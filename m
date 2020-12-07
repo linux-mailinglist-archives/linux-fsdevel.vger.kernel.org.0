@@ -2,136 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C72642D116F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 14:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85FCB2D117D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 14:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726348AbgLGNJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 08:09:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbgLGNJJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 08:09:09 -0500
-X-Gm-Message-State: AOAM531nlowu/yVlky6u2pitBwj/AM3Qqn/TU52EeOl3dedNaEO5v30A
-        NgnDRalEUWTeQ4IlBNKZHkgvbAJQkrrfrMDJmQA=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607346508;
-        bh=YiXfatZ6lH4pAyul08wZ68jWEXOKruJ8RP71cHFKE7U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DfT+77pJBcQ2Tz59v8I4UyfPu2VZ9kJOjlVYBjLELyOR9ps8CfmynkxvwsF8gtzjI
-         wteAvAxYZSjmljyE8mJsS/y/eyV8RzNK2ArSo0a5p1vfwBdAer+shvPD0ESQZT8gro
-         znbojXG6QvGNoEtJk7v86aFHScfXER5QzZqEt7cgHF1IbYfs1aL5sk2k/ct6wriFPD
-         eKKzP9SJConbTzoCSFFbLv872uxj5X/HAq3YbVvbND+yeS/JjEGD8yKjtkA7Svz5m2
-         xqRlO7x656wxKMlHRRp2QmNpL8xsQOnbQXje8XBGY0J1VNFeudfwihFBPO/8jDWhKL
-         me6vEBbvqQ4ig==
-X-Google-Smtp-Source: ABdhPJzOCttNG+HMmWL4e+OBsb98ZTp2Sv3FvcRmuGSUW/GZMTC2iGL0S6fIlzxpxGDYQ2h6OZ4tshGuqZ+cL5EHurQ=
-X-Received: by 2002:a4a:c60c:: with SMTP id l12mr10949035ooq.45.1607346507298;
- Mon, 07 Dec 2020 05:08:27 -0800 (PST)
+        id S1726208AbgLGNMd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 08:12:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726207AbgLGNMc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Dec 2020 08:12:32 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B086C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 05:11:52 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id 69so993378pgg.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 05:11:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xr2Bcp6E+mmoL8y2467sdPkluiPUdvKaThS4YyY4J9c=;
+        b=K0epKsTZU+gLms7McnmepszSabhIoYU0zdwL0UKK1d+felGnBD0CH+ZdkS4HeiiO/l
+         uDqKR5u/TKZao2Dzv3DZL/jQ9/MntB3uozS/zyfezOJIHOUKT/e1ftRmCZPamUDHx6f7
+         /A49te3pHnt1lrsXZaiSH1+3Somyck6aHOxIxNEIPwt2BidbLFhsiYJ74ICw4nT4hlE9
+         lmx6ibRuk1XVKY8brpow1UX+5s9m9oKBUaQF3NeJsX8NhgZzSgOZ9N/7UUBoEk+rARZF
+         qMaiBRxMSqmHeAZkBkkkwL2UrWERydhEZzbQPRpXnaT2rT+B74UfmHjrpig/fEODMAED
+         1ZLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xr2Bcp6E+mmoL8y2467sdPkluiPUdvKaThS4YyY4J9c=;
+        b=f6cY6gj6zbpgturCfFi96X7wSB01qUC1MmRGO+iKJaA89rJOnUxd17dobdYP7+cYS6
+         7aDXT97J/uD5UeHjflPt38p0HqTJz/505yc4PY6qtudkudV3VsHE5tlBrgATDzmjyL5y
+         HEvPG4+Amh7BuZYrTl4ovkIyCCUwsNd6+C/I4dCYHwDoSuNahRaWi4yj0tS4dd0swUj9
+         0oRdoraU7eN45NsGJrBORUKwOoPF4uiJVEyzQ99PR/LvXtH8nK3f67v0019kuR4/brLB
+         O18i8dpmcA0TajCWFb+bfpkynt5U44NZj34g188IqcjthVpouZ0Kzs+0AispR5ugmCAr
+         APRA==
+X-Gm-Message-State: AOAM531bTEPVA/dw4NmU9IXyDaMnRErUGyHETjCBbIxM1yubxIM+sQHM
+        4VLse663moq55tIsDYPhKSZMUfLcpiXgvtSDwSz+Nw==
+X-Google-Smtp-Source: ABdhPJwFQJZwos1WHpu2T1DlTqj0rkNPRW85TAeseGcC3/az3B3qPL6ZDfmEThgrDNp/pQC7ZQiLk8EnliD9tn22E10=
+X-Received: by 2002:a63:1203:: with SMTP id h3mr14789369pgl.273.1607346711799;
+ Mon, 07 Dec 2020 05:11:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20201204154626.GA26255@fieldses.org> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
- <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
- <118876.1607093975@warthog.procyon.org.uk> <122997.1607097713@warthog.procyon.org.uk>
- <20201204160347.GA26933@fieldses.org> <125709.1607100601@warthog.procyon.org.uk>
- <CAMj1kXEOm_yh478i+dqPiz0eoBxp4eag3j2qHm5eBLe+2kihoQ@mail.gmail.com>
- <127458.1607102368@warthog.procyon.org.uk> <CAMj1kXFe50HvZLxG6Kh-oYBCf5uu51hhuh7mW5UQ62ZSqmu_xA@mail.gmail.com>
- <468625.1607342512@warthog.procyon.org.uk>
-In-Reply-To: <468625.1607342512@warthog.procyon.org.uk>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Mon, 7 Dec 2020 14:08:16 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXH_gEjgZKx=8uQgv=ckBqTVoh3vrHj=O-nY-nm5VMgLaA@mail.gmail.com>
-Message-ID: <CAMj1kXH_gEjgZKx=8uQgv=ckBqTVoh3vrHj=O-nY-nm5VMgLaA@mail.gmail.com>
-Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
-To:     David Howells <dhowells@redhat.com>
-Cc:     Bruce Fields <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:BPF JIT for MIPS (32-BIT AND 64-BIT)" 
-        <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
+References: <20201130151838.11208-1-songmuchun@bytedance.com>
+ <20201130151838.11208-5-songmuchun@bytedance.com> <8505f01c-ad26-e571-b464-aedfd1bd9280@redhat.com>
+In-Reply-To: <8505f01c-ad26-e571-b464-aedfd1bd9280@redhat.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 7 Dec 2020 21:11:15 +0800
+Message-ID: <CAMZfGtXXHnso53-OZNotOnkZu1VX8WbBY66z2ynwVzcTZb44tQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v7 04/15] mm/hugetlb: Introduce
+ nr_free_vmemmap_pages in the struct hstate
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 7 Dec 2020 at 13:02, David Howells <dhowells@redhat.com> wrote:
+On Mon, Dec 7, 2020 at 8:36 PM David Hildenbrand <david@redhat.com> wrote:
 >
-> Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> > > Yeah - the problem with that is that for sunrpc, we might be dealing with 1MB
-> > > plus bits of non-contiguous pages, requiring >8K of scatterlist elements
-> > > (admittedly, we can chain them, but we may have to do one or more large
-> > > allocations).
-> > >
-> > > > However, I would recommend against it:
-> > >
-> > > Sorry, recommend against what?
-> > >
+> On 30.11.20 16:18, Muchun Song wrote:
+> > Every HugeTLB has more than one struct page structure. The 2M HugeTLB
+> > has 512 struct page structure and 1G HugeTLB has 4096 struct page
+> > structures. We __know__ that we only use the first 4(HUGETLB_CGROUP_MIN_ORDER)
+> > struct page structures to store metadata associated with each HugeTLB.
 > >
-> > Recommend against the current approach of manipulating the input like
-> > this and feeding it into the skcipher piecemeal.
->
-> Right.  I understand the problem, but as I mentioned above, the scatterlist
-> itself becomes a performance issue as it may exceed two pages in size.  Double
-> that as there may need to be separate input and output scatterlists.
->
-
-I wasn't aware that Herbert's work hadn't been merged yet. So that
-means it is entirely reasonable to split the input like this and feed
-the first part into a cbc(aes) skcipher and the last part into a
-cts(cbc(aes)) skcipher, provided that you ensure that the last part
-covers the final two blocks (one full block and one block that is
-either full or partial)
-
-With Herbert's changes, you will be able to use the same skcipher, and
-pass a flag to all but the final part that more data is coming. But
-for lack of that, the current approach is optimal for cases where
-having to cover the entire input with a single scatterlist is
-undesirable.
-
-> > Herbert recently made some changes for MSG_MORE support in the AF_ALG
-> > code, which permits a skcipher encryption to be split into several
-> > invocations of the skcipher layer without the need for this complexity
-> > on the side of the caller. Maybe there is a way to reuse that here.
-> > Herbert?
->
-> I wonder if it would help if the input buffer and output buffer didn't have to
-> correspond exactly in usage - ie. the output buffer could be used at a slower
-> rate than the input to allow for buffering inside the crypto algorithm.
->
-
-I don't follow - how could one be used at a slower rate?
-
-> > > Can you also do SHA at the same time in the same loop?
+> > There are a lot of struct page structures(8 page frames for 2MB HugeTLB
+> > page and 4096 page frames for 1GB HugeTLB page) associated with each
+> > HugeTLB page. For tail pages, the value of compound_head is the same.
+> > So we can reuse first page of tail page structures. We map the virtual
+> > addresses of the remaining pages of tail page structures to the first
+> > tail page struct, and then free these page frames. Therefore, we need
+> > to reserve two pages as vmemmap areas.
 > >
-> > SHA-1 or HMAC-SHA1? The latter could probably be modeled as an AEAD.
-> > The former doesn't really fit the current API so we'd have to invent
-> > something for it.
+> > So we introduce a new nr_free_vmemmap_pages field in the hstate to
+> > indicate how many vmemmap pages associated with a HugeTLB page that we
+> > can free to buddy system.
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+> > ---
+> >  include/linux/hugetlb.h |   3 ++
+> >  mm/Makefile             |   1 +
+> >  mm/hugetlb.c            |   3 ++
+> >  mm/hugetlb_vmemmap.c    | 129 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  mm/hugetlb_vmemmap.h    |  20 ++++++++
+> >  5 files changed, 156 insertions(+)
+> >  create mode 100644 mm/hugetlb_vmemmap.c
+> >  create mode 100644 mm/hugetlb_vmemmap.h
+> >
+> > diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> > index ebca2ef02212..4efeccb7192c 100644
+> > --- a/include/linux/hugetlb.h
+> > +++ b/include/linux/hugetlb.h
+> > @@ -492,6 +492,9 @@ struct hstate {
+> >       unsigned int nr_huge_pages_node[MAX_NUMNODES];
+> >       unsigned int free_huge_pages_node[MAX_NUMNODES];
+> >       unsigned int surplus_huge_pages_node[MAX_NUMNODES];
+> > +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> > +     unsigned int nr_free_vmemmap_pages;
+> > +#endif
+> >  #ifdef CONFIG_CGROUP_HUGETLB
+> >       /* cgroup control files */
+> >       struct cftype cgroup_files_dfl[7];
+> > diff --git a/mm/Makefile b/mm/Makefile
+> > index ed4b88fa0f5e..056801d8daae 100644
+> > --- a/mm/Makefile
+> > +++ b/mm/Makefile
+> > @@ -71,6 +71,7 @@ obj-$(CONFIG_FRONTSWAP)     += frontswap.o
+> >  obj-$(CONFIG_ZSWAP)  += zswap.o
+> >  obj-$(CONFIG_HAS_DMA)        += dmapool.o
+> >  obj-$(CONFIG_HUGETLBFS)      += hugetlb.o
+> > +obj-$(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)      += hugetlb_vmemmap.o
+> >  obj-$(CONFIG_NUMA)   += mempolicy.o
+> >  obj-$(CONFIG_SPARSEMEM)      += sparse.o
+> >  obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 1f3bf1710b66..25f9e8e9fc4a 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -42,6 +42,7 @@
+> >  #include <linux/userfaultfd_k.h>
+> >  #include <linux/page_owner.h>
+> >  #include "internal.h"
+> > +#include "hugetlb_vmemmap.h"
+> >
+> >  int hugetlb_max_hstate __read_mostly;
+> >  unsigned int default_hstate_idx;
+> > @@ -3206,6 +3207,8 @@ void __init hugetlb_add_hstate(unsigned int order)
+> >       snprintf(h->name, HSTATE_NAME_LEN, "hugepages-%lukB",
+> >                                       huge_page_size(h)/1024);
+> >
+> > +     hugetlb_vmemmap_init(h);
+> > +
+> >       parsed_hstate = h;
+> >  }
+> >
+> > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> > new file mode 100644
+> > index 000000000000..51152e258f39
+> > --- /dev/null
+> > +++ b/mm/hugetlb_vmemmap.c
+> > @@ -0,0 +1,129 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Free some vmemmap pages of HugeTLB
+> > + *
+> > + * Copyright (c) 2020, Bytedance. All rights reserved.
+> > + *
+> > + *     Author: Muchun Song <songmuchun@bytedance.com>
+> > + *
+> > + * The struct page structures (page structs) are used to describe a physical
+> > + * page frame. By default, there is a one-to-one mapping from a page frame to
+> > + * it's corresponding page struct.
+> > + *
+> > + * The HugeTLB pages consist of multiple base page size pages and is supported
+> > + * by many architectures. See hugetlbpage.rst in the Documentation directory
+> > + * for more details. On the x86 architecture, HugeTLB pages of size 2MB and 1GB
+> > + * are currently supported. Since the base page size on x86 is 4KB, a 2MB
+> > + * HugeTLB page consists of 512 base pages and a 1GB HugeTLB page consists of
+> > + * 4096 base pages. For each base page, there is a corresponding page struct.
+> > + *
+> > + * Within the HugeTLB subsystem, only the first 4 page structs are used to
+> > + * contain unique information about a HugeTLB page. HUGETLB_CGROUP_MIN_ORDER
+> > + * provides this upper limit. The only 'useful' information in the remaining
+> > + * page structs is the compound_head field, and this field is the same for all
+> > + * tail pages.
+> > + *
+> > + * By removing redundant page structs for HugeTLB pages, memory can returned to
+> > + * the buddy allocator for other uses.
+> > + *
+> > + * When the system boot up, every 2M HugeTLB has 512 struct page structs which
+> > + * size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
 >
-> The hashes corresponding to the kerberos enctypes I'm supporting are:
 >
-> HMAC-SHA1 for aes128-cts-hmac-sha1-96 and aes256-cts-hmac-sha1-96.
+> You should try to generalize all descriptions regarding differing base
+> page sizes. E.g., arm64 supports 4k, 16k, and 64k base pages.
+
+Will do. Thanks.
+
 >
-> HMAC-SHA256 for aes128-cts-hmac-sha256-128
+> [...]
 >
-> HMAC-SHA384 for aes256-cts-hmac-sha384-192
+> > @@ -0,0 +1,20 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Free some vmemmap pages of HugeTLB
+> > + *
+> > + * Copyright (c) 2020, Bytedance. All rights reserved.
+> > + *
+> > + *     Author: Muchun Song <songmuchun@bytedance.com>
+> > + */
+> > +#ifndef _LINUX_HUGETLB_VMEMMAP_H
+> > +#define _LINUX_HUGETLB_VMEMMAP_H
+> > +#include <linux/hugetlb.h>
+> > +
+> > +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> > +void __init hugetlb_vmemmap_init(struct hstate *h);
+> > +#else
+> > +static inline void hugetlb_vmemmap_init(struct hstate *h)
+> > +{
+> > +}
+> > +#endif /* CONFIG_HUGETLB_PAGE_FREE_VMEMMAP */
+> > +#endif /* _LINUX_HUGETLB_VMEMMAP_H */
+> >
 >
-> CMAC-CAMELLIA for camellia128-cts-cmac and camellia256-cts-cmac
+> This patch as it stands is rather sub-optimal. I mean, all it does is
+> add documentation and print what could be done.
 >
-> I'm not sure you can support all of those with the instructions available.
+> Can we instead introduce the basic infrastructure and enable it via this
+> patch on top, where we glue all the pieces together? Or is there
+> something I am missing?
+
+Maybe we can make the config of CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+default n in the Kconfig. When everything is ready, then make it
+default to y. Right?
+
+
+>
+> --
+> Thanks,
+>
+> David / dhildenb
 >
 
-It depends on whether the caller can make use of the authenc()
-pattern, which is a type of AEAD we support. There are numerous
-implementations of authenc(hmac(shaXXX),cbc(aes)), including h/w
-accelerated ones, but none that implement ciphertext stealing. So that
-means that, even if you manage to use the AEAD layer to perform both
-at the same time, the generic authenc() template will perform the
-cts(cbc(aes)) and hmac(shaXXX) by calling into skciphers and ahashes,
-respectively, which won't give you any benefit until accelerated
-implementations turn up that perform the whole operation in one pass
-over the input. And even then, I don't think the performance benefit
-will be worth it.
+
+--
+Yours,
+Muchun
