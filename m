@@ -2,139 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62EB02D0D2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 10:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 269812D0E26
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 11:39:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgLGJiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 04:38:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51096 "EHLO
+        id S1726214AbgLGKio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 05:38:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbgLGJiK (ORCPT
+        with ESMTP id S1726075AbgLGKin (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 04:38:10 -0500
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6931AC0613D1;
-        Mon,  7 Dec 2020 01:37:30 -0800 (PST)
-Received: by mail-lf1-x141.google.com with SMTP id a8so2349574lfb.3;
-        Mon, 07 Dec 2020 01:37:30 -0800 (PST)
+        Mon, 7 Dec 2020 05:38:43 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91307C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 02:37:57 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id ce23so14986428ejb.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 02:37:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RnNkd2vYhvmjED9WJj2Nxdy4XlHuVtV7w1DANTVG2FI=;
-        b=rh1WFl2WLrhE3ofzat0xeXZC+PtATDeAU/P6F9cLERB999UMGkd86Kypyttndnt4BP
-         LnZU+EJi4fy3fOUvRq8ktoo9AnyB/F+f+a/p46GO8fMlfxgHTB4DNwXozokFEf/68ivC
-         jn9JcA54mmpIPxqudMS2g3E5W96QeC8DV2zzTPhjLutcS6XkKa89enWpnq4+oMxDkapI
-         gC0yUPsyK/ZA3stvSKH6RqpPtEpBv05gSTTKDSGFpfhcmfsVjuilhnPqki6znBTFgrQd
-         4LHMzvDtiPAWR4mbwBJTIjzVhJOIxQ3RX9A8ZyRveLwudK8LpTmhNh0Lsp1f6mRQXRcy
-         q3Yw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VXIL/mPGOivAPpqwxpyRTpp5LeodAai3f6shhhCJSvc=;
+        b=epBZnYHYL+3atS7whj+dOGTaots4l4EmX2hejtWFeS/V33LeDhxYyPAz/HJjznLv7Q
+         8tsFzOXpbq98t0RuB0fEK6P0GIQc1hP/GlQctUsRkYtM6qaPtfx4HUIIQz5F6C5IYSri
+         +HjDh2eHZvBqxDEaeYBIO51faVdgqbYBTm0oNR+7hDI0lja7XI5qbGFOYZhXZzqorLB0
+         GzKoNHZgFXO4G6TxJtxKHqo/bfJz+8ucTLBMqksXtdfb6Coy33JUz5Lodn7px8eNyS5B
+         Ggi2HVNL/QrCC/omoO4tbOaf+8v+uRRGjAZ9r91a1Z4hePh7An+vGZ34zsuE8zOcijjs
+         iJdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RnNkd2vYhvmjED9WJj2Nxdy4XlHuVtV7w1DANTVG2FI=;
-        b=eNTNuEBnxmhkI+z74xTALu8u0RKUsJTj1mXlI9OxrUNcthkG+Srw9OB63GgL9d/f0w
-         +1hiT7eHamvPyimlZQmoae+FlUziKuCfMN8+hyI4zevXbWb1z5IabsSex9OuZRV9yjZk
-         O3MIbuuZi+wBK1+xsSGaUH6uNd7agXNgVJcnDRn5HXR26kADdD7tQpFQGB/oZ26i69WK
-         GTHRvBMDa0nq5sfeO+hE8jX7Lo+pfbNDRpK4Ym97iqjr4liVbjQ+GtXqA3Uv3yYxequX
-         afg7wWrNe2fVdyo3SdIeNuSSv+iRXr0682vFUXrYvnNXDo64dp5ICjIQzamD/JVXUpcU
-         SBOw==
-X-Gm-Message-State: AOAM533bz1kPlqXi/UxbIpDsl3z+iUWdRNGNuBoYn2VRUw21/1XbRXQw
-        48pra/Wj7kqD5YmRQiblWdfFGjjdY3c3xw==
-X-Google-Smtp-Source: ABdhPJxEcaykCb36ckt6dJ+g8AlQOFCGFaGSQjoNu9cPe8H9vffXm0tJ6T4ccMwMHd3yL5xWs/y99A==
-X-Received: by 2002:a19:197:: with SMTP id 145mr7980815lfb.483.1607333848927;
-        Mon, 07 Dec 2020 01:37:28 -0800 (PST)
-Received: from localhost.localdomain ([85.174.193.195])
-        by smtp.gmail.com with ESMTPSA id y15sm397014lfg.209.2020.12.07.01.37.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Dec 2020 01:37:27 -0800 (PST)
-From:   Artem Labazov <123321artyom@gmail.com>
-Cc:     123321artyom@gmail.com, stable@vger.kernel.org,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] exfat: Avoid allocating upcase table using kcalloc()
-Date:   Mon,  7 Dec 2020 12:34:23 +0300
-Message-Id: <20201207093424.833542-1-123321artyom@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <40be01d6cc61$7d23cac0$776b6040$@samsung.com>
-References: <40be01d6cc61$7d23cac0$776b6040$@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VXIL/mPGOivAPpqwxpyRTpp5LeodAai3f6shhhCJSvc=;
+        b=VcLoExdWT3BHvDunROcj60nXfkYMgEPWszdw6/0HDEDhDyXau8ejdAiWZ2BJwbKeeN
+         o++kO1IIMMdw8kr677fEoLnAxlMRxKgt8t9FBj4nJpeaxONybbsrMPr5RZQeXAXEzGXQ
+         R5zWtIl0naXBg+CfKyGp41n6omTnBSfIOYjMCjWdYiVcnQBc0svR/TSfyVAuXOMZHr7j
+         G6uun6EYIykuhE6g9WmYohc1wo5qw2rf3cuQzG9EV0mJqaKkVzTsms+uKqX0v8NbSin3
+         GYWmRssRIm2FBs2IKB+alsZf1WPCThJR33B347JE5j0Xa7QuDFOzmtOCLXfOLEJDHafh
+         sD7A==
+X-Gm-Message-State: AOAM530qyywosRntKEZOBKnVT2SRsit0VoOXVKNP4TaNAcVLEZb1BVGG
+        ZpOuxJLXVWQUlx7GDRw+P0RhPaYZnaJf3oM4NPAoBw==
+X-Google-Smtp-Source: ABdhPJyS8NPxP/N8yUAkByj94DqmhT5XJMlOeyUF6KVf2Vx2H9TvyJW2H/KEgzqT4En6ecuhA0MrYltatpFPfGUXBLo=
+X-Received: by 2002:a17:906:4c85:: with SMTP id q5mr18025326eju.375.1607337475996;
+ Mon, 07 Dec 2020 02:37:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <CA+G9fYs=nR-d0n8kV4=OWD+v=GR2ufOEWU9S4oG1_fZRxhGouQ@mail.gmail.com>
+ <20201207060746.GT11935@casper.infradead.org>
+In-Reply-To: <20201207060746.GT11935@casper.infradead.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 7 Dec 2020 16:07:44 +0530
+Message-ID: <CA+G9fYvQaBVRjxwQ0=+09RCVi-sExv4LAAXpH3-TSGNL29EY7g@mail.gmail.com>
+Subject: Re: WARNING: bad unlock balance detected! - mkfs.ext4/426 is trying
+ to release lock (rcu_read_lock)
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-stable <stable@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, rcu@vger.kernel.org,
+        lkft-triage@lists.linaro.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The table for Unicode upcase conversion requires an order-5 allocation,
-which may fail on a highly-fragmented system:
+On Mon, 7 Dec 2020 at 11:37, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Dec 07, 2020 at 11:17:29AM +0530, Naresh Kamboju wrote:
+> > While running "mkfs -t ext4" on arm64 juno-r2 device connected with SSD drive
+> > the following kernel warning reported on stable rc 5.9.13-rc1 kernel.
+> >
+> > Steps to reproduce:
+> > ------------------
+> > # boot arm64 Juno-r2 device with stable-rc 5.9.13-rc1.
+> > # Connect SSD drive
+> > # Format the file system ext4 type
+> >  mkfs -t ext4 <SSD-drive>
+> > # you will notice this warning
+>
+> Does it happen easily?  Can you bisect?
 
- pool-udisksd: page allocation failure: order:5, mode:0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=(null),cpuset=/,mems_allowed=0
- CPU: 4 PID: 3756880 Comm: pool-udisksd Tainted: G     U            5.8.10-200.fc32.x86_64 #1
- Hardware name: Dell Inc. XPS 13 9360/0PVG6D, BIOS 2.13.0 11/14/2019
- Call Trace:
-  dump_stack+0x6b/0x88
-  warn_alloc.cold+0x75/0xd9
-  ? _cond_resched+0x16/0x40
-  ? __alloc_pages_direct_compact+0x144/0x150
-  __alloc_pages_slowpath.constprop.0+0xcfa/0xd30
-  ? __schedule+0x28a/0x840
-  ? __wait_on_bit_lock+0x92/0xa0
-  __alloc_pages_nodemask+0x2df/0x320
-  kmalloc_order+0x1b/0x80
-  kmalloc_order_trace+0x1d/0xa0
-  exfat_create_upcase_table+0x115/0x390 [exfat]
-  exfat_fill_super+0x3ef/0x7f0 [exfat]
-  ? sget_fc+0x1d0/0x240
-  ? exfat_init_fs_context+0x120/0x120 [exfat]
-  get_tree_bdev+0x15c/0x250
-  vfs_get_tree+0x25/0xb0
-  do_mount+0x7c3/0xaf0
-  ? copy_mount_options+0xab/0x180
-  __x64_sys_mount+0x8e/0xd0
-  do_syscall_64+0x4d/0x90
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+I have been running multi test loops to reproduce this problem but no
+luck yet :(
+Since it is hard to reproduce we can not bisect.
 
-Convert kcalloc/kfree to their kv* variants to eliminate the issue.
-
-Cc: stable@vger.kernel.org # v5.7+
-Signed-off-by: Artem Labazov <123321artyom@gmail.com>
----
-v2: replace vmalloc with vzalloc to avoid uninitialized memory access
-v3: use kv* functions to attempt kmalloc first
-
- fs/exfat/nls.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index 675d0e7058c5..314d5407a1be 100644
---- a/fs/exfat/nls.c
-+++ b/fs/exfat/nls.c
-@@ -659,7 +659,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
- 	unsigned char skip = false;
- 	unsigned short *upcase_table;
- 
--	upcase_table = kcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
-+	upcase_table = kvcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
- 	if (!upcase_table)
- 		return -ENOMEM;
- 
-@@ -715,7 +715,7 @@ static int exfat_load_default_upcase_table(struct super_block *sb)
- 	unsigned short uni = 0, *upcase_table;
- 	unsigned int index = 0;
- 
--	upcase_table = kcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
-+	upcase_table = kvcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
- 	if (!upcase_table)
- 		return -ENOMEM;
- 
-@@ -803,5 +803,5 @@ int exfat_create_upcase_table(struct super_block *sb)
- 
- void exfat_free_upcase_table(struct exfat_sb_info *sbi)
- {
--	kfree(sbi->vol_utbl);
-+	kvfree(sbi->vol_utbl);
- }
--- 
-2.26.2
-
+- Naresh
