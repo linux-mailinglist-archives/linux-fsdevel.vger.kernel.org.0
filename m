@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FCB42D1739
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 18:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D95762D1750
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 18:17:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbgLGRLG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 12:11:06 -0500
-Received: from verein.lst.de ([213.95.11.211]:42822 "EHLO verein.lst.de"
+        id S1727050AbgLGRPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 12:15:43 -0500
+Received: from verein.lst.de ([213.95.11.211]:42865 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbgLGRLF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 12:11:05 -0500
+        id S1725814AbgLGRPm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Dec 2020 12:15:42 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id DF62E68AFE; Mon,  7 Dec 2020 18:10:21 +0100 (CET)
-Date:   Mon, 7 Dec 2020 18:10:21 +0100
+        id 7E27C67373; Mon,  7 Dec 2020 18:14:56 +0100 (CET)
+Date:   Mon, 7 Dec 2020 18:14:56 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -49,27 +49,52 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v4 05/40] fs: add attr_flags_to_mnt_flags helper
-Message-ID: <20201207171021.GB13614@lst.de>
-References: <20201203235736.3528991-1-christian.brauner@ubuntu.com> <20201203235736.3528991-6-christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v4 06/40] fs: add mount_setattr()
+Message-ID: <20201207171456.GC13614@lst.de>
+References: <20201203235736.3528991-1-christian.brauner@ubuntu.com> <20201203235736.3528991-7-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201203235736.3528991-6-christian.brauner@ubuntu.com>
+In-Reply-To: <20201203235736.3528991-7-christian.brauner@ubuntu.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> @@ -3450,6 +3450,28 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
->  	return ret;
->  }
->  
-> +#define FSMOUNT_VALID_FLAGS                                                    \
-> +	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV |            \
-> +	 MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME | MOUNT_ATTR_NODIRATIME)
+> +	switch (attr->propagation) {
+> +	case 0:
+> +		kattr->propagation = 0;
+> +		break;
+> +	case MS_UNBINDABLE:
+> +		kattr->propagation = MS_UNBINDABLE;
+> +		break;
+> +	case MS_PRIVATE:
+> +		kattr->propagation = MS_PRIVATE;
+> +		break;
+> +	case MS_SLAVE:
+> +		kattr->propagation = MS_SLAVE;
+> +		break;
+> +	case MS_SHARED:
+> +		kattr->propagation = MS_SHARED;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
 
-Any good reason for aligning the \ using spaces all the way out?
+This can be shortened to:
+
+#define MOUNT_SETATTR_PROPAGATION_FLAGS \
+	(MS_UNBINDABLE | MS_PRIVATE | MS_SLAVE | MS_SHARED)
+
+	if (attr->propagation & ~MOUNT_SETATTR_PROPAGATION_FLAGS)
+		return -EINVAL;
+	if (hweight32(attr->propagation & MOUNT_SETATTR_PROPAGATION_FLAGS) > 1)
+		return -EINVAL;
+	kattr->propagation = attr->propagation;
+
+> +asmlinkage long sys_mount_setattr(int dfd, const char __user *path, unsigned int flags,
+
+Overly long line.
 
 Otherwise looks good:
 
