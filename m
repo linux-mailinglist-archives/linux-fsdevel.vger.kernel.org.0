@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 369842D0F63
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:37:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 880802D0F66
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:37:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbgLGLgX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 06:36:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41168 "EHLO
+        id S1727713AbgLGLge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 06:36:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbgLGLgW (ORCPT
+        with ESMTP id S1727533AbgLGLgb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 06:36:22 -0500
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F203C0613D4;
-        Mon,  7 Dec 2020 03:35:42 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id f17so8656765pge.6;
-        Mon, 07 Dec 2020 03:35:42 -0800 (PST)
+        Mon, 7 Dec 2020 06:36:31 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A56AC08E85E;
+        Mon,  7 Dec 2020 03:35:45 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id 131so9603841pfb.9;
+        Mon, 07 Dec 2020 03:35:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=01Z5fklCLxTkAgFCaz6nAUEBM28bmnYK87yE7XDoghk=;
-        b=Ow37ASksRvhh9CbdtCHIUcexMF92+y/fcxUo4cp1Hcu1OVAkm4VgeqQuRQn3wk6HYw
-         HBIvMgI3NhxdwdBCKwt5Iq4O8LCN4Ax1wiG4DsCvRan0q4fRQKL8bzXsSjED1ZZnfPtW
-         i2fYicNCYucP2yFhvKqZO390HegOf8okFuF473TH47NWnU5wevHxKx8xWUmYQMv1OtGt
-         0lIXeFTqGZWaY2z+qKMSdfJnMGbGjjHGIm7bp+KVSSw1iX8dSHyykquckNwiMQ3vazJb
-         w8osDFx9fg+nq686wIqW3v7PfEnSUS4MCwgVJ3Vx8c8qTcTONTPefKk36TylgEAY+cPI
-         pfmg==
+        bh=8dMrBUV0z9hLgybDV1qAgRrexcK6XcuJtlWOIrJYhH0=;
+        b=QSXG0JhfnoAGvVBFx63sba2FOkjDtHFQBx/E4eY2XASWrdpLT0Ew5Lxo9DejGl9h++
+         5V2/EM/2abVeCbQe6r6uVAcXu38nGBRW5kLnKtZtrVY4TlxWPSKHSY/zlUjObVbTs+wL
+         x9eXcsTw9I5f8s7ws9VtyPX5JLLnZOlJuXOxZXXyCPUjoqPY9XoS104KOPsvqi2TP9Qr
+         dlnqXrw19GS6AKRnSVxl8hUOIkMKM9yyU4zUfq/dJvLXMP8hln1Ay82xzQkUBHKSwNDx
+         ejDThi/5DYZ0I6J/39QFbRF3Y/8kvDD3Eiy1+tKCQcQLGzMn2NiZ6exaemi55aBwIr5D
+         oy1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=01Z5fklCLxTkAgFCaz6nAUEBM28bmnYK87yE7XDoghk=;
-        b=PR0MrBiA9//P1Ma7RKw7i/yhY1UhpcAh980wx1c3fqfEF5wF0Xjdlgzmnvm+W3aWwR
-         f2KSBT+r0OuyDsYCKs18bjudL6dqBgs88wVbf4AisVEgtvr3zPLqIASAwQoADNqcPV+d
-         RXktpWd8Ww6jlCNmaIIdiNDrXXydbWalOQ13JxgFEt7KpTpoM9mnt2ktkVp3gBxhplbk
-         kQ8LGcgo7/ebm/CDLykjb825w8tKL695Cz1zzVYzRBX2z6+3UM7vnnH9cBfK8cMFhlia
-         RUJrBnkS2AUgQOIcqGGO27voFpPivp20rz6mWJXhL4HCNW9vGS5pRA2/F5FLgvsRPq9S
-         Hulw==
-X-Gm-Message-State: AOAM5322XJ3Lvmry8oFXCykZNgd1cpJ2fCGY/YU0BX1rGZt0UTeHEk+X
-        6H5k8XGOGbqupDhdPo4au3Q=
-X-Google-Smtp-Source: ABdhPJyc0QahNAcq2tXM9yV1P4tXgagCj+zgpJi+Q0nk6M3KkIQ/sHcL91OhO1SYZDhkmBDra3QOpQ==
-X-Received: by 2002:a63:a551:: with SMTP id r17mr3001298pgu.13.1607340942035;
-        Mon, 07 Dec 2020 03:35:42 -0800 (PST)
+        bh=8dMrBUV0z9hLgybDV1qAgRrexcK6XcuJtlWOIrJYhH0=;
+        b=rqDUjrk9EBFzosUBsLuEIPuUifylOKbqG4xu0KnAcUBzOy52Ay+soY4tZnJT5N+z77
+         eQjSsKS/umKVTqH9EKIiL0cK2uj6ZAswIDoAVYNHt7q1iGhDOy5J17WqgTkq4tAIwE5g
+         11DIOBna0vQ+yc6PKw/0J56Kv2Z4jKHmi4qAWEVbfj6AaaVvJoTeYT26IrHBcO6OtcBF
+         evcUGCW2HvHV9RgQLQY2ZPsdnFJgc+3qvBRZYcENziJk6fwoXkbV2d2uhg1TTlS6lvxe
+         kTaPkSUUWQeEECWNnXPaKsd+3bZVfKPZirbkNz5O2tYXPvCL4A2dPTot8Ho7nfidu3j3
+         DLtQ==
+X-Gm-Message-State: AOAM530EPFOaGZ/Nf+uduxfYSpksR9a+B35ZKeM7LDqKIKvxiLuxSyaq
+        Pyp/WuKryd9hicpkKI1IvP4=
+X-Google-Smtp-Source: ABdhPJxr+/fznfTo2BDgJytsbTQDDtDhOhsgkc3XiXicQdpt2zupWpmvamPhl7LZ72PAGPtdf/AUSg==
+X-Received: by 2002:a05:6a00:7c5:b029:19e:2965:7a6 with SMTP id n5-20020a056a0007c5b029019e296507a6mr2120711pfu.60.1607340945089;
+        Mon, 07 Dec 2020 03:35:45 -0800 (PST)
 Received: from localhost.localdomain ([203.205.141.39])
-        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.35.38
+        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.35.42
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Dec 2020 03:35:41 -0800 (PST)
+        Mon, 07 Dec 2020 03:35:44 -0800 (PST)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     linux-mm@kvack.org, akpm@linux-foundation.org,
@@ -57,11 +57,10 @@ To:     linux-mm@kvack.org, akpm@linux-foundation.org,
 Cc:     joao.m.martins@oracle.com, rdunlap@infradead.org,
         sean.j.christopherson@intel.com, xiaoguangrong.eric@gmail.com,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
-        Yulei Zhang <yuleixzhang@tencent.com>,
-        Chen Zhuo <sagazchen@tencent.com>
-Subject: [RFC V2 36/37] vfio: support dmempage refcount for vfio
-Date:   Mon,  7 Dec 2020 19:31:29 +0800
-Message-Id: <0e5dd1479a55d8af7adfe44390f8e45186295dce.1607332046.git.yuleixzhang@tencent.com>
+        Yulei Zhang <yuleixzhang@tencent.com>
+Subject: [RFC V2 37/37] Add documentation for dmemfs
+Date:   Mon,  7 Dec 2020 19:31:30 +0800
+Message-Id: <6a3a71f75dad1fa440677fc1bcdc170f178be1d8.1607332046.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <cover.1607332046.git.yuleixzhang@tencent.com>
 References: <cover.1607332046.git.yuleixzhang@tencent.com>
@@ -73,49 +72,88 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-Add get/put_dmem_pfn(), each time when vfio module reference/release
-dmempages.
+Introduce dmemfs.rst to document the basic usage of dmemfs.
 
-Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ Documentation/filesystems/dmemfs.rst | 58 ++++++++++++++++++++++++++++++++++++
+ Documentation/filesystems/index.rst  |  1 +
+ 2 files changed, 59 insertions(+)
+ create mode 100644 Documentation/filesystems/dmemfs.rst
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index c465d1a..4856a89 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -39,6 +39,7 @@
- #include <linux/notifier.h>
- #include <linux/dma-iommu.h>
- #include <linux/irqdomain.h>
-+#include <linux/dmem.h>
- 
- #define DRIVER_VERSION  "0.2"
- #define DRIVER_AUTHOR   "Alex Williamson <alex.williamson@redhat.com>"
-@@ -411,7 +412,10 @@ static int put_pfn(unsigned long pfn, int prot)
- 
- 		unpin_user_pages_dirty_lock(&page, 1, prot & IOMMU_WRITE);
- 		return 1;
--	}
-+	} else if (is_dmem_pfn(pfn))
-+		put_dmem_pfn(pfn);
+diff --git a/Documentation/filesystems/dmemfs.rst b/Documentation/filesystems/dmemfs.rst
+new file mode 100644
+index 00000000..f13ed0c
+--- /dev/null
++++ b/Documentation/filesystems/dmemfs.rst
+@@ -0,0 +1,58 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+	/* Dmem page is not counted against user. */
- 	return 0;
- }
- 
-@@ -477,6 +481,9 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 
- 		if (!ret && !is_invalid_reserved_pfn(*pfn))
- 			ret = -EFAULT;
++=====================================
++The Direct Memory Filesystem - DMEMFS
++=====================================
 +
-+		if (!ret && is_dmem_pfn(*pfn))
-+			get_dmem_pfn(*pfn);
- 	}
- done:
- 	mmap_read_unlock(mm);
++
++.. Table of contents
++
++   - Overview
++   - Compilation
++   - Usage
++
++Overview
++========
++
++Dmemfs (Direct Memory filesystem) is device memory or reserved
++memory based filesystem. This kind of memory is special as it
++is not managed by kernel and it is without 'struct page'. Therefore
++it can save extra memory from the host system for various usage,
++especially for guest virtual machines.
++
++It uses a kernel boot parameter ``dmem=`` to reserve the system
++memory when the host system boots up, the details can be checked
++in /Documentation/admin-guide/kernel-parameters.txt.
++
++Compilation
++===========
++
++The filesystem should be enabled by turning on the kernel configuration
++options::
++
++        CONFIG_DMEM_FS          - Direct Memory filesystem support
++        CONFIG_DMEM             - Allow reservation of memory for dmem
++
++
++Additionally, the following can be turned on to aid debugging::
++
++        CONFIG_DMEM_DEBUG_FS    - Enable debug information for dmem
++
++Usage
++========
++
++Dmemfs supports mapping ``4K``, ``2M`` and ``1G`` size of pages to
++the userspace, for example ::
++
++    # mount -t dmemfs none -o pagesize=4K /mnt/
++
++The it can create the backing storage with 4G size ::
++
++    # truncate /mnt/dmemfs-uuid --size 4G
++
++To use as backing storage for virtual machine starts with qemu, just need
++to specify the memory-backed-file in the qemu command line like this ::
++
++    # -object memory-backend-file,id=ram-node0,mem-path=/mnt/dmemfs-uuid \
++        share=yes,size=4G,host-nodes=0,policy=preferred -numa node,nodeid=0,memdev=ram-node0
++
+diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+index 98f59a8..23e944b 100644
+--- a/Documentation/filesystems/index.rst
++++ b/Documentation/filesystems/index.rst
+@@ -120,3 +120,4 @@ Documentation for filesystem implementations.
+    xfs-delayed-logging-design
+    xfs-self-describing-metadata
+    zonefs
++   dmemfs
 -- 
 1.8.3.1
 
