@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 856AF2D163E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 17:37:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA44D2D1643
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 17:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgLGQem (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 11:34:42 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55612 "EHLO
+        id S1727834AbgLGQeo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 11:34:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42404 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727794AbgLGQel (ORCPT
+        by vger.kernel.org with ESMTP id S1727811AbgLGQem (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 11:34:41 -0500
+        Mon, 7 Dec 2020 11:34:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607358795;
+        s=mimecast20190719; t=1607358796;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PLCQKZfzWqBvZ3fNsIg7ssx6JJEt23zVLXYENI3nPr8=;
-        b=NzcW/TcdiYV6pe1NgnOv5g6YUXRyR/VrkxlnoTfJC6Znr2SP2NwJkexB6GkfXWON7a7P3Z
-        TTFpRPJa9xv96xSiNSiNQIm1vQULhhl2R27lICZ+HD74AvwwL4+NSAZybNyGbbIfZC1u6r
-        dgodPu8m0X3hvGSRx+zlsN6Oexn8/xc=
+        bh=RE0m3vgq1/OaRAwZjvKOK2ey/mE38mR/q+wtN6wib9s=;
+        b=Eg87k5igU07VVyU7gpntFf3poClRUjMOlw7v0GBPEorMtynYOXsofThHhUeLdb1V6DxNjI
+        /JLlV88aynvZQ5Dc5aj3pw0U1aLb3J69TrXmEQScAGoinIL6+JScwpbTn+6XSdKges5l1t
+        DaAC9Bu+/wJggHOT4WG4Ej477iq1RCQ=
 Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
  [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-189-ZGyNkzmEMUGENmjRLQSI8g-1; Mon, 07 Dec 2020 11:33:13 -0500
-X-MC-Unique: ZGyNkzmEMUGENmjRLQSI8g-1
-Received: by mail-ed1-f69.google.com with SMTP id dh21so5155473edb.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 08:33:13 -0800 (PST)
+ us-mta-103-45VGdHYhNlm5LXG75mpyHg-1; Mon, 07 Dec 2020 11:33:14 -0500
+X-MC-Unique: 45VGdHYhNlm5LXG75mpyHg-1
+Received: by mail-ed1-f69.google.com with SMTP id g8so6030036edm.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 08:33:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PLCQKZfzWqBvZ3fNsIg7ssx6JJEt23zVLXYENI3nPr8=;
-        b=Stz1S4eOhyht1FCTduIiDj/lyGCW06yzjI1WaGIwgxMTnc/stcV5EHhKSrv+ceJkIY
-         NTbzEhwfXM7jy3DHFYCP/0jbSeTuPLDk/O5CW2lvyt7TgEZTa1z+tLQCFMtacPbc3Fb4
-         hPQIEm5Ad2f+MEQPU1RfGu5vKSW9d5rNJK3U8uwHv1mvwohBHnOsaqg0VYFFI3AOjUP9
-         gReNwmakEVloVfa1HtQOqJ69sLKNZXk+PwaTR/cwh1hb9FuPEM5zcWpWYY4iY/ghHjEU
-         L7oMw3v2jYAdmO2RGvKfBNqQvTo50W7Z1cvY4a5PAmHSeCDDbzEbvGjNHk8V0R8DlCL1
-         quGw==
-X-Gm-Message-State: AOAM530NX7fw85hgjaV7qjW+KydN90K+dBC2/sYAvqj+5ujrWrDbD73p
-        lE9lIEFmSv40dkUY/C9J5qd2bG+YHutXyUC7h/s35/u/iClEBuJKuhvr15hXN96mDCUkPSNqGtz
-        EJIrFaD6/mzBXz30JaKYWRxXmZA==
-X-Received: by 2002:a50:9f4a:: with SMTP id b68mr20511325edf.296.1607358792115;
-        Mon, 07 Dec 2020 08:33:12 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwcfXNOTxIA60QUdAr/l6040dD7T0L3kweELtDlwwC95Xbikn5wQvx9TnMAECGb3KS/JY4RKA==
-X-Received: by 2002:a50:9f4a:: with SMTP id b68mr20511314edf.296.1607358791932;
-        Mon, 07 Dec 2020 08:33:11 -0800 (PST)
+        bh=RE0m3vgq1/OaRAwZjvKOK2ey/mE38mR/q+wtN6wib9s=;
+        b=g8Fv8r9R7mifCAV1mKrlhJS4FFgna4NBEoj8fZFik0U8c8/dVhWbQV9V6RgTNG0o8E
+         ef5jt2zI+QcobVFLBKPU+AOTMR2X6NXB3BWs1iy/SqU+g6QwCFMNQe0FAugEx2y51meG
+         mjRIe1TvvuZb7b0MCKZAnPENZYnwEJ+zZaOr7fr3mu0aS70Q/bk9RtT46//K5YVM0gaR
+         HO+lotei1S4tb5gVSfVT7HCMJ6OC3x8FPUySPfTAxXs7KDg7NePMgz9Q3+cotqBTezap
+         B6jryZHApyuHe7OL5vh5BzliGcK8BvgjiVGYaqbipVpF8c7y8xX5i0Jrm0V5sMqueOcr
+         6PLA==
+X-Gm-Message-State: AOAM531BnDXxgxEcLU5CDcV+I0lD8clFiy8iTDOmThLZERoS1f72zgxL
+        9ucsRn9rNXuBhudi6bdVCBwgP8zZ3Zsai6CPn4XNITDEr55Z4pivUvSSB3wlsAXug/eT433B4iU
+        oza9oZK1UiQjaDXaKFpsXGa77HQ==
+X-Received: by 2002:a50:d74c:: with SMTP id i12mr20512779edj.236.1607358793439;
+        Mon, 07 Dec 2020 08:33:13 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzZo9cLo2B/sr3LytBzOfhCP7NvepbgDDGPqp8OuSqAKVtWfqlfy6nWwFOViRsEnP4mLzJm9A==
+X-Received: by 2002:a50:d74c:: with SMTP id i12mr20512764edj.236.1607358793260;
+        Mon, 07 Dec 2020 08:33:13 -0800 (PST)
 Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id op5sm12801964ejb.43.2020.12.07.08.33.10
+        by smtp.gmail.com with ESMTPSA id op5sm12801964ejb.43.2020.12.07.08.33.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Dec 2020 08:33:11 -0800 (PST)
+        Mon, 07 Dec 2020 08:33:12 -0800 (PST)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     "Eric W . Biederman" <ebiederm@xmission.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 09/10] ovl: do not get metacopy for userxattr
-Date:   Mon,  7 Dec 2020 17:32:54 +0100
-Message-Id: <20201207163255.564116-10-mszeredi@redhat.com>
+Subject: [PATCH v2 10/10] ovl: unprivieged mounts
+Date:   Mon,  7 Dec 2020 17:32:55 +0100
+Message-Id: <20201207163255.564116-11-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20201207163255.564116-1-mszeredi@redhat.com>
 References: <20201207163255.564116-1-mszeredi@redhat.com>
@@ -67,36 +67,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When looking up an inode on the lower layer for which the mounter lacks
-read permisison the metacopy check will fail.  This causes the lookup to
-fail as well, even though the directory is readable.
+Enable unprivileged user namespace mounts of overlayfs.  Overlayfs's
+permission model (*) ensures that the mounter itself cannot gain additional
+privileges by the act of creating an overlayfs mount.
 
-So ignore EACCES for the "userxattr" case and assume no metacopy for the
-unreadable file.
+This feature request is coming from the "rootless" container crowd.
+
+(*) Documentation/filesystems/overlayfs.txt#Permission model
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/util.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/overlayfs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 66eaf4db027f..703c6e529f39 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -880,6 +880,13 @@ int ovl_check_metacopy_xattr(struct ovl_fs *ofs, struct dentry *dentry)
- 	if (res < 0) {
- 		if (res == -ENODATA || res == -EOPNOTSUPP)
- 			return 0;
-+		/*
-+		 * getxattr on user.* may fail with EACCES in case there's no
-+		 * read permission on the inode.  Not much we can do, other than
-+		 * tell the caller that this is not a metacopy inode.
-+		 */
-+		if (ofs->config.userxattr && res == -EACCES)
-+			return 0;
- 		goto out;
- 	}
- 
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 189380b946be..019e6f1834b0 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -2073,6 +2073,7 @@ static struct dentry *ovl_mount(struct file_system_type *fs_type, int flags,
+ static struct file_system_type ovl_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "overlay",
++	.fs_flags	= FS_USERNS_MOUNT,
+ 	.mount		= ovl_mount,
+ 	.kill_sb	= kill_anon_super,
+ };
 -- 
 2.26.2
 
