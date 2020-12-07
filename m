@@ -2,157 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA482D11D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 14:25:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D7D2D135B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 15:16:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbgLGNYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 08:24:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58140 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbgLGNYp (ORCPT
+        id S1726534AbgLGOQh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 09:16:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35132 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725816AbgLGOQg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 08:24:45 -0500
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C941C0613D2
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 05:23:59 -0800 (PST)
-Received: by mail-pj1-x1044.google.com with SMTP id l23so7440128pjg.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 05:23:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ky+I9YkVzigjjr6stcndvMLpkjlk5/E6enUFznI0xXk=;
-        b=P34K7+7gmugd3RCndoxHSZmBwWjqQv3lr+RU3A27tiFeJKxAykWlrOPr07RB7o66zG
-         cYb/c/eE0KLWrs5GrSbXMMSKbdtAjZ2MRRWh5ndWSP1P4aLF8PBT9NgdHEjJqadOtjbH
-         eZaRFlCVVSeQZzDFFqim+bari+CRXDx07Hq3qbkzX5FakwrG/XFfrEgPyYJOjLU3rZ3m
-         HsvwSYCxIEIIWdbe3toyI98SqwSN5s57GVIcD29eU1kjLpNE92MUOgdQepdm9qph2i8X
-         9OstqP7zx0smn0/yY8wSD+6jUjWZFMJBR41NjBx9xvrjjLCOroYV+60llyFZxW8t7xuB
-         nPlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ky+I9YkVzigjjr6stcndvMLpkjlk5/E6enUFznI0xXk=;
-        b=j/8X2G2ksSzwdfXcD1Mh/s2xudyyYuqHeeD2pKnpNUGjnXqcxinpeWl9nys6E9EcNt
-         FJrmTFJxrNbmYxomTtZc2AYVtXvsrm1w5W8U+LZZeRD2LY+FH89EdsD/7ai4SDdVUr6a
-         3x5KO4yHNYXWaI++KK6Mjaxf4sn65xRloX6Poz09fQIqwUKK3sieDKhZ9VHAZ/BCK7G+
-         h38iRPEPNv8u38DhqZn0cFt9p7Dr9F6Ma+OCp7l50L1D/IDqQjlyQr82AWTP+NjZU9Kd
-         5ZkzXdXOQW+hS171qUKhUr7G2GtvjbsqC7N8HclkV6P/hyPKxFNzCA4diAW6S8RvoVv5
-         gw9A==
-X-Gm-Message-State: AOAM53356XckWs/IotK1LtEd5Btms9w6+vkVHJx8RFLe0huztZ2gWzA7
-        zr9FTuSjsEaMlRK3+N2u8LSlV1c1+tIsH3QO5aAaiQ==
-X-Google-Smtp-Source: ABdhPJwusQET8H/ZtzbMlFRmNDIDtUwVD9D8y47cTahBIlck/QWVBQr9rJ+XFSKkdsByhbn0oiK+TQ4qvTtVAjvkk2k=
-X-Received: by 2002:a17:90a:c588:: with SMTP id l8mr16181556pjt.147.1607347438932;
- Mon, 07 Dec 2020 05:23:58 -0800 (PST)
+        Mon, 7 Dec 2020 09:16:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607350509;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MgTQnfyHDBIlg0aW7LHURku9NdTnw1Wvewb97jbt5cc=;
+        b=gVIXr6T2Pt8C9T2sSOHcc18UHDWyxomeHZvwl+lckby8e01fLbVEIvNh27KuqB+c7AwQbC
+        pt/XnDKappz/LpLzFjbUi8Sv0ept1pLqxSUxsBrG9Uf55Re68nAofxYYfXRNs+YEqlHVHa
+        D2F5uNeS1+Nq86EwbM/FQjYJ2Z5zLqw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-333-YhyV3gt5MI-mqE0CMyDmIA-1; Mon, 07 Dec 2020 09:15:05 -0500
+X-MC-Unique: YhyV3gt5MI-mqE0CMyDmIA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 28400DF8A7;
+        Mon,  7 Dec 2020 14:15:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CE5C719C45;
+        Mon,  7 Dec 2020 14:15:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAMj1kXH_gEjgZKx=8uQgv=ckBqTVoh3vrHj=O-nY-nm5VMgLaA@mail.gmail.com>
+References: <CAMj1kXH_gEjgZKx=8uQgv=ckBqTVoh3vrHj=O-nY-nm5VMgLaA@mail.gmail.com> <20201204154626.GA26255@fieldses.org> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <118876.1607093975@warthog.procyon.org.uk> <122997.1607097713@warthog.procyon.org.uk> <20201204160347.GA26933@fieldses.org> <125709.1607100601@warthog.procyon.org.uk> <CAMj1kXEOm_yh478i+dqPiz0eoBxp4eag3j2qHm5eBLe+2kihoQ@mail.gmail.com> <127458.1607102368@warthog.procyon.org.uk> <CAMj1kXFe50HvZLxG6Kh-oYBCf5uu51hhuh7mW5UQ62ZSqmu_xA@mail.gmail.com> <468625.1607342512@warthog.procyon.org.uk>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     dhowells@redhat.com, Bruce Fields <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:BPF JIT for MIPS (32-BIT AND 64-BIT)" 
+        <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
+Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
 MIME-Version: 1.0
-References: <20201130151838.11208-1-songmuchun@bytedance.com>
- <20201130151838.11208-6-songmuchun@bytedance.com> <17abb7bb-de39-7580-b020-faec58032de9@redhat.com>
-In-Reply-To: <17abb7bb-de39-7580-b020-faec58032de9@redhat.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Mon, 7 Dec 2020 21:23:22 +0800
-Message-ID: <CAMZfGtUBe32=wYfR9Nqnq5_Xvb8hHO5j14eyFkRwx5uaS0n=1Q@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v7 05/15] mm/bootmem_info: Introduce {free,prepare}_vmemmap_page()
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <482242.1607350500.1@warthog.procyon.org.uk>
+Date:   Mon, 07 Dec 2020 14:15:00 +0000
+Message-ID: <482243.1607350500@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 7, 2020 at 8:39 PM David Hildenbrand <david@redhat.com> wrote:
->
-> On 30.11.20 16:18, Muchun Song wrote:
-> > In the later patch, we can use the free_vmemmap_page() to free the
-> > unused vmemmap pages and initialize a page for vmemmap page using
-> > via prepare_vmemmap_page().
+Ard Biesheuvel <ardb@kernel.org> wrote:
+
+> > I wonder if it would help if the input buffer and output buffer didn't
+> > have to correspond exactly in usage - ie. the output buffer could be used
+> > at a slower rate than the input to allow for buffering inside the crypto
+> > algorithm.
 > >
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  include/linux/bootmem_info.h | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
+> 
+> I don't follow - how could one be used at a slower rate?
+
+I mean that the crypto algorithm might need to buffer the last part of the
+input until it has a block's worth before it can write to the output.
+
+> > The hashes corresponding to the kerberos enctypes I'm supporting are:
 > >
-> > diff --git a/include/linux/bootmem_info.h b/include/linux/bootmem_info.h
-> > index 4ed6dee1adc9..239e3cc8f86c 100644
-> > --- a/include/linux/bootmem_info.h
-> > +++ b/include/linux/bootmem_info.h
-> > @@ -3,6 +3,7 @@
-> >  #define __LINUX_BOOTMEM_INFO_H
+> > HMAC-SHA1 for aes128-cts-hmac-sha1-96 and aes256-cts-hmac-sha1-96.
 > >
-> >  #include <linux/mmzone.h>
-> > +#include <linux/mm.h>
+> > HMAC-SHA256 for aes128-cts-hmac-sha256-128
 > >
-> >  /*
-> >   * Types for free bootmem stored in page->lru.next. These have to be in
-> > @@ -22,6 +23,29 @@ void __init register_page_bootmem_info_node(struct pglist_data *pgdat);
-> >  void get_page_bootmem(unsigned long info, struct page *page,
-> >                     unsigned long type);
-> >  void put_page_bootmem(struct page *page);
-> > +
-> > +static inline void free_vmemmap_page(struct page *page)
-> > +{
-> > +     VM_WARN_ON(!PageReserved(page) || page_ref_count(page) != 2);
-> > +
-> > +     /* bootmem page has reserved flag in the reserve_bootmem_region */
-> > +     if (PageReserved(page)) {
-> > +             unsigned long magic = (unsigned long)page->freelist;
-> > +
-> > +             if (magic == SECTION_INFO || magic == MIX_SECTION_INFO)
-> > +                     put_page_bootmem(page);
-> > +             else
-> > +                     WARN_ON(1);
-> > +     }
-> > +}
-> > +
-> > +static inline void prepare_vmemmap_page(struct page *page)
-> > +{
-> > +     unsigned long section_nr = pfn_to_section_nr(page_to_pfn(page));
-> > +
-> > +     get_page_bootmem(section_nr, page, SECTION_INFO);
-> > +     mark_page_reserved(page);
-> > +}
+> > HMAC-SHA384 for aes256-cts-hmac-sha384-192
+> >
+> > CMAC-CAMELLIA for camellia128-cts-cmac and camellia256-cts-cmac
+> >
+> > I'm not sure you can support all of those with the instructions available.
 >
-> Can you clarify in the description when exactly these functions are
-> called and on which type of pages?
+> It depends on whether the caller can make use of the authenc()
+> pattern, which is a type of AEAD we support.
 
-Will do.
+Interesting.  I didn't realise AEAD was an API.
 
->
-> Would indicating "bootmem" in the function names make it clearer what we
-> are dealing with?
->
-> E.g., any memory allocated via the memblock allocator and not via the
-> buddy will be makred reserved already in the memmap. It's unclear to me
-> why we need the mark_page_reserved() here - can you enlighten me? :)
+> There are numerous implementations of authenc(hmac(shaXXX),cbc(aes)),
+> including h/w accelerated ones, but none that implement ciphertext
+> stealing. So that means that, even if you manage to use the AEAD layer to
+> perform both at the same time, the generic authenc() template will perform
+> the cts(cbc(aes)) and hmac(shaXXX) by calling into skciphers and ahashes,
+> respectively, which won't give you any benefit until accelerated
+> implementations turn up that perform the whole operation in one pass over
+> the input. And even then, I don't think the performance benefit will be
+> worth it.
 
-Very thanks for your suggestions.
+Also, the rfc8009 variants that use AES with SHA256/384 hash the ciphertext,
+not the plaintext.
 
->
-> --
-> Thanks,
->
-> David / dhildenb
->
+For the moment, it's probably not worth worrying about, then.  If I can manage
+to abstract the sunrpc bits out into a krb5 library, we can improve the
+library later.
 
+David
 
--- 
-Yours,
-Muchun
