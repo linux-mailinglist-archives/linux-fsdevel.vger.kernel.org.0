@@ -2,172 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B84D52D10C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 13:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 269AC2D10CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 13:47:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725962AbgLGMnr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 07:43:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51788 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbgLGMnq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 07:43:46 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF55CC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 04:43:06 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id t7so9808271pfh.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 04:43:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A3Sz9EwcVm7/laPzVL4k5X0ZCii9fn78txSMeems5dA=;
-        b=JH1WGkTnBnWyl6t3H5VvF0TMMz5/m82Bz7apzt7nnrxQ6aH4/fP93IcsAur6/PdbLE
-         HkNrx5vI94hkp+cayxPCE/4C4LkA6r7wu5OI7yLoLUbIsfb4WeKrYpGZ21T6d8OY4+sb
-         n1WmlSDul/HFojHtb+cYnMtW9O6zws4A+srhsGrH7W/ekiDGwDPDXVUA1C9vgL6I93QQ
-         kjyfdZLpV3F2wck6ymYtgRgpnwrZvnt09+LuDaPRpFRzEBezmhyeSjHXFrDsP8mJHtst
-         i6PktA4JsnKm0RCMil2nv5UdF97zXfOMCiBeAcqk4BPK+nLygAhjk6ySa4whcUBRezi7
-         4vhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A3Sz9EwcVm7/laPzVL4k5X0ZCii9fn78txSMeems5dA=;
-        b=Pu7kDTyZA4ipy266xSJj4hQKBuM/zaXl9vs5yNin2BXeEyyO90YPUY/DF45vZN2q6M
-         IKeZuSec7llKEaSaXfVOu8ceVQN7aGfrzoWEQixuG43ehlTUZ84sc7glmkVIJqvVij9h
-         9ljhcDVfr+X86ZBeDQDJ0dCjL+zTO6S2nWSvxFw2wkzfMkdoZ/mhCS//xAvL32i4dmnZ
-         K0R5bZOosIbJjqysOjwrDqUhxbnHmKliy2VUtaYVVbG21OdcoIAngC2WqEvACUe+PKAF
-         TIq2X61lHgm7a0xPPgeU7Abrj85onrtP3UDZ/mMm5a3vc26S+VKOzPjeXWjfYZjn5sDR
-         kxEw==
-X-Gm-Message-State: AOAM533eZCFKB1I6JijEzvFTskC5CQlJhAq0fjR/23iLKLN02JzpMDqZ
-        cqE2vqk6rQm3ATnNRicykijqK1rs5+g+S1w3KanXrA==
-X-Google-Smtp-Source: ABdhPJyYNVAE+tmn7JNGEOXOkwcqZO1ZbR7gnIDXJdT+G8tgPZRXcx7VJ7I/bEbnUunqR2+pYwcX4YYTWhsShd60dZ4=
-X-Received: by 2002:a17:902:ed0d:b029:da:c83b:5f40 with SMTP id
- b13-20020a170902ed0db02900dac83b5f40mr16065185pld.20.1607344986256; Mon, 07
- Dec 2020 04:43:06 -0800 (PST)
-MIME-Version: 1.0
-References: <20201130151838.11208-1-songmuchun@bytedance.com>
- <20201130151838.11208-4-songmuchun@bytedance.com> <2ec1d360-c8c8-eb7b-2afe-b75ee61cfcea@redhat.com>
-In-Reply-To: <2ec1d360-c8c8-eb7b-2afe-b75ee61cfcea@redhat.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Mon, 7 Dec 2020 20:42:29 +0800
-Message-ID: <CAMZfGtVnw8aJWceLM1UerkAZzcjkObb-ZrCE_Jj6w3EUR=UN3Q@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v7 03/15] mm/hugetlb: Introduce a new
- config HUGETLB_PAGE_FREE_VMEMMAP
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
+        id S1725834AbgLGMqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 07:46:35 -0500
+Received: from mga11.intel.com ([192.55.52.93]:13302 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725550AbgLGMqe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Dec 2020 07:46:34 -0500
+IronPort-SDR: cnOsql8PLSohbGzBapKpFP6nayEoxa6CkOJHFuqQETKJEu7nEEIu4Zn98+m3oSV7M0APoSC45s
+ l7sNfi6Y4lSw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9827"; a="170182999"
+X-IronPort-AV: E=Sophos;i="5.78,399,1599548400"; 
+   d="scan'208";a="170182999"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2020 04:44:48 -0800
+IronPort-SDR: KIcPa1m/tdFSrCCg+HZ9wcNpGF/RBbY/5Xg1Ca101JRRKwiOb/+WF10Wk62CakzdO2ew9KNkf3
+ A/QkDatczTeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.78,399,1599548400"; 
+   d="scan'208";a="436691903"
+Received: from cvg-ubt08.iil.intel.com (HELO cvg-ubt08.me-corp.lan) ([10.185.176.12])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Dec 2020 04:44:41 -0800
+From:   Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kars Mulder <kerneldev@karsmulder.nl>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Joe Perches <joe@perches.com>,
+        Rafael Aquini <aquini@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu <chenqiwu@xiaomi.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH v2] do_exit(): panic() recursion detected
+Date:   Mon,  7 Dec 2020 14:44:33 +0200
+Message-Id: <20201207124433.4017265-1-vladimir.kondratiev@linux.intel.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 7, 2020 at 8:19 PM David Hildenbrand <david@redhat.com> wrote:
->
-> On 30.11.20 16:18, Muchun Song wrote:
-> > The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
-> > whether to enable the feature of freeing unused vmemmap associated
-> > with HugeTLB pages. And this is just for dependency check. Now only
-> > support x86.
->
-> x86 - i386 and x86-64? (I assume the latter only ;) )
+Recursive do_exit() is symptom of compromised kernel integrity.
+For safety critical systems, it may be better to
+panic() in this case to minimize risk.
 
-Yeah, you are right. Only the latter support SPARSEMEM_VMEMMAP.
+Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
+Change-Id: I42f45900a08c4282c511b05e9e6061360d07db60
+---
+ Documentation/admin-guide/kernel-parameters.txt | 6 ++++++
+ include/linux/kernel.h                          | 1 +
+ kernel/exit.c                                   | 7 +++++++
+ kernel/sysctl.c                                 | 9 +++++++++
+ 4 files changed, 23 insertions(+)
 
->
-> >
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  arch/x86/mm/init_64.c |  2 +-
-> >  fs/Kconfig            | 14 ++++++++++++++
-> >  2 files changed, 15 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> > index 0a45f062826e..0435bee2e172 100644
-> > --- a/arch/x86/mm/init_64.c
-> > +++ b/arch/x86/mm/init_64.c
-> > @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
-> >
-> >  static void __init register_page_bootmem_info(void)
-> >  {
-> > -#ifdef CONFIG_NUMA
-> > +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
-> >       int i;
-> >
->
-> Why does this hunk belong into this patch? Looks like this should go
-> into another patch.
-
-Of course can. But Mike suggests that it is better to use it when
-introducing a new config. Because this config depends on
-HAVE_BOOTMEM_INFO_NODE. And register_page_bootmem_info
-is aimed to register bootmem info. So maybe it is reasonable from
-this point of view. What is your opinion?
-
->
-> >       for_each_online_node(i)
-> > diff --git a/fs/Kconfig b/fs/Kconfig
-> > index 976e8b9033c4..4961dd488444 100644
-> > --- a/fs/Kconfig
-> > +++ b/fs/Kconfig
-> > @@ -245,6 +245,20 @@ config HUGETLBFS
-> >  config HUGETLB_PAGE
-> >       def_bool HUGETLBFS
-> >
-> > +config HUGETLB_PAGE_FREE_VMEMMAP
-> > +     def_bool HUGETLB_PAGE
-> > +     depends on X86
-> > +     depends on SPARSEMEM_VMEMMAP
-> > +     depends on HAVE_BOOTMEM_INFO_NODE
-> > +     help
-> > +       When using HUGETLB_PAGE_FREE_VMEMMAP, the system can save up some
-> > +       memory from pre-allocated HugeTLB pages when they are not used.
-> > +       6 pages per 2MB HugeTLB page and 4094 per 1GB HugeTLB page.
->
-> Calculations only apply to 4k base pages, no?
-
-No, if the base page is not 4k, we also can free 6 pages.
-
-For example:
-
-If the base page size is 64k, the PMD huge page size is 512MB. We also
-can free 6 pages(64k * 6) vmemmap. But maybe I should document this.
-
-Thanks.
-
-> (maybe generalize this a
-> bit or mention 4k base pages - I'm pretty sure we'll see the "depends on
-> X86" part fairly soon if this goes upstream)
-
-Yeah, it can be easy to adapt to different architectures. :)
-
->
->
-> --
-> Thanks,
->
-> David / dhildenb
->
-
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 44fde25bb221..6e12a6804557 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3508,6 +3508,12 @@
+ 			bit 4: print ftrace buffer
+ 			bit 5: print all printk messages in buffer
+ 
++	panic_on_exit_recursion
++			panic() when do_exit() recursion detected, rather then
++			try to stay running whenever possible.
++			Useful on safety critical systems; re-entry in do_exit
++			is a symptom of compromised kernel integrity.
++
+ 	panic_on_taint=	Bitmask for conditionally calling panic() in add_taint()
+ 			Format: <hex>[,nousertaint]
+ 			Hexadecimal bitmask representing the set of TAINT flags
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 2f05e9128201..5afb20534cb2 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -539,6 +539,7 @@ extern int sysctl_panic_on_rcu_stall;
+ extern int sysctl_panic_on_stackoverflow;
+ 
+ extern bool crash_kexec_post_notifiers;
++extern int panic_on_exit_recursion;
+ 
+ /*
+  * panic_cpu is used for synchronizing panic() and crash_kexec() execution. It
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 1f236ed375f8..162799a8b539 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -68,6 +68,9 @@
+ #include <asm/unistd.h>
+ #include <asm/mmu_context.h>
+ 
++int panic_on_exit_recursion __read_mostly;
++core_param(panic_on_exit_recursion, panic_on_exit_recursion, int, 0644);
++
+ static void __unhash_process(struct task_struct *p, bool group_dead)
+ {
+ 	nr_threads--;
+@@ -757,6 +760,10 @@ void __noreturn do_exit(long code)
+ 	 */
+ 	if (unlikely(tsk->flags & PF_EXITING)) {
+ 		pr_alert("Fixing recursive fault but reboot is needed!\n");
++		if (panic_on_exit_recursion)
++			panic("Recursive do_exit() detected in %s[%d]\n",
++			      current->comm, task_pid_nr(current));
++
+ 		futex_exit_recursive(tsk);
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+ 		schedule();
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index afad085960b8..bb397fba2c42 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2600,6 +2600,15 @@ static struct ctl_table kern_table[] = {
+ 		.extra2		= &one_thousand,
+ 	},
+ #endif
++	{
++		.procname	= "panic_on_exit_recursion",
++		.data		= &panic_on_exit_recursion,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
+ 	{
+ 		.procname	= "panic_on_warn",
+ 		.data		= &panic_on_warn,
 -- 
-Yours,
-Muchun
+2.27.0
+
