@@ -2,83 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F042D1DBB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 23:50:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73E592D1DDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 23:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgLGWts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 17:49:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33736 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbgLGWts (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 17:49:48 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C20F1C061749;
-        Mon,  7 Dec 2020 14:49:07 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kmPJX-00HHD1-Rb; Mon, 07 Dec 2020 22:49:03 +0000
-Date:   Mon, 7 Dec 2020 22:49:03 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        criu@openvz.org, bpf@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
-        Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+        id S1727834AbgLGW5t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 17:57:49 -0500
+Received: from mga18.intel.com ([134.134.136.126]:54197 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727787AbgLGW5t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Dec 2020 17:57:49 -0500
+IronPort-SDR: 7zKLOhtyxhEYBUi48Qi1kkQvaizdQ+yFxqtrVFibpjueHWK2wEpgQBfUl1Yu3Sy3rjyE7ld1tp
+ 7zazYKAIAFbQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9828"; a="161561964"
+X-IronPort-AV: E=Sophos;i="5.78,401,1599548400"; 
+   d="scan'208";a="161561964"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2020 14:57:08 -0800
+IronPort-SDR: zrK7N13f0547j6HUqKFTrPIBK5St3oJ2fDzMKbb6+BPw0XKG8JNCxz/onBIap5+rFNlbzyL0gG
+ Rc4ZzAHEnpoQ==
+X-IronPort-AV: E=Sophos;i="5.78,401,1599548400"; 
+   d="scan'208";a="407363009"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2020 14:57:06 -0800
+From:   ira.weiny@intel.com
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Matthew Wilcox <willy@infradead.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Chris Wright <chrisw@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>
-Subject: Re: [PATCH v2 09/24] file: Replace fcheck_files with
- files_lookup_fd_rcu
-Message-ID: <20201207224903.GA4117703@ZenIV.linux.org.uk>
-References: <87r1on1v62.fsf@x220.int.ebiederm.org>
- <20201120231441.29911-9-ebiederm@xmission.com>
- <20201207224656.GC4115853@ZenIV.linux.org.uk>
+        Christoph Hellwig <hch@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH V2 0/2] Lift memcpy_[to|from]_page to core
+Date:   Mon,  7 Dec 2020 14:57:01 -0800
+Message-Id: <20201207225703.2033611-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201207224656.GC4115853@ZenIV.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 07, 2020 at 10:46:57PM +0000, Al Viro wrote:
-> On Fri, Nov 20, 2020 at 05:14:26PM -0600, Eric W. Biederman wrote:
-> 
-> >  /*
-> >   * Check whether the specified fd has an open file.
-> >   */
-> > -#define fcheck(fd)	fcheck_files(current->files, fd)
-> > +#define fcheck(fd)	files_lookup_fd_rcu(current->files, fd)
-> 
-> Huh?
-> fs/file.c:1113: file = fcheck(oldfd);
-> 	dup3(), under ->file_lock, no rcu_read_lock() in sight
-> 
-> fs/locks.c:2548:                f = fcheck(fd);
-> 	fcntl_setlk(), ditto
-> 
-> fs/locks.c:2679:                f = fcheck(fd);
-> 	fcntl_setlk64(), ditto
-> 
-> fs/notify/dnotify/dnotify.c:330:        f = fcheck(fd);
-> 	fcntl_dirnotify(); this one _is_ under rcu_read_lock().
-> 
-> 
-> IOW, unless I've missed something earlier in the series, this is wrong.
+From: Ira Weiny <ira.weiny@intel.com>
 
-I have missed something, all right.  Ignore that comment...
+These are based on tip/core/mm.  As I was looking at converting the calls to
+kmap_local_page() I realized that there were a number of calls in highmem.h
+which should also be converted.
+
+So I've added a second prelim patch to convert those.
+
+This is a V2 to get into 5.11 so that we can start to convert all the various
+subsystems in 5.12.[1]
+
+I'm sending to Andrew and Thomas but I'm expecting these to go through
+tip/core/mm via Thomas if that is ok with Andrew.
+
+[1] https://lore.kernel.org/lkml/20201204160504.GH1563847@iweiny-DESK2.sc.intel.com/
+
+Ira Weiny (2):
+  mm/highmem: Remove deprecated kmap_atomic
+  mm/highmem: Lift memcpy_[to|from]_page to core
+
+ include/linux/highmem.h | 28 +++++++++++++-------------
+ include/linux/pagemap.h | 44 +++++++++++++++++++++++++++++++++++++++++
+ lib/iov_iter.c          | 26 +++---------------------
+ 3 files changed, 61 insertions(+), 37 deletions(-)
+
+-- 
+2.28.0.rc0.12.gb6a658bd00c9
+
