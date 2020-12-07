@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E24672D0F2C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:35:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 644272D0F3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727042AbgLGLeq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 06:34:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40834 "EHLO
+        id S1727070AbgLGLeu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 06:34:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbgLGLee (ORCPT
+        with ESMTP id S1727059AbgLGLet (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 06:34:34 -0500
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A1C9C061A51;
-        Mon,  7 Dec 2020 03:33:54 -0800 (PST)
-Received: by mail-pg1-x543.google.com with SMTP id w16so8638803pga.9;
-        Mon, 07 Dec 2020 03:33:54 -0800 (PST)
+        Mon, 7 Dec 2020 06:34:49 -0500
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0262C061A54;
+        Mon,  7 Dec 2020 03:33:59 -0800 (PST)
+Received: by mail-pf1-x443.google.com with SMTP id w6so9616581pfu.1;
+        Mon, 07 Dec 2020 03:33:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tcGaTFLZIvDv/+RZUQXw2n3pLOeGqC9LGmpKUSJxIHk=;
-        b=LnlBNsT2Ow4sDfC0QMME7MWuZITq+AEcH1sfAXBFXueeGXTmgyO9JdwNHIFIB4RP28
-         gn5IWNFLijhXsJzSsKaUnVdGCQx2gyWEBTqF0Kvs61fwySFHpYos92ROZTSt5SHfNHpP
-         OeImMtiG3vU9Uq5eC80XJMC+Whn9dkIcqFxDKCOBa6a4es99sdy7EHJfbDRbZezvytMN
-         w02FAN9w/yfckdzYqHtTMk3cHALFlV1gyfVTQPLKMmQmnHecGcHt0t+MIVhr8i6BF3VP
-         R9cuJswy7JR4RuuusdzKlbCS7tt+IM1+yJIPMKGbccth3u1CnENv8XPxLf4u/SW5Qm4e
-         W00Q==
+        bh=hZ7s/TPFWElvYaRd2Z4ImP4zL6ID97NqxxjlgrDo46E=;
+        b=AJAm2JQDxedsaO81FFlH0EqySZx0V1JZAWUyZSgG2JMejw/2P/2YNsn13l0harXSnv
+         U3Gyun4C/tDEp5GY75ukYQ8NKpN7HVEwvvgyY8BzE7ExfFNdBMDEZ/aOgvx075MECqL7
+         pYdV9tIyA5ilsGCR6SY4i+lSEV5W2rx9BftPjIVtKxyjCDnbwztLge9MJFNY8KOYMREE
+         wy7RQIV+YMYcC9VSimCcE1RnrIyOSmzDJjr9L/rCvjGXRPmPiQpqhp+CP4j7obar6c5B
+         qxRX1Y83xXr1EcYfim8OijyqJDwojAyLtA46wHnMUKFxo4aQcxCnXcAgkjCcPB8f/9ef
+         owvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tcGaTFLZIvDv/+RZUQXw2n3pLOeGqC9LGmpKUSJxIHk=;
-        b=RLyLLfXN+0jDFvOIjRU8xfBXviObaEPZ+k3Uq1lpcYe/Xz1k0XqMQqoF5/TwuRVP8t
-         iOVD3TYtiREhF6OReTOr6yQ5mA85tFSzw/vKtouw7L3ztt6x4uHZtJTfvDtBvo+jrZD8
-         DonnnEk6aMsGFtEkNLCONYrdaOnSYmZFKIhR37hg9REwZBrTUTJKZRTStZdRDI6NAA52
-         ZTSD7T1+gXiam6Hfb3+5AOlwY7xDLK3oArS6t5oN/TL/XjeGCANnLTzKdKLf1Qjhyh2i
-         kEHRMSrHAdq5PX6BJLHxc+rIRNVVcarpewgBvcEFe+SC5qoGyfFfF2p2alu4Q34S2WNn
-         wCxw==
-X-Gm-Message-State: AOAM532t+bhIh8PFNJZguXasf6HOhldj5EhJBp95btca+092TYcp8k7r
-        +3ccFWRWqqV1FyjRq1cwyfk=
-X-Google-Smtp-Source: ABdhPJwuFOmVar8+NpPkcSNRrOAxFN6p9lyUDwrJbLZ14eN6XyJlArx3zJXtTYoeeUDbEsE3lQb1/A==
-X-Received: by 2002:a63:5d59:: with SMTP id o25mr17481331pgm.218.1607340834222;
-        Mon, 07 Dec 2020 03:33:54 -0800 (PST)
+        bh=hZ7s/TPFWElvYaRd2Z4ImP4zL6ID97NqxxjlgrDo46E=;
+        b=DwwkgLz3GSwfIi30Hjq7iJr4GY0lkbU6ataj6ZkHMh6lrHIBA2R4LtsbLyGdflLlFx
+         xyDaY9vb0HiHInIatvkhOyv2D5WKjIrkbLnauUEL7qGdPVRkpF3k6R2KDm2fbsg2mmRe
+         wBxcqM8clvJV929R8R5UidRwsrOXKL5PxZ2gwVIoQuH7um9bwod54WJpqKvK0r8iJPNA
+         wqbqSNlAZ9mDQpDDRpb8mOtdTFsvQZlwcZl8Qp/ELHfU3oIAWoA2MweBfGFbv40JDq+S
+         D/cg+PIMWg67DZ7md/Q0UtQvWXga+3Ov9OIgJ3cyrjWTR74Zc82hNlCriP4HH9FAlhAW
+         LK/w==
+X-Gm-Message-State: AOAM5308/8YrfOy4HRgozIB/UHvk+9JkIvvd6FkZ5E830NlhZT4uXwwi
+        0jyK5LlxbqI2wJw5azGG8Ec=
+X-Google-Smtp-Source: ABdhPJwNOCi3KR2PAp9drrOXOVZPvcKF+MCuZ8w1Uu6pFaCaU7qErwtZSzlK+Cv5rjtTzxX3eZsSAw==
+X-Received: by 2002:a17:902:aa84:b029:da:f114:6022 with SMTP id d4-20020a170902aa84b02900daf1146022mr5850388plr.46.1607340839351;
+        Mon, 07 Dec 2020 03:33:59 -0800 (PST)
 Received: from localhost.localdomain ([203.205.141.39])
-        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.33.51
+        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.33.56
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Dec 2020 03:33:53 -0800 (PST)
+        Mon, 07 Dec 2020 03:33:58 -0800 (PST)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     linux-mm@kvack.org, akpm@linux-foundation.org,
@@ -59,9 +59,9 @@ Cc:     joao.m.martins@oracle.com, rdunlap@infradead.org,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
         Yulei Zhang <yuleixzhang@tencent.com>,
         Xiao Guangrong <gloryxiao@tencent.com>
-Subject: [RFC V2 08/37] dmem: show some statistic in debugfs
-Date:   Mon,  7 Dec 2020 19:31:01 +0800
-Message-Id: <bdd885acf956dadb6822569160aa83258b6eeccc.1607332046.git.yuleixzhang@tencent.com>
+Subject: [RFC V2 09/37] dmemfs: support remote access
+Date:   Mon,  7 Dec 2020 19:31:02 +0800
+Message-Id: <ff4b0e1c0d62754c1373489bbf2553132c1c561c.1607332046.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <cover.1607332046.git.yuleixzhang@tencent.com>
 References: <cover.1607332046.git.yuleixzhang@tencent.com>
@@ -73,154 +73,80 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-Create 'dmem' directory under debugfs and show some
-statistic for dmem pool, track total and free dpages
-on dmem pool and each numa node.
+It is required by ptrace_writedata and ptrace_readdata to access
+dmem memory remotely. The typical user is gdb, after this patch,
+gdb is able to read & write memory owned by the attached process
 
 Signed-off-by: Xiao Guangrong <gloryxiao@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- mm/Kconfig |   8 +++++
- mm/dmem.c  | 100 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 107 insertions(+), 1 deletion(-)
+ fs/dmemfs/inode.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 3a6d408..4dd8896 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -234,6 +234,14 @@ config DMEM
- 	  Allow reservation of memory which could be for the dedicated use of dmem.
- 	  It's the basis of dmemfs.
- 
-+config DMEM_DEBUG_FS
-+	bool "Enable debug information for direct memory"
-+	depends on DMEM && DEBUG_FS
-+	help
-+	  This option enables showing various statistics of direct memory
-+	  in debugfs filesystem.
-+
-+#
- # support for memory compaction
- config COMPACTION
- 	bool "Allow for memory compaction"
-diff --git a/mm/dmem.c b/mm/dmem.c
-index aa34bf2..6992e57 100644
---- a/mm/dmem.c
-+++ b/mm/dmem.c
-@@ -164,6 +164,103 @@ int dmem_region_register(int node, phys_addr_t start, phys_addr_t end)
- 	return 0;
+diff --git a/fs/dmemfs/inode.c b/fs/dmemfs/inode.c
+index 7723b58..3192f31 100644
+--- a/fs/dmemfs/inode.c
++++ b/fs/dmemfs/inode.c
+@@ -364,6 +364,51 @@ static void radix_put_entry(void)
+ 	rcu_read_unlock();
  }
  
-+#ifdef CONFIG_DMEM_DEBUG_FS
-+struct debugfs_entry {
-+	const char *name;
-+	unsigned long offset;
-+};
-+
-+#define DMEM_POOL_OFFSET(x)	offsetof(struct dmem_pool, x)
-+#define DMEM_POOL_ENTRY(x)	{__stringify(x), DMEM_POOL_OFFSET(x)}
-+
-+#define DMEM_NODE_OFFSET(x)	offsetof(struct dmem_node, x)
-+#define DMEM_NODE_ENTRY(x)	{__stringify(x), DMEM_NODE_OFFSET(x)}
-+
-+static struct debugfs_entry dmem_pool_entries[] = {
-+	DMEM_POOL_ENTRY(region_num),
-+	DMEM_POOL_ENTRY(registered_pages),
-+	DMEM_POOL_ENTRY(unaligned_pages),
-+	DMEM_POOL_ENTRY(dpage_shift),
-+	DMEM_POOL_ENTRY(total_dpages),
-+	DMEM_POOL_ENTRY(free_dpages),
-+};
-+
-+static struct debugfs_entry dmem_node_entries[] = {
-+	DMEM_NODE_ENTRY(total_dpages),
-+	DMEM_NODE_ENTRY(free_dpages),
-+};
-+
-+static int dmem_entry_get(void *offset, u64 *val)
++static bool check_vma_access(struct vm_area_struct *vma, int write)
 +{
-+	*val = *(u64 *)offset;
-+	return 0;
++	vm_flags_t vm_flags = write ? VM_WRITE : VM_READ;
++
++	return !!(vm_flags & vma->vm_flags);
 +}
 +
-+DEFINE_SIMPLE_ATTRIBUTE(dmem_fops, dmem_entry_get, NULL, "%llu\n");
-+
-+static int dmemfs_init_debugfs_node(struct dmem_node *dnode,
-+				    struct dentry *parent)
++static int
++dmemfs_access_dmem(struct vm_area_struct *vma, unsigned long addr,
++		   void *buf, int len, int write)
 +{
-+	struct dentry *node_dir;
-+	char dir_name[32];
-+	int i, ret = -EEXIST;
++	struct inode *inode = file_inode(vma->vm_file);
++	struct super_block *sb = inode->i_sb;
++	void *entry, *maddr;
++	int offset, pgoff;
 +
-+	snprintf(dir_name, sizeof(dir_name), "node%ld",
-+		 dnode - dmem_pool.nodes);
-+	node_dir = debugfs_create_dir(dir_name, parent);
-+	if (!node_dir)
-+		return ret;
++	if (!check_vma_access(vma, write))
++		return -EACCES;
 +
-+	for (i = 0; i < ARRAY_SIZE(dmem_node_entries); i++)
-+		if (!debugfs_create_file(dmem_node_entries[i].name, 0444,
-+		   node_dir, (void *)dnode + dmem_node_entries[i].offset,
-+		   &dmem_fops))
-+			return ret;
-+	return 0;
++	pgoff = linear_page_index(vma, addr);
++	if (pgoff > (MAX_LFS_FILESIZE >> PAGE_SHIFT))
++		return -EFAULT;
++
++	entry = radix_get_create_entry(vma, addr, inode, pgoff);
++	if (IS_ERR(entry))
++		return PTR_ERR(entry);
++
++	offset = addr & (sb->s_blocksize - 1);
++	addr = dmem_entry_to_addr(inode, entry);
++
++	/*
++	 * it is not beyond vma's region as the vma should be aligned
++	 * to blocksize
++	 */
++	len = min(len, (int)(sb->s_blocksize - offset));
++	maddr = __va(addr);
++	if (write)
++		memcpy(maddr + offset, buf, len);
++	else
++		memcpy(buf, maddr + offset, len);
++	radix_put_entry();
++
++	return len;
 +}
 +
-+static int dmemfs_init_debugfs(void)
-+{
-+	struct dentry *dmem_debugfs_dir;
-+	struct dmem_node *dnode;
-+	int i, ret = -EEXIST;
-+
-+	dmem_debugfs_dir = debugfs_create_dir("dmem", NULL);
-+	if (!dmem_debugfs_dir)
-+		return ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(dmem_pool_entries); i++)
-+		if (!debugfs_create_file(dmem_pool_entries[i].name, 0444,
-+		   dmem_debugfs_dir,
-+		   (void *)&dmem_pool + dmem_pool_entries[i].offset,
-+		   &dmem_fops))
-+			goto exit;
-+
-+	for_each_dmem_node(dnode) {
-+		/*
-+		 * do not create debugfs files for the node
-+		 * where no memory is available
-+		 */
-+		if (list_empty(&dnode->regions))
-+			continue;
-+
-+		if (dmemfs_init_debugfs_node(dnode, dmem_debugfs_dir))
-+			goto exit;
-+	}
-+
-+	return 0;
-+exit:
-+	debugfs_remove_recursive(dmem_debugfs_dir);
-+	return ret;
-+}
-+
-+#else
-+static int dmemfs_init_debugfs(void)
-+{
-+	return 0;
-+}
-+#endif
-+
- #define PENALTY_FOR_DMEM_SHARED_NODE		(1)
+ static vm_fault_t dmemfs_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+@@ -400,6 +445,7 @@ static unsigned long dmemfs_pagesize(struct vm_area_struct *vma)
+ static const struct vm_operations_struct dmemfs_vm_ops = {
+ 	.fault = dmemfs_fault,
+ 	.pagesize = dmemfs_pagesize,
++	.access = dmemfs_access_dmem,
+ };
  
- static int dmem_nodeload[MAX_NUMNODES] __initdata;
-@@ -364,7 +461,8 @@ static int __init dmem_late_init(void)
- 				goto exit;
- 		}
- 	}
--	return ret;
-+
-+	return dmemfs_init_debugfs();
- exit:
- 	dmem_uinit();
- 	return ret;
+ int dmemfs_file_mmap(struct file *file, struct vm_area_struct *vma)
 -- 
 1.8.3.1
 
