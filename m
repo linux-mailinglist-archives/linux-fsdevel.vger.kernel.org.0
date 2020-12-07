@@ -2,149 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 576B72D09BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 05:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F7252D0A46
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 06:41:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbgLGEdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Dec 2020 23:33:23 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:15968 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726484AbgLGEdW (ORCPT
+        id S1726483AbgLGFhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 00:37:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726475AbgLGFhP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Dec 2020 23:33:22 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20201207043237epoutp04a2082e71d802d2fdc27c099670546cd1~OVPvl9Vtx2882028820epoutp04S
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 04:32:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20201207043237epoutp04a2082e71d802d2fdc27c099670546cd1~OVPvl9Vtx2882028820epoutp04S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1607315557;
-        bh=Tide8Qzcd1wBEYRq2DlXDubvem7js4dUXECRaFokmXc=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=XtdAxiwbZgdui4X79mt04WVggwG3I+WMz8qpvT3EgwvFvhk9pq+1LUWEWQ0Y1bk6p
-         kkcyMCeeYLhYzjMxE2/e9VCOHhMCn1e05BDX0834JczqkYtvB2MvC55KvBlxVNNsH6
-         iAFRhCUA4EUtbxDgz82zqlpWJIAt5wgSjEo2vluM=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20201207043236epcas1p383bb508d91e04de0b81786c5f5e515c8~OVPufl6-w2791327913epcas1p36;
-        Mon,  7 Dec 2020 04:32:36 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.166]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4Cq9QW5FjZz4x9Ps; Mon,  7 Dec
-        2020 04:32:35 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B8.E8.10463.360BDCF5; Mon,  7 Dec 2020 13:32:35 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201207043235epcas1p1446adf522518089bb229d3aaa91e3f55~OVPs_Nu-D1972719727epcas1p1C;
-        Mon,  7 Dec 2020 04:32:35 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201207043235epsmtrp11ce9e709c29e6221a547d4c89bfc896c~OVPs9kkBX2580925809epsmtrp1P;
-        Mon,  7 Dec 2020 04:32:35 +0000 (GMT)
-X-AuditID: b6c32a38-f11ff700000028df-c3-5fcdb0630ea5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        56.93.08745.260BDCF5; Mon,  7 Dec 2020 13:32:34 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201207043234epsmtip2da9617598b3c34589b2e32954f381a4f~OVPsxKuWe1231112311epsmtip2N;
-        Mon,  7 Dec 2020 04:32:34 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Artem Labazov'" <123321artyom@gmail.com>
-Cc:     <stable@vger.kernel.org>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20201204133348.555024-1-123321artyom@gmail.com>
-Subject: RE: [PATCH v2] exfat: Avoid allocating upcase table using kcalloc()
-Date:   Mon, 7 Dec 2020 13:32:34 +0900
-Message-ID: <000301d6cc51$fc2b6d10$f4824730$@samsung.com>
+        Mon, 7 Dec 2020 00:37:15 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2AFFC0613D2
+        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Dec 2020 21:36:34 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id d17so17688735ejy.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Dec 2020 21:36:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=G4LlgMCq631UUu8D9rdAHM0/TC7MUROVJ5w6Q0ptdvQ=;
+        b=yJXCOGSm3p0ymlxgXOKyztjN6W5ZdifoYjl35o7SGUmIYWut1Z11DjJfZMzpABPV1t
+         Qic0DKpxqiZ38+DNi2VzVKxmfaRkMRlZWF9fyCCekq9ZO0R4sPoMVQpK5K8ibbWx5+wy
+         6zQ0v3M5dx60KlFccGUIbWyxmD3Z978A+VVyylTGvu9NQPZ82Pqi5lfwOITxA/jZiaVO
+         /vxO9JnEt04Cetx+TddS4KvCbxI6bnq7mf/h0eWbE7SETXDD2y96EummPpUzdTpmST8j
+         BlEUQaJHdW0vhv4cPl0jdSN42S6KPYpJpiCqD4a8k/Lyiu3nAqtS1UO4pef4/F94i7+j
+         WaFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=G4LlgMCq631UUu8D9rdAHM0/TC7MUROVJ5w6Q0ptdvQ=;
+        b=nRvF4ov5nx4a6H748HyFbFsTt28KqtXG6khq5WKFh//8o6FGsyPiad3gWKZuC9QpoB
+         Ej4E3r7wQOI1jNJEGVZoBZDavRfqMOZ2IKvT96r/GmRqYAkCL/JwQXUt7qeY3ONeslAs
+         kHPgTofDtSYxuarKjnpqgEH2B2iJybdVPrRPhfkVxjfolLRTYeQCaLW3q6MlyU/a6b4k
+         p7qFc39/PTcZEwG93yczSKYXQzsltykpZTWlt6AnYKGPhEDd4oy/iQhQaviZ5Cx407D+
+         dv0npDnkzP8XY7MQ4WLW4XdlzByteugmnwCvPwUQE9w7rCJB73K2EqlFSrq28TH+XvKL
+         ePUQ==
+X-Gm-Message-State: AOAM5336uVbv/TN6ZgzVnX0WRvJTGfkGXnjxMoQD34k03Q+mK/W0XtmP
+        LNYpPVnwF9JWrI9qsL/a9s8SQ43z9lhutACUGfvXJA==
+X-Google-Smtp-Source: ABdhPJyt4XRP1e++zVGdrBo9VE34sMun8PleYjFWZtk2N5cq9n5DW58DGShodjq/71w2TZVf1uE3KS0242gX91q0Ris=
+X-Received: by 2002:a17:907:2070:: with SMTP id qp16mr17307208ejb.503.1607319392893;
+ Sun, 06 Dec 2020 21:36:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJLXyJfxD6HCJurO6uIAS3PJP5HfAKOOt2OAQ3muqmo5QRQEA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdlhTTzd5w9l4g7srVCw23fzGarFn70kW
-        i8u75rBZbPl3hNViwcZHjA6sHjtn3WX36NuyitHj8ya5AOaoHJuM1MSU1CKF1Lzk/JTMvHRb
-        Je/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoJVKCmWJOaVAoYDE4mIlfTubovzSklSF
-        jPziElul1IKUnAJDgwK94sTc4tK8dL3k/FwrQwMDI1OgyoScjAvnjrAWnOGumD/pM2MD4yXO
-        LkZODgkBE4l1/fPZuhi5OIQEdjBK/Fi+mwXC+cQoceb+XGYI5zOjxNv509lgWs6074Nq2cUo
-        sf7xHEYI5yWjxK7bv9hBqtgEdCX+/dkP1iEioCdxYucOsFHMAl2MEv+mzmYFSXAK2EpMnn4e
-        rEFYwEdi0982RhCbRUBFYuKcDqAaDg5eAUuJrjUCIGFeAUGJkzOfsIDYzALyEtvfzmGGuEhB
-        4ufTZawQu5wkHm+bwQxRIyIxu7MNbK+EwF92idmHLkO94CJxftFtVghbWOLV8S3sELaUxMv+
-        NnaQvRIC1RIf90PN72CUePHdFsI2lri5fgPYacwCmhLrd+lDhBUldv6eywixlk/i3dceVogp
-        vBIdbUIQJaoSfZcOM0HY0hJd7R/YJzAqzULy2Cwkj81C8sAshGULGFlWMYqlFhTnpqcWGxaY
-        IEf2JkZwctSy2ME49+0HvUOMTByMhxglOJiVRHjVpM7GC/GmJFZWpRblxxeV5qQWH2I0BYb0
-        RGYp0eR8YHrOK4k3NDUyNja2MDEzNzM1VhLn/aPdES8kkJ5YkpqdmlqQWgTTx8TBKdXA5HD5
-        +snUExO8BXSyEraoJp7+ErG23v3QUSclnf17n/5aH77ikQfviTm1Qo0ZMZYfahkdN0R8WiuW
-        vOaoUV1CvUCTQVPtxZbcdf+D11ssuXhUg2vR7MhUzmQ28U+ciru+XxEQ6hfxdHDY3P6zcYqJ
-        zSeOmH0ii72F587fqybWp/dF/rM/i6fRgattD3+F8pm/jdCa9/PFJY13QRsVveuqf87Ie273
-        5/GpQwUqd3eIM62sy3p77PrPH6/lLxxo72m0apsXEeDKpHVrwrv5HFu8L8cX3DxRYX9y5yLf
-        4vzL+7bHH7xZHPxGdmed5NWUjT4hi3fVVHNMXX9ATcB6TcOJzKXTJyrsON0berBl3aRjHkos
-        xRmJhlrMRcWJAOerPCMXBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWy7bCSvG7ShrPxBhsv2lhsuvmN1WLP3pMs
-        Fpd3zWGz2PLvCKvFgo2PGB1YPXbOusvu0bdlFaPH501yAcxRXDYpqTmZZalF+nYJXBkXzh1h
-        LTjDXTF/0mfGBsZLnF2MnBwSAiYSZ9r3sYHYQgI7GCXOrXOBiEtLHDtxhrmLkQPIFpY4fLi4
-        i5ELqOQ5o8SZ//dYQGrYBHQl/v3ZD9YrIqAncWLnDmaQImaBPkaJu7O2QA3dwyjReVgAxOYU
-        sJWYPP08O4gtLOAjselvGyOIzSKgIjFxTgcryDJeAUuJrjVg5bwCghInZz5hAQkzA81v2whW
-        zSwgL7H97RxmiDMVJH4+XcYKcYKTxONtM5ghakQkZne2MU9gFJ6FZNIshEmzkEyahaRjASPL
-        KkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4PjQ0trBuGfVB71DjEwcjIcYJTiYlUR4
-        1aTOxgvxpiRWVqUW5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TBKdXAtIJ9
-        3se8KJ/J/i///9OdXHkmKtp01R2hxOr2OLPHigmR7VGda4/qyuo+uLP9xJqH5kdkZE48PKeg
-        k3DF8/Z55tk1r+dyb5fK6s8ViX32s5Nf9AF3mMNXDfMTB+/G2XNP3Ju54OOvV+4aHns/JX1Q
-        DCiJWRu6YIH4sQeTeQ5HvlcMDXwoGvI2m1+L/ezn3S9+L/u6dmLBdtUwj2MN0z78rjV55TvB
-        w8zSrMHEpHb3nlmntribLbHyNBGuLjyidfWhbwpD/cxN/Gd/3g41/G2cKCi346qO288bMa+v
-        +u/xKwq9tGChI9PDMyeOakYWtMj/zJs9xa2zcmNf5Ex2xfhzSXmXLorsjVG76XGoubnokhJL
-        cUaioRZzUXEiAB22hbb+AgAA
-X-CMS-MailID: 20201207043235epcas1p1446adf522518089bb229d3aaa91e3f55
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201204133512epcas1p4381b107d0fc72d92920d336df9683a22
-References: <001101d6c867$ca8c5730$5fa50590$@samsung.com>
-        <CGME20201204133512epcas1p4381b107d0fc72d92920d336df9683a22@epcas1p4.samsung.com>
-        <20201204133348.555024-1-123321artyom@gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 7 Dec 2020 11:06:10 +0530
+Message-ID: <CA+G9fYvhJTwQkGyH7HQzSsDBHT7pm5ziA9VTkRhE_bDSQp3JYg@mail.gmail.com>
+Subject: sched: core.c:7270 Illegal context switch in RCU-bh read-side
+ critical section! __alloc_pages_nodemask
+To:     open list <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        linux-stable <stable@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> The table for Unicode upcase conversion requires an order-5 allocation, which may fail on a highly-
-> fragmented system:
-> 
->  pool-udisksd: page allocation failure: order:5, mode:0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO),
-> nodemask=(null),cpuset=/,mems_allowed=0
->  CPU: 4 PID: 3756880 Comm: pool-udisksd Tainted: G     U            5.8.10-200.fc32.x86_64 #1
->  Hardware name: Dell Inc. XPS 13 9360/0PVG6D, BIOS 2.13.0 11/14/2019  Call Trace:
->   dump_stack+0x6b/0x88
->   warn_alloc.cold+0x75/0xd9
->   ? _cond_resched+0x16/0x40
->   ? __alloc_pages_direct_compact+0x144/0x150
->   __alloc_pages_slowpath.constprop.0+0xcfa/0xd30
->   ? __schedule+0x28a/0x840
->   ? __wait_on_bit_lock+0x92/0xa0
->   __alloc_pages_nodemask+0x2df/0x320
->   kmalloc_order+0x1b/0x80
->   kmalloc_order_trace+0x1d/0xa0
->   exfat_create_upcase_table+0x115/0x390 [exfat]
->   exfat_fill_super+0x3ef/0x7f0 [exfat]
->   ? sget_fc+0x1d0/0x240
->   ? exfat_init_fs_context+0x120/0x120 [exfat]
->   get_tree_bdev+0x15c/0x250
->   vfs_get_tree+0x25/0xb0
->   do_mount+0x7c3/0xaf0
->   ? copy_mount_options+0xab/0x180
->   __x64_sys_mount+0x8e/0xd0
->   do_syscall_64+0x4d/0x90
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> Make the driver use vzalloc() to eliminate the issue.
-> 
-> Cc: stable@vger.kernel.org # v5.7+
-> Signed-off-by: Artem Labazov <123321artyom@gmail.com>
-> ---
-> v2: replace vmalloc with vzalloc to avoid uninitialized memory access
-Applied.
-Thanks for your work!
+While booting arm64 hikey board with stable-rc 5.9.13-rc1 the following warning
+noticed. This is hard to reproduce.
 
+Step to reproduce:
+------------------------
+# Boot arm64 hikey device with stable-rc 5.9.13-rc1
+# Since it is hard to reproduce you may notice this warning
+
+Crash log :
+--------------
+[   10.763081] [drm] Initialized kirin 1.0.0 20150718 for f4100000.ade
+on minor 1
+[   10.764088] Bluetooth: hci0: change remote baud rate command in firmware
+[[0;32m  OK  [0m] Started TEE Supplicant.
+[   10.791741] mmc_host mmc2: Bus speed (slot 0) = 24800000Hz (slot
+req 400000Hz, actual 400000HZ div = 31)
+E/TC:0 tee_entry_std:545 Bad arg address 0x6b681000
+[[0;32m  OK  [0m] Started Periodic Command Scheduler.
+[   10.846417] mmc_host mmc2: Bus speed (slot 0) = 24800000Hz (slot
+req 25000000Hz, actual 24800000HZ div = 0)
+[   10.887083]
+[   10.887087]
+[   10.887095] =====================================
+[   10.887098] =============================
+[   10.887101] WARNING: bad unlock balance detected!
+[   10.887107] WARNING: suspicious RCU usage
+[   10.887112] 5.9.13-rc1 #1 Not tainted
+[   10.887120] 5.9.13-rc1 #1 Not tainted
+[   10.887122] -------------------------------------
+[   10.887129] systemd-udevd/306 is trying to release lock (
+[   10.887133] -----------------------------
+[   10.887135] fs_reclaim) at:
+[   10.887144] /usr/src/kernel/kernel/sched/core.c:7270 Illegal
+context switch in RCU-bh read-side critical section!
+[   10.887163] [<ffff80001030f2e8>] __alloc_pages_nodemask+0x250/0x4c0
+[   10.887166]
+[   10.887166] other info that might help us debug this:
+[   10.887166]
+[   10.887170] but there are no more locks to release!
+[   10.887175]
+[   10.887175] other info that might help us debug this:
+[   10.887179]
+[   10.887179] rcu_scheduler_active = 2, debug_locks = 0
+[   10.887182] 1 lock held by systemd-udevd/306:
+[   10.887189] 1 lock held by systemd-sysctl/342:
+[   10.887192]  #0: ffff00007474e518
+[   10.887199]  #0:
+[   10.887202]  (
+[   10.887209] ffff000070c54708
+[   10.887212] &mm->mmap_lock){++++}-{3:3}
+[   10.887219]  (
+[   10.887228] , at: do_page_fault+0x168/0x420
+[   10.887230] &type->i_mutex_dir_key
+[   10.887235]
+[   10.887235] stack backtrace:
+[   10.887237] #3){++++}-{3:3}
+[   10.887246] CPU: 1 PID: 306 Comm: systemd-udevd Not tainted 5.9.13-rc1 #1
+[   10.887255] , at: iterate_dir+0x54/0x1d0
+[   10.887258] Hardware name: HiKey Development Board (DT)
+[   10.887264]
+[   10.887264] stack backtrace:
+[   10.887266] Call trace:
+[   10.887276]  dump_backtrace+0x0/0x1f8
+[   10.887283]  show_stack+0x2c/0x38
+[   10.887292]  dump_stack+0xec/0x158
+[   10.887303]  print_unlock_imbalance_bug+0xec/0xf0
+[   10.887311]  lock_release+0x300/0x388
+[   10.887320]  __alloc_pages_nodemask+0x268/0x4c0
+[   10.887329]  alloc_pages_vma+0x90/0x240
+[   10.887338]  handle_mm_fault+0x8d4/0x12f0
+[   10.887346]  do_page_fault+0x1c4/0x420
+[   10.887353]  do_translation_fault+0xb0/0xcc
+[   10.887363]  do_mem_abort+0x50/0xb0
+[   10.887372]  el1_abort+0x28/0x30
+[   10.887379]  el1_sync_handler+0xc0/0xf0
+[   10.887386]  el1_sync+0x7c/0x100
+[   10.887397]  __arch_copy_to_user+0x1d8/0x310
+[   10.887407]  copy_page_to_iter+0x110/0x3e8
+[   10.887416]  generic_file_buffered_read+0x4b8/0xaa8
+[   10.887423]  generic_file_read_iter+0xd4/0x168
+[   10.887432]  blkdev_read_iter+0x50/0x78
+[   10.887442]  new_sync_read+0x100/0x1a0
+[   10.887449]  vfs_read+0x1b4/0x1d8
+[   10.887457]  ksys_read+0x74/0xf8
+[   10.887465]  __arm64_sys_read+0x24/0x30
+[   10.887472]  el0_svc_common.constprop.3+0x7c/0x198
+[   10.887478]  do_el0_svc+0x34/0xa0
+[   10.887486]  el0_sync_handler+0x16c/0x210
+[   10.887492]  el0_sync+0x140/0x180
+[   10.887504] CPU: 6 PID: 342 Comm: systemd-sysctl Not tainted 5.9.13-rc1 #1
+[   10.887510] Hardware name: HiKey Development Board (DT)
+[   10.887515] Call trace:
+[   10.887524]  dump_backtrace+0x0/0x1f8
+[   10.887531]  show_stack+0x2c/0x38
+[   10.887542]  dump_stack+0xec/0x158
+[   10.887552]  lockdep_rcu_suspicious+0xd4/0xf8
+[   10.887561]  ___might_sleep+0x1e4/0x208
+[   10.887569]  __might_sleep+0x54/0x90
+[   10.887577]  __might_fault+0x58/0xa8
+[   10.887584]  filldir64+0x1f0/0x488
+[   10.887593]  call_filldir+0xb0/0x140
+[   10.887600]  ext4_readdir+0x700/0x900
+[   10.887607]  iterate_dir+0x88/0x1d0
+[   10.887615]  __arm64_sys_getdents64+0x70/0x1a0
+[   10.887622]  el0_svc_common.constprop.3+0x7c/0x198
+[   10.887629]  do_el0_svc+0x34/0xa0
+[   10.887637]  el0_sync_handler+0x16c/0x210
+[   10.887644]  el0_sync+0x140/0x180
+[   10.912334] Console: switching to colour frame buffer device 256x72
+
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+
+Full boot log link,
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.9.y/build/v5.9.12-47-g1372e1af58d4/testrun/3538040/suite/linux-log-parser/test/check-kernel-warning-2012813/log
+
+metadata:
+  git branch: linux-5.9.y
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git commit: 1372e1af58d410676db7917cc3484ca22d471623
+  git describe: v5.9.12-47-g1372e1af58d4
+  make_kernelversion: 5.9.13-rc1
+  kernel-config:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/hikey/lkft/linux-stable-rc-5.9/47/config
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
