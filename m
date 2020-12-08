@@ -2,108 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BE7E2D275E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 10:20:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 148F82D27D8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 10:40:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbgLHJTk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 04:19:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24903 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728585AbgLHJTj (ORCPT
+        id S1727845AbgLHJjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 04:39:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727831AbgLHJjJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 04:19:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607419093;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Af9UgpwqHoabg6xVM1FDF5VpKj0YXv9xZDctidosARM=;
-        b=WoFZb7Q2VXJrh3hN1fRpB35HFSBLCp7xbNwiiU7Bwvo9GEo7LRyUEtBBByU2zuQs30ncdR
-        qUjhb2AvXLKIQgYnzxbT6T672XksNzuDEaZUEFYQnrbTWNXZ5kwHggN3AxdVK/r8EKvXEP
-        1POysRiMopOixpdwh1VaIGF/ivpblH8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-133-j3_6w5N1NCam5W3BvH8aNA-1; Tue, 08 Dec 2020 04:18:09 -0500
-X-MC-Unique: j3_6w5N1NCam5W3BvH8aNA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 422CE9CDA0;
-        Tue,  8 Dec 2020 09:18:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9719219C78;
-        Tue,  8 Dec 2020 09:18:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAMj1kXG5_ePTr7KCxE-m6g9xNHr72-xPMoED7Jmx38uNt6bzoQ@mail.gmail.com>
-References: <CAMj1kXG5_ePTr7KCxE-m6g9xNHr72-xPMoED7Jmx38uNt6bzoQ@mail.gmail.com> <20201204154626.GA26255@fieldses.org> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <118876.1607093975@warthog.procyon.org.uk> <122997.1607097713@warthog.procyon.org.uk> <20201204160347.GA26933@fieldses.org> <125709.1607100601@warthog.procyon.org.uk> <CAMj1kXEOm_yh478i+dqPiz0eoBxp4eag3j2qHm5eBLe+2kihoQ@mail.gmail.com> <127458.1607102368@warthog.procyon.org.uk> <CAMj1kXFe50HvZLxG6Kh-oYBCf5uu51hhuh7mW5UQ62ZSqmu_xA@mail.gmail.com> <468625.1607342512@warthog.procyon.org.uk> <CAMj1kXH_gEjgZKx=8uQgv=ckBqTVoh3vrHj=O-nY-nm5VMgLaA@mail.gmail.com> <482243.1607350500@warthog.procyon.org.uk>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     dhowells@redhat.com, Bruce Fields <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:BPF JIT for MIPS (32-BIT AND 64-BIT)" 
-        <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
-Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
+        Tue, 8 Dec 2020 04:39:09 -0500
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D7EC061794
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Dec 2020 01:38:23 -0800 (PST)
+Received: by mail-pf1-x443.google.com with SMTP id d2so9505887pfq.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Dec 2020 01:38:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=x1xsP4hi+UGnP2yxtDqsufVew2mnlvtx1BXkv0GZN90=;
+        b=eJKHIJ7oh3DpeexTdsuQEJnzvwrJ12Rl31xgSVrkzcb/aZZYka+igWw1YO2PtWFB1J
+         rxhPC50Vyx0iG9Cv0NV/2bZzoTjchW2CQNOftmmF2qoKbny/RO5hnJGA1TFooI5p46vM
+         V3hLYPyau1rDL4bT8/Dhto0x7gn8cHdXxjkgY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=x1xsP4hi+UGnP2yxtDqsufVew2mnlvtx1BXkv0GZN90=;
+        b=SDB8pdSrt5aGvKfOz2tvYe2ktR0T3KT+1CylcPeOWOLZCzzGctt+K748lrgWPS8hEJ
+         eScnskmr95OM2fwCxSCDL1r5C2u5UYhRabqHilD04t2YpCrlSTkNGA1OLX0Jgqhnc8IO
+         qwhSalU2xvEMja/jMlsp4jjVQaHRXJivjVFz2PLf4TW42p6tKoKyL41P44XbAsmDAb8F
+         NDsZRP8oxCXdBLylFSFdwyvWgc5MfgrWl2OXo8STJS2F2Si9T+l1v3EtXPACvg8SKyHy
+         OEJFC1dbS+TJztoWbtMNqGt04Wc2pd/az+8ld/nDwmx7y53XPRd+J08wpVZpHV06vtJu
+         RoUQ==
+X-Gm-Message-State: AOAM531leLtrnLRwPEmI+/ySoggvt7XjJD624CX5xSqZHRWG7YjBCLwp
+        fInoA5nLiW5OuUB/nAwlqRasbQ==
+X-Google-Smtp-Source: ABdhPJzz4+LER4Ucs9KFsZC8AVR333BX5objLsX8hHl7a2LaE2+WqTD3hzdG2uTXKcPBbZkmH0u0LQ==
+X-Received: by 2002:a17:90b:b0d:: with SMTP id bf13mr1617624pjb.194.1607420303307;
+        Tue, 08 Dec 2020 01:38:23 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:f693:9fff:fef4:2537])
+        by smtp.gmail.com with ESMTPSA id 129sm12316232pfw.86.2020.12.08.01.38.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Dec 2020 01:38:22 -0800 (PST)
+From:   Chirantan Ekbote <chirantan@chromium.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        fuse-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: [PATCH v2 0/2] fuse: fscrypt ioctl support
+Date:   Tue,  8 Dec 2020 18:38:06 +0900
+Message-Id: <20201208093808.1572227-1-chirantan@chromium.org>
+X-Mailer: git-send-email 2.29.2.576.ga3fc446d84-goog
+In-Reply-To: <20201207040303.906100-1-chirantan@chromium.org>
+References: <20201207040303.906100-1-chirantan@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <931124.1607419082.1@warthog.procyon.org.uk>
-Date:   Tue, 08 Dec 2020 09:18:02 +0000
-Message-ID: <931125.1607419082@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ard Biesheuvel <ardb@kernel.org> wrote:
+This series adds support for the FS_IOC_GET_ENCRYPTION_POLICY_EX ioctl
+to fuse.  We want this in Chrome OS because have applications running
+inside a VM that expect this ioctl to succeed on a virtiofs mount.
 
-Ard Biesheuvel <ardb@kernel.org> wrote:
+This series doesn't add support for other dynamically-sized ioctls
+because there don't appear to be any users for them.  However, once
+these patches are merged it should hopefully be much simpler to add
+support for other ioctls in the future, if necessary.
 
-> > > > I wonder if it would help if the input buffer and output buffer didn't
-> > > > have to correspond exactly in usage - ie. the output buffer could be
-> > > > used at a slower rate than the input to allow for buffering inside the
-> > > > crypto algorithm.
-> > >
-> > > I don't follow - how could one be used at a slower rate?
-> >
-> > I mean that the crypto algorithm might need to buffer the last part of the
-> > input until it has a block's worth before it can write to the output.
-> 
-> This is what is typically handled transparently by the driver. When
-> you populate a scatterlist, it doesn't matter how misaligned the
-> individual elements are, the scatterlist walker will always present
-> the data in chunks that the crypto algorithm can manage. This is why
-> using a single scatterlist for the entire input is preferable in
-> general.
+Changes in v2:
+ * Move ioctl length calculation to a separate function.
+ * Properly clean up in the error case.
+ * Check that the user-provided size does not cause an integer
+   overflow.
 
-Yep - but the assumption currently on the part of the callers is that they
-provide the input buffer and corresponding output buffer - and that the
-algorithm will transfer data from one to the other, such that the same amount
-of input and output bufferage will be used.
+Chirantan Ekbote (2):
+  fuse: Move ioctl length calculation to a separate function
+  fuse: Support FS_IOC_GET_ENCRYPTION_POLICY_EX
 
-However, if we start pushing data in progressively, this would no longer hold
-true unless we also require the caller to only present in block-size chunks.
+ fs/fuse/file.c | 43 +++++++++++++++++++++++++++++++++----------
+ 1 file changed, 33 insertions(+), 10 deletions(-)
 
-For example, if I gave the encryption function 120 bytes of data and a 120
-byte output buffer, but the algorithm has a 16-byte blocksize, it will,
-presumably, consume 120 bytes of input, but it can only write 112 bytes of
-output at this time.  So the current interface would need to evolve to
-indicate separately how much input has been consumed and how much output has
-been produced - in which case it can't be handled transparently.
-
-For krb5, it's actually worse than that, since we want to be able to
-insert/remove a header and a trailer (and might need to go back and update the
-header after) - but I think in the krb5 case, we need to treat the header and
-trailer specially and update them after the fact in the wrapping case
-(unwrapping is not a problem, since we can just cache the header).
-
-David
+-- 
+2.29.2.576.ga3fc446d84-goog
 
