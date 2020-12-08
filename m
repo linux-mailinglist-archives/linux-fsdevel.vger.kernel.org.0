@@ -2,230 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C8322D363C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 23:30:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C71452D3628
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 23:25:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbgLHW0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 17:26:49 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:44960 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730393AbgLHW0t (ORCPT
+        id S1730990AbgLHWWg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 17:22:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730547AbgLHWWc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 17:26:49 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B8ItgNN077047;
-        Tue, 8 Dec 2020 19:00:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=jGEyiZqdUOS9faxXMWXb/+atEZAcG8r2YE/P50mm0iQ=;
- b=jbqTC8Y2Rj5TD8nGrgK6jb9iDgxwHigfXnK2afO+5u/0NdKru8Yhsc7z+poH1aKIccJh
- xJp1LZtYam1mq2npxylHqIJuannXkuUz0JEqlmhY8x94QRhoCpaslgwg5zog9vQDCdif
- dn6Sqcr5ZPPxFutgNIUGTGdmqpRqOHel7n8GfXgRcLIpwnSQaJCcd5YBsEzolDWnsITU
- kacciFufrJvJp/h3Zi60KiIGlcGGH4eKOfxGMop8y0FyPfXFcu5EdbyjIoH/45cyppkE
- 3JTJY86Sxzl/Y6priuhxPbo2lcn72yGIZELyckJNFqJ0/NbuHYmUKXL3oL05j8fbb2s/ 1A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 357yqbvk6d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 08 Dec 2020 19:00:03 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B8IuUHX094441;
-        Tue, 8 Dec 2020 19:00:03 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 358m3y5d3b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Dec 2020 19:00:02 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0B8J01TJ007389;
-        Tue, 8 Dec 2020 19:00:01 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Dec 2020 11:00:00 -0800
-Date:   Tue, 8 Dec 2020 10:59:59 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     willy@infradead.org, david@fromorbit.com, hch@infradead.org,
-        mhocko@kernel.org, akpm@linux-foundation.org, dhowells@redhat.com,
-        jlayton@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v11 4/4] xfs: use current->journal_info to avoid
- transaction reservation recursion
-Message-ID: <20201208185959.GD1943235@magnolia>
-References: <20201208122824.16118-1-laoar.shao@gmail.com>
- <20201208122824.16118-5-laoar.shao@gmail.com>
+        Tue, 8 Dec 2020 17:22:32 -0500
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F25C061793
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Dec 2020 14:21:51 -0800 (PST)
+Received: by mail-ed1-x543.google.com with SMTP id k4so19299672edl.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Dec 2020 14:21:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7ZNiPYw40sliX0Vf+8f1KPJclmOw/mEiiXP4YtA29os=;
+        b=cv+f7gaz46kk7+ocM3oe/Fbj9/1I2zmrfAcfNRRUhiAcMaOX/RyI5qDVXBNajsq866
+         T7Bf5XKsHfrdiIEy9Ecm6eex7PG20lRkpAd02JCI9Pu4/ZjtEDHhGnxwT1jUuFoASz0H
+         COk5A/u261XhJNpyB/xgdw6WEnURwZelkDETT7tEynUoriEpoNIE3KfHlXJ4XcIUVX1l
+         nsojHvZjDSetRE8/DhI2ie7yz7F/p2PYGQyt550IL19r9795pYcS1K1gDeeOxs/5jAqg
+         27sHcZyUz7F+7bF9ta4sTvzsG+BCu1A/K5tQY1kn9pepIt/2BGjNcM/ACgMlq3tDWQAk
+         Gy0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7ZNiPYw40sliX0Vf+8f1KPJclmOw/mEiiXP4YtA29os=;
+        b=kNIOImMaKFaHzwPKPSjULMN+qEB/s05AM9jCUwdcJ3nYNg/hRN3kk3HU9eCTuUDZhS
+         FcW6H6bhWV2hQK+bqUt0jkA5nHCT57D06xwsqKXXuZR7Nvw391EU9i7kyLpktqznyg3Q
+         n92KvV7D0ozuH1giBtV+8z6RFWrnBmhpkJWvL8Sweuxq+Gjz4xsO+Yxo15+Umq9EzRoG
+         RDOVaRq3F+W8e9i9f5/kIFGrShyx3kBPuMwXVoY8lzY9yB3alYjivdZbtPm5ljJA998/
+         4jCsfxFt1MBMmpfO7Kc5LHD42Dqq/Ico+MuCME6hfQpc53MXFCKTwqyItYFPPVdsMYki
+         j3Qw==
+X-Gm-Message-State: AOAM532lL5FRr1H7x66ZLByZ+bwgg/IrHc9SoxGBlrSZUBv9dJEILQeT
+        bJDP6ScgZtL8zGT3AMwgwkWz4bYQOpOC/L3GqRThog==
+X-Google-Smtp-Source: ABdhPJxXqQNvQXf//rdUY9kLzwwTupXx80nYQR7XUYVJh3px8dDLa7NIWw5qZWMxmWKdX0nr9dwPX/0pRvtwU4EOoJ0=
+X-Received: by 2002:a50:e00f:: with SMTP id e15mr125619edl.210.1607466110060;
+ Tue, 08 Dec 2020 14:21:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201208122824.16118-5-laoar.shao@gmail.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9829 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=1 mlxscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012080115
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9829 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 mlxlogscore=999
- clxscore=1015 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
- spamscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012080115
+References: <20201207225703.2033611-1-ira.weiny@intel.com> <20201207225703.2033611-3-ira.weiny@intel.com>
+ <20201207232649.GD7338@casper.infradead.org> <CAPcyv4hkY-9V5Rq5s=BRku2AeWYtgs9DuVXnhdEkara2NiN9Tg@mail.gmail.com>
+ <20201207234008.GE7338@casper.infradead.org> <CAPcyv4g+NvdFO-Coe36mGqmp5v3ZtRCGziEoxsxLKmj5vPx7kA@mail.gmail.com>
+ <20201208213255.GO1563847@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20201208213255.GO1563847@iweiny-DESK2.sc.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 8 Dec 2020 14:21:48 -0800
+Message-ID: <CAPcyv4hwQvPj7BYzzwgp8K_BB=fXmm=pYp7sL42h5OmLnSLvNg@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] mm/highmem: Lift memcpy_[to|from]_page to core
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 08:28:24PM +0800, Yafang Shao wrote:
-> PF_FSTRANS which is used to avoid transaction reservation recursion, is
-> dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-> PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-> memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-> means to avoid filesystem reclaim recursion.
-> 
-> As these two flags have different meanings, we'd better reintroduce
-> PF_FSTRANS back. To avoid wasting the space of PF_* flags in task_struct,
-> we can reuse the current->journal_info to do that, per Willy. As the
-> check of transaction reservation recursion is used by XFS only, we can
-> move the check into xfs_vm_writepage(s), per Dave.
-> 
-> To better abstract that behavoir, two new helpers are introduced, as
-> follows,
-> - xfs_trans_context_active
->   To check whehter current is in fs transcation or not
-> - xfs_trans_context_swap
->   Transfer the transaction context when rolling a permanent transaction
-> 
-> These two new helpers are instroduced in xfs_trans.h.
-> 
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jeff Layton <jlayton@redhat.com>
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> ---
->  fs/iomap/buffered-io.c |  7 -------
->  fs/xfs/xfs_aops.c      | 17 +++++++++++++++++
->  fs/xfs/xfs_trans.c     |  3 +++
->  fs/xfs/xfs_trans.h     | 22 ++++++++++++++++++++++
->  4 files changed, 42 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 10cc7979ce38..3c53fa6ce64d 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1458,13 +1458,6 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  			PF_MEMALLOC))
->  		goto redirty;
->  
-> -	/*
-> -	 * Given that we do not allow direct reclaim to call us, we should
-> -	 * never be called in a recursive filesystem reclaim context.
-> -	 */
-> -	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
-> -		goto redirty;
-> -
->  	/*
->  	 * Is this page beyond the end of the file?
->  	 *
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 2371187b7615..0da0242d42c3 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -568,6 +568,16 @@ xfs_vm_writepage(
->  {
->  	struct xfs_writepage_ctx wpc = { };
->  
-> +	/*
-> +	 * Given that we do not allow direct reclaim to call us, we should
-> +	 * never be called while in a filesystem transaction.
-> +	 */
-> +	if (WARN_ON_ONCE(xfs_trans_context_active())) {
-> +		redirty_page_for_writepage(wbc, page);
-> +		unlock_page(page);
-> +		return 0;
-> +	}
-> +
->  	return iomap_writepage(page, wbc, &wpc.ctx, &xfs_writeback_ops);
->  }
->  
-> @@ -579,6 +589,13 @@ xfs_vm_writepages(
->  	struct xfs_writepage_ctx wpc = { };
->  
->  	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
-> +	/*
-> +	 * Given that we do not allow direct reclaim to call us, we should
-> +	 * never be called while in a filesystem transaction.
-> +	 */
-> +	if (WARN_ON_ONCE(xfs_trans_context_active()))
-> +		return 0;
-> +
->  	return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_ops);
->  }
->  
-> diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-> index fe20398a214e..08d4916ffb13 100644
-> --- a/fs/xfs/xfs_trans.c
-> +++ b/fs/xfs/xfs_trans.c
-> @@ -124,6 +124,9 @@ xfs_trans_dup(
->  	tp->t_rtx_res = tp->t_rtx_res_used;
->  	ntp->t_pflags = tp->t_pflags;
+On Tue, Dec 8, 2020 at 1:33 PM Ira Weiny <ira.weiny@intel.com> wrote:
+>
+> On Mon, Dec 07, 2020 at 03:49:55PM -0800, Dan Williams wrote:
+> > On Mon, Dec 7, 2020 at 3:40 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Mon, Dec 07, 2020 at 03:34:44PM -0800, Dan Williams wrote:
+> > > > On Mon, Dec 7, 2020 at 3:27 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > >
+> > > > > On Mon, Dec 07, 2020 at 02:57:03PM -0800, ira.weiny@intel.com wrote:
+> > > > > > +static inline void memcpy_page(struct page *dst_page, size_t dst_off,
+> > > > > > +                            struct page *src_page, size_t src_off,
+> > > > > > +                            size_t len)
+> > > > > > +{
+> > > > > > +     char *dst = kmap_local_page(dst_page);
+> > > > > > +     char *src = kmap_local_page(src_page);
+> > > > >
+> > > > > I appreciate you've only moved these, but please add:
+> > > > >
+> > > > >         BUG_ON(dst_off + len > PAGE_SIZE || src_off + len > PAGE_SIZE);
+> > > >
+> > > > I imagine it's not outside the realm of possibility that some driver
+> > > > on CONFIG_HIGHMEM=n is violating this assumption and getting away with
+> > > > it because kmap_atomic() of contiguous pages "just works (TM)".
+> > > > Shouldn't this WARN rather than BUG so that the user can report the
+> > > > buggy driver and not have a dead system?
+> > >
+> > > As opposed to (on a HIGHMEM=y system) silently corrupting data that
+> > > is on the next page of memory?
+> >
+> > Wouldn't it fault in HIGHMEM=y case? I guess not necessarily...
+> >
+> > > I suppose ideally ...
+> > >
+> > >         if (WARN_ON(dst_off + len > PAGE_SIZE))
+> > >                 len = PAGE_SIZE - dst_off;
+> > >         if (WARN_ON(src_off + len > PAGE_SIZE))
+> > >                 len = PAGE_SIZE - src_off;
+> > >
+> > > and then we just truncate the data of the offending caller instead of
+> > > corrupting innocent data that happens to be adjacent.  Although that's
+> > > not ideal either ... I dunno, what's the least bad poison to drink here?
+> >
+> > Right, if the driver was relying on "corruption" for correct operation.
+> >
+> > If corruption actual were happening in practice wouldn't there have
+> > been screams by now? Again, not necessarily...
+> >
+> > At least with just plain WARN the kernel will start screaming on the
+> > user's behalf, and if it worked before it will keep working.
+>
+> So I decided to just sleep on this because I was recently told to not introduce
+> new WARN_ON's[1]
+>
+> I don't think that truncating len is worth the effort.  The conversions being
+> done should all 'work'  At least corrupting users data in the same way as it
+> used to...  ;-)  I'm ok with adding the WARN_ON's and I have modified the patch
+> to do so while I work through the 0-day issues.  (not sure what is going on
+> there.)
+>
+> However, are we ok with adding the WARN_ON's given what Greg KH told me?  This
+> is a bit more critical than the PKS API in that it could result in corrupt
+> data.
 
-This one line (ntp->t_pflags = tp->t_pflags) should move to
-xfs_trans_context_swap.
-
---D
-
->  
-> +	/* Associate the new transaction with this thread. */
-> +	xfs_trans_context_swap(tp, ntp);
-> +
->  	/* move deferred ops over to the new tp */
->  	xfs_defer_move(ntp, tp);
->  
-> diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
-> index 44b11c64a15e..d596a375e3bf 100644
-> --- a/fs/xfs/xfs_trans.h
-> +++ b/fs/xfs/xfs_trans.h
-> @@ -268,16 +268,38 @@ xfs_trans_item_relog(
->  	return lip->li_ops->iop_relog(lip, tp);
->  }
->  
-> +static inline bool
-> +xfs_trans_context_active(void)
-> +{
-> +	/* Use journal_info to indicate current is in a transaction */
-> +	return current->journal_info != NULL;
-> +}
-> +
->  static inline void
->  xfs_trans_context_set(struct xfs_trans *tp)
->  {
-> +	ASSERT(!current->journal_info);
-> +	current->journal_info = tp;
->  	tp->t_pflags = memalloc_nofs_save();
->  }
->  
->  static inline void
->  xfs_trans_context_clear(struct xfs_trans *tp)
->  {
-> +	ASSERT(current->journal_info == tp);
-> +	current->journal_info = NULL;
->  	memalloc_nofs_restore(tp->t_pflags);
->  }
->  
-> +/*
-> + * Transfer the transaction context when rolling a permanent
-> + * transaction.
-> + */
-> +static inline void
-> +xfs_trans_context_swap(struct xfs_trans *tp, struct xfs_trans *ntp)
-> +{
-> +	ASSERT(current->journal_info == tp);
-> +	current->journal_info = ntp;
-> +}
-> +
->  #endif	/* __XFS_TRANS_H__ */
-> -- 
-> 2.18.4
-> 
+That situation was a bit different in my mind because the default
+fallback stub path has typically never had WARN_ON even if it's never
+supposed to be called.
