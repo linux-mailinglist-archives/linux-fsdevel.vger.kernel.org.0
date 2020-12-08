@@ -2,149 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A3FE2D33AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 21:28:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B42CC2D3368
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 21:27:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbgLHUW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 15:22:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38150 "EHLO
+        id S1726656AbgLHUSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 15:18:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729231AbgLHUWv (ORCPT
+        with ESMTP id S1726934AbgLHUSZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 15:22:51 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 285DBC0617A7;
-        Tue,  8 Dec 2020 12:22:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=T2NKufslsV4zHnMND/Rek7wwwX3gR2vSveo5C0g9xCM=; b=N1NRhNaSnVk8G1XUcYN1U+ABvW
-        ztPmgw8KbK64ZoLwyIZcu50+YxkTDV2EINrc8kV972LWHAmL6B5TJ5WQWY6lZ4EacCQg8k0v1MV8d
-        fey5ruQ58/6rzMsSq6XjNzSJgCfvQ/sMAySZdMAo6D4IWdYR+i80AfGCGlpM1cRAGXE62Spsen4KH
-        2N83yIBvl9/X443/Er6X+hlIs7sBqtUtOA5QWHLvMFI/NT3arW/U5mwnHoumbqcFuz0aGF6z9H6Zd
-        RDqqlfOmSvrfmslN2HUISUlYfn/1E/UEb4/u+x04b+sPYOYWLsBDdhWz7+TH6mDZNMvvafEsgTDuN
-        AefuqMaA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kmiwu-00051J-9O; Tue, 08 Dec 2020 19:47:00 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 11/11] mm/swap: Convert rotate_reclaimable_page to folio
-Date:   Tue,  8 Dec 2020 19:46:53 +0000
-Message-Id: <20201208194653.19180-12-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20201208194653.19180-1-willy@infradead.org>
-References: <20201208194653.19180-1-willy@infradead.org>
+        Tue, 8 Dec 2020 15:18:25 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B768C0617A6;
+        Tue,  8 Dec 2020 12:17:44 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kmizP-00HU9e-B3; Tue, 08 Dec 2020 19:49:35 +0000
+Date:   Tue, 8 Dec 2020 19:49:35 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kys@microsoft.com, haiyangz@microsoft.com,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH 1/6] seq_file: add seq_read_iter
+Message-ID: <20201208194935.GH3579531@ZenIV.linux.org.uk>
+References: <20201115155355.GR3576660@ZenIV.linux.org.uk>
+ <20201115214125.GA317@Ryzen-9-3900X.localdomain>
+ <20201115233814.GT3576660@ZenIV.linux.org.uk>
+ <20201115235149.GA252@Ryzen-9-3900X.localdomain>
+ <20201116002513.GU3576660@ZenIV.linux.org.uk>
+ <20201116003416.GA345@Ryzen-9-3900X.localdomain>
+ <20201116032942.GV3576660@ZenIV.linux.org.uk>
+ <20201127162902.GA11665@lst.de>
+ <20201208163552.GA15052@lst.de>
+ <CAHk-=wiPeddM90zqyaHzd6g6Cc3NUpg+2my2gX5mR1ydd0ZjNg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiPeddM90zqyaHzd6g6Cc3NUpg+2my2gX5mR1ydd0ZjNg@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the declaration into mm/internal.h and rename the function to
-rotate_reclaimable_folio().  This eliminates all five of the calls to
-compound_head() in this function.
+On Tue, Dec 08, 2020 at 10:34:45AM -0800, Linus Torvalds wrote:
+> On Tue, Dec 8, 2020 at 8:35 AM Christoph Hellwig <hch@lst.de> wrote:
+> > >
+> > > Shouldn't this go to Linus before v5.10 is released?
+> >
+> > ping?
+> 
+> So by now I'm a bit worried about this series, because the early fixes
+> caused more problems than the current state.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/swap.h |  1 -
- mm/filemap.c         |  2 +-
- mm/internal.h        |  1 +
- mm/page_io.c         |  4 ++--
- mm/swap.c            | 12 ++++++------
- 5 files changed, 10 insertions(+), 10 deletions(-)
+*nod*
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 5bba15ac5a2e..5aaca35ce887 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -343,7 +343,6 @@ extern void lru_add_drain(void);
- extern void lru_add_drain_cpu(int cpu);
- extern void lru_add_drain_cpu_zone(struct zone *zone);
- extern void lru_add_drain_all(void);
--extern void rotate_reclaimable_page(struct page *page);
- extern void deactivate_file_page(struct page *page);
- extern void deactivate_page(struct page *page);
- extern void mark_page_lazyfree(struct page *page);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 297144524f58..93e40e9ac357 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1477,7 +1477,7 @@ void end_page_writeback(struct page *page)
- 	 */
- 	if (FolioReclaim(folio)) {
- 		ClearFolioReclaim(folio);
--		rotate_reclaimable_page(&folio->page);
-+		rotate_reclaimable_folio(folio);
- 	}
- 
- 	/*
-diff --git a/mm/internal.h b/mm/internal.h
-index 8e9c660f33ca..f089535b5d86 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -35,6 +35,7 @@
- void page_writeback_init(void);
- 
- vm_fault_t do_swap_page(struct vm_fault *vmf);
-+void rotate_reclaimable_folio(struct folio *folio);
- 
- void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
- 		unsigned long floor, unsigned long ceiling);
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 9bca17ecc4df..1fc0a579da58 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -57,7 +57,7 @@ void end_swap_bio_write(struct bio *bio)
- 		 * Also print a dire warning that things will go BAD (tm)
- 		 * very quickly.
- 		 *
--		 * Also clear PG_reclaim to avoid rotate_reclaimable_page()
-+		 * Also clear PG_reclaim to avoid rotate_reclaimable_folio()
- 		 */
- 		set_page_dirty(page);
- 		pr_alert("Write-error on swap-device (%u:%u:%llu)\n",
-@@ -341,7 +341,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
- 			 * temporary failure if the system has limited
- 			 * memory for allocating transmit buffers.
- 			 * Mark the page dirty and avoid
--			 * rotate_reclaimable_page but rate-limit the
-+			 * rotate_reclaimable_folio but rate-limit the
- 			 * messages but do not flag PageError like
- 			 * the normal direct-to-bio case as it could
- 			 * be temporary.
-diff --git a/mm/swap.c b/mm/swap.c
-index 5022dfe388ad..9aadde8aea9b 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -241,19 +241,19 @@ static void pagevec_move_tail_fn(struct page *page, struct lruvec *lruvec)
-  * reclaim.  If it still appears to be reclaimable, move it to the tail of the
-  * inactive list.
-  *
-- * rotate_reclaimable_page() must disable IRQs, to prevent nasty races.
-+ * rotate_reclaimable_folio() must disable IRQs, to prevent nasty races.
-  */
--void rotate_reclaimable_page(struct page *page)
-+void rotate_reclaimable_folio(struct folio *folio)
- {
--	if (!PageLocked(page) && !PageDirty(page) &&
--	    !PageUnevictable(page) && PageLRU(page)) {
-+	if (!FolioLocked(folio) && !FolioDirty(folio) &&
-+	    !FolioUnevictable(folio) && FolioLRU(folio)) {
- 		struct pagevec *pvec;
- 		unsigned long flags;
- 
--		get_page(page);
-+		get_folio(folio);
- 		local_lock_irqsave(&lru_rotate.lock, flags);
- 		pvec = this_cpu_ptr(&lru_rotate.pvec);
--		if (!pagevec_add(pvec, page) || PageCompound(page))
-+		if (!pagevec_add(pvec, &folio->page) || FolioHead(folio))
- 			pagevec_lru_move_fn(pvec, pagevec_move_tail_fn);
- 		local_unlock_irqrestore(&lru_rotate.lock, flags);
- 	}
--- 
-2.29.2
+Said that, it does appear to survive all beating, and it does fix
+a regression introduced in this cycle, so, provided that amount of
+comments in there is OK with you...
 
+The following changes since commit d4d50710a8b46082224376ef119a4dbb75b25c56:
+
+  seq_file: add seq_read_iter (2020-11-06 10:05:18 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+
+for you to fetch changes up to 4bbf439b09c5ac3f8b3e9584fe080375d8d0ad2d:
+
+  fix return values of seq_read_iter() (2020-11-15 22:12:53 -0500)
+
+----------------------------------------------------------------
+Al Viro (1):
+      fix return values of seq_read_iter()
+
+ fs/seq_file.c | 57 +++++++++++++++++++++++++++------------------------------
+ 1 file changed, 27 insertions(+), 30 deletions(-)
