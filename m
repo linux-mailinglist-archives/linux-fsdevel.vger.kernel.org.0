@@ -2,83 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64ECB2D1FEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 02:24:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31B7E2D202C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 02:36:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbgLHBW7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 20:22:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20752 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726253AbgLHBW7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 20:22:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607390493;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xOH63xXW4+sGWa4f3BUPNHTYv3qj8dsuPHdWc32K0kg=;
-        b=EmvXfzVz6XYu3QnK5c+mZSHiEXyDaIt5PVOLF58uqq+MiAe9XCc9gTI1wGkEOAr9dn4HSO
-        a2ocygQAP8i3acC+CiPNXlOy0jIDBUn9muAtha81H9rJIlLBOk705Wu3+lWlTwTaR2MUlM
-        f4okwsIYj4laKyFzRTe0mV5nFR5V4aw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-43-w5RQKdeHP3O1GY6hs3-ARQ-1; Mon, 07 Dec 2020 20:21:29 -0500
-X-MC-Unique: w5RQKdeHP3O1GY6hs3-ARQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3C5B8107ACE3;
-        Tue,  8 Dec 2020 01:21:28 +0000 (UTC)
-Received: from T590 (ovpn-13-16.pek2.redhat.com [10.72.13.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D6FC31E5;
-        Tue,  8 Dec 2020 01:21:21 +0000 (UTC)
-Date:   Tue, 8 Dec 2020 09:21:17 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        id S1726369AbgLHBfn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 20:35:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726190AbgLHBfn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Dec 2020 20:35:43 -0500
+Date:   Mon, 7 Dec 2020 17:34:59 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1607391302;
+        bh=i3984NOIVWMaE+QFhgCLJtfILbc6/RSkG9XvGukRs7w=;
+        h=From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hca7faBpqEriF6FZPtd0wlbzAlfSR3EKfyTBaBt4dgDAVy9k1yPd7IQFpymwABy3h
+         s9qHHlOLbsb4kwF/DfCdj2T4PkbJ+5OVWDB3l03SlUvMWEw9yXHqVH08/s5GvFXorR
+         waVdV51wewfkqAeXxoNzsw4CAoe7ms/Mee6ucYrc=
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Qian Cai <qcai@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
         Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] block: add bio_iov_iter_nvecs for figuring out nr_vecs
-Message-ID: <20201208012117.GA1059392@T590>
-References: <20201201120652.487077-1-ming.lei@redhat.com>
- <3eb1020d-c336-dbe6-d75e-70c388464e6e@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3eb1020d-c336-dbe6-d75e-70c388464e6e@gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v14 09/10] arch, mm: wire up memfd_secret system call
+ were relevant
+Message-Id: <20201207173459.a4d4a3404e163314c29f0785@linux-foundation.org>
+In-Reply-To: <20201207160006.GG1112728@linux.ibm.com>
+References: <20201203062949.5484-1-rppt@kernel.org>
+        <20201203062949.5484-10-rppt@kernel.org>
+        <81631d3391abca3f41f2e19092b97a61d49f4e44.camel@redhat.com>
+        <20201207160006.GG1112728@linux.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 07, 2020 at 06:07:39PM +0000, Pavel Begunkov wrote:
-> On 01/12/2020 12:06, Ming Lei wrote:
-> > Pavel reported that iov_iter_npages is a bit heavy in case of bvec
-> > iter.
+On Mon, 7 Dec 2020 18:00:06 +0200 Mike Rapoport <rppt@linux.ibm.com> wrote:
+
 > > 
-> > Turns out it isn't necessary to iterate every page in the bvec iter,
-> > and we call iov_iter_npages() just for figuring out how many bio
-> > vecs need to be allocated. And we can simply map each vector in bvec iter
-> > to bio's vec, so just return iter->nr_segs from bio_iov_iter_nvecs() for
-> > bvec iter.
+> > I can't see where was it defined for arm64 after it looks like Andrew has
+> > deleted the  above chunk. Thus, we have a warning using this .config:
 > > 
-> > Also rename local variable 'nr_pages' as 'nr_vecs' which exactly matches its
-> > real usage.
+> > https://cailca.coding.net/public/linux/mm/git/files/master/arm64.config
 > > 
-> > This patch is based on Mathew's post:
+> > <stdin>:1539:2: warning: #warning syscall memfd_secret not implemented [-Wcpp]
 > 
-> Tried this, the system didn't boot + discovered a filesystem blowned after
-> booting with a stable kernel. That's on top of 4498a8536c816 ("block: use
-> an xarray for disk->part_tbl"), which works fine. Ideas?
+> I was under the impression that Andrew only removed the #ifdef...
+> 
+> Andrew, can you please restore syscall definition for memfd_secret() in
+> include/uapi/asm-generic/unistd.h?
+> 
 
-Is share any log to show the issue?
+urgh, OK, that seems to have got lost in the (moderate amount of)
+conflict resolution).
 
-Can you share us the kernel .config? And what is your root disk? Not see
-any issue on this kernel in my KVM test.
-
-
-Thanks,
-Ming
+--- a/include/uapi/asm-generic/unistd.h~arch-mm-wire-up-memfd_secret-system-call-were-relevant-fix
++++ a/include/uapi/asm-generic/unistd.h
+@@ -863,9 +863,13 @@ __SYSCALL(__NR_process_madvise, sys_proc
+ __SYSCALL(__NR_watch_mount, sys_watch_mount)
+ #define __NR_epoll_pwait2 442
+ __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
++#ifdef __ARCH_WANT_MEMFD_SECRET
++#define __NR_memfd_secret 443
++__SYSCALL(__NR_memfd_secret, sys_memfd_secret)
++#endif
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 443
++#define __NR_syscalls 444
+ 
+ /*
+  * 32 bit systems traditionally used different
+_
 
