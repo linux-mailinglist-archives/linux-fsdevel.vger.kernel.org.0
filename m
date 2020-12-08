@@ -2,82 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C94E2D205D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 02:52:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAC742D207C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 03:10:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbgLHBwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 20:52:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37443 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725877AbgLHBwL (ORCPT
+        id S1727571AbgLHCJZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 21:09:25 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:28016 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725877AbgLHCJZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 20:52:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607392244;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=u7uidQSRWovqSGyr2eKHppMK/Pin50WJWnRi+lM7zbE=;
-        b=fs+4j3oAfdewk3kzkoTgOy+cSiPVDUHRDIESXXE4OAgN8k4/EUcHj1bJ5jkL81pbpLdKy4
-        ES9AghF9A/1SCFVk8IgN5bV+6JDp8Upwb6uEepQfaZNSRdySQZIWQ3/JxhA2rxxsi5vIy1
-        U+N109EhBinJrQ4sUrTtv0ldI3EJ0KA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-105-gi9zAyrUP_mmn_kxtEv_wQ-1; Mon, 07 Dec 2020 20:50:42 -0500
-X-MC-Unique: gi9zAyrUP_mmn_kxtEv_wQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6DA01C28E;
-        Tue,  8 Dec 2020 01:50:41 +0000 (UTC)
-Received: from T590 (ovpn-13-16.pek2.redhat.com [10.72.13.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 715725D9DE;
-        Tue,  8 Dec 2020 01:50:34 +0000 (UTC)
-Date:   Tue, 8 Dec 2020 09:50:30 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] block: add bio_iov_iter_nvecs for figuring out nr_vecs
-Message-ID: <20201208015030.GC1059392@T590>
-References: <20201201120652.487077-1-ming.lei@redhat.com>
- <3eb1020d-c336-dbe6-d75e-70c388464e6e@gmail.com>
+        Mon, 7 Dec 2020 21:09:25 -0500
+X-IronPort-AV: E=Sophos;i="5.78,401,1599494400"; 
+   d="scan'208";a="102156242"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 08 Dec 2020 10:08:47 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 198A94CE6027;
+        Tue,  8 Dec 2020 10:08:46 +0800 (CST)
+Received: from G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Tue, 8 Dec 2020 10:08:45 +0800
+Received: from localhost.localdomain (10.167.225.206) by
+ G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Tue, 8 Dec 2020 10:08:44 +0800
+From:   Hao Li <lihao2018.fnst@cn.fujitsu.com>
+To:     <viro@zeniv.linux.org.uk>, <torvalds@linux-foundation.org>
+CC:     <ira.weiny@intel.com>, <dchinner@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>
+Subject: [PATCH] fs: Handle I_DONTCACHE in iput_final() instead of generic_drop_inode()
+Date:   Tue, 8 Dec 2020 10:08:43 +0800
+Message-ID: <20201208020843.3784-1-lihao2018.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3eb1020d-c336-dbe6-d75e-70c388464e6e@gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 198A94CE6027.AA467
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 07, 2020 at 06:07:39PM +0000, Pavel Begunkov wrote:
-> On 01/12/2020 12:06, Ming Lei wrote:
-> > Pavel reported that iov_iter_npages is a bit heavy in case of bvec
-> > iter.
-> > 
-> > Turns out it isn't necessary to iterate every page in the bvec iter,
-> > and we call iov_iter_npages() just for figuring out how many bio
-> > vecs need to be allocated. And we can simply map each vector in bvec iter
-> > to bio's vec, so just return iter->nr_segs from bio_iov_iter_nvecs() for
-> > bvec iter.
-> > 
-> > Also rename local variable 'nr_pages' as 'nr_vecs' which exactly matches its
-> > real usage.
-> > 
-> > This patch is based on Mathew's post:
-> 
-> Tried this, the system didn't boot + discovered a filesystem blowned after
-> booting with a stable kernel. That's on top of 4498a8536c816 ("block: use
-> an xarray for disk->part_tbl"), which works fine. Ideas?
+If generic_drop_inode() returns true, it means iput_final() can evict
+this inode regardless of whether it is dirty or not. If we check
+I_DONTCACHE in generic_drop_inode(), any inode with this bit set will be
+evicted unconditionally. This is not the desired behavior because
+I_DONTCACHE only means the inode shouldn't be cached on the LRU list.
+As for whether we need to evict this inode, this is what
+generic_drop_inode() should do. This patch corrects the usage of
+I_DONTCACHE.
 
-I guess it is caused by Christoph's "store a pointer to the block_device in struct bio (again)"
-which has been reverted in for-5.11/block.
+This patch was proposed in [1].
 
-I'd suggest to run your test against the latest for-5.11/block one more time.
+[1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
 
-thanks,
-Ming
+Fixes: dae2f8ed7992 ("fs: Lift XFS_IDONTCACHE to the VFS layer")
+Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+---
+This patch may have been forgotten.
+Original patch: https://lore.kernel.org/linux-fsdevel/20200904075939.176366-1-lihao2018.fnst@cn.fujitsu.com/
+
+ fs/inode.c         | 4 +++-
+ include/linux/fs.h | 3 +--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 9d78c37b00b8..5eea9912a0b9 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1627,7 +1627,9 @@ static void iput_final(struct inode *inode)
+ 	else
+ 		drop = generic_drop_inode(inode);
+ 
+-	if (!drop && (sb->s_flags & SB_ACTIVE)) {
++	if (!drop &&
++	    !(inode->i_state & I_DONTCACHE) &&
++	    (sb->s_flags & SB_ACTIVE)) {
+ 		inode_add_lru(inode);
+ 		spin_unlock(&inode->i_lock);
+ 		return;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8667d0cdc71e..8bde32cf9711 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2878,8 +2878,7 @@ extern int inode_needs_sync(struct inode *inode);
+ extern int generic_delete_inode(struct inode *inode);
+ static inline int generic_drop_inode(struct inode *inode)
+ {
+-	return !inode->i_nlink || inode_unhashed(inode) ||
+-		(inode->i_state & I_DONTCACHE);
++	return !inode->i_nlink || inode_unhashed(inode);
+ }
+ extern void d_mark_dontcache(struct inode *inode);
+ 
+-- 
+2.28.0
+
+
 
