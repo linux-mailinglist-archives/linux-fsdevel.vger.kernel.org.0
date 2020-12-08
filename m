@@ -2,61 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E83F12D2D04
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 15:23:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C87C2D2DD7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 16:06:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729841AbgLHOWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 09:22:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41362 "EHLO mx2.suse.de"
+        id S1729957AbgLHPGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 10:06:09 -0500
+Received: from verein.lst.de ([213.95.11.211]:46580 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729840AbgLHOWy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 09:22:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 75C23AD7C;
-        Tue,  8 Dec 2020 14:22:12 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3F60A1E133E; Tue,  8 Dec 2020 15:22:12 +0100 (CET)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, stable@vger.kernel.org
-Subject: [PATCH] quota: Fix error handling path of dquot_resume()
-Date:   Tue,  8 Dec 2020 15:22:08 +0100
-Message-Id: <20201208142208.14096-1-jack@suse.cz>
-X-Mailer: git-send-email 2.16.4
+        id S1729471AbgLHPGJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Dec 2020 10:06:09 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 64C856736F; Tue,  8 Dec 2020 16:05:21 +0100 (CET)
+Date:   Tue, 8 Dec 2020 16:05:20 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH v4 06/40] fs: add mount_setattr()
+Message-ID: <20201208150520.GA8252@lst.de>
+References: <20201203235736.3528991-1-christian.brauner@ubuntu.com> <20201203235736.3528991-7-christian.brauner@ubuntu.com> <20201207171456.GC13614@lst.de> <20201208103707.px6buexwuusn6d3f@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201208103707.px6buexwuusn6d3f@wittgenstein>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When reloading of quota failed we tried to cleanup using
-vfs_cleanup_quota_inode() however we passed wrong 'type' argument. Fix
-that.
+On Tue, Dec 08, 2020 at 11:37:07AM +0100, Christian Brauner wrote:
+> You want a v5 with the changes you requested before you continue
+> reviewing? Otherwise I'll just let you go through v4.
 
-Fixes: ae45f07d47cc ("quota: Simplify dquot_resume()")
-Reported-by: syzbot+2643e825238d7aabb37f@syzkaller.appspotmail.com
-CC: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/quota/dquot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I don't think it is worth resending so quickly.  We're not going to
+make 5.11 for this series anyway.
 
-I plan to queue this patch to my tree for the merge window.
-
-								Honza
-
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index bb02989d92b6..4f1373463766 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -2455,7 +2455,7 @@ int dquot_resume(struct super_block *sb, int type)
- 		ret = dquot_load_quota_sb(sb, cnt, dqopt->info[cnt].dqi_fmt_id,
- 					  flags);
- 		if (ret < 0)
--			vfs_cleanup_quota_inode(sb, type);
-+			vfs_cleanup_quota_inode(sb, cnt);
- 	}
- 
- 	return ret;
--- 
-2.16.4
-
+I plan to add XFS support as a learning exercise, but I'll probably need
+a little more time to get to that.
