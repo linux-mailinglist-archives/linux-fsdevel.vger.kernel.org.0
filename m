@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69FA02D33B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 21:28:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFEC92D3397
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 21:28:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgLHUXX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 15:23:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38050 "EHLO
+        id S1728271AbgLHUWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 15:22:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728100AbgLHUWX (ORCPT
+        with ESMTP id S1728257AbgLHUWP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 15:22:23 -0500
+        Tue, 8 Dec 2020 15:22:15 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F8DC06179C;
-        Tue,  8 Dec 2020 12:21:59 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD4DC061793;
+        Tue,  8 Dec 2020 12:21:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=xt5mgd5xPZqp/ehXI/kHMzNBJyy6JtKd8fa1WI3RK7s=; b=ZCufl/DRva/T7N4vYBk+eoB5hv
-        rdIzHzWI6eIhcfpLfkQsthl8hpvq2DdzTPs4x0tjtLvb4FRp0/Llfowg8LMhJI7bKO84Wn0HWBHqa
-        swDkv0YflMbW86v2yrLxQZJMQ1t0XI6ijqh8b56xv9e/J4tkGtQV20R3l14WacPgAwJuNlwW7kzFC
-        iLyu5veeMzW/975HkpqBmSVMCMfN6Efnl4oNFCwTw1z9fVm15Xj7sFY3FdtwfdiP1QjCWvHwCK88E
-        JWC0LfnGJc3+b0Kg3B9OLyewYJ3J6bfEC1EknxssnGNyNheNGlSycMh+H7QiC8c81EfYvOdJoM4CR
-        u8PhJUUw==;
+        bh=EWMwluwghzqMbyH7unQrphsIIg3dNu3LaF6rUw+qDGE=; b=aE6s6V1H9YrEt3+UkLCtIYZgU+
+        W/y4dZ9TRX/TgA1zCHDt00x0BZn+x567FJ1PsG9dKTruIgFuTYUltHDwQCg8JiQFA7KsMMWb1PRTU
+        0moz6DO6HcRj69g7cHI5ZpGPEtw7iIQDA0VD/Q+OhYbBZ+lvtGGxDWsIFk9GGGEY9dy/64szeOm2z
+        WG/jNwhUuvpZw/rTFs0xCnMvD3wbgrUxwHzt/ddNIRDC5/oOrh1kOK7AL27ktUJRyhOYgHm115PqP
+        QeierKpiLGoi7zGdXyqozaQiIsg/LzgxbaqwCLTxTK6l8SC9r4ZThst1no9l7OVbETSiyPSrKsKyo
+        9I9/db4g==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kmiwt-00050r-9L; Tue, 08 Dec 2020 19:46:59 +0000
+        id 1kmiwt-00050y-H9; Tue, 08 Dec 2020 19:46:59 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 07/11] mm: Add lock_folio_killable
-Date:   Tue,  8 Dec 2020 19:46:49 +0000
-Message-Id: <20201208194653.19180-8-willy@infradead.org>
+Subject: [RFC PATCH 08/11] mm/filemap: Convert end_page_writeback to use a folio
+Date:   Tue,  8 Dec 2020 19:46:50 +0000
+Message-Id: <20201208194653.19180-9-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20201208194653.19180-1-willy@infradead.org>
 References: <20201208194653.19180-1-willy@infradead.org>
@@ -43,114 +43,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is like lock_page_killable() but for use by callers who
-know they have a folio.  Convert __lock_page_killable() to be
-__lock_folio_killable().  This saves one call to compound_head() per
-contended call to lock_page_killable().
+With my config, this function shrinks from 480 bytes to 240 bytes
+due to elimination of repeated calls to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h | 15 ++++++++++-----
- mm/filemap.c            | 17 +++++++++--------
- 2 files changed, 19 insertions(+), 13 deletions(-)
+ mm/filemap.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 1d4a1828a434..060faeb8d701 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -584,7 +584,7 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
- }
- 
- extern void __lock_folio(struct folio *folio);
--extern int __lock_page_killable(struct page *page);
-+extern int __lock_folio_killable(struct folio *folio);
- extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
- extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 				unsigned int flags);
-@@ -632,6 +632,14 @@ static inline void lock_page(struct page *page)
- 	lock_folio(page_folio(page));
- }
- 
-+static inline int lock_folio_killable(struct folio *folio)
-+{
-+	might_sleep();
-+	if (!trylock_folio(folio))
-+		return __lock_folio_killable(folio);
-+	return 0;
-+}
-+
- /*
-  * lock_page_killable is like lock_page but can be interrupted by fatal
-  * signals.  It returns 0 if it locked the page and -EINTR if it was
-@@ -639,10 +647,7 @@ static inline void lock_page(struct page *page)
-  */
- static inline int lock_page_killable(struct page *page)
- {
--	might_sleep();
--	if (!trylock_page(page))
--		return __lock_page_killable(page);
--	return 0;
-+	return lock_folio_killable(page_folio(page));
- }
- 
- /*
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 8e87906f5dd6..50535b21b452 100644
+index 50535b21b452..f1b65f777539 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1534,14 +1534,13 @@ void __lock_folio(struct folio *folio)
+@@ -1148,11 +1148,11 @@ static void wake_up_page_bit(struct page *page, int bit_nr)
+ 	spin_unlock_irqrestore(&q->lock, flags);
  }
- EXPORT_SYMBOL(__lock_folio);
  
--int __lock_page_killable(struct page *__page)
-+int __lock_folio_killable(struct folio *folio)
+-static void wake_up_page(struct page *page, int bit)
++static void wake_up_folio(struct folio *folio, int bit)
  {
--	struct page *page = compound_head(__page);
--	wait_queue_head_t *q = page_waitqueue(page);
--	return wait_on_page_bit_common(q, page, PG_locked, TASK_KILLABLE,
-+	wait_queue_head_t *q = page_waitqueue(&folio->page);
-+	return wait_on_page_bit_common(q, &folio->page, PG_locked, TASK_KILLABLE,
- 					EXCLUSIVE);
+-	if (!PageWaiters(page))
++	if (!FolioWaiters(folio))
+ 		return;
+-	wake_up_page_bit(page, bit);
++	wake_up_page_bit(&folio->page, bit);
  }
--EXPORT_SYMBOL_GPL(__lock_page_killable);
-+EXPORT_SYMBOL_GPL(__lock_folio_killable);
  
- int __lock_page_async(struct page *page, struct wait_page_queue *wait)
- {
-@@ -1562,6 +1561,8 @@ int __lock_page_async(struct page *page, struct wait_page_queue *wait)
- int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 			 unsigned int flags)
+ /*
+@@ -1466,6 +1466,8 @@ EXPORT_SYMBOL(unlock_folio);
+  */
+ void end_page_writeback(struct page *page)
  {
 +	struct folio *folio = page_folio(page);
 +
- 	if (fault_flag_allow_retry_first(flags)) {
- 		/*
- 		 * CAUTION! In this case, mmap_lock is not released
-@@ -1580,13 +1581,13 @@ int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 	if (flags & FAULT_FLAG_KILLABLE) {
- 		int ret;
- 
--		ret = __lock_page_killable(page);
-+		ret = __lock_folio_killable(folio);
- 		if (ret) {
- 			mmap_read_unlock(mm);
- 			return 0;
- 		}
- 	} else {
--		__lock_folio(page_folio(page));
-+		__lock_folio(folio);
+ 	/*
+ 	 * TestClearPageReclaim could be used here but it is an atomic
+ 	 * operation and overkill in this particular case. Failing to
+@@ -1473,9 +1475,9 @@ void end_page_writeback(struct page *page)
+ 	 * justify taking an atomic operation penalty at the end of
+ 	 * ever page writeback.
+ 	 */
+-	if (PageReclaim(page)) {
+-		ClearPageReclaim(page);
+-		rotate_reclaimable_page(page);
++	if (FolioReclaim(folio)) {
++		ClearFolioReclaim(folio);
++		rotate_reclaimable_page(&folio->page);
  	}
  
- 	return 1;
-@@ -2778,7 +2779,7 @@ static int lock_page_maybe_drop_mmap(struct vm_fault *vmf, struct page *page,
+ 	/*
+@@ -1484,13 +1486,13 @@ void end_page_writeback(struct page *page)
+ 	 * But here we must make sure that the page is not freed and
+ 	 * reused before the wake_up_page().
+ 	 */
+-	get_page(page);
+-	if (!test_clear_page_writeback(page))
++	get_folio(folio);
++	if (!test_clear_page_writeback(&folio->page))
+ 		BUG();
  
- 	*fpin = maybe_unlock_mmap_for_io(vmf, *fpin);
- 	if (vmf->flags & FAULT_FLAG_KILLABLE) {
--		if (__lock_page_killable(&folio->page)) {
-+		if (__lock_folio_killable(folio)) {
- 			/*
- 			 * We didn't have the right flags to drop the mmap_lock,
- 			 * but all fault_handlers only check for fatal signals
+ 	smp_mb__after_atomic();
+-	wake_up_page(page, PG_writeback);
+-	put_page(page);
++	wake_up_folio(folio, PG_writeback);
++	put_folio(folio);
+ }
+ EXPORT_SYMBOL(end_page_writeback);
+ 
 -- 
 2.29.2
 
