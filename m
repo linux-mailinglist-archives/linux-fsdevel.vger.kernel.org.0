@@ -2,244 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE9982D2210
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 05:23:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A8A12D21F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 05:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbgLHEW7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 23:22:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56944 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbgLHEW6 (ORCPT
+        id S1726556AbgLHEVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 23:21:11 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:55264 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726457AbgLHEVL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 23:22:58 -0500
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B380C06179C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 20:21:43 -0800 (PST)
-Received: by mail-pl1-x643.google.com with SMTP id 4so6319027plk.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 20:21:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iuruSM5Wk5IQuXnGIYHAC1ej2c7Wmgf5EexDWUENUOw=;
-        b=JvSBmHPkXQn9tqltsKxRwqdG3L4xMxx3IUPXwtPqKOYEyGp238OQgLQ7jDXPKt24e3
-         sYkRd9arNELgXCsNFausQ1G47Il3mclukxuUag5+wS39WymDZvYjin+7g0neRTqG8Y9n
-         VO9rU6zNwtU41CReh9zDnH2Ljy1keWq+zuZwRvTfmgKg83qpHAMoB4/mXprbbYLETe6G
-         RBRnybRoEHBts/t70AtrP2bQhcUwjOJ8oh3mfZrTGORG02pzBeqFJEBegTzngrCn72XV
-         gPVe66zYzpbG9bk4zkDzACtObij3N/ESHJn/3qupwhqJAPbI9bj6K33pWLyewDQtt+LB
-         wCXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iuruSM5Wk5IQuXnGIYHAC1ej2c7Wmgf5EexDWUENUOw=;
-        b=aQuBqL3oC6s71E6S0v9dSTIIlazJ41IOf8Yz9uDVYzQ2oJ3nQtcsntYpj+FLtkFipP
-         9GE5gNLqnRuDU213b03KYXuF0/S3cjeXOjJ3NO9ROyb0rQN2bjcPJZ9cbjQ0ZYmBiNLx
-         rmyv5B169KW2qHdoc/KsJ+pCLn3u+Gj5IZi5jUsS5LhlzpD8HnXDVSHLwKBy4OaboLPK
-         Au4885UuKsmP7k7IqvKUE0oCBr/qts5/NVui7FbG4o6EfRnVd0PMyzOjAWe3JJi2WD51
-         4QOh9MDVt+gc1kKAMT7rZJkfYb42j7ioIGBztYzVmrYdi/5jeXS80s4PwcY2BDPg0tiM
-         jz+g==
-X-Gm-Message-State: AOAM533oDhL+uKPgnxMJRsEDLs2kymyx+w6tmESGvcdApo3o3JI/DBYK
-        HKxPImChitXr91NSrt5phRAgSw==
-X-Google-Smtp-Source: ABdhPJwCAN4zm3sxSIMbaeUGH8Q36ijCLpemWCrzTBw2fM2/G6fQIIQjIkxW+ToQpB618UjA8kaeLg==
-X-Received: by 2002:a17:902:6803:b029:d6:cf9d:2cfb with SMTP id h3-20020a1709026803b02900d6cf9d2cfbmr19526373plk.55.1607401302801;
-        Mon, 07 Dec 2020 20:21:42 -0800 (PST)
-Received: from localhost.localdomain ([103.136.221.70])
-        by smtp.gmail.com with ESMTPSA id mr7sm1031166pjb.31.2020.12.07.20.21.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Dec 2020 20:21:42 -0800 (PST)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org, adobriyan@gmail.com,
-        akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, hughd@google.com, shakeelb@google.com,
-        guro@fb.com, samitolvanen@google.com, feng.tang@intel.com,
-        neilb@suse.de, iamjoonsoo.kim@lge.com, rdunlap@infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v3 7/7] mm: memcontrol: make the slab calculation consistent
-Date:   Tue,  8 Dec 2020 12:18:47 +0800
-Message-Id: <20201208041847.72122-8-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
-In-Reply-To: <20201208041847.72122-1-songmuchun@bytedance.com>
-References: <20201208041847.72122-1-songmuchun@bytedance.com>
+        Mon, 7 Dec 2020 23:21:11 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id DACF93C1F3C;
+        Tue,  8 Dec 2020 15:20:27 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kmUUE-001fsm-VI; Tue, 08 Dec 2020 15:20:26 +1100
+Date:   Tue, 8 Dec 2020 15:20:26 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     darrick.wong@oracle.com, willy@infradead.org, hch@infradead.org,
+        mhocko@kernel.org, akpm@linux-foundation.org, dhowells@redhat.com,
+        jlayton@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v10 4/4] xfs: use current->journal_info to avoid
+ transaction reservation recursion
+Message-ID: <20201208042026.GW3913616@dread.disaster.area>
+References: <20201208021543.76501-1-laoar.shao@gmail.com>
+ <20201208021543.76501-5-laoar.shao@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201208021543.76501-5-laoar.shao@gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=yPCof4ZbAAAA:8 a=JfrnYn6hAAAA:8
+        a=7-415B0cAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8
+        a=EgeNp9WBsctHnM1Kfy0A:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22 a=AjGcO6oz07-iQ99wixmX:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Although the ratio of the slab is one, we also should read the ratio
-from the related memory_stats instead of hard-coding. And the local
-variable of size is already the value of slab_unreclaimable. So we
-do not need to read again.
+On Tue, Dec 08, 2020 at 10:15:43AM +0800, Yafang Shao wrote:
+> PF_FSTRANS which is used to avoid transaction reservation recursion, is
+> dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
+> PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
+> memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
+> means to avoid filesystem reclaim recursion.
+> 
+> As these two flags have different meanings, we'd better reintroduce
+> PF_FSTRANS back. To avoid wasting the space of PF_* flags in task_struct,
+> we can reuse the current->journal_info to do that, per Willy. As the
+> check of transaction reservation recursion is used by XFS only, we can
+> move the check into xfs_vm_writepage(s), per Dave.
+> 
+> To better abstract that behavoir, two new helpers are introduced, as
+> follows,
+> - xfs_trans_context_active
+>   To check whehter current is in fs transcation or not
+> - xfs_trans_context_swap
+>   Transfer the transaction context when rolling a permanent transaction
+> 
+> These two new helpers are instroduced in xfs_trans.h.
+> 
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jeff Layton <jlayton@redhat.com>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> ---
+>  fs/iomap/buffered-io.c |  7 -------
+>  fs/xfs/xfs_aops.c      | 17 +++++++++++++++++
+>  fs/xfs/xfs_trans.c     |  3 +++
+>  fs/xfs/xfs_trans.h     | 25 +++++++++++++++++++++++++
+>  4 files changed, 45 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 10cc7979ce38..3c53fa6ce64d 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1458,13 +1458,6 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
+>  			PF_MEMALLOC))
+>  		goto redirty;
+>  
+> -	/*
+> -	 * Given that we do not allow direct reclaim to call us, we should
+> -	 * never be called in a recursive filesystem reclaim context.
+> -	 */
+> -	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+> -		goto redirty;
+> -
+>  	/*
+>  	 * Is this page beyond the end of the file?
+>  	 *
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 2371187b7615..28db93d0da97 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -568,6 +568,16 @@ xfs_vm_writepage(
+>  {
+>  	struct xfs_writepage_ctx wpc = { };
+>  
+> +	/*
+> +	 * Given that we do not allow direct reclaim to call us, we should
+> +	 * never be called while in a filesystem transaction.
+> +	 */
+> +	if (xfs_trans_context_active()) {
+> +		redirty_page_for_writepage(wbc, page);
+> +		unlock_page(page);
+> +		return 0;
+> +	}
 
-We can drop the ratio in struct memory_stat. This can make the code
-clean and simple. And get rid of the awkward mix of static and runtime
-initialization of the memory_stats table.
+hmmm. Missing warning....
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- mm/memcontrol.c | 112 ++++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 73 insertions(+), 39 deletions(-)
+> diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
+> index 44b11c64a15e..82c6735e40fc 100644
+> --- a/fs/xfs/xfs_trans.h
+> +++ b/fs/xfs/xfs_trans.h
+> @@ -268,16 +268,41 @@ xfs_trans_item_relog(
+>  	return lip->li_ops->iop_relog(lip, tp);
+>  }
+>  
+> +static inline bool
+> +xfs_trans_context_active(void)
+> +{
+> +	/* Use journal_info to indicate current is in a transaction */
+> +	if (WARN_ON_ONCE(current->journal_info != NULL))
+> +		return true;
+> +
+> +	return false;
+> +}
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index a40797a27f87..841ea37cc123 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1511,49 +1511,78 @@ static bool mem_cgroup_wait_acct_move(struct mem_cgroup *memcg)
- 
- struct memory_stat {
- 	const char *name;
--	unsigned int ratio;
- 	unsigned int idx;
- };
- 
- static const struct memory_stat memory_stats[] = {
--	{ "anon", PAGE_SIZE, NR_ANON_MAPPED },
--	{ "file", PAGE_SIZE, NR_FILE_PAGES },
--	{ "kernel_stack", 1024, NR_KERNEL_STACK_KB },
--	{ "pagetables", PAGE_SIZE, NR_PAGETABLE },
--	{ "percpu", 1, MEMCG_PERCPU_B },
--	{ "sock", PAGE_SIZE, MEMCG_SOCK },
--	{ "shmem", PAGE_SIZE, NR_SHMEM },
--	{ "file_mapped", PAGE_SIZE, NR_FILE_MAPPED },
--	{ "file_dirty", PAGE_SIZE, NR_FILE_DIRTY },
--	{ "file_writeback", PAGE_SIZE, NR_WRITEBACK },
-+	{ "anon",			NR_ANON_MAPPED			},
-+	{ "file",			NR_FILE_PAGES			},
-+	{ "kernel_stack",		NR_KERNEL_STACK_KB		},
-+	{ "pagetables",			NR_PAGETABLE			},
-+	{ "percpu",			MEMCG_PERCPU_B			},
-+	{ "sock",			MEMCG_SOCK			},
-+	{ "shmem",			NR_SHMEM			},
-+	{ "file_mapped",		NR_FILE_MAPPED			},
-+	{ "file_dirty",			NR_FILE_DIRTY			},
-+	{ "file_writeback",		NR_WRITEBACK			},
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--	{ "anon_thp", PAGE_SIZE, NR_ANON_THPS },
--	{ "file_thp", PAGE_SIZE, NR_FILE_THPS },
--	{ "shmem_thp", PAGE_SIZE, NR_SHMEM_THPS },
-+	{ "anon_thp",			NR_ANON_THPS			},
-+	{ "file_thp",			NR_FILE_THPS			},
-+	{ "shmem_thp",			NR_SHMEM_THPS			},
- #endif
--	{ "inactive_anon", PAGE_SIZE, NR_INACTIVE_ANON },
--	{ "active_anon", PAGE_SIZE, NR_ACTIVE_ANON },
--	{ "inactive_file", PAGE_SIZE, NR_INACTIVE_FILE },
--	{ "active_file", PAGE_SIZE, NR_ACTIVE_FILE },
--	{ "unevictable", PAGE_SIZE, NR_UNEVICTABLE },
--
--	/*
--	 * Note: The slab_reclaimable and slab_unreclaimable must be
--	 * together and slab_reclaimable must be in front.
--	 */
--	{ "slab_reclaimable", 1, NR_SLAB_RECLAIMABLE_B },
--	{ "slab_unreclaimable", 1, NR_SLAB_UNRECLAIMABLE_B },
-+	{ "inactive_anon",		NR_INACTIVE_ANON		},
-+	{ "active_anon",		NR_ACTIVE_ANON			},
-+	{ "inactive_file",		NR_INACTIVE_FILE		},
-+	{ "active_file",		NR_ACTIVE_FILE			},
-+	{ "unevictable",		NR_UNEVICTABLE			},
-+	{ "slab_reclaimable",		NR_SLAB_RECLAIMABLE_B		},
-+	{ "slab_unreclaimable",		NR_SLAB_UNRECLAIMABLE_B		},
- 
- 	/* The memory events */
--	{ "workingset_refault_anon", 1, WORKINGSET_REFAULT_ANON },
--	{ "workingset_refault_file", 1, WORKINGSET_REFAULT_FILE },
--	{ "workingset_activate_anon", 1, WORKINGSET_ACTIVATE_ANON },
--	{ "workingset_activate_file", 1, WORKINGSET_ACTIVATE_FILE },
--	{ "workingset_restore_anon", 1, WORKINGSET_RESTORE_ANON },
--	{ "workingset_restore_file", 1, WORKINGSET_RESTORE_FILE },
--	{ "workingset_nodereclaim", 1, WORKINGSET_NODERECLAIM },
-+	{ "workingset_refault_anon",	WORKINGSET_REFAULT_ANON		},
-+	{ "workingset_refault_file",	WORKINGSET_REFAULT_FILE		},
-+	{ "workingset_activate_anon",	WORKINGSET_ACTIVATE_ANON	},
-+	{ "workingset_activate_file",	WORKINGSET_ACTIVATE_FILE	},
-+	{ "workingset_restore_anon",	WORKINGSET_RESTORE_ANON		},
-+	{ "workingset_restore_file",	WORKINGSET_RESTORE_FILE		},
-+	{ "workingset_nodereclaim",	WORKINGSET_NODERECLAIM		},
- };
- 
-+/* Translate stat items to the correct unit for memory.stat output */
-+static int memcg_page_state_unit(int item)
-+{
-+	int unit;
-+
-+	switch (item) {
-+	case MEMCG_PERCPU_B:
-+	case NR_SLAB_RECLAIMABLE_B:
-+	case NR_SLAB_UNRECLAIMABLE_B:
-+	case WORKINGSET_REFAULT_ANON:
-+	case WORKINGSET_REFAULT_FILE:
-+	case WORKINGSET_ACTIVATE_ANON:
-+	case WORKINGSET_ACTIVATE_FILE:
-+	case WORKINGSET_RESTORE_ANON:
-+	case WORKINGSET_RESTORE_FILE:
-+	case WORKINGSET_NODERECLAIM:
-+		unit = 1;
-+		break;
-+	case NR_KERNEL_STACK_KB:
-+		unit = SZ_1K;
-+		break;
-+	default:
-+		unit = PAGE_SIZE;
-+		break;
-+	}
-+
-+	return unit;
-+}
-+
-+static inline unsigned long memcg_page_state_output(struct mem_cgroup *memcg,
-+						    int item)
-+{
-+	return memcg_page_state(memcg, item) * memcg_page_state_unit(item);
-+}
-+
- static char *memory_stat_format(struct mem_cgroup *memcg)
- {
- 	struct seq_buf s;
-@@ -1577,13 +1606,12 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
- 	for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
- 		u64 size;
- 
--		size = memcg_page_state(memcg, memory_stats[i].idx);
--		size *= memory_stats[i].ratio;
-+		size = memcg_page_state_output(memcg, memory_stats[i].idx);
- 		seq_buf_printf(&s, "%s %llu\n", memory_stats[i].name, size);
- 
- 		if (unlikely(memory_stats[i].idx == NR_SLAB_UNRECLAIMABLE_B)) {
--			size = memcg_page_state(memcg, NR_SLAB_RECLAIMABLE_B) +
--			       memcg_page_state(memcg, NR_SLAB_UNRECLAIMABLE_B);
-+			size += memcg_page_state_output(memcg,
-+							NR_SLAB_RECLAIMABLE_B);
- 			seq_buf_printf(&s, "slab %llu\n", size);
- 		}
- 	}
-@@ -6377,6 +6405,12 @@ static int memory_stat_show(struct seq_file *m, void *v)
- }
- 
- #ifdef CONFIG_NUMA
-+static inline unsigned long lruvec_page_state_output(struct lruvec *lruvec,
-+						     int item)
-+{
-+	return lruvec_page_state(lruvec, item) * memcg_page_state_unit(item);
-+}
-+
- static int memory_numa_stat_show(struct seq_file *m, void *v)
- {
- 	int i;
-@@ -6394,8 +6428,8 @@ static int memory_numa_stat_show(struct seq_file *m, void *v)
- 			struct lruvec *lruvec;
- 
- 			lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(nid));
--			size = lruvec_page_state(lruvec, memory_stats[i].idx);
--			size *= memory_stats[i].ratio;
-+			size = lruvec_page_state_output(lruvec,
-+							memory_stats[i].idx);
- 			seq_printf(m, " N%d=%llu", nid, size);
- 		}
- 		seq_putc(m, '\n');
+Ah, this is wrong. The call sites should be:
+
+	if (WARN_ON_ONCE(xfs_trans_context_active())) {
+		/* do error handling */
+		return error_value;
+	}
+
+because we might want to use xfs_trans_context_active() to check if
+we are in a transaction context or not and that should not generate
+a warning. Also, placing the warning at the call site gives a more
+accurate indication of which IO path generated the warning....
+
+Cheers,
+
+Dave.
 -- 
-2.11.0
-
+Dave Chinner
+david@fromorbit.com
