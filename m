@@ -2,131 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98AEF2D2655
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 09:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE7E2D275E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 10:20:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbgLHIhe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 03:37:34 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:50221 "EHLO
+        id S1728735AbgLHJTk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 04:19:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24903 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725208AbgLHIhe (ORCPT
+        by vger.kernel.org with ESMTP id S1728585AbgLHJTj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 03:37:34 -0500
+        Tue, 8 Dec 2020 04:19:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607416567;
+        s=mimecast20190719; t=1607419093;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=0DvwN+nbpM7GczMlB5PaNqfbUXqBsL7aXUwvB7aLZR4=;
-        b=WC1vYy7Zwia9RI9KbcpXEZT3HwXd9L/U+Ep6I3GCAYciol1GAcTdYA4ztBOzr+ZHY8FaEv
-        lIomJnghxhYN70y9PCYPSjh48n5C1N6aUoq3Pk14QFOsimFyeeLwmWSlAhBRS1pG43CghN
-        uvrbvMndemReJt5v1TcTN8AzPwyUmGo=
+        bh=Af9UgpwqHoabg6xVM1FDF5VpKj0YXv9xZDctidosARM=;
+        b=WoFZb7Q2VXJrh3hN1fRpB35HFSBLCp7xbNwiiU7Bwvo9GEo7LRyUEtBBByU2zuQs30ncdR
+        qUjhb2AvXLKIQgYnzxbT6T672XksNzuDEaZUEFYQnrbTWNXZ5kwHggN3AxdVK/r8EKvXEP
+        1POysRiMopOixpdwh1VaIGF/ivpblH8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-186-dxz25ZAtOHqbSlHdfc70PQ-1; Tue, 08 Dec 2020 03:36:05 -0500
-X-MC-Unique: dxz25ZAtOHqbSlHdfc70PQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-133-j3_6w5N1NCam5W3BvH8aNA-1; Tue, 08 Dec 2020 04:18:09 -0500
+X-MC-Unique: j3_6w5N1NCam5W3BvH8aNA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0F77380EDA3;
-        Tue,  8 Dec 2020 08:36:04 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 422CE9CDA0;
+        Tue,  8 Dec 2020 09:18:06 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 99B985D6AB;
-        Tue,  8 Dec 2020 08:36:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9719219C78;
+        Tue,  8 Dec 2020 09:18:03 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6db2af99-e6e3-7f28-231e-2bdba05ca5fa@infradead.org>
-References: <6db2af99-e6e3-7f28-231e-2bdba05ca5fa@infradead.org> <0000000000002a530d05b400349b@google.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     dhowells@redhat.com,
-        syzbot <syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: memory leak in generic_parse_monolithic [+PATCH]
+In-Reply-To: <CAMj1kXG5_ePTr7KCxE-m6g9xNHr72-xPMoED7Jmx38uNt6bzoQ@mail.gmail.com>
+References: <CAMj1kXG5_ePTr7KCxE-m6g9xNHr72-xPMoED7Jmx38uNt6bzoQ@mail.gmail.com> <20201204154626.GA26255@fieldses.org> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <118876.1607093975@warthog.procyon.org.uk> <122997.1607097713@warthog.procyon.org.uk> <20201204160347.GA26933@fieldses.org> <125709.1607100601@warthog.procyon.org.uk> <CAMj1kXEOm_yh478i+dqPiz0eoBxp4eag3j2qHm5eBLe+2kihoQ@mail.gmail.com> <127458.1607102368@warthog.procyon.org.uk> <CAMj1kXFe50HvZLxG6Kh-oYBCf5uu51hhuh7mW5UQ62ZSqmu_xA@mail.gmail.com> <468625.1607342512@warthog.procyon.org.uk> <CAMj1kXH_gEjgZKx=8uQgv=ckBqTVoh3vrHj=O-nY-nm5VMgLaA@mail.gmail.com> <482243.1607350500@warthog.procyon.org.uk>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     dhowells@redhat.com, Bruce Fields <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:BPF JIT for MIPS (32-BIT AND 64-BIT)" 
+        <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
+Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <928042.1607416561.1@warthog.procyon.org.uk>
-Date:   Tue, 08 Dec 2020 08:36:01 +0000
-Message-ID: <928043.1607416561@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-ID: <931124.1607419082.1@warthog.procyon.org.uk>
+Date:   Tue, 08 Dec 2020 09:18:02 +0000
+Message-ID: <931125.1607419082@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
+Ard Biesheuvel <ardb@kernel.org> wrote:
 
-> Otherwise please look at the patch below.
+Ard Biesheuvel <ardb@kernel.org> wrote:
 
-The patch won't help, since it's not going through sys_fsconfig() - worse, it
-introduces two new errors.
+> > > > I wonder if it would help if the input buffer and output buffer didn't
+> > > > have to correspond exactly in usage - ie. the output buffer could be
+> > > > used at a slower rate than the input to allow for buffering inside the
+> > > > crypto algorithm.
+> > >
+> > > I don't follow - how could one be used at a slower rate?
+> >
+> > I mean that the crypto algorithm might need to buffer the last part of the
+> > input until it has a block's worth before it can write to the output.
+> 
+> This is what is typically handled transparently by the driver. When
+> you populate a scatterlist, it doesn't matter how misaligned the
+> individual elements are, the scatterlist walker will always present
+> the data in chunks that the crypto algorithm can manage. This is why
+> using a single scatterlist for the entire input is preferable in
+> general.
 
->  		fc->source = param->string;
-> -		param->string = NULL;
+Yep - but the assumption currently on the part of the callers is that they
+provide the input buffer and corresponding output buffer - and that the
+algorithm will transfer data from one to the other, such that the same amount
+of input and output bufferage will be used.
 
-This will cause the string now attached to fc->source to be freed by the
-caller.  No, the original is doing the correct thing here.  The point is to
-steal the string.
+However, if we start pushing data in progressively, this would no longer hold
+true unless we also require the caller to only present in block-size chunks.
 
-> @@ -262,7 +262,9 @@ static int vfs_fsconfig_locked(struct fs
->
-> -		return vfs_parse_fs_param(fc, param);
-> +		ret = vfs_parse_fs_param(fc, param);
-> +		kfree(param->string);
-> +		return ret;
+For example, if I gave the encryption function 120 bytes of data and a 120
+byte output buffer, but the algorithm has a 16-byte blocksize, it will,
+presumably, consume 120 bytes of input, but it can only write 112 bytes of
+output at this time.  So the current interface would need to evolve to
+indicate separately how much input has been consumed and how much output has
+been produced - in which case it can't be handled transparently.
 
-But your stack trace shows you aren't going through sys_fsconfig(), so this
-function isn't involved.  Further, this introduces a double free, since
-sys_fsconfig() frees param.string after it drops uapi_mutex.
-
-Looking at the backtrace:
-
->      kmemdup_nul+0x2d/0x70 mm/util.c:151
->      vfs_parse_fs_string+0x6e/0xd0 fs/fs_context.c:155
->      generic_parse_monolithic+0xe0/0x130 fs/fs_context.c:201
->      do_new_mount fs/namespace.c:2871 [inline]
->      path_mount+0xbbb/0x1170 fs/namespace.c:3205
->      do_mount fs/namespace.c:3218 [inline]
->      __do_sys_mount fs/namespace.c:3426 [inline]
->      __se_sys_mount fs/namespace.c:3403 [inline]
->      __x64_sys_mount+0x18e/0x1d0 fs/namespace.c:3403
-
-A couple of possibilities spring to mind from that: maybe
-vfs_parse_fs_string() is not releasing the param.string - but that's not the
-problem since we stole the string and the free is definitely there at the
-bottom of the function:
-
-	int vfs_parse_fs_string(struct fs_context *fc, const char *key,
-				const char *value, size_t v_size)
-	{
-	...
-		kfree(param.string);
-		return ret;
-	}
-
-or fc->source is not being cleaned up in vfs_clean_context() - but that's
-there as well:
-
-	void vfs_clean_context(struct fs_context *fc)
-	{
-	...
-		kfree(fc->source);
-		fc->source = NULL;
-
-In either of these cases, I would expect this to have already become evident
-from other filesystem mounts as there would be a lot of leaking going on,
-particularly with the first.
-
-Now the backtrace only shows what the state was when the string was allocated;
-it doesn't show what happened to it after that, so another possibility is that
-the filesystem being mounted nicked what vfs_parse_fs_param() had rightfully
-stolen, transferring fc->source somewhere else and then failed to release it -
-most likely on mount failure (ie. it's an error handling bug in the
-filesystem).
-
-Do we know what filesystem it was?
+For krb5, it's actually worse than that, since we want to be able to
+insert/remove a header and a trailer (and might need to go back and update the
+header after) - but I think in the krb5 case, we need to treat the header and
+trailer specially and update them after the fact in the wrapping case
+(unwrapping is not a problem, since we can just cache the header).
 
 David
 
