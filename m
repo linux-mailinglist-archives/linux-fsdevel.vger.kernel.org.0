@@ -2,22 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C87C2D2DD7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 16:06:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D52672D2E21
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 16:23:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729957AbgLHPGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 10:06:09 -0500
-Received: from verein.lst.de ([213.95.11.211]:46580 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729471AbgLHPGJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 10:06:09 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 64C856736F; Tue,  8 Dec 2020 16:05:21 +0100 (CET)
-Date:   Tue, 8 Dec 2020 16:05:20 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S1729938AbgLHPXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 10:23:25 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:47472 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729386AbgLHPXY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Dec 2020 10:23:24 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kmeoz-0002VB-M8; Tue, 08 Dec 2020 15:22:34 +0000
+Date:   Tue, 8 Dec 2020 16:22:22 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         linux-fsdevel@vger.kernel.org,
         John Johansen <john.johansen@canonical.com>,
@@ -38,7 +41,7 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         David Howells <dhowells@redhat.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
         Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
         Aleksa Sarai <cyphar@cyphar.com>,
         Lennart Poettering <lennart@poettering.net>,
         "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
@@ -51,23 +54,35 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org
 Subject: Re: [PATCH v4 06/40] fs: add mount_setattr()
-Message-ID: <20201208150520.GA8252@lst.de>
-References: <20201203235736.3528991-1-christian.brauner@ubuntu.com> <20201203235736.3528991-7-christian.brauner@ubuntu.com> <20201207171456.GC13614@lst.de> <20201208103707.px6buexwuusn6d3f@wittgenstein>
+Message-ID: <20201208152222.uuyj4odgawupuxcl@wittgenstein>
+References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
+ <20201203235736.3528991-7-christian.brauner@ubuntu.com>
+ <20201207171456.GC13614@lst.de>
+ <20201208103707.px6buexwuusn6d3f@wittgenstein>
+ <20201208150520.GA8252@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201208103707.px6buexwuusn6d3f@wittgenstein>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20201208150520.GA8252@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 11:37:07AM +0100, Christian Brauner wrote:
-> You want a v5 with the changes you requested before you continue
-> reviewing? Otherwise I'll just let you go through v4.
+On Tue, Dec 08, 2020 at 04:05:20PM +0100, Christoph Hellwig wrote:
+> On Tue, Dec 08, 2020 at 11:37:07AM +0100, Christian Brauner wrote:
+> > You want a v5 with the changes you requested before you continue
+> > reviewing? Otherwise I'll just let you go through v4.
+> 
+> I don't think it is worth resending so quickly.  We're not going to
+> make 5.11 for this series anyway.
 
-I don't think it is worth resending so quickly.  We're not going to
-make 5.11 for this series anyway.
+Yeah, I didn't target 5.11.
 
-I plan to add XFS support as a learning exercise, but I'll probably need
-a little more time to get to that.
+> 
+> I plan to add XFS support as a learning exercise, but I'll probably need
+> a little more time to get to that.
+
+Oh, excellent. I was thinking about doing xfs next. In any case, I'm
+happy to help with the port if you want.
+
+Christian
