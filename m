@@ -2,62 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A982A2D2C43
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 14:54:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1497D2D2C8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 15:05:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbgLHNyZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 08:54:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbgLHNyZ (ORCPT
+        id S1729661AbgLHOEa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 09:04:30 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52169 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729497AbgLHOEZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 08:54:25 -0500
-Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C27FC061749
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Dec 2020 05:53:45 -0800 (PST)
-Received: by mail-ua1-x944.google.com with SMTP id s42so1729054uad.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Dec 2020 05:53:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=KXqwKHybk8RYJktvaET1ahBukLZy1u/aQy98sG563lk=;
-        b=chWsjAfck73KeslinwsdZiTZD1rGdt3gsNyxwPxhyjQPB7mb+qKvAS6aTh9OVRM2eQ
-         CxDNSDf89WiiQvu6HItyxqEP0khJHgOuV4axzE/1NBDlQ6t0RTmUKQiBzLd9tgE3c3uS
-         ykw0Qpi8NoMpqzFuX91s/u/LRDoI1gmUzfc2CI5LinXPo2k+lljp+DlMEa/2uf23J+BA
-         sQ/5d+wP9tOEJE/FRDNYYdbkOG107BOhsNa5sr4vU0XK7ihDGDPC5Db7YWk8viYqJIx4
-         JMXQWayq8ObH48anb9x5cpb61LeZstcrD6AaUZ+AwpNe6BEeHHJG6BZf5OusEnPg0osv
-         7lJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=KXqwKHybk8RYJktvaET1ahBukLZy1u/aQy98sG563lk=;
-        b=hgUlroat16hGwCs4Ctu8BNUUMNZjGooXjyxaWH9qqMPvDwAqyvnPeGOPHGisBcX6Nx
-         gdr9CUQCiPguiao9HpSuiaSrbt8Kjuwi4Yk3esAQVHyTyQ5QHadjU60UFISOa/RKFtKf
-         qcEyMpxdiFKQNGEZUCN2Widy/fam6ZDuMgL5wnOeehmlW7Mf1ciMGv3XT+JHy1hdoesL
-         emRFugFug4RLDSHBZ/dLivQ4LR7z8AOvOpwLe4ZUx20lsud22dc8RAqJVmAHTvO2iyBE
-         lojrwWaxlqLg57wIZk/zGfd+CuoDF/aF/+mf27GyfOOMU2BQYVLIAOmKKoXOiJYC2sH/
-         MDww==
-X-Gm-Message-State: AOAM532pcMVVRiyHAjiuT+yOFsXJeypKECaP9e3JFSar9JqwC/ang74x
-        AYRsLhCnxT4yf5TjkXhnK6tCJAtcPyYqg/AyZFU=
-X-Google-Smtp-Source: ABdhPJz2lWFdTxCuP4yL/tEZ+IsbG5l560zdgjnPUnUn2RBtuY1w3GaWvtsc8bPyasX/6iiO90nSEx1mkVSa4Oz00F0=
-X-Received: by 2002:ab0:2707:: with SMTP id s7mr691011uao.65.1607435624386;
- Tue, 08 Dec 2020 05:53:44 -0800 (PST)
+        Tue, 8 Dec 2020 09:04:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607436179;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=X6d4iuw/2zncrstw5QmGL4uRz/t+VxjNUWTz4LWJVQk=;
+        b=DRjMUecdAfMjZsid90IY8vCM2eVJ8mWb6DLDT0+Bxw5P5VgTJ51Npc/3I8cNRQhVuBuGFB
+        I0EUsam8pvI+zOZzy8SEF0JAnroGB8Rm8WxhFbu00D1/tnjhL/IFVblJCFiSG645yLfG2k
+        MIjg5VG5BW23ZSqu7Uqsrr1ZRGIVcEc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-237-1yQZHnjvMACN12KejRdUFg-1; Tue, 08 Dec 2020 09:02:47 -0500
+X-MC-Unique: 1yQZHnjvMACN12KejRdUFg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3F2E858186;
+        Tue,  8 Dec 2020 14:02:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A45115D9F8;
+        Tue,  8 Dec 2020 14:02:42 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <955415.1607433903@warthog.procyon.org.uk>
+References: <955415.1607433903@warthog.procyon.org.uk> <118876.1607093975@warthog.procyon.org.uk> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
+To:     Chuck Lever <chuck.lever@oracle.com>,
+        Ard Biesheuvel <ardb@kernel.org>
+Cc:     dhowells@redhat.com, Bruce Fields <bfields@fieldses.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org
+Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
 MIME-Version: 1.0
-Received: by 2002:a05:6102:38d:0:0:0:0 with HTTP; Tue, 8 Dec 2020 05:53:44
- -0800 (PST)
-Reply-To: michellegoodman035@gmail.com
-From:   Shayma <shaymamarwan07@gmail.com>
-Date:   Tue, 8 Dec 2020 13:53:44 +0000
-Message-ID: <CAAgEbkmuq+MLyUyCpNWxbQaXOb6MythvkB2TCakM_m0AoczDzw@mail.gmail.com>
-Subject: From Michelle
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <959899.1607436161.1@warthog.procyon.org.uk>
+Date:   Tue, 08 Dec 2020 14:02:41 +0000
+Message-ID: <959900.1607436161@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello, I hope you received my message.
-I need quick responses
-well thank you
-Michelle
+David Howells <dhowells@redhat.com> wrote:
+
+> I wonder - would it make sense to reserve two arrays of scatterlist structs
+> and a mutex per CPU sufficient to map up to 1MiB of pages with each array
+> while the krb5 service is in use?
+
+Actually, simply reserving a set per CPU is probably unnecessary.  We could,
+say, set a minimum and a maximum on the reservations (say 2 -> 2*nr_cpus) and
+then allocate new ones when we run out.  Then let the memory shrinker clean
+them up off an lru list.
+
+David
+
