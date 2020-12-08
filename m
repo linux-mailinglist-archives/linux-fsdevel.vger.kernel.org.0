@@ -2,42 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 457E02D2C94
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 15:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD30A2D2CD9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 15:16:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbgLHOE6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 09:04:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729718AbgLHOE6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 09:04:58 -0500
-X-Gm-Message-State: AOAM533zDXagQPamJcCjm0vSMdgzUH+emfMx+uN/ClQgQharlccWqOTP
-        kZnOvoRe8EndPV8LA2qgHNfXuQDvH6ielxA9QLE=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607436257;
-        bh=lDqq2eswXCj3EY+TJU1U1M4S88oFP1VOECqQvTLwIYk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=huKOiS6vTt7nRhQpExK8DNb4h5Pv0evwMKQbfLx0IhhdrFwE8BE1BuC1muVURobOu
-         ST4nLS/ZHopUWB8YZac9l2BdtdjsyetfR6EV89vOuqQvQK/aenAm3V+nG7zVeW+w5F
-         KP4JOUwhIazs461yxwG2MM1FplLvvpGzli9t9KPMQQvPkwg09Tdk5pzardd4CnJ8uc
-         SbnTCXGOTbfgB64ub9z4gZO3MJeC/Af8FnqXPt2Hg7aTY5wQrz/nqTuKXqtiYmhBqa
-         BM2enEXefINKTlup0fU2LRo9J1BS26Lft0qtSthaRTqQVKtMJN7vapHRh/2jgnPjYv
-         pQq9esu8dZCjA==
-X-Google-Smtp-Source: ABdhPJxta+Y1usMiw3UnOu5t+6U7dNLt48uTZSJhRqrZc/PGcWcb8RD8IzREMTmeZYkQoYTac1yDx8/9+QCPcCzh6FM=
-X-Received: by 2002:a9d:12c:: with SMTP id 41mr16580172otu.77.1607436256848;
- Tue, 08 Dec 2020 06:04:16 -0800 (PST)
-MIME-Version: 1.0
-References: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
- <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
- <118876.1607093975@warthog.procyon.org.uk> <955415.1607433903@warthog.procyon.org.uk>
-In-Reply-To: <955415.1607433903@warthog.procyon.org.uk>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Tue, 8 Dec 2020 15:04:05 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXE+oi2Q7OE8o0xP4XabZt-y61NMG3Q3eyRzSG6cG9i4Kg@mail.gmail.com>
-Message-ID: <CAMj1kXE+oi2Q7OE8o0xP4XabZt-y61NMG3Q3eyRzSG6cG9i4Kg@mail.gmail.com>
-Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
-To:     David Howells <dhowells@redhat.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        id S1729457AbgLHOPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 09:15:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36332 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729379AbgLHOPV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Dec 2020 09:15:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607436835;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tffr6g9iDgmcI1vdIiaVq+38gJQDylZk+4muqW+tsNE=;
+        b=IJTpaHRCryhPZRPUjIJCq324nsns++Zv4yT18skVPHM7i0XQVOXz6RWw8OM/bmKJ2EZxXE
+        p0Nh0t+Wcu3JL4We+A4qu8TNFA9Wyxe64jU/0NdLUJoriCdPSFsLKU3mq8u3rync1dhc+a
+        /oQI2KML24M2ie9Fw4EDurIWg+mXtnA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-386-_6Jn5BKhNzC6LVuO_YUIoQ-1; Tue, 08 Dec 2020 09:13:53 -0500
+X-MC-Unique: _6Jn5BKhNzC6LVuO_YUIoQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9DADC19611AE;
+        Tue,  8 Dec 2020 14:13:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E13960BE2;
+        Tue,  8 Dec 2020 14:13:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAMj1kXE+oi2Q7OE8o0xP4XabZt-y61NMG3Q3eyRzSG6cG9i4Kg@mail.gmail.com>
+References: <CAMj1kXE+oi2Q7OE8o0xP4XabZt-y61NMG3Q3eyRzSG6cG9i4Kg@mail.gmail.com> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <118876.1607093975@warthog.procyon.org.uk> <955415.1607433903@warthog.procyon.org.uk>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     dhowells@redhat.com, Chuck Lever <chuck.lever@oracle.com>,
         Bruce Fields <bfields@fieldses.org>,
         CIFS <linux-cifs@vger.kernel.org>,
         Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
@@ -48,33 +52,34 @@ Cc:     Chuck Lever <chuck.lever@oracle.com>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <960648.1607436828.1@warthog.procyon.org.uk>
+Date:   Tue, 08 Dec 2020 14:13:48 +0000
+Message-ID: <960649.1607436828@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 8 Dec 2020 at 14:25, David Howells <dhowells@redhat.com> wrote:
->
-> I wonder - would it make sense to reserve two arrays of scatterlist structs
-> and a mutex per CPU sufficient to map up to 1MiB of pages with each array
-> while the krb5 service is in use?
->
-> That way sunrpc could, say, grab the mutex, map the input and output buffers,
-> do the entire crypto op in one go and then release the mutex - at least for
-> big ops, small ops needn't use this service.
->
-> For rxrpc/afs's use case this would probably be overkill - it's doing crypto
-> on each packet, not on whole operations - but I could still make use of it
-> there.
->
-> However, that then limits the maximum size of an op to 1MiB, plus dangly bits
-> on either side (which can be managed with chained scatterlist structs) and
-> also limits the number of large simultaneous krb5 crypto ops we can do.
->
+Ard Biesheuvel <ardb@kernel.org> wrote:
 
-Apparently, it is permitted for gss_krb5_cts_crypt() to do a
-kmalloc(GFP_NOFS) in the context from where gss_krb5_aes_encrypt() is
-being invoked, and so I don't see why it wouldn't be possible to
-simply kmalloc() a scatterlist[] of the appropriate size, populate it
-with all the pages, bufs and whatever else gets passed into the
-skcipher, and pass it into the skcipher in one go.
+> Apparently, it is permitted for gss_krb5_cts_crypt() to do a
+> kmalloc(GFP_NOFS) in the context from where gss_krb5_aes_encrypt() is
+> being invoked, and so I don't see why it wouldn't be possible to
+> simply kmalloc() a scatterlist[] of the appropriate size, populate it
+> with all the pages, bufs and whatever else gets passed into the
+> skcipher, and pass it into the skcipher in one go.
+
+I never said it wasn't possible.  But doing a pair of order-1 allocations from
+there might have a significant detrimental effect on performance - in which
+case Trond and co. will say "no".
+
+Remember: to crypt 1MiB of data on a 64-bit machine requires 2 x minimum 8KiB
+scatterlist arrays.  That's assuming the pages in the middle are contiguous,
+which might not be the case for a direct I/O read/write.  So for the DIO case,
+it could be involve an order-2 allocation (or chaining of single pages).
+
+David
+
