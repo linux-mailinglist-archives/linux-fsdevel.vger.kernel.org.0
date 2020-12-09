@@ -2,152 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E39D2D3A75
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 06:29:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDCF52D3B22
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 07:05:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbgLIF2h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 00:28:37 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:52656 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbgLIF2h (ORCPT
+        id S1727795AbgLIGEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 01:04:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727759AbgLIGEv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 00:28:37 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B95A0q9105596;
-        Wed, 9 Dec 2020 05:27:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=qzyRrI3IH/2QxeO7RQKqcBtsmjnFq4qnaFTyNmMyzMU=;
- b=amBzzgyLlfCa02zHEyp9XAR4VGXZTKgFy72hZz/ZsQLMiPoI7YcaivX2KctFgZZedUMm
- zu021tXs+mc+NRaxgk5TACKxR0C4VnNyCRgN1wKCoY1SGusg7Y6cN/08f16YqRZHelOl
- hR9sZLVuWbQEyZrMrN4rOGVGoiaeuVtUKjdc0kS1NmDgnKgK6MpXMTgKtRpW1awiZJND
- KTBv+j3xSBNl0+Av6bopvGfAvGnvAlu+J+nO4FS6y53M3GvSJGo9DVftY9odZBoPwGOG
- 8OwWDC9ue/tv8kyzWCieBQd/TF/v852ZfErLI8yAY2NXvvltaLlcezK2p64LxuE4meM7 Ow== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 35825m69vu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 09 Dec 2020 05:27:42 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B95AWH9082424;
-        Wed, 9 Dec 2020 05:27:42 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 358m3yr718-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Dec 2020 05:27:42 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0B95RdaG028987;
-        Wed, 9 Dec 2020 05:27:39 GMT
-Received: from [192.168.10.102] (/39.109.186.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Dec 2020 21:27:38 -0800
-Subject: Re: [PATCH v10 12/41] btrfs: implement zoned chunk allocator
-To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        dsterba@suse.com
-Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <e7896fe18651e3ad12a96ff3ec3255e3127c8239.1605007036.git.naohiro.aota@wdc.com>
-From:   Anand Jain <anand.jain@oracle.com>
-Message-ID: <b83b65ea-dbfc-b5f4-9681-6e9e53c76abb@oracle.com>
-Date:   Wed, 9 Dec 2020 13:27:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+        Wed, 9 Dec 2020 01:04:51 -0500
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25BF1C061793
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Dec 2020 22:04:11 -0800 (PST)
+Received: by mail-qt1-x844.google.com with SMTP id z3so224655qtw.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Dec 2020 22:04:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xcjmExBjtT7+7ElyensWFUdifiLprjWgTfo4sIg4HQE=;
+        b=agQnj7Gb2gtVc1cIrG7dVR8+y1SxanEFbdYCRrRtV7C+K24ebgG1nsdhZ59T7gipio
+         1rrRTYtvNa4OQ/qmNSoQD13A92lOsNTk+VdpURMsg0ivBaC4mbYdr5BZJtAOc5C5yzrW
+         uGdba1qiUfE4saX7TWQKYuYAW8pbOnrFrB0oa0kq9bGWncwnn0dDUCF94yXAfptyd7tM
+         T/XXt49XTseTv0Vv4POtJBMwUMkk9zHzqty1+xZ/PTCJZjrkRz+UDxiy47ujbHvi3yi8
+         tSnruOUX8Hv5L0gpUSnSciqiWOu1+05e0gQ0hy/NcuxjWAwsTbSUnLpgpvqR8futgxUJ
+         vzzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xcjmExBjtT7+7ElyensWFUdifiLprjWgTfo4sIg4HQE=;
+        b=hsYdfFbNzDopP7XUmUjQ8p4UqevyrBIDWQLdMk+n7JCpVcajMXkqvNM5CR7wLItpzw
+         YPIsFqZdGQsfWJgOwl5xDtgQCAoYQN21fiXyjOPjvUdiGA3CIpX0/BiMzILnClx++W2t
+         x3T1gzhyij4rozbp97CxyQYiEevH6XtJa5lVEK+D3G42bCGYgDOJVOHtoHRhBzCs8mJ4
+         B1eSaTzrnkC2hW0ROrXcKLDoYviQ6+qjDVZ1RA7Y+aoDxSt+qul6dfZQicRGlLClqoAB
+         sGGqHPzsxf00HFC5Xp67gDzC/G87n2Ke2Yh3t0kyrqcY++raMBhZt8E8l0BamWPEBguc
+         14aA==
+X-Gm-Message-State: AOAM530R9N7fW9VxWdyZhxkgssO41vg5tT9lsHS0axMPiNXYr2w3QYsZ
+        YVcD3sLyLnaAUibzHFoc24SdTPk+mBof5AuT+qsMUA==
+X-Google-Smtp-Source: ABdhPJyB9vNBchtypc5KPsub1w9raoVQSQwzPvelJqUhx25QqIML9E1ZKQvJNTMgIav4XBq8y/fHWIkv+jtkQODkM9I=
+X-Received: by 2002:ac8:4986:: with SMTP id f6mr1413480qtq.43.1607493849973;
+ Tue, 08 Dec 2020 22:04:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <e7896fe18651e3ad12a96ff3ec3255e3127c8239.1605007036.git.naohiro.aota@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9829 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012090036
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9829 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501 mlxscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012090036
+References: <1c752ffe-8118-f9ea-e928-d92783a5c516@infradead.org>
+ <6db2af99-e6e3-7f28-231e-2bdba05ca5fa@infradead.org> <0000000000002a530d05b400349b@google.com>
+ <928043.1607416561@warthog.procyon.org.uk> <1030308.1607468099@warthog.procyon.org.uk>
+ <e6d9fd7e-ea43-25a6-9f1e-16a605de0f2d@infradead.org>
+In-Reply-To: <e6d9fd7e-ea43-25a6-9f1e-16a605de0f2d@infradead.org>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 9 Dec 2020 07:03:58 +0100
+Message-ID: <CACT4Y+bbh=5SLG_ruq1QKd3xKaC-NzJo842KP7cmXFcRRrmOig@mail.gmail.com>
+Subject: Re: memory leak in generic_parse_monolithic [+PATCH]
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        syzbot <syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Dec 9, 2020 at 12:15 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 12/8/20 2:54 PM, David Howells wrote:
+> > Randy Dunlap <rdunlap@infradead.org> wrote:
+> >
+> >>> Now the backtrace only shows what the state was when the string was allocated;
+> >>> it doesn't show what happened to it after that, so another possibility is that
+> >>> the filesystem being mounted nicked what vfs_parse_fs_param() had rightfully
+> >>> stolen, transferring fc->source somewhere else and then failed to release it -
+> >>> most likely on mount failure (ie. it's an error handling bug in the
+> >>> filesystem).
+> >>>
+> >>> Do we know what filesystem it was?
+> >>
+> >> Yes, it's call AFS (or kAFS).
+> >
+> > Hmmm...  afs parses the string in afs_parse_source() without modifying it,
+> > then moves the pointer to fc->source (parallelling vfs_parse_fs_param()) and
+> > doesn't touch it again.  fc->source should be cleaned up by do_new_mount()
+> > calling put_fs_context() at the end of the function.
+> >
+> > As far as I can tell with the attached print-insertion patch, it works, called
+> > by the following commands, some of which are correct and some which aren't:
+> >
+> > # mount -t afs none /xfstest.test/ -o dyn
+> > # umount /xfstest.test
+> > # mount -t afs "" /xfstest.test/ -o foo
+> > mount: /xfstest.test: bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program.
+> > # umount /xfstest.test
+> > umount: /xfstest.test: not mounted.
+> > # mount -t afs %xfstest.test20 /xfstest.test/ -o foo
+> > mount: /xfstest.test: bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program.
+> > # umount /xfstest.test
+> > umount: /xfstest.test: not mounted.
+> > # mount -t afs %xfstest.test20 /xfstest.test/
+> > # umount /xfstest.test
+> >
+> > Do you know if the mount was successful and what the mount parameters were?
+>
+> Here's the syzbot reproducer:
+> https://syzkaller.appspot.com/x/repro.c?x=129ca3d6500000
+>
+> The "interesting" mount params are:
+>         source=%^]$[+%](${:\017k[)-:,source=%^]$[+.](%{:\017\200[)-:,\000
+>
+> There is no other AFS activity: nothing mounted, no cells known (or
+> whatever that is), etc.
+>
+> I don't recall if the mount was successful and I can't test it just now.
+> My laptop is mucked up.
+>
+>
+> Be aware that this report could just be a false positive: it waits
+> for 5 seconds then looks for a memleak. AFAIK, it's possible that the "leaked"
+> memory is still in valid use and will be freed some day.
+
+FWIW KMEMLEAK scans memory for pointers. If it claims a memory leak,
+it means the heap object is not referenced anywhere anymore. There are
+no live pointers to it to call kfree or anything else.
+Some false positives are theoretically possible, but so I don't
+remember any, all reported ones were true leaks:
+https://syzkaller.appspot.com/upstream/fixed?manager=ci-upstream-gce-leak
 
 
 
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index db884b96a5ea..7831cf6c6da4 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -1416,6 +1416,21 @@ static bool contains_pending_extent(struct btrfs_device *device, u64 *start,
->   	return false;
->   }
->   
-> +static inline u64 dev_extent_search_start_zoned(struct btrfs_device *device,
-> +						u64 start)
-> +{
-> +	u64 tmp;
-> +
-> +	if (device->zone_info->zone_size > SZ_1M)
-> +		tmp = device->zone_info->zone_size;
-> +	else
-> +		tmp = SZ_1M;
-> +	if (start < tmp)
-> +		start = tmp;
-> +
-> +	return btrfs_align_offset_to_zone(device, start);
-> +}
-> +
->   static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
->   {
->   	switch (device->fs_devices->chunk_alloc_policy) {
-> @@ -1426,11 +1441,57 @@ static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
->   		 * make sure to start at an offset of at least 1MB.
->   		 */
->   		return max_t(u64, start, SZ_1M);
-> +	case BTRFS_CHUNK_ALLOC_ZONED:
-> +		return dev_extent_search_start_zoned(device, start);
->   	default:
->   		BUG();
->   	}
->   }
->   
-
-> @@ -165,4 +190,13 @@ static inline bool btrfs_check_super_location(struct btrfs_device *device,
->   	       !btrfs_dev_is_sequential(device, pos);
->   }
->   
-> +static inline u64 btrfs_align_offset_to_zone(struct btrfs_device *device,
-> +					     u64 pos)
-> +{
-> +	if (!device->zone_info)
-> +		return pos;
-> +
-> +	return ALIGN(pos, device->zone_info->zone_size);
-> +}
-> +
->   #endif
-> 
-
-  Small functions (such as above) can be opened coded to make the
-  reviewing easier. The btrfs_align_offset_to_zone() and
-  dev_extent_search_start_zoned() can be open coded and merged into
-  the parent function dev_extent_search_start() as below...
-
-dev_extent_search_start()
-::
-	case BTRFS_CHUNK_ALLOC_ZONED:
-		start = max_t(u64, start,
-			      max_t(u64, device->zone_info->zone_size, SZ_1M));
-
-          return ALIGN(start, device->zone_info->zone_size);
-
-  As of now we don't allow mix of zoned with regular device in a
-  btrfs (those are verified during mount and device add/replace).
-  So we don't have to check for the same again in
-  btrfs_align_offset_to_zone().
-
-Thanks.
+> > David
+> > ---
+> > diff --git a/fs/afs/super.c b/fs/afs/super.c
+> > index 6c5900df6aa5..4c44ec0196c9 100644
+> > --- a/fs/afs/super.c
+> > +++ b/fs/afs/super.c
+> > @@ -299,7 +299,7 @@ static int afs_parse_source(struct fs_context *fc, struct fs_parameter *param)
+> >               ctx->cell = cell;
+> >       }
+> >
+> > -     _debug("CELL:%s [%p] VOLUME:%*.*s SUFFIX:%s TYPE:%d%s",
+> > +     kdebug("CELL:%s [%p] VOLUME:%*.*s SUFFIX:%s TYPE:%d%s",
+> >              ctx->cell->name, ctx->cell,
+> >              ctx->volnamesz, ctx->volnamesz, ctx->volname,
+> >              suffix ?: "-", ctx->type, ctx->force ? " FORCE" : "");
+> > @@ -318,6 +318,8 @@ static int afs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> >       struct afs_fs_context *ctx = fc->fs_private;
+> >       int opt;
+> >
+> > +     kenter("%s,%p '%s'", param->key, param->string, param->string);
+> > +
+> >       opt = fs_parse(fc, afs_fs_parameters, param, &result);
+> >       if (opt < 0)
+> >               return opt;
+> > diff --git a/fs/fs_context.c b/fs/fs_context.c
+> > index 2834d1afa6e8..f530a33876ce 100644
+> > --- a/fs/fs_context.c
+> > +++ b/fs/fs_context.c
+> > @@ -450,6 +450,8 @@ void put_fs_context(struct fs_context *fc)
+> >       put_user_ns(fc->user_ns);
+> >       put_cred(fc->cred);
+> >       put_fc_log(fc);
+> > +     if (strcmp(fc->fs_type->name, "afs") == 0)
+> > +             printk("PUT %p '%s'\n", fc->source, fc->source);
+> >       put_filesystem(fc->fs_type);
+> >       kfree(fc->source);
+> >       kfree(fc);
+> > @@ -671,6 +673,8 @@ void vfs_clean_context(struct fs_context *fc)
+> >       fc->s_fs_info = NULL;
+> >       fc->sb_flags = 0;
+> >       security_free_mnt_opts(&fc->security);
+> > +     if (strcmp(fc->fs_type->name, "afs") == 0)
+> > +             printk("CLEAN %p '%s'\n", fc->source, fc->source);
+> >       kfree(fc->source);
+> >       fc->source = NULL;
+> >
+> >
+>
+> I'll check more after my test machine is working again.
+>
+> thanks.
+> --
+> ~Randy
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/e6d9fd7e-ea43-25a6-9f1e-16a605de0f2d%40infradead.org.
