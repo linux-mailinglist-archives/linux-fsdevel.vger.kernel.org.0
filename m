@@ -2,76 +2,284 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A64BC2D46A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 17:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B6A42D46BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 17:28:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731898AbgLIQVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 11:21:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53768 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731901AbgLIQVf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 11:21:35 -0500
-Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01E0C06179C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Dec 2020 08:20:54 -0800 (PST)
-Received: by mail-vs1-xe44.google.com with SMTP id h6so1185308vsr.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 08:20:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ftrjIMacRnCDUW60B5wDdWIgLtC6j6ITMAxZ0z4dcsk=;
-        b=HgrvSW72NUDBACx2rcJOdsk9j2ywqmTiRhxzfml2ObmeS9/p68ApjmmEUiVuFFixel
-         U8V/3sWV/jT/RnYtuN76/jqqa0beH35lqx0GkOdrSQB8kmGRwv6xH/mpxgBW9stqYh98
-         TB1KeZ8zKUBTeHyC8I0eCxJ7EFkcfOUQYVVWk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ftrjIMacRnCDUW60B5wDdWIgLtC6j6ITMAxZ0z4dcsk=;
-        b=r9mp2hgpR28lsLisayV6GujSGmxccdT1d5MlO8IThWdnFmw9g0exRk6Y0IEnnQQ134
-         rtXyODOiajDpl9yOyI4ypNMeHj7ow5miney80Eb+QWEeGctqaGfnXIBil3Vt5BlHnJmY
-         s6yDxYP/0NSJTlcO4ev4mOf468F8PybK8Hdz6si/OvHW990byuI7q6JBeq3lQaeswPGk
-         OS0s0yIf2r2JI/6+9K6e8rjIOmQOLdIlv3ho9Xw0g4kiFVoLcxz0dmL8jBds1CmHoRVG
-         ltKSsRrfXCtp1kDEmrYlTZ1rb1SmCDQO1YhwemhbWHKBPS/8P0Ai9edRMaCz+zdQ27Is
-         JlHA==
-X-Gm-Message-State: AOAM533V77t+3Wc7hMiDJrvoUb/9wocwIVCcso4geclx+3FmGNVzNPB4
-        Q+4JXQb73Zm+ihbPm7xELh04SJ/+6chzIjwDcDdhxQ==
-X-Google-Smtp-Source: ABdhPJzZZ3IkQz7rOL8NyykGCELcBs/amTcJ+Xv2OgUQT+RVIeDoKVuHGvs38tWdvxSIhPXmjhSG0BuRFZBayhnap/U=
-X-Received: by 2002:a67:ed57:: with SMTP id m23mr2755029vsp.7.1607530854236;
- Wed, 09 Dec 2020 08:20:54 -0800 (PST)
+        id S1731291AbgLIQ1E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 11:27:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42014 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730349AbgLIQ1B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Dec 2020 11:27:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5186FAC9A;
+        Wed,  9 Dec 2020 16:26:16 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 03EC91E133E; Wed,  9 Dec 2020 17:26:16 +0100 (CET)
+Date:   Wed, 9 Dec 2020 17:26:15 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+f427adf9324b92652ccc@syzkaller.appspotmail.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: kernel BUG at fs/notify/dnotify/dnotify.c:LINE! (2)
+Message-ID: <20201209162615.GA2332@quack2.suse.cz>
+References: <000000000000be4c9505b4c35420@google.com>
+ <20201209133842.GA28118@quack2.suse.cz>
+ <20201209135934.GB28118@quack2.suse.cz>
+ <CAJfpegtZc=qXiQ55UOM1bhhPhhHkvPp3DzXSLS93uAfXSQ5vBw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-4-mszeredi@redhat.com>
- <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com> <CAJfpegsGpS=cym2NpnS6H-uMyLMKdbLpE1QxiDz4GQU1s-dYfg@mail.gmail.com>
-In-Reply-To: <CAJfpegsGpS=cym2NpnS6H-uMyLMKdbLpE1QxiDz4GQU1s-dYfg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 9 Dec 2020 17:20:43 +0100
-Message-ID: <CAJfpeguvt-Mia9YmT55q3R9tSFocpgq7FzjDKJgnaOEQsaBNVA@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] ovl: check privs before decoding file handle
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtZc=qXiQ55UOM1bhhPhhHkvPp3DzXSLS93uAfXSQ5vBw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 11:13 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Wed 09-12-20 17:15:02, Miklos Szeredi wrote:
+> On Wed, Dec 9, 2020 at 2:59 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 09-12-20 14:38:42, Jan Kara wrote:
+> > > Hello!
+> > >
+> > > so I was debugging the dnotify crash below (it's 100% reproducible for me)
+> > > and I came to the following. The reproducer opens 'file0' on FUSE
+> > > filesystem which is a directory at that point. Then it attached dnotify
+> > > mark to the directory 'file0' and then it does something to the FUSE fs
+> > > which I don't understand but the result is that when FUSE is unmounted the
+> > > 'file0' inode is actually a regular file (note that I've verified this is
+> > > really the same inode pointer). This then confuses dnotify which doesn't
+> > > tear down its structures properly and eventually crashes. So my question
+> > > is: How can an inode on FUSE filesystem morph from a dir to a regular file?
+> > > I presume this could confuse much more things than just dnotify?
+> > >
+> > > Before I dwelve more into FUSE internals, any idea Miklos what could have
+> > > gone wrong and how to debug this further?
+> >
+> > I've got an idea where to look and indeed it is the fuse_do_getattr() call
+> > that finds attributes returned by the server are inconsistent so it calls
+> > make_bad_inode() which, among other things, does:
+> >
+> >         inode->i_mode = S_IFREG;
+> >
+> > Indeed calling make_bad_inode() on a live inode doesn't look like a good
+> > idea. IMHO FUSE needs to come up with some other means of marking the inode
+> > as stale. Miklos?
+> 
+> Something like the attached.  It's untested and needs the
+> fuse_is_bad() test in more ops...
 
-> Hard link indexing should work without fh decoding, since it is only
-> encoding the file handle to search for the index entry, and encoding
-> is not privileged.
+The patch fixes the problem for me (the reproducer no longer crashes the
+kernel). So feel free to add:
 
-Tested this a bit and while hard link indexing does work,  inode
-lookup is broken since it uses the origin inode as a key (which is not
-available) instead of using the origin value directly.  This is
-fixable, but needs a fair amount of restructuring, so let's just
-postpone this and disable index for now, as you suggested.
+Tested-by: Jan Kara <jack@suse.cz>
 
-Thanks,
-Miklos
+								Honza
+
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index ff7dbeb16f88..1172179c9fba 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -202,7 +202,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+>  	int ret;
+>  
+>  	inode = d_inode_rcu(entry);
+> -	if (inode && is_bad_inode(inode))
+> +	if (inode && fuse_is_bad(inode))
+>  		goto invalid;
+>  	else if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
+>  		 (flags & LOOKUP_REVAL)) {
+> @@ -1030,7 +1030,7 @@ static int fuse_do_getattr(struct inode *inode, struct kstat *stat,
+>  	if (!err) {
+>  		if (fuse_invalid_attr(&outarg.attr) ||
+>  		    (inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
+> -			make_bad_inode(inode);
+> +			fuse_make_bad(inode);
+>  			err = -EIO;
+>  		} else {
+>  			fuse_change_attributes(inode, &outarg.attr,
+> @@ -1327,7 +1327,7 @@ static const char *fuse_get_link(struct dentry *dentry, struct inode *inode,
+>  	int err;
+>  
+>  	err = -EIO;
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		goto out_err;
+>  
+>  	if (fc->cache_symlinks)
+> @@ -1375,7 +1375,7 @@ static int fuse_dir_fsync(struct file *file, loff_t start, loff_t end,
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+>  	int err;
+>  
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		return -EIO;
+>  
+>  	if (fc->no_fsyncdir)
+> @@ -1664,7 +1664,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+>  
+>  	if (fuse_invalid_attr(&outarg.attr) ||
+>  	    (inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
+> -		make_bad_inode(inode);
+> +		fuse_make_bad(inode);
+>  		err = -EIO;
+>  		goto error;
+>  	}
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index c03034e8c152..30fdb3adf9b9 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -463,7 +463,7 @@ static int fuse_flush(struct file *file, fl_owner_t id)
+>  	FUSE_ARGS(args);
+>  	int err;
+>  
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		return -EIO;
+>  
+>  	err = write_inode_now(inode, 1);
+> @@ -535,7 +535,7 @@ static int fuse_fsync(struct file *file, loff_t start, loff_t end,
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+>  	int err;
+>  
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		return -EIO;
+>  
+>  	inode_lock(inode);
+> @@ -859,7 +859,7 @@ static int fuse_readpage(struct file *file, struct page *page)
+>  	int err;
+>  
+>  	err = -EIO;
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		goto out;
+>  
+>  	err = fuse_do_readpage(file, page);
+> @@ -952,7 +952,7 @@ static void fuse_readahead(struct readahead_control *rac)
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+>  	unsigned int i, max_pages, nr_pages = 0;
+>  
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		return;
+>  
+>  	max_pages = min_t(unsigned int, fc->max_pages,
+> @@ -1555,7 +1555,7 @@ static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  	struct fuse_file *ff = file->private_data;
+>  	struct inode *inode = file_inode(file);
+>  
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		return -EIO;
+>  
+>  	if (FUSE_IS_DAX(inode))
+> @@ -1573,7 +1573,7 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	struct fuse_file *ff = file->private_data;
+>  	struct inode *inode = file_inode(file);
+>  
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		return -EIO;
+>  
+>  	if (FUSE_IS_DAX(inode))
+> @@ -2172,7 +2172,7 @@ static int fuse_writepages(struct address_space *mapping,
+>  	int err;
+>  
+>  	err = -EIO;
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		goto out;
+>  
+>  	data.inode = inode;
+> @@ -2954,7 +2954,7 @@ long fuse_ioctl_common(struct file *file, unsigned int cmd,
+>  	if (!fuse_allow_current_process(fc))
+>  		return -EACCES;
+>  
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		return -EIO;
+>  
+>  	return fuse_do_ioctl(file, cmd, arg, flags);
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index d51598017d13..8484f0053687 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -172,6 +172,8 @@ enum {
+>  	FUSE_I_INIT_RDPLUS,
+>  	/** An operation changing file size is in progress  */
+>  	FUSE_I_SIZE_UNSTABLE,
+> +	/* Bad inode */
+> +	FUSE_I_BAD,
+>  };
+>  
+>  struct fuse_conn;
+> @@ -858,6 +860,16 @@ static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
+>  	return atomic64_read(&fc->attr_version);
+>  }
+>  
+> +static inline void fuse_make_bad(struct inode *inode)
+> +{
+> +	set_bit(FUSE_I_BAD, &get_fuse_inode(inode)->state);
+> +}
+> +
+> +static inline bool fuse_is_bad(struct inode *inode)
+> +{
+> +	return test_bit(FUSE_I_BAD, &get_fuse_inode(inode)->state);
+> +}
+> +
+>  /** Device operations */
+>  extern const struct file_operations fuse_dev_operations;
+>  
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 1a47afc95f80..f94b0bb57619 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -132,7 +132,7 @@ static void fuse_evict_inode(struct inode *inode)
+>  			fi->forget = NULL;
+>  		}
+>  	}
+> -	if (S_ISREG(inode->i_mode) && !is_bad_inode(inode)) {
+> +	if (S_ISREG(inode->i_mode) && !fuse_is_bad(inode)) {
+>  		WARN_ON(!list_empty(&fi->write_files));
+>  		WARN_ON(!list_empty(&fi->queued_writes));
+>  	}
+> @@ -342,7 +342,7 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+>  		unlock_new_inode(inode);
+>  	} else if ((inode->i_mode ^ attr->mode) & S_IFMT) {
+>  		/* Inode has changed type, any I/O on the old should fail */
+> -		make_bad_inode(inode);
+> +		fuse_make_bad(inode);
+>  		iput(inode);
+>  		goto retry;
+>  	}
+> diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+> index 3b5e91045871..3441ffa740f3 100644
+> --- a/fs/fuse/readdir.c
+> +++ b/fs/fuse/readdir.c
+> @@ -207,7 +207,7 @@ static int fuse_direntplus_link(struct file *file,
+>  			dput(dentry);
+>  			goto retry;
+>  		}
+> -		if (is_bad_inode(inode)) {
+> +		if (fuse_is_bad(inode)) {
+>  			dput(dentry);
+>  			return -EIO;
+>  		}
+> @@ -568,7 +568,7 @@ int fuse_readdir(struct file *file, struct dir_context *ctx)
+>  	struct inode *inode = file_inode(file);
+>  	int err;
+>  
+> -	if (is_bad_inode(inode))
+> +	if (fuse_is_bad(inode))
+>  		return -EIO;
+>  
+>  	mutex_lock(&ff->readdir.lock);
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
