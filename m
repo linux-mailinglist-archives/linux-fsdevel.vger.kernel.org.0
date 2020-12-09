@@ -2,130 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B7622D3F9F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 11:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29B0D2D3FAD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 11:15:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbgLIKMH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 05:12:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53172 "EHLO
+        id S1729689AbgLIKOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 05:14:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729774AbgLIKMH (ORCPT
+        with ESMTP id S1729621AbgLIKOJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 05:12:07 -0500
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB09C061793
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Dec 2020 02:11:26 -0800 (PST)
-Received: by mail-pl1-x642.google.com with SMTP id t18so691807plo.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 02:11:26 -0800 (PST)
+        Wed, 9 Dec 2020 05:14:09 -0500
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4648EC061793
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Dec 2020 02:13:29 -0800 (PST)
+Received: by mail-vs1-xe41.google.com with SMTP id q10so561999vsr.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 02:13:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=d8yNDgYWASv11UhUw/bWcMz19H0C2yz7qXfuD0bhUn0=;
-        b=dmAazBXoyUeAWM3edEVyWfiXKxv66KTgKIwyOz0VOteoRRUk7F3ylzt43TAE3VMM8Q
-         1sFsmFSjj63jlXMen3WT9Urn7Q2qLWZlj/66N9zfy28SAr77QjrM/kjt9v6gTeAZ2/2Q
-         DxWcZVRg8JuBlOn1nCXBjiwDKXFW2UrRAxKKutGUL0No8NJ0uU46GIErudp/1bpk2YOV
-         3iug93DTUMEW2TAmeCsIw3wEhf9IHF6uOKwqCNO1Hpl26TMxv9bmpX9TmdEvCRvUfsXA
-         OCgNgwTE8xwzTzA2JxXQOVrq4aT16xBpCrfgLj1GoHU8UovIah/xqh1uMCcQl+Rf6li8
-         QDoQ==
+        bh=GQQ1cftUs+z76vK6Lt731SlO6kCrFdJIO/2nHU2yT40=;
+        b=o/bXVedngN5pBxJH9KaF1htfa8gkhRjfiZvttaWZRToXJRtG+QqS8OSvQkhoND4ds6
+         8gLvFQLHhyGLVUZNOAdOIMFep9yf6detoqQLZk944USazgAMRCEgAuMgdlpjrMWdeGNF
+         ZdmnLWUhd+cDms8Du28ybWfG6vGi9quEFLNrc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=d8yNDgYWASv11UhUw/bWcMz19H0C2yz7qXfuD0bhUn0=;
-        b=ZseoMG0CzFhf6+T8zpqB501dYEKXH4tR6H4AayrMuKtIpmazMk7YgxvgOFdHmxELFs
-         5Ri531EOAnEwmjp0Vhyh5B/r3x/lwTpy5AqjgK9oTn/lfzZ+S+X7mMjxgJYeB9d9Tg0f
-         6AxQS/mJPlw3aMSN5bso1Y14EimxqNAJ700+Etlpe4FdqJFhvceKSbnEJwBfxW12yhe2
-         zu/xK46u87WVvneXttWzscIaLGmDzonmK7Z9iyAsXbjORsk4/ZGYLuxf78VdgWw25JxY
-         ZQe36OgQukSkEC4b2f6Yjpx3t81djmndR2+lrCLh7ax0h9cSCPrsoOCB/1w+gAAlpC24
-         /g+g==
-X-Gm-Message-State: AOAM530II6ubg23BBWMCIx0iRj3xP7zbBASV0gwyA9HdOQY/up1hJRga
-        PKwTCI6wKErVyQfncG/2s1qpZfHnRota5yTOWLC4mg==
-X-Google-Smtp-Source: ABdhPJyZbpmo6sQ/giSzPaUJeLNjnQbqSMGyDjlFlX08gqr+lliLp5PTVbu7rjbOxMBdYCStZdmNjSw4u/bBranfZic=
-X-Received: by 2002:a17:90a:ae14:: with SMTP id t20mr1578160pjq.13.1607508686459;
- Wed, 09 Dec 2020 02:11:26 -0800 (PST)
+        bh=GQQ1cftUs+z76vK6Lt731SlO6kCrFdJIO/2nHU2yT40=;
+        b=eDeu2Xe8UalWDVtxvLDuU8/lZX4Y+9W2Im8FgdvCdi/VwOAAqY1P7WxO+KDeIVb0XY
+         hPC2hSYD6h7riHGkghJeH/rR/ueI1YYuFF7bgfTzYMt4d1/cgl6KuR+tJfsp85/THpbh
+         CVKYyhebl2jf1dBwrgo2SnAPbczbPvgxXEalrZnrqbLPN2RD3Phu5ENUZHoWrzVUUhtn
+         vM3cJEIBcgMlt9Gm0o7XNk11flKQ0BRt4Hzt1aE8TWQ2tJm+69RXVILEjCIXFOpqADPy
+         HW4BakksTZzatR+WYx/ry5yxCUH1R+37SD8rEN8akuTrPm3+BJ5cwac/5h1PVNqfkviu
+         zAyA==
+X-Gm-Message-State: AOAM533xorIeKvaH8gzuF15ydODnBxo8kueA0nbSsvBIS8Q8DIQXqtn3
+        Yzjy30NjDb8LZlcxbV6TceECrGjlOYjnQmz2AdkQNg==
+X-Google-Smtp-Source: ABdhPJzREqcFmVRiyHTHLToKAaVH2NKuecCoZyx8wfazBSxTrTVhIRS7jyFnBaKgTWOjW7kai9p6aOWj8y5f7/0D+t0=
+X-Received: by 2002:a67:ed57:: with SMTP id m23mr926246vsp.7.1607508808505;
+ Wed, 09 Dec 2020 02:13:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20201130151838.11208-1-songmuchun@bytedance.com>
- <20201130151838.11208-7-songmuchun@bytedance.com> <ba57ea7d-709b-bf36-d48a-cc72a26012cc@redhat.com>
- <CAMZfGtV5200NZXH9Z_Z9qXo5FCd9E6JOTXjQtzcF0xGi-gCuPg@mail.gmail.com> <4b8a9389-1704-4d8c-ec58-abd753814dd9@redhat.com>
-In-Reply-To: <4b8a9389-1704-4d8c-ec58-abd753814dd9@redhat.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 9 Dec 2020 18:10:50 +0800
-Message-ID: <CAMZfGtURKbRingD28boJoZ+MjMTcr7L8mOWPX+hQF9nVLV6S9w@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v7 06/15] mm/hugetlb: Disable freeing
- vmemmap if struct page size is not power of two
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-4-mszeredi@redhat.com>
+ <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 9 Dec 2020 11:13:17 +0100
+Message-ID: <CAJfpegsGpS=cym2NpnS6H-uMyLMKdbLpE1QxiDz4GQU1s-dYfg@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] ovl: check privs before decoding file handle
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 6:06 PM David Hildenbrand <david@redhat.com> wrote:
+On Tue, Dec 8, 2020 at 2:53 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> On 09.12.20 11:03, Muchun Song wrote:
-> > On Wed, Dec 9, 2020 at 5:57 PM David Hildenbrand <david@redhat.com> wrote:
-> >>
-> >> On 30.11.20 16:18, Muchun Song wrote:
-> >>> We only can free the tail vmemmap pages of HugeTLB to the buddy allocator
-> >>> when the size of struct page is a power of two.
-> >>>
-> >>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> >>> ---
-> >>>  mm/hugetlb_vmemmap.c | 5 +++++
-> >>>  1 file changed, 5 insertions(+)
-> >>>
-> >>> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> >>> index 51152e258f39..ad8fc61ea273 100644
-> >>> --- a/mm/hugetlb_vmemmap.c
-> >>> +++ b/mm/hugetlb_vmemmap.c
-> >>> @@ -111,6 +111,11 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
-> >>>       unsigned int nr_pages = pages_per_huge_page(h);
-> >>>       unsigned int vmemmap_pages;
-> >>>
-> >>> +     if (!is_power_of_2(sizeof(struct page))) {
-> >>> +             pr_info("disable freeing vmemmap pages for %s\n", h->name);
-> >>
-> >> I'd just drop that pr_info(). Users are able to observe that it's
-> >> working (below), so they are able to identify that it's not working as well.
+> On Mon, Dec 7, 2020 at 6:36 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
 > >
-> > The below is just a pr_debug. Do you suggest converting it to pr_info?
+> > CAP_DAC_READ_SEARCH is required by open_by_handle_at(2) so check it in
+> > ovl_decode_real_fh() as well to prevent privilege escalation for
+> > unprivileged overlay mounts.
+> >
+> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > ---
+> >  fs/overlayfs/namei.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> > index a6162c4076db..82a55fdb1e7a 100644
+> > --- a/fs/overlayfs/namei.c
+> > +++ b/fs/overlayfs/namei.c
+> > @@ -156,6 +156,9 @@ struct dentry *ovl_decode_real_fh(struct ovl_fh *fh, struct vfsmount *mnt,
+> >         struct dentry *real;
+> >         int bytes;
+> >
+> > +       if (!capable(CAP_DAC_READ_SEARCH))
+> > +               return NULL;
+> > +
 >
-> Good question. I wonder if users really have to know in most cases.
-> Maybe pr_debug() is good enough in environments where we want to debug
-> why stuff is not working as expected.
+> If the mounter is not capable in init ns, ovl_check_origin() and
+> ovl_verify_index()
+> will not function as expected and this will break index and nfs export features.
 
-When someone enables this feature via the boot cmdline, maybe he should
-want to know whether this feature works. From this point of view, the pr_info
-is necessary. Right?
+NFS export is clear-cut.
 
->
-> --
-> Thanks,
->
-> David / dhildenb
->
+Hard link indexing should work without fh decoding, since it is only
+encoding the file handle to search for the index entry, and encoding
+is not privileged.
 
+Not sure how ovl_verify_index will choke on that, will have to try...
+but worse case we just need to disable verification.
 
--- 
-Yours,
-Muchun
+And yeah, using .overlay.origin attribute for inode number consistency
+won't work either, but it should fail silently (which is probably a
+good thing).  Haven't tested this yet, though.
+
+Thanks,
+Miklos
