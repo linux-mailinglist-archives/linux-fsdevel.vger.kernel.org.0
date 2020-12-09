@@ -2,73 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D2072D3F9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 11:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86F932D3FA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 11:12:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729742AbgLIKLN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 05:11:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729442AbgLIKLN (ORCPT
+        id S1729775AbgLIKMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 05:12:34 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20359 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729774AbgLIKMO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 05:11:13 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC39C0613CF;
-        Wed,  9 Dec 2020 02:10:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=iNVF9+1CEmnQuYVa3mTrTTlxl79IEcI5MQ5t1D/MbMI=; b=eMDgKToNzoSUAXmmfYxnYyXws/
-        Yad91sysOoU9rE4b/HDnTKW/aFGVG3/ZfZJL/rtj7MQHFy/uW3WFtvUcJ3feD8TZxEFHLQRWbjqsK
-        gp+2f1dtobc+BsteZJ7qh12N6hNWb2Lc/I/fWMjqJKHm0el91kz+eoAo6OKHkjK88ml9dJ2oaXWuw
-        tUHg61PGLqYhvra2Tr7oskQg+L7uSI9GEyWBbsTgMF+f2MTeDjYPZLLBB2I7XhGc54e9c9IG2xIO4
-        i55/PzTz3Ssb5BsX7sAN8Sr+cQtjR12jk0UIMD1r6wvfp82k1WNPBa2FYEZCAvVDVsPmHcagrfbgo
-        PcUwH/yg==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kmwQY-0003un-EW; Wed, 09 Dec 2020 10:10:30 +0000
-Date:   Wed, 9 Dec 2020 10:10:30 +0000
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     "hch@infradead.org" <hch@infradead.org>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
-Message-ID: <20201209101030.GA14302@infradead.org>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
- <20201209093138.GA3970@infradead.org>
- <SN4PR0401MB3598A4DA5A6E8F67DFB070859BCC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+        Wed, 9 Dec 2020 05:12:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607508646;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4TGW49VFxxgzg6HHlJEgqhfXkJr229AXz30lVfSS/wA=;
+        b=Qh7ycNgT6o6tFmOa9yt2tqhIY8fPWRGar9OWtnMgufVpHyR5QERIg6bAbx1dc0ZAN+YKk3
+        xiBqX3NXQBElrRWAdow0slfFZjsuFuW5fyrzQ6wwt0oTp7X1JFeGNZpaXIjv91vMsS8Rrb
+        096T0FBBsLVp1Q74wYBLszTnDb4b/EM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-509-F-PKDTCLPnu8Iu_PevaM0A-1; Wed, 09 Dec 2020 05:10:42 -0500
+X-MC-Unique: F-PKDTCLPnu8Iu_PevaM0A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C4C67B8101;
+        Wed,  9 Dec 2020 10:10:37 +0000 (UTC)
+Received: from [10.36.114.167] (ovpn-114-167.ams2.redhat.com [10.36.114.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B53EA6E41C;
+        Wed,  9 Dec 2020 10:10:31 +0000 (UTC)
+Subject: Re: [External] Re: [PATCH v7 06/15] mm/hugetlb: Disable freeing
+ vmemmap if struct page size is not power of two
+From:   David Hildenbrand <david@redhat.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201130151838.11208-1-songmuchun@bytedance.com>
+ <20201130151838.11208-7-songmuchun@bytedance.com>
+ <ba57ea7d-709b-bf36-d48a-cc72a26012cc@redhat.com>
+ <CAMZfGtV5200NZXH9Z_Z9qXo5FCd9E6JOTXjQtzcF0xGi-gCuPg@mail.gmail.com>
+ <4b8a9389-1704-4d8c-ec58-abd753814dd9@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <a6d11bc6-033d-3a0b-94ce-cbd556120b6d@redhat.com>
+Date:   Wed, 9 Dec 2020 11:10:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN4PR0401MB3598A4DA5A6E8F67DFB070859BCC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <4b8a9389-1704-4d8c-ec58-abd753814dd9@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 09, 2020 at 10:08:53AM +0000, Johannes Thumshirn wrote:
-> On 09/12/2020 10:34, Christoph Hellwig wrote:
-> > Btw, another thing I noticed:
-> > 
-> > when using io_uring to submit a write to btrfs that ends up using Zone
-> > Append we'll hit the
-> > 
-> > 	if (WARN_ON_ONCE(is_bvec))
-> > 		return -EINVAL;
-> > 
-> > case in bio_iov_iter_get_pages with the changes in this series.
+On 09.12.20 11:06, David Hildenbrand wrote:
+> On 09.12.20 11:03, Muchun Song wrote:
+>> On Wed, Dec 9, 2020 at 5:57 PM David Hildenbrand <david@redhat.com> wrote:
+>>>
+>>> On 30.11.20 16:18, Muchun Song wrote:
+>>>> We only can free the tail vmemmap pages of HugeTLB to the buddy allocator
+>>>> when the size of struct page is a power of two.
+>>>>
+>>>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>>>> ---
+>>>>  mm/hugetlb_vmemmap.c | 5 +++++
+>>>>  1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+>>>> index 51152e258f39..ad8fc61ea273 100644
+>>>> --- a/mm/hugetlb_vmemmap.c
+>>>> +++ b/mm/hugetlb_vmemmap.c
+>>>> @@ -111,6 +111,11 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
+>>>>       unsigned int nr_pages = pages_per_huge_page(h);
+>>>>       unsigned int vmemmap_pages;
+>>>>
+>>>> +     if (!is_power_of_2(sizeof(struct page))) {
+>>>> +             pr_info("disable freeing vmemmap pages for %s\n", h->name);
+>>>
+>>> I'd just drop that pr_info(). Users are able to observe that it's
+>>> working (below), so they are able to identify that it's not working as well.
+>>
+>> The below is just a pr_debug. Do you suggest converting it to pr_info?
 > 
-> Yes this warning is totally bogus. It was in there from the beginning of the
-> zone-append series and I have no idea why I didn't kill it.
+> Good question. I wonder if users really have to know in most cases.
+> Maybe pr_debug() is good enough in environments where we want to debug
+> why stuff is not working as expected.
 > 
-> IIRC Chaitanya had a patch in his nvmet zoned series removing it.
 
-Yes, but it is wrong.  What we need is a version of
-__bio_iov_bvec_add_pages that takes the hardware limits into account.
+Oh, another thought, can we glue availability of
+HUGETLB_PAGE_FREE_VMEMMAP (or a new define based on the config and the
+size of a stuct page) to the size of struct page somehow?
+
+I mean, it's known at compile time that this will never work.
+
+-- 
+Thanks,
+
+David / dhildenb
+
