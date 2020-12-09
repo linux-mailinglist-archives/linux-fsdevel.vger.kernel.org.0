@@ -2,134 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 862472D43BA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 15:01:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 922492D4435
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 15:26:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732566AbgLIOAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 09:00:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54308 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728489AbgLIOAQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 09:00:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E1909ACEB;
-        Wed,  9 Dec 2020 13:59:34 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 98A661E133E; Wed,  9 Dec 2020 14:59:34 +0100 (CET)
-Date:   Wed, 9 Dec 2020 14:59:34 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     syzbot <syzbot+f427adf9324b92652ccc@syzkaller.appspotmail.com>
-Cc:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: kernel BUG at fs/notify/dnotify/dnotify.c:LINE! (2)
-Message-ID: <20201209135934.GB28118@quack2.suse.cz>
-References: <000000000000be4c9505b4c35420@google.com>
- <20201209133842.GA28118@quack2.suse.cz>
+        id S1732939AbgLIOZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 09:25:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35754 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732623AbgLIOZF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Dec 2020 09:25:05 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2665C0613CF;
+        Wed,  9 Dec 2020 06:24:24 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kn0Nr-0004e7-Se; Wed, 09 Dec 2020 14:24:00 +0000
+Date:   Wed, 9 Dec 2020 14:23:59 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        criu@openvz.org, bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Andy Lavr <andy.lavr@gmail.com>
+Subject: Re: [PATCH v2 15/24] proc/fd: In proc_readfd_common use
+ task_lookup_next_fd_rcu
+Message-ID: <20201209142359.GN3579531@ZenIV.linux.org.uk>
+References: <87r1on1v62.fsf@x220.int.ebiederm.org>
+ <20201120231441.29911-15-ebiederm@xmission.com>
+ <20201207232900.GD4115853@ZenIV.linux.org.uk>
+ <877dprvs8e.fsf@x220.int.ebiederm.org>
+ <20201209040731.GK3579531@ZenIV.linux.org.uk>
+ <877dprtxly.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201209133842.GA28118@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <877dprtxly.fsf@x220.int.ebiederm.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 09-12-20 14:38:42, Jan Kara wrote:
-> Hello!
+On Tue, Dec 08, 2020 at 10:24:57PM -0600, Eric W. Biederman wrote:
+> Al Viro <viro@zeniv.linux.org.uk> writes:
 > 
-> so I was debugging the dnotify crash below (it's 100% reproducible for me)
-> and I came to the following. The reproducer opens 'file0' on FUSE
-> filesystem which is a directory at that point. Then it attached dnotify
-> mark to the directory 'file0' and then it does something to the FUSE fs
-> which I don't understand but the result is that when FUSE is unmounted the
-> 'file0' inode is actually a regular file (note that I've verified this is
-> really the same inode pointer). This then confuses dnotify which doesn't
-> tear down its structures properly and eventually crashes. So my question
-> is: How can an inode on FUSE filesystem morph from a dir to a regular file?
-> I presume this could confuse much more things than just dnotify?
+> > On Tue, Dec 08, 2020 at 04:38:09PM -0600, Eric W. Biederman wrote:
+> >
+> >> Is there any reason we don't simply rcu free the files_struct?
+> >> That would remove the need for the task_lock entirely.
+> >
+> > Umm...  Potentially interesting part here is the interaction with
+> > close_files(); currently that can't overlap with any of those
+> > 3rd-party accesses to descriptor table, but with your changes
+> > here it's very much possible.
 > 
-> Before I dwelve more into FUSE internals, any idea Miklos what could have
-> gone wrong and how to debug this further?
+> Good point.
+> 
+> I was worried there might have been a concern about the overhead
+> introduced by always rcu freeing files table.
+> 
+> > OTOH, it's not like close_files() did much beyond the effects of already
+> > possible close(2) done by one of the threads sharing that sucker.
+> > It's _probably_ safe (at least for proc_readfd_common()), but I'll need
+> > to look at the other places doing that kind of access.  Especially the
+> > BPF foulness...
 
-I've got an idea where to look and indeed it is the fuse_do_getattr() call
-that finds attributes returned by the server are inconsistent so it calls
-make_bad_inode() which, among other things, does:
+Still digging, unfortunately ;-/
 
-	inode->i_mode = S_IFREG;
+> > Oh, and in any case, the trick with repurposing ->rcu of embedded
+> > fdtable deserves a comment.  It's not hard to explain, so...
+> 
+> Agreed.  Something like fdtable.rcu isn't used so use it so by reusing
+> it we keep from wasting memory in files_struct to have a dedicated
+> rcu_head.
 
-Indeed calling make_bad_inode() on a live inode doesn't look like a good
-idea. IMHO FUSE needs to come up with some other means of marking the inode
-as stale. Miklos?
-
-								Honza
-
-> On Mon 23-11-20 02:05:16, syzbot wrote:
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    27bba9c5 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=11b82225500000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=330f3436df12fd44
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=f427adf9324b92652ccc
-> > compiler:       gcc (GCC) 10.1.0-syz 20200507
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d3f015500000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17162d4d500000
-> > 
-> > Bisection is inconclusive: the issue happens on the oldest tested release.
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16570525500000
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=15570525500000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=11570525500000
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+f427adf9324b92652ccc@syzkaller.appspotmail.com
-> > 
-> > wlan1: Creating new IBSS network, BSSID 50:50:50:50:50:50
-> > ------------[ cut here ]------------
-> > kernel BUG at fs/notify/dnotify/dnotify.c:118!
-> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> > CPU: 1 PID: 648 Comm: kworker/u4:4 Not tainted 5.10.0-rc4-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Workqueue: events_unbound fsnotify_mark_destroy_workfn
-> > RIP: 0010:dnotify_free_mark fs/notify/dnotify/dnotify.c:118 [inline]
-> > RIP: 0010:dnotify_free_mark+0x4b/0x60 fs/notify/dnotify/dnotify.c:112
-> > Code: 80 3c 02 00 75 26 48 83 bd 80 00 00 00 00 75 15 e8 0a d3 a0 ff 48 89 ee 48 8b 3d 68 8c 1d 0b 5d e9 aa 06 e2 ff e8 f5 d2 a0 ff <0f> 0b e8 ae 4d e2 ff eb d3 66 90 66 2e 0f 1f 84 00 00 00 00 00 41
-> > RSP: 0018:ffffc90002f1fc38 EFLAGS: 00010293
-> > RAX: 0000000000000000 RBX: ffffffff8958ae60 RCX: 1ffff920005e3f95
-> > RDX: ffff888012601a40 RSI: ffffffff81cf5ceb RDI: ffff88801aea2080
-> > RBP: ffff88801aea2000 R08: 0000000000000001 R09: ffffffff8ebb170f
-> > R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880171a2000
-> > R13: ffffc90002f1fc98 R14: ffff88801aea2010 R15: ffff88801aea2018
-> > FS:  0000000000000000(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000056045fa95978 CR3: 0000000012121000 CR4: 00000000001506e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  fsnotify_final_mark_destroy+0x71/0xb0 fs/notify/mark.c:205
-> >  fsnotify_mark_destroy_workfn+0x1eb/0x340 fs/notify/mark.c:840
-> >  process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
-> >  worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
-> >  kthread+0x3af/0x4a0 kernel/kthread.c:292
-> >  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> > Modules linked in:
-> > 
-> > 
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > 
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> > syzbot can test patches for this issue, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'd probably go for something along the lines of "we can avoid adding
+a separate rcu_head into files_struct, since rcu_head in struct fdtable
+is only used for separately allocated instances, allowing us to repurpose
+files_struct->fdtab.rcu for RCU-delayed freeing of files_struct"...
