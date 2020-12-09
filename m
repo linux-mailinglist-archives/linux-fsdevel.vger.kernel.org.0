@@ -2,140 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F235F2D3FC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 11:19:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96F582D403E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 11:47:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729870AbgLIKR5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 05:17:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54080 "EHLO
+        id S1729939AbgLIKpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 05:45:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729457AbgLIKR5 (ORCPT
+        with ESMTP id S1729361AbgLIKpG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 05:17:57 -0500
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D340AC061794
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Dec 2020 02:17:16 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id p6so686491plo.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 02:17:16 -0800 (PST)
+        Wed, 9 Dec 2020 05:45:06 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE94C0613CF;
+        Wed,  9 Dec 2020 02:44:26 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id z5so1137005iob.11;
+        Wed, 09 Dec 2020 02:44:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=i6nki0stxvDLMDU16G+h85cVFW5HA5XUXV7cTIWJJr0=;
-        b=pvUndUzCm8phQVX+DQW2QbqJ6hP9Mo1rCH6uiOZCqqpSNGU9AL8BzqhYf42rozN7IS
-         l5Yzs+0CjrRX0Z6S4G66CTxWCnl793hSRan0/U/azt8MSlaLczL2lfXWVh/tF4TE0cMK
-         k/Y4ljOcfwGflRPHG/C7BHPw2td3XFUEFUYEVDupOvEb9FhIMV6eI7ZvF1G+BaqnuiWu
-         6FfASOuRfrMdUUyOTrK5OtqN11+ZF/sWPIl22uwKKkTupgFH6BAdoV04vtfaqR8FdjQ7
-         xlcPF0pW0V6Plql9HIJolEdv59J2SxcKJwjFLEr7gDNWWqzwQYvgLmZCtR9Xld+G24IZ
-         6cpQ==
+        bh=htf7oQLbUIT12CkPdqZFjdgF/YoqVY5s3W8UZCtazfU=;
+        b=BDH0ED5DZ98HJqDCraITjaG60bDgQ6/mLGoFquywWqKEZtc0/RtlAKAgXDFxxgKmWH
+         2rbxoaPIMnSi2xtSm+EY4P4w8YojftKrWDsbyDV9XJdRDrVhOZJlFD9iGMbteHoWDMnX
+         lhJ8jVRDYpnKQFB0KVhhwy+dzkiQXDm+sW/7OKQoq/fCD95lBZSEsfrlkR4N9FcL7K9B
+         GRC7u4nSezTf4LTZyLuAYx3Uf7195hJNZCLUPSjFOO6Jp3j/sRCcDAW+Xnur6cC/h8hC
+         qfKqvjmKOaA4YxSND+srbTreUbHETuLhGYNCog0hI1sFjOuaci2JdYx4j8Q2F7pT/6M1
+         MvkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=i6nki0stxvDLMDU16G+h85cVFW5HA5XUXV7cTIWJJr0=;
-        b=AqtN/oag0df+9VKDYEkT//e6zFuMiKfD6YWzs+jfq80YKAFrsUx77UxS6ivaHaOdJP
-         Qd6exlWXJ8qblTr+4Qka7eSDW+id6jV4IpeVQA0+0EW+4Y/ZYv0azfJxfhKsaQokPKqg
-         g5XeggH9sOL+OPa6SLr2COMig57thb9rP3KXCdx+09qxXk/p9caiDU4YgvSdpz5PRM27
-         hn39RDDBVJRWHeNFLQhqP5qB9afHBYHN6hvrs7xRuLyCWuHvkG+oXT6oNi0ABCwhruKe
-         v9SL4OgLv5jhAtQBXxyx4VsZSfp+4Yk+S3+dPJHwu2S32Hykuu4oTIygJmkpSESIbLf9
-         /Fbw==
-X-Gm-Message-State: AOAM533ZYj4qneF0bNqnY/h5Ta0PGuG34T1+mAdhUPiihw3PmxW7NBDy
-        2pKRsEQ2TjvUZLVCEuq1ZVxxV0dH8CjfmzZ5l8QjEw==
-X-Google-Smtp-Source: ABdhPJwl0QKoTLMWry62ykQQQg/oA1aCc3XrZuGoJQcckNVK8qnVxEk3a+7jD8/okgrNoYprcRELUScKGF6oOLWx0fQ=
-X-Received: by 2002:a17:902:ed0d:b029:da:c83b:5f40 with SMTP id
- b13-20020a170902ed0db02900dac83b5f40mr1585560pld.20.1607509036409; Wed, 09
- Dec 2020 02:17:16 -0800 (PST)
+        bh=htf7oQLbUIT12CkPdqZFjdgF/YoqVY5s3W8UZCtazfU=;
+        b=iMB8QYBNZ3L51vBGlXWfgpQeJUYDdu7beB7WAUz4SA4/91Qbie7DYLXq899dWR0ZxY
+         Eoq67kGAtIXvq2Bv/h2BpupoVPBiJI+qbVe0V412uuVf/5zA0bbGOShSwF6xr7lf84u5
+         JXYKo2OJQ+qEhnT37U0F9Es1Z3D6e+6KTnvtM2E2CU1by0Z3SI6pqVWKx19e2ZeSqPNT
+         eLSyIUcloX6OItiE6E47QVqySdrrFI5yt7dgA2bBgyxHJp3ASyXjgzEyjXMOO+vygUhO
+         Sap4Uaoe35yUApsPFohhwT/7ybAqFGNj1R6YZKO2UAA5OtOQ3KWX5KRfZBzAQFVBIRUc
+         DR0A==
+X-Gm-Message-State: AOAM532DxnBnrJ3gTJuW1Vr9Cwi+TaXaDCCayZkNHFVTwyR3JkVWSv6U
+        d2ypRfAN/aQ6IJJXvOzOlxhUG2jseN88hjRz8u0=
+X-Google-Smtp-Source: ABdhPJwoZCydcQ/F/M7hMYjYvOS8z4MbQe8D7XdvViM/KC8+z4gAYHKEAqye/nrRvgEL+J/XKDTJuBkLppZidNDdXdY=
+X-Received: by 2002:a5e:9612:: with SMTP id a18mr1987644ioq.13.1607510665449;
+ Wed, 09 Dec 2020 02:44:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20201130151838.11208-1-songmuchun@bytedance.com>
- <20201130151838.11208-7-songmuchun@bytedance.com> <ba57ea7d-709b-bf36-d48a-cc72a26012cc@redhat.com>
- <CAMZfGtV5200NZXH9Z_Z9qXo5FCd9E6JOTXjQtzcF0xGi-gCuPg@mail.gmail.com>
- <4b8a9389-1704-4d8c-ec58-abd753814dd9@redhat.com> <a6d11bc6-033d-3a0b-94ce-cbd556120b6d@redhat.com>
-In-Reply-To: <a6d11bc6-033d-3a0b-94ce-cbd556120b6d@redhat.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 9 Dec 2020 18:16:40 +0800
-Message-ID: <CAMZfGtV9YnrLTosxz+wj_KEc+17iPWhfKmUB+P4CrKqcN_63dA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v7 06/15] mm/hugetlb: Disable freeing
- vmemmap if struct page size is not power of two
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201208122824.16118-1-laoar.shao@gmail.com> <20201208122824.16118-4-laoar.shao@gmail.com>
+ <20201208185946.GC1943235@magnolia> <CALOAHbB1uKmQ7ns08KW4zH1ikqD0GAY_Y7VySzmTY0=LTEPURA@mail.gmail.com>
+ <20201209035320.GI1943235@magnolia>
+In-Reply-To: <20201209035320.GI1943235@magnolia>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Wed, 9 Dec 2020 18:43:49 +0800
+Message-ID: <CALOAHbAqF8AjjFi3oboDq=oEsKOqRiNn7U=UbguE2jDXwG6fCQ@mail.gmail.com>
+Subject: Re: [PATCH v11 3/4] xfs: refactor the usage around xfs_trans_context_{set,clear}
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>, jlayton@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 6:10 PM David Hildenbrand <david@redhat.com> wrote:
+On Wed, Dec 9, 2020 at 11:53 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
 >
-> On 09.12.20 11:06, David Hildenbrand wrote:
-> > On 09.12.20 11:03, Muchun Song wrote:
-> >> On Wed, Dec 9, 2020 at 5:57 PM David Hildenbrand <david@redhat.com> wrote:
-> >>>
-> >>> On 30.11.20 16:18, Muchun Song wrote:
-> >>>> We only can free the tail vmemmap pages of HugeTLB to the buddy allocator
-> >>>> when the size of struct page is a power of two.
-> >>>>
-> >>>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> >>>> ---
-> >>>>  mm/hugetlb_vmemmap.c | 5 +++++
-> >>>>  1 file changed, 5 insertions(+)
-> >>>>
-> >>>> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> >>>> index 51152e258f39..ad8fc61ea273 100644
-> >>>> --- a/mm/hugetlb_vmemmap.c
-> >>>> +++ b/mm/hugetlb_vmemmap.c
-> >>>> @@ -111,6 +111,11 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
-> >>>>       unsigned int nr_pages = pages_per_huge_page(h);
-> >>>>       unsigned int vmemmap_pages;
-> >>>>
-> >>>> +     if (!is_power_of_2(sizeof(struct page))) {
-> >>>> +             pr_info("disable freeing vmemmap pages for %s\n", h->name);
-> >>>
-> >>> I'd just drop that pr_info(). Users are able to observe that it's
-> >>> working (below), so they are able to identify that it's not working as well.
-> >>
-> >> The below is just a pr_debug. Do you suggest converting it to pr_info?
+> On Wed, Dec 09, 2020 at 09:47:38AM +0800, Yafang Shao wrote:
+> > On Wed, Dec 9, 2020 at 2:59 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > >
+> > > On Tue, Dec 08, 2020 at 08:28:23PM +0800, Yafang Shao wrote:
+> > > > The xfs_trans context should be active after it is allocated, and
+> > > > deactive when it is freed.
+> > > >
+> > > > So these two helpers are refactored as,
+> > > > - xfs_trans_context_set()
+> > > >   Used in xfs_trans_alloc()
+> > > > - xfs_trans_context_clear()
+> > > >   Used in xfs_trans_free()
+> > > >
+> > > > This patch is based on Darrick's work to fix the issue in xfs/141 in the
+> > > > earlier version. [1]
+> > > >
+> > > > 1. https://lore.kernel.org/linux-xfs/20201104001649.GN7123@magnolia
+> > > >
+> > > > Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> > > > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > > Cc: Christoph Hellwig <hch@lst.de>
+> > > > Cc: Dave Chinner <david@fromorbit.com>
+> > > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > > > ---
+> > > >  fs/xfs/xfs_trans.c | 20 +++++++-------------
+> > > >  1 file changed, 7 insertions(+), 13 deletions(-)
+> > > >
+> > > > diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+> > > > index 11d390f0d3f2..fe20398a214e 100644
+> > > > --- a/fs/xfs/xfs_trans.c
+> > > > +++ b/fs/xfs/xfs_trans.c
+> > > > @@ -67,6 +67,9 @@ xfs_trans_free(
+> > > >       xfs_extent_busy_sort(&tp->t_busy);
+> > > >       xfs_extent_busy_clear(tp->t_mountp, &tp->t_busy, false);
+> > > >
+> > > > +     /* Detach the transaction from this thread. */
+> > > > +     xfs_trans_context_clear(tp);
+> > >
+> > > Don't you need to check if tp is still the current transaction before
+> > > you clear PF_MEMALLOC_NOFS, now that the NOFS is bound to the lifespan
+> > > of the transaction itself instead of the reservation?
+> > >
 > >
-> > Good question. I wonder if users really have to know in most cases.
-> > Maybe pr_debug() is good enough in environments where we want to debug
-> > why stuff is not working as expected.
+> > The current->journal_info is always the same with tp here in my verification.
+> > I don't know in which case they are different.
+>
+> I don't know why you changed it from the previous version.
+>
+
+I should explain it in the change log. Sorry about that.
+
+> > It would be better if you could explain in detail.  Anyway I can add
+> > the check with your comment in the next version.
+>
+> xfs_trans_alloc is called to allocate a transaction.  We set _NOFS and
+> save the old flags (which don't contain _NOFS) to this transaction.
+>
+> thread logs some changes and calls xfs_trans_roll.
+>
+> xfs_trans_roll calls xfs_trans_dup to duplicate the old transaction.
+>
+> xfs_trans_dup allocates a new transaction, which sets PF_MEMALLOC_NOFS
+> and saves the current context flags (in which _NOFS is set) in the new
+> transaction.
+>
+> xfs_trans_roll then commits the old transaction
+>
+> xfs_trans_commit frees the old transaction
+>
+> xfs_trans_free restores the old context (which didn't have _NOFS) and
+> now we've dropped NOFS incorrectly
+>
+> now we move on with the new transaction, but in the wrong NOFS mode.
+>
+> note that this becomes a lot more obvious once you start fiddling with
+> current->journal_info in the last patch.
+>
+
+Many thanks for the detailed explanation. I missed the rolling transaction.
+I will add this check in the next version.
+
+> --D
+>
 > >
->
-> Oh, another thought, can we glue availability of
-> HUGETLB_PAGE_FREE_VMEMMAP (or a new define based on the config and the
-> size of a stuct page) to the size of struct page somehow?
->
-> I mean, it's known at compile time that this will never work.
+> > >
+> > > > +
+> > > >       trace_xfs_trans_free(tp, _RET_IP_);
+> > > >       if (!(tp->t_flags & XFS_TRANS_NO_WRITECOUNT))
+> > > >               sb_end_intwrite(tp->t_mountp->m_super);
+> > > > @@ -153,9 +156,6 @@ xfs_trans_reserve(
+> > > >       int                     error = 0;
+> > > >       bool                    rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
+> > > >
+> > > > -     /* Mark this thread as being in a transaction */
+> > > > -     xfs_trans_context_set(tp);
+> > > > -
+> > > >       /*
+> > > >        * Attempt to reserve the needed disk blocks by decrementing
+> > > >        * the number needed from the number available.  This will
+> > > > @@ -163,10 +163,9 @@ xfs_trans_reserve(
+> > > >        */
+> > > >       if (blocks > 0) {
+> > > >               error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
+> > > > -             if (error != 0) {
+> > > > -                     xfs_trans_context_clear(tp);
+> > > > +             if (error != 0)
+> > > >                       return -ENOSPC;
+> > > > -             }
+> > > > +
+> > > >               tp->t_blk_res += blocks;
+> > > >       }
+> > > >
+> > > > @@ -241,8 +240,6 @@ xfs_trans_reserve(
+> > > >               tp->t_blk_res = 0;
+> > > >       }
+> > > >
+> > > > -     xfs_trans_context_clear(tp);
+> > > > -
+> > > >       return error;
+> > > >  }
+> > > >
+> > > > @@ -284,6 +281,8 @@ xfs_trans_alloc(
+> > > >       INIT_LIST_HEAD(&tp->t_dfops);
+> > > >       tp->t_firstblock = NULLFSBLOCK;
+> > > >
+> > > > +     /* Mark this thread as being in a transaction */
+> > > > +     xfs_trans_context_set(tp);
+> > > >       error = xfs_trans_reserve(tp, resp, blocks, rtextents);
+> > > >       if (error) {
+> > > >               xfs_trans_cancel(tp);
+> > > > @@ -878,7 +877,6 @@ __xfs_trans_commit(
+> > > >
+> > > >       xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
+> > > >
+> > > > -     xfs_trans_context_clear(tp);
+> > > >       xfs_trans_free(tp);
+> > > >
+> > > >       /*
+> > > > @@ -911,7 +909,6 @@ __xfs_trans_commit(
+> > > >               tp->t_ticket = NULL;
+> > > >       }
+> > > >
+> > > > -     xfs_trans_context_clear(tp);
+> > > >       xfs_trans_free_items(tp, !!error);
+> > > >       xfs_trans_free(tp);
+> > > >
+> > > > @@ -971,9 +968,6 @@ xfs_trans_cancel(
+> > > >               tp->t_ticket = NULL;
+> > > >       }
+> > > >
+> > > > -     /* mark this thread as no longer being in a transaction */
+> > > > -     xfs_trans_context_clear(tp);
+> > > > -
+> > > >       xfs_trans_free_items(tp, dirty);
+> > > >       xfs_trans_free(tp);
+> > > >  }
+> > > > --
+> > > > 2.18.4
+> > > >
+> >
+> >
+> >
+> > --
+> > Thanks
+> > Yafang
 
-Good question. I also thought about this question. Just like the
-macro SPINLOCK_SIZE does, we also can generate a new macro
-to indicate the size of the struct page. :)
-
->
-> --
-> Thanks,
->
-> David / dhildenb
->
 
 
 -- 
-Yours,
-Muchun
+Thanks
+Yafang
