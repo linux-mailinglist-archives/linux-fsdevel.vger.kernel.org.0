@@ -2,142 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3B82D4383
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 14:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08B7E2D4376
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 14:40:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732584AbgLINlF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 08:41:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732065AbgLINlE (ORCPT
+        id S1732590AbgLINjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 08:39:49 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:42641 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732577AbgLINjh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 08:41:04 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42E1C0613CF;
-        Wed,  9 Dec 2020 05:40:23 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id r7so1783740wrc.5;
-        Wed, 09 Dec 2020 05:40:23 -0800 (PST)
+        Wed, 9 Dec 2020 08:39:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1607521630; x=1639057630;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=cLg8v8xzcwI3GFvfsMpCuZU2BOr6bHwwWly3xZ1uuZI=;
+  b=NChQjD89aqyh/91DkY5z7NuzvivCnUXe92i9aVray8CeUGMpWtN68UlP
+   2OrUsMWmILlzmtQbWc1vn+rl6Ax0Lkg2/mSZAi2tuKmZUzWt1/GsmAMJE
+   NGAJkagXWq1jfB3ikhuWmyrrUeN/vHegIhU28wxBMGq8kVQnnI2qI37CX
+   hwDahGrHEu7X1pUi8vRyW7s8kcwdgIJ0na3PQj8kReiy15XihqppyOApn
+   FdH2rhdqAOx7PkJMNz2EyhAGppiPMNTDrgLlq4SRY2lzxCYIAeoiH9GSX
+   l+X0BLoeq8kTjW35M3F4eQbYG/hY/dZV6wxMp2IIE9zwltU2e3yAmK4Wu
+   g==;
+IronPort-SDR: zzDmEVJdQLy6i62soikyoipfPXF6bW03aGtzULvOT+E0i30luDfHCpws/8VGfbwIyt5CfWzSGb
+ g9r2cEzLbWtwvOBh9YevjxG3kU8gsa1fsryJQ4Q0xR/T/7tqWwEsg8g/RKqGxe2jzdLH5yeWTN
+ R4HkPkRX4ndQ76OQ9yKcyEtW6TyYCobb2Yuo0LVM7BkY7waOOYArERowjtIjwlm6rTivc/90M3
+ KSL+/aGjZKHldV1D1QI9n8UseF7XgbxRt3zTz4iOU6ewgXE1gWNEnKtgBq5C0ljn8tnFyoWKae
+ nCU=
+X-IronPort-AV: E=Sophos;i="5.78,405,1599494400"; 
+   d="scan'208";a="258493663"
+Received: from mail-co1nam11lp2173.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.173])
+  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 21:45:22 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Pfivnlpgose5ixthj/q2xaR2fRUuzyzvnaMYDXppmctsxaKRJ/bBUsTiOAuhc3hJEt6N+ObsjpLsSdBDOQdd7LLF9+Csp7e02XpBfYUQrMiRsVaBwZ4A8BIUB3ncIad8lGbEB3dEXPGd56b+oFO4oUSP5y3jPV0DqRxqxjyY245JYs+CdVOQS+OReHs7LS90iZgj/X/JELpMW/0FMC/pzRGUs2bAAx2EIR0hdHFI7X162PbDy/FxsNPAn7ln0oplZaQujG6lGhZIXVfnaukL4+CGjLjVlQCvpDfTFL2EVeuMayrJOWO/5bZy8SBzBX5D9nboUbtQvyhz3spR9xp28w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c+g4ISUr6a6kG5vX7CmzZ5cFeERqM8REqyosxJtLflU=;
+ b=lM+sDVXOtoo0ZsJjX+Xvw6wHfhuCfJqzDO+HIDoZYqaBDSgx3+L0hX7c3+NyBQ7CEd0Kk09gnS6JEVMzZFUoEJmLocdhLKI6R/5gss1/+PMJpZCNBRIDTOg3+vzLlHElUfbof2virXbyoCnPOk/31OZ2eFQVjEukKcaSaXrwfJD1OOUT3qYu6jQ9PPALEzlAyrji2olPoirzWB3BaTpmkvF1rBQ4E+z9vx1s4JOwWF1bbny8dwszAKiUMhnAUHlMkP1MLQSZO4lHyAH+TpW7qBgLDOJSjKYDGhEjlZVYs5WhzR9RkmOmColKk5K+xWGbWyKt6Ub/yFh4DeZt2RAPlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wb0v0Tpn/LXq5vifgNW6E6ooJIXyL4+/EUe6gXt5AjA=;
-        b=YLkw3uBJNQEB6Ow8AdhJs3yXbIraHjok/LjIhoexxcT0cJnljaBQWafgsHhC1nThiK
-         Am1A+K6ZryYfu1/pwAbfJbRYFLYb4ksS2yQL0pYIEoMczWHhR89QkVK4NtJY9WVB49FM
-         Wg9y0pTE5B4/+9dDOKr4dUWU4XEDCN25THALfkkOL1pqsHY1bdg1V1rBVqKjCbs0xKU5
-         pOt9AEZCi76wdzpCOxCdiGqZ+8RineobV6xSuDhUOxhKXvd0e4IyV+E+78mpL8AAI0vn
-         V+rFxFna0ocaz+15ruJC7JSBoq2UgvknI6coyA6SY2HO5KddauwmHmHMdV9rqpVkHSHX
-         Pqlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=wb0v0Tpn/LXq5vifgNW6E6ooJIXyL4+/EUe6gXt5AjA=;
-        b=MZT+tL7a02ANMtTB+GtDlHr9zitLDwonXgicnlt0dBVeMZ+YoRAzKvKoKQhfhaaI7p
-         6iJEiM9FbbHXSQTyly+ojWOIB0qLYHPyfAkvUY5Xm17a0QaRdr9cBYhm6rasQQnjz6Pu
-         TBMP3FuaWJkNvIUjIDcMsjsli0wss8L9fPPY6SxXQxqwYswVqo8WP6rTAw5ZaYkC/f8/
-         izZDA82ZeVECjMHkO6ixvNi5dw9rYqyNvQjDw/61mMn2k4ottL2qQnMrGxgQp/3KQlVd
-         plxbrVdjHh/TL13sW9TBC51hwCP7gOMEp0/cc7GxwO0K0CcWQksn4XaCzpwGF+He9dAP
-         4gLw==
-X-Gm-Message-State: AOAM530vWhQ9hGa8kXnqnkgkWDf38KX2DXCQoWowq3E3aw9laV7YYJOB
-        7ctuS9Q6uYRSEfJeNa+dKZaHi1Nxx/WXrQ==
-X-Google-Smtp-Source: ABdhPJzxhFtO4UdlPdbGQ537u5MzCUPEdq6CWvNEZrH3xX47qHyNFybDxVPkT2FAj3g2zdg3JP0GqQ==
-X-Received: by 2002:adf:ef4c:: with SMTP id c12mr2878033wrp.242.1607521222515;
-        Wed, 09 Dec 2020 05:40:22 -0800 (PST)
-Received: from [192.168.8.121] ([85.255.233.156])
-        by smtp.gmail.com with ESMTPSA id m8sm3558947wmc.27.2020.12.09.05.40.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Dec 2020 05:40:21 -0800 (PST)
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1607477897.git.asml.silence@gmail.com>
- <de27dbca08f8005a303e5efd81612c9a5cdcf196.1607477897.git.asml.silence@gmail.com>
- <20201209083645.GB21968@infradead.org>
- <20201209130723.GL3579531@ZenIV.linux.org.uk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 1/2] iov: introduce ITER_BVEC_FLAG_FIXED
-Message-ID: <b6cd4108-dbfe-5753-768f-92f55f38d6cd@gmail.com>
-Date:   Wed, 9 Dec 2020 13:37:05 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20201209130723.GL3579531@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c+g4ISUr6a6kG5vX7CmzZ5cFeERqM8REqyosxJtLflU=;
+ b=noWFCiBbGr2AxNELRjd7PsvfUq2qqFszbn6XhWrVeJ5MqS8Jj74GgFezEUIvnU0LrqChdk1wtJM2ZWva5LuUNxc35O0+rF6nZRexPUxwjTAlQ4ry5QBiZwFyPZ8inFKXgksrtMh6BiM9n/9QR2sWVM4J6aoGjxhPdhv3T5iBmiU=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN6PR04MB4048.namprd04.prod.outlook.com
+ (2603:10b6:805:40::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.12; Wed, 9 Dec
+ 2020 13:38:22 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::65d7:592a:32d4:9f98]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::65d7:592a:32d4:9f98%6]) with mapi id 15.20.3589.038; Wed, 9 Dec 2020
+ 13:38:22 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     "hch@infradead.org" <hch@infradead.org>
+CC:     Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
+Thread-Topic: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
+Thread-Index: AQHWt1Sb3HZRbzGDlk6Pnuh0g860vw==
+Date:   Wed, 9 Dec 2020 13:38:22 +0000
+Message-ID: <SN4PR0401MB35987F45DC6237FC6680CCB49BCC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+ <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
+ <20201209093138.GA3970@infradead.org>
+ <SN4PR0401MB3598A4DA5A6E8F67DFB070859BCC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20201209101030.GA14302@infradead.org>
+ <SN4PR0401MB35980273F346A1B2685D1D0F9BCC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8cb63b73-7a94-4082-1d88-08d89c47b2bc
+x-ms-traffictypediagnostic: SN6PR04MB4048:
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN6PR04MB404879CCD1FEDF79FE0816659BCC0@SN6PR04MB4048.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: qsH0dJGoApUme8ChL8x2nAUjIJwjfn6dq6y9G4rw1V6R2iXnGynYyP4k4VmzpQOWjBpoO7vVMHt1IxLx7KdnU0kUGbJZO+3SO2r252s+NZvbiQBCmdEgNkZEL0m/Ko53iO01IUbnWuJkA7kihJNKk2IqWON2RWgcNhbE6coFdVuaqtba0/Y+qMy5eIIpW2nVBQV2hOPYYP1iKu4aVz9XBAl3B+iDObZLVZAofyXHmfF8RX04fm7EfUgme3g2J/PjXjDJC7NY/jWRKdZWM0Y2HEjRX/cc0MXg8BYq0oXOlRFiQWg/GJmfnbHWh7NEG+KwsuCFkZE3d4NGaWgFMeQMkg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(136003)(346002)(66446008)(52536014)(66556008)(66946007)(66476007)(26005)(186003)(4744005)(64756008)(508600001)(4326008)(71200400001)(33656002)(5660300002)(83380400001)(2906002)(76116006)(86362001)(6506007)(54906003)(8676002)(7696005)(53546011)(6916009)(9686003)(8936002)(55016002)(91956017);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?K/LPIrnzWFheusFsB4nkJF6FXubr4mGXk8QDd2xOULxFbBUVDj+x4eqIOjg3?=
+ =?us-ascii?Q?8dUSHB/ib+H1BbV8PI/WORCwNgZSXHkXDbwH67rso+ovqtayOZ1ItfEapKfp?=
+ =?us-ascii?Q?ooNgjvK2kPFxAgT9QdiqgxOXWT4+oknI94bOuxmC4OB4Hkke6nE5eNMiqQm7?=
+ =?us-ascii?Q?M9YksnJp33GpMxqLIOTrFemcycTtkdA3I5m4M2JKAznMqj/AT4GS7DFQu5Yu?=
+ =?us-ascii?Q?gS7NjGL1C3Hiwc9Hh54xIVeGtHrmGaEU2pjGA+u8i7JVz3klNFfvK+55hW8R?=
+ =?us-ascii?Q?kdTkq7/Pwky5byog92gOWjO4V1BmcgYEU3/N2Wvz/uoF+3Pi9EWpHkc8lZIJ?=
+ =?us-ascii?Q?LWjCbWTouOcLqM4YmO+sxTc3p8oZ3i++ZDYyLeWz+kuM71Azd4lR75pHsSDp?=
+ =?us-ascii?Q?M+zqhU82YdGPfLlln7VGarhBGsrnsZkYKvbOnKhk3SNonhQmn8RA9ew8pO1w?=
+ =?us-ascii?Q?NpoXSDhIFcLzrWfkFKuRBKpC9H/CoJpxoxRrdPhrGy4JhsUmr35l4nvL7iii?=
+ =?us-ascii?Q?JwRLW0/U9a20NTpVNs8nY/OkDB1vcoPIIe1fjJJfKTKOul14dA7vwIxJZRDx?=
+ =?us-ascii?Q?XJZzvIMNHT6lH/qUmUw+o4pF4oct8E1UNa8ePhArW9D4AO17qLR9uLIcPdUo?=
+ =?us-ascii?Q?GRuZqg97fr+LPdH6KVcmJP5oChPECgO6b7YQrLdhaOFxvFx7dKQqwbPBJ3pp?=
+ =?us-ascii?Q?tpwrYCQkpTxNGKVZjJzxYtjT4Z22c70c9uYYEiGoIWBgKHD+mUJse1auGmoL?=
+ =?us-ascii?Q?w2jdOWxVQ1UkhupZrdU3bAzPfbYXx73uX9fdEc59f5SISLLt2bFCCDKEJlPq?=
+ =?us-ascii?Q?oVRSIK8f8loZmKLflAH1jZA80tT32Q+I+TnZkJi4rcJePVd4R5c8zzZsVrkX?=
+ =?us-ascii?Q?QVkC+3yqSNc3NWdyxUQscs/hrxueGvAQG7WhG7ppufqUnDaQwEvL0MxDSY5O?=
+ =?us-ascii?Q?hasKO2b260uB40lHowowQAW4qOuO+aWZtlJa2mNyVu87a14Tho3BW9z9uVob?=
+ =?us-ascii?Q?QHtl?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cb63b73-7a94-4082-1d88-08d89c47b2bc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2020 13:38:22.7319
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zYaitSnOouwRaHi1FoV07rWKuKgyHBE36Sdo0BvGFA/stmlUbM+XheYyTFskXZ1nNV6MqHQ231yDgSAr9VIKDkQ4S0s+DNd4xhlPMUL34d0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4048
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 09/12/2020 13:07, Al Viro wrote:
-> On Wed, Dec 09, 2020 at 08:36:45AM +0000, Christoph Hellwig wrote:
->>
->> This is making the iter type even more of a mess than it already is.
->> I think we at least need placeholders for 0/1 here and an explicit
->> flags namespace, preferably after the types.
->>
->> Then again I'd much prefer if we didn't even add the flag or at best
->> just add it for a short-term transition and move everyone over to the
->> new scheme.  Otherwise the amount of different interfaces and supporting
->> code keeps exploding.
-> 
-> Yes.  The only problem I see is how to describe the rules - "bdev-backed
-> iterators need the bvec array to stay allocated until IO completes"?
-> And one way or another, that needs to be documented - D/f/porting with
-> "mandatory" for priority.
-
-Yeah, I had troubles to put comments around, and it's still open.
-
-For current cases it can be bound to kiocb, e.g. "if an bvec iter passed
-"together" with kiocb then the vector should stay intact up to 
-->ki_complete()". But that "together" is rather full of holes.
-
--- 
-Pavel Begunkov
+On 09/12/2020 11:18, Johannes Thumshirn wrote:=0A=
+> On 09/12/2020 11:10, hch@infradead.org wrote:=0A=
+>> On Wed, Dec 09, 2020 at 10:08:53AM +0000, Johannes Thumshirn wrote:=0A=
+>>> On 09/12/2020 10:34, Christoph Hellwig wrote:=0A=
+>>>> Btw, another thing I noticed:=0A=
+>>>>=0A=
+>>>> when using io_uring to submit a write to btrfs that ends up using Zone=
+=0A=
+>>>> Append we'll hit the=0A=
+>>>>=0A=
+>>>> 	if (WARN_ON_ONCE(is_bvec))=0A=
+>>>> 		return -EINVAL;=0A=
+>>>>=0A=
+>>>> case in bio_iov_iter_get_pages with the changes in this series.=0A=
+>>>=0A=
+>>> Yes this warning is totally bogus. It was in there from the beginning o=
+f the=0A=
+>>> zone-append series and I have no idea why I didn't kill it.=0A=
+>>>=0A=
+>>> IIRC Chaitanya had a patch in his nvmet zoned series removing it.=0A=
+>>=0A=
+>> Yes, but it is wrong.  What we need is a version of=0A=
+>> __bio_iov_bvec_add_pages that takes the hardware limits into account.=0A=
+>>=0A=
+> =0A=
+> Ah now I understand the situation, I'm on it.=0A=
+> =0A=
+=0A=
+OK got something, just need to test it.=0A=
