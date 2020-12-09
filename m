@@ -2,116 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC8912D4CCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 22:25:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 085F22D4CE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 22:34:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387842AbgLIVYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 16:24:42 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:39585 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726501AbgLIVYm (ORCPT
+        id S2387986AbgLIVeM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 16:34:12 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:46476 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732223AbgLIVeB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 16:24:42 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A4E2E3C218E;
-        Thu, 10 Dec 2020 08:23:58 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kn6wI-002Gjj-13; Thu, 10 Dec 2020 08:23:58 +1100
-Date:   Thu, 10 Dec 2020 08:23:58 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     Hao Xu <haoxu@linux.alibaba.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
- in Direct IO
-Message-ID: <20201209212358.GE4170059@dread.disaster.area>
-References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
- <20201207022130.GC4170059@dread.disaster.area>
- <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
+        Wed, 9 Dec 2020 16:34:01 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kn75K-005T3u-9k; Wed, 09 Dec 2020 14:33:18 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kn75J-0006rx-EK; Wed, 09 Dec 2020 14:33:18 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jann@thejh.net>
+References: <87r1on1v62.fsf@x220.int.ebiederm.org>
+        <20201120231441.29911-15-ebiederm@xmission.com>
+        <20201207232900.GD4115853@ZenIV.linux.org.uk>
+        <877dprvs8e.fsf@x220.int.ebiederm.org>
+        <20201209040731.GK3579531@ZenIV.linux.org.uk>
+        <877dprtxly.fsf@x220.int.ebiederm.org>
+        <20201209142359.GN3579531@ZenIV.linux.org.uk>
+        <87o8j2svnt.fsf_-_@x220.int.ebiederm.org>
+        <CAHk-=wiUMHBHmmDS3_Xqh1wfGFyd_rdDmpZzk0cODoj1i7_VOA@mail.gmail.com>
+        <20201209195033.GP3579531@ZenIV.linux.org.uk>
+Date:   Wed, 09 Dec 2020 15:32:38 -0600
+In-Reply-To: <20201209195033.GP3579531@ZenIV.linux.org.uk> (Al Viro's message
+        of "Wed, 9 Dec 2020 19:50:33 +0000")
+Message-ID: <87sg8er7gp.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=SRrdq9N9AAAA:8 a=6R7veym_AAAA:8
-        a=7-415B0cAAAA:8 a=gWfzxe2RpuStIKZzZbUA:9 a=CjuIK1q_8ugA:10
-        a=ILCOIF4F_8SzUMnO7jNM:22 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain
+X-XM-SPF: eid=1kn75J-0006rx-EK;;;mid=<87sg8er7gp.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/UzOWmGe9SV576lXWAKwEdqLp/GDuaw78=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XM_B_SpammyWords
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4998]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 496 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 11 (2.3%), b_tie_ro: 10 (2.0%), parse: 1.17
+        (0.2%), extract_message_metadata: 17 (3.4%), get_uri_detail_list: 2.2
+        (0.4%), tests_pri_-1000: 16 (3.2%), tests_pri_-950: 1.37 (0.3%),
+        tests_pri_-900: 1.02 (0.2%), tests_pri_-90: 202 (40.8%), check_bayes:
+        200 (40.3%), b_tokenize: 8 (1.6%), b_tok_get_all: 9 (1.7%),
+        b_comp_prob: 2.8 (0.6%), b_tok_touch_all: 178 (35.9%), b_finish: 0.69
+        (0.1%), tests_pri_0: 230 (46.5%), check_dkim_signature: 0.48 (0.1%),
+        check_dkim_adsp: 22 (4.5%), poll_dns_idle: 21 (4.2%), tests_pri_10:
+        1.70 (0.3%), tests_pri_500: 10 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] files: rcu free files_struct
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 01:46:47PM +0800, JeffleXu wrote:
-> 
-> 
-> On 12/7/20 10:21 AM, Dave Chinner wrote:
-> > On Fri, Dec 04, 2020 at 05:44:56PM +0800, Hao Xu wrote:
-> >> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
-> >> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
-> >> IOCB_NOWAIT is set.
-> >>
-> >> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> >> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> >> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
-> >> ---
-> >>
-> >> Hi all,
-> >> I tested fio io_uring direct read for a file on ext4 filesystem on a
-> >> nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
-> >> means REQ_NOWAIT is not set in bio->bi_opf.
-> > 
-> > What iomap is doing is correct behaviour. IOCB_NOWAIT applies to the
-> > filesystem behaviour, not the block device.
-> > 
-> > REQ_NOWAIT can result in partial IO failures because the error is
-> > only reported to the iomap layer via IO completions. Hence we can
-> > split a DIO into multiple bios and have random bios in that IO fail
-> > with EAGAIN because REQ_NOWAIT is set. This error will
-> > get reported to the submitter via completion, and it will override
-> > any of the partial IOs that actually completed.
-> > 
-> > Hence, like the recently reported multi-mapping IOCB_NOWAIT bug
-> > reported by Jens and fixed in commit 883a790a8440 ("xfs: don't allow
-> > NOWAIT DIO across extent boundaries") we'll get silent partial
-> > writes occurring because the second submitted bio in an IO can
-> > trigger EAGAIN errors with partial IO completion having already
-> > occurred.
-> > 
-> > Further, we don't allow partial IO completion for DIO on XFS at all.
-> > DIO must be completely submitted and completed or return an error
-> > without having issued any IO at all.  Hence using REQ_NOWAIT for
-> > DIO bios is incorrect and not desirable.
-> 
-> Not familiar with xfs though, just in curiosity, how do you achive 'no
-> partial completion'? I mean you could avoid partial -EAGAIN by not
-> setting REQ_NOWAIT, but you could get other partial errors such as
-> -ENOMEM or something, as long as one DIO could be split to multiple bios.
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-If any part of a DIO fails, we fail the entire IO. When we split a
-DIO into multiple bios and one reports an error, we don't know track
-where in the IO it actually failed, we just fail the entire IO.
+> On Wed, Dec 09, 2020 at 11:13:38AM -0800, Linus Torvalds wrote:
+>> On Wed, Dec 9, 2020 at 10:05 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> >
+>> > -                               struct file * file = xchg(&fdt->fd[i], NULL);
+>> > +                               struct file * file = fdt->fd[i];
+>> >                                 if (file) {
+>> > +                                       rcu_assign_pointer(fdt->fd[i], NULL);
+>> 
+>> This makes me nervous. Why did we use to do that xchg() there? That
+>> has atomicity guarantees that now are gone.
+>> 
+>> Now, this whole thing should be called for just the last ref of the fd
+>> table, so presumably that atomicity was never needed in the first
+>> place. But the fact that we did that very expensive xchg() then makes
+>> me go "there's some reason for it".
+>> 
+>> Is this xchg() just bogus historical leftover? It kind of looks that
+>> way. But maybe that change should be done separately?
+>
+> I'm still not convinced that exposing close_files() to parallel
+> 3rd-party accesses is safe in all cases, so this patch still needs
+> more analysis.
 
-e.g. how do you report correct partial completion to userspace when
-a DIO gets split into 3 pieces and the middle one fails? There are
-two ranges that actually completed, but we can only report one of
-them....
+That is fine.  I just wanted to post the latest version so we could
+continue the discussion.  Especially with comments etc.
 
-And, really, we still need to report that an IO failed to userspace,
-because mission critical apps care more about the fact that an IO
-failure occurred than silently swallowing the IO error with a
-(potentially incorrect) partial IO completion notification.
+> And I'm none too happy about "we'll fix the things
+> up at the tail of the series" - the changes are subtle enough and
+> the area affected is rather fundamental.  So if we end up returning
+> to that several years from now while debugging something, I would
+> very much prefer to have the transformation series as clean and
+> understandable as possible.  It's not just about bisect hazard -
+> asking yourself "WTF had it been done that way, is there anything
+> subtle I'm missing here?" can cost many hours of head-scratching,
+> IME.
 
-Cheers,
+Fair enough.  I don't expect anyone is basing anything on that branch,
+so a rebase is possible.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Now removing the pounding on task_lock isn't about correctness, and it
+is not fixing a performance problem anyone has measured at this point.
+So I do think it should be a follow on.  If for no other reason than to
+keep the problem small enough it can fit in heads.
+
+Similarly the dnotify stuff.  Your description certain makes it look
+fishy but that the questionable parts are orthogonal to my patches.
+
+> Eric, I understand that you want to avoid reordering/folding, but
+> in this case it _is_ needed.  It's not as if there had been any
+> serious objections to the overall direction of changes; it's
+> just that we need to get that as understandable as possible.
+
+I will post the patch that will become -1/24 in a moment.
+
+Eric
+
+
+
