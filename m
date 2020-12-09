@@ -2,55 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E99BA2D4CA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 22:17:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8912D4CCA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 22:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgLIVRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 16:17:00 -0500
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:39855 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727369AbgLIVQt (ORCPT
+        id S2387842AbgLIVYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 16:24:42 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:39585 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726501AbgLIVYm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 16:16:49 -0500
+        Wed, 9 Dec 2020 16:24:42 -0500
 Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id E304A10C90F;
-        Thu, 10 Dec 2020 08:15:58 +1100 (AEDT)
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A4E2E3C218E;
+        Thu, 10 Dec 2020 08:23:58 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1kn6oY-002Gej-CG; Thu, 10 Dec 2020 08:15:58 +1100
-Date:   Thu, 10 Dec 2020 08:15:58 +1100
+        id 1kn6wI-002Gjj-13; Thu, 10 Dec 2020 08:23:58 +1100
+Date:   Thu, 10 Dec 2020 08:23:58 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
 Cc:     Hao Xu <haoxu@linux.alibaba.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         linux-fsdevel@vger.kernel.org,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
         Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
 Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
  in Direct IO
-Message-ID: <20201209211558.GD4170059@dread.disaster.area>
+Message-ID: <20201209212358.GE4170059@dread.disaster.area>
 References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
  <20201207022130.GC4170059@dread.disaster.area>
- <3b33a9e3-0f03-38cc-d484-3f355f75df73@kernel.dk>
+ <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3b33a9e3-0f03-38cc-d484-3f355f75df73@kernel.dk>
+In-Reply-To: <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
         a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
         a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=SRrdq9N9AAAA:8 a=6R7veym_AAAA:8
-        a=7-415B0cAAAA:8 a=018I-g7Lv1ZZF0RgCPIA:9 a=CjuIK1q_8ugA:10
+        a=7-415B0cAAAA:8 a=gWfzxe2RpuStIKZzZbUA:9 a=CjuIK1q_8ugA:10
         a=ILCOIF4F_8SzUMnO7jNM:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 07, 2020 at 04:40:38PM -0700, Jens Axboe wrote:
-> On 12/6/20 7:21 PM, Dave Chinner wrote:
+On Tue, Dec 08, 2020 at 01:46:47PM +0800, JeffleXu wrote:
+> 
+> 
+> On 12/7/20 10:21 AM, Dave Chinner wrote:
 > > On Fri, Dec 04, 2020 at 05:44:56PM +0800, Hao Xu wrote:
 > >> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
 > >> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
@@ -88,35 +90,24 @@ On Mon, Dec 07, 2020 at 04:40:38PM -0700, Jens Axboe wrote:
 > > without having issued any IO at all.  Hence using REQ_NOWAIT for
 > > DIO bios is incorrect and not desirable.
 > 
-> What you say makes total sense for a user using RWF_NOWAIT, but it
-> doesn't make a lot of sense for io_uring where we really want
-> IOCB_NOWAIT to be what it suggests it is - don't wait for other IO to
-> complete, if avoidable. One of the things that really suck with
-> aio/libai is the "yeah it's probably async, but lol, might not be"
-> aspect of it.
+> Not familiar with xfs though, just in curiosity, how do you achive 'no
+> partial completion'? I mean you could avoid partial -EAGAIN by not
+> setting REQ_NOWAIT, but you could get other partial errors such as
+> -ENOMEM or something, as long as one DIO could be split to multiple bios.
 
-Sure, but we have no way of telling what semantics the IO issuer
-actually requires from above. And because IOCB_NOWAIT behaviour is
-directly exposed to userspace by RWF_NOWAIT, that's the behaviour we
-have to implement.
+If any part of a DIO fails, we fail the entire IO. When we split a
+DIO into multiple bios and one reports an error, we don't know track
+where in the IO it actually failed, we just fail the entire IO.
 
-> For io_uring, if we do get -EAGAIN, we'll retry without NOWAIT set. So
-> the concern about fractured/short writes doesn't bubble up to the
-> application. Hence we really want an IOCB_NOWAIT_REALLY on that side,
-> instead of the poor mans IOCB_MAYBE_NOWAIT semantics.
+e.g. how do you report correct partial completion to userspace when
+a DIO gets split into 3 pieces and the middle one fails? There are
+two ranges that actually completed, but we can only report one of
+them....
 
-Yup, perhaps what we really want is a true IOCB_NONBLOCK flag as an
-internal kernel implementation. i.e. don't block anywhere in the
-stack, and the caller must handle retrying/completing the entire IO
-regardless of where the -EAGAIN comes from during the IO, including
-from a partial completion that the caller is waiting for...
-
-i.e. rather than hacking around this specific instance of "it blocks
-and we don't want it to", define the semantics and behaviour of a
-fully non-blocking IO through all layers from the VFS down to the
-hardware and let's implement that. Then we can stop playing
-whack-a-mole with all the "but it blocks when I do this, doctor!"
-issues that we seem to keep having.... :)
+And, really, we still need to report that an IO failed to userspace,
+because mission critical apps care more about the fact that an IO
+failure occurred than silently swallowing the IO error with a
+(potentially incorrect) partial IO completion notification.
 
 Cheers,
 
