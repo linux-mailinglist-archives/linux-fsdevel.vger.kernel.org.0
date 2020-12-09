@@ -2,109 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B342A2D3732
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 00:54:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3B3F2D385D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 02:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbgLHXxl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 18:53:41 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27030 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730236AbgLHXxh (ORCPT
+        id S1726203AbgLIBmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 20:42:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59642 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbgLIBmD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 18:53:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607471530;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=MTh9e9UxyEy8kihSlCzR3WJynOSHVGELayKPMtiESZU=;
-        b=bqo4rSEYmSs2IbP7Xi8SfqE8/UbmFCtJxqVTRpJ3x6g2PJ0iaw5YntcgthxSdiErbo3Oit
-        cxV9U3u8QS0H3ydqRhu710O6dAD4BRo7Wn28rrk4YzQZHsZD+qSZqi9gKgzmL5b+nxbw59
-        e+ryQOFbv3WvcFMYWi3XuH9T/knlBVk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-497-c3VAAdd1PuWrwzcGOCnjmg-1; Tue, 08 Dec 2020 18:52:07 -0500
-X-MC-Unique: c3VAAdd1PuWrwzcGOCnjmg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B4351803620;
-        Tue,  8 Dec 2020 23:52:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 848FA5D9DD;
-        Tue,  8 Dec 2020 23:52:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix memory leak when mounting with multiple source
- parameters
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com,
-        Randy Dunlap <rdunlap@infradead.org>, dhowells@redhat.com,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 08 Dec 2020 23:52:03 +0000
-Message-ID: <160747152376.1115012.15487588820547991576.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Tue, 8 Dec 2020 20:42:03 -0500
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB82C0613D6;
+        Tue,  8 Dec 2020 17:41:16 -0800 (PST)
+Received: by mail-il1-x142.google.com with SMTP id b8so60439ila.13;
+        Tue, 08 Dec 2020 17:41:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iAGWTxNYiR5ootYJRUnUUI04QhdswVTJD/R6XwstuWM=;
+        b=HB/rAKzJr5CG+rq2DeWaPCAmqtQN1wgBJx6FeZmzTHWzYSyhwWT6zlgTr7NxOc+CBn
+         1d52HA3170acxH6axHMsipNoDhhHBrZYXL7gLCMl0yWpgijY4omt0IcDaDj/NEG5gF5H
+         q1EafboB2/cpJuRinDHJ0lgR/M0goLFmG2o7Wmijj9zhGHPIkeiTMu9Qlv2NQdaZaDt5
+         CM40N0DOVcuN5ugpTuESqvMDuEdkvVZPy4y2p1TV1W4eJtF+w3aaWXT3T4P4QUqoWziZ
+         XByaOhvEsPitAECL4YMtMYHGeRxxqQHouGqgJ8+i7JKxE8QVee+q/A9cLG348f65gvQ0
+         1rRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iAGWTxNYiR5ootYJRUnUUI04QhdswVTJD/R6XwstuWM=;
+        b=Rkhg+rUOKaWjwwzjI40hN0BBT59UAFck+hudNGj3AuI9ZMTs6za0ORFd5inBazLOUf
+         p301qa4tSrpeQQvGHcU1L08KLv6AkqNIizlTk1zEXXYrNtgboA5x9KuuW4vH3JTd/Y5T
+         o3eAp9DKN6i6/jbGX6ECx8iu5qANytLxS/5TAC6vICHTJS5qkvAg1k1ctiC3cV8rl1Dy
+         K+l2+nwKKA/RHqLgruAagk6NyxQx9XT4SPyO2DTQxZ3V0O7tGpYyB9VLOr4Li+s/oHkh
+         lYgu7hjbkR9RqdgRLk5LnoCuXb32MNk+dXX3h1MPWEGNmgsWIZnqIgZrsFlqy2PmPlD2
+         TSRw==
+X-Gm-Message-State: AOAM532oRvYvov2jhecMXP8qdkRAegKcK6QWlr3AjmDGItMMQegTwYpI
+        xE+ZuDtJCX+K0muooKuJklAR0HHCN2RSlGapra4=
+X-Google-Smtp-Source: ABdhPJwYEbLB3evwd4abSi2gz55NeZ/XnLzHrSL8vccVrF859VvYv+M/ufOp7NWH+xP5cHBIkbG+AhvacQbYO4UR5S4=
+X-Received: by 2002:a05:6e02:c32:: with SMTP id q18mr58174ilg.203.1607478076247;
+ Tue, 08 Dec 2020 17:41:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <20201208122824.16118-1-laoar.shao@gmail.com> <20201208122824.16118-5-laoar.shao@gmail.com>
+ <20201208185959.GD1943235@magnolia>
+In-Reply-To: <20201208185959.GD1943235@magnolia>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Wed, 9 Dec 2020 09:40:40 +0800
+Message-ID: <CALOAHbCgfAJOn60_2Gw++uHPqutU0UO8pXi6Bg0_huRqepxpaA@mail.gmail.com>
+Subject: Re: [PATCH v11 4/4] xfs: use current->journal_info to avoid
+ transaction reservation recursion
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>, jlayton@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There's a memory leak in afs_parse_source() whereby multiple source=
-parameters overwrite fc->source in the fs_context struct without freeing
-the previously recorded source.
+On Wed, Dec 9, 2020 at 3:00 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> On Tue, Dec 08, 2020 at 08:28:24PM +0800, Yafang Shao wrote:
+> > PF_FSTRANS which is used to avoid transaction reservation recursion, is
+> > dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
+> > PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
+> > memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
+> > means to avoid filesystem reclaim recursion.
+> >
+> > As these two flags have different meanings, we'd better reintroduce
+> > PF_FSTRANS back. To avoid wasting the space of PF_* flags in task_struct,
+> > we can reuse the current->journal_info to do that, per Willy. As the
+> > check of transaction reservation recursion is used by XFS only, we can
+> > move the check into xfs_vm_writepage(s), per Dave.
+> >
+> > To better abstract that behavoir, two new helpers are introduced, as
+> > follows,
+> > - xfs_trans_context_active
+> >   To check whehter current is in fs transcation or not
+> > - xfs_trans_context_swap
+> >   Transfer the transaction context when rolling a permanent transaction
+> >
+> > These two new helpers are instroduced in xfs_trans.h.
+> >
+> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Cc: Michal Hocko <mhocko@kernel.org>
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Jeff Layton <jlayton@redhat.com>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > ---
+> >  fs/iomap/buffered-io.c |  7 -------
+> >  fs/xfs/xfs_aops.c      | 17 +++++++++++++++++
+> >  fs/xfs/xfs_trans.c     |  3 +++
+> >  fs/xfs/xfs_trans.h     | 22 ++++++++++++++++++++++
+> >  4 files changed, 42 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 10cc7979ce38..3c53fa6ce64d 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1458,13 +1458,6 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
+> >                       PF_MEMALLOC))
+> >               goto redirty;
+> >
+> > -     /*
+> > -      * Given that we do not allow direct reclaim to call us, we should
+> > -      * never be called in a recursive filesystem reclaim context.
+> > -      */
+> > -     if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+> > -             goto redirty;
+> > -
+> >       /*
+> >        * Is this page beyond the end of the file?
+> >        *
+> > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> > index 2371187b7615..0da0242d42c3 100644
+> > --- a/fs/xfs/xfs_aops.c
+> > +++ b/fs/xfs/xfs_aops.c
+> > @@ -568,6 +568,16 @@ xfs_vm_writepage(
+> >  {
+> >       struct xfs_writepage_ctx wpc = { };
+> >
+> > +     /*
+> > +      * Given that we do not allow direct reclaim to call us, we should
+> > +      * never be called while in a filesystem transaction.
+> > +      */
+> > +     if (WARN_ON_ONCE(xfs_trans_context_active())) {
+> > +             redirty_page_for_writepage(wbc, page);
+> > +             unlock_page(page);
+> > +             return 0;
+> > +     }
+> > +
+> >       return iomap_writepage(page, wbc, &wpc.ctx, &xfs_writeback_ops);
+> >  }
+> >
+> > @@ -579,6 +589,13 @@ xfs_vm_writepages(
+> >       struct xfs_writepage_ctx wpc = { };
+> >
+> >       xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+> > +     /*
+> > +      * Given that we do not allow direct reclaim to call us, we should
+> > +      * never be called while in a filesystem transaction.
+> > +      */
+> > +     if (WARN_ON_ONCE(xfs_trans_context_active()))
+> > +             return 0;
+> > +
+> >       return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_ops);
+> >  }
+> >
+> > diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+> > index fe20398a214e..08d4916ffb13 100644
+> > --- a/fs/xfs/xfs_trans.c
+> > +++ b/fs/xfs/xfs_trans.c
+> > @@ -124,6 +124,9 @@ xfs_trans_dup(
+> >       tp->t_rtx_res = tp->t_rtx_res_used;
+> >       ntp->t_pflags = tp->t_pflags;
+>
+> This one line (ntp->t_pflags = tp->t_pflags) should move to
+> xfs_trans_context_swap.
+>
 
-Fix this by only permitting a single source parameter and rejecting with an
-error all subsequent ones.
-
-This was caught by syzbot with the kernel memory leak detector, showing
-something like the following trace:
-
-unreferenced object 0xffff888114375440 (size 32):
-  comm "repro", pid 5168, jiffies 4294923723 (age 569.948s)
-  hex dump (first 32 bytes):
-    25 5e 5d 24 5b 2b 25 5d 28 24 7b 3a 0f 6b 5b 29  %^]$[+%](${:.k[)
-    2d 3a 00 00 00 00 00 00 00 00 00 00 00 00 00 00  -:..............
-  backtrace:
-    [<0000000072e41e46>] slab_post_alloc_hook+0x42/0x79
-    [<00000000d8b306e6>] __kmalloc_track_caller+0x125/0x16a
-    [<0000000028ae1813>] kmemdup_nul+0x24/0x3c
-    [<0000000072927516>] vfs_parse_fs_string+0x5a/0xa1
-    [<0000000045b4b196>] generic_parse_monolithic+0x9d/0xc5
-    [<0000000084462c80>] do_new_mount+0x10d/0x15a
-    [<000000008aef98c5>] do_mount+0x5f/0x8e
-    [<000000002998d632>] __do_sys_mount+0xff/0x127
-    [<00000000faf86d94>] do_syscall_64+0x2d/0x3a
-    [<000000004495c173>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: 13fcc6837049 ("afs: Add fs_context support")
-Reported-by: syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Randy Dunlap <rdunlap@infradead.org>
----
-
- fs/afs/super.c |    3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 6c5900df6aa5..e38bb1e7a4d2 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -230,6 +230,9 @@ static int afs_parse_source(struct fs_context *fc, struct fs_parameter *param)
- 
- 	_enter(",%s", name);
- 
-+	if (fc->source)
-+		return invalf(fc, "kAFS: Multiple sources not supported");
-+
- 	if (!name) {
- 		printk(KERN_ERR "kAFS: no volume name specified\n");
- 		return -EINVAL;
+Make sense to me.
+Will update it.
 
 
+> --D
+>
+> >
+> > +     /* Associate the new transaction with this thread. */
+> > +     xfs_trans_context_swap(tp, ntp);
+> > +
+> >       /* move deferred ops over to the new tp */
+> >       xfs_defer_move(ntp, tp);
+> >
+> > diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
+> > index 44b11c64a15e..d596a375e3bf 100644
+> > --- a/fs/xfs/xfs_trans.h
+> > +++ b/fs/xfs/xfs_trans.h
+> > @@ -268,16 +268,38 @@ xfs_trans_item_relog(
+> >       return lip->li_ops->iop_relog(lip, tp);
+> >  }
+> >
+> > +static inline bool
+> > +xfs_trans_context_active(void)
+> > +{
+> > +     /* Use journal_info to indicate current is in a transaction */
+> > +     return current->journal_info != NULL;
+> > +}
+> > +
+> >  static inline void
+> >  xfs_trans_context_set(struct xfs_trans *tp)
+> >  {
+> > +     ASSERT(!current->journal_info);
+> > +     current->journal_info = tp;
+> >       tp->t_pflags = memalloc_nofs_save();
+> >  }
+> >
+> >  static inline void
+> >  xfs_trans_context_clear(struct xfs_trans *tp)
+> >  {
+> > +     ASSERT(current->journal_info == tp);
+> > +     current->journal_info = NULL;
+> >       memalloc_nofs_restore(tp->t_pflags);
+> >  }
+> >
+> > +/*
+> > + * Transfer the transaction context when rolling a permanent
+> > + * transaction.
+> > + */
+> > +static inline void
+> > +xfs_trans_context_swap(struct xfs_trans *tp, struct xfs_trans *ntp)
+> > +{
+> > +     ASSERT(current->journal_info == tp);
+> > +     current->journal_info = ntp;
+> > +}
+> > +
+> >  #endif       /* __XFS_TRANS_H__ */
+> > --
+> > 2.18.4
+> >
+
+
+
+--
+Thanks
+Yafang
