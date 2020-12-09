@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A0D2D3878
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 02:56:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E7A02D3882
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 02:58:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbgLIByQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Dec 2020 20:54:16 -0500
-Received: from namei.org ([65.99.196.166]:59052 "EHLO mail.namei.org"
+        id S1725931AbgLIB6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Dec 2020 20:58:11 -0500
+Received: from namei.org ([65.99.196.166]:59072 "EHLO mail.namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbgLIByO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Dec 2020 20:54:14 -0500
+        id S1725808AbgLIB6L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Dec 2020 20:58:11 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id CBD5ADBF;
-        Wed,  9 Dec 2020 01:53:30 +0000 (UTC)
-Date:   Tue, 8 Dec 2020 17:53:30 -0800 (PST)
+        by mail.namei.org (Postfix) with ESMTPS id 0430BDC0;
+        Wed,  9 Dec 2020 01:57:30 +0000 (UTC)
+Date:   Tue, 8 Dec 2020 17:57:29 -0800 (PST)
 From:   James Morris <jmorris@namei.org>
 To:     Miklos Szeredi <mszeredi@redhat.com>
 cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
         linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] vfs: move cap_convert_nscap() call into
- vfs_setxattr()
-In-Reply-To: <20201207163255.564116-2-mszeredi@redhat.com>
-Message-ID: <f9866764-15b-e795-60aa-b484916f66b4@namei.org>
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-2-mszeredi@redhat.com>
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH v2 04/10] ovl: make ioctl() safe
+In-Reply-To: <20201207163255.564116-5-mszeredi@redhat.com>
+Message-ID: <e5876ecc-1cce-76d0-528-40b9bc54d0c2@namei.org>
+References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-5-mszeredi@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
@@ -33,17 +33,14 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, 7 Dec 2020, Miklos Szeredi wrote:
 
-> cap_convert_nscap() does permission checking as well as conversion of the
-> xattr value conditionally based on fs's user-ns.
+> ovl_ioctl_set_flags() does a capability check using flags, but then the
+> real ioctl double-fetches flags and uses potentially different value.
 > 
-> This is needed by overlayfs and probably other layered fs (ecryptfs) and is
-> what vfs_foo() is supposed to do anyway.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> The "Check the capability before cred override" comment misleading: user
+> can skip this check by presenting benign flags first and then overwriting
+> them to non-benign flags.
 
-
-Acked-by: James Morris <jamorris@linux.microsoft.com>
-
+Is this a security bug which should be fixed in stable?
 
 -- 
 James Morris
