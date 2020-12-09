@@ -2,246 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4B372D4800
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 18:35:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 514AE2D4837
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 18:45:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730669AbgLIRdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 12:33:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36666 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730402AbgLIRdb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 12:33:31 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6972C0613CF;
-        Wed,  9 Dec 2020 09:32:50 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id bo9so3266924ejb.13;
-        Wed, 09 Dec 2020 09:32:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pCTu9SYS4xAxD6fbbi1HzsiCoR2Dn8r2H8c6zyF7DTI=;
-        b=RDQPsXg/3vW9HZUFWux/wmqLbdK5YLbvHnMQAGT/VPDCsX77rEmD/49Xpf0BPbqWzi
-         veyHP8O/LbBWcN3gnRO4YJ3eknxH+VVlPCV1PzsyE03xgqqfjhx1ZhBzpmwLn2MEuzJR
-         w6DX5SND8/JKdEQSkaoVLxeno798Xz9gWj8HqY04jEtUwvjSvskoIxxlAiyIoQd/KwKI
-         RP/N+hVKcoyo2L/rHovy8nJTtvekg/emT/+ofSDko9yblBzKHuJX4XVmm5Hg3n58ypPW
-         tKktiwWBpf+1iPDoC11RAeVBugE6YARtx/3tbk9fVZpbR2nSi8LsSyZpAum4Qu+P971b
-         5fNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pCTu9SYS4xAxD6fbbi1HzsiCoR2Dn8r2H8c6zyF7DTI=;
-        b=K/SaWD7wQOXkJbJqDScUTjW4RZG7YBxwW2vOOqXcjJilIerrZVvy+eEq43oi04nn3u
-         7TkwHTXymbWB60sm3gYXqqFCvZpVrbgwyHEghqLLD8Z6doULobFxFhB8VQMqgxI/Gf0K
-         Hbmm1XNPbCvMob5RUSD6fpmCvsE8xAIDg8dEbLcd0q3eJ0pGVeWF7j8i3b/E2tLosfDQ
-         18YvIcoyctxASHY3l0/cDy/NO3471yxYfZqC/87L35VOq5WtX4pdT61ArlSkELXlr/wg
-         IxxBvXwRLr+n7r4VA2cUCQngP7pIgYp3Yfmz8DjIr3wTS76PCTDQrzgT+wKs00jxa+bO
-         ZWNg==
-X-Gm-Message-State: AOAM533I+nOULEcYkL+YLpOoeBHxiI+3CLlG75bV9Oy2B3GLkltxC2tG
-        +8fMqmQOtMuWBYqTCSkudJsn6gqjP3Y+j0nC0s8=
-X-Google-Smtp-Source: ABdhPJyX22yOKJwAo5RsbC9l4EZnf1ndp1QDw/Wv2fCvk/9ohTuzEt/5+LZi6rr83b5nFfCsUevVc9AV8nE5HdfzJbs=
-X-Received: by 2002:a17:907:20a4:: with SMTP id pw4mr2907593ejb.499.1607535169602;
- Wed, 09 Dec 2020 09:32:49 -0800 (PST)
+        id S1732825AbgLIRpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 12:45:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732750AbgLIRpl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Dec 2020 12:45:41 -0500
+Date:   Wed, 9 Dec 2020 09:44:59 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607535900;
+        bh=51HyNnPaHkU7aDildWZkYgLJdO+M2pmN6JGY4XANoO8=;
+        h=From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=N4e89LOuVlKOoVNJs7nP8zfPTYn0LCHW/SO7QU86ZT0sXsR3vjpE3VTaoUtydYEjK
+         xZ+S32IckZo8QWRLDe+dc6oFms3/7RqaJ6UbBhvBto2SmfvsUS1wlA/DjqprZal5Os
+         Mis7od0jM2d349bLv820V1grUvggG40DdCbsuv3tyH4XsU6pKeES1ik20IADdBrSY3
+         rsR2R7IDQ8FJM9QDYDygE9yHsgF17efFBhueD1i+yZr6kERpitbNevynOVO4t0wXWQ
+         uIGyAo0Dn6ofbCNE3iz8ijRlq99ZQjSE0REkDbU2STtC2V96mVKJsUtyBinaybLDn9
+         CbnT0b6FObzFQ==
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        criu@openvz.org, bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
+Subject: Re: [PATCH v2 09/24] file: Replace fcheck_files with
+ files_lookup_fd_rcu
+Message-ID: <20201209174459.GD2657@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <87r1on1v62.fsf@x220.int.ebiederm.org>
+ <20201120231441.29911-9-ebiederm@xmission.com>
+ <20201207224656.GC4115853@ZenIV.linux.org.uk>
+ <20201207224903.GA4117703@ZenIV.linux.org.uk>
+ <20201209165411.GA16743@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-7-shy828301@gmail.com>
- <49464720-675d-5144-043c-eba6852a9c06@virtuozzo.com> <CAHbLzkoiTmNLXj1Tx0-PggEdcYQ6nj71DUX3ya6mj3VNZ5ho4A@mail.gmail.com>
- <d5454f6d-6739-3252-fba0-ac39c6c526c4@virtuozzo.com>
-In-Reply-To: <d5454f6d-6739-3252-fba0-ac39c6c526c4@virtuozzo.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 9 Dec 2020 09:32:37 -0800
-Message-ID: <CAHbLzkqu5X-kFKt1vWYc8U=fK=NBWauP-=Kz+A9=GUuQ32+gAQ@mail.gmail.com>
-Subject: Re: [PATCH 6/9] mm: vmscan: use per memcg nr_deferred of shrinker
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201209165411.GA16743@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 7:42 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On 08.12.2020 20:13, Yang Shi wrote:
-> > On Thu, Dec 3, 2020 at 3:40 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >>
-> >> On 02.12.2020 21:27, Yang Shi wrote:
-> >>> Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's nr_deferred
-> >>> will be used in the following cases:
-> >>>     1. Non memcg aware shrinkers
-> >>>     2. !CONFIG_MEMCG
-> >>>     3. memcg is disabled by boot parameter
-> >>>
-> >>> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> >>> ---
-> >>>  mm/vmscan.c | 88 +++++++++++++++++++++++++++++++++++++++++++++++++----
-> >>>  1 file changed, 82 insertions(+), 6 deletions(-)
-> >>>
-> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> >>> index cba0bc8d4661..d569fdcaba79 100644
-> >>> --- a/mm/vmscan.c
-> >>> +++ b/mm/vmscan.c
-> >>> @@ -203,6 +203,12 @@ static DECLARE_RWSEM(shrinker_rwsem);
-> >>>  static DEFINE_IDR(shrinker_idr);
-> >>>  static int shrinker_nr_max;
-> >>>
-> >>> +static inline bool is_deferred_memcg_aware(struct shrinker *shrinker)
-> >>> +{
-> >>> +     return (shrinker->flags & SHRINKER_MEMCG_AWARE) &&
-> >>> +             !mem_cgroup_disabled();
-> >>> +}
-> >>> +
-> >>>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
-> >>>  {
-> >>>       int id, ret = -ENOMEM;
-> >>> @@ -271,7 +277,58 @@ static bool writeback_throttling_sane(struct scan_control *sc)
-> >>>  #endif
-> >>>       return false;
-> >>>  }
-> >>> +
-> >>> +static inline long count_nr_deferred(struct shrinker *shrinker,
-> >>> +                                  struct shrink_control *sc)
-> >>> +{
-> >>> +     bool per_memcg_deferred = is_deferred_memcg_aware(shrinker) && sc->memcg;
-> >>> +     struct memcg_shrinker_deferred *deferred;
-> >>> +     struct mem_cgroup *memcg = sc->memcg;
-> >>> +     int nid = sc->nid;
-> >>> +     int id = shrinker->id;
-> >>> +     long nr;
-> >>> +
-> >>> +     if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
-> >>> +             nid = 0;
-> >>> +
-> >>> +     if (per_memcg_deferred) {
-> >>> +             deferred = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_deferred,
-> >>> +                                                  true);
-> >>
-> >> My comment is about both 5/9 and 6/9 patches.
-> >
-> > Sorry for the late reply, I don't know why Gmail filtered this out to spam.
-> >
-> >>
-> >> shrink_slab_memcg() races with mem_cgroup_css_online(). A visibility of CSS_ONLINE flag
-> >> in shrink_slab_memcg()->mem_cgroup_online() does not guarantee that you will see
-> >> memcg->nodeinfo[nid]->shrinker_deferred != NULL in count_nr_deferred(). This may occur
-> >> because of processor reordering on !x86 (there is no a common lock or memory barriers).
-> >>
-> >> Regarding to shrinker_map this is not a problem due to map check in shrink_slab_memcg().
-> >> The map can't be NULL there.
-> >>
-> >> Regarding to shrinker_deferred you should prove either this is not a problem too,
-> >> or to add proper synchronization (maybe, based on barriers) or to add some similar check
-> >> (maybe, in shrink_slab_memcg() too).
-> >
-> > It seems shrink_slab_memcg() might see shrinker_deferred as NULL
-> > either due to the same reason. I don't think there is a guarantee it
-> > won't happen.
-> >
-> > We just need guarantee CSS_ONLINE is seen after shrinker_maps and
-> > shrinker_deferred are allocated, so I'm supposed barriers before
-> > "css->flags |= CSS_ONLINE" should work.
-> >
-> > So the below patch may be ok:
-> >
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index df128cab900f..9f7fb0450d69 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -5539,6 +5539,12 @@ static int mem_cgroup_css_online(struct
-> > cgroup_subsys_state *css)
-> >                 return -ENOMEM;
-> >         }
-> >
-> >
-> > +       /*
-> > +        * Barrier for CSS_ONLINE, so that shrink_slab_memcg() sees
-> > shirnker_maps
-> > +        * and shrinker_deferred before CSS_ONLINE.
-> > +        */
-> > +       smp_mb();
-> > +
-> >         /* Online state pins memcg ID, memcg ID pins CSS */
-> >         refcount_set(&memcg->id.ref, 1);
-> >         css_get(css);
->
-> smp barriers synchronize data access from different cpus. They should go in a pair.
-> In case of you add the smp barrier into mem_cgroup_css_online(), we should also
-> add one more smp barrier in another place, which we want to synchonize with this.
-> Also, every place should contain a comment referring to its pair: "Pairs with...".
+On Wed, Dec 09, 2020 at 04:54:11PM +0000, Al Viro wrote:
+> [paulmck Cc'd]
+> 
+> On Mon, Dec 07, 2020 at 10:49:04PM +0000, Al Viro wrote:
+> > On Mon, Dec 07, 2020 at 10:46:57PM +0000, Al Viro wrote:
+> > > On Fri, Nov 20, 2020 at 05:14:26PM -0600, Eric W. Biederman wrote:
+> > > 
+> > > >  /*
+> > > >   * Check whether the specified fd has an open file.
+> > > >   */
+> > > > -#define fcheck(fd)	fcheck_files(current->files, fd)
+> > > > +#define fcheck(fd)	files_lookup_fd_rcu(current->files, fd)
+> > > 
+> > > Huh?
+> > > fs/file.c:1113: file = fcheck(oldfd);
+> > > 	dup3(), under ->file_lock, no rcu_read_lock() in sight
+> > > 
+> > > fs/locks.c:2548:                f = fcheck(fd);
+> > > 	fcntl_setlk(), ditto
+> > > 
+> > > fs/locks.c:2679:                f = fcheck(fd);
+> > > 	fcntl_setlk64(), ditto
+> > > 
+> > > fs/notify/dnotify/dnotify.c:330:        f = fcheck(fd);
+> > > 	fcntl_dirnotify(); this one _is_ under rcu_read_lock().
+> > > 
+> > > 
+> > > IOW, unless I've missed something earlier in the series, this is wrong.
+> > 
+> > I have missed something, all right.  Ignore that comment...
+> 
+> Actually, I take that back - the use of fcheck() in dnotify _is_ interesting.
+> At the very least it needs to be commented upon; what that code is trying
+> to prevent is a race between fcntl_dirnotify() and close(2)/dup2(2) closing
+> the descriptor in question.  The problem is, dnotify marks are removed
+> when we detach from descriptor table; that's done by filp_close() calling
+> dnotify_flush().
+> 
+> Suppose fcntl(fd, F_NOTIFY, 0) in one thread races with close(fd) in another
+> (both sharing the same descriptor table).  If the former had created and
+> inserted a mark *after* the latter has gotten past dnotify_flush(), there
+> would be nothing to evict that mark.
+> 
+> That's the reason that fcheck() is there.  rcu_read_lock() used to be
+> sufficient, but the locking has changed since then and even if it is
+> still enough, that's not at all obvious.
+> 
+> Exclusion is not an issue; barriers, OTOH...  Back then we had
+> ->i_lock taken both by dnotify_flush() before any checks and
+> by fcntl_dirnotify() around the fcheck+insertion.  So on close
+> side we had
+> 	store NULL into descriptor table
+> 	acquire ->i_lock
+> 	fetch ->i_dnotify
+> 	...
+> 	release ->i_lock
+> while on fcntl() side we had
+> 	acquire ->i_lock
+> 	fetch from descriptor table, sod off if not our file
+> 	...
+> 	store ->i_dnotify
+> 	...
+> 	release ->i_lock
+> Storing NULL into descriptor table could get reordered into
+> ->i_lock-protected area in dnotify_flush(), but it could not
+> get reordered past releasing ->i_lock.  So fcntl_dirnotify()
+> either grabbed ->i_lock before dnotify_flush() (in which case
+> missing the store of NULL into descriptor table wouldn't
+> matter, since dnotify_flush() would've observed the mark
+> we'd inserted) or it would've seen that store to descriptor
+> table.
+> 
+> Nowadays it's nowhere near as straightforward; in fcntl_dirnotify()
+> we have
+>         /* this is needed to prevent the fcntl/close race described below */
+>         mutex_lock(&dnotify_group->mark_mutex);
+> and it would appear to be similar to the original situation, with
+> ->mark_mutex serving in place of ->i_lock.  However, dnotify_flush()
+> might not take that mutex at all - it has
+>         fsn_mark = fsnotify_find_mark(&inode->i_fsnotify_marks, dnotify_group);
+>         if (!fsn_mark)
+>                 return;
+> before grabbing that thing.  So the things are trickier - we actually
+> rely upon the barriers in fsnotify_find_mark().  And those are complicated.
+> The case when it returns non-NULL is not a problem - there we have that
+> mutex providing the barriers we need.  NULL can be returned in two cases:
+> 	a) ->i_fsnotify_marks is not empty, but it contains no
+> dnotify marks.  In that case we have ->i_fsnotify_marks.lock acquired
+> and released.  By the time it gets around to fcheck(), fcntl_dirnotify() has
+> either found or created and inserted a dnotify mark into that list, with
+> ->i_fsnotify_marks.lock acquired/released around the insertion, so we
+> are fine - either fcntl_dirnotify() gets there first (in which case
+> dnotify_flush() will observe it), or release of that lock by
+> fsnotify_find_mark() called by dnotify_flush() will serve as a barrier,
+> making sure that store to descriptor table will be observed.
+> 	b) fsnotify_find_mark() (fsnotify_grab_connector() it calls,
+> actually) finds ->i_fsnotify_marks empty.  That's where the things
+> get interesting; we have
+>         idx = srcu_read_lock(&fsnotify_mark_srcu);
+>         conn = srcu_dereference(*connp, &fsnotify_mark_srcu);
+>         if (!conn)
+>                 goto out;
+> on dnotify_flush() side.  The matching store of fcntl_dirnotify()
+> side would be in fsnotify_attach_connector_to_object(), where
+> we have
+>         /*
+>          * cmpxchg() provides the barrier so that readers of *connp can see
+>          * only initialized structure
+>          */
+>         if (cmpxchg(connp, NULL, conn)) {
+>                 /* Someone else created list structure for us */
+> 
+> So we have
+> A:
+> 	store NULL to descriptor table
+> 	srcu_read_lock
+> 	srcu_dereference fetches NULL from ->i_fsnotify_marks
+> vs.
+> B:
+> 	cmpxchg replaces NULL with non-NULL in ->i_fsnotify_marks
+> 	fetch from descriptor table, can't miss the store done by A
+> 
+> Which might be safe, but the whole thing *RELLY* needs to be discussed
+> in fcntl_dirnotify() in more details.  fs/notify/* guts are convoluted
+> enough to confuse anyone unfamiliar with them.
 
-Thanks, I think you are correct. Looked into it further, it seems the
-race pattern looks like:
+This ordering relies on the full barrier in srcu_read_lock().  There was
+a time when srcu_read_lock() did not have a full barrier, and there
+might well be a time in the future when srcu_read_lock() no longer has a
+full barrier.  So please add smp_mb__after_srcu_read_unlock() immediately
+after the srcu_read_lock() if you are relying on that full barrier.
 
-CPU A                                                                  CPU B
-store shrinker_maps pointer                      load CSS_ONLINE
-store CSS_ONLINE                                   load shrinker_maps pointer
-
-By checking the memory-barriers document, it seems we need write
-barrier/read barrier pair as below:
-
-CPU A                                                                  CPU B
-store shrinker_maps pointer                       load CSS_ONLINE
-<write barrier>                                             <read barrier>
-store CSS_ONLINE                                    load shrinker_maps pointer
-
-
-So, the patch should look like:
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index df128cab900f..489c0a84f82b 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5539,6 +5539,13 @@ static int mem_cgroup_css_online(struct
-cgroup_subsys_state *css)
-                return -ENOMEM;
-        }
-
-+       /*
-+        * Barrier for CSS_ONLINE, so that shrink_slab_memcg() sees
-shirnker_maps
-+        * and shrinker_deferred before CSS_ONLINE. It pairs with the
-read barrier
-+        * in shrink_slab_memcg().
-+        */
-+       smp_wmb();
-+
-        /* Online state pins memcg ID, memcg ID pins CSS */
-        refcount_set(&memcg->id.ref, 1);
-        css_get(css);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 9d2a6485e982..fc9bda576d98 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -603,13 +603,15 @@ static unsigned long shrink_slab_memcg(gfp_t
-gfp_mask, int nid,
-        if (!mem_cgroup_online(memcg))
-                return 0;
-
-+       /* Pairs with write barrier in mem_cgroup_css_online */
-+       smp_rmb();
-+
-        if (!down_read_trylock(&shrinker_rwsem))
-                return 0;
-
-+       /* Once memcg is online it can't be NULL */
-        map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map,
-                                        true);
--       if (unlikely(!map))
--               goto unlock;
-
-        for_each_set_bit(i, map->map, shrinker_nr_max) {
-                struct shrink_control sc = {
-
-
-Does this seem correct?
-
->
-> Kirill
->
+							Thanx, Paul
