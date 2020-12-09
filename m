@@ -2,90 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22FD12D4E7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 00:07:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C6E2D4E81
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 00:09:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729646AbgLIXGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 18:06:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59806 "EHLO
+        id S1729042AbgLIXIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 18:08:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728992AbgLIXFz (ORCPT
+        with ESMTP id S1727028AbgLIXIo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 18:05:55 -0500
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B696EC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Dec 2020 15:05:14 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id h19so5410649lfc.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 15:05:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hjapXZlRvPol1Fdb25tCQ4If3pC/GgbOJVNQ8ykfK8s=;
-        b=c31BOie+2yAAa3YQCJKD2zHSpEUhTjjA6XI/jJSDGzjBF7X2zPj5qzC1zOPnGkwafo
-         tEdisdWwFm/qbi8tVbAVDxTwFZzPKBjYdf+43YDcdu8/0gyyVAveYsvdNgKa8jNbtBmf
-         4OC/LT4BZ/+eY6hdk6qMmLxTb1UfGifzPIkRA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hjapXZlRvPol1Fdb25tCQ4If3pC/GgbOJVNQ8ykfK8s=;
-        b=JNkg1wC2AjgTbyw6umlN/Svk+Rm5r/OKOPjMKqVJjHnsgePQMsGtq2j0UDXwfQaGHl
-         ms+8sbVuPv3V/CCRWfyAuZayYnm9lSSSB87Vw9mQex7q+HmtYHLOAEMryJY7dX2TcnqE
-         GWiaclAswHM09JZC27G9rs3zdeceLGyypAc88CkUhlyhzIy+1TEeUyK+4f7Sy9HVOTAV
-         ntTc29+axBRTLyOjINBK54Ywv31RyRCIriptRPMgvlEuS6NaA/Qe5hmztqO/XP1ObEqZ
-         Vp0B3ugmQT86JdOjPbd4E1TQF9z38Q4AdrnKl2viKKpYLpJuR4SCIVkG+Sj75GtcETz7
-         q15g==
-X-Gm-Message-State: AOAM531OQEG3yJOYXRjSimI39CZOBwcs/GswI/QFds8Wy/CzgiZWt3Y6
-        yI/B8KT5ngpC49fIFgpr6PfhgSaQ635gWg==
-X-Google-Smtp-Source: ABdhPJxwPCQXnWuv0dPJGnR8s3nS867CXTa4oFqySji/ObiF0gZ8MIJP86NSMgvOa+AytEmoiyfiYg==
-X-Received: by 2002:a05:6512:3222:: with SMTP id f2mr1777290lfe.25.1607555112975;
-        Wed, 09 Dec 2020 15:05:12 -0800 (PST)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id a22sm386561ljq.109.2020.12.09.15.05.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Dec 2020 15:05:11 -0800 (PST)
-Received: by mail-lf1-f49.google.com with SMTP id r24so5446356lfm.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 15:05:11 -0800 (PST)
-X-Received: by 2002:a05:6512:338f:: with SMTP id h15mr1594049lfg.40.1607555111139;
- Wed, 09 Dec 2020 15:05:11 -0800 (PST)
-MIME-Version: 1.0
-References: <87r1on1v62.fsf@x220.int.ebiederm.org> <20201120231441.29911-15-ebiederm@xmission.com>
- <20201207232900.GD4115853@ZenIV.linux.org.uk> <877dprvs8e.fsf@x220.int.ebiederm.org>
- <20201209040731.GK3579531@ZenIV.linux.org.uk> <877dprtxly.fsf@x220.int.ebiederm.org>
- <20201209142359.GN3579531@ZenIV.linux.org.uk> <87o8j2svnt.fsf_-_@x220.int.ebiederm.org>
- <20201209194938.GS7338@casper.infradead.org> <20201209225828.GR3579531@ZenIV.linux.org.uk>
- <CAHk-=wi7MDO7hSK9-7pbfuwb0HOkMQF1fXyidxR=sqrFG-ZQJg@mail.gmail.com>
-In-Reply-To: <CAHk-=wi7MDO7hSK9-7pbfuwb0HOkMQF1fXyidxR=sqrFG-ZQJg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 9 Dec 2020 15:04:55 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whGEE9vB2Pw6g=+YqnXMz6z5paK3sxNOtN5CB68VQw=Ng@mail.gmail.com>
-Message-ID: <CAHk-=whGEE9vB2Pw6g=+YqnXMz6z5paK3sxNOtN5CB68VQw=Ng@mail.gmail.com>
-Subject: Re: [PATCH] files: rcu free files_struct
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Matthew Wilcox <willy@infradead.org>,
+        Wed, 9 Dec 2020 18:08:44 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3255DC0613CF;
+        Wed,  9 Dec 2020 15:08:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=t/kn1zEJAReVKYrtOYKBTrvf7aHmeGPWEokbx3HDDoQ=; b=UNO5kVG0d+ETE9RsvuHAiZxcj5
+        Adv8kCIydWRV0f6iORie7fLCP3D33gjJtKjU9TZM4GQGhmdkUcka00Vg35ozS+3F3Q8kvZDYdZodK
+        IHeoPFaIsHFJm5L4l1Ms31pUpqWh4kYC782eh7Q6n+E0m331CeB/wPvDAUkxxBaYXgAZOwuzhVDAC
+        O0QyRAb/GKfVAvYzjBMszuKCsKRNE9wF8ILtYBpnbPRdtMyWmc5SZZLmVS/FjcpIuEIppwk/bWbKc
+        mfgPjcf13ICnaaiGlMIleLdavqd59X4woYz6QzTZRmx7DiMFsb054nHpkh3qbw0nfYJPXzkMpLFNK
+        2NM3q2VA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kn8Yt-0000Bk-CQ; Wed, 09 Dec 2020 23:07:55 +0000
+Date:   Wed, 9 Dec 2020 23:07:55 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jann@thejh.net>
-Content-Type: text/plain; charset="UTF-8"
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jann@thejh.net>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] files: rcu free files_struct
+Message-ID: <20201209230755.GV7338@casper.infradead.org>
+References: <20201120231441.29911-15-ebiederm@xmission.com>
+ <20201207232900.GD4115853@ZenIV.linux.org.uk>
+ <877dprvs8e.fsf@x220.int.ebiederm.org>
+ <20201209040731.GK3579531@ZenIV.linux.org.uk>
+ <877dprtxly.fsf@x220.int.ebiederm.org>
+ <20201209142359.GN3579531@ZenIV.linux.org.uk>
+ <87o8j2svnt.fsf_-_@x220.int.ebiederm.org>
+ <20201209194938.GS7338@casper.infradead.org>
+ <20201209225828.GR3579531@ZenIV.linux.org.uk>
+ <CAHk-=wi7MDO7hSK9-7pbfuwb0HOkMQF1fXyidxR=sqrFG-ZQJg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi7MDO7hSK9-7pbfuwb0HOkMQF1fXyidxR=sqrFG-ZQJg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 3:01 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
+On Wed, Dec 09, 2020 at 03:01:36PM -0800, Linus Torvalds wrote:
+> On Wed, Dec 9, 2020 at 2:58 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Wed, Dec 09, 2020 at 07:49:38PM +0000, Matthew Wilcox wrote:
+> > >
+> > > Assuming this is safe, you can use RCU_INIT_POINTER() here because you're
+> > > storing NULL, so you don't need the wmb() before storing the pointer.
+> >
+> > fs/file.c:pick_file() would make more interesting target for the same treatment...
+> 
+> Actually, don't.
+> 
 > rcu_assign_pointer() itself already does the optimization for the case
 > of a constant NULL pointer assignment.
->
+> 
 > So there's no need to manually change things to RCU_INIT_POINTER().
 
-Side note: what should be done instead is to delete the stale comment.
-It should have been removed back when the optimization was done in
-2016 - see commit 3a37f7275cda ("rcu: No ordering for
-rcu_assign_pointer() of NULL")
+I missed that, and the documentation wasn't updated by
+3a37f7275cda5ad25c1fe9be8f20c76c60d175fa.
 
-            Linus
+Paul, how about this?
+
++++ b/Documentation/RCU/Design/Requirements/Requirements.rst
+@@ -1668,8 +1668,10 @@ against mishaps and misuse:
+    this purpose.
+ #. It is not necessary to use rcu_assign_pointer() when creating
+    linked structures that are to be published via a single external
+-   pointer. The RCU_INIT_POINTER() macro is provided for this task
+-   and also for assigning ``NULL`` pointers at runtime.
++   pointer. The RCU_INIT_POINTER() macro is provided for this task.
++   It used to be more efficient to use RCU_INIT_POINTER() to store a
++   ``NULL`` pointer, but rcu_assign_pointer() now optimises for a constant
++   ``NULL`` pointer itself.
+ 
+ This not a hard-and-fast list: RCU's diagnostic capabilities will
+ continue to be guided by the number and type of usage bugs found in
+
