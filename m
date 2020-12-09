@@ -2,152 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74EA92D45A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 16:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C3A2D45C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 16:50:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730166AbgLIPmu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 10:42:50 -0500
-Received: from relay.sw.ru ([185.231.240.75]:45694 "EHLO relay3.sw.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726431AbgLIPmq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 10:42:46 -0500
-Received: from [192.168.15.177]
-        by relay3.sw.ru with esmtp (Exim 4.94)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1kn1b1-00CQdb-IE; Wed, 09 Dec 2020 18:41:39 +0300
-Subject: Re: [PATCH 6/9] mm: vmscan: use per memcg nr_deferred of shrinker
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        id S1729658AbgLIPuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 10:50:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40481 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726278AbgLIPuJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Dec 2020 10:50:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607528922;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FAsAkjC0ZKqfT8nIOeG7vx7V2m4q/wdL4+UBTIQYf7s=;
+        b=FziFlAmK6XZkalhobYFVEbjNC7YAdwga/RmZLWU0WRP4dLa30sFJZUyYdt5LSwa/VTKdC3
+        gRlI/pDqrQDbbvmQjzZH2ZPc1KWN+PgNZr7gM9VrzU75u38939VAh0lWKNuPS5hnJzank8
+        69TL7NZX7051rCAb7Yo2Yn2M0W1ThgI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-185-qPQfirWWMnaXvDC8Ww-bRQ-1; Wed, 09 Dec 2020 10:48:38 -0500
+X-MC-Unique: qPQfirWWMnaXvDC8Ww-bRQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1D4748049F8;
+        Wed,  9 Dec 2020 15:47:31 +0000 (UTC)
+Received: from [10.36.113.30] (ovpn-113-30.ams2.redhat.com [10.36.113.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 731295D9D3;
+        Wed,  9 Dec 2020 15:47:23 +0000 (UTC)
+Subject: Re: [External] Re: [PATCH v7 06/15] mm/hugetlb: Disable freeing
+ vmemmap if struct page size is not power of two
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
         Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20201202182725.265020-1-shy828301@gmail.com>
- <20201202182725.265020-7-shy828301@gmail.com>
- <49464720-675d-5144-043c-eba6852a9c06@virtuozzo.com>
- <CAHbLzkoiTmNLXj1Tx0-PggEdcYQ6nj71DUX3ya6mj3VNZ5ho4A@mail.gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <d5454f6d-6739-3252-fba0-ac39c6c526c4@virtuozzo.com>
-Date:   Wed, 9 Dec 2020 18:41:49 +0300
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201130151838.11208-1-songmuchun@bytedance.com>
+ <20201130151838.11208-7-songmuchun@bytedance.com>
+ <ba57ea7d-709b-bf36-d48a-cc72a26012cc@redhat.com>
+ <CAMZfGtV5200NZXH9Z_Z9qXo5FCd9E6JOTXjQtzcF0xGi-gCuPg@mail.gmail.com>
+ <4b8a9389-1704-4d8c-ec58-abd753814dd9@redhat.com>
+ <a6d11bc6-033d-3a0b-94ce-cbd556120b6d@redhat.com>
+ <CAMZfGtWfz8DcwKBLdf3j0x9Dt6ZvOd+MvjX6yXrAoKDeXxW95w@mail.gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <33779de1-7a7a-aa5c-e756-92925d4b097d@redhat.com>
+Date:   Wed, 9 Dec 2020 16:47:22 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAHbLzkoiTmNLXj1Tx0-PggEdcYQ6nj71DUX3ya6mj3VNZ5ho4A@mail.gmail.com>
+In-Reply-To: <CAMZfGtWfz8DcwKBLdf3j0x9Dt6ZvOd+MvjX6yXrAoKDeXxW95w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08.12.2020 20:13, Yang Shi wrote:
-> On Thu, Dec 3, 2020 at 3:40 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+On 09.12.20 16:13, Muchun Song wrote:
+> On Wed, Dec 9, 2020 at 6:10 PM David Hildenbrand <david@redhat.com> wrote:
 >>
->> On 02.12.2020 21:27, Yang Shi wrote:
->>> Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's nr_deferred
->>> will be used in the following cases:
->>>     1. Non memcg aware shrinkers
->>>     2. !CONFIG_MEMCG
->>>     3. memcg is disabled by boot parameter
+>> On 09.12.20 11:06, David Hildenbrand wrote:
+>>> On 09.12.20 11:03, Muchun Song wrote:
+>>>> On Wed, Dec 9, 2020 at 5:57 PM David Hildenbrand <david@redhat.com> wrote:
+>>>>>
+>>>>> On 30.11.20 16:18, Muchun Song wrote:
+>>>>>> We only can free the tail vmemmap pages of HugeTLB to the buddy allocator
+>>>>>> when the size of struct page is a power of two.
+>>>>>>
+>>>>>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>>>>>> ---
+>>>>>>  mm/hugetlb_vmemmap.c | 5 +++++
+>>>>>>  1 file changed, 5 insertions(+)
+>>>>>>
+>>>>>> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+>>>>>> index 51152e258f39..ad8fc61ea273 100644
+>>>>>> --- a/mm/hugetlb_vmemmap.c
+>>>>>> +++ b/mm/hugetlb_vmemmap.c
+>>>>>> @@ -111,6 +111,11 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
+>>>>>>       unsigned int nr_pages = pages_per_huge_page(h);
+>>>>>>       unsigned int vmemmap_pages;
+>>>>>>
+>>>>>> +     if (!is_power_of_2(sizeof(struct page))) {
+>>>>>> +             pr_info("disable freeing vmemmap pages for %s\n", h->name);
+>>>>>
+>>>>> I'd just drop that pr_info(). Users are able to observe that it's
+>>>>> working (below), so they are able to identify that it's not working as well.
+>>>>
+>>>> The below is just a pr_debug. Do you suggest converting it to pr_info?
 >>>
->>> Signed-off-by: Yang Shi <shy828301@gmail.com>
->>> ---
->>>  mm/vmscan.c | 88 +++++++++++++++++++++++++++++++++++++++++++++++++----
->>>  1 file changed, 82 insertions(+), 6 deletions(-)
+>>> Good question. I wonder if users really have to know in most cases.
+>>> Maybe pr_debug() is good enough in environments where we want to debug
+>>> why stuff is not working as expected.
 >>>
->>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->>> index cba0bc8d4661..d569fdcaba79 100644
->>> --- a/mm/vmscan.c
->>> +++ b/mm/vmscan.c
->>> @@ -203,6 +203,12 @@ static DECLARE_RWSEM(shrinker_rwsem);
->>>  static DEFINE_IDR(shrinker_idr);
->>>  static int shrinker_nr_max;
->>>
->>> +static inline bool is_deferred_memcg_aware(struct shrinker *shrinker)
->>> +{
->>> +     return (shrinker->flags & SHRINKER_MEMCG_AWARE) &&
->>> +             !mem_cgroup_disabled();
->>> +}
->>> +
->>>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->>>  {
->>>       int id, ret = -ENOMEM;
->>> @@ -271,7 +277,58 @@ static bool writeback_throttling_sane(struct scan_control *sc)
->>>  #endif
->>>       return false;
->>>  }
->>> +
->>> +static inline long count_nr_deferred(struct shrinker *shrinker,
->>> +                                  struct shrink_control *sc)
->>> +{
->>> +     bool per_memcg_deferred = is_deferred_memcg_aware(shrinker) && sc->memcg;
->>> +     struct memcg_shrinker_deferred *deferred;
->>> +     struct mem_cgroup *memcg = sc->memcg;
->>> +     int nid = sc->nid;
->>> +     int id = shrinker->id;
->>> +     long nr;
->>> +
->>> +     if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
->>> +             nid = 0;
->>> +
->>> +     if (per_memcg_deferred) {
->>> +             deferred = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_deferred,
->>> +                                                  true);
 >>
->> My comment is about both 5/9 and 6/9 patches.
-> 
-> Sorry for the late reply, I don't know why Gmail filtered this out to spam.
-> 
+>> Oh, another thought, can we glue availability of
+>> HUGETLB_PAGE_FREE_VMEMMAP (or a new define based on the config and the
+>> size of a stuct page) to the size of struct page somehow?
 >>
->> shrink_slab_memcg() races with mem_cgroup_css_online(). A visibility of CSS_ONLINE flag
->> in shrink_slab_memcg()->mem_cgroup_online() does not guarantee that you will see
->> memcg->nodeinfo[nid]->shrinker_deferred != NULL in count_nr_deferred(). This may occur
->> because of processor reordering on !x86 (there is no a common lock or memory barriers).
->>
->> Regarding to shrinker_map this is not a problem due to map check in shrink_slab_memcg().
->> The map can't be NULL there.
->>
->> Regarding to shrinker_deferred you should prove either this is not a problem too,
->> or to add proper synchronization (maybe, based on barriers) or to add some similar check
->> (maybe, in shrink_slab_memcg() too).
+>> I mean, it's known at compile time that this will never work.
 > 
-> It seems shrink_slab_memcg() might see shrinker_deferred as NULL
-> either due to the same reason. I don't think there is a guarantee it
-> won't happen.
+> I want to define a macro which indicates the size of the
+> struct page. There is place (kernel/bounds.c) where can
+> do similar things. When I added the following code in
+> that file.
 > 
-> We just need guarantee CSS_ONLINE is seen after shrinker_maps and
-> shrinker_deferred are allocated, so I'm supposed barriers before
-> "css->flags |= CSS_ONLINE" should work.
+>         DEFINE(STRUCT_PAGE_SIZE, sizeof(struct page));
 > 
-> So the below patch may be ok:
+> Then the compiler will output a message like:
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index df128cab900f..9f7fb0450d69 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5539,6 +5539,12 @@ static int mem_cgroup_css_online(struct
-> cgroup_subsys_state *css)
->                 return -ENOMEM;
->         }
-> 
-> 
-> +       /*
-> +        * Barrier for CSS_ONLINE, so that shrink_slab_memcg() sees
-> shirnker_maps
-> +        * and shrinker_deferred before CSS_ONLINE.
-> +        */
-> +       smp_mb();
-> +
->         /* Online state pins memcg ID, memcg ID pins CSS */
->         refcount_set(&memcg->id.ref, 1);
->         css_get(css);
 
-smp barriers synchronize data access from different cpus. They should go in a pair.
-In case of you add the smp barrier into mem_cgroup_css_online(), we should also
-add one more smp barrier in another place, which we want to synchonize with this.
-Also, every place should contain a comment referring to its pair: "Pairs with...".
+Hm, from what I understand you cannot use sizeof() in #if etc. So it
+might not be possible after all. At least the compiler should optimize
+code like
 
-Kirill
+if (!is_power_of_2(sizeof(struct page))) {
+	// either this
+} else {
+	// or that
+}
+
+that can never be reached
+
+-- 
+Thanks,
+
+David / dhildenb
+
