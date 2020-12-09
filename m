@@ -2,129 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BBD92D41CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 13:12:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE642D42B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 14:07:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731310AbgLIMK4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 07:10:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43282 "EHLO
+        id S1731954AbgLINHC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 08:07:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730385AbgLIMKz (ORCPT
+        with ESMTP id S1732017AbgLING4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 07:10:55 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3217CC0613D6;
-        Wed,  9 Dec 2020 04:10:15 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id d3so1260061wmb.4;
-        Wed, 09 Dec 2020 04:10:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+B4LhbKc8cgGnmqfUmB7fwos4oooSCaRdehoA8quHxE=;
-        b=nctxuakD6SbtPQJXc4gTQobXPUfJ1aDYMtLonTkjYy93cCj3uI+WicN5Uf9TNPOtYb
-         zx/qj92FtQKzlIabw9nUhMWBg+MglfY6dP8MQVrlu9u1wpW0cARl/XzsCKBPo95cCpZA
-         BjtQ4/Q87k2WCNp0kjoCGn31OhE1mqH8hfK1asUnbLvOLbvWpv7zruBgOYghZ1i2TWgD
-         vBwxalQQ3aJCzo32TIIIhUXS7CxBa0mk8mq+S9ZIH4x18WKdATDKIINBBvotTEXEgqkX
-         6RPeDg2NbC2c3/wn5afIkWqYlC7n//x2Jd8nezEJyZ6ZGnqSnaFIEIIjsnBR8ozD0SpA
-         0xVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+B4LhbKc8cgGnmqfUmB7fwos4oooSCaRdehoA8quHxE=;
-        b=UEpicsDjfPRpffwlOoFAEkZrq3gAUGzXEt5ddE4UunAsJ4goIKNvX5LdO1GcOz9gdn
-         Fn5TichLJcMabSiLzgPZSKpMnBaxYATb8GhYIgrUH8u8lK7EZGZE2il6QFETzrQL5R60
-         nY+hsAf3YkKhtSLoaDSUmG/M7ZKkmtCUBXnOYqkLw2yCnxG27HzOkiVk2K6UleKOb0Lo
-         I7q1ZURJWYuWI0iVGg7p0IjtHv7U+XpaJr/mkaYdPTuxyEW2ebHVMQ1UZ1kwO72/A6zW
-         AyfTCjKg/fzyUIhT4C8m8lwMETKZSS6jWmtAzAPiFDpI8td4g18zRr5wog5A1MHtPI5j
-         l4/Q==
-X-Gm-Message-State: AOAM531NTTPoZnCb4QrmeeA/sTEizD4SnxXmqDxOTTbB6tUT9fs/IYSj
-        BnQGrfyIbtgWb++fr1+lJ8KJssHUeEvTyg==
-X-Google-Smtp-Source: ABdhPJy5vRdARng0tAAfaels2MlTsmfpSV+6b3lRdC0feO2Nkoo7kQs4zV2pZnLdE6B5a7mPCWq1sg==
-X-Received: by 2002:a05:600c:274d:: with SMTP id 13mr2456312wmw.77.1607515813770;
-        Wed, 09 Dec 2020 04:10:13 -0800 (PST)
-Received: from [192.168.8.121] ([85.255.233.156])
-        by smtp.gmail.com with ESMTPSA id s4sm3303381wra.91.2020.12.09.04.10.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Dec 2020 04:10:13 -0800 (PST)
-Subject: Re: [PATCH] iov_iter: optimise bvec iov_iter_advance()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <21b78c2f256e513b9eb3f22c7c1f55fc88992600.1606957658.git.asml.silence@gmail.com>
- <20201203091406.GA6189@infradead.org>
- <eb02fa7f-956e-ce7e-6a56-82318b2c6d2e@gmail.com>
- <20201209083341.GA21968@infradead.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <bcfd61df-23cd-fb56-5d7a-47ee2f025739@gmail.com>
-Date:   Wed, 9 Dec 2020 12:06:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Wed, 9 Dec 2020 08:06:56 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3207FC0613CF;
+        Wed,  9 Dec 2020 05:06:16 -0800 (PST)
+Received: from localhost (unknown [IPv6:2804:14c:132:242d::1000])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: krisman)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 24A531F45318;
+        Wed,  9 Dec 2020 13:06:12 +0000 (GMT)
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        tytso@mit.edu, khazhy@google.com, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH 5/8] vfs: Include origin of the SB error notification
+Organization: Collabora
+References: <20201208003117.342047-6-krisman@collabora.com>
+        <20201208003117.342047-1-krisman@collabora.com>
+        <952750.1607431868@warthog.procyon.org.uk>
+        <87r1o05ua6.fsf@collabora.com> <20201208184123.GC106255@magnolia>
+        <87lfe85c6b.fsf@collabora.com> <20201209032425.GD106255@magnolia>
+Date:   Wed, 09 Dec 2020 10:06:07 -0300
+In-Reply-To: <20201209032425.GD106255@magnolia> (Darrick J. Wong's message of
+        "Tue, 8 Dec 2020 19:24:25 -0800")
+Message-ID: <87h7ov5dts.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20201209083341.GA21968@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 09/12/2020 08:33, Christoph Hellwig wrote:
-> On Thu, Dec 03, 2020 at 11:48:56AM +0000, Pavel Begunkov wrote:
->> It's inlined and the on-stack iter is completely optimised out. Frankly,
->> I'd rather not open-code bvec_iter_advance(), at least for this chunk to
->> be findable from bvec.h, e.g. grep bvec_iter and bvec_for_each. Though,
->> I don't like myself that preamble/postamble.
-> 
-> Ok.  I still think we at least want a separate helper instead of
-> bloating the main iov_iter_advance.
+"Darrick J. Wong" <darrick.wong@oracle.com> writes:
 
-I agree on that, just haven't got back to it yet.
+> On Tue, Dec 08, 2020 at 04:29:32PM -0300, Gabriel Krisman Bertazi wrote:
+>> "Darrick J. Wong" <darrick.wong@oracle.com> writes:
+>> 
+>> > On Tue, Dec 08, 2020 at 09:58:25AM -0300, Gabriel Krisman Bertazi wrote:
+>> >> David Howells <dhowells@redhat.com> writes:
+>> >> 
+>> >> > Gabriel Krisman Bertazi <krisman@collabora.com> wrote:
+>> >> >
+>> >> >> @@ -130,6 +131,8 @@ struct superblock_error_notification {
+>> >
+>> > FWIW I wonder if this really should be inode_error_notification?
+>> >
+>> > If (for example) ext4 discovered an error in the blockgroup descriptor
+>> > and wanted to report it, the inode and block numbers would be
+>> > irrelevant, but the blockgroup number would be nice to have.
+>> 
+>> A previous RFC had superblock_error_notification and
+>> superblock_inode_error_notification split, I think we can recover that.
+>> 
+>> >
+>> >> >>  	__u32	error_cookie;
+>> >> >>  	__u64	inode;
+>> >> >>  	__u64	block;
+>> >> >> +	char	function[SB_NOTIFICATION_FNAME_LEN];
+>> >> >> +	__u16	line;
+>> >> >>  	char	desc[0];
+>> >> >>  };
+>> >> >
+>> >> > As Darrick said, this is a UAPI breaker, so you shouldn't do this (you can,
+>> >> > however, merge this ahead a patch).  Also, I would put the __u16 before the
+>> >> > char[].
+>> >> >
+>> >> > That said, I'm not sure whether it's useful to include the function name and
+>> >> > line.  Both fields are liable to change over kernel commits, so it's not
+>> >> > something userspace can actually interpret.  I think you're better off dumping
+>> >> > those into dmesg.
+>> >> >
+>> >> > Further, this reduces the capacity of desc[] significantly - I don't know if
+>> >> > that's a problem.
+>> >> 
+>> >> Yes, that is a big problem as desc is already quite limited.  I don't
+>> >
+>> > How limited?
+>> 
+>> The largest notification is 128 bytes, the one with the biggest header
+>> is superblock_error_notification which leaves 56 bytes for description.
+>> 
+>> >
+>> >> think it is a problem for them to change between kernel versions, as the
+>> >> monitoring userspace can easily associate it with the running kernel.
+>> >
+>> > How do you make that association?  $majordistro's 4.18 kernel is not the
+>> > same as the upstream 4.18.  Wouldn't you rather the notification message
+>> > be entirely self-describing rather than depending on some external
+>> > information about the sender?
+>> 
+>> True.  I was thinking on my use case where the customer controls their
+>> infrastructure and would specialize their userspace tools, but that is
+>> poor design on my part.  A self describing mechanism would be better.
+>> 
+>> >
+>> >> The alternative would be generating something like unique IDs for each
+>> >> error notification in the filesystem, no?
+>> >> 
+>> >> > And yet further, there's no room for addition of new fields with the desc[]
+>> >> > buffer on the end.  Now maybe you're planning on making use of desc[] for
+>> >> > text-encoding?
+>> >> 
+>> >> Yes.  I would like to be able to provide more details on the error,
+>> >> without having a unique id.  For instance, desc would have the formatted
+>> >> string below, describing the warning:
+>> >> 
+>> >> ext4_warning(inode->i_sb, "couldn't mark inode dirty (err %d)", err);
+>> >
+>> > Depending on the upper limit on the length of messages, I wonder if you
+>> > could split the superblock notification and the description string into
+>> > separate messages (with maybe the error cookie to tie them together) so
+>> > that the struct isn't limited by having a VLA on the end, and the
+>> > description can be more or less an arbitrary string?
+>> >
+>> > (That said I'm not familiar with the watch queue system so I have no
+>> > idea if chained messages even make sense here, or are already
+>> > implemented in some other way, or...)
+>> 
+>> I don't see any support for chaining messages in the current watch_queue
+>> implementation, I'd need to extend the interface to support it.  I
+>> considered this idea before, given the small description size, but I
+>> thought it would be over-complicated, even though much more future
+>> proof.  I will look into that.
+>> 
+>> What about the kernel exporting a per-filesystem table, as a build
+>> target or in /sys/fs/<fs>/errors, that has descriptions strings for each
+>> error?  Then the notification can have only the FS type, index to the
+>> table and params.  This won't exactly be self-describing as you wanted
+>> but, differently from function:line, it removes the need for the source
+>> code, and allows localization.  The per-filesystem table would be
+>> stable ABI, of course.
+>
+> Yikes.  I don't think people are going to be ok with a message table
+> where we can never remove the strings.  I bet GregKH won't like that
+> either (one value per sysfs file).
+
+Indeed, sysfs seems out of question.  In fact the string format doesn't
+even need to be in the kernel, and we don't need the strings to be sent
+as part of the notifications.  What if we can have a bunch of
+notification types, specific for each error message, and a library in
+userspace that parses the notifications and understands the parameters
+passed?  The library then displays the data as they wish.
+
+> (Maybe I misread that and all you meant by stable ABI is the fact that
+> the table exists at a given path and the notification message gives you
+> a index into ... wherever we put it.)
+
+The kernel could even export the table as a build-time target, that
+get's installed into X. But even that is not necessary if a library can
+make sense of a notification that uniquely identifies each error and
+only includes the useful debug parameters without any string formatting?
 
 -- 
-Pavel Begunkov
+Gabriel Krisman Bertazi
