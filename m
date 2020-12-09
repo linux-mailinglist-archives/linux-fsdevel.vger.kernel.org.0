@@ -2,242 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96F582D403E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 11:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDB692D40F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Dec 2020 12:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbgLIKpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 05:45:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729361AbgLIKpG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 05:45:06 -0500
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE94C0613CF;
-        Wed,  9 Dec 2020 02:44:26 -0800 (PST)
-Received: by mail-io1-xd44.google.com with SMTP id z5so1137005iob.11;
-        Wed, 09 Dec 2020 02:44:26 -0800 (PST)
+        id S1730703AbgLILWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 06:22:02 -0500
+Received: from mail-bn8nam11on2073.outbound.protection.outlook.com ([40.107.236.73]:46049
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730694AbgLILWA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Dec 2020 06:22:00 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Uqd6i/TXIUkw/2Dk1G/6sTtoYOjXDNPDWjIbwZ5NXAWctnNKpl2TG7N6UI67HegNtRQ3w9UynRV7dLLTGzht2DMYVa94RudZnJME2Il4UqjWpOwgWG2DGXkLM0y2Zpxhv59tkgf3iX9SYwYlYbMqZGe42LSAAVPgIY60TsWt924Vlo+shCvrJRwapWrHfEwxT6+tIuwcuEKyWMzMCmUVwIg26qmZfZAKkp1ElSSsqmsqrLrjlDpNsz7FBprEfuYWii4UM5WJfDrIeDE+1zaWOOLpC30VwWVpH38SjrAm8rVdQL+RJwi0h3ADT+W4RHIjUns4u/P1yIjwvhmtNFoTcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5IMNZ7tvrzZm4PF6zUY0Z9GNv4IuVJKmv7eyMGNUuHM=;
+ b=Rms++chfs8i43z7AZIDAQwZ1wq4DXbZAyK/EqgT4MDiPmgRvi5sD9NV8XI1dJtBzPAGToa/GExaP1uHLYH4XzVwPNuj17mbd02bmbLaFbW+eplfpbWKr+hDvRzaq0dV4MUp/izqTIkct44bgCu5pDNiLr1/kplp+D3KbaHTjwCSAzD9K+wtCef4FgHzhXMcPu0KgQGFYSS4gnYW6+5E9PBF/iObonKenHqHZiOt77CUERr5/XeWL9CNE5aez3ZFBg1T89QdqeIQayTYt+0OOB9EBKpX27Cmga2mANjK6Ky8OzBLxAXULSt7NFa551Z7ut7nn90xinDboM2fPDBfhhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=htf7oQLbUIT12CkPdqZFjdgF/YoqVY5s3W8UZCtazfU=;
-        b=BDH0ED5DZ98HJqDCraITjaG60bDgQ6/mLGoFquywWqKEZtc0/RtlAKAgXDFxxgKmWH
-         2rbxoaPIMnSi2xtSm+EY4P4w8YojftKrWDsbyDV9XJdRDrVhOZJlFD9iGMbteHoWDMnX
-         lhJ8jVRDYpnKQFB0KVhhwy+dzkiQXDm+sW/7OKQoq/fCD95lBZSEsfrlkR4N9FcL7K9B
-         GRC7u4nSezTf4LTZyLuAYx3Uf7195hJNZCLUPSjFOO6Jp3j/sRCcDAW+Xnur6cC/h8hC
-         qfKqvjmKOaA4YxSND+srbTreUbHETuLhGYNCog0hI1sFjOuaci2JdYx4j8Q2F7pT/6M1
-         MvkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=htf7oQLbUIT12CkPdqZFjdgF/YoqVY5s3W8UZCtazfU=;
-        b=iMB8QYBNZ3L51vBGlXWfgpQeJUYDdu7beB7WAUz4SA4/91Qbie7DYLXq899dWR0ZxY
-         Eoq67kGAtIXvq2Bv/h2BpupoVPBiJI+qbVe0V412uuVf/5zA0bbGOShSwF6xr7lf84u5
-         JXYKo2OJQ+qEhnT37U0F9Es1Z3D6e+6KTnvtM2E2CU1by0Z3SI6pqVWKx19e2ZeSqPNT
-         eLSyIUcloX6OItiE6E47QVqySdrrFI5yt7dgA2bBgyxHJp3ASyXjgzEyjXMOO+vygUhO
-         Sap4Uaoe35yUApsPFohhwT/7ybAqFGNj1R6YZKO2UAA5OtOQ3KWX5KRfZBzAQFVBIRUc
-         DR0A==
-X-Gm-Message-State: AOAM532DxnBnrJ3gTJuW1Vr9Cwi+TaXaDCCayZkNHFVTwyR3JkVWSv6U
-        d2ypRfAN/aQ6IJJXvOzOlxhUG2jseN88hjRz8u0=
-X-Google-Smtp-Source: ABdhPJwoZCydcQ/F/M7hMYjYvOS8z4MbQe8D7XdvViM/KC8+z4gAYHKEAqye/nrRvgEL+J/XKDTJuBkLppZidNDdXdY=
-X-Received: by 2002:a5e:9612:: with SMTP id a18mr1987644ioq.13.1607510665449;
- Wed, 09 Dec 2020 02:44:25 -0800 (PST)
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5IMNZ7tvrzZm4PF6zUY0Z9GNv4IuVJKmv7eyMGNUuHM=;
+ b=aY3w6HSvxUUeEK9EDQBthlLurc0R6oNuPNe26ktLsW0zHFFweqA8RquGywrStXE9prDoWwL1C6q3HIgb7HQFRz8IbzXfQusp1ZyWDNziVJZX4rcFXlejY34gDdXm3d/d5JeOE1gpMHr9f35KDS9CoyymU1KDqPvpVmhLWsEHX7g=
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=windriver.com;
+Received: from DM5PR11MB1674.namprd11.prod.outlook.com (2603:10b6:4:b::8) by
+ DM6PR11MB3515.namprd11.prod.outlook.com (2603:10b6:5:6c::24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3632.17; Wed, 9 Dec 2020 11:21:12 +0000
+Received: from DM5PR11MB1674.namprd11.prod.outlook.com
+ ([fe80::b41f:d3df:5f86:58f7]) by DM5PR11MB1674.namprd11.prod.outlook.com
+ ([fe80::b41f:d3df:5f86:58f7%10]) with mapi id 15.20.3632.018; Wed, 9 Dec 2020
+ 11:21:12 +0000
+From:   Yahu Gao <yahu.gao@windriver.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        yahu.gao@windriver.com
+Subject: Review request 0/1: fs/proc: Fix NULL pointer dereference in
+Date:   Wed,  9 Dec 2020 19:20:59 +0800
+Message-Id: <20201209112100.47653-1-yahu.gao@windriver.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [60.247.85.82]
+X-ClientProxiedBy: SJ0PR13CA0086.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::31) To DM5PR11MB1674.namprd11.prod.outlook.com
+ (2603:10b6:4:b::8)
 MIME-Version: 1.0
-References: <20201208122824.16118-1-laoar.shao@gmail.com> <20201208122824.16118-4-laoar.shao@gmail.com>
- <20201208185946.GC1943235@magnolia> <CALOAHbB1uKmQ7ns08KW4zH1ikqD0GAY_Y7VySzmTY0=LTEPURA@mail.gmail.com>
- <20201209035320.GI1943235@magnolia>
-In-Reply-To: <20201209035320.GI1943235@magnolia>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Wed, 9 Dec 2020 18:43:49 +0800
-Message-ID: <CALOAHbAqF8AjjFi3oboDq=oEsKOqRiNn7U=UbguE2jDXwG6fCQ@mail.gmail.com>
-Subject: Re: [PATCH v11 3/4] xfs: refactor the usage around xfs_trans_context_{set,clear}
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>, jlayton@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from pek-ygao-d1.wrs.com (60.247.85.82) by SJ0PR13CA0086.namprd13.prod.outlook.com (2603:10b6:a03:2c4::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.7 via Frontend Transport; Wed, 9 Dec 2020 11:21:10 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7bf918a0-3d62-4333-db27-08d89c348929
+X-MS-TrafficTypeDiagnostic: DM6PR11MB3515:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM6PR11MB3515AE22DE7A17929F06EC8999CC0@DM6PR11MB3515.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: e7dxISkIr0XSHwM8Faj5d3bskfZ5kCMFWul2i2/cCtj1xzj7SmgAl+Yz1f/SqVO5wg41JN5TQPjvcYruIv3i0urq2sCXH09CYWB2Xvun58gg5xTKRJ+07lVzg1UTXBjkIejLW/zbdKmy9Grcr7+y3vGrNMz3fejeos/y0/eKSrYQDQLeAG7Bq/ewBftHPBAsIAX7Lb8OUDKWiLrxTQQ4Hs8GIszgFmcQiWiSVX53BEboN3cpMkU97ZlTMOkxQg201/g7oPJsHSlcWmt3jN1hR+625gvihLVvwAHvH4Wqn7AD0ud2elSSQk5kwTCvSnbPLEmtoC9F+2HMWkTpVLoGS14b1EWXFq4j0T3Vhv8xYVvprCe+iKbJlXLrCp3DCdl2
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR11MB1674.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(136003)(366004)(376002)(5660300002)(66946007)(44832011)(16526019)(6916009)(508600001)(66476007)(26005)(186003)(45080400002)(6512007)(86362001)(4326008)(6506007)(2906002)(52116002)(66556008)(2616005)(8676002)(34490700003)(6486002)(107886003)(36756003)(6666004)(1076003)(956004)(83380400001)(8936002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?Iv1DFBWi7c8lfMD829fWBzV9IUvQNZuVubalB97y25V5ZynSvPLDk8MQJaqU?=
+ =?us-ascii?Q?vniAiNOMqxNCJ39eiUPUt2ZkPu5NcGv/UPvb0gtbYUfFB2rmSG01u78I8vtN?=
+ =?us-ascii?Q?3VM3kLiUmL4LuS0R3EbBGLC9Me7G7pbZIsiVjgQfZ5E0toNoAg7rShDSKdRV?=
+ =?us-ascii?Q?Am1GCAdBhovWTlGtx5Nxk33t0EmAaYzB/Zo4boK6zRuDUtgaMKVtjx9gnAlu?=
+ =?us-ascii?Q?Akv5gJrmuVrYgSMUg+Y+8l8n1xlG8cDW9dLlWdoPmOgFj/KN5Fq3AXRuQCG6?=
+ =?us-ascii?Q?J/nM3WsNkQfi7l/fpY7ZJ9UuZodxKQ1o0aOw8h7cdH6+eL3Y/GDFiMJrXW8z?=
+ =?us-ascii?Q?CEby2VoyuYoZv6O80p7mSX2NrNo06J0QpLaLwbCjkCK/nhOQVzSjAvUYF74J?=
+ =?us-ascii?Q?txDF6soG185XDP0hgD1WQMRsJxkKmjrPfHWJA1+50elCLuBXjGa35jhNBX5E?=
+ =?us-ascii?Q?AUAav7ysdtQB8u6XXcLr/FKGOlTTtfIAzS3pZVAhIGY3Q6qsPk/gF4Xc89/w?=
+ =?us-ascii?Q?rW7WAn8GvyO4oDYF0uM9VVFpIsAqhEKhc/NJoKbzOZT7RlNaSr3GvxP+MBNr?=
+ =?us-ascii?Q?4I6e2Bbc1fNDwAPQUDf5rBPLRfFWOM3ziqYNkgxLVJB0Q9auAfhhwHfvDPZX?=
+ =?us-ascii?Q?Gy3z/57/xS9whaz1md0TxDU1vqPlOHsSPH9SwUXfADUsmeyVVbHW19z+RTyX?=
+ =?us-ascii?Q?mjF8I2U6/TIt0s8nr5oVnWGX59TBuriaJ4qfoXR5uDepO8qhwwWHwAN2yre3?=
+ =?us-ascii?Q?6Z/xcvxN7GYzpfiVU/5Bra1oGuaxdE7Gse9rZ40SqiULk+l3QV4fHld2T0IM?=
+ =?us-ascii?Q?gJLstbXhpwxr5cBnSq4fJ3VC2vxm6QmcLAFniZGRn8Kham6dvpCAprfTd9Fm?=
+ =?us-ascii?Q?82Ar2iH/qQDFOtA3kdTi8KHYo/HEPoOoG56ROKuhGvE2xoPrCuu8yQ+DKBQE?=
+ =?us-ascii?Q?V4TeHcullTk0b8WnKXrqbH/R3sYLHyIY6JcRuF1O7s4=3D?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR11MB1674.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2020 11:21:12.5119
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7bf918a0-3d62-4333-db27-08d89c348929
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v/iRuc7IYZpRkbeJyS6VlvrWx5sps9bH53WCl/71CCr/kJT2v78y8OO3d/7lt9tpNNvHyed7EtE9Tn/ZFJ9v/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3515
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 11:53 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
->
-> On Wed, Dec 09, 2020 at 09:47:38AM +0800, Yafang Shao wrote:
-> > On Wed, Dec 9, 2020 at 2:59 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> > >
-> > > On Tue, Dec 08, 2020 at 08:28:23PM +0800, Yafang Shao wrote:
-> > > > The xfs_trans context should be active after it is allocated, and
-> > > > deactive when it is freed.
-> > > >
-> > > > So these two helpers are refactored as,
-> > > > - xfs_trans_context_set()
-> > > >   Used in xfs_trans_alloc()
-> > > > - xfs_trans_context_clear()
-> > > >   Used in xfs_trans_free()
-> > > >
-> > > > This patch is based on Darrick's work to fix the issue in xfs/141 in the
-> > > > earlier version. [1]
-> > > >
-> > > > 1. https://lore.kernel.org/linux-xfs/20201104001649.GN7123@magnolia
-> > > >
-> > > > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > > > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > > Cc: Christoph Hellwig <hch@lst.de>
-> > > > Cc: Dave Chinner <david@fromorbit.com>
-> > > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > > ---
-> > > >  fs/xfs/xfs_trans.c | 20 +++++++-------------
-> > > >  1 file changed, 7 insertions(+), 13 deletions(-)
-> > > >
-> > > > diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-> > > > index 11d390f0d3f2..fe20398a214e 100644
-> > > > --- a/fs/xfs/xfs_trans.c
-> > > > +++ b/fs/xfs/xfs_trans.c
-> > > > @@ -67,6 +67,9 @@ xfs_trans_free(
-> > > >       xfs_extent_busy_sort(&tp->t_busy);
-> > > >       xfs_extent_busy_clear(tp->t_mountp, &tp->t_busy, false);
-> > > >
-> > > > +     /* Detach the transaction from this thread. */
-> > > > +     xfs_trans_context_clear(tp);
-> > >
-> > > Don't you need to check if tp is still the current transaction before
-> > > you clear PF_MEMALLOC_NOFS, now that the NOFS is bound to the lifespan
-> > > of the transaction itself instead of the reservation?
-> > >
-> >
-> > The current->journal_info is always the same with tp here in my verification.
-> > I don't know in which case they are different.
->
-> I don't know why you changed it from the previous version.
->
+There is a kernel NULL pointer dereference was found in Linux system.
+The details of kernel NULL is shown at bellow.
 
-I should explain it in the change log. Sorry about that.
+Currently, we do not have a way to provoke this fault on purpose, but
+the reproduction rate in out CI loops is high enough that we could go
+for a trace patch in black or white UP and get a reproduction in few
+weeks.
 
-> > It would be better if you could explain in detail.  Anyway I can add
-> > the check with your comment in the next version.
->
-> xfs_trans_alloc is called to allocate a transaction.  We set _NOFS and
-> save the old flags (which don't contain _NOFS) to this transaction.
->
-> thread logs some changes and calls xfs_trans_roll.
->
-> xfs_trans_roll calls xfs_trans_dup to duplicate the old transaction.
->
-> xfs_trans_dup allocates a new transaction, which sets PF_MEMALLOC_NOFS
-> and saves the current context flags (in which _NOFS is set) in the new
-> transaction.
->
-> xfs_trans_roll then commits the old transaction
->
-> xfs_trans_commit frees the old transaction
->
-> xfs_trans_free restores the old context (which didn't have _NOFS) and
-> now we've dropped NOFS incorrectly
->
-> now we move on with the new transaction, but in the wrong NOFS mode.
->
-> note that this becomes a lot more obvious once you start fiddling with
-> current->journal_info in the last patch.
->
+Our kernel version is 4.1.21, but via analyzing the source code of the
+call trace. The upstream version should be affected. Really sorry for
+havn't reproduced this in upstream version. But it's easier to be safe
+than to prove it can't happen, right?
 
-Many thanks for the detailed explanation. I missed the rolling transaction.
-I will add this check in the next version.
+Details of kernel crash:
+----------------------------------------------------------------------
+[1446.285834] Unable to handle kernel NULL pointer dereference at
+virtual address 00000008
+[ 1446.293943] pgd = e4af0880
+[ 1446.296656] [00000008] *pgd=10cc3003, *pmd=04153003, *pte=00000000
+[ 1446.302898] Internal error: Oops: 207 1 PREEMPT SMP ARM
+[ 1446.302950] Modules linked in: adkNetD ncp
+lttng_ring_buffer_client_mmap_overwrite(C)
+lttng_ring_buffer_client_mmap_discard(C)
+lttng_ring_buffer_client_discard(C)
+lttng_ring_buffer_metadata_mmap_client(C) lttng_probe_printk(C)
+lttng_probe_irq(C) lttng_ring_buffer_metadata_client(C)
+lttng_ring_buffer_client_overwrite(C) lttng_probe_signal(C)
+lttng_probe_sched(C) lttng_tracer(C) lttng_statedump(C)
+lttng_lib_ring_buffer(C) lttng_clock_plugin_arm_cntpct(C) lttng_clock(C)
+[ 1446.302963] CPU: 0 PID: 12086 Comm: netstat Tainted: G C
+4.1.21-rt13-* #1
+[ 1446.302967] Hardware name: Ericsson CPM1
+[ 1446.302972] task: cbd75480 ti: c4a68000 task.ti: c4a68000
+[ 1446.302984] PC is at pid_delete_dentry+0x8/0x18
+[ 1446.302992] LR is at dput+0x1a8/0x2b4
+[ 1446.303003] pc : [] lr : [] psr: 20070013
+[ 1446.303003] sp : c4a69e88 ip : 00000000 fp : 00000000
+[ 1446.303007] r10: 000218cc r9 : cd228000 r8 : e5f44320
+[ 1446.303011] r7 : 00000001 r6 : 00080040 r5 : c4aa97d0 r4 : c4aa9780
+[ 1446.303015] r3 : 00000000 r2 : cbd75480 r1 : 00000000 r0 : c4aa9780
+[ 1446.303020] Flags: nzCv IRQs on FIQs on Mode SVC_32 ISA ARM Segment
+user
+[ 1446.303026] Control: 30c5387d Table: 24af0880 DAC: 000000fd
+[ 1446.303033] Process netstat (pid: 12086, stack limit = 0xc4a68218)
+[ 1446.303039] Stack: (0xc4a69e88 to 0xc4a6a000)
+[ 1446.303052] 9e80: c4a69f70 0000a1c0 c4a69f13 00000002 e5f44320
+cd228000
+[ 1446.303059] 9ea0: 000218cc c0571604 c0a60bcc 00000000 00000000
+00000000 c4a69f20 c4a69f15
+[ 1446.303065] 9ec0: 00003133 00000002 c4a69f13 00000000 0000001f
+c4a69f70 c35de800 0000007c
+[ 1446.303072] 9ee0: ce2b1c00 cd228000 00000001 c05747b8 c05745cc
+c35de800 0000001f 00000000
+[ 1446.303078] 9f00: 00000004 cd228008 00020000 c05745cc 33000004
+c0400031 c4a68000 00000400
+[ 1446.303086] 9f20: beb78c2c cd228000 c4a69f70 00000000 cd228008
+c0ffca90 c4a68000 00000400
+[ 1446.303103] 9f40: beb78c2c c052cd0c bf08a774 00000400 01480080
+00008000 cd228000 cd228000
+[ 1446.303114] 9f60: c040f7c8 c4a68000 00000400 c052d22c c052cd8c
+00000000 00000021 00000000
+[ 1446.303127] 9f80: 01480290 01480280 00007df0 ffffffea 01480060
+01480060 01480064 b6e424c0
+[ 1446.303143] 9fa0: 0000008d c040f794 01480060 01480064 00000004
+01480080 00008000 00000000
+[ 1446.303150] 9fc0: 01480060 01480064 b6e424c0 0000008d 01480080
+01480060 00035440 beb78c2c
+[ 1446.303156] 9fe0: 01480080 beb78160 b6ede59c b6edea3c 60070010
+00000004 00000000 00000000
+[ 1446.303167] [] (pid_delete_dentry) from [] (dput+0x1a8/0x2b4)
+[ 1446.303176] [] (dput) from [] (proc_fill_cache+0x54/0x10c)
+[ 1446.303189] [] (proc_fill_cache) from []
+(proc_readfd_common+0xd8/0x238)
+[ 1446.303203] [] (proc_readfd_common) from [] (iterate_dir+0x98/0x118)
+[ 1446.303217] [] (iterate_dir) from [] (SyS_getdents+0x7c/0xf0)
+[ 1446.303233] [] (SyS_getdents) from [] (__sys_trace_return+0x0/0x2c)
+[ 1446.303243] Code: e8bd0030 e12fff1e e5903028 e5133020 (e5930008) 
 
-> --D
->
-> >
-> > >
-> > > > +
-> > > >       trace_xfs_trans_free(tp, _RET_IP_);
-> > > >       if (!(tp->t_flags & XFS_TRANS_NO_WRITECOUNT))
-> > > >               sb_end_intwrite(tp->t_mountp->m_super);
-> > > > @@ -153,9 +156,6 @@ xfs_trans_reserve(
-> > > >       int                     error = 0;
-> > > >       bool                    rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
-> > > >
-> > > > -     /* Mark this thread as being in a transaction */
-> > > > -     xfs_trans_context_set(tp);
-> > > > -
-> > > >       /*
-> > > >        * Attempt to reserve the needed disk blocks by decrementing
-> > > >        * the number needed from the number available.  This will
-> > > > @@ -163,10 +163,9 @@ xfs_trans_reserve(
-> > > >        */
-> > > >       if (blocks > 0) {
-> > > >               error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
-> > > > -             if (error != 0) {
-> > > > -                     xfs_trans_context_clear(tp);
-> > > > +             if (error != 0)
-> > > >                       return -ENOSPC;
-> > > > -             }
-> > > > +
-> > > >               tp->t_blk_res += blocks;
-> > > >       }
-> > > >
-> > > > @@ -241,8 +240,6 @@ xfs_trans_reserve(
-> > > >               tp->t_blk_res = 0;
-> > > >       }
-> > > >
-> > > > -     xfs_trans_context_clear(tp);
-> > > > -
-> > > >       return error;
-> > > >  }
-> > > >
-> > > > @@ -284,6 +281,8 @@ xfs_trans_alloc(
-> > > >       INIT_LIST_HEAD(&tp->t_dfops);
-> > > >       tp->t_firstblock = NULLFSBLOCK;
-> > > >
-> > > > +     /* Mark this thread as being in a transaction */
-> > > > +     xfs_trans_context_set(tp);
-> > > >       error = xfs_trans_reserve(tp, resp, blocks, rtextents);
-> > > >       if (error) {
-> > > >               xfs_trans_cancel(tp);
-> > > > @@ -878,7 +877,6 @@ __xfs_trans_commit(
-> > > >
-> > > >       xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
-> > > >
-> > > > -     xfs_trans_context_clear(tp);
-> > > >       xfs_trans_free(tp);
-> > > >
-> > > >       /*
-> > > > @@ -911,7 +909,6 @@ __xfs_trans_commit(
-> > > >               tp->t_ticket = NULL;
-> > > >       }
-> > > >
-> > > > -     xfs_trans_context_clear(tp);
-> > > >       xfs_trans_free_items(tp, !!error);
-> > > >       xfs_trans_free(tp);
-> > > >
-> > > > @@ -971,9 +968,6 @@ xfs_trans_cancel(
-> > > >               tp->t_ticket = NULL;
-> > > >       }
-> > > >
-> > > > -     /* mark this thread as no longer being in a transaction */
-> > > > -     xfs_trans_context_clear(tp);
-> > > > -
-> > > >       xfs_trans_free_items(tp, dirty);
-> > > >       xfs_trans_free(tp);
-> > > >  }
-> > > > --
-> > > > 2.18.4
-> > > >
-> >
-> >
-> >
-> > --
-> > Thanks
-> > Yafang
-
-
-
--- 
-Thanks
-Yafang
