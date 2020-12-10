@@ -2,104 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59F132D6ACB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 23:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E08882D6ACA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 23:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405154AbgLJWa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2405156AbgLJWa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 10 Dec 2020 17:30:27 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34384 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405082AbgLJWV1 (ORCPT
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:53836 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405153AbgLJWaT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 17:21:27 -0500
-Received: by mail-ed1-f66.google.com with SMTP id dk8so7277092edb.1;
-        Thu, 10 Dec 2020 14:21:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mehdCErR0yhsbjduWQoy07Nba1zedRECDietLN/feuw=;
-        b=vH37f4c4uUnV9Lj134aNl+bMtR+Z16rKS3qiQpYSYV8wounD/s646Yp7jfkbi34PD0
-         T/TUAnKDsD/maaoFwDIP2gw42w390vdr4cRsX5m5EWGrw6w4go8dfJW+54wB4sKeKMdB
-         J50SUk9LykObnY0IqNdzt0epf9o7MlB7nI/Qnnu1qweP1woJULmga0XKmxAP47FximoF
-         68bhuW01qTVxo5WCTe4YBt+p55BgEH1vju3fUnWPCpqGPHaVoVqclXU+rwv4GYCE9fKE
-         pxTq1UdecXQqDpXHasxWX24Mkpzd4kIuVAmP4+S4r8jZzVZOX1qcCojyrZqBzP4fnJcJ
-         K7+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mehdCErR0yhsbjduWQoy07Nba1zedRECDietLN/feuw=;
-        b=q4RJJUf6Y9BMOiDPBULglvw4i3g6ygDL58//bMoIhaaKj2pNXGwL9ro/gJEYOWYlNI
-         8VLiSLtik5C2gFPGTSJGCJ3u7Rg06JBengI5PpQEOeMEGSptQ0HvPaNDdmMBT2vDMEx+
-         QjU2Raz6Od+e8mdJGaG/hvf+kMnfjlt3iNoNpM6cwayQU7HP159x/7ChXgbLCecJ2V4e
-         TpPSBQP+XfngqpFe/+zIBEe6pc4NjQP1WDXOqJgM3eQWdWK5KORaNh8kM7KlwghCDx+m
-         pXOpoMm6YAojeREAy/4Qtb45hWPI+8PGZ0b99cvR8ExaK408vrysykoZW0OnqdD0X2cO
-         J6lw==
-X-Gm-Message-State: AOAM532+kIQnGQaajqRJawod4wuW+UTO8+OpdupbS9NT+FcLRAIhhFSP
-        jZ7uP6VLGPosJsO16ZK/xTBueeo5BLbr0SpSFwIFXxa44as=
-X-Google-Smtp-Source: ABdhPJwPvbcgp24AbDog3/LDvwOSMb9RWGw4IainYjFFWWVMewc9GhkVfUbSqtIQxX15N4ulroWGzz9o9gAeP2UdsHY=
-X-Received: by 2002:a17:906:cd06:: with SMTP id oz6mr8414384ejb.25.1607637557953;
- Thu, 10 Dec 2020 13:59:17 -0800 (PST)
+        Thu, 10 Dec 2020 17:30:19 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id DA06A101B8C;
+        Fri, 11 Dec 2020 09:29:35 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1knURK-002dN6-Oc; Fri, 11 Dec 2020 09:29:34 +1100
+Date:   Fri, 11 Dec 2020 09:29:34 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 2/2] fs: expose LOOKUP_NONBLOCK through openat2()
+ RESOLVE_NONBLOCK
+Message-ID: <20201210222934.GI4170059@dread.disaster.area>
+References: <20201210200114.525026-1-axboe@kernel.dk>
+ <20201210200114.525026-3-axboe@kernel.dk>
 MIME-Version: 1.0
-References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-6-shy828301@gmail.com>
- <20201210153356.GE264602@cmpxchg.org>
-In-Reply-To: <20201210153356.GE264602@cmpxchg.org>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 10 Dec 2020 13:59:06 -0800
-Message-ID: <CAHbLzkouqvT7DNto=SYkoy28g7Tq7abyEjzwYcFGXzSrUx36FQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201210200114.525026-3-axboe@kernel.dk>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=drOt6m5kAAAA:8 a=7-415B0cAAAA:8
+        a=uvNq2T7deLPmxCVeDx4A:9 a=CjuIK1q_8ugA:10 a=RMMjzBEyIzXRtoq5n5K6:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 7:36 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
-> > @@ -504,6 +577,34 @@ int memcg_expand_shrinker_maps(int new_id)
-> >       return ret;
-> >  }
-> >
-> > +int memcg_expand_shrinker_deferred(int new_id)
-> > +{
-> > +     int size, old_size, ret = 0;
-> > +     struct mem_cgroup *memcg;
-> > +
-> > +     size = (new_id + 1) * sizeof(atomic_long_t);
-> > +     old_size = memcg_shrinker_deferred_size;
-> > +     if (size <= old_size)
-> > +             return 0;
-> > +
-> > +     mutex_lock(&memcg_shrinker_mutex);
->
-> The locking is somewhat confusing. I was wondering why we first read
-> memcg_shrinker_deferred_size "locklessly", then change it while
-> holding the &memcg_shrinker_mutex.
+On Thu, Dec 10, 2020 at 01:01:14PM -0700, Jens Axboe wrote:
+> Now that we support non-blocking path resolution internally, expose it
+> via openat2() in the struct open_how ->resolve flags. This allows
+> applications using openat2() to limit path resolution to the extent that
+> it is already cached.
+> 
+> If the lookup cannot be satisfied in a non-blocking manner, openat2(2)
+> will return -1/-EAGAIN.
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/open.c                    | 2 ++
+>  include/linux/fcntl.h        | 2 +-
+>  include/uapi/linux/openat2.h | 2 ++
+>  3 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 9af548fb841b..07dc9f3d1628 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1087,6 +1087,8 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+>  		lookup_flags |= LOOKUP_BENEATH;
+>  	if (how->resolve & RESOLVE_IN_ROOT)
+>  		lookup_flags |= LOOKUP_IN_ROOT;
+> +	if (how->resolve & RESOLVE_NONBLOCK)
+> +		lookup_flags |= LOOKUP_NONBLOCK;
+>  
+>  	op->lookup_flags = lookup_flags;
+>  	return 0;
+> diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+> index 921e750843e6..919a13c9317c 100644
+> --- a/include/linux/fcntl.h
+> +++ b/include/linux/fcntl.h
+> @@ -19,7 +19,7 @@
+>  /* List of all valid flags for the how->resolve argument: */
+>  #define VALID_RESOLVE_FLAGS \
+>  	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
+> -	 RESOLVE_BENEATH | RESOLVE_IN_ROOT)
+> +	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_NONBLOCK)
+>  
+>  /* List of all open_how "versions". */
+>  #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+> diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+> index 58b1eb711360..ddbf0796841a 100644
+> --- a/include/uapi/linux/openat2.h
+> +++ b/include/uapi/linux/openat2.h
+> @@ -35,5 +35,7 @@ struct open_how {
+>  #define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
+>  					be scoped inside the dirfd
+>  					(similar to chroot(2)). */
+> +#define RESOLVE_NONBLOCK	0x20 /* Only complete if resolution can be
+> +					done without IO */
 
-The concurrent shrinkers registration may have race. But, they should
-get different IDs, so it seems not matter.
+I don't think this describes the implementation correctly - it has
+nothing to actually do with whether IO is needed, just whether the
+lookup can be done without taking blocking locks. The slow path can
+complete without doing IO - it might miss the dentry cache but hit
+the filesystem buffer cache on lookup and the inode cache when
+retrieving the inode. And it may not even block anywhere doing this.
 
-I agree it is a little bit confusing and not that straightforward, it
-does owe some comments in the code.
+So, really, this isn't avoiding IO at all - it's avoiding the
+possibility of running a lookup path that might blocking on
+something.
 
->
-> memcg_shrinker_deferred_size only changes under shrinker_rwsem(write),
-> correct? This should be documented in a comment, IMO.
->
-> memcg_shrinker_mutex looks superfluous then. The memcg allocation path
-> is the read-side of memcg_shrinker_deferred_size, and so simply needs
-> to take shrinker_rwsem(read) to lock out shrinker (de)registration.
->
-> Also, isn't memcg_shrinker_deferred_size just shrinker_nr_max? And
-> memcg_expand_shrinker_deferred() is only called when size >= old_size
-> in the first place (because id >= shrinker_nr_max)?
+This also needs a openat2(2) man page update explaining exactly what
+behaviour/semantics this flag provides and that userspace can rely
+on when this flag is set...
+
+We've been failing to define the behaviour of our interfaces clearly,
+especially around non-blocking IO behaviour in recent times. We need
+to fix that, not make matters worse by adding new, poorly defined
+non-blocking behaviours...
+
+I'd also like to know how we actually test this is working- a
+reliable regression test for fstests would be very useful for
+ensuring that the behaviour as defined by the man page is not broken
+accidentally by future changes...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
