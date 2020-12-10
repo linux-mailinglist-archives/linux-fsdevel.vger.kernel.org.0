@@ -2,64 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA232D4FF9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 01:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA5B2D506A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 02:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731509AbgLJA6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 19:58:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36568 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730414AbgLJA6B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 19:58:01 -0500
-Date:   Wed, 9 Dec 2020 16:57:20 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607561840;
-        bh=SLnGH1+P80XGCfepu6iRSaors5BYzu6Ub1B8QSb7zm0=;
-        h=From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=m7u8Hb1gLxKmF0sDca5CaQtGltb4U9MM4Nmu3WkdXTuHihRyfTIoaRkK/nsFBvdl2
-         pLQ6q28z/nwBRkZeG0365uad6/LZybJNLqsRX4FcUdFRknJCtKUQpsLHY47ghYjBeq
-         q3LrBoM0ThYzinTzJjBE+Uq3B5PoxZrJhKGlYBFWhKGtth4hOdHcbEJNgqneQ0/KW0
-         w7svau4extRcSYzs6IrjMKo7h8fy7k+FuYoS0VdfHVVTY8TKBZp73o26pnnvsDfeA1
-         7hHzX2LNuXPoClCIEuRJQKRCXo6ScDRRecTF0n4oex5/LdMTtjfvAJlto6jNMUoXF9
-         Z+POeHkFgWRUQ==
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jann@thejh.net>
-Subject: Re: [PATCH] files: rcu free files_struct
-Message-ID: <20201210005720.GN2657@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <877dprtxly.fsf@x220.int.ebiederm.org>
- <20201209142359.GN3579531@ZenIV.linux.org.uk>
- <87o8j2svnt.fsf_-_@x220.int.ebiederm.org>
- <20201209194938.GS7338@casper.infradead.org>
- <20201209225828.GR3579531@ZenIV.linux.org.uk>
- <CAHk-=wi7MDO7hSK9-7pbfuwb0HOkMQF1fXyidxR=sqrFG-ZQJg@mail.gmail.com>
- <20201209230755.GV7338@casper.infradead.org>
- <CAHk-=wg3FFGZO6hgo-L0gSA4Vjv=B8uwa5N8P6SeJR5KbU5qBA@mail.gmail.com>
- <20201210003922.GL2657@paulmck-ThinkPad-P72>
- <CAHk-=wiE_z0FfWHT7at8si0cZgspt+M5rb1i1s79wRmzBOLqwA@mail.gmail.com>
+        id S1726420AbgLJBjj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 20:39:39 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:26035 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbgLJBjj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Dec 2020 20:39:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1607564379; x=1639100379;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AFI6it6kJQ2psUYuzLxZl39WwEf1xh8hmEOpoaEid8k=;
+  b=lhlU+Y6DoABH+evwUjOIPSrIBwCTrAbUS54CVEA4BKGkTrGNxeWfQF0a
+   doPpufGEyG/h7PDB961KIuastbZo6TxorH40LQJNqHZl17aadGH0E1s9S
+   6HNcb2KsjIY9jvTbc+lEqgcOdRa7CaAZEYYa1/2VHBK5xWZ625DLQ1qq7
+   rgoTTObkivMcyr8Q2GqCYFlm6iuIbWMECf6C1e13Z/7pku3Ut3tMPNHHf
+   /306sPHC2Bj0RKYAYKAylGxcv583wml+tBTKuGBhaLS/citlWB2HcSz1N
+   egyemxVD3by8ARycoPvWtlNABOWWeO1IOxpCVcGwnrhENltDji8uXALwF
+   w==;
+IronPort-SDR: hS5ZHT20MPiNYaPkN9ogEzgo7LyHSMFTCviJYewCLpQ+Rjf6E79gVePDqTHmlFULp4fuuahEyg
+ 9bzrGDpYgjh6F7M/VIMuzWcdvxhhxQqKrZCVftUTFICAn/taYDd2sA+ggqrRg8MzwYrkcJqRFk
+ +K8T358Nx5V6+85qQ7btMJKg+EWFcLqc+4H4vvkk/d6+Sch3drbSPAF9mGb2IQYN+8Y6tDV3qs
+ rlWvI5KT+u3rWQRnIZKySJ9mRTru2N+KuNil5GlUWmHjLHwIPxBrRpE2rZe/ct+sm6wGqe8bu1
+ qkM=
+X-IronPort-AV: E=Sophos;i="5.78,407,1599494400"; 
+   d="scan'208";a="154863920"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Dec 2020 09:38:29 +0800
+IronPort-SDR: QHZ92ELiSb4BzQl4eb0hW6t+mIm8+TCYex+buyezSoP0IbryO51KIg8NZuVs1hkxbFQuWwRzyp
+ 6rNQX6gurmr8WP4jsyPcUUXcRIxnijWcg=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2020 17:22:25 -0800
+IronPort-SDR: RK2neKfWyNFmkNvYQ7bP7pi/mPzXjWH6F5y9TFO8nAqZz8OyBp7Kw7iUyWUJojIADESDW2AbCl
+ qNybDX0fCh2A==
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip01.wdc.com with ESMTP; 09 Dec 2020 17:38:30 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2] zonefs: fix page reference and BIO leak
+Date:   Thu, 10 Dec 2020 10:38:28 +0900
+Message-Id: <20201210013828.417576-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiE_z0FfWHT7at8si0cZgspt+M5rb1i1s79wRmzBOLqwA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 09, 2020 at 04:41:06PM -0800, Linus Torvalds wrote:
-> On Wed, Dec 9, 2020 at 4:39 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > Like this, then?
-> 
-> Ack.
+In zonefs_file_dio_append(), the pages obtained using
+bio_iov_iter_get_pages() are not released on completion of the
+REQ_OP_APPEND BIO, nor when bio_iov_iter_get_pages() fails.
+Furthermore, a call to bio_put() is missing when
+bio_iov_iter_get_pages() fails.
 
-Queued with Matthew's Reported-by and your Acked-by, thank you all!
+Fix these resource leaks by adding BIO resource release code (bio_put()i
+and bio_release_pages()) at the end of the function after the BIO
+execution and add a jump to this resource cleanup code in case of
+bio_iov_iter_get_pages() failure.
 
-							Thanx, Paul
+While at it, also fix the call to task_io_account_write() to be passed
+the correct BIO size instead of bio_iov_iter_get_pages() return value.
+
+Reported-by: Christoph Hellwig <hch@lst.de>
+Fixes: 02ef12a663c7 ("zonefs: use REQ_OP_ZONE_APPEND for sync DIO")
+Cc: stable@vger.kernel.org
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ fs/zonefs/super.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index ff5930be096c..bec47f2d074b 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -691,21 +691,23 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
+ 		bio->bi_opf |= REQ_FUA;
+ 
+ 	ret = bio_iov_iter_get_pages(bio, from);
+-	if (unlikely(ret)) {
+-		bio_io_error(bio);
+-		return ret;
+-	}
++	if (unlikely(ret))
++		goto out_release;
++
+ 	size = bio->bi_iter.bi_size;
+-	task_io_account_write(ret);
++	task_io_account_write(size);
+ 
+ 	if (iocb->ki_flags & IOCB_HIPRI)
+ 		bio_set_polled(bio, iocb);
+ 
+ 	ret = submit_bio_wait(bio);
+ 
++	zonefs_file_write_dio_end_io(iocb, size, ret, 0);
++
++out_release:
++	bio_release_pages(bio, false);
+ 	bio_put(bio);
+ 
+-	zonefs_file_write_dio_end_io(iocb, size, ret, 0);
+ 	if (ret >= 0) {
+ 		iocb->ki_pos += size;
+ 		return size;
+-- 
+2.28.0
+
