@@ -2,138 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D08D2D545C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 08:14:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3BFF2D55EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 09:59:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbgLJHNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 02:13:06 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:16629 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725833AbgLJHNG (ORCPT
+        id S1730205AbgLJI5d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 03:57:33 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55042 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727727AbgLJI5Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 02:13:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607584384; x=1639120384;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=qO3NZNEu8dLeBPzXBBZc586AeuIsJThITi45Aj18LkM=;
-  b=E6GnnLXY8t/eSMq96Ltq/TqCh9PNouOQN7MOGmLxG1DRTT98dtoQip8U
-   LMcAkG9ccfA3j0Nh1Ka2f+Wyg3+WcT5p1Rzb9d4Ud0SAq5M2jHVzanXOv
-   8tANSqf6AeBQhlJE3II7XoIRRCIAYXF9mQf4ShJ8EM2PljlWYdryROPlo
-   0vUXCgZT/dyMKeepKXvFdIs2ryFrjNSRmsOiV78hRwyFDOdKqbmrUiK5V
-   ZzESCPRJapfDeWQOlQ5pNNLKG8fIWTGYbuiIj0VM3sK6q6fIhJoMtxwK7
-   AHRvdWjntUp0Z2JV7qWJTVvqXlrI3RvYgymNpumKA/V/w32sV4r+z0Qfo
-   A==;
-IronPort-SDR: f8Kj43USeSNoqB+FIvbxhGfvVnlBzMUWy6d4AGxcEByavkLNZVIWa+cKNeYkprhhRpjHZ8qOQJ
- naTyBPnhRqdnA4dTyrjayDaVo9vH9dcHOHPyWsu0lgCC/SR9+x6srS7sGGznTHfOePkhyVgqkp
- KzizGw2CJbOlUCxWn5OpVL5sWpBQpYONi6bRwuSxTtoox2RM5C1f+mB0x0Gc5GLJMZATJiZTKj
- tPsNNRvDTO/MntoP3hAaHrMlCE4FLN2gxDY780MZI6Jfsrv/6COjAXrLzq20ZejI6aFUTzwp9y
- yMU=
-X-IronPort-AV: E=Sophos;i="5.78,407,1599494400"; 
-   d="scan'208";a="159293565"
-Received: from mail-dm6nam10lp2106.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.106])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Dec 2020 15:11:59 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cF6tuKgoAD+wVWh6LSESE0Sw9zm2TfzcglfxW8ogMz2J/6aLSCotfHU1YmDycYs5r91Z211kYvY9UeInGdyd4ga+2DCTy0/vRDlLhTw9OBzJMOTvTy+XvwZ/HVi8wNevsWRext6UNdRCviJbbJW/nLuDwwg3ecc0gbfSHSSFqOl6O8/JcFhpguFYpUmaXfjitX61e4QmBWhTHao8pWAvRJVvGBRM3OOoZBY3w6WyA7R+5OyxLCGXBvpHYXgQ1G6o39nCsFDtUU5dKhEynR5D5LJMRKrsVjlZ1tzKFTxv9uxoYzH2bzqmPXxmQn+PktoActgXzYBztQ9uWBDiQrJfeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qO3NZNEu8dLeBPzXBBZc586AeuIsJThITi45Aj18LkM=;
- b=McjwGpMIGykYyLlremsAZgInz41CjT209Na4HjbOQVVjIguTR6JtyHexvQFesDBTrKZR6d9nKlFf5tVyHquMBqQ8ammyXY9eeZNU0rlTROyb6GKL/Tez/SnrUAve8qa+f+2HeAgidh9/9BUY/gLIztQkchFUzH9JuqPe8n+gF8hRI3xJdZ3onKLS+tA0Boyw60XH+SnX1nij9VlKopghX+zfw4Gfa0gyrgmhZPaPYpSTD7qt4CqR2NqTV2cXCDL7Zl5SfaQ77qNl34VGZdtWQB34nyxMTnFugMTw4/PUc8VG0KyMPzpMSyMkW7le0auj5mL0t7t+wm/HYH2S4gOtDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qO3NZNEu8dLeBPzXBBZc586AeuIsJThITi45Aj18LkM=;
- b=gN0lS1BFj8iKmSfWwbro+u/2UCCqJtabgOoCQhCpL8D59O/En/TcgpXntoF27wPwHq2Ys3fcSjV/IPeRRWlGdRYACTP9Sf+XRWrkst9WRhP/2sVmOGfF+3MsTUN2ThHpIIVKACuPRW4k1RHBQYs09oxJJoK/1oezdrITXo4oKys=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SA0PR04MB7306.namprd04.prod.outlook.com
- (2603:10b6:806:e7::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.13; Thu, 10 Dec
- 2020 07:11:57 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::65d7:592a:32d4:9f98]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::65d7:592a:32d4:9f98%6]) with mapi id 15.20.3589.038; Thu, 10 Dec 2020
- 07:11:57 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2] zonefs: fix page reference and BIO leak
-Thread-Topic: [PATCH v2] zonefs: fix page reference and BIO leak
-Thread-Index: AQHWzpUrpokN11k08kaowcuFJTiUbQ==
-Date:   Thu, 10 Dec 2020 07:11:57 +0000
-Message-ID: <SN4PR0401MB35981EA698BE4E89B81786279BCB0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20201210013828.417576-1-damien.lemoal@wdc.com>
- <SN4PR0401MB3598F92D83760E2A2D8749E59BCB0@SN4PR0401MB3598.namprd04.prod.outlook.com>
- <20201210070647.GA12511@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: lst.de; dkim=none (message not signed)
- header.d=none;lst.de; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1587e977-df6c-4798-a443-08d89cdae1c2
-x-ms-traffictypediagnostic: SA0PR04MB7306:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SA0PR04MB73061CFC936708DDB8F158549BCB0@SA0PR04MB7306.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: bnechf7FsUPWEHoVUQ4Iz+FduBMs5LQ6n7cpe02hYzKXxzr8fQL6zcU3yeOrl6I9Ur+Fq7T2W+TC0gXG0HmnbQuZdhrOC8lqYvh6XZ0Ewke9/RAPA0s7AQdXj5te53QaFbePIBxMFxqcgd0p+8Fi04gJw9ObghYtKMYr+2SuyAcnzkVa0nGYebWFSpR82GE9ikr/+E5jBvjpoU0nuH2+DbizTmrBy/R6w5HrMPUQ9MwxWFUdl1ss0UFIMJct8aGAu5Tr4nOt4Zw9O2gPKGQbj1Ue4rQHKbg0rxu5lDK0+I79gJoWEJSL4S5jS7d9YeK8fuy6RT2Y7A/zFUaVLjTbpw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(136003)(366004)(8936002)(186003)(8676002)(83380400001)(2906002)(66946007)(66476007)(66556008)(4326008)(64756008)(54906003)(52536014)(86362001)(6506007)(66446008)(5660300002)(76116006)(71200400001)(4744005)(9686003)(7696005)(33656002)(26005)(53546011)(91956017)(55016002)(6916009)(508600001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?ywd5Ue5dZypNOhO3AtZCHJPhCqKw4fK4T8haguyqax0LAjJKLO1sFUkAGq9E?=
- =?us-ascii?Q?quAtauP6z1wjpuxGxxXUtGN1h68bUxjiqmEQ/Goy5Ollgx0gKguiZPvxMFbJ?=
- =?us-ascii?Q?5MKh6tApmRSxabwCUyo53og8veLYirH45AM/1m3KRH+wquVYu/Jh9lj1w/kU?=
- =?us-ascii?Q?lrdmc/WT29aIwSynP9Ngn/CeLo20YjwEuGDZBi8j8h7ZbypY9wx9oEIexFQ+?=
- =?us-ascii?Q?cKcDWNZGpMMesTd1zjZeVmnMMyn7DoP+ucVvkB79BYqsvP1toSvtX8N8KMqR?=
- =?us-ascii?Q?EC5M8u+lljHfd+UWyB+Pxiel+7sDlMll/ChdDYJJMn/EqtVsr/Zk3ofgdMYY?=
- =?us-ascii?Q?GYiDfMAJ44VmiF6xMRYshBedpFKImyKjMZSZpAaL7D447koX+oel+Rwk5Fgd?=
- =?us-ascii?Q?apN0YJ5pBsvAwv45++MF1J5C6kNFX4O6x3aAErmWVzcexlNmu/KFzdOTVjqm?=
- =?us-ascii?Q?LZdBqubRLIS4ACUs1sEKO1toIoGhcf7FZvOkbaJiPhg7Ft92aRvuIk95Cp8r?=
- =?us-ascii?Q?vTz2BiAv4U77OAoyA9uGh6CjCZutrnPh/8plfENX6XOiXxKN8P9rlYaSOaPm?=
- =?us-ascii?Q?maChuEnJ0cwlulmk93cKzAgQKM4njnpl4pqn74z5Fd9fVCLYcR+g5nCAhyPs?=
- =?us-ascii?Q?Q1wP5a9LXg2/34btb+eGQbY4Ksl3+3Ya7dP09FxhS0AG2UIEbZ8NxKB83ZLY?=
- =?us-ascii?Q?BIdTmdHXKYK3icB8ersZVisniMM3zPP+fKcaMb3U197DqjxpVlYLFqEvzCRC?=
- =?us-ascii?Q?nOR4ySq0hh2WD/EzNC0Udw1WULj+Iasp3XLjm2DoDg/EIg2PhFhg3dSGDu2i?=
- =?us-ascii?Q?Up9MZi1wkvi0drcFa6llqtQMLLKFZkSbMOqSF/sf8J9myZ7Rap43HiCggRkJ?=
- =?us-ascii?Q?TetFKZb3cVKJBUkJxG/VPYkWa8Nt+DeNQtGs69dWmwP0wa2VY8BPIm9DyQpA?=
- =?us-ascii?Q?Brc0hwLBQOXtk34kqMNhIUZFsQx9d8vB3e/cVg2cNGzehxx4SnhxoW6Zb1dD?=
- =?us-ascii?Q?9hH2?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 10 Dec 2020 03:57:24 -0500
+Received: from static-50-53-41-238.bvtn.or.frontiernet.net ([50.53.41.238] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1knHkZ-0007sL-07; Thu, 10 Dec 2020 08:56:35 +0000
+Subject: Re: [PATCH v2 00/10] allow unprivileged overlay mounts
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20201207163255.564116-1-mszeredi@redhat.com>
+ <1725e01a-4d4d-aecb-bad6-54aa220b4cd2@i-love.sakura.ne.jp>
+From:   John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
+ azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
+ NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
+ L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
+ YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
+ UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
+ dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
+ OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
+ OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
+ V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
+ MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
+ NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
+ ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
+ d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
+ S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
+ d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
+ WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
+ ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
+ SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
+ bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
+ WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
+ NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
+ NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
+ cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
+ ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
+ QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
+ dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
+ OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
+ NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
+ cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
+ bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
+ V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
+ TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
+ QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
+ OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
+ SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
+ VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
+ QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
+ CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
+ RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
+ T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
+ N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
+ TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
+ L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
+ Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
+ ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
+ dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
+ a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
+ V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
+ aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
+ SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
+ SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
+ SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
+ M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
+ cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
+ TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
+ aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
+ RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
+ Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
+ a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
+ RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
+ VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
+ U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
+ Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
+ ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
+ WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
+ Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
+ Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
+ enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
+ WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
+ NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
+ MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
+ RVkgQkxPQ0stLS0tLQo=
+Organization: Canonical
+Message-ID: <7a64acab-dd05-765f-df2c-4896eb6a29df@canonical.com>
+Date:   Thu, 10 Dec 2020 00:56:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1587e977-df6c-4798-a443-08d89cdae1c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2020 07:11:57.6179
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QbVOGULCY/hHsUdO+H6DQS0cPm64JdHrzLID3wF6cTob+oZiFJfwTTy3pzn0hsuF1oogUetl6tT/w/d3mq03/EAICp1IglHOQcss4UKeRVE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR04MB7306
+In-Reply-To: <1725e01a-4d4d-aecb-bad6-54aa220b4cd2@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/12/2020 08:06, Christoph Hellwig wrote:=0A=
-> On Thu, Dec 10, 2020 at 07:03:08AM +0000, Johannes Thumshirn wrote:=0A=
->> Aren't we loosing bio->bi_status =3D BLK_STS_IOERR in case bio_iov_iter_=
-get_pages() fails now?=0A=
-> =0A=
-> We do, but it does not matter because nothing actually looks at=0A=
-> ->bi_status in this failure path.=0A=
-> =0A=
-=0A=
-Right we never pass the bio to the block layer in the error case.=0A=
-=0A=
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+On 12/8/20 2:27 AM, Tetsuo Handa wrote:
+> On 2020/12/08 1:32, Miklos Szeredi wrote:
+>> A general observation is that overlayfs does not call security_path_*()
+>> hooks on the underlying fs.  I don't see this as a problem, because a
+>> simple bind mount done inside a private mount namespace also defeats the
+>> path based security checks.  Maybe I'm missing something here, so I'm
+>> interested in comments from AppArmor and Tomoyo developers.
+> 
+> Regarding TOMOYO, I don't want overlayfs to call security_path_*() hooks on the
+> underlying fs, but the reason is different. It is not because a simple bind mount
+> done inside a private mount namespace defeats the path based security checks.
+> TOMOYO does want to check what device/filesystem is mounted on which location. But
+> currently TOMOYO is failing to check it due to fsopen()/fsmount()/move_mount() API.
+> 
+
+Regardless of TOMOYO's approach I would say that overlays should call the
+security_path_*() hooks, making it possible for an LSM to do something based off of
+them when needed.
+
+The current state of private mounts with regard to path based mediation is broken.
+I just haven't had time to try and come up with an acceptable fix for it. overlayfs
+is actually broken under apparmor mediation, and accesses to the lower layer end up
+getting denied but there is no way to properly allow them. So policy that hits this
+needs a flag set that allows for it in a very hacky way (its on the list of things
+to fix).
+
+Path based mediation has to carefully control mounts otherwise policy can be
+circumvented as Miklos rightly points out. Ideally path based LSM wouldn't allow
+you to do the simple bind mount inside a private mount namespace (at least not
+unless policy allowed for it). AppArmor does mediate the mount hooks and bind
+mounts in a private mount namespace (if they go through the LSM mount hooks) will
+be denied. Again the problem is how to allow them, and this is broken.
