@@ -2,121 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4472D661B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 20:15:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F02EE2D667C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 20:30:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393265AbgLJTOh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 14:14:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393309AbgLJTNU (ORCPT
+        id S2393431AbgLJTae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 14:30:34 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:49746 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393436AbgLJTad (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 14:13:20 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6727DC0617A6;
-        Thu, 10 Dec 2020 11:12:35 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id w1so4247852ejf.11;
-        Thu, 10 Dec 2020 11:12:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RTDvHTEKqVC+mjz0XehoDoae3BLNFHK2pu91mZg+aGw=;
-        b=NjJLG16LJsoXr1mpyosfDeS73eAn/zxzt1vzc2n50zH88d2Py/RvO144+T+g9gWnjV
-         S/YOhd5aRJs+E8zlkvImUxGjvHxlqc5OJ8vWCCDcCZFQ7HGtTO241PHIvSdNMpG4nKC6
-         0ZVvi6XoIJD713uO1rpa5SXh0bX+cTA33BU7wnDRcbq7FNlZip0DNgl22FmgN1blScBW
-         DKpraG1uMZD+Za2BhU4GExY6I9gEO8vwMavcFv7YlQZbnx/XGIV/in1IK4Hv5c6i4Dm3
-         ZAdvY2P6+R4fiJqbzi5gI+SPdjT0ikgVJ5owRXIUsxRdsKRZBo/X9x8jD/kWq3jATgm1
-         icCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RTDvHTEKqVC+mjz0XehoDoae3BLNFHK2pu91mZg+aGw=;
-        b=Dsw6o4p7L+Uj6KtO2ro7VFejtvIlQIcrJZBmd5CI6QAZTA2FgsteSg6zniJgtEbwqT
-         gwsthr3sXiUDJ7tGycA9Qqna7eLfWYtka9tRz4RPOemVHynAti6YqYM0SdmgIgL72izx
-         7QuQGKuAcjV2J7ed5uEPb2iRvoZHROCCRU2hXRxQKUIQmNqeQvOsppw6DCxw8XdJx17X
-         G9pZwOza57FHx+vfaYRVAWd/lmJhiXr4qRV3QOsII99ROAiqAZ6gxU+E42W4kDzzCT9h
-         B4OyLAlOEn+tRjk6rbzGqJuFzV85Cn9r/eUprpcH1r2oZcctZLGixs02vzYIWNDyRzNQ
-         loSw==
-X-Gm-Message-State: AOAM533e50AJjOP5peDE1l5w8/AlsDI0yMjnQ2v7moHSNFvFZeMhJfGj
-        KjWil460643DxOjWIQauPEaHyOI4/CWSDBdpAL4=
-X-Google-Smtp-Source: ABdhPJywr4rJuVSY3Z6ENZ+k0JTkQOilCOq4TnF75kgf6EqiLSKQAZ+GcDwt2qyuXOnj0ze1LzTkCJ/VA2ieytp9hXc=
-X-Received: by 2002:a17:906:24c3:: with SMTP id f3mr7594468ejb.238.1607627554147;
- Thu, 10 Dec 2020 11:12:34 -0800 (PST)
+        Thu, 10 Dec 2020 14:30:33 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1knRdL-003Miz-OI; Thu, 10 Dec 2020 12:29:47 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1knRdK-0006sF-Uo; Thu, 10 Dec 2020 12:29:47 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jann@thejh.net>
+References: <20201120231441.29911-15-ebiederm@xmission.com>
+        <20201207232900.GD4115853@ZenIV.linux.org.uk>
+        <877dprvs8e.fsf@x220.int.ebiederm.org>
+        <20201209040731.GK3579531@ZenIV.linux.org.uk>
+        <877dprtxly.fsf@x220.int.ebiederm.org>
+        <20201209142359.GN3579531@ZenIV.linux.org.uk>
+        <87o8j2svnt.fsf_-_@x220.int.ebiederm.org>
+        <CAHk-=wiUMHBHmmDS3_Xqh1wfGFyd_rdDmpZzk0cODoj1i7_VOA@mail.gmail.com>
+        <20201209195033.GP3579531@ZenIV.linux.org.uk>
+        <87sg8er7gp.fsf@x220.int.ebiederm.org>
+        <20201210061304.GS3579531@ZenIV.linux.org.uk>
+Date:   Thu, 10 Dec 2020 13:29:01 -0600
+In-Reply-To: <20201210061304.GS3579531@ZenIV.linux.org.uk> (Al Viro's message
+        of "Thu, 10 Dec 2020 06:13:04 +0000")
+Message-ID: <87h7oto3ya.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-6-shy828301@gmail.com>
- <20201210153356.GE264602@cmpxchg.org>
-In-Reply-To: <20201210153356.GE264602@cmpxchg.org>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 10 Dec 2020 11:12:22 -0800
-Message-ID: <CAHbLzkoSSQ_4aY1cNmJGZyL+r6yO3L41KWHi8ZQnDhFTNi-v_Q@mail.gmail.com>
-Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1knRdK-0006sF-Uo;;;mid=<87h7oto3ya.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19ZiLRNiJsD/mS47Qcr/W9aaoCcvplKFwU=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XM_B_SpammyWords
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4998]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 558 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 9 (1.6%), b_tie_ro: 7 (1.3%), parse: 1.57 (0.3%),
+        extract_message_metadata: 25 (4.5%), get_uri_detail_list: 3.4 (0.6%),
+        tests_pri_-1000: 17 (3.1%), tests_pri_-950: 1.31 (0.2%),
+        tests_pri_-900: 1.11 (0.2%), tests_pri_-90: 131 (23.4%), check_bayes:
+        129 (23.0%), b_tokenize: 9 (1.6%), b_tok_get_all: 9 (1.6%),
+        b_comp_prob: 3.3 (0.6%), b_tok_touch_all: 103 (18.4%), b_finish: 0.94
+        (0.2%), tests_pri_0: 289 (51.7%), check_dkim_signature: 0.54 (0.1%),
+        check_dkim_adsp: 2.7 (0.5%), poll_dns_idle: 65 (11.7%), tests_pri_10:
+        2.1 (0.4%), tests_pri_500: 77 (13.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] files: rcu free files_struct
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 7:36 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+Al Viro <viro@zeniv.linux.org.uk> writes:
+
+> On Wed, Dec 09, 2020 at 03:32:38PM -0600, Eric W. Biederman wrote:
+>> Al Viro <viro@zeniv.linux.org.uk> writes:
+>> 
+>> > On Wed, Dec 09, 2020 at 11:13:38AM -0800, Linus Torvalds wrote:
+>> >> On Wed, Dec 9, 2020 at 10:05 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> >> >
+>> >> > -                               struct file * file = xchg(&fdt->fd[i], NULL);
+>> >> > +                               struct file * file = fdt->fd[i];
+>> >> >                                 if (file) {
+>> >> > +                                       rcu_assign_pointer(fdt->fd[i], NULL);
+>> >> 
+>> >> This makes me nervous. Why did we use to do that xchg() there? That
+>> >> has atomicity guarantees that now are gone.
+>> >> 
+>> >> Now, this whole thing should be called for just the last ref of the fd
+>> >> table, so presumably that atomicity was never needed in the first
+>> >> place. But the fact that we did that very expensive xchg() then makes
+>> >> me go "there's some reason for it".
+>> >> 
+>> >> Is this xchg() just bogus historical leftover? It kind of looks that
+>> >> way. But maybe that change should be done separately?
+>> >
+>> > I'm still not convinced that exposing close_files() to parallel
+>> > 3rd-party accesses is safe in all cases, so this patch still needs
+>> > more analysis.
+>> 
+>> That is fine.  I just wanted to post the latest version so we could
+>> continue the discussion.  Especially with comments etc.
 >
-> On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
-> > @@ -504,6 +577,34 @@ int memcg_expand_shrinker_maps(int new_id)
-> >       return ret;
-> >  }
-> >
-> > +int memcg_expand_shrinker_deferred(int new_id)
-> > +{
-> > +     int size, old_size, ret = 0;
-> > +     struct mem_cgroup *memcg;
-> > +
-> > +     size = (new_id + 1) * sizeof(atomic_long_t);
-> > +     old_size = memcg_shrinker_deferred_size;
-> > +     if (size <= old_size)
-> > +             return 0;
-> > +
-> > +     mutex_lock(&memcg_shrinker_mutex);
+> It's probably safe.  I've spent today digging through the mess in
+> fs/notify and kernel/bpf, and while I'm disgusted with both, at
+> that point I believe that close_files() exposure is not going to
+> create problems with either.  And xchg() in there _is_ useless.
+
+Then I will work on a cleaned up version.
+
+> Said that, BPF "file iterator" stuff is potentially very unpleasant -
+> it allows to pin a struct file found in any process' descriptor table
+> indefinitely long.  Temporary struct file references grabbed by procfs
+> code, while unfortunate, are at least short-lived; with this stuff sky's
+> the limit.
 >
-> The locking is somewhat confusing. I was wondering why we first read
-> memcg_shrinker_deferred_size "locklessly", then change it while
-> holding the &memcg_shrinker_mutex.
+> I'm not happy about having that available, especially if it's a user-visible
+> primitive we can't withdraw at zero notice ;-/
 >
-> memcg_shrinker_deferred_size only changes under shrinker_rwsem(write),
-> correct? This should be documented in a comment, IMO.
+> What are the users of that thing and is there any chance to replace it
+> with something saner?  IOW, what *is* realistically called for each
+> struct file by the users of that iterator?
 
-Yes, it is correct.
+The bpf guys are no longer Cc'd and they can probably answer better than
+I.
 
->
-> memcg_shrinker_mutex looks superfluous then. The memcg allocation path
-> is the read-side of memcg_shrinker_deferred_size, and so simply needs
-> to take shrinker_rwsem(read) to lock out shrinker (de)registration.
+In a previous conversation it was mentioned that task_iter was supposed
+to be a high performance interface for getting proc like data out of the
+kernel using bpf.
 
-I see you point. Yes, it seems shrinker_{maps|deferred} allocation
-could be synchronized with shrinker registration by shrinker_rwsem.
+If so I think that handles the lifetime issues as bpf programs are
+supposed to be short-lived and can not pass references anywhere.
 
-memcg_shrinker_mutex is just renamed from memcg_shrinker_map_mutex
-which was introduced by shrinker_maps patchset. I'm not quite sure why
-this mutex was introduced at the first place, I guess the main purpose
-is to *not* exacerbate the contention of shrinker_rwsem?
+On the flip side it raises the question did the BPF guys just make the
+current layout of task_struct and struct file part of the linux kernel
+user space ABI?
 
-If that contention is not a concern, we could remove that dedicated mutex.
+Eric
 
->
-> Also, isn't memcg_shrinker_deferred_size just shrinker_nr_max? And
 
-No, it is variable. It is nr * sizeof(atomit_long_t). The nr is the
-current last shrinker ID. If a new shrinker is registered, the nr may
-grow.
-
-> memcg_expand_shrinker_deferred() is only called when size >= old_size
-> in the first place (because id >= shrinker_nr_max)?
-
-Yes.
