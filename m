@@ -2,128 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E08882D6ACA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 23:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C232D6BE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 00:39:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405156AbgLJWa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 17:30:27 -0500
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:53836 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405153AbgLJWaT (ORCPT
+        id S1727291AbgLJX24 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 18:28:56 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:48675 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726119AbgLJX2e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 17:30:19 -0500
+        Thu, 10 Dec 2020 18:28:34 -0500
 Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id DA06A101B8C;
-        Fri, 11 Dec 2020 09:29:35 +1100 (AEDT)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0307058DE93;
+        Fri, 11 Dec 2020 09:09:15 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1knURK-002dN6-Oc; Fri, 11 Dec 2020 09:29:34 +1100
-Date:   Fri, 11 Dec 2020 09:29:34 +1100
+        id 1knU7f-002d19-0G; Fri, 11 Dec 2020 09:09:15 +1100
+Date:   Fri, 11 Dec 2020 09:09:14 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 2/2] fs: expose LOOKUP_NONBLOCK through openat2()
- RESOLVE_NONBLOCK
-Message-ID: <20201210222934.GI4170059@dread.disaster.area>
-References: <20201210200114.525026-1-axboe@kernel.dk>
- <20201210200114.525026-3-axboe@kernel.dk>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, tytso@mit.edu,
+        khazhy@google.com, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH 4/8] vfs: Add superblock notifications
+Message-ID: <20201210220914.GG4170059@dread.disaster.area>
+References: <20201208003117.342047-1-krisman@collabora.com>
+ <20201208003117.342047-5-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201210200114.525026-3-axboe@kernel.dk>
+In-Reply-To: <20201208003117.342047-5-krisman@collabora.com>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
         a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=drOt6m5kAAAA:8 a=7-415B0cAAAA:8
-        a=uvNq2T7deLPmxCVeDx4A:9 a=CjuIK1q_8ugA:10 a=RMMjzBEyIzXRtoq5n5K6:22
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=20KFwNOVAAAA:8 a=bIklqNNcAAAA:8
+        a=7-415B0cAAAA:8 a=XzQluxY8ozV8i3kBV7QA:9 a=i2Bh8MKloSl-hS_9:21
+        a=cWOelMYJJw8xPhJN:21 a=CjuIK1q_8ugA:10 a=EkVPmbJYC8N8lJNKmfU-:22
         a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 01:01:14PM -0700, Jens Axboe wrote:
-> Now that we support non-blocking path resolution internally, expose it
-> via openat2() in the struct open_how ->resolve flags. This allows
-> applications using openat2() to limit path resolution to the extent that
-> it is already cached.
+On Mon, Dec 07, 2020 at 09:31:13PM -0300, Gabriel Krisman Bertazi wrote:
+> From: David Howells <dhowells@redhat.com>
 > 
-> If the lookup cannot be satisfied in a non-blocking manner, openat2(2)
-> will return -1/-EAGAIN.
+> Add a superblock event notification facility whereby notifications about
+> superblock events, such as I/O errors (EIO), quota limits being hit
+> (EDQUOT) and running out of space (ENOSPC) can be reported to a monitoring
+> process asynchronously.  Note that this does not cover vfsmount topology
+> changes.  watch_mount() is used for that.
+
+watch_mount() is not in the upstream tree, nor is it defined in this
+patch set.
+
+> Records are of the following format:
 > 
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/open.c                    | 2 ++
->  include/linux/fcntl.h        | 2 +-
->  include/uapi/linux/openat2.h | 2 ++
->  3 files changed, 5 insertions(+), 1 deletion(-)
+> 	struct superblock_notification {
+> 		struct watch_notification watch;
+> 		__u64	sb_id;
+> 	} *n;
 > 
-> diff --git a/fs/open.c b/fs/open.c
-> index 9af548fb841b..07dc9f3d1628 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1087,6 +1087,8 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
->  		lookup_flags |= LOOKUP_BENEATH;
->  	if (how->resolve & RESOLVE_IN_ROOT)
->  		lookup_flags |= LOOKUP_IN_ROOT;
-> +	if (how->resolve & RESOLVE_NONBLOCK)
-> +		lookup_flags |= LOOKUP_NONBLOCK;
->  
->  	op->lookup_flags = lookup_flags;
->  	return 0;
-> diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-> index 921e750843e6..919a13c9317c 100644
-> --- a/include/linux/fcntl.h
-> +++ b/include/linux/fcntl.h
-> @@ -19,7 +19,7 @@
->  /* List of all valid flags for the how->resolve argument: */
->  #define VALID_RESOLVE_FLAGS \
->  	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
-> -	 RESOLVE_BENEATH | RESOLVE_IN_ROOT)
-> +	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_NONBLOCK)
->  
->  /* List of all open_how "versions". */
->  #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
-> diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
-> index 58b1eb711360..ddbf0796841a 100644
-> --- a/include/uapi/linux/openat2.h
-> +++ b/include/uapi/linux/openat2.h
-> @@ -35,5 +35,7 @@ struct open_how {
->  #define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
->  					be scoped inside the dirfd
->  					(similar to chroot(2)). */
-> +#define RESOLVE_NONBLOCK	0x20 /* Only complete if resolution can be
-> +					done without IO */
+> Where:
+> 
+> 	n->watch.type will be WATCH_TYPE_SB_NOTIFY.
+> 
+> 	n->watch.subtype will indicate the type of event, such as
+> 	NOTIFY_SUPERBLOCK_READONLY.
+> 
+> 	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
+> 	record.
+> 
+> 	n->watch.info & WATCH_INFO_ID will be the fifth argument to
+> 	watch_sb(), shifted.
+> 
+> 	n->watch.info & NOTIFY_SUPERBLOCK_IS_NOW_RO will be used for
+> 	NOTIFY_SUPERBLOCK_READONLY, being set if the superblock becomes
+> 	R/O, and being cleared otherwise.
+> 
+> 	n->sb_id will be the ID of the superblock, as can be retrieved with
+> 	the fsinfo() syscall, as part of the fsinfo_sb_notifications
+> 	attribute in the watch_id field.
+> 
+> Note that it is permissible for event records to be of variable length -
+> or, at least, the length may be dependent on the subtype.  Note also that
+> the queue can be shared between multiple notifications of various types.
 
-I don't think this describes the implementation correctly - it has
-nothing to actually do with whether IO is needed, just whether the
-lookup can be done without taking blocking locks. The slow path can
-complete without doing IO - it might miss the dentry cache but hit
-the filesystem buffer cache on lookup and the inode cache when
-retrieving the inode. And it may not even block anywhere doing this.
+/me puts on his "We really, really, REALLY suck at APIs" hat.
 
-So, really, this isn't avoiding IO at all - it's avoiding the
-possibility of running a lookup path that might blocking on
-something.
+This adds a new syscall that has a complex structure associated with
+in. This needs a full man page specification written for it
+describing the parameters, the protocol structures, behaviour, etc
+before we can really review this. It really also needs full test
+infrastructure for every aspect of the syscall written from the man
+page (not the implementation) for fstests so that we end up with a
+consistent implementation for every filesystem that implements these
+watches.
 
-This also needs a openat2(2) man page update explaining exactly what
-behaviour/semantics this flag provides and that userspace can rely
-on when this flag is set...
+Other things:
 
-We've been failing to define the behaviour of our interfaces clearly,
-especially around non-blocking IO behaviour in recent times. We need
-to fix that, not make matters worse by adding new, poorly defined
-non-blocking behaviours...
+- Scoping: inode/block related information is not "superblock"
+  information. What about errors in non-inode related objects?
+- offets into files/devices/objects need to be in bytes, not blocks
+- errors can span multiple contiguous blocks, so the notification
+  needs to report the -byte range- the error corresponds to.
+- superblocks can have multiple block devices under them with
+  individual address ranges. Hence we need {object,dev,offset,len}
+  to uniquely identify where an error occurred in a filesystem.
+- userspace face structures need padding and flags/version/size
+  information so we can tell what shape the structure being passed
+  is. It is guaranteed that we will want to expand the structure
+  definitions in future, maybe even deprecate some...
+- syscall has no flags field.
+- syscall is of "at" type (relative path via dfd) so probably shoudl
+  be called "watch..._at()"
 
-I'd also like to know how we actually test this is working- a
-reliable regression test for fstests would be very useful for
-ensuring that the behaviour as defined by the man page is not broken
-accidentally by future changes...
+Fundamentally, though, I'm struggling to understand what the
+difference between watch_mount() and watch_sb() is going to be.
+"superblock" watches seem like the wrong abstraction for a path
+based watch interface. Superblocks can be shared across multiple
+disjoint paths, subvolumes and even filesystems.
+
+The path based user API is really asking to watch a mount, not a
+superblock. We don't otherwise expose superblocks to userspace at
+all, so this seems like the API is somewhat exposing internal kernel
+implementation behind mounts. However, there -is- a watch_mount()
+syscall floating around somewhere, so it makes me wonder exactly why
+we need a second syscall and interface protocol to expose
+essentially the same path-based watch information to userspace.
+Without having that syscall the same patchset, or a reference to
+that patchset (and man page documenting the interface), I have no
+idea what it does or why it is different or why it can't be used for
+these error notifications....
+
+/me wonders what applications are suppose to do if they have a watch
+on a path that then gets over-mounted by a different filesystem and
+so their watch for that path is effectively now stale because
+operations on that path now redirect to a different mount and
+superblock....
+
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index f27ac94d5fa7..3e97984bc4c8 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -51,6 +51,9 @@ COND_SYSCALL_COMPAT(io_pgetevents);
+>  COND_SYSCALL(io_uring_setup);
+>  COND_SYSCALL(io_uring_enter);
+>  COND_SYSCALL(io_uring_register);
+> +COND_SYSCALL(fsinfo);
+> +COND_SYSCALL(watch_mount);
+> +COND_SYSCALL(watch_sb);
+
+I think these need to be in the patches that introduce these
+syscalls, not this one.
 
 Cheers,
 
 Dave.
+
 -- 
 Dave Chinner
 david@fromorbit.com
