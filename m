@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E9E2D5A85
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 13:28:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3212D5A94
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 13:33:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbgLJM1q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 07:27:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41836 "EHLO
+        id S1726519AbgLJMdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 07:33:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728207AbgLJM1q (ORCPT
+        with ESMTP id S1726267AbgLJMdX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 07:27:46 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF54EC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 04:27:05 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id 11so3916474pfu.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 04:27:05 -0800 (PST)
+        Thu, 10 Dec 2020 07:33:23 -0500
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FED2C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 04:32:43 -0800 (PST)
+Received: by mail-pg1-x544.google.com with SMTP id t3so4067654pgi.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 04:32:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wRVH576RjUF7Hfh+GmVFJTHPtJJABCzK9jSLmoXeohM=;
-        b=QGxx2uqjkZLjwdyE5TglOBgNyR7M/o3toVg0IHWs2Un4c798mQiWRI/NN0FMfX4/gg
-         IJReYIcQ31zi26/7+syJfTE6ThijeQoZdGNcny52VUzZtPbGKiXISDRo3Ykuyf2ppOn8
-         6xYGIrmC+9Q1+oERfykes5HcLNdSI3l772nN6zLhVPDRCvVXv+9i/BeTzF7zR8vb/AxC
-         3JWAgmGWuNDJOT2d9hhfHKdfTBavQFlpTjzcV7qzNH3EgJ3QwGhm2wP6aFE5+PPqnnT+
-         72IUhDliIa3zPo0K+5frDNU0xN5UolLIcgRimNQAVabHNmXiViBJ8dfiLQjFNntlUYSC
-         08oA==
+        bh=l2j9oJVLdw2ETVRjvlsUKZFYNsqLIEckkbStxyUbG4c=;
+        b=Cf6GkzyVICZ2r+cphcXwh9MH72pN7NwUnmwu484SPDfOCSkIX7b16iRZS+XGbb0J9V
+         ogHDXhnYLhGBT0lXSBZjMp/7JnxpPxncVqbvvGDSe2Yt7XZPb2/XdTar+rZ9E2dmC9gS
+         fQH4+CLKK5F3vRAi+ixzmAIpBewwZZwKxPJom1P5o15wG7DUVUire3Az2R1rppKXtouM
+         GO8fBMD+6tkECDO2+6w4HSxn705fER+7axAKl50N1I9U/c55lRj8rxuNS49h74n9EQiK
+         KSQGY4SiMnuQb5zYN2yW3RKKa8RykPQTPPDWNy/ULPShCy1tFlsEejugZK4buXEFHUjh
+         PReQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wRVH576RjUF7Hfh+GmVFJTHPtJJABCzK9jSLmoXeohM=;
-        b=Us5++UJo7FXfcXrE8Rod8VLEPaJ+zjugErrECyfXjGWBDMNhGmy5P75UAL5f34oExA
-         H+RolyEgke1vEEMXl0Dyo+ewUa3fvDBff9ZzuUs4J9KdZsLmfer/mP/NOJnZ5D5wTSoA
-         EPs2E7aH9nWS3Fo9JxzhCcuIpsVLMRuMQ6UEt+aj58GbVmpItMgKw9QI7EdCBChkVUEy
-         Qdnc+kc0zm4UKaCeMP5JEXseo2oxN2gyENzQ/b2soJ0KS8w/TVJkyZnNatzeQG+BXvcv
-         j59uBlN/s3wZ0RKsp3Oix5mCi05BRW2K3wy64l1RUwOauMC0ejH9Itnl5Ay4h1jPlpaz
-         bSYg==
-X-Gm-Message-State: AOAM530BSQH2oytH6NCENhvQbjAJtxPjI80fYvtj2Bj9o4SLXUdibUDI
-        gxwbUhwkjyMQk7G+LJgmCy1v2xVyi7JjBJMN71EH1Q==
-X-Google-Smtp-Source: ABdhPJzJSSCikK3jOM3ONA3u/M/J74mq1J/fc+RbtNlN/9xfSaOqDZ4guFg9UoAE15TqPlyox8rej6pMBOvdcG5TA5k=
-X-Received: by 2002:a63:1203:: with SMTP id h3mr6352071pgl.273.1607603225499;
- Thu, 10 Dec 2020 04:27:05 -0800 (PST)
+        bh=l2j9oJVLdw2ETVRjvlsUKZFYNsqLIEckkbStxyUbG4c=;
+        b=rb7mq+ytd02L+BMBffdOecmLcEjzJdmvYfnDitYGOOYwi9VIpc8GUyR4HSJODnl6yf
+         Fzd8Cd2nCE/9n0LD+8GAGLCH2IBLi4a5vveiGQbSf3EOXCyxFOYRsUna3TO3CPy8Dlci
+         69FeYkjMiGGkZwnekdpn1EhMdGMCPGurIU8hEhFHneBbjSDfG9/30R9P5ydbO/Cdxt4c
+         j0vP2rcnROQcqikWUKQaiIb2WUmsea8+wtXbi+ElphDVdGA7w+Ru4wYP8hvd3iT6vrQu
+         49OddOoGygGrzNbjjtVMlfi3mM3wiuQ7xh7LN3nWtCUNY2p9LrAu/jVQqAsv5Lp9XNJa
+         6RoA==
+X-Gm-Message-State: AOAM530GsT5/ZYSqUT+G8Vs4qaJe1hdWPm6tstX6jLAT+6EprgxQ3z60
+        ZOJ99jZl1Bm8rjSmBfL0Mk2B3Vrw4X/vTnboleSV6Q==
+X-Google-Smtp-Source: ABdhPJzruP2FzeZRwPR6zyDb+MGWrPcKVuHVSHRiDqmTukJKyZeQtXXgwD7GQB8j4xgwJLtaqxztDYOUwhGdTqMth70=
+X-Received: by 2002:aa7:8105:0:b029:18e:c8d9:2c24 with SMTP id
+ b5-20020aa781050000b029018ec8d92c24mr6569040pfi.49.1607603562910; Thu, 10 Dec
+ 2020 04:32:42 -0800 (PST)
 MIME-Version: 1.0
 References: <20201210035526.38938-1-songmuchun@bytedance.com>
- <20201210035526.38938-10-songmuchun@bytedance.com> <20201210100454.GB3613@localhost.localdomain>
-In-Reply-To: <20201210100454.GB3613@localhost.localdomain>
+ <20201210035526.38938-11-songmuchun@bytedance.com> <20201210101526.GA4525@localhost.localdomain>
+In-Reply-To: <20201210101526.GA4525@localhost.localdomain>
 From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 10 Dec 2020 20:26:28 +0800
-Message-ID: <CAMZfGtVks41ZXaUgPdLyNqVCRYTvSm5qAN9GM5e0vqJ9YV7NdA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v8 09/12] mm/hugetlb: Add a kernel
- parameter hugetlb_free_vmemmap
+Date:   Thu, 10 Dec 2020 20:32:06 +0800
+Message-ID: <CAMZfGtWEE3rCBxXVb9bE_siByOuii19NVq1-Y2+EKe0-OSb2vg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v8 10/12] mm/hugetlb: Introduce
+ nr_free_vmemmap_pages in the struct hstate
 To:     Oscar Salvador <osalvador@suse.de>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Mike Kravetz <mike.kravetz@oracle.com>,
@@ -79,60 +80,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 7:41 PM Oscar Salvador <osalvador@suse.de> wrote:
+On Thu, Dec 10, 2020 at 7:40 PM Oscar Salvador <osalvador@suse.de> wrote:
 >
-> On Thu, Dec 10, 2020 at 11:55:23AM +0800, Muchun Song wrote:
-> > +hugetlb_free_vmemmap
-> > +     When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this enables freeing
-> > +     unused vmemmap pages associated each HugeTLB page.
->                                       ^^^ with
-
-Thanks.
-
->
-> > -     if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-> > +     if (is_hugetlb_free_vmemmap_enabled())
-> > +             err = vmemmap_populate_basepages(start, end, node, NULL);
-> > +     else if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-> >               err = vmemmap_populate_basepages(start, end, node, NULL);
->
-> Not sure if joining those in an OR makes se.se
-
-Well, I can do it.
-
->
-> >       else if (boot_cpu_has(X86_FEATURE_PSE))
-> >               err = vmemmap_populate_hugepages(start, end, node, altmap);
-> > @@ -1610,7 +1613,8 @@ void register_page_bootmem_memmap(unsigned long section_nr,
-> >               }
-> >               get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_INFO);
-> >
-> > -             if (!boot_cpu_has(X86_FEATURE_PSE)) {
-> > +             if (!boot_cpu_has(X86_FEATURE_PSE) ||
-> > +                 is_hugetlb_free_vmemmap_enabled()) {
->
-> I would add a variable at the beginning called "basepages_populated"
-> that holds the result of those two conditions.
-> I am not sure if it slightly improves the code as the conditions do
-> not need to be rechecked, but the readibility a bit.
-
-Agree. The condition does not need to be rechecked.
-Will  do in the next version. Thanks.
-
->
-> > +bool hugetlb_free_vmemmap_enabled;
-> > +
-> > +static int __init early_hugetlb_free_vmemmap_param(char *buf)
+> On Thu, Dec 10, 2020 at 11:55:24AM +0800, Muchun Song wrote:
+> > +void __init hugetlb_vmemmap_init(struct hstate *h)
 > > +{
-> > +     if (!buf)
-> > +             return -EINVAL;
+> > +     unsigned int nr_pages = pages_per_huge_page(h);
+> > +     unsigned int vmemmap_pages;
 > > +
 > > +     /* We cannot optimize if a "struct page" crosses page boundaries. */
+> > +     if (!is_power_of_2(sizeof(struct page)))
+> > +             return;
+> > +
+> > +     if (!hugetlb_free_vmemmap_enabled)
+> > +             return;
 >
-> I think this comment belongs to the last patch.
->
+> I think it would make sense to squash the last patch and this one.
+> As per the last patch, if "struct page" is not power of 2,
+> early_hugetlb_free_vmemmap_param() does not set
+> hugetlb_free_vmemmap_enabled, so the "!is_power_of_2" check from above
+> would become useless here.
+> We know that in order for hugetlb_free_vmemmap_enabled to become true,
+> the is_power_of_2 must have succeed early on when calling the early_
+> function.
 
-Thanks.
+Yeah, you are right. But if is_power_of_2 returns false. The compiler
+can optimize this function to null. If we remove the check, it prevents
+the compiler from optimizing the code of hugetlb_vmemmap_init().
+So I think leaving it here makes sense. Right?
 
 >
 > --
