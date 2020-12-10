@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D822D5982
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 12:43:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EEF92D597C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 12:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727424AbgLJLmA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 06:42:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47610 "EHLO mx2.suse.de"
+        id S1733234AbgLJLlG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 06:41:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38766 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729130AbgLJLlz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 06:41:55 -0500
+        id S1728423AbgLJLlF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 10 Dec 2020 06:41:05 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0079EAF16;
-        Thu, 10 Dec 2020 11:41:06 +0000 (UTC)
-Date:   Thu, 10 Dec 2020 11:04:54 +0100
+        by mx2.suse.de (Postfix) with ESMTP id 913DCACC6;
+        Thu, 10 Dec 2020 11:40:21 +0000 (UTC)
+Date:   Thu, 10 Dec 2020 11:15:26 +0100
 From:   Oscar Salvador <osalvador@suse.de>
 To:     Muchun Song <songmuchun@bytedance.com>
 Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
@@ -30,59 +30,40 @@ Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v8 09/12] mm/hugetlb: Add a kernel parameter
- hugetlb_free_vmemmap
-Message-ID: <20201210100454.GB3613@localhost.localdomain>
+Subject: Re: [PATCH v8 10/12] mm/hugetlb: Introduce nr_free_vmemmap_pages in
+ the struct hstate
+Message-ID: <20201210101526.GA4525@localhost.localdomain>
 References: <20201210035526.38938-1-songmuchun@bytedance.com>
- <20201210035526.38938-10-songmuchun@bytedance.com>
+ <20201210035526.38938-11-songmuchun@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201210035526.38938-10-songmuchun@bytedance.com>
+In-Reply-To: <20201210035526.38938-11-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 11:55:23AM +0800, Muchun Song wrote:
-> +hugetlb_free_vmemmap
-> +	When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this enables freeing
-> +	unused vmemmap pages associated each HugeTLB page.
-                                      ^^^ with
-
-> -	if (end - start < PAGES_PER_SECTION * sizeof(struct page))
-> +	if (is_hugetlb_free_vmemmap_enabled())
-> +		err = vmemmap_populate_basepages(start, end, node, NULL);
-> +	else if (end - start < PAGES_PER_SECTION * sizeof(struct page))
->  		err = vmemmap_populate_basepages(start, end, node, NULL);
-
-Not sure if joining those in an OR makes se.se
-
->  	else if (boot_cpu_has(X86_FEATURE_PSE))
->  		err = vmemmap_populate_hugepages(start, end, node, altmap);
-> @@ -1610,7 +1613,8 @@ void register_page_bootmem_memmap(unsigned long section_nr,
->  		}
->  		get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_INFO);
->  
-> -		if (!boot_cpu_has(X86_FEATURE_PSE)) {
-> +		if (!boot_cpu_has(X86_FEATURE_PSE) ||
-> +		    is_hugetlb_free_vmemmap_enabled()) {
-
-I would add a variable at the beginning called "basepages_populated"
-that holds the result of those two conditions.
-I am not sure if it slightly improves the code as the conditions do
-not need to be rechecked, but the readibility a bit.
-
-> +bool hugetlb_free_vmemmap_enabled;
-> +
-> +static int __init early_hugetlb_free_vmemmap_param(char *buf)
+On Thu, Dec 10, 2020 at 11:55:24AM +0800, Muchun Song wrote:
+> +void __init hugetlb_vmemmap_init(struct hstate *h)
 > +{
-> +	if (!buf)
-> +		return -EINVAL;
+> +	unsigned int nr_pages = pages_per_huge_page(h);
+> +	unsigned int vmemmap_pages;
 > +
 > +	/* We cannot optimize if a "struct page" crosses page boundaries. */
+> +	if (!is_power_of_2(sizeof(struct page)))
+> +		return;
+> +
+> +	if (!hugetlb_free_vmemmap_enabled)
+> +		return;
 
-I think this comment belongs to the last patch.
-
+I think it would make sense to squash the last patch and this one.
+As per the last patch, if "struct page" is not power of 2,
+early_hugetlb_free_vmemmap_param() does not set
+hugetlb_free_vmemmap_enabled, so the "!is_power_of_2" check from above
+would become useless here.
+We know that in order for hugetlb_free_vmemmap_enabled to become true,
+the is_power_of_2 must have succeed early on when calling the early_
+function.
 
 -- 
 Oscar Salvador
