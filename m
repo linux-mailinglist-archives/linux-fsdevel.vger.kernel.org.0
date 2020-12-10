@@ -2,99 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E12192D696D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 22:07:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 146F12D6A09
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 22:39:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404608AbgLJVHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 16:07:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38014 "EHLO
+        id S2405021AbgLJVh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 16:37:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392154AbgLJVHV (ORCPT
+        with ESMTP id S2405007AbgLJVhR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 16:07:21 -0500
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5917C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 13:06:40 -0800 (PST)
-Received: by mail-io1-xd41.google.com with SMTP id i18so7133998ioa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 13:06:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=apET3TzT7X2gFEqFUfLZxUZDvlyf6N54T9CIp6YhGpg=;
-        b=1lOQneS57T4DCXzg/wTZrZtg3spfHe7i5OX41Mie4X2unNKWUR+0VPl7KD5o1g4Pro
-         yBPK9ZJlsg4DubYIBEzD4sXKmfe0utj1N4U/v195/JeM1FcTJ+cUlaP8kNPo86DTo/Q7
-         5xwjspAk+9252tz6xwckZCZjziOotCmU6MmBQz72beaZocpwrku0fizf2fta/c0Ax/I/
-         NEP3/c5h9EU57k3oSfsaS6xPfWW7MsswgjkONYY8XuBzH9Ydh83UJoZUDmFbviatkzps
-         CzPAAYyxgE+x7Mn6BuaanJ4BiD2VsgA8rB3fne46Ri97ASYrh1Zt84TJ3AxMRMZJ3zWz
-         +xAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=apET3TzT7X2gFEqFUfLZxUZDvlyf6N54T9CIp6YhGpg=;
-        b=TtQW32vkSF58a5B7jQti/2BTWlPOwTlbvlVTbqhRslgEUcJ7us/hg1LA8XicO41vIy
-         LYMf7ui4q3Y5zsmzrp0x9oyC29egto+SJJBSClr2BSb/ecq0bla4JQQ1hLPRFY1YVfK3
-         dT1DsysUG9YSSjBZrH8MqPHiwg+b5MIexOosJ1hKY6fpw1ZMsoO+GLn20f2fEjFUPY5m
-         iAuuJnJicVMZbkY33VklkjNHVnflvfK9TpCpwxjFbzEQEmNlDpqqKrIMSWFL+rviUOtD
-         5l7eWh4m2Gzd4ZnorT9sAd2uSQNvBWcoylMDY3Rvd9ZkILBg8g6ZVCMntu6AjQt07uj2
-         0bvw==
-X-Gm-Message-State: AOAM530vRuEsHveczZMj6knv8Uwzt99Grqlw8daR4oO9OWEmqFXcSd+K
-        4+r08GsCG9rGzLjkX1HMTDiUFA==
-X-Google-Smtp-Source: ABdhPJxxELSN2c5oFE6kjwKeKDcwcNUnPGWLcqsoXng3bA792nBWczlkZV3v6+3vih9MreSbPCXQUQ==
-X-Received: by 2002:a05:6638:216e:: with SMTP id p14mr10911739jak.70.1607634400237;
-        Thu, 10 Dec 2020 13:06:40 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o7sm3214832iov.1.2020.12.10.13.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Dec 2020 13:06:39 -0800 (PST)
-Subject: Re: [PATCH 1/2] fs: add support for LOOKUP_NONBLOCK
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20201210200114.525026-1-axboe@kernel.dk>
- <20201210200114.525026-2-axboe@kernel.dk>
- <CAHk-=wif32e=MvP-rNn9wL9wXinrL1FK6OQ6xPMtuQ2VQTxvqw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <139ecda1-bb08-b1f2-655f-eeb9976e8cff@kernel.dk>
-Date:   Thu, 10 Dec 2020 14:06:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 10 Dec 2020 16:37:17 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F40B8C0613D6;
+        Thu, 10 Dec 2020 13:36:36 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1knTbs-000PdG-F8; Thu, 10 Dec 2020 21:36:24 +0000
+Date:   Thu, 10 Dec 2020 21:36:24 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jann@thejh.net>
+Subject: Re: [PATCH] files: rcu free files_struct
+Message-ID: <20201210213624.GT3579531@ZenIV.linux.org.uk>
+References: <877dprvs8e.fsf@x220.int.ebiederm.org>
+ <20201209040731.GK3579531@ZenIV.linux.org.uk>
+ <877dprtxly.fsf@x220.int.ebiederm.org>
+ <20201209142359.GN3579531@ZenIV.linux.org.uk>
+ <87o8j2svnt.fsf_-_@x220.int.ebiederm.org>
+ <CAHk-=wiUMHBHmmDS3_Xqh1wfGFyd_rdDmpZzk0cODoj1i7_VOA@mail.gmail.com>
+ <20201209195033.GP3579531@ZenIV.linux.org.uk>
+ <87sg8er7gp.fsf@x220.int.ebiederm.org>
+ <20201210061304.GS3579531@ZenIV.linux.org.uk>
+ <87h7oto3ya.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wif32e=MvP-rNn9wL9wXinrL1FK6OQ6xPMtuQ2VQTxvqw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h7oto3ya.fsf@x220.int.ebiederm.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/10/20 1:53 PM, Linus Torvalds wrote:
-> On Thu, Dec 10, 2020 at 12:01 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> io_uring always punts opens to async context, since there's no control
->> over whether the lookup blocks or not. Add LOOKUP_NONBLOCK to support
->> just doing the fast RCU based lookups, which we know will not block. If
->> we can do a cached path resolution of the filename, then we don't have
->> to always punt lookups for a worker.
-> 
-> Ok, this looks much better to me just from the name change.
-> 
-> Half of the patch is admittedly just to make sure it now returns the
-> right error from unlazy_walk (rather than knowing it's always
-> -ECHILD), and that could be its own thing, but I'm not sure it's even
-> worth splitting up. The only reason to do it would be to perhaps make
-> it really clear which part is the actual change, and which is just
-> that error handling cleanup.
-> 
-> So it looks fine to me, but I will leave this all to Al.
+On Thu, Dec 10, 2020 at 01:29:01PM -0600, Eric W. Biederman wrote:
+> Al Viro <viro@zeniv.linux.org.uk> writes:
 
-I did consider doing a prep patch just making the error handling clearer
-and get rid of the -ECHILD assumption, since it's pretty odd and not
-even something I'd expect to see in there. Al, do you want a prep patch
-to do that to make the change simpler/cleaner?
+> > What are the users of that thing and is there any chance to replace it
+> > with something saner?  IOW, what *is* realistically called for each
+> > struct file by the users of that iterator?
+> 
+> The bpf guys are no longer Cc'd and they can probably answer better than
+> I.
+> 
+> In a previous conversation it was mentioned that task_iter was supposed
+> to be a high performance interface for getting proc like data out of the
+> kernel using bpf.
+> 
+> If so I think that handles the lifetime issues as bpf programs are
+> supposed to be short-lived and can not pass references anywhere.
+> 
+> On the flip side it raises the question did the BPF guys just make the
+> current layout of task_struct and struct file part of the linux kernel
+> user space ABI?
 
--- 
-Jens Axboe
+An interesting question, that...  For the record: anybody coming to
+complain about a removed/renamed/replaced with something else field
+in struct file will be refered to Figure 1.
 
+None of the VFS data structures has any layout stability warranties.
+If BPF folks want access to something in that, they are welcome to come
+and discuss the set of accessors; so far nothing of that sort has happened.
+
+Direct access to any fields of any of those structures is subject to
+being broken at zero notice.
+
+IMO we need some notation for a structure being off-limits for BPF, tracing,
+etc., along the lines of "don't access any field directly".
