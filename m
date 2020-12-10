@@ -2,124 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5FC42D52DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 05:38:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C07E92D5315
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 06:19:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731779AbgLJEev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 23:34:51 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:50019 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731559AbgLJEev (ORCPT
+        id S1726323AbgLJFSy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 00:18:54 -0500
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:40251 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726313AbgLJFSy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 23:34:51 -0500
-Received: by mail-il1-f200.google.com with SMTP id m14so3288880ila.16
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 20:34:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=GtmL+rEWRF5LPcilsxz647xmeLLV8HdtqpGhFWPzIoQ=;
-        b=hyFGQP0St1lvi9/8+xH++M3uKDxbBtAXd378k4W3gTByngNvfuudpi3OTTEMoRtou0
-         yoAUN8jcRufPuKiSAAf/6+3j5tOHqRABW26X8rTQXgHkF1v+7N4JloDWRuaOXkQJLSrn
-         LL2GDfUweYNBQx3bYA1KlT/6SSW3oJOCD9eUKhkyqLxiZRa7IJJPYiQflHvfD08Iql+L
-         gU0RCvGSVzc8tDENlp3sTZrixEe0ikE7CqMSJaU7RV9U7MVivH/J0pIewkfV92NF1y1X
-         tUXdYd0jJT0vPx82DtkTY8IQ6/YwC3zW57an1nRoHOqq0P4ohecF9VDjjNWobHqvahUf
-         9TiQ==
-X-Gm-Message-State: AOAM530hVb5RqlrVnOvTVxQhtaMyhHQFWmfd9g3zzhUbCP0Gf7XmmCU0
-        EPOCXJcK6Mj7zQHM/uo/coCE/8JXk9LFjXOCoRrJUg7JKoKN
-X-Google-Smtp-Source: ABdhPJwbwYY73hqlr6h0G0JJoWVn7I8N0eTTIaQF+qdPJ3IGOt6GKdWxQjzOo53bRAWDush3uGw30NUPiKm7o4zw+ccTkJnLo1n9
+        Thu, 10 Dec 2020 00:18:54 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 7AB638BFC;
+        Thu, 10 Dec 2020 16:18:10 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1knELA-002NnU-U4; Thu, 10 Dec 2020 16:18:08 +1100
+Date:   Thu, 10 Dec 2020 16:18:08 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     Hao Xu <haoxu@linux.alibaba.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
+ in Direct IO
+Message-ID: <20201210051808.GF4170059@dread.disaster.area>
+References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
+ <20201207022130.GC4170059@dread.disaster.area>
+ <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
+ <20201209212358.GE4170059@dread.disaster.area>
+ <adf32418-dede-0b58-13da-40093e1e4e2d@linux.alibaba.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7906:: with SMTP id i6mr6995828iop.97.1607574850138;
- Wed, 09 Dec 2020 20:34:10 -0800 (PST)
-Date:   Wed, 09 Dec 2020 20:34:10 -0800
-In-Reply-To: <000000000000b0bbc905b05ab8d5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e47ccf05b614af28@google.com>
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in __lookup_slow
-From:   syzbot <syzbot+3db80bbf66b88d68af9d@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <adf32418-dede-0b58-13da-40093e1e4e2d@linux.alibaba.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=SRrdq9N9AAAA:8 a=6R7veym_AAAA:8
+        a=7-415B0cAAAA:8 a=xaIeskg8_AF8nRZSNhQA:9 a=CjuIK1q_8ugA:10
+        a=ILCOIF4F_8SzUMnO7jNM:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Thu, Dec 10, 2020 at 09:55:32AM +0800, JeffleXu wrote:
+> Sorry I'm still a little confused.
+> 
+> 
+> On 12/10/20 5:23 AM, Dave Chinner wrote:
+> > On Tue, Dec 08, 2020 at 01:46:47PM +0800, JeffleXu wrote:
+> >>
+> >>
+> >> On 12/7/20 10:21 AM, Dave Chinner wrote:
+> >>> On Fri, Dec 04, 2020 at 05:44:56PM +0800, Hao Xu wrote:
+> >>>> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
+> >>>> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
+> >>>> IOCB_NOWAIT is set.
+> >>>>
+> >>>> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> >>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> >>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+> >>>> ---
+> >>>>
+> >>>> Hi all,
+> >>>> I tested fio io_uring direct read for a file on ext4 filesystem on a
+> >>>> nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
+> >>>> means REQ_NOWAIT is not set in bio->bi_opf.
+> >>>
+> >>> What iomap is doing is correct behaviour. IOCB_NOWAIT applies to the
+> >>> filesystem behaviour, not the block device.
+> >>>
+> >>> REQ_NOWAIT can result in partial IO failures because the error is
+> >>> only reported to the iomap layer via IO completions. Hence we can
+> >>> split a DIO into multiple bios and have random bios in that IO fail
+> >>> with EAGAIN because REQ_NOWAIT is set. This error will
+> >>> get reported to the submitter via completion, and it will override
+> >>> any of the partial IOs that actually completed.
+> >>>
+> >>> Hence, like the recently reported multi-mapping IOCB_NOWAIT bug
+> >>> reported by Jens and fixed in commit 883a790a8440 ("xfs: don't allow
+> >>> NOWAIT DIO across extent boundaries") we'll get silent partial
+> >>> writes occurring because the second submitted bio in an IO can
+> >>> trigger EAGAIN errors with partial IO completion having already
+> >>> occurred.
+> >>>
+> 
+> >>> Further, we don't allow partial IO completion for DIO on XFS at all.
+> >>> DIO must be completely submitted and completed or return an error
+> >>> without having issued any IO at all.  Hence using REQ_NOWAIT for
+> >>> DIO bios is incorrect and not desirable.
+> 
+> 
+> The current block layer implementation causes that, as long as one split
+> bio fails, then the whole DIO fails, in which case several split bios
+> maybe have succeeded and the content has been written to the disk. This
+> is obviously what you called "partial IO completion".
+> 
+> I'm just concerned on how do you achieve that "DIO must return an error
+> without having issued any IO at all". Do you have some method of
+> reverting the content has already been written into the disk when a
+> partial error happened?
 
-HEAD commit:    a68a0262 mm/madvise: remove racy mm ownership check
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b36097500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e597c2b53c984cd8
-dashboard link: https://syzkaller.appspot.com/bug?extid=3db80bbf66b88d68af9d
-compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1737b8a7500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1697246b500000
+I think you've misunderstood what I was saying. I did not say
+"DIO must return an error without having issued any IO at all".
+There are two parts to my statement, and you just smashed part of
+the first statement into part of the second statement and came up
+something I didn't actually say.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3db80bbf66b88d68af9d@syzkaller.appspotmail.com
+The first statement is:
 
-REISERFS (device loop0): journal params: device loop0, size 8192, journal first block 18, max trans len 256, max batch 225, max commit age 30, max trans age 30
-REISERFS (device loop0): checking transaction log (loop0)
-REISERFS (device loop0): Using rupasov hash to sort names
-REISERFS (device loop0): using 3.5.x disk format
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 1d5b1067 P4D 1d5b1067 PUD 13a4d067 PMD 0 
-Oops: 0010 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8464 Comm: syz-executor889 Not tainted 5.10.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
-RSP: 0018:ffffc900015ffa10 EFLAGS: 00010246
-RAX: 1ffffffff13857c8 RBX: dffffc0000000000 RCX: ffff8880152c8000
-RDX: 0000000000000000 RSI: ffff88802e27dbe8 RDI: ffff888034c90190
-RBP: ffffffff89c2be40 R08: ffffffff81c397ee R09: fffffbfff1eabc57
-R10: fffffbfff1eabc57 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff888034c90190 R14: 1ffff11005c4fb7d R15: ffff88802e27dbe8
-FS:  00000000023f0880(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000012d42000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __lookup_slow+0x240/0x370 fs/namei.c:1544
- lookup_one_len+0x10e/0x200 fs/namei.c:2563
- reiserfs_lookup_privroot+0x85/0x1e0 fs/reiserfs/xattr.c:979
- reiserfs_fill_super+0x2a57/0x3140 fs/reiserfs/super.c:2176
- mount_bdev+0x24f/0x360 fs/super.c:1419
- legacy_get_tree+0xea/0x180 fs/fs_context.c:592
- vfs_get_tree+0x88/0x270 fs/super.c:1549
- do_new_mount fs/namespace.c:2875 [inline]
- path_mount+0x17b4/0x2a20 fs/namespace.c:3205
- do_mount fs/namespace.c:3218 [inline]
- __do_sys_mount fs/namespace.c:3426 [inline]
- __se_sys_mount+0x28c/0x320 fs/namespace.c:3403
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x44707a
-Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 fd ad fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 da ad fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007ffc217e9828 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffc217e9880 RCX: 000000000044707a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffc217e9840
-RBP: 00007ffc217e9840 R08: 00007ffc217e9880 R09: 00007ffc00000015
-R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000006
-R13: 0000000000000004 R14: 0000000000000003 R15: 0000000000000003
-Modules linked in:
-CR2: 0000000000000000
----[ end trace f20ed6d33f177882 ]---
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at RIP 0xffffffffffffffd6.
-RSP: 0018:ffffc900015ffa10 EFLAGS: 00010246
-RAX: 1ffffffff13857c8 RBX: dffffc0000000000 RCX: ffff8880152c8000
-RDX: 0000000000000000 RSI: ffff88802e27dbe8 RDI: ffff888034c90190
-RBP: ffffffff89c2be40 R08: ffffffff81c397ee R09: fffffbfff1eabc57
-R10: fffffbfff1eabc57 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff888034c90190 R14: 1ffff11005c4fb7d R15: ffff88802e27dbe8
-FS:  00000000023f0880(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000012d42000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+	1. "DIO must be fully submitted and completed ...."
 
+That is, if we need to break an IO up into multiple parts, the
+entire IO must be submitted and completed as a whole. We do not
+allow partial submission or completion of the IO at all because we
+cannot accurately report what parts of a multi-bio DIO that failed
+through the completion interface. IOWs, if any of the IOs after the
+first one fail submission, then we must complete all the IOs that
+have already been submitted before we can report the failure that
+occurred during the IO.
+
+The second statement is:
+
+	2. "... or return an error without having issued any IO at
+	   all."
+
+IO submission errors are only reported by the DIO layer through IO
+completion, in which case #1 is applied. #2 only applies to errors
+that occur before IO submission is started, and these errors are
+directly reported to the caller. IOCB_NOWAIT is a check done before
+we start submission, hence can return -EAGAIN directly to the
+caller.
+
+IOWs, if an error is returned to the caller, we have either not
+submitted any IO at all, or we have fully submitted and completed
+the IO and there was some error reported by the IO completions.
+There is no scope for "partial IO" here - it either completed fully
+or we got an error.
+
+This is necessary for correct AIO semantics. We aren't waiting for
+completions to be able to report submission errors to submitters.
+Hence for async IO, the only way for an error in the DIO layer to be
+reported to the submitter is if the error occurs before the first IO
+is submitted.(*)
+
+RWF_NOWAIT was explicitly intended to enable applications using
+AIO+DIO to avoid long latencies that occur as a result of blocking
+on filesystem locks and resources. Blocking in the request queue is
+minimal latency compared to waiting for (tens of) thousands of IOs
+to complete ((tens of) seconds!) so the filesystem iomap path can run a
+transaction to allocate disk spacei for the DIO.
+
+IOWS, IOCB_NOWAIT was pretty` much intended to only be seen at the
+filesystem layers to avoid the extremely high latencies that
+filesystem layers might cause.  Blocking for a few milliseconds or
+even tens of milliseconds in the request queue is not a problem
+IOCB_NOWAIT was ever intended to solve.
+
+Really, if io_uring needs DIO to avoid blocking in the request
+queues below the filesystem, it should be providing that guidance
+directly. IOCB_NOWAIT is -part- of the semantics being asked for,
+but it does not provide them all and we can't change them to provide
+exactly what io_uring wants because IOCB_NOWAIT == RWF_NOWAIT
+semantics.
+
+Cheers,
+
+Dave.
+
+(*) Yes, yes, I know that if you have a really fast storage the IO
+might complete before submission has finished, but that's just the
+final completion is done by the submitter and so #1 is actually
+being followed in this case. i.e. IO is fully submitted and
+completed.
+
+-- 
+Dave Chinner
+david@fromorbit.com
