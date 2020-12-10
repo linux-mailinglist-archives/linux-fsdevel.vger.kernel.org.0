@@ -2,87 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1544A2D6931
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 21:56:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D41532D6963
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 22:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404587AbgLJUyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 15:54:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
+        id S2393910AbgLJVGU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 16:06:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390467AbgLJUyT (ORCPT
+        with ESMTP id S2393977AbgLJVGB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 15:54:19 -0500
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D199C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 12:53:39 -0800 (PST)
-Received: by mail-il1-x142.google.com with SMTP id q1so6667700ilt.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 12:53:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AV69bGfhUdEycodDDhyR1U9yTN3e9xSNDJOQA71JSdA=;
-        b=b9K8oRpbje3k072ZzmyuLz7tYSYyWPotEbQ2IyK3M97pRFvjPTbMDZm5lMkfrrM3ka
-         uAsJjnQOYShGXJl+CRl5TqBDIAmwOv8OG48ZSN1jBmDvFzoyh64d71ZLkbI2/vM3X3lo
-         vwd/RicBp5bb8YK6cqRHOndh5q5ezMRoVwc1o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AV69bGfhUdEycodDDhyR1U9yTN3e9xSNDJOQA71JSdA=;
-        b=mNHXyL+Mijz9V2UkN1f36WcvlrOOHBa8mURJtR/dVZOZNDgTaA2KjO3edbUIpergoc
-         UODvOTZNT+5yGUzONr8NvFVleg/F+8AgsdcG4MGCZQzE+MmCqMZRqLRUm8EpcjIlqLvk
-         8+Drt9/OoiPK8FpiO7ICCFxywe2pm1AL0A09edkZBAWcCwOT4vtwwsc3uhD4scSzoQ82
-         lWdToaZuJtkMCPvjhClsa0u6abSwcrhU9dUOI4jiOih43i4nu7a8D6OAplR0bC8PzVDW
-         QJJVqJRcJ6o9QBsAahIKKKdpDbUIBA2Yb7NTpEcqJEYRa1JwrQXBDHghO3lVSglK3m78
-         6AYA==
-X-Gm-Message-State: AOAM533Fkj+VPl01zbRzFfR+sRJFCvWJUZbFOivTdY9jzttgy2SZLYRc
-        TZfC4xFFQkn3swxCpiCBOx1KB2te4dwfRg==
-X-Google-Smtp-Source: ABdhPJz9WQyTwetyjiJ/muZCksFZXsp8e//cF63yOnsgNGAt/dNX7gueMjxXCSzQwikNvJSVZqcbCA==
-X-Received: by 2002:a92:40c6:: with SMTP id d67mr11082279ill.236.1607633618042;
-        Thu, 10 Dec 2020 12:53:38 -0800 (PST)
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com. [209.85.166.42])
-        by smtp.gmail.com with ESMTPSA id z10sm3252414ioi.47.2020.12.10.12.53.36
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Dec 2020 12:53:36 -0800 (PST)
-Received: by mail-io1-f42.google.com with SMTP id q137so7058044iod.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 12:53:36 -0800 (PST)
-X-Received: by 2002:a02:a98c:: with SMTP id q12mr11118517jam.140.1607633615921;
- Thu, 10 Dec 2020 12:53:35 -0800 (PST)
+        Thu, 10 Dec 2020 16:06:01 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50882C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 13:05:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=BTDjt3nvSsN1ZiwoHBURwufx/oDbLa2gi089tmu1f9U=; b=AbaqnYkSSNf6gtVyRvZXHCEhBb
+        yZY8wYZYt+RKZhaIMLGPwQqEn7laKio7qQddUIlTcP1/oi5JTlS20JyyYyrBMyKMalluUa/6sWQNY
+        90dokiHU1HBs9fgoHKZrnzpaXmVuQ6PzeppD5dEoT5PGkuwEGFZLKaTfI2JbKUTTtw5Cplzgfka8s
+        I4c6JMpDfwcp7lE8K6watd2JXmK/KuLHTgWyWpndNVEJd9FpJ7mWH8rzckKZfk7dR9glBEabwzVnr
+        ag9haS45zZjN7ew3oghCV5owYvkYaiRR2J9TCYCWhP+AqiCPkOfvu96smSjaLMUmdOasMIIiY+N0y
+        BUc57RUg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1knT7n-0004yT-Sj; Thu, 10 Dec 2020 21:05:19 +0000
+Date:   Thu, 10 Dec 2020 21:05:19 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Zoom call about Page Folios tomorrow
+Message-ID: <20201210210519.GC7338@casper.infradead.org>
 MIME-Version: 1.0
-References: <20201210200114.525026-1-axboe@kernel.dk> <20201210200114.525026-2-axboe@kernel.dk>
-In-Reply-To: <20201210200114.525026-2-axboe@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 10 Dec 2020 12:53:19 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wif32e=MvP-rNn9wL9wXinrL1FK6OQ6xPMtuQ2VQTxvqw@mail.gmail.com>
-Message-ID: <CAHk-=wif32e=MvP-rNn9wL9wXinrL1FK6OQ6xPMtuQ2VQTxvqw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs: add support for LOOKUP_NONBLOCK
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 12:01 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> io_uring always punts opens to async context, since there's no control
-> over whether the lookup blocks or not. Add LOOKUP_NONBLOCK to support
-> just doing the fast RCU based lookups, which we know will not block. If
-> we can do a cached path resolution of the filename, then we don't have
-> to always punt lookups for a worker.
+Time: 18:00 UTC (7pm Prague, 1pm Montreal, 10am Los Angeles,
+		3am Saturday Tokyo, 5am Saturday Melbourne)
+Zoom Meeting ID: 960 8868 8749
+Password: 2097152
 
-Ok, this looks much better to me just from the name change.
+Since we don't have physical conferences any more, I'd like to talk to
+anyone who's interested in Page Folios (see my announcement earlier this
+week [1])
 
-Half of the patch is admittedly just to make sure it now returns the
-right error from unlazy_walk (rather than knowing it's always
--ECHILD), and that could be its own thing, but I'm not sure it's even
-worth splitting up. The only reason to do it would be to perhaps make
-it really clear which part is the actual change, and which is just
-that error handling cleanup.
+I don't have a presentation prepared, this is a discussion.  Feel free
+to just call in and listen.
 
-So it looks fine to me, but I will leave this all to Al.
-
-           Linus
+[1] https://lore.kernel.org/linux-mm/20201208194653.19180-1-willy@infradead.org/
