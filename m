@@ -2,98 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4A5E2D62B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 17:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DE692D6362
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 18:22:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391932AbgLJQ5e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 11:57:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392441AbgLJQ5Q (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 11:57:16 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0CDC061793
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 08:56:36 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id n7so4763565pgg.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 08:56:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WNgKN7a4ded1LeBkq8RoIInVbovzz2QvQreFxC7eifA=;
-        b=ngrw6r3STU/Y2YvnJY7eQsNYC2nhNp7w0fatD7eeX09k8h47QOCikE0TwWuSgtp318
-         UpbWRrRKJw+AxR0sEi/HWSxsLXfRq8h5A6rL3xl/+vhPCJLuOKcE6PHAYgcX6CVcj96r
-         ozPHOIebKkCQ2dasDIPUEULrRnSmQmY7edbwfV7AnRzgnQAd7Z4tGMVR+s+uNSdVjwoa
-         3Ybb4So9apwKgYFpDY0Va15eDsYUnFOYSOA9122EdxeG8SAekN3QckiVt4NIIQ2p8ogh
-         +LzA6FY+N50reiNcOrc0ywGp3fholP1Vxp1Lk6qEGtbrgH58W+2Rm7GEB7Pt5Mfs0l5R
-         Ud6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WNgKN7a4ded1LeBkq8RoIInVbovzz2QvQreFxC7eifA=;
-        b=eFHWpqi5u9cXj+muSMiFBEa61QtwrmHnwQ2xinNWS6XGpJubnzm40WzHh8Aom7IpGL
-         q2jC/J4q0G3B6aqI8L7GzHUTFIvbKCEqxM7tjx3NsI3D9Gi3hc8S73Jwa1m5QG4CeuA9
-         ATDhefRtV7joUbwX9Oc1dnQp2/bMzK3vQL3/TGNKsxLOiuovGwc+eXRu4N8L9oXzsZN8
-         gvNApJiENifijIzuVojO1P99l4At4wbVWfSyrj8tWnBNCkbDiCdibzbeOr0M2w2DeKvf
-         UQ9G2fNhrFhIBZKYnH7Q8wGN9zKS+YIijmiFgkyVNjSnkOTJPyMJGFkagr/XhZHkIG+V
-         yTjw==
-X-Gm-Message-State: AOAM532xJUDzpYIunXmfKOr63IlnGtvnjJ7lOaR+qxDIm3FYJeBFbIcZ
-        UdInHeU2cWmS9kl17YBaV+hfJjjfbzGs7zunoxpoKg==
-X-Google-Smtp-Source: ABdhPJy9pD/1lJ2qDgAePSWfoMb1GSMyq/JYmVxrm4dOjUbd/QptTorDHdnT6QbcEBnOyfTp+iPIECjZd6VjWW8O9JQ=
-X-Received: by 2002:a63:c15:: with SMTP id b21mr7349998pgl.341.1607619396305;
- Thu, 10 Dec 2020 08:56:36 -0800 (PST)
+        id S1733243AbgLJRV0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 12:21:26 -0500
+Received: from mga06.intel.com ([134.134.136.31]:31646 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387487AbgLJRTV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 10 Dec 2020 12:19:21 -0500
+IronPort-SDR: mLRdkECjjCunpUJfr9SWR9Ci0o5stZH3gf0sGgfDU3sNiQL+MeOk5x3lqLCx5vYG2x4IHYFE0k
+ g+4DKS9WVjgw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9831"; a="235889273"
+X-IronPort-AV: E=Sophos;i="5.78,408,1599548400"; 
+   d="scan'208";a="235889273"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2020 09:18:37 -0800
+IronPort-SDR: ++J+ZzT9cWzZbsmonTh7O3ug91FyfUcZ395M5vZLyclzI81RtVE+M0xrZaDe4hyWG3LP9PpyAH
+ XaCxDlqm1DDw==
+X-IronPort-AV: E=Sophos;i="5.78,408,1599548400"; 
+   d="scan'208";a="484568726"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2020 09:18:37 -0800
+From:   ira.weiny@intel.com
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH V3 0/3] Begin converting kmap calls to kmap_local_page()
+Date:   Thu, 10 Dec 2020 09:18:32 -0800
+Message-Id: <20201210171834.2472353-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 MIME-Version: 1.0
-References: <20201206101451.14706-1-songmuchun@bytedance.com>
- <20201206101451.14706-2-songmuchun@bytedance.com> <20201210160413.GH264602@cmpxchg.org>
-In-Reply-To: <20201210160413.GH264602@cmpxchg.org>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 11 Dec 2020 00:56:00 +0800
-Message-ID: <CAMZfGtVqwUdXjS4WL97XUcrV4=U2si3pkcoeLbQbeS=k1uMgdA@mail.gmail.com>
-Subject: Re: [External] Re: [RESEND PATCH v2 01/12] mm: memcontrol: fix
- NR_ANON_THPS account
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Hugh Dickins <hughd@google.com>, Will Deacon <will@kernel.org>,
-        Roman Gushchin <guro@fb.com>, Mike Rapoport <rppt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
-        peterx@redhat.com, krisman@collabora.com,
-        Suren Baghdasaryan <surenb@google.com>, avagin@openvz.org,
-        Marco Elver <elver@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 12:06 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Sun, Dec 06, 2020 at 06:14:40PM +0800, Muchun Song wrote:
-> > The unit of NR_ANON_THPS is HPAGE_PMD_NR already. So it should inc/dec
-> > by one rather than nr_pages.
-> >
-> > Fixes: 468c398233da ("mm: memcontrol: switch to native NR_ANON_THPS counter")
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
->
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->
-> But please change the subject to
->
->         'mm: memcontrol: fix NR_ANON_THPS accounting in charge moving'
+From: Ira Weiny <ira.weiny@intel.com>
 
-OK. Will do that. Thanks.
+Changes from V2[1]:
+	Update this cover letter
+	Update commit messages
+	From Matthew Wilcox
+		Put functions in highmem.h rather than pagemap.h
+	Investigate 0-day build errors.
+		AFAICT the patches were applied to the wrong tree and caused
+		build errors.
+
+There are many places in the kernel where kmap is used for a simple memory
+operation like memcpy, memset, or memmove and then the page is unmapped.
+
+This kmap/mem*/kunmap pattern is mixed between kmap and kmap_atomic uses.  All
+of them could use kmap_atomic() which is faster.  However, kmap_atomic() is
+being deprecated in favor of kmap_local_page().
+
+Use kmap_local_page() in the existing page operations.  Lift
+memcpy_[to|from]_page to highmem.h.  Remove memzero_page() and use zero_user()
+instead.  Add memcpy_page(), memmove_page(), and memset_page() to be used in
+future patches.  Finally, add BUG_ON()s to check for any miss use of the API
+and prevent data corruption in the same way zero_user() does.
+
+This is V3 to get into 5.11 so that we can start to convert all the various
+subsystems in 5.12.[2]
+
+These are based on tip/core/mm.  I'm sending to Andrew and Thomas but I'm
+expecting these to go through tip/core/mm via Thomas if that is ok with Andrew.
+
+[1] https://lore.kernel.org/lkml/20201207225703.2033611-1-ira.weiny@intel.com/
+[2] https://lore.kernel.org/lkml/20201204160504.GH1563847@iweiny-DESK2.sc.intel.com/
+
+
+Ira Weiny (2):
+  mm/highmem: Remove deprecated kmap_atomic
+  mm/highmem: Lift memcpy_[to|from]_page to core
+
+ include/linux/highmem.h | 81 ++++++++++++++++++++++++++++++++++-------
+ lib/iov_iter.c          | 26 ++-----------
+ 2 files changed, 70 insertions(+), 37 deletions(-)
 
 -- 
-Yours,
-Muchun
+2.28.0.rc0.12.gb6a658bd00c9
+
