@@ -2,153 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F02EE2D667C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 20:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD98E2D67FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 21:03:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393431AbgLJTae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 14:30:34 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:49746 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393436AbgLJTad (ORCPT
+        id S2404535AbgLJUCI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 15:02:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404302AbgLJUCC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 14:30:33 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1knRdL-003Miz-OI; Thu, 10 Dec 2020 12:29:47 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1knRdK-0006sF-Uo; Thu, 10 Dec 2020 12:29:47 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jann@thejh.net>
-References: <20201120231441.29911-15-ebiederm@xmission.com>
-        <20201207232900.GD4115853@ZenIV.linux.org.uk>
-        <877dprvs8e.fsf@x220.int.ebiederm.org>
-        <20201209040731.GK3579531@ZenIV.linux.org.uk>
-        <877dprtxly.fsf@x220.int.ebiederm.org>
-        <20201209142359.GN3579531@ZenIV.linux.org.uk>
-        <87o8j2svnt.fsf_-_@x220.int.ebiederm.org>
-        <CAHk-=wiUMHBHmmDS3_Xqh1wfGFyd_rdDmpZzk0cODoj1i7_VOA@mail.gmail.com>
-        <20201209195033.GP3579531@ZenIV.linux.org.uk>
-        <87sg8er7gp.fsf@x220.int.ebiederm.org>
-        <20201210061304.GS3579531@ZenIV.linux.org.uk>
-Date:   Thu, 10 Dec 2020 13:29:01 -0600
-In-Reply-To: <20201210061304.GS3579531@ZenIV.linux.org.uk> (Al Viro's message
-        of "Thu, 10 Dec 2020 06:13:04 +0000")
-Message-ID: <87h7oto3ya.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 10 Dec 2020 15:02:02 -0500
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC24DC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 12:01:21 -0800 (PST)
+Received: by mail-io1-xd2f.google.com with SMTP id n14so6855032iom.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 12:01:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sya1PQtNgFqGm2aTT6RKY27a2ojJW0x9lC7904ZSiEE=;
+        b=YutlIAu/AqhNz+Bu/8aUeVIh1Wc5bHqGk6HIgREMorxFYmf5MrEWhU0MkW3PiefvV7
+         PdVwCMd8nmOQzpWxTKqeHhn3gIWb19QmxbUoAqb+Tg7uTH0FACDVCUDZNI1AaRY0Dx0K
+         fy3IYCzZobSZ6IIt0d2LBvs7Npd83LF8yXB6Zsp/4StujyDwmWMzXsVdE4lsncnhibmJ
+         ZrxFVSoyR4yDZ9mx57r0pjRwxNlmTe4lWYWOcXNCiA9+gTRLjnu01AocqjVdQYNHwkiX
+         8uXrY6AB2CQEH/xq09GwBh75dCrrUUy+q3pM/hEsqwDVOd8F3Dl9vjtoo7i5WqKCOVoZ
+         D4tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sya1PQtNgFqGm2aTT6RKY27a2ojJW0x9lC7904ZSiEE=;
+        b=rds+yjrop7z0J4oAnxefgl346c4skzSCAlUodmXqRwe1fGnERjParIK4W2awJ+zWAx
+         pRS8EhKVl1bHXAuazz9L/UA8uVMjzDrSnoeZN516v268F5N2Zava19ZB7YBEvDtjrZSr
+         K7u8UakGUN60Kik71BLzVp372nOOywjdboDsfzRzW90i+lmCaq1jsspFhOfZ4g8n2bSU
+         OJVDxgkUCD5UdsUr59rilXAoqaz4PSja7l5DPY8FJ7M4JJSmE8LbqU8Gy+BfV876AWrG
+         VS2x6/j3mXCp5/BrpszXFgY7aVYDXaSSqYW+9OQSPSBbQlhA7CeknEnyWH1/1bp5eyPt
+         tD/g==
+X-Gm-Message-State: AOAM533jXEPeFTDUBFBu1PbvBZs0rZ59UsQrZiitlIC/ZEiTx9Sg3oyT
+        JKBXWOjvRZm7Qjvt0ky89bumae+Vdz0xHg==
+X-Google-Smtp-Source: ABdhPJzdzL3VIXkpHz7bQynuWQjxGeErRYapwHFROBwy7jSEFISUfgh21sMZOTrKlwdshtBSl9NmrA==
+X-Received: by 2002:a5d:9a03:: with SMTP id s3mr10246605iol.20.1607630480653;
+        Thu, 10 Dec 2020 12:01:20 -0800 (PST)
+Received: from p1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id x5sm3850277ilm.22.2020.12.10.12.01.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Dec 2020 12:01:20 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Subject: [PATCHSET 0/2] fs: Support for LOOKUP_NONBLOCK / RESOLVE_NONBLOCK
+Date:   Thu, 10 Dec 2020 13:01:12 -0700
+Message-Id: <20201210200114.525026-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1knRdK-0006sF-Uo;;;mid=<87h7oto3ya.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19ZiLRNiJsD/mS47Qcr/W9aaoCcvplKFwU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XM_B_SpammyWords
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4998]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 558 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 9 (1.6%), b_tie_ro: 7 (1.3%), parse: 1.57 (0.3%),
-        extract_message_metadata: 25 (4.5%), get_uri_detail_list: 3.4 (0.6%),
-        tests_pri_-1000: 17 (3.1%), tests_pri_-950: 1.31 (0.2%),
-        tests_pri_-900: 1.11 (0.2%), tests_pri_-90: 131 (23.4%), check_bayes:
-        129 (23.0%), b_tokenize: 9 (1.6%), b_tok_get_all: 9 (1.6%),
-        b_comp_prob: 3.3 (0.6%), b_tok_touch_all: 103 (18.4%), b_finish: 0.94
-        (0.2%), tests_pri_0: 289 (51.7%), check_dkim_signature: 0.54 (0.1%),
-        check_dkim_adsp: 2.7 (0.5%), poll_dns_idle: 65 (11.7%), tests_pri_10:
-        2.1 (0.4%), tests_pri_500: 77 (13.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] files: rcu free files_struct
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+Hi,
 
-> On Wed, Dec 09, 2020 at 03:32:38PM -0600, Eric W. Biederman wrote:
->> Al Viro <viro@zeniv.linux.org.uk> writes:
->> 
->> > On Wed, Dec 09, 2020 at 11:13:38AM -0800, Linus Torvalds wrote:
->> >> On Wed, Dec 9, 2020 at 10:05 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->> >> >
->> >> > -                               struct file * file = xchg(&fdt->fd[i], NULL);
->> >> > +                               struct file * file = fdt->fd[i];
->> >> >                                 if (file) {
->> >> > +                                       rcu_assign_pointer(fdt->fd[i], NULL);
->> >> 
->> >> This makes me nervous. Why did we use to do that xchg() there? That
->> >> has atomicity guarantees that now are gone.
->> >> 
->> >> Now, this whole thing should be called for just the last ref of the fd
->> >> table, so presumably that atomicity was never needed in the first
->> >> place. But the fact that we did that very expensive xchg() then makes
->> >> me go "there's some reason for it".
->> >> 
->> >> Is this xchg() just bogus historical leftover? It kind of looks that
->> >> way. But maybe that change should be done separately?
->> >
->> > I'm still not convinced that exposing close_files() to parallel
->> > 3rd-party accesses is safe in all cases, so this patch still needs
->> > more analysis.
->> 
->> That is fine.  I just wanted to post the latest version so we could
->> continue the discussion.  Especially with comments etc.
->
-> It's probably safe.  I've spent today digging through the mess in
-> fs/notify and kernel/bpf, and while I'm disgusted with both, at
-> that point I believe that close_files() exposure is not going to
-> create problems with either.  And xchg() in there _is_ useless.
+This adds support for just doing the RCU based (and non-blocking) part
+of path resolution. The main motivation is for io_uring to be able to
+do saner/faster open, so we don't always have to go async, particularly
+for the fast path of the data already being cached.
 
-Then I will work on a cleaned up version.
+Internally that is presented as LOOKUP_NONBLOCK, which depends on
+LOOKUP_RCU for doing the right thing. If we terminate the RCU part of the
+lookup, then we return -EAGAIN if LOOKUP_NONBLOCK is also set.
 
-> Said that, BPF "file iterator" stuff is potentially very unpleasant -
-> it allows to pin a struct file found in any process' descriptor table
-> indefinitely long.  Temporary struct file references grabbed by procfs
-> code, while unfortunate, are at least short-lived; with this stuff sky's
-> the limit.
->
-> I'm not happy about having that available, especially if it's a user-visible
-> primitive we can't withdraw at zero notice ;-/
->
-> What are the users of that thing and is there any chance to replace it
-> with something saner?  IOW, what *is* realistically called for each
-> struct file by the users of that iterator?
+The second patch is enabling this through openat2() as well, by adding
+a RESOLVE_NONBLOCK that can be passed in struct open_how ->resolve as
+well. Basic test case:
 
-The bpf guys are no longer Cc'd and they can probably answer better than
-I.
+[root@archlinux liburing]# echo 3 > /proc/sys/vm/drop_caches 
+[root@archlinux liburing]# test/do-open2 /etc/nanorc
+open: -1
+openat2: Resource temporarily unavailable
+[root@archlinux liburing]# touch /etc/nanorc
+[root@archlinux liburing]# test/do-open2 /etc/nanorc
+open: 3
 
-In a previous conversation it was mentioned that task_iter was supposed
-to be a high performance interface for getting proc like data out of the
-kernel using bpf.
-
-If so I think that handles the lifetime issues as bpf programs are
-supposed to be short-lived and can not pass references anywhere.
-
-On the flip side it raises the question did the BPF guys just make the
-current layout of task_struct and struct file part of the linux kernel
-user space ABI?
-
-Eric
+-- 
+Jens Axboe
 
 
