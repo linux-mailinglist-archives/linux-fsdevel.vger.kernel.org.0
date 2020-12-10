@@ -2,90 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A324E2D620A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 17:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1702E2D6257
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 17:46:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403824AbgLJQDh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 11:03:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46902 "EHLO
+        id S2392296AbgLJQpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 11:45:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392202AbgLJQDd (ORCPT
+        with ESMTP id S2391974AbgLJQpQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 11:03:33 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57765C061794
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 08:02:53 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id y17so5992195wrr.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 08:02:53 -0800 (PST)
+        Thu, 10 Dec 2020 11:45:16 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5811C0613CF;
+        Thu, 10 Dec 2020 08:44:36 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id e2so4725809pgi.5;
+        Thu, 10 Dec 2020 08:44:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6cqy3h6zeyXBfeazWGfRXkH+RsOnGkrK4uYLa4meA10=;
-        b=F55eqp5BdR+2SiD7cUjPc/dE5pm//HKBnJEcNN5JIQ3kahgaFcm0unTLLFNeCYA/Hd
-         mo7zbwH1GSpHvmwgMtLlswl7zttk633FKLWuA8j2R6zKbbTOwJPzK9qAjGbt32uLuL9E
-         3qT0+KI8QM1ZnsV+MPMeOJmcQZ+hGQTxRAC3++ooyZlY35akuYScnqpB0mLR0PT38nzY
-         3/i0V4j1Rd3vnz8E/9ditif0EzUdhdzgBSvDcW91585TV28VDRDMer1gez6ryZTsRRya
-         xFaWZ7TA5GBO/ZOctXMy2slNo0Ju3Vf9KOqund3aOhniPqFeoR78cVC+bfD2xzG5pIjZ
-         +F+g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=O6r1VxP3lNmxiqtfsbEsJwybOwIKpVa3l9EOS4rtjIs=;
+        b=R7SPHjgpg3mP/LQaoFtEybdof/xGXKUQhbGXAzB8JUBBjkWGfZONAmSRbN6l7NsVi8
+         p9SKNHE+1DnSBrogmA47RzMIqfhkHZnCCU3q/ire6iTMdTo5bofepmC5PAmUAR/2jPqc
+         fw276Oh/1X1U4E/a3YW5mL6M7V5TFnKtXPx3ur6UvYUKDJ1fW+APIMKbfKVYnKbMCbKI
+         dvmN+Z5vXtHVoUgxaJqzjfwW1yeb6BkpALggrv4Z+TfdLNHp9ap6JTCqKywEuBnjcE5w
+         XNTO6kyX55AQY+GYVpyjfruFvkmHLezhFM93QkQS556o3O2Uy8KG/6VlwUrNV1tUe6NN
+         kDag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6cqy3h6zeyXBfeazWGfRXkH+RsOnGkrK4uYLa4meA10=;
-        b=EoWcZpQZjJwhCNIDj4JqNRELyS+RICNKsuG7n6xiqg+M+lkCpL24FlJ26AS3wZpuBX
-         eJaG55Uyxtdv3zA6FR27nCYUto110UhYa76Od2utIcrJiHqAAIF6B6WqhH1z5jzZ77sR
-         M8k8xjG6Gqtp6q/wfg2Z/bEL7fzXjIrq1/xubxBikatLOwDCyEJQ2UoS6EDR4vghgZkd
-         IfZrGkxfpiqqf/fcc+NBpSwOXP9xORMXetUBAVokvN546PeLeLsHxyGjVj7e2FP+jV1U
-         zOebDvkHNbUI1taErz7H4OFx/JG6mFNBjRBtmsqZAblJaTLS3Hl+KQEtifN0qKcMqGsR
-         Q3yQ==
-X-Gm-Message-State: AOAM5319gLHr1cwoHPrP959nSmJCDWHtYEMtIJ37WIXQt0CTiGK1t0Y+
-        0VCC+45rfqW8yuhNxDQY2L79aQ==
-X-Google-Smtp-Source: ABdhPJwtafMVZTP78ChvtU3M0dgyS+B17bQv+/8rCQxS4HbWkwTRVKhsStph2yQMX0DPOFG/1UunXw==
-X-Received: by 2002:a5d:678d:: with SMTP id v13mr8994936wru.71.1607616171987;
-        Thu, 10 Dec 2020 08:02:51 -0800 (PST)
-Received: from localhost (p4fdabc80.dip0.t-ipconnect.de. [79.218.188.128])
-        by smtp.gmail.com with ESMTPSA id h3sm10278777wmm.4.2020.12.10.08.02.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=O6r1VxP3lNmxiqtfsbEsJwybOwIKpVa3l9EOS4rtjIs=;
+        b=UCp7Hwt6l4OCQDV7zxTt00uLkGR7TeqsARGbEmC/nyzs5b1wQsTYyQXjxu207i+taF
+         98ckWG7YaV4pl/2Jb6XCn26gN6ixsjIgqeJFmjiofTtQaAWEKdyQh+YE6/PN+TRdLuPc
+         ZV8/Ae+RdWpcPoUps3NzpGy/JerTkvmoU76++96xnzpJLLDDS3xq1JXcPNcytYUNw+1k
+         aDHTI86NIg5cB5g81jbJmhHPZap142Q8/2ympZR3UIu8RewqeoX3oaQsEHk0NG9UHahK
+         D7AUsgLqrDyWfDI/M1prWtXqccQRjQ5fpSC/0RUP5vkMtjG7ViMs8XywSKppv+9OSqsj
+         Rkbg==
+X-Gm-Message-State: AOAM532r0vJ44LfFjnutDZF29EKLfPCQu2ThWw1by5RZO2t6VKPpnLUM
+        KrVdEIjXxucyfRywkpWJKEjJjKmuorbs47rsfhE=
+X-Google-Smtp-Source: ABdhPJxsLeER9ZJbzr5nparyCDipcH7OlJcAWiIYmYBDTkjmVzuNtxhwf7u1BNqMy/MmQRxrbiWHsg==
+X-Received: by 2002:aa7:92c7:0:b029:197:e36f:fc5c with SMTP id k7-20020aa792c70000b0290197e36ffc5cmr7562994pfa.62.1607618676320;
+        Thu, 10 Dec 2020 08:44:36 -0800 (PST)
+Received: from cl-arch-kdev.. (cl-arch-kdev.xen.prgmr.com. [2605:2700:0:2:a800:ff:fed6:fc0d])
+        by smtp.gmail.com with ESMTPSA id k129sm6867175pgk.1.2020.12.10.08.44.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Dec 2020 08:02:51 -0800 (PST)
-Date:   Thu, 10 Dec 2020 17:00:45 +0100
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org, adobriyan@gmail.com,
-        akpm@linux-foundation.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, hughd@google.com, will@kernel.org,
-        guro@fb.com, rppt@kernel.org, tglx@linutronix.de, esyr@redhat.com,
-        peterx@redhat.com, krisman@collabora.com, surenb@google.com,
-        avagin@openvz.org, elver@google.com, rdunlap@infradead.org,
-        iamjoonsoo.kim@lge.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 01/12] mm: memcontrol: fix NR_ANON_THPS account
-Message-ID: <20201210160045.GF264602@cmpxchg.org>
-References: <20201206101451.14706-1-songmuchun@bytedance.com>
- <20201206101451.14706-2-songmuchun@bytedance.com>
+        Thu, 10 Dec 2020 08:44:35 -0800 (PST)
+From:   Fox Chen <foxhlchen@gmail.com>
+To:     raven@themaw.net
+Cc:     akpm@linux-foundation.org, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
+        ricklind@linux.vnet.ibm.com, sfr@canb.auug.org.au, tj@kernel.org,
+        viro@ZenIV.linux.org.uk, Fox Chen <foxhlchen@gmail.com>
+Subject: RE:[PATCH v2 0/6] kernfs: proposed locking and concurrency improvement
+Date:   Thu, 10 Dec 2020 16:44:23 +0000
+Message-Id: <20201210164423.9084-1-foxhlchen@gmail.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201206101451.14706-2-songmuchun@bytedance.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 06, 2020 at 06:14:40PM +0800, Muchun Song wrote:
-> The unit of NR_ANON_THPS is HPAGE_PMD_NR already. So it should inc/dec
-> by one rather than nr_pages.
+Hi,
 
-This is a real bug, thanks for catching it.
+I found this series of patches solves exact the problem I am trying to solve.
+https://lore.kernel.org/lkml/20201202145837.48040-1-foxhlchen@gmail.com/
 
-However, your patch changes the user-visible output of /proc/vmstat!
+The problem is reported by Brice Goglin on thread:
+Re: [PATCH 1/4] drivers core: Introduce CPU type sysfs interface
+https://lore.kernel.org/lkml/X60dvJoT4fURcnsF@kroah.com/
 
-NR_ANON_THPS isn't just used by memcg, it's a generic accounting item
-of the memory subsystem. See this from the Fixes:-patch:
+I independently comfirmed that on a 96-core AWS c5.metal server.
+Do open+read+write on /sys/devices/system/cpu/cpu15/topology/core_id 1000 times.
+With a single thread it takes ~2.5 us for each open+read+close.
+With one thread per core, 96 threads running simultaneously takes 540 us 
+for each of the same operation (without much variation) -- 200x slower than the 
+single thread one. 
 
--                       __inc_node_page_state(page, NR_ANON_THPS);
-+                       __inc_lruvec_page_state(page, NR_ANON_THPS);
+My Benchmark code is here:
+https://github.com/foxhlchen/sysfs_benchmark
 
-While we've considered /proc/vmstat less official than other files
-like meminfo, and have in the past freely added and removed items,
-changing the unit of an existing one is not going to work.
+The problem can only be observed in large machines (>=16 cores).
+The more cores you have the slower it can be.
+
+Perf shows that CPUs spend most of the time (>80%) waiting on mutex locks in 
+kernfs_iop_permission and kernfs_dop_revalidate.
+
+After applying this, performance gets huge boost -- with the fastest one at ~30 us 
+to the worst at ~180 us (most of on spin_locks, the delay just stacking up, very
+similar to the performance on ext4). 
+
+I hope this problem can justifies this series of patches. A big mutex in kernfs
+is really not nice. Due to this BIG LOCK, concurrency in kernfs is almost NONE,
+even though you do operations on different files, they are contentious.
+
+As we get more and more cores on normal machines and because sysfs provides such
+important information, this problem should be fix. So please reconsider accepting
+the patches.
+
+For the patches, there is a mutex_lock in kn->attr_mutex, as Tejun mentioned here 
+(https://lore.kernel.org/lkml/X8fe0cmu+aq1gi7O@mtj.duckdns.org/), maybe a global 
+rwsem for kn->iattr will be better??
+
+
+
+thanks,
+fox
+
