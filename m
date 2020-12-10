@@ -2,114 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1702E2D6257
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 17:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4A5E2D62B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 17:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392296AbgLJQpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 11:45:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53526 "EHLO
+        id S2391932AbgLJQ5e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 11:57:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391974AbgLJQpQ (ORCPT
+        with ESMTP id S2392441AbgLJQ5Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 11:45:16 -0500
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5811C0613CF;
-        Thu, 10 Dec 2020 08:44:36 -0800 (PST)
-Received: by mail-pg1-x542.google.com with SMTP id e2so4725809pgi.5;
-        Thu, 10 Dec 2020 08:44:36 -0800 (PST)
+        Thu, 10 Dec 2020 11:57:16 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0CDC061793
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 08:56:36 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id n7so4763565pgg.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 08:56:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=O6r1VxP3lNmxiqtfsbEsJwybOwIKpVa3l9EOS4rtjIs=;
-        b=R7SPHjgpg3mP/LQaoFtEybdof/xGXKUQhbGXAzB8JUBBjkWGfZONAmSRbN6l7NsVi8
-         p9SKNHE+1DnSBrogmA47RzMIqfhkHZnCCU3q/ire6iTMdTo5bofepmC5PAmUAR/2jPqc
-         fw276Oh/1X1U4E/a3YW5mL6M7V5TFnKtXPx3ur6UvYUKDJ1fW+APIMKbfKVYnKbMCbKI
-         dvmN+Z5vXtHVoUgxaJqzjfwW1yeb6BkpALggrv4Z+TfdLNHp9ap6JTCqKywEuBnjcE5w
-         XNTO6kyX55AQY+GYVpyjfruFvkmHLezhFM93QkQS556o3O2Uy8KG/6VlwUrNV1tUe6NN
-         kDag==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WNgKN7a4ded1LeBkq8RoIInVbovzz2QvQreFxC7eifA=;
+        b=ngrw6r3STU/Y2YvnJY7eQsNYC2nhNp7w0fatD7eeX09k8h47QOCikE0TwWuSgtp318
+         UpbWRrRKJw+AxR0sEi/HWSxsLXfRq8h5A6rL3xl/+vhPCJLuOKcE6PHAYgcX6CVcj96r
+         ozPHOIebKkCQ2dasDIPUEULrRnSmQmY7edbwfV7AnRzgnQAd7Z4tGMVR+s+uNSdVjwoa
+         3Ybb4So9apwKgYFpDY0Va15eDsYUnFOYSOA9122EdxeG8SAekN3QckiVt4NIIQ2p8ogh
+         +LzA6FY+N50reiNcOrc0ywGp3fholP1Vxp1Lk6qEGtbrgH58W+2Rm7GEB7Pt5Mfs0l5R
+         Ud6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=O6r1VxP3lNmxiqtfsbEsJwybOwIKpVa3l9EOS4rtjIs=;
-        b=UCp7Hwt6l4OCQDV7zxTt00uLkGR7TeqsARGbEmC/nyzs5b1wQsTYyQXjxu207i+taF
-         98ckWG7YaV4pl/2Jb6XCn26gN6ixsjIgqeJFmjiofTtQaAWEKdyQh+YE6/PN+TRdLuPc
-         ZV8/Ae+RdWpcPoUps3NzpGy/JerTkvmoU76++96xnzpJLLDDS3xq1JXcPNcytYUNw+1k
-         aDHTI86NIg5cB5g81jbJmhHPZap142Q8/2ympZR3UIu8RewqeoX3oaQsEHk0NG9UHahK
-         D7AUsgLqrDyWfDI/M1prWtXqccQRjQ5fpSC/0RUP5vkMtjG7ViMs8XywSKppv+9OSqsj
-         Rkbg==
-X-Gm-Message-State: AOAM532r0vJ44LfFjnutDZF29EKLfPCQu2ThWw1by5RZO2t6VKPpnLUM
-        KrVdEIjXxucyfRywkpWJKEjJjKmuorbs47rsfhE=
-X-Google-Smtp-Source: ABdhPJxsLeER9ZJbzr5nparyCDipcH7OlJcAWiIYmYBDTkjmVzuNtxhwf7u1BNqMy/MmQRxrbiWHsg==
-X-Received: by 2002:aa7:92c7:0:b029:197:e36f:fc5c with SMTP id k7-20020aa792c70000b0290197e36ffc5cmr7562994pfa.62.1607618676320;
-        Thu, 10 Dec 2020 08:44:36 -0800 (PST)
-Received: from cl-arch-kdev.. (cl-arch-kdev.xen.prgmr.com. [2605:2700:0:2:a800:ff:fed6:fc0d])
-        by smtp.gmail.com with ESMTPSA id k129sm6867175pgk.1.2020.12.10.08.44.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Dec 2020 08:44:35 -0800 (PST)
-From:   Fox Chen <foxhlchen@gmail.com>
-To:     raven@themaw.net
-Cc:     akpm@linux-foundation.org, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
-        ricklind@linux.vnet.ibm.com, sfr@canb.auug.org.au, tj@kernel.org,
-        viro@ZenIV.linux.org.uk, Fox Chen <foxhlchen@gmail.com>
-Subject: RE:[PATCH v2 0/6] kernfs: proposed locking and concurrency improvement
-Date:   Thu, 10 Dec 2020 16:44:23 +0000
-Message-Id: <20201210164423.9084-1-foxhlchen@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WNgKN7a4ded1LeBkq8RoIInVbovzz2QvQreFxC7eifA=;
+        b=eFHWpqi5u9cXj+muSMiFBEa61QtwrmHnwQ2xinNWS6XGpJubnzm40WzHh8Aom7IpGL
+         q2jC/J4q0G3B6aqI8L7GzHUTFIvbKCEqxM7tjx3NsI3D9Gi3hc8S73Jwa1m5QG4CeuA9
+         ATDhefRtV7joUbwX9Oc1dnQp2/bMzK3vQL3/TGNKsxLOiuovGwc+eXRu4N8L9oXzsZN8
+         gvNApJiENifijIzuVojO1P99l4At4wbVWfSyrj8tWnBNCkbDiCdibzbeOr0M2w2DeKvf
+         UQ9G2fNhrFhIBZKYnH7Q8wGN9zKS+YIijmiFgkyVNjSnkOTJPyMJGFkagr/XhZHkIG+V
+         yTjw==
+X-Gm-Message-State: AOAM532xJUDzpYIunXmfKOr63IlnGtvnjJ7lOaR+qxDIm3FYJeBFbIcZ
+        UdInHeU2cWmS9kl17YBaV+hfJjjfbzGs7zunoxpoKg==
+X-Google-Smtp-Source: ABdhPJy9pD/1lJ2qDgAePSWfoMb1GSMyq/JYmVxrm4dOjUbd/QptTorDHdnT6QbcEBnOyfTp+iPIECjZd6VjWW8O9JQ=
+X-Received: by 2002:a63:c15:: with SMTP id b21mr7349998pgl.341.1607619396305;
+ Thu, 10 Dec 2020 08:56:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201206101451.14706-1-songmuchun@bytedance.com>
+ <20201206101451.14706-2-songmuchun@bytedance.com> <20201210160413.GH264602@cmpxchg.org>
+In-Reply-To: <20201210160413.GH264602@cmpxchg.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Fri, 11 Dec 2020 00:56:00 +0800
+Message-ID: <CAMZfGtVqwUdXjS4WL97XUcrV4=U2si3pkcoeLbQbeS=k1uMgdA@mail.gmail.com>
+Subject: Re: [External] Re: [RESEND PATCH v2 01/12] mm: memcontrol: fix
+ NR_ANON_THPS account
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Hugh Dickins <hughd@google.com>, Will Deacon <will@kernel.org>,
+        Roman Gushchin <guro@fb.com>, Mike Rapoport <rppt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
+        peterx@redhat.com, krisman@collabora.com,
+        Suren Baghdasaryan <surenb@google.com>, avagin@openvz.org,
+        Marco Elver <elver@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Cgroups <cgroups@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Fri, Dec 11, 2020 at 12:06 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+> On Sun, Dec 06, 2020 at 06:14:40PM +0800, Muchun Song wrote:
+> > The unit of NR_ANON_THPS is HPAGE_PMD_NR already. So it should inc/dec
+> > by one rather than nr_pages.
+> >
+> > Fixes: 468c398233da ("mm: memcontrol: switch to native NR_ANON_THPS counter")
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+>
+> But please change the subject to
+>
+>         'mm: memcontrol: fix NR_ANON_THPS accounting in charge moving'
 
-I found this series of patches solves exact the problem I am trying to solve.
-https://lore.kernel.org/lkml/20201202145837.48040-1-foxhlchen@gmail.com/
+OK. Will do that. Thanks.
 
-The problem is reported by Brice Goglin on thread:
-Re: [PATCH 1/4] drivers core: Introduce CPU type sysfs interface
-https://lore.kernel.org/lkml/X60dvJoT4fURcnsF@kroah.com/
-
-I independently comfirmed that on a 96-core AWS c5.metal server.
-Do open+read+write on /sys/devices/system/cpu/cpu15/topology/core_id 1000 times.
-With a single thread it takes ~2.5 us for each open+read+close.
-With one thread per core, 96 threads running simultaneously takes 540 us 
-for each of the same operation (without much variation) -- 200x slower than the 
-single thread one. 
-
-My Benchmark code is here:
-https://github.com/foxhlchen/sysfs_benchmark
-
-The problem can only be observed in large machines (>=16 cores).
-The more cores you have the slower it can be.
-
-Perf shows that CPUs spend most of the time (>80%) waiting on mutex locks in 
-kernfs_iop_permission and kernfs_dop_revalidate.
-
-After applying this, performance gets huge boost -- with the fastest one at ~30 us 
-to the worst at ~180 us (most of on spin_locks, the delay just stacking up, very
-similar to the performance on ext4). 
-
-I hope this problem can justifies this series of patches. A big mutex in kernfs
-is really not nice. Due to this BIG LOCK, concurrency in kernfs is almost NONE,
-even though you do operations on different files, they are contentious.
-
-As we get more and more cores on normal machines and because sysfs provides such
-important information, this problem should be fix. So please reconsider accepting
-the patches.
-
-For the patches, there is a mutex_lock in kn->attr_mutex, as Tejun mentioned here 
-(https://lore.kernel.org/lkml/X8fe0cmu+aq1gi7O@mtj.duckdns.org/), maybe a global 
-rwsem for kn->iattr will be better??
-
-
-
-thanks,
-fox
-
+-- 
+Yours,
+Muchun
