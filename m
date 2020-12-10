@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A640D2D523A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 04:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EB4B2D5242
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 04:59:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731925AbgLJD6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Dec 2020 22:58:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48260 "EHLO
+        id S1732059AbgLJD7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Dec 2020 22:59:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731900AbgLJD6R (ORCPT
+        with ESMTP id S1731987AbgLJD6q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Dec 2020 22:58:17 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5F9C06179C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Dec 2020 19:57:33 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id t7so2776496pfh.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 19:57:33 -0800 (PST)
+        Wed, 9 Dec 2020 22:58:46 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8452C061285
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Dec 2020 19:57:54 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id c79so2791429pfc.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Dec 2020 19:57:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3qJg+8yJ0ZaO1UKBsLGCMyx4R42eQSImcGjXZI1+SbQ=;
-        b=HkGA3qoUtgf/tbgsG8XAo70dPJlpdKQeP0Aj+YqHIFvc3pYzgbg0Qnb4hUTRCpml/S
-         5P1Tc8nAUs5xY4UnB39WAVEwcsxtCDeB91ZyTuB73rPPdMrGNDqvZUfnezbOA7lx5ptc
-         eOFN2e8x8ojUo5MHVkceum1LjP8H+5Q3Qj39QNDjb8LnzWc/bV0Fd0LQLPP2GuyWS6pX
-         r9T0SVNzqRZeG+sLNkbyszMQ24H1eMWDAjkp9+ULYZKQkU8m7hyYUa20ZpYsJNbH1fAW
-         NtOE2fnWLscN5DWPHrPwUyQK7zDsFxc0S7J6DcOQoW0pKsTccZ2gV3rB+0O8CLzym/Hl
-         A6CQ==
+        bh=/XGFv2MFzigC1jXEGuh+0xsxrvpr1DgA3wrXZ9QAYoM=;
+        b=UM06XiPJqXnNYlPIjuwiT0W1AlWph80UIuK+UAPTeaaBD6XgIYHFSlzuWNT515fqmr
+         k9xRiE585WZptnPdyF/efcDBc5v26PvTmi7zF6JEPLA7KZDEi5fUX8V1PAsJt2cwG4QN
+         xDqkJEdc49ZcSV5xsP50XZF9cBNLJXJAuD0Oqp/yvOd/rD3/dWb2EeC76jEsV0/dD+rU
+         io2TGZx+zIPTjnSZCGRC9Hn/Zd2e+M/nauB6/VdrvwG2R0nMFjXWLfuijL6REIXYS8vg
+         lgWfZw4n3fgyKfwTNsGhlrIBMhTYuEMIMgfytqfzyYHF/Ffq4ImSVxTENbIQpYnzaK0X
+         Y17A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3qJg+8yJ0ZaO1UKBsLGCMyx4R42eQSImcGjXZI1+SbQ=;
-        b=Ik6332AkgFpeBjFmPVqLRNH3244zdYMV0faGJEyBJgT9I4k+G8AerCpW1YIWQWMwHc
-         RDQU1VUggp0SFc+nj08woE5KM7eTBc4rS5KOq3AjqKzpNwBZeGPQCq3rGJDB2oI6uS0y
-         3m6nOj3vCiUc09Nkh1vwDBnyVmMME6TFmtJulbCHfQbT37jGJhsQgCVDOzfh4ozdFxp9
-         BhScDlNol7OZWnCjaKHZW6KUcLpPcQrbwLZvXCno8QgIqjoX7C0xfuPXuPtoO+OLfKWa
-         IuJ5CHVa9qWpCKQm5gfn7OaxbG3ZE9gjpNhvgDQl0KjyHy0YxY2CAG/8/MEstHTWAh9p
-         9hBQ==
-X-Gm-Message-State: AOAM533jLnm/tOB/BskyjtV3FkQm1ImzsPQsCfgkMA8NMZv4i7qM9aBI
-        hD0tgUDdQ1hEEnAYjsfNknPA5g==
-X-Google-Smtp-Source: ABdhPJyfhImDBucIzV2jPuWAOlTx1/SFVwNqdnOQF4hp7enc0WfG5kHwkMxKLYQZ++pZH7KCbi43Rw==
-X-Received: by 2002:a63:124a:: with SMTP id 10mr5000062pgs.180.1607572652638;
-        Wed, 09 Dec 2020 19:57:32 -0800 (PST)
+        bh=/XGFv2MFzigC1jXEGuh+0xsxrvpr1DgA3wrXZ9QAYoM=;
+        b=ihzzeELk/Ip9GfMu7xdZq8ZBW6GNryWOElsIh1YRL6ZWxI7Ex7ypHllA81GdU+nbHK
+         B3GqNRTftTuel0w0sUumYpCw4GD2ahKjG9QBx2rG/zQbAoz3qYNQPtj+Ds9B93ZzxWcR
+         1gFxwpnwAl04QwhcGTTD0ezXewrqjFY96kdqrb5gcMWUo7MTgwXqXI+FWdzo0YDXrkpq
+         CVWwQklQrIF3VC3emOgW0WFyzagki1zi7UFfO+rPdfwFrhkjADhbJa1UuL1QieUIobuO
+         /EDDlrtPeuld3U5bNRPGsDxvXotXj5ifafx/7LuDweFlpZ4DKYqxAKW/l+oKd5xbtyEc
+         rRTg==
+X-Gm-Message-State: AOAM533PFlEQmsXj18qSOyVcGefNv8QPyouiaR2TESqPJ7UoiS9FTe7q
+        jQXgeg3D3gOy93QNeBpnd+HoqQ==
+X-Google-Smtp-Source: ABdhPJxwKlxOJeNA9Om/OdTPt9auWCJxB8SXy1Uy9JpRxNcf+KV7zoDGblL5f34prJm4UPuvAUEw9Q==
+X-Received: by 2002:a63:e207:: with SMTP id q7mr4799499pgh.377.1607572674495;
+        Wed, 09 Dec 2020 19:57:54 -0800 (PST)
 Received: from localhost.localdomain ([103.136.220.85])
-        by smtp.gmail.com with ESMTPSA id f33sm4266535pgl.83.2020.12.09.19.57.22
+        by smtp.gmail.com with ESMTPSA id f33sm4266535pgl.83.2020.12.09.19.57.43
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Dec 2020 19:57:32 -0800 (PST)
+        Wed, 09 Dec 2020 19:57:53 -0800 (PST)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -63,9 +63,9 @@ Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v8 01/12] mm/memory_hotplug: Factor out bootmem core functions to bootmem_info.c
-Date:   Thu, 10 Dec 2020 11:55:15 +0800
-Message-Id: <20201210035526.38938-2-songmuchun@bytedance.com>
+Subject: [PATCH v8 03/12] mm/bootmem_info: Introduce free_bootmem_page helper
+Date:   Thu, 10 Dec 2020 11:55:17 +0800
+Message-Id: <20201210035526.38938-4-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20201210035526.38938-1-songmuchun@bytedance.com>
 References: <20201210035526.38938-1-songmuchun@bytedance.com>
@@ -75,428 +75,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move bootmem info registration common API to individual bootmem_info.c.
-And we will use {get,put}_page_bootmem() to initialize the page for the
-vmemmap pages or free the vmemmap pages to buddy in the later patch.
-So move them out of CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code
-movement without any functional change.
+Any memory allocated via the memblock allocator and not via the buddy
+will be makred reserved already in the memmap. For those pages, we can
+call free_bootmem_page() to free it to buddy allocator.
+
+Becasue we wan to free some vmemmap pages of the HugeTLB to the buddy
+allocator, we can use this helper to do that in the later patchs.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: David Hildenbrand <david@redhat.com>
 ---
- arch/x86/mm/init_64.c          |   3 +-
- include/linux/bootmem_info.h   |  40 +++++++++++++
- include/linux/memory_hotplug.h |  27 ---------
- mm/Makefile                    |   1 +
- mm/bootmem_info.c              | 124 +++++++++++++++++++++++++++++++++++++++++
- mm/memory_hotplug.c            | 116 --------------------------------------
- mm/sparse.c                    |   1 +
- 7 files changed, 168 insertions(+), 144 deletions(-)
- create mode 100644 include/linux/bootmem_info.h
- create mode 100644 mm/bootmem_info.c
+ include/linux/bootmem_info.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index b5a3fa4033d3..0a45f062826e 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -33,6 +33,7 @@
- #include <linux/nmi.h>
- #include <linux/gfp.h>
- #include <linux/kcore.h>
-+#include <linux/bootmem_info.h>
- 
- #include <asm/processor.h>
- #include <asm/bios_ebda.h>
-@@ -1571,7 +1572,7 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
- 	return err;
- }
- 
--#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_HAVE_BOOTMEM_INFO_NODE)
-+#ifdef CONFIG_HAVE_BOOTMEM_INFO_NODE
- void register_page_bootmem_memmap(unsigned long section_nr,
- 				  struct page *start_page, unsigned long nr_pages)
- {
 diff --git a/include/linux/bootmem_info.h b/include/linux/bootmem_info.h
-new file mode 100644
-index 000000000000..4ed6dee1adc9
---- /dev/null
+index 4ed6dee1adc9..20a8b0df0c39 100644
+--- a/include/linux/bootmem_info.h
 +++ b/include/linux/bootmem_info.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LINUX_BOOTMEM_INFO_H
-+#define __LINUX_BOOTMEM_INFO_H
-+
-+#include <linux/mmzone.h>
-+
-+/*
-+ * Types for free bootmem stored in page->lru.next. These have to be in
-+ * some random range in unsigned long space for debugging purposes.
-+ */
-+enum {
-+	MEMORY_HOTPLUG_MIN_BOOTMEM_TYPE = 12,
-+	SECTION_INFO = MEMORY_HOTPLUG_MIN_BOOTMEM_TYPE,
-+	MIX_SECTION_INFO,
-+	NODE_INFO,
-+	MEMORY_HOTPLUG_MAX_BOOTMEM_TYPE = NODE_INFO,
-+};
-+
-+#ifdef CONFIG_HAVE_BOOTMEM_INFO_NODE
-+void __init register_page_bootmem_info_node(struct pglist_data *pgdat);
-+
-+void get_page_bootmem(unsigned long info, struct page *page,
-+		      unsigned long type);
-+void put_page_bootmem(struct page *page);
-+#else
-+static inline void register_page_bootmem_info_node(struct pglist_data *pgdat)
-+{
-+}
-+
-+static inline void put_page_bootmem(struct page *page)
-+{
-+}
-+
-+static inline void get_page_bootmem(unsigned long info, struct page *page,
-+				    unsigned long type)
-+{
-+}
-+#endif
-+
-+#endif /* __LINUX_BOOTMEM_INFO_H */
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 15acce5ab106..84590964ad35 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -33,18 +33,6 @@ struct vmem_altmap;
- 	___page;						   \
- })
+@@ -3,6 +3,7 @@
+ #define __LINUX_BOOTMEM_INFO_H
  
--/*
-- * Types for free bootmem stored in page->lru.next. These have to be in
-- * some random range in unsigned long space for debugging purposes.
-- */
--enum {
--	MEMORY_HOTPLUG_MIN_BOOTMEM_TYPE = 12,
--	SECTION_INFO = MEMORY_HOTPLUG_MIN_BOOTMEM_TYPE,
--	MIX_SECTION_INFO,
--	NODE_INFO,
--	MEMORY_HOTPLUG_MAX_BOOTMEM_TYPE = NODE_INFO,
--};
--
- /* Types for control the zone type of onlined and offlined memory */
- enum {
- 	/* Offline the memory. */
-@@ -222,17 +210,6 @@ static inline void arch_refresh_nodedata(int nid, pg_data_t *pgdat)
- #endif /* CONFIG_NUMA */
- #endif /* CONFIG_HAVE_ARCH_NODEDATA_EXTENSION */
- 
--#ifdef CONFIG_HAVE_BOOTMEM_INFO_NODE
--extern void __init register_page_bootmem_info_node(struct pglist_data *pgdat);
--#else
--static inline void register_page_bootmem_info_node(struct pglist_data *pgdat)
--{
--}
--#endif
--extern void put_page_bootmem(struct page *page);
--extern void get_page_bootmem(unsigned long ingo, struct page *page,
--			     unsigned long type);
--
- void get_online_mems(void);
- void put_online_mems(void);
- 
-@@ -260,10 +237,6 @@ static inline void zone_span_writelock(struct zone *zone) {}
- static inline void zone_span_writeunlock(struct zone *zone) {}
- static inline void zone_seqlock_init(struct zone *zone) {}
- 
--static inline void register_page_bootmem_info_node(struct pglist_data *pgdat)
--{
--}
--
- static inline int try_online_node(int nid)
- {
- 	return 0;
-diff --git a/mm/Makefile b/mm/Makefile
-index a1af02ba8f3f..ed4b88fa0f5e 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_SLUB) += slub.o
- obj-$(CONFIG_KASAN)	+= kasan/
- obj-$(CONFIG_KFENCE) += kfence/
- obj-$(CONFIG_FAILSLAB) += failslab.o
-+obj-$(CONFIG_HAVE_BOOTMEM_INFO_NODE) += bootmem_info.o
- obj-$(CONFIG_MEMORY_HOTPLUG) += memory_hotplug.o
- obj-$(CONFIG_MEMTEST)		+= memtest.o
- obj-$(CONFIG_MIGRATION) += migrate.o
-diff --git a/mm/bootmem_info.c b/mm/bootmem_info.c
-new file mode 100644
-index 000000000000..fcab5a3f8cc0
---- /dev/null
-+++ b/mm/bootmem_info.c
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  linux/mm/bootmem_info.c
-+ *
-+ *  Copyright (C)
-+ */
+ #include <linux/mmzone.h>
 +#include <linux/mm.h>
-+#include <linux/compiler.h>
-+#include <linux/memblock.h>
-+#include <linux/bootmem_info.h>
-+#include <linux/memory_hotplug.h>
-+
-+void get_page_bootmem(unsigned long info, struct page *page, unsigned long type)
-+{
-+	page->freelist = (void *)type;
-+	SetPagePrivate(page);
-+	set_page_private(page, info);
-+	page_ref_inc(page);
-+}
-+
-+void put_page_bootmem(struct page *page)
-+{
-+	unsigned long type;
-+
-+	type = (unsigned long) page->freelist;
-+	BUG_ON(type < MEMORY_HOTPLUG_MIN_BOOTMEM_TYPE ||
-+	       type > MEMORY_HOTPLUG_MAX_BOOTMEM_TYPE);
-+
-+	if (page_ref_dec_return(page) == 1) {
-+		page->freelist = NULL;
-+		ClearPagePrivate(page);
-+		set_page_private(page, 0);
-+		INIT_LIST_HEAD(&page->lru);
-+		free_reserved_page(page);
-+	}
-+}
-+
-+#ifndef CONFIG_SPARSEMEM_VMEMMAP
-+static void register_page_bootmem_info_section(unsigned long start_pfn)
-+{
-+	unsigned long mapsize, section_nr, i;
-+	struct mem_section *ms;
-+	struct page *page, *memmap;
-+	struct mem_section_usage *usage;
-+
-+	section_nr = pfn_to_section_nr(start_pfn);
-+	ms = __nr_to_section(section_nr);
-+
-+	/* Get section's memmap address */
-+	memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
-+
-+	/*
-+	 * Get page for the memmap's phys address
-+	 * XXX: need more consideration for sparse_vmemmap...
-+	 */
-+	page = virt_to_page(memmap);
-+	mapsize = sizeof(struct page) * PAGES_PER_SECTION;
-+	mapsize = PAGE_ALIGN(mapsize) >> PAGE_SHIFT;
-+
-+	/* remember memmap's page */
-+	for (i = 0; i < mapsize; i++, page++)
-+		get_page_bootmem(section_nr, page, SECTION_INFO);
-+
-+	usage = ms->usage;
-+	page = virt_to_page(usage);
-+
-+	mapsize = PAGE_ALIGN(mem_section_usage_size()) >> PAGE_SHIFT;
-+
-+	for (i = 0; i < mapsize; i++, page++)
-+		get_page_bootmem(section_nr, page, MIX_SECTION_INFO);
-+
-+}
-+#else /* CONFIG_SPARSEMEM_VMEMMAP */
-+static void register_page_bootmem_info_section(unsigned long start_pfn)
-+{
-+	unsigned long mapsize, section_nr, i;
-+	struct mem_section *ms;
-+	struct page *page, *memmap;
-+	struct mem_section_usage *usage;
-+
-+	section_nr = pfn_to_section_nr(start_pfn);
-+	ms = __nr_to_section(section_nr);
-+
-+	memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
-+
-+	register_page_bootmem_memmap(section_nr, memmap, PAGES_PER_SECTION);
-+
-+	usage = ms->usage;
-+	page = virt_to_page(usage);
-+
-+	mapsize = PAGE_ALIGN(mem_section_usage_size()) >> PAGE_SHIFT;
-+
-+	for (i = 0; i < mapsize; i++, page++)
-+		get_page_bootmem(section_nr, page, MIX_SECTION_INFO);
-+}
-+#endif /* !CONFIG_SPARSEMEM_VMEMMAP */
-+
-+void __init register_page_bootmem_info_node(struct pglist_data *pgdat)
-+{
-+	unsigned long i, pfn, end_pfn, nr_pages;
-+	int node = pgdat->node_id;
-+	struct page *page;
-+
-+	nr_pages = PAGE_ALIGN(sizeof(struct pglist_data)) >> PAGE_SHIFT;
-+	page = virt_to_page(pgdat);
-+
-+	for (i = 0; i < nr_pages; i++, page++)
-+		get_page_bootmem(node, page, NODE_INFO);
-+
-+	pfn = pgdat->node_start_pfn;
-+	end_pfn = pgdat_end_pfn(pgdat);
-+
-+	/* register section info */
-+	for (; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
-+		/*
-+		 * Some platforms can assign the same pfn to multiple nodes - on
-+		 * node0 as well as nodeN.  To avoid registering a pfn against
-+		 * multiple nodes we check that this pfn does not already
-+		 * reside in some other nodes.
-+		 */
-+		if (pfn_valid(pfn) && (early_pfn_to_nid(pfn) == node))
-+			register_page_bootmem_info_section(pfn);
-+	}
-+}
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index a8cef4955907..4c4ca99745b7 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -141,122 +141,6 @@ static void release_memory_resource(struct resource *res)
- }
  
- #ifdef CONFIG_MEMORY_HOTPLUG_SPARSE
--void get_page_bootmem(unsigned long info,  struct page *page,
--		      unsigned long type)
--{
--	page->freelist = (void *)type;
--	SetPagePrivate(page);
--	set_page_private(page, info);
--	page_ref_inc(page);
--}
--
--void put_page_bootmem(struct page *page)
--{
--	unsigned long type;
--
--	type = (unsigned long) page->freelist;
--	BUG_ON(type < MEMORY_HOTPLUG_MIN_BOOTMEM_TYPE ||
--	       type > MEMORY_HOTPLUG_MAX_BOOTMEM_TYPE);
--
--	if (page_ref_dec_return(page) == 1) {
--		page->freelist = NULL;
--		ClearPagePrivate(page);
--		set_page_private(page, 0);
--		INIT_LIST_HEAD(&page->lru);
--		free_reserved_page(page);
--	}
--}
--
--#ifdef CONFIG_HAVE_BOOTMEM_INFO_NODE
--#ifndef CONFIG_SPARSEMEM_VMEMMAP
--static void register_page_bootmem_info_section(unsigned long start_pfn)
--{
--	unsigned long mapsize, section_nr, i;
--	struct mem_section *ms;
--	struct page *page, *memmap;
--	struct mem_section_usage *usage;
--
--	section_nr = pfn_to_section_nr(start_pfn);
--	ms = __nr_to_section(section_nr);
--
--	/* Get section's memmap address */
--	memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
--
--	/*
--	 * Get page for the memmap's phys address
--	 * XXX: need more consideration for sparse_vmemmap...
--	 */
--	page = virt_to_page(memmap);
--	mapsize = sizeof(struct page) * PAGES_PER_SECTION;
--	mapsize = PAGE_ALIGN(mapsize) >> PAGE_SHIFT;
--
--	/* remember memmap's page */
--	for (i = 0; i < mapsize; i++, page++)
--		get_page_bootmem(section_nr, page, SECTION_INFO);
--
--	usage = ms->usage;
--	page = virt_to_page(usage);
--
--	mapsize = PAGE_ALIGN(mem_section_usage_size()) >> PAGE_SHIFT;
--
--	for (i = 0; i < mapsize; i++, page++)
--		get_page_bootmem(section_nr, page, MIX_SECTION_INFO);
--
--}
--#else /* CONFIG_SPARSEMEM_VMEMMAP */
--static void register_page_bootmem_info_section(unsigned long start_pfn)
--{
--	unsigned long mapsize, section_nr, i;
--	struct mem_section *ms;
--	struct page *page, *memmap;
--	struct mem_section_usage *usage;
--
--	section_nr = pfn_to_section_nr(start_pfn);
--	ms = __nr_to_section(section_nr);
--
--	memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
--
--	register_page_bootmem_memmap(section_nr, memmap, PAGES_PER_SECTION);
--
--	usage = ms->usage;
--	page = virt_to_page(usage);
--
--	mapsize = PAGE_ALIGN(mem_section_usage_size()) >> PAGE_SHIFT;
--
--	for (i = 0; i < mapsize; i++, page++)
--		get_page_bootmem(section_nr, page, MIX_SECTION_INFO);
--}
--#endif /* !CONFIG_SPARSEMEM_VMEMMAP */
--
--void __init register_page_bootmem_info_node(struct pglist_data *pgdat)
--{
--	unsigned long i, pfn, end_pfn, nr_pages;
--	int node = pgdat->node_id;
--	struct page *page;
--
--	nr_pages = PAGE_ALIGN(sizeof(struct pglist_data)) >> PAGE_SHIFT;
--	page = virt_to_page(pgdat);
--
--	for (i = 0; i < nr_pages; i++, page++)
--		get_page_bootmem(node, page, NODE_INFO);
--
--	pfn = pgdat->node_start_pfn;
--	end_pfn = pgdat_end_pfn(pgdat);
--
--	/* register section info */
--	for (; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
--		/*
--		 * Some platforms can assign the same pfn to multiple nodes - on
--		 * node0 as well as nodeN.  To avoid registering a pfn against
--		 * multiple nodes we check that this pfn does not already
--		 * reside in some other nodes.
--		 */
--		if (pfn_valid(pfn) && (early_pfn_to_nid(pfn) == node))
--			register_page_bootmem_info_section(pfn);
--	}
--}
--#endif /* CONFIG_HAVE_BOOTMEM_INFO_NODE */
--
- static int check_pfn_span(unsigned long pfn, unsigned long nr_pages,
- 		const char *reason)
+ /*
+  * Types for free bootmem stored in page->lru.next. These have to be in
+@@ -22,6 +23,24 @@ void __init register_page_bootmem_info_node(struct pglist_data *pgdat);
+ void get_page_bootmem(unsigned long info, struct page *page,
+ 		      unsigned long type);
+ void put_page_bootmem(struct page *page);
++
++/*
++ * Any memory allocated via the memblock allocator and not via the
++ * buddy will be makred reserved already in the memmap. For those
++ * pages, we can call this function to free it to buddy allocator.
++ */
++static inline void free_bootmem_page(struct page *page)
++{
++	unsigned long magic = (unsigned long)page->freelist;
++
++	/* bootmem page has reserved flag in the reserve_bootmem_region */
++	VM_WARN_ON(!PageReserved(page) || page_ref_count(page) != 2);
++
++	if (magic == SECTION_INFO || magic == MIX_SECTION_INFO)
++		put_page_bootmem(page);
++	else
++		WARN_ON(1);
++}
+ #else
+ static inline void register_page_bootmem_info_node(struct pglist_data *pgdat)
  {
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 7bd23f9d6cef..87676bf3af40 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -13,6 +13,7 @@
- #include <linux/vmalloc.h>
- #include <linux/swap.h>
- #include <linux/swapops.h>
-+#include <linux/bootmem_info.h>
- 
- #include "internal.h"
- #include <asm/dma.h>
 -- 
 2.11.0
 
