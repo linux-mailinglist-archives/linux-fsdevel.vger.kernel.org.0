@@ -2,128 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCB5A2D5A74
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 13:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E9E2D5A85
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Dec 2020 13:28:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbgLJMY7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 07:24:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41236 "EHLO
+        id S1729189AbgLJM1q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 07:27:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731010AbgLJMX4 (ORCPT
+        with ESMTP id S1728207AbgLJM1q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 07:23:56 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62955C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 04:23:16 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id i18so5323759ioa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 04:23:16 -0800 (PST)
+        Thu, 10 Dec 2020 07:27:46 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF54EC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 04:27:05 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id 11so3916474pfu.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 04:27:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nF9+g6mYV6IRupmAkfRb8NxFT8RcS0T8JHL28OEIqos=;
-        b=pMAStHjXEcYEnzztKvKbMOGtn2LzFNoE1WmMqF2c2CAfGX/VZHQyduVBdix8dTPlpv
-         0NM4B33U7DhfBxOqW1RvtJDnDXD5Yj+eYMvERD5qRpJ6OvlKAhOx8Rq2Yxf7tGh0FED0
-         62pR6mejgA3Nz8tXVg9geAtXzDrnY167aHK70E1NtFhZYF4eaQf616aJzX4jM9e8wHbW
-         wA5Bv1MsOojzbloSnh9HYPc0GSS2HCKXNVhSJXfUeFfM3dd2JB1TRToVnZZr1VoR/OZl
-         IRmyWsOquTQJsWjmOssNAkvWiBo07Jx4urGOeX1WDs1X4PJ7yzCHtTmr0cqLhZ4rSkHs
-         hyIQ==
+        bh=wRVH576RjUF7Hfh+GmVFJTHPtJJABCzK9jSLmoXeohM=;
+        b=QGxx2uqjkZLjwdyE5TglOBgNyR7M/o3toVg0IHWs2Un4c798mQiWRI/NN0FMfX4/gg
+         IJReYIcQ31zi26/7+syJfTE6ThijeQoZdGNcny52VUzZtPbGKiXISDRo3Ykuyf2ppOn8
+         6xYGIrmC+9Q1+oERfykes5HcLNdSI3l772nN6zLhVPDRCvVXv+9i/BeTzF7zR8vb/AxC
+         3JWAgmGWuNDJOT2d9hhfHKdfTBavQFlpTjzcV7qzNH3EgJ3QwGhm2wP6aFE5+PPqnnT+
+         72IUhDliIa3zPo0K+5frDNU0xN5UolLIcgRimNQAVabHNmXiViBJ8dfiLQjFNntlUYSC
+         08oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nF9+g6mYV6IRupmAkfRb8NxFT8RcS0T8JHL28OEIqos=;
-        b=YSvWLCAsCe7bEsScq1O1iIBU5g+tKrjnIlL6TcUlc+qoWIqLFP9JrgRZPHLdrrSaJp
-         hIJ8k70Pt9jPVsKkEcZ8X60SZUNiIPPQpECX0Hi/Vg//7SGAPY6rB+tbtvG7qGUe92HE
-         OuXRLfNQXizxHQvg0cE1OrahREF5Dsyor1jmleFutyKKgfr1EY4+D9p0/DKzyuWgwieR
-         qs7jwseygzTGUV++XKszHP/tToFSckgLMQdOlofzWx7vVUqWJBK2RfIUHPK/xaPNWA3Z
-         o4qZyskwi/AcLF7ccfmFDcUwlgmIG64UXgRSxKcTP/1mQveda7+8VQbaizE1ASMIjwB1
-         h48w==
-X-Gm-Message-State: AOAM533scC64s5kOaWlUbC3bNCLcHKHKQgkWmetuLdsOf9ZkfgdRu84f
-        lV5s9tYpSs+06VmMBmlE4+0x8I+2WgIwrzsa/gEGbmeRipc=
-X-Google-Smtp-Source: ABdhPJwRnW188oBc7D1K6f0n9rt2RThDrLMfHLW/7kX3Igqo8SaXklNClGzy41bz97DFRE/DAlpSlLfqx2284UWMChc=
-X-Received: by 2002:a02:8482:: with SMTP id f2mr8594735jai.93.1607602995670;
- Thu, 10 Dec 2020 04:23:15 -0800 (PST)
+        bh=wRVH576RjUF7Hfh+GmVFJTHPtJJABCzK9jSLmoXeohM=;
+        b=Us5++UJo7FXfcXrE8Rod8VLEPaJ+zjugErrECyfXjGWBDMNhGmy5P75UAL5f34oExA
+         H+RolyEgke1vEEMXl0Dyo+ewUa3fvDBff9ZzuUs4J9KdZsLmfer/mP/NOJnZ5D5wTSoA
+         EPs2E7aH9nWS3Fo9JxzhCcuIpsVLMRuMQ6UEt+aj58GbVmpItMgKw9QI7EdCBChkVUEy
+         Qdnc+kc0zm4UKaCeMP5JEXseo2oxN2gyENzQ/b2soJ0KS8w/TVJkyZnNatzeQG+BXvcv
+         j59uBlN/s3wZ0RKsp3Oix5mCi05BRW2K3wy64l1RUwOauMC0ejH9Itnl5Ay4h1jPlpaz
+         bSYg==
+X-Gm-Message-State: AOAM530BSQH2oytH6NCENhvQbjAJtxPjI80fYvtj2Bj9o4SLXUdibUDI
+        gxwbUhwkjyMQk7G+LJgmCy1v2xVyi7JjBJMN71EH1Q==
+X-Google-Smtp-Source: ABdhPJzJSSCikK3jOM3ONA3u/M/J74mq1J/fc+RbtNlN/9xfSaOqDZ4guFg9UoAE15TqPlyox8rej6pMBOvdcG5TA5k=
+X-Received: by 2002:a63:1203:: with SMTP id h3mr6352071pgl.273.1607603225499;
+ Thu, 10 Dec 2020 04:27:05 -0800 (PST)
 MIME-Version: 1.0
-References: <CAOQ4uxiOMeGD212Lt6_udbDb6f6M+dt4vUrZz_2Qt-tuvAt--A@mail.gmail.com>
- <20201210112511.GB24151@quack2.suse.cz>
-In-Reply-To: <20201210112511.GB24151@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 10 Dec 2020 14:23:04 +0200
-Message-ID: <CAOQ4uxj5+sO1PCfUB=xUHxnZjsAWmrCuhJgD7oaourn1R8KaMQ@mail.gmail.com>
-Subject: Re: FAN_CREATE_SELF
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201210035526.38938-1-songmuchun@bytedance.com>
+ <20201210035526.38938-10-songmuchun@bytedance.com> <20201210100454.GB3613@localhost.localdomain>
+In-Reply-To: <20201210100454.GB3613@localhost.localdomain>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 10 Dec 2020 20:26:28 +0800
+Message-ID: <CAMZfGtVks41ZXaUgPdLyNqVCRYTvSm5qAN9GM5e0vqJ9YV7NdA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v8 09/12] mm/hugetlb: Add a kernel
+ parameter hugetlb_free_vmemmap
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 1:43 PM Jan Kara <jack@suse.cz> wrote:
+On Thu, Dec 10, 2020 at 7:41 PM Oscar Salvador <osalvador@suse.de> wrote:
 >
-> Hi Amir!
->
-> On Wed 09-12-20 21:14:53, Amir Goldstein wrote:
-> > I have a use case with a listener that uses FAN_REPORT_FID mode.
-> > (fid is an index to a db).
-> > Most of the time fid can be resolved to the path and that is sufficient.
-> > If it cannot, the file will be detected by a later dir scan.
-> >
-> > I find that with most of the events this use case can handle the events
-> > efficiently without the name info except for FAN_CREATE.
-> >
-> > For files, with most applications, FAN_CREATE will be followed by
-> > some other event with the file fid, but it is not guaranteed.
-> > For dirs, a single FAN_CREATE event is more common.
-> >
-> > I was thinking that a FAN_CREATE_SELF event could be useful in some
-> > cases, but I don't think it is a must for closing functional gaps.
-> > For example, another group could be used with FAN_REPORT_DFID_NAME
-> > to listen on FAN_CREATE events only, or on FAN_CREATE (without name)
-> > the dir can be scanned, but it is not ideal.
-> >
-> > Before composing a patch I wanted to ask your opinion on the
-> > FAN_CREATE_SELF event. Do you have any thoughts on this?
->
-> Well, generating FAN_CREATE_SELF event is kind of odd because you have no
-> mark placed on the inode which is being created. So it would seem more
-> logical to me that dirent events - create, move, delete - could provide you
-> with a FID of object that is affected by the operation (i.e., where DFID +
-> name takes you). That would have to be another event info type.
+> On Thu, Dec 10, 2020 at 11:55:23AM +0800, Muchun Song wrote:
+> > +hugetlb_free_vmemmap
+> > +     When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this enables freeing
+> > +     unused vmemmap pages associated each HugeTLB page.
+>                                       ^^^ with
 
-FAN_CREATE_SELF makes sense for a filesystem mark. I forgot to
-mention that in the description of my use case.
-It also makes sense to API IMO because of symmetry with delete and move self
-vs. a completely new type of event.
-The application is maintaining a map with entries per accessed file
-indexed by fid.
-When an object appears on the fs, it would have been nice to be able to update
-the map right away, but it is not a deal breaker if it is updated later when the
-object is observed in another event.
+Thanks.
 
 >
-> BTW, what's the problem with just using FAN_REPORT_DFID_NAME? You don't
-> want to pay the cost of looking up & copying DFID+name instead of FID for
-> cases you don't care about? Is there such a significant difference?
+> > -     if (end - start < PAGES_PER_SECTION * sizeof(struct page))
+> > +     if (is_hugetlb_free_vmemmap_enabled())
+> > +             err = vmemmap_populate_basepages(start, end, node, NULL);
+> > +     else if (end - start < PAGES_PER_SECTION * sizeof(struct page))
+> >               err = vmemmap_populate_basepages(start, end, node, NULL);
+>
+> Not sure if joining those in an OR makes se.se
 
-That is the reason. Currently, the application uses FAN_REPORT_DFID_NAME,
-but I observed that with some configurations, name info is ONLY relevant for
-FAN_CREATE events. For those configurations, if we had FAN_CREATE_SELF,
-name info copying, variable size event allocation, less efficient merge, all of
-those could be avoided. How much does it actually save? I don't know.
+Well, I can do it.
 
-So as I said, I see it as a "nice to have" event, certainly not a
-must, but it can
-help optimize some workloads.
-The honest truth is that I think if I try hard enough I will be able
-to find a corner
-use case where FAN_CREATE_SELF can actually help to close a functional
-gap (or the new type of create event that you mentioned), but I am lazy try,
-so I try to use these arguments instead:
+>
+> >       else if (boot_cpu_has(X86_FEATURE_PSE))
+> >               err = vmemmap_populate_hugepages(start, end, node, altmap);
+> > @@ -1610,7 +1613,8 @@ void register_page_bootmem_memmap(unsigned long section_nr,
+> >               }
+> >               get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_INFO);
+> >
+> > -             if (!boot_cpu_has(X86_FEATURE_PSE)) {
+> > +             if (!boot_cpu_has(X86_FEATURE_PSE) ||
+> > +                 is_hugetlb_free_vmemmap_enabled()) {
+>
+> I would add a variable at the beginning called "basepages_populated"
+> that holds the result of those two conditions.
+> I am not sure if it slightly improves the code as the conditions do
+> not need to be rechecked, but the readibility a bit.
 
-The API documentation should be pretty straight forward and natural.
-The implementation should be trivial.
-So the question is - Why not?
+Agree. The condition does not need to be rechecked.
+Will  do in the next version. Thanks.
 
-Thanks,
-Amir.
+>
+> > +bool hugetlb_free_vmemmap_enabled;
+> > +
+> > +static int __init early_hugetlb_free_vmemmap_param(char *buf)
+> > +{
+> > +     if (!buf)
+> > +             return -EINVAL;
+> > +
+> > +     /* We cannot optimize if a "struct page" crosses page boundaries. */
+>
+> I think this comment belongs to the last patch.
+>
+
+Thanks.
+
+>
+> --
+> Oscar Salvador
+> SUSE L3
+
+
+
+-- 
+Yours,
+Muchun
