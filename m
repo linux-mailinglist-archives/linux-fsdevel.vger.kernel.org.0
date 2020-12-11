@@ -2,218 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF06D2D8235
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 23:39:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 592672D82E1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Dec 2020 00:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436775AbgLKWgl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 17:36:41 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:45068 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436721AbgLKWgc (ORCPT
+        id S2390537AbgLKXsn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 18:48:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46158 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389300AbgLKXsi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 17:36:32 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BBMUxbp136018;
-        Fri, 11 Dec 2020 22:35:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=tit4hGGp99VsMRkEIE45lsaL/RqvoY94HPSKp63Y9bY=;
- b=A9VZoVYr6hlC+2O//48xcyqmXCsclPrsyqzqbHauXzrDHZxc5md0aPFdoHlN7VqBoWWd
- oiZ9Z9p3r73+sTj03pTti0hp7Lp9GG9GvJYDbpes+lCctU4WDGO4QVfBp7lxpCE78v2Y
- OL56sJNb1Z5N3xl+grqgEvdN09YpUE7dY9ACSvcSVz9R+3K9Xc+jsC/Fdf60VbFPFK+h
- AZ2elUb1Hq9vqsAbdL9QBX3VaHZw9fMndzpr0dyJ5qHWUEuc3OM/WVIVzeoW6ZALoiIu
- E4Y0qE4+HzIOIQjKv/ypOk5FZJBSJyayuL1K730eCXColgqKpLvIDeT5s8TQOA5VygW3 rA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 35825mmybd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 11 Dec 2020 22:35:41 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BBMUq10061166;
-        Fri, 11 Dec 2020 22:35:40 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 358kyysrbf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Dec 2020 22:35:40 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BBMZcCv028211;
-        Fri, 11 Dec 2020 22:35:38 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 11 Dec 2020 14:35:37 -0800
-Date:   Fri, 11 Dec 2020 14:35:36 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        tytso@mit.edu, khazhy@google.com, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH 5/8] vfs: Include origin of the SB error notification
-Message-ID: <20201211223536.GE106255@magnolia>
-References: <20201208003117.342047-6-krisman@collabora.com>
- <20201208003117.342047-1-krisman@collabora.com>
- <952750.1607431868@warthog.procyon.org.uk>
- <87r1o05ua6.fsf@collabora.com>
- <20201208184123.GC106255@magnolia>
- <87lfe85c6b.fsf@collabora.com>
- <20201209032425.GD106255@magnolia>
- <87h7ov5dts.fsf@collabora.com>
+        Fri, 11 Dec 2020 18:48:38 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F7EC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 15:47:58 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id s21so7957248pfu.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 15:47:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oISh5Qt+9+qozoHwPiK0LJy1wYKfFRbf1g7sa3wtD80=;
+        b=M7t+fFdOFLTW7Fy25J82EvKyA/RadiGz9CwtFthgIL6J5q74/oT3Hnjt5pbEJccDrR
+         Dv4iNdeGm+QjOAbsc00ovYeTop+TOcoNnlxSBSPaNGT2Aua70NFEgZ11T/2sW6Bib4l+
+         G7A/lYczvJS5ULmTUD0AoJYiJggr+QBDA3Fi80s7q5ALx/TkgEwK7soeVPfe7HP8q+D4
+         qG4AJW23BnvgA9Vo/DhfoH2KOZgq/FFSx3UTXBYUAOvop7Nr55il0Uw6S1fyakc8Uk6S
+         WoygVAX6jHcfhi5IGCsK9u31IFgNQG1Cf7KNXk0I3aQG0annLeGkpku5XtTfhigHsikx
+         3rjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oISh5Qt+9+qozoHwPiK0LJy1wYKfFRbf1g7sa3wtD80=;
+        b=hAQnVhoTGrB/MkVIM6WS1TcsANb3L3kX3dU6JYnidlNc7+fKz2b2GhJqi3c7uEej6R
+         7pA8L9QMCE5t7ZcW3o1yx0hXB6QQq2FkWynN4yLLNowi/pcim0bqkZEIfLYXfDfM7DHW
+         LsxQfV8jkvXGLJSjCHR7/36F6tKx3dQXMBBvGmZqtAankGOtAvhlvoSXBfEGGhCPT46m
+         jH2AiayA3IBGyKjpsEM7vr0rcZjlISm+lFxDwD6vthgLnEHP3lOsj3uFBQSvJmF+79lo
+         xvIlr/mZAw8FZYSdpH5qCt0Arm9cGLQQ8OGNm7nCP8Q4YYvouwW/3p5CB4cF9F13Lmxz
+         w7zQ==
+X-Gm-Message-State: AOAM531J5c4ashIArj4o7jpiPJPNjgKcw+nk42f/Jcan45qaVSqDCoMZ
+        xEWyZ2EjEvtlhJhvff63FDV10LqpcDpKkg==
+X-Google-Smtp-Source: ABdhPJz/oUzlrT2856Zu0Dc09zPPJJJygXjqHifFUBIs7QpYPz1HKxb+MqZDpjQjpSGXq4Q99S0T9A==
+X-Received: by 2002:aa7:95a6:0:b029:155:336c:3494 with SMTP id a6-20020aa795a60000b0290155336c3494mr13731923pfk.17.1607730477590;
+        Fri, 11 Dec 2020 15:47:57 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id c199sm12611384pfb.108.2020.12.11.15.47.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Dec 2020 15:47:56 -0800 (PST)
+Subject: Re: [PATCH 1/2] fs: add support for LOOKUP_NONBLOCK
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201210200114.525026-1-axboe@kernel.dk>
+ <20201210200114.525026-2-axboe@kernel.dk>
+ <CAHk-=wif32e=MvP-rNn9wL9wXinrL1FK6OQ6xPMtuQ2VQTxvqw@mail.gmail.com>
+ <139ecda1-bb08-b1f2-655f-eeb9976e8cff@kernel.dk>
+ <20201211024553.GW3579531@ZenIV.linux.org.uk>
+ <89f96b42-9d58-cd46-e157-758e91269d89@kernel.dk>
+ <20201211172054.GX3579531@ZenIV.linux.org.uk>
+ <2b4dbb32-14b0-fe5d-9330-2bae036cbb93@kernel.dk>
+ <20201211215141.GA3579531@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <371d1235-74c8-bed7-2ddc-ebb78d2e8be6@kernel.dk>
+Date:   Fri, 11 Dec 2020 16:47:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h7ov5dts.fsf@collabora.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9832 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
- malwarescore=0 suspectscore=1 mlxlogscore=999 bulkscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012110148
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9832 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 adultscore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501 mlxscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012110148
+In-Reply-To: <20201211215141.GA3579531@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 09, 2020 at 10:06:07AM -0300, Gabriel Krisman Bertazi wrote:
-> "Darrick J. Wong" <darrick.wong@oracle.com> writes:
+On 12/11/20 2:51 PM, Al Viro wrote:
+> On Fri, Dec 11, 2020 at 11:50:12AM -0700, Jens Axboe wrote:
 > 
-> > On Tue, Dec 08, 2020 at 04:29:32PM -0300, Gabriel Krisman Bertazi wrote:
-> >> "Darrick J. Wong" <darrick.wong@oracle.com> writes:
-> >> 
-> >> > On Tue, Dec 08, 2020 at 09:58:25AM -0300, Gabriel Krisman Bertazi wrote:
-> >> >> David Howells <dhowells@redhat.com> writes:
-> >> >> 
-> >> >> > Gabriel Krisman Bertazi <krisman@collabora.com> wrote:
-> >> >> >
-> >> >> >> @@ -130,6 +131,8 @@ struct superblock_error_notification {
-> >> >
-> >> > FWIW I wonder if this really should be inode_error_notification?
-> >> >
-> >> > If (for example) ext4 discovered an error in the blockgroup descriptor
-> >> > and wanted to report it, the inode and block numbers would be
-> >> > irrelevant, but the blockgroup number would be nice to have.
-> >> 
-> >> A previous RFC had superblock_error_notification and
-> >> superblock_inode_error_notification split, I think we can recover that.
-> >> 
-> >> >
-> >> >> >>  	__u32	error_cookie;
-> >> >> >>  	__u64	inode;
-> >> >> >>  	__u64	block;
-> >> >> >> +	char	function[SB_NOTIFICATION_FNAME_LEN];
-> >> >> >> +	__u16	line;
-> >> >> >>  	char	desc[0];
-> >> >> >>  };
-> >> >> >
-> >> >> > As Darrick said, this is a UAPI breaker, so you shouldn't do this (you can,
-> >> >> > however, merge this ahead a patch).  Also, I would put the __u16 before the
-> >> >> > char[].
-> >> >> >
-> >> >> > That said, I'm not sure whether it's useful to include the function name and
-> >> >> > line.  Both fields are liable to change over kernel commits, so it's not
-> >> >> > something userspace can actually interpret.  I think you're better off dumping
-> >> >> > those into dmesg.
-> >> >> >
-> >> >> > Further, this reduces the capacity of desc[] significantly - I don't know if
-> >> >> > that's a problem.
-> >> >> 
-> >> >> Yes, that is a big problem as desc is already quite limited.  I don't
-> >> >
-> >> > How limited?
-> >> 
-> >> The largest notification is 128 bytes, the one with the biggest header
-> >> is superblock_error_notification which leaves 56 bytes for description.
-> >> 
-> >> >
-> >> >> think it is a problem for them to change between kernel versions, as the
-> >> >> monitoring userspace can easily associate it with the running kernel.
-> >> >
-> >> > How do you make that association?  $majordistro's 4.18 kernel is not the
-> >> > same as the upstream 4.18.  Wouldn't you rather the notification message
-> >> > be entirely self-describing rather than depending on some external
-> >> > information about the sender?
-> >> 
-> >> True.  I was thinking on my use case where the customer controls their
-> >> infrastructure and would specialize their userspace tools, but that is
-> >> poor design on my part.  A self describing mechanism would be better.
-> >> 
-> >> >
-> >> >> The alternative would be generating something like unique IDs for each
-> >> >> error notification in the filesystem, no?
-> >> >> 
-> >> >> > And yet further, there's no room for addition of new fields with the desc[]
-> >> >> > buffer on the end.  Now maybe you're planning on making use of desc[] for
-> >> >> > text-encoding?
-> >> >> 
-> >> >> Yes.  I would like to be able to provide more details on the error,
-> >> >> without having a unique id.  For instance, desc would have the formatted
-> >> >> string below, describing the warning:
-> >> >> 
-> >> >> ext4_warning(inode->i_sb, "couldn't mark inode dirty (err %d)", err);
-> >> >
-> >> > Depending on the upper limit on the length of messages, I wonder if you
-> >> > could split the superblock notification and the description string into
-> >> > separate messages (with maybe the error cookie to tie them together) so
-> >> > that the struct isn't limited by having a VLA on the end, and the
-> >> > description can be more or less an arbitrary string?
-> >> >
-> >> > (That said I'm not familiar with the watch queue system so I have no
-> >> > idea if chained messages even make sense here, or are already
-> >> > implemented in some other way, or...)
-> >> 
-> >> I don't see any support for chaining messages in the current watch_queue
-> >> implementation, I'd need to extend the interface to support it.  I
-> >> considered this idea before, given the small description size, but I
-> >> thought it would be over-complicated, even though much more future
-> >> proof.  I will look into that.
-> >> 
-> >> What about the kernel exporting a per-filesystem table, as a build
-> >> target or in /sys/fs/<fs>/errors, that has descriptions strings for each
-> >> error?  Then the notification can have only the FS type, index to the
-> >> table and params.  This won't exactly be self-describing as you wanted
-> >> but, differently from function:line, it removes the need for the source
-> >> code, and allows localization.  The per-filesystem table would be
-> >> stable ABI, of course.
-> >
-> > Yikes.  I don't think people are going to be ok with a message table
-> > where we can never remove the strings.  I bet GregKH won't like that
-> > either (one value per sysfs file).
+>> I could filter on O_TRUNC (and O_CREAT) in the caller from the io_uring
+>> side, and in fact we may want to do that in general for RESOLVE_LOOKUP
+>> as well.
 > 
-> Indeed, sysfs seems out of question.  In fact the string format doesn't
-> even need to be in the kernel, and we don't need the strings to be sent
-> as part of the notifications.  What if we can have a bunch of
-> notification types, specific for each error message, and a library in
-> userspace that parses the notifications and understands the parameters
-> passed?  The library then displays the data as they wish.
+> You do realize that it covers O_RDWR as well, right?  If the object is on
+> a frozen filesystem, mnt_want_write() will block until the thing gets thawed.
 
-Er... I don't think we (XFS) really are going to maintain a userspace
-library to decode kernel messages.
+I do, current patch does have that handled. I was only referring to the
+fact that I don't consider O_TRUNC interesting enough to fold in non-block
+support for it, I'm quite happy just letting that be as it is and just
+disallow it in the flags directly.
 
-> > (Maybe I misread that and all you meant by stable ABI is the fact that
-> > the table exists at a given path and the notification message gives you
-> > a index into ... wherever we put it.)
+>>> AFAICS, without that part it is pretty much worthless.  And details
+>>> of what you are going to do in the missing bits *do* matter - unlike the
+>>> pathwalk side (which is trivial) it has potential for being very
+>>> messy.  I want to see _that_ before we commit to going there, and
+>>> a user-visible flag to openat2() makes a very strong commitment.
+>>
+>> Fair enough. In terms of patch flow, do you want that as an addon before
+>> we do RESOLVE_NONBLOCK, or do you want it as part of the core
+>> LOOKUP_NONBLOCK patch?
 > 
-> The kernel could even export the table as a build-time target, that
-> get's installed into X. But even that is not necessary if a library can
-> make sense of a notification that uniquely identifies each error and
-> only includes the useful debug parameters without any string formatting?
+> I want to understand how it will be done.
 
-/me shrugs and thinks that chaining fs notifications via cookie might be
-a better way to do this, since then you could push out a stream of
-notices about a filesystem event:
+Of course. I'll post what I have later, easier to discuss an actual
+series of patches.
 
-(0) generic vfs error telling you something happened at a inode/offset
+>> Agree, if we're going bool, we should make it the more usually followed
+>> success-on-false instead. And I'm happy to see you drop those
+>> likely/unlikely as well, not a huge fan. I'll fold this into what I had
+>> for that and include your naming change.
+> 
+> BTW, I wonder if the compiler is able to figure out that
+> 
+> bool f(void)
+> {
+> 	if (unlikely(foo))
+> 		return false;
+> 	if (unlikely(bar))
+> 		return false;
+> 	return true;
+> }
+> 
+> is unlikely to return false.  We can force that, obviously (provide an inlined
+> wrapper and slap likely() there), but...
 
-(1) fs-specific notice giving more details about what that fs thinks is
-wrong
+Not sure, it _should_, but reality may differ with that guess.
 
-(2) formatted message string so that you can send it to the sysadmin or
-feed it to google translate or whatever :)
+-- 
+Jens Axboe
 
---D
-
-> -- 
-> Gabriel Krisman Bertazi
