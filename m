@@ -2,94 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21B9C2D74C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 12:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C9C82D7563
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 13:16:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391211AbgLKLgj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 06:36:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbgLKLgC (ORCPT
+        id S2405895AbgLKMO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 07:14:28 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:41778 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405843AbgLKMN7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 06:36:02 -0500
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7125C0613D3;
-        Fri, 11 Dec 2020 03:35:21 -0800 (PST)
-Received: by mail-pj1-x1043.google.com with SMTP id iq13so2064975pjb.3;
-        Fri, 11 Dec 2020 03:35:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/IhdBUb0scCndiXnRQTPChTtqAPkXlFGtY0OtAx67ck=;
-        b=ZKJfsRgFdbM6CxtecB00mhoKyIQaNMNtNznVof2pKSujRS5hkm8rHaZ53cpaq7mOfn
-         J80cSQsVx00dJqSccv6V61+4wQ+9f8gEzgEhbBPwO41DmOfT1ui0dHKLPtNPDmsle8mZ
-         SYTSEolWksiYZpZHros3sDK+w6Ymra2n5LcfhC2w3T7IKhYR83HcKTnmXGre7kMYwEAU
-         CIsw1TaFevRFKPcAP3t1k1CgjClIOVazHOnW21x38vlg5Ct+l7o3scHHFLK60vy94wBM
-         EvcJ8cim1URKhy96C+l+d2Oa8Z8G6zjZevcvEuV68FNt0yqCP/5yrSkZJk/br2ses6OL
-         YR6w==
+        Fri, 11 Dec 2020 07:13:59 -0500
+Received: by mail-il1-f200.google.com with SMTP id f19so6925351ilk.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 04:13:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/IhdBUb0scCndiXnRQTPChTtqAPkXlFGtY0OtAx67ck=;
-        b=O5qAcM793TTiXq9Kd+xJrGA9gO5dXBJvQOr1/tTyIfE2cMAmFVpd3OxayXDPxzjBaj
-         dDJ8lRbNJOjwfS4N+/JGKPs2+ul5ud4J8Jy9Q0rGrzyJEI88aEDawhCpojagWfaw0sP9
-         Uqq5OQipYLjTAWldEfOGw66UpX2JtThrwIuUZMOZwPZjd/Wu8MaCoSKM433vCSQaB3V5
-         3TVX89V8ntn00SwEI9ro6j0/Y0hSNaA1uCLp803JAz/3DSV58ak85kXzTvAM4HQqthfr
-         JU7AAFKcxvzmOda6g8K/bFdll2EL9NbDIdUh3dkuoaIuQeLx4sBnISGcvZ/m8opxp8ab
-         qWEA==
-X-Gm-Message-State: AOAM530253EZFvNGBcuKjsCft7gZMcsbOgW6Z2s3edW7nB7zKICCx4pC
-        dvCmBoRrNA2WWAIZfsdi/YrYcuqjaLxfsQ==
-X-Google-Smtp-Source: ABdhPJySZUD4VjYjbqOhBVhC7H5zIGyb5reb0rZmBLv0Z+plhsTOKJAUfAGTqAI4ormdSTeek15izg==
-X-Received: by 2002:a17:902:d907:b029:db:cb2b:8bcc with SMTP id c7-20020a170902d907b02900dbcb2b8bccmr10911717plz.9.1607686521232;
-        Fri, 11 Dec 2020 03:35:21 -0800 (PST)
-Received: from localhost ([211.108.35.36])
-        by smtp.gmail.com with ESMTPSA id v17sm10181233pga.58.2020.12.11.03.35.20
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Dec 2020 03:35:20 -0800 (PST)
-Date:   Fri, 11 Dec 2020 20:35:18 +0900
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] vfs: remove comment for deleted argument 'cred'
-Message-ID: <20201211113518.GB6945@localhost.localdomain>
-References: <20201202125232.19278-1-minwoo.im.dev@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=trAsHS3H3DwMvQCSOWs0SnFO00Wxs6W+MX8Qz0q0h0Y=;
+        b=bc6LsYWRJq90aqDVHMWt3Bl3hkUZ60pUfDEk+cobbIzDj0izKITQBSjaK8oIvdBEH4
+         KGrAu3I0W6AJsHvmA3UQ4umg+yQ0SGc4mVBu7eHhgsz2aAuVq8vFwO83D6ZlOZWTxvBF
+         CmkhhSHKkURiD5t3NV+xxdLsDg+C7UE13WbqpRt9o/3fpU0nlBRtrqB602uftni30bwX
+         IchmLoAXOCjSSfiqG9BuIbEeOWf4piXBa1Eq+1+v5qHZhmLy4WOPcWwyh1AsSYKbZUAa
+         f20l9KagW/vo4+h0v+FaM0OeqEMWfMHBtPbVWuICM21hvDA/yoxkk39bn9SdHWa1EXZH
+         hdUA==
+X-Gm-Message-State: AOAM533Ss6YtB+o4Hnw3Ef2RFWwCUgLI77fipn03fwhKyBUUYUo9npjf
+        ILSa8dXlySA7+I61FR/qgVTd5R9hulEgKhUEIf8jZIiCx1VU
+X-Google-Smtp-Source: ABdhPJw103nl5XZexMP/Dze6TbQjtTSh4v5ad2agj7aF7mBg8DKEPUECmme1q/0fnJVh1b+js7kUYzVzfymqz/pnetkd6cKyywK0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201202125232.19278-1-minwoo.im.dev@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Received: by 2002:a02:23ce:: with SMTP id u197mr15323145jau.113.1607688797893;
+ Fri, 11 Dec 2020 04:13:17 -0800 (PST)
+Date:   Fri, 11 Dec 2020 04:13:17 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b53deb05b62f3777@google.com>
+Subject: linux-next boot error: KASAN: global-out-of-bounds Read in fs_validate_description
+From:   syzbot <syzbot+37dba74686ae4898e969@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20-12-02 21:52:32, Minwoo Im wrote:
-> Removed credential argument comment with no functional changes.
-> 
-> Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
-> ---
->  fs/open.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index 9af548fb841b..85a532af0946 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -923,7 +923,6 @@ EXPORT_SYMBOL(file_path);
->   * vfs_open - open the file at the given path
->   * @path: path to open
->   * @file: newly allocated file with f_flag initialized
-> - * @cred: credentials to use
->   */
->  int vfs_open(const struct path *path, struct file *file)
->  {
-> -- 
-> 2.17.1
-> 
-
 Hello,
 
-Gentle ping,
+syzbot found the following issue on:
 
-Thanks!
+HEAD commit:    3cc2bd44 Add linux-next specific files for 20201211
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11627b13500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6dbe20fdaa5aaebe
+dashboard link: https://syzkaller.appspot.com/bug?extid=37dba74686ae4898e969
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+37dba74686ae4898e969@syzkaller.appspotmail.com
+
+FS-Cache: Loaded
+CacheFiles: Loaded
+TOMOYO: 2.6.0
+Mandatory Access Control activated.
+AppArmor: AppArmor Filesystem Enabled
+pnp: PnP ACPI init
+pnp: PnP ACPI: found 7 devices
+clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+NET: Registered protocol family 2
+tcp_listen_portaddr_hash hash table entries: 4096 (order: 6, 327680 bytes, vmalloc)
+TCP established hash table entries: 65536 (order: 7, 524288 bytes, vmalloc)
+TCP bind hash table entries: 65536 (order: 10, 4718592 bytes, vmalloc)
+TCP: Hash tables configured (established 65536 bind 65536)
+MPTCP token hash table entries: 8192 (order: 7, 720896 bytes, vmalloc)
+UDP hash table entries: 4096 (order: 7, 655360 bytes, vmalloc)
+UDP-Lite hash table entries: 4096 (order: 7, 655360 bytes, vmalloc)
+NET: Registered protocol family 1
+RPC: Registered named UNIX socket transport module.
+RPC: Registered udp transport module.
+RPC: Registered tcp transport module.
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+NET: Registered protocol family 44
+pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: resource 7 [mem 0xc0000000-0xfebfefff window]
+pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+pci 0000:00:05.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+PCI: CLS 0 bytes, default 64
+PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+software IO TLB: mapped [mem 0x00000000b5c00000-0x00000000b9c00000] (64MB)
+RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl timer
+kvm: already loaded the other module
+clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x212735223b2, max_idle_ns: 440795277976 ns
+clocksource: Switched to clocksource tsc
+Initialise system trusted keyrings
+workingset: timestamp_bits=40 max_order=21 bucket_order=0
+zbud: loaded
+DLM installed
+squashfs: version 4.0 (2009/01/31) Phillip Lougher
+FS-Cache: Netfs 'nfs' registered for caching
+NFS: Registering the id_resolver key type
+Key type id_resolver registered
+Key type id_legacy registered
+nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
+FS-Cache: Netfs 'cifs' registered for caching
+Key type cifs.spnego registered
+Key type cifs.idmap registered
+==================================================================
+BUG: KASAN: global-out-of-bounds in fs_validate_description+0x1a5/0x1d0 fs/fs_parser.c:371
+Read of size 8 at addr ffffffff899b8320 by task swapper/0/1
+
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.10.0-rc7-next-20201211-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:120
+ print_address_description.constprop.0.cold+0x5/0x2f8 mm/kasan/report.c:230
+ __kasan_report mm/kasan/report.c:396 [inline]
+ kasan_report.cold+0x79/0xd5 mm/kasan/report.c:413
+ fs_validate_description+0x1a5/0x1d0 fs/fs_parser.c:371
+ register_filesystem+0x78/0x320 fs/filesystems.c:78
+ init_cifs+0x7a4/0x8cf fs/cifs/cifsfs.c:1609
+ do_one_initcall+0x103/0x690 init/main.c:1220
+ do_initcall_level init/main.c:1293 [inline]
+ do_initcalls init/main.c:1309 [inline]
+ do_basic_setup init/main.c:1329 [inline]
+ kernel_init_freeable+0x600/0x684 init/main.c:1535
+ kernel_init+0xe/0x1e0 init/main.c:1418
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+
+The buggy address belongs to the variable:
+ smb3_fs_parameters+0xc60/0xf40
+
+Memory state around the buggy address:
+ ffffffff899b8200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffff899b8280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffffff899b8300: 00 00 00 00 f9 f9 f9 f9 05 f9 f9 f9 f9 f9 f9 f9
+                               ^
+ ffffffff899b8380: 06 f9 f9 f9 f9 f9 f9 f9 06 f9 f9 f9 f9 f9 f9 f9
+ ffffffff899b8400: 00 01 f9 f9 f9 f9 f9 f9 00 f9 f9 f9 f9 f9 f9 f9
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
