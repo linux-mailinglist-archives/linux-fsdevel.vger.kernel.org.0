@@ -2,74 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D9862D773B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 15:00:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 998072D7778
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 15:11:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391311AbgLKN7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 08:59:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39822 "EHLO
+        id S2389690AbgLKOJq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 09:09:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731660AbgLKN6l (ORCPT
+        with ESMTP id S2390663AbgLKOJh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 08:58:41 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A0BC0613D3;
-        Fri, 11 Dec 2020 05:58:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ZihKsA22Et28L+VhHdtqUTD2BoH0RLZyZlt+xMMF8Ow=; b=IyKYrwls3wfp56Z7qFPwr0ue7Z
-        Yprw6UCRdnGLdbOf1Sn2AaFRFwqr2StRLqZvlkEvVobIqWznxgPXiEHRDI3mGGeTILifiKRRq1MN6
-        3PSkhZ8HzT9DmE5G6vbGrDHNEYKFYSHkD3szMs/kc0gBWk+BSWcJ14PJgSMisrDtxJ4kUR0GKCMJM
-        M7qus/u6xx6J2pqCeasF54kAGlcrhWrYvQiUpoG7e5ZDP1Br6TDVaY9+Gpr8hO/A1VWTpVjPAx3pg
-        pT/kxGOx4WV03ILPeHx+lt9XtjjII1g2ZKRTWebPTNtmlM0Jfj2fT85MbiH7YPAblbb7Nrd6bBFyn
-        oRjQO0sQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1knivS-0003uy-0i; Fri, 11 Dec 2020 13:57:38 +0000
-Date:   Fri, 11 Dec 2020 13:57:37 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org, adobriyan@gmail.com,
-        akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, hughd@google.com, shakeelb@google.com,
-        guro@fb.com, samitolvanen@google.com, feng.tang@intel.com,
-        neilb@suse.de, iamjoonsoo.kim@lge.com, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] mm: memcontrol: convert NR_FILE_THPS account to
- pages
-Message-ID: <20201211135737.GA2443@casper.infradead.org>
-References: <20201211041954.79543-1-songmuchun@bytedance.com>
- <20201211041954.79543-4-songmuchun@bytedance.com>
+        Fri, 11 Dec 2020 09:09:37 -0500
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0798C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 06:08:56 -0800 (PST)
+Received: by mail-ej1-x642.google.com with SMTP id qw4so12464690ejb.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 06:08:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=aF3Mh+MA2q+ZpkL8xg5nd4+KjM1FTv7S2GkjkszOwBM=;
+        b=i6YXb/kx1K+ZBNheDvASX0oKCecbflSu+fyZ2fjKhwHBwFR4vTEmwXKgPT0qc764hc
+         qewaFUeRaEtQMg4y/IoQVBFWvYZgkKHgyPd0hX4njbbbc7ZIqLfu5zOpaeWkQf9WL/YY
+         gK4YXTSVzLt6ykV4YXpOlzQE2kLyT/GEE8ZicFgOtOByVhSdmNRn25qGctI7sVs67bMM
+         g71vZ5z1eKErNtAJkJsFWO6CAtctbdgFlqO3i2yYIu2B89QgS0bwMVUcc7u83MGSWI/p
+         irIp0IQm6+JQBAc2JE7Gcyj+oiIYQTctJxugvD6aHDhN70KKyCr4Vg/HLjfLLlUIbrcR
+         cO5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aF3Mh+MA2q+ZpkL8xg5nd4+KjM1FTv7S2GkjkszOwBM=;
+        b=Yxej/Z5Eum8vios7FUdN3G1ps8xJDo7wfKfCWUPHQL/iV+WQOhrEWyX1X/hM/74wOR
+         35y0NQ7cNLwRN69aFUan1gTraRReMR1EmoxAWR5J/Dt2pL/k9DzZ71VYcCImrYtG5scG
+         dJmTOUmdH4OtUoTnZiqUbxWK94R4HQLSF/vI4HyqJr6skqjEVrmheenT9mAkTul67HVh
+         W4/LyZRRv9k2mAso//ObQ1GcTZLx1OlwzpWWQ53Nc+Bjyi9DFmDxTh8k0sfkPH05XT4n
+         qn4uqb6mhRfFptMnZjL/qdi2Do/q+nrBKWSL76YEoIirWxElKBaq2k+aTNWgMP9aDDvU
+         spnQ==
+X-Gm-Message-State: AOAM5335n9x//oEMxPtNtJXZb6HC3f9AMg0PHIjqjTK3lXpYqMIgh9r8
+        UxKTTB9al5QFVLTeVM7n/r4Rvw==
+X-Google-Smtp-Source: ABdhPJyMudGT3oM0ZWZIivI28u4XfQD8nzeth0kSRM1OzeZjoSv9S67hiN2S0oEkgM7dAVinTklXtQ==
+X-Received: by 2002:a17:906:a244:: with SMTP id bi4mr11127201ejb.59.1607695735452;
+        Fri, 11 Dec 2020 06:08:55 -0800 (PST)
+Received: from localhost ([2620:10d:c093:400::5:ee7a])
+        by smtp.gmail.com with ESMTPSA id rs27sm7106637ejb.21.2020.12.11.06.08.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Dec 2020 06:08:38 -0800 (PST)
+Date:   Fri, 11 Dec 2020 15:06:22 +0100
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 2/2] block: no-copy bvec for direct IO
+Message-ID: <20201211140622.GA286014@cmpxchg.org>
+References: <cover.1607477897.git.asml.silence@gmail.com>
+ <51905c4fcb222e14a1d5cb676364c1b4f177f582.1607477897.git.asml.silence@gmail.com>
+ <20201209084005.GC21968@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201211041954.79543-4-songmuchun@bytedance.com>
+In-Reply-To: <20201209084005.GC21968@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 12:19:50PM +0800, Muchun Song wrote:
-> +++ b/mm/filemap.c
-> @@ -207,7 +207,7 @@ static void unaccount_page_cache_page(struct address_space *mapping,
->  		if (PageTransHuge(page))
->  			__dec_lruvec_page_state(page, NR_SHMEM_THPS);
->  	} else if (PageTransHuge(page)) {
-> -		__dec_lruvec_page_state(page, NR_FILE_THPS);
-> +		__mod_lruvec_page_state(page, NR_FILE_THPS, -HPAGE_PMD_NR);
+On Wed, Dec 09, 2020 at 08:40:05AM +0000, Christoph Hellwig wrote:
+> > +	/*
+> > +	 * In practice groups of pages tend to be accessed/reclaimed/refaulted
+> > +	 * together. To not go over bvec for those who didn't set BIO_WORKINGSET
+> > +	 * approximate it by looking at the first page and inducing it to the
+> > +	 * whole bio
+> > +	 */
+> > +	if (unlikely(PageWorkingset(iter->bvec->bv_page)))
+> > +		bio_set_flag(bio, BIO_WORKINGSET);
+> 
+> IIRC the feedback was that we do not need to deal with BIO_WORKINGSET
+> at all for direct I/O.
 
-+               __mod_lruvec_page_state(page, NR_FILE_THPS, -nr);
+Yes, this hunk is incorrect. We must not use this flag for direct IO.
+It's only for paging IO, when you bring in the data at page->mapping +
+page->index. Otherwise you tell the pressure accounting code that you
+are paging in a thrashing page, when really you're just reading new
+data into a page frame that happens to be hot.
 
-> +++ b/mm/huge_memory.c
-> @@ -2748,7 +2748,8 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
->  			if (PageSwapBacked(head))
->  				__dec_lruvec_page_state(head, NR_SHMEM_THPS);
->  			else
-> -				__dec_lruvec_page_state(head, NR_FILE_THPS);
-> +				__mod_lruvec_page_state(head, NR_FILE_THPS,
-> +							-HPAGE_PMD_NR);
-
-+                               __mod_lruvec_page_state(head, NR_FILE_THPS,
-+                                               -thp_nr_pages(head));
-
+(As per the other thread, bio_add_page() currently makes that same
+mistake for direct IO. I'm fixing that.)
