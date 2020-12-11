@@ -2,119 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC8F92D8143
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 22:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 322532D814D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 22:54:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392369AbgLKVr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 16:47:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55642 "EHLO
+        id S2406453AbgLKVws (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 16:52:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393075AbgLKVrS (ORCPT
+        with ESMTP id S2393027AbgLKVw2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 16:47:18 -0500
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46715C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 13:46:38 -0800 (PST)
-Received: by mail-il1-x143.google.com with SMTP id p5so10168671iln.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 13:46:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5YZ3H6K6bc/G0qXrDIFefGVxnZGlM8U6jgQ2tyAiHTI=;
-        b=d0CMIkFnqPwcAWOJhffv5xQONGukI+RI+CCX4W/nrLhy/6MzwNWjgJvqXGyz/8dH/g
-         dkXfvj6pSlyX2brya87K/bCg/sZRYnJvN+eURC4O9j1syrqt/TtubWnnE25PAMOKrm8d
-         8bixsCiybezNYWurE/XFjFuYKjv6aicmpmninUdh5VL+CmJ0sFZ438gcD+yFMB032BJj
-         5dt7wXcCSF03GanZo3wzgUdF/umQq06hjgQHlq/ufg90lbQf1kXzElAC/pr7H1Mr3xNM
-         hkOfREND0JYyWVCKC52maN+PzePflAvflLoKr8y2QEHMRIJcsIsVV1OH6VYJOk4e2NKZ
-         lvnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5YZ3H6K6bc/G0qXrDIFefGVxnZGlM8U6jgQ2tyAiHTI=;
-        b=EEf0Y1zOGWTFh9kPIjMUjesILrVMZXlydwRKDHTQnLySGOVfj8RYwHD6F0aoT4XXap
-         x1MIbx3VbPtdG/9FiqcdUr8G5cW1WVEJUf9ZdUdTtFXoTsjifox5bhoM6UDWdWsXMf6P
-         rh9ttCDFYLe7wxN8+TUVJ0Y1pN3tJfXyKvV2N6Nw9QFRhXnbVgWA47ScmzTH/BR1YZ6i
-         Ye6u+ezNfZ8Dealnc5vy7cjj1jpYo8sRkPR0ydbVGVpTBVb1AJd/hyliHEdCL3dH1WaH
-         eSskU4Pd0JbH26f0j6UY7aLqnzcC8PC0wVn3Uh8xRehjcgorZ4YV7D948YTr0SlDP2KY
-         BKKg==
-X-Gm-Message-State: AOAM530dAlTGfeRcgmTJhzGx1wTsUUonPR1vMbUIIbmo52Z5R62v2TFL
-        RSFjyr6NX/V4X8lX3LJVvkRy6V8idxGtWA==
-X-Google-Smtp-Source: ABdhPJzFs1zoFAVC/V57JNhrw/nxzy6wlKpS5dRbJXmmPpEjzyKV+/qO9IKDaTnxbzZOSPKqc199IQ==
-X-Received: by 2002:a92:358a:: with SMTP id c10mr18422376ilf.258.1607723197273;
-        Fri, 11 Dec 2020 13:46:37 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id a7sm6272628iln.63.2020.12.11.13.46.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Dec 2020 13:46:36 -0800 (PST)
+        Fri, 11 Dec 2020 16:52:28 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1BDFC0613D3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 13:51:47 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1knqKD-000eG0-F1; Fri, 11 Dec 2020 21:51:41 +0000
+Date:   Fri, 11 Dec 2020 21:51:41 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Subject: Re: [PATCH 1/2] fs: add support for LOOKUP_NONBLOCK
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Message-ID: <20201211215141.GA3579531@ZenIV.linux.org.uk>
 References: <20201210200114.525026-1-axboe@kernel.dk>
  <20201210200114.525026-2-axboe@kernel.dk>
- <20201211023555.GV3579531@ZenIV.linux.org.uk>
- <bef3f905-f6b7-1134-7ca9-ff9385d6bf86@kernel.dk>
- <CAHk-=wjkA5Rx+0UjkSFQUqLJK9eRJ_MqoTZ8y2nyt4zXwE9vDg@mail.gmail.com>
- <20201211172931.GY3579531@ZenIV.linux.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <53f6be3d-58d7-9471-44ab-1b594b83a4b9@kernel.dk>
-Date:   Fri, 11 Dec 2020 14:46:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <CAHk-=wif32e=MvP-rNn9wL9wXinrL1FK6OQ6xPMtuQ2VQTxvqw@mail.gmail.com>
+ <139ecda1-bb08-b1f2-655f-eeb9976e8cff@kernel.dk>
+ <20201211024553.GW3579531@ZenIV.linux.org.uk>
+ <89f96b42-9d58-cd46-e157-758e91269d89@kernel.dk>
+ <20201211172054.GX3579531@ZenIV.linux.org.uk>
+ <2b4dbb32-14b0-fe5d-9330-2bae036cbb93@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20201211172931.GY3579531@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b4dbb32-14b0-fe5d-9330-2bae036cbb93@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/11/20 10:29 AM, Al Viro wrote:
-> On Fri, Dec 11, 2020 at 09:21:20AM -0800, Linus Torvalds wrote:
->> On Fri, Dec 11, 2020 at 7:57 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> On 12/10/20 7:35 PM, Al Viro wrote:
->>>> _IF_ for some theoretical exercise you want to do "lookup without dropping
->>>> out of RCU", just add a flag that has unlazy_walk() fail.  With -ECHILD.
->>>> Strip it away in complete_walk() and have path_init() with that flag
->>>> and without LOOKUP_RCU fail with -EAGAIN.  All there is to it.
->>>
->>> Thanks Al, that makes for an easier implementation. I like that suggestion,
->>> boils it down to just three hunks (see below).
->>
->> Ooh. Yes, very nice.
+On Fri, Dec 11, 2020 at 11:50:12AM -0700, Jens Axboe wrote:
+
+> I could filter on O_TRUNC (and O_CREAT) in the caller from the io_uring
+> side, and in fact we may want to do that in general for RESOLVE_LOOKUP
+> as well.
+
+You do realize that it covers O_RDWR as well, right?  If the object is on
+a frozen filesystem, mnt_want_write() will block until the thing gets thawed.
+
+> > AFAICS, without that part it is pretty much worthless.  And details
+> > of what you are going to do in the missing bits *do* matter - unlike the
+> > pathwalk side (which is trivial) it has potential for being very
+> > messy.  I want to see _that_ before we commit to going there, and
+> > a user-visible flag to openat2() makes a very strong commitment.
 > 
-> Except for the wrong order in path_init() - the check should go _before_
->         if (!*s)
->                 flags &= ~LOOKUP_RCU;
-> for obvious reasons.
+> Fair enough. In terms of patch flow, do you want that as an addon before
+> we do RESOLVE_NONBLOCK, or do you want it as part of the core
+> LOOKUP_NONBLOCK patch?
 
-Oops yes, I fixed that up.
+I want to understand how it will be done.
 
-> Again, that part is trivial - what to do with
-> do_open()/open_last_lookups() is where the nastiness will be.
-> Basically, it makes sure we bail out in cases when lookup itself
-> would've blocked, but it does *not* bail out when equally heavy (and
-> unlikely) blocking sources hit past the complete_walk(). Which makes
-> it rather useless for the caller, unless we get logics added to that
-> part as well.  And _that_ I want to see before we commit to anything.
+> Agree, if we're going bool, we should make it the more usually followed
+> success-on-false instead. And I'm happy to see you drop those
+> likely/unlikely as well, not a huge fan. I'll fold this into what I had
+> for that and include your naming change.
 
-A few items can be handled by just disallowing them upfront - like
-O_TRUNC with RESOLVE_NONBLOCK. I'd prefer to do that instead of
-sprinkling trylock variants in places where they kind of end up being
-nonsensical anyway (eg O_TRUNC with RESOLVE_NONBLOCK just doesn't make
-sense). Outside of that, doesn't look like to me that do_open() needs
-any further massaging. open_last_lookups() needs to deal with
-non-blocking mnt_want_write(), but that looks pretty trivial, and
-trylock on the inode.
+BTW, I wonder if the compiler is able to figure out that
 
-So all seems pretty doable. Which makes me think I must be missing
-something?
+bool f(void)
+{
+	if (unlikely(foo))
+		return false;
+	if (unlikely(bar))
+		return false;
+	return true;
+}
 
--- 
-Jens Axboe
-
+is unlikely to return false.  We can force that, obviously (provide an inlined
+wrapper and slap likely() there), but...
