@@ -2,157 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 813C62D71D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 09:35:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 795972D721D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 09:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391031AbgLKIeL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 03:34:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47408 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390913AbgLKIdr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 03:33:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1607675578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=0nN/4tfEvGyVHUHBXr7qSj1epIuNUo7z3o9EDHS/J6k=;
-        b=bCVFp9GmbnKDjlfX3JAAAdIqmt4FN2gSM/if7V+I2XKbQvj5oBo99ZnIHOMyYC2LpXS9s+
-        n723we8UwzCussbvomQqitnytzcVkdalRTcehDJtxMtdOgfJcXZ4TnkhNZ6HMWMyCM3Gk1
-        HIeGNA3qiK3ByS3pBpsYIQHlI2Sjr28=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0444FAE2E;
-        Fri, 11 Dec 2020 08:32:58 +0000 (UTC)
-Subject: Re: [RFC PATCH 10/11] mm/filemap: Add folio_add_to_page_cache
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20201208194653.19180-1-willy@infradead.org>
- <20201208194653.19180-11-willy@infradead.org>
-From:   Nikolay Borisov <nborisov@suse.com>
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <398e5ad7-2c01-c22c-35d0-b2bf8ab2594d@suse.com>
-Date:   Fri, 11 Dec 2020 10:32:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S2437015AbgLKInl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 03:43:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390924AbgLKInI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Dec 2020 03:43:08 -0500
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 451C9C0613CF;
+        Fri, 11 Dec 2020 00:42:28 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id n4so8676572iow.12;
+        Fri, 11 Dec 2020 00:42:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rj1vcfLqePUUlfq7nqOeH8Fm78abBXaKWQgBWRoed4A=;
+        b=dl7l0wi5jZN6XN7c6BYUXRKxvPj9p3GLxvbbZ2NMLxZYHf74FV7iUH72JnoFuugKv7
+         r+j4eW81uTT36YVTgbawKBSSdgIIZOoCYc5h4KnLJIg1cBtqCR1QYVm60D4cCl26oURr
+         8AoT9wYTy3YutSRlHGHBcE+bjh5VrQlBU5i/RUygv0DqxTm20HPZ+kseOfcaowuYWLVj
+         2oA1BbrBziMh15/eQ54OWxSR135CxJC41UrTHPihzuKnwdRmr1zjBcfepE+vIVz0fo0E
+         uD3nTp3WHPKNzi/JadBV8wneE3k56qJK5/wRAyd3Zmq87SFwoakrwiCGFKS6T6n5pwD8
+         bv+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rj1vcfLqePUUlfq7nqOeH8Fm78abBXaKWQgBWRoed4A=;
+        b=Fht6IWs9VvUWBKZr0L7EGWrLqMwjxeiTaAUaUIuNzNczUslMvZzy3vuorlN+IQvqRr
+         0kgb7iZRCqHLmDo3iCoyDP5aSp1NeMpSfdLYcYL7w+uf3h93JBKckk5vQm0b6+ZmGHfz
+         x5yTsghUxp2KVX05lYhfncfT6UIAOHvSmlIiUuebZt/z7va4jEn3QmNg+PG6+tTWgGLv
+         rCTbUOkKWVquvlF6tVSdTvNLqP+pGCtYg3p15K4wYNcmXeiZ61VcRw+ttQdmA7GNZVQM
+         +9kuZ6j3DvkKnGoTf96yrqG7671FPEKbhUZ3lab7sjr/Mo5XDq9e44bl0T9r/Amz37jD
+         /RRA==
+X-Gm-Message-State: AOAM531+phuo4nmXK0XUTtTduTftu5ZS0L3jaG8zHqVfXaW6L+xnbGSm
+        eNr543Wv9rLyx/X81H90yRbkD5OwJuTAFb7yvtVkr35Gzpg=
+X-Google-Smtp-Source: ABdhPJzhnVXJNQD7u8uaTOLLiLj5CZNQL69qHFfHp5gzroIOKm7nN+i4YJf/xrqJQnnVE0ZxcPXFMeFW5YIBn6SnBtE=
+X-Received: by 2002:a02:a60a:: with SMTP id c10mr14200928jam.123.1607676147492;
+ Fri, 11 Dec 2020 00:42:27 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201208194653.19180-11-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <alpine.LSU.2.11.2012101507080.1100@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.2012101507080.1100@eggly.anvils>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 11 Dec 2020 10:42:16 +0200
+Message-ID: <CAOQ4uxj6Vvwj84KL4MaECzw1jV+i_Frm6cuqkrk8fT3a4M=FEw@mail.gmail.com>
+Subject: Re: linux-next fsnotify mod breaks tail -f
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000afb1d705b62c45d3"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+--000000000000afb1d705b62c45d3
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, Dec 11, 2020 at 1:45 AM Hugh Dickins <hughd@google.com> wrote:
+>
+> Hi Jan, Amir,
+>
+> There's something wrong with linux-next commit ca7fbf0d29ab
+> ("fsnotify: fix events reported to watching parent and child").
+>
+> If I revert that commit, no problem;
+> but here's a one-line script "tailed":
+>
+> for i in 1 2 3 4 5; do date; sleep 1; done &
+>
+> Then if I run that (same result doing ./tailed after chmod a+x):
+>
+> sh tailed >log; tail -f log
+>
+> the "tail -f log" behaves in one of three ways:
+>
+> 1) On a console, before graphical screen, no problem,
+>    it shows the five lines coming from "date" as you would expect.
+> 2) From xterm or another tty, shows just the first line from date,
+>    but after I wait and Ctrl-C out, "cat log" shows all five lines.
+> 3) From xterm or another tty, doesn't even show that first line.
+>
+> The before/after graphical screen thing seems particularly weird:
+> I expect you'll end up with a simpler explanation for what's
+> causing that difference.
+>
+> tailed and log are on ext4, if that's relevant;
+> ah, I just tried on tmpfs, and saw no problem there.
 
-On 8.12.20 г. 21:46 ч., Matthew Wilcox (Oracle) wrote:
-> Pages being added to the page cache should already be folios, so
-> turn add_to_page_cache_lru() into a wrapper.  Saves hundreds of
-> bytes of text.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/pagemap.h | 13 +++++++--
->  mm/filemap.c            | 62 ++++++++++++++++++++---------------------
->  2 files changed, 41 insertions(+), 34 deletions(-)
-> 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 060faeb8d701..3bc56b3aa384 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -778,9 +778,9 @@ static inline int fault_in_pages_readable(const char __user *uaddr, int size)
->  }
->  
->  int add_to_page_cache_locked(struct page *page, struct address_space *mapping,
-> -				pgoff_t index, gfp_t gfp_mask);
-> -int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
-> -				pgoff_t index, gfp_t gfp_mask);
-> +				pgoff_t index, gfp_t gfp);
-> +int folio_add_to_page_cache(struct folio *folio, struct address_space *mapping,
-> +				pgoff_t index, gfp_t gfp);
->  extern void delete_from_page_cache(struct page *page);
->  extern void __delete_from_page_cache(struct page *page, void *shadow);
->  int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
-> @@ -805,6 +805,13 @@ static inline int add_to_page_cache(struct page *page,
->  	return error;
->  }
->  
-> +static inline int add_to_page_cache_lru(struct page *page,
-> +		struct address_space *mapping, pgoff_t index, gfp_t gfp)
-> +{
-> +	return folio_add_to_page_cache((struct folio *)page, mapping,
-> +			index, gfp);
-> +}
-> +
->  /**
->   * struct readahead_control - Describes a readahead request.
->   *
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 56ff6aa24265..297144524f58 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -828,25 +828,25 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
->  }
->  EXPORT_SYMBOL_GPL(replace_page_cache_page);
->  
-> -static noinline int __add_to_page_cache_locked(struct page *page,
-> +static noinline int __add_to_page_cache_locked(struct folio *folio,
->  					struct address_space *mapping,
-> -					pgoff_t offset, gfp_t gfp,
-> +					pgoff_t index, gfp_t gfp,
->  					void **shadowp)
->  {
-> -	XA_STATE(xas, &mapping->i_pages, offset);
-> -	int huge = PageHuge(page);
-> +	XA_STATE(xas, &mapping->i_pages, index);
-> +	int huge = PageHuge(&folio->page);
+Nice riddle Hugh :)
+Thanks for this early testing!
 
-PageHuge also does page_compound, since you know this is either the head
-page or not you could use PageHeadHuge which simply checks if it's a
-head page and then goes directly to perform the hugepage check via the
-dtor.
+I was able to reproduce this.
+The outcome does not depend on the type of terminal or filesystem
+it depends on the existence of a watch on the parent dir of the log file.
+Running ' inotifywait -m . &' will stop tail from getting notifications:
 
-<snip>
+echo > log
+tail -f log &
+sleep 1
+echo "can you see this?" >> log
+inotifywait -m . &
+sleep 1
+echo "how about this?" >> log
+kill $(jobs -p)
+
+I suppose with a graphical screen you have systemd or other services
+in the system watching the logs/home dir in your test env.
+
+Attached fix patch. I suppose Jan will want to sqhash it.
+
+We missed a subtle logic change in the switch from inode/child marks
+to parent/inode marks terminology.
+
+Before the change (!inode_mark && child_mark) meant that name
+was not NULL and should be discarded (which the old code did).
+After the change (!parent_mark && inode_mark) is not enough to
+determine if name should be discarded (it should be discarded only
+for "events on child"), so another check is needed.
+
+Thanks,
+Amir.
+
+--000000000000afb1d705b62c45d3
+Content-Type: text/plain; charset="US-ASCII"; 
+	name="fsnotify-fix-for-fix-events-reported-to-watching-parent-and-child.patch.txt"
+Content-Disposition: attachment; 
+	filename="fsnotify-fix-for-fix-events-reported-to-watching-parent-and-child.patch.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_kik0jqhf0>
+X-Attachment-Id: f_kik0jqhf0
+
+RnJvbSBjN2VhNTdjNjZjOGM5Zjk2MDc5MjhiZjdjNTVmYzQwOWVlY2MzZTU3IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
+YXRlOiBGcmksIDExIERlYyAyMDIwIDEwOjE5OjM2ICswMjAwClN1YmplY3Q6IFtQQVRDSF0gZnNu
+b3RpZnk6IGZpeCBmb3IgZml4IGV2ZW50cyByZXBvcnRlZCB0byB3YXRjaGluZyBwYXJlbnQgYW5k
+CiBjaGlsZAoKVGhlIGNoaWxkIHdhdGNoIGlzIGV4cGVjdGluZyBhbiBldmVudCB3aXRob3V0IGZp
+bGUgbmFtZSBhbmQgd2l0aG91dAp0aGUgT05fQ0hJTEQgZmxhZy4KClJlcG9ydGVkLWJ5OiBIdWdo
+IERpY2tpbnMgPGh1Z2hkQGdvb2dsZS5jb20+ClNpZ25lZC1vZmYtYnk6IEFtaXIgR29sZHN0ZWlu
+IDxhbWlyNzNpbEBnbWFpbC5jb20+Ci0tLQogZnMvbm90aWZ5L2Zzbm90aWZ5LmMgfCA1ICsrKysr
+CiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvbm90aWZ5
+L2Zzbm90aWZ5LmMgYi9mcy9ub3RpZnkvZnNub3RpZnkuYwppbmRleCBhMGRhOWU3NjY5OTIuLjMw
+ZDQyMmI4YzBmYyAxMDA2NDQKLS0tIGEvZnMvbm90aWZ5L2Zzbm90aWZ5LmMKKysrIGIvZnMvbm90
+aWZ5L2Zzbm90aWZ5LmMKQEAgLTI5MSwxMyArMjkxLDE4IEBAIHN0YXRpYyBpbnQgZnNub3RpZnlf
+aGFuZGxlX2V2ZW50KHN0cnVjdCBmc25vdGlmeV9ncm91cCAqZ3JvdXAsIF9fdTMyIG1hc2ssCiAJ
+CX0KIAkJaWYgKCFpbm9kZV9tYXJrKQogCQkJcmV0dXJuIDA7CisJfQogCisJaWYgKG1hc2sgJiBG
+U19FVkVOVF9PTl9DSElMRCkgewogCQkvKgogCQkgKiBTb21lIGV2ZW50cyBjYW4gYmUgc2VudCBv
+biBib3RoIHBhcmVudCBkaXIgYW5kIGNoaWxkIG1hcmtzCiAJCSAqIChlLmcuIEZTX0FUVFJJQiku
+ICBJZiBib3RoIHBhcmVudCBkaXIgYW5kIGNoaWxkIGFyZQogCQkgKiB3YXRjaGluZywgcmVwb3J0
+IHRoZSBldmVudCBvbmNlIHRvIHBhcmVudCBkaXIgd2l0aCBuYW1lIChpZgogCQkgKiBpbnRlcmVz
+dGVkKSBhbmQgb25jZSB0byBjaGlsZCB3aXRob3V0IG5hbWUgKGlmIGludGVyZXN0ZWQpLgorCQkg
+KiBUaGUgY2hpbGQgd2F0Y2hlciBpcyBleHBlY3RpbmcgYW4gZXZlbnQgd2l0aG91dCBhIGZpbGUg
+bmFtZQorCQkgKiBhbmQgd2l0aG91dCB0aGUgRlNfRVZFTlRfT05fQ0hJTEQgZmxhZy4KIAkJICov
+CisJCW1hc2sgJj0gfkZTX0VWRU5UX09OX0NISUxEOwogCQlkaXIgPSBOVUxMOwogCQluYW1lID0g
+TlVMTDsKIAl9Ci0tIAoyLjI1LjEKCg==
+--000000000000afb1d705b62c45d3--
