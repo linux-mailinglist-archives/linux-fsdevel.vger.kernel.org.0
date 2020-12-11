@@ -2,127 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D72982D7AAD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 17:17:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE732D7ABE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 17:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395408AbgLKQQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 11:16:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32998 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395155AbgLKQQj (ORCPT
+        id S2406642AbgLKQWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 11:22:01 -0500
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:45359 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390999AbgLKQVe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 11:16:39 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39FACC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 08:15:59 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id x16so13088462ejj.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 08:15:59 -0800 (PST)
+        Fri, 11 Dec 2020 11:21:34 -0500
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 050DF822EA;
+        Fri, 11 Dec 2020 19:20:50 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=WW/IgNhybzf9n43eMLzqyKuFaTrBzPIKMpnR7SzERUk=;
-        b=bYROoITLccQpGFGMZXPD6eWxSyrqAjonuDGHEXaEMRMw2U73UZPBA/Wx+3wcdLnuwE
-         gH9Z8XDcULoJPsPcibh0AIQarFEI/KJBT0PJ6EA+bHu6T8MPr31cyPmomih/kjn5jZN7
-         m8npqnDCucqxPsaatevB23b9SJj+ogwBY0rjZvp69Gjpbf+e+RzXPhh5A4eel+1sspFD
-         x7FLY4Z07Wuzs1fGnz/y/aZTwusaVyQ4LocM7f1JYm86LAB2OOTRax8ujzryu2yP2Ccz
-         ue90Kdx0V68pf/HNNRQhRhrQ8KqbaMiZn2oaZCKv9J9va1bg1TEY7vGFP2UbEtaCXYM3
-         CkEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WW/IgNhybzf9n43eMLzqyKuFaTrBzPIKMpnR7SzERUk=;
-        b=j2qipJi1NuaRmxUFUZLyIjfCt6MuRzP0dNNylldweUVJrHB1+Pse7jOR5t3qW3bj8K
-         Uit3mX0uQyrOW41cOfLPp8bSl6+mMP6wQN6pnTHGnGOQ0L+Rt2KWXsKP+p4SkkEV9vaW
-         2LE7UdTbs9B6DyeUvsqEVej7OuAWt8aIqYbCLSrmCzqiOUqOcbOIDAfhiaWisi49AVH5
-         Ro4a9qndx9xoaqMPq49R5M71v6qOP+3G3y6drJPlaVNFvMqhpVKh3oeozdCrG4yokJoP
-         mIv3advOCXe+JEsuLL9qokjvnfXn9SD5xaA3UGmDTslnxx5o0bON9gvH8n9JuWGl80/x
-         9dfQ==
-X-Gm-Message-State: AOAM531pubt/YEd9LdVUu15j9Ts5iCoYhy2sMgDmIp3gYYsZ7HL+nquI
-        r1GaWn7XWUq0fPpfdTMDmLyD8Q==
-X-Google-Smtp-Source: ABdhPJzCbOj1KEERoOizE5nFoQrtWVhtDxa5igMqyGnmwwDfZ12nc/2x3mxL2z0PTn/ivUgMyLBp8A==
-X-Received: by 2002:a17:906:1151:: with SMTP id i17mr11899657eja.250.1607703357882;
-        Fri, 11 Dec 2020 08:15:57 -0800 (PST)
-Received: from localhost ([2620:10d:c093:400::5:ee7a])
-        by smtp.gmail.com with ESMTPSA id ga11sm7215778ejb.34.2020.12.11.08.15.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Dec 2020 08:15:57 -0800 (PST)
-Date:   Fri, 11 Dec 2020 17:13:52 +0100
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 2/2] block: no-copy bvec for direct IO
-Message-ID: <20201211161352.GB291478@cmpxchg.org>
-References: <cover.1607477897.git.asml.silence@gmail.com>
- <51905c4fcb222e14a1d5cb676364c1b4f177f582.1607477897.git.asml.silence@gmail.com>
- <20201209084005.GC21968@infradead.org>
- <20201211140622.GA286014@cmpxchg.org>
- <2404b68a-1569-ce25-c9c4-00d7e42f9e06@gmail.com>
- <20201211153836.GA291478@cmpxchg.org>
- <6507b474-6f91-f99d-1dff-d7c21462813e@gmail.com>
+        d=paragon-software.com; s=mail; t=1607703650;
+        bh=CM3HxYkVQXnLyOBz//rJ2DqwMSEPh6jAdNfhmCTs4T0=;
+        h=From:To:CC:Subject:Date;
+        b=FdVxiGo1cRF9ky97onVSjk7BrdX3lhHymkGxpnoQ+GOhQS9LtT6dzQu+0h0l4jyKV
+         qiz86EbdGg996whwX7CHIO8z2dXXBLS9SoSzLZTCdUV7rD2d4fsT4qd7YlzPdI+EyX
+         XSJ0XiF//A41fA+Dlv7GPa+21GNOtrO2W7PxWkac=
+Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Fri, 11 Dec 2020 19:20:49 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
+        <pali@kernel.org>, <dsterba@suse.cz>, <aaptel@suse.com>,
+        <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
+        <mark@harmstone.com>, <nborisov@suse.com>,
+        <linux-ntfs-dev@lists.sourceforge.net>, <anton@tuxera.com>,
+        <dan.carpenter@oracle.com>, <hch@lst.de>, <ebiggers@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v15 00/10] NTFS read-write driver GPL implementation by Paragon Software
+Date:   Fri, 11 Dec 2020 19:18:34 +0300
+Message-ID: <20201211161844.3590331-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6507b474-6f91-f99d-1dff-d7c21462813e@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.30.114.105]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 03:47:23PM +0000, Pavel Begunkov wrote:
-> On 11/12/2020 15:38, Johannes Weiner wrote:
-> > On Fri, Dec 11, 2020 at 02:20:11PM +0000, Pavel Begunkov wrote:
-> >> On 11/12/2020 14:06, Johannes Weiner wrote:
-> >>> On Wed, Dec 09, 2020 at 08:40:05AM +0000, Christoph Hellwig wrote:
-> >>>>> +	/*
-> >>>>> +	 * In practice groups of pages tend to be accessed/reclaimed/refaulted
-> >>>>> +	 * together. To not go over bvec for those who didn't set BIO_WORKINGSET
-> >>>>> +	 * approximate it by looking at the first page and inducing it to the
-> >>>>> +	 * whole bio
-> >>>>> +	 */
-> >>>>> +	if (unlikely(PageWorkingset(iter->bvec->bv_page)))
-> >>>>> +		bio_set_flag(bio, BIO_WORKINGSET);
-> >>>>
-> >>>> IIRC the feedback was that we do not need to deal with BIO_WORKINGSET
-> >>>> at all for direct I/O.
-> >>>
-> >>> Yes, this hunk is incorrect. We must not use this flag for direct IO.
-> >>> It's only for paging IO, when you bring in the data at page->mapping +
-> >>> page->index. Otherwise you tell the pressure accounting code that you
-> >>> are paging in a thrashing page, when really you're just reading new
-> >>> data into a page frame that happens to be hot.
-> >>>
-> >>> (As per the other thread, bio_add_page() currently makes that same
-> >>> mistake for direct IO. I'm fixing that.)
-> >>
-> >> I have that stuff fixed, it just didn't go into the RFC. That's basically
-> >> removing replacing add_page() with its version without BIO_WORKINGSET
-> 
-> I wrote something strange... Should have been "replacing add_page() in
-> those functions with a version without BIO_WORKINGSET".
+This patch adds NTFS Read-Write driver to fs/ntfs3.
 
-No worries, I understood.
+Having decades of expertise in commercial file systems development and huge
+test coverage, we at Paragon Software GmbH want to make our contribution to
+the Open Source Community by providing implementation of NTFS Read-Write
+driver for the Linux Kernel.
 
-> >> in bio_iov_iter_get_pages() and all __bio_iov_*_{add,get}_pages() +
-> >> fix up ./fs/direct-io.c. Should cover all direct cases if I didn't miss
-> >> some.
-> > 
-> > Ah, that's fantastic! Thanks for clarifying.
-> 
-> To keep it clear, do we go with what I have stashed (I'm planning to
-> reiterate this weekend)? or you're going to write it up yourself?
-> Just in case there is some cooler way you have in mind :)
+This is fully functional NTFS Read-Write driver. Current version works with
+NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
 
-Honestly, I only wrote all my ideas down and asked for feedback
-because I wasn't super excited about any of them ;-)
+We plan to support this version after the codebase once merged, and add new
+features and fix bugs. For example, full journaling support over JBD will be
+added in later updates.
 
-If your changes happen to separate the direct io path from the
-buffered io path naturally, I'm okay with it.
+v2:
+ - patch splitted to chunks (file-wise)
+ - build issues fixed
+ - sparse and checkpatch.pl errors fixed
+ - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
+ - cosmetics + code cleanup
 
-I'd say let's go with what you already have and see whether Jens and
-Christoph like it. We can always do follow-on cleanups.
+v3:
+ - added acl, noatime, no_acs_rules, prealloc mount options
+ - added fiemap support
+ - fixed encodings support
+ - removed typedefs
+ - adapted Kernel-way logging mechanisms
+ - fixed typos and corner-case issues
+
+v4:
+ - atomic_open() refactored
+ - code style updated
+ - bugfixes
+
+v5:
+- nls/nls_alt mount options added
+- Unicode conversion fixes
+- Improved very fragmented files operations
+- logging cosmetics
+
+v6:
+- Security Descriptors processing changed
+  added system.ntfs_security xattr to set
+  SD
+- atomic_open() optimized
+- cosmetics
+
+v7:
+- Security Descriptors validity checks added (by Mark Harmstone)
+- atomic_open() fixed for the compressed file creation with directio
+  case
+- remount support
+- temporarily removed readahead usage
+- cosmetics
+
+v8:
+- Compressed files operations fixed
+
+v9:
+- Further cosmetics applied as suggested
+by Joe Perches
+
+v10:
+- operations with compressed/sparse files on very fragmented volumes improved
+- reduced memory consumption for above cases
+
+v11:
+- further compressed files optimizations: reads/writes are now skipping bufferization
+- journal wipe to the initial state optimized (bufferization is also skipped)
+- optimized run storage (re-packing cluster metainformation)
+- fixes based on Matthew Wilcox feedback to the v10
+- compressed/sparse/normal could be set for empty files with 'system.ntfs_attrib' xattr
+
+v12:
+- nls_alt mount option removed after discussion with Pali Rohar
+- fixed ni_repack()
+- fixed resident files transition to non-resident when size increasing
+
+v13:
+- nested_lock fix (lockdep)
+- out-of-bounds read fix (KASAN warning)
+- resident->nonresident transition fixed for compressed files
+- load_nls() missed fix applied
+- some sparse utility warnings fixes
+
+v14:
+- support for additional compression types (we've adapted WIMLIB's
+  implementation, authored by Eric Biggers, into ntfs3)
+
+v15:
+- kernel test robot warnings fixed
+- lzx/xpress compression license headers updated
+
+Konstantin Komarov (10):
+  fs/ntfs3: Add headers and misc files
+  fs/ntfs3: Add initialization of super block
+  fs/ntfs3: Add bitmap
+  fs/ntfs3: Add file operations and implementation
+  fs/ntfs3: Add attrib operations
+  fs/ntfs3: Add compression
+  fs/ntfs3: Add NTFS journal
+  fs/ntfs3: Add Kconfig, Makefile and doc
+  fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+  fs/ntfs3: Add MAINTAINERS
+
+ Documentation/filesystems/ntfs3.rst |  107 +
+ MAINTAINERS                         |    7 +
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/ntfs3/Kconfig                    |   31 +
+ fs/ntfs3/Makefile                   |   32 +
+ fs/ntfs3/attrib.c                   | 1682 +++++++++
+ fs/ntfs3/attrlist.c                 |  463 +++
+ fs/ntfs3/bitfunc.c                  |  135 +
+ fs/ntfs3/bitmap.c                   | 1504 ++++++++
+ fs/ntfs3/debug.h                    |   61 +
+ fs/ntfs3/dir.c                      |  575 +++
+ fs/ntfs3/file.c                     | 1094 ++++++
+ fs/ntfs3/frecord.c                  | 3100 ++++++++++++++++
+ fs/ntfs3/fslog.c                    | 5220 +++++++++++++++++++++++++++
+ fs/ntfs3/fsntfs.c                   | 2528 +++++++++++++
+ fs/ntfs3/index.c                    | 2665 ++++++++++++++
+ fs/ntfs3/inode.c                    | 2056 +++++++++++
+ fs/ntfs3/lib/common_defs.h          |  196 +
+ fs/ntfs3/lib/decompress_common.c    |  314 ++
+ fs/ntfs3/lib/decompress_common.h    |  558 +++
+ fs/ntfs3/lib/lib.h                  |   18 +
+ fs/ntfs3/lib/lzx_common.c           |  204 ++
+ fs/ntfs3/lib/lzx_common.h           |   31 +
+ fs/ntfs3/lib/lzx_constants.h        |  113 +
+ fs/ntfs3/lib/lzx_decompress.c       |  554 +++
+ fs/ntfs3/lib/xpress_constants.h     |   23 +
+ fs/ntfs3/lib/xpress_decompress.c    |  166 +
+ fs/ntfs3/lznt.c                     |  452 +++
+ fs/ntfs3/namei.c                    |  590 +++
+ fs/ntfs3/ntfs.h                     | 1237 +++++++
+ fs/ntfs3/ntfs_fs.h                  | 1047 ++++++
+ fs/ntfs3/record.c                   |  614 ++++
+ fs/ntfs3/run.c                      | 1192 ++++++
+ fs/ntfs3/super.c                    | 1467 ++++++++
+ fs/ntfs3/upcase.c                   |   77 +
+ fs/ntfs3/xattr.c                    | 1073 ++++++
+ 37 files changed, 31188 insertions(+)
+ create mode 100644 Documentation/filesystems/ntfs3.rst
+ create mode 100644 fs/ntfs3/Kconfig
+ create mode 100644 fs/ntfs3/Makefile
+ create mode 100644 fs/ntfs3/attrib.c
+ create mode 100644 fs/ntfs3/attrlist.c
+ create mode 100644 fs/ntfs3/bitfunc.c
+ create mode 100644 fs/ntfs3/bitmap.c
+ create mode 100644 fs/ntfs3/debug.h
+ create mode 100644 fs/ntfs3/dir.c
+ create mode 100644 fs/ntfs3/file.c
+ create mode 100644 fs/ntfs3/frecord.c
+ create mode 100644 fs/ntfs3/fslog.c
+ create mode 100644 fs/ntfs3/fsntfs.c
+ create mode 100644 fs/ntfs3/index.c
+ create mode 100644 fs/ntfs3/inode.c
+ create mode 100644 fs/ntfs3/lib/common_defs.h
+ create mode 100644 fs/ntfs3/lib/decompress_common.c
+ create mode 100644 fs/ntfs3/lib/decompress_common.h
+ create mode 100644 fs/ntfs3/lib/lib.h
+ create mode 100644 fs/ntfs3/lib/lzx_common.c
+ create mode 100644 fs/ntfs3/lib/lzx_common.h
+ create mode 100644 fs/ntfs3/lib/lzx_constants.h
+ create mode 100644 fs/ntfs3/lib/lzx_decompress.c
+ create mode 100644 fs/ntfs3/lib/xpress_constants.h
+ create mode 100644 fs/ntfs3/lib/xpress_decompress.c
+ create mode 100644 fs/ntfs3/lznt.c
+ create mode 100644 fs/ntfs3/namei.c
+ create mode 100644 fs/ntfs3/ntfs.h
+ create mode 100644 fs/ntfs3/ntfs_fs.h
+ create mode 100644 fs/ntfs3/record.c
+ create mode 100644 fs/ntfs3/run.c
+ create mode 100644 fs/ntfs3/super.c
+ create mode 100644 fs/ntfs3/upcase.c
+ create mode 100644 fs/ntfs3/xattr.c
+
+-- 
+2.25.4
+
