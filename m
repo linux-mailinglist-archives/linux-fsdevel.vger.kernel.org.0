@@ -2,129 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C062D7D6C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 18:55:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 991A72D7DAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 19:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436682AbgLKRxt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 12:53:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47914 "EHLO
+        id S1727741AbgLKSIm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 13:08:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405735AbgLKRxg (ORCPT
+        with ESMTP id S1729265AbgLKSIP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 12:53:36 -0500
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F41AC0613CF;
-        Fri, 11 Dec 2020 09:52:56 -0800 (PST)
-Received: by mail-ej1-x641.google.com with SMTP id bo9so13474263ejb.13;
-        Fri, 11 Dec 2020 09:52:56 -0800 (PST)
+        Fri, 11 Dec 2020 13:08:15 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786CFC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 10:07:29 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id a9so14565247lfh.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 10:07:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=t7GrN+vF3F8/1mfjNA8maGpiuiIYyPy43Sa2g8ExXyg=;
-        b=N5V1Zt+5aVOO8IHTL4NHoHVqBfRv45HDkG1w4HbUIXIdyaMhMlNwjglAMLHv6MJRu2
-         CtsZBwxTWK85pVxSx5IrwPyx+bHQ6hHWfg8lrDQ16EmOBqW7n9TNeeYhGzKbVxYUh7rt
-         r0TtOlzduqhUCHRx825xdV8BAttMjUrVC318C2qCgPeEkbx9a5jYlGxv00baUg0jfEAO
-         TX5zyIqvKTWT+IgkVr2GhSNb1uskKxl3AkWrNDpgC9+XUI2dxDo4ryaUZIpeiIXUWb8g
-         8CBCTNUq1qoYD6vB7h3CFk8kj+V+2fCw1udyxXtB4zAJfcBiW0R4mvurCQ4Aspix9VXO
-         5SxA==
+        bh=/lhNAhTnpUy7aN6yOWsBRae0uCNBlueZz32LznFEKnc=;
+        b=G+fi77bW5dkGmi6Wu0pHGL+26xF2y2ZcBAR2UWz6A1fbwMuWJ61jNFTRdHdb+537DR
+         8+wNoBREyssJFBKmwMzCjvp3WELiSZ1P5KkjZOtz9LUvIdaQSSP75GxRYDyHH+XyUfVf
+         1VMOEa1ebV5H7m5Zvljzk27E9YsOVmlsX5yU4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=t7GrN+vF3F8/1mfjNA8maGpiuiIYyPy43Sa2g8ExXyg=;
-        b=t2AGsLKYe8nG4PiEiSr9Mb+/Mg2CgVj4geGcpJmHgEtPVW8+fzavYBjUcb7ePTGmUH
-         jIdNeDpKlERZTUio0NqGiWD/kCy7RCvsRwS2TF+PqzhKT9ZBQtPEEM7j/5AA7+UL9Nmo
-         us6ogFeNWT3GP5LpcJhcpRNrP8aLEzPJ+fat4Dg7VdbrptujpyJRXqdAtyV/5B58s4IR
-         HHrA1V0sxwWdY826nVUobnyD9JiJRiGxKdHnS/oT486oxg2nsl7cwc4YlrfsVYviGbVi
-         0VZx+a4UZQB2rY22zA0o2Jucuyew0IWc8o/qUIQrR0X34We3HLI3m85O5kfRUN6/HJWz
-         LOig==
-X-Gm-Message-State: AOAM5310x7leAMkvSXFMzEd9Z0ND4Yij0P1ORi3lPCm/QNDd59cCH0Df
-        sVbKcWKuL9/iENxWaAgI1M8Os+sw1JDiF0BfoLA=
-X-Google-Smtp-Source: ABdhPJwozfWoy777gbDNB3uqsNJHEJbZ/86HWYbed0b/GrVyJtTHjSdpc60O+eJbO4bNaFpHXbhPl3E3pY10gLSXCpQ=
-X-Received: by 2002:a17:906:6a45:: with SMTP id n5mr12287655ejs.514.1607709174880;
- Fri, 11 Dec 2020 09:52:54 -0800 (PST)
+        bh=/lhNAhTnpUy7aN6yOWsBRae0uCNBlueZz32LznFEKnc=;
+        b=IQ9zBLmysVC+HYCk2aqml7c9lGoZrcOf9wNHgF2V7Bk8nkA/hU0kf9c04mPF2fJ4eb
+         Ce7quTjAMAyOOmZQ0MC/5gFNB2cE0rh54s0BfrXOAvzJ+Pk6NJkl1RmK6K3Y7/UKcOp6
+         VHtxyS/o8oUtZXHKGHHpQX4Yaln0BDjPHhRfwLK/MLvda3liQusY+N4mAM+kTiM1Wlqv
+         i2Jj7QEiMnmWdTOZBL7vLjgwbsmKwOd7x0dwjj/QZeMe5JbwzkaOhw9iYz4aedn6y8VL
+         4kZGJKbNPn/5fjQxx2S+t+6eX7oIgBVWkXFVSGZY/s/fAwh5VRAKgdPhrve8OfXt57Nh
+         DTlw==
+X-Gm-Message-State: AOAM530pVL7lV3hTJilBzkThoQVNz0oAtMfaPYa+o02LKi8hkUBkFgMK
+        myvm2+x7UdBwAp6dNVAZJbTldafwCSKo1w==
+X-Google-Smtp-Source: ABdhPJzZg68+FPfuvios+CrzReaeNWXz8wjCuTkIgm6BIP8BqRqSXWgrq5vz1pk9a83IO94yM9VX7w==
+X-Received: by 2002:a19:a57:: with SMTP id 84mr5160112lfk.327.1607710047583;
+        Fri, 11 Dec 2020 10:07:27 -0800 (PST)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id m8sm1105842ljp.54.2020.12.11.10.07.26
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Dec 2020 10:07:26 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 23so14542592lfg.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 10:07:26 -0800 (PST)
+X-Received: by 2002:a19:8557:: with SMTP id h84mr4708706lfd.201.1607710045669;
+ Fri, 11 Dec 2020 10:07:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-6-shy828301@gmail.com>
- <20201210153356.GE264602@cmpxchg.org> <CAHbLzkoSSQ_4aY1cNmJGZyL+r6yO3L41KWHi8ZQnDhFTNi-v_Q@mail.gmail.com>
-In-Reply-To: <CAHbLzkoSSQ_4aY1cNmJGZyL+r6yO3L41KWHi8ZQnDhFTNi-v_Q@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 11 Dec 2020 09:52:42 -0800
-Message-ID: <CAHbLzkpwAANd_Nci5Krcek+NmexJCZVVQqSsJF6=xfLVsMK34Q@mail.gmail.com>
-Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20201210200114.525026-1-axboe@kernel.dk> <20201210200114.525026-3-axboe@kernel.dk>
+ <20201210222934.GI4170059@dread.disaster.area> <CAHk-=wiee7xKitbX74NvjcKDHLiE21=SbO9_urWBnvm=nSZAFQ@mail.gmail.com>
+ <20201211005830.GD3913616@dread.disaster.area> <CAHk-=whQTK74ZwP7W9oMZFYZH=_t-1po75ajxQQAf-R945zhRA@mail.gmail.com>
+ <20201211034541.GE3913616@dread.disaster.area>
+In-Reply-To: <20201211034541.GE3913616@dread.disaster.area>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 11 Dec 2020 10:07:08 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjyquiZzQ9ws7s_NPREts=FgGO3oY26da77Eva4MRsuyQ@mail.gmail.com>
+Message-ID: <CAHk-=wjyquiZzQ9ws7s_NPREts=FgGO3oY26da77Eva4MRsuyQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fs: expose LOOKUP_NONBLOCK through openat2() RESOLVE_NONBLOCK
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 11:12 AM Yang Shi <shy828301@gmail.com> wrote:
+On Thu, Dec 10, 2020 at 7:45 PM Dave Chinner <david@fromorbit.com> wrote:
 >
-> On Thu, Dec 10, 2020 at 7:36 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
-> > > @@ -504,6 +577,34 @@ int memcg_expand_shrinker_maps(int new_id)
-> > >       return ret;
-> > >  }
-> > >
-> > > +int memcg_expand_shrinker_deferred(int new_id)
-> > > +{
-> > > +     int size, old_size, ret = 0;
-> > > +     struct mem_cgroup *memcg;
-> > > +
-> > > +     size = (new_id + 1) * sizeof(atomic_long_t);
-> > > +     old_size = memcg_shrinker_deferred_size;
-> > > +     if (size <= old_size)
-> > > +             return 0;
-> > > +
-> > > +     mutex_lock(&memcg_shrinker_mutex);
-> >
-> > The locking is somewhat confusing. I was wondering why we first read
-> > memcg_shrinker_deferred_size "locklessly", then change it while
-> > holding the &memcg_shrinker_mutex.
-> >
-> > memcg_shrinker_deferred_size only changes under shrinker_rwsem(write),
-> > correct? This should be documented in a comment, IMO.
->
-> Yes, it is correct.
->
-> >
-> > memcg_shrinker_mutex looks superfluous then. The memcg allocation path
-> > is the read-side of memcg_shrinker_deferred_size, and so simply needs
-> > to take shrinker_rwsem(read) to lock out shrinker (de)registration.
->
-> I see you point. Yes, it seems shrinker_{maps|deferred} allocation
-> could be synchronized with shrinker registration by shrinker_rwsem.
->
-> memcg_shrinker_mutex is just renamed from memcg_shrinker_map_mutex
-> which was introduced by shrinker_maps patchset. I'm not quite sure why
-> this mutex was introduced at the first place, I guess the main purpose
-> is to *not* exacerbate the contention of shrinker_rwsem?
->
-> If that contention is not a concern, we could remove that dedicated mutex.
+> Part of the problem we have with the non-blocking behaviour is that
+> the user interfaces have been under specified, poorly reviewed and
+> targetted a single specific use case on a single filesystem rather
+> than generic behaviour. And mostly they lack the necessary test
+> coverage to ensure all filesystems behave the same way and to inform
+> us of a regression that *would break userspace applications*.
 
-It seems using shrinker_rwsem instead of dedicated mutex should not
-exacerbate the contention since we just add one read critical section.
-Will do it in v2.
+Fair enough. I just didn't really see much a concern here, exactly
+because this ends up not being a hard guarantee in the first place
+(but the reason I suggested then adding that RESOLVE_NONBLOCK is so
+that it could be tested without having to rely on timing and io_uring
+that _should_ get the same result regardless in the end).
 
+But the second reason I don't see much concern is exactly because it
+wouldn't affect individual filesystems. There's nothing new going on
+as far as  filesystem is concerned.
 
->
-> >
-> > Also, isn't memcg_shrinker_deferred_size just shrinker_nr_max? And
->
-> No, it is variable. It is nr * sizeof(atomit_long_t). The nr is the
-> current last shrinker ID. If a new shrinker is registered, the nr may
-> grow.
->
-> > memcg_expand_shrinker_deferred() is only called when size >= old_size
-> > in the first place (because id >= shrinker_nr_max)?
->
-> Yes.
+> Yes, I recognise and accept that some of the problems are partially
+> my fault. I also have a habit of trying to learn from the mistakes
+> I've made and then take steps to ensure that *we do not make those
+> same mistakes again*.
+
+So the third reason I reacted was because we have a history, and you
+have traditionally not ever really cared unless it's about xfs and IO.
+Which this thing would very explicitly not be about. The low-level
+filesystem would never see the semantics at all, and could never get
+it wrong.
+
+Well, a filesystem could "get it wrong" in the same sense that it can
+get the current LOOKUP_RCU wrong, of course.
+
+But that would be either an outright bug and a correctness problem -
+sleeping in RCU context - or be a performance problem - returning
+ECHILD very easily due to other reasons. And it would be entirely
+unrelated to the nonblocking path open, because it would be a
+performance issue even _normally_, just not visible as semantics.
+
+And that's the second reason I like this, and would like to see this,
+and see RESOLVE_NONBLOCK: exactly because we have _had_ those subtle
+issues that aren't actually correctness issues, but only "oh, this
+situation always takes us out of RCU lookup, and it's a very subtle
+performance problem".
+
+For example, it used to be that whenever we saw a symlink, we'd throw
+up our hands and say "we can't do this in RCU lookup" and give up.
+That wasn't a low-level filesystem problem, it was literally at the
+VFS layer, because the RCU lookup was fairly limited.
+
+Or some of the security models (well, _all_ of them) used to just say
+"oh, I can't do this check in RCU mode" and forced the slow path.
+
+It was very noticeable from a performance angle under certain loads,
+because RCU lookup is just _so_ much faster when you otherwise get
+locking and reference counting cache conflicts. Yes, yes, Al fixed the
+symlinks long ago, but we know RCU lookup still gives up fairly easily
+in other circumstances.
+
+And RCU lookup giving up eagerly is fine, of course. The whole point
+is that it's an optimistic "let's see if we can do this really
+quickly" interface that just works _most_ of the time.
+
+But that also makes it easy to miss things, because it's so hard to
+test when it's purely about latency and all the operations will retry
+and get the right result in the end. The "noticeable performance
+issues" are generally not very noticeable at the level of an
+individual operation - you need to do a lot of them, and often in
+parallel, to see the _big_ benefits.
+
+So RESOLVE_NONBLOCK would be a nice way to perhaps add automated
+testing for "did we screw up RCU pathname lookup", in addition to
+perhaps making it easier to find the cases where we currently give up
+too quickly just because it was _fairly_ rare and nobody had much
+visibility into that case.
+
+And we have had that "oh, RCU lookup broke" a couple of times by
+mistake - and then it takes a while to notice, because it's purely
+visible as a performance bug and not necessarily all _that_ obvious -
+exactly because it's purely about performance, and the semantic end
+result is the same.
+
+           Linus
