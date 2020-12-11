@@ -2,66 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 142C72D7A2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 16:59:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 425202D7A80
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 17:07:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393978AbgLKP6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 10:58:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58344 "EHLO
+        id S2390523AbgLKQGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 11:06:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393794AbgLKP6I (ORCPT
+        with ESMTP id S2390417AbgLKQGI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 10:58:08 -0500
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28FFAC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 07:57:28 -0800 (PST)
-Received: by mail-il1-x142.google.com with SMTP id r17so9196079ilo.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 07:57:28 -0800 (PST)
+        Fri, 11 Dec 2020 11:06:08 -0500
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 383EFC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 08:05:28 -0800 (PST)
+Received: by mail-io1-xd41.google.com with SMTP id n14so9927946iom.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 08:05:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sy0jImmmjPyN83Ri4PgO+hrRmVWXF0qSJhzAct9CgUQ=;
-        b=MGkQKCtzbzl3fMTvttR1rIFpOUfe1bW42nvS8U7qI54TDoEvUZGHZQmaDJVz+OHqKw
-         abHkcFLAcayQFdgtiCaE2qgx/dCwnyr7NGvefdeg4UVmC8n3uC2R1EhrFkXONgGAc3wq
-         ZoCbMjgAq5ivOAnbfCGXnY9Prkx6a6/AM6uVO21ysnOZHZijCqnwlTJHOEaQZXSTnO9U
-         xATTUkuw9uI3gPSK/pXuyeED0C4TxYvF+sCZXR699qdvDFn/F8IvbzA+ff8FSQ6msYs7
-         K9DfhKTfnuECfgBs2haMUROmuXhAX5fbAdnftrH1SwWNcjZCA7fIl3oT3EmhAsIkVLlT
-         3wAw==
+        bh=WmtocVwd8SIYfyxppkBTT7yqoUjf7g/Js8s1nZTs1jk=;
+        b=hGPo55SofOv9IGc4UGkoFy0BR2noDPsvHpjsaVmStZ0rFFDIQ0ErFViD0S8l6zhzy6
+         5vgxRLVN4LP2LDJZld7XD7YTCxyEjM0hykkdOXx0Z0DXGF3TWu3Wan95cL/GVPXS/bpn
+         oW7gyzblsfitsjUAhWP3bPxRw8bFvtIof4pzGwbACxl5bU9/LiZmhC8xfejjKMPe3pe5
+         k/XV+5ebU24ejtF4YTlcgv7HfuHYAwgORzwbig+C76vTAkLJoR+hwRJajLbt5D7IH6IF
+         DR/3WKl8T+kpOShVc3q/mcFdfOrCJMrx92V7vUo2J1Sr7/W/HvJW2QgPzcLvsbQiNUbq
+         DQ/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=sy0jImmmjPyN83Ri4PgO+hrRmVWXF0qSJhzAct9CgUQ=;
-        b=cyaSFKqEOs/uizh2Kbn6hQXI7w5QEwnIS6H5KSirekVbFDyidY7FP5Hu7T/fUQsGrU
-         x7sPanoBGTqg9UTCT+lDpDPM7/eLQ5/XHVpUjRKFrZVp1OcHeTbdibRoEIhurERCtEY/
-         +mRSyRnK1Oz1W5Fw1NPlcp015rcHKhE2pGanrCxxBBaA9JqVzWkybW1ymE2L9hdhnLeP
-         MqJek/Rbk2bXvrPI9sEhx9DQj1zPDMAZgkLvIRkvcC/6Yl+hDUvX1at5E/cOObJMAYSy
-         L7hnAgkIpn18w9vvK5EC3+Mb70Uj0v7dNAVdx4+Ch9VdML7ijV3p9b+s/o/BPaZGV0Vg
-         ZuZA==
-X-Gm-Message-State: AOAM533MjXqy82ifdmIV4KMnJtwigZp7rmrNxyuTkUJscCtQD6ey4K3C
-        nwo3vhuKFWWw9oaS1gJyY84A0g==
-X-Google-Smtp-Source: ABdhPJzVklRCDWwyyBanUSwGdT3wuTN/OHpB+wNcPOF/2Ehi+eId9s8kivXTODT+oVXXtFpgJJfGag==
-X-Received: by 2002:a92:9986:: with SMTP id t6mr17022935ilk.151.1607702247286;
-        Fri, 11 Dec 2020 07:57:27 -0800 (PST)
+        bh=WmtocVwd8SIYfyxppkBTT7yqoUjf7g/Js8s1nZTs1jk=;
+        b=TG9TXWKVm5BUtazsQe+45E3xqlAXP02pZwNL9K6yO3GzbAc/X6SqXlAVnFLJJporqm
+         CIyxeQQBAJbbPjSL+FwO/xHXtbnyP3V3bzRSyDBd3Xy5DBxB6m+HN7A4v4lP1kUCftIY
+         jW25Q7MyDAcJ9v61zpECGsKeiXIXukpdjLqtNhfQnzuVBxwNwmU/ZuEJ1MtPAfOCAvMA
+         LrLXDyim6yCA63IVBwuVfsbLh8dQls50ChxVhFEjjw+D/5baSGwmeUP5mnK61pO8xY47
+         Y4pns/YqT/UhodCIAjyYJjN+weD6gFwYxwLYUfVPlS44NOzbFtujZsZy1PKKFlvud0Np
+         yNDQ==
+X-Gm-Message-State: AOAM531TbP3yLweBCB09NsLmGFNs+Km+GQhFPGgUFbMA18XfNahGMzOo
+        9LgZ+FzsA4pdspQR16W5kFk/3YooRjToeQ==
+X-Google-Smtp-Source: ABdhPJwdlUuFIj+sQr9XmBWAylkczvEtu9aGvvKfXudqvWpCUkiLHRZNh80xMatUH/Msq5Q6Z5iirA==
+X-Received: by 2002:a6b:8f94:: with SMTP id r142mr1806224iod.115.1607702727121;
+        Fri, 11 Dec 2020 08:05:27 -0800 (PST)
 Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g6sm5512512ilc.85.2020.12.11.07.57.26
+        by smtp.gmail.com with ESMTPSA id v23sm4653049iol.21.2020.12.11.08.05.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Dec 2020 07:57:26 -0800 (PST)
+        Fri, 11 Dec 2020 08:05:26 -0800 (PST)
 Subject: Re: [PATCH 1/2] fs: add support for LOOKUP_NONBLOCK
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 References: <20201210200114.525026-1-axboe@kernel.dk>
  <20201210200114.525026-2-axboe@kernel.dk>
- <20201211023555.GV3579531@ZenIV.linux.org.uk>
+ <CAHk-=wif32e=MvP-rNn9wL9wXinrL1FK6OQ6xPMtuQ2VQTxvqw@mail.gmail.com>
+ <139ecda1-bb08-b1f2-655f-eeb9976e8cff@kernel.dk>
+ <20201211024553.GW3579531@ZenIV.linux.org.uk>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <bef3f905-f6b7-1134-7ca9-ff9385d6bf86@kernel.dk>
-Date:   Fri, 11 Dec 2020 08:57:26 -0700
+Message-ID: <89f96b42-9d58-cd46-e157-758e91269d89@kernel.dk>
+Date:   Fri, 11 Dec 2020 09:05:26 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201211023555.GV3579531@ZenIV.linux.org.uk>
+In-Reply-To: <20201211024553.GW3579531@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,82 +72,127 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/10/20 7:35 PM, Al Viro wrote:
-> On Thu, Dec 10, 2020 at 01:01:13PM -0700, Jens Axboe wrote:
->> io_uring always punts opens to async context, since there's no control
->> over whether the lookup blocks or not. Add LOOKUP_NONBLOCK to support
->> just doing the fast RCU based lookups, which we know will not block. If
->> we can do a cached path resolution of the filename, then we don't have
->> to always punt lookups for a worker.
+On 12/10/20 7:45 PM, Al Viro wrote:
+> On Thu, Dec 10, 2020 at 02:06:39PM -0700, Jens Axboe wrote:
+>> On 12/10/20 1:53 PM, Linus Torvalds wrote:
+>>> On Thu, Dec 10, 2020 at 12:01 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> io_uring always punts opens to async context, since there's no control
+>>>> over whether the lookup blocks or not. Add LOOKUP_NONBLOCK to support
+>>>> just doing the fast RCU based lookups, which we know will not block. If
+>>>> we can do a cached path resolution of the filename, then we don't have
+>>>> to always punt lookups for a worker.
+>>>
+>>> Ok, this looks much better to me just from the name change.
+>>>
+>>> Half of the patch is admittedly just to make sure it now returns the
+>>> right error from unlazy_walk (rather than knowing it's always
+>>> -ECHILD), and that could be its own thing, but I'm not sure it's even
+>>> worth splitting up. The only reason to do it would be to perhaps make
+>>> it really clear which part is the actual change, and which is just
+>>> that error handling cleanup.
+>>>
+>>> So it looks fine to me, but I will leave this all to Al.
 >>
->> During path resolution, we always do LOOKUP_RCU first. If that fails and
->> we terminate LOOKUP_RCU, then fail a LOOKUP_NONBLOCK attempt as well.
+>> I did consider doing a prep patch just making the error handling clearer
+>> and get rid of the -ECHILD assumption, since it's pretty odd and not
+>> even something I'd expect to see in there. Al, do you want a prep patch
+>> to do that to make the change simpler/cleaner?
 > 
-> In effect you are adding a mode where
-> 	* unlazy would fail, except when done from complete_walk()
-> 	* ->d_revalidate() wouldn't be attempted at all (not even with LOOKUP_RCU)
-> 	* ... but ->get_link() in RCU mode would
-> 	* ... and so would everything done after complete_walk() in
-> do_open(), very much including the joys like mnt_want_write() (i.e. waiting for
-> frozen fs to thaw), handling O_TRUNC, calling ->open() itself...
+> No, I do not.  Why bother returning anything other than -ECHILD, when
+> you can just have path_init() treat you flag sans LOOKUP_RCU as "fail
+> with -EAGAIN now" and be done with that?
 > 
-> So this "not punting lookups for a worker" looks fishy as hell - if you care
-> about blocking operations, you haven't really won anything.
-> 
-> And why exactly is the RCU case of ->d_revalidate() worth buggering off (it
-> really can't block - it's called under rcu_read_lock() and it does *not*
-> drop it)?
-> 
-> _IF_ for some theoretical exercise you want to do "lookup without dropping
-> out of RCU", just add a flag that has unlazy_walk() fail.  With -ECHILD.
-> Strip it away in complete_walk() and have path_init() with that flag
-> and without LOOKUP_RCU fail with -EAGAIN.  All there is to it.
+> What's the point propagating that thing when we are going to call the
+> non-RCU variant next if we get -ECHILD?
 
-Thanks Al, that makes for an easier implementation. I like that suggestion,
-boils it down to just three hunks (see below).
+Let's at least make it consistent - there is already one spot in there
+that passes the return value back (see below).
 
-For io_uring, the concept is just to perform the fast path inline. The
-RCU lookup serves that purpose nicely - if we fail that, then it's expected
-to take the latency hit of going async.
+> And that still doesn't answer the questions about the difference between
+> ->d_revalidate() and ->get_link() (for the latter you keep the call in
+> RCU mode, for the former you generate that -EAGAIN crap).  Or between
+> ->d_revalidate() and ->permission(), for that matter.
 
-> It still leaves you with fuckloads of blocking operations (and that's
-> "blocking" with "until admin thaws the damn filesystem several hours
-> down the road") after complete_walk(), though.
+I believe these are moot with the updated patch from the other email.
 
-But that's true (and expected) for any open that isn't non-blocking.
+> Finally, I really wonder what is that for; if you are in conditions when
+> you really don't want to risk going to sleep, you do *NOT* want to
+> do mnt_want_write().  Or ->open().  Or truncate().  Or, for Cthulhu
+> sake, IMA hash calculation.
 
+I just want to do the RCU side lookup, that is all. That's my fast path.
+If that doesn't work, then we'll go through the motions of pushing this
+to a context that allows blocking open.
+
+> So how hard are your "we don't want to block here" requirements?  Because
+> the stuff you do after complete_walk() can easily be much longer than
+> everything else.
+
+Ideally it'd extend a bit beyond the RCU lookup, as things like proc
+resolution will still fail with the proposed patch. But that's not a
+huge deal to me, I consider the dentry lookup to be Good Enough.
+
+
+commit bbfc4b98da8c5d9a64ae202952aa52ae6bb54dbd
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Thu Dec 10 14:10:37 2020 -0700
+
+    fs: make unlazy_walk() error handling consistent
+    
+    Most callers check for non-zero return, and assume it's -ECHILD (which
+    it always will be). One caller uses the actual error return. Clean this
+    up and make it fully consistent, by having unlazy_walk() return a bool
+    instead.
+    
+    No functional changes in this patch.
+    
+    Cc: Al Viro <viro@zeniv.linux.org.uk>
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 diff --git a/fs/namei.c b/fs/namei.c
-index d7952f863e79..d49c72e34c6e 100644
+index 03d0e11e4f36..d7952f863e79 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -686,6 +686,8 @@ static bool unlazy_walk(struct nameidata *nd)
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
+@@ -679,7 +679,7 @@ static bool legitimize_root(struct nameidata *nd)
+  * Nothing should touch nameidata between unlazy_walk() failure and
+  * terminate_walk().
+  */
+-static int unlazy_walk(struct nameidata *nd)
++static bool unlazy_walk(struct nameidata *nd)
+ {
+ 	struct dentry *parent = nd->path.dentry;
  
- 	nd->flags &= ~LOOKUP_RCU;
-+	if (nd->flags & LOOKUP_NONBLOCK)
-+		goto out1;
- 	if (unlikely(!legitimize_links(nd)))
- 		goto out1;
- 	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
-@@ -792,6 +794,7 @@ static int complete_walk(struct nameidata *nd)
- 		 */
- 		if (!(nd->flags & (LOOKUP_ROOT | LOOKUP_IS_SCOPED)))
- 			nd->root.mnt = NULL;
-+		nd->flags &= ~LOOKUP_NONBLOCK;
- 		if (unlikely(unlazy_walk(nd)))
- 			return -ECHILD;
- 	}
-@@ -2209,6 +2212,9 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+@@ -694,14 +694,14 @@ static int unlazy_walk(struct nameidata *nd)
+ 		goto out;
+ 	rcu_read_unlock();
+ 	BUG_ON(nd->inode != parent->d_inode);
+-	return 0;
++	return false;
  
- 	if (!*s)
- 		flags &= ~LOOKUP_RCU;
-+	/* LOOKUP_NONBLOCK requires RCU, ask caller to retry */
-+	if ((flags & (LOOKUP_RCU | LOOKUP_NONBLOCK)) == LOOKUP_NONBLOCK)
-+		return ERR_PTR(-EAGAIN);
- 	if (flags & LOOKUP_RCU)
- 		rcu_read_lock();
+ out1:
+ 	nd->path.mnt = NULL;
+ 	nd->path.dentry = NULL;
+ out:
+ 	rcu_read_unlock();
+-	return -ECHILD;
++	return true;
+ }
  
+ /**
+@@ -3151,9 +3151,8 @@ static const char *open_last_lookups(struct nameidata *nd,
+ 	} else {
+ 		/* create side of things */
+ 		if (nd->flags & LOOKUP_RCU) {
+-			error = unlazy_walk(nd);
+-			if (unlikely(error))
+-				return ERR_PTR(error);
++			if (unlazy_walk(nd))
++				return ERR_PTR(-ECHILD);
+ 		}
+ 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
+ 		/* trailing slashes? */
+
 
 -- 
 Jens Axboe
