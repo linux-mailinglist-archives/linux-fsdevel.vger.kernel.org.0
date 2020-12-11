@@ -2,163 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17D292D79EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 16:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 142C72D7A2C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 16:59:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393541AbgLKPvi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 10:51:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57304 "EHLO
+        id S2393978AbgLKP6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 10:58:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393387AbgLKPvY (ORCPT
+        with ESMTP id S2393794AbgLKP6I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 10:51:24 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E80BC0613D3;
-        Fri, 11 Dec 2020 07:50:43 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id r7so9507507wrc.5;
-        Fri, 11 Dec 2020 07:50:43 -0800 (PST)
+        Fri, 11 Dec 2020 10:58:08 -0500
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28FFAC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 07:57:28 -0800 (PST)
+Received: by mail-il1-x142.google.com with SMTP id r17so9196079ilo.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 07:57:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VekXSwnoYXueVcqtA9K9/HSshWoksn+mylfvGwHKpb4=;
-        b=pUG9zTKLCqj2b2w238i53Dn8OLePzfpCYaDZZtctzQ5P6nK0vIgIajQ5dkFy6mmqIb
-         dkKuOtIAy9pFnej/Q1yoyF93oKY2c41qbAkPUUxAv7BQ4NMNT9xDgk++tfe1h90nkYEd
-         8SjogG7j9rubhK7SlWgpvLWOxYexBZfPTpku+Qn30Woj8KdzbKrFE766vNJ8T14k43t1
-         dh/6C+DG8aMd6A9VUlJh0/DGMBHXsICAdKVLb9EptEdcMXbGWYotyAQ0VvDZcHIUgPBZ
-         sSTSX+Epu1s/LRgW3CdQxG/a8k84VKchZgGhf9lqjtQW0Ygg/ogA97YLk5pYhmP+9Bkr
-         S14Q==
+        bh=sy0jImmmjPyN83Ri4PgO+hrRmVWXF0qSJhzAct9CgUQ=;
+        b=MGkQKCtzbzl3fMTvttR1rIFpOUfe1bW42nvS8U7qI54TDoEvUZGHZQmaDJVz+OHqKw
+         abHkcFLAcayQFdgtiCaE2qgx/dCwnyr7NGvefdeg4UVmC8n3uC2R1EhrFkXONgGAc3wq
+         ZoCbMjgAq5ivOAnbfCGXnY9Prkx6a6/AM6uVO21ysnOZHZijCqnwlTJHOEaQZXSTnO9U
+         xATTUkuw9uI3gPSK/pXuyeED0C4TxYvF+sCZXR699qdvDFn/F8IvbzA+ff8FSQ6msYs7
+         K9DfhKTfnuECfgBs2haMUROmuXhAX5fbAdnftrH1SwWNcjZCA7fIl3oT3EmhAsIkVLlT
+         3wAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=VekXSwnoYXueVcqtA9K9/HSshWoksn+mylfvGwHKpb4=;
-        b=Zl6hQQFOpccmUBnFaTLCuYX+6ntXvw66p461zNwMULoUS0y9MB4iEhVZYCiE6CAVxU
-         rrJACFIhlkPf6y7xsTrsdmLOx0DA7nr92EUCWOxzj9XOSdX7T9SRwttEGBJeqHJ1eQm0
-         RENh4c15QyOxEp/YT8xApN7ZwhADaC0mtiC5zD18N7JpoWH/JKx2w/dt+dk9KdOm30nu
-         kahACiQakGy0iUCNXII0zgWQDxjhcZPUdcHhZGaasLuhc+AGJY3ASNM2X/Z1kz/RX0KR
-         LpCXIBetSGAinu21i4zuurtSLqgfqtW0jPYVlGcaCq0Y9RRL2Fo06MHEfdVDEVltuSOO
-         XtnQ==
-X-Gm-Message-State: AOAM533uU5GDVwOT+96bS0JuUcIibl7xFjA3XXQ2ekz7yHckFGnZ8LfE
-        +WXSr3Wve9OrzjQs2zLgjK8=
-X-Google-Smtp-Source: ABdhPJzaBYatgVFq0HB4uA0EChJqhViP0GMQNV81UaKjxbrpN5OBEmSHhpS2cksye2jgUcz5SQWcOQ==
-X-Received: by 2002:a5d:5105:: with SMTP id s5mr14192243wrt.136.1607701842165;
-        Fri, 11 Dec 2020 07:50:42 -0800 (PST)
-Received: from [192.168.8.123] ([85.255.234.121])
-        by smtp.gmail.com with ESMTPSA id z22sm14071258wml.1.2020.12.11.07.50.40
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sy0jImmmjPyN83Ri4PgO+hrRmVWXF0qSJhzAct9CgUQ=;
+        b=cyaSFKqEOs/uizh2Kbn6hQXI7w5QEwnIS6H5KSirekVbFDyidY7FP5Hu7T/fUQsGrU
+         x7sPanoBGTqg9UTCT+lDpDPM7/eLQ5/XHVpUjRKFrZVp1OcHeTbdibRoEIhurERCtEY/
+         +mRSyRnK1Oz1W5Fw1NPlcp015rcHKhE2pGanrCxxBBaA9JqVzWkybW1ymE2L9hdhnLeP
+         MqJek/Rbk2bXvrPI9sEhx9DQj1zPDMAZgkLvIRkvcC/6Yl+hDUvX1at5E/cOObJMAYSy
+         L7hnAgkIpn18w9vvK5EC3+Mb70Uj0v7dNAVdx4+Ch9VdML7ijV3p9b+s/o/BPaZGV0Vg
+         ZuZA==
+X-Gm-Message-State: AOAM533MjXqy82ifdmIV4KMnJtwigZp7rmrNxyuTkUJscCtQD6ey4K3C
+        nwo3vhuKFWWw9oaS1gJyY84A0g==
+X-Google-Smtp-Source: ABdhPJzVklRCDWwyyBanUSwGdT3wuTN/OHpB+wNcPOF/2Ehi+eId9s8kivXTODT+oVXXtFpgJJfGag==
+X-Received: by 2002:a92:9986:: with SMTP id t6mr17022935ilk.151.1607702247286;
+        Fri, 11 Dec 2020 07:57:27 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id g6sm5512512ilc.85.2020.12.11.07.57.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Dec 2020 07:50:41 -0800 (PST)
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-References: <cover.1607477897.git.asml.silence@gmail.com>
- <51905c4fcb222e14a1d5cb676364c1b4f177f582.1607477897.git.asml.silence@gmail.com>
- <20201209084005.GC21968@infradead.org> <20201211140622.GA286014@cmpxchg.org>
- <2404b68a-1569-ce25-c9c4-00d7e42f9e06@gmail.com>
- <20201211153836.GA291478@cmpxchg.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 2/2] block: no-copy bvec for direct IO
-Message-ID: <6507b474-6f91-f99d-1dff-d7c21462813e@gmail.com>
-Date:   Fri, 11 Dec 2020 15:47:23 +0000
+        Fri, 11 Dec 2020 07:57:26 -0800 (PST)
+Subject: Re: [PATCH 1/2] fs: add support for LOOKUP_NONBLOCK
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org
+References: <20201210200114.525026-1-axboe@kernel.dk>
+ <20201210200114.525026-2-axboe@kernel.dk>
+ <20201211023555.GV3579531@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <bef3f905-f6b7-1134-7ca9-ff9385d6bf86@kernel.dk>
+Date:   Fri, 11 Dec 2020 08:57:26 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201211153836.GA291478@cmpxchg.org>
+In-Reply-To: <20201211023555.GV3579531@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/12/2020 15:38, Johannes Weiner wrote:
-> On Fri, Dec 11, 2020 at 02:20:11PM +0000, Pavel Begunkov wrote:
->> On 11/12/2020 14:06, Johannes Weiner wrote:
->>> On Wed, Dec 09, 2020 at 08:40:05AM +0000, Christoph Hellwig wrote:
->>>>> +	/*
->>>>> +	 * In practice groups of pages tend to be accessed/reclaimed/refaulted
->>>>> +	 * together. To not go over bvec for those who didn't set BIO_WORKINGSET
->>>>> +	 * approximate it by looking at the first page and inducing it to the
->>>>> +	 * whole bio
->>>>> +	 */
->>>>> +	if (unlikely(PageWorkingset(iter->bvec->bv_page)))
->>>>> +		bio_set_flag(bio, BIO_WORKINGSET);
->>>>
->>>> IIRC the feedback was that we do not need to deal with BIO_WORKINGSET
->>>> at all for direct I/O.
->>>
->>> Yes, this hunk is incorrect. We must not use this flag for direct IO.
->>> It's only for paging IO, when you bring in the data at page->mapping +
->>> page->index. Otherwise you tell the pressure accounting code that you
->>> are paging in a thrashing page, when really you're just reading new
->>> data into a page frame that happens to be hot.
->>>
->>> (As per the other thread, bio_add_page() currently makes that same
->>> mistake for direct IO. I'm fixing that.)
+On 12/10/20 7:35 PM, Al Viro wrote:
+> On Thu, Dec 10, 2020 at 01:01:13PM -0700, Jens Axboe wrote:
+>> io_uring always punts opens to async context, since there's no control
+>> over whether the lookup blocks or not. Add LOOKUP_NONBLOCK to support
+>> just doing the fast RCU based lookups, which we know will not block. If
+>> we can do a cached path resolution of the filename, then we don't have
+>> to always punt lookups for a worker.
 >>
->> I have that stuff fixed, it just didn't go into the RFC. That's basically
->> removing replacing add_page() with its version without BIO_WORKINGSET
-
-I wrote something strange... Should have been "replacing add_page() in
-those functions with a version without BIO_WORKINGSET".
-
->> in bio_iov_iter_get_pages() and all __bio_iov_*_{add,get}_pages() +
->> fix up ./fs/direct-io.c. Should cover all direct cases if I didn't miss
->> some.
+>> During path resolution, we always do LOOKUP_RCU first. If that fails and
+>> we terminate LOOKUP_RCU, then fail a LOOKUP_NONBLOCK attempt as well.
 > 
-> Ah, that's fantastic! Thanks for clarifying.
+> In effect you are adding a mode where
+> 	* unlazy would fail, except when done from complete_walk()
+> 	* ->d_revalidate() wouldn't be attempted at all (not even with LOOKUP_RCU)
+> 	* ... but ->get_link() in RCU mode would
+> 	* ... and so would everything done after complete_walk() in
+> do_open(), very much including the joys like mnt_want_write() (i.e. waiting for
+> frozen fs to thaw), handling O_TRUNC, calling ->open() itself...
+> 
+> So this "not punting lookups for a worker" looks fishy as hell - if you care
+> about blocking operations, you haven't really won anything.
+> 
+> And why exactly is the RCU case of ->d_revalidate() worth buggering off (it
+> really can't block - it's called under rcu_read_lock() and it does *not*
+> drop it)?
+> 
+> _IF_ for some theoretical exercise you want to do "lookup without dropping
+> out of RCU", just add a flag that has unlazy_walk() fail.  With -ECHILD.
+> Strip it away in complete_walk() and have path_init() with that flag
+> and without LOOKUP_RCU fail with -EAGAIN.  All there is to it.
 
-To keep it clear, do we go with what I have stashed (I'm planning to
-reiterate this weekend)? or you're going to write it up yourself?
-Just in case there is some cooler way you have in mind :)
+Thanks Al, that makes for an easier implementation. I like that suggestion,
+boils it down to just three hunks (see below).
+
+For io_uring, the concept is just to perform the fast path inline. The
+RCU lookup serves that purpose nicely - if we fail that, then it's expected
+to take the latency hit of going async.
+
+> It still leaves you with fuckloads of blocking operations (and that's
+> "blocking" with "until admin thaws the damn filesystem several hours
+> down the road") after complete_walk(), though.
+
+But that's true (and expected) for any open that isn't non-blocking.
+
+
+diff --git a/fs/namei.c b/fs/namei.c
+index d7952f863e79..d49c72e34c6e 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -686,6 +686,8 @@ static bool unlazy_walk(struct nameidata *nd)
+ 	BUG_ON(!(nd->flags & LOOKUP_RCU));
+ 
+ 	nd->flags &= ~LOOKUP_RCU;
++	if (nd->flags & LOOKUP_NONBLOCK)
++		goto out1;
+ 	if (unlikely(!legitimize_links(nd)))
+ 		goto out1;
+ 	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
+@@ -792,6 +794,7 @@ static int complete_walk(struct nameidata *nd)
+ 		 */
+ 		if (!(nd->flags & (LOOKUP_ROOT | LOOKUP_IS_SCOPED)))
+ 			nd->root.mnt = NULL;
++		nd->flags &= ~LOOKUP_NONBLOCK;
+ 		if (unlikely(unlazy_walk(nd)))
+ 			return -ECHILD;
+ 	}
+@@ -2209,6 +2212,9 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 
+ 	if (!*s)
+ 		flags &= ~LOOKUP_RCU;
++	/* LOOKUP_NONBLOCK requires RCU, ask caller to retry */
++	if ((flags & (LOOKUP_RCU | LOOKUP_NONBLOCK)) == LOOKUP_NONBLOCK)
++		return ERR_PTR(-EAGAIN);
+ 	if (flags & LOOKUP_RCU)
+ 		rcu_read_lock();
+ 
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
