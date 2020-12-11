@@ -2,85 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA3E2D6CD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 02:04:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E602D6D9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 02:33:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390881AbgLKBDV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 20:03:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33574 "EHLO
+        id S2389606AbgLKBcK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 20:32:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730793AbgLKBCo (ORCPT
+        with ESMTP id S2389890AbgLKBbn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 20:02:44 -0500
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050F8C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 17:02:03 -0800 (PST)
-Received: by mail-lf1-x141.google.com with SMTP id l11so11056925lfg.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 17:02:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eL+h7xeFX3PxTC7wOBMQFR0+2THjd1Dky1cIThWDYyQ=;
-        b=h+6i4V+xCVtPhqyQ5W+p+kPGcRM0UqI/VgG0mk0VJ42AvTM1RMPxswzs9OIiYBv5Bk
-         lKzqn0O9h080zfeq9Qj0Bonkh9cLgcEO2VtIDzC1Wwd5kmcRPGDRcJNpmXICTNURnzJW
-         cOHs+SDNcu+K7A6j05UOGU6eXLCbDqnhzn4JI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eL+h7xeFX3PxTC7wOBMQFR0+2THjd1Dky1cIThWDYyQ=;
-        b=Kysjii8rekHwPIrRf7Ga8qthx2ZiwE7rQTYIFymVab57ycPXSiYiqg9eXCK93nRQLz
-         njVTqkXrCKiFp8qdwLwfbMiykmrVAnnh59XagNvIRfvOkTeXzNzbMyiWmi46iVPFDqhr
-         6aYElkbnxUkRPS8EJSZTd4ox4bYUSIcuLNgK1HUsdW8JeHQCnfJkHwfr5/sKz23LVpsa
-         nm+k+vWnpDE46g8lsoL79/qP+utUlecmX+qFMcm0k9CqnU8bDBL18yH8lHciDK4J8dAH
-         Hu/hDaCtSpHFmMVfdfnL+qsDQAED1sj4papESM+xuVS9W5cbA5gAmtZcYe+FPnGzxPfe
-         KBUg==
-X-Gm-Message-State: AOAM533+zx9trPUCbF8k8YVW780micIIWSF4bCtvFD6/82GYzXsdhAxJ
-        v3pZEJVtfm3dbIjUxL3Q0d41ZiVFI3sjtg==
-X-Google-Smtp-Source: ABdhPJxL+5oWevrX5LXEzEl9tmrZLAG7FnvpnTwJePgctBHU/33LIVUGapbsPXckOVMCMq75igKmRA==
-X-Received: by 2002:a19:f241:: with SMTP id d1mr3631544lfk.241.1607648522019;
-        Thu, 10 Dec 2020 17:02:02 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id b29sm697913lfc.12.2020.12.10.17.02.01
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Dec 2020 17:02:01 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id m25so10992959lfc.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 17:02:01 -0800 (PST)
-X-Received: by 2002:a19:8557:: with SMTP id h84mr3448854lfd.201.1607648520738;
- Thu, 10 Dec 2020 17:02:00 -0800 (PST)
-MIME-Version: 1.0
-References: <20201210200114.525026-1-axboe@kernel.dk> <20201210200114.525026-3-axboe@kernel.dk>
- <20201210222934.GI4170059@dread.disaster.area> <CAHk-=wiee7xKitbX74NvjcKDHLiE21=SbO9_urWBnvm=nSZAFQ@mail.gmail.com>
- <20201211005830.GD3913616@dread.disaster.area>
-In-Reply-To: <20201211005830.GD3913616@dread.disaster.area>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 10 Dec 2020 17:01:44 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whQTK74ZwP7W9oMZFYZH=_t-1po75ajxQQAf-R945zhRA@mail.gmail.com>
-Message-ID: <CAHk-=whQTK74ZwP7W9oMZFYZH=_t-1po75ajxQQAf-R945zhRA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fs: expose LOOKUP_NONBLOCK through openat2() RESOLVE_NONBLOCK
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        Thu, 10 Dec 2020 20:31:43 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE565C0613D6;
+        Thu, 10 Dec 2020 17:31:03 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1knXGn-000SL0-2o; Fri, 11 Dec 2020 01:30:53 +0000
+Date:   Fri, 11 Dec 2020 01:30:53 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/29] iov_iter: Switch to using a table of operations
+Message-ID: <20201211013053.GA107834@ZenIV.linux.org.uk>
+References: <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
+ <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk>
+ <CAHk-=wjttbQzVUR-jSW-Q42iOUJtu4zCxYe9HO3ovLGOQ_3jSA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjttbQzVUR-jSW-Q42iOUJtu4zCxYe9HO3ovLGOQ_3jSA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 4:58 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> Umm, yes, that is _exactly_ what I just said. :/
+On Sat, Nov 21, 2020 at 10:21:17AM -0800, Linus Torvalds wrote:
+> So I think conceptually this is the right thing to do, but I have a
+> couple of worries:
+> 
+>  - do we really need all those different versions? I'm thinking
+> "iter_full" versions in particular. They I think the iter_full version
+> could just be wrappers that call the regular iter thing and verify the
+> end result is full (and revert if not). No?
 
-.,. but it _sounded_ like you would actually want to do the whole
-filesystem thing, since why would you have piped up otherwise. I just
-wanted to clarify that the onle sane model is the one that patch
-actually implements.
+Umm...  Not sure - iov_iter_revert() is not exactly light.  OTOH, it's
+on a slow path...  Other variants:
+	* save local copy, run of normal variant on iter, then copy
+the saved back on failure
+	* make a local copy, run the normal variant in _that_, then
+copy it back on success.
 
-Otherwise, your email was just nit-picking about a single word in a
-comment in a header file.
+Note that the entire thing is 5 words, and we end up reading all of
+them anyway, so I wouldn't bet which variant ends up being faster -
+that would need testing to compare.
 
-Was that really what you wanted to do?
+I would certainly like to get rid of the duplication there, especially
+if we are going to add copy_to_iter_full() and friends (there are
+use cases for those).
 
-            Linus
+>  - I worry a bit about the indirect call overhead and spectre v2.
+> 
+>    So yeah, it would be good to have benchmarks to make sure this
+> doesn't regress for some simple case.
+> 
+> Other than those things, my initial reaction is "this does seem cleaner".
+
+It does seem cleaner, all right, but that stuff is on fairly hot paths.
+And I didn't want to mix the overhead of indirect calls into the picture,
+so it turned into cascades of ifs with rather vile macros to keep the
+size down.
+
+It looks like the cost of indirects is noticable.  OTOH, there are
+other iov_iter patches floating around, hopefully getting better
+code generation.  Let's see how much do those give and if they win
+considerably more than those several percents, revisit this series.
