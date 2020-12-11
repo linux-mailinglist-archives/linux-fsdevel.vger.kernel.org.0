@@ -2,130 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3562D6EDA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 04:48:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E8CD2D6F26
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 05:28:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395227AbgLKDqy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 22:46:54 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:54079 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2395221AbgLKDqY (ORCPT
+        id S2395354AbgLKEYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 23:24:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36266 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395347AbgLKEXn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 22:46:24 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A8F6558C72C;
-        Fri, 11 Dec 2020 14:45:42 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1knZNF-002i1i-J6; Fri, 11 Dec 2020 14:45:41 +1100
-Date:   Fri, 11 Dec 2020 14:45:41 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 2/2] fs: expose LOOKUP_NONBLOCK through openat2()
- RESOLVE_NONBLOCK
-Message-ID: <20201211034541.GE3913616@dread.disaster.area>
-References: <20201210200114.525026-1-axboe@kernel.dk>
- <20201210200114.525026-3-axboe@kernel.dk>
- <20201210222934.GI4170059@dread.disaster.area>
- <CAHk-=wiee7xKitbX74NvjcKDHLiE21=SbO9_urWBnvm=nSZAFQ@mail.gmail.com>
- <20201211005830.GD3913616@dread.disaster.area>
- <CAHk-=whQTK74ZwP7W9oMZFYZH=_t-1po75ajxQQAf-R945zhRA@mail.gmail.com>
+        Thu, 10 Dec 2020 23:23:43 -0500
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADAB5C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 20:23:03 -0800 (PST)
+Received: by mail-pj1-x1044.google.com with SMTP id hk16so1682019pjb.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 20:23:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JadMn18aCnIs/6Vjw45Dh3eAfbEtua6oaOg4kdj6BCQ=;
+        b=eCkNBMu8UVMzizfhgKu+N0keqKcYMkDxoJqXSjBAJuVT24Zx4JcNlyj0zk9vCTikLs
+         lmzn027hZix4kWPCyIGZc1e46yyFv/eFpJz+1yi15kgG+bSNG+uyewJKh+89avQLygjj
+         rQMrtG67rImSPoJJ9pa7mEwIZ4pF1N+8l2eozAfJ5BAejTuj052QDZOo2I0PvwKCgYqx
+         OtShU6qB3lCEaj6fqfhCiiYnLMKVF/kLzQV8XXJ/Pmt+NTyUYCgSL4ZHiYXjxhf5hiLY
+         41wf3VKfjPgBY/IGXC7MWQBe/DOuf1DDWIrxCUjdMiZHSI3AcnQitgBRtjadqjT0bNko
+         W6eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JadMn18aCnIs/6Vjw45Dh3eAfbEtua6oaOg4kdj6BCQ=;
+        b=AU3tor3xW7eUv7z0vqHFV9Hnkjr471iSyW+A4IIPws1sVvP2a4rma3mY/gQZB4v0B0
+         RPckDBBbtEXwm6/hZDBzoGQF/rxEECJnVCsswBQmJw2MDmzPvLqTIOXh9cmPSRcP3YQI
+         E47gbYph5MV33j61q2R7TV3CwT9vXF9l6JLsNvdR2cGR6Qur03m9fA8oEWXRcjwlT2g3
+         dFhS+OSI3TU2XzsUL+JKNebwyMNibt+Tpk/XkwfZfbv/YMGFufQuTcqEsXNKa7btujjD
+         1uQko4D+vleB2caIUBw6+ngafzMmJq+uYzRkJvfp38fMXInbS1327nCfW9j5Zvd8h4rF
+         Xw3Q==
+X-Gm-Message-State: AOAM531Cv9cMriJAcnsd5I2gZzHTDHjIBOEZ6mOrOoj1b1uC5dM+lG/T
+        m2jrK7bRiWsyQy/MM2FI+N7YqMq2BVYNiDnI
+X-Google-Smtp-Source: ABdhPJyjs37u4Khap3K42fbJclkpOu+lkUmwWGHiGDK8D2XhmsaFMZHcC5foQkbHXZA+aC4clu6KhQ==
+X-Received: by 2002:a17:902:9a90:b029:da:ba07:efdc with SMTP id w16-20020a1709029a90b02900daba07efdcmr9255576plp.1.1607660583024;
+        Thu, 10 Dec 2020 20:23:03 -0800 (PST)
+Received: from localhost.localdomain ([103.136.221.66])
+        by smtp.gmail.com with ESMTPSA id 19sm8623352pfu.85.2020.12.10.20.22.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Dec 2020 20:23:02 -0800 (PST)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     gregkh@linuxfoundation.org, rafael@kernel.org, adobriyan@gmail.com,
+        akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+        vdavydov.dev@gmail.com, hughd@google.com, shakeelb@google.com,
+        guro@fb.com, samitolvanen@google.com, feng.tang@intel.com,
+        neilb@suse.de, iamjoonsoo.kim@lge.com, rdunlap@infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v4 0/7] Convert all THP vmstat counters to pages
+Date:   Fri, 11 Dec 2020 12:19:47 +0800
+Message-Id: <20201211041954.79543-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whQTK74ZwP7W9oMZFYZH=_t-1po75ajxQQAf-R945zhRA@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=7-415B0cAAAA:8
-        a=r-QAs7MFpWqf1LBFxywA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 05:01:44PM -0800, Linus Torvalds wrote:
-> On Thu, Dec 10, 2020 at 4:58 PM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > Umm, yes, that is _exactly_ what I just said. :/
-> 
-> .,. but it _sounded_ like you would actually want to do the whole
-> filesystem thing, since why would you have piped up otherwise. I just
-> wanted to clarify that the onle sane model is the one that patch
-> actually implements.
+Hi,
 
-<sigh>
+This patch series is aimed to convert all THP vmstat counters to pages.
 
-Is that really what you think motivates me, Linus? It sounds like
-you've created an Evil Dave strawman and you simply cannot see past
-the taint Evil Dave has created in your head. :/
+The unit of some vmstat counters are pages, some are bytes, some are
+HPAGE_PMD_NR, and some are KiB. When we want to expose these vmstat
+counters to the userspace, we have to know the unit of the vmstat counters
+is which one. When the unit is bytes or kB, both clearly distinguishable
+by the B/KB suffix. But for the THP vmstat counters, we may make mistakes.
 
-I commented because Jens has recently found several issues with
-inconsistencies in "non-blocking" APIs that we have in the IO path.
-He's triggered bugs in the non-blocking behaviour in filesystem code
-through io_uring that we've had to fix (e.g. see commit 883a790a8440
-("xfs: don't allow NOWAIT DIO across extent boundaries"). Then there
-are the active discussions about the limited ability to use
-IOCB_NOWAIT for full stack non-blocking IO behaviour w/ REQ_NOWAIT
-in the block layer because the semantics of IOCB_NOWAIT are directly
-tied to the requirements of the RWF_NOWAIT preadv2/pwritev2 flag and
-using REQ_NOWAIT in the block layer will break them.
+For example, the below is some bug fix for the THP vmstat counters:
 
-Part of the problem we have with the non-blocking behaviour is that
-the user interfaces have been under specified, poorly reviewed and
-targetted a single specific use case on a single filesystem rather
-than generic behaviour. And mostly they lack the necessary test
-coverage to ensure all filesystems behave the same way and to inform
-us of a regression that *would break userspace applications*.
+  - 7de2e9f195b9 ("mm: memcontrol: correct the NR_ANON_THPS counter of hierarchical memcg")
+  - The first commit in this series ("fix NR_ANON_THPS accounting in charge moving")
 
-Yes, I recognise and accept that some of the problems are partially
-my fault. I also have a habit of trying to learn from the mistakes
-I've made and then take steps to ensure that *we do not make those
-same mistakes again*.
+This patch series can make the code clear. And make all the unit of the THP
+vmstat counters in pages. Finally, the unit of the vmstat counters are
+pages, kB and bytes. The B/KB suffix can tell us that the unit is bytes
+or kB. The rest which is without suffix are pages.
 
-> Otherwise, your email was just nit-picking about a single word in a
-> comment in a header file.
-> 
-> Was that really what you wanted to do?
+In this series, I changed the following vmstat counters unit from HPAGE_PMD_NR
+to pages. However, there is no change to the print format of output to user
+space.
 
-So for all your talk about "don't break userspace", you think that
-actively taking steps during reviews to avoid a poor userspace API
-is "nit-picking"? FYI, having a reviewer ask for a userspace API
-modification to:
+  - NR_ANON_THPS
+  - NR_FILE_THPS
+  - NR_SHMEM_THPS
+  - NR_SHMEM_PMDMAPPED
+  - NR_FILE_PMDMAPPED
 
-	- have clearly specified and documented behaviour,
-	- be provided with user documentation, and
-	- be submitted with regression tests
+Although every THP stats update overflows the per-cpu counter, resorting to
+atomic global updates.
 
-is not at all unusual or unexpected. Asking for these things during
-review on -fsdevel and various filesystem lists is a normal part of
-the process for getting changes to user APIs reviewed and merged.
-The fact that Jens replied with "yep, no problems, let's make sure
-we nail down the semantics" and Al has replied "what does
-RESOLVE_NONBLOCK actually mean for all the blocking stuff that open
-does /after/ the pathwalk?" shows that these semantics really do
-matter Hence they need to be defined, specified, documented and
-carefully exercised by regression tests. i.e. the patch that
-introduces the RESOLVE_NONBLOCK flag is the -easy part-, filling in
-the rest of the blanks is where all the hard work is...
+But this change is consistent with 4.7's 8f182270dfec ("mm/swap.c: flush
+lru pvecs on compound page arrival"): we accepted greater overhead for
+greater accuracy back then, so I think it's okay to do so for THP stats.
+Thanks Hugh for mentioning this.
 
-Hence calling these requests "nit picking" sets entirely the wrong
-tone for the wider community. You may not care about things like
-properly documenting interfaces, but application developers and
-users sure do and hence it's something we need to pay attention to
-and encourage.
+This was inspired by Johannes and Roman. Thanks to them.
 
-Leaders are supposed to encourage and support good development
-practices, not be arseholes to the people who ask for good practices
-to be followed.
+Changes in v3 -> v4:
+  - Rename the first commit subject to "mm: memcontrol: fix NR_ANON_THPS
+    accounting in charge moving".
+  - Fix /proc/vmstat printing. Thanks to Johannes points out that.
 
-Please start behaving more like a leader should when I'm around,
-Linus.
+Changes in v2 -> v3:
+  - Change the series subject from "Convert all vmstat counters to pages or bytes"
+    to "Convert all THP vmstat counters to pages".
+  - Remove convert of KB to B.
 
--Dave.
-(Not really Evil.)
+Changes in v1 -> v2:
+  - Change the series subject from "Convert all THP vmstat counters to pages"
+    to "Convert all vmstat counters to pages or bytes".
+  - Convert NR_KERNEL_SCS_KB account to bytes.
+  - Convert vmstat slab counters to bytes.
+  - Remove {global_}node_page_state_pages.
+
+Muchun Song (7):
+  mm: memcontrol: fix NR_ANON_THPS accounting in charge moving
+  mm: memcontrol: convert NR_ANON_THPS account to pages
+  mm: memcontrol: convert NR_FILE_THPS account to pages
+  mm: memcontrol: convert NR_SHMEM_THPS account to pages
+  mm: memcontrol: convert NR_SHMEM_PMDMAPPED account to pages
+  mm: memcontrol: convert NR_FILE_PMDMAPPED account to pages
+  mm: memcontrol: make the slab calculation consistent
+
+ drivers/base/node.c    |  27 +++++-----
+ fs/proc/meminfo.c      |  10 ++--
+ include/linux/mmzone.h |  13 +++++
+ mm/filemap.c           |   4 +-
+ mm/huge_memory.c       |   9 ++--
+ mm/khugepaged.c        |   4 +-
+ mm/memcontrol.c        | 132 +++++++++++++++++++++++--------------------------
+ mm/page_alloc.c        |   7 ++-
+ mm/rmap.c              |  19 ++++---
+ mm/shmem.c             |   3 +-
+ mm/vmstat.c            |  11 ++++-
+ 11 files changed, 130 insertions(+), 109 deletions(-)
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.11.0
+
