@@ -2,92 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 998072D7778
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 15:11:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0100B2D777B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 15:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389690AbgLKOJq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 09:09:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
+        id S2393752AbgLKOKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 09:10:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390663AbgLKOJh (ORCPT
+        with ESMTP id S2388197AbgLKOKR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 09:09:37 -0500
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0798C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 06:08:56 -0800 (PST)
-Received: by mail-ej1-x642.google.com with SMTP id qw4so12464690ejb.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 06:08:56 -0800 (PST)
+        Fri, 11 Dec 2020 09:10:17 -0500
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D9FC0617A6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 06:09:20 -0800 (PST)
+Received: by mail-pj1-x1041.google.com with SMTP id iq13so2250715pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Dec 2020 06:09:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=aF3Mh+MA2q+ZpkL8xg5nd4+KjM1FTv7S2GkjkszOwBM=;
-        b=i6YXb/kx1K+ZBNheDvASX0oKCecbflSu+fyZ2fjKhwHBwFR4vTEmwXKgPT0qc764hc
-         qewaFUeRaEtQMg4y/IoQVBFWvYZgkKHgyPd0hX4njbbbc7ZIqLfu5zOpaeWkQf9WL/YY
-         gK4YXTSVzLt6ykV4YXpOlzQE2kLyT/GEE8ZicFgOtOByVhSdmNRn25qGctI7sVs67bMM
-         g71vZ5z1eKErNtAJkJsFWO6CAtctbdgFlqO3i2yYIu2B89QgS0bwMVUcc7u83MGSWI/p
-         irIp0IQm6+JQBAc2JE7Gcyj+oiIYQTctJxugvD6aHDhN70KKyCr4Vg/HLjfLLlUIbrcR
-         cO5Q==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SJUsAyZid8ZpUCO1A6kJYtQfMdu1p6LphB094f0w3bg=;
+        b=Aj8ew0Hu3yHmTNKkdhjZ+X6b43SrHaczF4qZhuusrFL6cDfM/7VhTojRP/QDHzTBgT
+         iDuj+C/tHmdYwmm3ovc+i3N17HKVh7cYSnCelcgWY6O35mMi2Hu2VjqHvqEp96zhjev4
+         bZF/f0upjqsusL81IM5qMfVkpPR8mmnU4STGZxHf6Lw68FsEjUq+PRoTZ1HtyxQysEyG
+         fsawhedIjAPMW9279hsd3DFuGCQ+oKgIdwYrTdcM3PcFdVjVktEb/zZXpIwfIbkWAYOh
+         ErnmdqTBkSBXpel99roVOLdClBLUeF3AUteTb4o7wLJdhlLKA+6IYVvPF3py6NLkTwBB
+         5WEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=aF3Mh+MA2q+ZpkL8xg5nd4+KjM1FTv7S2GkjkszOwBM=;
-        b=Yxej/Z5Eum8vios7FUdN3G1ps8xJDo7wfKfCWUPHQL/iV+WQOhrEWyX1X/hM/74wOR
-         35y0NQ7cNLwRN69aFUan1gTraRReMR1EmoxAWR5J/Dt2pL/k9DzZ71VYcCImrYtG5scG
-         dJmTOUmdH4OtUoTnZiqUbxWK94R4HQLSF/vI4HyqJr6skqjEVrmheenT9mAkTul67HVh
-         W4/LyZRRv9k2mAso//ObQ1GcTZLx1OlwzpWWQ53Nc+Bjyi9DFmDxTh8k0sfkPH05XT4n
-         qn4uqb6mhRfFptMnZjL/qdi2Do/q+nrBKWSL76YEoIirWxElKBaq2k+aTNWgMP9aDDvU
-         spnQ==
-X-Gm-Message-State: AOAM5335n9x//oEMxPtNtJXZb6HC3f9AMg0PHIjqjTK3lXpYqMIgh9r8
-        UxKTTB9al5QFVLTeVM7n/r4Rvw==
-X-Google-Smtp-Source: ABdhPJyMudGT3oM0ZWZIivI28u4XfQD8nzeth0kSRM1OzeZjoSv9S67hiN2S0oEkgM7dAVinTklXtQ==
-X-Received: by 2002:a17:906:a244:: with SMTP id bi4mr11127201ejb.59.1607695735452;
-        Fri, 11 Dec 2020 06:08:55 -0800 (PST)
-Received: from localhost ([2620:10d:c093:400::5:ee7a])
-        by smtp.gmail.com with ESMTPSA id rs27sm7106637ejb.21.2020.12.11.06.08.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Dec 2020 06:08:38 -0800 (PST)
-Date:   Fri, 11 Dec 2020 15:06:22 +0100
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 2/2] block: no-copy bvec for direct IO
-Message-ID: <20201211140622.GA286014@cmpxchg.org>
-References: <cover.1607477897.git.asml.silence@gmail.com>
- <51905c4fcb222e14a1d5cb676364c1b4f177f582.1607477897.git.asml.silence@gmail.com>
- <20201209084005.GC21968@infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SJUsAyZid8ZpUCO1A6kJYtQfMdu1p6LphB094f0w3bg=;
+        b=TPgvDvJoNYfdCmSFJHrhYv1LTn6MNgVaBf3CICNgtZWHyuJFns9sfsDwhUyVgRHxGO
+         1D82RrYgd++GsbPuQKUDJaoIGyVXFwvt505kywYqOZmaz2B54EngnDPM4p631F3d6K0t
+         XJjA/KHd7OVmK7GJZGOfNbCkUJz6YUR38Exygn2VOpn0v2WUcon+K4nKdHLNDpG/g9jB
+         xZ2+0PiEBPlSmwuaki7MNoGg5hziQ6PVaP5rY3oumYiwnBR1OrpklQv+xE+DebJlBVS2
+         Bxuto+iut+ft61ijwyIvZAWUofDuxSeu6oLur5dQPnTNLgGDqoaElHoLyXXnq39mfNJB
+         0uOA==
+X-Gm-Message-State: AOAM532XgY/+K4Bm5d5jTa4pXOapkd3nqIB6sssLbLo0E4G3AXdhp35T
+        9IhRPu6OQrP+JQQPx5yo06paXyWDuS8au64OR/MYIw==
+X-Google-Smtp-Source: ABdhPJwrLNBJOldmJmyWaGlf9L4YnEd4a4zJ98KF8M3D+Gy0rq+4D6xov12z8j4f0zvZiLabKSGqTiyYXwKPUSSjrQM=
+X-Received: by 2002:a17:902:76c8:b029:d9:d6c3:357d with SMTP id
+ j8-20020a17090276c8b02900d9d6c3357dmr11055737plt.34.1607695759816; Fri, 11
+ Dec 2020 06:09:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201209084005.GC21968@infradead.org>
+References: <20201210035526.38938-1-songmuchun@bytedance.com>
+ <20201210035526.38938-8-songmuchun@bytedance.com> <20201211133624.GA27050@linux>
+In-Reply-To: <20201211133624.GA27050@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Fri, 11 Dec 2020 22:08:43 +0800
+Message-ID: <CAMZfGtXFtzJBifOrB2XdCrpazGP5MDuU3mp1Uag+TGLE3w49yw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v8 07/12] mm/hugetlb: Set the PageHWPoison
+ to the raw error page
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 09, 2020 at 08:40:05AM +0000, Christoph Hellwig wrote:
-> > +	/*
-> > +	 * In practice groups of pages tend to be accessed/reclaimed/refaulted
-> > +	 * together. To not go over bvec for those who didn't set BIO_WORKINGSET
-> > +	 * approximate it by looking at the first page and inducing it to the
-> > +	 * whole bio
-> > +	 */
-> > +	if (unlikely(PageWorkingset(iter->bvec->bv_page)))
-> > +		bio_set_flag(bio, BIO_WORKINGSET);
-> 
-> IIRC the feedback was that we do not need to deal with BIO_WORKINGSET
-> at all for direct I/O.
+On Fri, Dec 11, 2020 at 9:36 PM Oscar Salvador <osalvador@suse.de> wrote:
+>
+> On Thu, Dec 10, 2020 at 11:55:21AM +0800, Muchun Song wrote:
+> > +static inline void subpage_hwpoison_deliver(struct hstate *h, struct page *head)
+> > +{
+> > +     struct page *page = head;
+> > +
+> > +     if (!free_vmemmap_pages_per_hpage(h))
+> > +             return;
+> > +
+> > +     if (PageHWPoison(head))
+> > +             page = head + page_private(head + 4);
+> > +
+> > +     /*
+> > +      * Move PageHWPoison flag from head page to the raw error page,
+> > +      * which makes any subpages rather than the error page reusable.
+> > +      */
+> > +     if (page != head) {
+> > +             SetPageHWPoison(page);
+> > +             ClearPageHWPoison(head);
+> > +     }
+> > +}
+>
+> I would make the names coherent.
+> I am not definitely goot at names, but something like:
+> hwpoison_subpage_{foo,bar} looks better.
 
-Yes, this hunk is incorrect. We must not use this flag for direct IO.
-It's only for paging IO, when you bring in the data at page->mapping +
-page->index. Otherwise you tell the pressure accounting code that you
-are paging in a thrashing page, when really you're just reading new
-data into a page frame that happens to be hot.
+It's better than mine. Thank you.
 
-(As per the other thread, bio_add_page() currently makes that same
-mistake for direct IO. I'm fixing that.)
+>
+> Also, could not subpage_hwpoison_deliver be rewritten like:
+>
+>   static inline void subpage_hwpoison_deliver(struct hstate *h, struct page *head)
+>   {
+>        struct page *page;
+>
+>        if (!PageHWPoison(head) || !free_vmemmap_pages_per_hpage(h))
+>                return;
+>
+>        page = head + page_private(head + 4);
+>        /*
+>         * Move PageHWPoison flag from head page to the raw error page,
+>         * which makes any subpages rather than the error page reusable.
+>         */
+>        if (page != head) {
+>                SetPageHWPoison(page);
+>                ClearPageHWPoison(head);
+>        }
+>   }
+>
+> I think it is better code-wise.
+
+Will do. Thank you.
+
+>
+> > +      * Move PageHWPoison flag from head page to the raw error page,
+> > +      * which makes any subpages rather than the error page reusable.
+> > +      */
+> > +     if (page != head) {
+> > +             SetPageHWPoison(page);
+> > +             ClearPageHWPoison(head);
+> > +     }
+>
+> I would put this in an else-if above:
+>
+>         if (free_vmemmap_pages_per_hpage(h)) {
+>                 set_page_private(head + 4, page - head);
+>                 return;
+>         } else if (page != head) {
+>                 SetPageHWPoison(page);
+>                 ClearPageHWPoison(head);
+>         }
+>
+> or will we lose the optimization in case free_vmemmap_pages_per_hpage gets compiled out?
+>
+
+Either is OK. The compiler will help us optimize the code when
+free_vmemmap_pages_per_hpage always returns false.
+
+Thanks for your suggestions. :-)
+
+>
+> --
+> Oscar Salvador
+> SUSE L3
+
+
+
+-- 
+Yours,
+Muchun
