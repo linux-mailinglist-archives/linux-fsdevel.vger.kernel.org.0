@@ -2,124 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0533E2D7F4C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 20:23:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D606A2D8041
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 21:57:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbgLKTVO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Dec 2020 14:21:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33186 "EHLO
+        id S2394346AbgLKU4s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Dec 2020 15:56:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgLKTVN (ORCPT
+        with ESMTP id S1731997AbgLKU4e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Dec 2020 14:21:13 -0500
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDFCFC0613CF;
-        Fri, 11 Dec 2020 11:20:32 -0800 (PST)
-Received: by mail-lj1-x243.google.com with SMTP id q8so12125735ljc.12;
-        Fri, 11 Dec 2020 11:20:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lEGfJXljVJQVDFGapn/ihQVDl58e1Lo7WB4ovbMgJhY=;
-        b=SJCqMVKN8LJ4lYCYfW9l2jF51GJox8OeV9lqspXx0jlpBDkFxzp0eJHgWUvtYm4G+Q
-         u2mBuDV/1nQVNfDLD8+eZoCHrf4arG+GW8TWMtlEfKVuEEa5PZjPs2fBUI8UM5tSZHrc
-         E3PHBxMc9xeRDnJToUAerqephAG77XYIZ9rurTpYczP3kXCIXamBj0FFcvbpOcky3MC2
-         TOW/pQM/+Rd9X8CquN/a9gxJgJvbJNfyZRMjMEwiS31g72kux4ih7BJSk1BqB4179aGC
-         Na911b4MKhH+xNkUgUCN7D8q1I7u2oDsRunI/FEzwpPcHsjKx4ZUavqa7totLIDR0Yv/
-         zpog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lEGfJXljVJQVDFGapn/ihQVDl58e1Lo7WB4ovbMgJhY=;
-        b=TbkmErTR+q8aVXEGRRG+CC7NbhwPGTw0BmTYQrIUUpy9ZJ4xUt9A88pAc6FY/3MUmK
-         KyCk7qFEC/nTl24YTfWtM940X7z0UU7gN086vXj53tg09QWuaxWI/QT4Fk+x8ING8B+f
-         IGpYzw0rBn/Id3wyJmmPsqO/SvlstKJ6igtCNMIp/eHrEqp3e8sromk4jpXT5VOVsJYq
-         5Yh9saKJyowy0oMEEtrVkXAOy9iSDxrpwmTImkqT4kSzZZMyykwqVrpJtMFneCdOXO3E
-         jjGmFgGrWnCQXvoypvmCugICcUNN5Lb2kBiGS5lVgbl63sQijYeBu54nDO3kFPRTm1p0
-         A42Q==
-X-Gm-Message-State: AOAM5321cUqzG1wtR8DbyvUT/51yqHzgKR1ryhAXCy/VRKbDIfYQYG45
-        vsUEEyqhdaw0G0qgJuHRc2cogywdHmX3Qz0M1X+svVnrixE=
-X-Google-Smtp-Source: ABdhPJzb/hWU3/g5CvkMNDfdOVM5h2DtE0XxPTPg3z3CmqHPjeXluN9CzNtbBMmLlm6CDuybBz5q1d20bQsC+rOaltA=
-X-Received: by 2002:a2e:874c:: with SMTP id q12mr5431858ljj.424.1607714431449;
- Fri, 11 Dec 2020 11:20:31 -0800 (PST)
+        Fri, 11 Dec 2020 15:56:34 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5580BC0613CF;
+        Fri, 11 Dec 2020 12:55:54 -0800 (PST)
+Received: from localhost (unknown [IPv6:2804:14c:132:242d::1000])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: krisman)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id A8AE11F46140;
+        Fri, 11 Dec 2020 20:55:50 +0000 (GMT)
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, tytso@mit.edu,
+        khazhy@google.com, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH 4/8] vfs: Add superblock notifications
+Organization: Collabora
+References: <20201208003117.342047-1-krisman@collabora.com>
+        <20201208003117.342047-5-krisman@collabora.com>
+        <20201210220914.GG4170059@dread.disaster.area>
+Date:   Fri, 11 Dec 2020 17:55:32 -0300
+In-Reply-To: <20201210220914.GG4170059@dread.disaster.area> (Dave Chinner's
+        message of "Fri, 11 Dec 2020 09:09:14 +1100")
+Message-ID: <87ft4cukor.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-3-shy828301@gmail.com>
- <550518d6-fd50-72be-7c84-71153b470cfd@hisilicon.com>
-In-Reply-To: <550518d6-fd50-72be-7c84-71153b470cfd@hisilicon.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 11 Dec 2020 11:20:19 -0800
-Message-ID: <CAHbLzkr16gAYRpLceusLRtJQxx50Wxq1f3fUoGaYHC5-6U1K5g@mail.gmail.com>
-Subject: Re: [PATCH 2/9] mm: vmscan: use nid from shrink_control for tracepoint
-To:     "Xiaqing (A)" <saberlily.xia@hisilicon.com>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Liu Yi <daniel.liuyi@hisilicon.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 2, 2020 at 7:13 PM Xiaqing (A) <saberlily.xia@hisilicon.com> wr=
-ote:
->
->
->
-> On 2020/12/3 2:27, Yang Shi wrote:
-> > The tracepoint's nid should show what node the shrink happens on, the s=
-tart tracepoint
-> > uses nid from shrinkctl, but the nid might be set to 0 before end trace=
-point if the
-> > shrinker is not NUMA aware, so the traceing log may show the shrink hap=
-pens on one
-> > node but end up on the other node.  It seems confusing.  And the follow=
-ing patch
-> > will remove using nid directly in do_shrink_slab(), this patch also hel=
-ps cleanup
-> > the code.
-> >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >   mm/vmscan.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 7d6186a07daf..457ce04eebf2 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -533,7 +533,7 @@ static unsigned long do_shrink_slab(struct shrink_c=
-ontrol *shrinkctl,
-> >       new_nr =3D atomic_long_add_return(next_deferred,
-> >                                       &shrinker->nr_deferred[nid]);
-> >
-> > -     trace_mm_shrink_slab_end(shrinker, nid, freed, nr, new_nr, total_=
-scan);
-> > +     trace_mm_shrink_slab_end(shrinker, shrinkctl->nid, freed, nr, new=
-_nr, total_scan);
->
-> Hi=EF=BC=8C Yang
->
-> When I read this patch, I wondered why you modified it so much until I re=
-ad patch6. Could you merge
-> this patch into patch6?
 
-Sorry for the late reply. It could be, but I was inclined to think
-this is a bug and we might need backport it to stable, so I leave it
-as a standalone patch.
+
+Dave,
+
+Thanks a lot for the very detailed review.
+
+> On Mon, Dec 07, 2020 at 09:31:13PM -0300, Gabriel Krisman Bertazi wrote:
+>> From: David Howells <dhowells@redhat.com>
+>> 
+>> Add a superblock event notification facility whereby notifications about
+>> superblock events, such as I/O errors (EIO), quota limits being hit
+>> (EDQUOT) and running out of space (ENOSPC) can be reported to a monitoring
+>> process asynchronously.  Note that this does not cover vfsmount topology
+>> changes.  watch_mount() is used for that.
+>
+> watch_mount() is not in the upstream tree, nor is it defined in this
+> patch set.
+
+
+That is my mistake, not the author's.  I picked this from a longer series that has
+a watch_mount implementation, but didn't include it.  Only the commit message
+is bad, not the patch absence.
+
+>> Records are of the following format:
+>> 
+>> 	struct superblock_notification {
+>> 		struct watch_notification watch;
+>> 		__u64	sb_id;
+>> 	} *n;
+>> 
+>> Where:
+>> 
+>> 	n->watch.type will be WATCH_TYPE_SB_NOTIFY.
+>> 
+>> 	n->watch.subtype will indicate the type of event, such as
+>> 	NOTIFY_SUPERBLOCK_READONLY.
+>> 
+>> 	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
+>> 	record.
+>> 
+>> 	n->watch.info & WATCH_INFO_ID will be the fifth argument to
+>> 	watch_sb(), shifted.
+>> 
+>> 	n->watch.info & NOTIFY_SUPERBLOCK_IS_NOW_RO will be used for
+>> 	NOTIFY_SUPERBLOCK_READONLY, being set if the superblock becomes
+>> 	R/O, and being cleared otherwise.
+>> 
+>> 	n->sb_id will be the ID of the superblock, as can be retrieved with
+>> 	the fsinfo() syscall, as part of the fsinfo_sb_notifications
+>> 	attribute in the watch_id field.
+>> 
+>> Note that it is permissible for event records to be of variable length -
+>> or, at least, the length may be dependent on the subtype.  Note also that
+>> the queue can be shared between multiple notifications of various types.
+>
+> /me puts on his "We really, really, REALLY suck at APIs" hat.
+>
+> This adds a new syscall that has a complex structure associated with
+> in. This needs a full man page specification written for it
+> describing the parameters, the protocol structures, behaviour, etc
+> before we can really review this. It really also needs full test
+> infrastructure for every aspect of the syscall written from the man
+> page (not the implementation) for fstests so that we end up with a
+> consistent implementation for every filesystem that implements these
+> watches.
+
+I see.  I was thinking the other way around, getting a design accepted
+by you all before writing down documentation, but that makes a lot of
+sense. In fact, I'm taking a step back and writing a text proposal,
+without patches, such that we can agree on the main points before I
+start coding.
+
+> Other things:
+>
+> - Scoping: inode/block related information is not "superblock"
+>   information. What about errors in non-inode related objects?
+
+The previous RFC separated inode error notifications from other types,
+but my idea was to have different notifications types for each object.
+
+
+> - offets into files/devices/objects need to be in bytes, not blocks
+> - errors can span multiple contiguous blocks, so the notification
+>   needs to report the -byte range- the error corresponds to.
+> - superblocks can have multiple block devices under them with
+>   individual address ranges. Hence we need {object,dev,offset,len}
+>   to uniquely identify where an error occurred in a filesystem.
+> - userspace face structures need padding and flags/version/size
+>   information so we can tell what shape the structure being passed
+>   is. It is guaranteed that we will want to expand the structure
+>   definitions in future, maybe even deprecate some...
+> - syscall has no flags field.
+> - syscall is of "at" type (relative path via dfd) so probably shoudl
+>   be called "watch..._at()"
+
+will do all the above.
 
 >
-> Thanks!
->
-> >       return freed;
-> >   }
-> >
->
+> Fundamentally, though, I'm struggling to understand what the
+> difference between watch_mount() and watch_sb() is going to be.
+> "superblock" watches seem like the wrong abstraction for a path
+> based watch interface. Superblocks can be shared across multiple
+> disjoint paths, subvolumes and even filesystems.
+
+As far as I understand the original patchset, watch_mount was designed
+to monitor mountpoint operations (mount, umount,.. ) in a sub-tree,
+while watch_sb monitors filesystem operations and errors.  I'm not
+working with watch_mount, my current interest is in having a
+notifications mechanism for filesystem errors, which seemed to fit
+nicely with the watch_sb patchset for watch_queue.
+
+> The path based user API is really asking to watch a mount, not a
+> superblock. We don't otherwise expose superblocks to userspace at
+> all, so this seems like the API is somewhat exposing internal kernel
+> implementation behind mounts. However, there -is- a watch_mount()
+> syscall floating around somewhere, so it makes me wonder exactly why
+> we need a second syscall and interface protocol to expose
+> essentially the same path-based watch information to userspace.
+
+I think these are indeed different syscalls, but maybe a bit misnamed.
+
+If not by path, how could we uniquely identify an entire filesystem?
+Maybe pointing to a block device that has a valid filesystem and in the
+case of fs spawning through multiple devices, consider all of them?  But
+that would not work for some misc filesystems, like tmpfs.
+
+> Without having that syscall the same patchset, or a reference to
+> that patchset (and man page documenting the interface), I have no
+> idea what it does or why it is different or why it can't be used for
+> these error notifications....
+
+As a short summary, My goal is an error reporting mechanism for ext4
+(preferably that can also be used by other filesystems) that allows a
+userspace application to monitor errors on the filesystem without losing
+information and without having to parse a convoluted dmesg.  The
+watch_queue API seem to expose exactly the infrastructure for this kind
+of thing.  As I said, I'm gonna send a proposal with more details
+because, I'd really like to have something that can be used by several
+filesystems.
+
+-- 
+Gabriel Krisman Bertazi
