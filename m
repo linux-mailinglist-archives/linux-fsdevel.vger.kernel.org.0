@@ -2,75 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E29532D6CD2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 02:04:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AA3E2D6CD3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Dec 2020 02:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394709AbgLKA7g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Dec 2020 19:59:36 -0500
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:38212 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2394708AbgLKA7V (ORCPT
+        id S2390881AbgLKBDV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Dec 2020 20:03:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33574 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730793AbgLKBCo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Dec 2020 19:59:21 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 8767F765018;
-        Fri, 11 Dec 2020 11:58:35 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1knWlS-002fcc-Qb; Fri, 11 Dec 2020 11:58:30 +1100
-Date:   Fri, 11 Dec 2020 11:58:30 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Thu, 10 Dec 2020 20:02:44 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050F8C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 17:02:03 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id l11so11056925lfg.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 17:02:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eL+h7xeFX3PxTC7wOBMQFR0+2THjd1Dky1cIThWDYyQ=;
+        b=h+6i4V+xCVtPhqyQ5W+p+kPGcRM0UqI/VgG0mk0VJ42AvTM1RMPxswzs9OIiYBv5Bk
+         lKzqn0O9h080zfeq9Qj0Bonkh9cLgcEO2VtIDzC1Wwd5kmcRPGDRcJNpmXICTNURnzJW
+         cOHs+SDNcu+K7A6j05UOGU6eXLCbDqnhzn4JI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eL+h7xeFX3PxTC7wOBMQFR0+2THjd1Dky1cIThWDYyQ=;
+        b=Kysjii8rekHwPIrRf7Ga8qthx2ZiwE7rQTYIFymVab57ycPXSiYiqg9eXCK93nRQLz
+         njVTqkXrCKiFp8qdwLwfbMiykmrVAnnh59XagNvIRfvOkTeXzNzbMyiWmi46iVPFDqhr
+         6aYElkbnxUkRPS8EJSZTd4ox4bYUSIcuLNgK1HUsdW8JeHQCnfJkHwfr5/sKz23LVpsa
+         nm+k+vWnpDE46g8lsoL79/qP+utUlecmX+qFMcm0k9CqnU8bDBL18yH8lHciDK4J8dAH
+         Hu/hDaCtSpHFmMVfdfnL+qsDQAED1sj4papESM+xuVS9W5cbA5gAmtZcYe+FPnGzxPfe
+         KBUg==
+X-Gm-Message-State: AOAM533+zx9trPUCbF8k8YVW780micIIWSF4bCtvFD6/82GYzXsdhAxJ
+        v3pZEJVtfm3dbIjUxL3Q0d41ZiVFI3sjtg==
+X-Google-Smtp-Source: ABdhPJxL+5oWevrX5LXEzEl9tmrZLAG7FnvpnTwJePgctBHU/33LIVUGapbsPXckOVMCMq75igKmRA==
+X-Received: by 2002:a19:f241:: with SMTP id d1mr3631544lfk.241.1607648522019;
+        Thu, 10 Dec 2020 17:02:02 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id b29sm697913lfc.12.2020.12.10.17.02.01
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Dec 2020 17:02:01 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id m25so10992959lfc.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Dec 2020 17:02:01 -0800 (PST)
+X-Received: by 2002:a19:8557:: with SMTP id h84mr3448854lfd.201.1607648520738;
+ Thu, 10 Dec 2020 17:02:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20201210200114.525026-1-axboe@kernel.dk> <20201210200114.525026-3-axboe@kernel.dk>
+ <20201210222934.GI4170059@dread.disaster.area> <CAHk-=wiee7xKitbX74NvjcKDHLiE21=SbO9_urWBnvm=nSZAFQ@mail.gmail.com>
+ <20201211005830.GD3913616@dread.disaster.area>
+In-Reply-To: <20201211005830.GD3913616@dread.disaster.area>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 10 Dec 2020 17:01:44 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whQTK74ZwP7W9oMZFYZH=_t-1po75ajxQQAf-R945zhRA@mail.gmail.com>
+Message-ID: <CAHk-=whQTK74ZwP7W9oMZFYZH=_t-1po75ajxQQAf-R945zhRA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fs: expose LOOKUP_NONBLOCK through openat2() RESOLVE_NONBLOCK
+To:     Dave Chinner <david@fromorbit.com>
 Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 2/2] fs: expose LOOKUP_NONBLOCK through openat2()
- RESOLVE_NONBLOCK
-Message-ID: <20201211005830.GD3913616@dread.disaster.area>
-References: <20201210200114.525026-1-axboe@kernel.dk>
- <20201210200114.525026-3-axboe@kernel.dk>
- <20201210222934.GI4170059@dread.disaster.area>
- <CAHk-=wiee7xKitbX74NvjcKDHLiE21=SbO9_urWBnvm=nSZAFQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiee7xKitbX74NvjcKDHLiE21=SbO9_urWBnvm=nSZAFQ@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=7-415B0cAAAA:8
-        a=zJOtU--gRZm0aBwq0xkA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 03:29:23PM -0800, Linus Torvalds wrote:
-> On Thu, Dec 10, 2020 at 2:29 PM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > So, really, this isn't avoiding IO at all - it's avoiding the
-> > possibility of running a lookup path that might blocking on
-> > something.
-> 
-> For pathname lookup, the only case that matters is the RCU lockless lookup.
-> 
-> That cache hits basically 100% of the time except for the first
-> lookup, or under memory pressure.
-> 
-> And honestly, from a performance perspective, it's the lockless path
-> lookup that matters most. By the time you have to go to the
-> filesystem, take the directory locks etc, you've already lost.
-> 
-> So we're never going to bother with some kind of "lockless lookup for
-> actual filesystems", because it's only extra work for no actual gain.
-> 
-> End result: LOOKUP_NONBLOCK is about not just avoiding IO, but about
-> avoiding the filesystem and the inevitable locking that causes.
+On Thu, Dec 10, 2020 at 4:58 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> Umm, yes, that is _exactly_ what I just said. :/
 
-Umm, yes, that is _exactly_ what I just said. :/
+.,. but it _sounded_ like you would actually want to do the whole
+filesystem thing, since why would you have piped up otherwise. I just
+wanted to clarify that the onle sane model is the one that patch
+actually implements.
 
-Cheers,
+Otherwise, your email was just nit-picking about a single word in a
+comment in a header file.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Was that really what you wanted to do?
+
+            Linus
