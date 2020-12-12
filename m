@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF592D8871
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Dec 2020 18:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 504C02D8874
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Dec 2020 18:01:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407680AbgLLQwI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Dec 2020 11:52:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49366 "EHLO
+        id S2407683AbgLLQwc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Dec 2020 11:52:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405951AbgLLQv5 (ORCPT
+        with ESMTP id S2406053AbgLLQv6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Dec 2020 11:51:57 -0500
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F5A3C061793
-        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Dec 2020 08:51:17 -0800 (PST)
-Received: by mail-pj1-x1043.google.com with SMTP id lj6so2508240pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Dec 2020 08:51:17 -0800 (PST)
+        Sat, 12 Dec 2020 11:51:58 -0500
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC67C061794
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Dec 2020 08:51:18 -0800 (PST)
+Received: by mail-pl1-x644.google.com with SMTP id g20so5508921plo.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Dec 2020 08:51:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VTka/gpM64k/H7yRLstKZFGJk0r4OmXli/cCm+jSN2I=;
-        b=YI4UOEoSrYqL2SQF5uzul8hd8gHkG76ZWTU4YGdGrqYHXjSD2gWqk0eNdj/CSxwkd1
-         H72EbdOohorQTaHOhjOgjxqPxlBsqurA45LhdvWPoN/4KuiECfQBUQZlsLTYG22Ivag+
-         UYaP6I32RGIfEG9tiStfbF0CjotP2Hpeec85RzM6ShxVgsxGufpxeI+SsIUkeDPXPEuw
-         wV7ENWShhY0IW3ijUD9609kpNKn3f4SR9+L3qeUyeZ8ZixEVzDEHrvyTeH+oTvtzx202
-         Eg9yVo36WVqh0XvY87Y674obWsqPbIeBnP7io4SP2VaBf6YS8rlg0Fbtp18on7g4qxan
-         8JPQ==
+        bh=Sj4dbiovnGr54xIL9U5s6SlD51u/w+iAlhDwtYg8FCA=;
+        b=XdXT5Krilx/VzAUqbz0eIs0QqP956iAcogJMiY0ybLxfyQeHZKpZwzIkPtS2Os//QM
+         qCC5LlBB4UY/m8ayEvmRluD0vQe41fU2SllSCp3mtP173nrxEatkc0WnjRVeojbzAiW9
+         85SkLUSEYT+GueTiOBPOazt3Lfc8HoRXAcIquEER+qBm+mTU0SCuidfXfgR8+wp7v8My
+         eGXo8jtwne07i2eKNNQZ24/1KRbCraki7ty2Uk3FN8RWFdbom9A7emJetfKUWzDe9/7B
+         4WxED0dwfvWu/4Kb59c8W5osrbc8qfPvOD7F6lkZXYwhgUqZB04K9yF4CQpmFEwSJxWv
+         BNXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VTka/gpM64k/H7yRLstKZFGJk0r4OmXli/cCm+jSN2I=;
-        b=RS+ZP09pxDr0c5su0qmGYKP2Ds438Bwn1L2oLncLP8lQp7EZBZJevV33zmH5+noM35
-         25Bo7kmWxyvVUsbZEgy5+ESoeQWHjwL5Ai3fZFgmUcoNmNypRZCVN4TXZ/JB9KPlAbXz
-         WRPQzDwtGyOnIRTF8YhHlNQXDttBqiLLxCCVUnEID/RVaD7kWCFe3Wzf1zqLxGfWR/3H
-         GTJ40Cr99BHXdjIR+ZGHE8+abYSgykZBdKZPXoEM4uLnISpdq/8PHBkhge5+lqfsSYNL
-         9VQ93IymElSVx74DFGbjW6u1+B3aDfJsAotc6HlYIBaCtBBGFCbGjHkQCSvAWDia5UsS
-         Db/A==
-X-Gm-Message-State: AOAM531QoVBZVPJKOQzCKytaiIyNrH9S/7uxh1fiRrGgNrzIxHaxG6zf
-        YE/0GD683RHPmamgSjEPuCSMkkZwJXhU9g==
-X-Google-Smtp-Source: ABdhPJw3/r5x8pvaInMYvJmCE5bzsm0V4ctUb8EA2WRVTatl4tefhaPU8/dQ3MwANxJ5JluG827ycA==
-X-Received: by 2002:a17:902:bcca:b029:da:61e3:a032 with SMTP id o10-20020a170902bccab02900da61e3a032mr15779975pls.63.1607791876678;
-        Sat, 12 Dec 2020 08:51:16 -0800 (PST)
+        bh=Sj4dbiovnGr54xIL9U5s6SlD51u/w+iAlhDwtYg8FCA=;
+        b=gvzF4m+eK6TMWcZGn+A74FU3fD7BHP/7A+k8i6Rzit8ZonEFRMIL6PA+IL3JdH0yaM
+         LqNxo288FgvuKCW6t+Y+TJxKWF3pNudR53pBIZqFDPFQflQqB9H8snlf54wIcIMMRx55
+         evnTD1Z516yslnri/B1NgBD6xh4/MnAUBqk+7WiMqcg/hzKzvhvHS2CaSqkXQVbFfRB1
+         a693/DqPYFczfCJamwU3own2o4nHFdV+fIxfoh1KTXu3YdsstOBqr9BexfQB7LwSn7WN
+         9Tw41kNG9gDGf9Pk/mRkAKX+7WqPxTIkKdiDnP6XYgkA+sIY5lUm1iH0dQxdYo22fVVJ
+         W2/g==
+X-Gm-Message-State: AOAM531CGDRooQ8j0mI51y+VnlabIwRnBCZopOWg6vi7CQ43GPB24Qob
+        5bGNogA8AekO1U6TGgQ4RvSVQoJfEYX+Vg==
+X-Google-Smtp-Source: ABdhPJzRGbpwnjTZBThsdFy1NV7Dz41RTMAu5K+gu5WbJGMGoE0YZcijxCWto/LeBfbmGj1ipniqFw==
+X-Received: by 2002:a17:902:ac93:b029:db:c725:e321 with SMTP id h19-20020a170902ac93b02900dbc725e321mr15786186plr.41.1607791877960;
+        Sat, 12 Dec 2020 08:51:17 -0800 (PST)
 Received: from p1.localdomain ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id s17sm14855352pge.37.2020.12.12.08.51.15
+        by smtp.gmail.com with ESMTPSA id s17sm14855352pge.37.2020.12.12.08.51.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Dec 2020 08:51:16 -0800 (PST)
+        Sat, 12 Dec 2020 08:51:17 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] fs: add mnt_want_write_trylock()
-Date:   Sat, 12 Dec 2020 09:51:03 -0700
-Message-Id: <20201212165105.902688-4-axboe@kernel.dk>
+Subject: [PATCH 4/5] fs: honor LOOKUP_NONBLOCK for the last part of file open
+Date:   Sat, 12 Dec 2020 09:51:04 -0700
+Message-Id: <20201212165105.902688-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201212165105.902688-1-axboe@kernel.dk>
 References: <20201212165105.902688-1-axboe@kernel.dk>
@@ -64,56 +64,101 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-trylock variant of mnt_want_write() - this ends up being pretty trivial,
-as we already have a trylock variant of the sb_start_write() helper.
+We handle it for the path resolution itself, but we should also factor
+it in for open_last_lookups() and tmpfile open.
+
+We don't allow RESOLVE_NONBLOCK with O_TRUNC, so that case we can safely
+ignore.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/namespace.c        | 18 ++++++++++++++++++
- include/linux/mount.h |  1 +
- 2 files changed, 19 insertions(+)
+ fs/namei.c | 39 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 6 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index cebaa3e81794..7881cb5595af 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -359,6 +359,24 @@ int mnt_want_write(struct vfsmount *m)
- }
- EXPORT_SYMBOL_GPL(mnt_want_write);
+diff --git a/fs/namei.c b/fs/namei.c
+index 07a1aa874f65..1f976a213eef 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3127,6 +3127,7 @@ static const char *open_last_lookups(struct nameidata *nd,
+ 	struct dentry *dir = nd->path.dentry;
+ 	int open_flag = op->open_flag;
+ 	bool got_write = false;
++	bool nonblock = nd->flags & LOOKUP_NONBLOCK;
+ 	unsigned seq;
+ 	struct inode *inode;
+ 	struct dentry *dentry;
+@@ -3164,17 +3165,38 @@ static const char *open_last_lookups(struct nameidata *nd,
+ 	}
  
-+/**
-+ * mnt_want_write_trylock - try to get write access to a mount
-+ * @m: the mount on which to take a write
-+ *
-+ * trylock variant of @mnt_want_write. See description above.
-+ */
-+int mnt_want_write_trylock(struct vfsmount *m)
-+{
-+	int ret;
-+
-+	if (!sb_start_write_trylock(m->mnt_sb))
-+		return -EAGAIN;
-+	ret = __mnt_want_write(m);
-+	if (ret)
-+		sb_end_write(m->mnt_sb);
-+	return ret;
-+}
-+
- /**
-  * mnt_clone_write - get write access to a mount
-  * @mnt: the mount on which to take a write
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index aaf343b38671..e267e622d843 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -78,6 +78,7 @@ struct file; /* forward dec */
- struct path;
+ 	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
+-		got_write = !mnt_want_write(nd->path.mnt);
++		if (nonblock) {
++			got_write = !mnt_want_write_trylock(nd->path.mnt);
++			if (!got_write)
++				return ERR_PTR(-EAGAIN);
++		} else {
++			got_write = !mnt_want_write(nd->path.mnt);
++		}
+ 		/*
+ 		 * do _not_ fail yet - we might not need that or fail with
+ 		 * a different error; let lookup_open() decide; we'll be
+ 		 * dropping this one anyway.
+ 		 */
+ 	}
+-	if (open_flag & O_CREAT)
+-		inode_lock(dir->d_inode);
+-	else
+-		inode_lock_shared(dir->d_inode);
++	if (open_flag & O_CREAT) {
++		if (nonblock) {
++			if (!inode_trylock(dir->d_inode)) {
++				dentry = ERR_PTR(-EAGAIN);
++				goto drop_write;
++			}
++		} else {
++			inode_lock(dir->d_inode);
++		}
++	} else {
++		if (nonblock) {
++			if (!inode_trylock_shared(dir->d_inode)) {
++				dentry = ERR_PTR(-EAGAIN);
++				goto drop_write;
++			}
++		} else {
++			inode_lock_shared(dir->d_inode);
++		}
++	}
+ 	dentry = lookup_open(nd, file, op, got_write);
+ 	if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+ 		fsnotify_create(dir->d_inode, dentry);
+@@ -3183,6 +3205,7 @@ static const char *open_last_lookups(struct nameidata *nd,
+ 	else
+ 		inode_unlock_shared(dir->d_inode);
  
- extern int mnt_want_write(struct vfsmount *mnt);
-+extern int mnt_want_write_trylock(struct vfsmount *mnt);
- extern int mnt_want_write_file(struct file *file);
- extern int mnt_clone_write(struct vfsmount *mnt);
- extern void mnt_drop_write(struct vfsmount *mnt);
++drop_write:
+ 	if (got_write)
+ 		mnt_drop_write(nd->path.mnt);
+ 
+@@ -3242,6 +3265,7 @@ static int do_open(struct nameidata *nd,
+ 		open_flag &= ~O_TRUNC;
+ 		acc_mode = 0;
+ 	} else if (d_is_reg(nd->path.dentry) && open_flag & O_TRUNC) {
++		WARN_ON_ONCE(nd->flags & LOOKUP_NONBLOCK);
+ 		error = mnt_want_write(nd->path.mnt);
+ 		if (error)
+ 			return error;
+@@ -3311,7 +3335,10 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
+ 	int error = path_lookupat(nd, flags | LOOKUP_DIRECTORY, &path);
+ 	if (unlikely(error))
+ 		return error;
+-	error = mnt_want_write(path.mnt);
++	if (flags & LOOKUP_NONBLOCK)
++		error = mnt_want_write_trylock(path.mnt);
++	else
++		error = mnt_want_write(path.mnt);
+ 	if (unlikely(error))
+ 		goto out;
+ 	child = vfs_tmpfile(path.dentry, op->mode, op->open_flag);
 -- 
 2.29.2
 
