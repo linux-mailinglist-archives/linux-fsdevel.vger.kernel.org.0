@@ -2,135 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 839292D852D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Dec 2020 07:23:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C302F2D8590
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Dec 2020 11:02:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438476AbgLLGRX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Dec 2020 01:17:23 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2794 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436746AbgLLGRK (ORCPT
+        id S2438478AbgLLJ6v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Dec 2020 04:58:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388329AbgLLJ6o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Dec 2020 01:17:10 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd4603d0000>; Fri, 11 Dec 2020 22:16:29 -0800
-Received: from [10.2.58.108] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 12 Dec
- 2020 06:16:23 +0000
-Subject: Re: [PATCH v14 10/10] secretmem: test: add basic selftest for
- memfd_secret(2)
-To:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Christopher Lameter" <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Elena Reshetova" <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-riscv@lists.infradead.org>,
-        <x86@kernel.org>
-References: <20201203062949.5484-1-rppt@kernel.org>
- <20201203062949.5484-11-rppt@kernel.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <248f928b-1383-48ea-8584-ec10146e60c9@nvidia.com>
-Date:   Fri, 11 Dec 2020 22:16:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101
- Thunderbird/84.0
+        Sat, 12 Dec 2020 04:58:44 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC57C0613CF;
+        Sat, 12 Dec 2020 01:58:03 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id z5so12072161iob.11;
+        Sat, 12 Dec 2020 01:58:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VfC8U3+9RgAipJV6RtcOXOTncWoLx+pvsz+FVUtT+WM=;
+        b=ru8KqwZkrp8biP002XsKcZ7D9aatn+KC/DegPBreXXE6ZS1KMc/Z2M2WmwW/rQAwED
+         ySiXaA+fHXKjtOEjXJFmS2KxBd+ec+Y70LX4Pk7z9M8MhCoAVz4j/WRJOSNINxfivoGy
+         GDqSbNVGtCAdz19ntqGL4YhucICczEsvnsIK1IohMq8G/GJvv7igdgtJbHYr5c2VYy50
+         OVHwhsUVdRTzwCd+58mvjJX/NG+vDKlZIGZkYZRHzLMx6CAQnUEtILIwzXg1Uq3RjVYE
+         qDu5NyFAlIQqGmdLaQeJVLB+LvzOD2Jaeq5oZt8QOdSM+BuYHHZiYGISF9bV2y0Udiqd
+         iKtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VfC8U3+9RgAipJV6RtcOXOTncWoLx+pvsz+FVUtT+WM=;
+        b=B+j3aapKDBcQwzc9Au/qebRV0Q+pO36JCQfq9iMz/+OAs5FTQFwpI1RQTCz7ZZmT3V
+         i759zfNoPOs4d1WBG1pkP2lsRbel+NORW37uDkyNDrKu+wE6qPvtpqU5/tt0PiYro39S
+         s/OTgMDBMOyDT1Z4x8bJpX16Z7pxYNqv67PJLuPjijQls1FBbhVrwQVFa6Mjycqqr+E0
+         jVl56+AvQuoEUk7o63/htXDvE7g7NhdaptFnoHVguofJTFtLLN9wyONcgc2ATGc0/pH7
+         aqDKPXDkl2sv64Q91P4S7rY48uocnNnyW5qZ8HOcWpgvNqdznucZHndDc4oCD7t3pAGZ
+         vF4g==
+X-Gm-Message-State: AOAM533T2u9A/ir2n+U6DrAmFOpAN6leUROQyzXEwE7OH7vj04Ip1C92
+        BuwKm2w5gbPdHtJQzJlqvT0JCqGLcoDjbg4XCQI=
+X-Google-Smtp-Source: ABdhPJzmJSTtlvPRlby9CqpfmwXRf7R6w5YTMgILXhIqKEo4qqH4jQyqzvvTqqn3shcnX3rL3DHEDwbVItsF8VIsmMw=
+X-Received: by 2002:a02:b607:: with SMTP id h7mr21485997jam.120.1607767083180;
+ Sat, 12 Dec 2020 01:58:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201203062949.5484-11-rppt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607753789; bh=ofgMBZd16EADbvAo0gykil1HQ3WXinWEQXFsF7eWzJ0=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=nHiMzIuFi9yGg9dtEXBRDsgSZmIDOiTwrsl4IkhMy6fFmjAA+d/AS9GK73/GrEl8c
-         L2wFofk2X8mSJW/vLEAbgA9QPMoBNfjJd8BWsCI0rrp+bj6/xYZKQSgViVMLkLSYK1
-         k66ZGlnQfrIIuas55l4diL4Iaoyoywisz15vCenxZUMAMyAtm2LyPLwxbz991YbWg8
-         nRt0uF/HuZ34WhsfN3HMzjfJx7L8KMpuqwwkCn0Y66dd5OlXb+xyLmZkRBWZVKoHt4
-         QQtiTloYRW+10TrH/r0jzw36mCIbK7syoQlFnk7px83Aq1dj4ALMG1TaKaeUNQMmQk
-         OnZsyXYjTgO+g==
+References: <20201211235002.4195-1-sargun@sargun.me> <20201211235002.4195-3-sargun@sargun.me>
+In-Reply-To: <20201211235002.4195-3-sargun@sargun.me>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 12 Dec 2020 11:57:52 +0200
+Message-ID: <CAOQ4uxgj8LztnH3vD7M=Lp_FoNhoLwaD4CcWQR0T1pd=pe2kgA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] errseq: Add mechanism to snapshot errseq_counter
+ and check snapshot
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/2/20 10:29 PM, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-...
-> +#include "../kselftest.h"
+Forgot to CC Jeff?
+
+On Sat, Dec 12, 2020 at 1:50 AM Sargun Dhillon <sargun@sargun.me> wrote:
+>
+> This adds the function errseq_counter_sample to allow for "subscribers"
+> to take point-in-time snapshots of the errseq_counter, and store the
+> counter + errseq_t.
+>
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> ---
+>  include/linux/errseq.h |  4 ++++
+>  lib/errseq.c           | 51 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 55 insertions(+)
+>
+> diff --git a/include/linux/errseq.h b/include/linux/errseq.h
+> index 35818c484290..8998df499a3b 100644
+> --- a/include/linux/errseq.h
+> +++ b/include/linux/errseq.h
+> @@ -25,4 +25,8 @@ errseq_t errseq_set(errseq_t *eseq, int err);
+>  errseq_t errseq_sample(errseq_t *eseq);
+>  int errseq_check(errseq_t *eseq, errseq_t since);
+>  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
+> +void errseq_counter_sample(errseq_t *dst_errseq, int *dst_errors,
+> +                          struct errseq_counter *counter);
+> +int errseq_counter_check(struct errseq_counter *counter, errseq_t errseq_since,
+> +                        int errors_since);
+>  #endif
+> diff --git a/lib/errseq.c b/lib/errseq.c
+> index d555e7fc18d2..98fcfafa3d97 100644
+> --- a/lib/errseq.c
+> +++ b/lib/errseq.c
+> @@ -246,3 +246,54 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t *since)
+>         return err;
+>  }
+>  EXPORT_SYMBOL(errseq_check_and_advance);
 > +
-> +#define fail(fmt, ...) ksft_test_result_fail(fmt, ##__VA_ARGS__)
-> +#define pass(fmt, ...) ksft_test_result_pass(fmt, ##__VA_ARGS__)
-> +#define skip(fmt, ...) ksft_test_result_skip(fmt, ##__VA_ARGS__)
+> +/**
+> + * errseq_counter_sample() - Grab the current errseq_counter value
+> + * @dst_errseq: The errseq_t to copy to
+> + * @dst_errors: The destination overflow to copy to
+> + * @counter: The errseq_counter to copy from
+> + *
+> + * Grabs a point in time sample of the errseq_counter for latter comparison
+> + */
+> +void errseq_counter_sample(errseq_t *dst_errseq, int *dst_errors,
+
+Why 2 arguments and not struct errseq_counter *dst_counter?
+
+> +                          struct errseq_counter *counter)
+> +{
+> +       errseq_t cur;
 > +
-> +#ifdef __NR_memfd_secret
+> +       do {
+> +               cur = READ_ONCE(counter->errseq);
+> +               *dst_errors = atomic_read(&counter->errors);
+> +       } while (cur != READ_ONCE(counter->errseq));
+
+This loop seems odd. I think the return value should reflect the fact that
+the snapshot failed and let the caller decide if it wants to loop.
+
+And about the one and only introduced caller, I think the answer is that
+it shouldn't loop. If volatile overlayfs mount tries to sample the upper sb
+error counter and an unseen error exists, I argued before that I think
+mount should fail, so that the container orchestrator can decide what to do.
+Failure to take an errseq_counter sample means than an unseen error
+has been observed at least in the first or second check.
+
 > +
-> +#include <linux/secretmem.h>
-
-Hi Mike,
-
-Say, when I tried this out from today's linux-next, I had to delete the
-above line. In other words, the following was required in order to build:
-
-diff --git a/tools/testing/selftests/vm/memfd_secret.c b/tools/testing/selftests/vm/memfd_secret.c
-index 79578dfd13e6..c878c2b841fc 100644
---- a/tools/testing/selftests/vm/memfd_secret.c
-+++ b/tools/testing/selftests/vm/memfd_secret.c
-@@ -29,8 +29,6 @@
-
-  #ifdef __NR_memfd_secret
-
--#include <linux/secretmem.h>
--
-  #define PATTERN        0x55
-
-  static const int prot = PROT_READ | PROT_WRITE;
-
-
-...and that makes sense to me, because:
-
-a) secretmem.h is not in the uapi, which this selftests/vm build system
-    expects (it runs "make headers_install" for us, which is *not* going
-    to pick up items in the kernel include dirs), and
-
-b) There is nothing in secretmem.h that this test uses, anyway! Just these:
-
-bool vma_is_secretmem(struct vm_area_struct *vma);
-bool page_is_secretmem(struct page *page);
-bool secretmem_active(void);
+> +       /* Clear the seen bit to make checking later easier */
+> +       *dst_errseq = cur & ~ERRSEQ_SEEN;
+> +}
+> +EXPORT_SYMBOL(errseq_counter_sample);
+> +
+> +/**
+> + * errseq_counter_check() - Has an error occurred since the sample
+> + * @counter: The errseq_counter from which to check.
+> + * @errseq_since: The errseq_t sampled with errseq_counter_sample to check
+> + * @errors_since: The errors sampled with errseq_counter_sample to check
+> + *
+> + * Returns: The latest error set in the errseq_t or 0 if there have been none.
+> + */
+> +int errseq_counter_check(struct errseq_counter *counter, errseq_t errseq_since,
+> +                        int errors_since)
+> +{
+> +       errseq_t cur_errseq;
+> +       int cur_errors;
+> +
+> +       cur_errors = atomic_read(&counter->errors);
+> +       /* To match the barrier in errseq_counter_set */
+> +       smp_rmb();
+> +
+> +       /* Clear / ignore the seen bit as we do at sample time */
+> +       cur_errseq = READ_ONCE(counter->errseq) & ~ERRSEQ_SEEN;
+> +
+> +       if (cur_errseq == errseq_since && errors_since == cur_errors)
+> +               return 0;
+> +
+> +       return -(cur_errseq & MAX_ERRNO);
+> +}
 
 
-...or am I just Doing It Wrong? :)
+Same here. Why not pass an errseq_counter_since argument?
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+Thanks,
+Amir.
