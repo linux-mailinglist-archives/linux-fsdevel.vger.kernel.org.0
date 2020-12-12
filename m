@@ -2,204 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C04A02D864C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Dec 2020 12:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 139312D8708
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Dec 2020 15:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438498AbgLLLsu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Dec 2020 06:48:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38626 "EHLO mail.kernel.org"
+        id S2439150AbgLLOAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Dec 2020 09:00:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438416AbgLLLsu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Dec 2020 06:48:50 -0500
-Message-ID: <9ee191a5aadbabfe3571748072337b4fd0359800.camel@kernel.org>
+        id S2439135AbgLLOAj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 12 Dec 2020 09:00:39 -0500
+Date:   Sat, 12 Dec 2020 15:59:40 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607773689;
-        bh=31htvr81n75Zq7sOZci0YyM2LE18Gus6pGJOzZ3wjO8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=CB/90MQWmWgCI91878UEQepx3xnX0byvzW2JkKxHDd1W4q1UojHkthfQHZkTkLSHT
-         5wJlG+2tv+5NphaSHG9cEx8x5yjgSn6v32BglcwJrIOsOai6cFpL0L1UMRrLfEwBzb
-         JsjGhalcSWKM9xyqER7G6fgErLWkBN06uUoyN9PIvFlpUyuE/VOP1vngzDqACmzCt0
-         cap0qi/7nQrWWneVQzi6qaKkZv76GKinstJx8O8T72nWj2eojT5y3ORtjTVb78BmJJ
-         HMXEWLx63Od045JM7rGG7uVIwDkg6RqcWP88/36m206M7c/ytnt1PYZLFPoWep/lHi
-         9VCX9FMsCfjKA==
-Subject: Re: [PATCH v2 0/3] Check errors on sync for volatile overlayfs
- mounts
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Sargun Dhillon <sargun@sargun.me>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Date:   Sat, 12 Dec 2020 06:48:07 -0500
-In-Reply-To: <7779e2ed97080009d894f3442bfad31972494542.camel@kernel.org>
-References: <20201211235002.4195-1-sargun@sargun.me>
-         <7779e2ed97080009d894f3442bfad31972494542.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        s=k20201202; t=1607781598;
+        bh=W+S3uDjo9SUaklycr1VwLEkb3P+e5VKfy1opxSFjfP4=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=flXIgTj5QPdmF322uyfveGkWCvdiCUBTDqJEmaQAdBMU+9OnpTfe38HJDNJgc0lH8
+         G3M3nYjTvl4Jk0YTIcL5XhPPhChBAc7qxqYwpPq+/oyL9pin060A7R+FLePp8EI92r
+         GwnqdckCsl6axBY1CL4fx8yH/moiz2Z+oLa3jsxNsEo1pT2EOLhqIregvSKc55N4Zj
+         WuUAHrJAd8PgEDWlSYMQSNKmu4qJ1V3ZA+z2Yx8VyWB6hblUmlV0BHoIXeUaszFyMu
+         HjV36aGN0+weJj3fLUwesb3uBHEoXTzG37NgAFnxayD4MEFDMvTjDeUmf4Kr35XObN
+         Un6GIU6DTV1SA==
+From:   Mike Rapoport <rppt@kernel.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH v14 10/10] secretmem: test: add basic selftest for
+ memfd_secret(2)
+Message-ID: <20201212135940.GD8946@kernel.org>
+References: <20201203062949.5484-1-rppt@kernel.org>
+ <20201203062949.5484-11-rppt@kernel.org>
+ <248f928b-1383-48ea-8584-ec10146e60c9@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <248f928b-1383-48ea-8584-ec10146e60c9@nvidia.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 2020-12-12 at 06:21 -0500, Jeff Layton wrote:
-> On Fri, 2020-12-11 at 15:49 -0800, Sargun Dhillon wrote:
-> > The semantics of errseq and syncfs are such that it is impossible to track
-> > if any errors have occurred between the time the first error occurred, and
-> > the user checks for the error (calls syncfs, and subsequently
-> > errseq_check_and_advance.
-> > 
-> > Overlayfs has a volatile feature which short-circuits syncfs. This, in turn
-> > makes it so that the user can have silent data corruption and not know
-> > about it. The third patch in the series introduces behaviour that makes it
-> > so that we can track errors, and bubble up whether the user has put
-> > themselves in bad situation.
-> > 
-> > This required some gymanstics in errseq, and adding a wrapper around it
-> > called "errseq_counter" (errseq + counter). The data structure uses an
-> > atomic to track overflow errors. This approach, rather than moving to an
-> > atomic64 / u64 is so we can avoid bloating every person that subscribes to
-> > an errseq, and only add the subscriber behaviour to those who care (at the
-> > expense of space.
-> > 
-> > The datastructure is write-optimized, and rightfully so, as the users
-> > of the counter feature are just overlayfs, and it's called in fsync
-> > checking, which is a rather seldom operation, and not really on
-> > any hotpaths.
-> > 
-> > [1]: https://lore.kernel.org/linux-fsdevel/20201202092720.41522-1-sargun@sargun.me/
-> > 
-> > Sargun Dhillon (3):
-> >   errseq: Add errseq_counter to allow for all errors to be observed
-> >   errseq: Add mechanism to snapshot errseq_counter and check snapshot
-> >   overlay: Implement volatile-specific fsync error behaviour
-> > 
-> >  Documentation/filesystems/overlayfs.rst |   8 ++
-> >  fs/buffer.c                             |   2 +-
-> >  fs/overlayfs/file.c                     |   5 +-
-> >  fs/overlayfs/overlayfs.h                |   1 +
-> >  fs/overlayfs/ovl_entry.h                |   3 +
-> >  fs/overlayfs/readdir.c                  |   5 +-
-> >  fs/overlayfs/super.c                    |  26 +++--
-> >  fs/overlayfs/util.c                     |  28 +++++
-> >  fs/super.c                              |   1 +
-> >  fs/sync.c                               |   3 +-
-> >  include/linux/errseq.h                  |  18 ++++
-> >  include/linux/fs.h                      |   6 +-
-> >  include/linux/pagemap.h                 |   2 +-
-> >  lib/errseq.c                            | 129 ++++++++++++++++++++----
-> >  14 files changed, 202 insertions(+), 35 deletions(-)
-> > 
-> 
-> It would hel if you could more clearly lay out the semantics you're
-> looking for. If I understand correctly:
-> 
-> You basically want to be able to sample the sb->s_wb_err of the upper
-> layer at mount time and then always return an error if any new errors
-> were recorded since that point.
-> 
-> If that's correct, then I'm not sure I get need for all of this extra
-> counter machinery. Why not just sample it at mount time without
-> recording it as 0 if the seen flag isn't set. Then just do an
-> errseq_check against the upper superblock (without advancing) in the
-> overlayfs ->sync_fs routine and just errseq_set that error into the
-> overlayfs superblock? The syncfs syscall wrapper should then always
-> report the latest error.
-> 
-> Or (even better) rework all of the sync_fs/syncfs mess to be more sane,
-> so that overlayfs has more control over what errors get returned to
-> userland. ISTM that the main problem you have is that the
-> errseq_check_and_advance is done in the syscall wrapper, and that's
-> probably not appropriate for your use-case.
-> 
+Hi John,
 
-Something like this is what I was thinking (completely untested, of
-course and needs comments). Would this not give you what you want for
-volatile mount syncfs semantics?
+On Fri, Dec 11, 2020 at 10:16:23PM -0800, John Hubbard wrote:
+> On 12/2/20 10:29 PM, Mike Rapoport wrote:
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> ...
+> > +#include "../kselftest.h"
+> > +
+> > +#define fail(fmt, ...) ksft_test_result_fail(fmt, ##__VA_ARGS__)
+> > +#define pass(fmt, ...) ksft_test_result_pass(fmt, ##__VA_ARGS__)
+> > +#define skip(fmt, ...) ksft_test_result_skip(fmt, ##__VA_ARGS__)
+> > +
+> > +#ifdef __NR_memfd_secret
+> > +
+> > +#include <linux/secretmem.h>
+> 
+> Hi Mike,
+> 
+> Say, when I tried this out from today's linux-next, I had to delete the
+> above line. In other words, the following was required in order to build:
+> 
+> diff --git a/tools/testing/selftests/vm/memfd_secret.c b/tools/testing/selftests/vm/memfd_secret.c
+> index 79578dfd13e6..c878c2b841fc 100644
+> --- a/tools/testing/selftests/vm/memfd_secret.c
+> +++ b/tools/testing/selftests/vm/memfd_secret.c
+> @@ -29,8 +29,6 @@
+> 
+>  #ifdef __NR_memfd_secret
+> 
+> -#include <linux/secretmem.h>
+> -
+>  #define PATTERN        0x55
+> 
+>  static const int prot = PROT_READ | PROT_WRITE;
+> 
+> 
+> ...and that makes sense to me, because:
+> 
+> a) secretmem.h is not in the uapi, which this selftests/vm build system
+>    expects (it runs "make headers_install" for us, which is *not* going
+>    to pick up items in the kernel include dirs), and
+> 
+> b) There is nothing in secretmem.h that this test uses, anyway! Just these:
+> 
+> bool vma_is_secretmem(struct vm_area_struct *vma);
+> bool page_is_secretmem(struct page *page);
+> bool secretmem_active(void);
+> 
+> 
+> ...or am I just Doing It Wrong? :)
 
-diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-index 1b5a2094df8e..b7ada3fd04fd 100644
---- a/fs/overlayfs/ovl_entry.h
-+++ b/fs/overlayfs/ovl_entry.h
-@@ -79,6 +79,7 @@ struct ovl_fs {
- 	atomic_long_t last_ino;
- 	/* Whiteout dentry cache */
- 	struct dentry *whiteout;
-+	errseq_t err;
- };
- 
- static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 290983bcfbb3..35780776360c 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -264,8 +264,12 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
- 	if (!ovl_upper_mnt(ofs))
- 		return 0;
- 
--	if (!ovl_should_sync(ofs))
--		return 0;
-+	if (!ovl_should_sync(ofs)) {
-+		ret = errseq_check(&upper_sb->s_wb_err, ofs->err);
-+		errseq_set(&sb->s_wb_err, ret);
-+		return ret;
-+	}
-+
- 	/*
- 	 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
- 	 * All the super blocks will be iterated, including upper_sb.
-@@ -1945,7 +1949,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
- 
- 		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
- 		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
--
-+		ofs->err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
- 	}
- 	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
- 	err = PTR_ERR(oe);
-diff --git a/include/linux/errseq.h b/include/linux/errseq.h
-index fc2777770768..0d9ead687dc1 100644
---- a/include/linux/errseq.h
-+++ b/include/linux/errseq.h
-@@ -9,6 +9,7 @@ typedef u32	errseq_t;
- 
- errseq_t errseq_set(errseq_t *eseq, int err);
- errseq_t errseq_sample(errseq_t *eseq);
-+errseq_t errseq_sample_advance(errseq_t *eseq);
- int errseq_check(errseq_t *eseq, errseq_t since);
- int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
- #endif
-diff --git a/lib/errseq.c b/lib/errseq.c
-index 81f9e33aa7e7..27ab3000507f 100644
---- a/lib/errseq.c
-+++ b/lib/errseq.c
-@@ -130,6 +130,25 @@ errseq_t errseq_sample(errseq_t *eseq)
- }
- EXPORT_SYMBOL(errseq_sample);
- 
-+errseq_t errseq_sample_advance(errseq_t *eseq)
-+{
-+	errseq_t old = READ_ONCE(*eseq);
-+	errseq_t new = old;
-+
-+	/*
-+	 * For the common case of no errors ever having been set, we can skip
-+	 * marking the SEEN bit. Once an error has been set, the value will
-+	 * never go back to zero.
-+	 */
-+	if (old != 0) {
-+		new |= ERRSEQ_SEEN;
-+		if (old != new)
-+			cmpxchg(eseq, old, new);
-+	}
-+	return new;
-+}
-+EXPORT_SYMBOL(errseq_sample_advance);
-+
- /**
-  * errseq_check() - Has an error occurred since a particular sample point?
-  * @eseq: Pointer to errseq_t value to be checked.
+You are perfectly right, I had a stale header in uapi from the prevoius
+versions, the include in the test remained from then.
 
+@Andrew, can you please add the hunk above as a fixup?
 
+> thanks,
+> -- 
+> John Hubbard
+> NVIDIA
+
+-- 
+Sincerely yours,
+Mike.
