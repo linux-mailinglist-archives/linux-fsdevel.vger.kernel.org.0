@@ -2,124 +2,273 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C73232D9115
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 00:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2094E2D9131
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 00:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406880AbgLMXBB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Dec 2020 18:01:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731207AbgLMXAz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Dec 2020 18:00:55 -0500
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8963CC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Dec 2020 15:00:14 -0800 (PST)
-Received: by mail-ed1-x541.google.com with SMTP id h16so15220736edt.7
-        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Dec 2020 15:00:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e7XlCtFnQpWXdPLq8hdrC5r7fY/5pa4RVHpiXnxDixo=;
-        b=phMwJHB9hrJuAPuoWHUETTAUr+ZXE5D8Ao7Ty3wpgc050dKNUUBoMKAXf1O7pY4AG2
-         Xvk00py2QBa9gKDfoXui8tEcs2y9V79MuOSXo2ruf2ygLpdH+K/6J3L+CFCPs0Cd06zx
-         LAdvXdZSbvPFKX0IuziZEm33XyeJTEhaVAT2EK+UaWO3UBeLYiHhD78GWArvt2zk4FoX
-         l7qJQSQDN7srZVbqa+aqHAuVxDfPYDCfIRzSwdlyzoPLpEfHAqcRsAWKhVNvlKucQDeK
-         JlCh88udcetwhUsaJi2ehJ6eQQFhsvVPgEAZCxNW+2ydC6oZD2RqcKbJKXkh/EFIFMKt
-         3fbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e7XlCtFnQpWXdPLq8hdrC5r7fY/5pa4RVHpiXnxDixo=;
-        b=VZCizt5KPMqSdDIyhx4u+xqN2wFJrDQALSiG6Lv/o+mwFj2eRuLLwIgVCty4qfRQJU
-         ZtIKsQE2PPBiWDfc7cPiZgsXHgaIgMJVu627SHMS13zvYe+NVJKdi8HBX3ZpgUO5Urp2
-         e953ZItRgJWQeE+UJslaY2mWzH1hb9wuu+m5vC/SIm8D3K/y8E4HmBvpdiSuptNvYO6v
-         3bArCDlacGKJ4C2nQr9+U41pfFZafEt9L1uMrcBT0Ht4udvfOXlIV2gdAfnqQNMUG+nd
-         wYvrhszdiRcfimzn/QzQFyEqLTloakh39N1+OB32NIvT/G7WEdNfOduTEYVrgAPBaJQ0
-         zoHA==
-X-Gm-Message-State: AOAM530W6tZPCmSxNhN/qkCOD2vQC4p6gTlItwkWZ1WZQVDSDdgjWfw0
-        mgODm+IhObqHoYuSSu6ctq15C9pjwMl8+NLa0VWZ
-X-Google-Smtp-Source: ABdhPJyT8YEFTOyPKj1YPFnMWE+J+xwjmaptRDMSvik5afJSTQCXwpVgWI9ImeHlYLjJ2Ma1kD7KLF+btWLmDE7O+p4=
-X-Received: by 2002:aa7:d7d8:: with SMTP id e24mr21950323eds.135.1607900413041;
- Sun, 13 Dec 2020 15:00:13 -0800 (PST)
+        id S1730783AbgLMXgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Dec 2020 18:36:47 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48482 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725497AbgLMXgr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 13 Dec 2020 18:36:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id F2D36AC7F;
+        Sun, 13 Dec 2020 23:36:04 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>
+Date:   Mon, 14 Dec 2020 10:35:56 +1100
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH 1/2] errseq: split the SEEN flag into two new flags
+In-Reply-To: <20201213132713.66864-2-jlayton@kernel.org>
+References: <20201213132713.66864-1-jlayton@kernel.org>
+ <20201213132713.66864-2-jlayton@kernel.org>
+Message-ID: <87ft49jn37.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <20201204000212.773032-1-stephen.s.brennan@oracle.com>
- <20201212205522.GF2443@casper.infradead.org> <877dpln5uf.fsf@x220.int.ebiederm.org>
- <20201213162941.GG2443@casper.infradead.org>
-In-Reply-To: <20201213162941.GG2443@casper.infradead.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 13 Dec 2020 18:00:01 -0500
-Message-ID: <CAHC9VhSytjTGPhaKFC7Cq1qotps7oyFjU7vN4oLYSxXrruTfAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] proc: Allow pid_revalidate() during LOOKUP_RCU
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Brennan <stephen.s.brennan@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 13, 2020 at 11:30 AM Matthew Wilcox <willy@infradead.org> wrote:
-> On Sun, Dec 13, 2020 at 08:22:32AM -0600, Eric W. Biederman wrote:
-> > Matthew Wilcox <willy@infradead.org> writes:
-> >
-> > > On Thu, Dec 03, 2020 at 04:02:12PM -0800, Stephen Brennan wrote:
-> > >> -void pid_update_inode(struct task_struct *task, struct inode *inode)
-> > >> +static int do_pid_update_inode(struct task_struct *task, struct inode *inode,
-> > >> +                         unsigned int flags)
-> > >
-> > > I'm really nitpicking here, but this function only _updates_ the inode
-> > > if flags says it should.  So I was thinking something like this
-> > > (compile tested only).
-> > >
-> > > I'd really appreocate feedback from someone like Casey or Stephen on
-> > > what they need for their security modules.
-> >
-> > Just so we don't have security module questions confusing things
-> > can we please make this a 2 patch series?  With the first
-> > patch removing security_task_to_inode?
-> >
-> > The justification for the removal is that all security_task_to_inode
-> > appears to care about is the file type bits in inode->i_mode.  Something
-> > that never changes.  Having this in a separate patch would make that
-> > logical change easier to verify.
->
-> I don't think that's right, which is why I keep asking Stephen & Casey
-> for their thoughts.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-The SELinux security_task_to_inode() implementation only cares about
-inode->i_mode S_IFMT bits from the inode so that we can set the object
-class correctly.  The inode's SELinux label is taken from the
-associated task.
+On Sun, Dec 13 2020, Jeff Layton wrote:
 
-Casey would need to comment on Smack's needs.
+> Overlayfs's volatile mounts want to be able to sample an error for
+> their own purposes, without preventing a later opener from potentially
+> seeing the error.
+>
+> The original reason for the SEEN flag was to make it so that we didn't
+> need to increment the counter if nothing had observed the latest value
+> and the error was the same. Eventually, a regression was reported in
+> the errseq_t conversion, and we fixed that by using the SEEN flag to
+> also mean that the error had been reported to userland at least once
+> somewhere.
+>
+> Those are two different states, however. If we instead take a second
+> flag bit from the counter, we can track these two things separately,
+> and accomodate the overlayfs volatile mount use-case.
+>
+> Add a new MUSTINC flag that indicates that the counter must be
+> incremented the next time an error is set, and rework the errseq
+> functions to set and clear that flag whenever the SEEN bit is set or
+> cleared.
+>
+> Test only for the MUSTINC bit when deciding whether to increment the
+> counter and only for the SEEN bit when deciding what to return in
+> errseq_sample.
+>
+> Add a new errseq_peek function to allow for the overlayfs use-case.
+> This just grabs the latest counter and sets the MUSTINC bit, leaving
+> the SEEN bit untouched.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/errseq.h |  2 ++
+>  lib/errseq.c           | 64 ++++++++++++++++++++++++++++++++++--------
+>  2 files changed, 55 insertions(+), 11 deletions(-)
+>
+> diff --git a/include/linux/errseq.h b/include/linux/errseq.h
+> index fc2777770768..6d4b9bc629ac 100644
+> --- a/include/linux/errseq.h
+> +++ b/include/linux/errseq.h
+> @@ -9,6 +9,8 @@ typedef u32	errseq_t;
+>=20=20
+>  errseq_t errseq_set(errseq_t *eseq, int err);
+>  errseq_t errseq_sample(errseq_t *eseq);
+> +errseq_t errseq_peek(errseq_t *eseq);
+> +errseq_t errseq_sample_advance(errseq_t *eseq);
+>  int errseq_check(errseq_t *eseq, errseq_t since);
+>  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
+>  #endif
+> diff --git a/lib/errseq.c b/lib/errseq.c
+> index 81f9e33aa7e7..5cc830f0361b 100644
+> --- a/lib/errseq.c
+> +++ b/lib/errseq.c
+> @@ -38,8 +38,11 @@
+>  /* This bit is used as a flag to indicate whether the value has been see=
+n */
+>  #define ERRSEQ_SEEN		(1 << ERRSEQ_SHIFT)
 
-> For example,
->
->  * Sets the smack pointer in the inode security blob
->  */
-> static void smack_task_to_inode(struct task_struct *p, struct inode *inode)
-> {
->         struct inode_smack *isp = smack_inode(inode);
->         struct smack_known *skp = smk_of_task_struct(p);
->
->         isp->smk_inode = skp;
->         isp->smk_flags |= SMK_INODE_INSTANT;
-> }
->
-> That seems to do rather more than checking the file type bits.
+Would this look nicer using the BIT() macro?
 
--- 
-paul moore
-www.paul-moore.com
+  #define ERRSEQ_SEEN		BIT(ERRSEQ_SHIFT)
+
+>=20=20
+> +/* This bit indicates that value must be incremented even when error is =
+same */
+> +#define ERRSEQ_MUSTINC		(1 << (ERRSEQ_SHIFT + 1))
+
+ #define ERRSEQ_MUSTINC		BIT(ERRSEQ_SHIFT+1)
+
+or if you don't like the BIT macro (not everyone does), then maybe
+
+ #define ERR_SEQ_MUSTINC	(ERRSEQ_SEEN << 1 )
+
+??
+
+> +
+>  /* The lowest bit of the counter */
+> -#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 1))
+> +#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 2))
+
+Ditto.
+
+>=20=20
+>  /**
+>   * errseq_set - set a errseq_t for later reporting
+> @@ -77,11 +80,11 @@ errseq_t errseq_set(errseq_t *eseq, int err)
+>  	for (;;) {
+>  		errseq_t new;
+>=20=20
+> -		/* Clear out error bits and set new error */
+> -		new =3D (old & ~(MAX_ERRNO|ERRSEQ_SEEN)) | -err;
+> +		/* Clear out flag bits and set new error */
+> +		new =3D (old & ~(MAX_ERRNO|ERRSEQ_SEEN|ERRSEQ_MUSTINC)) | -err;
+
+This is starting to look clumsy (or maybe, this already looked clumsy,
+but now that is hard to ignore).
+
+		new =3D (old & (ERRSEQ_CTR_INC - 1)) | -err
+
+Also this assumes MAX_ERRNO is a mask, which it is .. today.
+
+	BUILD_BUG_ON(MAX_ERRNO & (MAX_ERRNO + 1));
+??
+
+>=20=20
+> -		/* Only increment if someone has looked at it */
+> -		if (old & ERRSEQ_SEEN)
+> +		/* Only increment if we have to */
+> +		if (old & ERRSEQ_MUSTINC)
+>  			new +=3D ERRSEQ_CTR_INC;
+>=20=20
+>  		/* If there would be no change, then call it done */
+> @@ -122,14 +125,50 @@ EXPORT_SYMBOL(errseq_set);
+>  errseq_t errseq_sample(errseq_t *eseq)
+>  {
+>  	errseq_t old =3D READ_ONCE(*eseq);
+> +	errseq_t new =3D old;
+>=20=20
+> -	/* If nobody has seen this error yet, then we can be the first. */
+> -	if (!(old & ERRSEQ_SEEN))
+> -		old =3D 0;
+> -	return old;
+> +	/*
+> +	 * For the common case of no errors ever having been set, we can skip
+> +	 * marking the SEEN|MUSTINC bits. Once an error has been set, the value
+> +	 * will never go back to zero.
+> +	 */
+> +	if (old !=3D 0) {
+> +		new |=3D ERRSEQ_SEEN|ERRSEQ_MUSTINC;
+
+You lose me here.  Why is ERRSEQ_SEEN being set, where it wasn't before?
+
+The ERRSEQ_SEEN flag not means precisely "The error has been reported to
+userspace".
+This operations isn't used to report errors - that is errseq_check().
+
+I'm not saying the code it wrong - I really cannot tell.
+I'm just saying that I cannot see why it might be right.
+
+Thanks,
+NeilBrown
+
+
+
+> +		if (old !=3D new)
+> +			cmpxchg(eseq, old, new);
+> +		if (!(old & ERRSEQ_SEEN))
+> +			return 0;
+> +	}
+> +	return new;
+>  }
+>  EXPORT_SYMBOL(errseq_sample);
+>=20=20
+> +/**
+> + * errseq_peek - Grab current errseq_t value, but don't mark it SEEN
+> + * @eseq: Pointer to errseq_t to be sampled.
+> + *
+> + * In some cases, we need to be able to sample the errseq_t, but we're n=
+ot
+> + * in a situation where we can report the value to userland. Use this
+> + * function to do that. This ensures that later errors will be recorded,
+> + * and that any current errors are reported at least once.
+> + *
+> + * Context: Any context.
+> + * Return: The current errseq value.
+> + */
+> +errseq_t errseq_peek(errseq_t *eseq)
+> +{
+> +	errseq_t old =3D READ_ONCE(*eseq);
+> +	errseq_t new =3D old;
+> +
+> +	if (old !=3D 0) {
+> +		new |=3D ERRSEQ_MUSTINC;
+> +		if (old !=3D new)
+> +			cmpxchg(eseq, old, new);
+> +	}
+> +	return new;
+> +}
+> +EXPORT_SYMBOL(errseq_peek);
+> +
+>  /**
+>   * errseq_check() - Has an error occurred since a particular sample poin=
+t?
+>   * @eseq: Pointer to errseq_t value to be checked.
+> @@ -143,7 +182,10 @@ EXPORT_SYMBOL(errseq_sample);
+>   */
+>  int errseq_check(errseq_t *eseq, errseq_t since)
+>  {
+> -	errseq_t cur =3D READ_ONCE(*eseq);
+> +	errseq_t cur =3D READ_ONCE(*eseq) & ~(ERRSEQ_MUSTINC|ERRSEQ_SEEN);
+> +
+> +	/* Clear the flag bits for comparison */
+> +	since &=3D ~(ERRSEQ_MUSTINC|ERRSEQ_SEEN);
+>=20=20
+>  	if (likely(cur =3D=3D since))
+>  		return 0;
+> @@ -195,7 +237,7 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t=
+ *since)
+>  		 * can advance "since" and return an error based on what we
+>  		 * have.
+>  		 */
+> -		new =3D old | ERRSEQ_SEEN;
+> +		new =3D old | ERRSEQ_SEEN | ERRSEQ_MUSTINC;
+>  		if (new !=3D old)
+>  			cmpxchg(eseq, old, new);
+>  		*since =3D new;
+> --=20
+> 2.29.2
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJCBAEBCAAsFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl/WpV0OHG5laWxiQHN1
+c2UuZGUACgkQOeye3VZigbm0kxAAvo6dSY4yu42bPdQHDJ+GSIjJe+tYo1N09lSk
+55bMqzQg57mwW2Xe9HklF4p4aiC3E8TEc4fz0c6tkSGv8fZOkVvk55zEYAgr2yc3
+8So/dlW6Ltd8JMSM3HJYb2KVs16GwcyHa37Z1Fh01fxEOHBHEQ8/pMgXDQuQYV7v
+kNjjHqlRe0loKcBQNdX2pzk/cUyrinsMQkJrpWIJWF+Q8b7U5dtF7djaHJsEuA5U
+u5AeOnk+CSn4Ykg/U/nmOI929Rqoi5+0gjl7jWP+vlAyQa1WhuuqA001IKuwk1aG
+MfTB8YSdQTCNl3eUDUZTiOY5qbScF5EdQsZ8YFXLd8eLi7Jk6qNxBPOfb6ZWPqJd
+A8BINxIrZD1w9j6pqzkcNVfRG1KrC/zjJTCAGwuPuhJkZ6LzG+Ah0Cho08J38Bvi
+XRyJbwtykoeEuNVVtMRvTT9c2lZVND1zl8qjDxH+T9WVJ/xecgS4ZrTLzb+U5x8Z
+sV/VGytIGclsk7CaObisQd3ygG5p3v1+w0ZL9yQ+Wux8i1JRdqdDclsKOkhwHHTi
+xOvlNaLJBWJS3ovaAfzVhXb7wfWByv3VBof41xIJl4oVXSfz9D5Vg3Vjul3jX/QQ
+P1jmXDjYdZmS4rmWuuPmAGyFw+8PhY2B1fLNwKDVyOMV+RQ058m3rHOy8KfgCjho
+AMP22cc=
+=vzKJ
+-----END PGP SIGNATURE-----
+--=-=-=--
