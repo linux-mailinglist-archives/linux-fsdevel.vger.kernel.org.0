@@ -2,130 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB5812D8F8D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Dec 2020 19:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F12D2D9040
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Dec 2020 20:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbgLMSxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Dec 2020 13:53:07 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:34804 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbgLMSw6 (ORCPT
+        id S2393094AbgLMTmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Dec 2020 14:42:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbgLMTmX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Dec 2020 13:52:58 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BDInnv5095008;
-        Sun, 13 Dec 2020 18:52:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=m+agSRCv2C7vA1smCTi9nr9ItANyGc4Iz5+EOO7ykN8=;
- b=CjylZuqN6lVabLCFgLdzeaUdMmE3xSDWWJXAUzymzlsZoiR8Uggp2G2dekEfTWR61N28
- 23zeynROsAP/N9YlLT84VY7IO/NnFh0vyZxx8Om6KsS4HtSKjdkkxPRxKUfw7xZGMOYP
- gIzWg5iVPBF+ctewxhnCj616R4St2fK4mmQJSdzYGyoYfCWnoxGj5s/H9tVtsvO6yL+B
- 1kr0CSLGGJa7nls4iZrmXO2EPRkxvs6M1OfAHgwIIbRzGw6kFHBZOfsaKL9tG4zG2T7I
- pzzEcV8OWET8Jy9mx2/3BdQuaf+7M1ljYZGQSV3s3Tk9/0ZqZrRbk1a+GQlhZSMIsIHu 3Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 35cntktnan-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 13 Dec 2020 18:52:05 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BDIf3Rd045988;
-        Sun, 13 Dec 2020 18:50:04 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 35d7ejqw4q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 13 Dec 2020 18:50:04 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BDIo3tt021888;
-        Sun, 13 Dec 2020 18:50:03 GMT
-Received: from Junxiaos-MacBook-Pro.local (/73.231.9.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 13 Dec 2020 10:50:02 -0800
-Subject: Re: [PATCH RFC 0/8] dcache: increase poison resistance
-To:     Konstantin Khlebnikov <koct9i@gmail.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Waiman Long <longman@redhat.com>,
-        Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
-        matthew.wilcox@oracle.com
-References: <158893941613.200862.4094521350329937435.stgit@buzz>
- <97ece625-2799-7ae6-28b5-73c52c7c497b@oracle.com>
- <CALYGNiN2F8gcKX+2nKOi1tapquJWfyzUkajWxTqgd9xvd7u1AA@mail.gmail.com>
-From:   Junxiao Bi <junxiao.bi@oracle.com>
-Message-ID: <d116ead4-f603-7e0c-e6ab-e721332c9832@oracle.com>
-Date:   Sun, 13 Dec 2020 10:49:45 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:78.0)
- Gecko/20100101 Thunderbird/78.5.1
+        Sun, 13 Dec 2020 14:42:23 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F56C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Dec 2020 11:41:37 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id z136so14870043iof.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Dec 2020 11:41:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z07wSqApa7KdylWKlqCudVTxgQybZlnVnQ/+UKjlHAI=;
+        b=Uymjlp6SzK5fiZtpC6bJVPiDo13QK9CRAa4LHsnnxRnaZ7hhtztjZ8PMkEvaKl1fxS
+         u1xivkvdE4PV8MmTTuDtLg4nj3rlsHpMM3TgG6gHBsQwPl0ugB9P2od0gIWd4hpgeyDk
+         jcaU7ZMT0Sfiii6ZVI4G9aKJbXtoEV5a3r+Mw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z07wSqApa7KdylWKlqCudVTxgQybZlnVnQ/+UKjlHAI=;
+        b=H+Kt6qZH6+mXccugEGr3klKR75n+jFVsicaZAEIQOkU9TFU+lxPXQo8xQTQc2/Vw/0
+         uUxrTQoyxiZX749116w/M42s+ZcWz471syOiIZ2/yTAQWvGSyDGJkLOBtYIk5zfP4Iy+
+         6qBWih0EIGmbi9GEW1JNCDwD8/gLqane4YNP6hGCZRqqhSvsjK9+rXscep+3VYiq6S6o
+         L34WXvQv2Klu5p0TPN3on0xd26WpCgg480X93Nt44vhtJevNqzRGj505q67YsZuy+bf4
+         n/lglX5Iwr9Q+VkwvTL5HX3ANCystxE+x/iuxV58PBPG2QImHvb6/+9Puu3f1WQAP8Z1
+         0eHQ==
+X-Gm-Message-State: AOAM53331+80CmG2uaqfiDz9VjVNbNgqJJvaEf16oiE6pm4YgeJsQB/k
+        Gc5y4/8rxJJBta9bdd91d/GSkA==
+X-Google-Smtp-Source: ABdhPJxwNSGDdYfgCvBbCqoEX7HGGzRxoojt7wxxWQrVjGgtddc47gzvN9IMWQPyOTpAdUuzN7QNDA==
+X-Received: by 2002:a05:6638:24c8:: with SMTP id y8mr28757450jat.63.1607888496615;
+        Sun, 13 Dec 2020 11:41:36 -0800 (PST)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id r11sm9697296ilg.39.2020.12.13.11.41.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 13 Dec 2020 11:41:35 -0800 (PST)
+Date:   Sun, 13 Dec 2020 19:41:34 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>
+Subject: Re: [PATCH v2 2/3] errseq: Add mechanism to snapshot errseq_counter
+ and check snapshot
+Message-ID: <20201213194133.GA8562@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20201211235002.4195-1-sargun@sargun.me>
+ <20201211235002.4195-3-sargun@sargun.me>
+ <CAOQ4uxgj8LztnH3vD7M=Lp_FoNhoLwaD4CcWQR0T1pd=pe2kgA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CALYGNiN2F8gcKX+2nKOi1tapquJWfyzUkajWxTqgd9xvd7u1AA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012130147
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 mlxscore=0
- lowpriorityscore=0 spamscore=0 adultscore=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 priorityscore=1501 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012130148
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgj8LztnH3vD7M=Lp_FoNhoLwaD4CcWQR0T1pd=pe2kgA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/11/20 11:32 PM, Konstantin Khlebnikov wrote:
+On Sat, Dec 12, 2020 at 11:57:52AM +0200, Amir Goldstein wrote:
+> Forgot to CC Jeff?
+> 
+Oops.
+> On Sat, Dec 12, 2020 at 1:50 AM Sargun Dhillon <sargun@sargun.me> wrote:
+> >
+> > This adds the function errseq_counter_sample to allow for "subscribers"
+> > to take point-in-time snapshots of the errseq_counter, and store the
+> > counter + errseq_t.
+> >
+> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> > ---
+> >  include/linux/errseq.h |  4 ++++
+> >  lib/errseq.c           | 51 ++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 55 insertions(+)
+> >
+> > diff --git a/include/linux/errseq.h b/include/linux/errseq.h
+> > index 35818c484290..8998df499a3b 100644
+> > --- a/include/linux/errseq.h
+> > +++ b/include/linux/errseq.h
+> > @@ -25,4 +25,8 @@ errseq_t errseq_set(errseq_t *eseq, int err);
+> >  errseq_t errseq_sample(errseq_t *eseq);
+> >  int errseq_check(errseq_t *eseq, errseq_t since);
+> >  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
+> > +void errseq_counter_sample(errseq_t *dst_errseq, int *dst_errors,
+> > +                          struct errseq_counter *counter);
+> > +int errseq_counter_check(struct errseq_counter *counter, errseq_t errseq_since,
+> > +                        int errors_since);
+> >  #endif
+> > diff --git a/lib/errseq.c b/lib/errseq.c
+> > index d555e7fc18d2..98fcfafa3d97 100644
+> > --- a/lib/errseq.c
+> > +++ b/lib/errseq.c
+> > @@ -246,3 +246,54 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t *since)
+> >         return err;
+> >  }
+> >  EXPORT_SYMBOL(errseq_check_and_advance);
+> > +
+> > +/**
+> > + * errseq_counter_sample() - Grab the current errseq_counter value
+> > + * @dst_errseq: The errseq_t to copy to
+> > + * @dst_errors: The destination overflow to copy to
+> > + * @counter: The errseq_counter to copy from
+> > + *
+> > + * Grabs a point in time sample of the errseq_counter for latter comparison
+> > + */
+> > +void errseq_counter_sample(errseq_t *dst_errseq, int *dst_errors,
+> 
+> Why 2 arguments and not struct errseq_counter *dst_counter?
+> 
 
-> On Thu, Dec 10, 2020 at 2:01 AM Junxiao Bi <junxiao.bi@oracle.com 
-> <mailto:junxiao.bi@oracle.com>> wrote:
->
->     Hi Konstantin,
->
->     We tested this patch set recently and found it limiting negative
->     dentry
->     to a small part of total memory. And also we don't see any
->     performance
->     regression on it. Do you have any plan to integrate it into
->     mainline? It
->     will help a lot on memory fragmentation issue causing by dentry slab,
->     there were a lot of customer cases where sys% was very high since
->     most
->     cpu were doing memory compaction, dentry slab was taking too much
->     memory
->     and nearly all dentry there were negative.
->
->
-> Right now I don't have any plans for this. I suspect such problems will
-> appear much more often since machines are getting bigger.
-> So, somebody will take care of it.
-We already had a lot of customer cases. It made no sense to leave so 
-many negative dentry in the system, it caused memory fragmentation and 
-not much benefit.
->
-> First part which collects negative dentries at the end list of 
-> siblings could be
-> done in a more obvious way by splitting the list in two.
-> But this touches much more code.
-That would add new field to dentry?
->
-> Last patch isn't very rigid but does non-trivial changes.
-> Probably it's better to call some garbage collector thingy periodically.
-> Lru list needs pressure to age and reorder entries properly.
+Mostly not to have to use atomic_* when setting this value and avoiding locking 
+another cacheline on the CPU. IIRC, atomic_t is always 4-byte aligned but int 
+doesn't have to be.
 
-Swap the negative dentry to the head of hash list when it get accessed? 
-Extra ones can be easily trimmed when swapping, using GC is to reduce 
-perf impact?
+> > +                          struct errseq_counter *counter)
+> > +{
+> > +       errseq_t cur;
+> > +
+> > +       do {
+> > +               cur = READ_ONCE(counter->errseq);
+> > +               *dst_errors = atomic_read(&counter->errors);
+> > +       } while (cur != READ_ONCE(counter->errseq));
+> 
+> This loop seems odd. I think the return value should reflect the fact that
+> the snapshot failed and let the caller decide if it wants to loop.
+> 
+> And about the one and only introduced caller, I think the answer is that
+> it shouldn't loop. If volatile overlayfs mount tries to sample the upper sb
+> error counter and an unseen error exists, I argued before that I think
+> mount should fail, so that the container orchestrator can decide what to do.
+> Failure to take an errseq_counter sample means than an unseen error
+> has been observed at least in the first or second check.
+> 
 
-Thanks,
+I guess. In the "good" case, there's the same computational cost, but the bad
+case (error occurs while we are snapshotting results in another spin.
 
-Junxioao.
+> > +
+> > +       /* Clear the seen bit to make checking later easier */
+> > +       *dst_errseq = cur & ~ERRSEQ_SEEN;
+> > +}
+> > +EXPORT_SYMBOL(errseq_counter_sample);
+> > +
+> > +/**
+> > + * errseq_counter_check() - Has an error occurred since the sample
+> > + * @counter: The errseq_counter from which to check.
+> > + * @errseq_since: The errseq_t sampled with errseq_counter_sample to check
+> > + * @errors_since: The errors sampled with errseq_counter_sample to check
+> > + *
+> > + * Returns: The latest error set in the errseq_t or 0 if there have been none.
+> > + */
+> > +int errseq_counter_check(struct errseq_counter *counter, errseq_t errseq_since,
+> > +                        int errors_since)
+> > +{
+> > +       errseq_t cur_errseq;
+> > +       int cur_errors;
+> > +
+> > +       cur_errors = atomic_read(&counter->errors);
+> > +       /* To match the barrier in errseq_counter_set */
+> > +       smp_rmb();
+> > +
+> > +       /* Clear / ignore the seen bit as we do at sample time */
+> > +       cur_errseq = READ_ONCE(counter->errseq) & ~ERRSEQ_SEEN;
+> > +
+> > +       if (cur_errseq == errseq_since && errors_since == cur_errors)
+> > +               return 0;
+> > +
+> > +       return -(cur_errseq & MAX_ERRNO);
+> > +}
+> 
+> 
+> Same here. Why not pass an errseq_counter_since argument?
+> 
+> Thanks,
+> Amir.
 
->
-> Gc could be off by default or thresholds set very high (50% of ram for 
-> example).
-> Final setup could be left up to owners of large systems, which needs 
-> fine tuning.
+See above. I can change this, and I mulled over this decision a bunch, 
+unfortunately (micro)benchmarking was inconclusive as to whether this made a 
+difference or not.
+
