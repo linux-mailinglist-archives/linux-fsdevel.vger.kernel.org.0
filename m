@@ -2,44 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 532962DA429
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 00:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAAC52DA467
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 00:54:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbgLNXdN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 18:33:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49240 "EHLO mail.kernel.org"
+        id S1730556AbgLNXxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 18:53:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725765AbgLNXdH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 18:33:07 -0500
-Message-ID: <f6e50ab2f42480e81f039648429f176bf44347e4.camel@kernel.org>
+        id S1727942AbgLNXxx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Dec 2020 18:53:53 -0500
+Message-ID: <979d78d04d882744d944f5723ad7a98b14badf8b.camel@kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607988746;
-        bh=fp0qYtb/6AnauANNyKvHXR9l73JHsnFjHmaadNcGYag=;
+        s=k20201202; t=1607989992;
+        bh=fdhvh40XSvNJTdZhesTxxgsXw8agxPu12C7HDN0rG+Q=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=rADNrLv7/FAABakaDDzYFUriri6rmHY3qblEbI+/OFWjQlTcPomur+qoWp13DhCiW
-         AT2R4fnQDPFBPsW2OoLB4N2fAOu39IfSkNfyNKiJsGjIjgNNWNHBVuslH1XNNlRSam
-         b8Icf2kQJIRPETN7VcCduA5FRywSkD+x+ZUjcZIESMHcoBrrSnZOHAjCCa0EkSyyac
-         l7Uo52a4sOd54SnPA92JCQaAyclpZ+hUi+GmCg+niuylOukzi74b6EZs9koLRg7b77
-         HX8WTVQZqMIGOOUcZAJuBZuAWOglqZMPfb0MCjfnw2vGlu9KKcPFEfmrpgAdENyRcN
-         /0Tl4Z3q7HNvA==
-Subject: Re: [RFC PATCH 1/2] errseq: split the SEEN flag into two new flags
+        b=Xzw/f2W+tv9XAeAbW1cwl5413sLDMIzy2+2l/ACVTbAg6Uc7lo8XUeylTQ5emPo52
+         N0rgWqWuo/VI/grdgdC4V1CuNPCTK777UdpJgll8T5tbFce59Gng5FWEec1gUKUGv/
+         dFqo1u/f2BtbkQ7IdiCUmRAIhEGQwD/weg3jmgSDtlt6p81nlKT1cDamlPECy5hUgd
+         SSEUlXggVLlfzM883WDbGcsgqJDk/QrJnkXHrtR110SqKcCWaDKhOorAaIXcw5W3An
+         YkJ5mqG/uK4tczzZALPZidv3y8sXTp3hJLTA3a2XHDo54qMk2J0fVmgGtZleRQJRve
+         oHaD27qSaWpFA==
+Subject: Re: [RFC PATCH 2/2] overlayfs: propagate errors from upper to
+ overlay sb in sync_fs
 From:   Jeff Layton <jlayton@kernel.org>
-To:     NeilBrown <neilb@suse.de>
+To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     Amir Goldstein <amir73il@gmail.com>,
         Sargun Dhillon <sargun@sargun.me>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
         overlayfs <linux-unionfs@vger.kernel.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
         NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
-Date:   Mon, 14 Dec 2020 18:32:24 -0500
-In-Reply-To: <87blewjber.fsf@notabene.neil.brown.name>
+Date:   Mon, 14 Dec 2020 18:53:10 -0500
+In-Reply-To: <20201214213843.GA3453@redhat.com>
 References: <20201213132713.66864-1-jlayton@kernel.org>
-         <20201213132713.66864-2-jlayton@kernel.org>
-         <87ft49jn37.fsf@notabene.neil.brown.name>
-         <20201214133714.GA13412@tleilax.poochiereds.net>
-         <87blewjber.fsf@notabene.neil.brown.name>
+         <20201213132713.66864-3-jlayton@kernel.org>
+         <20201214213843.GA3453@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
 MIME-Version: 1.0
@@ -48,311 +46,139 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-12-15 at 09:00 +1100, NeilBrown wrote:
-> On Mon, Dec 14 2020, Jeffrey Layton wrote:
-> 
-> > On Mon, Dec 14, 2020 at 10:35:56AM +1100, NeilBrown wrote:
-> > > On Sun, Dec 13 2020, Jeff Layton wrote:
-> > > 
-> > > > Overlayfs's volatile mounts want to be able to sample an error for
-> > > > their own purposes, without preventing a later opener from potentially
-> > > > seeing the error.
-> > > > 
-> > > > The original reason for the SEEN flag was to make it so that we didn't
-> > > > need to increment the counter if nothing had observed the latest value
-> > > > and the error was the same. Eventually, a regression was reported in
-> > > > the errseq_t conversion, and we fixed that by using the SEEN flag to
-> > > > also mean that the error had been reported to userland at least once
-> > > > somewhere.
-> > > > 
-> > > > Those are two different states, however. If we instead take a second
-> > > > flag bit from the counter, we can track these two things separately,
-> > > > and accomodate the overlayfs volatile mount use-case.
-> > > > 
-> > > > Add a new MUSTINC flag that indicates that the counter must be
-> > > > incremented the next time an error is set, and rework the errseq
-> > > > functions to set and clear that flag whenever the SEEN bit is set or
-> > > > cleared.
-> > > > 
-> > > > Test only for the MUSTINC bit when deciding whether to increment the
-> > > > counter and only for the SEEN bit when deciding what to return in
-> > > > errseq_sample.
-> > > > 
-> > > > Add a new errseq_peek function to allow for the overlayfs use-case.
-> > > > This just grabs the latest counter and sets the MUSTINC bit, leaving
-> > > > the SEEN bit untouched.
-> > > > 
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >  include/linux/errseq.h |  2 ++
-> > > >  lib/errseq.c           | 64 ++++++++++++++++++++++++++++++++++--------
-> > > >  2 files changed, 55 insertions(+), 11 deletions(-)
-> > > > 
-> > > > diff --git a/include/linux/errseq.h b/include/linux/errseq.h
-> > > > index fc2777770768..6d4b9bc629ac 100644
-> > > > --- a/include/linux/errseq.h
-> > > > +++ b/include/linux/errseq.h
-> > > > @@ -9,6 +9,8 @@ typedef u32	errseq_t;
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > >  errseq_t errseq_set(errseq_t *eseq, int err);
-> > > >  errseq_t errseq_sample(errseq_t *eseq);
-> > > > +errseq_t errseq_peek(errseq_t *eseq);
-> > > > +errseq_t errseq_sample_advance(errseq_t *eseq);
-> > > >  int errseq_check(errseq_t *eseq, errseq_t since);
-> > > >  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
-> > > >  #endif
-> > > > diff --git a/lib/errseq.c b/lib/errseq.c
-> > > > index 81f9e33aa7e7..5cc830f0361b 100644
-> > > > --- a/lib/errseq.c
-> > > > +++ b/lib/errseq.c
-> > > > @@ -38,8 +38,11 @@
-> > > >  /* This bit is used as a flag to indicate whether the value has been seen */
-> > > >  #define ERRSEQ_SEEN		(1 << ERRSEQ_SHIFT)
-> > > 
-> > > Would this look nicer using the BIT() macro?
-> > > 
-> > >   #define ERRSEQ_SEEN		BIT(ERRSEQ_SHIFT)
-> > > 
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > > +/* This bit indicates that value must be incremented even when error is same */
-> > > > +#define ERRSEQ_MUSTINC		(1 << (ERRSEQ_SHIFT + 1))
-> > > 
-> > >  #define ERRSEQ_MUSTINC		BIT(ERRSEQ_SHIFT+1)
-> > > 
-> > > or if you don't like the BIT macro (not everyone does), then maybe
-> > > 
-> > >  #define ERR_SEQ_MUSTINC	(ERRSEQ_SEEN << 1 )
-> > > 
-> > > ??
-> > > 
-> > > > +
-> > > >  /* The lowest bit of the counter */
-> > > > -#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 1))
-> > > > +#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 2))
-> > > 
-> > > Ditto.
-> > > 
+On Mon, 2020-12-14 at 16:38 -0500, Vivek Goyal wrote:
+> On Sun, Dec 13, 2020 at 08:27:13AM -0500, Jeff Layton wrote:
+> > Peek at the upper layer's errseq_t at mount time for volatile mounts,
+> > and record it in the per-sb info. In sync_fs, check for an error since
+> > the recorded point and set it in the overlayfs superblock if there was
+> > one.
 > > 
-> > Yes, I can make that change. The BIT macro is much easier to read.
-> > 
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > >  /**
-> > > >   * errseq_set - set a errseq_t for later reporting
-> > > > @@ -77,11 +80,11 @@ errseq_t errseq_set(errseq_t *eseq, int err)
-> > > >  	for (;;) {
-> > > >  		errseq_t new;
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > > -		/* Clear out error bits and set new error */
-> > > > -		new = (old & ~(MAX_ERRNO|ERRSEQ_SEEN)) | -err;
-> > > > +		/* Clear out flag bits and set new error */
-> > > > +		new = (old & ~(MAX_ERRNO|ERRSEQ_SEEN|ERRSEQ_MUSTINC)) | -err;
-> > > 
-> > > This is starting to look clumsy (or maybe, this already looked clumsy,
-> > > but now that is hard to ignore).
-> > > 
-> > > 		new = (old & (ERRSEQ_CTR_INC - 1)) | -err
-> > > 
-> > 
-> > I think you mean:
-> > 
-> > 		new = (old & ~(ERRSEQ_CTR_INC - 1)) | -err;
-> > 
-> > Maybe I can add a new ERRSEQ_CTR_MASK value though which makes it more
-> > evident.
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
 > 
-> Sounds good.
+> While we are solving problem for non-volatile overlay mount, I also
+> started thinking, what about non-volatile overlay syncfs() writeback errors.
+> Looks like these will not be reported to user space at all as of now
+> (because we never update overlay_sb->s_wb_err ever).
 > 
-> > 
-> > > Also this assumes MAX_ERRNO is a mask, which it is .. today.
-> > > 
-> > > 	BUILD_BUG_ON(MAX_ERRNO & (MAX_ERRNO + 1));
-> > > ??
-> > > 
-> > 
-> > We already have this in errseq_set:
-> > 
-> >         BUILD_BUG_ON_NOT_POWER_OF_2(MAX_ERRNO + 1);
+> A patch like this might fix it. (compile tested only).
 > 
-> Oh good - I didn't see.
+> overlayfs: Report syncfs() errors to user space
 > 
-> > 
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > > -		/* Only increment if someone has looked at it */
-> > > > -		if (old & ERRSEQ_SEEN)
-> > > > +		/* Only increment if we have to */
-> > > > +		if (old & ERRSEQ_MUSTINC)
-> > > >  			new += ERRSEQ_CTR_INC;
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > >  		/* If there would be no change, then call it done */
-> > > > @@ -122,14 +125,50 @@ EXPORT_SYMBOL(errseq_set);
-> > > >  errseq_t errseq_sample(errseq_t *eseq)
-> > > >  {
-> > > >  	errseq_t old = READ_ONCE(*eseq);
-> > > > +	errseq_t new = old;
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > > -	/* If nobody has seen this error yet, then we can be the first. */
-> > > > -	if (!(old & ERRSEQ_SEEN))
-> > > > -		old = 0;
-> > > > -	return old;
-> > > > +	/*
-> > > > +	 * For the common case of no errors ever having been set, we can skip
-> > > > +	 * marking the SEEN|MUSTINC bits. Once an error has been set, the value
-> > > > +	 * will never go back to zero.
-> > > > +	 */
-> > > > +	if (old != 0) {
-> > > > +		new |= ERRSEQ_SEEN|ERRSEQ_MUSTINC;
-> > > 
-> > > You lose me here.  Why is ERRSEQ_SEEN being set, where it wasn't before?
-> > > 
-> > > The ERRSEQ_SEEN flag not means precisely "The error has been reported to
-> > > userspace".
-> > > This operations isn't used to report errors - that is errseq_check().
-> > > 
-> > > I'm not saying the code it wrong - I really cannot tell.
-> > > I'm just saying that I cannot see why it might be right.
-> > > 
-> > 
-> > I think you're right. We should not be setting SEEN here, but we do
-> > need to set MUSTINC if it's not already set. I'll fix (and re-test).
+> Currently, syncfs(), calls filesystem ->sync_fs() method but ignores the
+> return code. But certain writeback errors can still be reported on 
+> syncfs() by checking errors on super block.
 > 
-> Thanks.  Though it isn't clear to me why MUSTINC needs to be set there,
-> so if you could make that clear, it would help me.
+> ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
 > 
-> Also, the two flags seem similar in how they are handled, only tracking
-> different states, but their names don't reflect that.
-> I imagine changing "SEEN" to "MUST_REPORT" or similar, so both flags are
-> "MUST_XXX".
-> Only I think we would then need to invert "SEEN" - as it currently means
-> "MUSTN'T_REPORT" .. approximately.
+> For the case of overlayfs, we never set overlayfs super block s_wb_err. That
+> means sync() will never report writeback errors on overlayfs uppon syncfs().
 > 
-> Or maybe we could replace MUST_INC by DID_INC, so it says what has been
-> done, rather than what must be done.
+> Fix this by updating overlay sb->sb_wb_err upon ->sync_fs() call. And that
+> should mean that user space syncfs() call should see writeback errors.
 > 
-> Or maybe not.  Certainly it would be useful to have a clear picture of
-> how the two flags are similar, and how they are different.
+> ovl_fsync() does not need anything special because if there are writeback
+> errors underlying filesystem will report it through vfs_fsync_range() return
+> code and user space will see it.
 > 
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/overlayfs/ovl_entry.h |    1 +
+>  fs/overlayfs/super.c     |   14 +++++++++++---
+>  2 files changed, 12 insertions(+), 3 deletions(-)
+> 
+> Index: redhat-linux/fs/overlayfs/super.c
+> ===================================================================
+> --- redhat-linux.orig/fs/overlayfs/super.c	2020-12-14 15:33:43.934400880 -0500
+> +++ redhat-linux/fs/overlayfs/super.c	2020-12-14 16:15:07.127400880 -0500
+> @@ -259,7 +259,7 @@ static int ovl_sync_fs(struct super_bloc
+>  {
+>  	struct ovl_fs *ofs = sb->s_fs_info;
+>  	struct super_block *upper_sb;
+> -	int ret;
+> +	int ret, ret2;
+>  
+> 
+> 
+> 
+>  	if (!ovl_upper_mnt(ofs))
+>  		return 0;
+> @@ -283,7 +283,14 @@ static int ovl_sync_fs(struct super_bloc
+>  	ret = sync_filesystem(upper_sb);
+>  	up_read(&upper_sb->s_umount);
+>  
+> 
+> 
+> 
+> -	return ret;
+> +	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
+> +		/* Upper sb has errors since last time */
+> +		spin_lock(&ofs->errseq_lock);
+> +		ret2 = errseq_check_and_advance(&upper_sb->s_wb_err,
+> +						&sb->s_wb_err);
+> +		spin_unlock(&ofs->errseq_lock);
+> +	}
+> +	return ret ? ret : ret2;
 
+I think this is probably not quite right.
 
-You need to set MUSTINC in errseq_peek to ensure that the next error
-that occurs will be recorded, via the counter being bumped. Otherwise
-that increment may be skipped (if no one else observed the last error).
+The problem I think is that the SEEN flag is always going to end up
+being set in sb->s_wb_err, and that is going to violate the desired
+semantics. If the writeback error occurred after all fd's were closed,
+then the next opener wouldn't see it and you'd lose the error.
 
-I sent a v2 set before I saw your mail. Hopefully it addresses some of
-your concerns.
+We probably need a function to cleanly propagate the error from one
+errseq_t to another so that that doesn't occur. I'll have to think about
+it.
 
-You're right that the flag naming is a bit awkward. I'm open to
-suggestions for names, but I'd probably like to keep the "sense" of the
-flags so that I don't need to sort out the logic again. It also works
-better with 0 being a special value that way.
-
-
-
-> Thanks,
-> NeilBrown
+>  }
+>  
 > 
 > 
-> > 
-> > Thanks for the review!
-> > 
-> > > 
-> > > 
-> > > 
-> > > > +		if (old != new)
-> > > > +			cmpxchg(eseq, old, new);
-> > > > +		if (!(old & ERRSEQ_SEEN))
-> > > > +			return 0;
-> > > > +	}
-> > > > +	return new;
-> > > >  }
-> > > >  EXPORT_SYMBOL(errseq_sample);
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > +/**
-> > > > + * errseq_peek - Grab current errseq_t value, but don't mark it SEEN
-> > > > + * @eseq: Pointer to errseq_t to be sampled.
-> > > > + *
-> > > > + * In some cases, we need to be able to sample the errseq_t, but we're not
-> > > > + * in a situation where we can report the value to userland. Use this
-> > > > + * function to do that. This ensures that later errors will be recorded,
-> > > > + * and that any current errors are reported at least once.
-> > > > + *
-> > > > + * Context: Any context.
-> > > > + * Return: The current errseq value.
-> > > > + */
-> > > > +errseq_t errseq_peek(errseq_t *eseq)
-> > > > +{
-> > > > +	errseq_t old = READ_ONCE(*eseq);
-> > > > +	errseq_t new = old;
-> > > > +
-> > > > +	if (old != 0) {
-> > > > +		new |= ERRSEQ_MUSTINC;
-> > > > +		if (old != new)
-> > > > +			cmpxchg(eseq, old, new);
-> > > > +	}
-> > > > +	return new;
-> > > > +}
-> > > > +EXPORT_SYMBOL(errseq_peek);
-> > > > +
-> > > >  /**
-> > > >   * errseq_check() - Has an error occurred since a particular sample point?
-> > > >   * @eseq: Pointer to errseq_t value to be checked.
-> > > > @@ -143,7 +182,10 @@ EXPORT_SYMBOL(errseq_sample);
-> > > >   */
-> > > >  int errseq_check(errseq_t *eseq, errseq_t since)
-> > > >  {
-> > > > -	errseq_t cur = READ_ONCE(*eseq);
-> > > > +	errseq_t cur = READ_ONCE(*eseq) & ~(ERRSEQ_MUSTINC|ERRSEQ_SEEN);
-> > > > +
-> > > > +	/* Clear the flag bits for comparison */
-> > > > +	since &= ~(ERRSEQ_MUSTINC|ERRSEQ_SEEN);
-> > > >  
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > >  	if (likely(cur == since))
-> > > >  		return 0;
-> > > > @@ -195,7 +237,7 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t *since)
-> > > >  		 * can advance "since" and return an error based on what we
-> > > >  		 * have.
-> > > >  		 */
-> > > > -		new = old | ERRSEQ_SEEN;
-> > > > +		new = old | ERRSEQ_SEEN | ERRSEQ_MUSTINC;
-> > > >  		if (new != old)
-> > > >  			cmpxchg(eseq, old, new);
-> > > >  		*since = new;
-> > > > -- 
-> > > > 2.29.2
+> 
+>  /**
+> @@ -1873,6 +1880,7 @@ static int ovl_fill_super(struct super_b
+>  	if (!cred)
+>  		goto out_err;
+>  
+> 
+> 
+> 
+> +	spin_lock_init(&ofs->errseq_lock);
+>  	/* Is there a reason anyone would want not to share whiteouts? */
+>  	ofs->share_whiteout = true;
+>  
+> 
+> 
+> 
+> @@ -1945,7 +1953,7 @@ static int ovl_fill_super(struct super_b
+>  
+> 
+> 
+> 
+>  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
+>  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
+> -
+> +		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
+>  	}
+>  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
+>  	err = PTR_ERR(oe);
+> Index: redhat-linux/fs/overlayfs/ovl_entry.h
+> ===================================================================
+> --- redhat-linux.orig/fs/overlayfs/ovl_entry.h	2020-12-14 15:33:43.934400880 -0500
+> +++ redhat-linux/fs/overlayfs/ovl_entry.h	2020-12-14 15:34:13.509400880 -0500
+> @@ -79,6 +79,7 @@ struct ovl_fs {
+>  	atomic_long_t last_ino;
+>  	/* Whiteout dentry cache */
+>  	struct dentry *whiteout;
+> +	spinlock_t errseq_lock;
+>  };
+>  
+> 
+> 
+> 
+>  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
+> 
 
 -- 
 Jeff Layton <jlayton@kernel.org>
