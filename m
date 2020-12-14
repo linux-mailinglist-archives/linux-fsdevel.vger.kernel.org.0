@@ -2,153 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2A72DA25E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 22:10:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66BA82DA29F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 22:42:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503695AbgLNVJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 16:09:40 -0500
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:39672 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2503647AbgLNVJU (ORCPT
+        id S2406764AbgLNVkQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 16:40:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:58162 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729890AbgLNVkQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 16:09:20 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id B9B5749952;
-        Tue, 15 Dec 2020 08:08:33 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kov57-003zjp-3R; Tue, 15 Dec 2020 08:08:33 +1100
-Date:   Tue, 15 Dec 2020 08:08:33 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mon, 14 Dec 2020 16:40:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607981928;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WR+RyLQ7QZDrTrU3w6RGuPv+flEY6ZP3IN3AdHw7u8o=;
+        b=I/OSKhYe9SdP2R3yCHiyjMMNUH3ErmWvw0cgLmqDGtImGJqQD2rCayFXDYoEKOk5fcn3U8
+        T2+vXJY7ow2biPD06v/Ff6Ad/7/b0YE6T2NeZNDPpTcbHqpeLrZtv7yaYqmobakcM1WXQ+
+        Jai6adlmrmffUhcj4j5JjE0EJwd2o9w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-256-EgKEIIDfNkOxTyBCXwdYlQ-1; Mon, 14 Dec 2020 16:38:46 -0500
+X-MC-Unique: EgKEIIDfNkOxTyBCXwdYlQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 456C16D531;
+        Mon, 14 Dec 2020 21:38:45 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-168.rdu2.redhat.com [10.10.114.168])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A3D718A9E;
+        Mon, 14 Dec 2020 21:38:44 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id E0784220BCF; Mon, 14 Dec 2020 16:38:43 -0500 (EST)
+Date:   Mon, 14 Dec 2020 16:38:43 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>, jlayton@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v12 3/4] xfs: refactor the usage around
- xfs_trans_context_{set,clear}
-Message-ID: <20201214210833.GE632069@dread.disaster.area>
-References: <20201209131146.67289-1-laoar.shao@gmail.com>
- <20201209131146.67289-4-laoar.shao@gmail.com>
- <20201209195235.GN1943235@magnolia>
- <CALOAHbD_DK9w=s9RDsVBNaYwgeRi4UUEGDHFb3zEsqh_V8gLMA@mail.gmail.com>
+        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH 2/2] overlayfs: propagate errors from upper to
+ overlay sb in sync_fs
+Message-ID: <20201214213843.GA3453@redhat.com>
+References: <20201213132713.66864-1-jlayton@kernel.org>
+ <20201213132713.66864-3-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALOAHbD_DK9w=s9RDsVBNaYwgeRi4UUEGDHFb3zEsqh_V8gLMA@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8
-        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=pGLkceISAAAA:8 a=rA-29Kngl8b7e2x1wjEA:9
-        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20201213132713.66864-3-jlayton@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 13, 2020 at 05:09:02PM +0800, Yafang Shao wrote:
-> On Thu, Dec 10, 2020 at 3:52 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> >
-> > On Wed, Dec 09, 2020 at 09:11:45PM +0800, Yafang Shao wrote:
-> > > The xfs_trans context should be active after it is allocated, and
-> > > deactive when it is freed.
-> > >
-> > > So these two helpers are refactored as,
-> > > - xfs_trans_context_set()
-> > >   Used in xfs_trans_alloc()
-> > > - xfs_trans_context_clear()
-> > >   Used in xfs_trans_free()
-> > >
-> > > This patch is based on Darrick's work to fix the issue in xfs/141 in the
-> > > earlier version. [1]
-> > >
-> > > 1. https://lore.kernel.org/linux-xfs/20201104001649.GN7123@magnolia
-> > >
-> > > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > Cc: Christoph Hellwig <hch@lst.de>
-> > > Cc: Dave Chinner <david@fromorbit.com>
-> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > ---
-> > >  fs/xfs/xfs_trans.c | 28 +++++++++++++++-------------
-> > >  1 file changed, 15 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-> > > index 11d390f0d3f2..4f4645329bb2 100644
-> > > --- a/fs/xfs/xfs_trans.c
-> > > +++ b/fs/xfs/xfs_trans.c
-> > > @@ -67,6 +67,17 @@ xfs_trans_free(
-> > >       xfs_extent_busy_sort(&tp->t_busy);
-> > >       xfs_extent_busy_clear(tp->t_mountp, &tp->t_busy, false);
-> > >
-> > > +
-> > > +     /* Detach the transaction from this thread. */
-> > > +     ASSERT(current->journal_info != NULL);
-> > > +     /*
-> > > +      * The PF_MEMALLOC_NOFS is bound to the transaction itself instead
-> > > +      * of the reservation, so we need to check if tp is still the
-> > > +      * current transaction before clearing the flag.
-> > > +      */
-> > > +     if (current->journal_info == tp)
-> >
-> > Um, you don't start setting journal_info until the next patch, so this
-> > means that someone who lands on this commit with git bisect will have a
-> > xfs with broken logic.
-> >
-> > Because this is the patch that changes where we set and restore NOFS
-> > context, I think you have to introduce xfs_trans_context_swap here,
-> > and not in the next patch.
-> >
+On Sun, Dec 13, 2020 at 08:27:13AM -0500, Jeff Layton wrote:
+> Peek at the upper layer's errseq_t at mount time for volatile mounts,
+> and record it in the per-sb info. In sync_fs, check for an error since
+> the recorded point and set it in the overlayfs superblock if there was
+> one.
 > 
-> Thanks for the review. I will change it in the next version.
-> 
-> > I also think the _swap routine has to move the old NOFS state to the
-> > new transaction's t_pflags,
-> 
-> Sure
-> 
-> > and then set NOFS in the old transaction's
-> > t_pflags so that when we clear the context on the old transaction we
-> > don't actually change the thread's NOFS state.
-> >
-> 
-> Both thread's NOFS state and thead's journal_info state can't be
-> changed in that case, right ?
-> So should it better be,
-> 
->     __xfs_trans_commit(tp, regrant)
->         xfs_trans_free(tp, regrant)
->             if (!regrant). // don't clear the xfs_trans_context if
-> regrant is true.
->                 xfs_trans_context_clear()
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
 
-No. You are trying to make this way more complex than it needs to be.
-The logic in the core XFS code is *already correct* and all we need
-to do is move that logic to wrapper functions, then slightly modify
-the implementation inside the wrapper functions.
+While we are solving problem for non-volatile overlay mount, I also
+started thinking, what about non-volatile overlay syncfs() writeback errors.
+Looks like these will not be reported to user space at all as of now
+(because we never update overlay_sb->s_wb_err ever).
 
-That is, xfs_trans_context_clear() should end up like this:
+A patch like this might fix it. (compile tested only).
 
-static inline void
-xfs_trans_context_clear(struct xfs_trans *tp)
-{
-	/*
-	 * If xfs_trans_context_swap() handed the NOFS context to a
-	 * new transaction we do not clear the context here.
-	 */
-	if (current->journal_info != tp)
-		return;
-	current->journal_info = NULL;
-	memalloc_nofs_restore(tp->t_pflags);
-}
+overlayfs: Report syncfs() errors to user space
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Currently, syncfs(), calls filesystem ->sync_fs() method but ignores the
+return code. But certain writeback errors can still be reported on 
+syncfs() by checking errors on super block.
+
+ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
+
+For the case of overlayfs, we never set overlayfs super block s_wb_err. That
+means sync() will never report writeback errors on overlayfs uppon syncfs().
+
+Fix this by updating overlay sb->sb_wb_err upon ->sync_fs() call. And that
+should mean that user space syncfs() call should see writeback errors.
+
+ovl_fsync() does not need anything special because if there are writeback
+errors underlying filesystem will report it through vfs_fsync_range() return
+code and user space will see it.
+
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+---
+ fs/overlayfs/ovl_entry.h |    1 +
+ fs/overlayfs/super.c     |   14 +++++++++++---
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+Index: redhat-linux/fs/overlayfs/super.c
+===================================================================
+--- redhat-linux.orig/fs/overlayfs/super.c	2020-12-14 15:33:43.934400880 -0500
++++ redhat-linux/fs/overlayfs/super.c	2020-12-14 16:15:07.127400880 -0500
+@@ -259,7 +259,7 @@ static int ovl_sync_fs(struct super_bloc
+ {
+ 	struct ovl_fs *ofs = sb->s_fs_info;
+ 	struct super_block *upper_sb;
+-	int ret;
++	int ret, ret2;
+ 
+ 	if (!ovl_upper_mnt(ofs))
+ 		return 0;
+@@ -283,7 +283,14 @@ static int ovl_sync_fs(struct super_bloc
+ 	ret = sync_filesystem(upper_sb);
+ 	up_read(&upper_sb->s_umount);
+ 
+-	return ret;
++	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
++		/* Upper sb has errors since last time */
++		spin_lock(&ofs->errseq_lock);
++		ret2 = errseq_check_and_advance(&upper_sb->s_wb_err,
++						&sb->s_wb_err);
++		spin_unlock(&ofs->errseq_lock);
++	}
++	return ret ? ret : ret2;
+ }
+ 
+ /**
+@@ -1873,6 +1880,7 @@ static int ovl_fill_super(struct super_b
+ 	if (!cred)
+ 		goto out_err;
+ 
++	spin_lock_init(&ofs->errseq_lock);
+ 	/* Is there a reason anyone would want not to share whiteouts? */
+ 	ofs->share_whiteout = true;
+ 
+@@ -1945,7 +1953,7 @@ static int ovl_fill_super(struct super_b
+ 
+ 		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
+ 		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
+-
++		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
+ 	}
+ 	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
+ 	err = PTR_ERR(oe);
+Index: redhat-linux/fs/overlayfs/ovl_entry.h
+===================================================================
+--- redhat-linux.orig/fs/overlayfs/ovl_entry.h	2020-12-14 15:33:43.934400880 -0500
++++ redhat-linux/fs/overlayfs/ovl_entry.h	2020-12-14 15:34:13.509400880 -0500
+@@ -79,6 +79,7 @@ struct ovl_fs {
+ 	atomic_long_t last_ino;
+ 	/* Whiteout dentry cache */
+ 	struct dentry *whiteout;
++	spinlock_t errseq_lock;
+ };
+ 
+ static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
+
