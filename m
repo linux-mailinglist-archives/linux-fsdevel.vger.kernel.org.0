@@ -2,124 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AAA22D9EAA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 19:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E2552D9EBA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 19:18:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440544AbgLNSH0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 13:07:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50526 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2440020AbgLNSHY (ORCPT
+        id S2440686AbgLNSQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 13:16:46 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37598 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439948AbgLNSQc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 13:07:24 -0500
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24D3C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 10:06:43 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id 23so32458614lfg.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 10:06:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hit8h4ESFzLD2aZUmbjsdA8DAR+89Dl324fKdk1F1es=;
-        b=LtAn/9pezEs7qht34GBhYcUMojtLlHZ2QHntz4DsoZSodhKi9expi4rRE4xXDPrHpq
-         SzXZQ1aFMdNgSHX1Famm7cxkBb4x31pG039EQh3clMHDIWbV8MIo7+zBvdOV9fqeFp5s
-         Xn0BeLdEMTAFyJvSQStdZf36Jngv6XWKIm7p8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hit8h4ESFzLD2aZUmbjsdA8DAR+89Dl324fKdk1F1es=;
-        b=I8QR3vtxG3iGbP/jv2Gu7it7oMvKV+6WuEzSleH3GvkI/Ecmn8tBcoVVRmaUmEcQ5X
-         tK3oYiuHIIKuMjhYNW/tF7ArDzHs19jYR/mLLjnVGT2bDLTeutR2VR9nyJ/ZuohUGaOU
-         IVpntkcYigKs2WN5pA2bsnKMnpV+MEA3s5Q2NLy35SfBbV0d6P/Rszer+MdChnzA6hrX
-         fwnOEb/ntrj6K8J73U07flzAasSbZ4T57h0Th5oOGy5YkZODs1r85He7iMTCiOEFAILK
-         ApDPGPO2mX5wqcPAtVN48AnQFstHVt1Ozfj1UcmECVlxxcK+EYPspEWss93SJHubukzE
-         Kygg==
-X-Gm-Message-State: AOAM53287L12uhzNmc7YzIcSAjkt/R9Xdxd3kJxCsZc9eWhzAqXK7kYj
-        i38+0KIMO8eQqTRutrxhc11pIE67nhp6zw==
-X-Google-Smtp-Source: ABdhPJwvY0qdia1AzvunxlVFnEd7WGyCt6tsckb34YTKSyJfZ9Oty7eFewG7IsS/x6gf7O635ONjoQ==
-X-Received: by 2002:a19:8606:: with SMTP id i6mr10964456lfd.350.1607969201085;
-        Mon, 14 Dec 2020 10:06:41 -0800 (PST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id y12sm2171487lfy.300.2020.12.14.10.06.39
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Dec 2020 10:06:39 -0800 (PST)
-Received: by mail-lf1-f50.google.com with SMTP id x20so12917394lfe.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 10:06:39 -0800 (PST)
-X-Received: by 2002:a2e:8995:: with SMTP id c21mr10700872lji.251.1607969198940;
- Mon, 14 Dec 2020 10:06:38 -0800 (PST)
+        Mon, 14 Dec 2020 13:16:32 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEIEDCI034754;
+        Mon, 14 Dec 2020 18:15:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=ZaSEriH/etd6gavTjqmBnMgdg9IepI1ZheaObdqlGiI=;
+ b=cJ2Sha+ltYGzoTHA12hggpi/bgadXCRyNBJL8YwE4ndhbX+PxqpXW5r7Obad/SQV2AyL
+ aOFDUxT1PQJvP17banc9fT7SZ16/eDq4bV2PpRE2XciAalqaWGWkyml6bjalzEa4Y5b6
+ GhS3Vec5dIGEHAfMT8CTNVsctSOflUev/6yO/dX37RG2yEwZSgGiI4d1BIZFzzREy3BH
+ ogCVKoO+WhAbSWJKYbNxq8FSbUjErmkgfGxQbc1okfqi89AuCStusgQujCp2xp15ilUp
+ YgjoKdqvYGuMAHdFTxdcX8Wsw6whOSApi8mluhDimq1xwiZer0z5fO57eX4XR4fqdAfW bw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 35cn9r6qas-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Dec 2020 18:15:36 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEIEn3g065836;
+        Mon, 14 Dec 2020 18:15:35 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 35e6ep9ck7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Dec 2020 18:15:35 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BEIFUs6025547;
+        Mon, 14 Dec 2020 18:15:31 GMT
+Received: from localhost (/10.159.237.141)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Dec 2020 10:15:29 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] proc: Allow pid_revalidate() during LOOKUP_RCU
+In-Reply-To: <877dpln5uf.fsf@x220.int.ebiederm.org>
+References: <20201204000212.773032-1-stephen.s.brennan@oracle.com>
+ <20201212205522.GF2443@casper.infradead.org>
+ <877dpln5uf.fsf@x220.int.ebiederm.org>
+Date:   Mon, 14 Dec 2020 10:15:27 -0800
+Message-ID: <8736082r0g.fsf@stepbren-lnx.us.oracle.com>
 MIME-Version: 1.0
-References: <20201212165105.902688-1-axboe@kernel.dk> <20201212165105.902688-5-axboe@kernel.dk>
- <CAHk-=wiA1+MuCLM0jRrY4ajA0wk3bs44n-iskZDv_zXmouk_EA@mail.gmail.com>
- <8c4e7013-2929-82ed-06f6-020a19b4fb3d@kernel.dk> <20201213225022.GF3913616@dread.disaster.area>
- <CAHk-=wg5AXnXE3bjqj0fgH2os1ptKeF-ee6i0p5GCw1o63EdgQ@mail.gmail.com> <20201214015248.GG3913616@dread.disaster.area>
-In-Reply-To: <20201214015248.GG3913616@dread.disaster.area>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 14 Dec 2020 10:06:23 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh90545S-_aR0kEz3+26fi711FoO9A5LXv_R0DxEfthaQ@mail.gmail.com>
-Message-ID: <CAHk-=wh90545S-_aR0kEz3+26fi711FoO9A5LXv_R0DxEfthaQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] fs: honor LOOKUP_NONBLOCK for the last part of file open
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=956 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012140121
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=973
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012140121
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 13, 2020 at 5:52 PM Dave Chinner <david@fromorbit.com> wrote:
+ebiederm@xmission.com (Eric W. Biederman) writes:
+
+> Matthew Wilcox <willy@infradead.org> writes:
 >
-> On Sun, Dec 13, 2020 at 04:45:39PM -0800, Linus Torvalds wrote:
-> > On Sun, Dec 13, 2020 at 2:50 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > >
-> > > > > Only O_CREAT | O_TRUNC should matter, since those are the ones that
-> > > > > cause writes as part of the *open*.
-> > >
-> > > And __O_TMPFILE, which is the same as O_CREAT.
-> >
-> > This made me go look at the code, but we seem to be ok here -
-> > __O_TMPFILE should never get to the do_open() logic at all, because it
-> > gets caught before that and does off to do_tmpfile() and then
-> > vfs_tmpfile() instead.
-> >
-> > And then it's up to the filesystem to do the inode locking if it needs
-> > to - it has a separate i_io->tempfile function for that.
+>> On Thu, Dec 03, 2020 at 04:02:12PM -0800, Stephen Brennan wrote:
+>>> -void pid_update_inode(struct task_struct *task, struct inode *inode)
+>>> +static int do_pid_update_inode(struct task_struct *task, struct inode *inode,
+>>> +			       unsigned int flags)
+>>
+>> I'm really nitpicking here, but this function only _updates_ the inode
+>> if flags says it should.  So I was thinking something like this
+>> (compile tested only).
+>>
+>> I'd really appreocate feedback from someone like Casey or Stephen on
+>> what they need for their security modules.
 >
-> Sure, and then it blocks.
+> Just so we don't have security module questions confusing things
+> can we please make this a 2 patch series?  With the first
+> patch removing security_task_to_inode?
+>
+> The justification for the removal is that all security_task_to_inode
+> appears to care about is the file type bits in inode->i_mode.  Something
+> that never changes.  Having this in a separate patch would make that
+> logical change easier to verify.
+>
 
-Yes. I was more just double-checking that currently really odd
+I'll gladly split that out in v3 so we can continue the discussion
+there.
 
-        if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
+I'll also include some changes with Matthew's suggestion of
+inode_needs_pid_update(). This in combination with your suggestion to do
+fewer flag checks in pid_revalidate() should cleanup the code a fair bit.
 
-condition that didn't make sense to me (it basically does two
-different kinds of writablity checks). So it was more that you pointed
-out that __O_TMPFILE was also missing from that odd condition, and
-that turns out to be because it was handled separately.
+Stephen
 
-So no disagreement about __O_TMPFILE being a "not a cached operation"
-- purely a "that condition is odd".
-
-It was just that O_WRONLY | O_RDWR didn't make tons of sense to me,
-since we then get the write count only to then drop it immediately
-immediately without having actually done any writes.
-
-But I guess they are there only as a "even if we don't write to the
-filesystem right now, we do want to get the EROFS error return from
-open(), rather than at write() time".
-
-I think technically it shouldn't need to do the pointless "synchronize
-and increment writers only to decrement them again" dance, and could
-just do a "mnt_is_readonly()" test for the plain "open writably, but
-without O_CREAT/O_TRUNC" case.
-
-But I guess there's no real downside to doing it the way we're doing
-it - it just looked odd to me when I was looking at it in the context
-of just pathname lookup.
-
-In do_faccessat() we have that bare __mnt_is_readonly() for the "I
-want EROFS, but I'm not actually writing now" case.
-
-            Linus
+> Eric
+>
+>>
+>> diff --git a/fs/proc/base.c b/fs/proc/base.c
+>> index b362523a9829..771f330bfce7 100644
+>> --- a/fs/proc/base.c
+>> +++ b/fs/proc/base.c
+>> @@ -1968,6 +1968,25 @@ void pid_update_inode(struct task_struct *task, struct inode *inode)
+>>  	security_task_to_inode(task, inode);
+>>  }
+>>  
+>> +/* See if we can avoid the above call.  Assumes RCU lock held */
+>> +static bool inode_needs_pid_update(struct task_struct *task,
+>> +		const struct inode *inode)
+>> +{
+>> +	kuid_t uid;
+>> +	kgid_t gid;
+>> +
+>> +	if (inode->i_mode & (S_ISUID | S_ISGID))
+>> +		return true;
+>> +	task_dump_owner(task, inode->i_mode, &uid, &gid);
+>> +	if (!uid_eq(uid, inode->i_uid) || !gid_eq(gid, inode->i_gid))
+>> +		return true;
+>> +	/*
+>> +	 * XXX: Do we need to call the security system here to see if
+>> +	 * there's a pending update?
+>> +	 */
+>> +	return false;
+>> +}
+>> +
+>>  /*
+>>   * Rewrite the inode's ownerships here because the owning task may have
+>>   * performed a setuid(), etc.
+>> @@ -1978,8 +1997,15 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+>>  	struct inode *inode;
+>>  	struct task_struct *task;
+>>  
+>> -	if (flags & LOOKUP_RCU)
+>> +	if (flags & LOOKUP_RCU) {
+>> +		inode = d_inode_rcu(dentry);
+>> +		task = pid_task(proc_pid(inode), PIDTYPE_PID);
+>> +		if (!task)
+>> +			return 0;
+>> +		if (!inode_needs_pid_update(task, inode))
+>> +			return 1;
+>>  		return -ECHILD;
+>> +	}
+>>  
+>>  	inode = d_inode(dentry);
+>>  	task = get_proc_task(inode);
