@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF9822DA015
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 20:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9702DA013
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 20:16:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502154AbgLNTOt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 14:14:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32798 "EHLO
+        id S2438061AbgLNTOq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 14:14:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2440496AbgLNTOS (ORCPT
+        with ESMTP id S2440528AbgLNTOT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 14:14:18 -0500
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14292C061794
+        Mon, 14 Dec 2020 14:14:19 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1F2DC06179C
         for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 11:13:38 -0800 (PST)
-Received: by mail-il1-x143.google.com with SMTP id x15so16878492ilq.1
+Received: by mail-io1-xd42.google.com with SMTP id p187so17994240iod.4
         for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 11:13:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=l/Y3zSbEAx5VH6dVCdGyeMeVWBXxWYk68SsntHDex+o=;
-        b=KSeF2CyC8kVq08OiG0rdey3qndGohgYbEYoGM5Bdhl+y4+DNu+DU5wMHLxj4bpZnJQ
-         Hwnt1HMwbEeuCgfbr+yBT7wimq5eZhhhXYnkYgWuXMMWVg8Hjcs+vC1C1zSbjgfhkM7m
-         a4RV8wwA7IcweatXnqvhoHjb8SBGLxNaVuf+Tfc9rwPZoO//38unRMQcEGslHoalrTRo
-         PE9Q8E+J3QbKHwkcdsBD0xD9ap/71JPnoibXQSuBmAMP0Yu6C0q9YMM3ZK9yy0yJilXP
-         /5XnLJd6B5Gb9M+sq4MLZ91IYzwvJUtunIpH81GoVTI4J5msfzHEbKO1vfl0nG8Kjwvw
-         9rQg==
+        bh=TMZPnAjXizjL/GC4e0rRBbgTIwmRcqkOa9SMMz0fkM0=;
+        b=Z06/gjqN7oYySiwQGKhtiiKTNcV0dZ6yEdjyWSBHsL7wAchVf0CFhYboSHB66AuKsS
+         6Lp1z9d+yaQ+ly+phdjzsIwCM5xxNB6bq5BLk+wPWvUsc4iHlFAL6ardgKliKdLDsyk3
+         f9zHh5H7jOIn/3uHP4OOoYjeD265AyAY0ZiCEiNCJhYqMXcp9IjqCqFG5eucn/CKDVwc
+         PS8skOsdKgjhfLSzlmnQggtHxioLnY7zPZrZr9Yx/OO/blvc8xgthVNcym94JDd7/9kL
+         YhW2BmdhNDlNo9BEEHvz5SxmMIgfFsVUU+mDAy3pgsyc5n7ETM/yP4Fk67i2x14jhbNt
+         c0aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=l/Y3zSbEAx5VH6dVCdGyeMeVWBXxWYk68SsntHDex+o=;
-        b=SQrcymxSZcQUwtnCUGR1WKvDB8gayfH3ew9Rp6LoMeZMxeWOs27mBZvxTFgBuQoXrs
-         AQcQ6BlYutfIkJYbWFuj1YeFfMJKfQR299ZyCos0rrY7eY9zFsSPkcLRHRD/6S4TxCkQ
-         d1ehKkmJvJHopwnIMu6lic9Uyt1aSX0JBaiTybk+6hmdnx4HsD3wF762CSTYLFTvy4zr
-         +HV4KKO234u3Yt2geSnIyhGj5BxvV3dS8+qAhQNPqSLeMJN9PxBV55wc7zY50GY3Kgnc
-         eI0x0aRWcKf2T7Q8bkqOXyvZDle+X8FN6Bf5R2I4XKf53qFSHUJEWK3WL3D25fPuQjaS
-         inaA==
-X-Gm-Message-State: AOAM5316lZ9pQIGjxkxi3PBSQwdx/n0DlLyEHX2Nq+5yiBIOKA0jYM52
-        QOHJgu2/ehKFl9KAo0kUDsuEBs4/vjx/jw==
-X-Google-Smtp-Source: ABdhPJyxZfghV7XdWRj2wNuXLTtRUvrRFhrzHaoTiJpEYR5daHl95XjV0MJ2iB/pjnGU9QE6w8ZrNg==
-X-Received: by 2002:a92:607:: with SMTP id x7mr35864078ilg.34.1607973217131;
-        Mon, 14 Dec 2020 11:13:37 -0800 (PST)
+        bh=TMZPnAjXizjL/GC4e0rRBbgTIwmRcqkOa9SMMz0fkM0=;
+        b=MuVM7XlNGQ5QRuqNEAHFKx6M8AouN6rAIZ5Iy1zfCD/Nor7Tq8sI6XBqRMHA7hcE5G
+         xVObO5AFShwW5QnaLYlUC8qSSgMhB1Un/30TI7rk8qrT0sAoszGNxTrG/X0MhYT1U/qY
+         Ni6CXvJ3qnwm3WIK1Brz4sMSXZQ/qK4pcu0n7XH0BWEK8M825IzqszcvyPruw2S7Da9J
+         CcE2mXZQRHkuNSbb0gFklprwaAF3+UmFmg6YiKmAf8IHH/xtjwkZZhTHJ2GLqVJEAMfC
+         saooqYZV9vyt2tLsILs/8d2EVqh28i74so6JtRH6i3Gtc9CEGECKOVoGKO0ywb/ftTD3
+         TRTg==
+X-Gm-Message-State: AOAM532y+bEosFNBrhKTxJQAVM31YLecBPaPV4izcyfTfMuBMT2tJwwz
+        vx95iJaR4pizRnWjri9TYIiIG4LWDUk/XA==
+X-Google-Smtp-Source: ABdhPJxyC0vd/4UjsF/H7s+udDRBJKpBXKBK5C7FTl/GOPoU97395XUKsKm2rv3WfXYccWI2sUJtFw==
+X-Received: by 2002:a05:6602:2110:: with SMTP id x16mr31702738iox.127.1607973218086;
+        Mon, 14 Dec 2020 11:13:38 -0800 (PST)
 Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 11sm11760566ilt.54.2020.12.14.11.13.36
+        by smtp.gmail.com with ESMTPSA id 11sm11760566ilt.54.2020.12.14.11.13.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Dec 2020 11:13:36 -0800 (PST)
+        Mon, 14 Dec 2020 11:13:37 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/4] fs: expose LOOKUP_NONBLOCK through openat2() RESOLVE_NONBLOCK
-Date:   Mon, 14 Dec 2020 12:13:23 -0700
-Message-Id: <20201214191323.173773-4-axboe@kernel.dk>
+Subject: [PATCH 4/4] io_uring: enable LOOKUP_NONBLOCK path resolution for filename lookups
+Date:   Mon, 14 Dec 2020 12:13:24 -0700
+Message-Id: <20201214191323.173773-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201214191323.173773-1-axboe@kernel.dk>
 References: <20201214191323.173773-1-axboe@kernel.dk>
@@ -64,66 +64,105 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that we support non-blocking path resolution internally, expose it
-via openat2() in the struct open_how ->resolve flags. This allows
-applications using openat2() to limit path resolution to the extent that
-it is already cached.
+Instead of being pessimistic and assume that path lookup will block, use
+LOOKUP_NONBLOCK to attempt just a cached lookup. This ensures that the
+fast path is always done inline, and we only punt to async context if
+IO is needed to satisfy the lookup.
 
-If the lookup cannot be satisfied in a non-blocking manner, openat2(2)
-will return -1/-EAGAIN.
+For forced nonblock open attempts, mark the file O_NONBLOCK over the
+actual ->open() call as well. We can safely clear this again before
+doing fd_install(), so it'll never be user visible that we fiddled with
+it.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/open.c                    | 6 ++++++
- include/linux/fcntl.h        | 2 +-
- include/uapi/linux/openat2.h | 4 ++++
- 3 files changed, 11 insertions(+), 1 deletion(-)
+ fs/io_uring.c | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
 
-diff --git a/fs/open.c b/fs/open.c
-index 9af548fb841b..a83434cfe01c 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1087,6 +1087,12 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
- 		lookup_flags |= LOOKUP_BENEATH;
- 	if (how->resolve & RESOLVE_IN_ROOT)
- 		lookup_flags |= LOOKUP_IN_ROOT;
-+	if (how->resolve & RESOLVE_NONBLOCK) {
-+		/* Don't bother even trying for create/truncate open */
-+		if (flags & (O_TRUNC | O_CREAT))
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 9d7baf8ba77a..6734a2616990 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -487,7 +487,6 @@ struct io_sr_msg {
+ struct io_open {
+ 	struct file			*file;
+ 	int				dfd;
+-	bool				ignore_nonblock;
+ 	struct filename			*filename;
+ 	struct open_how			how;
+ 	unsigned long			nofile;
+@@ -3998,7 +3997,6 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 		return ret;
+ 	}
+ 	req->open.nofile = rlimit(RLIMIT_NOFILE);
+-	req->open.ignore_nonblock = false;
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+ 	return 0;
+ }
+@@ -4040,39 +4038,45 @@ static int io_openat2(struct io_kiocb *req, bool force_nonblock)
+ {
+ 	struct open_flags op;
+ 	struct file *file;
++	bool nonblock_set;
+ 	int ret;
+ 
+-	if (force_nonblock && !req->open.ignore_nonblock)
+-		return -EAGAIN;
+-
+ 	ret = build_open_flags(&req->open.how, &op);
+ 	if (ret)
+ 		goto err;
++	nonblock_set = op.open_flag & O_NONBLOCK;
++	if (force_nonblock) {
++		/*
++		 * Don't bother trying for O_TRUNC or O_CREAT open, it'll
++		 * always -EAGAIN
++		 */
++		if (req->open.how.flags & (O_TRUNC | O_CREAT))
 +			return -EAGAIN;
-+		lookup_flags |= LOOKUP_NONBLOCK;
++		op.lookup_flags |= LOOKUP_NONBLOCK;
++		op.open_flag |= O_NONBLOCK;
 +	}
  
- 	op->lookup_flags = lookup_flags;
- 	return 0;
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 921e750843e6..919a13c9317c 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -19,7 +19,7 @@
- /* List of all valid flags for the how->resolve argument: */
- #define VALID_RESOLVE_FLAGS \
- 	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
--	 RESOLVE_BENEATH | RESOLVE_IN_ROOT)
-+	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_NONBLOCK)
+ 	ret = __get_unused_fd_flags(req->open.how.flags, req->open.nofile);
+ 	if (ret < 0)
+ 		goto err;
  
- /* List of all open_how "versions". */
- #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
-diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
-index 58b1eb711360..7bc1d0c35108 100644
---- a/include/uapi/linux/openat2.h
-+++ b/include/uapi/linux/openat2.h
-@@ -35,5 +35,9 @@ struct open_how {
- #define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
- 					be scoped inside the dirfd
- 					(similar to chroot(2)). */
-+#define RESOLVE_NONBLOCK	0x20 /* Only complete if resolution can be
-+					completed through cached lookup. May
-+					return -EAGAIN if that's not
-+					possible. */
- 
- #endif /* _UAPI_LINUX_OPENAT2_H */
+ 	file = do_filp_open(req->open.dfd, req->open.filename, &op);
++	if (force_nonblock && file == ERR_PTR(-EAGAIN)) {
++		/*
++		 * We could hang on to this 'fd', but seems like marginal
++		 * gain for something that is now known to be a slower path.
++		 * So just put it, and we'll get a new one when we retry.
++		 */
++		put_unused_fd(ret);
++		return -EAGAIN;
++	}
++
+ 	if (IS_ERR(file)) {
+ 		put_unused_fd(ret);
+ 		ret = PTR_ERR(file);
+-		/*
+-		 * A work-around to ensure that /proc/self works that way
+-		 * that it should - if we get -EOPNOTSUPP back, then assume
+-		 * that proc_self_get_link() failed us because we're in async
+-		 * context. We should be safe to retry this from the task
+-		 * itself with force_nonblock == false set, as it should not
+-		 * block on lookup. Would be nice to know this upfront and
+-		 * avoid the async dance, but doesn't seem feasible.
+-		 */
+-		if (ret == -EOPNOTSUPP && io_wq_current_is_worker()) {
+-			req->open.ignore_nonblock = true;
+-			refcount_inc(&req->refs);
+-			io_req_task_queue(req);
+-			return 0;
+-		}
+ 	} else {
++		if (force_nonblock && !nonblock_set)
++			file->f_flags &= ~O_NONBLOCK;
+ 		fsnotify_open(file);
+ 		fd_install(ret, file);
+ 	}
 -- 
 2.29.2
 
