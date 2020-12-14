@@ -2,35 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68EC82D92FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 06:52:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C3C2D931A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 06:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389731AbgLNFvG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 00:51:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35748 "EHLO mail.kernel.org"
+        id S2404740AbgLNFyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 00:54:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388095AbgLNFvC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 00:51:02 -0500
-Date:   Sun, 13 Dec 2020 21:50:19 -0800
+        id S1726058AbgLNFyJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Dec 2020 00:54:09 -0500
+Date:   Sun, 13 Dec 2020 21:53:27 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607925021;
-        bh=26wjFmCwOjxbjwCPVnXE7SyqfSynEV7b+ddO/h17k4I=;
+        s=k20201202; t=1607925209;
+        bh=i16BifUJiG908ADKX33lN3E+d1H+NPST+DKFRlua0sc=;
         h=From:To:Cc:Subject:From;
-        b=n/muPa2CduuxaSl+0TEAyvxRjflWJBxicz+gMGJDNpvNXQogxADu7X/WVccGdAlqi
-         xZmuIv3FwteKOr+Qlv5ddaktdmXQSJIeBxTQzP16O7fUFoPzMSDKpKdMu63zQ/rf4L
-         nkHx5mxptVdfc2WBUpiRT71HanPgKK5fmug5mHDGtTbGZJ04bJI4hhRlBraAVBb4nv
-         2cZYgMGX+sIph52A0SHSdKjUYTKcBWNBX29/dwftRvi2vV6JlukFQMNZnsxn+m7tOy
-         ADB2dQgI4vwseN0mcDjFLUWzBh0NPkgsiv/xrwLG41ZNV1WkrtMPXaL3OR1Cb1vFdS
-         nTBmup/vMTS6A==
+        b=Vz742K6NGVNpmN1b2Mu7MfDQY8/MpslxDH3rDOKvNd87Tq2HQdUGp9Zb28PahoBTo
+         9KPjGVineDijLgwV+U7csBNuX0nb9QN6k83hjaxFeZNk2GTahWNQFC71XfcguogXN8
+         +trPJwx0qNFUM8+41Iv05enSTy0VwY4KkCf/G/1i8NTMKV0TNzg7yRbHKXd9MN43wh
+         po+FoQ3oHkG05hHTVnwWwtKuf+W4TvAE0FIZV7YWp16KTnzUOa8xR21rrX8gQn/3lF
+         RbpB4SoHtb7EzqCCoueVr6+UL4NR02NttEHOBGIwt2+YnC4k2oUvX7yo4kzowW8Ygr
+         wlnxN5hS3PGqg==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] fscrypt updates for 5.11
-Message-ID: <X9b9G8p8AiRAzDwV@sol.localdomain>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] fsverity updates for 5.11
+Message-ID: <X9b910/Ldj6kdljm@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -44,60 +43,35 @@ The following changes since commit 09162bc32c880a791c6c0668ce0745cf7958f576:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
+  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
 
-for you to fetch changes up to a14d0b6764917b21ee6fdfd2a8a4c2920fbefcce:
+for you to fetch changes up to bde493349025ca0559e2fff88592935af3b8df19:
 
-  fscrypt: allow deleting files with unsupported encryption policy (2020-12-02 18:25:01 -0800)
-
-----------------------------------------------------------------
-
-This release there are some fixes for longstanding problems, as well as
-some cleanups:
-
-- Fix a race condition where a duplicate filename could be created in an
-  encrypted directory if a syscall that creates a new filename raced
-  with the directory's encryption key being added.
-
-- Allow deleting files that use an unsupported encryption policy.
-
-- Simplify the locking for 'struct fscrypt_master_key'.
-
-- Remove kernel-internal constants from the UAPI header.
-
-As usual, all these patches have been in linux-next with no reported
-issues, and I've tested them with xfstests.
+  fs-verity: move structs needed for file signing to UAPI header (2020-11-23 19:30:14 -0800)
 
 ----------------------------------------------------------------
-Eric Biggers (16):
-      fscrypt: remove kernel-internal constants from UAPI header
-      fscrypt: add fscrypt_is_nokey_name()
-      ext4: prevent creating duplicate encrypted filenames
-      f2fs: prevent creating duplicate encrypted filenames
-      ubifs: prevent creating duplicate encrypted filenames
-      fscrypt: remove unnecessary calls to fscrypt_require_key()
-      fscrypt: simplify master key locking
-      ext4: remove ext4_dir_open()
-      f2fs: remove f2fs_dir_open()
-      ubifs: remove ubifs_dir_open()
-      ext4: don't call fscrypt_get_encryption_info() from dx_show_leaf()
-      fscrypt: introduce fscrypt_prepare_readdir()
-      fscrypt: move body of fscrypt_prepare_setattr() out-of-line
-      fscrypt: move fscrypt_require_key() to fscrypt_private.h
-      fscrypt: unexport fscrypt_get_encryption_info()
-      fscrypt: allow deleting files with unsupported encryption policy
 
- fs/crypto/fname.c            |   8 +++-
- fs/crypto/fscrypt_private.h  |  56 +++++++++++++++-------
- fs/crypto/hooks.c            |  55 +++++++++++----------
- fs/crypto/keyring.c          |  10 +---
- fs/crypto/keysetup.c         |  44 +++++++++++------
- fs/crypto/policy.c           |  27 +++++++----
- fs/ext4/dir.c                |  16 ++-----
- fs/ext4/namei.c              |  13 ++---
- fs/f2fs/dir.c                |  10 +---
- fs/f2fs/f2fs.h               |   2 +
- fs/ubifs/dir.c               |  28 +++++------
- include/linux/fscrypt.h      | 112 ++++++++++++++++++++++++++++---------------
- include/uapi/linux/fscrypt.h |   5 +-
- 13 files changed, 227 insertions(+), 159 deletions(-)
+Some cleanups for fs-verity:
+
+- Rename some names that have been causing confusion.
+
+- Move structs needed for file signing to the UAPI header.
+
+----------------------------------------------------------------
+Eric Biggers (4):
+      fs-verity: remove filenames from file comments
+      fs-verity: rename fsverity_signed_digest to fsverity_formatted_digest
+      fs-verity: rename "file measurement" to "file digest"
+      fs-verity: move structs needed for file signing to UAPI header
+
+ Documentation/filesystems/fsverity.rst | 68 ++++++++++++++++------------------
+ fs/verity/enable.c                     |  8 ++--
+ fs/verity/fsverity_private.h           | 36 ++----------------
+ fs/verity/hash_algs.c                  |  2 +-
+ fs/verity/init.c                       |  2 +-
+ fs/verity/measure.c                    | 12 +++---
+ fs/verity/open.c                       | 24 ++++++------
+ fs/verity/signature.c                  | 14 +++----
+ fs/verity/verify.c                     |  2 +-
+ include/uapi/linux/fsverity.h          | 49 ++++++++++++++++++++++++
+ 10 files changed, 116 insertions(+), 101 deletions(-)
