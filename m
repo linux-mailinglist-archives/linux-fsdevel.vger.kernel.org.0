@@ -2,245 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4B72DA3ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 00:04:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 050F22DA3F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 00:12:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408328AbgLNXCz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 18:02:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28314 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2408029AbgLNXCy (ORCPT
+        id S2408130AbgLNXLc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 18:11:32 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38116 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbgLNXLc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 18:02:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607986887;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4NZ41tlcAvHRg9DaYGIdtPXF0NMAQ11HmPpMP2IZjUo=;
-        b=NQ/g6CxPDbQI3WHiLGc9MvSXK9u2WbUJZmG3cjOdS0ViezZDkZHXjaHv/N/HpQe0tWSV1E
-        o/L4QLvg0LLWn5M8ys5smXFxi35K9VP3a+BwYQUCUySPfH95W/rw0Kvv2t2oFV77uCa3vg
-        P0zKYkSMeTkrGWkEanYsZ4TriqUyi78=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-229-WjYbYX1mPXaJLDp-B6J0Dg-1; Mon, 14 Dec 2020 18:01:23 -0500
-X-MC-Unique: WjYbYX1mPXaJLDp-B6J0Dg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D28E51922021;
-        Mon, 14 Dec 2020 23:01:21 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-114-168.rdu2.redhat.com [10.10.114.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 799A86E53E;
-        Mon, 14 Dec 2020 23:01:21 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 10A1F220BCF; Mon, 14 Dec 2020 18:01:21 -0500 (EST)
-Date:   Mon, 14 Dec 2020 18:01:21 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH 2/2] overlayfs: propagate errors from upper to
- overlay sb in sync_fs
-Message-ID: <20201214230121.GB3453@redhat.com>
-References: <20201213132713.66864-1-jlayton@kernel.org>
- <20201213132713.66864-3-jlayton@kernel.org>
- <20201214213843.GA3453@redhat.com>
- <20201214220413.GA6508@ircssh-2.c.rugged-nimbus-611.internal>
+        Mon, 14 Dec 2020 18:11:32 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BENAER7189852;
+        Mon, 14 Dec 2020 23:10:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=ZgfrS8asxPlKxf8u6E3lDMqj0dpzTas5DAUZTX/96BU=;
+ b=ZnX+NbRmkt3P7jsWAPa6BvcMOAZZYFq1Hff0h1wvDoeEPFigPucFXj98wb2X5ATI9G84
+ XTpexSXEWT1BGdBkRjCbk4J7b6eOURSeTjZX7qFCs50y72nvnhiHeLuUFBpnx60VFqxB
+ aoYSwZNGDJAKEOr+Dpr7hKUHeKKod1o+VTXIrYye4sr0ORwN0M7JDh5hmNrRqnXQhXFU
+ gCfhZu5rew5DULgEawMMwPN+PfjnqlopsWVaV1y6+Ru+v2jUEWgoyjTIcDJWvAd2kSUt
+ ndyJemYjVLleGDNfrOo1AOxdAwq05CPEsHW7uU8hJxuLCdUTbpGfKRj73s/7b7v6M9EK bw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 35cn9r7x03-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Dec 2020 23:10:45 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEN58bf096736;
+        Mon, 14 Dec 2020 23:10:44 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 35d7em461d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Dec 2020 23:10:44 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BENAhq1002957;
+        Mon, 14 Dec 2020 23:10:43 GMT
+Received: from dhcp-10-159-135-62.vpn.oracle.com (/10.159.135.62)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Dec 2020 15:10:43 -0800
+Subject: Re: [PATCH RFC 0/8] dcache: increase poison resistance
+To:     Konstantin Khlebnikov <koct9i@gmail.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Waiman Long <longman@redhat.com>,
+        Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
+        matthew.wilcox@oracle.com
+References: <158893941613.200862.4094521350329937435.stgit@buzz>
+ <97ece625-2799-7ae6-28b5-73c52c7c497b@oracle.com>
+ <CALYGNiN2F8gcKX+2nKOi1tapquJWfyzUkajWxTqgd9xvd7u1AA@mail.gmail.com>
+ <d116ead4-f603-7e0c-e6ab-e721332c9832@oracle.com>
+ <CALYGNiM8Fp=ZV8S6c2L50ne1cGhE30PrT-C=4nfershvfAgP+Q@mail.gmail.com>
+From:   Junxiao Bi <junxiao.bi@oracle.com>
+Message-ID: <04b4d5cf-780d-83a9-2b2b-80ae6029ae2c@oracle.com>
+Date:   Mon, 14 Dec 2020 15:10:25 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:78.0)
+ Gecko/20100101 Thunderbird/78.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201214220413.GA6508@ircssh-2.c.rugged-nimbus-611.internal>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <CALYGNiM8Fp=ZV8S6c2L50ne1cGhE30PrT-C=4nfershvfAgP+Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9835 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012140154
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9835 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012140154
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 10:04:14PM +0000, Sargun Dhillon wrote:
-> On Mon, Dec 14, 2020 at 04:38:43PM -0500, Vivek Goyal wrote:
-> > On Sun, Dec 13, 2020 at 08:27:13AM -0500, Jeff Layton wrote:
-> > > Peek at the upper layer's errseq_t at mount time for volatile mounts,
-> > > and record it in the per-sb info. In sync_fs, check for an error since
-> > > the recorded point and set it in the overlayfs superblock if there was
-> > > one.
-> > > 
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > 
-> > While we are solving problem for non-volatile overlay mount, I also
-> > started thinking, what about non-volatile overlay syncfs() writeback errors.
-> > Looks like these will not be reported to user space at all as of now
-> > (because we never update overlay_sb->s_wb_err ever).
-> > 
-> > A patch like this might fix it. (compile tested only).
-> > 
-> > overlayfs: Report syncfs() errors to user space
-> > 
-> > Currently, syncfs(), calls filesystem ->sync_fs() method but ignores the
-> > return code. But certain writeback errors can still be reported on 
-> > syncfs() by checking errors on super block.
-> > 
-> > ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
-> > 
-> > For the case of overlayfs, we never set overlayfs super block s_wb_err. That
-> > means sync() will never report writeback errors on overlayfs uppon syncfs().
-> > 
-> > Fix this by updating overlay sb->sb_wb_err upon ->sync_fs() call. And that
-> > should mean that user space syncfs() call should see writeback errors.
-> > 
-> > ovl_fsync() does not need anything special because if there are writeback
-> > errors underlying filesystem will report it through vfs_fsync_range() return
-> > code and user space will see it.
-> > 
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  fs/overlayfs/ovl_entry.h |    1 +
-> >  fs/overlayfs/super.c     |   14 +++++++++++---
-> >  2 files changed, 12 insertions(+), 3 deletions(-)
-> > 
-> > Index: redhat-linux/fs/overlayfs/super.c
-> > ===================================================================
-> > --- redhat-linux.orig/fs/overlayfs/super.c	2020-12-14 15:33:43.934400880 -0500
-> > +++ redhat-linux/fs/overlayfs/super.c	2020-12-14 16:15:07.127400880 -0500
-> > @@ -259,7 +259,7 @@ static int ovl_sync_fs(struct super_bloc
-> >  {
-> >  	struct ovl_fs *ofs = sb->s_fs_info;
-> >  	struct super_block *upper_sb;
-> > -	int ret;
-> > +	int ret, ret2;
-> >  
-> >  	if (!ovl_upper_mnt(ofs))
-> >  		return 0;
-> > @@ -283,7 +283,14 @@ static int ovl_sync_fs(struct super_bloc
-> >  	ret = sync_filesystem(upper_sb);
-> >  	up_read(&upper_sb->s_umount);
-> >  
-> > -	return ret;
-> > +	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
-> > +		/* Upper sb has errors since last time */
-> > +		spin_lock(&ofs->errseq_lock);
-> > +		ret2 = errseq_check_and_advance(&upper_sb->s_wb_err,
-> > +						&sb->s_wb_err);
-> > +		spin_unlock(&ofs->errseq_lock);
-> > +	}
-> > +	return ret ? ret : ret2;
-> >  }
-> >  
-> >  /**
-> > @@ -1873,6 +1880,7 @@ static int ovl_fill_super(struct super_b
-> >  	if (!cred)
-> >  		goto out_err;
-> >  
-> > +	spin_lock_init(&ofs->errseq_lock);
-> >  	/* Is there a reason anyone would want not to share whiteouts? */
-> >  	ofs->share_whiteout = true;
-> >  
-> > @@ -1945,7 +1953,7 @@ static int ovl_fill_super(struct super_b
-> >  
-> >  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
-> >  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> > -
-> > +		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
-> >  	}
-> >  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
-> >  	err = PTR_ERR(oe);
-> > Index: redhat-linux/fs/overlayfs/ovl_entry.h
-> > ===================================================================
-> > --- redhat-linux.orig/fs/overlayfs/ovl_entry.h	2020-12-14 15:33:43.934400880 -0500
-> > +++ redhat-linux/fs/overlayfs/ovl_entry.h	2020-12-14 15:34:13.509400880 -0500
-> > @@ -79,6 +79,7 @@ struct ovl_fs {
-> >  	atomic_long_t last_ino;
-> >  	/* Whiteout dentry cache */
-> >  	struct dentry *whiteout;
-> > +	spinlock_t errseq_lock;
-> >  };
-> >  
-> >  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> > 
-> 
-> This was on my list of things to look at. I don't think we can / should use 
-> errseq_check_and_advance because it will hide errors from userspace.
+On 12/13/20 11:43 PM, Konstantin Khlebnikov wrote:
 
-Hi Sargun,
+>
+>
+> On Sun, Dec 13, 2020 at 9:52 PM Junxiao Bi <junxiao.bi@oracle.com 
+> <mailto:junxiao.bi@oracle.com>> wrote:
+>
+>     On 12/11/20 11:32 PM, Konstantin Khlebnikov wrote:
+>
+>     > On Thu, Dec 10, 2020 at 2:01 AM Junxiao Bi
+>     <junxiao.bi@oracle.com <mailto:junxiao.bi@oracle.com>
+>     > <mailto:junxiao.bi@oracle.com <mailto:junxiao.bi@oracle.com>>>
+>     wrote:
+>     >
+>     >     Hi Konstantin,
+>     >
+>     >     We tested this patch set recently and found it limiting negative
+>     >     dentry
+>     >     to a small part of total memory. And also we don't see any
+>     >     performance
+>     >     regression on it. Do you have any plan to integrate it into
+>     >     mainline? It
+>     >     will help a lot on memory fragmentation issue causing by
+>     dentry slab,
+>     >     there were a lot of customer cases where sys% was very high
+>     since
+>     >     most
+>     >     cpu were doing memory compaction, dentry slab was taking too
+>     much
+>     >     memory
+>     >     and nearly all dentry there were negative.
+>     >
+>     >
+>     > Right now I don't have any plans for this. I suspect such
+>     problems will
+>     > appear much more often since machines are getting bigger.
+>     > So, somebody will take care of it.
+>     We already had a lot of customer cases. It made no sense to leave so
+>     many negative dentry in the system, it caused memory fragmentation
+>     and
+>     not much benefit.
+>
+>
+> Dcache could grow so big only if the system lacks of memory pressure.
+>
+> Simplest solution is a cronjob which provinces such pressure by
+> creating sparse file on disk-based fs and then reading it.
+> This should wash away all inactive caches with no IO and zero chance 
+> of oom.
+Sound good, will try.
+>
+>     >
+>     > First part which collects negative dentries at the end list of
+>     > siblings could be
+>     > done in a more obvious way by splitting the list in two.
+>     > But this touches much more code.
+>     That would add new field to dentry?
+>
+>
+> Yep. Decision is up to maintainers.
+>
+>     >
+>     > Last patch isn't very rigid but does non-trivial changes.
+>     > Probably it's better to call some garbage collector thingy
+>     periodically.
+>     > Lru list needs pressure to age and reorder entries properly.
+>
+>     Swap the negative dentry to the head of hash list when it get
+>     accessed?
+>     Extra ones can be easily trimmed when swapping, using GC is to reduce
+>     perf impact?
+>
+>
+> Reclaimer/shrinker scans denties in LRU lists, it's an another list.
 
-I have been struggling to figure out when to use
-errseq_check_and_advance() and when to use this error_check() and
-errorseq_set() combination.
+Ah, you mean GC to reclaim from LRU list. I am not sure it could catch 
+up the speed of negative dentry generating.
 
-My rational for using errseq_check_and_advance() is that say there
-is an unseen error on upper super block, and if overlayfs calls
-syncfs(), then this call should set SEEN flag on upper super
-block, isn't it. This is equivalent of an app directly calling
-syncfs() on upper.
+Thanks,
 
-If we use error_check() and errseq_set() combination, then we
-are just reading state of upper superblock but really not impacting
-it despite the fact overlay apps are calling syncfs().
+Junxiao.
 
-Comapre it with fsync(). For non-volatile overlay, an fsync() overlay
-call will set SEEN flag on upper file. And I believe same thing
-should happen for ovl_syncfs() call as well. It makes more sense to me.
-
-Wondering how will it hide errors from user space. ovl "struct file"
-will have its own f->f_sb_err initialized from overlay superblock. And
-if overlay super block gets updated with error, a later
-errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err) should
-still return an error.
-
-What am I missing?
-
-Vivek
-
-
-> I think we 
-> need something like:
-> 
-> At startup, call errseq_peek and stash that value somewhere. This sets the 
-> MUSTINC flag.
-
-So this errseq_peek() stuff is required only if we don't want to 
-consume error while checking for error. In fact consuming error
-is not bad as long as we do it only ovl_syncfs() path. In fact
-it will match current semantics of syncfs().
-
-But issue we have is that we want to check for error outside syncfs()
-path too and don't want to consume it (otherwise it breaks the semantics
-that it will bee seen marked in syncfs() path).
-
-So that's why this notion of checking error without consuming it
-so tha we can check it in remount path.
-
-But in syncfs() path, it should be ok to consume unseen error and
-we should be able to call errseq_check_and_advance(), both for
-volatile and non-volatile mounts, isn't it?
-
-For ther paths, like remount, we probably can stash away on persistent
-storage and compare that value on remount and fail remount without
-actually consuming unseen error (because it is not syncfs path). This
-possibly can be used in other paths like read/write as well to
-make sure we can notice error without consuming it.
-
-IOW, we seem to have to paths we want to check errors in. In ovl_syncfs()
-path we should be able consume exisiting unseen error on upper, so
-errseq_check_and_advance() makes sense. In rest of the paths, we
-should use new semantics to check for errors.
-
-Vivek
-
-> 
-> At syncfs time: call errseq check, if it says there is an error, call 
-> errseq_peek again, and store the error in our superblock. Take the error value 
-> from the differenceb between the previous one and the new one, and copy it up to 
-> the superblock.
-> 
-> Either way, I think Jeff's work of making it so other kernel subsytems can 
-> interact with errseq on a superblock bears fruit elsewhere. If the first patch 
-> gets merged, I can put together the patches to do the standard error bubble
-> up for normal syncfs, volatile syncfs, and volatile remount.
-> 
-
+> My patch used order in hash lists is a very unusual way. Don't be 
+> confused.
+>
+> There are four lists
+> parent - siblings
+> hashtable - hashchain
+> LRU
+> inode - alias
+>
+>
+>     Thanks,
+>
+>     Junxioao.
+>
+>     >
+>     > Gc could be off by default or thresholds set very high (50% of
+>     ram for
+>     > example).
+>     > Final setup could be left up to owners of large systems, which
+>     needs
+>     > fine tuning.
+>
