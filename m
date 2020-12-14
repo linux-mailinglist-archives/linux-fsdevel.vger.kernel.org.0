@@ -2,75 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CED12D98AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 14:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C71C62D98B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 14:25:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407941AbgLNNXk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 08:23:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407791AbgLNNX3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 08:23:29 -0500
-Message-ID: <f325fd49b5e185cf77a906db48ed590a46c75ef6.camel@kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607952168;
-        bh=xjZ3pHqKzICtRPl9M4IUtDwVSELwVI8aQZwUptYA7Gg=;
-        h=Subject:From:To:Cc:Date:From;
-        b=KeOWG8NXyI70Zr8bnu6CKG8Cr944O9RJP0uPe4DE+P/Djuh0lxI8Si+TiraNrD6um
-         gpkqYmOPHpQNZ40Y8OZ31CO7ecmwqkvhw+cBNjErPm/ILeq8wfsQk2qhAgavf10I4l
-         kbaIvGIE/Bwxqwm4q+/TrOfQz+RJK4qOLtMBHOg7poNbxrNJ/hZHTaKPDaPNhcU1F2
-         CEq6w6qsSxxhtrxlqqWWACAiiPHw/B2lOmG6AAI/87bY24Ua9VlXgy4/WgibSy0HGU
-         JuSYFeoPIJOC+FnChpp0MuHrC4M4/Eo3e9usTg1r+a66ZUO2G0qZkkWjXSaCp3ifgg
-         oBw7QE/etzlKw==
-Subject: [GIT PULL] file locking fixes for 5.11
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "boqun.feng" <boqun.feng@gmail.com>,
-        Luo Meng <luomeng12@huawei.com>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>
-Date:   Mon, 14 Dec 2020 08:22:46 -0500
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        id S2407957AbgLNNZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 08:25:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407879AbgLNNYn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Dec 2020 08:24:43 -0500
+Received: from mail-vk1-xa44.google.com (mail-vk1-xa44.google.com [IPv6:2607:f8b0:4864:20::a44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12D7EC0613D3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 05:24:03 -0800 (PST)
+Received: by mail-vk1-xa44.google.com with SMTP id s13so2372931vkb.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 05:24:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dXF27qujJ2VqBKUjmJ8eURLL/NeptG+bztfHuQjY1oI=;
+        b=hZFWeny4SmmmFgsIN/hVdNQwkTNWkl26Sd3otE4YIbYrLe6OsynbrRUWun1L4xQb5c
+         LBJcwb2IxXaPgsLLDyucI7cNa5kpkTnH19eNkf7X2ap3Qr/eUQbgn79JwAYCVcz7FyUf
+         QuHQfzNb72UT1pZBtLr+26j9206Qm4qUmcqEQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dXF27qujJ2VqBKUjmJ8eURLL/NeptG+bztfHuQjY1oI=;
+        b=NOCbjRD8EBRI+xhFKwCw5bEs0q9kTUBw0py++tkce9NXNSjQ2VMaaCNWrh4qqOBdt2
+         xvbB1yLwseiVvLlcoqbSjBdbNNl62ndNW+GfsrEya8XHgApPATMM02k2YrfHtBNZwtbV
+         qOkuf/gbeRsMWEAofJ1XnJtbFW/plxYhjOOpS2lZUZ3OiV5ZEsXl+hTO2vFLKmXjLFb6
+         iW5g/RBIk+0b6h+egUNF7sctORbfBeWpOV1pQgUfhVnRLRJc5EvWYpTFCcoflVjsUncR
+         AA66eifBCPlI4tJy5V7ifJe8C8C0eie/T482gQOy+Fo62G0UGOa6Cj7+qYtcssX2qGtE
+         CC5g==
+X-Gm-Message-State: AOAM532jykez4QTi8m/bNUrIxz7dYmJMNeZtGz/gl4uJY9g+XobVrmBw
+        uX1tquAMfxR27+MTRZmdqhnny01WjkosVYutGbWW+Q==
+X-Google-Smtp-Source: ABdhPJzvUSTfUW3Xz5alxiJ7sFlX7KF4jeVhXMp6RTxvmF/3K2yu8V8fxwM6en5+0ouWA5dKH+Ugplct2E9eCxUY53g=
+X-Received: by 2002:a1f:2c01:: with SMTP id s1mr24498538vks.11.1607952242187;
+ Mon, 14 Dec 2020 05:24:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-5-mszeredi@redhat.com>
+ <CAOQ4uxhv+33nVxNQmZtf-uzZN0gMXBaDoiJYm88cWwa1fRQTTg@mail.gmail.com>
+ <CAJfpegsxku5D+08F6SUixQUfF6eDVm+o2pu6feLooq==ye0GDg@mail.gmail.com> <CAOQ4uxj6130FkTPQ0_83bBj2vJGaehdYk1dix6c8FgLStqN6qw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj6130FkTPQ0_83bBj2vJGaehdYk1dix6c8FgLStqN6qw@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 14 Dec 2020 14:23:51 +0100
+Message-ID: <CAJfpegvS3pD89GTfFTsAnRwQ+Oxuo+r7mP0JY1usDC3n3tT48Q@mail.gmail.com>
+Subject: Re: [PATCH v2 04/10] ovl: make ioctl() safe
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
+On Mon, Dec 14, 2020 at 6:44 AM Amir Goldstein <amir73il@gmail.com> wrote:
 
-  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
+> Perhaps, but there is a much bigger issue with this change IMO.
+> Not because of dropping rule (b) of the permission model, but because
+> of relaxing rule (a).
+>
+> Should overlayfs respect the conservative interpretation as it partly did
+> until this commit, a lower file must not lose IMMUTABLE/APPEND_ONLY
+> after copy up, but that is exactly what is going to happen if we first
+> copy up and then fail permission check on setting the flags.
 
-are available in the Git repository at:
+Yeah, it's a mess.   This will hopefully sort it out, as it will allow
+easier copy up of flags:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git locks-v5.11
+https://lore.kernel.org/linux-fsdevel/20201123141207.GC327006@miu.piliscsaba.redhat.com/
 
-for you to fetch changes up to 8d1ddb5e79374fb277985a6b3faa2ed8631c5b4c:
+In actual fact losing S_APPEND is not currently prevented by copy-up
+triggered by anything other than FS_IOC_SETX*, and even that is prone
+to races as indicated by the bug report that resulted in this patch.
 
-  fcntl: Fix potential deadlock in send_sig{io, urg}() (2020-11-05 07:44:15 -0500)
+Let's just fix the IMMUTABLE case:
 
-----------------------------------------------------------------
+  - if the file is already copied up with data (since the overlay
+ioctl implementation currently uses the realdata), then we're fine to
+copy up
 
-A fix for some undefined integer overflow behavior, a typo in a comment
-header, and a fix for a potential deadlock involving internal senders of
-SIGIO/SIGURG.
+  - if the file is not IMMUTABLE to start with, then also fine to copy
+up; even if the op will fail after copy up we haven't done anything
+that wouldn't be possible without this particular codepath
 
-----------------------------------------------------------------
-Boqun Feng (1):
-      fcntl: Fix potential deadlock in send_sig{io, urg}()
+  - if task has CAP_LINUX_IMMUTABLE (can add/remove immutable) then
+it's also fine to copy up since we can be fairly sure that the actual
+setflags will succeed as well.  If not, that can be a problem, but as
+I've said copying up IMMUTABLE and other flags should really be done
+by the copy up code, otherwise it won't work properly.
 
-Luo Meng (1):
-      locks: Fix UBSAN undefined behaviour in flock64_to_posix_lock
+Something like this incremental should be good,  I think:
 
-Mauro Carvalho Chehab (1):
-      locks: fix a typo at a kernel-doc markup
+@@ -576,6 +576,15 @@ static long ovl_ioctl_set_flags(struct f
 
- fs/fcntl.c | 10 ++++++----
- fs/locks.c |  4 ++--
- 2 files changed, 8 insertions(+), 6 deletions(-)
+  inode_lock(inode);
 
--- 
-Jeff Layton <jlayton@kernel.org>
++ /*
++ * Prevent copy up if immutable and has no CAP_LINUX_IMMUTABLE
++ * capability.
++ */
++ ret = -EPERM;
++ if (!ovl_has_upperdata(inode) && IS_IMMUTABLE(inode) &&
++     !capable(CAP_LINUX_IMMUTABLE))
++ goto unlock;
++
+  ret = ovl_maybe_copy_up(file_dentry(file), O_WRONLY);
+  if (ret)
+  goto unlock;
 
+Thanks,
+Miklos
