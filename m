@@ -2,121 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C71C62D98B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 14:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 586B72D98EC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 14:38:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407957AbgLNNZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 08:25:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407879AbgLNNYn (ORCPT
+        id S2439456AbgLNNbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 08:31:33 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:39059 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2439357AbgLNNbU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 08:24:43 -0500
-Received: from mail-vk1-xa44.google.com (mail-vk1-xa44.google.com [IPv6:2607:f8b0:4864:20::a44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12D7EC0613D3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 05:24:03 -0800 (PST)
-Received: by mail-vk1-xa44.google.com with SMTP id s13so2372931vkb.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 05:24:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dXF27qujJ2VqBKUjmJ8eURLL/NeptG+bztfHuQjY1oI=;
-        b=hZFWeny4SmmmFgsIN/hVdNQwkTNWkl26Sd3otE4YIbYrLe6OsynbrRUWun1L4xQb5c
-         LBJcwb2IxXaPgsLLDyucI7cNa5kpkTnH19eNkf7X2ap3Qr/eUQbgn79JwAYCVcz7FyUf
-         QuHQfzNb72UT1pZBtLr+26j9206Qm4qUmcqEQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dXF27qujJ2VqBKUjmJ8eURLL/NeptG+bztfHuQjY1oI=;
-        b=NOCbjRD8EBRI+xhFKwCw5bEs0q9kTUBw0py++tkce9NXNSjQ2VMaaCNWrh4qqOBdt2
-         xvbB1yLwseiVvLlcoqbSjBdbNNl62ndNW+GfsrEya8XHgApPATMM02k2YrfHtBNZwtbV
-         qOkuf/gbeRsMWEAofJ1XnJtbFW/plxYhjOOpS2lZUZ3OiV5ZEsXl+hTO2vFLKmXjLFb6
-         iW5g/RBIk+0b6h+egUNF7sctORbfBeWpOV1pQgUfhVnRLRJc5EvWYpTFCcoflVjsUncR
-         AA66eifBCPlI4tJy5V7ifJe8C8C0eie/T482gQOy+Fo62G0UGOa6Cj7+qYtcssX2qGtE
-         CC5g==
-X-Gm-Message-State: AOAM532jykez4QTi8m/bNUrIxz7dYmJMNeZtGz/gl4uJY9g+XobVrmBw
-        uX1tquAMfxR27+MTRZmdqhnny01WjkosVYutGbWW+Q==
-X-Google-Smtp-Source: ABdhPJzvUSTfUW3Xz5alxiJ7sFlX7KF4jeVhXMp6RTxvmF/3K2yu8V8fxwM6en5+0ouWA5dKH+Ugplct2E9eCxUY53g=
-X-Received: by 2002:a1f:2c01:: with SMTP id s1mr24498538vks.11.1607952242187;
- Mon, 14 Dec 2020 05:24:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-5-mszeredi@redhat.com>
- <CAOQ4uxhv+33nVxNQmZtf-uzZN0gMXBaDoiJYm88cWwa1fRQTTg@mail.gmail.com>
- <CAJfpegsxku5D+08F6SUixQUfF6eDVm+o2pu6feLooq==ye0GDg@mail.gmail.com> <CAOQ4uxj6130FkTPQ0_83bBj2vJGaehdYk1dix6c8FgLStqN6qw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj6130FkTPQ0_83bBj2vJGaehdYk1dix6c8FgLStqN6qw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 14 Dec 2020 14:23:51 +0100
-Message-ID: <CAJfpegvS3pD89GTfFTsAnRwQ+Oxuo+r7mP0JY1usDC3n3tT48Q@mail.gmail.com>
-Subject: Re: [PATCH v2 04/10] ovl: make ioctl() safe
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
+        Mon, 14 Dec 2020 08:31:20 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 3333A5804FD;
+        Mon, 14 Dec 2020 08:30:28 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 14 Dec 2020 08:30:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        TJmkM4jF4LL5/+kspmbrSwMYJtpXZf5QP3Byw4FqUjk=; b=efNUPekA2cyH/Xhz
+        hofdMYtC+KJg/KI0OiNFAyr7gNMbCh/+ePc161Xunn7h5qqSk0iZHbNy7fKSZUi7
+        1h0uUNmjbUy4ZAYCgIbAYmisnzbcexvbZ0vgXzWeZOGsDHtyZAdPXDPeqT/EC8Yk
+        jr52677EaMbD2gb/o//+Q6liNC0il/2fXDgVGJ2AtaMxgz1kYAfaPCFekAR2kWef
+        e4g92Oec9aG+cnFwKqElB5di1YNxRtyd0EoFmHxhsS0e0yxAq4LKFWqu/4tmQ63/
+        vUsHeHhpbf98dtt6nA7saCG6HKT1Hle6y3ZyFCh9GONUMZK5/CXOYcm8worTVuvj
+        mZRkgQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=TJmkM4jF4LL5/+kspmbrSwMYJtpXZf5QP3Byw4FqU
+        jk=; b=SoA76dWfxMXRsgTURtn3D4a4cb7NEHsfVMI1d/Be/utAc6dapZr2HAET8
+        j3EMkaOwtF4JutFGudLHnNkM0zIzFNw2oyy41Z8KJ1FdRrvP4rjHhOWYLfVAQqlW
+        UuPuaxJHA/F0zQReUjqGcMaSSdyRo0F8ih7/9SVr9V2L1t4zYm7odBJNG7UGWeZ8
+        7GU0xlQeC5BxC8Roult6SN4c17twUDm/bir7LCfKVf5ntY5Cfhu4aJnwEFb927Do
+        TodCSv6lFHo1PlOkXKK1HVpyhfBW4715X7iDT556PG1pG1R4YZJGxzOVWBDVGnQ3
+        8Htg+twqrKgt/fbMNcW65jvZzxx9Q==
+X-ME-Sender: <xms:8mjXXyX77k7J6-bMaeKlrrOhQhNCYASNUjZllj0qyLXtozrcASnBJQ>
+    <xme:8mjXX4PfFMm4kv3-w7DvmPIt4s5QlueZf4NNWY6i62Cl7qTrkabvfDUcGnfdUWZDL
+    axCAVAHFLfe>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudekkedgheefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    eikeeggeeuvdevgfefiefhudekkeegheeileejveethedutedvveehudffjeevudenucff
+    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvddurdeggedrudefhedrudefle
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghv
+    vghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:8mjXX2bUSLenX1xqnzvmtyAt6NNQ7WhhkCFjAlocTA-UnUEdxSmp-w>
+    <xmx:8mjXX8obXO8MWlbVxX9JMmnYXij1cgkvpl2FchyUVebkz0sC1RAehw>
+    <xmx:8mjXX6bUMV4ognH_qYoDBWAIaxeMlMGKHdDz_ZrvZeSOOG5ZrGZkoA>
+    <xmx:9GjXX650zEj1WigEmEcTSoVfxE68jcZyHcYWmwVr3yM0bHg6_NS7fw>
+Received: from mickey.themaw.net (unknown [121.44.135.139])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C6AF41080066;
+        Mon, 14 Dec 2020 08:30:22 -0500 (EST)
+Message-ID: <3e97846b52a46759c414bff855e49b07f0d908fc.camel@themaw.net>
+Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
+ improvement
+From:   Ian Kent <raven@themaw.net>
+To:     Fox Chen <foxhlchen@gmail.com>
+Cc:     akpm@linux-foundation.org, dhowells@redhat.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, ricklind@linux.vnet.ibm.com,
+        sfr@canb.auug.org.au, Tejun Heo <tj@kernel.org>,
+        viro@zeniv.linux.org.uk
+Date:   Mon, 14 Dec 2020 21:30:19 +0800
+In-Reply-To: <CAC2o3DJdHuQxY7Rn5uXUprS7i8ri1qB=wOUM2rdZkWt4yJHv1w@mail.gmail.com>
+References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+         <20201210164423.9084-1-foxhlchen@gmail.com>
+         <822f02508d495ee7398450774eb13e5116ec82ac.camel@themaw.net>
+         <13e21e4c9a5841243c8d130cf9324f6cfc4dc2e1.camel@themaw.net>
+         <bde0b6c32f2b055c1ad1401b45c4adf61aab6876.camel@themaw.net>
+         <CAC2o3DJdHuQxY7Rn5uXUprS7i8ri1qB=wOUM2rdZkWt4yJHv1w@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 6:44 AM Amir Goldstein <amir73il@gmail.com> wrote:
+On Mon, 2020-12-14 at 14:14 +0800, Fox Chen wrote:
+> On Sun, Dec 13, 2020 at 11:46 AM Ian Kent <raven@themaw.net> wrote:
+> > On Fri, 2020-12-11 at 10:17 +0800, Ian Kent wrote:
+> > > On Fri, 2020-12-11 at 10:01 +0800, Ian Kent wrote:
+> > > > > For the patches, there is a mutex_lock in kn->attr_mutex, as
+> > > > > Tejun
+> > > > > mentioned here
+> > > > > (
+> > > > > https://lore.kernel.org/lkml/X8fe0cmu+aq1gi7O@mtj.duckdns.org/
+> > > > > ),
+> > > > > maybe a global
+> > > > > rwsem for kn->iattr will be better??
+> > > > 
+> > > > I wasn't sure about that, IIRC a spin lock could be used around
+> > > > the
+> > > > initial check and checked again at the end which would probably
+> > > > have
+> > > > been much faster but much less conservative and a bit more ugly
+> > > > so
+> > > > I just went the conservative path since there was so much
+> > > > change
+> > > > already.
+> > > 
+> > > Sorry, I hadn't looked at Tejun's reply yet and TBH didn't
+> > > remember
+> > > it.
+> > > 
+> > > Based on what Tejun said it sounds like that needs work.
+> > 
+> > Those attribute handling patches were meant to allow taking the rw
+> > sem read lock instead of the write lock for kernfs_refresh_inode()
+> > updates, with the added locking to protect the inode attributes
+> > update since it's called from the VFS both with and without the
+> > inode lock.
+> 
+> Oh, understood. I was asking also because lock on kn->attr_mutex
+> drags
+> concurrent performance.
+> 
+> > Looking around it looks like kernfs_iattrs() is called from
+> > multiple
+> > places without a node database lock at all.
+> > 
+> > I'm thinking that, to keep my proposed change straight forward
+> > and on topic, I should just leave kernfs_refresh_inode() taking
+> > the node db write lock for now and consider the attributes handling
+> > as a separate change. Once that's done we could reconsider what's
+> > needed to use the node db read lock in kernfs_refresh_inode().
+> 
+> You meant taking write lock of kernfs_rwsem for
+> kernfs_refresh_inode()??
+> It may be a lot slower in my benchmark, let me test it.
 
-> Perhaps, but there is a much bigger issue with this change IMO.
-> Not because of dropping rule (b) of the permission model, but because
-> of relaxing rule (a).
->
-> Should overlayfs respect the conservative interpretation as it partly did
-> until this commit, a lower file must not lose IMMUTABLE/APPEND_ONLY
-> after copy up, but that is exactly what is going to happen if we first
-> copy up and then fail permission check on setting the flags.
+Yes, but make sure the write lock of kernfs_rwsem is being taken
+not the read lock.
 
-Yeah, it's a mess.   This will hopefully sort it out, as it will allow
-easier copy up of flags:
+That's a mistake I had initially?
 
-https://lore.kernel.org/linux-fsdevel/20201123141207.GC327006@miu.piliscsaba.redhat.com/
+Still, that attributes handling is, I think, sufficient to warrant
+a separate change since it looks like it might need work, the kernfs
+node db probably should be kept stable for those attribute updates
+but equally the existence of an instantiated dentry might mitigate
+the it.
 
-In actual fact losing S_APPEND is not currently prevented by copy-up
-triggered by anything other than FS_IOC_SETX*, and even that is prone
-to races as indicated by the bug report that resulted in this patch.
+Some people might just know whether it's ok or not but I would like
+to check the callers to work out what's going on.
 
-Let's just fix the IMMUTABLE case:
+In any case it's academic if GCH isn't willing to consider the series
+for review and possible merge.
 
-  - if the file is already copied up with data (since the overlay
-ioctl implementation currently uses the realdata), then we're fine to
-copy up
+Ian
 
-  - if the file is not IMMUTABLE to start with, then also fine to copy
-up; even if the op will fail after copy up we haven't done anything
-that wouldn't be possible without this particular codepath
-
-  - if task has CAP_LINUX_IMMUTABLE (can add/remove immutable) then
-it's also fine to copy up since we can be fairly sure that the actual
-setflags will succeed as well.  If not, that can be a problem, but as
-I've said copying up IMMUTABLE and other flags should really be done
-by the copy up code, otherwise it won't work properly.
-
-Something like this incremental should be good,  I think:
-
-@@ -576,6 +576,15 @@ static long ovl_ioctl_set_flags(struct f
-
-  inode_lock(inode);
-
-+ /*
-+ * Prevent copy up if immutable and has no CAP_LINUX_IMMUTABLE
-+ * capability.
-+ */
-+ ret = -EPERM;
-+ if (!ovl_has_upperdata(inode) && IS_IMMUTABLE(inode) &&
-+     !capable(CAP_LINUX_IMMUTABLE))
-+ goto unlock;
-+
-  ret = ovl_maybe_copy_up(file_dentry(file), O_WRONLY);
-  if (ret)
-  goto unlock;
-
-Thanks,
-Miklos
