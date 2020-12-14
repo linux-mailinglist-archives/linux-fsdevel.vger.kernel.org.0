@@ -2,87 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC0D2DA376
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 23:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71B922DA382
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 23:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439112AbgLNWfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 17:35:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36420 "EHLO
+        id S2502266AbgLNWi3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 17:38:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403758AbgLNWfE (ORCPT
+        with ESMTP id S2441065AbgLNWiU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 17:35:04 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D804AC0613D3;
-        Mon, 14 Dec 2020 14:34:23 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kowQ5-001HZ6-Fr; Mon, 14 Dec 2020 22:34:17 +0000
-Date:   Mon, 14 Dec 2020 22:34:17 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] epoll rework
-Message-ID: <20201214223417.GC3579531@ZenIV.linux.org.uk>
+        Mon, 14 Dec 2020 17:38:20 -0500
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AAA6C0613D6;
+        Mon, 14 Dec 2020 14:37:40 -0800 (PST)
+Received: by mail-pl1-x644.google.com with SMTP id x18so3645822pln.6;
+        Mon, 14 Dec 2020 14:37:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mLNmzPhP43nhieOnqMvcp0QWJXAMpr96qTKWJoY/ZIg=;
+        b=hsK5xsXCE7I+3lhyuJuZcI9LYbDckkT6H+F0ogIVtBwePpZbxa3Yqrdk1vc4p6P/24
+         ohr8nrs7xoJmm4QoJIEewpmRbmaH9EDC0dXA6LWOQ6c/nRPXDHWuQhnqt9OpH7ZDzw+R
+         Y5mcWVQKDTm1bwybGMskr73aJGjZ0yRQs54YEYRfhJ7SeZR6J/JINmqXAXwWn/6QAZvt
+         AaUU8KhtpkL39iRL/3lhnMp6qaoNc2tDdfPcvaG/aj1c+2OiQXgE4t6xIooR7nj4PiIc
+         Utss+mYeyolkHRDlecxDA0Oadxkbvo2Fq+E6/h+qc6w/GNivvnLa9MREP5yan47573ih
+         KPMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mLNmzPhP43nhieOnqMvcp0QWJXAMpr96qTKWJoY/ZIg=;
+        b=IvfgA6s+MMliWHLqfmyh6WCvjHpwF1GHxWKuzMuOdGBxi6JsL1APn95HIfZ0xrKOQI
+         3u+1rLHrLwheeFdZfDD/y3d0uvCJPrEf7xwDQjRTTKH7nP1IC68WcjAR1ezWKrqNkrUk
+         by2yPccxc9xzqF4wJ5kif9md1K2CfMRN2ibgqGROT340yhjqC7K2AghaxsdQxR1AcSb2
+         8NPwV5ojVd3+RKFVN603JfP7Cj38gBj0H6WEc8PpiCXCbpV/ExsyE/CzmfwcYsYsc5s3
+         DxEfaSHwTdyIl0OmoatjHymoFGns0+9XSb/n7QAJirQvQYJGJiBk8l24Hr9L068IqvNr
+         kzIg==
+X-Gm-Message-State: AOAM533AqVhw4+kAyyJ1B9w07kqpEgsaYVUEw5XAfPF8QoJj55tP5hgi
+        IIPWxHtsM8kJCu+DvJjbF5c=
+X-Google-Smtp-Source: ABdhPJxhqnvXV24KCfpjegu3atpqcSCyWTv5HW4biVwRItemM//+qtBugS5uzamRkpNNdcwZpjifKQ==
+X-Received: by 2002:a17:902:8ec4:b029:db:f9ef:564f with SMTP id x4-20020a1709028ec4b02900dbf9ef564fmr8697453plo.19.1607985459681;
+        Mon, 14 Dec 2020 14:37:39 -0800 (PST)
+Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
+        by smtp.gmail.com with ESMTPSA id d4sm20610758pfo.127.2020.12.14.14.37.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Dec 2020 14:37:38 -0800 (PST)
+From:   Yang Shi <shy828301@gmail.com>
+To:     guro@fb.com, ktkhai@virtuozzo.com, shakeelb@google.com,
+        david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
+        akpm@linux-foundation.org
+Cc:     shy828301@gmail.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC v2 PATCH 0/9] Make shrinker's nr_deferred memcg aware
+Date:   Mon, 14 Dec 2020 14:37:13 -0800
+Message-Id: <20201214223722.232537-1-shy828301@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Deal with epoll loop check/removal races sanely (among other things).
-Solution merged last cycle (pinning a bunch of struct file instances) had
-been forced by the wrong data structures; untangling that takes a bunch
-of preparations, but it's worth doing - control flow in there is ridiculously
-overcomplicated.  Memory footprint has also gone down, while we are at it.
-This is not all I want to do in the area, but since I didn't get around to
-posting the followups they'll have to wait for the next cycle.
 
-The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
+Changelog
+v1 --> v2:
+    * Use shrinker->flags to store the new SHRINKER_REGISTERED flag per Roman.
+    * Folded patch #1 into patch #6 per Roman.
+    * Added memory barrier to prevent shrink_slab_memcg from seeing NULL shrinker_maps/
+      shrinker_deferred per Kirill.
+    * Removed memcg_shrinker_map_mutex. Protcted shrinker_map/shrinker_deferred
+      allocations from expand with shrinker_rwsem per Johannes.
 
-  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
+Recently huge amount one-off slab drop was seen on some vfs metadata heavy workloads,
+it turned out there were huge amount accumulated nr_deferred objects seen by the
+shrinker.
 
-are available in the git repository at:
+On our production machine, I saw absurd number of nr_deferred shown as the below
+tracing result: 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.epoll
+<...>-48776 [032] .... 27970562.458916: mm_shrink_slab_start:
+super_cache_scan+0x0/0x1a0 ffff9a83046f3458: nid: 0 objects to shrink
+2531805877005 gfp_flags GFP_HIGHUSER_MOVABLE pgs_scanned 32 lru_pgs
+9300 cache items 1667 delta 11 total_scan 833
 
-for you to fetch changes up to 319c15174757aaedacc89a6e55c965416f130e64:
+There are 2.5 trillion deferred objects on one node, assuming all of them
+are dentry (192 bytes per object), so the total size of deferred on
+one node is ~480TB. It is definitely ridiculous.
 
-  epoll: take epitem list out of struct file (2020-10-25 20:02:08 -0400)
+I managed to reproduce this problem with kernel build workload plus negative dentry
+generator.
 
-----------------------------------------------------------------
-Al Viro (27):
-      epoll: switch epitem->pwqlist to single-linked list
-      epoll: get rid of epitem->nwait
-      untangling ep_call_nested(): get rid of useless arguments
-      untangling ep_call_nested(): it's all serialized on epmutex.
-      untangling ep_call_nested(): take pushing cookie into a helper
-      untangling ep_call_nested(): move push/pop of cookie into the callbacks
-      untangling ep_call_nested(): and there was much rejoicing
-      reverse_path_check_proc(): sane arguments
-      reverse_path_check_proc(): don't bother with cookies
-      clean reverse_path_check_proc() a bit
-      ep_loop_check_proc(): lift pushing the cookie into callers
-      get rid of ep_push_nested()
-      ep_loop_check_proc(): saner calling conventions
-      ep_scan_ready_list(): prepare to splitup
-      lift the calls of ep_read_events_proc() into the callers
-      lift the calls of ep_send_events_proc() into the callers
-      ep_send_events_proc(): fold into the caller
-      lift locking/unlocking ep->mtx out of ep_{start,done}_scan()
-      ep_insert(): don't open-code ep_remove() on failure exits
-      ep_insert(): we only need tep->mtx around the insertion itself
-      take the common part of ep_eventpoll_poll() and ep_item_poll() into helper
-      fold ep_read_events_proc() into the only caller
-      ep_insert(): move creation of wakeup source past the fl_ep_links insertion
-      convert ->f_ep_links/->fllink to hlist
-      lift rcu_read_lock() into reverse_path_check()
-      epoll: massage the check list insertion
-      epoll: take epitem list out of struct file
+First step, run the below kernel build test script:
 
- fs/eventpoll.c            | 717 +++++++++++++++++++---------------------------
- fs/file_table.c           |   1 -
- include/linux/eventpoll.h |  11 +-
- include/linux/fs.h        |   5 +-
- 4 files changed, 305 insertions(+), 429 deletions(-)
+NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+
+cd /root/Buildarea/linux-stable
+
+for i in `seq 1500`; do
+        cgcreate -g memory:kern_build
+        echo 4G > /sys/fs/cgroup/memory/kern_build/memory.limit_in_bytes
+
+        echo 3 > /proc/sys/vm/drop_caches
+        cgexec -g memory:kern_build make clean > /dev/null 2>&1
+        cgexec -g memory:kern_build make -j$NR_CPUS > /dev/null 2>&1
+
+        cgdelete -g memory:kern_build
+done
+
+Then run the below negative dentry generator script:
+
+NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+
+mkdir /sys/fs/cgroup/memory/test
+echo $$ > /sys/fs/cgroup/memory/test/tasks
+
+for i in `seq $NR_CPUS`; do
+        while true; do
+                FILE=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 64`
+                cat $FILE 2>/dev/null
+        done &
+done
+
+Then kswapd will shrink half of dentry cache in just one loop as the below tracing result
+showed:
+
+	kswapd0-475   [028] .... 305968.252561: mm_shrink_slab_start: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0
+objects to shrink 4994376020 gfp_flags GFP_KERNEL cache items 93689873 delta 45746 total_scan 46844936 priority 12
+	kswapd0-475   [021] .... 306013.099399: mm_shrink_slab_end: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0 unused
+scan count 4994376020 new scan count 4947576838 total_scan 8 last shrinker return val 46844928
+
+There were huge number of deferred objects before the shrinker was called, the behavior
+does match the code but it might be not desirable from the user's stand of point.
+
+The excessive amount of nr_deferred might be accumulated due to various reasons, for example:
+    * GFP_NOFS allocation
+    * Significant times of small amount scan (< scan_batch, 1024 for vfs metadata)
+
+However the LRUs of slabs are per memcg (memcg-aware shrinkers) but the deferred objects
+is per shrinker, this may have some bad effects:
+    * Poor isolation among memcgs. Some memcgs which happen to have frequent limit
+      reclaim may get nr_deferred accumulated to a huge number, then other innocent
+      memcgs may take the fall. In our case the main workload was hit.
+    * Unbounded deferred objects. There is no cap for deferred objects, it can outgrow
+      ridiculously as the tracing result showed.
+    * Easy to get out of control. Although shrinkers take into account deferred objects,
+      but it can go out of control easily. One misconfigured memcg could incur absurd 
+      amount of deferred objects in a period of time.
+    * Sort of reclaim problems, i.e. over reclaim, long reclaim latency, etc. There may be
+      hundred GB slab caches for vfe metadata heavy workload, shrink half of them may take
+      minutes. We observed latency spike due to the prolonged reclaim.
+
+These issues also have been discussed in https://lore.kernel.org/linux-mm/20200916185823.5347-1-shy828301@gmail.com/.
+The patchset is the outcome of that discussion.
+
+So this patchset makes nr_deferred per-memcg to tackle the problem. It does:
+    * Have memcg_shrinker_deferred per memcg per node, just like what shrinker_map
+      does. Instead it is an atomic_long_t array, each element represent one shrinker
+      even though the shrinker is not memcg aware, this simplifies the implementation.
+      For memcg aware shrinkers, the deferred objects are just accumulated to its own
+      memcg. The shrinkers just see nr_deferred from its own memcg. Non memcg aware
+      shrinkers still use global nr_deferred from struct shrinker.
+    * Once the memcg is offlined, its nr_deferred will be reparented to its parent along
+      with LRUs.
+    * The root memcg has memcg_shrinker_deferred array too. It simplifies the handling of
+      reparenting to root memcg.
+    * Cap nr_deferred to 2x of the length of lru. The idea is borrowed from Dave Chinner's
+      series (https://lore.kernel.org/linux-xfs/20191031234618.15403-1-david@fromorbit.com/)
+
+The downside is each memcg has to allocate extra memory to store the nr_deferred array.
+On our production environment, there are typically around 40 shrinkers, so each memcg
+needs ~320 bytes. 10K memcgs would need ~3.2MB memory. It seems fine.
+
+We have been running the patched kernel on some hosts of our fleet (test and production) for
+months, it works very well. The monitor data shows the working set is sustained as expected.
+
+
+Yang Shi (9):
+      mm: vmscan: use nid from shrink_control for tracepoint
+      mm: memcontrol: use shrinker_rwsem to protect shrinker_maps allocation
+      mm: vmscan: guarantee shrinker_slab_memcg() sees valid shrinker_maps for online memcg
+      mm: vmscan: use a new flag to indicate shrinker is registered
+      mm: memcontrol: add per memcg shrinker nr_deferred
+      mm: vmscan: use per memcg nr_deferred of shrinker
+      mm: vmscan: don't need allocate shrinker->nr_deferred for memcg aware shrinkers
+      mm: memcontrol: reparent nr_deferred when memcg offline
+      mm: vmscan: shrink deferred objects proportional to priority
+
+ include/linux/memcontrol.h |   9 +++++
+ include/linux/shrinker.h   |  11 ++++--
+ mm/internal.h              |   1 +
+ mm/memcontrol.c            | 156 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ mm/vmscan.c                | 193 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------
+ 5 files changed, 285 insertions(+), 85 deletions(-)
+
