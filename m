@@ -2,157 +2,300 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 586B72D98EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 14:38:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 022AC2D9900
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 14:38:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439456AbgLNNbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 08:31:33 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:39059 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2439357AbgLNNbU (ORCPT
+        id S2408005AbgLNNiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 08:38:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37064 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407978AbgLNNh7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 08:31:20 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 3333A5804FD;
-        Mon, 14 Dec 2020 08:30:28 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 14 Dec 2020 08:30:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
-        TJmkM4jF4LL5/+kspmbrSwMYJtpXZf5QP3Byw4FqUjk=; b=efNUPekA2cyH/Xhz
-        hofdMYtC+KJg/KI0OiNFAyr7gNMbCh/+ePc161Xunn7h5qqSk0iZHbNy7fKSZUi7
-        1h0uUNmjbUy4ZAYCgIbAYmisnzbcexvbZ0vgXzWeZOGsDHtyZAdPXDPeqT/EC8Yk
-        jr52677EaMbD2gb/o//+Q6liNC0il/2fXDgVGJ2AtaMxgz1kYAfaPCFekAR2kWef
-        e4g92Oec9aG+cnFwKqElB5di1YNxRtyd0EoFmHxhsS0e0yxAq4LKFWqu/4tmQ63/
-        vUsHeHhpbf98dtt6nA7saCG6HKT1Hle6y3ZyFCh9GONUMZK5/CXOYcm8worTVuvj
-        mZRkgQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=TJmkM4jF4LL5/+kspmbrSwMYJtpXZf5QP3Byw4FqU
-        jk=; b=SoA76dWfxMXRsgTURtn3D4a4cb7NEHsfVMI1d/Be/utAc6dapZr2HAET8
-        j3EMkaOwtF4JutFGudLHnNkM0zIzFNw2oyy41Z8KJ1FdRrvP4rjHhOWYLfVAQqlW
-        UuPuaxJHA/F0zQReUjqGcMaSSdyRo0F8ih7/9SVr9V2L1t4zYm7odBJNG7UGWeZ8
-        7GU0xlQeC5BxC8Roult6SN4c17twUDm/bir7LCfKVf5ntY5Cfhu4aJnwEFb927Do
-        TodCSv6lFHo1PlOkXKK1HVpyhfBW4715X7iDT556PG1pG1R4YZJGxzOVWBDVGnQ3
-        8Htg+twqrKgt/fbMNcW65jvZzxx9Q==
-X-ME-Sender: <xms:8mjXXyX77k7J6-bMaeKlrrOhQhNCYASNUjZllj0qyLXtozrcASnBJQ>
-    <xme:8mjXX4PfFMm4kv3-w7DvmPIt4s5QlueZf4NNWY6i62Cl7qTrkabvfDUcGnfdUWZDL
-    axCAVAHFLfe>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudekkedgheefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eikeeggeeuvdevgfefiefhudekkeegheeileejveethedutedvveehudffjeevudenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvddurdeggedrudefhedrudefle
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghv
-    vghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:8mjXX2bUSLenX1xqnzvmtyAt6NNQ7WhhkCFjAlocTA-UnUEdxSmp-w>
-    <xmx:8mjXX8obXO8MWlbVxX9JMmnYXij1cgkvpl2FchyUVebkz0sC1RAehw>
-    <xmx:8mjXX6bUMV4ognH_qYoDBWAIaxeMlMGKHdDz_ZrvZeSOOG5ZrGZkoA>
-    <xmx:9GjXX650zEj1WigEmEcTSoVfxE68jcZyHcYWmwVr3yM0bHg6_NS7fw>
-Received: from mickey.themaw.net (unknown [121.44.135.139])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C6AF41080066;
-        Mon, 14 Dec 2020 08:30:22 -0500 (EST)
-Message-ID: <3e97846b52a46759c414bff855e49b07f0d908fc.camel@themaw.net>
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Fox Chen <foxhlchen@gmail.com>
-Cc:     akpm@linux-foundation.org, dhowells@redhat.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, ricklind@linux.vnet.ibm.com,
-        sfr@canb.auug.org.au, Tejun Heo <tj@kernel.org>,
-        viro@zeniv.linux.org.uk
-Date:   Mon, 14 Dec 2020 21:30:19 +0800
-In-Reply-To: <CAC2o3DJdHuQxY7Rn5uXUprS7i8ri1qB=wOUM2rdZkWt4yJHv1w@mail.gmail.com>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
-         <20201210164423.9084-1-foxhlchen@gmail.com>
-         <822f02508d495ee7398450774eb13e5116ec82ac.camel@themaw.net>
-         <13e21e4c9a5841243c8d130cf9324f6cfc4dc2e1.camel@themaw.net>
-         <bde0b6c32f2b055c1ad1401b45c4adf61aab6876.camel@themaw.net>
-         <CAC2o3DJdHuQxY7Rn5uXUprS7i8ri1qB=wOUM2rdZkWt4yJHv1w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        Mon, 14 Dec 2020 08:37:59 -0500
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A885C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 05:37:19 -0800 (PST)
+Received: by mail-qk1-x743.google.com with SMTP id 22so5270322qkf.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 05:37:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poochiereds-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+7H3maVZDtKyIACQSbJDNioWChdxXmoUpiLkKKG29bg=;
+        b=tYvIPn/sCabmT4S6dXrNRgfqfOuzsNjdL+ZUDLeWb5WRiQT+HapuulzHv7JR3gvFop
+         ytoDjfbIVUPpIo6kh8Q0+1hloTV8Q+MsBnzbFyqiV1OVcqlVL7LEmaiMm38PiNxaE+rh
+         v2uyITjeFTRH25RTYjrzqAPfFMZaIpXM/Q7rSY2v1jxBqOKZNgPW0u0s2XsOP+ftuu6T
+         oD2UEYWJiZVqNGD7KTQrW6fUMpxjhle4flL/bCVJfTujaIUrPhyQPXb4TKLqHdRFnASm
+         AATQx8GsDTBbJTNOAQzdvT+zruS24bujWN17+91ZdAjiXC4CRxL91k1E4whGHkGoXHmh
+         AgjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+7H3maVZDtKyIACQSbJDNioWChdxXmoUpiLkKKG29bg=;
+        b=ORfvt2daUCA5YTHFiqaKdm/5S5/P7tf4E4W7QuRFZy5igpZRsyyBfHpdJ9AJN7xfIN
+         HJm34fhRT0IRD56EuzfY1hzMRZqMM0xRPm8RFBnrK0vkk9m1QQVfYD/tmGPoWt/q+IZm
+         Vw3Z/Cr2/WEpHNM1tiKbhKWAiGogISZLfal4b6lIeVJJeCTQpxZeJ/V1NEFRnhm13Jr0
+         lGPXB8kZS5wXizBpFxomC+WDAxpEiyHS55eJJrAq9rLQiFOCseQU2GEpCR54fbsmfHDt
+         3b4nohVfUsYilkfcm9TyG/g1+5KtN79DJ851pZO8xhtgigSVmy07X0Fi8XJK4NeQ5xES
+         fzjw==
+X-Gm-Message-State: AOAM532EAcTXlxKTVH9d45MDY8p0kNhTUlyqV618r+qxyhi+No8eopWy
+        r0N0dY9hBHyj+k64cMuD4mxpRQ==
+X-Google-Smtp-Source: ABdhPJw9MQ0s6FRmy65sWeAfUDVHu+0oU2LDGGgBYdPqUDMN62S2tyDouTwS1g3kUtCb8C06YAp+PA==
+X-Received: by 2002:a37:d2c7:: with SMTP id f190mr32750037qkj.128.1607953038121;
+        Mon, 14 Dec 2020 05:37:18 -0800 (PST)
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id x28sm14198318qtv.8.2020.12.14.05.37.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Dec 2020 05:37:16 -0800 (PST)
+Date:   Mon, 14 Dec 2020 08:37:14 -0500
+From:   Jeffrey Layton <jlayton@poochiereds.net>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH 1/2] errseq: split the SEEN flag into two new flags
+Message-ID: <20201214133714.GA13412@tleilax.poochiereds.net>
+References: <20201213132713.66864-1-jlayton@kernel.org>
+ <20201213132713.66864-2-jlayton@kernel.org>
+ <87ft49jn37.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ft49jn37.fsf@notabene.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-12-14 at 14:14 +0800, Fox Chen wrote:
-> On Sun, Dec 13, 2020 at 11:46 AM Ian Kent <raven@themaw.net> wrote:
-> > On Fri, 2020-12-11 at 10:17 +0800, Ian Kent wrote:
-> > > On Fri, 2020-12-11 at 10:01 +0800, Ian Kent wrote:
-> > > > > For the patches, there is a mutex_lock in kn->attr_mutex, as
-> > > > > Tejun
-> > > > > mentioned here
-> > > > > (
-> > > > > https://lore.kernel.org/lkml/X8fe0cmu+aq1gi7O@mtj.duckdns.org/
-> > > > > ),
-> > > > > maybe a global
-> > > > > rwsem for kn->iattr will be better??
-> > > > 
-> > > > I wasn't sure about that, IIRC a spin lock could be used around
-> > > > the
-> > > > initial check and checked again at the end which would probably
-> > > > have
-> > > > been much faster but much less conservative and a bit more ugly
-> > > > so
-> > > > I just went the conservative path since there was so much
-> > > > change
-> > > > already.
-> > > 
-> > > Sorry, I hadn't looked at Tejun's reply yet and TBH didn't
-> > > remember
-> > > it.
-> > > 
-> > > Based on what Tejun said it sounds like that needs work.
-> > 
-> > Those attribute handling patches were meant to allow taking the rw
-> > sem read lock instead of the write lock for kernfs_refresh_inode()
-> > updates, with the added locking to protect the inode attributes
-> > update since it's called from the VFS both with and without the
-> > inode lock.
+On Mon, Dec 14, 2020 at 10:35:56AM +1100, NeilBrown wrote:
+> On Sun, Dec 13 2020, Jeff Layton wrote:
 > 
-> Oh, understood. I was asking also because lock on kn->attr_mutex
-> drags
-> concurrent performance.
+> > Overlayfs's volatile mounts want to be able to sample an error for
+> > their own purposes, without preventing a later opener from potentially
+> > seeing the error.
+> >
+> > The original reason for the SEEN flag was to make it so that we didn't
+> > need to increment the counter if nothing had observed the latest value
+> > and the error was the same. Eventually, a regression was reported in
+> > the errseq_t conversion, and we fixed that by using the SEEN flag to
+> > also mean that the error had been reported to userland at least once
+> > somewhere.
+> >
+> > Those are two different states, however. If we instead take a second
+> > flag bit from the counter, we can track these two things separately,
+> > and accomodate the overlayfs volatile mount use-case.
+> >
+> > Add a new MUSTINC flag that indicates that the counter must be
+> > incremented the next time an error is set, and rework the errseq
+> > functions to set and clear that flag whenever the SEEN bit is set or
+> > cleared.
+> >
+> > Test only for the MUSTINC bit when deciding whether to increment the
+> > counter and only for the SEEN bit when deciding what to return in
+> > errseq_sample.
+> >
+> > Add a new errseq_peek function to allow for the overlayfs use-case.
+> > This just grabs the latest counter and sets the MUSTINC bit, leaving
+> > the SEEN bit untouched.
+> >
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  include/linux/errseq.h |  2 ++
+> >  lib/errseq.c           | 64 ++++++++++++++++++++++++++++++++++--------
+> >  2 files changed, 55 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/include/linux/errseq.h b/include/linux/errseq.h
+> > index fc2777770768..6d4b9bc629ac 100644
+> > --- a/include/linux/errseq.h
+> > +++ b/include/linux/errseq.h
+> > @@ -9,6 +9,8 @@ typedef u32	errseq_t;
+> >  
+> >  errseq_t errseq_set(errseq_t *eseq, int err);
+> >  errseq_t errseq_sample(errseq_t *eseq);
+> > +errseq_t errseq_peek(errseq_t *eseq);
+> > +errseq_t errseq_sample_advance(errseq_t *eseq);
+> >  int errseq_check(errseq_t *eseq, errseq_t since);
+> >  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
+> >  #endif
+> > diff --git a/lib/errseq.c b/lib/errseq.c
+> > index 81f9e33aa7e7..5cc830f0361b 100644
+> > --- a/lib/errseq.c
+> > +++ b/lib/errseq.c
+> > @@ -38,8 +38,11 @@
+> >  /* This bit is used as a flag to indicate whether the value has been seen */
+> >  #define ERRSEQ_SEEN		(1 << ERRSEQ_SHIFT)
 > 
-> > Looking around it looks like kernfs_iattrs() is called from
-> > multiple
-> > places without a node database lock at all.
-> > 
-> > I'm thinking that, to keep my proposed change straight forward
-> > and on topic, I should just leave kernfs_refresh_inode() taking
-> > the node db write lock for now and consider the attributes handling
-> > as a separate change. Once that's done we could reconsider what's
-> > needed to use the node db read lock in kernfs_refresh_inode().
+> Would this look nicer using the BIT() macro?
 > 
-> You meant taking write lock of kernfs_rwsem for
-> kernfs_refresh_inode()??
-> It may be a lot slower in my benchmark, let me test it.
+>   #define ERRSEQ_SEEN		BIT(ERRSEQ_SHIFT)
+> 
+> >  
+> > +/* This bit indicates that value must be incremented even when error is same */
+> > +#define ERRSEQ_MUSTINC		(1 << (ERRSEQ_SHIFT + 1))
+> 
+>  #define ERRSEQ_MUSTINC		BIT(ERRSEQ_SHIFT+1)
+> 
+> or if you don't like the BIT macro (not everyone does), then maybe
+> 
+>  #define ERR_SEQ_MUSTINC	(ERRSEQ_SEEN << 1 )
+> 
+> ??
+> 
+> > +
+> >  /* The lowest bit of the counter */
+> > -#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 1))
+> > +#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 2))
+> 
+> Ditto.
+> 
 
-Yes, but make sure the write lock of kernfs_rwsem is being taken
-not the read lock.
+Yes, I can make that change. The BIT macro is much easier to read.
 
-That's a mistake I had initially?
+> >  
+> >  /**
+> >   * errseq_set - set a errseq_t for later reporting
+> > @@ -77,11 +80,11 @@ errseq_t errseq_set(errseq_t *eseq, int err)
+> >  	for (;;) {
+> >  		errseq_t new;
+> >  
+> > -		/* Clear out error bits and set new error */
+> > -		new = (old & ~(MAX_ERRNO|ERRSEQ_SEEN)) | -err;
+> > +		/* Clear out flag bits and set new error */
+> > +		new = (old & ~(MAX_ERRNO|ERRSEQ_SEEN|ERRSEQ_MUSTINC)) | -err;
+> 
+> This is starting to look clumsy (or maybe, this already looked clumsy,
+> but now that is hard to ignore).
+> 
+> 		new = (old & (ERRSEQ_CTR_INC - 1)) | -err
+> 
 
-Still, that attributes handling is, I think, sufficient to warrant
-a separate change since it looks like it might need work, the kernfs
-node db probably should be kept stable for those attribute updates
-but equally the existence of an instantiated dentry might mitigate
-the it.
+I think you mean:
 
-Some people might just know whether it's ok or not but I would like
-to check the callers to work out what's going on.
+		new = (old & ~(ERRSEQ_CTR_INC - 1)) | -err;
 
-In any case it's academic if GCH isn't willing to consider the series
-for review and possible merge.
+Maybe I can add a new ERRSEQ_CTR_MASK value though which makes it more
+evident.
 
-Ian
+> Also this assumes MAX_ERRNO is a mask, which it is .. today.
+> 
+> 	BUILD_BUG_ON(MAX_ERRNO & (MAX_ERRNO + 1));
+> ??
+> 
+
+We already have this in errseq_set:
+
+        BUILD_BUG_ON_NOT_POWER_OF_2(MAX_ERRNO + 1);
+
+> >  
+> > -		/* Only increment if someone has looked at it */
+> > -		if (old & ERRSEQ_SEEN)
+> > +		/* Only increment if we have to */
+> > +		if (old & ERRSEQ_MUSTINC)
+> >  			new += ERRSEQ_CTR_INC;
+> >  
+> >  		/* If there would be no change, then call it done */
+> > @@ -122,14 +125,50 @@ EXPORT_SYMBOL(errseq_set);
+> >  errseq_t errseq_sample(errseq_t *eseq)
+> >  {
+> >  	errseq_t old = READ_ONCE(*eseq);
+> > +	errseq_t new = old;
+> >  
+> > -	/* If nobody has seen this error yet, then we can be the first. */
+> > -	if (!(old & ERRSEQ_SEEN))
+> > -		old = 0;
+> > -	return old;
+> > +	/*
+> > +	 * For the common case of no errors ever having been set, we can skip
+> > +	 * marking the SEEN|MUSTINC bits. Once an error has been set, the value
+> > +	 * will never go back to zero.
+> > +	 */
+> > +	if (old != 0) {
+> > +		new |= ERRSEQ_SEEN|ERRSEQ_MUSTINC;
+> 
+> You lose me here.  Why is ERRSEQ_SEEN being set, where it wasn't before?
+> 
+> The ERRSEQ_SEEN flag not means precisely "The error has been reported to
+> userspace".
+> This operations isn't used to report errors - that is errseq_check().
+> 
+> I'm not saying the code it wrong - I really cannot tell.
+> I'm just saying that I cannot see why it might be right.
+> 
+
+I think you're right. We should not be setting SEEN here, but we do
+need to set MUSTINC if it's not already set. I'll fix (and re-test).
+
+Thanks for the review!
+
+> 
+> 
+> 
+> > +		if (old != new)
+> > +			cmpxchg(eseq, old, new);
+> > +		if (!(old & ERRSEQ_SEEN))
+> > +			return 0;
+> > +	}
+> > +	return new;
+> >  }
+> >  EXPORT_SYMBOL(errseq_sample);
+> >  
+> > +/**
+> > + * errseq_peek - Grab current errseq_t value, but don't mark it SEEN
+> > + * @eseq: Pointer to errseq_t to be sampled.
+> > + *
+> > + * In some cases, we need to be able to sample the errseq_t, but we're not
+> > + * in a situation where we can report the value to userland. Use this
+> > + * function to do that. This ensures that later errors will be recorded,
+> > + * and that any current errors are reported at least once.
+> > + *
+> > + * Context: Any context.
+> > + * Return: The current errseq value.
+> > + */
+> > +errseq_t errseq_peek(errseq_t *eseq)
+> > +{
+> > +	errseq_t old = READ_ONCE(*eseq);
+> > +	errseq_t new = old;
+> > +
+> > +	if (old != 0) {
+> > +		new |= ERRSEQ_MUSTINC;
+> > +		if (old != new)
+> > +			cmpxchg(eseq, old, new);
+> > +	}
+> > +	return new;
+> > +}
+> > +EXPORT_SYMBOL(errseq_peek);
+> > +
+> >  /**
+> >   * errseq_check() - Has an error occurred since a particular sample point?
+> >   * @eseq: Pointer to errseq_t value to be checked.
+> > @@ -143,7 +182,10 @@ EXPORT_SYMBOL(errseq_sample);
+> >   */
+> >  int errseq_check(errseq_t *eseq, errseq_t since)
+> >  {
+> > -	errseq_t cur = READ_ONCE(*eseq);
+> > +	errseq_t cur = READ_ONCE(*eseq) & ~(ERRSEQ_MUSTINC|ERRSEQ_SEEN);
+> > +
+> > +	/* Clear the flag bits for comparison */
+> > +	since &= ~(ERRSEQ_MUSTINC|ERRSEQ_SEEN);
+> >  
+> >  	if (likely(cur == since))
+> >  		return 0;
+> > @@ -195,7 +237,7 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t *since)
+> >  		 * can advance "since" and return an error based on what we
+> >  		 * have.
+> >  		 */
+> > -		new = old | ERRSEQ_SEEN;
+> > +		new = old | ERRSEQ_SEEN | ERRSEQ_MUSTINC;
+> >  		if (new != old)
+> >  			cmpxchg(eseq, old, new);
+> >  		*since = new;
+> > -- 
+> > 2.29.2
+
 
