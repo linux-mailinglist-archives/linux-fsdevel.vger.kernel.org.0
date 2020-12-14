@@ -2,91 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9273B2D91A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 02:53:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E606C2D91E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 03:54:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437824AbgLNBxb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Dec 2020 20:53:31 -0500
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:60531 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2437812AbgLNBxb (ORCPT
+        id S2438091AbgLNCx6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Dec 2020 21:53:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406970AbgLNCx5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Dec 2020 20:53:31 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 50ECA1AD745;
-        Mon, 14 Dec 2020 12:52:49 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kod2e-003iQ2-2T; Mon, 14 Dec 2020 12:52:48 +1100
-Date:   Mon, 14 Dec 2020 12:52:48 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 4/5] fs: honor LOOKUP_NONBLOCK for the last part of file
- open
-Message-ID: <20201214015248.GG3913616@dread.disaster.area>
-References: <20201212165105.902688-1-axboe@kernel.dk>
- <20201212165105.902688-5-axboe@kernel.dk>
- <CAHk-=wiA1+MuCLM0jRrY4ajA0wk3bs44n-iskZDv_zXmouk_EA@mail.gmail.com>
- <8c4e7013-2929-82ed-06f6-020a19b4fb3d@kernel.dk>
- <20201213225022.GF3913616@dread.disaster.area>
- <CAHk-=wg5AXnXE3bjqj0fgH2os1ptKeF-ee6i0p5GCw1o63EdgQ@mail.gmail.com>
+        Sun, 13 Dec 2020 21:53:57 -0500
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F17C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Dec 2020 18:53:12 -0800 (PST)
+Received: by mail-pj1-x1041.google.com with SMTP id f14so5434927pju.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Dec 2020 18:53:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KfQodhCI8ZuQp7YRRZQxpihD4EYNwbDWNGKzRDV3Rag=;
+        b=1KGzDS5u0//+69i40jGl8BDlvmqcrhtOGrim4gQ5ZvvqQHMirN53vp1rc+KQ2APQji
+         9Qd3c1wKn31jlea+mxfiu1w+7gInJ4ouz8qQcxMw5YKDSzVCmRaZx9YMvbNDmbwZydSl
+         61B+dCsaa8pDkz33W8h+7js6xg2xFV1aH8glo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KfQodhCI8ZuQp7YRRZQxpihD4EYNwbDWNGKzRDV3Rag=;
+        b=LkbgdR4+pQT6H3pmXCFg6wLSjioYQaRgqp87KmM9lnwxE/cfGA7i8T1bXidbwS5KhN
+         3pehC2zZcokV7bPHRYE/Yx/J5lcrEbeLRcpufTK7msNb+StQsG+H+ZAJbB0oduqsk6jj
+         DG9i676/MCzbWOnOZe4YoHcnMR8JcvJoWuZy7RaSd6C5khjRHl71oTKxyeE6nEd1bYFN
+         Rgfsk/jD7l0lzkgdk4XWKDHg+zwl3NfRYFUonWx2xLkfM7uoiwzT0j/+FTWb6FQQ+gzA
+         KZvv1n+KwGpxe3akEV7Q7LMeFbgtjB7x6BF/tLklO3wxS8aYuJSEPge3Jvyw868+MNlK
+         JNag==
+X-Gm-Message-State: AOAM530HkR+xE2PNTW/ycsaoyze0wRezfJqyhioSs/0OPtczn2O+lxKW
+        13PZwmIfrGxnkIOw9d5hLxQHfA==
+X-Google-Smtp-Source: ABdhPJxnGNsNFzFel27Bu+rpPuTScapWtzqvD2o5GTyqWhbGx2VaTCHkBQzQMWb/zF/JNETrpe05IA==
+X-Received: by 2002:a17:902:bf06:b029:dc:1f:ac61 with SMTP id bi6-20020a170902bf06b02900dc001fac61mr2372550plb.16.1607914391619;
+        Sun, 13 Dec 2020 18:53:11 -0800 (PST)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id h20sm17102713pgv.23.2020.12.13.18.53.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Dec 2020 18:53:10 -0800 (PST)
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <schumaker.anna@gmail.com>,
+        "J . Bruce Fields" <bfields@fieldses.org>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        David Howells <dhowells@redhat.com>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mauricio@kinvolk.io, Alban Crequy <alban.crequy@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH RESEND v5 0/2] NFS: Fix interaction between fs_context and user namespaces
+Date:   Sun, 13 Dec 2020 18:53:03 -0800
+Message-Id: <20201214025305.25984-1-sargun@sargun.me>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg5AXnXE3bjqj0fgH2os1ptKeF-ee6i0p5GCw1o63EdgQ@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=7-415B0cAAAA:8
-        a=KhBIYd2v22FBfhuVGIcA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 13, 2020 at 04:45:39PM -0800, Linus Torvalds wrote:
-> On Sun, Dec 13, 2020 at 2:50 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > >
-> > > > Only O_CREAT | O_TRUNC should matter, since those are the ones that
-> > > > cause writes as part of the *open*.
-> >
-> > And __O_TMPFILE, which is the same as O_CREAT.
-> 
-> This made me go look at the code, but we seem to be ok here -
-> __O_TMPFILE should never get to the do_open() logic at all, because it
-> gets caught before that and does off to do_tmpfile() and then
-> vfs_tmpfile() instead.
-> 
-> And then it's up to the filesystem to do the inode locking if it needs
-> to - it has a separate i_io->tempfile function for that.
+This is a resend[2] for consideration into the next NFS client merge window.
 
-Sure, and then it blocks. Guaranteed, for the same reasons that
-O_CREAT will block when calling ->create() after the path lookup:
-the filesystem runs a transaction to allocate an inode and track it
-on the orphan list so that it gets cleaned up by recovery after a
-crash while the tmpfile is still open.
+Right now, it is possible to mount NFS with an non-matching super block
+user ns, and NFS sunrpc user ns. This (for the user) results in an awkward
+set of interactions if using anything other than auth_null, where the UIDs
+being sent to the server are different than the local UIDs being checked.
+This can cause "breakage", where if you try to communicate with the NFS
+server with any other set of mappings, it breaks.
 
-So it doesn't matter if the lookup is non-blocking, the tmpfile
-creation is guaranteed to block for the same reason O_CREAT and
-O_TRUNCATE will block....
+The reason for this is that you can call fsopen("nfs4") in the unprivileged
+namespace, and that configures fs_context with all the right information
+for that user namespace. In addition, it also keeps a gets a cred object
+associated with the caller -- which should match the user namespace.
+Unfortunately, the mount has to be finished in the init_user_ns because we
+currently require CAP_SYS_ADMIN in the init user namespace to call fsmount.
+This means that the superblock's user namespace is set "correctly" to the
+container, but there's absolutely no way nfs4idmap to consume an
+unprivileged user namespace because the cred / user_ns that's passed down
+to nfs4idmap is the one at fsmount.
 
-> From a LOOKUP_NONBLOCK standpoint, I think we should just disallow
-> O_TMPFILE the same way Jens disallowed O_TRUNCATE.
+How this actually exhibits is let's say that the UID 0 in the user
+namespace is mapped to UID 1000 in the init user ns (and kuid space). What
+will happen is that nfs4idmap will translate the UID 1000 into UID 0 on the
+wire, even if the mount is in entirely in the mount / user namespace of the
+container.
 
-*nod*
+So, it looks something like this
+Client in unprivileged User NS (UID: 0, KUID: 0)
+	->Perform open()
+		...VFS / NFS bits...
+		nfs_map_uid_to_name ->
+			from_kuid_munged(init_user_ns, uid) (returns 0)
+				RPC with UID 0
 
-I just don't think it makes sense to try to make any of the
-filesystem level stuff open() might do non-blocking. The moment we
-start a filesystem modification, we have to be able to block because
-it is the only way to guarantee forwards progress. So if we know we
-are going to call into the filesystem to make a modification if the
-pathwalk is successful, why even bother starting the pathwalk?
+This behaviour happens "the other way" as well, where the UID in the
+container may be 0, but the corresponding kuid is 1000. When a response
+from an NFS server comes in we decode it according to the idmap userns.
+The way this exhibits is even more odd.
 
-Cheers,
+Server responds with file attribute (UID: 0, GID: 0)
+	->nfs_map_name_to_uid(..., 0)
+		->make_kuid(init_user_ns, id) (returns 0)
+			....VFS / NFS Bits...
+			->from_kuid(container_ns, 0) -> invalid uid
+				-> EOVERFLOW
 
-Dave.
+This changes the nfs server to use the cred / userns from fs_context, which
+is how idmap is constructed. This subsequently is used in the above
+described flow of converting uids back-and-forth.
+
+Trond gave the feedback that this behaviour [implemented by this patch] is
+how the legacy sys_mount() behaviour worked[1], and that the intended
+behaviour is for UIDs to be plumbed through entirely, where the user
+namespaces UIDs are what is sent over the wire, and not the init user ns.
+
+[1]: https://lore.kernel.org/linux-nfs/8feccf45f6575a204da03e796391cc135283eb88.camel@hammerspace.com/
+[2]: https://lore.kernel.org/linux-nfs/20201112100952.3514-1-sargun@sargun.me/
+
+Sargun Dhillon (2):
+  NFS: NFSv2/NFSv3: Use cred from fs_context during mount
+  NFSv4: Refactor to use user namespaces for nfs4idmap
+
+ fs/nfs/client.c     | 4 ++--
+ fs/nfs/nfs4client.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.25.1
+
