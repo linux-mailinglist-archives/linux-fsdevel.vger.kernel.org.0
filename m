@@ -2,185 +2,358 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 050F22DA3F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 00:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 532962DA429
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 00:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408130AbgLNXLc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 18:11:32 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:38116 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbgLNXLc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 18:11:32 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BENAER7189852;
-        Mon, 14 Dec 2020 23:10:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=ZgfrS8asxPlKxf8u6E3lDMqj0dpzTas5DAUZTX/96BU=;
- b=ZnX+NbRmkt3P7jsWAPa6BvcMOAZZYFq1Hff0h1wvDoeEPFigPucFXj98wb2X5ATI9G84
- XTpexSXEWT1BGdBkRjCbk4J7b6eOURSeTjZX7qFCs50y72nvnhiHeLuUFBpnx60VFqxB
- aoYSwZNGDJAKEOr+Dpr7hKUHeKKod1o+VTXIrYye4sr0ORwN0M7JDh5hmNrRqnXQhXFU
- gCfhZu5rew5DULgEawMMwPN+PfjnqlopsWVaV1y6+Ru+v2jUEWgoyjTIcDJWvAd2kSUt
- ndyJemYjVLleGDNfrOo1AOxdAwq05CPEsHW7uU8hJxuLCdUTbpGfKRj73s/7b7v6M9EK bw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 35cn9r7x03-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Dec 2020 23:10:45 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEN58bf096736;
-        Mon, 14 Dec 2020 23:10:44 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 35d7em461d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Dec 2020 23:10:44 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BENAhq1002957;
-        Mon, 14 Dec 2020 23:10:43 GMT
-Received: from dhcp-10-159-135-62.vpn.oracle.com (/10.159.135.62)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Dec 2020 15:10:43 -0800
-Subject: Re: [PATCH RFC 0/8] dcache: increase poison resistance
-To:     Konstantin Khlebnikov <koct9i@gmail.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Waiman Long <longman@redhat.com>,
-        Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
-        matthew.wilcox@oracle.com
-References: <158893941613.200862.4094521350329937435.stgit@buzz>
- <97ece625-2799-7ae6-28b5-73c52c7c497b@oracle.com>
- <CALYGNiN2F8gcKX+2nKOi1tapquJWfyzUkajWxTqgd9xvd7u1AA@mail.gmail.com>
- <d116ead4-f603-7e0c-e6ab-e721332c9832@oracle.com>
- <CALYGNiM8Fp=ZV8S6c2L50ne1cGhE30PrT-C=4nfershvfAgP+Q@mail.gmail.com>
-From:   Junxiao Bi <junxiao.bi@oracle.com>
-Message-ID: <04b4d5cf-780d-83a9-2b2b-80ae6029ae2c@oracle.com>
-Date:   Mon, 14 Dec 2020 15:10:25 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:78.0)
- Gecko/20100101 Thunderbird/78.5.1
+        id S1726262AbgLNXdN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 18:33:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725765AbgLNXdH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Dec 2020 18:33:07 -0500
+Message-ID: <f6e50ab2f42480e81f039648429f176bf44347e4.camel@kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607988746;
+        bh=fp0qYtb/6AnauANNyKvHXR9l73JHsnFjHmaadNcGYag=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=rADNrLv7/FAABakaDDzYFUriri6rmHY3qblEbI+/OFWjQlTcPomur+qoWp13DhCiW
+         AT2R4fnQDPFBPsW2OoLB4N2fAOu39IfSkNfyNKiJsGjIjgNNWNHBVuslH1XNNlRSam
+         b8Icf2kQJIRPETN7VcCduA5FRywSkD+x+ZUjcZIESMHcoBrrSnZOHAjCCa0EkSyyac
+         l7Uo52a4sOd54SnPA92JCQaAyclpZ+hUi+GmCg+niuylOukzi74b6EZs9koLRg7b77
+         HX8WTVQZqMIGOOUcZAJuBZuAWOglqZMPfb0MCjfnw2vGlu9KKcPFEfmrpgAdENyRcN
+         /0Tl4Z3q7HNvA==
+Subject: Re: [RFC PATCH 1/2] errseq: split the SEEN flag into two new flags
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
+Date:   Mon, 14 Dec 2020 18:32:24 -0500
+In-Reply-To: <87blewjber.fsf@notabene.neil.brown.name>
+References: <20201213132713.66864-1-jlayton@kernel.org>
+         <20201213132713.66864-2-jlayton@kernel.org>
+         <87ft49jn37.fsf@notabene.neil.brown.name>
+         <20201214133714.GA13412@tleilax.poochiereds.net>
+         <87blewjber.fsf@notabene.neil.brown.name>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
 MIME-Version: 1.0
-In-Reply-To: <CALYGNiM8Fp=ZV8S6c2L50ne1cGhE30PrT-C=4nfershvfAgP+Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9835 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012140154
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9835 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
- malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012140154
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/13/20 11:43 PM, Konstantin Khlebnikov wrote:
+On Tue, 2020-12-15 at 09:00 +1100, NeilBrown wrote:
+> On Mon, Dec 14 2020, Jeffrey Layton wrote:
+> 
+> > On Mon, Dec 14, 2020 at 10:35:56AM +1100, NeilBrown wrote:
+> > > On Sun, Dec 13 2020, Jeff Layton wrote:
+> > > 
+> > > > Overlayfs's volatile mounts want to be able to sample an error for
+> > > > their own purposes, without preventing a later opener from potentially
+> > > > seeing the error.
+> > > > 
+> > > > The original reason for the SEEN flag was to make it so that we didn't
+> > > > need to increment the counter if nothing had observed the latest value
+> > > > and the error was the same. Eventually, a regression was reported in
+> > > > the errseq_t conversion, and we fixed that by using the SEEN flag to
+> > > > also mean that the error had been reported to userland at least once
+> > > > somewhere.
+> > > > 
+> > > > Those are two different states, however. If we instead take a second
+> > > > flag bit from the counter, we can track these two things separately,
+> > > > and accomodate the overlayfs volatile mount use-case.
+> > > > 
+> > > > Add a new MUSTINC flag that indicates that the counter must be
+> > > > incremented the next time an error is set, and rework the errseq
+> > > > functions to set and clear that flag whenever the SEEN bit is set or
+> > > > cleared.
+> > > > 
+> > > > Test only for the MUSTINC bit when deciding whether to increment the
+> > > > counter and only for the SEEN bit when deciding what to return in
+> > > > errseq_sample.
+> > > > 
+> > > > Add a new errseq_peek function to allow for the overlayfs use-case.
+> > > > This just grabs the latest counter and sets the MUSTINC bit, leaving
+> > > > the SEEN bit untouched.
+> > > > 
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > > >  include/linux/errseq.h |  2 ++
+> > > >  lib/errseq.c           | 64 ++++++++++++++++++++++++++++++++++--------
+> > > >  2 files changed, 55 insertions(+), 11 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/errseq.h b/include/linux/errseq.h
+> > > > index fc2777770768..6d4b9bc629ac 100644
+> > > > --- a/include/linux/errseq.h
+> > > > +++ b/include/linux/errseq.h
+> > > > @@ -9,6 +9,8 @@ typedef u32	errseq_t;
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > >  errseq_t errseq_set(errseq_t *eseq, int err);
+> > > >  errseq_t errseq_sample(errseq_t *eseq);
+> > > > +errseq_t errseq_peek(errseq_t *eseq);
+> > > > +errseq_t errseq_sample_advance(errseq_t *eseq);
+> > > >  int errseq_check(errseq_t *eseq, errseq_t since);
+> > > >  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
+> > > >  #endif
+> > > > diff --git a/lib/errseq.c b/lib/errseq.c
+> > > > index 81f9e33aa7e7..5cc830f0361b 100644
+> > > > --- a/lib/errseq.c
+> > > > +++ b/lib/errseq.c
+> > > > @@ -38,8 +38,11 @@
+> > > >  /* This bit is used as a flag to indicate whether the value has been seen */
+> > > >  #define ERRSEQ_SEEN		(1 << ERRSEQ_SHIFT)
+> > > 
+> > > Would this look nicer using the BIT() macro?
+> > > 
+> > >   #define ERRSEQ_SEEN		BIT(ERRSEQ_SHIFT)
+> > > 
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > > +/* This bit indicates that value must be incremented even when error is same */
+> > > > +#define ERRSEQ_MUSTINC		(1 << (ERRSEQ_SHIFT + 1))
+> > > 
+> > >  #define ERRSEQ_MUSTINC		BIT(ERRSEQ_SHIFT+1)
+> > > 
+> > > or if you don't like the BIT macro (not everyone does), then maybe
+> > > 
+> > >  #define ERR_SEQ_MUSTINC	(ERRSEQ_SEEN << 1 )
+> > > 
+> > > ??
+> > > 
+> > > > +
+> > > >  /* The lowest bit of the counter */
+> > > > -#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 1))
+> > > > +#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 2))
+> > > 
+> > > Ditto.
+> > > 
+> > 
+> > Yes, I can make that change. The BIT macro is much easier to read.
+> > 
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > >  /**
+> > > >   * errseq_set - set a errseq_t for later reporting
+> > > > @@ -77,11 +80,11 @@ errseq_t errseq_set(errseq_t *eseq, int err)
+> > > >  	for (;;) {
+> > > >  		errseq_t new;
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > > -		/* Clear out error bits and set new error */
+> > > > -		new = (old & ~(MAX_ERRNO|ERRSEQ_SEEN)) | -err;
+> > > > +		/* Clear out flag bits and set new error */
+> > > > +		new = (old & ~(MAX_ERRNO|ERRSEQ_SEEN|ERRSEQ_MUSTINC)) | -err;
+> > > 
+> > > This is starting to look clumsy (or maybe, this already looked clumsy,
+> > > but now that is hard to ignore).
+> > > 
+> > > 		new = (old & (ERRSEQ_CTR_INC - 1)) | -err
+> > > 
+> > 
+> > I think you mean:
+> > 
+> > 		new = (old & ~(ERRSEQ_CTR_INC - 1)) | -err;
+> > 
+> > Maybe I can add a new ERRSEQ_CTR_MASK value though which makes it more
+> > evident.
+> 
+> Sounds good.
+> 
+> > 
+> > > Also this assumes MAX_ERRNO is a mask, which it is .. today.
+> > > 
+> > > 	BUILD_BUG_ON(MAX_ERRNO & (MAX_ERRNO + 1));
+> > > ??
+> > > 
+> > 
+> > We already have this in errseq_set:
+> > 
+> >         BUILD_BUG_ON_NOT_POWER_OF_2(MAX_ERRNO + 1);
+> 
+> Oh good - I didn't see.
+> 
+> > 
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > > -		/* Only increment if someone has looked at it */
+> > > > -		if (old & ERRSEQ_SEEN)
+> > > > +		/* Only increment if we have to */
+> > > > +		if (old & ERRSEQ_MUSTINC)
+> > > >  			new += ERRSEQ_CTR_INC;
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > >  		/* If there would be no change, then call it done */
+> > > > @@ -122,14 +125,50 @@ EXPORT_SYMBOL(errseq_set);
+> > > >  errseq_t errseq_sample(errseq_t *eseq)
+> > > >  {
+> > > >  	errseq_t old = READ_ONCE(*eseq);
+> > > > +	errseq_t new = old;
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > > -	/* If nobody has seen this error yet, then we can be the first. */
+> > > > -	if (!(old & ERRSEQ_SEEN))
+> > > > -		old = 0;
+> > > > -	return old;
+> > > > +	/*
+> > > > +	 * For the common case of no errors ever having been set, we can skip
+> > > > +	 * marking the SEEN|MUSTINC bits. Once an error has been set, the value
+> > > > +	 * will never go back to zero.
+> > > > +	 */
+> > > > +	if (old != 0) {
+> > > > +		new |= ERRSEQ_SEEN|ERRSEQ_MUSTINC;
+> > > 
+> > > You lose me here.  Why is ERRSEQ_SEEN being set, where it wasn't before?
+> > > 
+> > > The ERRSEQ_SEEN flag not means precisely "The error has been reported to
+> > > userspace".
+> > > This operations isn't used to report errors - that is errseq_check().
+> > > 
+> > > I'm not saying the code it wrong - I really cannot tell.
+> > > I'm just saying that I cannot see why it might be right.
+> > > 
+> > 
+> > I think you're right. We should not be setting SEEN here, but we do
+> > need to set MUSTINC if it's not already set. I'll fix (and re-test).
+> 
+> Thanks.  Though it isn't clear to me why MUSTINC needs to be set there,
+> so if you could make that clear, it would help me.
+> 
+> Also, the two flags seem similar in how they are handled, only tracking
+> different states, but their names don't reflect that.
+> I imagine changing "SEEN" to "MUST_REPORT" or similar, so both flags are
+> "MUST_XXX".
+> Only I think we would then need to invert "SEEN" - as it currently means
+> "MUSTN'T_REPORT" .. approximately.
+> 
+> Or maybe we could replace MUST_INC by DID_INC, so it says what has been
+> done, rather than what must be done.
+> 
+> Or maybe not.  Certainly it would be useful to have a clear picture of
+> how the two flags are similar, and how they are different.
+> 
 
->
->
-> On Sun, Dec 13, 2020 at 9:52 PM Junxiao Bi <junxiao.bi@oracle.com 
-> <mailto:junxiao.bi@oracle.com>> wrote:
->
->     On 12/11/20 11:32 PM, Konstantin Khlebnikov wrote:
->
->     > On Thu, Dec 10, 2020 at 2:01 AM Junxiao Bi
->     <junxiao.bi@oracle.com <mailto:junxiao.bi@oracle.com>
->     > <mailto:junxiao.bi@oracle.com <mailto:junxiao.bi@oracle.com>>>
->     wrote:
->     >
->     >Â  Â  Â Hi Konstantin,
->     >
->     >Â  Â  Â We tested this patch set recently and found it limiting negative
->     >Â  Â  Â dentry
->     >Â  Â  Â to a small part of total memory. And also we don't see any
->     >Â  Â  Â performance
->     >Â  Â  Â regression on it. Do you have any plan to integrate it into
->     >Â  Â  Â mainline? It
->     >Â  Â  Â will help a lot on memory fragmentation issue causing by
->     dentry slab,
->     >Â  Â  Â there were a lot of customer cases where sys% was very high
->     since
->     >Â  Â  Â most
->     >Â  Â  Â cpu were doing memory compaction, dentry slab was taking too
->     much
->     >Â  Â  Â memory
->     >Â  Â  Â and nearly all dentry there were negative.
->     >
->     >
->     > Right now I don't have any plans for this. I suspect such
->     problems will
->     > appear much more often since machines are getting bigger.
->     > So, somebody will take care of it.
->     We already had a lot of customer cases. It made no sense to leave so
->     many negative dentry in the system, it caused memory fragmentation
->     and
->     not much benefit.
->
->
-> Dcache could grow so big only if the system lacks of memory pressure.
->
-> Simplest solution is a cronjobÂ which provincesÂ such pressure by
-> creating sparse file on disk-based fs and then reading it.
-> This should wash away all inactive caches with no IO and zero chance 
-> of oom.
-Sound good, will try.
->
->     >
->     > First part which collects negative dentries at the end list of
->     > siblings could be
->     > done in a more obvious way by splitting the list in two.
->     > But this touches much more code.
->     That would add new field to dentry?
->
->
-> Yep. DecisionÂ is up to maintainers.
->
->     >
->     > Last patch isn't very rigid but does non-trivial changes.
->     > Probably it's better to call some garbage collector thingy
->     periodically.
->     > Lru list needs pressure to age and reorder entries properly.
->
->     Swap the negative dentry to the head of hash list when it get
->     accessed?
->     Extra ones can be easily trimmed when swapping, using GC is to reduce
->     perf impact?
->
->
-> Reclaimer/shrinker scans dentiesÂ in LRU lists, it's an another list.
 
-Ah, you mean GC to reclaim from LRU list. I am not sure it could catch 
-up the speed of negative dentry generating.
+You need to set MUSTINC in errseq_peek to ensure that the next error
+that occurs will be recorded, via the counter being bumped. Otherwise
+that increment may be skipped (if no one else observed the last error).
 
-Thanks,
+I sent a v2 set before I saw your mail. Hopefully it addresses some of
+your concerns.
 
-Junxiao.
+You're right that the flag naming is a bit awkward. I'm open to
+suggestions for names, but I'd probably like to keep the "sense" of the
+flags so that I don't need to sort out the logic again. It also works
+better with 0 being a special value that way.
 
-> My patch used order in hash lists is a very unusual way. Don't be 
-> confused.
->
-> There are four lists
-> parent - siblings
-> hashtable - hashchain
-> LRU
-> inode - alias
->
->
->     Thanks,
->
->     Junxioao.
->
->     >
->     > Gc could be off by default or thresholds set very high (50% of
->     ram for
->     > example).
->     > Final setup could be left up to owners of large systems, which
->     needs
->     > fine tuning.
->
+
+
+> Thanks,
+> NeilBrown
+> 
+> 
+> > 
+> > Thanks for the review!
+> > 
+> > > 
+> > > 
+> > > 
+> > > > +		if (old != new)
+> > > > +			cmpxchg(eseq, old, new);
+> > > > +		if (!(old & ERRSEQ_SEEN))
+> > > > +			return 0;
+> > > > +	}
+> > > > +	return new;
+> > > >  }
+> > > >  EXPORT_SYMBOL(errseq_sample);
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > +/**
+> > > > + * errseq_peek - Grab current errseq_t value, but don't mark it SEEN
+> > > > + * @eseq: Pointer to errseq_t to be sampled.
+> > > > + *
+> > > > + * In some cases, we need to be able to sample the errseq_t, but we're not
+> > > > + * in a situation where we can report the value to userland. Use this
+> > > > + * function to do that. This ensures that later errors will be recorded,
+> > > > + * and that any current errors are reported at least once.
+> > > > + *
+> > > > + * Context: Any context.
+> > > > + * Return: The current errseq value.
+> > > > + */
+> > > > +errseq_t errseq_peek(errseq_t *eseq)
+> > > > +{
+> > > > +	errseq_t old = READ_ONCE(*eseq);
+> > > > +	errseq_t new = old;
+> > > > +
+> > > > +	if (old != 0) {
+> > > > +		new |= ERRSEQ_MUSTINC;
+> > > > +		if (old != new)
+> > > > +			cmpxchg(eseq, old, new);
+> > > > +	}
+> > > > +	return new;
+> > > > +}
+> > > > +EXPORT_SYMBOL(errseq_peek);
+> > > > +
+> > > >  /**
+> > > >   * errseq_check() - Has an error occurred since a particular sample point?
+> > > >   * @eseq: Pointer to errseq_t value to be checked.
+> > > > @@ -143,7 +182,10 @@ EXPORT_SYMBOL(errseq_sample);
+> > > >   */
+> > > >  int errseq_check(errseq_t *eseq, errseq_t since)
+> > > >  {
+> > > > -	errseq_t cur = READ_ONCE(*eseq);
+> > > > +	errseq_t cur = READ_ONCE(*eseq) & ~(ERRSEQ_MUSTINC|ERRSEQ_SEEN);
+> > > > +
+> > > > +	/* Clear the flag bits for comparison */
+> > > > +	since &= ~(ERRSEQ_MUSTINC|ERRSEQ_SEEN);
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > >  	if (likely(cur == since))
+> > > >  		return 0;
+> > > > @@ -195,7 +237,7 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t *since)
+> > > >  		 * can advance "since" and return an error based on what we
+> > > >  		 * have.
+> > > >  		 */
+> > > > -		new = old | ERRSEQ_SEEN;
+> > > > +		new = old | ERRSEQ_SEEN | ERRSEQ_MUSTINC;
+> > > >  		if (new != old)
+> > > >  			cmpxchg(eseq, old, new);
+> > > >  		*since = new;
+> > > > -- 
+> > > > 2.29.2
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
