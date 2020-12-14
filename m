@@ -2,105 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50CFB2DA23C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 22:04:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2A72DA25E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 22:10:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503690AbgLNVBw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 16:01:52 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:57024 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503706AbgLNVBs (ORCPT
+        id S2503695AbgLNVJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 16:09:40 -0500
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:39672 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2503647AbgLNVJU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 16:01:48 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEKsHeE144093;
-        Mon, 14 Dec 2020 21:00:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=aa0Ax+bPQnK4YL5LoY0LgelOl5GRjz9JrB0IR+sjwy4=;
- b=ZI3+5u9fy8oScjTCPSIf0nTtRFLUqT+rmE9ZY5kRukhi7zEbtkOhM1ANvHwO7nOCgi2N
- 09NS9xbcnV9uICnIhloRb5nT4+Mh5wNP7E2k95vLT5yq+NicQHkzj3sQUClD2B63PCkV
- iu7c4BOhuH8BbVldQeT3+PcYmeGxEao0sfoVdwy+2ncWx6tfP07IUKuugxzSQ1vAxNZ5
- pJTECX1MndtEGJigCmXGolSHW7PE/aS5eQm8VB7s2G8lKqMpLyfPuJFhuE6+an4rhX3k
- hcUTsD8xzCT2fLlHKZAHeCpXJ53fwnhQjCpfUUdvlvCcRh04cKwzor65YmwqTBoBXiRI lg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 35cn9r7ftb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Dec 2020 21:00:47 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEKt5rf135821;
-        Mon, 14 Dec 2020 20:58:47 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 35e6jq0b48-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Dec 2020 20:58:47 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BEKwcf0020933;
-        Mon, 14 Dec 2020 20:58:39 GMT
-Received: from [10.159.141.221] (/10.159.141.221)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Dec 2020 12:58:38 -0800
-Subject: Re: [RFC PATCH v2 0/6] fsdax: introduce fs query to support reflink
-To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        darrick.wong@oracle.com, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@lst.de, song@kernel.org, rgoldwyn@suse.de,
-        qi.fuli@fujitsu.com, y-goto@fujitsu.com
-References: <20201123004116.2453-1-ruansy.fnst@cn.fujitsu.com>
-From:   Jane Chu <jane.chu@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <89ab4ec4-e4f0-7c17-6982-4f55bb40f574@oracle.com>
-Date:   Mon, 14 Dec 2020 12:58:32 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+        Mon, 14 Dec 2020 16:09:20 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id B9B5749952;
+        Tue, 15 Dec 2020 08:08:33 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kov57-003zjp-3R; Tue, 15 Dec 2020 08:08:33 +1100
+Date:   Tue, 15 Dec 2020 08:08:33 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>, jlayton@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v12 3/4] xfs: refactor the usage around
+ xfs_trans_context_{set,clear}
+Message-ID: <20201214210833.GE632069@dread.disaster.area>
+References: <20201209131146.67289-1-laoar.shao@gmail.com>
+ <20201209131146.67289-4-laoar.shao@gmail.com>
+ <20201209195235.GN1943235@magnolia>
+ <CALOAHbD_DK9w=s9RDsVBNaYwgeRi4UUEGDHFb3zEsqh_V8gLMA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201123004116.2453-1-ruansy.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 bulkscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012140140
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- impostorscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0
- malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012140140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALOAHbD_DK9w=s9RDsVBNaYwgeRi4UUEGDHFb3zEsqh_V8gLMA@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8
+        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=pGLkceISAAAA:8 a=rA-29Kngl8b7e2x1wjEA:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Shiyang,
-
-On 11/22/2020 4:41 PM, Shiyang Ruan wrote:
-> This patchset is a try to resolve the problem of tracking shared page
-> for fsdax.
+On Sun, Dec 13, 2020 at 05:09:02PM +0800, Yafang Shao wrote:
+> On Thu, Dec 10, 2020 at 3:52 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> >
+> > On Wed, Dec 09, 2020 at 09:11:45PM +0800, Yafang Shao wrote:
+> > > The xfs_trans context should be active after it is allocated, and
+> > > deactive when it is freed.
+> > >
+> > > So these two helpers are refactored as,
+> > > - xfs_trans_context_set()
+> > >   Used in xfs_trans_alloc()
+> > > - xfs_trans_context_clear()
+> > >   Used in xfs_trans_free()
+> > >
+> > > This patch is based on Darrick's work to fix the issue in xfs/141 in the
+> > > earlier version. [1]
+> > >
+> > > 1. https://lore.kernel.org/linux-xfs/20201104001649.GN7123@magnolia
+> > >
+> > > Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> > > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > Cc: Christoph Hellwig <hch@lst.de>
+> > > Cc: Dave Chinner <david@fromorbit.com>
+> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > > ---
+> > >  fs/xfs/xfs_trans.c | 28 +++++++++++++++-------------
+> > >  1 file changed, 15 insertions(+), 13 deletions(-)
+> > >
+> > > diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+> > > index 11d390f0d3f2..4f4645329bb2 100644
+> > > --- a/fs/xfs/xfs_trans.c
+> > > +++ b/fs/xfs/xfs_trans.c
+> > > @@ -67,6 +67,17 @@ xfs_trans_free(
+> > >       xfs_extent_busy_sort(&tp->t_busy);
+> > >       xfs_extent_busy_clear(tp->t_mountp, &tp->t_busy, false);
+> > >
+> > > +
+> > > +     /* Detach the transaction from this thread. */
+> > > +     ASSERT(current->journal_info != NULL);
+> > > +     /*
+> > > +      * The PF_MEMALLOC_NOFS is bound to the transaction itself instead
+> > > +      * of the reservation, so we need to check if tp is still the
+> > > +      * current transaction before clearing the flag.
+> > > +      */
+> > > +     if (current->journal_info == tp)
+> >
+> > Um, you don't start setting journal_info until the next patch, so this
+> > means that someone who lands on this commit with git bisect will have a
+> > xfs with broken logic.
+> >
+> > Because this is the patch that changes where we set and restore NOFS
+> > context, I think you have to introduce xfs_trans_context_swap here,
+> > and not in the next patch.
+> >
 > 
-> Change from v1:
->    - Intorduce ->block_lost() for block device
->    - Support mapped device
->    - Add 'not available' warning for realtime device in XFS
->    - Rebased to v5.10-rc1
+> Thanks for the review. I will change it in the next version.
 > 
-> This patchset moves owner tracking from dax_assocaite_entry() to pmem
-> device, by introducing an interface ->memory_failure() of struct
-> pagemap.  The interface is called by memory_failure() in mm, and
-> implemented by pmem device.  Then pmem device calls its ->block_lost()
-> to find the filesystem which the damaged page located in, and call
-> ->storage_lost() to track files or metadata assocaited with this page.
-> Finally we are able to try to fix the damaged data in filesystem and do
+> > I also think the _swap routine has to move the old NOFS state to the
+> > new transaction's t_pflags,
+> 
+> Sure
+> 
+> > and then set NOFS in the old transaction's
+> > t_pflags so that when we clear the context on the old transaction we
+> > don't actually change the thread's NOFS state.
+> >
+> 
+> Both thread's NOFS state and thead's journal_info state can't be
+> changed in that case, right ?
+> So should it better be,
+> 
+>     __xfs_trans_commit(tp, regrant)
+>         xfs_trans_free(tp, regrant)
+>             if (!regrant). // don't clear the xfs_trans_context if
+> regrant is true.
+>                 xfs_trans_context_clear()
 
-Does that mean clearing poison? if so, would you mind to elaborate 
-specifically which change does that?
+No. You are trying to make this way more complex than it needs to be.
+The logic in the core XFS code is *already correct* and all we need
+to do is move that logic to wrapper functions, then slightly modify
+the implementation inside the wrapper functions.
 
-Thanks!
--jane
+That is, xfs_trans_context_clear() should end up like this:
 
-> other necessary processing, such as killing processes who are using the
-> files affected.
+static inline void
+xfs_trans_context_clear(struct xfs_trans *tp)
+{
+	/*
+	 * If xfs_trans_context_swap() handed the NOFS context to a
+	 * new transaction we do not clear the context here.
+	 */
+	if (current->journal_info != tp)
+		return;
+	current->journal_info = NULL;
+	memalloc_nofs_restore(tp->t_pflags);
+}
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
