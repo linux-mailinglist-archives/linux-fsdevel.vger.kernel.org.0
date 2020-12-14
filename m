@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3434A2DA389
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 23:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8804A2DA391
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Dec 2020 23:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502662AbgLNWjR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 17:39:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37050 "EHLO
+        id S2441157AbgLNWlK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 17:41:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502521AbgLNWjG (ORCPT
+        with ESMTP id S2502537AbgLNWjG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 14 Dec 2020 17:39:06 -0500
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76446C06138C;
-        Mon, 14 Dec 2020 14:37:52 -0800 (PST)
-Received: by mail-pl1-x644.google.com with SMTP id y8so9744628plp.8;
-        Mon, 14 Dec 2020 14:37:52 -0800 (PST)
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E7AC061285;
+        Mon, 14 Dec 2020 14:37:54 -0800 (PST)
+Received: by mail-pg1-x544.google.com with SMTP id g18so13777395pgk.1;
+        Mon, 14 Dec 2020 14:37:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ssXnZiLmnDnhCBaKkF0ViwDaE3pTbiD3bgrO3REdu1o=;
-        b=Kdyag+afxDemndXxDu2neVdeMrMnJnpsM79GpbcCiOrzOzOecSQNwuUwNkXBaAfsUm
-         amDvyRcr96/3GBLplUfOrS53VyimB/bD7uc8cL7ubwF/h2bPq8ljNIV1s7se7hquiP9c
-         3RvhvrRw/x7f2Khxqt8p3gz0hMoWA+vH1wdzGMUQd4f/e2P0RPJwesMT33kdRgRR7ZQa
-         tTYXem2DTnlGvmP2C9FZi3W0VC37WChq1xtvTnSlMHjlpmKdvYYrKxL/nXqDKvyRHxDf
-         CTV27ONp3jyp+fxK52/nnbpluX0KBiHPx8zrahhBuZE/0VU2+hJ6L+reyM7zj7X9D8qb
-         /LOw==
+        bh=+kmdzUyomriPoEmgNJZkhkyxllzW++vSvJDg1wBbRWU=;
+        b=iI8SQ4uIBy6rSF6WJgwZJtcCMKt06dXZSxVquYF/3xfi7j7bZXBscDEUmCgzi5GewB
+         IkE8ILNOew3ChA1nW75iqnez79iWw1ndLmdEo8i3ua18h3SXGZmqO0ZMh1+wRiabjzqR
+         u457fTskXBgUezEgKLBY80N5NDt6zlCNjwuLuHFKLHmuCBZW8+xvjRE2ntee027Cahhr
+         NM9BA3PYx/1thRe828BQdlVujz2/6yVbURUpZFHYoG9XQbBcF0YdiW1At1cCihtAuj12
+         e4tXSPFTIhhJ5e/n3mwY124qc/D8hTOntHETVdST3zZcxe1yU7NptmaHaERLmo9+Wwta
+         EO1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ssXnZiLmnDnhCBaKkF0ViwDaE3pTbiD3bgrO3REdu1o=;
-        b=P/xCT1SlHLe+DQaGq7dkaWkzxmQmwubK0fBe4X1VGdZ6TQOyEP57QRRUepTCvZNbjv
-         e3+l68i/iBHT2Edd4HKKmhXJHbXebWCuwYLgCeFA7ZJyCKLfQwowIa3EKdReO+0v/Uhc
-         CTaxNKv6LEU5yflxZp59nBSqYzXZoR8ZAjFdXwfP3CUTLwt0Aw/zZGvVaPmL36r/Ptmv
-         MS88lEAmsrvkC+JBNtDxRyiXkbWlytOefTk4x80jicH7eJ2VK/OPgWkYKhMc5c0NrTYf
-         U1geNlkg7aSZ26iksWYiN6AO+T9+vnJL0wOFvA/6Q3Yp2VYjpdkBK6seZHC4sVmN2LBB
-         sdPA==
-X-Gm-Message-State: AOAM5315nhbIhQUQzZC2IBW4HtyGmRUD17zDqgtAu7eLl7spZt3UQoYU
-        8GCagvFxABKlMYQ9A4DtGsM=
-X-Google-Smtp-Source: ABdhPJyWkKVRTRNzs5DbHGN2QcNv2wKI3ximz4j2UUbDkjomVlfb5vfSXO6RIa099VMG93AU7IgDsw==
-X-Received: by 2002:a17:90b:4b07:: with SMTP id lx7mr28007598pjb.230.1607985471993;
-        Mon, 14 Dec 2020 14:37:51 -0800 (PST)
+        bh=+kmdzUyomriPoEmgNJZkhkyxllzW++vSvJDg1wBbRWU=;
+        b=V0/tNCieSBE5g/I0MkVuTL6cx/gzttn7Nuo3s5Ll3bvT/l3zyQcpt8/WowTnDBgYlj
+         PYZ/lBH80iNrh7PTonHrC6mECX9q2+Z0i5eqFb1B9H2lqeK/dBXKmrnnBgqzDvuQAqEZ
+         AOG3GVPStcKW3VETcWNBjvzFSXgzSzyuzHNn3uNIeuW2X8Y/heys7EQ3e2yivDaVOP4c
+         CsHEZQOn8W9rveIuTSTPTGz+s1oqou2HoyTUfYwv4LWL/j49u9TnUYzPxgFMuWD2oSJX
+         gZ6RVUc3KpSAldL0ffEmVvDGAfJZGy8xTuw0/HmaV6uXiSbDWF7N643tDD2KaQVR28Rm
+         Fy2A==
+X-Gm-Message-State: AOAM530jfsGmolA6O0jVJ16o2+iAh+YCjb104cDeXkyGnjFWp95hNQoP
+        2fI2bXcqbcWtSpE3jSnfqYo=
+X-Google-Smtp-Source: ABdhPJz/LPX+WFR6Oci5zsfqoxLPRAVL4rXMXlUq7w+UJS5jvacni+aMkFdG5kal9SInUPXavYNuhQ==
+X-Received: by 2002:aa7:963c:0:b029:19d:dcd3:b2ae with SMTP id r28-20020aa7963c0000b029019ddcd3b2aemr25803975pfg.76.1607985474398;
+        Mon, 14 Dec 2020 14:37:54 -0800 (PST)
 Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
-        by smtp.gmail.com with ESMTPSA id d4sm20610758pfo.127.2020.12.14.14.37.49
+        by smtp.gmail.com with ESMTPSA id d4sm20610758pfo.127.2020.12.14.14.37.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Dec 2020 14:37:51 -0800 (PST)
+        Mon, 14 Dec 2020 14:37:53 -0800 (PST)
 From:   Yang Shi <shy828301@gmail.com>
 To:     guro@fb.com, ktkhai@virtuozzo.com, shakeelb@google.com,
         david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
         akpm@linux-foundation.org
 Cc:     shy828301@gmail.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [v2 PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
-Date:   Mon, 14 Dec 2020 14:37:18 -0800
-Message-Id: <20201214223722.232537-6-shy828301@gmail.com>
+Subject: [v2 PATCH 6/9] mm: vmscan: use per memcg nr_deferred of shrinker
+Date:   Mon, 14 Dec 2020 14:37:19 -0800
+Message-Id: <20201214223722.232537-7-shy828301@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20201214223722.232537-1-shy828301@gmail.com>
 References: <20201214223722.232537-1-shy828301@gmail.com>
@@ -66,269 +66,163 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently the number of deferred objects are per shrinker, but some slabs, for example,
-vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
-
-The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
-excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
-may suffer from over shrink, excessive reclaim latency, etc.
-
-For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
-heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
-might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
-
-We observed this hit in our production environment which was running vfs heavy workload
-shown as the below tracing log:
-
-<...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
-cache items 246404277 delta 31345 total_scan 123202138
-<...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
-last shrinker return val 123186855
-
-The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
-This also resulted in significant amount of page caches were dropped due to inodes eviction.
-
-Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
-better isolation.
-
-When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
-would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's nr_deferred
+will be used in the following cases:
+    1. Non memcg aware shrinkers
+    2. !CONFIG_MEMCG
+    3. memcg is disabled by boot parameter
 
 Signed-off-by: Yang Shi <shy828301@gmail.com>
 ---
- include/linux/memcontrol.h |   9 +++
- mm/memcontrol.c            | 110 ++++++++++++++++++++++++++++++++++++-
- mm/vmscan.c                |   4 ++
- 3 files changed, 120 insertions(+), 3 deletions(-)
+ mm/vmscan.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 83 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 922a7f600465..1b343b268359 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -92,6 +92,13 @@ struct lruvec_stat {
- 	long count[NR_VM_NODE_STAT_ITEMS];
- };
- 
-+
-+/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
-+struct memcg_shrinker_deferred {
-+	struct rcu_head rcu;
-+	atomic_long_t nr_deferred[];
-+};
-+
- /*
-  * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
-  * which have elements charged to this memcg.
-@@ -119,6 +126,7 @@ struct mem_cgroup_per_node {
- 	struct mem_cgroup_reclaim_iter	iter;
- 
- 	struct memcg_shrinker_map __rcu	*shrinker_map;
-+	struct memcg_shrinker_deferred __rcu	*shrinker_deferred;
- 
- 	struct rb_node		tree_node;	/* RB tree node */
- 	unsigned long		usage_in_excess;/* Set to the value by which */
-@@ -1489,6 +1497,7 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
- }
- 
- extern int memcg_expand_shrinker_maps(int new_id);
-+extern int memcg_expand_shrinker_deferred(int new_id);
- 
- extern void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
- 				   int nid, int shrinker_id);
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 3d4ddbb84a01..321d1818ce3d 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -394,14 +394,20 @@ DEFINE_STATIC_KEY_FALSE(memcg_kmem_enabled_key);
- EXPORT_SYMBOL(memcg_kmem_enabled_key);
- #endif
- 
--/* It is only can be changed with holding shrinker_rwsem exclusively */
-+/* They are only can be changed with holding shrinker_rwsem exclusively */
- static int memcg_shrinker_map_size;
-+static int memcg_shrinker_deferred_size;
- 
- static void memcg_free_shrinker_map_rcu(struct rcu_head *head)
- {
- 	kvfree(container_of(head, struct memcg_shrinker_map, rcu));
- }
- 
-+static void memcg_free_shrinker_deferred_rcu(struct rcu_head *head)
-+{
-+	kvfree(container_of(head, struct memcg_shrinker_deferred, rcu));
-+}
-+
- static int memcg_expand_one_shrinker_map(struct mem_cgroup *memcg,
- 					 int size, int old_size)
- {
-@@ -430,6 +436,34 @@ static int memcg_expand_one_shrinker_map(struct mem_cgroup *memcg,
- 	return 0;
- }
- 
-+static int memcg_expand_one_shrinker_deferred(struct mem_cgroup *memcg,
-+					      int size, int old_size)
-+{
-+	struct memcg_shrinker_deferred *new, *old;
-+	int nid;
-+
-+	for_each_node(nid) {
-+		old = rcu_dereference_protected(
-+			mem_cgroup_nodeinfo(memcg, nid)->shrinker_deferred, true);
-+		/* Not yet online memcg */
-+		if (!old)
-+			return 0;
-+
-+		new = kvmalloc_node(sizeof(*new) + size, GFP_KERNEL, nid);
-+		if (!new)
-+			return -ENOMEM;
-+
-+		/* Copy all old values, and clear all new ones */
-+		memcpy((void *)new->nr_deferred, (void *)old->nr_deferred, old_size);
-+		memset((void *)new->nr_deferred + old_size, 0, size - old_size);
-+
-+		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_deferred, new);
-+		call_rcu(&old->rcu, memcg_free_shrinker_deferred_rcu);
-+	}
-+
-+	return 0;
-+}
-+
- static void memcg_free_shrinker_maps(struct mem_cgroup *memcg)
- {
- 	struct mem_cgroup_per_node *pn;
-@@ -448,6 +482,21 @@ static void memcg_free_shrinker_maps(struct mem_cgroup *memcg)
- 	}
- }
- 
-+static void memcg_free_shrinker_deferred(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup_per_node *pn;
-+	struct memcg_shrinker_deferred *deferred;
-+	int nid;
-+
-+	for_each_node(nid) {
-+		pn = mem_cgroup_nodeinfo(memcg, nid);
-+		deferred = rcu_dereference_protected(pn->shrinker_deferred, true);
-+		if (deferred)
-+			kvfree(deferred);
-+		rcu_assign_pointer(pn->shrinker_deferred, NULL);
-+	}
-+}
-+
- static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
- {
- 	struct memcg_shrinker_map *map;
-@@ -472,6 +521,27 @@ static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
- 	return ret;
- }
- 
-+static int memcg_alloc_shrinker_deferred(struct mem_cgroup *memcg)
-+{
-+	struct memcg_shrinker_deferred *deferred;
-+	int nid, size, ret = 0;
-+
-+	down_read(&shrinker_rwsem);
-+	size = memcg_shrinker_deferred_size;
-+	for_each_node(nid) {
-+		deferred = kvzalloc_node(sizeof(*deferred) + size, GFP_KERNEL, nid);
-+		if (!deferred) {
-+			memcg_free_shrinker_deferred(memcg);
-+			ret = -ENOMEM;
-+			break;
-+		}
-+		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_deferred, deferred);
-+	}
-+	up_read(&shrinker_rwsem);
-+
-+	return ret;
-+}
-+
- int memcg_expand_shrinker_maps(int new_id)
- {
- 	int size, old_size, ret = 0;
-@@ -501,6 +571,33 @@ int memcg_expand_shrinker_maps(int new_id)
- 	return ret;
- }
- 
-+int memcg_expand_shrinker_deferred(int new_id)
-+{
-+	int size, old_size, ret = 0;
-+	struct mem_cgroup *memcg;
-+
-+	size = (new_id + 1) * sizeof(atomic_long_t);
-+	old_size = memcg_shrinker_deferred_size;
-+	if (size <= old_size)
-+		return 0;
-+
-+	if (!root_mem_cgroup)
-+		goto out;
-+
-+	for_each_mem_cgroup(memcg) {
-+		ret = memcg_expand_one_shrinker_deferred(memcg, size, old_size);
-+		if (ret) {
-+			mem_cgroup_iter_break(NULL, memcg);
-+			goto out;
-+		}
-+	}
-+out:
-+	if (!ret)
-+		memcg_shrinker_deferred_size = size;
-+
-+	return ret;
-+}
-+
- void memcg_set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
- {
- 	if (shrinker_id >= 0 && memcg && !mem_cgroup_is_root(memcg)) {
-@@ -5397,8 +5494,8 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
- 	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
- 
- 	/*
--	 * A memcg must be visible for memcg_expand_shrinker_maps()
--	 * by the time the maps are allocated. So, we allocate maps
-+	 * A memcg must be visible for memcg_expand_shrinker_{maps|deferred}()
-+	 * by the time the maps are allocated. So, we allocate maps and deferred
- 	 * here, when for_each_mem_cgroup() can't skip it.
- 	 */
- 	if (memcg_alloc_shrinker_maps(memcg)) {
-@@ -5406,6 +5503,12 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
- 		return -ENOMEM;
- 	}
- 
-+	if (memcg_alloc_shrinker_deferred(memcg)) {
-+		memcg_free_shrinker_maps(memcg);
-+		mem_cgroup_id_remove(memcg);
-+		return -ENOMEM;
-+	}
-+
- 	/*
- 	 * Barrier for CSS_ONLINE, so that shrink_slab_memcg() sees shirnker_maps
- 	 * and shrinker_deferred before CSS_ONLINE. It pairs with the read barrier
-@@ -5473,6 +5576,7 @@ static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
- 	cancel_work_sync(&memcg->high_work);
- 	mem_cgroup_remove_from_trees(memcg);
- 	memcg_free_shrinker_maps(memcg);
-+	memcg_free_shrinker_deferred(memcg);
- 	memcg_free_kmem(memcg);
- 	mem_cgroup_free(memcg);
- }
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 16c9d2aeeb26..bf34167dd67e 100644
+index bf34167dd67e..bce8cf44eca2 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -219,6 +219,10 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
- 			goto unlock;
- 		}
+@@ -203,6 +203,12 @@ DECLARE_RWSEM(shrinker_rwsem);
+ static DEFINE_IDR(shrinker_idr);
+ static int shrinker_nr_max;
  
-+		if (memcg_expand_shrinker_deferred(id)) {
-+			idr_remove(&shrinker_idr, id);
-+			goto unlock;
-+		}
- 		shrinker_nr_max = id + 1;
- 	}
- 	shrinker->id = id;
++static inline bool is_deferred_memcg_aware(struct shrinker *shrinker)
++{
++	return (shrinker->flags & SHRINKER_MEMCG_AWARE) &&
++		!mem_cgroup_disabled();
++}
++
+ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+ {
+ 	int id, ret = -ENOMEM;
+@@ -271,7 +277,58 @@ static bool writeback_throttling_sane(struct scan_control *sc)
+ #endif
+ 	return false;
+ }
++
++static inline long count_nr_deferred(struct shrinker *shrinker,
++				     struct shrink_control *sc)
++{
++	bool per_memcg_deferred = is_deferred_memcg_aware(shrinker) && sc->memcg;
++	struct memcg_shrinker_deferred *deferred;
++	struct mem_cgroup *memcg = sc->memcg;
++	int nid = sc->nid;
++	int id = shrinker->id;
++	long nr;
++
++	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
++		nid = 0;
++
++	if (per_memcg_deferred) {
++		deferred = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_deferred,
++						     true);
++		nr = atomic_long_xchg(&deferred->nr_deferred[id], 0);
++	} else
++		nr = atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
++
++	return nr;
++}
++
++static inline long set_nr_deferred(long nr, struct shrinker *shrinker,
++				   struct shrink_control *sc)
++{
++	bool per_memcg_deferred = is_deferred_memcg_aware(shrinker) && sc->memcg;
++	struct memcg_shrinker_deferred *deferred;
++	struct mem_cgroup *memcg = sc->memcg;
++	int nid = sc->nid;
++	int id = shrinker->id;
++	long new_nr;
++
++	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
++		nid = 0;
++
++	if (per_memcg_deferred) {
++		deferred = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_deferred,
++						     true);
++		new_nr = atomic_long_add_return(nr, &deferred->nr_deferred[id]);
++	} else
++		new_nr = atomic_long_add_return(nr, &shrinker->nr_deferred[nid]);
++
++	return new_nr;
++}
+ #else
++static inline bool is_deferred_memcg_aware(struct shrinker *shrinker)
++{
++	return false;
++}
++
+ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+ {
+ 	return 0;
+@@ -290,6 +347,29 @@ static bool writeback_throttling_sane(struct scan_control *sc)
+ {
+ 	return true;
+ }
++
++static inline long count_nr_deferred(struct shrinker *shrinker,
++				     struct shrink_control *sc)
++{
++	int nid = sc->nid;
++
++	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
++		nid = 0;
++
++	return atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
++}
++
++static inline long set_nr_deferred(long nr, struct shrinker *shrinker,
++				   struct shrink_control *sc)
++{
++	int nid = sc->nid;
++
++	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
++		nid = 0;
++
++	return atomic_long_add_return(nr,
++				      &shrinker->nr_deferred[nid]);
++}
+ #endif
+ 
+ /*
+@@ -429,13 +509,10 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	long freeable;
+ 	long nr;
+ 	long new_nr;
+-	int nid = shrinkctl->nid;
+ 	long batch_size = shrinker->batch ? shrinker->batch
+ 					  : SHRINK_BATCH;
+ 	long scanned = 0, next_deferred;
+ 
+-	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+-		nid = 0;
+ 
+ 	freeable = shrinker->count_objects(shrinker, shrinkctl);
+ 	if (freeable == 0 || freeable == SHRINK_EMPTY)
+@@ -446,7 +523,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	 * and zero it so that other concurrent shrinker invocations
+ 	 * don't also do this scanning work.
+ 	 */
+-	nr = atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
++	nr = count_nr_deferred(shrinker, shrinkctl);
+ 
+ 	total_scan = nr;
+ 	if (shrinker->seeks) {
+@@ -537,14 +614,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 		next_deferred = 0;
+ 	/*
+ 	 * move the unused scan count back into the shrinker in a
+-	 * manner that handles concurrent updates. If we exhausted the
+-	 * scan, there is no need to do an update.
++	 * manner that handles concurrent updates.
+ 	 */
+-	if (next_deferred > 0)
+-		new_nr = atomic_long_add_return(next_deferred,
+-						&shrinker->nr_deferred[nid]);
+-	else
+-		new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
++	new_nr = set_nr_deferred(next_deferred, shrinker, shrinkctl);
+ 
+ 	trace_mm_shrink_slab_end(shrinker, shrinkctl->nid, freed, nr, new_nr, total_scan);
+ 	return freed;
 -- 
 2.26.2
 
