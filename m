@@ -2,227 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87EC32DB1D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 17:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44F5B2DB1E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 17:53:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731219AbgLOQsC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 11:48:02 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58468 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731217AbgLOQr7 (ORCPT
+        id S1728584AbgLOQvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 11:51:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731063AbgLOQrC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 11:47:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608050792;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yvoLfPDS3GPj2oJUm//iV65orCWI3rrZ866PIW/DZco=;
-        b=fg5b9iq4k/9vRJo1I/yyQTxJ+PhtxH7c0EP10fh5hTBcIHGJWiMiR5MSpwiOgKn0V8wkW9
-        Ec1wpkibg5nquYyhdpaxwVEkEny36YBUs/onZ3kW+t47YB19ARhMCMNRPDaN6BOGV+aUZf
-        PvpP0mohgSQPomTf2kZDTf8iV7coxC4=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-4-OxAuev2qPNezvDptQ0c22A-1; Tue, 15 Dec 2020 11:44:01 -0500
-X-MC-Unique: OxAuev2qPNezvDptQ0c22A-1
-Received: by mail-qt1-f198.google.com with SMTP id i1so14700663qtw.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 08:44:00 -0800 (PST)
+        Tue, 15 Dec 2020 11:47:02 -0500
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F05DFC0617A7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 08:46:21 -0800 (PST)
+Received: by mail-ej1-x642.google.com with SMTP id j22so10654800eja.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 08:46:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Nw8qJctXIvsPyQDncdd+p7Hbk4k+GUcjFuipoh6BEs4=;
+        b=0R0b5iOpq46F/ltkqP5QUZtIM2vKLRP3r8+5Fw6C7tXoQFcZhivRhlMfBDF2uIfHR9
+         ciTSidoRlUqKtNVf7Y1vOFeoushrB+SrI9Oqph290PQicm2d8z2Yu8bTMfyk3RtIA5uE
+         qaw8fswZRGA3gEnZjS0BAuIziHW4h5sh46iKfUfI5ORZiCWvqbjRoNVEs7OQ3CFLcV1Z
+         pAAJUIW02QC0RyvGMtvFk87LTsPrAb9InBUIOkgqr71ZEARJ36hjGS+HsihZb+KMAM6p
+         d3YMtLURwEHhU7ThUVpwsqnyYI+PTz7YSICpImA5XGYMMvm0X1CC//XOh0kctyLNO2Yq
+         wCDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=yvoLfPDS3GPj2oJUm//iV65orCWI3rrZ866PIW/DZco=;
-        b=Y33N8+gk4n2v+/uPvdTzteG21gd9vXiLldBpHwykG7uW47gwlWC60sXzBhxAWz7nlP
-         RGPNXtg4Qh9MUmn/DT4JLf+QOPIM2ijO33lDO7fnW5p/oYoUKHc0t05dJghH6EtGMG0B
-         aBXLpffpFA4hYQoiWAW8DurwtRvdB8WoDAki9xySYAj8rmSJiU+zIGHsz1K6xZj0Ku7s
-         Lp2dNIBWgJuvODfVImshjBi/6qSzahvqmicj2ccgMRTmvADMA+Fp6oOqKDiE7kIlm59m
-         Ja3uv/cBawVjFPwkKSsd+kltKkun53CUT1yHB61P+tMNMADvII/28iVSBE6McV9xzMUn
-         ySFg==
-X-Gm-Message-State: AOAM530ylXc6ZD5CmCpRRt9MJDKt/fxxw0GJt7NIuiJiEGKw1f2tYidG
-        Hfd20uLs8UP1nYTL2sJOF8tb93fXBktNzxocDUM+DVMDbQIK0o6FlMkTN2xK67FJdlI0t+9xmsY
-        HFuuRrQPGrnv8kuTz5OtsOg3A6g==
-X-Received: by 2002:a05:6214:370:: with SMTP id t16mr38461082qvu.22.1608050640249;
-        Tue, 15 Dec 2020 08:44:00 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwMy1c5wQ24dBIZOGEhHnUL92nLjKe4utbF/3+yoD7VULpdYcfqRgLGG8zxEf2n+2LL7W+org==
-X-Received: by 2002:a05:6214:370:: with SMTP id t16mr38461064qvu.22.1608050640026;
-        Tue, 15 Dec 2020 08:44:00 -0800 (PST)
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id 17sm16625931qtu.23.2020.12.15.08.43.58
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Nw8qJctXIvsPyQDncdd+p7Hbk4k+GUcjFuipoh6BEs4=;
+        b=JGFrBflN1P4leqtTXayIGGmJBp7s6sd40StzXLB+gnVwPwWYWhGOEy9DD+py5aVG/8
+         P6PNfEyfPOpr1SyciZZDA4yg6OaYKbEGIABd/pfVerAITBISj8hJ6G5fRMoaShqJVvNP
+         r1tfbBUFN1abALZFrhZAmVupmRqGT2T1P8XmX1ZL1mnB9KIbg1qGEshdl4T4jAyxYhWG
+         f5iztL+uOfAEgAiOg0NTYMwbrWB8eNNMnauRs26RTBj42nzHznQj6G0lkZVuA225mwUO
+         eyJxaFeiW9QcrCrmml5TgGqL+K2YZpS2k60LsZnn2MG4mxwqADRnBCcbETNIS+nH71Ib
+         hMYA==
+X-Gm-Message-State: AOAM5324qF+oa/6Xp/8gpPEatf9tmw+zc7FOryPZh/pHNIh1QmPPkDA3
+        yvIrOyai6XskbUOUnBALHjvviA==
+X-Google-Smtp-Source: ABdhPJzXBrdogiiXI+Aubbw34P37afkwkySvpYIYVZdjbxX3UHqiyoshLsRXNbgF83diYQGkkMczJQ==
+X-Received: by 2002:a17:906:27c2:: with SMTP id k2mr6901718ejc.211.1608050780506;
+        Tue, 15 Dec 2020 08:46:20 -0800 (PST)
+Received: from localhost ([2620:10d:c093:400::5:d6dd])
+        by smtp.gmail.com with ESMTPSA id e3sm1764803ejq.96.2020.12.15.08.46.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Dec 2020 08:43:58 -0800 (PST)
-Message-ID: <882fa590d1e77a43ff5b1d705d6f7551e309eadf.camel@redhat.com>
-Subject: Re: [RFC PATCH v2 2/2] overlayfs: propagate errors from upper to
- overlay sb in sync_fs
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
+        Tue, 15 Dec 2020 08:46:19 -0800 (PST)
+Date:   Tue, 15 Dec 2020 17:44:12 +0100
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Yang Shi <shy828301@gmail.com>, Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
-Date:   Tue, 15 Dec 2020 11:43:57 -0500
-In-Reply-To: <20201215163058.GC63355@redhat.com>
-References: <20201214221421.1127423-1-jlayton@kernel.org>
-         <20201214221421.1127423-3-jlayton@kernel.org>
-         <20201215163058.GC63355@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/9] mm: vmscan: use per memcg nr_deferred of shrinker
+Message-ID: <20201215164412.GA385334@cmpxchg.org>
+References: <20201202182725.265020-1-shy828301@gmail.com>
+ <20201202182725.265020-7-shy828301@gmail.com>
+ <49464720-675d-5144-043c-eba6852a9c06@virtuozzo.com>
+ <CAHbLzkoiTmNLXj1Tx0-PggEdcYQ6nj71DUX3ya6mj3VNZ5ho4A@mail.gmail.com>
+ <d5454f6d-6739-3252-fba0-ac39c6c526c4@virtuozzo.com>
+ <CAHbLzkqu5X-kFKt1vWYc8U=fK=NBWauP-=Kz+A9=GUuQ32+gAQ@mail.gmail.com>
+ <20201210151331.GD264602@cmpxchg.org>
+ <6ffd6aa1-2c55-f4d3-a60a-56786d40531a@virtuozzo.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6ffd6aa1-2c55-f4d3-a60a-56786d40531a@virtuozzo.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-12-15 at 11:30 -0500, Vivek Goyal wrote:
-> On Mon, Dec 14, 2020 at 05:14:21PM -0500, Jeff Layton wrote:
-> > Peek at the upper layer's errseq_t at mount time for volatile mounts,
-> > and record it in the per-sb info. In sync_fs, check for an error since
-> > the recorded point and set it in the overlayfs superblock if there was
-> > one.
+On Thu, Dec 10, 2020 at 06:17:54PM +0300, Kirill Tkhai wrote:
+> On 10.12.2020 18:13, Johannes Weiner wrote:
+> > On Wed, Dec 09, 2020 at 09:32:37AM -0800, Yang Shi wrote:
+> >> On Wed, Dec 9, 2020 at 7:42 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> >>>
+> >>> On 08.12.2020 20:13, Yang Shi wrote:
+> >>>> On Thu, Dec 3, 2020 at 3:40 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> >>>>>
+> >>>>> On 02.12.2020 21:27, Yang Shi wrote:
+> >>>>>> Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's nr_deferred
+> >>>>>> will be used in the following cases:
+> >>>>>>     1. Non memcg aware shrinkers
+> >>>>>>     2. !CONFIG_MEMCG
+> >>>>>>     3. memcg is disabled by boot parameter
+> >>>>>>
+> >>>>>> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> >>>>>> ---
+> >>>>>>  mm/vmscan.c | 88 +++++++++++++++++++++++++++++++++++++++++++++++++----
+> >>>>>>  1 file changed, 82 insertions(+), 6 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> >>>>>> index cba0bc8d4661..d569fdcaba79 100644
+> >>>>>> --- a/mm/vmscan.c
+> >>>>>> +++ b/mm/vmscan.c
+> >>>>>> @@ -203,6 +203,12 @@ static DECLARE_RWSEM(shrinker_rwsem);
+> >>>>>>  static DEFINE_IDR(shrinker_idr);
+> >>>>>>  static int shrinker_nr_max;
+> >>>>>>
+> >>>>>> +static inline bool is_deferred_memcg_aware(struct shrinker *shrinker)
+> >>>>>> +{
+> >>>>>> +     return (shrinker->flags & SHRINKER_MEMCG_AWARE) &&
+> >>>>>> +             !mem_cgroup_disabled();
+> >>>>>> +}
+> >>>>>> +
+> >>>>>>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> >>>>>>  {
+> >>>>>>       int id, ret = -ENOMEM;
+> >>>>>> @@ -271,7 +277,58 @@ static bool writeback_throttling_sane(struct scan_control *sc)
+> >>>>>>  #endif
+> >>>>>>       return false;
+> >>>>>>  }
+> >>>>>> +
+> >>>>>> +static inline long count_nr_deferred(struct shrinker *shrinker,
+> >>>>>> +                                  struct shrink_control *sc)
+> >>>>>> +{
+> >>>>>> +     bool per_memcg_deferred = is_deferred_memcg_aware(shrinker) && sc->memcg;
+> >>>>>> +     struct memcg_shrinker_deferred *deferred;
+> >>>>>> +     struct mem_cgroup *memcg = sc->memcg;
+> >>>>>> +     int nid = sc->nid;
+> >>>>>> +     int id = shrinker->id;
+> >>>>>> +     long nr;
+> >>>>>> +
+> >>>>>> +     if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+> >>>>>> +             nid = 0;
+> >>>>>> +
+> >>>>>> +     if (per_memcg_deferred) {
+> >>>>>> +             deferred = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_deferred,
+> >>>>>> +                                                  true);
+> >>>>>
+> >>>>> My comment is about both 5/9 and 6/9 patches.
+> >>>>
+> >>>> Sorry for the late reply, I don't know why Gmail filtered this out to spam.
+> >>>>
+> >>>>>
+> >>>>> shrink_slab_memcg() races with mem_cgroup_css_online(). A visibility of CSS_ONLINE flag
+> >>>>> in shrink_slab_memcg()->mem_cgroup_online() does not guarantee that you will see
+> >>>>> memcg->nodeinfo[nid]->shrinker_deferred != NULL in count_nr_deferred(). This may occur
+> >>>>> because of processor reordering on !x86 (there is no a common lock or memory barriers).
+> >>>>>
+> >>>>> Regarding to shrinker_map this is not a problem due to map check in shrink_slab_memcg().
+> >>>>> The map can't be NULL there.
+> >>>>>
+> >>>>> Regarding to shrinker_deferred you should prove either this is not a problem too,
+> >>>>> or to add proper synchronization (maybe, based on barriers) or to add some similar check
+> >>>>> (maybe, in shrink_slab_memcg() too).
+> >>>>
+> >>>> It seems shrink_slab_memcg() might see shrinker_deferred as NULL
+> >>>> either due to the same reason. I don't think there is a guarantee it
+> >>>> won't happen.
+> >>>>
+> >>>> We just need guarantee CSS_ONLINE is seen after shrinker_maps and
+> >>>> shrinker_deferred are allocated, so I'm supposed barriers before
+> >>>> "css->flags |= CSS_ONLINE" should work.
+> >>>>
+> >>>> So the below patch may be ok:
+> >>>>
+> >>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> >>>> index df128cab900f..9f7fb0450d69 100644
+> >>>> --- a/mm/memcontrol.c
+> >>>> +++ b/mm/memcontrol.c
+> >>>> @@ -5539,6 +5539,12 @@ static int mem_cgroup_css_online(struct
+> >>>> cgroup_subsys_state *css)
+> >>>>                 return -ENOMEM;
+> >>>>         }
+> >>>>
+> >>>>
+> >>>> +       /*
+> >>>> +        * Barrier for CSS_ONLINE, so that shrink_slab_memcg() sees
+> >>>> shirnker_maps
+> >>>> +        * and shrinker_deferred before CSS_ONLINE.
+> >>>> +        */
+> >>>> +       smp_mb();
+> >>>> +
+> >>>>         /* Online state pins memcg ID, memcg ID pins CSS */
+> >>>>         refcount_set(&memcg->id.ref, 1);
+> >>>>         css_get(css);
+> >>>
+> >>> smp barriers synchronize data access from different cpus. They should go in a pair.
+> >>> In case of you add the smp barrier into mem_cgroup_css_online(), we should also
+> >>> add one more smp barrier in another place, which we want to synchonize with this.
+> >>> Also, every place should contain a comment referring to its pair: "Pairs with...".
+> >>
+> >> Thanks, I think you are correct. Looked into it further, it seems the
+> >> race pattern looks like:
+> >>
+> >> CPU A                                                                  CPU B
+> >> store shrinker_maps pointer                      load CSS_ONLINE
+> >> store CSS_ONLINE                                   load shrinker_maps pointer
+> >>
+> >> By checking the memory-barriers document, it seems we need write
+> >> barrier/read barrier pair as below:
+> >>
+> >> CPU A                                                                  CPU B
+> >> store shrinker_maps pointer                       load CSS_ONLINE
+> >> <write barrier>                                             <read barrier>
+> >> store CSS_ONLINE                                    load shrinker_maps pointer
+> >>
+> >>
+> >> So, the patch should look like:
+> >>
+> >> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> >> index df128cab900f..489c0a84f82b 100644
+> >> --- a/mm/memcontrol.c
+> >> +++ b/mm/memcontrol.c
+> >> @@ -5539,6 +5539,13 @@ static int mem_cgroup_css_online(struct
+> >> cgroup_subsys_state *css)
+> >>                 return -ENOMEM;
+> >>         }
+> >>
+> >> +       /*
+> >> +        * Barrier for CSS_ONLINE, so that shrink_slab_memcg() sees
+> >> shirnker_maps
+> >> +        * and shrinker_deferred before CSS_ONLINE. It pairs with the
+> >> read barrier
+> >> +        * in shrink_slab_memcg().
+> >> +        */
+> >> +       smp_wmb();
 > > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/overlayfs/ovl_entry.h |  1 +
-> >  fs/overlayfs/super.c     | 19 ++++++++++++++-----
-> >  2 files changed, 15 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> > index 1b5a2094df8e..f4285da50525 100644
-> > --- a/fs/overlayfs/ovl_entry.h
-> > +++ b/fs/overlayfs/ovl_entry.h
-> > @@ -79,6 +79,7 @@ struct ovl_fs {
-> >  	atomic_long_t last_ino;
-> >  	/* Whiteout dentry cache */
-> >  	struct dentry *whiteout;
-> > +	errseq_t errseq;
-> >  };
-> >  
-> > 
-> > 
-> > 
-> > 
-> > 
-> > 
-> > 
-> >  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index 290983bcfbb3..3f0cb91915ff 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -264,8 +264,16 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
-> >  	if (!ovl_upper_mnt(ofs))
-> >  		return 0;
-> >  
-> > 
-> > 
-> > 
-> > 
-> > 
-> > 
-> > 
-> > -	if (!ovl_should_sync(ofs))
-> > -		return 0;
-> > +	upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
-> > +
-> > +	if (!ovl_should_sync(ofs)) {
-> > +		/* Propagate errors from upper to overlayfs */
-> > +		ret = errseq_check(&upper_sb->s_wb_err, ofs->errseq);
-> > +		if (ret)
-> > +			errseq_set(&sb->s_wb_err, ret);
-> > +		return ret;
-> > +	}
-> > +
+> > Is there a reason why the shrinker allocations aren't done in
+> > .css_alloc()? That would take care of all necessary ordering:
 > 
-> I have few concerns here. I think ovl_sync_fs() should not be different
-> for volatile mounts and non-volatile mounts. IOW, if an overlayfs
-> user calls syncfs(fd), then only difference with non-volatile mount
-> is that we will not call sync_filesystem() on underlying filesystem. But
-> if there is an existing writeback error then that should be reported
-> to syncfs(fd) caller both in case of volatile and non-volatile mounts.
-> 
-> Additional requirement in case of non-volatile mount seems to be that
-> as soon as we detect first error, we probably should mark whole file
-> system bad and start returning error for overlay operations so that
-> upper layer can be thrown away and process restarted.
-> 
+> The reason is that allocations have to be made in a place, where
+> mem-cgroup_iter() can't miss it, since memcg_expand_shrinker_maps()
+> shouldn't miss allocated shrinker maps.
 
-That was the reason the patch did the errseq_set on every sync_fs
-invocation for a volatile mount. That should ensure that syncfs always
-returns an error. Still, there probably are cleaner ways to do this...
+I see, because we could have this:
 
-> And final non-volatile mount requirement seems to that we want to detect
-> writeback errors in non syncfs() paths, for ex. mount(). That's what
-> Sargun is trying to do. Keep a snapshot of upper_sb errseq on disk
-> and upon remount of volatile overlay make sure no writeback errors
-> have happened since then. And that's where I think we should be using
-> new errseq_peek() and errseq_check(&upper_sb->s_wb_err, ofs->errseq)
-> infracture. That way we can detect error on upper without consuming
-> it upon overlay remount.
-> 
-> IOW, IMHO, ovl_sync_fs(), should use same mechanism to report error to
-> user space both for volatile and non-volatile mounts. And this new
-> mechanism of peeking at error without consuming it should be used
-> in other paths like remount and possibly other overlay operations(if need
-> be). 
-> 
-> But creating a special path in ovl_sync_fs() for volatile mounts
-> only will create conflicts with error reporting for non-volatile
-> mounts. And IMHO, these should be same.
-> 
-> Is there a good reason that why we should treat volatile and non-volatile
-> mounts differently in ovl_sync_fs() from error detection and reporting
-> point of view.
-> 
+.css_alloc()
+  memcg_alloc_shrinker_maps()
+    down_read(&shrinker_sem)
+    map = alloc(shrinker_nr_max * sizeof(long));
+    rcu_assign_pointer(memcg->...->shrinker_map = map);
+    up_read(&shrinker_sem);
+                                                            register_shrinker()
+                                                              down_write(&shrinker_sem)
+                                                              shrinker_nr_max = id + 1;
+                                                              memcg_expand_shrinker_maps()
+                                                                for_each_mem_cgroup()
+                                                                  realloc
+                                                              up_write(&shrinker_sem)
+  list_add_tail_rcu(&css->sibling, &parent->children);
 
-Fair enough. I'm not that well-versed in overlayfs, so if you see a
-better way to do this, then that's fine by me. I just sent this out as a
-demonstration of how you could do it. Feel free to drop the second
-patch.
+  /* boom: missed new shrinker, map too small */
 
-I think the simplest solution to most of these issues is to add a new
-f_op->syncfs vector. You shouldn't need to propagate errors to the ovl
-sb at all if you add that. You can just operate on the upper sb's
-s_wb_err, and ignore the one in the ovl sb.
-
-> >  	/*
-> >  	 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
-> >  	 * All the super blocks will be iterated, including upper_sb.
-> > @@ -277,8 +285,6 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
-> >  	if (!wait)
-> >  		return 0;
-> >  
-> > 
-> > 
-> > 
-> > -	upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
-> > -
-> >  	down_read(&upper_sb->s_umount);
-> >  	ret = sync_filesystem(upper_sb);
-> >  	up_read(&upper_sb->s_umount);
-> > @@ -1945,8 +1951,11 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
-> >  
-> > 
-> > 
-> > 
-> >  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
-> >  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> > -
-> >  	}
-> > +
-> > +	if (ofs->config.ovl_volatile)
-> > +		ofs->errseq = errseq_peek(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
-> > +
-> >  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
-> >  	err = PTR_ERR(oe);
-> >  	if (IS_ERR(oe))
-> > -- 
-> > 2.29.2
-> > 
-> 
-
--- 
-Jeff Layton <jlayton@redhat.com>
-
+Thanks for the clarification.
