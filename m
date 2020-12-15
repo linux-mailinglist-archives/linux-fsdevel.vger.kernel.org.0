@@ -2,219 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FF242DAD9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 14:01:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 344F92DADE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 14:18:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbgLONAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 08:00:13 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:33305 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728632AbgLONAN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 08:00:13 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 35AF7580396;
-        Tue, 15 Dec 2020 07:59:27 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 15 Dec 2020 07:59:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
-        qHNuiRPUfmhVpEZXQy+wUvMfpqmiGB2JR0+F6M2f928=; b=fwbKxu8ZHkGxH205
-        /T02XtvEqPcMvG411U6TosC2y9trk9lFZEXtlvVAyGffVaFxwdADm/wADzdP5ke1
-        LmrAikzJ6iveCdNBw+1r7af7SzixNko3ASOuIx75e5RbHDpWV2MddaZIZ4BO77hJ
-        bz5Wduv+ko8WzKYgRyr1s/UP++r2YV6h6LggmRos1Nez04JpVy/PU4Zvt8UQyWRk
-        nVwG018dtsVVvrVxyyoI1gqTV24rpBkXaixSRuB2VlMlR+u2pPur7I1qlI40jVKF
-        7wL5A4W+/DbOtArrL3aoclMoaZ0su/xMaeE25QraMzeZZe//enfBwjuEDKL8Q2DJ
-        s2kDDQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=qHNuiRPUfmhVpEZXQy+wUvMfpqmiGB2JR0+F6M2f9
-        28=; b=FPC7PX3gbLRHVu6UJrxs9PN9QtuaUYE9dEi2pjbDmAloC6PEfchafX/Mb
-        EiIoZcmEW7iHfVoH4Vn8b8KHsBbfN3+oXqPG+LpojjDZrxJMJG+pIji+34YsHQP0
-        qulen4o2yU2T8zoWvFHHqh53qrkgopw3mVmDGo9lAVPcF4/vbxT05hEI2yjZQAgi
-        a8Ub5aXIWyQxIuCHdQ3BTEFSSBT6gBkzYnM7ETFOkT0z6O3STKE8JcPHfVPyk2RB
-        Ep66F3gx1oRpEwlGhZDi5SrE4XuzwqTU3db1o3IHN8q2AwiyCxo5BFspv2AqN0hn
-        MJphSERkaqG0A6dcdBIQbgse+BLRw==
-X-ME-Sender: <xms:LLPYXyjPVo6YdTdpi4FfT5bFigqtV7Ykhpq9wQlvM4c-suJMKu4-Vg>
-    <xme:LLPYX234qImRz7A8vkMEWr8B7GNSMCubiwNxw5MvsLFpa1iYjhCs8dDzK6BSk6HDY
-    WQ3Y7Uw3_pF>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudeltddggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eikeeggeeuvdevgfefiefhudekkeegheeileejveethedutedvveehudffjeevudenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvddurdeggedrudefhedrudefle
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghv
-    vghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:LLPYXzIU7Uh9nR8xRe8zOWTVA4P8RI1Hjjr7nIz7f5GteU0uduPuBA>
-    <xmx:LLPYX-zgCHt1MpN1IHCmnWUOYKCeJsDLK2TkkWyMkuJsOMta7sDM4g>
-    <xmx:LLPYX5XH1Oy1hGKGUBbeiH2j2N3RwA0_6OVmZsk1jTu5ouKGcllawg>
-    <xmx:L7PYX4sE4fXbgaDv_hniudsXrHh6qd5UiadNjDkbxJMFHiqk8rPKXA>
-Received: from mickey.themaw.net (unknown [121.44.135.139])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 405DB240066;
-        Tue, 15 Dec 2020 07:59:20 -0500 (EST)
-Message-ID: <efb7469c7bad2f6458c9a537b8e3623e7c303c21.camel@themaw.net>
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Fox Chen <foxhlchen@gmail.com>
-Cc:     akpm@linux-foundation.org, dhowells@redhat.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, ricklind@linux.vnet.ibm.com,
-        sfr@canb.auug.org.au, Tejun Heo <tj@kernel.org>,
-        viro@zeniv.linux.org.uk
-Date:   Tue, 15 Dec 2020 20:59:17 +0800
-In-Reply-To: <CAC2o3DLGtx15cgra3Y92UBdQRBKGckqOkDmwBV-aV-EpUqO5SQ@mail.gmail.com>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
-         <20201210164423.9084-1-foxhlchen@gmail.com>
-         <822f02508d495ee7398450774eb13e5116ec82ac.camel@themaw.net>
-         <13e21e4c9a5841243c8d130cf9324f6cfc4dc2e1.camel@themaw.net>
-         <bde0b6c32f2b055c1ad1401b45c4adf61aab6876.camel@themaw.net>
-         <CAC2o3DJdHuQxY7Rn5uXUprS7i8ri1qB=wOUM2rdZkWt4yJHv1w@mail.gmail.com>
-         <3e97846b52a46759c414bff855e49b07f0d908fc.camel@themaw.net>
-         <CAC2o3DLGtx15cgra3Y92UBdQRBKGckqOkDmwBV-aV-EpUqO5SQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1728342AbgLONRG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 08:17:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727621AbgLONQz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Dec 2020 08:16:55 -0500
+Message-ID: <73ed2ee27cb21b5879d030f5478839507dc35efd.camel@kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608038174;
+        bh=lD3zVNl/UdnKgognn1VdyUcVGB4m6JnB/aKuzonKIfc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=qTxErsFSHmx/BkWTpp1vtVNY0wohqAP911Vfi+YyEl7TJIASQsPTzXJzpx0FEF5Nc
+         JcQGOvT5l4J7+Aou6785fCmFqBMiikiRjo1MXCwAe+5wuKlv8IuUn2bMWD0dX4oRLa
+         CnhiWTiJZioz7JwOycAbaJxjd14fTNdqEGoSwxQsqBY+vhPNa9/laaag4xG0+F5sy2
+         AhWAlppjclNcmF3nwRtGGLL5SCjpUmj5Mq0CCA7RShgAmmiUeFuXtLYezfZQzTdrx0
+         BG8PeZqANwN6xbplobyEWWQVcBHEa/uhMGZSWu+6A36bQkVpbyQHWkuPTqOASCOnGo
+         8Vw9jiExYUTeQ==
+Subject: Re: [RFC PATCH 2/2] overlayfs: propagate errors from upper to
+ overlay sb in sync_fs
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
+Date:   Tue, 15 Dec 2020 08:16:12 -0500
+In-Reply-To: <979d78d04d882744d944f5723ad7a98b14badf8b.camel@kernel.org>
+References: <20201213132713.66864-1-jlayton@kernel.org>
+         <20201213132713.66864-3-jlayton@kernel.org>
+         <20201214213843.GA3453@redhat.com>
+         <979d78d04d882744d944f5723ad7a98b14badf8b.camel@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-12-15 at 16:33 +0800, Fox Chen wrote:
-> On Mon, Dec 14, 2020 at 9:30 PM Ian Kent <raven@themaw.net> wrote:
-> > On Mon, 2020-12-14 at 14:14 +0800, Fox Chen wrote:
-> > > On Sun, Dec 13, 2020 at 11:46 AM Ian Kent <raven@themaw.net>
-> > > wrote:
-> > > > On Fri, 2020-12-11 at 10:17 +0800, Ian Kent wrote:
-> > > > > On Fri, 2020-12-11 at 10:01 +0800, Ian Kent wrote:
-> > > > > > > For the patches, there is a mutex_lock in kn->attr_mutex, 
-> > > > > > > as
-> > > > > > > Tejun
-> > > > > > > mentioned here
-> > > > > > > (
-> > > > > > > https://lore.kernel.org/lkml/X8fe0cmu+aq1gi7O@mtj.duckdns.org/
-> > > > > > > ),
-> > > > > > > maybe a global
-> > > > > > > rwsem for kn->iattr will be better??
-> > > > > > 
-> > > > > > I wasn't sure about that, IIRC a spin lock could be used
-> > > > > > around
-> > > > > > the
-> > > > > > initial check and checked again at the end which would
-> > > > > > probably
-> > > > > > have
-> > > > > > been much faster but much less conservative and a bit more
-> > > > > > ugly
-> > > > > > so
-> > > > > > I just went the conservative path since there was so much
-> > > > > > change
-> > > > > > already.
-> > > > > 
-> > > > > Sorry, I hadn't looked at Tejun's reply yet and TBH didn't
-> > > > > remember
-> > > > > it.
-> > > > > 
-> > > > > Based on what Tejun said it sounds like that needs work.
-> > > > 
-> > > > Those attribute handling patches were meant to allow taking the
-> > > > rw
-> > > > sem read lock instead of the write lock for
-> > > > kernfs_refresh_inode()
-> > > > updates, with the added locking to protect the inode attributes
-> > > > update since it's called from the VFS both with and without the
-> > > > inode lock.
+On Mon, 2020-12-14 at 18:53 -0500, Jeff Layton wrote:
+> On Mon, 2020-12-14 at 16:38 -0500, Vivek Goyal wrote:
+> > On Sun, Dec 13, 2020 at 08:27:13AM -0500, Jeff Layton wrote:
+> > > Peek at the upper layer's errseq_t at mount time for volatile mounts,
+> > > and record it in the per-sb info. In sync_fs, check for an error since
+> > > the recorded point and set it in the overlayfs superblock if there was
+> > > one.
 > > > 
-> > > Oh, understood. I was asking also because lock on kn->attr_mutex
-> > > drags
-> > > concurrent performance.
-> > > 
-> > > > Looking around it looks like kernfs_iattrs() is called from
-> > > > multiple
-> > > > places without a node database lock at all.
-> > > > 
-> > > > I'm thinking that, to keep my proposed change straight forward
-> > > > and on topic, I should just leave kernfs_refresh_inode() taking
-> > > > the node db write lock for now and consider the attributes
-> > > > handling
-> > > > as a separate change. Once that's done we could reconsider
-> > > > what's
-> > > > needed to use the node db read lock in kernfs_refresh_inode().
-> > > 
-> > > You meant taking write lock of kernfs_rwsem for
-> > > kernfs_refresh_inode()??
-> > > It may be a lot slower in my benchmark, let me test it.
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
 > > 
-> > Yes, but make sure the write lock of kernfs_rwsem is being taken
-> > not the read lock.
+> > While we are solving problem for non-volatile overlay mount, I also
+> > started thinking, what about non-volatile overlay syncfs() writeback errors.
+> > Looks like these will not be reported to user space at all as of now
+> > (because we never update overlay_sb->s_wb_err ever).
 > > 
-> > That's a mistake I had initially?
+> > A patch like this might fix it. (compile tested only).
 > > 
-> > Still, that attributes handling is, I think, sufficient to warrant
-> > a separate change since it looks like it might need work, the
-> > kernfs
-> > node db probably should be kept stable for those attribute updates
-> > but equally the existence of an instantiated dentry might mitigate
-> > the it.
+> > overlayfs: Report syncfs() errors to user space
 > > 
-> > Some people might just know whether it's ok or not but I would like
-> > to check the callers to work out what's going on.
+> > Currently, syncfs(), calls filesystem ->sync_fs() method but ignores the
+> > return code. But certain writeback errors can still be reported on 
+> > syncfs() by checking errors on super block.
 > > 
-> > In any case it's academic if GCH isn't willing to consider the
-> > series
-> > for review and possible merge.
+> > ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
 > > 
-> Hi Ian
+> > For the case of overlayfs, we never set overlayfs super block s_wb_err. That
+> > means sync() will never report writeback errors on overlayfs uppon syncfs().
+> > 
+> > Fix this by updating overlay sb->sb_wb_err upon ->sync_fs() call. And that
+> > should mean that user space syncfs() call should see writeback errors.
+> > 
+> > ovl_fsync() does not need anything special because if there are writeback
+> > errors underlying filesystem will report it through vfs_fsync_range() return
+> > code and user space will see it.
+> > 
+> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > ---
+> >  fs/overlayfs/ovl_entry.h |    1 +
+> >  fs/overlayfs/super.c     |   14 +++++++++++---
+> >  2 files changed, 12 insertions(+), 3 deletions(-)
+> > 
+> > Index: redhat-linux/fs/overlayfs/super.c
+> > ===================================================================
+> > --- redhat-linux.orig/fs/overlayfs/super.c	2020-12-14 15:33:43.934400880 -0500
+> > +++ redhat-linux/fs/overlayfs/super.c	2020-12-14 16:15:07.127400880 -0500
+> > @@ -259,7 +259,7 @@ static int ovl_sync_fs(struct super_bloc
+> >  {
+> >  	struct ovl_fs *ofs = sb->s_fs_info;
+> >  	struct super_block *upper_sb;
+> > -	int ret;
+> > +	int ret, ret2;
+> >  
+> > 
+> > 
+> > 
+> >  	if (!ovl_upper_mnt(ofs))
+> >  		return 0;
+> > @@ -283,7 +283,14 @@ static int ovl_sync_fs(struct super_bloc
+> >  	ret = sync_filesystem(upper_sb);
+> >  	up_read(&upper_sb->s_umount);
+> >  
+> > 
+> > 
+> > 
+> > -	return ret;
+> > +	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
+> > +		/* Upper sb has errors since last time */
+> > +		spin_lock(&ofs->errseq_lock);
+> > +		ret2 = errseq_check_and_advance(&upper_sb->s_wb_err,
+> > +						&sb->s_wb_err);
+> > +		spin_unlock(&ofs->errseq_lock);
+> > +	}
+> > +	return ret ? ret : ret2;
 > 
-> I removed kn->attr_mutex and changed read lock to write lock for
-> kernfs_refresh_inode
+> I think this is probably not quite right.
 > 
-> down_write(&kernfs_rwsem);
-> kernfs_refresh_inode(kn, inode);
-> up_write(&kernfs_rwsem);
+> The problem I think is that the SEEN flag is always going to end up
+> being set in sb->s_wb_err, and that is going to violate the desired
+> semantics. If the writeback error occurred after all fd's were closed,
+> then the next opener wouldn't see it and you'd lose the error.
 > 
+> We probably need a function to cleanly propagate the error from one
+> errseq_t to another so that that doesn't occur. I'll have to think about
+> it.
 > 
-> Unfortunate, changes in this way make things worse,  my benchmark
-> runs
-> 100% slower than upstream sysfs.  :(
-> open+read+close a sysfs file concurrently took 1000us. (Currently,
-> sysfs with a big mutex kernfs_mutex only takes ~500us
-> for one open+read+close operation concurrently)
 
-Right, so it does need attention nowish.
+So, the problem is that we can't guarantee that we'll have an open file
+when sync_fs is called. So if you do the check_and_advance in the
+context of a sync() syscall, you'll effectively ensure that a later
+opener on the upper layer won't see the error (since the upper_sb's
+errseq_t will be marked SEEN.
 
-I'll have a look at it in a while, I really need to get a new autofs
-release out, and there are quite a few changes, and testing is seeing
-a number of errors, some old, some newly introduced. It's proving
-difficult.
+It's not clear to me what semantics you want in the following situation:
 
+mount upper layer
+mount overlayfs with non-volatile upper layer
+do "stuff" on overlayfs, and close all files on overlayfs
+get a writeback error on upper layer
+call sync() (sync_fs gets run)
+open file on upper layer mount
+call syncfs() on upper-layer fd
+
+Should that last syncfs error report an error?
+
+Also, suppose if at the end we instead opened a file on overlayfs and
+issued the syncfs() there -- should we see the error in that case? 
+
+> >  }
+> >  
+> > 
+> > 
+> > 
+> >  /**
+> > @@ -1873,6 +1880,7 @@ static int ovl_fill_super(struct super_b
+> >  	if (!cred)
+> >  		goto out_err;
+> >  
+> > 
+> > 
+> > 
+> > +	spin_lock_init(&ofs->errseq_lock);
+> >  	/* Is there a reason anyone would want not to share whiteouts? */
+> >  	ofs->share_whiteout = true;
+> >  
+> > 
+> > 
+> > 
+> > @@ -1945,7 +1953,7 @@ static int ovl_fill_super(struct super_b
+> >  
+> > 
+> > 
+> > 
+> >  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
+> >  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
+> > -
+> > +		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
+> >  	}
+> >  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
+> >  	err = PTR_ERR(oe);
+> > Index: redhat-linux/fs/overlayfs/ovl_entry.h
+> > ===================================================================
+> > --- redhat-linux.orig/fs/overlayfs/ovl_entry.h	2020-12-14 15:33:43.934400880 -0500
+> > +++ redhat-linux/fs/overlayfs/ovl_entry.h	2020-12-14 15:34:13.509400880 -0500
+> > @@ -79,6 +79,7 @@ struct ovl_fs {
+> >  	atomic_long_t last_ino;
+> >  	/* Whiteout dentry cache */
+> >  	struct dentry *whiteout;
+> > +	spinlock_t errseq_lock;
+> >  };
+> >  
+> > 
+> > 
+> > 
+> >  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
+> > 
 > 
-> > --45.93%--kernfs_iop_permission
->                                   |                                |
->                   |          |          |          |
->                                   |                                |
->                   |          |          |
-> > --22.55%--down_write
->                                   |                                |
->                   |          |          |          |          |
->                                   |                                |
->                   |          |          |          |
-> --20.69%--rwsem_down_write_slowpath
->                                   |                                |
->                   |          |          |          |
->   |
->                                   |                                |
->                   |          |          |          |
->   |--8.89%--schedule
-> 
-> perf showed most of the time had been spent on kernfs_iop_permission
-> 
-> 
-> thanks,
-> fox
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
