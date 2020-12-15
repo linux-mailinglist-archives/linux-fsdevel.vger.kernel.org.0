@@ -2,99 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 264C62DAE61
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 14:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D877A2DAE5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 14:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbgLON4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 08:56:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37232 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728889AbgLON4i (ORCPT
+        id S1728823AbgLON4Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 08:56:24 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:43170 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727200AbgLON4D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 08:56:38 -0500
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 765D9C0617A7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 05:55:57 -0800 (PST)
-Received: by mail-ed1-x544.google.com with SMTP id p22so21057973edu.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 05:55:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=28yftlhd5Mm7TNEoJztkfUFW7tsicxqlvZ58WZP092o=;
-        b=q8hRvO8FBlmEVVvGDqqdPymPT2VZCrOP6sdFOK85a8fzhGrEA+VPk8dRAl38JbXfAb
-         pENLRXdI7wPSCGKgFbDvGVqnbbRQ1YJqOZGobDdUJevwJgsecLQ0xYQyU1R7BaKyJOAm
-         aU8bjNtF5rSo+WjA633Q3G4UZXiJdP0mgMratYIzEVUbz4Yd3ALFdCr3qnjEbsQ7KGLI
-         gl3imdIUYwv7AEAmQMNJsX0f1SFP7S+DAL7TLK0FN0FaOdsxR875O0AgQ0WZrUXnMyu3
-         DYN8kHD7MtuD2z7RUKB5HUtduTjGtX3FHHdlziaVIJaOq47v8MTpI4KmaMgWA4Y5/SWe
-         RpNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=28yftlhd5Mm7TNEoJztkfUFW7tsicxqlvZ58WZP092o=;
-        b=QNb+mx7qq/koOZin90bTnM36cwlNPJWewm6ChX6xM1EHExaWLUgSWtiKzwJUuB5wqK
-         9ixcNArfXq623+H38holtz+e/gY6TMU/Dt1n8XqZOB8uVpgCNcyt/mL60a3o9B9jlLRo
-         930P2hCE+qvoPg8OTo9r6LC3es0EwtZ774+gnIG+F17ntYD/1MlqMiJO7y8JUObq8LR5
-         WVI/2736Efkqpy1YEUbw4flNbzlT4RkgqhnDPmhKMi/5qHQ3qSCLjC455LHm15OUASTg
-         qmBmBNYNFwMYi0ccFkv+uMcUtffVts/N7hUGkLyVFX+UrZCxTXgp0pd9kfcId62IS6fh
-         tJOg==
-X-Gm-Message-State: AOAM531Mb4WF+LfhjJ/hn64UFryP9tR8TTbmt0T5baqgXPjWFNuTCKAd
-        VKXgJlJLwcWVjJtP3YhdOnDY2Q==
-X-Google-Smtp-Source: ABdhPJyuNO0PF0kKJURjwb9+E/B+40e84QEC1lprj6xFNjGqXis995/63N/Dg86zVL7idzJQzFY5Fw==
-X-Received: by 2002:a05:6402:2066:: with SMTP id bd6mr29548060edb.211.1608040556150;
-        Tue, 15 Dec 2020 05:55:56 -0800 (PST)
-Received: from localhost ([2620:10d:c093:400::5:d6dd])
-        by smtp.gmail.com with ESMTPSA id b21sm18147895edr.53.2020.12.15.05.55.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Dec 2020 05:55:55 -0800 (PST)
-Date:   Tue, 15 Dec 2020 14:53:48 +0100
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Yang Shi <shy828301@gmail.com>, guro@fb.com, ktkhai@virtuozzo.com,
-        shakeelb@google.com, mhocko@suse.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH 2/9] mm: memcontrol: use shrinker_rwsem to protect
- shrinker_maps allocation
-Message-ID: <20201215135348.GC379720@cmpxchg.org>
-References: <20201214223722.232537-1-shy828301@gmail.com>
- <20201214223722.232537-3-shy828301@gmail.com>
- <20201215020957.GK3913616@dread.disaster.area>
+        Tue, 15 Dec 2020 08:56:03 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-256-kyP4j1eZN0iEOkzo-w1qBQ-1; Tue, 15 Dec 2020 13:54:22 +0000
+X-MC-Unique: kyP4j1eZN0iEOkzo-w1qBQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 15 Dec 2020 13:54:17 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 15 Dec 2020 13:54:17 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Pavel Begunkov' <asml.silence@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+CC:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: RE: [PATCH v1 2/6] iov_iter: optimise bvec iov_iter_advance()
+Thread-Topic: [PATCH v1 2/6] iov_iter: optimise bvec iov_iter_advance()
+Thread-Index: AQHW0njgRO60UNrAz0qHNwIRx20dYqn35EKAgAAgPwCAACb+4A==
+Date:   Tue, 15 Dec 2020 13:54:16 +0000
+Message-ID: <c5f54cb816564f2b96f5d7a0f85fdc4a@AcuMS.aculab.com>
+References: <cover.1607976425.git.asml.silence@gmail.com>
+ <5c9c22dbeecad883ca29b31896c262a8d2a77132.1607976425.git.asml.silence@gmail.com>
+ <262132648a8f4e7a9d1c79003ea74b3f@AcuMS.aculab.com>
+ <d151f81e-ec56-59c0-d2a0-ffd4a269fec1@gmail.com>
+In-Reply-To: <d151f81e-ec56-59c0-d2a0-ffd4a269fec1@gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201215020957.GK3913616@dread.disaster.area>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 01:09:57PM +1100, Dave Chinner wrote:
-> On Mon, Dec 14, 2020 at 02:37:15PM -0800, Yang Shi wrote:
-> > Since memcg_shrinker_map_size just can be changd under holding shrinker_rwsem
-> > exclusively, the read side can be protected by holding read lock, so it sounds
-> > superfluous to have a dedicated mutex.
-> 
-> I'm not sure this is a good idea. This couples the shrinker
-> infrastructure to internal details of how cgroups are initialised
-> and managed. Sure, certain operations might be done in certain
-> shrinker lock contexts, but that doesn't mean we should share global
-> locks across otherwise independent subsystems....
+RnJvbTogUGF2ZWwgQmVndW5rb3YNCj4gU2VudDogMTUgRGVjZW1iZXIgMjAyMCAxMToyNA0KPiAN
+Cj4gT24gMTUvMTIvMjAyMCAwOTozNywgRGF2aWQgTGFpZ2h0IHdyb3RlOg0KPiA+IEZyb206IFBh
+dmVsIEJlZ3Vua292DQo+ID4+IFNlbnQ6IDE1IERlY2VtYmVyIDIwMjAgMDA6MjANCj4gPj4NCj4g
+Pj4gaW92X2l0ZXJfYWR2YW5jZSgpIGlzIGhlYXZpbHkgdXNlZCwgYnV0IGltcGxlbWVudGVkIHRo
+cm91Z2ggZ2VuZXJpYw0KPiA+PiBpdGVyYXRpb24uIEFzIGJ2ZWNzIGhhdmUgYSBzcGVjaWZpY2Fs
+bHkgY3JhZnRlZCBhZHZhbmNlKCkgZnVuY3Rpb24sIGkuZS4NCj4gPj4gYnZlY19pdGVyX2FkdmFu
+Y2UoKSwgd2hpY2ggaXMgZmFzdGVyIGFuZCBzbGltbWVyLCB1c2UgaXQgaW5zdGVhZC4NCj4gPj4N
+Cj4gPj4gIGxpYi9pb3ZfaXRlci5jIHwgMTkgKysrKysrKysrKysrKysrKysrKw0KPiBbLi4uXQ0K
+PiA+PiAgdm9pZCBpb3ZfaXRlcl9hZHZhbmNlKHN0cnVjdCBpb3ZfaXRlciAqaSwgc2l6ZV90IHNp
+emUpDQo+ID4+ICB7DQo+ID4+ICAJaWYgKHVubGlrZWx5KGlvdl9pdGVyX2lzX3BpcGUoaSkpKSB7
+DQo+ID4+IEBAIC0xMDc3LDYgKzEwOTIsMTAgQEAgdm9pZCBpb3ZfaXRlcl9hZHZhbmNlKHN0cnVj
+dCBpb3ZfaXRlciAqaSwgc2l6ZV90IHNpemUpDQo+ID4+ICAJCWktPmNvdW50IC09IHNpemU7DQo+
+ID4+ICAJCXJldHVybjsNCj4gPj4gIAl9DQo+ID4+ICsJaWYgKGlvdl9pdGVyX2lzX2J2ZWMoaSkp
+IHsNCj4gPj4gKwkJaW92X2l0ZXJfYnZlY19hZHZhbmNlKGksIHNpemUpOw0KPiA+PiArCQlyZXR1
+cm47DQo+ID4+ICsJfQ0KPiA+PiAgCWl0ZXJhdGVfYW5kX2FkdmFuY2UoaSwgc2l6ZSwgdiwgMCwg
+MCwgMCkNCj4gPj4gIH0NCj4gPg0KPiA+IFRoaXMgc2VlbXMgdG8gYWRkIHlldCBhbm90aGVyIGNv
+bXBhcmlzb24gYmVmb3JlIHdoYXQgaXMgcHJvYmFibHkNCj4gPiB0aGUgY29tbW9uIGNhc2Ugb24g
+YW4gSU9WRUMgKGllIG5vcm1hbCB1c2Vyc3BhY2UgYnVmZmVyKS4NCj4gDQo+IElmIEFsIGZpbmFs
+bHkgdGFrZXMgdGhlIHBhdGNoIGZvciBpb3ZfaXRlcl9pc18qKCkgaGVscGVycyBpdCB3b3VsZA0K
+PiBiZSBjb21wbGV0ZWx5IG9wdGltaXNlZCBvdXQuDQoNCkkga25ldyBJIGRpZG4ndCBoYXZlIHRo
+YXQgcGF0aCAtIHRoZSBzb3VyY2VzIEkgbG9va2VkIGF0IGFyZW4ndCB0aGF0IG5ldy4NCkRpZG4n
+dCBrbm93IGl0cyBzdGF0ZS4NCg0KSW4gYW55IGNhc2UgdGhhdCBqdXN0IHN0b3BzIHRoZSBzYW1l
+IHRlc3QgYmVpbmcgZG9uZSB0d2ljZS4NCkluIHN0aWxsIGNoYW5nZXMgdGhlIG9yZGVyIG9mIHRo
+ZSB0ZXN0cy4NCg0KVGhlIHRocmVlICd1bmxpa2VseScgY2FzZXMgc2hvdWxkIHJlYWxseSBiZSBp
+bnNpZGUgYSBzaW5nbGUNCid1bmxpa2VseScgdGVzdCBmb3IgYWxsIHRocmVlIGJpdHMuDQpUaGVu
+IHRoZXJlIGlzIG9ubHkgb25lIG1pcy1wcmVkaWN0YWJsZSBqdW1wIHByaW9yIHRvIHRoZSB1c3Vh
+bCBwYXRoLg0KDQpCeSBhZGRpbmcgdGhlIHRlc3QgYmVmb3JlIGl0ZXJhdGVfYW5kX2FkdmFuY2Uo
+KSB5b3UgYXJlIChlZmZlY3RpdmVseSkNCm9wdGltaXNpbmcgZm9yIHRoZSBidmVjIChhbmQgZGlz
+Y2FyZCkgY2FzZXMuDQpBZGRpbmcgJ3VubGlrZWx5KCknIHdvbid0IG1ha2UgYW55IGRpZmZlcmVu
+Y2Ugb24gc29tZSBhcmNoaXRlY3R1cmVzLg0KSUlSQyByZWNlbnQgaW50ZWwgeDg2IGRvbid0IGhh
+dmUgYSAnc3RhdGljIHByZWRpY3Rpb24nIGZvciB1bmtub3duDQpicmFuY2hlcyAtIHRoZXkganVz
+dCB1c2Ugd2hhdGV2ZXIgaW4gaXMgdGhlIGJyYW5jaCBwcmVkaWN0b3IgdGFibGVzLg0KDQoJRGF2
+aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50
+IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTcz
+ODYgKFdhbGVzKQ0K
 
-They're not independent subsystems. Most of the memory controller is
-an extension of core VM operations that is fairly difficult to
-understand outside the context of those operations. Then there are a
-limited number of entry points from the cgroup interface. We used to
-have our own locks for core VM structures (private page lock e.g.) to
-coordinate VM and cgroup, and that was mostly unintelligble.
-
-We have since established that those two components coordinate with
-native VM locking and lifetime management. If you need to lock the
-page, you lock the page - instead of having all VM paths that already
-hold the page lock acquire a nested lock to exclude one cgroup path.
-
-In this case, we have auxiliary shrinker data, subject to shrinker
-lifetime and exclusion rules. It's much easier to understand that
-cgroup creation needs a stable shrinker list (shrinker_rwsem) to
-manage this data, than having an aliased lock that is private to the
-memcg callbacks and obscures this real interdependency.
