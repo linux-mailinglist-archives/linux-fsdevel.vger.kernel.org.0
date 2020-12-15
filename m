@@ -2,144 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB1E82DA6CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 04:30:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D367B2DA6B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 04:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725287AbgLODIu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 22:08:50 -0500
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:37098 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726483AbgLODIo (ORCPT
+        id S1726898AbgLODTV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 22:19:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbgLODTA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 22:08:44 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 2D011620E8;
-        Tue, 15 Dec 2020 14:07:58 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kp0gv-00455r-LR; Tue, 15 Dec 2020 14:07:57 +1100
-Date:   Tue, 15 Dec 2020 14:07:57 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     guro@fb.com, ktkhai@virtuozzo.com, shakeelb@google.com,
-        hannes@cmpxchg.org, mhocko@suse.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH 8/9] mm: memcontrol: reparent nr_deferred when memcg
- offline
-Message-ID: <20201215030757.GO3913616@dread.disaster.area>
-References: <20201214223722.232537-1-shy828301@gmail.com>
- <20201214223722.232537-9-shy828301@gmail.com>
+        Mon, 14 Dec 2020 22:19:00 -0500
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9585C06179C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 19:18:20 -0800 (PST)
+Received: by mail-pl1-x641.google.com with SMTP id r4so10195152pls.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 19:18:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=x0F4e7e8J+VvKx26V8nuLlBsAEt7nzUZe1QX+0WOrZI=;
+        b=MqehWWdECBfcy09hKHbVwBWV3Wg8cAoFYJzpCQkTfIfUaVG5dG8h/UMRJfToYrRuPb
+         w1e1VfIscbIr+nSDeUJJCIKQhiFGPi24shyg10hdKusCE/Y3b+4GpjIuiYInowiCFThq
+         g7uuGHAu/Re3fmXw7mdFFKg5dk+KA5PkdpNB7drpJcCCexbI/col4A6/i0OoNzK3Qbe6
+         7/vC8Ws0H1JDbLO460Bb0KkmuXrxYgvHWbsc/6p1ca86g6+/vIQAgz280Vb+WAizulY7
+         ydM3+xIiri12FgfoM0QTaF2fVN4opYZhQOLmjVKkjthfPes7N/5utXUrZM2sEg0zisTu
+         BENA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=x0F4e7e8J+VvKx26V8nuLlBsAEt7nzUZe1QX+0WOrZI=;
+        b=JzIeT/pAZCsFY8T40ou61CWQmgoPAT//3LNIUMrnfBJB1cay872NyFi3FCX38RHinY
+         E2y/vofmBWF33IeMN4ylYg4/ikfbVZ9Y/TSD22fajRpOdZPhzWzwy0EPd34LsvxHMWio
+         HJ2nD4LCC9UGsEcaOoPcGVu4vOI+JJWpSJCb3lEdNckZvmbR0miIpW26Vd7LMLcQKk4Y
+         euKOEJkCgJbngNfxMQ45JQ4p1r8RfkZcdFNqv8Ba6B86LI8cKyQJChtr3xz763nAei2+
+         3o9q6rBkFOTzmfYfVnWU10A0Q7oAnL96TIUr87SXpTgi+jSD6XgH9YOjq/qZpPAtlXhL
+         u1bg==
+X-Gm-Message-State: AOAM532o/ZnuxFCu86B52EOB2c3o3PsBDT35AiYeXHSG+CDxpGAAup2M
+        Fg4lq0N8Q+4gYNvdl0HNkA9nHQ==
+X-Google-Smtp-Source: ABdhPJyLAnVndemEaMwEL9ZPFp/FJzydb6o6UC59mdfPy13MPNnUS984np59pd8NYPwHr7iVBIOk7w==
+X-Received: by 2002:a17:90a:970b:: with SMTP id x11mr28106576pjo.16.1608002300280;
+        Mon, 14 Dec 2020 19:18:20 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id a141sm21678462pfa.189.2020.12.14.19.18.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Dec 2020 19:18:19 -0800 (PST)
+Subject: Re: [PATCHSET v3 0/4] fs: Support for LOOKUP_NONBLOCK /
+ RESOLVE_NONBLOCK
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20201214191323.173773-1-axboe@kernel.dk>
+ <CAHk-=wh7-H541jDYiFYkJvmVKdbyUH9+zVKf+=y-SnMFEFEkZA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7ac6a45f-26b2-ef4a-8941-f3bffcf03900@kernel.dk>
+Date:   Mon, 14 Dec 2020 20:18:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201214223722.232537-9-shy828301@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
-        a=G0UjF7Cs0_CI2k58uiMA:9 a=CjuIK1q_8ugA:10 a=-RoEEKskQ1sA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <CAHk-=wh7-H541jDYiFYkJvmVKdbyUH9+zVKf+=y-SnMFEFEkZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 02:37:21PM -0800, Yang Shi wrote:
-> Now shrinker's nr_deferred is per memcg for memcg aware shrinkers, add to parent's
-> corresponding nr_deferred when memcg offline.
+On 12/14/20 8:06 PM, Linus Torvalds wrote:
+> On Mon, Dec 14, 2020 at 11:13 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> I'm pretty happy with this at this point. The core change is very simple,
+>> and the users end up being trivial too.
 > 
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> ---
->  include/linux/shrinker.h |  4 ++++
->  mm/memcontrol.c          | 24 ++++++++++++++++++++++++
->  mm/vmscan.c              |  2 +-
->  3 files changed, 29 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> index 1eac79ce57d4..85cfc910dde4 100644
-> --- a/include/linux/shrinker.h
-> +++ b/include/linux/shrinker.h
-> @@ -78,6 +78,10 @@ struct shrinker {
->  };
->  #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
->  
-> +#ifdef CONFIG_MEMCG
-> +extern int shrinker_nr_max;
-> +#endif
-> +
->  /* Flags */
->  #define SHRINKER_REGISTERED	(1 << 0)
->  #define SHRINKER_NUMA_AWARE	(1 << 1)
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 321d1818ce3d..1f191a15bee1 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -59,6 +59,7 @@
->  #include <linux/tracehook.h>
->  #include <linux/psi.h>
->  #include <linux/seq_buf.h>
-> +#include <linux/shrinker.h>
->  #include "internal.h"
->  #include <net/sock.h>
->  #include <net/ip.h>
-> @@ -612,6 +613,28 @@ void memcg_set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
->  	}
->  }
->  
-> +static void memcg_reparent_shrinker_deferred(struct mem_cgroup *memcg)
-> +{
-> +	int i, nid;
-> +	long nr;
-> +	struct mem_cgroup *parent;
-> +	struct memcg_shrinker_deferred *child_deferred, *parent_deferred;
-> +
-> +	parent = parent_mem_cgroup(memcg);
-> +	if (!parent)
-> +		parent = root_mem_cgroup;
-> +
-> +	for_each_node(nid) {
-> +		child_deferred = memcg->nodeinfo[nid]->shrinker_deferred;
-> +		parent_deferred = parent->nodeinfo[nid]->shrinker_deferred;
-> +		for (i = 0; i < shrinker_nr_max; i ++) {
-> +			nr = atomic_long_read(&child_deferred->nr_deferred[i]);
-> +			atomic_long_add(nr,
-> +				&parent_deferred->nr_deferred[i]);
-> +		}
-> +	}
-> +}
+> It does look very simple.
 
-I would place this function in vmscan.c alongside the
-shrink_slab_set_nr_deferred_memcg() function so that all the
-accounting is in the one place.
+Agree, hard to imagine it being much simpler than this.
 
-> +
->  /**
->   * mem_cgroup_css_from_page - css of the memcg associated with a page
->   * @page: page of interest
-> @@ -5543,6 +5566,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
->  	page_counter_set_low(&memcg->memory, 0);
->  
->  	memcg_offline_kmem(memcg);
-> +	memcg_reparent_shrinker_deferred(memcg);
->  	wb_memcg_offline(memcg);
->  
->  	drain_all_stock(memcg);
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 8d5bfd818acd..693a41e89969 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -201,7 +201,7 @@ DECLARE_RWSEM(shrinker_rwsem);
->  #define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
->  
->  static DEFINE_IDR(shrinker_idr);
-> -static int shrinker_nr_max;
-> +int shrinker_nr_max;
+> It strikes me that io_statx would be another user of this. But it
+> obviously depends on what the actual io_uring users do..
 
-Then we don't need to make yet another variable global...
+Indeed, I did mention that in my email from the other thread earlier
+today, and I think it's potentially an even bigger deal than nonblock
+open. Lots of workloads are very stat intensive. So I did do that:
 
-Cheers,
+https://git.kernel.dk/cgit/linux-block/log/?h=nonblock-path-lookup
 
-Dave.
+it's the top three patches there. Basically all local file systems are
+fine with AT_STATX_LOOKUP just basically mapping to LOOKUP_NONBLOCK,
+various (mostly) networked file systems like to do revalidation and
+other kinds of communication as part of getattr. Hence the second patch
+there is needed to have some:
+
+if (query_flags & AT_STATX_NONBLOCK)
+	return -EAGAIN;
+
+constructs in there to avoid it in the nonblock path. Outside of that,
+it's very trivial and just works. I didn't include it in this posting to
+avoid detracting from the core work, but I definitely think we should be
+doing that as well.
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
+
