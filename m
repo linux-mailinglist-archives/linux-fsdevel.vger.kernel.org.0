@@ -2,82 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E17AF2DAE9F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 15:12:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80D312DAF7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 15:57:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729344AbgLOOK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 09:10:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39462 "EHLO
+        id S1729948AbgLOOsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 09:48:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729341AbgLOOKp (ORCPT
+        with ESMTP id S1729936AbgLOOsG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 09:10:45 -0500
+        Tue, 15 Dec 2020 09:48:06 -0500
 Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE33C0617A7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 06:10:03 -0800 (PST)
-Received: by mail-ej1-x643.google.com with SMTP id w1so23204810ejf.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 06:10:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BCEC06179C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 06:47:26 -0800 (PST)
+Received: by mail-ej1-x643.google.com with SMTP id 6so13431022ejz.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 06:47:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=NO1cdDn3rveUCdkxTy4K6Bz123za1ZPbmRLXpINNXFQ=;
-        b=Cj5TDFrP2UXo3tmwVUdTH7+GGb5RV0uPmO3jFGipk9hla1suqNd371yVeP25Rb7d8R
-         95thK+Kh0JbtyxNnRkK1QRrqiZ6+aDvVemT0KoFkKgrhdDhdeIjuWDIIBY1fJxz/XCAD
-         5GZ+TCH1ctDULr82sPdO6oNK483aeK/vBbo5gKWwqupJhRnSgpppS20wv5YTPvbMj/Ks
-         oeCMBtDzYPiSCngc2EEZ7N5Qv1l88T9Ndv4Df6mkbk9phQGuT+4qPHBxfWzfQG2sW5Ra
-         ipaEaUl9qeKnOtRDEfXw3a1Y+gzWybJBjz8NjbwoO4TpGQhICs7CJx6+gWBEE/GzU6JV
-         jk6A==
+        bh=uXsidnHN6xvD4rkSp2MPrzKExLvD2s/CBWkJh4xL/c8=;
+        b=hmgJIO6hC+zCQO5jBDz/KqQyAqz5+66A1CXpR5ppJ3Q/jcTKWX8eO+xYDY4zLAjzNr
+         kFDPci2DvyPzOKMfd/qC9QytiEQvX19bwaw/0YJpzMd/+c8ZyP7aFmwrx99A1Cr24HFb
+         ihbxVMLUFLBpNilkbDc1PmzUWzAF4mzFrnMfiKzPXAmRoCJ/uwMgWCry/RDwkCBK2pUu
+         kXrPH0Ict45lQScdNP4sQaALfJEwZ32bed71d9OnWnpJt2kxo6DQlxwxmRpBNQtkxrgQ
+         B6dGvIZyc21A8sViRde/+qJLxJP1qAR+ozUGcdG901Um+YPCtXBIpzZKFDgSh2I1xg3P
+         PIVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=NO1cdDn3rveUCdkxTy4K6Bz123za1ZPbmRLXpINNXFQ=;
-        b=HpSK9QXibs12imTTAW5gLfsKQfTs8kyimn36f7rjZ/cDlh8x7lS4+WCELtbIL/3Fx7
-         20YrU6c6CPH79XDIgL6myzLiREasuVm704mlx2ZD/U099nrja4Iqb8OAXhpyuVvygnul
-         9azS2wr+byL4bSYl5ZTs56ywb709QuE5CBfVIZ1mVZt73XMTn3em4lLxvbQ3Dk/FJGwT
-         rMRgC29jv21+jsXq0Zbe+a9C+UT2rsLINRgyDRc94qFQviPkcY+2m/8ACi0+C/VY4jEE
-         rzFFgq6sTYRg9HwURbxYGS/5v2vG4As/kFdBkQ0vjcvksMC9jwodE3EJ9WeHBHPdnxxQ
-         NHcw==
-X-Gm-Message-State: AOAM530BL28WA5xXxjico99aYPuDtI+N7pU937X1uN2BxK0m3RQKcRD6
-        mvo2ZbKS2z9zizTDDhQEevRv3A==
-X-Google-Smtp-Source: ABdhPJzPRYE9A5cY1G5sZnG6cPGdS4cAxTTw3KczQzQ73+UAxRhdd0rjjZ9pos0m/8EZVDC0oufo1A==
-X-Received: by 2002:a17:906:8587:: with SMTP id v7mr26396217ejx.381.1608041402353;
-        Tue, 15 Dec 2020 06:10:02 -0800 (PST)
+        bh=uXsidnHN6xvD4rkSp2MPrzKExLvD2s/CBWkJh4xL/c8=;
+        b=nfFXBisYxO6lbTJa/GMMW01s5TjyuqAq4zHTCrosA78W22bj/IhCZ4GxnSl9EwEcqB
+         bgPI5YWIXrUB0O5SjJVucPwULq/D0MJhACCZx3IgUiGn+6tJMRm+gJ7q8qQi4j1BwpBW
+         ufY777L5tMY2TEoCK2LF0CJERH0V3JD9nUl7BCkoErrQiZ3YFC4drNOHGOAX1N/8ESMs
+         ykEBvz+tGZrh/cTPSy8u3zONAs0nrdc/RlZUQyxFtehngbQa4ImEqkRBcRXjN55qF81G
+         K5xh5VI2RHbiZU6NheM+gOX/HpJBk5SV/woBWm6ny5YaC6cJQcLJh0ejctZzL0vT571v
+         74iw==
+X-Gm-Message-State: AOAM531mDWPhlIDS3zh350iO2BbLymJbZbeuqaMqCII2EYUZljVOu3QK
+        UDwaRvbkJLCIe//+MIIAmbMUiQ==
+X-Google-Smtp-Source: ABdhPJz4zOZt3U3vN8cP9uNm7Tb9AU0tWJaQj6vSyL8M0CvnB/RMpBpdngGOwVVF+cPNFCPh9DwyHg==
+X-Received: by 2002:a17:906:134f:: with SMTP id x15mr27667216ejb.278.1608043644908;
+        Tue, 15 Dec 2020 06:47:24 -0800 (PST)
 Received: from localhost ([2620:10d:c093:400::5:d6dd])
-        by smtp.gmail.com with ESMTPSA id d4sm19109737edq.36.2020.12.15.06.10.01
+        by smtp.gmail.com with ESMTPSA id h15sm1759058ejq.29.2020.12.15.06.47.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Dec 2020 06:10:01 -0800 (PST)
-Date:   Tue, 15 Dec 2020 15:07:54 +0100
+        Tue, 15 Dec 2020 06:47:23 -0800 (PST)
+Date:   Tue, 15 Dec 2020 15:45:16 +0100
 From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     guro@fb.com, ktkhai@virtuozzo.com, shakeelb@google.com,
-        david@fromorbit.com, mhocko@suse.com, akpm@linux-foundation.org,
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Yang Shi <shy828301@gmail.com>, guro@fb.com, ktkhai@virtuozzo.com,
+        shakeelb@google.com, mhocko@suse.com, akpm@linux-foundation.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH 2/9] mm: memcontrol: use shrinker_rwsem to protect
- shrinker_maps allocation
-Message-ID: <20201215140754.GD379720@cmpxchg.org>
+Subject: Re: [v2 PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
+Message-ID: <20201215144516.GE379720@cmpxchg.org>
 References: <20201214223722.232537-1-shy828301@gmail.com>
- <20201214223722.232537-3-shy828301@gmail.com>
+ <20201214223722.232537-6-shy828301@gmail.com>
+ <20201215022233.GL3913616@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201214223722.232537-3-shy828301@gmail.com>
+In-Reply-To: <20201215022233.GL3913616@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 02:37:15PM -0800, Yang Shi wrote:
-> Since memcg_shrinker_map_size just can be changd under holding shrinker_rwsem
-> exclusively, the read side can be protected by holding read lock, so it sounds
-> superfluous to have a dedicated mutex.  This should not exacerbate the contention
-> to shrinker_rwsem since just one read side critical section is added.
+On Tue, Dec 15, 2020 at 01:22:33PM +1100, Dave Chinner wrote:
+> On Mon, Dec 14, 2020 at 02:37:18PM -0800, Yang Shi wrote:
+> > Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> > 
+> > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> > may suffer from over shrink, excessive reclaim latency, etc.
+> > 
+> > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> > 
+> > We observed this hit in our production environment which was running vfs heavy workload
+> > shown as the below tracing log:
+> > 
+> > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> > cache items 246404277 delta 31345 total_scan 123202138
+> > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> > last shrinker return val 123186855
+> > 
+> > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> > This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> > 
+> > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> > better isolation.
+> > 
+> > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> > 
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  include/linux/memcontrol.h |   9 +++
+> >  mm/memcontrol.c            | 110 ++++++++++++++++++++++++++++++++++++-
+> >  mm/vmscan.c                |   4 ++
+> >  3 files changed, 120 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index 922a7f600465..1b343b268359 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -92,6 +92,13 @@ struct lruvec_stat {
+> >  	long count[NR_VM_NODE_STAT_ITEMS];
+> >  };
+> >  
+> > +
+> > +/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
+> > +struct memcg_shrinker_deferred {
+> > +	struct rcu_head rcu;
+> > +	atomic_long_t nr_deferred[];
+> > +};
 > 
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> So you're effectively copy and pasting the memcg_shrinker_map
+> infrastructure and doubling the number of allocations/frees required
+> to set up/tear down a memcg? Why not add it to the struct
+> memcg_shrinker_map like this:
+> 
+> struct memcg_shrinker_map {
+>         struct rcu_head	rcu;
+> 	unsigned long	*map;
+> 	atomic_long_t	*nr_deferred;
+> };
+> 
+> And when you dynamically allocate the structure, set the map and
+> nr_deferred pointers to the correct offset in the allocated range.
+> 
+> Then this patch is really only changes to the size of the chunk
+> being allocated, setting up the pointers and copying the relevant
+> data from the old to new.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Fully agreed.
 
-Thanks Yang, this is a step in the right direction. It would still be
-nice to also drop memcg_shrinker_map_size and (trivially) derive that
-value from shrinker_nr_max where necessary. It is duplicate state.
+In the longer-term, it may be nice to further expand this and make
+this the generalized intersection between cgroup, node and shrinkers.
+
+There is large overlap with list_lru e.g. - with data of identical
+scope and lifetime, but duplicative callbacks and management. If we
+folded list_lru_memcg into the above data structure, we could also
+generalize and reuse the existing callbacks.
