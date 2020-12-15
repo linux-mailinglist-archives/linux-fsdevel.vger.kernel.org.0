@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 056BE2DAE05
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 14:32:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4E0C2DAE12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 14:37:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbgLONbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 08:31:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42888 "EHLO mx2.suse.de"
+        id S1728324AbgLONgF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 08:36:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45814 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbgLONb0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 08:31:26 -0500
+        id S1728283AbgLONgB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Dec 2020 08:36:01 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1608039039; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1608039314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=3XPa6B5Agc5X6gtCtpcj1Z+hTlPDBybjc3CU9O9vvm8=;
-        b=lwTzTrU4ZpC9WAg1Lcxkfq6ExedXTJyBvr3P+BNvrZTJMYbNYj15XQHLVfMroQosvrZ4mr
-        fvFXk7otxv0Q/1eEnx3sQmIHMMBgLHwpNq0mUHe5mQfYL7zi6AqG9keKKuL5R9rcMaOTam
-        T+c6FIrXI3rjbfewiF6OnCYKHHoY8vo=
+        bh=E0ZZlFIFNjZLjI1zJKZsoEml0sOwnDtgK026kYKenBI=;
+        b=Z6ZxxODUV2XHWmRmYCV1o9D/nJq+SiPOW/aVOWIkMz7l8JSXApKVfT7woLR4dunzRE3lHN
+        bXNP2YJ/wA77wTuYlDWHXlsn7YrOnOYBxfsmB3r0/ill/VsLwPkkVG+GZK8GpOcIsm4WT6
+        EsTvSABPjTzw/lP1Dj2nyEqnl2U4TGA=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 52CBBAD64;
-        Tue, 15 Dec 2020 13:30:39 +0000 (UTC)
-Date:   Tue, 15 Dec 2020 14:30:38 +0100
+        by mx2.suse.de (Postfix) with ESMTP id 632F9AF45;
+        Tue, 15 Dec 2020 13:35:14 +0000 (UTC)
+Date:   Tue, 15 Dec 2020 14:35:14 +0100
 From:   Michal Hocko <mhocko@suse.com>
 To:     Muchun Song <songmuchun@bytedance.com>
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org, adobriyan@gmail.com,
@@ -33,184 +33,194 @@ Cc:     gregkh@linuxfoundation.org, rafael@kernel.org, adobriyan@gmail.com,
         neilb@suse.de, iamjoonsoo.kim@lge.com, rdunlap@infradead.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 2/7] mm: memcontrol: convert NR_ANON_THPS account to
- pages
-Message-ID: <20201215133038.GO32193@dhcp22.suse.cz>
+Subject: Re: [PATCH v3 7/7] mm: memcontrol: make the slab calculation
+ consistent
+Message-ID: <20201215133514.GP32193@dhcp22.suse.cz>
 References: <20201208041847.72122-1-songmuchun@bytedance.com>
- <20201208041847.72122-3-songmuchun@bytedance.com>
+ <20201208041847.72122-8-songmuchun@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201208041847.72122-3-songmuchun@bytedance.com>
+In-Reply-To: <20201208041847.72122-8-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 08-12-20 12:18:42, Muchun Song wrote:
-> The unit of NR_ANON_THPS is HPAGE_PMD_NR. Convert the NR_ANON_THPS
-> account to pages.
+On Tue 08-12-20 12:18:47, Muchun Song wrote:
+> Although the ratio of the slab is one, we also should read the ratio
+> from the related memory_stats instead of hard-coding. And the local
+> variable of size is already the value of slab_unreclaimable. So we
+> do not need to read again.
+>
+> We can drop the ratio in struct memory_stat. This can make the code
+> clean and simple. And get rid of the awkward mix of static and runtime
+> initialization of the memory_stats table.
 
-This changelog could benefit from some improvements. First of all you
-should be clear about the motivation. I believe the previous feedback
-was also to explicitly mention what effect this has on the pcp
-accounting flushing.
+This changelog doesn't explain, what is the problem, why do we care and
+why the additional code is worthwile.
 
 > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 > ---
->  drivers/base/node.c |  3 +--
->  fs/proc/meminfo.c   |  2 +-
->  mm/huge_memory.c    |  3 ++-
->  mm/memcontrol.c     | 20 ++++++--------------
->  mm/page_alloc.c     |  2 +-
->  mm/rmap.c           |  7 ++++---
->  6 files changed, 15 insertions(+), 22 deletions(-)
+>  mm/memcontrol.c | 112 ++++++++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 73 insertions(+), 39 deletions(-)
 > 
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index 04f71c7bc3f8..ec35cb567940 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -461,8 +461,7 @@ static ssize_t node_read_meminfo(struct device *dev,
->  			     nid, K(sunreclaimable)
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  			     ,
-> -			     nid, K(node_page_state(pgdat, NR_ANON_THPS) *
-> -				    HPAGE_PMD_NR),
-> +			     nid, K(node_page_state(pgdat, NR_ANON_THPS)),
->  			     nid, K(node_page_state(pgdat, NR_SHMEM_THPS) *
->  				    HPAGE_PMD_NR),
->  			     nid, K(node_page_state(pgdat, NR_SHMEM_PMDMAPPED) *
-> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-> index d6fc74619625..a635c8a84ddf 100644
-> --- a/fs/proc/meminfo.c
-> +++ b/fs/proc/meminfo.c
-> @@ -129,7 +129,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
->  
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  	show_val_kb(m, "AnonHugePages:  ",
-> -		    global_node_page_state(NR_ANON_THPS) * HPAGE_PMD_NR);
-> +		    global_node_page_state(NR_ANON_THPS));
->  	show_val_kb(m, "ShmemHugePages: ",
->  		    global_node_page_state(NR_SHMEM_THPS) * HPAGE_PMD_NR);
->  	show_val_kb(m, "ShmemPmdMapped: ",
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 10dd3cae5f53..66ec454120de 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2178,7 +2178,8 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->  		lock_page_memcg(page);
->  		if (atomic_add_negative(-1, compound_mapcount_ptr(page))) {
->  			/* Last compound_mapcount is gone. */
-> -			__dec_lruvec_page_state(page, NR_ANON_THPS);
-> +			__mod_lruvec_page_state(page, NR_ANON_THPS,
-> +						-HPAGE_PMD_NR);
->  			if (TestClearPageDoubleMap(page)) {
->  				/* No need in mapcount reference anymore */
->  				for (i = 0; i < HPAGE_PMD_NR; i++)
 > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 8818bf64d6fe..b18e25a5cdf3 100644
+> index a40797a27f87..841ea37cc123 100644
 > --- a/mm/memcontrol.c
 > +++ b/mm/memcontrol.c
-> @@ -1532,7 +1532,7 @@ static struct memory_stat memory_stats[] = {
->  	 * on some architectures, the macro of HPAGE_PMD_SIZE is not
->  	 * constant(e.g. powerpc).
->  	 */
-> -	{ "anon_thp", 0, NR_ANON_THPS },
-> +	{ "anon_thp", PAGE_SIZE, NR_ANON_THPS },
->  	{ "file_thp", 0, NR_FILE_THPS },
->  	{ "shmem_thp", 0, NR_SHMEM_THPS },
->  #endif
-> @@ -1565,8 +1565,7 @@ static int __init memory_stats_init(void)
+> @@ -1511,49 +1511,78 @@ static bool mem_cgroup_wait_acct_move(struct mem_cgroup *memcg)
 >  
->  	for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
+>  struct memory_stat {
+>  	const char *name;
+> -	unsigned int ratio;
+>  	unsigned int idx;
+>  };
+>  
+>  static const struct memory_stat memory_stats[] = {
+> -	{ "anon", PAGE_SIZE, NR_ANON_MAPPED },
+> -	{ "file", PAGE_SIZE, NR_FILE_PAGES },
+> -	{ "kernel_stack", 1024, NR_KERNEL_STACK_KB },
+> -	{ "pagetables", PAGE_SIZE, NR_PAGETABLE },
+> -	{ "percpu", 1, MEMCG_PERCPU_B },
+> -	{ "sock", PAGE_SIZE, MEMCG_SOCK },
+> -	{ "shmem", PAGE_SIZE, NR_SHMEM },
+> -	{ "file_mapped", PAGE_SIZE, NR_FILE_MAPPED },
+> -	{ "file_dirty", PAGE_SIZE, NR_FILE_DIRTY },
+> -	{ "file_writeback", PAGE_SIZE, NR_WRITEBACK },
+> +	{ "anon",			NR_ANON_MAPPED			},
+> +	{ "file",			NR_FILE_PAGES			},
+> +	{ "kernel_stack",		NR_KERNEL_STACK_KB		},
+> +	{ "pagetables",			NR_PAGETABLE			},
+> +	{ "percpu",			MEMCG_PERCPU_B			},
+> +	{ "sock",			MEMCG_SOCK			},
+> +	{ "shmem",			NR_SHMEM			},
+> +	{ "file_mapped",		NR_FILE_MAPPED			},
+> +	{ "file_dirty",			NR_FILE_DIRTY			},
+> +	{ "file_writeback",		NR_WRITEBACK			},
 >  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -		if (memory_stats[i].idx == NR_ANON_THPS ||
-> -		    memory_stats[i].idx == NR_FILE_THPS ||
-> +		if (memory_stats[i].idx == NR_FILE_THPS ||
->  		    memory_stats[i].idx == NR_SHMEM_THPS)
->  			memory_stats[i].ratio = HPAGE_PMD_SIZE;
+> -	{ "anon_thp", PAGE_SIZE, NR_ANON_THPS },
+> -	{ "file_thp", PAGE_SIZE, NR_FILE_THPS },
+> -	{ "shmem_thp", PAGE_SIZE, NR_SHMEM_THPS },
+> +	{ "anon_thp",			NR_ANON_THPS			},
+> +	{ "file_thp",			NR_FILE_THPS			},
+> +	{ "shmem_thp",			NR_SHMEM_THPS			},
 >  #endif
-> @@ -4088,10 +4087,6 @@ static int memcg_stat_show(struct seq_file *m, void *v)
->  		if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
->  			continue;
->  		nr = memcg_page_state_local(memcg, memcg1_stats[i]);
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -		if (memcg1_stats[i] == NR_ANON_THPS)
-> -			nr *= HPAGE_PMD_NR;
-> -#endif
->  		seq_printf(m, "%s %lu\n", memcg1_stat_names[i], nr * PAGE_SIZE);
->  	}
->  
-> @@ -4122,10 +4117,6 @@ static int memcg_stat_show(struct seq_file *m, void *v)
->  		if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
->  			continue;
->  		nr = memcg_page_state(memcg, memcg1_stats[i]);
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -		if (memcg1_stats[i] == NR_ANON_THPS)
-> -			nr *= HPAGE_PMD_NR;
-> -#endif
->  		seq_printf(m, "total_%s %llu\n", memcg1_stat_names[i],
->  						(u64)nr * PAGE_SIZE);
->  	}
-> @@ -5653,10 +5644,11 @@ static int mem_cgroup_move_account(struct page *page,
->  			__mod_lruvec_state(from_vec, NR_ANON_MAPPED, -nr_pages);
->  			__mod_lruvec_state(to_vec, NR_ANON_MAPPED, nr_pages);
->  			if (PageTransHuge(page)) {
-> -				__dec_lruvec_state(from_vec, NR_ANON_THPS);
-> -				__inc_lruvec_state(to_vec, NR_ANON_THPS);
-> +				__mod_lruvec_state(from_vec, NR_ANON_THPS,
-> +						   -nr_pages);
-> +				__mod_lruvec_state(to_vec, NR_ANON_THPS,
-> +						   nr_pages);
->  			}
+> -	{ "inactive_anon", PAGE_SIZE, NR_INACTIVE_ANON },
+> -	{ "active_anon", PAGE_SIZE, NR_ACTIVE_ANON },
+> -	{ "inactive_file", PAGE_SIZE, NR_INACTIVE_FILE },
+> -	{ "active_file", PAGE_SIZE, NR_ACTIVE_FILE },
+> -	{ "unevictable", PAGE_SIZE, NR_UNEVICTABLE },
 > -
+> -	/*
+> -	 * Note: The slab_reclaimable and slab_unreclaimable must be
+> -	 * together and slab_reclaimable must be in front.
+> -	 */
+> -	{ "slab_reclaimable", 1, NR_SLAB_RECLAIMABLE_B },
+> -	{ "slab_unreclaimable", 1, NR_SLAB_UNRECLAIMABLE_B },
+> +	{ "inactive_anon",		NR_INACTIVE_ANON		},
+> +	{ "active_anon",		NR_ACTIVE_ANON			},
+> +	{ "inactive_file",		NR_INACTIVE_FILE		},
+> +	{ "active_file",		NR_ACTIVE_FILE			},
+> +	{ "unevictable",		NR_UNEVICTABLE			},
+> +	{ "slab_reclaimable",		NR_SLAB_RECLAIMABLE_B		},
+> +	{ "slab_unreclaimable",		NR_SLAB_UNRECLAIMABLE_B		},
+>  
+>  	/* The memory events */
+> -	{ "workingset_refault_anon", 1, WORKINGSET_REFAULT_ANON },
+> -	{ "workingset_refault_file", 1, WORKINGSET_REFAULT_FILE },
+> -	{ "workingset_activate_anon", 1, WORKINGSET_ACTIVATE_ANON },
+> -	{ "workingset_activate_file", 1, WORKINGSET_ACTIVATE_FILE },
+> -	{ "workingset_restore_anon", 1, WORKINGSET_RESTORE_ANON },
+> -	{ "workingset_restore_file", 1, WORKINGSET_RESTORE_FILE },
+> -	{ "workingset_nodereclaim", 1, WORKINGSET_NODERECLAIM },
+> +	{ "workingset_refault_anon",	WORKINGSET_REFAULT_ANON		},
+> +	{ "workingset_refault_file",	WORKINGSET_REFAULT_FILE		},
+> +	{ "workingset_activate_anon",	WORKINGSET_ACTIVATE_ANON	},
+> +	{ "workingset_activate_file",	WORKINGSET_ACTIVATE_FILE	},
+> +	{ "workingset_restore_anon",	WORKINGSET_RESTORE_ANON		},
+> +	{ "workingset_restore_file",	WORKINGSET_RESTORE_FILE		},
+> +	{ "workingset_nodereclaim",	WORKINGSET_NODERECLAIM		},
+>  };
+>  
+> +/* Translate stat items to the correct unit for memory.stat output */
+> +static int memcg_page_state_unit(int item)
+> +{
+> +	int unit;
+> +
+> +	switch (item) {
+> +	case MEMCG_PERCPU_B:
+> +	case NR_SLAB_RECLAIMABLE_B:
+> +	case NR_SLAB_UNRECLAIMABLE_B:
+> +	case WORKINGSET_REFAULT_ANON:
+> +	case WORKINGSET_REFAULT_FILE:
+> +	case WORKINGSET_ACTIVATE_ANON:
+> +	case WORKINGSET_ACTIVATE_FILE:
+> +	case WORKINGSET_RESTORE_ANON:
+> +	case WORKINGSET_RESTORE_FILE:
+> +	case WORKINGSET_NODERECLAIM:
+> +		unit = 1;
+> +		break;
+> +	case NR_KERNEL_STACK_KB:
+> +		unit = SZ_1K;
+> +		break;
+> +	default:
+> +		unit = PAGE_SIZE;
+> +		break;
+> +	}
+> +
+> +	return unit;
+> +}
+> +
+> +static inline unsigned long memcg_page_state_output(struct mem_cgroup *memcg,
+> +						    int item)
+> +{
+> +	return memcg_page_state(memcg, item) * memcg_page_state_unit(item);
+> +}
+> +
+>  static char *memory_stat_format(struct mem_cgroup *memcg)
+>  {
+>  	struct seq_buf s;
+> @@ -1577,13 +1606,12 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
+>  	for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
+>  		u64 size;
+>  
+> -		size = memcg_page_state(memcg, memory_stats[i].idx);
+> -		size *= memory_stats[i].ratio;
+> +		size = memcg_page_state_output(memcg, memory_stats[i].idx);
+>  		seq_buf_printf(&s, "%s %llu\n", memory_stats[i].name, size);
+>  
+>  		if (unlikely(memory_stats[i].idx == NR_SLAB_UNRECLAIMABLE_B)) {
+> -			size = memcg_page_state(memcg, NR_SLAB_RECLAIMABLE_B) +
+> -			       memcg_page_state(memcg, NR_SLAB_UNRECLAIMABLE_B);
+> +			size += memcg_page_state_output(memcg,
+> +							NR_SLAB_RECLAIMABLE_B);
+>  			seq_buf_printf(&s, "slab %llu\n", size);
 >  		}
->  	} else {
->  		__mod_lruvec_state(from_vec, NR_FILE_PAGES, -nr_pages);
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 469e28f95ce7..1700f52b7869 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5580,7 +5580,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
->  			K(node_page_state(pgdat, NR_SHMEM_THPS) * HPAGE_PMD_NR),
->  			K(node_page_state(pgdat, NR_SHMEM_PMDMAPPED)
->  					* HPAGE_PMD_NR),
-> -			K(node_page_state(pgdat, NR_ANON_THPS) * HPAGE_PMD_NR),
-> +			K(node_page_state(pgdat, NR_ANON_THPS)),
->  #endif
->  			K(node_page_state(pgdat, NR_WRITEBACK_TEMP)),
->  			node_page_state(pgdat, NR_KERNEL_STACK_KB),
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 08c56aaf72eb..f59e92e26b61 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1144,7 +1144,8 @@ void do_page_add_anon_rmap(struct page *page,
->  		 * disabled.
->  		 */
->  		if (compound)
-> -			__inc_lruvec_page_state(page, NR_ANON_THPS);
-> +			__mod_lruvec_page_state(page, NR_ANON_THPS,
-> +						HPAGE_PMD_NR);
->  		__mod_lruvec_page_state(page, NR_ANON_MAPPED, nr);
 >  	}
+> @@ -6377,6 +6405,12 @@ static int memory_stat_show(struct seq_file *m, void *v)
+>  }
 >  
-> @@ -1186,7 +1187,7 @@ void page_add_new_anon_rmap(struct page *page,
->  		if (hpage_pincount_available(page))
->  			atomic_set(compound_pincount_ptr(page), 0);
+>  #ifdef CONFIG_NUMA
+> +static inline unsigned long lruvec_page_state_output(struct lruvec *lruvec,
+> +						     int item)
+> +{
+> +	return lruvec_page_state(lruvec, item) * memcg_page_state_unit(item);
+> +}
+> +
+>  static int memory_numa_stat_show(struct seq_file *m, void *v)
+>  {
+>  	int i;
+> @@ -6394,8 +6428,8 @@ static int memory_numa_stat_show(struct seq_file *m, void *v)
+>  			struct lruvec *lruvec;
 >  
-> -		__inc_lruvec_page_state(page, NR_ANON_THPS);
-> +		__mod_lruvec_page_state(page, NR_ANON_THPS, HPAGE_PMD_NR);
->  	} else {
->  		/* Anon THP always mapped first with PMD */
->  		VM_BUG_ON_PAGE(PageTransCompound(page), page);
-> @@ -1292,7 +1293,7 @@ static void page_remove_anon_compound_rmap(struct page *page)
->  	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
->  		return;
->  
-> -	__dec_lruvec_page_state(page, NR_ANON_THPS);
-> +	__mod_lruvec_page_state(page, NR_ANON_THPS, -HPAGE_PMD_NR);
->  
->  	if (TestClearPageDoubleMap(page)) {
->  		/*
+>  			lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(nid));
+> -			size = lruvec_page_state(lruvec, memory_stats[i].idx);
+> -			size *= memory_stats[i].ratio;
+> +			size = lruvec_page_state_output(lruvec,
+> +							memory_stats[i].idx);
+>  			seq_printf(m, " N%d=%llu", nid, size);
+>  		}
+>  		seq_putc(m, '\n');
 > -- 
 > 2.11.0
 
