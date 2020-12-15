@@ -2,184 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAAC52DA467
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 00:54:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5955A2DA4A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 01:26:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbgLNXxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 18:53:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727942AbgLNXxx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 18:53:53 -0500
-Message-ID: <979d78d04d882744d944f5723ad7a98b14badf8b.camel@kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607989992;
-        bh=fdhvh40XSvNJTdZhesTxxgsXw8agxPu12C7HDN0rG+Q=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Xzw/f2W+tv9XAeAbW1cwl5413sLDMIzy2+2l/ACVTbAg6Uc7lo8XUeylTQ5emPo52
-         N0rgWqWuo/VI/grdgdC4V1CuNPCTK777UdpJgll8T5tbFce59Gng5FWEec1gUKUGv/
-         dFqo1u/f2BtbkQ7IdiCUmRAIhEGQwD/weg3jmgSDtlt6p81nlKT1cDamlPECy5hUgd
-         SSEUlXggVLlfzM883WDbGcsgqJDk/QrJnkXHrtR110SqKcCWaDKhOorAaIXcw5W3An
-         YkJ5mqG/uK4tczzZALPZidv3y8sXTp3hJLTA3a2XHDo54qMk2J0fVmgGtZleRQJRve
-         oHaD27qSaWpFA==
-Subject: Re: [RFC PATCH 2/2] overlayfs: propagate errors from upper to
- overlay sb in sync_fs
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        id S1727316AbgLOAYo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 19:24:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53434 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbgLOAYo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Dec 2020 19:24:44 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 961A6C061793;
+        Mon, 14 Dec 2020 16:24:03 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id q75so16855449wme.2;
+        Mon, 14 Dec 2020 16:24:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8jc3AIzkIPReSThseVXRAPm4odmJMoGYu8KGcGUo5xA=;
+        b=UdWHcglApp9RdDZeyVfl7LsJgdxW48tzLbgNRju6ud80NwZdq8pS6rNA48XayxnD2y
+         gxp99ju2U22s0IgeHpYxNkwEmEsSWmjKvkDVgboRjCL0u2BjvWzJuRm3fQuna6NzrVJX
+         tY83rFJle/+8UqxI4cOpq7ZEPwQanA4rNBX48zfg4PVtL5ODTFYQfgYr+oKNqJ85Y/gd
+         599roSuL8vkZuUsB+DMvesJq5/Qay+HaVljVBmkn57M9MaFlDCjvpgkaWPWHAqXbqbH5
+         awkn32y9RHX7Bg8npAuH4ig4MoKopNAyVbodgQEudUlOhmPl/5BfCRzLw7S/Tb6KT7TR
+         Av8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8jc3AIzkIPReSThseVXRAPm4odmJMoGYu8KGcGUo5xA=;
+        b=JjH7Xp3ZjrUPqt0bm0f52mOdf+VEv41WWJNFd5zZmerIWueDZ4ud/4wCS4AHQn//KP
+         yz7xTY1dr+tIjnd+qTmFJ3C8nmB3UamvlZyBkQqVebySh2wZ7ewMbhPSKjjTN2EbMXMm
+         pkC+c6B1isPYgjQ+jgRfaH7J1mErUMrdZm4DAm6L3PzHI5i73sKrY0tNM94kJ21aQudX
+         2X8qjebGo3JUPuKZCgEGC7yLidNoK82iGc5aof7gyDw7T7mtssCSujCHcaBFbXw5zbef
+         DS0ix2m5rk6/U7dFwwfw66FJlxh4HHAiJlOkZrAUc6Rnyv0gvC0RpdiRGewsAWPI9Ett
+         +nVQ==
+X-Gm-Message-State: AOAM531NvqE4EFF++ZUDnUIa/hgiy0BnypCXAdurAe2lnojwulERxGBs
+        wUMdrDWQkqSSQVRaFCw/5r8V+SagMKvQzKLc
+X-Google-Smtp-Source: ABdhPJwGNnrKGp65JFv4dDtyk0FguiKKzh1xTxkYj/G+sMLant4a7Rnm4MCbD8CKdIpwjoDGsmxiog==
+X-Received: by 2002:a05:600c:258:: with SMTP id 24mr30918877wmj.16.1607991842015;
+        Mon, 14 Dec 2020 16:24:02 -0800 (PST)
+Received: from localhost.localdomain ([85.255.232.163])
+        by smtp.gmail.com with ESMTPSA id b19sm5362012wmj.37.2020.12.14.16.24.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Dec 2020 16:24:01 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     linux-block@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
-        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
-Date:   Mon, 14 Dec 2020 18:53:10 -0500
-In-Reply-To: <20201214213843.GA3453@redhat.com>
-References: <20201213132713.66864-1-jlayton@kernel.org>
-         <20201213132713.66864-3-jlayton@kernel.org>
-         <20201214213843.GA3453@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        Ming Lei <ming.lei@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH v1 0/6] no-copy bvec
+Date:   Tue, 15 Dec 2020 00:20:19 +0000
+Message-Id: <cover.1607976425.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-12-14 at 16:38 -0500, Vivek Goyal wrote:
-> On Sun, Dec 13, 2020 at 08:27:13AM -0500, Jeff Layton wrote:
-> > Peek at the upper layer's errseq_t at mount time for volatile mounts,
-> > and record it in the per-sb info. In sync_fs, check for an error since
-> > the recorded point and set it in the overlayfs superblock if there was
-> > one.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> 
-> While we are solving problem for non-volatile overlay mount, I also
-> started thinking, what about non-volatile overlay syncfs() writeback errors.
-> Looks like these will not be reported to user space at all as of now
-> (because we never update overlay_sb->s_wb_err ever).
-> 
-> A patch like this might fix it. (compile tested only).
-> 
-> overlayfs: Report syncfs() errors to user space
-> 
-> Currently, syncfs(), calls filesystem ->sync_fs() method but ignores the
-> return code. But certain writeback errors can still be reported on 
-> syncfs() by checking errors on super block.
-> 
-> ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
-> 
-> For the case of overlayfs, we never set overlayfs super block s_wb_err. That
-> means sync() will never report writeback errors on overlayfs uppon syncfs().
-> 
-> Fix this by updating overlay sb->sb_wb_err upon ->sync_fs() call. And that
-> should mean that user space syncfs() call should see writeback errors.
-> 
-> ovl_fsync() does not need anything special because if there are writeback
-> errors underlying filesystem will report it through vfs_fsync_range() return
-> code and user space will see it.
-> 
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/overlayfs/ovl_entry.h |    1 +
->  fs/overlayfs/super.c     |   14 +++++++++++---
->  2 files changed, 12 insertions(+), 3 deletions(-)
-> 
-> Index: redhat-linux/fs/overlayfs/super.c
-> ===================================================================
-> --- redhat-linux.orig/fs/overlayfs/super.c	2020-12-14 15:33:43.934400880 -0500
-> +++ redhat-linux/fs/overlayfs/super.c	2020-12-14 16:15:07.127400880 -0500
-> @@ -259,7 +259,7 @@ static int ovl_sync_fs(struct super_bloc
->  {
->  	struct ovl_fs *ofs = sb->s_fs_info;
->  	struct super_block *upper_sb;
-> -	int ret;
-> +	int ret, ret2;
->  
-> 
-> 
-> 
->  	if (!ovl_upper_mnt(ofs))
->  		return 0;
-> @@ -283,7 +283,14 @@ static int ovl_sync_fs(struct super_bloc
->  	ret = sync_filesystem(upper_sb);
->  	up_read(&upper_sb->s_umount);
->  
-> 
-> 
-> 
-> -	return ret;
-> +	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
-> +		/* Upper sb has errors since last time */
-> +		spin_lock(&ofs->errseq_lock);
-> +		ret2 = errseq_check_and_advance(&upper_sb->s_wb_err,
-> +						&sb->s_wb_err);
-> +		spin_unlock(&ofs->errseq_lock);
-> +	}
-> +	return ret ? ret : ret2;
+Instead of creating a full copy of iter->bvec into bio in direct I/O,
+the patchset makes use of the one provided. It changes semantics and
+obliges users of asynchronous kiocb to track bvec lifetime, and [1/6]
+converts the only place that doesn't.
 
-I think this is probably not quite right.
+bio_iov_iter_get_pages() is still does iov_iter_advance(), which is
+not great, but neccessary for revert to work. It's desirable to have
+a fast version of iov_iter_advance(i, i->count), so we may want to
+hack something up for that. E.g. allow to not keep it consistent
+in some cases when i->count==0. Also we can add a separate bio pool
+without inlined bvec. Very easy to do and shrinks bios from 3 to 2
+cachelines.
 
-The problem I think is that the SEEN flag is always going to end up
-being set in sb->s_wb_err, and that is going to violate the desired
-semantics. If the writeback error occurred after all fd's were closed,
-then the next opener wouldn't see it and you'd lose the error.
+Also as suggested it removes BIO_WORKINGSET from direct paths: blkdev,
+iomap, fs/direct-io. Even though the last one is not very important as
+more filesystems are converted to iomap, but still looks hacky. Maybe,
+as Johannes mentioned in another thread, moving it to the writeback
+code (or other option) would be better in the end. Afterwards?
 
-We probably need a function to cleanly propagate the error from one
-errseq_t to another so that that doesn't occur. I'll have to think about
-it.
+since RFC:
+- add target_core_file patch by Christoph
+- make no-copy default behaviour, remove iter flag
+- iter_advance() instead of hacks to revert to work
+- add bvec iter_advance() optimisation patch
+- remove PSI annotations from direct IO (iomap, block and fs/direct)
+- note in d/f/porting
 
->  }
->  
-> 
-> 
-> 
->  /**
-> @@ -1873,6 +1880,7 @@ static int ovl_fill_super(struct super_b
->  	if (!cred)
->  		goto out_err;
->  
-> 
-> 
-> 
-> +	spin_lock_init(&ofs->errseq_lock);
->  	/* Is there a reason anyone would want not to share whiteouts? */
->  	ofs->share_whiteout = true;
->  
-> 
-> 
-> 
-> @@ -1945,7 +1953,7 @@ static int ovl_fill_super(struct super_b
->  
-> 
-> 
-> 
->  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
->  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> -
-> +		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
->  	}
->  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
->  	err = PTR_ERR(oe);
-> Index: redhat-linux/fs/overlayfs/ovl_entry.h
-> ===================================================================
-> --- redhat-linux.orig/fs/overlayfs/ovl_entry.h	2020-12-14 15:33:43.934400880 -0500
-> +++ redhat-linux/fs/overlayfs/ovl_entry.h	2020-12-14 15:34:13.509400880 -0500
-> @@ -79,6 +79,7 @@ struct ovl_fs {
->  	atomic_long_t last_ino;
->  	/* Whiteout dentry cache */
->  	struct dentry *whiteout;
-> +	spinlock_t errseq_lock;
->  };
->  
-> 
-> 
-> 
->  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> 
+Christoph Hellwig (1):
+  target/file: allocate the bvec array as part of struct
+    target_core_file_cmd
+
+Pavel Begunkov (5):
+  iov_iter: optimise bvec iov_iter_advance()
+  bio: deduplicate adding a page into bio
+  block/psi: remove PSI annotations from direct IO
+  bio: add a helper calculating nr segments to alloc
+  block/iomap: don't copy bvec for direct IO
+
+ Documentation/filesystems/porting.rst |   9 +++
+ block/bio.c                           | 103 ++++++++++++--------------
+ drivers/target/target_core_file.c     |  20 ++---
+ fs/block_dev.c                        |   7 +-
+ fs/direct-io.c                        |   2 +
+ fs/iomap/direct-io.c                  |   9 +--
+ include/linux/bio.h                   |   9 +++
+ lib/iov_iter.c                        |  19 +++++
+ 8 files changed, 102 insertions(+), 76 deletions(-)
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.24.0
 
