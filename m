@@ -2,187 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3637E2DB6E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 00:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C89BF2DB6F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 00:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbgLOXIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 18:08:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730553AbgLOXIj (ORCPT
+        id S1729704AbgLOXMn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 18:12:43 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43648 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726414AbgLOXLS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 18:08:39 -0500
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93EFCC061793;
-        Tue, 15 Dec 2020 15:07:58 -0800 (PST)
-Received: by mail-ej1-x641.google.com with SMTP id lt17so30083002ejb.3;
-        Tue, 15 Dec 2020 15:07:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r18zDPp7Li8nfMcyLfci2xWIPMPHZANppnoHDsk75xs=;
-        b=BJXxwhtq9T0BneVaLpbysNqCfNj2z9hBKFp78OPn1ACejUsdztd9OOirIEDwa4P1xv
-         yDQrcoIYNgx+D76GNcecaKzWDQF9bRP7xIpQlG/ZqklDKfYatnF4CbSKnix5mFJqHfrx
-         g8xFsZGjd4bX87d9wxFOK3jw803djSIy+4NHEQJuSNrmRW2nunTEPEBLaesVzpxEHsQD
-         fCbChOmtVQwC0LSgTzZpyqWCxcBjhRfcbNPGzAqRmLZldWGw7TzBLzGWNaAdxSbqS1Vf
-         NQShFCEb0mIH3N7Mtd3AxavVJ8hh39f1MIwdj7j1YVp4Q0FPhMw2E6LSnLpztHmaq+36
-         58OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r18zDPp7Li8nfMcyLfci2xWIPMPHZANppnoHDsk75xs=;
-        b=ZLHq+QBKrLV7hVs73lJQxQ55NPhc/vpdW+CiBeTVur6tHaI0FT3N3a6u+rf15ihh8i
-         4h77iIGC+tjq9Wziv2LUsWD1wwbbs9fTOKVz4B+fMrmoh+3kLfyXMgRwsWDXNDtgVrbA
-         VRnHlGaFSIl5mKbsCJ32e6bNWmjzyqMGTdCxpGY+HKcJHarex7eHhCzlnbxq2fqMsaGL
-         pFnNO9LfYEExNwu/rkRzowCQCWXAOhlIuSU3RwAHur/RI7io35V+ua9p2sn9GinEtEva
-         y71z6lsuXPaiiX+4g8RA0i4Nmo7MSd7r9Iyi3MtYPiQafetSeJqelMDQQIQK6aTNUie6
-         Rmrg==
-X-Gm-Message-State: AOAM531801QLWg6bS4wUP4C+XHiplGHfhF7Iw015P7qzy5Bym/JZbvf5
-        141vbGviZe5SfeeS1IOWbymyi6SQVEvnxhu1Rqk=
-X-Google-Smtp-Source: ABdhPJyxsCJeyFmSmOBjir74ypT6mbs7+dyKRuofmup0MP7qL4k+bJETRP3WCX1h6g/EiBuDKVBIH/Xe1avfbNpRNc0=
-X-Received: by 2002:a17:906:7cc6:: with SMTP id h6mr28020461ejp.161.1608073677205;
- Tue, 15 Dec 2020 15:07:57 -0800 (PST)
+        Tue, 15 Dec 2020 18:11:18 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 1941F3C3F8B;
+        Wed, 16 Dec 2020 10:10:29 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kpJSY-004N5L-QJ; Wed, 16 Dec 2020 10:10:22 +1100
+Date:   Wed, 16 Dec 2020 10:10:22 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jane Chu <jane.chu@oracle.com>
+Cc:     Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        darrick.wong@oracle.com, dan.j.williams@intel.com, hch@lst.de,
+        song@kernel.org, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
+        y-goto@fujitsu.com
+Subject: Re: [RFC PATCH v2 0/6] fsdax: introduce fs query to support reflink
+Message-ID: <20201215231022.GL632069@dread.disaster.area>
+References: <20201123004116.2453-1-ruansy.fnst@cn.fujitsu.com>
+ <89ab4ec4-e4f0-7c17-6982-4f55bb40f574@oracle.com>
+ <bb699996-ddc8-8f3a-dc8f-2422bf990b06@cn.fujitsu.com>
+ <3b35604c-57e2-8cb5-da69-53508c998540@oracle.com>
 MIME-Version: 1.0
-References: <20201214223722.232537-1-shy828301@gmail.com> <20201214223722.232537-8-shy828301@gmail.com>
- <20201215030528.GN3913616@dread.disaster.area>
-In-Reply-To: <20201215030528.GN3913616@dread.disaster.area>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 15 Dec 2020 15:07:45 -0800
-Message-ID: <CAHbLzkoOcTuidghuR_pLsE4RX_6DiwXW+k2EQRJxrB6BDqhvBA@mail.gmail.com>
-Subject: Re: [v2 PATCH 7/9] mm: vmscan: don't need allocate
- shrinker->nr_deferred for memcg aware shrinkers
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3b35604c-57e2-8cb5-da69-53508c998540@oracle.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=IkcTkHD0fZMA:10 a=zTNgK-yGK50A:10 a=7-415B0cAAAA:8
+        a=1WtExyGbPUdzLH7rxhUA:9 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 7:05 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Mon, Dec 14, 2020 at 02:37:20PM -0800, Yang Shi wrote:
-> > Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
-> > allocate shrinker->nr_deferred for such shrinkers anymore.
-> >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  mm/vmscan.c | 28 ++++++++++++++--------------
-> >  1 file changed, 14 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index bce8cf44eca2..8d5bfd818acd 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -420,7 +420,15 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
-> >   */
-> >  int prealloc_shrinker(struct shrinker *shrinker)
-> >  {
-> > -     unsigned int size = sizeof(*shrinker->nr_deferred);
-> > +     unsigned int size;
-> > +
-> > +     if (is_deferred_memcg_aware(shrinker)) {
-> > +             if (prealloc_memcg_shrinker(shrinker))
-> > +                     return -ENOMEM;
-> > +             return 0;
-> > +     }
-> > +
-> > +     size = sizeof(*shrinker->nr_deferred);
-> >
-> >       if (shrinker->flags & SHRINKER_NUMA_AWARE)
-> >               size *= nr_node_ids;
-> > @@ -429,26 +437,18 @@ int prealloc_shrinker(struct shrinker *shrinker)
-> >       if (!shrinker->nr_deferred)
-> >               return -ENOMEM;
-> >
-> > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> > -             if (prealloc_memcg_shrinker(shrinker))
-> > -                     goto free_deferred;
-> > -     }
-> > -
-> >       return 0;
-> > -
-> > -free_deferred:
-> > -     kfree(shrinker->nr_deferred);
-> > -     shrinker->nr_deferred = NULL;
-> > -     return -ENOMEM;
-> >  }
->
-> I'm trying to put my finger on it, but this seems wrong to me. If
-> memcgs are disabled, then prealloc_memcg_shrinker() needs to fail.
-> The preallocation code should not care about internal memcg details
-> like this.
->
->         /*
->          * If the shrinker is memcg aware and memcgs are not
->          * enabled, clear the MEMCG flag and fall back to non-memcg
->          * behaviour for the shrinker.
->          */
->         if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
->                 error = prealloc_memcg_shrinker(shrinker);
->                 if (!error)
->                         return 0;
->                 if (error != -ENOSYS)
->                         return error;
->
->                 /* memcgs not enabled! */
->                 shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
->         }
->
->         size = sizeof(*shrinker->nr_deferred);
->         ....
->         return 0;
-> }
->
-> This guarantees that only the shrinker instances taht have a
-> correctly set up memcg attached to them will have the
-> SHRINKER_MEMCG_AWARE flag set. Hence in all the rest of the shrinker
-> code, we only ever need to check for SHRINKER_MEMCG_AWARE to
-> determine what we should do....
+On Tue, Dec 15, 2020 at 11:05:07AM -0800, Jane Chu wrote:
+> On 12/15/2020 3:58 AM, Ruan Shiyang wrote:
+> > Hi Jane
+> > 
+> > On 2020/12/15 上午4:58, Jane Chu wrote:
+> > > Hi, Shiyang,
+> > > 
+> > > On 11/22/2020 4:41 PM, Shiyang Ruan wrote:
+> > > > This patchset is a try to resolve the problem of tracking shared page
+> > > > for fsdax.
+> > > > 
+> > > > Change from v1:
+> > > >    - Intorduce ->block_lost() for block device
+> > > >    - Support mapped device
+> > > >    - Add 'not available' warning for realtime device in XFS
+> > > >    - Rebased to v5.10-rc1
+> > > > 
+> > > > This patchset moves owner tracking from dax_assocaite_entry() to pmem
+> > > > device, by introducing an interface ->memory_failure() of struct
+> > > > pagemap.  The interface is called by memory_failure() in mm, and
+> > > > implemented by pmem device.  Then pmem device calls its ->block_lost()
+> > > > to find the filesystem which the damaged page located in, and call
+> > > > ->storage_lost() to track files or metadata assocaited with this page.
+> > > > Finally we are able to try to fix the damaged data in filesystem and do
+> > > 
+> > > Does that mean clearing poison? if so, would you mind to elaborate
+> > > specifically which change does that?
+> > 
+> > Recovering data for filesystem (or pmem device) has not been done in
+> > this patchset...  I just triggered the handler for the files sharing the
+> > corrupted page here.
+> 
+> Thanks! That confirms my understanding.
+> 
+> With the framework provided by the patchset, how do you envision it to
+> ease/simplify poison recovery from the user's perspective?
 
-Thanks. I see your point. We could move the memcg specific details
-into prealloc_memcg_shrinker().
+At the moment, I'd say no change what-so-ever. THe behaviour is
+necessary so that we can kill whatever user application maps
+multiply-shared physical blocks if there's a memory error. THe
+recovery method from that is unchanged. The only advantage may be
+that the filesystem (if rmap enabled) can tell you the exact file
+and offset into the file where data was corrupted.
 
-It seems we have to acquire shrinker_rwsem before we check and modify
-SHIRNKER_MEMCG_AWARE bit if we may clear it.
+However, it can be worse, too: it may also now completely shut down
+the filesystem if the filesystem discovers the error is in metadata
+rather than user data. That's much more complex to recover from, and
+right now will require downtime to take the filesystem offline and
+run fsck to correct the error. That may trash whatever the metadata
+that can't be recovered points to, so you still have a uesr data
+recovery process to perform after this...
 
->
-> >  void free_prealloced_shrinker(struct shrinker *shrinker)
-> >  {
-> > -     if (!shrinker->nr_deferred)
-> > +     if (is_deferred_memcg_aware(shrinker)) {
-> > +             unregister_memcg_shrinker(shrinker);
-> >               return;
-> > +     }
-> >
-> > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> > -             unregister_memcg_shrinker(shrinker);
-> > +     if (!shrinker->nr_deferred)
-> > +             return;
-> >
-> >       kfree(shrinker->nr_deferred);
-> >       shrinker->nr_deferred = NULL;
->
-> e.g. then this function can simply do:
->
-> {
->         if (shrinker->flags & SHRINKER_MEMCG_AWARE)
->                 return unregister_memcg_shrinker(shrinker);
->         kfree(shrinker->nr_deferred);
->         shrinker->nr_deferred = NULL;
-> }
->
-> Cheers,
->
-> Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+> And how does it help in dealing with page faults upon poisoned
+> dax page?
+
+It doesn't. If the page is poisoned, the same behaviour will occur
+as does now. This is simply error reporting infrastructure, not
+error handling.
+
+Future work might change how we correct the faults found in the
+storage, but I think the user visible behaviour is going to be "kill
+apps mapping corrupted data" for a long time yet....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
