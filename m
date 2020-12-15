@@ -2,157 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B322DB62D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 22:59:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 408832DB633
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 23:01:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbgLOV6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 16:58:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55894 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731021AbgLOV6l (ORCPT
+        id S1727863AbgLOWAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 17:00:46 -0500
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:37543 "EHLO
+        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727074AbgLOWAb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 16:58:41 -0500
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0D6AC0613D3;
-        Tue, 15 Dec 2020 13:58:00 -0800 (PST)
-Received: by mail-ed1-x541.google.com with SMTP id r5so22663566eda.12;
-        Tue, 15 Dec 2020 13:58:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N1a8xrDPCZ026HQdK8Vq1OhFGNFowbJMgK6N8VyjyPY=;
-        b=jtrl3dfR/1vQ5dt76KTjESXT1RBhUqhuN0XasnNWtE4bFMBb+uXjOcAaFG4Tw5eosA
-         NQNGDova2B2qfvEMPrC0OhMSY00X9O3Pt0ktdk8KVoPawxC4WBo2VfrX4Eyj3lzqYsH7
-         tRkBecZ1rn3rbM5+Xv7pysLnpNckkwfTs01NvA/RERFPbjESx4D04DIjfBcYlz236UmL
-         VP6nQbNfmifDYWUYwr2KOwth3UpQCbZ2pX1jDtN1cTy02602tdB5fbFCMzPXgGg5CSzD
-         1UEaohj0mCAhTxfdF2wRkgT3ZvWg9JzIWDzKtM5lLuHYtjUoqd/KZ0Yr8cbkxT+f2DUt
-         Y9vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N1a8xrDPCZ026HQdK8Vq1OhFGNFowbJMgK6N8VyjyPY=;
-        b=Lo0N8QFgJdHnDLKjaJRlU7n4iAX8oCram0Qh33ESuqRyDRF+WBCgZINPUymSyJDAm5
-         WCzBsz0C+ISgMnNgBq5odANbcxcMZAslmcbf4jOuIfSL1hHV+94unl7CyYHb7eFeg9hW
-         7VrW7xthAJKtBp7NQeNrQmRX3USd11bcwtfAgcs0f26sOKgGdZ9y+E1F52f4bi5BJnS5
-         0thg6IEcoL1mmeWAM1+XsHOBBAooo1TKvc3RkRA45aD3NagM8ojFWLz9mDd/I20dLZHN
-         o4irZJjQfVrZYtER4peMhws9AekI/d+fqfTLw0dXC9czhZJG73d/CgZThbRM4hToUU1X
-         aGLg==
-X-Gm-Message-State: AOAM533BISvJvPKBatMOiFI4b3CZRTOgxGkO/t7BKRUdXzPnroF192RR
-        DnWztYwW0Rdj1CeQ8w/Mnuq8T0dAnXwYq0WUp0Y=
-X-Google-Smtp-Source: ABdhPJz2iMox1eHPojxlVeQmLPOYNsyRWakO6o+Lc8pqKLjCy/wbT6pwNGUBgys4AUvniZ8JaLwxZ/Hz8TIby4klQ7A=
-X-Received: by 2002:a05:6402:ca2:: with SMTP id cn2mr31266268edb.137.1608069479463;
- Tue, 15 Dec 2020 13:57:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20201214223722.232537-1-shy828301@gmail.com> <20201214223722.232537-6-shy828301@gmail.com>
- <20201215022233.GL3913616@dread.disaster.area> <20201215144516.GE379720@cmpxchg.org>
-In-Reply-To: <20201215144516.GE379720@cmpxchg.org>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 15 Dec 2020 13:57:47 -0800
-Message-ID: <CAHbLzkr0=f4xNiPA-OuF6sdzV5-RVkx9y_1rUmn2yWU2Kd8uhQ@mail.gmail.com>
-Subject: Re: [v2 PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
+        Tue, 15 Dec 2020 17:00:31 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 462641AC3A3;
+        Wed, 16 Dec 2020 08:59:39 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kpIM6-004M4N-M4; Wed, 16 Dec 2020 08:59:38 +1100
+Date:   Wed, 16 Dec 2020 08:59:38 +1100
+From:   Dave Chinner <david@fromorbit.com>
 To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Roman Gushchin <guro@fb.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Yang Shi <shy828301@gmail.com>, guro@fb.com, ktkhai@virtuozzo.com,
+        shakeelb@google.com, mhocko@suse.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH 2/9] mm: memcontrol: use shrinker_rwsem to protect
+ shrinker_maps allocation
+Message-ID: <20201215215938.GQ3913616@dread.disaster.area>
+References: <20201214223722.232537-1-shy828301@gmail.com>
+ <20201214223722.232537-3-shy828301@gmail.com>
+ <20201215020957.GK3913616@dread.disaster.area>
+ <20201215135348.GC379720@cmpxchg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201215135348.GC379720@cmpxchg.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=7-415B0cAAAA:8
+        a=lEa4DKvhuYFUtTyFDrcA:9 a=CjuIK1q_8ugA:10 a=-RoEEKskQ1sA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 6:47 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Tue, Dec 15, 2020 at 01:22:33PM +1100, Dave Chinner wrote:
-> > On Mon, Dec 14, 2020 at 02:37:18PM -0800, Yang Shi wrote:
-> > > Currently the number of deferred objects are per shrinker, but some slabs, for example,
-> > > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
-> > >
-> > > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
-> > > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
-> > > may suffer from over shrink, excessive reclaim latency, etc.
-> > >
-> > > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
-> > > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
-> > > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
-> > >
-> > > We observed this hit in our production environment which was running vfs heavy workload
-> > > shown as the below tracing log:
-> > >
-> > > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
-> > > cache items 246404277 delta 31345 total_scan 123202138
-> > > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
-> > > last shrinker return val 123186855
-> > >
-> > > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
-> > > This also resulted in significant amount of page caches were dropped due to inodes eviction.
-> > >
-> > > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
-> > > better isolation.
-> > >
-> > > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
-> > > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
-> > >
-> > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > > ---
-> > >  include/linux/memcontrol.h |   9 +++
-> > >  mm/memcontrol.c            | 110 ++++++++++++++++++++++++++++++++++++-
-> > >  mm/vmscan.c                |   4 ++
-> > >  3 files changed, 120 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > > index 922a7f600465..1b343b268359 100644
-> > > --- a/include/linux/memcontrol.h
-> > > +++ b/include/linux/memcontrol.h
-> > > @@ -92,6 +92,13 @@ struct lruvec_stat {
-> > >     long count[NR_VM_NODE_STAT_ITEMS];
-> > >  };
-> > >
-> > > +
-> > > +/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
-> > > +struct memcg_shrinker_deferred {
-> > > +   struct rcu_head rcu;
-> > > +   atomic_long_t nr_deferred[];
-> > > +};
-> >
-> > So you're effectively copy and pasting the memcg_shrinker_map
-> > infrastructure and doubling the number of allocations/frees required
-> > to set up/tear down a memcg? Why not add it to the struct
-> > memcg_shrinker_map like this:
-> >
-> > struct memcg_shrinker_map {
-> >         struct rcu_head       rcu;
-> >       unsigned long   *map;
-> >       atomic_long_t   *nr_deferred;
-> > };
-> >
-> > And when you dynamically allocate the structure, set the map and
-> > nr_deferred pointers to the correct offset in the allocated range.
-> >
-> > Then this patch is really only changes to the size of the chunk
-> > being allocated, setting up the pointers and copying the relevant
-> > data from the old to new.
->
-> Fully agreed.
+On Tue, Dec 15, 2020 at 02:53:48PM +0100, Johannes Weiner wrote:
+> On Tue, Dec 15, 2020 at 01:09:57PM +1100, Dave Chinner wrote:
+> > On Mon, Dec 14, 2020 at 02:37:15PM -0800, Yang Shi wrote:
+> > > Since memcg_shrinker_map_size just can be changd under holding shrinker_rwsem
+> > > exclusively, the read side can be protected by holding read lock, so it sounds
+> > > superfluous to have a dedicated mutex.
+> > 
+> > I'm not sure this is a good idea. This couples the shrinker
+> > infrastructure to internal details of how cgroups are initialised
+> > and managed. Sure, certain operations might be done in certain
+> > shrinker lock contexts, but that doesn't mean we should share global
+> > locks across otherwise independent subsystems....
+> 
+> They're not independent subsystems. Most of the memory controller is
+> an extension of core VM operations that is fairly difficult to
+> understand outside the context of those operations. Then there are a
+> limited number of entry points from the cgroup interface. We used to
+> have our own locks for core VM structures (private page lock e.g.) to
+> coordinate VM and cgroup, and that was mostly unintelligble.
 
-Thanks folks. Such idea has been discussed with Roman in the earlier
-emails. I agree this would make the code neater. Will do it in v3.
+Yes, but OTOH you can CONFIG_MEMCG=n and the shrinker infrastructure
+and shrinkers all still functions correctly.  Ergo, the shrinker
+infrastructure is independent of memcgs. Yes, it may have functions
+to iterate and manipulate memcgs, but it is not dependent on memcgs
+existing for correct behaviour and functionality.
 
->
-> In the longer-term, it may be nice to further expand this and make
-> this the generalized intersection between cgroup, node and shrinkers.
->
-> There is large overlap with list_lru e.g. - with data of identical
-> scope and lifetime, but duplicative callbacks and management. If we
-> folded list_lru_memcg into the above data structure, we could also
-> generalize and reuse the existing callbacks.
+Yet.
 
-Yes, agree we should look further to combine and deduplicate all the
-pieces for the long run.
+> We have since established that those two components coordinate with
+> native VM locking and lifetime management. If you need to lock the
+> page, you lock the page - instead of having all VM paths that already
+> hold the page lock acquire a nested lock to exclude one cgroup path.
+> 
+> In this case, we have auxiliary shrinker data, subject to shrinker
+> lifetime and exclusion rules. It's much easier to understand that
+> cgroup creation needs a stable shrinker list (shrinker_rwsem) to
+> manage this data, than having an aliased lock that is private to the
+> memcg callbacks and obscures this real interdependency.
+
+Ok, so the way to do this is to move all the stuff that needs to be
+done under a "subsystem global" lock to the one file, not turn a
+static lock into a globally visible lock and spray it around random
+source files. There's already way too many static globals to manage
+separate shrinker and memcg state..
+
+I certainly agree that shrinkers and memcg need to be more closely
+integrated.  I've only been saying that for ... well, since memcgs
+essentially duplicated the top level shrinker path so the shrinker
+map could be introduced to avoid calling shrinkers that have no work
+to do for memcgs. The shrinker map should be generic functionality
+for all shrinker invocations because even a non-memcg machine can
+have thousands of registered shrinkers that are mostly idle all the
+time.
+
+IOWs, I think the shrinker map management is not really memcg
+specific - it's just allocation and assignment of a structure, and
+the only memcg bit is the map is being stored in a memcg structure.
+Therefore, if we are looking towards tighter integration then we
+should acutally move the map management to the shrinker code, not
+split the shrinker infrastructure management across different files.
+There's already a heap of code in vmscan.c under #ifdef
+CONFIG_MEMCG, like the prealloc_shrinker() code path:
+
+prealloc_shrinker()				vmscan.c
+  if (MEMCG_AWARE)				vmscan.c
+    prealloc_memcg_shrinker			vmscan.c
+#ifdef CONFIG_MEMCG				vmscan.c
+      down_write(shrinker_rwsem)		vmscan.c
+      if (id > shrinker_id_max)			vmscan.c
+	memcg_expand_shrinker_maps		memcontrol.c
+	  for_each_memcg			memcontrol.c
+	    reallocate shrinker map		memcontrol.c
+	    replace shrinker map		memcontrol.c
+	shrinker_id_max = id			vmscan.c
+      down_write(shrinker_rwsem)		vmscan.c
+#endif
+
+And, really, there's very little code in memcg_expand_shrinker_maps()
+here - the only memcg part is the memcg iteration loop, and we
+already have them in vmscan.c (e.g. shrink_node_memcgs(),
+age_active_anon(), drop_slab_node()) so there's precedence for
+moving this memcg iteration for shrinker map management all into
+vmscan.c.
+
+Doing so would formalise the shrinker maps as first class shrinker
+infrastructure rather than being tacked on to the side of the memcg
+infrastructure. At this point it makes total sense to serialise map
+manipulations under the shrinker_rwsem.
+
+IOWs, I'm not disagreeing with the direction this patch takes us in,
+I'm disagreeing with the implementation as published in the patch
+because it doesn't move us closer to a clean, concise single
+shrinker infrastructure implementation.
+
+That is, for the medium term, I think  we should be getting rid of
+the "legacy" non-memcg shrinker path and everything runs under
+memcgs.  With this patchset moving all the deferred counts to be
+memcg aware, the only reason for keeping the non-memcg path around
+goes away.  If sc->memcg is null, then after this patch set we can
+simply use the root memcg and just use it's per-node accounting
+rather than having a separate construct for non-memcg aware per-node
+accounting.
+
+Hence if SHRINKER_MEMCG_AWARE is set, it simply means we should run
+the shrinker if sc->memcg is set.  There is no difference in setup
+of shrinkers, the duplicate non-memcg/memcg paths go away, and a
+heap of code drops out of the shrinker infrastructure. It becomes
+much simpler overall.
+
+It also means we have a path for further integrating memcg aware
+shrinkers into the shrinker infrastructure because we can always
+rely on the shrinker infrastructure being memcg aware. And with that
+in mind, I think we should probably also be moving the shrinker code
+out of vmscan.c into it's own file as it's really completely
+separate infrastructure from the vast majority of page reclaim
+infrastructure in vmscan.c...
+
+That's the view I'm looking at this patchset from. Not just as a
+standalone bug fix, but also from the perspective of what the
+architectural change implies and the directions for tighter
+integration it opens up for us.
+
+Cheers,
+
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
