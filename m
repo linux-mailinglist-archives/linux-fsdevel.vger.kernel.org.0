@@ -2,155 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4CB2DA6E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 04:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B05972DA6A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 04:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbgLODGY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Dec 2020 22:06:24 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41330 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727090AbgLODGP (ORCPT
+        id S1726370AbgLODHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Dec 2020 22:07:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50242 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbgLODHJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Dec 2020 22:06:15 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 60AA458C677;
-        Tue, 15 Dec 2020 14:05:29 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kp0eW-00454U-Mx; Tue, 15 Dec 2020 14:05:28 +1100
-Date:   Tue, 15 Dec 2020 14:05:28 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     guro@fb.com, ktkhai@virtuozzo.com, shakeelb@google.com,
-        hannes@cmpxchg.org, mhocko@suse.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH 7/9] mm: vmscan: don't need allocate
- shrinker->nr_deferred for memcg aware shrinkers
-Message-ID: <20201215030528.GN3913616@dread.disaster.area>
-References: <20201214223722.232537-1-shy828301@gmail.com>
- <20201214223722.232537-8-shy828301@gmail.com>
+        Mon, 14 Dec 2020 22:07:09 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3179AC061793
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 19:06:29 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id w13so35568560lfd.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 19:06:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8AalwIW4PP8rwrt3wyiUpaOFXNpQFrbomiSOdcxppEg=;
+        b=fYOz5UOQj6EzxrS+knSbYLj6/0hN69MAoew343SOLXxE2wqcZ7c5hwmXKh42X6emEY
+         y4LsQ7fBXpuhAvamncrA+XdFG61bd8LsFke8+TtiPb3Lr4u7JIp8xuuYyYjYiYOVefta
+         0URHS9JCMkv70gw2sJhA/FMrHOHpCg+fU1d7c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8AalwIW4PP8rwrt3wyiUpaOFXNpQFrbomiSOdcxppEg=;
+        b=caiwE3JDt2si0sq4+NNOl0q9GKFzoxr05Ekay3hz2LIkvSZUWtDToRCAGpd+lVpNP5
+         EoQJAIjwVwZdzuEUY30EHYksZKzl5owMw3kIX5O9UXda9xKZYDWgXyUN9ydX1XS4CYdY
+         IAsYrBZ/dSXdhgQVDrisXjEnUPNLCzZIRdoNl8Og3EoteUMsKBpWEaFWbLZXOCumN72v
+         5rkHI9xlBA5LcRuElbPXcwTT00E8pulQYZKYj4rCHLxa1UiQoYH/6HpDiwUymRkbGm/5
+         XZ5oGDtsO/y91uaNBqt0zIwwOPqdW5b/X1TfP0rKj/uB4kMMZKri/cvv8fOcLwxdJ1HH
+         SznQ==
+X-Gm-Message-State: AOAM531wGX8Lw9JLny59YmrpxnB9gbmOfub4AYvfuAaAy5PQuDGxaCfu
+        fk/C9hBDC5gHWutFwhQulXS2khSe0+pgkQ==
+X-Google-Smtp-Source: ABdhPJw4Bq2FUpdEe86as6v8twZPNkH+UQRWQBfTi/5W7L9VjSAge2RZCVn7OP3Ji9/jl0HA34WjpQ==
+X-Received: by 2002:a19:4148:: with SMTP id o69mr10102389lfa.610.1608001587405;
+        Mon, 14 Dec 2020 19:06:27 -0800 (PST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id a16sm409811ljh.91.2020.12.14.19.06.26
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Dec 2020 19:06:27 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id m25so35534277lfc.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Dec 2020 19:06:26 -0800 (PST)
+X-Received: by 2002:a2e:6f17:: with SMTP id k23mr11914087ljc.411.1608001585633;
+ Mon, 14 Dec 2020 19:06:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201214223722.232537-8-shy828301@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
-        a=HoWvQtbgcFNr9bk3r4sA:9 a=CjuIK1q_8ugA:10 a=-RoEEKskQ1sA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20201214191323.173773-1-axboe@kernel.dk>
+In-Reply-To: <20201214191323.173773-1-axboe@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 14 Dec 2020 19:06:09 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh7-H541jDYiFYkJvmVKdbyUH9+zVKf+=y-SnMFEFEkZA@mail.gmail.com>
+Message-ID: <CAHk-=wh7-H541jDYiFYkJvmVKdbyUH9+zVKf+=y-SnMFEFEkZA@mail.gmail.com>
+Subject: Re: [PATCHSET v3 0/4] fs: Support for LOOKUP_NONBLOCK / RESOLVE_NONBLOCK
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 02:37:20PM -0800, Yang Shi wrote:
-> Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
-> allocate shrinker->nr_deferred for such shrinkers anymore.
-> 
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> ---
->  mm/vmscan.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index bce8cf44eca2..8d5bfd818acd 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -420,7 +420,15 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
->   */
->  int prealloc_shrinker(struct shrinker *shrinker)
->  {
-> -	unsigned int size = sizeof(*shrinker->nr_deferred);
-> +	unsigned int size;
-> +
-> +	if (is_deferred_memcg_aware(shrinker)) {
-> +		if (prealloc_memcg_shrinker(shrinker))
-> +			return -ENOMEM;
-> +		return 0;
-> +	}
-> +
-> +	size = sizeof(*shrinker->nr_deferred);
->  
->  	if (shrinker->flags & SHRINKER_NUMA_AWARE)
->  		size *= nr_node_ids;
-> @@ -429,26 +437,18 @@ int prealloc_shrinker(struct shrinker *shrinker)
->  	if (!shrinker->nr_deferred)
->  		return -ENOMEM;
->  
-> -	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> -		if (prealloc_memcg_shrinker(shrinker))
-> -			goto free_deferred;
-> -	}
-> -
->  	return 0;
-> -
-> -free_deferred:
-> -	kfree(shrinker->nr_deferred);
-> -	shrinker->nr_deferred = NULL;
-> -	return -ENOMEM;
->  }
+On Mon, Dec 14, 2020 at 11:13 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> I'm pretty happy with this at this point. The core change is very simple,
+> and the users end up being trivial too.
 
-I'm trying to put my finger on it, but this seems wrong to me. If
-memcgs are disabled, then prealloc_memcg_shrinker() needs to fail.
-The preallocation code should not care about internal memcg details
-like this.
+It does look very simple.
 
-	/*
-	 * If the shrinker is memcg aware and memcgs are not
-	 * enabled, clear the MEMCG flag and fall back to non-memcg
-	 * behaviour for the shrinker.
-	 */
-	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-		error = prealloc_memcg_shrinker(shrinker);
-		if (!error)
-			return 0;
-		if (error != -ENOSYS)
-			return error;
+It strikes me that io_statx would be another user of this. But it
+obviously depends on what the actual io_uring users do..
 
-		/* memcgs not enabled! */
-		shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
-	}
-
-	size = sizeof(*shrinker->nr_deferred);
-	....
-	return 0;
-}
-
-This guarantees that only the shrinker instances taht have a
-correctly set up memcg attached to them will have the
-SHRINKER_MEMCG_AWARE flag set. Hence in all the rest of the shrinker
-code, we only ever need to check for SHRINKER_MEMCG_AWARE to
-determine what we should do....
-
->  void free_prealloced_shrinker(struct shrinker *shrinker)
->  {
-> -	if (!shrinker->nr_deferred)
-> +	if (is_deferred_memcg_aware(shrinker)) {
-> +		unregister_memcg_shrinker(shrinker);
->  		return;
-> +	}
->  
-> -	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> -		unregister_memcg_shrinker(shrinker);
-> +	if (!shrinker->nr_deferred)
-> +		return;
->  
->  	kfree(shrinker->nr_deferred);
->  	shrinker->nr_deferred = NULL;
-
-e.g. then this function can simply do:
-
-{
-	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-		return unregister_memcg_shrinker(shrinker);
-	kfree(shrinker->nr_deferred);
-	shrinker->nr_deferred = NULL;
-}
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+             Linus
