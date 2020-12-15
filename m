@@ -2,270 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6DF42DB147
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 17:25:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43D602DB179
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 17:34:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbgLOQXN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 11:23:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731000AbgLOQXM (ORCPT
+        id S1730789AbgLOQcu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 11:32:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:59752 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730679AbgLOQck (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 11:23:12 -0500
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7E3EC0617A6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 08:22:31 -0800 (PST)
-Received: by mail-pj1-x1041.google.com with SMTP id j13so9177598pjz.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 08:22:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=f5QvG4OOL0cJhtayslfEReuxe1hABNcPROjOSRNmBuI=;
-        b=nloh81hpbnZSVba1fttlkxzdrO6cQlBsaPfDAI0HHxU/CR1wmmhNamX8K4HPxB+vmj
-         rwXBB8FwGX7Tbr4lXc8Kl8sN5FuqQr0HRsN4jQMTwuf1kJaSvqec+JJiuX9MydVxFm+H
-         UC+k63BAGiCvRWYn0+H1XLnPB6jC0hgGUsKeOYqXYGj29kKdtuLVakEFSDYb9L9kqoQF
-         PvtQL7gO6ZMJfWNhOlPbiVbSQTPQgXR5pe1mvYRNKvVZZweRQ5s1vLxkD8bFwjtGOxqf
-         B+PlpQPyhVrRKNB9zsfVPa+0BQMc6lqtfRnr+vWiHSJPOhN4T1qI7sCV/gBPm9Fm6SdF
-         /acg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f5QvG4OOL0cJhtayslfEReuxe1hABNcPROjOSRNmBuI=;
-        b=DLwAX/0qlY5a10t8xqsxGwEa3eFEEE7XoPx7JrSfDT17dPfwLeqgTvqfWFVBM0lCCK
-         WIM2ESmEIhjPQH0vzHRbSQajHh+3bpoF5ZSgX+YsYLnxZs56Ko9qLOy+TDuzBiDETF1B
-         srtHOA1bASgKauu8xtR6ooEIIUoJYKOTnmguD1Vk8fHIckMKhAHB7dAVCAusWAdgSEke
-         LL41gxHOYIXu7rAKd8edB3vmgUOAw83yfxFFJzNl1yqfArTn+DMYeqjrlH7LPOQmbptz
-         hpq3EEPB/pZ3HSFdwT1i3L6fXHZSkObLn2WWSkJv020ceYN0WlU/wR9YL25NJjhjSEuF
-         SkkA==
-X-Gm-Message-State: AOAM532CLH2KTjiVEXJtURDB6jxaQGFeHKu5iFHlQ2KdGPQJ8xwmihGB
-        FfzR34CTNXaOXRkupsEJ9Sow/SwsoErwjLNzTHRrTg==
-X-Google-Smtp-Source: ABdhPJyIrx/IE5RWR7SkCD54ofonJkbSvYJd95V7JIgSwo8MKHtQFLVJ93vts2lMRQ581lzolmCtiisNKVeRZffaeGw=
-X-Received: by 2002:a17:902:ed0d:b029:da:c83b:5f40 with SMTP id
- b13-20020a170902ed0db02900dac83b5f40mr1801861pld.20.1608049351326; Tue, 15
- Dec 2020 08:22:31 -0800 (PST)
+        Tue, 15 Dec 2020 11:32:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608049869;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=udWFvzQvOxdj41oV5teTq8mWiC5+fQqsrITOoptPui8=;
+        b=NyeReEmPdx7bKSPBtL0MRrND2HmXXuTrG5tHBzrGix3+n9nrBMveWaMlRmv9TVK4/lP5oX
+        65+4A8lqSUrGg8acJ9PLzlcmNz4j33poeJd0k3KKl1lnifHM9ahM7xTReH1641N7DSW9oO
+        bNXC8zV7nJ3fsvahgS5qXv4rqsABKh8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-205-h2wha-MmM4Cz1qNzeXwwSw-1; Tue, 15 Dec 2020 11:31:00 -0500
+X-MC-Unique: h2wha-MmM4Cz1qNzeXwwSw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DFF496D520;
+        Tue, 15 Dec 2020 16:30:58 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-117-245.rdu2.redhat.com [10.10.117.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 775CF60854;
+        Tue, 15 Dec 2020 16:30:58 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 1277D220BCF; Tue, 15 Dec 2020 11:30:58 -0500 (EST)
+Date:   Tue, 15 Dec 2020 11:30:58 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH v2 2/2] overlayfs: propagate errors from upper to
+ overlay sb in sync_fs
+Message-ID: <20201215163058.GC63355@redhat.com>
+References: <20201214221421.1127423-1-jlayton@kernel.org>
+ <20201214221421.1127423-3-jlayton@kernel.org>
 MIME-Version: 1.0
-References: <20201208041847.72122-1-songmuchun@bytedance.com>
- <20201208041847.72122-8-songmuchun@bytedance.com> <20201215133514.GP32193@dhcp22.suse.cz>
-In-Reply-To: <20201215133514.GP32193@dhcp22.suse.cz>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 16 Dec 2020 00:21:55 +0800
-Message-ID: <CAMZfGtWcaoqtQg8RsuXcmHP6KDqM2jQ8-z_+urQ0YuRMqkhWxg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v3 7/7] mm: memcontrol: make the slab
- calculation consistent
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Feng Tang <feng.tang@intel.com>, Neil Brown <neilb@suse.de>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201214221421.1127423-3-jlayton@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 9:35 PM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Tue 08-12-20 12:18:47, Muchun Song wrote:
-> > Although the ratio of the slab is one, we also should read the ratio
-> > from the related memory_stats instead of hard-coding. And the local
-> > variable of size is already the value of slab_unreclaimable. So we
-> > do not need to read again.
-> >
-> > We can drop the ratio in struct memory_stat. This can make the code
-> > clean and simple. And get rid of the awkward mix of static and runtime
-> > initialization of the memory_stats table.
->
-> This changelog doesn't explain, what is the problem, why do we care and
-> why the additional code is worthwile.
+On Mon, Dec 14, 2020 at 05:14:21PM -0500, Jeff Layton wrote:
+> Peek at the upper layer's errseq_t at mount time for volatile mounts,
+> and record it in the per-sb info. In sync_fs, check for an error since
+> the recorded point and set it in the overlayfs superblock if there was
+> one.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/overlayfs/ovl_entry.h |  1 +
+>  fs/overlayfs/super.c     | 19 ++++++++++++++-----
+>  2 files changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+> index 1b5a2094df8e..f4285da50525 100644
+> --- a/fs/overlayfs/ovl_entry.h
+> +++ b/fs/overlayfs/ovl_entry.h
+> @@ -79,6 +79,7 @@ struct ovl_fs {
+>  	atomic_long_t last_ino;
+>  	/* Whiteout dentry cache */
+>  	struct dentry *whiteout;
+> +	errseq_t errseq;
+>  };
+>  
+>  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 290983bcfbb3..3f0cb91915ff 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -264,8 +264,16 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
+>  	if (!ovl_upper_mnt(ofs))
+>  		return 0;
+>  
+> -	if (!ovl_should_sync(ofs))
+> -		return 0;
+> +	upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
+> +
+> +	if (!ovl_should_sync(ofs)) {
+> +		/* Propagate errors from upper to overlayfs */
+> +		ret = errseq_check(&upper_sb->s_wb_err, ofs->errseq);
+> +		if (ret)
+> +			errseq_set(&sb->s_wb_err, ret);
+> +		return ret;
+> +	}
+> +
 
-Thank you. Will update the commit log for more clear.
+I have few concerns here. I think ovl_sync_fs() should not be different
+for volatile mounts and non-volatile mounts. IOW, if an overlayfs
+user calls syncfs(fd), then only difference with non-volatile mount
+is that we will not call sync_filesystem() on underlying filesystem. But
+if there is an existing writeback error then that should be reported
+to syncfs(fd) caller both in case of volatile and non-volatile mounts.
 
->
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  mm/memcontrol.c | 112 ++++++++++++++++++++++++++++++++++++--------------------
-> >  1 file changed, 73 insertions(+), 39 deletions(-)
-> >
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index a40797a27f87..841ea37cc123 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -1511,49 +1511,78 @@ static bool mem_cgroup_wait_acct_move(struct mem_cgroup *memcg)
-> >
-> >  struct memory_stat {
-> >       const char *name;
-> > -     unsigned int ratio;
-> >       unsigned int idx;
-> >  };
-> >
-> >  static const struct memory_stat memory_stats[] = {
-> > -     { "anon", PAGE_SIZE, NR_ANON_MAPPED },
-> > -     { "file", PAGE_SIZE, NR_FILE_PAGES },
-> > -     { "kernel_stack", 1024, NR_KERNEL_STACK_KB },
-> > -     { "pagetables", PAGE_SIZE, NR_PAGETABLE },
-> > -     { "percpu", 1, MEMCG_PERCPU_B },
-> > -     { "sock", PAGE_SIZE, MEMCG_SOCK },
-> > -     { "shmem", PAGE_SIZE, NR_SHMEM },
-> > -     { "file_mapped", PAGE_SIZE, NR_FILE_MAPPED },
-> > -     { "file_dirty", PAGE_SIZE, NR_FILE_DIRTY },
-> > -     { "file_writeback", PAGE_SIZE, NR_WRITEBACK },
-> > +     { "anon",                       NR_ANON_MAPPED                  },
-> > +     { "file",                       NR_FILE_PAGES                   },
-> > +     { "kernel_stack",               NR_KERNEL_STACK_KB              },
-> > +     { "pagetables",                 NR_PAGETABLE                    },
-> > +     { "percpu",                     MEMCG_PERCPU_B                  },
-> > +     { "sock",                       MEMCG_SOCK                      },
-> > +     { "shmem",                      NR_SHMEM                        },
-> > +     { "file_mapped",                NR_FILE_MAPPED                  },
-> > +     { "file_dirty",                 NR_FILE_DIRTY                   },
-> > +     { "file_writeback",             NR_WRITEBACK                    },
-> >  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> > -     { "anon_thp", PAGE_SIZE, NR_ANON_THPS },
-> > -     { "file_thp", PAGE_SIZE, NR_FILE_THPS },
-> > -     { "shmem_thp", PAGE_SIZE, NR_SHMEM_THPS },
-> > +     { "anon_thp",                   NR_ANON_THPS                    },
-> > +     { "file_thp",                   NR_FILE_THPS                    },
-> > +     { "shmem_thp",                  NR_SHMEM_THPS                   },
-> >  #endif
-> > -     { "inactive_anon", PAGE_SIZE, NR_INACTIVE_ANON },
-> > -     { "active_anon", PAGE_SIZE, NR_ACTIVE_ANON },
-> > -     { "inactive_file", PAGE_SIZE, NR_INACTIVE_FILE },
-> > -     { "active_file", PAGE_SIZE, NR_ACTIVE_FILE },
-> > -     { "unevictable", PAGE_SIZE, NR_UNEVICTABLE },
-> > -
-> > -     /*
-> > -      * Note: The slab_reclaimable and slab_unreclaimable must be
-> > -      * together and slab_reclaimable must be in front.
-> > -      */
-> > -     { "slab_reclaimable", 1, NR_SLAB_RECLAIMABLE_B },
-> > -     { "slab_unreclaimable", 1, NR_SLAB_UNRECLAIMABLE_B },
-> > +     { "inactive_anon",              NR_INACTIVE_ANON                },
-> > +     { "active_anon",                NR_ACTIVE_ANON                  },
-> > +     { "inactive_file",              NR_INACTIVE_FILE                },
-> > +     { "active_file",                NR_ACTIVE_FILE                  },
-> > +     { "unevictable",                NR_UNEVICTABLE                  },
-> > +     { "slab_reclaimable",           NR_SLAB_RECLAIMABLE_B           },
-> > +     { "slab_unreclaimable",         NR_SLAB_UNRECLAIMABLE_B         },
-> >
-> >       /* The memory events */
-> > -     { "workingset_refault_anon", 1, WORKINGSET_REFAULT_ANON },
-> > -     { "workingset_refault_file", 1, WORKINGSET_REFAULT_FILE },
-> > -     { "workingset_activate_anon", 1, WORKINGSET_ACTIVATE_ANON },
-> > -     { "workingset_activate_file", 1, WORKINGSET_ACTIVATE_FILE },
-> > -     { "workingset_restore_anon", 1, WORKINGSET_RESTORE_ANON },
-> > -     { "workingset_restore_file", 1, WORKINGSET_RESTORE_FILE },
-> > -     { "workingset_nodereclaim", 1, WORKINGSET_NODERECLAIM },
-> > +     { "workingset_refault_anon",    WORKINGSET_REFAULT_ANON         },
-> > +     { "workingset_refault_file",    WORKINGSET_REFAULT_FILE         },
-> > +     { "workingset_activate_anon",   WORKINGSET_ACTIVATE_ANON        },
-> > +     { "workingset_activate_file",   WORKINGSET_ACTIVATE_FILE        },
-> > +     { "workingset_restore_anon",    WORKINGSET_RESTORE_ANON         },
-> > +     { "workingset_restore_file",    WORKINGSET_RESTORE_FILE         },
-> > +     { "workingset_nodereclaim",     WORKINGSET_NODERECLAIM          },
-> >  };
-> >
-> > +/* Translate stat items to the correct unit for memory.stat output */
-> > +static int memcg_page_state_unit(int item)
-> > +{
-> > +     int unit;
-> > +
-> > +     switch (item) {
-> > +     case MEMCG_PERCPU_B:
-> > +     case NR_SLAB_RECLAIMABLE_B:
-> > +     case NR_SLAB_UNRECLAIMABLE_B:
-> > +     case WORKINGSET_REFAULT_ANON:
-> > +     case WORKINGSET_REFAULT_FILE:
-> > +     case WORKINGSET_ACTIVATE_ANON:
-> > +     case WORKINGSET_ACTIVATE_FILE:
-> > +     case WORKINGSET_RESTORE_ANON:
-> > +     case WORKINGSET_RESTORE_FILE:
-> > +     case WORKINGSET_NODERECLAIM:
-> > +             unit = 1;
-> > +             break;
-> > +     case NR_KERNEL_STACK_KB:
-> > +             unit = SZ_1K;
-> > +             break;
-> > +     default:
-> > +             unit = PAGE_SIZE;
-> > +             break;
-> > +     }
-> > +
-> > +     return unit;
-> > +}
-> > +
-> > +static inline unsigned long memcg_page_state_output(struct mem_cgroup *memcg,
-> > +                                                 int item)
-> > +{
-> > +     return memcg_page_state(memcg, item) * memcg_page_state_unit(item);
-> > +}
-> > +
-> >  static char *memory_stat_format(struct mem_cgroup *memcg)
-> >  {
-> >       struct seq_buf s;
-> > @@ -1577,13 +1606,12 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
-> >       for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
-> >               u64 size;
-> >
-> > -             size = memcg_page_state(memcg, memory_stats[i].idx);
-> > -             size *= memory_stats[i].ratio;
-> > +             size = memcg_page_state_output(memcg, memory_stats[i].idx);
-> >               seq_buf_printf(&s, "%s %llu\n", memory_stats[i].name, size);
-> >
-> >               if (unlikely(memory_stats[i].idx == NR_SLAB_UNRECLAIMABLE_B)) {
-> > -                     size = memcg_page_state(memcg, NR_SLAB_RECLAIMABLE_B) +
-> > -                            memcg_page_state(memcg, NR_SLAB_UNRECLAIMABLE_B);
-> > +                     size += memcg_page_state_output(memcg,
-> > +                                                     NR_SLAB_RECLAIMABLE_B);
-> >                       seq_buf_printf(&s, "slab %llu\n", size);
-> >               }
-> >       }
-> > @@ -6377,6 +6405,12 @@ static int memory_stat_show(struct seq_file *m, void *v)
-> >  }
-> >
-> >  #ifdef CONFIG_NUMA
-> > +static inline unsigned long lruvec_page_state_output(struct lruvec *lruvec,
-> > +                                                  int item)
-> > +{
-> > +     return lruvec_page_state(lruvec, item) * memcg_page_state_unit(item);
-> > +}
-> > +
-> >  static int memory_numa_stat_show(struct seq_file *m, void *v)
-> >  {
-> >       int i;
-> > @@ -6394,8 +6428,8 @@ static int memory_numa_stat_show(struct seq_file *m, void *v)
-> >                       struct lruvec *lruvec;
-> >
-> >                       lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(nid));
-> > -                     size = lruvec_page_state(lruvec, memory_stats[i].idx);
-> > -                     size *= memory_stats[i].ratio;
-> > +                     size = lruvec_page_state_output(lruvec,
-> > +                                                     memory_stats[i].idx);
-> >                       seq_printf(m, " N%d=%llu", nid, size);
-> >               }
-> >               seq_putc(m, '\n');
-> > --
-> > 2.11.0
->
-> --
-> Michal Hocko
-> SUSE Labs
+Additional requirement in case of non-volatile mount seems to be that
+as soon as we detect first error, we probably should mark whole file
+system bad and start returning error for overlay operations so that
+upper layer can be thrown away and process restarted.
 
+And final non-volatile mount requirement seems to that we want to detect
+writeback errors in non syncfs() paths, for ex. mount(). That's what
+Sargun is trying to do. Keep a snapshot of upper_sb errseq on disk
+and upon remount of volatile overlay make sure no writeback errors
+have happened since then. And that's where I think we should be using
+new errseq_peek() and errseq_check(&upper_sb->s_wb_err, ofs->errseq)
+infracture. That way we can detect error on upper without consuming
+it upon overlay remount.
 
+IOW, IMHO, ovl_sync_fs(), should use same mechanism to report error to
+user space both for volatile and non-volatile mounts. And this new
+mechanism of peeking at error without consuming it should be used
+in other paths like remount and possibly other overlay operations(if need
+be). 
 
--- 
-Yours,
-Muchun
+But creating a special path in ovl_sync_fs() for volatile mounts
+only will create conflicts with error reporting for non-volatile
+mounts. And IMHO, these should be same.
+
+Is there a good reason that why we should treat volatile and non-volatile
+mounts differently in ovl_sync_fs() from error detection and reporting
+point of view.
+
+Thanks
+Vivek
+
+>  	/*
+>  	 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
+>  	 * All the super blocks will be iterated, including upper_sb.
+> @@ -277,8 +285,6 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
+>  	if (!wait)
+>  		return 0;
+>  
+> -	upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
+> -
+>  	down_read(&upper_sb->s_umount);
+>  	ret = sync_filesystem(upper_sb);
+>  	up_read(&upper_sb->s_umount);
+> @@ -1945,8 +1951,11 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+>  
+>  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
+>  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
+> -
+>  	}
+> +
+> +	if (ofs->config.ovl_volatile)
+> +		ofs->errseq = errseq_peek(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
+> +
+>  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
+>  	err = PTR_ERR(oe);
+>  	if (IS_ERR(oe))
+> -- 
+> 2.29.2
+> 
+
