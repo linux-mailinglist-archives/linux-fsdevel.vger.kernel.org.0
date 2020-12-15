@@ -2,209 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 344F92DADE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 14:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 056BE2DAE05
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 14:32:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbgLONRG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 08:17:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50164 "EHLO mail.kernel.org"
+        id S1727321AbgLONbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 08:31:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42888 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727621AbgLONQz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 08:16:55 -0500
-Message-ID: <73ed2ee27cb21b5879d030f5478839507dc35efd.camel@kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608038174;
-        bh=lD3zVNl/UdnKgognn1VdyUcVGB4m6JnB/aKuzonKIfc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qTxErsFSHmx/BkWTpp1vtVNY0wohqAP911Vfi+YyEl7TJIASQsPTzXJzpx0FEF5Nc
-         JcQGOvT5l4J7+Aou6785fCmFqBMiikiRjo1MXCwAe+5wuKlv8IuUn2bMWD0dX4oRLa
-         CnhiWTiJZioz7JwOycAbaJxjd14fTNdqEGoSwxQsqBY+vhPNa9/laaag4xG0+F5sy2
-         AhWAlppjclNcmF3nwRtGGLL5SCjpUmj5Mq0CCA7RShgAmmiUeFuXtLYezfZQzTdrx0
-         BG8PeZqANwN6xbplobyEWWQVcBHEa/uhMGZSWu+6A36bQkVpbyQHWkuPTqOASCOnGo
-         8Vw9jiExYUTeQ==
-Subject: Re: [RFC PATCH 2/2] overlayfs: propagate errors from upper to
- overlay sb in sync_fs
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
-Date:   Tue, 15 Dec 2020 08:16:12 -0500
-In-Reply-To: <979d78d04d882744d944f5723ad7a98b14badf8b.camel@kernel.org>
-References: <20201213132713.66864-1-jlayton@kernel.org>
-         <20201213132713.66864-3-jlayton@kernel.org>
-         <20201214213843.GA3453@redhat.com>
-         <979d78d04d882744d944f5723ad7a98b14badf8b.camel@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        id S1726819AbgLONb0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Dec 2020 08:31:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1608039039; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3XPa6B5Agc5X6gtCtpcj1Z+hTlPDBybjc3CU9O9vvm8=;
+        b=lwTzTrU4ZpC9WAg1Lcxkfq6ExedXTJyBvr3P+BNvrZTJMYbNYj15XQHLVfMroQosvrZ4mr
+        fvFXk7otxv0Q/1eEnx3sQmIHMMBgLHwpNq0mUHe5mQfYL7zi6AqG9keKKuL5R9rcMaOTam
+        T+c6FIrXI3rjbfewiF6OnCYKHHoY8vo=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 52CBBAD64;
+        Tue, 15 Dec 2020 13:30:39 +0000 (UTC)
+Date:   Tue, 15 Dec 2020 14:30:38 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org, adobriyan@gmail.com,
+        akpm@linux-foundation.org, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, hughd@google.com, shakeelb@google.com,
+        guro@fb.com, samitolvanen@google.com, feng.tang@intel.com,
+        neilb@suse.de, iamjoonsoo.kim@lge.com, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] mm: memcontrol: convert NR_ANON_THPS account to
+ pages
+Message-ID: <20201215133038.GO32193@dhcp22.suse.cz>
+References: <20201208041847.72122-1-songmuchun@bytedance.com>
+ <20201208041847.72122-3-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201208041847.72122-3-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-12-14 at 18:53 -0500, Jeff Layton wrote:
-> On Mon, 2020-12-14 at 16:38 -0500, Vivek Goyal wrote:
-> > On Sun, Dec 13, 2020 at 08:27:13AM -0500, Jeff Layton wrote:
-> > > Peek at the upper layer's errseq_t at mount time for volatile mounts,
-> > > and record it in the per-sb info. In sync_fs, check for an error since
-> > > the recorded point and set it in the overlayfs superblock if there was
-> > > one.
-> > > 
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > 
-> > While we are solving problem for non-volatile overlay mount, I also
-> > started thinking, what about non-volatile overlay syncfs() writeback errors.
-> > Looks like these will not be reported to user space at all as of now
-> > (because we never update overlay_sb->s_wb_err ever).
-> > 
-> > A patch like this might fix it. (compile tested only).
-> > 
-> > overlayfs: Report syncfs() errors to user space
-> > 
-> > Currently, syncfs(), calls filesystem ->sync_fs() method but ignores the
-> > return code. But certain writeback errors can still be reported on 
-> > syncfs() by checking errors on super block.
-> > 
-> > ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
-> > 
-> > For the case of overlayfs, we never set overlayfs super block s_wb_err. That
-> > means sync() will never report writeback errors on overlayfs uppon syncfs().
-> > 
-> > Fix this by updating overlay sb->sb_wb_err upon ->sync_fs() call. And that
-> > should mean that user space syncfs() call should see writeback errors.
-> > 
-> > ovl_fsync() does not need anything special because if there are writeback
-> > errors underlying filesystem will report it through vfs_fsync_range() return
-> > code and user space will see it.
-> > 
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  fs/overlayfs/ovl_entry.h |    1 +
-> >  fs/overlayfs/super.c     |   14 +++++++++++---
-> >  2 files changed, 12 insertions(+), 3 deletions(-)
-> > 
-> > Index: redhat-linux/fs/overlayfs/super.c
-> > ===================================================================
-> > --- redhat-linux.orig/fs/overlayfs/super.c	2020-12-14 15:33:43.934400880 -0500
-> > +++ redhat-linux/fs/overlayfs/super.c	2020-12-14 16:15:07.127400880 -0500
-> > @@ -259,7 +259,7 @@ static int ovl_sync_fs(struct super_bloc
-> >  {
-> >  	struct ovl_fs *ofs = sb->s_fs_info;
-> >  	struct super_block *upper_sb;
-> > -	int ret;
-> > +	int ret, ret2;
-> >  
-> > 
-> > 
-> > 
-> >  	if (!ovl_upper_mnt(ofs))
-> >  		return 0;
-> > @@ -283,7 +283,14 @@ static int ovl_sync_fs(struct super_bloc
-> >  	ret = sync_filesystem(upper_sb);
-> >  	up_read(&upper_sb->s_umount);
-> >  
-> > 
-> > 
-> > 
-> > -	return ret;
-> > +	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
-> > +		/* Upper sb has errors since last time */
-> > +		spin_lock(&ofs->errseq_lock);
-> > +		ret2 = errseq_check_and_advance(&upper_sb->s_wb_err,
-> > +						&sb->s_wb_err);
-> > +		spin_unlock(&ofs->errseq_lock);
-> > +	}
-> > +	return ret ? ret : ret2;
+On Tue 08-12-20 12:18:42, Muchun Song wrote:
+> The unit of NR_ANON_THPS is HPAGE_PMD_NR. Convert the NR_ANON_THPS
+> account to pages.
+
+This changelog could benefit from some improvements. First of all you
+should be clear about the motivation. I believe the previous feedback
+was also to explicitly mention what effect this has on the pcp
+accounting flushing.
+
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>  drivers/base/node.c |  3 +--
+>  fs/proc/meminfo.c   |  2 +-
+>  mm/huge_memory.c    |  3 ++-
+>  mm/memcontrol.c     | 20 ++++++--------------
+>  mm/page_alloc.c     |  2 +-
+>  mm/rmap.c           |  7 ++++---
+>  6 files changed, 15 insertions(+), 22 deletions(-)
 > 
-> I think this is probably not quite right.
-> 
-> The problem I think is that the SEEN flag is always going to end up
-> being set in sb->s_wb_err, and that is going to violate the desired
-> semantics. If the writeback error occurred after all fd's were closed,
-> then the next opener wouldn't see it and you'd lose the error.
-> 
-> We probably need a function to cleanly propagate the error from one
-> errseq_t to another so that that doesn't occur. I'll have to think about
-> it.
-> 
-
-So, the problem is that we can't guarantee that we'll have an open file
-when sync_fs is called. So if you do the check_and_advance in the
-context of a sync() syscall, you'll effectively ensure that a later
-opener on the upper layer won't see the error (since the upper_sb's
-errseq_t will be marked SEEN.
-
-It's not clear to me what semantics you want in the following situation:
-
-mount upper layer
-mount overlayfs with non-volatile upper layer
-do "stuff" on overlayfs, and close all files on overlayfs
-get a writeback error on upper layer
-call sync() (sync_fs gets run)
-open file on upper layer mount
-call syncfs() on upper-layer fd
-
-Should that last syncfs error report an error?
-
-Also, suppose if at the end we instead opened a file on overlayfs and
-issued the syncfs() there -- should we see the error in that case? 
-
-> >  }
-> >  
-> > 
-> > 
-> > 
-> >  /**
-> > @@ -1873,6 +1880,7 @@ static int ovl_fill_super(struct super_b
-> >  	if (!cred)
-> >  		goto out_err;
-> >  
-> > 
-> > 
-> > 
-> > +	spin_lock_init(&ofs->errseq_lock);
-> >  	/* Is there a reason anyone would want not to share whiteouts? */
-> >  	ofs->share_whiteout = true;
-> >  
-> > 
-> > 
-> > 
-> > @@ -1945,7 +1953,7 @@ static int ovl_fill_super(struct super_b
-> >  
-> > 
-> > 
-> > 
-> >  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
-> >  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> > -
-> > +		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
-> >  	}
-> >  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
-> >  	err = PTR_ERR(oe);
-> > Index: redhat-linux/fs/overlayfs/ovl_entry.h
-> > ===================================================================
-> > --- redhat-linux.orig/fs/overlayfs/ovl_entry.h	2020-12-14 15:33:43.934400880 -0500
-> > +++ redhat-linux/fs/overlayfs/ovl_entry.h	2020-12-14 15:34:13.509400880 -0500
-> > @@ -79,6 +79,7 @@ struct ovl_fs {
-> >  	atomic_long_t last_ino;
-> >  	/* Whiteout dentry cache */
-> >  	struct dentry *whiteout;
-> > +	spinlock_t errseq_lock;
-> >  };
-> >  
-> > 
-> > 
-> > 
-> >  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> > 
-> 
+> diff --git a/drivers/base/node.c b/drivers/base/node.c
+> index 04f71c7bc3f8..ec35cb567940 100644
+> --- a/drivers/base/node.c
+> +++ b/drivers/base/node.c
+> @@ -461,8 +461,7 @@ static ssize_t node_read_meminfo(struct device *dev,
+>  			     nid, K(sunreclaimable)
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  			     ,
+> -			     nid, K(node_page_state(pgdat, NR_ANON_THPS) *
+> -				    HPAGE_PMD_NR),
+> +			     nid, K(node_page_state(pgdat, NR_ANON_THPS)),
+>  			     nid, K(node_page_state(pgdat, NR_SHMEM_THPS) *
+>  				    HPAGE_PMD_NR),
+>  			     nid, K(node_page_state(pgdat, NR_SHMEM_PMDMAPPED) *
+> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+> index d6fc74619625..a635c8a84ddf 100644
+> --- a/fs/proc/meminfo.c
+> +++ b/fs/proc/meminfo.c
+> @@ -129,7 +129,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>  
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  	show_val_kb(m, "AnonHugePages:  ",
+> -		    global_node_page_state(NR_ANON_THPS) * HPAGE_PMD_NR);
+> +		    global_node_page_state(NR_ANON_THPS));
+>  	show_val_kb(m, "ShmemHugePages: ",
+>  		    global_node_page_state(NR_SHMEM_THPS) * HPAGE_PMD_NR);
+>  	show_val_kb(m, "ShmemPmdMapped: ",
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 10dd3cae5f53..66ec454120de 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2178,7 +2178,8 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>  		lock_page_memcg(page);
+>  		if (atomic_add_negative(-1, compound_mapcount_ptr(page))) {
+>  			/* Last compound_mapcount is gone. */
+> -			__dec_lruvec_page_state(page, NR_ANON_THPS);
+> +			__mod_lruvec_page_state(page, NR_ANON_THPS,
+> +						-HPAGE_PMD_NR);
+>  			if (TestClearPageDoubleMap(page)) {
+>  				/* No need in mapcount reference anymore */
+>  				for (i = 0; i < HPAGE_PMD_NR; i++)
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 8818bf64d6fe..b18e25a5cdf3 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1532,7 +1532,7 @@ static struct memory_stat memory_stats[] = {
+>  	 * on some architectures, the macro of HPAGE_PMD_SIZE is not
+>  	 * constant(e.g. powerpc).
+>  	 */
+> -	{ "anon_thp", 0, NR_ANON_THPS },
+> +	{ "anon_thp", PAGE_SIZE, NR_ANON_THPS },
+>  	{ "file_thp", 0, NR_FILE_THPS },
+>  	{ "shmem_thp", 0, NR_SHMEM_THPS },
+>  #endif
+> @@ -1565,8 +1565,7 @@ static int __init memory_stats_init(void)
+>  
+>  	for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -		if (memory_stats[i].idx == NR_ANON_THPS ||
+> -		    memory_stats[i].idx == NR_FILE_THPS ||
+> +		if (memory_stats[i].idx == NR_FILE_THPS ||
+>  		    memory_stats[i].idx == NR_SHMEM_THPS)
+>  			memory_stats[i].ratio = HPAGE_PMD_SIZE;
+>  #endif
+> @@ -4088,10 +4087,6 @@ static int memcg_stat_show(struct seq_file *m, void *v)
+>  		if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
+>  			continue;
+>  		nr = memcg_page_state_local(memcg, memcg1_stats[i]);
+> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -		if (memcg1_stats[i] == NR_ANON_THPS)
+> -			nr *= HPAGE_PMD_NR;
+> -#endif
+>  		seq_printf(m, "%s %lu\n", memcg1_stat_names[i], nr * PAGE_SIZE);
+>  	}
+>  
+> @@ -4122,10 +4117,6 @@ static int memcg_stat_show(struct seq_file *m, void *v)
+>  		if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
+>  			continue;
+>  		nr = memcg_page_state(memcg, memcg1_stats[i]);
+> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -		if (memcg1_stats[i] == NR_ANON_THPS)
+> -			nr *= HPAGE_PMD_NR;
+> -#endif
+>  		seq_printf(m, "total_%s %llu\n", memcg1_stat_names[i],
+>  						(u64)nr * PAGE_SIZE);
+>  	}
+> @@ -5653,10 +5644,11 @@ static int mem_cgroup_move_account(struct page *page,
+>  			__mod_lruvec_state(from_vec, NR_ANON_MAPPED, -nr_pages);
+>  			__mod_lruvec_state(to_vec, NR_ANON_MAPPED, nr_pages);
+>  			if (PageTransHuge(page)) {
+> -				__dec_lruvec_state(from_vec, NR_ANON_THPS);
+> -				__inc_lruvec_state(to_vec, NR_ANON_THPS);
+> +				__mod_lruvec_state(from_vec, NR_ANON_THPS,
+> +						   -nr_pages);
+> +				__mod_lruvec_state(to_vec, NR_ANON_THPS,
+> +						   nr_pages);
+>  			}
+> -
+>  		}
+>  	} else {
+>  		__mod_lruvec_state(from_vec, NR_FILE_PAGES, -nr_pages);
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 469e28f95ce7..1700f52b7869 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5580,7 +5580,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+>  			K(node_page_state(pgdat, NR_SHMEM_THPS) * HPAGE_PMD_NR),
+>  			K(node_page_state(pgdat, NR_SHMEM_PMDMAPPED)
+>  					* HPAGE_PMD_NR),
+> -			K(node_page_state(pgdat, NR_ANON_THPS) * HPAGE_PMD_NR),
+> +			K(node_page_state(pgdat, NR_ANON_THPS)),
+>  #endif
+>  			K(node_page_state(pgdat, NR_WRITEBACK_TEMP)),
+>  			node_page_state(pgdat, NR_KERNEL_STACK_KB),
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 08c56aaf72eb..f59e92e26b61 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1144,7 +1144,8 @@ void do_page_add_anon_rmap(struct page *page,
+>  		 * disabled.
+>  		 */
+>  		if (compound)
+> -			__inc_lruvec_page_state(page, NR_ANON_THPS);
+> +			__mod_lruvec_page_state(page, NR_ANON_THPS,
+> +						HPAGE_PMD_NR);
+>  		__mod_lruvec_page_state(page, NR_ANON_MAPPED, nr);
+>  	}
+>  
+> @@ -1186,7 +1187,7 @@ void page_add_new_anon_rmap(struct page *page,
+>  		if (hpage_pincount_available(page))
+>  			atomic_set(compound_pincount_ptr(page), 0);
+>  
+> -		__inc_lruvec_page_state(page, NR_ANON_THPS);
+> +		__mod_lruvec_page_state(page, NR_ANON_THPS, HPAGE_PMD_NR);
+>  	} else {
+>  		/* Anon THP always mapped first with PMD */
+>  		VM_BUG_ON_PAGE(PageTransCompound(page), page);
+> @@ -1292,7 +1293,7 @@ static void page_remove_anon_compound_rmap(struct page *page)
+>  	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+>  		return;
+>  
+> -	__dec_lruvec_page_state(page, NR_ANON_THPS);
+> +	__mod_lruvec_page_state(page, NR_ANON_THPS, -HPAGE_PMD_NR);
+>  
+>  	if (TestClearPageDoubleMap(page)) {
+>  		/*
+> -- 
+> 2.11.0
 
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+Michal Hocko
+SUSE Labs
