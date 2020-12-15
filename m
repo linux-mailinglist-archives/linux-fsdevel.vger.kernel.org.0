@@ -2,46 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD902DAA57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 10:45:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC1D32DAB9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 12:05:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbgLOJoM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 04:44:12 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:52900 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726185AbgLOJoJ (ORCPT
+        id S1728431AbgLOLES (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 06:04:18 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58707 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbgLOLES (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 04:44:09 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UIidumF_1608025401;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UIidumF_1608025401)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 15 Dec 2020 17:43:22 +0800
-Subject: Re: [PATCH v3 RESEND] iomap: set REQ_NOWAIT according to IOCB_NOWAIT
- in Direct IO
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Hao Xu <haoxu@linux.alibaba.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Tue, 15 Dec 2020 06:04:18 -0500
+Received: from static-50-53-41-238.bvtn.or.frontiernet.net ([50.53.41.238] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1kp87B-0007Bi-DI; Tue, 15 Dec 2020 11:03:33 +0000
+Subject: Re: [PATCH v2 00/10] allow unprivileged overlay mounts
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
         linux-fsdevel@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <1607075096-94235-1-git-send-email-haoxu@linux.alibaba.com>
- <20201207022130.GC4170059@dread.disaster.area>
- <9bbfafcf-688c-bad9-c288-6478a88c6097@linux.alibaba.com>
- <20201209212358.GE4170059@dread.disaster.area>
- <adf32418-dede-0b58-13da-40093e1e4e2d@linux.alibaba.com>
- <20201210051808.GF4170059@dread.disaster.area>
- <fdb6e01a-a662-90fa-3844-410b2107e850@linux.alibaba.com>
- <20201214025655.GH3913616@dread.disaster.area>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <a0760c52-cdd7-eb66-27dc-27582c2db825@linux.alibaba.com>
-Date:   Tue, 15 Dec 2020 17:43:21 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.5.1
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20201207163255.564116-1-mszeredi@redhat.com>
+ <1725e01a-4d4d-aecb-bad6-54aa220b4cd2@i-love.sakura.ne.jp>
+ <7a64acab-dd05-765f-df2c-4896eb6a29df@canonical.com>
+ <CAJfpegsiuf8ib5cvVrr=zHZ+Xu7BMMTT2eYapsEUdmPcRBUiwQ@mail.gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
+ azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
+ NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
+ L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
+ YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
+ UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
+ dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
+ OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
+ OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
+ V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
+ MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
+ NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
+ ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
+ d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
+ S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
+ d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
+ WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
+ ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
+ SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
+ bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
+ WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
+ NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
+ NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
+ cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
+ ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
+ QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
+ dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
+ OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
+ NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
+ cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
+ bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
+ V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
+ TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
+ QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
+ OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
+ SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
+ VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
+ QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
+ CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
+ RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
+ T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
+ N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
+ TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
+ L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
+ Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
+ ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
+ dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
+ a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
+ V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
+ aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
+ SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
+ SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
+ SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
+ M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
+ cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
+ TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
+ aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
+ RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
+ Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
+ a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
+ RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
+ VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
+ U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
+ Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
+ ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
+ WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
+ Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
+ Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
+ enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
+ WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
+ NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
+ MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
+ RVkgQkxPQ0stLS0tLQo=
+Organization: Canonical
+Message-ID: <9b8236eb-b3c4-6e0f-edb8-833172c7c2c7@canonical.com>
+Date:   Tue, 15 Dec 2020 03:03:30 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201214025655.GH3913616@dread.disaster.area>
+In-Reply-To: <CAJfpegsiuf8ib5cvVrr=zHZ+Xu7BMMTT2eYapsEUdmPcRBUiwQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -49,278 +119,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for your explanation, again.
-
-On 12/14/20 10:56 AM, Dave Chinner wrote:
-> On Fri, Dec 11, 2020 at 10:50:44AM +0800, JeffleXu wrote:
->> Excellent explanation! Thanks a lot.
+On 12/10/20 1:39 AM, Miklos Szeredi wrote:
+> On Thu, Dec 10, 2020 at 10:00 AM John Johansen
+> <john.johansen@canonical.com> wrote:
 >>
->> Still some questions below.
->>
->> On 12/10/20 1:18 PM, Dave Chinner wrote:
->>> On Thu, Dec 10, 2020 at 09:55:32AM +0800, JeffleXu wrote:
->>>> Sorry I'm still a little confused.
->>>>
->>>>
->>>> On 12/10/20 5:23 AM, Dave Chinner wrote:
->>>>> On Tue, Dec 08, 2020 at 01:46:47PM +0800, JeffleXu wrote:
->>>>>>
->>>>>>
->>>>>> On 12/7/20 10:21 AM, Dave Chinner wrote:
->>>>>>> On Fri, Dec 04, 2020 at 05:44:56PM +0800, Hao Xu wrote:
->>>>>>>> Currently, IOCB_NOWAIT is ignored in Direct IO, REQ_NOWAIT is only set
->>>>>>>> when IOCB_HIPRI is set. But REQ_NOWAIT should be set as well when
->>>>>>>> IOCB_NOWAIT is set.
->>>>>>>>
->>>>>>>> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->>>>>>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->>>>>>>> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
->>>>>>>> ---
->>>>>>>>
->>>>>>>> Hi all,
->>>>>>>> I tested fio io_uring direct read for a file on ext4 filesystem on a
->>>>>>>> nvme ssd. I found that IOCB_NOWAIT is ignored in iomap layer, which
->>>>>>>> means REQ_NOWAIT is not set in bio->bi_opf.
->>>>>>>
->>>>>>> What iomap is doing is correct behaviour. IOCB_NOWAIT applies to the
->>>>>>> filesystem behaviour, not the block device.
->>>>>>>
->>>>>>> REQ_NOWAIT can result in partial IO failures because the error is
->>>>>>> only reported to the iomap layer via IO completions. Hence we can
->>>>>>> split a DIO into multiple bios and have random bios in that IO fail
->>>>>>> with EAGAIN because REQ_NOWAIT is set. This error will
->>>>>>> get reported to the submitter via completion, and it will override
->>>>>>> any of the partial IOs that actually completed.
->>>>>>>
->>>>>>> Hence, like the recently reported multi-mapping IOCB_NOWAIT bug
->>>>>>> reported by Jens and fixed in commit 883a790a8440 ("xfs: don't allow
->>>>>>> NOWAIT DIO across extent boundaries") we'll get silent partial
->>>>>>> writes occurring because the second submitted bio in an IO can
->>>>>>> trigger EAGAIN errors with partial IO completion having already
->>>>>>> occurred.
->>>>>>>
->>>>
->>>>>>> Further, we don't allow partial IO completion for DIO on XFS at all.
->>>>>>> DIO must be completely submitted and completed or return an error
->>>>>>> without having issued any IO at all.  Hence using REQ_NOWAIT for
->>>>>>> DIO bios is incorrect and not desirable.
->>>>
->>>>
->>>> The current block layer implementation causes that, as long as one split
->>>> bio fails, then the whole DIO fails, in which case several split bios
->>>> maybe have succeeded and the content has been written to the disk. This
->>>> is obviously what you called "partial IO completion".
->>>>
->>>> I'm just concerned on how do you achieve that "DIO must return an error
->>>> without having issued any IO at all". Do you have some method of
->>>> reverting the content has already been written into the disk when a
->>>> partial error happened?
+>> On 12/8/20 2:27 AM, Tetsuo Handa wrote:
+>>> On 2020/12/08 1:32, Miklos Szeredi wrote:
+>>>> A general observation is that overlayfs does not call security_path_*()
+>>>> hooks on the underlying fs.  I don't see this as a problem, because a
+>>>> simple bind mount done inside a private mount namespace also defeats the
+>>>> path based security checks.  Maybe I'm missing something here, so I'm
+>>>> interested in comments from AppArmor and Tomoyo developers.
 >>>
->>> I think you've misunderstood what I was saying. I did not say
->>> "DIO must return an error without having issued any IO at all".
->>> There are two parts to my statement, and you just smashed part of
->>> the first statement into part of the second statement and came up
->>> something I didn't actually say.
->>>
->>> The first statement is:
->>>
->>> 	1. "DIO must be fully submitted and completed ...."
->>>
->>> That is, if we need to break an IO up into multiple parts, the
->>> entire IO must be submitted and completed as a whole. We do not
->>> allow partial submission or completion of the IO at all because we
->>> cannot accurately report what parts of a multi-bio DIO that failed
->>> through the completion interface. IOWs, if any of the IOs after the
->>> first one fail submission, then we must complete all the IOs that
->>> have already been submitted before we can report the failure that
->>> occurred during the IO.
+>>> Regarding TOMOYO, I don't want overlayfs to call security_path_*() hooks on the
+>>> underlying fs, but the reason is different. It is not because a simple bind mount
+>>> done inside a private mount namespace defeats the path based security checks.
+>>> TOMOYO does want to check what device/filesystem is mounted on which location. But
+>>> currently TOMOYO is failing to check it due to fsopen()/fsmount()/move_mount() API.
 >>>
 >>
->> 1. Actually I'm quite not clear on what you called "partial submission
->> or completion". Even when REQ_NOWAIT is set for all split bios of one
->> DIO, then all these split bios are **submitted** to block layer through
->> submit_bio(). Even when one split bio after the first one failed
->> **inside** submit_bio() because of REQ_NOWAIT, submit_bio() only returns
->> BLK_QC_T_NONE, and the DIO layer (such as __blkdev_direct_IO()) will
->> still call submit_bio() for the remaining split bios. And then only when
->> all split bios complete, will the whole kiocb complete.
+>> Regardless of TOMOYO's approach I would say that overlays should call the
+>> security_path_*() hooks, making it possible for an LSM to do something based off of
+>> them when needed.
+>>
+>> The current state of private mounts with regard to path based mediation is broken.
+>> I just haven't had time to try and come up with an acceptable fix for it. overlayfs
+>> is actually broken under apparmor mediation, and accesses to the lower layer end up
+>> getting denied but there is no way to properly allow them. So policy that hits this
+>> needs a flag set that allows for it in a very hacky way (its on the list of things
+>> to fix).
+>>
+>> Path based mediation has to carefully control mounts otherwise policy can be
+>> circumvented as Miklos rightly points out. Ideally path based LSM wouldn't allow
+>> you to do the simple bind mount inside a private mount namespace (at least not
+>> unless policy allowed for it). AppArmor does mediate the mount hooks and bind
+>> mounts in a private mount namespace (if they go through the LSM mount hooks) will
+>> be denied. Again the problem is how to allow them, and this is broken.
 > 
-> Yes, so what you have there is complete submission and completion.
-> i.e. what I described as #1.
+> Okay, so what does that mean for overlayfs?
 > 
->> So if you define "submission" as submitting to hardware disk (such as
->> nvme device driver), then it is indeed **partial submission** when
->> REQ_NOWAIT set. But if the definition of "submission" is actually
->> "submitting to block layer by calling submit_bio()", then all split bios
->> of one DIO are indeed submitted to block layer, even when one split bio
->> gets BLK_STS_AGAIN because of REQ_NOWIAT.
+> AA can deny the overlay mount just as well as the bind mount, and it
+> can allow it just as well as the bind mount.  Policy could be the
+> same.
 > 
-> The latter is the definition we using in iomap, because at this
-> layer we are the ones submitting the bios and defining the bounds of
-> the IO. What happens in the lower layers does not concern us here.
-> 
-> Partial submission can occur at the iomap layer if IOCB_NOWAIT is
-> set - that was what 883a790a8440 fixed. i.e. we do
-> 
-> 	loop for all mapped extents {
-> 		loop for mapped range {
-> 			submit_bio(subrange)
-> 		}
-> 	}
-> 
-> So if we have an extent range like so:
-> 
-> 	start					end
-> 	+-----------+---------+------+-----------+
-> 	  ext 1        ext 2    ext 3    ext 4
-> 
-> We actually have to loop above 4 times to map the 4 extents that
-> span the user IO range. That means we need to submit at least 4
-> independent bios to run this IO.
-> 
-> So if we submit all the bios in a first mapped range (ext 1), then
-> go back to the filesystem to get the map for the next range to
-> submit and it returns -EAGAIN, we break out of the outer loop
-> without having completely submitted bios for the range spanning ext
-> 2, 3 or 4. That's partial IO submission as the *iomap layer* defines
-> it.
+not entirely the private mount is always detached from the namespace and we have
+no way to correlate the private mount to the overlay so the only safe thing is
+to deny operations on the private mount.
 
-Now I can understand the context of commit 883a790a8440 and the root
-issue here.
+Ideally we would have a way to provide some kind of correlation so we could
+make an informed decision.
 
+> Also all the security_path_ hooks will still get called for each
+> access on overlayfs itself.  They won't be called for the accesses
+> which overlayfs does on underlying layers, but is that needed?
 > 
-> And the "silent" part of the "partial write" it came from the fact
-> this propagated -EAGAIN to the user despite the fact that some IO
-> was actually successfully committed and completed. IOws, we may have
-> corrupted data on disk by telling the user nothing was done with
-> -EAGAIN rather than failing the partial IO with -EIO.>
-> This is the problem commit 883a790a8440 fixed.
-> 
->> 2. One DIO could be split into multiple bios in DIO layer. Similarly one
->> big bio could be split into multiple bios in block layer. In the
->> situation when all split bios have already been submitted to block
->> layer, since the IO completion interface could return only one error
->> code, the whole DIO could fail as long as one split bio fails, while
->> several other split bios could have already succeeded and the
->> corresponding disk sectors have already been overwritten.
-> 
-> Yup. That can happen. That's a data corruption for which prevention
-> is the responsibility of the layer doing the splitting and
-> recombining. 
+maybe but maybe not. The thing is apparmor doesn't just used security_path_
+hooks which means we get some operation on leaking through that are using
+the private mount. Its this inconsistent partial view that is problematic.
 
-Unfortunately the block layer doesn't handle this well currently.
-
-
-> The iomap layer knows nothing of this - this situation
-> needs to result in the entire bio that was split being marked with
-> an EIO error because we do not know what parts of the bio made it to
-> disk or not. IOWs, the result of the IO is undefined, and so we
-> need to return EIO to the user.
-
-What's the difference of EIO and EAGAIN here, besides the literal
-semantics, when the data corruption has already happened? The upper user
-has to resubmit the bio when EAGAIN is received, and the data corruption
-should disappear once the resubmission completes successfully. But the
-bio may not be resubmitted when EIO is received, and the data corruption
-is just left there.
-
-
-
-> 
-> This "data is inconsistent until all sub-devices complete their IO
-> successfully" situation is also known as the "RAID 5 write hole".
-> Crash while these IOs are in flight, and some might hit the disk and
-> some might not. When the system comes back up, you've got no idea
-> which part of that IO was completed or not, so the data in the
-> entire stripe is corrupt.
-> 
->> I'm not sure
->> if this is what you called "silent partial writes", and if this is the
->> core reason for commit 883a790a8440 ("xfs: don't allow NOWAIT DIO across
->> extent boundaries") you mentioned in previous mail.
-> 
-> No, it's not the same thing. This "split IO failed" should never
-> result in a silent partial write - it should always result in EIO.
-
-I'm doubted about this.
-
-The block layer could split one big bio into multiple split bios. Also
-one big DIO from one extent could also be split into multiple split
-bios, since one single bio could maintain at most BIO_MAX_PAGES i.e. 256
-segments. (see the loop in iomap_dio_bio_actor()) If the input iov_iter
-contains more than 256 segments, then it will be split into multiple
-split bios, though this iov_iter may be mapped to one single extent.
-
-And once one split bio (among all these split bios) failed with EAGAIN,
-the completion status of the whole IO is EAGAIN, rather than EIO, at
-least for the current implementation of block layer. So this should also
-be called "silent partial write", since partial bios may have been
-written to the disk successfully, while still **EAGAIN** returned in
-this situation?
-
-
-> 
->> If this is the case, then it seems that the IO completion interface
->> should be blamed for this issue. Besides REQ_NOWIAT, there may be more
->> situations that will cause "silent partial writes".
-> 
-> Yes, there are many potential causes of this behaviour. They are all
-> considered to be a data corruption, and so in all cases they should
-> be returning EIO as the completion status to the submitter of the
-> bio.
-> >> As long as one split bios could fail (besides EAGAIN, maybe EOPNOTSUPP,
->> if possible), while other split bios may still succeeds, then the error
->> of one split bio will still override the completion status of the whole
->> DIO.
-> 
-> If you get EOPNOTSUPP from on device in bio split across many
-> devices, then you have a bug in the layer that is splitting the IO.
-> All the sub-devices need to support the operation, or the top level
-> device cannot safely support that operation.
-> 
-> And if one device didn't do the opreation, then we have inconsistent
-> data on disk now and so EIO is the result that should be returned to
-> the user.
-
-EOPNOTSUPP is just an example here. I admit that NOWAIT may be
-problematic here. But what I mean here is that, once one split bio
-fails, the whole IO fails with the same error code e.g.
-EAGIAN/EOPNOTSUPP rather than EIO, while partial split bios may have
-already succeeded. IOWs, the block layer may also trigger "silent
-partial write" even without REQ_NOWAIT, though the possibility of
-"silent partial write" may increase a lot when REQ_NOWAIT applied.
-
-
-> 
->> In this case "silent partial writes" is still possible? In my
->> understanding, passing REQ_NOWAIT flags from IOCB_NOWAIT in DIO layer
->> only makes the problem more likely to happen, but it's not the only
->> source of this problem?
-> 
-> Passing REQ_NOWAIT from the iomap dio layer means that we will see
-> data corruptions in stable storage simply due to high IO load, rather
-> than the much, much rarer situations of software bugs or actual
-> hardware errors.  IOWs, REQ_NOWAIT essentially guarantees data
-> corruption in stable storage of a perfectly working storage stack
-> will occur and there is nothing the application can do to prevent
-> that occurring.
-> 
-> The worst part of this is that REQ_NOWAIT also requires the
-> application to detect and correct the corruption caused by the
-> kernel using REQ_NOWAIT inappropriately. And if the application
-> crashes before it can correct the data corruption, it's suddenly a
-> permanent, uncorrectable data corruption.
-> 
-> REQ_NOWAIT is dangerous and can easily cause harm to user data by
-> aborting parts of submitted IOs. IOWs, it's more like a random IO
-> error injection mechanism than a useful method of doing safe
-> non-blocking IO.
-> 
-> Cheers,
-> 
-> Dave.
+> Overlay could call those hooks itself (since the vfs_ helpers don't)
+> but the big question is whether that makes any sense.  AFAICS it might
+> make sense, but only if AA would correctly handle bind mounts, and
+> especially detached bind mounts (which is what overlayfs technically
+> uses).
 > 
 
--- 
-Thanks,
-Jeffle
+I haven't investigated enough to say for sure whether AA needs the path
+hooks called, but I think it probably doesn't. What AA does need is a
+way to determine what to do with private mounts when it encounters them
+in the none path hooks.
+
+That could be a simple as a hook when the private mount is setup so it
+can setup some state.
+
+> Thanks,
+> Miklos
+> 
+> Tja
+> 
+
