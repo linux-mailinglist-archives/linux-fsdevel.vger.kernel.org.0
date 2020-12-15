@@ -2,109 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAE732DB497
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 20:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12C072DB531
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 21:33:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbgLOTjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 14:39:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33900 "EHLO
+        id S1728425AbgLOUcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 15:32:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbgLOTjm (ORCPT
+        with ESMTP id S1727319AbgLOUVY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 14:39:42 -0500
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73571C0617A6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 11:39:02 -0800 (PST)
-Received: by mail-pg1-x543.google.com with SMTP id t37so15936971pga.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 11:39:02 -0800 (PST)
+        Tue, 15 Dec 2020 15:21:24 -0500
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9110FC06179C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 12:20:44 -0800 (PST)
+Received: by mail-oi1-x242.google.com with SMTP id q205so12029472oig.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 12:20:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4ny+6VHr3rCVkpRDtspTdbnm/DIlwsYB9DGmVDQKkiY=;
-        b=1hB1o2Z19fihn5NqJHuE+yw/dzRaNVHYlrCInQwWSUeOZ+Os8UpOp7VEGWF2gA1wcJ
-         DSNCYQlkwyccSvbI38r3UZ7e//NPjphzONc/IebYHC/1NcsUX/C6qq8KSxyTTjJaDrAK
-         tAUhgwvpkhy2ZlYzdPg9IYsE0eR4nA2+aNJ6lM88irZwXAcWkDsSxLh+fUuyeC0s5PZs
-         daersR1D4mKP2cWWiG3zELNuG1NdXKja3X0acePAm7ySEZM0vqKYrlwJbdxDZBR/Xn/0
-         xhc4qNRi68njocAUZIhYiWCTZgRqwd1hIy3dOsrRuTSBxdnxA7EuppZ2wh0+SxspieVy
-         Eiaw==
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cctYVRDBvS7gnFdNMIYJVdkb8x7AF/SwJBlmVDDyCYk=;
+        b=cG0sQKUePn5k7aBXprnMtjUhgWTI62Pe7UHw/zIlAPxIQF8CdBeDUc+kWVw1uEmxrp
+         nt/Mf6lmzqPPneA5f9T/IvFq50L32zvCJtGIu0+lySsoIbydIJUIm5JqDUwPtlh8wvwJ
+         qFLBILp4QS5owF/wYwSpWgEK1a3dB7Kw7lbnFV5LLSu/0tP2/DRUh+wOWoJzxKGTw+0c
+         JF6fTJxilb868jW5eKByzmX4MhYZnt06ya79TX/1gCHWi3HlsniqM+LZtGadDp6+Fo5Y
+         gg6j3iGI20bmEC/fcSFLip5F1NZSJtRFSu/1DN2TxE06zRrR8d0Rn64n3Mi7peUwaJM/
+         X9bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4ny+6VHr3rCVkpRDtspTdbnm/DIlwsYB9DGmVDQKkiY=;
-        b=Wm0arPoN4tfR5QWKH5mtF6jmxCN7ruF1BlkSf0qj+NOLlMYX5rc1VqPzxf2ZWU+Bc3
-         n80IWtAvuu3kHgjtStr4QGg1564dH5YWpmo5nxG9gJl3s4fG5hv0bqOB2KICG6QslOAL
-         0BnikBMTS+ZkF5NGHXr8y0G1aF3plyOVyLKv3UtfJwzxz8D1yHsiABIVCjssRVk7tCX1
-         zU3tHO1xHS880svHiz0GfJEqiyRNrtcGtQexJFsHJIGrqy6+RtE8bqms6pyTXSkDUmx8
-         i2nxCRV5/KxaW7tkgfP7JVzUXQ8OazXjjzW8VLU4LbheqBwU8kxwgR+/l+RDICAoakox
-         zDmA==
-X-Gm-Message-State: AOAM532iHMxL+9dzmoiXrFH8nwaoKHBNBtEuM5no6xt44JsHvHvDZ2kF
-        gKzfqGIG/1V0ZMwJcht0AzpTbX+ftBsbpA==
-X-Google-Smtp-Source: ABdhPJw0DgDP5Q1Hz7kbSmIegj6LPSYS/55F6t7efwvGBC2xgOWYnUYQSudYsucnnBk9CfRU5T7Tdw==
-X-Received: by 2002:a62:17d0:0:b029:19e:5cf9:a7f6 with SMTP id 199-20020a6217d00000b029019e5cf9a7f6mr30219999pfx.0.1608061141900;
-        Tue, 15 Dec 2020 11:39:01 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id x23sm9571391pge.47.2020.12.15.11.39.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Dec 2020 11:39:01 -0800 (PST)
-Subject: Re: [PATCH 2/4] fs: add support for LOOKUP_NONBLOCK
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20201214191323.173773-1-axboe@kernel.dk>
- <20201214191323.173773-3-axboe@kernel.dk>
- <20201215122447.GQ2443@casper.infradead.org>
- <75e7d845-2bd0-5916-ad45-fb84d9649546@kernel.dk>
- <20201215153319.GU2443@casper.infradead.org>
- <7c2ff4dd-848d-7d9f-c1c5-8f6dfc0be7b4@kernel.dk>
- <4ddec582-3e07-5d3d-8fd0-4df95c02abfb@kernel.dk>
- <CAHk-=wgsdrdep8uT7DiWftUzW5E5tb_b6CRkMk0cb06q3yE_WQ@mail.gmail.com>
- <01be1442-a4d1-6347-f955-3a28a8d253e7@kernel.dk>
- <CAHk-=wgyKDvLhiKfQ1xvBxFkD_+v_SCmMeJvzNJ_maibWH6QRQ@mail.gmail.com>
- <5e9f9121-68dd-81a1-38b7-8e1b4fd0cf0f@kernel.dk>
- <CAHk-=wgdcShySTmDbpwDiDQvDifLNN9XPjqw7BPij0YT4-z6sw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <67388bd9-755f-6ca6-0805-fb9e5ea1ff5a@kernel.dk>
-Date:   Tue, 15 Dec 2020 12:38:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cctYVRDBvS7gnFdNMIYJVdkb8x7AF/SwJBlmVDDyCYk=;
+        b=NG2U5UQ67qGgSZVzncHOITDISZ3Z9YzzTXr7289pXRbvsATaQzzEBx9vynLsfISzVK
+         sppRwIi4/h8r8YnSk8BmW6mBNLGplqZsXXDNMOQ8yCWjbq0aFN65LWDvsTosbXa/l52B
+         46exGdr0eepMeyGec94gpn+P+TUa19H8ukr/bZNc+nPheHNQ91uPw7tpqiCl2A8AEfV5
+         SsuNqXSRx1q2FY0GIrhavK5qz+gXwJNqb8dAyvD1GCmXt3A7HHNxVu5bPcTCCvPyIY3Q
+         x008qUokdNVu+0wLWtQ1jhPVNjClqbNol8ugm+JR6LGRNTsOy3Wqt8UBJ2uFstntVN14
+         npIA==
+X-Gm-Message-State: AOAM533hX87cfc7ndLN+Nl4WuonajXKRb/AJMjBHpbFp749U0jkhIdxL
+        UCZHip/etYl9WAY0N7ikbqbuoQl4qTv+u5bC++8HRwFHWOzUMLuc
+X-Google-Smtp-Source: ABdhPJxhr1wP1fBdicsk1DqIMds7hvlQbEZkufoyYLdqHll79Mr3HnsYwm3O4OouD6BQp08lkedR8r7d50Auyk+oO34=
+X-Received: by 2002:aca:4f47:: with SMTP id d68mr385593oib.135.1608063643849;
+ Tue, 15 Dec 2020 12:20:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgdcShySTmDbpwDiDQvDifLNN9XPjqw7BPij0YT4-z6sw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAOg9mSSCsPPYpHGAWVHoY5bO8DozzFNWXTi39XBc+GhDmWcRTA@mail.gmail.com>
+ <20201214030552.GI3913616@dread.disaster.area> <20201214040703.GJ2443@casper.infradead.org>
+In-Reply-To: <20201214040703.GJ2443@casper.infradead.org>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Tue, 15 Dec 2020 15:20:32 -0500
+Message-ID: <CAOg9mST-DqAp5ijqc8aX-5TH_cZrd7Wt5fLDZR0chUUpuyxMaw@mail.gmail.com>
+Subject: Re: "do_copy_range:: Invalid argument"
+To:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Mike Marshall <hubcapsc@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/15/20 12:32 PM, Linus Torvalds wrote:
-> On Tue, Dec 15, 2020 at 11:03 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> And for comparison, doing the same thing with the regular openat2()
->> system call takes 867,897 usec.
-> 
-> Well, you could always thread it. That's what git does for its
-> 'stat()' loop for 'git diff' and friends (the whole "check that the
-> index is up-to-date with all the files in the working tree" is
-> basically just a lot of lstat() calls).
+Hey! Y'all are awesome! I added this simple patch
+and all the tests that failed work now.  I added
+.splice_read too, don't know if I should have...
 
-Sure, but imho the whole point of LOOKUP_NONBLOCK + io_uring is that you
-don't have to worry about (or deal with) threading. As the offload
-numbers prove, offloading when you don't have to is always going to be a
-big loss. I like the model where the fast path is just done the right
-way, and the slow path is handled automatically, a whole lot more than
-chunking it off like that.
+I'll run all the xfstests (so far I just ran the
+handful of regressions so I could see that they
+were passing) and if that goes well, I'll refresh
+the orangefs linux-next tree. If that goes well, hopefully
+Linus will accept this during the 5.11 merge window.
 
-Granted that's less of an issue if the workload is "stat this crap ton
-of files", it's more difficult when you're doing it in a more piecemeal
-fashion as needed.
+Thanks again!
 
-Actually been on my list to use io_uring stat with git, but needed to
-get the LOOKUP_NONBLOCK done first...
+-Mike
 
--- 
-Jens Axboe
+[root@vm1 linux]# git diff
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index af375e049aae..7417af40d33e 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -663,6 +663,8 @@ const struct file_operations orangefs_file_operations = {
+        .unlocked_ioctl = orangefs_ioctl,
+        .mmap           = orangefs_file_mmap,
+        .open           = generic_file_open,
++        .splice_read    = generic_file_splice_read,
++        .splice_write   = iter_file_splice_write,
+        .flush          = orangefs_flush,
+        .release        = orangefs_file_release,
+        .fsync          = orangefs_fsync,
+[root@vm1 linux]#
 
+On Sun, Dec 13, 2020 at 11:07 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Dec 14, 2020 at 02:05:52PM +1100, Dave Chinner wrote:
+> > On Fri, Dec 11, 2020 at 11:26:28AM -0500, Mike Marshall wrote:
+> > > Greetings everyone...
+> > >
+> > > Omnibond has sent me off doing some testing chores lately.
+> > > I made no Orangefs patches for 5.9 or 5.10 and none were sent,
+> > > but I thought I should at least run through xfstests.
+> > >
+> > > There are tests that fail on 5.10-rc6 that didn't fail
+> > > on 5.8-rc7, and I've done enough looking to see that the
+> > > failure reasons all seem related.
+> > >
+> > > I will, of course, keep looking to try and understand these
+> > > failures. Bisection might lead me somewhere. In case the
+> > > notes I've taken so far trigger any of y'all to give me
+> > > any (constructive :-) ) suggestions, I've included them below.
+> > >
+> > > -Mike
+> > >
+> > > ---------------------------------------------------------------------
+> > >
+> > > generic/075
+> > >   58rc7: ? (check.log says it ran, results file missing)
+> > >   510rc6: failed, "do_copy_range:: Invalid argument"
+> > >           read the tests/generic/075 commit message for "detect
+> > >           preallocation support for fsx tests"
+> > >
+> > > generic/091
+> > >   58rc7: passed, but skipped fallocate parts "filesystem does not support"
+> > >   510rc6: failed, "do_copy_range:: Invalid argument"
+> > >
+> > > generic/112
+> > >   58rc7: ? (check.log says it ran, results file missing)
+> > >   510rc6: failed, "do_copy_range:: Invalid argument"
+> > >
+> > > generic/127
+> > >   58rc7: ? (check.log says it ran, results file missing)
+> > >   510rc6: failed, "do_copy_range:: Invalid argument"
+> > >
+> > > generic/249
+> > >   58rc7: passed
+> > >   510rc6: failed, "sendfile: Invalid argument"
+> > >           man 2 sendfile -> "SEE ALSO copy_file_range(2)"
+> >
+> > If sendfile() failed, then it's likely a splice related regression,
+> > not a copy_file_range() problem. The VFS CFR implementation falls
+> > back to splice if the fs doesn't provide a clone or copy offload
+> > method.
+> >
+> > THere's only been a handful of changes to fs/splice.c since 5.8rc7,
+> > so it might be worth doing a quick check reverting them first...
+>
+> I'd suggest applying the equivalent of
+> https://lore.kernel.org/linux-fsdevel/1606837496-21717-1-git-send-email-asmadeus@codewreck.org/
+> would be the first step.
