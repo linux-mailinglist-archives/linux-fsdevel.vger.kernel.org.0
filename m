@@ -2,99 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD292DAC8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 13:02:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92D212DACB4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 13:06:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbgLOMA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 07:00:58 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:23578 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728743AbgLOMAt (ORCPT
+        id S1728974AbgLOMFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 07:05:54 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:59154 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729036AbgLOMFr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 07:00:49 -0500
-X-IronPort-AV: E=Sophos;i="5.78,420,1599494400"; 
-   d="scan'208";a="102419797"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 15 Dec 2020 20:00:29 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 928374CE600B;
-        Tue, 15 Dec 2020 20:00:26 +0800 (CST)
-Received: from irides.mr (10.167.225.141) by G08CNEXMBPEKD05.g08.fujitsu.local
- (10.167.33.204) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 15 Dec
- 2020 20:00:25 +0800
-Subject: Re: [RFC PATCH v2 0/6] fsdax: introduce fs query to support reflink
-To:     Jane Chu <jane.chu@oracle.com>, <linux-kernel@vger.kernel.org>,
-        <linux-xfs@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
-        <linux-mm@kvack.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
-        <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@lst.de>, <song@kernel.org>,
-        <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
-References: <20201123004116.2453-1-ruansy.fnst@cn.fujitsu.com>
- <89ab4ec4-e4f0-7c17-6982-4f55bb40f574@oracle.com>
-From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
-Message-ID: <bb699996-ddc8-8f3a-dc8f-2422bf990b06@cn.fujitsu.com>
-Date:   Tue, 15 Dec 2020 19:58:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+        Tue, 15 Dec 2020 07:05:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608033860;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BMM7E9TuXF5eeNr/08yqebR2Dt2ctyis2zH1H/npDvk=;
+        b=K7+s+KnfBo4v9RnmU7i3mMOiTvTMfyQizYKVn1tFt2R5mY2j+JKP9zUoVK9P+yvR2ViePZ
+        9U1c8BKx7wHGYu+a0aaetZUJL36W3LafwkNVp7y/1AbR8BjDyTjNgG4MSnlwg/49QTNXCD
+        HWJyaAOCWKmA3rBs0nCvjDoZ+AYOZ4w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-282-YS-IJu5KMfS3eRNExERwJw-1; Tue, 15 Dec 2020 07:04:16 -0500
+X-MC-Unique: YS-IJu5KMfS3eRNExERwJw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 551CF180A096;
+        Tue, 15 Dec 2020 12:04:14 +0000 (UTC)
+Received: from T590 (ovpn-12-182.pek2.redhat.com [10.72.12.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 40F5019C44;
+        Tue, 15 Dec 2020 12:04:01 +0000 (UTC)
+Date:   Tue, 15 Dec 2020 20:03:57 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v1 0/6] no-copy bvec
+Message-ID: <20201215120357.GA1798021@T590>
+References: <cover.1607976425.git.asml.silence@gmail.com>
+ <20201215014114.GA1777020@T590>
+ <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <89ab4ec4-e4f0-7c17-6982-4f55bb40f574@oracle.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.225.141]
-X-ClientProxiedBy: G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) To
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
-X-yoursite-MailScanner-ID: 928374CE600B.AB884
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jane
-
-On 2020/12/15 上午4:58, Jane Chu wrote:
-> Hi, Shiyang,
+On Tue, Dec 15, 2020 at 11:14:20AM +0000, Pavel Begunkov wrote:
+> On 15/12/2020 01:41, Ming Lei wrote:
+> > On Tue, Dec 15, 2020 at 12:20:19AM +0000, Pavel Begunkov wrote:
+> >> Instead of creating a full copy of iter->bvec into bio in direct I/O,
+> >> the patchset makes use of the one provided. It changes semantics and
+> >> obliges users of asynchronous kiocb to track bvec lifetime, and [1/6]
+> >> converts the only place that doesn't.
+> > 
+> > Just think of one corner case: iov_iter(BVEC) may pass bvec table with zero
+> > length bvec, which may not be supported by block layer or driver, so
+> > this patchset has to address this case first.
 > 
-> On 11/22/2020 4:41 PM, Shiyang Ruan wrote:
->> This patchset is a try to resolve the problem of tracking shared page
->> for fsdax.
->>
->> Change from v1:
->>    - Intorduce ->block_lost() for block device
->>    - Support mapped device
->>    - Add 'not available' warning for realtime device in XFS
->>    - Rebased to v5.10-rc1
->>
->> This patchset moves owner tracking from dax_assocaite_entry() to pmem
->> device, by introducing an interface ->memory_failure() of struct
->> pagemap.  The interface is called by memory_failure() in mm, and
->> implemented by pmem device.  Then pmem device calls its ->block_lost()
->> to find the filesystem which the damaged page located in, and call
->> ->storage_lost() to track files or metadata assocaited with this page.
->> Finally we are able to try to fix the damaged data in filesystem and do
-> 
-> Does that mean clearing poison? if so, would you mind to elaborate 
-> specifically which change does that?
+> The easiest for me would be to fallback to copy if there are zero bvecs,
+> e.g. finding such during iov_iter_alignment(), but do we know from where
+> zero bvecs can came? As it's internals we may want to forbid them if
+> there is not too much hassle.
 
-Recovering data for filesystem (or pmem device) has not been done in 
-this patchset...  I just triggered the handler for the files sharing the 
-corrupted page here.
+You may find clue from the following link:
+
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2262077.html
 
 
---
 Thanks,
-Ruan Shiyang.
-
-> 
-> Thanks!
-> -jane
-> 
->> other necessary processing, such as killing processes who are using the
->> files affected.
-> 
-> 
-
+Ming
 
