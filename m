@@ -2,244 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B85E52DB666
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 23:17:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20F842DB66A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Dec 2020 23:18:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbgLOWRG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 17:17:06 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:41906 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbgLOWRF (ORCPT
+        id S1727749AbgLOWRv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 17:17:51 -0500
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:40033 "EHLO
+        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726365AbgLOWRj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 17:17:05 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BFM9ewR162755;
-        Tue, 15 Dec 2020 22:16:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=WEPukmZK/xBeBbyNkC4SRC4dtu16K8HyoQIKM2HTFuk=;
- b=yflCkxeCAPS1vYxlTMwohCIRyctDzL73dCDUkGkSNMnPtFJlvfu7/bbza4g1qHlgtGHW
- FEJhzm0Tp1b4LgAhssiVH3HFGP4YyQ/zQl6mCXYBtQ1NdYD9mecL81dmufMi9XwkbEX7
- KARc0xJNQvYrKKbDpExeuTHDD/1HUGkEKYw2EdlIhNBiRVdVLnni6M3w3fndwdPnzcRk
- DXFxcfJUOPgmjbFam315qio3hNSOLTiWUvh2wjxpdKWOdkBCVLu/2U0I9qgaAd01viwy
- 1jWDVYdjTg+jffLA94tHNdRvRNptue36KWxfeMhYWWtlf7Jk7AWCdWLXKxuSwMCd7PuW 4A== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 35ckcbd98e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Dec 2020 22:16:10 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BFMBBkS192573;
-        Tue, 15 Dec 2020 22:14:10 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 35d7enmxxv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Dec 2020 22:14:10 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BFME120018162;
-        Tue, 15 Dec 2020 22:14:01 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Dec 2020 14:14:01 -0800
-Date:   Tue, 15 Dec 2020 14:13:59 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+        Tue, 15 Dec 2020 17:17:39 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id B60E61ACD12;
+        Wed, 16 Dec 2020 09:16:51 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kpIck-004MEv-Bl; Wed, 16 Dec 2020 09:16:50 +1100
+Date:   Wed, 16 Dec 2020 09:16:50 +1100
+From:   Dave Chinner <david@fromorbit.com>
 To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
 Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        hch@infradead.org, nborisov@suse.com,
+        darrick.wong@oracle.com, hch@infradead.org, nborisov@suse.com,
         Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 2/2] btrfs: Make btrfs_direct_write atomic with respect
- to inode_lock
-Message-ID: <20201215221359.GA6911@magnolia>
+Subject: Re: [PATCH 1/2] iomap: Separate out generic_write_sync() from
+ iomap_dio_complete()
+Message-ID: <20201215221650.GR3913616@dread.disaster.area>
 References: <cover.1608053602.git.rgoldwyn@suse.com>
- <49ff9bfb8ef20e7a9c6e26fd54bc9f4508c9ccb4.1608053602.git.rgoldwyn@suse.com>
+ <f52d649dd35c616786b54ff7d76c6bcf95f9197e.1608053602.git.rgoldwyn@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <49ff9bfb8ef20e7a9c6e26fd54bc9f4508c9ccb4.1608053602.git.rgoldwyn@suse.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9836 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012150149
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9836 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
- malwarescore=0 impostorscore=0 lowpriorityscore=0 clxscore=1011
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012150149
+In-Reply-To: <f52d649dd35c616786b54ff7d76c6bcf95f9197e.1608053602.git.rgoldwyn@suse.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=iox4zFpeAAAA:8 a=7-415B0cAAAA:8
+        a=vO0O9KBZJt_N6kGT6psA:9 a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 12:06:36PM -0600, Goldwyn Rodrigues wrote:
+On Tue, Dec 15, 2020 at 12:06:35PM -0600, Goldwyn Rodrigues wrote:
 > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
-> btrfs_direct_write() fallsback to buffered write in case btrfs is not
-> able to perform or complete a direct I/O. During the fallback
-> inode lock is unlocked and relocked. This does not guarantee the
-> atomicity of the entire write since the lock can be acquired by another
-> write between unlock and relock.
+> This introduces a separate function __iomap_dio_complte() which
+> completes the Direct I/O without performing the write sync.
 > 
-> __btrfs_buffered_write() is used to perform the direct fallback write,
-> which performs the write without acquiring the lock or checks.
-
-Er... can you grab the inode lock before deciding which of the IO
-path(s) you're going to take?  Then you'd always have an atomic write
-even if fallback happens.
-
-(Also vaguely wondering why this needs even more slicing and dicing of
-the iomap directio functions...)
-
---D
-
+> Filesystems such as btrfs which require an inode_lock for sync can call
+> __iomap_dio_complete() and must perform sync on their own after unlock.
 > 
-> fa54fc76db94 ("btrfs: push inode locking and unlocking into buffered/direct write")
 > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > ---
->  fs/btrfs/file.c | 69 ++++++++++++++++++++++++++++---------------------
->  1 file changed, 40 insertions(+), 29 deletions(-)
+>  fs/iomap/direct-io.c  | 16 +++++++++++++---
+>  include/linux/iomap.h |  2 +-
+>  2 files changed, 14 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index 0e41459b8de6..9fc768b951f1 100644
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@ -1638,11 +1638,11 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
->  	return 0;
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 933f234d5bec..11a108f39fd9 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -76,7 +76,7 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+>  		dio->submit.cookie = submit_bio(bio);
 >  }
 >  
-> -static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
-> +static noinline ssize_t __btrfs_buffered_write(struct kiocb *iocb,
->  					       struct iov_iter *i)
+> -ssize_t iomap_dio_complete(struct iomap_dio *dio)
+> +ssize_t __iomap_dio_complete(struct iomap_dio *dio)
 >  {
->  	struct file *file = iocb->ki_filp;
-> -	loff_t pos;
-> +	loff_t pos = iocb->ki_pos;
->  	struct inode *inode = file_inode(file);
->  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
->  	struct page **pages = NULL;
-> @@ -1656,24 +1656,9 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
->  	bool only_release_metadata = false;
->  	bool force_page_uptodate = false;
->  	loff_t old_isize = i_size_read(inode);
-> -	unsigned int ilock_flags = 0;
-> -
-> -	if (iocb->ki_flags & IOCB_NOWAIT)
-> -		ilock_flags |= BTRFS_ILOCK_TRY;
-> -
-> -	ret = btrfs_inode_lock(inode, ilock_flags);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = generic_write_checks(iocb, i);
-> -	if (ret <= 0)
-> -		goto out;
->  
-> -	ret = btrfs_write_check(iocb, i, ret);
-> -	if (ret < 0)
-> -		goto out;
-> +	lockdep_assert_held(&inode->i_rwsem);
->  
-> -	pos = iocb->ki_pos;
->  	nrptrs = min(DIV_ROUND_UP(iov_iter_count(i), PAGE_SIZE),
->  			PAGE_SIZE / (sizeof(struct page *)));
->  	nrptrs = min(nrptrs, current->nr_dirtied_pause - current->nr_dirtied);
-> @@ -1877,10 +1862,37 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
->  		iocb->ki_pos += num_written;
+>  	const struct iomap_dio_ops *dops = dio->dops;
+>  	struct kiocb *iocb = dio->iocb;
+> @@ -119,18 +119,28 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
 >  	}
->  out:
-> -	btrfs_inode_unlock(inode, ilock_flags);
->  	return num_written ? num_written : ret;
->  }
 >  
-> +static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
-> +					       struct iov_iter *i)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	unsigned int ilock_flags = 0;
-> +	ssize_t ret;
+>  	inode_dio_end(file_inode(iocb->ki_filp));
 > +
-> +	if (iocb->ki_flags & IOCB_NOWAIT)
-> +		ilock_flags |= BTRFS_ILOCK_TRY;
-> +
-> +	ret = btrfs_inode_lock(inode, ilock_flags);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = generic_write_checks(iocb, i);
-> +	if (ret <= 0)
-> +		goto out;
-> +
-> +	ret = btrfs_write_check(iocb, i, ret);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = __btrfs_buffered_write(iocb, i);
-> +out:
-> +	btrfs_inode_unlock(inode, ilock_flags);
 > +	return ret;
 > +}
+> +EXPORT_SYMBOL_GPL(__iomap_dio_complete);
 > +
->  static ssize_t check_direct_IO(struct btrfs_fs_info *fs_info,
->  			       const struct iov_iter *iter, loff_t offset)
->  {
-> @@ -1927,10 +1939,8 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  	}
->  
->  	err = btrfs_write_check(iocb, from, err);
-> -	if (err < 0) {
-> -		btrfs_inode_unlock(inode, ilock_flags);
-> +	if (err < 0)
->  		goto out;
-> -	}
->  
->  	pos = iocb->ki_pos;
+> +ssize_t iomap_dio_complete(struct iomap_dio *dio)
+> +{
+> +	ssize_t ret;
+> +
+> +	ret = __iomap_dio_complete(dio);
 >  	/*
-> @@ -1944,22 +1954,19 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  		goto relock;
->  	}
+>  	 * If this is a DSYNC write, make sure we push it to stable storage now
+>  	 * that we've written data.
+>  	 */
+>  	if (ret > 0 && (dio->flags & IOMAP_DIO_NEED_SYNC))
+> -		ret = generic_write_sync(iocb, ret);
+> +		ret = generic_write_sync(dio->iocb, ret);
 >  
-> -	if (check_direct_IO(fs_info, from, pos)) {
-> -		btrfs_inode_unlock(inode, ilock_flags);
-> +	if (check_direct_IO(fs_info, from, pos))
->  		goto buffered;
-> -	}
+>  	kfree(dio);
 >  
->  	dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops,
->  			     &btrfs_dio_ops, is_sync_kiocb(iocb));
->  
-> -	btrfs_inode_unlock(inode, ilock_flags);
-> -
->  	if (IS_ERR_OR_NULL(dio)) {
->  		err = PTR_ERR_OR_ZERO(dio);
->  		if (err < 0 && err != -ENOTBLK)
->  			goto out;
->  	} else {
-> -		written = iomap_dio_complete(dio);
-> +		written = __iomap_dio_complete(dio);
-> +		kfree(dio);
->  	}
->  
->  	if (written < 0 || !iov_iter_count(from)) {
-> @@ -1969,7 +1976,7 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  
->  buffered:
->  	pos = iocb->ki_pos;
-> -	written_buffered = btrfs_buffered_write(iocb, from);
-> +	written_buffered = __btrfs_buffered_write(iocb, from);
->  	if (written_buffered < 0) {
->  		err = written_buffered;
->  		goto out;
-> @@ -1990,6 +1997,10 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  	invalidate_mapping_pages(file->f_mapping, pos >> PAGE_SHIFT,
->  				 endbyte >> PAGE_SHIFT);
->  out:
-> +	btrfs_inode_unlock(inode, ilock_flags);
-> +	if (written > 0)
-> +		generic_write_sync(iocb, written);
-> +
->  	return written ? written : err;
+>  	return ret;
 >  }
->  
-> -- 
-> 2.29.2
-> 
+> -EXPORT_SYMBOL_GPL(iomap_dio_complete);
+> +
+
+NACK.
+
+If you don't want iomap_dio_complete to do O_DSYNC work after
+successfully writing data, strip those flags out of the kiocb
+before you call iomap_dio_rw() and do it yourself after calling
+iomap_dio_complete().
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
