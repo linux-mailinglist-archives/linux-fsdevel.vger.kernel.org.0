@@ -2,171 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C482DB6F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 00:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 956432DB752
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 01:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbgLOXLn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 18:11:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39654 "EHLO
+        id S1727958AbgLPAB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 19:01:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726939AbgLOXLV (ORCPT
+        with ESMTP id S1725869AbgLOX0k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 18:11:21 -0500
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFE7BC0613D3;
-        Tue, 15 Dec 2020 15:10:40 -0800 (PST)
-Received: by mail-ed1-x543.google.com with SMTP id dk8so22873580edb.1;
-        Tue, 15 Dec 2020 15:10:40 -0800 (PST)
+        Tue, 15 Dec 2020 18:26:40 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34373C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 15:26:00 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id n10so8256646pgl.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 15:26:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CNCYDyfLbqK85vDm5hjHzQWbOVjNJhjXu61wGctb+F8=;
-        b=YWJVa18gdWSNQd4V4MwE52xizIm2FtuItrZoGSkcGOMW5blpZ9uMJllLtBIQVb1CR5
-         XoXCOdXMg29elarfEMZsEry1wt+aLJqvxptQXrx0sIJK1n56HCde4EYfzO145uu9GkOH
-         N4O9zXHa7kn+vi1g+3fMMNdD4a8aumfj3WlvefmbH/Eb4isYfgNTZhTEDH3NY9jRHQ69
-         M6BLwg/x9fbcwYn/5PqWbixwA5DKF91wcIT4OAIrtkW36M0GU/Ds9hrvY7v74qqEKzcn
-         V0tRRtSmijTbHa8UjXc9vYhAdCDiOEMzAvkkkuvrdJKUEtAjbFrGMcucF4b1oQ5TX8Mj
-         5bKQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0BtDjjQwgo5cssyB9phhEWsIn6Y0kXGy+MyO+eUcleY=;
+        b=meT7eA9f+evHXhFdUTPKlNkFReh5bmpybzWBS/ORVZ4+UdvEo5qejXD5Rcu9aXES89
+         lUZiZASZEZftfZLDtK7P7a2OAHXN6B7fw11eYRrj9O8FicoWdjZYcRz4lKO+Ah+jTEoH
+         wgOLU9yxjL2rPtHz12Kikaa0n7/V8Z8VMeSs1eP425jqC5vwPcHrC4mzP5zgjJBwNs+K
+         xTchos+YdrMKZqJFJUiJIjt0oCRd2dXS5kBpGKnspI6z6sY1i8fd43jVdqaSyyAXjLup
+         XrYYC9ftgGq2RSWdKVoL+90fbSI2RYsJWht3RU5TAOzGse/XFPq8aV8XYHbI0Tc7TP6S
+         D/tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CNCYDyfLbqK85vDm5hjHzQWbOVjNJhjXu61wGctb+F8=;
-        b=hBoTSA0VSRWP6HTHep5WWyr3GktTfY9yWzNaEMsLv+uvjmiiynUtpi2ZlDth0wvrlo
-         TH75ltxUFbsdVejh2d3EMKytnviLENXN1GupFEacAfefyzTUfftrJGq0YSNpFPc5pUos
-         tuPypBYH3o1Al/okl9eWLXM8nx2xZQ3jcsMelQMyO2yQvjGcq44OfOBnRj89fqWBILf8
-         r/y97sXvV8+CNd0sFOIw4uvVAfVmkyYVVhESiJYLQJmswpjR+ibREsW5mNepkM1KmViI
-         PwLprn/CncYv/YnaaATQhcE41mjWbjpwTviYrAqmw/0HoifJXXNO4x4ItAjrAveYUTDh
-         c0FA==
-X-Gm-Message-State: AOAM533jrMaz6MLKPHR9w63ePogsZ0I6s/XEjbFgpxCmQDV5XNtCRF1B
-        CVQJgsVYPT/fC5x/qx2aN0aX5p/yWJWvKD/adQA=
-X-Google-Smtp-Source: ABdhPJxR+ByMCJElfTfLUQkytyJl4Gal4PtfC6HQ9qud4xb2PhRYCwELfYt/bF2MkYq2a+l14IdNcS18t1x+Y/rYCTA=
-X-Received: by 2002:a05:6402:ca2:: with SMTP id cn2mr31375599edb.137.1608073839676;
- Tue, 15 Dec 2020 15:10:39 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0BtDjjQwgo5cssyB9phhEWsIn6Y0kXGy+MyO+eUcleY=;
+        b=L8Jn6cMnEqksZLVJm4Rq7CXyWGFZ8LUxHHx+37lKsYH+iYLlnIb5Jdz0EyiUZwbj5j
+         uledi6Mzp8XUiaSpNaSufoTmd4VqNdb0XUWYg+fag9xrLJUa0EzQqM1yW1EDz+9LUfxO
+         mHsL9I6Hcl68ZklV9X8eU88GjeNjz6drjpgg1cZNUxRt+2WKAMl/WfkI6pbtxK+ZZ92u
+         UxSZm7H3/pbx4YCD5SNMLOX3+glWzvI8qwAAl3kzCvbYK+Hu3NjD2S3u/G28+SyTRZQ4
+         A0dBve1YV82xJ1D676D0c9w3Gkm+4YDjqa4lzTRU1Nb309X7+mvSATWgN8lIgNKiCmFT
+         l+4w==
+X-Gm-Message-State: AOAM533SpA0akpgIxu/3lUeKHayKzw7KjYhSQ6T/K3zrwV+iqFfll+CF
+        XnFcX4ASIkHoz6CwqSlUsKg1EQ==
+X-Google-Smtp-Source: ABdhPJwS82e7t7h82A1CyyEkc/pGdyh/0u5/gxrHz21RbBG+KNHeMdMhpBfpJBmKKH1Ke5H0h8yTrQ==
+X-Received: by 2002:a63:5748:: with SMTP id h8mr4215757pgm.24.1608074759624;
+        Tue, 15 Dec 2020 15:25:59 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id a31sm13226pgb.93.2020.12.15.15.25.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Dec 2020 15:25:59 -0800 (PST)
+Subject: Re: [PATCH 3/4] fs: expose LOOKUP_NONBLOCK through openat2()
+ RESOLVE_NONBLOCK
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20201214191323.173773-1-axboe@kernel.dk>
+ <20201214191323.173773-4-axboe@kernel.dk>
+ <20201215222522.GS3913616@dread.disaster.area>
+ <CAHk-=whAhRQaFUn7dhDAgoofVRA2EJvbmiKAYFA0ciwPQjnGwg@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <656157a9-0d1c-25a9-7fe4-88e1216fa364@kernel.dk>
+Date:   Tue, 15 Dec 2020 16:25:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201214223722.232537-1-shy828301@gmail.com> <20201214223722.232537-9-shy828301@gmail.com>
- <20201215030757.GO3913616@dread.disaster.area>
-In-Reply-To: <20201215030757.GO3913616@dread.disaster.area>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 15 Dec 2020 15:10:28 -0800
-Message-ID: <CAHbLzkrTeY5mNuwi7kLVrCeV2tUjr6GSK1BX1xLWLjkPNoZQYg@mail.gmail.com>
-Subject: Re: [v2 PATCH 8/9] mm: memcontrol: reparent nr_deferred when memcg offline
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHk-=whAhRQaFUn7dhDAgoofVRA2EJvbmiKAYFA0ciwPQjnGwg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 7:08 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Mon, Dec 14, 2020 at 02:37:21PM -0800, Yang Shi wrote:
-> > Now shrinker's nr_deferred is per memcg for memcg aware shrinkers, add to parent's
-> > corresponding nr_deferred when memcg offline.
-> >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  include/linux/shrinker.h |  4 ++++
-> >  mm/memcontrol.c          | 24 ++++++++++++++++++++++++
-> >  mm/vmscan.c              |  2 +-
-> >  3 files changed, 29 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> > index 1eac79ce57d4..85cfc910dde4 100644
-> > --- a/include/linux/shrinker.h
-> > +++ b/include/linux/shrinker.h
-> > @@ -78,6 +78,10 @@ struct shrinker {
-> >  };
-> >  #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
-> >
-> > +#ifdef CONFIG_MEMCG
-> > +extern int shrinker_nr_max;
-> > +#endif
-> > +
-> >  /* Flags */
-> >  #define SHRINKER_REGISTERED  (1 << 0)
-> >  #define SHRINKER_NUMA_AWARE  (1 << 1)
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 321d1818ce3d..1f191a15bee1 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -59,6 +59,7 @@
-> >  #include <linux/tracehook.h>
-> >  #include <linux/psi.h>
-> >  #include <linux/seq_buf.h>
-> > +#include <linux/shrinker.h>
-> >  #include "internal.h"
-> >  #include <net/sock.h>
-> >  #include <net/ip.h>
-> > @@ -612,6 +613,28 @@ void memcg_set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
-> >       }
-> >  }
-> >
-> > +static void memcg_reparent_shrinker_deferred(struct mem_cgroup *memcg)
-> > +{
-> > +     int i, nid;
-> > +     long nr;
-> > +     struct mem_cgroup *parent;
-> > +     struct memcg_shrinker_deferred *child_deferred, *parent_deferred;
-> > +
-> > +     parent = parent_mem_cgroup(memcg);
-> > +     if (!parent)
-> > +             parent = root_mem_cgroup;
-> > +
-> > +     for_each_node(nid) {
-> > +             child_deferred = memcg->nodeinfo[nid]->shrinker_deferred;
-> > +             parent_deferred = parent->nodeinfo[nid]->shrinker_deferred;
-> > +             for (i = 0; i < shrinker_nr_max; i ++) {
-> > +                     nr = atomic_long_read(&child_deferred->nr_deferred[i]);
-> > +                     atomic_long_add(nr,
-> > +                             &parent_deferred->nr_deferred[i]);
-> > +             }
-> > +     }
-> > +}
->
-> I would place this function in vmscan.c alongside the
-> shrink_slab_set_nr_deferred_memcg() function so that all the
-> accounting is in the one place.
+On 12/15/20 3:31 PM, Linus Torvalds wrote:
+> On Tue, Dec 15, 2020 at 2:25 PM Dave Chinner <david@fromorbit.com> wrote:
+>>
+>> What text are you going to add to the man page to describe how this
+>> flag behaves to developers?
+> 
+> I think it was you or Jens who suggested renaming it to RESOLVE_CACHED
+> (and LOOKUP_CACHED), and I think that would be a good idea.
 
-Fine to me. Will incorporate in v3.
+Yeah that was me, and I think it helps both internally in terms of the
+code being easier/better to read, and when exposed as a user API as
+well. It makes it readily apparent what it does, which is much better
+than requring lengthy descriptions of it...
 
->
-> > +
-> >  /**
-> >   * mem_cgroup_css_from_page - css of the memcg associated with a page
-> >   * @page: page of interest
-> > @@ -5543,6 +5566,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
-> >       page_counter_set_low(&memcg->memory, 0);
-> >
-> >       memcg_offline_kmem(memcg);
-> > +     memcg_reparent_shrinker_deferred(memcg);
-> >       wb_memcg_offline(memcg);
-> >
-> >       drain_all_stock(memcg);
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 8d5bfd818acd..693a41e89969 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -201,7 +201,7 @@ DECLARE_RWSEM(shrinker_rwsem);
-> >  #define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
-> >
-> >  static DEFINE_IDR(shrinker_idr);
-> > -static int shrinker_nr_max;
-> > +int shrinker_nr_max;
->
-> Then we don't need to make yet another variable global...
->
-> Cheers,
->
-> Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+I'll go ahead and make the edit.
+
+-- 
+Jens Axboe
+
