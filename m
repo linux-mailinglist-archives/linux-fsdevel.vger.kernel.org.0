@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BC2A2DC66A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 19:26:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F9FD2DC65D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 19:26:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgLPSZj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 13:25:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
+        id S1727679AbgLPSZl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 13:25:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730431AbgLPSZJ (ORCPT
+        with ESMTP id S1726155AbgLPSZe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 13:25:09 -0500
+        Wed, 16 Dec 2020 13:25:34 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B37E0C0611CF;
-        Wed, 16 Dec 2020 10:23:43 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF63C0611D0;
+        Wed, 16 Dec 2020 10:23:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=zlo5KayZktdXY3pBXFt2EmyX7rZ4LXownyDR/ZbDnaA=; b=iRbUN8k+9UBv7Xu9/5ICwQr6bC
-        X6J4YHKFXRoX56HjMweOfUtmoTvKfmw95OxfHWactzUFbLbY7mr3BorjDyyQNkFVGXqJvBWtrnFPD
-        bU9dN/BNsmUZSGN+UaFOp0K80fX9dc/qpEqCnWz0ZnqS5NCySUBoORF7VndzMkSkT7m+JQZ/8bBlD
-        j7Slv1IFBizzpqTup7xrKwx2R0Th837wxXlwY96x1Dr9lcbgoGq/Y+aKUvGAQAfDeNS/ifTM6TnP7
-        XcYL6eTd4Si+x1SxBM0qa6PAb6LTifPSkdM698d8j2FE9aYb5fxDstjdStuJg+vfFFPvb1TBfs81I
-        vpPdysDA==;
+        bh=Lh+37Y8KyiuvFgoCDHyQ0aCP7Y2/TwBl9WkEXxWh7z0=; b=Ilr6dYVaMQHYp6TmRn0m8bculR
+        MXAy/gURQmO9Z2ei/x9TToif4rnD8rjQsJsc5NlmSL2FuJfMTNKyEXd0u52i5abydJW3G3jVTG611
+        lEspxhuOLqlA6ilLL5dP5vN8QvuY8p8jDSFUuEeSjB4ky3SO6e2pD1syvj4nPqIyCC6xFPKr+Dt3m
+        WxRIqD+48BoOE3XmJGVBZiX13zyJzlCBGolugz7lxz1aTBVJzifuM/vMqgdxwl5wzALX3QxAX3aOh
+        loxiRc1uf9R6MjBwRPIjeFlykcKnPW4A5W9pKRxqAezFvut9bZGg6NZdAGHqmKsQ3kBLhS12gAtHo
+        JSQ1+7nw==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kpbSg-00077r-0Z; Wed, 16 Dec 2020 18:23:42 +0000
+        id 1kpbSg-00078B-Do; Wed, 16 Dec 2020 18:23:42 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 16/25] mm: Add folio_mapping
-Date:   Wed, 16 Dec 2020 18:23:26 +0000
-Message-Id: <20201216182335.27227-17-willy@infradead.org>
+Subject: [PATCH 17/25] mm: Rename THP_SUPPORT to MULTI_PAGE_FOLIOS
+Date:   Wed, 16 Dec 2020 18:23:27 +0000
+Message-Id: <20201216182335.27227-18-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20201216182335.27227-1-willy@infradead.org>
 References: <20201216182335.27227-1-willy@infradead.org>
@@ -43,129 +43,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the folio equivalent of page_mapping().  Adjust
-page_file_mapping() and page_mapping_file() to use folios internally.
+Using THPs was confusing everyone.  Switch to the new name of folios.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/mm.h | 16 ++++++++++------
- mm/swapfile.c      |  6 +++---
- mm/util.c          | 20 ++++++++++----------
- 3 files changed, 23 insertions(+), 19 deletions(-)
+ fs/inode.c              |  4 ++--
+ include/linux/fs.h      |  2 +-
+ include/linux/pagemap.h | 14 +++++++-------
+ mm/shmem.c              |  2 +-
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 02ccb7a09190..8bc28b4aa933 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1559,17 +1559,22 @@ void page_address_init(void);
+diff --git a/fs/inode.c b/fs/inode.c
+index cb008acf0efd..2c79282803e7 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -180,8 +180,8 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	mapping->a_ops = &empty_aops;
+ 	mapping->host = inode;
+ 	mapping->flags = 0;
+-	if (sb->s_type->fs_flags & FS_THP_SUPPORT)
+-		__set_bit(AS_THP_SUPPORT, &mapping->flags);
++	if (sb->s_type->fs_flags & FS_MULTI_PAGE_FOLIOS)
++		__set_bit(AS_MULTI_PAGE_FOLIOS, &mapping->flags);
+ 	mapping->wb_err = 0;
+ 	atomic_set(&mapping->i_mmap_writable, 0);
+ #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ad4cf1bae586..08f9a8a524f2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2231,7 +2231,7 @@ struct file_system_type {
+ #define FS_HAS_SUBTYPE		4
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+ #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
+-#define FS_THP_SUPPORT		8192	/* Remove once all fs converted */
++#define FS_MULTI_PAGE_FOLIOS	8192	/* Remove once all fs converted */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	int (*init_fs_context)(struct fs_context *);
+ 	const struct fs_parameter_spec *parameters;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 88a66b65d1ed..630a0a589073 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -29,7 +29,7 @@ enum mapping_flags {
+ 	AS_EXITING	= 4, 	/* final truncate in progress */
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
+-	AS_THP_SUPPORT = 6,	/* THPs supported */
++	AS_MULTI_PAGE_FOLIOS = 6,
+ };
  
- extern void *page_rmapping(struct page *page);
- extern struct anon_vma *page_anon_vma(struct page *page);
--extern struct address_space *page_mapping(struct page *page);
-+struct address_space *folio_mapping(struct folio *);
-+struct address_space *__folio_file_mapping(struct folio *);
+ /**
+@@ -121,9 +121,9 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ 	m->gfp_mask = mask;
+ }
  
--extern struct address_space *__page_file_mapping(struct page *);
-+static inline struct address_space *page_mapping(struct page *page)
-+{
-+	return folio_mapping(page_folio(page));
-+}
- 
- static inline
- struct address_space *page_file_mapping(struct page *page)
+-static inline bool mapping_thp_support(struct address_space *mapping)
++static inline bool mapping_multi_page_folios(struct address_space *mapping)
  {
--	if (unlikely(PageSwapCache(page)))
--		return __page_file_mapping(page);
-+	struct folio *folio = page_folio(page);
-+	if (unlikely(FolioSwapCache(folio)))
-+		return __folio_file_mapping(folio);
- 
--	return page->mapping;
-+	return folio->page.mapping;
+-	return test_bit(AS_THP_SUPPORT, &mapping->flags);
++	return test_bit(AS_MULTI_PAGE_FOLIOS, &mapping->flags);
  }
  
- extern pgoff_t __page_file_index(struct page *page);
-@@ -1586,7 +1591,6 @@ static inline pgoff_t page_index(struct page *page)
- }
- 
- bool page_mapped(struct page *page);
--struct address_space *page_mapping(struct page *page);
- struct address_space *page_mapping_file(struct page *page);
- 
- /*
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 1c0a829f7311..9bf2f8daaa79 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3550,11 +3550,11 @@ struct swap_info_struct *page_swap_info(struct page *page)
- /*
-  * out-of-line __page_file_ methods to avoid include hell.
-  */
--struct address_space *__page_file_mapping(struct page *page)
-+struct address_space *__folio_file_mapping(struct folio *folio)
+ static inline int filemap_nr_thps(struct address_space *mapping)
+@@ -138,20 +138,20 @@ static inline int filemap_nr_thps(struct address_space *mapping)
+ static inline void filemap_nr_thps_inc(struct address_space *mapping)
  {
--	return page_swap_info(page)->swap_file->f_mapping;
-+	return page_swap_info(&folio->page)->swap_file->f_mapping;
+ #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+-	if (!mapping_thp_support(mapping))
++	if (!mapping_multi_page_folios(mapping))
+ 		atomic_inc(&mapping->nr_thps);
+ #else
+-	WARN_ON_ONCE(1);
++	WARN_ON_ONCE(!mapping_multi_page_folios(mapping));
+ #endif
  }
--EXPORT_SYMBOL_GPL(__page_file_mapping);
-+EXPORT_SYMBOL_GPL(__folio_file_mapping);
  
- pgoff_t __page_file_index(struct page *page)
+ static inline void filemap_nr_thps_dec(struct address_space *mapping)
  {
-diff --git a/mm/util.c b/mm/util.c
-index 8c9b7d1e7c49..7e9fc89c883a 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -686,39 +686,39 @@ struct anon_vma *page_anon_vma(struct page *page)
- 	return __page_rmapping(page);
+ #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+-	if (!mapping_thp_support(mapping))
++	if (!mapping_multi_page_folios(mapping))
+ 		atomic_dec(&mapping->nr_thps);
+ #else
+-	WARN_ON_ONCE(1);
++	WARN_ON_ONCE(!mapping_multi_page_folios(mapping));
+ #endif
  }
  
--struct address_space *page_mapping(struct page *page)
-+struct address_space *folio_mapping(struct folio *folio)
- {
- 	struct address_space *mapping;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 53d84d2c9fe5..192b7b5a7852 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3910,7 +3910,7 @@ static struct file_system_type shmem_fs_type = {
+ 	.parameters	= shmem_fs_parameters,
+ #endif
+ 	.kill_sb	= kill_litter_super,
+-	.fs_flags	= FS_USERNS_MOUNT | FS_THP_SUPPORT,
++	.fs_flags	= FS_USERNS_MOUNT | FS_MULTI_PAGE_FOLIOS,
+ };
  
--	page = compound_head(page);
--
- 	/* This happens if someone calls flush_dcache_page on slab page */
--	if (unlikely(PageSlab(page)))
-+	if (unlikely(FolioSlab(folio)))
- 		return NULL;
- 
--	if (unlikely(PageSwapCache(page))) {
-+	if (unlikely(FolioSwapCache(folio))) {
- 		swp_entry_t entry;
- 
--		entry.val = page_private(page);
-+		entry.val = page_private(&folio->page);
- 		return swap_address_space(entry);
- 	}
- 
--	mapping = page->mapping;
-+	mapping = folio->page.mapping;
- 	if ((unsigned long)mapping & PAGE_MAPPING_ANON)
- 		return NULL;
- 
- 	return (void *)((unsigned long)mapping & ~PAGE_MAPPING_FLAGS);
- }
--EXPORT_SYMBOL(page_mapping);
-+EXPORT_SYMBOL(folio_mapping);
- 
- /*
-  * For file cache pages, return the address_space, otherwise return NULL
-  */
- struct address_space *page_mapping_file(struct page *page)
- {
--	if (unlikely(PageSwapCache(page)))
-+	struct folio *folio = page_folio(page);
-+
-+	if (unlikely(FolioSwapCache(folio)))
- 		return NULL;
--	return page_mapping(page);
-+	return folio_mapping(folio);
- }
- 
- /* Slow path of page_mapcount() for compound pages */
+ int __init shmem_init(void)
 -- 
 2.29.2
 
