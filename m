@@ -2,159 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 488722DC901
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 23:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F13652DC945
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 23:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbgLPWek (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 17:34:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727211AbgLPWek (ORCPT
+        id S1730293AbgLPWxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 17:53:09 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:37704 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728672AbgLPWxH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 17:34:40 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D22FAC06179C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 14:33:59 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id t8so17547042pfg.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 14:33:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Y1V/afgG4DIkslA0xc0A+XWvvwcQEhNLsNWCOVCKiBg=;
-        b=AKkp0Mbi0Nfpj6MHLm6h8hOHSsg46UCi4esp75sISUG82vOcl4MsJN/p5FWE9CubIK
-         k1GuJRgC3lrqw+c4NpnIH/DtqIc4c4S3qAIYBL6/TP3VnbljwQDGT5D3wbFBhMsf9Yxz
-         QL5Ea8ymsyHO1QJHmEbpFOBxyKM9skPt+BfhubdmDhKLptzuV8HuuHZkQA19+3TJRR9s
-         sofpj3lTAgG7AD58WR8kSpOxkP/glFLJTraJuc++mr2ntqFBpLOBxi0WTzhE/Vn9NK44
-         vtTx2NAy727F3uThOO07Pjz9zwc1fWH18vjpAUVIfDjqCAzF5nRQY6TUi0WlYrGxqcr+
-         3soA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y1V/afgG4DIkslA0xc0A+XWvvwcQEhNLsNWCOVCKiBg=;
-        b=S6s8zk2XZsbqWi/u4Bsw49f8T5VQAmpNu9d8Ep2cDxQk1Gs1mplBNPeaWxO3n7f9Nr
-         4VmyQlfh8OD7U1PcYENjLc8tusXzuf3zXLy/TdVJn6gRAvhp9LEBm95eSkf3cl0GjU0f
-         TrzfvbcdGmitb4tFOwW4YV/PrBP+/ayndzzNRU8yF73BkNHxF0hS0gptAwecrMMFCuI8
-         uY7fvMxzEhulGqHCiDdMYcAcjAUV6HeyIXrtoYbjA5S7/haMpjzXxNPqcWkEW2uj/HlI
-         28YvpkQhXFf5YuPIWqYIwIg4J+VnY06ZM2AdcSNAlVrpbJOj5VRaUNLNzcUglomphkMP
-         Ps1Q==
-X-Gm-Message-State: AOAM533RcRU4TroVXBwTHNHze0XXMxd+L1qUCqJmYZ8G7/i3LkmN6Y8P
-        Zcuk5TLY8vvQUB+QPah7kzpqRQ==
-X-Google-Smtp-Source: ABdhPJz9+KtUyr658unPugj1FxE7nVE81YRUMp4QpzLjQpZK6KCrZjsLlo4D9Fkb1KoWLQjJc866eQ==
-X-Received: by 2002:a63:6e87:: with SMTP id j129mr35275212pgc.304.1608158039130;
-        Wed, 16 Dec 2020 14:33:59 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id ck20sm3102843pjb.20.2020.12.16.14.33.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Dec 2020 14:33:58 -0800 (PST)
-Subject: Re: WARNING in percpu_ref_kill_and_confirm (2)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     syzbot <syzbot+c9937dfb2303a5f18640@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org, Tejun Heo <tj@kernel.org>
-References: <0000000000004d454d05b69b5bd3@google.com>
- <8694934b-7ac6-a29f-0126-4a311bea4c35@kernel.dk>
-Message-ID: <5772ce88-ab3e-bbf3-2dc9-f1d3a8b06ce3@kernel.dk>
-Date:   Wed, 16 Dec 2020 15:33:56 -0700
+        Wed, 16 Dec 2020 17:53:07 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BGMnwJl082082;
+        Wed, 16 Dec 2020 22:51:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=GWzfUJIU936fkGAX1MiiiDp/YR1yirB8QOBvoZtTBBk=;
+ b=dSY3YZuNxSjZi3z5/7a8Jh1pLGdp8Chp+wAXG5EJLzjWD3Ptn8q96F2v50DN8jNyWFrw
+ 2KRG5b21NK4g6KXCs/mpjGUriJt1z46DuXFoozsyqJEE9lv4cesPuNIOTLa8Grwp4vJi
+ tbx3N8vYeBsj86AUsq+IN7fy40Eo7ruGsWYhdK+FR5UZ5+KtIcNmjVOfE5uJGKzS/1jR
+ VrkEuV3vp92CtJns7Lo0cnscysFXPPqQL2oNQvi2FiReuskxmBmioOW9mFWipJYB9KJ4
+ OIcO1hf7RhFUn3/AW4KbQzcTbcBOZfdjcx34MopbTKo9M2XIMfBwEd252XgGxrz2DKB+ qA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 35cntmas5d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Dec 2020 22:51:53 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BGMjHZW062482;
+        Wed, 16 Dec 2020 22:49:53 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 35d7eq52x2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Dec 2020 22:49:53 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BGMndJP001074;
+        Wed, 16 Dec 2020 22:49:39 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Dec 2020 14:49:38 -0800
+Subject: Re: [PATCH v9 03/11] mm/hugetlb: Free the vmemmap pages associated
+ with each HugeTLB page
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
+        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
+        willy@infradead.org, mhocko@suse.com, song.bao.hua@hisilicon.com,
+        david@redhat.com, duanxiongchun@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+References: <20201213154534.54826-1-songmuchun@bytedance.com>
+ <20201213154534.54826-4-songmuchun@bytedance.com>
+ <5936a766-505a-eab0-42a6-59aab2585880@oracle.com>
+ <20201216222549.GC3207@localhost.localdomain>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <49f6a0f1-c6fa-4642-2db0-69f090e8a392@oracle.com>
+Date:   Wed, 16 Dec 2020 14:49:36 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <8694934b-7ac6-a29f-0126-4a311bea4c35@kernel.dk>
+In-Reply-To: <20201216222549.GC3207@localhost.localdomain>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9837 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012160141
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9837 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 spamscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 impostorscore=0 priorityscore=1501 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012160142
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/16/20 2:46 PM, Jens Axboe wrote:
-> On 12/16/20 2:14 PM, syzbot wrote:
->> Hello,
+On 12/16/20 2:25 PM, Oscar Salvador wrote:
+> On Wed, Dec 16, 2020 at 02:08:30PM -0800, Mike Kravetz wrote:
+>>> + * vmemmap_rmap_walk - walk vmemmap page table
+>>> +
+>>> +static void vmemmap_pte_range(pmd_t *pmd, unsigned long addr,
+>>> +			      unsigned long end, struct vmemmap_rmap_walk *walk)
+>>> +{
+>>> +	pte_t *pte;
+>>> +
+>>> +	pte = pte_offset_kernel(pmd, addr);
+>>> +	do {
+>>> +		BUG_ON(pte_none(*pte));
+>>> +
+>>> +		if (!walk->reuse)
+>>> +			walk->reuse = pte_page(pte[VMEMMAP_TAIL_PAGE_REUSE]);
 >>
->> syzbot found the following issue on:
->>
->> HEAD commit:    7b1b868e Merge tag 'for-linus' of git://git.kernel.org/pub..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1156046b500000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=3416bb960d5c705d
->> dashboard link: https://syzkaller.appspot.com/bug?extid=c9937dfb2303a5f18640
->> compiler:       gcc (GCC) 10.1.0-syz 20200507
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1407c287500000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ed5f07500000
->>
->> The issue was bisected to:
->>
->> commit 4d004099a668c41522242aa146a38cc4eb59cb1e
->> Author: Peter Zijlstra <peterz@infradead.org>
->> Date:   Fri Oct 2 09:04:21 2020 +0000
->>
->>     lockdep: Fix lockdep recursion
+>> It may be just me, but I don't like the pte[-1] here.  It certainly does work
+>> as designed because we want to remap all pages in the range to the page before
+>> the range (at offset -1).  But, we do not really validate this 'reuse' page.
+>> There is the BUG_ON(pte_none(*pte)) as a sanity check, but we do nothing similar
+>> for pte[-1].  Based on the usage for HugeTLB pages, we can be confident that
+>> pte[-1] is actually a pte.  In discussions with Oscar, you mentioned another
+>> possible use for these routines.
 > 
-> Ehhh no... This is timing dependent, so probably why it ends up pinpointing
-> something totally unrelated.
+> Without giving it much of a thought, I guess we could duplicate the
+> BUG_ON for the pte outside the loop, and add a new one for pte[-1].
+> Also, since walk->reuse seems to not change once it is set, we can take
+> it outside the loop? e.g:
 > 
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14e9d433500000
->> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16e9d433500000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=12e9d433500000
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+c9937dfb2303a5f18640@syzkaller.appspotmail.com
->> Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
->>
->> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441309
->> RDX: 0000000000000002 RSI: 00000000200000c0 RDI: 0000000000003ad1
->> RBP: 000000000000f2ae R08: 0000000000000002 R09: 00000000004002c8
->> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021d0
->> R13: 0000000000402260 R14: 0000000000000000 R15: 0000000000000000
->> ------------[ cut here ]------------
->> percpu_ref_kill_and_confirm called more than once on io_ring_ctx_ref_free!
->> WARNING: CPU: 0 PID: 8476 at lib/percpu-refcount.c:382 percpu_ref_kill_and_confirm+0x126/0x180 lib/percpu-refcount.c:382
->> Modules linked in:
->> CPU: 0 PID: 8476 Comm: syz-executor389 Not tainted 5.10.0-rc7-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> RIP: 0010:percpu_ref_kill_and_confirm+0x126/0x180 lib/percpu-refcount.c:382
->> Code: 5d 08 48 8d 7b 08 48 89 fa 48 c1 ea 03 80 3c 02 00 75 5d 48 8b 53 08 48 c7 c6 00 4b 9d 89 48 c7 c7 60 4a 9d 89 e8 c6 97 f6 04 <0f> 0b 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02
->> RSP: 0018:ffffc9000b94fe10 EFLAGS: 00010086
->> RAX: 0000000000000000 RBX: ffff888011da4580 RCX: 0000000000000000
->> RDX: ffff88801fe84ec0 RSI: ffffffff8158c835 RDI: fffff52001729fb4
->> RBP: ffff88801539f000 R08: 0000000000000001 R09: ffff8880b9e2011b
->> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000293
->> R13: 0000000000000000 R14: 0000000000000000 R15: ffff88802de28758
->> FS:  00000000014ab880(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00007f2a7046b000 CR3: 0000000023368000 CR4: 0000000000350ef0
->> Call Trace:
->>  percpu_ref_kill include/linux/percpu-refcount.h:149 [inline]
->>  io_ring_ctx_wait_and_kill+0x2b/0x450 fs/io_uring.c:8382
->>  io_uring_release+0x3e/0x50 fs/io_uring.c:8420
->>  __fput+0x285/0x920 fs/file_table.c:281
->>  task_work_run+0xdd/0x190 kernel/task_work.c:151
->>  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:164 [inline]
->>  exit_to_user_mode_prepare+0x17e/0x1a0 kernel/entry/common.c:191
->>  syscall_exit_to_user_mode+0x38/0x260 kernel/entry/common.c:266
->>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->> RIP: 0033:0x441309
->> Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
->> RSP: 002b:00007ffed6545d38 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
->> RAX: fffffffffffffff4 RBX: 0000000000000000 RCX: 0000000000441309
->> RDX: 0000000000000002 RSI: 00000000200000c0 RDI: 0000000000003ad1
->> RBP: 000000000000f2ae R08: 0000000000000002 R09: 00000000004002c8
->> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021d0
->> R13: 0000000000402260 R14: 0000000000000000 R15: 0000000000000000
+> 	pte *pte;
 > 
-> What I think happens here is that we switch mode, but exit before it's
-> done. Wonder if there's a wait to wait for that on exit. Tejun?
+> 	pte = pte_offset_kernel(pmd, addr);
+> 	BUG_ON(pte_none(*pte));
+> 	BUG_ON(pte_none(pte[VMEMMAP_TAIL_PAGE_REUSE]));
+> 	walk->reuse = pte_page(pte[VMEMMAP_TAIL_PAGE_REUSE]);
+> 	do {
+> 		....
+> 	} while...
+> 
+> Or I am not sure whether we want to keep it inside the loop in case
+> future cases change walk->reuse during the operation.
+> But to be honest, I do not think it is realistic of all future possible
+> uses of this, so I would rather keep it simple for now.
 
-Sorry, that was another report... Looks like this one is exercising
-memory failure, maybe there's an issue with the teardown path for
-certain failures. I'll take a look.
+I was thinking about possibly passing the 'reuse' address as another parameter
+to vmemmap_remap_reuse().  We could add this addr to the vmemmap_rmap_walk
+struct and set walk->reuse when we get to the pte for that address.  Of
+course this would imply that the addr would need to be part of the range.
 
+Ideally, we would walk the page table to get to the reuse page.  My concern
+was not explicitly about adding the BUG_ON.  In more general use, *pte could
+be the first entry on a pte page.  And, then pte[-1] may not even be a pte.
+
+Again, I don't think this matters for the current HugeTLB use case.  Just a
+little concerned if code is put to use for other purposes.
 -- 
-Jens Axboe
-
+Mike Kravetz
