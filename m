@@ -2,93 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB0C02DC258
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 15:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C702DC25F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 15:39:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgLPOhD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 09:37:03 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:47568 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbgLPOhD (ORCPT
+        id S1726546AbgLPOji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 09:39:38 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36478 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726543AbgLPOji (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 09:37:03 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kpXuf-000cXw-J7; Wed, 16 Dec 2020 07:36:21 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kpXud-0000Ij-TV; Wed, 16 Dec 2020 07:36:20 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <871rfqad5g.fsf@x220.int.ebiederm.org>
-        <CAHk-=wijn40PoFccpQZExuyWnz2i+wmBx+9gw5nKJPVQVmzb5g@mail.gmail.com>
-Date:   Wed, 16 Dec 2020 08:35:34 -0600
-In-Reply-To: <CAHk-=wijn40PoFccpQZExuyWnz2i+wmBx+9gw5nKJPVQVmzb5g@mail.gmail.com>
-        (Linus Torvalds's message of "Tue, 15 Dec 2020 19:32:37 -0800")
-Message-ID: <87wnxh7r9l.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 16 Dec 2020 09:39:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608129491;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=gVUKEmORyjU5eVV5WXTEYQ4KDgnLkmlQvzKGyHA5964=;
+        b=aAssUVVV49hOszKmPduJ8/9FfG9Qsqw4oDgjZmCBOG4aJLAJLO+1xM1HRZO2nI1lHT2ijo
+        BQbkWy/yysyoSIlz7IQIONNlDgLw1aEKYr7awQJ40CBGVk3aeEMRV1oiazt7yeeqbDjEsF
+        268xlxioFcX6T3mngzGUw3MtLeYiaz8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-270-vuIpWoLrPT-_aA9rhG-Y3g-1; Wed, 16 Dec 2020 09:38:06 -0500
+X-MC-Unique: vuIpWoLrPT-_aA9rhG-Y3g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1BBC1801817;
+        Wed, 16 Dec 2020 14:38:04 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-112-114.rdu2.redhat.com [10.10.112.114])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DC6911800D;
+        Wed, 16 Dec 2020 14:38:02 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 5E825220BCF; Wed, 16 Dec 2020 09:38:02 -0500 (EST)
+Date:   Wed, 16 Dec 2020 09:38:02 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
+        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, miklos@szeredi.hu, jlayton@kernel.org,
+        amir73il@gmail.com, willy@infradead.org, jack@suse.cz,
+        sargun@sargun.me
+Subject: [PATCH] vfs, syncfs: Do not ignore return code from ->sync_fs()
+Message-ID: <20201216143802.GA10550@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kpXud-0000Ij-TV;;;mid=<87wnxh7r9l.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/+NlWkphSa3CpPRKjAGDxjWeL4PNaJD4A=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        XMSubMetaSxObfu_03,XMSubMetaSx_00 autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4913]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 834 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.5 (0.4%), b_tie_ro: 2.4 (0.3%), parse: 0.59
-        (0.1%), extract_message_metadata: 10 (1.2%), get_uri_detail_list: 0.51
-        (0.1%), tests_pri_-1000: 12 (1.4%), tests_pri_-950: 0.98 (0.1%),
-        tests_pri_-900: 0.77 (0.1%), tests_pri_-90: 114 (13.7%), check_bayes:
-        112 (13.5%), b_tokenize: 3.1 (0.4%), b_tok_get_all: 3.8 (0.5%),
-        b_comp_prob: 1.04 (0.1%), b_tok_touch_all: 102 (12.2%), b_finish: 0.66
-        (0.1%), tests_pri_0: 100 (12.0%), check_dkim_signature: 0.35 (0.0%),
-        check_dkim_adsp: 2.0 (0.2%), poll_dns_idle: 575 (69.0%), tests_pri_10:
-        1.59 (0.2%), tests_pri_500: 588 (70.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [GIT PULL] exec fixes for v5.11-rc1
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+I see that current implementation of __sync_filesystem() ignores the
+return code from ->sync_fs(). I am not sure why that's the case.
 
-> On Tue, Dec 15, 2020 at 3:00 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> There is a minor conflict with parallel changes to the bpf task_iter
->> code.  The changes don't fundamentally conflict but both are removing
->> code from same areas of the same function.
->
-> Ok, that was somewhat confusing.
->
-> I think I got it right, but I'd appreciate you giving my resolution a
-> second look. Just to be safe.
+Ignoring ->sync_fs() return code is problematic for overlayfs where
+it can return error if sync_filesystem() on upper super block failed.
+That error will simply be lost and sycnfs(overlay_fd), will get
+success (despite the fact it failed).
 
-I have read through the merge commit and everything looks correct.
+I am assuming that we want to continue to call __sync_blockdev()
+despite the fact that there have been errors reported from
+->sync_fs(). So I wrote this simple patch which captures the
+error from ->sync_fs() but continues to call __sync_blockdev()
+and returns error from sync_fs() if there is one.
 
-Eric
+There might be some very good reasons to not capture ->sync_fs()
+return code, I don't know. Hence thought of proposing this patch.
+Atleast I will get to know the reason. I still need to figure
+a way out how to propagate overlay sync_fs() errors to user
+space.
+
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+---
+ fs/sync.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+Index: redhat-linux/fs/sync.c
+===================================================================
+--- redhat-linux.orig/fs/sync.c	2020-12-16 09:15:49.831565653 -0500
++++ redhat-linux/fs/sync.c	2020-12-16 09:23:42.499853207 -0500
+@@ -30,14 +30,18 @@
+  */
+ static int __sync_filesystem(struct super_block *sb, int wait)
+ {
++	int ret, ret2;
++
+ 	if (wait)
+ 		sync_inodes_sb(sb);
+ 	else
+ 		writeback_inodes_sb(sb, WB_REASON_SYNC);
+ 
+ 	if (sb->s_op->sync_fs)
+-		sb->s_op->sync_fs(sb, wait);
+-	return __sync_blockdev(sb->s_bdev, wait);
++		ret = sb->s_op->sync_fs(sb, wait);
++	ret2 = __sync_blockdev(sb->s_bdev, wait);
++
++	return ret ? ret : ret2;
+ }
+ 
+ /*
 
