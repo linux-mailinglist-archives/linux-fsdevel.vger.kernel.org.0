@@ -2,65 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0DF52DC823
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 22:07:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 292112DC830
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 22:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729169AbgLPVH7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 16:07:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58028 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729166AbgLPVH7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 16:07:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 334A8AD07;
-        Wed, 16 Dec 2020 21:07:17 +0000 (UTC)
-Date:   Wed, 16 Dec 2020 15:07:18 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        hch@infradead.org, nborisov@suse.com
-Subject: Re: [PATCH 2/2] btrfs: Make btrfs_direct_write atomic with respect
- to inode_lock
-Message-ID: <20201216210718.u2rklayhl5hir5sg@fiona>
-References: <cover.1608053602.git.rgoldwyn@suse.com>
- <49ff9bfb8ef20e7a9c6e26fd54bc9f4508c9ccb4.1608053602.git.rgoldwyn@suse.com>
- <20201215221359.GA6911@magnolia>
+        id S1729186AbgLPVOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 16:14:52 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:49979 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729175AbgLPVOw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Dec 2020 16:14:52 -0500
+Received: by mail-io1-f71.google.com with SMTP id m19so25022590iow.16
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 13:14:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=7rbBwBeV/nUETB0HX2YQTZLq8NtHHXhsQ9iVBDLUlb8=;
+        b=DWfHlEF9JAloIYsbS9mha8H9t/i6V+/nXwsO3B+wk9BWleFhcA6+XMfYF9WoVVGdmN
+         D52/X3HQ7P+LsWEjXzjn9E6d9BFOkuaM7Hsvmda8r6Cx/OZ53L+mHp5UUDhwr0hiCeQl
+         EcKwvuoExjetVcnO8kS82wWsC1by43ZKhiiAhUwk78RZUpwN+h39eUQWe9XbEs2NW4/C
+         gseAjjINwqzrdEf966tC2zClfq47eWrL8u01vKRr5u5zW5QCJUIr0W3EjOzLIg4bx8NV
+         nV4YiZD16OJbOH1yB8D0+vvmsKqcIropFIq7iBOUdT0v1PZZS93Jy6pdqQTelGXb9oE4
+         ewrg==
+X-Gm-Message-State: AOAM531Uv4tRmW+mGN5P9GC+Ni9pSYXlFP7HgPykYIeuzU5HkHtG27Pq
+        0d0LXuU2e1IDRiwqX9nugyS8vch0DKZzaCE/sWwWQy4nEP0h
+X-Google-Smtp-Source: ABdhPJyqmiJMUD6GHtjjg2+G/jYr1VHHiSnXuOqnG8Qh4hgNXA50xhKwIh3GkFHi34aGlEINr2arQQoNpkvYiPztEFNF3LUKc3i/
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201215221359.GA6911@magnolia>
+X-Received: by 2002:a92:6b05:: with SMTP id g5mr46445714ilc.289.1608153251528;
+ Wed, 16 Dec 2020 13:14:11 -0800 (PST)
+Date:   Wed, 16 Dec 2020 13:14:11 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004d454d05b69b5bd3@google.com>
+Subject: WARNING in percpu_ref_kill_and_confirm (2)
+From:   syzbot <syzbot+c9937dfb2303a5f18640@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14:13 15/12, Darrick J. Wong wrote:
-> On Tue, Dec 15, 2020 at 12:06:36PM -0600, Goldwyn Rodrigues wrote:
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > 
-> > btrfs_direct_write() fallsback to buffered write in case btrfs is not
-> > able to perform or complete a direct I/O. During the fallback
-> > inode lock is unlocked and relocked. This does not guarantee the
-> > atomicity of the entire write since the lock can be acquired by another
-> > write between unlock and relock.
-> > 
-> > __btrfs_buffered_write() is used to perform the direct fallback write,
-> > which performs the write without acquiring the lock or checks.
-> 
-> Er... can you grab the inode lock before deciding which of the IO
-> path(s) you're going to take?  Then you'd always have an atomic write
-> even if fallback happens.
+Hello,
 
-No, since this is a fallback option which also works if the I/O is
-incomplete.
+syzbot found the following issue on:
 
-> 
-> (Also vaguely wondering why this needs even more slicing and dicing of
-> the iomap directio functions...)
+HEAD commit:    7b1b868e Merge tag 'for-linus' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1156046b500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3416bb960d5c705d
+dashboard link: https://syzkaller.appspot.com/bug?extid=c9937dfb2303a5f18640
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1407c287500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ed5f07500000
 
-I would most likely go with Dave's method of storing the flag in the
-function and calling iomap dio functions without IOCB_DSYNC flag. This
-way we don't have to change iomap.
+The issue was bisected to:
 
--- 
-Goldwyn
+commit 4d004099a668c41522242aa146a38cc4eb59cb1e
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Fri Oct 2 09:04:21 2020 +0000
+
+    lockdep: Fix lockdep recursion
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14e9d433500000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16e9d433500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12e9d433500000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c9937dfb2303a5f18640@syzkaller.appspotmail.com
+Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
+
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441309
+RDX: 0000000000000002 RSI: 00000000200000c0 RDI: 0000000000003ad1
+RBP: 000000000000f2ae R08: 0000000000000002 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021d0
+R13: 0000000000402260 R14: 0000000000000000 R15: 0000000000000000
+------------[ cut here ]------------
+percpu_ref_kill_and_confirm called more than once on io_ring_ctx_ref_free!
+WARNING: CPU: 0 PID: 8476 at lib/percpu-refcount.c:382 percpu_ref_kill_and_confirm+0x126/0x180 lib/percpu-refcount.c:382
+Modules linked in:
+CPU: 0 PID: 8476 Comm: syz-executor389 Not tainted 5.10.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:percpu_ref_kill_and_confirm+0x126/0x180 lib/percpu-refcount.c:382
+Code: 5d 08 48 8d 7b 08 48 89 fa 48 c1 ea 03 80 3c 02 00 75 5d 48 8b 53 08 48 c7 c6 00 4b 9d 89 48 c7 c7 60 4a 9d 89 e8 c6 97 f6 04 <0f> 0b 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02
+RSP: 0018:ffffc9000b94fe10 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: ffff888011da4580 RCX: 0000000000000000
+RDX: ffff88801fe84ec0 RSI: ffffffff8158c835 RDI: fffff52001729fb4
+RBP: ffff88801539f000 R08: 0000000000000001 R09: ffff8880b9e2011b
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000293
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff88802de28758
+FS:  00000000014ab880(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2a7046b000 CR3: 0000000023368000 CR4: 0000000000350ef0
+Call Trace:
+ percpu_ref_kill include/linux/percpu-refcount.h:149 [inline]
+ io_ring_ctx_wait_and_kill+0x2b/0x450 fs/io_uring.c:8382
+ io_uring_release+0x3e/0x50 fs/io_uring.c:8420
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:151
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:164 [inline]
+ exit_to_user_mode_prepare+0x17e/0x1a0 kernel/entry/common.c:191
+ syscall_exit_to_user_mode+0x38/0x260 kernel/entry/common.c:266
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x441309
+Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffed6545d38 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: fffffffffffffff4 RBX: 0000000000000000 RCX: 0000000000441309
+RDX: 0000000000000002 RSI: 00000000200000c0 RDI: 0000000000003ad1
+RBP: 000000000000f2ae R08: 0000000000000002 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021d0
+R13: 0000000000402260 R14: 0000000000000000 R15: 0000000000000000
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
