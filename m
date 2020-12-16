@@ -2,103 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79C702DC25F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 15:39:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 506F72DC268
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 15:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgLPOji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 09:39:38 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36478 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726543AbgLPOji (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 09:39:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608129491;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=gVUKEmORyjU5eVV5WXTEYQ4KDgnLkmlQvzKGyHA5964=;
-        b=aAssUVVV49hOszKmPduJ8/9FfG9Qsqw4oDgjZmCBOG4aJLAJLO+1xM1HRZO2nI1lHT2ijo
-        BQbkWy/yysyoSIlz7IQIONNlDgLw1aEKYr7awQJ40CBGVk3aeEMRV1oiazt7yeeqbDjEsF
-        268xlxioFcX6T3mngzGUw3MtLeYiaz8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-270-vuIpWoLrPT-_aA9rhG-Y3g-1; Wed, 16 Dec 2020 09:38:06 -0500
-X-MC-Unique: vuIpWoLrPT-_aA9rhG-Y3g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1BBC1801817;
-        Wed, 16 Dec 2020 14:38:04 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-112-114.rdu2.redhat.com [10.10.112.114])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DC6911800D;
-        Wed, 16 Dec 2020 14:38:02 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 5E825220BCF; Wed, 16 Dec 2020 09:38:02 -0500 (EST)
-Date:   Wed, 16 Dec 2020 09:38:02 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, miklos@szeredi.hu, jlayton@kernel.org,
-        amir73il@gmail.com, willy@infradead.org, jack@suse.cz,
-        sargun@sargun.me
-Subject: [PATCH] vfs, syncfs: Do not ignore return code from ->sync_fs()
-Message-ID: <20201216143802.GA10550@redhat.com>
+        id S1726475AbgLPOlj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 09:41:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50462 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726185AbgLPOli (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Dec 2020 09:41:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C38AEAC7F;
+        Wed, 16 Dec 2020 14:40:56 +0000 (UTC)
+Date:   Wed, 16 Dec 2020 15:40:53 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        mhocko@suse.com, song.bao.hua@hisilicon.com, david@redhat.com,
+        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v9 08/11] mm/hugetlb: Add a kernel parameter
+ hugetlb_free_vmemmap
+Message-ID: <20201216144052.GF29394@linux>
+References: <20201213154534.54826-1-songmuchun@bytedance.com>
+ <20201213154534.54826-9-songmuchun@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <20201213154534.54826-9-songmuchun@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I see that current implementation of __sync_filesystem() ignores the
-return code from ->sync_fs(). I am not sure why that's the case.
+On Sun, Dec 13, 2020 at 11:45:31PM +0800, Muchun Song wrote:
+> Add a kernel parameter hugetlb_free_vmemmap to disable the feature of
+> freeing unused vmemmap pages associated with each hugetlb page on boot.
+I guess this should read "to enable the feature"?
+AFAICS, it is disabled by default.
 
-Ignoring ->sync_fs() return code is problematic for overlayfs where
-it can return error if sync_filesystem() on upper super block failed.
-That error will simply be lost and sycnfs(overlay_fd), will get
-success (despite the fact it failed).
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-I am assuming that we want to continue to call __sync_blockdev()
-despite the fact that there have been errors reported from
-->sync_fs(). So I wrote this simple patch which captures the
-error from ->sync_fs() but continues to call __sync_blockdev()
-and returns error from sync_fs() if there is one.
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-There might be some very good reasons to not capture ->sync_fs()
-return code, I don't know. Hence thought of proposing this patch.
-Atleast I will get to know the reason. I still need to figure
-a way out how to propagate overlay sync_fs() errors to user
-space.
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
+>  Documentation/admin-guide/mm/hugetlbpage.rst    |  3 +++
+>  arch/x86/mm/init_64.c                           |  8 ++++++--
+>  include/linux/hugetlb.h                         | 19 +++++++++++++++++++
+>  mm/hugetlb_vmemmap.c                            | 16 ++++++++++++++++
+>  5 files changed, 53 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 3ae25630a223..9e6854f21d55 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1551,6 +1551,15 @@
+>  			Documentation/admin-guide/mm/hugetlbpage.rst.
+>  			Format: size[KMG]
+>  
+> +	hugetlb_free_vmemmap=
+> +			[KNL] When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set,
+> +			this controls freeing unused vmemmap pages associated
+> +			with each HugeTLB page.
+> +			Format: { on | off (default) }
+> +
+> +			on:  enable the feature
+> +			off: disable the feature
+> +
+>  	hung_task_panic=
+>  			[KNL] Should the hung task detector generate panics.
+>  			Format: 0 | 1
+> diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
+> index f7b1c7462991..3a23c2377acc 100644
+> --- a/Documentation/admin-guide/mm/hugetlbpage.rst
+> +++ b/Documentation/admin-guide/mm/hugetlbpage.rst
+> @@ -145,6 +145,9 @@ default_hugepagesz
+>  
+>  	will all result in 256 2M huge pages being allocated.  Valid default
+>  	huge page size is architecture dependent.
+> +hugetlb_free_vmemmap
+> +	When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this enables freeing
+> +	unused vmemmap pages associated with each HugeTLB page.
+>  
+>  When multiple huge page sizes are supported, ``/proc/sys/vm/nr_hugepages``
+>  indicates the current number of pre-allocated huge pages of the default size.
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index 0435bee2e172..1bce5f20e6ca 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -34,6 +34,7 @@
+>  #include <linux/gfp.h>
+>  #include <linux/kcore.h>
+>  #include <linux/bootmem_info.h>
+> +#include <linux/hugetlb.h>
+>  
+>  #include <asm/processor.h>
+>  #include <asm/bios_ebda.h>
+> @@ -1557,7 +1558,8 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
+>  {
+>  	int err;
+>  
+> -	if (end - start < PAGES_PER_SECTION * sizeof(struct page))
+> +	if (is_hugetlb_free_vmemmap_enabled() ||
+> +	    end - start < PAGES_PER_SECTION * sizeof(struct page))
+>  		err = vmemmap_populate_basepages(start, end, node, NULL);
+>  	else if (boot_cpu_has(X86_FEATURE_PSE))
+>  		err = vmemmap_populate_hugepages(start, end, node, altmap);
+> @@ -1585,6 +1587,8 @@ void register_page_bootmem_memmap(unsigned long section_nr,
+>  	pmd_t *pmd;
+>  	unsigned int nr_pmd_pages;
+>  	struct page *page;
+> +	bool base_mapping = !boot_cpu_has(X86_FEATURE_PSE) ||
+> +			    is_hugetlb_free_vmemmap_enabled();
+>  
+>  	for (; addr < end; addr = next) {
+>  		pte_t *pte = NULL;
+> @@ -1610,7 +1614,7 @@ void register_page_bootmem_memmap(unsigned long section_nr,
+>  		}
+>  		get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_INFO);
+>  
+> -		if (!boot_cpu_has(X86_FEATURE_PSE)) {
+> +		if (base_mapping) {
+>  			next = (addr + PAGE_SIZE) & PAGE_MASK;
+>  			pmd = pmd_offset(pud, addr);
+>  			if (pmd_none(*pmd))
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index ebca2ef02212..7f47f0eeca3b 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -770,6 +770,20 @@ static inline void huge_ptep_modify_prot_commit(struct vm_area_struct *vma,
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> +extern bool hugetlb_free_vmemmap_enabled;
+> +
+> +static inline bool is_hugetlb_free_vmemmap_enabled(void)
+> +{
+> +	return hugetlb_free_vmemmap_enabled;
+> +}
+> +#else
+> +static inline bool is_hugetlb_free_vmemmap_enabled(void)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+>  #else	/* CONFIG_HUGETLB_PAGE */
+>  struct hstate {};
+>  
+> @@ -923,6 +937,11 @@ static inline void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr
+>  					pte_t *ptep, pte_t pte, unsigned long sz)
+>  {
+>  }
+> +
+> +static inline bool is_hugetlb_free_vmemmap_enabled(void)
+> +{
+> +	return false;
+> +}
+>  #endif	/* CONFIG_HUGETLB_PAGE */
+>  
+>  static inline spinlock_t *huge_pte_lock(struct hstate *h,
+> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> index 02201c2e3dfa..64ad929cac61 100644
+> --- a/mm/hugetlb_vmemmap.c
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -180,6 +180,22 @@
+>  #define RESERVE_VMEMMAP_NR		2U
+>  #define RESERVE_VMEMMAP_SIZE		(RESERVE_VMEMMAP_NR << PAGE_SHIFT)
+>  
+> +bool hugetlb_free_vmemmap_enabled;
+> +
+> +static int __init early_hugetlb_free_vmemmap_param(char *buf)
+> +{
+> +	if (!buf)
+> +		return -EINVAL;
+> +
+> +	if (!strcmp(buf, "on"))
+> +		hugetlb_free_vmemmap_enabled = true;
+> +	else if (strcmp(buf, "off"))
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +early_param("hugetlb_free_vmemmap", early_hugetlb_free_vmemmap_param);
+> +
+>  static inline unsigned long free_vmemmap_pages_size_per_hpage(struct hstate *h)
+>  {
+>  	return (unsigned long)free_vmemmap_pages_per_hpage(h) << PAGE_SHIFT;
+> -- 
+> 2.11.0
+> 
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/sync.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-Index: redhat-linux/fs/sync.c
-===================================================================
---- redhat-linux.orig/fs/sync.c	2020-12-16 09:15:49.831565653 -0500
-+++ redhat-linux/fs/sync.c	2020-12-16 09:23:42.499853207 -0500
-@@ -30,14 +30,18 @@
-  */
- static int __sync_filesystem(struct super_block *sb, int wait)
- {
-+	int ret, ret2;
-+
- 	if (wait)
- 		sync_inodes_sb(sb);
- 	else
- 		writeback_inodes_sb(sb, WB_REASON_SYNC);
- 
- 	if (sb->s_op->sync_fs)
--		sb->s_op->sync_fs(sb, wait);
--	return __sync_blockdev(sb->s_bdev, wait);
-+		ret = sb->s_op->sync_fs(sb, wait);
-+	ret2 = __sync_blockdev(sb->s_bdev, wait);
-+
-+	return ret ? ret : ret2;
- }
- 
- /*
-
+-- 
+Oscar Salvador
+SUSE L3
