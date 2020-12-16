@@ -2,135 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30C932DC46E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 17:39:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B6F12DC48E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 17:47:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgLPQjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 11:39:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47338 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbgLPQjr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 11:39:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6A76CAC7F;
-        Wed, 16 Dec 2020 16:39:05 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 8FA5FDA6E1; Wed, 16 Dec 2020 17:37:25 +0100 (CET)
-Date:   Wed, 16 Dec 2020 17:37:25 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Richard Haines <richard_c_haines@btinternet.com>
-Subject: Re: [PATCH] vfs: fix fsconfig(2) LSM mount option handling for btrfs
-Message-ID: <20201216163725.GG6430@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Richard Haines <richard_c_haines@btinternet.com>
-References: <20201118102342.154277-1-omosnace@redhat.com>
+        id S1726793AbgLPQr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 11:47:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbgLPQr2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Dec 2020 11:47:28 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D35C0617A6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 08:46:47 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id g25so2299283wmh.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 08:46:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=DE711iUDj9r5LMmWllbuVgtmMj+CPE2L8Ns11eJmqHM=;
+        b=hJrLxEk5zcQ4Dd1ZG5IngV920AOieHzJKv03G1oBPwJtHu/1yKNG0R7lwXlvet9n3A
+         16ZyuE9AMDOxTpoIL+xrUZHpGdl2ofX5l3DNGLWHtT7me3Te9BrbJCZGwi5g5EJJPvv5
+         r4ViaNCL34MTuZWZ4VqAE7/aedSNpR1X4PU4GwkmoCbxzsoxMG4gPDBaH/MLtRA5j+Or
+         oeeU//ShhJkajqHCmo0eHtarMZSXTAysYODkgcO6XZ3ra972OBLRmkQuXo6DQ/UocQq5
+         Z8qQ080+00hxYMddmBS3YYS6+PAHENWdklFwZ9uskkuGzYvrxMSBueSz11yPgGN7tByM
+         3LVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DE711iUDj9r5LMmWllbuVgtmMj+CPE2L8Ns11eJmqHM=;
+        b=X22FmybTAiLfcGesKiYhw5/n/LOAII8X9Svrt+/ovOTPphTgX8pP0jXlyJLz2ipZrY
+         ZU34IXmBaplsRCQtVG653IkWisQmbH6opoX6kDRSl/Hagh9+waDLY04MN59CE3FD2tov
+         rIqBxMg0uCRq6Plvwqj0vosr3OYZKI2np17u1Tcy1BOrHWbv/Raefu48aQZ1ReGALf1Q
+         Qi607KdeM74xqRu3hpaJtFsM4FzTdll9Gc8A6IA670UwJtC7DacQ750BwKmNClz+yHQb
+         y0wvEafq4zzO2ATE/H7Ydx8Sb3X+rW89rmtP9sp/dyaAxEBj2vHSfE1sUXCHtYwh0KmA
+         BmaA==
+X-Gm-Message-State: AOAM5317oSXwhu7nxANLZuapYwCYzpp6KRwbqQpX6j/Foh4MRhpMqPlh
+        vWKxvDdg/Rtpx6dRLdCNcFIl/A==
+X-Google-Smtp-Source: ABdhPJzg0UruXSDSKZSq8q0ji5v9rpPrtks4trvwJcLLm1WQ1N11oUSdunIzIr2q+W1rOQuRZFKT5Q==
+X-Received: by 2002:a05:600c:218a:: with SMTP id e10mr4183217wme.27.1608137206467;
+        Wed, 16 Dec 2020 08:46:46 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:210:7220:84ff:fe09:7d5c])
+        by smtp.gmail.com with ESMTPSA id f7sm6803639wmc.1.2020.12.16.08.46.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Dec 2020 08:46:45 -0800 (PST)
+Date:   Wed, 16 Dec 2020 16:46:44 +0000
+From:   Alessio Balsini <balsini@android.com>
+To:     Peng Tao <bergwolf@gmail.com>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Akilesh Kailash <akailash@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>,
+        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V10 2/5] fuse: Passthrough initialization and release
+Message-ID: <X9o59AFDwfBvVK4u@google.com>
+References: <20201026125016.1905945-1-balsini@android.com>
+ <20201026125016.1905945-3-balsini@android.com>
+ <CA+a=Yy4bhC-432h8shxbsrY5vjTcRZopS-Ojo0924L49+Be3Cg@mail.gmail.com>
+ <20201127134123.GA569154@google.com>
+ <CA+a=Yy6S9spMLr9BqyO1qvU52iAAXU3i9eVtb81SnrzjkCwO5Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201118102342.154277-1-omosnace@redhat.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <CA+a=Yy6S9spMLr9BqyO1qvU52iAAXU3i9eVtb81SnrzjkCwO5Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 11:23:42AM +0100, Ondrej Mosnacek wrote:
-> When SELinux security options are passed to btrfs via fsconfig(2) rather
-> than via mount(2), the operation aborts with an error. What happens is
-> roughly this sequence:
+Hi Tao,
+
+On Sat, Nov 28, 2020 at 09:57:31AM +0800, Peng Tao wrote:
+> On Fri, Nov 27, 2020 at 9:41 PM Alessio Balsini <balsini@android.com> wrote:
+> >
+> > Hi Peng,
+> >
+> > Thanks for the heads up!
+> >
+> > On Thu, Nov 26, 2020 at 09:33:34PM +0800, Peng Tao wrote:
+> > > On Tue, Oct 27, 2020 at 12:19 AM Alessio Balsini <balsini@android.com> wrote:
+> > > > [...]
+> > > >  int fuse_passthrough_setup(struct fuse_conn *fc, struct fuse_file *ff,
+> > > >                            struct fuse_open_out *openarg)
+> > > >  {
+> > > > -       return -EINVAL;
+> > > > +       struct inode *passthrough_inode;
+> > > > +       struct super_block *passthrough_sb;
+> > > > +       struct fuse_passthrough *passthrough;
+> > > > +       int passthrough_fh = openarg->passthrough_fh;
+> > > > +
+> > > > +       if (!fc->passthrough)
+> > > > +               return -EPERM;
+> > > > +
+> > > > +       /* Default case, passthrough is not requested */
+> > > > +       if (passthrough_fh <= 0)
+> > > > +               return -EINVAL;
+> > > > +
+> > > > +       spin_lock(&fc->passthrough_req_lock);
+> > > > +       passthrough = idr_remove(&fc->passthrough_req, passthrough_fh);
+> > > > +       spin_unlock(&fc->passthrough_req_lock);
+> > > > +
+> > > > +       if (!passthrough)
+> > > > +               return -EINVAL;
+> > > > +
+> > > > +       passthrough_inode = file_inode(passthrough->filp);
+> > > > +       passthrough_sb = passthrough_inode->i_sb;
+> > > > +       if (passthrough_sb->s_stack_depth >= FILESYSTEM_MAX_STACK_DEPTH) {
+> > > Hi Alessio,
+> > >
+> > > passthrough_sb is the underlying filesystem superblock, right? It
+> > > seems to prevent fuse passthrough fs from stacking on another fully
+> > > stacked file system, instead of preventing other file systems from
+> > > stacking on this fuse passthrough file system. Am I misunderstanding
+> > > it?
+> >
+> > Correct, this checks the stacking depth on the lower filesystem.
+> > This is an intended behavior to avoid the stacking of multiple FUSE
+> > passthrough filesystems, and works because when a FUSE connection has
+> > the passthrough feature activated, the file system updates its
+> > s_stack_depth to FILESYSTEM_MAX_STACK_DEPTH in process_init_reply()
+> > (PATCH 1/5), avoiding further stacking.
+> >
+> > Do you see issues with that?
+> I'm considering a use case where a fuse passthrough file system is
+> stacked on top of an overlayfs and/or an ecryptfs. The underlying
+> s_stack_depth FILESYSTEM_MAX_STACK_DEPTH is rejected here so it is
+> possible to have an overlayfs or an ecryptfs underneath but not both
+> (with current FILESYSTEM_MAX_STACK_DEPTH being 2). How about changing
+> passthrough fuse sb s_stack_depth to FILESYSTEM_MAX_STACK_DEPTH + 1 in
+> PATCH 1/5, and allow passthrough_sb->s_stack_depth to be
+> FILESYSTEM_MAX_STACK_DEPTH here? So that existing kernel stacking file
+> system setups can all work as the underlying file system, while the
+> stacking of multiple FUSE passthrough filesystems is still blocked.
 > 
-> 1. vfs_parse_fs_param() eats away the LSM options and parses them into
->    fc->security.
-> 2. legacy_get_tree() finds nothing in ctx->legacy_data, passes this
->    nothing to btrfs.
-> [here btrfs calls another layer of vfs_kern_mount(), but let's ignore
->  that for simplicity]
-> 3. btrfs calls security_sb_set_mnt_opts() with empty options.
-> 4. vfs_get_tree() then calls its own security_sb_set_mnt_opts() with the
->    options stashed in fc->security.
-> 5. SELinux doesn't like that different options were used for the same
->    superblock and returns -EINVAL.
+
+
+Sounds like a good idea, I'll think about it a bit more and if
+everything's all right I'll post the new patchset.
+
+
+> >
+> > What I'm now thinking is that fuse_passthrough_open would probably be a
+> > better place for this check, so that the ioctl() would fail and the user
+> > space daemon may decide to skip passthrough and use legacy FUSE access
+> > for that file (or, at least, be aware that something went wrong).
+> >
+> +1, fuse_passthrough_open seems to be a better place for the check.
 > 
-> In the case of mount(2), the options are parsed by
-> legacy_parse_monolithic(), which skips the eating away of security
-> opts because of the FS_BINARY_MOUNTDATA flag, so they are passed to the
-> FS via ctx->legacy_data. The second call to security_sb_set_mnt_opts()
-> (from vfs_get_tree()) now passes empty opts, but the non-empty -> empty
-> sequence is allowed by SELinux for the FS_BINARY_MOUNTDATA case.
+> > A more aggressive approach would be instead to move the stacking depth
+> > check to fuse_fill_super_common, where we can update s_stack_depth to
+> > lower-fs depth+1 and fail if passthrough is active and s_stack_depth is
+> > greater than FILESYSTEM_MAX_STACK_DEPTH.
+> >
+> The lower layer files/directories might actually spread on different
+> file systems. I'm not sure if s_stack_depth check is still possible at
+> mount time. Even if we can calculate the substree s_stack_depth, it is
+> still more flexible to determine on a per inode basis, right?
 > 
-> It is a total mess, but the only sane fix for now seems to be to skip
-> processing the security opts in vfs_parse_fs_param() if the fc has
-> legacy opts set AND the fs specfies the FS_BINARY_MOUNTDATA flag. This
-> combination currently matches only btrfs and coda. For btrfs this fixes
-> the fsconfig(2) behavior, and for coda it makes setting security opts
-> via fsconfig(2) fail the same way as it would with mount(2) (because
-> FS_BINARY_MOUNTDATA filesystems are expected to call the mount opts LSM
-> hooks themselves, but coda never cared enough to do that). I believe
-> that is an acceptable state until both filesystems (or at least btrfs)
-> are converted to the new mount API (at which point btrfs won't need to
-> pretend it takes binary mount data any more and also won't need to call
-> the LSM hooks itself, assuming it will pass the fc->security information
-> properly).
-> 
-> Note that we can't skip LSM opts handling in vfs_parse_fs_param() solely
-> based on FS_BINARY_MOUNTDATA because that would break NFS.
-> 
-> See here for the original report and reproducer:
-> https://lore.kernel.org/selinux/c02674c970fa292610402aa866c4068772d9ad4e.camel@btinternet.com/
-> 
-> Reported-by: Richard Haines <richard_c_haines@btinternet.com>
-> Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> Cheers,
+> Tao
+> --
+> Into Sth. Rich & Strange
 
-Can we get this merged via the vfs tree, please? Possibly with
 
-CC: stable@vger.kernel.org # 5.4+
+Fair enough. The per-inode check is definitely the right way to proceed.
 
-> +	/*
-> +	 * In the legacy+binary mode, skip the security_fs_context_parse_param()
-> +	 * call and let the legacy handler process also the security options.
-> +	 * It will format them into the monolithic string, where the FS can
-> +	 * process them (with FS_BINARY_MOUNTDATA it is expected to do it).
-> +	 *
-> +	 * Currently, this matches only btrfs and coda. Coda is broken with
-> +	 * fsconfig(2) anyway, because it does actually take binary data. Btrfs
-> +	 * only *pretends* to take binary data to work around the SELinux's
-> +	 * no-remount-with-different-options check, so this allows it to work
-> +	 * with fsconfig(2) properly.
-> +	 *
-> +	 * Once btrfs is ported to the new mount API, this hack can be reverted.
-> +	 */
-> +	if (fc->ops != &legacy_fs_context_ops || !(fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)) {
+Thanks a lot for you feedback!
+Alessio
 
-Line is way over 80, it could be split like
-
-	if (fc->ops != &legacy_fs_context_ops ||
-	    !(fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)) {
-
-> +		ret = security_fs_context_parse_param(fc, param);
-> +		if (ret != -ENOPARAM)
-> +			/* Param belongs to the LSM or is disallowed by the LSM;
-> +			 * so don't pass to the FS.
-> +			 */
-
-The multi line comment should have the /* on a separate line (yes it's
-in the original code too but such things could be fixed when the code is
-moved).
-
-> +			return ret;
-> +	}
->  
->  	if (fc->ops->parse_param) {
->  		ret = fc->ops->parse_param(fc, param);
