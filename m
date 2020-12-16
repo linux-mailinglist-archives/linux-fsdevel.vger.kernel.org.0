@@ -2,185 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A63AA2DB9A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 04:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B49792DB9AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 04:31:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725792AbgLPDZj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Dec 2020 22:25:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50878 "EHLO
+        id S1725562AbgLPDbk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Dec 2020 22:31:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbgLPDZj (ORCPT
+        with ESMTP id S1725274AbgLPDbk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Dec 2020 22:25:39 -0500
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56369C061794
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 19:24:59 -0800 (PST)
-Received: by mail-pj1-x1041.google.com with SMTP id v1so727046pjr.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 19:24:59 -0800 (PST)
+        Tue, 15 Dec 2020 22:31:40 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810EFC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 19:31:00 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id m6so6005718pfm.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Dec 2020 19:31:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DnjH3+59C2HesEkci6o2tYhXJ5O1oMeATLk3gN2lfbg=;
-        b=H/9T2Di4Pe5rI0y2nVUFZ3UMm216WYTE9Xf04MP8zhn5RjRWrRdwoQPP1ZdIskjwCa
-         0ctDKAtETaY9G7isbgjYkIf5DYftsCeExeXvEWyNO5KUVqgo0FsoVIt5n4206Rh/C1u3
-         DqrTfdrwwQoXKUZvKWIIr6CuET9zfMcIsDN9AZv8SvCEG35pGKfGKjWKmZP/pixw/aOG
-         if41hwRtBpC4dNX4So5hbysvkAwWwPRHRzK7k2eYLR5LDq2FZmNmf4Gb/fxa/kxDvQ+O
-         2ShBjFsGiYuYQU9JDfwPuZ2ZvWwbw1cnSGm5uEKy8+68QBRgPp3z8jjVRV+BB7v3RsIx
-         gzFw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DqQdax5wUEqz+3JvGluM1Hb6N1LgdnHbZfF6kAuGG4I=;
+        b=fDMkFfbrF6yDUTtOgg3KrAwXAZluWTXiWFB4YQYHMoAboecXdjqu13epemq0wCKi8o
+         4kwtu45POKwMrcfeLieopaDrahuatILLQjWJCU25KwlFjWn9fj8zwNimch54suLFiKSS
+         xxgDZ7eap5qh01aiQGZPv6hDn4tBJe4xUXsv4rY+Ku87K4R+fEPZ5tKahWJX5Yfh7sVD
+         veVpXLE3fkb5IUxRI9Gq3ZLN4ydcTzQTuYpdv0mJsNRgQcPeDYVa876kDHQ3G8k40ss6
+         yjN33YGIocFj6Ih9epz0C3b7mBMXgwYqcXSnxC/oSslVSnHe4KiNN2tilNUDv+p84YS4
+         WGaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DnjH3+59C2HesEkci6o2tYhXJ5O1oMeATLk3gN2lfbg=;
-        b=jeWqhCB3CeJwgFI6ss1fpZFcQ1xZFrlDTtUGt2qTHTUm4FN4ur5/Tj9qhUMEx7y2eY
-         7prj0XQCZCAItkkp6Ssd2MQ5Z8kTr6j8ZBqRK7S31o+Kvvwx0HsSWrXzaujUf+3IY6GC
-         rlxPZK/1A0A7m+cpwfIWLtt3PaYg3pqOmTqMIFTqKBAT07RPOgyRuKd9ul5R6wkkTWLL
-         GfNPoBdPfFkhkut40HLx97iXCGvo1CX6Os9OsYTGyNBEE7119P34jRbiiY7EoeWRMqO3
-         CZSAsM8mTv8Yi7en0YCw9edYrpElPms61AL3MfDa81328IVymUb6BKfiN7QMiWLz640C
-         kCuQ==
-X-Gm-Message-State: AOAM532mbL3/K37e6NUZf8Av+oexv6Z0RLYI8OWfc9P7m07LNliVnUAx
-        zPHTvmWYgl8ZEB33lyLRJsdVnMqXhAQmB2ecMlSpng==
-X-Google-Smtp-Source: ABdhPJz0vnVdzRo2r8SFm69RR6xf0plpTm8e0X2u/aZgJ2No7jCV4ESWSR3kVc3lFpAv+GCLKBDYBT07o/8XH1oEPrA=
-X-Received: by 2002:a17:902:ed0d:b029:da:c83b:5f40 with SMTP id
- b13-20020a170902ed0db02900dac83b5f40mr3476341pld.20.1608089098795; Tue, 15
- Dec 2020 19:24:58 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DqQdax5wUEqz+3JvGluM1Hb6N1LgdnHbZfF6kAuGG4I=;
+        b=bCWi/EFwfDC527V6+xoHJHzrl4cqrtt40s5aXrzKGfwpz9nbwm5c0m+tzDIj8DwoXp
+         vevx3jpJYvrjWbI72QeqAnFOrb1NlCfMitk45ytVpKmTS38VBm7EJ51mQ2A2hzvp0+Wo
+         GWJfWd0giq+39gNaGmEpE7ZbKItnA3q2VxmPK7hT45enqqhB2OTvzTwTgCYZBSnNaAsS
+         cTtoF6dhjh8uYItnot7gn2t7uLWzBPeyKgcYd7NQrhRo4G4qa7slOAnzkUQABzn2F4gp
+         QDTrUrGhLlA+rOMgcuRlHwFlmCEZJYnlK3UJ6zCDWL7k1uWGShH2uLycopqn5GP+j/5Y
+         GUTQ==
+X-Gm-Message-State: AOAM531QZZDBmJYKmlLiT819xn2sECu0fSmvl2+o4n6N6nGnDBK1C382
+        yiLfaCisXemV3wM7w5ZFI+KxC15y0y5pmw==
+X-Google-Smtp-Source: ABdhPJzHtbz7eVq4JAsywxuFmztJCYN0o4Q/IEriXaatddDQZVkj4ydeXKbZNUwWWWBs/DlLzBOezQ==
+X-Received: by 2002:a63:7d47:: with SMTP id m7mr31007667pgn.405.1608089459824;
+        Tue, 15 Dec 2020 19:30:59 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id z27sm446060pfq.70.2020.12.15.19.30.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Dec 2020 19:30:59 -0800 (PST)
+Subject: Re: [PATCH 2/4] fs: add support for LOOKUP_NONBLOCK
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org
+References: <20201214191323.173773-1-axboe@kernel.dk>
+ <20201214191323.173773-3-axboe@kernel.dk>
+ <20201216023620.GH3579531@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a4ec6e24-2d01-0104-2604-18c88bd608a0@kernel.dk>
+Date:   Tue, 15 Dec 2020 20:30:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201213154534.54826-1-songmuchun@bytedance.com>
- <20201213154534.54826-3-songmuchun@bytedance.com> <7cfe44aa-3753-82d9-6630-194f1532e186@oracle.com>
-In-Reply-To: <7cfe44aa-3753-82d9-6630-194f1532e186@oracle.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 16 Dec 2020 11:24:22 +0800
-Message-ID: <CAMZfGtVdFNdxqvx7HL1CSQ55M7ry3QsyDRHzPStuuX-ibkmdjQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v9 02/11] mm/hugetlb: Introduce a new
- config HUGETLB_PAGE_FREE_VMEMMAP
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201216023620.GH3579531@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 16, 2020 at 9:04 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->
-> On 12/13/20 7:45 AM, Muchun Song wrote:
-> > The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
-> > whether to enable the feature of freeing unused vmemmap associated with
-> > HugeTLB pages. And this is just for dependency check. Now only support
-> > x86-64.
-> >
-> > Because this config depends on HAVE_BOOTMEM_INFO_NODE. And the function
-> > of the register_page_bootmem_info() is aimed to register bootmem info.
-> > So we should register bootmem info when this config is enabled.
->
-> Suggested commit message rewording?
->
-> The HUGETLB_PAGE_FREE_VMEMMAP option is used to enable the freeing of
-> unnecessary vmemmap associated with HugeTLB pages.  The config option is
-> introduced early so that supporting code can be written to depend on the
-> option.  The initial version of the code only provides support for x86-64.
->
-> Like other code which frees vmemmap, this config option depends on
-> HAVE_BOOTMEM_INFO_NODE.  The routine register_page_bootmem_info() is used
-> to register bootmem info.  Therefore, make sure register_page_bootmem_info
-> is enabled if HUGETLB_PAGE_FREE_VMEMMAP is defined.
+On 12/15/20 7:36 PM, Al Viro wrote:
+> On Mon, Dec 14, 2020 at 12:13:22PM -0700, Jens Axboe wrote:
+>> io_uring always punts opens to async context, since there's no control
+>> over whether the lookup blocks or not. Add LOOKUP_NONBLOCK to support
+>> just doing the fast RCU based lookups, which we know will not block. If
+>> we can do a cached path resolution of the filename, then we don't have
+>> to always punt lookups for a worker.
+>>
+>> We explicitly disallow O_CREAT | O_TRUNC opens, as those will require
+>> blocking, and O_TMPFILE as that requires filesystem interactions and
+>> there's currently no way to pass down an attempt to do nonblocking
+>> operations there. This basically boils down to whether or not we can
+>> do the fast path of open or not. If we can't, then return -EAGAIN and
+>> let the caller retry from an appropriate context that can handle
+>> blocking.
+>>
+>> During path resolution, we always do LOOKUP_RCU first. If that fails and
+>> we terminate LOOKUP_RCU, then fail a LOOKUP_NONBLOCK attempt as well.
+> 
+> Ho-hum...  FWIW, I'm tempted to do the same change of calling
+> conventions for unlazy_child() (try_to_unlazy_child(), true on
+> success).  OTOH, the call site is right next to removal of
+> unlikely(status == -ECHILD) suggested a few days ago...
+> 
+> Mind if I take your first commit + that removal of unlikely + change
+> of calling conventions for unlazy_child() into #work.namei (based at
+> 5.10), so that the rest of your series got rebased on top of that?
 
-Thank Mike. Will update.
+Of course, go ahead.
 
->
-> >
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  arch/x86/mm/init_64.c |  2 +-
-> >  fs/Kconfig            | 15 +++++++++++++++
-> >  2 files changed, 16 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> > index 0a45f062826e..0435bee2e172 100644
-> > --- a/arch/x86/mm/init_64.c
-> > +++ b/arch/x86/mm/init_64.c
-> > @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
-> >
-> >  static void __init register_page_bootmem_info(void)
-> >  {
-> > -#ifdef CONFIG_NUMA
-> > +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
-> >       int i;
-> >
-> >       for_each_online_node(i)
-> > diff --git a/fs/Kconfig b/fs/Kconfig
-> > index 976e8b9033c4..4c3a9c614983 100644
-> > --- a/fs/Kconfig
-> > +++ b/fs/Kconfig
-> > @@ -245,6 +245,21 @@ config HUGETLBFS
-> >  config HUGETLB_PAGE
-> >       def_bool HUGETLBFS
-> >
-> > +config HUGETLB_PAGE_FREE_VMEMMAP
-> > +     def_bool HUGETLB_PAGE
-> > +     depends on X86_64
-> > +     depends on SPARSEMEM_VMEMMAP
-> > +     depends on HAVE_BOOTMEM_INFO_NODE
-> > +     help
-> > +       When using HUGETLB_PAGE_FREE_VMEMMAP, the system can save up some
-> > +       memory from pre-allocated HugeTLB pages when they are not used.
-> > +       6 pages per HugeTLB page of the pmd level mapping and (PAGE_SIZE - 2)
-> > +       pages per HugeTLB page of the pud level mapping.
-> > +
-> > +       When the pages are going to be used or freed up, the vmemmap array
-> > +       representing that range needs to be remapped again and the pages
-> > +       we discarded earlier need to be rellocated again.
->
-> I see the previous discussion with David about wording here.  How about
-> leaving the functionality description general, and provide a specific
-> example for x86_64?  As mentioned we can always update when new arch support
-> is added.  Suggested text?
+>> @@ -3299,7 +3315,16 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
+>>  {
+>>  	struct dentry *child;
+>>  	struct path path;
+>> -	int error = path_lookupat(nd, flags | LOOKUP_DIRECTORY, &path);
+>> +	int error;
+>> +
+>> +	/*
+>> +	 * We can't guarantee that the fs doesn't block further down, so
+>> +	 * just disallow nonblock attempts at O_TMPFILE for now.
+>> +	 */
+>> +	if (flags & LOOKUP_NONBLOCK)
+>> +		return -EAGAIN;
+> 
+> Not sure I like it here, TBH...
 
-Good suggestion. Thanks.
-
->
->         The option HUGETLB_PAGE_FREE_VMEMMAP allows for the freeing of
->         some vmemmap pages associated with pre-allocated HugeTLB pages.
->         For example, on X86_64 6 vmemmap pages of size 4KB each can be
->         saved for each 2MB HugeTLB page.  4094 vmemmap pages of size 4KB
->         each can be saved for each 1GB HugeTLB page.
->
->         When a HugeTLB page is allocated or freed, the vmemmap array
->         representing the range associated with the page will need to be
->         remapped.  When a page is allocated, vmemmap pages are freed
->         after remapping.  When a page is freed, previously discarded
->         vmemmap pages must be allocated before before remapping.
->
-> --
-> Mike Kravetz
->
-> > +
-> >  config MEMFD_CREATE
-> >       def_bool TMPFS || HUGETLBFS
-> >
-> >
-
-
+This ties in with the later email, so you'd prefer to gate this upfront
+instead of putting it in here? I'm fine with that.
 
 -- 
-Yours,
-Muchun
+Jens Axboe
+
