@@ -2,111 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 088C52DBAFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 07:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6CA2DBF14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 11:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725905AbgLPGGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 01:06:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47280 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725274AbgLPGGc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 01:06:32 -0500
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2E1C0613D6;
-        Tue, 15 Dec 2020 22:05:52 -0800 (PST)
-Received: by mail-il1-x12d.google.com with SMTP id q5so941703ilc.10;
-        Tue, 15 Dec 2020 22:05:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P6Sg59zP5ptq5x2K8by0U8XXwiQHFOoVbiJ3Fi37iXw=;
-        b=S67YoxV9n23ZqrrblS/5Nup+FG7AyOTKzOim1I60JAAfBqrXAiDI1Z2Nbo2UtU/Hl4
-         hNB8LNLiBciaj5lQ3EuaLuia4g5D0M+Vu/12VIkGmM2TffzVi7a/Vi+8mit7yduMv90X
-         Iqg5INRAAUosZtjf7tC9SKWhZqb1+6jKuhmbcfVoJahp9K+naipFvqzU29HUJNKK20gd
-         zGD0IiWx6snzfqN/dN/wVnJDZ7Q5bKCVvPBpnr1VAIkYtdgfhQV0oKmP9tzi8Qa7pPDI
-         HlDZJ53G/ZI/cGpbaraS759rnSy1v+RfRryagK2FqelP8EMsmMyY/fwlIbvx1mN7KpB4
-         5GVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P6Sg59zP5ptq5x2K8by0U8XXwiQHFOoVbiJ3Fi37iXw=;
-        b=tbdNcEd6/YDPawA0cwtceJUvOwU2PNCM1Ec21WmWLKW9TdinxB+yOj0gCUoGshOBZl
-         jPPH0iHuKYgsrcSKo0NoZtgO8pYBQsBM6F1Ayf3BhGvBQT6sJZfuXp+PgJgLwjZ+daJu
-         InLxcFoRQpfMLRLdsPuEjB27vWtxIex3SIw5jYwZECqL6p1CJDrb5JcCHxeR2yTzEPZS
-         pMW7Gl3TwV64DRAS6/OEMSILugicfvGtj8QfBY0gbX2TaEa0IVp8I7k7J413th6fx3lo
-         bYWa4RBnR06g+UrQJiNN6g8npz55DQ4M5IFO9cv8by76hthKKKLfQ8xrmZujom++N5DL
-         Jw6A==
-X-Gm-Message-State: AOAM530csCZ6zfaIsyYLtsVqvsLYzRKEZAXX3/E/vbogZ+1iFjb42vNY
-        7OyhjJLsAzvZk67dsF+Iz24c989rQiwP1TplphQ=
-X-Google-Smtp-Source: ABdhPJxkFEjPMeTtp8jY66KaeuBieLp+BWoFhm36itUGcJKrrFpceUCJoG9X2suKji0F8TrrsXuxiHC5hnDdcR6SWC8=
-X-Received: by 2002:a92:2912:: with SMTP id l18mr33420710ilg.173.1608098752016;
- Tue, 15 Dec 2020 22:05:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20201116044529.1028783-1-dkadashev@gmail.com> <X8oWEkb1Cb9ssxnx@carbon.v>
- <CAOKbgA7MdAF1+MQePoZHALxNC5ye207ET=4JCqvdNcrGTcrkpw@mail.gmail.com> <faf1a897-3acf-dd82-474d-dadd9fa9a752@kernel.dk>
-In-Reply-To: <faf1a897-3acf-dd82-474d-dadd9fa9a752@kernel.dk>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Wed, 16 Dec 2020 13:05:41 +0700
-Message-ID: <CAOKbgA46PHvVW6h1s6U-kgVt2jdq0t+UXSiy7nn=JTonpXYAPQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+        id S1725768AbgLPK6N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 05:58:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34654 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725283AbgLPK6N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Dec 2020 05:58:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5E9D1AD89;
+        Wed, 16 Dec 2020 10:57:32 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 293E41E135E; Wed, 16 Dec 2020 11:57:32 +0100 (CET)
+Date:   Wed, 16 Dec 2020 11:57:32 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jan Kara <jack@suse.cz>, axboe@kernel.dk,
         linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] writeback: don't warn on an unregistered BDI in
+ __mark_inode_dirty
+Message-ID: <20201216105732.GF21258@quack2.suse.cz>
+References: <20200928122613.434820-1-hch@lst.de>
+ <20201209163536.GA2587@quack2.suse.cz>
+ <20201209174750.GA20352@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201209174750.GA20352@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 11:20 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/15/20 4:43 AM, Dmitry Kadashev wrote:
-> > On Fri, Dec 4, 2020 at 5:57 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
-> >>
-> >> On Mon, Nov 16, 2020 at 11:45:27AM +0700, Dmitry Kadashev wrote:
-> >>> This adds mkdirat support to io_uring and is heavily based on recently
-> >>> added renameat() / unlinkat() support.
-> >>>
-> >>> The first patch is preparation with no functional changes, makes
-> >>> do_mkdirat accept struct filename pointer rather than the user string.
-> >>>
-> >>> The second one leverages that to implement mkdirat in io_uring.
-> >>>
-> >>> Based on for-5.11/io_uring.
-> >>>
-> >>> Dmitry Kadashev (2):
-> >>>   fs: make do_mkdirat() take struct filename
-> >>>   io_uring: add support for IORING_OP_MKDIRAT
-> >>>
-> >>>  fs/internal.h                 |  1 +
-> >>>  fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
-> >>>  fs/namei.c                    | 20 ++++++++----
-> >>>  include/uapi/linux/io_uring.h |  1 +
-> >>>  4 files changed, 74 insertions(+), 6 deletions(-)
-> >>>
-> >>> --
-> >>> 2.28.0
-> >>>
-> >>
-> >> Hi Al Viro,
-> >>
-> >> Ping. Jens mentioned before that this looks fine by him, but you or
-> >> someone from fsdevel should approve the namei.c part first.
-> >
-> > Another ping.
-> >
-> > Jens, you've mentioned the patch looks good to you, and with quite
-> > similar changes (unlinkat, renameat) being sent for 5.11 is there
-> > anything that I can do to help this to be accepted (not necessarily
-> > for 5.11 at this point)?
->
-> Since we're aiming for 5.12 at this point, let's just hold off a bit and
-> see if Al gets time to ack/review the VFS side of things. There's no
-> immediate rush.
+On Wed 09-12-20 18:47:50, Christoph Hellwig wrote:
+> On Wed, Dec 09, 2020 at 05:35:36PM +0100, Jan Kara wrote:
+> > > I have a vague memory someone else sent this patch alredy, but couldn't
+> > > find it in my mailing list folder.  But given that my current NVMe
+> > > tests trigger it easily I'd rather get it fixed ASAP.
+> > 
+> > Did this patch get lost? I don't see it upstream or in Jens' tree. FWIW I
+> > agree the warning may result in false positive so I'm OK with removing it.
+> > So feel free to add:
+> > 
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> Yes, it looks like this patch got lost somewhere again.
 
-OK, sounds good, thanks.
+Since Jens didn't reply, I've just picked up the patch to my tree and will
+push it to Linus tomorrow.
 
+								Honza
 -- 
-Dmitry Kadashev
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
