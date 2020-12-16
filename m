@@ -2,100 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FD672DBAD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 06:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 088C52DBAFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 07:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725818AbgLPFoL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 00:44:11 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:42278 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725274AbgLPFoL (ORCPT
+        id S1725905AbgLPGGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 01:06:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47280 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725274AbgLPGGc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 00:44:11 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BG5ecQf172932;
-        Wed, 16 Dec 2020 05:43:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=T8VJpldCNi+sj6YW08esJ7EhQP7RkcOTlE+MlH6mYLs=;
- b=K5A3QJWodrZBH11uy941tRO6n38iCfy9Czcb7m/MrxhOmWZ3LtNOzj5vrynmZILAFi3C
- o/hBnV8lvTjP95xcdUi2MQqBPRED1ZX8HrGP3mgTO0VaKk49d0oxJdEXrzCmn2WpsevR
- +TKf3vheZaSiHrSF24Jt2/I39qoaraAeIkdbVXRS0prYxUdje7qgYmuOn2TTXv4HXzjE
- zeKrcD4mKuaI2/OXeWyhr/soaSXYHVvz+tqfcvXgUaPqICHwWGgcuyiRquHStTwcTb0m
- 7ct+CSzEd6nyCOeJfd9JtpUa/liMsJ9oJqj6TuBsp9LcHVyhraWlR1OYP0ij4CGAf2ZV 7g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 35cn9re4ux-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Dec 2020 05:43:13 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BG5f9TG060072;
-        Wed, 16 Dec 2020 05:43:13 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 35e6js8pa1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Dec 2020 05:43:13 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BG5hAp8001000;
-        Wed, 16 Dec 2020 05:43:10 GMT
-Received: from [10.159.136.92] (/10.159.136.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Dec 2020 21:43:10 -0800
-Subject: Re: [RFC PATCH v3 8/9] md: Implement ->corrupted_range()
-To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        darrick.wong@oracle.com, david@fromorbit.com, hch@lst.de,
-        song@kernel.org, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
-        y-goto@fujitsu.com
-References: <20201215121414.253660-1-ruansy.fnst@cn.fujitsu.com>
- <20201215121414.253660-9-ruansy.fnst@cn.fujitsu.com>
-From:   Jane Chu <jane.chu@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <100fcdf4-b2fe-d77d-e95f-52a7323d7ee1@oracle.com>
-Date:   Tue, 15 Dec 2020 21:43:08 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+        Wed, 16 Dec 2020 01:06:32 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2E1C0613D6;
+        Tue, 15 Dec 2020 22:05:52 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id q5so941703ilc.10;
+        Tue, 15 Dec 2020 22:05:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P6Sg59zP5ptq5x2K8by0U8XXwiQHFOoVbiJ3Fi37iXw=;
+        b=S67YoxV9n23ZqrrblS/5Nup+FG7AyOTKzOim1I60JAAfBqrXAiDI1Z2Nbo2UtU/Hl4
+         hNB8LNLiBciaj5lQ3EuaLuia4g5D0M+Vu/12VIkGmM2TffzVi7a/Vi+8mit7yduMv90X
+         Iqg5INRAAUosZtjf7tC9SKWhZqb1+6jKuhmbcfVoJahp9K+naipFvqzU29HUJNKK20gd
+         zGD0IiWx6snzfqN/dN/wVnJDZ7Q5bKCVvPBpnr1VAIkYtdgfhQV0oKmP9tzi8Qa7pPDI
+         HlDZJ53G/ZI/cGpbaraS759rnSy1v+RfRryagK2FqelP8EMsmMyY/fwlIbvx1mN7KpB4
+         5GVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P6Sg59zP5ptq5x2K8by0U8XXwiQHFOoVbiJ3Fi37iXw=;
+        b=tbdNcEd6/YDPawA0cwtceJUvOwU2PNCM1Ec21WmWLKW9TdinxB+yOj0gCUoGshOBZl
+         jPPH0iHuKYgsrcSKo0NoZtgO8pYBQsBM6F1Ayf3BhGvBQT6sJZfuXp+PgJgLwjZ+daJu
+         InLxcFoRQpfMLRLdsPuEjB27vWtxIex3SIw5jYwZECqL6p1CJDrb5JcCHxeR2yTzEPZS
+         pMW7Gl3TwV64DRAS6/OEMSILugicfvGtj8QfBY0gbX2TaEa0IVp8I7k7J413th6fx3lo
+         bYWa4RBnR06g+UrQJiNN6g8npz55DQ4M5IFO9cv8by76hthKKKLfQ8xrmZujom++N5DL
+         Jw6A==
+X-Gm-Message-State: AOAM530csCZ6zfaIsyYLtsVqvsLYzRKEZAXX3/E/vbogZ+1iFjb42vNY
+        7OyhjJLsAzvZk67dsF+Iz24c989rQiwP1TplphQ=
+X-Google-Smtp-Source: ABdhPJxkFEjPMeTtp8jY66KaeuBieLp+BWoFhm36itUGcJKrrFpceUCJoG9X2suKji0F8TrrsXuxiHC5hnDdcR6SWC8=
+X-Received: by 2002:a92:2912:: with SMTP id l18mr33420710ilg.173.1608098752016;
+ Tue, 15 Dec 2020 22:05:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201215121414.253660-9-ruansy.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9836 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 bulkscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012160035
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9836 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
- malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012160035
+References: <20201116044529.1028783-1-dkadashev@gmail.com> <X8oWEkb1Cb9ssxnx@carbon.v>
+ <CAOKbgA7MdAF1+MQePoZHALxNC5ye207ET=4JCqvdNcrGTcrkpw@mail.gmail.com> <faf1a897-3acf-dd82-474d-dadd9fa9a752@kernel.dk>
+In-Reply-To: <faf1a897-3acf-dd82-474d-dadd9fa9a752@kernel.dk>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Wed, 16 Dec 2020 13:05:41 +0700
+Message-ID: <CAOKbgA46PHvVW6h1s6U-kgVt2jdq0t+UXSiy7nn=JTonpXYAPQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/15/2020 4:14 AM, Shiyang Ruan wrote:
->   #ifdef CONFIG_SYSFS
-> +int bd_disk_holder_corrupted_range(struct block_device *bdev, loff_t off,
-> +				   size_t len, void *data);
->   int bd_link_disk_holder(struct block_device *bdev, struct gendisk *disk);
->   void bd_unlink_disk_holder(struct block_device *bdev, struct gendisk *disk);
->   #else
-> +int bd_disk_holder_corrupted_range(struct block_device *bdev, loff_t off,
+On Tue, Dec 15, 2020 at 11:20 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 12/15/20 4:43 AM, Dmitry Kadashev wrote:
+> > On Fri, Dec 4, 2020 at 5:57 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+> >>
+> >> On Mon, Nov 16, 2020 at 11:45:27AM +0700, Dmitry Kadashev wrote:
+> >>> This adds mkdirat support to io_uring and is heavily based on recently
+> >>> added renameat() / unlinkat() support.
+> >>>
+> >>> The first patch is preparation with no functional changes, makes
+> >>> do_mkdirat accept struct filename pointer rather than the user string.
+> >>>
+> >>> The second one leverages that to implement mkdirat in io_uring.
+> >>>
+> >>> Based on for-5.11/io_uring.
+> >>>
+> >>> Dmitry Kadashev (2):
+> >>>   fs: make do_mkdirat() take struct filename
+> >>>   io_uring: add support for IORING_OP_MKDIRAT
+> >>>
+> >>>  fs/internal.h                 |  1 +
+> >>>  fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
+> >>>  fs/namei.c                    | 20 ++++++++----
+> >>>  include/uapi/linux/io_uring.h |  1 +
+> >>>  4 files changed, 74 insertions(+), 6 deletions(-)
+> >>>
+> >>> --
+> >>> 2.28.0
+> >>>
+> >>
+> >> Hi Al Viro,
+> >>
+> >> Ping. Jens mentioned before that this looks fine by him, but you or
+> >> someone from fsdevel should approve the namei.c part first.
+> >
+> > Another ping.
+> >
+> > Jens, you've mentioned the patch looks good to you, and with quite
+> > similar changes (unlinkat, renameat) being sent for 5.11 is there
+> > anything that I can do to help this to be accepted (not necessarily
+> > for 5.11 at this point)?
+>
+> Since we're aiming for 5.12 at this point, let's just hold off a bit and
+> see if Al gets time to ack/review the VFS side of things. There's no
+> immediate rush.
 
-Did you mean
-   static inline int bd_disk_holder_corrupted_range(..
-?
+OK, sounds good, thanks.
 
-thanks,
--jane
-
-> +				   size_t len, void *data)
-> +{
-> +	return 0;
-> +}
->   static inline int bd_link_disk_holder(struct block_device *bdev,
->   				      struct gendisk *disk)
+-- 
+Dmitry Kadashev
