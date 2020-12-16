@@ -2,222 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD712DC5C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 18:54:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 030B62DC5E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 19:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbgLPRyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 12:54:51 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:50287 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728400AbgLPRyv (ORCPT
+        id S1729193AbgLPSGL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 13:06:11 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55392 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729186AbgLPSGL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 12:54:51 -0500
-Received: by mail-il1-f200.google.com with SMTP id t8so28786495ils.17
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 09:54:35 -0800 (PST)
+        Wed, 16 Dec 2020 13:06:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608141884;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=d4nZwJVVmcdTFOMzXn7+kjqd6SJSi7e36b7xnKg185k=;
+        b=UrIZl0cUHJ6+EkoBBAFTBWlxx/ydlUAOq64NIYalwiYIJCvIKauAC2bYEjgrfCj5QQXZ14
+        HPFNxDNVZAJZoQCSXAExm+shGgMaTb+8Gv6uPXpt+XevdfnrrD0f2AFbDUvyTuoK1nKkIb
+        sZFbDmJ4xVb4bj6nso4WJLedW+7EWXM=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-201-vocxEu86NXqv1qpuMkUGaA-1; Wed, 16 Dec 2020 13:04:41 -0500
+X-MC-Unique: vocxEu86NXqv1qpuMkUGaA-1
+Received: by mail-lf1-f69.google.com with SMTP id e16so13886217lfd.19
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 10:04:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=pBUMr9OFDi1jM0nZvmkLKWVe13QDgjJH7i6r+z2p8rM=;
-        b=VJcQqWbU5HyE87QPWcCrGsNHqkSvnpGWhNi3lof8x+mj0tSLer8l/YtRxo2KW96LMc
-         4mp6zev4cPS9M6upkhPLJ8Z1JQ24TWkJDT1f1fSHmiWqPFz0/r42gN4JymNBmLzEPY9d
-         GH+7lfRCiU+WTPqZCBegG8Ok6WZRnZNzRaoPjKGURrwoEi6CvyRJIl2hwszVJ/Y+yJJY
-         ksmMRxcCeKg4+Jm22G6f0++d45qPNHByoPC5PjSewB9SnZ9MMAvBv5tpoN10vmyyLMaq
-         VyzClfWT241Ef42dt0sS9lEenhitHrYlZP6kjiO/LsFUCbGrhSWi5HxBRDA+9L0yTHVG
-         vaTQ==
-X-Gm-Message-State: AOAM530ctwCao4hSXjb8utF4tmQqEfRpSka00z+30sQTalqHJSecYXP8
-        e0QFdF+s1C8TbIfkztW52+dZASuUloITXT19SAmvFgcoHYA4
-X-Google-Smtp-Source: ABdhPJwsBuLPpr+cYZzEdg8DPsj7/0nxG+fce8hKVGYB/IDDYpZ7Q5Qz7yt846BWWD5f/dO4a1GME49VoDOHTEJWGW8XyLfi+gO4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=d4nZwJVVmcdTFOMzXn7+kjqd6SJSi7e36b7xnKg185k=;
+        b=ccX8yJ8jUv+0yrQY1aMnMILn+uSo2MYZFC5+sbmP3OHAr5A4yC8DSWIufK/yt/SbOw
+         skkC3r0LjX8oLEib7FxVIyJPl34o4PSSik8apsAvEGVGH3jBqXmOraVJZdfkM4XC11Ed
+         JhWSqPEvCqDoO5gpDK7ZqXDZCFlt0o4+jSAhWm/nBuMcJAJJJPGWGL/r0BPHNaq++1Dp
+         hFBm1jbOlHUyJnfUWjMXJwLL5XVW7oe1dKxqrfjPEK9kjC2Ejez3VYEJNGnESAtd8Gq5
+         QtLRafRAWQivGgdsuAVrFWkWbZ3YHGhCDefMXA7vcstAp20yZSjw2mR/C7b+XvHJoSNM
+         0G6g==
+X-Gm-Message-State: AOAM530i4hbnWfn5enhVTU3x8GAlpZl2tAzCodFfouLUlokEd0imi1r2
+        3N18k0D9YfPsAD+9RSUhQdmnQnE4jjNuR06zk3eVmkYqNTfgfQCq3dqHBFRvy3kXmLu6bQ04swT
+        hmurTmZqslQyN9yFzmas0HSjwmKhvvQ+BRv5gn30vzw==
+X-Received: by 2002:a19:301:: with SMTP id 1mr9565343lfd.67.1608141879622;
+        Wed, 16 Dec 2020 10:04:39 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyMs0MWj8/FQzYB1jp+XRT6m/bARZuL2N/Ak9a5yDsW/fnPmyQk8QDHB24R+52MMPmwayKHDTlQD5wmPHSMM2w=
+X-Received: by 2002:a19:301:: with SMTP id 1mr9565328lfd.67.1608141879323;
+ Wed, 16 Dec 2020 10:04:39 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:8ec9:: with SMTP id q192mr8458854iod.28.1608141249857;
- Wed, 16 Dec 2020 09:54:09 -0800 (PST)
-Date:   Wed, 16 Dec 2020 09:54:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f24f4705b6988f3e@google.com>
-Subject: INFO: task hung in remove_proc_subtree
-From:   syzbot <syzbot+7b8f7100327c574c016f@syzkaller.appspotmail.com>
-To:     adobriyan@gmail.com, akpm@linux-foundation.org,
-        ebiederm@xmission.com, gladkov.alexey@gmail.com,
-        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20201118102342.154277-1-omosnace@redhat.com> <20201216163725.GG6430@twin.jikos.cz>
+In-Reply-To: <20201216163725.GG6430@twin.jikos.cz>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Wed, 16 Dec 2020 19:04:23 +0100
+Message-ID: <CAFqZXNs9Wi+n_pxe99yb=2V_h6g5Q10LcqYVsA7eUGDQoUD5EA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: fix fsconfig(2) LSM mount option handling for btrfs
+To:     dsterba@suse.cz, Ondrej Mosnacek <omosnace@redhat.com>,
+        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Richard Haines <richard_c_haines@btinternet.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Dec 16, 2020 at 5:40 PM David Sterba <dsterba@suse.cz> wrote:
+> On Wed, Nov 18, 2020 at 11:23:42AM +0100, Ondrej Mosnacek wrote:
+> > When SELinux security options are passed to btrfs via fsconfig(2) rather
+> > than via mount(2), the operation aborts with an error. What happens is
+> > roughly this sequence:
+> >
+> > 1. vfs_parse_fs_param() eats away the LSM options and parses them into
+> >    fc->security.
+> > 2. legacy_get_tree() finds nothing in ctx->legacy_data, passes this
+> >    nothing to btrfs.
+> > [here btrfs calls another layer of vfs_kern_mount(), but let's ignore
+> >  that for simplicity]
+> > 3. btrfs calls security_sb_set_mnt_opts() with empty options.
+> > 4. vfs_get_tree() then calls its own security_sb_set_mnt_opts() with the
+> >    options stashed in fc->security.
+> > 5. SELinux doesn't like that different options were used for the same
+> >    superblock and returns -EINVAL.
+> >
+> > In the case of mount(2), the options are parsed by
+> > legacy_parse_monolithic(), which skips the eating away of security
+> > opts because of the FS_BINARY_MOUNTDATA flag, so they are passed to the
+> > FS via ctx->legacy_data. The second call to security_sb_set_mnt_opts()
+> > (from vfs_get_tree()) now passes empty opts, but the non-empty -> empty
+> > sequence is allowed by SELinux for the FS_BINARY_MOUNTDATA case.
+> >
+> > It is a total mess, but the only sane fix for now seems to be to skip
+> > processing the security opts in vfs_parse_fs_param() if the fc has
+> > legacy opts set AND the fs specfies the FS_BINARY_MOUNTDATA flag. This
+> > combination currently matches only btrfs and coda. For btrfs this fixes
+> > the fsconfig(2) behavior, and for coda it makes setting security opts
+> > via fsconfig(2) fail the same way as it would with mount(2) (because
+> > FS_BINARY_MOUNTDATA filesystems are expected to call the mount opts LSM
+> > hooks themselves, but coda never cared enough to do that). I believe
+> > that is an acceptable state until both filesystems (or at least btrfs)
+> > are converted to the new mount API (at which point btrfs won't need to
+> > pretend it takes binary mount data any more and also won't need to call
+> > the LSM hooks itself, assuming it will pass the fc->security information
+> > properly).
+> >
+> > Note that we can't skip LSM opts handling in vfs_parse_fs_param() solely
+> > based on FS_BINARY_MOUNTDATA because that would break NFS.
+> >
+> > See here for the original report and reproducer:
+> > https://lore.kernel.org/selinux/c02674c970fa292610402aa866c4068772d9ad4e.camel@btinternet.com/
+> >
+> > Reported-by: Richard Haines <richard_c_haines@btinternet.com>
+> > Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+>
+> Can we get this merged via the vfs tree, please? Possibly with
+>
+> CC: stable@vger.kernel.org # 5.4+
+>
+> > +     /*
+> > +      * In the legacy+binary mode, skip the security_fs_context_parse_param()
+> > +      * call and let the legacy handler process also the security options.
+> > +      * It will format them into the monolithic string, where the FS can
+> > +      * process them (with FS_BINARY_MOUNTDATA it is expected to do it).
+> > +      *
+> > +      * Currently, this matches only btrfs and coda. Coda is broken with
+> > +      * fsconfig(2) anyway, because it does actually take binary data. Btrfs
+> > +      * only *pretends* to take binary data to work around the SELinux's
+> > +      * no-remount-with-different-options check, so this allows it to work
+> > +      * with fsconfig(2) properly.
+> > +      *
+> > +      * Once btrfs is ported to the new mount API, this hack can be reverted.
+> > +      */
+> > +     if (fc->ops != &legacy_fs_context_ops || !(fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)) {
+>
+> Line is way over 80, it could be split like
+>
+>         if (fc->ops != &legacy_fs_context_ops ||
+>             !(fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)) {
 
-syzbot found the following issue on:
+The chackpatch.pl limit is now 100 chars, so I hoped I would get away
+with it :) Splitting conditionals always looks kinda awkward... But I
+have no problem with changing it, if the VFS maintainers prefer that.
+I would like to get at least *some* feedback from them before I respin
+with just style changes...
 
-HEAD commit:    7f376f19 Merge tag 'mtd/fixes-for-5.10-rc8' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=102ac937500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3416bb960d5c705d
-dashboard link: https://syzkaller.appspot.com/bug?extid=7b8f7100327c574c016f
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=166e240f500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147eddef500000
+>
+> > +             ret = security_fs_context_parse_param(fc, param);
+> > +             if (ret != -ENOPARAM)
+> > +                     /* Param belongs to the LSM or is disallowed by the LSM;
+> > +                      * so don't pass to the FS.
+> > +                      */
+>
+> The multi line comment should have the /* on a separate line (yes it's
+> in the original code too but such things could be fixed when the code is
+> moved).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7b8f7100327c574c016f@syzkaller.appspotmail.com
+Okay. I prefer the "Linus" format as well, but since different
+subsystems still have their own opinions, I figured I'd just leave it
+be... But again, I'll be happy to change it if VFS maintainers don't
+object.
 
-INFO: task kworker/1:2:8489 blocked for more than 143 seconds.
-      Not tainted 5.10.0-rc7-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:2     state:D stack:24264 pid: 8489 ppid:     2 flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- context_switch kernel/sched/core.c:3779 [inline]
- __schedule+0x893/0x2130 kernel/sched/core.c:4528
- schedule+0xcf/0x270 kernel/sched/core.c:4606
- schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
- do_wait_for_common kernel/sched/completion.c:85 [inline]
- __wait_for_common kernel/sched/completion.c:106 [inline]
- wait_for_common kernel/sched/completion.c:117 [inline]
- wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
- proc_entry_rundown+0x1a1/0x1d0 fs/proc/inode.c:262
- remove_proc_subtree+0x26f/0x520 fs/proc/generic.c:752
- proc_remove fs/proc/generic.c:775 [inline]
- proc_remove+0x66/0x90 fs/proc/generic.c:772
- snd_info_disconnect+0x946/0xc20 sound/core/info.c:757
- snd_info_disconnect sound/core/info.c:756 [inline]
- snd_info_card_disconnect+0x134/0x230 sound/core/info.c:577
- snd_card_disconnect+0x2be/0x510 sound/core/init.c:421
- usb_audio_disconnect+0x2c4/0x7f0 sound/usb/card.c:877
- usb_unbind_interface+0x1d8/0x8d0 drivers/usb/core/driver.c:458
- __device_release_driver+0x3bd/0x6f0 drivers/base/dd.c:1154
- device_release_driver_internal drivers/base/dd.c:1185 [inline]
- device_release_driver+0x26/0x40 drivers/base/dd.c:1208
- bus_remove_device+0x2eb/0x5a0 drivers/base/bus.c:533
- device_del+0x502/0xec0 drivers/base/core.c:3115
- usb_disable_device+0x35b/0x7b0 drivers/usb/core/message.c:1410
- usb_disconnect.cold+0x27d/0x780 drivers/usb/core/hub.c:2217
- hub_port_connect drivers/usb/core/hub.c:5073 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5362 [inline]
- port_event drivers/usb/core/hub.c:5508 [inline]
- hub_event+0x1c8a/0x42d0 drivers/usb/core/hub.c:5590
- process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-INFO: task syz-executor488:14592 blocked for more than 143 seconds.
-      Not tainted 5.10.0-rc7-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor488 state:D stack:28144 pid:14592 ppid:  8497 flags:0x00000004
-Call Trace:
- context_switch kernel/sched/core.c:3779 [inline]
- __schedule+0x893/0x2130 kernel/sched/core.c:4528
- schedule+0xcf/0x270 kernel/sched/core.c:4606
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4665
- __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
- __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
- snd_info_text_entry_open+0x80/0x2e0 sound/core/info.c:373
- proc_reg_open+0x25d/0x620 fs/proc/inode.c:538
- do_dentry_open+0x4b9/0x11b0 fs/open.c:817
- do_open fs/namei.c:3252 [inline]
- path_openat+0x1b9a/0x2730 fs/namei.c:3369
- do_filp_open+0x17e/0x3c0 fs/namei.c:3396
- do_sys_openat2+0x16d/0x420 fs/open.c:1168
- do_sys_open fs/open.c:1184 [inline]
- __do_sys_openat fs/open.c:1200 [inline]
- __se_sys_openat fs/open.c:1195 [inline]
- __x64_sys_openat+0x13f/0x1f0 fs/open.c:1195
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x450739
-RSP: 002b:00007f4a57aefce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000700028 RCX: 0000000000450739
-RDX: 0000000000000001 RSI: 00000000200001c0 RDI: ffffffffffffff9c
-RBP: 0000000000700020 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000070002c
-R13: 000000000080fbcf R14: 00007f4a57af09c0 R15: 0000000000000000
+>
+> > +                     return ret;
+> > +     }
+> >
+> >       if (fc->ops->parse_param) {
+> >               ret = fc->ops->parse_param(fc, param);
+>
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/1654:
- #0: ffffffff8b3378e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
-1 lock held by in:imklog/8177:
- #0: ffff888012ef1270 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
-7 locks held by kworker/1:2/8489:
- #0: ffff888014c3fd38 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888014c3fd38 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888014c3fd38 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888014c3fd38 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888014c3fd38 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888014c3fd38 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc90000e9fda8 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
- #2: ffff88801c28a218 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:731 [inline]
- #2: ffff88801c28a218 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c5/0x42d0 drivers/usb/core/hub.c:5536
- #3: ffff888022bc8218 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:731 [inline]
- #3: ffff888022bc8218 (&dev->mutex){....}-{3:3}, at: usb_disconnect.cold+0x43/0x780 drivers/usb/core/hub.c:2208
- #4: ffff888018ea21a8 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:731 [inline]
- #4: ffff888018ea21a8 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:975 [inline]
- #4: ffff888018ea21a8 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal drivers/base/dd.c:1182 [inline]
- #4: ffff888018ea21a8 (&dev->mutex){....}-{3:3}, at: device_release_driver+0x1c/0x40 drivers/base/dd.c:1208
- #5: ffffffff8c8ae5e8 (register_mutex#6){+.+.}-{3:3}, at: usb_audio_disconnect+0xe4/0x7f0 sound/usb/card.c:866
- #6: ffffffff8c838028 (info_mutex){+.+.}-{3:3}, at: snd_info_card_disconnect+0x33/0x230 sound/core/info.c:573
-1 lock held by syz-executor488/14592:
- #0: ffffffff8c838028 (info_mutex){+.+.}-{3:3}, at: snd_info_text_entry_open+0x80/0x2e0 sound/core/info.c:373
+-- 
+Ondrej Mosnacek
+Software Engineer, Platform Security - SELinux kernel
+Red Hat, Inc.
 
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1654 Comm: khungtaskd Not tainted 5.10.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
- watchdog+0xd43/0xfa0 kernel/hung_task.c:294
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 27 Comm: kworker/u4:2 Not tainted 5.10.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: phy3 ieee80211_iface_work
-RIP: 0010:__lock_acquire+0x372/0x5500 kernel/locking/lockdep.c:4770
-Code: ed 44 09 e8 41 81 e7 00 00 03 00 41 c1 e1 13 41 09 c7 89 d8 48 c1 ea 03 c1 e0 12 25 00 00 04 00 41 09 c7 8b 84 24 38 01 00 00 <45> 09 f9 c1 e0 14 41 09 c1 41 8b 44 24 20 25 ff 1f 00 00 41 09 c1
-RSP: 0018:ffffc90000e1f890 EFLAGS: 00000006
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 1ffff110021e47c6 RSI: 0000000000000004 RDI: ffff888010f23e34
-RBP: ffff888010f23480 R08: 0000000000000001 R09: 0000000000080000
-R10: 0000000000000078 R11: 0000000000000000 R12: ffff888010f23e10
-R13: 0000000000000000 R14: ffffffff8b3378e0 R15: 0000000000020000
-FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa2708ab000 CR3: 0000000025718000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- lock_acquire kernel/locking/lockdep.c:5437 [inline]
- lock_acquire+0x29d/0x740 kernel/locking/lockdep.c:5402
- rcu_lock_acquire include/linux/rcupdate.h:248 [inline]
- rcu_read_lock include/linux/rcupdate.h:641 [inline]
- cgroup_account_cputime include/linux/cgroup.h:781 [inline]
- update_curr+0x311/0x840 kernel/sched/fair.c:870
- enqueue_entity+0x435/0x2080 kernel/sched/fair.c:4206
- enqueue_task_fair+0x1d8/0x1a70 kernel/sched/fair.c:5502
- enqueue_task kernel/sched/core.c:1572 [inline]
- activate_task kernel/sched/core.c:1591 [inline]
- ttwu_do_activate+0x17f/0x660 kernel/sched/core.c:2511
- ttwu_queue kernel/sched/core.c:2701 [inline]
- try_to_wake_up+0x54c/0x1330 kernel/sched/core.c:2979
- wake_up_worker kernel/workqueue.c:837 [inline]
- process_one_work+0x75a/0x15a0 kernel/workqueue.c:2235
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
