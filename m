@@ -2,14 +2,14 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82FC92DC99C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 00:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6FE22DC99F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 00:35:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730872AbgLPXd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1730864AbgLPXd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 16 Dec 2020 18:33:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41306 "EHLO
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43654 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730832AbgLPXdw (ORCPT
+        by vger.kernel.org with ESMTP id S1730830AbgLPXdw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 16 Dec 2020 18:33:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -18,33 +18,33 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/j8AnznhuFvsuzt8LMRV9SccvBVsiOm87kWl69oQMuI=;
-        b=i8Au55S5LJNPUF3gS+SQ7km8d25Y9d3k7GLUG5DOirbXsrpdERn8dvMJf9NI27Q6V/8MZo
-        DIuVFFcbOlmqI1WsNTna8ecSzNR+WrCwofabsa3itmHf/tG7khbaANzJbhKUe1L1EactAJ
-        EjOQIIHnMLDz2NKSHzXC+33rxhF7iEA=
+        bh=Iyvu3tczAymPkwWycdPC/BAXXExR62UHIGSUwLXdNqs=;
+        b=GATxJoVUWJWG8NY/0HNJrGYtwdvgP1PJEF/mYjKxrTBr15zQ1SbeexTq50SXG2fkoTRB7x
+        KXN79Z3HTksxGMBrJxeJQZvAWMzz//aJwYtIaH5HV8TX9pzHVyMYVqpdc0UIH0YoTUkW3g
+        mtg/rBen9MrNU5+g8PJuydVhInNuCEo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-17-BhMMAtBVMx6ndoGkaANqvA-1; Wed, 16 Dec 2020 18:32:22 -0500
-X-MC-Unique: BhMMAtBVMx6ndoGkaANqvA-1
+ us-mta-501-5DZe-w98PwK_bJ9o0z2SMw-1; Wed, 16 Dec 2020 18:32:22 -0500
+X-MC-Unique: 5DZe-w98PwK_bJ9o0z2SMw-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2394EBBEE0;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2F3C21842142;
         Wed, 16 Dec 2020 23:32:20 +0000 (UTC)
 Received: from horse.redhat.com (ovpn-112-114.rdu2.redhat.com [10.10.112.114])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F11875D9CD;
-        Wed, 16 Dec 2020 23:32:19 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 09B795D9D2;
+        Wed, 16 Dec 2020 23:32:20 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 7B769223D99; Wed, 16 Dec 2020 18:32:19 -0500 (EST)
+        id 8098A225FCD; Wed, 16 Dec 2020 18:32:19 -0500 (EST)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-unionfs@vger.kernel.org
 Cc:     jlayton@kernel.org, vgoyal@redhat.com, amir73il@gmail.com,
         sargun@sargun.me, miklos@szeredi.hu, willy@infradead.org,
         jack@suse.cz, neilb@suse.com, viro@zeniv.linux.org.uk
-Subject: [PATCH 2/3] overlayfs: Implement f_op->syncfs() call
-Date:   Wed, 16 Dec 2020 18:31:48 -0500
-Message-Id: <20201216233149.39025-3-vgoyal@redhat.com>
+Subject: [PATCH 3/3] overlayfs: Check writeback errors w.r.t upper in ->syncfs()
+Date:   Wed, 16 Dec 2020 18:31:49 -0500
+Message-Id: <20201216233149.39025-4-vgoyal@redhat.com>
 In-Reply-To: <20201216233149.39025-1-vgoyal@redhat.com>
 References: <20201216233149.39025-1-vgoyal@redhat.com>
 MIME-Version: 1.0
@@ -54,96 +54,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide an implementation for ->syncfs(). Now if there is an error
-returned by sync_filesystem(upper_sb), it will be visible to user
-space. Currently in ovl_sync_fs() path, this error is ignored by VFS.
+Check for writeback error on overlay super block w.r.t "struct file"
+passed in ->syncfs().
 
-A later patch also adds logic to detect writeback error.
+As of now real error happens on upper sb. So this patch first propagates
+error from upper sb to overlay sb and then checks error w.r.t struct
+file passed in.
+
+Jeff, I know you prefer that I should rather file upper file and check
+error directly on on upper sb w.r.t this real upper file.  While I was
+implementing that I thought what if file is on lower (and has not been
+copied up yet). In that case shall we not check writeback errors and
+return back to user space? That does not sound right though because,
+we are not checking for writeback errors on this file. Rather we
+are checking for any error on superblock. Upper might have an error
+and we should report it to user even if file in question is a lower
+file. And that's why I fell back to this approach. But I am open to
+change it if there are issues in this method.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/overlayfs/file.c      |  1 +
- fs/overlayfs/overlayfs.h |  3 +++
- fs/overlayfs/readdir.c   |  1 +
- fs/overlayfs/super.c     | 30 ++++++++++++++++++++++++++++++
- 4 files changed, 35 insertions(+)
+ fs/overlayfs/ovl_entry.h |  2 ++
+ fs/overlayfs/super.c     | 15 ++++++++++++---
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index efccb7c1f9bc..affc1ba63202 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -806,6 +806,7 @@ const struct file_operations ovl_file_operations = {
- 
- 	.copy_file_range	= ovl_copy_file_range,
- 	.remap_file_range	= ovl_remap_file_range,
-+	.syncfs			= ovl_syncfs,
+diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+index 1b5a2094df8e..a08fd719ee7b 100644
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -79,6 +79,8 @@ struct ovl_fs {
+ 	atomic_long_t last_ino;
+ 	/* Whiteout dentry cache */
+ 	struct dentry *whiteout;
++	/* Protects multiple sb->s_wb_err update from upper_sb . */
++	spinlock_t errseq_lock;
  };
  
- int __init ovl_aio_request_cache_init(void)
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index f8880aa2ba0e..1efb13800755 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -520,3 +520,6 @@ int ovl_set_origin(struct dentry *dentry, struct dentry *lower,
- 
- /* export.c */
- extern const struct export_operations ovl_export_operations;
-+
-+/* super.c */
-+int ovl_syncfs(struct file *file);
-diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index 01620ebae1bd..e89b450c8f8f 100644
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -975,6 +975,7 @@ const struct file_operations ovl_dir_operations = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= ovl_compat_ioctl,
- #endif
-+	.syncfs		= ovl_syncfs,
- };
- 
- int ovl_check_empty_dir(struct dentry *dentry, struct list_head *list)
+ static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
 diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 290983bcfbb3..b4d92e6fa5ce 100644
+index b4d92e6fa5ce..e7bc4492205e 100644
 --- a/fs/overlayfs/super.c
 +++ b/fs/overlayfs/super.c
-@@ -286,6 +286,36 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
- 	return ret;
+@@ -291,7 +291,7 @@ int ovl_syncfs(struct file *file)
+ 	struct super_block *sb = file->f_path.dentry->d_sb;
+ 	struct ovl_fs *ofs = sb->s_fs_info;
+ 	struct super_block *upper_sb;
+-	int ret;
++	int ret, ret2;
+ 
+ 	ret = 0;
+ 	down_read(&sb->s_umount);
+@@ -310,10 +310,18 @@ int ovl_syncfs(struct file *file)
+ 	ret = sync_filesystem(upper_sb);
+ 	up_read(&upper_sb->s_umount);
+ 
++	/* Update overlay sb->s_wb_err */
++	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
++		/* Upper sb has errors since last time */
++		spin_lock(&ofs->errseq_lock);
++		errseq_check_and_advance(&upper_sb->s_wb_err, &sb->s_wb_err);
++		spin_unlock(&ofs->errseq_lock);
++	}
+ 
++	ret2 = errseq_check_and_advance(&sb->s_wb_err, &file->f_sb_err);
+ out:
+ 	up_read(&sb->s_umount);
+-	return ret;
++	return ret ? ret : ret2;
  }
  
-+int ovl_syncfs(struct file *file)
-+{
-+	struct super_block *sb = file->f_path.dentry->d_sb;
-+	struct ovl_fs *ofs = sb->s_fs_info;
-+	struct super_block *upper_sb;
-+	int ret;
-+
-+	ret = 0;
-+	down_read(&sb->s_umount);
-+	if (sb_rdonly(sb))
-+		goto out;
-+
-+	if (!ovl_upper_mnt(ofs))
-+		goto out;
-+
-+	if (!ovl_should_sync(ofs))
-+		goto out;
-+
-+	upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
-+
-+	down_read(&upper_sb->s_umount);
-+	ret = sync_filesystem(upper_sb);
-+	up_read(&upper_sb->s_umount);
-+
-+
-+out:
-+	up_read(&sb->s_umount);
-+	return ret;
-+}
-+
  /**
-  * ovl_statfs
-  * @sb: The overlayfs super block
+@@ -1903,6 +1911,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (!cred)
+ 		goto out_err;
+ 
++	spin_lock_init(&ofs->errseq_lock);
+ 	/* Is there a reason anyone would want not to share whiteouts? */
+ 	ofs->share_whiteout = true;
+ 
+@@ -1975,7 +1984,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
+ 		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
+-
++		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
+ 	}
+ 	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
+ 	err = PTR_ERR(oe);
 -- 
 2.25.4
 
