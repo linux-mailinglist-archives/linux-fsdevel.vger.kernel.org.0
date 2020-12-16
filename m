@@ -2,206 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F73D2DC6B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 19:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 744F32DC6E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 20:10:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbgLPSry (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 13:47:54 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:40286 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728126AbgLPSrx (ORCPT
+        id S1731308AbgLPTJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 14:09:17 -0500
+Received: from cheetah.elm.relay.mailchannels.net ([23.83.212.34]:53406 "EHLO
+        cheetah.elm.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726665AbgLPTJR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 13:47:53 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BGIduP7097052;
-        Wed, 16 Dec 2020 18:47:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=Xr8yAw8/V8mkqXz0+iWuL/b/ysvEUbubY0zlp+7SudM=;
- b=FTpbDV5tlDmycn3h+k5CoK4fcGRpwnQnNeP7DsFp6KIARJDiuZXyYeoFmTh7XXe5AiJf
- TGgMHzw2g7ZMbMKhnTSS1vChoVjBO4P//dp4BwCMOL0auiRIzE1TpDs6gDE1QxFbrSVr
- US6sj9d96e4hZg/FCRnqdssHFXjNq27K0jpAL+v/CaDq1KeFBAZY5oanMKSwY33b4SGE
- vXPfJftZW/D65+kN6bj7k+KLl+CHGYogQYVogq1lFQWd1U3ucAvkEh/4419UD+o8qqIQ
- bQn+VIuDXKJqya8ED1X6lf0gVno38QdCXJdFWYmzLLJO5Ur7KZQSSWZDeLsswLIlxYN8 pQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 35ckcbj2nr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Dec 2020 18:47:08 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BGIfVGv192259;
-        Wed, 16 Dec 2020 18:47:08 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 35d7epw130-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Dec 2020 18:47:08 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BGIl7gU000469;
-        Wed, 16 Dec 2020 18:47:07 GMT
-Received: from dhcp-10-159-155-197.vpn.oracle.com (/10.159.155.197)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Dec 2020 10:47:06 -0800
-Subject: Re: [PATCH RFC 0/8] dcache: increase poison resistance
-From:   Junxiao Bi <junxiao.bi@oracle.com>
-To:     Konstantin Khlebnikov <koct9i@gmail.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Waiman Long <longman@redhat.com>,
-        Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
-        matthew.wilcox@oracle.com
-References: <158893941613.200862.4094521350329937435.stgit@buzz>
- <97ece625-2799-7ae6-28b5-73c52c7c497b@oracle.com>
- <CALYGNiN2F8gcKX+2nKOi1tapquJWfyzUkajWxTqgd9xvd7u1AA@mail.gmail.com>
- <d116ead4-f603-7e0c-e6ab-e721332c9832@oracle.com>
- <CALYGNiM8Fp=ZV8S6c2L50ne1cGhE30PrT-C=4nfershvfAgP+Q@mail.gmail.com>
- <04b4d5cf-780d-83a9-2b2b-80ae6029ae2c@oracle.com>
-Message-ID: <4bcbd2e7-b5e3-6f45-51cf-8658f9c9009d@oracle.com>
-Date:   Wed, 16 Dec 2020 10:46:46 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:78.0)
- Gecko/20100101 Thunderbird/78.5.1
+        Wed, 16 Dec 2020 14:09:17 -0500
+X-Greylist: delayed 128273 seconds by postgrey-1.27 at vger.kernel.org; Wed, 16 Dec 2020 14:09:16 EST
+X-Sender-Id: dreamhost|x-authsender|siddhesh@gotplt.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 895D91818E3;
+        Wed, 16 Dec 2020 19:08:29 +0000 (UTC)
+Received: from pdx1-sub0-mail-a17.g.dreamhost.com (100-105-161-17.trex.outbound.svc.cluster.local [100.105.161.17])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id D3CEA181F3D;
+        Wed, 16 Dec 2020 19:08:28 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|siddhesh@gotplt.org
+Received: from pdx1-sub0-mail-a17.g.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.18.11);
+        Wed, 16 Dec 2020 19:08:29 +0000
+X-MC-Relay: Good
+X-MailChannels-SenderId: dreamhost|x-authsender|siddhesh@gotplt.org
+X-MailChannels-Auth-Id: dreamhost
+X-Turn-Eight: 3863ca7e600b5ebe_1608145709194_2758044234
+X-MC-Loop-Signature: 1608145709194:2935019634
+X-MC-Ingress-Time: 1608145709193
+Received: from pdx1-sub0-mail-a17.g.dreamhost.com (localhost [127.0.0.1])
+        by pdx1-sub0-mail-a17.g.dreamhost.com (Postfix) with ESMTP id 8EDEB7F0EF;
+        Wed, 16 Dec 2020 11:08:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=gotplt.org; h=from:to:cc
+        :subject:date:message-id:mime-version:content-transfer-encoding;
+         s=gotplt.org; bh=gT0qKu6lYfWDkNttl7vX1GdFo4g=; b=F1am7u6cT3FQ9U
+        SGmo9YirhAhoArLjGd9rLd7KZen8ZEXJaCHuV4ZdIODQ/h1oFNpxkmRj8SDK71l4
+        JqP7LfQS1Ei9w0SwxGeshuRxfRano3auEhclRqWaQaqzCdjoZRevB9pmXqTq/tdI
+        ndng160CJcCRiXwIRSv/j8DZ9k4UA=
+Received: from rhbox.redhat.com (unknown [1.186.101.110])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: siddhesh@gotplt.org)
+        by pdx1-sub0-mail-a17.g.dreamhost.com (Postfix) with ESMTPSA id 8E69A7F0F7;
+        Wed, 16 Dec 2020 11:08:25 -0800 (PST)
+X-DH-BACKEND: pdx1-sub0-mail-a17
+From:   Siddhesh Poyarekar <siddhesh@gotplt.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Florian Weimer <fweimer@redhat.com>
+Subject: [PATCH v3] proc: Escape more characters in /proc/mounts output
+Date:   Thu, 17 Dec 2020 00:38:18 +0530
+Message-Id: <20201216190818.342878-1-siddhesh@gotplt.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <04b4d5cf-780d-83a9-2b2b-80ae6029ae2c@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9837 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012160117
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9837 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
- malwarescore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012160117
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Konstantin,
+When a filesystem is mounted with a blank name like so:
 
-How would you like to proceed with this patch set?
+ # mount '' bad -t tmpfs
 
-This patchset as it is already fixed the customer issue we faced, it 
-will stop memory fragmentation causing by negative dentry and no 
-performance regression through our test. In production workload, it is 
-common that some app kept creating and removing tmp files, this will 
-leave a lot of negative dentry over time, some time later, it will cause 
-memory fragmentation and system run into memory compaction and not 
-responsible. It will be good to push it to upstream merge. If you are 
-busy, we can try push it again.
+its name entry in /proc/mounts is blank causing the line to start
+with a space.
 
-Thanks,
+ /mnt/bad tmpfs rw,seclabel,relatime,inode64 0 0
 
-Junxiao.
+Further, the name could start with a hash, causing the entry to look
+like this (leading space added so that git does not strip it out):
 
-On 12/14/20 3:10 PM, Junxiao Bi wrote:
-> On 12/13/20 11:43 PM, Konstantin Khlebnikov wrote:
->
->>
->>
->> On Sun, Dec 13, 2020 at 9:52 PM Junxiao Bi <junxiao.bi@oracle.com 
->> <mailto:junxiao.bi@oracle.com>> wrote:
->>
->>     On 12/11/20 11:32 PM, Konstantin Khlebnikov wrote:
->>
->>     > On Thu, Dec 10, 2020 at 2:01 AM Junxiao Bi
->>     <junxiao.bi@oracle.com <mailto:junxiao.bi@oracle.com>
->>     > <mailto:junxiao.bi@oracle.com <mailto:junxiao.bi@oracle.com>>>
->>     wrote:
->>     >
->>     >     Hi Konstantin,
->>     >
->>     >     We tested this patch set recently and found it limiting 
->> negative
->>     >     dentry
->>     >     to a small part of total memory. And also we don't see any
->>     >     performance
->>     >     regression on it. Do you have any plan to integrate it into
->>     >     mainline? It
->>     >     will help a lot on memory fragmentation issue causing by
->>     dentry slab,
->>     >     there were a lot of customer cases where sys% was very high
->>     since
->>     >     most
->>     >     cpu were doing memory compaction, dentry slab was taking too
->>     much
->>     >     memory
->>     >     and nearly all dentry there were negative.
->>     >
->>     >
->>     > Right now I don't have any plans for this. I suspect such
->>     problems will
->>     > appear much more often since machines are getting bigger.
->>     > So, somebody will take care of it.
->>     We already had a lot of customer cases. It made no sense to leave so
->>     many negative dentry in the system, it caused memory fragmentation
->>     and
->>     not much benefit.
->>
->>
->> Dcache could grow so big only if the system lacks of memory pressure.
->>
->> Simplest solution is a cronjob which provinces such pressure by
->> creating sparse file on disk-based fs and then reading it.
->> This should wash away all inactive caches with no IO and zero chance 
->> of oom.
-> Sound good, will try.
->>
->>     >
->>     > First part which collects negative dentries at the end list of
->>     > siblings could be
->>     > done in a more obvious way by splitting the list in two.
->>     > But this touches much more code.
->>     That would add new field to dentry?
->>
->>
->> Yep. Decision is up to maintainers.
->>
->>     >
->>     > Last patch isn't very rigid but does non-trivial changes.
->>     > Probably it's better to call some garbage collector thingy
->>     periodically.
->>     > Lru list needs pressure to age and reorder entries properly.
->>
->>     Swap the negative dentry to the head of hash list when it get
->>     accessed?
->>     Extra ones can be easily trimmed when swapping, using GC is to 
->> reduce
->>     perf impact?
->>
->>
->> Reclaimer/shrinker scans denties in LRU lists, it's an another list.
->
-> Ah, you mean GC to reclaim from LRU list. I am not sure it could catch 
-> up the speed of negative dentry generating.
->
-> Thanks,
->
-> Junxiao.
->
->> My patch used order in hash lists is a very unusual way. Don't be 
->> confused.
->>
->> There are four lists
->> parent - siblings
->> hashtable - hashchain
->> LRU
->> inode - alias
->>
->>
->>     Thanks,
->>
->>     Junxioao.
->>
->>     >
->>     > Gc could be off by default or thresholds set very high (50% of
->>     ram for
->>     > example).
->>     > Final setup could be left up to owners of large systems, which
->>     needs
->>     > fine tuning.
->>
+ # /mnt/bad tmpfs rw,seclabel,relatime,inode64 0 0
+
+This breaks getmntent and any code that aims to parse fstab as well as
+/proc/mounts with the same logic since they need to strip leading
+spaces or skip over comments, due to which they report incorrect
+output or skip over the line respectively.
+
+This fix resolves both issues by (1) treating blank names the same way
+as not having a name and (2) by escaping the hash character into its
+octal encoding, which getmntent can then decode and print correctly.
+As far as file parsing is concerned, these are the only additional
+cases to cater for since they cover all characters that have a special
+meaning in that context.
+
+Signed-off-by: Siddhesh Poyarekar <siddhesh@gotplt.org>
+Cc: Florian Weimer <fweimer@redhat.com>
+---
+
+Changes from v2:
+- Check for blank name after the string has been duplicated into
+  kernelspace.
+
+ fs/namespace.c      | 5 +++++
+ fs/proc_namespace.c | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index cebaa3e81794..1c19bf930807 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3418,6 +3418,11 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, ch=
+ar __user *, dir_name,
+ 	if (IS_ERR(kernel_dev))
+ 		goto out_dev;
+=20
++	if (kernel_dev && !kernel_dev[0]) {
++		kfree(kernel_dev);
++		kernel_dev =3D NULL;
++	}
++
+ 	options =3D copy_mount_options(data);
+ 	ret =3D PTR_ERR(options);
+ 	if (IS_ERR(options))
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index e59d4bb3a89e..090b53120b7a 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -83,7 +83,7 @@ static void show_mnt_opts(struct seq_file *m, struct vf=
+smount *mnt)
+=20
+ static inline void mangle(struct seq_file *m, const char *s)
+ {
+-	seq_escape(m, s, " \t\n\\");
++	seq_escape(m, s, " \t\n\\#");
+ }
+=20
+ static void show_type(struct seq_file *m, struct super_block *sb)
+--=20
+2.29.2
+
