@@ -2,129 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 292112DC830
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 22:15:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2F82DC850
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Dec 2020 22:27:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgLPVOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 16:14:52 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:49979 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729175AbgLPVOw (ORCPT
+        id S1726027AbgLPV1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 16:27:35 -0500
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:43700 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725601AbgLPV1f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 16:14:52 -0500
-Received: by mail-io1-f71.google.com with SMTP id m19so25022590iow.16
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 13:14:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=7rbBwBeV/nUETB0HX2YQTZLq8NtHHXhsQ9iVBDLUlb8=;
-        b=DWfHlEF9JAloIYsbS9mha8H9t/i6V+/nXwsO3B+wk9BWleFhcA6+XMfYF9WoVVGdmN
-         D52/X3HQ7P+LsWEjXzjn9E6d9BFOkuaM7Hsvmda8r6Cx/OZ53L+mHp5UUDhwr0hiCeQl
-         EcKwvuoExjetVcnO8kS82wWsC1by43ZKhiiAhUwk78RZUpwN+h39eUQWe9XbEs2NW4/C
-         gseAjjINwqzrdEf966tC2zClfq47eWrL8u01vKRr5u5zW5QCJUIr0W3EjOzLIg4bx8NV
-         nV4YiZD16OJbOH1yB8D0+vvmsKqcIropFIq7iBOUdT0v1PZZS93Jy6pdqQTelGXb9oE4
-         ewrg==
-X-Gm-Message-State: AOAM531Uv4tRmW+mGN5P9GC+Ni9pSYXlFP7HgPykYIeuzU5HkHtG27Pq
-        0d0LXuU2e1IDRiwqX9nugyS8vch0DKZzaCE/sWwWQy4nEP0h
-X-Google-Smtp-Source: ABdhPJyqmiJMUD6GHtjjg2+G/jYr1VHHiSnXuOqnG8Qh4hgNXA50xhKwIh3GkFHi34aGlEINr2arQQoNpkvYiPztEFNF3LUKc3i/
+        Wed, 16 Dec 2020 16:27:35 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 66BF9D7FD6B;
+        Thu, 17 Dec 2020 08:26:49 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kpeJs-004h5o-Hy; Thu, 17 Dec 2020 08:26:48 +1100
+Date:   Thu, 17 Dec 2020 08:26:48 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        darrick.wong@oracle.com, dan.j.williams@intel.com, hch@lst.de,
+        song@kernel.org, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
+        y-goto@fujitsu.com
+Subject: Re: [RFC PATCH v3 4/9] mm, fsdax: Refactor memory-failure handler
+ for dax mapping
+Message-ID: <20201216212648.GN632069@dread.disaster.area>
+References: <20201215121414.253660-1-ruansy.fnst@cn.fujitsu.com>
+ <20201215121414.253660-5-ruansy.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:6b05:: with SMTP id g5mr46445714ilc.289.1608153251528;
- Wed, 16 Dec 2020 13:14:11 -0800 (PST)
-Date:   Wed, 16 Dec 2020 13:14:11 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004d454d05b69b5bd3@google.com>
-Subject: WARNING in percpu_ref_kill_and_confirm (2)
-From:   syzbot <syzbot+c9937dfb2303a5f18640@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201215121414.253660-5-ruansy.fnst@cn.fujitsu.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8
+        a=eyTjK9YyoW615e0u8fsA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Dec 15, 2020 at 08:14:09PM +0800, Shiyang Ruan wrote:
+> The current memory_failure_dev_pagemap() can only handle single-mapped
+> dax page for fsdax mode.  The dax page could be mapped by multiple files
+> and offsets if we let reflink feature & fsdax mode work together.  So,
+> we refactor current implementation to support handle memory failure on
+> each file and offset.
+> 
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+> ---
+.....
+>  static const char *action_name[] = {
+> @@ -1147,6 +1148,60 @@ static int try_to_split_thp_page(struct page *page, const char *msg)
+>  	return 0;
+>  }
+>  
+> +int mf_dax_mapping_kill_procs(struct address_space *mapping, pgoff_t index, int flags)
+> +{
+> +	const bool unmap_success = true;
+> +	unsigned long pfn, size = 0;
+> +	struct to_kill *tk;
+> +	LIST_HEAD(to_kill);
+> +	int rc = -EBUSY;
+> +	loff_t start;
+> +	dax_entry_t cookie;
+> +
+> +	/*
+> +	 * Prevent the inode from being freed while we are interrogating
+> +	 * the address_space, typically this would be handled by
+> +	 * lock_page(), but dax pages do not use the page lock. This
+> +	 * also prevents changes to the mapping of this pfn until
+> +	 * poison signaling is complete.
+> +	 */
+> +	cookie = dax_lock(mapping, index, &pfn);
+> +	if (!cookie)
+> +		goto unlock;
 
-syzbot found the following issue on:
+Why do we need to prevent the inode from going away here? This
+function gets called by XFS after doing an xfs_iget() call to grab
+the inode that owns the block. Hence the the inode (and the mapping)
+are guaranteed to be referenced and can't go away. Hence for the
+filesystem based callers, this whole "dax_lock()" thing can go away.
 
-HEAD commit:    7b1b868e Merge tag 'for-linus' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1156046b500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3416bb960d5c705d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c9937dfb2303a5f18640
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1407c287500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ed5f07500000
+So, AFAICT, the dax_lock() stuff is only necessary when the
+filesystem can't be used to resolve the owner of physical page that
+went bad....
 
-The issue was bisected to:
+Cheers,
 
-commit 4d004099a668c41522242aa146a38cc4eb59cb1e
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Fri Oct 2 09:04:21 2020 +0000
-
-    lockdep: Fix lockdep recursion
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14e9d433500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16e9d433500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e9d433500000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c9937dfb2303a5f18640@syzkaller.appspotmail.com
-Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
-
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441309
-RDX: 0000000000000002 RSI: 00000000200000c0 RDI: 0000000000003ad1
-RBP: 000000000000f2ae R08: 0000000000000002 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021d0
-R13: 0000000000402260 R14: 0000000000000000 R15: 0000000000000000
-------------[ cut here ]------------
-percpu_ref_kill_and_confirm called more than once on io_ring_ctx_ref_free!
-WARNING: CPU: 0 PID: 8476 at lib/percpu-refcount.c:382 percpu_ref_kill_and_confirm+0x126/0x180 lib/percpu-refcount.c:382
-Modules linked in:
-CPU: 0 PID: 8476 Comm: syz-executor389 Not tainted 5.10.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:percpu_ref_kill_and_confirm+0x126/0x180 lib/percpu-refcount.c:382
-Code: 5d 08 48 8d 7b 08 48 89 fa 48 c1 ea 03 80 3c 02 00 75 5d 48 8b 53 08 48 c7 c6 00 4b 9d 89 48 c7 c7 60 4a 9d 89 e8 c6 97 f6 04 <0f> 0b 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02
-RSP: 0018:ffffc9000b94fe10 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: ffff888011da4580 RCX: 0000000000000000
-RDX: ffff88801fe84ec0 RSI: ffffffff8158c835 RDI: fffff52001729fb4
-RBP: ffff88801539f000 R08: 0000000000000001 R09: ffff8880b9e2011b
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000293
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff88802de28758
-FS:  00000000014ab880(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2a7046b000 CR3: 0000000023368000 CR4: 0000000000350ef0
-Call Trace:
- percpu_ref_kill include/linux/percpu-refcount.h:149 [inline]
- io_ring_ctx_wait_and_kill+0x2b/0x450 fs/io_uring.c:8382
- io_uring_release+0x3e/0x50 fs/io_uring.c:8420
- __fput+0x285/0x920 fs/file_table.c:281
- task_work_run+0xdd/0x190 kernel/task_work.c:151
- tracehook_notify_resume include/linux/tracehook.h:188 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:164 [inline]
- exit_to_user_mode_prepare+0x17e/0x1a0 kernel/entry/common.c:191
- syscall_exit_to_user_mode+0x38/0x260 kernel/entry/common.c:266
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x441309
-Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffed6545d38 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: fffffffffffffff4 RBX: 0000000000000000 RCX: 0000000000441309
-RDX: 0000000000000002 RSI: 00000000200000c0 RDI: 0000000000003ad1
-RBP: 000000000000f2ae R08: 0000000000000002 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021d0
-R13: 0000000000402260 R14: 0000000000000000 R15: 0000000000000000
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
