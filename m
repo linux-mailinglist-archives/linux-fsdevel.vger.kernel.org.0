@@ -2,111 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 701262DD987
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 20:51:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3A742DD9AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 21:10:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbgLQTuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 14:50:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbgLQTuN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 14:50:13 -0500
-Message-ID: <f089a090dfe8e0554be46187ad345649a2feb4ad.camel@kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608234573;
-        bh=6M77sfOqL6ihI39KKZ2MrMyW78kRW0crwtWPbHsgXyw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=mT5ymEl4pB64SNCmAaQtiVMv2iXxtMLfe/aMt2z6aDI2VKg2KZU6f1wBBT5oZHpja
-         eM/Zly7lH1uULMGUvXO91eoNIsIeKkYWtp89OpG3hXT2e/1CXZgzczYHqPV8Sogfup
-         UX9MB/b8rJDQpgJfLDDEWU4aqQytk+A5SScHu4/xeSj+4FkCwnHC/vG/6PF2VZ1ZKu
-         PRCQOGH0CsX7c6Zxk9A5g+oFmNV68Db//26tBIc/Tf2UJqBrHarFDHdgm5Bl8DwDHr
-         Y1X5Ac6Zmxu6QR/g6NPejjzuJxf50VYE/Uewde8SWXIzSas1lv9VfokCIBPlKk7ajQ
-         iRMO7HKg3FpDQ==
-Subject: Re: [PATCH 1/3] vfs: add new f_op->syncfs vector
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>, Vivek Goyal <vgoyal@redhat.com>
+        id S1729070AbgLQUJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 15:09:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728203AbgLQUJk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Dec 2020 15:09:40 -0500
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14BFDC061794
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 12:09:00 -0800 (PST)
+Received: by mail-qt1-x82f.google.com with SMTP id c14so21051301qtn.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 12:09:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poochiereds-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=X1/L04rRK1r1xMrcrDJaqbKTKoWzz7Zr0eA57HFr5cM=;
+        b=jJL+yjx8YbWWUZPFTC1PKVtMou5mdkUyv3jdwAwVThCEh5AOh4Cbgi6f5FSWR8eC5r
+         DeNJK8ViUAxqKzKk8YLPluOphmh7uoBMJ66aq9uUVEBEEornFm9CE+0rnlaJ3oamgZJl
+         nVh/ZqPVQYTCzhZZCY1oA+S6ZYPEWrwKeo3DtvN6LHen37g+/EtuaWVIYxXZ46lDZ9xi
+         EC1IqzcSmM2CWdObOixhdQG6/b94ptd6Cix6bcnPeuV7gBAj2khupWVSK9HbiPHELRPr
+         syJw3Xx2AcdXUDEYV2T1v9Y3WQ/v2TIhVtL+OfJMtYFUtS098zNmfSOosUmQ/CFg+aub
+         +QtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=X1/L04rRK1r1xMrcrDJaqbKTKoWzz7Zr0eA57HFr5cM=;
+        b=VXF5v0ZENPn6JWADiVi1mQ1otM7Lr1AsHCrKjb26rXO/cr/0hryNhqVFeHcRSA5qQn
+         +uCSnLHQrOYtRz3gGt5HckiOYzMzML66agm8uSDbxhzSIT53HKZpVcql9ACTOtFj2nA/
+         qRUVMZ0aeHyFLMkdptdcNByCzfhLsEJuNvDUYju66R1/pJzmGKBy3MjVy1a+8jkKF4qm
+         pjg4Ak1LRE0TdP5wVZE66A+udU5F/0GwupHihR3Pzgk4xMxKmeFjNhmWzRajYVFvb0Wy
+         zjtuX7niqV1hDoUr/N+UX1T/1a9HcY7NFXF5m+MuLt5DOPMlvhDoUSiCwfwy6n9axZdH
+         9W8w==
+X-Gm-Message-State: AOAM530vUeo7FN/x1zLpMdKWRyJfY+GMGISEVMB9RPi6HJJKtefuuQ94
+        lkarGzPG9rP2Ma9ckWzcenaBSA==
+X-Google-Smtp-Source: ABdhPJxu4L/8qyzeODf5Urcw5HICzchlDzqWjrqdy5QmrUNwBvVSZIXxNC3Ri776/21NpBENaeGeog==
+X-Received: by 2002:ac8:4cc1:: with SMTP id l1mr505404qtv.128.1608235739180;
+        Thu, 17 Dec 2020 12:08:59 -0800 (PST)
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id p13sm2688454qtp.66.2020.12.17.12.08.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Dec 2020 12:08:58 -0800 (PST)
+Date:   Thu, 17 Dec 2020 15:08:56 -0500
+From:   Jeffrey Layton <jlayton@poochiereds.net>
+To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, amir73il@gmail.com,
-        sargun@sargun.me, miklos@szeredi.hu, willy@infradead.org,
-        jack@suse.cz, neilb@suse.com, Christoph Hellwig <hch@lst.de>
-Date:   Thu, 17 Dec 2020 14:49:30 -0500
-In-Reply-To: <20201217004935.GN3579531@ZenIV.linux.org.uk>
+        linux-unionfs@vger.kernel.org, jlayton@kernel.org,
+        amir73il@gmail.com, sargun@sargun.me, miklos@szeredi.hu,
+        willy@infradead.org, jack@suse.cz, neilb@suse.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 3/3] overlayfs: Check writeback errors w.r.t upper in
+ ->syncfs()
+Message-ID: <20201217200856.GA707519@tleilax.poochiereds.net>
 References: <20201216233149.39025-1-vgoyal@redhat.com>
-         <20201216233149.39025-2-vgoyal@redhat.com>
-         <20201217004935.GN3579531@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+ <20201216233149.39025-4-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201216233149.39025-4-vgoyal@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-12-17 at 00:49 +0000, Al Viro wrote:
-> [Christoph added to Cc...]
-> On Wed, Dec 16, 2020 at 06:31:47PM -0500, Vivek Goyal wrote:
-> > Current implementation of __sync_filesystem() ignores the return code
-> > from ->sync_fs(). I am not sure why that's the case. There must have
-> > been some historical reason for this.
-> > 
-> > Ignoring ->sync_fs() return code is problematic for overlayfs where
-> > it can return error if sync_filesystem() on upper super block failed.
-> > That error will simply be lost and sycnfs(overlay_fd), will get
-> > success (despite the fact it failed).
-> > 
-> > If we modify existing implementation, there is a concern that it will
-> > lead to user space visible behavior changes and break things. So
-> > instead implement a new file_operations->syncfs() call which will
-> > be called in syncfs() syscall path. Return code from this new
-> > call will be captured. And all the writeback error detection
-> > logic can go in there as well. Only filesystems which implement
-> > this call get affected by this change. Others continue to fallback
-> > to existing mechanism.
+On Wed, Dec 16, 2020 at 06:31:49PM -0500, Vivek Goyal wrote:
+> Check for writeback error on overlay super block w.r.t "struct file"
+> passed in ->syncfs().
 > 
-> That smells like a massive source of confusion down the road.  I'd just
-> looked through the existing instances; many always return 0, but quite
-> a few sometimes try to return an error:
-> fs/btrfs/super.c:2412:  .sync_fs        = btrfs_sync_fs,
-> fs/exfat/super.c:204:   .sync_fs        = exfat_sync_fs,
-> fs/ext4/super.c:1674:   .sync_fs        = ext4_sync_fs,
-> fs/f2fs/super.c:2480:   .sync_fs        = f2fs_sync_fs,
-> fs/gfs2/super.c:1600:   .sync_fs                = gfs2_sync_fs,
-> fs/hfsplus/super.c:368: .sync_fs        = hfsplus_sync_fs,
-> fs/nilfs2/super.c:689:  .sync_fs        = nilfs_sync_fs,
-> fs/ocfs2/super.c:139:   .sync_fs        = ocfs2_sync_fs,
-> fs/overlayfs/super.c:399:       .sync_fs        = ovl_sync_fs,
-> fs/ubifs/super.c:2052:  .sync_fs       = ubifs_sync_fs,
-> is the list of such.  There are 4 method callers:
-> dquot_quota_sync(), dquot_disable(), __sync_filesystem() and
-> sync_fs_one_sb().  For sync_fs_one_sb() we want to ignore the
-> return value; for __sync_filesystem() we almost certainly
-> do *not* - it ends with return __sync_blockdev(sb->s_bdev, wait),
-> after all.  The question for that one is whether we want
-> __sync_blockdev() called even in case of ->sync_fs() reporting
-> a failure, and I suspect that it's safer to call it anyway and
-> return the first error value we'd got.  No idea about quota
-> situation.
+> As of now real error happens on upper sb. So this patch first propagates
+> error from upper sb to overlay sb and then checks error w.r.t struct
+> file passed in.
 > 
+> Jeff, I know you prefer that I should rather file upper file and check
+> error directly on on upper sb w.r.t this real upper file.  While I was
+> implementing that I thought what if file is on lower (and has not been
+> copied up yet). In that case shall we not check writeback errors and
+> return back to user space? That does not sound right though because,
+> we are not checking for writeback errors on this file. Rather we
+> are checking for any error on superblock. Upper might have an error
+> and we should report it to user even if file in question is a lower
+> file. And that's why I fell back to this approach. But I am open to
+> change it if there are issues in this method.
+> 
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/overlayfs/ovl_entry.h |  2 ++
+>  fs/overlayfs/super.c     | 15 ++++++++++++---
+>  2 files changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+> index 1b5a2094df8e..a08fd719ee7b 100644
+> --- a/fs/overlayfs/ovl_entry.h
+> +++ b/fs/overlayfs/ovl_entry.h
+> @@ -79,6 +79,8 @@ struct ovl_fs {
+>  	atomic_long_t last_ino;
+>  	/* Whiteout dentry cache */
+>  	struct dentry *whiteout;
+> +	/* Protects multiple sb->s_wb_err update from upper_sb . */
+> +	spinlock_t errseq_lock;
+>  };
+>  
+>  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index b4d92e6fa5ce..e7bc4492205e 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -291,7 +291,7 @@ int ovl_syncfs(struct file *file)
+>  	struct super_block *sb = file->f_path.dentry->d_sb;
+>  	struct ovl_fs *ofs = sb->s_fs_info;
+>  	struct super_block *upper_sb;
+> -	int ret;
+> +	int ret, ret2;
+>  
+>  	ret = 0;
+>  	down_read(&sb->s_umount);
+> @@ -310,10 +310,18 @@ int ovl_syncfs(struct file *file)
+>  	ret = sync_filesystem(upper_sb);
+>  	up_read(&upper_sb->s_umount);
+>  
+> +	/* Update overlay sb->s_wb_err */
+> +	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
+> +		/* Upper sb has errors since last time */
+> +		spin_lock(&ofs->errseq_lock);
+> +		errseq_check_and_advance(&upper_sb->s_wb_err, &sb->s_wb_err);
+> +		spin_unlock(&ofs->errseq_lock);
+> +	}
 
-The only problem there is that makes it a bit difficult to override the
-error return to syncfs, which is really what overlayfs wants to be able
-to do. Their syncfs syncs out the upper layer, so it makes sense to just
-have their file->f_sb_err track the upper layer's sb->s_wb_err.
+So, the problem here is that the resulting value in sb->s_wb_err is
+going to end up with the REPORTED flag set (using the naming in my
+latest set). So, a later opener of a file on sb->s_wb_err won't see it.
 
-You can plumb the errors from sync_fs all the way through to the syncfs
-syscall, but we can't currently tell whether we're doing the sync_fs op
-on behalf of sync(), syncfs() or something else entirely. We need to
-ensure that if it does return an error, that it doesn't get dropped on
-the floor.
+For instance, suppose you call sync() on the box and does the above
+check and advance. Then, you open the file and call syncfs() and get
+back no error because REPORTED flag was set when you opened. That error
+will then be lost.
 
-I think it'd be simpler to just add f_op->syncfs and change
-s_op->sync_fs to a different name, to lessen the confusion.
-s_op->sync_fs sort of makes it look like you're implementing syncfs(2),
-but there's a bit more to it than that.
+>  
+> +	ret2 = errseq_check_and_advance(&sb->s_wb_err, &file->f_sb_err);
+>  out:
+>  	up_read(&sb->s_umount);
+> -	return ret;
+> +	return ret ? ret : ret2;
+>  }
+>  
+>  /**
+> @@ -1903,6 +1911,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+>  	if (!cred)
+>  		goto out_err;
+>  
+> +	spin_lock_init(&ofs->errseq_lock);
+>  	/* Is there a reason anyone would want not to share whiteouts? */
+>  	ofs->share_whiteout = true;
+>  
+> @@ -1975,7 +1984,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+>  
+>  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
+>  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
+> -
+> +		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
 
-Maybe s_op->sync_filesystem? There are only about 113 instances
-"sync_fs" in the tree. Changing the name might also help highlight the
-fact that the return code won't be ignored like it used to be.
--- 
-Jeff Layton <jlayton@kernel.org>
+This will mark the error on the upper_sb as REPORTED, and that's not
+really that's the case if you're just using it set s_wb_err in the
+overlay. You might want to use errseq_peek in this situation.
 
+>  	}
+>  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
+>  	err = PTR_ERR(oe);
+> -- 
+> 2.25.4
+> 
