@@ -2,176 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A742DD9AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 21:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B4C2DD9B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 21:15:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbgLQUJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 15:09:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60712 "EHLO
+        id S1729996AbgLQUOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 15:14:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728203AbgLQUJk (ORCPT
+        with ESMTP id S1726960AbgLQUOw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 15:09:40 -0500
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14BFDC061794
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 12:09:00 -0800 (PST)
-Received: by mail-qt1-x82f.google.com with SMTP id c14so21051301qtn.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 12:09:00 -0800 (PST)
+        Thu, 17 Dec 2020 15:14:52 -0500
+Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B6BC061794
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 12:14:12 -0800 (PST)
+Received: by mail-vk1-xa2d.google.com with SMTP id d6so4309025vkb.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 12:14:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poochiereds-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=X1/L04rRK1r1xMrcrDJaqbKTKoWzz7Zr0eA57HFr5cM=;
-        b=jJL+yjx8YbWWUZPFTC1PKVtMou5mdkUyv3jdwAwVThCEh5AOh4Cbgi6f5FSWR8eC5r
-         DeNJK8ViUAxqKzKk8YLPluOphmh7uoBMJ66aq9uUVEBEEornFm9CE+0rnlaJ3oamgZJl
-         nVh/ZqPVQYTCzhZZCY1oA+S6ZYPEWrwKeo3DtvN6LHen37g+/EtuaWVIYxXZ46lDZ9xi
-         EC1IqzcSmM2CWdObOixhdQG6/b94ptd6Cix6bcnPeuV7gBAj2khupWVSK9HbiPHELRPr
-         syJw3Xx2AcdXUDEYV2T1v9Y3WQ/v2TIhVtL+OfJMtYFUtS098zNmfSOosUmQ/CFg+aub
-         +QtQ==
+        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=Wkj6zzMnbmHy1R927KKmX6dciAdOSfnBEhhcIO0d4mk=;
+        b=PPAyoOEDgniD3rqXx8Mi6rD5GpNBJwOiVBxhD42bmoaznzZsKpod6IqJbT+h7jBQt+
+         yi1+gKzDOfcU1z+wRNNmMPTyGeJhP5k9fm983/7vptKYdZpR0tYtrqTkvecUzzA5dCQg
+         rS+LQD/mZpn53A04eicsCE61IBAawwpIEP+syhhmyKGXdBvjLzIwUV97crndts7bA/0Y
+         s+d6VNmypMyUer25By0XwRKfqMImCmtTIxPWgHgZOeaDPhaJPSAzePdxomXa+xh+cyTJ
+         cTyJmG5aZp7gunTFS6n1zCQj4baZey9fE9bEyLMUXqeZC4+Ayw6+5F8abYnJCkuqFX1c
+         8b7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=X1/L04rRK1r1xMrcrDJaqbKTKoWzz7Zr0eA57HFr5cM=;
-        b=VXF5v0ZENPn6JWADiVi1mQ1otM7Lr1AsHCrKjb26rXO/cr/0hryNhqVFeHcRSA5qQn
-         +uCSnLHQrOYtRz3gGt5HckiOYzMzML66agm8uSDbxhzSIT53HKZpVcql9ACTOtFj2nA/
-         qRUVMZ0aeHyFLMkdptdcNByCzfhLsEJuNvDUYju66R1/pJzmGKBy3MjVy1a+8jkKF4qm
-         pjg4Ak1LRE0TdP5wVZE66A+udU5F/0GwupHihR3Pzgk4xMxKmeFjNhmWzRajYVFvb0Wy
-         zjtuX7niqV1hDoUr/N+UX1T/1a9HcY7NFXF5m+MuLt5DOPMlvhDoUSiCwfwy6n9axZdH
-         9W8w==
-X-Gm-Message-State: AOAM530vUeo7FN/x1zLpMdKWRyJfY+GMGISEVMB9RPi6HJJKtefuuQ94
-        lkarGzPG9rP2Ma9ckWzcenaBSA==
-X-Google-Smtp-Source: ABdhPJxu4L/8qyzeODf5Urcw5HICzchlDzqWjrqdy5QmrUNwBvVSZIXxNC3Ri776/21NpBENaeGeog==
-X-Received: by 2002:ac8:4cc1:: with SMTP id l1mr505404qtv.128.1608235739180;
-        Thu, 17 Dec 2020 12:08:59 -0800 (PST)
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id p13sm2688454qtp.66.2020.12.17.12.08.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 12:08:58 -0800 (PST)
-Date:   Thu, 17 Dec 2020 15:08:56 -0500
-From:   Jeffrey Layton <jlayton@poochiereds.net>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, jlayton@kernel.org,
-        amir73il@gmail.com, sargun@sargun.me, miklos@szeredi.hu,
-        willy@infradead.org, jack@suse.cz, neilb@suse.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 3/3] overlayfs: Check writeback errors w.r.t upper in
- ->syncfs()
-Message-ID: <20201217200856.GA707519@tleilax.poochiereds.net>
-References: <20201216233149.39025-1-vgoyal@redhat.com>
- <20201216233149.39025-4-vgoyal@redhat.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=Wkj6zzMnbmHy1R927KKmX6dciAdOSfnBEhhcIO0d4mk=;
+        b=SLHKL7LjEiRlyzRLrl98eF6Fp3lu/pg8vXENokLQorwAht9ssRk2lHiDKpQiFRds7h
+         PlXM4n/O2Gvwyuef15RvSv4EIlhaZayRDU5xf970aNpXOiDgo43FzkkEEU5rarjOftXJ
+         xw42HjwwHmVfOVv2JjPEEUPiKlCW29hKzq8aALdC3SNlVjnvdigJqDcRDv9QHm/36fkr
+         SRXk1yTjFkyJ0FhMTaUwuHl60eHt48xIu/QTQ7IbfRhSdKo8iRGr+RssMgvakvH5cTCs
+         B7XC0LSNRbsm9ZrnT/y06kzO7oxQtuPV39j7ySxn2bKNIV6ElH5++2nHywfoUJHsdbSn
+         GrUg==
+X-Gm-Message-State: AOAM531LF0qsLtZ5UdRTOfE+5X9WJSbKUkyifXt8tmihauZ1dQyehTPG
+        LdqvycweMvOFYtSXFo0Hj7Ce70Nv5ziQRFqZ7tIYFu5KZkb08A0W
+X-Google-Smtp-Source: ABdhPJwTsWEW0HIHZqFlTbomU9Yax7JLlEZ50fezzGyZFhlXnEp2jCKytISdZB9hiijGKBofms5utlsmDgZqnrRoGOI=
+X-Received: by 2002:ac5:c92e:: with SMTP id u14mr721440vkl.15.1608236050994;
+ Thu, 17 Dec 2020 12:14:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201216233149.39025-4-vgoyal@redhat.com>
+From:   Chris Murphy <lists@colorremedies.com>
+Date:   Thu, 17 Dec 2020 13:13:54 -0700
+Message-ID: <CAJCQCtQUvyopGxBcXzenTy8MuEvm+W1PQNqzFf1Qp=p1M9pBGQ@mail.gmail.com>
+Subject: how to track down cause for EBUSY on /dev/vda4?
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 16, 2020 at 06:31:49PM -0500, Vivek Goyal wrote:
-> Check for writeback error on overlay super block w.r.t "struct file"
-> passed in ->syncfs().
-> 
-> As of now real error happens on upper sb. So this patch first propagates
-> error from upper sb to overlay sb and then checks error w.r.t struct
-> file passed in.
-> 
-> Jeff, I know you prefer that I should rather file upper file and check
-> error directly on on upper sb w.r.t this real upper file.  While I was
-> implementing that I thought what if file is on lower (and has not been
-> copied up yet). In that case shall we not check writeback errors and
-> return back to user space? That does not sound right though because,
-> we are not checking for writeback errors on this file. Rather we
-> are checking for any error on superblock. Upper might have an error
-> and we should report it to user even if file in question is a lower
-> file. And that's why I fell back to this approach. But I am open to
-> change it if there are issues in this method.
-> 
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/overlayfs/ovl_entry.h |  2 ++
->  fs/overlayfs/super.c     | 15 ++++++++++++---
->  2 files changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> index 1b5a2094df8e..a08fd719ee7b 100644
-> --- a/fs/overlayfs/ovl_entry.h
-> +++ b/fs/overlayfs/ovl_entry.h
-> @@ -79,6 +79,8 @@ struct ovl_fs {
->  	atomic_long_t last_ino;
->  	/* Whiteout dentry cache */
->  	struct dentry *whiteout;
-> +	/* Protects multiple sb->s_wb_err update from upper_sb . */
-> +	spinlock_t errseq_lock;
->  };
->  
->  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index b4d92e6fa5ce..e7bc4492205e 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -291,7 +291,7 @@ int ovl_syncfs(struct file *file)
->  	struct super_block *sb = file->f_path.dentry->d_sb;
->  	struct ovl_fs *ofs = sb->s_fs_info;
->  	struct super_block *upper_sb;
-> -	int ret;
-> +	int ret, ret2;
->  
->  	ret = 0;
->  	down_read(&sb->s_umount);
-> @@ -310,10 +310,18 @@ int ovl_syncfs(struct file *file)
->  	ret = sync_filesystem(upper_sb);
->  	up_read(&upper_sb->s_umount);
->  
-> +	/* Update overlay sb->s_wb_err */
-> +	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
-> +		/* Upper sb has errors since last time */
-> +		spin_lock(&ofs->errseq_lock);
-> +		errseq_check_and_advance(&upper_sb->s_wb_err, &sb->s_wb_err);
-> +		spin_unlock(&ofs->errseq_lock);
-> +	}
+Hi,
 
-So, the problem here is that the resulting value in sb->s_wb_err is
-going to end up with the REPORTED flag set (using the naming in my
-latest set). So, a later opener of a file on sb->s_wb_err won't see it.
+Short version:
+# mkfs.any /dev/vda4
+unable to open /dev/vda4: Device or resource busy
 
-For instance, suppose you call sync() on the box and does the above
-check and advance. Then, you open the file and call syncfs() and get
-back no error because REPORTED flag was set when you opened. That error
-will then be lost.
+Curiously /dev/vda4 is just a blank partition, not in use by anything
+that I'm aware of. And gdisk is allowed to modify the GPT on /dev/vda
+without complaint. This is a snippet from strace of the above command
+at the failure point:
 
->  
-> +	ret2 = errseq_check_and_advance(&sb->s_wb_err, &file->f_sb_err);
->  out:
->  	up_read(&sb->s_umount);
-> -	return ret;
-> +	return ret ? ret : ret2;
->  }
->  
->  /**
-> @@ -1903,6 +1911,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  	if (!cred)
->  		goto out_err;
->  
-> +	spin_lock_init(&ofs->errseq_lock);
->  	/* Is there a reason anyone would want not to share whiteouts? */
->  	ofs->share_whiteout = true;
->  
-> @@ -1975,7 +1984,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  
->  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
->  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> -
-> +		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
+openat(AT_FDCWD, "/dev/vda4", O_RDWR|O_EXCL) = -1 EBUSY (Device or
+resource busy)
+write(2, "ERROR: ", 7ERROR: )                  = 7
+write(2, "unable to open /dev/vda4: Device"..., 49unable to open
+/dev/vda4: Device or resource busy) = 49
+write(2, "\n", 1
+)
 
-This will mark the error on the upper_sb as REPORTED, and that's not
-really that's the case if you're just using it set s_wb_err in the
-overlay. You might want to use errseq_peek in this situation.
+Long version:
 
->  	}
->  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
->  	err = PTR_ERR(oe);
-> -- 
-> 2.25.4
-> 
+1. Create an image with xorriso. Result is an ISO 9660 image that also
+contains an MBR and GPT. Together, these are all in conflict but
+permit magical indirection to successfully boot a computer whether
+it's UEFI or BIOS, on optical or USB sticks.
+
+2. Write this image to a USB stick using cat or dd.
+
+3. The horrible idea occurs to use the large pile of extra space on
+the USB stick for persistence. Therefore a partition must be added.
+
+4. Given the MBR is not a single partition PMBR, its existence
+invalidates the GPT. And at least gdisk doesn't want to modify the GPT
+at all. But I can create a new GPT and PMBR, and in effect merge the
+old MBR and GPT entries to protect the two El Torito EFI system
+partitions, and the ISO 9660 image as a whole. Write this out to
+/dev/vda without any complaint, and the resulting image still boots
+BIOS and UEFI systems.
+
+5. Upon reboot, /dev/vda4 exists, a large empty partition. The idea is
+to format it, but all of the following commands fail with EBUSY:
+# mkdosfs /dev/vda4
+# mkfs.ext4 /dev/vda4
+# mkfs.xfs /dev/vda4
+# mkfs.btrfs /dev/vda4
+# btrfs device add /dev/vda4 /run/rootfsbase  [1]
+
+6. Color me confused. Granted, despite cleaning up the conflicting MBR
+and GPT, this is still an odd duck. ISO 9660 ostensibly is a read-only
+format, and /proc/mounts shows
+
+/dev/vda /run/initramfs/live iso9660
+ro,relatime,nojoliet,check=s,map=n,blocksize=2048 0 0
+
+So it sees the whole vda device as iso9660 and ro? But permits gdisk
+to modify some select sectors on vda? I admit it's an ambiguous image.
+Is it a duck or is it a rabbit? And therefore best to just look at it,
+not make modifications to it. Yet /dev/vda is modifiable, where the
+partitions aren't. Hmm.
+
+Thanks,
+
+--
+Chris Murphy
+
+
+[1]
+The last one for the future fs-devel trivia pursuit game. There is a
+mounted btrfs "seed" on /run/rootfsbase, and it's possible to make it
+a read-write "sprout" merely by adding a writable device. The command
+implies mkfs and file system resize. Once it completes, it's possible
+to remount,rw and all changes are directed to this device.
+
+
+-- 
+Chris Murphy
