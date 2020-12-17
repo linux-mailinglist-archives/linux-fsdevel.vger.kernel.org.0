@@ -2,261 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 351492DD165
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 13:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72DF42DD1B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 13:50:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbgLQMTm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 07:19:42 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31352 "EHLO
+        id S1726773AbgLQMt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 07:49:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:20937 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727426AbgLQMTm (ORCPT
+        by vger.kernel.org with ESMTP id S1725468AbgLQMt3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 07:19:42 -0500
+        Thu, 17 Dec 2020 07:49:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608207494;
+        s=mimecast20190719; t=1608209282;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DTlbLSnNcMrJSDuydAJRjKKQ4AwImC6eBy5XwIiw1xI=;
-        b=Mat6q3WeibKes36EpxuMVzJ+uQY96Sc+ebl4Q6OmmekQqlb5+iE5zmbUK1khzNTjBqr4Wi
-        hmEzJzn+5e5QJuW+cru/FyXG8fyBOQmv9x8FeT9DJkjjgvYZg3iRDKJcbG8XEcYPZ4XMbB
-        GG1RjMuYaRZGsLC064ZO3Dygg2p99AY=
+        bh=8b4oiC4dSPxOwjeEBB7JqxHVb4sztDSV/987LEUNdbY=;
+        b=M6428RSAfpXtD5HwT9VQsIyubOx30o2DMlSDJl17CrcrwA70z/+6+toJTEzblehj2pEBBw
+        sjHWeycuIwkVSRPIttb9e2gTptTH+kKqgxXRDsdb07Xjyd14zngthSWf8itgd6+c6+Aohd
+        tbYqGhmZz4m3s0v1QZ+GPJqpThohV48=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-593--W6qHNabMoa4KcgwSRp6ng-1; Thu, 17 Dec 2020 07:18:10 -0500
-X-MC-Unique: -W6qHNabMoa4KcgwSRp6ng-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-374-A0_NjNNcMIKKcm9terGWqQ-1; Thu, 17 Dec 2020 07:48:00 -0500
+X-MC-Unique: A0_NjNNcMIKKcm9terGWqQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 49FF5801AC9;
-        Thu, 17 Dec 2020 12:18:05 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF6D1801AC1;
+        Thu, 17 Dec 2020 12:47:59 +0000 (UTC)
 Received: from [10.36.113.93] (ovpn-113-93.ams2.redhat.com [10.36.113.93])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E2E11ACC7;
-        Thu, 17 Dec 2020 12:17:57 +0000 (UTC)
-Subject: Re: [PATCH v10 00/11] Free some vmemmap pages of HugeTLB page
-To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
-        mike.kravetz@oracle.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, mhocko@suse.com, song.bao.hua@hisilicon.com,
-        naoya.horiguchi@nec.com
-Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20201217121303.13386-1-songmuchun@bytedance.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C755660C47;
+        Thu, 17 Dec 2020 12:47:58 +0000 (UTC)
+Subject: Re: [PATCH 00/25] Page folios
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20201216182335.27227-1-willy@infradead.org>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat GmbH
-Message-ID: <6fbd36f0-4864-89ff-15ef-9750059defab@redhat.com>
-Date:   Thu, 17 Dec 2020 13:17:56 +0100
+Message-ID: <9e764222-a274-0a99-5e41-7cfa9ea15b86@redhat.com>
+Date:   Thu, 17 Dec 2020 13:47:57 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.5.0
 MIME-Version: 1.0
-In-Reply-To: <20201217121303.13386-1-songmuchun@bytedance.com>
+In-Reply-To: <20201216182335.27227-1-willy@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17.12.20 13:12, Muchun Song wrote:
-> Hi all,
+On 16.12.20 19:23, Matthew Wilcox (Oracle) wrote:
+> One of the great things about compound pages is that when you try to
+> do various operations on a tail page, it redirects to the head page and
+> everything Just Works.  One of the awful things is how much we pay for
+> that simplicity.  Here's an example, end_page_writeback():
 > 
-> This patch series will free some vmemmap pages(struct page structures)
-> associated with each hugetlbpage when preallocated to save memory.
+>         if (PageReclaim(page)) {
+>                 ClearPageReclaim(page);
+>                 rotate_reclaimable_page(page);
+>         }
+>         get_page(page);
+>         if (!test_clear_page_writeback(page))
+>                 BUG();
 > 
-> In order to reduce the difficulty of the first version of code review.
-> From this version, we disable PMD/huge page mapping of vmemmap if this
-> feature was enabled. This accutualy eliminate a bunch of the complex code
-> doing page table manipulation. When this patch series is solid, we cam add
-> the code of vmemmap page table manipulation in the future.
+>         smp_mb__after_atomic();
+>         wake_up_page(page, PG_writeback);
+>         put_page(page);
 > 
-> The struct page structures (page structs) are used to describe a physical
-> page frame. By default, there is a one-to-one mapping from a page frame to
-> it's corresponding page struct.
+> That all looks very straightforward, but if you dive into the disassembly,
+> you see that there are four calls to compound_head() in this function
+> (PageReclaim(), ClearPageReclaim(), get_page() and put_page()).  It's
+> all for nothing, because if anyone does call this routine with a tail
+> page, wake_up_page() will VM_BUG_ON_PGFLAGS(PageTail(page), page).
 > 
-> The HugeTLB pages consist of multiple base page size pages and is supported
-> by many architectures. See hugetlbpage.rst in the Documentation directory
-> for more details. On the x86 architecture, HugeTLB pages of size 2MB and 1GB
-> are currently supported. Since the base page size on x86 is 4KB, a 2MB
-> HugeTLB page consists of 512 base pages and a 1GB HugeTLB page consists of
-> 4096 base pages. For each base page, there is a corresponding page struct.
+> I'm not really a CPU person, but I imagine there's some kind of dependency
+> here that sucks too:
 > 
-> Within the HugeTLB subsystem, only the first 4 page structs are used to
-> contain unique information about a HugeTLB page. HUGETLB_CGROUP_MIN_ORDER
-> provides this upper limit. The only 'useful' information in the remaining
-> page structs is the compound_head field, and this field is the same for all
-> tail pages.
+>     1fd7:       48 8b 57 08             mov    0x8(%rdi),%rdx
+>     1fdb:       48 8d 42 ff             lea    -0x1(%rdx),%rax
+>     1fdf:       83 e2 01                and    $0x1,%edx
+>     1fe2:       48 0f 44 c7             cmove  %rdi,%rax
+>     1fe6:       f0 80 60 02 fb          lock andb $0xfb,0x2(%rax)
 > 
-> By removing redundant page structs for HugeTLB pages, memory can returned to
-> the buddy allocator for other uses.
+> Sure, it's going to be cache hot, but that cmove has to execute before
+> the lock andb.
 > 
-> When the system boot up, every 2M HugeTLB has 512 struct page structs which
-> size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
+> I would like to introduce a new concept that I call a Page Folio.
+> Or just struct folio to its friends.  Here it is,
+> struct folio {
+>         struct page page;
+> };
 > 
->     HugeTLB                  struct pages(8 pages)         page frame(8 pages)
->  +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
->  |           |                     |     0     | -------------> |     0     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     1     | -------------> |     1     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     2     | -------------> |     2     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     3     | -------------> |     3     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     4     | -------------> |     4     |
->  |    2MB    |                     +-----------+                +-----------+
->  |           |                     |     5     | -------------> |     5     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     6     | -------------> |     6     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     7     | -------------> |     7     |
->  |           |                     +-----------+                +-----------+
->  |           |
->  |           |
->  |           |
->  +-----------+
+> A folio is a struct page which is guaranteed not to be a tail page.
+> So it's either a head page or a base (order-0) page.  That means
+> we don't have to call compound_head() on it and we save massively.
+> end_page_writeback() reduces from four calls to compound_head() to just
+> one (at the beginning of the function) and it shrinks from 213 bytes
+> to 126 bytes (using distro kernel config options).  I think even that one
+> can be eliminated, but I'm going slowly at this point and taking the
+> safe route of transforming a random struct page pointer into a struct
+> folio pointer by calling page_folio().  By the end of this exercise,
+> end_page_writeback() will become end_folio_writeback().
 > 
-> The value of page->compound_head is the same for all tail pages. The first
-> page of page structs (page 0) associated with the HugeTLB page contains the 4
-> page structs necessary to describe the HugeTLB. The only use of the remaining
-> pages of page structs (page 1 to page 7) is to point to page->compound_head.
-> Therefore, we can remap pages 2 to 7 to page 1. Only 2 pages of page structs
-> will be used for each HugeTLB page. This will allow us to free the remaining
-> 6 pages to the buddy allocator.
-> 
-> Here is how things look after remapping.
-> 
->     HugeTLB                  struct pages(8 pages)         page frame(8 pages)
->  +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
->  |           |                     |     0     | -------------> |     0     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     1     | -------------> |     1     |
->  |           |                     +-----------+                +-----------+
->  |           |                     |     2     | ----------------^ ^ ^ ^ ^ ^
->  |           |                     +-----------+                   | | | | |
->  |           |                     |     3     | ------------------+ | | | |
->  |           |                     +-----------+                     | | | |
->  |           |                     |     4     | --------------------+ | | |
->  |    2MB    |                     +-----------+                       | | |
->  |           |                     |     5     | ----------------------+ | |
->  |           |                     +-----------+                         | |
->  |           |                     |     6     | ------------------------+ |
->  |           |                     +-----------+                           |
->  |           |                     |     7     | --------------------------+
->  |           |                     +-----------+
->  |           |
->  |           |
->  |           |
->  +-----------+
-> 
-> When a HugeTLB is freed to the buddy system, we should allocate 6 pages for
-> vmemmap pages and restore the previous mapping relationship.
-> 
-> Apart from 2MB HugeTLB page, we also have 1GB HugeTLB page. It is similar
-> to the 2MB HugeTLB page. We also can use this approach to free the vmemmap
-> pages.
-> 
-> In this case, for the 1GB HugeTLB page, we can save 4088 pages(There are
-> 4096 pages for struct page structs, we reserve 2 pages for vmemmap and 8
-> pages for page tables. So we can save 4088 pages). This is a very substantial
-> gain. On our server, run some SPDK/QEMU applications which will use 1024GB
-> hugetlbpage. With this feature enabled, we can save ~16GB(1G hugepage)/~11GB
-> (2MB hugepage, the worst case is 10GB while the best is 12GB) memory.
-> 
-> Because there are vmemmap page tables reconstruction on the freeing/allocating
-> path, it increases some overhead. Here are some overhead analysis.
-> 
-> 1) Allocating 10240 2MB hugetlb pages.
-> 
->    a) With this patch series applied:
->    # time echo 10240 > /proc/sys/vm/nr_hugepages
-> 
->    real     0m0.166s
->    user     0m0.000s
->    sys      0m0.166s
-> 
->    # bpftrace -e 'kprobe:alloc_fresh_huge_page { @start[tid] = nsecs; } kretprobe:alloc_fresh_huge_page /@start[tid]/ { @latency = hist(nsecs - @start[tid]); delete(@start[tid]); }'
->    Attaching 2 probes...
-> 
->    @latency:
->    [8K, 16K)           8360 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->    [16K, 32K)          1868 |@@@@@@@@@@@                                         |
->    [32K, 64K)            10 |                                                    |
->    [64K, 128K)            2 |                                                    |
-> 
->    b) Without this patch series:
->    # time echo 10240 > /proc/sys/vm/nr_hugepages
-> 
->    real     0m0.066s
->    user     0m0.000s
->    sys      0m0.066s
-> 
->    # bpftrace -e 'kprobe:alloc_fresh_huge_page { @start[tid] = nsecs; } kretprobe:alloc_fresh_huge_page /@start[tid]/ { @latency = hist(nsecs - @start[tid]); delete(@start[tid]); }'
->    Attaching 2 probes...
-> 
->    @latency:
->    [4K, 8K)           10176 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->    [8K, 16K)             62 |                                                    |
->    [16K, 32K)             2 |                                                    |
-> 
->    Summarize: this feature is about ~2x slower than before.
-> 
-> 2) Freeing 10240 2MB hugetlb pages.
-> 
->    a) With this patch series applied:
->    # time echo 0 > /proc/sys/vm/nr_hugepages
-> 
->    real     0m0.004s
->    user     0m0.000s
->    sys      0m0.002s
-> 
->    # bpftrace -e 'kprobe:__free_hugepage { @start[tid] = nsecs; } kretprobe:__free_hugepage /@start[tid]/ { @latency = hist(nsecs - @start[tid]); delete(@start[tid]); }'
->    Attaching 2 probes...
-> 
->    @latency:
->    [16K, 32K)         10240 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> 
->    b) Without this patch series:
->    # time echo 0 > /proc/sys/vm/nr_hugepages
-> 
->    real     0m0.077s
->    user     0m0.001s
->    sys      0m0.075s
-> 
->    # bpftrace -e 'kprobe:__free_hugepage { @start[tid] = nsecs; } kretprobe:__free_hugepage /@start[tid]/ { @latency = hist(nsecs - @start[tid]); delete(@start[tid]); }'
->    Attaching 2 probes...
-> 
->    @latency:
->    [4K, 8K)            9950 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->    [8K, 16K)            287 |@                                                   |
->    [16K, 32K)             3 |                                                    |
-> 
->    Summarize: The overhead of __free_hugepage is about ~2-4x slower than before.
->               But according to the allocation test above, I think that here is
-> 	      also ~2x slower than before.
-> 
->               But why the 'real' time of patched is smaller than before? Because
-> 	      In this patch series, the freeing hugetlb is asynchronous(through
-> 	      kwoker).
-> 
-> Although the overhead has increased, the overhead is not significant. Like Mike
-> said, "However, remember that the majority of use cases create hugetlb pages at
-> or shortly after boot time and add them to the pool. So, additional overhead is
-> at pool creation time. There is no change to 'normal run time' operations of
-> getting a page from or returning a page to the pool (think page fault/unmap)".
-> 
+> This is going to be a ton of work, and massively disruptive.  It'll touch
+> every filesystem, and a good few device drivers!  But I think it's worth
+> it.  Not every routine benefits as much as end_page_writeback(), but it
+> makes everything a little better.  At 29 bytes per call to lock_page(),
+> unlock_page(), put_page() and get_page(), that's on the order of 60kB of
+> text for allyesconfig.  More when you add on all the PageFoo() calls.
+> With the small amount of work I've done here, mm/filemap.o shrinks its
+> text segment by over a kilobyte from 33687 to 32318 bytes (and also 192
+> bytes of data).
 
-Just FYI, I'll be offline until first week of January. I'm planning on
-reviewing when I'm back.
+Just wondering, as the primary motivation here is "minimizing CPU work",
+did you run any benchmarks that revealed a visible performance improvement?
 
+Otherwise, we're left with a concept that's hard to grasp first (folio -
+what?!) and "a ton of work, and massively disruptive", saving some kb of
+code - which does not sound too appealing to me.
+
+(I like the idea of abstracting which pages are actually worth looking
+at directly instead of going via a tail page - tail pages act somewhat
+like a proxy for the head page when accessing flags)
 
 -- 
 Thanks,
