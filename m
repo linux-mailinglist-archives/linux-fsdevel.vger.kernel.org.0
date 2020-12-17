@@ -2,185 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B93732DCB30
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 04:07:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 761EE2DCB3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 04:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbgLQDHA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 22:07:00 -0500
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:48319 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725988AbgLQDG7 (ORCPT
+        id S1728007AbgLQDUo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Dec 2020 22:20:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbgLQDUo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 22:06:59 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 53DC35AE4BD;
-        Thu, 17 Dec 2020 14:06:14 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kpjcH-004mBp-SK; Thu, 17 Dec 2020 14:06:09 +1100
-Date:   Thu, 17 Dec 2020 14:06:09 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     darrick.wong@oracle.com, willy@infradead.org, hch@infradead.org,
-        mhocko@kernel.org, akpm@linux-foundation.org, dhowells@redhat.com,
-        jlayton@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v13 1/4] mm: Add become_kswapd and restore_kswapd
-Message-ID: <20201217030609.GP632069@dread.disaster.area>
-References: <20201217011157.92549-1-laoar.shao@gmail.com>
- <20201217011157.92549-2-laoar.shao@gmail.com>
+        Wed, 16 Dec 2020 22:20:44 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7027EC0617B0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 19:19:58 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id c22so3932538pgg.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 19:19:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gbs7EgWZM52eCkELY86Hx3Zy59sL0MGXRI9ZDzydt2c=;
+        b=DjbHeqrJr1G09b1tq/4/bGl9ph/QpMnxYiVt/4LUikyVkDynO0Z+2OztDUd8jKixY+
+         Kjj+U6omCQFXxlfIyKkqy6hd/h2uJp6nU7+Xn2BXnlFSvE0bhqIJ5ojY52b+JZ4Zm0DU
+         N/u2hmCHQ/k6VYjzZC1eQG3H4ePsUALhLZ6n+rian726xsArim630rX4iJfPntTj0ZXL
+         btZaJndxj/OLEl2+0Dn18H/gvmVq0GOsMzzqv2QaTRC8OhJSG1xZ4yXBr61XkEo/2ZvP
+         4r+vJdF1oYQO7WiPkVdRuynOFCHEk/67kIobjm4rfscCONh3xpui46H5urXVcKEi4qhj
+         8XEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gbs7EgWZM52eCkELY86Hx3Zy59sL0MGXRI9ZDzydt2c=;
+        b=W/fCk7ABnBHwFKCHUQrjVJ6H0UPnxZuHWgzpCNb1tH+qno0NyUfUqptaHUrU50ozP6
+         qW/7+GUVFqrHDDiNzZHQeLWWUhPY03ETtWnX1zVYDASt7+Ti8/pKPnYKShGZyi5V5l6S
+         dubQqDeQHHng0s9c+Jpb1/0Vpi9lRIlc5BMPLhA7Gj7suTjN2EAlJ3QZL3Eu+CK45GO3
+         yvRdBWekejd+fu4a1LiKPQRcqc7anDHbqmbeOlhC+6Fgx6+y/AscsRfHt3pIPj4yUbCq
+         vZuTEBzvVHEExzdwYoQS5pi6/oNkR0f7jjOfbp/FjX1g/6+RCphNixOL2frklLtmW1Fo
+         VTRA==
+X-Gm-Message-State: AOAM533yDSjKJ2zBNNRfORHYoqWLpwSkiaNbOG2UqfU53JEOi9nh4JRF
+        6RZhZsUUpSHkL4WduRA5msLr5Lnue3NmelQrn9Af8w==
+X-Google-Smtp-Source: ABdhPJy/YaJPtY/hqJbcS/FGGKfDszH2srApx17B+zdeojgzKxeVpXHtauVm3SP3eS9HwXVXuS1t+NctH625G9fRFWY=
+X-Received: by 2002:a63:50a:: with SMTP id 10mr7737721pgf.273.1608175197760;
+ Wed, 16 Dec 2020 19:19:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201217011157.92549-2-laoar.shao@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
-        a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8 a=4_ML_MP96qNlA5ZoDggA:9
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
-        a=WzC6qhA0u3u7Ye7llzcV:22
+References: <20201213154534.54826-1-songmuchun@bytedance.com>
+ <20201213154534.54826-5-songmuchun@bytedance.com> <6b555fb8-6fd5-049a-49c1-4dc8a3f66766@oracle.com>
+In-Reply-To: <6b555fb8-6fd5-049a-49c1-4dc8a3f66766@oracle.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 17 Dec 2020 11:19:21 +0800
+Message-ID: <CAMZfGtUu7P2eJSv9jhLWxaYsNidHZZpDPSTZLC7VprMaLKmgmg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v9 04/11] mm/hugetlb: Defer freeing of
+ HugeTLB pages
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 09:11:54AM +0800, Yafang Shao wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> Since XFS needs to pretend to be kswapd in some of its worker threads,
-> create methods to save & restore kswapd state.  Don't bother restoring
-> kswapd state in kswapd -- the only time we reach this code is when we're
-> exiting and the task_struct is about to be destroyed anyway.
-> 
-> Cc: Dave Chinner <david@fromorbit.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> ---
->  fs/xfs/libxfs/xfs_btree.c | 14 ++++++++------
->  include/linux/sched/mm.h  | 23 +++++++++++++++++++++++
->  mm/vmscan.c               | 16 +---------------
->  3 files changed, 32 insertions(+), 21 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-> index 51dbff9b0908..0f35b7a38e76 100644
-> --- a/fs/xfs/libxfs/xfs_btree.c
-> +++ b/fs/xfs/libxfs/xfs_btree.c
-> @@ -2813,8 +2813,9 @@ xfs_btree_split_worker(
->  {
->  	struct xfs_btree_split_args	*args = container_of(work,
->  						struct xfs_btree_split_args, work);
-> +	bool			is_kswapd = args->kswapd;
->  	unsigned long		pflags;
-> -	unsigned long		new_pflags = PF_MEMALLOC_NOFS;
-> +	int			memalloc_nofs;
->  
->  	/*
->  	 * we are in a transaction context here, but may also be doing work
-> @@ -2822,16 +2823,17 @@ xfs_btree_split_worker(
->  	 * temporarily to ensure that we don't block waiting for memory reclaim
->  	 * in any way.
->  	 */
-> -	if (args->kswapd)
-> -		new_pflags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
-> -
-> -	current_set_flags_nested(&pflags, new_pflags);
-> +	if (is_kswapd)
-> +		pflags = become_kswapd();
-> +	memalloc_nofs = memalloc_nofs_save();
->  
->  	args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
->  					 args->key, args->curp, args->stat);
->  	complete(args->done);
->  
-> -	current_restore_flags_nested(&pflags, new_pflags);
-> +	memalloc_nofs_restore(memalloc_nofs);
-> +	if (is_kswapd)
-> +		restore_kswapd(pflags);
->  }
->  
->  /*
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index d5ece7a9a403..2faf03e79a1e 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -278,6 +278,29 @@ static inline void memalloc_nocma_restore(unsigned int flags)
->  }
->  #endif
->  
-> +/*
-> + * Tell the memory management code that this thread is working on behalf
-> + * of background memory reclaim (like kswapd).  That means that it will
-> + * get access to memory reserves should it need to allocate memory in
-> + * order to make forward progress.  With this great power comes great
-> + * responsibility to not exhaust those reserves.
-> + */
-> +#define KSWAPD_PF_FLAGS		(PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD)
-> +
-> +static inline unsigned long become_kswapd(void)
-> +{
-> +	unsigned long flags = current->flags & KSWAPD_PF_FLAGS;
-> +
-> +	current->flags |= KSWAPD_PF_FLAGS;
-> +
-> +	return flags;
-> +}
+On Thu, Dec 17, 2020 at 7:48 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>
+> On 12/13/20 7:45 AM, Muchun Song wrote:
+> > In the subsequent patch, we will allocate the vmemmap pages when free
+> > HugeTLB pages. But update_and_free_page() is called from a non-task
+> > context(and hold hugetlb_lock), so we can defer the actual freeing in
+> > a workqueue to prevent use GFP_ATOMIC to allocate the vmemmap pages.
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>
+> It is unfortunate we need to add this complexitty, but I can not think
+> of another way.  One small comment (no required change) below.
+>
+> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-You can get rid of the empty lines out of this function.
+Thank you.
 
-> +static inline void restore_kswapd(unsigned long flags)
-> +{
-> +	current->flags &= ~(flags ^ KSWAPD_PF_FLAGS);
-> +}
+>
+> > ---
+> >  mm/hugetlb.c         | 77 ++++++++++++++++++++++++++++++++++++++++++++++++----
+> >  mm/hugetlb_vmemmap.c | 12 --------
+> >  mm/hugetlb_vmemmap.h | 17 ++++++++++++
+> >  3 files changed, 88 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 140135fc8113..0ff9b90e524f 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -1292,15 +1292,76 @@ static inline void destroy_compound_gigantic_page(struct page *page,
+> >                                               unsigned int order) { }
+> >  #endif
+> >
+> > -static void update_and_free_page(struct hstate *h, struct page *page)
+> > +static void __free_hugepage(struct hstate *h, struct page *page);
+> > +
+> > +/*
+> > + * As update_and_free_page() is be called from a non-task context(and hold
+> > + * hugetlb_lock), we can defer the actual freeing in a workqueue to prevent
+> > + * use GFP_ATOMIC to allocate a lot of vmemmap pages.
+> > + *
+> > + * update_hpage_vmemmap_workfn() locklessly retrieves the linked list of
+> > + * pages to be freed and frees them one-by-one. As the page->mapping pointer
+> > + * is going to be cleared in update_hpage_vmemmap_workfn() anyway, it is
+> > + * reused as the llist_node structure of a lockless linked list of huge
+> > + * pages to be freed.
+> > + */
+> > +static LLIST_HEAD(hpage_update_freelist);
+> > +
+> > +static void update_hpage_vmemmap_workfn(struct work_struct *work)
+> >  {
+> > -     int i;
+> > +     struct llist_node *node;
+> > +     struct page *page;
+> > +
+> > +     node = llist_del_all(&hpage_update_freelist);
+> >
+> > +     while (node) {
+> > +             page = container_of((struct address_space **)node,
+> > +                                  struct page, mapping);
+> > +             node = node->next;
+> > +             page->mapping = NULL;
+> > +             __free_hugepage(page_hstate(page), page);
+> > +
+> > +             cond_resched();
+> > +     }
+> > +}
+> > +static DECLARE_WORK(hpage_update_work, update_hpage_vmemmap_workfn);
+> > +
+> > +static inline void __update_and_free_page(struct hstate *h, struct page *page)
+> > +{
+> > +     /* No need to allocate vmemmap pages */
+> > +     if (!free_vmemmap_pages_per_hpage(h)) {
+> > +             __free_hugepage(h, page);
+> > +             return;
+> > +     }
+> > +
+> > +     /*
+> > +      * Defer freeing to avoid using GFP_ATOMIC to allocate vmemmap
+> > +      * pages.
+> > +      *
+> > +      * Only call schedule_work() if hpage_update_freelist is previously
+> > +      * empty. Otherwise, schedule_work() had been called but the workfn
+> > +      * hasn't retrieved the list yet.
+> > +      */
+> > +     if (llist_add((struct llist_node *)&page->mapping,
+> > +                   &hpage_update_freelist))
+> > +             schedule_work(&hpage_update_work);
+> > +}
+> > +
+> > +static void update_and_free_page(struct hstate *h, struct page *page)
+> > +{
+> >       if (hstate_is_gigantic(h) && !gigantic_page_runtime_supported())
+> >               return;
+> >
+> >       h->nr_huge_pages--;
+> >       h->nr_huge_pages_node[page_to_nid(page)]--;
+> > +
+> > +     __update_and_free_page(h, page);
+> > +}
+> > +
+> > +static void __free_hugepage(struct hstate *h, struct page *page)
+> > +{
+> > +     int i;
+> > +
+>
+> Can we add a comment here saying that this is where the call to allocate
+> vmemmmap pages will be inserted in a later patch.  Such a comment would
+> help a bit to understand the restructuring of the code.
 
-Urk, that requires thinking about to determine whether it is
-correct. And it is 3 runtime logic operations (^, ~ and &) too. The
-way all the memalloc_*_restore() functions restore the previous
-flags is obviously correct and only requires 2 runtime logic
-operations because the compiler calculates the ~ operation on the
-constant. So why do it differently here? i.e.:
+OK. Will do. Thanks.
 
-	current->flags = (current->flags & ~KSWAPD_PF_FLAGS) | flags;
+>
+> --
+> Mike Kravetz
+>
+> >       for (i = 0; i < pages_per_huge_page(h); i++) {
+> >               page[i].flags &= ~(1 << PG_locked | 1 << PG_error |
+> >                               1 << PG_referenced | 1 << PG_dirty |
+> > @@ -1313,13 +1374,17 @@ static void update_and_free_page(struct hstate *h, struct page *page)
+> >       set_page_refcounted(page);
+> >       if (hstate_is_gigantic(h)) {
+> >               /*
+> > -              * Temporarily drop the hugetlb_lock, because
+> > -              * we might block in free_gigantic_page().
+> > +              * Temporarily drop the hugetlb_lock only when this type of
+> > +              * HugeTLB page does not support vmemmap optimization (which
+> > +              * contex do not hold the hugetlb_lock), because we might block
+> > +              * in free_gigantic_page().
+> >                */
+> > -             spin_unlock(&hugetlb_lock);
+> > +             if (!free_vmemmap_pages_per_hpage(h))
+> > +                     spin_unlock(&hugetlb_lock);
+> >               destroy_compound_gigantic_page(page, huge_page_order(h));
+> >               free_gigantic_page(page, huge_page_order(h));
+> > -             spin_lock(&hugetlb_lock);
+> > +             if (!free_vmemmap_pages_per_hpage(h))
+> > +                     spin_lock(&hugetlb_lock);
+> >       } else {
+> >               __free_pages(page, huge_page_order(h));
+> >       }
 
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -3870,19 +3870,7 @@ static int kswapd(void *p)
->  	if (!cpumask_empty(cpumask))
->  		set_cpus_allowed_ptr(tsk, cpumask);
->  
-> -	/*
-> -	 * Tell the memory management that we're a "memory allocator",
-> -	 * and that if we need more memory we should get access to it
-> -	 * regardless (see "__alloc_pages()"). "kswapd" should
-> -	 * never get caught in the normal page freeing logic.
-> -	 *
-> -	 * (Kswapd normally doesn't need memory anyway, but sometimes
-> -	 * you need a small amount of memory in order to be able to
-> -	 * page out something else, and this flag essentially protects
-> -	 * us from recursively trying to free more memory as we're
-> -	 * trying to free the first piece of memory in the first place).
-> -	 */
-> -	tsk->flags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
-> +	become_kswapd();
->  	set_freezable();
->  
->  	WRITE_ONCE(pgdat->kswapd_order, 0);
-> @@ -3932,8 +3920,6 @@ static int kswapd(void *p)
->  			goto kswapd_try_sleep;
->  	}
->  
-> -	tsk->flags &= ~(PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD);
-> -
 
-Missing a restore_kswapd()?
 
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Yours,
+Muchun
