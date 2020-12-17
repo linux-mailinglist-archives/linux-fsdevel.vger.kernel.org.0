@@ -2,219 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D5D92DCBC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 05:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1652D2DCCCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 07:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbgLQEsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Dec 2020 23:48:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59884 "EHLO
+        id S1726964AbgLQGz1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 01:55:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbgLQEsF (ORCPT
+        with ESMTP id S1726503AbgLQGz1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Dec 2020 23:48:05 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3A81C061794;
-        Wed, 16 Dec 2020 20:47:24 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id o6so13151027iob.10;
-        Wed, 16 Dec 2020 20:47:24 -0800 (PST)
+        Thu, 17 Dec 2020 01:55:27 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23A69C0617A7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 22:54:47 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id v3so14599865plz.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Dec 2020 22:54:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PRUMLTk7szvcs7E9rP3JJrNFOeJ7mkueV5pL+SzEkSM=;
-        b=QRlJcth1nNqZpZH57ZV7mSS0URPgxM4TleMaXtrVW/Wg6sSJuMdzAQ2MVJbIfHK9QL
-         TOjdktPjwgqXEoHWHBuG0Kpl5+maKdYmNU23/jI1DNrB7ADfnRzpSVzf5oooxKCXqVWq
-         LJp3q2T9S3J8Fi9w+CzM9u8yRXMkm79eE0iOva5jDp3J6nJS24PCJ1Hh6p+wh7NyRmIR
-         uBJxBaLZ2Q7CnqnG56ombBFJ5qYfZsS8mYqJ4D3qCOlBEOM8qGFfxhi9WaUKcr3kl9Y8
-         7WcXPNc0OTcuLR0XZm0DqojDVwC9wEupU2c+tXHL3XNjFgEMwxClj5IeqMz46oiH8mpr
-         d27g==
+        bh=kYkx9ybV2ueAWfRQVHDx3D5vcB/QAf7LUwizku++lx4=;
+        b=R0gTUZ/+FhatN0Ola7XCwP06109oq3LSjiDLx745S1G4yZuUoGIKOIdEOfFNnMrxQe
+         jIu36Ii/UWnyJrMJwV8/Cb8hef91r3E4XiUWyVhOZdHJOl5WdnKDs8fwvjq2wIihNj7Y
+         Rx951XBU/s4mHFmnPyHjCFleq1NoZJ+xgzlJHgnpP9RF6X/OPreeu3W+YELbsOnRgC3X
+         AUrlEEHRed6m+LTcbfmVz9akeJA9Cw8r0C/iJC1Wd3K4jjIkwHQvgz1GoMPzQBj41d8U
+         rmisL0fl/QSjgMo8J1g3wDk6vnaRmE7v/rxG7ZQUtxbQYK7zW7Wpgf7WTQmeJdzhvWa8
+         5RmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PRUMLTk7szvcs7E9rP3JJrNFOeJ7mkueV5pL+SzEkSM=;
-        b=FNZ3ymNP96cqtyCGzt+mS9VPaHUBEZxKtLZRT0U7ciHB8zlEjk73wRVNPPZIFjvEjV
-         gKRyGOQcTZUQarKrmm9Ut2XZW9Vkb2rGW70qTd88D2qquRNTNhLwOBSEzhCFbrO2Bp/D
-         qUEIoWWnEpqV1LycgpEUrKxvFPPcGNdOZIBcuxLeElc2Zx82K3WsI3Kl2c6sGJKULMQX
-         cqNwUZFaVfB1sEXE/jYMh+WEdwB2C3UGKQEFKY0LYpbM5fiz3AMakJsnoyRoYDc1orMt
-         zm40liNcEamVkzlvFDkZbQjfdM1HqcpMEWFNIKEO/seZBAriieNXokntyjGhOL5QCnsd
-         8udQ==
-X-Gm-Message-State: AOAM5306sKNKiJaK0guldyi92Phwgq6Hr/Pjf3x5gi1dv4gcSysF6gl5
-        SwUpN+vUXyCHK4hUW7IRpYgMPWKd+JZRhX7NFtbFlKKO6KKZ3DRN
-X-Google-Smtp-Source: ABdhPJxBoUYfBARhqKQXlH0TMk7AC8ra43Si0SEHE3kCbFav1S1El7VPg2rN//ZysJPcc8ybj8p4DXerd58/pSgl2f0=
-X-Received: by 2002:a05:6602:2157:: with SMTP id y23mr45264126ioy.202.1608180443614;
- Wed, 16 Dec 2020 20:47:23 -0800 (PST)
+        bh=kYkx9ybV2ueAWfRQVHDx3D5vcB/QAf7LUwizku++lx4=;
+        b=cjfWyVNxfZyDKS5lLFWWyiehfKJte37oZ/5sEjyiMEumPtbJq2nfAzTlZoN3G4yZHq
+         i0YZrH7+61dwCyUKWqAOQDnauGruEa8pkM4fyu9OaokiPe7/ML8I7wtiBuvDLZG0UD7S
+         GBhRSSJ0NRM8p/oWzKv63DAOjzq29/C92D1wI8afgGIkUvDMWVw1rfVGBqTgkx266fyG
+         kmZj8PlS1DoDzTuN1FvzSHxhb1jU/0z8s/zvkAgEqn1QnVIwIC+XL8S7JK2l7eCeUhMP
+         /U+PLB3r9ZtoMOFR0DwaAdYooX7tPDX/7OmqcIZS1vjFDVhYoKWWKadPFvaqnjAM3M6N
+         ZQ2g==
+X-Gm-Message-State: AOAM530a9FB5xRVGnJKmvrQJI22y0Xdqj2rHTA7CGOtpSiMrAsWcS9wx
+        1Y+/1Fnm5qkwhh6asTRY/KYshcwkPEA0T2jnbaOzpA==
+X-Google-Smtp-Source: ABdhPJxIo3Bkh6if9eAbNjiecVSukBNUK6FsdvhRNKiiTT/IlqPDPu9KgseS7K+gDKV5spUiE1CR0WiMXQaInL/1jZE=
+X-Received: by 2002:a17:902:8503:b029:dc:44f:62d8 with SMTP id
+ bj3-20020a1709028503b02900dc044f62d8mr13771103plb.34.1608188086569; Wed, 16
+ Dec 2020 22:54:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20201217011157.92549-1-laoar.shao@gmail.com> <20201217011157.92549-2-laoar.shao@gmail.com>
- <20201217030609.GP632069@dread.disaster.area>
-In-Reply-To: <20201217030609.GP632069@dread.disaster.area>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Thu, 17 Dec 2020 12:46:47 +0800
-Message-ID: <CALOAHbBNbJ9z6YR20wff1Ei=SR6E-uNFRO8OHpRqg_emsD7few@mail.gmail.com>
-Subject: Re: [PATCH v13 1/4] mm: Add become_kswapd and restore_kswapd
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+References: <20201213154534.54826-1-songmuchun@bytedance.com>
+ <20201213154534.54826-4-songmuchun@bytedance.com> <5936a766-505a-eab0-42a6-59aab2585880@oracle.com>
+ <20201216222549.GC3207@localhost.localdomain> <49f6a0f1-c6fa-4642-2db0-69f090e8a392@oracle.com>
+In-Reply-To: <49f6a0f1-c6fa-4642-2db0-69f090e8a392@oracle.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 17 Dec 2020 14:54:10 +0800
+Message-ID: <CAMZfGtXwU7LcTZw7iKFNksVTYx8Bhd=9Nct+zfNy_ibuFiF6ew@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v9 03/11] mm/hugetlb: Free the vmemmap
+ pages associated with each HugeTLB page
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>, jlayton@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@suse.com>, Christoph Hellwig <hch@lst.de>
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 11:06 AM Dave Chinner <david@fromorbit.com> wrote:
+On Thu, Dec 17, 2020 at 6:52 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
 >
-> On Thu, Dec 17, 2020 at 09:11:54AM +0800, Yafang Shao wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> On 12/16/20 2:25 PM, Oscar Salvador wrote:
+> > On Wed, Dec 16, 2020 at 02:08:30PM -0800, Mike Kravetz wrote:
+> >>> + * vmemmap_rmap_walk - walk vmemmap page table
+> >>> +
+> >>> +static void vmemmap_pte_range(pmd_t *pmd, unsigned long addr,
+> >>> +                         unsigned long end, struct vmemmap_rmap_walk *walk)
+> >>> +{
+> >>> +   pte_t *pte;
+> >>> +
+> >>> +   pte = pte_offset_kernel(pmd, addr);
+> >>> +   do {
+> >>> +           BUG_ON(pte_none(*pte));
+> >>> +
+> >>> +           if (!walk->reuse)
+> >>> +                   walk->reuse = pte_page(pte[VMEMMAP_TAIL_PAGE_REUSE]);
+> >>
+> >> It may be just me, but I don't like the pte[-1] here.  It certainly does work
+> >> as designed because we want to remap all pages in the range to the page before
+> >> the range (at offset -1).  But, we do not really validate this 'reuse' page.
+> >> There is the BUG_ON(pte_none(*pte)) as a sanity check, but we do nothing similar
+> >> for pte[-1].  Based on the usage for HugeTLB pages, we can be confident that
+> >> pte[-1] is actually a pte.  In discussions with Oscar, you mentioned another
+> >> possible use for these routines.
 > >
-> > Since XFS needs to pretend to be kswapd in some of its worker threads,
-> > create methods to save & restore kswapd state.  Don't bother restoring
-> > kswapd state in kswapd -- the only time we reach this code is when we're
-> > exiting and the task_struct is about to be destroyed anyway.
+> > Without giving it much of a thought, I guess we could duplicate the
+> > BUG_ON for the pte outside the loop, and add a new one for pte[-1].
+> > Also, since walk->reuse seems to not change once it is set, we can take
+> > it outside the loop? e.g:
 > >
-> > Cc: Dave Chinner <david@fromorbit.com>
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > ---
-> >  fs/xfs/libxfs/xfs_btree.c | 14 ++++++++------
-> >  include/linux/sched/mm.h  | 23 +++++++++++++++++++++++
-> >  mm/vmscan.c               | 16 +---------------
-> >  3 files changed, 32 insertions(+), 21 deletions(-)
+> >       pte *pte;
 > >
-> > diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-> > index 51dbff9b0908..0f35b7a38e76 100644
-> > --- a/fs/xfs/libxfs/xfs_btree.c
-> > +++ b/fs/xfs/libxfs/xfs_btree.c
-> > @@ -2813,8 +2813,9 @@ xfs_btree_split_worker(
-> >  {
-> >       struct xfs_btree_split_args     *args = container_of(work,
-> >                                               struct xfs_btree_split_args, work);
-> > +     bool                    is_kswapd = args->kswapd;
-> >       unsigned long           pflags;
-> > -     unsigned long           new_pflags = PF_MEMALLOC_NOFS;
-> > +     int                     memalloc_nofs;
+> >       pte = pte_offset_kernel(pmd, addr);
+> >       BUG_ON(pte_none(*pte));
+> >       BUG_ON(pte_none(pte[VMEMMAP_TAIL_PAGE_REUSE]));
+> >       walk->reuse = pte_page(pte[VMEMMAP_TAIL_PAGE_REUSE]);
+> >       do {
+> >               ....
+> >       } while...
 > >
-> >       /*
-> >        * we are in a transaction context here, but may also be doing work
-> > @@ -2822,16 +2823,17 @@ xfs_btree_split_worker(
-> >        * temporarily to ensure that we don't block waiting for memory reclaim
-> >        * in any way.
-> >        */
-> > -     if (args->kswapd)
-> > -             new_pflags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
-> > -
-> > -     current_set_flags_nested(&pflags, new_pflags);
-> > +     if (is_kswapd)
-> > +             pflags = become_kswapd();
-> > +     memalloc_nofs = memalloc_nofs_save();
-> >
-> >       args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
-> >                                        args->key, args->curp, args->stat);
-> >       complete(args->done);
-> >
-> > -     current_restore_flags_nested(&pflags, new_pflags);
-> > +     memalloc_nofs_restore(memalloc_nofs);
-> > +     if (is_kswapd)
-> > +             restore_kswapd(pflags);
-> >  }
-> >
-> >  /*
-> > diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> > index d5ece7a9a403..2faf03e79a1e 100644
-> > --- a/include/linux/sched/mm.h
-> > +++ b/include/linux/sched/mm.h
-> > @@ -278,6 +278,29 @@ static inline void memalloc_nocma_restore(unsigned int flags)
-> >  }
-> >  #endif
-> >
-> > +/*
-> > + * Tell the memory management code that this thread is working on behalf
-> > + * of background memory reclaim (like kswapd).  That means that it will
-> > + * get access to memory reserves should it need to allocate memory in
-> > + * order to make forward progress.  With this great power comes great
-> > + * responsibility to not exhaust those reserves.
-> > + */
-> > +#define KSWAPD_PF_FLAGS              (PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD)
-> > +
-> > +static inline unsigned long become_kswapd(void)
-> > +{
-> > +     unsigned long flags = current->flags & KSWAPD_PF_FLAGS;
-> > +
-> > +     current->flags |= KSWAPD_PF_FLAGS;
-> > +
-> > +     return flags;
-> > +}
+> > Or I am not sure whether we want to keep it inside the loop in case
+> > future cases change walk->reuse during the operation.
+> > But to be honest, I do not think it is realistic of all future possible
+> > uses of this, so I would rather keep it simple for now.
 >
-> You can get rid of the empty lines out of this function.
->
-> > +static inline void restore_kswapd(unsigned long flags)
-> > +{
-> > +     current->flags &= ~(flags ^ KSWAPD_PF_FLAGS);
-> > +}
->
-> Urk, that requires thinking about to determine whether it is
-> correct. And it is 3 runtime logic operations (^, ~ and &) too. The
-> way all the memalloc_*_restore() functions restore the previous
-> flags is obviously correct and only requires 2 runtime logic
-> operations because the compiler calculates the ~ operation on the
-> constant. So why do it differently here? i.e.:
->
->         current->flags = (current->flags & ~KSWAPD_PF_FLAGS) | flags;
->
+> I was thinking about possibly passing the 'reuse' address as another parameter
+> to vmemmap_remap_reuse().  We could add this addr to the vmemmap_rmap_walk
+> struct and set walk->reuse when we get to the pte for that address.  Of
+> course this would imply that the addr would need to be part of the range.
 
-I will change it as you suggested if Matthew doesn't have a different
-opinion, Matthew ?
+Maybe adding another one parameter is unnecessary.  How about doing
+this in the vmemmap_remap_reuse?
 
+The 'reuse' address just is start + PAGE_SIZE.
 
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -3870,19 +3870,7 @@ static int kswapd(void *p)
-> >       if (!cpumask_empty(cpumask))
-> >               set_cpus_allowed_ptr(tsk, cpumask);
-> >
-> > -     /*
-> > -      * Tell the memory management that we're a "memory allocator",
-> > -      * and that if we need more memory we should get access to it
-> > -      * regardless (see "__alloc_pages()"). "kswapd" should
-> > -      * never get caught in the normal page freeing logic.
-> > -      *
-> > -      * (Kswapd normally doesn't need memory anyway, but sometimes
-> > -      * you need a small amount of memory in order to be able to
-> > -      * page out something else, and this flag essentially protects
-> > -      * us from recursively trying to free more memory as we're
-> > -      * trying to free the first piece of memory in the first place).
-> > -      */
-> > -     tsk->flags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
-> > +     become_kswapd();
-> >       set_freezable();
-> >
-> >       WRITE_ONCE(pgdat->kswapd_order, 0);
-> > @@ -3932,8 +3920,6 @@ static int kswapd(void *p)
-> >                       goto kswapd_try_sleep;
-> >       }
-> >
-> > -     tsk->flags &= ~(PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD);
-> > -
+void vmemmap_remap_free(unsigned long start, unsigned long size)
+{
+         unsigned long end = start + size;
+         unsigned long reuse_addr = start + PAGE_SIZE;
+         LIST_HEAD(vmemmap_pages);
+
+         struct vmemmap_remap_walk walk = {
+                  .remap_pte = vmemmap_remap_pte,
+                  .vmemmap_pages = &vmemmap_pages,
+                  .reuse_addr = reuse_addr.
+         };
+
+}
+
 >
-> Missing a restore_kswapd()?
+> Ideally, we would walk the page table to get to the reuse page.  My concern
+> was not explicitly about adding the BUG_ON.  In more general use, *pte could
+> be the first entry on a pte page.  And, then pte[-1] may not even be a pte.
 >
-> Cheers,
->
-> Dave.
+> Again, I don't think this matters for the current HugeTLB use case.  Just a
+> little concerned if code is put to use for other purposes.
 > --
-> Dave Chinner
-> david@fromorbit.com
+> Mike Kravetz
 
 
 
 -- 
-Thanks
-Yafang
+Yours,
+Muchun
