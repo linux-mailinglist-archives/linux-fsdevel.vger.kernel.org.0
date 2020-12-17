@@ -2,104 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE32A2DD586
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 17:56:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A06BA2DD792
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 19:15:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgLQQzr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 11:55:47 -0500
-Received: from mout.gmx.net ([212.227.15.18]:53895 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbgLQQzr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 11:55:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1608224054;
-        bh=w9NF0Fw8FV4NwKb4DviOu1flMn+fTYZk6inIQEtdZOQ=;
-        h=X-UI-Sender-Class:Date:From:To:Subject;
-        b=AeB9ceahramBRlMZ2XA277XfJJLneSOzfBIseT0NmGV6A2LKZw1RSLioixwqfr2gl
-         FUMN5ieNM17kpzIu5fAw++u5q3Ul8yY0WTW9Syw6EuGgobMzPpmxAFJZi7BEPnRzir
-         fxJN3sl8wNjt8lAU9cfTDWPM3sIiXHdBiXYGkZvY=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ls3530.fritz.box ([92.116.140.151]) by mail.gmx.com (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M2wL0-1kopY223Ku-003Mbw; Thu, 17
- Dec 2020 17:54:14 +0100
-Date:   Thu, 17 Dec 2020 17:54:13 +0100
-From:   Helge Deller <deller@gmx.de>
-To:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] proc/wchan: Use printk format instead of lookup_symbol_name()
-Message-ID: <20201217165413.GA1959@ls3530.fritz.box>
+        id S1731525AbgLQSKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 13:10:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42308 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731519AbgLQSKc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Dec 2020 13:10:32 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236B8C061794
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 10:09:52 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id o19so34226287lfo.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 10:09:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wyr2DNXyT/PI6oPddMFB+7JOcv51vfYZBM8msxQ4ehU=;
+        b=WJgn22xJzVmIm0pYatrBZTaOiMZm85fxXeliU4gkbm3eatafgORKqZHih45oQ/brLn
+         murnbhEU4wk1yt8bXEw//VoNyKo0pjyBMACeR9tOpbenPNRRq34neKQNZ5G7YenUdHJy
+         STr/M6fQtfm61OWnCNrDAzWXZXMOAKNG/uahg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wyr2DNXyT/PI6oPddMFB+7JOcv51vfYZBM8msxQ4ehU=;
+        b=ErB/+ymTSdVnQhxh0Ko1DUzr29ui9Cg/v6dr0kcnDrDkvj/F72YgqP5IfZ02UuxrqF
+         ys/IW94yNBxT1eJAIXZ3+KDto2xQc+oOM2y0eh+9VPw0NHMs6VrGXne0Me7YOZxvHWgU
+         cRDGr7rFFfOZhBerhEtsgepMw2pCisdyhyZN7WuFiATe44txix8Yiq9jiEosC0zHnl0J
+         gG7fXBi2zEHsM8TQTLXDe+OK4B0XYYVS5lckdS7tlBL8RfTwTmPETKrUmkSb+jRFKir0
+         iaRx549YfO+pTbjCfz7Qx5mT0SfcKe36+OhZJXJ5h8QN25/lqDuVSRXCEd0jJedE6r5C
+         O4Sw==
+X-Gm-Message-State: AOAM533RANDYpBmPeJLA20JmWgVv07YUOCCwjQbg0ScbKQbNw/wcwiRe
+        yyBYQzdEaCfrmbbJECl6FQjsWMYlXg8mEg==
+X-Google-Smtp-Source: ABdhPJxO/mtTbgmy1nD8nMTFgLL6497vV2JnStFZs0QtM7JwsS/oprJChT4/VGMtEtxFRF8B88YqdQ==
+X-Received: by 2002:a2e:874c:: with SMTP id q12mr211483ljj.424.1608228590312;
+        Thu, 17 Dec 2020 10:09:50 -0800 (PST)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id c198sm655639lfg.265.2020.12.17.10.09.49
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Dec 2020 10:09:49 -0800 (PST)
+Received: by mail-lf1-f49.google.com with SMTP id h205so16319219lfd.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 10:09:49 -0800 (PST)
+X-Received: by 2002:a2e:9b13:: with SMTP id u19mr226223lji.48.1608228588898;
+ Thu, 17 Dec 2020 10:09:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Provags-ID: V03:K1:/cU26LsCB4k0AOGUILYVTjf5wOZQxoZP+Cg1IsgYa8lcpbhhJo7
- 0ff0NLktCEYMtQDgr8p/gSim8wTzFwd/VnDFlwn+UNCsgIjC4mvVfFd60/sKrtLr60eyaVL
- /wdBPTB3M2YOutavuTxRSbbQLSGFcPprGOMvd6bLBHBQgFBktfEkoZT400H+SLe0ShT4bC0
- EonoJnWpJwEURfrjdJKgg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Lv1aiHDvxic=:IkcfXGt5HZbPMkDqL36841
- MhVFKQYU7gK0HSPUHLzudst5Oe+AkuvEJ0XyGYrgPZMg1G+H8GStnehD5el0nAMy+JIdPXw0g
- u9ewm5/iwE+mRZOWopmlFWaCzz/R12xI8c5PTSSGC+IJR309b8E/I9oG2PdV8TjRLe1ID0Pas
- 1LpiVpTECZAYnVEsUAqLumS9pvw9GREaq3Db0+0eH3dwhxfBPPyqxCwR19Q6hLSpK1rwX6xAo
- Py1VteqRytZuNiQPtc93z5bfo/V6MTu56xk9GrmZ5WR1ZL1AeVu5CP7gm5/q1kMlv4Ij+NETq
- VTJP8e70AjDG/e9LxlhFto5XFcwau4S8ny2EZ0I9Y79bSU8YKcjJevoCyPpn/Y5QSItFB8R7q
- NUaRZ0wdH1F/0FoFphyxtWSr/SBwV3xc8DUZpA7+vb8545aeFHiEzLquc5QEjiPyFw/E7EpAX
- PwS3GFOAMZoZiBjJOEm/EttYNezw8k4TrbflnMxiskeBxjBPQYfoNnAMRGThLXXBYZPEsRSto
- b7cPhfJ2EwyW5W2c3gDqXmEPXhaguKD3ae0o9E74/nA0Y2gfdGOgN0twapNjTESTVY3MxqPu9
- 2kNouvai/TqlPFMjdAsLiCVZ1uHNMg5fBim0W2OSF/TksstbFf8lMUbrUvev3mCijDGaA92i/
- ZutvEkHuHSGTi5IP6R1iQIjGdqjsvpKEqZmafbgkw03UW6365JPDYXODlKTBvZoaEb/ascfts
- SF/sUky2U0bsILR5vBGddtLUcl9A1hBKhx0ffQxgmx3N/J6mFHsvIGPn8iyVvG+K7nVYsAyQU
- i4FE2PZlbW5X5m4mcv83PHi8U6l0vZBL83GwkV/m2OHmx2q3letPhem2UKKN2sOGuYU8KDy9g
- /wpI/ar7Sr//LajJcyog==
-Content-Transfer-Encoding: quoted-printable
+References: <20201217161911.743222-1-axboe@kernel.dk>
+In-Reply-To: <20201217161911.743222-1-axboe@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 17 Dec 2020 10:09:32 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjxQOBVZiX-OD9YC1ZkA-N4tG7sjtkWApY8Rtz4gb_k6Q@mail.gmail.com>
+Message-ID: <CAHk-=wjxQOBVZiX-OD9YC1ZkA-N4tG7sjtkWApY8Rtz4gb_k6Q@mail.gmail.com>
+Subject: Re: [PATCHSET 0/4] fs: Support for LOOKUP_CACHED / RESOLVE_CACHED
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-To resolve the symbol fuction name for wchan, use the printk format
-specifier %ps instead of manually looking up the symbol function name
-via lookup_symbol_name().
+On Thu, Dec 17, 2020 at 8:19 AM Jens Axboe <axboe@kernel.dk> wrote:
+> [..]
+> which shows a failed nonblock lookup, then punt to worker, and then we
+> complete with fd == 4. This takes 65 usec in total. Re-running the same
+> test case again:
+> [..]
+> shows the same request completing inline, also returning fd == 4. This
+> takes 6 usec.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
+I think this example needs to be part of the git history - either move
+it into the individual commits, or we just need to make sure it
+doesn't get lost as a cover letter and ends up part of the merge
+message.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index b362523a9829..c4593e1cafa4 100644
-=2D-- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -67,7 +67,6 @@
- #include <linux/mm.h>
- #include <linux/swap.h>
- #include <linux/rcupdate.h>
--#include <linux/kallsyms.h>
- #include <linux/stacktrace.h>
- #include <linux/resource.h>
- #include <linux/module.h>
-@@ -386,19 +385,17 @@ static int proc_pid_wchan(struct seq_file *m, struct=
- pid_namespace *ns,
- 			  struct pid *pid, struct task_struct *task)
- {
- 	unsigned long wchan;
--	char symname[KSYM_NAME_LEN];
+Despite having seen the patch series so many times now, I'm still just
+really impressed by how small and neat it is, considering the above
+numbers, and considering just how problematic this case was
+historically (ie I remember all the discussions we had about
+nonblocking opens back in the days).
 
--	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
--		goto print0;
-+	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
-+		wchan =3D get_wchan(task);
-+	else
-+		wchan =3D 0;
+So I continue to go "this is the RightWay(tm)" just from that.
 
--	wchan =3D get_wchan(task);
--	if (wchan && !lookup_symbol_name(wchan, symname)) {
--		seq_puts(m, symname);
--		return 0;
--	}
-+	if (wchan)
-+		seq_printf(m, "%ps", (void *) wchan);
-+	else
-+		seq_putc(m, '0');
-
--print0:
--	seq_putc(m, '0');
- 	return 0;
- }
- #endif /* CONFIG_KALLSYMS */
+              Linus
