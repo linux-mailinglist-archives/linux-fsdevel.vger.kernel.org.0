@@ -2,92 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 356982DCE23
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 10:16:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40DA92DCEF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 10:59:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbgLQJPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 04:15:52 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17656 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbgLQJPv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 04:15:51 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fdb219f0004>; Thu, 17 Dec 2020 01:15:11 -0800
-Received: from [10.2.61.104] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 17 Dec
- 2020 09:15:11 +0000
-Subject: Re: [PATCH 18/25] btrfs: Use readahead_batch_length
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>
-CC:     <linux-kernel@vger.kernel.org>
-References: <20201216182335.27227-1-willy@infradead.org>
- <20201216182335.27227-19-willy@infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <a5b979d7-1086-fe6c-6e82-f20ecb56d24c@nvidia.com>
-Date:   Thu, 17 Dec 2020 01:15:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101
- Thunderbird/84.0
+        id S1727147AbgLQJ6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 04:58:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57860 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726548AbgLQJ6M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Dec 2020 04:58:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id ABA97AC7B;
+        Thu, 17 Dec 2020 09:57:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5B3921E135E; Thu, 17 Dec 2020 10:57:28 +0100 (CET)
+Date:   Thu, 17 Dec 2020 10:57:28 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        jlayton@kernel.org, amir73il@gmail.com, sargun@sargun.me,
+        miklos@szeredi.hu, willy@infradead.org, jack@suse.cz,
+        neilb@suse.com, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 1/3] vfs: add new f_op->syncfs vector
+Message-ID: <20201217095728.GB6989@quack2.suse.cz>
+References: <20201216233149.39025-1-vgoyal@redhat.com>
+ <20201216233149.39025-2-vgoyal@redhat.com>
+ <20201217004935.GN3579531@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20201216182335.27227-19-willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1608196511; bh=R8d+cbbN++Nu/JZ/Spif9ERgIOOHw66AVM7XM2f2jHA=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=J69MPPJWk8j7pB65gpW8AA5TpJ/a788fkD4dUvEE72a6NPnSq4BlCvo70SCDdPXBl
-         FEuy3YBxdv7OBPHkVdMjiWVHRCsuY8svj9NIs+/u6A+0IwyR2omdysyQ1/yWoDjLM5
-         cSQtmxfpLEDYN/AKdaYy1KqUuGriJhXmJqiFdoU2Rd7vHVgJBduKeyRClj/8zOIGBe
-         8y9PcBdazubCwir8jCdmxFYhflsG6IgwkvQYr23J/xB/T0tGWlpFcitEneNqCoOXK/
-         2Cw2majMmD6ZT/ahUy9+7mn4hhqb74gg8w8JBLllaA7jDyHZOtZyGdbxNsZHFtJN3z
-         +ThHTRn5nXDRA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201217004935.GN3579531@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/16/20 10:23 AM, Matthew Wilcox (Oracle) wrote:
-> Implement readahead_batch_length() to determine the number of bytes in
-> the current batch of readahead pages and use it in btrfs.
+On Thu 17-12-20 00:49:35, Al Viro wrote:
+> [Christoph added to Cc...]
+> On Wed, Dec 16, 2020 at 06:31:47PM -0500, Vivek Goyal wrote:
+> > Current implementation of __sync_filesystem() ignores the return code
+> > from ->sync_fs(). I am not sure why that's the case. There must have
+> > been some historical reason for this.
+> > 
+> > Ignoring ->sync_fs() return code is problematic for overlayfs where
+> > it can return error if sync_filesystem() on upper super block failed.
+> > That error will simply be lost and sycnfs(overlay_fd), will get
+> > success (despite the fact it failed).
+> > 
+> > If we modify existing implementation, there is a concern that it will
+> > lead to user space visible behavior changes and break things. So
+> > instead implement a new file_operations->syncfs() call which will
+> > be called in syncfs() syscall path. Return code from this new
+> > call will be captured. And all the writeback error detection
+> > logic can go in there as well. Only filesystems which implement
+> > this call get affected by this change. Others continue to fallback
+> > to existing mechanism.
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->   fs/btrfs/extent_io.c    | 6 ++----
->   include/linux/pagemap.h | 9 +++++++++
->   2 files changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index 6e3b72e63e42..42936a83a91b 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -4436,10 +4436,8 @@ void extent_readahead(struct readahead_control *rac)
->   	int nr;
->   
->   	while ((nr = readahead_page_batch(rac, pagepool))) {
-> -		u64 contig_start = page_offset(pagepool[0]);
-> -		u64 contig_end = page_offset(pagepool[nr - 1]) + PAGE_SIZE - 1;
-> -
-> -		ASSERT(contig_start + nr * PAGE_SIZE - 1 == contig_end);
-> +		u64 contig_start = readahead_pos(rac);
-> +		u64 contig_end = contig_start + readahead_batch_length(rac);
+> That smells like a massive source of confusion down the road.  I'd just
+> looked through the existing instances; many always return 0, but quite
+> a few sometimes try to return an error:
+> fs/btrfs/super.c:2412:  .sync_fs        = btrfs_sync_fs,
+> fs/exfat/super.c:204:   .sync_fs        = exfat_sync_fs,
+> fs/ext4/super.c:1674:   .sync_fs        = ext4_sync_fs,
+> fs/f2fs/super.c:2480:   .sync_fs        = f2fs_sync_fs,
+> fs/gfs2/super.c:1600:   .sync_fs                = gfs2_sync_fs,
+> fs/hfsplus/super.c:368: .sync_fs        = hfsplus_sync_fs,
+> fs/nilfs2/super.c:689:  .sync_fs        = nilfs_sync_fs,
+> fs/ocfs2/super.c:139:   .sync_fs        = ocfs2_sync_fs,
+> fs/overlayfs/super.c:399:       .sync_fs        = ovl_sync_fs,
+> fs/ubifs/super.c:2052:  .sync_fs       = ubifs_sync_fs,
+> is the list of such.  There are 4 method callers:
+> dquot_quota_sync(), dquot_disable(), __sync_filesystem() and
+> sync_fs_one_sb().  For sync_fs_one_sb() we want to ignore the
+> return value; for __sync_filesystem() we almost certainly
+> do *not* - it ends with return __sync_blockdev(sb->s_bdev, wait),
+> after all.  The question for that one is whether we want
+> __sync_blockdev() called even in case of ->sync_fs() reporting
+> a failure, and I suspect that it's safer to call it anyway and
+> return the first error value we'd got.  No idea about quota
+> situation.
 
-Something in this tiny change is breaking btrfs: it hangs my Fedora 33 test
-system (which changed over to btrfs) on boot. I haven't quite figured out
-what's really wrong, but git bisect lands here, *and* turning the whole
-extent_readahead() function into a no-op (on top of the whole series)
-allows everything to work once again.
+WRT quota situation: All the ->sync_fs() calls there are due to cache
+coherency reasons (we need to get quota changes to disk, then prune quota
+files's page cache, and then userspace can read current quota structures
+from the disk). We don't want to fail dquot_disable() just because caches
+might be incoherent so ignoring ->sync_fs() return value there is fine.
+With dquot_quota_sync() it might make some sense to return the error -
+that's just a backend for Q_SYNC quotactl(2). OTOH I'm not sure anybody
+really cares - Q_SYNC is rarely used.
 
-Sorry for not actually solving the root cause, but I figured you'd be able
-to jump straight to the answer, with the above information, so I'm sending
-it out early.
-
-
-thanks,
+								Honza
 -- 
-John Hubbard
-NVIDIA
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
