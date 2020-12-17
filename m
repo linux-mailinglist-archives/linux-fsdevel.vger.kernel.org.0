@@ -2,213 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0807C2DDAB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 22:19:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A29B2DDAE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 22:35:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728557AbgLQVTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 16:19:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728418AbgLQVTc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 16:19:32 -0500
-Message-ID: <9e38d400ed1e6bf4a3909f69238e3e5001d908fb.camel@kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608239931;
-        bh=C5Ln5j4AUfOuU08/+BrYXp7wAGP2LqOx+lHU9eUlRno=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=hTThsZXJkCqjTnz0x5Q4qlnY+sKv8oRcWybpnie7rCCeZH+ems3cP8kdJvIErLxM8
-         N4o4JFJnupV0Pc5DNv73go05EdECdZ+kq6Y5L/zplFLfDcW/EkvPkFH8N3wM4vQgET
-         sPYVw8TwaVUqLPWcoxuDNqM4uzVijBJ/Z8TtYGCvtHykKEs7AEJvVdtMFND8hqC7it
-         tIqRAQYPpeTxkwa2Grx64Wi6eADMXi0ee0VTTEyRnpVP1kbPNkE1AkS36BzSXvBGjM
-         xNy6xuIG56y+vM/hxLRZAOxE2dPfonGQUDFMbHaGjeLyAz3dkX9PjQoIU+dXKwWOCI
-         Uh9JkPgBRjAyA==
-Subject: Re: [PATCH v3] errseq: split the ERRSEQ_SEEN flag into two new flags
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
-Date:   Thu, 17 Dec 2020 16:18:49 -0500
-In-Reply-To: <20201217203523.GB28177@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20201217150037.468787-1-jlayton@kernel.org>
-         <20201217203523.GB28177@ircssh-2.c.rugged-nimbus-611.internal>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        id S1728204AbgLQVeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 16:34:22 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38649 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727106AbgLQVeW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Dec 2020 16:34:22 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kq0u3-00011J-Bo; Thu, 17 Dec 2020 21:33:39 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        syzbot+96cfd2b22b3213646a93@syzkaller.appspotmail.com,
+        Giuseppe Scrivano <gscrivan@redhat.com>
+Subject: [PATCH] close_range: cap range for CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC
+Date:   Thu, 17 Dec 2020 22:33:03 +0100
+Message-Id: <20201217213303.722643-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <https://lore.kernel.org/lkml/000000000000a3962305b6ab0077@google.com>
+References: <https://lore.kernel.org/lkml/000000000000a3962305b6ab0077@google.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-12-17 at 20:35 +0000, Sargun Dhillon wrote:
-> On Thu, Dec 17, 2020 at 10:00:37AM -0500, Jeff Layton wrote:
-> > Overlayfs's volatile mounts want to be able to sample an error for their
-> > own purposes, without preventing a later opener from potentially seeing
-> > the error.
-> > 
-> > The original reason for the ERRSEQ_SEEN flag was to make it so that we
-> > didn't need to increment the counter if nothing had observed the latest
-> > value and the error was the same. Eventually, a regression was reported
-> > in the errseq_t conversion, and we fixed that by using the ERRSEQ_SEEN
-> > flag to also mean that the error had been reported to userland at least
-> > once somewhere.
-> > 
-> > Those are two different states, however. If we instead take a second
-> > flag bit from the counter, we can track these two things separately, and
-> > accomodate the overlayfs volatile mount use-case.
-> > 
-> > Rename the ERRSEQ_SEEN flag to ERRSEQ_OBSERVED and use that to indicate
-> > that the counter must be incremented the next time an error is set.
-> > Also, add a new ERRSEQ_REPORTED flag that indicates whether the current
-> > error was returned to userland (and thus doesn't need to be reported on
-> > newly open file descriptions).
-> > 
-> > Test only for the OBSERVED bit when deciding whether to increment the
-> > counter and only for the REPORTED bit when deciding what to return in
-> > errseq_sample.
-> > 
-> > Add a new errseq_peek function to allow for the overlayfs use-case.
-> > This just grabs the latest counter and sets the OBSERVED bit, leaving the
-> > REPORTED bit untouched.
-> > 
-> > errseq_check_and_advance must now handle a single special case where
-> > it races against a "peek" of an as of yet unseen value. The do/while
-> > loop looks scary, but shouldn't loop more than once.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  Documentation/core-api/errseq.rst |  22 +++--
-> >  include/linux/errseq.h            |   1 +
-> >  lib/errseq.c                      | 139 ++++++++++++++++++++++--------
-> >  3 files changed, 118 insertions(+), 44 deletions(-)
-> > 
-> > v3: rename SEEN/MUSTINC flags to REPORTED/OBSERVED
-> > 
-> > Hopefully the new flag names will make this a bit more clear. We could
-> > also rename some of the functions if that helps too. We could consider
-> > moving from errseq_sample/_check_and_advance to
-> > errseq_observe/errseq_report?  I'm not sure that helps anything though.
-> > 
-> > I know that Vivek and Sargun are working on syncfs() for overlayfs, so
-> > we probably don't want to merge this until that work is ready. I think
-> 
-> I disagree. I think that this work can land ahead of that, given that I think 
-> this is probably backportable to v5.10 without much risk, with the addition of 
-> your RFC v2 Overlay patch. I think the work proper long-term repair Vivek is 
-> embarking upon seems like it may be far more invasive.
-> 
-> > the errseq_peek call will need to be part of their solution for volatile
-> > mounts, however, so I'm fine with merging this via the overlayfs tree,
-> > once that work is complete.
-> > 
-> > diff --git a/Documentation/core-api/errseq.rst b/Documentation/core-api/errseq.rst
-> > index ff332e272405..ce46ddcc1487 100644
-> > --- a/Documentation/core-api/errseq.rst
-> > +++ b/Documentation/core-api/errseq.rst
-> > @@ -18,18 +18,22 @@ these functions can be called from any context.
-> >  Note that there is a risk of collisions if new errors are being recorded
-> >  frequently, since we have so few bits to use as a counter.
-> >  
-> > 
-> > 
-> > 
-> > -To mitigate this, the bit between the error value and counter is used as
-> > -a flag to tell whether the value has been sampled since a new value was
-> > -recorded.  That allows us to avoid bumping the counter if no one has
-> > -sampled it since the last time an error was recorded.
-> > +To mitigate this, the bits between the error value and counter are used
-> > +as flags to tell whether the value has been sampled since a new value
-> > +was recorded, and whether the latest error has been seen by userland.
-> > +That allows us to avoid bumping the counter if no one has sampled it
-> > +since the last time an error was recorded, and also ensures that any
-> > +recorded error will be seen at least once.
-> >  
-> > 
-> > 
-> > 
-> >  Thus we end up with a value that looks something like this:
-> >  
-> > 
-> > 
-> > 
-> > -+--------------------------------------+----+------------------------+
-> > -| 31..13                               | 12 | 11..0                  |
-> > -+--------------------------------------+----+------------------------+
-> > -| counter                              | SF | errno                  |
-> > -+--------------------------------------+----+------------------------+
-> > ++---------------------------------+----+----+------------------------+
-> > +| 31..14                          | 13 | 12 | 11..0                  |
-> > ++---------------------------------+----+----+------------------------+
-> > +| counter                         | OF | RF | errno                  |
-> > ++---------------------------------+----+----+------------------------+
-> > +OF = ERRSEQ_OBSERVED flag
-> > +RF = ERRSEQ_REPORTED flag
-> >  
-> > 
-> > 
-> > 
-> >  The general idea is for "watchers" to sample an errseq_t value and keep
-> >  it as a running cursor.  That value can later be used to tell whether
-> > diff --git a/include/linux/errseq.h b/include/linux/errseq.h
-> > index fc2777770768..7e3634269c95 100644
-> > --- a/include/linux/errseq.h
-> > +++ b/include/linux/errseq.h
-> > @@ -9,6 +9,7 @@ typedef u32	errseq_t;
-> >  
-> > 
-> > 
-> > 
-> >  errseq_t errseq_set(errseq_t *eseq, int err);
-> >  errseq_t errseq_sample(errseq_t *eseq);
-> > +errseq_t errseq_peek(errseq_t *eseq);
-> >  int errseq_check(errseq_t *eseq, errseq_t since);
-> >  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
-> >  #endif
-> > diff --git a/lib/errseq.c b/lib/errseq.c
-> > index 81f9e33aa7e7..8fd6be134dcc 100644
-> > --- a/lib/errseq.c
-> > +++ b/lib/errseq.c
-> > @@ -21,10 +21,14 @@
-> >   * Note that there is a risk of collisions if new errors are being recorded
-> >   * frequently, since we have so few bits to use as a counter.
-> >   *
-> > - * To mitigate this, one bit is used as a flag to tell whether the value has
-> > - * been sampled since a new value was recorded. That allows us to avoid bumping
-> > - * the counter if no one has sampled it since the last time an error was
-> > - * recorded.
-> > + * To mitigate this, one bit is used as a flag to tell whether the value has been
-> > + * observed in some fashion. That allows us to avoid bumping the counter if no
-> > + * one has sampled it since the last time an error was recorded.
-> > + *
-> > + * A second flag bit is used to indicate whether the latest error that has been
-> > + * recorded has been reported to userland. If the REPORTED bit is not set when the
-> > + * file is opened, then we ensure that the opener will see the error by setting
-> > + * its sample to 0.
-> 
-> Since there are only a few places that report to userland (as far as I can tell, 
-> a bit of usage in ceph), does it make sense to maintain this specific flag that
-> indicates it's reported to userspace? Instead can userspace keep a snapshot
-> of the last errseq it reported (say on the superblock), and use that to drive
-> reports to userspace?
-> 
-> It's a 32-bit sacrifice per SB though, but it means we can get rid of 
-> errseq_check_and_advance and potentially remove any need for locking and just
-> rely on cmpxchg.
+After introducing CLOSE_RANGE_CLOEXEC syzbot reported a crash when
+CLOSE_RANGE_CLOEXEC is specified in conjunction with CLOSE_RANGE_UNSHARE.
+When CLOSE_RANGE_UNSHARE is specified the caller will receive a private
+file descriptor table in case their file descriptor table is currently
+shared. When the caller requests that all file descriptors are supposed to
+be operated on via e.g. a call like close_range(3, ~0U) and the caller
+shares their file descriptor table then the kernel will only copy all
+files in the range from 0 to 3 and no others.
+When the caller requests CLOSE_RANGE_CLOEXEC in such a scenario we need to
+make sure that the maximum fd of the newly allocated file descriptor table
+is used, not the maximum of the old file descriptor table. The patch has
+been tested by syzbot (see below) and the issue went away.
 
-I think it makes sense. You are essentially adding a new class of
-"samplers" that use the error for their own purposes and won't be
-reporting it to userland via normal channels (syncfs, etc.). A single
-bit to indicate whether it has only been observed by such samplers is
-not a huge sacrifice.
+syzbot reported
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
+BUG: KASAN: null-ptr-deref in atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
+BUG: KASAN: null-ptr-deref in atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
+BUG: KASAN: null-ptr-deref in filp_close+0x22/0x170 fs/open.c:1274
+Read of size 8 at addr 0000000000000077 by task syz-executor511/8522
 
-I worry too about race conditions when tracking this information across
-multiple words. You'll either need to use some locking to manage that,
-or get clever with memory barriers. Keeping everything in one word makes
-things a lot simpler.
+CPU: 1 PID: 8522 Comm: syz-executor511 Not tainted 5.10.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:120
+ __kasan_report mm/kasan/report.c:549 [inline]
+ kasan_report.cold+0x5/0x37 mm/kasan/report.c:562
+ check_memory_region_inline mm/kasan/generic.c:186 [inline]
+ check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
+ instrument_atomic_read include/linux/instrumented.h:71 [inline]
+ atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
+ atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
+ filp_close+0x22/0x170 fs/open.c:1274
+ close_files fs/file.c:402 [inline]
+ put_files_struct fs/file.c:417 [inline]
+ put_files_struct+0x1cc/0x350 fs/file.c:414
+ exit_files+0x12a/0x170 fs/file.c:435
+ do_exit+0xb4f/0x2a00 kernel/exit.c:818
+ do_group_exit+0x125/0x310 kernel/exit.c:920
+ get_signal+0x428/0x2100 kernel/signal.c:2792
+ arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
+ handle_signal_work kernel/entry/common.c:147 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+ exit_to_user_mode_prepare+0x124/0x200 kernel/entry/common.c:201
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+ syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x447039
+Code: Unable to access opcode bytes at RIP 0x44700f.
+RSP: 002b:00007f1b1225cdb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: 0000000000000001 RBX: 00000000006dbc28 RCX: 0000000000447039
+RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00000000006dbc2c
+RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 00007fff223b6bef R14: 00007f1b1225d9c0 R15: 00000000006dbc2c
+==================================================================
+
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-and-tested-by: syzbot+96cfd2b22b3213646a93@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         3274183b close_range: cap range for CLOSE_RANGE_UNSHARE | ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d42216b510180e3
+dashboard link: https://syzkaller.appspot.com/bug?extid=96cfd2b22b3213646a93
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Reported-by: syzbot+96cfd2b22b3213646a93@syzkaller.appspotmail.com
+Fixes: 582f1fb6b721 ("fs, close_range: add flag CLOSE_RANGE_CLOEXEC")
+Cc: Giuseppe Scrivano <gscrivan@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+I'll try to send this asap to get this fixed unless someone sees an
+issue with this. I'll also add tests for this in a little bit.
+
+Christian
+---
+ fs/file.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/file.c b/fs/file.c
+index 8434e0afecc7..0420cdb2ae5d 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -639,6 +639,10 @@ static inline void __range_cloexec(struct files_struct *cur_fds,
+ 
+ 	spin_lock(&cur_fds->file_lock);
+ 	fdt = files_fdtable(cur_fds);
++	if (max_fd >= fdt->max_fds) {
++		max_fd = fdt->max_fds;
++		max_fd--;
++	}
+ 	bitmap_set(fdt->close_on_exec, fd, max_fd - fd + 1);
+ 	spin_unlock(&cur_fds->file_lock);
+ }
+
+base-commit: accefff5b547a9a1d959c7e76ad539bf2480e78b
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.29.2
 
