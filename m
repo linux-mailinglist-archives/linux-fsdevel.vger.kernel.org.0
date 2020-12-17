@@ -2,179 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25E862DCE13
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 10:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 356982DCE23
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 10:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbgLQJGZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 04:06:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbgLQJGY (ORCPT
+        id S1726699AbgLQJPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 04:15:52 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17656 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbgLQJPv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 04:06:24 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179D2C0617A7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 01:05:44 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id b5so3750529pjk.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 01:05:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Jju/bhtr378BZhL5XC8hlXJ5twNsYnX10+jclSTpAtw=;
-        b=oyT19CCeCTvnLuZsgySvYPjdrvjtXQFVUeDBvJPphOXxl/MBFsaAONbs7EtEB9CB16
-         Z33x5yEq+NVJZyrcFATL9oI8Lom7xeH8H7nWshGuzMO2DfrQXY/ZWSUv25tcCpoYmUWe
-         ZkVeWr5GoxZlMbYI9gRf3oa7luwcmgIo27ljLWVTCs5MDwZfHxpMnDUNGT/+SWzbQ4xw
-         pv7FZal9SXndCn9cAd8vDh4MZXHBPCpYMQKqvakbue1/f7ux2VwzBHjilo3x2BfVxIvI
-         ks3ZW9TKrwk15fo6SLYheJGUS6QGy0019nm1laQvtbRpmEKZE2V15ZEcolLQc23reoZu
-         J8Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Jju/bhtr378BZhL5XC8hlXJ5twNsYnX10+jclSTpAtw=;
-        b=DLmhb55Kn6lwF23zLyscYFF+HKTJjiN3W5W8Ts7mgLYRuGtuxZBH+fREQstI0Z8GRA
-         WJtDoPN25KSX3Du4PTphVfwrZeMv6ULOYh6RajKPxBuHtg66OF4KUl7FsaPCc7zX7cth
-         soiNGqZFKEFgTAEZ+TDKb0EENa+ZaAeR3A9f83pPP2zbvmZ3glm70qUKmL3Y67Mtenqy
-         zaXKRKa//eRSqScbSFNFsKnDAS65aB1rPUdOBsfajZo+7sv/qaiQ21iC7NvO8aszCPoF
-         x30IwP42Ma9rbIuLQzSB2qJQ9vi0xSCEA2157vHc4lqe2XqPY4983MEmZPA2QDdGWPAX
-         mXDw==
-X-Gm-Message-State: AOAM532XWHGskaPrLQCSP3LAxBP78ca/L17GrI7+4QjyPUQif7k4wONj
-        z9mJQ3jGKFYZY4G7ae2uziW220g43TQhJkS55kTO1g==
-X-Google-Smtp-Source: ABdhPJxDpXsIbZNc4x3sr9DJrY0ZC9PGO9w3Eabe2wNgO5QhVcnZ9m9fZAKWqgGcx69r2FmoF930NeWGyZWQQdyJwZ4=
-X-Received: by 2002:a17:90a:c588:: with SMTP id l8mr7047657pjt.147.1608195943608;
- Thu, 17 Dec 2020 01:05:43 -0800 (PST)
+        Thu, 17 Dec 2020 04:15:51 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fdb219f0004>; Thu, 17 Dec 2020 01:15:11 -0800
+Received: from [10.2.61.104] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 17 Dec
+ 2020 09:15:11 +0000
+Subject: Re: [PATCH 18/25] btrfs: Use readahead_batch_length
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20201216182335.27227-1-willy@infradead.org>
+ <20201216182335.27227-19-willy@infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <a5b979d7-1086-fe6c-6e82-f20ecb56d24c@nvidia.com>
+Date:   Thu, 17 Dec 2020 01:15:10 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101
+ Thunderbird/84.0
 MIME-Version: 1.0
-References: <20201213154534.54826-1-songmuchun@bytedance.com>
- <20201213154534.54826-4-songmuchun@bytedance.com> <5936a766-505a-eab0-42a6-59aab2585880@oracle.com>
- <20201216222549.GC3207@localhost.localdomain> <49f6a0f1-c6fa-4642-2db0-69f090e8a392@oracle.com>
- <CAMZfGtXwU7LcTZw7iKFNksVTYx8Bhd=9Nct+zfNy_ibuFiF6ew@mail.gmail.com>
-In-Reply-To: <CAMZfGtXwU7LcTZw7iKFNksVTYx8Bhd=9Nct+zfNy_ibuFiF6ew@mail.gmail.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 17 Dec 2020 17:05:07 +0800
-Message-ID: <CAMZfGtU4QRXp_ufJX_XZzbANbhLO1sdGvDEe+ugTg7WfVc-VYA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v9 03/11] mm/hugetlb: Free the vmemmap
- pages associated with each HugeTLB page
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201216182335.27227-19-willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1608196511; bh=R8d+cbbN++Nu/JZ/Spif9ERgIOOHw66AVM7XM2f2jHA=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=J69MPPJWk8j7pB65gpW8AA5TpJ/a788fkD4dUvEE72a6NPnSq4BlCvo70SCDdPXBl
+         FEuy3YBxdv7OBPHkVdMjiWVHRCsuY8svj9NIs+/u6A+0IwyR2omdysyQ1/yWoDjLM5
+         cSQtmxfpLEDYN/AKdaYy1KqUuGriJhXmJqiFdoU2Rd7vHVgJBduKeyRClj/8zOIGBe
+         8y9PcBdazubCwir8jCdmxFYhflsG6IgwkvQYr23J/xB/T0tGWlpFcitEneNqCoOXK/
+         2Cw2majMmD6ZT/ahUy9+7mn4hhqb74gg8w8JBLllaA7jDyHZOtZyGdbxNsZHFtJN3z
+         +ThHTRn5nXDRA==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 2:54 PM Muchun Song <songmuchun@bytedance.com> wrote:
->
-> On Thu, Dec 17, 2020 at 6:52 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
-> >
-> > On 12/16/20 2:25 PM, Oscar Salvador wrote:
-> > > On Wed, Dec 16, 2020 at 02:08:30PM -0800, Mike Kravetz wrote:
-> > >>> + * vmemmap_rmap_walk - walk vmemmap page table
-> > >>> +
-> > >>> +static void vmemmap_pte_range(pmd_t *pmd, unsigned long addr,
-> > >>> +                         unsigned long end, struct vmemmap_rmap_walk *walk)
-> > >>> +{
-> > >>> +   pte_t *pte;
-> > >>> +
-> > >>> +   pte = pte_offset_kernel(pmd, addr);
-> > >>> +   do {
-> > >>> +           BUG_ON(pte_none(*pte));
-> > >>> +
-> > >>> +           if (!walk->reuse)
-> > >>> +                   walk->reuse = pte_page(pte[VMEMMAP_TAIL_PAGE_REUSE]);
-> > >>
-> > >> It may be just me, but I don't like the pte[-1] here.  It certainly does work
-> > >> as designed because we want to remap all pages in the range to the page before
-> > >> the range (at offset -1).  But, we do not really validate this 'reuse' page.
-> > >> There is the BUG_ON(pte_none(*pte)) as a sanity check, but we do nothing similar
-> > >> for pte[-1].  Based on the usage for HugeTLB pages, we can be confident that
-> > >> pte[-1] is actually a pte.  In discussions with Oscar, you mentioned another
-> > >> possible use for these routines.
-> > >
-> > > Without giving it much of a thought, I guess we could duplicate the
-> > > BUG_ON for the pte outside the loop, and add a new one for pte[-1].
-> > > Also, since walk->reuse seems to not change once it is set, we can take
-> > > it outside the loop? e.g:
-> > >
-> > >       pte *pte;
-> > >
-> > >       pte = pte_offset_kernel(pmd, addr);
-> > >       BUG_ON(pte_none(*pte));
-> > >       BUG_ON(pte_none(pte[VMEMMAP_TAIL_PAGE_REUSE]));
-> > >       walk->reuse = pte_page(pte[VMEMMAP_TAIL_PAGE_REUSE]);
-> > >       do {
-> > >               ....
-> > >       } while...
-> > >
-> > > Or I am not sure whether we want to keep it inside the loop in case
-> > > future cases change walk->reuse during the operation.
-> > > But to be honest, I do not think it is realistic of all future possible
-> > > uses of this, so I would rather keep it simple for now.
-> >
-> > I was thinking about possibly passing the 'reuse' address as another parameter
-> > to vmemmap_remap_reuse().  We could add this addr to the vmemmap_rmap_walk
-> > struct and set walk->reuse when we get to the pte for that address.  Of
-> > course this would imply that the addr would need to be part of the range.
->
-> Maybe adding another one parameter is unnecessary.  How about doing
-> this in the vmemmap_remap_reuse?
->
-> The 'reuse' address just is start + PAGE_SIZE.
->
-> void vmemmap_remap_free(unsigned long start, unsigned long size)
-> {
->          unsigned long end = start + size;
->          unsigned long reuse_addr = start + PAGE_SIZE;
-                                           ^^^
-                                        Here is "-"
-Sorry.
+On 12/16/20 10:23 AM, Matthew Wilcox (Oracle) wrote:
+> Implement readahead_batch_length() to determine the number of bytes in
+> the current batch of readahead pages and use it in btrfs.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>   fs/btrfs/extent_io.c    | 6 ++----
+>   include/linux/pagemap.h | 9 +++++++++
+>   2 files changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index 6e3b72e63e42..42936a83a91b 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -4436,10 +4436,8 @@ void extent_readahead(struct readahead_control *rac)
+>   	int nr;
+>   
+>   	while ((nr = readahead_page_batch(rac, pagepool))) {
+> -		u64 contig_start = page_offset(pagepool[0]);
+> -		u64 contig_end = page_offset(pagepool[nr - 1]) + PAGE_SIZE - 1;
+> -
+> -		ASSERT(contig_start + nr * PAGE_SIZE - 1 == contig_end);
+> +		u64 contig_start = readahead_pos(rac);
+> +		u64 contig_end = contig_start + readahead_batch_length(rac);
 
->          LIST_HEAD(vmemmap_pages);
->
->          struct vmemmap_remap_walk walk = {
->                   .remap_pte = vmemmap_remap_pte,
->                   .vmemmap_pages = &vmemmap_pages,
->                   .reuse_addr = reuse_addr.
->          };
->
-> }
->
-> >
-> > Ideally, we would walk the page table to get to the reuse page.  My concern
-> > was not explicitly about adding the BUG_ON.  In more general use, *pte could
-> > be the first entry on a pte page.  And, then pte[-1] may not even be a pte.
-> >
-> > Again, I don't think this matters for the current HugeTLB use case.  Just a
-> > little concerned if code is put to use for other purposes.
-> > --
-> > Mike Kravetz
->
->
->
-> --
-> Yours,
-> Muchun
+Something in this tiny change is breaking btrfs: it hangs my Fedora 33 test
+system (which changed over to btrfs) on boot. I haven't quite figured out
+what's really wrong, but git bisect lands here, *and* turning the whole
+extent_readahead() function into a no-op (on top of the whole series)
+allows everything to work once again.
+
+Sorry for not actually solving the root cause, but I figured you'd be able
+to jump straight to the answer, with the above information, so I'm sending
+it out early.
 
 
-
+thanks,
 -- 
-Yours,
-Muchun
+John Hubbard
+NVIDIA
