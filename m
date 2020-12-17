@@ -2,120 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDEEF2DD505
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 17:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B10CD2DD50A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Dec 2020 17:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbgLQQRR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 11:17:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:22919 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727160AbgLQQRR (ORCPT
+        id S1728127AbgLQQT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 11:19:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728109AbgLQQT5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 11:17:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608221750;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q/b/v+hSeNNT4VeZ2DOPGbxU3nTWh0frrgQ+iTBSu+E=;
-        b=i2jmW+oW0L6jHxaBJfbLYUs4Jqs3tA4YgQagUOSKbeX3rH/G0wvfEsinwSm2OBX/VIeceb
-        dDgrGN6K6Jwyp7FT9eAhu1u+4P9IssjstaXq86qzXlDaZHh+pnYv16EyJQ2Pj2U6VL/qSg
-        2o7SA/PTyLXFdRt1oeFLnjpsQYIfmyY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-206-cBfr0aPgO3WqHJmv33bM9Q-1; Thu, 17 Dec 2020 11:15:48 -0500
-X-MC-Unique: cBfr0aPgO3WqHJmv33bM9Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DC6C5108444D;
-        Thu, 17 Dec 2020 16:15:26 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-112-107.rdu2.redhat.com [10.10.112.107])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A7F4818222;
-        Thu, 17 Dec 2020 16:15:26 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 23962220BCF; Thu, 17 Dec 2020 11:15:26 -0500 (EST)
-Date:   Thu, 17 Dec 2020 11:15:26 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        jlayton@kernel.org, amir73il@gmail.com, sargun@sargun.me,
-        miklos@szeredi.hu, willy@infradead.org, neilb@suse.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 1/3] vfs: add new f_op->syncfs vector
-Message-ID: <20201217161526.GB3630@redhat.com>
-References: <20201216233149.39025-1-vgoyal@redhat.com>
- <20201216233149.39025-2-vgoyal@redhat.com>
- <20201217004935.GN3579531@ZenIV.linux.org.uk>
- <20201217095728.GB6989@quack2.suse.cz>
+        Thu, 17 Dec 2020 11:19:57 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 020CEC061794
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 08:19:17 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id p5so26326916iln.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Dec 2020 08:19:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3c5SMF0zYxqErtpvh8FlH8ydKXXNNubW5X+nlQlmPOI=;
+        b=aPap6Sg9frPxwaW2CDuf1o40kUThwidW6Kw5SAcV9fwNuB1bdjvnSPP6l5SCx2m+WR
+         9s7Klp+zIGww85tBzGCdbYzIM7RY2tzG5e3NI+FcZeg7K3T7IzYWWe8ogApp+OmT9OVt
+         Vy2cyiRprsn+peczc48dCdwYvLxLN+QuxSLasDuRoiY0NnYF3fbKLPZjyShGwHKKgJJa
+         O/Io3pyMrGJKH2yXAuOlQKNBoJ33BjxgZ4LAhD54G+bxlzamXoxseAe7281DW3DaMjUF
+         IvzB2ysnaY5AktH9KratVAU54ZL2uax/5M0++iSpfjG/nunm9FXUWqfA+ZnTvoKiKvKx
+         K6BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3c5SMF0zYxqErtpvh8FlH8ydKXXNNubW5X+nlQlmPOI=;
+        b=gyfrxQzneVqnmQQEY/soOKYO+nGmJuJxvAaPAZ/S62fYUp9L7S7QehAIqRaq3quMFV
+         8/gOyL5eVyjQXAQQ+UC9ZFZYWjUfSU21sAa1ET8o3N914Ue4jPaPiSZjbxCedU0NWug5
+         c4pbB606C/6tLPhP+AJ4JfVutzoUl0/KGKp/UUE2uHE8RAfnUr+1poGQV0HreuWatKSC
+         N7YFus4VsgKxHwDRt14PAyZJII1vo9B4jwPKC+0yX8fTbmmd1i483T4M+E+8I9VM0/TL
+         /cAW1HX/dY5Qv1NiIP9zViIT3On+mR7a7tMw4KjcrhCPQiPZApyPnMANdSfctU79mgTJ
+         2OIQ==
+X-Gm-Message-State: AOAM531kdKBhhO5j0mlo+UjtXdZxcAMvEo+6k7lANfPrdvsB4DRx/q7b
+        NlPQ9T2xTwwiDl03/rIGEaKT8N8FrTWj+g==
+X-Google-Smtp-Source: ABdhPJzr/4lHGz1kIZoO4e7W/cADj0qVNn5r0gsR62h3UuPtq70FPP8M+z7kfzKSY8Dtngf7ZCBG8A==
+X-Received: by 2002:a92:dc4a:: with SMTP id x10mr31075996ilq.153.1608221955797;
+        Thu, 17 Dec 2020 08:19:15 -0800 (PST)
+Received: from p1.localdomain ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id k76sm3849957ilk.36.2020.12.17.08.19.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Dec 2020 08:19:15 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Subject: [PATCHSET 0/4] fs: Support for LOOKUP_CACHED / RESOLVE_CACHED
+Date:   Thu, 17 Dec 2020 09:19:07 -0700
+Message-Id: <20201217161911.743222-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201217095728.GB6989@quack2.suse.cz>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 10:57:28AM +0100, Jan Kara wrote:
-> On Thu 17-12-20 00:49:35, Al Viro wrote:
-> > [Christoph added to Cc...]
-> > On Wed, Dec 16, 2020 at 06:31:47PM -0500, Vivek Goyal wrote:
-> > > Current implementation of __sync_filesystem() ignores the return code
-> > > from ->sync_fs(). I am not sure why that's the case. There must have
-> > > been some historical reason for this.
-> > > 
-> > > Ignoring ->sync_fs() return code is problematic for overlayfs where
-> > > it can return error if sync_filesystem() on upper super block failed.
-> > > That error will simply be lost and sycnfs(overlay_fd), will get
-> > > success (despite the fact it failed).
-> > > 
-> > > If we modify existing implementation, there is a concern that it will
-> > > lead to user space visible behavior changes and break things. So
-> > > instead implement a new file_operations->syncfs() call which will
-> > > be called in syncfs() syscall path. Return code from this new
-> > > call will be captured. And all the writeback error detection
-> > > logic can go in there as well. Only filesystems which implement
-> > > this call get affected by this change. Others continue to fallback
-> > > to existing mechanism.
-> > 
-> > That smells like a massive source of confusion down the road.  I'd just
-> > looked through the existing instances; many always return 0, but quite
-> > a few sometimes try to return an error:
-> > fs/btrfs/super.c:2412:  .sync_fs        = btrfs_sync_fs,
-> > fs/exfat/super.c:204:   .sync_fs        = exfat_sync_fs,
-> > fs/ext4/super.c:1674:   .sync_fs        = ext4_sync_fs,
-> > fs/f2fs/super.c:2480:   .sync_fs        = f2fs_sync_fs,
-> > fs/gfs2/super.c:1600:   .sync_fs                = gfs2_sync_fs,
-> > fs/hfsplus/super.c:368: .sync_fs        = hfsplus_sync_fs,
-> > fs/nilfs2/super.c:689:  .sync_fs        = nilfs_sync_fs,
-> > fs/ocfs2/super.c:139:   .sync_fs        = ocfs2_sync_fs,
-> > fs/overlayfs/super.c:399:       .sync_fs        = ovl_sync_fs,
-> > fs/ubifs/super.c:2052:  .sync_fs       = ubifs_sync_fs,
-> > is the list of such.  There are 4 method callers:
-> > dquot_quota_sync(), dquot_disable(), __sync_filesystem() and
-> > sync_fs_one_sb().  For sync_fs_one_sb() we want to ignore the
-> > return value; for __sync_filesystem() we almost certainly
-> > do *not* - it ends with return __sync_blockdev(sb->s_bdev, wait),
-> > after all.  The question for that one is whether we want
-> > __sync_blockdev() called even in case of ->sync_fs() reporting
-> > a failure, and I suspect that it's safer to call it anyway and
-> > return the first error value we'd got.  No idea about quota
-> > situation.
-> 
-> WRT quota situation: All the ->sync_fs() calls there are due to cache
-> coherency reasons (we need to get quota changes to disk, then prune quota
-> files's page cache, and then userspace can read current quota structures
-> from the disk). We don't want to fail dquot_disable() just because caches
-> might be incoherent so ignoring ->sync_fs() return value there is fine.
-> With dquot_quota_sync() it might make some sense to return the error -
-> that's just a backend for Q_SYNC quotactl(2). OTOH I'm not sure anybody
-> really cares - Q_SYNC is rarely used.
+Hi,
 
-Thanks Jan. May be I will leave dquot_quota_sync() untouched for now. When
-somebody has a need to capture return code from ->sync_fs() there, it
-can be easily added.
+Here's v3 of the LOOKUP_CACHED change. It's exposed as both a flag for
+openat2(), and it's used internally by io_uring to speed up (and make more
+efficient) the openat/openat2 support there. As posted in the v3 thread,
+performance numbers for various levels of the filename lookup already
+being cached:
 
-Vivek
+Cached		5.10-git	5.10-git+LOOKUP_CACHED	Speedup
+---------------------------------------------------------------
+33%		1,014,975	900,474			1.1x
+89%		 545,466	292,937			1.9x
+100%		 435,636	151,475			2.9x
+
+The more cache hot we are, the faster the inline LOOKUP_CACHED
+optimization helps. This is unsurprising and expected, as a thread
+offload becomes a more dominant part of the total overhead. If we look
+at io_uring tracing, doing an IORING_OP_OPENAT on a file that isn't in
+the dentry cache will yield:
+
+275.550481: io_uring_create: ring 00000000ddda6278, fd 3 sq size 8, cq size 16, flags 0
+275.550491: io_uring_submit_sqe: ring 00000000ddda6278, op 18, data 0x0, non block 1, sq_thread 0
+275.550498: io_uring_queue_async_work: ring 00000000ddda6278, request 00000000c0267d17, flags 69760, normal queue, work 000000003d683991
+275.550502: io_uring_cqring_wait: ring 00000000ddda6278, min_events 1
+275.550556: io_uring_complete: ring 00000000ddda6278, user_data 0x0, result 4
+
+which shows a failed nonblock lookup, then punt to worker, and then we
+complete with fd == 4. This takes 65 usec in total. Re-running the same
+test case again:
+
+281.253956: io_uring_create: ring 0000000008207252, fd 3 sq size 8, cq size 16, flags 0
+281.253967: io_uring_submit_sqe: ring 0000000008207252, op 18, data 0x0, non block 1, sq_thread 0
+281.253973: io_uring_complete: ring 0000000008207252, user_data 0x0, result 4
+
+shows the same request completing inline, also returning fd == 4. This
+takes 6 usec.
+
+Using openat2, we see that an attempted RESOLVE_CACHED open of an uncached
+file will fail with -EAGAIN, and a subsequent attempt will too as it's
+still not cached. ls the file and retry, and we successfully open it
+with RESOLVE_CACHED:
+
+[test@archlinux ~]$ ./openat2-cached /etc/nanorc
+open: -1
+openat2: Resource temporarily unavailable
+[test@archlinux ~]$ ./openat2-cached /etc/nanorc
+open: -1
+openat2: Resource temporarily unavailable
+[test@archlinux ~]$ ls -al /etc/nanorc
+-rw-r--r-- 1 root root 10066 Dec 17 16:15 /etc/nanorc
+[test@archlinux ~]$ ./openat2-cached /etc/nanorc
+open: 3
+
+Minor polish since v3:
+
+- Rename LOOKUP_NONBLOCK -> LOOKUP_CACHED, and ditto for the RESOLVE_
+  flag. This better explains what the feature does, making it more self
+  explanatory in terms of both code readability and for the user visible
+  part.
+
+- Remove dead LOOKUP_NONBLOCK check after we've dropped LOOKUP_RCU
+  already, spotted by Al.
+
+- Add O_TMPFILE to the checks upfront, so we can drop the checking in
+  do_tmpfile().
+
+-- 
+Jens Axboe
+
+
 
