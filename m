@@ -2,186 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 283B22DDC54
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 01:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 596B92DDC7C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 01:58:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732199AbgLRAP1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 19:15:27 -0500
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:37271 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727172AbgLRAP1 (ORCPT
+        id S1732037AbgLRA5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 19:57:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48572 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbgLRA5n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 19:15:27 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id A2DC51B3DEC;
-        Fri, 18 Dec 2020 11:14:43 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kq3Pu-00559F-Q5; Fri, 18 Dec 2020 11:14:42 +1100
-Date:   Fri, 18 Dec 2020 11:14:42 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     darrick.wong@oracle.com, willy@infradead.org, hch@infradead.org,
-        mhocko@kernel.org, akpm@linux-foundation.org, dhowells@redhat.com,
-        jlayton@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v13 4/4] xfs: use current->journal_info to avoid
- transaction reservation recursion
-Message-ID: <20201218001442.GS632069@dread.disaster.area>
-References: <20201217011157.92549-1-laoar.shao@gmail.com>
- <20201217011157.92549-5-laoar.shao@gmail.com>
+        Thu, 17 Dec 2020 19:57:43 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D41EC0617A7;
+        Thu, 17 Dec 2020 16:57:02 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id 6so773487ejz.5;
+        Thu, 17 Dec 2020 16:57:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fbD/dRrGbDxXh6bC3folm4DWgmxDRpxAq9bBC6SC4+k=;
+        b=ktLyBKf5jk0WsNYOBxZRR7EL07+cV0+O1zB7xk6iP83sDjUUrilu6t7VfNHv/4bWoe
+         s2H0Tf2FvmJ8dhuCJX+m/fgvI1HW+YF8Km6OlQuNS4v4wjs+jnmVI4o900tvYZoBQyz4
+         PSswVY2ngKmnoOtWSZbcSzlxq4ZAi1znC5dIMLmCbGKF6Xj4+MG5DndjTYTUc+1HjQGn
+         VnURW9+FYdAMPLi/F8j6qAxwNyWxrtdo9WQY2yHRBb7xwwaPf7IOgVxI7JdQp8JtRdz7
+         3zgSkscNXGHJVcFxIRd0GO90mWl2qqIZnES3ygBslfwnVAW6+IjIBdRc3ZNQhm9Z2QfF
+         IV/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fbD/dRrGbDxXh6bC3folm4DWgmxDRpxAq9bBC6SC4+k=;
+        b=hEA1VOnVDqmiFyTc6wr8RyCqI1NYJLj/se8L8iNN/xO7rV5erqsb3rlZoewOgYjQ/L
+         4j/56L2/CRssqAaBNBOB/jwN9XmByhWrSKwuYT2h3Xkv55PA6EjI1Gr6ajldBQYWnOhb
+         MQhSm+SSP5bPvXodbUJvuCEBxUtKNibWl8VX37BHZSXRJKawQfSMBsPkqCmQi+isLb9M
+         xiDJlDs2QD+4YZSEsR+AiCy4e1sF2iweSV9wyN0Y+G8l3lIVdoQgbh9S1AdQRp2uuypL
+         GrXoaYirKDR0QqOSR7udOqBTytJlfgPqPLJEuxOf7LKjQRNTk6iaRn5iIHdyNztBI2kO
+         N+nA==
+X-Gm-Message-State: AOAM532KrQSK/45cpXbDfJ0Y0y3rb0guRlogIdWcvGUJtUaQASsoAgHP
+        rwabWNcukncH6pnLppOaFd5pCg7DFAJjYNyuUCE=
+X-Google-Smtp-Source: ABdhPJxpn+YTVGd4P8X3A0/vXff0+YwH+btvdcy+G+SRmu3ePx33v5ttN3GVJ8D6gHv5BTyUUOhaZQor7ll9FCTHzGU=
+X-Received: by 2002:a17:906:720e:: with SMTP id m14mr603462ejk.161.1608253021411;
+ Thu, 17 Dec 2020 16:57:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201217011157.92549-5-laoar.shao@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=yPCof4ZbAAAA:8 a=JfrnYn6hAAAA:8
-        a=7-415B0cAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8
-        a=g3Vo3s_gVwYIqt0w1rsA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22 a=AjGcO6oz07-iQ99wixmX:22
+References: <20201214223722.232537-1-shy828301@gmail.com> <20201214223722.232537-8-shy828301@gmail.com>
+ <20201215030528.GN3913616@dread.disaster.area> <CAHbLzkoOcTuidghuR_pLsE4RX_6DiwXW+k2EQRJxrB6BDqhvBA@mail.gmail.com>
+In-Reply-To: <CAHbLzkoOcTuidghuR_pLsE4RX_6DiwXW+k2EQRJxrB6BDqhvBA@mail.gmail.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 17 Dec 2020 16:56:48 -0800
+Message-ID: <CAHbLzkoWco5gq8tuxbTsfpTF3GPUQLn9uNUTy1nUNwKGVPonmg@mail.gmail.com>
+Subject: Re: [v2 PATCH 7/9] mm: vmscan: don't need allocate
+ shrinker->nr_deferred for memcg aware shrinkers
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 09:11:57AM +0800, Yafang Shao wrote:
-> PF_FSTRANS which is used to avoid transaction reservation recursion, is
-> dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-> PF_MEMALLOC_NOFS") and replaced by PF_MEMALLOC_NOFS which means to avoid
-> filesystem reclaim recursion.
-> 
-> As these two flags have different meanings, we'd better reintroduce
-> PF_FSTRANS back. To avoid wasting the space of PF_* flags in task_struct,
-> we can reuse the current->journal_info to do that, per Willy. As the
-> check of transaction reservation recursion is used by XFS only, we can
-> move the check into xfs_vm_writepage(s), per Dave.
-> 
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jeff Layton <jlayton@redhat.com>
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> ---
->  fs/iomap/buffered-io.c |  7 -------
->  fs/xfs/xfs_aops.c      | 17 +++++++++++++++++
->  fs/xfs/xfs_trans.h     | 26 +++++++++++++++++++-------
->  3 files changed, 36 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 10cc7979ce38..3c53fa6ce64d 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1458,13 +1458,6 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  			PF_MEMALLOC))
->  		goto redirty;
->  
-> -	/*
-> -	 * Given that we do not allow direct reclaim to call us, we should
-> -	 * never be called in a recursive filesystem reclaim context.
-> -	 */
-> -	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
-> -		goto redirty;
-> -
->  	/*
->  	 * Is this page beyond the end of the file?
->  	 *
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 2371187b7615..0da0242d42c3 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -568,6 +568,16 @@ xfs_vm_writepage(
->  {
->  	struct xfs_writepage_ctx wpc = { };
->  
-> +	/*
-> +	 * Given that we do not allow direct reclaim to call us, we should
-> +	 * never be called while in a filesystem transaction.
-> +	 */
+On Tue, Dec 15, 2020 at 3:07 PM Yang Shi <shy828301@gmail.com> wrote:
+>
+> On Mon, Dec 14, 2020 at 7:05 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Mon, Dec 14, 2020 at 02:37:20PM -0800, Yang Shi wrote:
+> > > Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
+> > > allocate shrinker->nr_deferred for such shrinkers anymore.
+> > >
+> > > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > > ---
+> > >  mm/vmscan.c | 28 ++++++++++++++--------------
+> > >  1 file changed, 14 insertions(+), 14 deletions(-)
+> > >
+> > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > index bce8cf44eca2..8d5bfd818acd 100644
+> > > --- a/mm/vmscan.c
+> > > +++ b/mm/vmscan.c
+> > > @@ -420,7 +420,15 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
+> > >   */
+> > >  int prealloc_shrinker(struct shrinker *shrinker)
+> > >  {
+> > > -     unsigned int size = sizeof(*shrinker->nr_deferred);
+> > > +     unsigned int size;
+> > > +
+> > > +     if (is_deferred_memcg_aware(shrinker)) {
+> > > +             if (prealloc_memcg_shrinker(shrinker))
+> > > +                     return -ENOMEM;
+> > > +             return 0;
+> > > +     }
+> > > +
+> > > +     size = sizeof(*shrinker->nr_deferred);
+> > >
+> > >       if (shrinker->flags & SHRINKER_NUMA_AWARE)
+> > >               size *= nr_node_ids;
+> > > @@ -429,26 +437,18 @@ int prealloc_shrinker(struct shrinker *shrinker)
+> > >       if (!shrinker->nr_deferred)
+> > >               return -ENOMEM;
+> > >
+> > > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+> > > -             if (prealloc_memcg_shrinker(shrinker))
+> > > -                     goto free_deferred;
+> > > -     }
+> > > -
+> > >       return 0;
+> > > -
+> > > -free_deferred:
+> > > -     kfree(shrinker->nr_deferred);
+> > > -     shrinker->nr_deferred = NULL;
+> > > -     return -ENOMEM;
+> > >  }
+> >
+> > I'm trying to put my finger on it, but this seems wrong to me. If
+> > memcgs are disabled, then prealloc_memcg_shrinker() needs to fail.
+> > The preallocation code should not care about internal memcg details
+> > like this.
+> >
+> >         /*
+> >          * If the shrinker is memcg aware and memcgs are not
+> >          * enabled, clear the MEMCG flag and fall back to non-memcg
+> >          * behaviour for the shrinker.
+> >          */
+> >         if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+> >                 error = prealloc_memcg_shrinker(shrinker);
+> >                 if (!error)
+> >                         return 0;
+> >                 if (error != -ENOSYS)
+> >                         return error;
+> >
+> >                 /* memcgs not enabled! */
+> >                 shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
+> >         }
+> >
+> >         size = sizeof(*shrinker->nr_deferred);
+> >         ....
+> >         return 0;
+> > }
+> >
+> > This guarantees that only the shrinker instances taht have a
+> > correctly set up memcg attached to them will have the
+> > SHRINKER_MEMCG_AWARE flag set. Hence in all the rest of the shrinker
+> > code, we only ever need to check for SHRINKER_MEMCG_AWARE to
+> > determine what we should do....
+>
+> Thanks. I see your point. We could move the memcg specific details
+> into prealloc_memcg_shrinker().
+>
+> It seems we have to acquire shrinker_rwsem before we check and modify
+> SHIRNKER_MEMCG_AWARE bit if we may clear it.
 
-Comment is wrong. This is not protecting against direct reclaim
-recursion, this is protecting against writeback from within a
-transaction context.
+Hi Dave,
 
-Best to remove the comment altogether, because it is largely
-redundant.
+Is it possible that shrinker register races with shrinker unregister?
+It seems impossible to me by a quick visual code inspection. But I'm
+not a VFS expert so I'm not quite sure.
 
-> +	if (WARN_ON_ONCE(xfs_trans_context_active())) {
-> +		redirty_page_for_writepage(wbc, page);
-> +		unlock_page(page);
-> +		return 0;
-> +	}
-> +
->  	return iomap_writepage(page, wbc, &wpc.ctx, &xfs_writeback_ops);
->  }
->  
-> @@ -579,6 +589,13 @@ xfs_vm_writepages(
->  	struct xfs_writepage_ctx wpc = { };
->  
->  	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
-> +	/*
-> +	 * Given that we do not allow direct reclaim to call us, we should
-> +	 * never be called while in a filesystem transaction.
-> +	 */
+If it is impossible the implementation would be quite simple otherwise
+we need move shrinker_rwsem acquire/release to
+prealloc_shrinker/free_prealloced_shrinker/unregister_shrinker to
+protect SHRINKER_MEMCG_AWARE update.
 
-same here.
-
-> +	if (WARN_ON_ONCE(xfs_trans_context_active()))
-> +		return 0;
-> +
->  	return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_ops);
->  }
->  
-> diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
-> index 12380eaaf7ce..0c8140147b9b 100644
-> --- a/fs/xfs/xfs_trans.h
-> +++ b/fs/xfs/xfs_trans.h
-> @@ -268,29 +268,41 @@ xfs_trans_item_relog(
->  	return lip->li_ops->iop_relog(lip, tp);
->  }
->  
-> +static inline bool
-> +xfs_trans_context_active(void)
-> +{
-> +	/* Use journal_info to indicate current is in a transaction */
-> +	return current->journal_info != NULL;
-> +}
-
-Comment is not necessary.
-
-> +
->  static inline void
->  xfs_trans_context_set(struct xfs_trans *tp)
->  {
-> +	ASSERT(!current->journal_info);
-> +	current->journal_info = tp;
->  	tp->t_pflags = memalloc_nofs_save();
->  }
->  
->  static inline void
->  xfs_trans_context_clear(struct xfs_trans *tp)
->  {
-> +	/*
-> +	 * If xfs_trans_context_swap() handed the NOFS context to a
-> +	 * new transaction we do not clear the context here.
-> +	 */
-
-It's a transaction context, not a "NOFS context". Setting NOFS is
-just something we implement inside the transaction context. More
-correct would be:
-
-	/*
-	 * If we handed over the context via xfs_trans_context_swap() then 
-	 * the context is no longer ours to clear.
-	 */
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>
+> >
+> > >  void free_prealloced_shrinker(struct shrinker *shrinker)
+> > >  {
+> > > -     if (!shrinker->nr_deferred)
+> > > +     if (is_deferred_memcg_aware(shrinker)) {
+> > > +             unregister_memcg_shrinker(shrinker);
+> > >               return;
+> > > +     }
+> > >
+> > > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> > > -             unregister_memcg_shrinker(shrinker);
+> > > +     if (!shrinker->nr_deferred)
+> > > +             return;
+> > >
+> > >       kfree(shrinker->nr_deferred);
+> > >       shrinker->nr_deferred = NULL;
+> >
+> > e.g. then this function can simply do:
+> >
+> > {
+> >         if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> >                 return unregister_memcg_shrinker(shrinker);
+> >         kfree(shrinker->nr_deferred);
+> >         shrinker->nr_deferred = NULL;
+> > }
+> >
+> > Cheers,
+> >
+> > Dave.
+> > --
+> > Dave Chinner
+> > david@fromorbit.com
