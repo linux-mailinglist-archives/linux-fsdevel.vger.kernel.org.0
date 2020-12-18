@@ -2,91 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA472DE949
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 19:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9C612DEA2E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 21:27:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbgLRSvM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Dec 2020 13:51:12 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20802 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726137AbgLRSvM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Dec 2020 13:51:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608317385;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mu9mY5uhyKSd1nOZhoF3bMk566AK2t1HfVACnYE+V/s=;
-        b=aH6DCUooZRFyqNZ4MTs21U79DGDTaF1ZhlixZmS8fEloFOySgLHe5AtcxfQyv+oJeVTywB
-        PGQEBPiojBY0oB0QTa3rwEf7iaeS/N5d2sJTNyXH4DxIxkV84eD6ydGGTk0zdf7yEm/Q+n
-        GXtTnGuNbXbJKIAK5FZ8fkVB6yZIx3s=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-479-ZAmeYbrQMPSBAE1h56acAA-1; Fri, 18 Dec 2020 13:49:41 -0500
-X-MC-Unique: ZAmeYbrQMPSBAE1h56acAA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 43B04801817;
-        Fri, 18 Dec 2020 18:49:40 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA8995C1C5;
-        Fri, 18 Dec 2020 18:49:39 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Chris Murphy <lists@colorremedies.com>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: how to track down cause for EBUSY on /dev/vda4?
-References: <CAJCQCtQUvyopGxBcXzenTy8MuEvm+W1PQNqzFf1Qp=p1M9pBGQ@mail.gmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Fri, 18 Dec 2020 13:49:53 -0500
-In-Reply-To: <CAJCQCtQUvyopGxBcXzenTy8MuEvm+W1PQNqzFf1Qp=p1M9pBGQ@mail.gmail.com>
-        (Chris Murphy's message of "Thu, 17 Dec 2020 13:13:54 -0700")
-Message-ID: <x49sg83t0dq.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1730906AbgLRU0D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Dec 2020 15:26:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56878 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730516AbgLRU0C (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Dec 2020 15:26:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B7CB0AF5D;
+        Fri, 18 Dec 2020 20:25:20 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     Jeffrey Layton <jlayton@kernel.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+Date:   Sat, 19 Dec 2020 07:25:12 +1100
+Cc:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        amir73il@gmail.com, sargun@sargun.me, miklos@szeredi.hu,
+        willy@infradead.org, jack@suse.cz, neilb@suse.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 3/3] overlayfs: Check writeback errors w.r.t upper in
+ ->syncfs()
+In-Reply-To: <20201218165551.GA1178523@tleilax.poochiereds.net>
+References: <20201216233149.39025-1-vgoyal@redhat.com>
+ <20201216233149.39025-4-vgoyal@redhat.com>
+ <20201217200856.GA707519@tleilax.poochiereds.net>
+ <20201218144418.GA3424@redhat.com>
+ <20201218150258.GA866424@tleilax.poochiereds.net>
+ <20201218162819.GC3424@redhat.com>
+ <20201218165551.GA1178523@tleilax.poochiereds.net>
+Message-ID: <87sg82n9p3.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Chris Murphy <lists@colorremedies.com> writes:
+--=-=-=
+Content-Type: text/plain
 
-> Hi,
+On Fri, Dec 18 2020, Jeffrey Layton wrote:
 >
-> Short version:
-> # mkfs.any /dev/vda4
-> unable to open /dev/vda4: Device or resource busy
->
-> Curiously /dev/vda4 is just a blank partition, not in use by anything
-> that I'm aware of. And gdisk is allowed to modify the GPT on /dev/vda
-> without complaint. This is a snippet from strace of the above command
-> at the failure point:
->
-> openat(AT_FDCWD, "/dev/vda4", O_RDWR|O_EXCL) = -1 EBUSY (Device or
-> resource busy)
+> The patch we're discussing here _does_ add a f_op->syncfs, which is why
+> I was suggesting to do it that way.
 
-[snip]
+I haven't thought through the issues to decide what I think of adding a
+new op, but I already know what I think of adding ->syncfs.  Don't Do
+It.  The name is much too easily confused with ->sync_fs.
 
-> format, and /proc/mounts shows
->
-> /dev/vda /run/initramfs/live iso9660
-> ro,relatime,nojoliet,check=s,map=n,blocksize=2048 0 0
+If you call it ->sync_fs_return_error() it would be MUCH better.
 
-That mount claims the device, and you can't then also open a partition
-on that device exclusively.
+And having said that, the solution becomes obvious.  Add a new flag,
+either as another bit in 'int wait', or as a new bool.
+The new flag would be "return_error" - or whatever is appropriate.
 
-> So it sees the whole vda device as iso9660 and ro? But permits gdisk
-> to modify some select sectors on vda? I admit it's an ambiguous image.
-> Is it a duck or is it a rabbit? And therefore best to just look at it,
-> not make modifications to it. Yet /dev/vda is modifiable, where the
-> partitions aren't. Hmm.
+NeilBrown
 
-The file system is mounted read-only.  It may be that the /device/ is not
-read-only.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-HTH,
-Jeff
+-----BEGIN PGP SIGNATURE-----
 
+iQJBBAEBCAAsFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl/dECgOHG5laWxiQHN1
+c2UuZGUACgkQOeye3VZigbk3ig/4iZJnVRvb8/0pwu2NgBVBzqiie5K8kJNvUzsU
+BBTsOxBahvwn2B3zMsI9IP3q77wAdVF8wbl8HihIjuGuFramVoMmkCH+t1vVHa35
+cHuB+xZEOEqGgSVWYC02Ci54z+ZxHi71JlbVfT3n7Zrj1VY+k9q/23ZzRPknQjTr
+NU1QA2ya8r1P006F5/hJ/3zLTneuMYJsRWT6AlvYabI+rv12TMcirBBQFhcfb3je
+Q+/3RPZW1avW+hlIoACeMA0PRxWASwLH04Wx1zrC85G3OSpC+uBFt254jL/R5EPF
+GBiGPmEaEALoJrlnSoJLBWysb50lyTUf94R/Gj2wqYA3fJ51YB1eZqm2yudaUPWY
+QfYoaO6KdyjbPOJjXXD2lznIyWKvKFtT1XR/yvuKwuNtnuX2001uhXFLCLGTDFO8
+ujbSBJkFlMGGvxfZ2FsqRUBNWgPaKHMUCgIeqiTVmSqPoVeaVn74Ru06ilIVbcTF
+1ULHPC7arfCNRTbl7siAaGPSiPGbco4asdgrJzGyFaOJhgmZZ16kC1jFqAwwYMrg
+1sfjpjkgyPWjYy+hAbkOMsp3O1s3jvzVc8Qu0YLd0HKEI2zL7b52MzkE2KH4i1WN
+hYD5QCUc1G1xzEMPwnMCC7Jdthypgzjg6J9TzbmtOlfWQFORuCOTEeHUzcx6Lsf0
+e/2rvw==
+=hNhL
+-----END PGP SIGNATURE-----
+--=-=-=--
