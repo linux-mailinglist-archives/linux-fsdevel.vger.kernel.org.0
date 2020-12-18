@@ -2,334 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF812DE530
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 15:56:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC142DE53F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 16:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbgLROzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Dec 2020 09:55:24 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:34478 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727841AbgLROzY (ORCPT
+        id S1726224AbgLRPAY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Dec 2020 10:00:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36528 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbgLRPAX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Dec 2020 09:55:24 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kqH9V-0006v9-8S; Fri, 18 Dec 2020 14:54:41 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Giuseppe Scrivano <gscrivan@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 4/4] selftests/core: add regression test for CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC
-Date:   Fri, 18 Dec 2020 15:54:15 +0100
-Message-Id: <20201218145415.801063-4-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <https://lore.kernel.org/linux-fsdevel/20201217213303.722643-1-christian.brauner@ubuntu.com>
-References: <https://lore.kernel.org/linux-fsdevel/20201217213303.722643-1-christian.brauner@ubuntu.com>
+        Fri, 18 Dec 2020 10:00:23 -0500
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F1DC0617B0;
+        Fri, 18 Dec 2020 06:59:43 -0800 (PST)
+Received: by mail-qk1-x734.google.com with SMTP id i67so2155089qkf.11;
+        Fri, 18 Dec 2020 06:59:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=btTFe9SQJ12UsM8X01XRMs1GCaQg0iWb0+ZNquj0Yho=;
+        b=e4txPl7w1XfT0AF9f9WIr694+OCREoNz2aoMqbtbBWuGj4WqmSno11qRfiOxyIYfAP
+         pQOvE/5DaDl7dwc/TdNY3eGa1xUmxEz1rFlefvLY/wK1Zcg4S5jjtwsJj/sSuR1OxHqQ
+         8FgoQY7tq3utNH9sDFqGDURPi9fkjpoT5AvRmRLbWbW8Et2DUz/MEINM8z2ACRzDkK6y
+         pUHyLLcWXdDeA/NnV/lx5G3v1Ld2x6fHThU1XRiYSeCSk5Sfr08p2HXHV48atgZrcaeJ
+         MnxvomDQxBsudSzDpdeQ5FSyJQkcIKe5e/jChNMPiHBhQCpJof68XQgX0RADrRZcsOqU
+         w2/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=btTFe9SQJ12UsM8X01XRMs1GCaQg0iWb0+ZNquj0Yho=;
+        b=MfVY0D2K/n80FOGaYiiZcRyw6nXg3qH7WmTa8AyJlNxVrjzFWjeOMDdteCB/hoHA1d
+         ZMf5AxBfj3IKckIj0o/Yu08ZTsIPPXptSJ9VE9g+wgDetkScI1XkDEFVqVK3NVy+dy3n
+         7l2XodkqPz/XkWc/314Zk3ixKHM5jQ4Wkb2qShtUDn6EzZliflPM7XJyHjKG8KodY2qz
+         UVWjbOutziMMjVtqjUrpjtbO+HREkpb62dx6txGCB0aKn71pbOqjWgxm5luIoXJu+sif
+         +x0iNFeI1biFhsINJmKCttVY8O23PZO60W/h+fME1han0S60qmPB5lrh2QWa/obWjBgV
+         gqmA==
+X-Gm-Message-State: AOAM532rU+UN6PBJdMKVcQvKB9MIiKvnUQZwWmsYagrTBfzlKtEMhGe3
+        ktZBmal3+hcy2J43O0RTwGU=
+X-Google-Smtp-Source: ABdhPJwaHLdTGSrENguGze1yXBIkNLF8wP/RHMekAKxikbNXyIEErjFzKuRPIKoM+wyg1LyWwA536A==
+X-Received: by 2002:a05:620a:158e:: with SMTP id d14mr5001846qkk.358.1608303582534;
+        Fri, 18 Dec 2020 06:59:42 -0800 (PST)
+Received: from localhost ([2600:380:bc52:ed25:f121:8f09:67ad:9838])
+        by smtp.gmail.com with ESMTPSA id d25sm5675018qkl.97.2020.12.18.06.59.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Dec 2020 06:59:41 -0800 (PST)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Fri, 18 Dec 2020 09:59:07 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Ian Kent <raven@themaw.net>
+Cc:     Fox Chen <foxhlchen@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        akpm@linux-foundation.org, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, ricklind@linux.vnet.ibm.com,
+        sfr@canb.auug.org.au, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
+ improvement
+Message-ID: <X9zDu15MvJP3NU8K@mtj.duckdns.org>
+References: <3e97846b52a46759c414bff855e49b07f0d908fc.camel@themaw.net>
+ <CAC2o3DLGtx15cgra3Y92UBdQRBKGckqOkDmwBV-aV-EpUqO5SQ@mail.gmail.com>
+ <efb7469c7bad2f6458c9a537b8e3623e7c303c21.camel@themaw.net>
+ <da4f730bbbb20c0920599ca5afc316e2c092b7d8.camel@themaw.net>
+ <CAC2o3DJsvB6kj=S6D3q+_OBjgez9Q9B5s3-_gjUjaKmb2MkTHQ@mail.gmail.com>
+ <c4002127c72c07a00e8ba0fae6b0ebf5ba8e08e7.camel@themaw.net>
+ <a39b73a53778094279522f1665be01ce15fb21f4.camel@themaw.net>
+ <c8a6c9adc3651e64cf694f580a8cb3d87d7cb893.camel@themaw.net>
+ <X9t1xVTZ/ApIvPMg@mtj.duckdns.org>
+ <67a3012a6a215001c8be9344aee1c99897ff8b7e.camel@themaw.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67a3012a6a215001c8be9344aee1c99897ff8b7e.camel@themaw.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This test is a minimalized version of the reproducer given by syzbot
-(cf. [1]).
+Hello,
 
-After introducing CLOSE_RANGE_CLOEXEC syzbot reported a crash when
-CLOSE_RANGE_CLOEXEC is specified in conjunction with
-CLOSE_RANGE_UNSHARE.  When CLOSE_RANGE_UNSHARE is specified the caller
-will receive a private file descriptor table in case their file
-descriptor table is currently shared. When the caller requests that all
-file descriptors are supposed to be operated on via e.g. a call like
-close_range(3, ~0U) and the caller shares their file descriptor table
-then the kernel will only copy all files in the range from 0 to 3 and no
-others.
-The original bug used the maximum of the old file descriptor table not
-the new one. In order to test this bug we need to first create a huge
-large gap in the fd table. When we now call CLOSE_RANGE_UNSHARE with a
-shared fd table and and with ~0U as upper bound the kernel will only
-copy up to fd1 file descriptors into the new fd table. If max_fd in the
-close_range() codepaths isn't correctly set when requesting
-CLOSE_RANGE_CLOEXEC with all of these fds we will see NULL pointer
-derefs!
+On Fri, Dec 18, 2020 at 03:36:21PM +0800, Ian Kent wrote:
+> Sounds like your saying it would be ok to add a lock to the
+> attrs structure, am I correct?
 
-This test passes on a fixed kernel.
+Yeah, adding a lock to attrs is a lot less of a problem and it looks like
+it's gonna have to be either that or hashed locks, which might actually make
+sense if we're worried about the size of attrs (I don't think we need to).
 
-Cc: Giuseppe Scrivano <gscrivan@redhat.com>
-[1]: https://syzkaller.appspot.com/text?tag=KernelConfig&x=db720fe37a6a41d8
-Link: syzbot+96cfd2b22b3213646a93@syzkaller.appspotmail.com
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- tools/testing/selftests/core/Makefile         |   2 +-
- .../testing/selftests/core/close_range_test.c | 231 +++++++++++++++++-
- 2 files changed, 230 insertions(+), 3 deletions(-)
+Thanks.
 
-diff --git a/tools/testing/selftests/core/Makefile b/tools/testing/selftests/core/Makefile
-index f6f2d6f473c6..5ceb3ba1ca9c 100644
---- a/tools/testing/selftests/core/Makefile
-+++ b/tools/testing/selftests/core/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--CFLAGS += -g -I../../../../usr/include/
-+CFLAGS += -g -I../../../../usr/include/ -pthread
- 
- TEST_GEN_PROGS := close_range_test
- 
-diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testing/selftests/core/close_range_test.c
-index 862444f1c244..65f071d8fd16 100644
---- a/tools/testing/selftests/core/close_range_test.c
-+++ b/tools/testing/selftests/core/close_range_test.c
-@@ -3,15 +3,22 @@
- #define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
--#include <linux/kernel.h>
- #include <limits.h>
-+#include <linux/futex.h>
-+#include <pthread.h>
-+#include <signal.h>
- #include <stdbool.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <sys/prctl.h>
-+#include <sys/resource.h>
-+#include <sys/stat.h>
-+#include <sys/time.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
- #include <syscall.h>
- #include <unistd.h>
--#include <sys/resource.h>
- 
- #include "../kselftest_harness.h"
- #include "../clone3/clone3_selftests.h"
-@@ -384,4 +391,224 @@ TEST(close_range_cloexec_unshare)
- 	}
- }
- 
-+static uint64_t current_time_ms(void)
-+{
-+	struct timespec ts;
-+
-+	if (clock_gettime(CLOCK_MONOTONIC, &ts))
-+		exit(EXIT_FAILURE);
-+
-+	return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
-+}
-+
-+static void thread_start(void *(*fn)(void *), void *arg)
-+{
-+	int i;
-+	pthread_t th;
-+	pthread_attr_t attr;
-+
-+	pthread_attr_init(&attr);
-+	pthread_attr_setstacksize(&attr, 128 << 10);
-+
-+	for (i = 0; i < 100; i++) {
-+		if (pthread_create(&th, &attr, fn, arg) == 0) {
-+			pthread_attr_destroy(&attr);
-+			return;
-+		}
-+
-+		if (errno == EAGAIN) {
-+			usleep(50);
-+			continue;
-+		}
-+
-+		break;
-+	}
-+
-+	exit(EXIT_FAILURE);
-+}
-+
-+static void event_init(int *state)
-+{
-+	*state = 0;
-+}
-+
-+static void event_reset(int *state)
-+{
-+	*state = 0;
-+}
-+
-+static void event_set(int *state)
-+{
-+	if (*state)
-+		exit(EXIT_FAILURE);
-+
-+	__atomic_store_n(state, 1, __ATOMIC_RELEASE);
-+	syscall(SYS_futex, state, FUTEX_WAKE | FUTEX_PRIVATE_FLAG, 1000000);
-+}
-+
-+static void event_wait(int *state)
-+{
-+	while (!__atomic_load_n(state, __ATOMIC_ACQUIRE))
-+		syscall(SYS_futex, state, FUTEX_WAIT | FUTEX_PRIVATE_FLAG, 0, 0);
-+}
-+
-+static int event_isset(int *state)
-+{
-+	return __atomic_load_n(state, __ATOMIC_ACQUIRE);
-+}
-+
-+static int event_timedwait(int *state, uint64_t timeout)
-+{
-+	uint64_t start = current_time_ms();
-+	uint64_t now = start;
-+	for (;;) {
-+		struct timespec ts;
-+		uint64_t remain = timeout - (now - start);
-+
-+		ts.tv_sec = remain / 1000;
-+		ts.tv_nsec = (remain % 1000) * 1000 * 1000;
-+
-+		syscall(SYS_futex, state, FUTEX_WAIT | FUTEX_PRIVATE_FLAG, 0, &ts);
-+
-+		if (__atomic_load_n(state, __ATOMIC_ACQUIRE))
-+			return 1;
-+
-+		now = current_time_ms();
-+		if (now - start > timeout)
-+			return 0;
-+	}
-+}
-+
-+struct thread_t {
-+	int created;
-+	int call;
-+	int ready;
-+	int done;
-+};
-+
-+static struct thread_t threads[4];
-+static int running;
-+
-+static void thread_close_range_call(int call)
-+{
-+	int fd = 0;
-+
-+	switch (call) {
-+	case 0:
-+		fd = openat(-1, "/dev/null", 0, 0);
-+		if (fd < 0)
-+			fd = 0;
-+		break;
-+	case 1:
-+		sys_close_range(fd, -1, CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC);
-+		break;
-+	}
-+}
-+
-+static void *thread_close_range(void *arg)
-+{
-+	struct thread_t *th = (struct thread_t *)arg;
-+	for (;;) {
-+		event_wait(&th->ready);
-+		event_reset(&th->ready);
-+		thread_close_range_call(th->call);
-+		__atomic_fetch_sub(&running, 1, __ATOMIC_RELAXED);
-+		event_set(&th->done);
-+	}
-+	return 0;
-+}
-+
-+static void threaded_close_range(void)
-+{
-+	int i, fd, call, thread;
-+	for (call = 0; call < 2; call++) {
-+		for (thread = 0; thread < (int)(sizeof(threads) / sizeof(threads[0])); thread++) {
-+			struct thread_t *th = &threads[thread];
-+			if (!th->created) {
-+				th->created = 1;
-+				event_init(&th->ready);
-+				event_init(&th->done);
-+				event_set(&th->done);
-+				thread_start(thread_close_range, th);
-+			}
-+
-+			if (!event_isset(&th->done))
-+				continue;
-+
-+			event_reset(&th->done);
-+			th->call = call;
-+			__atomic_fetch_add(&running, 1, __ATOMIC_RELAXED);
-+			event_set(&th->ready);
-+			event_timedwait(&th->done, 45);
-+			break;
-+		}
-+	}
-+
-+	for (i = 0; i < 100 && __atomic_load_n(&running, __ATOMIC_RELAXED); i++)
-+		usleep(1000);
-+
-+	for (fd = 3; fd < 30; fd++)
-+		close(fd);
-+}
-+
-+/*
-+ * Regression test for syzbot+96cfd2b22b3213646a93@syzkaller.appspotmail.com
-+ */
-+TEST(close_range_cloexec_unshare_threaded_syzbot)
-+{
-+	int iter;
-+	int fd1, fd2, fd3;
-+
-+	/*
-+	 * Create a huge gap in the fd table. When we now call
-+	 * CLOSE_RANGE_UNSHARE with a shared fd table and and with ~0U as upper
-+	 * bound the kernel will only copy up to fd1 file descriptors into the
-+	 * new fd table. If max_fd in the close_range() codepaths isn't
-+	 * correctly set when requesting CLOSE_RANGE_CLOEXEC with all of these
-+	 * fds we will see NULL pointer derefs!
-+	 */
-+	fd1 = open("/dev/null", O_RDWR);
-+	EXPECT_GT(fd1, 0);
-+
-+	fd3 = dup2(fd1, 1000);
-+	EXPECT_GT(fd3, 0);
-+
-+	for (iter = 0; iter <= 1000; iter++) {
-+		pid_t pid;
-+		int status;
-+		uint64_t start;
-+
-+		pid = fork();
-+		if (pid < 0)
-+			exit(EXIT_FAILURE);
-+		if (pid == 0) {
-+			EXPECT_EQ(prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0), 0);
-+			setpgrp();
-+
-+			threaded_close_range();
-+			exit(EXIT_SUCCESS);
-+		}
-+
-+		status = 0;
-+		start = current_time_ms();
-+		for (;;) {
-+			if (waitpid(-1, &status, WNOHANG | __WALL) == pid)
-+				break;
-+
-+			usleep(1000);
-+
-+			if (current_time_ms() - start < 5 * 1000)
-+				continue;
-+
-+			kill(pid, SIGKILL);
-+
-+			EXPECT_EQ(waitpid(pid, &status, 0), pid);
-+
-+			EXPECT_EQ(true, WIFEXITED(status));
-+
-+			EXPECT_EQ(0, WEXITSTATUS(status));
-+		}
-+	}
-+}
-+
- TEST_HARNESS_MAIN
 -- 
-2.29.2
-
+tejun
