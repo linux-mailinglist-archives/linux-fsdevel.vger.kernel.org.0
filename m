@@ -2,136 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A954E2DE6A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 16:33:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04A112DE6D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 16:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbgLRPdT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Dec 2020 10:33:19 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:9905 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbgLRPdT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Dec 2020 10:33:19 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CyCX53VcNz7Gvm;
-        Fri, 18 Dec 2020 23:31:49 +0800 (CST)
-Received: from huawei.com (10.175.104.175) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.498.0; Fri, 18 Dec 2020
- 23:32:21 +0800
-From:   Shijie Luo <luoshijie1@huawei.com>
-To:     <linux-fsdevel@vger.kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <yangerkun@huawei.com>,
-        <yi.zhang@huawei.com>, <linfeilong@huawei.com>
-Subject: [PATCH RFC] fs: fix a hungtask problem when freeze/unfreeze fs
-Date:   Fri, 18 Dec 2020 10:32:02 -0500
-Message-ID: <20201218153202.33499-1-luoshijie1@huawei.com>
-X-Mailer: git-send-email 2.19.1
+        id S1728531AbgLRPl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Dec 2020 10:41:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42154 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728275AbgLRPl6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Dec 2020 10:41:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5B8D6ACF1;
+        Fri, 18 Dec 2020 15:41:17 +0000 (UTC)
+Date:   Fri, 18 Dec 2020 16:41:12 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        mhocko@suse.com, song.bao.hua@hisilicon.com, david@redhat.com,
+        naoya.horiguchi@nec.com, duanxiongchun@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v10 02/11] mm/hugetlb: Introduce a new config
+ HUGETLB_PAGE_FREE_VMEMMAP
+Message-ID: <20201218154112.GA3115@localhost.localdomain>
+References: <20201217121303.13386-1-songmuchun@bytedance.com>
+ <20201217121303.13386-3-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.175]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201217121303.13386-3-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We found a hungtask problem as described following:
-Running xfstests/generic/390 , and simutaneously offline/onlines
-disk we tested. It will cause a hungtask problem whose call trace is like this,
+On Thu, Dec 17, 2020 at 08:12:54PM +0800, Muchun Song wrote:
+> The HUGETLB_PAGE_FREE_VMEMMAP option is used to enable the freeing
+> of unnecessary vmemmap associated with HugeTLB pages. The config
+> option is introduced early so that supporting code can be written
+> to depend on the option. The initial version of the code only
+> provides support for x86-64.
+> 
+> Like other code which frees vmemmap, this config option depends on
+> HAVE_BOOTMEM_INFO_NODE. The routine register_page_bootmem_info() is
+> used to register bootmem info. Therefore, make sure
+> register_page_bootmem_info is enabled if HUGETLB_PAGE_FREE_VMEMMAP
+> is defined.
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-[369.857104] INFO: task fsstress:11672 blocked for more than 120 seconds.
-[  369.875724] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  369.885168] fsstress        D    0 11672  11625 0x00000080
-[  369.885169] Call Trace:
-[  369.885171]  ? __schedule+0x2fc/0x930
-[  369.885173]  ? filename_parentat+0x10b/0x1a0
-[  369.885175]  schedule+0x28/0x70
-[  369.885176]  rwsem_down_read_failed+0x102/0x1c0
-[  369.885178]  ? __percpu_down_read+0x93/0xb0
-[  369.885179]  __percpu_down_read+0x93/0xb0
-[  369.885182]  __sb_start_write+0x5f/0x70
-[  369.885183]  mnt_want_write+0x20/0x50
-[  369.885184]  do_renameat2+0x1f3/0x550
-[  369.885186]  __x64_sys_rename+0x1c/0x20
-[  369.885187]  do_syscall_64+0x5b/0x1b0
-[  369.885188]  entry_SYSCALL_64_after_hwframe+0x65/0xca
-[  369.885189] RIP: 0033:0x7f5e6e34ccb7
-[  369.885190] Code: Bad RIP value.
-[  369.885191] RSP: 002b:00007ffef4a83788 EFLAGS: 00000206 ORIG_RAX: 0000000000000052
-[  369.885191] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5e6e34ccb7
-[  369.885192] RDX: 0000000000000000 RSI: 0000000001b09500 RDI: 0000000001b09f90
-[  369.885192] RBP: 0000000000000000 R08: 0000000000000021 R09: 0000000000000000
-[  369.885193] R10: 0000000000000692 R11: 0000000000000206 R12: 00007ffef4a83a30
-[  369.885193] R13: 00007ffef4a83a40 R14: 00007ffef4a83a40 R15: 0000000000000001
+Ok, this commit message is much more clear, and the same goes for the
+config description.
 
-The root cause is that when offline/onlines disk, the filesystem can easily to get in
-a error state and this makes it change to be read-only. Function freeze_super() will hold
-all sb_writers rwsems including SB_FREEZE_COMPLETE when filesystem not read-only,
-but thaw_super_locked() cannot release these while the filesystem suddenly become read-only,
-because the logic will go to out.
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-freeze_super
-    hold sb_writers rwsems
-        sb->s_writers.frozen = SB_FREEZE_COMPLETE
-                                                 thaw_super_locked
-                                                     sb_rdonly
-                                                        sb->s_writers.frozen = SB_UNFROZEN;
-                                                            goto out // not release rwsems
-
-And at this time, if we call mnt_want_write(), the process will be blocked.
-
-This patch fixes this problem, when filesystem is read-only, just not to set sb_writers.frozen
-be SB_FREEZE_COMPLETE in freeze_super() and release all rwsems in thaw_super_locked.
-
-Signed-off-by: Shijie Luo <luoshijie1@huawei.com>
-Signed-off-by: yangerkun <yangerkun@huawei.com>
----
- fs/super.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
-
-diff --git a/fs/super.c b/fs/super.c
-index 2c6cdea2ab2d..50d79213f678 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1672,9 +1672,7 @@ int freeze_super(struct super_block *sb)
- 	}
- 
- 	if (sb_rdonly(sb)) {
--		/* Nothing to do really... */
--		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
--		up_write(&sb->s_umount);
-+		deactivate_locked_super(sb);
- 		return 0;
- 	}
- 
-@@ -1733,13 +1731,11 @@ static int thaw_super_locked(struct super_block *sb)
- 		return -EINVAL;
- 	}
- 
--	if (sb_rdonly(sb)) {
--		sb->s_writers.frozen = SB_UNFROZEN;
--		goto out;
--	}
--
- 	lockdep_sb_freeze_acquire(sb);
- 
-+	if (sb_rdonly(sb))
-+		goto out;
-+
- 	if (sb->s_op->unfreeze_fs) {
- 		error = sb->s_op->unfreeze_fs(sb);
- 		if (error) {
-@@ -1751,9 +1747,9 @@ static int thaw_super_locked(struct super_block *sb)
- 		}
- 	}
- 
-+out:
- 	sb->s_writers.frozen = SB_UNFROZEN;
- 	sb_freeze_unlock(sb);
--out:
- 	wake_up(&sb->s_writers.wait_unfrozen);
- 	deactivate_locked_super(sb);
- 	return 0;
 -- 
-2.19.1
-
+Oscar Salvador
+SUSE L3
