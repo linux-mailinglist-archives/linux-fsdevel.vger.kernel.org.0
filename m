@@ -2,201 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 596B92DDC7C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 01:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BA5F2DDC90
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 02:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732037AbgLRA5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Dec 2020 19:57:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48572 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726796AbgLRA5n (ORCPT
+        id S1730878AbgLRBHf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Dec 2020 20:07:35 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:34849 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729123AbgLRBHf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Dec 2020 19:57:43 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D41EC0617A7;
-        Thu, 17 Dec 2020 16:57:02 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id 6so773487ejz.5;
-        Thu, 17 Dec 2020 16:57:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fbD/dRrGbDxXh6bC3folm4DWgmxDRpxAq9bBC6SC4+k=;
-        b=ktLyBKf5jk0WsNYOBxZRR7EL07+cV0+O1zB7xk6iP83sDjUUrilu6t7VfNHv/4bWoe
-         s2H0Tf2FvmJ8dhuCJX+m/fgvI1HW+YF8Km6OlQuNS4v4wjs+jnmVI4o900tvYZoBQyz4
-         PSswVY2ngKmnoOtWSZbcSzlxq4ZAi1znC5dIMLmCbGKF6Xj4+MG5DndjTYTUc+1HjQGn
-         VnURW9+FYdAMPLi/F8j6qAxwNyWxrtdo9WQY2yHRBb7xwwaPf7IOgVxI7JdQp8JtRdz7
-         3zgSkscNXGHJVcFxIRd0GO90mWl2qqIZnES3ygBslfwnVAW6+IjIBdRc3ZNQhm9Z2QfF
-         IV/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fbD/dRrGbDxXh6bC3folm4DWgmxDRpxAq9bBC6SC4+k=;
-        b=hEA1VOnVDqmiFyTc6wr8RyCqI1NYJLj/se8L8iNN/xO7rV5erqsb3rlZoewOgYjQ/L
-         4j/56L2/CRssqAaBNBOB/jwN9XmByhWrSKwuYT2h3Xkv55PA6EjI1Gr6ajldBQYWnOhb
-         MQhSm+SSP5bPvXodbUJvuCEBxUtKNibWl8VX37BHZSXRJKawQfSMBsPkqCmQi+isLb9M
-         xiDJlDs2QD+4YZSEsR+AiCy4e1sF2iweSV9wyN0Y+G8l3lIVdoQgbh9S1AdQRp2uuypL
-         GrXoaYirKDR0QqOSR7udOqBTytJlfgPqPLJEuxOf7LKjQRNTk6iaRn5iIHdyNztBI2kO
-         N+nA==
-X-Gm-Message-State: AOAM532KrQSK/45cpXbDfJ0Y0y3rb0guRlogIdWcvGUJtUaQASsoAgHP
-        rwabWNcukncH6pnLppOaFd5pCg7DFAJjYNyuUCE=
-X-Google-Smtp-Source: ABdhPJxpn+YTVGd4P8X3A0/vXff0+YwH+btvdcy+G+SRmu3ePx33v5ttN3GVJ8D6gHv5BTyUUOhaZQor7ll9FCTHzGU=
-X-Received: by 2002:a17:906:720e:: with SMTP id m14mr603462ejk.161.1608253021411;
- Thu, 17 Dec 2020 16:57:01 -0800 (PST)
+        Thu, 17 Dec 2020 20:07:35 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 68B2958FE29;
+        Fri, 18 Dec 2020 12:06:48 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kq4EH-0055xX-Rv; Fri, 18 Dec 2020 12:06:45 +1100
+Date:   Fri, 18 Dec 2020 12:06:45 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, tytso@mit.edu,
+        khazhy@google.com, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH 4/8] vfs: Add superblock notifications
+Message-ID: <20201218010645.GA1199812@dread.disaster.area>
+References: <20201208003117.342047-1-krisman@collabora.com>
+ <20201208003117.342047-5-krisman@collabora.com>
+ <20201210220914.GG4170059@dread.disaster.area>
+ <87ft4cukor.fsf@collabora.com>
 MIME-Version: 1.0
-References: <20201214223722.232537-1-shy828301@gmail.com> <20201214223722.232537-8-shy828301@gmail.com>
- <20201215030528.GN3913616@dread.disaster.area> <CAHbLzkoOcTuidghuR_pLsE4RX_6DiwXW+k2EQRJxrB6BDqhvBA@mail.gmail.com>
-In-Reply-To: <CAHbLzkoOcTuidghuR_pLsE4RX_6DiwXW+k2EQRJxrB6BDqhvBA@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 17 Dec 2020 16:56:48 -0800
-Message-ID: <CAHbLzkoWco5gq8tuxbTsfpTF3GPUQLn9uNUTy1nUNwKGVPonmg@mail.gmail.com>
-Subject: Re: [v2 PATCH 7/9] mm: vmscan: don't need allocate
- shrinker->nr_deferred for memcg aware shrinkers
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ft4cukor.fsf@collabora.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=zTNgK-yGK50A:10 a=20KFwNOVAAAA:8 a=bIklqNNcAAAA:8
+        a=7-415B0cAAAA:8 a=BAjqJaPzbBLsPg9D8GYA:9 a=9gaeUh4213YzDVK8:21
+        a=21pc6Q3nKQSEouU-:21 a=CjuIK1q_8ugA:10 a=EkVPmbJYC8N8lJNKmfU-:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 3:07 PM Yang Shi <shy828301@gmail.com> wrote:
->
-> On Mon, Dec 14, 2020 at 7:05 PM Dave Chinner <david@fromorbit.com> wrote:
+On Fri, Dec 11, 2020 at 05:55:32PM -0300, Gabriel Krisman Bertazi wrote:
+> 
+> 
+> Dave,
+> 
+> Thanks a lot for the very detailed review.
+> 
+> > On Mon, Dec 07, 2020 at 09:31:13PM -0300, Gabriel Krisman Bertazi wrote:
+> >> From: David Howells <dhowells@redhat.com>
+> >> 
+> >> Add a superblock event notification facility whereby notifications about
+> >> superblock events, such as I/O errors (EIO), quota limits being hit
+> >> (EDQUOT) and running out of space (ENOSPC) can be reported to a monitoring
+> >> process asynchronously.  Note that this does not cover vfsmount topology
+> >> changes.  watch_mount() is used for that.
 > >
-> > On Mon, Dec 14, 2020 at 02:37:20PM -0800, Yang Shi wrote:
-> > > Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
-> > > allocate shrinker->nr_deferred for such shrinkers anymore.
-> > >
-> > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > > ---
-> > >  mm/vmscan.c | 28 ++++++++++++++--------------
-> > >  1 file changed, 14 insertions(+), 14 deletions(-)
-> > >
-> > > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > > index bce8cf44eca2..8d5bfd818acd 100644
-> > > --- a/mm/vmscan.c
-> > > +++ b/mm/vmscan.c
-> > > @@ -420,7 +420,15 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
-> > >   */
-> > >  int prealloc_shrinker(struct shrinker *shrinker)
-> > >  {
-> > > -     unsigned int size = sizeof(*shrinker->nr_deferred);
-> > > +     unsigned int size;
-> > > +
-> > > +     if (is_deferred_memcg_aware(shrinker)) {
-> > > +             if (prealloc_memcg_shrinker(shrinker))
-> > > +                     return -ENOMEM;
-> > > +             return 0;
-> > > +     }
-> > > +
-> > > +     size = sizeof(*shrinker->nr_deferred);
-> > >
-> > >       if (shrinker->flags & SHRINKER_NUMA_AWARE)
-> > >               size *= nr_node_ids;
-> > > @@ -429,26 +437,18 @@ int prealloc_shrinker(struct shrinker *shrinker)
-> > >       if (!shrinker->nr_deferred)
-> > >               return -ENOMEM;
-> > >
-> > > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> > > -             if (prealloc_memcg_shrinker(shrinker))
-> > > -                     goto free_deferred;
-> > > -     }
-> > > -
-> > >       return 0;
-> > > -
-> > > -free_deferred:
-> > > -     kfree(shrinker->nr_deferred);
-> > > -     shrinker->nr_deferred = NULL;
-> > > -     return -ENOMEM;
-> > >  }
+> > watch_mount() is not in the upstream tree, nor is it defined in this
+> > patch set.
+> 
+> 
+> That is my mistake, not the author's.  I picked this from a longer series that has
+> a watch_mount implementation, but didn't include it.  Only the commit message
+> is bad, not the patch absence.
+> 
+> >> Records are of the following format:
+> >> 
+> >> 	struct superblock_notification {
+> >> 		struct watch_notification watch;
+> >> 		__u64	sb_id;
+> >> 	} *n;
+> >> 
+> >> Where:
+> >> 
+> >> 	n->watch.type will be WATCH_TYPE_SB_NOTIFY.
+> >> 
+> >> 	n->watch.subtype will indicate the type of event, such as
+> >> 	NOTIFY_SUPERBLOCK_READONLY.
+> >> 
+> >> 	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
+> >> 	record.
+> >> 
+> >> 	n->watch.info & WATCH_INFO_ID will be the fifth argument to
+> >> 	watch_sb(), shifted.
+> >> 
+> >> 	n->watch.info & NOTIFY_SUPERBLOCK_IS_NOW_RO will be used for
+> >> 	NOTIFY_SUPERBLOCK_READONLY, being set if the superblock becomes
+> >> 	R/O, and being cleared otherwise.
+> >> 
+> >> 	n->sb_id will be the ID of the superblock, as can be retrieved with
+> >> 	the fsinfo() syscall, as part of the fsinfo_sb_notifications
+> >> 	attribute in the watch_id field.
+> >> 
+> >> Note that it is permissible for event records to be of variable length -
+> >> or, at least, the length may be dependent on the subtype.  Note also that
+> >> the queue can be shared between multiple notifications of various types.
 > >
-> > I'm trying to put my finger on it, but this seems wrong to me. If
-> > memcgs are disabled, then prealloc_memcg_shrinker() needs to fail.
-> > The preallocation code should not care about internal memcg details
-> > like this.
+> > /me puts on his "We really, really, REALLY suck at APIs" hat.
 > >
-> >         /*
-> >          * If the shrinker is memcg aware and memcgs are not
-> >          * enabled, clear the MEMCG flag and fall back to non-memcg
-> >          * behaviour for the shrinker.
-> >          */
-> >         if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> >                 error = prealloc_memcg_shrinker(shrinker);
-> >                 if (!error)
-> >                         return 0;
-> >                 if (error != -ENOSYS)
-> >                         return error;
+> > This adds a new syscall that has a complex structure associated with
+> > in. This needs a full man page specification written for it
+> > describing the parameters, the protocol structures, behaviour, etc
+> > before we can really review this. It really also needs full test
+> > infrastructure for every aspect of the syscall written from the man
+> > page (not the implementation) for fstests so that we end up with a
+> > consistent implementation for every filesystem that implements these
+> > watches.
+> 
+> I see.  I was thinking the other way around, getting a design accepted
+> by you all before writing down documentation, but that makes a lot of
+> sense. In fact, I'm taking a step back and writing a text proposal,
+> without patches, such that we can agree on the main points before I
+> start coding.
+> 
+> > Other things:
 > >
-> >                 /* memcgs not enabled! */
-> >                 shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
-> >         }
+> > - Scoping: inode/block related information is not "superblock"
+> >   information. What about errors in non-inode related objects?
+> 
+> The previous RFC separated inode error notifications from other types,
+> but my idea was to have different notifications types for each object.
+> 
+> 
+> > - offets into files/devices/objects need to be in bytes, not blocks
+> > - errors can span multiple contiguous blocks, so the notification
+> >   needs to report the -byte range- the error corresponds to.
+> > - superblocks can have multiple block devices under them with
+> >   individual address ranges. Hence we need {object,dev,offset,len}
+> >   to uniquely identify where an error occurred in a filesystem.
+> > - userspace face structures need padding and flags/version/size
+> >   information so we can tell what shape the structure being passed
+> >   is. It is guaranteed that we will want to expand the structure
+> >   definitions in future, maybe even deprecate some...
+> > - syscall has no flags field.
+> > - syscall is of "at" type (relative path via dfd) so probably shoudl
+> >   be called "watch..._at()"
+> 
+> will do all the above.
+> 
 > >
-> >         size = sizeof(*shrinker->nr_deferred);
-> >         ....
-> >         return 0;
-> > }
-> >
-> > This guarantees that only the shrinker instances taht have a
-> > correctly set up memcg attached to them will have the
-> > SHRINKER_MEMCG_AWARE flag set. Hence in all the rest of the shrinker
-> > code, we only ever need to check for SHRINKER_MEMCG_AWARE to
-> > determine what we should do....
->
-> Thanks. I see your point. We could move the memcg specific details
-> into prealloc_memcg_shrinker().
->
-> It seems we have to acquire shrinker_rwsem before we check and modify
-> SHIRNKER_MEMCG_AWARE bit if we may clear it.
+> > Fundamentally, though, I'm struggling to understand what the
+> > difference between watch_mount() and watch_sb() is going to be.
+> > "superblock" watches seem like the wrong abstraction for a path
+> > based watch interface. Superblocks can be shared across multiple
+> > disjoint paths, subvolumes and even filesystems.
+> 
+> As far as I understand the original patchset, watch_mount was designed
+> to monitor mountpoint operations (mount, umount,.. ) in a sub-tree,
+> while watch_sb monitors filesystem operations and errors.  I'm not
+> working with watch_mount, my current interest is in having a
+> notifications mechanism for filesystem errors, which seemed to fit
+> nicely with the watch_sb patchset for watch_queue.
 
-Hi Dave,
+<shrug>
 
-Is it possible that shrinker register races with shrinker unregister?
-It seems impossible to me by a quick visual code inspection. But I'm
-not a VFS expert so I'm not quite sure.
+The previous patches are not part of your proposal, and if they are
+not likely to be merged, then we don't really care what they are
+or what they did. The only thing that matters here is what your
+patchset is trying to implement and whether that is appropriate or
+not...
 
-If it is impossible the implementation would be quite simple otherwise
-we need move shrinker_rwsem acquire/release to
-prealloc_shrinker/free_prealloced_shrinker/unregister_shrinker to
-protect SHRINKER_MEMCG_AWARE update.
+> > The path based user API is really asking to watch a mount, not a
+> > superblock. We don't otherwise expose superblocks to userspace at
+> > all, so this seems like the API is somewhat exposing internal kernel
+> > implementation behind mounts. However, there -is- a watch_mount()
+> > syscall floating around somewhere, so it makes me wonder exactly why
+> > we need a second syscall and interface protocol to expose
+> > essentially the same path-based watch information to userspace.
+> 
+> I think these are indeed different syscalls, but maybe a bit misnamed.
+> 
+> If not by path, how could we uniquely identify an entire filesystem?
 
->
-> >
-> > >  void free_prealloced_shrinker(struct shrinker *shrinker)
-> > >  {
-> > > -     if (!shrinker->nr_deferred)
-> > > +     if (is_deferred_memcg_aware(shrinker)) {
-> > > +             unregister_memcg_shrinker(shrinker);
-> > >               return;
-> > > +     }
-> > >
-> > > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> > > -             unregister_memcg_shrinker(shrinker);
-> > > +     if (!shrinker->nr_deferred)
-> > > +             return;
-> > >
-> > >       kfree(shrinker->nr_deferred);
-> > >       shrinker->nr_deferred = NULL;
-> >
-> > e.g. then this function can simply do:
-> >
-> > {
-> >         if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> >                 return unregister_memcg_shrinker(shrinker);
-> >         kfree(shrinker->nr_deferred);
-> >         shrinker->nr_deferred = NULL;
-> > }
-> >
-> > Cheers,
-> >
-> > Dave.
-> > --
-> > Dave Chinner
-> > david@fromorbit.com
+Exactly why do we need to uniquely identify a filesystem based on
+it's superblock? Surely it's already been identified by path by the
+application that registered the watch?
+
+> Maybe pointing to a block device that has a valid filesystem and in the
+> case of fs spawning through multiple devices, consider all of them?  But
+> that would not work for some misc filesystems, like tmpfs.
+
+It can't be block device based at all - think NFS, CIFS, etc. We
+can't use UUIDs, because not all filesystem have them, and snapshots
+often have identical UUIDs.
+
+Really, I think "superblock" notifications are extremely problematic
+because the same superblock can be shared across different security
+contexts. I'm not sure what the solution might be, but I really
+don't like the idea of a mechanism that can report errors in objects
+outside the visibility of a namespaced container to that container
+just because it has access to some path inside a much bigger
+filesystem that is mostly out of bounds to that container.
+
+> > Without having that syscall the same patchset, or a reference to
+> > that patchset (and man page documenting the interface), I have no
+> > idea what it does or why it is different or why it can't be used for
+> > these error notifications....
+> 
+> As a short summary, My goal is an error reporting mechanism for ext4
+> (preferably that can also be used by other filesystems)
+
+There's no "preferably" here. Either it is generic and usable by all
+other filesystems, or it's not functionality that should be merged
+into the VFS or exposed by a syscall.
+
+> that allows a
+> userspace application to monitor errors on the filesystem without losing
+> information and without having to parse a convoluted dmesg.  The
+> watch_queue API seem to expose exactly the infrastructure for this kind
+> of thing.  As I said, I'm gonna send a proposal with more details
+> because, I'd really like to have something that can be used by several
+> filesystems.
+
+Yes, I know what the desired functionality is, it's just that it's
+not as simple as "redirect global error messages to global pipe"
+such as what we do with printk and dmesg...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
