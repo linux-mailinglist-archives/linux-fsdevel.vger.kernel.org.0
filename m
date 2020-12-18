@@ -2,170 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA2B2DE339
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 14:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A202DE512
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 15:46:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgLRNV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Dec 2020 08:21:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726286AbgLRNV1 (ORCPT
+        id S1725932AbgLROpw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Dec 2020 09:45:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53595 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726516AbgLROpv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Dec 2020 08:21:27 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F3DC0617A7;
-        Fri, 18 Dec 2020 05:20:46 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id a9so5410059lfh.2;
-        Fri, 18 Dec 2020 05:20:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OGRVW3Zib+bLKNC+Amev3v1cKadH0SToLHNOIADvq2o=;
-        b=pkvKvgjlTYrU0/rcHyKjHlh90stI5sOSKLqGgQy9GEpaW9fC2vF8hJQnOIt5c8SBdh
-         7On4XSt9s2ahIXDe/XUoBWn6cfWjgfCdXS4QjYXKcRgzTwdLxVEfxv9olmHEGjbZsywP
-         LYVkZAnsmZT+WJTkGNNZXB+Xa3ckIxvo8Gq4VG0KuSwnNlIhmE00z4HLFTX2FR8EronV
-         6FxqB3D2LyUlsmqSUBEpjlqc1AWMQ2FXzKZe2M4yJCz/qDh8HDKcvRnbDWKBg97PHhGf
-         3EZE7XSx/qAxFqVumF0TklBSIE4cHG0OS9qjDAVG24JPlQAjXxMUHACej1ioVnzM7P8I
-         L0vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OGRVW3Zib+bLKNC+Amev3v1cKadH0SToLHNOIADvq2o=;
-        b=DFE/d82pSAvaotvC5mZXFGiU45HPk2/SkwT9YZ6TTKkqBs9zZd9e7h7Ffov8BVgmDu
-         PsF55/mLarLY52Nw+UfzvNIbJVG3i3jZ3ny3PRxqz+Jveya+sRB9mvD3BPM0pftK1Nr+
-         TWTYjNq7K4YVOWBjBp0nbdSpb2iQQ0wiURFxMWybRFON+rlZYAb8ateQIJTeIpx48Fug
-         ucvi5IyG05TvUS42MBzkyQgOjlpRXA2pGmd/AGJtNpY5K/97WauXHOZHXaMNGLH3vlZV
-         hRnR2o283dovc2GR7qAbVIw6acTfDlDaaLTZTibMHpPF/k3FnqMi6KMO6QroePVhL1q7
-         Vi8A==
-X-Gm-Message-State: AOAM533dB/amjyNFD4wiSBgcYJPvhvvQae5JxNNcoRUkWfZdBy1qRn5F
-        u7xQXRt/SO/3m1A0D1wBd8gLaReFwiwkey6ayHg=
-X-Google-Smtp-Source: ABdhPJxNcBHYhpRK17C/zCYLKYTsInrzKiwsE3Gb5ARV2jH3e53ufX/o2xYcH8K0vfq/NOoWOttiMQWagPYmE+O1BBw=
-X-Received: by 2002:a2e:874d:: with SMTP id q13mr1791068ljj.323.1608297645213;
- Fri, 18 Dec 2020 05:20:45 -0800 (PST)
+        Fri, 18 Dec 2020 09:45:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608302664;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CthNdoUY/FIFXJCBduT4k2Ir0PRGPQTHNOp+0Jn+7JM=;
+        b=iUBRr0wwn5WrnV21fjD6S+VIy/UnNgf+Kn6032G5xBV+mTBEsshB+HpuvEtoBRIXF+Fizv
+        SKkI8Is5ykMt2dpRMZG7Fhpa4qEqt7yLPM81lfgn4+m1FnShtsHJ7EEv9+0sFrj6uYcd5h
+        YtcTH8DEU9FZRbtsPd+N/ajbcM/WpH0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-169-pEZB78OdMT2Hg7zsV1RQcA-1; Fri, 18 Dec 2020 09:44:21 -0500
+X-MC-Unique: pEZB78OdMT2Hg7zsV1RQcA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 43D98800688;
+        Fri, 18 Dec 2020 14:44:19 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-223.rdu2.redhat.com [10.10.115.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B815B60CED;
+        Fri, 18 Dec 2020 14:44:18 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 3E856220BCF; Fri, 18 Dec 2020 09:44:18 -0500 (EST)
+Date:   Fri, 18 Dec 2020 09:44:18 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Jeffrey Layton <jlayton@poochiereds.net>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, jlayton@kernel.org,
+        amir73il@gmail.com, sargun@sargun.me, miklos@szeredi.hu,
+        willy@infradead.org, jack@suse.cz, neilb@suse.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 3/3] overlayfs: Check writeback errors w.r.t upper in
+ ->syncfs()
+Message-ID: <20201218144418.GA3424@redhat.com>
+References: <20201216233149.39025-1-vgoyal@redhat.com>
+ <20201216233149.39025-4-vgoyal@redhat.com>
+ <20201217200856.GA707519@tleilax.poochiereds.net>
 MIME-Version: 1.0
-References: <bde0b6c32f2b055c1ad1401b45c4adf61aab6876.camel@themaw.net>
- <CAC2o3DJdHuQxY7Rn5uXUprS7i8ri1qB=wOUM2rdZkWt4yJHv1w@mail.gmail.com>
- <3e97846b52a46759c414bff855e49b07f0d908fc.camel@themaw.net>
- <CAC2o3DLGtx15cgra3Y92UBdQRBKGckqOkDmwBV-aV-EpUqO5SQ@mail.gmail.com>
- <efb7469c7bad2f6458c9a537b8e3623e7c303c21.camel@themaw.net>
- <da4f730bbbb20c0920599ca5afc316e2c092b7d8.camel@themaw.net>
- <CAC2o3DJsvB6kj=S6D3q+_OBjgez9Q9B5s3-_gjUjaKmb2MkTHQ@mail.gmail.com>
- <c4002127c72c07a00e8ba0fae6b0ebf5ba8e08e7.camel@themaw.net>
- <a39b73a53778094279522f1665be01ce15fb21f4.camel@themaw.net>
- <c8a6c9adc3651e64cf694f580a8cb3d87d7cb893.camel@themaw.net>
- <X9t1xVTZ/ApIvPMg@mtj.duckdns.org> <67a3012a6a215001c8be9344aee1c99897ff8b7e.camel@themaw.net>
- <CAC2o3DJhx+dJX-oMKSTNabWYyRB750VABib+OZ=7UX6rGJZD5g@mail.gmail.com> <f21e92d683c609b14e559209a1a1bed2f7c3649e.camel@themaw.net>
-In-Reply-To: <f21e92d683c609b14e559209a1a1bed2f7c3649e.camel@themaw.net>
-From:   Fox Chen <foxhlchen@gmail.com>
-Date:   Fri, 18 Dec 2020 21:20:33 +0800
-Message-ID: <CAC2o3DKO_weLt2n6hOwU=hJ9J4fc3Qa3mUHP7rMzksJVuGnsJA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency improvement
-To:     Ian Kent <raven@themaw.net>
-Cc:     Tejun Heo <tj@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-        akpm@linux-foundation.org, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, ricklind@linux.vnet.ibm.com,
-        sfr@canb.auug.org.au, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201217200856.GA707519@tleilax.poochiereds.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 18, 2020 at 7:21 PM Ian Kent <raven@themaw.net> wrote:
->
-> On Fri, 2020-12-18 at 16:01 +0800, Fox Chen wrote:
-> > On Fri, Dec 18, 2020 at 3:36 PM Ian Kent <raven@themaw.net> wrote:
-> > > On Thu, 2020-12-17 at 10:14 -0500, Tejun Heo wrote:
-> > > > Hello,
-> > > >
-> > > > On Thu, Dec 17, 2020 at 07:48:49PM +0800, Ian Kent wrote:
-> > > > > > What could be done is to make the kernfs node attr_mutex
-> > > > > > a pointer and dynamically allocate it but even that is too
-> > > > > > costly a size addition to the kernfs node structure as
-> > > > > > Tejun has said.
-> > > > >
-> > > > > I guess the question to ask is, is there really a need to
-> > > > > call kernfs_refresh_inode() from functions that are usually
-> > > > > reading/checking functions.
-> > > > >
-> > > > > Would it be sufficient to refresh the inode in the write/set
-> > > > > operations in (if there's any) places where things like
-> > > > > setattr_copy() is not already called?
-> > > > >
-> > > > > Perhaps GKH or Tejun could comment on this?
-> > > >
-> > > > My memory is a bit hazy but invalidations on reads is how sysfs
-> > > > namespace is
-> > > > implemented, so I don't think there's an easy around that. The
-> > > > only
-> > > > thing I
-> > > > can think of is embedding the lock into attrs and doing xchg
-> > > > dance
-> > > > when
-> > > > attaching it.
-> > >
-> > > Sounds like your saying it would be ok to add a lock to the
-> > > attrs structure, am I correct?
-> > >
-> > > Assuming it is then, to keep things simple, use two locks.
-> > >
-> > > One global lock for the allocation and an attrs lock for all the
-> > > attrs field updates including the kernfs_refresh_inode() update.
-> > >
-> > > The critical section for the global lock could be reduced and it
-> > > changed to a spin lock.
-> > >
-> > > In __kernfs_iattrs() we would have something like:
-> > >
-> > > take the allocation lock
-> > > do the allocated checks
-> > >   assign if existing attrs
-> > >   release the allocation lock
-> > >   return existing if found
-> > > othewise
-> > >   release the allocation lock
-> > >
-> > > allocate and initialize attrs
-> > >
-> > > take the allocation lock
-> > > check if someone beat us to it
-> > >   free and grab exiting attrs
-> > > otherwise
-> > >   assign the new attrs
-> > > release the allocation lock
-> > > return attrs
-> > >
-> > > Add a spinlock to the attrs struct and use it everywhere for
-> > > field updates.
-> > >
-> > > Am I on the right track or can you see problems with this?
-> > >
-> > > Ian
-> > >
-> >
-> > umm, we update the inode in kernfs_refresh_inode, right??  So I guess
-> > the problem is how can we protect the inode when kernfs_refresh_inode
-> > is called, not the attrs??
->
-> But the attrs (which is what's copied from) were protected by the
-> mutex lock (IIUC) so dealing with the inode attributes implies
-> dealing with the kernfs node attrs too.
->
-> For example in kernfs_iop_setattr() the call to setattr_copy() copies
-> the node attrs to the inode under the same mutex lock. So, if a read
-> lock is used the copy in kernfs_refresh_inode() is no longer protected,
-> it needs to be protected in a different way.
->
+On Thu, Dec 17, 2020 at 03:08:56PM -0500, Jeffrey Layton wrote:
+> On Wed, Dec 16, 2020 at 06:31:49PM -0500, Vivek Goyal wrote:
+> > Check for writeback error on overlay super block w.r.t "struct file"
+> > passed in ->syncfs().
+> > 
+> > As of now real error happens on upper sb. So this patch first propagates
+> > error from upper sb to overlay sb and then checks error w.r.t struct
+> > file passed in.
+> > 
+> > Jeff, I know you prefer that I should rather file upper file and check
+> > error directly on on upper sb w.r.t this real upper file.  While I was
+> > implementing that I thought what if file is on lower (and has not been
+> > copied up yet). In that case shall we not check writeback errors and
+> > return back to user space? That does not sound right though because,
+> > we are not checking for writeback errors on this file. Rather we
+> > are checking for any error on superblock. Upper might have an error
+> > and we should report it to user even if file in question is a lower
+> > file. And that's why I fell back to this approach. But I am open to
+> > change it if there are issues in this method.
+> > 
+> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > ---
+> >  fs/overlayfs/ovl_entry.h |  2 ++
+> >  fs/overlayfs/super.c     | 15 ++++++++++++---
+> >  2 files changed, 14 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+> > index 1b5a2094df8e..a08fd719ee7b 100644
+> > --- a/fs/overlayfs/ovl_entry.h
+> > +++ b/fs/overlayfs/ovl_entry.h
+> > @@ -79,6 +79,8 @@ struct ovl_fs {
+> >  	atomic_long_t last_ino;
+> >  	/* Whiteout dentry cache */
+> >  	struct dentry *whiteout;
+> > +	/* Protects multiple sb->s_wb_err update from upper_sb . */
+> > +	spinlock_t errseq_lock;
+> >  };
+> >  
+> >  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
+> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> > index b4d92e6fa5ce..e7bc4492205e 100644
+> > --- a/fs/overlayfs/super.c
+> > +++ b/fs/overlayfs/super.c
+> > @@ -291,7 +291,7 @@ int ovl_syncfs(struct file *file)
+> >  	struct super_block *sb = file->f_path.dentry->d_sb;
+> >  	struct ovl_fs *ofs = sb->s_fs_info;
+> >  	struct super_block *upper_sb;
+> > -	int ret;
+> > +	int ret, ret2;
+> >  
+> >  	ret = 0;
+> >  	down_read(&sb->s_umount);
+> > @@ -310,10 +310,18 @@ int ovl_syncfs(struct file *file)
+> >  	ret = sync_filesystem(upper_sb);
+> >  	up_read(&upper_sb->s_umount);
+> >  
+> > +	/* Update overlay sb->s_wb_err */
+> > +	if (errseq_check(&upper_sb->s_wb_err, sb->s_wb_err)) {
+> > +		/* Upper sb has errors since last time */
+> > +		spin_lock(&ofs->errseq_lock);
+> > +		errseq_check_and_advance(&upper_sb->s_wb_err, &sb->s_wb_err);
+> > +		spin_unlock(&ofs->errseq_lock);
+> > +	}
+> 
+> So, the problem here is that the resulting value in sb->s_wb_err is
+> going to end up with the REPORTED flag set (using the naming in my
+> latest set). So, a later opener of a file on sb->s_wb_err won't see it.
+> 
+> For instance, suppose you call sync() on the box and does the above
+> check and advance. Then, you open the file and call syncfs() and get
+> back no error because REPORTED flag was set when you opened. That error
+> will then be lost.
 
-Ok, I'm actually wondering why the VFS holds exclusive i_rwsem for .setattr but
- no lock for .getattr (misdocumented?? sometimes they have as you've found out)?
-What does it protect against?? Because .permission does a similar thing
-here -- updating inode attributes, the goal is to provide the same
-protection level
-for .permission as for .setattr, am I right???
+Hi Jeff,
 
+In this patch, I am doing this only in ->syncfs() path and not in
+->sync_fs() path. IOW, errseq_check_and_advance() will take place
+only if there is a valid "struct file" passed in. That means there
+is a consumer of the error and that means it should be fine to
+set the sb->s_wb_err as SEEN/REPORTED, right?
 
-thanks,
-fox
+If we end up plumbming "struct file" in existing ->sync_fs() routine,
+then I will call this only if a non NULL struct file has been 
+passed in. Otherwise skip this step. 
+
+IOW, sync() call will not result in errseq_check_and_advance() instead
+a syncfs() call will. 
+
+> 
+> >  
+> > +	ret2 = errseq_check_and_advance(&sb->s_wb_err, &file->f_sb_err);
+> >  out:
+> >  	up_read(&sb->s_umount);
+> > -	return ret;
+> > +	return ret ? ret : ret2;
+> >  }
+> >  
+> >  /**
+> > @@ -1903,6 +1911,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+> >  	if (!cred)
+> >  		goto out_err;
+> >  
+> > +	spin_lock_init(&ofs->errseq_lock);
+> >  	/* Is there a reason anyone would want not to share whiteouts? */
+> >  	ofs->share_whiteout = true;
+> >  
+> > @@ -1975,7 +1984,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+> >  
+> >  		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
+> >  		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
+> > -
+> > +		sb->s_wb_err = errseq_sample(&ovl_upper_mnt(ofs)->mnt_sb->s_wb_err);
+> 
+> This will mark the error on the upper_sb as REPORTED, and that's not
+> really that's the case if you're just using it set s_wb_err in the
+> overlay. You might want to use errseq_peek in this situation.
+
+For now I am still looking at existing code and not new code. Because
+I belive that new code does not change existing behavior instead
+provides additional functionality to allow sampling the error without
+marking it seen as well as provide helper to not force seeing an
+unseen error.
+
+So current errseq_sample() does not mark error SEEN. And if it is
+an unseen error, we will get 0 and be forced to see the error next
+time.
+
+One small issue with this is that say upper has unseen error. Now
+we mount overlay and save that value in sb->s_wb_err (unseen). Say
+a file is opened on upper and error is now seen on upper. But
+we still have unseen error cached in overlay and if overlay fd is
+now opened, f->f_sb_err will be 0 and it will be forced to see
+err on next syncfs().
+
+IOW, despite the fact that overlay fd was opened after upper sb had
+been marked seen, it still will see error. I think it probably is
+not a big issue.
+
+Vivek
+
+> 
+> >  	}
+> >  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
+> >  	err = PTR_ERR(oe);
+> > -- 
+> > 2.25.4
+> > 
+> 
+
