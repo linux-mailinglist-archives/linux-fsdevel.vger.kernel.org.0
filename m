@@ -2,193 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22B682DE7E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 18:13:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA472DE949
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Dec 2020 19:52:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbgLRRNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Dec 2020 12:13:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727787AbgLRRNZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Dec 2020 12:13:25 -0500
-Date:   Fri, 18 Dec 2020 09:12:42 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608311564;
-        bh=bVsTLD70gj51aNdtA0DVixIH0v5Pgvp0WnWlESG1bkQ=;
-        h=From:To:Cc:Subject:From;
-        b=k1N5rFGcHsAdql1bqwusSaWqosoKaGCEkVlUrNqnJP71BhXlzWiaEj9hV7ITY9XA5
-         tlVo4Ldv7nebt6m87AVGrgO5NoosWSxYkrFQFX482mAIzoueSyaAeGJ4xToNh6ZcPk
-         24pl+5M++jV7gSoitSpEuSQEjueF678grxe+PeR9kZPllKwuSXmnRNZU28g+vxK9uw
-         jyHpktv4fdRtW8uNI1uk9OGwtK4zkyd8lcan1eX98f+6a8epKqziMscREVmj4Vq5nU
-         dQDeceXJNYGFx+Ro076015c8OIp+9ZvPPhEkT1sYrfeobj6E/2o5MHH059IyWUstXs
-         XZ7mVnPWrUB5g==
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: new code for 5.11
-Message-ID: <20201218171242.GH6918@magnolia>
+        id S1726957AbgLRSvM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Dec 2020 13:51:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20802 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726137AbgLRSvM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Dec 2020 13:51:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608317385;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mu9mY5uhyKSd1nOZhoF3bMk566AK2t1HfVACnYE+V/s=;
+        b=aH6DCUooZRFyqNZ4MTs21U79DGDTaF1ZhlixZmS8fEloFOySgLHe5AtcxfQyv+oJeVTywB
+        PGQEBPiojBY0oB0QTa3rwEf7iaeS/N5d2sJTNyXH4DxIxkV84eD6ydGGTk0zdf7yEm/Q+n
+        GXtTnGuNbXbJKIAK5FZ8fkVB6yZIx3s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-479-ZAmeYbrQMPSBAE1h56acAA-1; Fri, 18 Dec 2020 13:49:41 -0500
+X-MC-Unique: ZAmeYbrQMPSBAE1h56acAA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 43B04801817;
+        Fri, 18 Dec 2020 18:49:40 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA8995C1C5;
+        Fri, 18 Dec 2020 18:49:39 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Chris Murphy <lists@colorremedies.com>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: how to track down cause for EBUSY on /dev/vda4?
+References: <CAJCQCtQUvyopGxBcXzenTy8MuEvm+W1PQNqzFf1Qp=p1M9pBGQ@mail.gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Fri, 18 Dec 2020 13:49:53 -0500
+In-Reply-To: <CAJCQCtQUvyopGxBcXzenTy8MuEvm+W1PQNqzFf1Qp=p1M9pBGQ@mail.gmail.com>
+        (Chris Murphy's message of "Thu, 17 Dec 2020 13:13:54 -0700")
+Message-ID: <x49sg83t0dq.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+Chris Murphy <lists@colorremedies.com> writes:
 
-Please pull the following branch containing all the new xfs code for
-5.11.  In this release we add the ability to set a 'needsrepair' flag
-indicating that we /know/ the filesystem requires xfs_repair, but other
-than that, it's the usual strengthening of metadata validation and
-miscellaneous cleanups.
+> Hi,
+>
+> Short version:
+> # mkfs.any /dev/vda4
+> unable to open /dev/vda4: Device or resource busy
+>
+> Curiously /dev/vda4 is just a blank partition, not in use by anything
+> that I'm aware of. And gdisk is allowed to modify the GPT on /dev/vda
+> without complaint. This is a snippet from strace of the above command
+> at the failure point:
+>
+> openat(AT_FDCWD, "/dev/vda4", O_RDWR|O_EXCL) = -1 EBUSY (Device or
+> resource busy)
 
-The branch merges cleanly with your upstream head as of a few minutes
-ago, so please let me know if anything strange happens.  Note also that
-I will not be sending any iomap pull requests for this merge window as
-there weren't any major iomap changes this cycle.
+[snip]
 
---D
+> format, and /proc/mounts shows
+>
+> /dev/vda /run/initramfs/live iso9660
+> ro,relatime,nojoliet,check=s,map=n,blocksize=2048 0 0
 
-The following changes since commit 418baf2c28f3473039f2f7377760bd8f6897ae18:
+That mount claims the device, and you can't then also open a partition
+on that device exclusively.
 
-  Linux 5.10-rc5 (2020-11-22 15:36:08 -0800)
+> So it sees the whole vda device as iso9660 and ro? But permits gdisk
+> to modify some select sectors on vda? I admit it's an ambiguous image.
+> Is it a duck or is it a rabbit? And therefore best to just look at it,
+> not make modifications to it. Yet /dev/vda is modifiable, where the
+> partitions aren't. Hmm.
 
-are available in the Git repository at:
+The file system is mounted read-only.  It may be that the /device/ is not
+read-only.
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.11-merge-4
+HTH,
+Jeff
 
-for you to fetch changes up to e82226138b20d4f638426413e83c6b5db532c6a2:
-
-  xfs: remove xfs_buf_t typedef (2020-12-16 16:07:34 -0800)
-
-----------------------------------------------------------------
-New code for 5.11:
-- Introduce a "needsrepair" "feature" to flag a filesystem as needing a
-  pass through xfs_repair.  This is key to enabling filesystem upgrades
-  (in xfs_db) that require xfs_repair to make minor adjustments to metadata.
-- Refactor parameter checking of recovered log intent items so that we
-  actually use the same validation code as them that generate the intent
-  items.
-- Various fixes to online scrub not reacting correctly to directory
-  entries pointing to inodes that cannot be igetted.
-- Refactor validation helpers for data and rt volume extents.
-- Refactor XFS_TRANS_DQ_DIRTY out of existence.
-- Fix a longstanding bug where mounting with "uqnoenforce" would start
-  user quotas in non-enforcing mode but /proc/mounts would display
-  "usrquota", implying that they are being enforced.
-- Don't flag dax+reflink inodes as corruption since that is a valid (but
-  not fully functional) combination right now.
-- Clean up raid stripe validation functions.
-- Refactor the inode allocation code to be more straightforward.
-- Small prep cleanup for idmapping support.
-- Get rid of the xfs_buf_t typedef.
-
-----------------------------------------------------------------
-Christoph Hellwig (2):
-      xfs: remove xfs_vn_setattr_nonsize
-      xfs: open code updating i_mode in xfs_set_acl
-
-Darrick J. Wong (21):
-      xfs: move kernel-specific superblock validation out of libxfs
-      xfs: define a new "needrepair" feature
-      xfs: enable the needsrepair feature
-      xfs: hoist recovered bmap intent checks out of xfs_bui_item_recover
-      xfs: improve the code that checks recovered bmap intent items
-      xfs: hoist recovered rmap intent checks out of xfs_rui_item_recover
-      xfs: improve the code that checks recovered rmap intent items
-      xfs: hoist recovered refcount intent checks out of xfs_cui_item_recover
-      xfs: improve the code that checks recovered refcount intent items
-      xfs: hoist recovered extent-free intent checks out of xfs_efi_item_recover
-      xfs: improve the code that checks recovered extent-free intent items
-      xfs: validate feature support when recovering rmap/refcount intents
-      xfs: trace log intent item recovery failures
-      xfs: detect overflows in bmbt records
-      xfs: fix parent pointer scrubber bailing out on unallocated inodes
-      xfs: scrub should mark a directory corrupt if any entries cannot be iget'd
-      xfs: refactor data device extent validation
-      xfs: refactor realtime volume extent validation
-      xfs: refactor file range validation
-      xfs: rename xfs_fc_* back to xfs_fs_*
-      xfs: fix the forward progress assertion in xfs_iwalk_run_callbacks
-
-Dave Chinner (5):
-      xfs: introduce xfs_dialloc_roll()
-      xfs: move on-disk inode allocation out of xfs_ialloc()
-      xfs: move xfs_dialloc_roll() into xfs_dialloc()
-      xfs: spilt xfs_dialloc() into 2 functions
-      xfs: remove xfs_buf_t typedef
-
-Eric Sandeen (1):
-      xfs: don't catch dax+reflink inodes as corruption in verifier
-
-Gao Xiang (3):
-      xfs: introduce xfs_validate_stripe_geometry()
-      xfs: convert noroom, okalloc in xfs_dialloc() to bool
-      xfs: kill ialloced in xfs_dialloc()
-
-Joseph Qi (1):
-      xfs: remove unneeded return value check for *init_cursor()
-
-Kaixu Xia (6):
-      xfs: delete duplicated tp->t_dqinfo null check and allocation
-      xfs: check tp->t_dqinfo value instead of the XFS_TRANS_DQ_DIRTY flag
-      xfs: directly return if the delta equal to zero
-      xfs: remove unnecessary null check in xfs_generic_create
-      xfs: remove the unused XFS_B_FSB_OFFSET macro
-      xfs: show the proper user quota options
-
-Zheng Yongjun (1):
-      fs/xfs: convert comma to semicolon
-
- fs/xfs/libxfs/xfs_alloc.c        |  16 +--
- fs/xfs/libxfs/xfs_bmap.c         |  28 ++---
- fs/xfs/libxfs/xfs_bmap_btree.c   |   2 -
- fs/xfs/libxfs/xfs_btree.c        |  12 +-
- fs/xfs/libxfs/xfs_format.h       |  11 +-
- fs/xfs/libxfs/xfs_ialloc.c       | 170 ++++++++++++++-------------
- fs/xfs/libxfs/xfs_ialloc.h       |  36 +++---
- fs/xfs/libxfs/xfs_ialloc_btree.c |   5 -
- fs/xfs/libxfs/xfs_inode_buf.c    |   4 -
- fs/xfs/libxfs/xfs_refcount.c     |   9 --
- fs/xfs/libxfs/xfs_rmap.c         |   9 --
- fs/xfs/libxfs/xfs_rtbitmap.c     |  22 ++--
- fs/xfs/libxfs/xfs_sb.c           | 104 +++++++++++------
- fs/xfs/libxfs/xfs_sb.h           |   3 +
- fs/xfs/libxfs/xfs_shared.h       |   1 -
- fs/xfs/libxfs/xfs_types.c        |  64 +++++++++++
- fs/xfs/libxfs/xfs_types.h        |   7 ++
- fs/xfs/scrub/agheader_repair.c   |   2 -
- fs/xfs/scrub/bmap.c              |  22 +---
- fs/xfs/scrub/common.c            |  14 ---
- fs/xfs/scrub/dir.c               |  21 +++-
- fs/xfs/scrub/inode.c             |   4 -
- fs/xfs/scrub/parent.c            |  10 +-
- fs/xfs/scrub/rtbitmap.c          |   4 +-
- fs/xfs/xfs_acl.c                 |  40 ++++---
- fs/xfs/xfs_bmap_item.c           |  65 ++++++-----
- fs/xfs/xfs_buf.c                 |  24 ++--
- fs/xfs/xfs_buf.h                 |  14 +--
- fs/xfs/xfs_buf_item.c            |   4 +-
- fs/xfs/xfs_extfree_item.c        |  23 ++--
- fs/xfs/xfs_fsops.c               |   2 +-
- fs/xfs/xfs_inode.c               | 243 +++++++++------------------------------
- fs/xfs/xfs_inode.h               |   6 +-
- fs/xfs/xfs_iops.c                |  41 +++----
- fs/xfs/xfs_iops.h                |   8 --
- fs/xfs/xfs_iwalk.c               |   2 +-
- fs/xfs/xfs_log_recover.c         |  13 ++-
- fs/xfs/xfs_qm.c                  |  26 ++---
- fs/xfs/xfs_refcount_item.c       |  52 +++++----
- fs/xfs/xfs_rmap_item.c           |  67 +++++++----
- fs/xfs/xfs_rtalloc.c             |  20 ++--
- fs/xfs/xfs_rtalloc.h             |   4 +-
- fs/xfs/xfs_super.c               |  77 ++++++++++---
- fs/xfs/xfs_symlink.c             |   4 +-
- fs/xfs/xfs_trace.h               |  18 +++
- fs/xfs/xfs_trans.c               |   2 +-
- fs/xfs/xfs_trans_buf.c           |  16 +--
- fs/xfs/xfs_trans_dquot.c         |  43 ++-----
- 48 files changed, 692 insertions(+), 702 deletions(-)
