@@ -2,249 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D64C2DEC18
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Dec 2020 00:45:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D512DEC44
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Dec 2020 01:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725885AbgLRXpM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Dec 2020 18:45:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbgLRXpL (ORCPT
+        id S1725917AbgLSAHi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Dec 2020 19:07:38 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:52318 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbgLSAHi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Dec 2020 18:45:11 -0500
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9EECC0617B0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Dec 2020 15:44:31 -0800 (PST)
-Received: by mail-il1-x12b.google.com with SMTP id g1so3734264ilk.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Dec 2020 15:44:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=OW5zqXszARx5ARpIBvRVoGQ/CkHN2uItCdMq8Tg890g=;
-        b=bcw7D+xnwUXTI/BcWe5BhN83YPA2abncygL09MCJiMvIlEtjkwzXWZzHylYMf1Y5g2
-         sKPb0vv2MahhgzYoj8XOAuJtVh5FP/pWJwQQTih5la/CSPbtAcFJwE3wwwfiE+Sn/ij3
-         eN/x3OizpVD9CnijLMxFTpFFDiOCpkoeqimGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=OW5zqXszARx5ARpIBvRVoGQ/CkHN2uItCdMq8Tg890g=;
-        b=frKdrQxgnTJAd0Xc26vyyWUAZprxl1AQqODOexbz/EtwrWQcpw8LI38lxR/2r7cKyj
-         kJ7idjaALa+7vZjMw5WgLtIrm0xOghkMoIsqdM7u3D9qYyfVLXmsN7B4H2KbYey2Ca3r
-         T2oBD0GpvIXkhWEUgcR/RiFfIumwrPP/BgUuvZ1/Ga7/bW6n+l1wEF4ecNjt7m7+U0RR
-         xuWWGZe+EZ02yjUHcsNL1YK05d46EKbROkJrum5y2JwzuEWBhqZKy2ycaEBLOkvo27ig
-         zE+uUfz6b4rgbPwfakiLxiQRLIFW6UQa9cStLwc1Dcmq8qEYCGNUF0/7cNTp0fgFArZR
-         Yp9w==
-X-Gm-Message-State: AOAM530SAX7bLy3+DQw8l5AU1dYYGAv4EsaWpTrSp2ydujVF4CWVFmHg
-        bMUjvG6jnHfl4JvfBA+wL6zz+w==
-X-Google-Smtp-Source: ABdhPJyO0JXUteyTChU1tOxvFgCdLwQpfw5YF1SKVg96brDgwyRzw/zMscfLLRe7ITDydoFR/EeNWw==
-X-Received: by 2002:a92:9ec7:: with SMTP id s68mr6713887ilk.171.1608335070679;
-        Fri, 18 Dec 2020 15:44:30 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id z13sm18406524iof.19.2020.12.18.15.44.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Dec 2020 15:44:30 -0800 (PST)
-Date:   Fri, 18 Dec 2020 23:44:28 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3] errseq: split the ERRSEQ_SEEN flag into two new flags
-Message-ID: <20201218234427.GA17343@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20201217150037.468787-1-jlayton@kernel.org>
- <20201217203523.GB28177@ircssh-2.c.rugged-nimbus-611.internal>
- <9e38d400ed1e6bf4a3909f69238e3e5001d908fb.camel@kernel.org>
+        Fri, 18 Dec 2020 19:07:38 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BJ06FvD007874;
+        Sat, 19 Dec 2020 00:06:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=zxiY7+GksnlWJv9IRLMUs6wIm9qq5bjvBFvbKqgvlng=;
+ b=cVRS1aPm18bYapDw9tLAzv3uFGMxrx48q2eUdBDy2RWSiSdqeuPU/ufUthe/ZMh6QpCG
+ tTG4Bw4mDD09mW3NqbmkdNPa132AqBdY3+aFTrZOXfYT+VNC5QczGpsMCknu5Sym59IG
+ gO/hJuv432nQAU79raUqzK4DBMYiOUPN6IkyqIDjVwCCKNo4MAGbmkhd5BBcStR5WBlI
+ L8YFPVYjksft5EyWp2nrNv+HDCKESh1RXQy2LDm8YvckFd03k6sVN8plKxw76LWYU/P1
+ t4DmlTdW/u+biRSt0z1vXkxnC4hN6RtkPdHR5EbFayB0/hLslCfOzUG127wkozoe2C9l xA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 35cn9rvqrk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 19 Dec 2020 00:06:33 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BJ05OH8151366;
+        Sat, 19 Dec 2020 00:06:32 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 35d7esvfc4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 19 Dec 2020 00:06:32 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BJ06Rok003375;
+        Sat, 19 Dec 2020 00:06:27 GMT
+Received: from localhost (/10.159.241.141)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 18 Dec 2020 16:06:27 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v3 1/2] proc: Allow pid_revalidate() during LOOKUP_RCU
+Date:   Fri, 18 Dec 2020 16:06:15 -0800
+Message-Id: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9e38d400ed1e6bf4a3909f69238e3e5001d908fb.camel@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012180164
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012180164
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 04:18:49PM -0500, Jeff Layton wrote:
-> On Thu, 2020-12-17 at 20:35 +0000, Sargun Dhillon wrote:
-> > On Thu, Dec 17, 2020 at 10:00:37AM -0500, Jeff Layton wrote:
-> > > Overlayfs's volatile mounts want to be able to sample an error for their
-> > > own purposes, without preventing a later opener from potentially seeing
-> > > the error.
-> > > 
-> > > The original reason for the ERRSEQ_SEEN flag was to make it so that we
-> > > didn't need to increment the counter if nothing had observed the latest
-> > > value and the error was the same. Eventually, a regression was reported
-> > > in the errseq_t conversion, and we fixed that by using the ERRSEQ_SEEN
-> > > flag to also mean that the error had been reported to userland at least
-> > > once somewhere.
-> > > 
-> > > Those are two different states, however. If we instead take a second
-> > > flag bit from the counter, we can track these two things separately, and
-> > > accomodate the overlayfs volatile mount use-case.
-> > > 
-> > > Rename the ERRSEQ_SEEN flag to ERRSEQ_OBSERVED and use that to indicate
-> > > that the counter must be incremented the next time an error is set.
-> > > Also, add a new ERRSEQ_REPORTED flag that indicates whether the current
-> > > error was returned to userland (and thus doesn't need to be reported on
-> > > newly open file descriptions).
-> > > 
-> > > Test only for the OBSERVED bit when deciding whether to increment the
-> > > counter and only for the REPORTED bit when deciding what to return in
-> > > errseq_sample.
-> > > 
-> > > Add a new errseq_peek function to allow for the overlayfs use-case.
-> > > This just grabs the latest counter and sets the OBSERVED bit, leaving the
-> > > REPORTED bit untouched.
-> > > 
-> > > errseq_check_and_advance must now handle a single special case where
-> > > it races against a "peek" of an as of yet unseen value. The do/while
-> > > loop looks scary, but shouldn't loop more than once.
-> > > 
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  Documentation/core-api/errseq.rst |  22 +++--
-> > >  include/linux/errseq.h            |   1 +
-> > >  lib/errseq.c                      | 139 ++++++++++++++++++++++--------
-> > >  3 files changed, 118 insertions(+), 44 deletions(-)
-> > > 
-> > > v3: rename SEEN/MUSTINC flags to REPORTED/OBSERVED
-> > > 
-> > > Hopefully the new flag names will make this a bit more clear. We could
-> > > also rename some of the functions if that helps too. We could consider
-> > > moving from errseq_sample/_check_and_advance to
-> > > errseq_observe/errseq_report?  I'm not sure that helps anything though.
-> > > 
-> > > I know that Vivek and Sargun are working on syncfs() for overlayfs, so
-> > > we probably don't want to merge this until that work is ready. I think
-> > 
-> > I disagree. I think that this work can land ahead of that, given that I think 
-> > this is probably backportable to v5.10 without much risk, with the addition of 
-> > your RFC v2 Overlay patch. I think the work proper long-term repair Vivek is 
-> > embarking upon seems like it may be far more invasive.
-> > 
-> > > the errseq_peek call will need to be part of their solution for volatile
-> > > mounts, however, so I'm fine with merging this via the overlayfs tree,
-> > > once that work is complete.
-> > > 
-> > > diff --git a/Documentation/core-api/errseq.rst b/Documentation/core-api/errseq.rst
-> > > index ff332e272405..ce46ddcc1487 100644
-> > > --- a/Documentation/core-api/errseq.rst
-> > > +++ b/Documentation/core-api/errseq.rst
-> > > @@ -18,18 +18,22 @@ these functions can be called from any context.
-> > >  Note that there is a risk of collisions if new errors are being recorded
-> > >  frequently, since we have so few bits to use as a counter.
-> > >  
-> > > 
-> > > 
-> > > 
-> > > -To mitigate this, the bit between the error value and counter is used as
-> > > -a flag to tell whether the value has been sampled since a new value was
-> > > -recorded.  That allows us to avoid bumping the counter if no one has
-> > > -sampled it since the last time an error was recorded.
-> > > +To mitigate this, the bits between the error value and counter are used
-> > > +as flags to tell whether the value has been sampled since a new value
-> > > +was recorded, and whether the latest error has been seen by userland.
-> > > +That allows us to avoid bumping the counter if no one has sampled it
-> > > +since the last time an error was recorded, and also ensures that any
-> > > +recorded error will be seen at least once.
-> > >  
-> > > 
-> > > 
-> > > 
-> > >  Thus we end up with a value that looks something like this:
-> > >  
-> > > 
-> > > 
-> > > 
-> > > -+--------------------------------------+----+------------------------+
-> > > -| 31..13                               | 12 | 11..0                  |
-> > > -+--------------------------------------+----+------------------------+
-> > > -| counter                              | SF | errno                  |
-> > > -+--------------------------------------+----+------------------------+
-> > > ++---------------------------------+----+----+------------------------+
-> > > +| 31..14                          | 13 | 12 | 11..0                  |
-> > > ++---------------------------------+----+----+------------------------+
-> > > +| counter                         | OF | RF | errno                  |
-> > > ++---------------------------------+----+----+------------------------+
-> > > +OF = ERRSEQ_OBSERVED flag
-> > > +RF = ERRSEQ_REPORTED flag
-> > >  
-> > > 
-> > > 
-> > > 
-> > >  The general idea is for "watchers" to sample an errseq_t value and keep
-> > >  it as a running cursor.  That value can later be used to tell whether
-> > > diff --git a/include/linux/errseq.h b/include/linux/errseq.h
-> > > index fc2777770768..7e3634269c95 100644
-> > > --- a/include/linux/errseq.h
-> > > +++ b/include/linux/errseq.h
-> > > @@ -9,6 +9,7 @@ typedef u32	errseq_t;
-> > >  
-> > > 
-> > > 
-> > > 
-> > >  errseq_t errseq_set(errseq_t *eseq, int err);
-> > >  errseq_t errseq_sample(errseq_t *eseq);
-> > > +errseq_t errseq_peek(errseq_t *eseq);
-> > >  int errseq_check(errseq_t *eseq, errseq_t since);
-> > >  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
-> > >  #endif
-> > > diff --git a/lib/errseq.c b/lib/errseq.c
-> > > index 81f9e33aa7e7..8fd6be134dcc 100644
-> > > --- a/lib/errseq.c
-> > > +++ b/lib/errseq.c
-> > > @@ -21,10 +21,14 @@
-> > >   * Note that there is a risk of collisions if new errors are being recorded
-> > >   * frequently, since we have so few bits to use as a counter.
-> > >   *
-> > > - * To mitigate this, one bit is used as a flag to tell whether the value has
-> > > - * been sampled since a new value was recorded. That allows us to avoid bumping
-> > > - * the counter if no one has sampled it since the last time an error was
-> > > - * recorded.
-> > > + * To mitigate this, one bit is used as a flag to tell whether the value has been
-> > > + * observed in some fashion. That allows us to avoid bumping the counter if no
-> > > + * one has sampled it since the last time an error was recorded.
-> > > + *
-> > > + * A second flag bit is used to indicate whether the latest error that has been
-> > > + * recorded has been reported to userland. If the REPORTED bit is not set when the
-> > > + * file is opened, then we ensure that the opener will see the error by setting
-> > > + * its sample to 0.
-> > 
-> > Since there are only a few places that report to userland (as far as I can tell, 
-> > a bit of usage in ceph), does it make sense to maintain this specific flag that
-> > indicates it's reported to userspace? Instead can userspace keep a snapshot
-> > of the last errseq it reported (say on the superblock), and use that to drive
-> > reports to userspace?
-> > 
-> > It's a 32-bit sacrifice per SB though, but it means we can get rid of 
-> > errseq_check_and_advance and potentially remove any need for locking and just
-> > rely on cmpxchg.
-> 
-> I think it makes sense. You are essentially adding a new class of
-> "samplers" that use the error for their own purposes and won't be
-> reporting it to userland via normal channels (syncfs, etc.). A single
-> bit to indicate whether it has only been observed by such samplers is
-> not a huge sacrifice.
-> 
-> I worry too about race conditions when tracking this information across
-> multiple words. You'll either need to use some locking to manage that,
-> or get clever with memory barriers. Keeping everything in one word makes
-> things a lot simpler.
-> -- 
-> Jeff Layton <jlayton@kernel.org>
-> 
+The pid_revalidate() function requires dropping from RCU into REF lookup
+mode. When many threads are resolving paths within /proc in parallel,
+this can result in heavy spinlock contention on d_locrkef as each thread
+tries to grab a reference to the /proc dentry (and drop it shortly
+thereafter).
 
-I'll wait for Amir or Miklos to chime in, but I'm happy with this, and it solves 
-my problems.
+Allow the pid_revalidate() function to execute under LOOKUP_RCU. When
+updates must be made to the inode, drop out of RCU and into REF mode.
 
-Do you want to respin this patch with the overlayfs patch as well, so
-we can cherry-pick to stable, and then focus on how we want to deal
-with this problem in the future?
+Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+---
+
+When running running ~100 parallel instances of "TZ=/etc/localtime ps -fe
+>/dev/null" on a 100CPU machine, the %sys utilization reaches 90%, and perf
+shows the following code path as being responsible for heavy contention on
+the d_lockref spinlock:
+
+      walk_component()
+        lookup_fast()
+          unlazy_child()
+            lockref_get_not_dead(&nd->path.dentry->d_lockref)
+
+By applying this patch, %sys utilization falls to around 60% under the same
+workload. Although this particular workload is a bit contrived, we have seen
+some monitoring scripts which produced similarly high %sys time due to this
+contention.
+
+Changes from v3:
+- Rather than call pid_update_inode() with flags, create
+  proc_inode_needs_update() to determine whether the call can be skipped.
+- Restore the call to the security hook (see next patch).
+Changes from v2:
+- Remove get_pid_task_rcu_user() and get_proc_task_rcu(), since they were
+  unnecessary.
+- Remove the call to security_task_to_inode().
+
+ fs/proc/base.c | 35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b3422cda2a91..4b246e9bd5df 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1968,6 +1968,20 @@ void pid_update_inode(struct task_struct *task, struct inode *inode)
+ 	security_task_to_inode(task, inode);
+ }
+ 
++/* See if we can avoid the above call. Assumes RCU lock held */
++static bool pid_inode_needs_update(struct task_struct *task, struct inode *inode)
++{
++	kuid_t uid;
++	kgid_t gid;
++
++	if (inode->i_mode & (S_ISUID | S_ISGID))
++		return true;
++	task_dump_owner(task, inode->i_mode, &uid, &gid);
++	if (!uid_eq(uid, inode->i_uid) || !gid_eq(gid, inode->i_gid))
++		return true;
++	return false;
++}
++
+ /*
+  * Rewrite the inode's ownerships here because the owning task may have
+  * performed a setuid(), etc.
+@@ -1977,19 +1991,20 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+ {
+ 	struct inode *inode;
+ 	struct task_struct *task;
++	int rv = 0;
+ 
+-	if (flags & LOOKUP_RCU)
+-		return -ECHILD;
+-
+-	inode = d_inode(dentry);
+-	task = get_proc_task(inode);
+-
++	rcu_read_lock();
++	inode = d_inode_rcu(dentry);
++	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+ 	if (task) {
+-		pid_update_inode(task, inode);
+-		put_task_struct(task);
+-		return 1;
++		rv = 1;
++		if ((flags & LOOKUP_RCU) && pid_inode_needs_update(task, inode))
++			rv = -ECHILD;
++		else if (!(flags & LOOKUP_RCU))
++			pid_update_inode(task, inode);
+ 	}
+-	return 0;
++	rcu_read_unlock();
++	return rv;
+ }
+ 
+ static inline bool proc_inode_is_dead(struct inode *inode)
+-- 
+2.25.1
+
