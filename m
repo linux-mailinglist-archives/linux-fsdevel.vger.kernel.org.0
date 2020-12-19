@@ -2,273 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B2922DEDE8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Dec 2020 10:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 547A12DEE0B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Dec 2020 10:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbgLSJKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Dec 2020 04:10:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33836 "EHLO
+        id S1726436AbgLSJtd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Dec 2020 04:49:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbgLSJKn (ORCPT
+        with ESMTP id S1726431AbgLSJtc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Dec 2020 04:10:43 -0500
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9845C0617B0;
-        Sat, 19 Dec 2020 01:10:02 -0800 (PST)
-Received: by mail-il1-x130.google.com with SMTP id q1so4449976ilt.6;
-        Sat, 19 Dec 2020 01:10:02 -0800 (PST)
+        Sat, 19 Dec 2020 04:49:32 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08351C0617B0;
+        Sat, 19 Dec 2020 01:48:52 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id k8so4506727ilr.4;
+        Sat, 19 Dec 2020 01:48:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=K1wy7liFqMqVpv5JtwH/C3c5e9etpiGocBgOADyhFdM=;
-        b=RndZ13ih4vKSuofRFlb/OT7+crLM7UarHW7UTafoYVQDGg/mMvijJ3UQx0dDP4KFNo
-         Q6AAwBX9VKAJHEgkWcCKLCRWj+cN25Tav1mmxYxmdRuAZkduqgsPnSGVEBNgixQ9y+vC
-         jisec+st7N7DPYftpu/iS5IQlH88lkn+CERhOXxj9b9UGSt0FEQ2QpROrspXhPA0dAP1
-         +yQWOr3b9PeBCFLM2JrWzO4pakflvEP1+fyOTpJiCq5bDOUtv7lb0KK7XXaTYE6QMg1C
-         5R3NO+ZPBmD0d9+COoJLk+LIaqn/y7tXrD+5R33oHn9y2pX5jrY82K4t/ZlUfMyx6Vks
-         ihHA==
+        bh=HfGvnUgrwCW53SrhDS2DbeVCGuni7enrdbWnfiDJQOo=;
+        b=fEEeNbEe37auHYpkISMemSM72YLICf4geOnLz4JvaVJiJkWIU6brmaJhqFdqmk1xgP
+         3bjfGT3T1vxMFqh6cCusXn2s+QAq5RTWvnOyoFHeLniyGgiEmX8Z2ivhZG6mYF4JCy33
+         CLsDWHDVlSPcEsSUxi1k9rWcdeuhh1IRIUnyssoUYcfTsBIZ1ZcY9JFE86xzNVdBfCRk
+         yaT6Xbezm5jP3eXCogfPaClpYV+GMta84XnloDRjujHpq6GhOt4bciMNme5JY1UaCJGT
+         gZ5cEeBM1M1vwQON7ol0daUFOCHE2aSbwQYjkzs5N6cbZXg0JFvJLgzlMzvwA2C9KaMF
+         Zf7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=K1wy7liFqMqVpv5JtwH/C3c5e9etpiGocBgOADyhFdM=;
-        b=SuoFW6M+TlRPBXT0d9LnBUxlcWf6b5eYA/XjdTYx5ypISbytZ3HFKkvs9xJSqGN0tU
-         fkTQfNpIo7zLCbukfg2SWul+cdsc5Xipxuzz1x7m5FqLHJ+OiFk7yQkhu4TQ9JS4+rHM
-         MPsStj9Gh06RYSJfBNP4nMPo5RGbdlqzEgZ4fsk/J/ae/9zPoEvSDbwi7P2hJxjtr5+M
-         IuXA2/hgW/XwNCIk/5tYoqjoV5KOiOnLxZPUI5jcLWyz6KMtXdWBcNOTyIWyf6i8OuL2
-         rF4fmdMzQ3U9Ip6wW+jRZz28yNXjuY3bMns+Tjaboozlf68RJh+7BX28hvuyVBLGO5kC
-         cSSg==
-X-Gm-Message-State: AOAM532vtLwPZbB4o3ckQ7nX+/1haYrlQSDbR3oV8lgl5n0HYfTerg2u
-        RElGP/DR/i1Cq2kYTJRpwI8XcTeL9ymuxb3FC8M=
-X-Google-Smtp-Source: ABdhPJwwWbvnrzzQX1AlWcAafNjbUiwriB5icT7nHAJKwGV8XH45WLDoDpatq1Ir2rUDtiZHD1j9iDuo5M6s+gXoYJQ=
-X-Received: by 2002:a92:da82:: with SMTP id u2mr8268140iln.137.1608369001800;
- Sat, 19 Dec 2020 01:10:01 -0800 (PST)
+        bh=HfGvnUgrwCW53SrhDS2DbeVCGuni7enrdbWnfiDJQOo=;
+        b=MfFDv7hEwqBnY1nTVDLHr1eNwCqlBevrWPd5cRCrLTRCo2CWRtaQcgQTLvkuxf+q6Q
+         zr98H+p4U0qclUNU1BikduwP21J3TROOeH5eauvTAgr6YF1QMT49KezzDneSmf94ivVH
+         gprW6AScXQNt8Z5TpRpPCj8uxgx9Jew5yPFe7lVTCimtBxKuuLZ+WdxzOmGzSuHe6T8i
+         MbmAXBWxi6PTQ4gAU/ykeg+brR+CkB472ygelM6+sPnMFCHBoz2pOG/gD1VbGN26fkzR
+         ZqZ44vHXzLlSLAhyeCG8p3uKkyokR4WLgei7/RMnz1th2ctef7KxGROCn1rHBYSD9ZIx
+         YB5Q==
+X-Gm-Message-State: AOAM533U7M6En5Hq0/eHL+5P9YWLhZ1X35MHIIUdkI4E5z0YLBHWh4oA
+        4MEtnLd0nUtN9vQ2o+4aFrXuv+Lj6coPPaumDFpd30pg7xY=
+X-Google-Smtp-Source: ABdhPJxoSpq2DeABvrvIUDgEyP2RORo0sn44qbYTMofch0xM/u2Xks9tpSI3FWS6XQFAJZRoYywmdLOGj+zw2+KDkSE=
+X-Received: by 2002:a92:da82:: with SMTP id u2mr8406011iln.137.1608371331279;
+ Sat, 19 Dec 2020 01:48:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20201217150037.468787-1-jlayton@kernel.org> <20201217203523.GB28177@ircssh-2.c.rugged-nimbus-611.internal>
- <9e38d400ed1e6bf4a3909f69238e3e5001d908fb.camel@kernel.org>
- <20201218234427.GA17343@ircssh-2.c.rugged-nimbus-611.internal> <3e7c3521f8852ba662413042348a4a7894e42dc3.camel@kernel.org>
-In-Reply-To: <3e7c3521f8852ba662413042348a4a7894e42dc3.camel@kernel.org>
+References: <20201218221129.851003-1-shakeelb@google.com>
+In-Reply-To: <20201218221129.851003-1-shakeelb@google.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 19 Dec 2020 11:09:50 +0200
-Message-ID: <CAOQ4uxi4UTUNejxn-0MX4DJkZSCCjsWos0jVwS1_toPc5PpP+g@mail.gmail.com>
-Subject: Re: [PATCH v3] errseq: split the ERRSEQ_SEEN flag into two new flags
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
+Date:   Sat, 19 Dec 2020 11:48:40 +0200
+Message-ID: <CAOQ4uxiyd=N-mvYWHFx6Yq1LW1BPcriZw++MAyOGB_4CDkDKYA@mail.gmail.com>
+Subject: Re: [PATCH] inotify, memcg: account inotify instances to kmemcg
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 19, 2020 at 3:03 AM Jeff Layton <jlayton@kernel.org> wrote:
+On Sat, Dec 19, 2020 at 12:11 AM Shakeel Butt <shakeelb@google.com> wrote:
 >
-> On Fri, 2020-12-18 at 23:44 +0000, Sargun Dhillon wrote:
-> > On Thu, Dec 17, 2020 at 04:18:49PM -0500, Jeff Layton wrote:
-> > > On Thu, 2020-12-17 at 20:35 +0000, Sargun Dhillon wrote:
-> > > > On Thu, Dec 17, 2020 at 10:00:37AM -0500, Jeff Layton wrote:
-> > > > > Overlayfs's volatile mounts want to be able to sample an error for their
-> > > > > own purposes, without preventing a later opener from potentially seeing
-> > > > > the error.
-> > > > >
-> > > > > The original reason for the ERRSEQ_SEEN flag was to make it so that we
-> > > > > didn't need to increment the counter if nothing had observed the latest
-> > > > > value and the error was the same. Eventually, a regression was reported
-> > > > > in the errseq_t conversion, and we fixed that by using the ERRSEQ_SEEN
-> > > > > flag to also mean that the error had been reported to userland at least
-> > > > > once somewhere.
-> > > > >
-> > > > > Those are two different states, however. If we instead take a second
-> > > > > flag bit from the counter, we can track these two things separately, and
-> > > > > accomodate the overlayfs volatile mount use-case.
-> > > > >
-> > > > > Rename the ERRSEQ_SEEN flag to ERRSEQ_OBSERVED and use that to indicate
-> > > > > that the counter must be incremented the next time an error is set.
-> > > > > Also, add a new ERRSEQ_REPORTED flag that indicates whether the current
-> > > > > error was returned to userland (and thus doesn't need to be reported on
-> > > > > newly open file descriptions).
-> > > > >
-> > > > > Test only for the OBSERVED bit when deciding whether to increment the
-> > > > > counter and only for the REPORTED bit when deciding what to return in
-> > > > > errseq_sample.
-> > > > >
-> > > > > Add a new errseq_peek function to allow for the overlayfs use-case.
-> > > > > This just grabs the latest counter and sets the OBSERVED bit, leaving the
-> > > > > REPORTED bit untouched.
-> > > > >
-> > > > > errseq_check_and_advance must now handle a single special case where
-> > > > > it races against a "peek" of an as of yet unseen value. The do/while
-> > > > > loop looks scary, but shouldn't loop more than once.
-> > > > >
-> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > ---
-> > > > >  Documentation/core-api/errseq.rst |  22 +++--
-> > > > >  include/linux/errseq.h            |   1 +
-> > > > >  lib/errseq.c                      | 139 ++++++++++++++++++++++--------
-> > > > >  3 files changed, 118 insertions(+), 44 deletions(-)
-> > > > >
-> > > > > v3: rename SEEN/MUSTINC flags to REPORTED/OBSERVED
-> > > > >
-> > > > > Hopefully the new flag names will make this a bit more clear. We could
-> > > > > also rename some of the functions if that helps too. We could consider
-> > > > > moving from errseq_sample/_check_and_advance to
-> > > > > errseq_observe/errseq_report?  I'm not sure that helps anything though.
-> > > > >
-> > > > > I know that Vivek and Sargun are working on syncfs() for overlayfs, so
-> > > > > we probably don't want to merge this until that work is ready. I think
-> > > >
-> > > > I disagree. I think that this work can land ahead of that, given that I think
-> > > > this is probably backportable to v5.10 without much risk, with the addition of
-> > > > your RFC v2 Overlay patch. I think the work proper long-term repair Vivek is
-> > > > embarking upon seems like it may be far more invasive.
-> > > >
-> > > > > the errseq_peek call will need to be part of their solution for volatile
-> > > > > mounts, however, so I'm fine with merging this via the overlayfs tree,
-> > > > > once that work is complete.
-> > > > >
-> > > > > diff --git a/Documentation/core-api/errseq.rst b/Documentation/core-api/errseq.rst
-> > > > > index ff332e272405..ce46ddcc1487 100644
-> > > > > --- a/Documentation/core-api/errseq.rst
-> > > > > +++ b/Documentation/core-api/errseq.rst
-> > > > > @@ -18,18 +18,22 @@ these functions can be called from any context.
-> > > > >  Note that there is a risk of collisions if new errors are being recorded
-> > > > >  frequently, since we have so few bits to use as a counter.
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > > -To mitigate this, the bit between the error value and counter is used as
-> > > > > -a flag to tell whether the value has been sampled since a new value was
-> > > > > -recorded.  That allows us to avoid bumping the counter if no one has
-> > > > > -sampled it since the last time an error was recorded.
-> > > > > +To mitigate this, the bits between the error value and counter are used
-> > > > > +as flags to tell whether the value has been sampled since a new value
-> > > > > +was recorded, and whether the latest error has been seen by userland.
-> > > > > +That allows us to avoid bumping the counter if no one has sampled it
-> > > > > +since the last time an error was recorded, and also ensures that any
-> > > > > +recorded error will be seen at least once.
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > >  Thus we end up with a value that looks something like this:
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > > -+--------------------------------------+----+------------------------+
-> > > > > -| 31..13                               | 12 | 11..0                  |
-> > > > > -+--------------------------------------+----+------------------------+
-> > > > > -| counter                              | SF | errno                  |
-> > > > > -+--------------------------------------+----+------------------------+
-> > > > > ++---------------------------------+----+----+------------------------+
-> > > > > +| 31..14                          | 13 | 12 | 11..0                  |
-> > > > > ++---------------------------------+----+----+------------------------+
-> > > > > +| counter                         | OF | RF | errno                  |
-> > > > > ++---------------------------------+----+----+------------------------+
-> > > > > +OF = ERRSEQ_OBSERVED flag
-> > > > > +RF = ERRSEQ_REPORTED flag
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > >  The general idea is for "watchers" to sample an errseq_t value and keep
-> > > > >  it as a running cursor.  That value can later be used to tell whether
-> > > > > diff --git a/include/linux/errseq.h b/include/linux/errseq.h
-> > > > > index fc2777770768..7e3634269c95 100644
-> > > > > --- a/include/linux/errseq.h
-> > > > > +++ b/include/linux/errseq.h
-> > > > > @@ -9,6 +9,7 @@ typedef u32     errseq_t;
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > >  errseq_t errseq_set(errseq_t *eseq, int err);
-> > > > >  errseq_t errseq_sample(errseq_t *eseq);
-> > > > > +errseq_t errseq_peek(errseq_t *eseq);
-> > > > >  int errseq_check(errseq_t *eseq, errseq_t since);
-> > > > >  int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
-> > > > >  #endif
-> > > > > diff --git a/lib/errseq.c b/lib/errseq.c
-> > > > > index 81f9e33aa7e7..8fd6be134dcc 100644
-> > > > > --- a/lib/errseq.c
-> > > > > +++ b/lib/errseq.c
-> > > > > @@ -21,10 +21,14 @@
-> > > > >   * Note that there is a risk of collisions if new errors are being recorded
-> > > > >   * frequently, since we have so few bits to use as a counter.
-> > > > >   *
-> > > > > - * To mitigate this, one bit is used as a flag to tell whether the value has
-> > > > > - * been sampled since a new value was recorded. That allows us to avoid bumping
-> > > > > - * the counter if no one has sampled it since the last time an error was
-> > > > > - * recorded.
-> > > > > + * To mitigate this, one bit is used as a flag to tell whether the value has been
-> > > > > + * observed in some fashion. That allows us to avoid bumping the counter if no
-> > > > > + * one has sampled it since the last time an error was recorded.
-> > > > > + *
-> > > > > + * A second flag bit is used to indicate whether the latest error that has been
-> > > > > + * recorded has been reported to userland. If the REPORTED bit is not set when the
-> > > > > + * file is opened, then we ensure that the opener will see the error by setting
-> > > > > + * its sample to 0.
-> > > >
-> > > > Since there are only a few places that report to userland (as far as I can tell,
-> > > > a bit of usage in ceph), does it make sense to maintain this specific flag that
-> > > > indicates it's reported to userspace? Instead can userspace keep a snapshot
-> > > > of the last errseq it reported (say on the superblock), and use that to drive
-> > > > reports to userspace?
-> > > >
-> > > > It's a 32-bit sacrifice per SB though, but it means we can get rid of
-> > > > errseq_check_and_advance and potentially remove any need for locking and just
-> > > > rely on cmpxchg.
-> > >
-> > > I think it makes sense. You are essentially adding a new class of
-> > > "samplers" that use the error for their own purposes and won't be
-> > > reporting it to userland via normal channels (syncfs, etc.). A single
-> > > bit to indicate whether it has only been observed by such samplers is
-> > > not a huge sacrifice.
-> > >
-> > > I worry too about race conditions when tracking this information across
-> > > multiple words. You'll either need to use some locking to manage that,
-> > > or get clever with memory barriers. Keeping everything in one word makes
-> > > things a lot simpler.
-> > > --
-> > > Jeff Layton <jlayton@kernel.org>
-> > >
-> >
-> > I'll wait for Amir or Miklos to chime in, but I'm happy with this, and it solves
-> > my problems.
-> >
-> > Do you want to respin this patch with the overlayfs patch as well, so
-> > we can cherry-pick to stable, and then focus on how we want to deal
-> > with this problem in the future?
+> Currently the fs sysctl inotify/max_user_instances is used to limit the
+> number of inotify instances on the system. For systems running multiple
+> workloads, the per-user namespace sysctl max_inotify_instances can be
+> used to further partition inotify instances. However there is no easy
+> way to set a sensible system level max limit on inotify instances and
+> further partition it between the workloads. It is much easier to charge
+> the underlying resource (i.e. memory) behind the inotify instances to
+> the memcg of the workload and let their memory limits limit the number
+> of inotify instances they can create.
+
+Not that I have a problem with this patch, but what problem does it try to
+solve? Are you concerned of users depleting system memory by creating
+userns's and allocating 128 * (struct fsnotify_group) at a time?
+
+IMO, that is not what max_user_instances was meant to protect against.
+There are two reasons I can think of to limit user instances:
+1. Pre-memgc, user allocation of events is limited to
+    <max_user_instances>*<max_queued_events>
+2. Performance penalty. User can place <max_user_instances>
+    watches on the same "hot" directory, that will cause any access to
+    that directory by any task on the system to pay the penalty of traversing
+    <max_user_instances> marks and attempt to queue <max_user_instances>
+    events. That cost, including <max_user_instances> inotify_merge() loops
+    could be significant
+
+#1 is not a problem anymore, since you already took care of accounting events
+to the user's memcg.
+#2 is not addressed by your patch.
+
 >
-> Assuming no one sees issues with it and that this solves the problem of
-> writeback errors on volatile mounts, I'm fine with this going in via the
-> overlayfs tree, just ahead of the patch that adds the first caller of
-> errseq_peek.
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> ---
+>  fs/notify/group.c                | 14 ++++++++++++--
+>  fs/notify/inotify/inotify_user.c |  5 +++--
+>  include/linux/fsnotify_backend.h |  2 ++
+>  3 files changed, 17 insertions(+), 4 deletions(-)
 >
+> diff --git a/fs/notify/group.c b/fs/notify/group.c
+> index a4a4b1c64d32..fab3cfdb4d9e 100644
+> --- a/fs/notify/group.c
+> +++ b/fs/notify/group.c
+> @@ -114,11 +114,12 @@ EXPORT_SYMBOL_GPL(fsnotify_put_group);
+>  /*
+>   * Create a new fsnotify_group and hold a reference for the group returned.
+>   */
+> -struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
+> +struct fsnotify_group *fsnotify_alloc_group_gfp(const struct fsnotify_ops *ops,
+> +                                               gfp_t gfp)
+>  {
+>         struct fsnotify_group *group;
+>
+> -       group = kzalloc(sizeof(struct fsnotify_group), GFP_KERNEL);
+> +       group = kzalloc(sizeof(struct fsnotify_group), gfp);
+>         if (!group)
+>                 return ERR_PTR(-ENOMEM);
+>
+> @@ -139,6 +140,15 @@ struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
+>
+>         return group;
+>  }
+> +EXPORT_SYMBOL_GPL(fsnotify_alloc_group_gfp);
+> +
+> +/*
+> + * Create a new fsnotify_group and hold a reference for the group returned.
+> + */
+> +struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
+> +{
+> +       return fsnotify_alloc_group_gfp(ops, GFP_KERNEL);
+> +}
+>  EXPORT_SYMBOL_GPL(fsnotify_alloc_group);
+>
+>  int fsnotify_fasync(int fd, struct file *file, int on)
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 59c177011a0f..7cb528c6154c 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -632,11 +632,12 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
+>         struct fsnotify_group *group;
+>         struct inotify_event_info *oevent;
+>
+> -       group = fsnotify_alloc_group(&inotify_fsnotify_ops);
+> +       group = fsnotify_alloc_group_gfp(&inotify_fsnotify_ops,
+> +                                        GFP_KERNEL_ACCOUNT);
+>         if (IS_ERR(group))
+>                 return group;
+>
+> -       oevent = kmalloc(sizeof(struct inotify_event_info), GFP_KERNEL);
+> +       oevent = kmalloc(sizeof(struct inotify_event_info), GFP_KERNEL_ACCOUNT);
+>         if (unlikely(!oevent)) {
+>                 fsnotify_destroy_group(group);
+>                 return ERR_PTR(-ENOMEM);
 
-I like the ERRSEQ_OBSERVED/ERRSEQ_REPORTED abstraction.
-I agree with Jeff that ERRSEQ_SEEN wrongly multiplexies two
-completely different things.
-
-We've had to maintain backward compact to the syncfs() behavior
-expected by existing users, but I can also imagine that fsinfo() would
-want to check for sb error without consuming it, so errseq_peek()
-looks like the right direction to take.
-
-> I think we're finding that the thornier problem is how to pass along
-> writeback errors on non-volatile mounts. That's probably going to
-> require some vfs-layer surgery, so it may be best to wait until the
-> shape of that is clear.
-
-I have to say, following the thread of each of those problems is pretty
-challenging. Following both issues in several intewinding threads is a
-workout...
+Any reason why you did not include fanotify in this patch?
 
 Thanks,
 Amir.
