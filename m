@@ -2,137 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 303662DEFD3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Dec 2020 14:26:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B93B82DEFE0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Dec 2020 14:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbgLSN0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Dec 2020 08:26:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34002 "EHLO mail.kernel.org"
+        id S1726596AbgLSNsr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Dec 2020 08:48:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726490AbgLSN0C (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Dec 2020 08:26:02 -0500
-Message-ID: <f622563d89515a834c299a07012f500e4c026e98.camel@kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608384321;
-        bh=AbZt8MrTsW6gktMQu+ojm4NdA+G7zkkOnPh4A6KAkrY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=R6BT2ihI9U266xqn5Nxmpkrr1hTGL3fTriEnsMyiHjYNjQQR2pRPHEchnk0eCEAWF
-         ScfPRuWLUi8zc++MviNSi7zElY0HBjsY0WoBSiSiBk47e1OPocH39KDU3qHtA6C2Uj
-         B0ZZyDXGvoWISkP8cqnEqOzdq46T0WsgsfCO0pGQvAV1RE3svjVqu7MrIrqJVZSZJR
-         QlZzDs0LU2JIk/JG22rzzm2vHKDNP+WTNc45abFw43u2yWt4nDo1OyujGAeAvLjvjt
-         TR4WqkfoCY/VgS4KDKH5VzKfnZnTtnRuqoWqrrEp5R3+WPr2TTKAYg3wbXZny34h4F
-         lC7FdJerDQvow==
-Subject: Re: [PATCH v3] errseq: split the ERRSEQ_SEEN flag into two new flags
+        id S1726479AbgLSNsr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 19 Dec 2020 08:48:47 -0500
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        NeilBrown <neilb@suse.com>, Jan Kara <jack@suse.cz>
-Date:   Sat, 19 Dec 2020 08:25:19 -0500
-In-Reply-To: <f84f3259d838f132029576b531d81525abd4e1b8.camel@kernel.org>
-References: <20201217150037.468787-1-jlayton@kernel.org>
-         <20201219061331.GQ15600@casper.infradead.org>
-         <f84f3259d838f132029576b531d81525abd4e1b8.camel@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     viro@zeniv.linux.org.uk
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sargun@sargun.me, amir73il@gmail.com,
+        vgoyal@redhat.com
+Subject: [PATCH][RESEND] vfs: protect file->f_sb_err with f_lock
+Date:   Sat, 19 Dec 2020 08:48:04 -0500
+Message-Id: <20201219134804.20034-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 2020-12-19 at 07:53 -0500, Jeff Layton wrote:
-> On Sat, 2020-12-19 at 06:13 +0000, Matthew Wilcox wrote:
-> > On Thu, Dec 17, 2020 at 10:00:37AM -0500, Jeff Layton wrote:
-> > > Overlayfs's volatile mounts want to be able to sample an error for their
-> > > own purposes, without preventing a later opener from potentially seeing
-> > > the error.
-> > 
-> > umm ... can't they just copy the errseq_t they're interested in, followed
-> > by calling errseq_check() later?
-> > 
-> 
-> They don't want the sampling for the volatile mount to prevent later
-> openers from seeing an error that hasn't yet been reported.
-> 
-> If they copy the errseq_t (or just do an errseq_sample), and then follow
-> it with a errseq_check_and_advance then the SEEN bit will end up being
-> set and a later opener wouldn't see the error.
-> 
-> Aside from that though, I think this patch clarifies things a bit since
-> the SEEN flag currently means two different things:
-> 
-> 1/ do I need to increment the counter when recording another error?
-> 
-> 2/ do I need to report this error to new samplers (at open time)
-> 
-> That was ok before, since we those conditions were always changed
-> together, but with the overlayfs volatile mount use-case, it no longer
-> does.
-> 
-> > actually, isn't errseq_check() buggy in the face of multiple
-> > watchers?  consider this:
-> > 
-> > worker.es starts at 0
-> > t2.es = errseq_sample(&worker.es)
-> > errseq_set(&worker.es, -EIO)
-> > t1.es = errseq_sample(&worker.es)
-> > t2.err = errseq_check_and_advance(&es, t2.es)
-> > 	** this sets ERRSEQ_SEEN **
-> > t1.err = errseq_check(&worker.es, t1.es)
-> > 	** reports an error, even though the only change is that
-> > 	   ERRSEQ_SEEN moved **.
-> > 
-> > i think errseq_check() should be:
-> > 
-> > 	if (likely(cur | ERRSEQ_SEEN) == (since | ERRSEQ_SEEN))
-> > 		return 0;
-> > 
-> > i'm not yet convinced other changes are needed to errseq.  but i am
-> > having great trouble understanding exactly what overlayfs is trying to do.
-> 
-> I think you're right on errseq_check. I'll plan to do a patch to fix
-> that up as well.
-> 
+When I added the ability for syncfs to report writeback errors, I
+neglected to adequately protect file->f_sb_err. We could have racing
+updates to that value if two tasks are issuing syncfs() on the same
+fd at the same time.
 
-I take it back. This isn't a problem for a couple of (non-obvious)
-reasons:
+Fix this by protecting the f_sb_err field with the file->f_lock,
+similarly to how the f_wb_err field is protected.
 
-1/ any "real" sample will either have the SEEN bit set or be 0. In the
-first case, errseq_check will return true (which is correct). In the
-second any change from what you sampled will have to have been a
-recorded error.
+Cc: stable@vger.kernel.org # v5.8+
+Fixes: 735e4ae5ba28 (vfs: track per-sb writeback errors and report them to syncfs)
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/sync.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-2/ ...but even if that weren't the case and you got a false positive
-from errseq_check, all of the existing callers call
-errseq_check_and_advance just afterward, which handles this correctly.
+I sent this a couple of weeks ago, but no one picked it up. No changes
+from the original posting, but added the Fixes tag and marked it for
+stable.
 
-Either way, splitting the flag in two means that we do need to take the
-flag bits into account, so errseq_same masks them off before comparing.
-
-> I too am having a bit of trouble understanding all of the nuances here.
-> My current understanding is that it depends on the "volatility" of the
-> mount:
-> 
-> normal (non-volatile): they basically want to be able to track errors as
-> if the files were being opened on the upper layer. For this case I think
-> they should aim to just do all of the error checking against the upper
-> sb and ignore the overlayfs s_wb_err field. This does mean pushing the
-> errseq_check_and_advance down into the individual filesystems in some
-> fashion though.
-> 
-> volatile: they want to sample at mount time and always return an error
-> to syncfs if there has been another error since the original sample
-> point. This sampling should also not affect later openers on the upper
-> layer (or on other overlayfs mounts).
-> 
-> I'm not 100% clear on whether I understand both use-cases correctly
-> though.
-
+diff --git a/fs/sync.c b/fs/sync.c
+index 1373a610dc78..3be26ff72431 100644
+--- a/fs/sync.c
++++ b/fs/sync.c
+@@ -162,7 +162,7 @@ SYSCALL_DEFINE1(syncfs, int, fd)
+ {
+ 	struct fd f = fdget(fd);
+ 	struct super_block *sb;
+-	int ret, ret2;
++	int ret, ret2 = 0;
+ 
+ 	if (!f.file)
+ 		return -EBADF;
+@@ -172,7 +172,12 @@ SYSCALL_DEFINE1(syncfs, int, fd)
+ 	ret = sync_filesystem(sb);
+ 	up_read(&sb->s_umount);
+ 
+-	ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
++	if (errseq_check(&sb->s_wb_err, f.file->f_sb_err)) {
++		/* Something changed, must use slow path */
++		spin_lock(&f.file->f_lock);
++		ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
++		spin_unlock(&f.file->f_lock);
++	}
+ 
+ 	fdput(f);
+ 	return ret ? ret : ret2;
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.29.2
 
