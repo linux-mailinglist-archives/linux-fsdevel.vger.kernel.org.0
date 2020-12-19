@@ -2,144 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9C42DEC3F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Dec 2020 01:07:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 263632DEC50
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Dec 2020 01:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725287AbgLSAHi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Dec 2020 19:07:38 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:49348 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbgLSAHi (ORCPT
+        id S1725925AbgLSARh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Dec 2020 19:17:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37304 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbgLSARg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Dec 2020 19:07:38 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BJ06MVk018009;
-        Sat, 19 Dec 2020 00:06:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=h05qvuELutaWEFd0FH0nDiggcQgz3WjMZcVQ54H2AqM=;
- b=g8reo9uoK2ZSBudZW4xxmSItvP+/L42kFQiBXHAnIIwqiUYWSaYFiCVCMUJdD/XyW50R
- hVcc6UthXBb91n9ilE403Q8o7iLtw70p3Pd2drJQmMuqOLx+n6MdR4dAG/gcDaiGG39G
- 9yJ7jshd32I/5o6rwFnuFPh5N7D+RsIAq8VcnsgdlsJUwhAyWYcQMha1150F9QQiZ1lY
- el+BDhsA67ctUdZRbZDJi41WxX7IXuW25pS+nC6MRWJdGxMJMEgXyknSYJh6s/9ajfim
- vH+PMr8q1uHc5JOBSnLj/dyQJmvrxvBtK6gPNUHbLFyiP3jIK9sL+n1uyKBTs3Fr5/oG RQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 35ckcbvw8m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 19 Dec 2020 00:06:32 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BJ05OhR049261;
-        Sat, 19 Dec 2020 00:06:32 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 35g3rgsfn0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Dec 2020 00:06:31 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BJ06Tmr022519;
-        Sat, 19 Dec 2020 00:06:29 GMT
-Received: from localhost (/10.159.241.141)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 18 Dec 2020 16:06:29 -0800
-From:   Stephen Brennan <stephen.s.brennan@oracle.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v3 2/2] proc: ensure security hook is called after exec
-Date:   Fri, 18 Dec 2020 16:06:16 -0800
-Message-Id: <20201219000616.197585-2-stephen.s.brennan@oracle.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
-References: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
+        Fri, 18 Dec 2020 19:17:36 -0500
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 503F5C0617B0;
+        Fri, 18 Dec 2020 16:16:56 -0800 (PST)
+Received: by mail-il1-x130.google.com with SMTP id q1so3789953ilt.6;
+        Fri, 18 Dec 2020 16:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o+srfVk5LFUit/NQt+S2ivZ9seQ6hbpnwEWB584IB1M=;
+        b=SaMiyBIWjpP1z8VlNM9VPbdbeQpZuMO+Ymt7hFKE3OVQV3PVyQYZaTe41AuayQ4r7u
+         D+0JyaOGlcCJXwD0QJ0BL594q7v/7PJIhIfXbD/iOduoUfb1AR/PPG6R3AbmcVSYpbAm
+         ovQ1Z0Y7b+pCrlyU+CgG4sY+lARHw6/0xHltrMSJ5PJh5+cFypQsXtrLXce9Y/dH1Rpp
+         MwrS/DOBr5q00zFGlcpV5qvSu+Mpr2EdZwA1tU41g7kRErAGjXT4OGZ4WVp1vWoD2yjo
+         bVJeGjhEzZ0pmAySe4X4Tu5S75zZlgcgfpuqM0IboeBybQTIh4uGfeN1e3irR1Lcb1qY
+         eRAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o+srfVk5LFUit/NQt+S2ivZ9seQ6hbpnwEWB584IB1M=;
+        b=jaZTNIQjDUTUptZRIpVIFWJgKGuUY4XJudFnhEz11qxcCmjsitsN532lS2KXysJKzi
+         Cja4L6YZspoeZCmEuNG5gmv8kZGFFkEcewZZu0EdE09BCv51TsGmbgwODES0pU5E1p9A
+         PcrIqURE93PvVtHzj+hiaad0WpKmxNu6dfas45yaGMvPzFhnsiJXT1ylSt9pr5h5tApU
+         4lcJZftZHQASa0vD3I3ZMWJF6xL5m64GPHncyVzh3SmCwtJRRi4qcz7Smm4QGvTAOtkz
+         jXjGMfb2o079DxzL0Hz5GZSh0V9BjeE9jn/w5hH3/Swg+f5G5H1im5j5aADyaCsOYJVH
+         GefQ==
+X-Gm-Message-State: AOAM531TvVi/rsqWTuDkbPd/VkCAxhE6fCmEy5U51D33n2RdOGGXpWJA
+        kGhAQFbxVGkOGkX52hT2B9s3jVTuHCUn8eT3nBw=
+X-Google-Smtp-Source: ABdhPJzSxqkvV+NbAPCJQWZJzXNqRmylB8moClwA0C9kvg1T5xDU8dIs76SfXzjOTqJ1BXo3tRJj9ii5YSitobTpRSU=
+X-Received: by 2002:a05:6e02:c32:: with SMTP id q18mr6667563ilg.203.1608337015728;
+ Fri, 18 Dec 2020 16:16:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
- spamscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012180164
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
- malwarescore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012180164
+References: <20201217011157.92549-1-laoar.shao@gmail.com> <20201217011157.92549-5-laoar.shao@gmail.com>
+ <20201218001442.GS632069@dread.disaster.area>
+In-Reply-To: <20201218001442.GS632069@dread.disaster.area>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sat, 19 Dec 2020 08:16:19 +0800
+Message-ID: <CALOAHbAKJ3G5VrsMhHeCy44rp2rhVUk2rWb1qdEF0BvRDuYYAA@mail.gmail.com>
+Subject: Re: [PATCH v13 4/4] xfs: use current->journal_info to avoid
+ transaction reservation recursion
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>, jlayton@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Smack needs its security_task_to_inode() hook to be called when a task
-execs a new executable. Store the self_exec_id of the task and call the
-hook via pid_update_inode() whenever the exec_id changes.
+On Fri, Dec 18, 2020 at 8:14 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Thu, Dec 17, 2020 at 09:11:57AM +0800, Yafang Shao wrote:
+> > PF_FSTRANS which is used to avoid transaction reservation recursion, is
+> > dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
+> > PF_MEMALLOC_NOFS") and replaced by PF_MEMALLOC_NOFS which means to avoid
+> > filesystem reclaim recursion.
+> >
+> > As these two flags have different meanings, we'd better reintroduce
+> > PF_FSTRANS back. To avoid wasting the space of PF_* flags in task_struct,
+> > we can reuse the current->journal_info to do that, per Willy. As the
+> > check of transaction reservation recursion is used by XFS only, we can
+> > move the check into xfs_vm_writepage(s), per Dave.
+> >
+> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Cc: Michal Hocko <mhocko@kernel.org>
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Jeff Layton <jlayton@redhat.com>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > ---
+> >  fs/iomap/buffered-io.c |  7 -------
+> >  fs/xfs/xfs_aops.c      | 17 +++++++++++++++++
+> >  fs/xfs/xfs_trans.h     | 26 +++++++++++++++++++-------
+> >  3 files changed, 36 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 10cc7979ce38..3c53fa6ce64d 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1458,13 +1458,6 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
+> >                       PF_MEMALLOC))
+> >               goto redirty;
+> >
+> > -     /*
+> > -      * Given that we do not allow direct reclaim to call us, we should
+> > -      * never be called in a recursive filesystem reclaim context.
+> > -      */
+> > -     if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+> > -             goto redirty;
+> > -
+> >       /*
+> >        * Is this page beyond the end of the file?
+> >        *
+> > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> > index 2371187b7615..0da0242d42c3 100644
+> > --- a/fs/xfs/xfs_aops.c
+> > +++ b/fs/xfs/xfs_aops.c
+> > @@ -568,6 +568,16 @@ xfs_vm_writepage(
+> >  {
+> >       struct xfs_writepage_ctx wpc = { };
+> >
+> > +     /*
+> > +      * Given that we do not allow direct reclaim to call us, we should
+> > +      * never be called while in a filesystem transaction.
+> > +      */
+>
+> Comment is wrong. This is not protecting against direct reclaim
+> recursion, this is protecting against writeback from within a
+> transaction context.
+>
 
-Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
----
+Ah, I forgot to change this comment after copy and paste. Thanks for
+pointing it out.
 
-As discussed on the v2 of the patch, this should allow Smack to receive a
-security_task_to_inode() call only when the uid/gid changes, or when the task
-execs a new binary. I have verified that this doesn't change the performance of
-the patch set, and that we do fall out of RCU walk on tasks which have recently
-exec'd.
+> Best to remove the comment altogether, because it is largely
+> redundant.
+>
 
- fs/proc/base.c     | 4 +++-
- fs/proc/internal.h | 5 ++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Sure, I will remove these comments.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 4b246e9bd5df..ad59e92e8433 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1917,6 +1917,7 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 	}
- 
- 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
-+	ei->exec_id = task->self_exec_id;
- 	security_task_to_inode(task, inode);
- 
- out:
-@@ -1965,6 +1966,7 @@ void pid_update_inode(struct task_struct *task, struct inode *inode)
- 	task_dump_owner(task, inode->i_mode, &inode->i_uid, &inode->i_gid);
- 
- 	inode->i_mode &= ~(S_ISUID | S_ISGID);
-+	PROC_I(inode)->exec_id = task->self_exec_id;
- 	security_task_to_inode(task, inode);
- }
- 
-@@ -1979,7 +1981,7 @@ static bool pid_inode_needs_update(struct task_struct *task, struct inode *inode
- 	task_dump_owner(task, inode->i_mode, &uid, &gid);
- 	if (!uid_eq(uid, inode->i_uid) || !gid_eq(gid, inode->i_gid))
- 		return true;
--	return false;
-+	return task->self_exec_id != PROC_I(inode)->exec_id;
- }
- 
- /*
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index f60b379dcdc7..1df9b039dfc3 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -92,7 +92,10 @@ union proc_op {
- 
- struct proc_inode {
- 	struct pid *pid;
--	unsigned int fd;
-+	union {
-+		unsigned int fd;
-+		u32 exec_id;
-+	};
- 	union proc_op op;
- 	struct proc_dir_entry *pde;
- 	struct ctl_table_header *sysctl;
+> > +     if (WARN_ON_ONCE(xfs_trans_context_active())) {
+> > +             redirty_page_for_writepage(wbc, page);
+> > +             unlock_page(page);
+> > +             return 0;
+> > +     }
+> > +
+> >       return iomap_writepage(page, wbc, &wpc.ctx, &xfs_writeback_ops);
+> >  }
+> >
+> > @@ -579,6 +589,13 @@ xfs_vm_writepages(
+> >       struct xfs_writepage_ctx wpc = { };
+> >
+> >       xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+> > +     /*
+> > +      * Given that we do not allow direct reclaim to call us, we should
+> > +      * never be called while in a filesystem transaction.
+> > +      */
+>
+> same here.
+>
+> > +     if (WARN_ON_ONCE(xfs_trans_context_active()))
+> > +             return 0;
+> > +
+> >       return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_ops);
+> >  }
+> >
+> > diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
+> > index 12380eaaf7ce..0c8140147b9b 100644
+> > --- a/fs/xfs/xfs_trans.h
+> > +++ b/fs/xfs/xfs_trans.h
+> > @@ -268,29 +268,41 @@ xfs_trans_item_relog(
+> >       return lip->li_ops->iop_relog(lip, tp);
+> >  }
+> >
+> > +static inline bool
+> > +xfs_trans_context_active(void)
+> > +{
+> > +     /* Use journal_info to indicate current is in a transaction */
+> > +     return current->journal_info != NULL;
+> > +}
+>
+> Comment is not necessary.
+>
+> > +
+> >  static inline void
+> >  xfs_trans_context_set(struct xfs_trans *tp)
+> >  {
+> > +     ASSERT(!current->journal_info);
+> > +     current->journal_info = tp;
+> >       tp->t_pflags = memalloc_nofs_save();
+> >  }
+> >
+> >  static inline void
+> >  xfs_trans_context_clear(struct xfs_trans *tp)
+> >  {
+> > +     /*
+> > +      * If xfs_trans_context_swap() handed the NOFS context to a
+> > +      * new transaction we do not clear the context here.
+> > +      */
+>
+> It's a transaction context, not a "NOFS context". Setting NOFS is
+> just something we implement inside the transaction context. More
+> correct would be:
+>
+>         /*
+>          * If we handed over the context via xfs_trans_context_swap() then
+>          * the context is no longer ours to clear.
+>          */
+>
+
+Sure, I will change it.
+
+
 -- 
-2.25.1
-
+Thanks
+Yafang
