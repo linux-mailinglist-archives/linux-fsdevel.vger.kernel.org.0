@@ -2,120 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A002DF386
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Dec 2020 05:27:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B0662DF391
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Dec 2020 05:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbgLTEZb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Dec 2020 23:25:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40438 "EHLO
+        id S1726992AbgLTErE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Dec 2020 23:47:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726815AbgLTEZ2 (ORCPT
+        with ESMTP id S1726817AbgLTErE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Dec 2020 23:25:28 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DFDDC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Dec 2020 20:24:42 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id b26so6178829lff.9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Dec 2020 20:24:42 -0800 (PST)
+        Sat, 19 Dec 2020 23:47:04 -0500
+Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C72C0617B0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Dec 2020 20:46:24 -0800 (PST)
+Received: by mail-pg1-x54a.google.com with SMTP id r29so4367739pga.20
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Dec 2020 20:46:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JFgiRqt389RYWGb/JlYYOu5sUPqgbDBylAV6+N6f2tM=;
-        b=NG8/CPTIEWkExbDtSpmxwFwgXfdcgJY7+FFFEZ00n6mr2Ym8j6TQ5nfAXHk2dVNsEY
-         +Jwx3B3CNGU50WTFaB+rCmrk7N7LcdJjx0JY7eSpsvBpapVVbLuWIaMW/AWY0h7rMv+w
-         XWdFbXcwUpLM0JvrCEgJeuCxlewxa04sjKrbJp/hCZ626dq7m/FZuVfBammrT91R0hnQ
-         1unNHu9ClyIDHq8oCcgf7XI2xo+bS5GNeRYuc1R9Gu5x2Ido9+SJf3GBEp7Qc+59OapG
-         tG029o+Va7iRBSw0Al1Q58K9uWo+2Ka9YRxgWRvTDiTTxsxDFI1rT4Ft3EitEKGy+Mg9
-         oc7w==
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=E+KTnvzcs5JsFh57zt07bVvSESBSRodeL+PTYDq6f7o=;
+        b=qj8HlWI6tZdIhw+rewCG3QHQBdMh6oLbeBtQ+FixjcusoK13IpGxkq1c5YE1l0+eed
+         zVbZJyKTvERT2TmdB6CoDbR2axOfXqPV+x+SH9aRLg97bazsi7cmiq3eFZ0yQhqWHZEy
+         jgTHQcQ6a/mSLbMqdCnl27zxAAxByeE4hwS28Z2Li9884mzx+AjeLqF0yib0RXZ3UI2u
+         yr1M5kJApUa7IIcCezfZgD/w0duGJqFLvVYPyzuImbmnY+45dm2nvZ93Jo7PYFiInYCP
+         DlUNzl8HjhbvqG9YQoZDbPUkKthc31dhOEb1TcZwuILm8RNXEho31q5o839xZWh11zgW
+         ASpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JFgiRqt389RYWGb/JlYYOu5sUPqgbDBylAV6+N6f2tM=;
-        b=tSKKyyO74sRY+luymxusWWGZoDL8iBFfjPT7QHmkbVICm5GOu0QoYY09zotopC3EVU
-         iOR1j0aM174YjRmxC0a+4er7U6RvPziMgt0KTaec47L6yKCNJ9QhUpaxDXSorfXgd4Vm
-         A2nReQtmSwrrcUtyftUDMifzVc/uy/flt516QurkbgYard76aLIyT8E7+ElZofbwIiYO
-         OXNq9n4Tvuyc1VUGQH0BnzD/vZbr/5hld8YZTCitoSk2ik886Ew0Y/QJxLJKT2gk55VV
-         hlC/MIm7TeG+o/gI2qv23841x/pMyyEKdWiQStJ3uQd7btdmHFTH30837v684vwA2B0h
-         LONw==
-X-Gm-Message-State: AOAM533SX7UPNKd+3ofSCKQqSSQmXDKhrPTdcJJFRFsdYSybH0TCnt9n
-        RiKICqYm2Jg59vTU3KUGVjdE8UZqCt81EyS+nv0uUFm3JaUTZQ==
-X-Google-Smtp-Source: ABdhPJx3gCsV/+khD7r04wyPsfQQRQzn/iOP9Tsgc7KYAprXKYWybinAxEkJ6S+asHTD4BhQBkZyfmqHBweeTp1yL80=
-X-Received: by 2002:a2e:9985:: with SMTP id w5mr4851906lji.122.1608438280605;
- Sat, 19 Dec 2020 20:24:40 -0800 (PST)
-MIME-Version: 1.0
-References: <20201218221129.851003-1-shakeelb@google.com> <CAOQ4uxiyd=N-mvYWHFx6Yq1LW1BPcriZw++MAyOGB_4CDkDKYA@mail.gmail.com>
- <CALvZod6uT+bH7NqooEbqMLC6ppcbu-v=QDQRyTcfWGUsQodYjQ@mail.gmail.com> <CAOQ4uxh3vEBMs8afudFU3zxKLpcKG7KuWEGkLiH0hioncum1UA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh3vEBMs8afudFU3zxKLpcKG7KuWEGkLiH0hioncum1UA@mail.gmail.com>
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=E+KTnvzcs5JsFh57zt07bVvSESBSRodeL+PTYDq6f7o=;
+        b=tB9L+jT2Rij4jzRGnBR9oUod9FqNVdmSYBulEyuU5ceHCTbAspe9+UyDw+G4sdvU8J
+         Ayc76jPAPO9vYJXYSfZqYoOWMmMmmlP9UFaConEwx1Laz9nHxcpSwRo6DT5bcYVYq6KK
+         MT/Zf2TqjXA1uWY9MHjqI2GEVVy9+EwQXRTHh9hQY3RboIRzpxkBNG0cR4me18OMpxZ+
+         gTF14WpjF954bmhDjhPYs9KjRgB/O91EZpWdpziNc7HLOhhUd2Qe+ug13AeXDzAUk7Sy
+         VtsGNCgmNjqN/VTSp22T8SgMTqnh3DZ52eEr9+NP5ExkQg9pGwJyiupQxBHn6iz04zp6
+         nx4A==
+X-Gm-Message-State: AOAM530S7FmK64pLB2l/7bolWPKsjBQU5s1riqPVYdUzua8cYONYLbIi
+        WyCX9RGt+znFeIWkYl5tXKESguwfOBQpAg==
+X-Google-Smtp-Source: ABdhPJwVJYVnWO4MvhahOTUFhh8SBrFUbCSc2epgLCW/93Vp5fokqG7+kT7R9YX7Y71yLo815QdY7cUMMVgCmQ==
+Sender: "shakeelb via sendgmr" <shakeelb@shakeelb.svl.corp.google.com>
+X-Received: from shakeelb.svl.corp.google.com ([100.116.77.44]) (user=shakeelb
+ job=sendgmr) by 2002:a17:90b:3011:: with SMTP id hg17mr11851579pjb.22.1608439583347;
+ Sat, 19 Dec 2020 20:46:23 -0800 (PST)
+Date:   Sat, 19 Dec 2020 20:46:08 -0800
+Message-Id: <20201220044608.1258123-1-shakeelb@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.29.2.684.gfbc64c5ab5-goog
+Subject: [PATCH v2] inotify, memcg: account inotify instances to kmemcg
 From:   Shakeel Butt <shakeelb@google.com>
-Date:   Sat, 19 Dec 2020 20:24:29 -0800
-Message-ID: <CALvZod6fua_SQ=1+MX_R52w8PVbFafSHgjcmhXdaRWkZtfe+cg@mail.gmail.com>
-Subject: Re: [PATCH] inotify, memcg: account inotify instances to kmemcg
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+To:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shakeel Butt <shakeelb@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 19, 2020 at 8:25 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Sat, Dec 19, 2020 at 4:31 PM Shakeel Butt <shakeelb@google.com> wrote:
-> >
-> > On Sat, Dec 19, 2020 at 1:48 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Sat, Dec 19, 2020 at 12:11 AM Shakeel Butt <shakeelb@google.com> wrote:
-> > > >
-> > > > Currently the fs sysctl inotify/max_user_instances is used to limit the
-> > > > number of inotify instances on the system. For systems running multiple
-> > > > workloads, the per-user namespace sysctl max_inotify_instances can be
-> > > > used to further partition inotify instances. However there is no easy
-> > > > way to set a sensible system level max limit on inotify instances and
-> > > > further partition it between the workloads. It is much easier to charge
-> > > > the underlying resource (i.e. memory) behind the inotify instances to
-> > > > the memcg of the workload and let their memory limits limit the number
-> > > > of inotify instances they can create.
-> > >
-> > > Not that I have a problem with this patch, but what problem does it try to
-> > > solve?
-> >
-> > I am aiming for the simplicity to not set another limit which can
-> > indirectly be limited by memcg limits. I just want to set the memcg
-> > limit on our production environment which runs multiple workloads on a
-> > system and not think about setting a sensible value to
-> > max_user_instances in production. I would prefer to set
-> > max_user_instances to max int and let the memcg limits of the
-> > workloads limit their inotify usage.
-> >
->
-> understood.
-> and I guess the multiple workloads cannot run each in their own userns?
-> because then you wouldn't need to change max_user_instances limit.
->
+Currently the fs sysctl inotify/max_user_instances is used to limit the
+number of inotify instances on the system. For systems running multiple
+workloads, the per-user namespace sysctl max_inotify_instances can be
+used to further partition inotify instances. However there is no easy
+way to set a sensible system level max limit on inotify instances and
+further partition it between the workloads. It is much easier to charge
+the underlying resource (i.e. memory) behind the inotify instances to
+the memcg of the workload and let their memory limits limit the number
+of inotify instances they can create.
 
-No workloads can run in their own user namespace but please note that
-max_user_instances is shared between all the user namespaces.
+With inotify instances charged to memcg, the admin can simply set
+max_user_instances to INT_MAX and let the memcg limits of the jobs limit
+their inotify instances.
 
->
-[snip]
-> > > Any reason why you did not include fanotify in this patch?
-> >
-> > The motivation was inotify's max_user_instances but we can charge
-> > fsnotify_group for fanotify as well. Though I would prefer that to be
-> > a separate patch. Let me know what you prefer?
-> >
->
-> I would prefer to add the helper fsnotify_alloc_user_group()
-> that will use the GFP_KERNEL_ACCOUNT allocation flags
-> internally.
->
-> fsnotify_alloc_group() is used by all backends that initialize a single
-> group instance for internal use and  fsnotify_alloc_user_group() will be
-> used by inotify/fanotify when users create instances.
-> I see no reason to separate that to two patches.
->
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+Changes since v1:
+- introduce fsnotify_alloc_user_group() and convert fanotify in addition
+  to inotify to use that function. [suggested by Amir]
 
-SGTM.
+ fs/notify/fanotify/fanotify_user.c |  2 +-
+ fs/notify/group.c                  | 25 ++++++++++++++++++++-----
+ fs/notify/inotify/inotify_user.c   |  4 ++--
+ include/linux/fsnotify_backend.h   |  1 +
+ 4 files changed, 24 insertions(+), 8 deletions(-)
+
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 3e01d8f2ab90..7e7afc2b62e1 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -976,7 +976,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 		f_flags |= O_NONBLOCK;
+ 
+ 	/* fsnotify_alloc_group takes a ref.  Dropped in fanotify_release */
+-	group = fsnotify_alloc_group(&fanotify_fsnotify_ops);
++	group = fsnotify_alloc_user_group(&fanotify_fsnotify_ops);
+ 	if (IS_ERR(group)) {
+ 		free_uid(user);
+ 		return PTR_ERR(group);
+diff --git a/fs/notify/group.c b/fs/notify/group.c
+index a4a4b1c64d32..ffd723ffe46d 100644
+--- a/fs/notify/group.c
++++ b/fs/notify/group.c
+@@ -111,14 +111,12 @@ void fsnotify_put_group(struct fsnotify_group *group)
+ }
+ EXPORT_SYMBOL_GPL(fsnotify_put_group);
+ 
+-/*
+- * Create a new fsnotify_group and hold a reference for the group returned.
+- */
+-struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
++static struct fsnotify_group *__fsnotify_alloc_group(
++				const struct fsnotify_ops *ops, gfp_t gfp)
+ {
+ 	struct fsnotify_group *group;
+ 
+-	group = kzalloc(sizeof(struct fsnotify_group), GFP_KERNEL);
++	group = kzalloc(sizeof(struct fsnotify_group), gfp);
+ 	if (!group)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -139,8 +137,25 @@ struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
+ 
+ 	return group;
+ }
++
++/*
++ * Create a new fsnotify_group and hold a reference for the group returned.
++ */
++struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
++{
++	return __fsnotify_alloc_group(ops, GFP_KERNEL);
++}
+ EXPORT_SYMBOL_GPL(fsnotify_alloc_group);
+ 
++/*
++ * Create a new fsnotify_group and hold a reference for the group returned.
++ */
++struct fsnotify_group *fsnotify_alloc_user_group(const struct fsnotify_ops *ops)
++{
++	return __fsnotify_alloc_group(ops, GFP_KERNEL_ACCOUNT);
++}
++EXPORT_SYMBOL_GPL(fsnotify_alloc_user_group);
++
+ int fsnotify_fasync(int fd, struct file *file, int on)
+ {
+ 	struct fsnotify_group *group = file->private_data;
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 59c177011a0f..266d17e8ecb9 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -632,11 +632,11 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
+ 	struct fsnotify_group *group;
+ 	struct inotify_event_info *oevent;
+ 
+-	group = fsnotify_alloc_group(&inotify_fsnotify_ops);
++	group = fsnotify_alloc_user_group(&inotify_fsnotify_ops);
+ 	if (IS_ERR(group))
+ 		return group;
+ 
+-	oevent = kmalloc(sizeof(struct inotify_event_info), GFP_KERNEL);
++	oevent = kmalloc(sizeof(struct inotify_event_info), GFP_KERNEL_ACCOUNT);
+ 	if (unlikely(!oevent)) {
+ 		fsnotify_destroy_group(group);
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index a2e42d3cd87c..e5409b83e731 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -470,6 +470,7 @@ static inline void fsnotify_update_flags(struct dentry *dentry)
+ 
+ /* create a new group */
+ extern struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops);
++extern struct fsnotify_group *fsnotify_alloc_user_group(const struct fsnotify_ops *ops);
+ /* get reference to a group */
+ extern void fsnotify_get_group(struct fsnotify_group *group);
+ /* drop reference on a group from fsnotify_alloc_group */
+-- 
+2.29.2.684.gfbc64c5ab5-goog
+
