@@ -2,171 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA35A2DFB2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 11:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 530062DFB5E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 12:08:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbgLUKpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Dec 2020 05:45:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40598 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbgLUKpK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Dec 2020 05:45:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 52188ADD6;
-        Mon, 21 Dec 2020 10:44:27 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 06B2F1E1332; Mon, 21 Dec 2020 11:44:27 +0100 (CET)
-Date:   Mon, 21 Dec 2020 11:44:26 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Shakeel Butt <shakeelb@google.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] inotify, memcg: account inotify instances to kmemcg
-Message-ID: <20201221104426.GA13601@quack2.suse.cz>
-References: <20201220044608.1258123-1-shakeelb@google.com>
- <CAOQ4uxi4b-zXfWhLNQ+aGWn2qG3vqMCjkJnhrugc0+oER1EjUA@mail.gmail.com>
+        id S1726082AbgLULIj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Dec 2020 06:08:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39604 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbgLULIi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Dec 2020 06:08:38 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BE95C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 03:07:57 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id iq13so5976779pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 03:07:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BOlZCOLM2fiX9IZHU6rHTKDZB2KqCTIIheGSQkZLkzk=;
+        b=keW0J8Q4lXZv+SIUf1De3T7sb3p2+MR0Lv0chpM09bx0Nf5BD8D5xSd/IAc7+zxacC
+         TWPoC21wd4gx+W52iqF52xIef/afr+jhVsi7ICGWneMOi4bju/knXoiROvRkFBMcggys
+         gkA4Ik1i+mImdXy06ZzmVZofmSfej86CBElBp5x9DGRYfeQd4HWCLFRlbaKjaowPGAsJ
+         IVkAjGPr4+BIpMFGmzi2+qnWEg3k/aB5NkTtneAyxaWGJsaxzm+lfSEVxypucCTxG0Lf
+         p3NLvydg4KDMuXdIT3HZUgFFg5XlzjgZy5lcvJZS07IWPc3vUWStqiexCXRwm73UpQh6
+         Onmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BOlZCOLM2fiX9IZHU6rHTKDZB2KqCTIIheGSQkZLkzk=;
+        b=FGm2pcX4klJnE9PWecVzcbdqMrxaysucRxaR8v7eonMtQtKq4MQGMZZGEJACOKaf2C
+         UTkh7ZUHQYYkWiPH+CbTu1VEl7W4p5tGjAZM8+eTzsneI/orSOvA/nVm1cE4U/JAZxpN
+         CITZcPMYn6cIo7FD/6or6am5hAjgLGf5ZFzBd9CKLWM9h3J3mANyqwuR85kkF6s7p7rJ
+         Z6LqrwU0d0uwQ8R9yYvWXg8GtckMuN4obr9sk0GSfr+wXFUV7tmNcAW3FEJUNvR0rVq8
+         /QLIAunE8OccjmEGDbKWDSo/a3CiH01cunwh3tZDbB8hrMzuFDdFFrJdLG6AAPAbG3Of
+         LrRg==
+X-Gm-Message-State: AOAM530K7rE8yDZvkGU12anmzP54zidrRR6fbeJaVCG3NHFsM3bCm3Pw
+        +VZ9hcWPTEoQJq7aSuly7oXV3pCk1Kz7Rd/KIxeQXw==
+X-Google-Smtp-Source: ABdhPJwoJStF1A669nR7sEzwHJAQg6sembIt+S/xmXLOZRFLjO1my0AFoe54teplQtqVoxYW3ICQo1YTApqa6dAcBYs=
+X-Received: by 2002:a17:902:8503:b029:dc:44f:62d8 with SMTP id
+ bj3-20020a1709028503b02900dc044f62d8mr15600526plb.34.1608548876589; Mon, 21
+ Dec 2020 03:07:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxi4b-zXfWhLNQ+aGWn2qG3vqMCjkJnhrugc0+oER1EjUA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20201217121303.13386-1-songmuchun@bytedance.com>
+ <20201217121303.13386-5-songmuchun@bytedance.com> <20201221102703.GA15804@linux>
+In-Reply-To: <20201221102703.GA15804@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 21 Dec 2020 19:07:18 +0800
+Message-ID: <CAMZfGtW0jzNchLqieAudyk4TsaAUtYEdoC=j+gkkVLJBaKg3pA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v10 04/11] mm/hugetlb: Defer freeing of
+ HugeTLB pages
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>, naoya.horiguchi@nec.com,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 20-12-20 13:32:46, Amir Goldstein wrote:
-> On Sun, Dec 20, 2020 at 6:46 AM Shakeel Butt <shakeelb@google.com> wrote:
-> >
-> > Currently the fs sysctl inotify/max_user_instances is used to limit the
-> > number of inotify instances on the system. For systems running multiple
-> > workloads, the per-user namespace sysctl max_inotify_instances can be
-> > used to further partition inotify instances. However there is no easy
-> > way to set a sensible system level max limit on inotify instances and
-> > further partition it between the workloads. It is much easier to charge
-> > the underlying resource (i.e. memory) behind the inotify instances to
-> > the memcg of the workload and let their memory limits limit the number
-> > of inotify instances they can create.
-> >
-> > With inotify instances charged to memcg, the admin can simply set
-> > max_user_instances to INT_MAX and let the memcg limits of the jobs limit
-> > their inotify instances.
-> >
-> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+On Mon, Dec 21, 2020 at 6:27 PM Oscar Salvador <osalvador@suse.de> wrote:
+>
+> On Thu, Dec 17, 2020 at 08:12:56PM +0800, Muchun Song wrote:
+> > In the subsequent patch, we will allocate the vmemmap pages when free
+> > HugeTLB pages. But update_and_free_page() is called from a non-task
+> > context(and hold hugetlb_lock), so we can defer the actual freeing in
+> > a workqueue to prevent from using GFP_ATOMIC to allocate the vmemmap
+> > pages.
+>
+> I think we would benefit from a more complete changelog, at least I had
+> to stare at the code for a while in order to grasp what are we trying
+> to do and the reasons behind.
 
-The patch looks good to me. Thanks for review Amir. I've picked the
-patch to my tree although it's currently in flux as we're currently in the
-middle of the merge window. So I won't push out the branch with the patch
-yet since I plan on rebasing it on top of -rc1 anyway.
+OK. Will do.
 
-								Honza
-
-> > Changes since v1:
-> > - introduce fsnotify_alloc_user_group() and convert fanotify in addition
-> >   to inotify to use that function. [suggested by Amir]
-> >
-> >  fs/notify/fanotify/fanotify_user.c |  2 +-
-> >  fs/notify/group.c                  | 25 ++++++++++++++++++++-----
-> >  fs/notify/inotify/inotify_user.c   |  4 ++--
-> >  include/linux/fsnotify_backend.h   |  1 +
-> >  4 files changed, 24 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > index 3e01d8f2ab90..7e7afc2b62e1 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -976,7 +976,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
-> >                 f_flags |= O_NONBLOCK;
-> >
-> >         /* fsnotify_alloc_group takes a ref.  Dropped in fanotify_release */
-> > -       group = fsnotify_alloc_group(&fanotify_fsnotify_ops);
-> > +       group = fsnotify_alloc_user_group(&fanotify_fsnotify_ops);
-> >         if (IS_ERR(group)) {
-> >                 free_uid(user);
-> >                 return PTR_ERR(group);
-> > diff --git a/fs/notify/group.c b/fs/notify/group.c
-> > index a4a4b1c64d32..ffd723ffe46d 100644
-> > --- a/fs/notify/group.c
-> > +++ b/fs/notify/group.c
-> > @@ -111,14 +111,12 @@ void fsnotify_put_group(struct fsnotify_group *group)
-> >  }
-> >  EXPORT_SYMBOL_GPL(fsnotify_put_group);
-> >
-> > -/*
-> > - * Create a new fsnotify_group and hold a reference for the group returned.
-> > - */
-> > -struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
-> > +static struct fsnotify_group *__fsnotify_alloc_group(
-> > +                               const struct fsnotify_ops *ops, gfp_t gfp)
-> >  {
-> >         struct fsnotify_group *group;
-> >
-> > -       group = kzalloc(sizeof(struct fsnotify_group), GFP_KERNEL);
-> > +       group = kzalloc(sizeof(struct fsnotify_group), gfp);
-> >         if (!group)
-> >                 return ERR_PTR(-ENOMEM);
-> >
-> > @@ -139,8 +137,25 @@ struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
-> >
-> >         return group;
-> >  }
+>
+> > +static void __free_hugepage(struct hstate *h, struct page *page);
 > > +
 > > +/*
-> > + * Create a new fsnotify_group and hold a reference for the group returned.
-> > + */
-> > +struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
-> > +{
-> > +       return __fsnotify_alloc_group(ops, GFP_KERNEL);
-> > +}
-> >  EXPORT_SYMBOL_GPL(fsnotify_alloc_group);
-> >
-> > +/*
-> > + * Create a new fsnotify_group and hold a reference for the group returned.
-> > + */
-> > +struct fsnotify_group *fsnotify_alloc_user_group(const struct fsnotify_ops *ops)
-> > +{
-> > +       return __fsnotify_alloc_group(ops, GFP_KERNEL_ACCOUNT);
-> > +}
-> > +EXPORT_SYMBOL_GPL(fsnotify_alloc_user_group);
-> > +
-> >  int fsnotify_fasync(int fd, struct file *file, int on)
+> > + * As update_and_free_page() is be called from a non-task context(and hold
+> > + * hugetlb_lock), we can defer the actual freeing in a workqueue to prevent
+> > + * use GFP_ATOMIC to allocate a lot of vmemmap pages.
+>
+> The above implies that update_and_free_page() is __always__ called from a
+> non-task context, but that is not always the case?
+
+IIUC, here is always the case.
+
+>
+> > +static void update_hpage_vmemmap_workfn(struct work_struct *work)
 > >  {
-> >         struct fsnotify_group *group = file->private_data;
-> > diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-> > index 59c177011a0f..266d17e8ecb9 100644
-> > --- a/fs/notify/inotify/inotify_user.c
-> > +++ b/fs/notify/inotify/inotify_user.c
-> > @@ -632,11 +632,11 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
-> >         struct fsnotify_group *group;
-> >         struct inotify_event_info *oevent;
+> > -     int i;
+> > +     struct llist_node *node;
+> > +     struct page *page;
 > >
-> > -       group = fsnotify_alloc_group(&inotify_fsnotify_ops);
-> > +       group = fsnotify_alloc_user_group(&inotify_fsnotify_ops);
-> >         if (IS_ERR(group))
-> >                 return group;
-> >
-> > -       oevent = kmalloc(sizeof(struct inotify_event_info), GFP_KERNEL);
-> > +       oevent = kmalloc(sizeof(struct inotify_event_info), GFP_KERNEL_ACCOUNT);
-> >         if (unlikely(!oevent)) {
-> >                 fsnotify_destroy_group(group);
-> >                 return ERR_PTR(-ENOMEM);
-> > diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> > index a2e42d3cd87c..e5409b83e731 100644
-> > --- a/include/linux/fsnotify_backend.h
-> > +++ b/include/linux/fsnotify_backend.h
-> > @@ -470,6 +470,7 @@ static inline void fsnotify_update_flags(struct dentry *dentry)
-> >
-> >  /* create a new group */
-> >  extern struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops);
-> > +extern struct fsnotify_group *fsnotify_alloc_user_group(const struct fsnotify_ops *ops);
-> >  /* get reference to a group */
-> >  extern void fsnotify_get_group(struct fsnotify_group *group);
-> >  /* drop reference on a group from fsnotify_alloc_group */
-> > --
-> > 2.29.2.684.gfbc64c5ab5-goog
-> >
+> > +     node = llist_del_all(&hpage_update_freelist);
+> > +
+> > +     while (node) {
+> > +             page = container_of((struct address_space **)node,
+> > +                                  struct page, mapping);
+> > +             node = node->next;
+> > +             page->mapping = NULL;
+> > +             __free_hugepage(page_hstate(page), page);
+> > +
+> > +             cond_resched();
+> > +     }
+> > +}
+> > +static DECLARE_WORK(hpage_update_work, update_hpage_vmemmap_workfn);
+>
+> I wonder if this should be moved to hugetlb_vmemmap.c
+
+Maybe I can do a try.
+
+>
+> > +/*
+> > + * This is where the call to allocate vmemmmap pages will be inserted.
+> > + */
+>
+> I think this should go in the changelog.
+
+OK. Will do.
+
+>
+> > +static void __free_hugepage(struct hstate *h, struct page *page)
+> > +{
+> > +     int i;
+> > +
+> >       for (i = 0; i < pages_per_huge_page(h); i++) {
+> >               page[i].flags &= ~(1 << PG_locked | 1 << PG_error |
+> >                               1 << PG_referenced | 1 << PG_dirty |
+> > @@ -1313,13 +1377,17 @@ static void update_and_free_page(struct hstate *h, struct page *page)
+> >       set_page_refcounted(page);
+> >       if (hstate_is_gigantic(h)) {
+> >               /*
+> > -              * Temporarily drop the hugetlb_lock, because
+> > -              * we might block in free_gigantic_page().
+> > +              * Temporarily drop the hugetlb_lock only when this type of
+> > +              * HugeTLB page does not support vmemmap optimization (which
+> > +              * context do not hold the hugetlb_lock), because we might
+> > +              * block in free_gigantic_page().
+>
+> "
+>  /*
+>   * Temporarily drop the hugetlb_lock, because we might block
+>   * in free_gigantic_page(). Only drop it in case the vmemmap
+>   * optimization is disabled, since that context does not hold
+>   * the lock.
+>   */
+> " ?
+
+Thanks a lot.
+
+>
+>
+> Oscar Salvador
+> SUSE L3
+
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yours,
+Muchun
