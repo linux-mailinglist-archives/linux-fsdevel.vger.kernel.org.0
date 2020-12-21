@@ -2,114 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDBCF2DFF41
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 19:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1335A2DFF5D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 19:11:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbgLUSGW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Dec 2020 13:06:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48958 "EHLO
+        id S1725844AbgLUSJe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Dec 2020 13:09:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbgLUSGW (ORCPT
+        with ESMTP id S1725818AbgLUSJd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Dec 2020 13:06:22 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B17C061282
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 10:05:41 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id b9so14746319ejy.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 10:05:41 -0800 (PST)
+        Mon, 21 Dec 2020 13:09:33 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F7FC061285
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 10:08:53 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id w1so14668275ejf.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 10:08:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RDT3CMWkb5v4KlAY6bNjmDFLqwN6ZEiRSV+Z6DSzr0s=;
-        b=jrj8LYfQ+G2abRBjq/EQNO52IGqX1ROGqjr73asfsMUx2io1t/Kj5vaWeNRQ05QBws
-         7ORYHBk1SfigU2h39+yGI1Lk3AhN50Cgw2pM71/m4zP1hwb+ikD3+K55GDIFL6cu4N9x
-         ZXqkVEqq4e9zYCD39Pgl2Yl2UyuINtmv3u1EhVxYVIV2oRUT+oNTfNWmFPJ0oiSuI1AA
-         DmducotL7D+1FUZXOZvqHAm9lf7QMa82bUozYx7IzidUTWK7x6Iib27Ho/jYH5ne0Z0S
-         Of1Dbmmu0Q124UefwB1rJjBdPSQEFSj36Hggs/J2Zs9T0HFyX0niq795BUINRYC4pEQ5
-         L9qw==
+        bh=kMPwSByM5Ofrk9Kvk8b94+hVOdCU16NWvETZQDOg+ns=;
+        b=RzcksibqGzUEPSFE0m8P+JWb11CJAU3jMWh0XO1JtfV/WtL4MjWV6XkqYK5EZ5Q2nU
+         TrDmyMWHSL26YBIbESRADOXyfBW7UB2f3zCeuNcC+uzPKF1Rwww9NXaogzewXr3/tczT
+         WNz6Yz6iyaqyz5eQbs0CIQPzpL191Qeth/q5I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RDT3CMWkb5v4KlAY6bNjmDFLqwN6ZEiRSV+Z6DSzr0s=;
-        b=TGf8uJAjHpoAXT8mnn8zB1/vbKuGwuWFKz1TBe3BjzCDSst8+c0T25QFkjr+05FR7G
-         azpGX9K53Moo7NLvWKNoXtUAEcYEzkPmD1ue0kFwhyoAlr+6ZbT8kwNq3SjSQed5uHT5
-         ZRWwgSVQh9z/2SqiYsjIUZlDb5P2mBLDC72D4cKzdrIfT8WgMDmXkdQ4f3xLvMjlssYx
-         NtD4Wkl8V8IsYn99PK+6ZfHsT0ysTG/HsBJLgV/Lli98SaGd3ER74QjvGmBrRrW3LN+h
-         LSXE9bj/NrZdGdpMyv7gaOvNGFR65FQg+swE3Fk18v1iyQzM1iaUfuh85xK0zQXLVlCS
-         tn4w==
-X-Gm-Message-State: AOAM532n6bffrj5TYpwDqJakrN6tN+krPMYfFa5vfsffFqbO0c6Uy3fK
-        CydMYOG3GAFR6LRWImYCnB+ax2GRczoO84IpPsnDVA1Sow==
-X-Google-Smtp-Source: ABdhPJwPBtlia5uDw63ingozAyc7AR0jROeP8m6nydP3bWYSBIMRH20XUWt+8TeXFSZsv23dBiOY4HZ+Ga0eJQoO4Vg=
-X-Received: by 2002:a17:907:d9e:: with SMTP id go30mr15735065ejc.488.1608570889830;
- Mon, 21 Dec 2020 09:14:49 -0800 (PST)
+        bh=kMPwSByM5Ofrk9Kvk8b94+hVOdCU16NWvETZQDOg+ns=;
+        b=Buk5OvW365J3JDj2tD89dh7XLOodH9rJkxsp0B3oeLLLNEqFsKfqZ1XRHsLTwc1BXP
+         R2XoXdXWVSiBD3mAi3Ue42hSMuKH8YI/O2ZEU6moUxW4HJY51m49+KBlkYGIXv9a9pG2
+         ijRqcAmTPsvlJjvRbUuyA5e4N9CSRbHa5C6TeGUwGV8OaQ8w1unvZCSuoImcMAP2/5LL
+         nkHlan5O6MZrlRwHs/KeO/OdvIRUKXF885bTVyUAtublB9zt8+75wSdMh/1cXLfSJxVj
+         lJOW7JZXJ3oVitOxERK9l2gTC9Q9mCM6JBXYM58m5+o9M5N1JbuSsAtDN5MFZZfaWXxm
+         Qvmw==
+X-Gm-Message-State: AOAM532V5pjuRbs6usavT2yrgjtSGQvqbGrsaAwA/w3tu38PbS9h1EZS
+        tWWD5UdIlHljg0QNXJeNN/jRidTiU4anqg==
+X-Google-Smtp-Source: ABdhPJxQPTSaAf7XhZ+9bRbygVjETrczjGgBEzT7LZc6nXBndR73FBHlPugo7OuCqJgvU738fVUjuw==
+X-Received: by 2002:a2e:9acf:: with SMTP id p15mr7710103ljj.192.1608572286316;
+        Mon, 21 Dec 2020 09:38:06 -0800 (PST)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id x11sm2150197lfq.244.2020.12.21.09.38.05
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Dec 2020 09:38:05 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id x20so25532076lfe.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 09:38:05 -0800 (PST)
+X-Received: by 2002:a2e:9b13:: with SMTP id u19mr7549776lji.48.1608572285100;
+ Mon, 21 Dec 2020 09:38:05 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1608225886.git.rgb@redhat.com> <982b9adffbd32264a853fe7f4f06f0d0a882c11d.1608225886.git.rgb@redhat.com>
-In-Reply-To: <982b9adffbd32264a853fe7f4f06f0d0a882c11d.1608225886.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 21 Dec 2020 12:14:38 -0500
-Message-ID: <CAHC9VhSTuBJ3LXxMY=nD7qBzmKLDjXY0V3hsuN34_siq_xRrig@mail.gmail.com>
-Subject: Re: [PATCH ghak90 v10 01/11] audit: collect audit task parameters
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux Containers List <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Linux FSdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        David Howells <dhowells@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Simo Sorce <simo@redhat.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+References: <365031.1608567254@warthog.procyon.org.uk>
+In-Reply-To: <365031.1608567254@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 21 Dec 2020 09:37:49 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whRD1YakfPKE72htDBzTKA73x3aEwi44ngYFf4WCk+1kQ@mail.gmail.com>
+Message-ID: <CAHk-=whRD1YakfPKE72htDBzTKA73x3aEwi44ngYFf4WCk+1kQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH] afs: Work around strnlen() oops with CONFIG_FORTIFIED_SOURCE=y
+To:     David Howells <dhowells@redhat.com>
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 21, 2020 at 11:57 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Mon, Dec 21, 2020 at 8:14 AM David Howells <dhowells@redhat.com> wrote:
 >
-> The audit-related parameters in struct task_struct should ideally be
-> collected together and accessed through a standard audit API and the audit
-> structures made opaque to other kernel subsystems.
->
-> Collect the existing loginuid, sessionid and audit_context together in a
-> new opaque struct audit_task_info called "audit" in struct task_struct.
->
-> Use kmem_cache to manage this pool of memory.
-> Un-inline audit_free() to be able to always recover that memory.
->
-> Please see the upstream github issues
-> https://github.com/linux-audit/audit-kernel/issues/81
-> https://github.com/linux-audit/audit-kernel/issues/90
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> Acked-by: Neil Horman <nhorman@tuxdriver.com>
-> Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> CONFIG_FORTIFIED_SOURCE=y now causes an oops in strnlen() from afs (see
+> attached patch for an explanation).  Is replacing the use with memchr() the
+> right approach?  Or should I be calling __real_strnlen() or whatever it's
+> called?
 
-Did Neil and Ondrej really ACK/Review the changes that you made here
-in v10 or are you just carrying over the ACK/Review?  I'm hopeful it
-is the former, because I'm going to be a little upset if it is the
-latter.
+Ugh. No.
 
-> ---
->  fs/io-wq.c            |   8 +--
->  fs/io_uring.c         |  16 ++---
->  include/linux/audit.h |  49 +++++---------
->  include/linux/sched.h |   7 +-
->  init/init_task.c      |   3 +-
->  init/main.c           |   2 +
->  kernel/audit.c        | 154 +++++++++++++++++++++++++++++++++++++++++-
->  kernel/audit.h        |   7 ++
->  kernel/auditsc.c      |  24 ++++---
->  kernel/fork.c         |   1 -
->  10 files changed, 205 insertions(+), 66 deletions(-)
+> AFS has a structured layout in its directory contents (AFS dirs are
+> downloaded as files and parsed locally by the client for lookup/readdir).
+> The slots in the directory are defined by union afs_xdr_dirent.  This,
+> however, only directly allows a name of a length that will fit into that
+> union.  To support a longer name, the next 1-8 contiguous entries are
+> annexed to the first one and the name flows across these.
 
--- 
-paul moore
-www.paul-moore.com
+I htink the right fix would be to try to create a type that actually
+describes that.
+
+IOW, maybe the afs_xdr_dirent union could be written something like
+
+  union afs_xdr_dirent {
+          struct {
+                  u8              valid;
+                  u8              unused[1];
+                  __be16          hash_next;
+                  __be32          vnode;
+                  __be32          unique;
+                  u8              name[];
+         } u;
+          u8                      extended_name[32];
+  } __packed;
+
+instead, and have a big comment about how "name[]" is that
+"16+overflow+next entries" thing?
+
+I didn't check how you currently use that ->name thing (not a good
+identifier to grep for..), so you might want some other model - like
+using a separate union case for this "unconstrained name" case.
+
+In fact, maybe that separate union struct is a better model anyway, to
+act as even more of documentation about the different cases..
+
+              Linus
