@@ -2,96 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2AC12DFF5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 19:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B14E2DFF1A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 19:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725848AbgLUSJY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Dec 2020 13:09:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgLUSJX (ORCPT
+        id S1725913AbgLUR7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Dec 2020 12:59:03 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:48974 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725782AbgLUR7D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Dec 2020 13:09:23 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCC5BC061793
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 10:08:42 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id o17so25875959lfg.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 10:08:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=strato-de.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=t3QVggRzHjEFtsFh1wMUe/+tpa2QkqZwpikhDdpwCpk=;
-        b=XOgNKnwZHTOihgKI7ehiX3fYVKe5IRebLCVuwmkhanBXJY/bsWZGPLLIAI60cA9tl4
-         c3hLwtce33nIkNeAIvdxQJ6hGG4fBNz4+nSXOLIMpXDckhxq8nvRNULFenZdMn0HfzMT
-         IZfDffRrO6MMLKwTcWGVBXbGrXWw/iDux/JEjVzOnZP5L6eQ4dzJIq6hoYeCnkRwcrXM
-         ndlWW7r11vhmYBvSQtdbo6DNsYCi2yPYupBPoEQnx+uzB62ZZ/IWwN26qOo18OTztc8w
-         6Cy/sNrymIIVLOKMQMU15Kr22Z+wjTXHmgq9eyUsag0KJjUcgoj4Do+qLtYdDNc/gUJN
-         hy7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=t3QVggRzHjEFtsFh1wMUe/+tpa2QkqZwpikhDdpwCpk=;
-        b=N6leEiM8oSMolfmdJvL0HjcnlTAjzDWDkqmkYThJca6pTaGXWe67VotUdEQsJLmCwy
-         t7O+6RB1JfZYhLenuk17fWtR4R8NdEz/K9RH2wrqfqrF3iph757DibZBzSdU2I96h2CH
-         iQ4786FCc8WdaqvZAl2UsSoRUeUoB1RVqGmQ3iMhfTg7ShwE6Sm3BP2snrWZGb8ZWQmg
-         JVdxlflqgrSRz97FY8QbeKnoDE9TDZRlZZuiIqZT0wK1DgeSng9WTXcUoPHUfW8HNV36
-         vmrV5d2CbS3uWCWietO0E1AzAiefyqSJViyewDfIhkloWOzk6LUvRqOxiEfO+qWIkoic
-         m2sQ==
-X-Gm-Message-State: AOAM532pec08Ovi+XmTAYYj/RXN02fk76Bq+jrl2ZG7Y8dCUPRCLhXj8
-        zS8Gx3/SsTxBgoCzAGhUHVjrg/XtU6qxyK3N6DvyMIOhje8lkeWDRBwTRY01u2v/3Xw5UEGPaK6
-        UTFJlKK+r4uhnoMlW6BFXTb57V1vPHkaE6TrB4p0CP/3Vs3MWWkRS1FdQjjpsZl6By07+k44NRL
-        M=
-X-Google-Smtp-Source: ABdhPJyIc8q8dP+FTuDSz47zMwtcl45+Vt3lQp2do17dp2KtZNcqT6ykvMA/2Iv8IsapIXMvpEhkyQ==
-X-Received: by 2002:a17:906:391b:: with SMTP id f27mr15898532eje.195.1608572293077;
-        Mon, 21 Dec 2020 09:38:13 -0800 (PST)
-Received: from [192.168.178.67] (p2e5a4655.dip0.t-ipconnect.de. [46.90.70.85])
-        by smtp.gmail.com with ESMTPSA id r11sm28650492edt.58.2020.12.21.09.38.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Dec 2020 09:38:12 -0800 (PST)
-To:     linux-fsdevel@vger.kernel.org
-From:   Barnim Dzwillo <dzwillo@strato.de>
-Subject: [ANNOUNCE] wrapfs with support for operation on top of NFS
-Message-ID: <76be1b65-3e46-ec09-45c0-db3a640179fc@strato.de>
-Date:   Mon, 21 Dec 2020 18:38:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 21 Dec 2020 12:59:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608573456;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PVTTSIZ+4qn+SwwDnLlevQMhsrEFZG01AfUJnVXzFpk=;
+        b=TfCyOqA2SivMCkf/I8XjXMp04bmPvcqtphEmVkjjIgkMM5On4nKiiJfYRxXpqI/PMTiT98
+        wA3SGD7rLTorwtISPgYTLzu/JCexWRbsFY7scx5b36VYW80YC5LcMORzxiapoDbuXCDNqU
+        1djA5r9+2SQ4VT1J4vRs4GUncPHXqkY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-64-Hmj-eDYzNaCOHIZWZAk8lw-1; Mon, 21 Dec 2020 12:57:32 -0500
+X-MC-Unique: Hmj-eDYzNaCOHIZWZAk8lw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E8B338030A5;
+        Mon, 21 Dec 2020 17:57:29 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B53BD1E5;
+        Mon, 21 Dec 2020 17:57:15 +0000 (UTC)
+Date:   Mon, 21 Dec 2020 12:57:12 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linux Containers List <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Linux FSdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Simo Sorce <simo@redhat.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 v10 01/11] audit: collect audit task parameters
+Message-ID: <20201221175712.GI1762914@madcap2.tricolour.ca>
+References: <cover.1608225886.git.rgb@redhat.com>
+ <982b9adffbd32264a853fe7f4f06f0d0a882c11d.1608225886.git.rgb@redhat.com>
+ <CAHC9VhSTuBJ3LXxMY=nD7qBzmKLDjXY0V3hsuN34_siq_xRrig@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSTuBJ3LXxMY=nD7qBzmKLDjXY0V3hsuN34_siq_xRrig@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 2020-12-21 12:14, Paul Moore wrote:
+> On Mon, Dec 21, 2020 at 11:57 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > The audit-related parameters in struct task_struct should ideally be
+> > collected together and accessed through a standard audit API and the audit
+> > structures made opaque to other kernel subsystems.
+> >
+> > Collect the existing loginuid, sessionid and audit_context together in a
+> > new opaque struct audit_task_info called "audit" in struct task_struct.
+> >
+> > Use kmem_cache to manage this pool of memory.
+> > Un-inline audit_free() to be able to always recover that memory.
+> >
+> > Please see the upstream github issues
+> > https://github.com/linux-audit/audit-kernel/issues/81
+> > https://github.com/linux-audit/audit-kernel/issues/90
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> 
+> Did Neil and Ondrej really ACK/Review the changes that you made here
+> in v10 or are you just carrying over the ACK/Review?  I'm hopeful it
+> is the former, because I'm going to be a little upset if it is the
+> latter.
 
-A version of wrapfs with support for operation on top of NFS is available here:
-https://github.com/bdzwillo/wrapfs_nfs
+It is the latter, sorry.  So, this needs to be reposted without their
+ACK/Review lines.
 
-The major additions are:
-- support for remote file locks
-- fixes for operation on top of remote file systems
-- example code to wrap vfs-write-ops in a separate branch
+> > ---
+> >  fs/io-wq.c            |   8 +--
+> >  fs/io_uring.c         |  16 ++---
+> >  include/linux/audit.h |  49 +++++---------
+> >  include/linux/sched.h |   7 +-
+> >  init/init_task.c      |   3 +-
+> >  init/main.c           |   2 +
+> >  kernel/audit.c        | 154 +++++++++++++++++++++++++++++++++++++++++-
+> >  kernel/audit.h        |   7 ++
+> >  kernel/auditsc.c      |  24 ++++---
+> >  kernel/fork.c         |   1 -
+> >  10 files changed, 205 insertions(+), 66 deletions(-)
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
+> 
 
-Since the original wrapfs shows its age, the lookup-, locking- & mmap-code
-was simplified based on code from the ecryptfs & overlayfs kernel modules.
-
-This version was developed for a centos-7.8 kernel and NFSv3 filer mounts,
-because this matches the setup in our company. I hope this can be useful
-also for other environments - the centos vfs api lags behind the current
-vanilla kernel, but the internals are very much alike.
-
-In retrospect I must say it is really hard to get the locking right on the
-vfs layer. Perhaps it would be useful to add example code for a working
-vfs loopback driver to the kernel source tree.
-
-Thanks,
-Barnim
+- RGB
 
 --
-Barnim Dzwillo
-STRATO AG, Pascalstrasse 10, 10587 Berlin
-Shared Hosting Development
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
