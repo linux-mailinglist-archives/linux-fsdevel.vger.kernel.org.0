@@ -2,126 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF69E2E0105
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 20:31:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92FA92E0147
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 20:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbgLUTaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Dec 2020 14:30:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:38606 "EHLO
+        id S1726618AbgLUTwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Dec 2020 14:52:47 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33468 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726974AbgLUTaS (ORCPT
+        by vger.kernel.org with ESMTP id S1726526AbgLUTwq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Dec 2020 14:30:18 -0500
+        Mon, 21 Dec 2020 14:52:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608578932;
+        s=mimecast20190719; t=1608580279;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DqGCALe//LHb1AnlutRHnAB2IrphEkKHBcp1ImnyyF4=;
-        b=WnrV8kyvYue+J+mU3LDvIm+WMyAsotl+UnZrSBsrdg2ADTKmmlnKkLGzL7MtajoPVueLr1
-        uHLjh7WvnATCHVfKr43+XvYADkYPIdcDZ+Pv1Dh/xUqTFxjCxXe+YbRKxVRJx1Du5jCnfq
-        1GuxtcfBFhyYS4XjNdiNJYJLNSCA4/A=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-400-PGmG3vnUOiCXkW42Cd6XMg-1; Mon, 21 Dec 2020 14:28:48 -0500
-X-MC-Unique: PGmG3vnUOiCXkW42Cd6XMg-1
-Received: by mail-qv1-f72.google.com with SMTP id i20so8710335qvk.18
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Dec 2020 11:28:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DqGCALe//LHb1AnlutRHnAB2IrphEkKHBcp1ImnyyF4=;
-        b=h/Bml2w48PaHV2kFA074XU5kwVzIWzS+DQfFJoYM6gM3afpVWS6b0vJ2ZNk6meH4BV
-         UKVi1fbpxenMgAN0kyDvhlVijonk/VW5whnnQlHgkjeaoT7gh1Eo/eSKvsOnuHhoZPsi
-         AMe/hngM9MqJNCaOP0skbb+7NdhNu9HpW+g1IyzfzVzLUFy0oiUq+XSA72lflrd1XJs2
-         IiovcuZDKxXGDrdVM6PBiaEZ+BrxOjdJT0FvJUa3BNvfGdGBdwIwmCTPw7DhmVkebgeJ
-         DQ8zzzP9EUiEBR/g1yapqXM+p6IS3Hq++OtNevhavHbvZgzoVC/DYRT4Kty5pwKl/DGx
-         JumQ==
-X-Gm-Message-State: AOAM5329QZ3qgnOe0609miSDnXY5HbhstWVvPl+3nuIrT0lGRxz8yG6/
-        W0moGhTKedZQrwJvcFttqAArYsxzt4+3E1OhFzulZC0vGufoVmzYdO/QF9KKj0MHFBf4Dvemo5C
-        AQjdiEHZne3wTu2BcNE4w93JWaw==
-X-Received: by 2002:aed:29c2:: with SMTP id o60mr17763192qtd.253.1608578928365;
-        Mon, 21 Dec 2020 11:28:48 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwsn1SLArBtFHb9e3jSB2ALMQZgUo1VQqvjtU1VmAZ7dXXrd9aB6Q7I+oD5sckuDOibu7ebRw==
-X-Received: by 2002:aed:29c2:: with SMTP id o60mr17763169qtd.253.1608578928083;
-        Mon, 21 Dec 2020 11:28:48 -0800 (PST)
-Received: from xz-x1 ([142.126.83.202])
-        by smtp.gmail.com with ESMTPSA id e38sm4967128qtb.30.2020.12.21.11.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Dec 2020 11:28:47 -0800 (PST)
-Date:   Mon, 21 Dec 2020 14:28:46 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH 03/13] selftests/vm/userfaultfd: wake after copy
- failure
-Message-ID: <20201221192846.GH6640@xz-x1>
-References: <20201129004548.1619714-1-namit@vmware.com>
- <20201129004548.1619714-4-namit@vmware.com>
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wMleRDSwz6xsXeUbgRCfLYniffObUPtn4CN9Ykh/eBg=;
+        b=Ol/8Ku4L0ckvp2HKSIafFJx2+q2Sttt9Uqf1OjfiKHrN3GIVrYoK6ba9ftdVnL8azqtDz3
+        OfJ25VUGRhfft/GYt14Fa5xyiO2Tc1xJm9HeZv1Jv1eviUw0tOVelQ+75d1iDRIUou5QQF
+        nnlLHjgqPM+7Jzau4mwf410jv38+LCs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-431-xwgI0t3-P9OopSbByjSh5Q-1; Mon, 21 Dec 2020 14:51:15 -0500
+X-MC-Unique: xwgI0t3-P9OopSbByjSh5Q-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 45062107ACE4;
+        Mon, 21 Dec 2020 19:51:12 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-244.rdu2.redhat.com [10.10.114.244])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 93B716F984;
+        Mon, 21 Dec 2020 19:51:11 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 2541E220BCF; Mon, 21 Dec 2020 14:51:11 -0500 (EST)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Cc:     jlayton@kernel.org, vgoyal@redhat.com, amir73il@gmail.com,
+        sargun@sargun.me, miklos@szeredi.hu, willy@infradead.org,
+        jack@suse.cz, neilb@suse.com, viro@zeniv.linux.org.uk, hch@lst.de
+Subject: [RFC PATCH 0/3][v3] vfs, overlayfs: Fix syncfs() to return correct errors
+Date:   Mon, 21 Dec 2020 14:50:52 -0500
+Message-Id: <20201221195055.35295-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201129004548.1619714-4-namit@vmware.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 28, 2020 at 04:45:38PM -0800, Nadav Amit wrote:
-> From: Nadav Amit <namit@vmware.com>
-> 
-> When userfaultfd copy-ioctl fails since the PTE already exists, an
-> -EEXIST error is returned and the faulting thread is not woken. The
-> current userfaultfd test does not wake the faulting thread in such case.
-> The assumption is presumably that another thread set the PTE through
-> copy/wp ioctl and would wake the faulting thread or that alternatively
-> the fault handler would realize there is no need to "must_wait" and
-> continue. This is not necessarily true.
-> 
-> There is an assumption that the "must_wait" tests in handle_userfault()
-> are sufficient to provide definitive answer whether the offending PTE is
-> populated or not. However, userfaultfd_must_wait() test is lockless.
-> Consequently, concurrent calls to ptep_modify_prot_start(), for
-> instance, can clear the PTE and can cause userfaultfd_must_wait()
-> to wrongly assume it is not populated and a wait is needed.
+Hi,
 
-Yes userfaultfd_must_wait() is lockless, however my understanding is that we'll
-enqueue before reading the page table, which seems to me that we'll always get
-notified even the race happens.  Should apply to either UFFDIO_WRITEPROTECT or
-UFFDIO_COPY, iiuc, as long as we follow the order of (1) modify pgtable (2)
-wake sleeping threads.  Then it also means that when must_wait() returned true,
-it should always get waked up when fault resolved.
+This is v3 of patches which try to fix syncfs() error handling issues
+w.r.t overlayfs and other filesystems.
 
-Taking UFFDIO_COPY as example, even if UFFDIO_COPY happen right before
-must_wait() calls:
+Previous version of patches are here.
+v2: 
+https://lore.kernel.org/linux-fsdevel/20201216233149.39025-1-vgoyal@redhat.com/
+v1:
+https://lore.kernel.org/linux-fsdevel/20201216143802.GA10550@redhat.com/
 
-       worker thread                       uffd thread
-       -------------                       -----------
+This series basically is trying to fix two problems.
 
-   handle_userfault
-    spin_lock(fault_pending_wqh)
-    enqueue()
-    set_current_state(INTERRUPTIBLE)
-    spin_unlock(fault_pending_wqh)
-    must_wait()
-      lockless walk page table
-                                           UFFDIO_COPY
-                                             fill in the hole
-                                             wake up threads
-                                               (this will wake up worker thread too?)
-    schedule()
-      (which may return immediately?)
+- First problem is that we ignore error code returned by ->sync_fs().
+  overlayfs file system can return error and there are other file
+  systems which can return error in certain cases. So to fix this issue,
+  first patch captures the return code from ->sync_fs and returns to
+  user space.
 
-While here fault_pending_wqh is lock protected. I just feel like there's some
-other reason to cause the thread to stall.  Or did I miss something?
+- Second problem is that current syncfs(), writeback error detection
+  logic does not work for overlayfs. current logic relies on all
+  sb->s_wb_err being update when errors occur but that's not true for
+  overlayfs. Real errors happen on underlyig filessytem and overlayfs
+  has no clue about these. To fix this issue, it has been proposed
+  that for filesystems like overlayfs, this check should be moved into
+  filesystem and then filesystem can check for error w.r.t upper super
+  block.
 
-Thanks,
+  There seem to be multiple ways of how this can be done.
+
+  A. Add a "struct file" argument to ->sync_fs() and modify all helpers.
+  B. Add a separate file operation say "f_op->syncfs()" and call that
+     in syncfs().
+  C. Add a separate super block operation to check and advance errors.
+
+Option A involves lot of changes all across the code. Also it is little
+problematic in the sense that for filesystems having a block device,
+looks like we want to check for errors after ___sync_blockdev() has
+returned. But ->sync_fs() is called before that. That means
+__sync_blockdev() will have to be pushed in side filesystem code as
+well. Jeff Layton gave something like this a try here.
+
+https://lore.kernel.org/linux-fsdevel/20180518123415.28181-1-jlayton@kernel.org/
+
+I posted patches for option B in V2. 
+
+https://lore.kernel.org/linux-fsdevel/20201216233149.39025-1-vgoyal@redhat.com/
+
+Now this is V3 of patches which implements option C. I think this is
+simplest in terms of implementation atleast.
+
+These patches are only compile tested. Will do more testing once I get
+a sense which option has a chance to fly.
+
+I think patch 1 should be applied irrespective of what option we end
+up choosing for fixing the writeback error issue.
+
+Thanks
+Vivek
+
+Vivek Goyal (3):
+  vfs: Do not ignore return code from s_op->sync_fs
+  vfs: Add a super block operation to check for writeback errors
+  overlayfs: Report writeback errors on upper
+
+ fs/overlayfs/file.c      |  1 +
+ fs/overlayfs/overlayfs.h |  1 +
+ fs/overlayfs/readdir.c   |  1 +
+ fs/overlayfs/super.c     | 23 +++++++++++++++++++++++
+ fs/overlayfs/util.c      | 13 +++++++++++++
+ fs/sync.c                | 13 ++++++++++---
+ include/linux/fs.h       |  1 +
+ 7 files changed, 50 insertions(+), 3 deletions(-)
 
 -- 
-Peter Xu
+2.25.4
 
