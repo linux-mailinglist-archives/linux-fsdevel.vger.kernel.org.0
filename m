@@ -2,56 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E212DF860
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 05:48:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E04D12DF9D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Dec 2020 09:20:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728379AbgLUEqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Dec 2020 23:46:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35464 "EHLO mail.kernel.org"
+        id S1727214AbgLUIRn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Dec 2020 03:17:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50966 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727658AbgLUEqA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Dec 2020 23:46:00 -0500
-Subject: Re: [GIT PULL] orangefs pull request for 5.11
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608525920;
-        bh=zyx8EUQyzG3aTasiqpcqDyzLl/go7DAUuT/mSnamjuY=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=BwDBQ5qqqI50kNhcwuCukfY+Te9qotwfKHeFBko+l1bF8I2BMeGxuYf4xdcxdc6hT
-         pfNpz+KUkfkMfg1Y4Wj21RQLilFiv8B5yvECz9ntn0VOckY6MRyfV7TrGvBK5HiOvG
-         U7alBnUqMaC3F35KAmuV36bxhEPEzJ2DW2/j3WdenTpKj52N6r7vGdwmswZY+WRuZD
-         KEIXXKrndGFV7kqCARxsGiMrEv1F/Vku0/QkBYlOGAL2nAvL+j44QvK6fxbyzRCgat
-         bfith7RQw9kpFT5RKeYAupqi92Yj9mUiNHrkOu95CmlDBZr7O+9ikIk5vYpI0KCyIX
-         s5td0/n3l8UNA==
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAOg9mSTwWmVWZVsWd6eUmqrzLpSDii0hyYLCRN_edH3uBhUmaA@mail.gmail.com>
-References: <CAOg9mSTwWmVWZVsWd6eUmqrzLpSDii0hyYLCRN_edH3uBhUmaA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAOg9mSTwWmVWZVsWd6eUmqrzLpSDii0hyYLCRN_edH3uBhUmaA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git tags/for-linus-5.11-ofs1
-X-PR-Tracked-Commit-Id: c1048828c3dbd96c7e371fae658e5f40e6a45e99
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e37b12e4bb21e7c81732370b0a2b34bd196f380b
-Message-Id: <160852592000.19479.13148600718708002685.pr-tracker-bot@kernel.org>
-Date:   Mon, 21 Dec 2020 04:45:20 +0000
-To:     Mike Marshall <hubcap@omnibond.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Mike Marshall <hubcapsc@gmail.com>
+        id S1726275AbgLUIRm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Dec 2020 03:17:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AB7C0ACF5;
+        Mon, 21 Dec 2020 08:16:59 +0000 (UTC)
+Date:   Mon, 21 Dec 2020 09:16:54 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        mhocko@suse.com, song.bao.hua@hisilicon.com, david@redhat.com,
+        naoya.horiguchi@nec.com, duanxiongchun@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v10 09/11] mm/hugetlb: Introduce nr_free_vmemmap_pages in
+ the struct hstate
+Message-ID: <20201221080414.GA14343@linux>
+References: <20201217121303.13386-1-songmuchun@bytedance.com>
+ <20201217121303.13386-10-songmuchun@bytedance.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201217121303.13386-10-songmuchun@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sun, 20 Dec 2020 15:06:25 -0500:
+On Thu, Dec 17, 2020 at 08:13:01PM +0800, Muchun Song wrote:
+> @@ -182,6 +184,12 @@ bool hugetlb_free_vmemmap_enabled;
+>  
+>  static int __init early_hugetlb_free_vmemmap_param(char *buf)
+>  {
+> +	/* We cannot optimize if a "struct page" crosses page boundaries. */
+> +	if ((!is_power_of_2(sizeof(struct page)))) {
+> +		pr_warn("cannot free vmemmap pages because \"struct page\" crosses page boundaries\n");
+> +		return 0;
+> +	}
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git tags/for-linus-5.11-ofs1
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e37b12e4bb21e7c81732370b0a2b34bd196f380b
-
-Thank you!
+Unless there is a strong reason behind, I would move this to the previous patch,
+where early_hugetlb_free_vmemmap_param is introduced.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Oscar Salvador
+SUSE L3
