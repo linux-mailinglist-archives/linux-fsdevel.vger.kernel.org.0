@@ -2,55 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C9C12E0CE6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 16:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47DB82E0D30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 17:19:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgLVPpc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Dec 2020 10:45:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51410 "EHLO
+        id S1727745AbgLVQTo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Dec 2020 11:19:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727373AbgLVPpc (ORCPT
+        with ESMTP id S1727647AbgLVQTn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Dec 2020 10:45:32 -0500
+        Tue, 22 Dec 2020 11:19:43 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4068AC061793;
-        Tue, 22 Dec 2020 07:44:52 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F6CC061793;
+        Tue, 22 Dec 2020 08:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GEu2oMLU4SSJqQIgd19YKJ2IS6X3GTZGvv9v3EFnUDQ=; b=jPX+n/KIeKI+9jn2zhyNTtGkxf
-        AsDMTzxYpxyNtj8XeJ+ssHns9uZ4d6Fvrp8K6iQiR4Fg+Yhw+Ub87tyykvC9aRZzw33GghkbTZv3s
-        fRtgd6tg8G8VpyNDCJNmzg//12oUUFuNDGHIXzln6dvWpA/VeUkotpB/u1sUwSo3aKJIZ9x8LPeaD
-        2YSwcSdd3fLwypE/E0GMSluQ5ljTpmC6QcobueLFoz5UJw7B83pFLGGCECXggWnTX4kIwKr3Qvx5r
-        Y8pNzk2HUQ2+Gtk9E1drAq68sTc2mG6Z3o2DYWcN031P/WbGf0SirQMQ+xBWlqqePWrdJebcS/IU9
-        MM6rA71A==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1krjpt-00026T-Pv; Tue, 22 Dec 2020 15:44:29 +0000
-Date:   Tue, 22 Dec 2020 15:44:29 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Xie Yongji <xieyongji@bytedance.com>
-Cc:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
-        sgarzare@redhat.com, parav@nvidia.com, akpm@linux-foundation.org,
-        rdunlap@infradead.org, willy@infradead.org,
-        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
-        corbet@lwn.net, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC v2 01/13] mm: export zap_page_range() for driver use
-Message-ID: <20201222154429.GA5557@infradead.org>
-References: <20201222145221.711-1-xieyongji@bytedance.com>
- <20201222145221.711-2-xieyongji@bytedance.com>
+        bh=wQR/YgBWhGYrRRqTF0BOEXEvKg/409uuplzpqhvAfKE=; b=c4UFcqjSsnoRISaP7DnxM5hrVx
+        /cVdi2XikxsfNoGUsy/3QVJ1u39j5POoDySKkAQbFURDUvtcF8ZYPFkABcM7RlGWcfa19hUCNipf1
+        hBMcwE/UFQpFOQwhLB1Gbk4Ws524uMAsmB6yQj5aMZAadQChx5dFCtko6GAZuec9PvO5ACjnwAQOW
+        PyFb/KAhWeXBH9LcI8SHlyQoRHNCbTVz9AiphEBQ75b1BhaKpEoOYG6tfqrNEorqlmvUYufjoZtLp
+        Kx5jAFYiDPLDIfOwgsec8E4dWWQQ/DRPd47IIk8FyZw+3tHi+TbKU80PFKIfQp8NN6b49B4JJBL3N
+        k8Nd684A==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1krkNI-0004VE-TL; Tue, 22 Dec 2020 16:19:00 +0000
+Date:   Tue, 22 Dec 2020 16:19:00 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, jlayton@kernel.org,
+        amir73il@gmail.com, sargun@sargun.me, miklos@szeredi.hu,
+        jack@suse.cz, neilb@suse.com, viro@zeniv.linux.org.uk, hch@lst.de
+Subject: Re: [PATCH 2/3] vfs: Add a super block operation to check for
+ writeback errors
+Message-ID: <20201222161900.GI874@casper.infradead.org>
+References: <20201221195055.35295-1-vgoyal@redhat.com>
+ <20201221195055.35295-3-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201222145221.711-2-xieyongji@bytedance.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20201221195055.35295-3-vgoyal@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 22, 2020 at 10:52:09PM +0800, Xie Yongji wrote:
-> Export zap_page_range() for use in VDUSE.
+On Mon, Dec 21, 2020 at 02:50:54PM -0500, Vivek Goyal wrote:
+> -	ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
+> +	if (sb->s_op->errseq_check_advance)
+> +		ret2 = sb->s_op->errseq_check_advance(sb, f.file);
 
-Err, no.  This has absolutely no business being used by drivers.
+What a terrible name for an fs operation.  You don't seem to be able
+to distinguish between semantics and implementation.  How about
+check_error()?
+
