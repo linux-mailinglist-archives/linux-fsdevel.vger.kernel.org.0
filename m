@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D97A92E04E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 04:54:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C19112E04E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 04:54:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbgLVDwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Dec 2020 22:52:11 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:46382 "EHLO
+        id S1726204AbgLVDwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Dec 2020 22:52:14 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:46466 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbgLVDwK (ORCPT
+        with ESMTP id S1725895AbgLVDwN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Dec 2020 22:52:10 -0500
+        Mon, 21 Dec 2020 22:52:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1608609130; x=1640145130;
+  t=1608609133; x=1640145133;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=pTqmR39NZa50+GsSfqSXeZ5uEGvutOxJFpJGtFeS/S4=;
-  b=BOZZMZxuSjCvdnedQY5OUJhoAXIEskHBS1jP0mvbolTbLArfrhTPcXm4
-   PzPoWUvDA6DHWALNCV7b9nVLfZYu2BjuMW0YmodFvVRGJRHOMltr+34+3
-   YTwYRNOU5XQ54qxbR2JAXAwc8nab48zZHEs5X7RxuMRAHlo+m+SGL29zQ
-   5emm0hQ95KbQ5xRr503Tm/CoQM8JQoIQdQtaca+gO8zbVh+LKcyecqI23
-   4DjULeVc/DjktC6AkC5QMKkOZA8H6a54QiC+m1djhrrjR7QLaJkkW/4hO
-   q0FuVApPOpT1XtU3eBgw5IjO8fa1I447tMcXCrzElN/czpib7p4MhPWWW
-   A==;
-IronPort-SDR: RaUArahMfIIg8z6A/9nZMNthCp6hz1XmzzPcXsngOwXi+1KOaUQSeNmVUOrobsVEoEmwvaB6PD
- xZfuE4MeDbtBfYLe34PA7ANdbAtyuy2U/wviPvk4gDETlrRwF5sz3emE/REtNZPT8w1HeZBmlL
- lGNwx5XDQP2oiWtRrbuJdXHgeCS2nAX5/9spFrvDNnKxLQHCBr+3JcSLb8RnvjeP01js2s2iNo
- vDSvyPg7Y76ynacOLnCVEpULGHwAaH1ytEpBap42hWbV7peCFiviHsmmNsReWRy/Vq9rbVQvYy
- tpw=
+  bh=FlPdWIqtYD5Xxqc/lXmoy2E+ERH2oUzLhki0CTMZK1A=;
+  b=kZsdPq4nmLG45Xbdd1UnRBoILlNjF42YX4KtCmnYBrUQdjTYoPhllnh1
+   3OembAFRtslWGnJ6FI3InidszPpjpiS2gu3UXI0rtHeU950ow0i9kqPwm
+   ajwpOhP+zFaHHL0Pf5BacB9KvLTmpFiVOFT0LYI8rbX/McSt2hYUAh1vR
+   L+85Hx9pOKSIfJq8jNVsA+17khetBKebN6UlMN85m+hz6Ke6D1QJEwnzS
+   n7FcGtdQC3nnMaxt6rgyP+ZfFhAfXj4GP7r273qNKZgOiXkLxMNSb3zC8
+   FX/VjrL0NVcdwZCzxQMPKzIQ7ZSVNuh0iGfIKRyt3MqQKET8r7gLDQfmM
+   w==;
+IronPort-SDR: tLPwYvfGTVnCpDiWYb+IE7Y5wtvrxAHeh3p7EAkhX7S0UnLn8uSd4I1uCf5zXA6Y17SnaGJmWI
+ ZBr+OCHpZ5LJWShHE2Z9wZWhZ2ifTg4jsnk8/5MlmAzLZ9tB8v810dsZuEY/RE1Fatgaho4ydV
+ 9Uky+O/EumaMTKQdfiQ8BjS/bIgE14Awt4+yeYfpSW+7ZPCBS+3XpP2v6kQ6UaJ6Z2Jd5ot53g
+ wjdvP0VC488NA/UvKnctFxNq8FCMeHwaAv60XGl1PwP55++NuMaWzzNYP5HigiGVEzYwN7g1aU
+ 66o=
 X-IronPort-AV: E=Sophos;i="5.78,438,1599494400"; 
-   d="scan'208";a="160193726"
+   d="scan'208";a="160193731"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Dec 2020 11:50:30 +0800
-IronPort-SDR: am785JMzsy2sn2Xt+ZIURx5f4S8Lzgaa55V6Jo0etJ1WGxpxJq3bvgKVY8e2D6jgS43CMHf0aF
- gJINKlHHo2GjMQW9/Ux6OCgKzXhXxGgCKqeN6VfER+Z/vnL5RduwrHero3GfO/6LDNTiRxxOHC
- /q0LPidKeZ6pIBLqUv52fBOxbYiWUZXRI7+5mswGP+CF1KSC9rGdesyXjrujSiEpzNO/B9h9RZ
- A9WliIADCf9oULO+vHrKAfNZ+kr9twmkjLfkwvuyB2DrPDT1xTStJkDxoKoT2a1xGR2mJH+Bdn
- RRuNGNZ0PnSccubrdb8mFgVE
+  by ob1.hgst.iphmx.com with ESMTP; 22 Dec 2020 11:50:32 +0800
+IronPort-SDR: 0D5PeZUHVnV4btp99cfcFo0wrnFZ4cUfldkU8edrQr7neXVa0+Q3ykgtEznR7bxCIOc3vbjlW+
+ PMMlPJe6P6PAOqPkStV34Na6a9/exBwTjRyJufdtLt09xjaVWeLhsbblywUhRsZ2uE2WyuhzgD
+ BPMCHQdbdTW8243HO90g/Fy5Oh2Kbl6kNFHdcoWSyPWqKZ+yXlC4PbDO77DqOZ0KaxKuIPUtpV
+ e4JwwJW+itH2HVKL0SWu99CChEMwMP466ChE3zIk5TKFAw5Tb+zvs+E9ACPniBBw1z8BlCSQv5
+ txYM+qhnic2FsnM00+coHb3m
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2020 19:35:41 -0800
-IronPort-SDR: 6wiUSmeIcDEvmdV60XHtuRQNMjVfVf4BQcPR33cWuDADig5khiS8YGYJJPXW2ll6L6NAhV5scO
- kukBiEQBAAAznuVqP3y6O4Yh4+BsLWv+qDcsEc2s2PDx6pMtNmQXUlmFehTc31WeWbc4ml+dKm
- As4R9cKULXvDgvYBi2dT696U02LufEY9yy1sK0CzgZ7jLeqdJrhygpTUBfo8NqvtV5XiTHgTUS
- Q1z8bGv0w/us4+2+ZqqiyIX+E71NA4Cr/f/wXdPXVpnV1zb6LvyVtkOShLBfsTJ6AzWkV4kbV4
- XKw=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2020 19:35:43 -0800
+IronPort-SDR: qDSeSD3IE8hgUaV1F4PKc53mdmhAUnjnFHpK75J04TFq3YlUXGEwnGzANJOm7VIhuKo82a6iN+
+ BPu988H9iat3nEVyjq4H8FZBl40uJjUiJjfs6dPdsTHNmXrjS2p8qRSTYHt8hZVxV1eC2liBFZ
+ nDQO7pZz5JFi4D9/KyHkQZb50cHAPeCk9/6yRt8eCqMVPAScHKo8/KCnOVQaoHsJB5lOen/5hg
+ 5QE4GX8M7qBfSVT7JnBpxIdOwvLKGPJgWfY2qRggX0UkVCzHzIMM5WHWJC4WTyTtXgQxUecfKo
+ Qg8=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 21 Dec 2020 19:50:29 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 21 Dec 2020 19:50:31 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v11 04/40] btrfs: change superblock location on conventional zone
-Date:   Tue, 22 Dec 2020 12:48:57 +0900
-Message-Id: <42c1712556e6865837151ad58252fb5f6ecff8f7.1608608848.git.naohiro.aota@wdc.com>
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v11 05/40] btrfs: release path before calling into btrfs_load_block_group_zone_info
+Date:   Tue, 22 Dec 2020 12:48:58 +0900
+Message-Id: <8fa3073375cf26759f9c5d3ce083c64d573ad9a6.1608608848.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
 References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
@@ -68,39 +68,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We cannot use log-structured superblock writing in conventional zones since
-there is no write pointer to determine the last written superblock
-position. So, we write a superblock at a static location in a conventional
-zone.
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-The written position is at the beginning of a zone, which is different from
-an SB position of regular btrfs. This difference causes a "chicken-and-egg
-problem" when supporting zoned emulation on a regular device. To know if
-btrfs is (emulated) zoned btrfs, we need to load an SB and check the
-feature flag. However, to load an SB, we need to know that it is zoned
-btrfs to load it from a different position.
+Since we have no write pointer in conventional zones, we cannot determine
+allocation offset from it. Instead, we set the allocation offset after the
+highest addressed extent. This is done by reading the extent tree in
+btrfs_load_block_group_zone_info(). However, this function is called from
+btrfs_read_block_groups(), so the read lock for the tree node can
+recursively taken.
 
-This patch moves the SB location on conventional zones so that the first SB
-location will be the same as regular btrfs.
-
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/btrfs/zoned.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/block-group.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 90b8d1d5369f..e5619c8bcebb 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -465,7 +465,8 @@ static int sb_log_location(struct block_device *bdev, struct blk_zone *zones,
- 	int ret;
+diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
+index b8bbdd95743e..69e1b24bbbad 100644
+--- a/fs/btrfs/block-group.c
++++ b/fs/btrfs/block-group.c
+@@ -1839,6 +1839,7 @@ static int read_one_block_group(struct btrfs_fs_info *info,
+ 		return -ENOMEM;
  
- 	if (zones[0].type == BLK_ZONE_TYPE_CONVENTIONAL) {
--		*bytenr_ret = zones[0].start << SECTOR_SHIFT;
-+		*bytenr_ret = (zones[0].start << SECTOR_SHIFT) +
-+			btrfs_sb_offset(0);
- 		return 0;
+ 	read_block_group_item(cache, path, key);
++	btrfs_release_path(path);
+ 
+ 	set_free_space_tree_thresholds(cache);
+ 
+@@ -2009,7 +2010,6 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
+ 			goto error;
+ 		key.objectid += key.offset;
+ 		key.offset = 0;
+-		btrfs_release_path(path);
  	}
+ 	btrfs_release_path(path);
  
 -- 
 2.27.0
