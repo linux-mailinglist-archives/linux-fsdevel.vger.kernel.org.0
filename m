@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 407E82E06F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 08:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2817B2E06F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 08:50:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbgLVHtz convert rfc822-to-8bit (ORCPT
+        id S1725818AbgLVHuL convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Dec 2020 02:49:55 -0500
-Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:20556 "EHLO
+        Tue, 22 Dec 2020 02:50:11 -0500
+Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:46286 "EHLO
         us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725300AbgLVHtz (ORCPT
+        by vger.kernel.org with ESMTP id S1725300AbgLVHuL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Dec 2020 02:49:55 -0500
+        Tue, 22 Dec 2020 02:50:11 -0500
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-449-G6FqNAIFO-WUMl6zQO5Gcw-1; Tue, 22 Dec 2020 02:48:34 -0500
-X-MC-Unique: G6FqNAIFO-WUMl6zQO5Gcw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-77-ltgZ50APOYGdCz0bgvCKZA-1; Tue, 22 Dec 2020 02:48:49 -0500
+X-MC-Unique: ltgZ50APOYGdCz0bgvCKZA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 64CB11005513;
-        Tue, 22 Dec 2020 07:48:33 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1418A15727;
+        Tue, 22 Dec 2020 07:48:48 +0000 (UTC)
 Received: from mickey.themaw.net (ovpn-116-49.sin2.redhat.com [10.67.116.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0DCC55D6D1;
-        Tue, 22 Dec 2020 07:48:27 +0000 (UTC)
-Subject: [PATCH 5/6] kernfs: stay in rcu-walk mode if possible
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B12B1B466;
+        Tue, 22 Dec 2020 07:48:41 +0000 (UTC)
+Subject: [PATCH 6/6] kernfs: add a spinlock to kernfs iattrs for inode updates
 From:   Ian Kent <raven@themaw.net>
 To:     Fox Chen <foxhlchen@gmail.com>
 Cc:     Tejun Heo <tj@kernel.org>,
@@ -35,13 +35,13 @@ Cc:     Tejun Heo <tj@kernel.org>,
         David Howells <dhowells@redhat.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Tue, 22 Dec 2020 15:48:24 +0800
-Message-ID: <160862330474.291330.11664503360150456908.stgit@mickey.themaw.net>
+Date:   Tue, 22 Dec 2020 15:48:39 +0800
+Message-ID: <160862331927.291330.16497188823501358991.stgit@mickey.themaw.net>
 In-Reply-To: <160862320263.291330.9467216031366035418.stgit@mickey.themaw.net>
 References: <160862320263.291330.9467216031366035418.stgit@mickey.themaw.net>
 User-Agent: StGit/0.21
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Authentication-Results: relay.mimecast.com;
         auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=raven@themaw.net
 X-Mimecast-Spam-Score: 0
@@ -52,86 +52,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-During path walks in sysfs (kernfs) needing to take a reference to
-a mount doesn't happen often since the walk won't be crossing mount
-point boundaries.
+The inode operations .permission() and .getattr() use the kernfs node
+write lock but all that's needed is to keep the rb tree stable while
+updating the inode attributes as well as protecting the update itself
+against concurrent changes.
 
-Also while staying in rcu-walk mode where possible wouldn't normally
-give much improvement.
+And .permission() is called frequently during path walks and can cause
+quite a bit of contention between kernfs node opertations and path
+walks when the number of concurrant walks is high.
 
-But when there are many concurrent path walks and there is high d_lock
-contention dget() will often need to resort to taking a spin lock to
-get the reference. And that could happen each time the reference is
-passed from component to component.
+To change kernfs_iop_getattr() and kernfs_iop_permission() to take
+the rw sem read lock instead of the write lock an addtional lock is
+needed to protect against multiple processes concurrently updating
+the inode attributes and link count in kernfs_refresh_inode().
 
-So, in the high contention case, it will contribute to the contention.
-
-Therefore staying in rcu-walk mode when possible will reduce contention.
+So add a spin lock to the kernfs_iattrs structure to protect these
+inode attributes updates and use it in kernfs_refresh_inode().
 
 Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- fs/kernfs/dir.c |   48 +++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+ fs/kernfs/inode.c           |   11 +++++++----
+ fs/kernfs/kernfs-internal.h |    1 +
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index fdeae2c6e7ba..50c5c8c886af 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -1048,8 +1048,54 @@ static int kernfs_dop_revalidate(struct dentry *dentry, unsigned int flags)
- 	struct kernfs_node *parent;
- 	struct kernfs_node *kn;
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index ddaf18198935..f583dde70174 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -55,6 +55,7 @@ static struct kernfs_iattrs *__kernfs_iattrs(struct kernfs_node *kn, int alloc)
+ 	simple_xattrs_init(&kn->iattr->xattrs);
+ 	atomic_set(&kn->iattr->nr_user_xattrs, 0);
+ 	atomic_set(&kn->iattr->user_xattr_size, 0);
++	spin_lock_init(&kn->iattr->inode_lock);
+ out_unlock:
+ 	ret = kn->iattr;
+ 	mutex_unlock(&iattr_mutex);
+@@ -171,6 +172,7 @@ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
+ {
+ 	struct kernfs_iattrs *attrs = kn->iattr;
  
--	if (flags & LOOKUP_RCU)
-+	if (flags & LOOKUP_RCU) {
-+		parent = kernfs_dentry_node(dentry->d_parent);
-+
-+		/* Directory node changed, no, then don't search? */
-+		if (!kernfs_dir_changed(parent, dentry))
-+			return 1;
-+
-+		kn = kernfs_dentry_node(dentry);
-+		if (!kn) {
-+			/* Negative hashed dentry, tell the VFS to switch to
-+			 * ref-walk mode and call us again so that node
-+			 * existence can be checked.
-+			 */
-+			if (!d_unhashed(dentry))
-+				return -ECHILD;
-+
-+			/* Negative unhashed dentry, this shouldn't happen
-+			 * because this case occurs in ref-walk mode after
-+			 * dentry allocation which is followed by a call
-+			 * to ->loopup(). But if it does happen the dentry
-+			 * is surely invalid.
-+			 */
-+			return 0;
-+		}
-+
-+		/* Since the dentry is positive (we got the kernfs node) a
-+		 * kernfs node reference was held at the time. Now if the
-+		 * dentry reference count is still greater than 0 it's still
-+		 * positive so take a reference to the node to perform an
-+		 * active check.
-+		 */
-+		if (d_count(dentry) <= 0 || !atomic_inc_not_zero(&kn->count))
-+			return -ECHILD;
-+
-+		/* The kernfs node reference count was greater than 0, if
-+		 * it's active continue in rcu-walk mode.
-+		 */
-+		if (kernfs_active_read(kn)) {
-+			kernfs_put(kn);
-+			return 1;
-+		}
-+
-+		/* Otherwise, just tell the VFS to switch to ref-walk mode
-+		 * and call us again so the kernfs node can be validated.
-+		 */
-+		kernfs_put(kn);
- 		return -ECHILD;
-+	}
++	spin_lock(&attrs->inode_lock);
+ 	inode->i_mode = kn->mode;
+ 	if (attrs)
+ 		/*
+@@ -181,6 +183,7 @@ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
  
- 	down_read(&kernfs_rwsem);
+ 	if (kernfs_type(kn) == KERNFS_DIR)
+ 		set_nlink(inode, kn->dir.subdirs + 2);
++	spin_unlock(&attrs->inode_lock);
+ }
  
+ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
+@@ -189,9 +192,9 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
+ 	struct inode *inode = d_inode(path->dentry);
+ 	struct kernfs_node *kn = inode->i_private;
+ 
+-	down_write(&kernfs_rwsem);
++	down_read(&kernfs_rwsem);
+ 	kernfs_refresh_inode(kn, inode);
+-	up_write(&kernfs_rwsem);
++	up_read(&kernfs_rwsem);
+ 
+ 	generic_fillattr(inode, stat);
+ 	return 0;
+@@ -281,9 +284,9 @@ int kernfs_iop_permission(struct inode *inode, int mask)
+ 
+ 	kn = inode->i_private;
+ 
+-	down_write(&kernfs_rwsem);
++	down_read(&kernfs_rwsem);
+ 	kernfs_refresh_inode(kn, inode);
+-	up_write(&kernfs_rwsem);
++	up_read(&kernfs_rwsem);
+ 
+ 	return generic_permission(inode, mask);
+ }
+diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
+index a7b0e2074260..184e4424b389 100644
+--- a/fs/kernfs/kernfs-internal.h
++++ b/fs/kernfs/kernfs-internal.h
+@@ -29,6 +29,7 @@ struct kernfs_iattrs {
+ 	struct simple_xattrs	xattrs;
+ 	atomic_t		nr_user_xattrs;
+ 	atomic_t		user_xattr_size;
++	spinlock_t		inode_lock;
+ };
+ 
+ /* +1 to avoid triggering overflow warning when negating it */
 
 
