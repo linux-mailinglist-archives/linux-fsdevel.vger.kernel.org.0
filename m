@@ -2,75 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E002E0E0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 19:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B0E2E0FA1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 22:05:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbgLVSAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Dec 2020 13:00:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39172 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727094AbgLVSAC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Dec 2020 13:00:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 37BD0ACF1;
-        Tue, 22 Dec 2020 17:59:20 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B56EA1E1364; Tue, 22 Dec 2020 18:59:19 +0100 (CET)
-Date:   Tue, 22 Dec 2020 18:59:19 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Yanjun Zhang <zhang.yanjuna@h3c.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] writeback: add warning messages for not registered bdi
-Message-ID: <20201222175919.GE22832@quack2.suse.cz>
-References: <20201217112801.22421-1-zhang.yanjuna@h3c.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201217112801.22421-1-zhang.yanjuna@h3c.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727677AbgLVVEe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Dec 2020 16:04:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727231AbgLVVEd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Dec 2020 16:04:33 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C41CC0613D3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Dec 2020 13:03:53 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id m203so19369785ybf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Dec 2020 13:03:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:to:cc;
+        bh=WOgnDDLT8masgIUfxisc/Vz+fHTSbfB6Pago9KBBzf0=;
+        b=YtjeHmzrVUTCg4xBTO9RPcviRfGJRfrfiG7zUoI5se6kc4+IWHD6GrZoGb3WHv891N
+         wZtXFLGgbJJ8iixIf8pcZUjWqXAb9dZapJbKV3Ncpv39w2ZtgAgQ6B+Ii8NSdFIOrwtS
+         3gt8ciHeP0tf684U2vn0KFiqMvPZ77FgPKrM1xAEKjK5hVO7HOTLwYpxpuLgP8+6bILf
+         YJGU/88i5dnW2suVciusLv0Py33JBQ9QdoKpC4GW4aNh1jXo+pI0A6cxWYsz7wCrRbcx
+         JaIJ0q6WJgSfWRc+vlNZU+rhYplcCYjKYSA0l4NbVdLzJVSElL4yc8hhtrsxzUpVgn0Q
+         beYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=WOgnDDLT8masgIUfxisc/Vz+fHTSbfB6Pago9KBBzf0=;
+        b=HvpeYM+c3a7/ULtZhzMNtGAFNbMhQ6KXVecyXhr+HWcMzGoPJHRGjhL2PkrIRdSXyg
+         v+mRja+qqh5/J3mp8p8xPFV8TSXgqREh+il3Y6YSnR39EScYDyxzZkjM0VXXbGUMOzeW
+         gChQWomDU/3VICj0J23N0AhdIrEhgzz1Cj/Lq9jhZuNc9pab3O8DgtjC7OpF4OQjyzIv
+         I5UDv9Q7AQXR1cxbapp/DpWDoQjFINcKm3IQugao7vg4qJULX5nSzThz8TvgSZT5rBZw
+         BeESThuXa4kP4YSdS1tLQmVgujgmo1SMAuRcKdzEuTQUenGqV3Nm0+hQC2ESylwexFB0
+         iU2w==
+X-Gm-Message-State: AOAM530zyrnT0m98RPkbDv2hyYZ1BT+B703mlromaERDMFbpREv/AyEK
+        iHy5LW0J+MymhK3h1BEc+/6dt9uR+QptTSqg+JQ=
+X-Google-Smtp-Source: ABdhPJz/6MKJ+O7AFkhNqgqABLRBvALVn+siNQAH2UdqT4fRgX2mkVU08Sks9HdqeglOye1gVWupMTHDX2i4CUgaTUU=
+Sender: "ndesaulniers via sendgmr" 
+        <ndesaulniers@ndesaulniers1.mtv.corp.google.com>
+X-Received: from ndesaulniers1.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:4d25])
+ (user=ndesaulniers job=sendgmr) by 2002:a25:1843:: with SMTP id
+ 64mr31148965yby.80.1608671032651; Tue, 22 Dec 2020 13:03:52 -0800 (PST)
+Date:   Tue, 22 Dec 2020 13:03:45 -0800
+In-Reply-To: <55261f67-deb5-4089-5548-62bc091016ec@roeck-us.net>
+Message-Id: <20201222210345.2275038-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+References: <55261f67-deb5-4089-5548-62bc091016ec@roeck-us.net>
+X-Mailer: git-send-email 2.29.2.729.g45daf8777d-goog
+Subject: [PATCH] fs: binfmt_em86: check return code of remove_arg_zero
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 17-12-20 19:28:01, Yanjun Zhang wrote:
-> The device name is only printed for the warning case, that bdi is not
-> registered detected by the function __mark_inode_dirty. Besides, the
-> device name returned by bdi_dev_name may be "(unknown)" in some cases.
-> 
-> This patch add printed messages about the inode and super block. Once
-> trigging this warning, we could make more direct analysis.
-> 
-> Signed-off-by: Yanjun Zhang <zhang.yanjuna@h3c.com>
+remove_arg_zero is declared as __must_check. Looks like it can return
+-EFAULT on failure.
 
-Thanks for the patch but I've just sent a patch to remove this warning from
-the kernel a few days ago to Linus because it could result in false
-positive... So your patch is not needed anymore.
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+ fs/binfmt_em86.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-								Honza
-
-> ---
->  fs/fs-writeback.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index e6005c78b..825160cf4 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -2323,7 +2323,8 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  
->  			WARN((wb->bdi->capabilities & BDI_CAP_WRITEBACK) &&
->  			     !test_bit(WB_registered, &wb->state),
-> -			     "bdi-%s not registered\n", bdi_dev_name(wb->bdi));
-> +			     "bdi-%s not registered, dirtied inode %lu on %s\n",
-> +			     bdi_dev_name(wb->bdi), inode->i_ino, sb->s_id);
->  
->  			inode->dirtied_when = jiffies;
->  			if (dirtytime)
-> -- 
-> 2.17.1
-> 
+diff --git a/fs/binfmt_em86.c b/fs/binfmt_em86.c
+index 06b9b9fddf70..6e98fcfca66e 100644
+--- a/fs/binfmt_em86.c
++++ b/fs/binfmt_em86.c
+@@ -63,7 +63,8 @@ static int load_em86(struct linux_binprm *bprm)
+ 	 * This is done in reverse order, because of how the
+ 	 * user environment and arguments are stored.
+ 	 */
+-	remove_arg_zero(bprm);
++	retval = remove_arg_zero(bprm);
++	if (retval < 0) return retval;
+ 	retval = copy_string_kernel(bprm->filename, bprm);
+ 	if (retval < 0) return retval; 
+ 	bprm->argc++;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.29.2.729.g45daf8777d-goog
+
