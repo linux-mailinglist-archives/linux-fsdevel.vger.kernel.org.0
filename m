@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B0F42E0C14
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 15:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8BE82E0C17
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 15:55:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbgLVOy1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Dec 2020 09:54:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43462 "EHLO
+        id S1727741AbgLVOyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Dec 2020 09:54:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbgLVOyZ (ORCPT
+        with ESMTP id S1727679AbgLVOyZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 22 Dec 2020 09:54:25 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABC1C061285
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Dec 2020 06:53:17 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id c12so8582880pfo.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Dec 2020 06:53:17 -0800 (PST)
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D26DAC0611C5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Dec 2020 06:53:24 -0800 (PST)
+Received: by mail-pl1-x62f.google.com with SMTP id g3so7556929plp.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Dec 2020 06:53:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hq6cLGhX+YOdloZCBCv76n2UjaYC8NZfkFs6/p+ZtOg=;
-        b=y40ttjV/YgM4wvX349wPEo/KuCxAMjRA2ZGiQMlh4+FFb89YrcRj657ZyIInGzamOW
-         0vfsCDqIluk6oIsB2jIj87YdKSM/exKmrbFfY4NkHc0YRPVvxD1OzSOfHVxKTOTiLzAd
-         tDe5wUQyRxNUbx5fMBoA8omQ1MJbSMpIFuetQZnAfhieIp+CYT7UAaOXwKoXffCnem1D
-         3V0DJz+Bxy3VchfzYjJwwfj5DFYGxerszby07BkOCNCactVeA6L6eyBtoh7l4VcAwVVM
-         ghNSomkizu0oUUr2IPwpiyVTKNdcXxHRdQYbXfIxvKEvTvFlRJik1/kfoVSrotdEaDwp
-         YYmw==
+        bh=WpzztgDjuirSaoCm4Y9iwgLXbmOFGv5bSk1ou8troPs=;
+        b=SqjN6hrfpyhBwT61OSi1kdMYlrZ3RN/kNoO0meZihnrymD1OEZhDiehSeRBO23nRd3
+         0bePzkBUAfUa3AueEFxYHLVuAUzf/70fjyq1CMYK9znh3Dt3g5NRXaEH9h3Y+Ll5ngAw
+         EqwY0xb471qaO+7coD9Rx3Xyzz2C8we1VZ9AUBLgNPufs73v+d3cQjmp9/zxvoiPMfxH
+         hS/tFA6Hf6KCUPvoEjyuLlp0mHV549uAKmUN3uw6NhbkY1HD7luXcKfDEWpPUPRv4xXI
+         WSufNIjIFu+kpf28itIRTLRtWwm2y2x+InNRzR+rcAM53ftC9V1P4fpGMavgLphPfdiQ
+         of6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hq6cLGhX+YOdloZCBCv76n2UjaYC8NZfkFs6/p+ZtOg=;
-        b=DaViqipCbWFpNB1Af5wnm6lC+7gXE7TP0wNqhnMy4cIyv6Qs3s5F9leT0Ugisb+Eg8
-         Y9rWw8FAv+snttwpIuZoX+rhEv0XYkqWSzsq+kJ/7/iFrpSjBxeVJglJIub2YlK+VAVO
-         N/bMSerUuzc7Ns53U4zVr9eoK+r3zvxs7v7IpjlpmHSBFuwR8UdTg/OcliQjuiIolgAp
-         7iMkcqMbXlhBqpHWPyOKtxLfHFUaQ7RjoVHm4hFDsAIuPhsQFtI7eYDHbFpUFy/FkroQ
-         gAqX1Dcx5De0xkcifS40AixGaG1iJscEeHhs2a3ProcBJ0CY8Byn0m/+Gn8yTY+6yBJW
-         hR7w==
-X-Gm-Message-State: AOAM532ADR/tARoinaCZRDxlZ0nXIDIxWlPBwNLT12tUAfNiyMnec+Qf
-        N4eSjepJMFAk88zBZAaoTW3g
-X-Google-Smtp-Source: ABdhPJwOIJpirmt9ZpOuYali2BMic+XSa8v1hT8Vzzl1Qawx8gam4Ow7LO4po33/t7B2y9SJvYO7HQ==
-X-Received: by 2002:a63:a516:: with SMTP id n22mr19707227pgf.125.1608648797542;
-        Tue, 22 Dec 2020 06:53:17 -0800 (PST)
+        bh=WpzztgDjuirSaoCm4Y9iwgLXbmOFGv5bSk1ou8troPs=;
+        b=mbG3V3lrHeDB/PLaYDwxH72rJ4nLyzA+Uy47WlfmYdiVi7qBr6P8ClpzzXYN9toKB5
+         Fj+rW2W2SkIrGcUEw0ff/s1TQ6Rj5Y3kH15ekb492K9zhi3SLyc9HTcv9xZvC0L4dCcD
+         FQQ6iEU+9CpieH3xjLTVHAekYZTwKIxC3s12BXLj426XNtjpR11nuawinohTP12l5svj
+         YOnLbTez7dt2d2lyoG0wWsl2brO+5h2QvGhmmMZXBkmWjnOLVEJ0pkAN1JplLaBzokpz
+         q+PK3FUixeHhtsBLie3k2JHsZaZAWJVVKPlCz+cDxG8I2nfz62Sf3LLCpI3Zf0KcSxp+
+         +A1g==
+X-Gm-Message-State: AOAM531EHLunB06jLxd+zkXRMpmxi3ozJy07C4MVBqMtNuHyKYTqERD6
+        EiuicvLgB+trA/Y5KiR7cZp4
+X-Google-Smtp-Source: ABdhPJxtTfGgv72xCHxYQaMRyp49L/o4fVi3XSgB6dBOFr3oospxL5XhVJtc/Nm8dWEkqKFRd4gPaA==
+X-Received: by 2002:a17:902:6b84:b029:dc:3419:b555 with SMTP id p4-20020a1709026b84b02900dc3419b555mr16883881plk.77.1608648804465;
+        Tue, 22 Dec 2020 06:53:24 -0800 (PST)
 Received: from localhost ([139.177.225.248])
-        by smtp.gmail.com with ESMTPSA id h12sm6357200pgk.70.2020.12.22.06.53.16
+        by smtp.gmail.com with ESMTPSA id h8sm23516011pjc.2.2020.12.22.06.53.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Dec 2020 06:53:17 -0800 (PST)
+        Tue, 22 Dec 2020 06:53:23 -0800 (PST)
 From:   Xie Yongji <xieyongji@bytedance.com>
 To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         sgarzare@redhat.com, parav@nvidia.com, akpm@linux-foundation.org,
@@ -57,9 +57,9 @@ To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
 Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [RFC v2 02/13] eventfd: track eventfd_signal() recursion depth separately in different cases
-Date:   Tue, 22 Dec 2020 22:52:10 +0800
-Message-Id: <20201222145221.711-3-xieyongji@bytedance.com>
+Subject: [RFC v2 03/13] eventfd: Increase the recursion depth of eventfd_signal()
+Date:   Tue, 22 Dec 2020 22:52:11 +0800
+Message-Id: <20201222145221.711-4-xieyongji@bytedance.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201222145221.711-1-xieyongji@bytedance.com>
 References: <20201222145221.711-1-xieyongji@bytedance.com>
@@ -69,121 +69,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now we have a global percpu counter to limit the recursion depth
-of eventfd_signal(). This can avoid deadlock or stack overflow.
-But in stack overflow case, it should be OK to increase the
-recursion depth if needed. So we add a percpu counter in eventfd_ctx
-to limit the recursion depth for deadlock case. Then it could be
-fine to increase the global percpu counter later.
+Increase the recursion depth of eventfd_signal() to 1. This
+will be used in VDUSE case later.
 
 Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 ---
- fs/aio.c                |  3 ++-
- fs/eventfd.c            | 20 +++++++++++++++++++-
- include/linux/eventfd.h |  5 +----
- 3 files changed, 22 insertions(+), 6 deletions(-)
+ fs/eventfd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 1f32da13d39e..5d82903161f5 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1698,7 +1698,8 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- 		list_del(&iocb->ki_list);
- 		iocb->ki_res.res = mangle_poll(mask);
- 		req->done = true;
--		if (iocb->ki_eventfd && eventfd_signal_count()) {
-+		if (iocb->ki_eventfd &&
-+			eventfd_signal_count(iocb->ki_eventfd)) {
- 			iocb = NULL;
- 			INIT_WORK(&req->work, aio_poll_put_work);
- 			schedule_work(&req->work);
 diff --git a/fs/eventfd.c b/fs/eventfd.c
-index e265b6dd4f34..2df24f9bada3 100644
+index 2df24f9bada3..478cdc175949 100644
 --- a/fs/eventfd.c
 +++ b/fs/eventfd.c
-@@ -25,6 +25,8 @@
+@@ -25,7 +25,7 @@
  #include <linux/idr.h>
  #include <linux/uio.h>
  
-+#define EVENTFD_WAKE_DEPTH 0
-+
+-#define EVENTFD_WAKE_DEPTH 0
++#define EVENTFD_WAKE_DEPTH 1
+ 
  DEFINE_PER_CPU(int, eventfd_wake_count);
- 
- static DEFINE_IDA(eventfd_ida);
-@@ -42,9 +44,17 @@ struct eventfd_ctx {
- 	 */
- 	__u64 count;
- 	unsigned int flags;
-+	int __percpu *wake_count;
- 	int id;
- };
- 
-+bool eventfd_signal_count(struct eventfd_ctx *ctx)
-+{
-+	return (this_cpu_read(*ctx->wake_count) ||
-+		this_cpu_read(eventfd_wake_count) > EVENTFD_WAKE_DEPTH);
-+}
-+EXPORT_SYMBOL_GPL(eventfd_signal_count);
-+
- /**
-  * eventfd_signal - Adds @n to the eventfd counter.
-  * @ctx: [in] Pointer to the eventfd context.
-@@ -71,17 +81,19 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
- 	 * it returns true, the eventfd_signal() call should be deferred to a
- 	 * safe context.
- 	 */
--	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
-+	if (WARN_ON_ONCE(eventfd_signal_count(ctx)))
- 		return 0;
- 
- 	spin_lock_irqsave(&ctx->wqh.lock, flags);
- 	this_cpu_inc(eventfd_wake_count);
-+	this_cpu_inc(*ctx->wake_count);
- 	if (ULLONG_MAX - ctx->count < n)
- 		n = ULLONG_MAX - ctx->count;
- 	ctx->count += n;
- 	if (waitqueue_active(&ctx->wqh))
- 		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
- 	this_cpu_dec(eventfd_wake_count);
-+	this_cpu_dec(*ctx->wake_count);
- 	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
- 
- 	return n;
-@@ -92,6 +104,7 @@ static void eventfd_free_ctx(struct eventfd_ctx *ctx)
- {
- 	if (ctx->id >= 0)
- 		ida_simple_remove(&eventfd_ida, ctx->id);
-+	free_percpu(ctx->wake_count);
- 	kfree(ctx);
- }
- 
-@@ -423,6 +436,11 @@ static int do_eventfd(unsigned int count, int flags)
- 
- 	kref_init(&ctx->kref);
- 	init_waitqueue_head(&ctx->wqh);
-+	ctx->wake_count = alloc_percpu(int);
-+	if (!ctx->wake_count) {
-+		kfree(ctx);
-+		return -ENOMEM;
-+	}
- 	ctx->count = count;
- 	ctx->flags = flags;
- 	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
-index fa0a524baed0..1a11ebbd74a9 100644
---- a/include/linux/eventfd.h
-+++ b/include/linux/eventfd.h
-@@ -45,10 +45,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt);
- 
- DECLARE_PER_CPU(int, eventfd_wake_count);
- 
--static inline bool eventfd_signal_count(void)
--{
--	return this_cpu_read(eventfd_wake_count);
--}
-+bool eventfd_signal_count(struct eventfd_ctx *ctx);
- 
- #else /* CONFIG_EVENTFD */
  
 -- 
 2.11.0
