@@ -2,145 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 030FC2E03D6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 02:25:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 133A32E0441
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Dec 2020 03:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbgLVBYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Dec 2020 20:24:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42076 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbgLVBYB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Dec 2020 20:24:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3206AAC7B;
-        Tue, 22 Dec 2020 01:23:19 +0000 (UTC)
-From:   NeilBrown <neilb@suse.de>
-To:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Date:   Tue, 22 Dec 2020 12:23:11 +1100
-Cc:     jlayton@kernel.org, vgoyal@redhat.com, amir73il@gmail.com,
-        sargun@sargun.me, miklos@szeredi.hu, willy@infradead.org,
-        jack@suse.cz, neilb@suse.com, viro@zeniv.linux.org.uk, hch@lst.de
-Subject: Re: [PATCH 1/3] vfs: Do not ignore return code from s_op->sync_fs
-In-Reply-To: <20201221195055.35295-2-vgoyal@redhat.com>
-References: <20201221195055.35295-1-vgoyal@redhat.com>
- <20201221195055.35295-2-vgoyal@redhat.com>
-Message-ID: <878s9qmy68.fsf@notabene.neil.brown.name>
+        id S1726156AbgLVCLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Dec 2020 21:11:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbgLVCLj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Dec 2020 21:11:39 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B0AC0613D3;
+        Mon, 21 Dec 2020 18:10:59 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id q4so6621257plr.7;
+        Mon, 21 Dec 2020 18:10:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FnuJh32XFVzCBtjJsd69Wal/1kF9mCCotS7zGoIN7ok=;
+        b=N9ghEEVKHllFEe1CMmaby1iettrwekp0TafKAcgMhCEwU//30jJq/WXdDU1fkb+v4u
+         Sm03GJzhSZgsr/7oqXdhVa7XOtP3cddsDuiVa33XbhvLc2xORCNFLQYR2m8A2cj9m++G
+         Ipku3OFeNrhBwfl/H91UeXmTxY5GfRI8O2EldtrrdhzYqVvilDnNsnyuI055IZM/BodE
+         EQ2U/tSpn5S9i5eo5pdzf5NeTgzB/HNS6guypjy7yDylpIOh8dYNWtKM7bliuVVFVGJt
+         HvpgiEdwQHb2s09CZhK6lQgbNRpIGqLBm5/iBF+UCSbG4gLtg/s7GZjOa8JsXLcyuTLb
+         t7Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FnuJh32XFVzCBtjJsd69Wal/1kF9mCCotS7zGoIN7ok=;
+        b=ugkb/f/BDHXACkQmyySP8a3t40pIF1ypitDHekQEvA7KnyYoRVtRr+aDV1capArXuH
+         aC+9W5pauHctJS5p+Zs8wGiD2wGCYsGQBiET2HwN9Gz6vh+u02A5gPdZxN/TBEq3Hyol
+         6tuTprmdz0Pv1yCjReJ6yWFrcW+kcLExQ1Bo6tpoG3efN9y1FgeyewZv6PZbvTgzogj7
+         sHOXz8AkCkCPWHKrlPfPhezWUy0dbSP5abJ4gBd1RMjxbvSrJbgxa/e3IaWaBGvKRldE
+         /MCvYkQtAbKCUFyB9V++FvJUXt8IcbiOBW0Qbjkp0QAw/Zfi7pyrtQTESpnWVOE48rQR
+         pnOw==
+X-Gm-Message-State: AOAM532Mp+KWjTS2NolIJV87smivhuTUUIR5zwIOe7J634UmkBPXqmmu
+        MSxL2HMrUpJPdmXRre8h3/t4RC/MLxeeiry7
+X-Google-Smtp-Source: ABdhPJwVZ7qyxc6Fy+VsDmXTzyQkrA98vbthOxfIYjkAC7ijO0mw8AbpFH9MMnBoJOoTIPmAalCvcQ==
+X-Received: by 2002:a17:902:8503:b029:dc:44f:62d8 with SMTP id bj3-20020a1709028503b02900dc044f62d8mr18757093plb.34.1608603058647;
+        Mon, 21 Dec 2020 18:10:58 -0800 (PST)
+Received: from gmail.com (c-73-241-149-213.hsd1.ca.comcast.net. [73.241.149.213])
+        by smtp.gmail.com with ESMTPSA id u1sm16660566pjr.51.2020.12.21.18.10.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 18:10:58 -0800 (PST)
+Date:   Mon, 21 Dec 2020 21:10:43 -0500
+From:   Noah Goldstein <goldstein.w.n@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     noah <goldstein.n@wustl.edu>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: io_uring.c: Add skip option for __io_sqe_files_update
+Message-ID: <20201222021043.GA139782@gmail.com>
+References: <20201220065025.116516-1-goldstein.w.n@gmail.com>
+ <0cdf2aac-6364-742d-debb-cfd58b4c6f2b@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0cdf2aac-6364-742d-debb-cfd58b4c6f2b@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Dec 21 2020, Vivek Goyal wrote:
-
-> Current implementation of __sync_filesystem() ignores the
-> return code from ->sync_fs(). I am not sure why that's the case.
->
-> Ignoring ->sync_fs() return code is problematic for overlayfs where
-> it can return error if sync_filesystem() on upper super block failed.
-> That error will simply be lost and sycnfs(overlay_fd), will get
-> success (despite the fact it failed).
->
-> Al Viro noticed that there are other filesystems which can sometimes
-> return error in ->sync_fs() and these errors will be ignored too.
->
-> fs/btrfs/super.c:2412:  .sync_fs        =3D btrfs_sync_fs,
-> fs/exfat/super.c:204:   .sync_fs        =3D exfat_sync_fs,
-> fs/ext4/super.c:1674:   .sync_fs        =3D ext4_sync_fs,
-> fs/f2fs/super.c:2480:   .sync_fs        =3D f2fs_sync_fs,
-> fs/gfs2/super.c:1600:   .sync_fs                =3D gfs2_sync_fs,
-> fs/hfsplus/super.c:368: .sync_fs        =3D hfsplus_sync_fs,
-> fs/nilfs2/super.c:689:  .sync_fs        =3D nilfs_sync_fs,
-> fs/ocfs2/super.c:139:   .sync_fs        =3D ocfs2_sync_fs,
-> fs/overlayfs/super.c:399:	.sync_fs        =3D ovl_sync_fs,
-> fs/ubifs/super.c:2052:  .sync_fs       =3D ubifs_sync_fs,
->
-> Hence, this patch tries to fix it and capture error returned
-> by ->sync_fs() and return to caller. I am specifically interested
-> in syncfs() path and return error to user.
->
-> I am assuming that we want to continue to call __sync_blockdev()
-> despite the fact that there have been errors reported from
-> ->sync_fs(). So this patch continues to call __sync_blockdev()
-> even if ->sync_fs() returns an error.
->
-> Al noticed that there are few other callsites where ->sync_fs() error
-> code is being ignored.
->
-> sync_fs_one_sb(): For this it seems desirable to ignore the return code.
->
-> dquot_disable(): Jan Kara mentioned that ignoring return code here is fine
-> 		 because we don't want to fail dquot_disable() just beacuse
-> 		 caches might be incoherent.
->
-> dquot_quota_sync(): Jan thinks that it might make some sense to capture
-> 		    return code here. But I am leaving it untouched for
-> 		   now. When somebody needs it, they can easily fix it.
->
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/sync.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/sync.c b/fs/sync.c
-> index 1373a610dc78..b5fb83a734cd 100644
-> --- a/fs/sync.c
-> +++ b/fs/sync.c
-> @@ -30,14 +30,18 @@
->   */
->  static int __sync_filesystem(struct super_block *sb, int wait)
->  {
-> +	int ret, ret2;
+On Sun, Dec 20, 2020 at 03:18:05PM +0000, Pavel Begunkov wrote:
+> On 20/12/2020 06:50, noah wrote:> From: noah <goldstein.n@wustl.edu>
+> > 
+> > This patch makes it so that specify a file descriptor value of -2 will
+> > skip updating the corresponding fixed file index.
+> > 
+> > This will allow for users to reduce the number of syscalls necessary
+> > to update a sparse file range when using the fixed file option.
+> 
+> Answering the github thread -- it's indeed a simple change, I had it the
+> same day you posted the issue. See below it's a bit cleaner. However, I
+> want to first review "io_uring: buffer registration enhancements", and
+> if it's good, for easier merging/etc I'd rather prefer to let it go
+> first (even if partially).
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 941fe9b64fd9..b3ae9d5da17e 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -7847,9 +7847,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  	if (IS_ERR(ref_node))
+>  		return PTR_ERR(ref_node);
+>  
+> -	done = 0;
+>  	fds = u64_to_user_ptr(up->fds);
+> -	while (nr_args) {
+> +	for (done = 0; done < nr_args; done++) {
+>  		struct fixed_file_table *table;
+>  		unsigned index;
+>  
+> @@ -7858,7 +7857,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  			err = -EFAULT;
+>  			break;
+>  		}
+> -		i = array_index_nospec(up->offset, ctx->nr_user_files);
+> +		if (fd == IORING_REGISTER_FILES_SKIP)
+> +			continue;
 > +
->  	if (wait)
->  		sync_inodes_sb(sb);
->  	else
->  		writeback_inodes_sb(sb, WB_REASON_SYNC);
->=20=20
->  	if (sb->s_op->sync_fs)
-> -		sb->s_op->sync_fs(sb, wait);
-> -	return __sync_blockdev(sb->s_bdev, wait);
-> +		ret =3D sb->s_op->sync_fs(sb, wait);
-> +	ret2 =3D __sync_blockdev(sb->s_bdev, wait);
-> +
-> +	return ret ? ret : ret2;
-
-I'm surprised that the compiler didn't complain that 'ret' might be used
-uninitialized.
-
-NeilBrown
-
->  }
->=20=20
->  /*
-> --=20
-> 2.25.4
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJCBAEBCAAsFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl/hSn8OHG5laWxiQHN1
-c2UuZGUACgkQOeye3VZigbnsaA//YWWMsKDY6jkZLXCd9xREfvs97olNMgHgIUde
-0YHq8em987RQMOrwYSbVo6vfZs+RkrfhxmubpHZ6fMBqrZCwiyLYAyJi3uRQrb6B
-50L7MbaCZq0SGq/wvvFTEVdNILo5wNPfPc5Huo1mlrv//TCTmYo/rBhBKT10/08z
-TifQq6eJhgnJHrOlI/9mc8ku/ODlQoXDAwY4XcEyyTcZ+ntbG4F1oV7v5NqZ45r3
-F4jIhUyNtfghAHwmmW+gnkKbVBKd2TiWoe1EaCpAXLtdJY6GLdbv02HDqbZfKcrw
-urhT1mj9YmIH3/y2TqFq6WSTfZYRu51Dn8oNoPKVcP+3SOq/t11FAjPRE4IfAKWQ
-bT9bEa142joXdTduNaWWmUos69Fk3JAv7UJfGhzS0pCOEIU4ai8TjeJ4R2njKeup
-pFngZPCwrAiZfaIwdH2rp9TJjr7gsvNkLmogYBT9ZzLMQmHuJdroYRMWyteLy2+/
-Ocrn2agVkNXPcHvlqHQ6IkFfj+zMGHOAxNX78+8+cyVYjO66zKIlF051RLJ+g1wh
-FnCyTai44liIE9nAieSskeMVEFLtNYDfQxPuHb4QHfYtFY6PzEI8LeehspoXJxio
-+5BmBsDU+1DsGGicPZzPNrqg6JqX0Vw8ylHzWmBlXt26lZyNG9ts26UnAtEK/CoF
-joOeRJY=
-=+/BP
------END PGP SIGNATURE-----
---=-=-=--
+> +		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
+>  		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+>  		index = i & IORING_FILE_TABLE_MASK;
+>  		if (table->files[index]) {
+> @@ -7896,9 +7898,6 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+>  				break;
+>  			}
+>  		}
+> -		nr_args--;
+> -		done++;
+> -		up->offset++;
+>  	}
+>  
+>  	if (needs_switch) {
+> 
+> -- 
+> Pavel Begunkov
+Ah. Got it.
