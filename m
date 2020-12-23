@@ -2,108 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5772E1C65
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 13:55:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E0B2E1CDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 14:52:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbgLWMy1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 07:54:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbgLWMy1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 07:54:27 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EAC8E22475;
-        Wed, 23 Dec 2020 12:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608728026;
-        bh=uPZNDtdrztbbNslQqwSCsY2Q8OQGkhzZMUMvfOws8Cs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=FfrwdVZGXUJhycIVF3YTAMMF64sSuwIGy27yC70XQjMPnS6P6ODX4KsNOmhTfBZms
-         cdWzsjLOfRpsIa/K3kKAY4H5bZkZniP+3+1w6cWBUtIL2jJsHQRl3FXkI8E5AP52lk
-         02S3o9WA5C/d6GTnWlLAi2/QHhoI3mLpf3Dmi+MJNarqM5pCWzuqvIcmGhEPE/85py
-         W4pKRJegVTvZUa9GEdUZnPwVwNWvs/RPLCc+vjNR3k7zoN5LNJq408+FcOS4qyT8vs
-         +rIcMZpvnc+X4O/hUffSPfjkvTQQG+a80zq6A7zTiR3JH9NnhNi/QAcfYdmv3Mhpq6
-         GEs7+Q0DmZEdQ==
-Message-ID: <dbc580cf9346aca06a3383533a09a794ca68917c.camel@kernel.org>
-Subject: Re: [PATCH 3/3] overlayfs: Report writeback errors on upper
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Vivek Goyal <vgoyal@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, amir73il@gmail.com,
-        sargun@sargun.me, miklos@szeredi.hu, jack@suse.cz, neilb@suse.com,
-        viro@zeniv.linux.org.uk, hch@lst.de
-Date:   Wed, 23 Dec 2020 07:53:43 -0500
-In-Reply-To: <20201222175518.GD3248@redhat.com>
-References: <20201221195055.35295-1-vgoyal@redhat.com>
-         <20201221195055.35295-4-vgoyal@redhat.com>
-         <20201222162027.GJ874@casper.infradead.org>
-         <20201222162925.GC3248@redhat.com>
-         <20201222174637.GK874@casper.infradead.org>
-         <20201222175518.GD3248@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        id S1728673AbgLWNuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Dec 2020 08:50:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27537 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728590AbgLWNuq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Dec 2020 08:50:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608731359;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ZGNdOYF1GHguREb96eu7XsayWCYIY8zL6HbhxA/2Gcg=;
+        b=dzlDfmlvDPOJa/2tz2cKsVqT+YkhPgNus2HP/glQquFHETgcpJo8+Opmn2o5A5JGlAieGn
+        9kK0Kb+CJDYXWjaa8AJFv/jdlyy4mX9l1qT+YNXugQeiZAGUECIij+h83n1/3zHgG0A3HO
+        31gNpC1kz/UWKWUlv7jEWfpbMlFHYPA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-436-CinpDOC7NM2ZOKP0xy9grw-1; Wed, 23 Dec 2020 08:49:15 -0500
+X-MC-Unique: CinpDOC7NM2ZOKP0xy9grw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3813910054FF;
+        Wed, 23 Dec 2020 13:49:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-204.rdu2.redhat.com [10.10.112.204])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 040596F7E5;
+        Wed, 23 Dec 2020 13:49:11 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Work around strnlen() oops with
+ CONFIG_FORTIFIED_SOURCE=y
+From:   David Howells <dhowells@redhat.com>
+To:     linux-afs@lists.infradead.org
+Cc:     dhowells@redhat.com, marc.dionne@auristor.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 23 Dec 2020 13:49:10 +0000
+Message-ID: <160873135094.834130.9048269997292829364.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-12-22 at 12:55 -0500, Vivek Goyal wrote:
-> On Tue, Dec 22, 2020 at 05:46:37PM +0000, Matthew Wilcox wrote:
-> > On Tue, Dec 22, 2020 at 11:29:25AM -0500, Vivek Goyal wrote:
-> > > On Tue, Dec 22, 2020 at 04:20:27PM +0000, Matthew Wilcox wrote:
-> > > > On Mon, Dec 21, 2020 at 02:50:55PM -0500, Vivek Goyal wrote:
-> > > > > +static int ovl_errseq_check_advance(struct super_block *sb, struct file *file)
-> > > > > +{
-> > > > > +	struct ovl_fs *ofs = sb->s_fs_info;
-> > > > > +	struct super_block *upper_sb;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	if (!ovl_upper_mnt(ofs))
-> > > > > +		return 0;
-> > > > > +
-> > > > > +	upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
-> > > > > +
-> > > > > +	if (!errseq_check(&upper_sb->s_wb_err, file->f_sb_err))
-> > > > > +		return 0;
-> > > > > +
-> > > > > +	/* Something changed, must use slow path */
-> > > > > +	spin_lock(&file->f_lock);
-> > > > > +	ret = errseq_check_and_advance(&upper_sb->s_wb_err, &file->f_sb_err);
-> > > > > +	spin_unlock(&file->f_lock);
-> > > > 
-> > > > Why are you microoptimising syncfs()?  Are there really applications which
-> > > > call syncfs() in a massively parallel manner on the same file descriptor?
-> > > 
-> > > This is atleast theoritical race. I am not aware which application can
-> > > trigger this race. So to me it makes sense to fix the race.
-> > > 
-> > > Jeff Layton also posted a fix for syncfs().
-> > > 
-> > > https://lore.kernel.org/linux-fsdevel/20201219134804.20034-1-jlayton@kernel.org/
-> > > 
-> > > To me it makes sense to fix the race irrespective of the fact if somebody
-> > > hit it or not. People end up copying code in other parts of kernel and
-> > > and they will atleast copy race free code.
-> > 
-> > Let me try again.  "Why are you trying to avoid taking the spinlock?"
-> 
-> Aha.., sorry, I misunderstood your question. I don't have a good answer.
-> I just copied the code from Jeff Layton's patch.
-> 
-> Agreed that cost of taking spin lock will not be significant until
-> syncfs() is called at high frequency. Having said that, most of the
-> time taking spin lock will not be needed, so avoiding it with
-> a simple call to errseq_check() sounds reasonable too.
-> 
-> I don't have any strong opinions here. I am fine with any of the
-> implementation people like.
-> 
+AFS has a structured layout in its directory contents (AFS dirs are
+downloaded as files and parsed locally by the client for lookup/readdir).
+The slots in the directory are defined by union afs_xdr_dirent.  This,
+however, only directly allows a name of a length that will fit into that
+union.  To support a longer name, the next 1-8 contiguous entries are
+annexed to the first one and the name flows across these.
 
-It is a micro-optimization, but we'll almost always be able to avoid
-taking the lock altogether. Errors here should be very, very infrequent.
+afs_dir_iterate_block() uses strnlen(), limited to the space to the end of
+the page, to find out how long the name is.  This worked fine until
+6a39e62abbaf.  With that commit, the compiler determines the size of the
+array and asserts that the string fits inside that array.  This is a
+problem for AFS because we *expect* it to overflow one or more arrays.
 
-That said I don't have strong feelings on this either.
--- 
-Jeff Layton <jlayton@kernel.org>
+A similar problem also occurs in afs_dir_scan_block() when a directory file
+is being locally edited to avoid the need to redownload it.  There strlen()
+was being used safely because each page has the last byte set to 0 when the
+file is downloaded and validated (in afs_dir_check_page()).
+
+Fix this by using memchr() instead and hoping no one changes that to check
+the object size.
+
+The issue can be triggered by something like:
+
+	touch /afs/example.com/thisisaveryveryverylongname
+
+and it generates a report that looks like:
+
+	detected buffer overflow in strnlen
+	------------[ cut here ]------------
+	kernel BUG at lib/string.c:1149!
+	...
+	RIP: 0010:fortify_panic+0xf/0x11
+	...
+	Call Trace:
+	 afs_dir_iterate_block+0x12b/0x35b
+	 afs_dir_iterate+0x14e/0x1ce
+	 afs_do_lookup+0x131/0x417
+	 afs_lookup+0x24f/0x344
+	 lookup_open.isra.0+0x1bb/0x27d
+	 open_last_lookups+0x166/0x237
+	 path_openat+0xe0/0x159
+	 do_filp_open+0x48/0xa4
+	 ? kmem_cache_alloc+0xf5/0x16e
+	 ? __clear_close_on_exec+0x13/0x22
+	 ? _raw_spin_unlock+0xa/0xb
+	 do_sys_openat2+0x72/0xde
+	 do_sys_open+0x3b/0x58
+	 do_syscall_64+0x2d/0x3a
+	 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: 6a39e62abbaf ("lib: string.h: detect intra-object overflow in fortified string functions")
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: Marc Dionne <marc.dionne@auristor.com>
+cc: Daniel Axtens <dja@axtens.net>
+---
+
+ fs/afs/dir.c      |   13 ++++++++++---
+ fs/afs/dir_edit.c |    8 +++++++-
+ 2 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 9068d5578a26..4fafb4e4d0df 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -350,6 +350,7 @@ static int afs_dir_iterate_block(struct afs_vnode *dvnode,
+ 				 unsigned blkoff)
+ {
+ 	union afs_xdr_dirent *dire;
++	const u8 *p;
+ 	unsigned offset, next, curr;
+ 	size_t nlen;
+ 	int tmp;
+@@ -378,9 +379,15 @@ static int afs_dir_iterate_block(struct afs_vnode *dvnode,
+ 
+ 		/* got a valid entry */
+ 		dire = &block->dirents[offset];
+-		nlen = strnlen(dire->u.name,
+-			       sizeof(*block) -
+-			       offset * sizeof(union afs_xdr_dirent));
++		p = memchr(dire->u.name, 0,
++			   sizeof(*block) - offset * sizeof(union afs_xdr_dirent));
++		if (!p) {
++			_debug("ENT[%zu.%u]: %u unterminated dirent name",
++			       blkoff / sizeof(union afs_xdr_dir_block),
++			       offset, next);
++			return afs_bad(dvnode, afs_file_error_dir_over_end);
++		}
++		nlen = p - dire->u.name;
+ 
+ 		_debug("ENT[%zu.%u]: %s %zu \"%s\"",
+ 		       blkoff / sizeof(union afs_xdr_dir_block), offset,
+diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
+index 2ffe09abae7f..5ee4e992ed8f 100644
+--- a/fs/afs/dir_edit.c
++++ b/fs/afs/dir_edit.c
+@@ -111,6 +111,8 @@ static int afs_dir_scan_block(union afs_xdr_dir_block *block, struct qstr *name,
+ 			      unsigned int blocknum)
+ {
+ 	union afs_xdr_dirent *de;
++	const u8 *p;
++	unsigned long offset;
+ 	u64 bitmap;
+ 	int d, len, n;
+ 
+@@ -135,7 +137,11 @@ static int afs_dir_scan_block(union afs_xdr_dir_block *block, struct qstr *name,
+ 			continue;
+ 
+ 		/* The block was NUL-terminated by afs_dir_check_page(). */
+-		len = strlen(de->u.name);
++		offset = (unsigned long)de->u.name & (PAGE_SIZE - 1);
++		p = memchr(de->u.name, 0, PAGE_SIZE - offset);
++		if (!p)
++			return -1;
++		len = p - de->u.name;
+ 		if (len == name->len &&
+ 		    memcmp(de->u.name, name->name, name->len) == 0)
+ 			return d;
+
 
