@@ -2,314 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 227A02E1C26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 13:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 767222E1C5B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 13:45:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbgLWMO6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 07:14:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
+        id S1728623AbgLWMpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Dec 2020 07:45:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbgLWMO5 (ORCPT
+        with ESMTP id S1728614AbgLWMpo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 07:14:57 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF59C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 04:14:16 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id jx16so22519680ejb.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 04:14:16 -0800 (PST)
+        Wed, 23 Dec 2020 07:45:44 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 269BDC0613D3;
+        Wed, 23 Dec 2020 04:45:04 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id i9so18521094wrc.4;
+        Wed, 23 Dec 2020 04:45:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=35ZYuDz/NHbYVvs0C4L+62CLzf5DN21GLodcbsEQFC8=;
-        b=aJinXqPssChyo572Y/V2zRy6J5OkTR1TQN+MEuQ4oNarcAhB2somhmUhWV0HmgGikG
-         e+TIqXxNraeIrU+WeupO3HTQPFteA8XEkMdqkUmBSeAWWQs239UH4vagR6/13LiAJHu8
-         yfWpPCNf4skU5igECuQuVO1SHWwpluiHTqNlURKhYiKtdGrksxeXzX0NDUalwkVuAbQA
-         JYQ12n2V0vxQ1VS2QymReXwjFDLc0DV3Lf73j6tylIA9XUeIy1YBOKqikAtUUQm99Hoa
-         /NV96IPBMICQtMBOSsG2cV1Ym4ZQLD07TZef94tSuVP7IBfcKCUbc+9mwgP2H9hgqYLx
-         Ly5A==
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Jaj4wwk2cpL92Bf2RNDnuKHKMQpm0P2e//A2PU6Aln4=;
+        b=DZGO6f8CnWZp0wO2SxfQADNUfYOnsJuBODJIi91TPBipb/+B6TUdzRr07a93Cc1Wnw
+         JrB3AXy6z+tOT3B5MyGuKNVbBJiZCNLr8V5sK/HjKoOaJlVmZ772fDMEtqrypfX1uOi1
+         OvryNewuk3sImUSI2lsYWKklb/F/Lfqse8crSQz0ePd9VcsevVXHqrvMryl13LXapCkx
+         vkxvxe0r8f2iQgaPcx3TNGAlSGQFTPHlXBh8bPPqQ7OLZ9SHy9ICgE6zEMY6EohGayip
+         cPUR5v0nl+hZYzyo3Kr70RAi/qcXlAIVYyxpVraEmN8AkHVcO4V5dLQyK+AMCr9QSATB
+         mTJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=35ZYuDz/NHbYVvs0C4L+62CLzf5DN21GLodcbsEQFC8=;
-        b=GwY+1354tqlltybxOsxxl59e+qe8ClgOC6yo6puPuN6QgsFg8zQ9dypoIaAbu2B2pR
-         TEEoPIrEpGVPuJi8P4YhxzyavWjCCHhLFsNo36YPnyd+5C+sOonIV3sjVPgAnxHIdvuE
-         Qhg2OnexFo/4z2nw9Q1HnhV6k0x2FdurlohBB1xCIg5E4NaS5C83QluTjpXGl9IOOvZa
-         YfxqLSsjh3fhmNHOWLr49wnTcPk5KFlS/yBPnadZYqpd4MG6fVrB4CHcMJCqWFsVbUyC
-         gY7NSM5+CyBDIJe+P1IpEIfzjc0ZC271N8ZK4pWMRR5TuDC/GTYC9gu70iiXGkTX3WZh
-         J9zg==
-X-Gm-Message-State: AOAM531msHOXtlhRczOoymkSFA2h3Ku2FV7NqRSZJUpW/bFVOmlDr9sa
-        srHVpOq/YZ9m9VYZPvQW4OOIQ3em2n8R1TzYvY/u
-X-Google-Smtp-Source: ABdhPJxvFGv55SXnvmstsRrPts85FfsZeW8DhW7IZ56OFMBLubAQ02qrxBnCF2WTw9XipJ1ju0Clb5hATd78E6jruXA=
-X-Received: by 2002:a17:906:94c5:: with SMTP id d5mr23137335ejy.427.1608725655618;
- Wed, 23 Dec 2020 04:14:15 -0800 (PST)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Jaj4wwk2cpL92Bf2RNDnuKHKMQpm0P2e//A2PU6Aln4=;
+        b=B4K9AVHiN2xyaFoy7bfPViphoRtK2Y6CQTbq2ipwl3jUGNmZOUAlgqnKZyg+Q3a1SN
+         yCAMHU/oSsVN8Pw+L8hf3MHFs3cc/d9V2fn/XKzgjxfS0Q/FzxAgO0YIqv7FiKxkUZz0
+         ScY6DQmxMaI8rbwwCSUu1SIzoDYUfo6Iu5wKz6wrPoQPvkTDXCx/aReUvky7Qf94AJFY
+         cUjlP5OUuFojoEgSRSpXJPk13f3Tus+BW/TSDB2VaBCFskjhLqv8sjOXuLns6lBuHRBd
+         lQlY5yPAIiDPE12vwPF8vI0NkqIOHeFO7Lmz7Rt4TgPFeLgDHlETgkPJoE+07da4HW29
+         aOUg==
+X-Gm-Message-State: AOAM532E6wxjySEg+hZpcTdrYhrRYCmKNIn1Rm2enqCNNFI/CcZepO/l
+        GJ5k4rJ5yTp3oNTqaTLWbVWuAr/xC9/YkQ==
+X-Google-Smtp-Source: ABdhPJz+dUWP/lnmFE+K6X7F/q71LIP3Z0GshDGOiHrUrjkBJs8CXJvqChBijrMxD9YEaSuNTBsVeQ==
+X-Received: by 2002:a5d:6503:: with SMTP id x3mr29155876wru.151.1608727502693;
+        Wed, 23 Dec 2020 04:45:02 -0800 (PST)
+Received: from [192.168.8.148] ([85.255.233.85])
+        by smtp.gmail.com with ESMTPSA id 94sm38080771wrq.22.2020.12.23.04.45.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Dec 2020 04:45:02 -0800 (PST)
+To:     Stefano Garzarella <sgarzare@redhat.com>,
+        Yejune Deng <yejune.deng@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1608694025-121050-1-git-send-email-yejune.deng@gmail.com>
+ <20201223103623.mxjsmitdmqsx6ftd@steredhat>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH] io_uring: remove io_remove_personalities()
+Message-ID: <3c013151-37de-1ef0-e989-9f871665d650@gmail.com>
+Date:   Wed, 23 Dec 2020 12:41:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20201222145221.711-1-xieyongji@bytedance.com> <20201222145221.711-10-xieyongji@bytedance.com>
- <6818a214-d587-4f0b-7de6-13c4e7e94ab6@redhat.com>
-In-Reply-To: <6818a214-d587-4f0b-7de6-13c4e7e94ab6@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 23 Dec 2020 20:14:04 +0800
-Message-ID: <CACycT3vVU9vg6R6UujSnSdk8cwxWPVgeJJs0JaBH_Zg4xC-epQ@mail.gmail.com>
-Subject: Re: [External] Re: [RFC v2 09/13] vduse: Add support for processing
- vhost iotlb message
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201223103623.mxjsmitdmqsx6ftd@steredhat>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 23, 2020 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> On 2020/12/22 =E4=B8=8B=E5=8D=8810:52, Xie Yongji wrote:
-> > To support vhost-vdpa bus driver, we need a way to share the
-> > vhost-vdpa backend process's memory with the userspace VDUSE process.
-> >
-> > This patch tries to make use of the vhost iotlb message to achieve
-> > that. We will get the shm file from the iotlb message and pass it
-> > to the userspace VDUSE process.
-> >
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >   Documentation/driver-api/vduse.rst |  15 +++-
-> >   drivers/vdpa/vdpa_user/vduse_dev.c | 147 ++++++++++++++++++++++++++++=
-++++++++-
-> >   include/uapi/linux/vduse.h         |  11 +++
-> >   3 files changed, 171 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-=
-api/vduse.rst
-> > index 623f7b040ccf..48e4b1ba353f 100644
-> > --- a/Documentation/driver-api/vduse.rst
-> > +++ b/Documentation/driver-api/vduse.rst
-> > @@ -46,13 +46,26 @@ The following types of messages are provided by the=
- VDUSE framework now:
-> >
-> >   - VDUSE_GET_CONFIG: Read from device specific configuration space
-> >
-> > +- VDUSE_UPDATE_IOTLB: Update the memory mapping in device IOTLB
-> > +
-> > +- VDUSE_INVALIDATE_IOTLB: Invalidate the memory mapping in device IOTL=
-B
-> > +
-> >   Please see include/linux/vdpa.h for details.
-> >
-> > -In the data path, VDUSE framework implements a MMU-based on-chip IOMMU
-> > +The data path of userspace vDPA device is implemented in different way=
-s
-> > +depending on the vdpa bus to which it is attached.
-> > +
-> > +In virtio-vdpa case, VDUSE framework implements a MMU-based on-chip IO=
-MMU
-> >   driver which supports mapping the kernel dma buffer to a userspace io=
-va
-> >   region dynamically. The userspace iova region can be created by passi=
-ng
-> >   the userspace vDPA device fd to mmap(2).
-> >
-> > +In vhost-vdpa case, the dma buffer is reside in a userspace memory reg=
-ion
-> > +which will be shared to the VDUSE userspace processs via the file
-> > +descriptor in VDUSE_UPDATE_IOTLB message. And the corresponding addres=
-s
-> > +mapping (IOVA of dma buffer <-> VA of the memory region) is also inclu=
-ded
-> > +in this message.
-> > +
-> >   Besides, the eventfd mechanism is used to trigger interrupt callbacks=
- and
-> >   receive virtqueue kicks in userspace. The following ioctls on the use=
-rspace
-> >   vDPA device fd are provided to support that:
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index b974333ed4e9..d24aaacb6008 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -34,6 +34,7 @@
-> >
-> >   struct vduse_dev_msg {
-> >       struct vduse_dev_request req;
-> > +     struct file *iotlb_file;
-> >       struct vduse_dev_response resp;
-> >       struct list_head list;
-> >       wait_queue_head_t waitq;
-> > @@ -325,12 +326,80 @@ static int vduse_dev_set_vq_state(struct vduse_de=
-v *dev,
-> >       return ret;
-> >   }
-> >
-> > +static int vduse_dev_update_iotlb(struct vduse_dev *dev, struct file *=
-file,
-> > +                             u64 offset, u64 iova, u64 size, u8 perm)
-> > +{
-> > +     struct vduse_dev_msg *msg;
-> > +     int ret;
-> > +
-> > +     if (!size)
-> > +             return -EINVAL;
-> > +
-> > +     msg =3D vduse_dev_new_msg(dev, VDUSE_UPDATE_IOTLB);
-> > +     msg->req.size =3D sizeof(struct vduse_iotlb);
-> > +     msg->req.iotlb.offset =3D offset;
-> > +     msg->req.iotlb.iova =3D iova;
-> > +     msg->req.iotlb.size =3D size;
-> > +     msg->req.iotlb.perm =3D perm;
-> > +     msg->req.iotlb.fd =3D -1;
-> > +     msg->iotlb_file =3D get_file(file);
-> > +
-> > +     ret =3D vduse_dev_msg_sync(dev, msg);
->
->
-> My feeling is that we should provide consistent API for the userspace
-> device to use.
->
-> E.g we'd better carry the IOTLB message for both virtio/vhost drivers.
->
-> It looks to me for virtio drivers we can still use UPDAT_IOTLB message
-> by using VDUSE file as msg->iotlb_file here.
->
+On 23/12/2020 10:36, Stefano Garzarella wrote:
+> On Wed, Dec 23, 2020 at 11:27:05AM +0800, Yejune Deng wrote:
+>> The function io_remove_personalities() is very similar to
+>> io_unregister_personality(),but the latter has a more reasonable
+>> return value.
+>>
+>> Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
+>> ---
+>> fs/io_uring.c | 25 ++++++-------------------
+>> 1 file changed, 6 insertions(+), 19 deletions(-)
+> 
+> The patch LGTM, maybe as an alternative you can leave io_remove_personality() with the interface needed by idr_for_each() and implement io_unregister_personality() calling io_remove_personality() with the right parameters.
 
-It's OK for me. One problem is when to transfer the UPDATE_IOTLB
-message in virtio cases.
+Right, don't replace sane types with void * just because.
+Leave well-typed io_unregister_personality() and call it from
+io_remove_personalities().
 
->
-> > +     vduse_dev_msg_put(msg);
-> > +     fput(file);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int vduse_dev_invalidate_iotlb(struct vduse_dev *dev,
-> > +                                     u64 iova, u64 size)
-> > +{
-> > +     struct vduse_dev_msg *msg;
-> > +     int ret;
-> > +
-> > +     if (!size)
-> > +             return -EINVAL;
-> > +
-> > +     msg =3D vduse_dev_new_msg(dev, VDUSE_INVALIDATE_IOTLB);
-> > +     msg->req.size =3D sizeof(struct vduse_iotlb);
-> > +     msg->req.iotlb.iova =3D iova;
-> > +     msg->req.iotlb.size =3D size;
-> > +
-> > +     ret =3D vduse_dev_msg_sync(dev, msg);
-> > +     vduse_dev_msg_put(msg);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static unsigned int perm_to_file_flags(u8 perm)
-> > +{
-> > +     unsigned int flags =3D 0;
-> > +
-> > +     switch (perm) {
-> > +     case VHOST_ACCESS_WO:
-> > +             flags |=3D O_WRONLY;
-> > +             break;
-> > +     case VHOST_ACCESS_RO:
-> > +             flags |=3D O_RDONLY;
-> > +             break;
-> > +     case VHOST_ACCESS_RW:
-> > +             flags |=3D O_RDWR;
-> > +             break;
-> > +     default:
-> > +             WARN(1, "invalidate vhost IOTLB permission\n");
-> > +             break;
-> > +     }
-> > +
-> > +     return flags;
-> > +}
-> > +
-> >   static ssize_t vduse_dev_read_iter(struct kiocb *iocb, struct iov_ite=
-r *to)
-> >   {
-> >       struct file *file =3D iocb->ki_filp;
-> >       struct vduse_dev *dev =3D file->private_data;
-> >       struct vduse_dev_msg *msg;
-> > -     int size =3D sizeof(struct vduse_dev_request);
-> > +     unsigned int flags;
-> > +     int fd, size =3D sizeof(struct vduse_dev_request);
-> >       ssize_t ret =3D 0;
-> >
-> >       if (iov_iter_count(to) < size)
-> > @@ -349,6 +418,18 @@ static ssize_t vduse_dev_read_iter(struct kiocb *i=
-ocb, struct iov_iter *to)
-> >               if (ret)
-> >                       return ret;
-> >       }
-> > +
-> > +     if (msg->req.type =3D=3D VDUSE_UPDATE_IOTLB && msg->req.iotlb.fd =
-=3D=3D -1) {
-> > +             flags =3D perm_to_file_flags(msg->req.iotlb.perm);
-> > +             fd =3D get_unused_fd_flags(flags);
-> > +             if (fd < 0) {
-> > +                     vduse_dev_enqueue_msg(dev, msg, &dev->send_list);
-> > +                     return fd;
-> > +             }
-> > +             fd_install(fd, get_file(msg->iotlb_file));
-> > +             msg->req.iotlb.fd =3D fd;
-> > +     }
-> > +
-> >       ret =3D copy_to_iter(&msg->req, size, to);
-> >       if (ret !=3D size) {
-> >               vduse_dev_enqueue_msg(dev, msg, &dev->send_list);
-> > @@ -565,6 +646,69 @@ static void vduse_vdpa_set_config(struct vdpa_devi=
-ce *vdpa, unsigned int offset,
-> >       vduse_dev_set_config(dev, offset, buf, len);
-> >   }
-> >
-> > +static void vduse_vdpa_invalidate_iotlb(struct vduse_dev *dev,
-> > +                                     struct vhost_iotlb_msg *msg)
-> > +{
-> > +     vduse_dev_invalidate_iotlb(dev, msg->iova, msg->size);
-> > +}
-> > +
-> > +static int vduse_vdpa_update_iotlb(struct vduse_dev *dev,
-> > +                                     struct vhost_iotlb_msg *msg)
-> > +{
-> > +     u64 uaddr =3D msg->uaddr;
-> > +     u64 iova =3D msg->iova;
-> > +     u64 size =3D msg->size;
-> > +     u64 offset;
-> > +     struct vm_area_struct *vma;
-> > +     int ret;
-> > +
-> > +     while (uaddr < msg->uaddr + msg->size) {
-> > +             vma =3D find_vma(current->mm, uaddr);
-> > +             ret =3D -EINVAL;
-> > +             if (!vma)
-> > +                     goto err;
-> > +
-> > +             size =3D min(msg->size, vma->vm_end - uaddr);
-> > +             offset =3D (vma->vm_pgoff << PAGE_SHIFT) + uaddr - vma->v=
-m_start;
-> > +             if (vma->vm_file && (vma->vm_flags & VM_SHARED)) {
-> > +                     ret =3D vduse_dev_update_iotlb(dev, vma->vm_file,=
- offset,
-> > +                                                     iova, size, msg->=
-perm);
-> > +                     if (ret)
-> > +                             goto err;
->
->
-> My understanding is that vma is something that should not be known by a
-> device. So I suggest to move the above processing to vhost-vdpa.c.
->
 
-Will do it.
+Also
+ * idr_for_each() - Iterate through all stored pointers.
+ ...
+ * If @fn returns anything other than %0, the iteration stops and that
+ * value is returned from this function.
 
-Thanks,
-Yongji
+For io_remove_personality() iod==NULL should not happen because
+it's under for_each and synchronised, but leave the return value be 
+
+io_remove_personality(void *, ...)
+{
+	struct io_ring_ctx *ctx = data;
+
+	io_unregister_personality(ctx, id);
+	return 0;
+}
+
+-- 
+Pavel Begunkov
