@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74F232E1449
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 03:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F003A2E13BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 03:37:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729941AbgLWCXQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Dec 2020 21:23:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52234 "EHLO mail.kernel.org"
+        id S1729760AbgLWCd7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Dec 2020 21:33:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729940AbgLWCXQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Dec 2020 21:23:16 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3800E22482;
-        Wed, 23 Dec 2020 02:22:54 +0000 (UTC)
+        id S1730347AbgLWCY7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Dec 2020 21:24:59 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B1CF22202;
+        Wed, 23 Dec 2020 02:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608690174;
-        bh=Iv5f45ChYLpTMHlwxxtdoZWBmiNeU1y8uPPFLZlXcBk=;
+        s=k20201202; t=1608690258;
+        bh=Y0pqD/Y6bPrDTC6zxax75R6Nyx+Z583bWU9ltQ+v5Rk=;
         h=From:To:Cc:Subject:Date:From;
-        b=r3UCaSe8FLRjSH1XNvBMFxFsj+7NhA2XznzrAzznwlo6gLuqlNAw7q0+26P2jC49X
-         usRkXOYH9NKGM0X1MwosU0Xyybh2c4uFSqSysU8QGURJL8yDT4kpVd0V8NM+rKmW2K
-         Zumk5jkflgACZCEbREsA24NBa5ZuIU2rr00FuWqjC4BYa3U+mxb2X/DtKe0gYBYw6w
-         ITOKz8KNKcy+RuGUN6zxfH6ZdYIfXDJqYm2FP6/sKWmkD+IiU7ao1k+Vi+7D5idA4j
-         ED4lyt+/I0x+4NoMLjj8iXzQ9UV7El+3NUUmgTJHfTDg56VFYxRb4ONlacABaopmye
-         wE/PyrIssuBaQ==
+        b=AlFaFsvBLUAoZA59XEbPOqbDXiOy6zxgncnS78o/EuU/SCQJmuTDsK6qRw+gUxWPF
+         Pij9NSle/PRBfCkKEZ1HEisflVMNVZpws4P+LWWHPmFz5T+84IApCeOuaBffoHP/r6
+         H2Sadcg/pY826qUrLqTUn5XG9ax4nHqjv0MtVldAJH8cqVvtsEpcRXynaUTXi9hQzB
+         x44uaNSsQx3+kyzNJDtMc2/2ee4za8M+pdnsuzLzC8LQenxFkEEM8Cxi2Q8fDMyjxR
+         YVjT4NN2PWJJ84u3zk4KIwXT8WYNKNrmMJJjRSaA6al06WoUt+cAXQLZPdCu+9LsYO
+         C/iAPWWbGCyxw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Luo Meng <luomeng12@huawei.com>, Jeff Layton <jlayton@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 01/66] locks: Fix UBSAN undefined behaviour in flock64_to_posix_lock
-Date:   Tue, 22 Dec 2020 21:21:47 -0500
-Message-Id: <20201223022253.2793452-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 01/48] locks: Fix UBSAN undefined behaviour in flock64_to_posix_lock
+Date:   Tue, 22 Dec 2020 21:23:29 -0500
+Message-Id: <20201223022417.2794032-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 X-stable: review
@@ -74,10 +74,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index 1a40e277eb5e1..11bb382a23c2e 100644
+index 8252647c6084f..edae232dfc864 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -488,7 +488,7 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
+@@ -471,7 +471,7 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
  	if (l->l_len > 0) {
  		if (l->l_len - 1 > OFFSET_MAX - fl->fl_start)
  			return -EOVERFLOW;
