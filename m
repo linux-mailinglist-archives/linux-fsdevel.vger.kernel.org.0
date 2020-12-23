@@ -2,130 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DB22E2138
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 21:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61D432E2149
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 21:26:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbgLWUWY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 15:22:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60694 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbgLWUWX (ORCPT
+        id S1728969AbgLWUYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Dec 2020 15:24:45 -0500
+Received: from mail-1.ca.inter.net ([208.85.220.69]:57480 "EHLO
+        mail-1.ca.inter.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727195AbgLWUYo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 15:22:23 -0500
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A74C06179C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 12:21:43 -0800 (PST)
-Received: by mail-il1-x132.google.com with SMTP id q1so234680ilt.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 12:21:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YIp/BzkdOvytsQ2dfltPyb5qXUBQynTBvMwCQ2WlfQc=;
-        b=eaGf/NZR63/J9T+0MxEFv22j+c3hPJvY2DdmuKQZGoQYGkpZGzm4mrP6XHW+v/982h
-         cCMxGbMo6/j9dbsjJF5trpKHNUlrHo8RsfpEznEwj/jebMWzWmIlkYMiEqUD9kWvg1Ml
-         HNDEFICvL+8Y9O8JVhsPK+cTcawSA+EMvWxz4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YIp/BzkdOvytsQ2dfltPyb5qXUBQynTBvMwCQ2WlfQc=;
-        b=YJkEbiJYlbpeXSVva1sAbi2IuWeDDHpspCH2IvuyzpDhqZ/ABYewlwYW0FcsFE7y0p
-         EVwkJTQBbrgEIhZUFYY+o7zcU5T0rFZOBSHOfUHYqH562BhrnhmlfgLgZXNsSqmFrZaO
-         IRnOxrSsL3h2VzrgaWpKIAmmpnpKzN0ipt5nZ28bRtD9ARwxHUBJCPX1ZBeuSzgOdOD7
-         emV6HlUmtOAjpgoeCBTJQeBhwCi/bwuz6NHBZrVXbxpi67/8u+PjuSe4HJAzaMtAf85w
-         4ei/Mgd34NaO0fl571w5Z9Q3ffhF6H4MI43l/6LLLwHct+Sq+hYYHXTIg2xN8SRY9wfb
-         S1/A==
-X-Gm-Message-State: AOAM530E0EQmDmAdPfPCxhVlY5RprRYnxtH5AKLiqGKdHYFDtqZ338Ln
-        EdAVMvho4iLF4dc5QESeQteGHw==
-X-Google-Smtp-Source: ABdhPJwJbX9fw50loVbIqJtPIKvnqXU8eAPFRgZx2132KVN4ygd+pgSFEQ7+FyYDGtda7kOaRmztpw==
-X-Received: by 2002:a92:b6c7:: with SMTP id m68mr26322693ill.95.1608754902781;
-        Wed, 23 Dec 2020 12:21:42 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id l6sm19034195ili.78.2020.12.23.12.21.42
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Dec 2020 12:21:42 -0800 (PST)
-Date:   Wed, 23 Dec 2020 20:21:41 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        jlayton@kernel.org, amir73il@gmail.com, miklos@szeredi.hu,
-        jack@suse.cz, neilb@suse.com, viro@zeniv.linux.org.uk, hch@lst.de
-Subject: Re: [PATCH 3/3] overlayfs: Report writeback errors on upper
-Message-ID: <20201223202140.GB11012@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20201221195055.35295-1-vgoyal@redhat.com>
- <20201221195055.35295-4-vgoyal@redhat.com>
- <20201223182026.GA9935@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223185044.GQ874@casper.infradead.org>
- <20201223192940.GA11012@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223200746.GR874@casper.infradead.org>
+        Wed, 23 Dec 2020 15:24:44 -0500
+Received: from localhost (offload-3.ca.inter.net [208.85.220.70])
+        by mail-1.ca.inter.net (Postfix) with ESMTP id CCEBC2EA28A;
+        Wed, 23 Dec 2020 15:24:02 -0500 (EST)
+Received: from mail-1.ca.inter.net ([208.85.220.69])
+        by localhost (offload-3.ca.inter.net [208.85.220.70]) (amavisd-new, port 10024)
+        with ESMTP id 0NtYbbCfRz7B; Wed, 23 Dec 2020 15:12:11 -0500 (EST)
+Received: from [192.168.48.23] (host-104-157-204-209.dyn.295.ca [104.157.204.209])
+        (using TLSv1 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: dgilbert@interlog.com)
+        by mail-1.ca.inter.net (Postfix) with ESMTPSA id 169332EA054;
+        Wed, 23 Dec 2020 15:23:58 -0500 (EST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH v1 0/6] no-copy bvec
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+References: <cover.1607976425.git.asml.silence@gmail.com>
+ <20201215014114.GA1777020@T590>
+ <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
+ <20201215120357.GA1798021@T590>
+ <e755fec3-4181-1414-0603-02e1a1f4e9eb@gmail.com>
+ <20201222141112.GE13079@infradead.org>
+ <933030f0-e428-18fd-4668-68db4f14b976@gmail.com>
+ <20201223155145.GA5902@infradead.org>
+ <f06ece44a86eb9c8ef07bbd9f6f53342366b7751.camel@HansenPartnership.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <8abc56c2-4db8-5ee3-ab2d-8960d0eeeb0d@interlog.com>
+Date:   Wed, 23 Dec 2020 15:23:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201223200746.GR874@casper.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <f06ece44a86eb9c8ef07bbd9f6f53342366b7751.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 23, 2020 at 08:07:46PM +0000, Matthew Wilcox wrote:
-> On Wed, Dec 23, 2020 at 07:29:41PM +0000, Sargun Dhillon wrote:
-> > On Wed, Dec 23, 2020 at 06:50:44PM +0000, Matthew Wilcox wrote:
-> > > On Wed, Dec 23, 2020 at 06:20:27PM +0000, Sargun Dhillon wrote:
-> > > > I fail to see why this is neccessary if you incorporate error reporting into the 
-> > > > sync_fs callback. Why is this separate from that callback? If you pickup Jeff's
-> > > > patch that adds the 2nd flag to errseq for "observed", you should be able to
-> > > > stash the first errseq seen in the ovl_fs struct, and do the check-and-return
-> > > > in there instead instead of adding this new infrastructure.
-> > > 
-> > > You still haven't explained why you want to add the "observed" flag.
-> > 
-> > 
-> > In the overlayfs model, many users may be using the same filesystem (super block)
-> > for their upperdir. Let's say you have something like this:
-> > 
-> > /workdir [Mounted FS]
-> > /workdir/upperdir1 [overlayfs upperdir]
-> > /workdir/upperdir2 [overlayfs upperdir]
-> > /workdir/userscratchspace
-> > 
-> > The user needs to be able to do something like:
-> > sync -f ${overlayfs1}/file
-> > 
-> > which in turn will call sync on the the underlying filesystem (the one mounted 
-> > on /workdir), and can check if the errseq has changed since the overlayfs was
-> > mounted, and use that to return an error to the user.
+On 2020-12-23 11:04 a.m., James Bottomley wrote:
+> On Wed, 2020-12-23 at 15:51 +0000, Christoph Hellwig wrote:
+>> On Wed, Dec 23, 2020 at 12:52:59PM +0000, Pavel Begunkov wrote:
+>>> Can scatterlist have 0-len entries? Those are directly translated
+>>> into bvecs, e.g. in nvme/target/io-cmd-file.c and
+>>> target/target_core_file.c. I've audited most of others by this
+>>> moment, they're fine.
+>>
+>> For block layer SGLs we should never see them, and for nvme neither.
+>> I think the same is true for the SCSI target code, but please double
+>> check.
 > 
-> OK, but I don't see why the current scheme doesn't work for this.  If
-> (each instance of) overlayfs samples the errseq at mount time and then
-> check_and_advances it at sync time, it will see any error that has occurred
-> since the mount happened (and possibly also an error which occurred before
-> the mount happened, but hadn't been reported to anybody before).
-> 
+> Right, no-one ever wants to see a 0-len scatter list entry.  The reason
+> is that every driver uses the sgl to program the device DMA engine in
+> the way NVME does.  a 0 length sgl would be a dangerous corner case:
+> some DMA engines would ignore it and others would go haywire, so if we
+> ever let a 0 length list down into the driver, they'd have to
+> understand the corner case behaviour of their DMA engine and filter it
+> accordingly, which is why we disallow them in the upper levels, since
+> they're effective nops anyway.
 
-If there is an outstanding error at mount time, and the SEEN flag is unset, 
-subsequent errors will not increment the counter, until the user calls sync on
-the upperdir's filesystem. If overlayfs calls check_and_advance on the upperdir's
-super block at any point, it will then set the seen block, and if the user calls
-syncfs on the upperdir, it will not return that there is an outstanding error,
-since overlayfs just cleared it.
+When using scatter gather lists at the far end (i.e. on the storage device)
+the T10 examples (WRITE SCATTERED and POPULATE TOKEN in SBC-4) explicitly
+allow the "number of logical blocks" in their sgl_s to be zero and state
+that it is _not_ to be considered an error.
 
+Doug Gilbert
 
-> > If we do not advance the errseq on the upperdir to "mark it as seen", that means 
-> > future errors will not be reported if the user calls sync -f ${overlayfs1}/file,
-> > because errseq will not increment the value if the seen bit is unset.
-> > 
-> > On the other hand, if we mark it as seen, then if the user calls sync on 
-> > /workdir/userscratchspace/file, they wont see the error since we just set the 
-> > SEEN flag.
-> 
-> While we set the SEEN flag, if the file were opened before the error
-> occurred, we would still report the error because the sequence is higher
-> than it was when we sampled the error.
-> 
-
-Right, this isn't a problem for people calling f(data)sync on a particular file, 
-because it takes its own snapshot of errseq. This is only problematic for folks 
-calling syncfs. In Jeff's other messages, it sounded like this behaviour is
-pretty important, and the likes of postgresql depend on it.
