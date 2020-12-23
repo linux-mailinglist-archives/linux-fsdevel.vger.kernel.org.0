@@ -2,357 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CDE72E1A55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 10:07:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA0B42E1A9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 10:50:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbgLWJHJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 04:07:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28376 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727995AbgLWJHJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 04:07:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608714341;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bzp4miSYa1YbX1pzPBEvAGZlsG6n9vA+NtKZUy2Yneg=;
-        b=K6/WLmJ3b/Tg6ZVbtN6nWvJvfo1d2Kur9EMCWis6dBeWPYSay2nowEt7XI3SHdwGUZYtw6
-        q67NE1YBwzOJEAUcUiJqpXpz3VNMFtnSD9OK5zSNkqltECfcH2klyKvzkGwN3KRRbQF/wy
-        wD+nUMJZN+zq1FOk9fSQu94h2uZv9+o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-397-Vmgvr832MN-qZP6m-ec38Q-1; Wed, 23 Dec 2020 04:05:37 -0500
-X-MC-Unique: Vmgvr832MN-qZP6m-ec38Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9F6BD107AD2F;
-        Wed, 23 Dec 2020 09:05:34 +0000 (UTC)
-Received: from [10.72.12.54] (ovpn-12-54.pek2.redhat.com [10.72.12.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B0CB619D9C;
-        Wed, 23 Dec 2020 09:05:22 +0000 (UTC)
-Subject: Re: [RFC v2 09/13] vduse: Add support for processing vhost iotlb
- message
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        akpm@linux-foundation.org, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20201222145221.711-1-xieyongji@bytedance.com>
- <20201222145221.711-10-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <6818a214-d587-4f0b-7de6-13c4e7e94ab6@redhat.com>
-Date:   Wed, 23 Dec 2020 17:05:21 +0800
+        id S1727919AbgLWJtq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Dec 2020 04:49:46 -0500
+Received: from mout.gmx.net ([212.227.17.22]:60513 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726022AbgLWJtp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Dec 2020 04:49:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1608716891;
+        bh=65nC/HIa2Iw+m1jZNyib0HWtljb/LeXqdwbAk2EgPYI=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=bpnWEIf+jRO3wV+4x01rnV/5YyOqpG9k2jAGURrJRWiBdc9vc0f04g/aRIAYSdBk0
+         +kNf7L7jl53yyDXqpv2Dg1ag4cOyfodr5OGVH57QcV3/+cB5kgl/nAtWewsOGauJUg
+         WudPC6ozCpCBcXd9tYIAtaj/hAiTGq6aQh/4mtYA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.20.60] ([92.116.156.206]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M3UZG-1krSWG3RVi-000Zpk; Wed, 23
+ Dec 2020 10:48:10 +0100
+Subject: Re: [PATCH] proc/wchan: Use printk format instead of
+ lookup_symbol_name()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20201217165413.GA1959@ls3530.fritz.box>
+ <20201222181807.360cd9458d50b625608b8b44@linux-foundation.org>
+From:   Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+ c2TFWAS8k6RLkk41ZUU8ENX8+qZx/Q==
+Message-ID: <b54649ea-1bec-25a9-2c22-35bdfabc89a9@gmx.de>
+Date:   Wed, 23 Dec 2020 10:48:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20201222145221.711-10-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201222181807.360cd9458d50b625608b8b44@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gRmuymGPB2LiNQ4rNhvvXmoz1yazFT4wiKbtNc6Z8rEG6IT3DCU
+ Hv7Q4ZEx1rSIJuvDO2hX7VM49rGf2C82Ja2Z4klmHQShQwHwZQ9BTPfGclXdgeiyGQ/B8Vo
+ hTJhy9/qAVUUQcqzqoFgBv1ywY9F2IvMWGm7HOYYwBHYS2lRKJVOWn5OScwGBrTfQV9Uol+
+ 5LXHQDblC9HEOZuY6866w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sUNSr/yqII8=:OxBfkv1UwqxWrNFMeT/nhL
+ lHTmDd9qfp0OCf4Eh8AGP9u9cM4nmpIIffe4wYvpyVJMAaAFAbvoWEMy52RqU3UNK7im6cM32
+ XNbwIrLAyAhTK30TDidOwIZP0st2uKILaDTEzk4+f0R4I/3NMXhkPHFiDiUgwBjbKiJjBGKMM
+ 2SyRC/KmUYfpCUZ2Mv5xqY1wyP9qGJueY4iLDuk+0R1xdkcULvpS5k2rzZ5dOvl3zbIbHdMhQ
+ Ynju3L2DysEbIm2A85wV9WqmRXtfJO0SewhXVRw31BHZI1VAGDGsQk+HgFpJW2HrunKF3i2L2
+ mSJ5pSxRUPvP1lF0rQeTJPhpCJyJYFdBQveVWdNoqAJ2C+IDv306WODPeJbBU5cqN19ZktlTC
+ VuOOxzfRy6rvvoGgGKiJKNSnbWe3xfNKcDymEhvTrqrRf6koT6qpgjg/ByYSaj+o7y30MuzSV
+ xrQRNGeAHOt5qTQOS3elicpewBZwbMsZX7IzM7SFQ0F5jQCfzc8QCL/B+PO2ogZRsBhISC7Qi
+ Cv7MCLi460xJAJGvvR2YClDOD3IaKhHP4ePJBqWI3tRGILze5pErK7edBuqZfOR0rbZQBN+SK
+ LOr2vDB9XTlpfigftB/1KBDiflhdkoe66YZ8MTmTjNvNdEcqG45iCmCe54AP2UbhvklyTvzS+
+ 4npuiuBYYGPU1o4nLgI94USX0UJfsHx0VTzbdi9lR9K1OXxlAmF9E7mEuqHyGxPxuTVNO6/I3
+ 0Bvrx+SQanLLbgXja+4BMEt0U0fI8yWfNVuuzxqse0KQx2AGCBbL9a7pH4cMiQtoKnOybDEjJ
+ Fy2pQAoHALrHle6PyBl0osoYTiOkhT+k0kjyBOkdRGmu/MOfCZD8KoRpl2x6irvB5I5ixfhnZ
+ HMGFrKwQMvsDVaJombgA==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 2020/12/22 下午10:52, Xie Yongji wrote:
-> To support vhost-vdpa bus driver, we need a way to share the
-> vhost-vdpa backend process's memory with the userspace VDUSE process.
+On 12/23/20 3:18 AM, Andrew Morton wrote:
+> On Thu, 17 Dec 2020 17:54:13 +0100 Helge Deller <deller@gmx.de> wrote:
 >
-> This patch tries to make use of the vhost iotlb message to achieve
-> that. We will get the shm file from the iotlb message and pass it
-> to the userspace VDUSE process.
+>> To resolve the symbol fuction name for wchan, use the printk format
+>> specifier %ps instead of manually looking up the symbol function name
+>> via lookup_symbol_name().
+>>
+>> Signed-off-by: Helge Deller <deller@gmx.de>
+>>
 >
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> ---
->   Documentation/driver-api/vduse.rst |  15 +++-
->   drivers/vdpa/vdpa_user/vduse_dev.c | 147 ++++++++++++++++++++++++++++++++++++-
->   include/uapi/linux/vduse.h         |  11 +++
->   3 files changed, 171 insertions(+), 2 deletions(-)
+> Please don't forget the "^---$" to separate the changelog from the
+> diff.
+
+Ok.
+
 >
-> diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
-> index 623f7b040ccf..48e4b1ba353f 100644
-> --- a/Documentation/driver-api/vduse.rst
-> +++ b/Documentation/driver-api/vduse.rst
-> @@ -46,13 +46,26 @@ The following types of messages are provided by the VDUSE framework now:
->   
->   - VDUSE_GET_CONFIG: Read from device specific configuration space
->   
-> +- VDUSE_UPDATE_IOTLB: Update the memory mapping in device IOTLB
-> +
-> +- VDUSE_INVALIDATE_IOTLB: Invalidate the memory mapping in device IOTLB
-> +
->   Please see include/linux/vdpa.h for details.
->   
-> -In the data path, VDUSE framework implements a MMU-based on-chip IOMMU
-> +The data path of userspace vDPA device is implemented in different ways
-> +depending on the vdpa bus to which it is attached.
-> +
-> +In virtio-vdpa case, VDUSE framework implements a MMU-based on-chip IOMMU
->   driver which supports mapping the kernel dma buffer to a userspace iova
->   region dynamically. The userspace iova region can be created by passing
->   the userspace vDPA device fd to mmap(2).
->   
-> +In vhost-vdpa case, the dma buffer is reside in a userspace memory region
-> +which will be shared to the VDUSE userspace processs via the file
-> +descriptor in VDUSE_UPDATE_IOTLB message. And the corresponding address
-> +mapping (IOVA of dma buffer <-> VA of the memory region) is also included
-> +in this message.
-> +
->   Besides, the eventfd mechanism is used to trigger interrupt callbacks and
->   receive virtqueue kicks in userspace. The following ioctls on the userspace
->   vDPA device fd are provided to support that:
-> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-> index b974333ed4e9..d24aaacb6008 100644
-> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> @@ -34,6 +34,7 @@
->   
->   struct vduse_dev_msg {
->   	struct vduse_dev_request req;
-> +	struct file *iotlb_file;
->   	struct vduse_dev_response resp;
->   	struct list_head list;
->   	wait_queue_head_t waitq;
-> @@ -325,12 +326,80 @@ static int vduse_dev_set_vq_state(struct vduse_dev *dev,
->   	return ret;
->   }
->   
-> +static int vduse_dev_update_iotlb(struct vduse_dev *dev, struct file *file,
-> +				u64 offset, u64 iova, u64 size, u8 perm)
-> +{
-> +	struct vduse_dev_msg *msg;
-> +	int ret;
-> +
-> +	if (!size)
-> +		return -EINVAL;
-> +
-> +	msg = vduse_dev_new_msg(dev, VDUSE_UPDATE_IOTLB);
-> +	msg->req.size = sizeof(struct vduse_iotlb);
-> +	msg->req.iotlb.offset = offset;
-> +	msg->req.iotlb.iova = iova;
-> +	msg->req.iotlb.size = size;
-> +	msg->req.iotlb.perm = perm;
-> +	msg->req.iotlb.fd = -1;
-> +	msg->iotlb_file = get_file(file);
-> +
-> +	ret = vduse_dev_msg_sync(dev, msg);
+>>  #include <linux/module.h>
+>> @@ -386,19 +385,17 @@ static int proc_pid_wchan(struct seq_file *m, str=
+uct pid_namespace *ns,
+>>  			  struct pid *pid, struct task_struct *task)
+>>  {
+>>  	unsigned long wchan;
+>> -	char symname[KSYM_NAME_LEN];
+>>
+>> -	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+>> -		goto print0;
+>> +	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+>> +		wchan =3D get_wchan(task);
+>> +	else
+>> +		wchan =3D 0;
+>>
+>> -	wchan =3D get_wchan(task);
+>> -	if (wchan && !lookup_symbol_name(wchan, symname)) {
+>> -		seq_puts(m, symname);
+>> -		return 0;
+>> -	}
+>> +	if (wchan)
+>> +		seq_printf(m, "%ps", (void *) wchan);
+>> +	else
+>> +		seq_putc(m, '0');
+>>
+>> -print0:
+>> -	seq_putc(m, '0');
+>>  	return 0;
+>>  }
+>
+> We can simplify this further?
+>
+> static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
+> 			  struct pid *pid, struct task_struct *task)
+> {
+> 	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+> 		seq_printf(m, "%ps", (void *)get_wchan(task));
+> 	else
+> 		seq_putc(m, '0');
+>
+> 	return 0;
+> }
+>
+>
+> --- a/fs/proc/base.c~proc-wchan-use-printk-format-instead-of-lookup_symb=
+ol_name-fix
+> +++ a/fs/proc/base.c
+> @@ -384,15 +384,8 @@ static const struct file_operations proc
+>  static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
+>  			  struct pid *pid, struct task_struct *task)
+>  {
+> -	unsigned long wchan;
+> -
+>  	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+> -		wchan =3D get_wchan(task);
+> -	else
+> -		wchan =3D 0;
+> -
+> -	if (wchan)
+> -		seq_printf(m, "%ps", (void *) wchan);
+> +		seq_printf(m, "%ps", (void *)get_wchan(task));
+>  	else
+>  		seq_putc(m, '0');
 
+get_wchan() does return NULL sometimes, in which case with
+your change now "0x0" instead of "0" gets printed.
 
-My feeling is that we should provide consistent API for the userspace 
-device to use.
+If that's acceptable, then your patch is Ok.
 
-E.g we'd better carry the IOTLB message for both virtio/vhost drivers.
-
-It looks to me for virtio drivers we can still use UPDAT_IOTLB message 
-by using VDUSE file as msg->iotlb_file here.
-
-
-> +	vduse_dev_msg_put(msg);
-> +	fput(file);
-> +
-> +	return ret;
-> +}
-> +
-> +static int vduse_dev_invalidate_iotlb(struct vduse_dev *dev,
-> +					u64 iova, u64 size)
-> +{
-> +	struct vduse_dev_msg *msg;
-> +	int ret;
-> +
-> +	if (!size)
-> +		return -EINVAL;
-> +
-> +	msg = vduse_dev_new_msg(dev, VDUSE_INVALIDATE_IOTLB);
-> +	msg->req.size = sizeof(struct vduse_iotlb);
-> +	msg->req.iotlb.iova = iova;
-> +	msg->req.iotlb.size = size;
-> +
-> +	ret = vduse_dev_msg_sync(dev, msg);
-> +	vduse_dev_msg_put(msg);
-> +
-> +	return ret;
-> +}
-> +
-> +static unsigned int perm_to_file_flags(u8 perm)
-> +{
-> +	unsigned int flags = 0;
-> +
-> +	switch (perm) {
-> +	case VHOST_ACCESS_WO:
-> +		flags |= O_WRONLY;
-> +		break;
-> +	case VHOST_ACCESS_RO:
-> +		flags |= O_RDONLY;
-> +		break;
-> +	case VHOST_ACCESS_RW:
-> +		flags |= O_RDWR;
-> +		break;
-> +	default:
-> +		WARN(1, "invalidate vhost IOTLB permission\n");
-> +		break;
-> +	}
-> +
-> +	return flags;
-> +}
-> +
->   static ssize_t vduse_dev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->   {
->   	struct file *file = iocb->ki_filp;
->   	struct vduse_dev *dev = file->private_data;
->   	struct vduse_dev_msg *msg;
-> -	int size = sizeof(struct vduse_dev_request);
-> +	unsigned int flags;
-> +	int fd, size = sizeof(struct vduse_dev_request);
->   	ssize_t ret = 0;
->   
->   	if (iov_iter_count(to) < size)
-> @@ -349,6 +418,18 @@ static ssize_t vduse_dev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->   		if (ret)
->   			return ret;
->   	}
-> +
-> +	if (msg->req.type == VDUSE_UPDATE_IOTLB && msg->req.iotlb.fd == -1) {
-> +		flags = perm_to_file_flags(msg->req.iotlb.perm);
-> +		fd = get_unused_fd_flags(flags);
-> +		if (fd < 0) {
-> +			vduse_dev_enqueue_msg(dev, msg, &dev->send_list);
-> +			return fd;
-> +		}
-> +		fd_install(fd, get_file(msg->iotlb_file));
-> +		msg->req.iotlb.fd = fd;
-> +	}
-> +
->   	ret = copy_to_iter(&msg->req, size, to);
->   	if (ret != size) {
->   		vduse_dev_enqueue_msg(dev, msg, &dev->send_list);
-> @@ -565,6 +646,69 @@ static void vduse_vdpa_set_config(struct vdpa_device *vdpa, unsigned int offset,
->   	vduse_dev_set_config(dev, offset, buf, len);
->   }
->   
-> +static void vduse_vdpa_invalidate_iotlb(struct vduse_dev *dev,
-> +					struct vhost_iotlb_msg *msg)
-> +{
-> +	vduse_dev_invalidate_iotlb(dev, msg->iova, msg->size);
-> +}
-> +
-> +static int vduse_vdpa_update_iotlb(struct vduse_dev *dev,
-> +					struct vhost_iotlb_msg *msg)
-> +{
-> +	u64 uaddr = msg->uaddr;
-> +	u64 iova = msg->iova;
-> +	u64 size = msg->size;
-> +	u64 offset;
-> +	struct vm_area_struct *vma;
-> +	int ret;
-> +
-> +	while (uaddr < msg->uaddr + msg->size) {
-> +		vma = find_vma(current->mm, uaddr);
-> +		ret = -EINVAL;
-> +		if (!vma)
-> +			goto err;
-> +
-> +		size = min(msg->size, vma->vm_end - uaddr);
-> +		offset = (vma->vm_pgoff << PAGE_SHIFT) + uaddr - vma->vm_start;
-> +		if (vma->vm_file && (vma->vm_flags & VM_SHARED)) {
-> +			ret = vduse_dev_update_iotlb(dev, vma->vm_file, offset,
-> +							iova, size, msg->perm);
-> +			if (ret)
-> +				goto err;
-
-
-My understanding is that vma is something that should not be known by a 
-device. So I suggest to move the above processing to vhost-vdpa.c.
-
-Thanks
-
-
-> +		}
-> +		iova += size;
-> +		uaddr += size;
-> +	}
-> +	return 0;
-> +err:
-> +	vduse_dev_invalidate_iotlb(dev, msg->iova, iova - msg->iova);
-> +	return ret;
-> +}
-> +
-> +static int vduse_vdpa_process_iotlb_msg(struct vdpa_device *vdpa,
-> +					struct vhost_iotlb_msg *msg)
-> +{
-> +	struct vduse_dev *dev = vdpa_to_vduse(vdpa);
-> +	int ret = 0;
-> +
-> +	switch (msg->type) {
-> +	case VHOST_IOTLB_UPDATE:
-> +		ret = vduse_vdpa_update_iotlb(dev, msg);
-> +		break;
-> +	case VHOST_IOTLB_INVALIDATE:
-> +		vduse_vdpa_invalidate_iotlb(dev, msg);
-> +		break;
-> +	case VHOST_IOTLB_BATCH_BEGIN:
-> +	case VHOST_IOTLB_BATCH_END:
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->   static void vduse_vdpa_free(struct vdpa_device *vdpa)
->   {
->   	struct vduse_dev *dev = vdpa_to_vduse(vdpa);
-> @@ -597,6 +741,7 @@ static const struct vdpa_config_ops vduse_vdpa_config_ops = {
->   	.set_status		= vduse_vdpa_set_status,
->   	.get_config		= vduse_vdpa_get_config,
->   	.set_config		= vduse_vdpa_set_config,
-> +	.process_iotlb_msg	= vduse_vdpa_process_iotlb_msg,
->   	.free			= vduse_vdpa_free,
->   };
->   
-> diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
-> index 873305dfd93f..c5080851f140 100644
-> --- a/include/uapi/linux/vduse.h
-> +++ b/include/uapi/linux/vduse.h
-> @@ -21,6 +21,8 @@ enum vduse_req_type {
->   	VDUSE_GET_STATUS,
->   	VDUSE_SET_CONFIG,
->   	VDUSE_GET_CONFIG,
-> +	VDUSE_UPDATE_IOTLB,
-> +	VDUSE_INVALIDATE_IOTLB,
->   };
->   
->   struct vduse_vq_num {
-> @@ -51,6 +53,14 @@ struct vduse_dev_config_data {
->   	__u8 data[VDUSE_CONFIG_DATA_LEN];
->   };
->   
-> +struct vduse_iotlb {
-> +	__u32 fd;
-> +	__u64 offset;
-> +	__u64 iova;
-> +	__u64 size;
-> +	__u8 perm;
-> +};
-> +
->   struct vduse_dev_request {
->   	__u32 type; /* request type */
->   	__u32 unique; /* request id */
-> @@ -62,6 +72,7 @@ struct vduse_dev_request {
->   		struct vduse_vq_ready vq_ready; /* virtqueue ready status */
->   		struct vduse_vq_state vq_state; /* virtqueue state */
->   		struct vduse_dev_config_data config; /* virtio device config space */
-> +		struct vduse_iotlb iotlb; /* iotlb message */
->   		__u64 features; /* virtio features */
->   		__u8 status; /* device status */
->   	};
-
+Helge
