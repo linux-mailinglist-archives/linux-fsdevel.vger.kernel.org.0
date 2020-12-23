@@ -2,86 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D6BE2E1890
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 06:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17B992E18F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 07:33:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbgLWFoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 00:44:55 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:35006 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725820AbgLWFoz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 00:44:55 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UJVIvXS_1608702252;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UJVIvXS_1608702252)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 23 Dec 2020 13:44:12 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     axboe@kernel.dk, viro@zeniv.linux.org.uk
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, hch@infradead.org
-Subject: [PATCH v2] block: move definition of blk_qc_t to types.h
-Date:   Wed, 23 Dec 2020 13:44:12 +0800
-Message-Id: <20201223054412.60372-1-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
+        id S1727029AbgLWGb4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Dec 2020 01:31:56 -0500
+Received: from m12-18.163.com ([220.181.12.18]:59838 "EHLO m12-18.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726282AbgLWGbz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Dec 2020 01:31:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=ir0Z7
+        hf5gWb4v2SG15f0NYgChr3Crfln+YyC/91u4/k=; b=RKkctj+qvAtmz0sFpPV6A
+        wFbz6VISLUly+pMJlpRkt2r4Fuh+3XlYQRjQ8RE5+w7to9gmkrEVuQQMcTOa4Q4z
+        8gD3zH4hHZGSfx/tshsid8WG04nXfQz1dat7Jf6ItBAhVEt6i7noptv2nUe4NnhX
+        aGj9vjSh0TzyCSrCwq0TjA=
+Received: from localhost (unknown [101.86.213.121])
+        by smtp14 (Coremail) with SMTP id EsCowADHkBjq4+JfvFX1LA--.25218S2;
+        Wed, 23 Dec 2020 14:30:02 +0800 (CST)
+Date:   Wed, 23 Dec 2020 14:30:02 +0800
+From:   Hui Su <sh_def@163.com>
+To:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Cc:     sh_def@163.com, songmuchun@bytedance.com
+Subject: [PATCH] mm/buffer.c: remove the macro check in check_irqs_on()
+Message-ID: <20201223063002.GA1526597@ubuntu-A520I-AC>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-CM-TRANSID: EsCowADHkBjq4+JfvFX1LA--.25218S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU0fHjUUUUU
+X-Originating-IP: [101.86.213.121]
+X-CM-SenderInfo: xvkbvvri6rljoofrz/1tbiIAoEX10TCqUscwADsM
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So that kiocb.ki_cookie can be defined as blk_qc_t, which will enforce
-the encapsulation.
+The macro irqs_disabled is always defined in include/linux/irqflags.h,
+so we don't need the macro check.
 
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+Signed-off-by: Hui Su <sh_def@163.com>
 ---
-changes since v1: add trivial comments 
----
- include/linux/blk_types.h | 2 +-
- include/linux/fs.h        | 2 +-
- include/linux/types.h     | 3 +++
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ fs/buffer.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 866f74261b3b..2e05244fc16d 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -532,7 +532,7 @@ static inline int op_stat_group(unsigned int op)
- 	return op_is_write(op);
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 32647d2011df..34b505542d96 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1247,9 +1247,7 @@ static DEFINE_PER_CPU(struct bh_lru, bh_lrus) = {{ NULL }};
+ 
+ static inline void check_irqs_on(void)
+ {
+-#ifdef irqs_disabled
+ 	BUG_ON(irqs_disabled());
+-#endif
  }
  
--typedef unsigned int blk_qc_t;
-+/* Macros for blk_qc_t */
- #define BLK_QC_T_NONE		-1U
- #define BLK_QC_T_SHIFT		16
- #define BLK_QC_T_INTERNAL	(1U << 31)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ad4cf1bae586..58db714c4834 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -330,7 +330,7 @@ struct kiocb {
- 	u16			ki_hint;
- 	u16			ki_ioprio; /* See linux/ioprio.h */
- 	union {
--		unsigned int		ki_cookie; /* for ->iopoll */
-+		blk_qc_t		ki_cookie; /* for ->iopoll */
- 		struct wait_page_queue	*ki_waitq; /* for async buffered IO */
- 	};
- 
-diff --git a/include/linux/types.h b/include/linux/types.h
-index a147977602b5..da5ca7e1bea9 100644
---- a/include/linux/types.h
-+++ b/include/linux/types.h
-@@ -125,6 +125,9 @@ typedef s64			int64_t;
- typedef u64 sector_t;
- typedef u64 blkcnt_t;
- 
-+/* cookie used for iopoll */
-+typedef unsigned int blk_qc_t;
-+
  /*
-  * The type of an index into the pagecache.
-  */
 -- 
-2.27.0
+2.25.1
+
 
