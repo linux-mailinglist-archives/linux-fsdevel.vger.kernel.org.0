@@ -2,128 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21DFA2E157F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 03:58:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BE92E17A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 04:12:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730633AbgLWCtS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Dec 2020 21:49:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730384AbgLWCtR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Dec 2020 21:49:17 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BDC9C0617A6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Dec 2020 18:48:37 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id w5so9692810pgj.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Dec 2020 18:48:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wP7Uq2lowyz2FH8P5+5koRz57WTCSgXorU4PTle7rdo=;
-        b=bI+yNYRnrvlvKm0GFWJ0h8Zo4CX+ntNyT8egYkggS18UBmlB5Ej5FmqGO/cmC3a6io
-         rjiGb4MIW9QvltzrZxdJDzjP+HmGGr5CTERjUc21VMF44i38G1LMaWQLTgrM96CfxFn7
-         OHEBz4+sDNwo1WVSAhW+l3nQjVStyrz8JeZdfW5gSfDdodXi7/SWiyuWPdb+Y4OdrSY0
-         qrE5QZFwaicGQDZ3c3tyX5pIzN+bjhBHG7uGbox0Hr6tS7uoZZsNklQGcEz9jqgvjR9z
-         5dkVJSklQB4IqZEVi5p0kBVeJaOfBJh5fgfsaUpmA25RoNGn4WfFbNliDSRu8yCgpVOt
-         hNzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wP7Uq2lowyz2FH8P5+5koRz57WTCSgXorU4PTle7rdo=;
-        b=G8rqhBUl5iRWg9DBc63Qt/mQaXFtBU+XTXs/39ntI9GhopuwfZnsBb+yfJ4dC4cpOe
-         lIrDV7UYLOWpiQqXjRsZ3B/j79eRYkfJvcL2UHFrnpMiySV6aCyl+gDiVKtYu+jZga5q
-         tMbpVsxTGwa48bwBHhooRAVWZpv9ygJmskU209RmEiUpklur1KJzsmNYcQ6r8bZvZlGw
-         edH+4bg3+4EX/XELYCZ65F3nggr7ZQsIM3391uh4/bgYZETnWxlcsY/cRYuyjAYKVcdH
-         pV3o0Pko7NsoQSZaw4XgZDRj0+I9VBw5+sMro3TajGqQKIr4oGDpzwWjH68YDOHEtogQ
-         IGAg==
-X-Gm-Message-State: AOAM532OGT+Q1+2G9vcc8H0NNUR6+/raPSeL5F+45f14jKo3iILrDjEV
-        G7Mru5siKtnazFmZZ9lBvQQHw97VWkxlzlNHQShkHA==
-X-Google-Smtp-Source: ABdhPJyZhq4UXodKoW1yonKLx7SJbDUeopHTSj9WphsfAsFA9xHEfINldXo3tXZS2SFAgF7o8OQRmc7gOerPeZ7KwJo=
-X-Received: by 2002:a63:480f:: with SMTP id v15mr9021169pga.341.1608691717231;
- Tue, 22 Dec 2020 18:48:37 -0800 (PST)
+        id S1726885AbgLWCRv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Dec 2020 21:17:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726319AbgLWCRv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Dec 2020 21:17:51 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6298522273;
+        Wed, 23 Dec 2020 02:16:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608689795;
+        bh=539rzbf8rQ7ehmxt1SF+EL4om810xyXqMCZFOHMRSF4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l0qMCMaaJhBoLqnhlxyMiBtZ4Z8HZR1cIWomZjrRVMDlccRFq87nnJ7vwKBmV/w70
+         24jJp0u5QI8GuqpXIA3n6C7/ZhWLiyeoARZwQDUnGSEhD9ydV1e8hcXNxzVRRHLr8d
+         jyCDyXlSEqxsaQRo3Cz7y0Vy/4ljZ7z3UASTPaxIAp5S4gb7Uuoo6sA9nL867NZADa
+         JwqC+TiCoyZ3ias/9lavdaCAa6WMKjmG87sgiuIajYiRzZ6jU9em1LE9halBLgoJ7T
+         H7fZb+kdCbnjoYw9/8va7l+7nFGFezi84hwfdR50KAAYJsVE0U0EqzwweRJ2beQcBk
+         kXyB5h+ERD2Pw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Luo Meng <luomeng12@huawei.com>, Jeff Layton <jlayton@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 006/217] locks: Fix UBSAN undefined behaviour in flock64_to_posix_lock
+Date:   Tue, 22 Dec 2020 21:12:55 -0500
+Message-Id: <20201223021626.2790791-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201223021626.2790791-1-sashal@kernel.org>
+References: <20201223021626.2790791-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20201222142440.28930-1-songmuchun@bytedance.com>
- <20201222142440.28930-4-songmuchun@bytedance.com> <20201222163248.GB31385@linux>
-In-Reply-To: <20201222163248.GB31385@linux>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 23 Dec 2020 10:47:59 +0800
-Message-ID: <CAMZfGtU5x6kcdL32zL8Mz6DBp3pEQ+kMC5=yOda9arUm5p0=Xg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v11 03/11] mm/hugetlb: Free the vmemmap
- pages associated with each HugeTLB page
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>, naoya.horiguchi@nec.com,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 23, 2020 at 12:32 AM Oscar Salvador <osalvador@suse.de> wrote:
->
-> On Tue, Dec 22, 2020 at 10:24:32PM +0800, Muchun Song wrote:
-> > diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
-> > index 5d0767cb424a..eff5b13a6945 100644
-> > --- a/include/linux/mmdebug.h
-> > +++ b/include/linux/mmdebug.h
-> > @@ -37,6 +37,13 @@ void dump_mm(const struct mm_struct *mm);
-> >                       BUG();                                          \
-> >               }                                                       \
-> >       } while (0)
-> > +#define VM_WARN_ON_PAGE(cond, page)                                  \
-> > +     do {                                                            \
-> > +             if (unlikely(cond)) {                                   \
-> > +                     dump_page(page, "VM_WARN_ON_PAGE(" __stringify(cond)")");\
-> > +                     WARN_ON(1);                                     \
-> > +             }                                                       \
-> > +     } while (0)
-> >  #define VM_WARN_ON_ONCE_PAGE(cond, page)     ({                      \
-> >       static bool __section(".data.once") __warned;                   \
-> >       int __ret_warn_once = !!(cond);                                 \
-> > @@ -60,6 +67,7 @@ void dump_mm(const struct mm_struct *mm);
-> >  #define VM_BUG_ON_MM(cond, mm) VM_BUG_ON(cond)
-> >  #define VM_WARN_ON(cond) BUILD_BUG_ON_INVALID(cond)
-> >  #define VM_WARN_ON_ONCE(cond) BUILD_BUG_ON_INVALID(cond)
-> > +#define VM_WARN_ON_PAGE(cond, page) BUILD_BUG_ON_INVALID(cond)
-> >  #define VM_WARN_ON_ONCE_PAGE(cond, page)  BUILD_BUG_ON_INVALID(cond)
-> >  #define VM_WARN_ONCE(cond, format...) BUILD_BUG_ON_INVALID(cond)
-> >  #define VM_WARN(cond, format...) BUILD_BUG_ON_INVALID(cond)
->
-> Take this off this patch and make it a preparation patch prior to this one.
-> A new VM_WARN_ON_ macro does not make much sense in this patch as it is
-> not related.
+From: Luo Meng <luomeng12@huawei.com>
 
-OK. Will do in the next version. Thanks.
+[ Upstream commit 16238415eb9886328a89fe7a3cb0b88c7335fe16 ]
 
->
-> I will have a look later today at the other changes, but so far looks good.
->
-> --
-> Oscar Salvador
-> SUSE L3
+When the sum of fl->fl_start and l->l_len overflows,
+UBSAN shows the following warning:
 
+UBSAN: Undefined behaviour in fs/locks.c:482:29
+signed integer overflow: 2 + 9223372036854775806
+cannot be represented in type 'long long int'
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xe4/0x14e lib/dump_stack.c:118
+ ubsan_epilogue+0xe/0x81 lib/ubsan.c:161
+ handle_overflow+0x193/0x1e2 lib/ubsan.c:192
+ flock64_to_posix_lock fs/locks.c:482 [inline]
+ flock_to_posix_lock+0x595/0x690 fs/locks.c:515
+ fcntl_setlk+0xf3/0xa90 fs/locks.c:2262
+ do_fcntl+0x456/0xf60 fs/fcntl.c:387
+ __do_sys_fcntl fs/fcntl.c:483 [inline]
+ __se_sys_fcntl fs/fcntl.c:468 [inline]
+ __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:468
+ do_syscall_64+0xc8/0x5a0 arch/x86/entry/common.c:293
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
+Fix it by parenthesizing 'l->l_len - 1'.
 
+Signed-off-by: Luo Meng <luomeng12@huawei.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/locks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index 1f84a03601fec..bc08610bae2f7 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -542,7 +542,7 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
+ 	if (l->l_len > 0) {
+ 		if (l->l_len - 1 > OFFSET_MAX - fl->fl_start)
+ 			return -EOVERFLOW;
+-		fl->fl_end = fl->fl_start + l->l_len - 1;
++		fl->fl_end = fl->fl_start + (l->l_len - 1);
+ 
+ 	} else if (l->l_len < 0) {
+ 		if (fl->fl_start + l->l_len < 0)
 -- 
-Yours,
-Muchun
+2.27.0
+
