@@ -2,35 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71C9D2E15BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 03:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5146B2E15B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Dec 2020 03:58:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729516AbgLWCwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Dec 2020 21:52:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49580 "EHLO mail.kernel.org"
+        id S1729570AbgLWCwT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Dec 2020 21:52:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729307AbgLWCVV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Dec 2020 21:21:21 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CDF05221E5;
-        Wed, 23 Dec 2020 02:21:04 +0000 (UTC)
+        id S1729345AbgLWCV3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Dec 2020 21:21:29 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8DFB022202;
+        Wed, 23 Dec 2020 02:21:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608690065;
-        bh=oyo0dMFmeIP9On4Qxj8Vvt0/uXxaCwSpx7Tdp1BfnGo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JZmRrE17llySnJSzzSqlah2zq6SkUD/4llBQ476eL6SW119FwU1JvD/r8OabNU8a8
-         dyn8ynz9wORih+kDwtahVeg/KHres9t6S4hYWj3zsLjx1zJrsnM615HxMyfKneKGV4
-         LdW49ABOkxrwPMh7ktAtBWUYkJcvkckMOdAcVQu5DufvXPjJR53X6EsAtwxTFiEqpg
-         6IlbQ1nDGBfNfDRvsALkrg03ouVSoS7ug/DHSgBlCCGS6MgPEFhEqk/IDDDc1FARhn
-         /FvKglcqqhrCh7waRSaYCMgJY94tYZryk+4zhSfOiyOySs1OUyKf3t2ZCsxdtG3IZy
-         PY45El5I+pIhg==
+        s=k20201202; t=1608690073;
+        bh=wBPzvhXBPG+5Nd2tquRxIlTxIH51YFIawOurhbTemqI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jTDHaWQNHr3Gg6jp1mdN2sL9wvD5o762HOz55k7pYoS1HcNRX6s8YPX2wbqkRbRy9
+         Q8KYm0UbWwIAyXWKofuAV7c3X7Mjqf+tucBD73BFNEyYelLBJoFd2kwmJR3k2NRqds
+         3o3Tv3JgHiKIOgEblBY482vlqY71j1komu+99DhFrHjQnscjrkkCZsEDCmD3vEqow1
+         InmVRv8VmzMBifgEi4sTFvTcrU/oo6LSg4XegU+v8fDYKw0x2nfHV8WNxrhuGCO6nJ
+         J82vU8VmBqhDd+TUuZA9Z1UN1e3RVSwOsUvpH9OqtJezb7JHqy6FYtrXLS2hp1aoG9
+         i/IoVoODD2TvA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Luo Meng <luomeng12@huawei.com>, Jeff Layton <jlayton@kernel.org>,
+Cc:     Boqun Feng <boqun.feng@gmail.com>,
+        syzbot+22e87cdf94021b984aa6@syzkaller.appspotmail.com,
+        syzbot+c5e32344981ad9f33750@syzkaller.appspotmail.com,
+        Jeff Layton <jlayton@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 01/87] locks: Fix UBSAN undefined behaviour in flock64_to_posix_lock
-Date:   Tue, 22 Dec 2020 21:19:37 -0500
-Message-Id: <20201223022103.2792705-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 07/87] fcntl: Fix potential deadlock in send_sig{io, urg}()
+Date:   Tue, 22 Dec 2020 21:19:43 -0500
+Message-Id: <20201223022103.2792705-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201223022103.2792705-1-sashal@kernel.org>
+References: <20201223022103.2792705-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -39,53 +44,129 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Luo Meng <luomeng12@huawei.com>
+From: Boqun Feng <boqun.feng@gmail.com>
 
-[ Upstream commit 16238415eb9886328a89fe7a3cb0b88c7335fe16 ]
+[ Upstream commit 8d1ddb5e79374fb277985a6b3faa2ed8631c5b4c ]
 
-When the sum of fl->fl_start and l->l_len overflows,
-UBSAN shows the following warning:
+Syzbot reports a potential deadlock found by the newly added recursive
+read deadlock detection in lockdep:
 
-UBSAN: Undefined behaviour in fs/locks.c:482:29
-signed integer overflow: 2 + 9223372036854775806
-cannot be represented in type 'long long int'
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xe4/0x14e lib/dump_stack.c:118
- ubsan_epilogue+0xe/0x81 lib/ubsan.c:161
- handle_overflow+0x193/0x1e2 lib/ubsan.c:192
- flock64_to_posix_lock fs/locks.c:482 [inline]
- flock_to_posix_lock+0x595/0x690 fs/locks.c:515
- fcntl_setlk+0xf3/0xa90 fs/locks.c:2262
- do_fcntl+0x456/0xf60 fs/fcntl.c:387
- __do_sys_fcntl fs/fcntl.c:483 [inline]
- __se_sys_fcntl fs/fcntl.c:468 [inline]
- __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:468
- do_syscall_64+0xc8/0x5a0 arch/x86/entry/common.c:293
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[...] ========================================================
+[...] WARNING: possible irq lock inversion dependency detected
+[...] 5.9.0-rc2-syzkaller #0 Not tainted
+[...] --------------------------------------------------------
+[...] syz-executor.1/10214 just changed the state of lock:
+[...] ffff88811f506338 (&f->f_owner.lock){.+..}-{2:2}, at: send_sigurg+0x1d/0x200
+[...] but this lock was taken by another, HARDIRQ-safe lock in the past:
+[...]  (&dev->event_lock){-...}-{2:2}
+[...]
+[...]
+[...] and interrupts could create inverse lock ordering between them.
+[...]
+[...]
+[...] other info that might help us debug this:
+[...] Chain exists of:
+[...]   &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
+[...]
+[...]  Possible interrupt unsafe locking scenario:
+[...]
+[...]        CPU0                    CPU1
+[...]        ----                    ----
+[...]   lock(&f->f_owner.lock);
+[...]                                local_irq_disable();
+[...]                                lock(&dev->event_lock);
+[...]                                lock(&new->fa_lock);
+[...]   <Interrupt>
+[...]     lock(&dev->event_lock);
+[...]
+[...]  *** DEADLOCK ***
 
-Fix it by parenthesizing 'l->l_len - 1'.
+The corresponding deadlock case is as followed:
 
-Signed-off-by: Luo Meng <luomeng12@huawei.com>
+	CPU 0		CPU 1		CPU 2
+	read_lock(&fown->lock);
+			spin_lock_irqsave(&dev->event_lock, ...)
+					write_lock_irq(&filp->f_owner.lock); // wait for the lock
+			read_lock(&fown-lock); // have to wait until the writer release
+					       // due to the fairness
+	<interrupted>
+	spin_lock_irqsave(&dev->event_lock); // wait for the lock
+
+The lock dependency on CPU 1 happens if there exists a call sequence:
+
+	input_inject_event():
+	  spin_lock_irqsave(&dev->event_lock,...);
+	  input_handle_event():
+	    input_pass_values():
+	      input_to_handler():
+	        handler->event(): // evdev_event()
+	          evdev_pass_values():
+	            spin_lock(&client->buffer_lock);
+	            __pass_event():
+	              kill_fasync():
+	                kill_fasync_rcu():
+	                  read_lock(&fa->fa_lock);
+	                  send_sigio():
+	                    read_lock(&fown->lock);
+
+To fix this, make the reader in send_sigurg() and send_sigio() use
+read_lock_irqsave() and read_lock_irqrestore().
+
+Reported-by: syzbot+22e87cdf94021b984aa6@syzkaller.appspotmail.com
+Reported-by: syzbot+c5e32344981ad9f33750@syzkaller.appspotmail.com
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/locks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fcntl.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index 28270e74be342..465917362eca3 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -479,7 +479,7 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
- 	if (l->l_len > 0) {
- 		if (l->l_len - 1 > OFFSET_MAX - fl->fl_start)
- 			return -EOVERFLOW;
--		fl->fl_end = fl->fl_start + l->l_len - 1;
-+		fl->fl_end = fl->fl_start + (l->l_len - 1);
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 4137d96534a6c..e039af1872ab2 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -779,9 +779,10 @@ void send_sigio(struct fown_struct *fown, int fd, int band)
+ {
+ 	struct task_struct *p;
+ 	enum pid_type type;
++	unsigned long flags;
+ 	struct pid *pid;
+ 	
+-	read_lock(&fown->lock);
++	read_lock_irqsave(&fown->lock, flags);
  
- 	} else if (l->l_len < 0) {
- 		if (fl->fl_start + l->l_len < 0)
+ 	type = fown->pid_type;
+ 	pid = fown->pid;
+@@ -802,7 +803,7 @@ void send_sigio(struct fown_struct *fown, int fd, int band)
+ 		read_unlock(&tasklist_lock);
+ 	}
+  out_unlock_fown:
+-	read_unlock(&fown->lock);
++	read_unlock_irqrestore(&fown->lock, flags);
+ }
+ 
+ static void send_sigurg_to_task(struct task_struct *p,
+@@ -817,9 +818,10 @@ int send_sigurg(struct fown_struct *fown)
+ 	struct task_struct *p;
+ 	enum pid_type type;
+ 	struct pid *pid;
++	unsigned long flags;
+ 	int ret = 0;
+ 	
+-	read_lock(&fown->lock);
++	read_lock_irqsave(&fown->lock, flags);
+ 
+ 	type = fown->pid_type;
+ 	pid = fown->pid;
+@@ -842,7 +844,7 @@ int send_sigurg(struct fown_struct *fown)
+ 		read_unlock(&tasklist_lock);
+ 	}
+  out_unlock_fown:
+-	read_unlock(&fown->lock);
++	read_unlock_irqrestore(&fown->lock, flags);
+ 	return ret;
+ }
+ 
 -- 
 2.27.0
 
