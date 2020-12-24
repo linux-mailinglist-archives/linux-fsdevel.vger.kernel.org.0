@@ -2,107 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 044712E2437
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 05:51:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9D32E2471
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 06:29:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbgLXEun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 23:50:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53786 "EHLO
+        id S1725871AbgLXF25 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Dec 2020 00:28:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbgLXEum (ORCPT
+        with ESMTP id S1725355AbgLXF25 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 23:50:42 -0500
-Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA95DC061794
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 20:50:02 -0800 (PST)
-Received: by mail-pl1-x649.google.com with SMTP id p19so651202plr.22
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 20:50:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=Ntto0REEo/mIE2Mt+Mq78tbyDspwuPQ1ayD5dtmBR7g=;
-        b=NJGvN7ALxQMN2zM8MqG58sWguw2zAaFtG8HsCOWqUYLHNtLwLj5Q4hIydcVeMKrHVz
-         0nOy8pQtErV3Ue5K0G04Me7qAyuwAWjbJsafmOYBjLU7bNzCM6gK0yvBzN+gZ5ilh4AP
-         EO0u5j1JWp/q7/tVwR/O6c+rz46houel/LQp+X714H7LYtW487EUKis1rQ0tBYKjoLX+
-         9DmQJX9uPCYbcd7aJPu+yzn/AjWHiUB5G0HDQBs8AbY7lyUvpuFUutDCy+QKC03HPefG
-         7dPV5cmdTunmeauKO82xSPH+qMBDTfOOGNWsuGH+eL/4gWi1vT15/7+mY7vpwbfPgk7+
-         mZKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=Ntto0REEo/mIE2Mt+Mq78tbyDspwuPQ1ayD5dtmBR7g=;
-        b=ZzDyTfOhxI1GmxgNmpxGdeGNz7tZ8fBiaIAYfQEcA+aUh95EEv4wG4Qe2gNPy5ufaA
-         1hv91orprZoQewHhmPBvvily8uDgh2Zenvzw2u9Gh76gabFiVUGS9CGyTGGD6M8Y+jJt
-         avOrZq9HS6niq1UI2PMhyjnpJZwS/0c7dTAtCwoqso+uG1G9RtbpVz3ZGXhmFfRbgLVN
-         E+Q0YZtWfs1jSua0wBLiuycmIudyV0pNUCpiUvLBE9ppXmRTcipTSSiLW7QTxKIvBD2/
-         ZOX1fBsqTxXb0xrYJ3fuBFXxr+qjfghdyYc2z9avHRY5m7eZKh3UNweSOUWQxHRLnA1y
-         8RxA==
-X-Gm-Message-State: AOAM530F41mx8FhhHuYBgeYNnQFCfdU7PML73f29oDs45s5rMf/nplW5
-        Dcxfwoy000reGfWDS00j09bSP7TOhIs=
-X-Google-Smtp-Source: ABdhPJw/t/hmdzMjOOcuRIc99sMUz7ICBakutS45TUV+RJgvRnbrXaCpowX2o/ccjMy+RdCs6/hDp3471PY=
-Sender: "satyat via sendgmr" <satyat@satyaprateek.c.googlers.com>
-X-Received: from satyaprateek.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
- (user=satyat job=sendgmr) by 2002:a17:90a:1706:: with SMTP id
- z6mr648286pjd.0.1608785401864; Wed, 23 Dec 2020 20:50:01 -0800 (PST)
-Date:   Thu, 24 Dec 2020 04:49:54 +0000
-Message-Id: <20201224044954.1349459-1-satyat@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.29.2.729.g45daf8777d-goog
-Subject: [PATCH] fs: Fix freeze_bdev()/thaw_bdev() accounting of bd_fsfreeze_sb
-From:   Satya Tangirala <satyat@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Satya Tangirala <satyat@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 24 Dec 2020 00:28:57 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA03C061794;
+        Wed, 23 Dec 2020 21:28:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=8Qc1ISgNacQk+//eBUSG28G+Kj9xBNwyPmPzmkXKVGY=; b=rEiavNyo9r7H5tmlMFNIfthLLG
+        AGf7SbpbTXSMjVi1Wo3mj1Q9vmiB+l2fyNlODBOZiew6Hc1quZWHVRQq3rqyVgGGwRyJIpKCAaVdu
+        v/XFve/Gw6D8e+suKuIDA2PHP8XC42CSeZiYG9uyCN/Jmef9572ahBzgzcEaQOrGxtysjSJ8GQKFV
+        Xzr5uDjVBSulBTqo17domLr9b++PA2q4rZXejBhzHaQ1hKLv4AOiTKBC5f3L9FCwBupAb2/rbQuPE
+        FBJuwrpBK1ktpgyLd7KujlXQ8BjcFMDJE6HR9Y+axbU8EXqq+Vk5g/wkcg0cr9k0ifCa7zelnkGRT
+        svG6ZcfA==;
+Received: from [2601:1c0:6280:3f0::64ea] (helo=smtpauth.infradead.org)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ksJAc-0005PN-Sr; Thu, 24 Dec 2020 05:28:15 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: delete repeated words in comments
+Date:   Wed, 23 Dec 2020 21:28:10 -0800
+Message-Id: <20201224052810.25315-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-freeze/thaw_bdev() currently use bdev->bd_fsfreeze_count to infer
-whether or not bdev->bd_fsfreeze_sb is valid (it's valid iff
-bd_fsfreeze_count is non-zero). thaw_bdev() doesn't nullify
-bd_fsfreeze_sb.
+Delete duplicate words in fs/*.c.
+The doubled words that are being dropped are:
+  that, be, the, in, and, for
 
-But this means a freeze_bdev() call followed by a thaw_bdev() call can
-leave bd_fsfreeze_sb with a non-null value, while bd_fsfreeze_count is
-zero. If freeze_bdev() is called again, and this time
-get_active_super() returns NULL (e.g. because the FS is unmounted),
-we'll end up with bd_fsfreeze_count > 0, but bd_fsfreeze_sb is
-*untouched* - it stays the same (now garbage) value. A subsequent
-thaw_bdev() will decide that the bd_fsfreeze_sb value is legitimate
-(since bd_fsfreeze_count > 0), and attempt to use it.
-
-Fix this by always setting bd_fsfreeze_sb to NULL when
-bd_fsfreeze_count is successfully decremented to 0 in thaw_sb().
-Alternatively, we could set bd_fsfreeze_sb to whatever
-get_active_super() returns in freeze_bdev() whenever bd_fsfreeze_count
-is successfully incremented to 1 from 0 (which can be achieved cleanly
-by moving the line currently setting bd_fsfreeze_sb to immediately
-after the "sync:" label, but it might be a little too subtle/easily
-overlooked in future).
-
-This fixes the currently panicking xfstests generic/085.
-
-Fixes: 040f04bd2e82 ("fs: simplify freeze_bdev/thaw_bdev")
-Signed-off-by: Satya Tangirala <satyat@google.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- fs/block_dev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/block_dev.c |    2 +-
+ fs/dcache.c    |    4 ++--
+ fs/direct-io.c |    4 ++--
+ fs/exec.c      |    4 ++--
+ fs/fhandle.c   |    2 +-
+ fs/pipe.c      |    2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 9e56ee1f2652..12a811a9ae4b 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -606,6 +606,8 @@ int thaw_bdev(struct block_device *bdev)
- 		error = thaw_super(sb);
- 	if (error)
- 		bdev->bd_fsfreeze_count++;
-+	else
-+		bdev->bd_fsfreeze_sb = NULL;
+--- linux-next-20201223.orig/fs/block_dev.c
++++ linux-next-20201223/fs/block_dev.c
+@@ -1260,7 +1260,7 @@ rescan:
+ 	return ret;
+ }
+ /*
+- * Only exported for for loop and dasd for historic reasons.  Don't use in new
++ * Only exported for loop and dasd for historic reasons.  Don't use in new
+  * code!
+  */
+ EXPORT_SYMBOL_GPL(bdev_disk_changed);
+--- linux-next-20201223.orig/fs/dcache.c
++++ linux-next-20201223/fs/dcache.c
+@@ -2150,8 +2150,8 @@ EXPORT_SYMBOL(d_obtain_root);
+  * same inode, only the actual correct case is stored in the dcache for
+  * case-insensitive filesystems.
+  *
+- * For a case-insensitive lookup match and if the the case-exact dentry
+- * already exists in in the dcache, use it and return it.
++ * For a case-insensitive lookup match and if the case-exact dentry
++ * already exists in the dcache, use it and return it.
+  *
+  * If no entry exists with the exact case name, allocate new dentry with
+  * the exact case, and return the spliced entry.
+--- linux-next-20201223.orig/fs/direct-io.c
++++ linux-next-20201223/fs/direct-io.c
+@@ -460,7 +460,7 @@ static inline void dio_cleanup(struct di
+  * Wait for the next BIO to complete.  Remove it and return it.  NULL is
+  * returned once all BIOs have been completed.  This must only be called once
+  * all bios have been issued so that dio->refcount can only decrease.  This
+- * requires that that the caller hold a reference on the dio.
++ * requires that the caller hold a reference on the dio.
+  */
+ static struct bio *dio_await_one(struct dio *dio)
+ {
+@@ -1277,7 +1277,7 @@ do_blockdev_direct_IO(struct kiocb *iocb
+ 	if (retval == -ENOTBLK) {
+ 		/*
+ 		 * The remaining part of the request will be
+-		 * be handled by buffered I/O when we return
++		 * handled by buffered I/O when we return
+ 		 */
+ 		retval = 0;
+ 	}
+--- linux-next-20201223.orig/fs/exec.c
++++ linux-next-20201223/fs/exec.c
+@@ -1454,7 +1454,7 @@ EXPORT_SYMBOL(finalize_exec);
+ /*
+  * Prepare credentials and lock ->cred_guard_mutex.
+  * setup_new_exec() commits the new creds and drops the lock.
+- * Or, if exec fails before, free_bprm() should release ->cred and
++ * Or, if exec fails before, free_bprm() should release ->cred
+  * and unlock.
+  */
+ static int prepare_bprm_creds(struct linux_binprm *bprm)
+@@ -1837,7 +1837,7 @@ static int bprm_execve(struct linux_binp
+ 
  out:
- 	mutex_unlock(&bdev->bd_fsfreeze_mutex);
- 	return error;
--- 
-2.29.2.729.g45daf8777d-goog
-
+ 	/*
+-	 * If past the point of no return ensure the the code never
++	 * If past the point of no return ensure the code never
+ 	 * returns to the userspace process.  Use an existing fatal
+ 	 * signal if present otherwise terminate the process with
+ 	 * SIGSEGV.
+--- linux-next-20201223.orig/fs/fhandle.c
++++ linux-next-20201223/fs/fhandle.c
+@@ -173,7 +173,7 @@ static int handle_to_path(int mountdirfd
+ 
+ 	/*
+ 	 * With handle we don't look at the execute bit on the
+-	 * the directory. Ideally we would like CAP_DAC_SEARCH.
++	 * directory. Ideally we would like CAP_DAC_SEARCH.
+ 	 * But we don't have that
+ 	 */
+ 	if (!capable(CAP_DAC_READ_SEARCH)) {
+--- linux-next-20201223.orig/fs/pipe.c
++++ linux-next-20201223/fs/pipe.c
+@@ -171,7 +171,7 @@ EXPORT_SYMBOL(generic_pipe_buf_try_steal
+  *
+  * Description:
+  *	This function grabs an extra reference to @buf. It's used in
+- *	in the tee() system call, when we duplicate the buffers in one
++ *	the tee() system call, when we duplicate the buffers in one
+  *	pipe into another.
+  */
+ bool generic_pipe_buf_get(struct pipe_inode_info *pipe, struct pipe_buffer *buf)
