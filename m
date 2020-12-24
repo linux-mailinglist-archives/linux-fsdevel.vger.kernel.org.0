@@ -2,95 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2B92E26B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 13:16:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E38492E2816
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 17:46:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbgLXMOi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Dec 2020 07:14:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36746 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbgLXMOi (ORCPT
+        id S1727901AbgLXQpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Dec 2020 11:45:54 -0500
+Received: from mail-1.ca.inter.net ([208.85.220.69]:43627 "EHLO
+        mail-1.ca.inter.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbgLXQpy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Dec 2020 07:14:38 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C48C06179C;
-        Thu, 24 Dec 2020 04:13:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ifO2Z41UF/ZdXjDCo5wL8aXgOUw3K83yCcmilFeONd8=; b=J4sz+5UcNIflCLTVeCfClavL70
-        sYTuvVbC1vbi1wUVFepnDPTYAaMqiXlJ4lKmAANmUAs1LS1KS3+oOWf/MrIJZ93DMAgLmKBkczCNX
-        9UZ5afuYzKyUMEgCD0dGsVULGDstM4r5nrh1VUR5+VghVXUGLavMRr3xSes9DAVmkRB6Cc42dCAzt
-        aki6C2pQiaM2s0G0rBdUndm+vm/kRMnDxZePRsQbUv2Mitkoqb51C4VWEf2xycHkuviUUlzq+oQqT
-        7sh9/4EGb3T138Pn1PZ0Swy91ONGqLCoiuVZrZcugMwflgPAy7Qqlvh0ni9NT3PgsnnS/UnFu3UgZ
-        Dt2M8D3w==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ksPVA-0002V2-SM; Thu, 24 Dec 2020 12:13:52 +0000
-Date:   Thu, 24 Dec 2020 12:13:52 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, Sargun Dhillon <sargun@sargun.me>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
-        NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Chengguang Xu <cgxu519@mykernel.net>
-Subject: Re: [PATCH 3/3] overlayfs: Report writeback errors on upper
-Message-ID: <20201224121352.GT874@casper.infradead.org>
-References: <20201221195055.35295-1-vgoyal@redhat.com>
- <20201221195055.35295-4-vgoyal@redhat.com>
- <20201223182026.GA9935@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223185044.GQ874@casper.infradead.org>
- <20201223192940.GA11012@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223200746.GR874@casper.infradead.org>
- <20201223202140.GB11012@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223204428.GS874@casper.infradead.org>
- <CAOQ4uxjAeGv8x2hBBzHz5PjSDq0Q+RN-ikgqEvAA+XE_U-U5Nw@mail.gmail.com>
+        Thu, 24 Dec 2020 11:45:54 -0500
+Received: from localhost (offload-3.ca.inter.net [208.85.220.70])
+        by mail-1.ca.inter.net (Postfix) with ESMTP id 31C992EA00D;
+        Thu, 24 Dec 2020 11:45:12 -0500 (EST)
+Received: from mail-1.ca.inter.net ([208.85.220.69])
+        by localhost (offload-3.ca.inter.net [208.85.220.70]) (amavisd-new, port 10024)
+        with ESMTP id NF1X0jaVqyMg; Thu, 24 Dec 2020 11:33:17 -0500 (EST)
+Received: from [192.168.48.23] (host-104-157-204-209.dyn.295.ca [104.157.204.209])
+        (using TLSv1 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: dgilbert@interlog.com)
+        by mail-1.ca.inter.net (Postfix) with ESMTPSA id A198C2EA01C;
+        Thu, 24 Dec 2020 11:45:10 -0500 (EST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH v1 0/6] no-copy bvec
+To:     Christoph Hellwig <hch@infradead.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20201215014114.GA1777020@T590>
+ <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
+ <20201215120357.GA1798021@T590>
+ <e755fec3-4181-1414-0603-02e1a1f4e9eb@gmail.com>
+ <20201222141112.GE13079@infradead.org>
+ <933030f0-e428-18fd-4668-68db4f14b976@gmail.com>
+ <20201223155145.GA5902@infradead.org>
+ <f06ece44a86eb9c8ef07bbd9f6f53342366b7751.camel@HansenPartnership.com>
+ <8abc56c2-4db8-5ee3-ab2d-8960d0eeeb0d@interlog.com>
+ <f5cb6ac2-1c59-33be-de8f-e86c8528fbec@gmail.com>
+ <20201224064119.GA3048@infradead.org>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <a7848827-fee0-2667-ea1e-d85913bc2433@interlog.com>
+Date:   Thu, 24 Dec 2020 11:45:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjAeGv8x2hBBzHz5PjSDq0Q+RN-ikgqEvAA+XE_U-U5Nw@mail.gmail.com>
+In-Reply-To: <20201224064119.GA3048@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 24, 2020 at 11:32:55AM +0200, Amir Goldstein wrote:
-> In current master, syncfs() on any file by any container user will
-> result in full syncfs() of the upperfs, which is very bad for container
-> isolation. This has been partly fixed by Chengguang Xu [1] and I expect
-> his work will be merged soon. Overlayfs still does not do the writeback
-> and syncfs() in overlay still waits for all upper fs writeback to complete,
-> but at least syncfs() in overlay only kicks writeback for upper fs files
-> dirtied by this overlay.
+On 2020-12-24 1:41 a.m., Christoph Hellwig wrote:
+> On Wed, Dec 23, 2020 at 08:32:45PM +0000, Pavel Begunkov wrote:
+>> On 23/12/2020 20:23, Douglas Gilbert wrote:
+>>> On 2020-12-23 11:04 a.m., James Bottomley wrote:
+>>>> On Wed, 2020-12-23 at 15:51 +0000, Christoph Hellwig wrote:
+>>>>> On Wed, Dec 23, 2020 at 12:52:59PM +0000, Pavel Begunkov wrote:
+>>>>>> Can scatterlist have 0-len entries? Those are directly translated
+>>>>>> into bvecs, e.g. in nvme/target/io-cmd-file.c and
+>>>>>> target/target_core_file.c. I've audited most of others by this
+>>>>>> moment, they're fine.
+>>>>>
+>>>>> For block layer SGLs we should never see them, and for nvme neither.
+>>>>> I think the same is true for the SCSI target code, but please double
+>>>>> check.
+>>>>
+>>>> Right, no-one ever wants to see a 0-len scatter list entry.?? The reason
+>>>> is that every driver uses the sgl to program the device DMA engine in
+>>>> the way NVME does.?? a 0 length sgl would be a dangerous corner case:
+>>>> some DMA engines would ignore it and others would go haywire, so if we
+>>>> ever let a 0 length list down into the driver, they'd have to
+>>>> understand the corner case behaviour of their DMA engine and filter it
+>>>> accordingly, which is why we disallow them in the upper levels, since
+>>>> they're effective nops anyway.
+>>>
+>>> When using scatter gather lists at the far end (i.e. on the storage device)
+>>> the T10 examples (WRITE SCATTERED and POPULATE TOKEN in SBC-4) explicitly
+>>> allow the "number of logical blocks" in their sgl_s to be zero and state
+>>> that it is _not_ to be considered an error.
+>>
+>> It's fine for my case unless it leaks them out of device driver to the
+>> net/block layer/etc. Is it?
 > 
-> [1] https://lore.kernel.org/linux-unionfs/CAJfpegsbb4iTxW8ZyuRFVNc63zg7Ku7vzpSNuzHASYZH-d5wWA@mail.gmail.com/
+> None of the SCSI Command mentions above are supported by Linux,
+> nevermind mapped to struct scatterlist.
 > 
-> Sharing the same SEEN flag among thousands of containers is also
-> far from ideal, because effectively this means that any given workload
-> in any single container has very little chance of observing the SEEN flag.
 
-Perhaps you misunderstand how errseq works.  If each container samples
-the errseq at startup, then they will all see any error which occurs
-during their lifespan (and possibly an error which occurred before they
-started up).
+The POPULATE TOKEN / WRITE USING TOKEN pair can be viewed as a subset
+of EXTENDED COPY (SPC-4) which also supports "range descriptors". It is
+not clear if target_core_xcopy.c supports these range descriptors but
+if it did, it would be trying to map them to struct scatterlist objects.
 
-> To this end, I do agree with Matthew that overlayfs should sample errseq
-> and the best patchset to implement it so far IMO is Jeff's patchset [2].
-> This patch set was written to cater only "volatile" overlayfs mount, but
-> there is no reason not to use the same mechanism for regular overlay
-> mount. The only difference being that "volatile" overlay only checks for
-> error since mount on syncfs() (because "volatile" overlay does NOT
-> syncfs upper fs) and regular overlay checks and advances the overlay's
-> errseq sample on syncfs (and does syncfs upper fs).
-> 
-> Matthew, I hope that my explanation of the use case and Jeff's answer
-> is sufficient to understand why the split of the SEEN flag is needed.
-> 
-> [2] https://lore.kernel.org/linux-unionfs/20201213132713.66864-1-jlayton@kernel.org/
+That said, it would be easy to skip the "number of logical blocks" == 0
+case when translating range descriptors to sgl_s.
 
-No, it still feels weird and wrong.
+In my ddpt utility (a dd clone) I have generalized skip= and seek= to
+optionally take sgl_s. If the last element in one of those sgl_s is
+LBAn,0 then it is interpreted as "until the end of that device" which
+is further restricted if the other sgl has a "hard" length or count=
+is given. The point being a length of 0 can have meaning, a benefit
+lost with NVMe's 0-based counts.
+
+Doug Gilbert
+
 
