@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E9A32E2534
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 08:26:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65AA42E2542
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 08:38:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725895AbgLXHZr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Dec 2020 02:25:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49182 "EHLO
+        id S1726583AbgLXHiD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Dec 2020 02:38:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725833AbgLXHZr (ORCPT
+        with ESMTP id S1726064AbgLXHiD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Dec 2020 02:25:47 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87FD9C0617A6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 23:25:06 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id i24so1394846edj.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 23:25:06 -0800 (PST)
+        Thu, 24 Dec 2020 02:38:03 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC96CC06179C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 23:37:22 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id i24so1416021edj.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 23:37:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=wqSoUJ0wK428r/8qtbJUJtWlo8/XxBIZ7I2arOIoVvg=;
-        b=uCfDQp+rckuVdcZ/vely7IwCRxCR6p1idVLIxaoZT9ytRtnDQPr53X7ewWQqhyQeRt
-         DGMuYQ/Fnt3huQeBJtDG+Ek3MxXEHmmOPiQWIkWYaFZlyepi/JdTJezVIRCTSKgSdiQo
-         QYx56uo5cPF/9QZ0DvERgrRadxTp4j/sFjxeGc8+d1FaZPqGAMURnQONgUeeIzc+/VRS
-         AsZlCV8qbRQeBZ2i0xspi7zbX3DtDcn2ZK8muC7HN9BMacgiC+ikbOEG7paMdjGNt+a2
-         mvJycjddQn7HMe4Xj8tNRld7Dr4eRKlgCuW44RhNjMZ33MP8wgf+4jDILoVtr+fht/nF
-         NSFQ==
+        bh=GCpEe9bgcinu2yB8dDVslobyM9KIB6TrbsIPt4r9UaE=;
+        b=wJtOPzCiU2BNyGRZwvpISTXAlJmybWeFPLzYdvCc8iE8/9pBk7j2/JHXlnsn5SiHJq
+         /VhmQ14nzfxHny+5Xt82jx4MMOBVBI0fW2rVd+EE/jGoYgVjlLDcth5SLiwaBua67nQx
+         Rr8cqU879rdLCTQGfKgqyGbkEaaqzpWwFZDYEFTAqBerD3BqdLPGwwM9fxzMP62ZawKz
+         xTDEWqZnlmWGlYwvOsb+K0h23Dg1BbxFmwDz2ZPLWiHHRdu+O0iZ1Z15O7vn1IHcFly6
+         YrMGQYjqrJunNEHTTmGJGAl5VWi3MnVZwT5tz6Pe1tYPAYqGre8Tl3xSih9PxZYGoAnI
+         1udA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wqSoUJ0wK428r/8qtbJUJtWlo8/XxBIZ7I2arOIoVvg=;
-        b=T/bk7KOKJSEZeGvvm8MlKw7sgibERz9FCTq5TUGSVAMlTn1JHfk4NKWHDH8wnibjP5
-         Z7UI0j08jNgFwyOAyUkHxeFVerE7Up69LiRVvsGZapMoeItNx5WkAM6gyW/9dCcUEIQj
-         RK9rj5XpbUNG1hFyX5ilWqDZL02/g4Sfi4XJATnYlAtbOdk1yCjRKpuWmVq+9Jwbi+8g
-         0pXPbPCqdBQJikn0qDXH3woYDsysxFnPjrHL/IWmHWIvK9MHl0SSMVi0CBOIPBhKTvOD
-         PfL2MRcojXHmsA6t4Km0tGtMXLp9ABE8+yu4mJbBH0NeEgotpRxBX7FHmeo2rJj+WEnG
-         Sd4g==
-X-Gm-Message-State: AOAM531N8ujaJXcuNnL6cc5uFlyN7bBGywE8oEeIF7OFV8EtaG5Xn1TQ
-        UDGzlD5moH2UmoLfCIxi+nff4yT7gsyjc2lkjJwO
-X-Google-Smtp-Source: ABdhPJxYtKj5zSF9sYKP0JW8AGDlYbzQ/DtgYlMviG2drnktYahrLMoBL4l3uXC37jhXyO2bXLesu8cNLrFWF81FKb8=
-X-Received: by 2002:aa7:c60c:: with SMTP id h12mr27893759edq.145.1608794704858;
- Wed, 23 Dec 2020 23:25:04 -0800 (PST)
+        bh=GCpEe9bgcinu2yB8dDVslobyM9KIB6TrbsIPt4r9UaE=;
+        b=moV3mrDU7IeTNGswEy02I+nuE/yb+lS8c7ED0Beo92ZTsaaB9kNHFuJbb0laP/g2/K
+         q1ykwMb1y7f3mDCqieurLplM8cA8qvA0DIzdLE1s4SaPLnVCrwB9fWLHqYyinB97bWfs
+         FOkkeRs2SOwelvimvLGWZ/WchiMiFjhDUR4FCuSC7o/xpIHxhjxyyfVtV0AlRB9qJUVm
+         MyxwbL0rFKo06HYItwqkqg9o5tQ+7uwH8nidHk0SMq9YNlw59swzBt6ifhd6Z2GyJ45F
+         hj24Ae6J8G4cuxLOLlzGVXiEH2JpMj4uGsqStI1nrS+L6yhZuJY6DA9QbkTkBojBACZS
+         u5/w==
+X-Gm-Message-State: AOAM533iU3jM1RqJAmz6bLHQ5JscbDjsncd8L98jA4kgy0mqQhkDSCXI
+        T/EKYGLFMaaVt13jTdeaPaQwuznovMwNNiZ6X3Iq
+X-Google-Smtp-Source: ABdhPJzIXBdUKvYXI8RIu6cIsVGbPRa/53lrumD//6NgHswloThw+T8myoLHefv1bkK72Rx12WVC0SaSlDURKfiWuHE=
+X-Received: by 2002:a50:f40e:: with SMTP id r14mr27056186edm.5.1608795441570;
+ Wed, 23 Dec 2020 23:37:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20201222145221.711-1-xieyongji@bytedance.com> <20201222145221.711-9-xieyongji@bytedance.com>
- <5b36bc51-1e19-2b59-6287-66aed435c8ed@redhat.com> <CACycT3tP8mgj043idjJW3BF12qmOhmHzYz8X5FyL8t5MbwLysw@mail.gmail.com>
- <4b13e574-d898-55cc-9ec6-78f28a7f2cd9@redhat.com>
-In-Reply-To: <4b13e574-d898-55cc-9ec6-78f28a7f2cd9@redhat.com>
+References: <20201222145221.711-1-xieyongji@bytedance.com> <20201222145221.711-10-xieyongji@bytedance.com>
+ <6818a214-d587-4f0b-7de6-13c4e7e94ab6@redhat.com> <CACycT3vVU9vg6R6UujSnSdk8cwxWPVgeJJs0JaBH_Zg4xC-epQ@mail.gmail.com>
+ <595fe7d6-7876-26e4-0b7c-1d63ca6d7a97@redhat.com>
+In-Reply-To: <595fe7d6-7876-26e4-0b7c-1d63ca6d7a97@redhat.com>
 From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 24 Dec 2020 15:24:54 +0800
-Message-ID: <CACycT3uPGEGsY-=Yak02B0pb77KCKH=bgvHMCQXvBdaWU=22zg@mail.gmail.com>
-Subject: Re: Re: [RFC v2 08/13] vdpa: Introduce process_iotlb_msg() in vdpa_config_ops
+Date:   Thu, 24 Dec 2020 15:37:10 +0800
+Message-ID: <CACycT3s=m=PQb5WFoMGhz8TNGme4+=rmbbBTtrugF9ZmNnWxEw@mail.gmail.com>
+Subject: Re: Re: [RFC v2 09/13] vduse: Add support for processing vhost iotlb message
 To:     Jason Wang <jasowang@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
@@ -69,106 +69,135 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 24, 2020 at 10:37 AM Jason Wang <jasowang@redhat.com> wrote:
+On Thu, Dec 24, 2020 at 10:41 AM Jason Wang <jasowang@redhat.com> wrote:
 >
 >
-> On 2020/12/23 =E4=B8=8B=E5=8D=887:06, Yongji Xie wrote:
-> > On Wed, Dec 23, 2020 at 4:37 PM Jason Wang <jasowang@redhat.com> wrote:
+> On 2020/12/23 =E4=B8=8B=E5=8D=888:14, Yongji Xie wrote:
+> > On Wed, Dec 23, 2020 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
 > >>
 > >> On 2020/12/22 =E4=B8=8B=E5=8D=8810:52, Xie Yongji wrote:
-> >>> This patch introduces a new method in the vdpa_config_ops to
-> >>> support processing the raw vhost memory mapping message in the
-> >>> vDPA device driver.
+> >>> To support vhost-vdpa bus driver, we need a way to share the
+> >>> vhost-vdpa backend process's memory with the userspace VDUSE process.
+> >>>
+> >>> This patch tries to make use of the vhost iotlb message to achieve
+> >>> that. We will get the shm file from the iotlb message and pass it
+> >>> to the userspace VDUSE process.
 > >>>
 > >>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 > >>> ---
-> >>>    drivers/vhost/vdpa.c | 5 ++++-
-> >>>    include/linux/vdpa.h | 7 +++++++
-> >>>    2 files changed, 11 insertions(+), 1 deletion(-)
+> >>>    Documentation/driver-api/vduse.rst |  15 +++-
+> >>>    drivers/vdpa/vdpa_user/vduse_dev.c | 147 +++++++++++++++++++++++++=
++++++++++++-
+> >>>    include/uapi/linux/vduse.h         |  11 +++
+> >>>    3 files changed, 171 insertions(+), 2 deletions(-)
 > >>>
-> >>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> >>> index 448be7875b6d..ccbb391e38be 100644
-> >>> --- a/drivers/vhost/vdpa.c
-> >>> +++ b/drivers/vhost/vdpa.c
-> >>> @@ -728,6 +728,9 @@ static int vhost_vdpa_process_iotlb_msg(struct vh=
-ost_dev *dev,
-> >>>        if (r)
-> >>>                return r;
+> >>> diff --git a/Documentation/driver-api/vduse.rst b/Documentation/drive=
+r-api/vduse.rst
+> >>> index 623f7b040ccf..48e4b1ba353f 100644
+> >>> --- a/Documentation/driver-api/vduse.rst
+> >>> +++ b/Documentation/driver-api/vduse.rst
+> >>> @@ -46,13 +46,26 @@ The following types of messages are provided by t=
+he VDUSE framework now:
 > >>>
-> >>> +     if (ops->process_iotlb_msg)
-> >>> +             return ops->process_iotlb_msg(vdpa, msg);
+> >>>    - VDUSE_GET_CONFIG: Read from device specific configuration space
+> >>>
+> >>> +- VDUSE_UPDATE_IOTLB: Update the memory mapping in device IOTLB
 > >>> +
-> >>>        switch (msg->type) {
-> >>>        case VHOST_IOTLB_UPDATE:
-> >>>                r =3D vhost_vdpa_process_iotlb_update(v, msg);
-> >>> @@ -770,7 +773,7 @@ static int vhost_vdpa_alloc_domain(struct vhost_v=
-dpa *v)
-> >>>        int ret;
+> >>> +- VDUSE_INVALIDATE_IOTLB: Invalidate the memory mapping in device IO=
+TLB
+> >>> +
+> >>>    Please see include/linux/vdpa.h for details.
 > >>>
-> >>>        /* Device want to do DMA by itself */
-> >>> -     if (ops->set_map || ops->dma_map)
-> >>> +     if (ops->set_map || ops->dma_map || ops->process_iotlb_msg)
-> >>>                return 0;
+> >>> -In the data path, VDUSE framework implements a MMU-based on-chip IOM=
+MU
+> >>> +The data path of userspace vDPA device is implemented in different w=
+ays
+> >>> +depending on the vdpa bus to which it is attached.
+> >>> +
+> >>> +In virtio-vdpa case, VDUSE framework implements a MMU-based on-chip =
+IOMMU
+> >>>    driver which supports mapping the kernel dma buffer to a userspace=
+ iova
+> >>>    region dynamically. The userspace iova region can be created by pa=
+ssing
+> >>>    the userspace vDPA device fd to mmap(2).
 > >>>
-> >>>        bus =3D dma_dev->bus;
-> >>> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> >>> index 656fe264234e..7bccedf22f4b 100644
-> >>> --- a/include/linux/vdpa.h
-> >>> +++ b/include/linux/vdpa.h
-> >>> @@ -5,6 +5,7 @@
-> >>>    #include <linux/kernel.h>
-> >>>    #include <linux/device.h>
-> >>>    #include <linux/interrupt.h>
-> >>> +#include <linux/vhost_types.h>
-> >>>    #include <linux/vhost_iotlb.h>
-> >>>    #include <net/genetlink.h>
+> >>> +In vhost-vdpa case, the dma buffer is reside in a userspace memory r=
+egion
+> >>> +which will be shared to the VDUSE userspace processs via the file
+> >>> +descriptor in VDUSE_UPDATE_IOTLB message. And the corresponding addr=
+ess
+> >>> +mapping (IOVA of dma buffer <-> VA of the memory region) is also inc=
+luded
+> >>> +in this message.
+> >>> +
+> >>>    Besides, the eventfd mechanism is used to trigger interrupt callba=
+cks and
+> >>>    receive virtqueue kicks in userspace. The following ioctls on the =
+userspace
+> >>>    vDPA device fd are provided to support that:
+> >>> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_u=
+ser/vduse_dev.c
+> >>> index b974333ed4e9..d24aaacb6008 100644
+> >>> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> >>> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> >>> @@ -34,6 +34,7 @@
 > >>>
-> >>> @@ -172,6 +173,10 @@ struct vdpa_iova_range {
-> >>>     *                          @vdev: vdpa device
-> >>>     *                          Returns the iova range supported by
-> >>>     *                          the device.
-> >>> + * @process_iotlb_msg:               Process vhost memory mapping me=
-ssage (optional)
-> >>> + *                           Only used for VDUSE device now
-> >>> + *                           @vdev: vdpa device
-> >>> + *                           @msg: vhost memory mapping message
-> >>>     * @set_map:                        Set device memory mapping (opt=
-ional)
-> >>>     *                          Needed for device that using device
-> >>>     *                          specific DMA translation (on-chip IOMM=
-U)
-> >>> @@ -240,6 +245,8 @@ struct vdpa_config_ops {
-> >>>        struct vdpa_iova_range (*get_iova_range)(struct vdpa_device *v=
-dev);
+> >>>    struct vduse_dev_msg {
+> >>>        struct vduse_dev_request req;
+> >>> +     struct file *iotlb_file;
+> >>>        struct vduse_dev_response resp;
+> >>>        struct list_head list;
+> >>>        wait_queue_head_t waitq;
+> >>> @@ -325,12 +326,80 @@ static int vduse_dev_set_vq_state(struct vduse_=
+dev *dev,
+> >>>        return ret;
+> >>>    }
 > >>>
-> >>>        /* DMA ops */
-> >>> +     int (*process_iotlb_msg)(struct vdpa_device *vdev,
-> >>> +                              struct vhost_iotlb_msg *msg);
-> >>>        int (*set_map)(struct vdpa_device *vdev, struct vhost_iotlb *i=
-otlb);
-> >>>        int (*dma_map)(struct vdpa_device *vdev, u64 iova, u64 size,
-> >>>                       u64 pa, u32 perm);
+> >>> +static int vduse_dev_update_iotlb(struct vduse_dev *dev, struct file=
+ *file,
+> >>> +                             u64 offset, u64 iova, u64 size, u8 perm=
+)
+> >>> +{
+> >>> +     struct vduse_dev_msg *msg;
+> >>> +     int ret;
+> >>> +
+> >>> +     if (!size)
+> >>> +             return -EINVAL;
+> >>> +
+> >>> +     msg =3D vduse_dev_new_msg(dev, VDUSE_UPDATE_IOTLB);
+> >>> +     msg->req.size =3D sizeof(struct vduse_iotlb);
+> >>> +     msg->req.iotlb.offset =3D offset;
+> >>> +     msg->req.iotlb.iova =3D iova;
+> >>> +     msg->req.iotlb.size =3D size;
+> >>> +     msg->req.iotlb.perm =3D perm;
+> >>> +     msg->req.iotlb.fd =3D -1;
+> >>> +     msg->iotlb_file =3D get_file(file);
+> >>> +
+> >>> +     ret =3D vduse_dev_msg_sync(dev, msg);
 > >>
-> >> Is there any reason that it can't be done via dma_map/dma_unmap or set=
-_map?
+> >> My feeling is that we should provide consistent API for the userspace
+> >> device to use.
 > >>
-> > To get the shmfd, we need the vma rather than physical address. And
-> > it's not necessary to pin the user pages in VDUSE case.
+> >> E.g we'd better carry the IOTLB message for both virtio/vhost drivers.
+> >>
+> >> It looks to me for virtio drivers we can still use UPDAT_IOTLB message
+> >> by using VDUSE file as msg->iotlb_file here.
+> >>
+> > It's OK for me. One problem is when to transfer the UPDATE_IOTLB
+> > message in virtio cases.
 >
 >
-> Right, actually, vhost-vDPA is planning to support shared virtual
-> address space.
+> Instead of generating IOTLB messages for userspace.
 >
-> So let's try to reuse the existing config ops. How about just introduce
-> an attribute to vdpa device that tells the bus tells the bus it can do
-> shared virtual memory. Then when the device is probed by vhost-vDPA, use
-> pages won't be pinned and we will do VA->VA mapping as IOVA->PA mapping
-> in the vhost IOTLB and the config ops. vhost IOTLB needs to be extended
-> to accept opaque pointer to store the file. And the file was pass via
-> the config ops as well.
+> How about record the mappings (which is a common case for device have
+> on-chip IOMMU e.g mlx5e and vdpa simlator), then we can introduce ioctl
+> for userspace to query?
 >
 
-OK, I see. Will try it in v3.
+If so, the IOTLB UPDATE is actually triggered by ioctl, but
+IOTLB_INVALIDATE is triggered by the message. Is it a little odd? Or
+how about trigger it when userspace call mmap() on the device fd?
 
 Thanks,
 Yongji
