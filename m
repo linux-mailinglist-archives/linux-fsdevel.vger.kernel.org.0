@@ -2,296 +2,289 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ECC52E23C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 03:43:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EC8A2E23C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 03:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbgLXCnR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 21:43:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37507 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728785AbgLXCnR (ORCPT
+        id S1728783AbgLXCpL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Dec 2020 21:45:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728638AbgLXCpL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 21:43:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1608777710;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4p4XCLcT9Cy4rfmz8sdmumlkVjWox2OdnsnLNXRg9jc=;
-        b=LCE8glcz7owlUYx4cLJg4E1v00wiUNJfh7XZ967MrRRJfuVM4noUzLbqi6Hw6r7MzUCwex
-        12egbcZHY/XVVaSIQN8Ck/E+4SlVNmwmWWIL4e6i/8O5b7nBHt81bxcFlqfUSpYeKRD0Oh
-        Vah2IoGYBhFC63jM2R06xM6wFwY25N8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-459-YdIz8xygPwCd8x_rcseEqg-1; Wed, 23 Dec 2020 21:41:46 -0500
-X-MC-Unique: YdIz8xygPwCd8x_rcseEqg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C3C15800D53;
-        Thu, 24 Dec 2020 02:41:43 +0000 (UTC)
-Received: from [10.72.13.109] (ovpn-13-109.pek2.redhat.com [10.72.13.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B45E60C04;
-        Thu, 24 Dec 2020 02:41:26 +0000 (UTC)
-Subject: Re: [External] Re: [RFC v2 09/13] vduse: Add support for processing
- vhost iotlb message
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20201222145221.711-1-xieyongji@bytedance.com>
- <20201222145221.711-10-xieyongji@bytedance.com>
- <6818a214-d587-4f0b-7de6-13c4e7e94ab6@redhat.com>
- <CACycT3vVU9vg6R6UujSnSdk8cwxWPVgeJJs0JaBH_Zg4xC-epQ@mail.gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <595fe7d6-7876-26e4-0b7c-1d63ca6d7a97@redhat.com>
-Date:   Thu, 24 Dec 2020 10:41:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 23 Dec 2020 21:45:11 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52E83C06179C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 18:44:31 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id m5so423776pjv.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 18:44:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jj7WfKowDTY95GUHl5uINaRFHYXKJEL5zQtSBC0Z0fg=;
+        b=PFOoA5HWcjgLHoueyb30M9jB+OwHlsdpyon9+H7R8rJlU9xnRZrtahbjlN7Z6celqG
+         ls725GrKSSkcBCWzFLVZ4I5wvU83LKlGCVmuPLQXc/vQzPqvsZquJzPHdqypTNfmtW8I
+         lTjGY9styytdKavQAkRs6LC95X3cWV6eAMJkvfRzVRcGTx+li5vT+AkXUoKMb4oS3a0Z
+         peqQhs/oFkyFJpPRka1GfePlkzgfT5PsBzOVHwijmad4uWufXHs9Qeb7ZqhH19yELs3Z
+         dfr0GxpxE0CGwEsbxGmLF8RWsO+fHR9P9P530nQNyOGClUiHuXgRI2ioXkDx9DQeIVhm
+         +aYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jj7WfKowDTY95GUHl5uINaRFHYXKJEL5zQtSBC0Z0fg=;
+        b=JC5Bt9Djn+DooCww5LpzNMoEfIK4BgToJJ8qC0/pDESyWwcnCs3wtcXTMspv8f+qsq
+         k73TOpqHfUPFsXPBj5pp7tPsgqZ5U0/e2Dn6hPJP1d/NGp+z35tS84T5ehdvCTx9tJ3F
+         Z7ySAkx1Ziss6JfBATizqfkeQMBET1U5HZhwQ6SbnGAwycBTsQIk9nmHcIUsVvS6+KqS
+         ZUJYstGUAEMLGaVkUYyWFKM0CjXTRSZ+p9Dw3mKaOG2e7yR4nfra0hH9vYmi38AjQWF4
+         5bg4Y6aVHOiiinH6JjjXmtA9e+CUHggd/IUjaoaxL08kF/yefJG2cF5JNcPzD5apug8x
+         +hrA==
+X-Gm-Message-State: AOAM5306yN7e9f5vziIwlHrQcKbo4tDnNztZ9wpm56tt/EAUuA1ykO+L
+        crdAoXvKbOFJXj6XAmG5GvgRKsskW7H5fOoDoDQ1Yw==
+X-Google-Smtp-Source: ABdhPJwEPvR5VVknSKpSOtEVtKXJ+pYmXsvOtLreyqe7Du7/wgw7c5qRAHb2D8O8tDKNVEeAOx4jfMfNgTEhRZgAcYM=
+X-Received: by 2002:a17:90a:5405:: with SMTP id z5mr2401755pjh.13.1608777870665;
+ Wed, 23 Dec 2020 18:44:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CACycT3vVU9vg6R6UujSnSdk8cwxWPVgeJJs0JaBH_Zg4xC-epQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <20201217034356.4708-1-songmuchun@bytedance.com>
+ <20201217034356.4708-8-songmuchun@bytedance.com> <CALvZod4wT1oHir1yo1TYxU+1oa+RaZvCkuRJcLN5f80zGKoFhw@mail.gmail.com>
+In-Reply-To: <CALvZod4wT1oHir1yo1TYxU+1oa+RaZvCkuRJcLN5f80zGKoFhw@mail.gmail.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 24 Dec 2020 10:43:53 +0800
+Message-ID: <CAMZfGtXE7jcGKugDKXb7k9Ly0vmoba22sp=QpNeCR-sNMv=wQg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v5 7/7] mm: memcontrol: make the slab
+ calculation consistent
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Feng Tang <feng.tang@intel.com>, Neil Brown <neilb@suse.de>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Cgroups <cgroups@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Dec 24, 2020 at 5:21 AM Shakeel Butt <shakeelb@google.com> wrote:
+>
+> On Wed, Dec 16, 2020 at 7:46 PM Muchun Song <songmuchun@bytedance.com> wrote:
+> >
+> > Although the ratio of the slab is one, we also should read the ratio
+> > from the related memory_stats instead of hard-coding. And the local
+> > variable of size is already the value of slab_unreclaimable. So we
+> > do not need to read again.
+> >
+> > To do this we need some code like below:
+> >
+> > if (unlikely(memory_stats[i].idx == NR_SLAB_UNRECLAIMABLE_B)) {
+> > -       size = memcg_page_state(memcg, NR_SLAB_RECLAIMABLE_B) +
+> > -              memcg_page_state(memcg, NR_SLAB_UNRECLAIMABLE_B);
+> > +       size += memcg_page_state(memcg, memory_stats[i - 1].idx) *
+> > +               memory_stats[i - 1].ratio;
 
-On 2020/12/23 下午8:14, Yongji Xie wrote:
-> On Wed, Dec 23, 2020 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
->>
->> On 2020/12/22 下午10:52, Xie Yongji wrote:
->>> To support vhost-vdpa bus driver, we need a way to share the
->>> vhost-vdpa backend process's memory with the userspace VDUSE process.
->>>
->>> This patch tries to make use of the vhost iotlb message to achieve
->>> that. We will get the shm file from the iotlb message and pass it
->>> to the userspace VDUSE process.
->>>
->>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
->>> ---
->>>    Documentation/driver-api/vduse.rst |  15 +++-
->>>    drivers/vdpa/vdpa_user/vduse_dev.c | 147 ++++++++++++++++++++++++++++++++++++-
->>>    include/uapi/linux/vduse.h         |  11 +++
->>>    3 files changed, 171 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
->>> index 623f7b040ccf..48e4b1ba353f 100644
->>> --- a/Documentation/driver-api/vduse.rst
->>> +++ b/Documentation/driver-api/vduse.rst
->>> @@ -46,13 +46,26 @@ The following types of messages are provided by the VDUSE framework now:
->>>
->>>    - VDUSE_GET_CONFIG: Read from device specific configuration space
->>>
->>> +- VDUSE_UPDATE_IOTLB: Update the memory mapping in device IOTLB
->>> +
->>> +- VDUSE_INVALIDATE_IOTLB: Invalidate the memory mapping in device IOTLB
->>> +
->>>    Please see include/linux/vdpa.h for details.
->>>
->>> -In the data path, VDUSE framework implements a MMU-based on-chip IOMMU
->>> +The data path of userspace vDPA device is implemented in different ways
->>> +depending on the vdpa bus to which it is attached.
->>> +
->>> +In virtio-vdpa case, VDUSE framework implements a MMU-based on-chip IOMMU
->>>    driver which supports mapping the kernel dma buffer to a userspace iova
->>>    region dynamically. The userspace iova region can be created by passing
->>>    the userspace vDPA device fd to mmap(2).
->>>
->>> +In vhost-vdpa case, the dma buffer is reside in a userspace memory region
->>> +which will be shared to the VDUSE userspace processs via the file
->>> +descriptor in VDUSE_UPDATE_IOTLB message. And the corresponding address
->>> +mapping (IOVA of dma buffer <-> VA of the memory region) is also included
->>> +in this message.
->>> +
->>>    Besides, the eventfd mechanism is used to trigger interrupt callbacks and
->>>    receive virtqueue kicks in userspace. The following ioctls on the userspace
->>>    vDPA device fd are provided to support that:
->>> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
->>> index b974333ed4e9..d24aaacb6008 100644
->>> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
->>> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
->>> @@ -34,6 +34,7 @@
->>>
->>>    struct vduse_dev_msg {
->>>        struct vduse_dev_request req;
->>> +     struct file *iotlb_file;
->>>        struct vduse_dev_response resp;
->>>        struct list_head list;
->>>        wait_queue_head_t waitq;
->>> @@ -325,12 +326,80 @@ static int vduse_dev_set_vq_state(struct vduse_dev *dev,
->>>        return ret;
->>>    }
->>>
->>> +static int vduse_dev_update_iotlb(struct vduse_dev *dev, struct file *file,
->>> +                             u64 offset, u64 iova, u64 size, u8 perm)
->>> +{
->>> +     struct vduse_dev_msg *msg;
->>> +     int ret;
->>> +
->>> +     if (!size)
->>> +             return -EINVAL;
->>> +
->>> +     msg = vduse_dev_new_msg(dev, VDUSE_UPDATE_IOTLB);
->>> +     msg->req.size = sizeof(struct vduse_iotlb);
->>> +     msg->req.iotlb.offset = offset;
->>> +     msg->req.iotlb.iova = iova;
->>> +     msg->req.iotlb.size = size;
->>> +     msg->req.iotlb.perm = perm;
->>> +     msg->req.iotlb.fd = -1;
->>> +     msg->iotlb_file = get_file(file);
->>> +
->>> +     ret = vduse_dev_msg_sync(dev, msg);
->>
->> My feeling is that we should provide consistent API for the userspace
->> device to use.
->>
->> E.g we'd better carry the IOTLB message for both virtio/vhost drivers.
->>
->> It looks to me for virtio drivers we can still use UPDAT_IOTLB message
->> by using VDUSE file as msg->iotlb_file here.
->>
-> It's OK for me. One problem is when to transfer the UPDATE_IOTLB
-> message in virtio cases.
+Hi Shakeel,
 
+Here is the [i - 1].
 
-Instead of generating IOTLB messages for userspace.
+> >
+> > It requires a series of BUG_ONs or comments to ensure these two
+> > items are actually adjacent and in the right order. So it would
+> > probably be easier to implement this using a wrapper that has a
+> > big switch() for unit conversion.
+> >
+> > This would fix the ratio inconsistency and get rid of the order
+> > guarantee.
+> >
+>
+> The commit message is really confusing. It is explaining a situation
+> which it did not do. I don't see any benefit of mentioning BUG_ONs or
+> [i-1]s in the message. The patch makes sure that we use the right
+> ratio for slab. Can you rewrite the commit message and motivate in
+> just that regard?
 
-How about record the mappings (which is a common case for device have 
-on-chip IOMMU e.g mlx5e and vdpa simlator), then we can introduce ioctl 
-for userspace to query?
+Yeah, I need rewrite the commit message to make it more clear.
+However, here is a discussion about this. See
 
-Thanks
+    https://lore.kernel.org/patchwork/patch/1348611/
 
+Thanks.
 
 >
->>> +     vduse_dev_msg_put(msg);
->>> +     fput(file);
->>> +
->>> +     return ret;
->>> +}
->>> +
->>> +static int vduse_dev_invalidate_iotlb(struct vduse_dev *dev,
->>> +                                     u64 iova, u64 size)
->>> +{
->>> +     struct vduse_dev_msg *msg;
->>> +     int ret;
->>> +
->>> +     if (!size)
->>> +             return -EINVAL;
->>> +
->>> +     msg = vduse_dev_new_msg(dev, VDUSE_INVALIDATE_IOTLB);
->>> +     msg->req.size = sizeof(struct vduse_iotlb);
->>> +     msg->req.iotlb.iova = iova;
->>> +     msg->req.iotlb.size = size;
->>> +
->>> +     ret = vduse_dev_msg_sync(dev, msg);
->>> +     vduse_dev_msg_put(msg);
->>> +
->>> +     return ret;
->>> +}
->>> +
->>> +static unsigned int perm_to_file_flags(u8 perm)
->>> +{
->>> +     unsigned int flags = 0;
->>> +
->>> +     switch (perm) {
->>> +     case VHOST_ACCESS_WO:
->>> +             flags |= O_WRONLY;
->>> +             break;
->>> +     case VHOST_ACCESS_RO:
->>> +             flags |= O_RDONLY;
->>> +             break;
->>> +     case VHOST_ACCESS_RW:
->>> +             flags |= O_RDWR;
->>> +             break;
->>> +     default:
->>> +             WARN(1, "invalidate vhost IOTLB permission\n");
->>> +             break;
->>> +     }
->>> +
->>> +     return flags;
->>> +}
->>> +
->>>    static ssize_t vduse_dev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>    {
->>>        struct file *file = iocb->ki_filp;
->>>        struct vduse_dev *dev = file->private_data;
->>>        struct vduse_dev_msg *msg;
->>> -     int size = sizeof(struct vduse_dev_request);
->>> +     unsigned int flags;
->>> +     int fd, size = sizeof(struct vduse_dev_request);
->>>        ssize_t ret = 0;
->>>
->>>        if (iov_iter_count(to) < size)
->>> @@ -349,6 +418,18 @@ static ssize_t vduse_dev_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>                if (ret)
->>>                        return ret;
->>>        }
->>> +
->>> +     if (msg->req.type == VDUSE_UPDATE_IOTLB && msg->req.iotlb.fd == -1) {
->>> +             flags = perm_to_file_flags(msg->req.iotlb.perm);
->>> +             fd = get_unused_fd_flags(flags);
->>> +             if (fd < 0) {
->>> +                     vduse_dev_enqueue_msg(dev, msg, &dev->send_list);
->>> +                     return fd;
->>> +             }
->>> +             fd_install(fd, get_file(msg->iotlb_file));
->>> +             msg->req.iotlb.fd = fd;
->>> +     }
->>> +
->>>        ret = copy_to_iter(&msg->req, size, to);
->>>        if (ret != size) {
->>>                vduse_dev_enqueue_msg(dev, msg, &dev->send_list);
->>> @@ -565,6 +646,69 @@ static void vduse_vdpa_set_config(struct vdpa_device *vdpa, unsigned int offset,
->>>        vduse_dev_set_config(dev, offset, buf, len);
->>>    }
->>>
->>> +static void vduse_vdpa_invalidate_iotlb(struct vduse_dev *dev,
->>> +                                     struct vhost_iotlb_msg *msg)
->>> +{
->>> +     vduse_dev_invalidate_iotlb(dev, msg->iova, msg->size);
->>> +}
->>> +
->>> +static int vduse_vdpa_update_iotlb(struct vduse_dev *dev,
->>> +                                     struct vhost_iotlb_msg *msg)
->>> +{
->>> +     u64 uaddr = msg->uaddr;
->>> +     u64 iova = msg->iova;
->>> +     u64 size = msg->size;
->>> +     u64 offset;
->>> +     struct vm_area_struct *vma;
->>> +     int ret;
->>> +
->>> +     while (uaddr < msg->uaddr + msg->size) {
->>> +             vma = find_vma(current->mm, uaddr);
->>> +             ret = -EINVAL;
->>> +             if (!vma)
->>> +                     goto err;
->>> +
->>> +             size = min(msg->size, vma->vm_end - uaddr);
->>> +             offset = (vma->vm_pgoff << PAGE_SHIFT) + uaddr - vma->vm_start;
->>> +             if (vma->vm_file && (vma->vm_flags & VM_SHARED)) {
->>> +                     ret = vduse_dev_update_iotlb(dev, vma->vm_file, offset,
->>> +                                                     iova, size, msg->perm);
->>> +                     if (ret)
->>> +                             goto err;
->>
->> My understanding is that vma is something that should not be known by a
->> device. So I suggest to move the above processing to vhost-vdpa.c.
->>
-> Will do it.
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+> >  mm/memcontrol.c | 105 +++++++++++++++++++++++++++++++++++---------------------
+> >  1 file changed, 66 insertions(+), 39 deletions(-)
+> >
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index a40797a27f87..eec44918d373 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -1511,49 +1511,71 @@ static bool mem_cgroup_wait_acct_move(struct mem_cgroup *memcg)
+> >
+> >  struct memory_stat {
+> >         const char *name;
+> > -       unsigned int ratio;
+> >         unsigned int idx;
+> >  };
+> >
+> >  static const struct memory_stat memory_stats[] = {
+> > -       { "anon", PAGE_SIZE, NR_ANON_MAPPED },
+> > -       { "file", PAGE_SIZE, NR_FILE_PAGES },
+> > -       { "kernel_stack", 1024, NR_KERNEL_STACK_KB },
+> > -       { "pagetables", PAGE_SIZE, NR_PAGETABLE },
+> > -       { "percpu", 1, MEMCG_PERCPU_B },
+> > -       { "sock", PAGE_SIZE, MEMCG_SOCK },
+> > -       { "shmem", PAGE_SIZE, NR_SHMEM },
+> > -       { "file_mapped", PAGE_SIZE, NR_FILE_MAPPED },
+> > -       { "file_dirty", PAGE_SIZE, NR_FILE_DIRTY },
+> > -       { "file_writeback", PAGE_SIZE, NR_WRITEBACK },
+> > +       { "anon",                       NR_ANON_MAPPED                  },
+> > +       { "file",                       NR_FILE_PAGES                   },
+> > +       { "kernel_stack",               NR_KERNEL_STACK_KB              },
+> > +       { "pagetables",                 NR_PAGETABLE                    },
+> > +       { "percpu",                     MEMCG_PERCPU_B                  },
+> > +       { "sock",                       MEMCG_SOCK                      },
+> > +       { "shmem",                      NR_SHMEM                        },
+> > +       { "file_mapped",                NR_FILE_MAPPED                  },
+> > +       { "file_dirty",                 NR_FILE_DIRTY                   },
+> > +       { "file_writeback",             NR_WRITEBACK                    },
+> >  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> > -       { "anon_thp", PAGE_SIZE, NR_ANON_THPS },
+> > -       { "file_thp", PAGE_SIZE, NR_FILE_THPS },
+> > -       { "shmem_thp", PAGE_SIZE, NR_SHMEM_THPS },
+> > +       { "anon_thp",                   NR_ANON_THPS                    },
+> > +       { "file_thp",                   NR_FILE_THPS                    },
+> > +       { "shmem_thp",                  NR_SHMEM_THPS                   },
+> >  #endif
+> > -       { "inactive_anon", PAGE_SIZE, NR_INACTIVE_ANON },
+> > -       { "active_anon", PAGE_SIZE, NR_ACTIVE_ANON },
+> > -       { "inactive_file", PAGE_SIZE, NR_INACTIVE_FILE },
+> > -       { "active_file", PAGE_SIZE, NR_ACTIVE_FILE },
+> > -       { "unevictable", PAGE_SIZE, NR_UNEVICTABLE },
+> > -
+> > -       /*
+> > -        * Note: The slab_reclaimable and slab_unreclaimable must be
+> > -        * together and slab_reclaimable must be in front.
+> > -        */
+> > -       { "slab_reclaimable", 1, NR_SLAB_RECLAIMABLE_B },
+> > -       { "slab_unreclaimable", 1, NR_SLAB_UNRECLAIMABLE_B },
+> > +       { "inactive_anon",              NR_INACTIVE_ANON                },
+> > +       { "active_anon",                NR_ACTIVE_ANON                  },
+> > +       { "inactive_file",              NR_INACTIVE_FILE                },
+> > +       { "active_file",                NR_ACTIVE_FILE                  },
+> > +       { "unevictable",                NR_UNEVICTABLE                  },
+> > +       { "slab_reclaimable",           NR_SLAB_RECLAIMABLE_B           },
+> > +       { "slab_unreclaimable",         NR_SLAB_UNRECLAIMABLE_B         },
+> >
+> >         /* The memory events */
+> > -       { "workingset_refault_anon", 1, WORKINGSET_REFAULT_ANON },
+> > -       { "workingset_refault_file", 1, WORKINGSET_REFAULT_FILE },
+> > -       { "workingset_activate_anon", 1, WORKINGSET_ACTIVATE_ANON },
+> > -       { "workingset_activate_file", 1, WORKINGSET_ACTIVATE_FILE },
+> > -       { "workingset_restore_anon", 1, WORKINGSET_RESTORE_ANON },
+> > -       { "workingset_restore_file", 1, WORKINGSET_RESTORE_FILE },
+> > -       { "workingset_nodereclaim", 1, WORKINGSET_NODERECLAIM },
+> > +       { "workingset_refault_anon",    WORKINGSET_REFAULT_ANON         },
+> > +       { "workingset_refault_file",    WORKINGSET_REFAULT_FILE         },
+> > +       { "workingset_activate_anon",   WORKINGSET_ACTIVATE_ANON        },
+> > +       { "workingset_activate_file",   WORKINGSET_ACTIVATE_FILE        },
+> > +       { "workingset_restore_anon",    WORKINGSET_RESTORE_ANON         },
+> > +       { "workingset_restore_file",    WORKINGSET_RESTORE_FILE         },
+> > +       { "workingset_nodereclaim",     WORKINGSET_NODERECLAIM          },
+> >  };
+> >
+> > +/* Translate stat items to the correct unit for memory.stat output */
+> > +static int memcg_page_state_unit(int item)
+> > +{
+> > +       switch (item) {
+> > +       case MEMCG_PERCPU_B:
+> > +       case NR_SLAB_RECLAIMABLE_B:
+> > +       case NR_SLAB_UNRECLAIMABLE_B:
+> > +       case WORKINGSET_REFAULT_ANON:
+> > +       case WORKINGSET_REFAULT_FILE:
+> > +       case WORKINGSET_ACTIVATE_ANON:
+> > +       case WORKINGSET_ACTIVATE_FILE:
+> > +       case WORKINGSET_RESTORE_ANON:
+> > +       case WORKINGSET_RESTORE_FILE:
+> > +       case WORKINGSET_NODERECLAIM:
+> > +               return 1;
+> > +       case NR_KERNEL_STACK_KB:
+> > +               return SZ_1K;
+> > +       default:
+> > +               return PAGE_SIZE;
+> > +       }
+> > +}
+> > +
+> > +static inline unsigned long memcg_page_state_output(struct mem_cgroup *memcg,
+> > +                                                   int item)
+> > +{
+> > +       return memcg_page_state(memcg, item) * memcg_page_state_unit(item);
+> > +}
+> > +
+> >  static char *memory_stat_format(struct mem_cgroup *memcg)
+> >  {
+> >         struct seq_buf s;
+> > @@ -1577,13 +1599,12 @@ static char *memory_stat_format(struct mem_cgroup *memcg)
+> >         for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
+> >                 u64 size;
+> >
+> > -               size = memcg_page_state(memcg, memory_stats[i].idx);
+> > -               size *= memory_stats[i].ratio;
+> > +               size = memcg_page_state_output(memcg, memory_stats[i].idx);
+> >                 seq_buf_printf(&s, "%s %llu\n", memory_stats[i].name, size);
+> >
+> >                 if (unlikely(memory_stats[i].idx == NR_SLAB_UNRECLAIMABLE_B)) {
+> > -                       size = memcg_page_state(memcg, NR_SLAB_RECLAIMABLE_B) +
+> > -                              memcg_page_state(memcg, NR_SLAB_UNRECLAIMABLE_B);
+> > +                       size += memcg_page_state_output(memcg,
+> > +                                                       NR_SLAB_RECLAIMABLE_B);
+> >                         seq_buf_printf(&s, "slab %llu\n", size);
+> >                 }
+> >         }
+> > @@ -6377,6 +6398,12 @@ static int memory_stat_show(struct seq_file *m, void *v)
+> >  }
+> >
+> >  #ifdef CONFIG_NUMA
+> > +static inline unsigned long lruvec_page_state_output(struct lruvec *lruvec,
+> > +                                                    int item)
+> > +{
+> > +       return lruvec_page_state(lruvec, item) * memcg_page_state_unit(item);
+> > +}
+> > +
 >
-> Thanks,
-> Yongji
+> No need to have lruvec_page_state_output() separately as there is just
+> one user. Just inline it.
 >
+> >  static int memory_numa_stat_show(struct seq_file *m, void *v)
+> >  {
+> >         int i;
+> > @@ -6394,8 +6421,8 @@ static int memory_numa_stat_show(struct seq_file *m, void *v)
+> >                         struct lruvec *lruvec;
+> >
+> >                         lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(nid));
+> > -                       size = lruvec_page_state(lruvec, memory_stats[i].idx);
+> > -                       size *= memory_stats[i].ratio;
+> > +                       size = lruvec_page_state_output(lruvec,
+> > +                                                       memory_stats[i].idx);
+> >                         seq_printf(m, " N%d=%llu", nid, size);
+> >                 }
+> >                 seq_putc(m, '\n');
+> > --
+> > 2.11.0
+> >
 
+
+
+-- 
+Yours,
+Muchun
