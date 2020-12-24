@@ -2,206 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A4C2E23F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 04:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 044712E2437
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 05:51:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbgLXDNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 22:13:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38872 "EHLO
+        id S1726329AbgLXEun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Dec 2020 23:50:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728631AbgLXDNE (ORCPT
+        with ESMTP id S1725933AbgLXEum (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 22:13:04 -0500
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46843C0617A7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 19:12:24 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id w6so557196pfu.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 19:12:24 -0800 (PST)
+        Wed, 23 Dec 2020 23:50:42 -0500
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA95DC061794
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 20:50:02 -0800 (PST)
+Received: by mail-pl1-x649.google.com with SMTP id p19so651202plr.22
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 20:50:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EbypRiS+9PLfGMqxSxXC547WEWfIQ4iF1EiMz2Usxn0=;
-        b=1+669ZjdqM7iT1NhCq2oNw//9yauIL84PQhZQMQqRRlPcoM32NuiQmvi4Q/K1xpVrH
-         swN8EnBuUMcBmrUjQ42Ci5mX9KvModAtHnhBX6tOXTiNds0Wh8vhZaRN/s3yf8RPXLeB
-         cyfHedBxluRyZD2OlYcsypi+2UUNUsW8eHFNBLhgpNnBSAzV+RvFBZ2udeKP6zJyHNqL
-         1r7c4lmWwPq+QFQPrNTQy9otiYfBm/QyTTyK8qhWtbJD811CFgFjJ1SsPilhd/w5ghef
-         SUVAD+Xi0vm4/A49Ou2o6GHswa/sc40RUXwIqtVD9Pu8X6wDxO6ODMAg0ifDXU8yTRq3
-         cR8Q==
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=Ntto0REEo/mIE2Mt+Mq78tbyDspwuPQ1ayD5dtmBR7g=;
+        b=NJGvN7ALxQMN2zM8MqG58sWguw2zAaFtG8HsCOWqUYLHNtLwLj5Q4hIydcVeMKrHVz
+         0nOy8pQtErV3Ue5K0G04Me7qAyuwAWjbJsafmOYBjLU7bNzCM6gK0yvBzN+gZ5ilh4AP
+         EO0u5j1JWp/q7/tVwR/O6c+rz46houel/LQp+X714H7LYtW487EUKis1rQ0tBYKjoLX+
+         9DmQJX9uPCYbcd7aJPu+yzn/AjWHiUB5G0HDQBs8AbY7lyUvpuFUutDCy+QKC03HPefG
+         7dPV5cmdTunmeauKO82xSPH+qMBDTfOOGNWsuGH+eL/4gWi1vT15/7+mY7vpwbfPgk7+
+         mZKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EbypRiS+9PLfGMqxSxXC547WEWfIQ4iF1EiMz2Usxn0=;
-        b=ONhmj9b5JdxOpOJyBVT/tPUKvq6ekdD47nXt1NFFk46NYiCG1ZCXug8NzNTsyxewmB
-         0bBpNZSBk2zzM5EA6g5sUiQboAhuIggdawf83KHRYPp1BPWEyfQAsTpl7N3ro6mERvCq
-         OcPbbP2OKe6OGAd++AG1QrdSA3wC1xoi/7Cgex/48BbKIEUPHFpT4eb0oqPuAFJVXXpx
-         55UIa0E1iIiUUz2FDApxKY3aVbZ79A62BpJwZrVXeYjwWMdtORcGOAocf70whsDXSZUZ
-         +fZboj4kTvhWEkyXWj+Hy9etcQ3zp9ZYaGGoPCymh7wR9JG5pC53IjTFLU6KfUOf6CaT
-         tE8w==
-X-Gm-Message-State: AOAM533MshRekNrasEX4CZYJ0YppOqi0ndWuZyZXmiEKTseGmXvZu2To
-        KX+rmR0vDJRUi1sjfsHsKW4u6QizldoA6vHRmNxPvw==
-X-Google-Smtp-Source: ABdhPJx9C3d/DmC7+EMAdHwkpdH81cpBPXMiiZ/K4MGw43gwXske/acVfm3oRuv2s/okVoIxwisyKYUQGcOvtgboyA0=
-X-Received: by 2002:aa7:8701:0:b029:19e:561:d476 with SMTP id
- b1-20020aa787010000b029019e0561d476mr6837324pfo.2.1608779543625; Wed, 23 Dec
- 2020 19:12:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20201224001635.5H0RjpkF_%akpm@linux-foundation.org> <a7b46040-2980-c2f4-45ea-1fa38f36d351@infradead.org>
-In-Reply-To: <a7b46040-2980-c2f4-45ea-1fa38f36d351@infradead.org>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 24 Dec 2020 11:11:47 +0800
-Message-ID: <CAMZfGtVvoQA00zENRzURHTomVgNvNYxXiX2rUkimYfOFt26P8Q@mail.gmail.com>
-Subject: Re: [External] Re: mmotm 2020-12-23-16-15 uploaded (mm/vmstat.c)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        mhocko@suse.cz, mm-commits@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=Ntto0REEo/mIE2Mt+Mq78tbyDspwuPQ1ayD5dtmBR7g=;
+        b=ZzDyTfOhxI1GmxgNmpxGdeGNz7tZ8fBiaIAYfQEcA+aUh95EEv4wG4Qe2gNPy5ufaA
+         1hv91orprZoQewHhmPBvvily8uDgh2Zenvzw2u9Gh76gabFiVUGS9CGyTGGD6M8Y+jJt
+         avOrZq9HS6niq1UI2PMhyjnpJZwS/0c7dTAtCwoqso+uG1G9RtbpVz3ZGXhmFfRbgLVN
+         E+Q0YZtWfs1jSua0wBLiuycmIudyV0pNUCpiUvLBE9ppXmRTcipTSSiLW7QTxKIvBD2/
+         ZOX1fBsqTxXb0xrYJ3fuBFXxr+qjfghdyYc2z9avHRY5m7eZKh3UNweSOUWQxHRLnA1y
+         8RxA==
+X-Gm-Message-State: AOAM530F41mx8FhhHuYBgeYNnQFCfdU7PML73f29oDs45s5rMf/nplW5
+        Dcxfwoy000reGfWDS00j09bSP7TOhIs=
+X-Google-Smtp-Source: ABdhPJw/t/hmdzMjOOcuRIc99sMUz7ICBakutS45TUV+RJgvRnbrXaCpowX2o/ccjMy+RdCs6/hDp3471PY=
+Sender: "satyat via sendgmr" <satyat@satyaprateek.c.googlers.com>
+X-Received: from satyaprateek.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
+ (user=satyat job=sendgmr) by 2002:a17:90a:1706:: with SMTP id
+ z6mr648286pjd.0.1608785401864; Wed, 23 Dec 2020 20:50:01 -0800 (PST)
+Date:   Thu, 24 Dec 2020 04:49:54 +0000
+Message-Id: <20201224044954.1349459-1-satyat@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.29.2.729.g45daf8777d-goog
+Subject: [PATCH] fs: Fix freeze_bdev()/thaw_bdev() accounting of bd_fsfreeze_sb
+From:   Satya Tangirala <satyat@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Satya Tangirala <satyat@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 24, 2020 at 10:57 AM Randy Dunlap <rdunlap@infradead.org> wrote=
-:
->
-> On 12/23/20 4:16 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2020-12-23-16-15 has been uploaded to
-> >
-> >    https://www.ozlabs.org/~akpm/mmotm/
-> >
-> > mmotm-readme.txt says
-> >
-> > README for mm-of-the-moment:
-> >
-> > https://www.ozlabs.org/~akpm/mmotm/
-> >
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> >
-> > You will need quilt to apply these patches to the latest Linus release =
-(5.x
-> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated=
- in
-> > https://ozlabs.org/~akpm/mmotm/series
-> >
-> > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss=
-,
-> > followed by the base kernel version against which this patch series is =
-to
-> > be applied.
->
-> on i386 or UML on i386 or x86_64:
-> (and probably on x86_64, but my builds haven't got there yet)
->
-> when CONFIG_TRANSPARENT_HUGEPAGE is not set/enabled:
+freeze/thaw_bdev() currently use bdev->bd_fsfreeze_count to infer
+whether or not bdev->bd_fsfreeze_sb is valid (it's valid iff
+bd_fsfreeze_count is non-zero). thaw_bdev() doesn't nullify
+bd_fsfreeze_sb.
 
-Very thanks for your information. I will fix this in the next version. Than=
-ks.
+But this means a freeze_bdev() call followed by a thaw_bdev() call can
+leave bd_fsfreeze_sb with a non-null value, while bd_fsfreeze_count is
+zero. If freeze_bdev() is called again, and this time
+get_active_super() returns NULL (e.g. because the FS is unmounted),
+we'll end up with bd_fsfreeze_count > 0, but bd_fsfreeze_sb is
+*untouched* - it stays the same (now garbage) value. A subsequent
+thaw_bdev() will decide that the bd_fsfreeze_sb value is legitimate
+(since bd_fsfreeze_count > 0), and attempt to use it.
 
->
-> ../mm/vmstat.c: In function =E2=80=98zoneinfo_show_print=E2=80=99:
-> ./../include/linux/compiler_types.h:320:38: error: call to =E2=80=98__com=
-piletime_assert_269=E2=80=99 declared with attribute error: BUILD_BUG faile=
-d
->   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->                                       ^
-> ./../include/linux/compiler_types.h:301:4: note: in definition of macro =
-=E2=80=98__compiletime_assert=E2=80=99
->     prefix ## suffix();    \
->     ^~~~~~
-> ./../include/linux/compiler_types.h:320:2: note: in expansion of macro =
-=E2=80=98_compiletime_assert=E2=80=99
->   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->   ^~~~~~~~~~~~~~~~~~~
-> ../include/linux/build_bug.h:39:37: note: in expansion of macro =E2=80=98=
-compiletime_assert=E2=80=99
->  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->                                      ^~~~~~~~~~~~~~~~~~
-> ../include/linux/build_bug.h:59:21: note: in expansion of macro =E2=80=98=
-BUILD_BUG_ON_MSG=E2=80=99
->  #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
->                      ^~~~~~~~~~~~~~~~
-> ../include/linux/huge_mm.h:325:28: note: in expansion of macro =E2=80=98B=
-UILD_BUG=E2=80=99
->  #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
->                             ^~~~~~~~~
-> ../include/linux/huge_mm.h:106:26: note: in expansion of macro =E2=80=98H=
-PAGE_PMD_SHIFT=E2=80=99
->  #define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
->                           ^~~~~~~~~~~~~~~
-> ../include/linux/huge_mm.h:107:26: note: in expansion of macro =E2=80=98H=
-PAGE_PMD_ORDER=E2=80=99
->  #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
->                           ^~~~~~~~~~~~~~~
-> ../mm/vmstat.c:1630:14: note: in expansion of macro =E2=80=98HPAGE_PMD_NR=
-=E2=80=99
->      pages /=3D HPAGE_PMD_NR;
->               ^~~~~~~~~~~~
-> ../mm/vmstat.c: In function =E2=80=98vmstat_start=E2=80=99:
-> ./../include/linux/compiler_types.h:320:38: error: call to =E2=80=98__com=
-piletime_assert_271=E2=80=99 declared with attribute error: BUILD_BUG faile=
-d
->   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->                                       ^
-> ./../include/linux/compiler_types.h:301:4: note: in definition of macro =
-=E2=80=98__compiletime_assert=E2=80=99
->     prefix ## suffix();    \
->     ^~~~~~
-> ./../include/linux/compiler_types.h:320:2: note: in expansion of macro =
-=E2=80=98_compiletime_assert=E2=80=99
->   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->   ^~~~~~~~~~~~~~~~~~~
-> ../include/linux/build_bug.h:39:37: note: in expansion of macro =E2=80=98=
-compiletime_assert=E2=80=99
->  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->                                      ^~~~~~~~~~~~~~~~~~
-> ../include/linux/build_bug.h:59:21: note: in expansion of macro =E2=80=98=
-BUILD_BUG_ON_MSG=E2=80=99
->  #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
->                      ^~~~~~~~~~~~~~~~
-> ../include/linux/huge_mm.h:325:28: note: in expansion of macro =E2=80=98B=
-UILD_BUG=E2=80=99
->  #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
->                             ^~~~~~~~~
-> ../include/linux/huge_mm.h:106:26: note: in expansion of macro =E2=80=98H=
-PAGE_PMD_SHIFT=E2=80=99
->  #define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
->                           ^~~~~~~~~~~~~~~
-> ../include/linux/huge_mm.h:107:26: note: in expansion of macro =E2=80=98H=
-PAGE_PMD_ORDER=E2=80=99
->  #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
->                           ^~~~~~~~~~~~~~~
-> ../mm/vmstat.c:1755:12: note: in expansion of macro =E2=80=98HPAGE_PMD_NR=
-=E2=80=99
->     v[i] /=3D HPAGE_PMD_NR;
->             ^~~~~~~~~~~~
->
-> due to <linux/huge_mm.h>:
->
-> #else /* CONFIG_TRANSPARENT_HUGEPAGE */
-> #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
-> #define HPAGE_PMD_MASK ({ BUILD_BUG(); 0; })
-> #define HPAGE_PMD_SIZE ({ BUILD_BUG(); 0; })
->
-> #define HPAGE_PUD_SHIFT ({ BUILD_BUG(); 0; })
-> #define HPAGE_PUD_MASK ({ BUILD_BUG(); 0; })
-> #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
->
->
->
-> >> mm-memcontrol-convert-nr_anon_thps-account-to-pages.patch
->
-> --
-> ~Randy
->
+Fix this by always setting bd_fsfreeze_sb to NULL when
+bd_fsfreeze_count is successfully decremented to 0 in thaw_sb().
+Alternatively, we could set bd_fsfreeze_sb to whatever
+get_active_super() returns in freeze_bdev() whenever bd_fsfreeze_count
+is successfully incremented to 1 from 0 (which can be achieved cleanly
+by moving the line currently setting bd_fsfreeze_sb to immediately
+after the "sync:" label, but it might be a little too subtle/easily
+overlooked in future).
 
+This fixes the currently panicking xfstests generic/085.
 
---=20
-Yours,
-Muchun
+Fixes: 040f04bd2e82 ("fs: simplify freeze_bdev/thaw_bdev")
+Signed-off-by: Satya Tangirala <satyat@google.com>
+---
+ fs/block_dev.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 9e56ee1f2652..12a811a9ae4b 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -606,6 +606,8 @@ int thaw_bdev(struct block_device *bdev)
+ 		error = thaw_super(sb);
+ 	if (error)
+ 		bdev->bd_fsfreeze_count++;
++	else
++		bdev->bd_fsfreeze_sb = NULL;
+ out:
+ 	mutex_unlock(&bdev->bd_fsfreeze_mutex);
+ 	return error;
+-- 
+2.29.2.729.g45daf8777d-goog
+
