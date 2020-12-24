@@ -2,205 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5CDD2E22EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 01:17:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D982E236F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 02:40:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbgLXARR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Dec 2020 19:17:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727029AbgLXARR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Dec 2020 19:17:17 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DA1BF22512;
-        Thu, 24 Dec 2020 00:16:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1608768996;
-        bh=ujnXSHFiFWsswvxUdkNUkr2aQZ4ufrFv9vhP1L0BSrc=;
-        h=Date:From:To:Subject:From;
-        b=SzOciRoHTu7kEPttMi0GrZ6KYTU4JVO5XCFaju2LZHfo+Okn3IL2hEQ7iZAGDz4F3
-         UcjxVA8F1EmbWbECOEdmg+KI9GbirLBiA0R80ATWCb3g/gQjlAxQpyKI0ZHR+2CEiO
-         DSKcLSkKTLxCYWXLC3mcui/ODl5E7cAsklYXp+s4=
-Date:   Wed, 23 Dec 2020 16:16:35 -0800
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2020-12-23-16-15 uploaded
-Message-ID: <20201224001635.5H0RjpkF_%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1728132AbgLXBjV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Dec 2020 20:39:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52668 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727057AbgLXBjU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Dec 2020 20:39:20 -0500
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B6EC061794;
+        Wed, 23 Dec 2020 17:38:40 -0800 (PST)
+Received: by mail-qt1-x832.google.com with SMTP id c14so722516qtn.0;
+        Wed, 23 Dec 2020 17:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4vnkUc3HmN35Oa7RstxVicTeVMJaPv8+xQ6Dlfwsdr4=;
+        b=CH7HcDBCXBsxGzoovkps8HGa6Bq9BCVjlCXDh7jg1ThLsHI22KCa7Zt+kiFIHfBPD8
+         MOEuBGp4jFAb2OfGHtJaw2tNZKevBUP0LRM4FPQHq/MuRp0lpZObpdsBnjxj1YY+3cR9
+         1sUw6jJOjUIZQA7NH1MMrj/ApO6HRb6ZHpfRgjPdTDOCLO/7+9vDATvJFE7PCQMNAL7n
+         4NSA1JkYyd5NJ5jQC4cc1TRX/ofcG7r2z9d//knB5DH5gzqTtJf+EldpVQw+oSyb79Dh
+         iz23GdD8v/8lBJvAxkCLiu22idQxcq7W/cxvylTgc2HGExjHke1bNXb26ysxmehLT5+C
+         tqIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4vnkUc3HmN35Oa7RstxVicTeVMJaPv8+xQ6Dlfwsdr4=;
+        b=W8EHX45L3RjAZP/XSLY6nTGQ7lRQQAdimgnT+qC+Sqfi9JZfVu5OhD9OTegCm5Uh9+
+         fhv5aT+XaFUEfmMV1r79Odr2VJqIgABdV3vnABLyB7XlKyLGMwH3VzaTClQw3FCKlErX
+         WojEytcKxnzGqumB4m9EGQklMPWUTOvInmPrRRxmX4PNdcTVpf8Hj2ZSfB/bRh/AOyfm
+         9pPewXz1vS1+GZx/hrxDag+Zd63sl82DWduC29XC5Pew8Fgu2nwGqafb4DX8RILL6rP8
+         t/ywyWix9v+Cjvt6NwjUyDa53El1KxeKmOGqByv1iuYJRDgVecqbzC09snfKoAUjxIGC
+         RWjQ==
+X-Gm-Message-State: AOAM5329xHruJG5uI8qUzVcbxwOwCILZE9lVhfwW9/KYORfROweiTZ62
+        znXRbg9g1S+aseRjEz1adpYsE+ox73NXF9JQFsk=
+X-Google-Smtp-Source: ABdhPJzCQ78+XVyv+ltmIInuA6BPrsxX9lDnuwthwioCVBR05xRu1Jc3Df1mDouqoYg1tl5nZNKZnZfYAhP7NmBKKlM=
+X-Received: by 2002:ac8:4c99:: with SMTP id j25mr28070469qtv.390.1608773919781;
+ Wed, 23 Dec 2020 17:38:39 -0800 (PST)
+MIME-Version: 1.0
+References: <1608694025-121050-1-git-send-email-yejune.deng@gmail.com>
+ <20201223103623.mxjsmitdmqsx6ftd@steredhat> <3c013151-37de-1ef0-e989-9f871665d650@gmail.com>
+In-Reply-To: <3c013151-37de-1ef0-e989-9f871665d650@gmail.com>
+From:   Yejune Deng <yejune.deng@gmail.com>
+Date:   Thu, 24 Dec 2020 09:38:26 +0800
+Message-ID: <CABWKuGXfBxeQv7HpVz9J97x0deoSNxUaVRxCToX0C_FTSs=1QQ@mail.gmail.com>
+Subject: Re: [PATCH] io_uring: remove io_remove_personalities()
+To:     Pavel Begunkov <asml.silence@gmail.com>, sgarzare@redhat.com
+Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2020-12-23-16-15 has been uploaded to
+OK=EF=BC=8CI will adopt it and resubmit.
 
-   https://www.ozlabs.org/~akpm/mmotm/
-
-mmotm-readme.txt says
-
-README for mm-of-the-moment:
-
-https://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-https://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-	https://github.com/hnaz/linux-mm
-
-The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.10:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-slub-call-account_slab_page-after-slab-page-initialization.patch
-* mm-memcg-slab-pre-allocate-obj_cgroups-for-slab-caches-with-slab_account.patch
-* lib-zlib-fix-inflating-zlib-streams-on-s390.patch
-* selftests-vm-fix-building-protection-keys-test.patch
-* mm-hugetlb-fix-deadlock-in-hugetlb_cow-error-path.patch
-* revert-kbuild-avoid-static_assert-for-genksyms.patch
-* zlib-move-export_symbol-and-module_license-out-of-dfltcc_symsc.patch
-* kdev_t-always-inline-major-minor-helper-functions.patch
-* mm-memmap-defer-init-dosnt-work-as-expected.patch
-* checkpatch-prefer-strscpy-to-strlcpy.patch
-* mm-add-prototype-for-__add_to_page_cache_locked.patch
-* mm-mremap-fix-extent-calculation.patch
-* mm-generalise-cow-smc-tlb-flushing-race-comment.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-* ramfs-support-o_tmpfile.patch
-* kernel-watchdog-flush-all-printk-nmi-buffers-when-hardlockup-detected.patch
-  mm.patch
-* mm-tracing-record-slab-name-for-kmem_cache_free.patch
-* mm-msync-exit-early-when-the-flags-is-an-ms_async-and-start-vm_start.patch
-* mm-swap-dont-setpageworkingset-unconditionally-during-swapin.patch
-* mm-memcontrol-fix-nr_anon_thps-accounting-in-charge-moving.patch
-* mm-memcontrol-convert-nr_anon_thps-account-to-pages.patch
-* mm-memcontrol-convert-nr_file_thps-account-to-pages.patch
-* mm-memcontrol-convert-nr_shmem_thps-account-to-pages.patch
-* mm-memcontrol-convert-nr_shmem_pmdmapped-account-to-pages.patch
-* mm-memcontrol-convert-nr_file_pmdmapped-account-to-pages.patch
-* mm-memcontrol-make-the-slab-calculation-consistent.patch
-* mm-memcontrol-optimize-per-lruvec-stats-counter-memory-usage.patch
-* mm-memcontrol-optimize-per-lruvec-stats-counter-memory-usage-checkpatch-fixes.patch
-* mm-memcg-revise-the-using-condition-of-lock_page_lruvec-function-series.patch
-* mm-memcg-remove-rcu-locking-for-lock_page_lruvec-function-series.patch
-* mm-mmap-remove-unnecessary-local-variable.patch
-* mm-mmap-replace-if-cond-bug-with-bug_on.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* mm-page_reporting-use-list_entry_is_head-in-page_reporting_cycle.patch
-* mm-huge_memoryc-update-tlb-entry-if-pmd-is-changed.patch
-* mips-do-not-call-flush_tlb_all-when-setting-pmd-entry.patch
-* mm-vmscan-__isolate_lru_page_prepare-clean-up.patch
-* mm-compaction-remove-rcu_read_lock-during-page-compaction.patch
-* mm-memblock-enforce-overlap-of-memorymemblock-and-memoryreserved.patch
-* mm-fix-initialization-of-struct-page-for-holes-in-memory-layout.patch
-* mm-fix-initialization-of-struct-page-for-holes-in-memory-layout-checkpatch-fixes.patch
-* mm-hugetlb-change-hugetlb_reserve_pages-to-type-bool.patch
-* hugetlbfs-remove-special-hugetlbfs_set_page_dirty.patch
-* mm-make-pagecache-tagged-lookups-return-only-head-pages.patch
-* mm-shmem-use-pagevec_lookup-in-shmem_unlock_mapping.patch
-* mm-swap-optimise-get_shadow_from_swap_cache.patch
-* mm-add-fgp_entry.patch
-* mm-filemap-rename-find_get_entry-to-mapping_get_entry.patch
-* mm-filemap-add-helper-for-finding-pages.patch
-* mm-filemap-add-helper-for-finding-pages-fix.patch
-* mm-filemap-add-mapping_seek_hole_data.patch
-* mm-filemap-add-mapping_seek_hole_data-fix.patch
-* iomap-use-mapping_seek_hole_data.patch
-* mm-add-and-use-find_lock_entries.patch
-* mm-add-and-use-find_lock_entries-fix.patch
-* mm-add-an-end-parameter-to-find_get_entries.patch
-* mm-add-an-end-parameter-to-pagevec_lookup_entries.patch
-* mm-remove-nr_entries-parameter-from-pagevec_lookup_entries.patch
-* mm-pass-pvec-directly-to-find_get_entries.patch
-* mm-remove-pagevec_lookup_entries.patch
-* mmthpshmem-limit-shmem-thp-alloc-gfp_mask.patch
-* mmthpshm-limit-gfp-mask-to-no-more-than-specified.patch
-* mmthpshmem-make-khugepaged-obey-tmpfs-mount-flags.patch
-* mm-cma-allocate-cma-areas-bottom-up.patch
-* mm-cma-allocate-cma-areas-bottom-up-fix.patch
-* mm-cma-allocate-cma-areas-bottom-up-fix-2.patch
-* memblock-do-not-start-bottom-up-allocations-with-kernel_end.patch
-* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings.patch
-* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings-fix.patch
-* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings-fix-2.patch
-* mm-zswap-clean-up-confusing-comment.patch
-* mm-remove-arch_remap-and-mm-arch-hooksh.patch
-* mm-add-kernel-electric-fence-infrastructure.patch
-* mm-add-kernel-electric-fence-infrastructure-fix.patch
-* mm-add-kernel-electric-fence-infrastructure-fix-2.patch
-* x86-kfence-enable-kfence-for-x86.patch
-* arm64-kfence-enable-kfence-for-arm64.patch
-* kfence-use-pt_regs-to-generate-stack-trace-on-faults.patch
-* mm-kfence-insert-kfence-hooks-for-slab.patch
-* mm-kfence-insert-kfence-hooks-for-slub.patch
-* kfence-kasan-make-kfence-compatible-with-kasan.patch
-* kfence-kasan-make-kfence-compatible-with-kasan-fix.patch
-* kfence-documentation-add-kfence-documentation.patch
-* kfence-add-test-suite.patch
-* kfence-add-test-suite-fix.patch
-* maintainers-add-entry-for-kfence.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* proc-wchan-use-printk-format-instead-of-lookup_symbol_name.patch
-* sysctlc-fix-underflow-value-setting-risk-in-vm_table.patch
-* proc-sysctl-make-protected_-world-readable.patch
-* lib-linear_ranges-fix-repeated-words-one-typo.patch
-* lib-optimize-cpumask_local_spread.patch
-* aio-simplify-read_events.patch
-  linux-next.patch
-  linux-next-git-rejects.patch
-* mm-add-definition-of-pmd_page_order.patch
-* mmap-make-mlock_future_check-global.patch
-* set_memory-allow-set_direct_map__noflush-for-multiple-pages.patch
-* set_memory-allow-set_direct_map__noflush-for-multiple-pages-fix.patch
-* set_memory-allow-querying-whether-set_direct_map_-is-actually-enabled.patch
-* set_memory-allow-querying-whether-set_direct_map_-is-actually-enabled-fix.patch
-* mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas.patch
-* mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas-fix.patch
-* secretmem-use-pmd-size-pages-to-amortize-direct-map-fragmentation.patch
-* secretmem-add-memcg-accounting.patch
-* pm-hibernate-disable-when-there-are-active-secretmem-users.patch
-* arch-mm-wire-up-memfd_secret-system-call-were-relevant.patch
-* arch-mm-wire-up-memfd_secret-system-call-were-relevant-fix.patch
-* arch-mm-wire-up-memfd_secret-system-call-were-relevant-fix-fix.patch
-* secretmem-test-add-basic-selftest-for-memfd_secret2.patch
-* secretmem-test-add-basic-selftest-for-memfd_secret2-fix.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+On Wed, Dec 23, 2020 at 8:45 PM Pavel Begunkov <asml.silence@gmail.com> wro=
+te:
+>
+> On 23/12/2020 10:36, Stefano Garzarella wrote:
+> > On Wed, Dec 23, 2020 at 11:27:05AM +0800, Yejune Deng wrote:
+> >> The function io_remove_personalities() is very similar to
+> >> io_unregister_personality(),but the latter has a more reasonable
+> >> return value.
+> >>
+> >> Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
+> >> ---
+> >> fs/io_uring.c | 25 ++++++-------------------
+> >> 1 file changed, 6 insertions(+), 19 deletions(-)
+> >
+> > The patch LGTM, maybe as an alternative you can leave io_remove_persona=
+lity() with the interface needed by idr_for_each() and implement io_unregis=
+ter_personality() calling io_remove_personality() with the right parameters=
+.
+>
+> Right, don't replace sane types with void * just because.
+> Leave well-typed io_unregister_personality() and call it from
+> io_remove_personalities().
+>
+>
+> Also
+>  * idr_for_each() - Iterate through all stored pointers.
+>  ...
+>  * If @fn returns anything other than %0, the iteration stops and that
+>  * value is returned from this function.
+>
+> For io_remove_personality() iod=3D=3DNULL should not happen because
+> it's under for_each and synchronised, but leave the return value be
+>
+> io_remove_personality(void *, ...)
+> {
+>         struct io_ring_ctx *ctx =3D data;
+>
+>         io_unregister_personality(ctx, id);
+>         return 0;
+> }
+>
+> --
+> Pavel Begunkov
