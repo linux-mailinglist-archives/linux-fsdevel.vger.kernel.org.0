@@ -2,202 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65AA42E2542
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 08:38:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A1D2E2545
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 08:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgLXHiD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Dec 2020 02:38:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726064AbgLXHiD (ORCPT
+        id S1725885AbgLXHny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Dec 2020 02:43:54 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:10359 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbgLXHnx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Dec 2020 02:38:03 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC96CC06179C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 23:37:22 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id i24so1416021edj.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Dec 2020 23:37:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GCpEe9bgcinu2yB8dDVslobyM9KIB6TrbsIPt4r9UaE=;
-        b=wJtOPzCiU2BNyGRZwvpISTXAlJmybWeFPLzYdvCc8iE8/9pBk7j2/JHXlnsn5SiHJq
-         /VhmQ14nzfxHny+5Xt82jx4MMOBVBI0fW2rVd+EE/jGoYgVjlLDcth5SLiwaBua67nQx
-         Rr8cqU879rdLCTQGfKgqyGbkEaaqzpWwFZDYEFTAqBerD3BqdLPGwwM9fxzMP62ZawKz
-         xTDEWqZnlmWGlYwvOsb+K0h23Dg1BbxFmwDz2ZPLWiHHRdu+O0iZ1Z15O7vn1IHcFly6
-         YrMGQYjqrJunNEHTTmGJGAl5VWi3MnVZwT5tz6Pe1tYPAYqGre8Tl3xSih9PxZYGoAnI
-         1udA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GCpEe9bgcinu2yB8dDVslobyM9KIB6TrbsIPt4r9UaE=;
-        b=moV3mrDU7IeTNGswEy02I+nuE/yb+lS8c7ED0Beo92ZTsaaB9kNHFuJbb0laP/g2/K
-         q1ykwMb1y7f3mDCqieurLplM8cA8qvA0DIzdLE1s4SaPLnVCrwB9fWLHqYyinB97bWfs
-         FOkkeRs2SOwelvimvLGWZ/WchiMiFjhDUR4FCuSC7o/xpIHxhjxyyfVtV0AlRB9qJUVm
-         MyxwbL0rFKo06HYItwqkqg9o5tQ+7uwH8nidHk0SMq9YNlw59swzBt6ifhd6Z2GyJ45F
-         hj24Ae6J8G4cuxLOLlzGVXiEH2JpMj4uGsqStI1nrS+L6yhZuJY6DA9QbkTkBojBACZS
-         u5/w==
-X-Gm-Message-State: AOAM533iU3jM1RqJAmz6bLHQ5JscbDjsncd8L98jA4kgy0mqQhkDSCXI
-        T/EKYGLFMaaVt13jTdeaPaQwuznovMwNNiZ6X3Iq
-X-Google-Smtp-Source: ABdhPJzIXBdUKvYXI8RIu6cIsVGbPRa/53lrumD//6NgHswloThw+T8myoLHefv1bkK72Rx12WVC0SaSlDURKfiWuHE=
-X-Received: by 2002:a50:f40e:: with SMTP id r14mr27056186edm.5.1608795441570;
- Wed, 23 Dec 2020 23:37:21 -0800 (PST)
+        Thu, 24 Dec 2020 02:43:53 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4D1hqg1pBwz7Hn0;
+        Thu, 24 Dec 2020 15:42:23 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.189.174) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 24 Dec 2020 15:42:59 +0800
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
+        <keescook@chromium.org>, <yzaikin@google.com>,
+        <adobriyan@gmail.com>, <vbabka@suse.cz>,
+        <linux-fsdevel@vger.kernel.org>, <mhocko@suse.com>,
+        <mhiramat@kernel.org>
+CC:     <nixiaoming@huawei.com>, <wangle6@huawei.com>
+Subject: [PATCH] proc_sysclt: fix oops caused by incorrect command parameters.
+Date:   Thu, 24 Dec 2020 15:42:56 +0800
+Message-ID: <20201224074256.117413-1-nixiaoming@huawei.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20201222145221.711-1-xieyongji@bytedance.com> <20201222145221.711-10-xieyongji@bytedance.com>
- <6818a214-d587-4f0b-7de6-13c4e7e94ab6@redhat.com> <CACycT3vVU9vg6R6UujSnSdk8cwxWPVgeJJs0JaBH_Zg4xC-epQ@mail.gmail.com>
- <595fe7d6-7876-26e4-0b7c-1d63ca6d7a97@redhat.com>
-In-Reply-To: <595fe7d6-7876-26e4-0b7c-1d63ca6d7a97@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 24 Dec 2020 15:37:10 +0800
-Message-ID: <CACycT3s=m=PQb5WFoMGhz8TNGme4+=rmbbBTtrugF9ZmNnWxEw@mail.gmail.com>
-Subject: Re: Re: [RFC v2 09/13] vduse: Add support for processing vhost iotlb message
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 24, 2020 at 10:41 AM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> On 2020/12/23 =E4=B8=8B=E5=8D=888:14, Yongji Xie wrote:
-> > On Wed, Dec 23, 2020 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> On 2020/12/22 =E4=B8=8B=E5=8D=8810:52, Xie Yongji wrote:
-> >>> To support vhost-vdpa bus driver, we need a way to share the
-> >>> vhost-vdpa backend process's memory with the userspace VDUSE process.
-> >>>
-> >>> This patch tries to make use of the vhost iotlb message to achieve
-> >>> that. We will get the shm file from the iotlb message and pass it
-> >>> to the userspace VDUSE process.
-> >>>
-> >>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> >>> ---
-> >>>    Documentation/driver-api/vduse.rst |  15 +++-
-> >>>    drivers/vdpa/vdpa_user/vduse_dev.c | 147 +++++++++++++++++++++++++=
-+++++++++++-
-> >>>    include/uapi/linux/vduse.h         |  11 +++
-> >>>    3 files changed, 171 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/driver-api/vduse.rst b/Documentation/drive=
-r-api/vduse.rst
-> >>> index 623f7b040ccf..48e4b1ba353f 100644
-> >>> --- a/Documentation/driver-api/vduse.rst
-> >>> +++ b/Documentation/driver-api/vduse.rst
-> >>> @@ -46,13 +46,26 @@ The following types of messages are provided by t=
-he VDUSE framework now:
-> >>>
-> >>>    - VDUSE_GET_CONFIG: Read from device specific configuration space
-> >>>
-> >>> +- VDUSE_UPDATE_IOTLB: Update the memory mapping in device IOTLB
-> >>> +
-> >>> +- VDUSE_INVALIDATE_IOTLB: Invalidate the memory mapping in device IO=
-TLB
-> >>> +
-> >>>    Please see include/linux/vdpa.h for details.
-> >>>
-> >>> -In the data path, VDUSE framework implements a MMU-based on-chip IOM=
-MU
-> >>> +The data path of userspace vDPA device is implemented in different w=
-ays
-> >>> +depending on the vdpa bus to which it is attached.
-> >>> +
-> >>> +In virtio-vdpa case, VDUSE framework implements a MMU-based on-chip =
-IOMMU
-> >>>    driver which supports mapping the kernel dma buffer to a userspace=
- iova
-> >>>    region dynamically. The userspace iova region can be created by pa=
-ssing
-> >>>    the userspace vDPA device fd to mmap(2).
-> >>>
-> >>> +In vhost-vdpa case, the dma buffer is reside in a userspace memory r=
-egion
-> >>> +which will be shared to the VDUSE userspace processs via the file
-> >>> +descriptor in VDUSE_UPDATE_IOTLB message. And the corresponding addr=
-ess
-> >>> +mapping (IOVA of dma buffer <-> VA of the memory region) is also inc=
-luded
-> >>> +in this message.
-> >>> +
-> >>>    Besides, the eventfd mechanism is used to trigger interrupt callba=
-cks and
-> >>>    receive virtqueue kicks in userspace. The following ioctls on the =
-userspace
-> >>>    vDPA device fd are provided to support that:
-> >>> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_u=
-ser/vduse_dev.c
-> >>> index b974333ed4e9..d24aaacb6008 100644
-> >>> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> >>> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> >>> @@ -34,6 +34,7 @@
-> >>>
-> >>>    struct vduse_dev_msg {
-> >>>        struct vduse_dev_request req;
-> >>> +     struct file *iotlb_file;
-> >>>        struct vduse_dev_response resp;
-> >>>        struct list_head list;
-> >>>        wait_queue_head_t waitq;
-> >>> @@ -325,12 +326,80 @@ static int vduse_dev_set_vq_state(struct vduse_=
-dev *dev,
-> >>>        return ret;
-> >>>    }
-> >>>
-> >>> +static int vduse_dev_update_iotlb(struct vduse_dev *dev, struct file=
- *file,
-> >>> +                             u64 offset, u64 iova, u64 size, u8 perm=
-)
-> >>> +{
-> >>> +     struct vduse_dev_msg *msg;
-> >>> +     int ret;
-> >>> +
-> >>> +     if (!size)
-> >>> +             return -EINVAL;
-> >>> +
-> >>> +     msg =3D vduse_dev_new_msg(dev, VDUSE_UPDATE_IOTLB);
-> >>> +     msg->req.size =3D sizeof(struct vduse_iotlb);
-> >>> +     msg->req.iotlb.offset =3D offset;
-> >>> +     msg->req.iotlb.iova =3D iova;
-> >>> +     msg->req.iotlb.size =3D size;
-> >>> +     msg->req.iotlb.perm =3D perm;
-> >>> +     msg->req.iotlb.fd =3D -1;
-> >>> +     msg->iotlb_file =3D get_file(file);
-> >>> +
-> >>> +     ret =3D vduse_dev_msg_sync(dev, msg);
-> >>
-> >> My feeling is that we should provide consistent API for the userspace
-> >> device to use.
-> >>
-> >> E.g we'd better carry the IOTLB message for both virtio/vhost drivers.
-> >>
-> >> It looks to me for virtio drivers we can still use UPDAT_IOTLB message
-> >> by using VDUSE file as msg->iotlb_file here.
-> >>
-> > It's OK for me. One problem is when to transfer the UPDATE_IOTLB
-> > message in virtio cases.
->
->
-> Instead of generating IOTLB messages for userspace.
->
-> How about record the mappings (which is a common case for device have
-> on-chip IOMMU e.g mlx5e and vdpa simlator), then we can introduce ioctl
-> for userspace to query?
->
+The process_sysctl_arg() does not check whether val is empty before
+ invoking strlen(val). If the command line parameter () is incorrectly
+ configured and val is empty, oops is triggered.
 
-If so, the IOTLB UPDATE is actually triggered by ioctl, but
-IOTLB_INVALIDATE is triggered by the message. Is it a little odd? Or
-how about trigger it when userspace call mmap() on the device fd?
+For example, "hung_task_panic=1" is incorrectly written as "hung_task_panic".
 
-Thanks,
-Yongji
+log:
+	Kernel command line: .... hung_task_panic
+	....
+	[000000000000000n] user address but active_mm is swapper
+	Internal error: Oops: 96000005 [#1] SMP
+	Modules linked in:
+	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.10.1 #1
+	Hardware name: linux,dummy-virt (DT)
+	pstate: 40000005 (nZcv daif -PAN -UAO -TCO BTYPE=--)
+	pc : __pi_strlen+0x10/0x98
+	lr : process_sysctl_arg+0x1e4/0x2ac
+	sp : ffffffc01104bd40
+	x29: ffffffc01104bd40 x28: 0000000000000000
+	x27: ffffff80c0a4691e x26: ffffffc0102a7c8c
+	x25: 0000000000000000 x24: ffffffc01104be80
+	x23: ffffff80c22f0b00 x22: ffffff80c02e28c0
+	x21: ffffffc0109f9000 x20: 0000000000000000
+	x19: ffffffc0107c08de x18: 0000000000000003
+	x17: ffffffc01105d000 x16: 0000000000000054
+	x15: ffffffffffffffff x14: 3030253078413830
+	x13: 000000000000ffff x12: 0000000000000000
+	x11: 0101010101010101 x10: 0000000000000005
+	x9 : 0000000000000003 x8 : ffffff80c0980c08
+	x7 : 0000000000000000 x6 : 0000000000000002
+	x5 : ffffff80c0235000 x4 : ffffff810f7c7ee0
+	x3 : 000000000000043a x2 : 00bdcc4ebacf1a54
+	x1 : 0000000000000000 x0 : 0000000000000000
+	Call trace:
+	 __pi_strlen+0x10/0x98
+	 parse_args+0x278/0x344
+	 do_sysctl_args+0x8c/0xfc
+	 kernel_init+0x5c/0xf4
+	 ret_from_fork+0x10/0x30
+	Code: b200c3eb 927cec01 f2400c07 54000301 (a8c10c22)
+
+Fixes: 3db978d480e2843 ("kernel/sysctl: support setting sysctl parameters
+ from kernel command line")
+Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+---
+ fs/proc/proc_sysctl.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 317899222d7f..4516411a2b44 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -1757,6 +1757,9 @@ static int process_sysctl_arg(char *param, char *val,
+ 	loff_t pos = 0;
+ 	ssize_t wret;
+ 
++	if (!val)
++		return 0;
++
+ 	if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
+ 		param += sizeof("sysctl") - 1;
+ 
+-- 
+2.27.0
+
