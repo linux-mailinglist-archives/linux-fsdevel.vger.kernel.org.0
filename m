@@ -2,122 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 998872E2868
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 18:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF0182E2894
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Dec 2020 19:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbgLXRbA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Dec 2020 12:31:00 -0500
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:37900 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726839AbgLXRbA (ORCPT
+        id S1728350AbgLXS2t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Dec 2020 13:28:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727778AbgLXS2s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Dec 2020 12:31:00 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 97C271280937;
-        Thu, 24 Dec 2020 09:30:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1608831019;
-        bh=ZrDKMysEKyRnhYwGjS71SXXWaighP0ldoE8CWdohIrg=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=r8mNX+IrqMNTTr696CzKuwaS+Sq91rTomLLBTI6H2DQdIAq2hg33Y7UH5jb+Go3cI
-         tb6nDGo60ZPDH/51WQjOHUSL6ZxKTbUHp+YB5IXye5R/Z2sAeuMEGaBDZTuMX5elLc
-         TByeaVv9dfWCLAVPKYUK4GoJKGCinejD2LtKCi08=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id h3bvsEulAG7l; Thu, 24 Dec 2020 09:30:19 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 8B4791280936;
-        Thu, 24 Dec 2020 09:30:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1608831019;
-        bh=ZrDKMysEKyRnhYwGjS71SXXWaighP0ldoE8CWdohIrg=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=r8mNX+IrqMNTTr696CzKuwaS+Sq91rTomLLBTI6H2DQdIAq2hg33Y7UH5jb+Go3cI
-         tb6nDGo60ZPDH/51WQjOHUSL6ZxKTbUHp+YB5IXye5R/Z2sAeuMEGaBDZTuMX5elLc
-         TByeaVv9dfWCLAVPKYUK4GoJKGCinejD2LtKCi08=
-Message-ID: <bdd002f433928dd545d336a982516afa4e095d49.camel@HansenPartnership.com>
-Subject: Re: [PATCH v1 0/6] no-copy bvec
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     dgilbert@interlog.com, Christoph Hellwig <hch@infradead.org>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Date:   Thu, 24 Dec 2020 09:30:17 -0800
-In-Reply-To: <8abc56c2-4db8-5ee3-ab2d-8960d0eeeb0d@interlog.com>
-References: <cover.1607976425.git.asml.silence@gmail.com>
-         <20201215014114.GA1777020@T590>
-         <103235c1-e7d0-0b55-65d0-013d1a09304e@gmail.com>
-         <20201215120357.GA1798021@T590>
-         <e755fec3-4181-1414-0603-02e1a1f4e9eb@gmail.com>
-         <20201222141112.GE13079@infradead.org>
-         <933030f0-e428-18fd-4668-68db4f14b976@gmail.com>
-         <20201223155145.GA5902@infradead.org>
-         <f06ece44a86eb9c8ef07bbd9f6f53342366b7751.camel@HansenPartnership.com>
-         <8abc56c2-4db8-5ee3-ab2d-8960d0eeeb0d@interlog.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Thu, 24 Dec 2020 13:28:48 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0257C061573;
+        Thu, 24 Dec 2020 10:28:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=VGafzW+gDLjGLMNoybNSBGNiUL4/Bi3JEFJxz+NnDOo=; b=EhJff5vA4Ww2XgctyYRLpm5zaW
+        fRb++J29JhQTcpWEtDdKhunxvfrubKlxzZI6mk3AeZEvGqrgkAZ8DnAxMnvlREgOTa9odqM6ubPUi
+        9VoylnGnIYzu+2X/G3J/CtrUMdrFMijVEKnIuYlm4v4kszYsGULZp1Nt3fBzThEONGsRLtKCj+CQs
+        Cs8EOGH/qKHER6lmIV04pGHhCSwHwvC3qezfOo6SqzswdE6qkFIfRoLDly20ykRbeL6Gi09JsixXi
+        8Nam8gVIdPJVmiDV2Xtfe5/BdGo2AENkRg2yBGtTnltj64CRb0vAf5ekbHFJ55JHDuBaJzCT7AllJ
+        1VEiqVXQ==;
+Received: from [2601:1c0:6280:3f0::64ea]
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ksVKp-0007Zk-7Z; Thu, 24 Dec 2020 18:27:35 +0000
+Subject: Re: [RFC V2 37/37] Add documentation for dmemfs
+To:     yulei.kernel@gmail.com, linux-mm@kvack.org,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        naoya.horiguchi@nec.com, viro@zeniv.linux.org.uk,
+        pbonzini@redhat.com
+Cc:     joao.m.martins@oracle.com, sean.j.christopherson@intel.com,
+        xiaoguangrong.eric@gmail.com, kernellwp@gmail.com,
+        lihaiwei.kernel@gmail.com, Yulei Zhang <yuleixzhang@tencent.com>
+References: <cover.1607332046.git.yuleixzhang@tencent.com>
+ <6a3a71f75dad1fa440677fc1bcdc170f178be1d8.1607332046.git.yuleixzhang@tencent.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a8920d25-e109-cfce-5137-1f4374c815e9@infradead.org>
+Date:   Thu, 24 Dec 2020 10:27:28 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
+In-Reply-To: <6a3a71f75dad1fa440677fc1bcdc170f178be1d8.1607332046.git.yuleixzhang@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-12-23 at 15:23 -0500, Douglas Gilbert wrote:
-> On 2020-12-23 11:04 a.m., James Bottomley wrote:
-> > On Wed, 2020-12-23 at 15:51 +0000, Christoph Hellwig wrote:
-> > > On Wed, Dec 23, 2020 at 12:52:59PM +0000, Pavel Begunkov wrote:
-> > > > Can scatterlist have 0-len entries? Those are directly
-> > > > translated into bvecs, e.g. in nvme/target/io-cmd-file.c and
-> > > > target/target_core_file.c. I've audited most of others by this
-> > > > moment, they're fine.
-> > > 
-> > > For block layer SGLs we should never see them, and for nvme
-> > > neither. I think the same is true for the SCSI target code, but
-> > > please double check.
-> > 
-> > Right, no-one ever wants to see a 0-len scatter list entry.  The
-> > reason is that every driver uses the sgl to program the device DMA
-> > engine in the way NVME does.  a 0 length sgl would be a dangerous
-> > corner case: some DMA engines would ignore it and others would go
-> > haywire, so if we ever let a 0 length list down into the driver,
-> > they'd have to understand the corner case behaviour of their DMA
-> > engine and filter it accordingly, which is why we disallow them in
-> > the upper levels, since they're effective nops anyway.
+Hi,
+
+On 12/7/20 3:31 AM, yulei.kernel@gmail.com wrote:
+> From: Yulei Zhang <yuleixzhang@tencent.com>
 > 
-> When using scatter gather lists at the far end (i.e. on the storage
-> device) the T10 examples (WRITE SCATTERED and POPULATE TOKEN in SBC-
-> 4) explicitly allow the "number of logical blocks" in their sgl_s to
-> be zero and state that it is _not_ to be considered an error.
+> Introduce dmemfs.rst to document the basic usage of dmemfs.
+> 
+> Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
+> ---
+>  Documentation/filesystems/dmemfs.rst | 58 ++++++++++++++++++++++++++++++++++++
+>  Documentation/filesystems/index.rst  |  1 +
+>  2 files changed, 59 insertions(+)
+>  create mode 100644 Documentation/filesystems/dmemfs.rst
+> 
+> diff --git a/Documentation/filesystems/dmemfs.rst b/Documentation/filesystems/dmemfs.rst
+> new file mode 100644
+> index 00000000..f13ed0c
+> --- /dev/null
+> +++ b/Documentation/filesystems/dmemfs.rst
+> @@ -0,0 +1,58 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=====================================
+> +The Direct Memory Filesystem - DMEMFS
+> +=====================================
+> +
+> +
+> +.. Table of contents
+> +
+> +   - Overview
+> +   - Compilation
+> +   - Usage
+> +
+> +Overview
+> +========
+> +
+> +Dmemfs (Direct Memory filesystem) is device memory or reserved
+> +memory based filesystem. This kind of memory is special as it
+> +is not managed by kernel and it is without 'struct page'. Therefore
+> +it can save extra memory from the host system for various usage,
 
-But that's pretty irrelevant.  The scatterlists that block has been
-constructing to drive DMA engines pre-date SCSI's addition of SGLs by
-decades (all SCSI commands before the object commands use a linear
-buffer which is implemented in the HBA engine as a scatterlist but not
-described by the SCSI standard as one).
+                                                             usages,
+or                                                           uses,
 
-So the answer to the question should the block layer emit zero length
-sgl elements is "no" because they can confuse some DMA engines.
+> +especially for guest virtual machines.
+> +
+> +It uses a kernel boot parameter ``dmem=`` to reserve the system
+> +memory when the host system boots up, the details can be checked
 
-If there's a more theoretical question of whether the target driver in
-adding commands it doesn't yet support should inject zero length SGL
-elements into block because SCSI allows it, the answer is still "no"
-because we don't want block to have SGLs that may confuse other DMA
-engines.  There's lots of daft corner cases in the SCSI standard we
-don't implement and a nop for SGL elements seems to be one of the more
-hare brained because it adds no useful feature and merely causes
-compatibility issues.
+                               boots up. The detail
 
-James
- 
+> +in /Documentation/admin-guide/kernel-parameters.txt.
+> +
+> +Compilation
+> +===========
+> +
+> +The filesystem should be enabled by turning on the kernel configuration
+> +options::
+> +
+> +        CONFIG_DMEM_FS          - Direct Memory filesystem support
+> +        CONFIG_DMEM             - Allow reservation of memory for dmem
+
+Would anyone want DMEM_FS without DMEM?
+
+> +
+> +
+> +Additionally, the following can be turned on to aid debugging::
+> +
+> +        CONFIG_DMEM_DEBUG_FS    - Enable debug information for dmem
+> +
+> +Usage
+> +========
+> +
+> +Dmemfs supports mapping ``4K``, ``2M`` and ``1G`` size of pages to
+
+                                                     sizes
+
+> +the userspace, for example ::
+
+       userspace. For example::
+
+> +
+> +    # mount -t dmemfs none -o pagesize=4K /mnt/
+> +
+> +The it can create the backing storage with 4G size ::
+
+   Then
+
+> +
+> +    # truncate /mnt/dmemfs-uuid --size 4G
+> +
+> +To use as backing storage for virtual machine starts with qemu, just need
+
+                                                 started with qemu, just specify
+   the memory-backed-file
+
+> +to specify the memory-backed-file in the qemu command line like this ::
+> +
+> +    # -object memory-backend-file,id=ram-node0,mem-path=/mnt/dmemfs-uuid \
+
+                        backed
+
+
+> +        share=yes,size=4G,host-nodes=0,policy=preferred -numa node,nodeid=0,memdev=ram-node0
+> +
+
+
+-- 
+~Randy
 
