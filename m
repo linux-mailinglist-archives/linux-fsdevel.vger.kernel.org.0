@@ -2,171 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BEC82E2A0C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Dec 2020 07:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 557852E2A14
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Dec 2020 08:00:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgLYGvR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Dec 2020 01:51:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38178 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbgLYGvR (ORCPT
+        id S1725873AbgLYG7p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Dec 2020 01:59:45 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24845 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725787AbgLYG7p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Dec 2020 01:51:17 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D1DC061573;
-        Thu, 24 Dec 2020 22:50:37 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id q137so3493852iod.9;
-        Thu, 24 Dec 2020 22:50:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I41NoPE2PFeA6hnau+XUtVHcpXOt5PQjNu23pBB7t2U=;
-        b=DuPsaCLcoHgwNBZRe3f034K5cLHK4ORuMrnJdwlDWSl3W8qzIJb3EK2kcfQksI0WiZ
-         4xyX3QsxvpbzMuip410pA8t+NbmM2dGUd8Q+ceE9PIxPfhxmYAaWc/B+NhMHJv6fZmug
-         tBaH3GmpFAgnTPCbfLeTqync4w2gNLAZQIsblJVqaV5QEIwSSNRAXnnUeekhO6jwpjnN
-         nlm3c2ytAYFshGk4aenLMjfjHX8B+vz9sxCNHrVLCHbvK4tFDlCA/9BOEnkXJK+6W0BG
-         BDvh5DZ70rWGXLG5gdir67xHBcODjzXyBmVGVXJO0BNunYu6wq0aYLUMjqQuVTLzSe8U
-         2TeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I41NoPE2PFeA6hnau+XUtVHcpXOt5PQjNu23pBB7t2U=;
-        b=pX7koRfoNvHr1UJ12B1UdWggPjNZTMywV54m6ILzQ3N2IxKEXPbxfnwsATH4IMdjun
-         WARoOn2pp4oYDDEtouZTUdGPyRAMoEM0oJrH+f+z6L76wd7RPqrxZDVydNqfQS5Quy+w
-         FADhfFkAHRG/MsgMZMqTHVUMgJBkLNo2VZqs7DyszUXAiwWPIve+VzBgaEOl6Zb7Wv07
-         pGXLL5SwSXq2SY32PpcLsvgWjWT+CG24Gs7HaWz6rjeT6A+uY2ZNxPC+tQjlM5uyCnKY
-         9eHAM+4JJ9rlAfIxiwphAjUe+gRoO/90SoEi3DfKt8vPprRlUyQ8BUVxLYMoPdgbOI3e
-         JR0w==
-X-Gm-Message-State: AOAM533TUOIb4hvxjWaZW7qxE38+x0V6HNGjeRFZ5KX9IZC7wYOO3skH
-        8alOvHKBbIzchtlmTzV7ZkuDkg20nOA++xQV9Pc=
-X-Google-Smtp-Source: ABdhPJxW/7olVTwSLSxAeDUa9+MyGpck3OUpRCcWnhkXvdhNMekK8dnYLB8VUVELPkQvghbeq+v8sxS9ebPGitS3nHo=
-X-Received: by 2002:a02:a60a:: with SMTP id c10mr28503608jam.123.1608879036430;
- Thu, 24 Dec 2020 22:50:36 -0800 (PST)
+        Fri, 25 Dec 2020 01:59:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608879498;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IBTp23RhCF2lNaGdXuKBZ6xR632uHIkymwYyPE70oOU=;
+        b=HWcBCyWATqEV1G84SskCoWfpJff6aZb0zpkuOt1mz52IZLcBWl85n76rKK1QD5ukvD462f
+        iSnpPlrhay6aQeAkvuVHM0OS7jIeuEmNG7pFJ8ULV2s3ED/jak1w/Dm4TUQVIpo4W8NJy0
+        n3vrY0/TeD49ClDp8tEJz9le234D5Ms=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-573-jwRdfOAsMsGt45YAWXmUug-1; Fri, 25 Dec 2020 01:58:16 -0500
+X-MC-Unique: jwRdfOAsMsGt45YAWXmUug-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9E8DC10054FF;
+        Fri, 25 Dec 2020 06:58:13 +0000 (UTC)
+Received: from [10.72.12.97] (ovpn-12-97.pek2.redhat.com [10.72.12.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3962B62462;
+        Fri, 25 Dec 2020 06:58:00 +0000 (UTC)
+Subject: Re: [RFC v2 09/13] vduse: Add support for processing vhost iotlb
+ message
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
+        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20201222145221.711-1-xieyongji@bytedance.com>
+ <20201222145221.711-10-xieyongji@bytedance.com>
+ <6818a214-d587-4f0b-7de6-13c4e7e94ab6@redhat.com>
+ <CACycT3vVU9vg6R6UujSnSdk8cwxWPVgeJJs0JaBH_Zg4xC-epQ@mail.gmail.com>
+ <595fe7d6-7876-26e4-0b7c-1d63ca6d7a97@redhat.com>
+ <CACycT3s=m=PQb5WFoMGhz8TNGme4+=rmbbBTtrugF9ZmNnWxEw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <0e6faf9c-117a-e23c-8d6d-488d0ec37412@redhat.com>
+Date:   Fri, 25 Dec 2020 14:57:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201221195055.35295-1-vgoyal@redhat.com> <20201221195055.35295-4-vgoyal@redhat.com>
- <20201223182026.GA9935@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223185044.GQ874@casper.infradead.org> <20201223192940.GA11012@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223200746.GR874@casper.infradead.org> <20201223202140.GB11012@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223204428.GS874@casper.infradead.org> <CAOQ4uxjAeGv8x2hBBzHz5PjSDq0Q+RN-ikgqEvAA+XE_U-U5Nw@mail.gmail.com>
- <20201224121352.GT874@casper.infradead.org>
-In-Reply-To: <20201224121352.GT874@casper.infradead.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 25 Dec 2020 08:50:25 +0200
-Message-ID: <CAOQ4uxj5YS9LSPoBZ3uakb6NeBG7g-Zeu+8Vt57tizEH6xu0cw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] overlayfs: Report writeback errors on upper
-To:     Matthew Wilcox <willy@infradead.org>,
-        Sargun Dhillon <sargun@sargun.me>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
-        NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Chengguang Xu <cgxu519@mykernel.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACycT3s=m=PQb5WFoMGhz8TNGme4+=rmbbBTtrugF9ZmNnWxEw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 24, 2020 at 2:13 PM Matthew Wilcox <willy@infradead.org> wrote:
+
+On 2020/12/24 下午3:37, Yongji Xie wrote:
+> On Thu, Dec 24, 2020 at 10:41 AM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> On 2020/12/23 下午8:14, Yongji Xie wrote:
+>>> On Wed, Dec 23, 2020 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>> On 2020/12/22 下午10:52, Xie Yongji wrote:
+>>>>> To support vhost-vdpa bus driver, we need a way to share the
+>>>>> vhost-vdpa backend process's memory with the userspace VDUSE process.
+>>>>>
+>>>>> This patch tries to make use of the vhost iotlb message to achieve
+>>>>> that. We will get the shm file from the iotlb message and pass it
+>>>>> to the userspace VDUSE process.
+>>>>>
+>>>>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+>>>>> ---
+>>>>>     Documentation/driver-api/vduse.rst |  15 +++-
+>>>>>     drivers/vdpa/vdpa_user/vduse_dev.c | 147 ++++++++++++++++++++++++++++++++++++-
+>>>>>     include/uapi/linux/vduse.h         |  11 +++
+>>>>>     3 files changed, 171 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
+>>>>> index 623f7b040ccf..48e4b1ba353f 100644
+>>>>> --- a/Documentation/driver-api/vduse.rst
+>>>>> +++ b/Documentation/driver-api/vduse.rst
+>>>>> @@ -46,13 +46,26 @@ The following types of messages are provided by the VDUSE framework now:
+>>>>>
+>>>>>     - VDUSE_GET_CONFIG: Read from device specific configuration space
+>>>>>
+>>>>> +- VDUSE_UPDATE_IOTLB: Update the memory mapping in device IOTLB
+>>>>> +
+>>>>> +- VDUSE_INVALIDATE_IOTLB: Invalidate the memory mapping in device IOTLB
+>>>>> +
+>>>>>     Please see include/linux/vdpa.h for details.
+>>>>>
+>>>>> -In the data path, VDUSE framework implements a MMU-based on-chip IOMMU
+>>>>> +The data path of userspace vDPA device is implemented in different ways
+>>>>> +depending on the vdpa bus to which it is attached.
+>>>>> +
+>>>>> +In virtio-vdpa case, VDUSE framework implements a MMU-based on-chip IOMMU
+>>>>>     driver which supports mapping the kernel dma buffer to a userspace iova
+>>>>>     region dynamically. The userspace iova region can be created by passing
+>>>>>     the userspace vDPA device fd to mmap(2).
+>>>>>
+>>>>> +In vhost-vdpa case, the dma buffer is reside in a userspace memory region
+>>>>> +which will be shared to the VDUSE userspace processs via the file
+>>>>> +descriptor in VDUSE_UPDATE_IOTLB message. And the corresponding address
+>>>>> +mapping (IOVA of dma buffer <-> VA of the memory region) is also included
+>>>>> +in this message.
+>>>>> +
+>>>>>     Besides, the eventfd mechanism is used to trigger interrupt callbacks and
+>>>>>     receive virtqueue kicks in userspace. The following ioctls on the userspace
+>>>>>     vDPA device fd are provided to support that:
+>>>>> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+>>>>> index b974333ed4e9..d24aaacb6008 100644
+>>>>> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+>>>>> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+>>>>> @@ -34,6 +34,7 @@
+>>>>>
+>>>>>     struct vduse_dev_msg {
+>>>>>         struct vduse_dev_request req;
+>>>>> +     struct file *iotlb_file;
+>>>>>         struct vduse_dev_response resp;
+>>>>>         struct list_head list;
+>>>>>         wait_queue_head_t waitq;
+>>>>> @@ -325,12 +326,80 @@ static int vduse_dev_set_vq_state(struct vduse_dev *dev,
+>>>>>         return ret;
+>>>>>     }
+>>>>>
+>>>>> +static int vduse_dev_update_iotlb(struct vduse_dev *dev, struct file *file,
+>>>>> +                             u64 offset, u64 iova, u64 size, u8 perm)
+>>>>> +{
+>>>>> +     struct vduse_dev_msg *msg;
+>>>>> +     int ret;
+>>>>> +
+>>>>> +     if (!size)
+>>>>> +             return -EINVAL;
+>>>>> +
+>>>>> +     msg = vduse_dev_new_msg(dev, VDUSE_UPDATE_IOTLB);
+>>>>> +     msg->req.size = sizeof(struct vduse_iotlb);
+>>>>> +     msg->req.iotlb.offset = offset;
+>>>>> +     msg->req.iotlb.iova = iova;
+>>>>> +     msg->req.iotlb.size = size;
+>>>>> +     msg->req.iotlb.perm = perm;
+>>>>> +     msg->req.iotlb.fd = -1;
+>>>>> +     msg->iotlb_file = get_file(file);
+>>>>> +
+>>>>> +     ret = vduse_dev_msg_sync(dev, msg);
+>>>> My feeling is that we should provide consistent API for the userspace
+>>>> device to use.
+>>>>
+>>>> E.g we'd better carry the IOTLB message for both virtio/vhost drivers.
+>>>>
+>>>> It looks to me for virtio drivers we can still use UPDAT_IOTLB message
+>>>> by using VDUSE file as msg->iotlb_file here.
+>>>>
+>>> It's OK for me. One problem is when to transfer the UPDATE_IOTLB
+>>> message in virtio cases.
+>>
+>> Instead of generating IOTLB messages for userspace.
+>>
+>> How about record the mappings (which is a common case for device have
+>> on-chip IOMMU e.g mlx5e and vdpa simlator), then we can introduce ioctl
+>> for userspace to query?
+>>
+> If so, the IOTLB UPDATE is actually triggered by ioctl, but
+> IOTLB_INVALIDATE is triggered by the message. Is it a little odd?
+
+
+Good point.
+
+Some questions here:
+
+1) Userspace think the IOTLB was flushed after IOTLB_INVALIDATE syscall 
+is returned. But this patch doesn't have this guarantee. Can this lead 
+some issues?
+2) I think after VDUSE userspace receives IOTLB_INVALIDATE, it needs to 
+issue a munmap(). What if it doesn't do that?
+
+
+>   Or
+> how about trigger it when userspace call mmap() on the device fd?
+
+
+One possible issue is that the IOTLB_UPDATE/INVALIDATE might come after 
+mmap():
+
+1) When vIOMMU is enabled
+2) Guest memory topology has been changed (memory hotplug).
+
+Thanks
+
+
 >
-> On Thu, Dec 24, 2020 at 11:32:55AM +0200, Amir Goldstein wrote:
-> > In current master, syncfs() on any file by any container user will
-> > result in full syncfs() of the upperfs, which is very bad for container
-> > isolation. This has been partly fixed by Chengguang Xu [1] and I expect
-> > his work will be merged soon. Overlayfs still does not do the writeback
-> > and syncfs() in overlay still waits for all upper fs writeback to complete,
-> > but at least syncfs() in overlay only kicks writeback for upper fs files
-> > dirtied by this overlay.
-> >
-> > [1] https://lore.kernel.org/linux-unionfs/CAJfpegsbb4iTxW8ZyuRFVNc63zg7Ku7vzpSNuzHASYZH-d5wWA@mail.gmail.com/
-> >
-> > Sharing the same SEEN flag among thousands of containers is also
-> > far from ideal, because effectively this means that any given workload
-> > in any single container has very little chance of observing the SEEN flag.
->
-> Perhaps you misunderstand how errseq works.  If each container samples
-> the errseq at startup, then they will all see any error which occurs
-> during their lifespan
-
-Meant to say "...very little chance of NOT observing the SEEN flag",
-but We are not in disagreement.
-My argument against sharing the SEEN flag refers to Vivek's patch of
-stacked errseq_sample()/errseq_check_and_advance() which does NOT
-sample errseq at overlayfs mount time. That is why my next sentence is:
-"I do agree with Matthew that overlayfs should sample errseq...".
-
-> (and possibly an error which occurred before they started up).
+> Thanks,
+> Yongji
 >
 
-Right. And this is where the discussion of splitting the SEEN flag started.
-Some of us want to treat overlayfs mount time as a true epoc for errseq.
-The new container didn't write any files yet, so it should not care about
-writeback errors from the past.
-
-I agree that it may not be very critical, but as I wrote before, I think we
-should do our best to try and isolate container workloads.
-
-> > To this end, I do agree with Matthew that overlayfs should sample errseq
-> > and the best patchset to implement it so far IMO is Jeff's patchset [2].
-> > This patch set was written to cater only "volatile" overlayfs mount, but
-> > there is no reason not to use the same mechanism for regular overlay
-> > mount. The only difference being that "volatile" overlay only checks for
-> > error since mount on syncfs() (because "volatile" overlay does NOT
-> > syncfs upper fs) and regular overlay checks and advances the overlay's
-> > errseq sample on syncfs (and does syncfs upper fs).
-> >
-> > Matthew, I hope that my explanation of the use case and Jeff's answer
-> > is sufficient to understand why the split of the SEEN flag is needed.
-> >
-> > [2] https://lore.kernel.org/linux-unionfs/20201213132713.66864-1-jlayton@kernel.org/
->
-> No, it still feels weird and wrong.
->
-
-All right. Considering your reservations, I think perhaps the split of the
-SEEN flag can wait for a later time after more discussions and maybe
-not as suitable for stable as we thought.
-
-I think that for stable, it would be sufficient to adapt Surgun's original
-syncfs for volatile mount patch [1] to cover the non-volatile case:
-on mout:
-- errseq_sample() upper fs
-- on volatile mount, errseq_check() upper fs and fail mount on un-SEEN error
-on syncfs:
-- errseq_check() for volatile mount
-- errseq_check_and_advance() for non-volatile mount
-- errseq_set() overlay sb on upper fs error
-
-Now errseq_set() is not only a hack around __sync_filesystem ignoring
-return value of ->sync_fs(). It is really needed for per-overlay SEEN
-error isolation in the non-volatile case.
-
-Unless I am missing something, I think we do not strictly need Vivek's
-1/3 patch [2] for stable, but not sure.
-
-Sargun,
-
-Do you agree with the above proposal?
-Will you make it into a patch?
-
-Vivek, Jefff,
-
-Do you agree that overlay syncfs observing writeback errors that predate
-overlay mount time is an issue that can be deferred (maybe forever)?
-
-BTW, in all the discussions we always assumed that stacked fsync() is correct
-WRT errseq, but in fact, fsync() can also observe an unseen error that predates
-overlay mount.
-In order to fix that, we will probably need to split the SEEN flag and some
-more errseq acrobatics, but again, not sure it is worth the effort.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-unionfs/20201202092720.41522-1-sargun@sargun.me/
-[2] https://lore.kernel.org/linux-unionfs/20201222151752.GA3248@redhat.com/
