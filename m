@@ -2,59 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C0E2E2C1D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Dec 2020 20:12:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9B812E2CE8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Dec 2020 03:42:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726091AbgLYTKT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Dec 2020 14:10:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbgLYTKT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Dec 2020 14:10:19 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 06AA322203;
-        Fri, 25 Dec 2020 19:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608923379;
-        bh=4FbaZJLaIV9w+cSCqzNejnBDiIAXN5ijihhIX7i65zQ=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=HbeyLKvTcQ0pagZmknokJj+QkktmlI/P5ckGuIwoJDOOewOvYlwLR+VuXC9KyUPqR
-         hCpz7T2t9pDu5rj+WCAzbGrr3ma9vUPyN1RgGiKDvVc6q1uKJD7mw/FV6AYb390VDT
-         PBUVLE1thWKgrdO4jwdE7rUQvC+M0T4DNP6tOpIUCg7eBMJEtcBZ9IJQGxQc1aCuR7
-         eqecBGnPqhDttOQkmCvBq+HPcRm5vQpAPlmmjoHJikl0vSGUCZMSWWWBaTqJ7uDUt1
-         EHHNNlgUYTloKBpU/3W0/2sPPcZkfHbqdEaLHl/5ZzBSMfBSQntRJkdWrMNIo0DxD0
-         Hh5EyNjnQE+XA==
-Received: from pdx-korg-docbuild-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-1.ci.codeaurora.org (Postfix) with ESMTP id E8B85600CE;
-        Fri, 25 Dec 2020 19:09:38 +0000 (UTC)
-Subject: Re: [git pull] vfs.git misc stuff
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20201224233507.GZ3579531@ZenIV.linux.org.uk>
-References: <20201224233507.GZ3579531@ZenIV.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20201224233507.GZ3579531@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
-X-PR-Tracked-Commit-Id: 2e2cbaf920d14de9a96180ddefd6861bcc46f07d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7bb5226c8a4bbf26a9ededc90532b0ad539d2017
-Message-Id: <160892337888.18440.12691447553520335493.pr-tracker-bot@kernel.org>
-Date:   Fri, 25 Dec 2020 19:09:38 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+        id S1726509AbgLZCmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Dec 2020 21:42:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbgLZCmF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 25 Dec 2020 21:42:05 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0C6AC061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Dec 2020 18:41:19 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id m5so3222089pjv.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Dec 2020 18:41:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Sz967Nqj1/pd7bQUVbnHkxFH6yQ0h6Xp7ixrXUk89/8=;
+        b=vSwpSFmCPplJ9v5fFXpePWTVhZJvocxqvlAfdYx0e4txIvnpXJNJGGT3F8jK3DdNHs
+         VpXbIW8SpTWCmMmwtGC3fGy/hdRsW4UUM4k198PxXMZVj1dZfdoq1fxBcTsUTRPqFQah
+         HlIiFSBVy4A7MEg6+FMLZTomMG//rsW6laDu6zFURUQhbdLtR5S4ionVVxk/ONZ5Tic+
+         zbrP253lvbAxgCnFqSdV0sv/V/noKTq0KGeyoHxdNUY6Go4VSlr04PUCPGUAubeiZWSf
+         +mlAOt2j8efRwKg1vniw+C7l4LzDZrVNsdZchnZKd6gJJiosJNXjkbE+O3c6V+NtWN3f
+         wnWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Sz967Nqj1/pd7bQUVbnHkxFH6yQ0h6Xp7ixrXUk89/8=;
+        b=GjH/YatDr9H7zjTfrm1hGYXB1KUD155s+Y3d69vPcZkb52Zhb+B/ZGTu6s/s078tlj
+         KLaV75nrN94BWhD8TtuqtgWgCSqAxoy+ZvLaUM1nRFqn1tOdVScEOkTssf417UG7rELC
+         LORce61EHOUc36oyTIN1+ayxCoOWEfE5yTrfUYcmJEHIObIw9U0fR9+JU3UVozTLObTg
+         123w9/b4FE+zq7v8KeThe0sED8oelGpfMsF6og8xpf1Ne9dHzE760w6ISOFiJHsLRC/U
+         D0IULdwM1WiyiBFY3aLy8fh0+i9GrSQu2wngqQ1VRsaUqBT6hx5FCyi5wlJOnY8RGKiS
+         nZDg==
+X-Gm-Message-State: AOAM532EMgG0VE6wN7dtKe1bHC6wH1298QwjGwRupEc+STZxfoJ2+dmy
+        EKD/I/euh0voRvKpS+AXCeBTIVsC+VwxIQ==
+X-Google-Smtp-Source: ABdhPJyASFpoRNWXZPNDPj7L+WwzB6DO/dTRSPQs6xWtnLao2nj+fURQNjzXgsPg5JiwC7L6ZBN52A==
+X-Received: by 2002:a17:90a:658c:: with SMTP id k12mr10771501pjj.31.1608950477926;
+        Fri, 25 Dec 2020 18:41:17 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id 68sm3541788pfe.33.2020.12.25.18.41.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Dec 2020 18:41:17 -0800 (PST)
+Subject: Re: [PATCH 1/4] fs: make unlazy_walk() error handling consistent
+To:     linux-fsdevel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+References: <20201217161911.743222-1-axboe@kernel.dk>
+ <20201217161911.743222-2-axboe@kernel.dk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <66d1d322-42d4-5a46-05fb-caab31d0d834@kernel.dk>
+Date:   Fri, 25 Dec 2020 19:41:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20201217161911.743222-2-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Thu, 24 Dec 2020 23:35:07 +0000:
+On 12/17/20 9:19 AM, Jens Axboe wrote:
+> Most callers check for non-zero return, and assume it's -ECHILD (which
+> it always will be). One caller uses the actual error return. Clean this
+> up and make it fully consistent, by having unlazy_walk() return a bool
+> instead. Rename it to try_to_unlazy() and return true on success, and
+> failure on error. That's easier to read.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7bb5226c8a4bbf26a9ededc90532b0ad539d2017
-
-Thank you!
+Al, were you planning on queuing this one up for 5.11 still? I'm fine
+with holding for 5.12 as well, would just like to know what your plans
+are. Latter goes for the whole series too, fwiw.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+
