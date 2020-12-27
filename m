@@ -2,105 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40D472E2EF2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Dec 2020 19:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 845D92E3106
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Dec 2020 13:01:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbgLZSYr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Dec 2020 13:24:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52960 "EHLO
+        id S1726116AbgL0MAk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Dec 2020 07:00:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbgLZSYr (ORCPT
+        with ESMTP id S1726089AbgL0MAj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Dec 2020 13:24:47 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312D5C061757
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Dec 2020 10:24:07 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id e2so4892317pgi.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Dec 2020 10:24:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jSrK72G+LTRB59CVRGVZLVEHqQGskT1SJE3WCaELUco=;
-        b=OXJWmMsj95kAmFcKp7NT4K7wAVvL+pAN1HgGTEYLIy2iSK82XZ6K/GSTZbQ8ZntpgT
-         WIi9dK05eUXwkJLN67V+PbEtWUOFGYGdWgxJ1iL83cyPRwHq9Rh9k2P5J0mEyztQhibo
-         M+Svr6V82pCw+LR0rw1hea5i4V4qzej9vkZFp5IVHNVZnquaJwkOrCiiUZinDLo6uokq
-         BEoQdFr4WrHsehGtXBLA4FlncYqGLqtXju8gDkYaH2pUigL8JW/tIq9JnbpiAI0aw9Fu
-         l0baCJUlckLTfihejxSC9gKEurgLiE6AkMQGFIi64znPQ/sO0cC7LROGuvENWHgxNEe/
-         BWLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jSrK72G+LTRB59CVRGVZLVEHqQGskT1SJE3WCaELUco=;
-        b=shvQd+81ND5Wf3FTqgqOy/Vk3uEWFCoJzsWjvUpJ8/LI8RswIG9I0m96L4Ro9K52pL
-         tDxldPwemc/rIEegc+7DFPoGRSUQV+hWZebN1r6racnrUo/oJv0GmqXhY0f+LydFHIPG
-         cz1JS5inh9TQNQ9IYXzWrQh5EJ7N88F7XZuGL2hJb55XVT/YcvQ0K31YmlWz92o5gMYe
-         +eF8hS3HU7TVnQBUVmctC104sBRTXTYz/QgwA4g+1xjbICXBJEZX7oDpYxg6gJOY5xh8
-         kxqoR5IXe9bbLP+v7obbm1cIAa3KzUNloAplnq6cFFpMoZUcPKn63jdpzjL1xsTOPZVR
-         5S9g==
-X-Gm-Message-State: AOAM5335em6Pk9HS+LSD9g+iV/lAX7YF4c71W6wx//m9ZyUO+PbYZ33j
-        eXJqh3WBSq+3XowbB4WeB1JymeMzeu2B6A==
-X-Google-Smtp-Source: ABdhPJxKx6+5oviqTK+nRSQdnRnQDra+NldCNilUAtR/NzuL22dTQURfsMVI1wHhcr8j8GnKIOEoAA==
-X-Received: by 2002:a63:4563:: with SMTP id u35mr36252074pgk.162.1609007046689;
-        Sat, 26 Dec 2020 10:24:06 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j3sm8486099pjs.50.2020.12.26.10.24.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Dec 2020 10:24:06 -0800 (PST)
-Subject: Re: [PATCH 1/4] fs: make unlazy_walk() error handling consistent
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org
-References: <20201217161911.743222-1-axboe@kernel.dk>
- <20201217161911.743222-2-axboe@kernel.dk>
- <66d1d322-42d4-5a46-05fb-caab31d0d834@kernel.dk>
- <20201226045043.GA3579531@ZenIV.linux.org.uk>
- <9ce193e7-8609-7d96-4719-f1b316c927e6@kernel.dk>
- <20201226175801.GV874@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7f1cbbd7-a6ee-e1d3-e24e-02cb107ac86d@kernel.dk>
-Date:   Sat, 26 Dec 2020 11:24:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sun, 27 Dec 2020 07:00:39 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 505A1C061794;
+        Sun, 27 Dec 2020 03:59:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5uwYsgKdAULuF/GQ5sfCvBZKMe+X+d+8OkxeVuEmVJA=; b=IjBY/sHC2/QcJWOmpl7VLlP7Jf
+        XOE8XGkn+3w0uboL02YaLa35ppR1NAmAR6R0bSwCV4SA7qE6KVMRkxt+rj2SZjYtAX4Vvp+rQ6X+L
+        yoTSGRfIbGeRwSIlWOr43PT/49Q/wVO9OxiROdlQXIfCyeWKO35VHe1/e19UQMC5deFxCW/Dx4l6X
+        L5MXthZUbL3KdF4rt0B1rTf6OAqR/kWVfW+wktWfVInuZKjEXpZmUTWILci1Up6fHnGAyNxuj9zKY
+        sB3yNCqCxl228B1vOG83sKPUK31hUQijt0odJg5fPg3/gpdBa0HC+I3v4hphiuwqGhU5Jb6ni1YlM
+        WFFfyplw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ktUhb-0008MJ-Kd; Sun, 27 Dec 2020 11:59:25 +0000
+Date:   Sun, 27 Dec 2020 11:59:11 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, rdunlap@infradead.org, joe@perches.com,
+        mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org
+Subject: Re: [PATCH v16 04/10] fs/ntfs3: Add file operations and
+ implementation
+Message-ID: <20201227115911.GB5479@casper.infradead.org>
+References: <20201225135119.3666763-1-almaz.alexandrovich@paragon-software.com>
+ <20201225135119.3666763-5-almaz.alexandrovich@paragon-software.com>
 MIME-Version: 1.0
-In-Reply-To: <20201226175801.GV874@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201225135119.3666763-5-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/26/20 10:58 AM, Matthew Wilcox wrote:
-> On Sat, Dec 26, 2020 at 10:33:25AM -0700, Jens Axboe wrote:
->> +.TP
->> +.B RESOLVE_CACHED
->> +Make the open operation fail unless all path components are already present
->> +in the kernels lookup cache.
->> +If any kind of revalidation or IO is needed to satisfy the lookup,
-> 
-> Usually spelled I/O in manpages.
+On Fri, Dec 25, 2020 at 04:51:13PM +0300, Konstantin Komarov wrote:
+> +static int ntfs_readdir(struct file *file, struct dir_context *ctx)
+> +{
+> +	const struct INDEX_ROOT *root;
+> +	u64 vbo;
+> +	size_t bit;
+> +	loff_t eod;
+> +	int err = 0;
+> +	struct inode *dir = file_inode(file);
+> +	struct ntfs_inode *ni = ntfs_i(dir);
+> +	struct super_block *sb = dir->i_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	loff_t i_size = dir->i_size;
 
-Changed, thanks!
+I appreciate directories are never likely to exceed 4GB, but why not
+use i_size_read() here?
 
->> +.BR openat2 ()
->> +fails with the error
->> +.B EAGAIN.
->> +This is useful in providing a fast path open that can be performed without
->> +resorting to thread offload, or other mechanism that an application might
->> +use to offload slower operations.
-> 
-> That almost reads backwards ... how about this?
-> 
-> This provides a fast path open that can be used when an application does
-> not wish to block.  It allows the application to hand off the lookup to
-> a separate thread which can block.
+> +	u32 pos = ctx->pos;
+> +	u8 *name = NULL;
+> +	struct indx_node *node = NULL;
+> +	u8 index_bits = ni->dir.index_bits;
+> +
+> +	/* name is a buffer of PATH_MAX length */
+> +	static_assert(NTFS_NAME_LEN * 4 < PATH_MAX);
+> +
+> +	if (ni->dir.changed) {
+> +		ni->dir.changed = false;
+> +		pos = 0;
+> +	}
 
-I deliberately did not want to include anything about blocking, would
-prefer to just keep it about having the necessary data/state cached.
+I don't think that 'changed' as implemented is all that useful.  If you
+have one reader and one-or-more writers, the reader will go back to the
+start, but if you have two readers and one-or-more writers, only one
+reader will see the 'changed' flag before the other one resets it.
 
--- 
-Jens Axboe
+You need to use a sequence counter or something if you want this to be
+proof against multiple readers, and honestly I don't think it's worth it.
+POSIX says:
+: If a file is removed from or added to the directory after the most
+: recent call to opendir() or rewinddir(), whether a subsequent call to
+: readdir() returns an entry for that file is unspecified.
+
+> +	eod = i_size + sbi->record_size;
+> +
+> +	if (pos >= eod)
+> +		return 0;
+> +
+> +	if (!dir_emit_dots(file, ctx))
+> +		return 0;
+> +
+> +	/* allocate PATH_MAX bytes */
+> +	name = __getname();
+> +	if (!name)
+> +		return -ENOMEM;
+> +
+> +	ni_lock(ni);
+
+What is ni_lock() protecting against here?  You're being called under the
+protection of dir->i_rwsem, which excludes simultaneous calls to create,
+link, mknod, symlink, mkdir, unlink, rmdir and rename.
+
+> +const struct file_operations ntfs_dir_operations = {
+> +	.llseek = generic_file_llseek,
+> +	.read = generic_read_dir,
+> +	.iterate = ntfs_readdir,
+
+This should probably be iterate_shared so multiple calls to readdir can
+be in progress at once (see Documentation/filesystems/porting)
 
