@@ -2,136 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5795A2E6C4D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Dec 2020 00:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D882E6C4A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Dec 2020 00:18:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbgL1Wzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1730099AbgL1Wzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 28 Dec 2020 17:55:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57932 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729362AbgL1UEW (ORCPT
+        with ESMTP id S1729445AbgL1Up2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Dec 2020 15:04:22 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C926C0613D6;
-        Mon, 28 Dec 2020 12:03:41 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id i24so10744912edj.8;
-        Mon, 28 Dec 2020 12:03:41 -0800 (PST)
+        Mon, 28 Dec 2020 15:45:28 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8026C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Dec 2020 12:44:47 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id g3so6171469plp.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Dec 2020 12:44:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l6wLs3O3NbOgM5Ikne900yyPCAu6Ee+BSm2CLHZBcHs=;
-        b=j0cC9TO1gDQxvqxWiUNWhnTF78mOXGz1VUQ1QK2ltNTP+r3WsgDcHAbjiDuEaUT/aW
-         BU0DPotHLrWwj+fUP8C8oGxaI24drzA97kJTPgcsRlFnoK7vBNsgEt+r4l8qaOFXcNtI
-         yP7hGvEnJb/CdBzcs/1QXTuNfQRZv4T0RMPWVRbhvpp8XdrrSpP4l0Z/WP6nLH7cx9yD
-         XnsWySG9f289D+LXaTGmaWZK+9SJvNfEL/nDWQVOss/+3cAKUysEgpLAdOJXVo5d7I0s
-         c8I/p6AtgpOPK+ELH4w8pbzu47Xx2FnJo9Gn37gWXeoFPSPV0YaA72or2DSb3EX6FWCy
-         zk/A==
+        d=sargun.me; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=46zWNq1MQMAllPErESq+P0d3wb/+jK7l73bBEn1MKsw=;
+        b=ULQrG5MLVRY0Vzr34XFrkm3y61mmJ5AIS4J3bNrtIG1AIchd+p7ay3R7CbXRclN8uZ
+         M6UeZQrH5oUiOCriZCg/UIiQDgd2JN5KLqd9nEs81cSqo5rI+PVH6kv0v+k6Yl5MCUjV
+         09OOnYx+vrVOj+ICiXMmKDiBDca8BE0gsq5OE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l6wLs3O3NbOgM5Ikne900yyPCAu6Ee+BSm2CLHZBcHs=;
-        b=ONTo/1WTINAd5o4U7LBEnKW80c//Lw7v1E62Y8T5dXBbSVdwGm/WOsgqcEIcP0J7Hc
-         z0PWw0/JwkRFu1k2moj4PocDr7Uw6ruPaeOrkyK9E8VH7c0DwgHvfyRJBWPFqAvON43M
-         4jwaRrh3NxXlYZNIjU2lPe3y8zbZGS3Al/ZNcquxKiXiVmWC8JE0CS0gWtVvDGfE20BF
-         Dxw08Be/zR1dumA7tom8qdR3zTrM3ima5ZqkICl5//w0wfp49SGydqZ1xrPMvkIFUXeN
-         y6yPKlEMkYZhkPmZtGbTxSwr+71BA3RumNEBD5A8ayal+RlU+hv4QuUIhho0GxQFAaKC
-         toDQ==
-X-Gm-Message-State: AOAM530xgco16M47JHswi1vfgZl1EfLS7j7ksslaVfIiaaCXGRH5lKVm
-        eTupK2Qz3aSPOGp9vLw6NRoZNKIX+4rjnH2ZKwE=
-X-Google-Smtp-Source: ABdhPJwlQf5wLF9FUY8a25sToNVh5qWgpnEg5KLjLvsGQ1lxQga3FI+dAsDiqTRhVt44lfrT95MqTjsmPwE91/1tbV8=
-X-Received: by 2002:a05:6402:1c8a:: with SMTP id cy10mr43621201edb.151.1609185820234;
- Mon, 28 Dec 2020 12:03:40 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=46zWNq1MQMAllPErESq+P0d3wb/+jK7l73bBEn1MKsw=;
+        b=kOdRSmuW/OePX9auM2+MCPBLW8lJv4sPTvdmCuabFhWLT2qFDIpLGV08FkUXJqv1fH
+         kRsiHY9liIgQxDPa+Q592l+B/kQN7aqC8LVhPKcBdqhgHvtwd/IuMth7GF3h4aIs8xYS
+         vNTR+cX1sRtmJpRpHFYeOZ0HnY4l+iX8gpNdu8A+c7Z56BGWhJvnsuJz8bc2j/YKP6s7
+         LT93kUVGCb7y+gzkOALogk1622r0GpRKLHHdCFwojJv0J6zEIhB4lApQcATSv2Z+Rnpn
+         pkgiXRkgx3ObKd5KLYxaoTldH2RnAxWiTOE+QsD31MEtlqRvR/F0Gbew4wBbnbXTRw6V
+         yI0A==
+X-Gm-Message-State: AOAM530foPp25R2E+E2AoxSA2Dh509+Xor3ltwUE7TGaZUpkJtCE7Wpd
+        jotLC64xeu0gM+tIURuPsh93jPsMb1UEEAAAt88=
+X-Google-Smtp-Source: ABdhPJxzW5BNpGbiIkly/rGtsowvBDABW0hzn/xoLQGi8JxAkFaLtLng/NVzkkuRgLFRoydQzclBJQ==
+X-Received: by 2002:a17:90b:24c:: with SMTP id fz12mr668157pjb.138.1609188287184;
+        Mon, 28 Dec 2020 12:44:47 -0800 (PST)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id b129sm37843077pgc.52.2020.12.28.12.44.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Dec 2020 12:44:46 -0800 (PST)
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        Kyle Anderson <kylea@netflix.com>,
+        Manas Alekar <malekar@netflix.com>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Rob Gulewich <rgulewich@netflix.com>,
+        Zoran Simic <zsimic@netflix.com>, stable@vger.kernel.org
+Subject: [RESEND PATCH] fs: Validate flags and capabilities before looking up path in ksys_umount
+Date:   Mon, 28 Dec 2020 12:44:38 -0800
+Message-Id: <20201228204438.1726-1-sargun@sargun.me>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20201214223722.232537-1-shy828301@gmail.com> <20201214223722.232537-4-shy828301@gmail.com>
- <20201215171439.GC385334@cmpxchg.org> <CAHbLzkrzv48S3ks-x8M=2sHxRS_+c-hLXdt4ScaWD6mC4ZFe8w@mail.gmail.com>
-In-Reply-To: <CAHbLzkrzv48S3ks-x8M=2sHxRS_+c-hLXdt4ScaWD6mC4ZFe8w@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 28 Dec 2020 12:03:28 -0800
-Message-ID: <CAHbLzkrxKOdfn8quHDCNwPMTLAe4rB3vyhmuzaL2KA+F23fr8Q@mail.gmail.com>
-Subject: Re: [v2 PATCH 3/9] mm: vmscan: guarantee shrinker_slab_memcg() sees
- valid shrinker_maps for online memcg
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I think Johannes's point makes sense to me. If the shrinker_maps is
-not initialized yet it means the memcg is too young to have a number
-of reclaimable slab caches. It sounds fine to just skip it.
+ksys_umount was refactored to into split into another function
+(path_umount) to enable sharing code. This changed the order that flags and
+permissions are validated in, and made it so that user_path_at was called
+before validating flags and capabilities.
 
-And, with consolidating shrinker_maps and shrinker_deferred into one
-struct, we could just check the pointer of the struct. So, it seems
-this patch is not necessary anymore. This patch will be dropped in v3.
+Unfortunately, libfuse2[1] and libmount[2] rely on the old flag validation
+behaviour to determine whether or not the kernel supports UMOUNT_NOFOLLOW.
+The other path that this validation is being checked on is
+init_umount->path_umount->can_umount. That's all internal to the kernel.
 
-On Tue, Dec 15, 2020 at 12:31 PM Yang Shi <shy828301@gmail.com> wrote:
->
-> On Tue, Dec 15, 2020 at 9:16 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > On Mon, Dec 14, 2020 at 02:37:16PM -0800, Yang Shi wrote:
-> > > The shrink_slab_memcg() races with mem_cgroup_css_online(). A visibility of CSS_ONLINE flag
-> > > in shrink_slab_memcg()->mem_cgroup_online() does not guarantee that we will see
-> > > memcg->nodeinfo[nid]->shrinker_maps != NULL.  This may occur because of processor reordering
-> > > on !x86.
-> > >
-> > > This seems like the below case:
-> > >
-> > >            CPU A          CPU B
-> > > store shrinker_map      load CSS_ONLINE
-> > > store CSS_ONLINE        load shrinker_map
-> >
-> > But we have a separate check on shrinker_maps, so it doesn't matter
-> > that it isn't guaranteed, no?
->
-> IIUC, yes. Checking shrinker_maps is the alternative way to detect the
-> reordering to prevent from seeing NULL shrinker_maps per Kirill.
->
-> We could check shrinker_deferred too, then just walk away if it is NULL.
->
-> >
-> > The only downside I can see is when CSS_ONLINE isn't visible yet and
-> > we bail even though we'd be ready to shrink. Although it's probably
-> > unlikely that there would be any objects allocated already...
->
-> Yes, it seems so.
->
-> >
-> > Can somebody remind me why we check mem_cgroup_online() at all?
->
-> IIUC it should be mainly used to skip offlined memcgs since there is
-> nothing on offlined memcgs' LRU because all objects have been
-> reparented. But shrinker_map won't be freed until .css_free is called.
-> So the shrinkers might be called in vain.
->
-> >
-> > If shrinker_map is set, we can shrink: .css_alloc is guaranteed to be
-> > complete, and by using RCU for the shrinker_map pointer, the map is
-> > also guaranteed to be initialized. There is nothing else happening
-> > during onlining that you may depend on.
-> >
-> > If shrinker_map isn't set, we cannot iterate the bitmap. It does not
-> > really matter whether CSS_ONLINE is reordered and visible already.
->
-> As I mentioned above it should be used to skip offlined memcgs, but it
-> also opens the race condition due to memory reordering. As Kirill
-> explained in the earlier email, we could either check the pointer or
-> use memory barriers.
->
-> If the memory barriers seems overkilling, I could definitely switch
-> back to NULL pointer check approach.
->
-> >
-> > Agreed with Dave: if we need that synchronization around onlining, it
-> > needs to happen inside the cgroup core. But I wouldn't add that until
-> > somebody actually required it.
+[1]: https://github.com/libfuse/libfuse/blob/9bfbeb576c5901b62a171d35510f0d1a922020b7/util/fusermount.c#L403
+[2]: https://github.com/karelzak/util-linux/blob/7ed579523b556b1270f28dbdb7ee07dee310f157/libmount/src/context_umount.c#L813
+
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Fixes: 41525f56e256 ("fs: refactor ksys_umount")
+---
+ fs/namespace.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index cebaa3e81794..dc76f1cb89f4 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1710,10 +1710,6 @@ static int can_umount(const struct path *path, int flags)
+ {
+ 	struct mount *mnt = real_mount(path->mnt);
+ 
+-	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
+-		return -EINVAL;
+-	if (!may_mount())
+-		return -EPERM;
+ 	if (path->dentry != path->mnt->mnt_root)
+ 		return -EINVAL;
+ 	if (!check_mnt(mnt))
+@@ -1746,6 +1742,12 @@ static int ksys_umount(char __user *name, int flags)
+ 	struct path path;
+ 	int ret;
+ 
++	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
++		return -EINVAL;
++
++	if (!may_mount())
++		return -EPERM;
++
+ 	if (!(flags & UMOUNT_NOFOLLOW))
+ 		lookup_flags |= LOOKUP_FOLLOW;
+ 	ret = user_path_at(AT_FDCWD, name, lookup_flags, &path);
+-- 
+2.25.1
+
