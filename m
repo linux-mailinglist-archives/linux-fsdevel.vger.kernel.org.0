@@ -2,608 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB7F2E34B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Dec 2020 08:27:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D88862E34CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Dec 2020 08:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbgL1HZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Dec 2020 02:25:34 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:7543 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726242AbgL1HZe (ORCPT
+        id S1726300AbgL1Hou (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Dec 2020 02:44:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57780 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726242AbgL1Hou (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Dec 2020 02:25:34 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R721e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=wetp.zy@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UJxtgu7_1609140278;
-Received: from wetpdeMacBook-Pro.local(mailfrom:wetp.zy@linux.alibaba.com fp:SMTPD_---0UJxtgu7_1609140278)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 28 Dec 2020 15:24:38 +0800
-Subject: Re: [PATCH 04/13] x86/extable: Introduce _ASM_EXTABLE_UA for uaccess
- fixups
-To:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        kernel-hardening@lists.openwall.com, dvyukov@google.com,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Borislav Petkov <bp@alien8.de>
-References: <1609139095-26337-1-git-send-email-wetp.zy@linux.alibaba.com>
- <1609139095-26337-5-git-send-email-wetp.zy@linux.alibaba.com>
-From:   wetp <wetp.zy@linux.alibaba.com>
-Message-ID: <095aa9a0-ef05-86a6-48f3-0a3208447654@linux.alibaba.com>
-Date:   Mon, 28 Dec 2020 15:24:38 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.0
+        Mon, 28 Dec 2020 02:44:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1609141402;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DUqT+VEpmHhWLOUn9+3++KLEXvtfbXB6JHxQWM389zk=;
+        b=gnXeJ+NbH9l3DuKsMvu1M3OKQStYc4CcWpb4kBzzb51kuc1lPp5rDFbIOmxL5e0lSsSW8W
+        kyWWIkWxP7jWCbBkDsi2QuuQfItt074yFrN1oLfRVogzpA9dIrpOmhOsU4xlDsrWeF37Xp
+        TrZRp4nv9tlM/BQk27GrOYGOKAdjjQc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-205-inycoFP9NTmopTKJEXh3dg-1; Mon, 28 Dec 2020 02:43:20 -0500
+X-MC-Unique: inycoFP9NTmopTKJEXh3dg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 88979800D53;
+        Mon, 28 Dec 2020 07:43:17 +0000 (UTC)
+Received: from [10.72.13.159] (ovpn-13-159.pek2.redhat.com [10.72.13.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E52E60CC4;
+        Mon, 28 Dec 2020 07:43:04 +0000 (UTC)
+Subject: Re: [RFC v2 09/13] vduse: Add support for processing vhost iotlb
+ message
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
+        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20201222145221.711-1-xieyongji@bytedance.com>
+ <20201222145221.711-10-xieyongji@bytedance.com>
+ <6818a214-d587-4f0b-7de6-13c4e7e94ab6@redhat.com>
+ <CACycT3vVU9vg6R6UujSnSdk8cwxWPVgeJJs0JaBH_Zg4xC-epQ@mail.gmail.com>
+ <595fe7d6-7876-26e4-0b7c-1d63ca6d7a97@redhat.com>
+ <CACycT3s=m=PQb5WFoMGhz8TNGme4+=rmbbBTtrugF9ZmNnWxEw@mail.gmail.com>
+ <0e6faf9c-117a-e23c-8d6d-488d0ec37412@redhat.com>
+ <CACycT3uwXBYvRbKDWdN3oCekv+o6_Lc=-KTrxejD=fr-zgibGw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <2b24398c-e6d9-14ec-2c0d-c303d528e377@redhat.com>
+Date:   Mon, 28 Dec 2020 15:43:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1609139095-26337-5-git-send-email-wetp.zy@linux.alibaba.com>
+In-Reply-To: <CACycT3uwXBYvRbKDWdN3oCekv+o6_Lc=-KTrxejD=fr-zgibGw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Please ingore this, so sorry to boring you.
 
-On 2020/12/28 下午3:04, Wetp Zhang wrote:
-> From: Jann Horn <jannh@google.com>
+On 2020/12/25 下午6:31, Yongji Xie wrote:
+> On Fri, Dec 25, 2020 at 2:58 PM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> On 2020/12/24 下午3:37, Yongji Xie wrote:
+>>> On Thu, Dec 24, 2020 at 10:41 AM Jason Wang <jasowang@redhat.com> wrote:
+>>>> On 2020/12/23 下午8:14, Yongji Xie wrote:
+>>>>> On Wed, Dec 23, 2020 at 5:05 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>>>> On 2020/12/22 下午10:52, Xie Yongji wrote:
+>>>>>>> To support vhost-vdpa bus driver, we need a way to share the
+>>>>>>> vhost-vdpa backend process's memory with the userspace VDUSE process.
+>>>>>>>
+>>>>>>> This patch tries to make use of the vhost iotlb message to achieve
+>>>>>>> that. We will get the shm file from the iotlb message and pass it
+>>>>>>> to the userspace VDUSE process.
+>>>>>>>
+>>>>>>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+>>>>>>> ---
+>>>>>>>      Documentation/driver-api/vduse.rst |  15 +++-
+>>>>>>>      drivers/vdpa/vdpa_user/vduse_dev.c | 147 ++++++++++++++++++++++++++++++++++++-
+>>>>>>>      include/uapi/linux/vduse.h         |  11 +++
+>>>>>>>      3 files changed, 171 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
+>>>>>>> index 623f7b040ccf..48e4b1ba353f 100644
+>>>>>>> --- a/Documentation/driver-api/vduse.rst
+>>>>>>> +++ b/Documentation/driver-api/vduse.rst
+>>>>>>> @@ -46,13 +46,26 @@ The following types of messages are provided by the VDUSE framework now:
+>>>>>>>
+>>>>>>>      - VDUSE_GET_CONFIG: Read from device specific configuration space
+>>>>>>>
+>>>>>>> +- VDUSE_UPDATE_IOTLB: Update the memory mapping in device IOTLB
+>>>>>>> +
+>>>>>>> +- VDUSE_INVALIDATE_IOTLB: Invalidate the memory mapping in device IOTLB
+>>>>>>> +
+>>>>>>>      Please see include/linux/vdpa.h for details.
+>>>>>>>
+>>>>>>> -In the data path, VDUSE framework implements a MMU-based on-chip IOMMU
+>>>>>>> +The data path of userspace vDPA device is implemented in different ways
+>>>>>>> +depending on the vdpa bus to which it is attached.
+>>>>>>> +
+>>>>>>> +In virtio-vdpa case, VDUSE framework implements a MMU-based on-chip IOMMU
+>>>>>>>      driver which supports mapping the kernel dma buffer to a userspace iova
+>>>>>>>      region dynamically. The userspace iova region can be created by passing
+>>>>>>>      the userspace vDPA device fd to mmap(2).
+>>>>>>>
+>>>>>>> +In vhost-vdpa case, the dma buffer is reside in a userspace memory region
+>>>>>>> +which will be shared to the VDUSE userspace processs via the file
+>>>>>>> +descriptor in VDUSE_UPDATE_IOTLB message. And the corresponding address
+>>>>>>> +mapping (IOVA of dma buffer <-> VA of the memory region) is also included
+>>>>>>> +in this message.
+>>>>>>> +
+>>>>>>>      Besides, the eventfd mechanism is used to trigger interrupt callbacks and
+>>>>>>>      receive virtqueue kicks in userspace. The following ioctls on the userspace
+>>>>>>>      vDPA device fd are provided to support that:
+>>>>>>> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+>>>>>>> index b974333ed4e9..d24aaacb6008 100644
+>>>>>>> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+>>>>>>> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+>>>>>>> @@ -34,6 +34,7 @@
+>>>>>>>
+>>>>>>>      struct vduse_dev_msg {
+>>>>>>>          struct vduse_dev_request req;
+>>>>>>> +     struct file *iotlb_file;
+>>>>>>>          struct vduse_dev_response resp;
+>>>>>>>          struct list_head list;
+>>>>>>>          wait_queue_head_t waitq;
+>>>>>>> @@ -325,12 +326,80 @@ static int vduse_dev_set_vq_state(struct vduse_dev *dev,
+>>>>>>>          return ret;
+>>>>>>>      }
+>>>>>>>
+>>>>>>> +static int vduse_dev_update_iotlb(struct vduse_dev *dev, struct file *file,
+>>>>>>> +                             u64 offset, u64 iova, u64 size, u8 perm)
+>>>>>>> +{
+>>>>>>> +     struct vduse_dev_msg *msg;
+>>>>>>> +     int ret;
+>>>>>>> +
+>>>>>>> +     if (!size)
+>>>>>>> +             return -EINVAL;
+>>>>>>> +
+>>>>>>> +     msg = vduse_dev_new_msg(dev, VDUSE_UPDATE_IOTLB);
+>>>>>>> +     msg->req.size = sizeof(struct vduse_iotlb);
+>>>>>>> +     msg->req.iotlb.offset = offset;
+>>>>>>> +     msg->req.iotlb.iova = iova;
+>>>>>>> +     msg->req.iotlb.size = size;
+>>>>>>> +     msg->req.iotlb.perm = perm;
+>>>>>>> +     msg->req.iotlb.fd = -1;
+>>>>>>> +     msg->iotlb_file = get_file(file);
+>>>>>>> +
+>>>>>>> +     ret = vduse_dev_msg_sync(dev, msg);
+>>>>>> My feeling is that we should provide consistent API for the userspace
+>>>>>> device to use.
+>>>>>>
+>>>>>> E.g we'd better carry the IOTLB message for both virtio/vhost drivers.
+>>>>>>
+>>>>>> It looks to me for virtio drivers we can still use UPDAT_IOTLB message
+>>>>>> by using VDUSE file as msg->iotlb_file here.
+>>>>>>
+>>>>> It's OK for me. One problem is when to transfer the UPDATE_IOTLB
+>>>>> message in virtio cases.
+>>>> Instead of generating IOTLB messages for userspace.
+>>>>
+>>>> How about record the mappings (which is a common case for device have
+>>>> on-chip IOMMU e.g mlx5e and vdpa simlator), then we can introduce ioctl
+>>>> for userspace to query?
+>>>>
+>>> If so, the IOTLB UPDATE is actually triggered by ioctl, but
+>>> IOTLB_INVALIDATE is triggered by the message. Is it a little odd?
+>>
+>> Good point.
+>>
+>> Some questions here:
+>>
+>> 1) Userspace think the IOTLB was flushed after IOTLB_INVALIDATE syscall
+>> is returned. But this patch doesn't have this guarantee. Can this lead
+>> some issues?
+> I'm not sure. But should it be guaranteed in VDUSE userspace? Just
+> like what vhost-user backend process does.
+
+
+I think so. This is because the userspace device needs a way to 
+synchronize invalidation with its datapath. Otherwise, guest may thing 
+the buffer is freed to be used by other parts but the it actually can be 
+used by the VDUSE device. The may cause security issues.
+
+
 >
-> fix #31317281
+>> 2) I think after VDUSE userspace receives IOTLB_INVALIDATE, it needs to
+>> issue a munmap(). What if it doesn't do that?
+>>
+> Yes, the munmap() is needed. If it doesn't do that, VDUSE userspace
+> could still access the corresponding guest memory region.
+
+
+I see. So all the above two questions are because VHOST_IOTLB_INVALIDATE 
+is expected to be synchronous. This need to be solved by tweaking the 
+current VDUSE API or we can re-visit to go with descriptors relaying first.
+
+Thanks
+
+
 >
-> commit 75045f77f7a73e617494d7a1fcf4e9c1849cec39 upstream
-> Backport summary: Backport to kernel 4.19.57 to enhance MCA-R for copyin
+> Thanks,
+> Yongji
 >
-> Currently, most fixups for attempting to access userspace memory are
-> handled using _ASM_EXTABLE, which is also used for various other types of
-> fixups (e.g. safe MSR access, IRET failures, and a bunch of other things).
-> In order to make it possible to add special safety checks to uaccess fixups
-> (in particular, checking whether the fault address is actually in
-> userspace), introduce a new exception table handler ex_handler_uaccess()
-> and wire it up to all the user access fixups (excluding ones that
-> already use _ASM_EXTABLE_EX).
->
-> Signed-off-by: Jann Horn <jannh@google.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Tested-by: Kees Cook <keescook@chromium.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: kernel-hardening@lists.openwall.com
-> Cc: dvyukov@google.com
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-> Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Borislav Petkov <bp@alien8.de>
-> Link: https://lkml.kernel.org/r/20180828201421.157735-5-jannh@google.com
-> Signed-off-by: Youquan Song <youquan.song@intel.com>
-> Signed-off-by: Wetp Zhang <wetp.zy@linux.alibaba.com>
-> ---
->   arch/x86/include/asm/asm.h     |   6 ++
->   arch/x86/include/asm/futex.h   |   6 +-
->   arch/x86/include/asm/uaccess.h |  16 +++---
->   arch/x86/lib/checksum_32.S     |   4 +-
->   arch/x86/lib/copy_user_64.S    |  90 ++++++++++++++---------------
->   arch/x86/lib/csum-copy_64.S    |   8 ++-
->   arch/x86/lib/getuser.S         |  12 ++--
->   arch/x86/lib/putuser.S         |  10 ++--
->   arch/x86/lib/usercopy_32.c     | 126 ++++++++++++++++++++---------------------
->   arch/x86/lib/usercopy_64.c     |   4 +-
->   arch/x86/mm/extable.c          |   8 +++
->   11 files changed, 154 insertions(+), 136 deletions(-)
->
-> diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-> index 990770f..13fe8d6 100644
-> --- a/arch/x86/include/asm/asm.h
-> +++ b/arch/x86/include/asm/asm.h
-> @@ -130,6 +130,9 @@
->   # define _ASM_EXTABLE(from, to)					\
->   	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
->   
-> +# define _ASM_EXTABLE_UA(from, to)				\
-> +	_ASM_EXTABLE_HANDLE(from, to, ex_handler_uaccess)
-> +
->   # define _ASM_EXTABLE_FAULT(from, to)				\
->   	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
->   
-> @@ -182,6 +185,9 @@
->   # define _ASM_EXTABLE(from, to)					\
->   	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
->   
-> +# define _ASM_EXTABLE_UA(from, to)				\
-> +	_ASM_EXTABLE_HANDLE(from, to, ex_handler_uaccess)
-> +
->   # define _ASM_EXTABLE_FAULT(from, to)				\
->   	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
->   
-> diff --git a/arch/x86/include/asm/futex.h b/arch/x86/include/asm/futex.h
-> index de4d688..13c83fe 100644
-> --- a/arch/x86/include/asm/futex.h
-> +++ b/arch/x86/include/asm/futex.h
-> @@ -20,7 +20,7 @@
->   		     "3:\tmov\t%3, %1\n"			\
->   		     "\tjmp\t2b\n"				\
->   		     "\t.previous\n"				\
-> -		     _ASM_EXTABLE(1b, 3b)			\
-> +		     _ASM_EXTABLE_UA(1b, 3b)			\
->   		     : "=r" (oldval), "=r" (ret), "+m" (*uaddr)	\
->   		     : "i" (-EFAULT), "0" (oparg), "1" (0))
->   
-> @@ -36,8 +36,8 @@
->   		     "4:\tmov\t%5, %1\n"			\
->   		     "\tjmp\t3b\n"				\
->   		     "\t.previous\n"				\
-> -		     _ASM_EXTABLE(1b, 4b)			\
-> -		     _ASM_EXTABLE(2b, 4b)			\
-> +		     _ASM_EXTABLE_UA(1b, 4b)			\
-> +		     _ASM_EXTABLE_UA(2b, 4b)			\
->   		     : "=&a" (oldval), "=&r" (ret),		\
->   		       "+m" (*uaddr), "=&r" (tem)		\
->   		     : "r" (oparg), "i" (-EFAULT), "1" (0))
-> diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-> index d7ccff5..58929cf 100644
-> --- a/arch/x86/include/asm/uaccess.h
-> +++ b/arch/x86/include/asm/uaccess.h
-> @@ -198,8 +198,8 @@ static inline bool __chk_range_not_ok(unsigned long addr, unsigned long size, un
->   		     "4:	movl %3,%0\n"				\
->   		     "	jmp 3b\n"					\
->   		     ".previous\n"					\
-> -		     _ASM_EXTABLE(1b, 4b)				\
-> -		     _ASM_EXTABLE(2b, 4b)				\
-> +		     _ASM_EXTABLE_UA(1b, 4b)				\
-> +		     _ASM_EXTABLE_UA(2b, 4b)				\
->   		     : "=r" (err)					\
->   		     : "A" (x), "r" (addr), "i" (errret), "0" (err))
->   
-> @@ -385,7 +385,7 @@ static inline bool __chk_range_not_ok(unsigned long addr, unsigned long size, un
->   		     "	xor"itype" %"rtype"1,%"rtype"1\n"		\
->   		     "	jmp 2b\n"					\
->   		     ".previous\n"					\
-> -		     _ASM_EXTABLE(1b, 3b)				\
-> +		     _ASM_EXTABLE_UA(1b, 3b)				\
->   		     : "=r" (err), ltype(x)				\
->   		     : "m" (__m(addr)), "i" (errret), "0" (err))
->   
-> @@ -477,7 +477,7 @@ static inline bool __chk_range_not_ok(unsigned long addr, unsigned long size, un
->   		     "3:	mov %3,%0\n"				\
->   		     "	jmp 2b\n"					\
->   		     ".previous\n"					\
-> -		     _ASM_EXTABLE(1b, 3b)				\
-> +		     _ASM_EXTABLE_UA(1b, 3b)				\
->   		     : "=r"(err)					\
->   		     : ltype(x), "m" (__m(addr)), "i" (errret), "0" (err))
->   
-> @@ -605,7 +605,7 @@ extern void __cmpxchg_wrong_size(void)
->   			"3:\tmov     %3, %0\n"				\
->   			"\tjmp     2b\n"				\
->   			"\t.previous\n"					\
-> -			_ASM_EXTABLE(1b, 3b)				\
-> +			_ASM_EXTABLE_UA(1b, 3b)				\
->   			: "+r" (__ret), "=a" (__old), "+m" (*(ptr))	\
->   			: "i" (-EFAULT), "q" (__new), "1" (__old)	\
->   			: "memory"					\
-> @@ -621,7 +621,7 @@ extern void __cmpxchg_wrong_size(void)
->   			"3:\tmov     %3, %0\n"				\
->   			"\tjmp     2b\n"				\
->   			"\t.previous\n"					\
-> -			_ASM_EXTABLE(1b, 3b)				\
-> +			_ASM_EXTABLE_UA(1b, 3b)				\
->   			: "+r" (__ret), "=a" (__old), "+m" (*(ptr))	\
->   			: "i" (-EFAULT), "r" (__new), "1" (__old)	\
->   			: "memory"					\
-> @@ -637,7 +637,7 @@ extern void __cmpxchg_wrong_size(void)
->   			"3:\tmov     %3, %0\n"				\
->   			"\tjmp     2b\n"				\
->   			"\t.previous\n"					\
-> -			_ASM_EXTABLE(1b, 3b)				\
-> +			_ASM_EXTABLE_UA(1b, 3b)				\
->   			: "+r" (__ret), "=a" (__old), "+m" (*(ptr))	\
->   			: "i" (-EFAULT), "r" (__new), "1" (__old)	\
->   			: "memory"					\
-> @@ -656,7 +656,7 @@ extern void __cmpxchg_wrong_size(void)
->   			"3:\tmov     %3, %0\n"				\
->   			"\tjmp     2b\n"				\
->   			"\t.previous\n"					\
-> -			_ASM_EXTABLE(1b, 3b)				\
-> +			_ASM_EXTABLE_UA(1b, 3b)				\
->   			: "+r" (__ret), "=a" (__old), "+m" (*(ptr))	\
->   			: "i" (-EFAULT), "r" (__new), "1" (__old)	\
->   			: "memory"					\
-> diff --git a/arch/x86/lib/checksum_32.S b/arch/x86/lib/checksum_32.S
-> index 46e71a7..ad8e090 100644
-> --- a/arch/x86/lib/checksum_32.S
-> +++ b/arch/x86/lib/checksum_32.S
-> @@ -273,11 +273,11 @@ unsigned int csum_partial_copy_generic (const char *src, char *dst,
->   
->   #define SRC(y...)			\
->   	9999: y;			\
-> -	_ASM_EXTABLE(9999b, 6001f)
-> +	_ASM_EXTABLE_UA(9999b, 6001f)
->   
->   #define DST(y...)			\
->   	9999: y;			\
-> -	_ASM_EXTABLE(9999b, 6002f)
-> +	_ASM_EXTABLE_UA(9999b, 6002f)
->   
->   #ifndef CONFIG_X86_USE_PPRO_CHECKSUM
->   
-> diff --git a/arch/x86/lib/copy_user_64.S b/arch/x86/lib/copy_user_64.S
-> index 020f75c..80cfad6 100644
-> --- a/arch/x86/lib/copy_user_64.S
-> +++ b/arch/x86/lib/copy_user_64.S
-> @@ -92,26 +92,26 @@ ENTRY(copy_user_generic_unrolled)
->   60:	jmp copy_user_handle_tail /* ecx is zerorest also */
->   	.previous
->   
-> -	_ASM_EXTABLE(1b,30b)
-> -	_ASM_EXTABLE(2b,30b)
-> -	_ASM_EXTABLE(3b,30b)
-> -	_ASM_EXTABLE(4b,30b)
-> -	_ASM_EXTABLE(5b,30b)
-> -	_ASM_EXTABLE(6b,30b)
-> -	_ASM_EXTABLE(7b,30b)
-> -	_ASM_EXTABLE(8b,30b)
-> -	_ASM_EXTABLE(9b,30b)
-> -	_ASM_EXTABLE(10b,30b)
-> -	_ASM_EXTABLE(11b,30b)
-> -	_ASM_EXTABLE(12b,30b)
-> -	_ASM_EXTABLE(13b,30b)
-> -	_ASM_EXTABLE(14b,30b)
-> -	_ASM_EXTABLE(15b,30b)
-> -	_ASM_EXTABLE(16b,30b)
-> -	_ASM_EXTABLE(18b,40b)
-> -	_ASM_EXTABLE(19b,40b)
-> -	_ASM_EXTABLE(21b,50b)
-> -	_ASM_EXTABLE(22b,50b)
-> +	_ASM_EXTABLE_UA(1b,30b)
-> +	_ASM_EXTABLE_UA(2b,30b)
-> +	_ASM_EXTABLE_UA(3b,30b)
-> +	_ASM_EXTABLE_UA(4b,30b)
-> +	_ASM_EXTABLE_UA(5b,30b)
-> +	_ASM_EXTABLE_UA(6b,30b)
-> +	_ASM_EXTABLE_UA(7b,30b)
-> +	_ASM_EXTABLE_UA(8b,30b)
-> +	_ASM_EXTABLE_UA(9b,30b)
-> +	_ASM_EXTABLE_UA(10b,30b)
-> +	_ASM_EXTABLE_UA(11b,30b)
-> +	_ASM_EXTABLE_UA(12b,30b)
-> +	_ASM_EXTABLE_UA(13b,30b)
-> +	_ASM_EXTABLE_UA(14b,30b)
-> +	_ASM_EXTABLE_UA(15b,30b)
-> +	_ASM_EXTABLE_UA(16b,30b)
-> +	_ASM_EXTABLE_UA(18b,40b)
-> +	_ASM_EXTABLE_UA(19b,40b)
-> +	_ASM_EXTABLE_UA(21b,50b)
-> +	_ASM_EXTABLE_UA(22b,50b)
->   ENDPROC(copy_user_generic_unrolled)
->   EXPORT_SYMBOL(copy_user_generic_unrolled)
->   
-> @@ -156,8 +156,8 @@ ENTRY(copy_user_generic_string)
->   	jmp copy_user_handle_tail
->   	.previous
->   
-> -	_ASM_EXTABLE(1b,11b)
-> -	_ASM_EXTABLE(3b,12b)
-> +	_ASM_EXTABLE_UA(1b,11b)
-> +	_ASM_EXTABLE_UA(3b,12b)
->   ENDPROC(copy_user_generic_string)
->   EXPORT_SYMBOL(copy_user_generic_string)
->   
-> @@ -189,7 +189,7 @@ ENTRY(copy_user_enhanced_fast_string)
->   	jmp copy_user_handle_tail
->   	.previous
->   
-> -	_ASM_EXTABLE(1b,12b)
-> +	_ASM_EXTABLE_UA(1b,12b)
->   ENDPROC(copy_user_enhanced_fast_string)
->   EXPORT_SYMBOL(copy_user_enhanced_fast_string)
->   
-> @@ -319,27 +319,27 @@ ENTRY(__copy_user_nocache)
->   	jmp copy_user_handle_tail
->   	.previous
->   
-> -	_ASM_EXTABLE(1b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(2b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(3b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(4b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(5b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(6b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(7b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(8b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(9b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(10b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(11b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(12b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(13b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(14b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(15b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(16b,.L_fixup_4x8b_copy)
-> -	_ASM_EXTABLE(20b,.L_fixup_8b_copy)
-> -	_ASM_EXTABLE(21b,.L_fixup_8b_copy)
-> -	_ASM_EXTABLE(30b,.L_fixup_4b_copy)
-> -	_ASM_EXTABLE(31b,.L_fixup_4b_copy)
-> -	_ASM_EXTABLE(40b,.L_fixup_1b_copy)
-> -	_ASM_EXTABLE(41b,.L_fixup_1b_copy)
-> +	_ASM_EXTABLE_UA(1b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(2b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(3b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(4b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(5b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(6b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(7b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(8b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(9b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(10b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(11b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(12b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(13b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(14b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(15b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(16b,.L_fixup_4x8b_copy)
-> +	_ASM_EXTABLE_UA(20b,.L_fixup_8b_copy)
-> +	_ASM_EXTABLE_UA(21b,.L_fixup_8b_copy)
-> +	_ASM_EXTABLE_UA(30b,.L_fixup_4b_copy)
-> +	_ASM_EXTABLE_UA(31b,.L_fixup_4b_copy)
-> +	_ASM_EXTABLE_UA(40b,.L_fixup_1b_copy)
-> +	_ASM_EXTABLE_UA(41b,.L_fixup_1b_copy)
->   ENDPROC(__copy_user_nocache)
->   EXPORT_SYMBOL(__copy_user_nocache)
-> diff --git a/arch/x86/lib/csum-copy_64.S b/arch/x86/lib/csum-copy_64.S
-> index 45a53df..a4a379e 100644
-> --- a/arch/x86/lib/csum-copy_64.S
-> +++ b/arch/x86/lib/csum-copy_64.S
-> @@ -31,14 +31,18 @@
->   
->   	.macro source
->   10:
-> -	_ASM_EXTABLE(10b, .Lbad_source)
-> +	_ASM_EXTABLE_UA(10b, .Lbad_source)
->   	.endm
->   
->   	.macro dest
->   20:
-> -	_ASM_EXTABLE(20b, .Lbad_dest)
-> +	_ASM_EXTABLE_UA(20b, .Lbad_dest)
->   	.endm
->   
-> +	/*
-> +	 * No _ASM_EXTABLE_UA; this is used for intentional prefetch on a
-> +	 * potentially unmapped kernel address.
-> +	 */
->   	.macro ignore L=.Lignore
->   30:
->   	_ASM_EXTABLE(30b, \L)
-> diff --git a/arch/x86/lib/getuser.S b/arch/x86/lib/getuser.S
-> index 49b167f..74fdff9 100644
-> --- a/arch/x86/lib/getuser.S
-> +++ b/arch/x86/lib/getuser.S
-> @@ -132,12 +132,12 @@ bad_get_user_8:
->   END(bad_get_user_8)
->   #endif
->   
-> -	_ASM_EXTABLE(1b,bad_get_user)
-> -	_ASM_EXTABLE(2b,bad_get_user)
-> -	_ASM_EXTABLE(3b,bad_get_user)
-> +	_ASM_EXTABLE_UA(1b, bad_get_user)
-> +	_ASM_EXTABLE_UA(2b, bad_get_user)
-> +	_ASM_EXTABLE_UA(3b, bad_get_user)
->   #ifdef CONFIG_X86_64
-> -	_ASM_EXTABLE(4b,bad_get_user)
-> +	_ASM_EXTABLE_UA(4b, bad_get_user)
->   #else
-> -	_ASM_EXTABLE(4b,bad_get_user_8)
-> -	_ASM_EXTABLE(5b,bad_get_user_8)
-> +	_ASM_EXTABLE_UA(4b, bad_get_user_8)
-> +	_ASM_EXTABLE_UA(5b, bad_get_user_8)
->   #endif
-> diff --git a/arch/x86/lib/putuser.S b/arch/x86/lib/putuser.S
-> index 96dce5fe..d2e5c9c 100644
-> --- a/arch/x86/lib/putuser.S
-> +++ b/arch/x86/lib/putuser.S
-> @@ -94,10 +94,10 @@ bad_put_user:
->   	EXIT
->   END(bad_put_user)
->   
-> -	_ASM_EXTABLE(1b,bad_put_user)
-> -	_ASM_EXTABLE(2b,bad_put_user)
-> -	_ASM_EXTABLE(3b,bad_put_user)
-> -	_ASM_EXTABLE(4b,bad_put_user)
-> +	_ASM_EXTABLE_UA(1b, bad_put_user)
-> +	_ASM_EXTABLE_UA(2b, bad_put_user)
-> +	_ASM_EXTABLE_UA(3b, bad_put_user)
-> +	_ASM_EXTABLE_UA(4b, bad_put_user)
->   #ifdef CONFIG_X86_32
-> -	_ASM_EXTABLE(5b,bad_put_user)
-> +	_ASM_EXTABLE_UA(5b, bad_put_user)
->   #endif
-> diff --git a/arch/x86/lib/usercopy_32.c b/arch/x86/lib/usercopy_32.c
-> index 7add8ba..71fb58d 100644
-> --- a/arch/x86/lib/usercopy_32.c
-> +++ b/arch/x86/lib/usercopy_32.c
-> @@ -47,8 +47,8 @@ static inline int __movsl_is_ok(unsigned long a1, unsigned long a2, unsigned lon
->   		"3:	lea 0(%2,%0,4),%0\n"				\
->   		"	jmp 2b\n"					\
->   		".previous\n"						\
-> -		_ASM_EXTABLE(0b,3b)					\
-> -		_ASM_EXTABLE(1b,2b)					\
-> +		_ASM_EXTABLE_UA(0b, 3b)					\
-> +		_ASM_EXTABLE_UA(1b, 2b)					\
->   		: "=&c"(size), "=&D" (__d0)				\
->   		: "r"(size & 3), "0"(size / 4), "1"(addr), "a"(0));	\
->   } while (0)
-> @@ -153,44 +153,44 @@ static inline int __movsl_is_ok(unsigned long a1, unsigned long a2, unsigned lon
->   		       "101:   lea 0(%%eax,%0,4),%0\n"
->   		       "       jmp 100b\n"
->   		       ".previous\n"
-> -		       _ASM_EXTABLE(1b,100b)
-> -		       _ASM_EXTABLE(2b,100b)
-> -		       _ASM_EXTABLE(3b,100b)
-> -		       _ASM_EXTABLE(4b,100b)
-> -		       _ASM_EXTABLE(5b,100b)
-> -		       _ASM_EXTABLE(6b,100b)
-> -		       _ASM_EXTABLE(7b,100b)
-> -		       _ASM_EXTABLE(8b,100b)
-> -		       _ASM_EXTABLE(9b,100b)
-> -		       _ASM_EXTABLE(10b,100b)
-> -		       _ASM_EXTABLE(11b,100b)
-> -		       _ASM_EXTABLE(12b,100b)
-> -		       _ASM_EXTABLE(13b,100b)
-> -		       _ASM_EXTABLE(14b,100b)
-> -		       _ASM_EXTABLE(15b,100b)
-> -		       _ASM_EXTABLE(16b,100b)
-> -		       _ASM_EXTABLE(17b,100b)
-> -		       _ASM_EXTABLE(18b,100b)
-> -		       _ASM_EXTABLE(19b,100b)
-> -		       _ASM_EXTABLE(20b,100b)
-> -		       _ASM_EXTABLE(21b,100b)
-> -		       _ASM_EXTABLE(22b,100b)
-> -		       _ASM_EXTABLE(23b,100b)
-> -		       _ASM_EXTABLE(24b,100b)
-> -		       _ASM_EXTABLE(25b,100b)
-> -		       _ASM_EXTABLE(26b,100b)
-> -		       _ASM_EXTABLE(27b,100b)
-> -		       _ASM_EXTABLE(28b,100b)
-> -		       _ASM_EXTABLE(29b,100b)
-> -		       _ASM_EXTABLE(30b,100b)
-> -		       _ASM_EXTABLE(31b,100b)
-> -		       _ASM_EXTABLE(32b,100b)
-> -		       _ASM_EXTABLE(33b,100b)
-> -		       _ASM_EXTABLE(34b,100b)
-> -		       _ASM_EXTABLE(35b,100b)
-> -		       _ASM_EXTABLE(36b,100b)
-> -		       _ASM_EXTABLE(37b,100b)
-> -		       _ASM_EXTABLE(99b,101b)
-> +		       _ASM_EXTABLE_UA(1b, 100b)
-> +		       _ASM_EXTABLE_UA(2b, 100b)
-> +		       _ASM_EXTABLE_UA(3b, 100b)
-> +		       _ASM_EXTABLE_UA(4b, 100b)
-> +		       _ASM_EXTABLE_UA(5b, 100b)
-> +		       _ASM_EXTABLE_UA(6b, 100b)
-> +		       _ASM_EXTABLE_UA(7b, 100b)
-> +		       _ASM_EXTABLE_UA(8b, 100b)
-> +		       _ASM_EXTABLE_UA(9b, 100b)
-> +		       _ASM_EXTABLE_UA(10b, 100b)
-> +		       _ASM_EXTABLE_UA(11b, 100b)
-> +		       _ASM_EXTABLE_UA(12b, 100b)
-> +		       _ASM_EXTABLE_UA(13b, 100b)
-> +		       _ASM_EXTABLE_UA(14b, 100b)
-> +		       _ASM_EXTABLE_UA(15b, 100b)
-> +		       _ASM_EXTABLE_UA(16b, 100b)
-> +		       _ASM_EXTABLE_UA(17b, 100b)
-> +		       _ASM_EXTABLE_UA(18b, 100b)
-> +		       _ASM_EXTABLE_UA(19b, 100b)
-> +		       _ASM_EXTABLE_UA(20b, 100b)
-> +		       _ASM_EXTABLE_UA(21b, 100b)
-> +		       _ASM_EXTABLE_UA(22b, 100b)
-> +		       _ASM_EXTABLE_UA(23b, 100b)
-> +		       _ASM_EXTABLE_UA(24b, 100b)
-> +		       _ASM_EXTABLE_UA(25b, 100b)
-> +		       _ASM_EXTABLE_UA(26b, 100b)
-> +		       _ASM_EXTABLE_UA(27b, 100b)
-> +		       _ASM_EXTABLE_UA(28b, 100b)
-> +		       _ASM_EXTABLE_UA(29b, 100b)
-> +		       _ASM_EXTABLE_UA(30b, 100b)
-> +		       _ASM_EXTABLE_UA(31b, 100b)
-> +		       _ASM_EXTABLE_UA(32b, 100b)
-> +		       _ASM_EXTABLE_UA(33b, 100b)
-> +		       _ASM_EXTABLE_UA(34b, 100b)
-> +		       _ASM_EXTABLE_UA(35b, 100b)
-> +		       _ASM_EXTABLE_UA(36b, 100b)
-> +		       _ASM_EXTABLE_UA(37b, 100b)
-> +		       _ASM_EXTABLE_UA(99b, 101b)
->   		       : "=&c"(size), "=&D" (d0), "=&S" (d1)
->   		       :  "1"(to), "2"(from), "0"(size)
->   		       : "eax", "edx", "memory");
-> @@ -259,26 +259,26 @@ static unsigned long __copy_user_intel_nocache(void *to,
->   	       "9:      lea 0(%%eax,%0,4),%0\n"
->   	       "16:     jmp 8b\n"
->   	       ".previous\n"
-> -	       _ASM_EXTABLE(0b,16b)
-> -	       _ASM_EXTABLE(1b,16b)
-> -	       _ASM_EXTABLE(2b,16b)
-> -	       _ASM_EXTABLE(21b,16b)
-> -	       _ASM_EXTABLE(3b,16b)
-> -	       _ASM_EXTABLE(31b,16b)
-> -	       _ASM_EXTABLE(4b,16b)
-> -	       _ASM_EXTABLE(41b,16b)
-> -	       _ASM_EXTABLE(10b,16b)
-> -	       _ASM_EXTABLE(51b,16b)
-> -	       _ASM_EXTABLE(11b,16b)
-> -	       _ASM_EXTABLE(61b,16b)
-> -	       _ASM_EXTABLE(12b,16b)
-> -	       _ASM_EXTABLE(71b,16b)
-> -	       _ASM_EXTABLE(13b,16b)
-> -	       _ASM_EXTABLE(81b,16b)
-> -	       _ASM_EXTABLE(14b,16b)
-> -	       _ASM_EXTABLE(91b,16b)
-> -	       _ASM_EXTABLE(6b,9b)
-> -	       _ASM_EXTABLE(7b,16b)
-> +	       _ASM_EXTABLE_UA(0b, 16b)
-> +	       _ASM_EXTABLE_UA(1b, 16b)
-> +	       _ASM_EXTABLE_UA(2b, 16b)
-> +	       _ASM_EXTABLE_UA(21b, 16b)
-> +	       _ASM_EXTABLE_UA(3b, 16b)
-> +	       _ASM_EXTABLE_UA(31b, 16b)
-> +	       _ASM_EXTABLE_UA(4b, 16b)
-> +	       _ASM_EXTABLE_UA(41b, 16b)
-> +	       _ASM_EXTABLE_UA(10b, 16b)
-> +	       _ASM_EXTABLE_UA(51b, 16b)
-> +	       _ASM_EXTABLE_UA(11b, 16b)
-> +	       _ASM_EXTABLE_UA(61b, 16b)
-> +	       _ASM_EXTABLE_UA(12b, 16b)
-> +	       _ASM_EXTABLE_UA(71b, 16b)
-> +	       _ASM_EXTABLE_UA(13b, 16b)
-> +	       _ASM_EXTABLE_UA(81b, 16b)
-> +	       _ASM_EXTABLE_UA(14b, 16b)
-> +	       _ASM_EXTABLE_UA(91b, 16b)
-> +	       _ASM_EXTABLE_UA(6b, 9b)
-> +	       _ASM_EXTABLE_UA(7b, 16b)
->   	       : "=&c"(size), "=&D" (d0), "=&S" (d1)
->   	       :  "1"(to), "2"(from), "0"(size)
->   	       : "eax", "edx", "memory");
-> @@ -321,9 +321,9 @@ unsigned long __copy_user_intel(void __user *to, const void *from,
->   		"3:	lea 0(%3,%0,4),%0\n"				\
->   		"	jmp 2b\n"					\
->   		".previous\n"						\
-> -		_ASM_EXTABLE(4b,5b)					\
-> -		_ASM_EXTABLE(0b,3b)					\
-> -		_ASM_EXTABLE(1b,2b)					\
-> +		_ASM_EXTABLE_UA(4b, 5b)					\
-> +		_ASM_EXTABLE_UA(0b, 3b)					\
-> +		_ASM_EXTABLE_UA(1b, 2b)					\
->   		: "=&c"(size), "=&D" (__d0), "=&S" (__d1), "=r"(__d2)	\
->   		: "3"(size), "0"(size), "1"(to), "2"(from)		\
->   		: "memory");						\
-> diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
-> index 9c5606d..fefe6443 100644
-> --- a/arch/x86/lib/usercopy_64.c
-> +++ b/arch/x86/lib/usercopy_64.c
-> @@ -37,8 +37,8 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
->   		"3:	lea 0(%[size1],%[size8],8),%[size8]\n"
->   		"	jmp 2b\n"
->   		".previous\n"
-> -		_ASM_EXTABLE(0b,3b)
-> -		_ASM_EXTABLE(1b,2b)
-> +		_ASM_EXTABLE_UA(0b, 3b)
-> +		_ASM_EXTABLE_UA(1b, 2b)
->   		: [size8] "=&c"(size), [dst] "=&D" (__d0)
->   		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr));
->   	clac();
-> diff --git a/arch/x86/mm/extable.c b/arch/x86/mm/extable.c
-> index 45f5d6c..dc72b2d 100644
-> --- a/arch/x86/mm/extable.c
-> +++ b/arch/x86/mm/extable.c
-> @@ -108,6 +108,14 @@ __visible bool ex_handler_fprestore(const struct exception_table_entry *fixup,
->   }
->   EXPORT_SYMBOL_GPL(ex_handler_fprestore);
->   
-> +bool ex_handler_uaccess(const struct exception_table_entry *fixup,
-> +				  struct pt_regs *regs, int trapnr)
-> +{
-> +	regs->ip = ex_fixup_addr(fixup);
-> +	return true;
-> +}
-> +EXPORT_SYMBOL(ex_handler_uaccess);
-> +
->   __visible bool ex_handler_ext(const struct exception_table_entry *fixup,
->   			      struct pt_regs *regs, int trapnr)
->   {
+
