@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F6312E69FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Dec 2020 19:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 096342E6A4C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Dec 2020 20:13:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbgL1SXP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Dec 2020 13:23:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42412 "EHLO
+        id S1729084AbgL1TNH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Dec 2020 14:13:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbgL1SXO (ORCPT
+        with ESMTP id S1729069AbgL1TNG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Dec 2020 13:23:14 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151A2C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Dec 2020 10:22:33 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id b9so15308879ejy.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Dec 2020 10:22:33 -0800 (PST)
+        Mon, 28 Dec 2020 14:13:06 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0C9C061793
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Dec 2020 11:12:25 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id t30so12320778wrb.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Dec 2020 11:12:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z2QbH8RGPNV6UCpysofOcmKw2kvcdsWtyhs8XyCCINw=;
-        b=oK1bIMFlk9+9P3yM6IxgC3sGgIIGBKSSzhxKjcmUmJw7zLxWGUG5Z4FT5RjgRhaBPN
-         i7pYF9MtjhuJl7YWB8Sew1jRxwXZSpYdf7aochu1zb+ZWaH/fiz/eL4vSeZrajQE63Mv
-         z8yRPyof9nFuCxMdTOpQKJbsFriOk4ifql5kOVecC6wXCqfH3/TJiCf5HKOIcx3H/IHz
-         eIH4ub0+o/wzo0oEQ22VsKGEYwpVGASXaadXI+DYrBGeTAtjrCS7Bn2U/ZMS4ZMjCFOD
-         I+9SQ2avnuepdBFUxQ4VZoQZyuyE/I1RxB1mpVZUmeo/uUA5VcVuLaaClMMSXkvR+40v
-         RCrA==
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=m/Wglbh+lTgBxyPrtUFRzs3rkWrSwjCdxL8lF/PAxdg=;
+        b=KHzYIWd41lKdXti3O/ypHc8S0tMeIsfWLC/Bj7B0SzjA8vucJTYN7bHDQbPOIgg+4F
+         fZD18Yty8GCok3qJf1fO63aT/4yXv5IpQqs4zCHs6V8c/hTJ3jaQBAZgI1nNOXy4naTF
+         ahJeKtRt8Pj9o4utY+Oij4Ku95ArtGy+QiPl1IdezaUwqXgj7zMzTDihrmBFRPhv697s
+         bXngRr1a7rkXrFhKxJYOOgbczrc3pA2FODIFky5l5upMPG9SMmchnVyAwlPmjBKrztxo
+         RaTE0yITbMFc9Tl43W6lAhyGoZZ8DqUbKdkwj5EfXs0er0oc6+0O81LxacbGaxM/kkSZ
+         KMhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z2QbH8RGPNV6UCpysofOcmKw2kvcdsWtyhs8XyCCINw=;
-        b=eoqhwjhugPN+XIrgxML4oyUTUpI2S848BeDVSflDlV+lwtJ+6U75HaumVTxGZzVlm+
-         OhrTWFFr1H4M0v5LtBcItUY96Zn2TbeIRjZ6kYQI1hLUKCNNiQaJXx344uxQq2U/DQoA
-         riH5AwZQp5zdeR9PXS4hCDOU2eLYbCEwdA56qSL2FmHb8AIvnadnsIH1eGsNnjB/B6O+
-         cGiSzhEXh0TNsjVPF8nZdiP/3Vqi5YJqONNijMD+q574QFFXh02t6gfvuyV0nXzoujip
-         dc6KbGbPRt6B/S6OuL3qz8TJ15+7MueLE/26Vz42otyvtYmAXOTIJqynQl9q78Ue83Zz
-         c3Kw==
-X-Gm-Message-State: AOAM533OQz7jM4CkSevh03AK5cAVhYyPCkWAYvaSoNSiW1nkKv20Y4yo
-        YW5MYrKaY2wWyqhqhQE4RUwY0hA8lEHOl3tZ3LZPrQ==
-X-Google-Smtp-Source: ABdhPJwvPxy4pkRK8okJN0/k8NDFvWE5wVUKTWXkCWpjS8Ii2ZVkfms8OJy9V0jmRbDe+48+k7MFRRK2mCrz0IR2NF4=
-X-Received: by 2002:a17:906:447:: with SMTP id e7mr42157038eja.172.1609179752023;
- Mon, 28 Dec 2020 10:22:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20201013013416.390574-1-dima@arista.com> <20201013013416.390574-3-dima@arista.com>
-In-Reply-To: <20201013013416.390574-3-dima@arista.com>
-From:   Brian Geffon <bgeffon@google.com>
-Date:   Mon, 28 Dec 2020 10:21:56 -0800
-Message-ID: <CADyq12y4WAjT7O3_4E3FmBv4dr5fY6utQZod1UN0Xv8PhOAnQA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] mm/mremap: For MREMAP_DONTUNMAP check security_vm_enough_memory_mm()
-To:     Dmitry Safonov <dima@arista.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=m/Wglbh+lTgBxyPrtUFRzs3rkWrSwjCdxL8lF/PAxdg=;
+        b=uexBJrPcWxOGsVTRmQMTjm28K6mCmWuycg+/F6uWpeV+BZaEYftlj/vwX7pGoPQxPS
+         p3jIAS8KhMfZm16+QI1X4g7bVTt0RHrfo7oC76+AZj96JcMzPV8BzSLVeVf6NQ1+3jTK
+         qJMdxWp8YvnKem6RM1HXD3z+I+6F/TIuLH7EFSraOCtPI9rk6ECJS3FSOw8i17UAgfxF
+         1fiMGh42egq2irRhBZQSotesvqZ1MeVcxfe68OH2sdyEWKBj1pFKrLnstjcgLSP1ujRE
+         EQ9abyLlZrxMmFsVw55lmaUEl9LYyODW9R8QEjRW4rprIOvW72YKRuTp9XDJnyoR0Xlx
+         RVXg==
+X-Gm-Message-State: AOAM531V0+gfVrZP8JPeFxfPcqTOunCK92N6fOUMk4sMteLBjbr3U9Al
+        KUa5i+GXJiMHBy+vemTbOaKX8uNJgLH53YNy
+X-Google-Smtp-Source: ABdhPJycPpZJYBqt0uJlm0KWY71lSYtZiAXnw+4FraPx9JOFiEU8hSeGhYPk8VZsjmDtrrKszFFOcA==
+X-Received: by 2002:a5d:4ccb:: with SMTP id c11mr50075979wrt.324.1609182744412;
+        Mon, 28 Dec 2020 11:12:24 -0800 (PST)
+Received: from ?IPv6:2a02:8084:e84:2480:228:f8ff:fe6f:83a8? ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
+        by smtp.gmail.com with ESMTPSA id s3sm258209wmc.44.2020.12.28.11.12.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Dec 2020 11:12:23 -0800 (PST)
+Subject: Re: [PATCH 2/6] mm/mremap: For MREMAP_DONTUNMAP check
+ security_vm_enough_memory_mm()
+To:     Brian Geffon <bgeffon@google.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Dmitry Safonov <0x7f454c46@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -72,18 +72,41 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Vlastimil Babka <vbabka@suse.cz>,
         Will Deacon <will@kernel.org>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20201013013416.390574-1-dima@arista.com>
+ <20201013013416.390574-3-dima@arista.com>
+ <CADyq12y4WAjT7O3_4E3FmBv4dr5fY6utQZod1UN0Xv8PhOAnQA@mail.gmail.com>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <d25ad10c-6f67-8c11-18c3-0193b8ea14c4@arista.com>
+Date:   Mon, 28 Dec 2020 19:12:21 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <CADyq12y4WAjT7O3_4E3FmBv4dr5fY6utQZod1UN0Xv8PhOAnQA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This looks good to me with a small comment.
+On 12/28/20 6:21 PM, Brian Geffon wrote:
+> This looks good to me with a small comment.
+> 
+>>         if (do_munmap(mm, old_addr, old_len, uf_unmap) < 0) {
+>>                 /* OOM: unable to split vma, just get accounts right */
+>> -               if (vm_flags & VM_ACCOUNT)
+>> +               if (vm_flags & VM_ACCOUNT && !(flags & MREMAP_DONTUNMAP))
+>>                         vm_acct_memory(new_len >> PAGE_SHIFT);
+> 
+> Checking MREMAP_DONTUNMAP in the do_munmap path is unnecessary as
+> MREMAP_DONTUNMAP will have already returned by this point.
 
->         if (do_munmap(mm, old_addr, old_len, uf_unmap) < 0) {
->                 /* OOM: unable to split vma, just get accounts right */
-> -               if (vm_flags & VM_ACCOUNT)
-> +               if (vm_flags & VM_ACCOUNT && !(flags & MREMAP_DONTUNMAP))
->                         vm_acct_memory(new_len >> PAGE_SHIFT);
+In this code it is also used as err-path. In case move_page_tables()
+fails to move all page tables or .mremap() callback fails, the new VMA
+is unmapped.
 
-Checking MREMAP_DONTUNMAP in the do_munmap path is unnecessary as
-MREMAP_DONTUNMAP will have already returned by this point.
+IOW, MREMAP_DONTUNMAP returns under:
+:	if (unlikely(!err && (flags & MREMAP_DONTUNMAP))) {
+
+-- 
+          Dima
