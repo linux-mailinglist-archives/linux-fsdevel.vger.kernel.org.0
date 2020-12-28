@@ -2,119 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 845D92E3106
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Dec 2020 13:01:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC55E2E3392
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Dec 2020 03:16:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbgL0MAk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Dec 2020 07:00:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbgL0MAj (ORCPT
+        id S1726371AbgL1CQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Dec 2020 21:16:06 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9998 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726361AbgL1CQF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Dec 2020 07:00:39 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 505A1C061794;
-        Sun, 27 Dec 2020 03:59:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5uwYsgKdAULuF/GQ5sfCvBZKMe+X+d+8OkxeVuEmVJA=; b=IjBY/sHC2/QcJWOmpl7VLlP7Jf
-        XOE8XGkn+3w0uboL02YaLa35ppR1NAmAR6R0bSwCV4SA7qE6KVMRkxt+rj2SZjYtAX4Vvp+rQ6X+L
-        yoTSGRfIbGeRwSIlWOr43PT/49Q/wVO9OxiROdlQXIfCyeWKO35VHe1/e19UQMC5deFxCW/Dx4l6X
-        L5MXthZUbL3KdF4rt0B1rTf6OAqR/kWVfW+wktWfVInuZKjEXpZmUTWILci1Up6fHnGAyNxuj9zKY
-        sB3yNCqCxl228B1vOG83sKPUK31hUQijt0odJg5fPg3/gpdBa0HC+I3v4hphiuwqGhU5Jb6ni1YlM
-        WFFfyplw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ktUhb-0008MJ-Kd; Sun, 27 Dec 2020 11:59:25 +0000
-Date:   Sun, 27 Dec 2020 11:59:11 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org
-Subject: Re: [PATCH v16 04/10] fs/ntfs3: Add file operations and
- implementation
-Message-ID: <20201227115911.GB5479@casper.infradead.org>
-References: <20201225135119.3666763-1-almaz.alexandrovich@paragon-software.com>
- <20201225135119.3666763-5-almaz.alexandrovich@paragon-software.com>
+        Sun, 27 Dec 2020 21:16:05 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4D41Mb685Czj05M;
+        Mon, 28 Dec 2020 10:14:35 +0800 (CST)
+Received: from [10.174.177.6] (10.174.177.6) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.498.0; Mon, 28 Dec 2020
+ 10:15:16 +0800
+Subject: Re: [RFC PATCH RESEND] fs: fix a hungtask problem when
+ freeze/unfreeze fs
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <yangerkun@huawei.com>,
+        <yi.zhang@huawei.com>, <linfeilong@huawei.com>, <jack@suse.cz>
+References: <20201226095641.17290-1-luoshijie1@huawei.com>
+ <20201226155500.GB3579531@ZenIV.linux.org.uk>
+From:   Shijie Luo <luoshijie1@huawei.com>
+Message-ID: <870c4a20-ac5e-c755-fe8c-e1a192bffb29@huawei.com>
+Date:   Mon, 28 Dec 2020 10:15:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201225135119.3666763-5-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20201226155500.GB3579531@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.174.177.6]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 25, 2020 at 04:51:13PM +0300, Konstantin Komarov wrote:
-> +static int ntfs_readdir(struct file *file, struct dir_context *ctx)
-> +{
-> +	const struct INDEX_ROOT *root;
-> +	u64 vbo;
-> +	size_t bit;
-> +	loff_t eod;
-> +	int err = 0;
-> +	struct inode *dir = file_inode(file);
-> +	struct ntfs_inode *ni = ntfs_i(dir);
-> +	struct super_block *sb = dir->i_sb;
-> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
-> +	loff_t i_size = dir->i_size;
 
-I appreciate directories are never likely to exceed 4GB, but why not
-use i_size_read() here?
+On 2020/12/26 23:55, Al Viro wrote:
+> On Sat, Dec 26, 2020 at 04:56:41AM -0500, Shijie Luo wrote:
+>
+>> The root cause is that when offline/onlines disks, the filesystem can easily get into
+>> a error state and this makes it change to be read-only. Function freeze_super() will hold
+>> all sb_writers rwsems including rwsem of SB_FREEZE_WRITE when filesystem not read-only,
+>> but thaw_super_locked() cannot release these while the filesystem suddenly become read-only,
+>> because the logic will go to out.
+>>
+>> freeze_super
+>>      hold sb_writers rwsems
+>>          sb->s_writers.frozen = SB_FREEZE_COMPLETE
+>>                                                   thaw_super_locked
+>>                                                       sb_rdonly
+>>                                                          sb->s_writers.frozen = SB_UNFROZEN;
+>>                                                              goto out // not release rwsems
+>>
+>> And at this time, if we call mnt_want_write(), the process will be blocked.
+>>
+>> This patch fixes this problem, when filesystem is read-only, just not to set sb_writers.frozen
+>> be SB_FREEZE_COMPLETE in freeze_super() and then release all rwsems in thaw_super_locked.
+> I really don't like that - you end up with a case when freeze_super() returns 0 *and*
+> consumes the reference it had been give.
 
-> +	u32 pos = ctx->pos;
-> +	u8 *name = NULL;
-> +	struct indx_node *node = NULL;
-> +	u8 index_bits = ni->dir.index_bits;
-> +
-> +	/* name is a buffer of PATH_MAX length */
-> +	static_assert(NTFS_NAME_LEN * 4 < PATH_MAX);
-> +
-> +	if (ni->dir.changed) {
-> +		ni->dir.changed = false;
-> +		pos = 0;
-> +	}
+Consuming the reference here because we won't "set frozen = 
+SB_FREEZE_COMPLETE" in thaw_super_locked() now.
 
-I don't think that 'changed' as implemented is all that useful.  If you
-have one reader and one-or-more writers, the reader will go back to the
-start, but if you have two readers and one-or-more writers, only one
-reader will see the 'changed' flag before the other one resets it.
+If don't do that, we never have a chance to consume it, 
+thaw_super_locked() will directly return "-EINVAL". But I do
 
-You need to use a sequence counter or something if you want this to be
-proof against multiple readers, and honestly I don't think it's worth it.
-POSIX says:
-: If a file is removed from or added to the directory after the most
-: recent call to opendir() or rewinddir(), whether a subsequent call to
-: readdir() returns an entry for that file is unspecified.
+agree that it's not a good idea to return 0. How about returning 
+"-EINVAL or -ENOTSUPP" ?
 
-> +	eod = i_size + sbi->record_size;
-> +
-> +	if (pos >= eod)
-> +		return 0;
-> +
-> +	if (!dir_emit_dots(file, ctx))
-> +		return 0;
-> +
-> +	/* allocate PATH_MAX bytes */
-> +	name = __getname();
-> +	if (!name)
-> +		return -ENOMEM;
-> +
-> +	ni_lock(ni);
+And, If we keep "frozen = SB_FREEZE_COMPLETE" in freeze_super() here, it 
+will cause another problem, thaw_super_locked()
 
-What is ni_lock() protecting against here?  You're being called under the
-protection of dir->i_rwsem, which excludes simultaneous calls to create,
-link, mknod, symlink, mkdir, unlink, rmdir and rename.
+will always release rwsems in my logic, but freeze_super() won't acquire 
+the rwsems when filesystem is read-only.
 
-> +const struct file_operations ntfs_dir_operations = {
-> +	.llseek = generic_file_llseek,
-> +	.read = generic_read_dir,
-> +	.iterate = ntfs_readdir,
+Thanks.
 
-This should probably be iterate_shared so multiple calls to readdir can
-be in progress at once (see Documentation/filesystems/porting)
-
+>>   	if (sb_rdonly(sb)) {
+>> -		/* Nothing to do really... */
+>> -		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
+>> -		up_write(&sb->s_umount);
+>> +		deactivate_locked_super(sb);
+>>   		return 0;
+>>   	}
+> .
+>
