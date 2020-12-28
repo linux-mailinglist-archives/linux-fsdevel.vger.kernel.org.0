@@ -2,154 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22CC62E6C51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Dec 2020 00:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D1482E6C4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Dec 2020 00:18:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbgL1Wzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1730064AbgL1Wzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 28 Dec 2020 17:55:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53950 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729305AbgL1Ti3 (ORCPT
+        with ESMTP id S1729317AbgL1ToA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Dec 2020 14:38:29 -0500
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38003C061793;
-        Mon, 28 Dec 2020 11:37:49 -0800 (PST)
-Received: by mail-io1-xd35.google.com with SMTP id m23so10331895ioy.2;
-        Mon, 28 Dec 2020 11:37:49 -0800 (PST)
+        Mon, 28 Dec 2020 14:44:00 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 739BFC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Dec 2020 11:43:20 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id t16so12359064wra.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Dec 2020 11:43:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dCBCEsht9qkuf5Ona8kNwyBV6hGMdb7gZ2iBC9FCRP4=;
-        b=Q9TFyFiU7kqB2e88OvbB+lyrxcqI/TwitqgP1IRr2q0KyCnDwRUvNMmbcq/LEBjqsW
-         /Y5dx1Q06XyUqXGZjLbFw2iHPeeK93uA0ylkM67TpDI/HIAWTNTqNG96uzh3CGn1me3X
-         8zzi6Q0LFo7dkNPzNvt6pYi5Qx/LnklEoUg2xKmSZZNriamx9QpU3wdtxg1j8Cxs4NW4
-         BCuMNLC0Rxwu1nF6lfYzNDzXViws/ObGDaJxXzSu5REzpnhHnHWqYHLqXRKBqfJOr5vp
-         b8n63vg6pkw+JKr7g8q6DfJSo56I61rHrZsimKFOIj3SK+4VwRE7gz57NoLAFiAFPl1z
-         XlAQ==
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6xzAcIdXIo+2Bde93U26aSmZWXaCRi+QsS3WozQgGb0=;
+        b=nkw+nGbKQWKPrOYGHK9BAjA42ze5HsZN6SKZlaOxdtmSyn6n+yB0xlk2LzHIda2Z7H
+         L0Vu27mcZ0gdxTenKuRZh/h3eyf+g2+xsrjQhMKT/F8QKjYdjdYgQCL0gzTQCdYL5h6J
+         Y/mLLftb4DOuAwwqyln10KAgbEKKEVEb6bHQb9zWFHI/j9L4C8BQ2ZNlkWniQEVTdIfY
+         sRTlcq9nF/VUYbiiCEW77KYeV/JkNvTrI1A4bECvzlKSrkW71Pj2fO7tvy4jSCJgGs0F
+         lsdo1I8CrVPXwXa6vmvi6gaE8oAGKgO4qVVGnS2tT0dbC09SgTs/IyaSIc4yrhdtQI3q
+         saxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dCBCEsht9qkuf5Ona8kNwyBV6hGMdb7gZ2iBC9FCRP4=;
-        b=Zl5CjcWqttiletmGIAXFJRwHyUG4CSun7387arNXuxgL6mPb8Jq0kQ89ZZKm/tS4rl
-         KWMA8+4u3kPL7YMxj2TZh36R0f0YwXq2gGfMKA7he1hYKLUgGUy5dIAc98CR8L4nXiAd
-         nmXBP9ONp8yBpJa3BLINPMlzR4Z8ebgh66bMxlAsaEcjcHEHGjPk2m8EnYwDYKrRzsOM
-         9lFWF5pOpyru858eyRQBA7lw50eilnuDYORRK/04QbPIpPWQkOalxD9GGc9KWxvz4OPB
-         7D4YF+KczH+Ekcgar1ufNMDqHUd3wjk96njekm/HkEliep7mFVbxSUNDtG053tfI7qxh
-         Lr8A==
-X-Gm-Message-State: AOAM530dnL/SkEXkMrr4wPdvjr3awNy2vEE/mbX1iMMypKBNSKTi+HWb
-        NybL2QSIqEmRhIizDYXiLh88QYvW/u3Wy9httTc=
-X-Google-Smtp-Source: ABdhPJw7C7qxRijlGNpz54cxtrCtrh8jFk9tDMaZzuvDrGOoZYY3dhbizc2BsSDNyomhfLcDoRpzH8Ul4lCQrIfgFfo=
-X-Received: by 2002:a5e:de08:: with SMTP id e8mr37384460iok.203.1609184268515;
- Mon, 28 Dec 2020 11:37:48 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6xzAcIdXIo+2Bde93U26aSmZWXaCRi+QsS3WozQgGb0=;
+        b=dUzmiSjKptCYDjBd8W+NWDrfp7xcBL0PH4XGZNSrNU6u49wujukQHVc5GSjsKWyeNR
+         rr3bAsPXYl/XNXjmBUflmw471cHef7vbzqQ8wZ3TA6wh9VUQkS7Z6p2giBNVkr79012m
+         7C+OZfdpXbIUvV/ufDsrJCZZa+CLJrBXuKfF51ZUDN25Lr7RLYcBwoadNRejO7crcYHV
+         O9DnTcOGdMd9D0dfAoo4q14cw2m/gBI4b1R8ArafnQ9VVsydhz1gHvVp178zq8Sh5+Y4
+         zMMXtINMK/qv3yZoU1CMZd+jGC0KJ3ifzVxHMBCfLn6jSjLD4GBLLQl8WkHnS4Ip+grD
+         cpYA==
+X-Gm-Message-State: AOAM531t0cFEFwoVmovchgyO3Sb5WAdCoF7cs3f4jNSxpdBm2a6325cI
+        FQPNea+SvJCIwUTTmNWuM7QWpA==
+X-Google-Smtp-Source: ABdhPJwb83Fu4ztPY35NAlxNDq3Sse0tFKe7OGO6soaKvmsY/wndPvptcOKr/BVCvNq+x6WTgo81qQ==
+X-Received: by 2002:a5d:61ca:: with SMTP id q10mr52549183wrv.124.1609184599201;
+        Mon, 28 Dec 2020 11:43:19 -0800 (PST)
+Received: from ?IPv6:2a02:8084:e84:2480:228:f8ff:fe6f:83a8? ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
+        by smtp.gmail.com with ESMTPSA id o125sm407062wmo.30.2020.12.28.11.43.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Dec 2020 11:43:18 -0800 (PST)
+Subject: Re: [PATCH 3/6] mremap: Don't allow MREMAP_DONTUNMAP on
+ special_mappings and aio
+To:     Brian Geffon <bgeffon@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will@kernel.org>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
+References: <20201013013416.390574-1-dima@arista.com>
+ <20201013013416.390574-4-dima@arista.com>
+ <CADyq12ww2SB=x16pdH4LBZJJxMakOWgkR0qX-maUe-RzYZ491Q@mail.gmail.com>
+ <d5d608ba-a25c-d3a2-b0f4-c97437a6dab1@arista.com>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <85e469ee-9986-30cf-09d2-832eb8a61291@arista.com>
+Date:   Mon, 28 Dec 2020 19:43:16 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-References: <20201223182026.GA9935@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223185044.GQ874@casper.infradead.org> <20201223192940.GA11012@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223200746.GR874@casper.infradead.org> <20201223202140.GB11012@ircssh-2.c.rugged-nimbus-611.internal>
- <20201223204428.GS874@casper.infradead.org> <CAOQ4uxjAeGv8x2hBBzHz5PjSDq0Q+RN-ikgqEvAA+XE_U-U5Nw@mail.gmail.com>
- <20201224121352.GT874@casper.infradead.org> <CAOQ4uxj5YS9LSPoBZ3uakb6NeBG7g-Zeu+8Vt57tizEH6xu0cw@mail.gmail.com>
- <1334bba9cefa81f80005f8416680afb29044379c.camel@kernel.org>
- <20201228155618.GA6211@casper.infradead.org> <5bc11eb2e02893e7976f89a888221c902c11a2b4.camel@kernel.org>
-In-Reply-To: <5bc11eb2e02893e7976f89a888221c902c11a2b4.camel@kernel.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 28 Dec 2020 21:37:37 +0200
-Message-ID: <CAOQ4uxhFz=Uervz6sMuz=RcFUWAxyLEhBrWnjQ+U0Jj_AaU59w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] overlayfs: Report writeback errors on upper
-To:     Jeff Layton <jlayton@kernel.org>, Sargun Dhillon <sargun@sargun.me>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
-        NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Chengguang Xu <cgxu519@mykernel.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d5d608ba-a25c-d3a2-b0f4-c97437a6dab1@arista.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 28, 2020 at 7:26 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Mon, 2020-12-28 at 15:56 +0000, Matthew Wilcox wrote:
-> > On Mon, Dec 28, 2020 at 08:25:50AM -0500, Jeff Layton wrote:
-> > > To be clear, the main thing you'll lose with the method above is the
-> > > ability to see an unseen error on a newly opened fd, if there was an
-> > > overlayfs mount using the same upper sb before your open occurred.
-> > >
-> > > IOW, consider two overlayfs mounts using the same upper layer sb:
-> > >
-> > > ovlfs1                              ovlfs2
-> > > ----------------------------------------------------------------------
-> > > mount
-> > > open fd1
-> > > write to fd1
-> > > <writeback fails>
-> > >                             mount (upper errseq_t SEEN flag marked)
-> > > open fd2
-> > > syncfs(fd2)
-> > > syncfs(fd1)
-> > >
-> > >
-> > > On a "normal" (non-overlay) fs, you'd get an error back on both syncfs
-> > > calls. The first one has a sample from before the error occurred, and
-> > > the second one has a sample of 0, due to the fact that the error was
-> > > unseen at open time.
-> > >
-> > > On overlayfs, with the intervening mount of ovlfs2, syncfs(fd1) will
-> > > return an error and syncfs(fd2) will not. If we split the SEEN flag into
-> > > two, then we can ensure that they both still get an error in this
-> > > situation.
-> >
-> > But do we need to?  If the inode has been evicted we also lose the errno.
-> > The guarantee we provide is that a fd that was open before the error
-> > occurred will see the error.  An fd that's opened after the error occurred
-> > may or may not see the error.
-> >
->
-> In principle, you can lose errors this way (which was the justification
-> for making errseq_sample return 0 when there are unseen errors). E.g.,
-> if you close fd1 instead of doing a syncfs on it, that error will be
-> lost forever.
->
-> As to whether that's OK, it's hard to say. It is a deviation from how
-> this works in a non-containerized situation, and I'd argue that it's
-> less than ideal. You may or may not see the error on fd2, but it's
-> dependent on events that take place outside the container and that
-> aren't observable from within it. That effectively makes the results
-> non-deterministic, which is usually a bad thing in computing...
->
+On 12/28/20 7:33 PM, Dmitry Safonov wrote:
+> [I moved your reply to avoid top-posting]
+> 
+> On 12/28/20 6:03 PM, Brian Geffon wrote:
+>> On Mon, Oct 12, 2020 at 6:34 PM Dmitry Safonov <dima@arista.com> wrote:
+>>>
+>>> As kernel expect to see only one of such mappings, any further
+>>> operations on the VMA-copy may be unexpected by the kernel.
+>>> Maybe it's being on the safe side, but there doesn't seem to be any
+>>> expected use-case for this, so restrict it now.
+>>>
+>>> Fixes: commit e346b3813067 ("mm/mremap: add MREMAP_DONTUNMAP to mremap()")
+>>> Signed-off-by: Dmitry Safonov <dima@arista.com>
+>>
+>> I don't think this situation can ever happen MREMAP_DONTUNMAP is
+>> already restricted to anonymous mappings (defined as not having
+>> vm_ops) and vma_to_resize checks that the mapping is anonymous before
+>> move_vma is called.
+> 
+> I've looked again now, I think it is possible. One can call
+> MREMAP_DONTUNMAP without MREMAP_FIXED and without resizing. So that the
+> old VMA is copied at some free address.
+> 
+> The calltrace would be: mremap()=>move_vma()
+> [under if (flags & MREMAP_MAYMOVE)].
+> 
+> On the other side I agree with you that the fix could have been better
+> if I realized the semantics that MREMAP_DONTUNMAP should only work with
+> anonymous mappings.
+> 
+> Probably, a better fix would be to move
+> :       if (flags & MREMAP_DONTUNMAP && (!vma_is_anonymous(vma) ||
+> :                       vma->vm_flags & VM_SHARED))
+> :               return ERR_PTR(-EINVAL);
+> 
+> from vma_to_resize() into the mremap() syscall directly.
+> What do you think?
 
-I understand that user experience inside containers will deviate from
-non containerized use cases. I can't say that I fully understand the
-situations that deviate.
+Ok, I've misread the code now, it checks vma_to_resize() before.
+I'll send a revert to this one.
 
-Having said that, I never objected to the SEEN flag split.
-To me, the split looks architecturally correct. If not for anything else,
-then for not observing past errors inside the overlay mount.
-I think you still need to convince Matthew though.
-
-The question remains what, if anything, should be nominated for
-stable. I was trying to propose the minimal patch that fixes the
-most basic syncfs overlayfs issues. In that context, it seemed
-that the issues that SEEN flag split solves are not on the
-MUST HAVE list, but maybe I am wrong.
-
-Sargun,
-
-How about sending another version of your patch, with or without the
-SEEN flag split (up to you) but not only for both the volatile and non-
-volatile cases, following my proposal.
-
-At least we can continue debating on a concrete patch instead of
-an envisioned combination of pieces posted to the list.
-
-If you can give some examples of use cases that the patch fixes
-with and without the SEEN flag split that could be useful for the
-discussion.
-
-Thanks,
-Amir.
+Thanks for noticing,
+          Dima
