@@ -2,124 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C8A2E6FA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Dec 2020 11:27:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A32C02E7190
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Dec 2020 16:02:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbgL2K1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Dec 2020 05:27:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbgL2K1H (ORCPT
+        id S1726418AbgL2PBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Dec 2020 10:01:43 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40055 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbgL2PBm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Dec 2020 05:27:07 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83906C061796
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Dec 2020 02:26:26 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id dk8so12176107edb.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Dec 2020 02:26:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nc9wrQqOQHmsxECh3j17j7lV49RpttyGP0GhLK+17YU=;
-        b=g8FZxrXDn29l36mNNRQqFUxk81fk2Itx3WjBIW7Apntu4/KmEVLmiFXE1MWX+ipJUk
-         UAOCgAmhI6xFWvmfi4QVNi7V6Fnd6Gkia30Al8+0ji+597aKIgp59LUQICjVT+Y2EtIq
-         7FmxX87hvndBrwx1CLhvYJCITcbimW9y8PmB5CXOYo5Hnavn2GjTltMo3o6Gs4bE9mwf
-         8IVQd9ZpFU16QHr0XdAztMcAR9X/gKFQrcL6P7MpWpzH/Z1yN5/Yiffds4l9DQI7V8RH
-         /CDwaQI2zwTC0oTvhW6eeJhjovdt2wxeDCEcjaz8sHFQL7ncJ35XV9K6bEOE1r3iklXv
-         fO3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nc9wrQqOQHmsxECh3j17j7lV49RpttyGP0GhLK+17YU=;
-        b=VFXqpHZ6mgG4gnCm0LsDjUvWJcKxaGrOlDD+d1tfB6v4RCAnL4A7pO94xU1mCFlOKl
-         meEAaQhzegobeQSoQTsU62O0jglOUgZDw48D8JDwwCeLzDAe8XO7sKAyhFerBzNv3HVv
-         YPHFeCvXpFlWNqyWXZGXi2TC9c1Rk4HKGdPJ5D5GRpYGJRnPN+OZcF1l+OtaiakSajLB
-         btG5DWPptgkOX8qhUO+PFBQ2u+3TLJ1xuaLGsmuId9y8S9iFItIB8II9Ge6RMIJ/jTkX
-         1alLkUWdJIyNCyWYEsoalGgQJYSe2Z0WkPv3+SgHy96wcugH2SnIIPFkWrNiGns+o/Qy
-         MAzw==
-X-Gm-Message-State: AOAM531On36FieiNqFt6Q4sWH+SzWJEZZd7qKaLZyKDPzcm1RlIawlmC
-        2OHCDYCMoDOpKN19ypVsofMl5URHPzd4Q2TgGEuQ
-X-Google-Smtp-Source: ABdhPJx/NBTVMKWG6/lXSJcOyZx0RSEHb+cLeMaWZSq0bAb/JjUzj8ZSiqTJ0rANOmxm2lHwgqBOrLYo0zs8/dQFjnI=
-X-Received: by 2002:a50:f304:: with SMTP id p4mr44250614edm.118.1609237585156;
- Tue, 29 Dec 2020 02:26:25 -0800 (PST)
+        Tue, 29 Dec 2020 10:01:42 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kuGUc-0005yc-B9; Tue, 29 Dec 2020 15:00:58 +0000
+Date:   Tue, 29 Dec 2020 16:00:56 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     hch@infradead.org, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org
+Subject: Re: Bug in __mmdrop() triggered by io-uring on v5.11-rc1
+Message-ID: <20201229150056.7ki6h25biyioommx@wittgenstein>
+References: <20201228165429.c3v637xlqxt56fsv@wittgenstein>
+ <d6788552-90bb-33f8-48ee-fb7081965e08@kernel.dk>
 MIME-Version: 1.0
-References: <20201222145221.711-1-xieyongji@bytedance.com> <CACycT3s=m=PQb5WFoMGhz8TNGme4+=rmbbBTtrugF9ZmNnWxEw@mail.gmail.com>
- <0e6faf9c-117a-e23c-8d6d-488d0ec37412@redhat.com> <CACycT3uwXBYvRbKDWdN3oCekv+o6_Lc=-KTrxejD=fr-zgibGw@mail.gmail.com>
- <2b24398c-e6d9-14ec-2c0d-c303d528e377@redhat.com> <CACycT3uDV43ecScrMh1QVpStuwDETHykJzzY=pkmZjP2Dd2kvg@mail.gmail.com>
- <e77c97c5-6bdc-cdd0-62c0-6ff75f6dbdff@redhat.com> <CACycT3soQoX5avZiFBLEGBuJpdni6-UxdhAPGpWHBWVf+dEySg@mail.gmail.com>
- <1356137727.40748805.1609233068675.JavaMail.zimbra@redhat.com>
-In-Reply-To: <1356137727.40748805.1609233068675.JavaMail.zimbra@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Tue, 29 Dec 2020 18:26:14 +0800
-Message-ID: <CACycT3sg61yRdupnD+jQEkWKsVEvMWfhkJ=5z_bYZLxCibDiHw@mail.gmail.com>
-Subject: Re: Re: [RFC v2 09/13] vduse: Add support for processing vhost iotlb message
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d6788552-90bb-33f8-48ee-fb7081965e08@kernel.dk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 29, 2020 at 5:11 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
->
-> ----- Original Message -----
-> > On Mon, Dec 28, 2020 at 4:43 PM Jason Wang <jasowang@redhat.com> wrote:
-> > >
-> > >
-> > > On 2020/12/28 =E4=B8=8B=E5=8D=884:14, Yongji Xie wrote:
-> > > >> I see. So all the above two questions are because VHOST_IOTLB_INVA=
-LIDATE
-> > > >> is expected to be synchronous. This need to be solved by tweaking =
-the
-> > > >> current VDUSE API or we can re-visit to go with descriptors relayi=
-ng
-> > > >> first.
-> > > >>
-> > > > Actually all vdpa related operations are synchronous in current
-> > > > implementation. The ops.set_map/dma_map/dma_unmap should not return
-> > > > until the VDUSE_UPDATE_IOTLB/VDUSE_INVALIDATE_IOTLB message is repl=
-ied
-> > > > by userspace. Could it solve this problem?
-> > >
-> > >
-> > >   I was thinking whether or not we need to generate IOTLB_INVALIDATE
-> > > message to VDUSE during dma_unmap (vduse_dev_unmap_page).
-> > >
-> > > If we don't, we're probably fine.
-> > >
-> >
-> > It seems not feasible. This message will be also used in the
-> > virtio-vdpa case to notify userspace to unmap some pages during
-> > consistent dma unmapping. Maybe we can document it to make sure the
-> > users can handle the message correctly.
->
-> Just to make sure I understand your point.
->
-> Do you mean you plan to notify the unmap of 1) streaming DMA or 2)
-> coherent DMA?
->
-> For 1) you probably need a workqueue to do that since dma unmap can
-> be done in irq or bh context. And if usrspace does't do the unmap, it
-> can still access the bounce buffer (if you don't zap pte)?
->
+On Mon, Dec 28, 2020 at 05:00:53PM -0700, Jens Axboe wrote:
+> On 12/28/20 9:54 AM, Christian Brauner wrote:
+> > Hey everyone,
+> > 
+> > The following oops can be triggered on a pristine v5.11-rc1 which I discovered
+> > while rebasing my idmapped mount patchset onto v5.11-rc1:
+> > 
+> > [  577.716339][ T7216] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)/LXD, BIOS 0.0.0 02/06/2015
+> > [  577.718584][ T7216] Call Trace:
+> > [  577.719357][ T7216]  dump_stack+0x10b/0x167
+> > [  577.720505][ T7216]  panic+0x347/0x783
+> > [  577.721588][ T7216]  ? print_oops_end_marker.cold+0x15/0x15
+> > [  577.723502][ T7216]  ? __warn.cold+0x5/0x2f
+> > [  577.725079][ T7216]  ? __mmdrop+0x30c/0x400
+> > [  577.736066][ T7216]  __warn.cold+0x20/0x2f
+> > [  577.745503][ T7216]  ? __mmdrop+0x30c/0x400
+> > [  577.755101][ T7216]  report_bug+0x277/0x300
+> > 
+> > f2-vm login: [  577.764873][ T7216]  handle_bug+0x3c/0x60
+> > [  577.773982][ T7216]  exc_invalid_op+0x18/0x50
+> > [  577.786341][ T7216]  asm_exc_invalid_op+0x12/0x20
+> > [  577.795500][ T7216] RIP: 0010:__mmdrop+0x30c/0x400
+> > [  577.804426][ T7216] Code: 00 00 4c 89 ef e8 64 61 8c 02 eb 82 e8 dd 48 32 00 4c 89 e7 e8 35 97 2e 00 e9 70 ff ff ff e8 cb 48 32 00 0f 0b e8 c4 48 32 00 <0f> 0b e9 51 fd ff ff e8 b8 48 32 00 0f 0b e9 82 fd ff ff e8 ac 48
+> > [  577.826526][ T7216] RSP: 0018:ffffc900073676d8 EFLAGS: 00010246
+> > [  577.836448][ T7216] RAX: 0000000000000000 RBX: ffff88810d56d1c0 RCX: ffff88810d56d1c0
+> > [  577.845860][ T7216] RDX: 0000000000000000 RSI: ffff88810d56d1c0 RDI: 0000000000000002
+> > [  577.856896][ T7216] RBP: ffff888025244700 R08: ffffffff8141a4ec R09: ffffed1004a488ed
+> > [  577.866712][ T7216] R10: ffff888025244763 R11: ffffed1004a488ec R12: ffff8880660b4c40
+> > [  577.875736][ T7216] R13: ffff888013930000 R14: ffff888025244700 R15: 0000000000000001
+> > [  577.889094][ T7216]  ? __mmdrop+0x30c/0x400
+> > [  577.898466][ T7216]  ? __mmdrop+0x30c/0x400
+> > [  577.907746][ T7216]  finish_task_switch+0x56f/0x8c0
+> > [  577.917553][ T7216]  ? __switch_to+0x580/0x1060
+> > [  577.926962][ T7216]  __schedule+0xa04/0x2310
+> > [  577.937965][ T7216]  ? firmware_map_remove+0x1a1/0x1a1
+> > 
+> > f2-vm login: [  577.947035][ T7216]  ? try_to_wake_up+0x7f3/0x16e0
+> > [  577.955799][ T7216]  ? preempt_schedule_thunk+0x16/0x18
+> > [  577.964988][ T7216]  preempt_schedule_common+0x4a/0xc0
+> > [  577.973670][ T7216]  preempt_schedule_thunk+0x16/0x18
+> > [  577.985967][ T7216]  try_to_wake_up+0x9eb/0x16e0
+> > [  577.994498][ T7216]  ? migrate_swap_stop+0x9d0/0x9d0
+> > [  578.003265][ T7216]  ? rcu_read_lock_held+0xae/0xc0
+> > [  578.012182][ T7216]  ? rcu_read_lock_sched_held+0xe0/0xe0
+> > [  578.021280][ T7216]  io_wqe_wake_worker.isra.0+0x4ba/0x670
+> > [  578.029857][ T7216]  ? io_wq_manager+0xc00/0xc00
+> > [  578.041295][ T7216]  ? _raw_spin_unlock_irqrestore+0x46/0x50
+> > [  578.050139][ T7216]  io_wqe_enqueue+0x212/0x980
+> > [  578.058213][ T7216]  __io_queue_async_work+0x201/0x4a0
+> > [  578.067518][ T7216]  io_queue_async_work+0x52/0x80
+> > [  578.078327][ T7216]  __io_queue_sqe+0x986/0xe80
+> > [  578.086615][ T7216]  ? io_uring_setup+0x3a90/0x3a90
+> > [  578.094528][ T7216]  ? radix_tree_load_root+0x119/0x1b0
+> > [  578.102598][ T7216]  ? io_async_task_func+0xa90/0xa90
+> > [  578.110208][ T7216]  ? __sanitizer_cov_trace_pc+0x1e/0x50
+> > [  578.120847][ T7216]  io_queue_sqe+0x5e3/0xc40
+> > [  578.127950][ T7216]  io_submit_sqes+0x17ca/0x26f0
+> > [  578.135559][ T7216]  ? io_queue_sqe+0xc40/0xc40
+> > [  578.143129][ T7216]  ? __x64_sys_io_uring_enter+0xa10/0xf00
+> > [  578.152183][ T7216]  ? xa_store+0x40/0x50
+> > [  578.162501][ T7216]  ? mutex_lock_io_nested+0x12a0/0x12a0
+> > [  578.170203][ T7216]  ? do_raw_spin_unlock+0x175/0x260
+> > [  578.177874][ T7216]  ? _raw_spin_unlock+0x28/0x40
+> > [  578.185560][ T7216]  ? xa_store+0x40/0x50
+> > [  578.192755][ T7216]  __x64_sys_io_uring_enter+0xa1b/0xf00
+> > [  578.201089][ T7216]  ? __io_uring_task_cancel+0x1e0/0x1e0
+> > [  578.210378][ T7216]  ? __sanitizer_cov_trace_pc+0x1e/0x50
+> > [  578.218401][ T7216]  ? __audit_syscall_entry+0x3fe/0x540
+> > [  578.226264][ T7216]  do_syscall_64+0x31/0x70
+> > [  578.234410][ T7216]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > [  578.244957][ T7216] RIP: 0033:0x7f5204b9c89d
+> > [  578.252372][ T7216] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d c3 f5 0c 00 f7 d8 64 89 01 48
+> > [  578.272398][ T7216] RSP: 002b:00007ffd62bb14e8 EFLAGS: 00000212 ORIG_RAX: 00000000000001aa
+> > [  578.280966][ T7216] RAX: ffffffffffffffda RBX: 00007ffd62bb1560 RCX: 00007f5204b9c89d
+> > [  578.289068][ T7216] RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000005
+> > [  578.300693][ T7216] RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000008
+> > [  578.308932][ T7216] R10: 0000000000000000 R11: 0000000000000212 R12: 0000000000000001
+> > [  578.317255][ T7216] R13: 0000000000000000 R14: 00007ffd62bb1520 R15: 0000000000000000
+> > [  578.328448][ T7216] Kernel Offset: disabled
+> > [  578.544329][ T7216] Rebooting in 86400 seconds..
+> 
+> I can't get your reproducer to work, and unfortunately that trace doesn't
+> have some of the debug info? But it looks like it must be the BUG in there.
+> Can you try with this? Must be related to creds and identity COW'ing,
+> and you are using multiple processes that share the ring.
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 7e35283fc0b1..eb4620ff638e 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1501,6 +1501,13 @@ static bool io_grab_identity(struct io_kiocb *req)
+>  		spin_unlock_irq(&ctx->inflight_lock);
+>  		req->work.flags |= IO_WQ_WORK_FILES;
+>  	}
+> +	if (!(req->work.flags & IO_WQ_WORK_MM) &&
+> +	    (def->work_flags & IO_WQ_WORK_MM)) {
+> +		if (id->mm != current->mm)
+> +			return false;
+> +		mmgrab(id->mm);
+> +		req->work.flags |= IO_WQ_WORK_MM;
+> +	}
+>  
+>  	return true;
+>  }
+> @@ -1525,13 +1532,6 @@ static void io_prep_async_work(struct io_kiocb *req)
+>  			req->work.flags |= IO_WQ_WORK_UNBOUND;
+>  	}
+>  
+> -	/* ->mm can never change on us */
+> -	if (!(req->work.flags & IO_WQ_WORK_MM) &&
+> -	    (def->work_flags & IO_WQ_WORK_MM)) {
+> -		mmgrab(id->mm);
+> -		req->work.flags |= IO_WQ_WORK_MM;
+> -	}
+> -
+>  	/* if we fail grabbing identity, we must COW, regrab, and retry */
+>  	if (io_grab_identity(req))
+>  		return;
 
-I plan to do it in the coherent DMA case. It's true that userspace can
-access the dma buffer if userspace doesn't do the unmap. But the dma
-pages would not be freed and reused unless user space called munmap()
-for them.
+I've taken this and applied it to:
+https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/commit/?h=io_uring_mmdrop&id=c8c68b2402709f7904a1a61cffbce4998278976e
 
-Thanks,
-Yongji
+With this patch applied the bug is gone so feel free to turn this into a
+proper patch and add:
+Tested-by: Christian Brauner <christian.brauner@ubuntu.com>:
+
+Christian
