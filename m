@@ -2,170 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDAFA2E77AF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 11:13:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6017E2E78EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 14:07:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbgL3KNd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Dec 2020 05:13:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbgL3KNc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Dec 2020 05:13:32 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB3DCC06179B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Dec 2020 02:12:51 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id ce23so21305095ejb.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Dec 2020 02:12:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=J5WJPM6JQMx4Jbj6E9atrShfsotzXemKwoPLiDZZeBk=;
-        b=rxuHPmrEKQkHWNReHzNXMMVqRLOCJizhg5zmF8EXSiwuAnfVOYbth3/EzLtp5m31bP
-         xaanEaEdkEsLiYv5Rw8VhMhbaWSk5vQ6QGR8dPzTgWHKGG7jf5EEaoD46EPhgg3kgKiC
-         Sp/iJpU5Lvh0tRAS/oacUHmEZf8ZL1o4KTwZN6hSI7GiJ0NY/YMyfFNt+17zgAV+RezW
-         0cl4iyu2wLI9FM79Z7ibczdgISZ80aptDAiWswwdM/Lge9mNEWI4yH1JyLl9xVRY0uEa
-         B07wMrk/Vk5tSBA0FQyPUhs64R9GxUaaS6coE2ln9Wz8I5oKwQLjO56qcGvqffzupefC
-         1NMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=J5WJPM6JQMx4Jbj6E9atrShfsotzXemKwoPLiDZZeBk=;
-        b=udhVY5+rkiosogZgmYsY8G1Fq8c+1OsnKTxgFG9kH3piqgGyhlhcb2M3Pf2mvkmVib
-         8SAwntEbtQ7wnGyVxsfSPxkliptphcBGYXX5cOq18A6Y0G9vOadVtIAWpowANeXQsabj
-         39+XRcSAHT3yzNbxfFpjBvrgyKIZBXI+6m6pn1S1JCXZdd0F015L93YIiW1HZvG0dPda
-         mxH7Iz/iVHAk0mGy6FMduc485Ug2VgR4OtKOXmqmOTLzxM9Bof52SK1AxMf8HJ0WEtL6
-         XQmmxmt012peIi029y0NSztte7w/09NCRrX5ZXUGKYkh3D8qWhqtpQOyVELvIe0NxTXO
-         cZxA==
-X-Gm-Message-State: AOAM531rtFMBF9cId0XIW2tB78OoVRb5YwIFzsWO2dFUgnFxYex6nuYU
-        /OHW0VVNdKz0KbLKxdnD6o+vjDdkoA3XCA4QMQUD
-X-Google-Smtp-Source: ABdhPJzfcf6oYCVKKo5/Wxp79G1FfJjdqXlE5V4OiBdpmsAmSa6Oyi1m1HZCfASuNteTrZena0AnCK+Qcxz5m86DSM4=
-X-Received: by 2002:a17:906:878d:: with SMTP id za13mr48518386ejb.395.1609323170757;
- Wed, 30 Dec 2020 02:12:50 -0800 (PST)
+        id S1727018AbgL3NEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Dec 2020 08:04:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726749AbgL3NEY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 30 Dec 2020 08:04:24 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5C045223E8;
+        Wed, 30 Dec 2020 13:03:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609333416;
+        bh=NqEGqp1novZlMhQPthLuK9lzcA9lKdPOjw64y0wArsg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l+ptVpuEIKHpA85YGvJHshuFy4UrIxls5unzpq22404LLdCOh5ngVNAz5sgNUzkB7
+         jFEGKFUw9/evMXKenMZ1FhLJ2WUoE89TjAf8lXbU8yhD9tkDjRbcvEXsaEyY5cTni0
+         rdb3sVhgz1ob66rALqA+FvPElqvBBBvUYHSzyGj5nF4tg/BnqktAq0vLd0sIWQPAKL
+         Y5gJEVyhNqS0WRJYO/8ZfzXA++7UL/drXhMtPEyaH01qDpkeArWXUaiIjx3jolebeV
+         etiSzMRT91dWtJioxjRM4HRb3VzH4blcIAimMBPPmWpAUsEIFy/mV3/Fl49UJ3rx5+
+         imaLVC1bf7a7A==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 16/31] fs/namespace.c: WARN if mnt_count has become negative
+Date:   Wed, 30 Dec 2020 08:02:58 -0500
+Message-Id: <20201230130314.3636961-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201230130314.3636961-1-sashal@kernel.org>
+References: <20201230130314.3636961-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20201222145221.711-1-xieyongji@bytedance.com> <CACycT3s=m=PQb5WFoMGhz8TNGme4+=rmbbBTtrugF9ZmNnWxEw@mail.gmail.com>
- <0e6faf9c-117a-e23c-8d6d-488d0ec37412@redhat.com> <CACycT3uwXBYvRbKDWdN3oCekv+o6_Lc=-KTrxejD=fr-zgibGw@mail.gmail.com>
- <2b24398c-e6d9-14ec-2c0d-c303d528e377@redhat.com> <CACycT3uDV43ecScrMh1QVpStuwDETHykJzzY=pkmZjP2Dd2kvg@mail.gmail.com>
- <e77c97c5-6bdc-cdd0-62c0-6ff75f6dbdff@redhat.com> <CACycT3soQoX5avZiFBLEGBuJpdni6-UxdhAPGpWHBWVf+dEySg@mail.gmail.com>
- <1356137727.40748805.1609233068675.JavaMail.zimbra@redhat.com>
- <CACycT3sg61yRdupnD+jQEkWKsVEvMWfhkJ=5z_bYZLxCibDiHw@mail.gmail.com>
- <b1aef426-29c7-7244-5fc9-56d52e86abb4@redhat.com> <CACycT3vZ7V5WWhCFLBK6FuvVNmPmMj_yc=COOB4cjjC13yHUwg@mail.gmail.com>
- <3fc6a132-9fc2-c4e2-7fb1-b5a8bfb771fa@redhat.com>
-In-Reply-To: <3fc6a132-9fc2-c4e2-7fb1-b5a8bfb771fa@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 30 Dec 2020 18:12:40 +0800
-Message-ID: <CACycT3tD3zyvV6Zy5NT4x=02hBgrRGq35xeTsRXXx-_wPGJXpQ@mail.gmail.com>
-Subject: Re: Re: [RFC v2 09/13] vduse: Add support for processing vhost iotlb message
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 30, 2020 at 4:41 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> On 2020/12/30 =E4=B8=8B=E5=8D=883:09, Yongji Xie wrote:
-> > On Wed, Dec 30, 2020 at 2:11 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> On 2020/12/29 =E4=B8=8B=E5=8D=886:26, Yongji Xie wrote:
-> >>> On Tue, Dec 29, 2020 at 5:11 PM Jason Wang <jasowang@redhat.com> wrot=
-e:
-> >>>>
-> >>>> ----- Original Message -----
-> >>>>> On Mon, Dec 28, 2020 at 4:43 PM Jason Wang <jasowang@redhat.com> wr=
-ote:
-> >>>>>> On 2020/12/28 =E4=B8=8B=E5=8D=884:14, Yongji Xie wrote:
-> >>>>>>>> I see. So all the above two questions are because VHOST_IOTLB_IN=
-VALIDATE
-> >>>>>>>> is expected to be synchronous. This need to be solved by tweakin=
-g the
-> >>>>>>>> current VDUSE API or we can re-visit to go with descriptors rela=
-ying
-> >>>>>>>> first.
-> >>>>>>>>
-> >>>>>>> Actually all vdpa related operations are synchronous in current
-> >>>>>>> implementation. The ops.set_map/dma_map/dma_unmap should not retu=
-rn
-> >>>>>>> until the VDUSE_UPDATE_IOTLB/VDUSE_INVALIDATE_IOTLB message is re=
-plied
-> >>>>>>> by userspace. Could it solve this problem?
-> >>>>>>     I was thinking whether or not we need to generate IOTLB_INVALI=
-DATE
-> >>>>>> message to VDUSE during dma_unmap (vduse_dev_unmap_page).
-> >>>>>>
-> >>>>>> If we don't, we're probably fine.
-> >>>>>>
-> >>>>> It seems not feasible. This message will be also used in the
-> >>>>> virtio-vdpa case to notify userspace to unmap some pages during
-> >>>>> consistent dma unmapping. Maybe we can document it to make sure the
-> >>>>> users can handle the message correctly.
-> >>>> Just to make sure I understand your point.
-> >>>>
-> >>>> Do you mean you plan to notify the unmap of 1) streaming DMA or 2)
-> >>>> coherent DMA?
-> >>>>
-> >>>> For 1) you probably need a workqueue to do that since dma unmap can
-> >>>> be done in irq or bh context. And if usrspace does't do the unmap, i=
-t
-> >>>> can still access the bounce buffer (if you don't zap pte)?
-> >>>>
-> >>> I plan to do it in the coherent DMA case.
-> >>
-> >> Any reason for treating coherent DMA differently?
-> >>
-> > Now the memory of the bounce buffer is allocated page by page in the
-> > page fault handler. So it can't be used in coherent DMA mapping case
-> > which needs some memory with contiguous virtual addresses. I can use
-> > vmalloc() to do allocation for the bounce buffer instead. But it might
-> > cause some memory waste. Any suggestion?
->
->
-> I may miss something. But I don't see a relationship between the
-> IOTLB_UNMAP and vmalloc().
->
+From: Eric Biggers <ebiggers@google.com>
 
-In the vmalloc() case, the coherent DMA page will be taken from the
-memory allocated by vmalloc(). So IOTLB_UNMAP is not needed anymore
-during coherent DMA unmapping because those vmalloc'ed memory which
-has been mapped into userspace address space during initialization can
-be reused. And userspace should not unmap the region until we destroy
-the device.
+[ Upstream commit edf7ddbf1c5eb98b720b063b73e20e8a4a1ce673 ]
 
->
-> >
-> >>> It's true that userspace can
-> >>> access the dma buffer if userspace doesn't do the unmap. But the dma
-> >>> pages would not be freed and reused unless user space called munmap()
-> >>> for them.
-> >>
-> >> I wonder whether or not we could recycle IOVA in this case to avoid th=
-e
-> >> IOTLB_UMAP message.
-> >>
-> > We can achieve that if we use vmalloc() to do allocation for the
-> > bounce buffer which can be used in coherent DMA mapping case. But
-> > looks like we still have no way to avoid the IOTLB_UMAP message in
-> > vhost-vdpa case.
->
->
-> I think that's fine. For virtio-vdpa, from VDUSE userspace perspective,
-> it works like a driver that is using SWIOTLB in this case.
->
+Missing calls to mntget() (or equivalently, too many calls to mntput())
+are hard to detect because mntput() delays freeing mounts using
+task_work_add(), then again using call_rcu().  As a result, mnt_count
+can often be decremented to -1 without getting a KASAN use-after-free
+report.  Such cases are still bugs though, and they point to real
+use-after-frees being possible.
 
-OK, will do it in v3.
+For an example of this, see the bug fixed by commit 1b0b9cc8d379
+("vfs: fsmount: add missing mntget()"), discussed at
+https://lkml.kernel.org/linux-fsdevel/20190605135401.GB30925@xxxxxxxxxxxxxxxxxxxxxxxxx/T/#u.
+This bug *should* have been trivial to find.  But actually, it wasn't
+found until syzkaller happened to use fchdir() to manipulate the
+reference count just right for the bug to be noticeable.
 
-Thanks,
-Yongji
+Address this by making mntput_no_expire() issue a WARN if mnt_count has
+become negative.
+
+Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/namespace.c | 9 ++++++---
+ fs/pnode.h     | 2 +-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index cebaa3e817940..93006abe7946a 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -156,10 +156,10 @@ static inline void mnt_add_count(struct mount *mnt, int n)
+ /*
+  * vfsmount lock must be held for write
+  */
+-unsigned int mnt_get_count(struct mount *mnt)
++int mnt_get_count(struct mount *mnt)
+ {
+ #ifdef CONFIG_SMP
+-	unsigned int count = 0;
++	int count = 0;
+ 	int cpu;
+ 
+ 	for_each_possible_cpu(cpu) {
+@@ -1139,6 +1139,7 @@ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
+ static void mntput_no_expire(struct mount *mnt)
+ {
+ 	LIST_HEAD(list);
++	int count;
+ 
+ 	rcu_read_lock();
+ 	if (likely(READ_ONCE(mnt->mnt_ns))) {
+@@ -1162,7 +1163,9 @@ static void mntput_no_expire(struct mount *mnt)
+ 	 */
+ 	smp_mb();
+ 	mnt_add_count(mnt, -1);
+-	if (mnt_get_count(mnt)) {
++	count = mnt_get_count(mnt);
++	if (count != 0) {
++		WARN_ON(count < 0);
+ 		rcu_read_unlock();
+ 		unlock_mount_hash();
+ 		return;
+diff --git a/fs/pnode.h b/fs/pnode.h
+index 49a058c73e4c7..26f74e092bd98 100644
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
+ void propagate_mount_unlock(struct mount *);
+ void mnt_release_group_id(struct mount *);
+ int get_dominating_id(struct mount *mnt, const struct path *root);
+-unsigned int mnt_get_count(struct mount *mnt);
++int mnt_get_count(struct mount *mnt);
+ void mnt_set_mountpoint(struct mount *, struct mountpoint *,
+ 			struct mount *);
+ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
+-- 
+2.27.0
+
