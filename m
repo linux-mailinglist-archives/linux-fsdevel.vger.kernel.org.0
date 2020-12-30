@@ -2,81 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B92352E753F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 00:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 392AC2E7549
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 01:10:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgL2XsM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Dec 2020 18:48:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbgL2XsM (ORCPT
+        id S1726281AbgL3AKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Dec 2020 19:10:06 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:49243 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726242AbgL3AKG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Dec 2020 18:48:12 -0500
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57B98C061799
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Dec 2020 15:47:32 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id w6so8782653pfu.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Dec 2020 15:47:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+3b8AdRBIqhWAbHJd9MKSPNeTg0fP65SdBmoyfUBMYg=;
-        b=LOWL6Dv/YDfwgO3gm7k/Ha/1/B99cixiWTPNt5zmPqOtGudX3B84OkiYJ2eqpazjW+
-         IUk8J5y74d/F2jrb6kaSCg62aNDYqZTCE5yYeAxG8Cch5dSa1uY3N/Vm0KYNAx8KqDu0
-         sD13n89GAed7RR/Bf+OSJ8NozA6xCZ0PHh2JESitG9MV7P7JaXslHGMA1KRNOWPnxTFy
-         XSoHOvK5yO5G9s+Xi0dC19N69lwHpf5M/kbSkDT/WGbqwiwYcsjIQYaMs4n0VFUb7EA2
-         35/aRBLbPNFMBN9OnvEpbxXrUOFQ4MUFfzxVEzOeMzGc+XZ2IbDhpvO8hI3iGB9Dw+kj
-         bk6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+3b8AdRBIqhWAbHJd9MKSPNeTg0fP65SdBmoyfUBMYg=;
-        b=OaQfVjZIk4M6fAdymU35RZj1QP6Iv6nQrwmB5QGK17k+NjqyZFuWu6Ki595FJGte/c
-         ONjWeLSxgC6/O9ZFU0shs/5poyXJqc+M3PGWO+6QqTnxNkNwYRlTLxk9gtCjn97yngNm
-         No0eK+Q/JX+1DrdsqbT29nlBRQ7NeczkJ40Iff50WvCLGgK5HnyefXL5jPryUPfZVJc7
-         x5fgQ4BkhUKU9rqwfz+3Nc5UdkyK3rTfDo9x2Y3e0hMxx6AS/f69zIZZN1865V6Ma8ht
-         LYH+3wn2XFy7ZFzxLdHYnm5mG7Bpa9kS3PI5EDKieIU3k1Dv/a51JUokDP9otzkZq1If
-         /W1g==
-X-Gm-Message-State: AOAM530iI9GMbCUkmB1rdekyA+D4w1lg7PVoYbhIjhyxm0jCp0nN5bAZ
-        LbJcJ85IrYJgM7rH+kIK8clI6w==
-X-Google-Smtp-Source: ABdhPJw5d9F0tV2Vowzh8aEgRK+TarMawaqPnaU+0pRVws/TCofMSmohcSXCPeG0Gyls3rJKg70taw==
-X-Received: by 2002:a62:19ca:0:b029:19d:cd0d:af83 with SMTP id 193-20020a6219ca0000b029019dcd0daf83mr47506004pfz.51.1609285651753;
-        Tue, 29 Dec 2020 15:47:31 -0800 (PST)
-Received: from ?IPv6:2603:8001:2900:d1ce:8f91:de2a:ac8a:800e? (2603-8001-2900-d1ce-8f91-de2a-ac8a-800e.res6.spectrum.com. [2603:8001:2900:d1ce:8f91:de2a:ac8a:800e])
-        by smtp.gmail.com with ESMTPSA id gz5sm4485940pjb.15.2020.12.29.15.47.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Dec 2020 15:47:31 -0800 (PST)
-Subject: Re: [PATCH] fs: block_dev.c: fix kernel-doc warnings from struct
- block_device changes
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20201229034706.30399-1-rdunlap@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <75e962dc-a95f-7ca7-c145-6a83f11d6271@kernel.dk>
-Date:   Tue, 29 Dec 2020 16:47:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 29 Dec 2020 19:10:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1609286919;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=e4GWSW+b7uP2mt0kRauq4WQsKZBizIfrti+Jx+uuuGk=;
+        b=VzCSJCT7BGXMzWr/RhxGWErehcdvzknKmhFWTUSNnu3MAwYWO8RwcGht0eyu7LTIQ0c2d0
+        2F/w6vImjoAu9r+MVhhfTcpCchmhg10mrxYJvVUXVBHEq6BR/CE+tbhETDZ9nJWW0iwUJ+
+        0cHkZniQzj9ig8UA+ze5j04fB5NKyZQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-248-ZgkwbmrHOM-ZYKoGABN4jA-1; Tue, 29 Dec 2020 19:08:35 -0500
+X-MC-Unique: ZgkwbmrHOM-ZYKoGABN4jA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B1DE4801817;
+        Wed, 30 Dec 2020 00:08:33 +0000 (UTC)
+Received: from localhost (ovpn-12-20.pek2.redhat.com [10.72.12.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A34660BFA;
+        Wed, 30 Dec 2020 00:08:29 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] fs/buffer: try to submit writeback bio in unit of page
+Date:   Wed, 30 Dec 2020 08:08:15 +0800
+Message-Id: <20201230000815.3448707-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20201229034706.30399-1-rdunlap@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/28/20 8:47 PM, Randy Dunlap wrote:
-> Fix new kernel-doc warnings in fs/block_dev.c:
-> 
-> ../fs/block_dev.c:1066: warning: Excess function parameter 'whole' description in 'bd_abort_claiming'
-> ../fs/block_dev.c:1837: warning: Function parameter or member 'dev' not described in 'lookup_bdev'
+It is observed that __block_write_full_page() always submit bio with size of block size,
+which is often 512 bytes.
 
-Applied, thanks.
+In case of sequential IO, or >=4k BS random/seq writeback IO, most of times IO
+represented by all buffer_head in each page can be done in single bio. It is actually
+done in single request IO by block layer's plug merge too.
 
+So check if IO represented by buffer_head can be merged to single page
+IO, if yes, just submit single bio instead of submitting one bio for each buffer_head.
+
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-block@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ fs/buffer.c | 112 +++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 90 insertions(+), 22 deletions(-)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 32647d2011df..6bcf9ce5d7f8 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -54,6 +54,8 @@
+ static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
+ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
+ 			 enum rw_hint hint, struct writeback_control *wbc);
++static int submit_page_wbc(int op, int op_flags, struct buffer_head *bh,
++			 enum rw_hint hint, struct writeback_control *wbc);
+ 
+ #define BH_ENTRY(list) list_entry((list), struct buffer_head, b_assoc_buffers)
+ 
+@@ -1716,10 +1718,12 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 	int err;
+ 	sector_t block;
+ 	sector_t last_block;
+-	struct buffer_head *bh, *head;
++	struct buffer_head *bh, *head, *prev_bh;
+ 	unsigned int blocksize, bbits;
+ 	int nr_underway = 0;
+ 	int write_flags = wbc_to_write_flags(wbc);
++	unsigned int total_size = 0;
++	bool continuous = true;
+ 
+ 	head = create_page_buffers(page, inode,
+ 					(1 << BH_Dirty)|(1 << BH_Uptodate));
+@@ -1774,6 +1778,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 		block++;
+ 	} while (bh != head);
+ 
++	prev_bh = NULL;
+ 	do {
+ 		if (!buffer_mapped(bh))
+ 			continue;
+@@ -1792,9 +1797,17 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 		}
+ 		if (test_clear_buffer_dirty(bh)) {
+ 			mark_buffer_async_write_endio(bh, handler);
++			total_size += bh->b_size;
+ 		} else {
+ 			unlock_buffer(bh);
+ 		}
++
++		if (continuous && prev_bh && !(
++		    prev_bh->b_blocknr + 1 == bh->b_blocknr &&
++		    prev_bh->b_bdev == bh->b_bdev &&
++		    buffer_meta(prev_bh) == buffer_meta(bh)))
++			continuous = false;
++		prev_bh = bh;
+ 	} while ((bh = bh->b_this_page) != head);
+ 
+ 	/*
+@@ -1804,15 +1817,21 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 	BUG_ON(PageWriteback(page));
+ 	set_page_writeback(page);
+ 
+-	do {
+-		struct buffer_head *next = bh->b_this_page;
+-		if (buffer_async_write(bh)) {
+-			submit_bh_wbc(REQ_OP_WRITE, write_flags, bh,
+-					inode->i_write_hint, wbc);
+-			nr_underway++;
+-		}
+-		bh = next;
+-	} while (bh != head);
++	if (total_size == PAGE_SIZE && continuous) {
++		submit_page_wbc(REQ_OP_WRITE, write_flags, bh,
++				inode->i_write_hint, wbc);
++		nr_underway = MAX_BUF_PER_PAGE;
++	} else {
++		do {
++			struct buffer_head *next = bh->b_this_page;
++			if (buffer_async_write(bh)) {
++				submit_bh_wbc(REQ_OP_WRITE, write_flags, bh,
++						inode->i_write_hint, wbc);
++				nr_underway++;
++			}
++			bh = next;
++		} while (bh != head);
++	}
+ 	unlock_page(page);
+ 
+ 	err = 0;
+@@ -3006,8 +3025,28 @@ static void end_bio_bh_io_sync(struct bio *bio)
+ 	bio_put(bio);
+ }
+ 
+-static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
+-			 enum rw_hint write_hint, struct writeback_control *wbc)
++static void end_bio_page_io_sync(struct bio *bio)
++{
++	struct buffer_head *head = bio->bi_private;
++	struct buffer_head *bh = head;
++
++	do {
++		struct buffer_head *next = bh->b_this_page;
++
++		if (unlikely(bio_flagged(bio, BIO_QUIET)))
++			set_bit(BH_Quiet, &bh->b_state);
++
++		bh->b_end_io(bh, !bio->bi_status);
++		bh = next;
++	} while (bh != head);
++
++	bio_put(bio);
++}
++
++static int __submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
++			   enum rw_hint write_hint,
++			   struct writeback_control *wbc, unsigned int size,
++			   bio_end_io_t   *end_io_handler)
+ {
+ 	struct bio *bio;
+ 
+@@ -3017,12 +3056,6 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
+ 	BUG_ON(buffer_delay(bh));
+ 	BUG_ON(buffer_unwritten(bh));
+ 
+-	/*
+-	 * Only clear out a write error when rewriting
+-	 */
+-	if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
+-		clear_buffer_write_io_error(bh);
+-
+ 	bio = bio_alloc(GFP_NOIO, 1);
+ 
+ 	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+@@ -3031,10 +3064,10 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
+ 	bio_set_dev(bio, bh->b_bdev);
+ 	bio->bi_write_hint = write_hint;
+ 
+-	bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
+-	BUG_ON(bio->bi_iter.bi_size != bh->b_size);
++	bio_add_page(bio, bh->b_page, size, bh_offset(bh));
++	BUG_ON(bio->bi_iter.bi_size != size);
+ 
+-	bio->bi_end_io = end_bio_bh_io_sync;
++	bio->bi_end_io = end_io_handler;
+ 	bio->bi_private = bh;
+ 
+ 	if (buffer_meta(bh))
+@@ -3048,13 +3081,48 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
+ 
+ 	if (wbc) {
+ 		wbc_init_bio(wbc, bio);
+-		wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
++		wbc_account_cgroup_owner(wbc, bh->b_page, size);
+ 	}
+ 
+ 	submit_bio(bio);
+ 	return 0;
+ }
+ 
++static inline int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
++				enum rw_hint write_hint,
++				struct writeback_control *wbc)
++{
++	/*
++	 * Only clear out a write error when rewriting
++	 */
++	if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
++		clear_buffer_write_io_error(bh);
++
++	return __submit_bh_wbc(op, op_flags, bh, write_hint, wbc, bh->b_size,
++			       end_bio_bh_io_sync);
++}
++
++static int submit_page_wbc(int op, int op_flags, struct buffer_head *head,
++			   enum rw_hint write_hint,
++			   struct writeback_control *wbc)
++{
++	struct buffer_head *bh = head;
++
++	WARN_ON(bh_offset(head) != 0);
++
++	/*
++	 * Only clear out a write error when rewriting
++	 */
++	do {
++		if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
++			clear_buffer_write_io_error(bh);
++		bh = bh->b_this_page;
++	} while (bh != head);
++
++	return __submit_bh_wbc(op, op_flags, head, write_hint, wbc, PAGE_SIZE,
++			       end_bio_page_io_sync);
++}
++
+ int submit_bh(int op, int op_flags, struct buffer_head *bh)
+ {
+ 	return submit_bh_wbc(op, op_flags, bh, 0, NULL);
 -- 
-Jens Axboe
+2.28.0
 
