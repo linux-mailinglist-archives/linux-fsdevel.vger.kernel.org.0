@@ -2,122 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 985F32E79E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 15:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A0F42E7A91
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 16:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbgL3OFs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Dec 2020 09:05:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49736 "EHLO
+        id S1726563AbgL3PpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Dec 2020 10:45:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbgL3OFs (ORCPT
+        with ESMTP id S1726548AbgL3PpA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Dec 2020 09:05:48 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4371CC061799;
-        Wed, 30 Dec 2020 06:05:08 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id h186so9759147pfe.0;
-        Wed, 30 Dec 2020 06:05:08 -0800 (PST)
+        Wed, 30 Dec 2020 10:45:00 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A957EC06179B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Dec 2020 07:44:19 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id p22so15730461edu.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Dec 2020 07:44:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RznXSw7qxQXCa6AGnGmmtVifZFqLdwppqr0oE+H73IQ=;
-        b=FiNo6uDsC8Fr0nL/oPoVOKzAGkk6h4ZY8XO2eOKKH32+LjhNXcma4jGLFZ50yQ2SJA
-         e289avFGuWNFUkBP0NfwaUTY5lhlENek0BSSTXQ2hXFNECXxCajrTLj0yOOPsM+SNqLO
-         QzC9j4//1IeOtOgsWgdLrDNZsWStVYdAcj6opbdYQykMWfwNozG1w8J/nfOdR4pmP8LW
-         56C0fU6c1QyCSLwjAE8TrQtsrtrsQo32DpQzetO4y7Z16ZMCJ8iaMHfAQnBxKt6RyrBa
-         +3f5BAihLHMb0mQCnxKX40ttERxcmdRUqd2zIxvS7d5xYT+KExPqDPux1dowkveOuxI1
-         kudA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5hBnQDw081gPYRJZ5sSOQpvtWrIndiY9aAJP6hoGoCI=;
+        b=jF9zBs3u6j4Qo5O+462fi/y8Z3H2Rg/kS494qsVJ1AZwXnP4CZKBWtNfWVC4M+XY2L
+         a4QSfGMk/T0BX8WKgAXjGmwlhjMR7jUfuM2MJMUhMMzVoz9BLvH3vgISA3wl+9ipOCg7
+         0Qetw+q4d2hE88fpkR4idIMOjFu7r0tivYhG8TVkhRtIgbM86B8C7RpW5EP6KPEYDHtC
+         vItSy1oO9aljOyRk1izLO06eG2w4wHJ+0sSw2J77SK31m7y6YeOFi1L64eSfXn/5DXnp
+         hbTTEwqrK98bNoVh9B93pHxvRkTOtAv++3QeaGy3wk9I8XYNKJVnZC34WbIzngDe6Wgn
+         Is7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RznXSw7qxQXCa6AGnGmmtVifZFqLdwppqr0oE+H73IQ=;
-        b=MVptWGhZ4hDSsYioOYDfl4oYmjTHSUD8VDTWqP4aT+8nOxDE14tSvRFw9R/jGEa/Am
-         EdSTYZQThH29RfrqlDTdM6JGnsPG3rk493JaIGHl++cGm0gRrRNSUWqz5N2TbGSY/P/q
-         qsqlq6hWTF/qa1wL+8KD0AEAJzMlqt8+n0KQKyZ+YIeK4wDhxc0C1m85dJ/z/wAuoBxv
-         uGMyzmY4p50eqCykp+gMFKYI0sR8fr1quP2K5j23v/I0+8tIKyxcesUFHz8qvEwXUUnc
-         kI/A+djdQkDNlt1f1iYda58R7wVKW1zrClo4bUBwMgj7O9ku/N+UexOVuF77agSZ3XtW
-         UAtQ==
-X-Gm-Message-State: AOAM5303D0oGGfVsCHeJYJyJlUhE5bNm6gmNw0Kyj28X8Tdkev2coK3F
-        KJ9J+UUwfCNzm+XZHu3uyrL0qnk/PeWNIQ==
-X-Google-Smtp-Source: ABdhPJw8xRASTcrtl2r8MBKh8DGsaJWaLP8WYraJJ3sYSTpRzFpO8y4QbnJFKUNPqe8cPlCRiXdfqw==
-X-Received: by 2002:a63:da58:: with SMTP id l24mr52102176pgj.178.1609337107580;
-        Wed, 30 Dec 2020 06:05:07 -0800 (PST)
-Received: from localhost ([211.108.35.36])
-        by smtp.gmail.com with ESMTPSA id b1sm7087859pjh.54.2020.12.30.06.05.06
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Dec 2020 06:05:07 -0800 (PST)
-Date:   Wed, 30 Dec 2020 23:05:04 +0900
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [RFC] block: reject I/O in BLKRRPART if block size changed
-Message-ID: <20201230140504.GB7917@localhost.localdomain>
-References: <20201226180232.12276-1-minwoo.im.dev@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5hBnQDw081gPYRJZ5sSOQpvtWrIndiY9aAJP6hoGoCI=;
+        b=tRCfUr7naJjnshCk5w1biOhktFCX8ohXlQqlT1di6ax8LxM7zvXxXNuia1gAF//wD0
+         OrzCGJupuz/kSsTlazoXrtUYRaIMq9GG4/NTojND8rVhnbWh9nrZx4Qa14ZcwIidG4O5
+         r/NGBI4IqhK/G4DBJQ7RTrzm1O7EeDkOJTnxzGsw4Ol5/pEKicPqV8Ll7jkPJN/HEFfK
+         Ad5Wtvkv/APdWGcQaGLal0rSG73mHCoerAWaOZVWhElkpcmIHfH5Npjjcmw35hBoURBY
+         UD9NFf23XajR9nl8po+Y0enR9fPhZz09sFiOexvcMnBZ5FTc13Gm4q8HfUlZp8JyOVdo
+         kjNA==
+X-Gm-Message-State: AOAM531ktSyPK2NQ+e6qLp50XE4Ym5jzZWdhdTfr4or1OrjTkzBZgBK0
+        5zf8MOkDx+ILKOTumXN+faWFFqCc+dedI3cBTA7ruQ==
+X-Google-Smtp-Source: ABdhPJzdhrxVcS8QaW5SwjUUsVlQzNcZNKy+323jJeGcsyxbQ7R92UwEPNUX1N2RLnmmTIXQIt78Z+E0q7QwZmHhaZE=
+X-Received: by 2002:a50:b5c5:: with SMTP id a63mr50773533ede.227.1609343058152;
+ Wed, 30 Dec 2020 07:44:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201226180232.12276-1-minwoo.im.dev@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20201013013416.390574-1-dima@arista.com> <20201013013416.390574-3-dima@arista.com>
+ <CADyq12y4WAjT7O3_4E3FmBv4dr5fY6utQZod1UN0Xv8PhOAnQA@mail.gmail.com> <d25ad10c-6f67-8c11-18c3-0193b8ea14c4@arista.com>
+In-Reply-To: <d25ad10c-6f67-8c11-18c3-0193b8ea14c4@arista.com>
+From:   Brian Geffon <bgeffon@google.com>
+Date:   Wed, 30 Dec 2020 07:43:42 -0800
+Message-ID: <CADyq12w0+ZA6nwJOtJJ-66vHuq4aWwQw22NOUymz7KQa9DXqHQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] mm/mremap: For MREMAP_DONTUNMAP check security_vm_enough_memory_mm()
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will@kernel.org>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20-12-27 03:02:32, Minwoo Im wrote:
-> Background:
->   Let's say we have 2 LBA format for 4096B and 512B LBA size for a
-> NVMe namespace.  Assume that current LBA format is 4096B and in case
-> we convert namespace to 512B and 4096B back again:
-> 
->   nvme format /dev/nvme0n1 --lbaf=1 --force  # to 512B LBA
->   nvme format /dev/nvme0n1 --lbaf=0 --force  # to 4096B LBA
-> 
->   Then we can see the following errors during the BLKRRPART ioctl from
-> the nvme-cli format subcommand:
-> 
->   [   10.771740] blk_update_request: operation not supported error, dev nvme0n1, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
->   [   10.780262] Buffer I/O error on dev nvme0n1, logical block 0, async page read
->   ...
-> 
->   Also, we can see the Read commands followed by the Format command due
-> to BLKRRPART ioctl with Number of LBAs to 65535(0xffff) which is
-> under-flowed because the request for the Read commands are coming with
-> 512B and this is because it's playing around with i_blkbits from the
-> block_device inode which needs to be avoided as [1].
-> 
->   kworker/0:1H-56      [000] ....   913.456922: nvme_setup_cmd: nvme0: disk=nvme0n1, qid=1, cmdid=216, nsid=1, flags=0x0, meta=0x0, cmd=(nvme_cmd_read slba=0, len=65535, ctrl=0x0, dsmgmt=0, reftag=0)
->   ksoftirqd/0-9       [000] .Ns.   916.566351: nvme_complete_rq: nvme0: disk=nvme0n1, qid=1, cmdid=216, res=0x0, retries=0, flags=0x0, status=0x4002
->   ...
-> 
->   Before we have commit 5ff9f19231a0 ("block: simplify
-> set_init_blocksize"), block size used to be bumped up to the
-> 4K(PAGE_SIZE) in this example and we have not seen these errors.  But
-> with this patch, we have to make sure that bdev->bd_inode->i_blkbits to
-> make sure that BLKRRPART ioctl pass proper request length based on the
-> changed logical block size.
-> 
-> Description:
->   As the previous discussion [1], this patch introduced a gendisk flag
-> to indicate that block size has been changed in the runtime.  This flag
-> is set when logical block size is changed in the runtime with sector
-> capacity itself.  It will be cleared when the file descriptor for the
-> block devie is opened again which means __blkdev_get() updates the block
-> size via set_init_blocksize().
->   This patch rejects I/O from the path of add_partitions() and
-> application should open the file descriptor again to update the block
-> size of the block device inode.
-> 
-> [1] https://lore.kernel.org/linux-nvme/20201223183143.GB13354@localhost.localdomain/T/#t
-> 
-> Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
+Ah, you're right. This individual patch looks good to me.
 
-Hello,
+Brian
 
-Sorry for the noises here.  Please ignore this patch.  Will try to
-prepare a new one for this issue.
-
-Thanks,
+On Mon, Dec 28, 2020 at 11:12 AM Dmitry Safonov <dima@arista.com> wrote:
+>
+> On 12/28/20 6:21 PM, Brian Geffon wrote:
+> > This looks good to me with a small comment.
+> >
+> >>         if (do_munmap(mm, old_addr, old_len, uf_unmap) < 0) {
+> >>                 /* OOM: unable to split vma, just get accounts right */
+> >> -               if (vm_flags & VM_ACCOUNT)
+> >> +               if (vm_flags & VM_ACCOUNT && !(flags & MREMAP_DONTUNMAP))
+> >>                         vm_acct_memory(new_len >> PAGE_SHIFT);
+> >
+> > Checking MREMAP_DONTUNMAP in the do_munmap path is unnecessary as
+> > MREMAP_DONTUNMAP will have already returned by this point.
+>
+> In this code it is also used as err-path. In case move_page_tables()
+> fails to move all page tables or .mremap() callback fails, the new VMA
+> is unmapped.
+>
+> IOW, MREMAP_DONTUNMAP returns under:
+> :       if (unlikely(!err && (flags & MREMAP_DONTUNMAP))) {
+>
+> --
+>           Dima
