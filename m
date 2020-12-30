@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 700CE2E7B63
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 18:01:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57EF32E7B6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 18:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbgL3RAy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Dec 2020 12:00:54 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:50482 "EHLO
+        id S1727141AbgL3RBO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Dec 2020 12:01:14 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:58640 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726681AbgL3RAv (ORCPT
+        with ESMTP id S1726428AbgL3RBN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Dec 2020 12:00:51 -0500
+        Wed, 30 Dec 2020 12:01:13 -0500
 X-IronPort-AV: E=Sophos;i="5.78,461,1599494400"; 
-   d="scan'208";a="103085836"
+   d="scan'208";a="103085839"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 31 Dec 2020 00:58:45 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 2EE7E4CE6024;
-        Thu, 31 Dec 2020 00:58:42 +0800 (CST)
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id 57F5C4CE6023;
+        Thu, 31 Dec 2020 00:58:43 +0800 (CST)
 Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Thu, 31 Dec 2020 00:58:41 +0800
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Thu, 31 Dec 2020 00:58:43 +0800
 Received: from irides.mr (10.167.225.141) by G08CNEXCHPEKD04.g08.fujitsu.local
  (10.167.33.209) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 31 Dec 2020 00:58:41 +0800
+ Transport; Thu, 31 Dec 2020 00:58:42 +0800
 From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>
@@ -32,16 +32,16 @@ CC:     <linux-fsdevel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
         <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <hch@lst.de>, <song@kernel.org>,
         <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
-Subject: [PATCH 08/10] md: Implement ->corrupted_range()
-Date:   Thu, 31 Dec 2020 00:55:59 +0800
-Message-ID: <20201230165601.845024-9-ruansy.fnst@cn.fujitsu.com>
+Subject: [PATCH 09/10] xfs: Implement ->corrupted_range() for XFS
+Date:   Thu, 31 Dec 2020 00:56:00 +0800
+Message-ID: <20201230165601.845024-10-ruansy.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201230165601.845024-1-ruansy.fnst@cn.fujitsu.com>
 References: <20201230165601.845024-1-ruansy.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 2EE7E4CE6024.AC3E1
+X-yoursite-MailScanner-ID: 57F5C4CE6023.ABDE7
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
 X-Spam-Status: No
@@ -49,191 +49,186 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With the support of ->rmap(), it is possible to obtain the superblock on
-a mapped device.
+This function is used to handle errors which may cause data lost in
+filesystem.  Such as memory failure in fsdax mode.
 
-If a pmem device is used as one target of mapped device, we cannot
-obtain its superblock directly.  With the help of SYSFS, the mapped
-device can be found on the target devices.  So, we iterate the
-bdev->bd_holder_disks to obtain its mapped device.
+In XFS, it requires "rmapbt" feature in order to query for files or
+metadata which associated to the corrupted data.  Then we could call fs
+recover functions to try to repair the corrupted data.(did not
+implemented in this patchset)
+
+After that, the memory failure also needs to notify the processes who
+are using those files.
+
+Only support data device.  Realtime device is not supported for now.
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
 ---
- drivers/md/dm.c       | 54 +++++++++++++++++++++++++++++++++++++++++++
- drivers/nvdimm/pmem.c | 11 +++------
- fs/block_dev.c        | 37 +++++++++++++++++++++++++++++
- include/linux/genhd.h |  2 ++
- 4 files changed, 96 insertions(+), 8 deletions(-)
+ fs/xfs/xfs_fsops.c |   5 +++
+ fs/xfs/xfs_mount.h |   1 +
+ fs/xfs/xfs_super.c | 107 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 113 insertions(+)
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 4e0cbfe3f14d..f9955be7afeb 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -507,6 +507,59 @@ static int dm_blk_report_zones(struct gendisk *disk, sector_t sector,
- #define dm_blk_report_zones		NULL
- #endif /* CONFIG_BLK_DEV_ZONED */
+diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
+index ef1d5bb88b93..0a2038875d32 100644
+--- a/fs/xfs/xfs_fsops.c
++++ b/fs/xfs/xfs_fsops.c
+@@ -501,6 +501,11 @@ xfs_do_force_shutdown(
+ "Corruption of in-memory data detected.  Shutting down filesystem");
+ 		if (XFS_ERRLEVEL_HIGH <= xfs_error_level)
+ 			xfs_stack_trace();
++	} else if (flags & SHUTDOWN_CORRUPT_META) {
++		xfs_alert_tag(mp, XFS_PTAG_SHUTDOWN_CORRUPT,
++"Corruption of on-disk metadata detected.  Shutting down filesystem");
++		if (XFS_ERRLEVEL_HIGH <= xfs_error_level)
++			xfs_stack_trace();
+ 	} else if (logerror) {
+ 		xfs_alert_tag(mp, XFS_PTAG_SHUTDOWN_LOGERROR,
+ 			"Log I/O Error Detected. Shutting down filesystem");
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index dfa429b77ee2..8f0df67ffcc1 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -274,6 +274,7 @@ void xfs_do_force_shutdown(struct xfs_mount *mp, int flags, char *fname,
+ #define SHUTDOWN_LOG_IO_ERROR	0x0002	/* write attempt to the log failed */
+ #define SHUTDOWN_FORCE_UMOUNT	0x0004	/* shutdown from a forced unmount */
+ #define SHUTDOWN_CORRUPT_INCORE	0x0008	/* corrupt in-memory data structures */
++#define SHUTDOWN_CORRUPT_META	0x0010  /* corrupt metadata on device */
  
-+struct dm_blk_corrupt {
-+	struct block_device *bdev;
-+	sector_t offset;
-+};
-+
-+static int dm_blk_corrupt_fn(struct dm_target *ti, struct dm_dev *dev,
-+				sector_t start, sector_t len, void *data)
-+{
-+	struct dm_blk_corrupt *bc = data;
-+
-+	return bc->bdev == (void *)dev->bdev &&
-+			(start <= bc->offset && bc->offset < start + len);
-+}
-+
-+static int dm_blk_corrupted_range(struct gendisk *disk,
-+				  struct block_device *target_bdev,
-+				  loff_t target_offset, size_t len, void *data)
-+{
-+	struct mapped_device *md = disk->private_data;
-+	struct block_device *md_bdev = md->bdev;
-+	struct dm_table *map;
-+	struct dm_target *ti;
-+	int srcu_idx, i, rc = -ENODEV;
-+	bool found = false;
-+	sector_t disk_sect, target_sect = to_sector(target_offset);
-+
-+	map = dm_get_live_table(md, &srcu_idx);
-+	if (!map)
-+		return rc;
-+
-+	for (i = 0; i < dm_table_get_num_targets(map); i++) {
-+		ti = dm_table_get_target(map, i);
-+		if (ti->type->iterate_devices && ti->type->rmap) {
-+			struct dm_blk_corrupt bc = {target_bdev, target_sect};
-+
-+			found = ti->type->iterate_devices(ti, dm_blk_corrupt_fn, &bc);
-+			if (!found)
-+				continue;
-+			disk_sect = ti->type->rmap(ti, target_sect);
-+			break;
-+		}
-+	}
-+
-+	if (found) {
-+		loff_t disk_off = to_bytes(disk_sect);
-+		loff_t bdev_off = to_bytes(disk_sect - get_start_sect(md_bdev));
-+		rc = bd_corrupted_range(md_bdev, disk_off, bdev_off, len, data);
-+	}
-+
-+	dm_put_live_table(md, srcu_idx);
-+	return rc;
-+}
-+
- static int dm_prepare_ioctl(struct mapped_device *md, int *srcu_idx,
- 			    struct block_device **bdev)
- {
-@@ -3084,6 +3137,7 @@ static const struct block_device_operations dm_blk_dops = {
- 	.getgeo = dm_blk_getgeo,
- 	.report_zones = dm_blk_report_zones,
- 	.pr_ops = &dm_pr_ops,
-+	.corrupted_range = dm_blk_corrupted_range,
- 	.owner = THIS_MODULE
- };
+ /*
+  * Flags for xfs_mountfs
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index e3e229e52512..cbcad419bb9e 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -35,6 +35,11 @@
+ #include "xfs_refcount_item.h"
+ #include "xfs_bmap_item.h"
+ #include "xfs_reflink.h"
++#include "xfs_alloc.h"
++#include "xfs_rmap.h"
++#include "xfs_rmap_btree.h"
++#include "xfs_rtalloc.h"
++#include "xfs_bit.h"
  
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 4688bff19c20..9f9a2f3bf73b 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -256,21 +256,16 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
- static int pmem_corrupted_range(struct gendisk *disk, struct block_device *bdev,
- 				loff_t disk_offset, size_t len, void *data)
- {
--	struct super_block *sb;
- 	loff_t bdev_offset;
- 	sector_t disk_sector = disk_offset >> SECTOR_SHIFT;
--	int rc = 0;
-+	int rc = -ENODEV;
- 
- 	bdev = bdget_disk_sector(disk, disk_sector);
- 	if (!bdev)
--		return -ENODEV;
-+		return rc;
- 
- 	bdev_offset = (disk_sector - get_start_sect(bdev)) << SECTOR_SHIFT;
--	sb = get_super(bdev);
--	if (sb && sb->s_op->corrupted_range) {
--		rc = sb->s_op->corrupted_range(sb, bdev, bdev_offset, len, data);
--		drop_super(sb);
--	}
-+	rc = bd_corrupted_range(bdev, bdev_offset, bdev_offset, len, data);
- 
- 	bdput(bdev);
- 	return rc;
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 9e84b1928b94..0e50f0e8e8af 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1171,6 +1171,27 @@ struct bd_holder_disk {
- 	int			refcnt;
- };
- 
-+static int bd_disk_holder_corrupted_range(struct block_device *bdev, loff_t off,
-+					  size_t len, void *data)
-+{
-+	struct bd_holder_disk *holder;
-+	struct gendisk *disk;
-+	int rc = 0;
-+
-+	if (list_empty(&(bdev->bd_holder_disks)))
-+		return -ENODEV;
-+
-+	list_for_each_entry(holder, &bdev->bd_holder_disks, list) {
-+		disk = holder->disk;
-+		if (disk->fops->corrupted_range) {
-+			rc = disk->fops->corrupted_range(disk, bdev, off, len, data);
-+			if (rc != -ENODEV)
-+				break;
-+		}
-+	}
-+	return rc;
-+}
-+
- static struct bd_holder_disk *bd_find_holder_disk(struct block_device *bdev,
- 						  struct gendisk *disk)
- {
-@@ -1378,6 +1399,22 @@ void bd_set_nr_sectors(struct block_device *bdev, sector_t sectors)
+ #include <linux/magic.h>
+ #include <linux/fs_context.h>
+@@ -1103,6 +1108,107 @@ xfs_fs_free_cached_objects(
+ 	return xfs_reclaim_inodes_nr(XFS_M(sb), sc->nr_to_scan);
  }
- EXPORT_SYMBOL(bd_set_nr_sectors);
  
-+int bd_corrupted_range(struct block_device *bdev, loff_t disk_off, loff_t bdev_off, size_t len, void *data)
++static int
++xfs_corrupt_helper(
++	struct xfs_btree_cur		*cur,
++	struct xfs_rmap_irec		*rec,
++	void				*data)
 +{
-+	struct super_block *sb = get_super(bdev);
-+	int rc = 0;
++	struct xfs_inode		*ip;
++	struct address_space		*mapping;
++	int				rc = 0;
++	int				*flags = data;
 +
-+	if (!sb) {
-+		rc = bd_disk_holder_corrupted_range(bdev, disk_off, len, data);
-+		return rc;
-+	} else if (sb->s_op->corrupted_range)
-+		rc = sb->s_op->corrupted_range(sb, bdev, bdev_off, len, data);
-+	drop_super(sb);
++	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
++	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
++		// TODO check and try to fix metadata
++		rc = -EFSCORRUPTED;
++	} else {
++		/*
++		 * Get files that incore, filter out others that are not in use.
++		 */
++		rc = xfs_iget(cur->bc_mp, cur->bc_tp, rec->rm_owner,
++			      XFS_IGET_INCORE, 0, &ip);
++		if (rc || !ip)
++			return rc;
++		if (!VFS_I(ip)->i_mapping)
++			goto out;
++
++		mapping = VFS_I(ip)->i_mapping;
++		if (IS_DAX(VFS_I(ip)))
++			rc = mf_dax_mapping_kill_procs(mapping, rec->rm_offset,
++						       *flags);
++		else
++			mapping_set_error(mapping, -EFSCORRUPTED);
++
++		// TODO try to fix data
++out:
++		xfs_irele(ip);
++	}
 +
 +	return rc;
 +}
-+EXPORT_SYMBOL(bd_corrupted_range);
 +
- static void __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part);
++static int
++xfs_fs_corrupted_range(
++	struct super_block	*sb,
++	struct block_device	*bdev,
++	loff_t			offset,
++	size_t			len,
++	void			*data)
++{
++	struct xfs_mount	*mp = XFS_M(sb);
++	struct xfs_trans	*tp = NULL;
++	struct xfs_btree_cur	*cur = NULL;
++	struct xfs_rmap_irec	rmap_low, rmap_high;
++	struct xfs_buf		*agf_bp = NULL;
++	xfs_fsblock_t		fsbno = XFS_B_TO_FSB(mp, offset);
++	xfs_filblks_t		bcnt = XFS_B_TO_FSB(mp, len);
++	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
++	xfs_agblock_t		agbno = XFS_FSB_TO_AGBNO(mp, fsbno);
++	int			error = 0;
++
++	if (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_bdev == bdev) {
++		xfs_warn(mp, "corrupted_range support not available for realtime device!");
++		return 0;
++	}
++	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_bdev == bdev &&
++	    mp->m_logdev_targp != mp->m_ddev_targp) {
++		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
++		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_META);
++		return 0;
++	}
++
++	if (!xfs_sb_version_hasrmapbt(&mp->m_sb)) {
++		xfs_warn(mp, "corrupted_range needs rmapbt enabled!");
++		return 0;
++	}
++
++	error = xfs_trans_alloc_empty(mp, &tp);
++	if (error)
++		return error;
++
++	error = xfs_alloc_read_agf(mp, tp, agno, 0, &agf_bp);
++	if (error)
++		return error;
++
++	cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, agno);
++
++	/* Construct a range for rmap query */
++	memset(&rmap_low, 0, sizeof(rmap_low));
++	memset(&rmap_high, 0xFF, sizeof(rmap_high));
++	rmap_low.rm_startblock = rmap_high.rm_startblock = agbno;
++	rmap_low.rm_blockcount = rmap_high.rm_blockcount = bcnt;
++
++	error = xfs_rmap_query_range(cur, &rmap_low, &rmap_high, xfs_corrupt_helper, data);
++	if (error == -EFSCORRUPTED)
++		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_META);
++
++	xfs_btree_del_cursor(cur, error);
++	xfs_trans_brelse(tp, agf_bp);
++	return error;
++}
++
+ static const struct super_operations xfs_super_operations = {
+ 	.alloc_inode		= xfs_fs_alloc_inode,
+ 	.destroy_inode		= xfs_fs_destroy_inode,
+@@ -1116,6 +1222,7 @@ static const struct super_operations xfs_super_operations = {
+ 	.show_options		= xfs_fs_show_options,
+ 	.nr_cached_objects	= xfs_fs_nr_cached_objects,
+ 	.free_cached_objects	= xfs_fs_free_cached_objects,
++	.corrupted_range	= xfs_fs_corrupted_range,
+ };
  
- int bdev_disk_changed(struct block_device *bdev, bool invalidate)
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index ed06209008b8..42290470810d 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -376,6 +376,8 @@ void revalidate_disk_size(struct gendisk *disk, bool verbose);
- bool bdev_check_media_change(struct block_device *bdev);
- int __invalidate_device(struct block_device *bdev, bool kill_dirty);
- void bd_set_nr_sectors(struct block_device *bdev, sector_t sectors);
-+int bd_corrupted_range(struct block_device *bdev, loff_t disk_off,
-+		       loff_t bdev_off, size_t len, void *data);
- 
- /* for drivers/char/raw.c: */
- int blkdev_ioctl(struct block_device *, fmode_t, unsigned, unsigned long);
+ static int
 -- 
 2.29.2
 
