@@ -2,138 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 578642E7684
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 07:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 165902E7690
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Dec 2020 07:33:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgL3G32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Dec 2020 01:29:28 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:33821 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726388AbgL3G31 (ORCPT
+        id S1726308AbgL3G3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Dec 2020 01:29:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36108 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbgL3G3y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Dec 2020 01:29:27 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 13D615C019C;
-        Wed, 30 Dec 2020 01:28:21 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 30 Dec 2020 01:28:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:mime-version:content-type; s=
-        fm3; bh=PSUMEHHqwnwguq8Haku3EVH3D6D0Gt/lLRo2eiPEe0o=; b=fuKuekFK
-        cF/8jEQv8NF5on28Z871ZPMKXLp+ZXcLLu00fvBCjDnv+n/SJgFe2pd++vniJBxN
-        2QbtNDtahBPPIl8ryDxc7k9awzhvSdGTWSQWs6e62+WegeTbBnvAQErBVA/wf5jq
-        DxsdL3mT0ltj/WlNIaGzYQI/jO099rWzu9V1iR1LFYOy6fgqXV5TaeevVvn27+bg
-        Q9g1R8TYrB7xflo8vt2rapZmN3KnNI6pW/DpXqV2XfmhYKQWw/3jE90qnRqg22JA
-        QEjNPcss//4wista67VxEt6pozqoLobosAceSABieftnichlpGKb9HGpqOEdl1DW
-        W8ei38apZc272Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:message-id
-        :mime-version:subject:to:x-me-proxy:x-me-proxy:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm1; bh=PSUMEHHqwnwguq8Haku3EVH3D6D0G
-        t/lLRo2eiPEe0o=; b=I0OlXwWsmBDeTTNcPsdFVhAeIK8NN0j1UauJbqrmf5KzC
-        2gKECnphBp2jXNv0fIntsuLc4u5N9AaHc5YxghWhJSSaRhvZI8CE2GwacAOCMMyW
-        FBlE2+slketILpz9psOgdWdcb54ox5iwJGajIMuXS1fvTowD4xRmm0u1gA5Z01Se
-        CgItG60tKAuKQdfxmyjipL4EemHjzp7Ii5kqE/HssD+ZNqG1LCAtAer7CVbFbdXi
-        K2/PfXU0Db+KNw/MQ1jjQDgKdpWPQFQrzYH/H1sf3RIHXjPkiS3mxi5dlUxj+a6D
-        VkDBpEeECSvt01mh76q5mV+hAauJSIZ/kxsL3sXIA==
-X-ME-Sender: <xms:BB7sXxUnK5Zzf5wujRTYGtL9qYIQu69ib7Ub8gVVBTulW_DJYRkrHA>
-    <xme:BB7sXxmezjpN-rVBTABnCSEETb4qC0GxjRX2UllR9P1RHXFcL-ebjX4XN7hhkjy3b
-    1kJR9v-mzsIDYFv7A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvddvvddgleekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkgggtugesthdtredttd
-    dtvdenucfhrhhomheptehnughrvghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghr
-    rgiivghlrdguvgeqnecuggftrfgrthhtvghrnhepiedvieelgeeuuedtfeduhfefteehhf
-    evvdeljeetgfeugfdtledtudetvdehkeffnecukfhppeeijedrudeitddrvddujedrvdeh
-    tdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnh
-    gurhgvshesrghnrghrrgiivghlrdguvg
-X-ME-Proxy: <xmx:BB7sX9YecBCwvVMo-tZAhFK20KMo4cnymrxtmhZxEKaGuaGtAoHLaw>
-    <xmx:BB7sX0XRnAFwaurnjiZqrk3TGQQczic3lbksC6CgRmp0B4NQqbKqDg>
-    <xmx:BB7sX7ncqJEqlX3apBiIi8z1kPRPmN891tR-c_37jzMc8FOp-bICpg>
-    <xmx:BR7sXzvggNA85j3J6J4ZjUuROXnuPAgoiVGcsUlHHNVSs9spzz8KGg>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B79F824005C;
-        Wed, 30 Dec 2020 01:28:20 -0500 (EST)
-Date:   Tue, 29 Dec 2020 22:28:19 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
- extents?
-Message-ID: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
+        Wed, 30 Dec 2020 01:29:54 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1248C061799;
+        Tue, 29 Dec 2020 22:29:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=SfTFgLP6wfqdV3POETz9tGdMTER4p/HPo53xEwUv884=; b=dcxUcAlZaUg6/xLLgmP2V7b3AT
+        OrjzzTQiEMt+yBXhVSd017ynS1Ey+DdQP64HMK2sUGmPi+a0uEpZM+6fhZ8lcWnpHYZ/iUcT1kkB/
+        zcC5bWFI3050e/zvK2M3fR/F5CGKNCVt3F/jZqA9ffWVOiZq0MsR/w8f4KdQrdwMmb46g54ZDYAqX
+        mUJTXqUYflT4Kl9F0NagIEbke1kpvkwNCWGD3IOOiM6ic/CSaKtLhNz+OupyW8iZiwIwf5+moApdH
+        aXuWL6yPGO2BvSxx2eZ7QYTYzWUy4s61rEFMlkoC2dECi6rcwWbA3mv9uxSF8iwm6ndsWo5oZRGuJ
+        fseZO6Bg==;
+Received: from [2601:1c0:6280:3f0::2c43]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kuUys-0002PI-4F; Wed, 30 Dec 2020 06:29:10 +0000
+Subject: Re: [PATCH] io_uring: style: redundant NULL check.
+To:     YANG LI <abaci-bugfix@linux.alibaba.com>, axboe@kernel.dk
+Cc:     viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1609309375-65129-1-git-send-email-abaci-bugfix@linux.alibaba.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <bb01e932-9b93-c672-2e76-d8a2918d5bd6@infradead.org>
+Date:   Tue, 29 Dec 2020 22:29:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <1609309375-65129-1-git-send-email-abaci-bugfix@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On 12/29/20 10:22 PM, YANG LI wrote:
+> If the pointer in kfree is empty, the function does nothing,
+> so remove the redundant NULL check.
+> 
+> Signed-off-by: YANG LI <abaci-bugfix@linux.alibaba.com>
+> Reported-by: Abaci <abaci@linux.alibaba.com>
+> ---
 
-For things like database journals using fallocate(0) is not sufficient,
-as writing into the the pre-allocated data with O_DIRECT | O_DSYNC
-writes requires the unwritten extents to be converted, which in turn
-requires journal operations.
+Looks like you should do something with these 2 comments:
 
-The performance difference in a journalling workload (lots of
-sequential, low-iodepth, often small, writes) is quite remarkable. Even
-on quite fast devices:
+ 	/* it's reportedly faster than delegating the null check to kfree() */
 
-    andres@awork3:/mnt/t3$ grep /mnt/t3 /proc/mounts
-    /dev/nvme1n1 /mnt/t3 xfs rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota 0 0
-
-    andres@awork3:/mnt/t3$ fallocate -l $((1024*1024*1024)) test_file
-
-    andres@awork3:/mnt/t3$ dd if=/dev/zero of=test_file bs=4096 conv=notrunc iflag=count_bytes count=$((1024*1024*1024)) oflag=direct,dsync
-    262144+0 records in
-    262144+0 records out
-    1073741824 bytes (1.1 GB, 1.0 GiB) copied, 117.587 s, 9.1 MB/s
-
-    andres@awork3:/mnt/t3$ dd if=/dev/zero of=test_file bs=4096 conv=notrunc iflag=count_bytes count=$((1024*1024*1024)) oflag=direct,dsync
-    262144+0 records in
-    262144+0 records out
-    1073741824 bytes (1.1 GB, 1.0 GiB) copied, 3.69125 s, 291 MB/s
-
-    andres@awork3:/mnt/t3$ fallocate -z -l $((1024*1024*1024)) test_file
-
-    andres@awork3:/mnt/t3$ dd if=/dev/zero of=test_file bs=4096 conv=notrunc iflag=count_bytes count=$((1024*1024*1024)) oflag=direct,dsync
-    z262144+0 records in
-    262144+0 records out
-    1073741824 bytes (1.1 GB, 1.0 GiB) copied, 109.398 s, 9.8 MB/s
-
-    andres@awork3:/mnt/t3$ dd if=/dev/zero of=test_file bs=4096 conv=notrunc iflag=count_bytes count=$((1024*1024*1024)) oflag=direct,dsync
-    262144+0 records in
-    262144+0 records out
-    1073741824 bytes (1.1 GB, 1.0 GiB) copied, 3.76166 s, 285 MB/s
-
-
-The way around that, from a database's perspective, is obviously to just
-overwrite the file "manually" after fallocate()ing it, utilizing larger
-writes, and then to recycle the file.
-
-
-But that's a fair bit of unnecessary IO from userspace, and it's IO that
-the kernel can do more efficiently on a number of types of block
-devices, e.g. by utilizing write-zeroes.
-
-
-Which brings me to $subject:
-
-Would it make sense to add a variant of FALLOC_FL_ZERO_RANGE that
-doesn't convert extents into unwritten extents, but instead uses
-blkdev_issue_zeroout() if supported?  Mostly interested in xfs/ext4
-myself, but ...
-
-Doing so as a variant of FALLOC_FL_ZERO_RANGE seems to make the most
-sense, as that'd work reasonably efficiently to initialize newly
-allocated space as well as for zeroing out previously used file space.
+>  fs/io_uring.c | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 7e35283..105e188 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1934,8 +1934,8 @@ static void io_dismantle_req(struct io_kiocb *req)
+>  {
+>  	io_clean_op(req);
+>  
+> -	if (req->async_data)
+> -		kfree(req->async_data);
+> +	kfree(req->async_data);
+> +
+>  	if (req->file)
+>  		io_put_file(req, req->file, (req->flags & REQ_F_FIXED_FILE));
+>  	if (req->fixed_file_refs)
+> @@ -3537,8 +3537,7 @@ static int io_read(struct io_kiocb *req, bool force_nonblock,
+>  	ret = 0;
+>  out_free:
+>  	/* it's reportedly faster than delegating the null check to kfree() */
+> -	if (iovec)
+> -		kfree(iovec);
+> +	kfree(iovec);
+>  	return ret;
+>  }
+>  
+> @@ -3644,8 +3643,7 @@ static int io_write(struct io_kiocb *req, bool force_nonblock,
+>  	}
+>  out_free:
+>  	/* it's reportedly faster than delegating the null check to kfree() */
+> -	if (iovec)
+> -		kfree(iovec);
+> +	kfree(iovec);
+>  	return ret;
+>  }
+>  
+> @@ -6133,8 +6131,7 @@ static void __io_clean_op(struct io_kiocb *req)
+>  		case IORING_OP_WRITE_FIXED:
+>  		case IORING_OP_WRITE: {
+>  			struct io_async_rw *io = req->async_data;
+> -			if (io->free_iovec)
+> -				kfree(io->free_iovec);
+> +			kfree(io->free_iovec);
+>  			break;
+>  			}
+>  		case IORING_OP_RECVMSG:
+> 
 
 
-As blkdev_issue_zeroout() already has a fallback path it seems this
-should be doable without too much concern for which devices have write
-zeroes, and which do not?
+-- 
+~Randy
 
-Greetings,
-
-Andres Freund
