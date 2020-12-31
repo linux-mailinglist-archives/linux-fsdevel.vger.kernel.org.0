@@ -2,202 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6752B2E7EA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Dec 2020 09:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 380122E80D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Dec 2020 16:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbgLaIBb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Dec 2020 03:01:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44972 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbgLaIBa (ORCPT
+        id S1726917AbgLaP0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Dec 2020 10:26:50 -0500
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:47204 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726314AbgLaP0t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Dec 2020 03:01:30 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50844C061573
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Dec 2020 00:00:50 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id ce23so24565284ejb.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Dec 2020 00:00:50 -0800 (PST)
+        Thu, 31 Dec 2020 10:26:49 -0500
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 362A182256;
+        Thu, 31 Dec 2020 18:26:07 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4vZcplAIb41k4LaB6dKNbkRj1W5i0zw8fIZIC7vJy8k=;
-        b=og+5JY4E3K4UPnN5TiFOOScjvaN/w5yE7Bg5E5Nk1ufD8N77pqk1f+zRfF9L1FVUkp
-         hSBs8/203UT342aufzMtkzaIRltYNmRxuNHFXA6Ydd78Tm+ZTCQ8hseCdHG/H5raSS1j
-         RsoMKMpG431hTuvucAo8IC7DYC1qQUyD9NfQDHp9kFHduTTsb65AIoIrSjzWbqgfHk32
-         FhvjmZpgYZfv/B03Z2qSK4AG7nsUT99nKz3q8fjSbN05oc+Q7kexg+cejWKyV8PjggCA
-         LWC2nofzjR51hoXhTpMqu95zJg9mOz5HjNL8obkBcR6NXOs3e+jtE1ejS1At3Am3N/6k
-         5Z2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4vZcplAIb41k4LaB6dKNbkRj1W5i0zw8fIZIC7vJy8k=;
-        b=s5WsWbRbT/BUSAWu5rSps/l3QNbcBnUU6YAPQj2ARvDBxU6fcnBsA9L9i1hSLVczIS
-         B9Wg4OyiydxSWgSdiRS93NEepBsaMNhCN/MmZYTO0GZ4impo62D24OJwL8CxBubpnd39
-         aN+bSFDr6pinca/qPcSB8qbhKolGD+tkiy8/QPApNW65NFGAppm24m3AgJFQgveipPsN
-         nrE9yPdzNA/oAkvDYitajjNuOB38qywUSNKjFWlSSzH909+2yVkx0G8KhcjdjepFPwZM
-         8EVk8L3RNb+VRIObc7UeEorrUgmkG5l2Cp4RaBqhNXGsibatC2IrMbtO3GbnqA28fz6o
-         cXIg==
-X-Gm-Message-State: AOAM531DHF1WcsTv00LP2H+q33bMwXXoH2lSfJzN3SCOSWiGKokrOogS
-        dX/v7zqeLxG8kaD2NKKesIFm87h4XYA9UI2TdcXD
-X-Google-Smtp-Source: ABdhPJzUYyZKN/oWREBg8SGLRKnYI6sZMmeS65RWsW2GrEDgzsI9LiI+njvKlfqjdSPeAoYGVse9La7+ch/x1AsJ/IQ=
-X-Received: by 2002:a17:906:edc8:: with SMTP id sb8mr52668753ejb.247.1609401648958;
- Thu, 31 Dec 2020 00:00:48 -0800 (PST)
+        d=paragon-software.com; s=mail; t=1609428367;
+        bh=ED4wNoHESlHTP96hXWIg9b7ldoXhnfdzOetLUHDQsIg=;
+        h=From:To:CC:Subject:Date;
+        b=Ur9zBPR5FGnPVwAXmcIMkxpPwmAPSxqipJ91Yxn9jSLIl/lELgqquYGqb6ECJZl5N
+         ogP+FoH3daeiwh+vVe0qg7sQVhO+XVYQQSVSf1DvJe6spppYY9CIjoDBohVYEE/TLW
+         Yv+mzqPzncA+gMujjWMaNk7szFzro6eG06sWuFG4=
+Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Thu, 31 Dec 2020 18:26:06 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
+        <pali@kernel.org>, <dsterba@suse.cz>, <aaptel@suse.com>,
+        <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
+        <mark@harmstone.com>, <nborisov@suse.com>,
+        <linux-ntfs-dev@lists.sourceforge.net>, <anton@tuxera.com>,
+        <dan.carpenter@oracle.com>, <hch@lst.de>, <ebiggers@kernel.org>,
+        <andy.lavr@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v17 00/10] NTFS read-write driver GPL implementation by Paragon Software
+Date:   Thu, 31 Dec 2020 18:23:51 +0300
+Message-ID: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-References: <20201222145221.711-1-xieyongji@bytedance.com> <CACycT3uwXBYvRbKDWdN3oCekv+o6_Lc=-KTrxejD=fr-zgibGw@mail.gmail.com>
- <2b24398c-e6d9-14ec-2c0d-c303d528e377@redhat.com> <CACycT3uDV43ecScrMh1QVpStuwDETHykJzzY=pkmZjP2Dd2kvg@mail.gmail.com>
- <e77c97c5-6bdc-cdd0-62c0-6ff75f6dbdff@redhat.com> <CACycT3soQoX5avZiFBLEGBuJpdni6-UxdhAPGpWHBWVf+dEySg@mail.gmail.com>
- <1356137727.40748805.1609233068675.JavaMail.zimbra@redhat.com>
- <CACycT3sg61yRdupnD+jQEkWKsVEvMWfhkJ=5z_bYZLxCibDiHw@mail.gmail.com>
- <b1aef426-29c7-7244-5fc9-56d52e86abb4@redhat.com> <CACycT3vZ7V5WWhCFLBK6FuvVNmPmMj_yc=COOB4cjjC13yHUwg@mail.gmail.com>
- <3fc6a132-9fc2-c4e2-7fb1-b5a8bfb771fa@redhat.com> <CACycT3tD3zyvV6Zy5NT4x=02hBgrRGq35xeTsRXXx-_wPGJXpQ@mail.gmail.com>
- <e0e693c3-1871-a410-c3d5-964518ec939a@redhat.com> <CACycT3vwMU5R7N8dZFBYX4-bxe2YT7EfK_M_jEkH8wzfH_GkBw@mail.gmail.com>
- <0885385c-ae46-158d-eabf-433ef8ecf27f@redhat.com> <CACycT3tc2P63k6J9ZkWTpPvHk_H8zUq0_Q6WOqYX_dSigUAnzA@mail.gmail.com>
- <79741d5d-0c35-ad1c-951a-41d8ab3b36a0@redhat.com>
-In-Reply-To: <79741d5d-0c35-ad1c-951a-41d8ab3b36a0@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 31 Dec 2020 16:00:38 +0800
-Message-ID: <CACycT3td8uSZOANdteP89y5NFY6KbaNPdyen3QRX4UP2xKTWnA@mail.gmail.com>
-Subject: Re: Re: [RFC v2 09/13] vduse: Add support for processing vhost iotlb message
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.30.114.105]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 31, 2020 at 3:12 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> On 2020/12/31 =E4=B8=8B=E5=8D=882:52, Yongji Xie wrote:
-> > On Thu, Dec 31, 2020 at 1:50 PM Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> On 2020/12/31 =E4=B8=8B=E5=8D=881:15, Yongji Xie wrote:
-> >>> On Thu, Dec 31, 2020 at 10:49 AM Jason Wang <jasowang@redhat.com> wro=
-te:
-> >>>> On 2020/12/30 =E4=B8=8B=E5=8D=886:12, Yongji Xie wrote:
-> >>>>> On Wed, Dec 30, 2020 at 4:41 PM Jason Wang <jasowang@redhat.com> wr=
-ote:
-> >>>>>> On 2020/12/30 =E4=B8=8B=E5=8D=883:09, Yongji Xie wrote:
-> >>>>>>> On Wed, Dec 30, 2020 at 2:11 PM Jason Wang <jasowang@redhat.com> =
-wrote:
-> >>>>>>>> On 2020/12/29 =E4=B8=8B=E5=8D=886:26, Yongji Xie wrote:
-> >>>>>>>>> On Tue, Dec 29, 2020 at 5:11 PM Jason Wang <jasowang@redhat.com=
-> wrote:
-> >>>>>>>>>> ----- Original Message -----
-> >>>>>>>>>>> On Mon, Dec 28, 2020 at 4:43 PM Jason Wang <jasowang@redhat.c=
-om> wrote:
-> >>>>>>>>>>>> On 2020/12/28 =E4=B8=8B=E5=8D=884:14, Yongji Xie wrote:
-> >>>>>>>>>>>>>> I see. So all the above two questions are because VHOST_IO=
-TLB_INVALIDATE
-> >>>>>>>>>>>>>> is expected to be synchronous. This need to be solved by t=
-weaking the
-> >>>>>>>>>>>>>> current VDUSE API or we can re-visit to go with descriptor=
-s relaying
-> >>>>>>>>>>>>>> first.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>> Actually all vdpa related operations are synchronous in cur=
-rent
-> >>>>>>>>>>>>> implementation. The ops.set_map/dma_map/dma_unmap should no=
-t return
-> >>>>>>>>>>>>> until the VDUSE_UPDATE_IOTLB/VDUSE_INVALIDATE_IOTLB message=
- is replied
-> >>>>>>>>>>>>> by userspace. Could it solve this problem?
-> >>>>>>>>>>>>        I was thinking whether or not we need to generate IOT=
-LB_INVALIDATE
-> >>>>>>>>>>>> message to VDUSE during dma_unmap (vduse_dev_unmap_page).
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> If we don't, we're probably fine.
-> >>>>>>>>>>>>
-> >>>>>>>>>>> It seems not feasible. This message will be also used in the
-> >>>>>>>>>>> virtio-vdpa case to notify userspace to unmap some pages duri=
-ng
-> >>>>>>>>>>> consistent dma unmapping. Maybe we can document it to make su=
-re the
-> >>>>>>>>>>> users can handle the message correctly.
-> >>>>>>>>>> Just to make sure I understand your point.
-> >>>>>>>>>>
-> >>>>>>>>>> Do you mean you plan to notify the unmap of 1) streaming DMA o=
-r 2)
-> >>>>>>>>>> coherent DMA?
-> >>>>>>>>>>
-> >>>>>>>>>> For 1) you probably need a workqueue to do that since dma unma=
-p can
-> >>>>>>>>>> be done in irq or bh context. And if usrspace does't do the un=
-map, it
-> >>>>>>>>>> can still access the bounce buffer (if you don't zap pte)?
-> >>>>>>>>>>
-> >>>>>>>>> I plan to do it in the coherent DMA case.
-> >>>>>>>> Any reason for treating coherent DMA differently?
-> >>>>>>>>
-> >>>>>>> Now the memory of the bounce buffer is allocated page by page in =
-the
-> >>>>>>> page fault handler. So it can't be used in coherent DMA mapping c=
-ase
-> >>>>>>> which needs some memory with contiguous virtual addresses. I can =
-use
-> >>>>>>> vmalloc() to do allocation for the bounce buffer instead. But it =
-might
-> >>>>>>> cause some memory waste. Any suggestion?
-> >>>>>> I may miss something. But I don't see a relationship between the
-> >>>>>> IOTLB_UNMAP and vmalloc().
-> >>>>>>
-> >>>>> In the vmalloc() case, the coherent DMA page will be taken from the
-> >>>>> memory allocated by vmalloc(). So IOTLB_UNMAP is not needed anymore
-> >>>>> during coherent DMA unmapping because those vmalloc'ed memory which
-> >>>>> has been mapped into userspace address space during initialization =
-can
-> >>>>> be reused. And userspace should not unmap the region until we destr=
-oy
-> >>>>> the device.
-> >>>> Just to make sure I understand. My understanding is that IOTLB_UNMAP=
- is
-> >>>> only needed when there's a change the mapping from IOVA to page.
-> >>>>
-> >>> Yes, that's true.
-> >>>
-> >>>> So if we stick to the mapping, e.g during dma_unmap, we just put IOV=
-A to
-> >>>> free list to be used by the next IOVA allocating. IOTLB_UNMAP could =
-be
-> >>>> avoided.
-> >>>>
-> >>>> So we are not limited by how the pages are actually allocated?
-> >>>>
-> >>> In coherent DMA cases, we need to return some memory with contiguous
-> >>> kernel virtual addresses. That is the reason why we need vmalloc()
-> >>> here. If we allocate the memory page by page, the corresponding kerne=
-l
-> >>> virtual addresses in a contiguous IOVA range might not be contiguous.
-> >>
-> >> Yes, but we can do that as what has been done in the series
-> >> (alloc_pages_exact()). Or do you mean it would be a little bit hard to
-> >> recycle IOVA/pages here?
-> >>
-> > Yes, it might be hard to reuse the memory. For example, we firstly
-> > allocate 1 IOVA/page during dma_map, then the IOVA is freed during
-> > dma_unmap. Actually we can't reuse this single page if we need a
-> > two-pages area in the next IOVA allocating. So the best way is using
-> > IOTLB_UNMAP to free this single page during dma_unmap too.
-> >
-> > Thanks,
-> > Yongji
->
->
-> I get you now. Then I agree that let's go with IOTLB_UNMAP.
->
+This patch adds NTFS Read-Write driver to fs/ntfs3.
 
-Fine, will do it.
+Having decades of expertise in commercial file systems development and huge
+test coverage, we at Paragon Software GmbH want to make our contribution to
+the Open Source Community by providing implementation of NTFS Read-Write
+driver for the Linux Kernel.
 
-Thanks,
-Yongji
+This is fully functional NTFS Read-Write driver. Current version works with
+NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
+
+We plan to support this version after the codebase once merged, and add new
+features and fix bugs. For example, full journaling support over JBD will be
+added in later updates.
+
+v2:
+ - patch splitted to chunks (file-wise)
+ - build issues fixed
+ - sparse and checkpatch.pl errors fixed
+ - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
+ - cosmetics + code cleanup
+
+v3:
+ - added acl, noatime, no_acs_rules, prealloc mount options
+ - added fiemap support
+ - fixed encodings support
+ - removed typedefs
+ - adapted Kernel-way logging mechanisms
+ - fixed typos and corner-case issues
+
+v4:
+ - atomic_open() refactored
+ - code style updated
+ - bugfixes
+
+v5:
+- nls/nls_alt mount options added
+- Unicode conversion fixes
+- Improved very fragmented files operations
+- logging cosmetics
+
+v6:
+- Security Descriptors processing changed
+  added system.ntfs_security xattr to set
+  SD
+- atomic_open() optimized
+- cosmetics
+
+v7:
+- Security Descriptors validity checks added (by Mark Harmstone)
+- atomic_open() fixed for the compressed file creation with directio
+  case
+- remount support
+- temporarily removed readahead usage
+- cosmetics
+
+v8:
+- Compressed files operations fixed
+
+v9:
+- Further cosmetics applied as suggested
+by Joe Perches
+
+v10:
+- operations with compressed/sparse files on very fragmented volumes improved
+- reduced memory consumption for above cases
+
+v11:
+- further compressed files optimizations: reads/writes are now skipping bufferization
+- journal wipe to the initial state optimized (bufferization is also skipped)
+- optimized run storage (re-packing cluster metainformation)
+- fixes based on Matthew Wilcox feedback to the v10
+- compressed/sparse/normal could be set for empty files with 'system.ntfs_attrib' xattr
+
+v12:
+- nls_alt mount option removed after discussion with Pali Rohar
+- fixed ni_repack()
+- fixed resident files transition to non-resident when size increasing
+
+v13:
+- nested_lock fix (lockdep)
+- out-of-bounds read fix (KASAN warning)
+- resident->nonresident transition fixed for compressed files
+- load_nls() missed fix applied
+- some sparse utility warnings fixes
+
+v14:
+- support for additional compression types (we've adapted WIMLIB's
+  implementation, authored by Eric Biggers, into ntfs3)
+
+v15:
+- kernel test robot warnings fixed
+- lzx/xpress compression license headers updated
+
+v16:
+- lzx/xpress moved to initial ntfs-3g plugin code
+- mutexes instead of a global spinlock for compresions
+- FALLOC_FL_PUNCH_HOLE and FALLOC_FL_COLLAPSE_RANGE implemented
+- CONFIG_NTFS3_FS_POSIX_ACL added
+
+v17:
+- FALLOC_FL_COLLAPSE_RANGE fixed
+- fixes for Mattew Wilcox's and Andy Lavr's concerns
+
+Konstantin Komarov (10):
+  fs/ntfs3: Add headers and misc files
+  fs/ntfs3: Add initialization of super block
+  fs/ntfs3: Add bitmap
+  fs/ntfs3: Add file operations and implementation
+  fs/ntfs3: Add attrib operations
+  fs/ntfs3: Add compression
+  fs/ntfs3: Add NTFS journal
+  fs/ntfs3: Add Kconfig, Makefile and doc
+  fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+  fs/ntfs3: Add MAINTAINERS
+
+ Documentation/filesystems/ntfs3.rst |  107 +
+ MAINTAINERS                         |    7 +
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/ntfs3/Kconfig                    |   41 +
+ fs/ntfs3/Makefile                   |   31 +
+ fs/ntfs3/attrib.c                   | 2081 +++++++++++
+ fs/ntfs3/attrlist.c                 |  463 +++
+ fs/ntfs3/bitfunc.c                  |  135 +
+ fs/ntfs3/bitmap.c                   | 1504 ++++++++
+ fs/ntfs3/debug.h                    |   61 +
+ fs/ntfs3/dir.c                      |  570 +++
+ fs/ntfs3/file.c                     | 1140 ++++++
+ fs/ntfs3/frecord.c                  | 3088 ++++++++++++++++
+ fs/ntfs3/fslog.c                    | 5220 +++++++++++++++++++++++++++
+ fs/ntfs3/fsntfs.c                   | 2527 +++++++++++++
+ fs/ntfs3/index.c                    | 2662 ++++++++++++++
+ fs/ntfs3/inode.c                    | 2051 +++++++++++
+ fs/ntfs3/lib/decompress_common.c    |  332 ++
+ fs/ntfs3/lib/decompress_common.h    |  352 ++
+ fs/ntfs3/lib/lib.h                  |   26 +
+ fs/ntfs3/lib/lzx_decompress.c       |  683 ++++
+ fs/ntfs3/lib/xpress_decompress.c    |  155 +
+ fs/ntfs3/lznt.c                     |  452 +++
+ fs/ntfs3/namei.c                    |  590 +++
+ fs/ntfs3/ntfs.h                     | 1237 +++++++
+ fs/ntfs3/ntfs_fs.h                  | 1049 ++++++
+ fs/ntfs3/record.c                   |  614 ++++
+ fs/ntfs3/run.c                      | 1254 +++++++
+ fs/ntfs3/super.c                    | 1477 ++++++++
+ fs/ntfs3/upcase.c                   |   77 +
+ fs/ntfs3/xattr.c                    | 1072 ++++++
+ 32 files changed, 31060 insertions(+)
+ create mode 100644 Documentation/filesystems/ntfs3.rst
+ create mode 100644 fs/ntfs3/Kconfig
+ create mode 100644 fs/ntfs3/Makefile
+ create mode 100644 fs/ntfs3/attrib.c
+ create mode 100644 fs/ntfs3/attrlist.c
+ create mode 100644 fs/ntfs3/bitfunc.c
+ create mode 100644 fs/ntfs3/bitmap.c
+ create mode 100644 fs/ntfs3/debug.h
+ create mode 100644 fs/ntfs3/dir.c
+ create mode 100644 fs/ntfs3/file.c
+ create mode 100644 fs/ntfs3/frecord.c
+ create mode 100644 fs/ntfs3/fslog.c
+ create mode 100644 fs/ntfs3/fsntfs.c
+ create mode 100644 fs/ntfs3/index.c
+ create mode 100644 fs/ntfs3/inode.c
+ create mode 100644 fs/ntfs3/lib/decompress_common.c
+ create mode 100644 fs/ntfs3/lib/decompress_common.h
+ create mode 100644 fs/ntfs3/lib/lib.h
+ create mode 100644 fs/ntfs3/lib/lzx_decompress.c
+ create mode 100644 fs/ntfs3/lib/xpress_decompress.c
+ create mode 100644 fs/ntfs3/lznt.c
+ create mode 100644 fs/ntfs3/namei.c
+ create mode 100644 fs/ntfs3/ntfs.h
+ create mode 100644 fs/ntfs3/ntfs_fs.h
+ create mode 100644 fs/ntfs3/record.c
+ create mode 100644 fs/ntfs3/run.c
+ create mode 100644 fs/ntfs3/super.c
+ create mode 100644 fs/ntfs3/upcase.c
+ create mode 100644 fs/ntfs3/xattr.c
+
+
+base-commit: f6e1ea19649216156576aeafa784e3b4cee45549
+-- 
+2.25.4
+
