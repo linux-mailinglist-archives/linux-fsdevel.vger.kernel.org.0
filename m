@@ -2,199 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8FF32E8536
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jan 2021 18:37:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 717BE2E85C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jan 2021 22:57:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbhAARgv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jan 2021 12:36:51 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:53634 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbhAARgv (ORCPT
+        id S1727396AbhAAVyk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jan 2021 16:54:40 -0500
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:33908 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727173AbhAAVyj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jan 2021 12:36:51 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kvOLQ-00EiGv-LC; Fri, 01 Jan 2021 10:36:08 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kvOLP-0009RW-Il; Fri, 01 Jan 2021 10:36:08 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>
-References: <20201207163255.564116-1-mszeredi@redhat.com>
-        <20201207163255.564116-2-mszeredi@redhat.com>
-Date:   Fri, 01 Jan 2021 11:35:16 -0600
-In-Reply-To: <20201207163255.564116-2-mszeredi@redhat.com> (Miklos Szeredi's
-        message of "Mon, 7 Dec 2020 17:32:46 +0100")
-Message-ID: <87czyoimqz.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 1 Jan 2021 16:54:39 -0500
+Received: from dread.disaster.area (pa49-179-167-107.pa.nsw.optusnet.com.au [49.179.167.107])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 0D56D8BF5;
+        Sat,  2 Jan 2021 08:53:54 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kvSMr-00244f-HB; Sat, 02 Jan 2021 08:53:53 +1100
+Date:   Sat, 2 Jan 2021 08:53:53 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     kernel test robot <oliver.sang@intel.com>,
+        0day robot <lkp@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>
+Subject: Re: [xfs] db962cd266: Assertion_failed
+Message-ID: <20210101215353.GB331610@dread.disaster.area>
+References: <20201222012131.47020-5-laoar.shao@gmail.com>
+ <20201231030158.GB379@xsang-OptiPlex-9020>
+ <CALOAHbD+mLMJSizToKPsx0iUd5Z71sJBOyMaV2enVvUHfHwLzg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kvOLP-0009RW-Il;;;mid=<87czyoimqz.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18iUeLdjvyBTCthc4PVnPTvYUkmUHyVYDw=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,T_TooManySym_03,XMSubLong,XM_B_SpammyWords
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 539 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 12 (2.2%), b_tie_ro: 10 (1.8%), parse: 1.76
-        (0.3%), extract_message_metadata: 8 (1.5%), get_uri_detail_list: 4.5
-        (0.8%), tests_pri_-1000: 6 (1.0%), tests_pri_-950: 1.84 (0.3%),
-        tests_pri_-900: 1.50 (0.3%), tests_pri_-90: 105 (19.4%), check_bayes:
-        102 (19.0%), b_tokenize: 14 (2.6%), b_tok_get_all: 8 (1.5%),
-        b_comp_prob: 3.3 (0.6%), b_tok_touch_all: 73 (13.6%), b_finish: 1.17
-        (0.2%), tests_pri_0: 374 (69.5%), check_dkim_signature: 0.88 (0.2%),
-        check_dkim_adsp: 3.1 (0.6%), poll_dns_idle: 0.90 (0.2%), tests_pri_10:
-        3.9 (0.7%), tests_pri_500: 11 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 01/10] vfs: move cap_convert_nscap() call into vfs_setxattr()
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALOAHbD+mLMJSizToKPsx0iUd5Z71sJBOyMaV2enVvUHfHwLzg@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
+        a=+wqVUQIkAh0lLYI+QRsciw==:117 a=+wqVUQIkAh0lLYI+QRsciw==:17
+        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8
+        a=XA52iYJiZECpFeylV-IA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <mszeredi@redhat.com> writes:
+On Fri, Jan 01, 2021 at 05:10:49PM +0800, Yafang Shao wrote:
+> On Thu, Dec 31, 2020 at 10:46 AM kernel test robot
+> <oliver.sang@intel.com> wrote:
+.....
+> > [  552.905799] XFS: Assertion failed: !current->journal_info, file: fs/xfs/xfs_trans.h, line: 280
+> > [  553.104459]  xfs_trans_reserve+0x225/0x320 [xfs]
+> > [  553.110556]  xfs_trans_roll+0x6e/0xe0 [xfs]
+> > [  553.116134]  xfs_defer_trans_roll+0x104/0x2a0 [xfs]
+> > [  553.122489]  ? xfs_extent_free_create_intent+0x62/0xc0 [xfs]
+> > [  553.129780]  xfs_defer_finish_noroll+0xb8/0x620 [xfs]
+> > [  553.136299]  xfs_defer_finish+0x11/0xa0 [xfs]
+> > [  553.142017]  xfs_itruncate_extents_flags+0x141/0x440 [xfs]
+> > [  553.149053]  xfs_setattr_size+0x3da/0x480 [xfs]
+> > [  553.154939]  ? setattr_prepare+0x6a/0x1e0
+> > [  553.160250]  xfs_vn_setattr+0x70/0x120 [xfs]
+> > [  553.165833]  notify_change+0x364/0x500
+> > [  553.170820]  ? do_truncate+0x76/0xe0
+> > [  553.175673]  do_truncate+0x76/0xe0
+> > [  553.180184]  path_openat+0xe6c/0x10a0
+> > [  553.184981]  do_filp_open+0x91/0x100
+> > [  553.189707]  ? __check_object_size+0x136/0x160
+> > [  553.195493]  do_sys_openat2+0x20d/0x2e0
+> > [  553.200481]  do_sys_open+0x44/0x80
+> > [  553.204926]  do_syscall_64+0x33/0x40
+> > [  553.209588]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> Thanks for the report.
+> 
+> At a first glance, it seems we should make a similar change as we did
+> in xfs_trans_context_clear().
+> 
+> static inline void
+> xfs_trans_context_set(struct xfs_trans *tp)
+> {
+>     /*
+>      * We have already handed over the context via xfs_trans_context_swap().
+>      */
+>     if (current->journal_info)
+>         return;
+>     current->journal_info = tp;
+>     tp->t_pflags = memalloc_nofs_save();
+> }
 
-> cap_convert_nscap() does permission checking as well as conversion of the
-> xattr value conditionally based on fs's user-ns.
->
-> This is needed by overlayfs and probably other layered fs (ecryptfs) and is
-> what vfs_foo() is supposed to do anyway.
+Ah, no.
 
-Well crap.
+Remember how I said "split out the wrapping of transaction
+context setup in xfs_trans_reserve() from
+the lifting of the context setting into xfs_trans_alloc()"?
 
-I just noticed this and it turns out this change is wrong.
+Well, you did the former and dropped the latter out of the patch
+set.
 
-The problem is that it reads the rootid from the v3 fscap, using
-current_user_ns() and then writes it using the sb->s_user_ns.
+Now when a transaction rolls after xfs_trans_context_swap(), it
+calls xfs_trans_reserve() and tries to do transaction context setup
+work inside a transaction context that already exists.  IOWs, you
+need to put the patch that lifts of the context setting up into
+xfs_trans_alloc() back into the patchset before adding the
+current->journal functionality patch.
 
-So any time the stacked filesystems sb->s_user_ns do not match or
-current_user_ns does not match sb->s_user_ns this could be a problem.
+Also, you need to test XFS code with CONFIG_XFS_DEBUG=y so that
+asserts are actually built into the code and exercised, because this
+ASSERT should have fired on the first rolling transaction that the
+kernel executes...
 
-In a stacked filesystem a second pass through vfs_setxattr will result
-in the rootid being translated a second time (with potentially the wrong
-namespaces).  I think because of the security checks a we won't write
-something we shouldn't be able to write to the filesystem.  Still we
-will be writing the wrong v3 fscap which can go quite badly.
+Cheers,
 
-This doesn't look terribly difficult to fix.
-
-Probably convert this into a fs independent form using uids in
-init_user_ns at input and have cap_convert_nscap convert the v3 fscap
-into the filesystem dependent form.  With some way for stackable
-filesystems to just skip converting it from the filesystem independent
-format.
-
-Uids in xattrs that are expected to go directly to disk, but aren't
-always suitable for going directly to disk are tricky.
-
-Eric
-
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/xattr.c                 | 17 +++++++++++------
->  include/linux/capability.h |  2 +-
->  security/commoncap.c       |  3 +--
->  3 files changed, 13 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index cd7a563e8bcd..fd57153b1f61 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -276,8 +276,16 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
->  {
->  	struct inode *inode = dentry->d_inode;
->  	struct inode *delegated_inode = NULL;
-> +	const void  *orig_value = value;
->  	int error;
->  
-> +	if (size && strcmp(name, XATTR_NAME_CAPS) == 0) {
-> +		error = cap_convert_nscap(dentry, &value, size);
-> +		if (error < 0)
-> +			return error;
-> +		size = error;
-> +	}
-> +
->  retry_deleg:
->  	inode_lock(inode);
->  	error = __vfs_setxattr_locked(dentry, name, value, size, flags,
-> @@ -289,6 +297,9 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
->  		if (!error)
->  			goto retry_deleg;
->  	}
-> +	if (value != orig_value)
-> +		kfree(value);
-> +
->  	return error;
->  }
->  EXPORT_SYMBOL_GPL(vfs_setxattr);
-> @@ -537,12 +548,6 @@ setxattr(struct dentry *d, const char __user *name, const void __user *value,
->  		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
->  		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
->  			posix_acl_fix_xattr_from_user(kvalue, size);
-> -		else if (strcmp(kname, XATTR_NAME_CAPS) == 0) {
-> -			error = cap_convert_nscap(d, &kvalue, size);
-> -			if (error < 0)
-> -				goto out;
-> -			size = error;
-> -		}
->  	}
->  
->  	error = vfs_setxattr(d, kname, kvalue, size, flags);
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index 1e7fe311cabe..b2f698915c0f 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -270,6 +270,6 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
->  /* audit system wants to get cap info from files as well */
->  extern int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data *cpu_caps);
->  
-> -extern int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size);
-> +extern int cap_convert_nscap(struct dentry *dentry, const void **ivalue, size_t size);
->  
->  #endif /* !_LINUX_CAPABILITY_H */
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 59bf3c1674c8..bacc1111d871 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -473,7 +473,7 @@ static bool validheader(size_t size, const struct vfs_cap_data *cap)
->   *
->   * If all is ok, we return the new size, on error return < 0.
->   */
-> -int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size)
-> +int cap_convert_nscap(struct dentry *dentry, const void **ivalue, size_t size)
->  {
->  	struct vfs_ns_cap_data *nscap;
->  	uid_t nsrootid;
-> @@ -516,7 +516,6 @@ int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size)
->  	nscap->magic_etc = cpu_to_le32(nsmagic);
->  	memcpy(&nscap->data, &cap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
->  
-> -	kvfree(*ivalue);
->  	*ivalue = nscap;
->  	return newsize;
->  }
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
