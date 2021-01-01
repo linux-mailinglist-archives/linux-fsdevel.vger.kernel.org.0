@@ -2,92 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1C0C2E82E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jan 2021 05:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C481A2E82E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jan 2021 05:30:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbhAAEIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Dec 2020 23:08:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60042 "EHLO
+        id S1726365AbhAAEaF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Dec 2020 23:30:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbhAAEIw (ORCPT
+        with ESMTP id S1726261AbhAAEaF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Dec 2020 23:08:52 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 027B0C061573
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Dec 2020 20:08:11 -0800 (PST)
+        Thu, 31 Dec 2020 23:30:05 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4273AC061573;
+        Thu, 31 Dec 2020 20:29:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TOG64ho11HP0VppbDk/f9ke+cHTRQUCyUm/vFGW2q8M=; b=p/91M4L/wI/WkYMnYzA8/uI0hH
-        FsEF/gqXDk2SPbykVnIx+okDZdWX6S2uCthq783sYXQu+BGBUaAdZ5Vtd2BgY2QxA0dA1uT2IswLy
-        8JXpNH3yAbtR8fwEWBW9qvlXXtNl0wXo1IH+La7DTjkYSQE/2qE724PiNWxGocxpxZeVImsNuIwsd
-        +jh4C/PxeMUnhSLDkMUElJIA3paWAA6c+cvYdes06QhisWfzMUSENFEh0aMOVUUO2pDdtrUqaS3I7
-        MCxar6rdNg/ZUBagkAeas8AtXaZR0dABXdJD/b1oZRVJQawx/ZYcpmIXjjbZiCXLIMMXf2T6/8KDd
-        xz9CqK9Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1kvBjU-001OQ9-D2; Fri, 01 Jan 2021 04:08:09 +0000
-Date:   Fri, 1 Jan 2021 04:08:08 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Marshall <hubcap@omnibond.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mike Marshall <hubcapsc@gmail.com>
-Subject: Re: problem with orangefs readpage...
-Message-ID: <20210101040808.GB18640@casper.infradead.org>
-References: <CAOg9mSQkkZtqBND-HKb2oSB8jxT6bkQU1LuExo0hPsEUhcMrPw@mail.gmail.com>
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=03MHVj7uFca2pur9ftrcvmwDErnMJojp89WXgKNO4AA=; b=ulXhILNkO4Vn79Fz0WFS5QtaVf
+        qFVb6mSuOHgqmfqc1tMBC67fYnpVzBFFXg3A4KfH4e8wRzR55lj+uaovFmy4DxEmleKrSjZ2LdGbQ
+        ac7wa5VoRQUnjiBgRnbVQWRzf+hGu+NG1PQyfbh3wrjL5bHHzEEx1Ps0vVzBbjNC1KRlsMaYiEQtE
+        S0WcdNbWWEbIvEBHdnKLZWUqsXVgFNXvgRWbsh7EcrPb1WPDe2yvILSvE3WKeDBEn6e5kpJ/5lbqr
+        eA+tcvY7ADwkPGBS/IS5raxViLjPSg3TI2JwcGA/8KrnyVI8vj0kKe6Ek0zxYU6WWZLOOHKajeUkL
+        8ZUS163Q==;
+Received: from [2601:1c0:6280:3f0::2c43] (helo=smtpauth.infradead.org)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kvC41-0006xy-6o; Fri, 01 Jan 2021 04:29:21 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        kernel test robot <lkp@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        linux-snps-arc@lists.infradead.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vineet Gupta <vgupts@synopsys.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: [PATCH v2] fs/dax: include <asm/page.h> to fix build error on ARC
+Date:   Thu, 31 Dec 2020 20:29:14 -0800
+Message-Id: <20210101042914.5313-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOg9mSQkkZtqBND-HKb2oSB8jxT6bkQU1LuExo0hPsEUhcMrPw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 31, 2020 at 04:51:53PM -0500, Mike Marshall wrote:
-> Greetings...
-> 
-> I hope some of you will suffer through reading this long message :-) ...
+fs/dax.c uses copy_user_page() but ARC does not provide that interface,
+resulting in a build error.
 
-Hi Mike!  Happy New Year!
+Provide copy_user_page() in <asm/page.h> (beside copy_page()) and
+add <asm/page.h> to fs/dax.c to fix the build error.
 
-> Orangefs isn't built to do small IO. Reading a
-> big file in page cache sized chunks is slow and painful.
-> I tried to write orangefs_readpage so that it would do a reasonable
-> sized hard IO, fill the page that was being called for, and then
-> go ahead and fill a whole bunch of the following pages into the
-> page cache with the extra data in the IO buffer.
+../fs/dax.c: In function 'copy_cow_page_dax':
+../fs/dax.c:702:2: error: implicit declaration of function 'copy_user_page'; did you mean 'copy_to_user_page'? [-Werror=implicit-function-declaration]
 
-This is some new version of orangefs_readpage(), right?  I don't see
-anything resembling this in the current codebase.  Did you disable
-orangefs_readpages() as part of this work?  Because the behaviour you're
-describing sounds very much like what the readahead code might do to a
-filesystem which implements readpage and neither readahead nor readpages.
+Fixes: cccbce671582 ("filesystem-dax: convert to dax_direct_access()")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: linux-snps-arc@lists.infradead.org
+Cc: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Vineet Gupta <vgupts@synopsys.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-nvdimm@lists.01.org
+---
+v2: rebase, add more Cc:
 
-> orangefs_readpage gets called for the first four pages and then my
-> prefill kicks in and fills the next pages and the right data ends
-> up in /tmp/nine. I, of course, wished and planned for orangefs_readpage
-> to only get called once, I don't understand why it gets called four
-> times, which results in three extraneous expensive hard IOs.
+ arch/arc/include/asm/page.h |    1 +
+ fs/dax.c                    |    1 +
+ 2 files changed, 2 insertions(+)
 
-I might suggest some judicious calling of dump_stack() to understand
-exactly what's calling you.  My suspicion is that it's this loop in
-read_pages():
-
-                while ((page = readahead_page(rac))) {
-                        aops->readpage(rac->file, page);
-                        put_page(page);
-                }
-
-which doesn't test for PageUptodate before calling you.
-
-It'd probably be best if you implemented ->readahead, which has its own
-ideas about which pages would be the right ones to read.  It's not always correct, but generally better to have that logic in the VFS than in each filesystem.
-
-You probably want to have a look at Dave Howells' work to allow
-the filesystem to expand the ractl:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter
-
-specifically this patch:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=fscache-iter&id=f582790b32d5d1d8b937df95a8b2b5fdb8380e46
+--- lnx-511-rc1.orig/fs/dax.c
++++ lnx-511-rc1/fs/dax.c
+@@ -25,6 +25,7 @@
+ #include <linux/sizes.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/iomap.h>
++#include <asm/page.h>
+ #include <asm/pgalloc.h>
+ 
+ #define CREATE_TRACE_POINTS
+--- lnx-511-rc1.orig/arch/arc/include/asm/page.h
++++ lnx-511-rc1/arch/arc/include/asm/page.h
+@@ -10,6 +10,7 @@
+ #ifndef __ASSEMBLY__
+ 
+ #define clear_page(paddr)		memset((paddr), 0, PAGE_SIZE)
++#define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
+ #define copy_page(to, from)		memcpy((to), (from), PAGE_SIZE)
+ 
+ struct vm_area_struct;
