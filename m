@@ -2,263 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B25C2E835B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jan 2021 10:13:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8FF32E8536
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jan 2021 18:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbhAAJMH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jan 2021 04:12:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49704 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbhAAJMG (ORCPT
+        id S1727155AbhAARgv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jan 2021 12:36:51 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:53634 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbhAARgv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jan 2021 04:12:06 -0500
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3A65C061573;
-        Fri,  1 Jan 2021 01:11:25 -0800 (PST)
-Received: by mail-il1-x12b.google.com with SMTP id k8so19054249ilr.4;
-        Fri, 01 Jan 2021 01:11:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=X2l8jXmgzCuN61tTEQ25moyBAzJ1BiUjP0mOjFYN50o=;
-        b=V4dGPiJAqnWQQU/9hypP3egSYKr8H8hrUk8Byk/fw4t04Djwhg9NVLacqYF17JEEpW
-         od8UY5Iwcr0Ls2QRJIpEMdmlE2kZOJ4PYjgudhM2pD9X7BQj3l5p/3iiEgQOg9WHkV6/
-         jaZYAWCJ1jvYmz+gc9cSYGUOWzroOjql0h5CSwiHxHukJBo5hV7HXe9LNDWGYz7Ft2ZA
-         STgQrsa9vUO+kadDuOKGOGdaL6XJ/nzRcQKWl1lwZ7Z2dls6Og2G7IbS3hLEzmWNA/Z0
-         qBs2jH0UGeZMVvHIWjt/ypqyVcqCHYQGn/X1zam27hyHurcHXfoUvUnP9aogpiJb9DUC
-         OPUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=X2l8jXmgzCuN61tTEQ25moyBAzJ1BiUjP0mOjFYN50o=;
-        b=MQIrV5omgWPT7YHVmmv99MNlOnjIwHWEBJsH6yJzRNgu05/di7OUTFE38O1kqnEijG
-         Mx26Zz4yjafcBFaRBJoCEAodW7vp7ILb3vPeovZKZpnA38B8m5KyeiD+1WKIRRu9yVN8
-         rUY30fsCx09EFNvnmoB67QVUWoFKYcUkI2Gdb5ushRu2o8Lo2WqF012euj8oN+KzmOt8
-         xsfhz3lkgVswsi7GnDiCzQe97QOwp8Mww8YV9dMgMPem+ox//3uhSz9jlT6RcN+vYvWr
-         pvdBpDF3ZUjlzUNrVNxPCTjNJun2U3Nk5cFwpfQ3chsce8X+0BPZ1N8zsDexuDbh9nhG
-         0YUA==
-X-Gm-Message-State: AOAM530pJNWSckaRyuqObhmEHG+juB4YaKz0AlDpm6glI95t7HSZeZpw
-        sQkWtq44ckA9jmFUDST5P4ZW5Kwjyq7BCu+zaBQ=
-X-Google-Smtp-Source: ABdhPJxNwRKMaNakmfdSUeZhoeeWiGLV1q1h71ajCe6X8/ZgEMII6dQtfkWzhQhOmTkKVKfe7R9/9idFYFS6Gtzrpvg=
-X-Received: by 2002:a92:489b:: with SMTP id j27mr57901947ilg.168.1609492285011;
- Fri, 01 Jan 2021 01:11:25 -0800 (PST)
+        Fri, 1 Jan 2021 12:36:51 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kvOLQ-00EiGv-LC; Fri, 01 Jan 2021 10:36:08 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kvOLP-0009RW-Il; Fri, 01 Jan 2021 10:36:08 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>
+References: <20201207163255.564116-1-mszeredi@redhat.com>
+        <20201207163255.564116-2-mszeredi@redhat.com>
+Date:   Fri, 01 Jan 2021 11:35:16 -0600
+In-Reply-To: <20201207163255.564116-2-mszeredi@redhat.com> (Miklos Szeredi's
+        message of "Mon, 7 Dec 2020 17:32:46 +0100")
+Message-ID: <87czyoimqz.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20201222012131.47020-5-laoar.shao@gmail.com> <20201231030158.GB379@xsang-OptiPlex-9020>
-In-Reply-To: <20201231030158.GB379@xsang-OptiPlex-9020>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Fri, 1 Jan 2021 17:10:49 +0800
-Message-ID: <CALOAHbD+mLMJSizToKPsx0iUd5Z71sJBOyMaV2enVvUHfHwLzg@mail.gmail.com>
-Subject: Re: [xfs] db962cd266: Assertion_failed
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     0day robot <lkp@intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-xfs@vger.kernel.org, Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-XM-SPF: eid=1kvOLP-0009RW-Il;;;mid=<87czyoimqz.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18iUeLdjvyBTCthc4PVnPTvYUkmUHyVYDw=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,T_TooManySym_03,XMSubLong,XM_B_SpammyWords
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 539 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 12 (2.2%), b_tie_ro: 10 (1.8%), parse: 1.76
+        (0.3%), extract_message_metadata: 8 (1.5%), get_uri_detail_list: 4.5
+        (0.8%), tests_pri_-1000: 6 (1.0%), tests_pri_-950: 1.84 (0.3%),
+        tests_pri_-900: 1.50 (0.3%), tests_pri_-90: 105 (19.4%), check_bayes:
+        102 (19.0%), b_tokenize: 14 (2.6%), b_tok_get_all: 8 (1.5%),
+        b_comp_prob: 3.3 (0.6%), b_tok_touch_all: 73 (13.6%), b_finish: 1.17
+        (0.2%), tests_pri_0: 374 (69.5%), check_dkim_signature: 0.88 (0.2%),
+        check_dkim_adsp: 3.1 (0.6%), poll_dns_idle: 0.90 (0.2%), tests_pri_10:
+        3.9 (0.7%), tests_pri_500: 11 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 01/10] vfs: move cap_convert_nscap() call into vfs_setxattr()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 31, 2020 at 10:46 AM kernel test robot
-<oliver.sang@intel.com> wrote:
->
->
-> Greeting,
->
-> FYI, we noticed the following commit (built with gcc-9):
->
-> commit: db962cd266c4d3230436aec2899186510797d49f ("[PATCH v14 4/4] xfs: u=
-se current->journal_info to avoid transaction reservation recursion")
-> url: https://github.com/0day-ci/linux/commits/Yafang-Shao/xfs-avoid-trans=
-action-reservation-recursion/20201222-092315
-> base: https://git.kernel.org/cgit/fs/xfs/xfs-linux.git for-next
->
-> in testcase: filebench
-> version: filebench-x86_64-22620e6-1_20201112
-> with following parameters:
->
->         disk: 1HDD
->         fs: btrfs
->         test: fivestreamwrite.f
->         cpufreq_governor: performance
->         ucode: 0x42e
->
->
->
-> on test machine: 48 threads Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz wit=
-h 112G memory
->
-> caused below changes (please refer to attached dmesg/kmsg for entire log/=
-backtrace):
->
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <oliver.sang@intel.com>
->
->
-> [  552.503501]
-> [  552.525993] /usr/bin/wget -q --timeout=3D1800 --tries=3D1 --local-enco=
-ding=3DUTF-8 http://internal-lkp-server:80/~lkp/pkg/linux/x86_64-rhel-8.3/g=
-cc-9/5c8fe583cce542aa0b84adc939ce85293de36e5e/modules.cgz -N -P /opt/rootfs=
-/tmp/pkg/linux/x86_64-rhel-8.3/gcc-9/5c8fe583cce542aa0b84adc939ce85293de36e=
-5e
-> [  552.525995]
-> [  552.884581] /opt/rootfs/tmp/pkg/linux/x86_64-rhel-8.3/gcc-9/5c8fe583cc=
-e542aa0b84adc939ce85293de36e5e/modules.cgz isn't modified
-> [  552.884583]
-> [  552.905799] XFS: Assertion failed: !current->journal_info, file: fs/xf=
-s/xfs_trans.h, line: 280
-> [  552.907594] /usr/bin/wget -q --timeout=3D1800 --tries=3D1 --local-enco=
-ding=3DUTF-8 http://internal-lkp-server:80/~lkp/osimage/ucode/intel-ucode-2=
-0201117.cgz -N -P /opt/rootfs/tmp/osimage/ucode
-> [  552.916568]
-> [  552.916574] ------------[ cut here ]------------
-> [  552.939361] /opt/rootfs/tmp/osimage/ucode/intel-ucode-20201117.cgz isn=
-'t modified
-> [  552.940036] kernel BUG at fs/xfs/xfs_message.c:110!
-> [  552.946338]
-> [  552.955784] invalid opcode: 0000 [#1] SMP PTI
-> [  552.971010] CPU: 46 PID: 3793 Comm: kexec-lkp Not tainted 5.10.0-rc5-0=
-0044-gdb962cd266c4 #1
-> [  552.981331] Hardware name: Intel Corporation S2600WP/S2600WP, BIOS SE5=
-C600.86B.02.02.0002.122320131210 12/23/2013
-> [  552.993907] RIP: 0010:assfail+0x23/0x28 [xfs]
-> [  552.999797] Code: 67 fc ff ff 0f 0b c3 0f 1f 44 00 00 41 89 c8 48 89 d=
-1 48 89 f2 48 c7 c6 30 58 be c0 e8 82 f9 ff ff 80 3d b1 80 0a 00 00 74 02 <=
-0f> 0b 0f 0b c3 48 8d 45 10 48 89 e2 4c 89 e6 48 89 1c 24 48 89 44
-> [  553.022798] RSP: 0018:ffffc90006a139c8 EFLAGS: 00010202
-> [  553.029624] RAX: 0000000000000000 RBX: ffff889c3edea700 RCX: 000000000=
-0000000
-> [  553.038646] RDX: 00000000ffffffc0 RSI: 000000000000000a RDI: ffffffffc=
-0bd7bab
-> [  553.047600] RBP: ffffc90006a13a14 R08: 0000000000000000 R09: 000000000=
-0000000
-> [  553.056536] R10: 000000000000000a R11: f000000000000000 R12: 000000000=
-0000000
-> [  553.065546] R13: 0000000000000000 R14: ffff889c3ede91c8 R15: ffff888f4=
-4608000
-> [  553.074455] FS:  00007ffff7fc9580(0000) GS:ffff889bea380000(0000) knlG=
-S:0000000000000000
-> [  553.084494] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  553.091837] CR2: 00005555555a1420 CR3: 0000001c30fbe002 CR4: 000000000=
-01706e0
-> [  553.100720] Call Trace:
-> [  553.104459]  xfs_trans_reserve+0x225/0x320 [xfs]
-> [  553.110556]  xfs_trans_roll+0x6e/0xe0 [xfs]
-> [  553.116134]  xfs_defer_trans_roll+0x104/0x2a0 [xfs]
-> [  553.122489]  ? xfs_extent_free_create_intent+0x62/0xc0 [xfs]
-> [  553.129780]  xfs_defer_finish_noroll+0xb8/0x620 [xfs]
-> [  553.136299]  xfs_defer_finish+0x11/0xa0 [xfs]
-> [  553.142017]  xfs_itruncate_extents_flags+0x141/0x440 [xfs]
-> [  553.149053]  xfs_setattr_size+0x3da/0x480 [xfs]
-> [  553.154939]  ? setattr_prepare+0x6a/0x1e0
-> [  553.160250]  xfs_vn_setattr+0x70/0x120 [xfs]
-> [  553.165833]  notify_change+0x364/0x500
-> [  553.170820]  ? do_truncate+0x76/0xe0
-> [  553.175673]  do_truncate+0x76/0xe0
-> [  553.180184]  path_openat+0xe6c/0x10a0
-> [  553.184981]  do_filp_open+0x91/0x100
-> [  553.189707]  ? __check_object_size+0x136/0x160
-> [  553.195493]  do_sys_openat2+0x20d/0x2e0
-> [  553.200481]  do_sys_open+0x44/0x80
-> [  553.204926]  do_syscall_64+0x33/0x40
-> [  553.209588]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [  553.215867] RIP: 0033:0x7ffff7ef11ae
-> [  553.220579] Code: 25 00 00 41 00 3d 00 00 41 00 74 48 48 8d 05 59 65 0=
-d 00 8b 00 85 c0 75 69 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff ff 0f 05 <=
-48> 3d 00 f0 ff ff 0f 87 a6 00 00 00 48 8b 4c 24 28 64 48 33 0c 25
-> [  553.242870] RSP: 002b:00007fffffffc980 EFLAGS: 00000246 ORIG_RAX: 0000=
-000000000101
-> [  553.251949] RAX: ffffffffffffffda RBX: 000055555556afcc RCX: 00007ffff=
-7ef11ae
-> [  553.260586] RDX: 0000000000000241 RSI: 00005555555aaa40 RDI: 00000000f=
-fffff9c
-> [  553.269217] RBP: 0000555555577bd0 R08: 00005555555a250f R09: 000055555=
-55783b0
-> [  553.277804] R10: 00000000000001b6 R11: 0000000000000246 R12: 000055555=
-55aaa40
-> [  553.286406] R13: 00000000fffffffd R14: 00005555555a1400 R15: 000000000=
-0000010
-> [  553.294926] Modules linked in: dm_mod xfs btrfs blake2b_generic xor zs=
-td_compress raid6_pq libcrc32c sd_mod t10_pi sg intel_rapl_msr intel_rapl_c=
-ommon sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm =
-mgag200 irqbypass crct10dif_pclmul drm_kms_helper crc32_pclmul crc32c_intel=
- ghash_clmulni_intel isci syscopyarea sysfillrect sysimgblt rapl fb_sys_fop=
-s ahci libsas libahci ipmi_si scsi_transport_sas mei_me intel_cstate ipmi_d=
-evintf ioatdma drm mei intel_uncore ipmi_msghandler libata dca wmi joydev i=
-p_tables
-> [  553.349820] ---[ end trace 41e34856cd03d8f3 ]---
-> [  553.359002] RIP: 0010:assfail+0x23/0x28 [xfs]
-> [  553.364558] Code: 67 fc ff ff 0f 0b c3 0f 1f 44 00 00 41 89 c8 48 89 d=
-1 48 89 f2 48 c7 c6 30 58 be c0 e8 82 f9 ff ff 80 3d b1 80 0a 00 00 74 02 <=
-0f> 0b 0f 0b c3 48 8d 45 10 48 89 e2 4c 89 e6 48 89 1c 24 48 89 44
-> [  553.386866] RSP: 0018:ffffc90006a139c8 EFLAGS: 00010202
-> [  553.393357] RAX: 0000000000000000 RBX: ffff889c3edea700 RCX: 000000000=
-0000000
-> [  553.402093] RDX: 00000000ffffffc0 RSI: 000000000000000a RDI: ffffffffc=
-0bd7bab
-> [  553.410746] RBP: ffffc90006a13a14 R08: 0000000000000000 R09: 000000000=
-0000000
-> [  553.419499] R10: 000000000000000a R11: f000000000000000 R12: 000000000=
-0000000
-> [  553.428122] R13: 0000000000000000 R14: ffff889c3ede91c8 R15: ffff888f4=
-4608000
-> [  553.436764] FS:  00007ffff7fc9580(0000) GS:ffff889bea380000(0000) knlG=
-S:0000000000000000
-> [  553.446562] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  553.453670] CR2: 00005555555a1420 CR3: 0000001c30fbe002 CR4: 000000000=
-01706e0
-> [  553.462302] Kernel panic - not syncing: Fatal exception
-> [  553.513856] Kernel Offset: disabled
-> ACPI MEMORY or I/O RESET_REG.
->
->
-> To reproduce:
->
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp install job.yaml  # job file is attached in this email
->         bin/lkp run     job.yaml
->
->
->
-> Thanks,
-> Oliver Sang
->
+Miklos Szeredi <mszeredi@redhat.com> writes:
 
-Thanks for the report.
+> cap_convert_nscap() does permission checking as well as conversion of the
+> xattr value conditionally based on fs's user-ns.
+>
+> This is needed by overlayfs and probably other layered fs (ecryptfs) and is
+> what vfs_foo() is supposed to do anyway.
 
-At a first glance, it seems we should make a similar change as we did
-in xfs_trans_context_clear().
+Well crap.
 
-static inline void
-xfs_trans_context_set(struct xfs_trans *tp)
-{
-    /*
-     * We have already handed over the context via xfs_trans_context_swap()=
-.
-     */
-    if (current->journal_info)
-        return;
-    current->journal_info =3D tp;
-    tp->t_pflags =3D memalloc_nofs_save();
-}
+I just noticed this and it turns out this change is wrong.
 
+The problem is that it reads the rootid from the v3 fscap, using
+current_user_ns() and then writes it using the sb->s_user_ns.
 
-I will analyze and retest it.
+So any time the stacked filesystems sb->s_user_ns do not match or
+current_user_ns does not match sb->s_user_ns this could be a problem.
 
---=20
-Thanks
-Yafang
+In a stacked filesystem a second pass through vfs_setxattr will result
+in the rootid being translated a second time (with potentially the wrong
+namespaces).  I think because of the security checks a we won't write
+something we shouldn't be able to write to the filesystem.  Still we
+will be writing the wrong v3 fscap which can go quite badly.
+
+This doesn't look terribly difficult to fix.
+
+Probably convert this into a fs independent form using uids in
+init_user_ns at input and have cap_convert_nscap convert the v3 fscap
+into the filesystem dependent form.  With some way for stackable
+filesystems to just skip converting it from the filesystem independent
+format.
+
+Uids in xattrs that are expected to go directly to disk, but aren't
+always suitable for going directly to disk are tricky.
+
+Eric
+
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/xattr.c                 | 17 +++++++++++------
+>  include/linux/capability.h |  2 +-
+>  security/commoncap.c       |  3 +--
+>  3 files changed, 13 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index cd7a563e8bcd..fd57153b1f61 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -276,8 +276,16 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+>  {
+>  	struct inode *inode = dentry->d_inode;
+>  	struct inode *delegated_inode = NULL;
+> +	const void  *orig_value = value;
+>  	int error;
+>  
+> +	if (size && strcmp(name, XATTR_NAME_CAPS) == 0) {
+> +		error = cap_convert_nscap(dentry, &value, size);
+> +		if (error < 0)
+> +			return error;
+> +		size = error;
+> +	}
+> +
+>  retry_deleg:
+>  	inode_lock(inode);
+>  	error = __vfs_setxattr_locked(dentry, name, value, size, flags,
+> @@ -289,6 +297,9 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+>  		if (!error)
+>  			goto retry_deleg;
+>  	}
+> +	if (value != orig_value)
+> +		kfree(value);
+> +
+>  	return error;
+>  }
+>  EXPORT_SYMBOL_GPL(vfs_setxattr);
+> @@ -537,12 +548,6 @@ setxattr(struct dentry *d, const char __user *name, const void __user *value,
+>  		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+>  		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+>  			posix_acl_fix_xattr_from_user(kvalue, size);
+> -		else if (strcmp(kname, XATTR_NAME_CAPS) == 0) {
+> -			error = cap_convert_nscap(d, &kvalue, size);
+> -			if (error < 0)
+> -				goto out;
+> -			size = error;
+> -		}
+>  	}
+>  
+>  	error = vfs_setxattr(d, kname, kvalue, size, flags);
+> diff --git a/include/linux/capability.h b/include/linux/capability.h
+> index 1e7fe311cabe..b2f698915c0f 100644
+> --- a/include/linux/capability.h
+> +++ b/include/linux/capability.h
+> @@ -270,6 +270,6 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+>  /* audit system wants to get cap info from files as well */
+>  extern int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data *cpu_caps);
+>  
+> -extern int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size);
+> +extern int cap_convert_nscap(struct dentry *dentry, const void **ivalue, size_t size);
+>  
+>  #endif /* !_LINUX_CAPABILITY_H */
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 59bf3c1674c8..bacc1111d871 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -473,7 +473,7 @@ static bool validheader(size_t size, const struct vfs_cap_data *cap)
+>   *
+>   * If all is ok, we return the new size, on error return < 0.
+>   */
+> -int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size)
+> +int cap_convert_nscap(struct dentry *dentry, const void **ivalue, size_t size)
+>  {
+>  	struct vfs_ns_cap_data *nscap;
+>  	uid_t nsrootid;
+> @@ -516,7 +516,6 @@ int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size)
+>  	nscap->magic_etc = cpu_to_le32(nsmagic);
+>  	memcpy(&nscap->data, &cap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+>  
+> -	kvfree(*ivalue);
+>  	*ivalue = nscap;
+>  	return newsize;
+>  }
