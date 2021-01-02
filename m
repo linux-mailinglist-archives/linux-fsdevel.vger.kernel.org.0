@@ -2,128 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 380712E860E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jan 2021 03:09:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82CEA2E877A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jan 2021 14:26:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbhABCIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jan 2021 21:08:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35492 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbhABCIX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jan 2021 21:08:23 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 102D5C061573
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jan 2021 18:07:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9Bj2i+mdxjQoyZ5DP+s0xeyewIlRtG8L+lLotgEXPTA=; b=vqliXBs+UanoJM5P13V3/y4UsA
-        NdDrHECp2lKC2DqUQ8vDyoykb1yXpyxro+8UwdY4juYCHkD9QrZLyNj0FbnueYzVEaWlhnGxU2MUl
-        cgmGHbgFBUAgD/w+1lM6YNlJjGQ9hmbmG5ozS/aZyvzMlHi/h5sN3XWOgnwNfnd7pPwM467hZzjyw
-        3cJayHpuUfQf3fUZ5DVCXPLEMFVxVAf7NX/ZxP5Lzganq3zF0SuuwMZkY1SMa8JjmtxSVDie6DXFs
-        yDsXMJyat2H2kXCXz3FEbGZTy6bkcKrt9Kk8jWu1qghVlo2KKDFplxv6ajCTFxgjXV2sHhYQii8Zs
-        DCcC2eEA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1kvWKL-002JWS-9F; Sat, 02 Jan 2021 02:07:34 +0000
-Date:   Sat, 2 Jan 2021 02:07:33 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Marshall <hubcapsc@gmail.com>
-Cc:     Mike Marshall <hubcap@omnibond.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: problem with orangefs readpage...
-Message-ID: <20210102020733.GA431927@casper.infradead.org>
-References: <CAOg9mSQkkZtqBND-HKb2oSB8jxT6bkQU1LuExo0hPsEUhcMrPw@mail.gmail.com>
- <20210101040808.GB18640@casper.infradead.org>
- <CAAoczXbw9A+kqMemEsJax+CaPkQsJzZNw6Y7XFhTsBqDnGD6hw@mail.gmail.com>
+        id S1726650AbhABN0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Jan 2021 08:26:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726636AbhABN03 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 2 Jan 2021 08:26:29 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DAABD224D4;
+        Sat,  2 Jan 2021 13:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609593949;
+        bh=nQptyWsIb5DLXUAZK2xe+ITycsezO9g8NVJXR3oAkm4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=V8EdnLsyWJKT9bxjUp5n2zEUvpNVcnHpEfJIqpZDfNqU45WzeiJl8WvVsEgET8JHK
+         /MVvoFy59bzktC95YX/+LAyH8bLYWXWeHkY7lH4U6P6SsonscRHCHaax+eg9iMUqD9
+         v1gIa20v6BIikhb4H69COOpMBsWH+Cui7dHtXXKfYCBpABidWvd8W1u6kX5Q9GBTNu
+         CXapbNzjaj3Tv8XDY3ZlBmLtolpfRL4btczqchZk7XxD10IrWH4XWjDzHkSh1UseNT
+         NTdvu/kgGU+iU9SxlWZcJlLdS5Z4rgFBEtVYnv0gwJY9wlQ0q1vrkR/FQDWCCdSnSn
+         RE9wGmXcJOF+A==
+Message-ID: <a8dc3066ec2dd2038af1375d7ecb2e72fe101e7b.camel@kernel.org>
+Subject: Re: [PATCH 3/3] overlayfs: Report writeback errors on upper
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>, Vivek Goyal <vgoyal@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
+        NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Chengguang Xu <cgxu519@mykernel.net>
+Date:   Sat, 02 Jan 2021 08:25:46 -0500
+In-Reply-To: <20201228204837.GA28221@casper.infradead.org>
+References: <20201223200746.GR874@casper.infradead.org>
+         <20201223202140.GB11012@ircssh-2.c.rugged-nimbus-611.internal>
+         <20201223204428.GS874@casper.infradead.org>
+         <CAOQ4uxjAeGv8x2hBBzHz5PjSDq0Q+RN-ikgqEvAA+XE_U-U5Nw@mail.gmail.com>
+         <20201224121352.GT874@casper.infradead.org>
+         <CAOQ4uxj5YS9LSPoBZ3uakb6NeBG7g-Zeu+8Vt57tizEH6xu0cw@mail.gmail.com>
+         <1334bba9cefa81f80005f8416680afb29044379c.camel@kernel.org>
+         <20201228155618.GA6211@casper.infradead.org>
+         <5bc11eb2e02893e7976f89a888221c902c11a2b4.camel@kernel.org>
+         <CAOQ4uxhFz=Uervz6sMuz=RcFUWAxyLEhBrWnjQ+U0Jj_AaU59w@mail.gmail.com>
+         <20201228204837.GA28221@casper.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAoczXbw9A+kqMemEsJax+CaPkQsJzZNw6Y7XFhTsBqDnGD6hw@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 01, 2021 at 05:15:32PM -0500, Mike Marshall wrote:
-> Hi Matthew... Thanks so much for the suggestions!
-> > This is some new version of orangefs_readpage(), right?
-> No, that code has been upstream for a while... that readahead_control
-> thing looks very interesting :-) ...
-
-Oh, my, I was looking at a tree from before 2018 that still had
-orangefs_readpages.  So, yes, I think what's happening is that
-orangefs_readpage() is being called from the readahead code.
-You'll hit this path:
-
-                        next_page = find_get_page(inode->i_mapping, index);
-                        if (next_page) {
-                                gossip_debug(GOSSIP_FILE_DEBUG,
-                                        "%s: found next page, quitting\n",
-                                        __func__);
-                                put_page(next_page);
-                                goto out;
-
-because readahead already allocated those pages for you and is trying
-to fill them one-at-a-time.
-
-Implementing ->readahead, even without dhowells' patch to expand
-the ractl will definitely help you!
-
-> -Mike
+On Mon, 2020-12-28 at 20:48 +0000, Matthew Wilcox wrote:
+> On Mon, Dec 28, 2020 at 09:37:37PM +0200, Amir Goldstein wrote:
+> > Having said that, I never objected to the SEEN flag split.
 > 
-> On Thu, Dec 31, 2020 at 11:08 PM Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > On Thu, Dec 31, 2020 at 04:51:53PM -0500, Mike Marshall wrote:
-> > > Greetings...
-> > >
-> > > I hope some of you will suffer through reading this long message :-) ...
-> >
-> > Hi Mike!  Happy New Year!
-> >
-> > > Orangefs isn't built to do small IO. Reading a
-> > > big file in page cache sized chunks is slow and painful.
-> > > I tried to write orangefs_readpage so that it would do a reasonable
-> > > sized hard IO, fill the page that was being called for, and then
-> > > go ahead and fill a whole bunch of the following pages into the
-> > > page cache with the extra data in the IO buffer.
-> >
-> > This is some new version of orangefs_readpage(), right?  I don't see
-> > anything resembling this in the current codebase.  Did you disable
-> > orangefs_readpages() as part of this work?  Because the behaviour you're
-> > describing sounds very much like what the readahead code might do to a
-> > filesystem which implements readpage and neither readahead nor readpages.
-> >
-> > > orangefs_readpage gets called for the first four pages and then my
-> > > prefill kicks in and fills the next pages and the right data ends
-> > > up in /tmp/nine. I, of course, wished and planned for orangefs_readpage
-> > > to only get called once, I don't understand why it gets called four
-> > > times, which results in three extraneous expensive hard IOs.
-> >
-> > I might suggest some judicious calling of dump_stack() to understand
-> > exactly what's calling you.  My suspicion is that it's this loop in
-> > read_pages():
-> >
-> >                 while ((page = readahead_page(rac))) {
-> >                         aops->readpage(rac->file, page);
-> >                         put_page(page);
-> >                 }
-> >
-> > which doesn't test for PageUptodate before calling you.
-> >
-> > It'd probably be best if you implemented ->readahead, which has its own
-> > ideas about which pages would be the right ones to read.  It's not always
-> > correct, but generally better to have that logic in the VFS than in each
-> > filesystem.
-> >
-> > You probably want to have a look at Dave Howells' work to allow
-> > the filesystem to expand the ractl:
-> >
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter
-> >
-> > specifically this patch:
-> >
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=fscache-iter&id=f582790b32d5d1d8b937df95a8b2b5fdb8380e46
-> >
+> I STRONGLY object to the SEEN flag split.  I think it is completely
+> unnecessary and nobody's shown me a use-case that changes my mind.
+
+I think the flag split makes better sense conceptually, though the
+existing callers don't really have a need for it. I have a use-case in
+mind that doesn't really involve overlayfs:
+
+We still have a lot of internal callers that ultimately call
+filemap_check_errors() to check and clear the mapping's AS_EIO/AS_ENOSPC
+flags.
+
+Splitting the SEEN flag in two could allow those callers to instead
+sample the errseq_t using errseq_peek for their own purposes, without
+clearing the REPORTED flag. That means that the existing semantics for
+seeing errors on newly opened files could be preserved while allowing
+internal callers to use errseq_t-based error handling.
+
+That said, I don't have any patches to do this right now. It's a fairly
+significant project to convert all of the existing callers of
+filemap_check_errors() to such a scheme wholesale. It could be done
+piecemeal though, and we could start discouraging new callers of
+filemap_check_errors and the like.
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
