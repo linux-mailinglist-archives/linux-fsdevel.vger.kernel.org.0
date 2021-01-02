@@ -2,88 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82CEA2E877A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jan 2021 14:26:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C25512E87C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jan 2021 16:25:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbhABN0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Jan 2021 08:26:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbhABN03 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Jan 2021 08:26:29 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DAABD224D4;
-        Sat,  2 Jan 2021 13:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609593949;
-        bh=nQptyWsIb5DLXUAZK2xe+ITycsezO9g8NVJXR3oAkm4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=V8EdnLsyWJKT9bxjUp5n2zEUvpNVcnHpEfJIqpZDfNqU45WzeiJl8WvVsEgET8JHK
-         /MVvoFy59bzktC95YX/+LAyH8bLYWXWeHkY7lH4U6P6SsonscRHCHaax+eg9iMUqD9
-         v1gIa20v6BIikhb4H69COOpMBsWH+Cui7dHtXXKfYCBpABidWvd8W1u6kX5Q9GBTNu
-         CXapbNzjaj3Tv8XDY3ZlBmLtolpfRL4btczqchZk7XxD10IrWH4XWjDzHkSh1UseNT
-         NTdvu/kgGU+iU9SxlWZcJlLdS5Z4rgFBEtVYnv0gwJY9wlQ0q1vrkR/FQDWCCdSnSn
-         RE9wGmXcJOF+A==
-Message-ID: <a8dc3066ec2dd2038af1375d7ecb2e72fe101e7b.camel@kernel.org>
-Subject: Re: [PATCH 3/3] overlayfs: Report writeback errors on upper
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>, Vivek Goyal <vgoyal@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
-        NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Chengguang Xu <cgxu519@mykernel.net>
-Date:   Sat, 02 Jan 2021 08:25:46 -0500
-In-Reply-To: <20201228204837.GA28221@casper.infradead.org>
-References: <20201223200746.GR874@casper.infradead.org>
-         <20201223202140.GB11012@ircssh-2.c.rugged-nimbus-611.internal>
-         <20201223204428.GS874@casper.infradead.org>
-         <CAOQ4uxjAeGv8x2hBBzHz5PjSDq0Q+RN-ikgqEvAA+XE_U-U5Nw@mail.gmail.com>
-         <20201224121352.GT874@casper.infradead.org>
-         <CAOQ4uxj5YS9LSPoBZ3uakb6NeBG7g-Zeu+8Vt57tizEH6xu0cw@mail.gmail.com>
-         <1334bba9cefa81f80005f8416680afb29044379c.camel@kernel.org>
-         <20201228155618.GA6211@casper.infradead.org>
-         <5bc11eb2e02893e7976f89a888221c902c11a2b4.camel@kernel.org>
-         <CAOQ4uxhFz=Uervz6sMuz=RcFUWAxyLEhBrWnjQ+U0Jj_AaU59w@mail.gmail.com>
-         <20201228204837.GA28221@casper.infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        id S1726650AbhABPWE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Jan 2021 10:22:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47478 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbhABPWD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 2 Jan 2021 10:22:03 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5E5C061573;
+        Sat,  2 Jan 2021 07:21:23 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id 3so13738288wmg.4;
+        Sat, 02 Jan 2021 07:21:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OJBITHaQqc5xps2gqOqR24Tyr4hGdZImALfk9kxilUw=;
+        b=NvGUGxltRkygnkWt8il2VY/VOJmppE+yq+zgwo8hmdFcFZfjYtKFZ/rhfCOQnBc+Zk
+         8xThlikKe45cXimJXDIexKr7ayg3lOvYuqlm7LgZ+jrDz+Caf5N0QJE0y2dlCjD+xd5b
+         sZMQP1sfAQPp+AM5Lig7wFNbxAechxk7ODSAJUgidqhfDVnAMOEFrXTIBGx+mFecPof/
+         RDRBMGsxVZmpKew2I0jLuZP/b9FqovcagcOCF3EuI1HhVpskaO+cUtenCizeHbbVp9KI
+         51z/mVU+s2eorqGFff/E7J47uV8DTSNJnYfBx8YnDhAPSiT9kSXtkQj0iJkYru2Hw4Zk
+         VRAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OJBITHaQqc5xps2gqOqR24Tyr4hGdZImALfk9kxilUw=;
+        b=rpMIAIeirbUfTJ56EvS5BvodnXqMozM4plCagANpQ4XaDpxq1XmqmOMZwWUokqr4JN
+         4QRg/sHIzrrJ9O5gFDQ0eh1zdho+r7ttOrZb8dA2dMK9MpK5/VAKj9bZpCOsIfzZPY83
+         JlwuvtkhjnaVne7VbXG/7GDDDxwrmNQgECFHKafgevYVLUhxfSmhGbCiKqmFx9sp11Dl
+         9RN4S5m3cv5pTjh9iF7RNtgKFUjKpBG/BH7DnbAAx/w/8kU8t6v7DcfxuAFWzPcFMueP
+         eXCGLsBUVeb2jAWQSCgUSieprF8FiD1GyOW/6jAdEKTMxj0hZ+VNrvZMoL8b3RP2Mkc1
+         oyvA==
+X-Gm-Message-State: AOAM533oIgF18UiNDvLB0e7NC2RavlPdNakp5Ahbe1BlgAT03rXnc+fA
+        VIsyaJ97NNnf1NMBFO/yK2our1I/8s55QQ==
+X-Google-Smtp-Source: ABdhPJz1HKKwKxVCoTsKOjB/MYoTeJtGzrGeOEkTWLP+7WGm6nET026PZQx1ZUd9bCXYV2kgxNirfg==
+X-Received: by 2002:a1c:87:: with SMTP id 129mr19523015wma.183.1609600881470;
+        Sat, 02 Jan 2021 07:21:21 -0800 (PST)
+Received: from localhost.localdomain ([85.255.236.0])
+        by smtp.gmail.com with ESMTPSA id h13sm78671243wrm.28.2021.01.02.07.21.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Jan 2021 07:21:20 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     linux-block@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH v2 0/7] no-copy bvec
+Date:   Sat,  2 Jan 2021 15:17:32 +0000
+Message-Id: <cover.1609461359.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-12-28 at 20:48 +0000, Matthew Wilcox wrote:
-> On Mon, Dec 28, 2020 at 09:37:37PM +0200, Amir Goldstein wrote:
-> > Having said that, I never objected to the SEEN flag split.
-> 
-> I STRONGLY object to the SEEN flag split.  I think it is completely
-> unnecessary and nobody's shown me a use-case that changes my mind.
+Currently, when iomap and block direct IO gets a bvec based iterator
+the bvec will be copied, with all other accounting that takes much
+CPU time and causes additional allocation for larger bvecs. The
+patchset makes it to reuse the passed in iter bvec.
 
-I think the flag split makes better sense conceptually, though the
-existing callers don't really have a need for it. I have a use-case in
-mind that doesn't really involve overlayfs:
+[1,2] are forbidding zero-length bvec segments to not pile special
+cases, [3] skip/fix PSI tracking to not iterate over bvecs extra
+time.
 
-We still have a lot of internal callers that ultimately call
-filemap_check_errors() to check and clear the mapping's AS_EIO/AS_ENOSPC
-flags.
 
-Splitting the SEEN flag in two could allow those callers to instead
-sample the errseq_t using errseq_peek for their own purposes, without
-clearing the REPORTED flag. That means that the existing semantics for
-seeing errors on newly opened files could be preserved while allowing
-internal callers to use errseq_t-based error handling.
+nullblk completion_nsec=0 submit_queues=NR_CORES, no merges, no stats
+fio/t/io_uring /dev/nullb0 -d 128 -s 32 -c 32 -p 0 -B 1 -F 1 -b BLOCK_SIZE
 
-That said, I don't have any patches to do this right now. It's a fairly
-significant project to convert all of the existing callers of
-filemap_check_errors() to such a scheme wholesale. It could be done
-piecemeal though, and we could start discouraging new callers of
-filemap_check_errors and the like.
+BLOCK_SIZE             512     4K      8K      16K     32K     64K
+===================================================================
+old (KIOPS)            1208    1208    1131    1039    863     699
+new (KIOPS)            1222    1222    1170    1137    1083    982
+
+Previously, Jens got before 10% difference for polling real HW and small
+block sizes, but that was for an older version that had one
+iov_iter_advance() less
+
+
+since RFC:
+- add target_core_file patch by Christoph
+- make no-copy default behaviour, remove iter flag
+- iter_advance() instead of hacks to revert to work
+- add bvec iter_advance() optimisation patch
+- remove PSI annotations from direct IO (iomap, block and fs/direct)
+- note in d/f/porting
+
+since v1:
+- don't allow zero-length bvec segments (Ming)
+- don't add a BIO_WORKINGSET-less version of bio_add_page(), just clear
+  the flag at the end and leave it for further cleanups (Christoph)
+- commit message and comments rewording (Dave)
+- other nits by Christoph
+
+Christoph Hellwig (1):
+  target/file: allocate the bvec array as part of struct
+    target_core_file_cmd
+
+Pavel Begunkov (6):
+  splice: don't generate zero-len segement bvecs
+  bvec/iter: disallow zero-length segment bvecs
+  block/psi: remove PSI annotations from direct IO
+  iov_iter: optimise bvec iov_iter_advance()
+  bio: add a helper calculating nr segments to alloc
+  bio: don't copy bvec for direct IO
+
+ Documentation/filesystems/porting.rst | 16 ++++++
+ block/bio.c                           | 71 +++++++++++++--------------
+ drivers/target/target_core_file.c     | 20 +++-----
+ fs/block_dev.c                        |  7 +--
+ fs/direct-io.c                        |  2 +
+ fs/iomap/direct-io.c                  |  9 ++--
+ fs/splice.c                           |  9 ++--
+ include/linux/bio.h                   | 13 +++++
+ lib/iov_iter.c                        | 21 +++++++-
+ 9 files changed, 103 insertions(+), 65 deletions(-)
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.24.0
 
