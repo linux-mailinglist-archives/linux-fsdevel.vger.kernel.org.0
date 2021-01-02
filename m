@@ -2,224 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F5F2E87E7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jan 2021 16:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4489D2E884A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jan 2021 20:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbhABPW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Jan 2021 10:22:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47606 "EHLO
+        id S1726687AbhABTaC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Jan 2021 14:30:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727044AbhABPWq (ORCPT
+        with ESMTP id S1726627AbhABT36 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Jan 2021 10:22:46 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C95BC0617A1;
-        Sat,  2 Jan 2021 07:21:34 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id g185so13756370wmf.3;
-        Sat, 02 Jan 2021 07:21:34 -0800 (PST)
+        Sat, 2 Jan 2021 14:29:58 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FC2C061573;
+        Sat,  2 Jan 2021 11:29:17 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id d26so26927909wrb.12;
+        Sat, 02 Jan 2021 11:29:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3l7dQjIvN+V+hEfZaCkzKb+BBnG/zeqm2g1H963d/fU=;
-        b=hKs4d/TU2wMEjpAXrytigQChKkUEsSDMoqcebeDllsKjoNG/spLXHO3ytny4jEZjuZ
-         NcLxLnXZKDqEH9Uj2glbOUxlmtYSXcbYEEbzmRPtNysnmvxO4yeCEfgncm951hEtOUZ1
-         hzlJX09+eupyD4mtHblxJyOVZVwMKlcxcxD9nbw8GLsoh0Xym5yPfV9pg84AivjTPr3M
-         a/yRyBwqMg6H/mJJ7/smc9rug0a80eRO6vJufbqg30jGrxcEEzL17qwrBGvdMV3jX7RK
-         bzucefWdFbQBUZa9GTb4HqOHSwqVZBOZ4y+ECy+X8wyJr0JlAbTMarl7wqY4+bShvhwm
-         eYZA==
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GnlwVWvkpbQ8SE3Dyv9Mq0E/QzLOYrHMEiAwrZu78NU=;
+        b=M/Oa2EKLq4X+hUWWwnVHA6PBYTUFkGejI8UOCRLKXi/CcPzPPF3hdQzxJ2t/Y7wYRe
+         UqpGj7LSv9KUNnNaGIt/CGrefwW8RiiPR5hD2fL4LGFHNABEKG3xvP8zrYJx5z1eGWYw
+         gafP8IpA8Em0ndh/y9gLReIIyhdHKRCYJQ3DdX/HVDcGYgGy/qKGWHpAP0Odvio5k2qB
+         znf4nWv6zPFtiw0rv5Iup7zBm6pftJqh3E9sNZl73tF5PzkyqDhYzpy2eYfeA5qN0C8n
+         kDMCM42gkpsrhvnej00Ry8Rl/TprTh9fE8eG9uR/A/ocfn7nf0N9HRX0Xy73q8vnsgJs
+         AeCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3l7dQjIvN+V+hEfZaCkzKb+BBnG/zeqm2g1H963d/fU=;
-        b=PhV45bzipliA8mXI/XqaQM6i22c87cathRqUyufcW3oIkqu55WKM8UugZbhVq/k5rJ
-         qMLgLA+Ux+bUTojEAIyeAzNIr4H5Wc0VbiO8vDex39Vkv8oZzLhP5Hq4W3GU72b3cS7m
-         guXI9528lhEacJQSWGwjs36YVrah1L6cXK1/ltT1g6aLpODNGRpsaCYsq2HbRz006GIL
-         +I6ZqLvH3kZYWuz5xFl9sQfaHWHxc6g8vrqRvuBHIb65s3wPWyjgceAFR2sa4ib9NaSb
-         NdBf1Xelty81sxIkmivCHDUHAqg4mPSBmlwcOFjrkSbE5oQzKS4YZGuCggDKYgd8L94R
-         Zm1w==
-X-Gm-Message-State: AOAM530CBfJoevVAQqaN5+mtT6MvmEehDRy6n/thOO0ffJZ1zS7ZEJ77
-        W2qyCEXMHcFeeGpODNXlMDa1aGNu3MlnDg==
-X-Google-Smtp-Source: ABdhPJwGhnMFbzLGsmTiJIkT4AO1maR288iVD0rGXhF6tvzkOS5GoZ/R3t3iUBUVe2FW5oIam/JQSg==
-X-Received: by 2002:a1c:43c6:: with SMTP id q189mr19936956wma.7.1609600893086;
-        Sat, 02 Jan 2021 07:21:33 -0800 (PST)
-Received: from localhost.localdomain ([85.255.236.0])
-        by smtp.gmail.com with ESMTPSA id h13sm78671243wrm.28.2021.01.02.07.21.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jan 2021 07:21:32 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=GnlwVWvkpbQ8SE3Dyv9Mq0E/QzLOYrHMEiAwrZu78NU=;
+        b=fWdq4yluxLlZcsUvfMdxVPzLoyCTmj9D7jBzB0PqvvEVC7W3jYUKVBDbKdZ5Ly4/nZ
+         5Ct4NdIytk8kKctgd2kSHlcKMaGU4y1p+PJyjX+xRtiFvIhbWAq6iyZ3N5W/K4VkaQzl
+         qkWvWEaXAJ1Ai0pjpcP7xhASI4y3qieKKbNoK+WkjEBPx0bEJILf4GCTnZQ+sRMvYPqa
+         dnZVfeulwNi/rO/Hg6uE6RAiNqRnE5kkhbcKzjDV+6vfUDX1tg1C5/LpPt4ypAn7s2u3
+         Q54fWXKRJniRiFlQvW5YSUXLd7MkGNEDCMoJfxHZOzjkjjHXL9GYmZT+IxS0z2gPAroj
+         GIXg==
+X-Gm-Message-State: AOAM530D/s0G7p2p0ybzMerS9XaM6zoRD20/RtlVPy8loE5fwhcLUh1S
+        QmOlSmRH0+GfjZ+c345yRpEPKDVifDg=
+X-Google-Smtp-Source: ABdhPJzhyNz4p3AvpO/1cVw6mvO9BZQLfF44Lh3zpV4yZH3Q4NFCDUoSEPfIhki6DcGPiuTzX5qnzw==
+X-Received: by 2002:a5d:5442:: with SMTP id w2mr73199180wrv.418.1609615756230;
+        Sat, 02 Jan 2021 11:29:16 -0800 (PST)
+Received: from [192.168.8.179] ([85.255.236.0])
+        by smtp.gmail.com with ESMTPSA id j2sm80516668wrt.35.2021.01.02.11.29.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Jan 2021 11:29:15 -0800 (PST)
+Subject: Re: [PATCH] io_uring: simplify io_remove_personalities()
+To:     Yejune Deng <yejune.deng@gmail.com>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1608778940-16049-1-git-send-email-yejune.deng@gmail.com>
 From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     linux-block@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v2 7/7] bio: don't copy bvec for direct IO
-Date:   Sat,  2 Jan 2021 15:17:39 +0000
-Message-Id: <29ed343fa15eb4139f8ab9104d3f9b16fe025dfd.1609461359.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1609461359.git.asml.silence@gmail.com>
-References: <cover.1609461359.git.asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <2c9df437-b5e9-51a8-1ccb-a16f5ed4fae6@gmail.com>
+Date:   Sat, 2 Jan 2021 19:25:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1608778940-16049-1-git-send-email-yejune.deng@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The block layer spends quite a while in blkdev_direct_IO() to copy and
-initialise bio's bvec. However, if we've already got a bvec in the input
-iterator it might be reused in some cases, i.e. when new
-ITER_BVEC_FLAG_FIXED flag is set. Simple tests show considerable
-performance boost, and it also reduces memory footprint.
+On 24/12/2020 03:02, Yejune Deng wrote:
+> The function io_remove_personalities() is very similar to
+> io_unregister_personality(),so implement io_remove_personalities()
+> calling io_unregister_personality().
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- Documentation/filesystems/porting.rst |  9 ++++
- block/bio.c                           | 67 ++++++++++++---------------
- include/linux/bio.h                   |  5 +-
- 3 files changed, 42 insertions(+), 39 deletions(-)
+Please, don't forget to specify a version in the subject, e.g.
+[PATCH v2], add a changelog after "---" and add tags from previous
+threads if any.
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index c722d94f29ea..1f8cf8e10b34 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -872,3 +872,12 @@ its result is kern_unmount() or kern_unmount_array().
- 
- zero-length bvec segments are disallowed, they must be filtered out before
- passed on to an iterator.
-+
-+---
-+
-+**mandatory**
-+
-+For bvec based itererators bio_iov_iter_get_pages() now doesn't copy bvecs but
-+uses the one provided. Anyone issuing kiocb-I/O should ensure that the bvec and
-+page references stay until I/O has completed, i.e. until ->ki_complete() has
-+been called or returned with non -EIOCBQUEUED code.
-diff --git a/block/bio.c b/block/bio.c
-index 9f26984af643..6f031a04b59a 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -960,21 +960,17 @@ void bio_release_pages(struct bio *bio, bool mark_dirty)
- }
- EXPORT_SYMBOL_GPL(bio_release_pages);
- 
--static int __bio_iov_bvec_add_pages(struct bio *bio, struct iov_iter *iter)
-+static int bio_iov_bvec_set(struct bio *bio, struct iov_iter *iter)
- {
--	const struct bio_vec *bv = iter->bvec;
--	unsigned int len;
--	size_t size;
--
--	if (WARN_ON_ONCE(iter->iov_offset > bv->bv_len))
--		return -EINVAL;
--
--	len = min_t(size_t, bv->bv_len - iter->iov_offset, iter->count);
--	size = bio_add_page(bio, bv->bv_page, len,
--				bv->bv_offset + iter->iov_offset);
--	if (unlikely(size != len))
--		return -EINVAL;
--	iov_iter_advance(iter, size);
-+	WARN_ON_ONCE(BVEC_POOL_IDX(bio) != 0);
-+
-+	bio->bi_vcnt = iter->nr_segs;
-+	bio->bi_max_vecs = iter->nr_segs;
-+	bio->bi_io_vec = (struct bio_vec *)iter->bvec;
-+	bio->bi_iter.bi_bvec_done = iter->iov_offset;
-+	bio->bi_iter.bi_size = iter->count;
-+
-+	iov_iter_advance(iter, iter->count);
- 	return 0;
- }
- 
-@@ -1088,12 +1084,12 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
-  * This takes either an iterator pointing to user memory, or one pointing to
-  * kernel pages (BVEC iterator). If we're adding user pages, we pin them and
-  * map them into the kernel. On IO completion, the caller should put those
-- * pages. If we're adding kernel pages, and the caller told us it's safe to
-- * do so, we just have to add the pages to the bio directly. We don't grab an
-- * extra reference to those pages (the user should already have that), and we
-- * don't put the page on IO completion. The caller needs to check if the bio is
-- * flagged BIO_NO_PAGE_REF on IO completion. If it isn't, then pages should be
-- * released.
-+ * pages. For bvec based iterators bio_iov_iter_get_pages() uses the provided
-+ * bvecs rather than copying them. Hence anyone issuing kiocb based IO needs
-+ * to ensure the bvecs and pages stay referenced until the submitted I/O is
-+ * completed by a call to ->ki_complete() or returns with an error other than
-+ * -EIOCBQUEUED. The caller needs to check if the bio is flagged BIO_NO_PAGE_REF
-+ * on IO completion. If it isn't, then pages should be released.
-  *
-  * The function tries, but does not guarantee, to pin as many pages as
-  * fit into the bio, or are requested in @iter, whatever is smaller. If
-@@ -1105,27 +1101,22 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
-  */
- int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- {
--	const bool is_bvec = iov_iter_is_bvec(iter);
--	int ret;
--
--	if (WARN_ON_ONCE(bio->bi_vcnt))
--		return -EINVAL;
-+	int ret = 0;
- 
--	do {
--		if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
--			if (WARN_ON_ONCE(is_bvec))
--				return -EINVAL;
--			ret = __bio_iov_append_get_pages(bio, iter);
--		} else {
--			if (is_bvec)
--				ret = __bio_iov_bvec_add_pages(bio, iter);
-+	if (iov_iter_is_bvec(iter)) {
-+		if (WARN_ON_ONCE(bio_op(bio) == REQ_OP_ZONE_APPEND))
-+			return -EINVAL;
-+		bio_iov_bvec_set(bio, iter);
-+		bio_set_flag(bio, BIO_NO_PAGE_REF);
-+		return 0;
-+	} else {
-+		do {
-+			if (bio_op(bio) == REQ_OP_ZONE_APPEND)
-+				ret = __bio_iov_append_get_pages(bio, iter);
- 			else
- 				ret = __bio_iov_iter_get_pages(bio, iter);
--		}
--	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
--
--	if (is_bvec)
--		bio_set_flag(bio, BIO_NO_PAGE_REF);
-+		} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
-+	}
- 
- 	/* don't account direct I/O as memory stall */
- 	bio_clear_flag(bio, BIO_WORKINGSET);
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index d8f9077c43ef..1d30572a8c53 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -444,10 +444,13 @@ static inline void bio_wouldblock_error(struct bio *bio)
- 
- /*
-  * Calculate number of bvec segments that should be allocated to fit data
-- * pointed by @iter.
-+ * pointed by @iter. If @iter is backed by bvec it's going to be reused
-+ * instead of allocating a new one.
-  */
- static inline int bio_iov_vecs_to_alloc(struct iov_iter *iter, int max_segs)
- {
-+	if (iov_iter_is_bvec(iter))
-+		return 0;
- 	return iov_iter_npages(iter, max_segs);
- }
- 
+Looks good
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+
+> 
+> Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
+> ---
+>  fs/io_uring.c | 28 +++++++++++-----------------
+>  1 file changed, 11 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index b749578..dc913fa 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8608,9 +8608,8 @@ static int io_uring_fasync(int fd, struct file *file, int on)
+>  	return fasync_helper(fd, file, on, &ctx->cq_fasync);
+>  }
+>  
+> -static int io_remove_personalities(int id, void *p, void *data)
+> +static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
+>  {
+> -	struct io_ring_ctx *ctx = data;
+>  	struct io_identity *iod;
+>  
+>  	iod = idr_remove(&ctx->personality_idr, id);
+> @@ -8618,7 +8617,17 @@ static int io_remove_personalities(int id, void *p, void *data)
+>  		put_cred(iod->creds);
+>  		if (refcount_dec_and_test(&iod->count))
+>  			kfree(iod);
+> +		return 0;
+>  	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int io_remove_personalities(int id, void *p, void *data)
+> +{
+> +	struct io_ring_ctx *ctx = data;
+> +
+> +	io_unregister_personality(ctx, id);
+>  	return 0;
+>  }
+>  
+> @@ -9679,21 +9688,6 @@ static int io_register_personality(struct io_ring_ctx *ctx)
+>  	return ret;
+>  }
+>  
+> -static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
+> -{
+> -	struct io_identity *iod;
+> -
+> -	iod = idr_remove(&ctx->personality_idr, id);
+> -	if (iod) {
+> -		put_cred(iod->creds);
+> -		if (refcount_dec_and_test(&iod->count))
+> -			kfree(iod);
+> -		return 0;
+> -	}
+> -
+> -	return -EINVAL;
+> -}
+> -
+>  static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
+>  				    unsigned int nr_args)
+>  {
+> 
+
 -- 
-2.24.0
-
+Pavel Begunkov
