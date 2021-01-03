@@ -2,131 +2,611 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6592E8E96
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jan 2021 22:54:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CDD12E8E9D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jan 2021 22:58:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbhACVyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Jan 2021 16:54:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47294 "EHLO
+        id S1726733AbhACV6R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Jan 2021 16:58:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbhACVyS (ORCPT
+        with ESMTP id S1726525AbhACV6R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Jan 2021 16:54:18 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 992BDC061573
-        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Jan 2021 13:53:38 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id iq13so8603190pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Jan 2021 13:53:38 -0800 (PST)
+        Sun, 3 Jan 2021 16:58:17 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5251C061573;
+        Sun,  3 Jan 2021 13:57:36 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id o13so60278598lfr.3;
+        Sun, 03 Jan 2021 13:57:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=SOqNdsnqAMqhnVr3MpJKK4X9DOOmp6814kfWnP9S4FM=;
-        b=y1cdXFGZJpYOh6kKX1ouuWSEilCExSz9gYHJ17RezGNA/EBig5DR8biiZGQ4rpGNct
-         84MUcwh0/tba3K7LqfC/lcL2DjJZnm+5v1GgbZjD3jUONljic/IGEPgqMXLn+PxlmQG5
-         uFzNAC9H2TU6buFlKO5fgSlWKK2KthjIGCHjZNEzMuabjwU/0MnyQq185SBoH7wREmoh
-         MfWh5ApELl6ld4c5QvbfdF2y38tFJzDPMFokc0wnQrB14WkKDzB4izb2ef3DPiima6Rd
-         UkeOpyNw5diJEwiqfEEmLTqy6GicK7lCJwdogwg6o6a18cy0oKyfQ+SJBE9IQQieHyQ3
-         G/hA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/Pq5sbU8BF49DDG/JssIh+YGz0vHa+xobOtTqwvprwI=;
+        b=X2mpdjF8uPsuY/VH55RxBw7BmzU4tZWHJFRgMOrVs3kBL8pC32nfM66pdsULk/yURw
+         81cQM9Qe2VO+BT9odJPUKxUcK/tTSqPZgEVukeQni08x0tjfCM4RvP/TmuGDmNXCH5ji
+         yrPGAMHuvSqRhOsaQhiaz1wvor1zCTjrr2zAuSNDfp2UEx4+PNA6nzNZ/1oLEKnH2SC1
+         8h8NqxwfrtDc8WQvReABezPcupbM2DOQ8lYlwbs3gFa14Wc3GLs/TPuEd++TDXC/3TkD
+         2o5JNA/rcdOtDqpKW4wFAn6b2wmXzVk51YoJ4gFD+MDd8OHe6KRL3VrEfaENCyamrB29
+         XgvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SOqNdsnqAMqhnVr3MpJKK4X9DOOmp6814kfWnP9S4FM=;
-        b=i+WM3D3VcZm+GxsswXk1xsGw+a7MvHTeNZQ2lER0hyhNTHsRf70Ekqo3siiiUYv6Ed
-         ANdw2CGKwzXz22eHF+lISWqHOktTB9E9tRTH5KS1z9D7vRd7LaMo0ncXtvqgs2b6OUyk
-         FGM2Q8tbpGlVwQKKItJZwLi3JnRLZZQDKTok5RlzmcHzWSp0RU+n70GGxvtr6d3/D7Zh
-         1vD7i7b8yRgmlTqxrNJwAYZc3DBdpaoYYyB0pnQLfDkrEUEESnPyE4MbA5GEk/GcNo5r
-         SO08jhWjGdgcW6LVUDaRkeXO1gtstCoaeiapsI4fHMpPzDRZJuVO4+du8Tzt+YkHjRId
-         ZLOA==
-X-Gm-Message-State: AOAM531+nlL3HWN12KtJduzpmVGfxTvmIm1nVSo+jpItzr39PVRUZQkl
-        oAlOFL7g/BdOqivEXH8/Uab3gw==
-X-Google-Smtp-Source: ABdhPJzcd8BBndSAfUu2cIdM/q7zeKNDdn3Zp84q+JXRLH44Np6UcYZ63lGG/K661Ig5IZzidwyodg==
-X-Received: by 2002:a17:90a:a394:: with SMTP id x20mr26316806pjp.24.1609710818032;
-        Sun, 03 Jan 2021 13:53:38 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c10sm54804651pfj.54.2021.01.03.13.53.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Jan 2021 13:53:37 -0800 (PST)
-Subject: Re: INFO: task hung in __io_uring_task_cancel
-To:     Palash Oswal <oswalpalash@gmail.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, will@kernel.org
-References: <CAGyP=7cFM6BJE7X2PN9YUptQgt5uQYwM4aVmOiVayQPJg1pqaA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e3bd8214-830d-ab3e-57ba-564c5adcac52@kernel.dk>
-Date:   Sun, 3 Jan 2021 14:53:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/Pq5sbU8BF49DDG/JssIh+YGz0vHa+xobOtTqwvprwI=;
+        b=my0arn2fPTs/RP0tmpzjFyXX84LusC+oV/DRSLopGfEy8Uq7UcvH+V1zMpOopEtKnS
+         bOOA8g7gC0UNZb2iRkM40811BfGtkIar4q7j53bRbrCCB5LaZLa/3C4VFxzSIus3s/qL
+         +Ud4epcCxnpw1t51ioxLr1XczqIPyks+EeS0c1+H2ivZm7WsQ147LCdAV7Y7zhnKVyFK
+         0LFOIqIUFNX0OXsTX1m34FrNLZr1Zaj9igobNK6Qaw+N/Q8aCTRpsr78g0/ncWKutoz+
+         d+t3T6xYCmd41iBW4qE0RMHX0YkVwEHHQfOb67h33F6qD29ZPpXOIWmAJ4h5Kc0XmlhD
+         mHyw==
+X-Gm-Message-State: AOAM533bE6wvjd2ydQTRfWFfxxCJ0pl5JRcNXn3pJGXZExPorRL3Kox6
+        6NMyQCWlRY4YfnofauPS77P7cPgwRhdQ6A==
+X-Google-Smtp-Source: ABdhPJxxb4CAuXqy7jwWYMSGMfdngNfIqm0fxbCtJWrT+iMA4a6nj7BRXZMAFxLoAer8m76eO3nlxw==
+X-Received: by 2002:a2e:95d5:: with SMTP id y21mr35742934ljh.477.1609711055101;
+        Sun, 03 Jan 2021 13:57:35 -0800 (PST)
+Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
+        by smtp.gmail.com with ESMTPSA id z14sm7116593lfd.283.2021.01.03.13.57.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Jan 2021 13:57:34 -0800 (PST)
+Date:   Sun, 3 Jan 2021 23:57:32 +0200
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
+        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com
+Subject: Re: [PATCH v17 04/10] fs/ntfs3: Add file operations and
+ implementation
+Message-ID: <20210103215732.vbgcrf42xnao6gw2@kari-VirtualBox>
+References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
+ <20201231152401.3162425-5-almaz.alexandrovich@paragon-software.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGyP=7cFM6BJE7X2PN9YUptQgt5uQYwM4aVmOiVayQPJg1pqaA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201231152401.3162425-5-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/2/21 9:14 PM, Palash Oswal wrote:
->  Hello,
+On Thu, Dec 31, 2020 at 06:23:55PM +0300, Konstantin Komarov wrote:
+> This adds file operations and implementation
 > 
-> I was running syzkaller and I found the following issue :
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> ---
+>  fs/ntfs3/dir.c     |  570 ++++++++
+>  fs/ntfs3/file.c    | 1140 ++++++++++++++++
+>  fs/ntfs3/frecord.c | 3088 ++++++++++++++++++++++++++++++++++++++++++++
+>  fs/ntfs3/namei.c   |  590 +++++++++
+>  fs/ntfs3/record.c  |  614 +++++++++
+>  fs/ntfs3/run.c     | 1254 ++++++++++++++++++
+>  6 files changed, 7256 insertions(+)
+>  create mode 100644 fs/ntfs3/dir.c
+>  create mode 100644 fs/ntfs3/file.c
+>  create mode 100644 fs/ntfs3/frecord.c
+>  create mode 100644 fs/ntfs3/namei.c
+>  create mode 100644 fs/ntfs3/record.c
+>  create mode 100644 fs/ntfs3/run.c
 > 
-> Head Commit : b1313fe517ca3703119dcc99ef3bbf75ab42bcfb ( v5.10.4 )
-> Git Tree : stable
-> Console Output :
-> [  242.769080] INFO: task repro:2639 blocked for more than 120 seconds.
-> [  242.769096]       Not tainted 5.10.4 #8
-> [  242.769103] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [  242.769112] task:repro           state:D stack:    0 pid: 2639
-> ppid:  2638 flags:0x00000004
-> [  242.769126] Call Trace:
-> [  242.769148]  __schedule+0x28d/0x7e0
-> [  242.769162]  ? __percpu_counter_sum+0x75/0x90
-> [  242.769175]  schedule+0x4f/0xc0
-> [  242.769187]  __io_uring_task_cancel+0xad/0xf0
-> [  242.769198]  ? wait_woken+0x80/0x80
-> [  242.769210]  bprm_execve+0x67/0x8a0
-> [  242.769223]  do_execveat_common+0x1d2/0x220
-> [  242.769235]  __x64_sys_execveat+0x5d/0x70
-> [  242.769249]  do_syscall_64+0x38/0x90
-> [  242.769260]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [  242.769270] RIP: 0033:0x7f59ce45967d
-> [  242.769277] RSP: 002b:00007ffd05d10a58 EFLAGS: 00000246 ORIG_RAX:
-> 0000000000000142
-> [  242.769290] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f59ce45967d
-> [  242.769297] RDX: 0000000000000000 RSI: 0000000020000180 RDI: 00000000ffffffff
-> [  242.769304] RBP: 00007ffd05d10a70 R08: 0000000000000000 R09: 00007ffd05d10a70
-> [  242.769311] R10: 0000000000000000 R11: 0000000000000246 R12: 000055a91d37d320
-> [  242.769318] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
 
-Can you see if this helps? The reproducer is pretty brutal, it'll fork
-thousands of tasks with rings! But should work of course. I think this
-one is pretty straight forward, and actually an older issue with the
-poll rewaiting.
+> +int ntfs_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+> +{
+> +	return generic_file_fsync(filp, start, end, datasync);
+> +}
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ca46f314640b..539de04f9183 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5103,6 +5103,12 @@ static bool io_poll_rewait(struct io_kiocb *req, struct io_poll_iocb *poll)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 
-+	/* Never re-wait on poll if the ctx or task is going away */
-+	if (percpu_ref_is_dying(&ctx->refs) || req->task->flags & PF_EXITING) {
-+		spin_lock_irq(&ctx->completion_lock);
-+		return false;
-+	}
-+
- 	if (!req->result && !READ_ONCE(poll->canceled)) {
- 		struct poll_table_struct pt = { ._key = poll->events };
- 
+Do we have a reson why we implement this if we just use generic. Isn't
+it more clear if we use generic fsync straight away?
 
--- 
-Jens Axboe
+> +static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
+> +{
 
+> +	/* Return error if mode is not supported */
+> +	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
+> +		     FALLOC_FL_COLLAPSE_RANGE))
+> +		return -EOPNOTSUPP;
+
+> +
+> +	if (mode & FALLOC_FL_PUNCH_HOLE) {
+
+> +	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
+
+> +	} else {
+> +		/*
+> +		 * normal file: allocate clusters, do not change 'valid' size
+> +		 */
+> +		err = ntfs_set_size(inode, max(end, i_size));
+> +		if (err)
+> +			goto out;
+> +
+> +		if (is_sparsed(ni) || is_compressed(ni)) {
+> +			CLST vcn_v = ni->i_valid >> sbi->cluster_bits;
+> +			CLST vcn = vbo >> sbi->cluster_bits;
+> +			CLST cend = bytes_to_cluster(sbi, end);
+> +			CLST lcn, clen;
+> +			bool new;
+> +
+> +			/*
+> +			 * allocate but not zero new clusters (see below comments)
+> +			 * this breaks security (one can read unused on-disk areas)
+> +			 * zeroing these clusters may be too long
+> +			 * may be we should check here for root rights?
+> +			 */
+> +			for (; vcn < cend; vcn += clen) {
+> +				err = attr_data_get_block(ni, vcn, cend - vcn,
+> +							  &lcn, &clen, &new);
+> +				if (err)
+> +					goto out;
+> +				if (!new || vcn >= vcn_v)
+> +					continue;
+> +
+> +				/*
+> +				 * Unwritten area
+> +				 * NTFS is not able to store several unwritten areas
+> +				 * Activate 'ntfs_sparse_cluster' to zero new allocated clusters
+> +				 *
+> +				 * Dangerous in case:
+> +				 * 1G of sparsed clusters + 1 cluster of data =>
+> +				 * valid_size == 1G + 1 cluster
+> +				 * fallocate(1G) will zero 1G and this can be very long
+> +				 * xfstest 016/086 will fail whithout 'ntfs_sparse_cluster'
+> +				 */
+> +				/*ntfs_sparse_cluster(inode, NULL, vcn,
+> +				 *		    min(vcn_v - vcn, clen));
+> +				 */
+> +			}
+> +		}
+> +
+> +		if (mode & FALLOC_FL_KEEP_SIZE) {
+
+Isn't this hole else already (mode & FALLOC_FL_KEEP_SIZE?
+
+> +			ni_lock(ni);
+> +			/*true - keep preallocated*/
+> +			err = attr_set_size(ni, ATTR_DATA, NULL, 0,
+> +					    &ni->file.run, i_size, &ni->i_valid,
+> +					    true, NULL);
+> +			ni_unlock(ni);
+> +		}
+> +	}
+> +
+> +	if (!err) {
+> +		inode->i_ctime = inode->i_mtime = current_time(inode);
+> +		mark_inode_dirty(inode);
+> +	}
+> +out:
+> +	if (err == -EFBIG)
+> +		err = -ENOSPC;
+> +
+> +	inode_unlock(inode);
+> +	return err;
+> +}
+
+> diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+
+> +int mi_get(struct ntfs_sb_info *sbi, CLST rno, struct mft_inode **mi)
+> +{
+> +	int err;
+> +	struct mft_inode *m = ntfs_alloc(sizeof(struct mft_inode), 1);
+> +
+> +	if (!m)
+> +		return -ENOMEM;
+> +
+> +	err = mi_init(m, sbi, rno);
+
+If error happend should we just free end exit. Now we call mi_put() to
+clean up.
+
+> +	if (!err)
+> +		err = mi_read(m, false);
+> +
+> +	if (err) {
+> +		mi_put(m);
+> +		return err;
+> +	}
+> +
+> +	*mi = m;
+> +	return 0;
+> +}
+
+> +struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
+> +{
+> +	const struct MFT_REC *rec = mi->mrec;
+> +	u32 used = le32_to_cpu(rec->used);
+> +	u32 t32, off, asize;
+> +	u16 t16;
+> +
+> +	if (!attr) {
+> +		u32 total = le32_to_cpu(rec->total);
+> +
+> +		off = le16_to_cpu(rec->attr_off);
+> +
+> +		if (used > total)
+> +			goto out;
+> +
+> +		if (off >= used || off < MFTRECORD_FIXUP_OFFSET_1 ||
+> +		    !IsDwordAligned(off)) {
+> +			goto out;
+> +		}
+> +
+> +		/* Skip non-resident records */
+> +		if (!is_rec_inuse(rec))
+> +			goto out;
+> +
+> +		attr = Add2Ptr(rec, off);
+> +	} else {
+> +		/* Check if input attr inside record */
+> +		off = PtrOffset(rec, attr);
+> +		if (off >= used)
+> +			goto out;
+> +
+> +		asize = le32_to_cpu(attr->size);
+> +		if (asize < SIZEOF_RESIDENT)
+> +			goto out;
+> +
+> +		attr = Add2Ptr(attr, asize);
+> +		off += asize;
+> +	}
+> +
+> +	asize = le32_to_cpu(attr->size);
+> +
+> +	/* Can we use the first field (attr->type) */
+> +	if (off + 8 > used) {
+> +		static_assert(QuadAlign(sizeof(enum ATTR_TYPE)) == 8);
+> +		goto out;
+> +	}
+> +
+> +	if (attr->type == ATTR_END) {
+> +		if (used != off + 8)
+> +			goto out;
+
+This if is not needed if there is return NULL after. But return
+NULL might also be bug.
+
+> +		return NULL;
+> +	}
+> +
+> +	t32 = le32_to_cpu(attr->type);
+> +	if ((t32 & 0xf) || (t32 > 0x100))
+> +		goto out;
+> +
+> +	/* Check boundary */
+> +	if (off + asize > used)
+> +		goto out;
+> +
+> +	/* Check size of attribute */
+> +	if (!attr->non_res) {
+> +		if (asize < SIZEOF_RESIDENT)
+> +			goto out;
+> +
+> +		t16 = le16_to_cpu(attr->res.data_off);
+> +
+> +		if (t16 > asize)
+> +			goto out;
+> +
+> +		t32 = le32_to_cpu(attr->res.data_size);
+> +		if (t16 + t32 > asize)
+> +			goto out;
+> +
+> +		return attr;
+> +	}
+> +
+> +	/* Check some nonresident fields */
+> +	if (attr->name_len &&
+> +	    le16_to_cpu(attr->name_off) + sizeof(short) * attr->name_len >
+> +		    le16_to_cpu(attr->nres.run_off)) {
+> +		goto out;
+> +	}
+> +
+> +	if (attr->nres.svcn || !is_attr_ext(attr)) {
+> +		if (asize + 8 < SIZEOF_NONRESIDENT)
+> +			goto out;
+> +
+> +		if (attr->nres.c_unit)
+> +			goto out;
+> +	} else if (asize + 8 < SIZEOF_NONRESIDENT_EX)
+> +		goto out;
+> +
+> +	return attr;
+> +
+> +out:
+> +	return NULL;
+> +}
+
+> diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
+
+> +static inline int run_packed_size(const s64 *n)
+> +{
+> +#ifdef __BIG_ENDIAN
+
+These are whole functions with ifdef. It would be maybe more clear
+that there really is whole functions to both endiand.
+
+> +	const u8 *p = (const u8 *)n + sizeof(*n) - 1;
+> +
+> +	if (*n >= 0) {
+> +		if (p[-7] || p[-6] || p[-5] || p[-4])
+> +			p -= 4;
+> +		if (p[-3] || p[-2])
+> +			p -= 2;
+> +		if (p[-1])
+> +			p -= 1;
+> +		if (p[0] & 0x80)
+> +			p -= 1;
+> +	} else {
+> +		if (p[-7] != 0xff || p[-6] != 0xff || p[-5] != 0xff ||
+> +		    p[-4] != 0xff)
+> +			p -= 4;
+> +		if (p[-3] != 0xff || p[-2] != 0xff)
+> +			p -= 2;
+> +		if (p[-1] != 0xff)
+> +			p -= 1;
+> +		if (!(p[0] & 0x80))
+> +			p -= 1;
+> +	}
+> +	return (const u8 *)n + sizeof(*n) - p;
+
+}
+#else
+static inline int run_packed_size(const s64 *n)
+{
+
+Something like this.
+
+> +	const u8 *p = (const u8 *)n;
+> +
+> +	if (*n >= 0) {
+> +		if (p[7] || p[6] || p[5] || p[4])
+> +			p += 4;
+> +		if (p[3] || p[2])
+> +			p += 2;
+> +		if (p[1])
+> +			p += 1;
+> +		if (p[0] & 0x80)
+> +			p += 1;
+> +	} else {
+> +		if (p[7] != 0xff || p[6] != 0xff || p[5] != 0xff ||
+> +		    p[4] != 0xff)
+> +			p += 4;
+> +		if (p[3] != 0xff || p[2] != 0xff)
+> +			p += 2;
+> +		if (p[1] != 0xff)
+> +			p += 1;
+> +		if (!(p[0] & 0x80))
+> +			p += 1;
+> +	}
+> +
+> +	return 1 + p - (const u8 *)n;
+> +#endif
+> +}
+> +
+> +/*
+> + * run_pack
+> + *
+> + * packs runs into buffer
+> + * packed_vcns - how much runs we have packed
+> + * packed_size - how much bytes we have used run_buf
+> + */
+> +int run_pack(const struct runs_tree *run, CLST svcn, CLST len, u8 *run_buf,
+> +	     u32 run_buf_size, CLST *packed_vcns)
+> +{
+> +	CLST next_vcn, vcn, lcn;
+> +	CLST prev_lcn = 0;
+> +	CLST evcn1 = svcn + len;
+> +	int packed_size = 0;
+> +	size_t i;
+> +	bool ok;
+> +	s64 dlcn, len64;
+> +	int offset_size, size_size, t;
+> +	const u8 *p;
+> +
+> +	next_vcn = vcn = svcn;
+> +
+> +	*packed_vcns = 0;
+> +
+> +	if (!len)
+> +		goto out;
+> +
+> +	ok = run_lookup_entry(run, vcn, &lcn, &len, &i);
+> +
+> +	if (!ok)
+> +		goto error;
+> +
+> +	if (next_vcn != vcn)
+> +		goto error;
+> +
+> +	for (;;) {
+> +		/* offset of current fragment relatively to previous fragment */
+> +		dlcn = 0;
+
+This dlcn
+
+> +		next_vcn = vcn + len;
+> +
+> +		if (next_vcn > evcn1)
+> +			len = evcn1 - vcn;
+> +
+> +		/*
+> +		 * mirror of len, but signed, because run_packed_size()
+> +		 * works with signed int only
+> +		 */
+> +		len64 = len;
+> +
+> +		/* how much bytes is packed len64 */
+> +		size_size = run_packed_size(&len64);
+
+Does (s64 *)&len work just fine?
+
+> +
+> +		/* offset_size - how much bytes is packed dlcn */
+> +		if (lcn == SPARSE_LCN) {
+> +			offset_size = 0;
+
+dlcn might be better to live here?
+
+> +		} else {
+> +			/* NOTE: lcn can be less than prev_lcn! */
+> +			dlcn = (s64)lcn - prev_lcn;
+> +			offset_size = run_packed_size(&dlcn);
+> +			prev_lcn = lcn;
+> +		}
+> +
+> +		t = run_buf_size - packed_size - 2 - offset_size;
+> +		if (t <= 0)
+> +			goto out;
+> +
+> +		/* can we store this entire run */
+> +		if (t < size_size)
+> +			goto out;
+> +
+> +		if (run_buf) {
+> +			p = (u8 *)&len64;
+> +
+> +			/* pack run header */
+> +			run_buf[0] = ((u8)(size_size | (offset_size << 4)));
+> +			run_buf += 1;
+> +
+> +			/* Pack the length of run */
+> +			switch (size_size) {
+> +#ifdef __BIG_ENDIAN
+> +			case 8:
+> +				run_buf[7] = p[0];
+> +				fallthrough;
+> +			case 7:
+> +				run_buf[6] = p[1];
+> +				fallthrough;
+> +			case 6:
+> +				run_buf[5] = p[2];
+> +				fallthrough;
+> +			case 5:
+> +				run_buf[4] = p[3];
+> +				fallthrough;
+> +			case 4:
+> +				run_buf[3] = p[4];
+> +				fallthrough;
+> +			case 3:
+> +				run_buf[2] = p[5];
+> +				fallthrough;
+> +			case 2:
+> +				run_buf[1] = p[6];
+> +				fallthrough;
+> +			case 1:
+> +				run_buf[0] = p[7];
+> +#else
+> +			case 8:
+> +				run_buf[7] = p[7];
+> +				fallthrough;
+> +			case 7:
+> +				run_buf[6] = p[6];
+> +				fallthrough;
+> +			case 6:
+> +				run_buf[5] = p[5];
+> +				fallthrough;
+> +			case 5:
+> +				run_buf[4] = p[4];
+> +				fallthrough;
+> +			case 4:
+> +				run_buf[3] = p[3];
+> +				fallthrough;
+> +			case 3:
+> +				run_buf[2] = p[2];
+> +				fallthrough;
+> +			case 2:
+> +				run_buf[1] = p[1];
+> +				fallthrough;
+> +			case 1:
+> +				run_buf[0] = p[0];
+> +#endif
+> +			}
+
+Why is this not own function? We use this like 5 places. Also isn't
+little endian just memcopy()
+
+> +
+> +			run_buf += size_size;
+> +			p = (u8 *)&dlcn;
+
+I think that when we have function for that switch tmp p is not needed
+anymore.
+
+> +
+> +			/* Pack the offset from previous lcn */
+> +			switch (offset_size) {
+> +#ifdef __BIG_ENDIAN
+> +			case 8:
+> +				run_buf[7] = p[0];
+> +				fallthrough;
+> +			case 7:
+> +				run_buf[6] = p[1];
+> +				fallthrough;
+> +			case 6:
+> +				run_buf[5] = p[2];
+> +				fallthrough;
+> +			case 5:
+> +				run_buf[4] = p[3];
+> +				fallthrough;
+> +			case 4:
+> +				run_buf[3] = p[4];
+> +				fallthrough;
+> +			case 3:
+> +				run_buf[2] = p[5];
+> +				fallthrough;
+> +			case 2:
+> +				run_buf[1] = p[6];
+> +				fallthrough;
+> +			case 1:
+> +				run_buf[0] = p[7];
+> +#else
+> +			case 8:
+> +				run_buf[7] = p[7];
+> +				fallthrough;
+> +			case 7:
+> +				run_buf[6] = p[6];
+> +				fallthrough;
+> +			case 6:
+> +				run_buf[5] = p[5];
+> +				fallthrough;
+> +			case 5:
+> +				run_buf[4] = p[4];
+> +				fallthrough;
+> +			case 4:
+> +				run_buf[3] = p[3];
+> +				fallthrough;
+> +			case 3:
+> +				run_buf[2] = p[2];
+> +				fallthrough;
+> +			case 2:
+> +				run_buf[1] = p[1];
+> +				fallthrough;
+> +			case 1:
+> +				run_buf[0] = p[0];
+> +#endif
+> +			}
+
+> +int run_get_highest_vcn(CLST vcn, const u8 *run_buf, u64 *highest_vcn)
+> +{
+
+> +		/* skip size_size */
+> +		run += size_size;
+> +
+> +		if (!len)
+> +			goto error;
+> +
+> +		run += offset_size;
+
+Can this be straight
+run += size_size + offset_size;
+
+> +
+> +#ifdef NTFS3_64BIT_CLUSTER
+> +		if ((vcn >> 32) || (len >> 32))
+> +			goto error;
+> +#endif
+> +		vcn64 += len;
+> +	}
+> +
+> +	*highest_vcn = vcn64 - 1;
+> +	return 0;
+> +}
