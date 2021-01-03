@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB1A2E8EB4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jan 2021 23:49:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1DB2E8EF9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 00:20:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbhACWsV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Jan 2021 17:48:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55518 "EHLO
+        id S1727058AbhACXSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Jan 2021 18:18:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbhACWsU (ORCPT
+        with ESMTP id S1726563AbhACXSk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Jan 2021 17:48:20 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CD10C061573;
-        Sun,  3 Jan 2021 14:47:40 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id y19so60206913lfa.13;
-        Sun, 03 Jan 2021 14:47:40 -0800 (PST)
+        Sun, 3 Jan 2021 18:18:40 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5EEBC061573;
+        Sun,  3 Jan 2021 15:17:59 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id h22so60557554lfu.2;
+        Sun, 03 Jan 2021 15:17:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=87RUIw64Kr1A5OliwMJO/pfdIRcRUQAtOYF9J54FhFc=;
-        b=R/1h1w3CLjy283V6oGtpIoG1Q3tLeo2fn53+eC1YwCEqKLEFXFGLAqt8u+HgEcM2y2
-         pDJw2mk8uRs2GlW/WHf2OJNXPkE5rggyNItKfJKVA0kqq5qbiRWFJrOmQ15FEPE+iDRU
-         TE5q6RPjuuHIXzV7C0yJ91mjOy+/R7ZOTc/847mTrDZrObKDo3D4yx6/vqKXl2FUXAky
-         6tZ/n2T+UIgCBkFxqwQT/DLnmokz9lkteidCq9xlzSoX2Z8kVdjMpSs7y/SCC00TYjyi
-         hxnYNMuBdxJ1rzw0xmj8jA/g4pdH/eL/nxULesRToDb6X3S4Xc06jhiwEpAyT4EOQKTl
-         yXCA==
+        bh=BAvAQQ+kFb6MYxJyXY6rcBWKb+4Ftoc7s8FLX1WY9Gs=;
+        b=gynPkt3ezVczKuRJ8Of69KnuHHieIGlemh74sSHl1iekRBAqH7UgnMfYovP15R/cBf
+         Ejnu+46GhT0oMsiEUb49KAOTtBZQlmFh84nl3w3GRKpn7waLfhcYLoXX8rpsLthgBucM
+         PzNeGXthBqE4S8b3vZOF1p7uGIaONaeurCgTjpWfZFF1sXu2WFkSO2xnIpuILx77DSyt
+         SJMkW+4dHVqmFc9HCwuHAIe5wtKF7c8EpzM2tUOJdEXvdfJtxlOj2qDexwwXZKySMnBr
+         MRKOxboObO9eJ+e05IvHpe8cJSFP5pwcgQ4qRLuSbPCOWszxKGjr36v1IzI+eRKq6caI
+         YHjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=87RUIw64Kr1A5OliwMJO/pfdIRcRUQAtOYF9J54FhFc=;
-        b=CANhiv4TgnF/liBvpOGPLVDVr2599jZ0tnaH6MO8dTXJl/gKLV2sDfpTbjPKqgOlPk
-         S1YAIBoXnP7TWECHt8Gr12IifUllFl2JivvtUAbQNO0wTZJObeRHCohZt8NEBs3eLbLz
-         rhZyD1NOGhNsWzQmv7BUWEgCP7NWDnLaOplhmuALyuT/pQ2Nim2MDb/9A3jSZ8Egfje3
-         ontszsfvStHvAlXGHYqi0od1cCo69ZR5tGZ3BEbKmtrGyXYVpboWtK8SwgPhBw230gj3
-         bVR1hpcUEufwWWutNRCX7U66VqjRLSybPNSsngyNsOU6xXtOyyGf98c+h9GCxbBPG3/O
-         WISg==
-X-Gm-Message-State: AOAM530tbtC5vo4kO0cHp2kUo5LiGWmKT2kAsaLSmt0v7zlD+gfogWPi
-        zxVxGVitk1In5tzkGT7wDEs=
-X-Google-Smtp-Source: ABdhPJxgZE7Fua+oorVTutxvrhFL61TMXKPZjfQDeihCiOf41/1uIS8p4sX7RhggqGKOwgIFs0bGzw==
-X-Received: by 2002:a2e:909a:: with SMTP id l26mr33223108ljg.182.1609714058543;
-        Sun, 03 Jan 2021 14:47:38 -0800 (PST)
+        bh=BAvAQQ+kFb6MYxJyXY6rcBWKb+4Ftoc7s8FLX1WY9Gs=;
+        b=JNX0birjO0K65kRoJQ8W8lb5VoeqZ2liELFi2LlGozPyO87Bt//i1wsb/Y8jITxTA5
+         MVwtT3JkJdz4o93Q6nifXkgFZCVIcPRsBpL0ov7gxAHXRS/0u74xuEs4iNR706/Gem/p
+         PaWDv3tsr7KgZ6PFQ7j1y6ch8mBhiBdCq7opZkjAhGa2Vq9jrM5bdaMuJ2gq+FzFZTaL
+         HqbU80Xs4LIJ9FT1SG0Ng6Y0H3HP91Uc0RUSqd1R/7nlfkjcSMgrdD6K7/lYxyQ+90QF
+         Qj7nd8ysirlabADpkq7Q3A+sgtVlcfP4ITMyaU8Vd+xSsZRFHRFsy89ISXsD14dF2Sg/
+         jHNQ==
+X-Gm-Message-State: AOAM530HTx/WjLaZv7HDyLI+RLvtJ80rUxjUvpN/5KOnB+F9dlKP/8zO
+        JNeZ9Dc4EHhVqLl2FjcmaNI=
+X-Google-Smtp-Source: ABdhPJzX1PcNnVbkJVDLB865DWzaUFjzCANnvqsk8a3Ro+ia0/OP7x2mrIwcWTXg1ziTWziZmzXFRw==
+X-Received: by 2002:a2e:8695:: with SMTP id l21mr36488941lji.151.1609715878235;
+        Sun, 03 Jan 2021 15:17:58 -0800 (PST)
 Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
-        by smtp.gmail.com with ESMTPSA id k11sm7095916lfd.3.2021.01.03.14.47.36
+        by smtp.gmail.com with ESMTPSA id c142sm7132529lfg.309.2021.01.03.15.17.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Jan 2021 14:47:37 -0800 (PST)
-Date:   Mon, 4 Jan 2021 00:47:35 +0200
+        Sun, 03 Jan 2021 15:17:57 -0800 (PST)
+Date:   Mon, 4 Jan 2021 01:17:55 +0200
 From:   Kari Argillander <kari.argillander@gmail.com>
 To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
@@ -58,212 +58,169 @@ Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
         linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
         dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
         andy.lavr@gmail.com
-Subject: Re: [PATCH v17 07/10] fs/ntfs3: Add NTFS journal
-Message-ID: <20210103224735.gtirbmcpkdsietrl@kari-VirtualBox>
+Subject: Re: [PATCH v17 01/10] fs/ntfs3: Add headers and misc files
+Message-ID: <20210103231755.bcmyalz3maq4ama2@kari-VirtualBox>
 References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
- <20201231152401.3162425-8-almaz.alexandrovich@paragon-software.com>
+ <20201231152401.3162425-2-almaz.alexandrovich@paragon-software.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201231152401.3162425-8-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20201231152401.3162425-2-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 31, 2020 at 06:23:58PM +0300, Konstantin Komarov wrote:
-> This adds NTFS journal
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->  fs/ntfs3/fslog.c | 5220 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 5220 insertions(+)
->  create mode 100644 fs/ntfs3/fslog.c
-> 
-> diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
+On Thu, Dec 31, 2020 at 06:23:52PM +0300, Konstantin Komarov wrote:
 
-> +static int read_log_page(struct ntfs_log *log, u32 vbo,
-> +			 struct RECORD_PAGE_HDR **buffer, bool allow_errors,
-> +			 bool ignore_usa_error, bool *usa_error)
-
-Allow_errors does nothing. I also think that no need for
-ignore_usa_error. We can just check usa_error if we need
-it. We just never raise return error for usa_error. And
-then caller can decide if want's to use it. 
-
-> +{
-> +	int err = 0;
-> +	u32 page_idx = vbo >> log->page_bits;
-> +	u32 page_off = vbo & log->page_mask;
-> +	u32 bytes = log->page_size - page_off;
-> +	void *to_free = NULL;
-> +	u32 page_vbo = page_idx << log->page_bits;
-> +	struct RECORD_PAGE_HDR *page_buf;
-> +	struct ntfs_inode *ni = log->ni;
-> +	bool bBAAD;
-> +
-> +	if (vbo >= log->l_size)
-> +		return -EINVAL;
-> +
-> +	if (!*buffer) {
-> +		to_free = ntfs_alloc(bytes, 0);
-> +		if (!to_free)
-> +			return -ENOMEM;
-> +		*buffer = to_free;
-> +	}
-> +
-> +	page_buf = page_off ? log->one_page_buf : *buffer;
-> +
-> +	err = ntfs_read_run_nb(ni->mi.sbi, &ni->file.run, page_vbo, page_buf,
-> +			       log->page_size, NULL);
-> +	if (err)
-> +		goto out;
-> +
-> +	if (page_buf->rhdr.sign != NTFS_FFFF_SIGNATURE)
-> +		ntfs_fix_post_read(&page_buf->rhdr, PAGE_SIZE, false);
-> +
-> +	if (page_buf != *buffer)
-> +		memcpy(*buffer, Add2Ptr(page_buf, page_off), bytes);
-> +
-> +	bBAAD = page_buf->rhdr.sign == NTFS_BAAD_SIGNATURE;
-> +
-> +	/* Check that the update sequence array for this page is valid */
-> +	if (bBAAD) {
-> +		/* If we don't allow errors, raise an error status */
-> +		if (!ignore_usa_error) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	if (usa_error)
-> +		*usa_error = bBAAD;
-> +
-
-So here we can just
-	delete if(bBAAD)
-and use
-	if (usa_error)
-		*usa_error = page_buf->rhdr.sign == NTFS_BAAD_SIGNATURE;
-
-> +out:
-> +	if (err && to_free) {
-> +		ntfs_free(to_free);
-> +		*buffer = NULL;
-> +	}
-> +
-> +	return err;
-> +}
+> diff --git a/fs/ntfs3/debug.h b/fs/ntfs3/debug.h
 
 > +/*
-> + * last_log_lsn
-> + *
-> + * This routine walks through the log pages for a file, searching for the
-> + * last log page written to the file
+> + * Logging macros ( thanks Joe Perches <joe@perches.com> for implementation )
 > + */
-> +static int last_log_lsn(struct ntfs_log *log)
-> +{
-
-> +	struct RECORD_PAGE_HDR *first_tail = NULL;
-> +	struct RECORD_PAGE_HDR *second_tail = NULL;
-
-> +next_tail:
-> +	/* Read second tail page (at pos 3/0x12000) */
-> +	if (read_log_page(log, second_off, &second_tail, true, true,
-> +			  &usa_error) ||
-> +	    usa_error || second_tail->rhdr.sign != NTFS_RCRD_SIGNATURE) {
-> +		ntfs_free(second_tail);
-> +		second_tail = NULL;
-> +		second_file_off = 0;
-> +		lsn2 = 0;
-> +	} else {
-> +		second_file_off = hdr_file_off(log, second_tail);
-> +		lsn2 = le64_to_cpu(second_tail->record_hdr.last_end_lsn);
-> +	}
-
-What will happend if we get -ENOMEM from read_log_page(). Log page
-might still be valid we will just ignore it. This doesn't sound 
-right. 
-
-This same thing happens many place with read_log_page().
-
 > +
-> +	/* Read first tail page (at pos 2/0x2000 ) */
-> +	if (read_log_page(log, final_off, &first_tail, true, true,
-> +			  &usa_error) ||
-> +	    usa_error || first_tail->rhdr.sign != NTFS_RCRD_SIGNATURE) {
-> +		ntfs_free(first_tail);
-> +		first_tail = NULL;
-> +		first_file_off = 0;
-> +		lsn1 = 0;
-> +	} else {
-> +		first_file_off = hdr_file_off(log, first_tail);
-> +		lsn1 = le64_to_cpu(first_tail->record_hdr.last_end_lsn);
-> +	}
+> +#define ntfs_err(sb, fmt, ...)  ntfs_printk(sb, KERN_ERR fmt, ##__VA_ARGS__)
+> +#define ntfs_warn(sb, fmt, ...) ntfs_printk(sb, KERN_WARNING fmt, ##__VA_ARGS__)
+> +#define ntfs_info(sb, fmt, ...) ntfs_printk(sb, KERN_INFO fmt, ##__VA_ARGS__)
+> +#define ntfs_notice(sb, fmt, ...)                                              \
+> +	ntfs_printk(sb, KERN_NOTICE fmt, ##__VA_ARGS__)
+> +
+> +#define ntfs_inode_err(inode, fmt, ...)                                        \
+> +	ntfs_inode_printk(inode, KERN_ERR fmt, ##__VA_ARGS__)
+> +#define ntfs_inode_warn(inode, fmt, ...)                                       \
+> +	ntfs_inode_printk(inode, KERN_WARNING fmt, ##__VA_ARGS__)
+> +
+> +#define ntfs_alloc(s, z)	kmalloc(s, (z) ? (GFP_NOFS | __GFP_ZERO) : GFP_NOFS)
 
-> +	if (first_tail && second_tail) {
-> +		if (best_lsn1 > best_lsn2) {
-> +			best_lsn = best_lsn1;
-> +			best_page = first_tail;
-> +			this_off = first_file_off;
-> +		} else {
-> +			best_lsn = best_lsn2;
-> +			best_page = second_tail;
-> +			this_off = second_file_off;
+kmalloc with __GFP_ZERO is just kzalloc. So why we even need ntfs_alloc(). We
+will be much happier if we straight away see
+
+kzalloc( , GFP_NOFS) or kmalloc( , GFP_NOFS)
+
+That way it will be easier to remove GFP_NOFS flag when not needed.
+I have not knowledge but I have read that even with filesystems it
+is not good pratice to always use that flag. Another point is that
+we will get these defines deleted from debug.h. Atleast to me this
+is strange place for them. And also this not even save line space
+much.
+
+kzalloc( , GFP_NOFS)
+ntfs_alloc( , 0)
+
+ntfs_free()
+kree()
+
+I can send patch fror this if you prefer this way. And nobady not
+nack about it.
+
+> +#define ntfs_free(p)		kfree(p)
+> +#define ntfs_memdup(src, len)	kmemdup(src, len, GFP_NOFS)
+
+> diff --git a/fs/ntfs3/upcase.c b/fs/ntfs3/upcase.c
+
+> +static inline u16 upcase_unicode_char(const u16 *upcase, u16 chr)
+> +{
+> +	if (chr < 'a')
+> +		return chr;
+> +
+> +	if (chr <= 'z')
+> +		return chr - ('a' - 'A');
+> +
+> +	return upcase[chr];
+> +}
+> +
+> +int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
+> +		   const u16 *upcase)
+> +{
+> +	int diff;
+> +	size_t len = l1 < l2 ? l1 : l2;
+> +
+> +	if (upcase) {
+> +		while (len--) {
+> +			diff = upcase_unicode_char(upcase, le16_to_cpu(*s1++)) -
+> +			       upcase_unicode_char(upcase, le16_to_cpu(*s2++));
+> +			if (diff)
+> +				return diff;
 > +		}
-> +	} else if (first_tail) {
-> +		best_lsn = best_lsn1;
-> +		best_page = first_tail;
-> +		this_off = first_file_off;
-> +	} else if (second_tail) {
-> +		best_lsn = best_lsn2;
-> +		best_page = second_tail;
-> +		this_off = second_file_off;
 > +	} else {
-> +		goto free_and_tail_read;
-
-Can't we just use straight tail_read here? 
-
+> +		while (len--) {
+> +			diff = le16_to_cpu(*s1++) - le16_to_cpu(*s2++);
+> +			if (diff)
+> +				return diff;
+> +		}
 > +	}
 > +
-> +	best_page_pos = le16_to_cpu(best_page->page_pos);
+> +	return (int)(l1 - l2);
+> +}
 
-> +	} else {
-> +free_and_tail_read:
-> +		ntfs_free(first_tail);
-> +		ntfs_free(second_tail);
-> +		goto tail_read;
-> +	}
-> +
-> +	ntfs_free(first_tail_prev);
-> +	first_tail_prev = first_tail;
-> +	final_off_prev = first_file_off;
-> +	first_tail = NULL;
-> +
-> +	ntfs_free(second_tail_prev);
-> +	second_tail_prev = second_tail;
-> +	second_off_prev = second_file_off;
-> +	second_tail = NULL;
-> +
-> +	final_off += log->page_size;
-> +	second_off += log->page_size;
-> +
-> +	if (tails < 0x10)
-> +		goto next_tail;
-> +tail_read:
-> +	first_tail = first_tail_prev;
-> +	final_off = final_off_prev;
+I notice that these functions might call both ignore case and upcase in a row.
+record.c - compare_attr()
+index.c - cmp_fnames()
 
-> +int log_replay(struct ntfs_inode *ni)
+So maybe we can add bool bothcases.
+
+int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
+		   const u16 *upcase, bool bothcase)
+{
+	int diff1 = 0;
+	int diff2;
+	size_t len = l1 < l2 ? l1 : l2;
+
+	if (!bothcase && upcase)
+		goto case_insentive;
+
+	for (; len; s1++, s2++, len--) {
+		diff1 = le16_to_cpu(*s1) - le16_to_cpu(*s2);
+		if (diff1) {
+			if (bothcase && upcase)
+				goto case_insentive;
+
+			return diff1;
+		}
+	}
+	return l1 - l2;
+
+case_insentive:
+	for (; len; s1++, s2++, len--) {
+		diff2 = upcase_unicode_char(upcase, le16_to_cpu(*s1)) -
+			 upcase_unicode_char(upcase, le16_to_cpu(*s2));
+		if (diff2)
+			return diff2;
+	}
+
+	if (bothcase && diff1)
+		return diff1;
+
+	return l1 - l2;
+}
+
+This is not tested. I can send patch for this also if you like idea.
+cmp_fnames() and compare_attr() will clean up alot with this.
+
+> +
+> +int ntfs_cmp_names_cpu(const struct cpu_str *uni1, const struct le_str *uni2,
+> +		       const u16 *upcase)
 > +{
-
-> +	/* Now we need to walk through looking for the last lsn */
-> +	err = last_log_lsn(log);
-> +	if (err == -EROFS)
-> +		goto out;
+> +	const u16 *s1 = uni1->name;
+> +	const __le16 *s2 = uni2->name;
+> +	size_t l1 = uni1->len;
+> +	size_t l2 = uni2->len;
+> +	size_t len = l1 < l2 ? l1 : l2;
+> +	int diff;
 > +
-
-No need for this if below is whole err check.
-
-> +	if (err)
-> +		goto out;
- 
+> +	if (upcase) {
+> +		while (len--) {
+> +			diff = upcase_unicode_char(upcase, *s1++) -
+> +			       upcase_unicode_char(upcase, le16_to_cpu(*s2++));
+> +			if (diff)
+> +				return diff;
+> +		}
+> +	} else {
+> +		while (len--) {
+> +			diff = *s1++ - le16_to_cpu(*s2++);
+> +			if (diff)
+> +				return diff;
+> +		}
+> +	}
+> +
+> +	return l1 - l2;
+> +}
