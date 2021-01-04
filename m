@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EA132E8F1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 02:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6022E8F25
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 02:03:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbhADA6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Jan 2021 19:58:21 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:11871 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbhADA6S (ORCPT
+        id S1727571AbhADBDX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Jan 2021 20:03:23 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:37363 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727557AbhADBDW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Jan 2021 19:58:18 -0500
+        Sun, 3 Jan 2021 20:03:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1609722126; x=1641258126;
+  t=1609722201; x=1641258201;
   h=from:to:cc:subject:date:message-id:references:
    content-transfer-encoding:mime-version;
-  bh=hySAzz86cunUFwqTSFGWWavjzS4pt62+umMeB7cORG4=;
-  b=BUOw7mIX39JMMd6Ps+0g0xqEfi+XyeviiyJqd/Mj1PCEInsb7r92rSqP
-   tF8sKE5Mkq/s40ocHfC4ZiOqTC3oCjme8a52lCql8quR1uyU0wl8f+FCf
-   AQ277SK2CF5ZY0VBjY7hwuD/gMUUogsy+WuvgDo3Tk2iLUArynQcetR6n
-   eyBkQEg5Lp9c2HzpbdDpZejifwf5wdEsgNOWe/gFswi/FXmHCUUkl4uxg
-   7eQBSKMgqiqhMaDmKgqTDlz6ohifXvzus6seoY4+6PnkVoEwYrP4/pual
-   ZQZ61JsEfxj4XoR0ac/RCiufRMVsdHvgI3PzLAcn4rMVuOCw4n6Q55PP/
-   g==;
-IronPort-SDR: aZuT+LSkzSybbc9xlQBBj5l9e/B1NFgG9506tKcN3kgKqTzeUqOCgR7ndspdiP1I1Xx2LDkGl2
- U2ervnrKAjjdvTb/YH0yeiVEdgu94jx/olvDz0uqmX7QSXACe0P9T/znMTROffvqUWxpt1Il5r
- BT66JMcsMBO6WS0qGrQPHs1P/6nOU0F5cCFgOrGzi63qXKYdhctgDTQQOaAI5E2quNFfOfd66j
- 3FT3PL3l3yKZKyOROyP0FvMGSAewaZrUGcZsitGmhefL5jTB32rpqKZ94xjSJjpPJwVC2RBOuq
- KrU=
+  bh=65KAgby0RQj0nZrGAxNKyGQ2CA3hkTGh3a6LDgyTw8w=;
+  b=oBEiu1veKTsj+9odRiIAwO0UR4kCeJJFdvz9wNaz9hEFpLi6ytV7WMu1
+   NvQwOZUBEs8+1ZpWafgmglq06FsUknAqZR225pbdZfDBRwHa9A71xzOBR
+   25n61W6TP6OKMjF4E6rGX6XdFIbsv38iviQcNFqZwceq6ikVZ4OWe6EKD
+   Nu6IPcPpiOfxv0EOr1gra+AVMdvVu2FncuCbEe5o0Vvi1TNBlgf+JyPcI
+   aMt9fx7HPQ+2j7DLt7baoNOFOHXDOkmmgbN8ll7svAP3ahULNcWD8B0Ev
+   ffOOdJq8t2B40tM9PHilt28zoQ/a9IJef+922/Sa5XJSyyoNrTDccJ3R4
+   Q==;
+IronPort-SDR: cuBVYjV8Wn3otuVpHAqSrRUjysADjC58NyYFuN9iuWmSRgHYk1tQOYhRrq2D9SMvDxffci0JLP
+ zaAhltQ3+Nq6mX89AYxcn9zXXKdVQNVzgYO1UNv7om9Zvzpi2cY1MF8aKIUT+xKWMPKjHlAxua
+ +BHRVHVSMLWoiukum3o5wdqJv1Yn4DQahOSXEQ35eQ3oYR57PeKjaxoDTnJfdPan0hFE+924j5
+ WkmZ2R22BqVIM6y/oXouDxuyWTX8Nynfv0GiigQX5SZk0QDHDQDf6gDA3KH7hAIdhXAHZToMkv
+ wMc=
 X-IronPort-AV: E=Sophos;i="5.78,472,1599494400"; 
-   d="scan'208";a="260309331"
-Received: from mail-cys01nam02lp2059.outbound.protection.outlook.com (HELO NAM02-CY1-obe.outbound.protection.outlook.com) ([104.47.37.59])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Jan 2021 09:00:26 +0800
+   d="scan'208";a="156468935"
+Received: from mail-mw2nam10lp2103.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.103])
+  by ob1.hgst.iphmx.com with ESMTP; 04 Jan 2021 09:02:15 +0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SqCNcD+AhHZtxL/CeEKRWWstxHCC0MyK5gAwhThJVRgH+6Ql4uRzxIIIL9MRuvDJFl9c6wmoywXZku3Mc+HfPPSctE//rXukDXjhJkDaLzB4UYfevTBZ1x6ViT9edekQNWdwbOX8gb3l16XbeT7rt6ZK48/OpYHl8Emspy4LSbxHrMCFdPlmx5LWXBt5Y+04nEsYkiiaz8EMY0CpdesLEPbrFWieu9EOe7AGV105a5tMI0RVBUeerTukpoCO+7YQjEB/tMoWQIMylXmKsm65M+ovol4YNjinZwdRtb2RQDVIZAuiLdzX4EoWZidVYxbWBJDvHn1dnkwingF1efYSkg==
+ b=mRH2aU7R7LFujP8xYo9l3oa6WLUpJr1Qyb7GRnk9mp1/N8Wd4zEB4jEwzw9LQX/tJrlOzhV2+4JhjjimT0aTiGpwIeXNlTuRx+cfyoQ0IgloZ10GqDCxqjtxtJY1F0ZDW3UNQtcyxRDP79+TK7w2G7CnQW9v81pqdnf0TSwNqra/oxczEjbMaCxkS9pCy8P8kANs6WM+536OgtsJ2QGi+t5L7RZmRqABNgsQI37P6F1/BEyDLot1l03Hu2hFNnr7Brm+axyn3dFOJIi84pzGeVRcePo5LvqCJa48a289YZuECjSTLOfEjlVwxV0dFYojB9GJ13mcS0psZOuJ3Kg9Jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=825Ea7U0l+eQRZcCTiARuMSlbF/8cW424OKenICmchw=;
- b=IuvpSUBY9IbQh82NGoEfAmAnxEAPiBwUZLlBl3ZTVIUBe7xCBSTfozX2e336yelEWDyBdPYYsR/cb7jzMs97VpajzkA8S4BnFs+4iE2HciDAbfKQitpfk5Pbq7Tlxx6pNaaCYMk1ocMGcnrGWIR0UZlUG6/i465akK1bYDJC/rv9tZEus1oxxICp+oIyK8WPWTjUKXI8DFYC7Me2KyPJPHf2K2qy/j9K9Pw60wV0U4LcBXCSP5gT8Z8XnSUcAKqNWoP4PrV83V5zplFvw/ay+dER9XgbIpa4UtaOD2S7PyAlnVLZ7tF/wheO6Eetixta0byC8p97/PRt/v1PvMpYTQ==
+ bh=fuJ5JgMJwn2FshfsGC4Q7qdZichJ+v/Gb1m0xDEshzo=;
+ b=dvSGiT5J5saHxE0CX5tFh5sB/S8ewHdjidevLWUnUuXK3Ce8k0MwCIFYHY7rygYez1PsMrf41OAWoKWvSiA30L8TjjxK/uuTLXCQxglru7fsB+yh5/+Zpr72T+c0RS8Mjmu0BLXpJYueuXJDqINhmXU3LrH+sFWxGVtaq+7Z4bx1L0UXu0KOl+BW+5HLSKa6Z91rucE51WQnoIoMf1doEbWrswa7CzUGgm3ADOfpP7FnbBpaYN+yUWQv2gSKzcuaWCqPDKEILGOn+DZEgz6EQAGKemvl1w01eV+5qoMpB1xLh6vLjhIKfRGoDRaZu7eCiR2icOOOjsQNoKfM5Ezp7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
  header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=825Ea7U0l+eQRZcCTiARuMSlbF/8cW424OKenICmchw=;
- b=M7tLCMfI84ei6U8KdKioDBXbZTjBzjGW3rqvXG1S0W5kFggAEdw2KJg9crG/w8pAhmxqdyf4xeOkAAcwJUk6wg5/rnDvbWG99jIN9eoV2KjpEkQoML0QflVJkmQTlE7wQGhB14UbLdg1m99Orum4iEAY8ZGcneiMCb0ngMkPQJY=
+ bh=fuJ5JgMJwn2FshfsGC4Q7qdZichJ+v/Gb1m0xDEshzo=;
+ b=Sjweh5upK67p6NmzIS65Onlb6n9CEncgxma78qiSeuDSriVWM7TADv4w4r6+7WvQMvCty6iJ0gKcaJwdz/lWO48BTTczmuKheXelCaPStRdXurdAb/np1B6AILRofeZK7gA+MyUDPnDjMO1Mc6tHDq4if3eM+GNa1GpWiUekDXQ=
 Received: from BYAPR04MB4965.namprd04.prod.outlook.com (2603:10b6:a03:4d::25)
  by SJ0PR04MB7438.namprd04.prod.outlook.com (2603:10b6:a03:2a0::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3721.20; Mon, 4 Jan
- 2021 00:57:07 +0000
+ 2021 01:02:14 +0000
 Received: from BYAPR04MB4965.namprd04.prod.outlook.com
  ([fe80::716c:4e0c:c6d1:298a]) by BYAPR04MB4965.namprd04.prod.outlook.com
  ([fe80::716c:4e0c:c6d1:298a%6]) with mapi id 15.20.3721.024; Mon, 4 Jan 2021
- 00:57:07 +0000
+ 01:02:14 +0000
 From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
 To:     Minwoo Im <minwoo.im.dev@gmail.com>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
@@ -69,8 +69,8 @@ CC:     Jens Axboe <axboe@kernel.dk>,
 Subject: Re: [RFC V2] block: reject I/O for same fd if block size changed
 Thread-Topic: [RFC V2] block: reject I/O for same fd if block size changed
 Thread-Index: AQHW3sVYE0D3BnsJEkakKhpEGYvfNw==
-Date:   Mon, 4 Jan 2021 00:57:07 +0000
-Message-ID: <BYAPR04MB49659FFF1A820C9E7BBC1D0386D20@BYAPR04MB4965.namprd04.prod.outlook.com>
+Date:   Mon, 4 Jan 2021 01:02:14 +0000
+Message-ID: <BYAPR04MB496588684CD8517829DE541286D20@BYAPR04MB4965.namprd04.prod.outlook.com>
 References: <20201230160129.23731-1-minwoo.im.dev@gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
@@ -81,33 +81,33 @@ authentication-results: gmail.com; dkim=none (message not signed)
 x-originating-ip: [199.255.45.62]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 95144d6f-e103-41df-53ef-08d8b04ba90b
+x-ms-office365-filtering-correlation-id: 18e304b5-21cf-4bdf-84a3-08d8b04c5fe4
 x-ms-traffictypediagnostic: SJ0PR04MB7438:
-x-microsoft-antispam-prvs: <SJ0PR04MB7438FDDA15999445E06A3F0186D20@SJ0PR04MB7438.namprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <SJ0PR04MB74388E0778475E3FE8044FE086D20@SJ0PR04MB7438.namprd04.prod.outlook.com>
 wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: rzbhm1pHmTRkEUcz1rjLSpGzFGme/grooprKs5eDQ+8ihy6d2prrv6zSjm0v2dmL8/1QI3mNXmAqUt095MtIzVl5iH8id+lxoMYtXSxmhcee4fp2b3iy6x/ykKXsF9p9D7OAwlgI1hQdQYk36JMC12WhzJjksJWXU+jXH8H5gFX6CjIWsDPbFVTBAA6Zc57j7YXi8bReRpHzKR5GvT5rkv6DPUb+swhkFTLIKnrialqe3I/LiXMXc4U7/0uw+tO1g+X57zJrgJ7jUDkMOcal+MA8sWMgMA/8RIde/MhKhEksYP3IRefeDiXiCTJkGoX0DQo9QouOaN7NTpt2JD0/CR9viUqpAsi2zIwx0jHQCXQXvAn7lJAiATIKUbWf+Wr+ogD6rXG4R/ZEwgWm89Ei4lhObqxANP/vGpcJyKpQokMusVLy4eGtXsqGtl1aQF5+DPxlAdV2sfBnGrDpgOa5bA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR04MB4965.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(346002)(396003)(376002)(136003)(39850400004)(8936002)(55016002)(33656002)(6506007)(2906002)(53546011)(966005)(9686003)(76116006)(66946007)(52536014)(66476007)(66446008)(64756008)(66556008)(83380400001)(316002)(26005)(5660300002)(7696005)(110136005)(4326008)(71200400001)(186003)(86362001)(478600001)(54906003)(8676002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?UY7s9R2lSbcth77YYQp6Oz4HLqHvDgz4rF4bUIwkiivRO6lI0OIVtAKTBHFQ?=
- =?us-ascii?Q?iRA6ySuErKZA1kZJhpTO1+EyLX0VXGtJgT/2FwArT8yRV4U65hfao0P5I8cy?=
- =?us-ascii?Q?4p8kJVlYmtxXTxSS9rY3R2crgNeX9Md5XSXfmRzcTsi053/FGSSxCptpUHbq?=
- =?us-ascii?Q?Mfm244UjksRgatvtYEZM+9qE/AfmphE9iREjgE89digjGnayuxu+RPODOfVZ?=
- =?us-ascii?Q?sxWf0BFJMS6mLok6WrJSduEYu8nSNnElVRRYjvo19ckS2SrRZuD1PZc/WeCT?=
- =?us-ascii?Q?RVbnPg6dnMiHb9ZNnuLB7+0FEo1aU4vZXwfmLFAnXbJJyLFeOaCcrZctFL1E?=
- =?us-ascii?Q?itKjGa6XwRwoPWkzGT44rpXB/Mr1T81UN5ChwmJ2+dJ6grvE9geg4yVC5GDr?=
- =?us-ascii?Q?EwaSn8MR0N2zajM4j8FhAxf4N2Kz/2hTBACTdILBh52+G3SQr3ZrEUyRiNSl?=
- =?us-ascii?Q?r9UpsoEFKAzKyRj6dLtdxcZEdOsHvYFRf8SKTTDUAMUWwC9Qkx5iE4jOdZY+?=
- =?us-ascii?Q?/ZL6/Xwu3FAo9ZPhFuJaf4sOhM82czKS2iDikmTAybrztE5ye4CrdNMRLcCM?=
- =?us-ascii?Q?0NfAdGQodEpuEYDQSo/8mggKe21Dnb2q8yidQZoMClVSmj4wuOwDSb9WZKCa?=
- =?us-ascii?Q?YSLPW4SB0hiEeOmpe0aJ6tW88MOm+wQarmtYAOLc6upEq4FNchijTlZNdNnq?=
- =?us-ascii?Q?mP7ma8FqMNiithSPewqfdIW7WEp7HTH1CtNICXVW9WIfm7m8NldYZ8sFyYbu?=
- =?us-ascii?Q?bHPJet1a7Md+Ljap9vDfs6sqPeHRS8m4/AwhrWVLPByZluG79JRC9ncBNZEd?=
- =?us-ascii?Q?eLRwKw6QBLV1Bl7frGX8c02WwpIkr2A5rzXGlAp4fgN6GDay8VP4WyR3MKh1?=
- =?us-ascii?Q?BpLAbvHUIcb2GNAaAb+MRh+szyrTO39XQF+R0Xc2D9hN1YcicpQ/OvIyfEnq?=
- =?us-ascii?Q?A+iC2UCK1qDR9xHyskHWpPbWchOyyeOc7F+T1OYbshMP6YSkLb2RPbf1DJX6?=
- =?us-ascii?Q?NhBF?=
+x-microsoft-antispam-message-info: hgvasGyI3Zu7n7n9OPxm93Do7HDLZCOqwOSjzqMHs4p2sKba8YIE+PTmlwEQUDslUD7Rc9aiU9qkB9HBU4pipF9DfX/+ZRQcfEldn+SIUCr0+w+C0sUeA0vhOOO4q2HXshBcgLvcHt/6VhYOjg8QcgEDBIFvxBsqaS1PBtRAnnJs9egPeM+Z6HI68yE8wWCNQr2iwkpHnDah/Gr0Rw6aJ5zwJkYrU3z3KYbYMIGjEBqNPda7WjI0jygwQlosRngIEw36XX2PxyC56pUJ0c3FdnZf1ONTaPvXFrNRM8IgAK56VTzpXOTogeh8y7tOX/JcwCnzMBPTS026pi+tjBbZ70UVEmKLil4S3oPgNf/+MliWiO9umEX0cijZR3kmjT4HRK99OpE8DXdHFc/YzqmRuA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR04MB4965.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39850400004)(136003)(376002)(396003)(346002)(366004)(7696005)(110136005)(26005)(5660300002)(54906003)(478600001)(4744005)(8676002)(71200400001)(186003)(86362001)(4326008)(9686003)(76116006)(66946007)(55016002)(33656002)(8936002)(2906002)(53546011)(6506007)(83380400001)(316002)(66476007)(52536014)(66556008)(64756008)(66446008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?1AV4OGN7I0ScJPd2urX1KEqOvLvOb1ZkoR+zZyFJcZyySKobuEb+tz7ydeH9?=
+ =?us-ascii?Q?PSiDZNiMK8a7XC1tkm53QPGwConP1aVG3m6G1qvKQHNEyRMOuJbwMz1YPEv8?=
+ =?us-ascii?Q?jHf0ApCFJwzTwj4pTPDw9WllpxOqbMHI4nuUFuiuiSKLEFW2/P05U8Bl5zpD?=
+ =?us-ascii?Q?OYOdW/Od56N3A0SUAnx9pIExbIon4htpNGJ6Z4+chxIsH4Vemx28BJ08Rbq7?=
+ =?us-ascii?Q?QAIYpN0x9VFjubgzBkYj5txkT9CP0iIa/k0jb6KP0S8xZkCu8a2UZAQjTOUe?=
+ =?us-ascii?Q?yzvq/+viDJgfNREgwnIjy/ztqkBj6odeZT2FSzBHYpPagGrZPo9PK+Qnx0H8?=
+ =?us-ascii?Q?RceyUT0J2siXzsYkLQbvZPShV9WNf+rN8gj9phjQmmTpUhaBSxf0Ca57JlZQ?=
+ =?us-ascii?Q?KEB8TxY94mi5Kwb8Bl0e1QiLjAhQZGGRJ7aoehxXPtRw5Qd/0DroIHtMDbLJ?=
+ =?us-ascii?Q?J0E+pKSSN8ZmjfQMscDXjW0uNWzwHxMB5MQrlM6JC6bMl5veLaW6GSEjhTp2?=
+ =?us-ascii?Q?/2SNxKpd2rDCL9BeYZOKXva1dUui1mSKO/NC6LMsuRx3Qopsrea5i5jef8pF?=
+ =?us-ascii?Q?fU7bl6bxqc1CS4NDkmjyOPKqYK9s1giID/V7h0NOjoZ+76JqjC4lIkCi8gD2?=
+ =?us-ascii?Q?G+btaJu4eOfkpUxRAulWPMDp7eKmaXo5seaa4DBVMDAETFRxYO2yw3oxJ58E?=
+ =?us-ascii?Q?USf9jcLJ7GUpEhTVMcS6yrGyN5yXm0ZW33pD+bvxb5hjrFnI27PfmY2dGFmE?=
+ =?us-ascii?Q?hS2z5wjYxOVw7XRKG0w3Xp0c03QX+5+SAuyGHNWdpTZA6oRuQ1dEiTVGbCZk?=
+ =?us-ascii?Q?4Tts9BH+vcEBo8RLjCssm1gP762L1LpEbBQ+84LFCNCLfxNmYnW1/aFuIvnc?=
+ =?us-ascii?Q?mpF280ZutgFoC2tS60SL+Tg2yF+ppN3WddDBgI0HDpuYtacvuynFmf18iTuF?=
+ =?us-ascii?Q?iQ0qcuNIUZPMS8/YYnSheg8/biXndgXG8RIuuUsgXfZDgFjF7pKJ+cq8f4+Y?=
+ =?us-ascii?Q?h9xJ?=
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -115,76 +115,31 @@ MIME-Version: 1.0
 X-OriginatorOrg: wdc.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: BYAPR04MB4965.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95144d6f-e103-41df-53ef-08d8b04ba90b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2021 00:57:07.7323
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18e304b5-21cf-4bdf-84a3-08d8b04c5fe4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2021 01:02:14.5120
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1R4mMaG6QV0AX3rNOlphn9AyOxb5xi48x58571LXrIOH3NkxAS2knAKQ+cuuP0EeF5m+Yuql4KTd9AUKxcZPXha+oBhgKOmC5aqfLRbLrs0=
+X-MS-Exchange-CrossTenant-userprincipalname: JTtS8wxXi2B1Vbmk7sMOH77IZffiQh/Ltg+rjIY+nSQLZtlGBD6Xh1qqUgRWGh/nUNEV+KVa8UTknWJp61m9zF1JYKfv/wU6NzCfcn88eWk=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR04MB7438
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 12/30/20 08:03, Minwoo Im wrote:=0A=
-> Let's say, for example of NVMe device, Format command to change out=0A=
-> LBA format to another logical block size and BLKRRPART to re-read=0A=
-> partition information with a same file descriptor like:=0A=
->=0A=
-> 	fd =3D open("/dev/nvme0n1", O_RDONLY);=0A=
->=0A=
-> 	nvme_format(fd, ...);=0A=
-> 	if (ioctl(fd, BLKRRPART) < 0)=0A=
-> 		..=0A=
->=0A=
-> In this case, ioctl causes invalid Read operations which are triggered=0A=
-> by buffer_head I/O path to re-read partition information.  This is=0A=
-> because it's still playing around with i_blksize and i_blkbits.  So,=0A=
-> 512 -> 4096 -> 512 logical block size changes will cause an under-flowed=
-=0A=
-> length of Read operations.=0A=
->=0A=
-> Case for NVMe:=0A=
->   (LBAF 1 512B, LBAF 0 4K logical block size)=0A=
->=0A=
->   nvme format /dev/nvme0n1 --lbaf=3D1 --force  # to 512B LBA=0A=
->   nvme format /dev/nvme0n1 --lbaf=3D0 --force  # to 4096B LBA=0A=
->=0A=
-> [dmesg-snip]=0A=
->   [   10.771740] blk_update_request: operation not supported error, dev n=
-vme0n1, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0=0A=
->   [   10.780262] Buffer I/O error on dev nvme0n1, logical block 0, async =
-page read=0A=
->=0A=
-> [event-snip]=0A=
->   kworker/0:1H-56      [000] ....   913.456922: nvme_setup_cmd: nvme0: di=
-sk=3Dnvme0n1, qid=3D1, cmdid=3D216, nsid=3D1, flags=3D0x0, meta=3D0x0, cmd=
-=3D(nvme_cmd_read slba=3D0, len=3D65535, ctrl=3D0x0, dsmgmt=3D0, reftag=3D0=
-)=0A=
->    ksoftirqd/0-9       [000] .Ns.   916.566351: nvme_complete_rq: nvme0: =
-disk=3Dnvme0n1, qid=3D1, cmdid=3D216, res=3D0x0, retries=3D0, flags=3D0x0, =
-status=3D0x4002=0A=
->=0A=
-> As the previous discussion [1], this patch introduced a gendisk flag=0A=
-> to indicate that block size has been changed in the runtime.  This flag=
-=0A=
-> is set when logical block size is changed in the runtime in the block=0A=
-> layer.  It will be cleared when the file descriptor for the=0A=
-> block devie is opened again through __blkdev_get() which updates the bloc=
-k=0A=
-> size via set_init_blocksize().=0A=
->=0A=
-> This patch rejects I/O from the path of add_partitions() to avoid=0A=
-> issuing invalid Read operations to device.  It also sets a flag to=0A=
-> gendisk in blk_queue_logical_block_size to minimize caller-side updates.=
-=0A=
->=0A=
-> [1] https://lore.kernel.org/linux-nvme/20201223183143.GB13354@localhost.l=
-ocaldomain/T/#t=0A=
->=0A=
-> Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>=0A=
-Rewrite the change-log similar to what we have in the repo and fix=0A=
-the spelling mistakes. Add a cover-letter to explain the testcase=0A=
-and the execution effect, also I'd move discussion link into=0A=
-cover-letter.=0A=
+>  =0A=
+> diff --git a/block/genhd.c b/block/genhd.c=0A=
+> index 73faec438e49..c3a73cba7c88 100644=0A=
+> --- a/block/genhd.c=0A=
+> +++ b/block/genhd.c=0A=
+> @@ -81,6 +81,7 @@ bool set_capacity_and_notify(struct gendisk *disk, sect=
+or_t size)=0A=
+>  	 */=0A=
+>  	if (!capacity || !size)=0A=
+>  		return false;=0A=
+> +=0A=
+>  	kobject_uevent_env(&disk_to_dev(disk)->kobj, KOBJ_CHANGE, envp);=0A=
+>  	return true;=0A=
+>  }=0A=
+Avoid adding extra newlines in the patch, remove above extra line in v3.=0A=
