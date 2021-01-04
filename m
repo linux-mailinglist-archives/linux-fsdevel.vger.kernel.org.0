@@ -2,111 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1071F2E9DFB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 20:12:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DB82E9DFE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 20:12:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbhADTL0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 14:11:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47184 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbhADTLY (ORCPT
+        id S1727661AbhADTLq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 14:11:46 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:53535 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726680AbhADTLq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 14:11:24 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8559CC061574;
-        Mon,  4 Jan 2021 11:10:44 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kwVFb-006r86-1a; Mon, 04 Jan 2021 19:10:43 +0000
-Date:   Mon, 4 Jan 2021 19:10:43 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH] fs/inode.c: make inode_init_always() initialize i_ino to
- 0
-Message-ID: <20210104191043.GM3579531@ZenIV.linux.org.uk>
-References: <20201031004420.87678-1-ebiggers@kernel.org>
- <20201106175205.GE845@sol.localdomain>
- <X7gP9iuTuRp9MHpP@sol.localdomain>
- <X8gE01JQANXhenMC@gmail.com>
- <X/NkSg4i7h5h4+Wc@sol.localdomain>
+        Mon, 4 Jan 2021 14:11:46 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 0D2925C0126;
+        Mon,  4 Jan 2021 14:11:00 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 04 Jan 2021 14:11:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=pZXhUZxCSADzBVQ9ofdJtQeBBSe
+        xqsAm8Eg19RhO6cI=; b=agiscWQ98ZDuMJN0olfAXH6/OU4LfJ24tbHICetHAC2
+        nYx4EZXVTSQ2E2t2AxOYCUAkBuEEpwMjAZA1hG/JLI6E+4pQ7uVmymHY92jaVsXm
+        0BqMIBILJiEYUwQ3m5KIqfb/3JXeVsI3d48/Ei7Y8Llv3uF/Xzd5EMO0ylY+F06X
+        ccH453M0ISZImILbZHSCV99Wq7A4t+xjeiP85iwf9znW+2Mz/HkjoTN/shrv5ri+
+        Ro8AnK+iya1ZTqgvaNdNZloEA+4yW+GbXvD5SicIkkopqUPATMIYsvAAsb5GDkt6
+        SuMu/AnCirpfwdRjvfQ/jdhhnb0wzGwOKhibJHFrLuQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=pZXhUZ
+        xCSADzBVQ9ofdJtQeBBSexqsAm8Eg19RhO6cI=; b=NOehI7clTvaRQUcobnnJuU
+        JIS01ZYV2qpr7LkfSG0pgRuWTaf8ZEjoxY/+Nu3NIoRenwkkED6AG3wbVIA3h6C8
+        6EzHv4XRdHYSZy7RThzuM9gT8u83QBXMxXZ/2sd1MFUUNa+qqFeOP3CmgYov/n4i
+        o5lW4eof7DB/4HQOomUFQ1R8Qo3pYe2wtrcIKYD2EWrxPjjGVuzyj1djpCXfAPCl
+        qJ2qtHJwwkS55pzufZlDK+yXGHiFEIFCHvxwxJ07pWMil+2ITgXQUappRtFxYJaV
+        xI6dSLoijMfXJ+5S6aWRzguUZo5kQnkkG4+KvRvgqcYBoQ9g/x3yQcfgdAKgtoUg
+        ==
+X-ME-Sender: <xms:Q2jzX7TMbCsmPAy47o265epCU8kG7dHJS3XwH6LgM1lAmO49GdjBxQ>
+    <xme:Q2jzX8thonNni7mhli0HvCFfNERxeRJtf4DCD455qtsjxCLsE61abAxX_UdIF3eVg
+    q0m4fto2xipiB9dJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdeffedguddvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughr
+    vghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuggftrf
+    grthhtvghrnhepudekhfekleeugeevteehleffffejgeelueduleeffeeutdelffeujeff
+    hfeuffdunecukfhppeeijedrudeitddrvddujedrvdehtdenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvshesrghnrghrrgiivghl
+    rdguvg
+X-ME-Proxy: <xmx:Q2jzX9v6SPLtIj6qaGqMkCDKAJRcmCnLoBQp20AWgDVqfhNj-m2SJA>
+    <xmx:Q2jzXyx-AqhbjXoWiiNFevYXyoIHW7Ja31-VA4PMHqfjhHY-5oCYOg>
+    <xmx:Q2jzXzhK-k3azrJOxdWkLG_2yDqVOU_vkss3UYwhfHEevAnb_McXSQ>
+    <xmx:RGjzXzdT8WAgLl3Q6NeiyOO0YiW_qQhlQkwGVCuLRZnhW6E6KadpMQ>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 7CF531080064;
+        Mon,  4 Jan 2021 14:10:59 -0500 (EST)
+Date:   Mon, 4 Jan 2021 11:10:58 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
+ extents?
+Message-ID: <20210104191058.sryksqjnjjnn5raa@alap3.anarazel.de>
+References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
+ <20210104181958.GE6908@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <X/NkSg4i7h5h4+Wc@sol.localdomain>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20210104181958.GE6908@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 04, 2021 at 10:54:02AM -0800, Eric Biggers wrote:
-> On Wed, Dec 02, 2020 at 01:19:15PM -0800, Eric Biggers wrote:
-> > On Fri, Nov 20, 2020 at 10:50:30AM -0800, Eric Biggers wrote:
-> > > On Fri, Nov 06, 2020 at 09:52:05AM -0800, Eric Biggers wrote:
-> > > > On Fri, Oct 30, 2020 at 05:44:20PM -0700, Eric Biggers wrote:
-> > > > > From: Eric Biggers <ebiggers@google.com>
-> > > > > 
-> > > > > Currently inode_init_always() doesn't initialize i_ino to 0.  This is
-> > > > > unexpected because unlike the other inode fields that aren't initialized
-> > > > > by inode_init_always(), i_ino isn't guaranteed to end up back at its
-> > > > > initial value after the inode is freed.  Only one filesystem (XFS)
-> > > > > actually sets set i_ino back to 0 when freeing its inodes.
-> > > > > 
-> > > > > So, callers of new_inode() see some random previous i_ino.  Normally
-> > > > > that's fine, since normally i_ino isn't accessed before being set.
-> > > > > There can be edge cases where that isn't necessarily true, though.
-> > > > > 
-> > > > > The one I've run into is that on ext4, when creating an encrypted file,
-> > > > > the new file's encryption key has to be set up prior to the jbd2
-> > > > > transaction, and thus prior to i_ino being set.  If something goes
-> > > > > wrong, fs/crypto/ may log warning or error messages, which normally
-> > > > > include i_ino.  So it needs to know whether it is valid to include i_ino
-> > > > > yet or not.  Also, on some files i_ino needs to be hashed for use in the
-> > > > > crypto, so fs/crypto/ needs to know whether that can be done yet or not.
-> > > > > 
-> > > > > There are ways this could be worked around, either in fs/crypto/ or in
-> > > > > fs/ext4/.  But, it seems there's no reason not to just fix
-> > > > > inode_init_always() to do the expected thing and initialize i_ino to 0.
-> > > > > 
-> > > > > So, do that, and also remove the initialization in jfs_fill_super() that
-> > > > > becomes redundant.
-> > > > > 
-> > > > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > > > ---
-> > > > >  fs/inode.c     | 1 +
-> > > > >  fs/jfs/super.c | 1 -
-> > > > >  2 files changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/fs/inode.c b/fs/inode.c
-> > > > > index 9d78c37b00b81..eb001129f157c 100644
-> > > > > --- a/fs/inode.c
-> > > > > +++ b/fs/inode.c
-> > > > > @@ -142,6 +142,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
-> > > > >  	atomic_set(&inode->i_count, 1);
-> > > > >  	inode->i_op = &empty_iops;
-> > > > >  	inode->i_fop = &no_open_fops;
-> > > > > +	inode->i_ino = 0;
-> > > > >  	inode->__i_nlink = 1;
-> > > > >  	inode->i_opflags = 0;
-> > > > >  	if (sb->s_xattr)
-> > > > > diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-> > > > > index b2dc4d1f9dcc5..1f0ffabbde566 100644
-> > > > > --- a/fs/jfs/super.c
-> > > > > +++ b/fs/jfs/super.c
-> > > > > @@ -551,7 +551,6 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
-> > > > >  		ret = -ENOMEM;
-> > > > >  		goto out_unload;
-> > > > >  	}
-> > > > > -	inode->i_ino = 0;
-> > > > >  	inode->i_size = i_size_read(sb->s_bdev->bd_inode);
-> > > > >  	inode->i_mapping->a_ops = &jfs_metapage_aops;
-> > > > >  	inode_fake_hash(inode);
-> > > > > 
-> > > > 
-> > > > Al, any thoughts on this?
-> > 
-> > Ping.
-> 
-> Ping.
+Hi,
 
-Applied.
+On 2021-01-04 10:19:58 -0800, Darrick J. Wong wrote:
+> On Tue, Dec 29, 2020 at 10:28:19PM -0800, Andres Freund wrote:
+> > Would it make sense to add a variant of FALLOC_FL_ZERO_RANGE that
+> > doesn't convert extents into unwritten extents, but instead uses
+> > blkdev_issue_zeroout() if supported?  Mostly interested in xfs/ext4
+> > myself, but ...
+> > 
+> > Doing so as a variant of FALLOC_FL_ZERO_RANGE seems to make the most
+> > sense, as that'd work reasonably efficiently to initialize newly
+> > allocated space as well as for zeroing out previously used file space.
+> > 
+> > 
+> > As blkdev_issue_zeroout() already has a fallback path it seems this
+> > should be doable without too much concern for which devices have write
+> > zeroes, and which do not?
+> 
+> Question: do you want the kernel to write zeroes even for devices that
+> don't support accelerated zeroing?
+
+I don't have a strong opinion on it. A complex userland application can
+do a bit better job managing queue depth etc, but otherwise I suspect
+doing the IO from kernel will win by a small bit. And the queue-depth
+issue presumably would be relevant for write-zeroes as well, making me
+lean towards just using the fallback.
+
+
+> Since I assume that if the fallocate fails you'll fall back to writing
+> zeroes from userspace anyway...
+
+And there's non-linux platforms as well, at least that's the rumor I hear.
+
+
+> Second question: Would it help to have a FALLOC_FL_DRY_RUN flag that
+> could be used to probe if a file supports fallocate without actually
+> changing anything?  I'm (separately) pursuing a fix for the loop device
+> not being able to figure out if a file actually supports a particular
+> fallocate mode.
+
+Hm. I can see some potential uses of such a flag, but I haven't really
+wished for it so far.
+
+Greetings,
+
+Andres Freund
