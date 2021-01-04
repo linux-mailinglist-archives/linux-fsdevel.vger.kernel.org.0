@@ -2,37 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D333E2E9AF2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 17:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D212E9B2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 17:40:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbhADQW3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 11:22:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49190 "EHLO
+        id S1727949AbhADQiq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 11:38:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727886AbhADQW2 (ORCPT
+        with ESMTP id S1727897AbhADQip (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 11:22:28 -0500
+        Mon, 4 Jan 2021 11:38:45 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E90C061574;
-        Mon,  4 Jan 2021 08:21:48 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685EFC061793;
+        Mon,  4 Jan 2021 08:38:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=c0jpPOEqnvAg3akTI36JpIt9xU
-        3Ekb+xZLKcCXAuP6aX6X9X8OGfhEZ17fGCaGMIef9SYWHAdGFc3uo+vlM9b1aXhF2iUKc3eoM/+dB
-        IQGe6jvfoR/G8XoGFUMvlRk4jRdegFaYaE6jx2RsUzv3k6nJKLUfpQHggy8F8pB0AZd+3mRagBkmm
-        m3WCbGkk0X4L0vgPqIe18hM7QT3VbjVhhWEDpUWZER/+kUzQkuZsCNMWKvmvJtTLy6zB8vkGFhGvM
-        MziqpdCXp1G/luzbgryf1rW4esI1mIB1/QXusWuiHmvToORh0ubs8CpGH8homiD0Ul2EDf3i99GBY
-        fTjSWP2g==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1kwSbF-000I7h-7f; Mon, 04 Jan 2021 16:20:54 +0000
-Date:   Mon, 4 Jan 2021 16:20:53 +0000
-From:   Christoph Hellwig <hch@infradead.org>
+        bh=jtkbapT8fmTkqdGfawodnxdn1L9OuJ2hV6kgW2yTqWk=; b=kPgHDr7sil9tk8p6Bt6Pg7BkoU
+        qgIFz+hKZQewdgVs5RRcTUS8US4wERe/1Ik9TLb7yss87lkLOSjfChOBjgFVcdJGJqGqKRcfOclCn
+        y+Fk/AajWS5n6Dnx+M7QBg4FrHcUBHQeD8KAxcb7SOO1nzdvOs9WceX3ackS4w9cx3Tr9zvtzhsMs
+        htyNAT7f4vdjSW0tQ1tiAZL2lOrexShD800pjnGRTvsN6+Ry9GtpShUREBOFDmPg5+NQLyPvkMlo/
+        Zvj67UkaUamUNM9aDHexzMNReovVddfdRhtk68Bhu+gEPy71ABUAOCUPs7K0PQdTbD7vZs4RR+NIJ
+        uNehDS9g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1kwSrj-000JJd-C5; Mon, 04 Jan 2021 16:37:56 +0000
+Date:   Mon, 4 Jan 2021 16:37:55 +0000
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Pavel Begunkov <asml.silence@gmail.com>
 Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
         Ming Lei <ming.lei@redhat.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -42,19 +41,34 @@ Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] bio: don't copy bvec for direct IO
-Message-ID: <20210104162053.GC68600@infradead.org>
+Subject: Re: [PATCH v2 2/7] bvec/iter: disallow zero-length segment bvecs
+Message-ID: <20210104163755.GA22407@casper.infradead.org>
 References: <cover.1609461359.git.asml.silence@gmail.com>
- <29ed343fa15eb4139f8ab9104d3f9b16fe025dfd.1609461359.git.asml.silence@gmail.com>
+ <b46b8c1943bbefcb90ea5c4dd9beaad8bbc15448.1609461359.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <29ed343fa15eb4139f8ab9104d3f9b16fe025dfd.1609461359.git.asml.silence@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <b46b8c1943bbefcb90ea5c4dd9beaad8bbc15448.1609461359.git.asml.silence@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+On Sat, Jan 02, 2021 at 03:17:34PM +0000, Pavel Begunkov wrote:
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -865,3 +865,10 @@ no matter what.  Everything is handled by the caller.
+>  
+>  clone_private_mount() returns a longterm mount now, so the proper destructor of
+>  its result is kern_unmount() or kern_unmount_array().
+> +
+> +---
+> +
+> +**mandatory**
+> +
+> +zero-length bvec segments are disallowed, they must be filtered out before
+> +passed on to an iterator.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Why are you putting this in filesystems/porting?  Filesystems don't usually
+generate bvecs ... there's nothing in this current series that stops them.
+I'd suggest Documentation/block/biovecs.rst or biodoc.rst (and frankly,
+biodoc.rst needs a good cleanup)
