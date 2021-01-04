@@ -2,81 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8214C2EA10C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 00:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC662EA0D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 00:32:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbhADXp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 18:45:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60932 "EHLO
+        id S1727030AbhADXaw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 18:30:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbhADXp1 (ORCPT
+        with ESMTP id S1726974AbhADXaw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 18:45:27 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D942C061574;
-        Mon,  4 Jan 2021 15:44:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YBgRGjn+yLmFC+9fNHoHRFsXeCxEkKsHezqEmQ36bEQ=; b=XIYp5yjtmgky7iNoVOQb+o3wZr
-        3L/KpsgoiU4PgUF/2JfxkJRLW1hcLCYXszkagaCvEljXe9Uz+u8+jE4+N39M+0neNh8AXn+EbgqWM
-        UAxR+Arf7ji2B/OFG3Uuzpv6oLlzE/WKH4NRTf2C5ZLJ22nsjlTWilnsqIdsGcypiK9aJg4IAg5lM
-        1g4r0kbHQm4M2Ktv1xQeCRGIRJ24dRRo5PufxYiZ9vMcYqdiYxSuk/oTaFj4aJIls1KwvNY3iTP+R
-        Trby8W4LwayqM2o9OfZDsuFaS3Xmo2k+k2H9fTJbw7qxTzxk44Reo+ivVA4pG6SNp99GU0kgCtR58
-        KvCbKeJQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1kwWHJ-000VKI-Fy; Mon, 04 Jan 2021 20:17:08 +0000
-Date:   Mon, 4 Jan 2021 20:16:33 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel test robot <lkp@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vgupts@synopsys.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [PATCH v2] fs/dax: include <asm/page.h> to fix build error on ARC
-Message-ID: <20210104201633.GE22407@casper.infradead.org>
-References: <20210101042914.5313-1-rdunlap@infradead.org>
- <CAPcyv4jAiqyFg_BUHh_bJRG-BqzvOwthykijRapB_8i6VtwTmQ@mail.gmail.com>
+        Mon, 4 Jan 2021 18:30:52 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE57C061795
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Jan 2021 15:30:06 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id hk16so569489pjb.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Jan 2021 15:30:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yfLp24TIh/SK3eveJWpwVSs8JsQPedAkqnYyRzM6i/E=;
+        b=LF2YwwtIXDuK8UwqLyfIcaYPTy3TzccRLiJWztAkNea/6+B/SIjv8ihAufVpiBi4Jq
+         78opLO1Sm+lpCEAA1Zag//b+WHYOa+QgQKzWulhebUXV4UmAzNpwTnU2m/lr8D/qx8/n
+         aW8EBcfhGZ3D7gl5djK2sUMHe30w5kQGGKPEM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yfLp24TIh/SK3eveJWpwVSs8JsQPedAkqnYyRzM6i/E=;
+        b=ZIagJYa8mstYC+HT6cBLhlNmDpBik3CMdB6aY0cihc0wsx2LynYojiNvWqba2ghumG
+         zd/NrySFsYMaxIwfXqXzCa2rJLvp2OmmREg/9iBSM5pA9T21F1MqVYKx4Vk6kULxbMzw
+         ggWQUbVEgKitZVgxYxyG/G5B0bjrWVBGzXatCA0nJ8XgBuaXg88CYTX0hZ6Hz7mmjlFI
+         oGPzFCdOlDLi+rjkE5yioYIDFFqalQE3nyE3ubc0kj8gkBnOaPPsq9fr+z/JNU0gnyFM
+         Pnzc3K34vXQwHOMybS7za7vjamibEnI8z14IMn/8OPSQUm7OdrBNhhKd06O07+a/cgNT
+         r78g==
+X-Gm-Message-State: AOAM533I8Xe/5Uu9NuOWu0KAH605KvIqWUOwyBj28q5mp3tx8nUvONkz
+        GkJUsfC89mxwoEI/IA6rXBclqt5VxR9ipGTi
+X-Google-Smtp-Source: ABdhPJxdTMt66p4c6f3Rf9V54y7mtfnp7MA4ljeEQiInYcxuJT+Ov18Ei0wjmalBGBtqV4Dbl1SNMw==
+X-Received: by 2002:aa7:8d8b:0:b029:19e:1081:77af with SMTP id i11-20020aa78d8b0000b029019e108177afmr66242908pfr.78.1609797255745;
+        Mon, 04 Jan 2021 13:54:15 -0800 (PST)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id n7sm56765924pfn.141.2021.01.04.13.54.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jan 2021 13:54:15 -0800 (PST)
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        Kyle Anderson <kylea@netflix.com>,
+        Manas Alekar <malekar@netflix.com>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Rob Gulewich <rgulewich@netflix.com>,
+        Zoran Simic <zsimic@netflix.com>, stable@vger.kernel.org
+Subject: [PATCH v2] fs: Validate umount flags before looking up path in ksys_umount
+Date:   Mon,  4 Jan 2021 13:54:07 -0800
+Message-Id: <20210104215407.10161-1-sargun@sargun.me>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jAiqyFg_BUHh_bJRG-BqzvOwthykijRapB_8i6VtwTmQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 04, 2021 at 12:13:02PM -0800, Dan Williams wrote:
-> On Thu, Dec 31, 2020 at 8:29 PM Randy Dunlap <rdunlap@infradead.org> wrote:
-> > +++ lnx-511-rc1/fs/dax.c
-> > @@ -25,6 +25,7 @@
-> >  #include <linux/sizes.h>
-> >  #include <linux/mmu_notifier.h>
-> >  #include <linux/iomap.h>
-> > +#include <asm/page.h>
-> 
-> I would expect this to come from one of the linux/ includes like
-> linux/mm.h. asm/ headers are implementation linux/ headers are api.
+ksys_umount was refactored to into split into another function
+(path_umount) to enable sharing code. This changed the order that flags and
+permissions are validated in, and made it so that user_path_at was called
+before validating flags.
 
-It does indeed come from linux/mm.h already.  And a number of
-other random places, including linux/serial.h.  Our headers are a mess,
-but they shouldn't be made worse by adding _this_ include.  So I
-second Dan's objection here.
+Unfortunately, libfuse2[1] and libmount[2] rely on the old flag validation
+behaviour to determine whether or not the kernel supports UMOUNT_NOFOLLOW.
+The other path that this validation is being checked on is
+init_umount->path_umount->can_umount. That's all internal to the kernel. We
+can safely move flag checking to ksys_umount, and let other users of
+path_umount know they need to perform their own validation.
 
-> Once you drop that then the subject of this patch can just be "arc:
-> add a copy_user_page() implementation", and handled by the arc
-> maintainer (or I can take it with Vineet's ack).
-> 
-> >  #include <asm/pgalloc.h>
-> 
-> Yes, this one should have a linux/ api header to front it, but that's
-> a cleanup for another day.
+[1]: https://github.com/libfuse/libfuse/blob/9bfbeb576c5901b62a171d35510f0d1a922020b7/util/fusermount.c#L403
+[2]: https://github.com/karelzak/util-linux/blob/7ed579523b556b1270f28dbdb7ee07dee310f157/libmount/src/context_umount.c#L813
 
-Definitely more involved.
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Fixes: 41525f56e256 ("fs: refactor ksys_umount")
+---
+ fs/namespace.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index cebaa3e81794..752f82121dd4 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1710,8 +1710,6 @@ static int can_umount(const struct path *path, int flags)
+ {
+ 	struct mount *mnt = real_mount(path->mnt);
+ 
+-	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
+-		return -EINVAL;
+ 	if (!may_mount())
+ 		return -EPERM;
+ 	if (path->dentry != path->mnt->mnt_root)
+@@ -1725,6 +1723,13 @@ static int can_umount(const struct path *path, int flags)
+ 	return 0;
+ }
+ 
++
++/*
++ * path_umount - unmount by path
++ *
++ * path_umount does not check the validity of flags. It is up to the caller
++ * to ensure that it only contains valid umount options.
++ */
+ int path_umount(struct path *path, int flags)
+ {
+ 	struct mount *mnt = real_mount(path->mnt);
+@@ -1746,6 +1751,10 @@ static int ksys_umount(char __user *name, int flags)
+ 	struct path path;
+ 	int ret;
+ 
++	/* Check flag validity first to allow probing of supported flags */
++	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
++		return -EINVAL;
++
+ 	if (!(flags & UMOUNT_NOFOLLOW))
+ 		lookup_flags |= LOOKUP_FOLLOW;
+ 	ret = user_path_at(AT_FDCWD, name, lookup_flags, &path);
+-- 
+2.25.1
 
