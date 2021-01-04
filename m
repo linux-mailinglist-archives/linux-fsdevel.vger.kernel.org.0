@@ -2,112 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 965FF2E9D82
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 19:55:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 069C62E9D86
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 19:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbhADSyq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 13:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49416 "EHLO mail.kernel.org"
+        id S1727032AbhADSz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 13:55:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbhADSyp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 13:54:45 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7A36821D1B;
-        Mon,  4 Jan 2021 18:54:04 +0000 (UTC)
+        id S1726330AbhADSz6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 4 Jan 2021 13:55:58 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 48B2121D1B;
+        Mon,  4 Jan 2021 18:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609786444;
-        bh=ALjPf9mA+5qsZKZg6AOgKpgqT+RTFmaxS7GgH34EOpE=;
+        s=k20201202; t=1609786517;
+        bh=MpFc3N5sadh45HXZYPKekhePp7BQUpn3XZfR02GWyfg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AVibMkrVYs9xlvjjyN8JjyHSKImCnKlV3z6l7v9mSJjWoYSzmSCPQnGQc8ZosZBH7
-         7S+i6Ks2iM5yLpSZeCUr6CztNcWpxfuZZbIONbbBwnEnWmcYBr72TqTAy4AlWc0WZC
-         V7ytivWEVlUpoR45tJRG/Equ96CDSI+ci7Prvt7y9u7ieO7FOf+DeNADjZqRYfAgRk
-         Z4VhOBrRYr00qBa5dTAnpr29TaXwxgiXQJkFN7+Bw1hI4J6oS1YcAsM6lHA7WFWDlH
-         FiaBYebXIvsYSIg5fl34AIClCFYI3uQkjvLrr5TRVgNMxTi70PT3WHw7W/cxeSz7tf
-         d6FgdGQJTL9Dw==
-Date:   Mon, 4 Jan 2021 10:54:02 -0800
+        b=ucvmp3lUBV56HNYQtbhj2Qbgf7LWzLtjhc9G0GFdCGTefXE76a6rgCaUF1wLwDwMH
+         ojryTtKX9sQavzDnaXkztQ658g6CV2CzJo8WYW+Ui/rhdxiLt12gvhA9gvEghLFCHG
+         828NFWjf6PVM+eoy+9mtf5syGUcsbrfpKaSKrr0z3XH3x76oqXnRh5CMpUaSF8sKwE
+         7IRIguR0lOlYN2M3kKm+b8P6yOfm0hmN+yZz+NnmiN/hVOgr/9BmphrMuR1YBt9bWG
+         zusE8QL4VRm/6X3fc/DdW/fLB1n6W+SRvQ1Nzr/R/8U88edLi5S8Y/ojsp5TXoi5c9
+         58WYprSuKZyWw==
+Date:   Mon, 4 Jan 2021 10:55:15 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH] fs/inode.c: make inode_init_always() initialize i_ino to
- 0
-Message-ID: <X/NkSg4i7h5h4+Wc@sol.localdomain>
-References: <20201031004420.87678-1-ebiggers@kernel.org>
- <20201106175205.GE845@sol.localdomain>
- <X7gP9iuTuRp9MHpP@sol.localdomain>
- <X8gE01JQANXhenMC@gmail.com>
+To:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] vfs: don't unnecessarily clone write access for
+ writable fds
+Message-ID: <X/Nkk4rlS43W90TV@sol.localdomain>
+References: <20200922164418.119184-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <X8gE01JQANXhenMC@gmail.com>
+In-Reply-To: <20200922164418.119184-1-ebiggers@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 02, 2020 at 01:19:15PM -0800, Eric Biggers wrote:
-> On Fri, Nov 20, 2020 at 10:50:30AM -0800, Eric Biggers wrote:
-> > On Fri, Nov 06, 2020 at 09:52:05AM -0800, Eric Biggers wrote:
-> > > On Fri, Oct 30, 2020 at 05:44:20PM -0700, Eric Biggers wrote:
-> > > > From: Eric Biggers <ebiggers@google.com>
-> > > > 
-> > > > Currently inode_init_always() doesn't initialize i_ino to 0.  This is
-> > > > unexpected because unlike the other inode fields that aren't initialized
-> > > > by inode_init_always(), i_ino isn't guaranteed to end up back at its
-> > > > initial value after the inode is freed.  Only one filesystem (XFS)
-> > > > actually sets set i_ino back to 0 when freeing its inodes.
-> > > > 
-> > > > So, callers of new_inode() see some random previous i_ino.  Normally
-> > > > that's fine, since normally i_ino isn't accessed before being set.
-> > > > There can be edge cases where that isn't necessarily true, though.
-> > > > 
-> > > > The one I've run into is that on ext4, when creating an encrypted file,
-> > > > the new file's encryption key has to be set up prior to the jbd2
-> > > > transaction, and thus prior to i_ino being set.  If something goes
-> > > > wrong, fs/crypto/ may log warning or error messages, which normally
-> > > > include i_ino.  So it needs to know whether it is valid to include i_ino
-> > > > yet or not.  Also, on some files i_ino needs to be hashed for use in the
-> > > > crypto, so fs/crypto/ needs to know whether that can be done yet or not.
-> > > > 
-> > > > There are ways this could be worked around, either in fs/crypto/ or in
-> > > > fs/ext4/.  But, it seems there's no reason not to just fix
-> > > > inode_init_always() to do the expected thing and initialize i_ino to 0.
-> > > > 
-> > > > So, do that, and also remove the initialization in jfs_fill_super() that
-> > > > becomes redundant.
-> > > > 
-> > > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > > ---
-> > > >  fs/inode.c     | 1 +
-> > > >  fs/jfs/super.c | 1 -
-> > > >  2 files changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/fs/inode.c b/fs/inode.c
-> > > > index 9d78c37b00b81..eb001129f157c 100644
-> > > > --- a/fs/inode.c
-> > > > +++ b/fs/inode.c
-> > > > @@ -142,6 +142,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
-> > > >  	atomic_set(&inode->i_count, 1);
-> > > >  	inode->i_op = &empty_iops;
-> > > >  	inode->i_fop = &no_open_fops;
-> > > > +	inode->i_ino = 0;
-> > > >  	inode->__i_nlink = 1;
-> > > >  	inode->i_opflags = 0;
-> > > >  	if (sb->s_xattr)
-> > > > diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-> > > > index b2dc4d1f9dcc5..1f0ffabbde566 100644
-> > > > --- a/fs/jfs/super.c
-> > > > +++ b/fs/jfs/super.c
-> > > > @@ -551,7 +551,6 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
-> > > >  		ret = -ENOMEM;
-> > > >  		goto out_unload;
-> > > >  	}
-> > > > -	inode->i_ino = 0;
-> > > >  	inode->i_size = i_size_read(sb->s_bdev->bd_inode);
-> > > >  	inode->i_mapping->a_ops = &jfs_metapage_aops;
-> > > >  	inode_fake_hash(inode);
-> > > > 
-> > > 
-> > > Al, any thoughts on this?
+On Tue, Sep 22, 2020 at 09:44:18AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Ping.
+> There's no need for mnt_want_write_file() to increment mnt_writers when
+> the file is already open for writing, provided that
+> mnt_drop_write_file() is changed to conditionally decrement it.
+> 
+> We seem to have ended up in the current situation because
+> mnt_want_write_file() used to be paired with mnt_drop_write(), due to
+> mnt_drop_write_file() not having been added yet.  So originally
+> mnt_want_write_file() had to always increment mnt_writers.
+> 
+> But later mnt_drop_write_file() was added, and all callers of
+> mnt_want_write_file() were paired with it.  This makes the compatibility
+> between mnt_want_write_file() and mnt_drop_write() no longer necessary.
+> 
+> Therefore, make __mnt_want_write_file() and __mnt_drop_write_file() skip
+> incrementing mnt_writers on files already open for writing.  This
+> removes the only caller of mnt_clone_write(), so remove that too.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> v3: added note to porting file.
+> v2: keep the check for emergency r/o remounts.
+> 
+>  Documentation/filesystems/porting.rst |  7 ++++
+>  fs/namespace.c                        | 53 ++++++++++-----------------
+>  include/linux/mount.h                 |  1 -
+>  3 files changed, 27 insertions(+), 34 deletions(-)
 
 Ping.
