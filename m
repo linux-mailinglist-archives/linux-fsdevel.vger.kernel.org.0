@@ -2,129 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BBF12E9EB6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 21:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB232E9EDE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 21:31:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbhADUNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 15:13:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56786 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727814AbhADUNt (ORCPT
+        id S1727814AbhADUad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 15:30:33 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:40677 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725840AbhADUad (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 15:13:49 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 681A0C061793
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Jan 2021 12:13:09 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id n26so38418442eju.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Jan 2021 12:13:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7kOBICLhgLGGyrBsGRMV3d/XVZVOrn09qft6qb67hiE=;
-        b=b7+VQwx/HUQzT1Lln1PrW9cd3nW1D010dCcBMbiDuL8w8T2cMiST0QajPYCyO9SBTy
-         E+7xVOhLrFVJHR+eUx1Ij+VS2X57fazwKoDionRO4qDeMd7X03I234SRmEUAPqe2R5Xa
-         ILlc302XjgoH5Sb9Yqfte/wMcpHbdyYWLbrxXh4dys0bF7YG4zkHLzESiH5c7HdCyToB
-         1fXlQ/L7kIH37aSQ7TFVTIolgaJRkFT5ppz+EOR/Qk4YOCFsVgzztEwTaOK4xAnSZ/xw
-         nNEP6gn0mObJwoCPXe0QJbplu6Itl2Ty79I28i8dSDWE0XtVR5Sxh2PCd/D8T2JoHd3K
-         JLAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7kOBICLhgLGGyrBsGRMV3d/XVZVOrn09qft6qb67hiE=;
-        b=F5ysZMAfnpBY51oA2235vojsdklcNFQWqQK1vjrsNouEAeb3Nhvu2xDA/RVIaI1NDS
-         CGB0ug6w+GCzr+LL/Ith2M5dXB+ZUcnavRtzYNqrmSS9Pcp2s0yEdLijjramcBAG/Xtq
-         rQHbGw3SkBJl6IzEqaDYiTPBqrMAIJQtsqqZpIV4Dvd9vdLhvzTGT8ubDLPaQleJFxKK
-         2f/RLp2lgph1qZ4RELqnGeyQX/EU0TXuGT89RJgxY3fDrqIO6ThEo1EYHYbfl6nsAAZV
-         kuADXTd3/qbK1E9JT01YZCqt1poFXNR8o/exWecjknE54dcD9yFowOjEQxja1cUFkzSF
-         xVmg==
-X-Gm-Message-State: AOAM530R0/fBjXJThYOh9vXatDYJo5OxZXf1jiowvmZllodL89Ijyx78
-        Pdm7ZanTu2yuq7CAN6yvCfVNrIjI1WdyuwrkWm9DCA==
-X-Google-Smtp-Source: ABdhPJy+4iAG8xX6k5boBafJrxqqiEEzN3EesBcv4x2KpEgiPAMRNtZVgnB3PFS5lgHiTfJrc6ChogC2RZDjLmvXQ/E=
-X-Received: by 2002:a17:906:2707:: with SMTP id z7mr68530499ejc.418.1609791188031;
- Mon, 04 Jan 2021 12:13:08 -0800 (PST)
+        Mon, 4 Jan 2021 15:30:33 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id C60945C01B2;
+        Mon,  4 Jan 2021 15:29:26 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 04 Jan 2021 15:29:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=L4o1gT+9Nmi0578JQUpjoRZokjP
+        2JxKpsVmdouqDL2Y=; b=VGQ0HerEoQmkJXMmFRbzzU4+J1AoRwwt0qwyTay2ZSx
+        5HK8iQdhi641M01S7QEONTthzMoXmjPKqQatTRjlvKi7A/Hiqsd3dGS4v4bXT3KU
+        Tzc9QwOTT3K2km12B/zoRjPIzrSiIb6j0xxKqhYoYNnk4fj/aI82Zypm5hpHVuD0
+        shsyxpjpPbyrWjcDPDy+H5sv2oyRdI/UYtyP7Qhms7WHeZg+7jmRCD0oeipwwpy6
+        PGTXWsa7z0f9oOB/NeTh6v+Fph/FOuulVX1hNilaQ6sSR11KnEAUC8A9kifHxXu/
+        mHxNLdm5AgOQZ+qQv+f74sC9CXSuwz8R8cMaNyIxYBA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=L4o1gT
+        +9Nmi0578JQUpjoRZokjP2JxKpsVmdouqDL2Y=; b=glCIRr71LLSuL9ADgG9Xa1
+        wtKFMKWtvFzUdYzJotxLLMBrnA/gosHywKpMb6uBrjXqdFdvccb91ty5xJnDJpHw
+        uOXe7mZ83fSingi18PcsKVyAYW4zjDwNVZUCvEKcz6QXA40j5WOdBiup66qFZYpQ
+        u9NgR/zy9vZWYqYtGFzovtlK3ZoRV0WTGQelBzLXljoawpb+Oo9qKMLm6QS8e8cs
+        UUc1A5LUG+pE4lD2XqIiaSAwQ4nSOXbn51Jipri+JrxYxEXJLplKk3kTmVwSgLKi
+        qF2ZWx5QLOVFagcqkEOWBvyfXXZYeQBGzQIfKleq2f0tjubOlmUqizFuOIXGFhzg
+        ==
+X-ME-Sender: <xms:pnrzXzyhJrO1xOFobn8G7-zRymlkjW6teC9ZEx23Cu7avuQajEUbBg>
+    <xme:pnrzX2vcNPYDHaonwd1-8vKRCjkmEWDU0GMfKeSchBTNHpjzQOtzggbpDwimWB7sR
+    LSMch-fESQTmOsb2g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdeffedgudeflecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjsehttd
+    ertddttddvnecuhfhrohhmpeetnhgurhgvshcuhfhrvghunhguuceorghnughrvghssegr
+    nhgrrhgriigvlhdruggvqeenucggtffrrghtthgvrhhnpedukefhkeelueegveetheelff
+    ffjeegleeuudelfeefuedtleffueejfffhueffudenucfkphepieejrdduiedtrddvudej
+    rddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghnughrvghssegrnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:pnrzXw0PGdeUb0WAG7DSLqsVlgBx3vc5-Gms6OWnuKK_kmmFEpVbDQ>
+    <xmx:pnrzXx_9WVqRoWRzMRlKMCMTzbMGt8GQGdiY1RRQYhsZ9pHiYXlmYg>
+    <xmx:pnrzXxMzYS89WK5idbN35yK-MYgpLXaY1DgwDRgBbt_Uiwlk2kghJg>
+    <xmx:pnrzX5FAbDIm30H8Jib0CLgS1agt5jZ1kBjQ_c1wnAHKx_Iu1Q_P1Q>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 3799D240057;
+        Mon,  4 Jan 2021 15:29:26 -0500 (EST)
+Date:   Mon, 4 Jan 2021 12:29:24 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
+ extents?
+Message-ID: <20210104202924.ugwjnbo376t3jad2@alap3.anarazel.de>
+References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
+ <X/NpsZ8tSPkCwsYE@mit.edu>
 MIME-Version: 1.0
-References: <20210101042914.5313-1-rdunlap@infradead.org>
-In-Reply-To: <20210101042914.5313-1-rdunlap@infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 4 Jan 2021 12:13:02 -0800
-Message-ID: <CAPcyv4jAiqyFg_BUHh_bJRG-BqzvOwthykijRapB_8i6VtwTmQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fs/dax: include <asm/page.h> to fix build error on ARC
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel test robot <lkp@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vgupts@synopsys.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <X/NpsZ8tSPkCwsYE@mit.edu>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 31, 2020 at 8:29 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> fs/dax.c uses copy_user_page() but ARC does not provide that interface,
-> resulting in a build error.
->
-> Provide copy_user_page() in <asm/page.h> (beside copy_page()) and
-> add <asm/page.h> to fs/dax.c to fix the build error.
->
-> ../fs/dax.c: In function 'copy_cow_page_dax':
-> ../fs/dax.c:702:2: error: implicit declaration of function 'copy_user_page'; did you mean 'copy_to_user_page'? [-Werror=implicit-function-declaration]
->
-> Fixes: cccbce671582 ("filesystem-dax: convert to dax_direct_access()")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Vineet Gupta <vgupta@synopsys.com>
-> Cc: linux-snps-arc@lists.infradead.org
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Acked-by: Vineet Gupta <vgupts@synopsys.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-nvdimm@lists.01.org
-> ---
-> v2: rebase, add more Cc:
->
->  arch/arc/include/asm/page.h |    1 +
->  fs/dax.c                    |    1 +
->  2 files changed, 2 insertions(+)
->
-> --- lnx-511-rc1.orig/fs/dax.c
-> +++ lnx-511-rc1/fs/dax.c
-> @@ -25,6 +25,7 @@
->  #include <linux/sizes.h>
->  #include <linux/mmu_notifier.h>
->  #include <linux/iomap.h>
-> +#include <asm/page.h>
+Hi,
 
-I would expect this to come from one of the linux/ includes like
-linux/mm.h. asm/ headers are implementation linux/ headers are api.
+On 2021-01-04 14:17:05 -0500, Theodore Ts'o wrote:
+> One thing to note is that there are some devices which support a write
+> zeros operation, but where it is *less* performant than actually
+> writing zeros via DMA'ing zero pages.  Yes, that's insane.
+> Unfortunately, there are a insane devices out there....
 
-Once you drop that then the subject of this patch can just be "arc:
-add a copy_user_page() implementation", and handled by the arc
-maintainer (or I can take it with Vineet's ack).
+That doesn't surprise me at all, unfortunately. I'm planning to send a
+proposal to allow disabling a device's use of fua for similar reasons...
 
->  #include <asm/pgalloc.h>
 
-Yes, this one should have a linux/ api header to front it, but that's
-a cleanup for another day.
+> That doesn't meant that your proposal shouldn't be adopted.  But it
+> would be a good idea to have some kind of way to either allow some
+> kind of tuning knob to disable the user of zeroout (either in the
+> block device, file system, or in userspace), and/or some kind of way
+> to try to automatically figure out whether using zeroout is actually a
+> win, since most users aren't going to be up to adjusting a manual
+> tuning knob.
 
->
->  #define CREATE_TRACE_POINTS
-> --- lnx-511-rc1.orig/arch/arc/include/asm/page.h
-> +++ lnx-511-rc1/arch/arc/include/asm/page.h
-> @@ -10,6 +10,7 @@
->  #ifndef __ASSEMBLY__
->
->  #define clear_page(paddr)              memset((paddr), 0, PAGE_SIZE)
-> +#define copy_user_page(to, from, vaddr, pg)    copy_page(to, from)
->  #define copy_page(to, from)            memcpy((to), (from), PAGE_SIZE)
->
->  struct vm_area_struct;
+A block device know seems to make sense to me. There already is
+  /sys/block/*/queue/write_zeroes_max_bytes
+it seems like it could make sense to add a sibling entry to allow tuning
+that? Presumably with a quirks (as suggested by Matthew) to choose a
+sensible default?
+
+It's not quite analogous, but there's for
+max_hw_sectors_kb/max_sectors_kb and discard_max_bytes /
+discard_max_hw_bytes, and it seems like something vaguely in that
+direction could make sense?
+
+Greetings,
+
+Andres Freund
