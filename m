@@ -2,84 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F862E9CE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 19:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD4412E9CF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 19:21:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbhADSSK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 13:18:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38948 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbhADSSJ (ORCPT
+        id S1727319AbhADSUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 13:20:46 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:48022 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbhADSUp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 13:18:09 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51D26C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Jan 2021 10:17:29 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id 23so66481240lfg.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Jan 2021 10:17:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Nxs/g6TU6k+3ccAxWF3RmI3wwmsghsbxSfcyPJnj/yE=;
-        b=aU3EveDTHVgrRuQoFlRYqzfsZL5PVBtqBHAghkzv90SxCacKkYgqK0oz8N2aFLuSWv
-         o9YlFu+tAfUMqjhpA9cSRvWsPTjus8T+Og3w33OQsA3aR8vIGht1AH7jvtAP8kPvzaS/
-         L86nkINnFDxWEccDGvypL8FSTXbiRq6Kack1Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Nxs/g6TU6k+3ccAxWF3RmI3wwmsghsbxSfcyPJnj/yE=;
-        b=jHMNsDgvAopIwKnwRZnTKYjs8o5qdYJCJ1F37yv9XDGySgmjd7gG/gttHz9EYpMbJo
-         vAem4OJsDRkuQ8NjbiJcqTMmvrBqfqi8EB/7WNFdlAjDIs7CDi/R1aRAXw33gEluUEoN
-         ObqMv+KWLZlqKyOMdA4X/5F32l9BUumV60jGW1MDU+SItgv+SeKg0UsCH9ufUaBiWDzk
-         +0+tn9QqYyNCozOE97skgAyDNBAeTvHgOgeJ0s344PuB+FN9tt9C26uhjJI1CuDpPm6D
-         spMBL6UL0BVG/1E9WELZqC563Igp7ECiSwvfAzGHWkFwhFuBVDaXenQjRkqoQ1dHtR0U
-         bqmA==
-X-Gm-Message-State: AOAM530STAQr0LwMcdjpzc76hfk2FVJ9rM5Ckcl1JheZ3lLkgTDAoxR/
-        xf0VXJOswUAR2n0XR3UGlG4HMnzh3WykVA==
-X-Google-Smtp-Source: ABdhPJxJFE3Bow9rNGEJEdiWhsmFHH90I/N7hj3VeHKP+2abdNmflsYRdCyAX1haO/3OkzV2VorO2w==
-X-Received: by 2002:a19:8210:: with SMTP id e16mr17778617lfd.69.1609784247426;
-        Mon, 04 Jan 2021 10:17:27 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id s16sm8683876ljj.34.2021.01.04.10.17.26
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jan 2021 10:17:26 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id h205so66548339lfd.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Jan 2021 10:17:26 -0800 (PST)
-X-Received: by 2002:a2e:9ad7:: with SMTP id p23mr34245988ljj.465.1609784245871;
- Mon, 04 Jan 2021 10:17:25 -0800 (PST)
+        Mon, 4 Jan 2021 13:20:45 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104Hwh5J158233;
+        Mon, 4 Jan 2021 18:20:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=TflZweK4yN8+HOp7rLn3uJumfxqV/idgYDk9wA/ocYw=;
+ b=a5Fd/hETnYgFYvRCrQ5pg4wJZ49Zhojgl5ifOmBpKXv8iDs5K86Y7Di0A8Eq7CyI0ofp
+ 1VvbqF6wPYDpuznjtUrXNN6WTjKk+/qpl09y0x42ApBc3E0IuIHIkfC48LdjjwdztPUj
+ pn0kFLHq0oGEhUGlcHQDHHTMGhXL0Fn1fS04dvzWIzWZ2wacp3vKDb+rLHwXZVOIHIVp
+ Sh0FwxyZ/EFh+xCEeQKoC2tG/iqyynHskStlYNFeR2VGsCGVJHPS9x6I9ZZyEaUQP/xh
+ S5/6XdfxUrD2RBRYfHbkTyLSJuv2Yr5BgGDSLFPhZInabRave67eS4S9bwGavNpQXOWH wA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 35tebann0y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 04 Jan 2021 18:20:02 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104I0QMg103721;
+        Mon, 4 Jan 2021 18:20:01 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 35v4rag2ug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Jan 2021 18:20:01 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 104IJxK0027721;
+        Mon, 4 Jan 2021 18:19:59 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Jan 2021 10:19:58 -0800
+Date:   Mon, 4 Jan 2021 10:19:58 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andres Freund <andres@anarazel.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
+ extents?
+Message-ID: <20210104181958.GE6908@magnolia>
+References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
 MIME-Version: 1.0
-References: <365031.1608567254@warthog.procyon.org.uk> <CAHk-=whRD1YakfPKE72htDBzTKA73x3aEwi44ngYFf4WCk+1kQ@mail.gmail.com>
- <257074.1609763562@warthog.procyon.org.uk>
-In-Reply-To: <257074.1609763562@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 4 Jan 2021 10:17:10 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjFom7xhs5SHcWi1toxrBDwmyhBmVmGOqn9e3g6+bf5sw@mail.gmail.com>
-Message-ID: <CAHk-=wjFom7xhs5SHcWi1toxrBDwmyhBmVmGOqn9e3g6+bf5sw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] afs: Work around strnlen() oops with CONFIG_FORTIFIED_SOURCE=y
-To:     David Howells <dhowells@redhat.com>
-Cc:     Daniel Axtens <dja@axtens.net>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 adultscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101040118
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101040118
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 4, 2021 at 4:32 AM David Howells <dhowells@redhat.com> wrote:
->
-> How about the attached, then?  I
+On Tue, Dec 29, 2020 at 10:28:19PM -0800, Andres Freund wrote:
+> Hi,
+> 
+> For things like database journals using fallocate(0) is not sufficient,
+> as writing into the the pre-allocated data with O_DIRECT | O_DSYNC
+> writes requires the unwritten extents to be converted, which in turn
+> requires journal operations.
+> 
+> The performance difference in a journalling workload (lots of
+> sequential, low-iodepth, often small, writes) is quite remarkable. Even
+> on quite fast devices:
+> 
+>     andres@awork3:/mnt/t3$ grep /mnt/t3 /proc/mounts
+>     /dev/nvme1n1 /mnt/t3 xfs rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota 0 0
+> 
+>     andres@awork3:/mnt/t3$ fallocate -l $((1024*1024*1024)) test_file
+> 
+>     andres@awork3:/mnt/t3$ dd if=/dev/zero of=test_file bs=4096 conv=notrunc iflag=count_bytes count=$((1024*1024*1024)) oflag=direct,dsync
+>     262144+0 records in
+>     262144+0 records out
+>     1073741824 bytes (1.1 GB, 1.0 GiB) copied, 117.587 s, 9.1 MB/s
+> 
+>     andres@awork3:/mnt/t3$ dd if=/dev/zero of=test_file bs=4096 conv=notrunc iflag=count_bytes count=$((1024*1024*1024)) oflag=direct,dsync
+>     262144+0 records in
+>     262144+0 records out
+>     1073741824 bytes (1.1 GB, 1.0 GiB) copied, 3.69125 s, 291 MB/s
+> 
+>     andres@awork3:/mnt/t3$ fallocate -z -l $((1024*1024*1024)) test_file
+> 
+>     andres@awork3:/mnt/t3$ dd if=/dev/zero of=test_file bs=4096 conv=notrunc iflag=count_bytes count=$((1024*1024*1024)) oflag=direct,dsync
+>     z262144+0 records in
+>     262144+0 records out
+>     1073741824 bytes (1.1 GB, 1.0 GiB) copied, 109.398 s, 9.8 MB/s
+> 
+>     andres@awork3:/mnt/t3$ dd if=/dev/zero of=test_file bs=4096 conv=notrunc iflag=count_bytes count=$((1024*1024*1024)) oflag=direct,dsync
+>     262144+0 records in
+>     262144+0 records out
+>     1073741824 bytes (1.1 GB, 1.0 GiB) copied, 3.76166 s, 285 MB/s
+> 
+> 
+> The way around that, from a database's perspective, is obviously to just
+> overwrite the file "manually" after fallocate()ing it, utilizing larger
+> writes, and then to recycle the file.
+> 
+> 
+> But that's a fair bit of unnecessary IO from userspace, and it's IO that
+> the kernel can do more efficiently on a number of types of block
+> devices, e.g. by utilizing write-zeroes.
+> 
+> 
+> Which brings me to $subject:
+> 
+> Would it make sense to add a variant of FALLOC_FL_ZERO_RANGE that
+> doesn't convert extents into unwritten extents, but instead uses
+> blkdev_issue_zeroout() if supported?  Mostly interested in xfs/ext4
+> myself, but ...
+> 
+> Doing so as a variant of FALLOC_FL_ZERO_RANGE seems to make the most
+> sense, as that'd work reasonably efficiently to initialize newly
+> allocated space as well as for zeroing out previously used file space.
+> 
+> 
+> As blkdev_issue_zeroout() already has a fallback path it seems this
+> should be doable without too much concern for which devices have write
+> zeroes, and which do not?
 
-That looks like the right thing, but I didn't check how the name[]
-array (or the overflow[] one) is actually used. But I assume you've
-tested this.
+Question: do you want the kernel to write zeroes even for devices that
+don't support accelerated zeroing?  Since I assume that if the fallocate
+fails you'll fall back to writing zeroes from userspace anyway...
 
-Do you want me to apply the patch as-is, or will I be getting a pull
-request with this (and the number-of-slots calculation thing you
-mention in the commit message)?
+Second question: Would it help to have a FALLOC_FL_DRY_RUN flag that
+could be used to probe if a file supports fallocate without actually
+changing anything?  I'm (separately) pursuing a fix for the loop device
+not being able to figure out if a file actually supports a particular
+fallocate mode.
 
-               Linus
+--D
+
+> Greetings,
+> 
+> Andres Freund
