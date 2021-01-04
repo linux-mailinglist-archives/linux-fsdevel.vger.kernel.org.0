@@ -2,101 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 310C52EA06E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 00:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2C6A2EA0B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 00:26:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbhADXIA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 18:08:00 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29132 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727117AbhADXIA (ORCPT
+        id S1727209AbhADXXC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 18:23:02 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:45114 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbhADXXB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 18:08:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1609801594;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=yVDxwdUBGkQMs4znx48SVYeyk3m6+wNqj8IWaOnvkQE=;
-        b=P9PaqAkirKRww/qXP8ZKqcGmy1OEFszUoI0Rx5sY6ly02SWYDCoEnoEOvWNd4NnxiIXQ2Q
-        qryejQXMiOAnj1zAeUB/yegLNklpqyJstJJ47NJi6mBLwi1E3kWeZWmkFokjNFaE0Sez3Z
-        NQxQJATq9T2vfPQFr6SoRCwaJ5IsrPw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-539-TZyJnsy5OT61xslAofjc3w-1; Mon, 04 Jan 2021 18:06:32 -0500
-X-MC-Unique: TZyJnsy5OT61xslAofjc3w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C8B3107ACE3;
-        Mon,  4 Jan 2021 23:06:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3615B60BE5;
-        Mon,  4 Jan 2021 23:06:29 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     To:;
-Cc:     dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] afs: Fix directory entry name handling
+        Mon, 4 Jan 2021 18:23:01 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104NIkN0157881;
+        Mon, 4 Jan 2021 23:22:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=of7cDloEGBPE5l8WJ889ZLzwlRrbg724FmM0fBM4+OA=;
+ b=GtFrS5/8a9nCTxCjnqVUQa91ZYBEEcVT1X9IWYtCbZXrYMFyvDIpjUQYBht/DXkgUWPF
+ a4k+J08vTkAqjqEY4HeAN76GhVnFDhG2aTfE1qvd3vzixnYWwbFB1uoqPPPtyBtSoujn
+ WLsdwkiDm2K5lx2/XwbJFtLEaD618jhsVxPR4ube9ECoiVwdkG65fZGMK1qubGijhkuP
+ DrMO7GOv7KiWQWjZkI4K9VqP39aIT1uYIyEq6DYZOZ9lZ+Y8OZV7VW2fDj/WzY6Sy24+
+ eAl7Dw6QC5N9/geVG0wgcRV7HxE3FUByL1IZUDai2c0i6gkR5SIfwKcNPP82BMgP2BY5 fw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 35tebappcg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 04 Jan 2021 23:22:00 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104NKJmP089224;
+        Mon, 4 Jan 2021 23:21:59 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 35uxnrut8r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Jan 2021 23:21:59 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 104NLq9j000985;
+        Mon, 4 Jan 2021 23:21:54 GMT
+Received: from localhost (/10.159.240.116)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Jan 2021 23:21:52 +0000
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v4] proc: Allow pid_revalidate() during LOOKUP_RCU
+Date:   Mon,  4 Jan 2021 15:21:22 -0800
+Message-Id: <20210104232123.31378-1-stephen.s.brennan@oracle.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <311221.1609801588.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 04 Jan 2021 23:06:28 +0000
-Message-ID: <311222.1609801588@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101040141
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101040141
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+The pid_revalidate() function drops from RCU into REF lookup mode. When
+many threads are resolving paths within /proc in parallel, this can
+result in heavy spinlock contention on d_lockref as each thread tries to
+grab a reference to the /proc dentry (and drop it shortly thereafter).
 
-Could you pull these two commits, assuming Daniel doesn't object?  The fir=
-st
-is the fix for the strnlen() array limit check and the second fixes the
-calculation of the number of dirent records used to represent any particul=
-ar
-filename length.
+Investigation indicates that it is not necessary to drop RCU in
+pid_revalidate(), as no RCU data is modified and the function never
+sleeps. So, remove the LOOKUP_RCU check.
 
-I've added Tested-bys for Marc Dionne into the branch, but otherwise the
-patches should be the same as have been on the branch since the 23rd (was
-commit 587f19fc90c1).
-
-David
+Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
 ---
-The following changes since commit a409ed156a90093a03fe6a93721ddf4c591eac8=
-7:
+When running running ~100 parallel instances of "TZ=/etc/localtime ps -fe
+>/dev/null" on a 100CPU machine, the %sys utilization reaches 90%, and perf
+shows the following code path as being responsible for heavy contention on
+the d_lockref spinlock:
 
-  Merge tag 'gpio-v5.11-1' of git://git.kernel.org/pub/scm/linux/kernel/gi=
-t/linusw/linux-gpio (2020-12-17 18:07:20 -0800)
+      walk_component()
+        lookup_fast()
+          d_revalidate()
+            pid_revalidate() // returns -ECHILD
+          unlazy_child()
+            lockref_get_not_dead(&nd->path.dentry->d_lockref) <-- contention
 
-are available in the Git repository at:
+By applying this patch, %sys utilization falls to around 60% under the same
+workload. Although this particular workload is a bit contrived, we have seen
+some monitoring scripts which produced similarly high %sys time due to this
+contention.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/afs-fixes-04012021
+Changes in v4:
+- Simplify by unconditionally calling pid_update_inode() from pid_revalidate,
+  and removing the LOOKUP_RCU check.
+Changes in v3:
+- Rather than call pid_update_inode() with flags, create
+  proc_inode_needs_update() to determine whether the call can be skipped.
+- Restore the call to the security hook (see next patch).
+Changes in v2:
+- Remove get_pid_task_rcu_user() and get_proc_task_rcu(), since they were
+  unnecessary.
+- Remove the call to security_task_to_inode().
 
-for you to fetch changes up to 366911cd762db02c2dd32fad1be96b72a66f205d:
+ fs/proc/base.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-  afs: Fix directory entry size calculation (2021-01-04 12:25:19 +0000)
-
-----------------------------------------------------------------
-AFS fixes
-
-----------------------------------------------------------------
-David Howells (2):
-      afs: Work around strnlen() oops with CONFIG_FORTIFIED_SOURCE=3Dy
-      afs: Fix directory entry size calculation
-
- fs/afs/dir.c               | 49 ++++++++++++++++++++++++-----------------=
------
- fs/afs/dir_edit.c          |  6 ++----
- fs/afs/xdr_fs.h            | 25 +++++++++++++++++++----
- include/trace/events/afs.h |  2 ++
- 4 files changed, 51 insertions(+), 31 deletions(-)
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index f52217f432bc..633ef74e8dfd 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1974,19 +1974,18 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+ {
+ 	struct inode *inode;
+ 	struct task_struct *task;
++	int ret = 0;
+ 
+-	if (flags & LOOKUP_RCU)
+-		return -ECHILD;
+-
+-	inode = d_inode(dentry);
+-	task = get_proc_task(inode);
++	rcu_read_lock();
++	inode = d_inode_rcu(dentry);
++	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+ 
+ 	if (task) {
+ 		pid_update_inode(task, inode);
+-		put_task_struct(task);
+-		return 1;
++		ret = 1;
+ 	}
+-	return 0;
++	rcu_read_unlock();
++	return ret;
+ }
+ 
+ static inline bool proc_inode_is_dead(struct inode *inode)
+-- 
+2.25.1
 
