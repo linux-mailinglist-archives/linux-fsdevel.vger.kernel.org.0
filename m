@@ -2,123 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C31D12E9E48
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 20:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C3AD2E9E57
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 20:52:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbhADTn2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 14:43:28 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:34569 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726026AbhADTn2 (ORCPT
+        id S1727783AbhADTw0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 14:52:26 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:43326 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbhADTw0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 14:43:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1609789321;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DFTJFha9FhyF/9pADUAkOyw1Behx7NK51FU77ZYVlXE=;
-        b=D56Y5HjUpc2FfFfUE3thqJ5AZfEB4Dm1wthPNj7sgFGew4LknEiZN8B1bFisxW5atLPCiK
-        yr4v5M4319zYft2HhQpKGwOQ7cFKuMwAVTfQkUpNhX10ksQmGj04roSSzh6/zwatJFj/B3
-        elfOAwrI5wT/zC7am8oL7+czjm775tg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-540-q9QmwUIhOxaGnByj1D9pVA-1; Mon, 04 Jan 2021 14:41:58 -0500
-X-MC-Unique: q9QmwUIhOxaGnByj1D9pVA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F4B510054FF;
-        Mon,  4 Jan 2021 19:41:56 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-2.rdu2.redhat.com [10.10.115.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E59755D765;
-        Mon,  4 Jan 2021 19:41:55 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 6EAA9220BCF; Mon,  4 Jan 2021 14:41:55 -0500 (EST)
-Date:   Mon, 4 Jan 2021 14:41:55 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, amir73il@gmail.com,
-        sargun@sargun.me, miklos@szeredi.hu, willy@infradead.org,
-        jack@suse.cz, neilb@suse.com, viro@zeniv.linux.org.uk, hch@lst.de
-Subject: Re: [PATCH 2/3] vfs: Add a super block operation to check for
- writeback errors
-Message-ID: <20210104194155.GE63879@redhat.com>
-References: <20201221195055.35295-1-vgoyal@redhat.com>
- <20201221195055.35295-3-vgoyal@redhat.com>
- <3b488048b666f22108e7660eb32e10860a75784a.camel@kernel.org>
+        Mon, 4 Jan 2021 14:52:26 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104JhsRt035793;
+        Mon, 4 Jan 2021 19:51:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=aR5E33ngmM7rA62zOVK1kNDHyQ1ZhIMHNofceRK43oY=;
+ b=tZ6PDIrmrYEHFS6MJkkZg39L4P9UbJPfi96nsJzOXI7+dwovQUhsLnxFeQo+B9Uvq+6m
+ dHovtt15YZRSJL1tCLKJOj/FIa0oBOERJDWL+yD6xe7a8cOTbS/YfKi3XouEcMxrsJJO
+ rgd3Ttio6mVEagOCaIcNLq56zQIy2669/WrkV8XgJIy0oGXg+qEgraSGVxASAsByRRvs
+ 7JaYIQ/kzXpZTP+FH1NNk3zHrCcRjAWJn6yWThEk8uuHvaRvFx6NoVcJz26WMdhDUrSe
+ CRgzS+5Vz0kySVly0+wSrJf8vi8gztS5QM4Tg3gnxlUnX+h2qgg39glbKJ27Ki7rShUB 6w== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 35tg8qwyfj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 04 Jan 2021 19:51:22 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104JihXY093653;
+        Mon, 4 Jan 2021 19:51:21 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 35v1f7rp4p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Jan 2021 19:51:21 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 104Jp8Xv017494;
+        Mon, 4 Jan 2021 19:51:08 GMT
+Received: from localhost (/10.159.240.116)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Jan 2021 11:51:07 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 2/2] proc: ensure security hook is called after exec
+In-Reply-To: <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
+References: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
+ <20201219000616.197585-2-stephen.s.brennan@oracle.com>
+ <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
+Date:   Mon, 04 Jan 2021 11:51:07 -0800
+Message-ID: <87pn2k5vmc.fsf@stepbren-lnx.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3b488048b666f22108e7660eb32e10860a75784a.camel@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101040124
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 phishscore=0 bulkscore=0
+ spamscore=0 impostorscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101040124
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 23, 2020 at 07:48:52AM -0500, Jeff Layton wrote:
-> On Mon, 2020-12-21 at 14:50 -0500, Vivek Goyal wrote:
-> > Right now we check for errors on super block in syncfs().
-> > 
-> > ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
-> > 
-> > overlayfs does not update sb->s_wb_err and it is tracked on upper filesystem.
-> > So provide a superblock operation to check errors so that filesystem
-> > can provide override generic method and provide its own method to
-> > check for writeback errors.
-> > 
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  fs/sync.c          | 5 ++++-
-> >  include/linux/fs.h | 1 +
-> >  2 files changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/sync.c b/fs/sync.c
-> > index b5fb83a734cd..57e43a16dfca 100644
-> > --- a/fs/sync.c
-> > +++ b/fs/sync.c
-> > @@ -176,7 +176,10 @@ SYSCALL_DEFINE1(syncfs, int, fd)
-> >  	ret = sync_filesystem(sb);
-> >  	up_read(&sb->s_umount);
-> >  
-> > 
-> > -	ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
-> > +	if (sb->s_op->errseq_check_advance)
-> > +		ret2 = sb->s_op->errseq_check_advance(sb, f.file);
-> > +	else
-> > +		ret2 = errseq_check_and_advance(&sb->s_wb_err, &f.file->f_sb_err);
-> >  
-> > 
-> >  	fdput(f);
-> >  	return ret ? ret : ret2;
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 8667d0cdc71e..4297b6127adf 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1965,6 +1965,7 @@ struct super_operations {
-> >  				  struct shrink_control *);
-> >  	long (*free_cached_objects)(struct super_block *,
-> >  				    struct shrink_control *);
-> > +	int (*errseq_check_advance)(struct super_block *, struct file *);
-> >  };
-> >  
-> > 
-> >  /*
-> 
-> Also, the other super_operations generally don't take a superblock
-> pointer when you pass in a different fs object pointer. This should
-> probably just take a struct file * and then the operation can chase
-> pointers to the superblock from there.
+Stephen Smalley <stephen.smalley.work@gmail.com> writes:
 
-Ok, I will drop super_block * argument and just pass in "struct file *".
+> On Fri, Dec 18, 2020 at 7:06 PM Stephen Brennan
+> <stephen.s.brennan@oracle.com> wrote:
+>>
+>> Smack needs its security_task_to_inode() hook to be called when a task
+>> execs a new executable. Store the self_exec_id of the task and call the
+>> hook via pid_update_inode() whenever the exec_id changes.
+>>
+>> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+>
+> Sorry to be late in responding, but the proc inode security structure
+> needs to be updated not only upon a context-changing exec but also
+> upon a setcon(3) aka write to /proc/self/attr/current just like the
+> uid/gid needs to be updated not only upon a setuid exec but also upon
+> a setuid(2).  I'm also unclear as to why you can't call
+> security_task_to_inode during RCU lookup; it doesn't block/sleep
+> AFAICT.
+> All it does is take a spinlock and update a few fields.
 
-Vivek
+The reason I assumed that we need to drop out of RCU mode to update the
+inode and call the security hooks was simply because that is how the
+code worked originally. I wanted to be conservative in my changes, by
+only leaving RCU mode "when necessary", but this assumed that it was
+necessary to leave RCU mode at all!
 
->  
-> -- 
-> Jeff Layton <jlayton@kernel.org>
-> 
+None of the data in a proc inode (at least, i_mode, i_uid, i_gid) seems
+to be "RCU protected" in the sense that they could not be modified
+during an RCU read critical section. If this were the case, then there
+would have to be some sort of copying and a synchronize_rcu() used
+somewhere.  So it seems that running pid_update_inode() (which does not
+sleep and simply takes some spinlocks) should be safe during RCU mode.
 
+My assumption had originally been that the security_pid_to_inode() calls
+could be liable to sleep. But during this review we've seen that both
+the selinux and smack security_pid_to_inode() implementations are also
+"RCU safe" in that they do not sleep.
+
+So rather than trying to guess when this security hook would like to be
+called, it seems that it would be safe to take the easiest option: just
+execute pid_revalidate() in RCU mode always, for instance with the
+example changes below. Is there anything obviously wrong with this
+approach that I'm missing?
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..105581e51032 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1830,19 +1830,18 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+ {
+ 	struct inode *inode;
+ 	struct task_struct *task;
++	int rv = 0;
+ 
+-	if (flags & LOOKUP_RCU)
+-		return -ECHILD;
+-
+-	inode = d_inode(dentry);
+-	task = get_proc_task(inode);
++	rcu_read_lock();
++	inode = d_inode_rcu(dentry);
++	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+ 
+ 	if (task) {
+ 		pid_update_inode(task, inode);
+-		put_task_struct(task);
+-		return 1;
++		rv = 1;
+ 	}
+-	return 0;
++	rcu_read_unlock();
++	return rv;
+ }
+ 
+ static inline bool proc_inode_is_dead(struct inode *inode)
