@@ -2,96 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3FD02E9723
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 15:23:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 407382E9785
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 15:44:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbhADOXP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 09:23:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58708 "EHLO
+        id S1726810AbhADOn5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 09:43:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727136AbhADOXP (ORCPT
+        with ESMTP id S1726396AbhADOn5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 09:23:15 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95745C061793;
-        Mon,  4 Jan 2021 06:22:34 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id o13so64720527lfr.3;
-        Mon, 04 Jan 2021 06:22:34 -0800 (PST)
+        Mon, 4 Jan 2021 09:43:57 -0500
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29712C061793
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Jan 2021 06:43:17 -0800 (PST)
+Received: by mail-io1-xd2f.google.com with SMTP id o6so25151772iob.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Jan 2021 06:43:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kXTFfeMRZQQpjX/bUjX/VUuqwPxBKyg8TYI+r24zwMc=;
-        b=bL9IjbB8aRoM2Bbdkox5AoGHJ7LmMDhG5X87RhacQffOkK4RDKh9GzBDzsLftnPqjg
-         sjV80SnDAn9HsjTEPA9YkwRPxUyVdnQBmUdeKBb/07ve4M5yhoiJkpnkolbCB1bB7yLF
-         4fIkPhcyWaaJmR3N99kkDhOhqel2j0sPbAgo9zH5cf3zqTnSF3E6HkO8dYrEZDfVrgtX
-         gDhvY0tDgHRPyUCGvBLSvEtKVY+nsdJCQTjGbY4qSfCx/Db8rW+TaQoVlZPjyrkfzeSc
-         n7HoTrR9GUEHLA+Ged8gOt/vkI8SWGZXUvdoC4ZYDH0yQ+Vph9fZX5iKRbus6nq3x+7I
-         EIxw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EGVk4w6jP2DKMQ5Tg3ZhtV3hHEvTAKkxCcA25JB7GiA=;
+        b=YSYFp8hI3gqzNT0VLITElzDPdY7QBuLrppqkSWfBOgWdG3Yt9DVGvcJzHg8hrwHSau
+         9rM7ZvMt6cUzOXrTHC4PixOQBODw/xWal5s541G2m1ypfS7aqQaQRkqYSnfABZaQsOC+
+         4Nlcmpx9pEAdEMOHa2C35tP7JsRqlxUbg8rLrI7eb6Oihho+0fVBivvPyENrMJl0q6EI
+         1a8Cv75/047peKxi/Y43yVT5eBq8CKGcIs8TZZI+8QcjnojZ1C6OgJ+rc8EtzAMcnHp9
+         O3eJhSy0mO+eDlj+n7V4JYlNx2wdTXSonDmk75nAlMwZVpXIRuZvUCfYY911pm+wwerG
+         J3tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kXTFfeMRZQQpjX/bUjX/VUuqwPxBKyg8TYI+r24zwMc=;
-        b=PCljmN9+XRc/74lw5nDuZN9IyJItbYtakmH3+ACqyXdxWOPSk3XxWybE+iUmy+Vhyp
-         vKSN7m8KmA/GAbZaS8HpZdA4HM09qjBv6P/8ihpU26oltpHJLyRqiX5UYtzgJGSmB6y8
-         +PyL6XyfFWMNfpUXSJi7hdoB+QBmvqNyxx3/+9uTHRVeagjpVljdcF8dYDje4tLC4Arf
-         TxWln3AGKP9yCQ9SZtXh36M5KL3FAkPJBHDfFJ02MLRtsAX7txbGBpBR4XTNLHY0lr8x
-         lZ9WURDAx2nO/RtS4pY2VA8h2pyPVaG2DKCoT55dmf4dvXeDNTZLkRZ3WgEuBLW2Gzm1
-         DxBw==
-X-Gm-Message-State: AOAM531vh05Sv1/5stTvVsV5vl8mGRzAQEeDqh5jMCRYPOCVtZ3wV1Kj
-        UmFzHnoazsGveylUV45Iwx79dtgaPYd9X4euxZ8=
-X-Google-Smtp-Source: ABdhPJytbIseJCFq7LhrJXQnsC4iBKXOUNOS6w9t+SOinAywUYi8J+1uiDqH+aTMStFRoDVoeD38KQIiVG21U4iPnlg=
-X-Received: by 2002:a19:c786:: with SMTP id x128mr35713651lff.323.1609770153039;
- Mon, 04 Jan 2021 06:22:33 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EGVk4w6jP2DKMQ5Tg3ZhtV3hHEvTAKkxCcA25JB7GiA=;
+        b=tAPF8q5srbMvRmb0zNrGQRtAzawcTkbBrB8b7x84xRTXQhcdP3RQuBjDo+PBUD9N7G
+         u3MW9eN6j53w1T1kjnaOmqV1vxUeltpwy+1alW84tVuwjHMpiPbNtBejick05abh5Xlo
+         uCfn+XPPHkWO4tGQ1Q+GJd1V58hF8sIvOr2xWZECaz9kh3mRettRGLYwKzRmhBQbaCN5
+         WLlladbe7r2oCr4Ya2LA3B8aXUPFfX0O0KTzQB3MZcMuBW2YiFftaPW3lJPqI/TxEPMC
+         juJg/uVus9kp5zRMcRmPZmJ0B9UC7gtuLLjGSdFp+K3q9dJzvd1ZNHt7Fzf81f0tNkUp
+         QoKQ==
+X-Gm-Message-State: AOAM532+nwLET3oVPYJ5rp27IjUnv3kTooIRbLcVDr1LRU5t5UDaoMCb
+        ZOEM94Ew4/4Ici2jEJffqbPXT5myEwkQ3Q==
+X-Google-Smtp-Source: ABdhPJz3wY7JGVjnZv5SRAibNjqVy3kD5YDtB3sQynSckJxhIP0g7MjAo2Isjx/Ct9IdZ00Hxrfcsg==
+X-Received: by 2002:a02:ceb0:: with SMTP id z16mr62414233jaq.40.1609771396524;
+        Mon, 04 Jan 2021 06:43:16 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 12sm42216795ily.42.2021.01.04.06.43.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Jan 2021 06:43:15 -0800 (PST)
+Subject: Re: [PATCHSET v3 0/4] fs: Support for LOOKUP_NONBLOCK /
+ RESOLVE_NONBLOCK
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org
+References: <20201214191323.173773-1-axboe@kernel.dk>
+ <20210104053112.GH3579531@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a51a2db9-716a-be20-5f71-5180394a992b@kernel.dk>
+Date:   Mon, 4 Jan 2021 07:43:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
- <20201219000616.197585-2-stephen.s.brennan@oracle.com> <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Mon, 4 Jan 2021 09:22:22 -0500
-Message-ID: <CAEjxPJ6HBGaPVbWFBTYgDDpDX6duvpJvCinSJP863kM69=qWqg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] proc: ensure security hook is called after exec
-To:     Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210104053112.GH3579531@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 4, 2021 at 9:16 AM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Fri, Dec 18, 2020 at 7:06 PM Stephen Brennan
-> <stephen.s.brennan@oracle.com> wrote:
-> >
-> > Smack needs its security_task_to_inode() hook to be called when a task
-> > execs a new executable. Store the self_exec_id of the task and call the
-> > hook via pid_update_inode() whenever the exec_id changes.
-> >
-> > Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
->
-> Sorry to be late in responding, but the proc inode security structure
-> needs to be updated not only upon a context-changing exec but also
-> upon a setcon(3) aka write to /proc/self/attr/current just like the
-> uid/gid needs to be updated not only upon a setuid exec but also upon
-> a setuid(2).  I'm also unclear as to why you can't call
-> security_task_to_inode during RCU lookup; it doesn't block/sleep
-> AFAICT.
-> All it does is take a spinlock and update a few fields.
+On 1/3/21 10:31 PM, Al Viro wrote:
+> On Mon, Dec 14, 2020 at 12:13:20PM -0700, Jens Axboe wrote:
+>> Hi,
+>>
+>> Wanted to throw out what the current state of this is, as we keep
+>> getting closer to something palatable.
+>>
+>> This time I've included the io_uring change too. I've tested this through
+>> both openat2, and through io_uring as well.
+>>
+>> I'm pretty happy with this at this point. The core change is very simple,
+>> and the users end up being trivial too.
+>>
+>> Also available here:
+>>
+>> https://git.kernel.dk/cgit/linux-block/log/?h=nonblock-path-lookup
+> 
+> OK, pushed with modifications into vfs.git #work.namei
+> 
+> Changes: dropped a couple of pointless pieces in open_last_lookups()/do_open(),
+> moved O_TMPFILE rejection into build_open_flags() (i.e. in the third of your
+> commits).  And no io_uring stuff in there - your #4 is absent.
+> 
+> I've not put it into #for-next yet; yell if you see any problems with that
+> branch, or it'll end up there ;-)
 
-You could also optimize this by comparing the sid similar to how the
-uid/gid are compared and only updating it within the hook if it has
-not yet been initialized or has changed since it was originally set.
+Thanks Al - but you picked out of v3, not v4. Not that there are huge
+changes between the two, from the posting of v4:
+
+- Rename LOOKUP_NONBLOCK -> LOOKUP_CACHED, and ditto for the RESOLVE_
+  flag. This better explains what the feature does, making it more self
+  explanatory in terms of both code readability and for the user visible
+  part.
+
+- Remove dead LOOKUP_NONBLOCK check after we've dropped LOOKUP_RCU
+  already, spotted by Al.
+
+- Add O_TMPFILE to the checks upfront, so we can drop the checking in
+  do_tmpfile().
+
+and it sounds like you did the last two when merging yourself. I do like
+LOOKUP_CACHED better than LOOKUP_NONBLOCK, mostly for the externally
+self-documenting feature of it. What do you think?
+
+Here's the v4 posting, fwiw:
+
+https://lore.kernel.org/linux-fsdevel/20201217161911.743222-1-axboe@kernel.dk/
+
+-- 
+Jens Axboe
+
