@@ -2,108 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB232E9EDE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 21:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6882E9F43
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jan 2021 22:04:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbhADUad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 15:30:33 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:40677 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725840AbhADUad (ORCPT
+        id S1726620AbhADVD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 16:03:29 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38816 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbhADVD2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 15:30:33 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id C60945C01B2;
-        Mon,  4 Jan 2021 15:29:26 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 04 Jan 2021 15:29:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=L4o1gT+9Nmi0578JQUpjoRZokjP
-        2JxKpsVmdouqDL2Y=; b=VGQ0HerEoQmkJXMmFRbzzU4+J1AoRwwt0qwyTay2ZSx
-        5HK8iQdhi641M01S7QEONTthzMoXmjPKqQatTRjlvKi7A/Hiqsd3dGS4v4bXT3KU
-        Tzc9QwOTT3K2km12B/zoRjPIzrSiIb6j0xxKqhYoYNnk4fj/aI82Zypm5hpHVuD0
-        shsyxpjpPbyrWjcDPDy+H5sv2oyRdI/UYtyP7Qhms7WHeZg+7jmRCD0oeipwwpy6
-        PGTXWsa7z0f9oOB/NeTh6v+Fph/FOuulVX1hNilaQ6sSR11KnEAUC8A9kifHxXu/
-        mHxNLdm5AgOQZ+qQv+f74sC9CXSuwz8R8cMaNyIxYBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=L4o1gT
-        +9Nmi0578JQUpjoRZokjP2JxKpsVmdouqDL2Y=; b=glCIRr71LLSuL9ADgG9Xa1
-        wtKFMKWtvFzUdYzJotxLLMBrnA/gosHywKpMb6uBrjXqdFdvccb91ty5xJnDJpHw
-        uOXe7mZ83fSingi18PcsKVyAYW4zjDwNVZUCvEKcz6QXA40j5WOdBiup66qFZYpQ
-        u9NgR/zy9vZWYqYtGFzovtlK3ZoRV0WTGQelBzLXljoawpb+Oo9qKMLm6QS8e8cs
-        UUc1A5LUG+pE4lD2XqIiaSAwQ4nSOXbn51Jipri+JrxYxEXJLplKk3kTmVwSgLKi
-        qF2ZWx5QLOVFagcqkEOWBvyfXXZYeQBGzQIfKleq2f0tjubOlmUqizFuOIXGFhzg
-        ==
-X-ME-Sender: <xms:pnrzXzyhJrO1xOFobn8G7-zRymlkjW6teC9ZEx23Cu7avuQajEUbBg>
-    <xme:pnrzX2vcNPYDHaonwd1-8vKRCjkmEWDU0GMfKeSchBTNHpjzQOtzggbpDwimWB7sR
-    LSMch-fESQTmOsb2g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdeffedgudeflecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjsehttd
-    ertddttddvnecuhfhrohhmpeetnhgurhgvshcuhfhrvghunhguuceorghnughrvghssegr
-    nhgrrhgriigvlhdruggvqeenucggtffrrghtthgvrhhnpedukefhkeelueegveetheelff
-    ffjeegleeuudelfeefuedtleffueejfffhueffudenucfkphepieejrdduiedtrddvudej
-    rddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:pnrzXw0PGdeUb0WAG7DSLqsVlgBx3vc5-Gms6OWnuKK_kmmFEpVbDQ>
-    <xmx:pnrzXx_9WVqRoWRzMRlKMCMTzbMGt8GQGdiY1RRQYhsZ9pHiYXlmYg>
-    <xmx:pnrzXxMzYS89WK5idbN35yK-MYgpLXaY1DgwDRgBbt_Uiwlk2kghJg>
-    <xmx:pnrzX5FAbDIm30H8Jib0CLgS1agt5jZ1kBjQ_c1wnAHKx_Iu1Q_P1Q>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3799D240057;
-        Mon,  4 Jan 2021 15:29:26 -0500 (EST)
-Date:   Mon, 4 Jan 2021 12:29:24 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
- extents?
-Message-ID: <20210104202924.ugwjnbo376t3jad2@alap3.anarazel.de>
-References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
- <X/NpsZ8tSPkCwsYE@mit.edu>
+        Mon, 4 Jan 2021 16:03:28 -0500
+X-Greylist: delayed 1415 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Jan 2021 16:03:28 EST
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kwWYB-006sAQ-KF; Mon, 04 Jan 2021 20:33:59 +0000
+Date:   Mon, 4 Jan 2021 20:33:59 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, Kyle Anderson <kylea@netflix.com>,
+        Manas Alekar <malekar@netflix.com>
+Subject: Re: [PATCH] fs: Validate flags and capabilities before looking up
+ path in ksys_umount
+Message-ID: <20210104203359.GO3579531@ZenIV.linux.org.uk>
+References: <20201223102604.2078-1-sargun@sargun.me>
+ <20210104195127.GN3579531@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <X/NpsZ8tSPkCwsYE@mit.edu>
+In-Reply-To: <20210104195127.GN3579531@ZenIV.linux.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Mon, Jan 04, 2021 at 07:51:27PM +0000, Al Viro wrote:
+> On Wed, Dec 23, 2020 at 02:26:04AM -0800, Sargun Dhillon wrote:
+> > ksys_umount was refactored to into split into another function
+> > (path_umount) to enable sharing code. This changed the order that flags and
+> > permissions are validated in, and made it so that user_path_at was called
+> > before validating flags and capabilities.
+> > 
+> > Unfortunately, libfuse2[1] and libmount[2] rely on the old flag validation
+> > behaviour to determine whether or not the kernel supports UMOUNT_NOFOLLOW.
+> > The other path that this validation is being checked on is
+> > init_umount->path_umount->can_umount. That's all internal to the kernel.
+> > 
+> > [1]: https://github.com/libfuse/libfuse/blob/9bfbeb576c5901b62a171d35510f0d1a922020b7/util/fusermount.c#L403
+> > [2]: https://github.com/karelzak/util-linux/blob/7ed579523b556b1270f28dbdb7ee07dee310f157/libmount/src/context_umount.c#L813
+> 
+> Sorry, I don't like that solution.  If nothing else, it turns path_umount() into
+> a landmine for the future.  Yes, we have a regression, yes, we need to do something
+> about it, but that's not a good way to do that.
+> 
+> FWIW, I would rather separate the check of flags validity from can_umount()
+> and lift _that_ into ksys_umount(), with "path_umount() relies upon the
+> flags being minimally sane" comment slapped at path_umount() definition.
+> The rest of can_umount() really shouldn't be taken out of there.
 
-On 2021-01-04 14:17:05 -0500, Theodore Ts'o wrote:
-> One thing to note is that there are some devices which support a write
-> zeros operation, but where it is *less* performant than actually
-> writing zeros via DMA'ing zero pages.  Yes, that's insane.
-> Unfortunately, there are a insane devices out there....
+I mean something like the following; unlike your variant, may_mount() is left
+where it is.
 
-That doesn't surprise me at all, unfortunately. I'm planning to send a
-proposal to allow disabling a device's use of fua for similar reasons...
+commit a0a6df9afcaf439a6b4c88a3b522e3d05fdef46f
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Mon Jan 4 15:25:34 2021 -0500
 
+    umount(2): move the flag validity checks first
+    
+    Unfortunately, there's userland code that used to rely upon these
+    checks being done before anything else to check for UMOUNT_NOFOLLOW
+    support.  That broke in 41525f56e256 ("fs: refactor ksys_umount").
+    Separate those from the rest of checks and move them to ksys_umount();
+    unlike everything else in there, this can be sanely done there.
+    
+    Reported-by: Sargun Dhillon <sargun@sargun.me>
+    Fixes: 41525f56e256 ("fs: refactor ksys_umount")
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-> That doesn't meant that your proposal shouldn't be adopted.  But it
-> would be a good idea to have some kind of way to either allow some
-> kind of tuning knob to disable the user of zeroout (either in the
-> block device, file system, or in userspace), and/or some kind of way
-> to try to automatically figure out whether using zeroout is actually a
-> win, since most users aren't going to be up to adjusting a manual
-> tuning knob.
-
-A block device know seems to make sense to me. There already is
-  /sys/block/*/queue/write_zeroes_max_bytes
-it seems like it could make sense to add a sibling entry to allow tuning
-that? Presumably with a quirks (as suggested by Matthew) to choose a
-sensible default?
-
-It's not quite analogous, but there's for
-max_hw_sectors_kb/max_sectors_kb and discard_max_bytes /
-discard_max_hw_bytes, and it seems like something vaguely in that
-direction could make sense?
-
-Greetings,
-
-Andres Freund
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d2db7dfe232b..9d33909d0f9e 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1713,8 +1713,6 @@ static int can_umount(const struct path *path, int flags)
+ {
+ 	struct mount *mnt = real_mount(path->mnt);
+ 
+-	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
+-		return -EINVAL;
+ 	if (!may_mount())
+ 		return -EPERM;
+ 	if (path->dentry != path->mnt->mnt_root)
+@@ -1728,6 +1726,7 @@ static int can_umount(const struct path *path, int flags)
+ 	return 0;
+ }
+ 
++// caller is responsible for flags being sane
+ int path_umount(struct path *path, int flags)
+ {
+ 	struct mount *mnt = real_mount(path->mnt);
+@@ -1749,6 +1748,10 @@ static int ksys_umount(char __user *name, int flags)
+ 	struct path path;
+ 	int ret;
+ 
++	// basic validity checks done first
++	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
++		return -EINVAL;
++
+ 	if (!(flags & UMOUNT_NOFOLLOW))
+ 		lookup_flags |= LOOKUP_FOLLOW;
+ 	ret = user_path_at(AT_FDCWD, name, lookup_flags, &path);
