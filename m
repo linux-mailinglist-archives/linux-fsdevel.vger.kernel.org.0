@@ -2,155 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C0C2EB5B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 00:02:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 969932EB62D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 00:29:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731637AbhAEXAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jan 2021 18:00:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727793AbhAEXAH (ORCPT
+        id S1727304AbhAEX2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jan 2021 18:28:30 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:34942 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbhAEX2a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jan 2021 18:00:07 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21ACEC0617A4;
-        Tue,  5 Jan 2021 14:59:04 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id g3so567993plp.2;
-        Tue, 05 Jan 2021 14:59:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wnMlP5mohrX3bvCSvWrNTxzp8rn+yEf+Jg5XouhGMW8=;
-        b=VfKzNUjMJmuArEaHfpqnslSBVuqZOQjrYZbMQtPQjbs3dE0oYJ2cgQ1rN9OkzKriYB
-         QRfZgVB1tjfgE8Uu6nS6zawm4Dyax8d9B7r1Pu3S0Whtox5LxMYX9KD/hKUiE8dS8R9x
-         g777bezaoqX7KjKNgzsr4x6779qhSqO1hgrsYJb660FtfDvZMeKlOknsSkEMbZPfKhY8
-         qbZ5RQ2sw9+O/uMmWcXt4xZIqYTh+9+knsjziZgGeeMlsDCsaAj/SDSgLKN2hI0aMrch
-         0dYurd+5FU+W6D6aXK4OkteMVGsCGlVt8IaA4N2kzWj//PWKAVOXmJxOzcTbs7w6fy9N
-         XYxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wnMlP5mohrX3bvCSvWrNTxzp8rn+yEf+Jg5XouhGMW8=;
-        b=KN7PS8hhH/Mymx9UCQT7EigbgildMQJJHee0TofH13wCz3qVausYS1Tck3zRmPeOW/
-         xl3rNSmeWzmxglCV9pH+McuKjw1/mcgslzC7phiI76QsaF34PrwuV/7+r7ZQzhFGaGln
-         /k+RnOQgQBpFYXNFDS26DIZ4KJfsFjxiRWreH6DHrFoHJAbY8y+UGPuifBIQUGapa9Xn
-         JhAO/exWMbUpjxJEHgo+vVqqMenwTxPm9HnhA62e6vKFcp86Z/y2C8LDU8SFVobho1pM
-         /KUYk+VPuRkUMNnMqnYROjGT9jEQrOdn3re2bz0J7onsQLF+q21PyxF8ap8o9TcCr+9l
-         xnsg==
-X-Gm-Message-State: AOAM530VI8kESG59HShVR/pgLK9sCNJGkRpu5zf0z0X0bH5tjuSHQRZh
-        zpxnbaeHFpFigL8VyXcNMjs=
-X-Google-Smtp-Source: ABdhPJw7TMu00abpfLHlFdGgRt+lmRt41rnt1svrizMh0Lj4ti/rve6qS9uCxXYsPIfEIz31zFZbCw==
-X-Received: by 2002:a17:902:d90c:b029:da:9930:9da7 with SMTP id c12-20020a170902d90cb02900da99309da7mr1668658plz.85.1609887543779;
-        Tue, 05 Jan 2021 14:59:03 -0800 (PST)
-Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
-        by smtp.gmail.com with ESMTPSA id fw12sm244233pjb.43.2021.01.05.14.59.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jan 2021 14:59:02 -0800 (PST)
-From:   Yang Shi <shy828301@gmail.com>
-To:     guro@fb.com, ktkhai@virtuozzo.com, shakeelb@google.com,
-        david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
-        akpm@linux-foundation.org
-Cc:     shy828301@gmail.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [v3 PATCH 09/11] mm: vmscan: don't need allocate shrinker->nr_deferred for memcg aware shrinkers
-Date:   Tue,  5 Jan 2021 14:58:15 -0800
-Message-Id: <20210105225817.1036378-10-shy828301@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210105225817.1036378-1-shy828301@gmail.com>
-References: <20210105225817.1036378-1-shy828301@gmail.com>
+        Tue, 5 Jan 2021 18:28:30 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 105NF5mt170674;
+        Tue, 5 Jan 2021 23:27:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=tyV62G40bD/pUWWd9jFwnRCJ68TPKtBWn9L5iARg8W0=;
+ b=D53IVTKPiz3BFnesbpSctdeFdAosPnXlbG3fMixFG9nTKkaBiQXIAM45D4HATcTWLxJT
+ SnmpjvXL56kguDEKEQvysfaZi8uAMS/+c7BkXLXYZ8Fe97ASTg8hNyEjIuY+mGHHnJSk
+ cdbDdviVdq32Chu/Y/a3FnZv43Z4crxPhvJ21eH8JPU3B+3kr/bkdir9cpJW8W7Q+Eit
+ osCVM3XFiz7ScsL/nubict1Vwkwswh0op/xK0N/tddU/I6+TTQillD3HkjU/ZAy/LRKx
+ jFU1QR+vYmeb02zgW8htptX6MRsyiB+CBwz0JxRiXWge6JOW+fQx7x//L9wcfLrWrlCy NQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 35tebau93t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 05 Jan 2021 23:27:22 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 105NGPXj147406;
+        Tue, 5 Jan 2021 23:25:22 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 35v4rbyp9y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Jan 2021 23:25:22 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 105NPDq2008196;
+        Tue, 5 Jan 2021 23:25:15 GMT
+Received: from localhost (/10.159.141.245)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 05 Jan 2021 15:25:13 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4] proc: Allow pid_revalidate() during LOOKUP_RCU
+In-Reply-To: <20210105195937.GX3579531@ZenIV.linux.org.uk>
+References: <20210104232123.31378-1-stephen.s.brennan@oracle.com>
+ <20210105055935.GT3579531@ZenIV.linux.org.uk>
+ <20210105165005.GV3579531@ZenIV.linux.org.uk>
+ <20210105195937.GX3579531@ZenIV.linux.org.uk>
+Date:   Tue, 05 Jan 2021 15:25:11 -0800
+Message-ID: <87a6tnge5k.fsf@stepbren-lnx.us.oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9855 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 adultscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101050133
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9855 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101050133
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
-allocate shrinker->nr_deferred for such shrinkers anymore.
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-The prealloc_memcg_shrinker() would return -ENOSYS if !CONFIG_MEMCG or memcg is disabled
-by kernel command line, then shrinker's SHRINKER_MEMCG_AWARE flag would be cleared.
-This makes the implementation of this patch simpler.
+> On Tue, Jan 05, 2021 at 04:50:05PM +0000, Al Viro wrote:
+>
+>> LSM_AUDIT_DATA_DENTRY is easy to handle - wrap
+>>                 audit_log_untrustedstring(ab, a->u.dentry->d_name.name);
+>> into grabbing/dropping a->u.dentry->d_lock and we are done.
+>
+> Incidentally, LSM_AUDIT_DATA_DENTRY in mainline is *not* safe wrt
+> rename() - for long-named dentries it is possible to get preempted
+> in the middle of
+>                 audit_log_untrustedstring(ab, a->u.dentry->d_name.name);
+> and have the bugger renamed, with old name ending up freed.  The
+> same goes for LSM_AUDIT_DATA_INODE...
 
-Signed-off-by: Yang Shi <shy828301@gmail.com>
----
- mm/vmscan.c | 33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+In the case of proc_pid_permission(), this preemption doesn't seem
+possible. We have task_lock() (a spinlock) held by ptrace_may_access()
+during this call, so preemption should be disabled:
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index f20ed8e928c2..d9795fb0f1c5 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -340,6 +340,9 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
- {
- 	int id, ret = -ENOMEM;
- 
-+	if (mem_cgroup_disabled())
-+		return -ENOSYS;
-+
- 	down_write(&shrinker_rwsem);
- 	/* This may call shrinker, so it must use down_read_trylock() */
- 	id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
-@@ -424,7 +427,7 @@ static bool writeback_throttling_sane(struct scan_control *sc)
- #else
- static int prealloc_memcg_shrinker(struct shrinker *shrinker)
- {
--	return 0;
-+	return -ENOSYS;
- }
- 
- static void unregister_memcg_shrinker(struct shrinker *shrinker)
-@@ -535,8 +538,20 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
-  */
- int prealloc_shrinker(struct shrinker *shrinker)
- {
--	unsigned int size = sizeof(*shrinker->nr_deferred);
-+	unsigned int size;
-+	int err;
-+
-+	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-+		err = prealloc_memcg_shrinker(shrinker);
-+		if (!err)
-+			return 0;
-+		if (err != -ENOSYS)
-+			return err;
-+
-+		shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
-+	}
- 
-+	size = sizeof(*shrinker->nr_deferred);
- 	if (shrinker->flags & SHRINKER_NUMA_AWARE)
- 		size *= nr_node_ids;
- 
-@@ -544,26 +559,14 @@ int prealloc_shrinker(struct shrinker *shrinker)
- 	if (!shrinker->nr_deferred)
- 		return -ENOMEM;
- 
--	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
--		if (prealloc_memcg_shrinker(shrinker))
--			goto free_deferred;
--	}
- 
- 	return 0;
--
--free_deferred:
--	kfree(shrinker->nr_deferred);
--	shrinker->nr_deferred = NULL;
--	return -ENOMEM;
- }
- 
- void free_prealloced_shrinker(struct shrinker *shrinker)
- {
--	if (!shrinker->nr_deferred)
--		return;
--
- 	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
--		unregister_memcg_shrinker(shrinker);
-+		return unregister_memcg_shrinker(shrinker);
- 
- 	kfree(shrinker->nr_deferred);
- 	shrinker->nr_deferred = NULL;
--- 
-2.26.2
+proc_pid_permission()
+  has_pid_permissions()
+    ptrace_may_access()
+      task_lock()
+      __ptrace_may_access()
+      | security_ptrace_access_check()
+      |   ptrace_access_check -> selinux_ptrace_access_check()
+      |     avc_has_perm()
+      |       avc_audit() // note that has_pid_permissions() didn't get a
+      |                   // flags field to propagate, so flags will not
+      |                   // contain MAY_NOT_BLOCK
+      |         slow_avc_audit()
+      |           common_lsm_audit()
+      |             dump_common_audit_data()
+      task_unlock()
 
+I understand the issue of d_name.name being freed across a preemption is
+more general than proc_pid_permission() (as other callers may have
+preemption enabled). However, it seems like there's another issue here.
+avc_audit() seems to imply that slow_avc_audit() would sleep:
+ 
+static inline int avc_audit(struct selinux_state *state,
+			    u32 ssid, u32 tsid,
+			    u16 tclass, u32 requested,
+			    struct av_decision *avd,
+			    int result,
+			    struct common_audit_data *a,
+			    int flags)
+{
+	u32 audited, denied;
+	audited = avc_audit_required(requested, avd, result, 0, &denied);
+	if (likely(!audited))
+		return 0;
+	/* fall back to ref-walk if we have to generate audit */
+	if (flags & MAY_NOT_BLOCK)
+		return -ECHILD;
+	return slow_avc_audit(state, ssid, tsid, tclass,
+			      requested, audited, denied, result,
+			      a);
+} 
+
+If there are other cases in here where we might sleep, it would be a
+problem to sleep with the task lock held, correct?
