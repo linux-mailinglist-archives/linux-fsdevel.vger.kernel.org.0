@@ -2,248 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57F142EA5B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 08:07:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A762EA5BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 08:12:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725966AbhAEHGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jan 2021 02:06:55 -0500
-Received: from so254-31.mailgun.net ([198.61.254.31]:15684 "EHLO
-        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbhAEHGy (ORCPT
+        id S1726202AbhAEHMQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jan 2021 02:12:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45164 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbhAEHMP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jan 2021 02:06:54 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1609830395; h=References: In-Reply-To: References:
- In-Reply-To: Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=PSD4T8ASrr1pfYU48t/ftAURhWN9+rkwMmpAWedYLBE=; b=Gb/qk8dZYWERcy++PbwzGHx6gIOeNfvkFGNCaKyVjINS0C6niLYjr8XtcLi8pWeKQQSoYTnX
- EPipze5C6y4664txVDl9V2KdRgHlsP0cscB5zjEPhps+H7ZpYSk8PCmKoA4DMEo1w12FOTKk
- Cl8bcgmzrJv0qeA0jWiOCzQWYk0=
-X-Mailgun-Sending-Ip: 198.61.254.31
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 5ff40fcab73be0303d19c447 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 05 Jan 2021 07:05:46
- GMT
-Sender: cgoldswo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2F75DC43462; Tue,  5 Jan 2021 07:05:46 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL
-        autolearn=no autolearn_force=no version=3.4.0
-Received: from cgoldswo-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cgoldswo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 89BFBC433C6;
-        Tue,  5 Jan 2021 07:05:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89BFBC433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=cgoldswo@codeaurora.org
-From:   Chris Goldsworthy <cgoldswo@codeaurora.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Laura Abbott <lauraa@codeaurora.org>,
-        Chris Goldsworthy <cgoldswo@codeaurora.org>
-Subject: [PATCH v2] fs/buffer.c: Revoke LRU when trying to drop buffers
-Date:   Mon,  4 Jan 2021 23:05:33 -0800
-Message-Id: <f97956626c8ddecdc5938c38b58dab5fc24b366a.1609829465.git.cgoldswo@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1609829465.git.cgoldswo@codeaurora.org>
-References: <cover.1609829465.git.cgoldswo@codeaurora.org>
-In-Reply-To: <cover.1609829465.git.cgoldswo@codeaurora.org>
-References: <cover.1609829465.git.cgoldswo@codeaurora.org>
+        Tue, 5 Jan 2021 02:12:15 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73D01C061793;
+        Mon,  4 Jan 2021 23:11:35 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id x15so27729678ilq.1;
+        Mon, 04 Jan 2021 23:11:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9fDC7QQ+tqOU87CZCpxb1J4dIdKIq1eloIxFZr+S9xg=;
+        b=ghlTMQ1faXr+h0xbllew/KvAL1OnHTMjCybq7tQz5gvGYuraYjThdZP7lfJXOP12QQ
+         3lD7Qc7mBbUIzJ5GTsGJfF4UsrXsh9+rp80wd8MZhkY83qZo2MvrLTLIHZeK+vFDp5m8
+         Kq90a8PQwNBsK925Q18Uq5s8dJYLRmw/CQMCZGPlEvhnrxjR7Fw/6l3W0fKV0r2F57gb
+         Jbb0gF4U28W3bHpCjuEgvHznt31WZeskQbYvErCKxYeoZyaLXOxJ8pN0Xwei7qMb+CBX
+         7w5pQqkXVlqrkHrSMj6KZQwa2wwR6o7UQirzMJV1/VgxWyhgXB9B8PUlucVmYSfzeDjl
+         nAHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9fDC7QQ+tqOU87CZCpxb1J4dIdKIq1eloIxFZr+S9xg=;
+        b=PtHhDg8rTDXt8CbJfn34fdh4+Fqm50lsoiOobQ4z5EZJTJgR9Ypx0cIdPyqaYI/ttq
+         m1RNkWf546dpAS90vFgAte7BQVfcnVoLJZko66WitfV722Ab6RBAAWWSPqq+pywHvr3C
+         8Ev3zcnml8uSZStpn7SzUUHOGnUj8kGAMQXUG3PUH6WQ/ec4XXCXJHYWLHcK9Xr79wBN
+         s2oUn4mOHbx+j4gSFPSX6Cewu0CU5VdYcHSN6GhtnwuR9Fpkc+Verb49EZykeFP++hoX
+         h9Xl22m5Wi5cZhiSQfu+D1tyRjS6LkHZ+gzq74OiW3dH9rvuZeth5aSws/MX1bNpnqYS
+         lDJg==
+X-Gm-Message-State: AOAM533rIuE+fLdOw3kH8l12VZ7tkXlgbXH3LpljaXX444BKpoZkUL+K
+        jjYj1w+kpFjLe9QseQO72o02sQwmJDtkZmjiCrtGEJYT1MQ=
+X-Google-Smtp-Source: ABdhPJypOXb4AHmuNXG9iPA0yHFBbz9rXRi6gaK8jfGwkwT3HQTNnqjmxwK96QwnlboERsoGKLQRvILb3zjOY3r3RaU=
+X-Received: by 2002:a05:6e02:1a8e:: with SMTP id k14mr76152018ilv.275.1609830694924;
+ Mon, 04 Jan 2021 23:11:34 -0800 (PST)
+MIME-Version: 1.0
+References: <20201223185044.GQ874@casper.infradead.org> <20201223192940.GA11012@ircssh-2.c.rugged-nimbus-611.internal>
+ <20201223200746.GR874@casper.infradead.org> <20201223202140.GB11012@ircssh-2.c.rugged-nimbus-611.internal>
+ <20201223204428.GS874@casper.infradead.org> <CAOQ4uxjAeGv8x2hBBzHz5PjSDq0Q+RN-ikgqEvAA+XE_U-U5Nw@mail.gmail.com>
+ <20210104151424.GA63879@redhat.com> <CAOQ4uxgiC5Wm+QqD+vbmzkFvEqG6yvKYe_4sR7ZUVfu-=Ys9oQ@mail.gmail.com>
+ <20210104154015.GA73873@redhat.com> <CAOQ4uxhYXeUt2iggM3oubdgr91QPNhUg2PdN128gRvR3rQoy1Q@mail.gmail.com>
+ <20210104224447.GG63879@redhat.com>
+In-Reply-To: <20210104224447.GG63879@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 5 Jan 2021 09:11:23 +0200
+Message-ID: <CAOQ4uxh07Rqj88PDNVqzq9D28rp+Z2aRtPvNoapeaH5iZWJr4Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] overlayfs: Report writeback errors on upper
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
+        NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Chengguang Xu <cgxu519@mykernel.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Laura Abbott <lauraa@codeaurora.org>
+> >
+> > What I would rather see is:
+> > - Non-volatile: first syncfs in every container gets an error (nice to have)
+>
+> I am not sure why are we making this behavior per container. This should
+> be no different from current semantics we have for syncfs() on regular
+> filesystem. And that will provide what you are looking for. If you
+> want single error to be reported in all ovleray mounts, then make
+> sure you have one fd open in each mount after mount, then call syncfs()
+> on that fd.
+>
 
-When a buffer is added to the LRU list, a reference is taken which is
-not dropped until the buffer is evicted from the LRU list. This is the
-correct behavior, however this LRU reference will prevent the buffer
-from being dropped. This means that the buffer can't actually be dropped
-until it is selected for eviction. There's no bound on the time spent
-on the LRU list, which means that the buffer may be undroppable for
-very long periods of time. Given that migration involves dropping
-buffers, the associated page is now unmigratible for long periods of
-time as well. CMA relies on being able to migrate a specific range
-of pages, so these types of failures make CMA significantly
-less reliable, especially under high filesystem usage.
+Ok.
 
-Rather than waiting for the LRU algorithm to eventually kick out
-the buffer, explicitly remove the buffer from the LRU list when trying
-to drop it. There is still the possibility that the buffer
-could be added back on the list, but that indicates the buffer is
-still in use and would probably have other 'in use' indicates to
-prevent dropping.
+> Not sure why overlayfs behavior/semantics should be any differnt
+> than what regular filessytems like ext4/xfs are offering. Once we
+> get page cache sharing sorted out with xfs reflink, then people
+> will not even need overlayfs and be able to launch containers
+> just using xfs reflink and share base image. In that case also
+> they will need to keep an fd open per container they want to
+> see an error in.
+>
+> So my patches exactly provide that. syncfs() behavior is same with
+> overlayfs as application gets it on other filesystems. And to me
+> its important to keep behavior same.
+>
+> > - Volatile: every syncfs and every fsync in every container gets an error
+> >   (important IMO)
+>
+> For volatile mounts, I agree that we need to fail overlayfs instance
+> as soon as first error is detected since mount. And this applies to
+> not only syncfs()/fsync() but to read/write and other operations too.
+>
+> For that we will need additional patches which are floating around
+> to keep errseq sample in overlay and check for errors in all
+> paths syncfs/fsync/read/write/.... and fail fs.
 
-Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
-Signed-off-by: Chris Goldsworthy <cgoldswo@codeaurora.org>
-Cc: Matthew Wilcox <willy@infradead.org>
----
- fs/buffer.c   | 85 +++++++++++++++++++++++++++++++++++++++++++++++++++++++----
- fs/internal.h |  5 ++++
- 2 files changed, 85 insertions(+), 5 deletions(-)
+> But these patches build on top of my patches.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 96c7604..536fb5b 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -48,6 +48,7 @@
- #include <linux/sched/mm.h>
- #include <trace/events/block.h>
- #include <linux/fscrypt.h>
-+#include <linux/xarray.h>
- 
- #include "internal.h"
- 
-@@ -1471,12 +1472,63 @@ static bool has_bh_in_lru(int cpu, void *dummy)
- 	return false;
- }
- 
-+static void __evict_bhs_lru(void *arg)
-+{
-+	struct bh_lru *b = &get_cpu_var(bh_lrus);
-+	struct busy_bhs_container *busy_bhs = arg;
-+	struct buffer_head *bh;
-+	int i;
-+
-+	XA_STATE(xas, &busy_bhs->xarray, 0);
-+
-+	xas_for_each(&xas, bh, busy_bhs->size) {
-+		for (i = 0; i < BH_LRU_SIZE; i++) {
-+			if (b->bhs[i] == bh) {
-+				brelse(b->bhs[i]);
-+				b->bhs[i] = NULL;
-+				break;
-+			}
-+		}
-+
-+		bh = bh->b_this_page;
-+	}
-+
-+	put_cpu_var(bh_lrus);
-+}
-+
-+static bool page_has_bhs_in_lru(int cpu, void *arg)
-+{
-+	struct bh_lru *b = per_cpu_ptr(&bh_lrus, cpu);
-+	struct busy_bhs_container *busy_bhs = arg;
-+	struct buffer_head *bh;
-+	int i;
-+
-+	XA_STATE(xas, &busy_bhs->xarray, 0);
-+
-+	xas_for_each(&xas, bh, busy_bhs->size) {
-+		for (i = 0; i < BH_LRU_SIZE; i++) {
-+			if (b->bhs[i] == bh)
-+				return true;
-+		}
-+
-+		bh = bh->b_this_page;
-+	}
-+
-+	return false;
-+
-+}
- void invalidate_bh_lrus(void)
- {
- 	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
- }
- EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
- 
-+static void evict_bh_lrus(struct busy_bhs_container *busy_bhs)
-+{
-+	on_each_cpu_cond(page_has_bhs_in_lru, __evict_bhs_lru,
-+			 busy_bhs, 1);
-+}
-+
- void set_bh_page(struct buffer_head *bh,
- 		struct page *page, unsigned long offset)
- {
-@@ -3242,14 +3294,36 @@ drop_buffers(struct page *page, struct buffer_head **buffers_to_free)
- {
- 	struct buffer_head *head = page_buffers(page);
- 	struct buffer_head *bh;
-+	struct busy_bhs_container busy_bhs;
-+	int xa_ret, ret = 0;
-+
-+	xa_init(&busy_bhs.xarray);
-+	busy_bhs.size = 0;
- 
- 	bh = head;
- 	do {
--		if (buffer_busy(bh))
--			goto failed;
-+		if (buffer_busy(bh)) {
-+			xa_ret = xa_err(xa_store(&busy_bhs.xarray, busy_bhs.size++,
-+						 bh, GFP_ATOMIC));
-+			if (xa_ret)
-+				goto out;
-+		}
- 		bh = bh->b_this_page;
- 	} while (bh != head);
- 
-+	if (busy_bhs.size) {
-+		/*
-+		 * Check if the busy failure was due to an outstanding
-+		 * LRU reference
-+		 */
-+		evict_bh_lrus(&busy_bhs);
-+		do {
-+			if (buffer_busy(bh))
-+				goto out;
-+		} while (bh != head);
-+	}
-+
-+	ret = 1;
- 	do {
- 		struct buffer_head *next = bh->b_this_page;
- 
-@@ -3259,9 +3333,10 @@ drop_buffers(struct page *page, struct buffer_head **buffers_to_free)
- 	} while (bh != head);
- 	*buffers_to_free = head;
- 	detach_page_private(page);
--	return 1;
--failed:
--	return 0;
-+out:
-+	xa_destroy(&busy_bhs.xarray);
-+
-+	return ret;
- }
- 
- int try_to_free_buffers(struct page *page)
-diff --git a/fs/internal.h b/fs/internal.h
-index 77c50be..00f17c4 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -15,6 +15,7 @@ struct mount;
- struct shrink_control;
- struct fs_context;
- struct user_namespace;
-+struct xarray;
- 
- /*
-  * block_dev.c
-@@ -49,6 +50,10 @@ static inline int emergency_thaw_bdev(struct super_block *sb)
-  */
- extern int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
- 		get_block_t *get_block, struct iomap *iomap);
-+struct busy_bhs_container {
-+	struct xarray xarray;
-+	int size;
-+};
- 
- /*
-  * char_dev.c
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Here we disagree.
 
+I don't see how Jeff's patch is "building on top of your patches"
+seeing that it is perfectly well contained and does not in fact depend
+on your patches.
+
+And I do insist that the fix for volatile mounts syncfs/fsync error
+reporting should be applied before your patches or at the very least
+not heavily depend on them.
+
+volatile mount was introduced in fresh new v5.10, which is also an
+LTS kernel. It would be inconsiderate of volatile mount users and developers
+to make backporting that fix to v5.10.y any harder than it should be.
+
+> My patches don't solve this problem of failing overlay mount for
+> the volatile mount case.
+>
+
+Here we agree.
+
+> >
+> > This is why I prefer to sample upper sb error on mount and propagate
+> > new errors to overlayfs sb (Jeff's patch).
+>
+> Ok, I think this is one of the key points of the whole discussion. What
+> mechanism should be used to propagate writeback errors through overlayfs.
+>
+> A. Propagate errors from upper sb to overlay sb.
+> B. Leave overlay sb alone and use upper sb for error checks.
+>
+> We don't have good model to propagate errors between super blocks,
+> so Jeff preferred not to do error propagation between super blocks
+> for regular mounts.
+>
+> https://lore.kernel.org/linux-fsdevel/bff90dfee3a3392d67a4f3516ab28989e87fa25f.camel@kernel.org/
+>
+> If we are not defining new semantics for syncfs() for overlayfs, then
+> I can't see what's the advantage of coming up with new mechanism to
+> propagate errors to overlay sb. Approach B should work just fine and
+> provide the syncfs() semantics we want for overlayfs (Same semantics
+> as other filesystems).
+>
+
+Ok. I am on board with B.
+
+Philosophically. overlayfs model is somewhere between "passthrough"
+and "proxy" when handling pure upper files and as overlayfs evolves,
+it steadily moves towards the "proxy" model, with page cache and
+writeback being the largest remaining piece to convert.
+
+So I concede that as long as overlayfs writeback is mostly passthrough,
+syncfs might as well be passthrough to upper fs as well.
+
+Thanks,
+Amir.
