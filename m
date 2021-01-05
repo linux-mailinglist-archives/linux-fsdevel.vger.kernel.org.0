@@ -2,186 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E50192EAAE4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 13:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E1D2EABED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 14:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbhAEMaG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jan 2021 07:30:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37790 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730226AbhAEM2j (ORCPT
+        id S1728574AbhAEN26 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jan 2021 08:28:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29927 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727898AbhAEN26 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jan 2021 07:28:39 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C25C061574;
-        Tue,  5 Jan 2021 04:27:39 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id v3so16262372plz.13;
-        Tue, 05 Jan 2021 04:27:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GCJpwmdnZwt/uKHRtY639LOCKcFjRCkpFiLLDLiMMTA=;
-        b=PpZvIHnwPrR7ghtYY4A7PxSbHFOQgPwblp/MQCEEf5Bv+Tzumyt6ZOoqnVARIheYG9
-         DB1JTZwlUWKoyoQNgTS8+AUchogb3rYh9144A8Y7JFhwydB8/vxeOs/BWPBXOt8odHGD
-         sTTuGXq561TDfKTh+LwvPyhtrY0Np5Oa+FzC1/Vipwx069MuOSP1WVSL/Dxq1jgeZKov
-         3ADMhysUDyvbFMAixgKb3HfgKoNj+UtcnnsY3vzUVZGdnUqCN03hv7ZyLKaLqLEYn9r+
-         CuuYQr0P08+1/uyWNv3vp1CIhxP9iqTdHV5NT6kDAYQvqx2b29njNkkuk+uX50JdU4a+
-         R5Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=GCJpwmdnZwt/uKHRtY639LOCKcFjRCkpFiLLDLiMMTA=;
-        b=sdgE2D1htVzchi27+Lxb/ntrapLfj99CED6vq1IPIJKWjjNrfZAx463lKvBrbRyFxm
-         fEKh9mkqiSRVFC0YLYyouYIYDG6VuaAuQkOyWITstAJohqI7gMOv+UHUma0+PyumI5vX
-         TGnl40f6NUFQlCn7c1Yq+0I9QQdEJZp/zJJlpQS9c0+OSOQHH1H39bmTtyYZ4Qo6++oB
-         fLgUGE0JTOyRaei2iZqpc/Zz1IJlCbbIDJvOL2IrwnGtUhr4LMTPMq0nmmthi/zHnvnL
-         20EbPMQH6hswBX8smuTIjOr/sc6Sg7XsBtolfK6FL1rdgbWMDtlv8HPOV+Ir00SNpj9L
-         qlsg==
-X-Gm-Message-State: AOAM531J0RSy3HVG3Ne3T7b0uOX9UMNTqYGceVgmkoYkbC5uUZEHNFy7
-        rJvEvwvTLF/LjMYyQaWib4koo9yPFACiKA==
-X-Google-Smtp-Source: ABdhPJxHmldIRQrvO77IFzCFAUMwQikmaQIQwCUv1MOp5bwFqwX7c01BVi88X+weOQ5v4sUVoZ1Fdg==
-X-Received: by 2002:a17:90a:5509:: with SMTP id b9mr3874173pji.230.1609849658703;
-        Tue, 05 Jan 2021 04:27:38 -0800 (PST)
-Received: from localhost.localdomain ([211.108.35.36])
-        by smtp.gmail.com with ESMTPSA id gw7sm2599647pjb.36.2021.01.05.04.27.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jan 2021 04:27:38 -0800 (PST)
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        Tue, 5 Jan 2021 08:28:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1609853251;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=AuJdJsTyCFlQnRguqyE12Pcn4kKOYDILhxDjEZQeYnM=;
+        b=fRmYpGfqDkxqv/MHb35kxTXaf13bzNKEsf26igXsFvZJ6s0v58aqsokrib0iF/YzLqqGLQ
+        9UoQlVcJTmIXklTz86NZG58TuNoKyLRhAjtYTBLe3wQfdOB78ltlWBOTcMIfwfI3frnc4z
+        79pMEPF4DvIAvUHiOL4LXfV+qKYKYug=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-181-MsXiY_ljOQi7HEXjF9cZsA-1; Tue, 05 Jan 2021 08:27:28 -0500
+X-MC-Unique: MsXiY_ljOQi7HEXjF9cZsA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1267EA0CBE;
+        Tue,  5 Jan 2021 13:27:27 +0000 (UTC)
+Received: from localhost (ovpn-12-37.pek2.redhat.com [10.72.12.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A91D1002382;
+        Tue,  5 Jan 2021 13:27:21 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: [PATCH V4 1/1] block: reject I/O for same fd if block size changed
-Date:   Tue,  5 Jan 2021 21:27:17 +0900
-Message-Id: <20210105122717.2568-2-minwoo.im.dev@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210105122717.2568-1-minwoo.im.dev@gmail.com>
-References: <20210105122717.2568-1-minwoo.im.dev@gmail.com>
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH] fs: block_dev: compute nr_vecs hint for improving writeback bvecs allocation
+Date:   Tue,  5 Jan 2021 21:26:47 +0800
+Message-Id: <20210105132647.3818503-1-ming.lei@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch fixes I/O errors during BLKRRPART ioctl() behavior right
-after format operation that changed logical block size of the block
-device with a same file descriptor opened.
+Writeback code always allocates bio with max allowed bvecs(BIO_MAX_PAGES)
+since it is hard to know in advance how many pages will be written in
+single bio. And BIO_MAX_PAGES bvecs takes one 4K page.
 
-This issue can be easily reproduced with a single format command in case
-of NVMe (logical block size 512B to 4096B).
+On the other hand, for workloads of random IO, most of writeback bios just
+uses <= 4 bvecs; for workloads of sequential IO, attributes to multipage
+bvec, quite a lot of pages are contiguous because of space/time locality
+for pages in sequential IO workloads, then either nr_bvecs is small enough
+or size of bio is very big. So in reality, it is quite often to see most
+of writeback bios just uses <=4 bvecs, which can be allocated inline. This
+can be observed in normal tests(kernel build, git clone kernel, dbench,
+...)
 
-	nvme format /dev/nvme0n1 --lbaf=1 --force
+So improve bvec allocation by using Exponential Weighted Moving Average(
+EWMA) to compute nr_bvecs hint for writeback bio. With this simple
+approach, it is observed[1] that most of writeback bios just need <=4
+nr_bvecs in normal workloads, then bvecs can be allocated inline with bio
+together, meantime one extra 4k allocation is avoided.
 
-This is because the application, nvme-cli format subcommand issues an
-admin command followed by BLKRRPART ioctl to re-read partition
-information without closing the file descriptor.  If file descriptor
-stays opened, __blkdev_get() will not be invoked at all even logical
-block size has been changed.
+[1] bpftrace script for observing writeback .bi_max_vcnt & .bi_vcnt
+histogram
+http://people.redhat.com/minlei/tests/tools/wb_vcnt.bt
 
-It will cause I/O errors with invalid Read operations during the
-BLKRRPART ioctl due to i_blkbits mismatch. The invalid operations in
-BLKRRPART happens with under-flowed Number of LBA(NLB) values
-0xffff(65535) because i_blkbits is still set to 9 even the logical block
-size has been updated to 4096.  The BLKRRPART will lead buffer_head to
-hold 512B data which is less than the logical lock size of the block
-device.
-
-The root cause, which is because i_blkbits of inode of the block device
-is not updated, can be solved easily by re-opening file descriptor
-again from application.  But, that's just for application's business
-and kernel should reject invalid Read operations during the BLKRRPART
-ioctl.
-
-This patch rejects I/O from the path of add_partitions() to avoid
-issuing invalid Read operations to device.  It sets a flag to
-request_queue in blk_queue_logical_block_size to minimize caller-side
-updates.
-
-Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Darrick J. Wong <darrick.wong@oracle.com>
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- block/blk-settings.c    |  3 +++
- block/partitions/core.c | 12 ++++++++++++
- fs/block_dev.c          |  8 ++++++++
- include/linux/blkdev.h  |  1 +
- 4 files changed, 24 insertions(+)
+ fs/block_dev.c            |  1 +
+ fs/iomap/buffered-io.c    | 13 +++++++++----
+ include/linux/bio.h       |  2 --
+ include/linux/blk_types.h | 31 +++++++++++++++++++++++++++++++
+ 4 files changed, 41 insertions(+), 6 deletions(-)
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 43990b1d148b..48a6fc7bb5f5 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -329,6 +329,9 @@ void blk_queue_logical_block_size(struct request_queue *q, unsigned int size)
- {
- 	struct queue_limits *limits = &q->limits;
- 
-+	if (limits->logical_block_size != size)
-+		blk_queue_flag_set(QUEUE_FLAG_LBSZ_CHANGED, q);
-+
- 	limits->logical_block_size = size;
- 
- 	if (limits->physical_block_size < size)
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index e7d776db803b..6f175ea18ff3 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -612,12 +612,24 @@ static bool blk_add_partition(struct gendisk *disk, struct block_device *bdev,
- 
- int blk_add_partitions(struct gendisk *disk, struct block_device *bdev)
- {
-+	struct request_queue *q = bdev_get_queue(bdev);
- 	struct parsed_partitions *state;
- 	int ret = -EAGAIN, p, highest;
- 
- 	if (!disk_part_scan_enabled(disk))
- 		return 0;
- 
-+	/*
-+	 * Reject to check partition information if block size has been changed
-+	 * in the runtime.  If block size of a block device has been changed,
-+	 * the file descriptor should be opened agian to update the blkbits.
-+	 */
-+	if (test_bit(QUEUE_FLAG_LBSZ_CHANGED, &q->queue_flags)) {
-+		pr_warn("%s: rejecting checking partition. fd should be opened again.\n",
-+				disk->disk_name);
-+		return -EBADFD;
-+	}
-+
- 	state = check_partition(disk, bdev);
- 	if (!state)
- 		return 0;
 diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 9293045e128c..8056a412a3d1 100644
+index 3e5b02f6606c..0490f16a96db 100644
 --- a/fs/block_dev.c
 +++ b/fs/block_dev.c
-@@ -130,7 +130,15 @@ EXPORT_SYMBOL(truncate_bdev_range);
+@@ -880,6 +880,7 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
+ #ifdef CONFIG_SYSFS
+ 	INIT_LIST_HEAD(&bdev->bd_holder_disks);
+ #endif
++	bdev->bd_wb_nr_vecs_hint = BIO_MAX_PAGES / 2;
+ 	bdev->bd_stats = alloc_percpu(struct disk_stats);
+ 	if (!bdev->bd_stats) {
+ 		iput(inode);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 16a1e82e3aeb..1e031af182db 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1210,6 +1210,7 @@ iomap_submit_ioend(struct iomap_writepage_ctx *wpc, struct iomap_ioend *ioend,
+ 		return error;
+ 	}
  
- static void set_init_blocksize(struct block_device *bdev)
- {
-+	struct request_queue *q = bdev_get_queue(bdev);
-+
- 	bdev->bd_inode->i_blkbits = blksize_bits(bdev_logical_block_size(bdev));
-+
-+	/*
-+	 * Allow I/O commands for this block device.  We can say that this
-+	 * block device has proper blkbits updated.
-+	 */
-+	blk_queue_flag_clear(QUEUE_FLAG_LBSZ_CHANGED, q);
++	bdev_update_wb_nr_vecs_hint(wpc->iomap.bdev, ioend->io_bio);
+ 	submit_bio(ioend->io_bio);
+ 	return 0;
  }
+@@ -1221,7 +1222,8 @@ iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
+ 	struct iomap_ioend *ioend;
+ 	struct bio *bio;
  
- int set_blocksize(struct block_device *bdev, int size)
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 070de09425ad..6d0542434be6 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -625,6 +625,7 @@ struct request_queue {
- #define QUEUE_FLAG_RQ_ALLOC_TIME 27	/* record rq->alloc_time_ns */
- #define QUEUE_FLAG_HCTX_ACTIVE	28	/* at least one blk-mq hctx is active */
- #define QUEUE_FLAG_NOWAIT       29	/* device supports NOWAIT */
-+#define QUEUE_FLAG_LBSZ_CHANGED	30	/* logical block size changed */
+-	bio = bio_alloc_bioset(GFP_NOFS, BIO_MAX_PAGES, &iomap_ioend_bioset);
++	bio = bio_alloc_bioset(GFP_NOFS, bdev_wb_nr_vecs_hint(wpc->iomap.bdev),
++			&iomap_ioend_bioset);
+ 	bio_set_dev(bio, wpc->iomap.bdev);
+ 	bio->bi_iter.bi_sector = sector;
+ 	bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
+@@ -1248,11 +1250,13 @@ iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
+  * traversal in iomap_finish_ioend().
+  */
+ static struct bio *
+-iomap_chain_bio(struct bio *prev)
++iomap_chain_bio(struct bio *prev, struct block_device *bdev)
+ {
+ 	struct bio *new;
  
- #define QUEUE_FLAG_MQ_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
- 				 (1 << QUEUE_FLAG_SAME_COMP) |		\
+-	new = bio_alloc(GFP_NOFS, BIO_MAX_PAGES);
++	bdev_update_wb_nr_vecs_hint(bdev, prev);
++
++	new = bio_alloc(GFP_NOFS, bdev_wb_nr_vecs_hint(bdev));
+ 	bio_copy_dev(new, prev);/* also copies over blkcg information */
+ 	new->bi_iter.bi_sector = bio_end_sector(prev);
+ 	new->bi_opf = prev->bi_opf;
+@@ -1308,7 +1312,8 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
+ 	if (!merged) {
+ 		if (bio_full(wpc->ioend->io_bio, len)) {
+ 			wpc->ioend->io_bio =
+-				iomap_chain_bio(wpc->ioend->io_bio);
++				iomap_chain_bio(wpc->ioend->io_bio,
++						wpc->iomap.bdev);
+ 		}
+ 		bio_add_page(wpc->ioend->io_bio, page, len, poff);
+ 	}
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 70914dd6a70d..ad0cd1a2abbe 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -19,8 +19,6 @@
+ #define BIO_BUG_ON
+ #endif
+ 
+-#define BIO_MAX_PAGES		256
+-
+ #define bio_prio(bio)			(bio)->bi_ioprio
+ #define bio_set_prio(bio, prio)		((bio)->bi_ioprio = prio)
+ 
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 866f74261b3b..078e212f5e1f 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -24,6 +24,7 @@ struct block_device {
+ 	sector_t		bd_start_sect;
+ 	struct disk_stats __percpu *bd_stats;
+ 	unsigned long		bd_stamp;
++	unsigned short		bd_wb_nr_vecs_hint;
+ 	bool			bd_read_only;	/* read-only policy */
+ 	dev_t			bd_dev;
+ 	int			bd_openers;
+@@ -307,6 +308,8 @@ enum {
+ 	BIO_FLAG_LAST
+ };
+ 
++#define BIO_MAX_PAGES		256
++
+ /* See BVEC_POOL_OFFSET below before adding new flags */
+ 
+ /*
+@@ -565,4 +568,32 @@ struct blk_rq_stat {
+ 	u64 batch;
+ };
+ 
++/* called before submitting writeback bios */
++static inline void bdev_update_wb_nr_vecs_hint(struct block_device *bdev,
++		struct bio *bio)
++{
++	unsigned short nr_vecs;
++
++	if (!bdev)
++		return;
++
++	nr_vecs = bdev->bd_wb_nr_vecs_hint;
++	/*
++	 * If this bio is full, double current nr_vecs_hint for fast convergence.
++	 * Otherwise use Exponential Weighted Moving Average to figure out the
++	 * hint
++	 */
++	if (bio->bi_vcnt >= bio->bi_max_vecs)
++		nr_vecs *= 2;
++	else
++		nr_vecs = (nr_vecs * 3 + bio->bi_vcnt + 3) / 4;
++
++	bdev->bd_wb_nr_vecs_hint = clamp_val(nr_vecs, 1, BIO_MAX_PAGES);
++}
++
++static inline unsigned short bdev_wb_nr_vecs_hint(struct block_device *bdev)
++{
++	return bdev->bd_wb_nr_vecs_hint;
++}
++
+ #endif /* __LINUX_BLK_TYPES_H */
 -- 
-2.17.1
+2.28.0
 
