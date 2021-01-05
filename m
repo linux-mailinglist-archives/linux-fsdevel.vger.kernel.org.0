@@ -2,102 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F4222EA84E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 11:14:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3AFF2EAAD6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 13:30:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbhAEKMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jan 2021 05:12:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44944 "EHLO
+        id S1730305AbhAEM3F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jan 2021 07:29:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728074AbhAEKMr (ORCPT
+        with ESMTP id S1730300AbhAEM3C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jan 2021 05:12:47 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E418C061793;
-        Tue,  5 Jan 2021 02:12:07 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id n10so20971009pgl.10;
-        Tue, 05 Jan 2021 02:12:07 -0800 (PST)
+        Tue, 5 Jan 2021 07:29:02 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91014C061382;
+        Tue,  5 Jan 2021 04:27:34 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id 15so21181610pgx.7;
+        Tue, 05 Jan 2021 04:27:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=s6MIg1by4xxMrWniV9WmT7wL3vQp0SC+5JFNaInbk7g=;
-        b=IxQVrP0of1IbChhiAKviNyE6d95TPLiOq/QqK6rbSqrFX7ayK0s3nAK8E15gNzxosg
-         UXIE0C+4AEIg6kX5YcT11cbMYHb85nt/rFFyuGsBoMsO7K7AIxdeKxjSG2XWDoVxjUkh
-         nfHCiLo1b8w6lkajAx1UKSdmzGFAW+MFHrm3YqTOUrJiNPKV2IFj7ktlKzOwK9QvMFhj
-         iHGWoIRSaJ/wX1PqyMcgjF/U6xTQ3Fdfg9FJva0QQ2erzWvkjvVSV7uzv8rT6eNKz9mk
-         WVpcnhhaRUyHj34Z0QlUHuGK9lQ2RDAS6FxWt9Obin96Z3DGdbZ9ZYTi18kHOtPWOwZi
-         DDcQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=XqETI2dj6LLMBcSn8TTOy0ZVVdhDfBt9SMpfQ1dkImQ=;
+        b=WQsow3O8vXyWtIbJBHbR3W4gOlVwK8Qd/A5nbSTl85GhpmUx4R2I2WPb91OFzDusKE
+         i9ktAcKupz8zPLeLVmyNz5//2HjmCTqFfJF2fXJG3Fgxcs2halLHhw11qJ1gasv635qX
+         mX3/v0Q/4fhISLcYCclxQLkA7BJNwSYjJ3lzxbiXcuHQZqbjN3pJc/SQTpahgW9FyCrD
+         YWwf1zAKqFLucH+DeaV//cym6fMcZrihcxKVSwVQBNWswgn9/ZDJ2GI0eACemKu6usj2
+         A+sx9UlNmn7BnkfrcKNfmBUB9+v8iDQKq19XGgQCPJR/H10bvARdcgJB/8924zxCY59I
+         28LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=s6MIg1by4xxMrWniV9WmT7wL3vQp0SC+5JFNaInbk7g=;
-        b=AiP3WXRTlO3wNZWdpVOr0gPRI1WuM5cTCTetP/z5DQ6AnStz/mE3QGOfTKdn9YIELn
-         kZlFpKemEv0X/Nw13n3q5tgl1BH8pCXxeJy54+TGTVXyp6puZMlCDgqs05oulT4G6G2j
-         q5vot3+L98/8DMzOhiGs+DZ1eGsjWH2cX/wlEiF7iZxZaITYBWUkjorBUWt7MZU0ovkp
-         ojHIP88ssxIk9Eh4HN+C7rJOPx3zK0jpcq/74qcUHKd438ErCT0rrIUSoabpddmEKpr3
-         id6GTiPTGjeze+4n5Ab5kAgP4r/bhwcpu1Zjaz1i2/fYp1wXa6Q8zzIx806q27Z3Eg6J
-         831w==
-X-Gm-Message-State: AOAM531cVAQdSFM9XdjbJ/c8YKpWKUPS+ryASZidU1YbfzkzttJbGqzS
-        hhi8kgIzhtrvF2oSV9mO32dVOOU2Svk=
-X-Google-Smtp-Source: ABdhPJzMmTATlj4o28EQdMzNkIFfTFD63ya/GZyNscl6IKKhdhsYxo35yHvASuXrlDytfK5JCFtvrQ==
-X-Received: by 2002:a05:6a00:22ce:b029:197:9168:80fb with SMTP id f14-20020a056a0022ceb0290197916880fbmr48483416pfj.38.1609841527168;
-        Tue, 05 Jan 2021 02:12:07 -0800 (PST)
-Received: from localhost ([211.108.35.36])
-        by smtp.gmail.com with ESMTPSA id u12sm57403310pfh.98.2021.01.05.02.12.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Jan 2021 02:12:06 -0800 (PST)
-Date:   Tue, 5 Jan 2021 19:12:02 +0900
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XqETI2dj6LLMBcSn8TTOy0ZVVdhDfBt9SMpfQ1dkImQ=;
+        b=LKH/61MBScCqNThhyieKoEqilLLWx7nbh9HRbO/9Bft1NQd6f8R3VL2teyobZVhkEq
+         YEshie04dpL3SwcgKlavBhbUHOqrNeGlPXU47+rR/lPdwdQL1ymh+TIhXMSnQdYYdr4+
+         e9K8UZB6lcBsM0Cbl7S7+LvzHufHENol5RPuvmuKkF0lGU/iq3TmYNRsN1awdr8hxwbA
+         cvIVrfgHlsZJtkWmURX2xszbga9X1XwLBJTl6az4UE1QLBE5sLY77tqMZ+87ER/R+EAl
+         +ce1pYdkuNyAvIRJZNbYujhXZ4tr4iT29tF6+/UNHUPxM9W8dK5kyplTJZoLTsF7Fy8x
+         arGg==
+X-Gm-Message-State: AOAM530WrK7AHTnP0U0A4H8znSKnDZ65wEIH3LnUARWx609uB+e3xCO0
+        jCESWmrqpqvGm9R95Luif8MPPBDWD2calA==
+X-Google-Smtp-Source: ABdhPJyQy0Jl0taKm2oXKaclq9kNLyhy6PSoq+ZrxVqR0efdgYnsNiNwszpgiWCRPsmgqf3hr6zucg==
+X-Received: by 2002:aa7:9f97:0:b029:1a5:94d8:9cbf with SMTP id z23-20020aa79f970000b02901a594d89cbfmr68773148pfr.79.1609849653923;
+        Tue, 05 Jan 2021 04:27:33 -0800 (PST)
+Received: from localhost.localdomain ([211.108.35.36])
+        by smtp.gmail.com with ESMTPSA id gw7sm2599647pjb.36.2021.01.05.04.27.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jan 2021 04:27:33 -0800 (PST)
 From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvme@lists.infradead.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-Subject: Re: [RFC PATCH V3 1/1] block: reject I/O for same fd if block size
- changed
-Message-ID: <20210105101202.GA9970@localhost.localdomain>
-References: <20210104130659.22511-1-minwoo.im.dev@gmail.com>
- <20210104130659.22511-2-minwoo.im.dev@gmail.com>
- <20210104171108.GA27235@lst.de>
- <20210104171141.GB27235@lst.de>
- <20210105010456.GA6454@localhost.localdomain>
- <20210105075009.GA30039@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210105075009.GA30039@lst.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        Christoph Hellwig <hch@lst.de>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: [PATCH V4 0/1] block: fix I/O errors in BLKRRPART
+Date:   Tue,  5 Jan 2021 21:27:16 +0900
+Message-Id: <20210105122717.2568-1-minwoo.im.dev@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hello,
 
-On 21-01-05 08:50:09, Christoph Hellwig wrote:
-> On Tue, Jan 05, 2021 at 10:04:56AM +0900, Minwoo Im wrote:
-> > It was a point that I really would like to ask by RFC whether we can
-> > have backpointer to the gendisk from the request_queue.  And I'd like to
-> > have it to simplify this routine and for future usages also.
-> 
-> I think it is the right thing to do, at least mid-term, although I
-> don't want to enforce the burden on you right now.
-> 
-> > I will restrict this one by checking GENHD_FL_UP flag from the gendisk
-> > for the next patch.
-> > 
-> > > 
-> > > Alternatively we could make this request_queue QUEUE* flag for now.
-> > 
-> > As this patch rejects I/O from the block layer partition code, can we
-> > have this flag in gendisk rather than request_queue ?
-> 
-> For now we can as the request_queue is required.  I have some plans to
-> clean up this area, but just using a request_queue flag for now is
-> probably the simplest, even if it means more work for me later.
+  This patch fixes I/O errors during BLKRRPART ioctl() behavior right
+after format operation that changed logical block size of the block
+device with a same file descriptor opened.
 
-Please let me prepare the next quick fix for this issue with request_queue
-flag.
+Testcase:
 
-Thanks!
+  The following testcase is a case of NVMe namespace with the following
+conditions:
+
+  - Current LBA format is lbaf=0 (512 bytes logical block size)
+  - LBA Format(lbaf=1) has 4096 bytes logical block size
+
+  # Format block device logical block size 512B to 4096B                                                                                                                                                                                                                                                                                                                                       
+  nvme format /dev/nvme0n1 --lbaf=1 --force
+
+  This will cause I/O errors because BLKRRPART ioctl() happened right after
+the format command with same file descriptor opened in application
+(e.g., nvme-cli) like:
+
+  fd = open("/dev/nvme0n1", O_RDONLY);
+
+  nvme_format(fd, ...);
+  if (ioctl(fd, BLKRRPART) < 0)
+        ...
+
+Errors:
+
+  We can see the Read command with Number of LBA(NLB) 0xffff(65535) which
+was under-flowed because BLKRRPART operation requested request size based
+on i_blkbits of the block device which is 9 via buffer_head.
+
+  [dmesg-snip]
+    [   10.771740] blk_update_request: operation not supported error, dev nvme0n1, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+    [   10.780262] Buffer I/O error on dev nvme0n1, logical block 0, async page read
+
+  [event-snip]
+    kworker/0:1H-56      [000] ....   913.456922: nvme_setup_cmd: nvme0: disk=nvme0n1, qid=1, cmdid=216, nsid=1, flags=0x0, meta=0x0, cmd=(nvme_cmd_read slba=0, len=65535, ctrl=0x0, dsmgmt=0, reftag=0)
+     ksoftirqd/0-9       [000] .Ns.   916.566351: nvme_complete_rq: nvme0: disk=nvme0n1, qid=1, cmdid=216, res=0x0, retries=0, flags=0x0, status=0x4002
+
+  The patch below fixes the I/O errors by rejecting I/O requests from the
+block layer with setting a flag to request_queue until the file descriptor
+re-opened to be updated by __blkdev_get().  This is based on the previous
+discussion [1].
+
+Since V3(RFC):
+  - Move flag from gendisk to request_queue for future clean-ups.
+    (Christoph, [3])
+
+Since V2(RFC):
+  - Cover letter with testcase and error logs attached. Removed un-related
+    changes: empty line. (Chaitanya, [2])
+  - Put blkdev with blkdev_put_no_open().
+
+Since V1(RFC):
+  - Updated patch to reject I/O rather than updating i_blkbits of the
+    block device's inode directly from driver. (Christoph, [1])
+
+[1] https://lore.kernel.org/linux-nvme/20201223183143.GB13354@localhost.localdomain/T/#t
+[2] https://lore.kernel.org/linux-nvme/20201230140504.GB7917@localhost.localdomain/T/#t
+[3] https://lore.kernel.org/linux-block/20210105101202.GA9970@localhost.localdomain/T/#u
+
+Thanks,
+
+Minwoo Im (1):
+  block: reject I/O for same fd if block size changed
+
+ block/blk-settings.c    |  3 +++
+ block/partitions/core.c | 12 ++++++++++++
+ fs/block_dev.c          |  8 ++++++++
+ include/linux/blkdev.h  |  1 +
+ 4 files changed, 24 insertions(+)
+
+-- 
+2.17.1
+
