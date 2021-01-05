@@ -2,208 +2,365 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 209A32EA1EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 01:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 321122EA2C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jan 2021 02:11:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbhAEA5q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jan 2021 19:57:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38446 "EHLO mail.kernel.org"
+        id S1726300AbhAEBGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jan 2021 20:06:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726749AbhAEA5q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jan 2021 19:57:46 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 821DD2253A;
-        Tue,  5 Jan 2021 00:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1609808225;
-        bh=tIq8+M0TJ/5JJpvalqipy0BfCy0wXVJf0vXa1f9urPs=;
-        h=Date:From:To:Subject:From;
-        b=vNAsKOb2pcrtDzNRGFnWnFArETxIut9dc5bVtr7ZOOt1kTGcJi2YVpnG7ZUblx5yK
-         +w7SHBaMKGTPcO9/if6x49raHRf8oxikPITpVb5+pNLb/hfEWFNnhkRe0CsgZpjRI+
-         UPFOAcTTiA2hBWrilfbuUDn4oAy3KC1Q9kEpJBwU=
-Date:   Mon, 04 Jan 2021 16:57:03 -0800
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2021-01-04-16-56 uploaded
-Message-ID: <20210105005703.XhY3BDF8Y%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1728045AbhAEBAl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 4 Jan 2021 20:00:41 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CDB56225AA;
+        Tue,  5 Jan 2021 00:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609808366;
+        bh=ZieGW3Et/wQUMZmGqWV7pv9/jbVeskaboo7z3aGg9o8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CvzIms4HkPnUFfJjuIdaKwwV4sT2TsQkN6U6J0de/eVKQSXkSjsraaf+nOkhBuuDk
+         9Z0vfgYlL3vSmDgs2p419yMAEVe15/DuKPvNP0sAguFfr7JGfBBxVGHywap4WLp2K/
+         LWESIn9maybFZ7Wyh3f5D5SDXPY7l0rN+I+qCBNAO7N2mJOMfhHraZ5ySnM+0DzY0u
+         FtwtvUsQuyphJGPUt/yB3oh2Ej2zuqB9HPN2ERmhX9WdMS/fg4BEnCocsbgqffBKXw
+         l0Z4xTrYb50jf4s/eLyxP6/5sqnYhERc6+n/YB5fUS0Ojs12jEznmPyQez987YauOq
+         aeQNUA7K6wPPw==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     fstests@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>
+Subject: [xfstests RFC PATCH] generic: test for lazytime timestamp updates
+Date:   Mon,  4 Jan 2021 16:58:18 -0800
+Message-Id: <20210105005818.92978-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.30.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2021-01-04-16-56 has been uploaded to
+From: Eric Biggers <ebiggers@google.com>
 
-   https://www.ozlabs.org/~akpm/mmotm/
+Test that when the lazytime mount option is enabled, updates to atime,
+mtime, and ctime get persisted in the cases when they should be.
 
-mmotm-readme.txt says
+Note that this doesn't test that updates aren't persisted when they
+shouldn't be, as that would be harder to do.  (This also means that we
+don't have to check whether the filesystem supports lazytime before
+running the test.  If lazytime is ignored, the test will pass.)
 
-README for mm-of-the-moment:
+As this test requires support for the shutdown ioctl, it currently runs
+only on ext4, f2fs, and xfs.  It passes on ext4 and f2fs, but it fails
+on xfs because xfs has a bug where it doesn't persist lazytime timestamp
+updates on user-triggered syncs or after dirtytime_expire_seconds has
+elapsed.  I've sent out patches to fix this bug.
 
-https://www.ozlabs.org/~akpm/mmotm/
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+RFC for now, since the XFS fix
+(https://lore.kernel.org/r/20210105005452.92521-14-ebiggers@kernel.org)
+hasn't been merged yet.
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-https://ozlabs.org/~akpm/mmotm/series
+ tests/generic/900     | 235 ++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/900.out |  37 +++++++
+ tests/generic/group   |   1 +
+ 3 files changed, 273 insertions(+)
+ create mode 100755 tests/generic/900
+ create mode 100644 tests/generic/900.out
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+diff --git a/tests/generic/900 b/tests/generic/900
+new file mode 100755
+index 00000000..cbd4b12a
+--- /dev/null
++++ b/tests/generic/900
+@@ -0,0 +1,235 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0-only
++# Copyright 2021 Google LLC
++#
++# FS QA Test No. 900
++#
++# Test that when the lazytime mount option is enabled, updates to atime, mtime,
++# and ctime are persisted in (at least) the four cases when they should be:
++#
++# - the inode needs to be updated for some change unrelated to file timestamps
++# - userspace calls fsync(), syncfs(), or sync()
++# - the inode is evicted from memory
++# - more than dirtytime_expire_seconds have elapsed
++#
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
++
++here=`pwd`
++tmp=/tmp/$$
++status=1	# failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
++
++DIRTY_EXPIRE_CENTISECS_ORIG=$(</proc/sys/vm/dirty_expire_centisecs)
++DIRTY_WRITEBACK_CENTISECS_ORIG=$(</proc/sys/vm/dirty_writeback_centisecs)
++DIRTYTIME_EXPIRE_SECONDS_ORIG=$(</proc/sys/vm/dirtytime_expire_seconds)
++
++restore_expiration_settings()
++{
++	echo "$DIRTY_EXPIRE_CENTISECS_ORIG" > /proc/sys/vm/dirty_expire_centisecs
++	echo "$DIRTY_WRITEBACK_CENTISECS_ORIG" > /proc/sys/vm/dirty_writeback_centisecs
++	echo "$DIRTYTIME_EXPIRE_SECONDS_ORIG" > /proc/sys/vm/dirtytime_expire_seconds
++}
++
++# Enable continuous writeback of dirty inodes, so that we don't have to wait
++# for the typical 30 seconds default.
++__expire_inodes()
++{
++	echo 1 > /proc/sys/vm/dirty_expire_centisecs
++	echo 1 > /proc/sys/vm/dirty_writeback_centisecs
++}
++
++# Trigger and wait for writeback of any dirty inodes (not dirtytime inodes).
++expire_inodes()
++{
++	__expire_inodes
++	# Userspace doesn't have direct visibility into when inodes are dirty,
++	# so the best we can do is sleep for a couple seconds.
++	sleep 2
++	restore_expiration_settings
++}
++
++# Trigger and wait for writeback of any dirtytime inodes.
++expire_timestamps()
++{
++	# Enable immediate expiration of lazytime timestamps, so that we don't
++	# have to wait for the typical 24 hours default.  This should quickly
++	# turn dirtytime inodes into regular dirty inodes.
++	echo 1 > /proc/sys/vm/dirtytime_expire_seconds
++
++	# Enable continuous writeback of dirty inodes.
++	__expire_inodes
++
++	# Userspace doesn't have direct visibility into when inodes are dirty,
++	# so the best we can do is sleep for a couple seconds.
++	sleep 2
++	restore_expiration_settings
++}
++
++_cleanup()
++{
++	restore_expiration_settings
++	rm -f $tmp.*
++}
++
++. ./common/rc
++. ./common/filter
++
++rm -f $seqres.full
++
++_supported_fs generic
++# This test uses the shutdown command, so it has to use the scratch filesystem
++# rather than the test filesystem.
++_require_scratch
++_require_scratch_shutdown
++_require_xfs_io_command "pwrite"
++_require_xfs_io_command "fsync"
++_require_xfs_io_command "syncfs"
++# This test doesn't have to check that the filesystem supports "lazytime", since
++# "lazytime" is a VFS-level option, and at worst it just will be ignored.  This
++# test will still pass in that case, as it only tests that timestamp updates are
++# persisted when they should be; it doesn't test that timestamp updates aren't
++# persisted when they shouldn't be.
++
++_scratch_mkfs &>> $seqres.full
++_scratch_mount
++
++# Create the test file for which we'll update and check the timestamps.
++file=$SCRATCH_MNT/file
++$XFS_IO_PROG -f $file -c "pwrite 0 100" > /dev/null
++
++# Get the specified timestamp of $file in nanoseconds since the epoch.
++get_timestamp()
++{
++	local timestamp_type=$1
++
++	local arg
++	case $timestamp_type in
++	atime)	arg=X ;;
++	mtime)	arg=Y ;;
++	ctime)	arg=Z ;;
++	*)	_fail "Unhandled timestamp_type: $timestamp_type" ;;
++	esac
++	stat -c "%.9${arg}" $file | tr -d '.'
++}
++
++do_test()
++{
++	local timestamp_type=$1
++	local persist_method=$2
++
++	echo -e "\n# Testing that lazytime $timestamp_type update is persisted by $persist_method"
++
++	# Mount the filesystem with lazytime.  If atime is being tested, then
++	# also use strictatime, since otherwise the filesystem may default to
++	# relatime and not do the atime updates.
++	if [[ $timestamp_type == atime ]]; then
++		_scratch_cycle_mount lazytime,strictatime
++	else
++		_scratch_cycle_mount lazytime
++	fi
++
++	# Update the specified timestamp on the file.
++	local orig_time=$(get_timestamp $timestamp_type)
++	sleep 0.1
++	case $timestamp_type in
++	atime)
++		# Read from the file to update its atime.
++		cat $file > /dev/null
++		;;
++	mtime)
++		# Write to the file to update its mtime.  Make sure to not write
++		# past the end of the file, as that would change i_size, which
++		# would be an inode change which would cause the timestamp to
++		# always be written -- thus making the test not detect bugs
++		# where the timestamp doesn't get written.
++		#
++		# Also do the write twice, since XFS updates i_version the first
++		# time, which likewise causes mtime to be written.  We want the
++		# last thing done to just update mtime.
++		$XFS_IO_PROG -f $file -c "pwrite 0 100" > /dev/null
++		$XFS_IO_PROG -f $file -c "pwrite 0 100" > /dev/null
++		;;
++	ctime)
++		# It isn't possible to update just ctime, so use 'touch -a'
++		# to update both atime and ctime.
++		touch -a $file
++		;;
++	esac
++	local expected_time=$(get_timestamp $timestamp_type)
++	if (( expected_time <= orig_time )); then
++		echo "FAIL: $timestamp_type didn't increase after updating it (in-memory)"
++	fi
++
++	# Do something that should cause the timestamp to be persisted.
++	case $persist_method in
++	other_inode_change)
++		# Make a non-timestamp-related change to the inode.
++		chmod 777 $file
++		if [[ $timestamp_type == ctime ]]; then
++			# The inode change will have updated ctime again.
++			expected_time=$(get_timestamp ctime)
++		fi
++		# The inode may have been marked dirty but not actually written
++		# yet.  Expire it by tweaking the VM settings and waiting.
++		expire_inodes
++		;;
++	sync)
++		# Execute the sync() system call.
++		sync
++		;;
++	fsync)
++		# Execute the fsync() system call on the file.
++		$XFS_IO_PROG -r $file -c fsync
++		;;
++	syncfs)
++		# Execute the syncfs() system call on the filesystem.
++		$XFS_IO_PROG $SCRATCH_MNT -c syncfs
++		;;
++	eviction)
++		# Evict the inode from memory.  In theory, drop_caches should do
++		# the trick by itself.  But that actually just dirties the
++		# inodes that need a lazytime update.  So we still need to wait
++		# for inode writeback too.
++		echo 2 > /proc/sys/vm/drop_caches
++		expire_inodes
++		;;
++	expiration)
++		# Expire the lazy timestamps via dirtytime_expire_seconds.
++		expire_timestamps
++		;;
++	*)
++		_fail "Unhandled persist_method: $persist_method"
++	esac
++
++	# Use the shutdown ioctl to abort the filesystem.
++	#
++	# The timestamp might have just been written to the log and not *fully*
++	# persisted yet, so use -f to ensure the log gets flushed.
++	_scratch_shutdown -f
++
++	# Now remount the filesystem and verify that the timestamp really got
++	# updated as expected.
++	_scratch_cycle_mount
++	local ondisk_time=$(get_timestamp $timestamp_type)
++	if (( ondisk_time != expected_time )); then
++		# Fail the test by printing unexpected output rather than by
++		# calling _fail(), since we can still run the other test cases.
++		echo "FAIL: lazytime $timestamp_type wasn't persisted by $persist_method"
++		echo "ondisk_time ($ondisk_time) != expected_time ($expected_time)"
++	fi
++}
++
++for timestamp_type in atime mtime ctime; do
++	do_test $timestamp_type other_inode_change
++	do_test $timestamp_type sync
++	do_test $timestamp_type fsync
++	do_test $timestamp_type syncfs
++	do_test $timestamp_type eviction
++	do_test $timestamp_type expiration
++done
++
++# success, all done
++status=0
++exit
+diff --git a/tests/generic/900.out b/tests/generic/900.out
+new file mode 100644
+index 00000000..53bd2e29
+--- /dev/null
++++ b/tests/generic/900.out
+@@ -0,0 +1,37 @@
++QA output created by 900
++
++# Testing that lazytime atime update is persisted by other_inode_change
++
++# Testing that lazytime atime update is persisted by sync
++
++# Testing that lazytime atime update is persisted by fsync
++
++# Testing that lazytime atime update is persisted by syncfs
++
++# Testing that lazytime atime update is persisted by eviction
++
++# Testing that lazytime atime update is persisted by expiration
++
++# Testing that lazytime mtime update is persisted by other_inode_change
++
++# Testing that lazytime mtime update is persisted by sync
++
++# Testing that lazytime mtime update is persisted by fsync
++
++# Testing that lazytime mtime update is persisted by syncfs
++
++# Testing that lazytime mtime update is persisted by eviction
++
++# Testing that lazytime mtime update is persisted by expiration
++
++# Testing that lazytime ctime update is persisted by other_inode_change
++
++# Testing that lazytime ctime update is persisted by sync
++
++# Testing that lazytime ctime update is persisted by fsync
++
++# Testing that lazytime ctime update is persisted by syncfs
++
++# Testing that lazytime ctime update is persisted by eviction
++
++# Testing that lazytime ctime update is persisted by expiration
+diff --git a/tests/generic/group b/tests/generic/group
+index fec35d8e..2c19381c 100644
+--- a/tests/generic/group
++++ b/tests/generic/group
+@@ -624,3 +624,4 @@
+ 619 auto rw enospc
+ 620 auto mount quick
+ 621 auto quick encrypt
++900 auto
+-- 
+2.30.0
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-	https://github.com/hnaz/linux-mm
-
-The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.11-rc2:
-(patches marked "*" will be included in linux-next)
-
-* mm-slub-consider-rest-of-partial-list-if-acquire_slab-fails.patch
-* mm-page_alloc-add-a-missing-mm_page_alloc_zone_locked-tracepoint.patch
-* mm-page_alloc-add-a-missing-mm_page_alloc_zone_locked-tracepoint-fix.patch
-* mm-memcontrol-fix-warning-in-mem_cgroup_page_lruvec.patch
-* kasan-fix-unaligned-address-is-unhandled-in-kasan_remove_zero_shadow.patch
-* kasan-fix-incorrect-arguments-passing-in-kasan_add_zero_shadow.patch
-* ubsan-disable-unsigned-integer-overflow-sanitizer-with-clang.patch
-* ubsan-disable-unsigned-integer-overflow-sanitizer-with-clang-fix.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* ocfs2-remove-redundant-conditional-before-iput.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-* ramfs-support-o_tmpfile.patch
-* fs-delete-repeated-words-in-comments.patch
-* kernel-watchdog-flush-all-printk-nmi-buffers-when-hardlockup-detected.patch
-  mm.patch
-* mm-tracing-record-slab-name-for-kmem_cache_free.patch
-* mm-msync-exit-early-when-the-flags-is-an-ms_async-and-start-vm_start.patch
-* mm-swap-dont-setpageworkingset-unconditionally-during-swapin.patch
-* mm-memcg-slab-pre-allocate-obj_cgroups-for-slab-caches-with-slab_account.patch
-* mm-memcg-slab-pre-allocate-obj_cgroups-for-slab-caches-with-slab_account-fix.patch
-* mm-memcontrol-optimize-per-lruvec-stats-counter-memory-usage.patch
-* mm-memcontrol-optimize-per-lruvec-stats-counter-memory-usage-checkpatch-fixes.patch
-* mm-memcontrol-fix-nr_anon_thps-accounting-in-charge-moving.patch
-* mm-memcontrol-convert-nr_anon_thps-account-to-pages.patch
-* mm-memcontrol-convert-nr_file_thps-account-to-pages.patch
-* mm-memcontrol-convert-nr_shmem_thps-account-to-pages.patch
-* mm-memcontrol-convert-nr_shmem_pmdmapped-account-to-pages.patch
-* mm-memcontrol-convert-nr_file_pmdmapped-account-to-pages.patch
-* mm-memcontrol-make-the-slab-calculation-consistent.patch
-* mm-memcg-revise-the-using-condition-of-lock_page_lruvec-function-series.patch
-* mm-memcg-remove-rcu-locking-for-lock_page_lruvec-function-series.patch
-* mm-mmap-remove-unnecessary-local-variable.patch
-* mm-mmap-replace-if-cond-bug-with-bug_on.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* mm-improve-mprotectrw-efficiency-on-pages-referenced-once.patch
-* mm-page_reporting-use-list_entry_is_head-in-page_reporting_cycle.patch
-* mm-huge_memoryc-update-tlb-entry-if-pmd-is-changed.patch
-* mips-do-not-call-flush_tlb_all-when-setting-pmd-entry.patch
-* mm-vmscan-__isolate_lru_page_prepare-clean-up.patch
-* mm-compaction-remove-rcu_read_lock-during-page-compaction.patch
-* mm-memblock-enforce-overlap-of-memorymemblock-and-memoryreserved.patch
-* mm-fix-initialization-of-struct-page-for-holes-in-memory-layout.patch
-* mm-hugetlb-change-hugetlb_reserve_pages-to-type-bool.patch
-* hugetlbfs-remove-special-hugetlbfs_set_page_dirty.patch
-* mm-make-pagecache-tagged-lookups-return-only-head-pages.patch
-* mm-shmem-use-pagevec_lookup-in-shmem_unlock_mapping.patch
-* mm-swap-optimise-get_shadow_from_swap_cache.patch
-* mm-add-fgp_entry.patch
-* mm-filemap-rename-find_get_entry-to-mapping_get_entry.patch
-* mm-filemap-add-helper-for-finding-pages.patch
-* mm-filemap-add-helper-for-finding-pages-fix.patch
-* mm-filemap-add-mapping_seek_hole_data.patch
-* mm-filemap-add-mapping_seek_hole_data-fix.patch
-* iomap-use-mapping_seek_hole_data.patch
-* mm-add-and-use-find_lock_entries.patch
-* mm-add-and-use-find_lock_entries-fix.patch
-* mm-add-an-end-parameter-to-find_get_entries.patch
-* mm-add-an-end-parameter-to-pagevec_lookup_entries.patch
-* mm-remove-nr_entries-parameter-from-pagevec_lookup_entries.patch
-* mm-pass-pvec-directly-to-find_get_entries.patch
-* mm-remove-pagevec_lookup_entries.patch
-* mmthpshmem-limit-shmem-thp-alloc-gfp_mask.patch
-* mmthpshm-limit-gfp-mask-to-no-more-than-specified.patch
-* mmthpshmem-make-khugepaged-obey-tmpfs-mount-flags.patch
-* mm-cma-allocate-cma-areas-bottom-up.patch
-* mm-cma-allocate-cma-areas-bottom-up-fix.patch
-* mm-cma-allocate-cma-areas-bottom-up-fix-2.patch
-* mm-cma-allocate-cma-areas-bottom-up-fix-3.patch
-* mm-cma-allocate-cma-areas-bottom-up-fix-3-fix.patch
-* memblock-do-not-start-bottom-up-allocations-with-kernel_end.patch
-* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings.patch
-* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings-fix.patch
-* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings-fix-2.patch
-* mm-zswap-clean-up-confusing-comment.patch
-* mm-remove-arch_remap-and-mm-arch-hooksh.patch
-* mm-page-flagsh-typo-fix-it-if.patch
-* mm-add-kernel-electric-fence-infrastructure.patch
-* mm-add-kernel-electric-fence-infrastructure-fix.patch
-* mm-add-kernel-electric-fence-infrastructure-fix-2.patch
-* mm-add-kernel-electric-fence-infrastructure-fix-3.patch
-* x86-kfence-enable-kfence-for-x86.patch
-* arm64-kfence-enable-kfence-for-arm64.patch
-* kfence-use-pt_regs-to-generate-stack-trace-on-faults.patch
-* mm-kfence-insert-kfence-hooks-for-slab.patch
-* mm-kfence-insert-kfence-hooks-for-slub.patch
-* kfence-kasan-make-kfence-compatible-with-kasan.patch
-* kfence-kasan-make-kfence-compatible-with-kasan-fix.patch
-* kfence-documentation-add-kfence-documentation.patch
-* kfence-add-test-suite.patch
-* kfence-add-test-suite-fix.patch
-* maintainers-add-entry-for-kfence.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* proc-wchan-use-printk-format-instead-of-lookup_symbol_name.patch
-* sysctlc-fix-underflow-value-setting-risk-in-vm_table.patch
-* proc-sysctl-make-protected_-world-readable.patch
-* lib-optimize-cpumask_local_spread.patch
-* lib-optimize-cpumask_local_spread-v8.patch
-* checkpatch-improve-blank-line-after-declaration-test.patch
-* checkpatch-ignore-warning-designated-initializers-using-nr_cpus.patch
-* aio-simplify-read_events.patch
-  linux-next.patch
-* mm-add-definition-of-pmd_page_order.patch
-* mmap-make-mlock_future_check-global.patch
-* set_memory-allow-set_direct_map__noflush-for-multiple-pages.patch
-* set_memory-allow-set_direct_map__noflush-for-multiple-pages-fix.patch
-* set_memory-allow-querying-whether-set_direct_map_-is-actually-enabled.patch
-* set_memory-allow-querying-whether-set_direct_map_-is-actually-enabled-fix.patch
-* mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas.patch
-* mm-introduce-memfd_secret-system-call-to-create-secret-memory-areas-fix.patch
-* secretmem-use-pmd-size-pages-to-amortize-direct-map-fragmentation.patch
-* secretmem-add-memcg-accounting.patch
-* pm-hibernate-disable-when-there-are-active-secretmem-users.patch
-* arch-mm-wire-up-memfd_secret-system-call-were-relevant.patch
-* arch-mm-wire-up-memfd_secret-system-call-were-relevant-fix.patch
-* arch-mm-wire-up-memfd_secret-system-call-were-relevant-fix-fix.patch
-* secretmem-test-add-basic-selftest-for-memfd_secret2.patch
-* secretmem-test-add-basic-selftest-for-memfd_secret2-fix.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
