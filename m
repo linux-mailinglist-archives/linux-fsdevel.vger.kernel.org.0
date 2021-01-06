@@ -2,140 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EFF32EC70F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 00:47:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E6B62EC729
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 00:59:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbhAFXrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jan 2021 18:47:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59596 "EHLO
+        id S1727789AbhAFX73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jan 2021 18:59:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbhAFXrW (ORCPT
+        with ESMTP id S1727582AbhAFX72 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jan 2021 18:47:22 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C87C8C061786
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Jan 2021 15:46:41 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id s15so2351916plr.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Jan 2021 15:46:41 -0800 (PST)
+        Wed, 6 Jan 2021 18:59:28 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CBFC06136D
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Jan 2021 15:58:48 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id n3so3185847pjm.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Jan 2021 15:58:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tA11nn9ae5cvgWVfh9wtHtDpSHe6PyopJBRnKzHppXM=;
-        b=KQgESEvYY2Vkv50quj7FiQWHW0q6YXGW1PWoPHh6FSygQCBplRYdtGIjRMoKBCvfMH
-         KEfAgvs2NWtTKBgOaaoIoSbPZtkPZnPZJAhE1P8LCEsEF1cXINtiXtQceXs9f+0HbSIo
-         ZOj6S65EwepaYZVCHyHz56+4SEW8azhvCtrus=
+        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=nHM/zNarT82wu+x4lgAdGC2mHx8Guijmtu+f0YBziZs=;
+        b=NA3F+XKmnhNi6kzCESfIdsxKS2uZOsStA6v3UFprwRKw/OhFhOWV573G2OwOoRXJ9G
+         jpkX1PlTe24W+T6jmj/B9TdYvsqrmput3qZCO1iiRFiYVl8Nq5JykFYmHdH7fIBlGNO9
+         CjocitqQhG0jlGmIOTyGy0VGw5YZXa0E2JaYi54EB7YUp+23q3wIVe/ioL3JnNDIXwMW
+         0tLRdb8hjdQgj4wze3oBgV1PFShLjU29t90MrOXd5ZFilZTglcaLd7kxppWvJXysCH8b
+         CB9pxhKFB7fm4Sue3R5jjV3cX9ZHnG2ftbIES6aCsKS/kx9wrVNWV088nQ8W8BXgVKsT
+         hGgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tA11nn9ae5cvgWVfh9wtHtDpSHe6PyopJBRnKzHppXM=;
-        b=L8K3rvfHJbuIWhm/9zbSyxPk5USRPt828znRlCwclgz9YibLsDSXOVF/GjkKsHlqYb
-         8oWWGq8y1qwHQ+/nyGxPpDVEUmBJo/GCUYL5AgChxMm+1h8ia3XsrdzKYgM7m+X3H17j
-         UVSuabpIdh/QgE33GEnYUpm/W5bKQwx0+WHU+A/RTnDQFK3NBUkXsNJfsDjwlAriZ0rN
-         0nM995pTEf02HlLa3EyQCr+xWutDc9oS0K1a9gGQdoAsrryV6aqoR4jvwGSGtfI889q6
-         frtT+UctkDHu5S63fmmfLKd3ph/RsXaGUfKDopXg6o1xHsTUinuVSUVbwPMRVVbkoNaZ
-         9xEA==
-X-Gm-Message-State: AOAM531FjbgA0jLSpqajST0ESJZ0VBRH+mlqW4KHxdo/G2gbm3Mgs3IZ
-        6JxuV2YnU7ZttGYT/IszBdC4IQ==
-X-Google-Smtp-Source: ABdhPJwI81mzLEY+LJZAtfAoi1S/rKxmaN04K7UCpg8GFh53qvuGjRpnBd7jeLLhTbMFrxNf4WCBCw==
-X-Received: by 2002:a17:90a:db96:: with SMTP id h22mr6501306pjv.204.1609976801211;
-        Wed, 06 Jan 2021 15:46:41 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j20sm3638718pfd.106.2021.01.06.15.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jan 2021 15:46:40 -0800 (PST)
-Date:   Wed, 6 Jan 2021 15:46:39 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, mcgrof@kernel.org,
-        yzaikin@google.com, adobriyan@gmail.com, vbabka@suse.cz,
-        linux-fsdevel@vger.kernel.org, mhocko@suse.com,
-        mhiramat@kernel.org, wangle6@huawei.com
-Subject: Re: [PATCH] proc_sysclt: fix oops caused by incorrect command
- parameters.
-Message-ID: <202101061539.966EBB293@keescook>
-References: <20201224074256.117413-1-nixiaoming@huawei.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=nHM/zNarT82wu+x4lgAdGC2mHx8Guijmtu+f0YBziZs=;
+        b=blal6seS9AcTyyGS64MJ1TTX3gxlik5hZYqbIkJbDJ8Mc+sBsfeew7jIYVvdK1fXPU
+         pk/AB1bXUEdZvvg0c/UrQaA33VVv4WgzRy+1jKX8KCkxBtmMTU0Qjr5zyFnLFeHCl2TS
+         xNr8XWdfcfbJkS99oTHGbgAqypBF1MJ3NnusHlqllb75rcG4MWslxUzzhGM/OuXFd+2U
+         xEpw86LhqHJpVPY6Yx+hIQVUOFuJOA8su7yIQQTybAELUGdjpRB9fCNN2Q3rRIHNhdYG
+         ZAhhfd3OZwqjIAjfqm/ELAcwC+eNVvl4IzGVXiHjBAioi4C7Qb5SKpKFPYROQJvWJsR+
+         hWWw==
+X-Gm-Message-State: AOAM5323kvVJfeddRbz9qpPdE2xupyI4VK0HqjaMRDnys8FIGAOMpmun
+        h8Jk1WkO5qQRZaL8wkTeImp3Vg==
+X-Google-Smtp-Source: ABdhPJwv5izWk5XM30g9rPSPMdovHLcTpT0DO/uurwnBAYjc/lVBVQTLqZutGbJkbfaM5c98RBK3cQ==
+X-Received: by 2002:a17:90a:1706:: with SMTP id z6mr1080632pjd.0.1609977526924;
+        Wed, 06 Jan 2021 15:58:46 -0800 (PST)
+Received: from [192.168.10.153] (124-171-107-241.dyn.iinet.net.au. [124.171.107.241])
+        by smtp.gmail.com with UTF8SMTPSA id d6sm3384801pfo.199.2021.01.06.15.58.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Jan 2021 15:58:46 -0800 (PST)
+Message-ID: <5e6716a6-0314-8360-4fb6-5c959022a24c@ozlabs.ru>
+Date:   Thu, 7 Jan 2021 10:58:39 +1100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201224074256.117413-1-nixiaoming@huawei.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101
+ Thunderbird/85.0
+Subject: Re: [RFC PATCH kernel] block: initialize block_device::bd_bdi for
+ bdev_cache
+Content-Language: en-US
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210106092900.26595-1-aik@ozlabs.ru>
+ <20210106104106.GA29271@quack2.suse.cz>
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+In-Reply-To: <20210106104106.GA29271@quack2.suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-subject typo: "sysclt" -> "sysctl"
 
-On Thu, Dec 24, 2020 at 03:42:56PM +0800, Xiaoming Ni wrote:
-> The process_sysctl_arg() does not check whether val is empty before
->  invoking strlen(val). If the command line parameter () is incorrectly
->  configured and val is empty, oops is triggered.
-> 
-> For example, "hung_task_panic=1" is incorrectly written as "hung_task_panic".
-> 
-> log:
-> 	Kernel command line: .... hung_task_panic
-> 	....
-> 	[000000000000000n] user address but active_mm is swapper
-> 	Internal error: Oops: 96000005 [#1] SMP
-> 	Modules linked in:
-> 	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.10.1 #1
-> 	Hardware name: linux,dummy-virt (DT)
-> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO BTYPE=--)
-> 	pc : __pi_strlen+0x10/0x98
-> 	lr : process_sysctl_arg+0x1e4/0x2ac
-> 	sp : ffffffc01104bd40
-> 	x29: ffffffc01104bd40 x28: 0000000000000000
-> 	x27: ffffff80c0a4691e x26: ffffffc0102a7c8c
-> 	x25: 0000000000000000 x24: ffffffc01104be80
-> 	x23: ffffff80c22f0b00 x22: ffffff80c02e28c0
-> 	x21: ffffffc0109f9000 x20: 0000000000000000
-> 	x19: ffffffc0107c08de x18: 0000000000000003
-> 	x17: ffffffc01105d000 x16: 0000000000000054
-> 	x15: ffffffffffffffff x14: 3030253078413830
-> 	x13: 000000000000ffff x12: 0000000000000000
-> 	x11: 0101010101010101 x10: 0000000000000005
-> 	x9 : 0000000000000003 x8 : ffffff80c0980c08
-> 	x7 : 0000000000000000 x6 : 0000000000000002
-> 	x5 : ffffff80c0235000 x4 : ffffff810f7c7ee0
-> 	x3 : 000000000000043a x2 : 00bdcc4ebacf1a54
-> 	x1 : 0000000000000000 x0 : 0000000000000000
-> 	Call trace:
-> 	 __pi_strlen+0x10/0x98
-> 	 parse_args+0x278/0x344
-> 	 do_sysctl_args+0x8c/0xfc
-> 	 kernel_init+0x5c/0xf4
-> 	 ret_from_fork+0x10/0x30
-> 	Code: b200c3eb 927cec01 f2400c07 54000301 (a8c10c22)
-> 
-> Fixes: 3db978d480e2843 ("kernel/sysctl: support setting sysctl parameters
->  from kernel command line")
-> Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
-> ---
->  fs/proc/proc_sysctl.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 317899222d7f..4516411a2b44 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -1757,6 +1757,9 @@ static int process_sysctl_arg(char *param, char *val,
->  	loff_t pos = 0;
->  	ssize_t wret;
->  
-> +	if (!val)
-> +		return 0;
-> +
->  	if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
->  		param += sizeof("sysctl") - 1;
 
-Otherwise, yeah, this is a good test to add. I would make it more
-verbose, though:
+On 06/01/2021 21:41, Jan Kara wrote:
+> On Wed 06-01-21 20:29:00, Alexey Kardashevskiy wrote:
+>> This is a workaround to fix a null derefence crash:
+>>
+>> [c00000000b01f840] c00000000b01f880 (unreliable)
+>> [c00000000b01f880] c000000000769a3c bdev_evict_inode+0x21c/0x370
+>> [c00000000b01f8c0] c00000000070bacc evict+0x11c/0x230
+>> [c00000000b01f900] c00000000070c138 iput+0x2a8/0x4a0
+>> [c00000000b01f970] c0000000006ff030 dentry_unlink_inode+0x220/0x250
+>> [c00000000b01f9b0] c0000000007001c0 __dentry_kill+0x190/0x320
+>> [c00000000b01fa00] c000000000701fb8 dput+0x5e8/0x860
+>> [c00000000b01fa80] c000000000705848 shrink_dcache_for_umount+0x58/0x100
+>> [c00000000b01fb00] c0000000006cf864 generic_shutdown_super+0x54/0x200
+>> [c00000000b01fb80] c0000000006cfd48 kill_anon_super+0x38/0x60
+>> [c00000000b01fbc0] c0000000006d12cc deactivate_locked_super+0xbc/0x110
+>> [c00000000b01fbf0] c0000000006d13bc deactivate_super+0x9c/0xc0
+>> [c00000000b01fc20] c00000000071a340 cleanup_mnt+0x1b0/0x250
+>> [c00000000b01fc80] c000000000278fa8 task_work_run+0xf8/0x180
+>> [c00000000b01fcd0] c00000000002b4ac do_notify_resume+0x4dc/0x5d0
+>> [c00000000b01fda0] c00000000004ba0c syscall_exit_prepare+0x28c/0x370
+>> [c00000000b01fe10] c00000000000e06c system_call_common+0xfc/0x27c
+>> --- Exception: c00 (System Call) at 0000000010034890
+>>
+>> Is this fixed properly already somewhere? Thanks,
+>>
+>> Fixes: e6cb53827ed6 ("block: initialize struct block_device in bdev_alloc")
+> 
+> I don't think it's fixed anywhere and I've seen the syzbot report and I was
+> wondering how this can happen when bdev_alloc() initializes bdev->bd_bdi
+> and it also wasn't clear to me whether bd_bdi is really the only field that
+> is problematic - if we can get to bdev_evict_inode() without going through
+> bdev_alloc(), we are probably missing initialization of other fields in
+> that place as well...
+> 
+> But now I've realized that probably the inode is a root inode for bdev
+> superblock which is allocated by VFS through new_inode() and thus doesn't
+> undergo the initialization in bdev_alloc(). 
 
-	if (!val) {
-		pr_err("Missing param value! Expected '%s=...value...'\n", param);
-		return 0;
-	}
+yup, this is the case.
+
+> And AFAICT the root inode on
+> bdev superblock can get only to bdev_evict_inode() and bdev_free_inode().
+> Looking at bdev_evict_inode() the only thing that's used there from struct
+> block_device is really bd_bdi. bdev_free_inode() will also access
+> bdev->bd_stats and bdev->bd_meta_info. So we need to at least initialize
+> these to NULL as well.
+
+These are all NULL.
+
+> IMO the most logical place for all these
+> initializations is in bdev_alloc_inode()...
+
+
+This works. We can also check for NULL where it crashes. But I do not 
+know the code to make an informed decision...
+
+> 
+> 								Honza
+> 
+>> ---
+>>   fs/block_dev.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/fs/block_dev.c b/fs/block_dev.c
+>> index 3e5b02f6606c..86fdc28d565e 100644
+>> --- a/fs/block_dev.c
+>> +++ b/fs/block_dev.c
+>> @@ -792,8 +792,10 @@ static void bdev_free_inode(struct inode *inode)
+>>   static void init_once(void *data)
+>>   {
+>>   	struct bdev_inode *ei = data;
+>> +	struct block_device *bdev = &ei->bdev;
+>>   
+>>   	inode_init_once(&ei->vfs_inode);
+>> +	bdev->bd_bdi = &noop_backing_dev_info;
+>>   }
+>>   
+>>   static void bdev_evict_inode(struct inode *inode)
+>> -- 
+>> 2.17.1
+>>
 
 -- 
-Kees Cook
+Alexey
