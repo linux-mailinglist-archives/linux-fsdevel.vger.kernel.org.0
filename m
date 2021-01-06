@@ -2,191 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D3802EC0B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 16:57:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 451CF2EC0F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 17:17:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbhAFP4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jan 2021 10:56:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34760 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbhAFP4P (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jan 2021 10:56:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 73352AA35;
-        Wed,  6 Jan 2021 15:55:33 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DAFDD1E0812; Wed,  6 Jan 2021 16:55:32 +0100 (CET)
-Date:   Wed, 6 Jan 2021 16:55:32 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        darrick.wong@oracle.com, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@lst.de, song@kernel.org, rgoldwyn@suse.de,
-        qi.fuli@fujitsu.com, y-goto@fujitsu.com
-Subject: Re: [PATCH 05/10] mm, pmem: Implement ->memory_failure() in pmem
- driver
-Message-ID: <20210106155532.GD29271@quack2.suse.cz>
-References: <20201230165601.845024-1-ruansy.fnst@cn.fujitsu.com>
- <20201230165601.845024-6-ruansy.fnst@cn.fujitsu.com>
+        id S1727429AbhAFQRN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jan 2021 11:17:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45606 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbhAFQRN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Jan 2021 11:17:13 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1163C06134D;
+        Wed,  6 Jan 2021 08:16:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=ns/8b6WrIA7MMHf4WsPJu0vdjDlHmaHEsY/klE9k97c=; b=FtulGt/Y++hPqKpKQfw990eNW6
+        +1fHIgtdIQwFQc+e8/vemTj6Xnzz7cSu6GfFxDfG0RmYcxKKP8nYVqTvjxximQ48CUR/gdkBZsPI1
+        K88nN6R3RC3i3VI+3q1cqMC45KubY/8pR0Xp6uhPoDsOqPpRCzSh+P8tPFQTtWsSSG1Uf5p/wYY3T
+        NrbXTq0EtOYflTr1SGl4ew7UOf+edfE59XQvnu89tRFZKWGWk94AGLFGuchscqF/RukT6RPjZkDXp
+        IMkco9OOiDj5AicdtjJuDPU1iRvRRoLBLHhZZ5vmA6kqTsiB5bc5ARsIyLGB+eco0+8MSAjwxsKe7
+        Opf9BHuw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1kxBNK-002UTp-0X; Wed, 06 Jan 2021 16:10:50 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH] io_uring: Fix return value from alloc_fixed_file_ref_node
+Date:   Wed,  6 Jan 2021 16:09:26 +0000
+Message-Id: <20210106160926.593770-1-willy@infradead.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201230165601.845024-6-ruansy.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 31-12-20 00:55:56, Shiyang Ruan wrote:
-> Call the ->memory_failure() which is implemented by pmem driver, in
-> order to finally notify filesystem to handle the corrupted data.  The
-> old collecting and killing processes are moved into
-> mf_dax_mapping_kill_procs(), which will be called by filesystem.
-> 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+alloc_fixed_file_ref_node() currently returns an ERR_PTR on failure.
+io_sqe_files_unregister() expects it to return NULL and since it can only
+return -ENOMEM, it makes more sense to change alloc_fixed_file_ref_node()
+to behave that way.
 
-I understand the intent but this patch breaks DAX hwpoison handling for
-everybody at this point in the series (nobody implements ->memory_failure()
-handler yet) so it is bisection unfriendly. This should really be the last
-step in the series once all the other infrastructure is implemented.
-Furthermore AFAIU it breaks DAX hwpoison handling terminally for all
-filesystems which don't implement ->corrupted_range() - e.g. for ext4.
-Your series needs to implement ->corrupted_range() for all filesystems
-supporting DAX so that we don't regress current functionality...
+Fixes: 1ffc54220c44 ("io_uring: fix io_sqe_files_unregister() hangs")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/io_uring.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-								Honza
-
-> ---
->  drivers/nvdimm/pmem.c | 24 +++++++++++++++++++++
->  mm/memory-failure.c   | 50 +++++--------------------------------------
->  2 files changed, 29 insertions(+), 45 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 875076b0ea6c..4a114937c43b 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -363,9 +363,33 @@ static void pmem_release_disk(void *__pmem)
->  	put_disk(pmem->disk);
->  }
->  
-> +static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
-> +		unsigned long pfn, int flags)
-> +{
-> +	struct pmem_device *pdev;
-> +	struct gendisk *disk;
-> +	loff_t disk_offset;
-> +	int rc = 0;
-> +	unsigned long size = page_size(pfn_to_page(pfn));
-> +
-> +	pdev = container_of(pgmap, struct pmem_device, pgmap);
-> +	disk = pdev->disk;
-> +	if (!disk)
-> +		return -ENXIO;
-> +
-> +	disk_offset = PFN_PHYS(pfn) - pdev->phys_addr - pdev->data_offset;
-> +	if (disk->fops->corrupted_range) {
-> +		rc = disk->fops->corrupted_range(disk, NULL, disk_offset, size, &flags);
-> +		if (rc == -ENODEV)
-> +			rc = -ENXIO;
-> +	}
-> +	return rc;
-> +}
-> +
->  static const struct dev_pagemap_ops fsdax_pagemap_ops = {
->  	.kill			= pmem_pagemap_kill,
->  	.cleanup		= pmem_pagemap_cleanup,
-> +	.memory_failure		= pmem_pagemap_memory_failure,
->  };
->  
->  static int pmem_attach_disk(struct device *dev,
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 37bc6e2a9564..0109ad607fb8 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1269,28 +1269,11 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->  		struct dev_pagemap *pgmap)
->  {
->  	struct page *page = pfn_to_page(pfn);
-> -	const bool unmap_success = true;
-> -	unsigned long size = 0;
-> -	struct to_kill *tk;
-> -	LIST_HEAD(to_kill);
->  	int rc = -EBUSY;
-> -	loff_t start;
-> -	dax_entry_t cookie;
-> -
-> -	/*
-> -	 * Prevent the inode from being freed while we are interrogating
-> -	 * the address_space, typically this would be handled by
-> -	 * lock_page(), but dax pages do not use the page lock. This
-> -	 * also prevents changes to the mapping of this pfn until
-> -	 * poison signaling is complete.
-> -	 */
-> -	cookie = dax_lock_page(page);
-> -	if (!cookie)
-> -		goto out;
->  
->  	if (hwpoison_filter(page)) {
->  		rc = 0;
-> -		goto unlock;
-> +		goto out;
->  	}
->  
->  	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
-> @@ -1298,7 +1281,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->  		 * TODO: Handle HMM pages which may need coordination
->  		 * with device-side memory.
->  		 */
-> -		goto unlock;
-> +		goto out;
->  	}
->  
->  	/*
-> @@ -1307,33 +1290,10 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->  	 */
->  	SetPageHWPoison(page);
->  
-> -	/*
-> -	 * Unlike System-RAM there is no possibility to swap in a
-> -	 * different physical page at a given virtual address, so all
-> -	 * userspace consumption of ZONE_DEVICE memory necessitates
-> -	 * SIGBUS (i.e. MF_MUST_KILL)
-> -	 */
-> -	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
-> -	collect_procs_file(page, page->mapping, page->index, &to_kill,
-> -			   flags & MF_ACTION_REQUIRED);
-> +	/* call driver to handle the memory failure */
-> +	if (pgmap->ops->memory_failure)
-> +		rc = pgmap->ops->memory_failure(pgmap, pfn, flags);
->  
-> -	list_for_each_entry(tk, &to_kill, nd)
-> -		if (tk->size_shift)
-> -			size = max(size, 1UL << tk->size_shift);
-> -	if (size) {
-> -		/*
-> -		 * Unmap the largest mapping to avoid breaking up
-> -		 * device-dax mappings which are constant size. The
-> -		 * actual size of the mapping being torn down is
-> -		 * communicated in siginfo, see kill_proc()
-> -		 */
-> -		start = (page->index << PAGE_SHIFT) & ~(size - 1);
-> -		unmap_mapping_range(page->mapping, start, start + size, 0);
-> -	}
-> -	kill_procs(&to_kill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
-> -	rc = 0;
-> -unlock:
-> -	dax_unlock_page(page, cookie);
->  out:
->  	/* drop pgmap ref acquired in caller */
->  	put_dev_pagemap(pgmap);
-> -- 
-> 2.29.2
-> 
-> 
-> 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index ca46f314640b..d4d3e30331e4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7684,12 +7684,12 @@ static struct fixed_file_ref_node *alloc_fixed_file_ref_node(
+ 
+ 	ref_node = kzalloc(sizeof(*ref_node), GFP_KERNEL);
+ 	if (!ref_node)
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 
+ 	if (percpu_ref_init(&ref_node->refs, io_file_data_ref_zero,
+ 			    0, GFP_KERNEL)) {
+ 		kfree(ref_node);
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 	}
+ 	INIT_LIST_HEAD(&ref_node->node);
+ 	INIT_LIST_HEAD(&ref_node->file_list);
+@@ -7783,9 +7783,9 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	}
+ 
+ 	ref_node = alloc_fixed_file_ref_node(ctx);
+-	if (IS_ERR(ref_node)) {
++	if (!ref_node) {
+ 		io_sqe_files_unregister(ctx);
+-		return PTR_ERR(ref_node);
++		return -ENOMEM;
+ 	}
+ 
+ 	io_sqe_files_set_node(file_data, ref_node);
+@@ -7885,8 +7885,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 		return -EINVAL;
+ 
+ 	ref_node = alloc_fixed_file_ref_node(ctx);
+-	if (IS_ERR(ref_node))
+-		return PTR_ERR(ref_node);
++	if (!ref_node)
++		return -ENOMEM;
+ 
+ 	done = 0;
+ 	fds = u64_to_user_ptr(up->fds);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.29.2
+
