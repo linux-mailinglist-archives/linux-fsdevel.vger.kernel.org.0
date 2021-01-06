@@ -2,105 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E6E22EC62B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 23:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDFB12EC659
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 23:47:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbhAFWV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jan 2021 17:21:57 -0500
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:34521 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726488AbhAFWV5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jan 2021 17:21:57 -0500
-Received: from dread.disaster.area (pa49-179-167-107.pa.nsw.optusnet.com.au [49.179.167.107])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id BE3D476AF41;
-        Thu,  7 Jan 2021 09:21:12 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kxHB1-003m7x-Iw; Thu, 07 Jan 2021 09:21:11 +1100
-Date:   Thu, 7 Jan 2021 09:21:11 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: block_dev: compute nr_vecs hint for improving
- writeback bvecs allocation
-Message-ID: <20210106222111.GE331610@dread.disaster.area>
-References: <20210105132647.3818503-1-ming.lei@redhat.com>
- <20210105183938.GA3878@lst.de>
- <20210106084548.GA3845805@T590>
+        id S1727736AbhAFWri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jan 2021 17:47:38 -0500
+Received: from venus.catern.com ([68.183.49.163]:47294 "EHLO venus.catern.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727688AbhAFWri (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Jan 2021 17:47:38 -0500
+X-Greylist: delayed 589 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Jan 2021 17:47:37 EST
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=98.7.229.235; helo=localhost; envelope-from=sbaugh@catern.com; receiver=<UNKNOWN> 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=catern.com; s=mail;
+        t=1609972627; bh=GhGqfhrOmk85bE9brf63v61AQzlMYBaNZ+f/18AJtj8=;
+        h=From:To:Cc:Subject:Date;
+        b=P1/agWQRlSIpE5EI66HiAfbnB5qN+6p+vw2ZXK6sWeNXMo6AH7glAMEHZeAjQhLYe
+         cjhe72+bFPscefg32PaxAAbEoI653W0ze+HpyKGNo/joAaLJp1CKBwpUfwLOakPTpj
+         +V+EqdWbppCdEoWBFTTajAzUOkosP3EhdtjBLOeg=
+Received: from localhost (cpe-98-7-229-235.nyc.res.rr.com [98.7.229.235])
+        by venus.catern.com (Postfix) with ESMTPSA id A1C932E10C4;
+        Wed,  6 Jan 2021 22:37:07 +0000 (UTC)
+From:   Spencer Baugh <sbaugh@catern.com>
+To:     David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     inux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: FUSE no longer allows empty string for "source" with new mount API
+Date:   Wed, 06 Jan 2021 17:37:00 -0500
+Message-ID: <871rexvgj7.fsf@catern.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210106084548.GA3845805@T590>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=+wqVUQIkAh0lLYI+QRsciw==:117 a=+wqVUQIkAh0lLYI+QRsciw==:17
-        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
-        a=dbeGUg55DdRa2WVwu8kA:9 a=CjuIK1q_8ugA:10 a=igBNqPyMv6gA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 06, 2021 at 04:45:48PM +0800, Ming Lei wrote:
-> On Tue, Jan 05, 2021 at 07:39:38PM +0100, Christoph Hellwig wrote:
-> > At least for iomap I think this is the wrong approach.  Between the
-> > iomap and writeback_control we know the maximum size of the writeback
-> > request and can just use that.
-> 
-> I think writeback_control can tell us nothing about max pages in single
-> bio:
 
-By definition, the iomap tells us exactly how big the IO is going to
-be. i.e. an iomap spans a single contiguous range that we are going
-to issue IO on. Hence we can use that to size the bio exactly
-right for direct IO.
+Hi,
 
-> - wbc->nr_to_write controls how many pages to writeback, this pages
->   usually don't belong to same bio. Also this number is often much
->   bigger than BIO_MAX_PAGES.
-> 
-> - wbc->range_start/range_end is similar too, which is often much more
->   bigger than BIO_MAX_PAGES.
-> 
-> Also page/blocks_in_page can be mapped to different extent too, which is
-> only available when wpc->ops->map_blocks() is returned,
+Calling mount(2) and passing an empty string for the "source" parameter
+when mounting a FUSE filesystem used to work.
 
-We only allocate the bio -after- calling ->map_blocks() to obtain
-the iomap for the given writeback range request. Hence we
-already know how large the BIO could be before we allocate it.
+However, it seems after the migration to the new mount API, passing an
+empty string for "source" with mount(2) no longer works, since the new
+mount API actually parses the "source" parameter and doesn't allow an
+empty string. This breaks users of FUSE which don't go through libfuse,
+so it seems like a userspace-visible regression.
 
-> which looks not
-> different with mpage_writepages(), in which bio is allocated with
-> BIO_MAX_PAGES vecs too.
+I haven't bisected to confirm that it's specifically the new mount API
+which is the problem, just seen that it works on some old kernels and
+fails on some kernels after
 
-__mpage_writepage() only maps a page at a time, so it can't tell
-ahead of time how big the bio is going to need to be as it doesn't
-return/cache a contiguous extent range. So it's actually very
-different to the iomap writeback code, and effectively does require
-a BIO_MAX_PAGES vecs allocation all the time...
+commit c30da2e981a703c6b1d49911511f7ade8dac20be
+Author: David Howells <dhowells@redhat.com>
+Date:   Mon Mar 25 16:38:31 2019 +0000
 
-> Or you mean we can use iomap->length for this purpose? But iomap->length
-> still is still too big in case of xfs.
+    fuse: convert to use the new mount API
 
-if we are doing small random writeback into large extents (i.e.
-iomap->length is large), then it is trivial to detect that we are
-doing random writes rather than sequential writes by checking if the
-current page is sequential to the last sector in the current bio.
-We already do this non-sequential IO checking to determine if a new
-bio needs to be allocated in iomap_can_add_to_ioend(), and we also
-know how large the current contiguous range mapped into the current
-bio chain is (ioend->io_size). Hence we've got everything we need to
-determine whether we should do a large or small bio vec allocation
-in the iomap writeback path...
+so apologies if the culprit turns out to be something else.
 
-Cheers,
+I'd try to fix it myself, but I'm not sure how to completely ignore a
+parameter with the new mount API - I assume that with the new mount API,
+we need to explicitly handle "source", so something like the below
+simple patch won't work.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Spencer Baugh
+
+---
+1 file changed, 8 deletions(-)
+fs/fuse/inode.c | 8 --------
+
+modified   fs/fuse/inode.c
+@@ -449,7 +449,6 @@ enum {
+ };
+ 
+ static const struct fs_parameter_spec fuse_fs_parameters[] = {
+-	fsparam_string	("source",		OPT_SOURCE),
+ 	fsparam_u32	("fd",			OPT_FD),
+ 	fsparam_u32oct	("rootmode",		OPT_ROOTMODE),
+ 	fsparam_u32	("user_id",		OPT_USER_ID),
+@@ -473,13 +472,6 @@ static int fuse_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		return opt;
+ 
+ 	switch (opt) {
+-	case OPT_SOURCE:
+-		if (fc->source)
+-			return invalfc(fc, "Multiple sources specified");
+-		fc->source = param->string;
+-		param->string = NULL;
+-		break;
+-
+ 	case OPT_SUBTYPE:
+ 		if (ctx->subtype)
+ 			return invalfc(fc, "Multiple subtypes specified");
+
