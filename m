@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E9182EBD10
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 12:17:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E957B2EBD33
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 12:36:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725822AbhAFLQo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jan 2021 06:16:44 -0500
-Received: from relay.sw.ru ([185.231.240.75]:49728 "EHLO relay3.sw.ru"
+        id S1725803AbhAFLgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jan 2021 06:36:17 -0500
+Received: from relay.sw.ru ([185.231.240.75]:55910 "EHLO relay3.sw.ru"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725788AbhAFLQo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jan 2021 06:16:44 -0500
+        id S1725788AbhAFLgR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Jan 2021 06:36:17 -0500
 Received: from [192.168.15.143]
         by relay3.sw.ru with esmtp (Exim 4.94)
         (envelope-from <ktkhai@virtuozzo.com>)
-        id 1kx6mG-00Fd6I-Ge; Wed, 06 Jan 2021 14:14:56 +0300
-Subject: Re: [v3 PATCH 09/11] mm: vmscan: don't need allocate
- shrinker->nr_deferred for memcg aware shrinkers
+        id 1kx75B-00FdAy-9u; Wed, 06 Jan 2021 14:34:29 +0300
+Subject: Re: [v3 PATCH 10/11] mm: memcontrol: reparent nr_deferred when memcg
+ offline
 To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, shakeelb@google.com,
         david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
         akpm@linux-foundation.org
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20210105225817.1036378-1-shy828301@gmail.com>
- <20210105225817.1036378-10-shy828301@gmail.com>
+ <20210105225817.1036378-11-shy828301@gmail.com>
 From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <7c591313-08fd-4f98-6021-6dfa59f01aff@virtuozzo.com>
-Date:   Wed, 6 Jan 2021 14:15:07 +0300
+Message-ID: <777d47b3-65f7-5727-2d21-dbef93e7d1ed@virtuozzo.com>
+Date:   Wed, 6 Jan 2021 14:34:39 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <20210105225817.1036378-10-shy828301@gmail.com>
+In-Reply-To: <20210105225817.1036378-11-shy828301@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -39,102 +39,108 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 06.01.2021 01:58, Yang Shi wrote:
-> Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
-> allocate shrinker->nr_deferred for such shrinkers anymore.
-> 
-> The prealloc_memcg_shrinker() would return -ENOSYS if !CONFIG_MEMCG or memcg is disabled
-> by kernel command line, then shrinker's SHRINKER_MEMCG_AWARE flag would be cleared.
-> This makes the implementation of this patch simpler.
+> Now shrinker's nr_deferred is per memcg for memcg aware shrinkers, add to parent's
+> corresponding nr_deferred when memcg offline.
 > 
 > Signed-off-by: Yang Shi <shy828301@gmail.com>
 > ---
->  mm/vmscan.c | 33 ++++++++++++++++++---------------
->  1 file changed, 18 insertions(+), 15 deletions(-)
+>  include/linux/memcontrol.h |  1 +
+>  mm/memcontrol.c            |  1 +
+>  mm/vmscan.c                | 29 +++++++++++++++++++++++++++++
+>  3 files changed, 31 insertions(+)
 > 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 5599082df623..d1e52e916cc2 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1586,6 +1586,7 @@ extern int memcg_alloc_shrinker_info(struct mem_cgroup *memcg);
+>  extern void memcg_free_shrinker_info(struct mem_cgroup *memcg);
+>  extern void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
+>  				   int nid, int shrinker_id);
+> +extern void memcg_reparent_shrinker_deferred(struct mem_cgroup *memcg);
+>  #else
+>  #define mem_cgroup_sockets_enabled 0
+>  static inline void mem_cgroup_sk_alloc(struct sock *sk) { };
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 126f1fd550c8..19e555675582 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5284,6 +5284,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+>  	page_counter_set_low(&memcg->memory, 0);
+>  
+>  	memcg_offline_kmem(memcg);
+> +	memcg_reparent_shrinker_deferred(memcg);
+>  	wb_memcg_offline(memcg);
+>  
+>  	drain_all_stock(memcg);
 > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index f20ed8e928c2..d9795fb0f1c5 100644
+> index d9795fb0f1c5..71056057d26d 100644
 > --- a/mm/vmscan.c
 > +++ b/mm/vmscan.c
-> @@ -340,6 +340,9 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->  {
->  	int id, ret = -ENOMEM;
->  
-> +	if (mem_cgroup_disabled())
-> +		return -ENOSYS;
-> +
->  	down_write(&shrinker_rwsem);
->  	/* This may call shrinker, so it must use down_read_trylock() */
->  	id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
-> @@ -424,7 +427,7 @@ static bool writeback_throttling_sane(struct scan_control *sc)
->  #else
->  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->  {
-> -	return 0;
-> +	return -ENOSYS;
+> @@ -396,6 +396,35 @@ static long set_nr_deferred_memcg(long nr, int nid, struct shrinker *shrinker,
+>  	return atomic_long_add_return(nr, &info->nr_deferred[shrinker->id]);
 >  }
 >  
->  static void unregister_memcg_shrinker(struct shrinker *shrinker)
-> @@ -535,8 +538,20 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
->   */
->  int prealloc_shrinker(struct shrinker *shrinker)
->  {
-> -	unsigned int size = sizeof(*shrinker->nr_deferred);
-> +	unsigned int size;
-> +	int err;
+> +void memcg_reparent_shrinker_deferred(struct mem_cgroup *memcg)
+> +{
+> +	int i, nid;
+> +	long nr;
+> +	struct mem_cgroup *parent;
+> +	struct memcg_shrinker_info *child_info, *parent_info;
 > +
-> +	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> +		err = prealloc_memcg_shrinker(shrinker);
-> +		if (!err)
-> +			return 0;
-> +		if (err != -ENOSYS)
-> +			return err;
+> +	parent = parent_mem_cgroup(memcg);
+> +	if (!parent)
+> +		parent = root_mem_cgroup;
 > +
-> +		shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
+> +	/* Prevent from concurrent shrinker_info expand */
+> +	down_read(&shrinker_rwsem);
+> +	for_each_node(nid) {
+> +		child_info = rcu_dereference_protected(
+> +					memcg->nodeinfo[nid]->shrinker_info,
+> +					true);
+> +		parent_info = rcu_dereference_protected(
+> +					parent->nodeinfo[nid]->shrinker_info,
+> +					true);
 
-This looks very confusing.
+Simple assignment can't take such lots of space, we have to do something with that.
 
-In case of you want to disable preallocation branch for !MEMCG case,
-you should firstly consider something like the below:
+Number of these
 
-#ifdef CONFIG_MEMCG
-#define SHRINKER_MEMCG_AWARE    (1 << 2)
-#else
-#define SHRINKER_MEMCG_AWARE    0
-#endif
+	rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info, true)
 
+became too big, and we can't allow every of them takes 3 lines.
+
+We should introduce a short helper to dereferrence this, so we will be able to give
+out attention to really difficult logic instead of wasting it on parsing this.
+
+		child_info = memcg_shrinker_info(memcg, nid);
+or
+		child_info = memcg_shrinker_info_protected(memcg, nid);
+
+Both of them fit in single line.
+
+struct memcg_shrinker_info *memcg_shrinker_info_protected(
+					struct mem_cgroup *memcg, int nid)
+{
+	return rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
+					 lockdep_assert_held(&shrinker_rwsem));
+}
+
+
+> +		for (i = 0; i < shrinker_nr_max; i++) {
+> +			nr = atomic_long_read(&child_info->nr_deferred[i]);
+> +			atomic_long_add(nr,
+> +					&parent_info->nr_deferred[i]);
+
+Why new line is here? In case of you merge it up, it will be even shorter then previous line.
+
+> +		}
 > +	}
->  
-> +	size = sizeof(*shrinker->nr_deferred);
->  	if (shrinker->flags & SHRINKER_NUMA_AWARE)
->  		size *= nr_node_ids;
->  
-> @@ -544,26 +559,14 @@ int prealloc_shrinker(struct shrinker *shrinker)
->  	if (!shrinker->nr_deferred)
->  		return -ENOMEM;
->  
-> -	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> -		if (prealloc_memcg_shrinker(shrinker))
-> -			goto free_deferred;
-> -	}
->  
->  	return 0;
-> -
-> -free_deferred:
-> -	kfree(shrinker->nr_deferred);
-> -	shrinker->nr_deferred = NULL;
-> -	return -ENOMEM;
->  }
->  
->  void free_prealloced_shrinker(struct shrinker *shrinker)
+> +	up_read(&shrinker_rwsem);
+> +}
+> +
+>  static bool cgroup_reclaim(struct scan_control *sc)
 >  {
-> -	if (!shrinker->nr_deferred)
-> -		return;
-> -
->  	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> -		unregister_memcg_shrinker(shrinker);
-> +		return unregister_memcg_shrinker(shrinker);
->  
->  	kfree(shrinker->nr_deferred);
->  	shrinker->nr_deferred = NULL;
+>  	return sc->target_mem_cgroup;
 > 
 
