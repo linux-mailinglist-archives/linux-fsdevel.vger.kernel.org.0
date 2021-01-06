@@ -2,110 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4656A2EBC93
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 11:43:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 491842EBD05
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 12:09:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbhAFKlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jan 2021 05:41:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33850 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbhAFKls (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jan 2021 05:41:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id C29DDACAF;
-        Wed,  6 Jan 2021 10:41:06 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 78CB61E0812; Wed,  6 Jan 2021 11:41:06 +0100 (CET)
-Date:   Wed, 6 Jan 2021 11:41:06 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        id S1726223AbhAFLHs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jan 2021 06:07:48 -0500
+Received: from relay.sw.ru ([185.231.240.75]:45968 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726211AbhAFLHr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Jan 2021 06:07:47 -0500
+Received: from [192.168.15.143]
+        by relay3.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1kx6dY-00Fd3a-PP; Wed, 06 Jan 2021 14:05:56 +0300
+Subject: Re: [v3 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
+To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, shakeelb@google.com,
+        david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
+        akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH kernel] block: initialize block_device::bd_bdi for
- bdev_cache
-Message-ID: <20210106104106.GA29271@quack2.suse.cz>
-References: <20210106092900.26595-1-aik@ozlabs.ru>
+References: <20210105225817.1036378-1-shy828301@gmail.com>
+ <20210105225817.1036378-8-shy828301@gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <a3452140-9f88-3cb9-0359-ca374f9e9d9d@virtuozzo.com>
+Date:   Wed, 6 Jan 2021 14:06:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210106092900.26595-1-aik@ozlabs.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210105225817.1036378-8-shy828301@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 06-01-21 20:29:00, Alexey Kardashevskiy wrote:
-> This is a workaround to fix a null derefence crash:
+On 06.01.2021 01:58, Yang Shi wrote:
+> Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
 > 
-> [c00000000b01f840] c00000000b01f880 (unreliable)
-> [c00000000b01f880] c000000000769a3c bdev_evict_inode+0x21c/0x370
-> [c00000000b01f8c0] c00000000070bacc evict+0x11c/0x230
-> [c00000000b01f900] c00000000070c138 iput+0x2a8/0x4a0
-> [c00000000b01f970] c0000000006ff030 dentry_unlink_inode+0x220/0x250
-> [c00000000b01f9b0] c0000000007001c0 __dentry_kill+0x190/0x320
-> [c00000000b01fa00] c000000000701fb8 dput+0x5e8/0x860
-> [c00000000b01fa80] c000000000705848 shrink_dcache_for_umount+0x58/0x100
-> [c00000000b01fb00] c0000000006cf864 generic_shutdown_super+0x54/0x200
-> [c00000000b01fb80] c0000000006cfd48 kill_anon_super+0x38/0x60
-> [c00000000b01fbc0] c0000000006d12cc deactivate_locked_super+0xbc/0x110
-> [c00000000b01fbf0] c0000000006d13bc deactivate_super+0x9c/0xc0
-> [c00000000b01fc20] c00000000071a340 cleanup_mnt+0x1b0/0x250
-> [c00000000b01fc80] c000000000278fa8 task_work_run+0xf8/0x180
-> [c00000000b01fcd0] c00000000002b4ac do_notify_resume+0x4dc/0x5d0
-> [c00000000b01fda0] c00000000004ba0c syscall_exit_prepare+0x28c/0x370
-> [c00000000b01fe10] c00000000000e06c system_call_common+0xfc/0x27c
-> --- Exception: c00 (System Call) at 0000000010034890
+> The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> may suffer from over shrink, excessive reclaim latency, etc.
 > 
-> Is this fixed properly already somewhere? Thanks,
+> For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
 > 
-> Fixes: e6cb53827ed6 ("block: initialize struct block_device in bdev_alloc")
-
-I don't think it's fixed anywhere and I've seen the syzbot report and I was
-wondering how this can happen when bdev_alloc() initializes bdev->bd_bdi
-and it also wasn't clear to me whether bd_bdi is really the only field that
-is problematic - if we can get to bdev_evict_inode() without going through
-bdev_alloc(), we are probably missing initialization of other fields in
-that place as well...
-
-But now I've realized that probably the inode is a root inode for bdev
-superblock which is allocated by VFS through new_inode() and thus doesn't
-undergo the initialization in bdev_alloc(). And AFAICT the root inode on
-bdev superblock can get only to bdev_evict_inode() and bdev_free_inode().
-Looking at bdev_evict_inode() the only thing that's used there from struct
-block_device is really bd_bdi. bdev_free_inode() will also access
-bdev->bd_stats and bdev->bd_meta_info. So we need to at least initialize
-these to NULL as well. IMO the most logical place for all these
-initializations is in bdev_alloc_inode()...
-
-								Honza
-
+> We observed this hit in our production environment which was running vfs heavy workload
+> shown as the below tracing log:
+> 
+> <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> cache items 246404277 delta 31345 total_scan 123202138
+> <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> last shrinker return val 123186855
+> 
+> The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> 
+> Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> better isolation.
+> 
+> When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> 
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
 > ---
->  fs/block_dev.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  include/linux/memcontrol.h |  7 +++---
+>  mm/vmscan.c                | 49 +++++++++++++++++++++++++-------------
+>  2 files changed, 37 insertions(+), 19 deletions(-)
 > 
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index 3e5b02f6606c..86fdc28d565e 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -792,8 +792,10 @@ static void bdev_free_inode(struct inode *inode)
->  static void init_once(void *data)
->  {
->  	struct bdev_inode *ei = data;
-> +	struct block_device *bdev = &ei->bdev;
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index e05bbe8277cc..5599082df623 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -93,12 +93,13 @@ struct lruvec_stat {
+>  };
 >  
->  	inode_init_once(&ei->vfs_inode);
-> +	bdev->bd_bdi = &noop_backing_dev_info;
+>  /*
+> - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> - * which have elements charged to this memcg.
+> + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
+> + * shrinkers, which have elements charged to this memcg.
+>   */
+>  struct memcg_shrinker_info {
+>  	struct rcu_head rcu;
+> -	unsigned long map[];
+> +	unsigned long *map;
+> +	atomic_long_t *nr_deferred;
+>  };
+>  
+>  /*
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 0033659abf9e..72259253e414 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -193,10 +193,12 @@ static void memcg_free_shrinker_info_rcu(struct rcu_head *head)
 >  }
 >  
->  static void bdev_evict_inode(struct inode *inode)
-> -- 
-> 2.17.1
+>  static int memcg_expand_one_shrinker_info(struct mem_cgroup *memcg,
+> -					  int size, int old_size)
+> +					  int m_size, int d_size,
+> +					  int old_m_size, int old_d_size)
+>  {
+>  	struct memcg_shrinker_info *new, *old;
+>  	int nid;
+> +	int size = m_size + d_size;
+>  
+>  	for_each_node(nid) {
+>  		old = rcu_dereference_protected(
+> @@ -209,9 +211,18 @@ static int memcg_expand_one_shrinker_info(struct mem_cgroup *memcg,
+>  		if (!new)
+>  			return -ENOMEM;
+>  
+> -		/* Set all old bits, clear all new bits */
+> -		memset(new->map, (int)0xff, old_size);
+> -		memset((void *)new->map + old_size, 0, size - old_size);
+> +		new->map = (unsigned long *)((unsigned long)new + sizeof(*new));
+> +		new->nr_deferred = (atomic_long_t *)((unsigned long)new +
+> +					sizeof(*new) + m_size);
+
+Can't we write this more compact?
+
+		new->map = (unsigned long *)(new + 1);
+		new->nr_deferred = (atomic_long_t)(new->map + 1);
+
+> +
+> +		/* map: set all old bits, clear all new bits */
+> +		memset(new->map, (int)0xff, old_m_size);
+> +		memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
+> +		/* nr_deferred: copy old values, clear all new values */
+> +		memcpy((void *)new->nr_deferred, (void *)old->nr_deferred,
+> +		       old_d_size);
+
+Why not
+	 	memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
+?
+
+> +		memset((void *)new->nr_deferred + old_d_size, 0,
+> +		       d_size - old_d_size);
+>  
+>  		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+>  		call_rcu(&old->rcu, memcg_free_shrinker_info_rcu);
+> @@ -226,9 +237,6 @@ void memcg_free_shrinker_info(struct mem_cgroup *memcg)
+>  	struct memcg_shrinker_info *info;
+>  	int nid;
+>  
+> -	if (mem_cgroup_is_root(memcg))
+> -		return;
+> -
+>  	for_each_node(nid) {
+>  		pn = mem_cgroup_nodeinfo(memcg, nid);
+>  		info = rcu_dereference_protected(pn->shrinker_info, true);
+> @@ -242,12 +250,13 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+>  {
+>  	struct memcg_shrinker_info *info;
+>  	int nid, size, ret = 0;
+> -
+> -	if (mem_cgroup_is_root(memcg))
+> -		return 0;
+> +	int m_size, d_size = 0;
+>  
+>  	down_read(&shrinker_rwsem);
+> -	size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> +	m_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> +	d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> +	size = m_size + d_size;
+> +
+>  	for_each_node(nid) {
+>  		info = kvzalloc(sizeof(*info) + size, GFP_KERNEL);
+>  		if (!info) {
+> @@ -255,6 +264,9 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+>  			ret = -ENOMEM;
+>  			break;
+>  		}
+> +		info->map = (unsigned long *)((unsigned long)info + sizeof(*info));
+> +		info->nr_deferred = (atomic_long_t *)((unsigned long)info +
+> +					sizeof(*info) + m_size);
+>  		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>  	}
+>  	up_read(&shrinker_rwsem);
+> @@ -265,10 +277,16 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+>  static int memcg_expand_shrinker_info(int new_id)
+>  {
+>  	int size, old_size, ret = 0;
+> +	int m_size, d_size = 0;
+> +	int old_m_size, old_d_size = 0;
+>  	struct mem_cgroup *memcg;
+>  
+> -	size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> -	old_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> +	m_size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> +	d_size = (new_id + 1) * sizeof(atomic_long_t);
+> +	size = m_size + d_size;
+> +	old_m_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> +	old_d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> +	old_size = old_m_size + old_d_size;
+>  	if (size <= old_size)
+>  		return 0;
+
+This replication of patch [4/11] looks awkwardly. Please, try to incorporate
+the same changes to nr_deferred as I requested for shrinker_map in [4/11].
+
+>  
+> @@ -277,9 +295,8 @@ static int memcg_expand_shrinker_info(int new_id)
+>  
+>  	memcg = mem_cgroup_iter(NULL, NULL, NULL);
+>  	do {
+> -		if (mem_cgroup_is_root(memcg))
+> -			continue;
+> -		ret = memcg_expand_one_shrinker_info(memcg, size, old_size);
+> +		ret = memcg_expand_one_shrinker_info(memcg, m_size, d_size,
+> +						     old_m_size, old_d_size);
+>  		if (ret) {
+>  			mem_cgroup_iter_break(NULL, memcg);
+>  			goto out;
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
