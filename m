@@ -2,95 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6BF72EBBA5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 10:28:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6CA62EBBB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 10:30:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbhAFJ1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jan 2021 04:27:32 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:35188 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbhAFJ1b (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jan 2021 04:27:31 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10698xps155607;
-        Wed, 6 Jan 2021 09:26:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=C5Kq07wiNBQ4rVv897deaByc527PdhtjKPiJX1mh5ls=;
- b=vCeORKPMxyQlqDy2r58qBwj35pk6WypqsSVUyHm8EHVn6gJCLp8lGHwP6I+UR51JY1j0
- HOCpo8somKXRb/Ah6APFT/AEjg8xKo/xlR/cVraUefOvAGGgHTzZQ5dGbArczKmVPz3j
- HhyB952AgBNntfWJJmF4NeqrPZMYS3JgTY2UOPnY5M6Iqv/G7Sk8nl5DpkdI8jMAQ2FG
- MUYA7eISE1oY+2q+ydAaXlluBz5TUdmH1clfnCbFfZdMnBgCBVV1vZMvl0UiTH4ufHG+
- ttIApAVbaVsqM4CdbQ/PqH4hmILnTU/aPp1b4N5sROxDs88MCGMDA25f7LI0Tsk2pgTu 6Q== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 35w5420wb6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 06 Jan 2021 09:26:48 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1069BOLP147152;
-        Wed, 6 Jan 2021 09:26:48 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 35w3g0rh1c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Jan 2021 09:26:48 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 1069QkNa003217;
-        Wed, 6 Jan 2021 09:26:46 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Jan 2021 01:26:46 -0800
-Date:   Wed, 6 Jan 2021 12:26:39 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] io_uring: fix an IS_ERR() vs NULL check
-Message-ID: <X/WCTxIRT4SHLemV@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9855 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 spamscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101060056
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9855 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 adultscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1011 impostorscore=0
- spamscore=0 mlxlogscore=999 lowpriorityscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101060056
+        id S1726504AbhAFJ3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jan 2021 04:29:49 -0500
+Received: from ozlabs.ru ([107.174.27.60]:48286 "EHLO ozlabs.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726249AbhAFJ3s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Jan 2021 04:29:48 -0500
+Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
+        by ozlabs.ru (Postfix) with ESMTP id 6AD7CAE80203;
+        Wed,  6 Jan 2021 04:29:03 -0500 (EST)
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH kernel] block: initialize block_device::bd_bdi for bdev_cache
+Date:   Wed,  6 Jan 2021 20:29:00 +1100
+Message-Id: <20210106092900.26595-1-aik@ozlabs.ru>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The alloc_fixed_file_ref_node() function never returns NULL, it returns
-error pointers on error.
+This is a workaround to fix a null derefence crash:
 
-Fixes: 1ffc54220c44 ("io_uring: fix io_sqe_files_unregister() hangs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[c00000000b01f840] c00000000b01f880 (unreliable)
+[c00000000b01f880] c000000000769a3c bdev_evict_inode+0x21c/0x370
+[c00000000b01f8c0] c00000000070bacc evict+0x11c/0x230
+[c00000000b01f900] c00000000070c138 iput+0x2a8/0x4a0
+[c00000000b01f970] c0000000006ff030 dentry_unlink_inode+0x220/0x250
+[c00000000b01f9b0] c0000000007001c0 __dentry_kill+0x190/0x320
+[c00000000b01fa00] c000000000701fb8 dput+0x5e8/0x860
+[c00000000b01fa80] c000000000705848 shrink_dcache_for_umount+0x58/0x100
+[c00000000b01fb00] c0000000006cf864 generic_shutdown_super+0x54/0x200
+[c00000000b01fb80] c0000000006cfd48 kill_anon_super+0x38/0x60
+[c00000000b01fbc0] c0000000006d12cc deactivate_locked_super+0xbc/0x110
+[c00000000b01fbf0] c0000000006d13bc deactivate_super+0x9c/0xc0
+[c00000000b01fc20] c00000000071a340 cleanup_mnt+0x1b0/0x250
+[c00000000b01fc80] c000000000278fa8 task_work_run+0xf8/0x180
+[c00000000b01fcd0] c00000000002b4ac do_notify_resume+0x4dc/0x5d0
+[c00000000b01fda0] c00000000004ba0c syscall_exit_prepare+0x28c/0x370
+[c00000000b01fe10] c00000000000e06c system_call_common+0xfc/0x27c
+--- Exception: c00 (System Call) at 0000000010034890
+
+Is this fixed properly already somewhere? Thanks,
+
+Fixes: e6cb53827ed6 ("block: initialize struct block_device in bdev_alloc")
 ---
- fs/io_uring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/block_dev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index ca46f314640b..2234ce03034a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7255,8 +7255,8 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 	if (!data)
- 		return -ENXIO;
- 	backup_node = alloc_fixed_file_ref_node(ctx);
--	if (!backup_node)
--		return -ENOMEM;
-+	if (IS_ERR(backup_node))
-+		return PTR_ERR(backup_node);
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 3e5b02f6606c..86fdc28d565e 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -792,8 +792,10 @@ static void bdev_free_inode(struct inode *inode)
+ static void init_once(void *data)
+ {
+ 	struct bdev_inode *ei = data;
++	struct block_device *bdev = &ei->bdev;
  
- 	spin_lock_bh(&data->lock);
- 	ref_node = data->node;
+ 	inode_init_once(&ei->vfs_inode);
++	bdev->bd_bdi = &noop_backing_dev_info;
+ }
+ 
+ static void bdev_evict_inode(struct inode *inode)
 -- 
-2.29.2
+2.17.1
 
