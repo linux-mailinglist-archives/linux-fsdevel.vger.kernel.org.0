@@ -2,73 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ECC02EC6F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 00:40:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE37C2EC6FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 00:41:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbhAFXj3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jan 2021 18:39:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbhAFXj3 (ORCPT
+        id S1727237AbhAFXlS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jan 2021 18:41:18 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:60437 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726918AbhAFXlS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jan 2021 18:39:29 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E98C7C061786
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Jan 2021 15:38:48 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id iq13so286139pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Jan 2021 15:38:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zo+uooqajJkVIc//qGbLq5a2/tbMq8FCHMG3Hgw2MPg=;
-        b=EZN7MpBxbYHR9Lh0ewX4mZiq4ydtxnT0egjcjk7gNEwYb/IGUVMbHIxmyc7rXvP/ju
-         5YpiG66ya+lrQwzp/2X4r/USBF2Xxkn5nYTwZteODtbSYNeKDwex4LiC/CMuVeHtcui/
-         dTv7Ee789uT/X/ekZXgf2EBCsb3cXImFuV0HU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zo+uooqajJkVIc//qGbLq5a2/tbMq8FCHMG3Hgw2MPg=;
-        b=Uet9kqZwGaxi79qwhSAK5JjExEMqa4fZPbz8NoXuGRxtKAAHbh4cllRkFXbaBCa2ZI
-         j4HrMTZ0dAbXbQxad53pzx/hL7reqEemdnZ8oOEEcypF8LuWyza0TWT/SM1VzOZTYypy
-         rFlS1hQ6ewEi9eXBdgvMejEaW7P7Mh+p7Lzo4WqY4duCeg+krL0GEGLO16gSu5hm0qMk
-         gb0EC/SCxCUeYfj166xXUdO1Z9v1nG3FBaPp7+xhK9Gb6X9RzYf8aKFSELZPQGm2x61t
-         ygoMZKvCEwx8kPqTlUEw9ZEwFcqY0olrrgIyp5zT6z0iggOjPLiP2BIMZ1LN5ZCqjyNP
-         LZYA==
-X-Gm-Message-State: AOAM533oCSLi3/qhw/qMht18Zm8MI1+MbKXdO8KfhYlcCmrsB7H8mYm4
-        i8U6eSK3pR8ziN5z/IVcHVD16g==
-X-Google-Smtp-Source: ABdhPJzFCUoLGe/zdRGGV12Za77C+HHWpBzk9SrAUn38P4fp0LVimmMsGeqXex9rQxO/w3gPNiIR5A==
-X-Received: by 2002:a17:902:be0e:b029:dc:138c:b030 with SMTP id r14-20020a170902be0eb02900dc138cb030mr6509956pls.55.1609976328463;
-        Wed, 06 Jan 2021 15:38:48 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t25sm3851890pgv.30.2021.01.06.15.38.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jan 2021 15:38:47 -0800 (PST)
-Date:   Wed, 6 Jan 2021 15:38:46 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sysctl: use min() helper for namecmp()
-Message-ID: <202101061538.AEF4E09D@keescook>
-References: <20210104083221.21184-1-masahiroy@kernel.org>
+        Wed, 6 Jan 2021 18:41:18 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id D05FD14B3;
+        Wed,  6 Jan 2021 18:40:11 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 06 Jan 2021 18:40:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=n5SmyEUKkQ7qERAis2ZaaktUbKh
+        4cYFmBEpwHyqlAFw=; b=kHvX0HT4JwMXX9ZXBdMY6+ppwTMBzcFa/noS3E7R7LA
+        rIEt2BYOivw6sm3TvMXh+/Su+B8gBZMuZnASFMWzh8CmH22/QobA/cdaNoM0Nvz2
+        WrR6kioaEU8vWLJpvk1bSddNc5adfWk25W+pia9dEfAofzNmZQTl+ySh+Ck6w9Gx
+        yqYPkUzKIIBfB+C2M1V02ttRPH5RqstR2MkR/JQ6lqFkHVf/hCvOOy6aMou4GqAx
+        zXq4kUC5/dqidzy7OVa1GmUV5mjLIkNTm2PigQXdL2HhN1nYLNNSM2kAKE6c0qpW
+        mZKNSgMOQiEHpKRHthNbgzv/MnMFsTgRS0O1oIvziXw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=n5SmyE
+        UKkQ7qERAis2ZaaktUbKh4cYFmBEpwHyqlAFw=; b=iv1IZft2dhtPMs6a0ZYLDL
+        KhOC4nlPgNHnErGjdxhRWfrhWZOdvDZEM/YDFhWN4kcj74JcIH/LDiHSnkj7QZNg
+        lMo5531yhZtV5wMdF0IyZSlif3ag33JCBPd4PlVTh7Piy6wgR2O7rCMzygyHYA1z
+        YM3d4ZTjFMaONAvrHVAtyRXicMBy9fw7T0E/X79MpoIKUBdl+JTVr7KNwL1Rng9e
+        Vof3W1Z9xZPj18gBRFU/4xqIFotwytro4qstNBfbeK4DFgORHNIgs/sPIBso3fz1
+        jtPIF7CQGePsQ+TuSHhmY/ENvb6iRA+y9K4AjMiJuk7iojg6egRUe0L+5RpZ90/g
+        ==
+X-ME-Sender: <xms:W0r2X7rAzlVuas5cUtL18mZ-thcn0GqvAcKmmjA4KHAiZIdYcy0MmQ>
+    <xme:W0r2X1pHnYnne3KwsaKtu4-BrJk368hozS6Hr-sodAWp7UJr5N0n-ENiR0dGIU1sB
+    mTTgml4X-Y4NqR80g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdegtddgkedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujgesthdtre
+    dttddtvdenucfhrhhomheptehnughrvghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghn
+    rghrrgiivghlrdguvgeqnecuggftrfgrthhtvghrnhepudekhfekleeugeevteehleffff
+    ejgeelueduleeffeeutdelffeujeffhfeuffdunecukfhppeeijedrudeitddrvddujedr
+    vdehtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grnhgurhgvshesrghnrghrrgiivghlrdguvg
+X-ME-Proxy: <xmx:W0r2X4OVarAF5pkNoPPJfRSaKF5prZowNUhVQG6WJGIWmkZpOwSoGg>
+    <xmx:W0r2X-7GXJMCO4u9msmbvbJKdY_jGVTuQiWjtFKEa-aVt85jmGtlGw>
+    <xmx:W0r2X65L5hxClFtPVZ103Zx5xJkzd12sxACuzjbgQFCgyvjKHyYzbA>
+    <xmx:W0r2X6HgoYGoUrWSu2CJ90EB_9XCqawa8ZPs2GkQxj1xI593B3ASnw>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0EE18240064;
+        Wed,  6 Jan 2021 18:40:11 -0500 (EST)
+Date:   Wed, 6 Jan 2021 15:40:09 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
+ extents?
+Message-ID: <20210106234009.b6gbzl7bjm2evxj6@alap3.anarazel.de>
+References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
+ <20210106225201.GF331610@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210104083221.21184-1-masahiroy@kernel.org>
+In-Reply-To: <20210106225201.GF331610@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 04, 2021 at 05:32:21PM +0900, Masahiro Yamada wrote:
-> Make it slightly readable by using min().
+Hi,
+
+On 2021-01-07 09:52:01 +1100, Dave Chinner wrote:
+> On Tue, Dec 29, 2020 at 10:28:19PM -0800, Andres Freund wrote:
+> > Which brings me to $subject:
+> > 
+> > Would it make sense to add a variant of FALLOC_FL_ZERO_RANGE that
+> > doesn't convert extents into unwritten extents, but instead uses
+> > blkdev_issue_zeroout() if supported?  Mostly interested in xfs/ext4
+> > myself, but ...
 > 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> We have explicit requests from users (think initialising large VM
+> images) that FALLOC_FL_ZERO_RANGE must never fall back to writing
+> zeroes manually.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+That behaviour makes a lot of sense for quite a few use cases - I wasn't
+trying to make it sound like it should not be available. Nor that
+FALLOC_FL_ZERO_RANGE should behave differently.
 
--- 
-Kees Cook
+
+> IOWs, while you might want FALLOC_FL_ZERO_RANGE to explicitly write
+> zeros, we have users who explicitly don't want it to do this.
+
+Right - which is why I was asking for a variant of FALLOC_FL_ZERO_RANGE
+(jokingly named FALLOC_FL_ZERO_RANGE_BUT_REALLY in the subject), rather
+than changing the behaviour.
+
+
+> Perhaps we should add want FALLOC_FL_CONVERT_RANGE, which tells the
+> filesystem to convert an unwritten range of zeros to a written range
+> by manually writing zeros. i.e. you do FALLOC_FL_ZERO_RANGE to zero
+> the range and fill holes using metadata manipulation, followed by
+> FALLOC_FL_WRITE_RANGE to then convert the "metadata zeros" to real
+> written zeros.
+
+Yep, something like that would do the trick. Perhaps
+FALLOC_FL_MATERIALIZE_RANGE?
+
+Greetings,
+
+Andres Freund
