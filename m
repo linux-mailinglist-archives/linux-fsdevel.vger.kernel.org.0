@@ -2,82 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 794162EB827
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 03:40:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF322EB836
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jan 2021 03:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbhAFCja (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jan 2021 21:39:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59216 "EHLO
+        id S1726011AbhAFCoR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jan 2021 21:44:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbhAFCj3 (ORCPT
+        with ESMTP id S1725978AbhAFCoR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jan 2021 21:39:29 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1157CC06134B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Jan 2021 18:38:14 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id o19so3384420lfo.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Jan 2021 18:38:13 -0800 (PST)
+        Tue, 5 Jan 2021 21:44:17 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 381B0C06134B
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Jan 2021 18:43:26 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id ga15so3224299ejb.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Jan 2021 18:43:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Ury5f7F0ygdu/yondQUGmbZ3cq88GMLsTjmzvozFvjc=;
-        b=JJTa/Tc+QXB7WTaTy03wXcVsiHCJ38bI/5PQU88HQ7YN4KMpPo+5MqlwDqB9HQdU4s
-         +ffbgkc58Jd0iZCuDKXDzIQGz508oG5upwZRERod2tiZ1JDwovF24A9bNyAkovIsB0DF
-         vQ5dhm6M/QrRyW2sUvMRUA8fA580S8vKFJifkqsq+biFxy1WYEC9GR3S8uLl402UtDGC
-         8+BMzLyqfGhxhyK18nkdQE2lGKcyTUxz20aGSs7EYR3LJx/Bh70Xel7XpEPeO1o75+dR
-         tTMfb8mBfsjMHKptKJQv9ke1SSeQz2hTBc6aWrgTgKDd6Gucj4N6AKERsmxMfoBBgG5f
-         D3qQ==
+        bh=Rl30GHiO7+ok45uxZXaNkdS1h9GOZB8/wNoJsPJg7EY=;
+        b=r3Wpg2DR14agmLIdTiA23ZamhLdjd5Hm7Yrz7aomhIgcxuBcp/fDg++5xrguOlESBz
+         n2O7qtM4JWyW1jfJKnotNRpb7gQ1dFSi+sT8LKIgj//ooGAkIOe9NfFIfluFrnW7g+ZZ
+         Ez5ejKOt7uptWA4vV4/asbGgisa0Sjv7zlGMd+xUTxJeIc/9gWBjLKuupEPDg7iUyC1a
+         xhUyNX38fpxgcLcOd/XsfrF7ERPBwD97GpFrBiVcE+a91hetKV3oUfAxl0armtD0xI39
+         ji1CcYPOVCbt3ygNwrOMhU8BekaxTCfYyijIfRkTC4z7ZjipSBnn+/QOrMLq037LCmKU
+         R1BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ury5f7F0ygdu/yondQUGmbZ3cq88GMLsTjmzvozFvjc=;
-        b=fxqa+pGBqGYq17gAKhavXbxlcLoO+xzAJRmjYrPIxxnJAdvcoihx4tj5LdWOqzGn3H
-         R87hGM6NJGkf8Jl7ARVY1sxFyVmq1agVkS4qAKSCVZpd1pGYthIc6PavpRIRM0Idnbn0
-         yxGgBxuJLxiaA8MCSFJf5nVavJIF+CJGCNroqgQrZkFh28y5YSi1l+/R0KYEjfPH3a5D
-         AyKHLl2TqenCddfRxOdBJS5FVaaryEivd8I2akHwcX1m554d15p9U//5sGFb3xt2IICd
-         VyQRJqFuzcJZMWwwdvDkTopn2BfnPP+VWE5XFVwRw1BvkicEkD/xHvr2qmxTWd/7GU3O
-         TDYw==
-X-Gm-Message-State: AOAM530MfNGnHa7Tw93Gwep+4+MN61J0Wmu/Yj1UiNK7IEdEEhSrZEaa
-        fjsrVwM/Q5Is24gsEu8rk7Rw1UihH7TRaNlfgD0=
-X-Google-Smtp-Source: ABdhPJyhW9COAv+OxGK2kh2IIX00msmTRyXR26oD1Hjec8jnar2dkN9PRalz7nXQlp7ElJNqMzgTW0hTwXUYrMrWpTo=
-X-Received: by 2002:ac2:599e:: with SMTP id w30mr918546lfn.552.1609900692588;
- Tue, 05 Jan 2021 18:38:12 -0800 (PST)
+        bh=Rl30GHiO7+ok45uxZXaNkdS1h9GOZB8/wNoJsPJg7EY=;
+        b=Kdzg6hxo8mQVira8fNT9gUCM32eOCjLvF5tgZUDWpqw9rQRfMmHfoRnaFi8R+BA0YA
+         FUuGO4ojc5JcnyMknrKVF38BLbdYIPPh5fO+yUyZxvzuVTk4smk0DIgdAe8cKaL40NYg
+         9QQbG3UphrW65w+kc+HAC7EfhIXzSOC0NECZ9NO4VS5/sIwyeOYm1TX7c1LLYB/cVnxp
+         xP0eZ9A2lHw6x4pcgmaUOJvxPqu0E33Sj0nXg8ciPk19/SwMK5sPYl5Dix4GqSXHuw2K
+         /W07qxrtOJK5wTcHuQPjRy3GbY5YX/9AwgIWO0Ilz1zXsswTZbmKEuf9zdOfspT8cbp+
+         4FCw==
+X-Gm-Message-State: AOAM530dHEkVd+vwDQqHjtuLw/duc5ekiZavf7VEErr0gqo2TFj4G1QN
+        8AtckqJJtBVloreR2wmw6nHQJ7BMGofMxzA1emDq
+X-Google-Smtp-Source: ABdhPJxBGghK0hX4bygHQKZbY85SZEF5lnAAJg7KT5u9deBBsKhmsljHRmL87cbGrw8/2aPatl5OyzOxF6pU1QwhjSM=
+X-Received: by 2002:a17:906:2e82:: with SMTP id o2mr1559118eji.106.1609901004776;
+ Tue, 05 Jan 2021 18:43:24 -0800 (PST)
 MIME-Version: 1.0
-References: <160862320263.291330.9467216031366035418.stgit@mickey.themaw.net>
- <CAC2o3DJqK0ECrRnO0oArgHV=_S7o35UzfP4DSSXZLJmtLbvrKg@mail.gmail.com> <04675888088a088146e3ca00ca53099c95fbbad7.camel@themaw.net>
-In-Reply-To: <04675888088a088146e3ca00ca53099c95fbbad7.camel@themaw.net>
-From:   Fox Chen <foxhlchen@gmail.com>
-Date:   Wed, 6 Jan 2021 10:38:00 +0800
-Message-ID: <CAC2o3D+qsH3suFk4ZX9jbSOy3WbMHdb9j6dWUhWuvt1RdLOODA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] kernfs: proposed locking and concurrency improvement
-To:     Ian Kent <raven@themaw.net>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20210104232123.31378-1-stephen.s.brennan@oracle.com>
+ <20210105055935.GT3579531@ZenIV.linux.org.uk> <20210105165005.GV3579531@ZenIV.linux.org.uk>
+ <20210105195937.GX3579531@ZenIV.linux.org.uk> <87a6tnge5k.fsf@stepbren-lnx.us.oracle.com>
+ <CAHC9VhQnQW8RvTzyb4MTAvGZ7b=AHJXS8PzD=egTcpdDz73Yzg@mail.gmail.com> <20210106003803.GA3579531@ZenIV.linux.org.uk>
+In-Reply-To: <20210106003803.GA3579531@ZenIV.linux.org.uk>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 5 Jan 2021 21:43:13 -0500
+Message-ID: <CAHC9VhQyZOewT5nQ5fqqx-tvSx1kt62i26ruF_Unk5K_iFQTKA@mail.gmail.com>
+Subject: Re: [PATCH v4] proc: Allow pid_revalidate() during LOOKUP_RCU
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ian,
+On Tue, Jan 5, 2021 at 7:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Tue, Jan 05, 2021 at 07:00:59PM -0500, Paul Moore wrote:
 
-I am rethinking this problem. Can we simply use a global lock?
+...
 
- In your original patch 5, you have a global mutex attr_mutex to
-protect attr, if we change it to a rwsem, is it enough to protect both
-inode and attr while having the concurrent read ability?
+> > I would expect the problem here to be the currently allocated audit
+> > buffer isn't large enough to hold the full audit record, in which case
+> > it will attempt to expand the buffer by a call to pskb_expand_head() -
+> > don't ask why audit buffers are skbs, it's awful - using a gfp flag
+> > that was established when the buffer was first created.  In this
+> > particular case it is GFP_ATOMIC|__GFP_NOWARN, which I believe should
+> > be safe in that it will not sleep on an allocation miss.
+> >
+> > I need to go deal with dinner, so I can't trace the entire path at the
+> > moment, but I believe the potential audit buffer allocation is the
+> > main issue.
+>
+> Nope.  dput() in dump_common_audit_data(), OTOH, is certainly not
+> safe.
 
-like this patch I submitted. ( clearly, I missed __kernfs_iattrs part,
-but just about that idea )
-https://lore.kernel.org/lkml/20201207084333.179132-1-foxhlchen@gmail.com/
+My mistake.  My initial reaction is to always assume audit is the
+problem; I should have traced everything through before commenting.
 
+> OTTH, it's not really needed there - see vfs.git #work.audit
+> for (untested) turning that sucker non-blocking.  I hadn't tried
+> a followup that would get rid of the entire AVC_NONBLOCKING thing yet,
+> but I suspect that it should simplify the things in there nicely...
 
+It would be nice to be able to get rid of the limitation on when we
+can update the AVC and do proper auditing.  I doubt the impact is
+anything that anyone notices, but I agree that it should make things
+much cleaner.  Thanks Al.
 
-thanks,
-fox
+-- 
+paul moore
+www.paul-moore.com
