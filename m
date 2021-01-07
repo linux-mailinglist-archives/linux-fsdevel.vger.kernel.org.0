@@ -2,257 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54BCE2ED711
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 20:01:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9245F2ED72D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 20:07:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728836AbhAGTAi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jan 2021 14:00:38 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27885 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728674AbhAGTAh (ORCPT
+        id S1729104AbhAGTFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jan 2021 14:05:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43100 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbhAGTFq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jan 2021 14:00:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610045951;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Xi2LsUJTfR3F6Kw+mgZKWaNP6g+KrERh5YVstyYnNc=;
-        b=J9VzF6R+YaSFFTPioXNcCAlMOTRNXUZDbZ0ZhuadJu2okrsth5D+QeNOWtvH0mQ4MGlIFN
-        SQ2PGsyAti0tL39ahyiCGj6ytf9kCmcr8AzUifiGYRa6RQIUt62wazl+D1K+30oj1q1Rgz
-        /xYwkRcOB1cAFEvDCewC5WHeyY/ZNcM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-129-1dVGJka0OZeA2-GkdfYnAA-1; Thu, 07 Jan 2021 13:59:06 -0500
-X-MC-Unique: 1dVGJka0OZeA2-GkdfYnAA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7143D107ACF5;
-        Thu,  7 Jan 2021 18:59:04 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0613C19630;
-        Thu,  7 Jan 2021 18:59:03 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 107Ix3eV025400;
-        Thu, 7 Jan 2021 13:59:03 -0500
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 107Ix18i025339;
-        Thu, 7 Jan 2021 13:59:02 -0500
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Thu, 7 Jan 2021 13:59:01 -0500 (EST)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Wang Jianchao <jianchao.wan9@gmail.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh" <rajesh.tadakamadla@hpe.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Subject: Re: Expense of read_iter
-In-Reply-To: <20210107151125.GB5270@casper.infradead.org>
-Message-ID: <alpine.LRH.2.02.2101071110080.30654@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com> <20210107151125.GB5270@casper.infradead.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        Thu, 7 Jan 2021 14:05:46 -0500
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A9EC0612F5
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jan 2021 11:05:05 -0800 (PST)
+Received: by mail-pg1-x549.google.com with SMTP id w13so5473664pgr.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jan 2021 11:05:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=1Ks8/3nZJCYS90R8JKk2puoyafhaeYHGuGPtcF6mxek=;
+        b=s33gwiE6wEj4kJwKpZ+JBEnAPq2Iul6GLks8POMY9MgZc9LBZEzjlEFhyqZYiwx4id
+         dMUAawf6ZO1RuNGq6qWn7XiCwJZaExLSJ/x0qIdCrZcZ5lvZbgLpOXACTZgO7pmlu87x
+         Zv/9mH/Oxu+THRCrCKk23deOoYVx+kIKAa5hSJt7UI49J1EJO2RC9KiHnXTjT/vb1SAb
+         yhuOQHXkHuckcPE1Q+qkGIReZWdZZ1KhdiTyGY799YowVmEqWHJf722bg2qLRozEV0Kd
+         vZm4JkDx7ZwLeiNeB2q5xb7tZVq7cjBJEKYOlzBvaCQRi8AAGDzniY+am3PWed00CrYr
+         UxpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=1Ks8/3nZJCYS90R8JKk2puoyafhaeYHGuGPtcF6mxek=;
+        b=WGJRlAq7jZFdSVjygVVMUFwX7/bTOHY0bwlBph5vGegunMFLqiwM4zraCDOsGbHJu9
+         ngV7Kj+1uMP1rSrudy09c9TJTCAqAoXA/vq1VZ17mrH/l52faGHaJu2IlRfja/3EtZUJ
+         3UdTQC/F8RJr9dmigMdjs/wTJGNAn3oYCcQBzrDvCzBcghRZyaTfzVM/kyMKBmb8jbBZ
+         iYrbJn8z0t6JFJOwq69DN//dlWFmk6urlspotqY4tWI9vFGGaPWDy5g6ez51ytPX3Kfa
+         9FW1PrSUc+EeduEShczcemK6uKpUjOIYYUyfnpFmh89dWKlNTTN9JgbtZJrpVAgtf0d9
+         BcbA==
+X-Gm-Message-State: AOAM531/LXt4r7lcHFKVTSabRByC7wLGH4LRcdWacLFNNDf+Wf1z6rht
+        fjWvRCLvVTbvyiiFhE+H+KKbjFSCeQeF7SYX1w6e
+X-Google-Smtp-Source: ABdhPJxFND2XY3Pg2WyGKBNLXJEiCRrx4CwvkyILubCDSqYj/vz535k983RPVy3w45oJ8bmaDS3h0zHA99/3XyZBAkZh
+Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
+X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:f693:9fff:feef:c8f8])
+ (user=axelrasmussen job=sendgmr) by 2002:a17:90a:c085:: with SMTP id
+ o5mr10737346pjs.210.1610046305274; Thu, 07 Jan 2021 11:05:05 -0800 (PST)
+Date:   Thu,  7 Jan 2021 11:04:51 -0800
+Message-Id: <20210107190453.3051110-1-axelrasmussen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.29.2.729.g45daf8777d-goog
+Subject: [RFC PATCH 0/2] userfaultfd: handle minor faults, add UFFDIO_CONTINUE
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Steven Price <steven.price@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Adam Ruprecht <ruprecht@google.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Oliver Upton <oupton@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Overview
+========
 
+This series adds a new userfaultfd registration mode,
+UFFDIO_REGISTER_MODE_MINOR. This allows userspace to intercept "minor" faults.
+By "minor" fault, I mean the following situation:
 
-On Thu, 7 Jan 2021, Matthew Wilcox wrote:
+Let there exist two mappings (i.e., VMAs) to the same page(s) (shared memory).
+One of the mappings is registered with userfaultfd (in minor mode), and the
+other is not. Via the non-UFFD mapping, the underlying pages have already been
+allocated & filled with some contents. The UFFD mapping has not yet been
+faulted in; when it is touched for the first time, this results in what I'm
+calling a "minor" fault. As a concrete example, when working with hugetlbfs, we
+have huge_pte_none(), but find_lock_page() finds an existing page.
 
-> On Thu, Jan 07, 2021 at 08:15:41AM -0500, Mikulas Patocka wrote:
-> > I'd like to ask about this piece of code in __kernel_read:
-> > 	if (unlikely(!file->f_op->read_iter || file->f_op->read))
-> > 		return warn_unsupported...
-> > and __kernel_write:
-> > 	if (unlikely(!file->f_op->write_iter || file->f_op->write))
-> > 		return warn_unsupported...
-> > 
-> > - It exits with an error if both read_iter and read or write_iter and 
-> > write are present.
-> > 
-> > I found out that on NVFS, reading a file with the read method has 10% 
-> > better performance than the read_iter method. The benchmark just reads the 
-> > same 4k page over and over again - and the cost of creating and parsing 
-> > the kiocb and iov_iter structures is just that high.
-> 
-> Which part of it is so expensive?
+We also add a new ioctl to resolve such faults: UFFDIO_CONTINUE. The idea is,
+userspace resolves the fault by either a) doing nothing if the contents are
+already correct, or b) updating the underlying contents using the second,
+non-UFFD mapping (via memcpy/memset or similar, or something fancier like RDMA,
+or etc...). In either case, userspace issues UFFDIO_CONTINUE to tell the kernel
+"I have ensured the page contents are correct, carry on setting up the mapping".
 
-The read_iter path is much bigger:
-vfs_read		- 0x160 bytes
-new_sync_read		- 0x160 bytes
-nvfs_rw_iter		- 0x100 bytes
-nvfs_rw_iter_locked	- 0x4a0 bytes
-iov_iter_advance	- 0x300 bytes
+Use Case
+========
 
-If we go with the "read" method, there's just:
-vfs_read		- 0x160 bytes
-nvfs_read		- 0x200 bytes
+Consider the use case of VM live migration (e.g. under QEMU/KVM):
 
-> Is it worth, eg adding an iov_iter
-> type that points to a single buffer instead of a single-member iov?
-> 
-> +++ b/include/linux/uio.h
-> @@ -19,6 +19,7 @@ struct kvec {
->  
->  enum iter_type {
->         /* iter types */
-> +       ITER_UBUF = 2,
->         ITER_IOVEC = 4,
->         ITER_KVEC = 8,
->         ITER_BVEC = 16,
-> @@ -36,6 +36,7 @@ struct iov_iter {
->         size_t iov_offset;
->         size_t count;
->         union {
-> +               void __user *buf;
->                 const struct iovec *iov;
->                 const struct kvec *kvec;
->                 const struct bio_vec *bvec;
-> 
-> and then doing all the appropriate changes to make that work.
+1. While a VM is still running, we copy the contents of its memory to a
+   target machine. The pages are populated on the target by writing to the
+   non-UFFD mapping, using the setup described above. The VM is still running
+   (and therefore its memory is likely changing), so this may be repeated
+   several times, until we decide the target is "up to date enough".
 
+2. We pause the VM on the source, and start executing on the target machine.
+   During this gap, the VM's user(s) will *see* a pause, so it is desirable to
+   minimize this window.
 
-I tried this benchmark on nvfs:
+3. Between the last time any page was copied from the source to the target, and
+   when the VM was paused, the contents of that page may have changed - and
+   therefore the copy we have on the target machine is out of date. Although we
+   can keep track of which pages are out of date, for VMs with large amounts of
+   memory, it is "slow" to transfer this information to the target machine. We
+   want to resume execution before such a transfer would complete.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+4. So, the guest begins executing on the target machine. The first time it
+   touches its memory (via the UFFD-registered mapping), userspace wants to
+   intercept this fault. Userspace checks whether or not the page is up to date,
+   and if not, copies the updated page from the source machine, via the non-UFFD
+   mapping. Finally, whether a copy was performed or not, userspace issues a
+   UFFDIO_CONTINUE ioctl to tell the kernel "I have ensured the page contents
+   are correct, carry on setting up the mapping".
 
-int main(void)
-{
-	unsigned long i;
-	unsigned long l = 1UL << 38;
-	unsigned s = 4096;
-	void *a = valloc(s);
-	if (!a) perror("malloc"), exit(1);
-	for (i = 0; i < l; i += s) {
-		if (pread(0, a, s, 0) != s) perror("read"), exit(1);
-	}
-	return 0;
-}
+We don't have to do all of the final updates on-demand. The userfaultfd manager
+can, in the background, also copy over updated pages once it receives the map of
+which pages are up-to-date or not.
 
+Interaction with Existing APIs
+==============================
 
-Result, using the read_iter method:
+Because it's possible to combine registration modes (e.g. a single VMA can be
+userfaultfd-registered MINOR | MISSING), and because it's up to userspace how to
+resolve faults once they are received, I spent some time thinking through how
+the existing API interacts with the new feature.
 
-# To display the perf.data header info, please use --header/--header-only options.
-#
-#
-# Total Lost Samples: 0
-#
-# Samples: 3K of event 'cycles'
-# Event count (approx.): 1049885560
-#
-# Overhead  Command  Shared Object     Symbol                               
-# ........  .......  ................  .....................................
-#
-    47.32%  pread    [kernel.vmlinux]  [k] copy_user_generic_string
-     7.83%  pread    [kernel.vmlinux]  [k] current_time
-     6.57%  pread    [nvfs]            [k] nvfs_rw_iter_locked
-     5.59%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64
-     4.23%  pread    libc-2.31.so      [.] __libc_pread
-     3.51%  pread    [kernel.vmlinux]  [k] syscall_return_via_sysret
-     2.34%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64_after_hwframe
-     2.34%  pread    [kernel.vmlinux]  [k] vfs_read
-     2.34%  pread    [kernel.vmlinux]  [k] __fsnotify_parent
-     2.31%  pread    [kernel.vmlinux]  [k] new_sync_read
-     2.21%  pread    [nvfs]            [k] nvfs_bmap
-     1.89%  pread    [kernel.vmlinux]  [k] iov_iter_advance
-     1.71%  pread    [kernel.vmlinux]  [k] __x64_sys_pread64
-     1.59%  pread    [kernel.vmlinux]  [k] atime_needs_update
-     1.24%  pread    [nvfs]            [k] nvfs_rw_iter
-     0.94%  pread    [kernel.vmlinux]  [k] touch_atime
-     0.75%  pread    [kernel.vmlinux]  [k] syscall_enter_from_user_mode
-     0.72%  pread    [kernel.vmlinux]  [k] ktime_get_coarse_real_ts64
-     0.68%  pread    [kernel.vmlinux]  [k] down_read
-     0.62%  pread    [kernel.vmlinux]  [k] exit_to_user_mode_prepare
-     0.52%  pread    [kernel.vmlinux]  [k] syscall_exit_to_user_mode
-     0.49%  pread    [kernel.vmlinux]  [k] syscall_exit_to_user_mode_prepare
-     0.47%  pread    [kernel.vmlinux]  [k] __fget_light
-     0.46%  pread    [kernel.vmlinux]  [k] do_syscall_64
-     0.42%  pread    pread             [.] main
-     0.33%  pread    [kernel.vmlinux]  [k] up_read
-     0.29%  pread    [kernel.vmlinux]  [k] iov_iter_init
-     0.16%  pread    [kernel.vmlinux]  [k] __fdget
-     0.10%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64_safe_stack
-     0.03%  pread    pread             [.] pread@plt
-     0.00%  perf     [kernel.vmlinux]  [k] x86_pmu_enable_all
+UFFDIO_CONTINUE cannot be used to resolve non-minor faults, as it does not
+allocate a new page. If UFFDIO_CONTINUE is used on a non-minor fault:
 
+- For non-shared memory or shmem, -EINVAL is returned.
+- For hugetlb, -EFAULT is returned.
 
-#
-# (Tip: Use --symfs <dir> if your symbol files are in non-standard locations)
-#
+UFFDIO_COPY and UFFDIO_ZEROPAGE cannot be used to resolve minor faults. Without
+modifications, the existing codepath assumes a new page needs to be allocated.
+This is okay, since userspace must have a second non-UFFD-registered mapping
+anyway, thus there isn't much reason to want to use these in any case (just
+memcpy or memset or similar).
 
+- If UFFDIO_COPY is used on a minor fault, -EEXIST is returned.
+- If UFFDIO_ZEROPAGE is used on a minor fault, -EEXIST is returned (or -EINVAL
+  in the case of hugetlb, as UFFDIO_ZEROPAGE is unsupported in any case).
+- UFFDIO_WRITEPROTECT simply doesn't work with shared memory, and returns
+  -ENOENT in that case (regardless of the kind of fault).
 
+Remaining Work
+==============
 
-Result, using the read method:
+This patchset doesn't include updates to userfaultfd's documentation or
+selftests. This will be added before I send a non-RFC version of this series
+(I want to find out if there are strong objections to the API surface before
+spending the time to document it.)
 
-# To display the perf.data header info, please use --header/--header-only options.
-#
-#
-# Total Lost Samples: 0
-#
-# Samples: 3K of event 'cycles'
-# Event count (approx.): 1312158116
-#
-# Overhead  Command  Shared Object     Symbol                               
-# ........  .......  ................  .....................................
-#
-    60.77%  pread    [kernel.vmlinux]  [k] copy_user_generic_string
-     6.14%  pread    [kernel.vmlinux]  [k] current_time
-     3.88%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64
-     3.55%  pread    libc-2.31.so      [.] __libc_pread
-     3.04%  pread    [nvfs]            [k] nvfs_bmap
-     2.84%  pread    [kernel.vmlinux]  [k] syscall_return_via_sysret
-     2.71%  pread    [nvfs]            [k] nvfs_read
-     2.56%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64_after_hwframe
-     2.00%  pread    [kernel.vmlinux]  [k] __x64_sys_pread64
-     1.98%  pread    [kernel.vmlinux]  [k] __fsnotify_parent
-     1.77%  pread    [kernel.vmlinux]  [k] vfs_read
-     1.35%  pread    [kernel.vmlinux]  [k] atime_needs_update
-     0.94%  pread    [kernel.vmlinux]  [k] exit_to_user_mode_prepare
-     0.91%  pread    [kernel.vmlinux]  [k] __fget_light
-     0.83%  pread    [kernel.vmlinux]  [k] syscall_enter_from_user_mode
-     0.70%  pread    [kernel.vmlinux]  [k] down_read
-     0.70%  pread    [kernel.vmlinux]  [k] touch_atime
-     0.65%  pread    [kernel.vmlinux]  [k] ktime_get_coarse_real_ts64
-     0.55%  pread    [kernel.vmlinux]  [k] syscall_exit_to_user_mode
-     0.49%  pread    [kernel.vmlinux]  [k] up_read
-     0.44%  pread    [kernel.vmlinux]  [k] do_syscall_64
-     0.39%  pread    [kernel.vmlinux]  [k] syscall_exit_to_user_mode_prepare
-     0.34%  pread    pread             [.] main
-     0.26%  pread    [kernel.vmlinux]  [k] __fdget
-     0.10%  pread    pread             [.] pread@plt
-     0.10%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64_safe_stack
-     0.00%  perf     [kernel.vmlinux]  [k] x86_pmu_enable_all
+Currently the patchset only supports hugetlbfs. There is no reason it can't work
+with shmem, but I expect hugetlbfs to be much more commonly used since we're
+talking about backing guest memory for VMs. I plan to implement shmem support in
+a follow-up patch series.
 
+Axel Rasmussen (2):
+  userfaultfd: add minor fault registration mode
+  userfaultfd: add UFFDIO_CONTINUE ioctl
 
-#
-# (Tip: To set sample time separation other than 100ms with --sort time use --time-quantum)
-#
+ fs/proc/task_mmu.c               |   1 +
+ fs/userfaultfd.c                 | 143 ++++++++++++++++++++++++-------
+ include/linux/mm.h               |   1 +
+ include/linux/userfaultfd_k.h    |  14 ++-
+ include/trace/events/mmflags.h   |   1 +
+ include/uapi/linux/userfaultfd.h |  36 +++++++-
+ mm/hugetlb.c                     |  42 +++++++--
+ mm/userfaultfd.c                 |  86 ++++++++++++++-----
+ 8 files changed, 261 insertions(+), 63 deletions(-)
 
-
-Note that if we sum the percentage of nvfs_iter_locked, new_sync_read, 
-iov_iter_advance, nvfs_rw_iter, we get 12.01%. On the other hand, in the 
-second trace, nvfs_read consumes just 2.71% - and it replaces 
-functionality of all these functions.
-
-That is the reason for that 10% degradation with read_iter.
-
-Mikulas
+--
+2.29.2.729.g45daf8777d-goog
 
