@@ -2,241 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24025305C57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ECF5305D50
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:35:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343706AbhA0NAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 08:00:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53078 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238180AbhA0M6s (ORCPT
+        id S232655AbhA0New (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 08:34:52 -0500
+Received: from mail.windriver.com ([147.11.1.11]:63659 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238306AbhA0Nch (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 07:58:48 -0500
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B26C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 04:58:08 -0800 (PST)
-Received: by mail-il1-x136.google.com with SMTP id y5so1627179ilg.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 04:58:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=64K/QKtyMLn8l0u6NeWx49QvJK1DHku325Cs/2hvSpw=;
-        b=vZJoOB+x8H8nMMFUWBsuyzXQBowR4BbNaEWOZzE7HJq5PEbaQihf4Ra3PzQubldgEb
-         7YmBw3QuD69Stne3cvNOyspVzUMrCU/3SICCmVcOnh10weVvOPiNjrs1Si0FtShXEToY
-         XSBH/Dx0RbP1n+q/6BAeSzFGOceNWYP2hrU9CuOKkB3wznxwOsFBsWhTyYMumHSCGmF5
-         o1KySAVSmltOtSb0LRnL4O/1FrkQDuKK11W2t+5QC8+vOlI7qzONfKyF4H73gSjbZwHk
-         FdStF0/yngCBruHpiVtx6wZkVKJFC4GPG92txnRaCXxLCXECTKNfDYKyu0/dMJWnOSYs
-         5g2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=64K/QKtyMLn8l0u6NeWx49QvJK1DHku325Cs/2hvSpw=;
-        b=TAf/pNsr2otA1hxuYye5KtCByxRkzHfKQvnagVVJcLlTgCj9XwmjpJj8ZeU20bLH/N
-         W7+y9hd/RRCPBWLMD81fApoHPcZoySIs14f3FS0cqG4M9nWTlqCp5UCgP/qXtQ/mwWg8
-         9n7ghM0imF8SwXNGYzD3KVcq/Zd/b5Xy6AigVzuLYqiMy9TCvoIxXiEMjb21qu+DKjgX
-         QNEnhGBbzu2kQWOS6JlMETDanb14El2s44DGe2KSnau5J0DaEkPnZ57LI9smYv5C3TUf
-         NBtBGE62QKYnnTWoui+yIY9d/CP4fte+1mj42xR4Pq18K54RLdBlCq5LTSK04I0rAWgy
-         aWcQ==
-X-Gm-Message-State: AOAM531a3cQfpdDcz2u1CSOiPWhrjbxRv51LklJNie23/DExz73Bfw/T
-        dvheD5/N0neSHjYMmQDLHhP8PStZWP3MKq7PGBeDFBmf
-X-Google-Smtp-Source: ABdhPJxubc34NKX68njwH52WGh5YJKsfElW72tmv4q5o4Pb3HCy2TG4XmfmyjwBogR7y891DAykvtm8xWUyJJHhpx9E=
-X-Received: by 2002:a05:6e02:14ce:: with SMTP id o14mr8878458ilk.9.1611752287319;
- Wed, 27 Jan 2021 04:58:07 -0800 (PST)
+        Wed, 27 Jan 2021 08:32:37 -0500
+Received: from pek-ygao-d1.windriver.com (pek-ygao-d1.corp.ad.wrs.com [128.224.155.99])
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTPS id 10792Eew007852
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jan 2021 01:02:21 -0800 (PST)
+References: <20201209112100.47653-1-yahu.gao@windriver.com> <87zh2mprwl.fsf@x220.int.ebiederm.org>
+User-agent: mu4e 1.2.0; emacs 26.3
+From:   Gao Yahu <yahu.gao@windriver.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Yahu Gao <yahu.gao@windriver.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: Review request 0/1: fs/proc: Fix NULL pointer dereference in
+In-reply-to: <87zh2mprwl.fsf@x220.int.ebiederm.org>
+Date:   Thu, 07 Jan 2021 17:02:13 +0800
+Message-ID: <87ft3d86i2.fsf@pek-ygao-d1>
 MIME-Version: 1.0
-References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-9-amir73il@gmail.com>
- <20200226091804.GD10728@quack2.suse.cz> <CAOQ4uxiXbGF+RRUmnP4Sbub+3TxEavmCvi0AYpwHuLepqexdCA@mail.gmail.com>
- <20200226143843.GT10728@quack2.suse.cz> <CAOQ4uxh+Mpr-f3LY5PHNDtCoqTrey69-339DabzSkhRR4cbUYA@mail.gmail.com>
- <CAOQ4uxj_C4EbzwwcrE09P5Z83WqmwNVdeZRJ6qNaThM3pkUinQ@mail.gmail.com>
- <20210125130149.GC1175@quack2.suse.cz> <CAOQ4uxiSSYr4bejwZBBPDjs1Vg_BUSSjY4YiUAgri=adHdOLuQ@mail.gmail.com>
- <20210127112416.GB3108@quack2.suse.cz>
-In-Reply-To: <20210127112416.GB3108@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 27 Jan 2021 14:57:56 +0200
-Message-ID: <CAOQ4uxhqm4kZ4sDpYqnknRTMbwfTft5zr=3P+ijV8ex5C_+y-w@mail.gmail.com>
-Subject: Re: fanotify_merge improvements
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 1:24 PM Jan Kara <jack@suse.cz> wrote:
+
+Eric W. Biederman <ebiederm@xmission.com> writes:
+
+> [Please note this e-mail is from an EXTERNAL e-mail address]
 >
-> On Tue 26-01-21 18:21:26, Amir Goldstein wrote:
-> > On Mon, Jan 25, 2021 at 3:01 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Sat 23-01-21 15:30:59, Amir Goldstein wrote:
-> > > > On Fri, Jan 22, 2021 at 3:59 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > >
-> > > > > > > > Hum, now thinking about this, maybe we could clean this up even a bit more.
-> > > > > > > > event->inode is currently used only by inotify and fanotify for merging
-> > > > > > > > purposes. Now inotify could use its 'wd' instead of inode with exactly the
-> > > > > > > > same results, fanotify path or fid check is at least as strong as the inode
-> > > > > > > > check. So only for the case of pure "inode" events, we need to store inode
-> > > > > > > > identifier in struct fanotify_event - and we can do that in the union with
-> > > > > > > > struct path and completely remove the 'inode' member from fsnotify_event.
-> > > > > > > > Am I missing something?
-> > > > > > >
-> > > > > > > That generally sounds good and I did notice it is strange that wd is not
-> > > > > > > being compared.  However, I think I was worried that comparing fid+name
-> > > > > > > (in following patches) would be more expensive than comparing dentry (or
-> > > > > > > object inode) as a "rule out first" in merge, so I preferred to keep the
-> > > > > > > tag/dentry/id comparison for fanotify_fid case.
-> > > > > >
-> > > > > > Yes, that could be a concern.
-> > > > > >
-> > > > > > > Given this analysis (and assuming it is correct), would you like me to
-> > > > > > > just go a head with the change suggested above? or anything beyond that?
-> > > > > >
-> > > > > > Let's go just with the change suggested above for now. We can work on this
-> > > > > > later (probably with optimizing of the fanotify merging code).
-> > > > > >
-> > > > >
-> > > > > Hi Jan,
-> > > > >
-> > > > > Recap:
-> > > > > - fanotify_merge is very inefficient and uses extensive CPU if queue contains
-> > > > >   many events, so it is rather easy for a poorly written listener to
-> > > > > cripple the system
-> > > > > - You had an idea to store in event->objectid a hash of all the compared
-> > > > >   fields (e.g. fid+name)
-> > > > > - I think you had an idea to keep a hash table of events in the queue
-> > > > > to find the
-> > > > >   merge candidates faster
-> > > > > - For internal uses, I carry a patch that limits the linear search for
-> > > > > last 128 events
-> > > > >   which is enough to relieve the CPU overuse in case of unattended long queues
-> > > > >
-> > > > > I tried looking into implementing the hash table idea, assuming I understood you
-> > > > > correctly and I struggled to choose appropriate table sizes. It seemed to make
-> > > > > sense to use a global hash table, such as inode/dentry cache for all the groups
-> > > > > but that would add complexity to locking rules of queue/dequeue and
-> > > > > group cleanup.
-> > > > >
-> > > > > A simpler solution I considered, similar to my 128 events limit patch,
-> > > > > is to limit
-> > > > > the linear search to events queued in the last X seconds.
-> > > > > The rationale is that event merging is not supposed to be long term at all.
-> > > > > If a listener fails to perform read from the queue, it is not fsnotify's job to
-> > > > > try and keep the queue compact. I think merging events mechanism was
-> > > > > mainly meant to merge short bursts of events on objects, which are quite
-> > > > > common and surely can happen concurrently on several objects.
-> > > > >
-> > > > > My intuition is that making event->objectid into event->hash in addition
-> > > > > to limiting the age of events to merge would address the real life workloads.
-> > > > > One question if we do choose this approach is what should the age limit be?
-> > > > > Should it be configurable? Default to infinity and let distro cap the age or
-> > > > > provide a sane default by kernel while slightly changing behavior (yes please).
-> > > > >
-> > > > > What are your thoughts about this?
-> > > >
-> > > > Aha! found it:
-> > > > https://lore.kernel.org/linux-fsdevel/20200227112755.GZ10728@quack2.suse.cz/
-> > > > You suggested a small hash table per group (128 slots).
-> > > >
-> > > > My intuition is that this will not be good enough for the worst case, which is
-> > > > not that hard to hit is real life:
-> > > > 1. Listener sets FAN_UNLIMITED_QUEUE
-> > > > 2. Listener adds a FAN_MARK_FILESYSTEM watch
-> > > > 3. Many thousands of events are queued
-> > > > 4. Listener lingers (due to bad implementation?) in reading events
-> > > > 5. Every single event now incurs a huge fanotify_merge() cost
-> > > >
-> > > > Reducing the cost of merge from O(N) to O(N/128) doesn't really fix the
-> > > > problem.
-> > >
-> > > So my thought was that indeed reducing the overhead of merging by a factor
-> > > of 128 should be enough for any practical case as much as I agree that in
-> > > principle the computational complexity remains the same. And I've picked
-> > > per-group hash table to avoid interferences among notification groups and
-> > > to keep locking simple. That being said I'm not opposed to combining this
-> > > with a limit on the number of elements traversed in a hash chain (e.g.
-> > > those 128 you use yourself) - it will be naturally ordered by queue order
-> > > if we are a bit careful. This will provide efficient and effective merging
-> > > for ~8k queued events which seems enough to me. I find time based limits
-> > > not really worth it. Yes, they provide more predictable behavior but less
-> > > predictable runtime and overall I don't find the complexity worth the
-> > > benefit.
-> > >
-> >
-> > Sounds reasonable.
-> > If you have time, please take a look at this WIP branch:
-> > https://github.com/amir73il/linux/commits/fanotify_merge
-> > and let me know if you like the direction it is taking.
-> >
-> > This branch is only compile tested, but I am asking w.r.t to the chosen
-> > data structures.  So far it is just an array of queues selected by (yet
-> > unmodified) objectid.  Reading is just from any available queue.
-> >
-> > My goal was to avoid having to hang the event on multiple list/hlist and
-> > the idea is to implement read by order of events as follows:
+> Yahu Gao <yahu.gao@windriver.com> writes:
 >
-> As a side note, since we use notification_list as a strict queue, we could
-> actually use a singly linked list for linking all the events (implemented
-> in include/linux/llist.h). That way we can save one pointer in
-> fsnotify_event if we wish without too much complication AFAICT. But I'm not
-> sure we really care.
+>> There is a kernel NULL pointer dereference was found in Linux system.
+>> The details of kernel NULL is shown at bellow.
+>>
+>> Currently, we do not have a way to provoke this fault on purpose, but
+>> the reproduction rate in out CI loops is high enough that we could go
+>> for a trace patch in black or white UP and get a reproduction in few
+>> weeks.
+>>
+>> Our kernel version is 4.1.21, but via analyzing the source code of the
+>> call trace. The upstream version should be affected. Really sorry for
+>> havn't reproduced this in upstream version. But it's easier to be safe
+>> than to prove it can't happen, right?
+>
+> Except I there are strong invariants that suggests that it takes
+> a memory stomp to get a NULL pointer deference here.
 >
 
-Handling of the overflow event is going to be a bit subtle and permission
-events are not following the strict FIFO.
-Anyway, I'd rather not get into that change.
+Sorry for late reply. I took a long time to find root cause of memory stomp,
+but got nothing for now:(
 
-> > - With multi queue, high bit of obejctid will be masked for merge compare.
-> > - Instead, they will be used to store the next_qid to read from
-> >
-> > For example:
-> > - event #1 is added to queue 6
-> > - set group->last_qid = 6
-> > - set group->next_qid = 6 (because group->num_events == 1)
-> > - event #2 is added to queue 13
-> > - the next_qid bits of the last event in last_qid (6) queue are set to 13
-> > - set group->last_qid = 13
-> >
-> > - read() checks value of group->next_qid and reads the first event
-> > from queue 6 (event #1)
-> > - event #1 has 13 stored in next_qid bits so set group->next_qid = 13
-> > - read() reads first event from queue 13 (event #2)
+> For the life of a proc inode PROC_I(inode)->pid should be non-NULL.
 >
-> That's an interesting idea. I like it and I think it would work. Just
-> instead of masking, I'd use bitfields. Or we could just restrict objectid
-> to 32-bits and use remaining 32-bits for the next_qid pointer. I know it
-> will waste some bits but 32-bits of objectid should provide us with enough
-> space to avoid doing full event comparison in most cases
-
-Certainly.
-The entire set of objects to compare is going to be limited to 128*128,
-so 32bit should be plenty of hash bits.
-Simplicity is preferred.
-
->  - BTW WRT naming I
-> find 'qid' somewhat confusing. Can we call it say 'next_bucket' or
-> something like that?
+> For a non-NULL pid pointer ->tasks[PIDTYPE_PID].first simply reads
+> an entry out of the struct pid.  Only pid needs to be non-NULL.
 >
-
-Sure. If its going to be 32bit, I can just call it next_key for simplicity
-and store the next event key instead of the next event bucket.
-
-> > Permission events require special care, but that is the idea of a simple
-> > singly linked list using qid's for reading events by insert order and
-> > merging by hashed queue.
+> So I don't see how you are getting a NULL pointer derference.
 >
-> Why are permission events special in this regard?
+> Have you decoded the oops, looked at the assembly and seen which field
+> is NULL?  I expec that will help you track down what is wrong.
 >
+There are two messages I had found:
+1. 'Unable to handle kernel NULL pointer dereference at virtual address
+ 00000008'.
+2. In kernel 4.1.21, the members of 'struct pid' likes follow:
+(Apologize for missing this message at first)
+...
+struct pid
+{
+        atomic_t count;
+        unsigned int level;
+        /* lists of tasks that use this pid */
+        struct hlist_head tasks[PIDTYPE_MAX];
+        struct rcu_head rcu;
+        struct upid numbers[1];
+};
+...
+The offset of the member *tasks* from *struct pid* is 0x00000008.
 
-They are not removed from the head of the queue, so
-middle event next_key may need to be updated when they
-are removed.
+Based on the above message, I thought we got a NULL pointer of struct
+pid.
 
-I guess since permission events are not merged, they could
-use their own queue. If we do not care about ordering of
-permission events and non-permission events, we can treat this
-as a priority queue and it will simplify things considerably.
-Boosting priority of blocking hooks seems like the right thing to do.
-I wonder if we could make that change?
+Regards,
+Yahu
 
-Thanks,
-Amir.
+>
+>> Details of kernel crash:
+>> ----------------------------------------------------------------------
+>> [1446.285834] Unable to handle kernel NULL pointer dereference at
+>> virtual address 00000008
+>> [ 1446.293943] pgd = e4af0880
+>> [ 1446.296656] [00000008] *pgd=10cc3003, *pmd=04153003, *pte=00000000
+>> [ 1446.302898] Internal error: Oops: 207 1 PREEMPT SMP ARM
+>> [ 1446.302950] Modules linked in: adkNetD ncp
+>> lttng_ring_buffer_client_mmap_overwrite(C)
+>> lttng_ring_buffer_client_mmap_discard(C)
+>> lttng_ring_buffer_client_discard(C)
+>> lttng_ring_buffer_metadata_mmap_client(C) lttng_probe_printk(C)
+>> lttng_probe_irq(C) lttng_ring_buffer_metadata_client(C)
+>> lttng_ring_buffer_client_overwrite(C) lttng_probe_signal(C)
+>> lttng_probe_sched(C) lttng_tracer(C) lttng_statedump(C)
+>> lttng_lib_ring_buffer(C) lttng_clock_plugin_arm_cntpct(C) lttng_clock(C)
+>> [ 1446.302963] CPU: 0 PID: 12086 Comm: netstat Tainted: G C
+>> 4.1.21-rt13-* #1
+>> [ 1446.302967] Hardware name: Ericsson CPM1
+>> [ 1446.302972] task: cbd75480 ti: c4a68000 task.ti: c4a68000
+>> [ 1446.302984] PC is at pid_delete_dentry+0x8/0x18
+>> [ 1446.302992] LR is at dput+0x1a8/0x2b4
+>> [ 1446.303003] pc : [] lr : [] psr: 20070013
+>> [ 1446.303003] sp : c4a69e88 ip : 00000000 fp : 00000000
+>> [ 1446.303007] r10: 000218cc r9 : cd228000 r8 : e5f44320
+>> [ 1446.303011] r7 : 00000001 r6 : 00080040 r5 : c4aa97d0 r4 : c4aa9780
+>> [ 1446.303015] r3 : 00000000 r2 : cbd75480 r1 : 00000000 r0 : c4aa9780
+>> [ 1446.303020] Flags: nzCv IRQs on FIQs on Mode SVC_32 ISA ARM Segment
+>> user
+>> [ 1446.303026] Control: 30c5387d Table: 24af0880 DAC: 000000fd
+>> [ 1446.303033] Process netstat (pid: 12086, stack limit = 0xc4a68218)
+>> [ 1446.303039] Stack: (0xc4a69e88 to 0xc4a6a000)
+>> [ 1446.303052] 9e80: c4a69f70 0000a1c0 c4a69f13 00000002 e5f44320
+>> cd228000
+>> [ 1446.303059] 9ea0: 000218cc c0571604 c0a60bcc 00000000 00000000
+>> 00000000 c4a69f20 c4a69f15
+>> [ 1446.303065] 9ec0: 00003133 00000002 c4a69f13 00000000 0000001f
+>> c4a69f70 c35de800 0000007c
+>> [ 1446.303072] 9ee0: ce2b1c00 cd228000 00000001 c05747b8 c05745cc
+>> c35de800 0000001f 00000000
+>> [ 1446.303078] 9f00: 00000004 cd228008 00020000 c05745cc 33000004
+>> c0400031 c4a68000 00000400
+>> [ 1446.303086] 9f20: beb78c2c cd228000 c4a69f70 00000000 cd228008
+>> c0ffca90 c4a68000 00000400
+>> [ 1446.303103] 9f40: beb78c2c c052cd0c bf08a774 00000400 01480080
+>> 00008000 cd228000 cd228000
+>> [ 1446.303114] 9f60: c040f7c8 c4a68000 00000400 c052d22c c052cd8c
+>> 00000000 00000021 00000000
+>> [ 1446.303127] 9f80: 01480290 01480280 00007df0 ffffffea 01480060
+>> 01480060 01480064 b6e424c0
+>> [ 1446.303143] 9fa0: 0000008d c040f794 01480060 01480064 00000004
+>> 01480080 00008000 00000000
+>> [ 1446.303150] 9fc0: 01480060 01480064 b6e424c0 0000008d 01480080
+>> 01480060 00035440 beb78c2c
+>> [ 1446.303156] 9fe0: 01480080 beb78160 b6ede59c b6edea3c 60070010
+>> 00000004 00000000 00000000
+>> [ 1446.303167] [] (pid_delete_dentry) from [] (dput+0x1a8/0x2b4)
+>> [ 1446.303176] [] (dput) from [] (proc_fill_cache+0x54/0x10c)
+>> [ 1446.303189] [] (proc_fill_cache) from []
+>> (proc_readfd_common+0xd8/0x238)
+>> [ 1446.303203] [] (proc_readfd_common) from [] (iterate_dir+0x98/0x118)
+>> [ 1446.303217] [] (iterate_dir) from [] (SyS_getdents+0x7c/0xf0)
+>> [ 1446.303233] [] (SyS_getdents) from [] (__sys_trace_return+0x0/0x2c)
+>> [ 1446.303243] Code: e8bd0030 e12fff1e e5903028 e5133020 (e5930008)
+>
+> Eric
+
