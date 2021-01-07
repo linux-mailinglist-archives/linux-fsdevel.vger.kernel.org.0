@@ -2,65 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60B2C2ED444
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 17:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C01832ED43E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 17:27:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbhAGQ1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jan 2021 11:27:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47261 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726541AbhAGQ1f (ORCPT
+        id S1728336AbhAGQ0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jan 2021 11:26:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46308 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728118AbhAGQ0v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jan 2021 11:27:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610036769;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cQV/x5GtXZ0B2hPRvGG0KO7F8c4S3HMWgh/cKMsSZQg=;
-        b=T++2GgJqqOZmzHqvWuqXTn0tNlyGwmQ/o5Uwx+Ch8lpIWGNyuj+5y0ytlboSAph+aSDV3X
-        6NlxQGb91PaFGscHhXrvehmJSLQtA/FiMuHBg81p71V9zl5fdGHLhebh/CHXlw9RpsX3NP
-        jtuZw/9IwGMwqVhySdF9MAOvduNj7qw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-361-0oCKIdzxMBy12Zv7lVr-Rg-1; Thu, 07 Jan 2021 11:26:07 -0500
-X-MC-Unique: 0oCKIdzxMBy12Zv7lVr-Rg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C10F4800D55;
-        Thu,  7 Jan 2021 16:26:04 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B77ED3A47;
-        Thu,  7 Jan 2021 16:26:04 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id AAF684BB7B;
-        Thu,  7 Jan 2021 16:26:04 +0000 (UTC)
-Date:   Thu, 7 Jan 2021 11:26:02 -0500 (EST)
-From:   Bob Peterson <rpeterso@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Satya Tangirala <satyat@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Message-ID: <1880595671.42956897.1610036762534.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20210107162000.GA2693@lst.de>
-References: <20201224044954.1349459-1-satyat@google.com> <20210107162000.GA2693@lst.de>
+        Thu, 7 Jan 2021 11:26:51 -0500
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6A1C0612F4
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jan 2021 08:26:11 -0800 (PST)
+Received: by mail-il1-x130.google.com with SMTP id r17so7225180ilo.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jan 2021 08:26:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QIxzF2bLadsBEQs53wZwsJlvmAD1DJLG/cb78U0SHpM=;
+        b=lTR4t4/m5RCDhjOGakyk/fz0/tCMcwhMcoCNu/MgEqDrWJfdVnItWQMQacd9GGJ2Yz
+         cz6Lrez9rKKyEKXkS9uyaRpxuo+qSi7X34N7NoDjVaYfgosCx/VgBQI6iBGfcstXHvVX
+         kwxv3oCeawJ8k9qdv7MJ5w7fOBZIFFSf31KUn4snljd8oowKRjfnUWkkoktwb77G/mEE
+         Q6chWbRVDRvLvv4El4midO2TTpyWI2dpdQmctVS2sV8XM025zlR3WRQURrfRMu1J/6ha
+         yH5jdvDKBLuz0aw6jaYRiZwZqaEqI0k8DP6GvvLj4rxfU39WaUN13TwrPKmZrtHXAwjS
+         Ytog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QIxzF2bLadsBEQs53wZwsJlvmAD1DJLG/cb78U0SHpM=;
+        b=jKEdFLqNQHZwsLWV41S+YiPPywwRndOkkh36vPCi7+86yMqZFEPXD0wzwBmQ5i2VGl
+         J4dsNO3q4GNWlPF/jnJUYV0e2EhlfqxeUsDv07oypoOYMrT8C1QQEnsOUccxOSA8JOlV
+         gX6N4qEx75X0OzUTcJYPioRcyPOZrhJXrd0q3fw/xnEa/gl0ptr94UEz7TzbxQgRsnQT
+         uBY/g/KjTEH97fWcJml6Wo9kwFSJKoyc5uiVBLyXkmiuakNbpBQ5EhnfTMI6S/ktDSVZ
+         2ZKNc4uHEwurbo0F5O/00qEduFWonEIhn2lNDbHCP5oBVnsHqSW5m20KZqw7mmV9QjSS
+         ZviQ==
+X-Gm-Message-State: AOAM533T+c5a13jAbL3KvYA0+XsdpiJf2efBH7QR7MMudI28T2RcUgK4
+        +IJyQNVrriI/HX0h8+uBEdsRGA==
+X-Google-Smtp-Source: ABdhPJyOkfS44FMzaxu0QiHKrCmj2Lkuo/V5YETM7Lw88rC8dECEOyx51VGY8skJP9arsJcI9tB+GA==
+X-Received: by 2002:a92:cb43:: with SMTP id f3mr9461411ilq.50.1610036770838;
+        Thu, 07 Jan 2021 08:26:10 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id p3sm3469663iol.35.2021.01.07.08.26.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Jan 2021 08:26:10 -0800 (PST)
 Subject: Re: [PATCH] fs: Fix freeze_bdev()/thaw_bdev() accounting of
  bd_fsfreeze_sb
+To:     Christoph Hellwig <hch@lst.de>, Satya Tangirala <satyat@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20201224044954.1349459-1-satyat@google.com>
+ <20210107162000.GA2693@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <79b418db-d7d2-eb07-af43-b66397a05c02@kernel.dk>
+Date:   Thu, 7 Jan 2021 09:26:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20210107162000.GA2693@lst.de>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.112.201, 10.4.195.23]
-Thread-Topic: Fix freeze_bdev()/thaw_bdev() accounting of bd_fsfreeze_sb
-Thread-Index: wReIBcuiVcLsNfvvUAISHBXneDQ8yg==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Original Message -----
+On 1/7/21 9:20 AM, Christoph Hellwig wrote:
 > Can someone pick this up?  Maybe through Jens' block tree as that is
 > where my commit this is fixing up came from.
 > 
@@ -68,62 +78,9 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 > 
 > 
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> On Thu, Dec 24, 2020 at 04:49:54AM +0000, Satya Tangirala wrote:
-> > freeze/thaw_bdev() currently use bdev->bd_fsfreeze_count to infer
-> > whether or not bdev->bd_fsfreeze_sb is valid (it's valid iff
-> > bd_fsfreeze_count is non-zero). thaw_bdev() doesn't nullify
-> > bd_fsfreeze_sb.
-> > 
-> > But this means a freeze_bdev() call followed by a thaw_bdev() call can
-> > leave bd_fsfreeze_sb with a non-null value, while bd_fsfreeze_count is
-> > zero. If freeze_bdev() is called again, and this time
-> > get_active_super() returns NULL (e.g. because the FS is unmounted),
-> > we'll end up with bd_fsfreeze_count > 0, but bd_fsfreeze_sb is
-> > *untouched* - it stays the same (now garbage) value. A subsequent
-> > thaw_bdev() will decide that the bd_fsfreeze_sb value is legitimate
-> > (since bd_fsfreeze_count > 0), and attempt to use it.
-> > 
-> > Fix this by always setting bd_fsfreeze_sb to NULL when
-> > bd_fsfreeze_count is successfully decremented to 0 in thaw_sb().
-> > Alternatively, we could set bd_fsfreeze_sb to whatever
-> > get_active_super() returns in freeze_bdev() whenever bd_fsfreeze_count
-> > is successfully incremented to 1 from 0 (which can be achieved cleanly
-> > by moving the line currently setting bd_fsfreeze_sb to immediately
-> > after the "sync:" label, but it might be a little too subtle/easily
-> > overlooked in future).
-> > 
-> > This fixes the currently panicking xfstests generic/085.
-> > 
-> > Fixes: 040f04bd2e82 ("fs: simplify freeze_bdev/thaw_bdev")
-> > Signed-off-by: Satya Tangirala <satyat@google.com>
-> > ---
-> >  fs/block_dev.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/block_dev.c b/fs/block_dev.c
-> > index 9e56ee1f2652..12a811a9ae4b 100644
-> > --- a/fs/block_dev.c
-> > +++ b/fs/block_dev.c
-> > @@ -606,6 +606,8 @@ int thaw_bdev(struct block_device *bdev)
-> >  		error = thaw_super(sb);
-> >  	if (error)
-> >  		bdev->bd_fsfreeze_count++;
-> > +	else
-> > +		bdev->bd_fsfreeze_sb = NULL;
-> >  out:
-> >  	mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> >  	return error;
-> > --
-> > 2.29.2.729.g45daf8777d-goog
-> ---end quoted text---
-> 
-> 
-Funny you should ask. I came across this bug in my testing of gfs2
-and my patch is slightly different. I was wondering who to send it to.
-Perhaps Viro?
 
-Regards,
+Applied, thanks.
 
-Bob Peterson
+-- 
+Jens Axboe
 
