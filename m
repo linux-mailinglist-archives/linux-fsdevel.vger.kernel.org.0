@@ -2,153 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B32C82ECA7C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 07:24:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E78062ECAC3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 08:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbhAGGYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jan 2021 01:24:24 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:40602 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbhAGGYX (ORCPT
+        id S1725900AbhAGHCw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jan 2021 02:02:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbhAGHCw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jan 2021 01:24:23 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210107062338epoutp035413f2ea383bdda2b6569bd70d1ba1bb~X3whUewem1835718357epoutp03u
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jan 2021 06:23:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210107062338epoutp035413f2ea383bdda2b6569bd70d1ba1bb~X3whUewem1835718357epoutp03u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1610000618;
-        bh=R4is/Ep0hJRf/2NW4TpOdp4BEDnzWEJy5TzUv5ZED2A=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=iuJoVKGWyVOXlpt9KDtR7f5H9fLPvseGfPyThnvZmrGmeH21XvNEEwLYKWqAUZcIu
-         8dp0VZ9SFDijiL5sL64wLYzV6B2TFwzLUMSxzPWd64s9tFx9tYMpjZIpDGBJjovbiX
-         BmJnuCOS0bhOp7QRCSPttTK08OW9Ab9JX6hk0fBE=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210107062338epcas1p2dd7fff20df0d09ccbeb9dc5b00247a86~X3wg4jwrz1993319933epcas1p2l;
-        Thu,  7 Jan 2021 06:23:38 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4DBGQK1VQ9z4x9Q7; Thu,  7 Jan
-        2021 06:23:37 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        74.05.02418.9E8A6FF5; Thu,  7 Jan 2021 15:23:37 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210107062336epcas1p1f7bb77862b7c00b818c6a24bb04a76fa~X3wfcHk6k1697116971epcas1p1Y;
-        Thu,  7 Jan 2021 06:23:36 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210107062336epsmtrp1906a12427a548ad8cd6d0590ccf351a0~X3wfbZqkr0225302253epsmtrp16;
-        Thu,  7 Jan 2021 06:23:36 +0000 (GMT)
-X-AuditID: b6c32a35-c23ff70000010972-8e-5ff6a8e9a0c5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A8.3A.08745.8E8A6FF5; Thu,  7 Jan 2021 15:23:36 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210107062336epsmtip2f5d1ae94da103c2b4b84f1d97733f074~X3wfOZmuL2214722147epsmtip2j;
-        Thu,  7 Jan 2021 06:23:36 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Hyeongseok Kim'" <hyeongseok@gmail.com>,
-        <namjae.jeon@samsung.com>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20210106043945.36546-1-hyeongseok@gmail.com>
-Subject: RE: [PATCH] exfat: improve performance of exfat_free_cluster when
- using dirsync mount option
-Date:   Thu, 7 Jan 2021 15:23:36 +0900
-Message-ID: <244001d6e4bd$a18072f0$e48158d0$@samsung.com>
+        Thu, 7 Jan 2021 02:02:52 -0500
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11FC9C0612F4;
+        Wed,  6 Jan 2021 23:02:12 -0800 (PST)
+Received: by mail-il1-x136.google.com with SMTP id e7so5789099ile.7;
+        Wed, 06 Jan 2021 23:02:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YTt2iOcdKE4UY7gFfdehlngY69FHJ1uqrL8kNL4lN74=;
+        b=p7IBiiEnJr6wVwYOhRWuzN8CFzPgocDKLDIlO4X9eKj00/6fj/6l6+29/3E3/KJEFA
+         Ld3DHmarBLEC79P4JolvmhP5bKuxm71ca8ziHbJa+RZXGpN365j5y2iyg2UcJ0MGpr9Q
+         AhtH40mfMqvmJdzFEkhvDF9A4M0IusRhk5mkxd3X0/bkf1QZ2uZvuGSzLH6RaPT+AZw0
+         K1JJI7FVqwAneWNJ2k3dNE3Pe7W70IY9/WkEZyFIxHPj4koKZnWX+2xQXVreze/5aT0w
+         SlWDFg1uVNC/azAaC14bKDPy40ze02hXSdq2HQgylwuhcu1bA7MQkNFw9N+ae6PLaQsx
+         IMAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YTt2iOcdKE4UY7gFfdehlngY69FHJ1uqrL8kNL4lN74=;
+        b=B0lsfwuDPuOSGWUTH51MIotcPStnpJpGI9XjY5Mk5UZMwptokFAXrvRamds0ivelSL
+         enNVn3vc5y8DPQJlBsKL7OdCghsMU1z8wtPO3cAUi9PP41l1yPZmveYUalhUcU1FGCmX
+         odC83TSHBCNvCrM2cC/8CXtQgxxLp2eKTqAcYYhLuKEFe7R8EgtyzwxdGdluqXViJQqY
+         BJs5YbzwZQRP0Tdl6OeDukp7OP9MxawficKNcNPD0IhiLgyMZ1A73opvcr4fkpMhywRG
+         faEyHMYM13H24lHLFXKFFSrKOPPs9ySTVNo2BVDrJ6erGejOjU8mwa+82Nbyt6rDLYUK
+         Nt1g==
+X-Gm-Message-State: AOAM532GfTie9jZcxpally+UZVAKu3sAYfennVQHzmPapcKYvMu2O4WB
+        7EvzAFtLEznv+wnbAI4nIhvcPZwy/QVfD/yt0rdJQnNni6A=
+X-Google-Smtp-Source: ABdhPJzCmV6l8fuKW9Y+8fwWPFDTKkDc86N/yWJKxC11RItaXjTAhczgzZ19hsGw+rmdj9qKF/wiN5hNWm9sDKJqxkY=
+X-Received: by 2002:a92:d587:: with SMTP id a7mr3487057iln.250.1610002931441;
+ Wed, 06 Jan 2021 23:02:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQE9l3LMTUKYLRjlfrko2bpokujgCAI4/HcfqzyDawA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHKsWRmVeSWpSXmKPExsWy7bCmru7LFd/iDWYt57D4O/ETk8WevSdZ
-        LC7vmsNm8WN6vQOLx85Zd9k9+rasYvT4vEkugDkqxyYjNTEltUghNS85PyUzL91WyTs43jne
-        1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaJmSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYp
-        tSAlp8DQoECvODG3uDQvXS85P9fK0MDAyBSoMiEnY/r2y4wFD3kqftzfy9zAeIOji5GTQ0LA
-        RKL731fGLkYuDiGBHYwSNx/PZoFwPjFKXH3+nhXC+cwo8WbyCjaYlh8tt6ASuxglnt/6xwbh
-        vGSU2DXhABNIFZuArsSTGz+ZQWwRAQ+Jx03HwOLMAs4Sh2+cAotzClhJ3Dq3jh3EFhZIl2i8
-        uB5sA4uAisTqu++B6jk4eAUsJZ79zAUJ8woISpyc+YQFYoy8xPa3c5ghDlKQ2P3pKCvEKiuJ
-        n9cXskHUiEjM7mxjBrlNQuAru8TNrROgPnCRuPB/IzuELSzx6vgWKFtK4mV/G5RdL/F//lp2
-        iOYWRomHn7aBHSQhYC/x/pIFiMksoCmxfpc+RLmixM7fcxkh9vJJvPvawwpRzSvR0SYEUaIi
-        8f3DThaYTVd+XGWawKg0C8lns5B8NgvJB7MQli1gZFnFKJZaUJybnlpsWGCIHNmbGMEJUct0
-        B+PEtx/0DjEycTAeYpTgYFYS4bU49iVeiDclsbIqtSg/vqg0J7X4EKMpMKgnMkuJJucDU3Je
-        SbyhqZGxsbGFiZm5mamxkjhvksGDeCGB9MSS1OzU1ILUIpg+Jg5OqQamXBlT7yMyel1nP93y
-        /VrtmnSRZds5JsXt4p/MF6xfPmfhiuBysaoDOy6/P/q8+vCy5s6+tZsdwh4KGm19vF3FxfVE
-        KtudwLJDNqxHHW/KSppIlQOT7syaisreNwYqK8yWZZ1kdfK6w9cyf+5y470hijafA8pqQgMf
-        6f0MPd97nDcrb1W2pNPSFdWrElJ7NnlnWsXP4OQo2nCyhnfnsd5n7z++inGvsN36vPdtoNrS
-        x43nG9J+lG36vjv8Ta/efZXETKMp4m9VG/af2DhtKV9Jk0/Suer/95g+PS1r5fsmklnsq6hc
-        seiz1eZQv6L9Jek5sp9jFOMu9egJ67jpJL2YGVj+c9ZSU/lZu3/UTlViKc5INNRiLipOBADp
-        FdHwEQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsWy7bCSvO6LFd/iDS78lrP4O/ETk8WevSdZ
-        LC7vmsNm8WN6vQOLx85Zd9k9+rasYvT4vEkugDmKyyYlNSezLLVI3y6BK2P69suMBQ95Kn7c
-        38vcwHiDo4uRk0NCwETiR8st1i5GLg4hgR2MEhs/NrJ3MXIAJaQkDu7ThDCFJQ4fLoYoec4o
-        cWr7ezaQXjYBXYknN34yg9giAl4S+5tes4PYzAKuEvOfr2aDaOhmlPh3+RtYEaeAlcStc+vA
-        ioQFUiX2Pp0DNohFQEVi9d33TCDLeAUsJZ79zAUJ8woISpyc+YQFJMwsoCfRtpERYry8xPa3
-        c5ghzleQ2P3pKCvECVYSP68vZIOoEZGY3dnGPIFReBaSSbMQJs1CMmkWko4FjCyrGCVTC4pz
-        03OLDQuM8lLL9YoTc4tL89L1kvNzNzGCY0JLawfjnlUf9A4xMnEwHmKU4GBWEuG1OPYlXog3
-        JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQamuplzD7iV3t4r
-        oe+jeuSuz4LGlGcfGoS0kjat3slyYDZPSEDot6c2liKlbK9Yni+5PK9Xij+Tf+pk080+S22W
-        B3azvt1+qLZr4YSKMnMHi4/6QS4rSir42CaY7UzYZVtw35InIb7SSPmHQG3TaRnrVaovnpxa
-        yHxVUf9X9VbNJXxSXNIxqq2z0v+1NRXNjXso/+CUoKTQ3KxnzpvLlH5fLmTctCA7U3vR1k+p
-        oa+OWz//UrVkx8ZMdes6kxXFjMucrV9t+JbxiPX6mj+TwsKMgJHL1vLhg6Ao8xy5F7PX/+Bi
-        unnjZ7dzR23FZFP5mz+DTob9vyN1esttsfjtf8JTvp7Pi7CUMP0irDX9MZsSS3FGoqEWc1Fx
-        IgCitn9S+AIAAA==
-X-CMS-MailID: 20210107062336epcas1p1f7bb77862b7c00b818c6a24bb04a76fa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210106044038epcas1p2d3488531b0a63c122f7401d4d56b03a8
-References: <CGME20210106044038epcas1p2d3488531b0a63c122f7401d4d56b03a8@epcas1p2.samsung.com>
-        <20210106043945.36546-1-hyeongseok@gmail.com>
+References: <20210106083546.4392-1-sargun@sargun.me> <20210106194658.GA3290@redhat.com>
+In-Reply-To: <20210106194658.GA3290@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 7 Jan 2021 09:02:00 +0200
+Message-ID: <CAOQ4uxgR_gybovg6t4+=MbeMXS6jm5ov1ULDGZgzg7yCxETsDw@mail.gmail.com>
+Subject: Re: [PATCH v3] overlay: Implement volatile-specific fsync error behaviour
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> There are stressful update of cluster allocation bitmap when using dirsync
-> mount option which is doing sync buffer on every cluster bit clearing.
-> This could result in performance degradation when deleting big size file.
-> Fix to update only when the bitmap buffer index is changed would make less
-> disk access, improving performance especially for truncate operation.
-> 
-> Testing with Samsung 256GB sdcard, mounted with dirsync option (mount -t
-> exfat /dev/block/mmcblk0p1 /temp/mount -o dirsync)
-> 
-> Remove 4GB file, blktrace result.
-> [Before] : 39 secs.
-> Total (blktrace):
->  Reads Queued:      0,        0KiB	 Writes Queued:      32775,
-16387KiB
->  Read Dispatches:   0,        0KiB	 Write Dispatches:   32775,
-16387KiB
->  Reads Requeued:    0		         Writes Requeued:        0
->  Reads Completed:   0,        0KiB	 Writes Completed:   32775,
-16387KiB
->  Read Merges:       0,        0KiB	 Write Merges:           0,
-0KiB
->  IO unplugs:        2        	     Timer unplugs:          0
-> 
-> [After] : 1 sec.
-> Total (blktrace):
->  Reads Queued:      0,        0KiB	 Writes Queued:         13,
-6KiB
->  Read Dispatches:   0,        0KiB	 Write Dispatches:      13,
-6KiB
->  Reads Requeued:    0		         Writes Requeued:        0
->  Reads Completed:   0,        0KiB	 Writes Completed:      13,
-6KiB
->  Read Merges:       0,        0KiB	 Write Merges:           0,
-0KiB
->  IO unplugs:        1        	     Timer unplugs:          0
-> 
-> Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
+On Wed, Jan 6, 2021 at 9:47 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Wed, Jan 06, 2021 at 12:35:46AM -0800, Sargun Dhillon wrote:
+> > Overlayfs's volatile option allows the user to bypass all forced sync calls
+> > to the upperdir filesystem. This comes at the cost of safety. We can never
+> > ensure that the user's data is intact, but we can make a best effort to
+> > expose whether or not the data is likely to be in a bad state.
+> >
+> > The best way to handle this in the time being is that if an overlayfs's
+> > upperdir experiences an error after a volatile mount occurs, that error
+> > will be returned on fsync, fdatasync, sync, and syncfs. This is
+> > contradictory to the traditional behaviour of VFS which fails the call
+> > once, and only raises an error if a subsequent fsync error has occurred,
+> > and been raised by the filesystem.
+> >
+> > One awkward aspect of the patch is that we have to manually set the
+> > superblock's errseq_t after the sync_fs callback as opposed to just
+> > returning an error from syncfs. This is because the call chain looks
+> > something like this:
+> >
+> > sys_syncfs ->
+> >       sync_filesystem ->
+> >               __sync_filesystem ->
+> >                       /* The return value is ignored here
+> >                       sb->s_op->sync_fs(sb)
+> >                       _sync_blockdev
+> >               /* Where the VFS fetches the error to raise to userspace */
+> >               errseq_check_and_advance
+> >
+> > Because of this we call errseq_set every time the sync_fs callback occurs.
+>
+> Why not start capturing return code of ->sync_fs and then return error
+> from ovl->sync_fs. And then you don't have to do errseq_set(ovl_sb).
+>
+> I already posted a patch to capture retrun code from ->sync_fs.
+>
+> https://lore.kernel.org/linux-fsdevel/20201221195055.35295-2-vgoyal@redhat.com/
+>
+>
 
-Looks good.
-Thanks for your work!
+Vivek,
 
-Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
+IMO the more important question is "Why not?".
 
+Your patches will undoubtedly get to mainline in the near future and they do
+make the errseq_set(ovl_sb) in this patch a bit redundant, but I really see no
+harm in it. It is very simple for you to remove this line in your patch.
+I do see the big benefit of an independent patch that is easy to apply to fix
+a fresh v5.10 feature.
+
+I think it is easy for people to dismiss the importance of "syncfs on volatile"
+which sounds like a contradiction, but it is not.
+The fact that the current behavior is documented doesn't make it right either.
+It just makes our review wrong.
+The durability guarantee (that volatile does not provide) is very different
+from the "reliability" guarantee that it CAN provide.
+We do not want to have to explain to people that "volatile" provided different
+guarantees depending on the kernel they are running.
+Fixing syncfs/fsync of volatile is much more important IMO than erroring
+on other fs ops post writeback error, because other fs ops are equally
+unreliable on any filesystem in case application did not do fsync.
+
+Ignoring the factor of "backporting cost" when there is no engineering
+justification to do so is just ignoring the pain of others.
+Do you have an engineering argument for objecting this patch is
+applied before your fixes to syncfs vfs API?
+
+Sargun,
+
+Please add Fixes/Stable #v5.10 tags.
+
+Thanks,
+Amir.
