@@ -2,214 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3AB82EE8EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jan 2021 23:41:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D58432EE99B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 00:11:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbhAGWlN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jan 2021 17:41:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48836 "EHLO
+        id S1727722AbhAGXJZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jan 2021 18:09:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728465AbhAGWlM (ORCPT
+        with ESMTP id S1727434AbhAGXJZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jan 2021 17:41:12 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F14D0C0612F8
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jan 2021 14:40:31 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id 6so11958170ejz.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jan 2021 14:40:31 -0800 (PST)
+        Thu, 7 Jan 2021 18:09:25 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 153CDC0612F5
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jan 2021 15:08:44 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id iq13so2604066pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jan 2021 15:08:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+XqVUgVy1pNqlxwWd84db3LuiaUvuAHDBIZX+64W06k=;
-        b=NWv01/zlyr6q4YPTCOMw9UY+da1CE8yvE6GZIprVi4hP1rB4m6+X4xE6B6p+eM1shE
-         0zE5jIDed7UafJJVgMB6ps4K6ZZL2xhShkgG9G/NzeQO5b+qfNC3chpr/tt4pjl5byp/
-         CIqStP6l1L3/IcWbmD/46AOc7BYuxJMUuzBYdv8+5r4+HKT+rE6PtzqhBvBDDAAYYAM8
-         GpKBoLMnXaSmCjt5fHi0T0v1cbvIMuA0WHOmV9Ax+b5Q1knQxE73WaUPRiyKdQV9E5d0
-         1jeQGsSOsRWOasPp3Y1z4wtnXrVsjdPt9zIppPGahZV1grkOPXoOm2q058gj8KL1AspE
-         oKxw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3iyas93Xd3n71dYLej+fNpSNMU2nnrmKXbg8DDh2m6I=;
+        b=MuqTzTgO8erYRwjZdS8746g8JXjtOqAXaegqafRnww/2qDkdrh5R6PdFhNwMWvrcEV
+         IFBCbTe8sWpUsWoc109YTf95HgR92mg8ajHAChZ0ZyTy66KRFrpQc+gALbQ5ZOvH3LFx
+         ZWhGrhw2eZyuFi3Jq/MYGejc+KWaHIXYXLTVCC1+pa0pdAc/B+k3j506PN1zvjxUQwMe
+         zMt9wBoV+dsMcUjvtMa5DUpF8Jpdv3L+sScJKnY0vbf9DT32d9hFcdUo+TMeu5Xc/7FD
+         rCE3VmrTFhCZg+pRWfXztHpYviu0XfD37WGVNjOh57m6CO+5JPNO/ZWANmrI3gJT7qlC
+         /Zog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+XqVUgVy1pNqlxwWd84db3LuiaUvuAHDBIZX+64W06k=;
-        b=fwBKAR6xdVLe3nWpO83WANbLadz4KLmcNSAC22FNAwfdwbUCYe7E3DGR0yVBeMv/B3
-         PK+8KuGiBga2foKwpupWyoTDWaZsB4RcDCIAtKOA/UMcmMwHbYbiFyq7ugQdn7uKyNzG
-         fJUvQfah5ndHdcltLe5g2Ajao8Y83fs43GmXmvPTmwN3yQIRJAuhYKaiFmA8OsJLwgcO
-         TRuN+T2DnCZns/GO/1OXIY7N9fpKr/gVa5vaO+n14Ve1KOI7K710DWHJ4GTQL0NXlws0
-         0SWEZQR0QS67Zu3SIy2Vp3z9wNq1Ew3n70ExPP7/5YXUhDFOHcDjBsVndRE5XSPeXwGI
-         Sj5g==
-X-Gm-Message-State: AOAM530La+9zD42P68zApwdiIH7FHgUeZ2v0bKmmL6zZWHCWGcet0Bn8
-        LgC3oXQV59sFZPaCb/PSS/JjiqA3AOtHFcnQksD5rg==
-X-Google-Smtp-Source: ABdhPJwZ7WP+sgJ8+ZyhYXNdwlC3xgvuyXpzmUt/hdDxhpxuuYpYzodvyLVmvEcLcEqe1d518K6Uml2VPwoViudSN5w=
-X-Received: by 2002:a17:906:351a:: with SMTP id r26mr657411eja.409.1610059230459;
- Thu, 07 Jan 2021 14:40:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20201112015359.1103333-1-lokeshgidra@google.com>
- <20201112015359.1103333-4-lokeshgidra@google.com> <CAHC9VhS2WNXn2cVAUcAY5AmmBv+=XsthCevofNNuEOU3=jtLrg@mail.gmail.com>
- <CA+EESO5wXubeutVOdbp_LamfP5TyG0r7BO-qnWV=wkd9zWqJ4w@mail.gmail.com> <CAHC9VhSPOHr+ayFK2RADh6u8Dsmp5GYPTWs3HLPtjwbFTgVrfQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSPOHr+ayFK2RADh6u8Dsmp5GYPTWs3HLPtjwbFTgVrfQ@mail.gmail.com>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Thu, 7 Jan 2021 14:40:19 -0800
-Message-ID: <CA+EESO4YOJe6V6R_gng++gYH9BOGjGJQ9nqXyymTkJOWSaOUYg@mail.gmail.com>
-Subject: Re: [PATCH v13 3/4] selinux: teach SELinux about anonymous inodes
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3iyas93Xd3n71dYLej+fNpSNMU2nnrmKXbg8DDh2m6I=;
+        b=X+zWu8+iGAtXq40DYOuWycNM/QKlBawyZU9P5liKSTZi5jjoi4XZOI1B4UGNLe3GIH
+         6NIl3twuTyj1vCVrfqr+DHZpteNpQxw6b+h/cU3+Z/8tEbWbjZJLNGpF6L1L16in1Kaa
+         dK2tDW6P39Ztro/wVtqOTEi6ZziDx6+nKTQal8QryioUCmfEk/CL6VGYT+UAv+WgiPd/
+         go+9+SqhGICbVYcF5DyvubxSmIZjYXsVYG+//su4l7LPdS8u03hUmd0BeuJVl41mZ5WQ
+         qA8okL/A7jZZ6rp5dC8koIsggW88r6lMsBa3B7yj6J+e0/9jYM5E3jOyCGmmTeHpdfvq
+         aZ1Q==
+X-Gm-Message-State: AOAM53382DATEjieJo7lWyx9E/Q5gN07n+Y8aWv+6LT92Ix75qXRTNRs
+        Dh1oZFqSX8UZfMjET0OCyuonJF2tl51/ZQ==
+X-Google-Smtp-Source: ABdhPJxLf0Zskg8/tIDC+zofRN5Y5UXl0HGvKfDv7mJbtuMomwEGSZE/BJd2ls8u/kCopsLKxCmaWg==
+X-Received: by 2002:a17:902:67:b029:dc:3cdb:6e50 with SMTP id 94-20020a1709020067b02900dc3cdb6e50mr1028679pla.61.1610060924147;
+        Thu, 07 Jan 2021 15:08:44 -0800 (PST)
+Received: from google.com (139.60.82.34.bc.googleusercontent.com. [34.82.60.139])
+        by smtp.gmail.com with ESMTPSA id y5sm7176228pfp.45.2021.01.07.15.08.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jan 2021 15:08:43 -0800 (PST)
+Date:   Thu, 7 Jan 2021 23:08:39 +0000
+From:   Satya Tangirala <satyat@google.com>
+To:     Bob Peterson <rpeterso@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH] fs: Fix freeze_bdev()/thaw_bdev() accounting of
+ bd_fsfreeze_sb
+Message-ID: <X/eUd4iLxnl2nYRF@google.com>
+References: <20201224044954.1349459-1-satyat@google.com>
+ <20210107162000.GA2693@lst.de>
+ <1137375419.42956970.1610036857271.JavaMail.zimbra@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1137375419.42956970.1610036857271.JavaMail.zimbra@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 7, 2021 at 2:30 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Wed, Jan 6, 2021 at 10:55 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > On Wed, Jan 6, 2021 at 7:03 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Wed, Nov 11, 2020 at 8:54 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > > From: Daniel Colascione <dancol@google.com>
-> > > >
-> > > > This change uses the anon_inodes and LSM infrastructure introduced in
-> > > > the previous patches to give SELinux the ability to control
-> > > > anonymous-inode files that are created using the new
-> > > > anon_inode_getfd_secure() function.
-> > > >
-> > > > A SELinux policy author detects and controls these anonymous inodes by
-> > > > adding a name-based type_transition rule that assigns a new security
-> > > > type to anonymous-inode files created in some domain. The name used
-> > > > for the name-based transition is the name associated with the
-> > > > anonymous inode for file listings --- e.g., "[userfaultfd]" or
-> > > > "[perf_event]".
-> > > >
-> > > > Example:
-> > > >
-> > > > type uffd_t;
-> > > > type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
-> > > > allow sysadm_t uffd_t:anon_inode { create };
-> > > >
-> > > > (The next patch in this series is necessary for making userfaultfd
-> > > > support this new interface.  The example above is just
-> > > > for exposition.)
-> > > >
-> > > > Signed-off-by: Daniel Colascione <dancol@google.com>
-> > > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> > > > ---
-> > > >  security/selinux/hooks.c            | 56 +++++++++++++++++++++++++++++
-> > > >  security/selinux/include/classmap.h |  2 ++
-> > > >  2 files changed, 58 insertions(+)
-> > > >
-> > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > > > index 6b1826fc3658..d092aa512868 100644
-> > > > --- a/security/selinux/hooks.c
-> > > > +++ b/security/selinux/hooks.c
-> > > > @@ -2927,6 +2927,61 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
-> > > >         return 0;
-> > > >  }
-> > > >
-> > > > +static int selinux_inode_init_security_anon(struct inode *inode,
-> > > > +                                           const struct qstr *name,
-> > > > +                                           const struct inode *context_inode)
-> > > > +{
-> > > > +       const struct task_security_struct *tsec = selinux_cred(current_cred());
-> > > > +       struct common_audit_data ad;
-> > > > +       struct inode_security_struct *isec;
-> > > > +       int rc;
-> > > > +
-> > > > +       if (unlikely(!selinux_initialized(&selinux_state)))
-> > > > +               return 0;
-> > > > +
-> > > > +       isec = selinux_inode(inode);
-> > > > +
-> > > > +       /*
-> > > > +        * We only get here once per ephemeral inode.  The inode has
-> > > > +        * been initialized via inode_alloc_security but is otherwise
-> > > > +        * untouched.
-> > > > +        */
-> > > > +
-> > > > +       if (context_inode) {
-> > > > +               struct inode_security_struct *context_isec =
-> > > > +                       selinux_inode(context_inode);
-> > > > +               if (context_isec->initialized != LABEL_INITIALIZED)
-> > > > +                       return -EACCES;
-> > > > +
-> > > > +               isec->sclass = context_isec->sclass;
-> > >
-> > > Taking the object class directly from the context_inode is
-> > > interesting, and I suspect problematic.  In the case below where no
-> > > context_inode is supplied the object class is set to
-> > > SECCLASS_ANON_INODE, which is correct, but when a context_inode is
-> > > supplied there is no guarantee that the object class will be set to
-> > > SECCLASS_ANON_INODE.  This could both pose a problem for policy
-> > > writers (how do you distinguish the anon inode from other normal file
-> > > inodes in this case?) as well as an outright fault later in this
-> > > function when we try to check the ANON_INODE__CREATE on an object
-> > > other than a SECCLASS_ANON_INODE object.
-> > >
-> > Thanks for catching this. I'll initialize 'sclass' unconditionally to
-> > SECCLASS_ANON_INODE in the next version. Also, do you think I should
-> > add a check that context_inode's sclass must be SECCLASS_ANON_INODE to
-> > confirm that we never receive a regular inode as context_inode?
->
-> This is one of the reasons why I was asking if you ever saw the need
-> to use a regular inode here.  It seems much safer to me to add a check
-> to ensure that context_inode is SECCLASS_ANON_INODE and return an
-> error otherwise; I would also suggest emitting an error using pr_err()
-> with something along the lines of "SELinux:  initializing anonymous
-> inode with inappropriate inode" (or something similar).
->
-Thanks. I'll do that.
+On Thu, Jan 07, 2021 at 11:27:37AM -0500, Bob Peterson wrote:
+> ----- Original Message -----
+> > Can someone pick this up?  Maybe through Jens' block tree as that is
+> > where my commit this is fixing up came from.
+> Christoph and Al,
+> 
+> Here is my version:
+> 
+> Bob Peterson
+> 
+> fs: fix freeze count problem in freeze_bdev
+> 
+> Before this patch, if you tried to freeze a device (function freeze_bdev)
+> while it was being unmounted, it would get NULL back from get_active_super
+> and correctly bypass the freeze calls. Unfortunately, it forgot to decrement
+> its bd_fsfreeze_count. Subsequent calls to device thaw (thaw_bdev) would
+> see the non-zero bd_fsfreeze_count and assume the bd_fsfreeze_sb value was
+> still valid. That's not a safe assumption and resulted in use-after-free,
+> which often caused fatal kernel errors like: "unable to handle page fault
+> for address."
+> 
+> This patch adds the necessary decrement of bd_fsfreeze_count for that
+> error path. It also adds code to set the bd_fsfreeze_sb to NULL when the
+> last reference is reached in thaw_bdev.
+> 
+> Reviewed-by: Bob Peterson <rpeterso@redhat.com>
+> ---
+>  fs/block_dev.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 9e56ee1f2652..c6daf7d12546 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -555,8 +555,10 @@ int freeze_bdev(struct block_device *bdev)
+>  		goto done;
+>  
+>  	sb = get_active_super(bdev);
+> -	if (!sb)
+> +	if (!sb) {
+> +		bdev->bd_fsfreeze_count--;
+>  		goto sync;
+> +	}
+>  	if (sb->s_op->freeze_super)
+>  		error = sb->s_op->freeze_super(sb);
+>  	else
+> @@ -600,6 +602,7 @@ int thaw_bdev(struct block_device *bdev)
+>  	if (!sb)
+>  		goto out;
+>  
+> +	bdev->bd_fsfreeze_sb = NULL;
+This causes bdev->bd_fsfreeze_sb to be set to NULL even if the call to
+thaw_super right after this line fail. So if a caller tries to call
+thaw_bdev() again after receiving such an error, that next call won't even
+try to call thaw_super(). Is that what we want here?  (I don't know much
+about this code, but from a cursory glance I think this difference is
+visible to emergency_thaw_bdev() in fs/buffer.c)
 
-> If something changes in the future we can always reconsider this restriction.
+In my version of the patch, I set bdev->bd_fsfreeze_sb to NULL only
+*after* we check that the call to thaw_super() succeeded to avoid this.
+>  	if (sb->s_op->thaw_super)
+>  		error = sb->s_op->thaw_super(sb);
+>  	else
 >
-> > > It works in the userfaultfd case because the context_inode is
-> > > originally created with this function so the object class is correctly
-> > > set to SECCLASS_ANON_INODE, but can we always guarantee that to be the
-> > > case?  Do we ever need or want to support using a context_inode that
-> > > is not SECCLASS_ANON_INODE?
-> >
-> > I don't think there is any requirement of supporting context_inode
-> > which isn't anon-inode. And even if there is, as you described
-> > earlier, for ANON_INODE__CREATE to work the sclass has to be
-> > SECCLASS_ANON_INODE. I'll appreciate comments on this from others,
-> > particularly Daniel and Stephen who originally discussed and
-> > implemented this patch.
->
-> I would encourage you not to wait too long for additional feedback
-> before sending the next revision.
+In another mail, you mentioned
+> I wrote this patch to fix the freeze/thaw device problem before I saw
+> the patch "fs: Fix freeze_bdev()/thaw_bdev() accounting of bd_fsfreeze_sb"
+> from Satya Tangirala. That one, however, does not fix the bd_freeze_count
+> problem and this patch does.
+Thanks a lot for investigating the bug and the patch I sent :)
+Was there actually an issue with that patch I sent? As you said, the bug
+is very reproduceable on master with generic/085. But with my patch, I
+don't see any issues even after having run the test many, many times
+(admittedly, I tested it on f2fs and ext4 rather than gfs2, but I don't
+think that should cause much differences). Did you have a test case that
+actually causes a failure with my patch?
 
-Certainly. I'll send next version in a day or two.
->
-> --
-> paul moore
-> www.paul-moore.com
+The only two differences between the patch I sent and this patch are
+
+1) The point at which the bd_fsfreeze_bd is set to NULL in thaw_bdev(), as
+I mentioned above already.
+
+2) Whether or not to decrement bd_fsfreeze_count when we get a NULL from
+get_active_super() in freeze_bdev() - I don't do this in my patch.
+
+I think setting bd_fsfreeze_sb to NULL in thaw_bdev (in either the place
+your patch does it or my patch does it) is enough to fix the bug w.r.t the
+use-after-free. Fwiw, I do think it should be set to NULL after we check for
+all the errors though.
+
+I think the second difference (decrementing bd_fsfreeze_count when
+get_active_super() returns NULL) doesn't change anything w.r.t the
+use-after-free. It does however, change the behaviour of the function
+slightly, and it might be caller visible (because from a cursory glance, it
+looks like we're reading the bd_fsfreeze_count from some other places like
+fs/super.c). Even before 040f04bd2e82, the code wouldn't decrement
+bd_fsfreeze_count when get_active_super() returned NULL - so is this change
+in behaviour intentional? And if so, maybe it should go in a separate
+patch?
