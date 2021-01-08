@@ -2,107 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 843792EEB57
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 03:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FF2C2EEC09
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 04:53:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbhAHCh0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jan 2021 21:37:26 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:56864 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725959AbhAHCh0 (ORCPT
+        id S1726658AbhAHDxF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jan 2021 22:53:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40988 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbhAHDxF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jan 2021 21:37:26 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UL0x81H_1610073402;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0UL0x81H_1610073402)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 08 Jan 2021 10:36:43 +0800
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-To:     miklos@szeredi.hu, akpm@linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, baolin.wang@linux.alibaba.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/filemap: Remove unused parameter and change to void type for replace_page_cache_page()
-Date:   Fri,  8 Jan 2021 10:36:34 +0800
-Message-Id: <609c30e5274ba15d8b90c872fd0d8ac437a9b2bb.1610071401.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 7 Jan 2021 22:53:05 -0500
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D73C0612F5
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jan 2021 19:52:24 -0800 (PST)
+Received: by mail-pg1-x532.google.com with SMTP id 15so6800072pgx.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jan 2021 19:52:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HiGLLfAjEAR8On+QKrY3j3HfRNusrkUwxaBKD2WhMIY=;
+        b=nhj/PEcH3hPyhteiZrCIGv25mArSLWZVLSTZIxhYkKZSbus/kbnaWPpxjE426s0GoV
+         HoeSVKw1dD5JH+mG0ZTb5XgeBNe4k2yuQrXrWDhygYlmX9fODeRS4Dl8y3bFMRxgEfIC
+         5VYbyjQrpCkn8wSUDNs/sfLQEmZV1xcqfcIio23kUS1PJMZ7+zOCtMO71wdIlU0lRFF4
+         4U0bHPsopTWTWiGuPwRXYUEDUNLuWtQ9QRl+72cBhYg8i4opH6dj380UGOYZZWcmqV5A
+         siDO/BmzDv8rEFGnsKlPfG+l7Mxrq5eHMjJV+AXtDCl2d+hWC6FKeGmjV2C1C6u/dHgw
+         Wssg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HiGLLfAjEAR8On+QKrY3j3HfRNusrkUwxaBKD2WhMIY=;
+        b=M2qe420PH0CC02FGKEob4h1MfJvFIlBlmUu9nBP6ksQ5pb2+hNMEO73i97hob5Bjt9
+         vXYfRj+Bvp+p7Nip8OEMsyzNkWlmiXCmTqGN/erMFDc6FIaZMJQI/4BX7WiL8AHkxDLR
+         vJkW/xpE6SlRSEY/q6/iIj36959Id2RflYwXEA0cYCrnUT8/CaTIaBf0sgb0Y9kavdTN
+         WqtEmUpQszWiL6ihX9MR6Qfa49JGrVkjqIZ3kmyaGSnZeQHU2LbDwxPxNo9yFsWf3HvD
+         fioTLArMyEK2ywnc7B4+SBwDmOKpnyqWCoJ4XvWHBetA/KvhTbu5Dcu7g0AOSTlLLrsu
+         S19Q==
+X-Gm-Message-State: AOAM530jKAEnZcSeR0FLVf9BvcN7wqskFy7cQUTfkkwKnOzLV8EQJFTY
+        Zf+nTqhyGvxCsm5pXNFHSFYqMQ==
+X-Google-Smtp-Source: ABdhPJykzR/yNkFwQof7rEfk4PolELnvPOEL9jCEBYC2w5Vd/AKL2rEYYJapcEWygpxrhJCVX0tm+A==
+X-Received: by 2002:a63:174f:: with SMTP id 15mr5064327pgx.49.1610077944403;
+        Thu, 07 Jan 2021 19:52:24 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id b10sm7796209pgh.15.2021.01.07.19.52.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Jan 2021 19:52:23 -0800 (PST)
+Subject: Re: [PATCH] fs: process fput task_work with TWA_SIGNAL
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Song Liu <songliubraving@fb.com>
+References: <d6ddf6c2-3789-2e10-ba71-668cba03eb35@kernel.dk>
+ <CAD=FV=WJzNEf+=H2_Eyz3HRnv+0hW5swikg=hFMkHxGb569Bpw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6fdffaf6-2a40-da4f-217d-157f163111cb@kernel.dk>
+Date:   Thu, 7 Jan 2021 20:52:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAD=FV=WJzNEf+=H2_Eyz3HRnv+0hW5swikg=hFMkHxGb569Bpw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since commit 74d609585d8b ("page cache: Add and replace pages using the XArray")
-was merged, the replace_page_cache_page() can not fail and always return
-0, we can remove the redundant return value and void it. Moreover remove
-the unused gfp_mask.
+On 1/7/21 3:17 PM, Doug Anderson wrote:
+> Hi,
+> 
+> On Tue, Jan 5, 2021 at 10:30 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> Song reported a boot regression in a kvm image with 5.11-rc, and bisected
+>> it down to the below patch. Debugging this issue, turns out that the boot
+>> stalled when a task is waiting on a pipe being released. As we no longer
+>> run task_work from get_signal() unless it's queued with TWA_SIGNAL, the
+>> task goes idle without running the task_work. This prevents ->release()
+>> from being called on the pipe, which another boot task is waiting on.
+>>
+>> Use TWA_SIGNAL for the file fput work to ensure it's run before the task
+>> goes idle.
+>>
+>> Fixes: 98b89b649fce ("signal: kill JOBCTL_TASK_WORK")
+>> Reported-by: Song Liu <songliubraving@fb.com>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> I just spend a bit of time bisecting and landed on commit 98b89b649fce
+> ("signal: kill JOBCTL_TASK_WORK") causing my failure to bootup
+> mainline.  Your patch fixes my problem.  I haven't done any analysis
+> of the code--just testing, thus:
+> 
+> Tested-by: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- fs/fuse/dev.c           | 6 +-----
- include/linux/pagemap.h | 2 +-
- mm/filemap.c            | 7 +------
- 3 files changed, 3 insertions(+), 12 deletions(-)
+Thanks, adding your Tested-by.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 588f8d1..c6636b4 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -844,11 +844,7 @@ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
- 	if (WARN_ON(PageMlocked(oldpage)))
- 		goto out_fallback_unlock;
- 
--	err = replace_page_cache_page(oldpage, newpage, GFP_KERNEL);
--	if (err) {
--		unlock_page(newpage);
--		goto out_put_old;
--	}
-+	replace_page_cache_page(oldpage, newpage);
- 
- 	get_page(newpage);
- 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index d5570de..74e466e 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -757,7 +757,7 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
- 				pgoff_t index, gfp_t gfp_mask);
- extern void delete_from_page_cache(struct page *page);
- extern void __delete_from_page_cache(struct page *page, void *shadow);
--int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
-+void replace_page_cache_page(struct page *old, struct page *new);
- void delete_from_page_cache_batch(struct address_space *mapping,
- 				  struct pagevec *pvec);
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 5c9d564..e4906f5 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -775,7 +775,6 @@ int file_write_and_wait_range(struct file *file, loff_t lstart, loff_t lend)
-  * replace_page_cache_page - replace a pagecache page with a new one
-  * @old:	page to be replaced
-  * @new:	page to replace with
-- * @gfp_mask:	allocation mode
-  *
-  * This function replaces a page in the pagecache with a new one.  On
-  * success it acquires the pagecache reference for the new page and
-@@ -784,10 +783,8 @@ int file_write_and_wait_range(struct file *file, loff_t lstart, loff_t lend)
-  * caller must do that.
-  *
-  * The remove + add is atomic.  This function cannot fail.
-- *
-- * Return: %0
-  */
--int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
-+void replace_page_cache_page(struct page *old, struct page *new)
- {
- 	struct address_space *mapping = old->mapping;
- 	void (*freepage)(struct page *) = mapping->a_ops->freepage;
-@@ -822,8 +819,6 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
- 	if (freepage)
- 		freepage(old);
- 	put_page(old);
--
--	return 0;
- }
- EXPORT_SYMBOL_GPL(replace_page_cache_page);
- 
 -- 
-1.8.3.1
+Jens Axboe
 
