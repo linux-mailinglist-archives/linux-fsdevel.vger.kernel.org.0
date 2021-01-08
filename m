@@ -2,193 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 172C72EF84D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 20:40:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61B892EF871
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 20:58:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbhAHTkV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 14:40:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46862 "EHLO
+        id S1728898AbhAHT5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 14:57:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728823AbhAHTkU (ORCPT
+        with ESMTP id S1728871AbhAHT5Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 14:40:20 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C8BC061381;
-        Fri,  8 Jan 2021 11:39:39 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id h205so25644560lfd.5;
-        Fri, 08 Jan 2021 11:39:39 -0800 (PST)
+        Fri, 8 Jan 2021 14:57:16 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78148C061381
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jan 2021 11:56:36 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id g3so6236649plp.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jan 2021 11:56:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lRRuQiPCIIeRicvu+E7yQv5jDQB4era/dfVIHrx38PY=;
-        b=DDK07p/ZKmZovcAoUiUjhPZ9+WCGC807tO2pvPWlhUi9UtECGHDga2OUiQLvFRW6m1
-         CL7YpLNNsh3TSClAeQ/dcSMdqb7lPU03rY1tDf2yHm+w0ax3yV318Yy5oPz3DyHPicTI
-         vmAGuZP3ws04WKr1+0mzPdwnygTMRJx0+iB6AAiBfXZc15OrNwotlxr94ltS3El5Ph1R
-         5WYgAdo103laqbvVr/QRVJacC46ys3XZ59rB6XDiSWFlvy8CFIN7IpE4eHnbipMfAj4j
-         9YLrGXSg4oVXIGeWUrPWGEnZJXsHYmpMQZxKHYjAY2W5nH/ttP52YDraR9DHsNuOMRyg
-         ykbQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=R4SPTHSIUd+VlaCh32aVSBkToD1GOPyHGJmjtMY2nAc=;
+        b=S7LvBMBESxvowA//Ymxnxlz5W5RNEDsPW26b6jwpZbxfGlMZfqYOjqg5jLGglciuIr
+         a980IiucU+skQrBdthDD1xK/bePVGH3h34OnGQRTV1e+E+F9LV+b0K/jrGywWvW24xie
+         /l+FC4c32K4+xqdOpb6Jq54hH2OFSfx0r/P8Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lRRuQiPCIIeRicvu+E7yQv5jDQB4era/dfVIHrx38PY=;
-        b=ZhIR0Oh2KDcSKN9sjDRGrFvTbTp4ISpFG6cm3D6DrokHQGTFwcgWQYvjKEZfAUniXx
-         /u4nibnr3VpSpvoLnhyqdSqLLFOdZjclucc+2KoQV4ybfWo/iFbCzx/+Cz9mSZiAJuoO
-         EuE0ewc8hd8McxWvVWjBNRE9DEDrf/oRZ5NUb2YQaTjhkzYI6OwaFV6riUObBEPrPVnk
-         HAEI+hHNtwZsEBxznB3MKArbhyrfifmut7utUTjHeIxCPV2uNmN+Raeusm8cYtJaVJFW
-         w0aWMqHIkK9c6TK1QeZZbs4uhC75oHuxaourNGOI8rKev4pSu5f7skpjB0h7oN9n9uvN
-         HNCA==
-X-Gm-Message-State: AOAM530B0inqi06mPJ2jRMoLfcntEE14efkpToEPpE8BVFwncKu9yhQ2
-        pXj80omPGaDfey3wUKqbIekOsd+C1OGTdt83t8I=
-X-Google-Smtp-Source: ABdhPJzp+tchs1WxNnpCyQKdVwlmdW4339VLO6VpJKuxPGqACDJSvoyrCRLpOfnZNEuPynu3i6RydgSvS62GOLzl5A8=
-X-Received: by 2002:a2e:b949:: with SMTP id 9mr2033333ljs.376.1610134778285;
- Fri, 08 Jan 2021 11:39:38 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=R4SPTHSIUd+VlaCh32aVSBkToD1GOPyHGJmjtMY2nAc=;
+        b=C4NwoxaGzbXUYc9o/FOnsCN0HzkkdeGG5c2izgBMU2lnXSJ0zsphX4iCuAtggmCH7/
+         XXMVdHuwd5zV4V5jB+0IdET56Vm2rcxfeED7xdBmpdS/jGsw6yFWmRuTLreo+u1SqXuK
+         FifWE5RTt82gL7V4VAuFL3n86xdCJWTu706qVp+zwMZfdH92ivNKvyFEp8+Z15I4yyO3
+         7tePclBhXoWvwpPPE7J4Ej3nLXE+VYNakfPArk+fs4xG8Hc7/QVJIMrZVNomfxLSplVO
+         ALw1tvpbNNwvIw5V1b7+S2MjsuntuT1JFDS5K9L41B1wFoEm3NjHWbMftW39SzJxsEk7
+         3PtQ==
+X-Gm-Message-State: AOAM533ghBJB+CCfl0ICxJYFSPtk29HeF4HQvhOAZw6ZD2vVzC8ymO0s
+        31uve/Xi4qSmEXFEaLzOD1KkSQ==
+X-Google-Smtp-Source: ABdhPJwNfsCsgsNiBAlvV6/M/HnULmqUZTkWD35XvXYJbvquqAE4dzZDChGgGLvbXOpsF7AcC53+Cw==
+X-Received: by 2002:a17:902:bcc6:b029:db:e257:9050 with SMTP id o6-20020a170902bcc6b02900dbe2579050mr5413933pls.22.1610135795867;
+        Fri, 08 Jan 2021 11:56:35 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 19sm9669252pfu.85.2021.01.08.11.56.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Jan 2021 11:56:35 -0800 (PST)
+Date:   Fri, 8 Jan 2021 11:56:33 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>, linux-kernel@vger.kernel.org,
+        mcgrof@kernel.org, yzaikin@google.com, adobriyan@gmail.com,
+        linux-fsdevel@vger.kernel.org, vbabka@suse.cz,
+        akpm@linux-foundation.org, wangle6@huawei.com
+Subject: Re: [PATCH v2] proc_sysctl: fix oops caused by incorrect command
+ parameters.
+Message-ID: <202101081152.0CB22390@keescook>
+References: <20210108023339.55917-1-nixiaoming@huawei.com>
+ <20210108092145.GX13207@dhcp22.suse.cz>
+ <829bbba0-d3bb-a114-af81-df7390082958@huawei.com>
+ <20210108114718.GA13207@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20210108053259.726613-1-lokeshgidra@google.com> <20210108053259.726613-4-lokeshgidra@google.com>
-In-Reply-To: <20210108053259.726613-4-lokeshgidra@google.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Fri, 8 Jan 2021 14:39:26 -0500
-Message-ID: <CAEjxPJ5Z8X02J-qvETuhDSHqgnORYiG=dmsTPGYfYtyusdRz1A@mail.gmail.com>
-Subject: Re: [PATCH v14 3/4] selinux: teach SELinux about anonymous inodes
-To:     Lokesh Gidra <lokeshgidra@google.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>, kaleshsingh@google.com,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        kernel-team@android.com, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210108114718.GA13207@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 8, 2021 at 12:33 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
->
-> From: Daniel Colascione <dancol@google.com>
->
-> This change uses the anon_inodes and LSM infrastructure introduced in
-> the previous patches to give SELinux the ability to control
-> anonymous-inode files that are created using the new
-> anon_inode_getfd_secure() function.
->
-> A SELinux policy author detects and controls these anonymous inodes by
-> adding a name-based type_transition rule that assigns a new security
-> type to anonymous-inode files created in some domain. The name used
-> for the name-based transition is the name associated with the
-> anonymous inode for file listings --- e.g., "[userfaultfd]" or
-> "[perf_event]".
->
-> Example:
->
-> type uffd_t;
-> type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
-> allow sysadm_t uffd_t:anon_inode { create };
->
-> (The next patch in this series is necessary for making userfaultfd
-> support this new interface.  The example above is just
-> for exposition.)
->
-> Signed-off-by: Daniel Colascione <dancol@google.com>
-> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> ---
->  security/selinux/hooks.c            | 59 +++++++++++++++++++++++++++++
->  security/selinux/include/classmap.h |  2 +
->  2 files changed, 61 insertions(+)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 644b17ec9e63..8b4e155b2930 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2934,6 +2933,63 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
->         return 0;
->  }
->
-> +static int selinux_inode_init_security_anon(struct inode *inode,
-> +                                           const struct qstr *name,
-> +                                           const struct inode *context_inode)
-> +{
-> +       const struct task_security_struct *tsec = selinux_cred(current_cred());
-> +       struct common_audit_data ad;
-> +       struct inode_security_struct *isec;
-> +       int rc;
-> +
-> +       if (unlikely(!selinux_initialized(&selinux_state)))
-> +               return 0;
-> +
-> +       isec = selinux_inode(inode);
-> +
-> +       /*
-> +        * We only get here once per ephemeral inode.  The inode has
-> +        * been initialized via inode_alloc_security but is otherwise
-> +        * untouched.
-> +        */
-> +       isec->initialized = LABEL_INITIALIZED;
-> +       isec->sclass = SECCLASS_ANON_INODE;
-> +
-> +       if (context_inode) {
-> +               struct inode_security_struct *context_isec =
-> +                       selinux_inode(context_inode);
-> +               if (context_isec->initialized != LABEL_INITIALIZED)
-> +                       return -EACCES;
-> +               if (context_isec->sclass != SECCLASS_ANON_INODE) {
-> +                       pr_err("SELinux:  initializing anonymous inode with non-anonymous inode");
-> +                       return -EACCES;
-> +               }
+On Fri, Jan 08, 2021 at 12:47:18PM +0100, Michal Hocko wrote:
+> On Fri 08-01-21 18:01:52, Xiaoming Ni wrote:
+> > On 2021/1/8 17:21, Michal Hocko wrote:
+> > > On Fri 08-01-21 10:33:39, Xiaoming Ni wrote:
+> > > > The process_sysctl_arg() does not check whether val is empty before
+> > > >   invoking strlen(val). If the command line parameter () is incorrectly
+> > > >   configured and val is empty, oops is triggered.
+> > > > 
+> > > > For example, "hung_task_panic=1" is incorrectly written as "hung_task_panic".
+> > > > 
+> > > > log:
+> > > > 	Kernel command line: .... hung_task_panic
+> > > > 	....
+> > > > 	[000000000000000n] user address but active_mm is swapper
+> > > > 	Internal error: Oops: 96000005 [#1] SMP
+> > > > 	Modules linked in:
+> > > > 	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.10.1 #1
+> > > > 	Hardware name: linux,dummy-virt (DT)
+> > > > 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO BTYPE=--)
+> > > > 	pc : __pi_strlen+0x10/0x98
+> > > > 	lr : process_sysctl_arg+0x1e4/0x2ac
+> > > > 	sp : ffffffc01104bd40
+> > > > 	x29: ffffffc01104bd40 x28: 0000000000000000
+> > > > 	x27: ffffff80c0a4691e x26: ffffffc0102a7c8c
+> > > > 	x25: 0000000000000000 x24: ffffffc01104be80
+> > > > 	x23: ffffff80c22f0b00 x22: ffffff80c02e28c0
+> > > > 	x21: ffffffc0109f9000 x20: 0000000000000000
+> > > > 	x19: ffffffc0107c08de x18: 0000000000000003
+> > > > 	x17: ffffffc01105d000 x16: 0000000000000054
+> > > > 	x15: ffffffffffffffff x14: 3030253078413830
+> > > > 	x13: 000000000000ffff x12: 0000000000000000
+> > > > 	x11: 0101010101010101 x10: 0000000000000005
+> > > > 	x9 : 0000000000000003 x8 : ffffff80c0980c08
+> > > > 	x7 : 0000000000000000 x6 : 0000000000000002
+> > > > 	x5 : ffffff80c0235000 x4 : ffffff810f7c7ee0
+> > > > 	x3 : 000000000000043a x2 : 00bdcc4ebacf1a54
+> > > > 	x1 : 0000000000000000 x0 : 0000000000000000
+> > > > 	Call trace:
+> > > > 	 __pi_strlen+0x10/0x98
+> > > > 	 parse_args+0x278/0x344
+> > > > 	 do_sysctl_args+0x8c/0xfc
+> > > > 	 kernel_init+0x5c/0xf4
+> > > > 	 ret_from_fork+0x10/0x30
+> > > > 	Code: b200c3eb 927cec01 f2400c07 54000301 (a8c10c22)
+> > > > 
+> > > > Fixes: 3db978d480e2843 ("kernel/sysctl: support setting sysctl parameters
+> > > >   from kernel command line")
+> > > > Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+> > > 
+> > > Thanks for catching this!
+> > > 
+> > > > ---------
+> > > > v2:
+> > > >     Added log output of the failure branch based on the review comments of Kees Cook.
+> > > > v1: https://lore.kernel.org/lkml/20201224074256.117413-1-nixiaoming@huawei.com/
+> > > > ---------
+> > > > ---
+> > > >   fs/proc/proc_sysctl.c | 5 +++++
+> > > >   1 file changed, 5 insertions(+)
+> > > > 
+> > > > diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> > > > index 317899222d7f..dc1a56515e86 100644
+> > > > --- a/fs/proc/proc_sysctl.c
+> > > > +++ b/fs/proc/proc_sysctl.c
+> > > > @@ -1757,6 +1757,11 @@ static int process_sysctl_arg(char *param, char *val,
+> > > >   	loff_t pos = 0;
+> > > >   	ssize_t wret;
+> > > > +	if (!val) {
+> > > > +		pr_err("Missing param value! Expected '%s=...value...'\n", param);
+> > > > +		return 0;
+> > I may need to move the validation code for val to the end of the validation
+> > code for param to prevent non-sysctl arguments from triggering the current
+> > print.
+> 
+> Why would that matter? A missing value is clearly a error path and it
+> should be reported.
 
-This would preclude using this facility for anonymous inodes created
-by kvm and other use cases.
-Don't do this.
+This test is in the correct place. I think it's just a question of the
+return values.
 
-> +
-> +               isec->sid = context_isec->sid;
-> +       } else {
-> +               rc = security_transition_sid(
-> +                       &selinux_state, tsec->sid, tsec->sid,
-> +                       isec->sclass, name, &isec->sid);
-> +               if (rc)
-> +                       return rc;
-> +       }
-> +
-> +       /*
-> +        * Now that we've initialized security, check whether we're
-> +        * allowed to actually create this type of anonymous inode.
-> +        */
-> +
-> +       ad.type = LSM_AUDIT_DATA_INODE;
-> +       ad.u.inode = inode;
-> +
-> +       return avc_has_perm(&selinux_state,
-> +                           tsec->sid,
-> +                           isec->sid,
-> +                           isec->sclass,
-> +                           ANON_INODE__CREATE,
+> > Or delete the print and keep it silent for a little better performance.
+> > Which is better?
+> 
+> I do not think there is a performance argument on the table. The generic
+> code is returning EINVAL on a missing value where it is needed. Sysctl
+> all require a value IIRC so EINVAL would be the right way to report
+> this and let the generic code to complain.
 
-FILE__CREATE is perfectly appropriate here, not that it makes any difference.
+The reason the others do a "return 0" is because other error conditions
+will end up double-reporting:
+
+                switch (ret) {
+                case 0:
+                        continue;
+                case -ENOENT:
+                        pr_err("%s: Unknown parameter `%s'\n", doing, param);
+                        break;
+                case -ENOSPC:
+                        pr_err("%s: `%s' too large for parameter `%s'\n",
+                               doing, val ?: "", param);
+                        break;
+                default:
+                        pr_err("%s: `%s' invalid for parameter `%s'\n",
+                               doing, val ?: "", param);
+                        break;
+                }
+
+Also note that where the sysctl parsing happens, it calls parse_args()
+without checking return codes, so that doesn't matter either.
+
+It's possible that doing this would be sufficient, though:
+
++	if (!val)
++		return -EINVAL;
+
+Since that would hit the "default" error report which looks reasonable.
+
+-- 
+Kees Cook
