@@ -2,132 +2,452 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3AE72EEE42
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 09:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E06BA2EEEB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 09:42:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbhAHIBQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 03:01:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21290 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727265AbhAHIBL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 03:01:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610092785;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=t2Uqdb9txLxEPVkApRsygTFUuNyR++VCv2wK5tWRd0Q=;
-        b=XhOupzEYT/d4yG4GJaISeW4PeOg3eZIHybGr4q77Bl18cS/4ZRNGnXS8fM6aDpnLtpZlNn
-        OYKtyJlQZfekY+UU6jWJeI31bo+PlllZ6B46Al1ga4A8i0/GDX7i1lw1r4xSsEUd5Uy1Yr
-        yQJRr6PynPf6xYJ/8DecmqbHQ9WHVTU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-515-FVuK9KCNNw61Br6hOlN66Q-1; Fri, 08 Jan 2021 02:59:40 -0500
-X-MC-Unique: FVuK9KCNNw61Br6hOlN66Q-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C2A8418C9F40;
-        Fri,  8 Jan 2021 07:59:38 +0000 (UTC)
-Received: from T590 (ovpn-13-115.pek2.redhat.com [10.72.13.115])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A8EA060C17;
-        Fri,  8 Jan 2021 07:59:28 +0000 (UTC)
-Date:   Fri, 8 Jan 2021 15:59:22 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        id S1727729AbhAHImM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 03:42:12 -0500
+Received: from david.siemens.de ([192.35.17.14]:58002 "EHLO david.siemens.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725816AbhAHImL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 8 Jan 2021 03:42:11 -0500
+X-Greylist: delayed 1099 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Jan 2021 03:42:08 EST
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 1088McHL004359
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Jan 2021 09:22:49 +0100
+Received: from [167.87.32.120] ([167.87.32.120])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1088MZZK003752;
+        Fri, 8 Jan 2021 09:22:35 +0100
+Subject: Re: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
+To:     Laurent Vivier <laurent@vivier.eu>, linux-kernel@vger.kernel.org
+Cc:     Greg Kurz <groug@kaod.org>, Jann Horn <jannh@google.com>,
+        Andrei Vagin <avagin@gmail.com>, linux-api@vger.kernel.org,
+        Dmitry Safonov <dima@arista.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: block_dev: compute nr_vecs hint for improving
- writeback bvecs allocation
-Message-ID: <20210108075922.GB3982620@T590>
-References: <20210105132647.3818503-1-ming.lei@redhat.com>
- <20210105183938.GA3878@lst.de>
- <20210106084548.GA3845805@T590>
- <20210106222111.GE331610@dread.disaster.area>
+        Eric Biederman <ebiederm@xmission.com>,
+        Henning Schild <henning.schild@siemens.com>,
+        =?UTF-8?Q?C=c3=a9dric_Le_Goate?= =?UTF-8?Q?r?= <clg@kaod.org>
+References: <20191216091220.465626-1-laurent@vivier.eu>
+ <20191216091220.465626-2-laurent@vivier.eu>
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <4fabc6a4-0e8d-11ad-5757-467f15dc96ee@siemens.com>
+Date:   Fri, 8 Jan 2021 09:22:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210106222111.GE331610@dread.disaster.area>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20191216091220.465626-2-laurent@vivier.eu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 07, 2021 at 09:21:11AM +1100, Dave Chinner wrote:
-> On Wed, Jan 06, 2021 at 04:45:48PM +0800, Ming Lei wrote:
-> > On Tue, Jan 05, 2021 at 07:39:38PM +0100, Christoph Hellwig wrote:
-> > > At least for iomap I think this is the wrong approach.  Between the
-> > > iomap and writeback_control we know the maximum size of the writeback
-> > > request and can just use that.
-> > 
-> > I think writeback_control can tell us nothing about max pages in single
-> > bio:
+On 16.12.19 10:12, Laurent Vivier wrote:
+> This patch allows to have a different binfmt_misc configuration
+> for each new user namespace. By default, the binfmt_misc configuration
+> is the one of the previous level, but if the binfmt_misc filesystem is
+> mounted in the new namespace a new empty binfmt instance is created and
+> used in this namespace.
 > 
-> By definition, the iomap tells us exactly how big the IO is going to
-> be. i.e. an iomap spans a single contiguous range that we are going
-> to issue IO on. Hence we can use that to size the bio exactly
-> right for direct IO.
-
-When I trace wpc->iomap.length in iomap_add_to_ioend() on the following fio
-randwrite/write, the length is 1GB most of times, maybe because it is
-one fresh XFS.
-
-fio --size=1G --bsrange=4k-4k --runtime=30 --numjobs=2 --ioengine=psync --iodepth=32 \
-	--directory=$DIR --group_reporting=1 --unlink=0 --direct=0 --fsync=0 --name=f1 \
-	--stonewall --rw=$RW
-sync
-
-Another reason is that pages in the range may be contiguous physically,
-so lots of pages may share one single bvec.
-
+> For instance, using "unshare" we can start a chroot of another
+> architecture and configure the binfmt_misc interpreter without being root
+> to run the binaries in this chroot.
 > 
-> > - wbc->nr_to_write controls how many pages to writeback, this pages
-> >   usually don't belong to same bio. Also this number is often much
-> >   bigger than BIO_MAX_PAGES.
-> > 
-> > - wbc->range_start/range_end is similar too, which is often much more
-> >   bigger than BIO_MAX_PAGES.
-> > 
-> > Also page/blocks_in_page can be mapped to different extent too, which is
-> > only available when wpc->ops->map_blocks() is returned,
+> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+> Acked-by: Andrei Vagin <avagin@gmail.com>
+> Tested-by: Henning Schild <henning.schild@siemens.com>
+> ---
+>  fs/binfmt_misc.c               | 115 +++++++++++++++++++++++++--------
+>  include/linux/user_namespace.h |  15 +++++
+>  kernel/user.c                  |  14 ++++
+>  kernel/user_namespace.c        |   3 +
+>  4 files changed, 119 insertions(+), 28 deletions(-)
 > 
-> We only allocate the bio -after- calling ->map_blocks() to obtain
-> the iomap for the given writeback range request. Hence we
-> already know how large the BIO could be before we allocate it.
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index cdb45829354d..17fa1f56ca2e 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -40,9 +40,6 @@ enum {
+>  	VERBOSE_STATUS = 1 /* make it zero to save 400 bytes kernel memory */
+>  };
+>  
+> -static LIST_HEAD(entries);
+> -static int enabled = 1;
+> -
+>  enum {Enabled, Magic};
+>  #define MISC_FMT_PRESERVE_ARGV0 (1 << 31)
+>  #define MISC_FMT_OPEN_BINARY (1 << 30)
+> @@ -62,10 +59,7 @@ typedef struct {
+>  	struct file *interp_file;
+>  } Node;
+>  
+> -static DEFINE_RWLOCK(entries_lock);
+>  static struct file_system_type bm_fs_type;
+> -static struct vfsmount *bm_mnt;
+> -static int entry_count;
+>  
+>  /*
+>   * Max length of the register string.  Determined by:
+> @@ -82,18 +76,37 @@ static int entry_count;
+>   */
+>  #define MAX_REGISTER_LENGTH 1920
+>  
+> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
+> +{
+> +	struct binfmt_namespace *b_ns;
+> +
+> +	while (ns) {
+> +		b_ns = READ_ONCE(ns->binfmt_ns);
+> +		if (b_ns)
+> +			return b_ns;
+> +		ns = ns->parent;
+> +	}
+> +	/* as the first user namespace is initialized with
+> +	 * &init_binfmt_ns we should never come here
+> +	 * but we try to stay safe by logging a warning
+> +	 * and returning a sane value
+> +	 */
+> +	WARN_ON_ONCE(1);
+> +	return &init_binfmt_ns;
+> +}
+> +
+>  /*
+>   * Check if we support the binfmt
+>   * if we do, return the node, else NULL
+>   * locking is done in load_misc_binary
+>   */
+> -static Node *check_file(struct linux_binprm *bprm)
+> +static Node *check_file(struct binfmt_namespace *ns, struct linux_binprm *bprm)
+>  {
+>  	char *p = strrchr(bprm->interp, '.');
+>  	struct list_head *l;
+>  
+>  	/* Walk all the registered handlers. */
+> -	list_for_each(l, &entries) {
+> +	list_for_each(l, &ns->entries) {
+>  		Node *e = list_entry(l, Node, list);
+>  		char *s;
+>  		int j;
+> @@ -135,17 +148,18 @@ static int load_misc_binary(struct linux_binprm *bprm)
+>  	struct file *interp_file = NULL;
+>  	int retval;
+>  	int fd_binary = -1;
+> +	struct binfmt_namespace *ns = binfmt_ns(current_user_ns());
+>  
+>  	retval = -ENOEXEC;
+> -	if (!enabled)
+> +	if (!ns->enabled)
+>  		return retval;
+>  
+>  	/* to keep locking time low, we copy the interpreter string */
+> -	read_lock(&entries_lock);
+> -	fmt = check_file(bprm);
+> +	read_lock(&ns->entries_lock);
+> +	fmt = check_file(ns, bprm);
+>  	if (fmt)
+>  		dget(fmt->dentry);
+> -	read_unlock(&entries_lock);
+> +	read_unlock(&ns->entries_lock);
+>  	if (!fmt)
+>  		return retval;
+>  
+> @@ -611,19 +625,19 @@ static void bm_evict_inode(struct inode *inode)
+>  	kfree(e);
+>  }
+>  
+> -static void kill_node(Node *e)
+> +static void kill_node(struct binfmt_namespace *ns, Node *e)
+>  {
+>  	struct dentry *dentry;
+>  
+> -	write_lock(&entries_lock);
+> +	write_lock(&ns->entries_lock);
+>  	list_del_init(&e->list);
+> -	write_unlock(&entries_lock);
+> +	write_unlock(&ns->entries_lock);
+>  
+>  	dentry = e->dentry;
+>  	drop_nlink(d_inode(dentry));
+>  	d_drop(dentry);
+>  	dput(dentry);
+> -	simple_release_fs(&bm_mnt, &entry_count);
+> +	simple_release_fs(&ns->bm_mnt, &ns->entry_count);
+>  }
+>  
+>  /* /<entry> */
+> @@ -653,6 +667,9 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+>  	struct dentry *root;
+>  	Node *e = file_inode(file)->i_private;
+>  	int res = parse_command(buffer, count);
+> +	struct binfmt_namespace *ns;
+> +
+> +	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
+>  
+>  	switch (res) {
+>  	case 1:
+> @@ -669,7 +686,7 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+>  		inode_lock(d_inode(root));
+>  
+>  		if (!list_empty(&e->list))
+> -			kill_node(e);
+> +			kill_node(ns, e);
+>  
+>  		inode_unlock(d_inode(root));
+>  		break;
+> @@ -695,6 +712,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+>  	struct inode *inode;
+>  	struct super_block *sb = file_inode(file)->i_sb;
+>  	struct dentry *root = sb->s_root, *dentry;
+> +	struct binfmt_namespace *ns;
+>  	int err = 0;
+>  
+>  	e = create_entry(buffer, count);
+> @@ -718,7 +736,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+>  	if (!inode)
+>  		goto out2;
+>  
+> -	err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
+> +	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
+> +	err = simple_pin_fs(&bm_fs_type, &ns->bm_mnt,
+> +			    &ns->entry_count);
+>  	if (err) {
+>  		iput(inode);
+>  		inode = NULL;
+> @@ -727,12 +747,16 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+>  
+>  	if (e->flags & MISC_FMT_OPEN_FILE) {
+>  		struct file *f;
+> +		const struct cred *old_cred;
+>  
+> +		old_cred = override_creds(file->f_cred);
+>  		f = open_exec(e->interpreter);
+> +		revert_creds(old_cred);
+>  		if (IS_ERR(f)) {
+>  			err = PTR_ERR(f);
+>  			pr_notice("register: failed to install interpreter file %s\n", e->interpreter);
+> -			simple_release_fs(&bm_mnt, &entry_count);
+> +			simple_release_fs(&ns->bm_mnt,
+> +					  &ns->entry_count);
+>  			iput(inode);
+>  			inode = NULL;
+>  			goto out2;
+> @@ -745,9 +769,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+>  	inode->i_fop = &bm_entry_operations;
+>  
+>  	d_instantiate(dentry, inode);
+> -	write_lock(&entries_lock);
+> -	list_add(&e->list, &entries);
+> -	write_unlock(&entries_lock);
+> +	write_lock(&ns->entries_lock);
+> +	list_add(&e->list, &ns->entries);
+> +	write_unlock(&ns->entries_lock);
+>  
+>  	err = 0;
+>  out2:
+> @@ -772,7 +796,9 @@ static const struct file_operations bm_register_operations = {
+>  static ssize_t
+>  bm_status_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+>  {
+> -	char *s = enabled ? "enabled\n" : "disabled\n";
+> +	struct binfmt_namespace *ns =
+> +				binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
+> +	char *s = ns->enabled ? "enabled\n" : "disabled\n";
+>  
+>  	return simple_read_from_buffer(buf, nbytes, ppos, s, strlen(s));
+>  }
+> @@ -780,25 +806,28 @@ bm_status_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+>  static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+>  		size_t count, loff_t *ppos)
+>  {
+> +	struct binfmt_namespace *ns;
+>  	int res = parse_command(buffer, count);
+>  	struct dentry *root;
+>  
+> +	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
+>  	switch (res) {
+>  	case 1:
+>  		/* Disable all handlers. */
+> -		enabled = 0;
+> +		ns->enabled = 0;
+>  		break;
+>  	case 2:
+>  		/* Enable all handlers. */
+> -		enabled = 1;
+> +		ns->enabled = 1;
+>  		break;
+>  	case 3:
+>  		/* Delete all handlers. */
+>  		root = file_inode(file)->i_sb->s_root;
+>  		inode_lock(d_inode(root));
+>  
+> -		while (!list_empty(&entries))
+> -			kill_node(list_first_entry(&entries, Node, list));
+> +		while (!list_empty(&ns->entries))
+> +			kill_node(ns, list_first_entry(&ns->entries,
+> +						       Node, list));
+>  
+>  		inode_unlock(d_inode(root));
+>  		break;
+> @@ -825,24 +854,53 @@ static const struct super_operations s_ops = {
+>  static int bm_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	int err;
+> +	struct user_namespace *ns = sb->s_user_ns;
+>  	static const struct tree_descr bm_files[] = {
+>  		[2] = {"status", &bm_status_operations, S_IWUSR|S_IRUGO},
+>  		[3] = {"register", &bm_register_operations, S_IWUSR},
+>  		/* last one */ {""}
+>  	};
+>  
+> +	/* create a new binfmt namespace
+> +	 * if we are not in the first user namespace
+> +	 * but the binfmt namespace is the first one
+> +	 */
+> +	if (READ_ONCE(ns->binfmt_ns) == NULL) {
+> +		struct binfmt_namespace *new_ns;
+> +
+> +		new_ns = kmalloc(sizeof(struct binfmt_namespace),
+> +				 GFP_KERNEL);
+> +		if (new_ns == NULL)
+> +			return -ENOMEM;
+> +		INIT_LIST_HEAD(&new_ns->entries);
+> +		new_ns->enabled = 1;
+> +		rwlock_init(&new_ns->entries_lock);
+> +		new_ns->bm_mnt = NULL;
+> +		new_ns->entry_count = 0;
+> +		/* ensure new_ns is completely initialized before sharing it */
+> +		smp_wmb();
+> +		WRITE_ONCE(ns->binfmt_ns, new_ns);
+> +	}
+> +
+>  	err = simple_fill_super(sb, BINFMTFS_MAGIC, bm_files);
+>  	if (!err)
+>  		sb->s_op = &s_ops;
+>  	return err;
+>  }
+>  
+> +static void bm_free(struct fs_context *fc)
+> +{
+> +	if (fc->s_fs_info)
+> +		put_user_ns(fc->s_fs_info);
+> +}
+> +
+>  static int bm_get_tree(struct fs_context *fc)
+>  {
+> -	return get_tree_single(fc, bm_fill_super);
+> +	return get_tree_keyed(fc, bm_fill_super, get_user_ns(fc->user_ns));
+>  }
+>  
+>  static const struct fs_context_operations bm_context_ops = {
+> +	.free		= bm_free,
+>  	.get_tree	= bm_get_tree,
+>  };
+>  
+> @@ -861,6 +919,7 @@ static struct file_system_type bm_fs_type = {
+>  	.owner		= THIS_MODULE,
+>  	.name		= "binfmt_misc",
+>  	.init_fs_context = bm_init_fs_context,
+> +	.fs_flags	= FS_USERNS_MOUNT,
+>  	.kill_sb	= kill_litter_super,
+>  };
+>  MODULE_ALIAS_FS("binfmt_misc");
+> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+> index fb9f4f799554..16e6f3a97a01 100644
+> --- a/include/linux/user_namespace.h
+> +++ b/include/linux/user_namespace.h
+> @@ -52,6 +52,18 @@ enum ucount_type {
+>  	UCOUNT_COUNTS,
+>  };
+>  
+> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
+> +struct binfmt_namespace {
+> +	struct list_head entries;
+> +	rwlock_t entries_lock;
+> +	int enabled;
+> +	struct vfsmount *bm_mnt;
+> +	int entry_count;
+> +} __randomize_layout;
+> +
+> +extern struct binfmt_namespace init_binfmt_ns;
+> +#endif
+> +
+>  struct user_namespace {
+>  	struct uid_gid_map	uid_map;
+>  	struct uid_gid_map	gid_map;
+> @@ -86,6 +98,9 @@ struct user_namespace {
+>  #endif
+>  	struct ucounts		*ucounts;
+>  	int ucount_max[UCOUNT_COUNTS];
+> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
+> +	struct binfmt_namespace *binfmt_ns;
+> +#endif
+>  } __randomize_layout;
+>  
+>  struct ucounts {
+> diff --git a/kernel/user.c b/kernel/user.c
+> index 5235d7f49982..092b2b4d47a6 100644
+> --- a/kernel/user.c
+> +++ b/kernel/user.c
+> @@ -20,6 +20,17 @@
+>  #include <linux/user_namespace.h>
+>  #include <linux/proc_ns.h>
+>  
+> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
+> +struct binfmt_namespace init_binfmt_ns = {
+> +	.entries = LIST_HEAD_INIT(init_binfmt_ns.entries),
+> +	.enabled = 1,
+> +	.entries_lock = __RW_LOCK_UNLOCKED(init_binfmt_ns.entries_lock),
+> +	.bm_mnt = NULL,
+> +	.entry_count = 0,
+> +};
+> +EXPORT_SYMBOL_GPL(init_binfmt_ns);
+> +#endif
+> +
+>  /*
+>   * userns count is 1 for root user, 1 for init_uts_ns,
+>   * and 1 for... ?
+> @@ -67,6 +78,9 @@ struct user_namespace init_user_ns = {
+>  	.keyring_name_list = LIST_HEAD_INIT(init_user_ns.keyring_name_list),
+>  	.keyring_sem = __RWSEM_INITIALIZER(init_user_ns.keyring_sem),
+>  #endif
+> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
+> +	.binfmt_ns = &init_binfmt_ns,
+> +#endif
+>  };
+>  EXPORT_SYMBOL_GPL(init_user_ns);
+>  
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 8eadadc478f9..f42c32269e20 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -191,6 +191,9 @@ static void free_user_ns(struct work_struct *work)
+>  			kfree(ns->projid_map.forward);
+>  			kfree(ns->projid_map.reverse);
+>  		}
+> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
+> +		kfree(ns->binfmt_ns);
+> +#endif
+>  		retire_userns_sysctls(ns);
+>  		key_free_user_ns(ns);
+>  		ns_free_inum(&ns->ns);
 > 
-> > which looks not
-> > different with mpage_writepages(), in which bio is allocated with
-> > BIO_MAX_PAGES vecs too.
-> 
-> __mpage_writepage() only maps a page at a time, so it can't tell
-> ahead of time how big the bio is going to need to be as it doesn't
-> return/cache a contiguous extent range. So it's actually very
-> different to the iomap writeback code, and effectively does require
-> a BIO_MAX_PAGES vecs allocation all the time...
-> 
-> > Or you mean we can use iomap->length for this purpose? But iomap->length
-> > still is still too big in case of xfs.
-> 
-> if we are doing small random writeback into large extents (i.e.
-> iomap->length is large), then it is trivial to detect that we are
-> doing random writes rather than sequential writes by checking if the
-> current page is sequential to the last sector in the current bio.
-> We already do this non-sequential IO checking to determine if a new
-> bio needs to be allocated in iomap_can_add_to_ioend(), and we also
-> know how large the current contiguous range mapped into the current
-> bio chain is (ioend->io_size). Hence we've got everything we need to
-> determine whether we should do a large or small bio vec allocation
-> in the iomap writeback path...
 
-page->index should tell us if the workload is random or sequential, however
-still not easy to decide how many pages there will be in the next bio
-when iomap->length is large.
+What happened with this proposal since then?
 
+As there is quite some delay between the feature finally hitting
+upstream and a random distro-based containter host providing it to
+unprivileged users, the longer we wait, the longer the pain persists
+(e.g. when building cross-arch containers or when dealing with different
+qemu-user-static versions...). Is there anything we can do to help with it?
 
-Thanks,
-Ming
+Jan
 
+-- 
+Siemens AG, T RDA IOT
+Corporate Competence Center Embedded Linux
