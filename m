@@ -2,180 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 279162EED2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 06:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 310292EED6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 07:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbhAHFer (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 00:34:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56672 "EHLO
+        id S1725793AbhAHGVu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 01:21:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbhAHFeo (ORCPT
+        with ESMTP id S1725308AbhAHGVu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 00:34:44 -0500
-Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04DAEC0612A8
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jan 2021 21:33:10 -0800 (PST)
-Received: by mail-qk1-x74a.google.com with SMTP id g26so8380942qkk.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jan 2021 21:33:09 -0800 (PST)
+        Fri, 8 Jan 2021 01:21:50 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EC02C0612F4;
+        Thu,  7 Jan 2021 22:21:10 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id o6so8702823iob.10;
+        Thu, 07 Jan 2021 22:21:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=Cge7zJHdUeDRqJYsTUJX6Q9Nj8WIU/VuWZZ/mr14Zmg=;
-        b=qN+rRwo6MVgxmmI+RbC5qwLL+fMkVwWvNqMlQqHeJpnol+J5bOoiaOWcfCW3r8AHoW
-         GYYLgp3gQHBaShRiCtiKkIw4wc9S4XawwRAb05Yr50CNRnEQgc4HtbkYBvnH7zjiRVOt
-         YhzAdoKFJ+ai7dkkYNr+FZkc6JghkugaPQnpWPR7ptoiw+j3TlHhHENkYG7OqwGTfRIN
-         PXc38cJeTAo8Zgjem7Lr+TtntNEJdbDAzWO2h2zvGPvnmLlfsyNRHE/iO4Yi8/Xq87Rf
-         gLDo3nJWCDrbzKS+T64F/HLNM+Ohsf+j3E0gwRbEEOLHks9b/vd+nA5nmrHvDh++9Tr8
-         5LvQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=fRt9iAXeB2GI80EtXCRbQ5aPiZvmK+o9C7d1Bsvt+do=;
+        b=YxOpNcVVoOZcKlJ+jiokzag6bi0HEzoKriJlkH//jlV1sPU3hIViinaCAL/qHDr2wL
+         FuZ/waQYK90AYDAwq48hHhRfskGWNaI6ck3/4gWTOYytUl0CTyx3HmXv+fCxSA1S2KWK
+         KE0NdIdrjvzxpx9GPdjnKzp1+w/iNFyshGmsW0TdoywtCVA2NQqOQYSu0aZMPbTpO4gp
+         bZe+NkauFHsSdm/oVSJkBuqLM0Y45CIFvuG37e8evCO+/SjHV1c9wnIPAXy2J4eh+7iV
+         ivEPaeM9X6gx0CjqsF/PZ9BFPPhnBfCoZ76VshdqfNV+I01yClfjbT1qA2w+WHus+OG3
+         jV9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Cge7zJHdUeDRqJYsTUJX6Q9Nj8WIU/VuWZZ/mr14Zmg=;
-        b=fkMc0UvDM8OdpAyiPfz2DaT/wTFp6pqkeuQKbyryFXCpU0p7RrxU9Jwbq3K/lMrnYr
-         JTxOBO5Hm+mCIuJKMra5ch8f98UkF0ViuwFTfjoe6KM+RlfSBRyHGvz7XbWr3xTZdugX
-         xjHxvJoUGov/nVkctGaPA4iH6EBRplJfwKcsH9nOH32EhAXowP62q7R//ojME/5FCEq/
-         ge3Dlg18q0UJdLpHTRPxwKduxiZALR+FYBVcVaRdh8o2btx3Yk+TNPcKoxcTuWA9YHck
-         zV/2ht1ShO0vVdwwF6Rdl1gLufqfsobXxBA+wAiNh9y3bLxvF8m+x4Rg3dxR//15Of5J
-         fL7A==
-X-Gm-Message-State: AOAM530x5OwSa5iQvcTsAmCcvJByElCyT+6UEr0nLHLWh6fIkZ6gcDrX
-        qi2O7icEWKubGkivtx9yFrsYVmH6xtLRY1A+8A==
-X-Google-Smtp-Source: ABdhPJxm8tlrBDnY+v0WVkKBRI5KV7uvRVzcdBOqrHxkpxVhZYwYjuvyY1pgMx2tkFD/UUvuWNqF585dxeWZV3GCAg==
-Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
-X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
- (user=lokeshgidra job=sendgmr) by 2002:a05:6214:714:: with SMTP id
- b20mr2029281qvz.36.1610083989040; Thu, 07 Jan 2021 21:33:09 -0800 (PST)
-Date:   Thu,  7 Jan 2021 21:32:59 -0800
-In-Reply-To: <20210108053259.726613-1-lokeshgidra@google.com>
-Message-Id: <20210108053259.726613-5-lokeshgidra@google.com>
-Mime-Version: 1.0
-References: <20210108053259.726613-1-lokeshgidra@google.com>
-X-Mailer: git-send-email 2.30.0.284.gd98b1dd5eaa7-goog
-Subject: [PATCH v14 4/4] userfaultfd: use secure anon inodes for userfaultfd
-From:   Lokesh Gidra <lokeshgidra@google.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=fRt9iAXeB2GI80EtXCRbQ5aPiZvmK+o9C7d1Bsvt+do=;
+        b=fliO1kIgiL4mIYsmvgggaiI/PanaxczdqobkGBslCJxU64fRYqjdpBnLkbiSTkEkzj
+         nP16TD2JTSRGQIM1dB9DB9hrX5lpqvVFZPu51cL8z/tAJpvq4Xp0qgbVwbNoJ5/sBRDz
+         XOSfi+fUCTQeXzJsnGlgX0hP2lr+U1Q3PdcjLM/Szd6XYjCo/vDr4T8SGpLc3xbKCkYs
+         tcWrAMYo3ieWag1B/EJlmNXeDayD/7mSzgb5djeBOE+aC2nJeYWWjpZtYseBncNtnZp8
+         pGEtEYJeIzE34ZZCw0MvkkCf9wwGMLRP5/BesQ6vLMEqfAEt4Sy7BHHWASB3zCOF5TgM
+         VC7Q==
+X-Gm-Message-State: AOAM531yWK3k1LYkf/FkMjrxfQgsItNRspsVv4hAc04ayof3edodEdbN
+        onEads+2PaTQrehPGR5fZS02ywRd3hCIcpNPjwo=
+X-Google-Smtp-Source: ABdhPJxsdAo6XSDAxRybNW7xXZoQEcdYx521f19aso48ztHDovkw0r9XhjsnHio7q4YIwwUmhcfg4q1gjT6R1dsQyuo=
+X-Received: by 2002:a02:2ace:: with SMTP id w197mr2101883jaw.132.1610086869403;
+ Thu, 07 Jan 2021 22:21:09 -0800 (PST)
+MIME-Version: 1.0
+References: <d6ddf6c2-3789-2e10-ba71-668cba03eb35@kernel.dk>
+ <CAD=FV=WJzNEf+=H2_Eyz3HRnv+0hW5swikg=hFMkHxGb569Bpw@mail.gmail.com> <6fdffaf6-2a40-da4f-217d-157f163111cb@kernel.dk>
+In-Reply-To: <6fdffaf6-2a40-da4f-217d-157f163111cb@kernel.dk>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 8 Jan 2021 07:20:57 +0100
+Message-ID: <CA+icZUV2jRPtKyTw7h-mST83yooTdOLYRBWcoLFgUSjtcUMVgg@mail.gmail.com>
+Subject: Re: [PATCH] fs: process fput task_work with TWA_SIGNAL
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Doug Anderson <dianders@chromium.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org
+        Oleg Nesterov <oleg@redhat.com>,
+        Song Liu <songliubraving@fb.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Daniel Colascione <dancol@google.com>
+On Fri, Jan 8, 2021 at 4:56 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 1/7/21 3:17 PM, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Tue, Jan 5, 2021 at 10:30 AM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> Song reported a boot regression in a kvm image with 5.11-rc, and bisected
+> >> it down to the below patch. Debugging this issue, turns out that the boot
+> >> stalled when a task is waiting on a pipe being released. As we no longer
+> >> run task_work from get_signal() unless it's queued with TWA_SIGNAL, the
+> >> task goes idle without running the task_work. This prevents ->release()
+> >> from being called on the pipe, which another boot task is waiting on.
+> >>
+> >> Use TWA_SIGNAL for the file fput work to ensure it's run before the task
+> >> goes idle.
+> >>
+> >> Fixes: 98b89b649fce ("signal: kill JOBCTL_TASK_WORK")
+> >> Reported-by: Song Liu <songliubraving@fb.com>
+> >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> >
+> > I just spend a bit of time bisecting and landed on commit 98b89b649fce
+> > ("signal: kill JOBCTL_TASK_WORK") causing my failure to bootup
+> > mainline.  Your patch fixes my problem.  I haven't done any analysis
+> > of the code--just testing, thus:
+> >
+> > Tested-by: Douglas Anderson <dianders@chromium.org>
+>
+> Thanks, adding your Tested-by.
+>
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+I have this in my patch-series since it appeared in [1].
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
+Feel free to add my:
 
-[LG: Remove owner inode from userfaultfd_ctx]
-[LG: Use anon_inode_getfd_secure() instead of anon_inode_getfile_secure()
- in userfaultfd syscall]
-[LG: Use inode of file in userfaultfd_read() in resolve_userfault_fork()]
+   Tested-by: Sedat Dilek <sedat.dilek@gmail.com> # LLVM/Clang version 11.0.1
 
-Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
----
- fs/userfaultfd.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+- Sedat -
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 894cc28142e7..0be8cdd4425a 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -979,14 +979,14 @@ static __poll_t userfaultfd_poll(struct file *file, poll_table *wait)
- 
- static const struct file_operations userfaultfd_fops;
- 
--static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
--				  struct userfaultfd_ctx *new,
-+static int resolve_userfault_fork(struct userfaultfd_ctx *new,
-+				  struct inode *inode,
- 				  struct uffd_msg *msg)
- {
- 	int fd;
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
-+			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -996,7 +996,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- }
- 
- static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
--				    struct uffd_msg *msg)
-+				    struct uffd_msg *msg, struct inode *inode)
- {
- 	ssize_t ret;
- 	DECLARE_WAITQUEUE(wait, current);
-@@ -1107,7 +1107,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 	spin_unlock_irq(&ctx->fd_wqh.lock);
- 
- 	if (!ret && msg->event == UFFD_EVENT_FORK) {
--		ret = resolve_userfault_fork(ctx, fork_nctx, msg);
-+		ret = resolve_userfault_fork(fork_nctx, inode, msg);
- 		spin_lock_irq(&ctx->event_wqh.lock);
- 		if (!list_empty(&fork_event)) {
- 			/*
-@@ -1167,6 +1167,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	ssize_t _ret, ret = 0;
- 	struct uffd_msg msg;
- 	int no_wait = file->f_flags & O_NONBLOCK;
-+	struct inode *inode = file_inode(file);
- 
- 	if (ctx->state == UFFD_STATE_WAIT_API)
- 		return -EINVAL;
-@@ -1174,7 +1175,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	for (;;) {
- 		if (count < sizeof(msg))
- 			return ret ? ret : -EINVAL;
--		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg);
-+		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg, inode);
- 		if (_ret < 0)
- 			return ret ? ret : _ret;
- 		if (copy_to_user((__u64 __user *) buf, &msg, sizeof(msg)))
-@@ -1999,8 +2000,8 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
-+			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
--- 
-2.30.0.284.gd98b1dd5eaa7-goog
+[1] https://git.kernel.dk/cgit/linux-block/log/?h=task_work
 
+- Sedat -
