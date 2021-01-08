@@ -2,308 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DFD32EF497
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 16:13:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A6C2EF4A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 16:15:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727475AbhAHPMm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 10:12:42 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55071 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726880AbhAHPMm (ORCPT
+        id S1727860AbhAHPOI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 10:14:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33566 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbhAHPOH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 10:12:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610118674;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Fttv1kOo4N8Hd2+R64WopH6TC0l8L49oP2Q1aZdi+mA=;
-        b=COyVjfxdi3kO8hwWOPYoVl8rw4L49jUR3mHM5yyftiHu9utchjYdbcco6OYRbfypBzwu/b
-        1r1W83mY1Iq4b/3rYhaaauv0/STyeD31kUQh94SI5f+ocEYR6eBdbZ6gVWf4eOfou+RZHt
-        ZKTe6/0Do5UfhCx/AQt6bxgL/ky5fXg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-356-JxYJRtiWOqG9wS84-0MCFg-1; Fri, 08 Jan 2021 10:11:12 -0500
-X-MC-Unique: JxYJRtiWOqG9wS84-0MCFg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D46B4180A095;
-        Fri,  8 Jan 2021 15:11:10 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-203.rdu2.redhat.com [10.10.116.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 04E105D9C0;
-        Fri,  8 Jan 2021 15:11:09 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 740CA22054F; Fri,  8 Jan 2021 10:11:08 -0500 (EST)
-Date:   Fri, 8 Jan 2021 10:11:08 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        Amir Goldstein <amir73il@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>,
-        Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
-        Jeff Layton <jlayton@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4] overlay: Implement volatile-specific fsync error
- behaviour
-Message-ID: <20210108151108.GB46319@redhat.com>
-References: <20210108001043.12683-1-sargun@sargun.me>
+        Fri, 8 Jan 2021 10:14:07 -0500
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79926C061380
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jan 2021 07:13:27 -0800 (PST)
+Received: by mail-il1-x12a.google.com with SMTP id h3so2873898ils.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jan 2021 07:13:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=X+2UtfkBPnnuQuIwW1zRXENi1oQh+qwawjQ4qNtMfuA=;
+        b=YoMmu5ev7dY1osTbWUw3P2STybQtJuUNz9f5bum2KnZ3dX6xr+5f5PanyCEqDINf+g
+         m5EIp1ZSPhs2DmDz2qrXxe1ZYj3spBmUAAoMRgsrTvb14Ttp9H6EZMvfTH6ryhcVlrtd
+         LyqlTflbomlsSbwsgVlCp53cIVSegkj/iPPFHecE5oS+GHNGNZfm+l4j7wOdon47JsW3
+         DjIs1azSBt65lXIVePXAqBgjeB3/j5gsmchqe4McP2qxRASAEC2JJUDo04eVApq9O6zJ
+         v1jY7X2hW50grC/S2+vMZ+hDsSzNQBIVQhU2PVDOz0S2bInPI5KNS4mRUlKmnHPhVo4p
+         qiqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=X+2UtfkBPnnuQuIwW1zRXENi1oQh+qwawjQ4qNtMfuA=;
+        b=dJxewOQE+Fw9sKGMKeJtIGyPeqS7Lpceci9fDEHSDwO/dDh0k+fLnaaWTmoValWlvx
+         xd3tuio7uWaU34p2gsTtmwTcxCTAz8dAZaIFNrf+lNmjk4uwn5sWr6gvcLl1oZAZFYu8
+         jY+8YVq+QuyeHr2gqEF57Fy4KcuIk/xVkq2mx9I+jinpxCasCOc0123d2CCB6deSxJle
+         c3fiIabWYgJTZuu6ZMpJelOGazW9i4CeH6Wqf2qqHrsLZMSYz02GVyDEGIUqfHhllTNj
+         l5IigcUYGHFw78Ch1TrVZuQBPRV3DOBJiAK8MHMXWrKAqBnYwuTq/dNT8KPS/AABj1nN
+         YEow==
+X-Gm-Message-State: AOAM533Jwe5OMZVk3xwm+fujc0JlXG1OyhOr7Y84azkLUEndg1H0PwiN
+        ItkPoE76c9cR0ZM2KbSTjki84g==
+X-Google-Smtp-Source: ABdhPJznjNEDEk/j9wuKv0NcVeLmbsz0AfL8f6cqokNM9vGPJOSwga4qJijjuay4NFFsEAgmfmQKSA==
+X-Received: by 2002:a92:b6c7:: with SMTP id m68mr4177599ill.95.1610118806707;
+        Fri, 08 Jan 2021 07:13:26 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id t2sm8305022ili.31.2021.01.08.07.13.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Jan 2021 07:13:26 -0800 (PST)
+Subject: Re: [PATCH] fs: process fput task_work with TWA_SIGNAL
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Song Liu <songliubraving@fb.com>
+References: <d6ddf6c2-3789-2e10-ba71-668cba03eb35@kernel.dk>
+ <20210108052651.GM3579531@ZenIV.linux.org.uk>
+ <20210108064639.GN3579531@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <245fba32-76cc-c4e1-6007-0b1f8a22a86b@kernel.dk>
+Date:   Fri, 8 Jan 2021 08:13:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210108001043.12683-1-sargun@sargun.me>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20210108064639.GN3579531@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 07, 2021 at 04:10:43PM -0800, Sargun Dhillon wrote:
-> Overlayfs's volatile option allows the user to bypass all forced sync calls
-> to the upperdir filesystem. This comes at the cost of safety. We can never
-> ensure that the user's data is intact, but we can make a best effort to
-> expose whether or not the data is likely to be in a bad state.
-> 
-> The best way to handle this in the time being is that if an overlayfs's
-> upperdir experiences an error after a volatile mount occurs, that error
-> will be returned on fsync, fdatasync, sync, and syncfs. This is
-> contradictory to the traditional behaviour of VFS which fails the call
-> once, and only raises an error if a subsequent fsync error has occurred,
-> and been raised by the filesystem.
-> 
-> One awkward aspect of the patch is that we have to manually set the
-> superblock's errseq_t after the sync_fs callback as opposed to just
-> returning an error from syncfs. This is because the call chain looks
-> something like this:
-> 
-> sys_syncfs ->
-> 	sync_filesystem ->
-> 		__sync_filesystem ->
-> 			/* The return value is ignored here
-> 			sb->s_op->sync_fs(sb)
-> 			_sync_blockdev
-> 		/* Where the VFS fetches the error to raise to userspace */
-> 		errseq_check_and_advance
-> 
-> Because of this we call errseq_set every time the sync_fs callback occurs.
-> Due to the nature of this seen / unseen dichotomy, if the upperdir is an
-> inconsistent state at the initial mount time, overlayfs will refuse to
-> mount, as overlayfs cannot get a snapshot of the upperdir's errseq that
-> will increment on error until the user calls syncfs.
-> 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Fixes: c86243b090bc ("ovl: provide a mount option "volatile"")
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> Cc: Jeff Layton <jlayton@redhat.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
+On 1/7/21 11:46 PM, Al Viro wrote:
+> On Fri, Jan 08, 2021 at 05:26:51AM +0000, Al Viro wrote:
+>> On Tue, Jan 05, 2021 at 11:29:11AM -0700, Jens Axboe wrote:
+>>> Song reported a boot regression in a kvm image with 5.11-rc, and bisected
+>>> it down to the below patch. Debugging this issue, turns out that the boot
+>>> stalled when a task is waiting on a pipe being released. As we no longer
+>>> run task_work from get_signal() unless it's queued with TWA_SIGNAL, the
+>>> task goes idle without running the task_work. This prevents ->release()
+>>> from being called on the pipe, which another boot task is waiting on.
+>>>
+>>> Use TWA_SIGNAL for the file fput work to ensure it's run before the task
+>>> goes idle.
+>>>
+>>> Fixes: 98b89b649fce ("signal: kill JOBCTL_TASK_WORK")
+>>> Reported-by: Song Liu <songliubraving@fb.com>
+>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>
+>>> ---
+>>>
+>>> The other alternative here is obviously to re-instate the:
+>>>
+>>> if (unlikely(current->task_works))
+>>> 	task_work_run();
+>>>
+>>> in get_signal() that we had before this change. Might be safer in case
+>>> there are other cases that need to ensure the work is run in a timely
+>>> fashion, though I do think it's cleaner to long term to correctly mark
+>>> task_work with the needed notification type. Comments welcome...
+>>
+>> Interesting...  I think I've missed the discussion of that thing; could
+>> you forward the relevant thread my way or give an archive link to it?
 
-Looks good to me.
+The initial report from Song was off list, and I just worked from that
+to get to understanding the issue. Most of it is in the commit message,
+but the debugging basically involved figuring out what the stuck task
+was doing (it was in idle), and that it still had pending task_work. The
+task_work was 5 entries of ____fput, with 4 being ext4 files, and 1
+being a pipe. So that lead to the theory of the pipe not being released,
+and hence why we were stuck.
 
-Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
+> Actually, why do we need TWA_RESUME at all?  OK, a while ago you've added
+> a way for task_work_add() to do wake_up_signal().  Fine, so if the sucker
+> had been asleep in get_signal(), it gets woken up and the work gets run
+> fast.  Irrelevant for those who did task_work_add() for themselves.
+> With that commit, though, you've suddenly changed the default behaviour -
+> now if you do that task_work_add() for current *and* get asleep in
+> get_signal(), task_work_add() gets delayed - potentially for a very
+> long time.
 
-Thanks
-Vivek
+Right, this is why I brought up that we can re-instate the get_signal()
+running task_work unconditionally as another way of fixing it, because
+that change was inadvertently done as part of the commit that killed off
+JOBCTL_TASK_WORK.
 
-> ---
->  Documentation/filesystems/overlayfs.rst |  8 ++++++
->  fs/overlayfs/file.c                     |  5 ++--
->  fs/overlayfs/overlayfs.h                |  1 +
->  fs/overlayfs/ovl_entry.h                |  2 ++
->  fs/overlayfs/readdir.c                  |  5 ++--
->  fs/overlayfs/super.c                    | 34 ++++++++++++++++++++-----
->  fs/overlayfs/util.c                     | 27 ++++++++++++++++++++
->  7 files changed, 71 insertions(+), 11 deletions(-)
+> Now the default (TWA_RESUME) has changed semantics; matter of fact,
+> TWA_SIGNAL seems to be a lot closer than what we used to have.  I'm
+> too sleepy right now to check if there are valid usecases for your new
+> TWA_RESUME behaviour, but I very much doubt that old callers (before
+> the TWA_RESUME/TWA_SIGNAL split) want that.
 > 
-> diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
-> index 580ab9a0fe31..137afeb3f581 100644
-> --- a/Documentation/filesystems/overlayfs.rst
-> +++ b/Documentation/filesystems/overlayfs.rst
-> @@ -575,6 +575,14 @@ without significant effort.
->  The advantage of mounting with the "volatile" option is that all forms of
->  sync calls to the upper filesystem are omitted.
->  
-> +In order to avoid a giving a false sense of safety, the syncfs (and fsync)
-> +semantics of volatile mounts are slightly different than that of the rest of
-> +VFS.  If any writeback error occurs on the upperdir's filesystem after a
-> +volatile mount takes place, all sync functions will return an error.  Once this
-> +condition is reached, the filesystem will not recover, and every subsequent sync
-> +call will return an error, even if the upperdir has not experience a new error
-> +since the last sync call.
-> +
->  When overlay is mounted with "volatile" option, the directory
->  "$workdir/work/incompat/volatile" is created.  During next mount, overlay
->  checks for this directory and refuses to mount if present. This is a strong
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index a1f72ac053e5..5c5c3972ebd0 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -445,8 +445,9 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->  	const struct cred *old_cred;
->  	int ret;
->  
-> -	if (!ovl_should_sync(OVL_FS(file_inode(file)->i_sb)))
-> -		return 0;
-> +	ret = ovl_sync_status(OVL_FS(file_inode(file)->i_sb));
-> +	if (ret <= 0)
-> +		return ret;
->  
->  	ret = ovl_real_fdget_meta(file, &real, !datasync);
->  	if (ret)
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index f8880aa2ba0e..9f7af98ae200 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -322,6 +322,7 @@ int ovl_check_metacopy_xattr(struct ovl_fs *ofs, struct dentry *dentry);
->  bool ovl_is_metacopy_dentry(struct dentry *dentry);
->  char *ovl_get_redirect_xattr(struct ovl_fs *ofs, struct dentry *dentry,
->  			     int padding);
-> +int ovl_sync_status(struct ovl_fs *ofs);
->  
->  static inline bool ovl_is_impuredir(struct super_block *sb,
->  				    struct dentry *dentry)
-> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> index 1b5a2094df8e..b208eba5d0b6 100644
-> --- a/fs/overlayfs/ovl_entry.h
-> +++ b/fs/overlayfs/ovl_entry.h
-> @@ -79,6 +79,8 @@ struct ovl_fs {
->  	atomic_long_t last_ino;
->  	/* Whiteout dentry cache */
->  	struct dentry *whiteout;
-> +	/* r/o snapshot of upperdir sb's only taken on volatile mounts */
-> +	errseq_t errseq;
->  };
->  
->  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 01620ebae1bd..a273ef901e57 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -909,8 +909,9 @@ static int ovl_dir_fsync(struct file *file, loff_t start, loff_t end,
->  	struct file *realfile;
->  	int err;
->  
-> -	if (!ovl_should_sync(OVL_FS(file->f_path.dentry->d_sb)))
-> -		return 0;
-> +	err = ovl_sync_status(OVL_FS(file->f_path.dentry->d_sb));
-> +	if (err <= 0)
-> +		return err;
->  
->  	realfile = ovl_dir_real_file(file, true);
->  	err = PTR_ERR_OR_ZERO(realfile);
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 290983bcfbb3..d23177a53c95 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -261,11 +261,20 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
->  	struct super_block *upper_sb;
->  	int ret;
->  
-> -	if (!ovl_upper_mnt(ofs))
-> -		return 0;
-> +	ret = ovl_sync_status(ofs);
-> +	/*
-> +	 * We have to always set the err, because the return value isn't
-> +	 * checked in syncfs, and instead indirectly return an error via
-> +	 * the sb's writeback errseq, which VFS inspects after this call.
-> +	 */
-> +	if (ret < 0) {
-> +		errseq_set(&sb->s_wb_err, -EIO);
-> +		return -EIO;
-> +	}
-> +
-> +	if (!ret)
-> +		return ret;
->  
-> -	if (!ovl_should_sync(ofs))
-> -		return 0;
->  	/*
->  	 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
->  	 * All the super blocks will be iterated, including upper_sb.
-> @@ -1927,6 +1936,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  	sb->s_op = &ovl_super_operations;
->  
->  	if (ofs->config.upperdir) {
-> +		struct super_block *upper_sb;
-> +
->  		if (!ofs->config.workdir) {
->  			pr_err("missing 'workdir'\n");
->  			goto out_err;
-> @@ -1936,6 +1947,16 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  		if (err)
->  			goto out_err;
->  
-> +		upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
-> +		if (!ovl_should_sync(ofs)) {
-> +			ofs->errseq = errseq_sample(&upper_sb->s_wb_err);
-> +			if (errseq_check(&upper_sb->s_wb_err, ofs->errseq)) {
-> +				err = -EIO;
-> +				pr_err("Cannot mount volatile when upperdir has an unseen error. Sync upperdir fs to clear state.\n");
-> +				goto out_err;
-> +			}
-> +		}
-> +
->  		err = ovl_get_workdir(sb, ofs, &upperpath);
->  		if (err)
->  			goto out_err;
-> @@ -1943,9 +1964,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  		if (!ofs->workdir)
->  			sb->s_flags |= SB_RDONLY;
->  
-> -		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
-> -		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> -
-> +		sb->s_stack_depth = upper_sb->s_stack_depth;
-> +		sb->s_time_gran = upper_sb->s_time_gran;
->  	}
->  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
->  	err = PTR_ERR(oe);
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 23f475627d07..6e7b8c882045 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -950,3 +950,30 @@ char *ovl_get_redirect_xattr(struct ovl_fs *ofs, struct dentry *dentry,
->  	kfree(buf);
->  	return ERR_PTR(res);
->  }
-> +
-> +/*
-> + * ovl_sync_status() - Check fs sync status for volatile mounts
-> + *
-> + * Returns 1 if this is not a volatile mount and a real sync is required.
-> + *
-> + * Returns 0 if syncing can be skipped because mount is volatile, and no errors
-> + * have occurred on the upperdir since the mount.
-> + *
-> + * Returns -errno if it is a volatile mount, and the error that occurred since
-> + * the last mount. If the error code changes, it'll return the latest error
-> + * code.
-> + */
-> +
-> +int ovl_sync_status(struct ovl_fs *ofs)
-> +{
-> +	struct vfsmount *mnt;
-> +
-> +	if (ovl_should_sync(ofs))
-> +		return 1;
-> +
-> +	mnt = ovl_upper_mnt(ofs);
-> +	if (!mnt)
-> +		return 0;
-> +
-> +	return errseq_check(&mnt->mnt_sb->s_wb_err, ofs->errseq);
-> +}
-> -- 
-> 2.25.1
+> In particular, for mntput_no_expire() we definitely do *not* want
+> that, same as with fput().  Same, AFAICS, for YAMA report_access().
+> And for binder_deferred_fd_close().  And task_tick_numa() looks that
+> way as well...
 > 
+> Anyway, bedtime for me; right now it looks like at least for task ==
+> current we always want TWA_SIGNAL.  I'll look into that more tomorrow
+> when I get up, but so far it smells like switching everything to
+> TWA_SIGNAL would be the right thing to do, if not going back to bool
+> notify for task_work_add()...
+
+Before the change, the fact that we ran task_work off get_signal() and
+thus processed even non-notify work in that path was a bit of a mess,
+imho. If you have work that needs processing now, in the same manner as
+signals, then you really should be using TWA_SIGNAL. For this pipe case,
+and I'd need to setup and reproduce it again, the task must have a
+signal pending and that would have previously caused the task_work to
+run, and now it does not. TWA_RESUME technically didn't change its
+behavior, it's still the same notification type, we just don't run
+task_work unconditionally (regardless of notification type) from
+get_signal().
+
+I think the main question here is if we want to re-instate the behavior
+of running task_work off get_signal(). I'm leaning towards not doing
+that and ensuring that callers that DO need that are using TWA_SIGNAL.
+
+-- 
+Jens Axboe
 
