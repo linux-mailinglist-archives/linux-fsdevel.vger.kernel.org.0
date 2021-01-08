@@ -2,92 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB1E2EF954
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 21:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51B4B2EF945
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 21:34:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbhAHUgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 15:36:24 -0500
-Received: from casper.infradead.org ([90.155.50.34]:50312 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729018AbhAHUgX (ORCPT
+        id S1729270AbhAHUd1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 15:33:27 -0500
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:53169 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729251AbhAHUd1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 15:36:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0BDgIONn6TjjQMsa9yNHOZnzgJZxqty6jQ95csWbZak=; b=VqtzpDEUiHiNIlsNu1O/yx6KxX
-        LbBd4nXTprs9jRxCfiLT8qrfTU68eKVlHiCFzq3vgfnIntYgs9WeDxbYsFpYFzp0TYe1z/UrbyqnX
-        Z+gprP/3UA3U+ecTAdgGFDt+6i/tGrbEzWXSu3VHz+sIZHQGE8S00RLosjrGr3KyKHbJeRL8kYZ1E
-        v53WctRMSqqioV0Vp+ylJrjmE1x19psmquRxI3q+noZne4ZljZHRSqcweQd5i3S+lPqkoH3ZN+lf+
-        ovW9vu3XH/DUFguJG2ZgT6hIJS8d2VvA7jxwPdBG2YtE4jjL13TWA+qgbZ/1XObAeenKM4TNPvlJx
-        VEfhfjXQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1kxWwf-000A25-U4; Thu, 07 Jan 2021 15:12:09 +0000
-Date:   Thu, 7 Jan 2021 15:11:25 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Wang Jianchao <jianchao.wan9@gmail.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh" <rajesh.tadakamadla@hpe.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Subject: Expense of read_iter
-Message-ID: <20210107151125.GB5270@casper.infradead.org>
-References: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com>
+        Fri, 8 Jan 2021 15:33:27 -0500
+Received: from dread.disaster.area (pa49-179-167-107.pa.nsw.optusnet.com.au [49.179.167.107])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id EFAD17655CD;
+        Sat,  9 Jan 2021 07:32:43 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kxyR7-004R24-RS; Sat, 09 Jan 2021 07:32:41 +1100
+Date:   Sat, 9 Jan 2021 07:32:41 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andres Freund <andres@anarazel.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
+ extents?
+Message-ID: <20210108203241.GI331610@dread.disaster.area>
+References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
+ <20210106225201.GF331610@dread.disaster.area>
+ <20210106234009.b6gbzl7bjm2evxj6@alap3.anarazel.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <20210106234009.b6gbzl7bjm2evxj6@alap3.anarazel.de>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
+        a=+wqVUQIkAh0lLYI+QRsciw==:117 a=+wqVUQIkAh0lLYI+QRsciw==:17
+        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
+        a=wut9VHP1pO6yiD9O2Z4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 07, 2021 at 08:15:41AM -0500, Mikulas Patocka wrote:
-> I'd like to ask about this piece of code in __kernel_read:
-> 	if (unlikely(!file->f_op->read_iter || file->f_op->read))
-> 		return warn_unsupported...
-> and __kernel_write:
-> 	if (unlikely(!file->f_op->write_iter || file->f_op->write))
-> 		return warn_unsupported...
+On Wed, Jan 06, 2021 at 03:40:09PM -0800, Andres Freund wrote:
+> Hi,
 > 
-> - It exits with an error if both read_iter and read or write_iter and 
-> write are present.
+> On 2021-01-07 09:52:01 +1100, Dave Chinner wrote:
+> > On Tue, Dec 29, 2020 at 10:28:19PM -0800, Andres Freund wrote:
+> > > Which brings me to $subject:
+> > > 
+> > > Would it make sense to add a variant of FALLOC_FL_ZERO_RANGE that
+> > > doesn't convert extents into unwritten extents, but instead uses
+> > > blkdev_issue_zeroout() if supported?  Mostly interested in xfs/ext4
+> > > myself, but ...
+> > 
+> > We have explicit requests from users (think initialising large VM
+> > images) that FALLOC_FL_ZERO_RANGE must never fall back to writing
+> > zeroes manually.
 > 
-> I found out that on NVFS, reading a file with the read method has 10% 
-> better performance than the read_iter method. The benchmark just reads the 
-> same 4k page over and over again - and the cost of creating and parsing 
-> the kiocb and iov_iter structures is just that high.
+> That behaviour makes a lot of sense for quite a few use cases - I wasn't
+> trying to make it sound like it should not be available. Nor that
+> FALLOC_FL_ZERO_RANGE should behave differently.
+> 
+> 
+> > IOWs, while you might want FALLOC_FL_ZERO_RANGE to explicitly write
+> > zeros, we have users who explicitly don't want it to do this.
+> 
+> Right - which is why I was asking for a variant of FALLOC_FL_ZERO_RANGE
+> (jokingly named FALLOC_FL_ZERO_RANGE_BUT_REALLY in the subject), rather
+> than changing the behaviour.
+> 
+> 
+> > Perhaps we should add want FALLOC_FL_CONVERT_RANGE, which tells the
+> > filesystem to convert an unwritten range of zeros to a written range
+> > by manually writing zeros. i.e. you do FALLOC_FL_ZERO_RANGE to zero
+> > the range and fill holes using metadata manipulation, followed by
+> > FALLOC_FL_WRITE_RANGE to then convert the "metadata zeros" to real
+> > written zeros.
+> 
+> Yep, something like that would do the trick. Perhaps
+> FALLOC_FL_MATERIALIZE_RANGE?
 
-Which part of it is so expensive?  Is it worth, eg adding an iov_iter
-type that points to a single buffer instead of a single-member iov?
+[ FWIW, I really dislike the "RANGE" part of fallocate flag names.
+It's redundant (fallocate always operates on a range!) and just
+makes names unnecessarily longer. ]
 
-+++ b/include/linux/uio.h
-@@ -19,6 +19,7 @@ struct kvec {
- 
- enum iter_type {
-        /* iter types */
-+       ITER_UBUF = 2,
-        ITER_IOVEC = 4,
-        ITER_KVEC = 8,
-        ITER_BVEC = 16,
-@@ -36,6 +36,7 @@ struct iov_iter {
-        size_t iov_offset;
-        size_t count;
-        union {
-+               void __user *buf;
-                const struct iovec *iov;
-                const struct kvec *kvec;
-                const struct bio_vec *bvec;
+I used "convert range" as the name explicitly because it has
+specific meaning for extent space manipulation. i.e. we "convert"
+extents from one state to another. "write range" is also has
+explicit meaning, in that it will convert extents from unwritten to
+written data.
 
-and then doing all the appropriate changes to make that work.
+In comparison, "materialise" is something undefined, and could be
+easily thought to take something ephemeral (such as a hole) and turn
+it into something real (an allocated extent). We wouldn't want this
+operation to allocate space, so I think "materialise" is just too
+much magic to encoding into an API for an explicit, well defined
+state change.
+
+We also have people asking for ZERO_RANGE to just flip existing
+extents from written to unwritten (rather than the punch/preallocate
+we do now). This is also a "convert" operation, just in the other
+direction (from data to zeros rather than from zeros to data).
+
+The observation I'm making here is that these "convert" oeprations
+will both makes SEEK_HOLE/SEEK_DATA behave differently for the
+underlying data. preallocated space is considered a HOLE, written
+zeros are considered DATA. So we do expose the ability to check that
+a "convert" operation has actually changed the state of the
+underlying extents in either direction...
+
+CONVERT_TO_DATA/CONVERT_TO_ZERO as an operational pair whose
+behaviour is visible and easily testable via SEEK_HOLE/SEEK_DATA
+makes a lot more sense to me. Also defining them to fail fast if
+unwritten extents are not supported by the filesystem (i.e. they
+should -never- physically write anything) would also allow
+applications to fall back to ZERO_RANGE on filesystems that don't
+support unwritten extents to explicitly write zeros if
+CONVERT_TO_ZERO fails....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
