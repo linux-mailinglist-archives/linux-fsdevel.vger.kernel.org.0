@@ -2,109 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AADB92EF5E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 17:42:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC302EF6FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 19:07:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbhAHQmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 11:42:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47290 "EHLO
+        id S1728528AbhAHSGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 13:06:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbhAHQmX (ORCPT
+        with ESMTP id S1728442AbhAHSGd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 11:42:23 -0500
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D270C0612EA
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jan 2021 08:41:43 -0800 (PST)
-Received: by mail-il1-x130.google.com with SMTP id w17so10823296ilj.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jan 2021 08:41:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tfcIOHpOWkd6vXQn9Tle245dz2NTfaGcxHlFkJI3CvM=;
-        b=m6xlwPdYzQsvZjRotIlCOJJXrwZjkdeOmljQcrsE/AQiBggArMAW0SxzaHLe4Ei//q
-         A4wfMiENvJMmrFa9vhlGbMv6AWgiqL4gFJJEddG2RFDVgYFQdg8k9Yyr8wLU2hgzh0iP
-         Tq7+/goX0VHd6TLz+b0DWlfLPOgmvJ87PsF4535ewSaeL7S62DDOe6229ixQpDSSW9+2
-         dmOcF2mq1KdsIJ17Xorx3es3wU+e5G5eKs5BeCwuc1uIzj3ejPd8E/hudsHk5/SuNIy7
-         61eSPa1AaMFR1ovu9yZiryF+VdUOe8KnEEEZJfnDvUoc3pHPEcgKElmqzEKN+qSil1En
-         SuWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tfcIOHpOWkd6vXQn9Tle245dz2NTfaGcxHlFkJI3CvM=;
-        b=qCLbCXZS1Aj8SJhy4liuBuPXn9yFCArsMjhH/88uLVlVSe/D70HiKssd7I6rzPaBWm
-         Be8SOANNQdezFTqqTsZc/zTT1YFRoDu3cL6RUMFo0HmxZSgwvEwV5TGT6FEs3HnRv9Fw
-         bcFr13pyBUEQ8cjG/n2E1b+6GaaiSmQ3/6MzyDCHMf6Ph2FFTWFXwqO2ibOlestYF6el
-         WrRxfVdTSI9bVA0xZGutkWSFzKG0hmW8isH0B09RY5ZOcXR5y1XNmZTVIiF7TYiaFpd4
-         wQqR2HrYqMXjyNCUbVm5j1GHrzjJauz+/pOB33sDPntJPVwhVjd+6jvVJfYMFkKla/ay
-         iRRQ==
-X-Gm-Message-State: AOAM533XKkgAAcd2sRuw4i2uHTqaQv2H7mRnc8Z07BTphiMZZg9B6QAl
-        VfdxspgLZ7etY/0qEVnYapbeGJxoPPDPe/VMDz+KeOm5
-X-Google-Smtp-Source: ABdhPJxnZgEJ6IytvQqiTWUaDXV8AW/BCQQvzQGbYr0LGiX8vNRQl57/PMFFKQkFOcdTS8ERda0E3h6xuR73d9wYy6M=
-X-Received: by 2002:a92:d587:: with SMTP id a7mr4627553iln.250.1610124102722;
- Fri, 08 Jan 2021 08:41:42 -0800 (PST)
+        Fri, 8 Jan 2021 13:06:33 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 705BFC061381;
+        Fri,  8 Jan 2021 10:05:53 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kxw8l-008PGL-MG; Fri, 08 Jan 2021 18:05:35 +0000
+Date:   Fri, 8 Jan 2021 18:05:35 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: Re: [PATCH] fs: process fput task_work with TWA_SIGNAL
+Message-ID: <20210108180535.GR3579531@ZenIV.linux.org.uk>
+References: <d6ddf6c2-3789-2e10-ba71-668cba03eb35@kernel.dk>
+ <20210108052651.GM3579531@ZenIV.linux.org.uk>
+ <20210108064639.GN3579531@ZenIV.linux.org.uk>
+ <245fba32-76cc-c4e1-6007-0b1f8a22a86b@kernel.dk>
+ <20210108155807.GQ3579531@ZenIV.linux.org.uk>
+ <41e33492-7b01-6801-cbb1-78ecef0c9fc0@kernel.dk>
+ <2cdd6d47-7eb1-3ab1-7aa8-80c54819009b@kernel.dk>
 MIME-Version: 1.0
-References: <20210107214401.249416-1-amir73il@gmail.com>
-In-Reply-To: <20210107214401.249416-1-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 8 Jan 2021 18:41:31 +0200
-Message-ID: <CAOQ4uxhQq1o3eb5ajMvY0Zan+HkOeMtZKEyD1Z0NKp7v_6SPBg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] Generic per-mount io stats
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2cdd6d47-7eb1-3ab1-7aa8-80c54819009b@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 7, 2021 at 11:44 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Miklos,
->
-> I was trying to address the lack of iostat report for non-blockdev
-> filesystems such as overlayfs and fuse.
->
-> NFS has already addressed this with it own custom stats collection,
-> which is displayed in /proc/<pid>/mountstats.
->
-> When looking at the options, I found that a generic solution is quite
-> simple and could serve all filesystems that opt-in to use it.
->
-> This short patch set results in the following mountstats example report:
->
-> device overlay mounted on /mnt with fstype overlay
->         times: 125 153
->         rchar: 12
->         wchar: 0
->         syscr: 2
->         syscw: 0
->
-> The choise to collect and report io stats by mount and not by sb is
-> quite arbitrary, because it was quite easy to implement and is natural
-> to the existing mountstats proc file.
->
-> I used the arbirtaty flag FS_USERNS_MOUNT as an example for a way for
-> filesystem to opt-in to mount io stats, but it could be either an FS_
-> SB_ or MNT_ flag.  I do not anticipate shortage of opinions on this
-> matter.
->
-> As for performance, the io accounting hooks are the existing hooks for
-> task io accounting.  mount io stats add a dereference to mnt_pcp for
-> the filesystems that opt-in and one per-cpu var update.  The dereference
-> to mnt_sb->s_type->fs_flags is temporary as we will probably want to
-> use an MNT_ flag, whether kernel internal or user controlled.
->
-> What do everyone think about this?
->
-> Al,
->
-> did I break any subtle rules of the vfs?
->
+On Fri, Jan 08, 2021 at 09:26:40AM -0700, Jens Axboe wrote:
+> >> Can you show the callers that DO NOT need it?
+> > 
+> > OK, so here's my suggestion:
+> > 
+> > 1) For 5.11, we just re-instate the task_work run in get_signal(). This
+> >    will make TWA_RESUME have the exact same behavior as before.
+> > 
+> > 2) For 5.12, I'll prepare a patch that collapses TWA_RESUME and TWA_SIGNAL,
+> >    turning it into a bool again (notify or no notify).
+> > 
+> > How does that sound?
+> 
+> Attached the patches - #1 is proposed for 5.11 to fix the current issue,
+> and then 2-4 can get queued for 5.12 to totally remove the difference
+> between TWA_RESUME and TWA_SIGNAL.
+> 
+> Totally untested, but pretty straight forward.
 
-That is besides dereferencing a NULL file pointer when getting EBADF
-in p/readv/writev...
+	Umm...  I'm looking at the callers of get_signal() and I really wonder
+how your support for TIF_NOTIFY_SIGNAL interacts with saved sigmask handling
+by various do_signal() (calls of restore_saved_sigmask()).  Could you give
+pointers to relevant discussion or a braindump on the same?  I realize that
+it had been months ago, but...
 
-Thanks,
-Amir.
+	Do we even need restore_saved_sigmask_unless() now?  Could
+set_user_sigmask() simply set TIF_NOTIFY_SIGNAL?  Oleg, could you comment
+on that?
+
+	Another fun question is how does that thing interact with
+single-stepping logics; it's been about 8 years since I looked into
+those horrors, but they used to be bloody awful...
+
+	What I'm trying to figure out is how costly TIF_NOTIFY_SIGNAL is
+on the work execution side; task_work_add() side is cheap enough, it's
+delivery that is interesting.
