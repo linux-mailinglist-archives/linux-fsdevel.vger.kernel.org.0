@@ -2,68 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7C8A2EF549
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 17:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E7E12EF55E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 17:03:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbhAHP7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 10:59:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40582 "EHLO
+        id S1727805AbhAHQCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 11:02:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbhAHP7C (ORCPT
+        with ESMTP id S1727850AbhAHQCR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 10:59:02 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B4AC061380;
-        Fri,  8 Jan 2021 07:58:21 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kxu9P-008Nht-Tr; Fri, 08 Jan 2021 15:58:08 +0000
-Date:   Fri, 8 Jan 2021 15:58:07 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: Re: [PATCH] fs: process fput task_work with TWA_SIGNAL
-Message-ID: <20210108155807.GQ3579531@ZenIV.linux.org.uk>
-References: <d6ddf6c2-3789-2e10-ba71-668cba03eb35@kernel.dk>
- <20210108052651.GM3579531@ZenIV.linux.org.uk>
- <20210108064639.GN3579531@ZenIV.linux.org.uk>
- <245fba32-76cc-c4e1-6007-0b1f8a22a86b@kernel.dk>
+        Fri, 8 Jan 2021 11:02:17 -0500
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE876C0612A5
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jan 2021 08:00:56 -0800 (PST)
+Received: by mail-qk1-x72b.google.com with SMTP id f26so8855789qka.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jan 2021 08:00:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=ik6B+6lkNc+iFrIPLOlH6nyfA0JsJ4cRGzVhof+Ll8w=;
+        b=VpA/rpQ5qi0dFR7Mowe5aGCpF9u7a1VmQn5q9ZZuQCrdDN5tZn6sXwU9XTDBXmdfYo
+         GHrqoepeF5HsPEyz7s83Q2FgcvfAPgYumhvcRGiBVC2GK+C5XV14Ui++lS3so5pA2/iT
+         1rfJS9pZ3rxyDmU9J33KM0ODd0VovMdrCXj4PDHLrX+mNc/gXoaOQ9JB4dQ8+Pi+t3Y5
+         owDd0dhEIxx5inTgS9uv9USD9ua3iUgbE7ZeBpPZmm3e8Mr6fY26xd3tbIKjFdXg+Z5e
+         HzKpZOj3j3xkWAI+2U0PJ6WCaJvaJp4eQ7JPK2DyyOLy9Is9PPJi0kyYoCvOmtdELPp9
+         eESw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
+         :from:date:message-id:subject:to:content-transfer-encoding;
+        bh=ik6B+6lkNc+iFrIPLOlH6nyfA0JsJ4cRGzVhof+Ll8w=;
+        b=Nyk3xLB/rWXkkbUv2C4PdpVzu4D5Z6mhdw6kQuY3VCk/p/Lo0vjU+y2I5A04midiUc
+         8ssgSjsG13NjbpY7haOSCWPzfZdbD1D3iZPXqlBvMw7Tq3DwxRCANnmIYvLPmt7+R1Ke
+         jA7OmRoJ392B32jC/Oe+EKeTtZCEIeJichhoSIdJDz9D+rVwFdo6wEyROSc8ZFvXujla
+         9clPCmf3xrIZKtfgCmucRvoscoz/zEVG9tnoLOxfzFFWoUGhHyOISfE1HMhiq2QdlwA3
+         us/VLYIweRZm0vUFQaykz2E75hQy3IRoa3vKzM+oe4L8Hoo/fpeFvG/xlxq60gjA0JmO
+         SxNA==
+X-Gm-Message-State: AOAM530m4FShUwa5UTzZsfFugaxVvTzKBgnUi/zJEQmW0dx3WBb6qm5B
+        xm6hwbUa6mkMZNGQB+u+KCqsA/v8UJkrDhvu2W8=
+X-Google-Smtp-Source: ABdhPJy5DcDb2tpoN6hwwNxbrQ4+6iS7cEF5BYexkcUy5+hBuogz8U9cM9vP/oN0NUHGYqGpdQYDJc3bSIrriX19zaw=
+X-Received: by 2002:a37:9f14:: with SMTP id i20mr4583418qke.321.1610121655742;
+ Fri, 08 Jan 2021 08:00:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <245fba32-76cc-c4e1-6007-0b1f8a22a86b@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Received: by 2002:a05:6214:148d:0:0:0:0 with HTTP; Fri, 8 Jan 2021 08:00:55
+ -0800 (PST)
+Reply-To: camillejackson021@gmail.com
+In-Reply-To: <CAGCmbMQupVT-1ZX2--N7Bjf2eW4VuUQ4dE_hzd1qAGQuE_JBEQ@mail.gmail.com>
+References: <CAGCmbMQupVT-1ZX2--N7Bjf2eW4VuUQ4dE_hzd1qAGQuE_JBEQ@mail.gmail.com>
+From:   camille jackson <adamraouf78@gmail.com>
+Date:   Fri, 8 Jan 2021 16:00:55 +0000
+Message-ID: <CAGCmbMR9p4PyoggcTsQ1z8w+PCmEh+pd463ifnbWZyKw1o3FtQ@mail.gmail.com>
+Subject: =?UTF-8?B?0JfQtNGA0LDQstGB0YLQstGD0LnRgtC1LA==?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 08, 2021 at 08:13:25AM -0700, Jens Axboe wrote:
-> > Anyway, bedtime for me; right now it looks like at least for task ==
-> > current we always want TWA_SIGNAL.  I'll look into that more tomorrow
-> > when I get up, but so far it smells like switching everything to
-> > TWA_SIGNAL would be the right thing to do, if not going back to bool
-> > notify for task_work_add()...
-> 
-> Before the change, the fact that we ran task_work off get_signal() and
-> thus processed even non-notify work in that path was a bit of a mess,
-> imho. If you have work that needs processing now, in the same manner as
-> signals, then you really should be using TWA_SIGNAL. For this pipe case,
-> and I'd need to setup and reproduce it again, the task must have a
-> signal pending and that would have previously caused the task_work to
-> run, and now it does not. TWA_RESUME technically didn't change its
-> behavior, it's still the same notification type, we just don't run
-> task_work unconditionally (regardless of notification type) from
-> get_signal().
-
-It sure as hell did change behaviour.  Think of the effect of getting
-hit with SIGSTOP.  That's what that "bit of a mess" had been about.
-Work done now vs. possibly several days later when SIGCONT finally
-gets sent.
-
-> I think the main question here is if we want to re-instate the behavior
-> of running task_work off get_signal(). I'm leaning towards not doing
-> that and ensuring that callers that DO need that are using TWA_SIGNAL.
-
-Can you show the callers that DO NOT need it?
+0J/RgNC40LLQtdGC0YHRgtCy0YPRjiDRgtC10LHRjywg0LzQvtC5INC00YDRg9CzLCDQvdCw0LTQ
+tdGO0YHRjCwg0YLRiyDQsiDQv9C+0YDRj9C00LrQtSwg0L/QvtC20LDQu9GD0LnRgdGC0LAsINC+
+0YLQstC10YLRjCDQvNC90LUNCtCx0LvQsNCz0L7QtNCw0YDRjywNCg==
