@@ -2,132 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCB482EF1A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 12:51:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1D12EF2C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 14:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbhAHLvJ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 8 Jan 2021 06:51:09 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:43821 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726688AbhAHLvH (ORCPT
+        id S1726220AbhAHNAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 08:00:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40980 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbhAHNAM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 06:51:07 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-227-JrkSGbMLN9-FUY2lxHNdvQ-1; Fri, 08 Jan 2021 11:49:28 +0000
-X-MC-Unique: JrkSGbMLN9-FUY2lxHNdvQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 8 Jan 2021 11:49:27 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 8 Jan 2021 11:49:27 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: [PATCH 05/11] iov_iter: merge the compat case into
- rw_copy_check_uvector
-Thread-Topic: [PATCH 05/11] iov_iter: merge the compat case into
- rw_copy_check_uvector
-Thread-Index: AQHWkCRUvpDO9SBAlU68E+WeFLSma6oeR04A
-Date:   Fri, 8 Jan 2021 11:49:27 +0000
-Message-ID: <7167a94511a84f30b18733d56007a7a5@AcuMS.aculab.com>
-References: <20200921143434.707844-1-hch@lst.de>
- <20200921143434.707844-6-hch@lst.de>
-In-Reply-To: <20200921143434.707844-6-hch@lst.de>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 8 Jan 2021 08:00:12 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18991C0612F4
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jan 2021 04:59:32 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id q5so10108106ilc.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jan 2021 04:59:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=WYSaHM9r6uysAUvp9nyuEks2t9hNctkID59kc9VK5xc=;
+        b=DaytoU/08EfN4newYg6SISoZxOQpuYFcUPpBctAjrxRLJxlcYgMolSqJGd/y+Y0tqC
+         suQsgUXvYuy3jzsI6x4OoRmc+Oru+FvEAd0QfZSb+n+ZPa81FxKA+m7JIF2YgCWcDOnx
+         44X2Ke/1ljrczvALEDiDNquDhUSyYP2PucSQk6AoX1u/Yc9r8kkEHtCOobY+noifTzLZ
+         OGlNfbMO9rz0UIzSPqWz+/mJaZk7brTt41IvILvqrAcmUz2Hxl6aVdcLwHWr+DFBfpHK
+         /E1Eqm58/0Ctyiv/kECAURGJ+jgWMWdFTNuL4kv0qK70fYMkcczJL4drarcPu+DfNKHD
+         ANog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=WYSaHM9r6uysAUvp9nyuEks2t9hNctkID59kc9VK5xc=;
+        b=oq/FIN5UMQgndWPXa6u1TSeYmwBbG/vvk5pxtbPf24ttT25jtBPIgc6oegQXJya/FR
+         kvDyJZd3Z3ECpt/oAUtJqNPNsueLU7/gsM3x5f8STGsyB8zkFoN0fy6eCpxZuoIoAiMc
+         8YJFNAy7Qx6vtevytB1Q+jMiXr7mHhAbzwWc3UQRl137QDwO7xwXdsecCn/ayBb8uerR
+         AQLKUzaQ1vMXOtNDWEGb5NuiShV5nbshxHfyRL8TGgYY+L0yzBZWk/wGE6hkBiJtyedE
+         cu3KbEYf7xaO1vRpWphM+Z5k5MIfmCItQkhlIpdaWDb3KbjB8bai7AL2fdab812SNyM+
+         8l4w==
+X-Gm-Message-State: AOAM532OOVuMfycidWhxEhNyp9LXjqlgGqMmyG7uPq5caUleqJh3uEnn
+        iC0WmQ954H+8n6GkKT4mq4Z7pELepPPox/OeaTBa8+M+TL1Y7w==
+X-Google-Smtp-Source: ABdhPJxtQ7Ru6seXvIxshFbsGin60gvekD7Zn1Ol0reBkUYTJH+drKgiQjb9YFodZ29Mdif5my57rPfX8IbaojO0K2I=
+X-Received: by 2002:a05:6e02:1a43:: with SMTP id u3mr3612508ilv.209.1610110771515;
+ Fri, 08 Jan 2021 04:59:31 -0800 (PST)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20200723185921.1847880-1-tytso@mit.edu> <CA+icZUU7Dqoc3-HeM5W4EMXzmZSetD+=WkavDgeGqAi4St6t3g@mail.gmail.com>
+In-Reply-To: <CA+icZUU7Dqoc3-HeM5W4EMXzmZSetD+=WkavDgeGqAi4St6t3g@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 8 Jan 2021 13:59:20 +0100
+Message-ID: <CA+icZUW1nybY==tV0sGDjZTOinR17Tpj3Eh3cjCtZXDOXXJAdw@mail.gmail.com>
+Subject: Re: [PATCH] fs: prevent out-of-bounds array speculation when closing
+ a file descriptor
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     viro@zeniv.linux.org.uk,
+        Linux Filesystem Development List 
+        <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
-> Sent: 21 September 2020 15:34
-> 
-> Stop duplicating the iovec verify code, and instead add add a
-> __import_iovec helper that does the whole verify and import, but takes
-> a bool compat to decided on the native or compat layout.  This also
-> ends up massively simplifying the calling conventions.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  lib/iov_iter.c | 195 ++++++++++++++++++-------------------------------
->  1 file changed, 70 insertions(+), 125 deletions(-)
-> 
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index a64867501a7483..8bfa47b63d39aa 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -10,6 +10,7 @@
->  #include <net/checksum.h>
->  #include <linux/scatterlist.h>
->  #include <linux/instrumented.h>
-> +#include <linux/compat.h>
-> 
->  #define PIPE_PARANOIA /* for now */
-> 
-> @@ -1650,43 +1651,76 @@ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags)
->  }
->  EXPORT_SYMBOL(dup_iter);
-> 
-> -static ssize_t rw_copy_check_uvector(int type,
-> -		const struct iovec __user *uvector, unsigned long nr_segs,
-> -		unsigned long fast_segs, struct iovec *fast_pointer,
-> -		struct iovec **ret_pointer)
-> +static int compat_copy_iovecs_from_user(struct iovec *iov,
-> +		const struct iovec __user *uvector, unsigned long nr_segs)
-> +{
-> +	const struct compat_iovec __user *uiov =
-> +		(const struct compat_iovec __user *)uvector;
-> +	unsigned long i;
-> +	int ret = -EFAULT;
-> +
-> +	if (!user_access_begin(uvector, nr_segs * sizeof(*uvector)))
-> +		return -EFAULT;
+On Fri, Jul 24, 2020 at 3:18 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> On Thu, Jul 23, 2020 at 9:02 PM Theodore Ts'o <tytso@mit.edu> wrote:
+> >
+> > Google-Bug-Id: 114199369
+> > Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+>
+> Tested-by: Sedat Dilek <sedat.dilek@gmail.com> # Linux v5.8-rc6+
+>
 
-I little bit late, but the above isn't quite right.
-It should be sizeof(*iouv) - the length is double what it should be.
+Ping.
 
-Not that access_ok() can fail for compat addresses
-and the extra length won't matter for architectures that
-need the address/length to open an address hole into userspace.
+What is the status of this patch?
 
-	David
+ - Sedat -
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+>
+> > ---
+> >  fs/file.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/fs/file.c b/fs/file.c
+> > index abb8b7081d7a..73189eaad1df 100644
+> > --- a/fs/file.c
+> > +++ b/fs/file.cfs: prevent out-of-bounds array speculation when closing=
+ a file descriptor
+> > @@ -632,6 +632,7 @@ int __close_fd(struct files_struct *files, unsigned=
+ fd)
+> >         fdt =3D files_fdtable(files);
+> >         if (fd >=3D fdt->max_fds)
+> >                 goto out_unlock;fs: prevent out-of-bounds array specula=
+tion when closing a file descriptor fs: prevent out-of-bounds array specula=
+tion when closing a file descriptor fs: prevent out-of-bounds array specula=
+tion when closing a file descriptor
+> > +       fd =3D array_index_nospec(fd, fdt->max_fds);
+> >         file =3D fdt->fd[fd];
+> >         if (!file)
+> >                 goto out_unlock;
+> > --
+> > 2.24.1
+> >
