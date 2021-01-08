@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15DEF2EED91
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 07:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 612192EED95
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 07:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbhAHGsE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 01:48:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39722 "EHLO
+        id S1726698AbhAHGww (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 01:52:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbhAHGsE (ORCPT
+        with ESMTP id S1726484AbhAHGww (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 01:48:04 -0500
+        Fri, 8 Jan 2021 01:52:52 -0500
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5022CC0612F5;
-        Thu,  7 Jan 2021 22:47:24 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A4CEC0612F4;
+        Thu,  7 Jan 2021 22:52:12 -0800 (PST)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kxlYO-008GZK-Fc; Fri, 08 Jan 2021 06:47:20 +0000
-Date:   Fri, 8 Jan 2021 06:47:20 +0000
+        id 1kxld1-008Ges-Bm; Fri, 08 Jan 2021 06:52:07 +0000
+Date:   Fri, 8 Jan 2021 06:52:07 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Sedat Dilek <sedat.dilek@gmail.com>
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -26,7 +26,7 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         Oleg Nesterov <oleg@redhat.com>,
         Song Liu <songliubraving@fb.com>
 Subject: Re: [PATCH] fs: process fput task_work with TWA_SIGNAL
-Message-ID: <20210108064720.GO3579531@ZenIV.linux.org.uk>
+Message-ID: <20210108065207.GP3579531@ZenIV.linux.org.uk>
 References: <d6ddf6c2-3789-2e10-ba71-668cba03eb35@kernel.dk>
  <20210108052651.GM3579531@ZenIV.linux.org.uk>
  <CA+icZUWZePRQ6h8TLekp3EMNvLG22o4stV7OaGVCnm9VeX6d=w@mail.gmail.com>
@@ -78,4 +78,9 @@ On Fri, Jan 08, 2021 at 07:21:52AM +0100, Sedat Dilek wrote:
 > 
 > [1] https://marc.info/?t=160987156600001&r=1&w=2
 
-Thanks; will check tomorrow.
+Wait, that's this very thread, starting with the posting I'd been replying
+to.  Really confused now...  Was that a private bug report and an equally
+private discussion?  That's what I wanted to see...
+
+Anyway, I'm more than half-asleep right now; will get back to that in the
+morning.
