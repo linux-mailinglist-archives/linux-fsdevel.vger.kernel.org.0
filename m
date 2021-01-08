@@ -2,152 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 360322EF9CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 22:01:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF242EFA64
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 22:25:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbhAHVBE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 16:01:04 -0500
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:60828 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728511AbhAHVBD (ORCPT
+        id S1728582AbhAHVYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 16:24:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35008 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbhAHVYv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 16:01:03 -0500
-Received: from dread.disaster.area (pa49-179-167-107.pa.nsw.optusnet.com.au [49.179.167.107])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 3438676566F;
-        Sat,  9 Jan 2021 08:00:17 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kxyrp-004RRw-51; Sat, 09 Jan 2021 08:00:17 +1100
-Date:   Sat, 9 Jan 2021 08:00:17 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: block_dev: compute nr_vecs hint for improving
- writeback bvecs allocation
-Message-ID: <20210108210017.GK331610@dread.disaster.area>
-References: <20210105132647.3818503-1-ming.lei@redhat.com>
- <20210105183938.GA3878@lst.de>
- <20210106084548.GA3845805@T590>
- <20210106222111.GE331610@dread.disaster.area>
- <20210108075922.GB3982620@T590>
+        Fri, 8 Jan 2021 16:24:51 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 128EAC061796;
+        Fri,  8 Jan 2021 13:24:11 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id o17so26297584lfg.4;
+        Fri, 08 Jan 2021 13:24:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+afgHAtxhrr/i0EcynJ2CYFaHfGmcyOTzMQ7jRJw+34=;
+        b=EWLV5/5BkInHF7B8SUxiUYVtKJo/pNuo44Gb8xnDt/w4FZxPLZ8xfTzdWYJMrAW/+a
+         +LaIs19proJuaO55Kb6fm7+XwoBa0RSfdRj8CDpynFu+mvinLspy6QaPnJmyHZCXTpRH
+         2tzjQhNaKzXG/hsIDyZN7dp+K0bG1Q1yOxvrbLQMQADxtmON3+FCqM6CvATijn69lpXO
+         9g32ONk0kwEuiJ0f1/C+jgSCoxih3JnKyx8TQtMjyO0q7RmPmAItIL9AGhHuI+nVQ7dC
+         YcfRN5oyxzE08hOUyju+DpHfnCLTyQYxz1HZ/Bv9mXci8/QpfnGPzGuEyGXWQbe/uGW3
+         58vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+afgHAtxhrr/i0EcynJ2CYFaHfGmcyOTzMQ7jRJw+34=;
+        b=UK0wocWUZtu0DHqTjE8Sdvb02AoF+BRQlebgV0oCZJX1Ub40meqOeHUQkMBRJoVAmh
+         1lFLIZzWAtF+D/hzNX2GkkZjW6gQ1WvU8Hl1z1MOqEfmSJxx3bop6zDk7GVKd1qPhuaY
+         ASCguyZ1BnWTOBaekcWh+l24DUocL5Nrj4YTJ9lrFIfXCyvnMoUZUhNwlDfpEy2+7ACJ
+         ToSD15q4kVtAPWFp5maahIXg6VB68kOdVVNTptKvTDDDGxIK5v8453cbi8mDC1ci5D9I
+         KmXu6eIb5iFufusqtjC0x70g0ROkKgPcfkZ/0ZZfQhmhrXvvAi3kU+m2jwDCH6qiV79I
+         L5rg==
+X-Gm-Message-State: AOAM531WxYsctfAqL+lN9TnPjgLTV4XpKrmMXyVDXFttzGgfW1mc+nJL
+        3ztG67REqTHCNmyY8bnJDIMbCw0RLN526xjLCA4=
+X-Google-Smtp-Source: ABdhPJw0Nu906p07vhl6IlMcKRUd1QVarTQZeVS6m9q64qCsKOGolBZa7QCJCdGe5JoJ7BqKGChStMaECN6aBDppJQc=
+X-Received: by 2002:a19:6b0e:: with SMTP id d14mr162388lfa.210.1610141049528;
+ Fri, 08 Jan 2021 13:24:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210108075922.GB3982620@T590>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=+wqVUQIkAh0lLYI+QRsciw==:117 a=+wqVUQIkAh0lLYI+QRsciw==:17
-        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
-        a=0TDAt5E3tB6VCO8953IA:9 a=qZgZfBh61L_KZ1-l:21 a=JzxU2LrYxQ7o857g:21
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20201112015359.1103333-1-lokeshgidra@google.com>
+ <20201112015359.1103333-4-lokeshgidra@google.com> <CAHC9VhS2WNXn2cVAUcAY5AmmBv+=XsthCevofNNuEOU3=jtLrg@mail.gmail.com>
+ <CAEjxPJ6TA_nXrUJ6CjhG-j0_oAj9WU1vRn5pGvjDqQ2Bk9VVag@mail.gmail.com> <CA+EESO45ezOtg1-MHfwSk3YNYRS7cYnH+kMz-T_MdaSpyW=8Yw@mail.gmail.com>
+In-Reply-To: <CA+EESO45ezOtg1-MHfwSk3YNYRS7cYnH+kMz-T_MdaSpyW=8Yw@mail.gmail.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Fri, 8 Jan 2021 16:23:58 -0500
+Message-ID: <CAEjxPJ7CL0WbEeooyh=d_LggZ7xTtcqsLY3TSunJ6oXWNxBOuw@mail.gmail.com>
+Subject: Re: [PATCH v13 3/4] selinux: teach SELinux about anonymous inodes
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 08, 2021 at 03:59:22PM +0800, Ming Lei wrote:
-> On Thu, Jan 07, 2021 at 09:21:11AM +1100, Dave Chinner wrote:
-> > On Wed, Jan 06, 2021 at 04:45:48PM +0800, Ming Lei wrote:
-> > > On Tue, Jan 05, 2021 at 07:39:38PM +0100, Christoph Hellwig wrote:
-> > > > At least for iomap I think this is the wrong approach.  Between the
-> > > > iomap and writeback_control we know the maximum size of the writeback
-> > > > request and can just use that.
-> > > 
-> > > I think writeback_control can tell us nothing about max pages in single
-> > > bio:
-> > 
-> > By definition, the iomap tells us exactly how big the IO is going to
-> > be. i.e. an iomap spans a single contiguous range that we are going
-> > to issue IO on. Hence we can use that to size the bio exactly
-> > right for direct IO.
-> 
-> When I trace wpc->iomap.length in iomap_add_to_ioend() on the following fio
-> randwrite/write, the length is 1GB most of times, maybe because it is
-> one fresh XFS.
+On Fri, Jan 8, 2021 at 3:17 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+>
+> On Fri, Jan 8, 2021 at 11:35 AM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > On Wed, Jan 6, 2021 at 10:03 PM Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > On Wed, Nov 11, 2020 at 8:54 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > > > From: Daniel Colascione <dancol@google.com>
+> > > >
+> > > > This change uses the anon_inodes and LSM infrastructure introduced in
+> > > > the previous patches to give SELinux the ability to control
+> > > > anonymous-inode files that are created using the new
+> > > > anon_inode_getfd_secure() function.
+> > > >
+> > > > A SELinux policy author detects and controls these anonymous inodes by
+> > > > adding a name-based type_transition rule that assigns a new security
+> > > > type to anonymous-inode files created in some domain. The name used
+> > > > for the name-based transition is the name associated with the
+> > > > anonymous inode for file listings --- e.g., "[userfaultfd]" or
+> > > > "[perf_event]".
+> > > >
+> > > > Example:
+> > > >
+> > > > type uffd_t;
+> > > > type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
+> > > > allow sysadm_t uffd_t:anon_inode { create };
+> > > >
+> > > > (The next patch in this series is necessary for making userfaultfd
+> > > > support this new interface.  The example above is just
+> > > > for exposition.)
+> > > >
+> > > > Signed-off-by: Daniel Colascione <dancol@google.com>
+> > > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> > > > ---
+> > > >  security/selinux/hooks.c            | 56 +++++++++++++++++++++++++++++
+> > > >  security/selinux/include/classmap.h |  2 ++
+> > > >  2 files changed, 58 insertions(+)
+> > > >
+> > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > > index 6b1826fc3658..d092aa512868 100644
+> > > > --- a/security/selinux/hooks.c
+> > > > +++ b/security/selinux/hooks.c
+> > > > @@ -2927,6 +2927,61 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+> > > >         return 0;
+> > > >  }
+> > > >
+> > > > +static int selinux_inode_init_security_anon(struct inode *inode,
+> > > > +                                           const struct qstr *name,
+> > > > +                                           const struct inode *context_inode)
+> > > > +{
+> > > > +       const struct task_security_struct *tsec = selinux_cred(current_cred());
+> > > > +       struct common_audit_data ad;
+> > > > +       struct inode_security_struct *isec;
+> > > > +       int rc;
+> > > > +
+> > > > +       if (unlikely(!selinux_initialized(&selinux_state)))
+> > > > +               return 0;
+> > > > +
+> > > > +       isec = selinux_inode(inode);
+> > > > +
+> > > > +       /*
+> > > > +        * We only get here once per ephemeral inode.  The inode has
+> > > > +        * been initialized via inode_alloc_security but is otherwise
+> > > > +        * untouched.
+> > > > +        */
+> > > > +
+> > > > +       if (context_inode) {
+> > > > +               struct inode_security_struct *context_isec =
+> > > > +                       selinux_inode(context_inode);
+> > > > +               if (context_isec->initialized != LABEL_INITIALIZED)
+> > > > +                       return -EACCES;
+> Stephen, as per your explanation below, is this check also
+> problematic? I mean is it possible that /dev/kvm context_inode may not
+> have its label initialized? If so, then v12 of the patch series can be
+> used as is. Otherwise, I will send the next version which rollbacks
+> v14 and v13, except for this check. Kindly confirm.
 
-Yes, that's exactly what I said it would do.
-
-> Another reason is that pages in the range may be contiguous physically,
-> so lots of pages may share one single bvec.
-
-The iomap layer does not care about this, and there's no way this
-can be detected ahead of time, anyway, because we are only passed a
-single page at a time. When we get large pages from the page cache,
-we'll still only get one page at a time, but we'll get physically
-contiguous pages and so it will still be a 1 page : 1 bvec
-relationship at the iomap layer.
-
-> > > - wbc->nr_to_write controls how many pages to writeback, this pages
-> > >   usually don't belong to same bio. Also this number is often much
-> > >   bigger than BIO_MAX_PAGES.
-> > > 
-> > > - wbc->range_start/range_end is similar too, which is often much more
-> > >   bigger than BIO_MAX_PAGES.
-> > > 
-> > > Also page/blocks_in_page can be mapped to different extent too, which is
-> > > only available when wpc->ops->map_blocks() is returned,
-> > 
-> > We only allocate the bio -after- calling ->map_blocks() to obtain
-> > the iomap for the given writeback range request. Hence we
-> > already know how large the BIO could be before we allocate it.
-> > 
-> > > which looks not
-> > > different with mpage_writepages(), in which bio is allocated with
-> > > BIO_MAX_PAGES vecs too.
-> > 
-> > __mpage_writepage() only maps a page at a time, so it can't tell
-> > ahead of time how big the bio is going to need to be as it doesn't
-> > return/cache a contiguous extent range. So it's actually very
-> > different to the iomap writeback code, and effectively does require
-> > a BIO_MAX_PAGES vecs allocation all the time...
-> > 
-> > > Or you mean we can use iomap->length for this purpose? But iomap->length
-> > > still is still too big in case of xfs.
-> > 
-> > if we are doing small random writeback into large extents (i.e.
-> > iomap->length is large), then it is trivial to detect that we are
-> > doing random writes rather than sequential writes by checking if the
-> > current page is sequential to the last sector in the current bio.
-> > We already do this non-sequential IO checking to determine if a new
-> > bio needs to be allocated in iomap_can_add_to_ioend(), and we also
-> > know how large the current contiguous range mapped into the current
-> > bio chain is (ioend->io_size). Hence we've got everything we need to
-> > determine whether we should do a large or small bio vec allocation
-> > in the iomap writeback path...
-> 
-> page->index should tell us if the workload is random or sequential, however
-> still not easy to decide how many pages there will be in the next bio
-> when iomap->length is large.
-
-page->index doesn't tell us anything about what type of IO is being
-done - it just tells us where in the file we need to map to find the
-physical block we need to write it to. OTOH, the iomap writeback
-context contains all the information about current IO being build -
-offset, size, current bio, etc - and the page->index gets compared
-against the state in the iomap writepage context.
-
-So, if the wpc->iomap.length is large, current page->index does not
-map sequentially to the end of wpc->ioend->io_bio (or
-wpc->io_end->io_offset + wpc->ioend->io_size) and
-wpc->io_end->io_size == page_size(page) for the currently held bio,
-then we are clearly doing random single page writeback into a large
-allocated extent. Hence in that case we can do small bvec
-allocations for the new bio.
-
-Sure, the first bio in a ->writepages invocation doesn't have this
-information, so we've going to have to assume BIO_MAX_PAGES for the
-first bio. But for every bio after that in the ->writepages
-invocation we have the state of the previous contiguous writeback
-range held in the wpc structure and can use that info to optimise
-the thousands of random single pages that are written after then
-first one...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+The context_inode should always be initialized already.  I'm not fond
+though of silently returning -EACCES here.  At the least we should
+have a pr_err() or pr_warn() here.  In reality, this could only occur
+in the case of a kernel bug or memory corruption so it used to be a
+candidate for WARN_ON() or BUG_ON() or similar but I know that
+BUG_ON() at least is frowned upon these days.
