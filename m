@@ -2,120 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C453E2EF2F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 14:18:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 759FB2EF31A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 14:34:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbhAHNSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 08:18:43 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51802 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725816AbhAHNSn (ORCPT
+        id S1727049AbhAHNeG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 08:34:06 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:50544 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbhAHNeE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 08:18:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610111837;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bg8rlW5E0vWkjj4xn9p0kuI2DQ6aO3LChdMVPwhxTYY=;
-        b=EY7wsyVC88lMucNvRQZ/jvwzeroIPZOzZgJpaJln1OKfcWNNf6czPP1OpDpnZnmMa2bpVN
-        sVWCfABVmcssyVWXJsrXpiRIS+dzfDYIiNNvWOJOsyAN7kIJDu5U41QcsFO1k5sgTOUhP3
-        jDfSq4kOt3ORfxBbFE83JHws5vPqAyY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-583-bk1YV-HWOYCeEAD7skCUEg-1; Fri, 08 Jan 2021 08:17:15 -0500
-X-MC-Unique: bk1YV-HWOYCeEAD7skCUEg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B6D731005513;
-        Fri,  8 Jan 2021 13:17:13 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 68A755D9C0;
-        Fri,  8 Jan 2021 13:17:13 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 5C8E34BB40;
-        Fri,  8 Jan 2021 13:17:13 +0000 (UTC)
-Date:   Fri, 8 Jan 2021 08:17:11 -0500 (EST)
-From:   Bob Peterson <rpeterso@redhat.com>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Message-ID: <879072186.43549344.1610111831181.JavaMail.zimbra@redhat.com>
-In-Reply-To: <X/eUd4iLxnl2nYRF@google.com>
-References: <20201224044954.1349459-1-satyat@google.com> <20210107162000.GA2693@lst.de> <1137375419.42956970.1610036857271.JavaMail.zimbra@redhat.com> <X/eUd4iLxnl2nYRF@google.com>
-Subject: Re: [PATCH] fs: Fix freeze_bdev()/thaw_bdev() accounting of
- bd_fsfreeze_sb
+        Fri, 8 Jan 2021 08:34:04 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 108DPdUd109883;
+        Fri, 8 Jan 2021 13:32:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=S4zkW1M4aTxRNcJblTq8nmnAoFttecuVr7DB3iYS6lc=;
+ b=u43BWw/YI46k+PZDdz6WgFXEaetk1U74Zlf6i1GzYDfBCjp2TclctQZfEm69hfePQ3lF
+ cLN/e1XxgUS2OeTwOaaTys0uRP1vUFZEKV3i/6tXp/NaKhytTrPuVZ8wiGwQCbSUbxys
+ P60h0XHWLot0qHkXh9mVOxr89HvQ6nVgMAvA+OPttZmzmXyf+fgt3zfqNS5eqXGIFtig
+ uyVdf/PpYc/lmKRfaqoHjE5emwYXEjn20lwGfJZRlhSkp6SrMtJaxZ1JWh9NwbiwE/Ov
+ FjYEbhHZEolr0NNoVTS9y8SvZnd50yp4LcmRpMM97dXdvLPbhRCG7O4hC+MoKZ+oUAW+ Rg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 35wepmh24m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 08 Jan 2021 13:32:43 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 108DKYVC100966;
+        Fri, 8 Jan 2021 13:32:42 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 35v4rfafy5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Jan 2021 13:32:42 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 108DWXDO026007;
+        Fri, 8 Jan 2021 13:32:33 GMT
+Received: from [192.168.1.6] (/116.231.20.68)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Jan 2021 13:32:33 +0000
+Subject: Re: [RFC v2 06/13] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
+        jasowang@redhat.com, stefanha@redhat.com, sgarzare@redhat.com,
+        parav@nvidia.com, akpm@linux-foundation.org, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20201222145221.711-1-xieyongji@bytedance.com>
+ <20201222145221.711-7-xieyongji@bytedance.com>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <f8dcb8d0-0024-1f78-d1a7-e487ca3deda7@oracle.com>
+Date:   Fri, 8 Jan 2021 21:32:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20201222145221.711-7-xieyongji@bytedance.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.112.201, 10.4.195.27]
-Thread-Topic: Fix freeze_bdev()/thaw_bdev() accounting of bd_fsfreeze_sb
-Thread-Index: Qh0Y8TOdr+3c+YdH/MUolaQzVBj28w==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9857 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 adultscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101080076
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9857 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 spamscore=0
+ impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 clxscore=1011 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101080076
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Original Message -----
-> This causes bdev->bd_fsfreeze_sb to be set to NULL even if the call to
-> thaw_super right after this line fail. So if a caller tries to call
-> thaw_bdev() again after receiving such an error, that next call won't even
-> try to call thaw_super(). Is that what we want here?  (I don't know much
-> about this code, but from a cursory glance I think this difference is
-> visible to emergency_thaw_bdev() in fs/buffer.c)
+On 12/22/20 10:52 PM, Xie Yongji wrote:
+> This VDUSE driver enables implementing vDPA devices in userspace.
+> Both control path and data path of vDPA devices will be able to
+> be handled in userspace.
 > 
-> In my version of the patch, I set bdev->bd_fsfreeze_sb to NULL only
-> *after* we check that the call to thaw_super() succeeded to avoid this.
+> In the control path, the VDUSE driver will make use of message
+> mechnism to forward the config operation from vdpa bus driver
+> to userspace. Userspace can use read()/write() to receive/reply
+> those control messages.
+> 
+> In the data path, the VDUSE driver implements a MMU-based on-chip
+> IOMMU driver which supports mapping the kernel dma buffer to a
+> userspace iova region dynamically. Userspace can access those
+> iova region via mmap(). Besides, the eventfd mechanism is used to
+> trigger interrupt callbacks and receive virtqueue kicks in userspace
+> 
+> Now we only support virtio-vdpa bus driver with this patch applied.
+> 
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> ---
+>  Documentation/driver-api/vduse.rst                 |   74 ++
+>  Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
+>  drivers/vdpa/Kconfig                               |    8 +
+>  drivers/vdpa/Makefile                              |    1 +
+>  drivers/vdpa/vdpa_user/Makefile                    |    5 +
+>  drivers/vdpa/vdpa_user/eventfd.c                   |  221 ++++
+>  drivers/vdpa/vdpa_user/eventfd.h                   |   48 +
+>  drivers/vdpa/vdpa_user/iova_domain.c               |  442 ++++++++
+>  drivers/vdpa/vdpa_user/iova_domain.h               |   93 ++
+>  drivers/vdpa/vdpa_user/vduse.h                     |   59 ++
+>  drivers/vdpa/vdpa_user/vduse_dev.c                 | 1121 ++++++++++++++++++++
+>  include/uapi/linux/vdpa.h                          |    1 +
+>  include/uapi/linux/vduse.h                         |   99 ++
+>  13 files changed, 2173 insertions(+)
+>  create mode 100644 Documentation/driver-api/vduse.rst
+>  create mode 100644 drivers/vdpa/vdpa_user/Makefile
+>  create mode 100644 drivers/vdpa/vdpa_user/eventfd.c
+>  create mode 100644 drivers/vdpa/vdpa_user/eventfd.h
+>  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
+>  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
+>  create mode 100644 drivers/vdpa/vdpa_user/vduse.h
+>  create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
+>  create mode 100644 include/uapi/linux/vduse.h
+> 
+> diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
+> new file mode 100644
+> index 000000000000..da9b3040f20a
+> --- /dev/null
+> +++ b/Documentation/driver-api/vduse.rst
+> @@ -0,0 +1,74 @@
+> +==================================
+> +VDUSE - "vDPA Device in Userspace"
+> +==================================
+> +
+> +vDPA (virtio data path acceleration) device is a device that uses a
+> +datapath which complies with the virtio specifications with vendor
+> +specific control path. vDPA devices can be both physically located on
+> +the hardware or emulated by software. VDUSE is a framework that makes it
+> +possible to implement software-emulated vDPA devices in userspace.
+> +
 
-Yes, I see your point. Your patch is superior and I'll mine accordingly.
+Could you explain a bit more why need a VDUSE framework?
+Software emulated vDPA devices is more likely used by debugging only when
+don't have real hardware.
+Do you think do the emulation in kernel space is not enough?
 
-> Thanks a lot for investigating the bug and the patch I sent :)
-> Was there actually an issue with that patch I sent? As you said, the bug
+Thanks,
+Bob
 
-No, I never saw your patch until I saw Christoph's reference to it yesterday,
-after I had been using my patch to fix the problem. AFAIK, there is no
-problem with your patch.
+> +How VDUSE works
+> +------------
+> +Each userspace vDPA device is created by the VDUSE_CREATE_DEV ioctl on
+> +the VDUSE character device (/dev/vduse). Then a file descriptor pointing
+> +to the new resources will be returned, which can be used to implement the
+> +userspace vDPA device's control path and data path.
+> +
+> +To implement control path, the read/write operations to the file descriptor
+> +will be used to receive/reply the control messages from/to VDUSE driver.
+> +Those control messages are based on the vdpa_config_ops which defines a
+> +unified interface to control different types of vDPA device.
+> +
 
-> I think the second difference (decrementing bd_fsfreeze_count when
-> get_active_super() returns NULL) doesn't change anything w.r.t the
-> use-after-free. It does however, change the behaviour of the function
-> slightly, and it might be caller visible (because from a cursory glance, it
-> looks like we're reading the bd_fsfreeze_count from some other places like
-> fs/super.c). Even before 040f04bd2e82, the code wouldn't decrement
-> bd_fsfreeze_count when get_active_super() returned NULL - so is this change
-> in behaviour intentional? And if so, maybe it should go in a separate
-> patch?
-
-This is the bigger issue, and I'm not very familiar with this code either,
-so I'll defer to the experts. Yes, it's a change in behavior, but I think
-it makes sense to decrement the bd_fsfreeze_count in this case. Here's why:
-
-If the blockdev is frozen by freeze_bdev while it's being unmounted, the
-bd_fsfreeze_count is incremented, but the freeze is ignored. Subsequent
-attempts to thaw the device will be ignored but return 0 because the sb
-is not found. When the device is mounted again, calls to freeze_bdev
-will bypass the call to freeze_super for the newly mounted sb, because
-bdev->bd_fsfreeze_count was then incremented from 1 to 2 in freeze_bdev.
-
-	if (++bdev->bd_fsfreeze_count > 1)
-		goto done;
-
-So you're freezing the device without really freezing the superblock.
-Seems like dangerous behavior to me. The new sb will only be frozen if
-a second thaw is done, which gets them back in sync. I suppose we could
-say this is acceptable loss, and your number of thaws should match your
-freezes, and if they don't: user error. Still, it seems like we should do
-something about it, like refuse to mount a frozen device. Perhaps it already
-does that; I'll need to do some research.
-
-Like I said, I don't know this code. I'm just trying to fix a problem
-I observed. I'll defer to the experts.
-
-Regards,
-
-Bob Peterson
 
