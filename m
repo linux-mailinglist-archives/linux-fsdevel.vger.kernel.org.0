@@ -2,132 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CAD52EF197
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 12:48:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCB482EF1A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 12:51:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbhAHLsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 06:48:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52512 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbhAHLsI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 06:48:08 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1610106441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cRs14sUKQFDtfxfOv42U2R1ffmk3k5kFywb1nQwYHDc=;
-        b=Nw8SdwvSoRzqFvf51E98pVV82XwTvggeDVESclI9UaaVfT4L3bWYUUeoPPb7rdpQmSCR7W
-        u/Ju5CnbypZ1jUgoP4IxGpKtyfQGoydMXiIXo+GT1eoKSxnEA3JYZw8paWmJZVeeokBcRJ
-        UhvGSdL0ZtYC2VDPr74quplkTocELFw=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2D8F2AD24;
-        Fri,  8 Jan 2021 11:47:21 +0000 (UTC)
-Date:   Fri, 8 Jan 2021 12:47:18 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, adobriyan@gmail.com,
-        linux-fsdevel@vger.kernel.org, vbabka@suse.cz,
-        akpm@linux-foundation.org, wangle6@huawei.com
-Subject: Re: [PATCH v2] proc_sysctl: fix oops caused by incorrect command
- parameters.
-Message-ID: <20210108114718.GA13207@dhcp22.suse.cz>
-References: <20210108023339.55917-1-nixiaoming@huawei.com>
- <20210108092145.GX13207@dhcp22.suse.cz>
- <829bbba0-d3bb-a114-af81-df7390082958@huawei.com>
+        id S1726794AbhAHLvJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 8 Jan 2021 06:51:09 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:43821 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726688AbhAHLvH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 8 Jan 2021 06:51:07 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-227-JrkSGbMLN9-FUY2lxHNdvQ-1; Fri, 08 Jan 2021 11:49:28 +0000
+X-MC-Unique: JrkSGbMLN9-FUY2lxHNdvQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 8 Jan 2021 11:49:27 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 8 Jan 2021 11:49:27 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christoph Hellwig' <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: [PATCH 05/11] iov_iter: merge the compat case into
+ rw_copy_check_uvector
+Thread-Topic: [PATCH 05/11] iov_iter: merge the compat case into
+ rw_copy_check_uvector
+Thread-Index: AQHWkCRUvpDO9SBAlU68E+WeFLSma6oeR04A
+Date:   Fri, 8 Jan 2021 11:49:27 +0000
+Message-ID: <7167a94511a84f30b18733d56007a7a5@AcuMS.aculab.com>
+References: <20200921143434.707844-1-hch@lst.de>
+ <20200921143434.707844-6-hch@lst.de>
+In-Reply-To: <20200921143434.707844-6-hch@lst.de>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <829bbba0-d3bb-a114-af81-df7390082958@huawei.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 08-01-21 18:01:52, Xiaoming Ni wrote:
-> On 2021/1/8 17:21, Michal Hocko wrote:
-> > On Fri 08-01-21 10:33:39, Xiaoming Ni wrote:
-> > > The process_sysctl_arg() does not check whether val is empty before
-> > >   invoking strlen(val). If the command line parameter () is incorrectly
-> > >   configured and val is empty, oops is triggered.
-> > > 
-> > > For example, "hung_task_panic=1" is incorrectly written as "hung_task_panic".
-> > > 
-> > > log:
-> > > 	Kernel command line: .... hung_task_panic
-> > > 	....
-> > > 	[000000000000000n] user address but active_mm is swapper
-> > > 	Internal error: Oops: 96000005 [#1] SMP
-> > > 	Modules linked in:
-> > > 	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.10.1 #1
-> > > 	Hardware name: linux,dummy-virt (DT)
-> > > 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO BTYPE=--)
-> > > 	pc : __pi_strlen+0x10/0x98
-> > > 	lr : process_sysctl_arg+0x1e4/0x2ac
-> > > 	sp : ffffffc01104bd40
-> > > 	x29: ffffffc01104bd40 x28: 0000000000000000
-> > > 	x27: ffffff80c0a4691e x26: ffffffc0102a7c8c
-> > > 	x25: 0000000000000000 x24: ffffffc01104be80
-> > > 	x23: ffffff80c22f0b00 x22: ffffff80c02e28c0
-> > > 	x21: ffffffc0109f9000 x20: 0000000000000000
-> > > 	x19: ffffffc0107c08de x18: 0000000000000003
-> > > 	x17: ffffffc01105d000 x16: 0000000000000054
-> > > 	x15: ffffffffffffffff x14: 3030253078413830
-> > > 	x13: 000000000000ffff x12: 0000000000000000
-> > > 	x11: 0101010101010101 x10: 0000000000000005
-> > > 	x9 : 0000000000000003 x8 : ffffff80c0980c08
-> > > 	x7 : 0000000000000000 x6 : 0000000000000002
-> > > 	x5 : ffffff80c0235000 x4 : ffffff810f7c7ee0
-> > > 	x3 : 000000000000043a x2 : 00bdcc4ebacf1a54
-> > > 	x1 : 0000000000000000 x0 : 0000000000000000
-> > > 	Call trace:
-> > > 	 __pi_strlen+0x10/0x98
-> > > 	 parse_args+0x278/0x344
-> > > 	 do_sysctl_args+0x8c/0xfc
-> > > 	 kernel_init+0x5c/0xf4
-> > > 	 ret_from_fork+0x10/0x30
-> > > 	Code: b200c3eb 927cec01 f2400c07 54000301 (a8c10c22)
-> > > 
-> > > Fixes: 3db978d480e2843 ("kernel/sysctl: support setting sysctl parameters
-> > >   from kernel command line")
-> > > Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
-> > 
-> > Thanks for catching this!
-> > 
-> > > ---------
-> > > v2:
-> > >     Added log output of the failure branch based on the review comments of Kees Cook.
-> > > v1: https://lore.kernel.org/lkml/20201224074256.117413-1-nixiaoming@huawei.com/
-> > > ---------
-> > > ---
-> > >   fs/proc/proc_sysctl.c | 5 +++++
-> > >   1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> > > index 317899222d7f..dc1a56515e86 100644
-> > > --- a/fs/proc/proc_sysctl.c
-> > > +++ b/fs/proc/proc_sysctl.c
-> > > @@ -1757,6 +1757,11 @@ static int process_sysctl_arg(char *param, char *val,
-> > >   	loff_t pos = 0;
-> > >   	ssize_t wret;
-> > > +	if (!val) {
-> > > +		pr_err("Missing param value! Expected '%s=...value...'\n", param);
-> > > +		return 0;
-> I may need to move the validation code for val to the end of the validation
-> code for param to prevent non-sysctl arguments from triggering the current
-> print.
+From: Christoph Hellwig <hch@lst.de>
+> Sent: 21 September 2020 15:34
+> 
+> Stop duplicating the iovec verify code, and instead add add a
+> __import_iovec helper that does the whole verify and import, but takes
+> a bool compat to decided on the native or compat layout.  This also
+> ends up massively simplifying the calling conventions.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  lib/iov_iter.c | 195 ++++++++++++++++++-------------------------------
+>  1 file changed, 70 insertions(+), 125 deletions(-)
+> 
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index a64867501a7483..8bfa47b63d39aa 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -10,6 +10,7 @@
+>  #include <net/checksum.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/instrumented.h>
+> +#include <linux/compat.h>
+> 
+>  #define PIPE_PARANOIA /* for now */
+> 
+> @@ -1650,43 +1651,76 @@ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags)
+>  }
+>  EXPORT_SYMBOL(dup_iter);
+> 
+> -static ssize_t rw_copy_check_uvector(int type,
+> -		const struct iovec __user *uvector, unsigned long nr_segs,
+> -		unsigned long fast_segs, struct iovec *fast_pointer,
+> -		struct iovec **ret_pointer)
+> +static int compat_copy_iovecs_from_user(struct iovec *iov,
+> +		const struct iovec __user *uvector, unsigned long nr_segs)
+> +{
+> +	const struct compat_iovec __user *uiov =
+> +		(const struct compat_iovec __user *)uvector;
+> +	unsigned long i;
+> +	int ret = -EFAULT;
+> +
+> +	if (!user_access_begin(uvector, nr_segs * sizeof(*uvector)))
+> +		return -EFAULT;
 
-Why would that matter? A missing value is clearly a error path and it
-should be reported.
+I little bit late, but the above isn't quite right.
+It should be sizeof(*iouv) - the length is double what it should be.
 
-> Or delete the print and keep it silent for a little better performance.
-> Which is better?
+Not that access_ok() can fail for compat addresses
+and the extra length won't matter for architectures that
+need the address/length to open an address hole into userspace.
 
-I do not think there is a performance argument on the table. The generic
-code is returning EINVAL on a missing value where it is needed. Sysctl
-all require a value IIRC so EINVAL would be the right way to report
-this and let the generic code to complain.
+	David
 
--- 
-Michal Hocko
-SUSE Labs
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
