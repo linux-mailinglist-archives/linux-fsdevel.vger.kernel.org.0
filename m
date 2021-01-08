@@ -2,120 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D8EE2EF72A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 19:17:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2DE2EF77C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jan 2021 19:36:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbhAHSQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 13:16:08 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:43920 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbhAHSQH (ORCPT
+        id S1728694AbhAHSfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 13:35:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36722 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbhAHSfR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 13:16:07 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 108HwwOY004690;
-        Fri, 8 Jan 2021 18:15:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=KiTw25sQnwXSQX+0iRD1HBB4uXxJXhd7Tk5XQ9JUJTE=;
- b=gTJvSGLjyueTzS8vgNsV+rpKJmQFk8fY+zb3p5ZDQqfAWD0TXtxr0+zcwpk/Z5f9BG5e
- VwNDwsqFMNUcseD6IEwkpfpSHYOITZNUp5dTFJF3GZJlV0Qbvj5cXNFfUWQ4mhZbb6Kh
- 7t601GM0mXU18dnI2cVo1qytEC2sUIBJA6/fu4DmcG+wxp0PxPmrBAwkqYTHm9KeCfXv
- FqcIB4Ec7M+DYaIHNVo1oCCjPzOaZ1lgAMjgQF/f8urKsNVcjV12MvAhvgmFwrWXDi2x
- SFEINWClUGqtHlOWAU9dapkOdg1gHd2jiFKW+9gf1IC+ZJpceqxWihAQYrpFIpewNTLj zg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 35wcuy2pbg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 08 Jan 2021 18:15:08 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 108I0wFn081682;
-        Fri, 8 Jan 2021 18:15:08 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 35v1fcvpaa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 08 Jan 2021 18:15:08 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 108IF6J1019818;
-        Fri, 8 Jan 2021 18:15:06 GMT
-Received: from [10.159.230.21] (/10.159.230.21)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 08 Jan 2021 18:15:05 +0000
-Subject: Re: [RFC PATCH v3 0/9] fsdax: introduce fs query to support reflink
-To:     Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        dan.j.williams@intel.com, david@fromorbit.com, hch@lst.de,
-        song@kernel.org, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
-        y-goto@fujitsu.com
-References: <20201215121414.253660-1-ruansy.fnst@cn.fujitsu.com>
- <7fc7ba7c-f138-4944-dcc7-ce4b3f097528@oracle.com>
- <a57c44dd-127a-3bd2-fcb3-f1373572de27@cn.fujitsu.com>
- <20201218034907.GG6918@magnolia>
- <16ac8000-2892-7491-26a0-84de4301f168@cn.fujitsu.com>
-From:   Jane Chu <jane.chu@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <f3f93809-ba68-521f-70d8-27f1ba5d0036@oracle.com>
-Date:   Fri, 8 Jan 2021 10:14:58 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Fri, 8 Jan 2021 13:35:17 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B370C0612EA
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jan 2021 10:34:37 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id r3so9945985wrt.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jan 2021 10:34:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=e7pg80uF4hvinD5xxFFdGcoJSnPu6QoAYEa2ANOYIPI=;
+        b=k9iXW073qzdVHb5KwnMYNrVipadScTLAkzyTavptz/upVn+6xi8feToH2HDfzeS0Tz
+         BFmsHk2/QhZVB0BgnpYkgE7FCYvtCMBgJLMz+TdQDLzIIqEqkK6TtB71H/sWT4L+yXE3
+         9OhvYP2Z9pLxTksufQODseq4+C36EXA4oMcQrezkpIZ23z2LBVZpvzcefDF4Z7T9oZPi
+         Zkf+zyOdKEo7BEpCMDvI+yl49xmkE+Ho4Y/sae3/E4pFM4J3kxWK+iwdcMXbf3kxq58I
+         JPm8s2bbBrI0zEtUiGE/hTGQm/HauVbiquh2dKP7aHjUbGN5sMJMniE97mmeC4w9AWqN
+         Cv7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=e7pg80uF4hvinD5xxFFdGcoJSnPu6QoAYEa2ANOYIPI=;
+        b=NXWpnbmATrHouJqda/SpqSNAYpPYEJDVmf4HiubxkQziQ5ACsVAYJVdC7xcksFa9Ts
+         SnztZp2knugM3Bqt2DZsmYqdMR9H8vn5BjQFSxmn5eyDqLVYQkkKzCT5jj51mlD9mO+t
+         bc2l8DemcDMXtHlc3s+MGXHAVwR6HesdwyiH/6rYqfoEtSJ8OUXSoxjApVb7tU2fKDnN
+         q7ZVt+VvEM6DrVDcJ4VvO2FStQM+JuWK+2K9+DT8lJtkTvjTU2NFyXNO6Kbr5CbY98Sc
+         Z76wY+Gvl+1YW7CM0Z5AoHaqtS6wo0LQNkJLr8ovoGxoWV7EwmluOhFLlC99TX84KkHB
+         aRaQ==
+X-Gm-Message-State: AOAM530tIOoEuGad0IfBNWnHUIdQAPaIaUqM8IZVwDt2MS/TxQm3B26C
+        GW/beUxdxldh6CCMOmDMEy4gRE+ODSeNSPycgYY=
+X-Google-Smtp-Source: ABdhPJyKgLy6kRfSVF3lNhi5RoQG/B//IrxEqT8/TJrnQy/aS+skw1HXhaPkO/1lf/x26+oQNEn9c4XJMitJSqQi4RE=
+X-Received: by 2002:a5d:50c3:: with SMTP id f3mr4837750wrt.287.1610130875658;
+ Fri, 08 Jan 2021 10:34:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <16ac8000-2892-7491-26a0-84de4301f168@cn.fujitsu.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9858 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- suspectscore=0 spamscore=0 bulkscore=0 adultscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101080099
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9858 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
- clxscore=1011 spamscore=0 impostorscore=0 priorityscore=1501 mlxscore=0
- adultscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101080099
+Reply-To: mrsdaniella.kyle@yandex.com
+Sender: alfonsoblack2@gmail.com
+Received: by 2002:a05:6000:1811:0:0:0:0 with HTTP; Fri, 8 Jan 2021 10:34:35
+ -0800 (PST)
+From:   Mrs Daniella Kyle <mrsdaniellakyle6@gmail.com>
+Date:   Fri, 8 Jan 2021 10:34:35 -0800
+X-Google-Sender-Auth: P-CECdCIp-no0P9ISq3YQXopDL4
+Message-ID: <CAOzfzms4Y=Yt25_qP4gFhLVSFHoQ1hExfoBFmiYfbF-mxQCEpQ@mail.gmail.com>
+Subject: ATM Visa card compensation, Thanks for your past effort
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Shiyang,
+Hello,
 
-On 12/18/2020 1:13 AM, Ruan Shiyang wrote:
->>>>
->>>> So I tried the patchset with pmem error injection, the SIGBUS payload
->>>> does not look right -
->>>>
->>>> ** SIGBUS(7): **
->>>> ** si_addr(0x(nil)), si_lsb(0xC), si_code(0x4, BUS_MCEERR_AR) **
->>>>
->>>> I expect the payload looks like
->>>>
->>>> ** si_addr(0x7f3672e00000), si_lsb(0x15), si_code(0x4, 
->>>> BUS_MCEERR_AR) **
->>>
->>> Thanks for testing.  I test the SIGBUS by writing a program which calls
->>> madvise(... ,MADV_HWPOISON) to inject memory-failure.  It just shows 
->>> that
->>> the program is killed by SIGBUS.  I cannot get any detail from it.  So,
->>> could you please show me the right way(test tools) to test it?
->>
->> I'm assuming that Jane is using a program that calls sigaction to
->> install a SIGBUS handler, and dumps the entire siginfo_t structure
->> whenever it receives one...
+How are you, hope all is well with you?
 
-Yes, thanks Darrick.
+This message might come to you as surprises, It is a very joyful
+moment for me to share this good news to you today, although i have
+really missed you because you give me the faith to carry on despite
+all that happened,you really brought hope to my hopeless situation
+then, therefore i made a vow to myself that even if we fail to
+complete the transaction together,i must surely still compensate you.
 
-> 
-> OK.  Let me try it and figure out what's wrong in it.
+To be very honest with you, It is a joyful moment for me and my family
+right now, so therefore am using this opportunity to inform you that
+have successfully move to Vietnam where am currently living with my
+business partner who assisted me to complete the transfer, but due to
+the willingness and acceptance you showed during my pain have decided
+to willingly compensated you and show my gratitude to you with these
+sum of $750,000.00 Seven Hundred and fifty Thousand US Dollars).
 
-I injected poison via "ndctl inject-error",  not expecting it made any 
-difference though.
+I want you to accept it as a gift from the bottom of my heart, Have
+issued the check and I instructed the bank to roll the fund on an ATM
+credit card for
+security reasons,you can use the ATM card to withdraw money from any
+ATM machine world wide with a maximum of US$10,000 daily.
 
-Any luck?
+This vow I made to myself about compensating you has been in my mind
+so I am here to fulfill it to you, although I did not tell you what
+was in my mind, my bank account manager said you can receive the card
+and use it anywhere in this global world. Go ahead contact the Global
+ATM Alliance directly with this below information. Email Address:
+..... atmcardroyaldepartment106@outlook.com
 
-thanks,
--jane
+ Name: ........... ....... Global ATM Visa Card Alliance
+Office Address; ...... 01BP 23 Rue Des Grands Moulins.Ouagadougou, Burkina faso
+Email Address: ..... [atmcardroyaldepartment106@outlook.com]
+Name Of Manager In charge: Mrs Zoure Gueratou
 
+Ask the manager to send you the ATM card and the pin code of the ATM
+card that i gave to you as compensation, So feel free and get in
+touched directly with the ATM office and instruct him where to send
+you the ATM card so that you can start to withdraw the money. Please
+do let me know immediately you receive it so that we can share the joy
+of your success.
+
+Presently I am very busy here in Vietnam because of the investment
+projects which I and my new partner are having at hand, I have given
+instructions to the ATM Visa card office on your behalf to release the
+ATM card which I gave to you as compensation. Therefore feel free and
+get in touch with him and he shall send the ATM card for you in order
+for you to start withdrawing the compensation money without delay.
+
+I and my family wish you best of luck in whatever business you shall
+invest this money into. Kindly let me know as soon you received the
+ATM visa card together with the pin code at your disposal.
+
+Thank you
+Yours Sincerely
+Mrs Daniella Kyle
