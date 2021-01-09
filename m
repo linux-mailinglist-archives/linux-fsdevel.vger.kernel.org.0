@@ -2,54 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D77402EFE36
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 07:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CC02EFE3F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 08:22:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbhAIGwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Jan 2021 01:52:39 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10482 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbhAIGwj (ORCPT
+        id S1726068AbhAIHUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Jan 2021 02:20:49 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:39607 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbhAIHUt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Jan 2021 01:52:39 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DCVwv0Y6mzj4cp;
-        Sat,  9 Jan 2021 14:50:55 +0800 (CST)
-Received: from [10.174.176.235] (10.174.176.235) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.498.0; Sat, 9 Jan 2021 14:51:50 +0800
-Subject: Re: [PATCH] syscalls: add comments show the define file for aio
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>
-References: <20210109031416.1375292-1-yangerkun@huawei.com>
- <20210109045848.GS3579531@ZenIV.linux.org.uk>
-From:   yangerkun <yangerkun@huawei.com>
-Message-ID: <d8c556cc-bbfd-16df-61ee-3a8dc6a0c012@huawei.com>
-Date:   Sat, 9 Jan 2021 14:51:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Sat, 9 Jan 2021 02:20:49 -0500
+Received: by mail-il1-f197.google.com with SMTP id f2so12450228ils.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jan 2021 23:20:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=pwlzMsvPhHWdCYhkogMUXxJRp4tYIVlfkKGPQ7+nxL0=;
+        b=PpFUFSsM+5gOiI5iRtLV2+Q+VbX09LRkcM2H1vRn+0dr9zYDBkdpzy6Tm9NIfcARGy
+         f01AxApZbo66nfWeY0B8YuODq0kF3y0GXmxu3+F+xzIMX5OlLHgw+HmYRhC27QRUAo9L
+         /xibOu8OYleaPpRgB1zQdz52y2VTmNf+x1POhhBDbTfOUklldrTnzaFt7IFlld2kAzgk
+         yGodd7sa1OKKeZKG6qGbBEqBgxjanudV3skMPBEGhBNcZiqsmeAMJrglkl6J8iAkrRue
+         7kFm9h2y+WsmLTSxDuL+jYB5++5xLndmoai+1WhJel3WA1S1KDBMHmhYf08/gyZbZLBV
+         53TA==
+X-Gm-Message-State: AOAM533mHjmsO/YhJCsORahKM3V2xambEp6ZUG69xrEtq6i+yJGzd7o4
+        yVl6Z3yChwGZ2C+kt58qtBK+pr95nRLKBHvUVCthnESaew76
+X-Google-Smtp-Source: ABdhPJwA+Mc5PFaC0yCPB3v9+L1044sATU8eG2faM5z6IFbIQfEP8SliAOyimFLXQ8J471KSRH0b3iip2QE9qZrE/Flj+Aslg+9g
 MIME-Version: 1.0
-In-Reply-To: <20210109045848.GS3579531@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.176.235]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a05:6602:93:: with SMTP id h19mr8312686iob.59.1610176808615;
+ Fri, 08 Jan 2021 23:20:08 -0800 (PST)
+Date:   Fri, 08 Jan 2021 23:20:08 -0800
+In-Reply-To: <000000000000b0bbc905b05ab8d5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b4098905b872801e@google.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in __lookup_slow
+From:   syzbot <syzbot+3db80bbf66b88d68af9d@syzkaller.appspotmail.com>
+To:     jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rkovhaev@gmail.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+syzbot suspects this issue was fixed by commit:
 
+commit d24396c5290ba8ab04ba505176874c4e04a2d53c
+Author: Rustam Kovhaev <rkovhaev@gmail.com>
+Date:   Sun Nov 1 14:09:58 2020 +0000
 
-ÔÚ 2021/1/9 12:58, Al Viro Ð´µÀ:
-> On Sat, Jan 09, 2021 at 11:14:16AM +0800, yangerkun wrote:
->> fs/aio.c define the syscalls for aio.
->>
->> Signed-off-by: yangerkun <yangerkun@huawei.com>
-> 
-> That (and the next patch) really ought to go to Arnd - I've very little
-> to do with the unistd.h machinery.
-> .
+    reiserfs: add check for an invalid ih_entry_count
 
-Thanks! Will resend patch to Arnd!
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=111480e7500000
+start commit:   a68a0262 mm/madvise: remove racy mm ownership check
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e597c2b53c984cd8
+dashboard link: https://syzkaller.appspot.com/bug?extid=3db80bbf66b88d68af9d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1737b8a7500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1697246b500000
 
-> 
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: reiserfs: add check for an invalid ih_entry_count
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
