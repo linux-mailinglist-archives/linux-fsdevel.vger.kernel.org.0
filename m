@@ -2,121 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B1052EFE9F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 09:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B443D2EFEFF
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 11:44:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbhAII36 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Jan 2021 03:29:58 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:39498 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbhAII35 (ORCPT
+        id S1726154AbhAIKo3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Jan 2021 05:44:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53760 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbhAIKo3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Jan 2021 03:29:57 -0500
-Received: by mail-il1-f198.google.com with SMTP id f2so12554891ils.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Jan 2021 00:29:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=eqtHRI6EKHUkmqQpqzOZc2xRSvZjjEKnnJC+bZZCVOE=;
-        b=d2tQw5gXu+r3HnNnC7X7Ul0a76Oc6uOXUQ9RN/zmn5ns5tTv0nHQPBB6kj6TdlQQot
-         /PlKK801rsMnEra5iubSrZMWs/cA3Kqke5LtHbT3G3BW1Z1bcI4pIO3WHtDWOLOTEpdx
-         PJ3uS98XFiVRsFfDTrBu0Fqg8S87k3KbP9SBjbqvbY3Vg9jNuCnsWiYe2uwCWKpNEahB
-         vIPNCeYSvnARPM8rfFYJKlVrC/aNV9ZKf4ykyqishF5pUpuZV6qqYvrpHTFLhXwnK766
-         qqNZGP5nEM+HfXx+9LrfBTry3F6ouHwjpTkIxX4QulPLRZIiOm9euN5HVnCa8GP9OAeH
-         poxQ==
-X-Gm-Message-State: AOAM532k56T0q8Rqns0sbrp4fWfVNf8tPUB2UOwuEZUXl6IajUASv9yZ
-        LqtvDP9WsEHDkfIWC+48kANnInXpTJonDWP4ZF6Y6IraKlqA
-X-Google-Smtp-Source: ABdhPJyh94sxj0bQ8Vfsp8SY9JlbFRV5dPMTRzYKd61C12qMqS34mLDJe/vbgvaH6HXqdEPLvIbmmQIJvUezoBwXoNoq8XsqBmHi
+        Sat, 9 Jan 2021 05:44:29 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA36C061786
+        for <linux-fsdevel@vger.kernel.org>; Sat,  9 Jan 2021 02:43:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=v6VNlgGujWfNpG+8/JqqgvRUX4
+        PegDGmvO7TiYsxohtLfDDDGlt+ASwBWucJUIXr5UbvoUESt+OJqTP2Ulk9mjOTm6r6AzJEwhgjOxh
+        vEYse1kyMChSPsGn/MDeEskP3AmJK9I900p8b4Gk9ciLYlh427c2z4eKCIyqF6Cr/1Xpe6wIbZa3O
+        5IDGQLog6ppmz/8YQE85WoA9kIoqAewZdBgGMPB9sCyr3xTBhTDVxhTjEovDkgIN17OrvJhcKBZ36
+        Ktq46hxce1Dh9Fz4+M8Bw71Q+tL2nLUUL7YgFpaeuG+2yQXBJi9jQoQapzrv1nspY7Yld9RrbxgPJ
+        EA5AOSUQ==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1kyBha-000Ssz-Rt; Sat, 09 Jan 2021 10:42:48 +0000
+Date:   Sat, 9 Jan 2021 10:42:34 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jens Axboe <axboe@kernel.dk>, Maxim Levitsky <mlevitsk@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH] bdev: Do not return EBUSY if bdev discard races with
+ write
+Message-ID: <20210109104234.GA109579@infradead.org>
+References: <20210107154034.1490-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8e05:: with SMTP id a5mr8282357ion.133.1610180956411;
- Sat, 09 Jan 2021 00:29:16 -0800 (PST)
-Date:   Sat, 09 Jan 2021 00:29:16 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ee606405b873772a@google.com>
-Subject: general protection fault in io_sqe_files_unregister
-From:   syzbot <syzbot+9ec0395bc17f2b1e3cc1@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210107154034.1490-1-jack@suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Looks good,
 
-syzbot found the following issue on:
-
-HEAD commit:    71c061d2 Merge tag 'for-5.11-rc2-tag' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ec3f67500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8aa30b9da402d224
-dashboard link: https://syzkaller.appspot.com/bug?extid=9ec0395bc17f2b1e3cc1
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9ec0395bc17f2b1e3cc1@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 9107 Comm: syz-executor.2 Not tainted 5.11.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__list_add include/linux/list.h:71 [inline]
-RIP: 0010:list_add_tail include/linux/list.h:100 [inline]
-RIP: 0010:io_sqe_files_set_node fs/io_uring.c:7243 [inline]
-RIP: 0010:io_sqe_files_unregister+0x42a/0x770 fs/io_uring.c:7279
-Code: 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 07 03 00 00 4c 89 ea 4c 89 ad 88 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 02 00 00 49 8d 7f 18 48 8d 85 80 00 00 00 48
-RSP: 0018:ffffc9000982fcf8 EFLAGS: 00010247
-RAX: dffffc0000000000 RBX: ffff88814763fe90 RCX: ffffc9000d28d000
-RDX: 0000000000000000 RSI: ffffffff81d82695 RDI: 0000000000000003
-RBP: ffff88814763fe00 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff81d82684 R11: 0000000000000000 R12: 00000000fffffffc
-R13: 0000000000000004 R14: ffff88814763fe80 R15: fffffffffffffff4
-FS:  00007f6532203700(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200000d8 CR3: 0000000014ad5000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __io_uring_register fs/io_uring.c:9916 [inline]
- __do_sys_io_uring_register+0x1185/0x4080 fs/io_uring.c:10000
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45e219
-Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f6532202c68 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 0000000000000007 RCX: 000000000045e219
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000003
-RBP: 00007f6532202ca0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00000000016afb5f R14: 00007f65322039c0 R15: 000000000119bf8c
-Modules linked in:
----[ end trace 6e4aada9e44ca3d1 ]---
-RIP: 0010:__list_add include/linux/list.h:71 [inline]
-RIP: 0010:list_add_tail include/linux/list.h:100 [inline]
-RIP: 0010:io_sqe_files_set_node fs/io_uring.c:7243 [inline]
-RIP: 0010:io_sqe_files_unregister+0x42a/0x770 fs/io_uring.c:7279
-Code: 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 07 03 00 00 4c 89 ea 4c 89 ad 88 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 02 00 00 49 8d 7f 18 48 8d 85 80 00 00 00 48
-RSP: 0018:ffffc9000982fcf8 EFLAGS: 00010247
-RAX: dffffc0000000000 RBX: ffff88814763fe90 RCX: ffffc9000d28d000
-RDX: 0000000000000000 RSI: ffffffff81d82695 RDI: 0000000000000003
-RBP: ffff88814763fe00 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff81d82684 R11: 0000000000000000 R12: 00000000fffffffc
-R13: 0000000000000004 R14: ffff88814763fe80 R15: fffffffffffffff4
-FS:  00007f6532203700(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200000d8 CR3: 0000000014ad5000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
