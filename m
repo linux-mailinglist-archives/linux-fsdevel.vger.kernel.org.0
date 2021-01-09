@@ -2,104 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C91872EFE6B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 09:00:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8432EFE75
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 09:00:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbhAIIAY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Jan 2021 03:00:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40942 "EHLO mail.kernel.org"
+        id S1726620AbhAIIAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Jan 2021 03:00:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbhAIIAY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Jan 2021 03:00:24 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A4A01238E8;
+        id S1726283AbhAIIAZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 9 Jan 2021 03:00:25 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F40B223A5A;
         Sat,  9 Jan 2021 07:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610179183;
-        bh=ACg45O7fwl+jjbSXOKOgmB8S7GJDMNFMcVb39xwXyqc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FUWwrKFxWbAldpKEGaeqArDF0GOisvWQyMA+9vwJkP4Bic2Uq485vNk3j8Xmtjzlu
-         4w/JNw6y22kZM6y+CvSS2vYHcsLC/LJ/N3mrIpb2Q0SsiAvgn/0KYmchTVoOf6aJAq
-         8vjVL2EEds2Iu/85xLzmecooyeyTMqUVpiZ/381FY3dgeNMe2M1GbuYGZp6wa0eIx6
-         /e8aOB7P2P1kY2v/z4a32ovGbtqrFPUp1xeZ/NvOuu+tbD6FOvKAC920ny3Z1ky7mV
-         RKnk6udMZy//aHEjWPnP6Lze4YLCscFq1/SlorEcOsou3Pl0TSpc+j2oHB51vPRerl
-         BcgHHVXXR3CVw==
+        s=k20201202; t=1610179184;
+        bh=1rb2w5b9UOxpC3OxzW9+QP89tf5CQ3zdJFICcmtU3TU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XU4zvhFa1Zu0ptpTjjqYS8ozs0xKWCB+TFS9gf093u1w81EM6X7h4H2qdOLWWE/Zw
+         r+r9r2d75JEO0osibm5OsbqFmeQmEqBGWvhnpseMYlYerw5gwllg0QNPOS4+Q9hW/f
+         HKKhlNjA4ZPIQzThQLG/YuHu4L1Ebkk/l/dBh/J8etQSQbebHTKWWNsLFs6LtoezSt
+         ho9FJkzPYfpY2XMJztYi1ku80+d+uD5YnAV8uK/wXxExhklYJG3IPrW6K+dYgwv629
+         NQe9UrO7uxQvrNkuOJCJNS6jL+Kqf0yVhY8L66xdn563eD2OVRY1r8x4DyCAWAVSnR
+         OSKnQsiESAarw==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
-        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 00/12] lazytime fix and cleanups
-Date:   Fri,  8 Jan 2021 23:58:51 -0800
-Message-Id: <20210109075903.208222-1-ebiggers@kernel.org>
+        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: [PATCH v2 01/12] fs: fix lazytime expiration handling in __writeback_single_inode()
+Date:   Fri,  8 Jan 2021 23:58:52 -0800
+Message-Id: <20210109075903.208222-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210109075903.208222-1-ebiggers@kernel.org>
+References: <20210109075903.208222-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+From: Eric Biggers <ebiggers@google.com>
 
-Patch 1 fixes a bug in how __writeback_single_inode() handles lazytime
-expirations.  I originally reported this last year
-(https://lore.kernel.org/r/20200306004555.GB225345@gmail.com) because it
-causes the FS_IOC_REMOVE_ENCRYPTION_KEY ioctl to not work properly, as
-the bug causes inodes to remain dirty after a sync.
+When lazytime is enabled and an inode is being written due to its
+in-memory updated timestamps having expired, either due to a sync() or
+syncfs() system call or due to dirtytime_expire_interval having elapsed,
+the VFS needs to inform the filesystem so that the filesystem can copy
+the inode's timestamps out to the on-disk data structures.
 
-It also turns out that lazytime on XFS is partially broken because it
-doesn't actually write timestamps to disk after a sync() or after
-dirtytime_expire_interval.  This is fixed by the same fix.
+This is done by __writeback_single_inode() calling
+mark_inode_dirty_sync(), which then calls ->dirty_inode(I_DIRTY_SYNC).
 
-This supersedes previously proposed fixes, including
-https://lore.kernel.org/r/20200307020043.60118-1-tytso@mit.edu and
-https://lore.kernel.org/r/20200325122825.1086872-3-hch@lst.de from last
-year (which had some issues and didn't fix the XFS bug), and v1 of this
-patchset which took a different approach
-(https://lore.kernel.org/r/20210105005452.92521-1-ebiggers@kernel.org).
+However, this occurs after __writeback_single_inode() has already
+cleared the dirty flags from ->i_state.  This causes two bugs:
 
-Patches 2-12 then clean up various things related to lazytime and
-writeback, such as clarifying the semantics of ->dirty_inode() and the
-inode dirty flags, and improving comments.  Most of these patches could
-be applied independently if needed.
+- mark_inode_dirty_sync() redirties the inode, causing it to remain
+  dirty.  This wastefully causes the inode to be written twice.  But
+  more importantly, it breaks cases where sync_filesystem() is expected
+  to clean dirty inodes.  This includes the FS_IOC_REMOVE_ENCRYPTION_KEY
+  ioctl (as reported at
+  https://lore.kernel.org/r/20200306004555.GB225345@gmail.com), as well
+  as possibly filesystem freezing (freeze_super()).
 
-This patchset applies to v5.11-rc2.
+- Since ->i_state doesn't contain I_DIRTY_TIME when ->dirty_inode() is
+  called from __writeback_single_inode() for lazytime expiration,
+  xfs_fs_dirty_inode() ignores the notification.  (XFS only cares about
+  lazytime expirations, and it assumes that I_DIRTY_TIME will contain
+  i_state during those.)  Therefore, lazy timestamps aren't persisted by
+  sync(), syncfs(), or dirtytime_expire_interval on XFS.
 
-Changed since v1:
-  - Switched to the fix suggested by Jan Kara, and dropped the
-    patches which introduced ->lazytime_expired().
-  - Fixed bugs in the fat and ext4 patches.
-  - Added patch "fs: improve comments for writeback_single_inode()".
-  - Reordered the patches a bit.
-  - Added Reviewed-by's.
+Fix this by moving the call to mark_inode_dirty_sync() to earlier in
+__writeback_single_inode(), before the dirty flags are cleared from
+i_state.  This makes filesystems be properly notified of the timestamp
+expiration, and it avoids incorrectly redirtying the inode.
 
-Eric Biggers (12):
-  fs: fix lazytime expiration handling in __writeback_single_inode()
-  fs: correctly document the inode dirty flags
-  fs: only specify I_DIRTY_TIME when needed in generic_update_time()
-  fat: only specify I_DIRTY_TIME when needed in fat_update_time()
-  fs: don't call ->dirty_inode for lazytime timestamp updates
-  fs: pass only I_DIRTY_INODE flags to ->dirty_inode
-  fs: clean up __mark_inode_dirty() a bit
-  fs: drop redundant check from __writeback_single_inode()
-  fs: improve comments for writeback_single_inode()
-  gfs2: don't worry about I_DIRTY_TIME in gfs2_fsync()
-  ext4: simplify i_state checks in __ext4_update_other_inode_time()
-  xfs: remove a stale comment from xfs_file_aio_write_checks()
+This fixes xfstest generic/580 (which tests
+FS_IOC_REMOVE_ENCRYPTION_KEY) when run on ext4 or f2fs with lazytime
+enabled.  It also fixes the new lazytime xfstest I've proposed, which
+reproduces the above-mentioned XFS bug
+(https://lore.kernel.org/r/20210105005818.92978-1-ebiggers@kernel.org).
 
- Documentation/filesystems/vfs.rst |   5 +-
- fs/ext4/inode.c                   |  20 +----
- fs/f2fs/super.c                   |   3 -
- fs/fat/misc.c                     |  23 +++---
- fs/fs-writeback.c                 | 132 +++++++++++++++++-------------
- fs/gfs2/file.c                    |   4 +-
- fs/gfs2/super.c                   |   2 -
- fs/inode.c                        |  38 +++++----
- fs/xfs/xfs_file.c                 |   6 --
- include/linux/fs.h                |  18 ++--
- 10 files changed, 132 insertions(+), 119 deletions(-)
+Alternatively, we could call ->dirty_inode(I_DIRTY_SYNC) directly.  But
+due to the introduction of I_SYNC_QUEUED, mark_inode_dirty_sync() is the
+right thing to do because mark_inode_dirty_sync() now knows not to move
+the inode to a writeback list if it is currently queued for sync.
 
+Fixes: 0ae45f63d4ef ("vfs: add support for a lazytime mount option")
+Cc: stable@vger.kernel.org
+Depends-on: 5afced3bf281 ("writeback: Avoid skipping inode writeback")
+Suggested-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/fs-writeback.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-base-commit: e71ba9452f0b5b2e8dc8aa5445198cd9214a6a62
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index acfb55834af23..c41cb887eb7d3 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1474,21 +1474,25 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+ 	}
+ 
+ 	/*
+-	 * Some filesystems may redirty the inode during the writeback
+-	 * due to delalloc, clear dirty metadata flags right before
+-	 * write_inode()
++	 * If the inode has dirty timestamps and we need to write them, call
++	 * mark_inode_dirty_sync() to notify the filesystem about it and to
++	 * change I_DIRTY_TIME into I_DIRTY_SYNC.
+ 	 */
+-	spin_lock(&inode->i_lock);
+-
+-	dirty = inode->i_state & I_DIRTY;
+ 	if ((inode->i_state & I_DIRTY_TIME) &&
+-	    ((dirty & I_DIRTY_INODE) ||
+-	     wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
++	    (wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
+ 	     time_after(jiffies, inode->dirtied_time_when +
+ 			dirtytime_expire_interval * HZ))) {
+-		dirty |= I_DIRTY_TIME;
+ 		trace_writeback_lazytime(inode);
++		mark_inode_dirty_sync(inode);
+ 	}
++
++	/*
++	 * Some filesystems may redirty the inode during the writeback
++	 * due to delalloc, clear dirty metadata flags right before
++	 * write_inode()
++	 */
++	spin_lock(&inode->i_lock);
++	dirty = inode->i_state & I_DIRTY;
+ 	inode->i_state &= ~dirty;
+ 
+ 	/*
+@@ -1509,8 +1513,6 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+ 
+ 	spin_unlock(&inode->i_lock);
+ 
+-	if (dirty & I_DIRTY_TIME)
+-		mark_inode_dirty_sync(inode);
+ 	/* Don't write the inode if only I_DIRTY_PAGES was set */
+ 	if (dirty & ~I_DIRTY_PAGES) {
+ 		int err = write_inode(inode, wbc);
 -- 
 2.30.0
 
