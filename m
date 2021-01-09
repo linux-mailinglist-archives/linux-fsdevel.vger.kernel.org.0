@@ -2,64 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24B2B2F01F4
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 18:03:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF0DC2F0200
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 18:04:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726195AbhAIRBp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Jan 2021 12:01:45 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:55707 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbhAIRBp (ORCPT
+        id S1726294AbhAIREm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Jan 2021 12:04:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbhAIREm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Jan 2021 12:01:45 -0500
-Received: by mail-il1-f198.google.com with SMTP id c13so13256932ilg.22
-        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Jan 2021 09:01:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=TKUoXu927qEWQVV5Epbyzc7Ss7cy0HmJolu4+tIMmUI=;
-        b=FPXffV6d6gy6Ux94t9GnWY/p9hcX+j7gVEfDd9hCc4VHkDoPUaPZq7Gd/Rs8vSt+DW
-         FMk6M9PzRq6WxLXmuIYraZOl+jjYWyVz+0yM3JeJ6LjYoKOjkc9h1jGTz05gnazHUmSc
-         7a2ojmsg2DfmqZAwMfkakVZPUYR8u7O+OcrPXNBwK6Mz/nvq1AtqChLmt8ze7SA3xqNB
-         Lvg/B9FeLq1RCYaW7P34NJHyy5ucTogImSh/r10jfPHMH9xGuqQjD7F+PxwkNuCcQTSk
-         I94YvgQF6dbkRJU8lK/5t8fpEnH5RUp/cZ2fuZWPVAEmPCNAYP9TOs6EnCACyOr74rYm
-         QOIA==
-X-Gm-Message-State: AOAM53087cYm4aA8HOnKWWSmhQC/Q0BkzDRBnx26LeI/2/8Ro1laK0aF
-        U7WwAMmLif3U3BJIO0s8pE+clLVvywuNVNiUI2rSFtySsYzu
-X-Google-Smtp-Source: ABdhPJwpCDQCauEE8T5RinO+sglwtX2Wf03+cIUORnl4QvxsgoLfN20TgVTsEVpOZ5X7+qwp6ZSWudIC7bxQVULggumWU5sdTQq8
+        Sat, 9 Jan 2021 12:04:42 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B661C061786;
+        Sat,  9 Jan 2021 09:04:02 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kyHeh-008iFa-1l; Sat, 09 Jan 2021 17:03:59 +0000
+Date:   Sat, 9 Jan 2021 17:03:59 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iov_iter: optimise iter type checking
+Message-ID: <20210109170359.GT3579531@ZenIV.linux.org.uk>
+References: <a8cdb781384791c30e30036aced4c027c5dfea86.1605969341.git.asml.silence@gmail.com>
+ <6e795064-fdbd-d354-4b01-a4f7409debf5@gmail.com>
+ <54cd4d1b-d7ec-a74c-8be0-e48780609d56@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:63cd:: with SMTP id j196mr8221257jac.61.1610211664742;
- Sat, 09 Jan 2021 09:01:04 -0800 (PST)
-Date:   Sat, 09 Jan 2021 09:01:04 -0800
-In-Reply-To: <06c3d80d-eb09-5cda-e0bf-862400d02433@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004a4ef105b87a9e10@google.com>
-Subject: Re: BUG: unable to handle kernel paging request in percpu_ref_exit
-From:   syzbot <syzbot+99ed55100402022a6276@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54cd4d1b-d7ec-a74c-8be0-e48780609d56@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sat, Jan 09, 2021 at 04:09:08PM +0000, Pavel Begunkov wrote:
+> On 06/12/2020 16:01, Pavel Begunkov wrote:
+> > On 21/11/2020 14:37, Pavel Begunkov wrote:
+> >> The problem here is that iov_iter_is_*() helpers check types for
+> >> equality, but all iterate_* helpers do bitwise ands. This confuses
+> >> compilers, so even if some cases were handled separately with
+> >> iov_iter_is_*(), corresponding ifs in iterate*() right after are not
+> >> eliminated.
+> >>
+> >> E.g. iov_iter_npages() first handles discards, but iterate_all_kinds()
+> >> still checks for discard iter type and generates unreachable code down
+> >> the line.
+> > 
+> > Ping. This one should be pretty simple
+> 
+> Ping please. Any doubts about this patch?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Sorry, had been buried in other crap.  I'm really not fond of the
+bitmap use; if anything, I would rather turn iterate_and_advance() et.al.
+into switches...
 
-Reported-and-tested-by: syzbot+99ed55100402022a6276@syzkaller.appspotmail.com
+How about moving the READ/WRITE part into MSB?  Checking is just as fast
+(if not faster - check for sign vs. checking bit 0).  And turn the
+types into straight (dense) enum.
 
-Tested on:
+Almost all iov_iter_rw() callers have the form (iov_iter_rw(iter) == READ) or
+(iov_iter_rw(iter) == WRITE).  Out of 50-odd callers there are 5 nominal
+exceptions:
+fs/cifs/smbdirect.c:1936:                        iov_iter_rw(&msg->msg_iter));
+fs/exfat/inode.c:442:   int rw = iov_iter_rw(iter);
+fs/f2fs/data.c:3639:    int rw = iov_iter_rw(iter);
+fs/f2fs/f2fs.h:4082:    int rw = iov_iter_rw(iter);
+fs/f2fs/f2fs.h:4092:    int rw = iov_iter_rw(iter);
 
-commit:         d9d05217 io_uring: stop SQPOLL submit on creator's death
-git tree:       git://git.kernel.dk/linux-block
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2455d075a1c4afa8
-dashboard link: https://syzkaller.appspot.com/bug?extid=99ed55100402022a6276
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+The first one is debugging printk
+        if (iov_iter_rw(&msg->msg_iter) == WRITE) {
+                /* It's a bug in upper layer to get there */
+                cifs_dbg(VFS, "Invalid msg iter dir %u\n",
+                         iov_iter_rw(&msg->msg_iter));
+                rc = -EINVAL;
+                goto out;
+        }
+and if you look at the condition, the quality of message is
+underwhelming - "Data source msg iter passed by caller" would
+be more informative.
 
-Note: testing is done by a robot and is best-effort only.
+Other 4...  exfat one is
+        if (rw == WRITE) {
+...
+	}
+...
+        if (ret < 0 && (rw & WRITE))
+                exfat_write_failed(mapping, size);
+IOW, doing
+	bool is_write = iov_iter_rw(iter) == WRITE;
+would be cleaner.  f2fs.h ones are
+	int rw = iov_iter_rw(iter);
+	....
+	if (.... && rw == WRITE ...
+so they are of the same sort (assuming we want that local
+variable in the first place).
+
+f2fs/data.c is the least trivial - it includes things like
+                if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
+and considering the amount of other stuff done there,
+I would suggest something like
+	int rw = is_data_source(iter) ? WRITE : READ;
+
+I'll dig myself from under ->d_revalidate() code review, look
+through the iov_iter-related series and post review, hopefully
+by tonight.
