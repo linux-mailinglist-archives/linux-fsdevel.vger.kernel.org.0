@@ -2,62 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 193492EFCE2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 02:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FBE82EFD06
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jan 2021 03:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbhAIBuu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jan 2021 20:50:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40294 "EHLO mail.kernel.org"
+        id S1726899AbhAICHJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jan 2021 21:07:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbhAIBuu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jan 2021 20:50:50 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 282C52399C;
-        Sat,  9 Jan 2021 01:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1610157009;
-        bh=z7UqMVFYSJxdzVLfXg8lbRyvre2vUdZj4dWLmneULJ0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GwP6pSnTvoUY/yBfJMkk4z9bp7cALDgm/YU+jIg/Eon/3Xka/h3LqLuWTZxiODkDo
-         MFnFkoFBKFNtrr+0i3ng7g6gtVRfTrbDniojusqOiVAUSuoY/+5WVlIgzh7nwy3l8Q
-         UwWQEjXrEJW2LEXeUD1nYsUEmDolAmkofFE6WDZ0=
-Date:   Fri, 8 Jan 2021 17:50:08 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        linux-kernel@vger.kernel.org, mcgrof@kernel.org,
-        yzaikin@google.com, adobriyan@gmail.com,
-        linux-fsdevel@vger.kernel.org, vbabka@suse.cz, wangle6@huawei.com
-Subject: Re: [PATCH v2] proc_sysctl: fix oops caused by incorrect command
- parameters.
-Message-Id: <20210108175008.da3c60a6e402f5f1ddab2a65@linux-foundation.org>
-In-Reply-To: <20210108201025.GA17019@dhcp22.suse.cz>
-References: <20210108023339.55917-1-nixiaoming@huawei.com>
-        <20210108092145.GX13207@dhcp22.suse.cz>
-        <829bbba0-d3bb-a114-af81-df7390082958@huawei.com>
-        <20210108114718.GA13207@dhcp22.suse.cz>
-        <202101081152.0CB22390@keescook>
-        <20210108201025.GA17019@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726877AbhAICHH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 8 Jan 2021 21:07:07 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 9D99023AC6;
+        Sat,  9 Jan 2021 02:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610157966;
+        bh=XgNBcMcH2z2Okn0EaX7+WrGAUoX1VY2CbTGv1/zD4fc=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=ZCnab758G70YJcmZYvmnMe5c4IDS6eNdEkMw2cczaslqaAEOYW0haGjGlsC4phc91
+         FsDVyJ51vr+MClauPyzeA7Bc8VwXh7eKysPbDEEa3vV6Z1HpdhePkKDuUbS/GCskvV
+         BMOHA9lw1AppN2pDglV5nxLlh0/BB4ZvqhcwOvL0u1xvRU7Uyph9p/sg0dEHp+q4DS
+         Uc520LcK+oXg7JFvMxIICYQbFM3c9yGNl703shJgmwab+D7tThLFf0/J2lZcOUpuwt
+         gpxb6DLBQIty5y8yTqinHLVUJ4VKbJyVMDRsRW9LOMdEouCM9cvK+vhH1oWqmXzJ7B
+         6BAyMIHvU8H7g==
+Received: from pdx-korg-docbuild-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-1.ci.codeaurora.org (Postfix) with ESMTP id 8E5F260077;
+        Sat,  9 Jan 2021 02:06:06 +0000 (UTC)
+Subject: Re: [GIT PULL] zonefs fixes for 5.11-rc3
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210109002841.941893-1-damien.lemoal@wdc.com>
+References: <20210109002841.941893-1-damien.lemoal@wdc.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210109002841.941893-1-damien.lemoal@wdc.com>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.11-rc3
+X-PR-Tracked-Commit-Id: 4f8b848788f77c7f5c3bd98febce66b7aa14785f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 996e435fd401de35df62ac943ab9402cfe85c430
+Message-Id: <161015796651.28077.12964165452282999200.pr-tracker-bot@kernel.org>
+Date:   Sat, 09 Jan 2021 02:06:06 +0000
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 8 Jan 2021 21:10:25 +0100 Michal Hocko <mhocko@suse.com> wrote:
+The pull request you sent on Sat,  9 Jan 2021 09:28:41 +0900:
 
-> > > Why would that matter? A missing value is clearly a error path and it
-> > > should be reported.
-> > 
-> > This test is in the correct place. I think it's just a question of the
-> > return values.
-> 
-> I was probably not clear. The test for val is at the right place. I
-> would just expect -EINVAL and have the generic code to report.
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.11-rc3
 
-It does seem a bit screwy that process_sysctl_arg() returns zero in all
-situations (parse_args() is set up to handle an error return from it). 
-But this patch is consistent with all the other error handling in
-process_sysctl_arg().
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/996e435fd401de35df62ac943ab9402cfe85c430
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
