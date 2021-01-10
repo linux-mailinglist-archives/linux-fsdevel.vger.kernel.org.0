@@ -2,150 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4FD2F0643
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Jan 2021 11:08:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 665D32F0690
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Jan 2021 12:14:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbhAJKEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Jan 2021 05:04:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41262 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbhAJKEq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Jan 2021 05:04:46 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2B1C06179F
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Jan 2021 02:04:04 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id w1so20411297ejf.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Jan 2021 02:04:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ntHLah0q+SvwKSjeDWR+MVFLLttqY1N89uUPbqPMpiA=;
-        b=ZGwx+oiiGqvNDB+EaNh7KH6pXXDJEN6Q1ZH/kdatn05h3TURc1jdAQPJK2Hd1dt3y9
-         oX9qanMfO/pXUBOO5CoyFgf6lRFCoVfxQ3mFPJHZnlvUdkDjlt0GIj245r6osobCwOlt
-         rV7pJn8gsCpRiAAnmMLALjrtwokfqMai7FP927XnZ5UzVr16916CyigDjon5TNvYTytQ
-         cn9l6tUn9hlp6zO8JVbySRHAx75MxIw0hNpWAiOdFrdHTMSmNqGtIFyqUALoWPUJdkEf
-         eeYy6crslJzT0GNwXexlvaM5HjhSavw0e4FhTYttSXZE+kdUSJspWEvV5UqgUW+OpJNe
-         OdgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ntHLah0q+SvwKSjeDWR+MVFLLttqY1N89uUPbqPMpiA=;
-        b=IZBHEa5lQdEu0uXDrPZuCPm0iD9mCe/xD0OjWiB2j3xRGaOl2bgWxhe1d/lMnG8KIx
-         kvuSWKlTXggeLN+7qEhxCbYKYxEBi2B7ivpWAZR5Jb1f1TZfkJpgg3WeVAXdFrBIXME6
-         Te5ZYksn2O/LulmaZWqYdzoOG3vRtWk2qhRhrGBqQrW5WqMtWJq8uI5Qt+GJs7a0XYW1
-         lifbmeJujh79qRgpdj8R91D5NTqvfFra/PkJ0GX/QS9KxF32YoDMCAbg7RvP3+t1G3Ag
-         Do4hcEJ//4pT/tBEgbYJYfzi48L6rHy1NlJfRgDvuXZO/WvmwKtIBnUloSxZR7Cwhw2Q
-         4fTg==
-X-Gm-Message-State: AOAM5307tZX95RPBfJ+eqGTrH76dbFpQTMO9whg6YoGISoTD3u6bIZ21
-        fYbgwPp9EBKh1rNmnfQfAChhnkc3Fmpt7VQrfZkJ
-X-Google-Smtp-Source: ABdhPJxxW/yAqeYuRuPessHdacKwHtFahI0Eg6d90J6rPXonweRKhqtq6PPHcOf9f2M6pT+y8/HK7s5rhlXTDDVOoNY=
-X-Received: by 2002:a17:907:1629:: with SMTP id hb41mr7211587ejc.197.1610273043284;
- Sun, 10 Jan 2021 02:04:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20201222145221.711-1-xieyongji@bytedance.com> <20201222145221.711-7-xieyongji@bytedance.com>
- <f8dcb8d0-0024-1f78-d1a7-e487ca3deda7@oracle.com>
-In-Reply-To: <f8dcb8d0-0024-1f78-d1a7-e487ca3deda7@oracle.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Sun, 10 Jan 2021 18:03:52 +0800
-Message-ID: <CACycT3u859hX5ChcxVS2EMmF4-vu5H+io_CcNWSKaN8NFA9cXg@mail.gmail.com>
-Subject: Re: Re: [RFC v2 06/13] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Bob Liu <bob.liu@oracle.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1726251AbhAJLMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Jan 2021 06:12:12 -0500
+Received: from m12-14.163.com ([220.181.12.14]:56505 "EHLO m12-14.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726069AbhAJLMM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 10 Jan 2021 06:12:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=K5bd1iSxuYjB1QAwRo
+        5MXHF/8joiWC6BSPtbOExVNhM=; b=oFdka2Ci4Fge1pFWxBTCecZTUoMMVYgkE2
+        5rQYUB/N4fM8p4j+bx1h9Iojti8D+KAlg4NOKCwVtIdU3VA4IkrlhDuJBheeCMcA
+        jT+AlOPVGYtenzlHpVQXJ5/UXEF7Vi6B8d1Od/GEkJJVhN22HkuNUq8d+h/A5A3l
+        Y0ZIyyqqs=
+Received: from localhost.localdomain.localdomain (unknown [182.150.135.160])
+        by smtp10 (Coremail) with SMTP id DsCowAC3r3g6vPpfVkx6fQ--.64249S2;
+        Sun, 10 Jan 2021 16:35:06 +0800 (CST)
+From:   winndows@163.com
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Liao Pingfang <winndows@163.com>
+Subject: [PATCH] fs: Remove the comment for argument "cred" of vfs_open()
+Date:   Sun, 10 Jan 2021 16:23:15 +0800
+Message-Id: <1610266995-5770-1-git-send-email-winndows@163.com>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: DsCowAC3r3g6vPpfVkx6fQ--.64249S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GrWrZw15ZFW7ZrWkAFWfuFg_yoWxtwbE9a
+        y0yrWkW3yrJr1rGa48CFsaqFWIqr1fCr1rCayrXws7tFn5X3W5uFyqy34xtryUZr9rWF4D
+        trn8XryDuFW0kjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjfcTtUUUUU==
+X-Originating-IP: [182.150.135.160]
+X-CM-SenderInfo: hzlq0vxrzvqiywtou0bp/1tbiMBoWmVWBwsDEywAAs8
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 8, 2021 at 9:32 PM Bob Liu <bob.liu@oracle.com> wrote:
->
-> On 12/22/20 10:52 PM, Xie Yongji wrote:
-> > This VDUSE driver enables implementing vDPA devices in userspace.
-> > Both control path and data path of vDPA devices will be able to
-> > be handled in userspace.
-> >
-> > In the control path, the VDUSE driver will make use of message
-> > mechnism to forward the config operation from vdpa bus driver
-> > to userspace. Userspace can use read()/write() to receive/reply
-> > those control messages.
-> >
-> > In the data path, the VDUSE driver implements a MMU-based on-chip
-> > IOMMU driver which supports mapping the kernel dma buffer to a
-> > userspace iova region dynamically. Userspace can access those
-> > iova region via mmap(). Besides, the eventfd mechanism is used to
-> > trigger interrupt callbacks and receive virtqueue kicks in userspace
-> >
-> > Now we only support virtio-vdpa bus driver with this patch applied.
-> >
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >  Documentation/driver-api/vduse.rst                 |   74 ++
-> >  Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
-> >  drivers/vdpa/Kconfig                               |    8 +
-> >  drivers/vdpa/Makefile                              |    1 +
-> >  drivers/vdpa/vdpa_user/Makefile                    |    5 +
-> >  drivers/vdpa/vdpa_user/eventfd.c                   |  221 ++++
-> >  drivers/vdpa/vdpa_user/eventfd.h                   |   48 +
-> >  drivers/vdpa/vdpa_user/iova_domain.c               |  442 ++++++++
-> >  drivers/vdpa/vdpa_user/iova_domain.h               |   93 ++
-> >  drivers/vdpa/vdpa_user/vduse.h                     |   59 ++
-> >  drivers/vdpa/vdpa_user/vduse_dev.c                 | 1121 ++++++++++++++++++++
-> >  include/uapi/linux/vdpa.h                          |    1 +
-> >  include/uapi/linux/vduse.h                         |   99 ++
-> >  13 files changed, 2173 insertions(+)
-> >  create mode 100644 Documentation/driver-api/vduse.rst
-> >  create mode 100644 drivers/vdpa/vdpa_user/Makefile
-> >  create mode 100644 drivers/vdpa/vdpa_user/eventfd.c
-> >  create mode 100644 drivers/vdpa/vdpa_user/eventfd.h
-> >  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
-> >  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
-> >  create mode 100644 drivers/vdpa/vdpa_user/vduse.h
-> >  create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
-> >  create mode 100644 include/uapi/linux/vduse.h
-> >
-> > diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
-> > new file mode 100644
-> > index 000000000000..da9b3040f20a
-> > --- /dev/null
-> > +++ b/Documentation/driver-api/vduse.rst
-> > @@ -0,0 +1,74 @@
-> > +==================================
-> > +VDUSE - "vDPA Device in Userspace"
-> > +==================================
-> > +
-> > +vDPA (virtio data path acceleration) device is a device that uses a
-> > +datapath which complies with the virtio specifications with vendor
-> > +specific control path. vDPA devices can be both physically located on
-> > +the hardware or emulated by software. VDUSE is a framework that makes it
-> > +possible to implement software-emulated vDPA devices in userspace.
-> > +
->
-> Could you explain a bit more why need a VDUSE framework?
+From: Liao Pingfang <winndows@163.com>
 
-This can be used to implement a userspace I/O (such as storage,
-network and so on) solution (virtio-based) for both container and VM.
+Remove the comment for argument "cred" of vfs_open(), as
+it was removed.
 
-> Software emulated vDPA devices is more likely used by debugging only when
-> don't have real hardware.
+Fixes: ae2bb293a3e8 ("get rid of cred argument of vfs_open() and do_dentry_open()")
+Signed-off-by: Liao Pingfang <winndows@163.com>
+---
+ fs/open.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I think software emulated vDPA devices should be also useful in other
-cases, just like FUSE does.
+diff --git a/fs/open.c b/fs/open.c
+index 1e06e44..6935570 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -923,7 +923,6 @@ char *file_path(struct file *filp, char *buf, int buflen)
+  * vfs_open - open the file at the given path
+  * @path: path to open
+  * @file: newly allocated file with f_flag initialized
+- * @cred: credentials to use
+  */
+ int vfs_open(const struct path *path, struct file *file)
+ {
+-- 
+1.8.3.1
 
-> Do you think do the emulation in kernel space is not enough?
->
 
-Doing the emulation in userspace should be more flexible.
-
-Thanks,
-Yongji
