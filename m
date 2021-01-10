@@ -2,70 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 339FF2F0628
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Jan 2021 10:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B4FD2F0643
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Jan 2021 11:08:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbhAJJRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Jan 2021 04:17:05 -0500
-Received: from m12-12.163.com ([220.181.12.12]:35937 "EHLO m12-12.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbhAJJRE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Jan 2021 04:17:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=RDFd4ojr9oPLVYMa8v
-        ZUnB0tEmIsHcjTNiyT+hAwf60=; b=bgDPBNi/Yo5DpqjD94PUtddTNi60PycowQ
-        f3/dDdG62Xi/jcftsXHpOgiKDFov4i6DJfm8LPQOr3TTuCykwfPHGvvuSyZjkGYz
-        oOk0hhctkSi1n33UN7M2J2FDdYK1qVASqqg+IjvoPNahK5B82vZtN5yF65Vfb7Vu
-        SwilCV8Hc=
-Received: from localhost.localdomain.localdomain (unknown [182.150.135.160])
-        by smtp8 (Coremail) with SMTP id DMCowABnyxxyuvpf3_6QLQ--.21667S2;
-        Sun, 10 Jan 2021 16:27:30 +0800 (CST)
-From:   winndows@163.com
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Liao Pingfang <winndows@163.com>
-Subject: [PATCH] writeback: Remove useless comment for __wakeup_flusher_threads_bdi()
-Date:   Sun, 10 Jan 2021 16:14:53 +0800
-Message-Id: <1610266493-5526-1-git-send-email-winndows@163.com>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: DMCowABnyxxyuvpf3_6QLQ--.21667S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtF4fKF4DZFWfKrW3Cw18Grg_yoW3uFc_Xa
-        y8ArWDGFsxZ3W5G34xZ3Z3tFW0gr4kCr4rZanakF98JFy5ur9Fvw4kZrWDAw109FW3WFZx
-        GwnrXFWvkrZIkjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjfgADUUUUU==
-X-Originating-IP: [182.150.135.160]
-X-CM-SenderInfo: hzlq0vxrzvqiywtou0bp/xtbBDRMWmVaEB5WxWQAAs5
+        id S1726222AbhAJKEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Jan 2021 05:04:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41262 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbhAJKEq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 10 Jan 2021 05:04:46 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2B1C06179F
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Jan 2021 02:04:04 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id w1so20411297ejf.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Jan 2021 02:04:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ntHLah0q+SvwKSjeDWR+MVFLLttqY1N89uUPbqPMpiA=;
+        b=ZGwx+oiiGqvNDB+EaNh7KH6pXXDJEN6Q1ZH/kdatn05h3TURc1jdAQPJK2Hd1dt3y9
+         oX9qanMfO/pXUBOO5CoyFgf6lRFCoVfxQ3mFPJHZnlvUdkDjlt0GIj245r6osobCwOlt
+         rV7pJn8gsCpRiAAnmMLALjrtwokfqMai7FP927XnZ5UzVr16916CyigDjon5TNvYTytQ
+         cn9l6tUn9hlp6zO8JVbySRHAx75MxIw0hNpWAiOdFrdHTMSmNqGtIFyqUALoWPUJdkEf
+         eeYy6crslJzT0GNwXexlvaM5HjhSavw0e4FhTYttSXZE+kdUSJspWEvV5UqgUW+OpJNe
+         OdgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ntHLah0q+SvwKSjeDWR+MVFLLttqY1N89uUPbqPMpiA=;
+        b=IZBHEa5lQdEu0uXDrPZuCPm0iD9mCe/xD0OjWiB2j3xRGaOl2bgWxhe1d/lMnG8KIx
+         kvuSWKlTXggeLN+7qEhxCbYKYxEBi2B7ivpWAZR5Jb1f1TZfkJpgg3WeVAXdFrBIXME6
+         Te5ZYksn2O/LulmaZWqYdzoOG3vRtWk2qhRhrGBqQrW5WqMtWJq8uI5Qt+GJs7a0XYW1
+         lifbmeJujh79qRgpdj8R91D5NTqvfFra/PkJ0GX/QS9KxF32YoDMCAbg7RvP3+t1G3Ag
+         Do4hcEJ//4pT/tBEgbYJYfzi48L6rHy1NlJfRgDvuXZO/WvmwKtIBnUloSxZR7Cwhw2Q
+         4fTg==
+X-Gm-Message-State: AOAM5307tZX95RPBfJ+eqGTrH76dbFpQTMO9whg6YoGISoTD3u6bIZ21
+        fYbgwPp9EBKh1rNmnfQfAChhnkc3Fmpt7VQrfZkJ
+X-Google-Smtp-Source: ABdhPJxxW/yAqeYuRuPessHdacKwHtFahI0Eg6d90J6rPXonweRKhqtq6PPHcOf9f2M6pT+y8/HK7s5rhlXTDDVOoNY=
+X-Received: by 2002:a17:907:1629:: with SMTP id hb41mr7211587ejc.197.1610273043284;
+ Sun, 10 Jan 2021 02:04:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20201222145221.711-1-xieyongji@bytedance.com> <20201222145221.711-7-xieyongji@bytedance.com>
+ <f8dcb8d0-0024-1f78-d1a7-e487ca3deda7@oracle.com>
+In-Reply-To: <f8dcb8d0-0024-1f78-d1a7-e487ca3deda7@oracle.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Sun, 10 Jan 2021 18:03:52 +0800
+Message-ID: <CACycT3u859hX5ChcxVS2EMmF4-vu5H+io_CcNWSKaN8NFA9cXg@mail.gmail.com>
+Subject: Re: Re: [RFC v2 06/13] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Bob Liu <bob.liu@oracle.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
+        Parav Pandit <parav@nvidia.com>, akpm@linux-foundation.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, bcrl@kvack.org, corbet@lwn.net,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Liao Pingfang <winndows@163.com>
+On Fri, Jan 8, 2021 at 9:32 PM Bob Liu <bob.liu@oracle.com> wrote:
+>
+> On 12/22/20 10:52 PM, Xie Yongji wrote:
+> > This VDUSE driver enables implementing vDPA devices in userspace.
+> > Both control path and data path of vDPA devices will be able to
+> > be handled in userspace.
+> >
+> > In the control path, the VDUSE driver will make use of message
+> > mechnism to forward the config operation from vdpa bus driver
+> > to userspace. Userspace can use read()/write() to receive/reply
+> > those control messages.
+> >
+> > In the data path, the VDUSE driver implements a MMU-based on-chip
+> > IOMMU driver which supports mapping the kernel dma buffer to a
+> > userspace iova region dynamically. Userspace can access those
+> > iova region via mmap(). Besides, the eventfd mechanism is used to
+> > trigger interrupt callbacks and receive virtqueue kicks in userspace
+> >
+> > Now we only support virtio-vdpa bus driver with this patch applied.
+> >
+> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > ---
+> >  Documentation/driver-api/vduse.rst                 |   74 ++
+> >  Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
+> >  drivers/vdpa/Kconfig                               |    8 +
+> >  drivers/vdpa/Makefile                              |    1 +
+> >  drivers/vdpa/vdpa_user/Makefile                    |    5 +
+> >  drivers/vdpa/vdpa_user/eventfd.c                   |  221 ++++
+> >  drivers/vdpa/vdpa_user/eventfd.h                   |   48 +
+> >  drivers/vdpa/vdpa_user/iova_domain.c               |  442 ++++++++
+> >  drivers/vdpa/vdpa_user/iova_domain.h               |   93 ++
+> >  drivers/vdpa/vdpa_user/vduse.h                     |   59 ++
+> >  drivers/vdpa/vdpa_user/vduse_dev.c                 | 1121 ++++++++++++++++++++
+> >  include/uapi/linux/vdpa.h                          |    1 +
+> >  include/uapi/linux/vduse.h                         |   99 ++
+> >  13 files changed, 2173 insertions(+)
+> >  create mode 100644 Documentation/driver-api/vduse.rst
+> >  create mode 100644 drivers/vdpa/vdpa_user/Makefile
+> >  create mode 100644 drivers/vdpa/vdpa_user/eventfd.c
+> >  create mode 100644 drivers/vdpa/vdpa_user/eventfd.h
+> >  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
+> >  create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
+> >  create mode 100644 drivers/vdpa/vdpa_user/vduse.h
+> >  create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
+> >  create mode 100644 include/uapi/linux/vduse.h
+> >
+> > diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
+> > new file mode 100644
+> > index 000000000000..da9b3040f20a
+> > --- /dev/null
+> > +++ b/Documentation/driver-api/vduse.rst
+> > @@ -0,0 +1,74 @@
+> > +==================================
+> > +VDUSE - "vDPA Device in Userspace"
+> > +==================================
+> > +
+> > +vDPA (virtio data path acceleration) device is a device that uses a
+> > +datapath which complies with the virtio specifications with vendor
+> > +specific control path. vDPA devices can be both physically located on
+> > +the hardware or emulated by software. VDUSE is a framework that makes it
+> > +possible to implement software-emulated vDPA devices in userspace.
+> > +
+>
+> Could you explain a bit more why need a VDUSE framework?
 
-Remove useless comment for __wakeup_flusher_threads_bdi(), as
-argument 'nr_pages' was removed.
+This can be used to implement a userspace I/O (such as storage,
+network and so on) solution (virtio-based) for both container and VM.
 
-Fixes: e8e8a0c6c9bf ("writeback: move nr_pages == 0 logic to one location")
-Signed-off-by: Liao Pingfang <winndows@163.com>
----
- fs/fs-writeback.c | 4 ----
- 1 file changed, 4 deletions(-)
+> Software emulated vDPA devices is more likely used by debugging only when
+> don't have real hardware.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index acfb558..05eee22 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2099,10 +2099,6 @@ void wb_workfn(struct work_struct *work)
- 	current->flags &= ~PF_SWAPWRITE;
- }
- 
--/*
-- * Start writeback of `nr_pages' pages on this bdi. If `nr_pages' is zero,
-- * write back the whole world.
-- */
- static void __wakeup_flusher_threads_bdi(struct backing_dev_info *bdi,
- 					 enum wb_reason reason)
- {
--- 
-1.8.3.1
+I think software emulated vDPA devices should be also useful in other
+cases, just like FUSE does.
 
+> Do you think do the emulation in kernel space is not enough?
+>
 
+Doing the emulation in userspace should be more flexible.
+
+Thanks,
+Yongji
