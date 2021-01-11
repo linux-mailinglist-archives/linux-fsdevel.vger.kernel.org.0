@@ -2,138 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C25B2F0BC3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 05:21:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 042292F0C30
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 06:17:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbhAKEVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Jan 2021 23:21:01 -0500
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:44767 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726278AbhAKEVA (ORCPT
+        id S1727252AbhAKFQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 00:16:47 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:50042 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727235AbhAKFQr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Jan 2021 23:21:00 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 6DED7229E;
-        Sun, 10 Jan 2021 23:20:14 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Sun, 10 Jan 2021 23:20:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        UDF/jeENnPalcKRQYrg/TnkaEJR4pTja5gcX7090LeY=; b=TCJhqg9zrMNzCwA+
-        cWduJ16UDTlgY+WZHZQr6Cv0Rp2tEQyAk64+dKWoFX5RxJttkyK4ej0yClrpiA5V
-        oChZRvNFGHPJ4jXK5YcPCaVbeNjEwlBLpVZ9k0449dJeqLUI0WJnIyQp3XAQissh
-        hfwI0loyiQNny6D4+WtBF0wrg2GncADFLpaCnfEu6x4RKX1fwfBudS9vX3sp2tOZ
-        ytHg0rFq9lzosAEC7x8PRgTqF61J0AoGSQRVvSHHtVgm7nalKlbuGbgw3mWNqAQS
-        f0qC32FPnczD7xLf7Av3TtbkRYBeoIXliPw8geykmmmNdhGCoaXciW/D4R6cauQe
-        iIuvYw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=UDF/jeENnPalcKRQYrg/TnkaEJR4pTja5gcX7090L
-        eY=; b=LN7HfwUewgu4y7T5Kb9kek/EOA7RVFdQJZF9wXYdSKrf0N0Ofcj/LGOb1
-        EVKxbLqtGPK1rUcGiAnT3bgizMHN4/GoSJGR3kf5K7vR+4BT6hScYt4GIZAMRMZr
-        mbUZ4ceX/qAOnpXp8lIXFnFgiIyprh+ga6Amv3g7qm0ZTHQ2ZWVfmO9M2NHrn/VD
-        QuFoE8D71nif8WKet/ZrgqDJJrnLQw9kCTFcfYUoLfoXLA7lhGxskG8btzCRh10T
-        fRLvoX0rvwC8ozx44XgmcxNTWSm+DrI+/Qz8KkWNMG4DzYOdGzlC8e+j5D4Wg38O
-        65vLGeoS5rz61nKE9DmUGbdE3omyA==
-X-ME-Sender: <xms:_dH7X3UGPVLn3ASDIJm7ALtiBYu9AYkMG4m-HpraFxjxmh7EJPSbHg>
-    <xme:_dH7Xz3TyeJpH5xfs-G_u23kcl9-WrWkBv5rR90yK7FsIaIh5b7Cf8YpL_2lISvzW
-    pFKuBqIS7Yt>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdehtddgieejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eikeeggeeuvdevgfefiefhudekkeegheeileejveethedutedvveehudffjeevudenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvddurdeggedrudefuddrvdefne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgv
-    nhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:_dH7X-arnkcCYJb36ym6OROvK1Yfwqncqxn40BTioM1HOtCsxvO-1w>
-    <xmx:_dH7X2reBgghaqmDncyWyhcsPILrTkQXmaEN4BRe9A401RnPjFNTpw>
-    <xmx:_dH7X6qOC2WCu6rMi7LLE7pqQxQ_VuF0LPRgjEBizEXmZhWvhEZ5Mg>
-    <xmx:_tH7X8kcUEtNVcLXQu-rP4BNEyDIXvPQ3eknK3Hv28RFJXZxNf6Jdg>
-Received: from mickey.themaw.net (unknown [121.44.131.23])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3E3551080064;
-        Sun, 10 Jan 2021 23:20:09 -0500 (EST)
-Message-ID: <42efbb86327c2f5a8378d734edc231e3c5a34053.camel@themaw.net>
-Subject: Re: [PATCH 0/6] kernfs: proposed locking and concurrency improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Fox Chen <foxhlchen@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Mon, 11 Jan 2021 12:20:06 +0800
-In-Reply-To: <75de66869bd584903055996fb0e0bab2b57acd68.camel@themaw.net>
-References: <160862320263.291330.9467216031366035418.stgit@mickey.themaw.net>
-         <CAC2o3DJqK0ECrRnO0oArgHV=_S7o35UzfP4DSSXZLJmtLbvrKg@mail.gmail.com>
-         <04675888088a088146e3ca00ca53099c95fbbad7.camel@themaw.net>
-         <CAC2o3D+qsH3suFk4ZX9jbSOy3WbMHdb9j6dWUhWuvt1RdLOODA@mail.gmail.com>
-         <75de66869bd584903055996fb0e0bab2b57acd68.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        Mon, 11 Jan 2021 00:16:47 -0500
+Received: by mail-il1-f199.google.com with SMTP id q3so1036443ilv.16
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Jan 2021 21:16:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=TwLtYgNM/VxZnJX9RYzFOAmbDbu3TS829VUYdlrQ6tU=;
+        b=TzUmr3oBEWB8EOsemWlgJCS/2yUZAxKFQbvC7YA6GMsIBU+3PlAjFnSsKgHtGZZZ3V
+         f8DRbiTyorNlIzuDG9VdTEzacEQx6SvkdGmk3KKo4VA2K9OwP0dmNR558Gw6wThtPIrA
+         9AbEaszAeBb+3Zk/Eg/QHzzMFfANlgth0w66pIMZlXpWd+UosM1umuDq10LjF45semHr
+         3BrZitwTWb5/QWlv9vnN0+Pn8a6hMj+QsHah8p6TovTZ7KMcqQtZBa55nrsfOA6GCijC
+         oCVnn+VIRFi/lEcPFD4104F81xDLibtpPh//bE8o5llRGQgXFxgpsV5tWXz7PEE7hWhT
+         aBVQ==
+X-Gm-Message-State: AOAM5336gnpewBc6TYPiIE+xaS1vXOoKQS8xOxfD0N2LFBCfWCMdjjZU
+        foHcgqnvw90QDfTbFwFdNbjheWi7K9MkZ+n6f413Bl9MYzQ3
+X-Google-Smtp-Source: ABdhPJw34d6R73XmCxuksM9133DcvPyLfBOZgm6heuu0BEb6aKdNf+Jt1XOKWGljxWX0oVlLoshF5G4fzBYFc5U+6aYPAdyyumLW
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:f86:: with SMTP id v6mr14014231ilo.56.1610342166413;
+ Sun, 10 Jan 2021 21:16:06 -0800 (PST)
+Date:   Sun, 10 Jan 2021 21:16:06 -0800
+In-Reply-To: <000000000000f5964705b7d47d8c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cbca0705b89900b3@google.com>
+Subject: Re: INFO: trying to register non-static key in l2cap_sock_teardown_cb
+From:   syzbot <syzbot+a41dfef1d2e04910eb2e@syzkaller.appspotmail.com>
+To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
+        davem@davemloft.net, hdanton@sina.com, johan.hedberg@gmail.com,
+        kuba@kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luiz.dentz@gmail.com, marcel@holtmann.org,
+        mareklindner@neomailbox.ch, miklos@szeredi.hu, mszeredi@redhat.com,
+        netdev@vger.kernel.org, sw@simonwunderlich.de,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-01-11 at 11:19 +0800, Ian Kent wrote:
-> On Wed, 2021-01-06 at 10:38 +0800, Fox Chen wrote:
-> > Hi Ian,
-> > 
-> > I am rethinking this problem. Can we simply use a global lock?
-> > 
-> >  In your original patch 5, you have a global mutex attr_mutex to
-> > protect attr, if we change it to a rwsem, is it enough to protect
-> > both
-> > inode and attr while having the concurrent read ability?
-> > 
-> > like this patch I submitted. ( clearly, I missed __kernfs_iattrs
-> > part,
-> > but just about that idea )
-> > https://lore.kernel.org/lkml/20201207084333.179132-1-foxhlchen@gmail.com/
-> 
-> I don't think so.
-> 
-> kernfs_refresh_inode() writes to the inode so taking a read lock
-> will allow multiple processes to concurrently update it which is
-> what we need to avoid.
-> 
-> It's possibly even more interesting.
-> 
-> For example, kernfs_iop_rmdir() and kernfs_iop_mkdir() might alter
-> the inode link count (I don't know if that would be the sort of thing
-> they would do but kernfs can't possibly know either). Both of these
-> functions rely on the VFS locking for exclusion but the inode link
-> count is updated in kernfs_refresh_inode() too.
-> 
-> That's the case now, without any patches.
+syzbot has bisected this issue to:
 
-So it's not so easy to get the inode from just the kernfs object
-so these probably aren't a problem ...
+commit 4680a7ee5db27772af40d83393fa0fb955b745b7
+Author: Miklos Szeredi <mszeredi@redhat.com>
+Date:   Sat Oct 1 05:32:33 2016 +0000
 
-> 
-> I'm not entirely sure what's going on in kernfs_refresh_inode().
-> 
-> It could be as simple as being called with a NULL inode because
-> the dentry concerned is negative at that point. I haven't had
-> time to look closely at it TBH but I have been thinking about it.
+    fuse: remove duplicate cs->offset assignment
 
-Certainly this can be called without a struct iattr having been
-allocated ... and given it probably needs to remain a pointer
-rather than embedded in the node the inode link count update
-can't easily be protected from concurrent updates.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11fc80e7500000
+start commit:   73b7a604 net: dsa: bcm_sf2: support BCM4908's integrated s..
+git tree:       net-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13fc80e7500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fc80e7500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9ce34124da4c882b
+dashboard link: https://syzkaller.appspot.com/bug?extid=a41dfef1d2e04910eb2e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=166ee4cf500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1337172f500000
 
-If it was ok to do the allocation at inode creation the problem
-becomes much simpler to resolve but I thought there were concerns
-about ram consumption (although I don't think that was exactly what
-was said?).
+Reported-by: syzbot+a41dfef1d2e04910eb2e@syzkaller.appspotmail.com
+Fixes: 4680a7ee5db2 ("fuse: remove duplicate cs->offset assignment")
 
-Ian
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
