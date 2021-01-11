@@ -2,90 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4824E2F1E43
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 19:52:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A342F1E61
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 19:58:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390003AbhAKSv5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 13:51:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37738 "EHLO
+        id S2390667AbhAKS6N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 13:58:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730372AbhAKSv5 (ORCPT
+        with ESMTP id S1731334AbhAKS6M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 13:51:57 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9123C061786;
-        Mon, 11 Jan 2021 10:51:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QAL+ZD/8n4kz4BQqPvgQ+g9eI1B/tW2s2NBOJt50tpA=; b=YDa2PzLwdmllsLO3i51RXg8A0D
-        XVtts9amjDsQ37djBoBr6W7Uslhh6Kw/+gDgxGTyBj60ije1eQookOHwWU1CItDtFsWkUKG6jwJDq
-        zDRCc401pQDopQKDnGasVCdsW2DSF+/seg+84zWsBm5KiDe4asQBu0kblg3hu5SkWwG81RqQxSdMP
-        /evVMtg5SfehRAKSAo/d0rGiAxXyaiCpatLd75XuTKlpRIwNRU/JWU68GOFwxtPLtuHgQfrN/SrTg
-        3SVzsBbmUrwXVZHA1lFT0vl8L5R9kHbKSRmpEBSxRY+DX0O5Hk78ty7twF+etZuUbBEFxAeRLCMZ1
-        FUMVh2pA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1kz2HX-003etV-Ns; Mon, 11 Jan 2021 18:51:12 +0000
-Date:   Mon, 11 Jan 2021 18:51:11 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] char_dev: replace cdev_map with an xarray
-Message-ID: <20210111185111.GI35215@casper.infradead.org>
-References: <20210111170513.1526780-1-hch@lst.de>
- <20210111173500.GG35215@casper.infradead.org>
- <X/yUzVu04TyVuU/f@kroah.com>
- <20210111182029.GH35215@casper.infradead.org>
- <X/yZ6wtNYJEniwC0@kroah.com>
+        Mon, 11 Jan 2021 13:58:12 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2466EC061786;
+        Mon, 11 Jan 2021 10:57:32 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id w1so1104634ejf.11;
+        Mon, 11 Jan 2021 10:57:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3NVjzqyeG4SJekFF3bDqFWyaSeiE+9++w1R+w2UCUDY=;
+        b=LHhjYxcoAPAAinyEfyEObtgscE/8ZOzhXFWVkH0R6Jf5o0miQed/nocLX+CXFkAE1G
+         FK69wbVEeMtoVjV5klLZgL1XK/x2VCcbImcTCM9dFtany/NbZ8kgLe+JRKVIGIZ4qR0s
+         JzymgIx2WbydtgCbaN+7U3cQPHhso5PoClnZgCJBZuzAfDJjtiN4wSo03dCzg8j2o/em
+         tLE/bopl8qnJ6He79OpVFuf0S10jO6McjxetLnRUKfRkgxzPMX3JE0wWa280ND8vcBMH
+         G2LiSdbNpN7pbhdsZf6VbXZhgtg+e9jBJIbvHZpQfdZdi5omEwRH1ZJ7Xsjo5B5KBinn
+         hmYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3NVjzqyeG4SJekFF3bDqFWyaSeiE+9++w1R+w2UCUDY=;
+        b=MYEbU3SYHyLxxcEkbYXoMiDJZnzR06YK+w4mA7PYCv84vs/9ib8ImVDcDkR3FvXBau
+         9rSzRLWHywvbIwsGUfsD6PKdSrXkJUtW1LZF/vZB35baD2k1h3LcNW/ZUg/kB+DX5EoE
+         Dc1wYq6DAE2J/bA8/IJ7dGEfu+WkgJjy4JqBZ4FvQCVrp3vs2OFr75XutLvFVNlWMveH
+         5JQHQvAhRAtBUtXQaAh2B+l3RZdPDyahwqoZYNsrkMHsNR0KLO4CIQ9aqOKVdVeMd6o0
+         08CWpc9timbTlmu9skmGh9EE3hY47kH71XKTZ5At86WUKwWJuia1tyjIDpttqkDOGhvG
+         iOOg==
+X-Gm-Message-State: AOAM532LyKmF+q0BfX+FA1sgf5qOY4ZtRnuiVf8XzMPddIMsHPncbpEi
+        E2UQpUwoYdXY5MwIWCy3v3He3Br1xnXqJxwUOjY=
+X-Google-Smtp-Source: ABdhPJyS9HMQhQh/g+O1fLpkuel6PXjVXl3mCSzKSP+vxhfXMAvxV7ro06+/MVYihARVdgEYeWOlcl3cn7UrTlrnBvQ=
+X-Received: by 2002:a17:907:20a4:: with SMTP id pw4mr567221ejb.499.1610391450862;
+ Mon, 11 Jan 2021 10:57:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <X/yZ6wtNYJEniwC0@kroah.com>
+References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-4-shy828301@gmail.com>
+ <56d26993-1577-3747-2d89-1275d92f7a15@virtuozzo.com> <CAHbLzkqS2b7Eb_xDU3-6wR=LN5yr4nDeyyaynfLCzFJOinuUZw@mail.gmail.com>
+ <35543012-882c-2e1e-f23b-d25a6fa41e67@virtuozzo.com>
+In-Reply-To: <35543012-882c-2e1e-f23b-d25a6fa41e67@virtuozzo.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Mon, 11 Jan 2021 10:57:19 -0800
+Message-ID: <CAHbLzkpXjzN_730iqR_PnU0-vv_rbHZM1dKdjhzEdY8rstzZDg@mail.gmail.com>
+Subject: Re: [v3 PATCH 03/11] mm: vmscan: use shrinker_rwsem to protect
+ shrinker_maps allocation
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 07:33:15PM +0100, Greg KH wrote:
-> On Mon, Jan 11, 2021 at 06:20:29PM +0000, Matthew Wilcox wrote:
-> > > efficient in what way?  Space or faster lookup?
-> > 
-> > Both, but primarily space.
-> > 
-> > The radix tree underlying the xarray allows N consecutive entries with
-> > the same value to be represented as a single entry; if there are at
-> > least 64 entries then we get to skip an entire level of the tree (saving
-> > 1/7 of a page).  Of course, we'd need to go from the 'head' pointer to
-> > the correct pointer, something like p += rdev - p->rdev.
-> 
-> How much "space" are you talking about here?
+On Mon, Jan 11, 2021 at 9:34 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> On 11.01.2021 20:08, Yang Shi wrote:
+> > On Wed, Jan 6, 2021 at 1:55 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> >>
+> >> On 06.01.2021 01:58, Yang Shi wrote:
+> >>> Since memcg_shrinker_map_size just can be changd under holding shrinker_rwsem
+> >>> exclusively, the read side can be protected by holding read lock, so it sounds
+> >>> superfluous to have a dedicated mutex.  This should not exacerbate the contention
+> >>> to shrinker_rwsem since just one read side critical section is added.
+> >>>
+> >>> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> >>> ---
+> >>>  mm/vmscan.c | 16 ++++++----------
+> >>>  1 file changed, 6 insertions(+), 10 deletions(-)
+> >>>
+> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> >>> index 9db7b4d6d0ae..ddb9f972f856 100644
+> >>> --- a/mm/vmscan.c
+> >>> +++ b/mm/vmscan.c
+> >>> @@ -187,7 +187,6 @@ static DECLARE_RWSEM(shrinker_rwsem);
+> >>>  #ifdef CONFIG_MEMCG
+> >>>
+> >>>  static int memcg_shrinker_map_size;
+> >>> -static DEFINE_MUTEX(memcg_shrinker_map_mutex);
+> >>>
+> >>>  static void memcg_free_shrinker_map_rcu(struct rcu_head *head)
+> >>>  {
+> >>> @@ -200,8 +199,6 @@ static int memcg_expand_one_shrinker_map(struct mem_cgroup *memcg,
+> >>>       struct memcg_shrinker_map *new, *old;
+> >>>       int nid;
+> >>>
+> >>> -     lockdep_assert_held(&memcg_shrinker_map_mutex);
+> >>> -
+> >>>       for_each_node(nid) {
+> >>>               old = rcu_dereference_protected(
+> >>>                       mem_cgroup_nodeinfo(memcg, nid)->shrinker_map, true);
+> >>> @@ -250,7 +247,7 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
+> >>>       if (mem_cgroup_is_root(memcg))
+> >>>               return 0;
+> >>>
+> >>> -     mutex_lock(&memcg_shrinker_map_mutex);
+> >>> +     down_read(&shrinker_rwsem);
+> >>>       size = memcg_shrinker_map_size;
+> >>>       for_each_node(nid) {
+> >>>               map = kvzalloc(sizeof(*map) + size, GFP_KERNEL);
+> >>> @@ -261,7 +258,7 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
+> >>>               }
+> >>>               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_map, map);
+> >>
+> >> Here we do STORE operation, and since we want the assignment is visible
+> >> for shrink_slab_memcg() under down_read(), we have to use down_write()
+> >> in memcg_alloc_shrinker_maps().
+> >
+> > I apologize for the late reply, these emails went to my SPAM again.
+>
+> This is the second time the problem appeared. Just add my email address to allow list,
+> and there won't be this problem again.
 
-576 bytes -- 1/7 of a page.
+Yes, I thought clicking "not spam" would add your email address to the
+allow list automatically. But it turns out not true.
 
-> A "normal" machine has about 100-200 char devices.  Servers, maybe more,
-> but probably not.
-> 
-> The kobject being used previously wasn't really "small" at all, so odds
-> are any conversion to not use it like this will be better overall.
+>
+> > Before this patch it was not serialized by any lock either, right? Do
+> > we have to serialize it? As Johannes mentioned if shrinker_maps has
+> > not been initialized yet, it means the memcg is a newborn, there
+> > should not be significant amount of reclaimable slab caches, so it is
+> > fine to skip it. The point makes some sense to me.
+> >
+> > So, the read lock seems good enough.
+>
+> No, this is not so.
+>
+> Patch "[v3 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred" adds
+> new assignments:
+>
+> +               info->map = (unsigned long *)((unsigned long)info + sizeof(*info));
+> +               info->nr_deferred = (atomic_long_t *)((unsigned long)info +
+> +                                       sizeof(*info) + m_size);
+>
+> info->map and info->nr_deferred are not visible under READ lock in shrink_slab_memcg(),
+> unless you use WRITE lock in memcg_alloc_shrinker_maps().
 
-Yes.
+However map and nr_deferred are assigned before
+rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new). The
+shrink_slab_memcg() checks shrinker_info pointer.
+But that order might be not guaranteed, so it seems a memory barrier
+before rcu_assign_pointer should be good enough, right?
 
-> > > THis shouldn't be on a "fast" lookup path, so I doubt that's worth
-> > > optimizing for.  Space, maybe, for systems with thousands of scsi
-> > > devices, but usually they just stick to the block device, not a char
-> > > device from what I remember.
-> > 
-> > /dev/sgX is a chardev?
-> 
-> I sure hope no one is using /dev/sgX for tens of thousands of block
-> device accesses, if so, they have bigger problems than this :)
-
-There is one sgX char dev for every /dev/sdN, so anyone with a thousand
-SCSI devices also has a thousand char devices.  On the other hand,
-they're added one at a time, so there is no chance to optimise here:
-
-        cdev = cdev_alloc();
-...
-        error = cdev_add(cdev, MKDEV(SCSI_GENERIC_MAJOR, sdp->index), 1);
-
+>
+> Nowhere in your patchset you convert READ lock to WRITE lock in memcg_alloc_shrinker_maps().
+>
+> So, just use the true lock in this patch from the first time.
+>
+> >>
+> >>>       }
+> >>> -     mutex_unlock(&memcg_shrinker_map_mutex);
+> >>> +     up_read(&shrinker_rwsem);
+> >>>
+> >>>       return ret;
+> >>>  }
+> >>> @@ -276,9 +273,8 @@ static int memcg_expand_shrinker_maps(int new_id)
+> >>>       if (size <= old_size)
+> >>>               return 0;
+> >>>
+> >>> -     mutex_lock(&memcg_shrinker_map_mutex);
+> >>>       if (!root_mem_cgroup)
+> >>> -             goto unlock;
+> >>> +             goto out;
+> >>>
+> >>>       memcg = mem_cgroup_iter(NULL, NULL, NULL);
+> >>>       do {
+> >>> @@ -287,13 +283,13 @@ static int memcg_expand_shrinker_maps(int new_id)
+> >>>               ret = memcg_expand_one_shrinker_map(memcg, size, old_size);
+> >>>               if (ret) {
+> >>>                       mem_cgroup_iter_break(NULL, memcg);
+> >>> -                     goto unlock;
+> >>> +                     goto out;
+> >>>               }
+> >>>       } while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
+> >>> -unlock:
+> >>> +out:
+> >>>       if (!ret)
+> >>>               memcg_shrinker_map_size = size;
+> >>> -     mutex_unlock(&memcg_shrinker_map_mutex);
+> >>> +
+> >>>       return ret;
+> >>>  }
+> >>>
+> >>>
+> >>
+> >>
+>
+>
