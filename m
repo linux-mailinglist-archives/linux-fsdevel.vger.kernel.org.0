@@ -2,118 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8022F204E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:02:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2874B2F2066
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:10:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404118AbhAKUCR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 15:02:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
+        id S2391341AbhAKUHe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 15:07:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbhAKUCR (ORCPT
+        with ESMTP id S2390143AbhAKUHe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 15:02:17 -0500
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05688C061795
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:01:37 -0800 (PST)
-Received: by mail-qk1-x734.google.com with SMTP id v126so614435qkd.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:01:36 -0800 (PST)
+        Mon, 11 Jan 2021 15:07:34 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19A9C061795;
+        Mon, 11 Jan 2021 12:06:53 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id dk8so1113781edb.1;
+        Mon, 11 Jan 2021 12:06:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mgrT4Altg8glIRE+MOOUJE15z5PhjqAtILPKl/TgNP8=;
-        b=yAxr2iADLTUmXEiDK5K7FSnU6C8ZRcfTqSe/09PKcZ8TVKMvCwCbCoRMezIqdg8GNS
-         oSz6KtIRvv0JoCzAqTfAnI4FYLWCYLdZlyjKGCAUIoSk73t1ORtJyksp/LsPxoSGGVpR
-         gt3g1rEW7lh0PRkq+tMnkqiLMqZuFyFYHhXHcu1hQ80FNmfRSfouTzwjDs1p8yA62ibJ
-         fuJCFti8lRVU+ffh2slTYfu+M2cAQ26u+LKFFA++ZkDaL8VIlsA0INfu0R427nTb9lXu
-         PR/WUQp/L5OWjB1KJgl2oYFlNaIXLCrVNwUlp/VyNZXHK4II/z5J12EEymLM0t4ZA56b
-         fIbg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Vua/4FAuzJKcybmU96dmSVXE6bAQ11vfonwPty39STU=;
+        b=jn/iS6wcEHjTuKOIG5EgLsXBQT5yi8UITaREcgDFXa1OyA9PpNg21X0CURa1dZbccI
+         kLm5aLJ/C0ouFXWl2PrVviBsFA2LcdVNtK4/KlZeAL6uNreI1ZqznNthWpzF1kMC5wvE
+         5jvDHnNzKshVcPoQ2uXvYt3efl+eHkLJBrCr+km7SFOLC0Ku9SqxqvjJvOZdxFHlPsu7
+         F+PPmfJytzn+dEFmwShYtxrQuSxt7iHZ4xNi9LXgfOz9O6Okqv+I1hlDVIiW13Cw0VAn
+         TokAs3MmOmZfkqtPZhp/SpTQuXW6lJbeRa5qP0DNu97Z0OxvYiiw+xAIaHdoFDeeWcvt
+         0ogA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mgrT4Altg8glIRE+MOOUJE15z5PhjqAtILPKl/TgNP8=;
-        b=CKsCl3vJc0IN7qj40veS8AYm7A5VkG2T2eGHf1RqwIkVEcoreWJNDSdjrbQ2dcPoF1
-         2Tbs6/xDRZnT/zV6vzfZx46gcpbqEUhumo71arDcfl0POcx319HkybJuP48Pz+ljkatP
-         BG5mB93TDcnVfahM13zZvaKCJcOWew9ViWNezTxoaIkYUuZIn9CfVnOQYfkMfnbJ1Fup
-         ss095fXaLCbzbQB4moOPtrdueETUetbgX61mr7XByXmPbuYc32Iq/L2+fErcCYFbCIeN
-         ozqbPHHuYgWi26kUT8bCv08eXT8qIbVXvkwvomP2WefW9KYpKTvjzJJr8PBZ1b3iwvdt
-         tItA==
-X-Gm-Message-State: AOAM530rhu6QyFEDk+Tpuvahq1FzebQEhh8AEv6P7FILQuedgJ4HxksD
-        iYLaR4ttTfjcui0fiZWFXc2J6g==
-X-Google-Smtp-Source: ABdhPJz+0rghxG3TVomri2fQn9Hcffg7QPgRzkdOAnjI5IBHoiITb5e67MqI4j97kse2T6N0S0HrDg==
-X-Received: by 2002:a37:e504:: with SMTP id e4mr997913qkg.191.1610395296098;
-        Mon, 11 Jan 2021 12:01:36 -0800 (PST)
-Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id y16sm443407qki.132.2021.01.11.12.01.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Jan 2021 12:01:35 -0800 (PST)
-Subject: Re: [PATCH v11 05/40] btrfs: release path before calling into
- btrfs_load_block_group_zone_info
-To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        dsterba@suse.com
-Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
- <8fa3073375cf26759f9c5d3ce083c64d573ad9a6.1608608848.git.naohiro.aota@wdc.com>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <3f611f04-39fa-e95e-09f2-28c01f5e2a80@toxicpanda.com>
-Date:   Mon, 11 Jan 2021 15:01:34 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Vua/4FAuzJKcybmU96dmSVXE6bAQ11vfonwPty39STU=;
+        b=TUx7GsanfaRifau7DSsftuhWlYGByg7IRc1IIixjEm18EHVjwGE3lG2Dv0N9B3iHw2
+         gdTYwSE357UApjaDlRxSVHayifPWu2xZzKqlOrFn+YnnHT0eVceZsjO3dE2j6lLWeCUi
+         rJGmIZDsv9IpdT9z3jz52RR5TMY/gZ72YL1X+rb1BhNk3nUoHsh/gZSO2G1s3zqSKla+
+         T9fO2Nqmb5ZdOfgch710hLZryzwCTaJF1UmPB9uqyHPSvtgvEhk0qFE+OJCrva80xJKr
+         ot2TfLeqBzRJOeyY1TZd6Mdk9dgiUuisaanNAmReP2p3iqo5hzKbrYMKwHIDh5hZMfv6
+         i1Vg==
+X-Gm-Message-State: AOAM532uSMiJFTLdHw/tfjP9NX/k6yTjpl49MyZ21EhwIsZA+ZDDXtcc
+        9s5K8uV8fqZZ7wz0m5KM3Sbcq/0hnXn77WecD2Q=
+X-Google-Smtp-Source: ABdhPJw2JE0XKzdLSRtyimoueQT49YkniTFElT5qp82XIKYeiHDg+pZyGZERgKh4rOTg8hcgpGSHlVp3ZDd0HMD1u+Q=
+X-Received: by 2002:a05:6402:350:: with SMTP id r16mr752578edw.176.1610395612650;
+ Mon, 11 Jan 2021 12:06:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <8fa3073375cf26759f9c5d3ce083c64d573ad9a6.1608608848.git.naohiro.aota@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201118144617.986860-1-willemdebruijn.kernel@gmail.com>
+ <20201118144617.986860-2-willemdebruijn.kernel@gmail.com> <20201118150041.GF29991@casper.infradead.org>
+ <CA+FuTSdxNBvNMy341EHeiKOWZ19H++aw-tfr6Fx1mFmbg-z4zQ@mail.gmail.com>
+ <CAK8P3a0t02o77+8QNZwXF2k1pY3Xrm5bydv8Vx1TW060P7BKqA@mail.gmail.com>
+ <893e8ed21e544d048bff7933013332a0@AcuMS.aculab.com> <CAF=yD-+arBFuZCU3UDx0XKmUGaEz8P1EaDLPK0YFCz82MdwBcg@mail.gmail.com>
+ <20201119143131.GG29991@casper.infradead.org> <CAK8P3a1SwQ=L_qA1BmeAt=Xc-Q9Mv4V+J5LFLB5R6rMDST8UiA@mail.gmail.com>
+ <CAF=yD-Kd-6f9wAYLD=dP1pk4qncWim424Fu6Hgj=ZrnUtEPORA@mail.gmail.com>
+ <CAK8P3a21JRFUJrz1+TYWcVL8s4uSfeSFyoMkGsqUPbV+F=r_yw@mail.gmail.com>
+ <CAF=yD-Lzu9j6T4ubRjawF-EKOC3pkQTkpigg=PugWwybY-1ZyQ@mail.gmail.com>
+ <CAK8P3a1cJf7+b5HCmFiLq+FdM+D+37rHYaftRgRYbhTyjwR6wg@mail.gmail.com>
+ <CAF=yD-LdtCCY=Mg9CruZHdjBXV6VmEPydzwfcE2BHUC8z7Xgng@mail.gmail.com>
+ <CAK8P3a2WifcGmmFzSLC4-0SKsv0RT231P6TVKpWm=j927ykmQg@mail.gmail.com>
+ <CA+FuTSdPir68M9PwhuCkd_Saz-Wi3xa_rNuwvbNmpAkMjOqhuA@mail.gmail.com>
+ <CAK8P3a2Z=X68aU27qQ_0vK6c_oj9CVbThuGscjqKXRCYKfFpgg@mail.gmail.com> <CAF=yD-LAzjyNRy0vqToWqx5LxeQMYY3fVzV0vr0X7Q70ZAR-AQ@mail.gmail.com>
+In-Reply-To: <CAF=yD-LAzjyNRy0vqToWqx5LxeQMYY3fVzV0vr0X7Q70ZAR-AQ@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Mon, 11 Jan 2021 15:06:15 -0500
+Message-ID: <CAF=yD-JskHu0oBBTaRT_v7MZNEdgtYN3BmiexqjAgJV1hBKkEw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] epoll: add nsec timeout support with epoll_pwait2
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Laight <David.Laight@aculab.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Soheil Hassas Yeganeh <soheil.kdev@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Shuo Chen <shuochen@google.com>,
+        linux-man <linux-man@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/21/20 10:48 PM, Naohiro Aota wrote:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> 
-> Since we have no write pointer in conventional zones, we cannot determine
-> allocation offset from it. Instead, we set the allocation offset after the
-> highest addressed extent. This is done by reading the extent tree in
-> btrfs_load_block_group_zone_info(). However, this function is called from
-> btrfs_read_block_groups(), so the read lock for the tree node can
-> recursively taken.
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->   fs/btrfs/block-group.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-> index b8bbdd95743e..69e1b24bbbad 100644
-> --- a/fs/btrfs/block-group.c
-> +++ b/fs/btrfs/block-group.c
-> @@ -1839,6 +1839,7 @@ static int read_one_block_group(struct btrfs_fs_info *info,
->   		return -ENOMEM;
->   
->   	read_block_group_item(cache, path, key);
-> +	btrfs_release_path(path);
->   
->   	set_free_space_tree_thresholds(cache);
->   
-> @@ -2009,7 +2010,6 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
->   			goto error;
->   		key.objectid += key.offset;
->   		key.offset = 0;
-> -		btrfs_release_path(path);
->   	}
->   	btrfs_release_path(path);
->   
-> 
+On Thu, Dec 10, 2020 at 5:59 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Thu, Dec 10, 2020 at 3:34 PM Arnd Bergmann <arnd@kernel.org> wrote:
+> >
+> > On Thu, Dec 10, 2020 at 6:33 PM Willem de Bruijn
+> > <willemdebruijn.kernel@gmail.com> wrote:
+> > > On Sat, Nov 21, 2020 at 4:27 AM Arnd Bergmann <arnd@kernel.org> wrote=
+:
+> > > > On Fri, Nov 20, 2020 at 11:28 PM Willem de Bruijn <willemdebruijn.k=
+ernel@gmail.com> wrote:
+> > > > I would imagine this can be done like the way I proposed
+> > > > for get_bitmap() in sys_migrate_pages:
+> > > >
+> > > > https://lore.kernel.org/lkml/20201102123151.2860165-4-arnd@kernel.o=
+rg/
+> > >
+> > > Coming back to this. Current patchset includes new select and poll
+> > > selftests to verify the changes. I need to send a small kselftest
+> > > patch for that first.
+> > >
+> > > Assuming there's no time pressure, I will finish up and send the main
+> > > changes after the merge window, for the next release then.
+> > >
+> > > Current state against linux-next at
+> > > https://github.com/wdebruij/linux-next-mirror/tree/select-compat-1
+> >
+> > Ok, sounds good to me. I've had a (very brief) look and have one
+> > suggestion: instead of open-coding the compat vs native mode
+> > in multiple places like
+> >
+> > if (!in_compat_syscall())
+> >     =EF=BF=BC return copy_from_user(fdset, ufdset, FDS_BYTES(nr)) ? -EF=
+AULT : 0;
+> > else
+> >     =EF=BF=BC return compat_get_bitmap(fdset, ufdset, nr);
+> >
+> > maybe move this into a separate function and call that where needed.
+> >
+> > I've done this for the get_bitmap() function in my series at
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/com=
+mit/?h=3Dcompat-alloc-user-space-7&id=3Db1b23ebb12b635654a2060df49455167a14=
+2c5d2
+> >
+> > The definition is slightly differrent for cpumask, nodemask and fd_set,
+> > so we'd need to try out the best way to structure the code to end
+> > up with the most readable version, but it should be possible when
+> > there are only three callers (and duplicating the function would
+> > be the end of the world either)
+>
+> For fd_set there is only a single caller for each direction. Do you
+> prefer helpers even so?
+>
+> For sigmask, with three callers, something along the lines of this?
+>
+>   @@ -1138,10 +1135,7 @@ static int do_ppoll(struct pollfd __user
+> *ufds, unsigned int nfds,
+>                           return -EINVAL;
+>           }
+>
+>   -       if (!in_compat_syscall())
+>   -               ret =3D set_user_sigmask(sigmask, sigsetsize);
+>   -       else
+>   -               ret =3D set_compat_user_sigmask(sigmask, sigsetsize);
+>   +       ret =3D set_maybe_compat_user_sigmask(sigmask, sigsetsize);
+>           if (ret)
+>                   return ret;
+>
+>   --- a/include/linux/compat.h
+>   +++ b/include/linux/compat.h
+>   @@ -942,6 +942,17 @@ static inline bool in_compat_syscall(void) {
+> return false; }
+>
+>   +static inline int set_maybe_compat_user_sigmask(const void __user *sig=
+mask,
+>   +                                               size_t sigsetsize)
+>   +{
+>   +#if defined CONFIG_COMPAT
+>   +       if (unlikely(in_compat_syscall()))
+>   +               return set_compat_user_sigmask(sigmask, sigsetsize);
+>   +#endif
+>   +
+>   +       return set_user_sigmask(sigmask, sigsetsize);
+>   +}
 
-Instead why don't we just read in the bgi into the stack, and pass the pointer 
-into read_one_block_group(), drop the path before calling read_one_block_group? 
-  We don't use the path in read_one_block_group, there's no reason to pass it 
-in.  It'll fix your problem and make it a little cleaner.  Thanks,
+set_user_sigmask is the only open-coded variant that is used more than once=
+.
 
-Josef
+Because it is used in both select.c and eventpoll.c, a helper would
+have to live in compat.h. This then needs a new dependency on
+sched_signal.h.
+
+So given that this is a simple branch, it might just make logic more
+complex, instead of less. I can add this change in a separate patch on
+top of the original three, to judge whether it is worthwhile.
