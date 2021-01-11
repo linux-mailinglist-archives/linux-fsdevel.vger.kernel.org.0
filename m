@@ -2,85 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E896F2F210D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:46:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD3CC2F2132
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:56:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390882AbhAKUpY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 15:45:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391313AbhAKUpS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 15:45:18 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0922F222B6;
-        Mon, 11 Jan 2021 20:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610397877;
-        bh=M1OSN1vteho8Huw58TPHtw4Wnq7VMtKCfQ1CREQhDR0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g6E1CBBApgNQRIvnyUYpczU4snTK3TxTIWiGp2D7l9axmxnf6NKFoHnat6vVu4e2x
-         I9XIFx85m+OaASnJa35GO1Lnq6n9jCT+wDbjGwYs6QheK3MCRNoAdJlZfYYodREnYB
-         o+3ziJVlenNjdNHZNq3EDaRlJJAlbS6mK1P7kvZryDnMiAPy1kFnfILWddwBcW6wxu
-         SELSewJq8rbzB/ndE+t+XbX/vEKHxLvi2jQezrrvts8jJ1y/+Ad2x5xKCgaHtetEX3
-         OZcpXXl3Hsh8sIV0cn0ov2lVF0/F8gETBM8QdHmHtC59U75feIsb+nL+o6/OlT3c++
-         dyjRmmLboidRg==
-Date:   Mon, 11 Jan 2021 12:44:35 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 00/12] lazytime fix and cleanups
-Message-ID: <X/y4s12YrXiUwWfN@sol.localdomain>
-References: <20210109075903.208222-1-ebiggers@kernel.org>
- <20210111151517.GK18475@quack2.suse.cz>
+        id S1728348AbhAKUza (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 15:55:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36206 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727747AbhAKUz3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Jan 2021 15:55:29 -0500
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55455C061794
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:54:49 -0800 (PST)
+Received: by mail-qt1-x82b.google.com with SMTP id v5so260336qtv.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:54:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vtXGMnlbBMGaX/s8hVeCkrNkSKIjAn/qCEFU0k0ooT8=;
+        b=EvlSyoOL3hgyVnmJEmwffWo7I+fIoUzbLpFjGK35vzgfDSsA0h/jizUBFbTsKCuDQU
+         cQoaLgkBCgHOXQ8asd3bR1NxjpSgdNrZVAEmHwTqkm63/VjfjRa5qgWzDTElAm5UpvAd
+         kmAD3J9tta8BL1qvpYn3u8f+qOd1xVr4AQ3rRqXvcuvB3oI9wTiYdzu8jtldn2uay6si
+         qrsCU3NjOIKoZ7u+TBVG59opc8lZvn4cyMAc9pLrb/cA2PrKCo9ichyutuQdsCWA7s+s
+         qJsPYcXhQe9jKvbppzqyw6kdFKzLqP2kB9KzDO78BJ8m8451pqJBHYVncC1lB8LyLIzy
+         J8iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vtXGMnlbBMGaX/s8hVeCkrNkSKIjAn/qCEFU0k0ooT8=;
+        b=lU8m6HRymxYHM1McdwYBr1hz8BKtTWtlGurKO4i1lXNl6gJktxKUP/JFh7WiBtMV7m
+         2cdJ/QAeFRa8caGCNVBYD2pERMLeq9BzHh3OMHjiNNxtTs9XbeUPJ5kZ5vyb7Q+GqTQw
+         cfrXN6oVa8k7duoN4nIRPWFluAs/1zW/RkZMNxcGZZl5pVjzPv4iL2EDB5ApghA+OZVv
+         20oI9ve8w9+sLSZvyvWZ72AGIodS7ABSoZw7Z2+3YOjjsEngF36yQD0TOxso3PvJlo45
+         saOEq57oeAf0oUqNnLE1dtWEJuxPQqXr7edX/ETTnNinOeJpXPkny7k2VTt3uzKQtnqd
+         Luyw==
+X-Gm-Message-State: AOAM530GGC8PcIzJ4/rggFepXpttYalyjDVEhnxAC17NrYOQbv1/qyYh
+        6L0ZhHfnTqfNhZcgSSQQ8eEDVQ==
+X-Google-Smtp-Source: ABdhPJylOpxh4MwnSETWJhFvB5+XPisiIb3qS1XX5URioaF2uq6hTNggHta6v0m3PMOmSFU3i3FuoQ==
+X-Received: by 2002:ac8:720c:: with SMTP id a12mr1532824qtp.42.1610398488016;
+        Mon, 11 Jan 2021 12:54:48 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id g28sm353981qtm.91.2021.01.11.12.54.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jan 2021 12:54:47 -0800 (PST)
+Subject: Re: [PATCH v11 08/40] btrfs: emulated zoned mode on non-zoned devices
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
+ <e2bcb873196a16b05d5757cd8087900d4f464347.1608608848.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <a7a236a1-672b-12bd-02f5-7e12d8d55a5e@toxicpanda.com>
+Date:   Mon, 11 Jan 2021 15:54:46 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210111151517.GK18475@quack2.suse.cz>
+In-Reply-To: <e2bcb873196a16b05d5757cd8087900d4f464347.1608608848.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 04:15:17PM +0100, Jan Kara wrote:
-> Hi!
+On 12/21/20 10:49 PM, Naohiro Aota wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> On Fri 08-01-21 23:58:51, Eric Biggers wrote:
-> > Hello,
-> > 
-> > Patch 1 fixes a bug in how __writeback_single_inode() handles lazytime
-> > expirations.  I originally reported this last year
-> > (https://lore.kernel.org/r/20200306004555.GB225345@gmail.com) because it
-> > causes the FS_IOC_REMOVE_ENCRYPTION_KEY ioctl to not work properly, as
-> > the bug causes inodes to remain dirty after a sync.
-> > 
-> > It also turns out that lazytime on XFS is partially broken because it
-> > doesn't actually write timestamps to disk after a sync() or after
-> > dirtytime_expire_interval.  This is fixed by the same fix.
-> > 
-> > This supersedes previously proposed fixes, including
-> > https://lore.kernel.org/r/20200307020043.60118-1-tytso@mit.edu and
-> > https://lore.kernel.org/r/20200325122825.1086872-3-hch@lst.de from last
-> > year (which had some issues and didn't fix the XFS bug), and v1 of this
-> > patchset which took a different approach
-> > (https://lore.kernel.org/r/20210105005452.92521-1-ebiggers@kernel.org).
-> > 
-> > Patches 2-12 then clean up various things related to lazytime and
-> > writeback, such as clarifying the semantics of ->dirty_inode() and the
-> > inode dirty flags, and improving comments.  Most of these patches could
-> > be applied independently if needed.
-> > 
-> > This patchset applies to v5.11-rc2.
+> Emulate zoned btrfs mode on non-zoned devices. This is done by "slicing
+> up" the block-device into static sized chunks and fake a conventional zone
+> on each of them. The emulated zone size is determined from the size of
+> device extent.
 > 
-> The series look good to me. How do you plan to merge it (after resolving
-> Christoph's remarks)? I guess either Ted can take it through the ext4 tree
-> or I can take it through my tree...
+> This is mainly aimed at testing parts of the zoned mode, i.e. the zoned
+> chunk allocator, on regular block devices.
 > 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-I think taking it through your tree would be best, unless Al or Ted wants to
-take it.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-I'll probably separate out
-"xfs: remove a stale comment from xfs_file_aio_write_checks()",
-since it isn't really related anymore and could go in through the XFS tree.
+Thanks,
 
-- Eric
+Josef
