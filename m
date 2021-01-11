@@ -2,177 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2874B2F2066
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:10:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2432F2068
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391341AbhAKUHe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 15:07:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54118 "EHLO
+        id S2391536AbhAKUJA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 15:09:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390143AbhAKUHe (ORCPT
+        with ESMTP id S2391513AbhAKUIx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 15:07:34 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19A9C061795;
-        Mon, 11 Jan 2021 12:06:53 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id dk8so1113781edb.1;
-        Mon, 11 Jan 2021 12:06:53 -0800 (PST)
+        Mon, 11 Jan 2021 15:08:53 -0500
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B55C061794
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:08:12 -0800 (PST)
+Received: by mail-qk1-x72e.google.com with SMTP id p14so6616qke.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:08:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Vua/4FAuzJKcybmU96dmSVXE6bAQ11vfonwPty39STU=;
-        b=jn/iS6wcEHjTuKOIG5EgLsXBQT5yi8UITaREcgDFXa1OyA9PpNg21X0CURa1dZbccI
-         kLm5aLJ/C0ouFXWl2PrVviBsFA2LcdVNtK4/KlZeAL6uNreI1ZqznNthWpzF1kMC5wvE
-         5jvDHnNzKshVcPoQ2uXvYt3efl+eHkLJBrCr+km7SFOLC0Ku9SqxqvjJvOZdxFHlPsu7
-         F+PPmfJytzn+dEFmwShYtxrQuSxt7iHZ4xNi9LXgfOz9O6Okqv+I1hlDVIiW13Cw0VAn
-         TokAs3MmOmZfkqtPZhp/SpTQuXW6lJbeRa5qP0DNu97Z0OxvYiiw+xAIaHdoFDeeWcvt
-         0ogA==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FHth/aaRGXw8bPkksN5hjPH+DYHe+92fn3EKoOPKveU=;
+        b=xSKSRey0zDYxR9bJ7/hLqOBHXUc9MMX6Fkw6qu1x8skDncTMF78XOi1DpZ8ODOBDFY
+         d9MwZXZ54AUoqB3Od0Q0Rj5vtrB86BQ8hrPzGc0bcfQ12izILc7cOxJ0xTXw2XPsXE1C
+         DeAiElQ9+y2KeHsgZBdKDoJIjsEdFWH9EqDCj5O0Cd0KEg9MYI5bPUg4U4HINubTMDQ2
+         PSMfy269yHRn12ac5ISOsmbcC+p9ocWk7T/S4YhFxKSkk0mn/SOta9Ih6hseyLmwbiEV
+         H1UHa9QrKyC5s6R9j7vTIQmHbTMP9322xXbsgV003Sh2Bhb02hoUbbTw1QDkgEacYpqt
+         C4jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Vua/4FAuzJKcybmU96dmSVXE6bAQ11vfonwPty39STU=;
-        b=TUx7GsanfaRifau7DSsftuhWlYGByg7IRc1IIixjEm18EHVjwGE3lG2Dv0N9B3iHw2
-         gdTYwSE357UApjaDlRxSVHayifPWu2xZzKqlOrFn+YnnHT0eVceZsjO3dE2j6lLWeCUi
-         rJGmIZDsv9IpdT9z3jz52RR5TMY/gZ72YL1X+rb1BhNk3nUoHsh/gZSO2G1s3zqSKla+
-         T9fO2Nqmb5ZdOfgch710hLZryzwCTaJF1UmPB9uqyHPSvtgvEhk0qFE+OJCrva80xJKr
-         ot2TfLeqBzRJOeyY1TZd6Mdk9dgiUuisaanNAmReP2p3iqo5hzKbrYMKwHIDh5hZMfv6
-         i1Vg==
-X-Gm-Message-State: AOAM532uSMiJFTLdHw/tfjP9NX/k6yTjpl49MyZ21EhwIsZA+ZDDXtcc
-        9s5K8uV8fqZZ7wz0m5KM3Sbcq/0hnXn77WecD2Q=
-X-Google-Smtp-Source: ABdhPJw2JE0XKzdLSRtyimoueQT49YkniTFElT5qp82XIKYeiHDg+pZyGZERgKh4rOTg8hcgpGSHlVp3ZDd0HMD1u+Q=
-X-Received: by 2002:a05:6402:350:: with SMTP id r16mr752578edw.176.1610395612650;
- Mon, 11 Jan 2021 12:06:52 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FHth/aaRGXw8bPkksN5hjPH+DYHe+92fn3EKoOPKveU=;
+        b=XX9sL3FQo8M5DP2MfxlqpKe7mAXk0NPueTIBLneStNkKV+j8du7PUuCRWaj/vzibhJ
+         ENOJMnQXFnKBIgEWqiJ/2pyEXnKonMcI5fm1c1O6MPdItS8bWXmWEed8ArG7+qjnERKh
+         QAc7D3d9SbazRz+LDh3oGcnwsDEtBLnLpn1xaDIIKDraV3Tdt+S1Ur0U8x4m1JxXG4qN
+         5YZUqjbEcNtuT24FI+o5GOUKkALoSrzTuDxAUrsXf0P+lfPkHvfZFmbZArvLrT5qTtI5
+         Ig4zNf9Br2FKpQXFb041KDi7fS22IDlRHi3p+FrHnXd9kbJSuwTY4IVkEmR3j0oMl3Sm
+         F7oQ==
+X-Gm-Message-State: AOAM533NKzkBTz+gqwf3Cnk98zhcRMgMYXeGRGVUGwVf/9ddW2e5itKr
+        aDe94vdeDqN0d1DKarCjq6o9VQ==
+X-Google-Smtp-Source: ABdhPJyHKp00d1h8tDaA+yMYqHjhyBUP9PWFx/rhtQ9gpobh9qAoUOCdrATVHf4Ij84rffpiFz5b2g==
+X-Received: by 2002:a05:620a:1467:: with SMTP id j7mr1064813qkl.266.1610395692123;
+        Mon, 11 Jan 2021 12:08:12 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id a22sm443706qkl.121.2021.01.11.12.08.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jan 2021 12:08:11 -0800 (PST)
+Subject: Re: [PATCH v11 06/40] btrfs: do not load fs_info->zoned from incompat
+ flag
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
+ <fb24b16fb695d521254f92d70241246f859ffa36.1608608848.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <21c01c81-22fd-437f-4e41-ce4563d71dc9@toxicpanda.com>
+Date:   Mon, 11 Jan 2021 15:08:10 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-References: <20201118144617.986860-1-willemdebruijn.kernel@gmail.com>
- <20201118144617.986860-2-willemdebruijn.kernel@gmail.com> <20201118150041.GF29991@casper.infradead.org>
- <CA+FuTSdxNBvNMy341EHeiKOWZ19H++aw-tfr6Fx1mFmbg-z4zQ@mail.gmail.com>
- <CAK8P3a0t02o77+8QNZwXF2k1pY3Xrm5bydv8Vx1TW060P7BKqA@mail.gmail.com>
- <893e8ed21e544d048bff7933013332a0@AcuMS.aculab.com> <CAF=yD-+arBFuZCU3UDx0XKmUGaEz8P1EaDLPK0YFCz82MdwBcg@mail.gmail.com>
- <20201119143131.GG29991@casper.infradead.org> <CAK8P3a1SwQ=L_qA1BmeAt=Xc-Q9Mv4V+J5LFLB5R6rMDST8UiA@mail.gmail.com>
- <CAF=yD-Kd-6f9wAYLD=dP1pk4qncWim424Fu6Hgj=ZrnUtEPORA@mail.gmail.com>
- <CAK8P3a21JRFUJrz1+TYWcVL8s4uSfeSFyoMkGsqUPbV+F=r_yw@mail.gmail.com>
- <CAF=yD-Lzu9j6T4ubRjawF-EKOC3pkQTkpigg=PugWwybY-1ZyQ@mail.gmail.com>
- <CAK8P3a1cJf7+b5HCmFiLq+FdM+D+37rHYaftRgRYbhTyjwR6wg@mail.gmail.com>
- <CAF=yD-LdtCCY=Mg9CruZHdjBXV6VmEPydzwfcE2BHUC8z7Xgng@mail.gmail.com>
- <CAK8P3a2WifcGmmFzSLC4-0SKsv0RT231P6TVKpWm=j927ykmQg@mail.gmail.com>
- <CA+FuTSdPir68M9PwhuCkd_Saz-Wi3xa_rNuwvbNmpAkMjOqhuA@mail.gmail.com>
- <CAK8P3a2Z=X68aU27qQ_0vK6c_oj9CVbThuGscjqKXRCYKfFpgg@mail.gmail.com> <CAF=yD-LAzjyNRy0vqToWqx5LxeQMYY3fVzV0vr0X7Q70ZAR-AQ@mail.gmail.com>
-In-Reply-To: <CAF=yD-LAzjyNRy0vqToWqx5LxeQMYY3fVzV0vr0X7Q70ZAR-AQ@mail.gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Mon, 11 Jan 2021 15:06:15 -0500
-Message-ID: <CAF=yD-JskHu0oBBTaRT_v7MZNEdgtYN3BmiexqjAgJV1hBKkEw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] epoll: add nsec timeout support with epoll_pwait2
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        David Laight <David.Laight@aculab.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Soheil Hassas Yeganeh <soheil.kdev@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Shuo Chen <shuochen@google.com>,
-        linux-man <linux-man@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <fb24b16fb695d521254f92d70241246f859ffa36.1608608848.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 5:59 PM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
->
-> On Thu, Dec 10, 2020 at 3:34 PM Arnd Bergmann <arnd@kernel.org> wrote:
-> >
-> > On Thu, Dec 10, 2020 at 6:33 PM Willem de Bruijn
-> > <willemdebruijn.kernel@gmail.com> wrote:
-> > > On Sat, Nov 21, 2020 at 4:27 AM Arnd Bergmann <arnd@kernel.org> wrote=
-:
-> > > > On Fri, Nov 20, 2020 at 11:28 PM Willem de Bruijn <willemdebruijn.k=
-ernel@gmail.com> wrote:
-> > > > I would imagine this can be done like the way I proposed
-> > > > for get_bitmap() in sys_migrate_pages:
-> > > >
-> > > > https://lore.kernel.org/lkml/20201102123151.2860165-4-arnd@kernel.o=
-rg/
-> > >
-> > > Coming back to this. Current patchset includes new select and poll
-> > > selftests to verify the changes. I need to send a small kselftest
-> > > patch for that first.
-> > >
-> > > Assuming there's no time pressure, I will finish up and send the main
-> > > changes after the merge window, for the next release then.
-> > >
-> > > Current state against linux-next at
-> > > https://github.com/wdebruij/linux-next-mirror/tree/select-compat-1
-> >
-> > Ok, sounds good to me. I've had a (very brief) look and have one
-> > suggestion: instead of open-coding the compat vs native mode
-> > in multiple places like
-> >
-> > if (!in_compat_syscall())
-> >     =EF=BF=BC return copy_from_user(fdset, ufdset, FDS_BYTES(nr)) ? -EF=
-AULT : 0;
-> > else
-> >     =EF=BF=BC return compat_get_bitmap(fdset, ufdset, nr);
-> >
-> > maybe move this into a separate function and call that where needed.
-> >
-> > I've done this for the get_bitmap() function in my series at
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/com=
-mit/?h=3Dcompat-alloc-user-space-7&id=3Db1b23ebb12b635654a2060df49455167a14=
-2c5d2
-> >
-> > The definition is slightly differrent for cpumask, nodemask and fd_set,
-> > so we'd need to try out the best way to structure the code to end
-> > up with the most readable version, but it should be possible when
-> > there are only three callers (and duplicating the function would
-> > be the end of the world either)
->
-> For fd_set there is only a single caller for each direction. Do you
-> prefer helpers even so?
->
-> For sigmask, with three callers, something along the lines of this?
->
->   @@ -1138,10 +1135,7 @@ static int do_ppoll(struct pollfd __user
-> *ufds, unsigned int nfds,
->                           return -EINVAL;
->           }
->
->   -       if (!in_compat_syscall())
->   -               ret =3D set_user_sigmask(sigmask, sigsetsize);
->   -       else
->   -               ret =3D set_compat_user_sigmask(sigmask, sigsetsize);
->   +       ret =3D set_maybe_compat_user_sigmask(sigmask, sigsetsize);
->           if (ret)
->                   return ret;
->
->   --- a/include/linux/compat.h
->   +++ b/include/linux/compat.h
->   @@ -942,6 +942,17 @@ static inline bool in_compat_syscall(void) {
-> return false; }
->
->   +static inline int set_maybe_compat_user_sigmask(const void __user *sig=
-mask,
->   +                                               size_t sigsetsize)
->   +{
->   +#if defined CONFIG_COMPAT
->   +       if (unlikely(in_compat_syscall()))
->   +               return set_compat_user_sigmask(sigmask, sigsetsize);
->   +#endif
->   +
->   +       return set_user_sigmask(sigmask, sigsetsize);
->   +}
+On 12/21/20 10:48 PM, Naohiro Aota wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> 
+> Since fs_info->zoned is unioned with fs_info->zone_size, loading
+> fs_info->zoned from the incompat flag screw up the zone_size. So, let's
+> avoid to load it from the flag. It will be eventually set by
+> btrfs_get_dev_zone_info_all_devices().
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-set_user_sigmask is the only open-coded variant that is used more than once=
-.
+May want to take another crack at that changelog, the grammar is way off.  The 
+code is fine tho
 
-Because it is used in both select.c and eventpoll.c, a helper would
-have to live in compat.h. This then needs a new dependency on
-sched_signal.h.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-So given that this is a simple branch, it might just make logic more
-complex, instead of less. I can add this change in a separate patch on
-top of the original three, to judge whether it is worthwhile.
+Thanks,
+
+Josef
