@@ -2,124 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E66EC2F0EE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 10:17:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D90C2F0F69
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 10:50:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbhAKJRc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 04:17:32 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:37248 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727957AbhAKJRc (ORCPT
+        id S1728179AbhAKJri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 04:47:38 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:28428 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727819AbhAKJrh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 04:17:32 -0500
-Date:   Mon, 11 Jan 2021 10:16:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1610356608;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LEXe/B0Q3kSQ+pyi11QVzunFEXSDJfyzRctZD/mSGwY=;
-        b=uCnnwbctZA1rQ3V0p2kZu+d3zaZFHTKUJPOo76b5D7cuxWEOXVJdpIqiLFP5aTXpvIjv9s
-        qwAvW5WhwffRTnvcztEi2+1v/oENxwE79UOubMC7jJKeubOBD6zsvQUL74GztGQIAKB8HO
-        BT4sxjhTakFs4dVqAQh6GY6Sn14JBtplCvPA2cmstH/p72FEB2TnSYVyeSL8sjTNI80v3T
-        oCsDUl6wYJXQ9QueQxoB6wuP+fNUTobWuAtyizRQCOtZthAqYs4ojlXRNfsr2J83hANEKU
-        KrLFmoV7Ai9vVG4RtXD3Lh/qUjXo6jULZnNtu/UYw3EhRXUZtNRGRg4NMuxugQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1610356608;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LEXe/B0Q3kSQ+pyi11QVzunFEXSDJfyzRctZD/mSGwY=;
-        b=aQ0P+BB77W0OA8uLsIQDcnYrwKkOka8jvG0VLRGl2/Wpm04Edp57/CM7syBgLiKrsJkDcC
-        9SLKzMSTP9RzBiAw==
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc:     Paul Cercueil <paul@crapouillou.net>, tglx@linutronix.de,
-        airlied@linux.ie, airlied@redhat.com, akpm@linux-foundation.org,
-        arnd@arndb.de, bcrl@kvack.org, bristot@redhat.com,
-        bsegall@google.com, bskeggs@redhat.com, chris@zankel.net,
-        christian.koenig@amd.com, clm@fb.com, davem@davemloft.net,
-        deanbo422@gmail.com, dietmar.eggemann@arm.com,
-        dri-devel@lists.freedesktop.org, dsterba@suse.com,
-        green.hu@gmail.com, hch@lst.de, intel-gfx@lists.freedesktop.org,
-        jcmvbkbc@gmail.com, josef@toxicpanda.com, juri.lelli@redhat.com,
-        kraxel@redhat.com, linux-aio@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-btrfs@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mm@kvack.org,
-        linux-snps-arc@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        linux@armlinux.org.uk, linuxppc-dev@lists.ozlabs.org,
-        mgorman@suse.de, mingo@kernel.org, monstr@monstr.eu,
-        mpe@ellerman.id.au, nickhu@andestech.com,
-        nouveau@lists.freedesktop.org, paulmck@kernel.org,
-        paulus@samba.org, peterz@infradead.org, ray.huang@amd.com,
-        rodrigo.vivi@intel.com, rostedt@goodmis.org,
-        sparclinux@vger.kernel.org, spice-devel@lists.freedesktop.org,
-        sroland@vmware.com, torvalds@linuxfoundation.org,
-        vgupta@synopsys.com, vincent.guittot@linaro.org,
-        viro@zeniv.linux.org.uk, virtualization@lists.linux-foundation.org,
-        x86@kernel.org
-Subject: Re: [patch V3 13/37] mips/mm/highmem: Switch to generic kmap atomic
-Message-ID: <20210111091646.hkugbtlcced3vmno@linutronix.de>
-References: <JUTMMQ.NNFWKIUV7UUJ1@crapouillou.net>
- <20210108235805.GA17543@alpha.franken.de>
- <20210109003352.GA18102@alpha.franken.de>
+        Mon, 11 Jan 2021 04:47:37 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-36-V9nBYAwpNcy0GTxHaZ28IA-1; Mon, 11 Jan 2021 09:35:57 +0000
+X-MC-Unique: V9nBYAwpNcy0GTxHaZ28IA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 11 Jan 2021 09:35:56 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 11 Jan 2021 09:35:56 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Pavel Begunkov' <asml.silence@gmail.com>,
+        'Al Viro' <viro@zeniv.linux.org.uk>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] iov_iter: optimise iter type checking
+Thread-Topic: [PATCH] iov_iter: optimise iter type checking
+Thread-Index: AQHW5qm9/hT6YRd33Eq5lMaMuw9mB6of0+hQgAAHboCAAk7E0A==
+Date:   Mon, 11 Jan 2021 09:35:56 +0000
+Message-ID: <e125521b90d5405898c21c0e896c3525@AcuMS.aculab.com>
+References: <a8cdb781384791c30e30036aced4c027c5dfea86.1605969341.git.asml.silence@gmail.com>
+ <6e795064-fdbd-d354-4b01-a4f7409debf5@gmail.com>
+ <54cd4d1b-d7ec-a74c-8be0-e48780609d56@gmail.com>
+ <20210109170359.GT3579531@ZenIV.linux.org.uk>
+ <b04df39d77114547811d7bfc2c0d4c8c@AcuMS.aculab.com>
+ <1783c58f-1016-0c6b-be7f-a93bc2f8f2a4@gmail.com>
+In-Reply-To: <1783c58f-1016-0c6b-be7f-a93bc2f8f2a4@gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210109003352.GA18102@alpha.franken.de>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-01-09 01:33:52 [+0100], Thomas Bogendoerfer wrote:
-> On Sat, Jan 09, 2021 at 12:58:05AM +0100, Thomas Bogendoerfer wrote:
-> > On Fri, Jan 08, 2021 at 08:20:43PM +0000, Paul Cercueil wrote:
-> > > Hi Thomas,
-> > > 
-> > > 5.11 does not boot anymore on Ingenic SoCs, I bisected it to this commit.
-> > > 
-> > > Any idea what could be happening?
-> > 
-> > not yet, kernel crash log of a Malta QEMU is below.
-> 
-> update:
-> 
-> This dirty hack lets the Malta QEMU boot again:
-> 
-> diff --git a/mm/highmem.c b/mm/highmem.c
-> index c3a9ea7875ef..190cdda1149d 100644
-> --- a/mm/highmem.c
-> +++ b/mm/highmem.c
-> @@ -515,7 +515,7 @@ void *__kmap_local_pfn_prot(unsigned long pfn, pgprot_t prot)
->  	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
->  	BUG_ON(!pte_none(*(kmap_pte - idx)));
->  	pteval = pfn_pte(pfn, prot);
-> -	set_pte_at(&init_mm, vaddr, kmap_pte - idx, pteval);
-> +	set_pte(kmap_pte - idx, pteval);
->  	arch_kmap_local_post_map(vaddr, pteval);
->  	current->kmap_ctrl.pteval[kmap_local_idx()] = pteval;
->  	preempt_enable();
-> 
-> set_pte_at() tries to update cache and could do an kmap_atomic() there.
-So the old implementation used set_pte() while the new one uses
-set_pte_at().
+RnJvbTogUGF2ZWwgQmVndW5rb3YNCj4gU2VudDogMDkgSmFudWFyeSAyMDIxIDIyOjExDQouLi4u
+DQo+ID4gRG9lcyBhbnkgY29kZSBhY3R1YWxseSBsb29rIGF0IHRoZSBmaWVsZHMgYXMgYSBwYWly
+Pw0KPiA+IFdvdWxkIGl0IGV2ZW4gYmUgYmV0dGVyIHRvIHVzZSBzZXBhcmF0ZSBieXRlcz8NCj4g
+PiBFdmVuIGdyb3dpbmcgdGhlIG9uLXN0YWNrIHN0cnVjdHVyZSBieSBhIHdvcmQgd29uJ3QgcmVh
+bGx5IG1hdHRlci4NCj4gDQo+IHU4IHR5cGUsIHJ3Ow0KPiANCj4gVGhhdCB3b24ndCBibG9hdCB0
+aGUgc3RydWN0LiBJIGxpa2UgdGhlIGlkZWEuIElmIHVzZWQgdG9nZXRoZXIgY29tcGlsZXJzDQo+
+IGNhbiB0cmVhdCBpdCBhcyB1MTYuDQo+IA0KPiBidHcgdGhlcmUgaXMgYSA0QiBob2xlIGp1c3Qg
+YWZ0ZXIgZm9yIHg2NC4NCg0KSSd2ZSBqdXN0IGhhZCBhIHF1aWNrIGxvb2sgYXQgdGhlIHNvdXJj
+ZXMuDQooTm90aGluZyB3YXMgcG93ZXJlZCB1cCBlYXJsaWVyLikNCg0KQUZBSUNUIG5vdGhpbmcg
+bmVlZHMgdGhlIFJXIGZsYWcgdG8gYmUgaW4gdGhlIHNhbWUgd29yZA0KYXMgdGhlIHR5cGUuDQpJ
+ZiB5b3UgdGhpbmsgYWJvdXQgaXQsIHRoZSBjYWxsIHNpdGUgaXMgc3BlY2lmaWMgdG8gcmVhZC93
+cml0ZS4NClRoZSBvbmx5IHBsYWNlcyBpb3ZfaXRlcl9ydygpIGlzIHVzZWQgaW4gaW5zaWRlIGhl
+bHBlciBmdW5jdGlvbnMNCnRvIHNhdmUgdGhlIGRpcmVjdGlvbiBiZWluZyBwYXNzZWQgZnJvbSB0
+aGUgY2FsbGVyLg0KDQpJIGhvcGUgdGhlIGNvbW1lbnQgYWJvdXQgYml0IDEgYmVpbmcgQlZFQ19G
+TEFHX05PX1JFRiBpcyBvbGQuDQpJIGNhbid0IGZpbmQgYW55IHJlZmVyZW5jZXMgdG8gdGhhdCBm
+bGFnLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5
+IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRp
+b24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-> Not sure, if this is allowed at this point.
-The problem is the recursion
-  kmap_atomic() -> __update_cache() -> kmap_atomic()
-
-and kmap_local_idx_push() runs out if index space before stack space.
-
-I'm not sure if the __update_cache() worked for highmem. It has been
-added for that in commit
-   f4281bba81810 ("MIPS: Handle highmem pages in __update_cache")
-
-but it assumes that the address returned by kmap_atomic() is the same or
-related enough for flush_data_cache_page() to work.
-
-> Thomas.
-> 
-
-Sebastian
