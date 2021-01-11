@@ -2,72 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 248902F1DDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 19:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E45852F1DF6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 19:26:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389348AbhAKSVO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 13:21:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59346 "EHLO
+        id S2390360AbhAKSZv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 13:25:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730240AbhAKSVO (ORCPT
+        with ESMTP id S1727225AbhAKSZu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 13:21:14 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09B1C061786;
-        Mon, 11 Jan 2021 10:20:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Jt+zTaSzHgoXv74FihambALys8BL18QGIjpnja/5Ee8=; b=CTiDW6Md6Yj0vdiWQK5L1rL/lt
-        +jdS3x5pyLb6p5tCGsAjAdr4gpliYx2tU7eTqF7u8/x3n0crT3nc8sh7zjITbW3ja7hgd64A0yttp
-        wfB90pVnk6lKzHUV0IgWcuB+P5uip+kXnMXhNS9vyu8MupR/nF7vUP+M0y8+Og9s9qf+QS7zp7khh
-        gCtjzkEyMZSrEx6jFE4axyH12qx/cUCO0DyJ/2Ea2KCquO8SGIpPZepvWLX6RkK4M6pb3jXLs/bvi
-        mRzLOiWXH0QdhU+JYY8WU0e1qQb3dUEr4t5S//Q9a984Y602WyUiryNq7+ZwfJwIoJVgnaq9ZDPsv
-        5DJOrPMA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1kz1np-003cc6-0b; Mon, 11 Jan 2021 18:20:29 +0000
-Date:   Mon, 11 Jan 2021 18:20:29 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] char_dev: replace cdev_map with an xarray
-Message-ID: <20210111182029.GH35215@casper.infradead.org>
-References: <20210111170513.1526780-1-hch@lst.de>
- <20210111173500.GG35215@casper.infradead.org>
- <X/yUzVu04TyVuU/f@kroah.com>
+        Mon, 11 Jan 2021 13:25:50 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29310C061794;
+        Mon, 11 Jan 2021 10:25:10 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id y24so724613edt.10;
+        Mon, 11 Jan 2021 10:25:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e4l2iu8JfXCpwRp5jD2yGSeHThvMrp9zXdMim0CaLnA=;
+        b=tSWnHvHvkN6pH1QJPPItHBp1SLqGII+jCn2CypN8nK5/jRUrAmX/abGhwjBKFWJdDi
+         MOf7/x2TJvdcI8i7ZQSwdbVYj5ePCYgRTjenOssmF+gqkmRjKNw3hU4Zh6Nblu+J/fGS
+         gIEVsot+VPzwflPl1G2voaPdiNv7N+3Q3mGUnrs9HalGqApytEhiumaCYNl0ffDsOOwY
+         yxysRR/CEGnjGPhHK0vNdsvmTol5SWm7AcADxBw4Q4Hx1hHwo+c2ciOyOJVBhk9jLgIR
+         1Z8YEIzI4SfRwEf+4fZS459sM5DdYwgEjXMl5zuZoTPWxtjlWa1dogWwciAT9zIONg7B
+         wjjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e4l2iu8JfXCpwRp5jD2yGSeHThvMrp9zXdMim0CaLnA=;
+        b=V9+LyJSVVncs7ZFoDZ30TVhD4Nci6cNwinndC6Ge6rJNFyUObjpPL/pkCvOBNI7n2P
+         luG5WcbqNQ7VUrgnBbqbyCIzFfkPUgLycg+m50RQPsPtrMMoeC+yInTGWS/GIk/bqDMT
+         em5j1J8KhSvaxUa4EXjUgHrHYyeUDB1qTS3/w1ofS6vCx3trhopzlqAsAwR7KhbGWxs3
+         o6TAgMs98lV1ZOY/KueR01BR4qzGBv+ibE97lFzxG3XPM7F1zSDA8BOXJXJlSE/6rhf4
+         ffi1DswX228P6tNuP08UMII03RAzRsV5FC6pWkBdToCEY4/47CXsPpWZh7EBXQmZ15DJ
+         kWWg==
+X-Gm-Message-State: AOAM530V0Ntp4i+Mb+zSCgxeXIA8NoSYihpprOCuBIZOOUgzK3pnoamf
+        fwCmERIlqVQ+RR7nfL9FbiJOR1ItOb+jaaeTbSw=
+X-Google-Smtp-Source: ABdhPJwXNLK1M/j1Mbx4eezgEQTgOBMWG94tM1/AhN0XdizNslGbjDVhvfnQdpiocFnGQGS0uqLd+G5/1RT22eI1AsA=
+X-Received: by 2002:a05:6402:746:: with SMTP id p6mr475862edy.313.1610389508844;
+ Mon, 11 Jan 2021 10:25:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <X/yUzVu04TyVuU/f@kroah.com>
+References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-8-shy828301@gmail.com>
+ <a3452140-9f88-3cb9-0359-ca374f9e9d9d@virtuozzo.com>
+In-Reply-To: <a3452140-9f88-3cb9-0359-ca374f9e9d9d@virtuozzo.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Mon, 11 Jan 2021 10:24:56 -0800
+Message-ID: <CAHbLzkrcVdsHMUwtz2NXmwwZCh8rCDDjieciJ9XewU1ZGbf4+g@mail.gmail.com>
+Subject: Re: [v3 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 07:11:25PM +0100, Greg KH wrote:
-> On Mon, Jan 11, 2021 at 05:35:00PM +0000, Matthew Wilcox wrote:
-> > On Mon, Jan 11, 2021 at 06:05:13PM +0100, Christoph Hellwig wrote:
-> > > None of the complicated overlapping regions bits of the kobj_map are
-> > > required for the character device lookup, so just a trivial xarray
-> > > instead.
-> > 
-> > Thanks for doing this.  We could make it more efficient for chardevs
-> > that occupy 64 or more consecutive/aligned devices -- is it worth doing?
-> 
-> efficient in what way?  Space or faster lookup?
+On Wed, Jan 6, 2021 at 3:07 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> On 06.01.2021 01:58, Yang Shi wrote:
+> > Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> >
+> > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> > may suffer from over shrink, excessive reclaim latency, etc.
+> >
+> > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> >
+> > We observed this hit in our production environment which was running vfs heavy workload
+> > shown as the below tracing log:
+> >
+> > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> > cache items 246404277 delta 31345 total_scan 123202138
+> > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> > last shrinker return val 123186855
+> >
+> > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> > This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> >
+> > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> > better isolation.
+> >
+> > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  include/linux/memcontrol.h |  7 +++---
+> >  mm/vmscan.c                | 49 +++++++++++++++++++++++++-------------
+> >  2 files changed, 37 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index e05bbe8277cc..5599082df623 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -93,12 +93,13 @@ struct lruvec_stat {
+> >  };
+> >
+> >  /*
+> > - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> > - * which have elements charged to this memcg.
+> > + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
+> > + * shrinkers, which have elements charged to this memcg.
+> >   */
+> >  struct memcg_shrinker_info {
+> >       struct rcu_head rcu;
+> > -     unsigned long map[];
+> > +     unsigned long *map;
+> > +     atomic_long_t *nr_deferred;
+> >  };
+> >
+> >  /*
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 0033659abf9e..72259253e414 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -193,10 +193,12 @@ static void memcg_free_shrinker_info_rcu(struct rcu_head *head)
+> >  }
+> >
+> >  static int memcg_expand_one_shrinker_info(struct mem_cgroup *memcg,
+> > -                                       int size, int old_size)
+> > +                                       int m_size, int d_size,
+> > +                                       int old_m_size, int old_d_size)
+> >  {
+> >       struct memcg_shrinker_info *new, *old;
+> >       int nid;
+> > +     int size = m_size + d_size;
+> >
+> >       for_each_node(nid) {
+> >               old = rcu_dereference_protected(
+> > @@ -209,9 +211,18 @@ static int memcg_expand_one_shrinker_info(struct mem_cgroup *memcg,
+> >               if (!new)
+> >                       return -ENOMEM;
+> >
+> > -             /* Set all old bits, clear all new bits */
+> > -             memset(new->map, (int)0xff, old_size);
+> > -             memset((void *)new->map + old_size, 0, size - old_size);
+> > +             new->map = (unsigned long *)((unsigned long)new + sizeof(*new));
+> > +             new->nr_deferred = (atomic_long_t *)((unsigned long)new +
+> > +                                     sizeof(*new) + m_size);
+>
+> Can't we write this more compact?
+>
+>                 new->map = (unsigned long *)(new + 1);
+>                 new->nr_deferred = (atomic_long_t)(new->map + 1);
 
-Both, but primarily space.
+Thanks for the suggestion, will incorporate it in v4.
 
-The radix tree underlying the xarray allows N consecutive entries with
-the same value to be represented as a single entry; if there are at
-least 64 entries then we get to skip an entire level of the tree (saving
-1/7 of a page).  Of course, we'd need to go from the 'head' pointer to
-the correct pointer, something like p += rdev - p->rdev.
+>
+> > +
+> > +             /* map: set all old bits, clear all new bits */
+> > +             memset(new->map, (int)0xff, old_m_size);
+> > +             memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
+> > +             /* nr_deferred: copy old values, clear all new values */
+> > +             memcpy((void *)new->nr_deferred, (void *)old->nr_deferred,
+> > +                    old_d_size);
+>
+> Why not
+>                 memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
+> ?
 
-> THis shouldn't be on a "fast" lookup path, so I doubt that's worth
-> optimizing for.  Space, maybe, for systems with thousands of scsi
-> devices, but usually they just stick to the block device, not a char
-> device from what I remember.
+Will fix in v4.
 
-/dev/sgX is a chardev?
+>
+> > +             memset((void *)new->nr_deferred + old_d_size, 0,
+> > +                    d_size - old_d_size);
+> >
+> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+> >               call_rcu(&old->rcu, memcg_free_shrinker_info_rcu);
+> > @@ -226,9 +237,6 @@ void memcg_free_shrinker_info(struct mem_cgroup *memcg)
+> >       struct memcg_shrinker_info *info;
+> >       int nid;
+> >
+> > -     if (mem_cgroup_is_root(memcg))
+> > -             return;
+> > -
+> >       for_each_node(nid) {
+> >               pn = mem_cgroup_nodeinfo(memcg, nid);
+> >               info = rcu_dereference_protected(pn->shrinker_info, true);
+> > @@ -242,12 +250,13 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+> >  {
+> >       struct memcg_shrinker_info *info;
+> >       int nid, size, ret = 0;
+> > -
+> > -     if (mem_cgroup_is_root(memcg))
+> > -             return 0;
+> > +     int m_size, d_size = 0;
+> >
+> >       down_read(&shrinker_rwsem);
+> > -     size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     m_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> > +     size = m_size + d_size;
+> > +
+> >       for_each_node(nid) {
+> >               info = kvzalloc(sizeof(*info) + size, GFP_KERNEL);
+> >               if (!info) {
+> > @@ -255,6 +264,9 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+> >                       ret = -ENOMEM;
+> >                       break;
+> >               }
+> > +             info->map = (unsigned long *)((unsigned long)info + sizeof(*info));
+> > +             info->nr_deferred = (atomic_long_t *)((unsigned long)info +
+> > +                                     sizeof(*info) + m_size);
+> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+> >       }
+> >       up_read(&shrinker_rwsem);
+> > @@ -265,10 +277,16 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+> >  static int memcg_expand_shrinker_info(int new_id)
+> >  {
+> >       int size, old_size, ret = 0;
+> > +     int m_size, d_size = 0;
+> > +     int old_m_size, old_d_size = 0;
+> >       struct mem_cgroup *memcg;
+> >
+> > -     size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> > -     old_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     m_size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     d_size = (new_id + 1) * sizeof(atomic_long_t);
+> > +     size = m_size + d_size;
+> > +     old_m_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     old_d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> > +     old_size = old_m_size + old_d_size;
+> >       if (size <= old_size)
+> >               return 0;
+>
+> This replication of patch [4/11] looks awkwardly. Please, try to incorporate
+> the same changes to nr_deferred as I requested for shrinker_map in [4/11].
+
+Sure. Thanks.
+
+>
+> >
+> > @@ -277,9 +295,8 @@ static int memcg_expand_shrinker_info(int new_id)
+> >
+> >       memcg = mem_cgroup_iter(NULL, NULL, NULL);
+> >       do {
+> > -             if (mem_cgroup_is_root(memcg))
+> > -                     continue;
+> > -             ret = memcg_expand_one_shrinker_info(memcg, size, old_size);
+> > +             ret = memcg_expand_one_shrinker_info(memcg, m_size, d_size,
+> > +                                                  old_m_size, old_d_size);
+> >               if (ret) {
+> >                       mem_cgroup_iter_break(NULL, memcg);
+> >                       goto out;
+> >
+>
+>
