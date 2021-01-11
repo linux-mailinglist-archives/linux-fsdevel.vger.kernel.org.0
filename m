@@ -2,176 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC6A2F224B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 22:59:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C57752F2435
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 01:34:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731130AbhAKV6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 16:58:52 -0500
-Received: from relay.sw.ru ([185.231.240.75]:60986 "EHLO relay3.sw.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728040AbhAKV6w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 16:58:52 -0500
-Received: from [192.168.15.62]
-        by relay3.sw.ru with esmtp (Exim 4.94)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1kz5BG-00GEv4-Ka; Tue, 12 Jan 2021 00:56:54 +0300
-Subject: Re: [v3 PATCH 09/11] mm: vmscan: don't need allocate
- shrinker->nr_deferred for memcg aware shrinkers
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
+        id S2404264AbhALAZi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 19:25:38 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:56074 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390497AbhAKWot (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Jan 2021 17:44:49 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10BMdih7051839;
+        Mon, 11 Jan 2021 22:43:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=6Ose25Stsa51S7paVM2cR2t4IRVZY53vBBpbLwwbkAA=;
+ b=OghPzvJl8YKoQgZy+h246WtI8gJr1vTaM4fGqtfvDD4fahBYOUU4hiOIcq3Dng8s4Hzk
+ 3H+t61iDmRgbzOPeXjjsZUYcV76d9XnKjpoAOGe+z1hqA93Ar7+wzFDKyb7YJP6UQnTH
+ w+/T3kNBCao6O3DsdnYRGzlEajcS8pn1VQ1PDdfEky7U1AhlB2ZTffNTRc7W5E13fx/x
+ zo7RA6wj49BDQjBD+OqpjHrBgwPNFwM2wa/A3lGd2Tv4YLVAjjlbwuaLXZ/lB9oascl2
+ HUTkDh33+PDz2W4Y0DoO+osPTxLC40i3M5JyIQz/r9XAlMytVg3bRKrRviOmYKcssNWB qw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 360kcykpnx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 11 Jan 2021 22:43:01 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10BMeTU6011908;
+        Mon, 11 Jan 2021 22:43:01 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 360kefuysq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Jan 2021 22:43:01 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10BMgpJ8003688;
+        Mon, 11 Jan 2021 22:42:51 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 11 Jan 2021 14:42:51 -0800
+Subject: Re: [RFC PATCH 0/2] userfaultfd: handle minor faults, add
+ UFFDIO_CONTINUE
+To:     Axel Rasmussen <axelrasmussen@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20210105225817.1036378-1-shy828301@gmail.com>
- <20210105225817.1036378-10-shy828301@gmail.com>
- <7c591313-08fd-4f98-6021-6dfa59f01aff@virtuozzo.com>
- <CAHbLzkrFA6DTjJzxhrsAVCNMcLS7bXATUyF79EC1sov2D1VYqg@mail.gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <ed883db6-5f52-a41b-d759-f4fb61d5b4e5@virtuozzo.com>
-Date:   Tue, 12 Jan 2021 00:57:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Steven Price <steven.price@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Adam Ruprecht <ruprecht@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Oliver Upton <oupton@google.com>
+References: <20210107190453.3051110-1-axelrasmussen@google.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <48f4f43f-eadd-f37d-bd8f-bddba03a7d39@oracle.com>
+Date:   Mon, 11 Jan 2021 14:42:48 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <CAHbLzkrFA6DTjJzxhrsAVCNMcLS7bXATUyF79EC1sov2D1VYqg@mail.gmail.com>
+In-Reply-To: <20210107190453.3051110-1-axelrasmussen@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9861 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101110127
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9861 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 clxscore=1011 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101110127
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11.01.2021 21:40, Yang Shi wrote:
-> On Wed, Jan 6, 2021 at 3:16 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>
->> On 06.01.2021 01:58, Yang Shi wrote:
->>> Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
->>> allocate shrinker->nr_deferred for such shrinkers anymore.
->>>
->>> The prealloc_memcg_shrinker() would return -ENOSYS if !CONFIG_MEMCG or memcg is disabled
->>> by kernel command line, then shrinker's SHRINKER_MEMCG_AWARE flag would be cleared.
->>> This makes the implementation of this patch simpler.
->>>
->>> Signed-off-by: Yang Shi <shy828301@gmail.com>
->>> ---
->>>  mm/vmscan.c | 33 ++++++++++++++++++---------------
->>>  1 file changed, 18 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->>> index f20ed8e928c2..d9795fb0f1c5 100644
->>> --- a/mm/vmscan.c
->>> +++ b/mm/vmscan.c
->>> @@ -340,6 +340,9 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->>>  {
->>>       int id, ret = -ENOMEM;
->>>
->>> +     if (mem_cgroup_disabled())
->>> +             return -ENOSYS;
->>> +
->>>       down_write(&shrinker_rwsem);
->>>       /* This may call shrinker, so it must use down_read_trylock() */
->>>       id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
->>> @@ -424,7 +427,7 @@ static bool writeback_throttling_sane(struct scan_control *sc)
->>>  #else
->>>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->>>  {
->>> -     return 0;
->>> +     return -ENOSYS;
->>>  }
->>>
->>>  static void unregister_memcg_shrinker(struct shrinker *shrinker)
->>> @@ -535,8 +538,20 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
->>>   */
->>>  int prealloc_shrinker(struct shrinker *shrinker)
->>>  {
->>> -     unsigned int size = sizeof(*shrinker->nr_deferred);
->>> +     unsigned int size;
->>> +     int err;
->>> +
->>> +     if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
->>> +             err = prealloc_memcg_shrinker(shrinker);
->>> +             if (!err)
->>> +                     return 0;
->>> +             if (err != -ENOSYS)
->>> +                     return err;
->>> +
->>> +             shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
->>
->> This looks very confusing.
->>
->> In case of you want to disable preallocation branch for !MEMCG case,
->> you should firstly consider something like the below:
+On 1/7/21 11:04 AM, Axel Rasmussen wrote:
+> Overview
+> ========
 > 
-> Not only !CONFIG_MEMCG, but also "cgroup_disable=memory" case.
+> This series adds a new userfaultfd registration mode,
+> UFFDIO_REGISTER_MODE_MINOR. This allows userspace to intercept "minor" faults.
+> By "minor" fault, I mean the following situation:
 > 
->>
->> #ifdef CONFIG_MEMCG
->> #define SHRINKER_MEMCG_AWARE    (1 << 2)
->> #else
->> #define SHRINKER_MEMCG_AWARE    0
->> #endif
+> Let there exist two mappings (i.e., VMAs) to the same page(s) (shared memory).
+> One of the mappings is registered with userfaultfd (in minor mode), and the
+> other is not. Via the non-UFFD mapping, the underlying pages have already been
+> allocated & filled with some contents. The UFFD mapping has not yet been
+> faulted in; when it is touched for the first time, this results in what I'm
+> calling a "minor" fault. As a concrete example, when working with hugetlbfs, we
+> have huge_pte_none(), but find_lock_page() finds an existing page.
 > 
-> This could handle !CONFIG_MEMCG case, but can't deal with
-> "cgroup_disable=memory" case. We could consider check
-> mem_cgroup_disabled() when initializing shrinker, but this may result
-> in touching fs codes like below:
+> We also add a new ioctl to resolve such faults: UFFDIO_CONTINUE. The idea is,
+> userspace resolves the fault by either a) doing nothing if the contents are
+> already correct, or b) updating the underlying contents using the second,
+> non-UFFD mapping (via memcpy/memset or similar, or something fancier like RDMA,
+> or etc...). In either case, userspace issues UFFDIO_CONTINUE to tell the kernel
+> "I have ensured the page contents are correct, carry on setting up the mapping".
 > 
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -266,7 +266,9 @@ static struct super_block *alloc_super(struct
-> file_system_type *type, int flags,
->         s->s_shrink.scan_objects = super_cache_scan;
->         s->s_shrink.count_objects = super_cache_count;
->         s->s_shrink.batch = 1024;
-> -       s->s_shrink.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE;
-> +       s->s_shrink.flags = SHRINKER_NUMA_AWARE;
-> +       if (!mem_cgroup_disabled())
-> +               s->s_shrink.flags |= SHRINKER_MEMCG_AWARE;
->         if (prealloc_shrinker(&s->s_shrink))
->                 goto fail;
->         if (list_lru_init_memcg(&s->s_dentry_lru, &s->s_shrink))
 
-Oh. If so, then initial variant was better.
+One quick thought.
 
->>
->>> +     }
->>>
->>> +     size = sizeof(*shrinker->nr_deferred);
->>>       if (shrinker->flags & SHRINKER_NUMA_AWARE)
->>>               size *= nr_node_ids;
->>>
->>> @@ -544,26 +559,14 @@ int prealloc_shrinker(struct shrinker *shrinker)
->>>       if (!shrinker->nr_deferred)
->>>               return -ENOMEM;
->>>
->>> -     if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
->>> -             if (prealloc_memcg_shrinker(shrinker))
->>> -                     goto free_deferred;
->>> -     }
->>>
->>>       return 0;
->>> -
->>> -free_deferred:
->>> -     kfree(shrinker->nr_deferred);
->>> -     shrinker->nr_deferred = NULL;
->>> -     return -ENOMEM;
->>>  }
->>>
->>>  void free_prealloced_shrinker(struct shrinker *shrinker)
->>>  {
->>> -     if (!shrinker->nr_deferred)
->>> -             return;
->>> -
->>>       if (shrinker->flags & SHRINKER_MEMCG_AWARE)
->>> -             unregister_memcg_shrinker(shrinker);
->>> +             return unregister_memcg_shrinker(shrinker);
->>>
->>>       kfree(shrinker->nr_deferred);
->>>       shrinker->nr_deferred = NULL;
->>>
->>
->>
+This is not going to work as expected with hugetlbfs pmd sharing.  If you
+are not familiar with hugetlbfs pmd sharing, you are not alone. :)
 
+pmd sharing is enabled for x86 and arm64 architectures.  If there are multiple
+shared mappings of the same underlying hugetlbfs file or shared memory segment
+that are 'suitably aligned', then the PMD pages associated with those regions
+are shared by all the mappings.  Suitably aligned means 'on a 1GB boundary'
+and 1GB in size.
+
+When pmds are shared, your mappings will never see a 'minor fault'.  This
+is because the PMD (page table entries) is shared.
+
+-- 
+Mike Kravetz
