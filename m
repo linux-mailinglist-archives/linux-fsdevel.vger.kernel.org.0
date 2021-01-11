@@ -2,71 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2432F2068
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76C102F2073
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:13:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391536AbhAKUJA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 15:09:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54394 "EHLO
+        id S2391410AbhAKUMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 15:12:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391513AbhAKUIx (ORCPT
+        with ESMTP id S2391355AbhAKUMr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 15:08:53 -0500
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B55C061794
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:08:12 -0800 (PST)
-Received: by mail-qk1-x72e.google.com with SMTP id p14so6616qke.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:08:12 -0800 (PST)
+        Mon, 11 Jan 2021 15:12:47 -0500
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55AC2C061786
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:12:07 -0800 (PST)
+Received: by mail-qk1-x72d.google.com with SMTP id 186so32377qkj.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:12:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FHth/aaRGXw8bPkksN5hjPH+DYHe+92fn3EKoOPKveU=;
-        b=xSKSRey0zDYxR9bJ7/hLqOBHXUc9MMX6Fkw6qu1x8skDncTMF78XOi1DpZ8ODOBDFY
-         d9MwZXZ54AUoqB3Od0Q0Rj5vtrB86BQ8hrPzGc0bcfQ12izILc7cOxJ0xTXw2XPsXE1C
-         DeAiElQ9+y2KeHsgZBdKDoJIjsEdFWH9EqDCj5O0Cd0KEg9MYI5bPUg4U4HINubTMDQ2
-         PSMfy269yHRn12ac5ISOsmbcC+p9ocWk7T/S4YhFxKSkk0mn/SOta9Ih6hseyLmwbiEV
-         H1UHa9QrKyC5s6R9j7vTIQmHbTMP9322xXbsgV003Sh2Bhb02hoUbbTw1QDkgEacYpqt
-         C4jg==
+        bh=4EzAN+mcBbGIa+lLyccyrpaP9QTnMNoFcym6YhBp3D8=;
+        b=IMASya93CBxE9Iyya0VKTMxclfINeuvGTU6QvRStG1iZlQGqBpnYS6R+WZGtUpeR7A
+         lpgbaYORAXBVAfB9qcgC2VseRU9jzq0BggdMrmG6B4ztE06WdIxghlaluTT26qS2Ejmc
+         65P+p+4lRTDfr4ZZeNzZY2n5WskoFV0aq/BLcsu9XRTREjgVzXqbtmovgQgK29tJ2zYf
+         0sNE+XgEAy8I66t+Gcn9oHwGBPqQEo5nNM+vQ6mWmq4PMTP6wdP3HijCmiV3eQcFbZe0
+         zrijlUReP4lYr1YGwG8+CmVCijnpOsZvA9ZaFXarHnPScwvDYsq1o5XinL+6Eww0QDoa
+         gqvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FHth/aaRGXw8bPkksN5hjPH+DYHe+92fn3EKoOPKveU=;
-        b=XX9sL3FQo8M5DP2MfxlqpKe7mAXk0NPueTIBLneStNkKV+j8du7PUuCRWaj/vzibhJ
-         ENOJMnQXFnKBIgEWqiJ/2pyEXnKonMcI5fm1c1O6MPdItS8bWXmWEed8ArG7+qjnERKh
-         QAc7D3d9SbazRz+LDh3oGcnwsDEtBLnLpn1xaDIIKDraV3Tdt+S1Ur0U8x4m1JxXG4qN
-         5YZUqjbEcNtuT24FI+o5GOUKkALoSrzTuDxAUrsXf0P+lfPkHvfZFmbZArvLrT5qTtI5
-         Ig4zNf9Br2FKpQXFb041KDi7fS22IDlRHi3p+FrHnXd9kbJSuwTY4IVkEmR3j0oMl3Sm
-         F7oQ==
-X-Gm-Message-State: AOAM533NKzkBTz+gqwf3Cnk98zhcRMgMYXeGRGVUGwVf/9ddW2e5itKr
-        aDe94vdeDqN0d1DKarCjq6o9VQ==
-X-Google-Smtp-Source: ABdhPJyHKp00d1h8tDaA+yMYqHjhyBUP9PWFx/rhtQ9gpobh9qAoUOCdrATVHf4Ij84rffpiFz5b2g==
-X-Received: by 2002:a05:620a:1467:: with SMTP id j7mr1064813qkl.266.1610395692123;
-        Mon, 11 Jan 2021 12:08:12 -0800 (PST)
+        bh=4EzAN+mcBbGIa+lLyccyrpaP9QTnMNoFcym6YhBp3D8=;
+        b=t20kBvxA0h8TKT11uHYM8LqD2d1FqXw2wQD00EFLELHfCDetlRh3c5qChyr8TntAEE
+         +XdTDMpjzUhgP1OQ5hCTw7TDdMGktfzllYHehG/fNFiAFyq7c3KosBkJxjebiNFEkDQi
+         piYOH7zAhboS0H2mFDdIQVKEjbqdV4xqs0PyTb5ybFjoePDhmXEPQ53zY8aTTvcEvGQ9
+         sGlmXckR1z933A/CHhTxclU/42FVmoEuR2IQxKPj7UQuqJDlvopzZX/TJfCLjGLb5mX8
+         ThZO8c3ZSc3qJHbHDtZcDwCCda+SZnhpxumkmXx4WMKPB0MuYC9EGtbR6ZBrYl2bl8hx
+         GIMQ==
+X-Gm-Message-State: AOAM532sF4aqh7DB9Du4K0I4dVKJowTklJF438o54Z4lylB7dQ3sjVtB
+        COZAC2P5/03WdNk4SVdHhTZ+rQ==
+X-Google-Smtp-Source: ABdhPJyHDNFc7S714UpLGh6H9TO8+mtWiV+d2551Res7G9bjidD6KSZuEykfVAv+GwLI2R+l1Kwz0g==
+X-Received: by 2002:a37:9b42:: with SMTP id d63mr1029815qke.449.1610395926569;
+        Mon, 11 Jan 2021 12:12:06 -0800 (PST)
 Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id a22sm443706qkl.121.2021.01.11.12.08.11
+        by smtp.gmail.com with ESMTPSA id x17sm330240qts.59.2021.01.11.12.12.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Jan 2021 12:08:11 -0800 (PST)
-Subject: Re: [PATCH v11 06/40] btrfs: do not load fs_info->zoned from incompat
- flag
+        Mon, 11 Jan 2021 12:12:05 -0800 (PST)
+Subject: Re: [PATCH v11 07/40] btrfs: disallow fitrim in ZONED mode
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+        "Darrick J. Wong" <darrick.wong@oracle.com>
 References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
- <fb24b16fb695d521254f92d70241246f859ffa36.1608608848.git.naohiro.aota@wdc.com>
+ <7e1a3b008e0ded5b0ea1a86ec842618c2bcac56a.1608608848.git.naohiro.aota@wdc.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <21c01c81-22fd-437f-4e41-ce4563d71dc9@toxicpanda.com>
-Date:   Mon, 11 Jan 2021 15:08:10 -0500
+Message-ID: <3a4305f2-a3eb-7503-7c53-8c4039378f03@toxicpanda.com>
+Date:   Mon, 11 Jan 2021 15:12:04 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <fb24b16fb695d521254f92d70241246f859ffa36.1608608848.git.naohiro.aota@wdc.com>
+In-Reply-To: <7e1a3b008e0ded5b0ea1a86ec842618c2bcac56a.1608608848.git.naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,21 +72,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/21/20 10:48 PM, Naohiro Aota wrote:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On 12/21/20 10:49 PM, Naohiro Aota wrote:
+> The implementation of fitrim is depending on space cache, which is not used
+> and disabled for zoned btrfs' extent allocator. So the current code does
+> not work with zoned btrfs. In the future, we can implement fitrim for zoned
+> btrfs by enabling space cache (but, only for fitrim) or scanning the extent
+> tree at fitrim time. But, for now, disallow fitrim in ZONED mode.
 > 
-> Since fs_info->zoned is unioned with fs_info->zone_size, loading
-> fs_info->zoned from the incompat flag screw up the zone_size. So, let's
-> avoid to load it from the flag. It will be eventually set by
-> btrfs_get_dev_zone_info_all_devices().
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>   fs/btrfs/ioctl.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
 > 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 5b9b0a390f0e..6df362081478 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -527,6 +527,14 @@ static noinline int btrfs_ioctl_fitrim(struct btrfs_fs_info *fs_info,
+>   	if (!capable(CAP_SYS_ADMIN))
+>   		return -EPERM;
+>   
+> +	/*
+> +	 * btrfs_trim_block_group() is depending on space cache, which is
+> +	 * not available in ZONED mode. So, disallow fitrim in ZONED mode
+> +	 * for now.
+> +	 */
+> +	if (fs_info->zoned)
 
-May want to take another crack at that changelog, the grammar is way off.  The 
-code is fine tho
-
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-
-Thanks,
+Should be btrfs_is_zoned(fs_info);  Thanks,
 
 Josef
