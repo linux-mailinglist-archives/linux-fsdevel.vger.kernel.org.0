@@ -2,107 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09DF82F1FD9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 20:52:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE8022F204E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:02:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391139AbhAKTvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 14:51:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50596 "EHLO
+        id S2404118AbhAKUCR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 15:02:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389549AbhAKTvc (ORCPT
+        with ESMTP id S1726722AbhAKUCR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 14:51:32 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493D7C061794
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 11:50:52 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id f14so170170pju.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 11:50:52 -0800 (PST)
+        Mon, 11 Jan 2021 15:02:17 -0500
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05688C061795
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:01:37 -0800 (PST)
+Received: by mail-qk1-x734.google.com with SMTP id v126so614435qkd.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 12:01:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=n6ls+HCeSi/UAGSF82kmFOo5CUAwHtYihLvyPgL0mcE=;
-        b=H8QTkAzz/CeEF6/0Vl1CTWBMYc/3JUp0GGJBSpkbejf0BMipsZqtGfUzN7Jjgc7t18
-         1Jfhjcnv8nEpLFEsI85m5V2Do69agxrK4EKE81AEH2PDf69QwM/T+1ryVsFHN2OFFAQL
-         W3NnhhLBGonsRHVxbY4xVLnczBS7PwApeaLkQ=
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mgrT4Altg8glIRE+MOOUJE15z5PhjqAtILPKl/TgNP8=;
+        b=yAxr2iADLTUmXEiDK5K7FSnU6C8ZRcfTqSe/09PKcZ8TVKMvCwCbCoRMezIqdg8GNS
+         oSz6KtIRvv0JoCzAqTfAnI4FYLWCYLdZlyjKGCAUIoSk73t1ORtJyksp/LsPxoSGGVpR
+         gt3g1rEW7lh0PRkq+tMnkqiLMqZuFyFYHhXHcu1hQ80FNmfRSfouTzwjDs1p8yA62ibJ
+         fuJCFti8lRVU+ffh2slTYfu+M2cAQ26u+LKFFA++ZkDaL8VIlsA0INfu0R427nTb9lXu
+         PR/WUQp/L5OWjB1KJgl2oYFlNaIXLCrVNwUlp/VyNZXHK4II/z5J12EEymLM0t4ZA56b
+         fIbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=n6ls+HCeSi/UAGSF82kmFOo5CUAwHtYihLvyPgL0mcE=;
-        b=AsZE2jleJfhypq6Mzi7xc7h2Olz4Qu3AaBFItPxTCfJzOa+2A2ldQStUQzkOX/hGAw
-         xgA3vKdIg888MXRLyp7f4rmw6/Yi9z7VQsI2AyxlMotnPraDYJZ5oSo5Y9AoRMN2q8KG
-         fk3OGbM3hu0fsT87INcGx1xa1drJjEcsfP7O4bNVmSw8JTgrIbMi6UEAuBnPyHtj4M9P
-         guAVnG+e1klYcweyYFDnsY8qG6ozy0OOg6gJ8q5sWtz1KzAzo3E9kNMaNOiTYGCeqKEZ
-         CO9rTFUlSCmqm9Liiqpem4JdDEYuNA7NYkw8du6e2LZy7oMyvonAEEmJFF5AnhlGx8J9
-         gszA==
-X-Gm-Message-State: AOAM530gEzVd7dqSqbHhQj2qeKmcSP3Bo01z2OcwIxdpv+rVAuyaLSGS
-        nVkmG5JnMKPaZxPJLFzlBMAHTg==
-X-Google-Smtp-Source: ABdhPJxKa7QP3e4sq1yJcAafKZZT/e+hen74xAJGxhKWlM/2If7MuvrSisNeNB/Dxb26DvWCKVgWEw==
-X-Received: by 2002:a17:902:d48c:b029:de:2fb:98a with SMTP id c12-20020a170902d48cb02900de02fb098amr859988plg.59.1610394651729;
-        Mon, 11 Jan 2021 11:50:51 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t135sm451741pfc.39.2021.01.11.11.50.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 11:50:50 -0800 (PST)
-Date:   Mon, 11 Jan 2021 11:50:49 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, mcgrof@kernel.org,
-        yzaikin@google.com, adobriyan@gmail.com,
-        linux-fsdevel@vger.kernel.org, vbabka@suse.cz, wangle6@huawei.com
-Subject: Re: [PATCH v2] proc_sysctl: fix oops caused by incorrect command
- parameters.
-Message-ID: <202101111149.20A58E1@keescook>
-References: <20210108023339.55917-1-nixiaoming@huawei.com>
- <20210108092145.GX13207@dhcp22.suse.cz>
- <829bbba0-d3bb-a114-af81-df7390082958@huawei.com>
- <20210108114718.GA13207@dhcp22.suse.cz>
- <202101081152.0CB22390@keescook>
- <20210108201025.GA17019@dhcp22.suse.cz>
- <20210108175008.da3c60a6e402f5f1ddab2a65@linux-foundation.org>
- <bc098af4-c0cd-212e-d09d-46d617d0acab@huawei.com>
- <20210111142131.GA22493@dhcp22.suse.cz>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mgrT4Altg8glIRE+MOOUJE15z5PhjqAtILPKl/TgNP8=;
+        b=CKsCl3vJc0IN7qj40veS8AYm7A5VkG2T2eGHf1RqwIkVEcoreWJNDSdjrbQ2dcPoF1
+         2Tbs6/xDRZnT/zV6vzfZx46gcpbqEUhumo71arDcfl0POcx319HkybJuP48Pz+ljkatP
+         BG5mB93TDcnVfahM13zZvaKCJcOWew9ViWNezTxoaIkYUuZIn9CfVnOQYfkMfnbJ1Fup
+         ss095fXaLCbzbQB4moOPtrdueETUetbgX61mr7XByXmPbuYc32Iq/L2+fErcCYFbCIeN
+         ozqbPHHuYgWi26kUT8bCv08eXT8qIbVXvkwvomP2WefW9KYpKTvjzJJr8PBZ1b3iwvdt
+         tItA==
+X-Gm-Message-State: AOAM530rhu6QyFEDk+Tpuvahq1FzebQEhh8AEv6P7FILQuedgJ4HxksD
+        iYLaR4ttTfjcui0fiZWFXc2J6g==
+X-Google-Smtp-Source: ABdhPJz+0rghxG3TVomri2fQn9Hcffg7QPgRzkdOAnjI5IBHoiITb5e67MqI4j97kse2T6N0S0HrDg==
+X-Received: by 2002:a37:e504:: with SMTP id e4mr997913qkg.191.1610395296098;
+        Mon, 11 Jan 2021 12:01:36 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id y16sm443407qki.132.2021.01.11.12.01.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jan 2021 12:01:35 -0800 (PST)
+Subject: Re: [PATCH v11 05/40] btrfs: release path before calling into
+ btrfs_load_block_group_zone_info
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
+ <8fa3073375cf26759f9c5d3ce083c64d573ad9a6.1608608848.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <3f611f04-39fa-e95e-09f2-28c01f5e2a80@toxicpanda.com>
+Date:   Mon, 11 Jan 2021 15:01:34 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210111142131.GA22493@dhcp22.suse.cz>
+In-Reply-To: <8fa3073375cf26759f9c5d3ce083c64d573ad9a6.1608608848.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 03:21:31PM +0100, Michal Hocko wrote:
-> On Mon 11-01-21 11:48:19, Xiaoming Ni wrote:
-> [...]
-> > patch3:
-> > 	+++ b/fs/proc/proc_sysctl.c
-> > 	@@ -1770,6 +1770,9 @@ static int process_sysctl_arg(char *param, char *val,
-> > 							return 0;
-> > 			}
-> > 
-> > 	+       if (!val)
-> > 	+               return -EINVAL;
-> > 	+
-> > 			/*
-> > 			 * To set sysctl options, we use a temporary mount of proc, look up the
-> > 			 * respective sys/ file and write to it. To avoid mounting it when no
-> > 
-> > sysctl log for patch3:
-> > 	Setting sysctl args: `' invalid for parameter `hung_task_panic'
-> [...]
-> > When process_sysctl_arg() is called, the param parameter may not be the
-> > sysctl parameter.
-> > 
-> > Patch3 or patch4, which is better?
+On 12/21/20 10:48 PM, Naohiro Aota wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> Patch3
+> Since we have no write pointer in conventional zones, we cannot determine
+> allocation offset from it. Instead, we set the allocation offset after the
+> highest addressed extent. This is done by reading the extent tree in
+> btrfs_load_block_group_zone_info(). However, this function is called from
+> btrfs_read_block_groups(), so the read lock for the tree node can
+> recursively taken.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>   fs/btrfs/block-group.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
+> index b8bbdd95743e..69e1b24bbbad 100644
+> --- a/fs/btrfs/block-group.c
+> +++ b/fs/btrfs/block-group.c
+> @@ -1839,6 +1839,7 @@ static int read_one_block_group(struct btrfs_fs_info *info,
+>   		return -ENOMEM;
+>   
+>   	read_block_group_item(cache, path, key);
+> +	btrfs_release_path(path);
+>   
+>   	set_free_space_tree_thresholds(cache);
+>   
+> @@ -2009,7 +2010,6 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
+>   			goto error;
+>   		key.objectid += key.offset;
+>   		key.offset = 0;
+> -		btrfs_release_path(path);
+>   	}
+>   	btrfs_release_path(path);
+>   
+> 
 
-Oh, I see the issue here -- I thought we were only calling
-process_sysctl_arg() with valid sysctl fields. It looks like we're not,
-which means it should silently ignore everything that isn't a sysctl
-field, and only return -EINVAL when it IS a sysctl but it lacks a value.
+Instead why don't we just read in the bgi into the stack, and pass the pointer 
+into read_one_block_group(), drop the path before calling read_one_block_group? 
+  We don't use the path in read_one_block_group, there's no reason to pass it 
+in.  It'll fix your problem and make it a little cleaner.  Thanks,
 
--- 
-Kees Cook
+Josef
