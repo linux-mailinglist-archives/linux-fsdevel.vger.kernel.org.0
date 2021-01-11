@@ -2,182 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2D132F1E30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 19:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4824E2F1E43
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 19:52:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390214AbhAKSoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 13:44:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36086 "EHLO
+        id S2390003AbhAKSv5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 13:51:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390054AbhAKSoO (ORCPT
+        with ESMTP id S1730372AbhAKSv5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 13:44:14 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36AC5C061786;
-        Mon, 11 Jan 2021 10:43:34 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id v26so768150eds.13;
-        Mon, 11 Jan 2021 10:43:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HdavPfho2y2aZPaSzJ50dkLev1j8QD0jxgYpMcuQTxo=;
-        b=qD8xUYRdDKGqeMdTnSxWls6Jl/yNJ5ruqkG/XcNRXfZX+T4BdbjtK0o5I9jmPVn/ce
-         B1vYupIurWRK8Ripfkjh9RZ3Xb+Y6nLJMbpPocyjLxcCoWr9RJcKG6VYZWdFfCGLor2/
-         0hEnjDBxzrMNKyuFAYJuEVMRWlb+Ot34fRTIPGe9LImLoG/eAQCRnR+Hl6v/obd5kViB
-         JQrkMo6EakYHJpOicqguAI2E+5c7K3LmuXBokuV+5xx1jgHTju64Osy+M4MQkwplx0hV
-         rgPn9LiebSR79SiwTfP+jipp+5QZPjxm9Hkupu8D7UQENDXA2aresoMBMIRN0yHdDLfc
-         RWog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HdavPfho2y2aZPaSzJ50dkLev1j8QD0jxgYpMcuQTxo=;
-        b=Jl0r/RPloKCe0JDMasy+Tcz8PPf8HZA0NAOzNnIrWAKIx8d7NEj3HYvigf7+Edm7C6
-         XCkuhHKljAr8EhOJAh0/LV+6sW7JbYYJDaApSOugym1exudo/oNTKAdYJhtZt4NXrKa4
-         r6Mm9+j27jrhMn+8ySPD+Slns0m+/2vHuQyszI1VUhNn+prfDPyvNJK3A5cs7+EEEn+a
-         KoTUoGCKVkvRpMlQrhgrw2PcNS4eKXDFT/MIBqtdnJkhjcVCP4M2kz8LExHYL/kO9yEq
-         5Yq67Mfcn8rW8XqJxQbfwIlQyRvcvMtII2wjtlQhRUhieRniShCfDzfON4zSoCUlfr7T
-         6hTA==
-X-Gm-Message-State: AOAM533+XfG2Hr52mBcJ1gcVQP1oq+lEoLuhjWHkVdBS5rH0/33slDY5
-        RAz1U3LEzR3NFlldMvUS3/8UOEgRlGcry9NOg64=
-X-Google-Smtp-Source: ABdhPJzTsIe/iQOwZjvQaOYH8kv6w6GD4dQu8EwThJ5A/fDtjZbMK6SYYVlOsmOQY3B4Iojo1tH7nyJeXbt5Y+fbTHs=
-X-Received: by 2002:a50:d552:: with SMTP id f18mr553663edj.168.1610390612990;
- Mon, 11 Jan 2021 10:43:32 -0800 (PST)
+        Mon, 11 Jan 2021 13:51:57 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9123C061786;
+        Mon, 11 Jan 2021 10:51:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=QAL+ZD/8n4kz4BQqPvgQ+g9eI1B/tW2s2NBOJt50tpA=; b=YDa2PzLwdmllsLO3i51RXg8A0D
+        XVtts9amjDsQ37djBoBr6W7Uslhh6Kw/+gDgxGTyBj60ije1eQookOHwWU1CItDtFsWkUKG6jwJDq
+        zDRCc401pQDopQKDnGasVCdsW2DSF+/seg+84zWsBm5KiDe4asQBu0kblg3hu5SkWwG81RqQxSdMP
+        /evVMtg5SfehRAKSAo/d0rGiAxXyaiCpatLd75XuTKlpRIwNRU/JWU68GOFwxtPLtuHgQfrN/SrTg
+        3SVzsBbmUrwXVZHA1lFT0vl8L5R9kHbKSRmpEBSxRY+DX0O5Hk78ty7twF+etZuUbBEFxAeRLCMZ1
+        FUMVh2pA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1kz2HX-003etV-Ns; Mon, 11 Jan 2021 18:51:12 +0000
+Date:   Mon, 11 Jan 2021 18:51:11 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] char_dev: replace cdev_map with an xarray
+Message-ID: <20210111185111.GI35215@casper.infradead.org>
+References: <20210111170513.1526780-1-hch@lst.de>
+ <20210111173500.GG35215@casper.infradead.org>
+ <X/yUzVu04TyVuU/f@kroah.com>
+ <20210111182029.GH35215@casper.infradead.org>
+ <X/yZ6wtNYJEniwC0@kroah.com>
 MIME-Version: 1.0
-References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-11-shy828301@gmail.com>
- <777d47b3-65f7-5727-2d21-dbef93e7d1ed@virtuozzo.com>
-In-Reply-To: <777d47b3-65f7-5727-2d21-dbef93e7d1ed@virtuozzo.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 11 Jan 2021 10:43:20 -0800
-Message-ID: <CAHbLzkp+DKXLgAPtkPXZsSgS2QVtyFcPFBuC7oJXXH+f73j+kw@mail.gmail.com>
-Subject: Re: [v3 PATCH 10/11] mm: memcontrol: reparent nr_deferred when memcg offline
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <X/yZ6wtNYJEniwC0@kroah.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 6, 2021 at 3:35 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On 06.01.2021 01:58, Yang Shi wrote:
-> > Now shrinker's nr_deferred is per memcg for memcg aware shrinkers, add to parent's
-> > corresponding nr_deferred when memcg offline.
-> >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  include/linux/memcontrol.h |  1 +
-> >  mm/memcontrol.c            |  1 +
-> >  mm/vmscan.c                | 29 +++++++++++++++++++++++++++++
-> >  3 files changed, 31 insertions(+)
-> >
-> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > index 5599082df623..d1e52e916cc2 100644
-> > --- a/include/linux/memcontrol.h
-> > +++ b/include/linux/memcontrol.h
-> > @@ -1586,6 +1586,7 @@ extern int memcg_alloc_shrinker_info(struct mem_cgroup *memcg);
-> >  extern void memcg_free_shrinker_info(struct mem_cgroup *memcg);
-> >  extern void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
-> >                                  int nid, int shrinker_id);
-> > +extern void memcg_reparent_shrinker_deferred(struct mem_cgroup *memcg);
-> >  #else
-> >  #define mem_cgroup_sockets_enabled 0
-> >  static inline void mem_cgroup_sk_alloc(struct sock *sk) { };
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 126f1fd550c8..19e555675582 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -5284,6 +5284,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
-> >       page_counter_set_low(&memcg->memory, 0);
-> >
-> >       memcg_offline_kmem(memcg);
-> > +     memcg_reparent_shrinker_deferred(memcg);
-> >       wb_memcg_offline(memcg);
-> >
-> >       drain_all_stock(memcg);
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index d9795fb0f1c5..71056057d26d 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -396,6 +396,35 @@ static long set_nr_deferred_memcg(long nr, int nid, struct shrinker *shrinker,
-> >       return atomic_long_add_return(nr, &info->nr_deferred[shrinker->id]);
-> >  }
-> >
-> > +void memcg_reparent_shrinker_deferred(struct mem_cgroup *memcg)
-> > +{
-> > +     int i, nid;
-> > +     long nr;
-> > +     struct mem_cgroup *parent;
-> > +     struct memcg_shrinker_info *child_info, *parent_info;
-> > +
-> > +     parent = parent_mem_cgroup(memcg);
-> > +     if (!parent)
-> > +             parent = root_mem_cgroup;
-> > +
-> > +     /* Prevent from concurrent shrinker_info expand */
-> > +     down_read(&shrinker_rwsem);
-> > +     for_each_node(nid) {
-> > +             child_info = rcu_dereference_protected(
-> > +                                     memcg->nodeinfo[nid]->shrinker_info,
-> > +                                     true);
-> > +             parent_info = rcu_dereference_protected(
-> > +                                     parent->nodeinfo[nid]->shrinker_info,
-> > +                                     true);
->
-> Simple assignment can't take such lots of space, we have to do something with that.
->
-> Number of these
->
->         rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info, true)
->
-> became too big, and we can't allow every of them takes 3 lines.
->
-> We should introduce a short helper to dereferrence this, so we will be able to give
-> out attention to really difficult logic instead of wasting it on parsing this.
->
->                 child_info = memcg_shrinker_info(memcg, nid);
-> or
->                 child_info = memcg_shrinker_info_protected(memcg, nid);
->
-> Both of them fit in single line.
->
-> struct memcg_shrinker_info *memcg_shrinker_info_protected(
->                                         struct mem_cgroup *memcg, int nid)
-> {
->         return rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
->                                          lockdep_assert_held(&shrinker_rwsem));
-> }
+On Mon, Jan 11, 2021 at 07:33:15PM +0100, Greg KH wrote:
+> On Mon, Jan 11, 2021 at 06:20:29PM +0000, Matthew Wilcox wrote:
+> > > efficient in what way?  Space or faster lookup?
+> > 
+> > Both, but primarily space.
+> > 
+> > The radix tree underlying the xarray allows N consecutive entries with
+> > the same value to be represented as a single entry; if there are at
+> > least 64 entries then we get to skip an entire level of the tree (saving
+> > 1/7 of a page).  Of course, we'd need to go from the 'head' pointer to
+> > the correct pointer, something like p += rdev - p->rdev.
+> 
+> How much "space" are you talking about here?
 
-Thanks for the suggestion, it makes sense to me. Will incorporate it in v4.
+576 bytes -- 1/7 of a page.
 
->
->
-> > +             for (i = 0; i < shrinker_nr_max; i++) {
-> > +                     nr = atomic_long_read(&child_info->nr_deferred[i]);
-> > +                     atomic_long_add(nr,
-> > +                                     &parent_info->nr_deferred[i]);
->
-> Why new line is here? In case of you merge it up, it will be even shorter then previous line.
+> A "normal" machine has about 100-200 char devices.  Servers, maybe more,
+> but probably not.
+> 
+> The kobject being used previously wasn't really "small" at all, so odds
+> are any conversion to not use it like this will be better overall.
 
-Just keep in 80 lines. We could relax it.
+Yes.
 
->
-> > +             }
-> > +     }
-> > +     up_read(&shrinker_rwsem);
-> > +}
-> > +
-> >  static bool cgroup_reclaim(struct scan_control *sc)
-> >  {
-> >       return sc->target_mem_cgroup;
-> >
->
->
+> > > THis shouldn't be on a "fast" lookup path, so I doubt that's worth
+> > > optimizing for.  Space, maybe, for systems with thousands of scsi
+> > > devices, but usually they just stick to the block device, not a char
+> > > device from what I remember.
+> > 
+> > /dev/sgX is a chardev?
+> 
+> I sure hope no one is using /dev/sgX for tens of thousands of block
+> device accesses, if so, they have bigger problems than this :)
+
+There is one sgX char dev for every /dev/sdN, so anyone with a thousand
+SCSI devices also has a thousand char devices.  On the other hand,
+they're added one at a time, so there is no chance to optimise here:
+
+        cdev = cdev_alloc();
+...
+        error = cdev_add(cdev, MKDEV(SCSI_GENERIC_MAJOR, sdp->index), 1);
+
