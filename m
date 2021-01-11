@@ -2,94 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A04C2F284F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 07:26:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F17EC2F2855
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 07:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730912AbhALGZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 01:25:00 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10710 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730742AbhALGY7 (ORCPT
+        id S1733081AbhALG31 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 01:29:27 -0500
+Received: from mail.univ-alger.dz ([193.194.83.97]:55958 "EHLO
+        mail.univ-alger.dz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733068AbhALG31 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 01:24:59 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DFL9J4Jz5zl43b;
-        Tue, 12 Jan 2021 14:23:00 +0800 (CST)
-Received: from [10.67.102.197] (10.67.102.197) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 12 Jan 2021 14:24:10 +0800
-Subject: Re: [PATCH v3] proc_sysctl: fix oops caused by incorrect command
- parameters.
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
-        <keescook@chromium.org>, <yzaikin@google.com>,
-        <adobriyan@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-        <vbabka@suse.cz>, <mhocko@suse.com>, <andy.shevchenko@gmail.com>,
-        <wangle6@huawei.com>
-References: <20210112033155.91502-1-nixiaoming@huawei.com>
- <20210111203340.98dd3c8fa675b709bcf6d49e@linux-foundation.org>
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-Message-ID: <89d1369e-f0a8-66f2-c0ea-3aac3a55e2c1@huawei.com>
-Date:   Tue, 12 Jan 2021 14:24:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.0.1
+        Tue, 12 Jan 2021 01:29:27 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.univ-alger.dz (Postfix) with ESMTP id 0CAF94D46F65;
+        Mon, 11 Jan 2021 13:55:47 +0100 (CET)
+Received: from mail.univ-alger.dz ([127.0.0.1])
+        by localhost (mail.univ-alger.dz [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id p0qRw1_zNGHz; Mon, 11 Jan 2021 13:55:46 +0100 (CET)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.univ-alger.dz (Postfix) with ESMTP id 8A4894D63697;
+        Mon, 11 Jan 2021 13:25:55 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mail.univ-alger.dz
+Received: from mail.univ-alger.dz ([127.0.0.1])
+        by localhost (mail.univ-alger.dz [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id qsS8A0V1_edO; Mon, 11 Jan 2021 13:25:55 +0100 (CET)
+Received: from MACBOOK341C.localdomain (unknown [209.216.92.203])
+        by mail.univ-alger.dz (Postfix) with ESMTPSA id 4A7994D08515;
+        Mon, 11 Jan 2021 12:55:47 +0100 (CET)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210111203340.98dd3c8fa675b709bcf6d49e@linux-foundation.org>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.102.197]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Sie_haben_eine_Spende_von_=E2=82=AC_5=2E800=2E000=2C00=2E?=
+To:     Recipients <z.benamor@univ-alger.dz>
+From:   "Mrs. Mavis" <z.benamor@univ-alger.dz>
+Date:   Mon, 11 Jan 2021 03:55:35 -0800
+Reply-To: wanczykm61@gmail.com
+Message-Id: <20210111115548.4A7994D08515@mail.univ-alger.dz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/1/12 12:33, Andrew Morton wrote:
-> On Tue, 12 Jan 2021 11:31:55 +0800 Xiaoming Ni <nixiaoming@huawei.com> wrote:
-> 
->> The process_sysctl_arg() does not check whether val is empty before
->>   invoking strlen(val). If the command line parameter () is incorrectly
->>   configured and val is empty, oops is triggered.
->>
->> --- a/fs/proc/proc_sysctl.c
->> +++ b/fs/proc/proc_sysctl.c
->> @@ -1770,6 +1770,9 @@ static int process_sysctl_arg(char *param, char *val,
->>   			return 0;
->>   	}
->>   
->> +	if (!val)
->> +		return -EINVAL;
->> +
-> 
-> I think v2 (return 0) was preferable.  Because all the other error-out
-> cases in process_sysctl_arg() also do a `return 0'.
+Sie haben eine Spende von € 5.800.000,00. von Mavis Wanczyk antworten Sie mit diesem Code [MW530342019], um die Spende zu erhalten
 
-https://lore.kernel.org/lkml/bc098af4-c0cd-212e-d09d-46d617d0acab@huawei.com/
 
-patch4:
-     +++ b/fs/proc/proc_sysctl.c
-     @@ -1757,6 +1757,9 @@ static int process_sysctl_arg(char *param, 
-char *val,
-             loff_t pos = 0;
-             ssize_t wret;
-
-     +       if (!val)
-     +               return 0;
-     +
-             if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
-                     param += sizeof("sysctl") - 1;
-
-Is this the version you're talking about?
-
-> 
-> If we're going to do a separate "patch: make process_sysctl_arg()
-> return an errno instead of 0" then fine, we can discuss that.  But it's
-> conceptually a different work from fixing this situation.
-> .
-> 
-However, are the logs generated by process_sysctl_arg() clearer and more 
-accurate than parse_args()? Should the logs generated by 
-process_sysctl_arg() be deleted?
-
-Thanks
-Xiaoming Ni
-
+Vous avez un don de 5 800 000,00 €. de Mavis Wanczyk répondez avec ce code [MW530342019] pour recevoir le don
