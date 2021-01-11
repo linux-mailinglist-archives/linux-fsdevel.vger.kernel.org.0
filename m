@@ -2,87 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 400582F20F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E896F2F210D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 21:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403920AbhAKUjp convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 15:39:45 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:30756 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730894AbhAKUjo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 15:39:44 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-181-LrIHlJGROP60njMXGZJVxQ-1; Mon, 11 Jan 2021 20:38:05 +0000
-X-MC-Unique: LrIHlJGROP60njMXGZJVxQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 11 Jan 2021 20:38:04 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 11 Jan 2021 20:38:04 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH] iov_iter: fix the uaccess area in
- copy_compat_iovec_from_user
-Thread-Topic: [PATCH] iov_iter: fix the uaccess area in
- copy_compat_iovec_from_user
-Thread-Index: AQHW6D4kBTWqpwzzr0yPRBs9OThlYaoi4ZVg
-Date:   Mon, 11 Jan 2021 20:38:04 +0000
-Message-ID: <051a78cc73484e7db68ee86a359a1ab5@AcuMS.aculab.com>
-References: <20210111171926.1528615-1-hch@lst.de>
-In-Reply-To: <20210111171926.1528615-1-hch@lst.de>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S2390882AbhAKUpY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 15:45:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391313AbhAKUpS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Jan 2021 15:45:18 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0922F222B6;
+        Mon, 11 Jan 2021 20:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610397877;
+        bh=M1OSN1vteho8Huw58TPHtw4Wnq7VMtKCfQ1CREQhDR0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g6E1CBBApgNQRIvnyUYpczU4snTK3TxTIWiGp2D7l9axmxnf6NKFoHnat6vVu4e2x
+         I9XIFx85m+OaASnJa35GO1Lnq6n9jCT+wDbjGwYs6QheK3MCRNoAdJlZfYYodREnYB
+         o+3ziJVlenNjdNHZNq3EDaRlJJAlbS6mK1P7kvZryDnMiAPy1kFnfILWddwBcW6wxu
+         SELSewJq8rbzB/ndE+t+XbX/vEKHxLvi2jQezrrvts8jJ1y/+Ad2x5xKCgaHtetEX3
+         OZcpXXl3Hsh8sIV0cn0ov2lVF0/F8gETBM8QdHmHtC59U75feIsb+nL+o6/OlT3c++
+         dyjRmmLboidRg==
+Date:   Mon, 11 Jan 2021 12:44:35 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2 00/12] lazytime fix and cleanups
+Message-ID: <X/y4s12YrXiUwWfN@sol.localdomain>
+References: <20210109075903.208222-1-ebiggers@kernel.org>
+ <20210111151517.GK18475@quack2.suse.cz>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210111151517.GK18475@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig
-> Sent: 11 January 2021 17:19
+On Mon, Jan 11, 2021 at 04:15:17PM +0100, Jan Kara wrote:
+> Hi!
 > 
-> sizeof needs to be called on the compat pointer, not the native one.
+> On Fri 08-01-21 23:58:51, Eric Biggers wrote:
+> > Hello,
+> > 
+> > Patch 1 fixes a bug in how __writeback_single_inode() handles lazytime
+> > expirations.  I originally reported this last year
+> > (https://lore.kernel.org/r/20200306004555.GB225345@gmail.com) because it
+> > causes the FS_IOC_REMOVE_ENCRYPTION_KEY ioctl to not work properly, as
+> > the bug causes inodes to remain dirty after a sync.
+> > 
+> > It also turns out that lazytime on XFS is partially broken because it
+> > doesn't actually write timestamps to disk after a sync() or after
+> > dirtytime_expire_interval.  This is fixed by the same fix.
+> > 
+> > This supersedes previously proposed fixes, including
+> > https://lore.kernel.org/r/20200307020043.60118-1-tytso@mit.edu and
+> > https://lore.kernel.org/r/20200325122825.1086872-3-hch@lst.de from last
+> > year (which had some issues and didn't fix the XFS bug), and v1 of this
+> > patchset which took a different approach
+> > (https://lore.kernel.org/r/20210105005452.92521-1-ebiggers@kernel.org).
+> > 
+> > Patches 2-12 then clean up various things related to lazytime and
+> > writeback, such as clarifying the semantics of ->dirty_inode() and the
+> > inode dirty flags, and improving comments.  Most of these patches could
+> > be applied independently if needed.
+> > 
+> > This patchset applies to v5.11-rc2.
 > 
-> Fixes: 89cd35c58bc2 ("iov_iter: transparently handle compat iovecs in import_iovec")
-> Reported-by: David Laight <David.Laight@ACULAB.COM>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  lib/iov_iter.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The series look good to me. How do you plan to merge it (after resolving
+> Christoph's remarks)? I guess either Ted can take it through the ext4 tree
+> or I can take it through my tree...
 > 
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 1635111c5bd2af..586215aa0f15ce 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -1658,7 +1658,7 @@ static int copy_compat_iovec_from_user(struct iovec *iov,
->  		(const struct compat_iovec __user *)uvec;
->  	int ret = -EFAULT, i;
-> 
-> -	if (!user_access_begin(uvec, nr_segs * sizeof(*uvec)))
-> +	if (!user_access_begin(uvec, nr_segs * sizeof(*uiov)))
 
-The first 'uvec' probably ought to be changed as well.
-Even though both variables have the same value.
+I think taking it through your tree would be best, unless Al or Ted wants to
+take it.
 
-	David
+I'll probably separate out
+"xfs: remove a stale comment from xfs_file_aio_write_checks()",
+since it isn't really related anymore and could go in through the XFS tree.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+- Eric
