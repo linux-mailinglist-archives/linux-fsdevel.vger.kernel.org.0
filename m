@@ -2,84 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E772F1E6D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 20:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD012F1EC8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jan 2021 20:17:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390629AbhAKTBL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 14:01:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39736 "EHLO
+        id S2387445AbhAKTRV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 14:17:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387474AbhAKTBK (ORCPT
+        with ESMTP id S2387724AbhAKTRV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 14:01:10 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6975FC061794;
-        Mon, 11 Jan 2021 11:00:30 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id j16so922194edr.0;
-        Mon, 11 Jan 2021 11:00:30 -0800 (PST)
+        Mon, 11 Jan 2021 14:17:21 -0500
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F5A7C061794
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 11:16:41 -0800 (PST)
+Received: by mail-qt1-x829.google.com with SMTP id e15so65864qte.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 11:16:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uzP+1DGQOIvMcrmW5euTCx4qruv4FZRB/uAKoISXx7g=;
-        b=vYvjvw2VygIPnmh6It2+CmmoRmokSmmdOVcghJAay5P0gwOKgCtrJIRfxmNk2JQ9Gt
-         Yp0EGdFJPRo/PUP/Tvb5Co7yP6dVVCNru/NvggkdIy5K54ABaJH9xQODCLmSHkFnFRIy
-         ep+ZBEwOBxlwgelNEP5kkgO2CNeoE9ZK9v8Oa6dRWAv7JOM/RC+4tBCCA1UZiJig1v1c
-         7j14pM6nHFGOWjiKadNnZvQpLqTEU7rmlkd2GSB6GAxQCnL6MbK/HH8V4K9Jvc68mdVQ
-         ws2kbYHyusZvYf84yhPCtP56WXOvrGTi9ph1iWYcDNx5QmkaFOvQO6OVVLmgsoBmNXAd
-         d33A==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EOIAHZy7Alr8j0pKyIV99mgIDJFNi3YsWZPV/tFxciI=;
+        b=Rv0JtkE3sNJWZpvrJPQTHpAG6CzUTdY4fYgqMvTNVg+8Zpuc52jkJ2q1qb0jj1I8nN
+         4Hlhzx+x0yRbv4yrFXrBRI/sd+Gsf2PEJUGvquMY6V73JNug6wlzc/vsRQpG3Q0B3AC3
+         j8sX8eJiHOfnktBqo+eDB5FzD4otaF8o/OqWm583fAIQnCRQT0+Dx59198BppCDpomq/
+         AsV/Tc55Nj8EYfz0AczTAtr8eWnCN3LSj3FzNOME1wtRKBe/C2liJAhY2cqM2xmipFvr
+         e9dgL5+R0Gqe4Qcm9JHfZpqJQSOWmdo3CnKqFzpUqF6xRx4Y7D6c8CUD3rVB/duBQpje
+         X/pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uzP+1DGQOIvMcrmW5euTCx4qruv4FZRB/uAKoISXx7g=;
-        b=I4rf85gYB9URgHP9lY6Z/3I7TGotXWRVFMBt49O+HL1eKk6MagfI2NteBpL/k5rcIA
-         l9A1R7lIYFQDP6co18Hn6bQ7aZ33RERmPqdnpTdVUV5mwHlwbOxXxVIyEWku9u+HV0d2
-         09hklLi15OHbvMCagQNxTd0P0wS06WIs1tEsQTtxVk3e+PLIHZvr0T1o0aNwuZ3v9gn0
-         HTbvgX2PY1oCrEyDo/WE56rMxpWWKt457wv86H8F3GqkcJzMJIQYgVx4wF0Nh7SsqfEL
-         ufmc2+FLG0avsM3sLZUsJ4IrYxzJytNzBVryQc/5CR5DZTiXG7R8PCAjjM86d9BW1OCd
-         1vNA==
-X-Gm-Message-State: AOAM531F3ICtU/tIRRXGIYeyMo3LK2BLdAMwXVQpngiYGNIOAFEV2pMA
-        /K2WwKIWXbm2utw73ZUPcUahh0OPo6Pa5BJF8/w=
-X-Google-Smtp-Source: ABdhPJxstPPw4CO3o1D30g5iH8wIXuWOW04btKKyxK2E6Wtyijem6zZOJ+FxolNGIMsJ4KvkthSWqv5R7y1ou0a4L1Q=
-X-Received: by 2002:a05:6402:c95:: with SMTP id cm21mr593253edb.294.1610391629218;
- Mon, 11 Jan 2021 11:00:29 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EOIAHZy7Alr8j0pKyIV99mgIDJFNi3YsWZPV/tFxciI=;
+        b=IxLNxcxSRweHJsJ63yzgENShghb65F9rD+ziPYeEZryr3SlhL7ehXv5CHC9S46CjyN
+         ZOpaoKOyp5vll8ShymY6NxvVJHHgi8nFQBtGANxJXVEVFCiRo1+o/VqHMzBzBWicOuzw
+         nNvvGaiQuigGu+SxjIqUfHlEFyBLLo3QZ/oF741+KHqV985otL18TzFtFPaUg+7L01NO
+         UGnXlu6nLgj7gtl3VKPgKc7HbZOIAYi1SftMNHN8HCmPA47pplgOahxbbXYAn+/DNSL+
+         L7uDRrbF5qAE/z3u8+j/D9KrKQFcW53bG6zLHZfILxXcYJtiMoziXnUD6yw5qtbJd5RX
+         MFKw==
+X-Gm-Message-State: AOAM531BKC4f9KS9P++l14bb5M00cTfjl/F6d8qH+AQHXx3tYB8OsONh
+        1SoCKPXoxVm2eNzXlo8g6+m7uA==
+X-Google-Smtp-Source: ABdhPJxm4i5VdPQb/eP5QpGwRg3sntj8WZF0Msn9gz42PlqLZvCHhmdxl9uij6E89ihSRlw99Ix1nQ==
+X-Received: by 2002:ac8:6b59:: with SMTP id x25mr1061609qts.301.1610392600388;
+        Mon, 11 Jan 2021 11:16:40 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id x185sm415721qkb.87.2021.01.11.11.16.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jan 2021 11:16:39 -0800 (PST)
+Subject: Re: [PATCH v11 03/40] btrfs: defer loading zone info after opening
+ trees
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
+ <ba41ebbfe3a47b0088a50d7d6eddb28d99cc9d83.1608608848.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <fa8c5079-d681-f2a5-bdb5-175ad0ebb59d@toxicpanda.com>
+Date:   Mon, 11 Jan 2021 14:16:38 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-3-shy828301@gmail.com>
- <20210107001351.GD1110904@carbon.dhcp.thefacebook.com>
-In-Reply-To: <20210107001351.GD1110904@carbon.dhcp.thefacebook.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 11 Jan 2021 11:00:17 -0800
-Message-ID: <CAHbLzkqnLKh7L5BWdSsoX5t-DjpOwYREwY5yBXgRUqAuubueQw@mail.gmail.com>
-Subject: Re: [v3 PATCH 02/11] mm: vmscan: consolidate shrinker_maps handling code
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ba41ebbfe3a47b0088a50d7d6eddb28d99cc9d83.1608608848.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 6, 2021 at 4:14 PM Roman Gushchin <guro@fb.com> wrote:
->
-> On Tue, Jan 05, 2021 at 02:58:08PM -0800, Yang Shi wrote:
-> > The shrinker map management is not really memcg specific, it's just allocation
->
-> In the current form it doesn't look so, especially because each name
-> has a memcg_ prefix and each function takes a memcg argument.
->
-> It begs for some refactorings (Kirill suggested some) and renamings.
+On 12/21/20 10:48 PM, Naohiro Aota wrote:
+> This is preparation patch to implement zone emulation on a regular device.
+> 
+> To emulate zoned mode on a regular (non-zoned) device, we need to decide an
+> emulating zone size. Instead of making it compile-time static value, we'll
+> make it configurable at mkfs time. Since we have one zone == one device
+> extent restriction, we can determine the emulated zone size from the size
+> of a device extent. We can extend btrfs_get_dev_zone_info() to show a
+> regular device filled with conventional zones once the zone size is
+> decided.
+> 
+> The current call site of btrfs_get_dev_zone_info() during the mount process
+> is earlier than reading the trees, so we can't slice a regular device to
+> conventional zones. This patch defers the loading of zone info to
+> open_ctree() to load the emulated zone size from a device extent.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-BTW, do you mean the suggestion about renaming memcg_shrinker_maps to
-shrinker_maps? I just saw his email today since gmail filtered his
-emails to SPAM :-(
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
->
-> Thanks!
+Thanks,
+
+Josef
