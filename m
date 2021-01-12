@@ -2,77 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ED682F27A5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 06:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A04C2F284F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 07:26:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388384AbhALFV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 00:21:58 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:44302 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725554AbhALFV6 (ORCPT
+        id S1730912AbhALGZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 01:25:00 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10710 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730742AbhALGY7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 00:21:58 -0500
-Received: from dread.disaster.area (pa49-179-167-107.pa.nsw.optusnet.com.au [49.179.167.107])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 8C2BE826077;
-        Tue, 12 Jan 2021 16:21:15 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kzC7G-005aGL-IW; Tue, 12 Jan 2021 16:21:14 +1100
-Date:   Tue, 12 Jan 2021 16:21:14 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v2 04/12] fat: only specify I_DIRTY_TIME when needed in
- fat_update_time()
-Message-ID: <20210112052114.GS331610@dread.disaster.area>
-References: <20210109075903.208222-1-ebiggers@kernel.org>
- <20210109075903.208222-5-ebiggers@kernel.org>
- <20210111105201.GB2502@lst.de>
- <X/ysA8PuJ/+JXQYL@sol.localdomain>
+        Tue, 12 Jan 2021 01:24:59 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DFL9J4Jz5zl43b;
+        Tue, 12 Jan 2021 14:23:00 +0800 (CST)
+Received: from [10.67.102.197] (10.67.102.197) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 12 Jan 2021 14:24:10 +0800
+Subject: Re: [PATCH v3] proc_sysctl: fix oops caused by incorrect command
+ parameters.
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
+        <keescook@chromium.org>, <yzaikin@google.com>,
+        <adobriyan@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+        <vbabka@suse.cz>, <mhocko@suse.com>, <andy.shevchenko@gmail.com>,
+        <wangle6@huawei.com>
+References: <20210112033155.91502-1-nixiaoming@huawei.com>
+ <20210111203340.98dd3c8fa675b709bcf6d49e@linux-foundation.org>
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+Message-ID: <89d1369e-f0a8-66f2-c0ea-3aac3a55e2c1@huawei.com>
+Date:   Tue, 12 Jan 2021 14:24:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <X/ysA8PuJ/+JXQYL@sol.localdomain>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=+wqVUQIkAh0lLYI+QRsciw==:117 a=+wqVUQIkAh0lLYI+QRsciw==:17
-        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
-        a=joOgMYZwUYIHNJ8tGMoA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20210111203340.98dd3c8fa675b709bcf6d49e@linux-foundation.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.102.197]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 11:50:27AM -0800, Eric Biggers wrote:
-> On Mon, Jan 11, 2021 at 11:52:01AM +0100, Christoph Hellwig wrote:
-> > On Fri, Jan 08, 2021 at 11:58:55PM -0800, Eric Biggers wrote:
-> > > +	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
-> > > +		dirty_flags |= I_DIRTY_SYNC;
-> > 
-> > fat does not support i_version updates, so this bit can be skipped.
+On 2021/1/12 12:33, Andrew Morton wrote:
+> On Tue, 12 Jan 2021 11:31:55 +0800 Xiaoming Ni <nixiaoming@huawei.com> wrote:
 > 
-> Is that really the case?  Any filesystem (including fat) can be mounted with
-> "iversion", which causes SB_I_VERSION to be set.
+>> The process_sysctl_arg() does not check whether val is empty before
+>>   invoking strlen(val). If the command line parameter () is incorrectly
+>>   configured and val is empty, oops is triggered.
+>>
+>> --- a/fs/proc/proc_sysctl.c
+>> +++ b/fs/proc/proc_sysctl.c
+>> @@ -1770,6 +1770,9 @@ static int process_sysctl_arg(char *param, char *val,
+>>   			return 0;
+>>   	}
+>>   
+>> +	if (!val)
+>> +		return -EINVAL;
+>> +
+> 
+> I think v2 (return 0) was preferable.  Because all the other error-out
+> cases in process_sysctl_arg() also do a `return 0'.
 
-That's a bug. Filesystems taht don't support persistent i_version on
-disk need to clear SB_I_VERSION in their mount and remount paths
-because the VFS iversion mount option was a complete screwup from
-the start.
+https://lore.kernel.org/lkml/bc098af4-c0cd-212e-d09d-46d617d0acab@huawei.com/
 
-> A lot of filesystems (including fat) don't store i_version to disk, but it looks
-> like it will still get updated in-memory.  Could anything be relying on that?
+patch4:
+     +++ b/fs/proc/proc_sysctl.c
+     @@ -1757,6 +1757,9 @@ static int process_sysctl_arg(char *param, 
+char *val,
+             loff_t pos = 0;
+             ssize_t wret;
 
-If they do, then they are broken by definition. i_version as
-reported to observers is defined as monotonically increasing with
-every change to the inode. i.e. it never goes backwards. Which, of
-course, it will do if you crash or even just unmount/mount a
-filesystem that doesn't persist it.
+     +       if (!val)
+     +               return 0;
+     +
+             if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
+                     param += sizeof("sysctl") - 1;
 
-Cheers,
+Is this the version you're talking about?
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> 
+> If we're going to do a separate "patch: make process_sysctl_arg()
+> return an errno instead of 0" then fine, we can discuss that.  But it's
+> conceptually a different work from fixing this situation.
+> .
+> 
+However, are the logs generated by process_sysctl_arg() clearer and more 
+accurate than parse_args()? Should the logs generated by 
+process_sysctl_arg() be deleted?
+
+Thanks
+Xiaoming Ni
+
