@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60BD72F3EF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A68FE2F3F60
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:46:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438216AbhALWQc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 17:16:32 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44823 "EHLO
+        id S2438181AbhALWP7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 17:15:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:44793 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438195AbhALWQL (ORCPT
+        with ESMTP id S2438174AbhALWP5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 17:16:11 -0500
+        Tue, 12 Jan 2021 17:15:57 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kzRlg-0003bd-7c; Tue, 12 Jan 2021 22:04:00 +0000
+        id 1kzRli-0003bd-Qe; Tue, 12 Jan 2021 22:04:02 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -54,21 +54,21 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 28/42] init: handle idmapped mounts
-Date:   Tue, 12 Jan 2021 23:01:10 +0100
-Message-Id: <20210112220124.837960-29-christian.brauner@ubuntu.com>
+Subject: [PATCH v5 29/42] ioctl: handle idmapped mounts
+Date:   Tue, 12 Jan 2021 23:01:11 +0100
+Message-Id: <20210112220124.837960-30-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=K1Mmb+2iBnpojBmIU4SJaafXPX8O2CFx1CDw+utpuOU=; m=xvNrFhQ1y2dLwavhTa/L5ycYJlSyn9UahBsh8fnhzMg=; p=T84ylcJgm7jErZy8A3A4JEJzeX2Sy/VPnkeSnFEr7Mg=; g=463fa33c5c532e8c7af638fb27b57db52004da88
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YuAAKCRCRxhvAZXjcop8AAQCXD3D 4M62CMgvA6omdkdSEWaz7FL2OLzNdBtMvfUobNgEA/4AMHFZRBaM4sgnQsdBwRx8Ot748zQ6VHemO ok8YmwI=
+X-Patch-Hashes: v=1; h=sha256; i=kAwitCaU5Zsp+82CuxVVPm6U8xXlPPtQ0Z0Dh6WXu44=; m=VC5Xd0Zl8AGaO0BlP8YtVNixey9scChiBadwiGTSB5k=; p=oTgP29ybjPTdbnArRS0UjBd62m6f1UrtDPAozi+SHu8=; g=c32d9c1a69a581553f7de28602c01b53e63879e6
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YuAAKCRCRxhvAZXjcolFtAP9Jyut NCwljnX8YPYbEbH0TGh2ZGqdwFl7dwrXEioMjsgEAxXesyAYTyhhGHAHOKEZri1frriOo39vmk6H9 U/Lv1wg=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enable the init helpers to handle idmapped mounts by passing down the
+Enable generic ioctls to handle idmapped mounts by passing down the
 mount's user namespace. If the initial user namespace is passed nothing
 changes so non-idmapped mounts will see identical behavior as before.
 
@@ -85,103 +85,56 @@ patch introduced
 unchanged
 
 /* v4 */
-unchanged
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 
 /* v5 */
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
----
- fs/init.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/fs/init.c b/fs/init.c
-index 06d8e52ce18e..1db2b392e4e6 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -49,7 +49,7 @@ int __init init_chdir(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, path.dentry->d_inode,
-+	error = inode_permission(mnt_user_ns(path.mnt), path.dentry->d_inode,
- 				 MAY_EXEC | MAY_CHDIR);
- 	if (!error)
- 		set_fs_pwd(current->fs, &path);
-@@ -65,7 +65,7 @@ int __init init_chroot(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, path.dentry->d_inode,
-+	error = inode_permission(mnt_user_ns(path.mnt), path.dentry->d_inode,
- 				 MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
-@@ -120,7 +120,7 @@ int __init init_eaccess(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, d_inode(path.dentry),
-+	error = inode_permission(mnt_user_ns(path.mnt), d_inode(path.dentry),
- 				 MAY_ACCESS);
- 	path_put(&path);
- 	return error;
-@@ -160,8 +160,8 @@ int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
- 		mode &= ~current_umask();
- 	error = security_path_mknod(&path, dentry, mode, dev);
- 	if (!error)
--		error = vfs_mknod(&init_user_ns, path.dentry->d_inode, dentry,
--				  mode, new_decode_dev(dev));
-+		error = vfs_mknod(mnt_user_ns(path.mnt), path.dentry->d_inode,
-+				  dentry, mode, new_decode_dev(dev));
- 	done_path_create(&path, dentry);
- 	return error;
- }
-@@ -170,6 +170,7 @@ int __init init_link(const char *oldname, const char *newname)
+- Christoph Hellwig <hch@lst.de>:
+  - Use new file_userns_helper().
+---
+ fs/remap_range.c   | 7 +++++--
+ fs/verity/enable.c | 2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index 29a4a4dbfe12..dc68394ec9a1 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -432,13 +432,16 @@ EXPORT_SYMBOL(vfs_clone_file_range);
+ /* Check whether we are allowed to dedupe the destination file */
+ static bool allow_file_dedupe(struct file *file)
  {
- 	struct dentry *new_dentry;
- 	struct path old_path, new_path;
-+	struct user_namespace *mnt_userns;
- 	int error;
++	struct user_namespace *mnt_userns = file_user_ns(file);
++	struct inode *inode = file_inode(file);
++
+ 	if (capable(CAP_SYS_ADMIN))
+ 		return true;
+ 	if (file->f_mode & FMODE_WRITE)
+ 		return true;
+-	if (uid_eq(current_fsuid(), file_inode(file)->i_uid))
++	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)))
+ 		return true;
+-	if (!inode_permission(&init_user_ns, file_inode(file), MAY_WRITE))
++	if (!inode_permission(mnt_userns, inode, MAY_WRITE))
+ 		return true;
+ 	return false;
+ }
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index 6809cf8a99b7..9a221e368fa6 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -369,7 +369,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
+ 	 * has verity enabled, and to stabilize the data being hashed.
+ 	 */
  
- 	error = kern_path(oldname, 0, &old_path);
-@@ -184,14 +185,15 @@ int __init init_link(const char *oldname, const char *newname)
- 	error = -EXDEV;
- 	if (old_path.mnt != new_path.mnt)
- 		goto out_dput;
--	error = may_linkat(&init_user_ns, &old_path);
-+	mnt_userns = mnt_user_ns(new_path.mnt);
-+	error = may_linkat(mnt_userns, &old_path);
- 	if (unlikely(error))
- 		goto out_dput;
- 	error = security_path_link(old_path.dentry, &new_path, new_dentry);
- 	if (error)
- 		goto out_dput;
--	error = vfs_link(old_path.dentry, &init_user_ns,
--			 new_path.dentry->d_inode, new_dentry, NULL);
-+	error = vfs_link(old_path.dentry, mnt_userns, new_path.dentry->d_inode,
-+			 new_dentry, NULL);
- out_dput:
- 	done_path_create(&new_path, new_dentry);
- out:
-@@ -210,7 +212,8 @@ int __init init_symlink(const char *oldname, const char *newname)
- 		return PTR_ERR(dentry);
- 	error = security_path_symlink(&path, dentry, oldname);
- 	if (!error)
--		error = vfs_symlink(&init_user_ns, path.dentry->d_inode, dentry, oldname);
-+		error = vfs_symlink(mnt_user_ns(path.mnt), path.dentry->d_inode,
-+				    dentry, oldname);
- 	done_path_create(&path, dentry);
- 	return error;
- }
-@@ -233,7 +236,8 @@ int __init init_mkdir(const char *pathname, umode_t mode)
- 		mode &= ~current_umask();
- 	error = security_path_mkdir(&path, dentry, mode);
- 	if (!error)
--		error = vfs_mkdir(&init_user_ns, path.dentry->d_inode, dentry, mode);
-+		error = vfs_mkdir(mnt_user_ns(path.mnt), path.dentry->d_inode,
-+				  dentry, mode);
- 	done_path_create(&path, dentry);
- 	return error;
- }
+-	err = inode_permission(&init_user_ns, inode, MAY_WRITE);
++	err = inode_permission(file_user_ns(filp), inode, MAY_WRITE);
+ 	if (err)
+ 		return err;
+ 
 -- 
 2.30.0
 
