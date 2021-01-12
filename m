@@ -2,48 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F17EC2F2855
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 07:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DB712F2857
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 07:32:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733081AbhALG31 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1733095AbhALG32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 01:29:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733070AbhALG31 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 12 Jan 2021 01:29:27 -0500
-Received: from mail.univ-alger.dz ([193.194.83.97]:55958 "EHLO
-        mail.univ-alger.dz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733068AbhALG31 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 01:29:27 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.univ-alger.dz (Postfix) with ESMTP id 0CAF94D46F65;
-        Mon, 11 Jan 2021 13:55:47 +0100 (CET)
-Received: from mail.univ-alger.dz ([127.0.0.1])
-        by localhost (mail.univ-alger.dz [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id p0qRw1_zNGHz; Mon, 11 Jan 2021 13:55:46 +0100 (CET)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.univ-alger.dz (Postfix) with ESMTP id 8A4894D63697;
-        Mon, 11 Jan 2021 13:25:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mail.univ-alger.dz
-Received: from mail.univ-alger.dz ([127.0.0.1])
-        by localhost (mail.univ-alger.dz [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qsS8A0V1_edO; Mon, 11 Jan 2021 13:25:55 +0100 (CET)
-Received: from MACBOOK341C.localdomain (unknown [209.216.92.203])
-        by mail.univ-alger.dz (Postfix) with ESMTPSA id 4A7994D08515;
-        Mon, 11 Jan 2021 12:55:47 +0100 (CET)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Sie_haben_eine_Spende_von_=E2=82=AC_5=2E800=2E000=2C00=2E?=
-To:     Recipients <z.benamor@univ-alger.dz>
-From:   "Mrs. Mavis" <z.benamor@univ-alger.dz>
-Date:   Mon, 11 Jan 2021 03:55:35 -0800
-Reply-To: wanczykm61@gmail.com
-Message-Id: <20210111115548.4A7994D08515@mail.univ-alger.dz>
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 54790229CA;
+        Tue, 12 Jan 2021 06:28:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1610432926;
+        bh=66Qx1gj4EzTEeVhhLDcGKAc/ygvdzEvNrer5sghrXJ4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WFj9SeW+PsLybv3ux9riWrJaLAdMXDXKXz7KO+2WGT560uhpeR/6TKnzEuChPHvLc
+         iT6R7pT6h6duplxwdDpwAo0C3uDu9tzJU3HGG0pcHydpL9QMzv9qVv1S6J2HjTUDmr
+         JJMBPFJeJUT078kuTfy6+m+HsDPGx2Jdon+YmDkE=
+Date:   Mon, 11 Jan 2021 22:28:45 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Xiaoming Ni <nixiaoming@huawei.com>
+Cc:     <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
+        <keescook@chromium.org>, <yzaikin@google.com>,
+        <adobriyan@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+        <vbabka@suse.cz>, <mhocko@suse.com>, <andy.shevchenko@gmail.com>,
+        <wangle6@huawei.com>
+Subject: Re: [PATCH v3] proc_sysctl: fix oops caused by incorrect command
+ parameters.
+Message-Id: <20210111222845.67ceb4e3c7f64f267756e4e8@linux-foundation.org>
+In-Reply-To: <89d1369e-f0a8-66f2-c0ea-3aac3a55e2c1@huawei.com>
+References: <20210112033155.91502-1-nixiaoming@huawei.com>
+        <20210111203340.98dd3c8fa675b709bcf6d49e@linux-foundation.org>
+        <89d1369e-f0a8-66f2-c0ea-3aac3a55e2c1@huawei.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sie haben eine Spende von € 5.800.000,00. von Mavis Wanczyk antworten Sie mit diesem Code [MW530342019], um die Spende zu erhalten
+On Tue, 12 Jan 2021 14:24:05 +0800 Xiaoming Ni <nixiaoming@huawei.com> wrote:
 
+> On 2021/1/12 12:33, Andrew Morton wrote:
+> > On Tue, 12 Jan 2021 11:31:55 +0800 Xiaoming Ni <nixiaoming@huawei.com> wrote:
+> > 
+> >> The process_sysctl_arg() does not check whether val is empty before
+> >>   invoking strlen(val). If the command line parameter () is incorrectly
+> >>   configured and val is empty, oops is triggered.
+> >>
+> >> --- a/fs/proc/proc_sysctl.c
+> >> +++ b/fs/proc/proc_sysctl.c
+> >> @@ -1770,6 +1770,9 @@ static int process_sysctl_arg(char *param, char *val,
+> >>   			return 0;
+> >>   	}
+> >>   
+> >> +	if (!val)
+> >> +		return -EINVAL;
+> >> +
+> > 
+> > I think v2 (return 0) was preferable.  Because all the other error-out
+> > cases in process_sysctl_arg() also do a `return 0'.
+> 
+> https://lore.kernel.org/lkml/bc098af4-c0cd-212e-d09d-46d617d0acab@huawei.com/
+> 
+> patch4:
+>      +++ b/fs/proc/proc_sysctl.c
+>      @@ -1757,6 +1757,9 @@ static int process_sysctl_arg(char *param, 
+> char *val,
+>              loff_t pos = 0;
+>              ssize_t wret;
+> 
+>      +       if (!val)
+>      +               return 0;
+>      +
+>              if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
+>                      param += sizeof("sysctl") - 1;
+> 
+> Is this the version you're talking about?
 
-Vous avez un don de 5 800 000,00 €. de Mavis Wanczyk répondez avec ce code [MW530342019] pour recevoir le don
+yes, but as a separate patch.  The bugfix comes first.
+
+> > 
+> > If we're going to do a separate "patch: make process_sysctl_arg()
+> > return an errno instead of 0" then fine, we can discuss that.  But it's
+> > conceptually a different work from fixing this situation.
+> > .
+> > 
+> However, are the logs generated by process_sysctl_arg() clearer and more 
+> accurate than parse_args()? Should the logs generated by 
+> process_sysctl_arg() be deleted?
+
+I think the individual logs are very useful and should be retained.
