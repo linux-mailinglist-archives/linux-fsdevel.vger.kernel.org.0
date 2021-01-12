@@ -2,98 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65FB72F2551
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 02:18:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9AFF2F255D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 02:18:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731570AbhALBNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 20:13:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35328 "EHLO
+        id S1728776AbhALBRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 20:17:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731384AbhALBNd (ORCPT
+        with ESMTP id S1728675AbhALBRx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 20:13:33 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 174BCC061794
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 17:12:53 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id b8so498350plx.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 17:12:53 -0800 (PST)
+        Mon, 11 Jan 2021 20:17:53 -0500
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02A17C061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 17:17:13 -0800 (PST)
+Received: by mail-vs1-xe2e.google.com with SMTP id h18so576588vsg.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 17:17:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HeroSUVjjmC+Oi1TznGuZqpsMLfJSMPO+vq+1KmDVOY=;
-        b=eh3zl5GxXEYsEZi6yuaetcvNkJbsOPeSlI99r6w6+7dicC5rvtqC81rRI/VOQFtIVC
-         8RDAFZbcqMf72vNe80Ux6BOjdoCVwQEfACLjtQBWn8W02nAUK4QiR5WpPxLZy4FQXNSG
-         bTwU6ywKdhHi3J/GglPA+iyXCvAEk2QagSGKXk4Woz0M/A0+WybRt9hp9NVK1cX1RQIU
-         qeQpheXPopxYcL9OZ5gqX22NdJPSw1gAESQkovLj1Q7UJR+4yZix50BIcwqZftgllBVC
-         X5NCmW6DUy6srOhc6rTOK7zYFJHIqvKDtQOuTnZCwryddZ/17xuF0JTmskybdyoo8lSF
-         OxzA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uwodCnoTd5iinruqOw9v+f7fNpo6ey4C5JTJngxT1fY=;
+        b=NiFUb+xlR9l77SRPdvYOWbB+wKmzPy04rjqd1eqSjfyWmn8PkNdC42su/XLVRMg/N+
+         kd4+AN2SkcxRt6K+etxF5VgdXH60d7zlaMToJ+FlJw4++zixKZC2LCxWydUYArKXyLne
+         qdkShVaz/2EuMAt6sd8D4fKV7SypnJ6epppT1nvRmCUr09M/mkD25cYDMEzNrzWj4J8R
+         IB1P+dgvAsWd3+jO7WrXBvv+cPcwdB8ANVHTH4TVZWT1HPYiDsooda0FeaTn1aa/ZZ1z
+         RzRyTJIsB+RmTFxMko6KTI+d/qcXIbI8ANxK9FwkW6Ez34AGeVkn0cWQQqWL87egs46y
+         bmbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HeroSUVjjmC+Oi1TznGuZqpsMLfJSMPO+vq+1KmDVOY=;
-        b=Rm9MyUd/q+Gk4RufNZSIKzxAEiU7QZrp5hV4Z5yao34rNAhrAsVG9hhvsfth73EO5z
-         xZHCCLhzKgWmmO4dWZ+45aFCKL0nzqUXKK8elJ+IN9bIFCjvnLsAxz3IrsMepx1r4Q1x
-         /KxocXTZtJFwB7HLQkdNUMZFt54fDfHntRYwSOxHd6A9UZRHl9eJmR9YGJ2GDkZpCZ7x
-         7P4JcmyOcll/NLSu2byTDKeENqOweKB5j8MgmBnPtf0SOJlOk18WslJvz56gFtOS9shN
-         bce+f0rbWhLFYDAM9K17piNy09Q1+jgVbhN9pE7v0M5nuCHevFv9m+SunPEJ7zEdBLOe
-         Tl/A==
-X-Gm-Message-State: AOAM533Q3LHNmj8NBZy2jJMXYU7+sJmbBr9+T1FdUs0atvzkuaKtNY3D
-        pMWeYX0ZwVcDTjGDBG8l304zDA==
-X-Google-Smtp-Source: ABdhPJxRF0FNun799Re6m0Dlhn3msDTubi+Ca34uUaYeDXhd5YM/gQp4x/Eq+sUbStMDe7j70fv8hA==
-X-Received: by 2002:a17:902:7c04:b029:dc:99f2:eea4 with SMTP id x4-20020a1709027c04b02900dc99f2eea4mr2508598pll.43.1610413972364;
-        Mon, 11 Jan 2021 17:12:52 -0800 (PST)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:675])
-        by smtp.gmail.com with ESMTPSA id o7sm921465pfp.144.2021.01.11.17.12.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 17:12:50 -0800 (PST)
-Date:   Mon, 11 Jan 2021 17:12:47 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com, linux-man <linux-man@vger.kernel.org>
-Subject: Re: Ping: [PATCH man-pages v6] Document encoded I/O
-Message-ID: <X/z3j7dtRrAMc8wC@relinquished.localdomain>
-References: <cover.1605723568.git.osandov@fb.com>
- <ec1588a618bd313e5a7c05a7f4954cc2b76ddac3.1605724767.git.osandov@osandov.com>
- <4d1430aa-a374-7565-4009-7ec5139bf311@gmail.com>
- <fb4a4270-eb7a-06d5-e703-9ee470b61f8b@gmail.com>
- <05e1f13c-5776-961b-edc4-0d09d02b7829@gmail.com>
- <dcb0679d-3ac5-dd95-5473-3c66ae4132b6@gmail.com>
- <559edb86-4223-71e9-9ebf-c917ae71a13d@gmail.com>
- <2aca4914-d247-28d1-22e0-102ea5ff826e@gmail.com>
- <7e2e061d-fd4b-1243-6b91-cc3168146bba@gmail.com>
- <48cc36d0-5e18-2429-9503-729ce01ac1c8@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uwodCnoTd5iinruqOw9v+f7fNpo6ey4C5JTJngxT1fY=;
+        b=p/ZYMeAv4Vo/6eoD0gQq2mORRJK48aFVrUoogyZGZw1yU1S1Ut7oAi1TSUO7GrOJs9
+         EJQuvX+H3E7tPZnqTD+RfH/t7t+ShV6gCUTU/qUdJaq355bgEr0ZKw16WbLEaq96XVwS
+         SUiHtjPl7ymvfhBvQdkpfxFdlfwD1iyY/kryuS6BzaQA7fMyYCe7veM8rM7Hwgel5+bH
+         iJRq4V5kPLxmcASE6urN5RCvXLGCDrAXw9sNNZIaKAFq6EydtzMWRTyNbUV+RW89tsOm
+         INXhzq5+NExPKavC9E7GLG0w67Vr+GcZfIuO6EDasHRfjVWgzobDKv9qJcTou+HSEkEY
+         ypnA==
+X-Gm-Message-State: AOAM530kmdtUOYia/IjT/WPfGxRVB9j03C5Px9WGNsCMq7t3DehFJRtj
+        nLD2uXT4TSs+meYLMmm8H7lGP+FRvAw=
+X-Google-Smtp-Source: ABdhPJwrxH2E/z0GwAA1kMwu0Cw9oY+IXaXUgDjZ6yeMd8xC5kwgjpAXJsSViHONd5X3zQUaBYGGIw==
+X-Received: by 2002:a67:dd95:: with SMTP id i21mr1948038vsk.33.1610414231917;
+        Mon, 11 Jan 2021 17:17:11 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id u16sm176565vsc.23.2021.01.11.17.17.11
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jan 2021 17:17:11 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id s85so598880vsc.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 17:17:11 -0800 (PST)
+X-Received: by 2002:a67:6995:: with SMTP id e143mr356433vsc.51.1610414230636;
+ Mon, 11 Jan 2021 17:17:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <48cc36d0-5e18-2429-9503-729ce01ac1c8@gmail.com>
+References: <20210112003017.4010304-1-willemdebruijn.kernel@gmail.com> <20210112005823.GB3579531@ZenIV.linux.org.uk>
+In-Reply-To: <20210112005823.GB3579531@ZenIV.linux.org.uk>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Mon, 11 Jan 2021 20:16:35 -0500
+X-Gmail-Original-Message-ID: <CA+FuTScKa+1WMLywzNTraCxkHAshix6v4Fxf3kh5ZENirsicMA@mail.gmail.com>
+Message-ID: <CA+FuTScKa+1WMLywzNTraCxkHAshix6v4Fxf3kh5ZENirsicMA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] fs: deduplicate compat logic
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Arnd Bergmann <arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 18, 2020 at 11:32:17AM +0100, Alejandro Colomar (man-pages) wrote:
-> Hi Omar,
-> 
-> Linux 5.10 has been recently released.
-> Do you have any updates for this patch?
-> 
-> Thanks,
-> 
-> Alex
+On Mon, Jan 11, 2021 at 7:58 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Mon, Jan 11, 2021 at 07:30:11PM -0500, Willem de Bruijn wrote:
+> > From: Willem de Bruijn <willemb@google.com>
+> >
+> > Use in_compat_syscall() to differentiate compat handling exactly
+> > where needed, including in nested function calls. Then remove
+> > duplicated code in callers.
+>
+> IMO it's a bad idea.  Use of in_compat_syscall() is hard to avoid
+> in some cases, but let's not use it without a good reason.  It
+> makes the code harder to reason about.
 
-Hi, Alex,
+In the specific cases of select, poll and epoll, this removes quite a
+bit of duplicate code that may diverge over time. Indeed, for select
+already has. Reduction of duplication may also make subsequent changes
+more feasible. We discussed avoiding in epoll an unnecessary
+ktime_get_ts64 in select_estimate_accuracy, which requires plumbing a
+variable through these intermediate helpers.
 
-Now that the holidays are over I'm revisiting this series and plan to
-send a new version this week or next.
+I also personally find the code simpler to understand without the
+various near duplicates. The change exposes their differences
+more clearly. select is the best example of this.
 
-Thanks,
-Omar
+The last two patches I added based on earlier comments. Perhaps
+the helper in 5 adds more churn than it's worth.
