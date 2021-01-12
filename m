@@ -2,337 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E929E2F33EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 16:14:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0DE2F33D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 16:14:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbhALPNj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 10:13:39 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26688 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405065AbhALPNf (ORCPT
+        id S2404085AbhALPMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 10:12:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404034AbhALPMr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 10:13:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610464328;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=eYAwFL1bjtKuxrU7qTxXl+J5KIWZcpoUKayCM4CfTx4=;
-        b=Pjd2fVMOZL7sYeEWxIHjT8EXtfa37Ljandr1UgNAufKm9nk28sGSh6c7EcL4XVxXjj6vbm
-        wwtj+dFTq3cmOVAzXujySwD3H3frUollXKs/ghKRE6JXlpHqzM0Z6Z8YFAFQgjZNqk0EWv
-        /f/92v9qCOqPc56h+XOF55kEDf4fIQ8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-585-iK-nb-EHMbicuqqU05FD5Q-1; Tue, 12 Jan 2021 10:12:04 -0500
-X-MC-Unique: iK-nb-EHMbicuqqU05FD5Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CEE4C100C601;
-        Tue, 12 Jan 2021 15:12:01 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB2325D9CD;
-        Tue, 12 Jan 2021 15:11:55 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux Containers List <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Linux FSdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>
-Cc:     Neil Horman <nhorman@tuxdriver.com>,
-        David Howells <dhowells@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Simo Sorce <simo@redhat.com>,
-        Eric Paris <eparis@parisplace.org>, mpatel@redhat.com,
-        Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
+        Tue, 12 Jan 2021 10:12:47 -0500
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71CCFC061794
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 07:12:06 -0800 (PST)
+Received: by mail-qk1-x729.google.com with SMTP id p14so2064425qke.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 07:12:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=p6nHs722LNtVQng6i1tmK1s3mfSjyGnq6ztlToZAdRA=;
+        b=scr4TGHzdHczFRrYhZ7Nlh31hLiOrzB8ocqsCJQX3r0j9E7YCREF18h/ZH8Pn3jkOl
+         pSZCnBJzKBqI9RPSoXQoYANJanvKtirASGCHtkMbn442gMsImcpfdQsdAfoT33/wnBFe
+         0WV4UCb+4o1eD7ZIVHFdjq4gIg4NDIlI9fMNajIpssAWhXiNqBa/PrAYDpKy3ilOSYiT
+         Zr0Z7VDqsLrQkFX13xa+wSbnfjZP2PXa56HVbKzRvsGbA24bkBV5PyEkUwjHf4iDRhhY
+         RnFQJ5G0wXuZ/X241rp7/09LnjVuRXMygeugJ1epuVed8IkIe5BmkHPoR/OYCsE2ru5E
+         87vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=p6nHs722LNtVQng6i1tmK1s3mfSjyGnq6ztlToZAdRA=;
+        b=sdKOd3lxsZVEbegjXPtnaJLXc3fj2vhI64JS/Db00SKXC9n/5av8QFQFu6X7+0GeJW
+         gRn25KJLZ7au3PkPeY3F+ik9z5WJHth/DnmLlEgD6DLPYD75j+kAIUHPJoXeAx0GootI
+         Pi6ISe1KZelCclO4A9a5WjP9X8FqIWufJ9h6APeMCZQzNdAK5lcMThUNbJHy8SK6+6b6
+         5TYN+B7sTrzgNidRvJMAmsf/+eH7PptiVdChVm+O1FygLpCjnCI5HTMq4CLwaaZHnL5v
+         DK+hNQ9EzEmSR86fEnI3RjizZCj8+IooXyoRPkCOLLzK+fzLWogiYpgN8rgN27CjJ7iC
+         mV0A==
+X-Gm-Message-State: AOAM532hpS7C+IsEioQXKLoGR8mfiMoT8lJWDRbrbv2MkUdYBAeUpoaX
+        EMEWvXnpCTsbNa3GDTkSRp5vkg==
+X-Google-Smtp-Source: ABdhPJzmfdQ/+KPWjiltm/rc7shUyKIBVveksHVyJ0h6SWy+mOH2UdbkWYdCHWNj6gF+6nT/1qDuOA==
+X-Received: by 2002:a37:9583:: with SMTP id x125mr5134431qkd.75.1610464325540;
+        Tue, 12 Jan 2021 07:12:05 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id p6sm1174596qtl.21.2021.01.12.07.12.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Jan 2021 07:12:04 -0800 (PST)
+Subject: Re: [PATCH v11 12/40] btrfs: calculate allocation offset for
+ conventional zones
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak90 v11 11/11] audit: add capcontid to set contid outside init_user_ns
-Date:   Tue, 12 Jan 2021 10:09:39 -0500
-Message-Id: <f535d3945bf0fccb3fd6278ec6bb2f0f01317fd3.1610399347.git.rgb@redhat.com>
-In-Reply-To: <cover.1610399347.git.rgb@redhat.com>
-References: <cover.1610399347.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
+ <5101ed472a046b3fc691aeb90f84bb55790d4fc0.1608608848.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <95f5ef2f-ab89-9907-5c34-f9d9f7f88a9d@toxicpanda.com>
+Date:   Tue, 12 Jan 2021 10:12:03 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
+MIME-Version: 1.0
+In-Reply-To: <5101ed472a046b3fc691aeb90f84bb55790d4fc0.1608608848.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-process in a non-init user namespace the capability to set audit
-container identifiers of individual children.
+On 12/21/20 10:49 PM, Naohiro Aota wrote:
+> Conventional zones do not have a write pointer, so we cannot use it to
+> determine the allocation offset if a block group contains a conventional
+> zone.
+> 
+> But instead, we can consider the end of the last allocated extent in the
+> block group as an allocation offset.
+> 
+> For new block group, we cannot calculate the allocation offset by
+> consulting the extent tree, because it can cause deadlock by taking extent
+> buffer lock after chunk mutex (which is already taken in
+> btrfs_make_block_group()). Since it is a new block group, we can simply set
+> the allocation offset to 0, anyway.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>   fs/btrfs/block-group.c |  4 +-
+>   fs/btrfs/zoned.c       | 93 +++++++++++++++++++++++++++++++++++++++---
+>   fs/btrfs/zoned.h       |  4 +-
+>   3 files changed, 92 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
+> index 8c029e45a573..9eb1e3aa5e0f 100644
+> --- a/fs/btrfs/block-group.c
+> +++ b/fs/btrfs/block-group.c
+> @@ -1867,7 +1867,7 @@ static int read_one_block_group(struct btrfs_fs_info *info,
+>   			goto error;
+>   	}
+>   
+> -	ret = btrfs_load_block_group_zone_info(cache);
+> +	ret = btrfs_load_block_group_zone_info(cache, false);
+>   	if (ret) {
+>   		btrfs_err(info, "zoned: failed to load zone info of bg %llu",
+>   			  cache->start);
+> @@ -2150,7 +2150,7 @@ int btrfs_make_block_group(struct btrfs_trans_handle *trans, u64 bytes_used,
+>   	if (btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE))
+>   		cache->needs_free_space = 1;
+>   
+> -	ret = btrfs_load_block_group_zone_info(cache);
+> +	ret = btrfs_load_block_group_zone_info(cache, true);
+>   	if (ret) {
+>   		btrfs_put_block_group(cache);
+>   		return ret;
+> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> index adca89a5ebc1..ceb6d0d7d33b 100644
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -897,7 +897,62 @@ int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size)
+>   	return 0;
+>   }
+>   
+> -int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache)
+> +static int calculate_alloc_pointer(struct btrfs_block_group *cache,
+> +				   u64 *offset_ret)
+> +{
+> +	struct btrfs_fs_info *fs_info = cache->fs_info;
+> +	struct btrfs_root *root = fs_info->extent_root;
+> +	struct btrfs_path *path;
+> +	struct btrfs_key key;
+> +	struct btrfs_key found_key;
+> +	int ret;
+> +	u64 length;
+> +
+> +	path = btrfs_alloc_path();
+> +	if (!path)
+> +		return -ENOMEM;
+> +
+> +	key.objectid = cache->start + cache->length;
+> +	key.type = 0;
+> +	key.offset = 0;
+> +
+> +	ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
+> +	/* We should not find the exact match */
+> +	if (ret <= 0) {
+> +		ret = -EUCLEAN;
+> +		goto out;
+> +	}
 
-Provide the /proc/$PID/audit_capcontid interface to capcontid.
-Valid values are: 1==enabled, 0==disabled
+We're eating the return value here if ret < 0, so I'd rather we do something like
 
-Writing a "1" to this special file for the target process $PID will
-enable the target process to set audit container identifiers of its
-descendants.
+if (!ret)
+	ret = -EUCLEAN;
+if (ret < 0)
+	goto out;
 
-A process must already have CAP_AUDIT_CONTROL in the initial user
-namespace or have had audit_capcontid enabled by a previous use of this
-feature by its parent on this process in order to be able to enable it
-for another process.  The target process must be a descendant of the
-calling process.
+Thanks,
 
-Report this action in new message type AUDIT_SET_CAPCONTID 1022 with
-fields opid= capcontid= old-capcontid=
-
-Add an entry to Documentation/ABI.
-
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- .../ABI/testing/procfs-audit_containerid      | 16 +++++
- fs/proc/base.c                                | 54 +++++++++++++++
- include/linux/audit.h                         |  4 +-
- include/uapi/linux/audit.h                    |  1 +
- kernel/audit.c                                | 65 ++++++++++++++++++-
- 5 files changed, 137 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/ABI/testing/procfs-audit_containerid b/Documentation/ABI/testing/procfs-audit_containerid
-index 30ea64790473..c697d7da0ad1 100644
---- a/Documentation/ABI/testing/procfs-audit_containerid
-+++ b/Documentation/ABI/testing/procfs-audit_containerid
-@@ -11,3 +11,19 @@ Description:
- 		or have its own /proc/$pid/capcontainerid set to write
- 		or read.
- 
-+
-+What:		Capability to set or get the Audit Container Identifier
-+Date:		2020-??
-+KernelVersion:	5.10?
-+Contact:	linux-audit@redhat.com
-+Format:		u32
-+Users:		auditd, libaudit, audit-testsuite, podman(?), container orchestrators
-+Description:
-+		The /proc/$pid/audit_capcontainerid pseudofile is
-+		written to set and is read to get the capability of
-+		process $pid to write or to read the /proc/$pid/containerid
-+		audit container identifier of any of its descendants.
-+		"1" allows and "0" denies that capability.  This
-+		property is an extension to CAP_AUDIT_CONTROL outside of
-+		the initial user namespace.
-+
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index bf447e7932d2..7495eec1c73b 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1383,6 +1383,58 @@ static const struct file_operations proc_contid_operations = {
- 	.write		= proc_contid_write,
- 	.llseek		= generic_file_llseek,
- };
-+
-+static ssize_t proc_capcontid_read(struct file *file, char __user *buf,
-+				  size_t count, loff_t *ppos)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct task_struct *task = get_proc_task(inode);
-+	ssize_t length;
-+	char tmpbuf[TMPBUFLEN];
-+
-+	if (!task)
-+		return -ESRCH;
-+	length = audit_get_capcontid_proc(tmpbuf, TMPBUFLEN, task);
-+	put_task_struct(task);
-+	if (length < 0)
-+		return length;
-+	return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
-+}
-+
-+static ssize_t proc_capcontid_write(struct file *file, const char __user *buf,
-+				   size_t count, loff_t *ppos)
-+{
-+	struct inode *inode = file_inode(file);
-+	u32 capcontid;
-+	int rv;
-+	struct task_struct *task = get_proc_task(inode);
-+
-+	if (!task)
-+		return -ESRCH;
-+	if (*ppos != 0) {
-+		/* No partial writes. */
-+		put_task_struct(task);
-+		return -EINVAL;
-+	}
-+
-+	rv = kstrtou32_from_user(buf, count, 10, &capcontid);
-+	if (rv < 0) {
-+		put_task_struct(task);
-+		return rv;
-+	}
-+
-+	rv = audit_set_capcontid(task, capcontid);
-+	put_task_struct(task);
-+	if (rv < 0)
-+		return rv;
-+	return count;
-+}
-+
-+static const struct file_operations proc_capcontid_operations = {
-+	.read		= proc_capcontid_read,
-+	.write		= proc_capcontid_write,
-+	.llseek		= generic_file_llseek,
-+};
- #endif
- 
- #ifdef CONFIG_FAULT_INJECTION
-@@ -3286,6 +3338,7 @@ static const struct pid_entry tgid_base_stuff[] = {
- 	REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
- 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
- 	REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-+	REG("audit_capcontainerid", S_IWUSR|S_IRUSR, proc_capcontid_operations),
- #endif
- #ifdef CONFIG_FAULT_INJECTION
- 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-@@ -3629,6 +3682,7 @@ static const struct pid_entry tid_base_stuff[] = {
- 	REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
- 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
- 	REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-+	REG("audit_capcontainerid", S_IWUSR|S_IRUSR, proc_capcontid_operations),
- #endif
- #ifdef CONFIG_FAULT_INJECTION
- 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 014f73296fec..3f5444393618 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -214,8 +214,10 @@ extern void audit_set_sessionid_iouring(unsigned int sessionid);
- 
- extern int audit_get_contid_proc(char *tmpbuf, int TMPBUFLEN,
- 				 struct task_struct *task);
--
-+extern int audit_get_capcontid_proc(char *tmpbuf, int TMPBUFLEN,
-+				 struct task_struct *task);
- extern int audit_set_contid(struct task_struct *tsk, u64 contid);
-+extern int audit_set_capcontid(struct task_struct *tsk, u32 enable);
- 
- extern void audit_copy_namespaces(struct net *net, struct task_struct *tsk);
- extern void audit_switch_task_namespaces(struct nsproxy *ns,
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 66350e572e41..b7c7ab2e6a1d 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -73,6 +73,7 @@
- #define AUDIT_GET_FEATURE	1019	/* Get which features are enabled */
- #define AUDIT_CONTAINER_OP	1020	/* Define the container id and info */
- #define AUDIT_SIGNAL_INFO2	1021	/* Get info auditd signal sender */
-+#define AUDIT_SET_CAPCONTID	1022	/* Set cap_contid of a task */
- 
- #define AUDIT_FIRST_USER_MSG	1100	/* Userspace messages mostly uninteresting to kernel */
- #define AUDIT_USER_AVC		1107	/* We filter this differently */
-diff --git a/kernel/audit.c b/kernel/audit.c
-index d2e9d803e5fd..7e825305b3c2 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -238,6 +238,7 @@ struct audit_task_info {
- 	kuid_t			loginuid;
- 	unsigned int		sessionid;
- 	struct audit_contobj	*cont;
-+	u32			capcontid;
- #ifdef CONFIG_AUDITSYSCALL
- 	struct audit_context	*ctx;
- #endif
-@@ -308,6 +309,15 @@ static inline u64 audit_get_contid(struct task_struct *tsk)
- 	return info->cont->id;
- }
- 
-+static inline u32 audit_get_capcontid(struct task_struct *tsk)
-+{
-+	struct audit_task_info *info = tsk->audit;
-+
-+	if (!info)
-+		return 0;
-+	return info->capcontid;
-+}
-+
- inline struct audit_context *_audit_context(struct task_struct *tsk)
- {
- 	struct audit_task_info *info = tsk->audit;
-@@ -420,6 +430,7 @@ static void audit_alloc_task(struct task_struct *tsk)
- 	rcu_read_lock();
- 	info->cont = _audit_contobj_get_bytask(current);
- 	rcu_read_unlock();
-+	info->capcontid = 0;
- 	tsk->audit = info;
- }
- 
-@@ -2988,6 +2999,56 @@ static bool audit_contid_isnesting(struct task_struct *tsk)
- 	return !isowner && ownerisparent;
- }
- 
-+int audit_set_capcontid(struct task_struct *tsk, u32 enable)
-+{
-+	u32 oldcapcontid;
-+	int rc = 0;
-+	struct audit_buffer *ab;
-+	struct audit_task_info *info = tsk->audit;
-+
-+	if (!info)
-+		return -ENOPROTOOPT;
-+	oldcapcontid = audit_get_capcontid(tsk);
-+	/* if task is not descendant, block */
-+	if (tsk == current || !task_is_descendant(current, tsk))
-+		rc = -EXDEV;
-+	else if (current_user_ns() == &init_user_ns) {
-+		if (!capable(CAP_AUDIT_CONTROL) &&
-+		    !audit_get_capcontid(current))
-+			rc = -EPERM;
-+	}
-+	if (!rc)
-+		info->capcontid = enable;
-+
-+	if (!audit_enabled)
-+		return rc;
-+
-+	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_SET_CAPCONTID);
-+	if (!ab)
-+		return rc;
-+
-+	audit_log_format(ab,
-+			 "opid=%d capcontid=%u old-capcontid=%u",
-+			 task_tgid_nr(tsk), enable, oldcapcontid);
-+	audit_log_end(ab);
-+	return rc;
-+}
-+
-+int audit_get_capcontid_proc(char *tmpbuf, int TMPBUFLEN,
-+			  struct task_struct *tsk)
-+{
-+	int length;
-+
-+	/* if we don't have caps, reject */
-+	if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current)) {
-+		length = -EPERM;
-+		goto out;
-+	}
-+	length = scnprintf(tmpbuf, TMPBUFLEN, "%u", audit_get_capcontid(tsk));
-+out:
-+	return length;
-+}
-+
- /*
-  * audit_set_contid - set current task's audit contid
-  * @tsk: target task
-@@ -3021,7 +3082,7 @@ int audit_set_contid(struct task_struct *tsk, u64 contid)
- 	if (contid == AUDIT_CID_UNSET) {
- 		/* Don't allow the contid to be unset */
- 		rc = -EINVAL;
--	} else if (!capable(CAP_AUDIT_CONTROL)) {
-+	} else if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current)) {
- 		/* if we don't have caps, reject */
- 		rc = -EPERM;
- 	} else if (!list_empty(&tsk->children) ||
-@@ -3111,7 +3172,7 @@ int audit_get_contid_proc(char *tmpbuf, int TMPBUFLEN,
- 	int length;
- 
- 	/* if we don't have caps, reject */
--	if (!capable(CAP_AUDIT_CONTROL)) {
-+	if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current)) {
- 		length = -EPERM;
- 		goto out;
- 	}
--- 
-2.18.4
-
+Josef
