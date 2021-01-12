@@ -2,101 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA5D2F3D82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:44:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CDAA2F3DDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389329AbhALVlv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 16:41:51 -0500
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:39415 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731253AbhALVhl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 16:37:41 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id DBAF05C01E9;
-        Tue, 12 Jan 2021 16:36:34 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 12 Jan 2021 16:36:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=Uu763oWbJWYmCwQoS+PcRoadjyh
-        lnHhoTiLxUdxm918=; b=lA1UaPCB1gWTWf+CMmIhzQfwi07esA2tt1zqzzodlg3
-        1DOfvxgxJs47H/L2kbNrjbxYwxUycZjD5pC7GLx4bajbs0oQV9xGEJ4xVwh9oenI
-        Xvl58bvx4YsJWa/sPXBDRgYdsa+y2+2YPhVVSkmBe4TwdCrgaSFs2KY/8IPtG/vy
-        bBSbnHvdvrKT4mLTMXFAfBpjkP3+d929VKh5DQJdBXeOSkpAfzE48SyfJWzm6Bpc
-        ClqAerYQlJxPRg24/pOdD0vqk1S8z+GJClvM6cLPFC2NeqXnI7o3lomWltj6511F
-        rU+X90I+tX03QZhRsYlUXtFwyWQaFj1STj/whlkpCOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Uu763o
-        WbJWYmCwQoS+PcRoadjyhlnHhoTiLxUdxm918=; b=mJekN6kYB/JUjM5fT8ncZj
-        icaWeg+u9/5jX8VSNvMm/OtLvvrSkGG0Dffi5Xva5hf6s+0pMf6jjPjL4QSvSLSn
-        OeuNPk4xJZbi2i8A71zKguK8S7Usq9QD2lCzl5P8pr8kltctTcldXDAdkAYmMG8e
-        2ckyTfAZWekbL0Wq8xi+75zZnBotz40xlOzkIlm9+Um84jkChIy4dByKtwEKRj/J
-        mKrSVuI9hsFNcgk0hemjQUo0m62U2gMDS3v9opTMsKtqZkuJxOHdXzUqsEqo9jG8
-        dP720/zNhy1lAjIDNMhoNyATHv7VVehxZw0jgLQhS2JES4NNpeRCerxUc+hVquQA
-        ==
-X-ME-Sender: <xms:Yhb-X2DmtHXLrer6DIdB-u1vl1gglLVg1jOWQvApQ2ALJ5PHky9ZAQ>
-    <xme:Yhb-Xwhzdo0brwwBkFlP9JwHbxksgfw5K-oRr17rR34cm9IQo-sZr8Z8j1063l-Xv
-    kquJiGdttLiLSuuvQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedukedrtddtgdduudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
-    htthgvrhhnpedukefhkeelueegveetheelffffjeegleeuudelfeefuedtleffueejfffh
-    ueffudenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdr
-    uggv
-X-ME-Proxy: <xmx:Yhb-X5mCiJnfgBVpqLWfzux-iGGonByxB9KjAbWyDZGvei-yuq5KJg>
-    <xmx:Yhb-X0x9ZFwH5BmVOVTz_WVsyYZBUMCdZJGl480V6HzI0kkTn6UC-g>
-    <xmx:Yhb-X7Rlr0UYUgMPY9OkBQbDx18ZlFTB3gmgpajoWCeRPhkoPwgoJw>
-    <xmx:Yhb-X8IsQVdVYdQcHf33Snrrc1I3YuwjpTNgtTcM9HM6li37YBsPZQ>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 7D3831080057;
-        Tue, 12 Jan 2021 16:36:34 -0500 (EST)
-Date:   Tue, 12 Jan 2021 13:36:33 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Andreas Dilger <adilger@dilger.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Avi Kivity <avi@scylladb.com>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
- extents?
-Message-ID: <20210112213633.fb4tjlgvo6tznfr4@alap3.anarazel.de>
-References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
- <20210104181958.GE6908@magnolia>
- <20210104191058.sryksqjnjjnn5raa@alap3.anarazel.de>
- <f6f75f11-5d5b-ae63-d584-4b6f09ff401e@scylladb.com>
- <20210112181600.GA1228497@infradead.org>
- <C8811877-48A9-4199-9F28-20F5B071AE36@dilger.ca>
- <20210112184339.GA1238746@infradead.org>
- <1C33DEE4-8BE9-4BF3-A589-E11532382B36@dilger.ca>
- <20210112211445.GC1164248@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210112211445.GC1164248@magnolia>
+        id S1733019AbhALVvH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 16:51:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45468 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725858AbhALVvF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Jan 2021 16:51:05 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7415B2078E;
+        Tue, 12 Jan 2021 21:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1610488225;
+        bh=RuQm3XtnZXv3Z0x+r8o0VpLOgkw/jIG772EFCf8H178=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=2LhdIXY65Y7ov5Min1zRxxJLH0ZkNyWVzaarhZ/qr4J2nsX+E2y7sZQGXrHQ2MSQI
+         J4zgu8QNhEryeEexeHcY0mcdlTsD47WUGaFjfX/mSHDZVeSgRIebzmg75X6nBecM30
+         X68D0a95yH7+oN43SUvS8qsYam8FfJtnbypxYQ5c=
+Date:   Tue, 12 Jan 2021 13:50:10 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Shakeel Butt <shakeelb@google.com>
+Subject: Re: mmotm 2021-01-12-01-57 uploaded (NR_SWAPCACHE in mm/)
+Message-Id: <20210112135010.267508efa85fe98f670ed9e9@linux-foundation.org>
+In-Reply-To: <ac517aa0-2396-321c-3396-13aafba46116@infradead.org>
+References: <20210112095806.I2Z6as5al%akpm@linux-foundation.org>
+        <ac517aa0-2396-321c-3396-13aafba46116@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue, 12 Jan 2021 12:38:18 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
 
-On 2021-01-12 13:14:45 -0800, Darrick J. Wong wrote:
-> ALLOCSP64 can only allocate pre-zeroed blocks as part of extending EOF,
-> whereas a new FZERO flag means that we can pre-zero an arbitrary range
-> of bytes in a file.  I don't know if Avi or Andres' usecases demand that
-> kind of flexibilty but I know I'd rather go for the more powerful
-> interface.
+> On 1/12/21 1:58 AM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2021-01-12-01-57 has been uploaded to
+> > 
+> >    https://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > https://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> > 
+> 
+> on i386 and x86_64:
+> 
+> when CONFIG_SWAP is not set/enabled:
+> 
+> ../mm/migrate.c: In function ‘migrate_page_move_mapping’:
+> ../mm/migrate.c:504:35: error: ‘NR_SWAPCACHE’ undeclared (first use in this function); did you mean ‘QC_SPACE’?
+>     __mod_lruvec_state(old_lruvec, NR_SWAPCACHE, -nr);
+>                                    ^~~~~~~~~~~~
+> 
+> ../mm/memcontrol.c:1529:20: error: ‘NR_SWAPCACHE’ undeclared here (not in a function); did you mean ‘SGP_CACHE’?
+>   { "swapcached",   NR_SWAPCACHE   },
+>                     ^~~~~~~~~~~~
 
-Postgres/I don't at the moment have a need to allocate "written" zeroed
-space anywhere but EOF. I can see some potential uses for more flexible
-pre-zeroing in the future though, but not very near term.
+Thanks.  I did the below.
 
-Greetings,
+But we're still emitting "Node %d SwapCached: 0 kB" in sysfs when
+CONFIG_SWAP=n, which is probably wrong.  Shakeel, can you please have a
+think?
 
-Andres Freund
+
+--- a/mm/memcontrol.c~mm-memcg-add-swapcache-stat-for-memcg-v2-fix
++++ a/mm/memcontrol.c
+@@ -1521,7 +1521,9 @@ static const struct memory_stat memory_s
+ 	{ "file_mapped",		NR_FILE_MAPPED			},
+ 	{ "file_dirty",			NR_FILE_DIRTY			},
+ 	{ "file_writeback",		NR_WRITEBACK			},
++#ifdef CONFIG_SWAP
+ 	{ "swapcached",			NR_SWAPCACHE			},
++#endif
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	{ "anon_thp",			NR_ANON_THPS			},
+ 	{ "file_thp",			NR_FILE_THPS			},
+--- a/mm/migrate.c~mm-memcg-add-swapcache-stat-for-memcg-v2-fix
++++ a/mm/migrate.c
+@@ -500,10 +500,12 @@ int migrate_page_move_mapping(struct add
+ 			__mod_lruvec_state(old_lruvec, NR_SHMEM, -nr);
+ 			__mod_lruvec_state(new_lruvec, NR_SHMEM, nr);
+ 		}
++#ifdef CONFIG_SWAP
+ 		if (PageSwapCache(page)) {
+ 			__mod_lruvec_state(old_lruvec, NR_SWAPCACHE, -nr);
+ 			__mod_lruvec_state(new_lruvec, NR_SWAPCACHE, nr);
+ 		}
++#endif
+ 		if (dirty && mapping_can_writeback(mapping)) {
+ 			__mod_lruvec_state(old_lruvec, NR_FILE_DIRTY, -nr);
+ 			__mod_zone_page_state(oldzone, NR_ZONE_WRITE_PENDING, -nr);
+_
+
