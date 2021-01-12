@@ -2,253 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4EAE2F3246
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:56:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3E392F322B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:49:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733196AbhALNyx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 08:54:53 -0500
-Received: from smtp180.sjtu.edu.cn ([202.120.2.180]:41076 "EHLO
-        smtp180.sjtu.edu.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbhALNyx (ORCPT
+        id S1726526AbhALNtV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 08:49:21 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:40206 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726184AbhALNtU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 08:54:53 -0500
-X-Greylist: delayed 544 seconds by postgrey-1.27 at vger.kernel.org; Tue, 12 Jan 2021 08:54:47 EST
-Received: from mta03.sjtu.edu.cn (mta03.sjtu.edu.cn [202.121.179.7])
-        by smtp180.sjtu.edu.cn (Postfix) with ESMTPS id 1F20A1008D5D0;
-        Tue, 12 Jan 2021 21:45:01 +0800 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by mta03.sjtu.edu.cn (Postfix) with ESMTP id 0E02310DC2C;
-        Tue, 12 Jan 2021 21:45:01 +0800 (CST)
-X-Virus-Scanned: amavisd-new at mta03.sjtu.edu.cn
-Received: from mta03.sjtu.edu.cn ([127.0.0.1])
-        by localhost (mta03.sjtu.edu.cn [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id nln1cMqzBZfO; Tue, 12 Jan 2021 21:45:00 +0800 (CST)
-Received: from mstore107.sjtu.edu.cn (unknown [10.118.0.107])
-        by mta03.sjtu.edu.cn (Postfix) with ESMTP id DC9AB10DA5E;
-        Tue, 12 Jan 2021 21:45:00 +0800 (CST)
-Date:   Tue, 12 Jan 2021 21:45:00 +0800 (CST)
-From:   Zhongwei Cai <sunrise_l@sjtu.edu.cn>
-To:     Mingkai Dong <mingkaidong@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Wang Jianchao <jianchao.wan9@gmail.com>,
-        "Tadakamadla, Rajesh" <rajesh.tadakamadla@hpe.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Message-ID: <2041983017.5681521.1610459100858.JavaMail.zimbra@sjtu.edu.cn>
-In-Reply-To: <17045315-CC1F-4165-B8E3-BA55DD16D46B@gmail.com>
-References: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com> <20210107151125.GB5270@casper.infradead.org> <17045315-CC1F-4165-B8E3-BA55DD16D46B@gmail.com>
-Subject: Re: Expense of read_iter
+        Tue, 12 Jan 2021 08:49:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1610460289; x=1641996289;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=UCjSUM3EbNK9Uiwj8ng4m5Wcqst/t7yTmsn/cRjMGlo=;
+  b=qul7pMegv47dlpmXN4MrVoiIRG4EkGewGzXJuSeZQyQY51cm674ZfkqM
+   NEUH03oXqo0kX4eFXucsHGCShq0vJq0TAHaUiiZAO5wZWyLKFJlucDWPd
+   6SiOA3WzFYo/upEsoaUOim61IznJZ98opjVTkcOZaWzTRPdNW788L8bmB
+   9svZt5RhZE94Y+KGmDbstw9HPTzG623A3jB42nTRKXPc8JXVMLz4k8DJ2
+   hSgmvUMe9SInoIyow3HAxiweP/em/qT4RXI53ibEtjLB/5TojOLcHtRvR
+   7hEBQ31VvSBAiTjddPAfzjxL7N5g+TWW7dalkh8m964zMap7CCLjoHkJb
+   Q==;
+IronPort-SDR: h6/an+elC+j8wQuCWPbZqClK3DvZcBydpCFDkyErG6ntyt+lIskrUW4y0CTJL4BSFGY8uZujuk
+ UTdH58Mk7rLafCeYASxOpJLQHK3Svlt439OuKZFjuyM/dZFiAwh44NXzf1f0/xwuHwv84TBNpe
+ Sbw6mWKdZ1wByXKt7SPdksnpTEauFzSqJgnR/FJBHaoQMQDUVsUOePs+VOgPUWqtyfIEdD01yK
+ biPZknhtsJGN2WIse+iXL6+emaEbMZZEdZs0EhNwUNAN77bX5b8myhlY/fbR0e6Fxh/V3LoiPY
+ 7ZU=
+X-IronPort-AV: E=Sophos;i="5.79,341,1602518400"; 
+   d="scan'208";a="261140653"
+Received: from mail-bn8nam08lp2041.outbound.protection.outlook.com (HELO NAM04-BN8-obe.outbound.protection.outlook.com) ([104.47.74.41])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Jan 2021 22:03:08 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AWxPF3H2N++1Zav146hXLmmer2d1FZfb3NzxBnWnYjMa20s6HDNuUm+oeDRS8YOrS9P+caxLxmM/iQ6UWmVy8ev/i62okDpWtIz8y5BkRExJER7KR+RYb+zfJiJ4DCZv3vYjMtC63t+F7sqcxCjIrn9TIq2s37oaZgGwV7ENhLrEfLOoZlUUfGUgsmFmGx6QWa420OlXA5h95LxUIRatyDa67zcSgT4iFb9+D3GnTdzEG25fxiFYZLalKawNCWIz4y9K0CK4IhrK/KKnm8aiT7eKC0tfsKFXBHnNhgIDoBRyfKPl1unvCzdO0mMk1S27n/Ul8UU6NGWVaJLal9m5Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YyZljLbHzuxsN3FjNofOyPEJ63QOoLRXgDXZedxhsGE=;
+ b=WKSRd111q1TjvsczD80VlV6Jum6i3F2iIfEuZZ5MfWmwSL1HhmTyrpJl5xrjr33jsLLpasX7C0X0hMD3hmzkLzYssSdM9sSQGCsH/Ik4XKutD65g7FCRki3Ej6vbTzRCpRsJiqRkg5LEx0EAf1gfhmdcInmOHYnsmyd/fRx8H4lz0S7f0bgNszeGubhH9QTKzEPY76cDwajamKNy2mQ83k7M89gMuSDieLQkkKTCyWwQqH81HuyBKB2PZZp8tXuUGrT4BuebVyfwUPmbRdfu06rCAsrqfE2Id5xrmnkHe/wNdPbzhzaR6duKtpxX3NE1P3qxdZI08E5tMN7GjtN71g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YyZljLbHzuxsN3FjNofOyPEJ63QOoLRXgDXZedxhsGE=;
+ b=tFXrgpMvKxyblyIwQyhYdXrwQEaX5hcwzwotcR/kUMLgwgoVpPUWmOc+tpiEhI5nyC7O8dIGj/iEZmNVBBv31wVBs+Gfma7gFT5unjEZhvp7ruqtTFFMe5z/rufBF0bQHtSiDcUV12JId1wVCrQUPg8mjr+1TugFYukB4cLBnoI=
+Received: from DM5PR0401MB3591.namprd04.prod.outlook.com (2603:10b6:4:7e::15)
+ by DM6PR04MB4698.namprd04.prod.outlook.com (2603:10b6:5:20::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.8; Tue, 12 Jan
+ 2021 13:48:11 +0000
+Received: from DM5PR0401MB3591.namprd04.prod.outlook.com
+ ([fe80::61b3:1707:5b14:6b59]) by DM5PR0401MB3591.namprd04.prod.outlook.com
+ ([fe80::61b3:1707:5b14:6b59%5]) with mapi id 15.20.3742.012; Tue, 12 Jan 2021
+ 13:48:11 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     "hch@infradead.org" <hch@infradead.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>
+CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v11 01/40] block: add bio_add_zone_append_page
+Thread-Topic: [PATCH v11 01/40] block: add bio_add_zone_append_page
+Thread-Index: AQHW2BWZvPW5wHn7UUGeLnRkjRGHMg==
+Date:   Tue, 12 Jan 2021 13:48:10 +0000
+Message-ID: <DM5PR0401MB3591058581A93F24D8C357349BAA0@DM5PR0401MB3591.namprd04.prod.outlook.com>
+References: <cover.1608515994.git.naohiro.aota@wdc.com>
+ <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
+ <20201222133547.GC5099@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2001:a62:15c4:1c01:38c1:d5fb:3079:ba93]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: e8f9880d-8426-4ddd-3c63-08d8b700b376
+x-ms-traffictypediagnostic: DM6PR04MB4698:
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR04MB46989AFF7E0928310A9185149BAA0@DM6PR04MB4698.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dk/slc3mwP0nCG3BEEMZwxiaZGFCS54zhL721lG67Eo3O/5rY0RXrg9b/zChEysrdi+cAesnJx60lY05aYe38Wv69a+IrutCyUK/jlXSRB3em/h/fU+YsjNIdkG/64raLuiZueVh2sqlMAQDBkR77q9ULKGPJFv3gA9O59add2jHUh9cqa0+kWpQg0lLc8czjvyfk3cmL8vU5M3Ei/ki9xrt8L5jvjdI32geXMIQu0NXBYyrxGTBoCAzBKwgkpbUtoNCMixYkYoC23CoXJLAPfmBBgH0pdI1gQmrtJVjASgUevcu6zJA+d9X4MLGUTMeOzkhQsJRA2H/XcKBmWgim6VVMxJdwkMX8ad++vfCmoqk6K917mE70XT81JCFmRgHgaQQ5huMLWeo4wRmJ0spHQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR0401MB3591.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(136003)(39850400004)(346002)(396003)(86362001)(6636002)(8676002)(2906002)(478600001)(9686003)(4744005)(55016002)(8936002)(66946007)(316002)(54906003)(33656002)(5660300002)(76116006)(71200400001)(53546011)(66476007)(52536014)(6506007)(7696005)(186003)(64756008)(66446008)(83380400001)(91956017)(4326008)(66556008)(110136005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?5+ShvLe8KYaqmTxHHnd0/0bq/lQKiNP+HkdrsFjqIWkbLhfg38XuGVJj3poj?=
+ =?us-ascii?Q?Hni6Njlx2VK2Gz5KtYCPuLbgQLKzZ5hGsFXOCo6fQept/M2cc+I5f7JwxqOs?=
+ =?us-ascii?Q?rx9H1hiukRubOrM6RB503flhVBFfIgs4+PlUO+z5fY/jH12np3QofyebSsDk?=
+ =?us-ascii?Q?5G4E3/AElDx/iAAF3BveFN2FgzBZ+FXSaqUQcWM9+6kONtog+U5il+4A0e/1?=
+ =?us-ascii?Q?jhY4J7tBJ+6P0teRdFccEIAFX1bRtJ7Eb5IdvMgAo4gr5E1adGOTpXivtu1/?=
+ =?us-ascii?Q?N+AbK8nulGQzg8rz3jNOG2Svx8WGNt4q0RiMlLKZj6FXnKJSoaB8ap2JsMSa?=
+ =?us-ascii?Q?YO90Q9GoR9qdD460PQwrkQbLbjGvEX5lBo+yUURBaqXrIPGcIgqnminmfKX4?=
+ =?us-ascii?Q?/fZg10fgSkWcuB2/2Y+ytKtkHjF8k1OfyRTrWWjwvf2aEdOtQusav1aQSWpo?=
+ =?us-ascii?Q?plHsDAuiekxQ7SwU15C74IAw7SDvreixhULmvvCIrc41rElA38spHpz08dGB?=
+ =?us-ascii?Q?o2dudCvkcqG3sAtL+sTH5yH0cI5WnDGohOXoj24A35Gm0YLYryufnhzvNhBv?=
+ =?us-ascii?Q?9Eqh27tU41jSmAHBKiun/FebGvX8mgWp2vX7hZOHlN2pV3+i6GmF7TvlXBfT?=
+ =?us-ascii?Q?d+2Kf/sIqhkoVl6NiikdT0+MkRowMr9zur3PewzzGAO6IxyzZPQfiAq1HKPm?=
+ =?us-ascii?Q?SKP/drb6kckZ8PmAUltHT6o+qaxV4sOEQVMs0jfddxY1LDmNY/ZmTj0JfS9+?=
+ =?us-ascii?Q?ctMrQmBgQ5aOvCbYwTjJdEBqWxcTqxlPRzaTh9A3T7iP63xwD7LAdCz3j7Wj?=
+ =?us-ascii?Q?w44j7gn4WuXQ0y5qTTmsYDLlYQe7w+Fc3VJmo0nbAu3ZL51NYLnWtsrHiNMW?=
+ =?us-ascii?Q?2aPeDIUtqm4HNomJrTFiRf2sPcO+cKZ/8k950z/MhCGPPZd6hV4lLLpsUkhh?=
+ =?us-ascii?Q?c44wn0RMQafEdsA27r+49LJVcmUC9B3rQdoZdKdqfLE8yFka3qBPOD/6JVGM?=
+ =?us-ascii?Q?8NLRoKOUwhMzctkZrlFrVC0NyW/su6+XnXHXStcBYxD+e3GrVh1ks+lIJ4OW?=
+ =?us-ascii?Q?Cw9egS1d?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=GB2312
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [58.196.139.16]
-X-Mailer: Zimbra 8.8.15_GA_3980 (ZimbraWebClient - FF84 (Win)/8.8.15_GA_3928)
-Thread-Topic: Expense of read_iter
-Thread-Index: tOQkjpVW00AjdXfPbSr9PJY5OGgUJg==
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR0401MB3591.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8f9880d-8426-4ddd-3c63-08d8b700b376
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jan 2021 13:48:11.0569
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: x2TL4CtVXVCR5HxIesU3JRRKjTax8UAODcbdmdQB69J7Kj00aJaiEG57h+5KAHXwsqxa0qAZYiNhRaYMgVZALUYLx4lrLgzYEC93M0jhdCw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB4698
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-I'm working with Mingkai on optimizations for Ext4-dax.
-We think that optmizing the read-iter method cannot achieve the
-same performance as the read method for Ext4-dax. 
-We tried Mikulas's benchmark on Ext4-dax. The overall time and perf
-results are listed below:
-
-Overall time of 2^26 4KB read.
-
-Method       Time
-read         26.782s
-read-iter    36.477s
-
-Perf result, using the read_iter method:
-
-# To display the perf.data header info, please use --header/--header-only options.
-#
-#
-# Total Lost Samples: 0
-#
-# Samples: 1K of event 'cycles'
-# Event count (approx.): 13379476464
-#
-# Overhead  Command  Shared Object     Symbol                                 
-# ........  .......  ................  .......................................
-#
-    20.09%  pread    [kernel.vmlinux]  [k] copy_user_generic_string
-     6.58%  pread    [kernel.vmlinux]  [k] iomap_apply
-     6.01%  pread    [kernel.vmlinux]  [k] syscall_return_via_sysret
-     4.85%  pread    libc-2.31.so      [.] __libc_pread
-     3.61%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64_after_hwframe
-     3.25%  pread    [kernel.vmlinux]  [k] _raw_read_lock
-     2.80%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64
-     2.71%  pread    [ext4]            [k] ext4_es_lookup_extent
-     2.71%  pread    [kernel.vmlinux]  [k] __fsnotify_parent
-     2.63%  pread    [kernel.vmlinux]  [k] __srcu_read_unlock
-     2.55%  pread    [kernel.vmlinux]  [k] new_sync_read
-     2.39%  pread    [ext4]            [k] ext4_iomap_begin
-     2.38%  pread    [kernel.vmlinux]  [k] vfs_read
-     2.30%  pread    [kernel.vmlinux]  [k] dax_iomap_actor
-     2.30%  pread    [kernel.vmlinux]  [k] __srcu_read_lock
-     2.14%  pread    [ext4]            [k] ext4_inode_block_valid
-     1.97%  pread    [kernel.vmlinux]  [k] _copy_mc_to_iter
-     1.97%  pread    [ext4]            [k] ext4_map_blocks
-     1.89%  pread    [kernel.vmlinux]  [k] down_read
-     1.89%  pread    [kernel.vmlinux]  [k] up_read
-     1.65%  pread    [ext4]            [k] ext4_file_read_iter
-     1.48%  pread    [kernel.vmlinux]  [k] dax_iomap_rw
-     1.48%  pread    [jbd2]            [k] jbd2_transaction_committed
-     1.15%  pread    [nd_pmem]         [k] __pmem_direct_access
-     1.15%  pread    [kernel.vmlinux]  [k] ksys_pread64
-     1.15%  pread    [kernel.vmlinux]  [k] __fget_light
-     1.15%  pread    [ext4]            [k] ext4_set_iomap
-     1.07%  pread    [kernel.vmlinux]  [k] atime_needs_update
-     0.82%  pread    pread             [.] main
-     0.82%  pread    [kernel.vmlinux]  [k] do_syscall_64
-     0.74%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64_safe_stack
-     0.66%  pread    [kernel.vmlinux]  [k] __x86_indirect_thunk_rax
-     0.66%  pread    [nd_pmem]         [k] 0x00000000000001d0
-     0.59%  pread    [kernel.vmlinux]  [k] dax_direct_access
-     0.58%  pread    [nd_pmem]         [k] 0x00000000000001de
-     0.58%  pread    [kernel.vmlinux]  [k] bdev_dax_pgoff
-     0.49%  pread    [kernel.vmlinux]  [k] syscall_enter_from_user_mode
-     0.49%  pread    [kernel.vmlinux]  [k] exit_to_user_mode_prepare
-     0.49%  pread    [kernel.vmlinux]  [k] syscall_exit_to_user_mode
-     0.41%  pread    [kernel.vmlinux]  [k] syscall_exit_to_user_mode_prepare
-     0.33%  pread    [nd_pmem]         [k] 0x0000000000001083
-     0.33%  pread    [kernel.vmlinux]  [k] dax_get_private
-     0.33%  pread    [kernel.vmlinux]  [k] timestamp_truncate
-     0.33%  pread    [kernel.vmlinux]  [k] percpu_counter_add_batch
-     0.33%  pread    [kernel.vmlinux]  [k] copyout_mc
-     0.33%  pread    [ext4]            [k] __check_block_validity.constprop.80
-     0.33%  pread    [kernel.vmlinux]  [k] touch_atime
-     0.25%  pread    [nd_pmem]         [k] 0x000000000000107f
-     0.25%  pread    [kernel.vmlinux]  [k] rw_verify_area
-     0.25%  pread    [ext4]            [k] ext4_iomap_end
-     0.25%  pread    [kernel.vmlinux]  [k] _cond_resched
-     0.25%  pread    [kernel.vmlinux]  [k] rcu_all_qs
-     0.16%  pread    [kernel.vmlinux]  [k] __fdget
-     0.16%  pread    [kernel.vmlinux]  [k] ktime_get_coarse_real_ts64
-     0.16%  pread    [kernel.vmlinux]  [k] iov_iter_init
-     0.16%  pread    [kernel.vmlinux]  [k] current_time
-     0.16%  pread    [nd_pmem]         [k] 0x0000000000001075
-     0.16%  pread    [ext4]            [k] ext4_inode_datasync_dirty
-     0.16%  pread    [kernel.vmlinux]  [k] copy_mc_to_user
-     0.08%  pread    pread             [.] pread@plt
-     0.08%  pread    [kernel.vmlinux]  [k] __x86_indirect_thunk_r11
-     0.08%  pread    [kernel.vmlinux]  [k] security_file_permission
-     0.08%  pread    [kernel.vmlinux]  [k] dax_read_unlock
-     0.08%  pread    [kernel.vmlinux]  [k] _raw_spin_unlock_irqrestore
-     0.08%  pread    [nd_pmem]         [k] 0x000000000000108f
-     0.08%  pread    [nd_pmem]         [k] 0x0000000000001095
-     0.08%  pread    [kernel.vmlinux]  [k] rcu_read_unlock_strict
-     0.00%  pread    [kernel.vmlinux]  [k] native_write_msr
-
-
-#
-# (Tip: Show current config key-value pairs: perf config --list)
-#
-
-Perf result, using the read method we added for Ext4-dax:
-
-# To display the perf.data header info, please use --header/--header-only options.
-#
-#
-# Total Lost Samples: 0
-#
-# Samples: 1K of event 'cycles'
-# Event count (approx.): 13364755903
-#
-# Overhead  Command  Shared Object     Symbol                                 
-# ........  .......  ................  .......................................
-#
-    28.65%  pread    [kernel.vmlinux]  [k] copy_user_generic_string
-     7.99%  pread    [ext4]            [k] ext4_dax_read
-     6.50%  pread    [kernel.vmlinux]  [k] syscall_return_via_sysret
-     5.43%  pread    libc-2.31.so      [.] __libc_pread
-     4.45%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64
-     4.20%  pread    [kernel.vmlinux]  [k] down_read
-     3.38%  pread    [kernel.vmlinux]  [k] _raw_read_lock
-     3.13%  pread    [ext4]            [k] ext4_es_lookup_extent
-     3.05%  pread    [kernel.vmlinux]  [k] __srcu_read_lock
-     2.72%  pread    [kernel.vmlinux]  [k] __fsnotify_parent
-     2.55%  pread    [kernel.vmlinux]  [k] __srcu_read_unlock
-     2.47%  pread    [kernel.vmlinux]  [k] vfs_read
-     2.31%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64_after_hwframe
-     1.89%  pread    [kernel.vmlinux]  [k] up_read
-     1.73%  pread    [ext4]            [k] ext4_map_blocks
-     1.65%  pread    pread             [.] main
-     1.56%  pread    [kernel.vmlinux]  [k] __fget_light
-     1.48%  pread    [ext4]            [k] ext4_inode_block_valid
-     1.34%  pread    [kernel.vmlinux]  [k] ksys_pread64
-     1.23%  pread    [kernel.vmlinux]  [k] entry_SYSCALL_64_safe_stack
-     1.08%  pread    [kernel.vmlinux]  [k] syscall_exit_to_user_mode
-     1.07%  pread    [nd_pmem]         [k] __pmem_direct_access
-     0.99%  pread    [kernel.vmlinux]  [k] atime_needs_update
-     0.91%  pread    [kernel.vmlinux]  [k] security_file_permission
-     0.91%  pread    [kernel.vmlinux]  [k] syscall_enter_from_user_mode
-     0.66%  pread    [kernel.vmlinux]  [k] timestamp_truncate
-     0.58%  pread    [kernel.vmlinux]  [k] ktime_get_coarse_real_ts64
-     0.49%  pread    pread             [.] pread@plt
-     0.41%  pread    [kernel.vmlinux]  [k] current_time
-     0.41%  pread    [kernel.vmlinux]  [k] dax_direct_access
-     0.41%  pread    [kernel.vmlinux]  [k] do_syscall_64
-     0.41%  pread    [kernel.vmlinux]  [k] exit_to_user_mode_prepare
-     0.41%  pread    [kernel.vmlinux]  [k] percpu_counter_add_batch
-     0.33%  pread    [kernel.vmlinux]  [k] touch_atime
-     0.33%  pread    [ext4]            [k] __check_block_validity.constprop.80
-     0.33%  pread    [kernel.vmlinux]  [k] copy_mc_to_user
-     0.25%  pread    [kernel.vmlinux]  [k] dax_get_private
-     0.25%  pread    [kernel.vmlinux]  [k] rcu_all_qs
-     0.25%  pread    [nd_pmem]         [k] 0x0000000000001095
-     0.16%  pread    [kernel.vmlinux]  [k] _raw_spin_lock_irqsave
-     0.16%  pread    [kernel.vmlinux]  [k] syscall_exit_to_user_mode_prepare
-     0.16%  pread    [nd_pmem]         [k] 0x0000000000001083
-     0.16%  pread    [kernel.vmlinux]  [k] rw_verify_area
-     0.16%  pread    [kernel.vmlinux]  [k] _raw_spin_unlock_irqrestore
-     0.16%  pread    [kernel.vmlinux]  [k] __fdget
-     0.16%  pread    [kernel.vmlinux]  [k] dax_read_lock
-     0.16%  pread    [kernel.vmlinux]  [k] __x86_indirect_thunk_rax
-     0.08%  pread    [kernel.vmlinux]  [k] rcu_read_unlock_strict
-     0.08%  pread    [kernel.vmlinux]  [k] dax_read_unlock
-     0.08%  pread    [kernel.vmlinux]  [k] update_irq_load_avg
-     0.08%  pread    [nd_pmem]         [k] 0x000000000000109d
-     0.08%  pread    [nd_pmem]         [k] 0x000000000000107a
-     0.08%  pread    [kernel.vmlinux]  [k] __x64_sys_pread64
-     0.00%  pread    [kernel.vmlinux]  [k] native_write_msr
-
-
-#
-# (Tip: Sample related events with: perf record -e '{cycles,instructions}:S')
-#
-
-Note that the overall time of read method is 73.42% of the read-iter method.
-If we sum up the percentage of read-iter specific functions (including
-ext4_file_read_iter, iomap_apply, dax_iomap_actor, _copy_mc_to_iter,
-ext4_iomap_begin, jbd2_transaction_committed, new_sync_read, dax_iomap_rw,
-ext4_set_iomap, ext4_iomap_end and iov_iter_init), we will get 20.81%.
-In the second trace, ext4_dax_read only consumes 7.99%, which can replace
-all these functions.
-
-The overhead mainly consists of two parts. The first is constructing
-struct iov_iter and iterating it (i.e., new_sync, _copy_mc_to_iter and
-iov_iter_init). The second is the dax io mechanism provided by VFS (i.e.,
-dax_iomap_rw, iomap_apply and ext4_iomap_begin).
-
-There could be two approaches to optimizing: 1) implementing the read method
-without the complexity of iterators and dax_iomap_rw; 2) optimizing both
-iterators and how dax_iomap_rw works. Since dax_iomap_rw requires
-ext4_iomap_begin, which further involves the iomap structure and others
-(e.g., journaling status locks in Ext4), we think implementing the read
-method would be easier.
-
-Thanks,
-Zhongwei
-
+On 22/12/2020 14:35, Christoph Hellwig wrote:=0A=
+>> +int bio_add_zone_append_page(struct bio *bio, struct page *page,=0A=
+>> +			     unsigned int len, unsigned int offset)=0A=
+>> +{=0A=
+>> +	struct request_queue *q;=0A=
+>> +	bool same_page =3D false;=0A=
+>> +=0A=
+>> +	if (WARN_ON_ONCE(bio_op(bio) !=3D REQ_OP_ZONE_APPEND))=0A=
+>> +		return 0;=0A=
+>> +=0A=
+>> +	q =3D bio->bi_disk->queue;=0A=
+> =0A=
+> I'd still prefer to initialize q at declaration time.=0A=
+> =0A=
+> But except for this cosmetic nitpick the patch looks good:=0A=
+> =0A=
+> Reviewed-by: Christoph Hellwig <hch@lst.de>=0A=
+> =0A=
+=0A=
+Oops, fixed.=0A=
