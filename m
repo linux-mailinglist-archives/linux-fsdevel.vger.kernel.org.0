@@ -2,480 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B81CA2F25A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 02:48:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEB842F25D8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 02:53:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732522AbhALBlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 20:41:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732511AbhALBlH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 20:41:07 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E1FE02250F;
-        Tue, 12 Jan 2021 01:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610415625;
-        bh=kVOfYL6+sBeo2LI3me1lntGIjBCu0GqICxpvJeoLnAY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J6RwQBVPe6drH7x6By4lNSzmEbvlN6ajl5OC+hC+qOefbnWw4gJ1RIGB47b4RUyTv
-         OWhq4SfTgdyA5mNTZRfyOD9dpqjSRYXTA5Ls6DYEXe+ApHGV46AlC76n72tu4BPNz/
-         50xbRsxjkCNIPdHvZGh7k6qgCghPlA2W75qRHZwajUtF2Lz5fEqR/NOwcXJCpE+9hC
-         mPeOrwlvABuo6nEoL1f+CSMpGptyb1/ybQtUevlz0Lv2RgRjAtpQpYi+pgD2GokNjc
-         3029VLipwo2iq5eb/52oBdDO+XzC0hwRCk+4PHF8yRvW1RauyZXjTrg9S02bnqySJc
-         woGXBHfY77U4A==
-Date:   Mon, 11 Jan 2021 17:40:23 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        avi@scylladb.com, andres@anarazel.de
-Subject: Re: [PATCH 1/6] iomap: convert iomap_dio_rw() to an args structure
-Message-ID: <20210112014023.GN1164246@magnolia>
-References: <20210112010746.1154363-1-david@fromorbit.com>
- <20210112010746.1154363-2-david@fromorbit.com>
+        id S1728883AbhALBvJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 20:51:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42911 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728371AbhALBvI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Jan 2021 20:51:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1610416181;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=X7I3t60OzDuClLBrgXB9TFcroHckA8JyuUi8Px53LWc=;
+        b=QHPRh3cC6A0JB/s3xBAAcz1O0mWUwzNmH8f2DKV3CFg25rdeRBX+XC9LT9g3ipcHJQtNF1
+        XW31MpHzqAgkqRLWVYDZ2wrWJbO7sTTDKIOZFxcWnnNP/r9NkKhYPizzFy03V6WLA8tMkA
+        sMfYONcE+ZWzlo58X5LKCgzND2LfLrA=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-400-BGguTxnjOnC5A4jRnWAqTA-1; Mon, 11 Jan 2021 20:49:39 -0500
+X-MC-Unique: BGguTxnjOnC5A4jRnWAqTA-1
+Received: by mail-io1-f71.google.com with SMTP id w26so510282iox.21
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jan 2021 17:49:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=X7I3t60OzDuClLBrgXB9TFcroHckA8JyuUi8Px53LWc=;
+        b=Ny2qa7Xq6d8rY8hxW0zAsO4NFnlG8S2rokbNgU/f4ZKhmE6G+00ReOyKob3KLzyyu8
+         1wjirz2cLMzNDiZqNUN/gzMNUIhFTXtKq0ZtGU+L1btNyyZjRaoKhNzkLERGe2rwnDQJ
+         8FJvLkvtAATLAHtkAHHSRol4IK4eA8wCp/OdYnEd0gHK6RGA2bLQrZRmlK6/4sZ0fugm
+         gB+12n57HyjK62mZgy1t1elWNSGbSrUb9okIToyM/n/hMErpgokHorZ1u8M8RM9winlx
+         9N0luLp7bwqPZlFKMklt4XoFohwOX1uMV16VHzQYIp2OcEhxEXJcvWViK40a0q+qRld+
+         2i4A==
+X-Gm-Message-State: AOAM530+leegxnBl32QXn9aQDV1vFTEMcKk63cWMV0iU4GFw0FnAG8wd
+        wsUBB80E4xcK8i1lAF1iQzPomzJAh8LZdM8sftZItICjqYBge7Td78ELUnl6r+n78tI6X6d3JF4
+        5hcUib0dRAvv7A+XYIf+iz/Geuw==
+X-Received: by 2002:a92:bbc1:: with SMTP id x62mr1769152ilk.73.1610416178316;
+        Mon, 11 Jan 2021 17:49:38 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzec8+pABMEvXdhqkPqUGOWTzGirXjybA6kOBRXBjFiE6no2H02vg1btC7WPO4Dy7RifLB+Sw==
+X-Received: by 2002:a92:bbc1:: with SMTP id x62mr1769133ilk.73.1610416178036;
+        Mon, 11 Jan 2021 17:49:38 -0800 (PST)
+Received: from xz-x1 ([142.126.83.202])
+        by smtp.gmail.com with ESMTPSA id y13sm858351iop.14.2021.01.11.17.49.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jan 2021 17:49:37 -0800 (PST)
+Date:   Mon, 11 Jan 2021 20:49:34 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Axel Rasmussen <axelrasmussen@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Steven Price <steven.price@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Adam Ruprecht <ruprecht@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [RFC PATCH 0/2] userfaultfd: handle minor faults, add
+ UFFDIO_CONTINUE
+Message-ID: <20210112014934.GB588752@xz-x1>
+References: <20210107190453.3051110-1-axelrasmussen@google.com>
+ <48f4f43f-eadd-f37d-bd8f-bddba03a7d39@oracle.com>
+ <20210111230848.GA588752@xz-x1>
+ <2b31c1ad-2b61-32e7-e3e5-63a3041eabfd@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210112010746.1154363-2-david@fromorbit.com>
+In-Reply-To: <2b31c1ad-2b61-32e7-e3e5-63a3041eabfd@oracle.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 12, 2021 at 12:07:41PM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+On Mon, Jan 11, 2021 at 04:13:41PM -0800, Mike Kravetz wrote:
+> On 1/11/21 3:08 PM, Peter Xu wrote:
+> > On Mon, Jan 11, 2021 at 02:42:48PM -0800, Mike Kravetz wrote:
+> >> On 1/7/21 11:04 AM, Axel Rasmussen wrote:
+> >>> Overview
+> >>> ========
+> >>>
+> >>> This series adds a new userfaultfd registration mode,
+> >>> UFFDIO_REGISTER_MODE_MINOR. This allows userspace to intercept "minor" faults.
+> >>> By "minor" fault, I mean the following situation:
+> >>>
+> >>> Let there exist two mappings (i.e., VMAs) to the same page(s) (shared memory).
+> >>> One of the mappings is registered with userfaultfd (in minor mode), and the
+> >>> other is not. Via the non-UFFD mapping, the underlying pages have already been
+> >>> allocated & filled with some contents. The UFFD mapping has not yet been
+> >>> faulted in; when it is touched for the first time, this results in what I'm
+> >>> calling a "minor" fault. As a concrete example, when working with hugetlbfs, we
+> >>> have huge_pte_none(), but find_lock_page() finds an existing page.
+> >>>
+> >>> We also add a new ioctl to resolve such faults: UFFDIO_CONTINUE. The idea is,
+> >>> userspace resolves the fault by either a) doing nothing if the contents are
+> >>> already correct, or b) updating the underlying contents using the second,
+> >>> non-UFFD mapping (via memcpy/memset or similar, or something fancier like RDMA,
+> >>> or etc...). In either case, userspace issues UFFDIO_CONTINUE to tell the kernel
+> >>> "I have ensured the page contents are correct, carry on setting up the mapping".
+> >>>
+> >>
+> >> One quick thought.
+> >>
+> >> This is not going to work as expected with hugetlbfs pmd sharing.  If you
+> >> are not familiar with hugetlbfs pmd sharing, you are not alone. :)
+> >>
+> >> pmd sharing is enabled for x86 and arm64 architectures.  If there are multiple
+> >> shared mappings of the same underlying hugetlbfs file or shared memory segment
+> >> that are 'suitably aligned', then the PMD pages associated with those regions
+> >> are shared by all the mappings.  Suitably aligned means 'on a 1GB boundary'
+> >> and 1GB in size.
+> >>
+> >> When pmds are shared, your mappings will never see a 'minor fault'.  This
+> >> is because the PMD (page table entries) is shared.
+> > 
+> > Thanks for raising this, Mike.
+> > 
+> > I've got a few patches that plan to disable huge pmd sharing for uffd in
+> > general, e.g.:
+> > 
+> > https://github.com/xzpeter/linux/commit/f9123e803d9bdd91bf6ef23b028087676bed1540
+> > https://github.com/xzpeter/linux/commit/aa9aeb5c4222a2fdb48793cdbc22902288454a31
+> > 
+> > I believe we don't want that for missing mode too, but it's just not extremely
+> > important for missing mode yet, because in missing mode we normally monitor all
+> > the processes that will be using the registered mm range.  For example, in QEMU
+> > postcopy migration with vhost-user hugetlbfs files as backends, we'll monitor
+> > both the QEMU process and the DPDK program, so that either of the programs will
+> > trigger a missing fault even if pmd shared between them.  However again I think
+> > it's not ideal since uffd (even if missing mode) is pgtable-based, so sharing
+> > could always be too tricky.
+> > 
+> > They're not yet posted to public yet since that's part of uffd-wp support for
+> > hugetlbfs (along with shmem).  So just raise this up to avoid potential
+> > duplicated work before I post the patchset.
+> > 
+> > (Will read into details soon; probably too many things piled up...)
 > 
-> Adding yet another parameter to the iomap_dio_rw() interface means
-> changing lots of filesystems to add the parameter. Convert this
-> interface to an args structure so in future we don't need to modify
-> every caller to add a new parameter.
+> Thanks for the heads up about this Peter.
 > 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> ---
->  fs/btrfs/file.c       | 21 ++++++++++++++++-----
->  fs/ext4/file.c        | 24 ++++++++++++++++++------
->  fs/gfs2/file.c        | 19 ++++++++++++++-----
->  fs/iomap/direct-io.c  | 30 ++++++++++++++----------------
->  fs/xfs/xfs_file.c     | 30 +++++++++++++++++++++---------
->  fs/zonefs/super.c     | 21 +++++++++++++++++----
->  include/linux/iomap.h | 16 ++++++++++------
->  7 files changed, 110 insertions(+), 51 deletions(-)
-> 
-> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index 0e41459b8de6..a49d9fa918d1 100644
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@ -1907,6 +1907,13 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  	ssize_t err;
->  	unsigned int ilock_flags = 0;
->  	struct iomap_dio *dio = NULL;
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= from,
-> +		.ops			= &btrfs_dio_iomap_ops,
-> +		.dops			= &btrfs_dio_ops,
+> I know Oracle DB really wants shared pmds -and- UFFD.  I need to get details
+> of their exact usage model.  I know they primarily use SIGBUS, but use
+> MISSING_HUGETLBFS as well.  We may need to be more selective in when to
+> disable.
 
-/me wonders if it would make sense to move all the iomap_dio_ops fields
-into iomap_dio_rw_args to reduce pointer dereferencing when making the
-indirect call?
+After a second thought, indeed it's possible to use it that way with pmd
+sharing.  Actually we don't need to generate the fault for every page, if what
+we want to do is simply "initializing the pages using some data" on the
+registered ranges.  Should also be the case even for qemu+dpdk, because if
+e.g. qemu faulted in a page, then it'll be nicer if dpdk can avoid faulting in
+again (so when huge pmd sharing enabled we can even avoid the PF irq to install
+the pte if at last page cache existed).  It should be similarly beneficial if
+the other process is not faulting in but proactively filling the holes using
+UFFDIO_COPY either for the current process or for itself; sounds like a valid
+scenario for Google too when VM migrates.
 
---D
+I've modified my local tree to only disable pmd sharing for uffd-wp but keep
+missing mode as-is [1].  A new helper uffd_disable_huge_pmd_share() is
+introduced in patch "hugetlb/userfaultfd: Forbid huge pmd sharing when uffd
+enabled", so should be easier if we would like to add minor mode too.
 
-> +		.wait_for_completion	= is_sync_kiocb(iocb),
-> +	};
->  
->  	if (iocb->ki_flags & IOCB_NOWAIT)
->  		ilock_flags |= BTRFS_ILOCK_TRY;
-> @@ -1949,9 +1956,7 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  		goto buffered;
->  	}
->  
-> -	dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops,
-> -			     &btrfs_dio_ops, is_sync_kiocb(iocb));
-> -
-> +	dio = __iomap_dio_rw(&args);
->  	btrfs_inode_unlock(inode, ilock_flags);
->  
->  	if (IS_ERR_OR_NULL(dio)) {
-> @@ -3617,13 +3622,19 @@ static ssize_t btrfs_direct_read(struct kiocb *iocb, struct iov_iter *to)
->  {
->  	struct inode *inode = file_inode(iocb->ki_filp);
->  	ssize_t ret;
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= to,
-> +		.ops			= &btrfs_dio_iomap_ops,
-> +		.dops			= &btrfs_dio_ops,
-> +		.wait_for_completion	= is_sync_kiocb(iocb),
-> +	};
->  
->  	if (check_direct_read(btrfs_sb(inode->i_sb), to, iocb->ki_pos))
->  		return 0;
->  
->  	btrfs_inode_lock(inode, BTRFS_ILOCK_SHARED);
-> -	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
-> -			   is_sync_kiocb(iocb));
-> +	ret = iomap_dio_rw(&args);
->  	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
->  	return ret;
->  }
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 3ed8c048fb12..436508be6d88 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -53,6 +53,12 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  {
->  	ssize_t ret;
->  	struct inode *inode = file_inode(iocb->ki_filp);
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= to,
-> +		.ops			= &ext4_iomap_ops,
-> +		.wait_for_completion	= is_sync_kiocb(iocb),
-> +	};
->  
->  	if (iocb->ki_flags & IOCB_NOWAIT) {
->  		if (!inode_trylock_shared(inode))
-> @@ -74,8 +80,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  		return generic_file_read_iter(iocb, to);
->  	}
->  
-> -	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL,
-> -			   is_sync_kiocb(iocb));
-> +	ret = iomap_dio_rw(&args);
->  	inode_unlock_shared(inode);
->  
->  	file_accessed(iocb->ki_filp);
-> @@ -459,9 +464,15 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	struct inode *inode = file_inode(iocb->ki_filp);
->  	loff_t offset = iocb->ki_pos;
->  	size_t count = iov_iter_count(from);
-> -	const struct iomap_ops *iomap_ops = &ext4_iomap_ops;
->  	bool extend = false, unaligned_io = false;
->  	bool ilock_shared = true;
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= from,
-> +		.ops			= &ext4_iomap_ops,
-> +		.dops			= &ext4_dio_write_ops,
-> +		.wait_for_completion	= is_sync_kiocb(iocb),
-> +	};
->  
->  	/*
->  	 * We initially start with shared inode lock unless it is
-> @@ -548,9 +559,10 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	}
->  
->  	if (ilock_shared)
-> -		iomap_ops = &ext4_iomap_overwrite_ops;
-> -	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
-> -			   is_sync_kiocb(iocb) || unaligned_io || extend);
-> +		args.ops = &ext4_iomap_overwrite_ops;
-> +	if (unaligned_io || extend)
-> +		args.wait_for_completion = true;
-> +	ret = iomap_dio_rw(&args);
->  	if (ret == -ENOTBLK)
->  		ret = 0;
->  
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index b39b339feddc..d44a5f9c5f34 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -788,6 +788,12 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
->  	struct gfs2_inode *ip = GFS2_I(file->f_mapping->host);
->  	size_t count = iov_iter_count(to);
->  	ssize_t ret;
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= to,
-> +		.ops			= &gfs2_iomap_ops,
-> +		.wait_for_completion	= is_sync_kiocb(iocb),
-> +	};
->  
->  	if (!count)
->  		return 0; /* skip atime */
-> @@ -797,9 +803,7 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
->  	if (ret)
->  		goto out_uninit;
->  
-> -	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
-> -			   is_sync_kiocb(iocb));
-> -
-> +	ret = iomap_dio_rw(&args);
->  	gfs2_glock_dq(gh);
->  out_uninit:
->  	gfs2_holder_uninit(gh);
-> @@ -815,6 +819,12 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
->  	size_t len = iov_iter_count(from);
->  	loff_t offset = iocb->ki_pos;
->  	ssize_t ret;
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= from,
-> +		.ops			= &gfs2_iomap_ops,
-> +		.wait_for_completion	= is_sync_kiocb(iocb),
-> +	};
->  
->  	/*
->  	 * Deferred lock, even if its a write, since we do no allocation on
-> @@ -833,8 +843,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
->  	if (offset + len > i_size_read(&ip->i_inode))
->  		goto out;
->  
-> -	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
-> -			   is_sync_kiocb(iocb));
-> +	ret = iomap_dio_rw(&args);
->  	if (ret == -ENOTBLK)
->  		ret = 0;
->  out:
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 933f234d5bec..05cacc27578c 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -418,13 +418,13 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
->   * writes.  The callers needs to fall back to buffered I/O in this case.
->   */
->  struct iomap_dio *
-> -__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> -		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
-> -		bool wait_for_completion)
-> +__iomap_dio_rw(struct iomap_dio_rw_args *args)
->  {
-> +	struct kiocb *iocb = args->iocb;
-> +	struct iov_iter *iter = args->iter;
->  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->  	struct inode *inode = file_inode(iocb->ki_filp);
-> -	size_t count = iov_iter_count(iter);
-> +	size_t count = iov_iter_count(args->iter);
->  	loff_t pos = iocb->ki_pos;
->  	loff_t end = iocb->ki_pos + count - 1, ret = 0;
->  	unsigned int flags = IOMAP_DIRECT;
-> @@ -434,7 +434,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	if (!count)
->  		return NULL;
->  
-> -	if (WARN_ON(is_sync_kiocb(iocb) && !wait_for_completion))
-> +	if (WARN_ON(is_sync_kiocb(iocb) && !args->wait_for_completion))
->  		return ERR_PTR(-EIO);
->  
->  	dio = kmalloc(sizeof(*dio), GFP_KERNEL);
-> @@ -445,7 +445,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	atomic_set(&dio->ref, 1);
->  	dio->size = 0;
->  	dio->i_size = i_size_read(inode);
-> -	dio->dops = dops;
-> +	dio->dops = args->dops;
->  	dio->error = 0;
->  	dio->flags = 0;
->  
-> @@ -490,7 +490,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	if (ret)
->  		goto out_free_dio;
->  
-> -	if (iov_iter_rw(iter) == WRITE) {
-> +	if (iov_iter_rw(args->iter) == WRITE) {
->  		/*
->  		 * Try to invalidate cache pages for the range we are writing.
->  		 * If this invalidation fails, let the caller fall back to
-> @@ -503,7 +503,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  			goto out_free_dio;
->  		}
->  
-> -		if (!wait_for_completion && !inode->i_sb->s_dio_done_wq) {
-> +		if (!args->wait_for_completion && !inode->i_sb->s_dio_done_wq) {
->  			ret = sb_init_dio_done_wq(inode->i_sb);
->  			if (ret < 0)
->  				goto out_free_dio;
-> @@ -514,12 +514,12 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  
->  	blk_start_plug(&plug);
->  	do {
-> -		ret = iomap_apply(inode, pos, count, flags, ops, dio,
-> +		ret = iomap_apply(inode, pos, count, flags, args->ops, dio,
->  				iomap_dio_actor);
->  		if (ret <= 0) {
->  			/* magic error code to fall back to buffered I/O */
->  			if (ret == -ENOTBLK) {
-> -				wait_for_completion = true;
-> +				args->wait_for_completion = true;
->  				ret = 0;
->  			}
->  			break;
-> @@ -566,9 +566,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	 *	of the final reference, and we will complete and free it here
->  	 *	after we got woken by the I/O completion handler.
->  	 */
-> -	dio->wait_for_completion = wait_for_completion;
-> +	dio->wait_for_completion = args->wait_for_completion;
->  	if (!atomic_dec_and_test(&dio->ref)) {
-> -		if (!wait_for_completion)
-> +		if (!args->wait_for_completion)
->  			return ERR_PTR(-EIOCBQUEUED);
->  
->  		for (;;) {
-> @@ -596,13 +596,11 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  EXPORT_SYMBOL_GPL(__iomap_dio_rw);
->  
->  ssize_t
-> -iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> -		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
-> -		bool wait_for_completion)
-> +iomap_dio_rw(struct iomap_dio_rw_args *args)
->  {
->  	struct iomap_dio *dio;
->  
-> -	dio = __iomap_dio_rw(iocb, iter, ops, dops, wait_for_completion);
-> +	dio = __iomap_dio_rw(args);
->  	if (IS_ERR_OR_NULL(dio))
->  		return PTR_ERR_OR_ZERO(dio);
->  	return iomap_dio_complete(dio);
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 5b0f93f73837..29f4204e551f 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -205,6 +205,12 @@ xfs_file_dio_aio_read(
->  	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
->  	size_t			count = iov_iter_count(to);
->  	ssize_t			ret;
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= to,
-> +		.ops			= &xfs_read_iomap_ops,
-> +		.wait_for_completion	= is_sync_kiocb(iocb),
-> +	};
->  
->  	trace_xfs_file_direct_read(ip, count, iocb->ki_pos);
->  
-> @@ -219,8 +225,7 @@ xfs_file_dio_aio_read(
->  	} else {
->  		xfs_ilock(ip, XFS_IOLOCK_SHARED);
->  	}
-> -	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL,
-> -			is_sync_kiocb(iocb));
-> +	ret = iomap_dio_rw(&args);
->  	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
->  
->  	return ret;
-> @@ -519,6 +524,13 @@ xfs_file_dio_aio_write(
->  	int			iolock;
->  	size_t			count = iov_iter_count(from);
->  	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= from,
-> +		.ops			= &xfs_direct_write_iomap_ops,
-> +		.dops			= &xfs_dio_write_ops,
-> +		.wait_for_completion	= is_sync_kiocb(iocb),
-> +	};
->  
->  	/* DIO must be aligned to device logical sector size */
->  	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
-> @@ -535,6 +547,12 @@ xfs_file_dio_aio_write(
->  	    ((iocb->ki_pos + count) & mp->m_blockmask)) {
->  		unaligned_io = 1;
->  
-> +		/*
-> +		 * This must be the only IO in-flight. Wait on it before we
-> +		 * release the iolock to prevent subsequent overlapping IO.
-> +		 */
-> +		args.wait_for_completion = true;
-> +
->  		/*
->  		 * We can't properly handle unaligned direct I/O to reflink
->  		 * files yet, as we can't unshare a partial block.
-> @@ -578,13 +596,7 @@ xfs_file_dio_aio_write(
->  	}
->  
->  	trace_xfs_file_direct_write(ip, count, iocb->ki_pos);
-> -	/*
-> -	 * If unaligned, this is the only IO in-flight. Wait on it before we
-> -	 * release the iolock to prevent subsequent overlapping IO.
-> -	 */
-> -	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
-> -			   &xfs_dio_write_ops,
-> -			   is_sync_kiocb(iocb) || unaligned_io);
-> +	ret = iomap_dio_rw(&args);
->  out:
->  	xfs_iunlock(ip, iolock);
->  
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index bec47f2d074b..edf353ad1edc 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -735,6 +735,13 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
->  	bool append = false;
->  	size_t count;
->  	ssize_t ret;
-> +	struct iomap_dio_rw_args args = {
-> +		.iocb			= iocb,
-> +		.iter			= from,
-> +		.ops			= &zonefs_iomap_ops,
-> +		.dops			= &zonefs_write_dio_ops,
-> +		.wait_for_completion	= sync,
-> +	};
->  
->  	/*
->  	 * For async direct IOs to sequential zone files, refuse IOCB_NOWAIT
-> @@ -779,8 +786,8 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
->  	if (append)
->  		ret = zonefs_file_dio_append(iocb, from);
->  	else
-> -		ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
-> -				   &zonefs_write_dio_ops, sync);
-> +		ret = iomap_dio_rw(&args);
-> +
->  	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
->  	    (ret > 0 || ret == -EIOCBQUEUED)) {
->  		if (ret > 0)
-> @@ -909,6 +916,13 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  	mutex_unlock(&zi->i_truncate_mutex);
->  
->  	if (iocb->ki_flags & IOCB_DIRECT) {
-> +		struct iomap_dio_rw_args args = {
-> +			.iocb			= iocb,
-> +			.iter			= to,
-> +			.ops			= &zonefs_iomap_ops,
-> +			.dops			= &zonefs_read_dio_ops,
-> +			.wait_for_completion	= is_sync_kiocb(iocb),
-> +		};
->  		size_t count = iov_iter_count(to);
->  
->  		if ((iocb->ki_pos | count) & (sb->s_blocksize - 1)) {
-> @@ -916,8 +930,7 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  			goto inode_unlock;
->  		}
->  		file_accessed(iocb->ki_filp);
-> -		ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops,
-> -				   &zonefs_read_dio_ops, is_sync_kiocb(iocb));
-> +		ret = iomap_dio_rw(&args);
->  	} else {
->  		ret = generic_file_read_iter(iocb, to);
->  		if (ret == -EIO)
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 5bd3cac4df9c..16d20c01b5bb 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -256,12 +256,16 @@ struct iomap_dio_ops {
->  			struct bio *bio, loff_t file_offset);
->  };
->  
-> -ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> -		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
-> -		bool wait_for_completion);
-> -struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> -		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
-> -		bool wait_for_completion);
-> +struct iomap_dio_rw_args {
-> +	struct kiocb		*iocb;
-> +	struct iov_iter		*iter;
-> +	const struct iomap_ops	*ops;
-> +	const struct iomap_dio_ops *dops;
-> +	bool			wait_for_completion;
-> +};
-> +
-> +ssize_t iomap_dio_rw(struct iomap_dio_rw_args *args);
-> +struct iomap_dio *__iomap_dio_rw(struct iomap_dio_rw_args *args);
->  ssize_t iomap_dio_complete(struct iomap_dio *dio);
->  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
->  
-> -- 
-> 2.28.0
-> 
+Thanks!
+
+[1] https://github.com/xzpeter/linux/commits/uffd-wp-shmem-hugetlbfs
+
+-- 
+Peter Xu
+
