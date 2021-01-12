@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FD9C2F3A9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 20:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 944F72F3AAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 20:39:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406902AbhALTb0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 14:31:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45850 "EHLO
+        id S2404607AbhALThR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 14:37:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406789AbhALTbZ (ORCPT
+        with ESMTP id S1732584AbhALThQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 14:31:25 -0500
-Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D703C061786
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 11:30:45 -0800 (PST)
-Received: by mail-qv1-xf36.google.com with SMTP id p5so1444334qvs.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 11:30:45 -0800 (PST)
+        Tue, 12 Jan 2021 14:37:16 -0500
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FD3FC061575
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 11:36:36 -0800 (PST)
+Received: by mail-qk1-x735.google.com with SMTP id w79so2981158qkb.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 11:36:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2oFLrVJdbx6JLDkzdLKfI6dxGFHt1u344+x+I0x/70Q=;
-        b=gmhaQAHlMrfXuPaprcMk/bVxZKoYCj+vKepNFIwOHyuhLAEMWudMwprS25YO82bqeP
-         8chyszJzgyPsUMqaoa8Uwg4Vc09EubPQPg1QjEYvE9IiHbx/ecZWTD1tZ8Ubj7Gh+vw+
-         4zEEDPCbtvxaIqAlDA9rZ9DMNbG0eau4mZ/pZk3GrTk48lLchZZqpbsZcfvUGkBH8MuB
-         m/q8V3d3vK+7uNtb8QLdeTGYktBg4XncgZCm1FPFvHuVqTKSZK7LTudXSzXKZ7ZkmUHv
-         qzgq0YcB8ef1N85Qr29h6DIRH4Fs6fifRoX92RTWdw2HpQ9kodcddBZcMcbMVMMYFKj/
-         OoRA==
+        bh=AF8nZxMphvu+aZn1k4BUicUQlLLJxkqYyK9NALRcH7I=;
+        b=HYtoZDlwABYpMfcqzLmfYIfIxgWWnLc9GcaqKYPL4tRnX8esZ1L4KpcwAj9YYlHLOn
+         TVs97gmYKPS2hUWECVlXHWmA0GzpyIOxZjgmeKA8mqDWeYzIvetHA4Kh4rCi//gaBBEP
+         W7Mdp1XS6Oc5mql1eKR4FgxKzjO+9eO/N0R+0NQMuZtnZlYjOnpvFRs9UZWrX6mSThan
+         UTZCdcXjqY8b7edBouIpgw1HKrWihXwoP9IWi216nUtQyo/fp3X1CCpXFaG9ILZVXamQ
+         uCbRESILnro0ng3bndChjsJ9tx6KiiblswMpFkBm50hQ96YJGZ6aIblZeB5PEdM904s7
+         6pRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=2oFLrVJdbx6JLDkzdLKfI6dxGFHt1u344+x+I0x/70Q=;
-        b=lzY+wk+ZK4g5k92aYTWL4/m2cyt6Zp3V9cSS7uss+CdQrBFTmnYHZm6Mt1fXc3htFe
-         nrtRxXznTb1agfE4D5w5cPu59uHVESYJY5N3rbogLwuSFVBc68NcYL6/MchAdn+faJLA
-         9xQfsj8ziIj19+7v8LgIbRQz7QseCrkTN2EF/h9/qgqmwv0OlOMHIBo4PNNW5idRaPPw
-         b/8RaCGNZtl9juzrJ5n3cJtHVO9ND7i5D1oc+seG61GU4FQcQITjXSA82REnkdkFNo9b
-         FKB8KBqMC7bWNDTQGTLbwO13/ggGXMKf39zuTm2WZFgYSaPCDxVLOFAnjy5caAoAiltG
-         VZsw==
-X-Gm-Message-State: AOAM531lg1DU/pypmgCVnIBTY1Sf8vn5tyybOtgpXKSYEPCUO6SetjxM
-        Dqxz69Up0iJcVDX59oLbPE7erg==
-X-Google-Smtp-Source: ABdhPJwlzvNe4ffTDoEmVVI2j4PFTGFTAoCt9YjQvG0A41xRG6cPx7n7+US3B9Ic5jNGraGbr9XSHg==
-X-Received: by 2002:a05:6214:1227:: with SMTP id p7mr1024381qvv.31.1610479844202;
-        Tue, 12 Jan 2021 11:30:44 -0800 (PST)
+        bh=AF8nZxMphvu+aZn1k4BUicUQlLLJxkqYyK9NALRcH7I=;
+        b=uEdZB9Z3Fj1HX9JKdQe+7KvllAJBYNj3LZd56aGcrxAkE4Ja/FYx3mzWWT7igGPqGY
+         m2FEt82mofEl0NnbQKgPvuBWI9U7UFmSsTU5Pr4rTzR8CtmnVFfZ7YvoMLVtl5f10vAO
+         4vtDvGTtkAw9elzNnJJybvNPfCX6lXlgNu46e4SWH01DCLFlcxS65iusWvU4lkHcO5j8
+         wo3SEKzrDch9aNjbor3zuxQowqm+OBQKdbnZCJ9rpZlIZgCIEw14D/OoH+fdBD0X9hQk
+         NPcUYhXzWQ1V7zBdKEgix0fF14rSv64a/6WxaJcFF5HyRGsamQlx3JH5/n2+E4ZBj/7p
+         zDAA==
+X-Gm-Message-State: AOAM533OUeE/Mgx9Ww1XFNp9pvcB7/I9heSvcmqU6iys6xmroI+avJbm
+        uglaJoSMlwz4+xsliul4X0V+EQ==
+X-Google-Smtp-Source: ABdhPJz+RFd2guYp6BnmSWX+tS9Om+VRscRHW9+XtFJG1mqIawlHp4tmUZHDALdoib/Ji0mvd8dOUw==
+X-Received: by 2002:a37:a095:: with SMTP id j143mr1007962qke.25.1610480195687;
+        Tue, 12 Jan 2021 11:36:35 -0800 (PST)
 Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id r190sm1941860qka.54.2021.01.12.11.30.43
+        by smtp.gmail.com with ESMTPSA id d3sm1894855qka.36.2021.01.12.11.36.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Jan 2021 11:30:43 -0800 (PST)
-Subject: Re: [PATCH v11 31/40] btrfs: mark block groups to copy for
+        Tue, 12 Jan 2021 11:36:35 -0800 (PST)
+Subject: Re: [PATCH v11 32/40] btrfs: implement cloning for ZONED
  device-replace
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         dsterba@suse.com
@@ -58,14 +58,14 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>
 References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
- <ec6780c980e445b0caba100bebc875970fc22a07.1608608848.git.naohiro.aota@wdc.com>
+ <25d52cf3e1e1fcc53625d1a6d925dfa46aedc547.1608608848.git.naohiro.aota@wdc.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <17245e25-a2c4-2c2a-6341-bf2a5f0f90f6@toxicpanda.com>
-Date:   Tue, 12 Jan 2021 14:30:42 -0500
+Message-ID: <c2247edd-7afc-3606-f8d2-22663c162621@toxicpanda.com>
+Date:   Tue, 12 Jan 2021 14:36:34 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <ec6780c980e445b0caba100bebc875970fc22a07.1608608848.git.naohiro.aota@wdc.com>
+In-Reply-To: <25d52cf3e1e1fcc53625d1a6d925dfa46aedc547.1608608848.git.naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,33 +74,16 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 12/21/20 10:49 PM, Naohiro Aota wrote:
-> This is the 1/4 patch to support device-replace in ZONED mode.
+> This is 2/4 patch to implement device-replace for ZONED mode.
 > 
-> We have two types of I/Os during the device-replace process. One is an I/O
-> to "copy" (by the scrub functions) all the device extents on the source
-> device to the destination device.  The other one is an I/O to "clone" (by
-> handle_ops_on_dev_replace()) new incoming write I/Os from users to the
-> source device into the target device.
+> On zoned mode, a block group must be either copied (from the source device
+> to the destination device) or cloned (to the both device).
 > 
-> Cloning incoming I/Os can break the sequential write rule in the target
-> device. When writing is mapped in the middle of a block group, the I/O is
-> directed in the middle of a target device zone, which breaks the sequential
-> write rule.
+> This commit implements the cloning part. If a block group targeted by an IO
+> is marked to copy, we should not clone the IO to the destination device,
+> because the block group is eventually copied by the replace process.
 > 
-> However, the cloning function cannot be merely disabled since incoming I/Os
-> targeting already copied device extents must be cloned so that the I/O is
-> executed on the target device.
-> 
-> We cannot use dev_replace->cursor_{left,right} to determine whether bio is
-> going to not yet copied region.  Since we have a time gap between finishing
-> btrfs_scrub_dev() and rewriting the mapping tree in
-> btrfs_dev_replace_finishing(), we can have a newly allocated device extent
-> which is never cloned nor copied.
-> 
-> So the point is to copy only already existing device extents. This patch
-> introduces mark_block_group_to_copy() to mark existing block groups as a
-> target of copying. Then, handle_ops_on_dev_replace() and dev-replace can
-> check the flag to do their job.
+> This commit also handles cloning of device reset.
 > 
 > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
