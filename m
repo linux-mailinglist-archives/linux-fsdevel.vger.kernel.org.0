@@ -2,53 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B2C12F318E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:26:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0C4B2F31A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:26:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbhALNX7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 08:23:59 -0500
-Received: from verein.lst.de ([213.95.11.211]:55529 "EHLO verein.lst.de"
+        id S1729609AbhALN0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 08:26:06 -0500
+Received: from verein.lst.de ([213.95.11.211]:55540 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbhALNX7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 08:23:59 -0500
+        id S1727895AbhALN0F (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Jan 2021 08:26:05 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id B37E067373; Tue, 12 Jan 2021 14:23:15 +0100 (CET)
-Date:   Tue, 12 Jan 2021 14:23:15 +0100
+        id 5AC0A68B02; Tue, 12 Jan 2021 14:25:21 +0100 (CET)
+Date:   Tue, 12 Jan 2021 14:25:21 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v2 04/12] fat: only specify I_DIRTY_TIME when needed in
- fat_update_time()
-Message-ID: <20210112132315.GA13780@lst.de>
-References: <20210109075903.208222-1-ebiggers@kernel.org> <20210109075903.208222-5-ebiggers@kernel.org> <20210111105201.GB2502@lst.de> <X/ysA8PuJ/+JXQYL@sol.localdomain>
+Subject: Re: [PATCH v2 11/12] ext4: simplify i_state checks in
+ __ext4_update_other_inode_time()
+Message-ID: <20210112132521.GB13780@lst.de>
+References: <20210109075903.208222-1-ebiggers@kernel.org> <20210109075903.208222-12-ebiggers@kernel.org> <20210111105342.GE2502@lst.de> <X/yzzKhysdFUY/6o@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <X/ysA8PuJ/+JXQYL@sol.localdomain>
+In-Reply-To: <X/yzzKhysdFUY/6o@sol.localdomain>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 11:50:27AM -0800, Eric Biggers wrote:
-> On Mon, Jan 11, 2021 at 11:52:01AM +0100, Christoph Hellwig wrote:
-> > On Fri, Jan 08, 2021 at 11:58:55PM -0800, Eric Biggers wrote:
-> > > +	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
-> > > +		dirty_flags |= I_DIRTY_SYNC;
-> > 
-> > fat does not support i_version updates, so this bit can be skipped.
+On Mon, Jan 11, 2021 at 12:23:40PM -0800, Eric Biggers wrote:
+> > I think a descriptively named inline helper in fs.h would really improve
+> > this..
 > 
-> Is that really the case?  Any filesystem (including fat) can be mounted with
-> "iversion", which causes SB_I_VERSION to be set.
+> Do you want this even though it is specific to how ext4 opportunisticly updates
+> other inodes in the same inode block as the inode being updated?  That's the
+> only reason that I_FREEING|I_WILL_FREE|I_NEW need to be checked; everywhere else
+> justs want I_DIRTY_TIME.
 > 
-> A lot of filesystems (including fat) don't store i_version to disk, but it looks
-> like it will still get updated in-memory.  Could anything be relying on that?
+> We could add:
+> 
+> 	static inline bool other_inode_has_dirtytime(struct inode *inode)
+> 	{
+> 		return (inode->state & (I_FREEING | I_WILL_FREE |
+> 					I_NEW | I_DIRTY_TIME)) == I_DIRTY_TIME;
+> 	}
+> 
+> But it seems a bit weird when it's specific to ext4 at the moment.
+> 
+> Are you thinking that other filesystems will implement the same sort of
+> opportunistic update, so we should add the helper now?
 
-As Dave pointed out i_version can't really work for fat.  But I guess
-that is indeed out of scope for this series, so let's go ahead with this
-version for now:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+For my taste these checks for flags is way too much black magic and will
+trivially break when people add new flags.  So having a helper next to
+the definition of the I_* flags that is well documented would be very,
+very helpful.  My preferred naming would be something along the lines
+of 'inode_is_dirty_lazytime_only()'.
