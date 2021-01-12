@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E0F2F2402
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 01:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FD6B2F23FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 01:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbhALAcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 19:32:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54360 "EHLO
+        id S1728224AbhALAbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 19:31:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbhALAbG (ORCPT
+        with ESMTP id S1728045AbhALAbH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 19:31:06 -0500
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1FA1C061795;
-        Mon, 11 Jan 2021 16:30:25 -0800 (PST)
-Received: by mail-il1-x130.google.com with SMTP id q1so1204218ilt.6;
-        Mon, 11 Jan 2021 16:30:25 -0800 (PST)
+        Mon, 11 Jan 2021 19:31:07 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09AB8C06179F;
+        Mon, 11 Jan 2021 16:30:27 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id d9so498327iob.6;
+        Mon, 11 Jan 2021 16:30:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QY4rVYyu6E/6EmhURp973qid4e3oR/DMlYXIb6itw4o=;
-        b=mStwfFMTSroR0iUvcTwJfk75Ns0P5glJNuMQ7gNdd1l+9JHi6eLSGTNYKfZnX00W0H
-         rcFIzjvSZ84Pddvt1IsOkucc8V6JY3qTQNw5S2vBDMWV9b8afJjrmR3oaZA1Q+KgvTbo
-         ChVbuIlI5gCo0S04+xb4EACfAB/+dRgpOYJM0S6Zch0zQnjitjAa0Xm/SblcABaTidCo
-         LF1mk8kRH8IGyog4xyVfyGH/tOf6NQkBh0nBpPFME7udWPOwLlNubXXWle7lA9q7R2op
-         VVZ9kUk/R1EsB0Hdj6OM0bPOIkCLeMJ+v9+bz3hIM6Mq81cQbOnIN+Et7vlSSjgQc0Vb
-         lVIQ==
+        bh=UAMxIDbTziLFJUvywaK2ZNZ+Q4hesEIu8XKmRJ1p2y0=;
+        b=gmi5u04GjO9Ds2D4RL79j/1jn+HXdk+n4+O7fdPDvf7a/9eQqWsZxbMmZciHI1csvC
+         2pfMethWqgC5lEqxos+6FCcLOc0B8fqf/UY5by+jz5iMyd2n3vrDd3TyjYUoo71jzLxY
+         zPY/58p0lSwPjxzf0gumnso1h6rwGBn81yiyKajGuIPOU92E2QtHG5wSpbq5cFkJRaZ7
+         I0QODVkUWTNNjqaLfwIP6vFRptZA/bbVpjakIjtWKR0OfAxqrj6Bl7TRbm8kvoy2Hsc3
+         P5tjKt6PXZezm83BjGqNgJzXb5LYCyJlLQ3IIxsLtspWQLwE5YimbAOkYIQ3HDjE6IDl
+         2d/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QY4rVYyu6E/6EmhURp973qid4e3oR/DMlYXIb6itw4o=;
-        b=J6Gciv+1HbkFNZi6QjgzUF1BUQfNCY5jv2Z14X3Vpwdrh2VVsuEPo/GsQOAVxjhPXv
-         CCfPd09WlLQs7mVWYxhk3fMZGCDp9pkm9nPMxBiEZsoL8tdXO2fzJXm1sItIlk1HznXs
-         zz4YBHShlkeYn0hvXjddhvpu6YcpDWgn/q6nkyUVkEnUyG7diUI7olkijs9OKeQcjxSZ
-         9Wrc3eqsJQI59OMR88h4qKdlEw0ghgPSZKoGaT6MKWYwH0MSa0nFyaKxnzcAPW6NrZq7
-         oX/WCfMIaZigRc8bMO1sEPLyf+bpajeUiopVlM1GAjSjK3rGh8vilPc/Fi8PQNMeQcRq
-         AfJg==
-X-Gm-Message-State: AOAM5322qN/oqo7kTSlSU9K0tkr5cunbUvjYA1bZz268yynm5tfITpGD
-        g4EujtlXivxzRZcyd36eaETtsU9T/Ps=
-X-Google-Smtp-Source: ABdhPJzxIYBWZ6+a+hxa0seYD4rhHzW43p+pTBvYyEkGzr7DYBIlKnO4Whu1QOFqEB2L6cnS6z+V0A==
-X-Received: by 2002:a05:6e02:b2e:: with SMTP id e14mr1558354ilu.164.1610411425002;
-        Mon, 11 Jan 2021 16:30:25 -0800 (PST)
+        bh=UAMxIDbTziLFJUvywaK2ZNZ+Q4hesEIu8XKmRJ1p2y0=;
+        b=lAhV4+m226hdPHCUWRJFsWsneY5l+Uaplf9Am2mB0XTjZQiQ0vveMmh/3ajvjz0+9R
+         MZBa/B1inmLR7N12XIutb3r9AUL8keU87BUtUJU+CPktzDseVwilgGKCNzssH8FX1MP2
+         Wlyrg281sLIeTa4nhXmIWlZaHlQDTY6V1ZlHbhzITZgGak8D8Bg/e6z0Qr+WdPBssD97
+         9Q/qpE44Uic03yuoex83oK2ApdqvWcyYcjSxhLobmPBZ9ExC8sIs84z7/2rpf1LNLhEA
+         j9eHMdu8jxVA6CSPqbkmn5uzP7N6RsdZ0xZrNB94ySf7Gpd7UhBeeGuVQ32qmkTvD0V2
+         G2BA==
+X-Gm-Message-State: AOAM5334bfzOrhym2UVJR25W2FlLRlb7BuwmnQGJ1TO1S0zGKxxokmRH
+        u1V8cXIcjZCKH2IACsHGNxu6s700sjU=
+X-Google-Smtp-Source: ABdhPJyPPKTIeR5EuFUFOku6/rJjWP/q97RCtO7qqv7/gaq4ZM1vr1ax14hdkaPqPKYOQ3mMknVYhA==
+X-Received: by 2002:a02:2ace:: with SMTP id w197mr1926451jaw.132.1610411426160;
+        Mon, 11 Jan 2021 16:30:26 -0800 (PST)
 Received: from willemb.nyc.corp.google.com ([2620:0:1003:312:f693:9fff:fef4:3e8a])
-        by smtp.gmail.com with ESMTPSA id z10sm741723ioi.47.2021.01.11.16.30.23
+        by smtp.gmail.com with ESMTPSA id z10sm741723ioi.47.2021.01.11.16.30.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 16:30:24 -0800 (PST)
+        Mon, 11 Jan 2021 16:30:25 -0800 (PST)
 From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, willy@infradead.org, arnd@kernel.org,
         Willem de Bruijn <willemb@google.com>
-Subject: [PATCH 3/6] ppoll: deduplicate compat logic
-Date:   Mon, 11 Jan 2021 19:30:14 -0500
-Message-Id: <20210112003017.4010304-4-willemdebruijn.kernel@gmail.com>
+Subject: [PATCH 4/6] epoll: deduplicate compat logic
+Date:   Mon, 11 Jan 2021 19:30:15 -0500
+Message-Id: <20210112003017.4010304-5-willemdebruijn.kernel@gmail.com>
 X-Mailer: git-send-email 2.30.0.284.gd98b1dd5eaa7-goog
 In-Reply-To: <20210112003017.4010304-1-willemdebruijn.kernel@gmail.com>
 References: <20210112003017.4010304-1-willemdebruijn.kernel@gmail.com>
@@ -67,158 +67,91 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Willem de Bruijn <willemb@google.com>
 
-Apply the same compat deduplication strategy to ppoll that was
-previously applied to select and pselect.
+Apply the same compat deduplication strategy to epoll that was
+previously applied to (p)select and ppoll.
 
-Like pselect, ppoll has timespec and sigmask arguments, which have
-compat variants. poll has neither, so is not modified.
-
-Convert the ppoll syscall to a do_ppoll() helper that branches on
-timespec and sigmask variants internally.
-
-This allows calling the same implementation for all syscall variants:
-standard, time32, compat, compat + time32.
+Make do_epoll_wait handle both variants of sigmask. This removes
+the need for near duplicate do_compat_epoll_pwait.
 
 Signed-off-by: Willem de Bruijn <willemb@google.com>
 ---
- fs/select.c | 91 ++++++++++++++++++-----------------------------------
- 1 file changed, 30 insertions(+), 61 deletions(-)
+ fs/eventpoll.c | 38 +++++++++-----------------------------
+ 1 file changed, 9 insertions(+), 29 deletions(-)
 
-diff --git a/fs/select.c b/fs/select.c
-index dee7dfc5217b..27567795a892 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -1120,28 +1120,48 @@ SYSCALL_DEFINE3(poll, struct pollfd __user *, ufds, unsigned int, nfds,
- 	return ret;
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index a829af074eb5..c9dcffba2da1 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -2239,7 +2239,7 @@ SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events,
+  */
+ static int do_epoll_pwait(int epfd, struct epoll_event __user *events,
+ 			  int maxevents, struct timespec64 *to,
+-			  const sigset_t __user *sigmask, size_t sigsetsize)
++			  const void __user *sigmask, size_t sigsetsize)
+ {
+ 	int error;
+ 
+@@ -2247,7 +2247,10 @@ static int do_epoll_pwait(int epfd, struct epoll_event __user *events,
+ 	 * If the caller wants a certain signal mask to be set during the wait,
+ 	 * we apply it here.
+ 	 */
+-	error = set_user_sigmask(sigmask, sigsetsize);
++	if (!in_compat_syscall())
++		error = set_user_sigmask(sigmask, sigsetsize);
++	else
++		error = set_compat_user_sigmask(sigmask, sigsetsize);
+ 	if (error)
+ 		return error;
+ 
+@@ -2288,28 +2291,6 @@ SYSCALL_DEFINE6(epoll_pwait2, int, epfd, struct epoll_event __user *, events,
  }
  
--SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
--		struct __kernel_timespec __user *, tsp, const sigset_t __user *, sigmask,
--		size_t, sigsetsize)
-+static int do_ppoll(struct pollfd __user *ufds, unsigned int nfds,
-+		    void __user *tsp, const void __user *sigmask,
-+		    size_t sigsetsize, enum poll_time_type type)
+ #ifdef CONFIG_COMPAT
+-static int do_compat_epoll_pwait(int epfd, struct epoll_event __user *events,
+-				 int maxevents, struct timespec64 *timeout,
+-				 const compat_sigset_t __user *sigmask,
+-				 compat_size_t sigsetsize)
+-{
+-	long err;
+-
+-	/*
+-	 * If the caller wants a certain signal mask to be set during the wait,
+-	 * we apply it here.
+-	 */
+-	err = set_compat_user_sigmask(sigmask, sigsetsize);
+-	if (err)
+-		return err;
+-
+-	err = do_epoll_wait(epfd, events, maxevents, timeout);
+-
+-	restore_saved_sigmask_unless(err == -EINTR);
+-
+-	return err;
+-}
+-
+ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
+ 		       struct epoll_event __user *, events,
+ 		       int, maxevents, int, timeout,
+@@ -2318,9 +2299,9 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
  {
- 	struct timespec64 ts, end_time, *to = NULL;
- 	int ret;
+ 	struct timespec64 to;
  
- 	if (tsp) {
--		if (get_timespec64(&ts, tsp))
--			return -EFAULT;
-+		switch (type) {
-+		case PT_TIMESPEC:
-+			if (get_timespec64(&ts, tsp))
-+				return -EFAULT;
-+			break;
-+		case PT_OLD_TIMESPEC:
-+			if (get_old_timespec32(&ts, tsp))
-+				return -EFAULT;
-+			break;
-+		default:
-+			BUG();
-+		}
+-	return do_compat_epoll_pwait(epfd, events, maxevents,
+-				     ep_timeout_to_timespec(&to, timeout),
+-				     sigmask, sigsetsize);
++	return do_epoll_pwait(epfd, events, maxevents,
++			      ep_timeout_to_timespec(&to, timeout),
++			      sigmask, sigsetsize);
+ }
  
- 		to = &end_time;
- 		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
+ COMPAT_SYSCALL_DEFINE6(epoll_pwait2, int, epfd,
+@@ -2340,8 +2321,7 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait2, int, epfd,
  			return -EINVAL;
  	}
  
--	ret = set_user_sigmask(sigmask, sigsetsize);
-+	if (!in_compat_syscall())
-+		ret = set_user_sigmask(sigmask, sigsetsize);
-+	else
-+		ret = set_compat_user_sigmask(sigmask, sigsetsize);
- 	if (ret)
- 		return ret;
- 
- 	ret = do_sys_poll(ufds, nfds, to);
--	return poll_select_finish(&end_time, tsp, PT_TIMESPEC, ret);
-+	return poll_select_finish(&end_time, tsp, type, ret);
-+}
-+
-+SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
-+		struct __kernel_timespec __user *, tsp, const sigset_t __user *, sigmask,
-+		size_t, sigsetsize)
-+{
-+	return do_ppoll(ufds, nfds, tsp, sigmask, sigsetsize, PT_TIMESPEC);
- }
- 
- #if defined(CONFIG_COMPAT_32BIT_TIME) && !defined(CONFIG_64BIT)
-@@ -1150,24 +1170,7 @@ SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
- 		struct old_timespec32 __user *, tsp, const sigset_t __user *, sigmask,
- 		size_t, sigsetsize)
- {
--	struct timespec64 ts, end_time, *to = NULL;
--	int ret;
--
--	if (tsp) {
--		if (get_old_timespec32(&ts, tsp))
--			return -EFAULT;
--
--		to = &end_time;
--		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
--			return -EINVAL;
--	}
--
--	ret = set_user_sigmask(sigmask, sigsetsize);
--	if (ret)
--		return ret;
--
--	ret = do_sys_poll(ufds, nfds, to);
--	return poll_select_finish(&end_time, tsp, PT_OLD_TIMESPEC, ret);
-+	return do_ppoll(ufds, nfds, tsp, sigmask, sigsetsize, PT_OLD_TIMESPEC);
- }
- #endif
- 
-@@ -1258,24 +1261,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds,
- 	unsigned int,  nfds, struct old_timespec32 __user *, tsp,
- 	const compat_sigset_t __user *, sigmask, compat_size_t, sigsetsize)
- {
--	struct timespec64 ts, end_time, *to = NULL;
--	int ret;
--
--	if (tsp) {
--		if (get_old_timespec32(&ts, tsp))
--			return -EFAULT;
--
--		to = &end_time;
--		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
--			return -EINVAL;
--	}
--
--	ret = set_compat_user_sigmask(sigmask, sigsetsize);
--	if (ret)
--		return ret;
--
--	ret = do_sys_poll(ufds, nfds, to);
--	return poll_select_finish(&end_time, tsp, PT_OLD_TIMESPEC, ret);
-+	return do_ppoll(ufds, nfds, tsp, sigmask, sigsetsize, PT_OLD_TIMESPEC);
- }
- #endif
- 
-@@ -1284,24 +1270,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
- 	unsigned int,  nfds, struct __kernel_timespec __user *, tsp,
- 	const compat_sigset_t __user *, sigmask, compat_size_t, sigsetsize)
- {
--	struct timespec64 ts, end_time, *to = NULL;
--	int ret;
--
--	if (tsp) {
--		if (get_timespec64(&ts, tsp))
--			return -EFAULT;
--
--		to = &end_time;
--		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
--			return -EINVAL;
--	}
--
--	ret = set_compat_user_sigmask(sigmask, sigsetsize);
--	if (ret)
--		return ret;
--
--	ret = do_sys_poll(ufds, nfds, to);
--	return poll_select_finish(&end_time, tsp, PT_TIMESPEC, ret);
-+	return do_ppoll(ufds, nfds, tsp, sigmask, sigsetsize, PT_TIMESPEC);
+-	return do_compat_epoll_pwait(epfd, events, maxevents, to,
+-				     sigmask, sigsetsize);
++	return do_epoll_pwait(epfd, events, maxevents, to, sigmask, sigsetsize);
  }
  
  #endif
