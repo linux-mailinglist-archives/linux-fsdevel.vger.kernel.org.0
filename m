@@ -2,184 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC0B92F3D05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F7512F3D1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:43:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438116AbhALVhZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 16:37:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36606 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437094AbhALU7D (ORCPT
+        id S2438123AbhALVh0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 16:37:26 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:56190 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437141AbhALVRs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 15:59:03 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BADAC061575;
-        Tue, 12 Jan 2021 12:58:23 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id d17so5437454ejy.9;
-        Tue, 12 Jan 2021 12:58:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2488YfIKw2/IPkOU3jNJR+xLgk8bwBEm0EMuKAKYdtE=;
-        b=r+7U1RgXJGA5UAOTqwDP6UL0+Qi7sfZ73exStFoFDpTEiR6aKOE5DcB5y6NaDIlH7W
-         9eb4xzc9BLBdVVNB5eTriTQMOmGqaA+uEuASwVTCHuUeeqJA4wMAw/o9sYpHRMpv4FHC
-         K24MzipXIz4HRSsDVeBnNjd75HEf2tP3lYmDUJJtg9dnq69AaKvc3uA0PKvZMC847DzF
-         4qBpMwiInB5opME2tonWYmB9vo7vVBTxxls3tDZRpPQROsfvWRVZPeyAtDxrwEvhVyp6
-         f+gyJJFejYSdW6pkitd/La9X5P+E/R0FTVxLOIFs1j1vJGDymh5xJQHsutbcLwhljkUb
-         XbeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2488YfIKw2/IPkOU3jNJR+xLgk8bwBEm0EMuKAKYdtE=;
-        b=GzeSpDkXKQaYaEt3Vek2dTT0bjB17zEFDvLJuC4ddqW0xqxat4mlSwBdUgWSoGQstx
-         gWROH8KGfJP1088Jqscea6xUUp/E6KQBrBR8+9PG5wpgBlmrEN0PwAjAipqn2A/mZ+Iu
-         bKU81kpsfVOvwuv2+vdXRG4wkJLy+Li5iUpSc6dpsyFaqoV1H4Gf5ulUwf5/SmW4qOVD
-         p6rJYKTqsRYSs8eX7ElDW75hr6wTPZcnwKx5jCS4eqboIxfTJiIaX/pi19oz/edTaRKg
-         BjzADpRvF+iISTZUev7KZUn9QnV51+MgVWrBXj+DpvGQ5qW6GEr/Gnf3+BnCBnjBO1US
-         trgA==
-X-Gm-Message-State: AOAM530KzNY9VzpNFR0PiDepy+FIlLWIQWj2//i/O45kHokL/4etF3+v
-        PuKraDy9RtWL4oUY8Ucqk7Bg9Hcc0tvo7lBVJ9I=
-X-Google-Smtp-Source: ABdhPJywiChfAqj+hTD+lWNPDRLSpKCj8jiEW6HWfM7CeSy44afF60mxJ8fD+ZgkFhrLb+rqeT2kS7vvOifHe5uef6U=
-X-Received: by 2002:a17:906:6a45:: with SMTP id n5mr486085ejs.514.1610485101796;
- Tue, 12 Jan 2021 12:58:21 -0800 (PST)
+        Tue, 12 Jan 2021 16:17:48 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10CLDwxf169332;
+        Tue, 12 Jan 2021 21:16:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=bR1zl62x1crSRLRZaw4N0mjRNUkzoJkEbrwHjcd/Sig=;
+ b=W07FZK1ysQcddYInZReTNoPBDnq9Voc+vPtNoQ5utzKwJHik6NAhjj2ev9QZxboUiCZI
+ 9DyMdd/oh41Etv4D2DAjq7Q9X6iCr8h1xW9zA8a00RbJ4QDZZutxFq/2IV/2VWoF2WwI
+ DiHYufs18UUo8BHpTfaRawegmtorKZYsS4B3wVc06XHVdAapCddXWYOVnUGgD1lxrzIP
+ rJa+JwhcqgK8/MQPr3ridgoga604sbChyKrTXYm7Yv21Agexj1+zf3SXXI7Thlz99I4j
+ 2SBsj1N0eqb6zzn/TBJ9vBuptdQdQLT3EZ3c0HI7xqvi+Ura5p7EwzVTamLMvoAbZrW+ /g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 360kcyrhny-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jan 2021 21:16:53 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10CL65Ce072883;
+        Tue, 12 Jan 2021 21:14:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 360keye5qr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jan 2021 21:14:53 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 10CLElAE013096;
+        Tue, 12 Jan 2021 21:14:47 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Jan 2021 13:14:47 -0800
+Date:   Tue, 12 Jan 2021 13:14:45 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Avi Kivity <avi@scylladb.com>,
+        Andres Freund <andres@anarazel.de>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
+ extents?
+Message-ID: <20210112211445.GC1164248@magnolia>
+References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
+ <20210104181958.GE6908@magnolia>
+ <20210104191058.sryksqjnjjnn5raa@alap3.anarazel.de>
+ <f6f75f11-5d5b-ae63-d584-4b6f09ff401e@scylladb.com>
+ <20210112181600.GA1228497@infradead.org>
+ <C8811877-48A9-4199-9F28-20F5B071AE36@dilger.ca>
+ <20210112184339.GA1238746@infradead.org>
+ <1C33DEE4-8BE9-4BF3-A589-E11532382B36@dilger.ca>
 MIME-Version: 1.0
-References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-6-shy828301@gmail.com>
- <bdf650e0-6728-4481-3454-c865649bbdcf@virtuozzo.com> <CAHbLzkqZ7Hmo7DSQijrgoKaDQDaOb3+tTGeJ2xU8drFKZ6jv4A@mail.gmail.com>
- <ff0d1ed1-e2ae-3e0c-e780-e8d2287cc99b@virtuozzo.com>
-In-Reply-To: <ff0d1ed1-e2ae-3e0c-e780-e8d2287cc99b@virtuozzo.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 12 Jan 2021 12:58:10 -0800
-Message-ID: <CAHbLzkrOfSSMDhHyemSFWdQ4aSGLytM+9u=s2-BNWsKkLVGgEg@mail.gmail.com>
-Subject: Re: [v3 PATCH 05/11] mm: vmscan: use a new flag to indicate shrinker
- is registered
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1C33DEE4-8BE9-4BF3-A589-E11532382B36@dilger.ca>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9862 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101120126
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9862 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 clxscore=1011 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101120127
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 1:38 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On 11.01.2021 21:17, Yang Shi wrote:
-> > On Wed, Jan 6, 2021 at 2:22 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >>
-> >> On 06.01.2021 01:58, Yang Shi wrote:
-> >>> Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
-> >>> This approach is fine with nr_deferred at the shrinker level, but the following
-> >>> patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
-> >>> shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
-> >>> from unregistering correctly.
-> >>>
-> >>> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> >>> ---
-> >>>  include/linux/shrinker.h |  7 ++++---
-> >>>  mm/vmscan.c              | 13 +++++++++----
-> >>>  2 files changed, 13 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> >>> index 0f80123650e2..1eac79ce57d4 100644
-> >>> --- a/include/linux/shrinker.h
-> >>> +++ b/include/linux/shrinker.h
-> >>> @@ -79,13 +79,14 @@ struct shrinker {
-> >>>  #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
-> >>>
-> >>>  /* Flags */
-> >>> -#define SHRINKER_NUMA_AWARE  (1 << 0)
-> >>> -#define SHRINKER_MEMCG_AWARE (1 << 1)
-> >>> +#define SHRINKER_REGISTERED  (1 << 0)
-> >>> +#define SHRINKER_NUMA_AWARE  (1 << 1)
-> >>> +#define SHRINKER_MEMCG_AWARE (1 << 2)
-> >>>  /*
-> >>>   * It just makes sense when the shrinker is also MEMCG_AWARE for now,
-> >>>   * non-MEMCG_AWARE shrinker should not have this flag set.
-> >>>   */
-> >>> -#define SHRINKER_NONSLAB     (1 << 2)
-> >>> +#define SHRINKER_NONSLAB     (1 << 3)
-> >>>
-> >>>  extern int prealloc_shrinker(struct shrinker *shrinker);
-> >>>  extern void register_shrinker_prepared(struct shrinker *shrinker);
-> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> >>> index 8da765a85569..9761c7c27412 100644
-> >>> --- a/mm/vmscan.c
-> >>> +++ b/mm/vmscan.c
-> >>> @@ -494,6 +494,7 @@ void register_shrinker_prepared(struct shrinker *shrinker)
-> >>>       if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> >>>               idr_replace(&shrinker_idr, shrinker, shrinker->id);
-> >>>  #endif
-> >>> +     shrinker->flags |= SHRINKER_REGISTERED;
-> >>
-> >> In case of we introduce this new flag, we should kill old flag SHRINKER_REGISTERING,
-> >> which are not needed anymore (we should you the new flag instead of that).
-> >
-> > The only think that I'm confused with is the check in
-> > shrink_slab_memcg, it does:
-> >
-> > shrinker = idr_find(&shrinker_idr, i);
-> > if (unlikely(!shrinker || shrinker == SHRINKER_REGISTERING)) {
-> >
-> > When allocating idr, the shrinker is associated with
-> > SHRINKER_REGISTERING. But, shrink_slab_memcg does acquire read
-> > shrinker_rwsem, and idr_alloc is called with holding write
-> > shrinker_rwsem, so I'm supposed shrink_slab_memcg should never see
-> > shrinker is registering.
->
-> After prealloc_shrinker() shrinker is visible for shrink_slab_memcg().
-> This is the moment shrink_slab_memcg() sees SHRINKER_REGISTERED.
+On Tue, Jan 12, 2021 at 11:51:07AM -0700, Andreas Dilger wrote:
+> On Jan 12, 2021, at 11:43 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> > 
+> > On Tue, Jan 12, 2021 at 11:39:58AM -0700, Andreas Dilger wrote:
+> >>> XFS already has a XFS_IOC_ALLOCSP64 that is defined to actually
+> >>> allocate written extents.  It does not currently use
+> >>> blkdev_issue_zeroout, but could be changed pretty trivially to do so.
+> >>> 
+> >>>> But note it will need to be plumbed down to md and dm to be generally
+> >>>> useful.
+> >>> 
+> >>> DM and MD already support mddev_check_write_zeroes, at least for the
+> >>> usual targets.
+> >> 
+> >> Similarly, ext4 also has EXT4_GET_BLOCKS_CREATE_ZERO that can allocate zero
+> >> filled extents rather than unwritten extents (without clobbering existing
+> >> data like FALLOC_FL_ZERO_RANGE does), and just needs a flag from fallocate()
+> >> to trigger it.  This is plumbed down to blkdev_issue_zeroout() as well.
+> > 
+> > XFS_IOC_ALLOCSP64 actually is an ioctl that has been around since 1995
+> > on IRIX (as an fcntl).
+> 
+> I'm not against adding XFS_IOC_ALLOCSP64 to ext4, if applications are actually
+> using that.
 
-Yes, this exactly is what I'm supposed.
+<shudder> Some of them are, but--
 
->
-> > If so it seems easy to remove
-> > SHRINKER_REGISTERING.
-> >
-> > We just need change that check to:
-> > !shrinker || !(shrinker->flags & SHRINKER_REGISTERED)
-> >
-> >>>       up_write(&shrinker_rwsem);
-> >>>  }
-> >>>
-> >>> @@ -513,13 +514,17 @@ EXPORT_SYMBOL(register_shrinker);
-> >>>   */
-> >>>  void unregister_shrinker(struct shrinker *shrinker)
-> >>>  {
-> >>> -     if (!shrinker->nr_deferred)
-> >>> -             return;
-> >>> -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> >>> -             unregister_memcg_shrinker(shrinker);
-> >>>       down_write(&shrinker_rwsem);
-> >>
-> >> I do not think there are some users which registration may race with unregistration.
-> >> So, I think we should check SHRINKER_REGISTERED unlocked similar to we used to check
-> >> shrinker->nr_deferred unlocked.
-> >
-> > Yes, I agree.
-> >
-> >>
-> >>> +     if (!(shrinker->flags & SHRINKER_REGISTERED)) {
-> >>> +             up_write(&shrinker_rwsem);
-> >>> +             return;
-> >>> +     }
-> >>>       list_del(&shrinker->list);
-> >>> +     shrinker->flags &= ~SHRINKER_REGISTERED;
-> >>>       up_write(&shrinker_rwsem);
-> >>> +
-> >>> +     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> >>> +             unregister_memcg_shrinker(shrinker);
-> >>>       kfree(shrinker->nr_deferred);
-> >>>       shrinker->nr_deferred = NULL;
-> >>>  }
-> >>>
-> >>
-> >>
->
->
+ALLOCSP64 can only allocate pre-zeroed blocks as part of extending EOF,
+whereas a new FZERO flag means that we can pre-zero an arbitrary range
+of bytes in a file.  I don't know if Avi or Andres' usecases demand that
+kind of flexibilty but I know I'd rather go for the more powerful
+interface.
+
+--D
+
+> It also makes sense to me that there also be an fallocate() mode for allocating
+> zeroed blocks (which was the original request), since fallocate() is already
+> doing very similar things and is the central interface for managing block
+> allocation instead of having a filesystem-specific ioctl() to do this.
+> 
+> Cheers, Andreas
+> 
+> 
+> 
+> 
+> 
+
+
