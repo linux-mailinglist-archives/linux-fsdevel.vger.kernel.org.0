@@ -2,171 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A1982F2622
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 03:13:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6ECF2F2672
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 03:58:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbhALCNC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 21:13:02 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10708 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727940AbhALCNC (ORCPT
+        id S1731532AbhALC4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 21:56:34 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:57297 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728044AbhALC4d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 21:13:02 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DFDZb0Nhwzl3KW;
-        Tue, 12 Jan 2021 10:11:03 +0800 (CST)
-Received: from huawei.com (10.174.176.179) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.498.0; Tue, 12 Jan 2021
- 10:12:13 +0800
-From:   wangbin <wangbin224@huawei.com>
-To:     <adobriyan@gmail.com>, <akpm@linux-foundation.org>, <guro@fb.com>,
-        <shakeelb@google.com>, <hannes@cmpxchg.org>, <will@kernel.org>,
-        <wangbin224@huawei.com>, <feng.tang@intel.com>, <neilb@suse.de>,
-        <kirill.shutemov@linux.intel.com>, <samitolvanen@google.com>,
-        <rppt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <hushiyuan@huawei.com>
-Subject: [PATCH] mm: thp: introduce NR_PARTIAL_THPS
-Date:   Tue, 12 Jan 2021 10:12:08 +0800
-Message-ID: <20210112021208.1875-1-wangbin224@huawei.com>
-X-Mailer: git-send-email 2.29.2.windows.3
+        Mon, 11 Jan 2021 21:56:33 -0500
+X-IronPort-AV: E=Sophos;i="5.79,340,1602518400"; 
+   d="scan'208";a="103383793"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 12 Jan 2021 10:55:38 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id C0A054CE602D;
+        Tue, 12 Jan 2021 10:55:35 +0800 (CST)
+Received: from irides.mr (10.167.225.141) by G08CNEXMBPEKD05.g08.fujitsu.local
+ (10.167.33.204) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 12 Jan
+ 2021 10:55:36 +0800
+Subject: Re: [PATCH 04/10] mm, fsdax: Refactor memory-failure handler for dax
+ mapping
+To:     Jan Kara <jack@suse.cz>
+CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
+        <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@lst.de>, <song@kernel.org>,
+        <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
+References: <20201230165601.845024-1-ruansy.fnst@cn.fujitsu.com>
+ <20201230165601.845024-5-ruansy.fnst@cn.fujitsu.com>
+ <20210106154132.GC29271@quack2.suse.cz>
+From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
+Message-ID: <75164044-bfdf-b2d6-dff0-d6a8d56d1f62@cn.fujitsu.com>
+Date:   Tue, 12 Jan 2021 10:55:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.174.176.179]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20210106154132.GC29271@quack2.suse.cz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.225.141]
+X-ClientProxiedBy: G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) To
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
+X-yoursite-MailScanner-ID: C0A054CE602D.AADE7
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Bin Wang <wangbin224@huawei.com>
 
-Currently we don't split transhuge pages on partial unmap. After using the
-deferred_split_huge_page() to solve the memory overhead, we still have a
-problem with memory count. We have no idea about how much partial unmap
-memory there is because the partial unmap memory is covered in transhuge
-pages until the pages are split.
 
-Why should we know this? Just image that there is a process, which does the
-following:
-1)Mmap() 1GB memory and all the memory is transferred to transhuge pages by
-kernel.
-What happened: System free memory decreases 1GB. AnonHugePages increases
-1GB.
-2)Call madvise() don't need 1MB per transhuge page.
-What happened: Rss of the process decreases 512MB. AnonHugePages decreases
-1GB. System free memory doesn't increase.
+On 2021/1/6 下午11:41, Jan Kara wrote:
+> On Thu 31-12-20 00:55:55, Shiyang Ruan wrote:
+>> The current memory_failure_dev_pagemap() can only handle single-mapped
+>> dax page for fsdax mode.  The dax page could be mapped by multiple files
+>> and offsets if we let reflink feature & fsdax mode work together.  So,
+>> we refactor current implementation to support handle memory failure on
+>> each file and offset.
+>>
+>> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+> 
+> Overall this looks OK to me, a few comments below.
+> 
+>> ---
+>>   fs/dax.c            | 21 +++++++++++
+>>   include/linux/dax.h |  1 +
+>>   include/linux/mm.h  |  9 +++++
+>>   mm/memory-failure.c | 91 ++++++++++++++++++++++++++++++++++-----------
+>>   4 files changed, 100 insertions(+), 22 deletions(-)
 
-It's confusing that the system free memory is less than expected. And this
-is because that we just call split_huge_pmd() on partial unmap. I think we
-shouldn't roll back to split_huge_page(), but we can add NR_PARTIAL_THPS
-in node_stat_item to show the count of partial unmap pages.
+...
 
-We can follow the deferred_split_huge_page() codepath to record the
-partial unmap pages. And reduce the count when transhuge pages are split
-eventually.
+>>   
+>> @@ -345,9 +348,12 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
+>>   	}
+>>   
+>>   	tk->addr = page_address_in_vma(p, vma);
+>> -	if (is_zone_device_page(p))
+>> -		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
+>> -	else
+>> +	if (is_zone_device_page(p)) {
+>> +		if (is_device_fsdax_page(p))
+>> +			tk->addr = vma->vm_start +
+>> +					((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
+> 
+> It seems strange to use 'pgoff' for dax pages and not for any other page.
+> Why? I'd rather pass correct pgoff from all callers of add_to_kill() and
+> avoid this special casing...
 
-Signed-off-by: Bin Wang <wangbin224@huawei.com>
----
- fs/proc/meminfo.c      | 2 ++
- include/linux/mmzone.h | 1 +
- mm/huge_memory.c       | 7 ++++++-
- mm/rmap.c              | 9 +++++++--
- mm/vmstat.c            | 1 +
- 5 files changed, 17 insertions(+), 3 deletions(-)
+Because one fsdax page can be shared by multiple pgoffs.  I have to pass 
+each pgoff in each iteration to calculate the address in vma (for 
+tk->addr).  Other kinds of pages don't need this.  They can get their 
+unique address by calling "page_address_in_vma()".
 
-diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-index d6fc74619625..f6f02469dd9e 100644
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -138,6 +138,8 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 		    global_node_page_state(NR_FILE_THPS) * HPAGE_PMD_NR);
- 	show_val_kb(m, "FilePmdMapped:  ",
- 		    global_node_page_state(NR_FILE_PMDMAPPED) * HPAGE_PMD_NR);
-+	show_val_kb(m, "PartFreePages:  ",
-+		    global_node_page_state(NR_PARTIAL_THPS));
- #endif
- 
- #ifdef CONFIG_CMA
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index b593316bff3d..cc417c9870ad 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -194,6 +194,7 @@ enum node_stat_item {
- 	NR_FILE_THPS,
- 	NR_FILE_PMDMAPPED,
- 	NR_ANON_THPS,
-+	NR_PARTIAL_THPS,	/* partial free pages of transhuge pages */
- 	NR_VMSCAN_WRITE,
- 	NR_VMSCAN_IMMEDIATE,	/* Prioritise for reclaim when writeback ends */
- 	NR_DIRTIED,		/* page dirtyings since bootup */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 9237976abe72..2f2856cf1ed0 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2788,6 +2788,8 @@ void free_transhuge_page(struct page *page)
- 	if (!list_empty(page_deferred_list(page))) {
- 		ds_queue->split_queue_len--;
- 		list_del(page_deferred_list(page));
-+		__mod_node_page_state(page_pgdat(page), NR_PARTIAL_THPS,
-+				      -HPAGE_PMD_NR);
- 	}
- 	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
- 	free_compound_page(page);
-@@ -2880,8 +2882,11 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 		if (!trylock_page(page))
- 			goto next;
- 		/* split_huge_page() removes page from list on success */
--		if (!split_huge_page(page))
-+		if (!split_huge_page(page)) {
- 			split++;
-+			__mod_node_page_state(page_pgdat(page),
-+					      NR_PARTIAL_THPS, -HPAGE_PMD_NR);
-+		}
- 		unlock_page(page);
- next:
- 		put_page(page);
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 08c56aaf72eb..269edf41ccd7 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1309,8 +1309,11 @@ static void page_remove_anon_compound_rmap(struct page *page)
- 		 * page of the compound page is unmapped, but at least one
- 		 * small page is still mapped.
- 		 */
--		if (nr && nr < thp_nr_pages(page))
-+		if (nr && nr < thp_nr_pages(page)) {
-+			__mod_node_page_state(page_pgdat(page),
-+					      NR_PARTIAL_THPS, nr);
- 			deferred_split_huge_page(page);
-+		}
- 	} else {
- 		nr = thp_nr_pages(page);
- 	}
-@@ -1357,8 +1360,10 @@ void page_remove_rmap(struct page *page, bool compound)
- 	if (unlikely(PageMlocked(page)))
- 		clear_page_mlock(page);
- 
--	if (PageTransCompound(page))
-+	if (PageTransCompound(page)) {
-+		__inc_node_page_state(page, NR_PARTIAL_THPS);
- 		deferred_split_huge_page(compound_head(page));
-+	}
- 
- 	/*
- 	 * It would be tidy to reset the PageAnon mapping here,
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index f8942160fc95..93459dde0dcd 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1203,6 +1203,7 @@ const char * const vmstat_text[] = {
- 	"nr_file_hugepages",
- 	"nr_file_pmdmapped",
- 	"nr_anon_transparent_hugepages",
-+	"nr_partial_free_pages",
- 	"nr_vmscan_write",
- 	"nr_vmscan_immediate_reclaim",
- 	"nr_dirtied",
--- 
-2.23.0
+So, I added this fsdax case here.  This patchset only implemented the 
+fsdax case, other cases also need to be added here if to be implemented.
+
+
+--
+Thanks,
+Ruan Shiyang.
+
+> 
+>> +		tk->size_shift = dev_pagemap_mapping_shift(p, vma, tk->addr);
+>> +	} else
+>>   		tk->size_shift = page_shift(compound_head(p));
+>>   
+>>   	/*
+>> @@ -495,7 +501,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>>   			if (!page_mapped_in_vma(page, vma))
+>>   				continue;
+>>   			if (vma->vm_mm == t->mm)
+>> -				add_to_kill(t, page, vma, to_kill);
+>> +				add_to_kill(t, page, NULL, 0, vma, to_kill);
+>>   		}
+>>   	}
+>>   	read_unlock(&tasklist_lock);
+>> @@ -505,24 +511,19 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>>   /*
+>>    * Collect processes when the error hit a file mapped page.
+>>    */
+>> -static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>> -				int force_early)
+>> +static void collect_procs_file(struct page *page, struct address_space *mapping,
+>> +		pgoff_t pgoff, struct list_head *to_kill, int force_early)
+>>   {
+>>   	struct vm_area_struct *vma;
+>>   	struct task_struct *tsk;
+>> -	struct address_space *mapping = page->mapping;
+>> -	pgoff_t pgoff;
+>>   
+>>   	i_mmap_lock_read(mapping);
+>>   	read_lock(&tasklist_lock);
+>> -	pgoff = page_to_pgoff(page);
+>>   	for_each_process(tsk) {
+>>   		struct task_struct *t = task_early_kill(tsk, force_early);
+>> -
+>>   		if (!t)
+>>   			continue;
+>> -		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff,
+>> -				      pgoff) {
+>> +		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
+>>   			/*
+>>   			 * Send early kill signal to tasks where a vma covers
+>>   			 * the page but the corrupted page is not necessarily
+>> @@ -531,7 +532,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>>   			 * to be informed of all such data corruptions.
+>>   			 */
+>>   			if (vma->vm_mm == t->mm)
+>> -				add_to_kill(t, page, vma, to_kill);
+>> +				add_to_kill(t, page, mapping, pgoff, vma, to_kill);
+>>   		}
+>>   	}
+>>   	read_unlock(&tasklist_lock);
+>> @@ -550,7 +551,8 @@ static void collect_procs(struct page *page, struct list_head *tokill,
+>>   	if (PageAnon(page))
+>>   		collect_procs_anon(page, tokill, force_early);
+>>   	else
+>> -		collect_procs_file(page, tokill, force_early);
+>> +		collect_procs_file(page, page->mapping, page_to_pgoff(page),
+> 
+> Why not use page_mapping() helper here? It would be safer for THPs if they
+> ever get here...
+> 
+> 								Honza
+> 
+
 
