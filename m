@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F1892F3EE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:45:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C01302F3EDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:45:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394196AbhALWFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 17:05:09 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:43283 "EHLO
+        id S2394180AbhALWE6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 17:04:58 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43310 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394053AbhALWEZ (ORCPT
+        with ESMTP id S2394094AbhALWE1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 17:04:25 -0500
+        Tue, 12 Jan 2021 17:04:27 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kzRlF-0003bd-6s; Tue, 12 Jan 2021 22:03:33 +0000
+        id 1kzRlH-0003bd-Tj; Tue, 12 Jan 2021 22:03:36 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -54,26 +54,31 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 18/42] stat: handle idmapped mounts
-Date:   Tue, 12 Jan 2021 23:01:00 +0100
-Message-Id: <20210112220124.837960-19-christian.brauner@ubuntu.com>
+Subject: [PATCH v5 19/42] namei: handle idmapped mounts in may_*() helpers
+Date:   Tue, 12 Jan 2021 23:01:01 +0100
+Message-Id: <20210112220124.837960-20-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=vGMOMdphqJGOw3v8kzO0vhWTe1dmzIo91EWuV9yn2Jo=; m=MJabVmVl+H92f3H8+lvbTsa8/CUtmnjsmQvPnR8UzSE=; p=pwWopKlw6jZxxlFNGkwQTsWRosKgE9IOYE/I98KCZtU=; g=cf117978e07b9cbf4d455e0264359ef7a9c3971d
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YtgAKCRCRxhvAZXjcosR7AQDqhtZ IThWFLYGNpH94GbU9WImkmT5qYQFUmoMpcVrbxQEAj8MJeehY+aCzUYln+eU3Pb6oDG4vOu7998np fRDy4AA=
+X-Patch-Hashes: v=1; h=sha256; i=KV+LhlrktsMncLO6e8jUpqKUgfKTYAz983qsIKoSFOE=; m=cHb1fjBtXSjA9Oa84icEhCDTWPeYz+D/NzZQXdlPxAo=; p=7+9HNWKuNj/4JABPao+aF0PPG4awo0AVR0akAIkKTLc=; g=d62fbb1da40009d22ce790fcb3b82f1a1536b781
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YtwAKCRCRxhvAZXjcohLuAPoDNtE lhukd5nEAJtdjPkCcNBHARVmQtTB7Jh3afpmpzgD/W1ft5Z95Xl2yHnQPnfEh3dnTsxfvPxm+sCBh tlSNbgc=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The generic_fillattr() helper fills in the basic attributes associated
-with an inode. Enable it to handle idmapped mounts. If the inode is
-accessed through an idmapped mount we need to map it according to the
-mount's user namespace before we store the uid and gid.
-If the initial user namespace is passed nothing changes so non-idmapped
-mounts will see identical behavior as before.
+The may_follow_link(), may_linkat(), may_lookup(), may_open(),
+may_o_create(), may_create_in_sticky(), may_delete(), and may_create()
+helpers determine whether the caller is privileged enough to perform the
+associated operations. Let them handle idmapped mounts by mapping the
+inode or fsids according to the mount's user namespace. Afterwards the
+checks are identical to non-idmapped inodes. The patch takes care to
+retrieve the mount's user namespace right before performing permission
+checks and passing it down into the fileystem so the user namespace
+can't change in between by someone idmapping a mount that is currently
+not idmapped. If the initial user namespace is passed nothing changes so
+non-idmapped mounts will see identical behavior as before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -82,605 +87,621 @@ Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-- Christoph Hellwig <hch@lst.de>:
-  - Don't pollute the vfs with additional helpers simply extend the existing
-    helpers with an additional argument and switch all callers.
+unchanged
 
 /* v3 */
 unchanged
 
 /* v4 */
-unchanged
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 
 /* v5 */
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 ---
- fs/9p/vfs_inode.c      |  4 ++--
- fs/9p/vfs_inode_dotl.c |  4 ++--
- fs/afs/inode.c         |  2 +-
- fs/btrfs/inode.c       |  2 +-
- fs/ceph/inode.c        |  2 +-
- fs/cifs/inode.c        |  2 +-
- fs/coda/inode.c        |  2 +-
- fs/ecryptfs/inode.c    |  4 ++--
- fs/erofs/inode.c       |  2 +-
- fs/exfat/file.c        |  2 +-
- fs/ext2/inode.c        |  2 +-
- fs/ext4/inode.c        |  2 +-
- fs/f2fs/file.c         |  2 +-
- fs/fat/file.c          |  2 +-
- fs/fuse/dir.c          |  2 +-
- fs/gfs2/inode.c        |  2 +-
- fs/hfsplus/inode.c     |  2 +-
- fs/kernfs/inode.c      |  2 +-
- fs/libfs.c             |  4 ++--
- fs/minix/inode.c       |  2 +-
- fs/nfs/inode.c         |  2 +-
- fs/nfs/namespace.c     |  2 +-
- fs/ocfs2/file.c        |  2 +-
- fs/orangefs/inode.c    |  2 +-
- fs/proc/base.c         |  4 ++--
- fs/proc/generic.c      |  2 +-
- fs/proc/proc_net.c     |  2 +-
- fs/proc/proc_sysctl.c  |  2 +-
- fs/proc/root.c         |  2 +-
- fs/stat.c              | 20 ++++++++++++++------
- fs/sysv/itree.c        |  2 +-
- fs/ubifs/dir.c         |  2 +-
- fs/udf/symlink.c       |  2 +-
- fs/vboxsf/utils.c      |  2 +-
- include/linux/fs.h     |  2 +-
- mm/shmem.c             |  2 +-
- 36 files changed, 54 insertions(+), 46 deletions(-)
+ fs/btrfs/ioctl.c   |   5 +-
+ fs/init.c          |   2 +-
+ fs/inode.c         |   2 +-
+ fs/internal.h      |   2 +-
+ fs/namei.c         | 147 ++++++++++++++++++++++++++++-----------------
+ fs/xattr.c         |   2 +-
+ include/linux/fs.h |  14 +++--
+ 7 files changed, 108 insertions(+), 66 deletions(-)
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 9c3ff6e9ab82..c21b146c8d91 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -1027,7 +1027,7 @@ v9fs_vfs_getattr(const struct path *path, struct kstat *stat,
- 	p9_debug(P9_DEBUG_VFS, "dentry: %p\n", dentry);
- 	v9ses = v9fs_dentry2v9ses(dentry);
- 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE) {
--		generic_fillattr(d_inode(dentry), stat);
-+		generic_fillattr(&init_user_ns, d_inode(dentry), stat);
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 950b4f1b9092..05c33b8bd75b 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -927,8 +927,9 @@ static int btrfs_may_delete(struct inode *dir, struct dentry *victim, int isdir)
+ 		return error;
+ 	if (IS_APPEND(dir))
+ 		return -EPERM;
+-	if (check_sticky(dir, d_inode(victim)) || IS_APPEND(d_inode(victim)) ||
+-	    IS_IMMUTABLE(d_inode(victim)) || IS_SWAPFILE(d_inode(victim)))
++	if (check_sticky(&init_user_ns, dir, d_inode(victim)) ||
++	    IS_APPEND(d_inode(victim)) || IS_IMMUTABLE(d_inode(victim)) ||
++	    IS_SWAPFILE(d_inode(victim)))
+ 		return -EPERM;
+ 	if (isdir) {
+ 		if (!d_is_dir(victim))
+diff --git a/fs/init.c b/fs/init.c
+index 2b4842f4802b..dd3d698afcd8 100644
+--- a/fs/init.c
++++ b/fs/init.c
+@@ -184,7 +184,7 @@ int __init init_link(const char *oldname, const char *newname)
+ 	error = -EXDEV;
+ 	if (old_path.mnt != new_path.mnt)
+ 		goto out_dput;
+-	error = may_linkat(&old_path);
++	error = may_linkat(&init_user_ns, &old_path);
+ 	if (unlikely(error))
+ 		goto out_dput;
+ 	error = security_path_link(old_path.dentry, &new_path, new_dentry);
+diff --git a/fs/inode.c b/fs/inode.c
+index 49b512592dcd..46116ef44c9f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1796,7 +1796,7 @@ bool atime_needs_update(const struct path *path, struct inode *inode)
+ 	/* Atime updates will likely cause i_uid and i_gid to be written
+ 	 * back improprely if their true value is unknown to the vfs.
+ 	 */
+-	if (HAS_UNMAPPED_ID(inode))
++	if (HAS_UNMAPPED_ID(mnt_user_ns(mnt), inode))
+ 		return false;
+ 
+ 	if (IS_NOATIME(inode))
+diff --git a/fs/internal.h b/fs/internal.h
+index 77c50befbfbe..6c8a4eddc7e6 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -73,7 +73,7 @@ extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
+ 			   const char *, unsigned int, struct path *);
+ long do_rmdir(int dfd, struct filename *name);
+ long do_unlinkat(int dfd, struct filename *name);
+-int may_linkat(struct path *link);
++int may_linkat(struct user_namespace *mnt_userns, struct path *link);
+ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
+ 		 struct filename *newname, unsigned int flags);
+ 
+diff --git a/fs/namei.c b/fs/namei.c
+index d8dee449e92a..05f1db8e7ed0 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -510,7 +510,7 @@ int inode_permission(struct user_namespace *mnt_userns,
+ 		 * written back improperly if their true value is unknown
+ 		 * to the vfs.
+ 		 */
+-		if (HAS_UNMAPPED_ID(inode))
++		if (HAS_UNMAPPED_ID(mnt_userns, inode))
+ 			return -EACCES;
+ 	}
+ 
+@@ -1008,11 +1008,16 @@ int sysctl_protected_regular __read_mostly;
+  */
+ static inline int may_follow_link(struct nameidata *nd, const struct inode *inode)
+ {
++	struct user_namespace *mnt_userns;
++	kuid_t i_uid;
++
+ 	if (!sysctl_protected_symlinks)
  		return 0;
- 	}
- 	fid = v9fs_fid_lookup(dentry);
-@@ -1040,7 +1040,7 @@ v9fs_vfs_getattr(const struct path *path, struct kstat *stat,
- 		return PTR_ERR(st);
  
- 	v9fs_stat2inode(st, d_inode(dentry), dentry->d_sb, 0);
--	generic_fillattr(d_inode(dentry), stat);
-+	generic_fillattr(&init_user_ns, d_inode(dentry), stat);
- 
- 	p9stat_free(st);
- 	kfree(st);
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 302553101fcb..984f28315d2a 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -468,7 +468,7 @@ v9fs_vfs_getattr_dotl(const struct path *path, struct kstat *stat,
- 	p9_debug(P9_DEBUG_VFS, "dentry: %p\n", dentry);
- 	v9ses = v9fs_dentry2v9ses(dentry);
- 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE) {
--		generic_fillattr(d_inode(dentry), stat);
-+		generic_fillattr(&init_user_ns, d_inode(dentry), stat);
++	mnt_userns = mnt_user_ns(nd->path.mnt);
++	i_uid = i_uid_into_mnt(mnt_userns, inode);
+ 	/* Allowed if owner and follower match. */
+-	if (uid_eq(current_cred()->fsuid, inode->i_uid))
++	if (uid_eq(current_cred()->fsuid, i_uid))
  		return 0;
- 	}
- 	fid = v9fs_fid_lookup(dentry);
-@@ -485,7 +485,7 @@ v9fs_vfs_getattr_dotl(const struct path *path, struct kstat *stat,
- 		return PTR_ERR(st);
  
- 	v9fs_stat2inode_dotl(st, d_inode(dentry), 0);
--	generic_fillattr(d_inode(dentry), stat);
-+	generic_fillattr(&init_user_ns, d_inode(dentry), stat);
- 	/* Change block size to what the server returned */
- 	stat->blksize = st->st_blksize;
+ 	/* Allowed if parent directory not sticky and world-writable. */
+@@ -1020,7 +1025,7 @@ static inline int may_follow_link(struct nameidata *nd, const struct inode *inod
+ 		return 0;
  
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index b0d7b892090d..795ee5cb3817 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -745,7 +745,7 @@ int afs_getattr(const struct path *path, struct kstat *stat,
+ 	/* Allowed if parent directory and link owner match. */
+-	if (uid_valid(nd->dir_uid) && uid_eq(nd->dir_uid, inode->i_uid))
++	if (uid_valid(nd->dir_uid) && uid_eq(nd->dir_uid, i_uid))
+ 		return 0;
  
- 	do {
- 		read_seqbegin_or_lock(&vnode->cb_lock, &seq);
--		generic_fillattr(inode, stat);
-+		generic_fillattr(&init_user_ns, inode, stat);
- 		if (test_bit(AFS_VNODE_SILLY_DELETED, &vnode->flags) &&
- 		    stat->nlink > 0)
- 			stat->nlink -= 1;
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 97bbf80ee12d..c8045c9d51d9 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8841,7 +8841,7 @@ static int btrfs_getattr(const struct path *path, struct kstat *stat,
- 				  STATX_ATTR_IMMUTABLE |
- 				  STATX_ATTR_NODUMP);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	stat->dev = BTRFS_I(inode)->root->anon_dev;
- 
- 	spin_lock(&BTRFS_I(inode)->lock);
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 145e26a4ddbb..179a2bb88538 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2385,7 +2385,7 @@ int ceph_getattr(const struct path *path, struct kstat *stat,
- 			return err;
- 	}
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	stat->ino = ceph_present_inode(inode);
- 
- 	/*
-diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-index 27554f71f744..374abce7efaf 100644
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -2408,7 +2408,7 @@ int cifs_getattr(const struct path *path, struct kstat *stat,
- 			return rc;
- 	}
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	stat->blksize = cifs_sb->ctx->bsize;
- 	stat->ino = CIFS_I(inode)->uniqueid;
- 
-diff --git a/fs/coda/inode.c b/fs/coda/inode.c
-index b1c70e2b9b1e..4d113e191cb8 100644
---- a/fs/coda/inode.c
-+++ b/fs/coda/inode.c
-@@ -256,7 +256,7 @@ int coda_getattr(const struct path *path, struct kstat *stat,
- {
- 	int err = coda_revalidate_inode(d_inode(path->dentry));
- 	if (!err)
--		generic_fillattr(d_inode(path->dentry), stat);
-+		generic_fillattr(&init_user_ns, d_inode(path->dentry), stat);
- 	return err;
- }
- 
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 7de9fda25dad..0a218d7c3023 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -975,7 +975,7 @@ static int ecryptfs_getattr_link(const struct path *path, struct kstat *stat,
- 
- 	mount_crypt_stat = &ecryptfs_superblock_to_private(
- 						dentry->d_sb)->mount_crypt_stat;
--	generic_fillattr(d_inode(dentry), stat);
-+	generic_fillattr(&init_user_ns, d_inode(dentry), stat);
- 	if (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) {
- 		char *target;
- 		size_t targetsiz;
-@@ -1003,7 +1003,7 @@ static int ecryptfs_getattr(const struct path *path, struct kstat *stat,
- 	if (!rc) {
- 		fsstack_copy_attr_all(d_inode(dentry),
- 				      ecryptfs_inode_to_lower(d_inode(dentry)));
--		generic_fillattr(d_inode(dentry), stat);
-+		generic_fillattr(&init_user_ns, d_inode(dentry), stat);
- 		stat->blocks = lower_stat.blocks;
- 	}
- 	return rc;
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 3e21c0e8adae..083818063ac6 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -343,7 +343,7 @@ int erofs_getattr(const struct path *path, struct kstat *stat,
- 	stat->attributes_mask |= (STATX_ATTR_COMPRESSED |
- 				  STATX_ATTR_IMMUTABLE);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index ace35aa8e64b..e9705b3295d3 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -273,7 +273,7 @@ int exfat_getattr(const struct path *path, struct kstat *stat,
- 	struct inode *inode = d_backing_inode(path->dentry);
- 	struct exfat_inode_info *ei = EXFAT_I(inode);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	exfat_truncate_atime(&stat->atime);
- 	stat->result_mask |= STATX_BTIME;
- 	stat->btime.tv_sec = ei->i_crtime.tv_sec;
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 9de813635d8d..3d8acafca8ce 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -1660,7 +1660,7 @@ int ext2_getattr(const struct path *path, struct kstat *stat,
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 55990b74b9e4..69caa7b939d3 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5567,7 +5567,7 @@ int ext4_getattr(const struct path *path, struct kstat *stat,
- 				  STATX_ATTR_NODUMP |
- 				  STATX_ATTR_VERITY);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ba18b7e28d51..5020c740f068 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -820,7 +820,7 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
- 				  STATX_ATTR_NODUMP |
- 				  STATX_ATTR_VERITY);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 
- 	/* we need to show initial sectors used for inline_data/dentries */
- 	if ((S_ISREG(inode->i_mode) && f2fs_has_inline_data(inode)) ||
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 805b501467e9..f7e04f533d31 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -398,7 +398,7 @@ int fat_getattr(const struct path *path, struct kstat *stat,
- 		u32 request_mask, unsigned int flags)
- {
- 	struct inode *inode = d_inode(path->dentry);
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	stat->blksize = MSDOS_SB(inode->i_sb)->cluster_size;
- 
- 	if (MSDOS_SB(inode->i_sb)->options.nfs == FAT_NFS_NOSTALE_RO) {
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index eb648ed19312..f2f252e3da7f 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1087,7 +1087,7 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
- 		forget_all_cached_acls(inode);
- 		err = fuse_do_getattr(inode, stat, file);
- 	} else if (stat) {
--		generic_fillattr(inode, stat);
-+		generic_fillattr(&init_user_ns, inode, stat);
- 		stat->mode = fi->orig_i_mode;
- 		stat->ino = fi->orig_ino;
- 	}
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index aef2f7587392..9b773b2b9d32 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -2049,7 +2049,7 @@ static int gfs2_getattr(const struct path *path, struct kstat *stat,
- 				  STATX_ATTR_IMMUTABLE |
- 				  STATX_ATTR_NODUMP);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 
- 	if (gfs2_holder_initialized(&gh))
- 		gfs2_glock_dq_uninit(&gh);
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index ffa137f8234e..642e067d8fe8 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -286,7 +286,7 @@ int hfsplus_getattr(const struct path *path, struct kstat *stat,
- 	stat->attributes_mask |= STATX_ATTR_APPEND | STATX_ATTR_IMMUTABLE |
- 				 STATX_ATTR_NODUMP;
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index 7e44052b42e1..032d3d7546d8 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -193,7 +193,7 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
- 	kernfs_refresh_inode(kn, inode);
- 	mutex_unlock(&kernfs_mutex);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index a73fe109403c..508e9ea8e6f3 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -31,7 +31,7 @@ int simple_getattr(const struct path *path, struct kstat *stat,
- 		   u32 request_mask, unsigned int query_flags)
- {
- 	struct inode *inode = d_inode(path->dentry);
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	stat->blocks = inode->i_mapping->nrpages << (PAGE_SHIFT - 9);
- 	return 0;
- }
-@@ -1304,7 +1304,7 @@ static int empty_dir_getattr(const struct path *path, struct kstat *stat,
- 			     u32 request_mask, unsigned int query_flags)
- {
- 	struct inode *inode = d_inode(path->dentry);
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index 34f546404aa1..91c81d2fc90d 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -658,7 +658,7 @@ int minix_getattr(const struct path *path, struct kstat *stat,
- 	struct super_block *sb = path->dentry->d_sb;
- 	struct inode *inode = d_inode(path->dentry);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	if (INODE_VERSION(inode) == MINIX_V1)
- 		stat->blocks = (BLOCK_SIZE / 512) * V1_minix_blocks(stat->size, sb);
- 	else
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 522aa10a1a3e..cab123ec1664 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -857,7 +857,7 @@ int nfs_getattr(const struct path *path, struct kstat *stat,
- 	/* Only return attributes that were revalidated. */
- 	stat->result_mask &= request_mask;
- out_no_update:
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	stat->ino = nfs_compat_user_ino64(NFS_FILEID(inode));
- 	if (S_ISDIR(inode->i_mode))
- 		stat->blksize = NFS_SERVER(inode)->dtsize;
-diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-index 2bcbe38afe2e..55fc711e368b 100644
---- a/fs/nfs/namespace.c
-+++ b/fs/nfs/namespace.c
-@@ -213,7 +213,7 @@ nfs_namespace_getattr(const struct path *path, struct kstat *stat,
- {
- 	if (NFS_FH(d_inode(path->dentry))->size != 0)
- 		return nfs_getattr(path, stat, request_mask, query_flags);
--	generic_fillattr(d_inode(path->dentry), stat);
-+	generic_fillattr(&init_user_ns, d_inode(path->dentry), stat);
- 	return 0;
- }
- 
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index cabf355b148f..a070d4c9b6ed 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -1313,7 +1313,7 @@ int ocfs2_getattr(const struct path *path, struct kstat *stat,
- 		goto bail;
- 	}
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	/*
- 	 * If there is inline data in the inode, the inode will normally not
- 	 * have data blocks allocated (it may have an external xattr block).
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 563fe9ab8eb2..b94032f77e61 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -903,7 +903,7 @@ int orangefs_getattr(const struct path *path, struct kstat *stat,
- 	ret = orangefs_inode_getattr(inode,
- 	    request_mask & STATX_SIZE ? ORANGEFS_GETATTR_SIZE : 0);
- 	if (ret == 0) {
--		generic_fillattr(inode, stat);
-+		generic_fillattr(&init_user_ns, inode, stat);
- 
- 		/* override block size reported to stat */
- 		if (!(request_mask & STATX_SIZE))
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index bb4e63a3684f..d45aa68c1f17 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1934,7 +1934,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
- 	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
- 	struct task_struct *task;
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 
- 	stat->uid = GLOBAL_ROOT_UID;
- 	stat->gid = GLOBAL_ROOT_GID;
-@@ -3803,7 +3803,7 @@ static int proc_task_getattr(const struct path *path, struct kstat *stat,
- {
- 	struct inode *inode = d_inode(path->dentry);
- 	struct task_struct *p = get_proc_task(inode);
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 
- 	if (p) {
- 		stat->nlink += get_nr_threads(p);
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 6d4fabab8aa7..0db96a761149 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -145,7 +145,7 @@ static int proc_getattr(const struct path *path, struct kstat *stat,
- 		}
- 	}
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-index 18601042af99..4aef49ccf571 100644
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -297,7 +297,7 @@ static int proc_tgid_net_getattr(const struct path *path, struct kstat *stat,
- 
- 	net = get_proc_task_net(inode);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 
- 	if (net != NULL) {
- 		stat->nlink = net->proc_net->nlink;
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index ec67dbc1f705..87c828348140 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -840,7 +840,7 @@ static int proc_sys_getattr(const struct path *path, struct kstat *stat,
- 	if (IS_ERR(head))
- 		return PTR_ERR(head);
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	if (table)
- 		stat->mode = (stat->mode & S_IFMT) | table->mode;
- 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 5e444d4f9717..244e4b6f15ef 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -311,7 +311,7 @@ void __init proc_root_init(void)
- static int proc_root_getattr(const struct path *path, struct kstat *stat,
- 			     u32 request_mask, unsigned int query_flags)
- {
--	generic_fillattr(d_inode(path->dentry), stat);
-+	generic_fillattr(&init_user_ns, d_inode(path->dentry), stat);
- 	stat->nlink = proc_root.nlink + nr_processes();
- 	return 0;
- }
-diff --git a/fs/stat.c b/fs/stat.c
-index dacecdda2e79..8c58c37ef1ab 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -26,21 +26,29 @@
+ 	if (nd->flags & LOOKUP_RCU)
+@@ -1033,6 +1038,7 @@ static inline int may_follow_link(struct nameidata *nd, const struct inode *inod
  
  /**
-  * generic_fillattr - Fill in the basic attributes from the inode struct
-- * @inode: Inode to use as the source
-- * @stat: Where to fill in the attributes
+  * safe_hardlink_source - Check for safe hardlink conditions
 + * @mnt_userns:	user namespace of the mount the inode was found from
-+ * @inode:	Inode to use as the source
-+ * @stat:	Where to fill in the attributes
+  * @inode: the source inode to hardlink from
   *
-  * Fill in the basic attributes in the kstat structure from data that's to be
-  * found on the VFS inode structure.  This is the default if no getattr inode
-  * operation is supplied.
-+ *
+  * Return false if at least one of the following conditions:
+@@ -1043,7 +1049,8 @@ static inline int may_follow_link(struct nameidata *nd, const struct inode *inod
+  *
+  * Otherwise returns true.
+  */
+-static bool safe_hardlink_source(struct inode *inode)
++static bool safe_hardlink_source(struct user_namespace *mnt_userns,
++				 struct inode *inode)
+ {
+ 	umode_t mode = inode->i_mode;
+ 
+@@ -1060,7 +1067,7 @@ static bool safe_hardlink_source(struct inode *inode)
+ 		return false;
+ 
+ 	/* Hardlinking to unreadable or unwritable sources is dangerous. */
+-	if (inode_permission(&init_user_ns, inode, MAY_READ | MAY_WRITE))
++	if (inode_permission(mnt_userns, inode, MAY_READ | MAY_WRITE))
+ 		return false;
+ 
+ 	return true;
+@@ -1068,6 +1075,7 @@ static bool safe_hardlink_source(struct inode *inode)
+ 
+ /**
+  * may_linkat - Check permissions for creating a hardlink
++ * @mnt_userns:	user namespace of the mount the inode was found from
+  * @link: the source to hardlink from
+  *
+  * Block hardlink when all of:
+@@ -1076,14 +1084,21 @@ static bool safe_hardlink_source(struct inode *inode)
+  *  - hardlink source is unsafe (see safe_hardlink_source() above)
+  *  - not CAP_FOWNER in a namespace with the inode owner uid mapped
+  *
 + * If the inode has been found through an idmapped mount the user namespace of
 + * the vfsmount must be passed through @mnt_userns. This function will then take
-+ * care to map the inode according to @mnt_userns before filling in the uid and
-+ * gid filds. On non-idmapped mounts or if permission checking is to be
-+ * performed on the raw inode simply passs init_user_ns.
++ * care to map the inode according to @mnt_userns before checking permissions. On
++ * non-idmapped mounts or if permission checking is to be performed on the raw
++ * inode simply passs init_user_ns.
++ *
+  * Returns 0 if successful, -ve on error.
   */
--void generic_fillattr(struct inode *inode, struct kstat *stat)
-+void generic_fillattr(struct user_namespace *mnt_userns, struct inode *inode,
-+		      struct kstat *stat)
+-int may_linkat(struct path *link)
++int may_linkat(struct user_namespace *mnt_userns, struct path *link)
  {
- 	stat->dev = inode->i_sb->s_dev;
- 	stat->ino = inode->i_ino;
- 	stat->mode = inode->i_mode;
- 	stat->nlink = inode->i_nlink;
--	stat->uid = inode->i_uid;
--	stat->gid = inode->i_gid;
-+	stat->uid = i_uid_into_mnt(mnt_userns, inode);
-+	stat->gid = i_gid_into_mnt(mnt_userns, inode);
- 	stat->rdev = inode->i_rdev;
- 	stat->size = i_size_read(inode);
- 	stat->atime = inode->i_atime;
-@@ -87,7 +95,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 		return inode->i_op->getattr(path, stat, request_mask,
- 					    query_flags);
+ 	struct inode *inode = link->dentry->d_inode;
  
--	generic_fillattr(inode, stat);
-+	generic_fillattr(mnt_user_ns(path->mnt), inode, stat);
- 	return 0;
- }
- EXPORT_SYMBOL(vfs_getattr_nosec);
-diff --git a/fs/sysv/itree.c b/fs/sysv/itree.c
-index bcb67b0cabe7..83cffab6955f 100644
---- a/fs/sysv/itree.c
-+++ b/fs/sysv/itree.c
-@@ -445,7 +445,7 @@ int sysv_getattr(const struct path *path, struct kstat *stat,
- 		 u32 request_mask, unsigned int flags)
+ 	/* Inode writeback is not safe when the uid or gid are invalid. */
+-	if (!uid_valid(inode->i_uid) || !gid_valid(inode->i_gid))
++	if (!uid_valid(i_uid_into_mnt(mnt_userns, inode)) ||
++	    !gid_valid(i_gid_into_mnt(mnt_userns, inode)))
+ 		return -EOVERFLOW;
+ 
+ 	if (!sysctl_protected_hardlinks)
+@@ -1092,7 +1107,8 @@ int may_linkat(struct path *link)
+ 	/* Source inode owner (or CAP_FOWNER) can hardlink all they like,
+ 	 * otherwise, it must be a safe source.
+ 	 */
+-	if (safe_hardlink_source(inode) || inode_owner_or_capable(&init_user_ns, inode))
++	if (safe_hardlink_source(mnt_userns, inode) ||
++	    inode_owner_or_capable(mnt_userns, inode))
+ 		return 0;
+ 
+ 	audit_log_path_denied(AUDIT_ANOM_LINK, "linkat");
+@@ -1103,6 +1119,7 @@ int may_linkat(struct path *link)
+  * may_create_in_sticky - Check whether an O_CREAT open in a sticky directory
+  *			  should be allowed, or not, on files that already
+  *			  exist.
++ * @mnt_userns:	user namespace of the mount the inode was found from
+  * @dir_mode: mode bits of directory
+  * @dir_uid: owner of directory
+  * @inode: the inode of the file to open
+@@ -1118,16 +1135,25 @@ int may_linkat(struct path *link)
+  * the directory doesn't have to be world writable: being group writable will
+  * be enough.
+  *
++ * If the inode has been found through an idmapped mount the user namespace of
++ * the vfsmount must be passed through @mnt_userns. This function will then take
++ * care to map the inode according to @mnt_userns before checking permissions. On
++ * non-idmapped mounts or if permission checking is to be performed on the raw
++ * inode simply passs init_user_ns.
++ *
+  * Returns 0 if the open is allowed, -ve on error.
+  */
+-static int may_create_in_sticky(umode_t dir_mode, kuid_t dir_uid,
+-				struct inode * const inode)
++static int may_create_in_sticky(struct user_namespace *mnt_userns,
++				struct nameidata *nd, struct inode *const inode)
  {
- 	struct super_block *s = path->dentry->d_sb;
--	generic_fillattr(d_inode(path->dentry), stat);
-+	generic_fillattr(&init_user_ns, d_inode(path->dentry), stat);
- 	stat->blocks = (s->s_blocksize / 512) * sysv_nblocks(s, stat->size);
- 	stat->blksize = s->s_blocksize;
- 	return 0;
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 694e7714545b..a8881ed61620 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -1589,7 +1589,7 @@ int ubifs_getattr(const struct path *path, struct kstat *stat,
- 				STATX_ATTR_ENCRYPTED |
- 				STATX_ATTR_IMMUTABLE);
++	umode_t dir_mode = nd->dir_mode;
++	kuid_t dir_uid = nd->dir_uid;
++
+ 	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
+ 	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
+ 	    likely(!(dir_mode & S_ISVTX)) ||
+-	    uid_eq(inode->i_uid, dir_uid) ||
+-	    uid_eq(current_fsuid(), inode->i_uid))
++	    uid_eq(i_uid_into_mnt(mnt_userns, inode), dir_uid) ||
++	    uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)))
+ 		return 0;
  
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	stat->blksize = UBIFS_BLOCK_SIZE;
- 	stat->size = ui->ui_size;
- 
-diff --git a/fs/udf/symlink.c b/fs/udf/symlink.c
-index c973db239604..54a44d1f023c 100644
---- a/fs/udf/symlink.c
-+++ b/fs/udf/symlink.c
-@@ -159,7 +159,7 @@ static int udf_symlink_getattr(const struct path *path, struct kstat *stat,
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct page *page;
- 
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
- 	page = read_mapping_page(inode->i_mapping, 0, NULL);
- 	if (IS_ERR(page))
- 		return PTR_ERR(page);
-diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
-index 018057546067..d2cd1c99f48e 100644
---- a/fs/vboxsf/utils.c
-+++ b/fs/vboxsf/utils.c
-@@ -233,7 +233,7 @@ int vboxsf_getattr(const struct path *path, struct kstat *kstat,
- 	if (err)
- 		return err;
- 
--	generic_fillattr(d_inode(dentry), kstat);
-+	generic_fillattr(&init_user_ns, d_inode(dentry), kstat);
- 	return 0;
+ 	if (likely(dir_mode & 0002) ||
+@@ -1617,17 +1643,18 @@ static struct dentry *lookup_slow(const struct qstr *name,
+ 	return res;
  }
+ 
+-static inline int may_lookup(struct nameidata *nd)
++static inline int may_lookup(struct user_namespace *mnt_userns,
++			     struct nameidata *nd)
+ {
+ 	if (nd->flags & LOOKUP_RCU) {
+-		int err = inode_permission(&init_user_ns, nd->inode,
++		int err = inode_permission(mnt_userns, nd->inode,
+ 					   MAY_EXEC | MAY_NOT_BLOCK);
+ 		if (err != -ECHILD)
+ 			return err;
+ 		if (unlazy_walk(nd))
+ 			return -ECHILD;
+ 	}
+-	return inode_permission(&init_user_ns, nd->inode, MAY_EXEC);
++	return inode_permission(mnt_userns, nd->inode, MAY_EXEC);
+ }
+ 
+ static int reserve_stack(struct nameidata *nd, struct path *link, unsigned seq)
+@@ -2180,7 +2207,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ 		u64 hash_len;
+ 		int type;
+ 
+-		err = may_lookup(nd);
++		err = may_lookup(&init_user_ns, nd);
+ 		if (err)
+ 			return err;
+ 
+@@ -2228,7 +2255,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ OK:
+ 			/* pathname or trailing symlink, done */
+ 			if (!depth) {
+-				nd->dir_uid = nd->inode->i_uid;
++				nd->dir_uid = i_uid_into_mnt(&init_user_ns, nd->inode);
+ 				nd->dir_mode = nd->inode->i_mode;
+ 				nd->flags &= ~LOOKUP_PARENT;
+ 				return 0;
+@@ -2706,15 +2733,16 @@ int user_path_at_empty(int dfd, const char __user *name, unsigned flags,
+ }
+ EXPORT_SYMBOL(user_path_at_empty);
+ 
+-int __check_sticky(struct inode *dir, struct inode *inode)
++int __check_sticky(struct user_namespace *mnt_userns, struct inode *dir,
++		   struct inode *inode)
+ {
+ 	kuid_t fsuid = current_fsuid();
+ 
+-	if (uid_eq(inode->i_uid, fsuid))
++	if (uid_eq(i_uid_into_mnt(mnt_userns, inode), fsuid))
+ 		return 0;
+-	if (uid_eq(dir->i_uid, fsuid))
++	if (uid_eq(i_uid_into_mnt(mnt_userns, dir), fsuid))
+ 		return 0;
+-	return !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FOWNER);
++	return !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FOWNER);
+ }
+ EXPORT_SYMBOL(__check_sticky);
+ 
+@@ -2738,7 +2766,8 @@ EXPORT_SYMBOL(__check_sticky);
+  * 11. We don't allow removal of NFS sillyrenamed files; it's handled by
+  *     nfs_async_unlink().
+  */
+-static int may_delete(struct inode *dir, struct dentry *victim, bool isdir)
++static int may_delete(struct user_namespace *mnt_userns, struct inode *dir,
++		      struct dentry *victim, bool isdir)
+ {
+ 	struct inode *inode = d_backing_inode(victim);
+ 	int error;
+@@ -2750,19 +2779,21 @@ static int may_delete(struct inode *dir, struct dentry *victim, bool isdir)
+ 	BUG_ON(victim->d_parent->d_inode != dir);
+ 
+ 	/* Inode writeback is not safe when the uid or gid are invalid. */
+-	if (!uid_valid(inode->i_uid) || !gid_valid(inode->i_gid))
++	if (!uid_valid(i_uid_into_mnt(mnt_userns, inode)) ||
++	    !gid_valid(i_gid_into_mnt(mnt_userns, inode)))
+ 		return -EOVERFLOW;
+ 
+ 	audit_inode_child(dir, victim, AUDIT_TYPE_CHILD_DELETE);
+ 
+-	error = inode_permission(&init_user_ns, dir, MAY_WRITE | MAY_EXEC);
++	error = inode_permission(mnt_userns, dir, MAY_WRITE | MAY_EXEC);
+ 	if (error)
+ 		return error;
+ 	if (IS_APPEND(dir))
+ 		return -EPERM;
+ 
+-	if (check_sticky(dir, inode) || IS_APPEND(inode) ||
+-	    IS_IMMUTABLE(inode) || IS_SWAPFILE(inode) || HAS_UNMAPPED_ID(inode))
++	if (check_sticky(mnt_userns, dir, inode) || IS_APPEND(inode) ||
++	    IS_IMMUTABLE(inode) || IS_SWAPFILE(inode) ||
++	    HAS_UNMAPPED_ID(mnt_userns, inode))
+ 		return -EPERM;
+ 	if (isdir) {
+ 		if (!d_is_dir(victim))
+@@ -2787,7 +2818,8 @@ static int may_delete(struct inode *dir, struct dentry *victim, bool isdir)
+  *  4. We should have write and exec permissions on dir
+  *  5. We can't do it if dir is immutable (done in permission())
+  */
+-static inline int may_create(struct inode *dir, struct dentry *child)
++static inline int may_create(struct user_namespace *mnt_userns,
++			     struct inode *dir, struct dentry *child)
+ {
+ 	struct user_namespace *s_user_ns;
+ 	audit_inode_child(dir, child, AUDIT_TYPE_CHILD_CREATE);
+@@ -2796,10 +2828,10 @@ static inline int may_create(struct inode *dir, struct dentry *child)
+ 	if (IS_DEADDIR(dir))
+ 		return -ENOENT;
+ 	s_user_ns = dir->i_sb->s_user_ns;
+-	if (!kuid_has_mapping(s_user_ns, current_fsuid()) ||
+-	    !kgid_has_mapping(s_user_ns, current_fsgid()))
++	if (!kuid_has_mapping(s_user_ns, fsuid_into_mnt(mnt_userns)) ||
++	    !kgid_has_mapping(s_user_ns, fsgid_into_mnt(mnt_userns)))
+ 		return -EOVERFLOW;
+-	return inode_permission(&init_user_ns, dir, MAY_WRITE | MAY_EXEC);
++	return inode_permission(mnt_userns, dir, MAY_WRITE | MAY_EXEC);
+ }
+ 
+ /*
+@@ -2849,7 +2881,7 @@ EXPORT_SYMBOL(unlock_rename);
+ int vfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 		bool want_excl)
+ {
+-	int error = may_create(dir, dentry);
++	int error = may_create(&init_user_ns, dir, dentry);
+ 	if (error)
+ 		return error;
+ 
+@@ -2872,7 +2904,7 @@ int vfs_mkobj(struct dentry *dentry, umode_t mode,
+ 		void *arg)
+ {
+ 	struct inode *dir = dentry->d_parent->d_inode;
+-	int error = may_create(dir, dentry);
++	int error = may_create(&init_user_ns, dir, dentry);
+ 	if (error)
+ 		return error;
+ 
+@@ -2894,7 +2926,8 @@ bool may_open_dev(const struct path *path)
+ 		!(path->mnt->mnt_sb->s_iflags & SB_I_NODEV);
+ }
+ 
+-static int may_open(const struct path *path, int acc_mode, int flag)
++static int may_open(struct user_namespace *mnt_userns, const struct path *path,
++		    int acc_mode, int flag)
+ {
+ 	struct dentry *dentry = path->dentry;
+ 	struct inode *inode = dentry->d_inode;
+@@ -2929,7 +2962,7 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+ 		break;
+ 	}
+ 
+-	error = inode_permission(&init_user_ns, inode, MAY_OPEN | acc_mode);
++	error = inode_permission(mnt_userns, inode, MAY_OPEN | acc_mode);
+ 	if (error)
+ 		return error;
+ 
+@@ -2944,7 +2977,7 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+ 	}
+ 
+ 	/* O_NOATIME can only be set by the owner or superuser */
+-	if (flag & O_NOATIME && !inode_owner_or_capable(&init_user_ns, inode))
++	if (flag & O_NOATIME && !inode_owner_or_capable(mnt_userns, inode))
+ 		return -EPERM;
+ 
+ 	return 0;
+@@ -2979,7 +3012,9 @@ static inline int open_to_namei_flags(int flag)
+ 	return flag;
+ }
+ 
+-static int may_o_create(const struct path *dir, struct dentry *dentry, umode_t mode)
++static int may_o_create(struct user_namespace *mnt_userns,
++			const struct path *dir, struct dentry *dentry,
++			umode_t mode)
+ {
+ 	struct user_namespace *s_user_ns;
+ 	int error = security_path_mknod(dir, dentry, mode, 0);
+@@ -2987,11 +3022,11 @@ static int may_o_create(const struct path *dir, struct dentry *dentry, umode_t m
+ 		return error;
+ 
+ 	s_user_ns = dir->dentry->d_sb->s_user_ns;
+-	if (!kuid_has_mapping(s_user_ns, current_fsuid()) ||
+-	    !kgid_has_mapping(s_user_ns, current_fsgid()))
++	if (!kuid_has_mapping(s_user_ns, fsuid_into_mnt(mnt_userns)) ||
++	    !kgid_has_mapping(s_user_ns, fsgid_into_mnt(mnt_userns)))
+ 		return -EOVERFLOW;
+ 
+-	error = inode_permission(&init_user_ns, dir->dentry->d_inode,
++	error = inode_permission(mnt_userns, dir->dentry->d_inode,
+ 				 MAY_WRITE | MAY_EXEC);
+ 	if (error)
+ 		return error;
+@@ -3124,7 +3159,8 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 		if (!IS_POSIXACL(dir->d_inode))
+ 			mode &= ~current_umask();
+ 		if (likely(got_write))
+-			create_error = may_o_create(&nd->path, dentry, mode);
++			create_error = may_o_create(&init_user_ns, &nd->path,
++						    dentry, mode);
+ 		else
+ 			create_error = -EROFS;
+ 	}
+@@ -3285,7 +3321,7 @@ static int do_open(struct nameidata *nd,
+ 			return -EEXIST;
+ 		if (d_is_dir(nd->path.dentry))
+ 			return -EISDIR;
+-		error = may_create_in_sticky(nd->dir_mode, nd->dir_uid,
++		error = may_create_in_sticky(&init_user_ns, nd,
+ 					     d_backing_inode(nd->path.dentry));
+ 		if (unlikely(error))
+ 			return error;
+@@ -3305,7 +3341,7 @@ static int do_open(struct nameidata *nd,
+ 			return error;
+ 		do_truncate = true;
+ 	}
+-	error = may_open(&nd->path, acc_mode, open_flag);
++	error = may_open(&init_user_ns, &nd->path, acc_mode, open_flag);
+ 	if (!error && !(file->f_mode & FMODE_OPENED))
+ 		error = vfs_open(&nd->path, file);
+ 	if (!error)
+@@ -3380,7 +3416,7 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
+ 	path.dentry = child;
+ 	audit_inode(nd->name, child, 0);
+ 	/* Don't check for other permissions, the inode was just created */
+-	error = may_open(&path, 0, op->open_flag);
++	error = may_open(&init_user_ns, &path, 0, op->open_flag);
+ 	if (error)
+ 		goto out2;
+ 	file->f_path.mnt = path.mnt;
+@@ -3587,7 +3623,7 @@ EXPORT_SYMBOL(user_path_create);
+ int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+ {
+ 	bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
+-	int error = may_create(dir, dentry);
++	int error = may_create(&init_user_ns, dir, dentry);
+ 
+ 	if (error)
+ 		return error;
+@@ -3688,7 +3724,7 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
+ 
+ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ {
+-	int error = may_create(dir, dentry);
++	int error = may_create(&init_user_ns, dir, dentry);
+ 	unsigned max_links = dir->i_sb->s_max_links;
+ 
+ 	if (error)
+@@ -3749,7 +3785,7 @@ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+ 
+ int vfs_rmdir(struct inode *dir, struct dentry *dentry)
+ {
+-	int error = may_delete(dir, dentry, 1);
++	int error = may_delete(&init_user_ns, dir, dentry, 1);
+ 
+ 	if (error)
+ 		return error;
+@@ -3871,7 +3907,7 @@ SYSCALL_DEFINE1(rmdir, const char __user *, pathname)
+ int vfs_unlink(struct inode *dir, struct dentry *dentry, struct inode **delegated_inode)
+ {
+ 	struct inode *target = dentry->d_inode;
+-	int error = may_delete(dir, dentry, 0);
++	int error = may_delete(&init_user_ns, dir, dentry, 0);
+ 
+ 	if (error)
+ 		return error;
+@@ -4003,7 +4039,7 @@ SYSCALL_DEFINE1(unlink, const char __user *, pathname)
+ 
+ int vfs_symlink(struct inode *dir, struct dentry *dentry, const char *oldname)
+ {
+-	int error = may_create(dir, dentry);
++	int error = may_create(&init_user_ns, dir, dentry);
+ 
+ 	if (error)
+ 		return error;
+@@ -4092,7 +4128,7 @@ int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_de
+ 	if (!inode)
+ 		return -ENOENT;
+ 
+-	error = may_create(dir, new_dentry);
++	error = may_create(&init_user_ns, dir, new_dentry);
+ 	if (error)
+ 		return error;
+ 
+@@ -4109,7 +4145,7 @@ int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_de
+ 	 * be writen back improperly if their true value is unknown to
+ 	 * the vfs.
+ 	 */
+-	if (HAS_UNMAPPED_ID(inode))
++	if (HAS_UNMAPPED_ID(&init_user_ns, inode))
+ 		return -EPERM;
+ 	if (!dir->i_op->link)
+ 		return -EPERM;
+@@ -4191,7 +4227,7 @@ static int do_linkat(int olddfd, const char __user *oldname, int newdfd,
+ 	error = -EXDEV;
+ 	if (old_path.mnt != new_path.mnt)
+ 		goto out_dput;
+-	error = may_linkat(&old_path);
++	error = may_linkat(&init_user_ns, &old_path);
+ 	if (unlikely(error))
+ 		goto out_dput;
+ 	error = security_path_link(old_path.dentry, &new_path, new_dentry);
+@@ -4284,6 +4320,7 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	       struct inode **delegated_inode, unsigned int flags)
+ {
+ 	int error;
++	struct user_namespace *mnt_userns = &init_user_ns;
+ 	bool is_dir = d_is_dir(old_dentry);
+ 	struct inode *source = old_dentry->d_inode;
+ 	struct inode *target = new_dentry->d_inode;
+@@ -4294,19 +4331,19 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	if (source == target)
+ 		return 0;
+ 
+-	error = may_delete(old_dir, old_dentry, is_dir);
++	error = may_delete(mnt_userns, old_dir, old_dentry, is_dir);
+ 	if (error)
+ 		return error;
+ 
+ 	if (!target) {
+-		error = may_create(new_dir, new_dentry);
++		error = may_create(mnt_userns, new_dir, new_dentry);
+ 	} else {
+ 		new_is_dir = d_is_dir(new_dentry);
+ 
+ 		if (!(flags & RENAME_EXCHANGE))
+-			error = may_delete(new_dir, new_dentry, is_dir);
++			error = may_delete(mnt_userns, new_dir, new_dentry, is_dir);
+ 		else
+-			error = may_delete(new_dir, new_dentry, new_is_dir);
++			error = may_delete(mnt_userns, new_dir, new_dentry, new_is_dir);
+ 	}
+ 	if (error)
+ 		return error;
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 03afd803e50b..f0bfe207ebab 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -98,7 +98,7 @@ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+ 		 * to be writen back improperly if their true value is
+ 		 * unknown to the vfs.
+ 		 */
+-		if (HAS_UNMAPPED_ID(inode))
++		if (HAS_UNMAPPED_ID(mnt_userns, inode))
+ 			return -EPERM;
+ 	}
  
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 89e41a821bad..e4876e373636 100644
+index e4876e373636..e7c802478730 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -3141,7 +3141,7 @@ extern int __page_symlink(struct inode *inode, const char *symname, int len,
- extern int page_symlink(struct inode *inode, const char *symname, int len);
- extern const struct inode_operations page_symlink_inode_operations;
- extern void kfree_link(void *);
--extern void generic_fillattr(struct inode *, struct kstat *);
-+extern void generic_fillattr(struct user_namespace *, struct inode *, struct kstat *);
- extern int vfs_getattr_nosec(const struct path *, struct kstat *, u32, unsigned int);
- extern int vfs_getattr(const struct path *, struct kstat *, u32, unsigned int);
- void __inode_add_bytes(struct inode *inode, loff_t bytes);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 23b8e9c15a42..339d5530d3a9 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1072,7 +1072,7 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
- 		shmem_recalc_inode(inode);
- 		spin_unlock_irq(&info->lock);
- 	}
--	generic_fillattr(inode, stat);
-+	generic_fillattr(&init_user_ns, inode, stat);
+@@ -2083,9 +2083,11 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
+ #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
+ 				 (inode)->i_rdev == WHITEOUT_DEV)
  
- 	if (is_huge_enabled(sb_info))
- 		stat->blksize = HPAGE_PMD_SIZE;
+-static inline bool HAS_UNMAPPED_ID(struct inode *inode)
++static inline bool HAS_UNMAPPED_ID(struct user_namespace *mnt_userns,
++				   struct inode *inode)
+ {
+-	return !uid_valid(inode->i_uid) || !gid_valid(inode->i_gid);
++	return !uid_valid(i_uid_into_mnt(mnt_userns, inode)) ||
++	       !gid_valid(i_gid_into_mnt(mnt_userns, inode));
+ }
+ 
+ static inline enum rw_hint file_write_hint(struct file *file)
+@@ -2810,7 +2812,8 @@ extern int notify_change(struct user_namespace *, struct dentry *,
+ 			 struct iattr *, struct inode **);
+ extern int inode_permission(struct user_namespace *, struct inode *, int);
+ extern int generic_permission(struct user_namespace *, struct inode *, int);
+-extern int __check_sticky(struct inode *dir, struct inode *inode);
++extern int __check_sticky(struct user_namespace *mnt_userns, struct inode *dir,
++			  struct inode *inode);
+ 
+ static inline bool execute_ok(struct inode *inode)
+ {
+@@ -3429,12 +3432,13 @@ static inline bool is_sxid(umode_t mode)
+ 	return (mode & S_ISUID) || ((mode & S_ISGID) && (mode & S_IXGRP));
+ }
+ 
+-static inline int check_sticky(struct inode *dir, struct inode *inode)
++static inline int check_sticky(struct user_namespace *mnt_userns,
++			       struct inode *dir, struct inode *inode)
+ {
+ 	if (!(dir->i_mode & S_ISVTX))
+ 		return 0;
+ 
+-	return __check_sticky(dir, inode);
++	return __check_sticky(mnt_userns, dir, inode);
+ }
+ 
+ static inline void inode_has_no_xattr(struct inode *inode)
 -- 
 2.30.0
 
