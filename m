@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3DF2F3F50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7442F3F57
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 01:46:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404944AbhALWPx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 17:15:53 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44659 "EHLO
+        id S2405427AbhALWRr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 17:17:47 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:45133 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436786AbhALWPE (ORCPT
+        with ESMTP id S2438270AbhALWRo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 17:15:04 -0500
+        Tue, 12 Jan 2021 17:17:44 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kzRlb-0003bd-4v; Tue, 12 Jan 2021 22:03:55 +0000
+        id 1kzRld-0003bd-DP; Tue, 12 Jan 2021 22:03:57 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -54,23 +54,24 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 26/42] fcntl: handle idmapped mounts
-Date:   Tue, 12 Jan 2021 23:01:08 +0100
-Message-Id: <20210112220124.837960-27-christian.brauner@ubuntu.com>
+Subject: [PATCH v5 27/42] notify: handle idmapped mounts
+Date:   Tue, 12 Jan 2021 23:01:09 +0100
+Message-Id: <20210112220124.837960-28-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=79BfejdDgH1ldNWwCcl2HPMsbZ+QshNiYeRA/Vyc6bM=; m=FGBRqZW9kX+0QUrItseootp4lAC2KvbC1yD/fw9Fke8=; p=r9rGnrNawGj5+EUFX+OMWIOsx3y9vDbV91x7CMyj/xU=; g=764e8b39eed7589416effdff14896d5d3ca522b9
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YtwAKCRCRxhvAZXjcou+KAQDjcqJ hPMsUm7m6JtnmHbfrJ0uCy40qs0JWJolzFqK4ygD8CvIC1MHT52bxtny+mmxr9VZ096EUZAHp/ZXY Tdpyvg0=
+X-Patch-Hashes: v=1; h=sha256; i=m4dSb1vZZyg/6OFc1HkrzZoINWVfXi6fEBCLScH9qO8=; m=L41rIL7rk4mTNxft12WYGnDO5UtEpl+ZRCRY1mXiFD4=; p=llIL77s1jziMeTXIOvn4NXU9WjoPCcFX94fV2iuBuAE=; g=251f87afe6b169e0d3ecada7420b76fa9931ce4f
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YtwAKCRCRxhvAZXjcorEWAQC71l+ QLOLv+C2pRpl8uUNOVG8zRFchwfy6QElf2fHIyQEA4ZumE87DNQH0HrIO30nTP/w8RRjNy/LP24gV QqajeQg=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enable the setfl() helper to handle idmapped mounts by passing down the
-mount's user namespace. If the initial user namespace is passed nothing
-changes so non-idmapped mounts will see identical behavior as before.
+Enable notify implementations to handle idmapped mounts by passing down
+the mount's user namespace. If the initial user namespace is passed
+nothing changes so non-idmapped mounts will see identical behavior as
+before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -90,30 +91,44 @@ unchanged
 /* v5 */
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 ---
- fs/fcntl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/notify/fanotify/fanotify_user.c | 2 +-
+ fs/notify/inotify/inotify_user.c   | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 74d99731fd43..58706031e603 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -25,6 +25,7 @@
- #include <linux/user_namespace.h>
- #include <linux/memfd.h>
- #include <linux/compat.h>
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 4ca13fb33c7c..c60b8cc1f94d 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -702,7 +702,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+ 	}
+ 
+ 	/* you can only watch an inode if you have read permissions on it */
+-	ret = inode_permission(&init_user_ns, path->dentry->d_inode, MAY_READ);
++	ret = inode_permission(mnt_user_ns(path->mnt), path->dentry->d_inode, MAY_READ);
+ 	if (ret) {
+ 		path_put(path);
+ 		goto out;
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 18e7024207a9..cecff22549d7 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -31,6 +31,7 @@
+ #include <linux/wait.h>
+ #include <linux/memcontrol.h>
+ #include <linux/security.h>
 +#include <linux/mount.h>
  
- #include <linux/poll.h>
- #include <asm/siginfo.h>
-@@ -46,7 +47,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
- 
- 	/* O_NOATIME can only be set by the owner or superuser */
- 	if ((arg & O_NOATIME) && !(filp->f_flags & O_NOATIME))
--		if (!inode_owner_or_capable(&init_user_ns, inode))
-+		if (!inode_owner_or_capable(mnt_user_ns(filp->f_path.mnt), inode))
- 			return -EPERM;
- 
- 	/* required for strict SunOS emulation */
+ #include "inotify.h"
+ #include "../fdinfo.h"
+@@ -352,7 +353,7 @@ static int inotify_find_inode(const char __user *dirname, struct path *path,
+ 	if (error)
+ 		return error;
+ 	/* you can only watch an inode if you have read permissions on it */
+-	error = inode_permission(&init_user_ns, path->dentry->d_inode, MAY_READ);
++	error = inode_permission(mnt_user_ns(path->mnt), path->dentry->d_inode, MAY_READ);
+ 	if (error) {
+ 		path_put(path);
+ 		return error;
 -- 
 2.30.0
 
