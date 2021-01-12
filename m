@@ -2,76 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84C1F2F385A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 19:17:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D22362F38E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 19:32:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406134AbhALSRU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 13:17:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390926AbhALSRT (ORCPT
+        id S2404377AbhALScU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 13:32:20 -0500
+Received: from so254-31.mailgun.net ([198.61.254.31]:62561 "EHLO
+        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391672AbhALScT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 13:17:19 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E79B9C0617B1;
-        Tue, 12 Jan 2021 10:16:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9NZJmYiv3WvaLd4DekuUPhNFoe24SSZqwwyXq3L2EsE=; b=XEMEqV6SQPKTYXhyC7rWE0dTYx
-        EyaCqPCtJinetgHQJ5FwZJd+9k7uHqGzbYMGURYfgC9sdoWFWX5lBbosqX9t1NNaQZHuyz6b5mj+n
-        H6gwP83sjvqt1tgakFIPS6FfStjbOV21iBSCL1WwEJozn42dbIv05QSFuDusj8z6xz+OCDMSWh0wl
-        wiej+sOKoAfNQoMhmmA6onM7CuJ3zM9hP5a/i/I4bB7H6TwazCqQLDHtSC/8dmtSMMzq3ChfS/sdM
-        M6T4shIq6yV+/ey6IE4/t83CG/UAeS2c4/PKyo1pVgsC+ninMbpwnEUZb++z91rqzWNhYhqiSwauZ
-        lBz7zrLg==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1kzOD2-005AMI-M8; Tue, 12 Jan 2021 18:16:04 +0000
-Date:   Tue, 12 Jan 2021 18:16:00 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Avi Kivity <avi@scylladb.com>
-Cc:     Andres Freund <andres@anarazel.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
- extents?
-Message-ID: <20210112181600.GA1228497@infradead.org>
-References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
- <20210104181958.GE6908@magnolia>
- <20210104191058.sryksqjnjjnn5raa@alap3.anarazel.de>
- <f6f75f11-5d5b-ae63-d584-4b6f09ff401e@scylladb.com>
+        Tue, 12 Jan 2021 13:32:19 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1610476314; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=TUzx4xA1ScWYvWi9Xn7goti+UFU5enmnZ4wQmA91pBw=; b=D+fPG3HqmOxTcDBebUEm2igr4q4HsGToknW8KonVaXeU4x11RZHCrLZ4EHW6Uhv7RcdPUchb
+ Fu1Ll/OlMiB1V1DOqvEGu1GosSLjoob5pYpMaa2yXwGB++umE5mzycDdE5MnxZpo8ncF+fI+
+ y5ZRQWgjhcX21tc1QzpWOFf9eO0=
+X-Mailgun-Sending-Ip: 198.61.254.31
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n09.prod.us-east-1.postgun.com with SMTP id
+ 5ffdeb008fb3cda82f9f79b6 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 12 Jan 2021 18:31:28
+ GMT
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B21B8C433CA; Tue, 12 Jan 2021 18:31:27 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        NICE_REPLY_A,SPF_FAIL,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [192.168.1.10] (cpe-75-83-25-192.socal.res.rr.com [75.83.25.192])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sidgup)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E80B9C433ED;
+        Tue, 12 Jan 2021 18:31:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E80B9C433ED
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
+Subject: Re: PROBLEM: Firmware loader fallback mechanism no longer works with
+ sendfile
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     mcgrof@kernel.org, rafael@kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "psodagud@codeaurora.org" <psodagud@codeaurora.org>
+References: <7e6f44b1-a0d2-d1d1-9c11-dcea163f8f03@codeaurora.org>
+ <X/QJCgoLPhfECEmP@kroah.com>
+ <180bdfaf-8c84-6946-b46f-3729d4eb17cc@codeaurora.org>
+ <X/WSA7nmsUSrpsfr@kroah.com>
+ <62583aaa-d557-8c9a-5959-52c9efad1fe3@codeaurora.org>
+ <X/hv634I9JOoHZRk@kroah.com>
+From:   Siddharth Gupta <sidgup@codeaurora.org>
+Message-ID: <1adf9aa4-ed7e-8f05-a354-57419d61ec18@codeaurora.org>
+Date:   Tue, 12 Jan 2021 10:31:26 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6f75f11-5d5b-ae63-d584-4b6f09ff401e@scylladb.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <X/hv634I9JOoHZRk@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 04, 2021 at 09:57:48PM +0200, Avi Kivity wrote:
-> > I don't have a strong opinion on it. A complex userland application can
-> > do a bit better job managing queue depth etc, but otherwise I suspect
-> > doing the IO from kernel will win by a small bit. And the queue-depth
-> > issue presumably would be relevant for write-zeroes as well, making me
-> > lean towards just using the fallback.
-> > 
-> 
-> The new flag will avoid requiring DMA to transfer the entire file size, and
-> perhaps can be implemented in the device by just adjusting metadata. So
-> there is potential for the new flag to be much more efficient.
 
-We already support a WRITE_ZEROES operation, which many (but not all)
-NVMe devices and some SCSI devices support.  The blkdev_issue_zeroout
-helper can use those, or falls back to writing actual zeroes.
+On 1/8/2021 6:44 AM, Greg KH wrote:
+> On Thu, Jan 07, 2021 at 02:03:47PM -0800, Siddharth Gupta wrote:
+>> On 1/6/2021 2:33 AM, Greg KH wrote:
+>>>>>> Since the binary attributes don't support splice_{read,write} functions the
+>>>>>> calls to splice_{read,write} used the default kernel_{read,write} functions.
+>>>>>> With the above change this results in an -EINVAL return from
+>>>>>> do_splice_from[4].
+>>>>>>
+>>>>>> This essentially means that sendfile will not work for any binary attribute
+>>>>>> in the sysfs.
+>>>>> Have you tried fixing this with a patch much like what we did for the
+>>>>> proc files that needed this?  If not, can you?
+>>>> I am not aware of this fix, could you provide me a link for reference? I
+>>>> will try it out.
+>>> Look at the series of commits starting at fe33850ff798 ("proc: wire up
+>>> generic_file_splice_read for iter ops") for how this was fixed in procfs
+>>> as an example of what also needs to be done for binary sysfs files.
+>> I tried to follow these fixes, but I am unfamiliar with fs code. I don't see
+>> the generic_file_splice_write function anymore on newer kernels, also AFAICT
+>> kernfs_ops does not define {read,write}_iter operations. If the solution is
+>> simple and someone could provide the patches I would be happy to test them
+>> out. If not, some more information about how to proceed would be nice.
+> Can you try this tiny patch out below?
+Sorry for the delay, I tried out the patch, but I am still seeing the 
+error. Please take a look at these logs with
+android running in the userspace[1]:
 
-XFS already has a XFS_IOC_ALLOCSP64 that is defined to actually
-allocate written extents.  It does not currently use
-blkdev_issue_zeroout, but could be changed pretty trivially to do so.
+[   62.295056][  T249] remoteproc remoteproc1: powering up 
+xxxxxxxx.remoteproc-cdsp
+[   62.304138][  T249] remoteproc remoteproc1: Direct firmware load for 
+cdsp.mdt failed with error -2
+[   62.312976][  T249] remoteproc remoteproc1: Falling back to sysfs 
+fallback for: cdsp.mdt
+[   62.469748][  T394] ueventd: firmware: loading 'cdsp.mdt' for 
+'/devices/platform/soc/xxxxxxxx.remoteproc-cdsp/remoteproc/remoteproc1/cdsp.mdt'
+[   62.498700][  T394] ueventd: firmware: sendfile failed { 
+'/sys/devices/platform/soc/xxxxxxxx.remoteproc-cdsp/remoteproc/remoteproc1/cdsp.mdt', 
+'cdsp.mdt' }: Invalid argument
 
-> But note it will need to be plumbed down to md and dm to be generally
-> useful.
+Thanks,
+Sid
 
-DM and MD already support mddev_check_write_zeroes, at least for the
-usual targets.
+[1]: 
+https://android.googlesource.com/platform/system/core/+/refs/heads/master/init/firmware_handler.cpp#57
+>
+> thanks,
+>
+> greg k-h
+>
+> diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+> index f277d023ebcd..113bc816d430 100644
+> --- a/fs/kernfs/file.c
+> +++ b/fs/kernfs/file.c
+> @@ -968,6 +968,8 @@ const struct file_operations kernfs_file_fops = {
+>   	.release	= kernfs_fop_release,
+>   	.poll		= kernfs_fop_poll,
+>   	.fsync		= noop_fsync,
+> +	.splice_read	= generic_file_splice_read,
+> +	.splice_write	= iter_file_splice_write,
+>   };
+>   
+>   /**
