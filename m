@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3912F3029
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:05:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E2732F3016
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:05:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbhALNER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 08:04:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53814 "EHLO mail.kernel.org"
+        id S1728142AbhALNCy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 08:02:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405318AbhALM6f (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 07:58:35 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 316162311B;
-        Tue, 12 Jan 2021 12:58:02 +0000 (UTC)
+        id S2405420AbhALM6i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Jan 2021 07:58:38 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BC6EA2312D;
+        Tue, 12 Jan 2021 12:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610456283;
-        bh=sssGw7VAmhQ9zYNCAgQ46mvt8+d/n+n3c7UnO0Lb+nc=;
+        s=k20201202; t=1610456297;
+        bh=zPb3uoCMpMg0zIdBDDDosH3CoWb00JMVhzJ0D614Sfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YnoLO1heD023xFcmoWzZAY+JL/AQPvYLFlBfsBf3GRuUDF2rz4iGAUYY7wFhtwC0Q
-         M9b/IYgkerPKvMcza08cB3xohXV16YVjVFzrNB8qN9BUfM6kSX00a5HX1CsBpZgLxL
-         2KIq00T4ESgMh3KvKg1P5Zyll6e9lppVoDZ0ZZoT8XKO4zjuUTuMYBEubBO+MoFRV9
-         Oer+iCsjZNjJnyGLoazMhsHujcJ8wf4H5qctrhZtE+gNKZruO4pNZAg6wwO5dIUuwN
-         i+g5gbXJuFCNwJ3zmnZMJlrgn1zQI2uuD6nACVFl5n7Rgjv5CS/NLw1VcAeCqQPRvP
-         ImUm7f1Wk8LQw==
+        b=tnWZe7jYXbndqJEpcGrhQv7J97EqfEVJk9gB/OqwruJWD4KT6vXrn1LZkmCJb/TfL
+         L6k+CsN5GrPQZHDxUmIXS/LmiPmglS8AjlYfR28Wxl0Sgr99KfeCeQuvhwAfTUpcuR
+         sMtEzPkClMz4DATC+qGKiaaoiaKxfUilJkOIMqr3XufQjfAlCxzZb6OiPvhyAO9mxF
+         oP7DHzr6H2c9ygoxKrfwKYK98+PTeNx7fhR4wO2vu6kuWXT9A73fl2ijoNa4zmNj2c
+         QyCT+W+XlfanQxgLoygJ9w5GO1PYVN0TwEhQxwdCi6/jnHmC4Hhrg0nxg62SjlYM8h
+         ZZlEVqazWuh0Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
@@ -34,12 +34,12 @@ Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 09/13] arch/arc: add copy_user_page() to <asm/page.h> to fix build error on ARC
-Date:   Tue, 12 Jan 2021 07:57:45 -0500
-Message-Id: <20210112125749.71193-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 4/8] arch/arc: add copy_user_page() to <asm/page.h> to fix build error on ARC
+Date:   Tue, 12 Jan 2021 07:58:05 -0500
+Message-Id: <20210112125810.71348-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210112125749.71193-1-sashal@kernel.org>
-References: <20210112125749.71193-1-sashal@kernel.org>
+In-Reply-To: <20210112125810.71348-1-sashal@kernel.org>
+References: <20210112125810.71348-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -79,7 +79,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
-index 09ddddf71cc50..a70fef79c4055 100644
+index ffb5f33475f19..f0f43eb709d2f 100644
 --- a/arch/arc/include/asm/page.h
 +++ b/arch/arc/include/asm/page.h
 @@ -13,6 +13,7 @@
