@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B4F42F34AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 16:52:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18FD82F34B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 16:56:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392103AbhALPwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 10:52:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54694 "EHLO
+        id S2392199AbhALPxX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 10:53:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392064AbhALPwG (ORCPT
+        with ESMTP id S2392192AbhALPxW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 10:52:06 -0500
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8489C06179F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 07:51:25 -0800 (PST)
-Received: by mail-qt1-x829.google.com with SMTP id h19so1781578qtq.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 07:51:25 -0800 (PST)
+        Tue, 12 Jan 2021 10:53:22 -0500
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173BEC061794
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 07:52:42 -0800 (PST)
+Received: by mail-qk1-x730.google.com with SMTP id h4so2215553qkk.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jan 2021 07:52:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=czDseoOnOGRSzCZMGapC9qH4FJPI8pYW205lRRKqplo=;
-        b=BjymW39KXrPg2F5A9D5yXqibmoS7kh0mIiVWqbp41P7iiqkS6TxFW+s3pZIY1jivu/
-         Ao0gmQFcW3K8+njEvHVM5O6PWhLOB9G6DaAshCNpBblqq2dIYIkuUrucyr/qC/Ykl3bl
-         c58HCyCTg/qxf9Vh1CeBfVaePBXOIA2brec87O2fdaCqEpjvUxwgYp0HcL551qcVik94
-         ynZ+utGJUyZ02hbOkSbrQtwrIRQw3nV6Bx0EHDbBUV3L3aGh+BVP6uO1gAnflM1RvPIq
-         JiuZDjJxkp8oJQfs7AKhHeKfAqKuLWFUaMK8JF8OsZQaQy1tN5Bb1y+Um1g7PD1ItP1G
-         Uemw==
+        bh=3VOirjeOIr8hFRm3h3Xp5mZuV+8C+76qUAIeoSHnuRs=;
+        b=UD+st9PzLlClludf4uK5aFj+zVbeUU1a2TLuK04qgHnlgPAt/AOudNFQWtJlRebu7N
+         f17RzYFk0zMzc7ZH+ay7DM/9vB5cf0pVrs0c6VdQgtEGkZMlLlioS/rZkY2dvdXOy0ML
+         BXKWAVZPfGQfiz/Ofje4Ih0YWLOgdLwYlCvUvw0wMuhwWV6dmETlBD+Y2y14vcfs15uU
+         HgLXCit1veUlQQyBqkZxKI/veK0gfCa5099+vs+hAmbaILlazZtKsCvrdQRYtzJlnrkr
+         jS6l76MX6pazYYZmZvyqdHDldKVhIBZ0hejfWWocoeNVk8ewiuFNO17SZo5RFLJmx5HF
+         HRnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=czDseoOnOGRSzCZMGapC9qH4FJPI8pYW205lRRKqplo=;
-        b=BCbsOQyNIR9bg60Lk0zcdI3r5T3srtJCmrXiHj2Ra4KzCRqk/4MAGAv+kCoEuPSciu
-         mI+nluUvSdS+5N57GCr/Ud2Y/nCITcNJBkEAfoTcaAMMZV/+3awinTJajIJA/IBa+HIa
-         QOYdH8TMqpgyT0hTceyZR8Lsl6mW+rj/sprt5bGqz8zD2QYXAy909NEKRcfVkxWXWZnm
-         4tKd+hX074io5fsAbEobQKH+OGyGL2Dgos0oZCuZC5/hQBf+yglkvQzR+OCrxodThUtZ
-         pMzNUDezE5Y4CusVNavZ7Myoz2KLlKjPRnrVlTMjQi3HCqo1YBpX7TE6bwBhwF6oPd5i
-         Tu0A==
-X-Gm-Message-State: AOAM531KN/Nlzm7B/bIO1AeeBwyrxgyWb//xKlKa5jfvNF0Okm8I6tdn
-        D5d/dI99iDmNdOStKIYx0m8ELMCz/3E5ioMh
-X-Google-Smtp-Source: ABdhPJwtibQJQig0QFWJDWN40ncrChyt6y1cnTC94rRpeGkBg5SboaHya8cIIrahcIekU9yJHHujpQ==
-X-Received: by 2002:ac8:110e:: with SMTP id c14mr5048776qtj.293.1610466685026;
-        Tue, 12 Jan 2021 07:51:25 -0800 (PST)
+        bh=3VOirjeOIr8hFRm3h3Xp5mZuV+8C+76qUAIeoSHnuRs=;
+        b=Hku9LxFR1ZYB1VA7NLAPC2x9cIc9HjZZMeVl9lCmQw30e39u694arTb2t1DgtWYDhw
+         lHeh7+DeZ8Jsobm5v9DQf89oBfKuq5PkEbhBz954to7UdA8kFG0Wxq6GA2ZqeDpbRlZr
+         jAn/oENdipIqgXC0U7fswPa1HmVAudW8YT4vEvOV9Yb0Ki+Pvqr/5OcdWkYOrZz4umKC
+         SAzmXK2ZpWVu/eU6biuiq2NhK1HDrGxSVmfYUPgLsiy4HfzpauMmYDkenUhaUqBSQRAv
+         B7SsyN0P8ApYreDdYANHf2GL6RT3kmESF50Fl5mxlGuzKGu9la7QAoGl2UPWZ3ZigxS2
+         XIbg==
+X-Gm-Message-State: AOAM53293qOAIHvHAaXMHRWJFBHNjFmFSUA6ouVoBqqNah/UlKNg0qLb
+        QQvgj9nQHfcys/dZeWXwAU/S/Q==
+X-Google-Smtp-Source: ABdhPJzXxc0ipRQINJ/p5shNULsus/jkY3XyvKky1a1zVgoSEOFq0r4Vr7GaLVcEOgm6Ss77yCP6Aw==
+X-Received: by 2002:a37:2796:: with SMTP id n144mr5369005qkn.471.1610466761282;
+        Tue, 12 Jan 2021 07:52:41 -0800 (PST)
 Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id c7sm1457585qkm.99.2021.01.12.07.51.23
+        by smtp.gmail.com with ESMTPSA id q92sm1239635qtd.48.2021.01.12.07.52.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Jan 2021 07:51:24 -0800 (PST)
-Subject: Re: [PATCH v11 15/40] btrfs: redirty released extent buffers in ZONED
- mode
+        Tue, 12 Jan 2021 07:52:40 -0800 (PST)
+Subject: Re: [PATCH v11 16/40] btrfs: advance allocation pointer after tree
+ log node
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
@@ -58,14 +58,14 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>
 References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
- <530bf9339d499c4f2209baeca7769a1c32a245bc.1608608848.git.naohiro.aota@wdc.com>
+ <a26bdfd95d5416bbaf49411cea69bee2f06e947e.1608608848.git.naohiro.aota@wdc.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <8fc5abec-521e-4022-31c4-a63428dc7642@toxicpanda.com>
-Date:   Tue, 12 Jan 2021 10:51:23 -0500
+Message-ID: <19ac727e-4232-8a2b-d36c-ab34eecc22ce@toxicpanda.com>
+Date:   Tue, 12 Jan 2021 10:52:39 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <530bf9339d499c4f2209baeca7769a1c32a245bc.1608608848.git.naohiro.aota@wdc.com>
+In-Reply-To: <a26bdfd95d5416bbaf49411cea69bee2f06e947e.1608608848.git.naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,21 +74,12 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 12/21/20 10:49 PM, Naohiro Aota wrote:
-> Tree manipulating operations like merging nodes often release
-> once-allocated tree nodes. Btrfs cleans such nodes so that pages in the
-> node are not uselessly written out. On ZONED volumes, however, such
-> optimization blocks the following IOs as the cancellation of the write out
-> of the freed blocks breaks the sequential write sequence expected by the
-> device.
+> Since the allocation info of tree log node is not recorded to the extent
+> tree, calculate_alloc_pointer() cannot detect the node, so the pointer can
+> be over a tree node.
 > 
-> This patch introduces a list of clean and unwritten extent buffers that
-> have been released in a transaction. Btrfs redirty the buffer so that
-> btree_write_cache_pages() can send proper bios to the devices.
-> 
-> Besides it clears the entire content of the extent buffer not to confuse
-> raw block scanners e.g. btrfsck. By clearing the content,
-> csum_dirty_buffer() complains about bytenr mismatch, so avoid the checking
-> and checksum using newly introduced buffer flag EXTENT_BUFFER_NO_CHECK.
+> Replaying the log call btrfs_remove_free_space() for each node in the log
+> tree. So, advance the pointer after the node.
 > 
 > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
