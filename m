@@ -2,41 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B382F305E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:15:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A06532F306E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:15:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404259AbhALM5v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 07:57:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53840 "EHLO mail.kernel.org"
+        id S2404721AbhALM6I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 07:58:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404205AbhALM5u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 07:57:50 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3A94F23341;
-        Tue, 12 Jan 2021 12:56:42 +0000 (UTC)
+        id S2404596AbhALM6G (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Jan 2021 07:58:06 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C43F423125;
+        Tue, 12 Jan 2021 12:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610456203;
-        bh=96kcUeeVfBtCkWLjFvAMr+Zk9U/z11oxm4TPo3Pg69w=;
+        s=k20201202; t=1610456230;
+        bh=ZoM5RNyuCE09IxKK+DH0s/aeaGT914MTeZfuuKJGd+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lVwR8GLmlHEbKLN4gc+U4R8G/DZic5kB8hZ0BJF0btnc9Phi4O6lS9QtlA5Y9/joH
-         lsfzaIDjzP2tHnXXhMRyr/ps0fxEZk1Izq60Bbu9cs9ykJ15pe5nPHWHsip0lCCHIt
-         xOhTtK73xgaMFgljSBQE0QN+t9h5RhlUTMMvgzW7peDuwXfAIBjrLtcPwvttTKtOoP
-         EX+NWY2JIm+OpIvWilEZ30qeGKYRrZM+nfsJ3KlGKbc14xuuLmVC8O0UH7nLbG9Q3t
-         Fzq9fPXL3XPSBFNmTzDz5TqdeU22T91G4xJ4Ty5yFxo1PB5gOSqErDu7wjIx9wzilH
-         Y4USnAFY11PMQ==
+        b=prxBZ9eVwr+fkGUEA42hJU5yTgJnJOZ2+lEwSfqlQ74B1Gd/VlzHndAwmcT+4duID
+         CV3kRock8a0h+5On0zYp7zOzaExHnU0LFj9h3men7GoNPMtcGTSaNdttud7Z0XgLbU
+         U3oSX0BDs/lkptpZ61nXiONcYaikF2hl4rkoJ0iQMfVoERZsceC8XhMj7dEFjUJd2x
+         PdaA4FMkvjPf314Zn3SwShfha5JBGhPclMgbSlRPqD+QArbjJQorHzfgLldWbh5hRO
+         BSthhOdBwx29VKXAGoBkEoIT/gJ3MPE84JGYBmEn1MvXEQudD0pw3qVRzdPw9yJRkH
+         HaBa1xGqdRaEg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Laight <David.Laight@aculab.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 51/51] poll: fix performance regression due to out-of-line __put_user()
-Date:   Tue, 12 Jan 2021 07:55:33 -0500
-Message-Id: <20210112125534.70280-51-sashal@kernel.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        kernel test robot <lkp@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        linux-snps-arc@lists.infradead.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 18/28] arch/arc: add copy_user_page() to <asm/page.h> to fix build error on ARC
+Date:   Tue, 12 Jan 2021 07:56:34 -0500
+Message-Id: <20210112125645.70739-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210112125534.70280-1-sashal@kernel.org>
-References: <20210112125534.70280-1-sashal@kernel.org>
+In-Reply-To: <20210112125645.70739-1-sashal@kernel.org>
+References: <20210112125645.70739-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -45,84 +48,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit ef0ba05538299f1391cbe097de36895bb36ecfe6 ]
+[ Upstream commit 8a48c0a3360bf2bf4f40c980d0ec216e770e58ee ]
 
-The kernel test robot reported a -5.8% performance regression on the
-"poll2" test of will-it-scale, and bisected it to commit d55564cfc222
-("x86: Make __put_user() generate an out-of-line call").
+fs/dax.c uses copy_user_page() but ARC does not provide that interface,
+resulting in a build error.
 
-I didn't expect an out-of-line __put_user() to matter, because no normal
-core code should use that non-checking legacy version of user access any
-more.  But I had overlooked the very odd poll() usage, which does a
-__put_user() to update the 'revents' values of the poll array.
+Provide copy_user_page() in <asm/page.h>.
 
-Now, Al Viro correctly points out that instead of updating just the
-'revents' field, it would be much simpler to just copy the _whole_
-pollfd entry, and then we could just use "copy_to_user()" on the whole
-array of entries, the same way we use "copy_from_user()" a few lines
-earlier to get the original values.
+../fs/dax.c: In function 'copy_cow_page_dax':
+../fs/dax.c:702:2: error: implicit declaration of function 'copy_user_page'; did you mean 'copy_to_user_page'? [-Werror=implicit-function-declaration]
 
-But that is not what we've traditionally done, and I worry that threaded
-applications might be concurrently modifying the other fields of the
-pollfd array.  So while Al's suggestion is simpler - and perhaps worth
-trying in the future - this instead keeps the "just update revents"
-model.
-
-To fix the performance regression, use the modern "unsafe_put_user()"
-instead of __put_user(), with the proper "user_write_access_begin()"
-guarding in place. This improves code generation enormously.
-
-Link: https://lore.kernel.org/lkml/20210107134723.GA28532@xsang-OptiPlex-9020/
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Tested-by: Oliver Sang <oliver.sang@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: linux-snps-arc@lists.infradead.org
+Cc: Dan Williams <dan.j.williams@intel.com>
+#Acked-by: Vineet Gupta <vgupta@synopsys.com> # v1
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-nvdimm@lists.01.org
+#Reviewed-by: Ira Weiny <ira.weiny@intel.com> # v2
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/select.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/arc/include/asm/page.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/select.c b/fs/select.c
-index ebfebdfe5c69a..37aaa8317f3ae 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -1011,14 +1011,17 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
- 	fdcount = do_poll(head, &table, end_time);
- 	poll_freewait(&table);
+diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
+index 0a32e8cfd074d..bcd1920ae75a3 100644
+--- a/arch/arc/include/asm/page.h
++++ b/arch/arc/include/asm/page.h
+@@ -10,6 +10,7 @@
+ #ifndef __ASSEMBLY__
  
-+	if (!user_write_access_begin(ufds, nfds * sizeof(*ufds)))
-+		goto out_fds;
-+
- 	for (walk = head; walk; walk = walk->next) {
- 		struct pollfd *fds = walk->entries;
- 		int j;
+ #define clear_page(paddr)		memset((paddr), 0, PAGE_SIZE)
++#define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
+ #define copy_page(to, from)		memcpy((to), (from), PAGE_SIZE)
  
--		for (j = 0; j < walk->len; j++, ufds++)
--			if (__put_user(fds[j].revents, &ufds->revents))
--				goto out_fds;
-+		for (j = walk->len; j; fds++, ufds++, j--)
-+			unsafe_put_user(fds->revents, &ufds->revents, Efault);
-   	}
-+	user_write_access_end();
- 
- 	err = fdcount;
- out_fds:
-@@ -1030,6 +1033,11 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
- 	}
- 
- 	return err;
-+
-+Efault:
-+	user_write_access_end();
-+	err = -EFAULT;
-+	goto out_fds;
- }
- 
- static long do_restart_poll(struct restart_block *restart_block)
+ struct vm_area_struct;
 -- 
 2.27.0
 
