@@ -2,94 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 712602F26BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 04:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A242F271F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 05:34:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbhALDcw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jan 2021 22:32:52 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11093 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbhALDcw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jan 2021 22:32:52 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DFGLh4HYdzMJ0q;
-        Tue, 12 Jan 2021 11:30:52 +0800 (CST)
-Received: from use12-sp2.huawei.com (10.67.189.174) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 12 Jan 2021 11:31:58 +0800
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
+        id S1730340AbhALEeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jan 2021 23:34:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730216AbhALEeW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Jan 2021 23:34:22 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D10022D2A;
+        Tue, 12 Jan 2021 04:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1610426021;
+        bh=w/M12tdhcBmd54UikgcO72r4KlYDUVQ214IXwdAJU4Q=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QkctXtZo5gSC/FMwQZuBGsoPav92UIYtbXIGCu3NUkNQBRJjWGCtpRvhobr2oW2XM
+         HQpqgL20C1Ow3ucl6xfmKxQmvO0sMkqUJY9DV2b8hU2GS8y0UfOSbBCzPozRWIuc16
+         aYCuIdyHf7tE0z6TJEsjANwU32lprMJFu7l5srTs=
+Date:   Mon, 11 Jan 2021 20:33:40 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Xiaoming Ni <nixiaoming@huawei.com>
+Cc:     <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
         <keescook@chromium.org>, <yzaikin@google.com>,
         <adobriyan@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-        <vbabka@suse.cz>, <akpm@linux-foundation.org>, <mhocko@suse.com>,
-        <andy.shevchenko@gmail.com>
-CC:     <nixiaoming@huawei.com>, <wangle6@huawei.com>
-Subject: [PATCH v3] proc_sysctl: fix oops caused by incorrect command parameters.
-Date:   Tue, 12 Jan 2021 11:31:55 +0800
-Message-ID: <20210112033155.91502-1-nixiaoming@huawei.com>
-X-Mailer: git-send-email 2.27.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.67.189.174]
-X-CFilter-Loop: Reflected
+        <vbabka@suse.cz>, <mhocko@suse.com>, <andy.shevchenko@gmail.com>,
+        <wangle6@huawei.com>
+Subject: Re: [PATCH v3] proc_sysctl: fix oops caused by incorrect command
+ parameters.
+Message-Id: <20210111203340.98dd3c8fa675b709bcf6d49e@linux-foundation.org>
+In-Reply-To: <20210112033155.91502-1-nixiaoming@huawei.com>
+References: <20210112033155.91502-1-nixiaoming@huawei.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The process_sysctl_arg() does not check whether val is empty before
- invoking strlen(val). If the command line parameter () is incorrectly
- configured and val is empty, oops is triggered.
+On Tue, 12 Jan 2021 11:31:55 +0800 Xiaoming Ni <nixiaoming@huawei.com> wrote:
 
-For example:
-  "hung_task_panic=1" is incorrectly written as "hung_task_panic", oops is
-  triggered. The call stack is as follows:
-    Kernel command line: .... hung_task_panic
-    ......
-    Call trace:
-    __pi_strlen+0x10/0x98
-    parse_args+0x278/0x344
-    do_sysctl_args+0x8c/0xfc
-    kernel_init+0x5c/0xf4
-    ret_from_fork+0x10/0x30
+> The process_sysctl_arg() does not check whether val is empty before
+>  invoking strlen(val). If the command line parameter () is incorrectly
+>  configured and val is empty, oops is triggered.
+> 
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -1770,6 +1770,9 @@ static int process_sysctl_arg(char *param, char *val,
+>  			return 0;
+>  	}
+>  
+> +	if (!val)
+> +		return -EINVAL;
+> +
 
-To fix it, check whether "val" is empty when "phram" is a sysctl field.
-Error codes are returned in the failure branch, and error logs are
-generated by parse_args().
+I think v2 (return 0) was preferable.  Because all the other error-out
+cases in process_sysctl_arg() also do a `return 0'.
 
-Fixes: 3db978d480e2843 ("kernel/sysctl: support setting sysctl parameters
- from kernel command line")
-Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
-
----------
-v3:
-  Return -EINVAL, When phram is the sysctl field and val is empty.
-
-v2: https://lore.kernel.org/lkml/20210108023339.55917-1-nixiaoming@huawei.com/
-  Added log output of the failure branch based on the review comments of Kees Cook.
-
-v1: https://lore.kernel.org/lkml/20201224074256.117413-1-nixiaoming@huawei.com/
-
----------
----
- fs/proc/proc_sysctl.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 317899222d7f..d493a50058a5 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1770,6 +1770,9 @@ static int process_sysctl_arg(char *param, char *val,
- 			return 0;
- 	}
- 
-+	if (!val)
-+		return -EINVAL;
-+
- 	/*
- 	 * To set sysctl options, we use a temporary mount of proc, look up the
- 	 * respective sys/ file and write to it. To avoid mounting it when no
--- 
-2.27.0
-
+If we're going to do a separate "patch: make process_sysctl_arg()
+return an errno instead of 0" then fine, we can discuss that.  But it's
+conceptually a different work from fixing this situation.  
