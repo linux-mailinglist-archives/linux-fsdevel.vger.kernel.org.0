@@ -2,94 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71F152F3006
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:05:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA30A2F307F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 14:15:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbhALNBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 08:01:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389562AbhALM6t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 07:58:49 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D35C22312F;
-        Tue, 12 Jan 2021 12:58:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610456310;
-        bh=0xLiq19uuF+LFA0yw7Rwauxqd1irVWHtnuE67K59/lY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b8O+IFZDV1mhk5XsTsWbLrW1xzrSVYxvK5blw0fJPWOYpStCe3DCIq7EXWLyLxolN
-         TLMwQfBVojPJMLN9JxABbmBux71bYXWiqRGUpVBKyaKjN3hBfImirfcsTX4oH+j2ru
-         NjHhomzM0c8ys/od7truSD0S2+6XeKJDbsnP5x000hT9HFGAVLJgzYU/CLFIieWddh
-         cF9uNR0cr8ARsiFzmgcVojEDTN8GkQ6qGGVIMtUaW9OAcXLdoF/mm5w9+Eul9btKCh
-         DvWDBUQcBKH18yRPmjz5KQMwz+CMKgkHCylmUjpUG9h+5SMHgh9mAuDaslVTUGVmFq
-         W1kWy89IcdHiQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        kernel test robot <lkp@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 4/8] arch/arc: add copy_user_page() to <asm/page.h> to fix build error on ARC
-Date:   Tue, 12 Jan 2021 07:58:19 -0500
-Message-Id: <20210112125823.71463-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210112125823.71463-1-sashal@kernel.org>
-References: <20210112125823.71463-1-sashal@kernel.org>
+        id S1726293AbhALNG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 08:06:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47164 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbhALNGZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Jan 2021 08:06:25 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07462C061575;
+        Tue, 12 Jan 2021 05:05:45 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id x13so2243567oic.5;
+        Tue, 12 Jan 2021 05:05:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=jG7yC7dRyy6dt72lUFM/3t9zBGIIKAjh3jwa8hEtR3E=;
+        b=GPdyYrrVW+PrgmgwgfR158+Bgk8DZP5VSqv/XJ8rrzZ75iShU5Or2o9NOyxTaopod/
+         dl2OjLdvPbOSN0EDdL5ISCDv7y8hcU5TOkKzYprpXpkFQFaaraLqxPkef5IvNoYU/2Rj
+         HN3lG9JJEe8tNOi4reu2juJcfpFU7+vH9I3wEFLbMt84X+T6lINlP9uelUZd6Hnlxbiw
+         aTBBIgvnawJyzgx5dnV7qyGVU3IL7o92PRsiY8oaQC/u9CYP5LKk/BjISRFRnE0oksSl
+         daB5tfDYAMzb+HQmpLwQEtR3FC7QZDgtDY15LIcKGKd9TTiMizS4wOkE4+uso0gV6hEU
+         RAow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=jG7yC7dRyy6dt72lUFM/3t9zBGIIKAjh3jwa8hEtR3E=;
+        b=mG3Q+xp/aeYfQYoMVPL4nFFLPfjF/pDW55tEkUo4Asd8KKLFfRSwm8Meqwi0CLbTN6
+         Dy8H7BpKESL2byP/++2oRhF9hcIPYlhpfghcHYZilnVefHga3K2b07xmnYc4Yh5m0Swm
+         HhcRLAHWOAyKVG3hzkIpKdHIv0k5Xk45MMD68beu7X3Z4VG1ymG5smEvpZtw3fGEWr4G
+         uUIUIzevvA866+9KRK3Moi7gdWwKiU4/7YPlbWGaYn+klOO+eUzL7JJNZZq1gUJ6ewYQ
+         DPTz4jrWZy5rDrlkXcmMLI5AZVMPpwY9zZgdvc7+baaG7JDqM85RUDlsbI4/TCr/Ft27
+         HYzw==
+X-Gm-Message-State: AOAM531OSlS7ON1pepQzWmc/aQGqnj5FVV3bdMkfqFCobhUVmdRBqrk0
+        zXFEoXhHFL52NlqTQTRNqeq4K9YI0alS3SiDKra2a4VOl1o=
+X-Google-Smtp-Source: ABdhPJytDeAF7tlHnNqgLlew0bBzronuC2rEP0oAL4QlbNewPwYZhLHTEi4EpK9zVDm/sGBrD38ULz92BbaXPDiCE/c=
+X-Received: by 2002:aca:ded4:: with SMTP id v203mr2225247oig.148.1610456744446;
+ Tue, 12 Jan 2021 05:05:44 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20210112004820.4013953-1-willemdebruijn.kernel@gmail.com> <87turmibbs.fsf@oldenburg2.str.redhat.com>
+In-Reply-To: <87turmibbs.fsf@oldenburg2.str.redhat.com>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Tue, 12 Jan 2021 14:05:33 +0100
+Message-ID: <CAKgNAkgCbx8OctQ1xQ4337K=QpARbVPhwroKD6XvbQi9GkOrcw@mail.gmail.com>
+Subject: Re: [PATCH manpages] epoll_wait.2: add epoll_pwait2
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Florian,
 
-[ Upstream commit 8a48c0a3360bf2bf4f40c980d0ec216e770e58ee ]
+On Tue, 12 Jan 2021 at 13:33, Florian Weimer <fweimer@redhat.com> wrote:
+>
+> * Willem de Bruijn:
+>
+> > From: Willem de Bruijn <willemb@google.com>
+> >
+> > Expand the epoll_wait page with epoll_pwait2, an epoll_wait variant
+> > that takes a struct timespec to enable nanosecond resolution timeout.
+> >
+> >     int epoll_pwait2(int fd, struct epoll_event *events,
+> >                      int maxevents,
+> >                      const struct timespec *timeout,
+> >                      const sigset_t *sigset);
+>
+> Does it really use struct timespec?  With 32-bit times on most 32-bit
+> targets?
 
-fs/dax.c uses copy_user_page() but ARC does not provide that interface,
-resulting in a build error.
+The type inside the kernel seems to be:
 
-Provide copy_user_page() in <asm/page.h>.
+[[
+SYSCALL_DEFINE6(epoll_pwait2, int, epfd, struct epoll_event __user *, events,
+                int, maxevents, const struct __kernel_timespec __user
+*, timeout,
 
-../fs/dax.c: In function 'copy_cow_page_dax':
-../fs/dax.c:702:2: error: implicit declaration of function 'copy_user_page'; did you mean 'copy_to_user_page'? [-Werror=implicit-function-declaration]
+struct __kernel_timespec {
+        __kernel_time64_t       tv_sec;                 /* seconds */
+        long long               tv_nsec;                /* nanoseconds */
+};
+]]
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Dan Williams <dan.j.williams@intel.com>
-#Acked-by: Vineet Gupta <vgupta@synopsys.com> # v1
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-nvdimm@lists.01.org
-#Reviewed-by: Ira Weiny <ira.weiny@intel.com> # v2
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arc/include/asm/page.h | 1 +
- 1 file changed, 1 insertion(+)
+So, 64 bits by the look of things.
 
-diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
-index 8f1145ed0046f..fd2c88ef2e2b8 100644
---- a/arch/arc/include/asm/page.h
-+++ b/arch/arc/include/asm/page.h
-@@ -17,6 +17,7 @@
- #define free_user_page(page, addr)	free_page(addr)
- 
- #define clear_page(paddr)		memset((paddr), 0, PAGE_SIZE)
-+#define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- #define copy_page(to, from)		memcpy((to), (from), PAGE_SIZE)
- 
- struct vm_area_struct;
+Thanks,
+
+Michael
+
 -- 
-2.27.0
-
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
