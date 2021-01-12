@@ -2,96 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DB712F2857
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 07:32:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB6382F28B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jan 2021 08:13:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733095AbhALG32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jan 2021 01:29:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52646 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733070AbhALG31 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jan 2021 01:29:27 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 54790229CA;
-        Tue, 12 Jan 2021 06:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1610432926;
-        bh=66Qx1gj4EzTEeVhhLDcGKAc/ygvdzEvNrer5sghrXJ4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WFj9SeW+PsLybv3ux9riWrJaLAdMXDXKXz7KO+2WGT560uhpeR/6TKnzEuChPHvLc
-         iT6R7pT6h6duplxwdDpwAo0C3uDu9tzJU3HGG0pcHydpL9QMzv9qVv1S6J2HjTUDmr
-         JJMBPFJeJUT078kuTfy6+m+HsDPGx2Jdon+YmDkE=
-Date:   Mon, 11 Jan 2021 22:28:45 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
-        <keescook@chromium.org>, <yzaikin@google.com>,
-        <adobriyan@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-        <vbabka@suse.cz>, <mhocko@suse.com>, <andy.shevchenko@gmail.com>,
-        <wangle6@huawei.com>
-Subject: Re: [PATCH v3] proc_sysctl: fix oops caused by incorrect command
- parameters.
-Message-Id: <20210111222845.67ceb4e3c7f64f267756e4e8@linux-foundation.org>
-In-Reply-To: <89d1369e-f0a8-66f2-c0ea-3aac3a55e2c1@huawei.com>
-References: <20210112033155.91502-1-nixiaoming@huawei.com>
-        <20210111203340.98dd3c8fa675b709bcf6d49e@linux-foundation.org>
-        <89d1369e-f0a8-66f2-c0ea-3aac3a55e2c1@huawei.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S2391825AbhALHMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jan 2021 02:12:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391757AbhALHMP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Jan 2021 02:12:15 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C4AC061575;
+        Mon, 11 Jan 2021 23:11:34 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id q75so1046746wme.2;
+        Mon, 11 Jan 2021 23:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Eb5RjUdvsaJoaHaCzpdgtojGaEokAS+4OO3nSTY9j9c=;
+        b=rjjB/JJWczy+jxbhzpEnKdl1C1ieu9dRSfGxwLauplIck1Bk1VV0PgGZO0B0XQY9+W
+         SG04+j8DxQnttkv996JxICx+7AVeZhDm1mbzdrP2/Z5rMz0R7lVs6PgUkEr5jVbxfGy9
+         XdY5XTXZaY6E8sFdwZSocOTfqlBKYJmq/hxQESOZ+JFV1UvOpi429vlIJC+7bk0yeS6I
+         agHA3sCB3wtgYZUJslbOXLxJG78iC80a4lAiMb1hOsvd5JXw45cZiRsmKAfimCNCU4/z
+         a/GNAl0qNw77MLFNapy5Ua7iwy3OwluRqUmbdTBxNu0Gwckz6Tokynh8ks7xkbolr9UR
+         IPyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Eb5RjUdvsaJoaHaCzpdgtojGaEokAS+4OO3nSTY9j9c=;
+        b=RR2OyJCWZY6rIB2a044tavT/NTdS+czk5tsWb9I9m0UrgBuFdJbuP43hfSWO2HFoGI
+         SPAJGw1nBsX1zBMV5fc3sLon8KKC7hk3voEEqGbP5xVQbsgejmsakdDm0zS/P55TINUF
+         PWygLQlx3yIuxARr+j4ryixLPvaP+ktW5Xrz2H/0/tY4Yg6XzF5yW4dLotkMoUMdwxsP
+         Bjq3tYGmRFiK/DStxEYLJNhF7xEZop4QjSsp0P3dKluxrmqzSSxw+DQz59+aB7KfyWXU
+         ShUw6EPJ7W/k0sM2U0pjP3B+RMZ1WpKt5sSniwzz/Om6JJM3ZyTG2OPNkwpj14UuOwNT
+         e6jw==
+X-Gm-Message-State: AOAM532LLH5B40+cKbMaao48ME35JwNRjGBlInSRFzSJ1PMvFPS450cv
+        7OHpcwhZFyhHDPEEamPVcyE=
+X-Google-Smtp-Source: ABdhPJyOBSu8i4jrjS04H/WODSIcX7Mam2pUCavU8CK4+W+I7p1e5OB/rPYzHwhZIRF0PeC1mfiLHg==
+X-Received: by 2002:a1c:1fc4:: with SMTP id f187mr2073830wmf.107.1610435493259;
+        Mon, 11 Jan 2021 23:11:33 -0800 (PST)
+Received: from ?IPv6:2001:a61:244d:fe01:9fb1:d962:461a:45e8? ([2001:a61:244d:fe01:9fb1:d962:461a:45e8])
+        by smtp.gmail.com with ESMTPSA id t1sm3361572wro.27.2021.01.11.23.11.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jan 2021 23:11:32 -0800 (PST)
+Cc:     mtk.manpages@gmail.com, linux-fsdevel@vger.kernel.org,
+        Willem de Bruijn <willemb@google.com>
+Subject: Re: [PATCH manpages] epoll_wait.2: add epoll_pwait2
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        linux-man@vger.kernel.org
+References: <20210112004820.4013953-1-willemdebruijn.kernel@gmail.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <f0e614e6-1534-3355-c69c-834865802fa8@gmail.com>
+Date:   Tue, 12 Jan 2021 08:11:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
+MIME-Version: 1.0
+In-Reply-To: <20210112004820.4013953-1-willemdebruijn.kernel@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 12 Jan 2021 14:24:05 +0800 Xiaoming Ni <nixiaoming@huawei.com> wrote:
+Hello Willem,
 
-> On 2021/1/12 12:33, Andrew Morton wrote:
-> > On Tue, 12 Jan 2021 11:31:55 +0800 Xiaoming Ni <nixiaoming@huawei.com> wrote:
-> > 
-> >> The process_sysctl_arg() does not check whether val is empty before
-> >>   invoking strlen(val). If the command line parameter () is incorrectly
-> >>   configured and val is empty, oops is triggered.
-> >>
-> >> --- a/fs/proc/proc_sysctl.c
-> >> +++ b/fs/proc/proc_sysctl.c
-> >> @@ -1770,6 +1770,9 @@ static int process_sysctl_arg(char *param, char *val,
-> >>   			return 0;
-> >>   	}
-> >>   
-> >> +	if (!val)
-> >> +		return -EINVAL;
-> >> +
-> > 
-> > I think v2 (return 0) was preferable.  Because all the other error-out
-> > cases in process_sysctl_arg() also do a `return 0'.
+On 1/12/21 1:48 AM, Willem de Bruijn wrote:
+> From: Willem de Bruijn <willemb@google.com>
 > 
-> https://lore.kernel.org/lkml/bc098af4-c0cd-212e-d09d-46d617d0acab@huawei.com/
+> Expand the epoll_wait page with epoll_pwait2, an epoll_wait variant
+> that takes a struct timespec to enable nanosecond resolution timeout.
 > 
-> patch4:
->      +++ b/fs/proc/proc_sysctl.c
->      @@ -1757,6 +1757,9 @@ static int process_sysctl_arg(char *param, 
-> char *val,
->              loff_t pos = 0;
->              ssize_t wret;
+>     int epoll_pwait2(int fd, struct epoll_event *events,
+>                      int maxevents,
+>                      const struct timespec *timeout,
+>                      const sigset_t *sigset);
 > 
->      +       if (!val)
->      +               return 0;
->      +
->              if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
->                      param += sizeof("sysctl") - 1;
-> 
-> Is this the version you're talking about?
+> Signed-off-by: Willem de Bruijn <willemb@google.com>
 
-yes, but as a separate patch.  The bugfix comes first.
+Thank you for the patch. And thanks for fixing epoll_(p)wait!
+Patch applied.
 
-> > 
-> > If we're going to do a separate "patch: make process_sysctl_arg()
-> > return an errno instead of 0" then fine, we can discuss that.  But it's
-> > conceptually a different work from fixing this situation.
-> > .
-> > 
-> However, are the logs generated by process_sysctl_arg() clearer and more 
-> accurate than parse_args()? Should the logs generated by 
-> process_sysctl_arg() be deleted?
+Cheers,
 
-I think the individual logs are very useful and should be retained.
+Michael
+
+> ---
+> 
+> This is the same as an RFC sent earlier.
+> 
+> epoll_pwait2 is now merged in 5.11-rc1.
+> 
+> I'm not sure whether to send for manpages inclusion before 5.11
+> reaches stable ABI, or after. Erring on the side of caution. It
+> could still be reverted before then, of course.
+> ---
+>  man2/epoll_wait.2 | 31 +++++++++++++++++++++++++++++--
+>  1 file changed, 29 insertions(+), 2 deletions(-)
+> 
+> diff --git a/man2/epoll_wait.2 b/man2/epoll_wait.2
+> index 36001e02bde3..21d63503a87f 100644
+> --- a/man2/epoll_wait.2
+> +++ b/man2/epoll_wait.2
+> @@ -22,7 +22,7 @@
+>  .\"
+>  .TH EPOLL_WAIT 2 2020-04-11 "Linux" "Linux Programmer's Manual"
+>  .SH NAME
+> -epoll_wait, epoll_pwait \- wait for an I/O event on an epoll file descriptor
+> +epoll_wait, epoll_pwait, epoll_pwait2 \- wait for an I/O event on an epoll file descriptor
+>  .SH SYNOPSIS
+>  .nf
+>  .B #include <sys/epoll.h>
+> @@ -32,6 +32,9 @@ epoll_wait, epoll_pwait \- wait for an I/O event on an epoll file descriptor
+>  .BI "int epoll_pwait(int " epfd ", struct epoll_event *" events ,
+>  .BI "               int " maxevents ", int " timeout ,
+>  .BI "               const sigset_t *" sigmask );
+> +.BI "int epoll_pwait2(int " epfd ", struct epoll_event *" events ,
+> +.BI "                int " maxevents ", const struct timespec *" timeout ,
+> +.BI "                const sigset_t *" sigmask );
+>  .fi
+>  .SH DESCRIPTION
+>  The
+> @@ -170,6 +173,25 @@ argument may be specified as NULL, in which case
+>  .BR epoll_pwait ()
+>  is equivalent to
+>  .BR epoll_wait ().
+> +.SS epoll_pwait2 ()
+> +The
+> +.BR epoll_pwait2 ()
+> +system call is equivalent to
+> +.BR epoll_pwait ()
+> +except for the
+> +.I timeout
+> +argument. It takes an argument of type
+> +.I timespec
+> +to be able to specify nanosecond resolution timeout. This argument functions
+> +the same as in
+> +.BR pselect (2)
+> +and
+> +.BR ppoll (2).
+> +If
+> +.I timeout
+> +is NULL, then
+> +.BR epoll_pwait2 ()
+> +can block indefinitely.
+>  .SH RETURN VALUE
+>  On success,
+>  .BR epoll_wait ()
+> @@ -217,6 +239,9 @@ Library support is provided in glibc starting with version 2.3.2.
+>  .BR epoll_pwait ()
+>  was added to Linux in kernel 2.6.19.
+>  Library support is provided in glibc starting with version 2.6.
+> +.PP
+> +.BR epoll_pwait2 ()
+> +was added to Linux in kernel 5.11.
+>  .SH CONFORMING TO
+>  .BR epoll_wait ()
+>  and
+> @@ -269,7 +294,9 @@ this means that timeouts greater than 35.79 minutes are treated as infinity.
+>  .SS C library/kernel differences
+>  The raw
+>  .BR epoll_pwait ()
+> -system call has a sixth argument,
+> +and
+> +.BR epoll_pwait2 ()
+> +system calls have a sixth argument,
+>  .IR "size_t sigsetsize" ,
+>  which specifies the size in bytes of the
+>  .IR sigmask
+> 
+
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
