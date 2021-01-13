@@ -2,174 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1BFE2F554C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 00:52:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6BA72F570D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 02:59:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbhAMXu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 18:50:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729555AbhAMXtV (ORCPT
+        id S1728426AbhANB6N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 20:58:13 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:33679 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729559AbhAMXm4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 18:49:21 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB28C061575;
-        Wed, 13 Jan 2021 15:48:40 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id 6so5615684ejz.5;
-        Wed, 13 Jan 2021 15:48:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qxBGvawjchkt3PkBeFPglNIYbXfNwIwM3XGy8lG49Os=;
-        b=AfdoteZDe3xUjLlIDNDLWd9Uf3cGhaAjkvrrCqckV1VoC8npQcL2xFuorx8afbtim+
-         SQuh4mC0lT44zU8JH6P+bDEl2pf6kvZoOKWYiQp9cA96lI0DgtLS12IVYGgL+rC5wkm8
-         cS8F+nZfJQaE5TfdqhW0AotCJEVT27up6WF3tSAHmbn/UeDkVkFUOo2z2+iywe5zJYbe
-         RVq7VRqszIGny+V3aVIG6wQKR0WnXGFttX8jNrL9IilvGENapTjbcX036MAkr4rZPmuZ
-         T8rKrx5rlF/F9g0rY1u5AtDyz4NvTeFJr8KMhHh9EqpMYW8uI1F86HNkCiVHK36hKaGQ
-         JQ2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qxBGvawjchkt3PkBeFPglNIYbXfNwIwM3XGy8lG49Os=;
-        b=ql+Ff0mpC5YnSL+pKyp/qQM42i21dE09CaWDMoGAPE95D7528AbEtFRxb2IzegavZM
-         3hDIW6O7pQ3sKB3V0IWLRIubhlBsUpLGZkT2IXmKVWzq6mI61+Rye+fI/yjcWVl+0WOM
-         XemZd167KREEaUKgUQEGxOv/2JbynYKXSxO9tQGWE+sBao4FktwIf1bk2ykbP8kOqLWl
-         kCU4NY16+U+ABQWuGsQDKpDcv2bnKbDMczK7AVwkuxVOi42GBACCp523cO+oYCFA0KJY
-         lrccQpPlN13nzddHCLTFl2C99WmtWrSe10JLNO7fCgNdObBUf13VOD6+uP9LarXrsPU4
-         cJGQ==
-X-Gm-Message-State: AOAM533/eTFO10Jq38w+hnQpeMrhx84vYoQq03ACdCtT7r5JxtNL5VMi
-        hP6D5wG9AD7psZpD9Oi2qZWw5jOlhZC/nuduTu+lDSXCvYy4/w==
-X-Google-Smtp-Source: ABdhPJzo5LMkPw9QOaRIWmHNxXmPhpnoc1H63/T35dxn5b2PlL41yBvCJpVtev2FCnnftyWiGi3AmQuhX6au8I8gl+4=
-X-Received: by 2002:a17:906:1a4e:: with SMTP id j14mr3231194ejf.507.1610581719097;
- Wed, 13 Jan 2021 15:48:39 -0800 (PST)
+        Wed, 13 Jan 2021 18:42:56 -0500
+Received: from dread.disaster.area (pa49-179-167-107.pa.nsw.optusnet.com.au [49.179.167.107])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2E0603E9D56;
+        Thu, 14 Jan 2021 09:49:39 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kzoxL-006B9A-JF; Thu, 14 Jan 2021 09:49:35 +1100
+Date:   Thu, 14 Jan 2021 09:49:35 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, avi@scylladb.com
+Subject: Re: [PATCH 09/10] iomap: add a IOMAP_DIO_NOALLOC flag
+Message-ID: <20210113224935.GJ331610@dread.disaster.area>
+References: <20210112162616.2003366-1-hch@lst.de>
+ <20210112162616.2003366-10-hch@lst.de>
+ <20210112232923.GD331610@dread.disaster.area>
+ <20210113153215.GA1284163@bfoster>
 MIME-Version: 1.0
-References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-5-shy828301@gmail.com>
- <955422c5-0703-e9fb-f309-6ed6b5fc0e0a@virtuozzo.com>
-In-Reply-To: <955422c5-0703-e9fb-f309-6ed6b5fc0e0a@virtuozzo.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 13 Jan 2021 15:48:27 -0800
-Message-ID: <CAHbLzkqo=bHcrLBPd68teEAtfLcOsZZ+e3Eds9EfGakhDbW8zA@mail.gmail.com>
-Subject: Re: [v3 PATCH 04/11] mm: vmscan: remove memcg_shrinker_map_size
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210113153215.GA1284163@bfoster>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=+wqVUQIkAh0lLYI+QRsciw==:117 a=+wqVUQIkAh0lLYI+QRsciw==:17
+        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
+        a=JDRsW_cnHUdvuFr_4FIA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 6, 2021 at 2:16 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On 06.01.2021 01:58, Yang Shi wrote:
-> > Both memcg_shrinker_map_size and shrinker_nr_max is maintained, but actually the
-> > map size can be calculated via shrinker_nr_max, so it seems unnecessary to keep both.
-> > Remove memcg_shrinker_map_size since shrinker_nr_max is also used by iterating the
-> > bit map.
-> >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  mm/vmscan.c | 12 ++++--------
-> >  1 file changed, 4 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index ddb9f972f856..8da765a85569 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -185,8 +185,7 @@ static LIST_HEAD(shrinker_list);
-> >  static DECLARE_RWSEM(shrinker_rwsem);
-> >
-> >  #ifdef CONFIG_MEMCG
-> > -
-> > -static int memcg_shrinker_map_size;
-> > +static int shrinker_nr_max;
-> >
-> >  static void memcg_free_shrinker_map_rcu(struct rcu_head *head)
-> >  {
-> > @@ -248,7 +247,7 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
-> >               return 0;
-> >
-> >       down_read(&shrinker_rwsem);
-> > -     size = memcg_shrinker_map_size;
-> > +     size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
-> >       for_each_node(nid) {
-> >               map = kvzalloc(sizeof(*map) + size, GFP_KERNEL);
-> >               if (!map) {
-> > @@ -269,7 +268,7 @@ static int memcg_expand_shrinker_maps(int new_id)
-> >       struct mem_cgroup *memcg;
-> >
-> >       size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
-> > -     old_size = memcg_shrinker_map_size;
-> > +     old_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
-> >       if (size <= old_size)
-> >               return 0;
->
-> These bunch of DIV_ROUND_UP() looks too complex. Since now all the shrinker maps allocation
-> logic in the only file, can't we simplify this to look better? I mean something like below
-> to merge in your patch:
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index b951c289ef3a..27b6371a1656 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -247,7 +247,7 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
->                 return 0;
->
->         down_read(&shrinker_rwsem);
-> -       size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
-> +       size = shrinker_nr_max / BITS_PER_BYTE;
+On Wed, Jan 13, 2021 at 10:32:15AM -0500, Brian Foster wrote:
+> On Wed, Jan 13, 2021 at 10:29:23AM +1100, Dave Chinner wrote:
+> > On Tue, Jan 12, 2021 at 05:26:15PM +0100, Christoph Hellwig wrote:
+> > > Add a flag to request that the iomap instances do not allocate blocks
+> > > by translating it to another new IOMAP_NOALLOC flag.
+> > 
+> > Except "no allocation" that is not what XFS needs for concurrent
+> > sub-block DIO.
+> > 
+> > We are trying to avoid external sub-block IO outside the range of
+> > the user data IO (COW, sub-block zeroing, etc) so that we don't
+> > trash adjacent sub-block IO in flight. This means we can't do
+> > sub-block zeroing and that then means we can't map unwritten extents
+> > or allocate new extents for the sub-block IO.  It also means the IO
+> > range cannot span EOF because that triggers unconditional sub-block
+> > zeroing in iomap_dio_rw_actor().
+> > 
+> > And because we may have to map multiple extents to fully span an IO
+> > range, we have to guarantee that subsequent extents for the IO are
+> > also written otherwise we have a partial write abort case. Hence we
+> > have single extent limitations as well.
+> > 
+> > So "no allocation" really doesn't describe what we want this flag to
+> > at all.
+> > 
+> > If we're going to use a flag for this specific functionality, let's
+> > call it what it is: IOMAP_DIO_UNALIGNED/IOMAP_UNALIGNED and do two
+> > things with it.
+> > 
+> > 	1. Make unaligned IO a formal part of the iomap_dio_rw()
+> > 	behaviour so it can do the common checks to for things that
+> > 	need exclusive serialisation for unaligned IO (i.e. avoid IO
+> > 	spanning EOF, abort if there are cached pages over the
+> > 	range, etc).
+> > 
+> > 	2. require the filesystem mapping callback do only allow
+> > 	unaligned IO into ranges that are contiguous and don't
+> > 	require mapping state changes or sub-block zeroing to be
+> > 	performed during the sub-block IO.
+> > 
+> > 
+> 
+> Something I hadn't thought about before is whether applications might
+> depend on current unaligned dio serialization for coherency and thus
+> break if the kernel suddenly allows concurrent unaligned dio to pass
+> through. Should this be something that is explicitly requested by
+> userspace?
 
-The type of shrinker_maps->map is "unsigned long *", I think we should
-do "(shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long)".
+If applications are relying on an undocumented, implementation
+specific behaviour of a filesystem that only occurs for IOs of a
+certain size for implicit data coherency between independent,
+non-overlapping DIOs and/or page cache IO, then they are already
+broken and need fixing because that behaviour is not guaranteed to
+occur. e.g. 512 byte block size filesystem does not provide such
+serialisation, so if the app depends on 512 byte DIOs being
+serialised completely by the filesytem then it already fails on 512
+byte block size filesystems.
 
-And the "/ BITS_PER_BYTE" makes calculating the pointer of nr_deferred
-array harder in the following patch since the length of the map array
-may be not multiple of "unsigned long". Without the nr_deferred array,
-this change seems fine.
+So, no, we simply don't care about breaking broken applications that
+are already broken.
 
->         for_each_node(nid) {
->                 map = kvzalloc(sizeof(*map) + size, GFP_KERNEL);
->                 if (!map) {
-> @@ -264,13 +264,11 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
->
->  static int memcg_expand_shrinker_maps(int new_id)
->  {
-> -       int size, old_size, ret = 0;
-> +       int size, old_size, new_nr_max, ret = 0;
->         struct mem_cgroup *memcg;
->
->         size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
-> -       old_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
-> -       if (size <= old_size)
-> -               return 0;
-> +       new_nr_max = size * BITS_PER_BYTE;
->
->         if (!root_mem_cgroup)
->                 goto out;
-> @@ -287,6 +285,9 @@ static int memcg_expand_shrinker_maps(int new_id)
->         } while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
->
->  out:
-> +       if (ret == 0)
-> +               shrinker_nr_max = new_nr_max;
-> +
->         return ret;
->  }
->
-> @@ -334,8 +335,6 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->                         idr_remove(&shrinker_idr, id);
->                         goto unlock;
->                 }
-> -
-> -               shrinker_nr_max = id + 1;
->         }
->         shrinker->id = id;
->         ret = 0;
->
+> That aside, I agree that the DIO_UNALIGNED approach seems a bit more
+> clear than NOALLOC, but TBH the more I look at this the more Christoph's
+> first approach seems cleanest to me. It is a bit unfortunate to
+> duplicate the mapping lookups and have the extra ILOCK cycle, but the
+> lock is shared and only taken when I/O is unaligned. I don't really see
+> why that is a show stopper yet it's acceptable to fall back to exclusive
+> dio if the target range happens to be discontiguous (but otherwise
+> mapped/written).
+
+Unnecessary lock cycles in the fast path are always bad. The whole
+reason this change is being done is for performance to bring it up
+to par with block aligned IO. Adding an extra lock cycle to the
+ILOCK on every IO will halve the performance on high IOPs hardware
+because the ILOCK will be directly exposed to userspace IO
+submission and hence become the contention point instead of the
+IOLOCK.
+
+IOWs, the fact taht we take the ILOCK 2x per IO instead of once
+means that the ILOCK becomes the performance limiting lock (because
+even shared locking causes cacheline contention) and changes the
+entire lock profile for the IO path when unaligned IO is being done.
+
+This is also ignoring the fact that the ILOCK is held in exclusive
+mode during IO completion while doing file size and extent
+manipulation transactions. IOWs we can block waiting on IO
+completion before we even decide if we can do the IO with shared
+locking. Hence there are new IO submission serialisation points in
+the fast path that will also slow down the cases where we have to do
+exclusive locking....
+
+So, yeah, I can only see bad things occurring by lifting the ILOCK
+up into the high level IO path. And, of course, once it's taken
+there, people will find new reasons to expand it's scope and the
+problems will only get worse...
+
+> So I dunno... to me, I would start with that approach and then as the
+> implementation soaks, perhaps see if we can find a way to optimize away
+> the extra cycle and lookup.
+
+I don't see how we can determine if we can do the unlaigned IO
+holding a shared lock without doing an extent lookup. It's the
+underlying extent state that makes shared locking possible, and I
+can't think of any other state we can look at to make this decision.
+
+Hence I think this path is simply a dead end with no possibility of
+further optimisation. Of course, if you can solve the problem
+without needing an extent lookup, then we can talk about how to
+avoid racing with actual extent mapping changes done under the
+ILOCK... :)
+
+Cheers,
+
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
