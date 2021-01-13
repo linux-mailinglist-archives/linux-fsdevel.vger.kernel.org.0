@@ -2,137 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA8B2F48C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 11:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94E2E2F48E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 11:46:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbhAMKh4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 05:37:56 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:54069 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbhAMKh4 (ORCPT
+        id S1727351AbhAMKmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 05:42:19 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:21481 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbhAMKmT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 05:37:56 -0500
-Received: by mail-io1-f69.google.com with SMTP id l20so2094336ioc.20
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jan 2021 02:37:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=7GNOF7qGFDGf5o1lpOvQ+1SohtcKvm00Mky/7K1AHxw=;
-        b=h2erYKN2hPHCTbi2hS7rJqOt0erqyg0GnrXBmWTZu1Zo32UhZvEp9Go3a3QRh3Luut
-         apGTHrCQsjSsOG4oyWa4lIZIMXD44/BcIe709EyQX0b10HMKF2S68UKqc4Q4lbVesq+U
-         YI8qWLjYYN5jghvzUmWdQoR2mKKRF8q/y2ZT85zOP450V1u21nEQwTqesBKz8eMCUyPS
-         r7KwzgwFybHG6SPqoj8mJ0iwKpMtFAQ2a+ntfGUU2N/rO8uXbuLpzr42151FkAgxsIRL
-         Ek1Wd7xbCtfKQ60iZA7Vi+pKqQ12p5wD2FOk8/MCdrz7R37iBPCUpU5b0ZY/QpK3txKu
-         vn3g==
-X-Gm-Message-State: AOAM5317wNtAm0TG3d35hHaC2VBIFXus1lnupIrSZrJkxqXzyDn/azQS
-        z13y0jCinnTVwD8Qh2JreKS6pLpKQU/zLIF2Ya5NfU+ejfN/
-X-Google-Smtp-Source: ABdhPJxaeiud9TqE/DpYaNNIkh0RBsmcxZRfcaXobByCwqOcJ38Ly1rrrgGGLoswHJ0aGguf/8Oer9fDTGtLL03jmZfBy+0UR+Pr
+        Wed, 13 Jan 2021 05:42:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1610534930; x=1642070930;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1coX7kAwUe0LPk/zrUpTwwDI3hk732UpFXNIYnhsFrI=;
+  b=T5niHmq15nR3G+wTtmldIWWwlqcLSSYuV/6cfEv2Rt1v47prwd5BLJpS
+   Q14XBqGDR8SYV8rzpF3QJB0aqsaZyvLp5DpFP/hDU3mZ0ICKx4RRzxjke
+   S/1cwABLPaiqO+X8k/jZ6Ue4NeNSSlpBjJpiH2ytzrVjHZoE07qUpePXO
+   FqhjTB9MrWPfHE3lfvJ1fq6q/8ERQDsXwil/c9vNqyKXyp6XfFRBQbDRd
+   wEHjcR2NuX4JE/aeTkMmJeBPlrLQCrcUIhsCT915IH6O+ScGlAJZMAUBn
+   VA4fHlcgYJm2M9wKTNS/NKq/LNurV9A7wjUDu/V+urD5QBCKIJDEiGva2
+   A==;
+IronPort-SDR: 3YCnLwijngwxyLn7tNQjW+tmeupI1rPPFLaJTM5EQCs0veVNDkCyivPusAEFK1L7P4SEZdF/g8
+ emvWnq3PDrwEh8E4AInUzjE4TpBR2iq5B6oGQUh43KVDEExBih3L2DEL5VAbjOsbEp8LmbjsX9
+ B2ysNPSepK8aj1IuW4I14WXLactPJ7yiUmHsawbCb+bkjY2rpaQIDX8wbbLvgfxo0dwg+JQJVI
+ KgcthkMkIn2ekN2vo1MWaC/fQQCtBJ5L7H8nDRodKMqxyiqMEG9Jlqi8XiUxiYBvlL5ujPyHWJ
+ iPw=
+X-IronPort-AV: E=Sophos;i="5.79,344,1602518400"; 
+   d="scan'208";a="261232821"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Jan 2021 18:47:11 +0800
+IronPort-SDR: /Dy98GsJ71+c/fWBmWGKVNLhsqw76Ho1W1Km9aLG9ojRP2BuXY4GCsgWnSkPTQoBPNa1Sf4iXq
+ kcUWglTymcgUluR/xqw439Z17VMLy8i6aFo9ojwvgYyIzetXFxQmTuFhU+TITi2V8+ZYWccR5n
+ ptm4x7+x0uV3CjIR/afvvCFhtN1yzd1Smpl4bljdkvRNSFYBx7Z1PIE+WijUPjC4vnq0cafRn8
+ I8eLvsXsmbUoeQTAMtzvC4D6v8zfJHkcJv14sMluegb5laZAgnd4j2giAvHoSqh5VoerZeZCPU
+ ApfDnZs3M2YubasUQ7jv5Xx5
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2021 02:24:02 -0800
+IronPort-SDR: A3zyPNEAp35ckAFmlUqqdZ64BkC68+8MJWGaAL/5ypBUv02WJ8AiGLzUsWSNyjwZFG2GT0LUU/
+ X8d1c3YBAuRWu8ts9hABy/9ldLZXl5w9HrKGqA82YhtSY+aMT5jvED/FADX/KVJEf6fFuLIAuk
+ DkwMJHF7188hmuEPV8enEPms2wS96nHQe1zs0YLU9yXQAEfJmuyqvoyslktO4H8skIY69WG9Cz
+ l/84/JhvZVbR/us+xPlgvUBTp7gXkj9J5PmXWfh9P/uOQWKWWe7uYq0+8cF/PHUQIkSFnN5wDO
+ WpY=
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip01.wdc.com with SMTP; 13 Jan 2021 02:41:11 -0800
+Received: (nullmailer pid 503073 invoked by uid 1000);
+        Wed, 13 Jan 2021 10:41:11 -0000
+Date:   Wed, 13 Jan 2021 19:41:11 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v11 27/40] btrfs: introduce dedicated data write path for
+ ZONED mode
+Message-ID: <20210113104111.3yntypwyna3tegx6@naota.dhcp.fujisawa.hgst.com>
+References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
+ <2b4271752514c9f376b1fc6a988336ed9238aa0d.1608608848.git.naohiro.aota@wdc.com>
+ <5c4596ba-06b5-e972-bf85-5a6401a4dd16@toxicpanda.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:9346:: with SMTP id v67mr1054121iod.108.1610534235432;
- Wed, 13 Jan 2021 02:37:15 -0800 (PST)
-Date:   Wed, 13 Jan 2021 02:37:15 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000006c2105b8c5b9b9@google.com>
-Subject: general protection fault in io_disable_sqo_submit
-From:   syzbot <syzbot+ab412638aeb652ded540@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <5c4596ba-06b5-e972-bf85-5a6401a4dd16@toxicpanda.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Jan 12, 2021 at 02:24:09PM -0500, Josef Bacik wrote:
+>On 12/21/20 10:49 PM, Naohiro Aota wrote:
+>>If more than one IO is issued for one file extent, these IO can be written
+>>to separate regions on a device. Since we cannot map one file extent to
+>>such a separate area, we need to follow the "one IO == one ordered extent"
+>>rule.
+>>
+>>The Normal buffered, uncompressed, not pre-allocated write path (used by
+>>cow_file_range()) sometimes does not follow this rule. It can write a part
+>>of an ordered extent when specified a region to write e.g., when its
+>>called from fdatasync().
+>>
+>>Introduces a dedicated (uncompressed buffered) data write path for ZONED
+>>mode. This write path will CoW the region and write it at once.
+>>
+>>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+>
+>This means we'll write one page at a time, no coalescing of data 
+>pages.  I'm not the one with zoned devices in production, but it might 
+>be worth fixing this in the future so you're not generating a billion 
+>bio's for large sequential data areas.
 
-syzbot found the following issue on:
+Actually, it is already wrting multiple pages in one bio. We get a
+delalloced range
+that spans multiple pages from btrfs_run_delalloc_range() and write all the
+pages with one bio in extent_write_locked_range().
 
-HEAD commit:    7c53f6b6 Linux 5.11-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1606a757500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c60c9ff9cc916cbc
-dashboard link: https://syzkaller.appspot.com/bug?extid=ab412638aeb652ded540
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13adb0d0d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1527be48d00000
-
-The issue was bisected to:
-
-commit d9d05217cb6990b9a56e13b56e7a1b71e2551f6c
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Fri Jan 8 20:57:25 2021 +0000
-
-    io_uring: stop SQPOLL submit on creator's death
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17b3b248d00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1473b248d00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1073b248d00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ab412638aeb652ded540@syzkaller.appspotmail.com
-Fixes: d9d05217cb69 ("io_uring: stop SQPOLL submit on creator's death")
-
-RDX: 0000000000000001 RSI: 0000000020000300 RDI: 00000000000000ff
-RBP: 0000000000011fc2 R08: 0000000000000001 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021d0
-R13: 0000000000402260 R14: 0000000000000000 R15: 0000000000000000
-general protection fault, probably for non-canonical address 0xdffffc0000000022: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000110-0x0000000000000117]
-CPU: 1 PID: 8473 Comm: syz-executor814 Not tainted 5.11.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_ring_set_wakeup_flag fs/io_uring.c:6929 [inline]
-RIP: 0010:io_disable_sqo_submit+0xdb/0x130 fs/io_uring.c:8891
-Code: fa 48 c1 ea 03 80 3c 02 00 75 62 48 8b 9b c0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d bb 14 01 00 00 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 1d 83
-RSP: 0018:ffffc9000154fd78 EFLAGS: 00010007
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815976e0
-RDX: 0000000000000022 RSI: 0000000000000004 RDI: 0000000000000114
-RBP: ffff8880149ee480 R08: 0000000000000001 R09: 0000000000000003
-R10: fffff520002a9fa1 R11: 1ffffffff1d308df R12: fffffffffffffff4
-R13: 0000000000000001 R14: ffff8880149ee054 R15: ffff8880149ee000
-FS:  0000000000be4880(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000304 CR3: 0000000014b50000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- io_uring_create fs/io_uring.c:9711 [inline]
- io_uring_setup+0x12b1/0x38e0 fs/io_uring.c:9739
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x441309
-Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffea5e64578 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441309
-RDX: 0000000000000001 RSI: 0000000020000300 RDI: 00000000000000ff
-RBP: 0000000000011fc2 R08: 0000000000000001 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021d0
-R13: 0000000000402260 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 0941172fec2041bb ]---
-RIP: 0010:io_ring_set_wakeup_flag fs/io_uring.c:6929 [inline]
-RIP: 0010:io_disable_sqo_submit+0xdb/0x130 fs/io_uring.c:8891
-Code: fa 48 c1 ea 03 80 3c 02 00 75 62 48 8b 9b c0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d bb 14 01 00 00 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 1d 83
-RSP: 0018:ffffc9000154fd78 EFLAGS: 00010007
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815976e0
-RDX: 0000000000000022 RSI: 0000000000000004 RDI: 0000000000000114
-RBP: ffff8880149ee480 R08: 0000000000000001 R09: 0000000000000003
-R10: fffff520002a9fa1 R11: 1ffffffff1d308df R12: fffffffffffffff4
-R13: 0000000000000001 R14: ffff8880149ee054 R15: ffff8880149ee000
-FS:  0000000000be4880(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000304 CR3: 0000000014b50000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+>
+>Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+>
+>Thanks,
+>
+>Josef
