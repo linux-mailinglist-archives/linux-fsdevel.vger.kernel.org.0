@@ -2,115 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DDC12F4FFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 17:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 541902F504E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 17:47:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbhAMQak (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 11:30:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56606 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726812AbhAMQak (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 11:30:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 69F31AD57;
-        Wed, 13 Jan 2021 16:29:58 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1BACD1E08EE; Wed, 13 Jan 2021 17:29:58 +0100 (CET)
-Date:   Wed, 13 Jan 2021 17:29:58 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 00/11] lazytime fix and cleanups
-Message-ID: <20210113162957.GA26686@quack2.suse.cz>
-References: <20210112190253.64307-1-ebiggers@kernel.org>
+        id S1727782AbhAMQqF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 11:46:05 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:57449 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727777AbhAMQqF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Jan 2021 11:46:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1610556279;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=B2nZaowcmYpAm6+Q7xTb3SoumDbJkYtkPecNpTcfdqc=;
+        b=gvmR8F0EbASo0nL0dV8lZ1GlhFmyJlkBeGGMQffQY7SY/sauHd0Ofyh1Pge1YL3vchdVmY
+        fs6YYNA9X5Rxl3krfkKAd9u5R/ITRkqRaExL3QpNQfSTeVXHixtErfW2ZP739RYzZyvBiI
+        4VPiU4tJmeBHnXHlINjuGaRhXOOdzYM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-208-n2t6kthuPH2jhsKcw9bewQ-1; Wed, 13 Jan 2021 11:44:35 -0500
+X-MC-Unique: n2t6kthuPH2jhsKcw9bewQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0654A806660;
+        Wed, 13 Jan 2021 16:44:33 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C7E0C6062F;
+        Wed, 13 Jan 2021 16:44:32 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 10DGiWGW005756;
+        Wed, 13 Jan 2021 11:44:32 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 10DGiUmf005752;
+        Wed, 13 Jan 2021 11:44:31 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 13 Jan 2021 11:44:30 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Zhongwei Cai <sunrise_l@sjtu.edu.cn>
+cc:     Mingkai Dong <mingkaidong@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Wang Jianchao <jianchao.wan9@gmail.com>,
+        "Tadakamadla, Rajesh" <rajesh.tadakamadla@hpe.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+Subject: Re: Expense of read_iter
+In-Reply-To: <2041983017.5681521.1610459100858.JavaMail.zimbra@sjtu.edu.cn>
+Message-ID: <alpine.LRH.2.02.2101131008530.27448@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com> <20210107151125.GB5270@casper.infradead.org> <17045315-CC1F-4165-B8E3-BA55DD16D46B@gmail.com> <2041983017.5681521.1610459100858.JavaMail.zimbra@sjtu.edu.cn>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210112190253.64307-1-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
 
-On Tue 12-01-21 11:02:42, Eric Biggers wrote:
-> Patch 1 fixes a bug in how __writeback_single_inode() handles lazytime
-> expirations.  I originally reported this last year
-> (https://lore.kernel.org/r/20200306004555.GB225345@gmail.com) because it
-> causes the FS_IOC_REMOVE_ENCRYPTION_KEY ioctl to not work properly, as
-> the bug causes inodes to remain dirty after a sync.
-> 
-> It also turns out that lazytime on XFS is partially broken because it
-> doesn't actually write timestamps to disk after a sync() or after
-> dirtytime_expire_interval.  This is fixed by the same fix.
-> 
-> This supersedes previously proposed fixes, including
-> https://lore.kernel.org/r/20200307020043.60118-1-tytso@mit.edu and
-> https://lore.kernel.org/r/20200325122825.1086872-3-hch@lst.de from last
-> year (which had some issues and didn't fix the XFS bug), and v1 of this
-> patchset which took a different approach
-> (https://lore.kernel.org/r/20210105005452.92521-1-ebiggers@kernel.org).
-> 
-> Patches 2-11 then clean up various things related to lazytime and
-> writeback, such as clarifying the semantics of ->dirty_inode() and the
-> inode dirty flags, and improving comments.
-> 
-> This patchset applies to v5.11-rc2.
 
-Thanks for the patches. I've picked the patches to my tree. I plan to push
-patch 1/11 to Linus later this week, the rest of the cleanups will go to
-him during the next merge window.
-
-								Honza
+On Tue, 12 Jan 2021, Zhongwei Cai wrote:
 
 > 
-> Changed v2 => v3:
->   - Changed ext4 patch to add a helper function
->     inode_is_dirtytime_only() to include/linux/fs.h.
->   - Dropped XFS cleanup patch, as it can be sent/applied separately.
->   - Added Reviewed-by's.
+> I'm working with Mingkai on optimizations for Ext4-dax.
+
+What specific patch are you working on? Please, post it somewhere.
+
+> We think that optmizing the read-iter method cannot achieve the
+> same performance as the read method for Ext4-dax. 
+> We tried Mikulas's benchmark on Ext4-dax. The overall time and perf
+> results are listed below:
 > 
-> Changed v1 => v2:
->   - Switched to the fix suggested by Jan Kara, and dropped the
->     patches which introduced ->lazytime_expired().
->   - Fixed bugs in the fat and ext4 patches.
->   - Added patch "fs: improve comments for writeback_single_inode()".
->   - Reordered the patches a bit.
->   - Added Reviewed-by's.
+> Overall time of 2^26 4KB read.
 > 
-> Eric Biggers (11):
->   fs: fix lazytime expiration handling in __writeback_single_inode()
->   fs: correctly document the inode dirty flags
->   fs: only specify I_DIRTY_TIME when needed in generic_update_time()
->   fat: only specify I_DIRTY_TIME when needed in fat_update_time()
->   fs: don't call ->dirty_inode for lazytime timestamp updates
->   fs: pass only I_DIRTY_INODE flags to ->dirty_inode
->   fs: clean up __mark_inode_dirty() a bit
->   fs: drop redundant check from __writeback_single_inode()
->   fs: improve comments for writeback_single_inode()
->   gfs2: don't worry about I_DIRTY_TIME in gfs2_fsync()
->   ext4: simplify i_state checks in __ext4_update_other_inode_time()
-> 
->  Documentation/filesystems/vfs.rst |   5 +-
->  fs/ext4/inode.c                   |  20 +----
->  fs/f2fs/super.c                   |   3 -
->  fs/fat/misc.c                     |  23 +++---
->  fs/fs-writeback.c                 | 132 +++++++++++++++++-------------
->  fs/gfs2/file.c                    |   4 +-
->  fs/gfs2/super.c                   |   2 -
->  fs/inode.c                        |  38 +++++----
->  include/linux/fs.h                |  33 ++++++--
->  9 files changed, 146 insertions(+), 114 deletions(-)
-> 
-> 
-> base-commit: e71ba9452f0b5b2e8dc8aa5445198cd9214a6a62
-> -- 
-> 2.30.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Method       Time
+> read         26.782s
+> read-iter    36.477s
+
+What happens if you use this trick ( https://lkml.org/lkml/2021/1/11/1612 )
+- detect in the "read_iter" method that there is just one segment and 
+treat it like a "read" method. I think that it should improve performance 
+for your case.
+
+Mikulas
+
