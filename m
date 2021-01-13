@@ -2,99 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E77F82F54EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 23:35:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1BFE2F554C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 00:52:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbhAMWeQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 17:34:16 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:48526 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbhAMWdM (ORCPT
+        id S1729594AbhAMXu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 18:50:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45154 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729555AbhAMXtV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 17:33:12 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10DMO15C022373;
-        Wed, 13 Jan 2021 22:31:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=cbAaYYA369SOVtMavd6SqpAAxPSZNSJN5l6rUr3r578=;
- b=hw1PkC/sUHVQ3mQIsWe5wLnCnD2UBEsLkifv+QVZj58xK8X58jAvZHonkY4pgU3pvEDj
- Qbdg//OBSnnr5KhM1CRI+pUx8YpfyfYH6j9jCGSIiEjGCAW7ADrY1s+JbJ/rPaKRuNJ7
- PqW5Aff7qhKGiz3m9c3YZnYnV0paT2Loxi7cTh/BWnDyVYu5qdlqzBieH8mF1mYGr9+i
- WmNU4hCwh6GoY2StJhoj56q3c00HmJooyE3Mwy2Jczgsm0mtYCv1nuUF0ON7KkDArGIg
- 9BElpiJWUeQU2dZSNnu4fGH2edtGH636RDEeJH74U0UD8GUsWHc3t9/2mS/wRnSnNS1u Mg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 360kcywv8r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jan 2021 22:31:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10DMTfZl061547;
-        Wed, 13 Jan 2021 22:31:11 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 360ke9591t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jan 2021 22:31:11 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 10DMUxqN029174;
-        Wed, 13 Jan 2021 22:31:00 GMT
-Received: from [192.168.2.112] (/50.38.35.18)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Jan 2021 14:30:59 -0800
-Subject: Re: [PATCH v12 03/13] mm: Introduce VM_WARN_ON_PAGE macro
-To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
-        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
-        willy@infradead.org, osalvador@suse.de, mhocko@suse.com,
-        song.bao.hua@hisilicon.com, david@redhat.com,
-        naoya.horiguchi@nec.com
-Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210106141931.73931-1-songmuchun@bytedance.com>
- <20210106141931.73931-4-songmuchun@bytedance.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <65b2103d-6198-3380-d36e-17dd774359bd@oracle.com>
-Date:   Wed, 13 Jan 2021 14:30:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Wed, 13 Jan 2021 18:49:21 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB28C061575;
+        Wed, 13 Jan 2021 15:48:40 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id 6so5615684ejz.5;
+        Wed, 13 Jan 2021 15:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qxBGvawjchkt3PkBeFPglNIYbXfNwIwM3XGy8lG49Os=;
+        b=AfdoteZDe3xUjLlIDNDLWd9Uf3cGhaAjkvrrCqckV1VoC8npQcL2xFuorx8afbtim+
+         SQuh4mC0lT44zU8JH6P+bDEl2pf6kvZoOKWYiQp9cA96lI0DgtLS12IVYGgL+rC5wkm8
+         cS8F+nZfJQaE5TfdqhW0AotCJEVT27up6WF3tSAHmbn/UeDkVkFUOo2z2+iywe5zJYbe
+         RVq7VRqszIGny+V3aVIG6wQKR0WnXGFttX8jNrL9IilvGENapTjbcX036MAkr4rZPmuZ
+         T8rKrx5rlF/F9g0rY1u5AtDyz4NvTeFJr8KMhHh9EqpMYW8uI1F86HNkCiVHK36hKaGQ
+         JQ2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qxBGvawjchkt3PkBeFPglNIYbXfNwIwM3XGy8lG49Os=;
+        b=ql+Ff0mpC5YnSL+pKyp/qQM42i21dE09CaWDMoGAPE95D7528AbEtFRxb2IzegavZM
+         3hDIW6O7pQ3sKB3V0IWLRIubhlBsUpLGZkT2IXmKVWzq6mI61+Rye+fI/yjcWVl+0WOM
+         XemZd167KREEaUKgUQEGxOv/2JbynYKXSxO9tQGWE+sBao4FktwIf1bk2ykbP8kOqLWl
+         kCU4NY16+U+ABQWuGsQDKpDcv2bnKbDMczK7AVwkuxVOi42GBACCp523cO+oYCFA0KJY
+         lrccQpPlN13nzddHCLTFl2C99WmtWrSe10JLNO7fCgNdObBUf13VOD6+uP9LarXrsPU4
+         cJGQ==
+X-Gm-Message-State: AOAM533/eTFO10Jq38w+hnQpeMrhx84vYoQq03ACdCtT7r5JxtNL5VMi
+        hP6D5wG9AD7psZpD9Oi2qZWw5jOlhZC/nuduTu+lDSXCvYy4/w==
+X-Google-Smtp-Source: ABdhPJzo5LMkPw9QOaRIWmHNxXmPhpnoc1H63/T35dxn5b2PlL41yBvCJpVtev2FCnnftyWiGi3AmQuhX6au8I8gl+4=
+X-Received: by 2002:a17:906:1a4e:: with SMTP id j14mr3231194ejf.507.1610581719097;
+ Wed, 13 Jan 2021 15:48:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210106141931.73931-4-songmuchun@bytedance.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9863 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101130135
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9863 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
- impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101130134
+References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-5-shy828301@gmail.com>
+ <955422c5-0703-e9fb-f309-6ed6b5fc0e0a@virtuozzo.com>
+In-Reply-To: <955422c5-0703-e9fb-f309-6ed6b5fc0e0a@virtuozzo.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Wed, 13 Jan 2021 15:48:27 -0800
+Message-ID: <CAHbLzkqo=bHcrLBPd68teEAtfLcOsZZ+e3Eds9EfGakhDbW8zA@mail.gmail.com>
+Subject: Re: [v3 PATCH 04/11] mm: vmscan: remove memcg_shrinker_map_size
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/6/21 6:19 AM, Muchun Song wrote:
-> Very similar to VM_WARN_ON_ONCE_PAGE and VM_BUG_ON_PAGE, add
-> VM_WARN_ON_PAGE macro.
-> 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->  include/linux/mmdebug.h | 8 ++++++++
->  1 file changed, 8 insertions(+)
+On Wed, Jan 6, 2021 at 2:16 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> On 06.01.2021 01:58, Yang Shi wrote:
+> > Both memcg_shrinker_map_size and shrinker_nr_max is maintained, but actually the
+> > map size can be calculated via shrinker_nr_max, so it seems unnecessary to keep both.
+> > Remove memcg_shrinker_map_size since shrinker_nr_max is also used by iterating the
+> > bit map.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  mm/vmscan.c | 12 ++++--------
+> >  1 file changed, 4 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index ddb9f972f856..8da765a85569 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -185,8 +185,7 @@ static LIST_HEAD(shrinker_list);
+> >  static DECLARE_RWSEM(shrinker_rwsem);
+> >
+> >  #ifdef CONFIG_MEMCG
+> > -
+> > -static int memcg_shrinker_map_size;
+> > +static int shrinker_nr_max;
+> >
+> >  static void memcg_free_shrinker_map_rcu(struct rcu_head *head)
+> >  {
+> > @@ -248,7 +247,7 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
+> >               return 0;
+> >
+> >       down_read(&shrinker_rwsem);
+> > -     size = memcg_shrinker_map_size;
+> > +     size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> >       for_each_node(nid) {
+> >               map = kvzalloc(sizeof(*map) + size, GFP_KERNEL);
+> >               if (!map) {
+> > @@ -269,7 +268,7 @@ static int memcg_expand_shrinker_maps(int new_id)
+> >       struct mem_cgroup *memcg;
+> >
+> >       size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> > -     old_size = memcg_shrinker_map_size;
+> > +     old_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> >       if (size <= old_size)
+> >               return 0;
+>
+> These bunch of DIV_ROUND_UP() looks too complex. Since now all the shrinker maps allocation
+> logic in the only file, can't we simplify this to look better? I mean something like below
+> to merge in your patch:
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index b951c289ef3a..27b6371a1656 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -247,7 +247,7 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
+>                 return 0;
+>
+>         down_read(&shrinker_rwsem);
+> -       size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> +       size = shrinker_nr_max / BITS_PER_BYTE;
 
-I was going to question the use/need for this macro in the following
-patch.  Looks like Oscar has already done that, and free_bootmem_page
-will now use VM_BUG_ON_PAGE.  So, this patch can be dropped.
+The type of shrinker_maps->map is "unsigned long *", I think we should
+do "(shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long)".
 
--- 
-Mike Kravetz
+And the "/ BITS_PER_BYTE" makes calculating the pointer of nr_deferred
+array harder in the following patch since the length of the map array
+may be not multiple of "unsigned long". Without the nr_deferred array,
+this change seems fine.
+
+>         for_each_node(nid) {
+>                 map = kvzalloc(sizeof(*map) + size, GFP_KERNEL);
+>                 if (!map) {
+> @@ -264,13 +264,11 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
+>
+>  static int memcg_expand_shrinker_maps(int new_id)
+>  {
+> -       int size, old_size, ret = 0;
+> +       int size, old_size, new_nr_max, ret = 0;
+>         struct mem_cgroup *memcg;
+>
+>         size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> -       old_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> -       if (size <= old_size)
+> -               return 0;
+> +       new_nr_max = size * BITS_PER_BYTE;
+>
+>         if (!root_mem_cgroup)
+>                 goto out;
+> @@ -287,6 +285,9 @@ static int memcg_expand_shrinker_maps(int new_id)
+>         } while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
+>
+>  out:
+> +       if (ret == 0)
+> +               shrinker_nr_max = new_nr_max;
+> +
+>         return ret;
+>  }
+>
+> @@ -334,8 +335,6 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+>                         idr_remove(&shrinker_idr, id);
+>                         goto unlock;
+>                 }
+> -
+> -               shrinker_nr_max = id + 1;
+>         }
+>         shrinker->id = id;
+>         ret = 0;
+>
