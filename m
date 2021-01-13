@@ -2,270 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D31D02F51CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 19:18:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D949B2F51EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 19:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbhAMSRH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 13:17:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727963AbhAMSRG (ORCPT
+        id S1728262AbhAMSYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 13:24:24 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:7415 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728254AbhAMSYX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 13:17:06 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE10C061786;
-        Wed, 13 Jan 2021 10:16:26 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id w1so4394248ejf.11;
-        Wed, 13 Jan 2021 10:16:26 -0800 (PST)
+        Wed, 13 Jan 2021 13:24:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1610562263; x=1642098263;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=shm7D8uAvOAILpeMB5LJ18mMdf/3LmhurtgxhX7uFtY=;
+  b=IZxD/UGHbPA2LdhQUUfMmFvsVwZsnRdCEQzyQmVwOsd8XykTpsI1hukN
+   GLbJ9qfrhquoSLboLaDpI+DnFUy/tBvHIw//3s9iYOFSQzfJPG7YKK0s+
+   m4JAh96E3yuXQ3080QUJZvWno7RGG0tsDI0Ebp5EtxUlYXDAQ2v+8W9KO
+   WWzzrJC6VnswQAA4ASX3/iMh6rUIFapiZAxCL+RfZ4nxm8jB0khF5uBCF
+   IBrbt/ufFU1y6arKIsXgar0uedu0uwHTRDx6rywbxDPLhtai0kPTe7s8k
+   hrEpTJqfU+t9EasEMDl80pcUuGHLmjdiI+xbtCwgEp041qlG5Vc5l5K+m
+   g==;
+IronPort-SDR: qtsaCHXucI8jA7xVlK9yDeSzUXpbqaijB6wD4vqo2iumxGzBK1hyMeFtebes1O2157BHK+aL/0
+ nfSRCDhxYXQirhlBCeB5YWx5+iKC9dPfVNU/4VoZe48qvKv8hKQ/20NCz4uizDxhtJba/IG/cm
+ jDX37hDJxLJD56zj89mqszwiPW7Tna/NCVZw2t2hGFiBNR6gg74f/W9BoI9e0XfkWRVLzUfbAs
+ 9yf8uAEfG44H4tlcfePbEsIaqEbscvtysKBDwAJY55CLUVsNdnJwU+Z4wJFoRMXRxUVpe0bBPZ
+ 46E=
+X-IronPort-AV: E=Sophos;i="5.79,344,1602518400"; 
+   d="scan'208";a="157350123"
+Received: from mail-co1nam11lp2177.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.177])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Jan 2021 02:23:17 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GP8/aBiifpb7YHmJjipttBQvYQolW4n2m3DKGMg2Qrb9jqGBpRB90qMLRBBJ6vttScchd+8iZ7oo7xlpAUkdf6igSYGWsYx33qzMaHQkxNW453lIGc+ee/ZKejXkE5zSC4Hd/9TsyeeTPFq+xJUkMgdg0jWQOGwVFytGz8fyHzUvWd0moM6/GOm1JoSER7IHJTjQwWkpfgdwRBQKZFq24JWwMohoK8PLHUNYgtjDcomJ7KTntLtQSViHk8RLL6r5XYRNBNwwDZvgXP8ojvsreOgVwgB5f039okFhaJwtEpHIoNMMOL25qNqHOIcvNBVBCME9o4x2guZ3+xwPzLMk3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hvbwITBK+rNfLwDBaIpx7/8hanyy7+QRL+hr3cfhiZY=;
+ b=kHgTvbaiqoNXasLZ8h7MyEg7A/saB+kpZZppfCW/GAVfDM8BDKKSvWvtufXDhcHU6YcXVX3PEQkbt0pPZr64cfHJYYo4fhBroaHPqKFaL++3fzF8NNjvCjHXWFQjV7fgnrKL6L7ZgS9IsdTkYUIlIVGMSG+mx0OWLQp4XY7JRQAV3SznOeWbzoN8cBJIJ3OgKaScRujdQPtNncMzd7RefTAugKuY6VQAjZksa2GL5yjouCgYku48hWTzHlTI+0rF65RxzuIid1jQ95PWlNvjysHspyjYAhNvV8fJSebI50CqRvCd2qw/+orntTnHnsI2iEPOdTWh38AW65Uz3X4K+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EvTiuc+2xyLYeRcrb0/52TJi7BbIHLk9GXdghe1/ck8=;
-        b=pZPUepV9NQObFtttTju09UoUXtYfPvhPFMxJJB/J23vy/w7suSvVg4SitD9bojoBvX
-         tZHoOYT/vsEeRa3TCCYHp3xxQfoUllu44wefJBFlV51UiI84FmW0Ccx+rFgH/qXDfVyx
-         XGoS6McIM2OwNfboCHh9qUKM7FSTeWpqFwKMxOspG/Gi6huHl69CcfKpyCkSgs3SSNg8
-         1fuRawRQDqcKdpLD0a3C7MCb+1Dju9aDuQ2u+SrVUAP7GnxXh1T8UtEMLJ1dKhUn5eCx
-         jcoW1Sj3lQAJWvYsy30ygSj+FmotUiEM7c945ROEuwgk4FwuWJQtyrXZQSVnDiKJQ9pp
-         YtQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EvTiuc+2xyLYeRcrb0/52TJi7BbIHLk9GXdghe1/ck8=;
-        b=ffZeiPil3x14t628ZMmbSMhNSqUhHCqVdCpQecKrkhTUsf5f4wB+xfpbacwU1ozPY+
-         puNVOoWbZrD6GA1TIxLoqpn05hkpbk2kLDAWFXBdAYRBrYghQbBM3GRXtrZTLLNv1R8O
-         jwrM5exxq6UoMt0DvA6surQtPlYjhaXpLsSm97t8/cL7PKBj4hc5jqTnWa5kpZsjRuIH
-         VZL5tUqTYfNMm3mwaKKp8Fya1cJ57uiO4XLhUqd1ankxxmdtjlMJFtkVCSaKOFlb/krZ
-         ewW71SKz9sK9lTGc33gH104tnvPo8D44P4MZBECTxENSqZW3g3aNxkI+0UeBrl+k/wqw
-         ISvg==
-X-Gm-Message-State: AOAM533kZ5+fH4TPcPSBqtBuyA5hnfk+DxuW68jk3xccXZPGmhEZAFqg
-        f/sR0mzBpSpFxAU5yNZJN6ImsPEGxJBaoPg8kdk=
-X-Google-Smtp-Source: ABdhPJxKf+o87lFKMsfYidQ89N1P8F5iDs2JRQ1uKOS/Fdx6rj7HQIU4g9yoy/JxQWjP2BUmUsOFyCecnWuNpcRGlGM=
-X-Received: by 2002:a17:907:546:: with SMTP id wk6mr2432952ejb.238.1610561784993;
- Wed, 13 Jan 2021 10:16:24 -0800 (PST)
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hvbwITBK+rNfLwDBaIpx7/8hanyy7+QRL+hr3cfhiZY=;
+ b=uZcPKxKguigEr3LTiH6FGsCfB4thmBF0REcE8isF6hZe3cmaKiVULg1GY+iWDAerKkJDBklhdxdCN7ZNRNvB+CezRmOMTv7CPB3Oty3DAO2UXGblahKQnpX94hh6IDWsfwGmwPNFNGjkxuY8u6aTTJCBpaXiVgSXdmd6LeCqr1Q=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN6PR04MB3967.namprd04.prod.outlook.com
+ (2603:10b6:805:49::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.6; Wed, 13 Jan
+ 2021 18:23:16 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::146f:bed3:ce59:c87e]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::146f:bed3:ce59:c87e%3]) with mapi id 15.20.3742.012; Wed, 13 Jan 2021
+ 18:23:16 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>
+CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v11 08/40] btrfs: emulated zoned mode on non-zoned devices
+Thread-Topic: [PATCH v11 08/40] btrfs: emulated zoned mode on non-zoned
+ devices
+Thread-Index: AQHW2BWcUYX4xLVlc0uHppav6ENdEw==
+Date:   Wed, 13 Jan 2021 18:23:16 +0000
+Message-ID: <SN4PR0401MB3598901190835E3C72A505749BA90@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <cover.1608515994.git.naohiro.aota@wdc.com>
+ <e2bcb873196a16b05d5757cd8087900d4f464347.1608608848.git.naohiro.aota@wdc.com>
+ <20210113175843.GV6430@twin.jikos.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: suse.cz; dkim=none (message not signed)
+ header.d=none;suse.cz; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2001:a62:15c4:1c01:c8b:c088:e383:ecf6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 50704f65-d59f-4378-c028-08d8b7f04bf5
+x-ms-traffictypediagnostic: SN6PR04MB3967:
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN6PR04MB3967CB24465B74E5FBD94A029BA90@SN6PR04MB3967.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:639;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: uV4MMzFGheqKzY6Usf4XNMWKNlpmTBttGnF8EL+Hs1D2XBhZNEdJd1f0kYgBe/j9/dVBPjyerMqfQf/zG03p9aavWjVCfN0kFAM9PbbN3CH0pkemfaXz8+nyNAE8+ZJiUcOWoTvrDJ1/VlpqNTcNJ7ZnraZxMhCS7+vgiYHtjQiDkFSGnOz8O7gQ6kpG4pcsn3VB7BC7yuZYLUI/NBl8tHfRVxMJni2y58D+aN917DiyIRWTV86u3ZtImHF10/251yXbYWobHeNE2t9XV8Hzy56fC3fYZxHdxvKLjVMa02rRh6LdOzxBcu/MYsWklQfEHr16AOmBfLl4FTZEYPZvMHQR6wfFVFxpOYP0UknmcDURN3BmW1KDNKrAY7zZXvTtrLU4Jw7hb5VQPEGcc/ic8Q==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(376002)(136003)(39860400002)(346002)(366004)(6636002)(4744005)(55016002)(9686003)(52536014)(66446008)(33656002)(8936002)(5660300002)(86362001)(316002)(8676002)(7696005)(478600001)(110136005)(64756008)(6506007)(54906003)(71200400001)(53546011)(66556008)(66476007)(4326008)(91956017)(186003)(2906002)(66946007)(76116006)(83380400001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?JiZF4gfKL95uyRIf8yoTwLZAVcpQsP99n+QnwGkDuWn7hKX6Zofg3celOtUk?=
+ =?us-ascii?Q?8mvfSjF51JUpqdAIlYSSypjQ+4qMkL9V0cIYudTl8sUMySLsYUSiTVfZNOgE?=
+ =?us-ascii?Q?71TLhzpndpjBglx9aORXDc5JjH0u9r0fZhF3kkX13dT4+Tll8P3cxjFj1vqs?=
+ =?us-ascii?Q?7vCpIdgIsQRH8xHdB7WWbcjWNVbMtg/1bTU7kK5HODI4X9di4oHTn7+MuYO9?=
+ =?us-ascii?Q?kyZQ09YGDlEjrJ4nlpGRJNnBZpNoJgTNEYVKjcXhUQsCX55tGw3JtB3Lbru4?=
+ =?us-ascii?Q?jLp6jbX4esOSa5xbZwdoF+lP7EqM+4QbFSJoE53hRmPI/lTHb8jDEmc4uRKs?=
+ =?us-ascii?Q?a4B0NTE0MxvOgqhc+mHJAE/ZpSOyCQOyvqkvHAKeslgRipBJE2oCImCiprJF?=
+ =?us-ascii?Q?Kuc4Shg4WwkaY2FAmqcJb33p9WQ6mgzkABXyFJH0XPoYRcz5zqIoeKERku9N?=
+ =?us-ascii?Q?hTFOp0Fa2OUFVahnV4ZxIB3jNdAlMy0iExw/+KJu4Om6ddFlnbiPEnJoguXc?=
+ =?us-ascii?Q?256qjIcj0oGkepNnerYiVNbs+5+JadGJo+peyh0b6hmw5ocHFvisvPZjoAwg?=
+ =?us-ascii?Q?hrPgYcE20+i5tnrSc94fu2RL1NZVlFJYvDL+5fPgjhPZRSDDo/MHHulF6Um2?=
+ =?us-ascii?Q?19q5T/LJj/IHatB3gPuLIplsEmeaK8q/VWv8OCVDc3eLrqVO+0zT899oUIDn?=
+ =?us-ascii?Q?g5RP0bFm44SPhX53erOluUrmqfzvshnlxEP82dOLBeMlS9h97jIn9h424Gs5?=
+ =?us-ascii?Q?2T1n0nAmMpxcRnbsPmSwh5SvgFhdErPxbbwfLq2XmyEjb9zCzLq3zvHDuWsw?=
+ =?us-ascii?Q?Pm6souQvMyZ1GpIPY6nKJuGB0nA5gVH3iZXQQisiZd3mcREaxkvEVAP2Ai0F?=
+ =?us-ascii?Q?wZqOlR+bMMYu70wzxJ5eqLeEPnRdltC9iK316lQ9qKT+e8dhuLugzLc/jwUU?=
+ =?us-ascii?Q?ml3I9WgTvW0Kgb9ZPbTOJiXNRlZhxdmL/JvKBoJONBE2guInb695mmDN5N/i?=
+ =?us-ascii?Q?Q3vbmUHtIrjnpWrQrUbdXgSSVVI0bACc8orKZ26/mH4dPNbn7gxAqGo99zoG?=
+ =?us-ascii?Q?BTMVbNTB?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-4-shy828301@gmail.com>
- <56d26993-1577-3747-2d89-1275d92f7a15@virtuozzo.com> <CAHbLzkqS2b7Eb_xDU3-6wR=LN5yr4nDeyyaynfLCzFJOinuUZw@mail.gmail.com>
- <35543012-882c-2e1e-f23b-d25a6fa41e67@virtuozzo.com> <CAHbLzkpXjzN_730iqR_PnU0-vv_rbHZM1dKdjhzEdY8rstzZDg@mail.gmail.com>
- <dca605d9-ace9-3660-3dc6-6b413e342053@virtuozzo.com> <CAHbLzkqebxLaBt2Ok=rrYHCJ1U1zT+VXGsjzHsOZq37D6eeP-A@mail.gmail.com>
-In-Reply-To: <CAHbLzkqebxLaBt2Ok=rrYHCJ1U1zT+VXGsjzHsOZq37D6eeP-A@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 13 Jan 2021 10:16:13 -0800
-Message-ID: <CAHbLzkrHKTm0kvHSGXziFjv4b_jbkyY4R+RYePPB89_4yT7W7A@mail.gmail.com>
-Subject: Re: [v3 PATCH 03/11] mm: vmscan: use shrinker_rwsem to protect
- shrinker_maps allocation
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50704f65-d59f-4378-c028-08d8b7f04bf5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2021 18:23:16.5986
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: r7xPR2cOiINVxBRTWNCHwWxJb001mYTaLJ/Gl2xJB36QqCFvL8tKfwOFRFwajKpehmFK+gUnBjxAMHPazCWexOn+mvgjvhPMtOSyEmCrWl0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB3967
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 12, 2021 at 1:23 PM Yang Shi <shy828301@gmail.com> wrote:
->
-> On Mon, Jan 11, 2021 at 1:34 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >
-> > On 11.01.2021 21:57, Yang Shi wrote:
-> > > On Mon, Jan 11, 2021 at 9:34 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> > >>
-> > >> On 11.01.2021 20:08, Yang Shi wrote:
-> > >>> On Wed, Jan 6, 2021 at 1:55 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> > >>>>
-> > >>>> On 06.01.2021 01:58, Yang Shi wrote:
-> > >>>>> Since memcg_shrinker_map_size just can be changd under holding shrinker_rwsem
-> > >>>>> exclusively, the read side can be protected by holding read lock, so it sounds
-> > >>>>> superfluous to have a dedicated mutex.  This should not exacerbate the contention
-> > >>>>> to shrinker_rwsem since just one read side critical section is added.
-> > >>>>>
-> > >>>>> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > >>>>> ---
-> > >>>>>  mm/vmscan.c | 16 ++++++----------
-> > >>>>>  1 file changed, 6 insertions(+), 10 deletions(-)
-> > >>>>>
-> > >>>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > >>>>> index 9db7b4d6d0ae..ddb9f972f856 100644
-> > >>>>> --- a/mm/vmscan.c
-> > >>>>> +++ b/mm/vmscan.c
-> > >>>>> @@ -187,7 +187,6 @@ static DECLARE_RWSEM(shrinker_rwsem);
-> > >>>>>  #ifdef CONFIG_MEMCG
-> > >>>>>
-> > >>>>>  static int memcg_shrinker_map_size;
-> > >>>>> -static DEFINE_MUTEX(memcg_shrinker_map_mutex);
-> > >>>>>
-> > >>>>>  static void memcg_free_shrinker_map_rcu(struct rcu_head *head)
-> > >>>>>  {
-> > >>>>> @@ -200,8 +199,6 @@ static int memcg_expand_one_shrinker_map(struct mem_cgroup *memcg,
-> > >>>>>       struct memcg_shrinker_map *new, *old;
-> > >>>>>       int nid;
-> > >>>>>
-> > >>>>> -     lockdep_assert_held(&memcg_shrinker_map_mutex);
-> > >>>>> -
-> > >>>>>       for_each_node(nid) {
-> > >>>>>               old = rcu_dereference_protected(
-> > >>>>>                       mem_cgroup_nodeinfo(memcg, nid)->shrinker_map, true);
-> > >>>>> @@ -250,7 +247,7 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
-> > >>>>>       if (mem_cgroup_is_root(memcg))
-> > >>>>>               return 0;
-> > >>>>>
-> > >>>>> -     mutex_lock(&memcg_shrinker_map_mutex);
-> > >>>>> +     down_read(&shrinker_rwsem);
-> > >>>>>       size = memcg_shrinker_map_size;
-> > >>>>>       for_each_node(nid) {
-> > >>>>>               map = kvzalloc(sizeof(*map) + size, GFP_KERNEL);
-> > >>>>> @@ -261,7 +258,7 @@ int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
-> > >>>>>               }
-> > >>>>>               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_map, map);
-> > >>>>
-> > >>>> Here we do STORE operation, and since we want the assignment is visible
-> > >>>> for shrink_slab_memcg() under down_read(), we have to use down_write()
-> > >>>> in memcg_alloc_shrinker_maps().
-> > >>>
-> > >>> I apologize for the late reply, these emails went to my SPAM again.
-> > >>
-> > >> This is the second time the problem appeared. Just add my email address to allow list,
-> > >> and there won't be this problem again.
-> > >
-> > > Yes, I thought clicking "not spam" would add your email address to the
-> > > allow list automatically. But it turns out not true.
-> > >
-> > >>
-> > >>> Before this patch it was not serialized by any lock either, right? Do
-> > >>> we have to serialize it? As Johannes mentioned if shrinker_maps has
-> > >>> not been initialized yet, it means the memcg is a newborn, there
-> > >>> should not be significant amount of reclaimable slab caches, so it is
-> > >>> fine to skip it. The point makes some sense to me.
-> > >>>
-> > >>> So, the read lock seems good enough.
-> > >>
-> > >> No, this is not so.
-> > >>
-> > >> Patch "[v3 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred" adds
-> > >> new assignments:
-> > >>
-> > >> +               info->map = (unsigned long *)((unsigned long)info + sizeof(*info));
-> > >> +               info->nr_deferred = (atomic_long_t *)((unsigned long)info +
-> > >> +                                       sizeof(*info) + m_size);
-> > >>
-> > >> info->map and info->nr_deferred are not visible under READ lock in shrink_slab_memcg(),
-> > >> unless you use WRITE lock in memcg_alloc_shrinker_maps().
-> > >
-> > > However map and nr_deferred are assigned before
-> > > rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new). The
-> > > shrink_slab_memcg() checks shrinker_info pointer.
-> > > But that order might be not guaranteed, so it seems a memory barrier
-> > > before rcu_assign_pointer should be good enough, right?
-> >
-> > Yes, and here are some more:
-> >
-> > 1)There is rcu_dereference_protected() dereferrencing in rcu_dereference_protected(),
-> >   but in case of we use READ lock in memcg_alloc_shrinker_maps(), the dereferrencing
-> >   is not actually protected.
-> >
-> > 2)READ lock makes memcg_alloc_shrinker_info() racy against memory allocation fail.
-> >   memcg_alloc_shrinker_info()->memcg_free_shrinker_info() may free memory right
-> >   after shrink_slab_memcg() dereferenced it. You may say shrink_slab_memcg()->mem_cgroup_online()
-> >   protects us from it?! Yes, sure, but this is not the thing we want to remember
-> >   in the future, since this spreads modularity.
-> >
-> > Why don't we use WRITE lock? It prohibits shrinking of SLAB during memcg_alloc_shrinker_info()->kvzalloc()?
->
-> Yes, it is the main concern.
->
-> > Yes, but it is not a problem, since page cache is still shrinkable, and we are able to
-> > allocate memory. WRITE lock means better modularity, and it gives us a possibility
-> > not to think about corner cases.
->
-> I do agree using write lock makes life easier. I'm just not sure how
-> bad the impact would be, particularly with vfs metadata heavy workload
-> (the most memory is consumed by slab cache rather than page cache).
-> But I think I can design a simple test case, which generates global
-> memory pressure with slab cache (i.e. negative dentry cache), then
-> create significant amount of memcgs (i.e. 10k), then check if the
-> memcgs creation time is lengthened or not.
-
-Did a test on a VM with two nodes (80 cpus) + 16GB memory. The test
-does the below firstly:
-* Generate negative dentry cache from all cpus to fill up the memory
-* Run kernel build with 80 processes
-
-The memory would be filled up and there should be multiple parallel
-reclaimers running simultaneously (at least 2 kswapd processes, at
-most 80 reclaimers), then create 10K memcgs (memcgs creation need
-allocate shrinker_info with acquiring shrinker_rwsem).
-
-The result is:
-
-Read lock
-real    7m17.891s
-user    0m28.061s
-sys     2m33.170s
-
-Write lock
-real    7m5.431s
-user    0m20.400s
-sys     2m53.162s
-
-The one with write lock has longer sys time, it should not be caused
-by the lock contention since the lock is rwsem, it might spend more
-time in reclaiming pages. But it had a little bit shorter wall time
-spent. And OOMs didn't happen either.
-
-So, it seems using write lock didn't have a noticeable impact.
-
->
-> >
-> > >>
-> > >> Nowhere in your patchset you convert READ lock to WRITE lock in memcg_alloc_shrinker_maps().
-> > >>
-> > >> So, just use the true lock in this patch from the first time.
-> > >>
-> > >>>>
-> > >>>>>       }
-> > >>>>> -     mutex_unlock(&memcg_shrinker_map_mutex);
-> > >>>>> +     up_read(&shrinker_rwsem);
-> > >>>>>
-> > >>>>>       return ret;
-> > >>>>>  }
-> > >>>>> @@ -276,9 +273,8 @@ static int memcg_expand_shrinker_maps(int new_id)
-> > >>>>>       if (size <= old_size)
-> > >>>>>               return 0;
-> > >>>>>
-> > >>>>> -     mutex_lock(&memcg_shrinker_map_mutex);
-> > >>>>>       if (!root_mem_cgroup)
-> > >>>>> -             goto unlock;
-> > >>>>> +             goto out;
-> > >>>>>
-> > >>>>>       memcg = mem_cgroup_iter(NULL, NULL, NULL);
-> > >>>>>       do {
-> > >>>>> @@ -287,13 +283,13 @@ static int memcg_expand_shrinker_maps(int new_id)
-> > >>>>>               ret = memcg_expand_one_shrinker_map(memcg, size, old_size);
-> > >>>>>               if (ret) {
-> > >>>>>                       mem_cgroup_iter_break(NULL, memcg);
-> > >>>>> -                     goto unlock;
-> > >>>>> +                     goto out;
-> > >>>>>               }
-> > >>>>>       } while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
-> > >>>>> -unlock:
-> > >>>>> +out:
-> > >>>>>       if (!ret)
-> > >>>>>               memcg_shrinker_map_size = size;
-> > >>>>> -     mutex_unlock(&memcg_shrinker_map_mutex);
-> > >>>>> +
-> > >>>>>       return ret;
-> > >>>>>  }
-> > >>>>>
-> > >>>>>
-> > >>>>
-> > >>>>
-> > >>
-> > >>
-> >
-> >
+On 13/01/2021 19:00, David Sterba wrote:=0A=
+> so what changed that it's fine to use device->fs_info now while it was=0A=
+> not before?=0A=
+=0A=
+The time when we call btrfs_get_dev_zone_info() in "btrfs: defer loading=0A=
+zone info after opening trees". =0A=
+=0A=
+From the commit message:=0A=
+=0A=
+"The current call site of btrfs_get_dev_zone_info() during the mount proces=
+s=0A=
+is earlier than reading the trees, so we can't slice a regular device to=0A=
+conventional zones. This patch defers the loading of zone info to=0A=
+open_ctree() to load the emulated zone size from a device extent."=0A=
+    =0A=
+Hope this clarifies your concerns.=0A=
