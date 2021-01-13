@@ -2,106 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BB122F5754
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 03:59:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B70202F5787
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 04:00:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbhAMVbk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 16:31:40 -0500
-Received: from so254-31.mailgun.net ([198.61.254.31]:13772 "EHLO
-        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729140AbhAMVaU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 16:30:20 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1610573400; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=Ch2XVgOCR5t+oWiqNZvTCBTunPhnsKohqMu9LnBESb0=; b=es2JS2pa9Hi5vc9VAIfmIMnCsXmzTaroiI2LioBvOCnxxJC1Wwa6WY4IsCDlibQt/j7kIp5a
- OiYtqP2iHDH+gp2OIlcnLEMnngLSuEsKqL13ACFhtNqdeJeBSW6ZxB55I3255bLpALztVhYS
- USu7BGepD97gRRJPjUCc4EMvMgc=
-X-Mailgun-Sending-Ip: 198.61.254.31
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 5fff63708fb3cda82fb0335c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 13 Jan 2021 21:17:36
- GMT
-Sender: cgoldswo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id CB0F4C43463; Wed, 13 Jan 2021 21:17:35 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL
-        autolearn=no autolearn_force=no version=3.4.0
-Received: from cgoldswo-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1729013AbhANCBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 21:01:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51468 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729470AbhAMXZG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Jan 2021 18:25:06 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: cgoldswo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D71CAC433CA;
-        Wed, 13 Jan 2021 21:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D71CAC433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=cgoldswo@codeaurora.org
-From:   Chris Goldsworthy <cgoldswo@codeaurora.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Goldsworthy <cgoldswo@codeaurora.org>
-Subject: [PATCH v3] Resolve LRU page-pinning issue for file-backed pages 
-Date:   Wed, 13 Jan 2021 13:17:29 -0800
-Message-Id: <cover.1610572007.git.cgoldswo@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        by mail.kernel.org (Postfix) with ESMTPSA id 32DEC233ED;
+        Wed, 13 Jan 2021 23:13:49 +0000 (UTC)
+Date:   Wed, 13 Jan 2021 18:13:47 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs/namei.c: Remove unlikely of status being -ECHILD
+ in lookup_fast()
+Message-ID: <20210113181347.633356a7@gandalf.local.home>
+In-Reply-To: <20201209170928.26b4cda7@gandalf.local.home>
+References: <20201209170928.26b4cda7@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It is possible for file-backed pages to end up in a contiguous memory area
-(CMA), such that the relevant page must be migrated using the .migratepage()
-callback when its backing physical memory is selected for use in an CMA
-allocation (through cma_alloc()).  However, if a set of address space
-operations (AOPs) for a file-backed page lacks a migratepage() page call-back,
-fallback_migrate_page() will be used instead, which through
-try_to_release_page() calls try_to_free_buffers() (which is called directly or
-through a try_to_free_buffers() callback.  try_to_free_buffers() in turn calls
-drop_buffers()
+Ping?
 
-drop_buffers() itself can fail due to the buffer_head associated with a page
-being busy. However, it is possible that the buffer_head is on an LRU list for
-a CPU, such that we can try removing the buffer_head from that list, in order
-to successfully release the page.  Do this.
+-- Steve
 
-v1: https://lore.kernel.org/lkml/cover.1606194703.git.cgoldswo@codeaurora.org/T/#m3a44b5745054206665455625ccaf27379df8a190
-Original version of the patch (with updates to make to account for changes in
-on_each_cpu_cond()).
 
-v2: https://lore.kernel.org/lkml/cover.1609829465.git.cgoldswo@codeaurora.org/
-Follow Matthew Wilcox's suggestion of reducing the number of calls to
-on_each_cpu_cond(), by iterating over a page's busy buffer_heads inside of
-on_each_cpu_cond(). To copy from his e-mail, we go from:
+On Wed, 9 Dec 2020 17:09:28 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-for_each_buffer
-	for_each_cpu
-		for_each_lru_entry
-
-to:
-
-for_each_cpu
-	for_each_buffer
-		for_each_lru_entry
-
-This is done using xarrays, which I found to be the cleanest data structure to
-use, though a pre-allocated array of page_size(page) / bh->b_size elements might
-be more performant.
-
-v3: Replace xas_for_each() with xa_for_each() to account for proper locking.
-
-Laura Abbott (1):
-  fs/buffer.c: Revoke LRU when trying to drop buffers
-
- fs/buffer.c | 81 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 76 insertions(+), 5 deletions(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> From:  Steven Rostedt (VMware) <rostedt@goodmis.org>
+> 
+> Running my yearly branch profiling code, it detected a 100% wrong branch
+> condition in name.c for lookup_fast(). The code in question has:
+> 
+> 		status = d_revalidate(dentry, nd->flags);
+> 		if (likely(status > 0))
+> 			return dentry;
+> 		if (unlazy_child(nd, dentry, seq))
+> 			return ERR_PTR(-ECHILD);
+> 		if (unlikely(status == -ECHILD))
+> 			/* we'd been told to redo it in non-rcu mode */
+> 			status = d_revalidate(dentry, nd->flags);
+> 
+> If the status of the d_revalidate() is greater than zero, then the function
+> finishes. Otherwise, if it is an "unlazy_child" it returns with -ECHILD.
+> After the above two checks, the status is compared to -ECHILD, as that is
+> what is returned if the original d_revalidate() needed to be done in a
+> non-rcu mode.
+> 
+> Especially this path is called in a condition of:
+> 
+> 	if (nd->flags & LOOKUP_RCU) {
+> 
+> And most of the d_revalidate() functions have:
+> 
+> 	if (flags & LOOKUP_RCU)
+> 		return -ECHILD;
+> 
+> It appears that that is the only case that this if statement is triggered
+> on two of my machines, running in production.
+> 
+> As it is dependent on what filesystem mix is configured in the running
+> kernel, simply remove the unlikely() from the if statement.
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+> Changes since v1:
+> 
+>  - Remove unlikely() instead of making it a likely()
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index d4a6dd772303..c7b7e83853f3 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1495,7 +1495,7 @@ static struct dentry *lookup_fast(struct nameidata *nd,
+>  			return dentry;
+>  		if (unlazy_child(nd, dentry, seq))
+>  			return ERR_PTR(-ECHILD);
+> -		if (unlikely(status == -ECHILD))
+> +		if (status == -ECHILD)
+>  			/* we'd been told to redo it in non-rcu mode */
+>  			status = d_revalidate(dentry, nd->flags);
+>  	} else {
 
