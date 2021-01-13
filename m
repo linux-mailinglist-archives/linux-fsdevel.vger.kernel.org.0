@@ -2,147 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 318DF2F56E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 02:59:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C831A2F571A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 02:59:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbhANBzT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 20:55:19 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:49158 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729617AbhAMXyY (ORCPT
+        id S1728941AbhANB64 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 20:58:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729539AbhAMXj5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 18:54:24 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10DNKDqt129605;
-        Wed, 13 Jan 2021 23:27:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=8nhKPkft+xGSN2PyfovUj+WldoTS6Xrgzrpgzt8e86w=;
- b=v7VHxdffCnMUVJhbIDNMJ1Qfr5ZAv7MJdvUqMKSTY+fc5MnCU2qmENSBaH8P4invXRwW
- CjIeWdV+IZ19P8Yx/8a+NO9hRB9DQQZRjQFBn2fsKrcf068dC0C204nl2J69hC/DpG5m
- btY56Kg9qqZp5c7bVJKfehNq6b8PkiJiQZ27EnraZnXgsmPRU3cLgL6VH2kNH/baSBXf
- pUW/+fOVRL+Z/+/P7sXoz3ETcHTEAKbSCWt/PH0fQLKLaAgQD2Cx7bpwlqcNqRRJKOQA
- fZT710NseYt6navd9ZlhGqNV0SUVFZo1UCHLye1wpHjSeRQJliDze4X0uDH+/bI2mZVW XA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 360kcyx1v3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jan 2021 23:27:40 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10DNKBki145808;
-        Wed, 13 Jan 2021 23:27:39 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 360kf1dy53-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jan 2021 23:27:39 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10DNRZCb002460;
-        Wed, 13 Jan 2021 23:27:35 GMT
-Received: from [192.168.2.112] (/50.38.35.18)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Jan 2021 15:27:34 -0800
-Subject: Re: [External] Re: [PATCH v12 04/13] mm/hugetlb: Free the vmemmap
- pages associated with each HugeTLB page
-To:     Oscar Salvador <osalvador@suse.de>,
-        Muchun Song <songmuchun@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20210106141931.73931-1-songmuchun@bytedance.com>
- <20210106141931.73931-5-songmuchun@bytedance.com>
- <20210112080453.GA10895@linux>
- <CAMZfGtUqN2BZH28i9VJhRJ3VH3OGKBQ7hDUuX1-F5LcwbKk+4A@mail.gmail.com>
- <20210113092028.GB24816@linux>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <a9baf18c-22c7-4946-9778-678f6bc808dc@oracle.com>
-Date:   Wed, 13 Jan 2021 15:27:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Wed, 13 Jan 2021 18:39:57 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD06CC0617BE;
+        Wed, 13 Jan 2021 15:30:35 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id f4so5543548ejx.7;
+        Wed, 13 Jan 2021 15:30:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+ThdM1NIAavEN91ZusgnEdjYDUGaG7otfohp4Z3kCOQ=;
+        b=DLI9fFXEWZoTRwYbyi9uxrj9CaxCfGZ+z+M07V1BFKhs8RKrCKRxp8y2kbjB+2gyeH
+         JOLdAFe3FIC/zztuywOi0OA1BnF0xoi9bqjxdOtdudXG1zoMOeeDi6DTpMZK8EL2kNHr
+         blAqNWDdTLGMYp9UMzi1BANeK6SJeZA9DuGocqgX7CcH9floirKI6YoU72eJli8hBjre
+         vEhjGrhCXsdwLOVlov6F3bvszmyI2HcCShSlI95Ke+d8ZOusKB4g6V5T3Prmq34Lh0gm
+         A277DgVbb3HXdKLFlC8ah0QsMgAHTXGiSXr1p1U5b70/Dkjeamxo65TARwP7zc6Gl9OD
+         icDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+ThdM1NIAavEN91ZusgnEdjYDUGaG7otfohp4Z3kCOQ=;
+        b=AoN+bZP/jBJsE/lDcchiBn9HCC4VkF+Lrv28BIFuyNZ+1Tf/Ev63x9wKqolIjxfmWr
+         PK/UGM4nmC1spcrlh7j+rCrnk4tfrx9qfIrJGPsGVeGC91sDI6YZqTBV6o3ebCSie5TC
+         VyOr+NaqVkqBu0nHPhX9yRHPzrF7fyQcc8RmW4a1UInxjnSh/HqQ/V17nfPlh75PSoHR
+         tINZxnhhYZ9KVI+0uOG/ABRyrXgg9fUwj8d3YrMsOAXWNXtXDLPWoy68DlyJTMt+R0l2
+         dnWbMMBNxtJckARdw2mIpto2nJaQIJbu/Tj2/PJRua+p/KakQOL0jYoMVzwv+Omt+qBD
+         oxrw==
+X-Gm-Message-State: AOAM530D/6ZfsfI+5+lnFs7PthvB5ITwxq9Y8f72yDMtyfxEvF/QDTaB
+        L3okNBsgYnD0aVLCNIR6i+qlTjoN0gCb8R4WJm8=
+X-Google-Smtp-Source: ABdhPJyaypfl3BCqee9yX2oainSpZH51t7ScuzPWbw8Ko1Esha9+teMs8WM+uMFKT9txOHoO27WvFmyQCRMW7FhJ0Io=
+X-Received: by 2002:a17:906:b04f:: with SMTP id bj15mr3134065ejb.383.1610580634426;
+ Wed, 13 Jan 2021 15:30:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210113092028.GB24816@linux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9863 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 adultscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101130141
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9863 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
- impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101130141
+References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-8-shy828301@gmail.com>
+ <a3452140-9f88-3cb9-0359-ca374f9e9d9d@virtuozzo.com>
+In-Reply-To: <a3452140-9f88-3cb9-0359-ca374f9e9d9d@virtuozzo.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Wed, 13 Jan 2021 15:30:22 -0800
+Message-ID: <CAHbLzko_1VydJHurX4fACw4v9v859dUbCwSpvhBOnDoKiwu0pQ@mail.gmail.com>
+Subject: Re: [v3 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/13/21 1:20 AM, Oscar Salvador wrote:
-> On Tue, Jan 12, 2021 at 07:33:33PM +0800, Muchun Song wrote:
->>> It seems a bit odd to only pass "start" for the BUG_ON.
->>> Also, I kind of dislike the "addr += PAGE_SIZE" in vmemmap_pte_range.
->>>
->>> I wonder if adding a ".remap_start_addr" would make more sense.
->>> And adding it here with the vmemmap_remap_walk init.
->>
->> How about introducing a new function which aims to get the reuse
->> page? In this case, we can drop the BUG_ON() and "addr += PAGE_SIZE"
->> which is in vmemmap_pte_range. The vmemmap_remap_range only
->> does the remapping.
-> 
-> How would that look? 
-> It might be good, dunno, but the point is, we should try to make the rules as
-> simple as possible, dropping weird assumptions.
-> 
-> Callers of vmemmap_remap_free should know three things:
-> 
-> - Range to be remapped
-> - Addr to remap to
-> - Current implemantion needs addr to be remap to to be part of the complete
->   range
-> 
-> right?
+On Wed, Jan 6, 2021 at 3:07 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> On 06.01.2021 01:58, Yang Shi wrote:
+> > Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> >
+> > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> > may suffer from over shrink, excessive reclaim latency, etc.
+> >
+> > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> >
+> > We observed this hit in our production environment which was running vfs heavy workload
+> > shown as the below tracing log:
+> >
+> > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> > cache items 246404277 delta 31345 total_scan 123202138
+> > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> > last shrinker return val 123186855
+> >
+> > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> > This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> >
+> > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> > better isolation.
+> >
+> > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  include/linux/memcontrol.h |  7 +++---
+> >  mm/vmscan.c                | 49 +++++++++++++++++++++++++-------------
+> >  2 files changed, 37 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index e05bbe8277cc..5599082df623 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -93,12 +93,13 @@ struct lruvec_stat {
+> >  };
+> >
+> >  /*
+> > - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> > - * which have elements charged to this memcg.
+> > + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
+> > + * shrinkers, which have elements charged to this memcg.
+> >   */
+> >  struct memcg_shrinker_info {
+> >       struct rcu_head rcu;
+> > -     unsigned long map[];
+> > +     unsigned long *map;
+> > +     atomic_long_t *nr_deferred;
+> >  };
+> >
+> >  /*
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 0033659abf9e..72259253e414 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -193,10 +193,12 @@ static void memcg_free_shrinker_info_rcu(struct rcu_head *head)
+> >  }
+> >
+> >  static int memcg_expand_one_shrinker_info(struct mem_cgroup *memcg,
+> > -                                       int size, int old_size)
+> > +                                       int m_size, int d_size,
+> > +                                       int old_m_size, int old_d_size)
+> >  {
+> >       struct memcg_shrinker_info *new, *old;
+> >       int nid;
+> > +     int size = m_size + d_size;
+> >
+> >       for_each_node(nid) {
+> >               old = rcu_dereference_protected(
+> > @@ -209,9 +211,18 @@ static int memcg_expand_one_shrinker_info(struct mem_cgroup *memcg,
+> >               if (!new)
+> >                       return -ENOMEM;
+> >
+> > -             /* Set all old bits, clear all new bits */
+> > -             memset(new->map, (int)0xff, old_size);
+> > -             memset((void *)new->map + old_size, 0, size - old_size);
+> > +             new->map = (unsigned long *)((unsigned long)new + sizeof(*new));
+> > +             new->nr_deferred = (atomic_long_t *)((unsigned long)new +
+> > +                                     sizeof(*new) + m_size);
+>
+> Can't we write this more compact?
+>
+>                 new->map = (unsigned long *)(new + 1);
+>                 new->nr_deferred = (atomic_long_t)(new->map + 1);
 
-And, current implementation needs must have remap addr be the first in the
-complete range.  This is just because of the way the page tables are walked
-for remapping.  The remap/reuse page must be found first so that the following
-pages can be remapped to it.
+By relooking this, the second line looks wrong. The layout should be:
 
-That implementation seems to be the 'most efficient' for hugetlb pages where
-we want vmemmap pages n+3 and beyond mapped to n+2.
+        ----------------------------
+       | struct shrinker_info |
+       -----------------------------
+       |    map array             |
+       -----------------------------
+       |   nr_deferred array   |
+       ------------------------------
 
-In a more general purpose vmemmap_remap_free implementation, the reuse/remap
-address would not necessarily need to be related to the range.  However, this
-would require a separate page table walk/validation for the reuse address
-independent of the range.  This may be what Muchun was proposing for 'a new
-function which aims to get the reuse page'.
+new->map is the pointer to map array, its type is "unsigned long *",
+so "new->map + 1" should point to the next 32 bytes, but the map array
+may occupy more than one "unsigned long", this would corrupt the
+arrays.
 
-IMO, the decision on how to implement depends on the intended use case.
-- If this is going to be hugetlb only (or perhaps generic huge page only)
-  functionality, then I am OK with an efficient implementation that has
-  some restrictions.
-- If we see this being used for more general purpose remapping, then we
-  should go with a more general purpose implementation.
+I think we could use "new->map + (shrinker_nr_max / BITS_PER_LONG) + 1"
 
-Again, just my opinion.
--- 
-Mike Kravetz
+>
+> > +
+> > +             /* map: set all old bits, clear all new bits */
+> > +             memset(new->map, (int)0xff, old_m_size);
+> > +             memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
+> > +             /* nr_deferred: copy old values, clear all new values */
+> > +             memcpy((void *)new->nr_deferred, (void *)old->nr_deferred,
+> > +                    old_d_size);
+>
+> Why not
+>                 memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
+> ?
+>
+> > +             memset((void *)new->nr_deferred + old_d_size, 0,
+> > +                    d_size - old_d_size);
+> >
+> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+> >               call_rcu(&old->rcu, memcg_free_shrinker_info_rcu);
+> > @@ -226,9 +237,6 @@ void memcg_free_shrinker_info(struct mem_cgroup *memcg)
+> >       struct memcg_shrinker_info *info;
+> >       int nid;
+> >
+> > -     if (mem_cgroup_is_root(memcg))
+> > -             return;
+> > -
+> >       for_each_node(nid) {
+> >               pn = mem_cgroup_nodeinfo(memcg, nid);
+> >               info = rcu_dereference_protected(pn->shrinker_info, true);
+> > @@ -242,12 +250,13 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+> >  {
+> >       struct memcg_shrinker_info *info;
+> >       int nid, size, ret = 0;
+> > -
+> > -     if (mem_cgroup_is_root(memcg))
+> > -             return 0;
+> > +     int m_size, d_size = 0;
+> >
+> >       down_read(&shrinker_rwsem);
+> > -     size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     m_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> > +     size = m_size + d_size;
+> > +
+> >       for_each_node(nid) {
+> >               info = kvzalloc(sizeof(*info) + size, GFP_KERNEL);
+> >               if (!info) {
+> > @@ -255,6 +264,9 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+> >                       ret = -ENOMEM;
+> >                       break;
+> >               }
+> > +             info->map = (unsigned long *)((unsigned long)info + sizeof(*info));
+> > +             info->nr_deferred = (atomic_long_t *)((unsigned long)info +
+> > +                                     sizeof(*info) + m_size);
+> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+> >       }
+> >       up_read(&shrinker_rwsem);
+> > @@ -265,10 +277,16 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
+> >  static int memcg_expand_shrinker_info(int new_id)
+> >  {
+> >       int size, old_size, ret = 0;
+> > +     int m_size, d_size = 0;
+> > +     int old_m_size, old_d_size = 0;
+> >       struct mem_cgroup *memcg;
+> >
+> > -     size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> > -     old_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     m_size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     d_size = (new_id + 1) * sizeof(atomic_long_t);
+> > +     size = m_size + d_size;
+> > +     old_m_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
+> > +     old_d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> > +     old_size = old_m_size + old_d_size;
+> >       if (size <= old_size)
+> >               return 0;
+>
+> This replication of patch [4/11] looks awkwardly. Please, try to incorporate
+> the same changes to nr_deferred as I requested for shrinker_map in [4/11].
+>
+> >
+> > @@ -277,9 +295,8 @@ static int memcg_expand_shrinker_info(int new_id)
+> >
+> >       memcg = mem_cgroup_iter(NULL, NULL, NULL);
+> >       do {
+> > -             if (mem_cgroup_is_root(memcg))
+> > -                     continue;
+> > -             ret = memcg_expand_one_shrinker_info(memcg, size, old_size);
+> > +             ret = memcg_expand_one_shrinker_info(memcg, m_size, d_size,
+> > +                                                  old_m_size, old_d_size);
+> >               if (ret) {
+> >                       mem_cgroup_iter_break(NULL, memcg);
+> >                       goto out;
+> >
+>
+>
