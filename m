@@ -2,215 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 303462F5644
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 02:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BB122F5754
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 03:59:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbhANBoy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 20:44:54 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:59185 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727047AbhANBox (ORCPT
+        id S1729145AbhAMVbk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 16:31:40 -0500
+Received: from so254-31.mailgun.net ([198.61.254.31]:13772 "EHLO
+        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729140AbhAMVaU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 20:44:53 -0500
-X-IronPort-AV: E=Sophos;i="5.79,345,1602518400"; 
-   d="scan'208";a="103460770"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 14 Jan 2021 09:44:21 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 6AB404CE1A08;
-        Thu, 14 Jan 2021 09:44:16 +0800 (CST)
-Received: from irides.mr (10.167.225.141) by G08CNEXMBPEKD05.g08.fujitsu.local
- (10.167.33.204) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 14 Jan
- 2021 09:44:17 +0800
-Subject: Re: [PATCH 04/10] mm, fsdax: Refactor memory-failure handler for dax
- mapping
-To:     zhong jiang <zhongjiang-ali@linux.alibaba.com>,
-        Jan Kara <jack@suse.cz>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
-        <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@lst.de>, <song@kernel.org>,
-        <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
-References: <20201230165601.845024-1-ruansy.fnst@cn.fujitsu.com>
- <20201230165601.845024-5-ruansy.fnst@cn.fujitsu.com>
- <20210106154132.GC29271@quack2.suse.cz>
- <75164044-bfdf-b2d6-dff0-d6a8d56d1f62@cn.fujitsu.com>
- <781f276b-afdd-091c-3dba-048e415431ab@linux.alibaba.com>
-From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
-Message-ID: <ef29ba5c-96d7-d0bb-e405-c7472a518b32@cn.fujitsu.com>
-Date:   Thu, 14 Jan 2021 09:44:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
-MIME-Version: 1.0
-In-Reply-To: <781f276b-afdd-091c-3dba-048e415431ab@linux.alibaba.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.225.141]
-X-ClientProxiedBy: G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) To
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
-X-yoursite-MailScanner-ID: 6AB404CE1A08.AD0C5
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
+        Wed, 13 Jan 2021 16:30:20 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1610573400; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=Ch2XVgOCR5t+oWiqNZvTCBTunPhnsKohqMu9LnBESb0=; b=es2JS2pa9Hi5vc9VAIfmIMnCsXmzTaroiI2LioBvOCnxxJC1Wwa6WY4IsCDlibQt/j7kIp5a
+ OiYtqP2iHDH+gp2OIlcnLEMnngLSuEsKqL13ACFhtNqdeJeBSW6ZxB55I3255bLpALztVhYS
+ USu7BGepD97gRRJPjUCc4EMvMgc=
+X-Mailgun-Sending-Ip: 198.61.254.31
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 5fff63708fb3cda82fb0335c (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 13 Jan 2021 21:17:36
+ GMT
+Sender: cgoldswo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id CB0F4C43463; Wed, 13 Jan 2021 21:17:35 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL
+        autolearn=no autolearn_force=no version=3.4.0
+Received: from cgoldswo-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: cgoldswo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D71CAC433CA;
+        Wed, 13 Jan 2021 21:17:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D71CAC433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=cgoldswo@codeaurora.org
+From:   Chris Goldsworthy <cgoldswo@codeaurora.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Goldsworthy <cgoldswo@codeaurora.org>
+Subject: [PATCH v3] Resolve LRU page-pinning issue for file-backed pages 
+Date:   Wed, 13 Jan 2021 13:17:29 -0800
+Message-Id: <cover.1610572007.git.cgoldswo@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+It is possible for file-backed pages to end up in a contiguous memory area
+(CMA), such that the relevant page must be migrated using the .migratepage()
+callback when its backing physical memory is selected for use in an CMA
+allocation (through cma_alloc()).  However, if a set of address space
+operations (AOPs) for a file-backed page lacks a migratepage() page call-back,
+fallback_migrate_page() will be used instead, which through
+try_to_release_page() calls try_to_free_buffers() (which is called directly or
+through a try_to_free_buffers() callback.  try_to_free_buffers() in turn calls
+drop_buffers()
 
+drop_buffers() itself can fail due to the buffer_head associated with a page
+being busy. However, it is possible that the buffer_head is on an LRU list for
+a CPU, such that we can try removing the buffer_head from that list, in order
+to successfully release the page.  Do this.
 
-On 2021/1/13 下午6:04, zhong jiang wrote:
-> 
-> On 2021/1/12 10:55 上午, Ruan Shiyang wrote:
->>
->>
->> On 2021/1/6 下午11:41, Jan Kara wrote:
->>> On Thu 31-12-20 00:55:55, Shiyang Ruan wrote:
->>>> The current memory_failure_dev_pagemap() can only handle single-mapped
->>>> dax page for fsdax mode.  The dax page could be mapped by multiple 
->>>> files
->>>> and offsets if we let reflink feature & fsdax mode work together.  So,
->>>> we refactor current implementation to support handle memory failure on
->>>> each file and offset.
->>>>
->>>> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
->>>
->>> Overall this looks OK to me, a few comments below.
->>>
->>>> ---
->>>>   fs/dax.c            | 21 +++++++++++
->>>>   include/linux/dax.h |  1 +
->>>>   include/linux/mm.h  |  9 +++++
->>>>   mm/memory-failure.c | 91 
->>>> ++++++++++++++++++++++++++++++++++-----------
->>>>   4 files changed, 100 insertions(+), 22 deletions(-)
->>
->> ...
->>
->>>>   @@ -345,9 +348,12 @@ static void add_to_kill(struct task_struct 
->>>> *tsk, struct page *p,
->>>>       }
->>>>         tk->addr = page_address_in_vma(p, vma);
->>>> -    if (is_zone_device_page(p))
->>>> -        tk->size_shift = dev_pagemap_mapping_shift(p, vma);
->>>> -    else
->>>> +    if (is_zone_device_page(p)) {
->>>> +        if (is_device_fsdax_page(p))
->>>> +            tk->addr = vma->vm_start +
->>>> +                    ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
->>>
->>> It seems strange to use 'pgoff' for dax pages and not for any other 
->>> page.
->>> Why? I'd rather pass correct pgoff from all callers of add_to_kill() and
->>> avoid this special casing...
->>
->> Because one fsdax page can be shared by multiple pgoffs.  I have to 
->> pass each pgoff in each iteration to calculate the address in vma (for 
->> tk->addr).  Other kinds of pages don't need this. They can get their 
->> unique address by calling "page_address_in_vma()".
->>
-> IMO,   an fsdax page can be shared by multiple files rather than 
-> multiple pgoffs if fs query support reflink.   Because an page only 
-> located in an mapping(page->mapping is exclusive),  hence it  only has 
-> an pgoff or index pointing at the node.
-> 
->   or  I miss something for the feature ?  thanks,
+v1: https://lore.kernel.org/lkml/cover.1606194703.git.cgoldswo@codeaurora.org/T/#m3a44b5745054206665455625ccaf27379df8a190
+Original version of the patch (with updates to make to account for changes in
+on_each_cpu_cond()).
 
-Yes, a fsdax page is shared by multiple files because of reflink.  I 
-think my description of 'pgoff' here is not correct.  This 'pgoff' means 
-the offset within the a file.  (We use rmap to find out all the sharing 
-files and their offsets.)  So, I said that "can be shared by multiple 
-pgoffs".  It's my bad.
+v2: https://lore.kernel.org/lkml/cover.1609829465.git.cgoldswo@codeaurora.org/
+Follow Matthew Wilcox's suggestion of reducing the number of calls to
+on_each_cpu_cond(), by iterating over a page's busy buffer_heads inside of
+on_each_cpu_cond(). To copy from his e-mail, we go from:
 
-I think I should name it another word to avoid misunderstandings.
+for_each_buffer
+	for_each_cpu
+		for_each_lru_entry
 
+to:
 
---
-Thanks,
-Ruan Shiyang.
+for_each_cpu
+	for_each_buffer
+		for_each_lru_entry
 
-> 
->> So, I added this fsdax case here.  This patchset only implemented the 
->> fsdax case, other cases also need to be added here if to be implemented.
->>
->>
->> -- 
->> Thanks,
->> Ruan Shiyang.
->>
->>>
->>>> +        tk->size_shift = dev_pagemap_mapping_shift(p, vma, tk->addr);
->>>> +    } else
->>>>           tk->size_shift = page_shift(compound_head(p));
->>>>         /*
->>>> @@ -495,7 +501,7 @@ static void collect_procs_anon(struct page 
->>>> *page, struct list_head *to_kill,
->>>>               if (!page_mapped_in_vma(page, vma))
->>>>                   continue;
->>>>               if (vma->vm_mm == t->mm)
->>>> -                add_to_kill(t, page, vma, to_kill);
->>>> +                add_to_kill(t, page, NULL, 0, vma, to_kill);
->>>>           }
->>>>       }
->>>>       read_unlock(&tasklist_lock);
->>>> @@ -505,24 +511,19 @@ static void collect_procs_anon(struct page 
->>>> *page, struct list_head *to_kill,
->>>>   /*
->>>>    * Collect processes when the error hit a file mapped page.
->>>>    */
->>>> -static void collect_procs_file(struct page *page, struct list_head 
->>>> *to_kill,
->>>> -                int force_early)
->>>> +static void collect_procs_file(struct page *page, struct 
->>>> address_space *mapping,
->>>> +        pgoff_t pgoff, struct list_head *to_kill, int force_early)
->>>>   {
->>>>       struct vm_area_struct *vma;
->>>>       struct task_struct *tsk;
->>>> -    struct address_space *mapping = page->mapping;
->>>> -    pgoff_t pgoff;
->>>>         i_mmap_lock_read(mapping);
->>>>       read_lock(&tasklist_lock);
->>>> -    pgoff = page_to_pgoff(page);
->>>>       for_each_process(tsk) {
->>>>           struct task_struct *t = task_early_kill(tsk, force_early);
->>>> -
->>>>           if (!t)
->>>>               continue;
->>>> -        vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff,
->>>> -                      pgoff) {
->>>> +        vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, 
->>>> pgoff) {
->>>>               /*
->>>>                * Send early kill signal to tasks where a vma covers
->>>>                * the page but the corrupted page is not necessarily
->>>> @@ -531,7 +532,7 @@ static void collect_procs_file(struct page 
->>>> *page, struct list_head *to_kill,
->>>>                * to be informed of all such data corruptions.
->>>>                */
->>>>               if (vma->vm_mm == t->mm)
->>>> -                add_to_kill(t, page, vma, to_kill);
->>>> +                add_to_kill(t, page, mapping, pgoff, vma, to_kill);
->>>>           }
->>>>       }
->>>>       read_unlock(&tasklist_lock);
->>>> @@ -550,7 +551,8 @@ static void collect_procs(struct page *page, 
->>>> struct list_head *tokill,
->>>>       if (PageAnon(page))
->>>>           collect_procs_anon(page, tokill, force_early);
->>>>       else
->>>> -        collect_procs_file(page, tokill, force_early);
->>>> +        collect_procs_file(page, page->mapping, page_to_pgoff(page),
->>>
->>> Why not use page_mapping() helper here? It would be safer for THPs if 
->>> they
->>> ever get here...
->>>
->>>                                 Honza
->>>
->>
-> 
-> 
+This is done using xarrays, which I found to be the cleanest data structure to
+use, though a pre-allocated array of page_size(page) / bh->b_size elements might
+be more performant.
 
+v3: Replace xas_for_each() with xa_for_each() to account for proper locking.
+
+Laura Abbott (1):
+  fs/buffer.c: Revoke LRU when trying to drop buffers
+
+ fs/buffer.c | 81 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 76 insertions(+), 5 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
