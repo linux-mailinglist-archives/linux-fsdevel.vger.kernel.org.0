@@ -2,195 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4DB02F489C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 11:27:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 463D52F48CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 11:41:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbhAMKYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 05:24:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbhAMKYM (ORCPT
+        id S1727429AbhAMKh5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 05:37:57 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:49024 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbhAMKh5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 05:24:12 -0500
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E1A1C06179F;
-        Wed, 13 Jan 2021 02:23:32 -0800 (PST)
-Received: by mail-ot1-x329.google.com with SMTP id o11so1425024ote.4;
-        Wed, 13 Jan 2021 02:23:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2Hoa9myK143cV0+5FfOAtzs2mXHnYs56TUMaxDFngxI=;
-        b=A27KBa9Qa0CiPAirttd1MC3c+k7HXbqbNcZaGLIuO02YysUlSXQe9nftLGDAbk+k1Y
-         m5vlobOmcK2hqS2qzoIMlFmrlm78z+S5YpNhleNyEkdCDlJlMZcES7zOwZhpVJukDoJ2
-         G+FqJ4ETTUSzfZYR716nzjqMzhCkMlQ2b5rYQ5iLd+G60zEIWQ2zHlTq6sZS+LfN9Ybv
-         tekBdi0j5Nf8H44wvix5j6SwwlNGbKwSwkCWxj7UDmWeGm5H6CZCtAkXVp3L4YyVyagJ
-         bp1r3zK3LekfVEfyXBfd7B/4W8GGe5gvL/tuUO9t0ZoNqLhWuY9jEgf6aI4mkHb8vFx6
-         LfzQ==
+        Wed, 13 Jan 2021 05:37:57 -0500
+Received: by mail-io1-f72.google.com with SMTP id 191so2102464iob.15
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jan 2021 02:37:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2Hoa9myK143cV0+5FfOAtzs2mXHnYs56TUMaxDFngxI=;
-        b=ldS/u21y5uNTFsQGLyB3cXcpgoPZIWQ8s+qWu/vNyikTaUOIzKtxx5MWU3wSLUfNUx
-         hc+eXilm8Zs5otpZS+IBvC1ATYI5dhBjRebPfnCPTNOkaSsSNkBz11sIZCNVkHNvhVio
-         x3hQ0FIntlhvGCYApLjnt6j7g+fhyq10sqcDiOXdItMC1hiynwoWo3NOUjlrim+umxs1
-         GAQm37co/e2/4cTlaPOHX6tVd8N3r/iVmdOw3I/Q031aUKhZ5DmDWcLiq4YrsWcWF+iw
-         OVRrKZnMl8NYtEysmjBEOu9It9Q6ZUlIHzMV/W1wqtq+xjFsCTCh8ptQBjpNv1tQ2upV
-         LmuQ==
-X-Gm-Message-State: AOAM531DnY71IJlj9vYw4AsxwfSUF93uoSIjXNYlf1gqyXDcwiAQJSh5
-        5dApXge8dhZ1wPxzXjrpjwI=
-X-Google-Smtp-Source: ABdhPJzMbFRs70OCbw4e3J96c+SlsfFE7Ic6psQgivnf/qYiMFYIWrf1tQemCSk4aiSnqSS+tSYWsg==
-X-Received: by 2002:a9d:12d7:: with SMTP id g81mr761901otg.103.1610533411738;
-        Wed, 13 Jan 2021 02:23:31 -0800 (PST)
-Received: from localhost.localdomain ([50.236.19.102])
-        by smtp.gmail.com with ESMTPSA id z8sm335571oon.10.2021.01.13.02.23.25
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jan 2021 02:23:31 -0800 (PST)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     darrick.wong@oracle.com, willy@infradead.org, david@fromorbit.com,
-        hch@infradead.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        dhowells@redhat.com, jlayton@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        oliver.sang@intel.com, Yafang Shao <laoar.shao@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v15 4/4] xfs: use current->journal_info to avoid transaction reservation recursion
-Date:   Wed, 13 Jan 2021 18:22:24 +0800
-Message-Id: <20210113102224.13655-5-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <20210113102224.13655-1-laoar.shao@gmail.com>
-References: <20210113102224.13655-1-laoar.shao@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=FflgQIa0V/Siwck56OOWVGczfPVwFLuPrTzseNjH5mg=;
+        b=ACKef2pNG+sKBh8Z4rlQQUjR7EX+Zhu1bLBPzejwV4KKdYt5p22easwN/a9wkuTd8y
+         7/TysN43/xnH8rJvfkalKhek8DeVVEc6TAhired9KttExcon/dVmx0SnAPm2uRCg3pGe
+         qkySWp+fwIEdUlGi5u5EAdtjblm74b9Lk7ebDWEXKDe5VpZ9YVF8ynUY0Z5vksD2zPWV
+         0gv0vEz0jouIzoJtmF/IfW/8NbtR//9mBjyy3zAvLFO08TtGY9voC9r+Ry6qettPkKvL
+         mKPZS430ku74a72ZFNSHFh9xZCJT/fVHu9SDqz0j59qmUei6KYl/L14/APo3RPuRw4Ro
+         5WSQ==
+X-Gm-Message-State: AOAM532bNrz+ajo+JB3CNCHu/PK5mlB1GaK3ipp/7YQ9xFS8BcGCUk6R
+        9A/tseF3fthhfWowdb3zMLN5FfTJ3iOmlTg82MT5pU3hki/M
+X-Google-Smtp-Source: ABdhPJykJAmynDQ2pp2mibHVe5Ws8QccqfA0IzI4h/Mfbd321XGZirMBogHYRJ5ypTfcAwpw/62pH7GdAtFDqayCAhgThGx1s/ls
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:1dca:: with SMTP id 193mr1778755jaj.39.1610534235644;
+ Wed, 13 Jan 2021 02:37:15 -0800 (PST)
+Date:   Wed, 13 Jan 2021 02:37:15 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000003aab005b8c5b9ac@google.com>
+Subject: WARNING in io_ring_ctx_wait_and_kill
+From:   syzbot <syzbot+9c9c35374c0ecac06516@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PF_FSTRANS which is used to avoid transaction reservation recursion, is
-dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-PF_MEMALLOC_NOFS") and replaced by PF_MEMALLOC_NOFS which means to avoid
-filesystem reclaim recursion.
+Hello,
 
-As these two flags have different meanings, we'd better reintroduce
-PF_FSTRANS back. To avoid wasting the space of PF_* flags in
-task_struct,
-we can reuse the current->journal_info to do that, per Willy. As the
-check of transaction reservation recursion is used by XFS only, we can
-move the check into xfs_vm_writepage(s), per Dave.
+syzbot found the following issue on:
 
-[oliver.sang@intel.com: reported a Assertion_failed in the prev version]
+HEAD commit:    7c53f6b6 Linux 5.11-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=115280af500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c60c9ff9cc916cbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=9c9c35374c0ecac06516
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16286007500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107fc7fb500000
 
-Cc: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@redhat.com>
-Cc: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+The issue was bisected to:
+
+commit d9d05217cb6990b9a56e13b56e7a1b71e2551f6c
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Fri Jan 8 20:57:25 2021 +0000
+
+    io_uring: stop SQPOLL submit on creator's death
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=135aeb0b500000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10daeb0b500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=175aeb0b500000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9c9c35374c0ecac06516@syzkaller.appspotmail.com
+Fixes: d9d05217cb69 ("io_uring: stop SQPOLL submit on creator's death")
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 8494 at fs/io_uring.c:8717 io_ring_ctx_wait_and_kill+0x4f2/0x600 fs/io_uring.c:8717
+Modules linked in:
+CPU: 0 PID: 8494 Comm: syz-executor170 Not tainted 5.11.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_ring_ctx_wait_and_kill+0x4f2/0x600 fs/io_uring.c:8717
+Code: 0f 85 23 01 00 00 48 8b ab 68 01 00 00 be 08 00 00 00 48 8d 7d 50 e8 8d 29 db ff f0 4c 29 65 50 e9 80 fd ff ff e8 0e 6a 98 ff <0f> 0b 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 0f b6 04
+RSP: 0018:ffffc9000160fe38 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888014c83000 RCX: 0000000000000000
+RDX: ffff888020309bc0 RSI: ffffffff81da5fb2 RDI: 0000000000000003
+RBP: ffff888014c83044 R08: 0000000000000002 R09: ffffffff8ed30867
+R10: ffffffff81da5b2d R11: 0000000000000000 R12: 0000000000000002
+R13: ffff888014c83040 R14: ffff888014c83380 R15: ffff88802e2ea000
+FS:  0000000002167880(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f69433e31f0 CR3: 0000000017b77000 CR4: 0000000000350ef0
+Call Trace:
+ io_uring_release+0x3e/0x50 fs/io_uring.c:8759
+ __fput+0x283/0x920 fs/file_table.c:280
+ task_work_run+0xdd/0x190 kernel/task_work.c:140
+ tracehook_notify_resume include/linux/tracehook.h:189 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:174 [inline]
+ exit_to_user_mode_prepare+0x249/0x250 kernel/entry/common.c:201
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+ syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4402c9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffca0848378 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffe8 RBX: 00000000004002c8 RCX: 00000000004402c9
+RDX: 00000000004402c9 RSI: 0000000020000040 RDI: 0000000000002094
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401ad0
+R13: 0000000000401b60 R14: 0000000000000000 R15: 0000000000000000
+
+
 ---
- fs/iomap/buffered-io.c |  7 -------
- fs/xfs/xfs_aops.c      | 10 ++++++++++
- fs/xfs/xfs_trans.h     | 22 +++++++++++++++++++---
- 3 files changed, 29 insertions(+), 10 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 10cc7979ce38..3c53fa6ce64d 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1458,13 +1458,6 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 			PF_MEMALLOC))
- 		goto redirty;
- 
--	/*
--	 * Given that we do not allow direct reclaim to call us, we should
--	 * never be called in a recursive filesystem reclaim context.
--	 */
--	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
--		goto redirty;
--
- 	/*
- 	 * Is this page beyond the end of the file?
- 	 *
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 2371187b7615..eed4881d4461 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -568,6 +568,12 @@ xfs_vm_writepage(
- {
- 	struct xfs_writepage_ctx wpc = { };
- 
-+	if (WARN_ON_ONCE(xfs_trans_context_active())) {
-+		redirty_page_for_writepage(wbc, page);
-+		unlock_page(page);
-+		return 0;
-+	}
-+
- 	return iomap_writepage(page, wbc, &wpc.ctx, &xfs_writeback_ops);
- }
- 
-@@ -579,6 +585,10 @@ xfs_vm_writepages(
- 	struct xfs_writepage_ctx wpc = { };
- 
- 	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
-+
-+	if (WARN_ON_ONCE(xfs_trans_context_active()))
-+		return 0;
-+
- 	return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_ops);
- }
- 
-diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
-index 3645fd0d74b8..e2f3251d6cce 100644
---- a/fs/xfs/xfs_trans.h
-+++ b/fs/xfs/xfs_trans.h
-@@ -268,24 +268,40 @@ xfs_trans_item_relog(
- 	return lip->li_ops->iop_relog(lip, tp);
- }
- 
-+static inline bool
-+xfs_trans_context_active(void)
-+{
-+	return current->journal_info != NULL;
-+}
-+
- static inline void
- xfs_trans_context_set(struct xfs_trans *tp)
- {
-+	ASSERT(!current->journal_info);
-+	current->journal_info = tp;
- 	tp->t_pflags = memalloc_nofs_save();
- }
- 
- static inline void
- xfs_trans_context_clear(struct xfs_trans *tp)
- {
--	if (!tp->t_pflags)
--		memalloc_nofs_restore(tp->t_pflags);
-+	/*
-+	 * If we handed over the context via xfs_trans_context_swap() then
-+	 * the context is no longer needed to clear.
-+	 */
-+	if (current->journal_info != tp)
-+		return;
-+
-+	current->journal_info = NULL;
-+	memalloc_nofs_restore(tp->t_pflags);
- }
- 
- static inline void
- xfs_trans_context_swap(struct xfs_trans *tp, struct xfs_trans *ntp)
- {
-+	ASSERT(current->journal_info == tp);
-+	current->journal_info = ntp;
- 	ntp->t_pflags = tp->t_pflags;
--	tp->t_pflags = -1;
- }
- 
- #endif	/* __XFS_TRANS_H__ */
--- 
-2.17.1
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
