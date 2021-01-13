@@ -2,106 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94E2E2F48E1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 11:46:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BEB52F4D33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jan 2021 15:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbhAMKmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 05:42:19 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:21481 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727340AbhAMKmT (ORCPT
+        id S1726822AbhAMOfd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 09:35:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38206 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbhAMOfc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 05:42:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1610534930; x=1642070930;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1coX7kAwUe0LPk/zrUpTwwDI3hk732UpFXNIYnhsFrI=;
-  b=T5niHmq15nR3G+wTtmldIWWwlqcLSSYuV/6cfEv2Rt1v47prwd5BLJpS
-   Q14XBqGDR8SYV8rzpF3QJB0aqsaZyvLp5DpFP/hDU3mZ0ICKx4RRzxjke
-   S/1cwABLPaiqO+X8k/jZ6Ue4NeNSSlpBjJpiH2ytzrVjHZoE07qUpePXO
-   FqhjTB9MrWPfHE3lfvJ1fq6q/8ERQDsXwil/c9vNqyKXyp6XfFRBQbDRd
-   wEHjcR2NuX4JE/aeTkMmJeBPlrLQCrcUIhsCT915IH6O+ScGlAJZMAUBn
-   VA4fHlcgYJm2M9wKTNS/NKq/LNurV9A7wjUDu/V+urD5QBCKIJDEiGva2
-   A==;
-IronPort-SDR: 3YCnLwijngwxyLn7tNQjW+tmeupI1rPPFLaJTM5EQCs0veVNDkCyivPusAEFK1L7P4SEZdF/g8
- emvWnq3PDrwEh8E4AInUzjE4TpBR2iq5B6oGQUh43KVDEExBih3L2DEL5VAbjOsbEp8LmbjsX9
- B2ysNPSepK8aj1IuW4I14WXLactPJ7yiUmHsawbCb+bkjY2rpaQIDX8wbbLvgfxo0dwg+JQJVI
- KgcthkMkIn2ekN2vo1MWaC/fQQCtBJ5L7H8nDRodKMqxyiqMEG9Jlqi8XiUxiYBvlL5ujPyHWJ
- iPw=
-X-IronPort-AV: E=Sophos;i="5.79,344,1602518400"; 
-   d="scan'208";a="261232821"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Jan 2021 18:47:11 +0800
-IronPort-SDR: /Dy98GsJ71+c/fWBmWGKVNLhsqw76Ho1W1Km9aLG9ojRP2BuXY4GCsgWnSkPTQoBPNa1Sf4iXq
- kcUWglTymcgUluR/xqw439Z17VMLy8i6aFo9ojwvgYyIzetXFxQmTuFhU+TITi2V8+ZYWccR5n
- ptm4x7+x0uV3CjIR/afvvCFhtN1yzd1Smpl4bljdkvRNSFYBx7Z1PIE+WijUPjC4vnq0cafRn8
- I8eLvsXsmbUoeQTAMtzvC4D6v8zfJHkcJv14sMluegb5laZAgnd4j2giAvHoSqh5VoerZeZCPU
- ApfDnZs3M2YubasUQ7jv5Xx5
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2021 02:24:02 -0800
-IronPort-SDR: A3zyPNEAp35ckAFmlUqqdZ64BkC68+8MJWGaAL/5ypBUv02WJ8AiGLzUsWSNyjwZFG2GT0LUU/
- X8d1c3YBAuRWu8ts9hABy/9ldLZXl5w9HrKGqA82YhtSY+aMT5jvED/FADX/KVJEf6fFuLIAuk
- DkwMJHF7188hmuEPV8enEPms2wS96nHQe1zs0YLU9yXQAEfJmuyqvoyslktO4H8skIY69WG9Cz
- l/84/JhvZVbR/us+xPlgvUBTp7gXkj9J5PmXWfh9P/uOQWKWWe7uYq0+8cF/PHUQIkSFnN5wDO
- WpY=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 13 Jan 2021 02:41:11 -0800
-Received: (nullmailer pid 503073 invoked by uid 1000);
-        Wed, 13 Jan 2021 10:41:11 -0000
-Date:   Wed, 13 Jan 2021 19:41:11 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v11 27/40] btrfs: introduce dedicated data write path for
- ZONED mode
-Message-ID: <20210113104111.3yntypwyna3tegx6@naota.dhcp.fujisawa.hgst.com>
-References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
- <2b4271752514c9f376b1fc6a988336ed9238aa0d.1608608848.git.naohiro.aota@wdc.com>
- <5c4596ba-06b5-e972-bf85-5a6401a4dd16@toxicpanda.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <5c4596ba-06b5-e972-bf85-5a6401a4dd16@toxicpanda.com>
+        Wed, 13 Jan 2021 09:35:32 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA81CC061786;
+        Wed, 13 Jan 2021 06:34:51 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id h10so1317002pfo.9;
+        Wed, 13 Jan 2021 06:34:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wuAPPQU+6X7mitOsqG1eiFMYozHtMEmetO9yEuL4FC0=;
+        b=spHGxxzehb1XCEntTkAOMPbuWQEKAplQnBPaN6t1Ia3kDOUcWlbCT6q3Md8t2m1iAo
+         clyDJfL0Y9CORWRnXl+LqXbr8VE6jvbOi23/jIKWOENQoVogaJW7qHaJOvbIPACDaLAE
+         mDQz1o6lnuY5GgrcWkxJK5Uq//4gwPwEklHRQACTZEShXuKnzu2Fbc+AtD12sHKDocl0
+         y/5wabM+bu5gRfmM9lps7OJhiwdfefToE5D1KhuYo9O9KCRfbo3/JbXF5rUJ30r5DLCo
+         KG0vahtvADy7PRw2S9B7r+I88yEM5z5gH1EJYxt/Ih74WDNaKyBg+tlSZWp8yUHoAN9y
+         bt+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wuAPPQU+6X7mitOsqG1eiFMYozHtMEmetO9yEuL4FC0=;
+        b=Cqwyx6uTSp5Elo7ROB1su3yudiAsdm7cfUGzugCAbwIc9Lzg+UdhV8ybNQcxiw9bOU
+         HQWXers/VYPkf5euFH/u6Um6xvtuyYwBjFf9S5ELEtD+aHwo9h7j8jHUR5pv9f8Yztqp
+         j6tnolC7IjLt6UlF0sYCMnShiaxQgvy+EXoFlz9OuSkhH461Oz2CQtf0ij186So86CgG
+         oyW7ifLrQyRWYHj5EYJ2h9T8gTs7OS2S9KBcJPCVu8LYL8ujj8LXJBhIKJpoaaJHjZJl
+         rID8Jf9YKk+ejfTqjKGsaSXJjVuVM22PAAA0cpk1tEuTLCeuvUWxbLIE/F3zNxUNe9DM
+         s/2A==
+X-Gm-Message-State: AOAM531W1QV0mZI4z/c5dRHd/pDjHoUDs3ibVA3CE6FpRAz2xQ80RpFM
+        UTDXA3f+bbEJSSNE0e1tpcRsJWUFE6PDxA==
+X-Google-Smtp-Source: ABdhPJwZLSbTDb+DnYUit6x3YH5fJ+SKF5iLK7fBcGoJ7NjP418/fl/X/bjQwvz1RVZdEmXLbVUOEQ==
+X-Received: by 2002:a63:f010:: with SMTP id k16mr2366648pgh.28.1610548491261;
+        Wed, 13 Jan 2021 06:34:51 -0800 (PST)
+Received: from localhost.localdomain ([211.108.35.36])
+        by smtp.gmail.com with ESMTPSA id c5sm3248265pjo.4.2021.01.13.06.34.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Jan 2021 06:34:50 -0800 (PST)
+From:   Minwoo Im <minwoo.im.dev@gmail.com>
+To:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: [PATCH V5 0/1] block: fix I/O errors in BLKRRPART
+Date:   Wed, 13 Jan 2021 23:34:31 +0900
+Message-Id: <20210113143432.426-1-minwoo.im.dev@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 12, 2021 at 02:24:09PM -0500, Josef Bacik wrote:
->On 12/21/20 10:49 PM, Naohiro Aota wrote:
->>If more than one IO is issued for one file extent, these IO can be written
->>to separate regions on a device. Since we cannot map one file extent to
->>such a separate area, we need to follow the "one IO == one ordered extent"
->>rule.
->>
->>The Normal buffered, uncompressed, not pre-allocated write path (used by
->>cow_file_range()) sometimes does not follow this rule. It can write a part
->>of an ordered extent when specified a region to write e.g., when its
->>called from fdatasync().
->>
->>Introduces a dedicated (uncompressed buffered) data write path for ZONED
->>mode. This write path will CoW the region and write it at once.
->>
->>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
->
->This means we'll write one page at a time, no coalescing of data 
->pages.  I'm not the one with zoned devices in production, but it might 
->be worth fixing this in the future so you're not generating a billion 
->bio's for large sequential data areas.
+Hello,
 
-Actually, it is already wrting multiple pages in one bio. We get a
-delalloced range
-that spans multiple pages from btrfs_run_delalloc_range() and write all the
-pages with one bio in extent_write_locked_range().
+  This patch fixes I/O errors during BLKRRPART ioctl() behavior right
+after format operation that changed logical block size of the block
+device with a same file descriptor opened.
 
->
->Reviewed-by: Josef Bacik <josef@toxicpanda.com>
->
->Thanks,
->
->Josef
+Testcase:
+
+  The following testcase is a case of NVMe namespace with the following
+conditions:
+
+  - Current LBA format is lbaf=0 (512 bytes logical block size)
+  - LBA Format(lbaf=1) has 4096 bytes logical block size
+
+  # Format block device logical block size 512B to 4096B                                                                                                                                                                                                                                                                                                                                       
+  nvme format /dev/nvme0n1 --lbaf=1 --force
+
+  This will cause I/O errors because BLKRRPART ioctl() happened right after
+the format command with same file descriptor opened in application
+(e.g., nvme-cli) like:
+
+  fd = open("/dev/nvme0n1", O_RDONLY);
+
+  nvme_format(fd, ...);
+  if (ioctl(fd, BLKRRPART) < 0)
+        ...
+
+Errors:
+
+  We can see the Read command with Number of LBA(NLB) 0xffff(65535) which
+was under-flowed because BLKRRPART operation requested request size based
+on i_blkbits of the block device which is 9 via buffer_head.
+
+  [dmesg-snip]
+    [   10.771740] blk_update_request: operation not supported error, dev nvme0n1, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+    [   10.780262] Buffer I/O error on dev nvme0n1, logical block 0, async page read
+
+  [event-snip]
+    kworker/0:1H-56      [000] ....   913.456922: nvme_setup_cmd: nvme0: disk=nvme0n1, qid=1, cmdid=216, nsid=1, flags=0x0, meta=0x0, cmd=(nvme_cmd_read slba=0, len=65535, ctrl=0x0, dsmgmt=0, reftag=0)
+     ksoftirqd/0-9       [000] .Ns.   916.566351: nvme_complete_rq: nvme0: disk=nvme0n1, qid=1, cmdid=216, res=0x0, retries=0, flags=0x0, status=0x4002
+
+  The patch below fixes the I/O errors by rejecting I/O requests from the
+block layer with setting a flag to request_queue until the file descriptor
+re-opened to be updated by __blkdev_get().  This is based on the previous
+discussion [1].
+
+Since V4:
+  - Rebased on block-5.11.
+  - Added Reviewed-by Tag from Christoph.
+
+Since V3(RFC):
+  - Move flag from gendisk to request_queue for future clean-ups.
+    (Christoph, [3])
+
+Since V2(RFC):
+  - Cover letter with testcase and error logs attached. Removed un-related
+    changes: empty line. (Chaitanya, [2])
+  - Put blkdev with blkdev_put_no_open().
+
+Since V1(RFC):
+  - Updated patch to reject I/O rather than updating i_blkbits of the
+    block device's inode directly from driver. (Christoph, [1])
+
+[1] https://lore.kernel.org/linux-nvme/20201223183143.GB13354@localhost.localdomain/T/#t
+[2] https://lore.kernel.org/linux-nvme/20201230140504.GB7917@localhost.localdomain/T/#t
+[3] https://lore.kernel.org/linux-block/20210105101202.GA9970@localhost.localdomain/T/#u
+
+Thanks,
+
+Minwoo Im (1):
+  block: reject I/O for same fd if block size changed
+
+ block/blk-settings.c    |  3 +++
+ block/partitions/core.c | 12 ++++++++++++
+ fs/block_dev.c          |  8 ++++++++
+ include/linux/blkdev.h  |  1 +
+ 4 files changed, 24 insertions(+)
+
+-- 
+2.17.1
+
