@@ -2,103 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0BDC2F6482
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 16:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF6EF2F65A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 17:21:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbhANP10 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 10:27:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:31061 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726810AbhANP1Z (ORCPT
+        id S1726551AbhANQUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 11:20:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60706 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbhANQUk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 10:27:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610637959;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
-        bh=+jOB4Fu7fKncqGSyJ+NR1n6barLftBxA3FNSl4jUPIc=;
-        b=CTytdlJ/Y0HKvyOCg3azAdquFFOivvtf0CaywiTQRTcl8D7gl/XgISKBjLV9ci+wzjHuhn
-        olyTpBJFZOKqjhqofHuvV4OK+8flpKyxw7aQJ1tYej7TunR8AMRWG+NqlrjS2wvT7s5d5E
-        r3xoCKZ5I1xV3TlDrh4WE6kJXolqYYQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-158-n1LttnR8MGqAibK7y6ABoQ-1; Thu, 14 Jan 2021 10:25:57 -0500
-X-MC-Unique: n1LttnR8MGqAibK7y6ABoQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 87C0A107ACFB;
-        Thu, 14 Jan 2021 15:25:56 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 801B95D6AD;
-        Thu, 14 Jan 2021 15:25:56 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 783FF4BB40;
-        Thu, 14 Jan 2021 15:25:56 +0000 (UTC)
-Date:   Thu, 14 Jan 2021 10:25:56 -0500 (EST)
-From:   Bob Peterson <rpeterso@redhat.com>
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>, tj <tj@kernel.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>
-Message-ID: <1403463545.44592876.1610637956402.JavaMail.zimbra@redhat.com>
-In-Reply-To: <330231792.44586135.1610635888053.JavaMail.zimbra@redhat.com>
-Subject: locking (or LOCKDEP) problem with mark_buffer_dirty()
+        Thu, 14 Jan 2021 11:20:40 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F13C061575;
+        Thu, 14 Jan 2021 08:19:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=L957m6SCsm4YfRvwt1RQwkHpsqdoGDsxSLN6pjGCXjg=; b=SwgoX4biWiRfNIkgGKBzF1hThh
+        fgohm23xOlFZxJhSLZKiwJXvlpOT7mQ1aERIfxlbDnMSz8cAhA501/6QBLnf5vxFq+Kvg8w7lNzGu
+        lKsu5VUh30ZpNT1bDp4PgQQDOAF2zDky3QBOcd8dN/XGAqJ/p2C2tMdWALZA6gQ+xCzpv+dn065rk
+        2TTrQt7lGJCVnnHfj+gY6z8VUTG1gzIwprxJtAF5iFkyufA4tU7Q2Fuvhh6wXdjjz4/2sT9ZCH6eX
+        Aa9Hq52wo/tTnFG/QpwZVj0ONsXxVxsjndY/W8xQ7Zm0pIhz05bcYui4M6gozuphqFgWnJ9k7MeB2
+        tBm+E3uQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l05LN-007mRF-WF; Thu, 14 Jan 2021 16:19:41 +0000
+Date:   Thu, 14 Jan 2021 16:19:29 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        jlayton@redhat.com, dwysocha@redhat.com,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Christoph Hellwig <hch@lst.de>, dchinner@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Redesigning and modernising fscache
+Message-ID: <20210114161929.GQ35215@casper.infradead.org>
+References: <2758811.1610621106@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.112.189, 10.4.195.13]
-Thread-Topic: locking (or LOCKDEP) problem with mark_buffer_dirty()
-Thread-Index: ZL4TGelaTfxpOHHuHpm458fsxklU0A==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2758811.1610621106@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Tejun and linux-fsdevel,
+On Thu, Jan 14, 2021 at 10:45:06AM +0000, David Howells wrote:
+> However, there've been some objections to the approach I've taken to
+> implementing this.  The way I've done it is to disable the use of fscache by
+> the five network filesystems that use it, remove much of the old code, put in
+> the reimplementation, then cut the filesystems over.  I.e. rip-and-replace.
+> It leaves unported filesystems unable to use it - but three of the five are
+> done (afs, ceph, nfs), and I've supplied partially-done patches for the other
+> two (9p, cifs).
+> 
+> It's been suggested that it's too hard to review this way and that either I
+> should go for a gradual phasing in or build the new one in parallel.  The
+> first is difficult because I want to change how almost everything in there
+> works - but the parts are tied together; the second is difficult because there
+> are areas that would *have* to overlap (the UAPI device file, the cache
+> storage, the cache size limits and at least some state for managing these), so
+> there would have to be interaction between the two variants.  One refinement
+> of the latter would be to make the two implementations mutually exclusive: you
+> can build one or the other, but not both.
 
-I have a question about function mark_buffer_dirty and LOCKDEP.
+My reservation with "build fscache2" is that it's going to take some
+time to do, and I really want rid of ->readpages as soon as possible.
 
-Background: Func mark_buffer_dirty() has a calling sequence that looks kind
-of like this (simplified):
-
-mark_buffer_dirty()
-   __set_page_dirty()
-      account_page_dirtied()
-         inode_to_wb() which contains:
-#ifdef CONFIG_LOCKDEP
-	WARN_ON_ONCE(debug_locks &&
-		     (!lockdep_is_held(&inode->i_lock) &&
-		      !lockdep_is_held(&inode->i_mapping->i_pages.xa_lock) &&
-		      !lockdep_is_held(&inode->i_wb->list_lock)));
-#endif
-   ...
-   __mark_inode_dirty()
-      spin_lock(&inode->i_lock);
-      ...
-      spin_unlock(&inode->i_lock);
-   ...      
-
-The LOCKDEP checks were added with Tejun Heo's 2015 patch, aaa2cacf8184e2a92accb8e443b1608d65f9a13f.
-
-Since mark_buffer_dirty()'s call to __mark_inode_dirty() locks the inode->i_lock,
-functions must not call mark_buffer_dirty() with inode->i_lock locked: or deadlock.
-
-If they're not doing anything with the xarrays or the i_wb list (i.e. holding the
-other two locks), they get these LOCKDEP warnings.
-
-So either:
-(a) the LOCKDEP warnings are not valid in all cases -or-
-(b) mark_buffer_dirty() should be grabbing inode->i_lock at some point like __mark_inode_dirty() does.
-
-My question is: which is it, a or b? TIA.
-
-(My situation is that the gfs2 file system gets these LOCKDEP warnings
-when it calls mark_buffer_dirty() [obviously only if LOCKDEP is set], and it's
-not appropriate to lock xa_lock or i_wb->list_lock, and we cannot lock i_lock
-for the reasons stated above).
-
-Regards,
-
-Bob Peterson
-GFS2 File System
-
+What I'd like to see is netfs_readahead() existing as soon as possible,
+built on top of the current core.  Then filesystems can implement
+netfs_read_request_ops one by one, and they become insulated from the
+transition.
