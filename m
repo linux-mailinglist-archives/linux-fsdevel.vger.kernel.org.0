@@ -2,147 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B4292F6874
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 18:55:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 994572F6A25
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 19:57:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbhANRzm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 12:55:42 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:38811 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729326AbhANRzl (ORCPT
+        id S1728992AbhANSzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 13:55:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37798 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728777AbhANSzd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 12:55:41 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l06pa-0006dG-Cq; Thu, 14 Jan 2021 17:54:46 +0000
-Date:   Thu, 14 Jan 2021 18:54:41 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Thu, 14 Jan 2021 13:55:33 -0500
+Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFFEBC061757
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jan 2021 10:54:52 -0800 (PST)
+Received: by mail-qt1-x849.google.com with SMTP id p20so5254866qtq.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jan 2021 10:54:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=AaPp1q1W8KDgYenpyt0snxhoTAxUV/jsi8fLsxYee9s=;
+        b=AbFdoP4sUQzsnEf7uPBF6d1yyv7CEWy2hdehyosQPrfCEnUbp5VpMDvzXTovH7dvnY
+         BUW7QoXa1ZS5R2g07mGCaB6/MPPcY3Zp6ngE7iLB9LYftWbbW8T6r5heYE4WGpLub/5E
+         119UCT52twmefKyyAjVnpVpDA6PmdAZLdqCzVLm+TNFFfe7inQn5Pd4uaQHnKMJ6Xsf1
+         GhgcRoFiyZyyu8mk20KPHxXF4HxfT0gITpKLYk0fzoNw3VjNZ67X06FS5QqPOH0Nyray
+         X6Tl7++H0WaeBEzOpYY5T6o3n4t/ATRNnhlglQwgg22wG4cJicV1oEpr8LLpEDGritzO
+         tdeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=AaPp1q1W8KDgYenpyt0snxhoTAxUV/jsi8fLsxYee9s=;
+        b=C3aNXY+7ZjdJoPJcIBQv1UB0T5DpEVuQiQWe3S7QhkVMKYgSkJDo/yt/oOLdyTydc3
+         RyTDWNMV8ZGi903B3YBvYaAGFDJTbg2SXc+m7ZB40PJb0R+fkaq/q+Aknf0tNkl8pS79
+         w21Ouk07KzotritmY7ho0rlsDuwUyRIjS9gNHwi2y41yDCtfKmcP+1G8hCGLxq4KkK8C
+         5kAZCL2FcosGtKEo3QcCkVnVF3fjaFjUMSqbExpkWLWoLkzCHcdURuorGfuHQX8LgaZ0
+         4SGC4RUwfZSExhrt7vatcScEeqotTCJCz4Wr+4dVxxuQCEYruztBGXktnsJL0KrbyCOW
+         AxIQ==
+X-Gm-Message-State: AOAM530y7kUbI7s1Yc5kmDJ/y5plHsmRKxBmeRK7VZS3TDxIiE2+yA/u
+        tv583UbAy9yYMl32g0lHZFbGrN6KRrk=
+X-Google-Smtp-Source: ABdhPJyOjW3fImyvzubc9dkkNbV113IJEHcA3Y5QmRLgEwh56M49ioa1URPWggXJt8Ch2ptbRNX+UA4XhJI=
+Sender: "figiel via sendgmr" <figiel@odra.waw.corp.google.com>
+X-Received: from odra.waw.corp.google.com ([2a00:79e0:2:11:1ea0:b8ff:fe79:fe73])
+ (user=figiel job=sendgmr) by 2002:a05:6214:b12:: with SMTP id
+ u18mr2482010qvj.21.1610650491811; Thu, 14 Jan 2021 10:54:51 -0800 (PST)
+Date:   Thu, 14 Jan 2021 19:54:45 +0100
+Message-Id: <20210114185445.996-1-figiel@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.30.0.284.gd98b1dd5eaa7-goog
+Subject: [PATCH v2] fs/proc: Expose RSEQ configuration
+From:   Piotr Figiel <figiel@google.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v5 00/42] idmapped mounts
-Message-ID: <20210114175441.v5cbtzad3ejjcjsw@wittgenstein>
-References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210114171241.GA1164240@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210114171241.GA1164240@magnolia>
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michel Lespinasse <walken@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Andrei Vagin <avagin@gmail.com>, mathieu.desnoyers@efficios.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        posk@google.com, kyurtsever@google.com, ckennelly@google.com,
+        pjt@google.com, Piotr Figiel <figiel@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 09:12:41AM -0800, Darrick J. Wong wrote:
-> On Tue, Jan 12, 2021 at 11:00:42PM +0100, Christian Brauner wrote:
-> > Hey everyone,
-> > 
-> > The only major change is the inclusion of hch's patch to port XFS to
-> > support idmapped mounts. Thanks to Christoph for doing that work.
-> 
-> Yay :)
-> 
-> > (For a full list of major changes between versions see the end of this
-> >  cover letter.
-> >  Please also note the large xfstests testsuite in patch 42 that has been
-> >  kept as part of this series. It verifies correct vfs behavior with and
-> >  without idmapped mounts including covering newer vfs features such as
-> >  io_uring.
-> >  I currently still plan to target the v5.12 merge window.)
-> > 
-> > With this patchset we make it possible to attach idmappings to mounts,
-> > i.e. simply put different bind mounts can expose the same file or
-> > directory with different ownership.
-> > Shifting of ownership on a per-mount basis handles a wide range of
-> > long standing use-cases. Here are just a few:
-> > - Shifting of a subset of ownership-less filesystems (vfat) for use by
-> >   multiple users, effectively allowing for DAC on such devices
-> >   (systemd, Android, ...)
-> > - Allow remapping uid/gid on external filesystems or paths (USB sticks,
-> >   network filesystem, ...) to match the local system's user and groups.
-> >   (David Howells intends to port AFS as a first candidate.)
-> > - Shifting of a container rootfs or base image without having to mangle
-> >   every file (runc, Docker, containerd, k8s, LXD, systemd ...)
-> > - Sharing of data between host or privileged containers with
-> >   unprivileged containers (runC, Docker, containerd, k8s, LXD, ...)
-> > - Data sharing between multiple user namespaces with incompatible maps
-> >   (LXD, k8s, ...)
-> 
-> That sounds neat.  AFAICT, the VFS passes the filesystem a mount userns
-> structure, which is then carried down the call stack to whatever
-> functions actually care about mapping kernel [ug]ids to their ondisk
-> versions?
+For userspace checkpoint and restore (C/R) some way of getting process
+state containing RSEQ configuration is needed.
 
-Yes. This requires not too many changes to the actual filesystems as you
-can see from the xfs conversion that Christoph has done.
+There are two ways this information is going to be used:
+ - to re-enable RSEQ for threads which had it enabled before C/R
+ - to detect if a thread was in a critical section during C/R
 
-> 
-> Does quota still work after this patchset is applied?  There isn't any
-> mention of that in the cover letter and I don't see a code patch, so
-> does that mean everything just works?  I'm particularly curious about
+Since C/R preserves TLS memory and addresses RSEQ ABI will be restored
+using the address registered before C/R.
 
-The most interesting quota codepaths I audited are dquot_transfer that
-transfers quota from one inode to another one during setattr. That
-happens via a struct iattr which will already contain correctly
-translated ia_uid and ia_gid values according to the mount the caller is
-coming from. I'll take another close look at that now and add tests for
-that if I can find some in xfstests.
+Detection whether the thread is in a critical section during C/R is
+needed to enforce behavior of RSEQ abort during C/R. Attaching with
+ptrace() before registers are dumped itself doesn't cause RSEQ abort.
+Restoring the instruction pointer within the critical section is
+problematic because rseq_cs may get cleared before the control is
+passed to the migrated application code leading to RSEQ invariants not
+being preserved.
 
-> whether there can exist processes with CAP_SYS_ADMIN and an idmapped
-> mount?  Syscalls like bulkstat and quotactl present file [ug]ids to
+Signed-off-by: Piotr Figiel <figiel@google.com>
 
-Yes, that should be possible.
+---
 
-> programs, but afaict there won't be any translating going on?
+v2:
+ - fixed string formatting for 32-bit architectures
 
-quotactl operates on the superblock. So the caller would need a mapping
-in the user namespace of the superblock. That doesn't need to change.
-But we could in the future extend this to be on a per-mount basis if
-this was a desired use-case. I don't think it needs to happen right now
-though.
+v1:
+ - https://lkml.kernel.org/r/20210113174127.2500051-1-figiel@google.com
 
-> 
-> (To be fair, bulkstat is an xfs-only thing, but quota control isn't.)
+---
+ fs/proc/base.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-I'm certain we'll find more things to cover after the first version has
-landed. :)
-We for sure won't cover it all in the first iteration.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b3422cda2a91..7cc36a224b8b 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -662,6 +662,21 @@ static int proc_pid_syscall(struct seq_file *m, struct pid_namespace *ns,
+ 
+ 	return 0;
+ }
++
++#ifdef CONFIG_RSEQ
++static int proc_pid_rseq(struct seq_file *m, struct pid_namespace *ns,
++				struct pid *pid, struct task_struct *task)
++{
++	int res = lock_trace(task);
++
++	if (res)
++		return res;
++	seq_printf(m, "%tx %08x\n", (ptrdiff_t)((uintptr_t)task->rseq),
++		   task->rseq_sig);
++	unlock_trace(task);
++	return 0;
++}
++#endif /* CONFIG_RSEQ */
+ #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
+ 
+ /************************************************************************/
+@@ -3182,6 +3197,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	REG("comm",      S_IRUGO|S_IWUSR, proc_pid_set_comm_operations),
+ #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
+ 	ONE("syscall",    S_IRUSR, proc_pid_syscall),
++#ifdef CONFIG_RSEQ
++	ONE("rseq",       S_IRUSR, proc_pid_rseq),
++#endif
+ #endif
+ 	REG("cmdline",    S_IRUGO, proc_pid_cmdline_ops),
+ 	ONE("stat",       S_IRUGO, proc_tgid_stat),
+@@ -3522,6 +3540,9 @@ static const struct pid_entry tid_base_stuff[] = {
+ 			 &proc_pid_set_comm_operations, {}),
+ #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
+ 	ONE("syscall",   S_IRUSR, proc_pid_syscall),
++#ifdef CONFIG_RSEQ
++	ONE("rseq",      S_IRUSR, proc_pid_rseq),
++#endif
+ #endif
+ 	REG("cmdline",   S_IRUGO, proc_pid_cmdline_ops),
+ 	ONE("stat",      S_IRUGO, proc_tid_stat),
+-- 
+2.30.0.284.gd98b1dd5eaa7-goog
 
-> 
-> I'll start skimming the patchset...
-
-Thanks!
-Christian
