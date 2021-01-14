@@ -2,429 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 991FC2F5A78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 06:38:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99D932F5AF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 07:50:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725908AbhANFib (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 00:38:31 -0500
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:38531 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725841AbhANFia (ORCPT
+        id S1727024AbhANGtV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 01:49:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727021AbhANGtU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 00:38:30 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 9936FEAA;
-        Thu, 14 Jan 2021 00:37:23 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 14 Jan 2021 00:37:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        CO9GkTeM3/atftEbr6NN1kksMNDQaQKX9SduygLq/ec=; b=EJ9u1No/OWkL6HUq
-        gFGVngF7Sf8BCxtbfG4zrTPz1V9h7w4KKDRv7Fq+bgI43KVgCTsdJbmaGq6bMKBW
-        tP12OTbtI37Jm6NfKok+9wfppyDdI0/Kql1npseYeRUHE45gGyE7sl3WQaJZ8/S+
-        ZKbJgx468xE/jea/MkAv5ogVzax6UpOdMquhDGEE/xyqeBCglIfegX1TdbldWiIB
-        QYVJ4DIrqV6VwhhavOZtvpUKeVg5SAuhHXQ3u3MHDjwJMmmtyR+c/7yX7cl3rWXT
-        VGEXDFetIsjdls32z2LHoAHPZ7RJL4NU1irnGDj/hDCi55k01RPRUH5RBxLG1USa
-        ri+9TA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=CO9GkTeM3/atftEbr6NN1kksMNDQaQKX9SduygLq/
-        ec=; b=I4N7Gjul0FkWJVtfjQKKph0OKHVU5dX35PuZESTnxGMs0nRlg/0cyY/HX
-        2C0XMQMp61VJJBGV6V+BwgD7ppinrkifR/qts4PfFvMcOZBwXX2P1/FEbo5ywoIa
-        8LO2zbcIkkTsMaPhJaHowyBIgiDZ87aOZJVhYf2nvfV697Bs53pthmuUNcU1YR0B
-        Aqe1Gp5FyGrys/IMga7ZbOEerHjZ3ZSRDKZHntiUrlKCas9H5wx+aSjIIlA1+FEB
-        //OPv2PusCud44IMUQ88X6MZCPJm6g8SEPPHNlu0rFuMpHv50y/3Hg/8u4EnJFNn
-        j3EJ4jFU/yTIpZlxw3l1zcBeuZxrQ==
-X-ME-Sender: <xms:ktj_X-RE03rWDyZeUfcQKC5Nusj_lJXxm2xiJpKA4yHdJnmAfColBg>
-    <xme:ktj_XzxJ_51KlNsfK73YPA20WFkFojCYNn2hVONz-eGjkCQEHRwSo1RmMQQXCYzRU
-    Mvw88NV9QIH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedukedrtdeggdekiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepie
-    ekgeeguedvvefgfeeihfdukeekgeehieeljeevteehudetvdevheduffejvedunecuffho
-    mhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvuddrgeegrddufedvrdduhedtne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgv
-    nhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:ktj_X71uLiT4z_toIiC4SWeYxc1PFbFGAaysPhkqrApF681c2sWA-g>
-    <xmx:ktj_X6BgYmAETjiRLvLbUpj6YFJgm5tz4EZxMWG2usxEngMsx6OuwA>
-    <xmx:ktj_X3iodnzpQE_E24AmG03Iu5cAUNLxI_yaLpQ3lqRxnK-jarz2kQ>
-    <xmx:k9j_X3cxNxAzRFiT21gQEdlIdYczvs8_yoVvzbWFIWv-ZUrGVA0KTQ>
-Received: from mickey.themaw.net (unknown [121.44.132.150])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 7C77724005B;
-        Thu, 14 Jan 2021 00:37:19 -0500 (EST)
-Message-ID: <06577a9f7090ef128745260d6d08fe93d50ee39b.camel@themaw.net>
-Subject: Re: [PATCH 0/6] kernfs: proposed locking and concurrency improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Fox Chen <foxhlchen@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Thu, 14 Jan 2021 13:37:08 +0800
-In-Reply-To: <CAC2o3DLNtm-JkENOuxP51C91PjieUwXegPkPbs=bLQXKhjykRA@mail.gmail.com>
-References: <160862320263.291330.9467216031366035418.stgit@mickey.themaw.net>
-         <CAC2o3DJqK0ECrRnO0oArgHV=_S7o35UzfP4DSSXZLJmtLbvrKg@mail.gmail.com>
-         <04675888088a088146e3ca00ca53099c95fbbad7.camel@themaw.net>
-         <CAC2o3D+qsH3suFk4ZX9jbSOy3WbMHdb9j6dWUhWuvt1RdLOODA@mail.gmail.com>
-         <75de66869bd584903055996fb0e0bab2b57acd68.camel@themaw.net>
-         <42efbb86327c2f5a8378d734edc231e3c5a34053.camel@themaw.net>
-         <CAC2o3D+W70pzEd0MQ1Osxnin=j2mxwH4KdAYwR1mB67LyLbf5Q@mail.gmail.com>
-         <aa193477213228daf85acdae7c31e1bfff3d694c.camel@themaw.net>
-         <CAC2o3D+_Cscy4HyQhigh3DQvth7EJgQFA8PX94=XC5R30fwRwQ@mail.gmail.com>
-         <cc784e7a2b65c562d6e8082e5febec4fa74784b7.camel@themaw.net>
-         <CAC2o3D+FYJ0b-bL66-C9Xna=R6PvGaPq0fMCmepNbOqX2o8RzA@mail.gmail.com>
-         <6182b818d4298898875e9bd59fa9a1dcb279db62.camel@themaw.net>
-         <9b4d99e7d614810692c2e2e0631e164e3c3de4dd.camel@themaw.net>
-         <CAC2o3DLNtm-JkENOuxP51C91PjieUwXegPkPbs=bLQXKhjykRA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        Thu, 14 Jan 2021 01:49:20 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72605C061575
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jan 2021 22:48:40 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id y23so3677655wmi.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jan 2021 22:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=rEByY9VwYO/ilF16a6/hn85Ky4LITGY/WfKgegfD5ho=;
+        b=mN9jnHc8tUpRqXrUDJc0JxMGzXaGqq4riLHE0OaQcOKz40MOnCBzwuJavypl9SPtgl
+         29BFRuKL5m7sLlMgFiVseBvw8HIyTz11jGZ2DELghCcvEaeH5Ii9HsAvHrv9+P0VCuDz
+         lHwbGyzFLKzquJ38sVEytN/higd0/lG2rV7iSQ2PhQ6jzjxgGnmEliR3uyO/UbBQab2E
+         4hJZ7f3zycYrfg2nBIqLEv6Kt9M25rmVNqdbea+lHKB9QcZINxBGu4ROdtcR/yp4gLn9
+         WpTkVk1tmlMy40+7AbXJifdKVXsU6eVFZ9Ho3NHnVM9DThzmGy5Aki8+XTYGZYqmLLbW
+         PXkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=rEByY9VwYO/ilF16a6/hn85Ky4LITGY/WfKgegfD5ho=;
+        b=V+r2oRWNVXaHbUirzHMH7lCTAG6YsZuSp3DyGEETRooACi5wWhinZJZtCl9hLDWUk6
+         ZPnt16ATnAfJ5YOFh5by+m9cmRzyGfEFcM76hbzfNOJ4y0kB1w1O3h8vEmAkHqM293zQ
+         c93m5x9oquI25JEGBZ6AsBl7pu7GfZmmKh6EODg9bOlaBD+CxftO+Bo6KeYlJXT7xZbd
+         MJz3QX3Ex2LGY9957wRP1Dnd4Q4nh4sKcYRvK1z7ijkknAYrWLoCeg4hmpvKj/SO/hNc
+         B4D1Ea5olrHF8XOt8PWIDY+3RAT5CEPjFcIDRCnDtGXdg1b1mKHFf+8lRVCLA6X79Wkk
+         mJVw==
+X-Gm-Message-State: AOAM530VIAeygDMM++MhzI3bED/M6LbiEnqdGny91UIf4JY7B73X79I7
+        7AIERR9SW5tlaZfeaTaLuVE+Gg==
+X-Google-Smtp-Source: ABdhPJzpECKyW4ZabeXsvmWWwG6DkSOugAgOdBizZb0+5sBQkqNqqRrIXmZaoDxsfry1lJbglM2+2Q==
+X-Received: by 2002:a05:600c:2117:: with SMTP id u23mr2337658wml.153.1610606918861;
+        Wed, 13 Jan 2021 22:48:38 -0800 (PST)
+Received: from tmp.scylladb.com (bzq-79-182-3-66.red.bezeqint.net. [79.182.3.66])
+        by smtp.googlemail.com with ESMTPSA id v20sm8141086wra.19.2021.01.13.22.48.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Jan 2021 22:48:37 -0800 (PST)
+Subject: Re: [RFC] xfs: reduce sub-block DIO serialisation
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        andres@anarazel.de
+References: <20210112010746.1154363-1-david@fromorbit.com>
+ <32f99253-fe56-9198-e47c-7eb0e24fdf73@scylladb.com>
+ <20210112221324.GU331610@dread.disaster.area>
+ <0f0706f9-92ab-6b38-f3ab-b91aaf4343d1@scylladb.com>
+ <20210113203809.GF331610@dread.disaster.area>
+From:   Avi Kivity <avi@scylladb.com>
+Message-ID: <50362fc8-3d5e-cd93-4e55-f3ecddc21780@scylladb.com>
+Date:   Thu, 14 Jan 2021 08:48:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20210113203809.GF331610@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2021-01-13 at 16:00 +0800, Fox Chen wrote:
-> On Wed, Jan 13, 2021 at 3:51 PM Ian Kent <raven@themaw.net> wrote:
-> > On Wed, 2021-01-13 at 15:47 +0800, Ian Kent wrote:
-> > > On Wed, 2021-01-13 at 15:00 +0800, Fox Chen wrote:
-> > > > On Wed, Jan 13, 2021 at 1:17 PM Ian Kent <raven@themaw.net>
-> > > > wrote:
-> > > > > On Mon, 2021-01-11 at 17:02 +0800, Fox Chen wrote:
-> > > > > > On Mon, Jan 11, 2021 at 4:42 PM Ian Kent <raven@themaw.net>
-> > > > > > wrote:
-> > > > > > > On Mon, 2021-01-11 at 15:04 +0800, Fox Chen wrote:
-> > > > > > > > On Mon, Jan 11, 2021 at 12:20 PM Ian Kent <
-> > > > > > > > raven@themaw.net
-> > > > > > > > wrote:
-> > > > > > > > > On Mon, 2021-01-11 at 11:19 +0800, Ian Kent wrote:
-> > > > > > > > > > On Wed, 2021-01-06 at 10:38 +0800, Fox Chen wrote:
-> > > > > > > > > > > Hi Ian,
-> > > > > > > > > > > 
-> > > > > > > > > > > I am rethinking this problem. Can we simply use a
-> > > > > > > > > > > global
-> > > > > > > > > > > lock?
-> > > > > > > > > > > 
-> > > > > > > > > > >  In your original patch 5, you have a global
-> > > > > > > > > > > mutex
-> > > > > > > > > > > attr_mutex
-> > > > > > > > > > > to
-> > > > > > > > > > > protect attr, if we change it to a rwsem, is it
-> > > > > > > > > > > enough
-> > > > > > > > > > > to
-> > > > > > > > > > > protect
-> > > > > > > > > > > both
-> > > > > > > > > > > inode and attr while having the concurrent read
-> > > > > > > > > > > ability?
-> > > > > > > > > > > 
-> > > > > > > > > > > like this patch I submitted. ( clearly, I missed
-> > > > > > > > > > > __kernfs_iattrs
-> > > > > > > > > > > part,
-> > > > > > > > > > > but just about that idea )
-> > > > > > > > > > > https://lore.kernel.org/lkml/20201207084333.179132-1-foxhlchen@gmail.com/
-> > > > > > > > > > 
-> > > > > > > > > > I don't think so.
-> > > > > > > > > > 
-> > > > > > > > > > kernfs_refresh_inode() writes to the inode so
-> > > > > > > > > > taking a
-> > > > > > > > > > read
-> > > > > > > > > > lock
-> > > > > > > > > > will allow multiple processes to concurrently
-> > > > > > > > > > update it
-> > > > > > > > > > which
-> > > > > > > > > > is
-> > > > > > > > > > what we need to avoid.
-> > > > > > > > 
-> > > > > > > > Oh, got it. I missed the inode part. my bad. :(
-> > > > > > > > 
-> > > > > > > > > > It's possibly even more interesting.
-> > > > > > > > > > 
-> > > > > > > > > > For example, kernfs_iop_rmdir() and
-> > > > > > > > > > kernfs_iop_mkdir()
-> > > > > > > > > > might
-> > > > > > > > > > alter
-> > > > > > > > > > the inode link count (I don't know if that would be
-> > > > > > > > > > the
-> > > > > > > > > > sort
-> > > > > > > > > > of
-> > > > > > > > > > thing
-> > > > > > > > > > they would do but kernfs can't possibly know
-> > > > > > > > > > either).
-> > > > > > > > > > Both of
-> > > > > > > > > > these
-> > > > > > > > > > functions rely on the VFS locking for exclusion but
-> > > > > > > > > > the
-> > > > > > > > > > inode
-> > > > > > > > > > link
-> > > > > > > > > > count is updated in kernfs_refresh_inode() too.
-> > > > > > > > > > 
-> > > > > > > > > > That's the case now, without any patches.
-> > > > > > > > > 
-> > > > > > > > > So it's not so easy to get the inode from just the
-> > > > > > > > > kernfs
-> > > > > > > > > object
-> > > > > > > > > so these probably aren't a problem ...
-> > > > > > > > 
-> > > > > > > > IIUC only when dop->revalidate, iop->lookup being
-> > > > > > > > called,
-> > > > > > > > the
-> > > > > > > > result
-> > > > > > > > of rmdir/mkdir will be sync with vfs.
-> > > > > > > 
-> > > > > > > Don't quite get what you mean here?
-> > > > > > > 
-> > > > > > > Do you mean something like, VFS objects are created on
-> > > > > > > user
-> > > > > > > access
-> > > > > > > to the file system. Given that user access generally
-> > > > > > > means
-> > > > > > > path
-> > > > > > > resolution possibly followed by some operation.
-> > > > > > > 
-> > > > > > > I guess those VFS objects will go away some time after
-> > > > > > > the
-> > > > > > > access
-> > > > > > > but even thought the code looks like that should happen
-> > > > > > > pretty
-> > > > > > > quickly after I've observed that these objects stay
-> > > > > > > around
-> > > > > > > longer
-> > > > > > > than expected. There wouldn't be any use in maintaining a
-> > > > > > > least
-> > > > > > > recently used list of dentry candidates eligible to
-> > > > > > > discard.
-> > > > > > 
-> > > > > > Yes, that is what I meant. I think the duration may depend
-> > > > > > on
-> > > > > > the
-> > > > > > current ram pressure. though not quite sure, I'm still
-> > > > > > digging
-> > > > > > this
-> > > > > > part of code.
-> > > > > > 
-> > > > > > > > kernfs_node is detached from vfs inode/dentry to save
-> > > > > > > > ram.
-> > > > > > > > 
-> > > > > > > > > > I'm not entirely sure what's going on in
-> > > > > > > > > > kernfs_refresh_inode().
-> > > > > > > > > > 
-> > > > > > > > > > It could be as simple as being called with a NULL
-> > > > > > > > > > inode
-> > > > > > > > > > because
-> > > > > > > > > > the dentry concerned is negative at that point. I
-> > > > > > > > > > haven't
-> > > > > > > > > > had
-> > > > > > > > > > time to look closely at it TBH but I have been
-> > > > > > > > > > thinking
-> > > > > > > > > > about
-> > > > > > > > > > it.
-> > > > > > > > 
-> > > > > > > > um, It shouldn't be called with a NULL inode, right?
-> > > > > > > > 
-> > > > > > > > inode->i_mode = kn->mode;
-> > > > > > > > 
-> > > > > > > > otherwise will crash.
-> > > > > > > 
-> > > > > > > Yes, you're right about that.
-> > > > > > > 
-> > > > > > > > > Certainly this can be called without a struct iattr
-> > > > > > > > > having
-> > > > > > > > > been
-> > > > > > > > > allocated ... and given it probably needs to remain a
-> > > > > > > > > pointer
-> > > > > > > > > rather than embedded in the node the inode link count
-> > > > > > > > > update
-> > > > > > > > > can't easily be protected from concurrent updates.
-> > > > > > > > > 
-> > > > > > > > > If it was ok to do the allocation at inode creation
-> > > > > > > > > the
-> > > > > > > > > problem
-> > > > > > > > > becomes much simpler to resolve but I thought there
-> > > > > > > > > were
-> > > > > > > > > concerns
-> > > > > > > > > about ram consumption (although I don't think that
-> > > > > > > > > was
-> > > > > > > > > exactly
-> > > > > > > > > what
-> > > > > > > > > was said?).
-> > > > > > > > > 
-> > > > > > > > 
-> > > > > > > > you meant iattr to be allocated at inode creation
-> > > > > > > > time??
-> > > > > > > > yes, I think so. it's due to ram consumption.
-> > > > > > > 
-> > > > > > > I did, yes.
-> > > > > > > 
-> > > > > > > The actual problem is dealing with multiple concurrent
-> > > > > > > updates
-> > > > > > > to
-> > > > > > > the inode link count, the rest can work.
-> > > > > 
-> > > > > Umm ... maybe I've been trying to do this in the wrong place
-> > > > > all
-> > > > > along.
-> > > > > 
-> > > > > You know the inode i_lock looks like the sensible thing to
-> > > > > use to
-> > > > > protect these updates.
-> > > > > 
-> > > > > Something like this for that last patch should work:
-> > > > > 
-> > > > > kernfs: use i_lock to protect concurrent inode updates
-> > > > > 
-> > > > > From: Ian Kent <raven@themaw.net>
-> > > > > 
-> > > > > The inode operations .permission() and .getattr() use the
-> > > > > kernfs
-> > > > > node
-> > > > > write lock but all that's needed is to keep the rb tree
-> > > > > stable
-> > > > > while
-> > > > > updating the inode attributes as well as protecting the
-> > > > > update
-> > > > > itself
-> > > > > against concurrent changes.
-> > > > > 
-> > > > > And .permission() is called frequently during path walks and
-> > > > > can
-> > > > > cause
-> > > > > quite a bit of contention between kernfs node opertations and
-> > > > > path
-> > > > > walks when the number of concurrant walks is high.
-> > > > > 
-> > > > > To change kernfs_iop_getattr() and kernfs_iop_permission() to
-> > > > > take
-> > > > > the rw sem read lock instead of the write lock an addtional
-> > > > > lock
-> > > > > is
-> > > > > needed to protect against multiple processes concurrently
-> > > > > updating
-> > > > > the inode attributes and link count in
-> > > > > kernfs_refresh_inode().
-> > > > > 
-> > > > > The inode i_lock seems like the sensible thing to use to
-> > > > > protect
-> > > > > these
-> > > > > inode attribute updates so use it in kernfs_refresh_inode().
-> > > > > 
-> > > > > Signed-off-by: Ian Kent <raven@themaw.net>
-> > > > > ---
-> > > > >  fs/kernfs/inode.c |   10 ++++++----
-> > > > >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > > > > 
-> > > > > diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-> > > > > index ddaf18198935..e26fa5115821 100644
-> > > > > --- a/fs/kernfs/inode.c
-> > > > > +++ b/fs/kernfs/inode.c
-> > > > > @@ -171,6 +171,7 @@ static void kernfs_refresh_inode(struct
-> > > > > kernfs_node *kn, struct inode *inode)
-> > > > >  {
-> > > > >         struct kernfs_iattrs *attrs = kn->iattr;
-> > > > > 
-> > > > > +       spin_lock(inode->i_lock);
-> > > > >         inode->i_mode = kn->mode;
-> > > > >         if (attrs)
-> > > > >                 /*
-> > > > > @@ -181,6 +182,7 @@ static void kernfs_refresh_inode(struct
-> > > > > kernfs_node *kn, struct inode *inode)
-> > > > > 
-> > > > >         if (kernfs_type(kn) == KERNFS_DIR)
-> > > > >                 set_nlink(inode, kn->dir.subdirs + 2);
-> > > > > +       spin_unlock(inode->i_lock);
-> > > > >  }
-> > > > > 
-> > > > >  int kernfs_iop_getattr(const struct path *path, struct kstat
-> > > > > *stat,
-> > > > > @@ -189,9 +191,9 @@ int kernfs_iop_getattr(const struct path
-> > > > > *path,
-> > > > > struct kstat *stat,
-> > > > >         struct inode *inode = d_inode(path->dentry);
-> > > > >         struct kernfs_node *kn = inode->i_private;
-> > > > > 
-> > > > > -       down_write(&kernfs_rwsem);
-> > > > > +       down_read(&kernfs_rwsem);
-> > > > >         kernfs_refresh_inode(kn, inode);
-> > > > > -       up_write(&kernfs_rwsem);
-> > > > > +       up_read(&kernfs_rwsem);
-> > > > > 
-> > > > >         generic_fillattr(inode, stat);
-> > > > >         return 0;
-> > > > > @@ -281,9 +283,9 @@ int kernfs_iop_permission(struct inode
-> > > > > *inode,
-> > > > > int mask)
-> > > > > 
-> > > > >         kn = inode->i_private;
-> > > > > 
-> > > > > -       down_write(&kernfs_rwsem);
-> > > > > +       down_read(&kernfs_rwsem);
-> > > > >         kernfs_refresh_inode(kn, inode);
-> > > > > -       up_write(&kernfs_rwsem);
-> > > > > +       up_read(&kernfs_rwsem);
-> > > > > 
-> > > > >         return generic_permission(inode, mask);
-> > > > >  }
-> > > > > 
-> > > > 
-> > > > It looks good on my local machine, let me test my benchmark on
-> > > > a
-> > > > big
-> > > > machine. :)
-> > > > 
-> > > > Also, I wonder why i_lock?? what if I use a local spin_lock,
-> > > > will
-> > > > there be any difference???
-> > > 
-> > > I think that amounts to using a global lock (ie. static) not a
-> > > per-object lock which is needed to reduce contention.
-> > 
-> > And this lock is used for similar purposes in quite a few other
-> > places so it seems like sensible, consistent usage.
-> 
-> Oh, yes, that's awesome. And it would never be used to protect iop
-> operations on VFS side as i_rwsem does. Sounds great!
+On 1/13/21 10:38 PM, Dave Chinner wrote:
+> On Wed, Jan 13, 2021 at 10:00:37AM +0200, Avi Kivity wrote:
+>> On 1/13/21 12:13 AM, Dave Chinner wrote:
+>>> On Tue, Jan 12, 2021 at 10:01:35AM +0200, Avi Kivity wrote:
+>>>> On 1/12/21 3:07 AM, Dave Chinner wrote:
+>>>>> Hi folks,
+>>>>>
+>>>>> This is the XFS implementation on the sub-block DIO optimisations
+>>>>> for written extents that I've mentioned on #xfs and a couple of
+>>>>> times now on the XFS mailing list.
+>>>>>
+>>>>> It takes the approach of using the IOMAP_NOWAIT non-blocking
+>>>>> IO submission infrastructure to optimistically dispatch sub-block
+>>>>> DIO without exclusive locking. If the extent mapping callback
+>>>>> decides that it can't do the unaligned IO without extent
+>>>>> manipulation, sub-block zeroing, blocking or splitting the IO into
+>>>>> multiple parts, it aborts the IO with -EAGAIN. This allows the high
+>>>>> level filesystem code to then take exclusive locks and resubmit the
+>>>>> IO once it has guaranteed no other IO is in progress on the inode
+>>>>> (the current implementation).
+>>>> Can you expand on the no-splitting requirement? Does it involve only
+>>>> splitting by XFS (IO spans >1 extents) or lower layers (RAID)?
+>>> XFS only.
+>>
+>> Ok, that is somewhat under control as I can provide an extent hint, and wish
+>> really hard that the filesystem isn't fragmented.
+>>
+>>
+>>>> The reason I'm concerned is that it's the constraint that the application
+>>>> has least control over. I guess I could use RWF_NOWAIT to avoid blocking my
+>>>> main thread (but last time I tried I'd get occasional EIOs that frightened
+>>>> me off that).
+>>> Spurious EIO from RWF_NOWAIT is a bug that needs to be fixed. DO you
+>>> have any details?
+>>>
+>> I reported it in [1]. It's long since gone since I disabled RWF_NOWAIT. It
+>> was relatively rare, sometimes happening in continuous integration runs that
+>> take hours, and sometimes not.
+>>
+>>
+>> I expect it's fixed by now since io_uring relies on it. Maybe I should turn
+>> it on for kernels > some_random_version.
+>>
+>>
+>> [1] https://lore.kernel.org/lkml/9bab0f40-5748-f147-efeb-5aac4fd44533@scylladb.com/t/#u
+> Yeah, as I thought. Usage of REQ_NOWAIT with filesystem based IO is
+> simply broken - it causes spurious IO failures to be reported to IO
+> completion callbacks and so are very difficult to track and/or
+> retry. iomap does not use REQ_NOWAIT at all, so you should not ever
+> see this from XFS or ext4 DIO anymore...
 
-I'm not quite done yet though.
 
-I will need to spend some time checking for any places where the VFS
-updates those inode attributes or the inode link count to verify there
-are no more possible races than there was before changing to use the
-read lock.
+What kernel version would be good?
 
-Ian
-> 
-> > > > static void kernfs_refresh_inode(struct kernfs_node *kn, struct
-> > > > inode
-> > > > *inode)
-> > > > {
-> > > >         struct kernfs_iattrs *attrs = kn->iattr;
-> > > >         static DEFINE_SPINLOCK(inode_lock);
-> > > > 
-> > > >         spin_lock(&inode_lock);
-> > > >         inode->i_mode = kn->mode;
-> > > >         if (attrs)
-> > > >                 /*
-> > > >                  * kernfs_node has non-default attributes get
-> > > > them
-> > > > from
-> > > >                  * persistent copy in kernfs_node.
-> > > >                  */
-> > > >                 set_inode_attr(inode, attrs);
-> > > > 
-> > > >         if (kernfs_type(kn) == KERNFS_DIR)
-> > > >                 set_nlink(inode, kn->dir.subdirs + 2);
-> > > >         spin_unlock(&inode_lock);
-> > > > }
-> > > > 
-> > > > 
-> > > > 
-> > > > thanks,
-> > > > fox
+
+Searching the log I found
+
+
+commit 4503b7676a2e0abe69c2f2c0d8b03aec53f2f048
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Mon Jun 1 10:00:27 2020 -0600
+
+     io_uring: catch -EIO from buffered issue request failure
+
+     -EIO bubbles up like -EAGAIN if we fail to allocate a request at the
+     lower level. Play it safe and treat it like -EAGAIN in terms of sync
+     retry, to avoid passing back an errant -EIO.
+
+     Catch some of these early for block based file, as non-mq devices
+     generally do not support NOWAIT. That saves us some overhead by
+     not first trying, then retrying from async context. We can go straight
+     to async punt instead.
+
+     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+but this looks to be io_uring specific fix (somewhat frightening too), 
+not removal of REQ_NOWAIT.
+
+
 
