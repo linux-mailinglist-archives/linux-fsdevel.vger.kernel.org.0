@@ -2,258 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 085E72F5DED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 10:42:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 446ED2F5E2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 10:57:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbhANJk3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 04:40:29 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58723 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726551AbhANJkZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 04:40:25 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=zhongjiang-ali@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0ULi6zbO_1610617113;
-Received: from L-X1DSLVDL-1420.local(mailfrom:zhongjiang-ali@linux.alibaba.com fp:SMTPD_---0ULi6zbO_1610617113)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 14 Jan 2021 17:38:34 +0800
-Subject: Re: [PATCH 04/10] mm, fsdax: Refactor memory-failure handler for dax
- mapping
-To:     Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>, Jan Kara <jack@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        darrick.wong@oracle.com, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@lst.de, song@kernel.org, rgoldwyn@suse.de,
-        qi.fuli@fujitsu.com, y-goto@fujitsu.com
-References: <20201230165601.845024-1-ruansy.fnst@cn.fujitsu.com>
- <20201230165601.845024-5-ruansy.fnst@cn.fujitsu.com>
- <20210106154132.GC29271@quack2.suse.cz>
- <75164044-bfdf-b2d6-dff0-d6a8d56d1f62@cn.fujitsu.com>
- <781f276b-afdd-091c-3dba-048e415431ab@linux.alibaba.com>
- <ef29ba5c-96d7-d0bb-e405-c7472a518b32@cn.fujitsu.com>
- <e2f7ad16-8162-4933-9091-72e690e9877e@linux.alibaba.com>
- <4f184987-3cc2-c72d-0774-5d20ea2e1d49@cn.fujitsu.com>
-From:   zhong jiang <zhongjiang-ali@linux.alibaba.com>
-Message-ID: <53ecb7e2-8f59-d1a5-df75-4780620ce91f@linux.alibaba.com>
-Date:   Thu, 14 Jan 2021 17:38:33 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:85.0)
- Gecko/20100101 Thunderbird/85.0
+        id S1728317AbhANJ4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 04:56:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40442 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728312AbhANJ4w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Jan 2021 04:56:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 2E1E7AB7A;
+        Thu, 14 Jan 2021 09:56:12 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CE6401E086B; Thu, 14 Jan 2021 10:56:11 +0100 (CET)
+Date:   Thu, 14 Jan 2021 10:56:11 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Zhengyuan Liu <liuzhengyuang521@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Zhengyuan Liu <liuzhengyuan@tj.kylinos.cn>, jack@suse.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/quota: fix the mismatch of data type
+Message-ID: <20210114095611.GA25790@quack2.suse.cz>
+References: <20210111043541.11622-1-liuzhengyuan@tj.kylinos.cn>
+ <20210113174432.GH6854@quack2.suse.cz>
+ <CAOOPZo6_3wzKxUD8HJPpPoF5oKGYo6eOd37M1iHLEW0sELcFoA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4f184987-3cc2-c72d-0774-5d20ea2e1d49@cn.fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOOPZo6_3wzKxUD8HJPpPoF5oKGYo6eOd37M1iHLEW0sELcFoA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu 14-01-21 11:14:09, Zhengyuan Liu wrote:
+> On Thu, Jan 14, 2021 at 1:44 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Mon 11-01-21 12:35:41, Zhengyuan Liu wrote:
+> > > From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+> > >
+> > > When doing fuzzing test to quota, an error occurred due to the
+> > > mismatch of data type:
+> > >
+> > >     Quota error (device loop0): qtree_write_dquot: Error -1244987383 occurred while creating quota
+> > >     Unable to handle kernel paging request at virtual address ffffffffb5cb0071
+> > >     Mem abort info:
+> > >       ESR = 0x96000006
+> > >       EC = 0x25: DABT (current EL), IL = 32 bits
+> > >       SET = 0, FnV = 0
+> > >       EA = 0, S1PTW = 0
+> > >     Data abort info:
+> > >       ISV = 0, ISS = 0x00000006
+> > >       CM = 0, WnR = 0
+> > >     swapper pgtable: 64k pages, 48-bit VAs, pgdp=0000000023980000
+> > >     [ffffffffb5cb0071] pgd=00000000243f0003, p4d=00000000243f0003, pud=00000000243f0003, pmd=0000000000000000
+> > >     Internal error: Oops: 96000006 [#1] SMP
+> > >     Modules linked in: nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nftn
+> > >     CPU: 1 PID: 1256 Comm: a.out Not tainted 5.10.0 #31
+> > >     Hardware name: XXXX XXXX/Kunpeng Desktop Board D920L11K, BIOS 0.23 07/22/2020
+> > >     pstate: 00400009 (nzcv daif +PAN -UAO -TCO BTYPE=--)
+> > >     pc : dquot_add_space+0x30/0x258
+> > >     lr : __dquot_alloc_space+0x22c/0x358
+> > >     sp : ffff80001c10f660
+> > >     x29: ffff80001c10f660 x28: 0000000000000001
+> > >     x27: 0000000000000000 x26: 0000000000000000
+> > >     x25: ffff800011add9c8 x24: ffff0020a2110470
+> > >     x23: 0000000000000400 x22: 0000000000000400
+> > >     x21: 0000000000000000 x20: 0000000000000400
+> > >     x19: ffffffffb5cb0009 x18: 0000000000000000
+> > >     x17: 0000000000000020 x16: 0000000000000000
+> > >     x15: 0000000000000010 x14: 65727471203a2930
+> > >     x13: 706f6f6c20656369 x12: 0000000000000020
+> > >     x11: 000000000000000a x10: 0000000000000400
+> > >     x9 : ffff8000103afb5c x8 : 0000000800000000
+> > >     x7 : 0000000000002000 x6 : 000000000000000f
+> > >     x5 : ffffffffb5cb0009 x4 : ffff80001c10f728
+> > >     x3 : 0000000000000001 x2 : 0000000000000000
+> > >     x1 : 0000000000000400 x0 : ffffffffb5cb0009
+> > >     Call trace:
+> > >      dquot_add_space+0x30/0x258
+> > >      __dquot_alloc_space+0x22c/0x358
+> > >      ext4_mb_new_blocks+0x100/0xe88
+> > >      ext4_new_meta_blocks+0xb4/0x110
+> > >      ext4_xattr_block_set+0x4ec/0xce8
+> > >      ext4_xattr_set_handle+0x400/0x528
+> > >      ext4_xattr_set+0xc4/0x170
+> > >      ext4_xattr_security_set+0x30/0x40
+> > >      __vfs_setxattr+0x7c/0xa0
+> > >      __vfs_setxattr_noperm+0x88/0x218
+> > >      __vfs_setxattr_locked+0xf8/0x120
+> > >      vfs_setxattr+0x6c/0x100
+> > >      setxattr+0x148/0x240
+> > >      path_setxattr+0xc4/0xd8
+> > >      __arm64_sys_setxattr+0x2c/0x40
+> > >      el0_svc_common.constprop.4+0x94/0x178
+> > >      do_el0_svc+0x78/0x98
+> > >      el0_svc+0x20/0x30
+> > >      el0_sync_handler+0x90/0xb8
+> > >      el0_sync+0x158/0x180
+> > >
+> > > In this test case, the return value from get_free_dqblk() could be
+> > > info->dqi_free_blk, which is defined as unsigned int, but we use
+> > > type int in do_insert_tree to check the return value, and therefor we
+> > > may get a negative duo to the transformation. This negative(as aboved
+> > > said -1244987383) then can transmit to dquots in __dquot_initialize(),
+> > > and once we access there can trigger above panic.
+> > >
+> > >       __dquot_initialize():
+> > >                 dquot = dqget(sb, qid);
+> > >                 if (IS_ERR(dquot)) {
+> > >                         /* We raced with somebody turning quotas off... */
+> > >                         if (PTR_ERR(dquot) != -ESRCH) {
+> > >                                 ret = PTR_ERR(dquot);
+> > >                                 goto out_put;
+> > >                         }
+> > >                         dquot = NULL;
+> > >                 }
+> > >                 got[cnt] = dquot;
+> > >
+> > > Try to fix this problem by making the data type consistent.
+> > >
+> > > Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+> >
+> > Hum, I think this problem has already been fixed by commits:
+> >
+> > 10f04d40a9f "quota: Don't overflow quota file offsets"
+> >
+> > and
+> >
+> > 11c514a99bb "quota: Sanity-check quota file headers on load"
+> 
+> The latest v5.11-rc3 which has included these two patches indeed fixed
+> my problem.
+> Sorry, I only checked v5.10.
 
-On 2021/1/14 11:52 上午, Ruan Shiyang wrote:
->
->
-> On 2021/1/14 上午11:26, zhong jiang wrote:
->>
->> On 2021/1/14 9:44 上午, Ruan Shiyang wrote:
->>>
->>>
->>> On 2021/1/13 下午6:04, zhong jiang wrote:
->>>>
->>>> On 2021/1/12 10:55 上午, Ruan Shiyang wrote:
->>>>>
->>>>>
->>>>> On 2021/1/6 下午11:41, Jan Kara wrote:
->>>>>> On Thu 31-12-20 00:55:55, Shiyang Ruan wrote:
->>>>>>> The current memory_failure_dev_pagemap() can only handle 
->>>>>>> single-mapped
->>>>>>> dax page for fsdax mode.  The dax page could be mapped by 
->>>>>>> multiple files
->>>>>>> and offsets if we let reflink feature & fsdax mode work 
->>>>>>> together. So,
->>>>>>> we refactor current implementation to support handle memory 
->>>>>>> failure on
->>>>>>> each file and offset.
->>>>>>>
->>>>>>> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
->>>>>>
->>>>>> Overall this looks OK to me, a few comments below.
->>>>>>
->>>>>>> ---
->>>>>>>   fs/dax.c            | 21 +++++++++++
->>>>>>>   include/linux/dax.h |  1 +
->>>>>>>   include/linux/mm.h  |  9 +++++
->>>>>>>   mm/memory-failure.c | 91 
->>>>>>> ++++++++++++++++++++++++++++++++++-----------
->>>>>>>   4 files changed, 100 insertions(+), 22 deletions(-)
->>>>>
->>>>> ...
->>>>>
->>>>>>>   @@ -345,9 +348,12 @@ static void add_to_kill(struct 
->>>>>>> task_struct *tsk, struct page *p,
->>>>>>>       }
->>>>>>>         tk->addr = page_address_in_vma(p, vma);
->>>>>>> -    if (is_zone_device_page(p))
->>>>>>> -        tk->size_shift = dev_pagemap_mapping_shift(p, vma);
->>>>>>> -    else
->>>>>>> +    if (is_zone_device_page(p)) {
->>>>>>> +        if (is_device_fsdax_page(p))
->>>>>>> +            tk->addr = vma->vm_start +
->>>>>>> +                    ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
->>>>>>
->>>>>> It seems strange to use 'pgoff' for dax pages and not for any 
->>>>>> other page.
->>>>>> Why? I'd rather pass correct pgoff from all callers of 
->>>>>> add_to_kill() and
->>>>>> avoid this special casing...
->>>>>
->>>>> Because one fsdax page can be shared by multiple pgoffs. I have to 
->>>>> pass each pgoff in each iteration to calculate the address in vma 
->>>>> (for tk->addr).  Other kinds of pages don't need this. They can 
->>>>> get their unique address by calling "page_address_in_vma()".
->>>>>
->>>> IMO,   an fsdax page can be shared by multiple files rather than 
->>>> multiple pgoffs if fs query support reflink.   Because an page only 
->>>> located in an mapping(page->mapping is exclusive), hence it  only 
->>>> has an pgoff or index pointing at the node.
->>>>
->>>>   or  I miss something for the feature ?  thanks,
->>>
->>> Yes, a fsdax page is shared by multiple files because of reflink. I 
->>> think my description of 'pgoff' here is not correct.  This 'pgoff' 
->>> means the offset within the a file. (We use rmap to find out all the 
->>> sharing files and their offsets.)  So, I said that "can be shared by 
->>> multiple pgoffs".  It's my bad.
->>>
->>> I think I should name it another word to avoid misunderstandings.
->>>
->> IMO,  All the sharing files should be the same offset to share the 
->> fsdax page.  why not that ? 
->
-> The dedupe operation can let different files share their same data 
-> extent, though offsets are not same.  So, files can share one fsdax 
-> page at different offset.
-Ok,  Get it.
->
->> As you has said,  a shared fadax page should be inserted to different 
->> mapping files.  but page->index and page->mapping is exclusive.  
->> hence an page only should be placed in an mapping tree.
->
-> We can't use page->mapping and page->index here for reflink & fsdax. 
-> And that's this patchset aims to solve.  I introduced a series of 
-> ->corrupted_range(), from mm to pmem driver to block device and 
-> finally to filesystem, to use rmap feature of filesystem to find out 
-> all files sharing same data extent (fsdax page).
+Thanks for confirmation!
 
- From this patch,  each file has mapping tree,  the shared page will be 
-inserted into multiple file mapping tree.  then filesystem use file and 
-offset to get the killed process.   Is it correct?
-
-Thanks,
-
->
->
-> -- 
-> Thanks,
-> Ruan Shiyang.
->
->>
->> And In the current patch,  we failed to found out that all process 
->> use the fsdax page shared by multiple files and kill them.
->>
->>
->> Thanks,
->>
->>> -- 
->>> Thanks,
->>> Ruan Shiyang.
->>>
->>>>
->>>>> So, I added this fsdax case here. This patchset only implemented 
->>>>> the fsdax case, other cases also need to be added here if to be 
->>>>> implemented.
->>>>>
->>>>>
->>>>> -- 
->>>>> Thanks,
->>>>> Ruan Shiyang.
->>>>>
->>>>>>
->>>>>>> +        tk->size_shift = dev_pagemap_mapping_shift(p, vma, 
->>>>>>> tk->addr);
->>>>>>> +    } else
->>>>>>>           tk->size_shift = page_shift(compound_head(p));
->>>>>>>         /*
->>>>>>> @@ -495,7 +501,7 @@ static void collect_procs_anon(struct page 
->>>>>>> *page, struct list_head *to_kill,
->>>>>>>               if (!page_mapped_in_vma(page, vma))
->>>>>>>                   continue;
->>>>>>>               if (vma->vm_mm == t->mm)
->>>>>>> -                add_to_kill(t, page, vma, to_kill);
->>>>>>> +                add_to_kill(t, page, NULL, 0, vma, to_kill);
->>>>>>>           }
->>>>>>>       }
->>>>>>>       read_unlock(&tasklist_lock);
->>>>>>> @@ -505,24 +511,19 @@ static void collect_procs_anon(struct page 
->>>>>>> *page, struct list_head *to_kill,
->>>>>>>   /*
->>>>>>>    * Collect processes when the error hit a file mapped page.
->>>>>>>    */
->>>>>>> -static void collect_procs_file(struct page *page, struct 
->>>>>>> list_head *to_kill,
->>>>>>> -                int force_early)
->>>>>>> +static void collect_procs_file(struct page *page, struct 
->>>>>>> address_space *mapping,
->>>>>>> +        pgoff_t pgoff, struct list_head *to_kill, int force_early)
->>>>>>>   {
->>>>>>>       struct vm_area_struct *vma;
->>>>>>>       struct task_struct *tsk;
->>>>>>> -    struct address_space *mapping = page->mapping;
->>>>>>> -    pgoff_t pgoff;
->>>>>>>         i_mmap_lock_read(mapping);
->>>>>>>       read_lock(&tasklist_lock);
->>>>>>> -    pgoff = page_to_pgoff(page);
->>>>>>>       for_each_process(tsk) {
->>>>>>>           struct task_struct *t = task_early_kill(tsk, 
->>>>>>> force_early);
->>>>>>> -
->>>>>>>           if (!t)
->>>>>>>               continue;
->>>>>>> -        vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff,
->>>>>>> -                      pgoff) {
->>>>>>> +        vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, 
->>>>>>> pgoff) {
->>>>>>>               /*
->>>>>>>                * Send early kill signal to tasks where a vma covers
->>>>>>>                * the page but the corrupted page is not necessarily
->>>>>>> @@ -531,7 +532,7 @@ static void collect_procs_file(struct page 
->>>>>>> *page, struct list_head *to_kill,
->>>>>>>                * to be informed of all such data corruptions.
->>>>>>>                */
->>>>>>>               if (vma->vm_mm == t->mm)
->>>>>>> -                add_to_kill(t, page, vma, to_kill);
->>>>>>> +                add_to_kill(t, page, mapping, pgoff, vma, 
->>>>>>> to_kill);
->>>>>>>           }
->>>>>>>       }
->>>>>>>       read_unlock(&tasklist_lock);
->>>>>>> @@ -550,7 +551,8 @@ static void collect_procs(struct page *page, 
->>>>>>> struct list_head *tokill,
->>>>>>>       if (PageAnon(page))
->>>>>>>           collect_procs_anon(page, tokill, force_early);
->>>>>>>       else
->>>>>>> -        collect_procs_file(page, tokill, force_early);
->>>>>>> +        collect_procs_file(page, page->mapping, 
->>>>>>> page_to_pgoff(page),
->>>>>>
->>>>>> Why not use page_mapping() helper here? It would be safer for 
->>>>>> THPs if they
->>>>>> ever get here...
->>>>>>
->>>>>>                                 Honza
->>>>>>
->>>>>
->>>>
->>>>
->>>
->>
->>
->
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
