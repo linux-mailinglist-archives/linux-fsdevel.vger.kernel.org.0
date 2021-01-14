@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95CCE2F6C6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 21:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54EF92F6C9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 21:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbhANUoe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 15:44:34 -0500
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:58162 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726049AbhANUod (ORCPT
+        id S1728486AbhANUwn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 15:52:43 -0500
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:43884 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726578AbhANUwn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 15:44:33 -0500
+        Thu, 14 Jan 2021 15:52:43 -0500
+X-Greylist: delayed 489 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Jan 2021 15:52:40 EST
 Received: from dread.disaster.area (pa49-179-167-107.pa.nsw.optusnet.com.au [49.179.167.107])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 84A94D5E47A;
-        Fri, 15 Jan 2021 07:43:35 +1100 (AEDT)
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 03E40105E38;
+        Fri, 15 Jan 2021 07:51:54 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1l09Sw-006UW3-9I; Fri, 15 Jan 2021 07:43:34 +1100
-Date:   Fri, 15 Jan 2021 07:43:34 +1100
+        id 1l09b0-006Uat-5I; Fri, 15 Jan 2021 07:51:54 +1100
+Date:   Fri, 15 Jan 2021 07:51:54 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         linux-fsdevel@vger.kernel.org,
         John Johansen <john.johansen@canonical.com>,
@@ -55,79 +55,83 @@ Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v5 00/42] idmapped mounts
-Message-ID: <20210114204334.GK331610@dread.disaster.area>
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v5 37/42] xfs: support idmapped mounts
+Message-ID: <20210114205154.GL331610@dread.disaster.area>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210114171241.GA1164240@magnolia>
+ <20210112220124.837960-38-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210114171241.GA1164240@magnolia>
+In-Reply-To: <20210112220124.837960-38-christian.brauner@ubuntu.com>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
         a=+wqVUQIkAh0lLYI+QRsciw==:117 a=+wqVUQIkAh0lLYI+QRsciw==:17
         a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
-        a=In5g3teRgiYIkOrEuZ4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=44ec6t6cGFOkeLdKtF4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 09:12:41AM -0800, Darrick J. Wong wrote:
-> On Tue, Jan 12, 2021 at 11:00:42PM +0100, Christian Brauner wrote:
-> > Hey everyone,
-> > 
-> > The only major change is the inclusion of hch's patch to port XFS to
-> > support idmapped mounts. Thanks to Christoph for doing that work.
+On Tue, Jan 12, 2021 at 11:01:19PM +0100, Christian Brauner wrote:
+> From: Christoph Hellwig <hch@lst.de>
 > 
-> Yay :)
+> Enable idmapped mounts for xfs. This basically just means passing down
+> the user_namespace argument from the VFS methods down to where it is
+> passed to helper.
 > 
-> > (For a full list of major changes between versions see the end of this
-> >  cover letter.
-> >  Please also note the large xfstests testsuite in patch 42 that has been
-> >  kept as part of this series. It verifies correct vfs behavior with and
-> >  without idmapped mounts including covering newer vfs features such as
-> >  io_uring.
-> >  I currently still plan to target the v5.12 merge window.)
-> > 
-> > With this patchset we make it possible to attach idmappings to mounts,
-> > i.e. simply put different bind mounts can expose the same file or
-> > directory with different ownership.
-> > Shifting of ownership on a per-mount basis handles a wide range of
-> > long standing use-cases. Here are just a few:
-> > - Shifting of a subset of ownership-less filesystems (vfat) for use by
-> >   multiple users, effectively allowing for DAC on such devices
-> >   (systemd, Android, ...)
-> > - Allow remapping uid/gid on external filesystems or paths (USB sticks,
-> >   network filesystem, ...) to match the local system's user and groups.
-> >   (David Howells intends to port AFS as a first candidate.)
-> > - Shifting of a container rootfs or base image without having to mangle
-> >   every file (runc, Docker, containerd, k8s, LXD, systemd ...)
-> > - Sharing of data between host or privileged containers with
-> >   unprivileged containers (runC, Docker, containerd, k8s, LXD, ...)
-> > - Data sharing between multiple user namespaces with incompatible maps
-> >   (LXD, k8s, ...)
-> 
-> That sounds neat.  AFAICT, the VFS passes the filesystem a mount userns
-> structure, which is then carried down the call stack to whatever
-> functions actually care about mapping kernel [ug]ids to their ondisk
-> versions?
-> 
-> Does quota still work after this patchset is applied?  There isn't any
-> mention of that in the cover letter and I don't see a code patch, so
-> does that mean everything just works?  I'm particularly curious about
-> whether there can exist processes with CAP_SYS_ADMIN and an idmapped
-> mount?  Syscalls like bulkstat and quotactl present file [ug]ids to
-> programs, but afaict there won't be any translating going on?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+....
+> @@ -654,6 +658,7 @@ xfs_vn_change_ok(
+>   */
+>  static int
+>  xfs_setattr_nonsize(
+> +	struct user_namespace	*mnt_userns,
+>  	struct xfs_inode	*ip,
+>  	struct iattr		*iattr)
+>  {
+> @@ -813,7 +818,7 @@ xfs_setattr_nonsize(
+>  	 * 	     Posix ACL code seems to care about this issue either.
+>  	 */
+>  	if (mask & ATTR_MODE) {
+> -		error = posix_acl_chmod(&init_user_ns, inode, inode->i_mode);
+> +		error = posix_acl_chmod(mnt_userns, inode, inode->i_mode);
+>  		if (error)
+>  			return error;
+>  	}
+> @@ -868,7 +873,7 @@ xfs_setattr_size(
+>  		 * Use the regular setattr path to update the timestamps.
+>  		 */
+>  		iattr->ia_valid &= ~ATTR_SIZE;
+> -		return xfs_setattr_nonsize(ip, iattr);
+> +		return xfs_setattr_nonsize(&init_user_ns, ip, iattr);
 
-bulkstat is not allowed inside user namespaces. It's an init
-namespace only thing because it provides unchecked/unbounded access
-to all inodes in the filesystem, not just those contained within a
-specific mount container.
+Shouldn't that be passing mnt_userns?
 
-Hence I don't think bulkstat output (and other initns+root only
-filesystem introspection APIs) should be subject to or concerned
-about idmapping.
+>  	}
+>  
+>  	/*
+> @@ -1037,6 +1042,7 @@ xfs_setattr_size(
+>  
+>  int
+>  xfs_vn_setattr_size(
+> +	struct user_namespace	*mnt_userns,
+>  	struct dentry		*dentry,
+>  	struct iattr		*iattr)
+>  {
+> @@ -1045,7 +1051,7 @@ xfs_vn_setattr_size(
+>  
+>  	trace_xfs_setattr(ip);
+>  
+> -	error = xfs_vn_change_ok(dentry, iattr);
+> +	error = xfs_vn_change_ok(mnt_userns, dentry, iattr);
+>  	if (error)
+>  		return error;
+>  	return xfs_setattr_size(ip, iattr);
+
+And this passing mnt_userns down into xfs_setattr_size()?  Seems
+like a bit of a landmine...
 
 Cheers,
 
