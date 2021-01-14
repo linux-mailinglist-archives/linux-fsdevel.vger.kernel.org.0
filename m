@@ -2,150 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 994572F6A25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 19:57:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 012E42F6A62
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 20:05:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbhANSzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 13:55:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37798 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbhANSzd (ORCPT
+        id S1727017AbhANTCD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 14:02:03 -0500
+Received: from smtp-1908.mail.infomaniak.ch ([185.125.25.8]:49107 "EHLO
+        smtp-1908.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728656AbhANTCC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 13:55:33 -0500
-Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFFEBC061757
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jan 2021 10:54:52 -0800 (PST)
-Received: by mail-qt1-x849.google.com with SMTP id p20so5254866qtq.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jan 2021 10:54:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=AaPp1q1W8KDgYenpyt0snxhoTAxUV/jsi8fLsxYee9s=;
-        b=AbFdoP4sUQzsnEf7uPBF6d1yyv7CEWy2hdehyosQPrfCEnUbp5VpMDvzXTovH7dvnY
-         BUW7QoXa1ZS5R2g07mGCaB6/MPPcY3Zp6ngE7iLB9LYftWbbW8T6r5heYE4WGpLub/5E
-         119UCT52twmefKyyAjVnpVpDA6PmdAZLdqCzVLm+TNFFfe7inQn5Pd4uaQHnKMJ6Xsf1
-         GhgcRoFiyZyyu8mk20KPHxXF4HxfT0gITpKLYk0fzoNw3VjNZ67X06FS5QqPOH0Nyray
-         X6Tl7++H0WaeBEzOpYY5T6o3n4t/ATRNnhlglQwgg22wG4cJicV1oEpr8LLpEDGritzO
-         tdeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=AaPp1q1W8KDgYenpyt0snxhoTAxUV/jsi8fLsxYee9s=;
-        b=C3aNXY+7ZjdJoPJcIBQv1UB0T5DpEVuQiQWe3S7QhkVMKYgSkJDo/yt/oOLdyTydc3
-         RyTDWNMV8ZGi903B3YBvYaAGFDJTbg2SXc+m7ZB40PJb0R+fkaq/q+Aknf0tNkl8pS79
-         w21Ouk07KzotritmY7ho0rlsDuwUyRIjS9gNHwi2y41yDCtfKmcP+1G8hCGLxq4KkK8C
-         5kAZCL2FcosGtKEo3QcCkVnVF3fjaFjUMSqbExpkWLWoLkzCHcdURuorGfuHQX8LgaZ0
-         4SGC4RUwfZSExhrt7vatcScEeqotTCJCz4Wr+4dVxxuQCEYruztBGXktnsJL0KrbyCOW
-         AxIQ==
-X-Gm-Message-State: AOAM530y7kUbI7s1Yc5kmDJ/y5plHsmRKxBmeRK7VZS3TDxIiE2+yA/u
-        tv583UbAy9yYMl32g0lHZFbGrN6KRrk=
-X-Google-Smtp-Source: ABdhPJyOjW3fImyvzubc9dkkNbV113IJEHcA3Y5QmRLgEwh56M49ioa1URPWggXJt8Ch2ptbRNX+UA4XhJI=
-Sender: "figiel via sendgmr" <figiel@odra.waw.corp.google.com>
-X-Received: from odra.waw.corp.google.com ([2a00:79e0:2:11:1ea0:b8ff:fe79:fe73])
- (user=figiel job=sendgmr) by 2002:a05:6214:b12:: with SMTP id
- u18mr2482010qvj.21.1610650491811; Thu, 14 Jan 2021 10:54:51 -0800 (PST)
-Date:   Thu, 14 Jan 2021 19:54:45 +0100
-Message-Id: <20210114185445.996-1-figiel@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.30.0.284.gd98b1dd5eaa7-goog
-Subject: [PATCH v2] fs/proc: Expose RSEQ configuration
-From:   Piotr Figiel <figiel@google.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Thu, 14 Jan 2021 14:02:02 -0500
+X-Greylist: delayed 384 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Jan 2021 14:02:01 EST
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DGtls2KsZzMq8XJ;
+        Thu, 14 Jan 2021 19:54:49 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DGtlp18bWzlh8T2;
+        Thu, 14 Jan 2021 19:54:46 +0100 (CET)
+Subject: Re: [PATCH v26 07/12] landlock: Support filesystem access-control
+To:     Jann Horn <jannh@google.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Michel Lespinasse <walken@google.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Andrei Vagin <avagin@gmail.com>, mathieu.desnoyers@efficios.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        posk@google.com, kyurtsever@google.com, ckennelly@google.com,
-        pjt@google.com, Piotr Figiel <figiel@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20201209192839.1396820-1-mic@digikod.net>
+ <20201209192839.1396820-8-mic@digikod.net>
+ <CAG48ez1wbAQwU-eoC9DngHyUM_5F01MJQpRnLaJFvfRUrnXBdA@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <aeb3e152-8108-89d2-0577-4b130368f14f@digikod.net>
+Date:   Thu, 14 Jan 2021 19:54:36 +0100
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez1wbAQwU-eoC9DngHyUM_5F01MJQpRnLaJFvfRUrnXBdA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For userspace checkpoint and restore (C/R) some way of getting process
-state containing RSEQ configuration is needed.
 
-There are two ways this information is going to be used:
- - to re-enable RSEQ for threads which had it enabled before C/R
- - to detect if a thread was in a critical section during C/R
+On 14/01/2021 04:22, Jann Horn wrote:
+> On Wed, Dec 9, 2020 at 8:28 PM Mickaël Salaün <mic@digikod.net> wrote:
+>> Thanks to the Landlock objects and ruleset, it is possible to identify
+>> inodes according to a process's domain.  To enable an unprivileged
+>> process to express a file hierarchy, it first needs to open a directory
+>> (or a file) and pass this file descriptor to the kernel through
+>> landlock_add_rule(2).  When checking if a file access request is
+>> allowed, we walk from the requested dentry to the real root, following
+>> the different mount layers.  The access to each "tagged" inodes are
+>> collected according to their rule layer level, and ANDed to create
+>> access to the requested file hierarchy.  This makes possible to identify
+>> a lot of files without tagging every inodes nor modifying the
+>> filesystem, while still following the view and understanding the user
+>> has from the filesystem.
+>>
+>> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
+>> keep the same struct inodes for the same inodes whereas these inodes are
+>> in use.
+>>
+>> This commit adds a minimal set of supported filesystem access-control
+>> which doesn't enable to restrict all file-related actions.  This is the
+>> result of multiple discussions to minimize the code of Landlock to ease
+>> review.  Thanks to the Landlock design, extending this access-control
+>> without breaking user space will not be a problem.  Moreover, seccomp
+>> filters can be used to restrict the use of syscall families which may
+>> not be currently handled by Landlock.
+> [...]
+>> +static bool check_access_path_continue(
+>> +               const struct landlock_ruleset *const domain,
+>> +               const struct path *const path, const u32 access_request,
+>> +               u64 *const layer_mask)
+>> +{
+> [...]
+>> +       /*
+>> +        * An access is granted if, for each policy layer, at least one rule
+>> +        * encountered on the pathwalk grants the access, regardless of their
+>> +        * position in the layer stack.  We must then check not-yet-seen layers
+>> +        * for each inode, from the last one added to the first one.
+>> +        */
+>> +       for (i = 0; i < rule->num_layers; i++) {
+>> +               const struct landlock_layer *const layer = &rule->layers[i];
+>> +               const u64 layer_level = BIT_ULL(layer->level - 1);
+>> +
+>> +               if (!(layer_level & *layer_mask))
+>> +                       continue;
+>> +               if ((layer->access & access_request) != access_request)
+>> +                       return false;
+>> +               *layer_mask &= ~layer_level;
+> 
+> Hmm... shouldn't the last 5 lines be replaced by the following?
+> 
+> if ((layer->access & access_request) == access_request)
+>     *layer_mask &= ~layer_level;
+> 
+> And then, since this function would always return true, you could
+> change its return type to "void".
+> 
+> 
+> As far as I can tell, the current version will still, if a ruleset
+> looks like this:
+> 
+> /usr read+write
+> /usr/lib/ read
+> 
+> reject write access to /usr/lib, right?
 
-Since C/R preserves TLS memory and addresses RSEQ ABI will be restored
-using the address registered before C/R.
+If these two rules are from different layers, then yes it would work as
+intended. However, if these rules are from the same layer the path walk
+will not stop at /usr/lib but go down to /usr, which grants write
+access. This is the reason I wrote it like this and the
+layout1.inherit_subset test checks that. I'm updating the documentation
+to better explain how an access is checked with one or multiple layers.
 
-Detection whether the thread is in a critical section during C/R is
-needed to enforce behavior of RSEQ abort during C/R. Attaching with
-ptrace() before registers are dumped itself doesn't cause RSEQ abort.
-Restoring the instruction pointer within the critical section is
-problematic because rseq_cs may get cleared before the control is
-passed to the migrated application code leading to RSEQ invariants not
-being preserved.
+Doing this way also enables to stop the path walk earlier, which is the
+original purpose of this function.
 
-Signed-off-by: Piotr Figiel <figiel@google.com>
 
----
-
-v2:
- - fixed string formatting for 32-bit architectures
-
-v1:
- - https://lkml.kernel.org/r/20210113174127.2500051-1-figiel@google.com
-
----
- fs/proc/base.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index b3422cda2a91..7cc36a224b8b 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -662,6 +662,21 @@ static int proc_pid_syscall(struct seq_file *m, struct pid_namespace *ns,
- 
- 	return 0;
- }
-+
-+#ifdef CONFIG_RSEQ
-+static int proc_pid_rseq(struct seq_file *m, struct pid_namespace *ns,
-+				struct pid *pid, struct task_struct *task)
-+{
-+	int res = lock_trace(task);
-+
-+	if (res)
-+		return res;
-+	seq_printf(m, "%tx %08x\n", (ptrdiff_t)((uintptr_t)task->rseq),
-+		   task->rseq_sig);
-+	unlock_trace(task);
-+	return 0;
-+}
-+#endif /* CONFIG_RSEQ */
- #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
- 
- /************************************************************************/
-@@ -3182,6 +3197,9 @@ static const struct pid_entry tgid_base_stuff[] = {
- 	REG("comm",      S_IRUGO|S_IWUSR, proc_pid_set_comm_operations),
- #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
- 	ONE("syscall",    S_IRUSR, proc_pid_syscall),
-+#ifdef CONFIG_RSEQ
-+	ONE("rseq",       S_IRUSR, proc_pid_rseq),
-+#endif
- #endif
- 	REG("cmdline",    S_IRUGO, proc_pid_cmdline_ops),
- 	ONE("stat",       S_IRUGO, proc_tgid_stat),
-@@ -3522,6 +3540,9 @@ static const struct pid_entry tid_base_stuff[] = {
- 			 &proc_pid_set_comm_operations, {}),
- #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
- 	ONE("syscall",   S_IRUSR, proc_pid_syscall),
-+#ifdef CONFIG_RSEQ
-+	ONE("rseq",      S_IRUSR, proc_pid_rseq),
-+#endif
- #endif
- 	REG("cmdline",   S_IRUGO, proc_pid_cmdline_ops),
- 	ONE("stat",      S_IRUGO, proc_tid_stat),
--- 
-2.30.0.284.gd98b1dd5eaa7-goog
-
+> 
+> 
+>> +       }
+>> +       return true;
+>> +}
