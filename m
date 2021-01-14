@@ -2,146 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE5792F5B46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 08:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 416052F5C12
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 09:07:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbhANH16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 02:27:58 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:33399 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbhANH15 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 02:27:57 -0500
-Received: by mail-io1-f69.google.com with SMTP id m3so6749247ioy.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jan 2021 23:27:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=YzeP38Whzabl2SILmCDC2he+feFF6GbC3cI7SHBtcxc=;
-        b=c0XQLXc1di83J1oh3IpB//P58yI6uTS6IuT5aN3NfCd6gUPg0j3Ak0qQ08Y1uDkwnF
-         JcgWaM1WtK94v/lzo8tZE0uEpw9FKHD1ZIDHHCdu/FBIJdJ+bsc8axf/Tg1oOuyllNE8
-         gp+p3wnFYjPq9hG9P2ZjUWFwMSJ96ATqObT4o5kh8g00207DxYNljSg38oNRnFdbsPm6
-         RxUXY0QBfyET1MMrY9azjxaAF/017a1PYeheji8a+Q42b/idNbu3FFE2GmZOZVDwfH2x
-         h4SADpwP2BNGZTm29si5aap/rERe5Zqh4j7hO/ApnsKb9ryX48HBtSHBN1o1tDf8qXen
-         qysQ==
-X-Gm-Message-State: AOAM532j2D1nybqXLX5nqHGPhTkOmvmquld/7QhPT3rLWU0rSw+pyf3i
-        LQYIJwZS8KmPPrRQaxyLy3vg6MUQ3ZXVlxvXkivXLrDqmRaf
-X-Google-Smtp-Source: ABdhPJzTRwoQlONJjqJAj6alLo1oAepHaGIrbhEWMdEM+dzxy6wUGkTTZZ7uhH7HRbHegYY8oWGClnCnL/+huEnxGdfSOE055dM4
+        id S1728290AbhANIGq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 03:06:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59020 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728130AbhANIGX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Jan 2021 03:06:23 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AFD9323A58;
+        Thu, 14 Jan 2021 08:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610611500;
+        bh=KzRA72DJ8FelN5FRPnISDXzhJWHYX6V5D7cnrrYqmns=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nOm4NqCaUWLg4HTBDeJeoBxDK1hE6KD6kwIaS5QUdGE5d95M0LOuBe17UH6ZhtxWj
+         2SIokKCq5OrWbc/QTRPFACCsP/28F9IHn5ydVSMGUJC9s2jP+tMN80H9tSZ77bm3FC
+         VuJGlQICCzi4qz/Gjt5ZVImWz1CaQcpPOemSSW2UY1plhyCBX0ffc8ZreB8SYwreWG
+         a2Wjqa/k8fmoxGbUlaKINA7quVFVGZDOIEdybff/MtPHwEQKCte3px4suSSxEJzxPs
+         ZezS17i65C2hxskblSDd8TCCCI/NNP1qdJmjaooHey/QEueJfY+BWtlFyEGbMsiuzC
+         o3DjiUV3zELfQ==
+Received: by mail.kernel.org with local (Exim 4.94)
+        (envelope-from <mchehab@kernel.org>)
+        id 1kzxcn-00EQ6N-K6; Thu, 14 Jan 2021 09:04:57 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Evgeniy Polyakov <zbr@ioremap.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jon Maloy <jmaloy@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Gong <richard.gong@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Will Drewry <wad@chromium.org>,
+        Ying Xue <ying.xue@windriver.com>,
+        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net
+Subject: [PATCH v6 00/16] Fix several bad kernel-doc markups
+Date:   Thu, 14 Jan 2021 09:04:36 +0100
+Message-Id: <cover.1610610937.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-X-Received: by 2002:a02:cf9a:: with SMTP id w26mr5401177jar.25.1610609236357;
- Wed, 13 Jan 2021 23:27:16 -0800 (PST)
-Date:   Wed, 13 Jan 2021 23:27:16 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000067b86b05b8d72ff6@google.com>
-Subject: general protection fault in io_uring_setup
-From:   syzbot <syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi Jon,
 
-syzbot found the following issue on:
+This series have three parts:
 
-HEAD commit:    65f0d241 Merge tag 'sound-5.11-rc4' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16bbcd98d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee2266946ed36986
-dashboard link: https://syzkaller.appspot.com/bug?extid=06b7d55a62acca161485
-compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ef17fb500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1045ef67500000
+1)  10 remaining fixup patches from the series I sent back on Dec, 1st:
 
-The issue was bisected to:
+   parport: fix a kernel-doc markup
+   rapidio: fix kernel-doc a markup
+   fs: fix kernel-doc markups
+   pstore/zone: fix a kernel-doc markup
+   firmware: stratix10-svc: fix kernel-doc markups
+   connector: fix a kernel-doc markup
+   lib/crc7: fix a kernel-doc markup
+   memblock: fix kernel-doc markups
+   w1: fix a kernel-doc markup
+   selftests: kselftest_harness.h: partially fix kernel-doc markups
 
-commit d9d05217cb6990b9a56e13b56e7a1b71e2551f6c
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Fri Jan 8 20:57:25 2021 +0000
+2) The patch adding the new check to ensure that the kernel-doc
+   markup will be used for the right declaration;
 
-    io_uring: stop SQPOLL submit on creator's death
+3) 5 additional patches, produced against next-20210114 with new
+   problems detected after the original series: 
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=148ba0cf500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=168ba0cf500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=128ba0cf500000
+ net: tip: fix a couple kernel-doc markups
+ net: cfg80211: fix a kerneldoc markup
+ reset: core: fix a kernel-doc markup
+ drm: drm_crc: fix a kernel-doc markup
+ platform/surface: aggregator: fix a kernel-doc markup
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com
-Fixes: d9d05217cb69 ("io_uring: stop SQPOLL submit on creator's death")
+It probably makes sense to merge at least the first 11 patches
+via the doc tree, as they should apply cleanly there, and
+having the last 5 patches merged via each maintainer's tree.
 
-Code: e8 cc ac 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc6a96c958 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 0000000000441889
-RDX: 0000000020ffd000 RSI: 0000000020000200 RDI: 0000000000003040
-RBP: 000000000000d8dd R08: 0000000000000001 R09: 0000000020ffd000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020ffd000
-R13: 0000000020ffb000 R14: 0000000000000000 R15: 0000000000000000
-general protection fault, probably for non-canonical address 0xdffffc0000000022: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000110-0x0000000000000117]
-CPU: 0 PID: 8444 Comm: syz-executor770 Not tainted 5.11.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_ring_set_wakeup_flag fs/io_uring.c:6929 [inline]
-RIP: 0010:io_disable_sqo_submit fs/io_uring.c:8891 [inline]
-RIP: 0010:io_uring_create fs/io_uring.c:9711 [inline]
-RIP: 0010:io_uring_setup fs/io_uring.c:9739 [inline]
-RIP: 0010:__do_sys_io_uring_setup fs/io_uring.c:9745 [inline]
-RIP: 0010:__se_sys_io_uring_setup+0x2abb/0x37b0 fs/io_uring.c:9742
-Code: c0 00 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 c5 31 de ff 41 be 14 01 00 00 4c 03 33 4c 89 f0 48 c1 e8 03 <42> 8a 04 28 84 c0 0f 85 46 06 00 00 41 80 0e 01 48 8b 7c 24 30 e8
-RSP: 0018:ffffc90000edfca0 EFLAGS: 00010007
-RAX: 0000000000000022 RBX: ffff888021fe50c0 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffffc90000edfb80
-RBP: ffffc90000edff38 R08: dffffc0000000000 R09: 0000000000000003
-R10: fffff520001dbf71 R11: 0000000000000004 R12: 0000000000000001
-R13: dffffc0000000000 R14: 0000000000000114 R15: 00000000fffffff4
-FS:  0000000000975940(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000204 CR3: 00000000222d6000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x441889
-Code: e8 cc ac 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc6a96c958 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 0000000000441889
-RDX: 0000000020ffd000 RSI: 0000000020000200 RDI: 0000000000003040
-RBP: 000000000000d8dd R08: 0000000000000001 R09: 0000000020ffd000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020ffd000
-R13: 0000000020ffb000 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace d873293344bf9303 ]---
-RIP: 0010:io_ring_set_wakeup_flag fs/io_uring.c:6929 [inline]
-RIP: 0010:io_disable_sqo_submit fs/io_uring.c:8891 [inline]
-RIP: 0010:io_uring_create fs/io_uring.c:9711 [inline]
-RIP: 0010:io_uring_setup fs/io_uring.c:9739 [inline]
-RIP: 0010:__do_sys_io_uring_setup fs/io_uring.c:9745 [inline]
-RIP: 0010:__se_sys_io_uring_setup+0x2abb/0x37b0 fs/io_uring.c:9742
-Code: c0 00 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 c5 31 de ff 41 be 14 01 00 00 4c 03 33 4c 89 f0 48 c1 e8 03 <42> 8a 04 28 84 c0 0f 85 46 06 00 00 41 80 0e 01 48 8b 7c 24 30 e8
-RSP: 0018:ffffc90000edfca0 EFLAGS: 00010007
-RAX: 0000000000000022 RBX: ffff888021fe50c0 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffffc90000edfb80
-RBP: ffffc90000edff38 R08: dffffc0000000000 R09: 0000000000000003
-R10: fffff520001dbf71 R11: 0000000000000004 R12: 0000000000000001
-R13: dffffc0000000000 R14: 0000000000000114 R15: 00000000fffffff4
-FS:  0000000000975940(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000204 CR3: 00000000222d6000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+-
+
+Kernel-doc has always be limited to a probably bad documented
+rule:
+
+The kernel-doc markups should appear *imediatelly before* the
+function or data structure that it documents.
+
+On other words, if a C file would contain something like this:
+
+	/**
+	 * foo - function foo
+	 * @args: foo args
+	 */
+	static inline void bar(int args);
+
+	/**
+	 * bar - function bar
+	 * @args: foo args
+	 */
+	static inline void foo(void *args);
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+The output (in ReST format) will be:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+	.. c:function:: void bar (int args)
+
+	   function foo
+
+	**Parameters**
+
+	``int args``
+	  foo args
+
+
+	.. c:function:: void foo (void *args)
+
+	   function bar
+
+	**Parameters**
+
+	``void *args``
+	  foo args
+
+Which is clearly a wrong result.  Before this changeset, 
+not even a warning is produced on such cases.
+
+As placing such markups just before the documented
+data is a common practice, on most cases this is fine.
+
+However, as patches touch things, identifiers may be
+renamed, and people may forget to update the kernel-doc
+markups to follow such changes.
+
+This has been happening for quite a while, as there are
+lots of files with kernel-doc problems.
+
+This series address those issues and add a file at the
+end that will enforce that the identifier will match the
+kernel-doc markup, avoiding this problem from
+keep happening as time goes by.
+
+This series is based on current upstream tree.
+
+@maintainers: feel free to pick the patches and
+apply them directly on your trees, as all patches on 
+this series are independent from the other ones.
+
+--
+
+v6:
+  - rebased on the top of next-20210114 and added a few extra fixes
+
+v5:
+  - The completion.h patch was replaced by another one which drops
+    an obsolete macro;
+  - Some typos got fixed and review tags got added;
+  - Dropped patches that were already merged at linux-next.
+
+v4:
+
+  - Patches got rebased and got some acks.
+
+Mauro Carvalho Chehab (16):
+  parport: fix a kernel-doc markup
+  rapidio: fix kernel-doc a markup
+  fs: fix kernel-doc markups
+  pstore/zone: fix a kernel-doc markup
+  firmware: stratix10-svc: fix kernel-doc markups
+  connector: fix a kernel-doc markup
+  lib/crc7: fix a kernel-doc markup
+  memblock: fix kernel-doc markups
+  w1: fix a kernel-doc markup
+  selftests: kselftest_harness.h: partially fix kernel-doc markups
+  scripts: kernel-doc: validate kernel-doc markup with the actual names
+  net: tip: fix a couple kernel-doc markups
+  net: cfg80211: fix a kerneldoc markup
+  reset: core: fix a kernel-doc markup
+  drm: drm_crc: fix a kernel-doc markup
+  platform/surface: aggregator: fix a kernel-doc markup
+
+ drivers/parport/share.c                       |  2 +-
+ .../surface/aggregator/ssh_request_layer.c    |  2 +-
+ drivers/rapidio/rio.c                         |  2 +-
+ drivers/reset/core.c                          |  4 +-
+ fs/dcache.c                                   | 73 ++++++++++---------
+ fs/inode.c                                    |  4 +-
+ fs/pstore/zone.c                              |  2 +-
+ fs/seq_file.c                                 |  5 +-
+ fs/super.c                                    | 12 +--
+ include/drm/drm_crtc.h                        |  2 +-
+ include/linux/connector.h                     |  2 +-
+ .../firmware/intel/stratix10-svc-client.h     | 10 +--
+ include/linux/memblock.h                      |  4 +-
+ include/linux/parport.h                       | 31 ++++++++
+ include/linux/w1.h                            |  2 +-
+ include/net/cfg80211.h                        |  2 +-
+ lib/crc7.c                                    |  2 +-
+ net/tipc/link.c                               |  2 +-
+ net/tipc/node.c                               |  2 +-
+ scripts/kernel-doc                            | 62 ++++++++++++----
+ tools/testing/selftests/kselftest_harness.h   | 26 ++++---
+ 21 files changed, 160 insertions(+), 93 deletions(-)
+
+-- 
+2.29.2
+
+
