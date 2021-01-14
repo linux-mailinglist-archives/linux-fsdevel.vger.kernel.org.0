@@ -2,155 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B63D2F6C55
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 21:39:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95CCE2F6C6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 21:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbhANUjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 15:39:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60196 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbhANUjX (ORCPT
+        id S1727072AbhANUoe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 15:44:34 -0500
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:58162 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726049AbhANUod (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 15:39:23 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4492C0613C1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jan 2021 12:38:42 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id r5so7149844eda.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jan 2021 12:38:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HW2Gy+bmbScdrUiihPvmqmOfoBoJ371Y9lVdMFUmq+Y=;
-        b=yGOdyQNILINypQm/2jqXO6AfJMafn21XGw8EuGb3Op3CFg1tTZMSAR0rEasGJ1fNOS
-         yLllo/9Y8iS/xZYU6AxccWxMPTpSMM8D6QvzzM4jMSGwEs9hnHIlBnLno7KTxzdYF3Kp
-         KwtNyxup1uOWxXyQrcBBAo2o9U51ITkYAiriKkt2QNr2JX6HrELaFQgxFhhCA8zYidBs
-         k7aOmIV3u5QzjG0umzVAbcSHGi2o9GzSnc7gS6T59a8K4b8xbNr8QhTa7Jy5EYUITqET
-         o40thjAjGnsgi1R5vPAh+U9Vvz+toY/DwyAl8fonbO5ueCyy/1GYAeVF73/Ndh+roNVD
-         9VQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HW2Gy+bmbScdrUiihPvmqmOfoBoJ371Y9lVdMFUmq+Y=;
-        b=EweQmXyBABFl5txtN4hiRQHHYvpErV9jUeHioKi0IpnwpnSP/kq3tCG2MkYQJRJsTN
-         miWOmNhRB51LpqK9WvjSMuFliHs3+TYgoLMWUILNmnM6FMwUvwFo/d7tzPjdSQqa9l06
-         uKG2CyrE+sE7BzdRD/K6Aj4j/CU9q4ueQyBNx3B7ctwOQ34gfkcQSAku0lYGCU9ZwTwc
-         7+bTI5W4fJaZyMfbOHIYT02UyCPNLvUpEx8zbd791xitAkqNGxTMyON+xTNHQoI8SBae
-         ya9iv/V+xv5K6jqNZK2g6XbDk5CsldThR1JQuHfX/Vgu8p9PZQCP4aaGD42ZmC5dHmQL
-         C/YA==
-X-Gm-Message-State: AOAM530w+elKvgjXTHhWxdKYiQuAVxUF2w3T8t4Gzgglr+qKPQWa769r
-        ge+5/GCUPu8Qr2k8blt0NnA6TROyC+culZc6CEHz9w==
-X-Google-Smtp-Source: ABdhPJw/UE18mcptuTTaq48ZA3l/slnXhk/5uHJysnrWQLOxkXl0WkGF7VK5q6iTBMceXPuJ8xY9V/7LnANIuvkLoIM=
-X-Received: by 2002:a50:b282:: with SMTP id p2mr7358432edd.210.1610656721518;
- Thu, 14 Jan 2021 12:38:41 -0800 (PST)
+        Thu, 14 Jan 2021 15:44:33 -0500
+Received: from dread.disaster.area (pa49-179-167-107.pa.nsw.optusnet.com.au [49.179.167.107])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 84A94D5E47A;
+        Fri, 15 Jan 2021 07:43:35 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1l09Sw-006UW3-9I; Fri, 15 Jan 2021 07:43:34 +1100
+Date:   Fri, 15 Jan 2021 07:43:34 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v5 00/42] idmapped mounts
+Message-ID: <20210114204334.GK331610@dread.disaster.area>
+References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
+ <20210114171241.GA1164240@magnolia>
 MIME-Version: 1.0
-References: <20201230165601.845024-1-ruansy.fnst@cn.fujitsu.com> <20201230165601.845024-5-ruansy.fnst@cn.fujitsu.com>
-In-Reply-To: <20201230165601.845024-5-ruansy.fnst@cn.fujitsu.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 14 Jan 2021 12:38:30 -0800
-Message-ID: <CAPcyv4hD1aeVGQ33j54o8jKi41qtAVkAhTgrx64C=WPZ0SvNQg@mail.gmail.com>
-Subject: Re: [PATCH 04/10] mm, fsdax: Refactor memory-failure handler for dax mapping
-To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        david <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        song@kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        qi.fuli@fujitsu.com, y-goto@fujitsu.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210114171241.GA1164240@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=+wqVUQIkAh0lLYI+QRsciw==:117 a=+wqVUQIkAh0lLYI+QRsciw==:17
+        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
+        a=In5g3teRgiYIkOrEuZ4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 30, 2020 at 8:59 AM Shiyang Ruan <ruansy.fnst@cn.fujitsu.com> wrote:
->
-> The current memory_failure_dev_pagemap() can only handle single-mapped
-> dax page for fsdax mode.  The dax page could be mapped by multiple files
-> and offsets if we let reflink feature & fsdax mode work together.  So,
-> we refactor current implementation to support handle memory failure on
-> each file and offset.
->
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-> ---
->  fs/dax.c            | 21 +++++++++++
->  include/linux/dax.h |  1 +
->  include/linux/mm.h  |  9 +++++
->  mm/memory-failure.c | 91 ++++++++++++++++++++++++++++++++++-----------
->  4 files changed, 100 insertions(+), 22 deletions(-)
->
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 5b47834f2e1b..799210cfa687 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -378,6 +378,27 @@ static struct page *dax_busy_page(void *entry)
->         return NULL;
->  }
->
-> +/*
-> + * dax_load_pfn - Load pfn of the DAX entry corresponding to a page
-> + * @mapping: The file whose entry we want to load
-> + * @index:   The offset where the DAX entry located in
-> + *
-> + * Return:   pfn of the DAX entry
-> + */
-> +unsigned long dax_load_pfn(struct address_space *mapping, unsigned long index)
-> +{
-> +       XA_STATE(xas, &mapping->i_pages, index);
-> +       void *entry;
-> +       unsigned long pfn;
-> +
-> +       xas_lock_irq(&xas);
-> +       entry = xas_load(&xas);
-> +       pfn = dax_to_pfn(entry);
-> +       xas_unlock_irq(&xas);
-> +
-> +       return pfn;
-> +}
-> +
->  /*
->   * dax_lock_mapping_entry - Lock the DAX entry corresponding to a page
->   * @page: The page whose entry we want to lock
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index b52f084aa643..89e56ceeffc7 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -150,6 +150,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
->
->  struct page *dax_layout_busy_page(struct address_space *mapping);
->  struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
-> +unsigned long dax_load_pfn(struct address_space *mapping, unsigned long index);
->  dax_entry_t dax_lock_page(struct page *page);
->  void dax_unlock_page(struct page *page, dax_entry_t cookie);
->  #else
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index db6ae4d3fb4e..db3059a1853e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1141,6 +1141,14 @@ static inline bool is_device_private_page(const struct page *page)
->                 page->pgmap->type == MEMORY_DEVICE_PRIVATE;
->  }
->
-> +static inline bool is_device_fsdax_page(const struct page *page)
-> +{
-> +       return IS_ENABLED(CONFIG_DEV_PAGEMAP_OPS) &&
-> +               IS_ENABLED(CONFIG_DEVICE_PRIVATE) &&
-> +               is_zone_device_page(page) &&
-> +               page->pgmap->type == MEMORY_DEVICE_FS_DAX;
-> +}
-> +
+On Thu, Jan 14, 2021 at 09:12:41AM -0800, Darrick J. Wong wrote:
+> On Tue, Jan 12, 2021 at 11:00:42PM +0100, Christian Brauner wrote:
+> > Hey everyone,
+> > 
+> > The only major change is the inclusion of hch's patch to port XFS to
+> > support idmapped mounts. Thanks to Christoph for doing that work.
+> 
+> Yay :)
+> 
+> > (For a full list of major changes between versions see the end of this
+> >  cover letter.
+> >  Please also note the large xfstests testsuite in patch 42 that has been
+> >  kept as part of this series. It verifies correct vfs behavior with and
+> >  without idmapped mounts including covering newer vfs features such as
+> >  io_uring.
+> >  I currently still plan to target the v5.12 merge window.)
+> > 
+> > With this patchset we make it possible to attach idmappings to mounts,
+> > i.e. simply put different bind mounts can expose the same file or
+> > directory with different ownership.
+> > Shifting of ownership on a per-mount basis handles a wide range of
+> > long standing use-cases. Here are just a few:
+> > - Shifting of a subset of ownership-less filesystems (vfat) for use by
+> >   multiple users, effectively allowing for DAC on such devices
+> >   (systemd, Android, ...)
+> > - Allow remapping uid/gid on external filesystems or paths (USB sticks,
+> >   network filesystem, ...) to match the local system's user and groups.
+> >   (David Howells intends to port AFS as a first candidate.)
+> > - Shifting of a container rootfs or base image without having to mangle
+> >   every file (runc, Docker, containerd, k8s, LXD, systemd ...)
+> > - Sharing of data between host or privileged containers with
+> >   unprivileged containers (runC, Docker, containerd, k8s, LXD, ...)
+> > - Data sharing between multiple user namespaces with incompatible maps
+> >   (LXD, k8s, ...)
+> 
+> That sounds neat.  AFAICT, the VFS passes the filesystem a mount userns
+> structure, which is then carried down the call stack to whatever
+> functions actually care about mapping kernel [ug]ids to their ondisk
+> versions?
+> 
+> Does quota still work after this patchset is applied?  There isn't any
+> mention of that in the cover letter and I don't see a code patch, so
+> does that mean everything just works?  I'm particularly curious about
+> whether there can exist processes with CAP_SYS_ADMIN and an idmapped
+> mount?  Syscalls like bulkstat and quotactl present file [ug]ids to
+> programs, but afaict there won't be any translating going on?
 
-Have a look at the recent fixes to pfn_to_online_page() vs DAX pages [1].
+bulkstat is not allowed inside user namespaces. It's an init
+namespace only thing because it provides unchecked/unbounded access
+to all inodes in the filesystem, not just those contained within a
+specific mount container.
 
-This above page type check is racy given that the pfn could stop being
-pfn_valid() while this check is running. I think hwpoison_filter()
-needs an explicit check for whether the page is already referenced or
-not. For example the current call to hwpoison_filter() from
-memory_failure_dev_pagemap() is safe because the page has already been
-validated as ZONE_DEVICE and is safe to de-reference page->pgmap.
+Hence I don't think bulkstat output (and other initns+root only
+filesystem introspection APIs) should be subject to or concerned
+about idmapping.
 
-[1]: http://lore.kernel.org/r/161058499000.1840162.702316708443239771.stgit@dwillia2-desk3.amr.corp.intel.com
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
