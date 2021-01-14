@@ -2,145 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 446ED2F5E2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 10:57:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E5E62F5EB0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 11:27:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbhANJ4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 04:56:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40442 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728312AbhANJ4w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 04:56:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2E1E7AB7A;
-        Thu, 14 Jan 2021 09:56:12 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CE6401E086B; Thu, 14 Jan 2021 10:56:11 +0100 (CET)
-Date:   Thu, 14 Jan 2021 10:56:11 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Zhengyuan Liu <liuzhengyuang521@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Zhengyuan Liu <liuzhengyuan@tj.kylinos.cn>, jack@suse.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/quota: fix the mismatch of data type
-Message-ID: <20210114095611.GA25790@quack2.suse.cz>
-References: <20210111043541.11622-1-liuzhengyuan@tj.kylinos.cn>
- <20210113174432.GH6854@quack2.suse.cz>
- <CAOOPZo6_3wzKxUD8HJPpPoF5oKGYo6eOd37M1iHLEW0sELcFoA@mail.gmail.com>
+        id S1728573AbhANKZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 05:25:23 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30752 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726374AbhANKZU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Jan 2021 05:25:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1610619833;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+MMb1/G417jh9jG0BhfvlCwuED50p5s62EpK3Ii+ar8=;
+        b=TX8+CDoZfj5fPzD9EWFBp8Xo7p2qsHeSOtIrMyOkCQvL7nvk4fIJ4oUqDsgL14zdvwyPXA
+        Jjs6klDJ1DtPyXJLK+QNLAzszGUiiDVJ1nMyPHyTxByz+Ja1p7nzxV7aOsFhuXjf8zKYRc
+        2obHRZo711hyy6V08viAB2E2Bkz3SyU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-26-VirEnoeyPVi0Wfw776grDQ-1; Thu, 14 Jan 2021 05:23:51 -0500
+X-MC-Unique: VirEnoeyPVi0Wfw776grDQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3551C190A7A3;
+        Thu, 14 Jan 2021 10:23:50 +0000 (UTC)
+Received: from bfoster (ovpn-114-23.rdu2.redhat.com [10.10.114.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 76BC674AA0;
+        Thu, 14 Jan 2021 10:23:49 +0000 (UTC)
+Date:   Thu, 14 Jan 2021 05:23:47 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, avi@scylladb.com
+Subject: Re: [PATCH 09/10] iomap: add a IOMAP_DIO_NOALLOC flag
+Message-ID: <20210114102347.GD1333929@bfoster>
+References: <20210112162616.2003366-1-hch@lst.de>
+ <20210112162616.2003366-10-hch@lst.de>
+ <20210112232923.GD331610@dread.disaster.area>
+ <20210113153215.GA1284163@bfoster>
+ <20210113224935.GJ331610@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOOPZo6_3wzKxUD8HJPpPoF5oKGYo6eOd37M1iHLEW0sELcFoA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210113224935.GJ331610@dread.disaster.area>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 14-01-21 11:14:09, Zhengyuan Liu wrote:
-> On Thu, Jan 14, 2021 at 1:44 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Mon 11-01-21 12:35:41, Zhengyuan Liu wrote:
-> > > From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
-> > >
-> > > When doing fuzzing test to quota, an error occurred due to the
-> > > mismatch of data type:
-> > >
-> > >     Quota error (device loop0): qtree_write_dquot: Error -1244987383 occurred while creating quota
-> > >     Unable to handle kernel paging request at virtual address ffffffffb5cb0071
-> > >     Mem abort info:
-> > >       ESR = 0x96000006
-> > >       EC = 0x25: DABT (current EL), IL = 32 bits
-> > >       SET = 0, FnV = 0
-> > >       EA = 0, S1PTW = 0
-> > >     Data abort info:
-> > >       ISV = 0, ISS = 0x00000006
-> > >       CM = 0, WnR = 0
-> > >     swapper pgtable: 64k pages, 48-bit VAs, pgdp=0000000023980000
-> > >     [ffffffffb5cb0071] pgd=00000000243f0003, p4d=00000000243f0003, pud=00000000243f0003, pmd=0000000000000000
-> > >     Internal error: Oops: 96000006 [#1] SMP
-> > >     Modules linked in: nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nftn
-> > >     CPU: 1 PID: 1256 Comm: a.out Not tainted 5.10.0 #31
-> > >     Hardware name: XXXX XXXX/Kunpeng Desktop Board D920L11K, BIOS 0.23 07/22/2020
-> > >     pstate: 00400009 (nzcv daif +PAN -UAO -TCO BTYPE=--)
-> > >     pc : dquot_add_space+0x30/0x258
-> > >     lr : __dquot_alloc_space+0x22c/0x358
-> > >     sp : ffff80001c10f660
-> > >     x29: ffff80001c10f660 x28: 0000000000000001
-> > >     x27: 0000000000000000 x26: 0000000000000000
-> > >     x25: ffff800011add9c8 x24: ffff0020a2110470
-> > >     x23: 0000000000000400 x22: 0000000000000400
-> > >     x21: 0000000000000000 x20: 0000000000000400
-> > >     x19: ffffffffb5cb0009 x18: 0000000000000000
-> > >     x17: 0000000000000020 x16: 0000000000000000
-> > >     x15: 0000000000000010 x14: 65727471203a2930
-> > >     x13: 706f6f6c20656369 x12: 0000000000000020
-> > >     x11: 000000000000000a x10: 0000000000000400
-> > >     x9 : ffff8000103afb5c x8 : 0000000800000000
-> > >     x7 : 0000000000002000 x6 : 000000000000000f
-> > >     x5 : ffffffffb5cb0009 x4 : ffff80001c10f728
-> > >     x3 : 0000000000000001 x2 : 0000000000000000
-> > >     x1 : 0000000000000400 x0 : ffffffffb5cb0009
-> > >     Call trace:
-> > >      dquot_add_space+0x30/0x258
-> > >      __dquot_alloc_space+0x22c/0x358
-> > >      ext4_mb_new_blocks+0x100/0xe88
-> > >      ext4_new_meta_blocks+0xb4/0x110
-> > >      ext4_xattr_block_set+0x4ec/0xce8
-> > >      ext4_xattr_set_handle+0x400/0x528
-> > >      ext4_xattr_set+0xc4/0x170
-> > >      ext4_xattr_security_set+0x30/0x40
-> > >      __vfs_setxattr+0x7c/0xa0
-> > >      __vfs_setxattr_noperm+0x88/0x218
-> > >      __vfs_setxattr_locked+0xf8/0x120
-> > >      vfs_setxattr+0x6c/0x100
-> > >      setxattr+0x148/0x240
-> > >      path_setxattr+0xc4/0xd8
-> > >      __arm64_sys_setxattr+0x2c/0x40
-> > >      el0_svc_common.constprop.4+0x94/0x178
-> > >      do_el0_svc+0x78/0x98
-> > >      el0_svc+0x20/0x30
-> > >      el0_sync_handler+0x90/0xb8
-> > >      el0_sync+0x158/0x180
-> > >
-> > > In this test case, the return value from get_free_dqblk() could be
-> > > info->dqi_free_blk, which is defined as unsigned int, but we use
-> > > type int in do_insert_tree to check the return value, and therefor we
-> > > may get a negative duo to the transformation. This negative(as aboved
-> > > said -1244987383) then can transmit to dquots in __dquot_initialize(),
-> > > and once we access there can trigger above panic.
-> > >
-> > >       __dquot_initialize():
-> > >                 dquot = dqget(sb, qid);
-> > >                 if (IS_ERR(dquot)) {
-> > >                         /* We raced with somebody turning quotas off... */
-> > >                         if (PTR_ERR(dquot) != -ESRCH) {
-> > >                                 ret = PTR_ERR(dquot);
-> > >                                 goto out_put;
-> > >                         }
-> > >                         dquot = NULL;
-> > >                 }
-> > >                 got[cnt] = dquot;
-> > >
-> > > Try to fix this problem by making the data type consistent.
-> > >
-> > > Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
-> >
-> > Hum, I think this problem has already been fixed by commits:
-> >
-> > 10f04d40a9f "quota: Don't overflow quota file offsets"
-> >
-> > and
-> >
-> > 11c514a99bb "quota: Sanity-check quota file headers on load"
+On Thu, Jan 14, 2021 at 09:49:35AM +1100, Dave Chinner wrote:
+> On Wed, Jan 13, 2021 at 10:32:15AM -0500, Brian Foster wrote:
+> > On Wed, Jan 13, 2021 at 10:29:23AM +1100, Dave Chinner wrote:
+> > > On Tue, Jan 12, 2021 at 05:26:15PM +0100, Christoph Hellwig wrote:
+> > > > Add a flag to request that the iomap instances do not allocate blocks
+> > > > by translating it to another new IOMAP_NOALLOC flag.
+> > > 
+> > > Except "no allocation" that is not what XFS needs for concurrent
+> > > sub-block DIO.
+> > > 
+> > > We are trying to avoid external sub-block IO outside the range of
+> > > the user data IO (COW, sub-block zeroing, etc) so that we don't
+> > > trash adjacent sub-block IO in flight. This means we can't do
+> > > sub-block zeroing and that then means we can't map unwritten extents
+> > > or allocate new extents for the sub-block IO.  It also means the IO
+> > > range cannot span EOF because that triggers unconditional sub-block
+> > > zeroing in iomap_dio_rw_actor().
+> > > 
+> > > And because we may have to map multiple extents to fully span an IO
+> > > range, we have to guarantee that subsequent extents for the IO are
+> > > also written otherwise we have a partial write abort case. Hence we
+> > > have single extent limitations as well.
+> > > 
+> > > So "no allocation" really doesn't describe what we want this flag to
+> > > at all.
+> > > 
+> > > If we're going to use a flag for this specific functionality, let's
+> > > call it what it is: IOMAP_DIO_UNALIGNED/IOMAP_UNALIGNED and do two
+> > > things with it.
+> > > 
+> > > 	1. Make unaligned IO a formal part of the iomap_dio_rw()
+> > > 	behaviour so it can do the common checks to for things that
+> > > 	need exclusive serialisation for unaligned IO (i.e. avoid IO
+> > > 	spanning EOF, abort if there are cached pages over the
+> > > 	range, etc).
+> > > 
+> > > 	2. require the filesystem mapping callback do only allow
+> > > 	unaligned IO into ranges that are contiguous and don't
+> > > 	require mapping state changes or sub-block zeroing to be
+> > > 	performed during the sub-block IO.
+> > > 
+> > > 
+> > 
+> > Something I hadn't thought about before is whether applications might
+> > depend on current unaligned dio serialization for coherency and thus
+> > break if the kernel suddenly allows concurrent unaligned dio to pass
+> > through. Should this be something that is explicitly requested by
+> > userspace?
 > 
-> The latest v5.11-rc3 which has included these two patches indeed fixed
-> my problem.
-> Sorry, I only checked v5.10.
+> If applications are relying on an undocumented, implementation
+> specific behaviour of a filesystem that only occurs for IOs of a
+> certain size for implicit data coherency between independent,
+> non-overlapping DIOs and/or page cache IO, then they are already
+> broken and need fixing because that behaviour is not guaranteed to
+> occur. e.g. 512 byte block size filesystem does not provide such
+> serialisation, so if the app depends on 512 byte DIOs being
+> serialised completely by the filesytem then it already fails on 512
+> byte block size filesystems.
+> 
 
-Thanks for confirmation!
+I'm not sure how the block size relates beyond just changing the
+alignment requirements..?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> So, no, we simply don't care about breaking broken applications that
+> are already broken.
+> 
+
+I agree in general, but I'm not sure that helps us on the "don't break
+userspace" front. We can call userspace broken all we want, but if some
+application has such a workload that historically functions correctly
+due to this serialization and all of a sudden starts to cause data
+corruption because we decide to remove it, I fear we'd end up taking the
+blame regardless. :/
+
+I wonder if other fs' provide similar concurrent unaligned dio
+support..? A quick look at ext4 shows it has similar logic to XFS, btrfs
+looks like it falls back to buffered I/O...
+
+> > That aside, I agree that the DIO_UNALIGNED approach seems a bit more
+> > clear than NOALLOC, but TBH the more I look at this the more Christoph's
+> > first approach seems cleanest to me. It is a bit unfortunate to
+> > duplicate the mapping lookups and have the extra ILOCK cycle, but the
+> > lock is shared and only taken when I/O is unaligned. I don't really see
+> > why that is a show stopper yet it's acceptable to fall back to exclusive
+> > dio if the target range happens to be discontiguous (but otherwise
+> > mapped/written).
+> 
+> Unnecessary lock cycles in the fast path are always bad. The whole
+> reason this change is being done is for performance to bring it up
+> to par with block aligned IO. Adding an extra lock cycle to the
+> ILOCK on every IO will halve the performance on high IOPs hardware
+> because the ILOCK will be directly exposed to userspace IO
+> submission and hence become the contention point instead of the
+> IOLOCK.
+> 
+> IOWs, the fact taht we take the ILOCK 2x per IO instead of once
+> means that the ILOCK becomes the performance limiting lock (because
+> even shared locking causes cacheline contention) and changes the
+> entire lock profile for the IO path when unaligned IO is being done.
+> 
+> This is also ignoring the fact that the ILOCK is held in exclusive
+> mode during IO completion while doing file size and extent
+> manipulation transactions. IOWs we can block waiting on IO
+> completion before we even decide if we can do the IO with shared
+> locking. Hence there are new IO submission serialisation points in
+> the fast path that will also slow down the cases where we have to do
+> exclusive locking....
+> 
+> So, yeah, I can only see bad things occurring by lifting the ILOCK
+> up into the high level IO path. And, of course, once it's taken
+> there, people will find new reasons to expand it's scope and the
+> problems will only get worse...
+> 
+
+I'm not saying the extra ilock cycle is free or even ideal. I'm
+questioning that the proposed alternatives provide complete
+functionality when things like unaligned dio that span mappings are
+always going to fall back to exclusive I/O. There's an obvious tradeoff
+there between performance and predictability that IMO isn't as cut and
+dry as you describe. I certainly don't consider that as bringing
+unaligned dio performance up to par with block aligned dio.
+
+> > So I dunno... to me, I would start with that approach and then as the
+> > implementation soaks, perhaps see if we can find a way to optimize away
+> > the extra cycle and lookup.
+> 
+> I don't see how we can determine if we can do the unlaigned IO
+> holding a shared lock without doing an extent lookup. It's the
+> underlying extent state that makes shared locking possible, and I
+> can't think of any other state we can look at to make this decision.
+> 
+
+Not sure how you got "without doing an extent lookup" from my comment.
+:P I was referring to the extra/early lookup and lock cycle that we're
+discussing above wrt to the original series. These subsequent series
+already do without it, but to me they sacrifice functionality. I'm
+basically saying that it might be worth to try and make it work first,
+make it fast(er) second (or otherwise find a way to address the issue in
+the latest series).
+
+Of course, based on the behavior of other fs' I'm not totally convinced
+this is a great idea in the first place, at least not without some kind
+of opt-in from userspace or perhaps broader community consensus..
+
+Brian
+
+> Hence I think this path is simply a dead end with no possibility of
+> further optimisation. Of course, if you can solve the problem
+> without needing an extent lookup, then we can talk about how to
+> avoid racing with actual extent mapping changes done under the
+> ILOCK... :)
+> 
+> Cheers,
+> 
+> Dave.
+> 
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
+
