@@ -2,272 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C831A2F571A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 02:59:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 303462F5644
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 02:57:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728941AbhANB64 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jan 2021 20:58:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729539AbhAMXj5 (ORCPT
+        id S1728020AbhANBoy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jan 2021 20:44:54 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:59185 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727047AbhANBox (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jan 2021 18:39:57 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD06CC0617BE;
-        Wed, 13 Jan 2021 15:30:35 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id f4so5543548ejx.7;
-        Wed, 13 Jan 2021 15:30:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+ThdM1NIAavEN91ZusgnEdjYDUGaG7otfohp4Z3kCOQ=;
-        b=DLI9fFXEWZoTRwYbyi9uxrj9CaxCfGZ+z+M07V1BFKhs8RKrCKRxp8y2kbjB+2gyeH
-         JOLdAFe3FIC/zztuywOi0OA1BnF0xoi9bqjxdOtdudXG1zoMOeeDi6DTpMZK8EL2kNHr
-         blAqNWDdTLGMYp9UMzi1BANeK6SJeZA9DuGocqgX7CcH9floirKI6YoU72eJli8hBjre
-         vEhjGrhCXsdwLOVlov6F3bvszmyI2HcCShSlI95Ke+d8ZOusKB4g6V5T3Prmq34Lh0gm
-         A277DgVbb3HXdKLFlC8ah0QsMgAHTXGiSXr1p1U5b70/Dkjeamxo65TARwP7zc6Gl9OD
-         icDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+ThdM1NIAavEN91ZusgnEdjYDUGaG7otfohp4Z3kCOQ=;
-        b=AoN+bZP/jBJsE/lDcchiBn9HCC4VkF+Lrv28BIFuyNZ+1Tf/Ev63x9wKqolIjxfmWr
-         PK/UGM4nmC1spcrlh7j+rCrnk4tfrx9qfIrJGPsGVeGC91sDI6YZqTBV6o3ebCSie5TC
-         VyOr+NaqVkqBu0nHPhX9yRHPzrF7fyQcc8RmW4a1UInxjnSh/HqQ/V17nfPlh75PSoHR
-         tINZxnhhYZ9KVI+0uOG/ABRyrXgg9fUwj8d3YrMsOAXWNXtXDLPWoy68DlyJTMt+R0l2
-         dnWbMMBNxtJckARdw2mIpto2nJaQIJbu/Tj2/PJRua+p/KakQOL0jYoMVzwv+Omt+qBD
-         oxrw==
-X-Gm-Message-State: AOAM530D/6ZfsfI+5+lnFs7PthvB5ITwxq9Y8f72yDMtyfxEvF/QDTaB
-        L3okNBsgYnD0aVLCNIR6i+qlTjoN0gCb8R4WJm8=
-X-Google-Smtp-Source: ABdhPJyaypfl3BCqee9yX2oainSpZH51t7ScuzPWbw8Ko1Esha9+teMs8WM+uMFKT9txOHoO27WvFmyQCRMW7FhJ0Io=
-X-Received: by 2002:a17:906:b04f:: with SMTP id bj15mr3134065ejb.383.1610580634426;
- Wed, 13 Jan 2021 15:30:34 -0800 (PST)
+        Wed, 13 Jan 2021 20:44:53 -0500
+X-IronPort-AV: E=Sophos;i="5.79,345,1602518400"; 
+   d="scan'208";a="103460770"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 14 Jan 2021 09:44:21 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id 6AB404CE1A08;
+        Thu, 14 Jan 2021 09:44:16 +0800 (CST)
+Received: from irides.mr (10.167.225.141) by G08CNEXMBPEKD05.g08.fujitsu.local
+ (10.167.33.204) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 14 Jan
+ 2021 09:44:17 +0800
+Subject: Re: [PATCH 04/10] mm, fsdax: Refactor memory-failure handler for dax
+ mapping
+To:     zhong jiang <zhongjiang-ali@linux.alibaba.com>,
+        Jan Kara <jack@suse.cz>
+CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
+        <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@lst.de>, <song@kernel.org>,
+        <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
+References: <20201230165601.845024-1-ruansy.fnst@cn.fujitsu.com>
+ <20201230165601.845024-5-ruansy.fnst@cn.fujitsu.com>
+ <20210106154132.GC29271@quack2.suse.cz>
+ <75164044-bfdf-b2d6-dff0-d6a8d56d1f62@cn.fujitsu.com>
+ <781f276b-afdd-091c-3dba-048e415431ab@linux.alibaba.com>
+From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
+Message-ID: <ef29ba5c-96d7-d0bb-e405-c7472a518b32@cn.fujitsu.com>
+Date:   Thu, 14 Jan 2021 09:44:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-References: <20210105225817.1036378-1-shy828301@gmail.com> <20210105225817.1036378-8-shy828301@gmail.com>
- <a3452140-9f88-3cb9-0359-ca374f9e9d9d@virtuozzo.com>
-In-Reply-To: <a3452140-9f88-3cb9-0359-ca374f9e9d9d@virtuozzo.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 13 Jan 2021 15:30:22 -0800
-Message-ID: <CAHbLzko_1VydJHurX4fACw4v9v859dUbCwSpvhBOnDoKiwu0pQ@mail.gmail.com>
-Subject: Re: [v3 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <781f276b-afdd-091c-3dba-048e415431ab@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.225.141]
+X-ClientProxiedBy: G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) To
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
+X-yoursite-MailScanner-ID: 6AB404CE1A08.AD0C5
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 6, 2021 at 3:07 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On 06.01.2021 01:58, Yang Shi wrote:
-> > Currently the number of deferred objects are per shrinker, but some slabs, for example,
-> > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
-> >
-> > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
-> > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
-> > may suffer from over shrink, excessive reclaim latency, etc.
-> >
-> > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
-> > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
-> > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
-> >
-> > We observed this hit in our production environment which was running vfs heavy workload
-> > shown as the below tracing log:
-> >
-> > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
-> > cache items 246404277 delta 31345 total_scan 123202138
-> > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
-> > last shrinker return val 123186855
-> >
-> > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
-> > This also resulted in significant amount of page caches were dropped due to inodes eviction.
-> >
-> > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
-> > better isolation.
-> >
-> > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
-> > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
-> >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  include/linux/memcontrol.h |  7 +++---
-> >  mm/vmscan.c                | 49 +++++++++++++++++++++++++-------------
-> >  2 files changed, 37 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > index e05bbe8277cc..5599082df623 100644
-> > --- a/include/linux/memcontrol.h
-> > +++ b/include/linux/memcontrol.h
-> > @@ -93,12 +93,13 @@ struct lruvec_stat {
-> >  };
-> >
-> >  /*
-> > - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
-> > - * which have elements charged to this memcg.
-> > + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
-> > + * shrinkers, which have elements charged to this memcg.
-> >   */
-> >  struct memcg_shrinker_info {
-> >       struct rcu_head rcu;
-> > -     unsigned long map[];
-> > +     unsigned long *map;
-> > +     atomic_long_t *nr_deferred;
-> >  };
-> >
-> >  /*
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 0033659abf9e..72259253e414 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -193,10 +193,12 @@ static void memcg_free_shrinker_info_rcu(struct rcu_head *head)
-> >  }
-> >
-> >  static int memcg_expand_one_shrinker_info(struct mem_cgroup *memcg,
-> > -                                       int size, int old_size)
-> > +                                       int m_size, int d_size,
-> > +                                       int old_m_size, int old_d_size)
-> >  {
-> >       struct memcg_shrinker_info *new, *old;
-> >       int nid;
-> > +     int size = m_size + d_size;
-> >
-> >       for_each_node(nid) {
-> >               old = rcu_dereference_protected(
-> > @@ -209,9 +211,18 @@ static int memcg_expand_one_shrinker_info(struct mem_cgroup *memcg,
-> >               if (!new)
-> >                       return -ENOMEM;
-> >
-> > -             /* Set all old bits, clear all new bits */
-> > -             memset(new->map, (int)0xff, old_size);
-> > -             memset((void *)new->map + old_size, 0, size - old_size);
-> > +             new->map = (unsigned long *)((unsigned long)new + sizeof(*new));
-> > +             new->nr_deferred = (atomic_long_t *)((unsigned long)new +
-> > +                                     sizeof(*new) + m_size);
->
-> Can't we write this more compact?
->
->                 new->map = (unsigned long *)(new + 1);
->                 new->nr_deferred = (atomic_long_t)(new->map + 1);
 
-By relooking this, the second line looks wrong. The layout should be:
 
-        ----------------------------
-       | struct shrinker_info |
-       -----------------------------
-       |    map array             |
-       -----------------------------
-       |   nr_deferred array   |
-       ------------------------------
+On 2021/1/13 下午6:04, zhong jiang wrote:
+> 
+> On 2021/1/12 10:55 上午, Ruan Shiyang wrote:
+>>
+>>
+>> On 2021/1/6 下午11:41, Jan Kara wrote:
+>>> On Thu 31-12-20 00:55:55, Shiyang Ruan wrote:
+>>>> The current memory_failure_dev_pagemap() can only handle single-mapped
+>>>> dax page for fsdax mode.  The dax page could be mapped by multiple 
+>>>> files
+>>>> and offsets if we let reflink feature & fsdax mode work together.  So,
+>>>> we refactor current implementation to support handle memory failure on
+>>>> each file and offset.
+>>>>
+>>>> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+>>>
+>>> Overall this looks OK to me, a few comments below.
+>>>
+>>>> ---
+>>>>   fs/dax.c            | 21 +++++++++++
+>>>>   include/linux/dax.h |  1 +
+>>>>   include/linux/mm.h  |  9 +++++
+>>>>   mm/memory-failure.c | 91 
+>>>> ++++++++++++++++++++++++++++++++++-----------
+>>>>   4 files changed, 100 insertions(+), 22 deletions(-)
+>>
+>> ...
+>>
+>>>>   @@ -345,9 +348,12 @@ static void add_to_kill(struct task_struct 
+>>>> *tsk, struct page *p,
+>>>>       }
+>>>>         tk->addr = page_address_in_vma(p, vma);
+>>>> -    if (is_zone_device_page(p))
+>>>> -        tk->size_shift = dev_pagemap_mapping_shift(p, vma);
+>>>> -    else
+>>>> +    if (is_zone_device_page(p)) {
+>>>> +        if (is_device_fsdax_page(p))
+>>>> +            tk->addr = vma->vm_start +
+>>>> +                    ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
+>>>
+>>> It seems strange to use 'pgoff' for dax pages and not for any other 
+>>> page.
+>>> Why? I'd rather pass correct pgoff from all callers of add_to_kill() and
+>>> avoid this special casing...
+>>
+>> Because one fsdax page can be shared by multiple pgoffs.  I have to 
+>> pass each pgoff in each iteration to calculate the address in vma (for 
+>> tk->addr).  Other kinds of pages don't need this. They can get their 
+>> unique address by calling "page_address_in_vma()".
+>>
+> IMO,   an fsdax page can be shared by multiple files rather than 
+> multiple pgoffs if fs query support reflink.   Because an page only 
+> located in an mapping(page->mapping is exclusive),  hence it  only has 
+> an pgoff or index pointing at the node.
+> 
+>   or  I miss something for the feature ?  thanks,
 
-new->map is the pointer to map array, its type is "unsigned long *",
-so "new->map + 1" should point to the next 32 bytes, but the map array
-may occupy more than one "unsigned long", this would corrupt the
-arrays.
+Yes, a fsdax page is shared by multiple files because of reflink.  I 
+think my description of 'pgoff' here is not correct.  This 'pgoff' means 
+the offset within the a file.  (We use rmap to find out all the sharing 
+files and their offsets.)  So, I said that "can be shared by multiple 
+pgoffs".  It's my bad.
 
-I think we could use "new->map + (shrinker_nr_max / BITS_PER_LONG) + 1"
+I think I should name it another word to avoid misunderstandings.
 
->
-> > +
-> > +             /* map: set all old bits, clear all new bits */
-> > +             memset(new->map, (int)0xff, old_m_size);
-> > +             memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
-> > +             /* nr_deferred: copy old values, clear all new values */
-> > +             memcpy((void *)new->nr_deferred, (void *)old->nr_deferred,
-> > +                    old_d_size);
->
-> Why not
->                 memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
-> ?
->
-> > +             memset((void *)new->nr_deferred + old_d_size, 0,
-> > +                    d_size - old_d_size);
-> >
-> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
-> >               call_rcu(&old->rcu, memcg_free_shrinker_info_rcu);
-> > @@ -226,9 +237,6 @@ void memcg_free_shrinker_info(struct mem_cgroup *memcg)
-> >       struct memcg_shrinker_info *info;
-> >       int nid;
-> >
-> > -     if (mem_cgroup_is_root(memcg))
-> > -             return;
-> > -
-> >       for_each_node(nid) {
-> >               pn = mem_cgroup_nodeinfo(memcg, nid);
-> >               info = rcu_dereference_protected(pn->shrinker_info, true);
-> > @@ -242,12 +250,13 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
-> >  {
-> >       struct memcg_shrinker_info *info;
-> >       int nid, size, ret = 0;
-> > -
-> > -     if (mem_cgroup_is_root(memcg))
-> > -             return 0;
-> > +     int m_size, d_size = 0;
-> >
-> >       down_read(&shrinker_rwsem);
-> > -     size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
-> > +     m_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
-> > +     d_size = shrinker_nr_max * sizeof(atomic_long_t);
-> > +     size = m_size + d_size;
-> > +
-> >       for_each_node(nid) {
-> >               info = kvzalloc(sizeof(*info) + size, GFP_KERNEL);
-> >               if (!info) {
-> > @@ -255,6 +264,9 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
-> >                       ret = -ENOMEM;
-> >                       break;
-> >               }
-> > +             info->map = (unsigned long *)((unsigned long)info + sizeof(*info));
-> > +             info->nr_deferred = (atomic_long_t *)((unsigned long)info +
-> > +                                     sizeof(*info) + m_size);
-> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
-> >       }
-> >       up_read(&shrinker_rwsem);
-> > @@ -265,10 +277,16 @@ int memcg_alloc_shrinker_info(struct mem_cgroup *memcg)
-> >  static int memcg_expand_shrinker_info(int new_id)
-> >  {
-> >       int size, old_size, ret = 0;
-> > +     int m_size, d_size = 0;
-> > +     int old_m_size, old_d_size = 0;
-> >       struct mem_cgroup *memcg;
-> >
-> > -     size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
-> > -     old_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
-> > +     m_size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
-> > +     d_size = (new_id + 1) * sizeof(atomic_long_t);
-> > +     size = m_size + d_size;
-> > +     old_m_size = DIV_ROUND_UP(shrinker_nr_max, BITS_PER_LONG) * sizeof(unsigned long);
-> > +     old_d_size = shrinker_nr_max * sizeof(atomic_long_t);
-> > +     old_size = old_m_size + old_d_size;
-> >       if (size <= old_size)
-> >               return 0;
->
-> This replication of patch [4/11] looks awkwardly. Please, try to incorporate
-> the same changes to nr_deferred as I requested for shrinker_map in [4/11].
->
-> >
-> > @@ -277,9 +295,8 @@ static int memcg_expand_shrinker_info(int new_id)
-> >
-> >       memcg = mem_cgroup_iter(NULL, NULL, NULL);
-> >       do {
-> > -             if (mem_cgroup_is_root(memcg))
-> > -                     continue;
-> > -             ret = memcg_expand_one_shrinker_info(memcg, size, old_size);
-> > +             ret = memcg_expand_one_shrinker_info(memcg, m_size, d_size,
-> > +                                                  old_m_size, old_d_size);
-> >               if (ret) {
-> >                       mem_cgroup_iter_break(NULL, memcg);
-> >                       goto out;
-> >
->
->
+
+--
+Thanks,
+Ruan Shiyang.
+
+> 
+>> So, I added this fsdax case here.  This patchset only implemented the 
+>> fsdax case, other cases also need to be added here if to be implemented.
+>>
+>>
+>> -- 
+>> Thanks,
+>> Ruan Shiyang.
+>>
+>>>
+>>>> +        tk->size_shift = dev_pagemap_mapping_shift(p, vma, tk->addr);
+>>>> +    } else
+>>>>           tk->size_shift = page_shift(compound_head(p));
+>>>>         /*
+>>>> @@ -495,7 +501,7 @@ static void collect_procs_anon(struct page 
+>>>> *page, struct list_head *to_kill,
+>>>>               if (!page_mapped_in_vma(page, vma))
+>>>>                   continue;
+>>>>               if (vma->vm_mm == t->mm)
+>>>> -                add_to_kill(t, page, vma, to_kill);
+>>>> +                add_to_kill(t, page, NULL, 0, vma, to_kill);
+>>>>           }
+>>>>       }
+>>>>       read_unlock(&tasklist_lock);
+>>>> @@ -505,24 +511,19 @@ static void collect_procs_anon(struct page 
+>>>> *page, struct list_head *to_kill,
+>>>>   /*
+>>>>    * Collect processes when the error hit a file mapped page.
+>>>>    */
+>>>> -static void collect_procs_file(struct page *page, struct list_head 
+>>>> *to_kill,
+>>>> -                int force_early)
+>>>> +static void collect_procs_file(struct page *page, struct 
+>>>> address_space *mapping,
+>>>> +        pgoff_t pgoff, struct list_head *to_kill, int force_early)
+>>>>   {
+>>>>       struct vm_area_struct *vma;
+>>>>       struct task_struct *tsk;
+>>>> -    struct address_space *mapping = page->mapping;
+>>>> -    pgoff_t pgoff;
+>>>>         i_mmap_lock_read(mapping);
+>>>>       read_lock(&tasklist_lock);
+>>>> -    pgoff = page_to_pgoff(page);
+>>>>       for_each_process(tsk) {
+>>>>           struct task_struct *t = task_early_kill(tsk, force_early);
+>>>> -
+>>>>           if (!t)
+>>>>               continue;
+>>>> -        vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff,
+>>>> -                      pgoff) {
+>>>> +        vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, 
+>>>> pgoff) {
+>>>>               /*
+>>>>                * Send early kill signal to tasks where a vma covers
+>>>>                * the page but the corrupted page is not necessarily
+>>>> @@ -531,7 +532,7 @@ static void collect_procs_file(struct page 
+>>>> *page, struct list_head *to_kill,
+>>>>                * to be informed of all such data corruptions.
+>>>>                */
+>>>>               if (vma->vm_mm == t->mm)
+>>>> -                add_to_kill(t, page, vma, to_kill);
+>>>> +                add_to_kill(t, page, mapping, pgoff, vma, to_kill);
+>>>>           }
+>>>>       }
+>>>>       read_unlock(&tasklist_lock);
+>>>> @@ -550,7 +551,8 @@ static void collect_procs(struct page *page, 
+>>>> struct list_head *tokill,
+>>>>       if (PageAnon(page))
+>>>>           collect_procs_anon(page, tokill, force_early);
+>>>>       else
+>>>> -        collect_procs_file(page, tokill, force_early);
+>>>> +        collect_procs_file(page, page->mapping, page_to_pgoff(page),
+>>>
+>>> Why not use page_mapping() helper here? It would be safer for THPs if 
+>>> they
+>>> ever get here...
+>>>
+>>>                                 Honza
+>>>
+>>
+> 
+> 
+
+
