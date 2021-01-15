@@ -2,131 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01B1A2F884F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 23:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF36F2F885D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 23:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbhAOWTK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 17:19:10 -0500
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:48936 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726187AbhAOWTK (ORCPT
+        id S1726367AbhAOWV3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 17:21:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbhAOWV3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 17:19:10 -0500
-Received: from dread.disaster.area (pa49-181-54-82.pa.nsw.optusnet.com.au [49.181.54.82])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id CF493110C30;
-        Sat, 16 Jan 2021 09:18:26 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1l0XQH-000Lu8-Pc; Sat, 16 Jan 2021 09:18:25 +1100
-Date:   Sat, 16 Jan 2021 09:18:25 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Bob Peterson <rpeterso@redhat.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>, tj <tj@kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: locking (or LOCKDEP) problem with mark_buffer_dirty()
-Message-ID: <20210115221825.GA78965@dread.disaster.area>
-References: <330231792.44586135.1610635888053.JavaMail.zimbra@redhat.com>
- <1403463545.44592876.1610637956402.JavaMail.zimbra@redhat.com>
+        Fri, 15 Jan 2021 17:21:29 -0500
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE703C061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:20:48 -0800 (PST)
+Received: by mail-qt1-x82c.google.com with SMTP id c1so7209704qtc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:20:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zxbJ3C2Wh7iG6P8iLG/G4N3xjaagWOAu/Q6gR+krxvs=;
+        b=z8z0DHvDg+mqcJIvmS2VHAz3PhgyVD1R/uO6LFpEUWhOzrWOLhFahBDe8e4+xRmmMf
+         FImQIInpaoZxhYrNXteHjWKnyajjGfZ7Ueumwr9WQSP2Wgwr2NzePiBS5J79S2yArBrD
+         VZMv4kWwrPmjjV+9pThTf3XtB4nsIZ1jgJTqxQWpKdaPTatlSN23kQx9FevsUI42+JZ6
+         3ZYyIlvN3Mf+X197FECaKP9nQoB9I2xXevf1/fw5Ra+SsJ/VZuA20lt5DyyPcJOoZzlO
+         Sm1nqJ3gj89JRp/znuGfwfdmp8mi8wxspSgeSwq06UqdfusPRuMb5vjZWVug4q360VLL
+         MZlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zxbJ3C2Wh7iG6P8iLG/G4N3xjaagWOAu/Q6gR+krxvs=;
+        b=WYEL2xUbz06aRdQo213dEbwb3TxGtr3Py6oJ1JGCCUA5vWdlRIbT1YFc557hrOmYBa
+         /8cgRqhOGPa7IHJiYox76N0jII1ruBeyqm/t9sfYE6AO42aUZDnJ/B3C4c7awrfTMys+
+         EAznBoqkGAYrG1kV48Bv9F4euIxklN2FVaMl9lSfGXjbvocIF648b1xPRk+zW6ZAYFCW
+         oqPvlCfwr5fROKBjvwjjIQUxWDm7TX7qJrmo/t0eMqiz5c8TLxEv4mgkusWlqWBg0aW8
+         47KKaToga++Z3gZz9rLWGBNTLuuyFKg+JXtkKiSbLhGW22BNHwVsfNR2qQtKWOVTdLnD
+         3Dxw==
+X-Gm-Message-State: AOAM533sSr/ejV+7zk0dkLFcYi9TgvQVDf+8scdE+ZWVQAl9mV+C3GL3
+        GOGeBCb5UnLodB3WJ7AbQXrDx8jIk5bSf8EP
+X-Google-Smtp-Source: ABdhPJz3m+/27qVjnWSz5OwhE5Au9c/12sCQBx5hV8ktKYqfs4bswD7MjwFYIP+HXR+qGd8psuUHPg==
+X-Received: by 2002:aed:3ac1:: with SMTP id o59mr9631789qte.203.1610749248081;
+        Fri, 15 Jan 2021 14:20:48 -0800 (PST)
+Received: from ?IPv6:2620:10d:c0a8:11e1::105d? ([2620:10d:c091:480::1:cc17])
+        by smtp.gmail.com with ESMTPSA id v47sm1035361qtb.42.2021.01.15.14.20.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Jan 2021 14:20:47 -0800 (PST)
+Subject: Re: [PATCH v12 04/41] btrfs: use regular SB location on emulated
+ zoned mode
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <cover.1610693036.git.naohiro.aota@wdc.com>
+ <30ac9e674289d206ec9299228d38cd7d03cd16c4.1610693037.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <13285359-e64c-a2db-1d9d-20b523e0c510@toxicpanda.com>
+Date:   Fri, 15 Jan 2021 17:20:45 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1403463545.44592876.1610637956402.JavaMail.zimbra@redhat.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=NAd5MxazP4FGoF8nXO8esw==:117 a=NAd5MxazP4FGoF8nXO8esw==:17
-        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
-        a=LUTreo_bbnMX7zBHYQ8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <30ac9e674289d206ec9299228d38cd7d03cd16c4.1610693037.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 10:25:56AM -0500, Bob Peterson wrote:
-> Hi Tejun and linux-fsdevel,
+On 1/15/21 1:53 AM, Naohiro Aota wrote:
+> The zoned btrfs puts a superblock at the beginning of SB logging zones
+> if the zone is conventional. This difference causes a chicken-and-egg
+> problem for emulated zoned mode. Since the device is a regular
+> (non-zoned) device, we cannot know if the btrfs is regular or emulated
+> zoned while we read the superblock. But, to load proper superblock, we
+> need to see if it is emulated zoned or not.
 > 
-> I have a question about function mark_buffer_dirty and LOCKDEP.
+> We place the SBs at the same location as the regular btrfs on emulated
+> zoned mode to solve the problem. It is possible because it's ensured
+> that all the SB locations are at a conventional zone on emulated zoned
+> mode.
 > 
-> Background: Func mark_buffer_dirty() has a calling sequence that looks kind
-> of like this (simplified):
-> 
-> mark_buffer_dirty()
->    __set_page_dirty()
->       account_page_dirtied()
->          inode_to_wb() which contains:
-> #ifdef CONFIG_LOCKDEP
-> 	WARN_ON_ONCE(debug_locks &&
-> 		     (!lockdep_is_held(&inode->i_lock) &&
-> 		      !lockdep_is_held(&inode->i_mapping->i_pages.xa_lock) &&
-> 		      !lockdep_is_held(&inode->i_wb->list_lock)));
-> #endif
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-inode_to_wb() gets called:
+Ok so in emulated mode we simply won't be able to test the SB logging stuff.  I 
+think this is an OK trade-off,
 
-- under the xa_lock from page accounting (such as the above path), 
-- under the inode->i_lock from wbc_attach_and_unlock_inode() and
-  other places,
-- and wb->list_lock is what protects the writeback list that the
-  inode is on, so it held whenever the inode is added/removed from a
-  writeback list.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-Essentially, one of those locks has to be held to keep inode_to_wb()
-stable and valid.  The function inode_switch_wbs_work_fn() explains
-this in a roundabout way:
+Thanks,
 
-.....
-         * Grabbing old_wb->list_lock, inode->i_lock and the i_pages lock
-         * gives us exclusion against all wb related operations on @inode
-         * including IO list manipulations and stat updates.
-         */
-
-So, essentially, inode_to_wb() is checking at least one of these
-locks is held when it is called.
-
-In the above case, __set_page_dirty() takes the xa_lock before
-calling account_page_dirtied(), so the lockdep warning should not
-ever fire in this path. It also means that you can't hold the
-xa_lock when calling mark_buffer_dirty()....
-
->    ...
->    __mark_inode_dirty()
->       spin_lock(&inode->i_lock);
->       ...
->       spin_unlock(&inode->i_lock);
->    ...      
-
-__mark_inode_dirty() also takes the wb->list_lock (via
-locked_inode_to_wb_and_lock_list() because the inode->i_lock is held
-so the lockdep check won't fire). Hence you can't hold the
-wb->list_lock when calling mark_buffer_dirty() either.
-
-> The LOCKDEP checks were added with Tejun Heo's 2015 patch, aaa2cacf8184e2a92accb8e443b1608d65f9a13f.
-> 
-> Since mark_buffer_dirty()'s call to __mark_inode_dirty() locks the inode->i_lock,
-> functions must not call mark_buffer_dirty() with inode->i_lock locked: or deadlock.
-
-You can't hold any of those three locks inode_to_wb() checks when calling
-mark_buffer_dirty(), nor should you. And, AFAICT,
-mark_buffer_dirty() is doing all the right locking, so maybe there's
-something else going on here that isn't actually a bug in
-mark_buffer_dirty().
-
-> If they're not doing anything with the xarrays or the i_wb list (i.e. holding the
-> other two locks), they get these LOCKDEP warnings.
->
-> So either:
-> (a) the LOCKDEP warnings are not valid in all cases -or-
-> (b) mark_buffer_dirty() should be grabbing inode->i_lock at some point like __mark_inode_dirty() does.
-
-> My question is: which is it, a or b? TIA.
-
-c) something else?
-
-Perhaps you've got some other inode->i_lock locking bug, and this is
-the first place that happens to notice it? Or perhap lockdep itself
-has been broken again?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Josef
