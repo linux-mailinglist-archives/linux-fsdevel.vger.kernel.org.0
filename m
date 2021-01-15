@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E5F2F734D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 08:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAB1A2F7364
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 08:03:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730345AbhAOG7h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 01:59:37 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41647 "EHLO
+        id S1730466AbhAOG7w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 01:59:52 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41718 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728869AbhAOG7g (ORCPT
+        with ESMTP id S1730431AbhAOG7v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 01:59:36 -0500
+        Fri, 15 Jan 2021 01:59:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1610693976; x=1642229976;
+  t=1610693990; x=1642229990;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=x0qh581EhEV9VljJVg6uXrojD8Nw39aN75ASM6rP5PU=;
-  b=mSkvjN1gKoyAS2/BAjQ+NSmwaqhg5yPKc7O9V+mhb6BBx4qSAd0NiIbk
-   +U59OeGwxtJgbuoBlfm2WkoxIFepZaESGlNryKOGACgGufmacIZWW1oKC
-   9/pHFdoAbnUENAVJ9LbHp4nH/V40slRh8HImsopwNynBgSpY161yGem0y
-   lKZQPv5lgq6aJJ4dEv6WEXnVj/a5pldfFGJujaikfudiGFXIAKR+xVFWm
-   KG3fNRGm4+iCEPQXxxj2jqZVspc3fzQh2ncFHd3yvbtxOwypp+xB/vKkG
-   5fBjLcUA+Z45prWzn1/Pc94xzIDN3pbV9xXK02rogGzSdMQoT9IJWffvb
-   Q==;
-IronPort-SDR: USn2lDRyIUZ1P039pcafPaQU2vcx4zNxUnEtj/KmxGHqrECLsbwhpHxV7JJNd8AIVDFWgzaTY8
- FZ/mUHNg8NykWA+eQWFDUsQsngjFYWLfvr/7HhsILprGX9IQH39ncrvC3Nr52wZLimVabxOlAp
- 9dv3Vgv1g2QjMoP+sDGcGIhrIhLioDxoIeXgi5IkJ6FGemb13xSi1pAP1+WTScwsF3H/nJiVBs
- cfW5eX05Q/2t9r95VldvngB7JGy1DefVbNBLN7D1xAMQw9ffrlExfwMFhmq67mFHGgeufWoBF2
- Fc8=
+  bh=QsVu7GBkwVh+sJroTATbqitsmKDIxtzYpMvVRjLwIjg=;
+  b=ESk2Z/2nH68yefeR1w17jJinpLbzCF7zKeTIwDARMWVNkbzo19Zqzshd
+   leqfqcQKHzzTGj+km4Z4z89gKiQbGkFVNbAOVIbvwmag1ZuJ+n7JqobAS
+   b85LOQMt2i5XPZtDimmDKncpswPOohjAJbL2ReLAbqPGxRDLmRa4kOSBz
+   NeUcr/wFVoY0Dmmm2Ib2NJfSCxgLNYWIYH5tOf3nFu5IaH8lEsFQBqyI+
+   FMzywM3aanUyftR/JXuiYN5vLQDqDBp90vtOxhCoC8zrGP+/gisbL6sky
+   +duKe3YoYy414eucSqo7ytfhuviHk+DtFCF5TaM9DwEDsMRECYA/8uvu3
+   w==;
+IronPort-SDR: IgvWB/w/umFpGjc2a5G53apVdX0RzdhL4h8mwTeyfKszHhFMyZjlVV0T1DGzcoF9H8MPghxdq/
+ zoSOpcF3ygtrn1y0wdGfLoYMLVXd3rm78J4U9x2bK/YmQvdK0qEebzES5uNX55hm25GQJglusH
+ 25mhXONZVWSedBRVRR0WUpvcfdjeeiasYeB2rD+jfdnsTODXWYqtU0d5ZVXvHTXbhXqyexIIOQ
+ 169ZlxkKBRkkTijSLDa55OIOAmQG9U5OquHTnnQJTiFS4rgpnLFwLzhW8KMSIB2C0eL3q4ic8X
+ mRo=
 X-IronPort-AV: E=Sophos;i="5.79,348,1602518400"; 
-   d="scan'208";a="161928284"
+   d="scan'208";a="161928287"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2021 14:55:59 +0800
-IronPort-SDR: 2w43JGyLMiEDdH5WVYAXTYkzPlwcTpE5Zd3hw8uo5TJ0Vf9VixGWuAjEdegf9yEnqOdz4ymDpx
- QeE6JmfrYOcnhyrKtd5eqhbVjbQ+NohCVQamgm1K6BPtbNjbACvzBwiRXc2rVTIpvS6gK2M5SF
- 5R2NcHmjbXRHEt/oCAiZcdpCgq8sQxuefkAXKmgi3x7h1PuMYjLI8K523xt5NZ5qjECEM8dUzN
- PvA0i5R3WN+ZvJM9ZjFq5ZrA+c5pMO5yoQ9bTNJYDCO0kbK5q4H+MTlHBD7Qgwe/EzN/YyVRl2
- mO/IMCvdCpxntDhO6b/1MNOj
+  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2021 14:56:01 +0800
+IronPort-SDR: rGr9WjJi/yAg+twUu3tbKpRCkcIkYx6diR1bRrgMU3Zi74fSn9xXNTWLefXN+ChABIGPc+lc1v
+ SifAcxnugaT/zswNpKGB9d0LOU0MJrWraSMaOquKnilmcxXkbnnK6lz/FXaqE9M+jChqEZO9iC
+ +//L2Vc1XJItMEP+jA4OkfxorpxnP9hT5wn2teWbbcakHsNwq1fB5Qz0x63d/yl4CMOjrP0/zv
+ GUDZtIBEgkUUNj7IfAUXrRCpwoOkGZ7bUBOCdA93sv9GgiCq9cN0tzo1CiLINCAS27kdHNF64l
+ m9qxX158lyIwZFUuf01Gac3w
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2021 22:40:41 -0800
-IronPort-SDR: WAcpIRnSv+pgoqsgM3zM18sV8pkMh8UJ1EC0XefWCKYFjBZW9JcIN6XWxAoTNFITOf7wWFs3Q2
- 4qtR1aAe1b/HFJSXjHh8UF1lej+jEhBF+w5CNJAMLGP5cwf6IpInGynCl+vY8dZjjp1HgJK6Bj
- YpPU5mdFYHsJ4Re4zSinwRAZ+C0Oa5Uq3/EkdDrMrAe2/b+iW/SnkFysVpsVid9wgFS6xgk3wQ
- 35vDRD3ECG78fc0gQjEvB5iwob5OTgYSaIuuJoECt1ITZgnJ04v+Fj6TsH20UqLwsMNGX5i5tN
- TkM=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2021 22:40:43 -0800
+IronPort-SDR: 1qq5PG/HOhqxWetSMqqG3K34f5yBftHZefBnN6RqV5D0w97WdZ2qM3HdIFp45gv/6mHlsBelcW
+ OSiVl0B7mMsiuupZ8mBUESvGYb7g5lu7ZMRyw03wpdkY1ToINfvdbSwbnXhR2KImCZZSkKHpKA
+ 57YXfrxp+Fqq1kVt9mru2jEdbQTOXZRz8Neirhm4YfkmCSD4C3uQun3p1K+Gr9/rylC9UlN3Tz
+ 96LUQ9l+VZwG9Kf5p1AbOWUPq6nUAbbl1Hwv0RNneR21Suk297XSjvyi3tGQqCpjgVsK+ATBEc
+ NiU=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 14 Jan 2021 22:55:58 -0800
-Received: (nullmailer pid 1916474 invoked by uid 1000);
+  by uls-op-cesaip01.wdc.com with SMTP; 14 Jan 2021 22:56:00 -0800
+Received: (nullmailer pid 1916476 invoked by uid 1000);
         Fri, 15 Jan 2021 06:55:02 -0000
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
@@ -59,9 +59,9 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Naohiro Aota <naohiro.aota@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v12 27/41] btrfs: enable zone append writing for direct IO
-Date:   Fri, 15 Jan 2021 15:53:31 +0900
-Message-Id: <c6abc208a165c38a69d1159445b90918690957d6.1610693037.git.naohiro.aota@wdc.com>
+Subject: [PATCH v12 28/41] btrfs: introduce dedicated data write path for ZONED mode
+Date:   Fri, 15 Jan 2021 15:53:32 +0900
+Message-Id: <34fed65a5240be2d2eed7b0be01f1db56c1f88d9.1610693037.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1610693036.git.naohiro.aota@wdc.com>
 References: <cover.1610693036.git.naohiro.aota@wdc.com>
@@ -71,57 +71,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Likewise to buffered IO, enable zone append writing for direct IO when its
-used on a zoned block device.
+If more than one IO is issued for one file extent, these IO can be written
+to separate regions on a device. Since we cannot map one file extent to
+such a separate area, we need to follow the "one IO == one ordered extent"
+rule.
+
+The Normal buffered, uncompressed, not pre-allocated write path (used by
+cow_file_range()) sometimes does not follow this rule. It can write a part
+of an ordered extent when specified a region to write e.g., when its
+called from fdatasync().
+
+Introduces a dedicated (uncompressed buffered) data write path for ZONED
+mode. This write path will CoW the region and write it at once.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/inode.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ fs/btrfs/inode.c | 34 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
 
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 6b5f273a0d83..4f0915346c9d 100644
+index 4f0915346c9d..cf84fdfd6543 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -7708,6 +7708,9 @@ static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
- 	iomap->bdev = fs_info->fs_devices->latest_bdev;
- 	iomap->length = len;
- 
-+	if (write && btrfs_use_zone_append(BTRFS_I(inode), em))
-+		iomap->flags |= IOMAP_F_ZONE_APPEND;
-+
- 	free_extent_map(em);
- 
+@@ -1400,6 +1400,29 @@ static int cow_file_range_async(struct btrfs_inode *inode,
  	return 0;
-@@ -7936,6 +7939,8 @@ static void btrfs_end_dio_bio(struct bio *bio)
- 	if (err)
- 		dip->dio_bio->bi_status = err;
- 
-+	btrfs_record_physical_zoned(dip->inode, dip->logical_offset, bio);
-+
- 	bio_put(bio);
- 	btrfs_dio_private_put(dip);
  }
-@@ -8088,6 +8093,18 @@ static blk_qc_t btrfs_submit_direct(struct inode *inode, struct iomap *iomap,
- 		bio->bi_end_io = btrfs_end_dio_bio;
- 		btrfs_io_bio(bio)->logical = file_offset;
  
-+		WARN_ON_ONCE(write && btrfs_is_zoned(fs_info) &&
-+			     fs_info->max_zone_append_size &&
-+			     bio_op(bio) != REQ_OP_ZONE_APPEND);
++static noinline int run_delalloc_zoned(struct btrfs_inode *inode,
++				       struct page *locked_page, u64 start,
++				       u64 end, int *page_started,
++				       unsigned long *nr_written)
++{
++	int ret;
 +
-+		if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
-+			ret = extract_ordered_extent(inode, bio, file_offset);
-+			if (ret) {
-+				bio_put(bio);
-+				goto out_err;
-+			}
-+		}
++	ret = cow_file_range(inode, locked_page, start, end,
++			     page_started, nr_written, 0);
++	if (ret)
++		return ret;
 +
- 		ASSERT(submit_len >= clone_len);
- 		submit_len -= clone_len;
++	if (*page_started)
++		return 0;
++
++	__set_page_dirty_nobuffers(locked_page);
++	account_page_redirty(locked_page);
++	extent_write_locked_range(&inode->vfs_inode, start, end, WB_SYNC_ALL);
++	*page_started = 1;
++
++	return 0;
++}
++
+ static noinline int csum_exist_in_range(struct btrfs_fs_info *fs_info,
+ 					u64 bytenr, u64 num_bytes)
+ {
+@@ -1879,17 +1902,24 @@ int btrfs_run_delalloc_range(struct btrfs_inode *inode, struct page *locked_page
+ {
+ 	int ret;
+ 	int force_cow = need_force_cow(inode, start, end);
++	const bool do_compress = inode_can_compress(inode) &&
++		inode_need_compress(inode, start, end);
++	const bool zoned = btrfs_is_zoned(inode->root->fs_info);
  
+ 	if (inode->flags & BTRFS_INODE_NODATACOW && !force_cow) {
++		ASSERT(!zoned);
+ 		ret = run_delalloc_nocow(inode, locked_page, start, end,
+ 					 page_started, 1, nr_written);
+ 	} else if (inode->flags & BTRFS_INODE_PREALLOC && !force_cow) {
++		ASSERT(!zoned);
+ 		ret = run_delalloc_nocow(inode, locked_page, start, end,
+ 					 page_started, 0, nr_written);
+-	} else if (!inode_can_compress(inode) ||
+-		   !inode_need_compress(inode, start, end)) {
++	} else if (!do_compress && !zoned) {
+ 		ret = cow_file_range(inode, locked_page, start, end,
+ 				     page_started, nr_written, 1);
++	} else if (!do_compress && zoned) {
++		ret = run_delalloc_zoned(inode, locked_page, start, end,
++					 page_started, nr_written);
+ 	} else {
+ 		set_bit(BTRFS_INODE_HAS_ASYNC_EXTENT, &inode->runtime_flags);
+ 		ret = cow_file_range_async(inode, wbc, locked_page, start, end,
 -- 
 2.27.0
 
