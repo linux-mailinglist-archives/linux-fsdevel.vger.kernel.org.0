@@ -2,274 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59E5A2F7086
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 03:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F50E2F71AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 05:46:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732047AbhAOCWw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 21:22:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49302 "EHLO
+        id S1729614AbhAOEpL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 23:45:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbhAOCWv (ORCPT
+        with ESMTP id S1728668AbhAOEpJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 21:22:51 -0500
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F7B0C061757;
-        Thu, 14 Jan 2021 18:22:11 -0800 (PST)
-Received: by mail-oi1-x22a.google.com with SMTP id d189so8097541oig.11;
-        Thu, 14 Jan 2021 18:22:11 -0800 (PST)
+        Thu, 14 Jan 2021 23:45:09 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 663C4C061575;
+        Thu, 14 Jan 2021 20:44:28 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id k10so6244975wmi.3;
+        Thu, 14 Jan 2021 20:44:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6wmzLSUbWxe7uYFFgvS6JY6e1cTj43Im/jbA3ENu1Rc=;
-        b=pys63q1jQeIO+K9Ufv///n2i/i+KcDT1oo6C2FKGkDnaZVyG3Ndg/Xlb6ZSe3qsPgu
-         1ow58z4xua1KrT2bPeaIJ7xw5eJV+3Q9LlFqICJJrT05XuiEHuimqiNue8JrukWbr/kf
-         ++zsQuDpMjahWUdaHFCK0zC10XRrdp+JoM7c/qOtBacO/SitZCVP5FtgtBCuraMRCZ7N
-         J0xB2R4sAJv4D0W3aYPtEfUr7Q37jlim67TDPhrW1jbMscUIq/D1C1zAFq6K1BlnA9Yx
-         +0CXTiFr0qd4bEK2XofXKCilxg94oYOS+cZfUlDxh9jC1LyHZu21fwdXpVrOjwxbXupW
-         Ey3g==
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oMMv5S4CfKPC/nDBxjQsaxRQfrFMKm4a2sZxLMk7C9o=;
+        b=EywqEU1iMi2yxP4kRHfmspXPBsyQ0TM/o3SaAdkqbaioj9rwj73YUIRLQxSuvYBhoK
+         9F6U5GIhIN0Exa7+rNXNGgmjFH6CievRGcnRgwOLffze+XMJbyEKPdb0yB+SJD2NEk6Y
+         oSzPDj4tPOYFrmJiBMbwISpUSilQxIZYzIBm3pwF6E/5TRm9pAjjf+N1X4qO+50Qoi8I
+         aK37n2bzLGtah1FhQpYZzwSOJzqPivJ7djVNA5lcKK8p4Nqi+c3RmJaaOI7paW0SzKU4
+         nrABk2JcyfpB3F62x0JXnhFomilbfh5UTXsvR0VMJ/Ue+HltK6YLVrz+VO7NIeKLgvEt
+         +ncw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6wmzLSUbWxe7uYFFgvS6JY6e1cTj43Im/jbA3ENu1Rc=;
-        b=neOHtFuNuUDPdpDgd/L7oMq/LRRYvOLgTmmZZx0NhzRd2J9nmktcbhCX4ki61j5P3o
-         zl0N8YqqEf/K1hJ3x0rne2Rt4UOm9FZsUclL1gd8vonXpkgxcyhWhftJeegkcVxyO8sS
-         5qh2P503i4hDIbZQZ5VI6/4YWOtydLty0KHyJIFqwO+BhxvRxKEA99eIYaNbqkIQmu//
-         40IDm96fkHKvw9JCc2vsc2CMpEA0ZuQ/dZdCLw3b5UIgsIyPVPhDOJanHuLrBhTfxYmx
-         zPeJH9dFjDX6nYjbWRdz3rWZ7x+Okic7cmo1HAgWWKcr7JCmvSKCDR4LtyzzDj/WussF
-         24Sw==
-X-Gm-Message-State: AOAM532i1ENtTxaSr7c4zyqi+opeaKVJaVYmEjzheW3YGdIGPaGSPy3/
-        9iiw9WJodpGo7rtNR2B+x/I0amTlQ1pR+o6niFs=
-X-Google-Smtp-Source: ABdhPJwvVIKYYfKxra9oBS+BV3RiFPDAm5pu3/AUUL1pyCsAxWO2UWplnbDuREC25fyBoVHFWscvUGW/dc9ut9l4J4o=
-X-Received: by 2002:aca:f15:: with SMTP id 21mr4706888oip.109.1610677330863;
- Thu, 14 Jan 2021 18:22:10 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oMMv5S4CfKPC/nDBxjQsaxRQfrFMKm4a2sZxLMk7C9o=;
+        b=ulexB0BzUsw9IAqfhT9KTsKgeQEy3trAmlzVoMypZCto8JlzrAYV7fhZ/kMUAdvI9Q
+         B3UOmaB6rcxyVvlcnxKZ0KAs2wnoab74713XvY+Rl2nWNE04xYM7jcdZ4iCiJJI41iwE
+         nanfheWqgE8tik/gLBtoNTP4QgavlNxYqvXApf6gLc3awN0SyJtSCdOHGzF8q15s0tTw
+         EtrxUPETYEUXnK6IJ+mu16QI9qbkzrRbApBBp0gYMDfaicRWbskVaELVa3pYFI5GtxMr
+         8aFWBeqnROyJdvYhkAVXBtremgc76rIIi3xZ9YlBMswyApDfTsVMc3YJw5BD48C6hJiN
+         s+Dg==
+X-Gm-Message-State: AOAM530bfxkb5qkCQEjjmWKOOu61V7sC7qK84ikyGNPxdukkiYWyTQxU
+        6o8mJR0cSU5HiBCqMnipItpXiIdhpqltyg==
+X-Google-Smtp-Source: ABdhPJyI1P1vuu2kiSih/uXZQHIdK005QyG0oHSE8nQWm3t9UH3T13bJfLhIFREr9LWptcyTPBotTg==
+X-Received: by 2002:a1c:984a:: with SMTP id a71mr167078wme.175.1610685867181;
+        Thu, 14 Jan 2021 20:44:27 -0800 (PST)
+Received: from [192.168.8.122] ([85.255.233.192])
+        by smtp.gmail.com with ESMTPSA id b132sm11748668wmh.21.2021.01.14.20.44.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Jan 2021 20:44:26 -0800 (PST)
+Subject: Re: general protection fault in io_uring_setup
+To:     syzbot <syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <0000000000000a65ee05b8e6adc1@google.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <221d0220-1b12-ba5f-af0e-b4563d122ef4@gmail.com>
+Date:   Fri, 15 Jan 2021 04:40:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20210106064807.253112-1-Sonicadvance1@gmail.com> <CAK8P3a2tV3HzPpbCR7mAeutx38_D2d-vfpEgpXv+GW_98w3VSQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a2tV3HzPpbCR7mAeutx38_D2d-vfpEgpXv+GW_98w3VSQ@mail.gmail.com>
-From:   Ryan Houdek <sonicadvance1@gmail.com>
-Date:   Thu, 14 Jan 2021 18:21:59 -0800
-Message-ID: <CABnRqDcTaqZj8u8hhwbysU-o_phZh-5-vZsiDScq6xrKbPH_Kw@mail.gmail.com>
-Subject: Re: [PATCH] Adds a new ioctl32 syscall for backwards compatibility layers
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        "Amanieu d'Antras" <amanieu@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joe Perches <joe@perches.com>, Jan Kara <jack@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0000000000000a65ee05b8e6adc1@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 6, 2021 at 12:49 AM Arnd Bergmann <arnd@kernel.org> wrote:
->
-> On Wed, Jan 6, 2021 at 7:48 AM <sonicadvance1@gmail.com> wrote:
-> > From: Ryan Houdek <Sonicadvance1@gmail.com>
-> ...
-> > This does not solve the following problems:
-> > 1) compat_alloc_user_space inside ioctl
-> > 2) ioctls that check task mode instead of entry point for behaviour
-> > 3) ioctls allocating memory
-> > 4) struct packing problems between architectures
-> >
-> > Workarounds for the problems presented:
-> > 1a) Do a stack pivot to the lower 32bits from userspace
-> >   - Forces host 64bit process to have its thread stacks to live in 32bit
-> >   space. Not ideal.
-> >   - Only do a stack pivot on ioctl to save previous 32bit VA space
-> > 1b) Teach kernel that compat_alloc_userspace can return a 64bit pointer
-> >   - x86-64 truncates stack from this function
-> >   - AArch64 returns the full stack pointer
-> >   - Only ~29 users. Validating all of them support a 64bit stack is
-> >   trivial?
->
-> I've almost completed the removal of compat_alloc_user_space(),
-> that should no longer be a concern when the syscall gets added.
->
-> > 2a) Any application using these can be checked for compatibility in
-> > userspace and put on a block list.
-> > 2b) Fix any ioctls doing broken behaviour based on task mode rather than
-> > ioctl entry point
->
-> What the ioctls() actually check is 'in_compat_syscall()', which is not
-> the mode of the task but the type of syscall. There is actually a general
-> trend to use this helper more rather than less, and I think the only
-> way forward here is to ensure that this returns true when entering
-> through the new syscall number.
->
-> For x86, this has another complication, as some ioctls also need to
-> check whether they are in an ia32 task (with packed u64 and 32-bit
-> __kernel_old_time_t) or an x32 task (with aligned u64 and 64-bit
-> __kernel_old_time_t). If the new syscall gets wired up on x86 as well,
-> you'd need to decide which of the two behaviors you want.
+On 15/01/2021 01:56, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> 
+> Reported-and-tested-by: syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com
 
-I can have a follow-up patch that makes this do ni_syscall on x86_64
-since we can go through the int 0x80 handler, or x32 handler path and
-choose whichever one there.
+#syz dup: general protection fault in io_disable_sqo_submit
 
->
-> > 3a) Userspace consumes all VA space above 32bit. Forcing allocations to
-> > occur in lower 32bits
-> >   - This is the current implementation
-> > 3b) Ensure any allocation in the ioctl handles ioctl entrypoint rather
-> > than just allow generic memory allocations in full VA space
-> >   - This is hard to guarantee
->
-> What kind of allocation do you mean here? Can you give an example of
-> an ioctl that does this?
+> 
+> Tested on:
+> 
+> commit:         06585c49 io_uring: do sqo disable on install_fd error
+> git tree:       git://git.kernel.dk/linux-block
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=54595eacbd613c0d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=06b7d55a62acca161485
+> compiler:       clang version 11.0.1
+> 
+> Note: testing is done by a robot and is best-effort only.
+> 
 
-My concern here would be something like DRM allocating memory and
-returning a pointer to userspace that ends up in 64bit space.
-I can see something like `drm_get_unmapped_area` calls in to
-`current->mm->get_unmapped_area` which I believe only ends up falling
-down TASK_SIZE checks.
-Which could potentially return pointers in the 64bit address space
-range in this case. Theoretically can be resolved either by thieving
-the full 64bit VA range, or doing something like the Tango layer
-patches that on syscall entry changes the syscall to a "compat"
-syscall.
-compat syscall flag like Tango might be nicer here?
-
->
-> > 4a) Blocklist any application using ioctls that have different struct
-> > packing across the boundary
-> >   - Can happen when struct packing of 32bit x86 application goes down
-> >   the aarch64 compat_ioctl path
-> >   - Userspace is a AArch64 process passing 32bit x86 ioctl structures
-> >   through the compat_ioctl path which is typically for AArch32 processes
-> >   - None currently identified
-> > 4b) Work with upstream kernel and userspace projects to evaluate and fix
-> >   - Identify the problem ioctls
-> >   - Implement a new ioctl with more sane struct packing that matches
-> >   cross-arch
-> >   - Implement new ioctl while maintaining backwards compatibility with
-> >   previous ioctl handler
-> >   - Change upstream project to use the new compatibility ioctl
-> >   - ioctl deprecation will be case by case per device and project
-> > 4b) Userspace implements a full ioctl emulation layer
-> >   - Parses the full ioctl tree
-> >   - Either passes through ioctls that it doesn't understand or
-> >   transforms ioctls that it knows are trouble
-> >   - Has the downside that it can still run in to edge cases that will
-> >   fail
-> >   - Performance of additional tracking is a concern
-> >   - Prone to failure keeping the kernel ioctl and userspace ioctl
-> >   handling in sync
-> >   - Really want to have it in the kernel space as much as possible
->
-> I think there are only a few ioctls that are affected, and you can
-> probably get a list from qemu, which emulates them in user space
-> already. Doing that transformation should not be all that hard
-> in the end.
->
-> If we want to do this in the kernel, this probably requires changes
-> to the syscall calling convention. Adding a flag to pick a particular
-> style of ioctl arguments would work, and this could enable the
-> case of emulating arm32 ioctls on x86-64 hosts.
->
-> > diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-> > index 86a9d7b3eabe..949788f5ba40 100644
-> > --- a/arch/arm64/include/asm/unistd.h
-> > +++ b/arch/arm64/include/asm/unistd.h
-> > @@ -38,7 +38,7 @@
-> >  #define __ARM_NR_compat_set_tls                (__ARM_NR_COMPAT_BASE + 5)
-> >  #define __ARM_NR_COMPAT_END            (__ARM_NR_COMPAT_BASE + 0x800)
-> >
-> > -#define __NR_compat_syscalls           442
-> > +#define __NR_compat_syscalls           443
-> >  #endif
-> >
-> >  #define __ARCH_WANT_SYS_CLONE
-> > diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-> > index cccfbbefbf95..35e3bc83dbdc 100644
-> > --- a/arch/arm64/include/asm/unistd32.h
-> > +++ b/arch/arm64/include/asm/unistd32.h
-> > @@ -891,6 +891,8 @@ __SYSCALL(__NR_faccessat2, sys_faccessat2)
-> >  __SYSCALL(__NR_process_madvise, sys_process_madvise)
-> >  #define __NR_epoll_pwait2 441
-> >  __SYSCALL(__NR_epoll_pwait2, compat_sys_epoll_pwait2)
-> > +#define __NR_ioctl32 442
-> > +__SYSCALL(__NR_ioctl32, compat_sys_ioctl)
-> >
->
-> I'm not sure why you want this in 32-bit processes, can't they just call
-> the normal ioctl() function?
->
-
-I'll have a follow up patch that on 32bit hosts this is a ni_syscall instead
-
-> >  }
-> > +
-> > +COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
-> > +                       compat_ulong_t, arg)
-> > +{
-> > +       return do_ioctl32(fd, cmd, arg);
-> > +}
-> > +
-> > +SYSCALL_DEFINE3(ioctl32, unsigned int, fd, unsigned int, cmd,
-> > +                       compat_ulong_t, arg)
-> > +{
-> > +       return do_ioctl32(fd, cmd, arg);
-> > +}
->
-> These two look identical to me, I don't think you need to add a wrapper
-> here at all, but can just use the normal compat_sys_ioctl entry point
-> unless you want to add a 'flags' argument to control the struct padding.
-
-I tried having the dispatch table call directly in to the COMPAT one
-and the way things were lining up weren't allowing me to do this.
-Since this is a bit unique in how it operates, I'm not quite sure if
-there is another example I could pull from for this.
-
->
-> > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> > index 728752917785..18279e5b7b4f 100644
-> > --- a/include/uapi/asm-generic/unistd.h
-> > +++ b/include/uapi/asm-generic/unistd.h
-> > @@ -862,8 +862,15 @@ __SYSCALL(__NR_process_madvise, sys_process_madvise)
-> >  #define __NR_epoll_pwait2 441
-> >  __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
-> >
-> > +#define __NR_ioctl32 442
-> > +#ifdef CONFIG_COMPAT
-> > +__SC_COMP(__NR_ioctl32, sys_ioctl32, compat_sys_ioctl)
-> > +#else
-> > +__SC_COMP(__NR_ioctl32, sys_ni_syscall, sys_ni_syscall)
-> > +#endif
-> > +
-> >  #undef __NR_syscalls
-> > -#define __NR_syscalls 442
-> > +#define __NR_syscalls 443
->
-> (already mentioned on IRC)
->
-
-> If you add it here, the same number should be assigned across all architectures,
-> or at least a comment added to declare the number as reserved, to keep
-> the following syscalls in sync.
-
-I can have a followup patch that adds this to all the backends.
->
->         Arnd
+-- 
+Pavel Begunkov
