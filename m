@@ -2,54 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 921542F8837
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 23:15:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2DF52F8840
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 23:18:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbhAOWPD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 17:15:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51918 "EHLO
+        id S1726506AbhAOWRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 17:17:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbhAOWPC (ORCPT
+        with ESMTP id S1725918AbhAOWRO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 17:15:02 -0500
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20DD5C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:14:22 -0800 (PST)
-Received: by mail-qk1-x734.google.com with SMTP id h4so13274723qkk.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:14:22 -0800 (PST)
+        Fri, 15 Jan 2021 17:17:14 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E81C061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:16:34 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id f26so13268191qka.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:16:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VoLQECfseYAV/zUcv9S4Mgy+WEFb7zTo1bVUUery1Z8=;
-        b=Yg2yiCGfNAK6YgdIgFk6mh0pTMeQShQX/J9/LROcIcjXYoyRrLhYz4M+Oz8IjKYm60
-         Bx+s6QfXNti9+5qPhnNjIOS2T6mp9i5z8+QUb+BFwM51ahFWXzLLdSUka02XcCUKHXuf
-         KVnb7l215wLTsBvXppTotCh0UR6veqdA4zw/7Pad0XadAx9BME1sNMzcAZe7Fgdiok1K
-         7WlAIowRtK42eJ/sqNtfXUuZcXH3g9XVSlk5nBJ/2h/IAly36zv2cg4xtasv6uLY/YMc
-         RvF3k7OBJ5Mz10vmV7liJ4AWw/JxYWHDRqUFZ3SA6gbbOTnnrA7DxW6m4R2U+31i60LA
-         eCzg==
+        bh=4aN9oA1N7juzXfdXE+PXfSx6s2NsbKqM7ahAHcpgrzM=;
+        b=SzfBZf0AC+PW7i5MWAvJTqrtPtGNxCS19lNr2MjhM+wL2sc2K5IcaEx4+O2UJE+U5f
+         HbneO4LPScqDQ9lK+zpA4JaZyINu+yEpelAuChu4a55YdFSgXAVNueTdjITqtPDH1vim
+         1GPPwKUSwJ07l73whOqHCcrEQRoi27sUhpZT9if6XbTjd4pJOFw3YviAP/jnOfQl1Hu7
+         1pxL0zRlqsB/DwsXCvbJLuSGp1yxoqHQSNvX6UM653h8Cd+3DyJwaBUIByISV2258NBW
+         84tpxotp1hPuoFG5sVvZGYd2s8glSAe9qKQpjLScbcak+mEW43U/sIQ9kfINImsP4+Gc
+         2fdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=VoLQECfseYAV/zUcv9S4Mgy+WEFb7zTo1bVUUery1Z8=;
-        b=nn1sKcGCfqitwCPXO1+o1rVMsnLn1Ztq5cBPBUGdKPmDv+AYXdOt8FJDtnc44Fha0O
-         zcVyglFP3HBKs4w7MrZO5hVja33dDgms2DpnQQnRTsYLMtUaQGbeDPJb13ZP+9eADhPt
-         T/n4nkDRumyHGslrwc9q65cqZvz5BTkg3CKmYuf9810IW011UliCHIEmUuejrY7Q95no
-         pvgzqCqKcgxOgB8HMVOQxG24U2+jfoobrFlQKdrObKOB9Kk9Ct1k3Wdcx4y6Y8SZV3cT
-         6oxCF501SWDabRKxEnu6vLZC5qcdBMiprq/7Md1Y/igMqiDhuyT8Sp0DTFALgwXP9fd+
-         p+qg==
-X-Gm-Message-State: AOAM5330PhpHyssVtx1AXDJOXYLlv6PDeQGkXDXTikFYnPu0jPpXRF9T
-        Kz5TT+vBujlBdlfzV78qmTPCnfs9A+uFv1yV
-X-Google-Smtp-Source: ABdhPJxD29qDXH4yI1yUvfgjkrId1RBDkGZlKjxe3SH08PjiLclmD+6yWVyPABUPQK4CJ/NBEGT5TA==
-X-Received: by 2002:a05:620a:2047:: with SMTP id d7mr14514210qka.255.1610748861214;
-        Fri, 15 Jan 2021 14:14:21 -0800 (PST)
+        bh=4aN9oA1N7juzXfdXE+PXfSx6s2NsbKqM7ahAHcpgrzM=;
+        b=h45n+vqXu60CProu1xHO72bvfThexzE0T9S0ZJxcgbc3h8ZiVAN1G5uNImG6DCv6JR
+         YjlqOlNSX1wbUM/ArjZDjvQM1X7xDQLPPntOPws3jk2ie+yzAouidh0z2kNQie0F+lF5
+         Tlf1P46xNhU00OFJDEXWnJyial0jK+IuNOby0hiYE7aJdSuQY7bvEW2drynJ8yElMm7a
+         Yxmicm9LcO9d+zPHmiUM8LHxQiKvexJev2XKGTA004HVwG4TcnhZM+n8JUmTiUmndk90
+         VMf/34/dPLwaq6Q4pcQzOuUptxWC0mMSUzCxOHq6ECbuQLq78q1Yt2q+qLSbdOAQ4mx5
+         3Eqg==
+X-Gm-Message-State: AOAM5308WkQZkypsDr1FW5rdlrEY0efHqfpmicBlvhY1Jvv2C0swL3EA
+        vmrFYlzP4f5x4PdQjyKfGzGhpA==
+X-Google-Smtp-Source: ABdhPJzS1C9/Yn7X7lgtmb2v7YgCiM/Xxlr51Yk9BwS+mLzYlxu2BPmI4HpVBeEJc6kT2Ueban/BcA==
+X-Received: by 2002:a05:620a:81b:: with SMTP id s27mr14768315qks.385.1610748993822;
+        Fri, 15 Jan 2021 14:16:33 -0800 (PST)
 Received: from ?IPv6:2620:10d:c0a8:11e1::105d? ([2620:10d:c091:480::1:cc17])
-        by smtp.gmail.com with ESMTPSA id r190sm6061510qka.54.2021.01.15.14.14.19
+        by smtp.gmail.com with ESMTPSA id 38sm3448382qtb.67.2021.01.15.14.16.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 14:14:20 -0800 (PST)
-Subject: Re: [PATCH v12 19/41] btrfs: extract page adding function
+        Fri, 15 Jan 2021 14:16:33 -0800 (PST)
+Subject: Re: [PATCH v12 20/41] btrfs: use bio_add_zone_append_page for zoned
+ btrfs
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
@@ -57,14 +58,14 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>
 References: <cover.1610693036.git.naohiro.aota@wdc.com>
- <59940825e958cf3e4cf99813febae57beb86ddaf.1610693037.git.naohiro.aota@wdc.com>
+ <9cb19c5a674bede549a357b676627083bf71345d.1610693037.git.naohiro.aota@wdc.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <d460ac3e-91d2-4cea-2c12-6e7bc51e37e1@toxicpanda.com>
-Date:   Fri, 15 Jan 2021 17:14:19 -0500
+Message-ID: <0c747633-0f43-63ac-86cf-943c24677cd1@toxicpanda.com>
+Date:   Fri, 15 Jan 2021 17:16:31 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <59940825e958cf3e4cf99813febae57beb86ddaf.1610693037.git.naohiro.aota@wdc.com>
+In-Reply-To: <9cb19c5a674bede549a357b676627083bf71345d.1610693037.git.naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -73,76 +74,76 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 1/15/21 1:53 AM, Naohiro Aota wrote:
-> This commit extract page adding to bio part from submit_extent_page(). The
-> page is added only when bio_flags are the same, contiguous and the added
-> page fits in the same stripe as pages in the bio.
+> Zoned device has its own hardware restrictions e.g. max_zone_append_size
+> when using REQ_OP_ZONE_APPEND. To follow the restrictions, use
+> bio_add_zone_append_page() instead of bio_add_page(). We need target device
+> to use bio_add_zone_append_page(), so this commit reads the chunk
+> information to memoize the target device to btrfs_io_bio(bio)->device.
 > 
-> Condition checkings are reordered to allow early return to avoid possibly
-> heavy btrfs_bio_fits_in_stripe() calling.
+> Currently, zoned btrfs only supports SINGLE profile. In the feature,
+> btrfs_io_bio can hold extent_map and check the restrictions for all the
+> devices the bio will be mapped.
 > 
 > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 > ---
->   fs/btrfs/extent_io.c | 57 ++++++++++++++++++++++++++++++++------------
->   1 file changed, 42 insertions(+), 15 deletions(-)
+>   fs/btrfs/extent_io.c | 30 +++++++++++++++++++++++++++---
+>   1 file changed, 27 insertions(+), 3 deletions(-)
 > 
 > diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index 129d571a5c1a..96f43b9121d6 100644
+> index 96f43b9121d6..41fccfbaee15 100644
 > --- a/fs/btrfs/extent_io.c
 > +++ b/fs/btrfs/extent_io.c
-> @@ -3061,6 +3061,45 @@ struct bio *btrfs_bio_clone_partial(struct bio *orig, int offset, int size)
->   	return bio;
+> @@ -3083,6 +3083,7 @@ static bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
+>   {
+>   	sector_t sector = logical >> SECTOR_SHIFT;
+>   	bool contig;
+> +	int ret;
+>   
+>   	if (prev_bio_flags != bio_flags)
+>   		return false;
+> @@ -3097,7 +3098,12 @@ static bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
+>   	if (btrfs_bio_fits_in_stripe(page, size, bio, bio_flags))
+>   		return false;
+>   
+> -	return bio_add_page(bio, page, size, pg_offset) == size;
+> +	if (bio_op(bio) == REQ_OP_ZONE_APPEND)
+> +		ret = bio_add_zone_append_page(bio, page, size, pg_offset);
+> +	else
+> +		ret = bio_add_page(bio, page, size, pg_offset);
+> +
+> +	return ret == size;
 >   }
 >   
-> +/**
-> + * btrfs_bio_add_page	-	attempt to add a page to bio
-> + * @bio:	destination bio
-> + * @page:	page to add to the bio
-> + * @logical:	offset of the new bio or to check whether we are adding
-> + *              a contiguous page to the previous one
-> + * @pg_offset:	starting offset in the page
-> + * @size:	portion of page that we want to write
-> + * @prev_bio_flags:  flags of previous bio to see if we can merge the current one
-> + * @bio_flags:	flags of the current bio to see if we can merge them
-> + * @return:	true if page was added, false otherwise
-> + *
-> + * Attempt to add a page to bio considering stripe alignment etc. Return
-> + * true if successfully page added. Otherwise, return false.
-> + */
-> +static bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
-> +			       unsigned int size, unsigned int pg_offset,
-> +			       unsigned long prev_bio_flags,
-> +			       unsigned long bio_flags)
-> +{
-> +	sector_t sector = logical >> SECTOR_SHIFT;
-> +	bool contig;
-> +
-> +	if (prev_bio_flags != bio_flags)
-> +		return false;
-> +
-> +	if (prev_bio_flags & EXTENT_BIO_COMPRESSED)
-> +		contig = bio->bi_iter.bi_sector == sector;
-> +	else
-> +		contig = bio_end_sector(bio) == sector;
-> +	if (!contig)
-> +		return false;
-> +
-> +	if (btrfs_bio_fits_in_stripe(page, size, bio, bio_flags))
-> +		return false;
-> +
-> +	return bio_add_page(bio, page, size, pg_offset) == size;
-> +}
-> +
 >   /*
->    * @opf:	bio REQ_OP_* and REQ_* flags as one value
->    * @wbc:	optional writeback control for io accounting
-> @@ -3089,27 +3128,15 @@ static int submit_extent_page(unsigned int opf,
+> @@ -3128,7 +3134,9 @@ static int submit_extent_page(unsigned int opf,
 >   	int ret = 0;
 >   	struct bio *bio;
 >   	size_t io_size = min_t(size_t, size, PAGE_SIZE);
-> -	sector_t sector = offset >> 9;
+> -	struct extent_io_tree *tree = &BTRFS_I(page->mapping->host)->io_tree;
+> +	struct btrfs_inode *inode = BTRFS_I(page->mapping->host);
+> +	struct extent_io_tree *tree = &inode->io_tree;
+> +	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+>   
+>   	ASSERT(bio_ret);
+>   
+> @@ -3159,11 +3167,27 @@ static int submit_extent_page(unsigned int opf,
+>   	if (wbc) {
+>   		struct block_device *bdev;
+>   
+> -		bdev = BTRFS_I(page->mapping->host)->root->fs_info->fs_devices->latest_bdev;
+> +		bdev = fs_info->fs_devices->latest_bdev;
+>   		bio_set_dev(bio, bdev);
+>   		wbc_init_bio(wbc, bio);
+>   		wbc_account_cgroup_owner(wbc, page, io_size);
+>   	}
+> +	if (btrfs_is_zoned(fs_info) &&
+> +	    bio_op(bio) == REQ_OP_ZONE_APPEND) {
+> +		struct extent_map *em;
+> +		struct map_lookup *map;
+> +
+> +		em = btrfs_get_chunk_map(fs_info, offset, io_size);
 
-offset has been renamed to disk_bytenr in misc-next, you'll need to refresh 
-these patches against misc-next as this doesn't apply cleanly.  Thanks,
+Same goes for this, it fails to compile on misc-next.  Thanks,
 
 Josef
