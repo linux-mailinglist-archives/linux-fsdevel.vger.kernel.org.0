@@ -2,204 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2CFC2F7FEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 16:45:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D61F22F8020
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 16:58:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732702AbhAOPpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 10:45:04 -0500
-Received: from mail.efficios.com ([167.114.26.124]:39736 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732130AbhAOPpD (ORCPT
+        id S1727357AbhAOP55 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 10:57:57 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:46920 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbhAOP55 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 10:45:03 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 70ADF2ED463;
-        Fri, 15 Jan 2021 10:44:21 -0500 (EST)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 8yqs5yHjsDgP; Fri, 15 Jan 2021 10:44:21 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 02F272ED7C8;
-        Fri, 15 Jan 2021 10:44:21 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 02F272ED7C8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1610725461;
-        bh=hHOaSuEsxF7HH6QvUOEW9vlsXyh2kshGGUnCj98GgPk=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=KWwfxa1rMdh9+imADasGtwgtoBOZI9THQY8caaIiAXtKLJpgx3OWRJiDw48iQDAED
-         D1tZG2y6PCfb2bpJ3fRyTVRkMkQtXohj6fQb41BspaJQZ0sOC/eeMbIXU4MkF+XAMJ
-         jyEZbuvzYPdnGxiZsyQyvb2U1Iha3QRQsAd3NlFL9p79KbLyx+ovP0XXolSnMMakjq
-         9hJlD86t53s/fIMHwjXGDduOwAA/gZ+m9v3BdPMx/nHBOrI5zeUClzMSSqyA1Bs3fR
-         3SY7nIYs45H86VMQR2h5i22a5l35ijbxepXiLVR01Cz7WuLxnvUN41aG7KVSZyTrDc
-         gWW+972CnB6Tg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id KZRFZ3auoPDG; Fri, 15 Jan 2021 10:44:20 -0500 (EST)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id E54D02ED7C5;
-        Fri, 15 Jan 2021 10:44:20 -0500 (EST)
-Date:   Fri, 15 Jan 2021 10:44:20 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Piotr Figiel <figiel@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        paulmck <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Michel Lespinasse <walken@google.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Peter Oskolkov <posk@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Chris Kennelly <ckennelly@google.com>,
-        Paul Turner <pjt@google.com>
-Message-ID: <1530232798.13459.1610725460826.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20210114185445.996-1-figiel@google.com>
-References: <20210114185445.996-1-figiel@google.com>
-Subject: Re: [PATCH v2] fs/proc: Expose RSEQ configuration
+        Fri, 15 Jan 2021 10:57:57 -0500
+Received: by mail-io1-f72.google.com with SMTP id a2so15507202iod.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 07:57:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=qXTsRqj7cYBPnxmeCt1odzuPUDY733T/RjyDjuaCrrw=;
+        b=IGg/t/Bw5hXsNMUAvwpKkmOV6ekxklT2t7GXBGh4Pe4FCh9rumqmby3jeB0oyCjTsB
+         HcKIhzhwGXxKCBQhL3sahpFjtgKyOjByof8+19OGNcJh0DKLUV+fma/pfvQYryPFT1Ah
+         lYc13qUFzBbE9W5ppCYQ4wvc/RICwMXTRAO6FbQIZS7Fopiwjh0NAhmdthCyOnXsHwyX
+         o2o1MMVItJ5HOwuY6ZVniQG9bPN+8YmLRu59E+v0UqONsw4XzF71e5BMmKhQWYufaEIZ
+         i2eYomteB2hyJDJ2o7Q+xEgMzJwJsieIwioVf2A6rzQVy24Z8v+pre9y0twh2JTo+r5M
+         stOQ==
+X-Gm-Message-State: AOAM530XUEcUH4t2YhwnHWl4VYAO7IncDVmv5KUuwqVNnwI5kCDminVK
+        O5DGACgq0HFpJvRlYuuOIzp0tdy2uywf9YzFCIGacJHYG/c5
+X-Google-Smtp-Source: ABdhPJyiD+fNvl8B4MqhdsVY5CPSjGxhADrupCbq/JwTVNG534yL9FLVKHRq3zE42Lw65OP5ZQc2zHtsdBYRUsWLILoZC8q+BzQ8
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3991 (ZimbraWebClient - FF84 (Linux)/8.8.15_GA_3980)
-Thread-Topic: fs/proc: Expose RSEQ configuration
-Thread-Index: fHnTuU7wnvFk0SnZHls1lGXop5OmJQ==
+X-Received: by 2002:a02:2544:: with SMTP id g65mr1543741jag.91.1610726236762;
+ Fri, 15 Jan 2021 07:57:16 -0800 (PST)
+Date:   Fri, 15 Jan 2021 07:57:16 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002c365205b8f26d09@google.com>
+Subject: WARNING in io_uring_flush
+From:   syzbot <syzbot+a32b546d58dde07875a1@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ On Jan 14, 2021, at 1:54 PM, Piotr Figiel figiel@google.com wrote:
+Hello,
 
-Added PeterZ, Paul and Boqun to CC. They are also listed as maintainers of rseq.
-Please CC them in your next round of patches.
+syzbot found the following issue on:
 
-> For userspace checkpoint and restore (C/R) some way of getting process
-> state containing RSEQ configuration is needed.
-> 
-> There are two ways this information is going to be used:
-> - to re-enable RSEQ for threads which had it enabled before C/R
-> - to detect if a thread was in a critical section during C/R
-> 
-> Since C/R preserves TLS memory and addresses RSEQ ABI will be restored
-> using the address registered before C/R.
+HEAD commit:    14662050 Merge tag 'linux-kselftest-fixes-5.11-rc4' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a09ed0d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c066f800cf2824be
+dashboard link: https://syzkaller.appspot.com/bug?extid=a32b546d58dde07875a1
+compiler:       gcc (GCC) 10.1.0-syz 20200507
 
-Indeed, if the process goes through a checkpoint/restore while within a
-rseq c.s., that critical section should abort. Given that it's only the
-restored process which resumes user-space execution, there should be some
-way to ensure that the rseq tls pointer is restored before that thread goes
-back to user-space, or some way to ensure the rseq TLS is registered
-before that thread returns to the saved instruction pointer.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-How do you plan to re-register the rseq TLS for each thread upon restore ?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a32b546d58dde07875a1@syzkaller.appspotmail.com
 
-I suspect you move the return IP to the abort either at checkpoint or restore
-if you detect that the thread is running in a rseq critical section.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 11100 at fs/io_uring.c:9096 io_uring_flush+0x326/0x3a0 fs/io_uring.c:9096
+Modules linked in:
+CPU: 1 PID: 11100 Comm: syz-executor.3 Not tainted 5.11.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_uring_flush+0x326/0x3a0 fs/io_uring.c:9096
+Code: e9 58 fe ff ff e8 6a 21 9b ff 49 c7 84 24 a0 00 00 00 00 00 00 00 e9 aa fe ff ff e8 44 9c dd ff e9 91 fd ff ff e8 4a 21 9b ff <0f> 0b e9 51 ff ff ff e8 3e 9c dd ff e9 06 fd ff ff 4c 89 f7 e8 31
+RSP: 0018:ffffc90000fd7aa0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff8880758de140 RSI: ffffffff81d7aac6 RDI: 0000000000000003
+RBP: ffff8880264d8500 R08: 0000000000000000 R09: 0000000028eda801
+R10: ffffffff81d7aa15 R11: 0000000000000000 R12: ffff888035f73000
+R13: ffff888028eda801 R14: ffff888035f73040 R15: ffff888035f730d0
+FS:  0000000000000000(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f16cd441710 CR3: 000000006924f000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ filp_close+0xb4/0x170 fs/open.c:1280
+ close_files fs/file.c:401 [inline]
+ put_files_struct fs/file.c:416 [inline]
+ put_files_struct+0x1cc/0x350 fs/file.c:413
+ exit_files+0x7e/0xa0 fs/file.c:433
+ do_exit+0xc22/0x2ae0 kernel/exit.c:820
+ do_group_exit+0x125/0x310 kernel/exit.c:922
+ get_signal+0x3e9/0x20a0 kernel/signal.c:2770
+ arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
+ handle_signal_work kernel/entry/common.c:147 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+ exit_to_user_mode_prepare+0x148/0x250 kernel/entry/common.c:201
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+ syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45e219
+Code: Unable to access opcode bytes at RIP 0x45e1ef.
+RSP: 002b:00007f49d69f3c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffe0 RBX: 0000000000000006 RCX: 000000000045e219
+RDX: ffffffffffffffef RSI: 0000000020d7cfcb RDI: 0000000000000007
+RBP: 000000000119bfd8 R08: 0000000000000000 R09: 00000000ffffffd8
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000119bf8c
+R13: 00007fff13b97d2f R14: 00007f49d69f49c0 R15: 000000000119bf8c
 
-> 
-> Detection whether the thread is in a critical section during C/R is
-> needed to enforce behavior of RSEQ abort during C/R. Attaching with
-> ptrace() before registers are dumped itself doesn't cause RSEQ abort.
 
-Right, because the RSEQ abort is only done when going back to user-space,
-and AFAIU the checkpointed process will cease to exist, and won't go back
-to user-space, therefore bypassing any RSEQ abort.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> Restoring the instruction pointer within the critical section is
-> problematic because rseq_cs may get cleared before the control is
-> passed to the migrated application code leading to RSEQ invariants not
-> being preserved.
-
-The commit message should state that both the per-thread rseq TLS area address
-and the signature are dumped within this new proc file.
-
-> 
-> Signed-off-by: Piotr Figiel <figiel@google.com>
-> 
-> ---
-> 
-> v2:
-> - fixed string formatting for 32-bit architectures
-> 
-> v1:
-> - https://lkml.kernel.org/r/20210113174127.2500051-1-figiel@google.com
-> 
-> ---
-> fs/proc/base.c | 21 +++++++++++++++++++++
-> 1 file changed, 21 insertions(+)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index b3422cda2a91..7cc36a224b8b 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -662,6 +662,21 @@ static int proc_pid_syscall(struct seq_file *m, struct
-> pid_namespace *ns,
-> 
-> 	return 0;
-> }
-> +
-> +#ifdef CONFIG_RSEQ
-> +static int proc_pid_rseq(struct seq_file *m, struct pid_namespace *ns,
-> +				struct pid *pid, struct task_struct *task)
-> +{
-> +	int res = lock_trace(task);
-
-AFAIU lock_trace prevents concurrent exec() from modifying the task's content.
-What prevents a concurrent rseq register/unregister to be executed concurrently
-with proc_pid_rseq ?
-
-> +
-> +	if (res)
-> +		return res;
-> +	seq_printf(m, "%tx %08x\n", (ptrdiff_t)((uintptr_t)task->rseq),
-
-I wonder if all those parentheses are needed. Wouldn't it be enough to have:
-
-  (ptrdiff_t)(uintptr_t)task->rseq
-
-?
-
-Thanks,
-
-Mathieu
-
-> +		   task->rseq_sig);
-> +	unlock_trace(task);
-> +	return 0;
-> +}
-> +#endif /* CONFIG_RSEQ */
-> #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
-> 
-> /************************************************************************/
-> @@ -3182,6 +3197,9 @@ static const struct pid_entry tgid_base_stuff[] = {
-> 	REG("comm",      S_IRUGO|S_IWUSR, proc_pid_set_comm_operations),
-> #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
-> 	ONE("syscall",    S_IRUSR, proc_pid_syscall),
-> +#ifdef CONFIG_RSEQ
-> +	ONE("rseq",       S_IRUSR, proc_pid_rseq),
-> +#endif
-> #endif
-> 	REG("cmdline",    S_IRUGO, proc_pid_cmdline_ops),
-> 	ONE("stat",       S_IRUGO, proc_tgid_stat),
-> @@ -3522,6 +3540,9 @@ static const struct pid_entry tid_base_stuff[] = {
-> 			 &proc_pid_set_comm_operations, {}),
-> #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
-> 	ONE("syscall",   S_IRUSR, proc_pid_syscall),
-> +#ifdef CONFIG_RSEQ
-> +	ONE("rseq",      S_IRUSR, proc_pid_rseq),
-> +#endif
-> #endif
-> 	REG("cmdline",   S_IRUGO, proc_pid_cmdline_ops),
-> 	ONE("stat",      S_IRUGO, proc_tid_stat),
-> --
-> 2.30.0.284.gd98b1dd5eaa7-goog
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
