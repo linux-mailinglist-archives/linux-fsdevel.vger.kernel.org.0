@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B7E2F731F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 07:57:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C992F7322
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 07:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728900AbhAOG51 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 01:57:27 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41752 "EHLO
+        id S1729058AbhAOG5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 01:57:30 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41699 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbhAOG5Z (ORCPT
+        with ESMTP id S1725880AbhAOG5a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 01:57:25 -0500
+        Fri, 15 Jan 2021 01:57:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1610693845; x=1642229845;
+  t=1610693849; x=1642229849;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Byrp/LbzSYs1xXDKYbLKlz6PUoB9ASc9IQVGmlw34ZI=;
-  b=RO5ftpEjR1HN7x8HYaX5OhE6xMt04+i+5jrtYuLBpx44KYj5fEf/KYzm
-   Sfk69371m2mjGSS/VxKbzLQJGU+VS2CJcwdKcOonuy8lBAXv9ajVe2qmr
-   NTkfEtmDHrD46CDjBHtH1WTN0fSYH9y9vK2uSh+SNnm4TW2kXwaVI421Q
-   VSb/fTqNo/VsmUkJb3K/yeKR4MgULEU3t7R/AITSmbEZgTCF8ckDEPFZG
-   Rh5EjD8L0LAVaiGaLxtZf0ozFqQROCJackhyMFeLV5IjMuXDV/rr9L0p3
-   RpSmL/U+iZTd4LNWFJNNlrcH0itHIQIWTtoCPlqVGL4PO3G0v444PGi4R
-   A==;
-IronPort-SDR: vhQDqloJbrDgYVL1NVjJzN8XOcltq0T7s8tHxN7921bYz8Llsnox7HIHoJZLa0kQ5QAHqtyTDG
- OQN5VNbu7NBFOaq3luUReS50KpAEHcqGI+riMFOPU1+bSGfVlg+VvcSKZlQkGh6+7Ea47DS9t4
- k4j72/ay6/FkZXYD1lFcfMrxCz2MAFH/yonsESiMa0J8ZdIo42NPN7ZQaq+7sosDCg5Fe6DeVh
- 4RGTzN8j7k/Ca/0X7KQrAf1j4ZecrA2gwSV4GnKt1Ql2tQrFMPR/XmbVpXZDpFmVLLfKDu6HvU
- F6M=
+  bh=+sm/fN9W8fQlbkokpHeAJyDbUy6ZvDK+xuK+VUwTBA0=;
+  b=TeIyyU93r1kARo04fflPwawdW4N/o+5s2PfDtU9I/g31vEe2cmLBtrcy
+   tN+7FVaTqQp/CQ4SMg9IuAO/jjdTdT+1Jwj48WM1L5hs3XBplYpAqtqEL
+   xvcUsymYbFkw35Osn96Ompsf8Pf1MT0d8dJuIMhrNc5SN3eYOui00y5aD
+   4JGpWvHCGF9c556IuKcV9e8PokKIPmVC3dSsQ8VLezLcNqrl9K29ZykFu
+   f6STl5gXyJ7t2DPVus0PpYQOrUuDw6Sixw93WZEPINKysqly9aYGOLDfw
+   bnyJGBVlYgsJmYEPvwJAIs3D4EAl9z4DQqjci7e9UBAKciYqJp9L7jLm0
+   g==;
+IronPort-SDR: kxZ+lnk7gxkWp5RM/Z0f9inHXqEWK3uYU+BfpskStmhWdApkPaIMnUN/A6d9ZKvSkXOCE53UDi
+ fmEzx5VDdWhHufigGpatPzkS0gD5qHsW3xfNabyvHzxkz+Vjv+1R697FmELxacx5KQTvTSnCJs
+ mLPClhR3nNoaDTEXKRmJUav6cQX9bVQdyFtlGA9L28KfGT2xwJIjikl1qQP6M+BMXGdcxpsGVh
+ efgC2OMrrVwMrUvHjnaXICv7FlXhPa4MXopJFwHh0t8noBOAXJHkO+SPKFOLOWqMs3VzLZBTTM
+ Zw0=
 X-IronPort-AV: E=Sophos;i="5.79,348,1602518400"; 
-   d="scan'208";a="161928208"
+   d="scan'208";a="161928211"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2021 14:55:19 +0800
-IronPort-SDR: 5J5uVGCifczXO2u901plnq7cxl1e/H1CakayXpYRV8ULevzhBjhkF8mfwMoG0L4hxe9xTZMeGu
- RI0km1GUIVt32ZnpSic5jDBe7CMZqI6ESDzKBoUyClAf87bsZoSV9tvYr/vvmjgBwEQ0ax40Cl
- RSY5TUDWotP3rHNJeddTzMdhdxlnR/HhjCLTJIhKh7XDn5TfPJouxxyW2yHITTmnecOoTUBw2d
- J190NEn/9d7KGRMHE9xbhr0zxKSwJ/zN1LycI1DRIJRMxrahUdTGk+5od86kUo8OJ8scqN1edM
- 1l4DDksjsZtLwi9v8wN99tnk
+  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2021 14:55:21 +0800
+IronPort-SDR: dYqUbAChu9yXpnhhPd65RKTh0i3D2GoPT3yVNGEj6OyfvmtynXfhTMDTFxsExomoyFxgLTwYGS
+ K89cEXTXePlEEOZQ5a3ntlDD+KC9SObjvhYNvn2F/AScQM9t0Yy9mEPr6Y3WYrZT48KnsDLXIo
+ 0HBd2CAeXTAvrWmWRyVm8/vNR11osoIsAFQax7V4Y6j1U85KdoDXx5unnrXapTs9wye3Il9URK
+ D9c1dRwtaqUg4PKZALaqCSpxrHA2egcklNMeQcYM+cCj/ymfm4WutiKjQQ/Eps095dCMa6wW8/
+ 2/hRFD0kNMpPJszoFg2zf1LL
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2021 22:40:01 -0800
-IronPort-SDR: aS3qfFUm1unC9zYPY7Dw+hGU8hkExSGWCzmOUrURlNJgg5Nj5wt9xe0tNpci4TkJe0hgmuWWoS
- ZoxJ8byx35sJdHzEYAaIrrqqGTfMtbTXgf2TIe60DTdcevn3EjGsZ1EVx1LE1xVETajNX226Vv
- nsSZndrPUF+rPYi0ELG95CpYZtmcZYsDpNDe98xT1T6LG8LfXt1DxXCxjOXmUrMgMcBD44n7Ez
- 0F3cGq1AMs2KNHADSZ7Cs0K4OdG2px/yMnIicM5HFHF5OLuu+4SmNYvGgNcIEXKAvbLKKrl/XO
- FRA=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2021 22:40:03 -0800
+IronPort-SDR: yAVdE8XbQlbDTyISudm+I4aKhRhJFH7RIbkfOZOe+shlY+Zkfx6bv81AHEJDPW61LAGEwuTRvM
+ YqzNs4KHfkdGYHwQ8yg8voaD9l3ZUBYbDPgxtqrrUgsWuMqCjqY/WtJgupJAVVA5NiAwQqBsJw
+ 87yF0qYe8BBUcDPMHdLE8kk7u3eIZHzBo9tXJ3uZXhl0znbrRfNqpOn6nMoYCb+20lBeXNRaVc
+ xR19guF8xYrqqMKS2HcDmp6q8p+b2wynLW7UdLIBJG7FKfmEWoRwxySOBZt0VhXJnZ/owpUju3
+ qI4=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 14 Jan 2021 22:55:17 -0800
-Received: (nullmailer pid 1916434 invoked by uid 1000);
+  by uls-op-cesaip01.wdc.com with SMTP; 14 Jan 2021 22:55:19 -0800
+Received: (nullmailer pid 1916436 invoked by uid 1000);
         Fri, 15 Jan 2021 06:55:02 -0000
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
@@ -58,10 +58,11 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v12 08/41] btrfs: allow zoned mode on non-zoned block devices
-Date:   Fri, 15 Jan 2021 15:53:11 +0900
-Message-Id: <b80a551167d92406924050e9ccbcd872f84fa857.1610693037.git.naohiro.aota@wdc.com>
+Subject: [PATCH v12 08/41] btrfs: emulated zoned mode on non-zoned devices
+Date:   Fri, 15 Jan 2021 15:53:12 +0900
+Message-Id: <20210115065502.1911839-1-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1610693036.git.naohiro.aota@wdc.com>
 References: <cover.1610693036.git.naohiro.aota@wdc.com>
@@ -73,7 +74,7 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Run zoned btrfs mode on non-zoned devices. This is done by "slicing
+Emulate zoned btrfs mode on non-zoned devices. This is done by "slicing
 up" the block-device into static sized chunks and fake a conventional zone
 on each of them. The emulated zone size is determined from the size of
 device extent.
@@ -81,26 +82,22 @@ device extent.
 This is mainly aimed at testing parts of the zoned mode, i.e. the zoned
 chunk allocator, on regular block devices.
 
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/zoned.c | 149 +++++++++++++++++++++++++++++++++++++++++++----
+ fs/btrfs/zoned.c | 139 +++++++++++++++++++++++++++++++++++++++++++----
  fs/btrfs/zoned.h |  14 +++--
- 2 files changed, 147 insertions(+), 16 deletions(-)
+ 2 files changed, 137 insertions(+), 16 deletions(-)
 
 diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 684dad749a8c..13b240e5db4e 100644
+index 684dad749a8c..23ecf1cd3490 100644
 --- a/fs/btrfs/zoned.c
 +++ b/fs/btrfs/zoned.c
-@@ -119,6 +119,37 @@ static inline u32 sb_zone_number(int shift, int mirror)
+@@ -119,14 +119,48 @@ static inline u32 sb_zone_number(int shift, int mirror)
  	return 0;
  }
  
-+/*
-+ * Emulate blkdev_report_zones() for a non-zoned device. It slice up
-+ * the block device into static sized chunks and fake a conventional zone
-+ * on each of them.
-+ */
 +static int emulate_report_zones(struct btrfs_device *device, u64 pos,
 +				struct blk_zone *zones, unsigned int nr_zones)
 +{
@@ -130,7 +127,10 @@ index 684dad749a8c..13b240e5db4e 100644
  static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
  			       struct blk_zone *zones, unsigned int *nr_zones)
  {
-@@ -127,6 +158,12 @@ static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
+ 	int ret;
+ 
++	ASSERT(btrfs_is_zoned(device->fs_info));
++
  	if (!*nr_zones)
  		return 0;
  
@@ -143,11 +143,10 @@ index 684dad749a8c..13b240e5db4e 100644
  	ret = blkdev_report_zones(device->bdev, pos >> SECTOR_SHIFT, *nr_zones,
  				  copy_zone_info_cb, zones);
  	if (ret < 0) {
-@@ -143,6 +180,50 @@ static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
+@@ -143,6 +177,49 @@ static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
  	return 0;
  }
  
-+/* The emulated zone size is determined from the size of device extent. */
 +static int calculate_emulated_zone_size(struct btrfs_fs_info *fs_info)
 +{
 +	struct btrfs_path *path;
@@ -194,7 +193,7 @@ index 684dad749a8c..13b240e5db4e 100644
  int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_info *fs_info)
  {
  	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
-@@ -169,6 +250,7 @@ int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_info *fs_info)
+@@ -169,6 +246,7 @@ int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_info *fs_info)
  
  int btrfs_get_dev_zone_info(struct btrfs_device *device)
  {
@@ -202,7 +201,7 @@ index 684dad749a8c..13b240e5db4e 100644
  	struct btrfs_zoned_device_info *zone_info = NULL;
  	struct block_device *bdev = device->bdev;
  	struct request_queue *queue = bdev_get_queue(bdev);
-@@ -177,9 +259,14 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
+@@ -177,9 +255,14 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
  	struct blk_zone *zones = NULL;
  	unsigned int i, nreported = 0, nr_zones;
  	unsigned int zone_sectors;
@@ -218,7 +217,7 @@ index 684dad749a8c..13b240e5db4e 100644
  		return 0;
  
  	if (device->zone_info)
-@@ -189,8 +276,20 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
+@@ -189,8 +272,20 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
  	if (!zone_info)
  		return -ENOMEM;
  
@@ -240,7 +239,7 @@ index 684dad749a8c..13b240e5db4e 100644
  	/* Check if it's power of 2 (see is_power_of_2) */
  	ASSERT(zone_sectors != 0 && (zone_sectors & (zone_sectors - 1)) == 0);
  	zone_info->zone_size = zone_sectors << SECTOR_SHIFT;
-@@ -296,12 +395,32 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
+@@ -296,12 +391,32 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
  
  	device->zone_info = zone_info;
  
@@ -279,7 +278,7 @@ index 684dad749a8c..13b240e5db4e 100644
  
  	return 0;
  
-@@ -348,7 +467,7 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+@@ -348,7 +463,7 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
  	u64 nr_devices = 0;
  	u64 zone_size = 0;
  	u64 max_zone_append_size = 0;
@@ -288,16 +287,9 @@ index 684dad749a8c..13b240e5db4e 100644
  	int ret = 0;
  
  	/* Count zoned devices */
-@@ -359,9 +478,17 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
- 			continue;
+@@ -360,8 +475,10 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
  
  		model = bdev_zoned_model(device->bdev);
-+		/*
-+		 * A Host-Managed zoned device msut be used as a zoned
-+		 * device. A Host-Aware zoned device and a non-zoned devices
-+		 * can be treated as a zoned device, if ZONED flag is
-+		 * enabled in the superblock.
-+		 */
  		if (model == BLK_ZONED_HM ||
 -		    (model == BLK_ZONED_HA && incompat_zoned)) {
 -			struct btrfs_zoned_device_info *zone_info;
