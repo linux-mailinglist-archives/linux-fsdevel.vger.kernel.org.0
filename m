@@ -2,71 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67AB92F881D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 23:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDBA42F882F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 23:09:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbhAOWER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 17:04:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49588 "EHLO
+        id S1726417AbhAOWIL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 17:08:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725918AbhAOWEQ (ORCPT
+        with ESMTP id S1726236AbhAOWIK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 17:04:16 -0500
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91BE3C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:03:36 -0800 (PST)
-Received: by mail-qv1-xf2f.google.com with SMTP id l14so4734413qvh.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:03:36 -0800 (PST)
+        Fri, 15 Jan 2021 17:08:10 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41C8C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:07:29 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id w79so13230597qkb.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:07:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BI7NmpJ8bb6Ryf6z7JDJSpiAPrw0wXW+V+3D6pFFPP4=;
-        b=zT/XDvR0DDjHutPcSmbdNheGNE2vTq489LcaWpBzHR6KFg3arUrjznQSLt53RYoUYc
-         062FwPpcHI3n+bIiQLk6qYQ3GtRL6sTVrBl3bb1+6UclNoZxxBt+JyegfcjkHy9shDNZ
-         M5R3QhNhZ8Gm1kWm7vU/tb7xkzCKAw4EsyvH8n4/KaMg/BHFxuoO0kiHU5XDeiSu13gM
-         tdWabdQmfydUc/nSZYEVVkOAFjWY8xnGd0XB+Z0gwGOg2SYwyAqRo/D4yIGeMefgUQvp
-         4MhfTMIN4+mfeRsMq9ntkQaH4LV46QSKK5gShK3Lyn53AVY8OlrOgI51pNu5jyJWUVWt
-         TXkA==
+        bh=uNzL673GdviGLPz+r57IyRVxYAdl4OzcJ2xyxyIRfo0=;
+        b=uk1p8nQuxM+wcf1gz1dHqIyhfinS6CMkT9Gzkxr1Urqh/QJAgvSB3II5AsQ84unwSG
+         1ACmKfjXqaeRYN0lujwhUCL0TN2R8tuEykFPp87lSL4aheMyicyPh+YeiuyU+hAUJnsT
+         zXN3TeWVKY+szlBuMrK2y4TBf4ZB0UjG0J/65NjfBB8BE9B67cf5oFP0j/PBQGR07sry
+         PtmZ2cbyhHa9bCKR/zFSt4cfbaSoxUmQZKJ1q2fXmDC3ZBcud09nhc+Jl0EHAeAcQNPl
+         viWG6AKKA4pOGurJgCH4BDEdmzK2w9xEffyoS/fU9wV6AMIDFSYEoR5YdLhLrvUfLQMh
+         dmuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=BI7NmpJ8bb6Ryf6z7JDJSpiAPrw0wXW+V+3D6pFFPP4=;
-        b=iohcL/obIsio34UUK0NIPs/uTrobf1GJs5xqjeUxsPYgVKuu/gdvcm01HY5OEuQImO
-         CXsZeUvrU8qEsQytSqagiDkzMBcfezDMuNetgrRRXt2erCE7OZOGcrFD+AAw4BaKZHGt
-         EkdKg7pLUdsaiBvi78b5FRfpp3TFpNUEvHZtLRpZaVFFge5baXgQHxTUSNhntuBJ5ozc
-         qZO/xchwkHlMgMtflKJAYAuB/l4oYLkqVtWXlyaMJJ4VL3veYp8vqh5L5E2duH66h0hi
-         kYhHcFdpVrm0UOWM15pMr2M7h+Z1KMGytCC84gNRp2C8egsv9nUXd5YXruFUVpTxoTfA
-         dr0w==
-X-Gm-Message-State: AOAM530CJ3dEEbM7FbnJxKMueW8k+MbUPJg2DX92EeN/mCs9hocRO+Qx
-        nSa2Y8c7tT+0pyOiGHGJTLmG9Q==
-X-Google-Smtp-Source: ABdhPJy84w//V2a86cpwW34/OVJ6oIcEoSgdqnDzutmJ8gO5nFYD0WYb1eN0xClPl1zYF5rRI90t3g==
-X-Received: by 2002:a05:6214:a14:: with SMTP id dw20mr14125886qvb.43.1610748215770;
-        Fri, 15 Jan 2021 14:03:35 -0800 (PST)
+        bh=uNzL673GdviGLPz+r57IyRVxYAdl4OzcJ2xyxyIRfo0=;
+        b=XDMlymbCO2FpeMm14B1+hD/55dXr5T9VH7tfMLtura0xGvsUD7gBwwryv49dMcThHf
+         JrxfP2WF8E9EXIl459Q2zGEZPBj6hRRoFR9Iim63COxkBk2s5agjrO/IaxqESW6GwN5O
+         PjghH5vcCBdzVEd7uRlbkMiQiviMsgJQZ70kVRPFTbuvQ3KbyzQmIcmlhfoyE5bKm4fI
+         UwwlGhQUSKQ7Ap6oT8PcDoE6T11+2hO2E/HtJeEJqEn5DiuXvBa8DpEGxzVZKzU/pXBR
+         yFQvTXxv64bcFgQcc0ZgEAff4GDv59ajENg5ZSDH0Vp4nuWpCcEwX6XHXudUiT4WwPIv
+         dNJg==
+X-Gm-Message-State: AOAM53200SHU2fb9zess+t44L830iScaYIZGH8c3LSn0maEW5uBpYbyv
+        dhnXyYpJ+VavlYgKaNGfb04u8sHJvnoa0tA7
+X-Google-Smtp-Source: ABdhPJy8LJ3vY+ygYvG5UTSU/TrRD21jDXS4xq85RrA1oK/tCEYIK3ZBNYMe9dnFJr3RZEnsKnm4fA==
+X-Received: by 2002:a37:bcc6:: with SMTP id m189mr14595003qkf.88.1610748449043;
+        Fri, 15 Jan 2021 14:07:29 -0800 (PST)
 Received: from ?IPv6:2620:10d:c0a8:11e1::105d? ([2620:10d:c091:480::1:cc17])
-        by smtp.gmail.com with ESMTPSA id i13sm5756623qkk.83.2021.01.15.14.03.34
+        by smtp.gmail.com with ESMTPSA id m85sm5959788qke.33.2021.01.15.14.07.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 14:03:35 -0800 (PST)
-Subject: Re: [PATCH v12 01/41] block: add bio_add_zone_append_page
+        Fri, 15 Jan 2021 14:07:28 -0800 (PST)
+Subject: Re: [PATCH v12 08/41] btrfs: allow zoned mode on non-zoned block
+ devices
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Christoph Hellwig <hch@lst.de>
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
 References: <cover.1610693036.git.naohiro.aota@wdc.com>
- <8d02dae71ff7ec934bc3155850e2e2b030b7dbbe.1610693037.git.naohiro.aota@wdc.com>
+ <b80a551167d92406924050e9ccbcd872f84fa857.1610693037.git.naohiro.aota@wdc.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <53a3b32d-c0ba-aa8c-1f2c-bed851cdf806@toxicpanda.com>
-Date:   Fri, 15 Jan 2021 17:03:33 -0500
+Message-ID: <e026431f-1cbe-fd28-c4f8-0bee4b26de16@toxicpanda.com>
+Date:   Fri, 15 Jan 2021 17:07:26 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <8d02dae71ff7ec934bc3155850e2e2b030b7dbbe.1610693037.git.naohiro.aota@wdc.com>
+In-Reply-To: <b80a551167d92406924050e9ccbcd872f84fa857.1610693037.git.naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,16 +77,42 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 1/15/21 1:53 AM, Naohiro Aota wrote:
 > From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> Add bio_add_zone_append_page(), a wrapper around bio_add_hw_page() which
-> is intended to be used by file systems that directly add pages to a bio
-> instead of using bio_iov_iter_get_pages().
+> Run zoned btrfs mode on non-zoned devices. This is done by "slicing
+> up" the block-device into static sized chunks and fake a conventional zone
+> on each of them. The emulated zone size is determined from the size of
+> device extent.
 > 
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> This is mainly aimed at testing parts of the zoned mode, i.e. the zoned
+> chunk allocator, on regular block devices.
+> 
 > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>   fs/btrfs/zoned.c | 149 +++++++++++++++++++++++++++++++++++++++++++----
+>   fs/btrfs/zoned.h |  14 +++--
+>   2 files changed, 147 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> index 684dad749a8c..13b240e5db4e 100644
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -119,6 +119,37 @@ static inline u32 sb_zone_number(int shift, int mirror)
+>   	return 0;
+>   }
+>   
+> +/*
+> + * Emulate blkdev_report_zones() for a non-zoned device. It slice up
+> + * the block device into static sized chunks and fake a conventional zone
+> + * on each of them.
+> + */
+> +static int emulate_report_zones(struct btrfs_device *device, u64 pos,
+> +				struct blk_zone *zones, unsigned int nr_zones)
+> +{
+> +	const sector_t zone_sectors =
+> +		device->fs_info->zone_size >> SECTOR_SHIFT;
+> +	sector_t bdev_size = device->bdev->bd_part->nr_sects;
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-
-Thanks,
+This needs to be changed to bdev_nr_sectors(), it fails to compile on misc-next. 
+  This patch also fails to apply to misc-next as well.  Thanks,
 
 Josef
