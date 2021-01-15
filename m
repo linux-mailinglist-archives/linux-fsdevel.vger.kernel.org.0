@@ -2,110 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D3D2F8300
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 18:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A966F2F8416
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 19:21:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbhAORxM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 12:53:12 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33202 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726402AbhAORxL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 12:53:11 -0500
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 10FHpKnV022119
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 15 Jan 2021 12:51:21 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 3494715C399F; Fri, 15 Jan 2021 12:51:20 -0500 (EST)
-Date:   Fri, 15 Jan 2021 12:51:20 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        St?phane Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v5 00/42] idmapped mounts
-Message-ID: <YAHWGMb9rTehRsRz@mit.edu>
-References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210114171241.GA1164240@magnolia>
- <20210114204334.GK331610@dread.disaster.area>
- <20210115162423.GB2179337@infradead.org>
+        id S2388510AbhAOSUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 13:20:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388218AbhAOSUN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 Jan 2021 13:20:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3550423A58;
+        Fri, 15 Jan 2021 18:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610734772;
+        bh=7HZGCsiZfKx7k8RTP6gegLOEC7SUZGN0WL2KEa1MIqw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OLgSi9dXP1/YkA9HyFOY/X6hDj3RaQ6Ohe7A5+afoRqJVi76p4BsVaWFg67i7xPN+
+         6tZ+JGUzOYkAc4C6Sqpk7z0yCXnts0hnTQUE9wijYEKFxyXOS+SYpEz0qXShSdLEMS
+         IeVxDBKO7PWFFEmTKsOKfgQW8p3OWYonyQJLlena81DsNsqLA9MvUbaXw3qdaBVUFQ
+         RlvnXyxdljEpWdHSNlQ0ZgoJ6VenS6b64yLhH9TfUezjo6pSp27OciWtK9MAPSrZ7P
+         yat9Uam8Fm2+YLYUl4HU+10eRYuebg0aC9S/umMOtp6WfZpH/R0zghGYgHcWvoPGz3
+         P26n77xWu0DGw==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-api@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: [PATCH 0/6] fs-verity: add an ioctl to read verity metadata
+Date:   Fri, 15 Jan 2021 10:18:13 -0800
+Message-Id: <20210115181819.34732-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210115162423.GB2179337@infradead.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 04:24:23PM +0000, Christoph Hellwig wrote:
-> 
-> That is what the capabilities are designed for and we already check
-> for them.
+[This patchset applies to v5.11-rc3]
 
-So perhaps I'm confused, but my understanding is that in the
-containers world, capabilities are a lot more complicated.  There is:
+Add an ioctl FS_IOC_READ_VERITY_METADATA which allows reading verity
+metadata from a file that has fs-verity enabled, including:
 
-1) The initial namespace capability set
+- The Merkle tree
+- The fsverity_descriptor (not including the signature if present)
+- The built-in signature, if present
 
-2) The container's user-namespace capability set
+This ioctl has similar semantics to pread().  It is passed the type of
+metadata to read (one of the above three), and a buffer, offset, and
+size.  It returns the number of bytes read or an error.
 
-3) The namespace in which the file system is mounted --- which is
-      "usually, but not necessarily the initial namespace" and
-      presumably could potentially not necessarily be the current
-      container's user name space, is namespaces can be hierarchically
-      arranged.
+This ioctl doesn't make any assumption about where the metadata is
+stored on-disk.  It does assume the metadata is in a stable format, but
+that's basically already the case:
 
-Is that correct?  If so, how does this patch set change things (if
-any), and and how does this interact with quota administration
-operations?
+- The Merkle tree and fsverity_descriptor are defined by how fs-verity
+  file digests are computed; see the "File digest computation" section
+  of Documentation/filesystems/fsverity.rst.  Technically, the way in
+  which the levels of the tree are ordered relative to each other wasn't
+  previously specified, but it's logical to put the root level first.
 
-On a related note, ext4 specifies a "reserved user" or "reserved
-group" which can access the reserved blocks.  If we have a file system
-which is mounted in a namespace running a container which is running
-RHEL or SLES, and in that container, we have a file system mounted (so
-it was not mounted in the initial namespace), with id-mapping --- and
-then there is a further sub-container created with its own user
-sub-namespace further mapping uids/gids --- will the right thing
-happen?  For that matter, how *is* the "right thing" defined?
+- The built-in signature is the value passed to FS_IOC_ENABLE_VERITY.
 
-Sorry if this is a potentially stupid question, but I find user
-namespaces and id and capability mapping to be hopefully confusing for
-my tiny brain.  :-)
+This ioctl is useful because it allows writing a server program that
+takes a verity file and serves it to a client program, such that the
+client can do its own fs-verity compatible verification of the file.
+This only makes sense if the client doesn't trust the server and if the
+server needs to provide the storage for the client.
 
-						- Ted
+More concretely, there is interest in using this ability in Android to
+export APK files (which are protected by fs-verity) to "protected VMs".
+This would use Protected KVM (https://lwn.net/Articles/836693), which
+provides an isolated execution environment without having to trust the
+traditional "host".  A "guest" VM can boot from a signed image and
+perform specific tasks in a minimum trusted environment using files that
+have fs-verity enabled on the host, without trusting the host or
+requiring that the guest has its own trusted storage.
+
+Technically, it would be possible to duplicate the metadata and store it
+in separate files for serving.  However, that would be less efficient
+and would require extra care in userspace to maintain file consistency.
+
+In addition to the above, the ability to read the built-in signatures is
+useful because it allows a system that is using the in-kernel signature
+verification to migrate to userspace signature verification.
+
+This patchset has been tested by new xfstests which call this new ioctl
+via a new subcommand for the 'fsverity' program from fsverity-utils.
+
+Eric Biggers (6):
+  fs-verity: factor out fsverity_get_descriptor()
+  fs-verity: don't pass whole descriptor to fsverity_verify_signature()
+  fs-verity: add FS_IOC_READ_VERITY_METADATA ioctl
+  fs-verity: support reading Merkle tree with ioctl
+  fs-verity: support reading descriptor with ioctl
+  fs-verity: support reading signature with ioctl
+
+ Documentation/filesystems/fsverity.rst |  76 ++++++++++
+ fs/ext4/ioctl.c                        |   7 +
+ fs/f2fs/file.c                         |  11 ++
+ fs/verity/Makefile                     |   1 +
+ fs/verity/fsverity_private.h           |  13 +-
+ fs/verity/open.c                       | 133 +++++++++++------
+ fs/verity/read_metadata.c              | 195 +++++++++++++++++++++++++
+ fs/verity/signature.c                  |  20 +--
+ include/linux/fsverity.h               |  12 ++
+ include/uapi/linux/fsverity.h          |  14 ++
+ 10 files changed, 417 insertions(+), 65 deletions(-)
+ create mode 100644 fs/verity/read_metadata.c
+
+
+base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+-- 
+2.30.0
+
