@@ -2,163 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB862F74CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 10:02:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 648762F74F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 10:11:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbhAOJBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 04:01:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33922 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbhAOJBq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 04:01:46 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3CB7E235DD;
-        Fri, 15 Jan 2021 09:01:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610701265;
-        bh=/A9+Zdj6TeXK+0F6O2x/uxJykl7caLwG9Gsbb99EJRA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=slpAOPtS7YCDBAgE41dzMlkAmNSstSYU6QgVZardVdQRETcPFnBhz638B9MfCX9JI
-         MdQA8a9ZaP0356QuNQNixM9RlXTSng99DVtQx+anK4/dziSRPwcw8N45+yhLuETEM9
-         886mtj2yOSvuCZ9xdjVHxcnQL5P9rDdeFWP03g3+i3PqQX3bDDgY2/86xrjgWioN6n
-         Iclf3LZ1NDz6EZ+1/OORQvNiPySLtX+xZFhAN4y3Z/KRIyNLJYCmpYExV2avR6gWHH
-         jU8FsUvGN1l0NzE6s3W1dtuSTJHb0/EvTJylkIFXsvvl42gP1yJyLgCzR/dqBxgBcV
-         ASNt2zWE3woQQ==
-Received: by mail-wr1-f44.google.com with SMTP id 6so1143432wri.3;
-        Fri, 15 Jan 2021 01:01:05 -0800 (PST)
-X-Gm-Message-State: AOAM531HTNGUdL4+vR/BWQoyILMjAi8NzZ6vBC/e+L+BNspeZMSV360k
-        qLrATk46YYYL+jUu4zetFO7JsZvA5Qy4HbzsV7c=
-X-Google-Smtp-Source: ABdhPJzCQLMfJc8/rJJcn23B9XcoACgRVHugAZAivO5b5vHr1dE7chj1zH27zmTIY5/fobqope9ovRY+ySLR+C9B87M=
-X-Received: by 2002:adf:fe05:: with SMTP id n5mr12248933wrr.9.1610701263721;
- Fri, 15 Jan 2021 01:01:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20210106064807.253112-1-Sonicadvance1@gmail.com>
- <CAK8P3a2tV3HzPpbCR7mAeutx38_D2d-vfpEgpXv+GW_98w3VSQ@mail.gmail.com> <CABnRqDfQ5Qfa2ybut0qXcKuYnsMcG7+9gqjL-e7nZF1bkvhPRw@mail.gmail.com>
-In-Reply-To: <CABnRqDfQ5Qfa2ybut0qXcKuYnsMcG7+9gqjL-e7nZF1bkvhPRw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Fri, 15 Jan 2021 10:00:47 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2vfVfEWTk1ig349LGqt8bkK8YQWjE6PRyx+xvgYx7-gA@mail.gmail.com>
-Message-ID: <CAK8P3a2vfVfEWTk1ig349LGqt8bkK8YQWjE6PRyx+xvgYx7-gA@mail.gmail.com>
-Subject: Re: [PATCH] Adds a new ioctl32 syscall for backwards compatibility layers
-To:     Ryan Houdek <sonicadvance1@gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S1729295AbhAOJLR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 04:11:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51918 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728900AbhAOJLM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 Jan 2021 04:11:12 -0500
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [IPv6:2001:1600:4:17::190c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35736C061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 01:10:27 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DHFl51bMyzMprtq;
+        Fri, 15 Jan 2021 10:10:25 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DHFl26L60zlppyv;
+        Fri, 15 Jan 2021 10:10:22 +0100 (CET)
+Subject: Re: [PATCH v26 07/12] landlock: Support filesystem access-control
+To:     Jann Horn <jannh@google.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        "Amanieu d'Antras" <amanieu@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joe Perches <joe@perches.com>, Jan Kara <jack@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20201209192839.1396820-1-mic@digikod.net>
+ <20201209192839.1396820-8-mic@digikod.net>
+ <CAG48ez1wbAQwU-eoC9DngHyUM_5F01MJQpRnLaJFvfRUrnXBdA@mail.gmail.com>
+ <aeb3e152-8108-89d2-0577-4b130368f14f@digikod.net>
+ <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <9be6481f-9c03-dd32-378f-20bc7c52315c@digikod.net>
+Date:   Fri, 15 Jan 2021 10:10:36 +0100
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 3:06 AM Ryan Houdek <sonicadvance1@gmail.com> wrote:
-> On Wed, Jan 6, 2021 at 12:49 AM Arnd Bergmann <arnd@kernel.org> wrote:
->> On Wed, Jan 6, 2021 at 7:48 AM <sonicadvance1@gmail.com> wrote:
->> > From: Ryan Houdek <Sonicadvance1@gmail.com>
->> ...
+
+On 14/01/2021 23:43, Jann Horn wrote:
+> On Thu, Jan 14, 2021 at 7:54 PM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 14/01/2021 04:22, Jann Horn wrote:
+>>> On Wed, Dec 9, 2020 at 8:28 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>> Thanks to the Landlock objects and ruleset, it is possible to identify
+>>>> inodes according to a process's domain.  To enable an unprivileged
+>>>> process to express a file hierarchy, it first needs to open a directory
+>>>> (or a file) and pass this file descriptor to the kernel through
+>>>> landlock_add_rule(2).  When checking if a file access request is
+>>>> allowed, we walk from the requested dentry to the real root, following
+>>>> the different mount layers.  The access to each "tagged" inodes are
+>>>> collected according to their rule layer level, and ANDed to create
+>>>> access to the requested file hierarchy.  This makes possible to identify
+>>>> a lot of files without tagging every inodes nor modifying the
+>>>> filesystem, while still following the view and understanding the user
+>>>> has from the filesystem.
+>>>>
+>>>> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
+>>>> keep the same struct inodes for the same inodes whereas these inodes are
+>>>> in use.
+>>>>
+>>>> This commit adds a minimal set of supported filesystem access-control
+>>>> which doesn't enable to restrict all file-related actions.  This is the
+>>>> result of multiple discussions to minimize the code of Landlock to ease
+>>>> review.  Thanks to the Landlock design, extending this access-control
+>>>> without breaking user space will not be a problem.  Moreover, seccomp
+>>>> filters can be used to restrict the use of syscall families which may
+>>>> not be currently handled by Landlock.
+>>> [...]
+>>>> +static bool check_access_path_continue(
+>>>> +               const struct landlock_ruleset *const domain,
+>>>> +               const struct path *const path, const u32 access_request,
+>>>> +               u64 *const layer_mask)
+>>>> +{
+>>> [...]
+>>>> +       /*
+>>>> +        * An access is granted if, for each policy layer, at least one rule
+>>>> +        * encountered on the pathwalk grants the access, regardless of their
+>>>> +        * position in the layer stack.  We must then check not-yet-seen layers
+>>>> +        * for each inode, from the last one added to the first one.
+>>>> +        */
+>>>> +       for (i = 0; i < rule->num_layers; i++) {
+>>>> +               const struct landlock_layer *const layer = &rule->layers[i];
+>>>> +               const u64 layer_level = BIT_ULL(layer->level - 1);
+>>>> +
+>>>> +               if (!(layer_level & *layer_mask))
+>>>> +                       continue;
+>>>> +               if ((layer->access & access_request) != access_request)
+>>>> +                       return false;
+>>>> +               *layer_mask &= ~layer_level;
+>>>
+>>> Hmm... shouldn't the last 5 lines be replaced by the following?
+>>>
+>>> if ((layer->access & access_request) == access_request)
+>>>     *layer_mask &= ~layer_level;
+>>>
+>>> And then, since this function would always return true, you could
+>>> change its return type to "void".
+>>>
+>>>
+>>> As far as I can tell, the current version will still, if a ruleset
+>>> looks like this:
+>>>
+>>> /usr read+write
+>>> /usr/lib/ read
+>>>
+>>> reject write access to /usr/lib, right?
 >>
->> For x86, this has another complication, as some ioctls also need to
->> check whether they are in an ia32 task (with packed u64 and 32-bit
->> __kernel_old_time_t) or an x32 task (with aligned u64 and 64-bit
->> __kernel_old_time_t). If the new syscall gets wired up on x86 as well,
->> you'd need to decide which of the two behaviors you want.
->
->
-> I can have a follow-up patch that makes this do ni-syscall on x86_64 since
-> we can go through the int 0x80 handler, or x32 handler path and choose
-> whichever one there.
+>> If these two rules are from different layers, then yes it would work as
+>> intended. However, if these rules are from the same layer the path walk
+>> will not stop at /usr/lib but go down to /usr, which grants write
+>> access.
+> 
+> I don't see why the code would do what you're saying it does. And an
+> experiment seems to confirm what I said; I checked out landlock-v26,
+> and the behavior I get is:
 
-I'd say for consistency
+There is a misunderstanding, I was responding to your proposition to
+modify check_access_path_continue(), not about the behavior of landlock-v26.
 
->> > 3a) Userspace consumes all VA space above 32bit. Forcing allocations to
->> > occur in lower 32bits
->> >   - This is the current implementation
->> > 3b) Ensure any allocation in the ioctl handles ioctl entrypoint rather
->> > than just allow generic memory allocations in full VA space
->> >   - This is hard to guarantee
->>
->> What kind of allocation do you mean here? Can you give an example of
->> an ioctl that does this?
->>
-> My concern here would be something like DRM allocating memory and
-> returning a pointer to userspace that ends up in 64bit space.
-> I can see something like `drm_get_unmapped_area` calls in to
->  `current->mm->get_unmapped_area` which I believe only ends up falling
-> down TASK_SIZE checks.
+> 
+> user@vm:~/landlock$ dd if=/dev/null of=/tmp/aaa
+> 0+0 records in
+> 0+0 records out
+> 0 bytes copied, 0.00106365 s, 0.0 kB/s
+> user@vm:~/landlock$ LL_FS_RO='/lib' LL_FS_RW='/' ./sandboxer dd
+> if=/dev/null of=/tmp/aaa
+> 0+0 records in
+> 0+0 records out
+> 0 bytes copied, 0.000491814 s, 0.0 kB/s
+> user@vm:~/landlock$ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd
+> if=/dev/null of=/tmp/aaa
+> dd: failed to open '/tmp/aaa': Permission denied
+> user@vm:~/landlock$
+> 
+> Granting read access to /tmp prevents writing to it, even though write
+> access was granted to /.
+> 
 
-I see.
+It indeed works like this with landlock-v26. However, with your above
+proposition, it would work like this:
 
-> Which could potentially return pointers in the 64bit address space range
-> in this case. Theoretically can be resolved either by thieving the full 64bit
-> VA range, or doing something like the Tango layer patches that on
-> syscall entry changes the syscall to a "compat" syscall.
-> compat syscall flag like Tango might be nicer here?
+$ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd if=/dev/null of=/tmp/aaa
+0+0 records in
+0+0 records out
+0 bytes copied, 0.000187265 s, 0.0 kB/s
 
-Not sure how that flag is best encoded, but yes, it would have to be
-somewhere that arch_get_unmapped_area() and
-arch_get_mmap_end() can find. Clearly we want a solution that works
-for both tango and for your work, as well as being portable to any
-architecture.
-
->> >  }
->> > +
->> > +COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
->> > +                       compat_ulong_t, arg)
->> > +{
->> > +       return do_ioctl32(fd, cmd, arg);
->> > +}
->> > +
->> > +SYSCALL_DEFINE3(ioctl32, unsigned int, fd, unsigned int, cmd,
->> > +                       compat_ulong_t, arg)
->> > +{
->> > +       return do_ioctl32(fd, cmd, arg);
->> > +}
->>
->> These two look identical to me, I don't think you need to add a wrapper
->> here at all, but can just use the normal compat_sys_ioctl entry point
->> unless you want to add a 'flags' argument to control the struct padding.
->
->
-> I tried having the dispatch table call directly in to the COMPAT one and
-> the way things were lining up weren't allowing me to do this.
-> Since this is a bit unique in how it operates, I'm not quite sure if there is
-> another example I could pull from for this.
-
-For the asm-generic/unistd.h, you should be able to write htis as
-
-#if __BITS_PER_LONG == 64
-__SC_COMP(__NR_ioctl32, compat_sys_ioctl, sys_ni_syscall)
-#endif
-
-Which means that the native syscall in a 64-bit process always
-points to compat_sys_ioctl, while a 32-bit process always gets
--ENOSYS.
-
-Similarly, the syscall_64.tbl file on x86 and the other 64-bit
-architectures would use
-442    64      ioctl32         compat_sys_ioctl
-
-FWIW, I suppose you can rename compat_sys_ioctl to
-sys_ioctl32 treewide, if that name makes more sense.
-
-      Arnd
+…which is not what users would expect I guess. :)
