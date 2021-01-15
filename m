@@ -2,275 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 270432F8480
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 19:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB92C2F8504
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 20:06:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733221AbhAOScv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 13:32:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60486 "EHLO
+        id S1732237AbhAOTFt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 14:05:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733246AbhAOScv (ORCPT
+        with ESMTP id S1729312AbhAOTFs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 13:32:51 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75128C061796
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 10:31:30 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id n11so11463536lji.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 10:31:30 -0800 (PST)
+        Fri, 15 Jan 2021 14:05:48 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D44FC061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 11:05:08 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id k7so7671028ybm.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 11:05:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=doIF7YGiAhKmeiwZI9aWnSI+iqxNbrVvLkiRLdsWXwo=;
-        b=WPdEeI0zC9+D3jlTAjWy+d5mggbWi3OY2VUQ/43nSuiyfjKqFEx6T22EPtvWJwurbw
-         fS9acjTUgC7Dq6WJkCW/k/wgwuphYGYLEyF3BfOJNEltwyCo294v+jPalogZjNvZM/Rt
-         fuasjPtoEWd7gP8cPZRsuacpG2Inn3Lahs0xthzwPh1lzIa+k70BK3/A9+tANStEamhN
-         DIQaqnF0NmlcoHX7guomoXZunjHQf6PQqIgKsUwREKXv11OzrhVaS0LjpabOTp10tJDz
-         U1YoJdqBnuI8yxikWBi6UrYvxbN7MGFNj8XLbF/o7DGkOk6M3wBWF3De3DfCNlI1N97B
-         MTGg==
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=IkeNtsg12cSB50tpxqXIzuzk3XvZlj8L+XKyLiVN8wU=;
+        b=MBEBxfpQEBqCIliIETaRaUKTZcbsd6Hcv0Mxbny7eTvEGyo2GPu0VZVvoktI+twx7J
+         d3yx6e6TeRKPns4tt70az8tAnAZuK3/JcVYUq5r2yDdRXy/o+istYEJ/dI25/tYOuIja
+         S/oamfLYkivtP8jXWhqL9COrBHog4tE1XqFn1aPzeQF6UKXQxZUZAvlTW66nriJyDTkt
+         1RcVCAw8Gv8TeRZ/FU33lWrNZxKGPWlPT/kwA8fSCek0R0bANINBGPx8Gaz/EG2jenCV
+         HzYP/T4cEsUNGHaWSRp15VcyzhZlatNxgvWHLQBapRX+ox5sXDO3lMy2rSO29iQ2YDef
+         SZ0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=doIF7YGiAhKmeiwZI9aWnSI+iqxNbrVvLkiRLdsWXwo=;
-        b=Wm4/iU53/XNwxvAFHLdtMMBgyiXzTkLYAgBxJTW8rcWqu+uTXBVe4Lf8bTICCkGM9o
-         O0QjSGUHsFVSRM8is8QVReidaPEeGT7YFiTINC5Dq9zS4D1kyon0vo6PT2nlBScZQBLg
-         WTFKqqXx7i0Wko3fAIoTza7zxzCdQp17PVr0x83+KovonZNxyckWqWYodAyI1/h8IgzT
-         ww/VIPykgoZrnBY5Y5NxcVAdp/yNMQP27gh8MvIJdGPBVinp2LMoWlSXSq3hMnPehVM/
-         61DtDZynrFuNxmP02LLviV1aPR9+O/CTs5BZohWa7LNcmzs/8zu3Rl/3Qj3QkIECMIuX
-         xLYA==
-X-Gm-Message-State: AOAM533NP4sn5jDU6PU6UjTHAt/ZZiApLXjXgIUsMbsImDdEI38heMqZ
-        M3OGIFdoLbQxOvDnB6RBRaJPfpp7z/epSJ3OBjZxEQ==
-X-Google-Smtp-Source: ABdhPJwgqnHrWWmTgRSWdjUFVb+FJ/p8ce+SLZoErtKGscrYZjJMLxMRJWkdYszsALachIQuW5LMv7rhF3d0xR729W8=
-X-Received: by 2002:a2e:9d87:: with SMTP id c7mr5757298ljj.43.1610735487873;
- Fri, 15 Jan 2021 10:31:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20201209192839.1396820-1-mic@digikod.net> <20201209192839.1396820-8-mic@digikod.net>
- <CAG48ez1wbAQwU-eoC9DngHyUM_5F01MJQpRnLaJFvfRUrnXBdA@mail.gmail.com>
- <aeb3e152-8108-89d2-0577-4b130368f14f@digikod.net> <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
- <9be6481f-9c03-dd32-378f-20bc7c52315c@digikod.net>
-In-Reply-To: <9be6481f-9c03-dd32-378f-20bc7c52315c@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 15 Jan 2021 19:31:01 +0100
-Message-ID: <CAG48ez1O0VTwEiRd3KqexoF78WR+cmP5bGk5Kh5Cs7aPepiDVg@mail.gmail.com>
-Subject: Re: [PATCH v26 07/12] landlock: Support filesystem access-control
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=IkeNtsg12cSB50tpxqXIzuzk3XvZlj8L+XKyLiVN8wU=;
+        b=Kb84lUAj4MXu/irS3ZVzr0CCBjJds9baGNE0laboB+Qn3E6b4Mv7l0n1d2hDlwgxz5
+         gq7PvcDFRKQpl8e8jTA+phJspnoYyVkPvCoRBN4Imsz0YCraXF2Lw66UjTv7rv21r0rH
+         A6iYikWyen9bmtSm4NrbFYME2lJVKZVgHl8G7YoQjI4Fu5eK2KEAeProiq1uVGefoo4F
+         jDuZuUnPhBOUie4Z4NPPmttuS3Surjl/4ubqMH3DXOsU0wHKr3rwIYF+EC8uvpl2+aMt
+         JU9FswwJ8Y1b0/FKCoEsNPSve7eJZTgp3NY5UTHSOIMGV1HcsqjrbAJMlE8ssJTpVSaW
+         vLcA==
+X-Gm-Message-State: AOAM533qdlWykbYowy51ip5Czwdwe4FWgRgJixOFnC9iJAdnnEVei4SY
+        1Nt8O5hnlBPwpGedfWsjKMZJ3awtjs/5whPvdguf
+X-Google-Smtp-Source: ABdhPJwQn2RWmM+M/ljSajZfXa9UgAS8xSA0e9GZGwniB7VIvvmgun3ucQ1PZYPd86SwKRym9WyD2xt7E4HR6Nf6Sxsd
+Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
+X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:f693:9fff:feef:c8f8])
+ (user=axelrasmussen job=sendgmr) by 2002:a25:6187:: with SMTP id
+ v129mr20432937ybb.318.1610737507180; Fri, 15 Jan 2021 11:05:07 -0800 (PST)
+Date:   Fri, 15 Jan 2021 11:04:42 -0800
+Message-Id: <20210115190451.3135416-1-axelrasmussen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.30.0.284.gd98b1dd5eaa7-goog
+Subject: [PATCH 0/9] userfaultfd: add minor fault handling
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Steven Price <steven.price@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Adam Ruprecht <ruprecht@google.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Oliver Upton <oupton@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 10:10 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
-> On 14/01/2021 23:43, Jann Horn wrote:
-> > On Thu, Jan 14, 2021 at 7:54 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
-et> wrote:
-> >> On 14/01/2021 04:22, Jann Horn wrote:
-> >>> On Wed, Dec 9, 2020 at 8:28 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.=
-net> wrote:
-> >>>> Thanks to the Landlock objects and ruleset, it is possible to identi=
-fy
-> >>>> inodes according to a process's domain.  To enable an unprivileged
-> >>>> process to express a file hierarchy, it first needs to open a direct=
-ory
-> >>>> (or a file) and pass this file descriptor to the kernel through
-> >>>> landlock_add_rule(2).  When checking if a file access request is
-> >>>> allowed, we walk from the requested dentry to the real root, followi=
-ng
-> >>>> the different mount layers.  The access to each "tagged" inodes are
-> >>>> collected according to their rule layer level, and ANDed to create
-> >>>> access to the requested file hierarchy.  This makes possible to iden=
-tify
-> >>>> a lot of files without tagging every inodes nor modifying the
-> >>>> filesystem, while still following the view and understanding the use=
-r
-> >>>> has from the filesystem.
-> >>>>
-> >>>> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does no=
-t
-> >>>> keep the same struct inodes for the same inodes whereas these inodes=
- are
-> >>>> in use.
-> >>>>
-> >>>> This commit adds a minimal set of supported filesystem access-contro=
-l
-> >>>> which doesn't enable to restrict all file-related actions.  This is =
-the
-> >>>> result of multiple discussions to minimize the code of Landlock to e=
-ase
-> >>>> review.  Thanks to the Landlock design, extending this access-contro=
-l
-> >>>> without breaking user space will not be a problem.  Moreover, seccom=
-p
-> >>>> filters can be used to restrict the use of syscall families which ma=
-y
-> >>>> not be currently handled by Landlock.
-> >>> [...]
-> >>>> +static bool check_access_path_continue(
-> >>>> +               const struct landlock_ruleset *const domain,
-> >>>> +               const struct path *const path, const u32 access_requ=
-est,
-> >>>> +               u64 *const layer_mask)
-> >>>> +{
-> >>> [...]
-> >>>> +       /*
-> >>>> +        * An access is granted if, for each policy layer, at least =
-one rule
-> >>>> +        * encountered on the pathwalk grants the access, regardless=
- of their
-> >>>> +        * position in the layer stack.  We must then check not-yet-=
-seen layers
-> >>>> +        * for each inode, from the last one added to the first one.
-> >>>> +        */
-> >>>> +       for (i =3D 0; i < rule->num_layers; i++) {
-> >>>> +               const struct landlock_layer *const layer =3D &rule->=
-layers[i];
-> >>>> +               const u64 layer_level =3D BIT_ULL(layer->level - 1);
-> >>>> +
-> >>>> +               if (!(layer_level & *layer_mask))
-> >>>> +                       continue;
-> >>>> +               if ((layer->access & access_request) !=3D access_req=
-uest)
-> >>>> +                       return false;
-> >>>> +               *layer_mask &=3D ~layer_level;
-> >>>
-> >>> Hmm... shouldn't the last 5 lines be replaced by the following?
-> >>>
-> >>> if ((layer->access & access_request) =3D=3D access_request)
-> >>>     *layer_mask &=3D ~layer_level;
-> >>>
-> >>> And then, since this function would always return true, you could
-> >>> change its return type to "void".
-> >>>
-> >>>
-> >>> As far as I can tell, the current version will still, if a ruleset
-> >>> looks like this:
-> >>>
-> >>> /usr read+write
-> >>> /usr/lib/ read
-> >>>
-> >>> reject write access to /usr/lib, right?
-> >>
-> >> If these two rules are from different layers, then yes it would work a=
-s
-> >> intended. However, if these rules are from the same layer the path wal=
-k
-> >> will not stop at /usr/lib but go down to /usr, which grants write
-> >> access.
-> >
-> > I don't see why the code would do what you're saying it does. And an
-> > experiment seems to confirm what I said; I checked out landlock-v26,
-> > and the behavior I get is:
->
-> There is a misunderstanding, I was responding to your proposition to
-> modify check_access_path_continue(), not about the behavior of landlock-v=
-26.
->
-> >
-> > user@vm:~/landlock$ dd if=3D/dev/null of=3D/tmp/aaa
-> > 0+0 records in
-> > 0+0 records out
-> > 0 bytes copied, 0.00106365 s, 0.0 kB/s
-> > user@vm:~/landlock$ LL_FS_RO=3D'/lib' LL_FS_RW=3D'/' ./sandboxer dd
-> > if=3D/dev/null of=3D/tmp/aaa
-> > 0+0 records in
-> > 0+0 records out
-> > 0 bytes copied, 0.000491814 s, 0.0 kB/s
-> > user@vm:~/landlock$ LL_FS_RO=3D'/tmp' LL_FS_RW=3D'/' ./sandboxer dd
-> > if=3D/dev/null of=3D/tmp/aaa
-> > dd: failed to open '/tmp/aaa': Permission denied
-> > user@vm:~/landlock$
-> >
-> > Granting read access to /tmp prevents writing to it, even though write
-> > access was granted to /.
-> >
->
-> It indeed works like this with landlock-v26. However, with your above
-> proposition, it would work like this:
->
-> $ LL_FS_RO=3D'/tmp' LL_FS_RW=3D'/' ./sandboxer dd if=3D/dev/null of=3D/tm=
-p/aaa
-> 0+0 records in
-> 0+0 records out
-> 0 bytes copied, 0.000187265 s, 0.0 kB/s
->
-> =E2=80=A6which is not what users would expect I guess. :)
+Changelog
+=========
 
-Ah, so we are disagreeing about what the right semantics are. ^^ To
-me, that is exactly the behavior I would expect.
+RFC->v1:
+- Rebased onto Peter Xu's patches for disabling huge PMD sharing for certain
+  userfaultfd-registered areas.
+- Added commits which update documentation, and add a self test which exercises
+  the new feature.
+- Fixed reporting CONTINUE as a supported ioctl even for non-MINOR ranges.
 
-Imagine that someone wants to write a program that needs to be able to
-load libraries from /usr/lib (including subdirectories) and needs to
-be able to write output to some user-specified output directory. So
-they use something like this to sandbox their program (plus error
-handling):
+Overview
+========
 
-static void add_fs_rule(int ruleset_fd, char *path, u64 allowed_access) {
-  int fd =3D open(path, O_PATH);
-  struct landlock_path_beneath_attr path_beneath =3D {
-    .parent_fd =3D fd,
-    .allowed_access =3D allowed_access
-  };
-  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-          &path_beneath, 0);
-  close(fd);
-}
-int main(int argc, char **argv) {
-  char *output_dir =3D argv[1];
-  int ruleset_fd =3D landlock_create_ruleset(&ruleset_attr,
-sizeof(ruleset_attr, 0);
-  add_fs_rule(ruleset_fd, "/usr/lib", ACCESS_FS_ROUGHLY_READ);
-  add_fs_rule(ruleset_fd, output_dir,
-LANDLOCK_ACCESS_FS_WRITE_FILE|LANDLOCK_ACCESS_FS_MAKE_REG|LANDLOCK_ACCESS_F=
-S_REMOVE_FILE);
-  prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-  landlock_enforce_ruleset_current(ruleset_fd, 0);
-}
+This series adds a new userfaultfd registration mode,
+UFFDIO_REGISTER_MODE_MINOR. This allows userspace to intercept "minor" faults.
+By "minor" fault, I mean the following situation:
 
-This will *almost* always work; but if the output directory is
-/usr/lib/x86_64-linux-gnu/ , loading libraries from that directory
-won't work anymore, right? So if userspace wanted this to *always*
-works correctly, it would have to somehow figure out whether there is
-a path upwards from the output directory (under any mount) that will
-encounter /usr/lib, and set different permissions if that is the case.
-That seems unnecessarily messy to me; and I think that this will make
-it harder for generic commandline tools and such to adopt landlock.
+Let there exist two mappings (i.e., VMAs) to the same page(s) (shared memory).
+One of the mappings is registered with userfaultfd (in minor mode), and the
+other is not. Via the non-UFFD mapping, the underlying pages have already been
+allocated & filled with some contents. The UFFD mapping has not yet been
+faulted in; when it is touched for the first time, this results in what I'm
+calling a "minor" fault. As a concrete example, when working with hugetlbfs, we
+have huge_pte_none(), but find_lock_page() finds an existing page.
 
+We also add a new ioctl to resolve such faults: UFFDIO_CONTINUE. The idea is,
+userspace resolves the fault by either a) doing nothing if the contents are
+already correct, or b) updating the underlying contents using the second,
+non-UFFD mapping (via memcpy/memset or similar, or something fancier like RDMA,
+or etc...). In either case, userspace issues UFFDIO_CONTINUE to tell the kernel
+"I have ensured the page contents are correct, carry on setting up the mapping".
 
-If you do want to have the ability to deny access to subtrees of trees
-to which access is permitted, I think that that should be made
-explicit in the UAPI - e.g. you could (at a later point, after this
-series has landed) introduce a new EXCLUDE flag for
-landlock_add_rule() that means "I want to deny the access specified by
-this rule", or something like that. (And you'd have to very carefully
-document under which circumstances such rules are actually effective -
-e.g. if someone grants full access to $HOME, but excludes $HOME/.ssh,
-an attacker would still be able to rename $HOME/.ssh to $HOME/old_ssh,
-and then if the program is later restarted and creates the ruleset
-from scratch again, the old SSH folder will be accessible.)
+Use Case
+========
+
+Consider the use case of VM live migration (e.g. under QEMU/KVM):
+
+1. While a VM is still running, we copy the contents of its memory to a
+   target machine. The pages are populated on the target by writing to the
+   non-UFFD mapping, using the setup described above. The VM is still running
+   (and therefore its memory is likely changing), so this may be repeated
+   several times, until we decide the target is "up to date enough".
+
+2. We pause the VM on the source, and start executing on the target machine.
+   During this gap, the VM's user(s) will *see* a pause, so it is desirable to
+   minimize this window.
+
+3. Between the last time any page was copied from the source to the target, and
+   when the VM was paused, the contents of that page may have changed - and
+   therefore the copy we have on the target machine is out of date. Although we
+   can keep track of which pages are out of date, for VMs with large amounts of
+   memory, it is "slow" to transfer this information to the target machine. We
+   want to resume execution before such a transfer would complete.
+
+4. So, the guest begins executing on the target machine. The first time it
+   touches its memory (via the UFFD-registered mapping), userspace wants to
+   intercept this fault. Userspace checks whether or not the page is up to date,
+   and if not, copies the updated page from the source machine, via the non-UFFD
+   mapping. Finally, whether a copy was performed or not, userspace issues a
+   UFFDIO_CONTINUE ioctl to tell the kernel "I have ensured the page contents
+   are correct, carry on setting up the mapping".
+
+We don't have to do all of the final updates on-demand. The userfaultfd manager
+can, in the background, also copy over updated pages once it receives the map of
+which pages are up-to-date or not.
+
+Interaction with Existing APIs
+==============================
+
+Because it's possible to combine registration modes (e.g. a single VMA can be
+userfaultfd-registered MINOR | MISSING), and because it's up to userspace how to
+resolve faults once they are received, I spent some time thinking through how
+the existing API interacts with the new feature.
+
+UFFDIO_CONTINUE cannot be used to resolve non-minor faults, as it does not
+allocate a new page. If UFFDIO_CONTINUE is used on a non-minor fault:
+
+- For non-shared memory or shmem, -EINVAL is returned.
+- For hugetlb, -EFAULT is returned.
+
+UFFDIO_COPY and UFFDIO_ZEROPAGE cannot be used to resolve minor faults. Without
+modifications, the existing codepath assumes a new page needs to be allocated.
+This is okay, since userspace must have a second non-UFFD-registered mapping
+anyway, thus there isn't much reason to want to use these in any case (just
+memcpy or memset or similar).
+
+- If UFFDIO_COPY is used on a minor fault, -EEXIST is returned.
+- If UFFDIO_ZEROPAGE is used on a minor fault, -EEXIST is returned (or -EINVAL
+  in the case of hugetlb, as UFFDIO_ZEROPAGE is unsupported in any case).
+- UFFDIO_WRITEPROTECT simply doesn't work with shared memory, and returns
+  -ENOENT in that case (regardless of the kind of fault).
+
+Dependencies
+============
+
+I've included 4 commits from Peter Xu's larger series
+(https://lore.kernel.org/patchwork/cover/1366017/) in this series. My changes
+depend on his work, to disable huge PMD sharing for MINOR registered userfaultfd
+areas. I included the 4 commits directly because a) it lets this series just be
+applied and work as-is, and b) they are fairly standalone, and could potentially
+be merged even without the rest of the larger series Peter submitted. Thanks
+Peter!
+
+Also, although it doesn't affect minor fault handling, I did notice that the
+userfaultfd self test sometimes experienced memory corruption
+(https://lore.kernel.org/patchwork/cover/1356755/). For anyone testing this
+series, it may be useful to apply that series first to fix the selftest
+flakiness. That series doesn't have to be merged into mainline / maintaner
+branches before mine, though.
+
+Future Work
+===========
+
+Currently the patchset only supports hugetlbfs. There is no reason it can't work
+with shmem, but I expect hugetlbfs to be much more commonly used since we're
+talking about backing guest memory for VMs. I plan to implement shmem support in
+a follow-up patch series.
+
+Axel Rasmussen (5):
+  userfaultfd: add minor fault registration mode
+  userfaultfd: disable huge PMD sharing for MINOR registered VMAs
+  userfaultfd: add UFFDIO_CONTINUE ioctl
+  userfaultfd: update documentation to describe minor fault handling
+  userfaultfd/selftests: add test exercising minor fault handling
+
+Peter Xu (4):
+  hugetlb: Pass vma into huge_pte_alloc()
+  hugetlb/userfaultfd: Forbid huge pmd sharing when uffd enabled
+  mm/hugetlb: Move flush_hugetlb_tlb_range() into hugetlb.h
+  hugetlb/userfaultfd: Unshare all pmds for hugetlbfs when register wp
+
+ Documentation/admin-guide/mm/userfaultfd.rst | 105 ++++++----
+ arch/arm64/mm/hugetlbpage.c                  |   5 +-
+ arch/ia64/mm/hugetlbpage.c                   |   3 +-
+ arch/mips/mm/hugetlbpage.c                   |   4 +-
+ arch/parisc/mm/hugetlbpage.c                 |   2 +-
+ arch/powerpc/mm/hugetlbpage.c                |   3 +-
+ arch/s390/mm/hugetlbpage.c                   |   2 +-
+ arch/sh/mm/hugetlbpage.c                     |   2 +-
+ arch/sparc/mm/hugetlbpage.c                  |   2 +-
+ fs/proc/task_mmu.c                           |   1 +
+ fs/userfaultfd.c                             | 190 ++++++++++++++++---
+ include/linux/hugetlb.h                      |  22 ++-
+ include/linux/mm.h                           |   1 +
+ include/linux/mmu_notifier.h                 |   1 +
+ include/linux/userfaultfd_k.h                |  29 ++-
+ include/trace/events/mmflags.h               |   1 +
+ include/uapi/linux/userfaultfd.h             |  36 +++-
+ mm/hugetlb.c                                 |  61 ++++--
+ mm/userfaultfd.c                             |  88 ++++++---
+ tools/testing/selftests/vm/userfaultfd.c     | 147 +++++++++++++-
+ 20 files changed, 570 insertions(+), 135 deletions(-)
+
+--
+2.30.0.284.gd98b1dd5eaa7-goog
+
