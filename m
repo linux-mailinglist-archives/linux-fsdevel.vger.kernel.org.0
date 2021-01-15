@@ -2,526 +2,319 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB2C2F7378
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 08:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5787E2F7390
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 08:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727663AbhAOHEd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 02:04:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbhAOHEb (ORCPT
+        id S1731415AbhAOHPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 02:15:52 -0500
+Received: from eu-shark1.inbox.eu ([195.216.236.81]:60732 "EHLO
+        eu-shark1.inbox.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbhAOHPw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 02:04:31 -0500
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AA24C061575;
-        Thu, 14 Jan 2021 23:03:50 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id b3so4925437pft.3;
-        Thu, 14 Jan 2021 23:03:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GHiYLWes15995yc06JXjproFwSKI9EhRTzfJK8Em9SI=;
-        b=VuQxLNreZ35kgOv9t50bPmMmRYfdkoMyenmcQ/EDiL+khkwLjA9TiaeWqm8RE+0z5J
-         dJMnoqkNtpJ1vG4fRJ04X1k47+3GXa8DrrEpMY9XbvvaQDogHwCuIKtSthDXdn7B+psV
-         LLMjBR/e+Dkqs27AHDNisqoPuW0e47Zp2vCrNUEJRIsM65Y1hyOF60ujN5G+mVYCqmRt
-         lE+aEa9thbHHIIwH/bcuweSMJ/b5Zp+RON0M0MddkMSsHMojeueLCI6AYwxpCXSqVODX
-         3qjJY+iwd58/bhyAB4Ak0o5l/ViRZO3c3fC0mS1r/UaLnBREjoKNbKdVPsSTW8eGAeJr
-         TlQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GHiYLWes15995yc06JXjproFwSKI9EhRTzfJK8Em9SI=;
-        b=Svm4X1qu0SxEfD41qvCe89/nBaUL+EB26KqMZwXa0esM3vSxGFoZP7LCqqodEUHAJ9
-         P8FnL2Lahm0nwAgdsfEZcXDangJFYvLY/CKFVBGzmqItfgNVEd2kmZBJuYqHGYel5XDM
-         g06y/wfiaPA6LfOt0LyxrupNPHxyDOmmQw7/a9VQti4/SNC1uDVb+/oX8WN3HgnDj7G4
-         N7c68kEkcsLI43z6lM/jZBMZFrDoIAePIZAvVpnwr5adIN5SRgtZhZTYeZKN0ZdjMB39
-         DGZnYi/4hH5ebcT77/19PFTkwFaoQa1QfdI+ySo1Ca6RJD8tgrFgzLeR1U73UHTCMfcB
-         ATmQ==
-X-Gm-Message-State: AOAM530tsb5SUONvTY/9rCFXCYqjWlWl7X6LalrshMT7NlhOyTlh12UL
-        UoA3foY5zbdP8CtIt+fSrQ4=
-X-Google-Smtp-Source: ABdhPJy33sFGOuEJVL/71ZTFrs1JqOaDhD02Tw/th8z46pDfvhRBV6ViKBsRBoDKqTo0JFodgh2g5A==
-X-Received: by 2002:a62:8050:0:b029:19d:e8b4:ba1 with SMTP id j77-20020a6280500000b029019de8b40ba1mr11371438pfd.69.1610694229866;
-        Thu, 14 Jan 2021 23:03:49 -0800 (PST)
-Received: from localhost.localdomain (76-242-91-105.lightspeed.sntcca.sbcglobal.net. [76.242.91.105])
-        by smtp.gmail.com with ESMTPSA id h8sm8399086pjc.2.2021.01.14.23.03.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jan 2021 23:03:49 -0800 (PST)
-From:   sonicadvance1@gmail.com
-X-Google-Original-From: Sonicadvance1@gmail.com
-Cc:     Ryan Houdek <Sonicadvance1@gmail.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        David Rientjes <rientjes@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oleg Nesterov <oleg@redhat.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Jan Kara <jack@suse.cz>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: [PATCH] Adds a new ioctl32 syscall for backwards compatibility layers
-Date:   Thu, 14 Jan 2021 23:02:50 -0800
-Message-Id: <20210115070326.294332-1-Sonicadvance1@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210106064807.253112-1-Sonicadvance1@gmail.com>
-References: <20210106064807.253112-1-Sonicadvance1@gmail.com>
+        Fri, 15 Jan 2021 02:15:52 -0500
+X-Greylist: delayed 376 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Jan 2021 02:15:49 EST
+Received: from eu-shark1.inbox.eu (localhost [127.0.0.1])
+        by eu-shark1-out.inbox.eu (Postfix) with ESMTP id E32916C007D6;
+        Fri, 15 Jan 2021 09:08:41 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=inbox.eu; s=20140211;
+        t=1610694521; bh=GRqzfruJMHJhOS+73NqVaMpWtYx8YxcDSN1y5keLhag=;
+        h=References:From:To:Cc:Subject:In-reply-to:Date;
+        b=QaQAam72yaZMt3fmkr9UHXEwWfPXatJKKEHL2GshXEutG2F7h+4jTaRgVv8jsWZLZ
+         Q0vEiZZKauxN8ROBiXMyNHZJXvzyXEL3zWCLQfDkqX+OwV/SRh3RRg77LgIkyARiOv
+         XKwZcJ4UfmW7Ha5dN1/8Hdjd8nZtROUu14sXiaME=
+Received: from localhost (localhost [127.0.0.1])
+        by eu-shark1-in.inbox.eu (Postfix) with ESMTP id C32666C007D2;
+        Fri, 15 Jan 2021 09:08:41 +0200 (EET)
+Received: from eu-shark1.inbox.eu ([127.0.0.1])
+        by localhost (eu-shark1.inbox.eu [127.0.0.1]) (spamfilter, port 35)
+        with ESMTP id 8RqygKFhkmwG; Fri, 15 Jan 2021 09:08:41 +0200 (EET)
+Received: from mail.inbox.eu (eu-pop1 [127.0.0.1])
+        by eu-shark1-in.inbox.eu (Postfix) with ESMTP id 2A1766C007B1;
+        Fri, 15 Jan 2021 09:08:41 +0200 (EET)
+Received: from nas (unknown [45.87.95.231])
+        (Authenticated sender: l@damenly.su)
+        by mail.inbox.eu (Postfix) with ESMTPA id 6F0921BE00B3;
+        Fri, 15 Jan 2021 09:08:35 +0200 (EET)
+References: <06add214bc16ef08214de1594ecdfcc4cdcdbd78.1608608848.git.naohiro.aota@wdc.com>
+ <e2332c7ecb8e4b1a98a769db75ceac899ab1c3c0.1608608848.git.naohiro.aota@wdc.com>
+User-agent: mu4e 1.4.13; emacs 27.1
+From:   Su Yue <l@damenly.su>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v11 22/40] btrfs: split ordered extent when bio is sent
+In-reply-to: <e2332c7ecb8e4b1a98a769db75ceac899ab1c3c0.1608608848.git.naohiro.aota@wdc.com>
+Message-ID: <eeim1xue.fsf@damenly.su>
+Date:   Fri, 15 Jan 2021 15:08:25 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; format=flowed
+X-Virus-Scanned: OK
+X-ESPOL: 6NpmlYxOGzysiV+lRWetdgtNzzYrL+Ds55TE3V0G3GeDUSOAe1YFVw6+mHJ0Tn2k
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ryan Houdek <Sonicadvance1@gmail.com>
 
-Problem presented:
-A backwards compatibility layer that allows running x86-64 and x86
-processes inside of an AArch64 process.
-  - CPU is emulated
-  - Syscall interface is mostly passthrough
-  - Some syscalls require patching or emulation depending on behaviour
-  - Not viable from the emulator design to use an AArch32 host process
+On Tue 22 Dec 2020 at 11:49, Naohiro Aota <naohiro.aota@wdc.com> 
+wrote:
 
-x86-64 and x86 userspace emulator source:
-https://github.com/FEX-Emu/FEX
-Usage of ioctl32 is currently in a downstream fork. This will be the
-first user of the syscall.
+> For a zone append write, the device decides the location the 
+> data is
+> written to. Therefore we cannot ensure that two bios are written
+> consecutively on the device. In order to ensure that a ordered 
+> extent maps
+> to a contiguous region on disk, we need to maintain a "one bio 
+> == one
+> ordered extent" rule.
+>
+> This commit implements the splitting of an ordered extent and 
+> extent map
+> on bio submission to adhere to the rule.
+>
+> [testbot] made extract_ordered_extent static
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>  fs/btrfs/inode.c        | 89 
+>  +++++++++++++++++++++++++++++++++++++++++
+>  fs/btrfs/ordered-data.c | 76 
+>  +++++++++++++++++++++++++++++++++++
+>  fs/btrfs/ordered-data.h |  2 +
+>  3 files changed, 167 insertions(+)
+>
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 37782b4cfd28..15e0c7714c7f 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -2217,6 +2217,86 @@ static blk_status_t 
+> btrfs_submit_bio_start(struct inode *inode, struct bio *bio,
+>  	return btrfs_csum_one_bio(BTRFS_I(inode), bio, 0, 0);
+>  }
+>
+> +static int extract_ordered_extent(struct inode *inode, struct 
+> bio *bio,
+> +				  loff_t file_offset)
+> +{
+> +	struct btrfs_ordered_extent *ordered;
+> +	struct extent_map *em = NULL, *em_new = NULL;
+> +	struct extent_map_tree *em_tree = 
+> &BTRFS_I(inode)->extent_tree;
+> +	u64 start = (u64)bio->bi_iter.bi_sector << SECTOR_SHIFT;
+> +	u64 len = bio->bi_iter.bi_size;
+> +	u64 end = start + len;
+> +	u64 ordered_end;
+> +	u64 pre, post;
+> +	int ret = 0;
+> +
+> +	ordered = btrfs_lookup_ordered_extent(BTRFS_I(inode), 
+> file_offset);
+> +	if (WARN_ON_ONCE(!ordered))
+> +		return -EIO;
+> +
+> +	/* No need to split */
+> +	if (ordered->disk_num_bytes == len)
+> +		goto out;
+> +
+> +	/* We cannot split once end_bio'd ordered extent */
+> +	if (WARN_ON_ONCE(ordered->bytes_left != 
+> ordered->disk_num_bytes)) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* We cannot split a compressed ordered extent */
+> +	if (WARN_ON_ONCE(ordered->disk_num_bytes != 
+> ordered->num_bytes)) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* We cannot split a waited ordered extent */
+> +	if (WARN_ON_ONCE(wq_has_sleeper(&ordered->wait))) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	ordered_end = ordered->disk_bytenr + ordered->disk_num_bytes;
+> +	/* bio must be in one ordered extent */
+> +	if (WARN_ON_ONCE(start < ordered->disk_bytenr || end > 
+> ordered_end)) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* Checksum list should be empty */
+> +	if (WARN_ON_ONCE(!list_empty(&ordered->list))) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	pre = start - ordered->disk_bytenr;
+> +	post = ordered_end - end;
+> +
+> +	btrfs_split_ordered_extent(ordered, pre, post);
+> +
+> +	read_lock(&em_tree->lock);
+> +	em = lookup_extent_mapping(em_tree, ordered->file_offset, 
+> len);
+> +	if (!em) {
+> +		read_unlock(&em_tree->lock);
+> +		ret = -EIO;
+> +		goto out;
+> +	}
+> +	read_unlock(&em_tree->lock);
+> +
+> +	ASSERT(!test_bit(EXTENT_FLAG_COMPRESSED, &em->flags));
+> +	em_new = create_io_em(BTRFS_I(inode), em->start + pre, len,
+> +			      em->start + pre, em->block_start + pre, len,
+> +			      len, len, BTRFS_COMPRESS_NONE,
+> +			      BTRFS_ORDERED_REGULAR);
+>
+"if (IS_ERR(em_new)) ..." is lost.
 
-Cross documentation:
-https://github.com/FEX-Emu/FEX/wiki/32Bit-x86-Woes#ioctl---54
 
-ioctls are opaque from the emulator perspective and the data wants to be
-passed through a syscall as unimpeded as possible.
-Sadly due to ioctl struct differences between x86 and x86-64, we need a
-syscall that exposes the compatibility ioctl handler to userspace in a
-64bit process.
-
-This is necessary behaves of the behaviour differences that occur
-between an x86 process doing an ioctl and an x86-64 process doing an
-ioctl.
-
-Both of which are captured and passed through the AArch64 ioctl space.
-This is implementing a new ioctl32 syscall that allows us to pass 32bit
-x86 ioctls through to the kernel with zero or minimal manipulation.
-
-The only supported hosts where we care about this currently is AArch64
-and x86-64 (For testing purposes).
-PPC64LE, MIPS64LE, and RISC-V64 might be interesting to support in the
-future; But I don't have any platforms that get anywhere near Cortex-A77
-performance in those architectures. Nor do I have the time to bring up
-the emulator on them.
-x86-64 can get to the compatibility ioctl through the int $0x80 handler.
-
-This does not solve the following problems:
-1) compat_alloc_user_space inside ioctl
-2) ioctls that check task mode instead of entry point for behaviour
-3) ioctls allocating memory
-4) struct packing problems between architectures
-
-Workarounds for the problems presented:
-1a) Do a stack pivot to the lower 32bits from userspace
-  - Forces host 64bit process to have its thread stacks to live in 32bit
-  space. Not ideal.
-  - Only do a stack pivot on ioctl to save previous 32bit VA space
-1b) Teach kernel that compat_alloc_userspace can return a 64bit pointer
-  - x86-64 truncates stack from this function
-  - AArch64 returns the full stack pointer
-  - Only ~29 users. Validating all of them support a 64bit stack is
-  trivial?
-
-2a) Any application using these can be checked for compatibility in
-userspace and put on a block list.
-2b) Fix any ioctls doing broken behaviour based on task mode rather than
-ioctl entry point
-
-3a) Userspace consumes all VA space above 32bit. Forcing allocations to
-occur in lower 32bits
-  - This is the current implementation
-3b) Ensure any allocation in the ioctl handles ioctl entrypoint rather
-than just allow generic memory allocations in full VA space
-  - This is hard to guarantee
-
-4a) Blocklist any application using ioctls that have different struct
-packing across the boundary
-  - Can happen when struct packing of 32bit x86 application goes down
-  the aarch64 compat_ioctl path
-  - Userspace is a AArch64 process passing 32bit x86 ioctl structures
-  through the compat_ioctl path which is typically for AArch32 processes
-  - None currently identified
-4b) Work with upstream kernel and userspace projects to evaluate and fix
-  - Identify the problem ioctls
-  - Implement a new ioctl with more sane struct packing that matches
-  cross-arch
-  - Implement new ioctl while maintaining backwards compatibility with
-  previous ioctl handler
-  - Change upstream project to use the new compatibility ioctl
-  - ioctl deprecation will be case by case per device and project
-4b) Userspace implements a full ioctl emulation layer
-  - Parses the full ioctl tree
-  - Either passes through ioctls that it doesn't understand or
-  transforms ioctls that it knows are trouble
-  - Has the downside that it can still run in to edge cases that will
-  fail
-  - Performance of additional tracking is a concern
-  - Prone to failure keeping the kernel ioctl and userspace ioctl
-  handling in sync
-  - Really want to have it in the kernel space as much as possible
-
-Signed-off-by: Ryan Houdek <Sonicadvance1@gmail.com>
----
- arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
- arch/arm/tools/syscall.tbl                  |  1 +
- arch/arm64/include/asm/unistd.h             |  2 +-
- arch/arm64/include/asm/unistd32.h           |  2 ++
- arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
- arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 ++
- arch/mips/kernel/syscalls/syscall_o32.tbl   |  1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
- arch/s390/kernel/syscalls/syscall.tbl       |  1 +
- arch/sh/kernel/syscalls/syscall.tbl         |  1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |  1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
- fs/ioctl.c                                  | 18 ++++++++++++++++--
- include/linux/syscalls.h                    |  4 ++++
- include/uapi/asm-generic/unistd.h           |  9 ++++++++-
- kernel/sys_ni.c                             |  3 +++
- tools/include/uapi/asm-generic/unistd.h     |  9 ++++++++-
- 23 files changed, 59 insertions(+), 5 deletions(-)
-
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index a6617067dbe6..81e70fd241d7 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -481,3 +481,4 @@
- 549	common	faccessat2			sys_faccessat2
- 550	common	process_madvise			sys_process_madvise
- 551	common	epoll_pwait2			sys_epoll_pwait2
-+552	common	ioctl32			sys_ni_syscall
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 20e1170e2e0a..98fbf1af1169 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -455,3 +455,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	ioctl32			sys_ni_syscall
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 86a9d7b3eabe..949788f5ba40 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		442
-+#define __NR_compat_syscalls		443
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index cccfbbefbf95..35e3bc83dbdc 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -891,6 +891,8 @@ __SYSCALL(__NR_faccessat2, sys_faccessat2)
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
- #define __NR_epoll_pwait2 441
- __SYSCALL(__NR_epoll_pwait2, compat_sys_epoll_pwait2)
-+#define __NR_ioctl32 442
-+__SYSCALL(__NR_ioctl32, compat_sys_ioctl)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index bfc00f2bd437..087fc9627357 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -362,3 +362,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	sys_ioctl32			sys_ioctl32
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 7fe4e45c864c..502b2f87ab60 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -441,3 +441,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	ioctl32			sys_ni_syscall
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index a522adf194ab..e69be6c836d2 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -447,3 +447,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	ioctl32			sys_ni_syscall
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 0f03ad223f33..ba395218446f 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -380,3 +380,4 @@
- 439	n32	faccessat2			sys_faccessat2
- 440	n32	process_madvise			sys_process_madvise
- 441	n32	epoll_pwait2			compat_sys_epoll_pwait2
-+442	n32	ioctl32			sys_ni_syscall
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 91649690b52f..f42f939702e2 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -356,3 +356,5 @@
- 439	n64	faccessat2			sys_faccessat2
- 440	n64	process_madvise			sys_process_madvise
- 441	n64	epoll_pwait2			sys_epoll_pwait2
-+441	n64	epoll_pwait2			sys_epoll_pwait2
-+442	n64	ioctl32			sys_ioctl32
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 4bad0c40aed6..b08ff6066f06 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -429,3 +429,4 @@
- 439	o32	faccessat2			sys_faccessat2
- 440	o32	process_madvise			sys_process_madvise
- 441	o32	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	o32	ioctl32			sys_ni_syscall
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 6bcc31966b44..84d2b88d92fa 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -439,3 +439,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	64	ioctl32			sys_ioctl32
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index f744eb5cba88..9f04d73cf649 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -531,3 +531,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	64	sys_ioctl32				sys_ioctl32
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index d443423495e5..2c90c0ecb5c7 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -444,3 +444,4 @@
- 439  common	faccessat2		sys_faccessat2			sys_faccessat2
- 440  common	process_madvise		sys_process_madvise		sys_process_madvise
- 441  common	epoll_pwait2		sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	64	sys_ioctl32			sys_ni_syscall
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 9df40ac0ebc0..1e02a13fa049 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -444,3 +444,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	ioctl32			sys_ni_syscall
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 40d8c7cd8298..f7d24678d0b1 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -487,3 +487,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	64	sys_ioctl32			sys_ioctl32
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 874aeacde2dd..b1a3461e1e20 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -446,3 +446,4 @@
- 439	i386	faccessat2		sys_faccessat2
- 440	i386	process_madvise		sys_process_madvise
- 441	i386	epoll_pwait2		sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	i386	ioctl32		sys_ni_syscall
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 78672124d28b..0250a04df0df 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -363,6 +363,7 @@
- 439	common	faccessat2		sys_faccessat2
- 440	common	process_madvise		sys_process_madvise
- 441	common	epoll_pwait2		sys_epoll_pwait2
-+442	64	ioctl32		sys_ioctl32
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 46116a28eeed..34b653b36b7b 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -412,3 +412,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	ioctl32			sys_ni_syscall
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 4e6cc0a7d69c..7b324a21a257 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -790,8 +790,8 @@ long compat_ptr_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- }
- EXPORT_SYMBOL(compat_ptr_ioctl);
- 
--COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
--		       compat_ulong_t, arg)
-+long do_ioctl32(unsigned int fd, unsigned int cmd,
-+			compat_ulong_t arg)
- {
- 	struct fd f = fdget(fd);
- 	int error;
-@@ -850,4 +850,18 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
- 
- 	return error;
- }
-+
-+COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
-+			compat_ulong_t, arg)
-+{
-+	return do_ioctl32(fd, cmd, arg);
-+}
-+
-+#if BITS_PER_LONG == 64
-+SYSCALL_DEFINE3(ioctl32, unsigned int, fd, unsigned int, cmd,
-+			compat_ulong_t, arg)
-+{
-+	return do_ioctl32(fd, cmd, arg);
-+}
-+#endif
- #endif
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index f3929aff39cf..fb7bac17167a 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -386,6 +386,10 @@ asmlinkage long sys_inotify_rm_watch(int fd, __s32 wd);
- /* fs/ioctl.c */
- asmlinkage long sys_ioctl(unsigned int fd, unsigned int cmd,
- 				unsigned long arg);
-+#if defined(CONFIG_COMPAT) && BITS_PER_LONG == 64
-+asmlinkage long sys_ioctl32(unsigned int fd, unsigned int cmd,
-+				compat_ulong_t arg);
-+#endif
- 
- /* fs/ioprio.c */
- asmlinkage long sys_ioprio_set(int which, int who, int ioprio);
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 728752917785..18279e5b7b4f 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -862,8 +862,15 @@ __SYSCALL(__NR_process_madvise, sys_process_madvise)
- #define __NR_epoll_pwait2 441
- __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
- 
-+#define __NR_ioctl32 442
-+#ifdef CONFIG_COMPAT
-+__SC_COMP(__NR_ioctl32, sys_ioctl32, compat_sys_ioctl)
-+#else
-+__SC_COMP(__NR_ioctl32, sys_ni_syscall, sys_ni_syscall)
-+#endif
-+
- #undef __NR_syscalls
--#define __NR_syscalls 442
-+#define __NR_syscalls 443
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 19aa806890d5..5a2f25eb341c 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -302,6 +302,9 @@ COND_SYSCALL(recvmmsg_time32);
- COND_SYSCALL_COMPAT(recvmmsg_time32);
- COND_SYSCALL_COMPAT(recvmmsg_time64);
- 
-+COND_SYSCALL(ioctl32);
-+COND_SYSCALL_COMPAT(ioctl32);
-+
- /*
-  * Architecture specific syscalls: see further below
-  */
-diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
-index 728752917785..18279e5b7b4f 100644
---- a/tools/include/uapi/asm-generic/unistd.h
-+++ b/tools/include/uapi/asm-generic/unistd.h
-@@ -862,8 +862,15 @@ __SYSCALL(__NR_process_madvise, sys_process_madvise)
- #define __NR_epoll_pwait2 441
- __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
- 
-+#define __NR_ioctl32 442
-+#ifdef CONFIG_COMPAT
-+__SC_COMP(__NR_ioctl32, sys_ioctl32, compat_sys_ioctl)
-+#else
-+__SC_COMP(__NR_ioctl32, sys_ni_syscall, sys_ni_syscall)
-+#endif
-+
- #undef __NR_syscalls
--#define __NR_syscalls 442
-+#define __NR_syscalls 443
- 
- /*
-  * 32 bit systems traditionally used different
--- 
-2.27.0
+> +	free_extent_map(em_new);
+> +
+> +out:
+> +	free_extent_map(em);
+> +	btrfs_put_ordered_extent(ordered);
+> +
+> +	return ret;
+> +}
+> +
+>  /*
+>   * extent_io.c submission hook. This does the right thing for 
+>   csum calculation
+>   * on write, or reading the csums from the tree before a read.
+> @@ -2252,6 +2332,15 @@ blk_status_t btrfs_submit_data_bio(struct 
+> inode *inode, struct bio *bio,
+>  	if (btrfs_is_free_space_inode(BTRFS_I(inode)))
+>  		metadata = BTRFS_WQ_ENDIO_FREE_SPACE;
+>
+> +	if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
+> +		struct page *page = bio_first_bvec_all(bio)->bv_page;
+> +		loff_t file_offset = page_offset(page);
+> +
+> +		ret = extract_ordered_extent(inode, bio, file_offset);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+>  	if (btrfs_op(bio) != BTRFS_MAP_WRITE) {
+>  		ret = btrfs_bio_wq_end_io(fs_info, bio, metadata);
+>  		if (ret)
+> diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+> index 79d366a36223..4f8f48e7a482 100644
+> --- a/fs/btrfs/ordered-data.c
+> +++ b/fs/btrfs/ordered-data.c
+> @@ -898,6 +898,82 @@ void 
+> btrfs_lock_and_flush_ordered_range(struct btrfs_inode *inode, 
+> u64 start,
+>  	}
+>  }
+>
+> +static void clone_ordered_extent(struct btrfs_ordered_extent 
+> *ordered, u64 pos,
+> +				 u64 len)
+> +{
+> +	struct inode *inode = ordered->inode;
+> +	u64 file_offset = ordered->file_offset + pos;
+> +	u64 disk_bytenr = ordered->disk_bytenr + pos;
+> +	u64 num_bytes = len;
+> +	u64 disk_num_bytes = len;
+> +	int type;
+> +	unsigned long flags_masked =
+> +		ordered->flags & ~(1 << BTRFS_ORDERED_DIRECT);
+> +	int compress_type = ordered->compress_type;
+> +	unsigned long weight;
+> +
+> +	weight = hweight_long(flags_masked);
+> +	WARN_ON_ONCE(weight > 1);
+> +	if (!weight)
+> +		type = 0;
+> +	else
+> +		type = __ffs(flags_masked);
+> +
+> +	if (test_bit(BTRFS_ORDERED_COMPRESSED, &ordered->flags)) {
+> +		WARN_ON_ONCE(1);
+> +		btrfs_add_ordered_extent_compress(BTRFS_I(inode), 
+> file_offset,
+> +						  disk_bytenr, num_bytes,
+> +						  disk_num_bytes, type,
+> +						  compress_type);
+> +	} else if (test_bit(BTRFS_ORDERED_DIRECT, &ordered->flags)) {
+> +		btrfs_add_ordered_extent_dio(BTRFS_I(inode), file_offset,
+> +					     disk_bytenr, num_bytes,
+> +					     disk_num_bytes, type);
+> +	} else {
+> +		btrfs_add_ordered_extent(BTRFS_I(inode), file_offset,
+> +					 disk_bytenr, num_bytes, disk_num_bytes,
+> +					 type);
+> +	}
+> +}
+> +
+> +void btrfs_split_ordered_extent(struct btrfs_ordered_extent 
+> *ordered, u64 pre,
+> +				u64 post)
+> +{
+> +	struct inode *inode = ordered->inode;
+> +	struct btrfs_ordered_inode_tree *tree = 
+> &BTRFS_I(inode)->ordered_tree;
+> +	struct rb_node *node;
+> +	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+> +
+> +	spin_lock_irq(&tree->lock);
+> +	/* Remove from tree once */
+> +	node = &ordered->rb_node;
+> +	rb_erase(node, &tree->tree);
+> +	RB_CLEAR_NODE(node);
+> +	if (tree->last == node)
+> +		tree->last = NULL;
+> +
+> +	ordered->file_offset += pre;
+> +	ordered->disk_bytenr += pre;
+> +	ordered->num_bytes -= (pre + post);
+> +	ordered->disk_num_bytes -= (pre + post);
+> +	ordered->bytes_left -= (pre + post);
+> +
+> +	/* Re-insert the node */
+> +	node = tree_insert(&tree->tree, ordered->file_offset,
+> +			   &ordered->rb_node);
+> +	if (node)
+> +		btrfs_panic(fs_info, -EEXIST,
+> +				"zoned: inconsistency in ordered tree at offset 
+> %llu",
+> +				ordered->file_offset);
+> +
+> +	spin_unlock_irq(&tree->lock);
+> +
+> +	if (pre)
+> +		clone_ordered_extent(ordered, 0, pre);
+> +	if (post)
+> +		clone_ordered_extent(ordered, pre + 
+> ordered->disk_num_bytes, post);
+> +}
+> +
+>  int __init ordered_data_init(void)
+>  {
+>  	btrfs_ordered_extent_cache = 
+>  kmem_cache_create("btrfs_ordered_extent",
+> diff --git a/fs/btrfs/ordered-data.h b/fs/btrfs/ordered-data.h
+> index 0bfa82b58e23..f9964276f85f 100644
+> --- a/fs/btrfs/ordered-data.h
+> +++ b/fs/btrfs/ordered-data.h
+> @@ -190,6 +190,8 @@ void btrfs_wait_ordered_roots(struct 
+> btrfs_fs_info *fs_info, u64 nr,
+>  void btrfs_lock_and_flush_ordered_range(struct btrfs_inode 
+>  *inode, u64 start,
+>  					u64 end,
+>  					struct extent_state **cached_state);
+> +void btrfs_split_ordered_extent(struct btrfs_ordered_extent 
+> *ordered, u64 pre,
+> +				u64 post);
+>  int __init ordered_data_init(void);
+>  void __cold ordered_data_exit(void);
 
