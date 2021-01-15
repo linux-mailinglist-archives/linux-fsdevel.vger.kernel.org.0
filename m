@@ -2,78 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEF832F88E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 23:52:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBA6C2F892B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Jan 2021 00:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbhAOWv1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 17:51:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59768 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbhAOWvZ (ORCPT
+        id S1727699AbhAOXJI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 18:09:08 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:54635 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbhAOXJE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 17:51:25 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED57BC061757
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:50:44 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id u21so12112817lja.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:50:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BP8A5Fr5rq60xwzRjLDYqleQmQwgjOuNkcax/uogylI=;
-        b=JDgaJ+aZakTkLqDRr/Nxj6NnPtktkwyykElehcXd5k5pvtIMEqDat9KXS9w4vU95Tg
-         cPLMFOfNK6lVirAkvw5Y+0SYQdkrHgzJpOd2VZoReMNLGAlPDA/6zkk405lzaLY+hf+S
-         PvrIxh/S8EUjw/io+SfZUja2CP/1O23mYY3ik=
+        Fri, 15 Jan 2021 18:09:04 -0500
+Received: by mail-io1-f70.google.com with SMTP id w26so17485047iox.21
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 15:08:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BP8A5Fr5rq60xwzRjLDYqleQmQwgjOuNkcax/uogylI=;
-        b=Mdn4KpiPfODWiPbxIXy2eAnVsGPUL7c71KwAu8Iq4qDzfrpUd5RbUsjFMGsfphpXKg
-         bL7Bu3fbeqicdsv3ERuAMJEv7Z3N1pgdyTWzePtRvavVY7PG1l+ZpNamang70xs0tAGN
-         ATnHTJfLO6mDhokIu+godge7jswpyZs2aiGPNc5xYpSTOwQlWmSdgdqTKIqx4kvo37zw
-         iddT8VL84Q5b13MpHekYAJXiXE11W9qM7FmBekp3KGhuiEbtXmTgajlUj3MLEEuKRyGL
-         Jia6IuxU/gVfblUge3an1dxYZlD4e70v3ge7oB095FvDyXp1MAeF3ujvnyvkGMUGOxsO
-         8gOA==
-X-Gm-Message-State: AOAM532cDjWyXsCRorCjkKOxW7Xo+Qp7kY/Lrs+4HivJZz6l73h7BdWQ
-        Hy3ca7Om1YiN5ukp3TIjAvSkoLsFV3HOhA==
-X-Google-Smtp-Source: ABdhPJx7k6ZS+heXn9QawLNcxj0588UkCa++mmP1jCZlAdOgquNaiRODQDxA66NhLdOEnSh7OPgybA==
-X-Received: by 2002:a2e:2417:: with SMTP id k23mr5929249ljk.373.1610751043063;
-        Fri, 15 Jan 2021 14:50:43 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id o14sm1051300lfi.92.2021.01.15.14.50.41
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 14:50:42 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id h205so15503226lfd.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:50:41 -0800 (PST)
-X-Received: by 2002:ac2:420a:: with SMTP id y10mr4766178lfh.377.1610751041631;
- Fri, 15 Jan 2021 14:50:41 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=uakvH1s9XP9G5HMG/CzCkdjvXgWW8t2Z/lJ6987n5Pg=;
+        b=Wc9R4oaWvlapCyUGoYvOPXpKY9hapf3fzf4j1iday7jLFTwOfb1sMiTlKcAwqrqXez
+         6s8cFXbW/jKy0E+F+T3iicb0HIs8MTPUmodsSU4Jo//pewAhId9MWTv5pWeF4nypB9BC
+         9il+fvQXGleV76Uom24FLHs97rHYYqgSIHwS0ZmmzK5l8jfs/+AlA3bWJGsL3/JpJLs5
+         ++/Tys11+8pE1y5pWY9wpQAI0xP+K5rfUKfJWdt0iayGZM+jqELKSI4eiJ5AXSInUAe4
+         9xEFwljLIs8hOwWxkTrBXSV3bkZ/L5V9NfrmEuBCOOOmxf+9AyuXi3s/DK7haCF3/WPI
+         xawg==
+X-Gm-Message-State: AOAM5312cs/4D5J43Q4BdJHT/XHqUmFQ+GsXcXageQWgx3y/FxMG+dvi
+        z9NqkToM+whRC8lbb62xHzQvN0vuMjX8xBH68eEHSnPDCO3G
+X-Google-Smtp-Source: ABdhPJz/gYSCw4xqt5wGfGkX/mxjgGPv7jbyqDMBL8oivBdtAgy4D84Zxnn/e77W47tmfvQ2IVLQL/PDSFTdE+nSlYbeK2gi4ntx
 MIME-Version: 1.0
-References: <20210115163917.GH27380@quack2.suse.cz>
-In-Reply-To: <20210115163917.GH27380@quack2.suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 15 Jan 2021 14:50:25 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whTVhOYX5C4TWFrRdAz=QygD0uPDzhLD6sbv2yZfq8+gw@mail.gmail.com>
-Message-ID: <CAHk-=whTVhOYX5C4TWFrRdAz=QygD0uPDzhLD6sbv2yZfq8+gw@mail.gmail.com>
-Subject: Re: [GIT PULL] Fs & udf fixes for v5.11-rc4
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+X-Received: by 2002:a92:ba82:: with SMTP id t2mr12456787ill.139.1610752103304;
+ Fri, 15 Jan 2021 15:08:23 -0800 (PST)
+Date:   Fri, 15 Jan 2021 15:08:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f054d005b8f87274@google.com>
+Subject: WARNING in io_disable_sqo_submit
+From:   syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 8:39 AM Jan Kara <jack@suse.cz> wrote:
-> lianzhi chang (1):
->       udf: fix the problem that the disc content is not displayed
+Hello,
 
-What? Hell no.
+syzbot found the following issue on:
 
-This garbage doesn't even build, has never built, and is unbelievable shit.
+HEAD commit:    7c53f6b6 Linux 5.11-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a76f70d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c60c9ff9cc916cbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
+compiler:       gcc (GCC) 10.1.0-syz 20200507
 
-Clearly entirely untested, there's an extraneous left-over close
-parens in there.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-              Linus
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 9094 at fs/io_uring.c:8884 io_disable_sqo_submit+0x106/0x130 fs/io_uring.c:8884
+Modules linked in:
+CPU: 1 PID: 9094 Comm: syz-executor.5 Not tainted 5.11.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_disable_sqo_submit+0x106/0x130 fs/io_uring.c:8884
+Code: b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 1d 83 8b 14 01 00 00 01 48 89 ef 5b 5d e9 ef bc 23 07 e8 5a e5 9a ff <0f> 0b e9 35 ff ff ff e8 3e a1 dd ff eb dc e8 67 a1 dd ff e9 65 ff
+RSP: 0018:ffffc9000188fea0 EFLAGS: 00010212
+RAX: 0000000000000044 RBX: ffff888079dbe000 RCX: ffffc90013b54000
+RDX: 0000000000040000 RSI: ffffffff81d7e466 RDI: ffff888079dbe0d0
+RBP: ffff8880201c0c80 R08: 0000000000000000 R09: 00000000278d0001
+R10: ffffffff81d7e705 R11: 0000000000000001 R12: ffff888079dbe000
+R13: ffff8880278d0001 R14: ffff888079dbe040 R15: ffff888079dbe0d0
+FS:  00007fe461a71700(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000080 CR3: 0000000011fd1000 CR4: 0000000000350ee0
+Call Trace:
+ io_uring_flush+0x28b/0x3a0 fs/io_uring.c:9099
+ filp_close+0xb4/0x170 fs/open.c:1280
+ close_fd+0x5c/0x80 fs/file.c:626
+ __do_sys_close fs/open.c:1299 [inline]
+ __se_sys_close fs/open.c:1297 [inline]
+ __x64_sys_close+0x2f/0xa0 fs/open.c:1297
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45e219
+Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fe461a70c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 000000000045e219
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000007
+RBP: 000000000119bfb0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000119bf8c
+R13: 00007ffc626b58ff R14: 00007fe461a719c0 R15: 000000000119bf8c
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
