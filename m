@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B46B62F7357
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 08:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A92C2F7359
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 08:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbhAOHAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 02:00:16 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41699 "EHLO
+        id S1730792AbhAOHAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 02:00:18 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41647 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730484AbhAOHAP (ORCPT
+        with ESMTP id S1730484AbhAOHAR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 02:00:15 -0500
+        Fri, 15 Jan 2021 02:00:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1610694014; x=1642230014;
+  t=1610694017; x=1642230017;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=bs5kdRQRmWNJivMdayB8MbrQ6IwKl0lXTAehbR6yqYk=;
-  b=rTN84j9zXrcDPz4J7z/+B0ewml1wcYMIV3FBxrVqGw/817aSgElpG3ns
-   nAAZTastniqfGaz9oCHi9wy3taSkTAIMjdM3iUqDIihOOWwirhTGx/6iC
-   P9F7x1Mn4Fix6rrMurpIr2Yrmqe4I9fVjP7RM49YbouvMHliWF8BejehB
-   cd06KQ22RLxbtaKdGM2nKVSbU2u5xxCVBeJRlNuPV2ORfagoh4PseBlwx
-   Sg9e3O3Ae8DEn5v9FjrGjpU0AgOGrdXOZu01MC9ecQryN+EOjKWx7T/LV
-   5o+C+g1AK+nJ/PyiDTDkauGuRRtKAZu9L7GQUv+Xppdm/K3ri/jEtPZ2p
+  bh=WD9LT9tM0885Oy1NdHTkL0CRdbifJwUyVIslk7M6Ut4=;
+  b=En5LAMKEoV6jw60/m1T+5CxEgJQx66P2mI/L+LfPH6AzWNgr89inBDeJ
+   +VeBsEWs6/8fpKyZXhBv7K15RHKCK9N9bSXHxvv0sd2MggnJuleSj5OM3
+   +o606/KF+R6LprRPwTWdudJ5Zo9WtvHMkGj5Ch4M3ZybWXur7I8DTdbox
+   3QpaH5svkNDTD6nLlsptm5B2aZciCix/0hEVCOOIHoTn4SXQuB+jIzjkn
+   9p2nYHmC586bCahdfq6G+D+V/HFOmlFlocZ0+TvhO49ygPydeIvKOvkcZ
+   c6ZZOr9o3s89JzGiNtGALg/dtrmXagXfpYGxumea9H8CAFyfsluClwsAq
    Q==;
-IronPort-SDR: GhkJgwiTYTCGIfAwOQ7+fbMesF8zHSrXcYKqFxrhHq9ZPbtwqTmhNngIMsdjWx33S3ikHccxMf
- 2w7hW+GdK2mmFnI+OwOyNXZW0tStfaFA3pI+9/EAy1zCyqTpxHt1BvstlIgCabsoSmGLaRGDi0
- 35u54S540mgr8phQ8x/GqfgUpD+2xKwCVPV1I6uY0Mo2MlRk3Be801qcP5P5nuEQogEdVkZB6H
- wOEkJVqHCV3KVNPHmxv9OkvUghZNBJ7+MAcuAs2yRpkJ/RJAVhFT4Z5ynqQqW8LPBQ6AK7bgqt
- r6A=
+IronPort-SDR: MNnYmfAz3FrjbEj6wIYUGKqnh1gquXsqVVWQUhtm8HKThI196NBbe0nYxK76A70xM32p7g1+Zs
+ nTnKVlg0uCbslVtBWkxDsF/dVknQVsDFqouuFbIh92nPwkvnhd9lWQKjvlIJutktSY0wyCJYjx
+ P/FpXQW9fem/cuRxDO80qOcORFnYDupS4FUDn9R16ygJpIH1LwNKQPB7aRBunVYVbWhrYEQbtT
+ /4emFnwJb82cCci2TBoAlRkZ1P3n3PNKajRVeyaTWoUGOY0DZcx8auQNip7m/COE921H5G5Duz
+ 59A=
 X-IronPort-AV: E=Sophos;i="5.79,348,1602518400"; 
-   d="scan'208";a="161928301"
+   d="scan'208";a="161928304"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2021 14:56:09 +0800
-IronPort-SDR: zfb2QjtIwtdXew4g1hTftZ79LhdOQ5gTqyjXWD5m4uqI+ZjgkHhKszIZQ0wgJtO6sICAASsJZ2
- 3uOw7RQYSF3EzjwQd8kVuqAmIU+gzTjaMVYWQ0YzhFpjaSsNaPu9o16CqpEyglVezqjIkukoGb
- NDBN1wx/cELHemO/SVbxCM4i7cDTVdORsNV46Ll4E83sDmhMtmbpN3poB2+C4x2s4GJBZmOnSX
- Oe8HOUu3bRgJRzbLzWDhyujtBlXSHk1tcsx+KVwh9tZ8jI3vRvS6BQe+ewGJfwQGujC5CfUcEX
- PLP6mvcywZNAxBhjsm7zouMP
+  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2021 14:56:11 +0800
+IronPort-SDR: uPlEvnzlthldBLsu+kG093uf38MWTj4utz4BoNHTgZUtxxnYc6wFCwZLNuO8mSTxcQTokPRPhm
+ ug/N30hMIpRJnUULW0sw5cPFwKWK8oQsmFjNXaAyzc7eR8BAsxanLmMNni6sgPEBzfV1jrdAnj
+ 4/axSHrQVjpBxQB3LWB6xV7uKXAPwulqH2RhnqbTxVVu9MOTcMAfTLmz0fx11xyZlY5vG13Y+e
+ iVl/F7NxTEP8edWdfPHIvTQkTdCrXdejD171wApab/SsTJDCxiQTeJj8Q+x/MgJZyoLagfd+Mw
+ cXlQsFL3t9T855CyfBo/DYog
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2021 22:40:51 -0800
-IronPort-SDR: iZpgUr9LelIn1nWU+sMH9G0VVLCkQtD4+0asOk25GDpTPa5F1cizjzUBjGosElJYoFdqnHS2uh
- dDfnIpxNHx0kRmlrXCLiBeOBmtrVxgwX07ABssnA7fSDVaFmNw3brg/DjzQcO4trz7ojuzAADZ
- 3OK/ToW5mwDQndtY/n6HfOFUBwBiUVdSfIUrP+LGDuuRaTg64xrcqv8opUQqcUyIh2OXCESdsw
- mlRRFr2ZXvu4HVRfL1wpqQlAhQyS59ifs1o1fgYr2d1ZoZPmWmIFG9pkMrMCUsocMbFuO0GyI5
- pAk=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2021 22:40:53 -0800
+IronPort-SDR: BpYbzjXjaZYcmtD1tNFGYFR74mBCJi8ujW1lJ0V52ymJsn/sHsjIcOLtSKP3CqoFyS9FyS6efH
+ 4DeXw8b2QBE6BHQ3yk6CX1rqS3GvhB+IPZwuubTT+q78pzc2QOUPuinEK+sE/3JumD9h4H5MHP
+ wIdZvftqHiivz+olWf1aFFl4ZxLgh7D/yQ0YxQdLozMy1uiAAZwBfPT58FYMn2qp3xVmXxzSmY
+ yWEr0xKxyzezv5sff4OBi1jFAnS9VdtLzzX3OO3JIQfafuzDL+XAyKP8NLGpcmnYS7LmFMJv5J
+ G4Y=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 14 Jan 2021 22:56:08 -0800
-Received: (nullmailer pid 1916484 invoked by uid 1000);
+  by uls-op-cesaip01.wdc.com with SMTP; 14 Jan 2021 22:56:10 -0800
+Received: (nullmailer pid 1916486 invoked by uid 1000);
         Fri, 15 Jan 2021 06:55:02 -0000
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
@@ -59,9 +59,9 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Naohiro Aota <naohiro.aota@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v12 32/41] btrfs: mark block groups to copy for device-replace
-Date:   Fri, 15 Jan 2021 15:53:36 +0900
-Message-Id: <8a15ae8f4ac407a54b44d5d1bec80342b28dd047.1610693037.git.naohiro.aota@wdc.com>
+Subject: [PATCH v12 33/41] btrfs: implement cloning for ZONED device-replace
+Date:   Fri, 15 Jan 2021 15:53:37 +0900
+Message-Id: <cc6e7035d0a0851b90749a26d0e6c5da7a1f0b8e.1610693037.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1610693036.git.naohiro.aota@wdc.com>
 References: <cover.1610693036.git.naohiro.aota@wdc.com>
@@ -71,310 +71,211 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the 1/4 patch to support device-replace in ZONED mode.
+This is 2/4 patch to implement device-replace for ZONED mode.
 
-We have two types of I/Os during the device-replace process. One is an I/O
-to "copy" (by the scrub functions) all the device extents on the source
-device to the destination device.  The other one is an I/O to "clone" (by
-handle_ops_on_dev_replace()) new incoming write I/Os from users to the
-source device into the target device.
+On zoned mode, a block group must be either copied (from the source device
+to the destination device) or cloned (to the both device).
 
-Cloning incoming I/Os can break the sequential write rule in the target
-device. When writing is mapped in the middle of a block group, the I/O is
-directed in the middle of a target device zone, which breaks the sequential
-write rule.
+This commit implements the cloning part. If a block group targeted by an IO
+is marked to copy, we should not clone the IO to the destination device,
+because the block group is eventually copied by the replace process.
 
-However, the cloning function cannot be merely disabled since incoming I/Os
-targeting already copied device extents must be cloned so that the I/O is
-executed on the target device.
-
-We cannot use dev_replace->cursor_{left,right} to determine whether bio is
-going to not yet copied region.  Since we have a time gap between finishing
-btrfs_scrub_dev() and rewriting the mapping tree in
-btrfs_dev_replace_finishing(), we can have a newly allocated device extent
-which is never cloned nor copied.
-
-So the point is to copy only already existing device extents. This patch
-introduces mark_block_group_to_copy() to mark existing block groups as a
-target of copying. Then, handle_ops_on_dev_replace() and dev-replace can
-check the flag to do their job.
+This commit also handles cloning of device reset.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/block-group.h |   1 +
- fs/btrfs/dev-replace.c | 182 +++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/dev-replace.h |   3 +
- fs/btrfs/scrub.c       |  17 ++++
- 4 files changed, 203 insertions(+)
+ fs/btrfs/extent-tree.c | 57 +++++++++++++++++++++++++++++++-----------
+ fs/btrfs/volumes.c     | 33 ++++++++++++++++++++++--
+ fs/btrfs/zoned.c       | 11 ++++++++
+ 3 files changed, 84 insertions(+), 17 deletions(-)
 
-diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
-index 19a22bf930c6..3dec66ed36cb 100644
---- a/fs/btrfs/block-group.h
-+++ b/fs/btrfs/block-group.h
-@@ -95,6 +95,7 @@ struct btrfs_block_group {
- 	unsigned int iref:1;
- 	unsigned int has_caching_ctl:1;
- 	unsigned int removed:1;
-+	unsigned int to_copy:1;
- 
- 	int disk_cache_state;
- 
-diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-index 324f646d6e5e..b2a6ca206ac0 100644
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -22,6 +22,7 @@
- #include "dev-replace.h"
- #include "sysfs.h"
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index ac24a79ce32a..23d77e3196ca 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -35,6 +35,7 @@
+ #include "discard.h"
+ #include "rcu-string.h"
  #include "zoned.h"
-+#include "block-group.h"
++#include "dev-replace.h"
  
- /*
-  * Device replace overview
-@@ -459,6 +460,183 @@ static char* btrfs_dev_name(struct btrfs_device *device)
- 		return rcu_str_deref(device->name);
+ #undef SCRAMBLE_DELAYED_REFS
+ 
+@@ -1300,6 +1301,46 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+ 	return ret;
  }
  
-+static int mark_block_group_to_copy(struct btrfs_fs_info *fs_info,
-+				    struct btrfs_device *src_dev)
++static int do_discard_extent(struct btrfs_bio_stripe *stripe, u64 *bytes)
 +{
-+	struct btrfs_path *path;
-+	struct btrfs_key key;
-+	struct btrfs_key found_key;
-+	struct btrfs_root *root = fs_info->dev_root;
-+	struct btrfs_dev_extent *dev_extent = NULL;
-+	struct btrfs_block_group *cache;
-+	struct btrfs_trans_handle *trans;
++	struct btrfs_device *dev = stripe->dev;
++	struct btrfs_fs_info *fs_info = dev->fs_info;
++	struct btrfs_dev_replace *dev_replace = &fs_info->dev_replace;
++	u64 phys = stripe->physical;
++	u64 len = stripe->length;
++	u64 discarded = 0;
 +	int ret = 0;
-+	u64 chunk_offset;
 +
-+	/* Do not use "to_copy" on non-ZONED for now */
-+	if (!btrfs_is_zoned(fs_info))
-+		return 0;
++	/* Zone reset in ZONED mode */
++	if (btrfs_can_zone_reset(dev, phys, len)) {
++		u64 src_disc;
 +
-+	mutex_lock(&fs_info->chunk_mutex);
-+
-+	/* Ensure we don't have pending new block group */
-+	spin_lock(&fs_info->trans_lock);
-+	while (fs_info->running_transaction &&
-+	       !list_empty(&fs_info->running_transaction->dev_update_list)) {
-+		spin_unlock(&fs_info->trans_lock);
-+		mutex_unlock(&fs_info->chunk_mutex);
-+		trans = btrfs_attach_transaction(root);
-+		if (IS_ERR(trans)) {
-+			ret = PTR_ERR(trans);
-+			mutex_lock(&fs_info->chunk_mutex);
-+			if (ret == -ENOENT)
-+				continue;
-+			else
-+				goto unlock;
-+		}
-+
-+		ret = btrfs_commit_transaction(trans);
-+		mutex_lock(&fs_info->chunk_mutex);
++		ret = btrfs_reset_device_zone(dev, phys, len, &discarded);
 +		if (ret)
-+			goto unlock;
++			goto out;
 +
-+		spin_lock(&fs_info->trans_lock);
-+	}
-+	spin_unlock(&fs_info->trans_lock);
++		if (!btrfs_dev_replace_is_ongoing(dev_replace) ||
++		    dev != dev_replace->srcdev)
++			goto out;
 +
-+	path = btrfs_alloc_path();
-+	if (!path) {
-+		ret = -ENOMEM;
-+		goto unlock;
-+	}
++		src_disc = discarded;
 +
-+	path->reada = READA_FORWARD;
-+	path->search_commit_root = 1;
-+	path->skip_locking = 1;
-+
-+	key.objectid = src_dev->devid;
-+	key.offset = 0;
-+	key.type = BTRFS_DEV_EXTENT_KEY;
-+
-+	ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
-+	if (ret < 0)
-+		goto free_path;
-+	if (ret > 0) {
-+		if (path->slots[0] >=
-+		    btrfs_header_nritems(path->nodes[0])) {
-+			ret = btrfs_next_leaf(root, path);
-+			if (ret < 0)
-+				goto free_path;
-+			if (ret > 0) {
-+				ret = 0;
-+				goto free_path;
-+			}
-+		} else {
-+			ret = 0;
-+		}
++		/* send to replace target as well */
++		ret = btrfs_reset_device_zone(dev_replace->tgtdev, phys, len,
++					      &discarded);
++		discarded += src_disc;
++	} else if (blk_queue_discard(bdev_get_queue(stripe->dev->bdev))) {
++		ret = btrfs_issue_discard(dev->bdev, phys, len, &discarded);
++	} else {
++		ret = 0;
++		*bytes = 0;
 +	}
 +
-+	while (1) {
-+		struct extent_buffer *l = path->nodes[0];
-+		int slot = path->slots[0];
-+
-+		btrfs_item_key_to_cpu(l, &found_key, slot);
-+
-+		if (found_key.objectid != src_dev->devid)
-+			break;
-+
-+		if (found_key.type != BTRFS_DEV_EXTENT_KEY)
-+			break;
-+
-+		if (found_key.offset < key.offset)
-+			break;
-+
-+		dev_extent = btrfs_item_ptr(l, slot, struct btrfs_dev_extent);
-+
-+		chunk_offset = btrfs_dev_extent_chunk_offset(l, dev_extent);
-+
-+		cache = btrfs_lookup_block_group(fs_info, chunk_offset);
-+		if (!cache)
-+			goto skip;
-+
-+		spin_lock(&cache->lock);
-+		cache->to_copy = 1;
-+		spin_unlock(&cache->lock);
-+
-+		btrfs_put_block_group(cache);
-+
-+skip:
-+		ret = btrfs_next_item(root, path);
-+		if (ret != 0) {
-+			if (ret > 0)
-+				ret = 0;
-+			break;
-+		}
-+	}
-+
-+free_path:
-+	btrfs_free_path(path);
-+unlock:
-+	mutex_unlock(&fs_info->chunk_mutex);
-+
++out:
++	*bytes = discarded;
 +	return ret;
 +}
 +
-+bool btrfs_finish_block_group_to_copy(struct btrfs_device *srcdev,
-+				      struct btrfs_block_group *cache,
-+				      u64 physical)
+ int btrfs_discard_extent(struct btrfs_fs_info *fs_info, u64 bytenr,
+ 			 u64 num_bytes, u64 *actual_bytes)
+ {
+@@ -1333,28 +1374,14 @@ int btrfs_discard_extent(struct btrfs_fs_info *fs_info, u64 bytenr,
+ 
+ 		stripe = bbio->stripes;
+ 		for (i = 0; i < bbio->num_stripes; i++, stripe++) {
+-			struct btrfs_device *dev = stripe->dev;
+-			u64 physical = stripe->physical;
+-			u64 length = stripe->length;
+ 			u64 bytes;
+-			struct request_queue *req_q;
+ 
+ 			if (!stripe->dev->bdev) {
+ 				ASSERT(btrfs_test_opt(fs_info, DEGRADED));
+ 				continue;
+ 			}
+ 
+-			req_q = bdev_get_queue(stripe->dev->bdev);
+-			/* Zone reset in ZONED mode */
+-			if (btrfs_can_zone_reset(dev, physical, length))
+-				ret = btrfs_reset_device_zone(dev, physical,
+-							      length, &bytes);
+-			else if (blk_queue_discard(req_q))
+-				ret = btrfs_issue_discard(dev->bdev, physical,
+-							  length, &bytes);
+-			else
+-				continue;
+-
++			ret = do_discard_extent(stripe, &bytes);
+ 			if (!ret) {
+ 				discarded_bytes += bytes;
+ 			} else if (ret != -EOPNOTSUPP) {
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index c8c94e5081eb..f3ab7ff0769f 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -5973,9 +5973,29 @@ static int get_extra_mirror_from_replace(struct btrfs_fs_info *fs_info,
+ 	return ret;
+ }
+ 
++static bool is_block_group_to_copy(struct btrfs_fs_info *fs_info, u64 logical)
 +{
-+	struct btrfs_fs_info *fs_info = cache->fs_info;
-+	struct extent_map *em;
-+	struct map_lookup *map;
-+	u64 chunk_offset = cache->start;
-+	int num_extents, cur_extent;
-+	int i;
++	struct btrfs_block_group *cache;
++	bool ret;
 +
-+	/* Do not use "to_copy" on non-ZONED for now */
++	/* non-ZONED mode does not use "to_copy" flag */
 +	if (!btrfs_is_zoned(fs_info))
-+		return true;
-+
-+	spin_lock(&cache->lock);
-+	if (cache->removed) {
-+		spin_unlock(&cache->lock);
-+		return true;
-+	}
-+	spin_unlock(&cache->lock);
-+
-+	em = btrfs_get_chunk_map(fs_info, chunk_offset, 1);
-+	ASSERT(!IS_ERR(em));
-+	map = em->map_lookup;
-+
-+	num_extents = cur_extent = 0;
-+	for (i = 0; i < map->num_stripes; i++) {
-+		/* We have more device extent to copy */
-+		if (srcdev != map->stripes[i].dev)
-+			continue;
-+
-+		num_extents++;
-+		if (physical == map->stripes[i].physical)
-+			cur_extent = i;
-+	}
-+
-+	free_extent_map(em);
-+
-+	if (num_extents > 1 && cur_extent < num_extents - 1) {
-+		/*
-+		 * Has more stripes on this device. Keep this BG
-+		 * readonly until we finish all the stripes.
-+		 */
 +		return false;
-+	}
 +
-+	/* Last stripe on this device */
++	cache = btrfs_lookup_block_group(fs_info, logical);
++
 +	spin_lock(&cache->lock);
-+	cache->to_copy = 0;
++	ret = cache->to_copy;
 +	spin_unlock(&cache->lock);
 +
-+	return true;
++	btrfs_put_block_group(cache);
++	return ret;
 +}
 +
- static int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
- 		const char *tgtdev_name, u64 srcdevid, const char *srcdev_name,
- 		int read_src)
-@@ -500,6 +678,10 @@ static int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
- 	if (ret)
- 		return ret;
+ static void handle_ops_on_dev_replace(enum btrfs_map_op op,
+ 				      struct btrfs_bio **bbio_ret,
+ 				      struct btrfs_dev_replace *dev_replace,
++				      u64 logical,
+ 				      int *num_stripes_ret, int *max_errors_ret)
+ {
+ 	struct btrfs_bio *bbio = *bbio_ret;
+@@ -5988,6 +6008,15 @@ static void handle_ops_on_dev_replace(enum btrfs_map_op op,
+ 	if (op == BTRFS_MAP_WRITE) {
+ 		int index_where_to_add;
  
-+	ret = mark_block_group_to_copy(fs_info, src_device);
-+	if (ret)
-+		return ret;
-+
- 	down_write(&dev_replace->rwsem);
- 	switch (dev_replace->replace_state) {
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED:
-diff --git a/fs/btrfs/dev-replace.h b/fs/btrfs/dev-replace.h
-index 60b70dacc299..3911049a5f23 100644
---- a/fs/btrfs/dev-replace.h
-+++ b/fs/btrfs/dev-replace.h
-@@ -18,5 +18,8 @@ int btrfs_dev_replace_cancel(struct btrfs_fs_info *fs_info);
- void btrfs_dev_replace_suspend_for_unmount(struct btrfs_fs_info *fs_info);
- int btrfs_resume_dev_replace_async(struct btrfs_fs_info *fs_info);
- int __pure btrfs_dev_replace_is_ongoing(struct btrfs_dev_replace *dev_replace);
-+bool btrfs_finish_block_group_to_copy(struct btrfs_device *srcdev,
-+				      struct btrfs_block_group *cache,
-+				      u64 physical);
- 
- #endif
-diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index 3a0a6b8ed6f2..b57c1184f330 100644
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -3564,6 +3564,17 @@ int scrub_enumerate_chunks(struct scrub_ctx *sctx,
- 		if (!cache)
- 			goto skip;
- 
-+
-+		if (sctx->is_dev_replace && btrfs_is_zoned(fs_info)) {
-+			spin_lock(&cache->lock);
-+			if (!cache->to_copy) {
-+				spin_unlock(&cache->lock);
-+				ro_set = 0;
-+				goto done;
-+			}
-+			spin_unlock(&cache->lock);
-+		}
++		/*
++		 * a block group which have "to_copy" set will
++		 * eventually copied by dev-replace process. We can
++		 * avoid cloning IO here.
++		 */
++		if (is_block_group_to_copy(dev_replace->srcdev->fs_info,
++					   logical))
++			return;
 +
  		/*
- 		 * Make sure that while we are scrubbing the corresponding block
- 		 * group doesn't get its logical address and its device extents
-@@ -3695,6 +3706,12 @@ int scrub_enumerate_chunks(struct scrub_ctx *sctx,
+ 		 * duplicate the write operations while the dev replace
+ 		 * procedure is running. Since the copying of the old disk to
+@@ -6383,8 +6412,8 @@ static int __btrfs_map_block(struct btrfs_fs_info *fs_info,
  
- 		scrub_pause_off(fs_info);
+ 	if (dev_replace_is_ongoing && dev_replace->tgtdev != NULL &&
+ 	    need_full_stripe(op)) {
+-		handle_ops_on_dev_replace(op, &bbio, dev_replace, &num_stripes,
+-					  &max_errors);
++		handle_ops_on_dev_replace(op, &bbio, dev_replace, logical,
++					  &num_stripes, &max_errors);
+ 	}
  
-+		if (sctx->is_dev_replace &&
-+		    !btrfs_finish_block_group_to_copy(dev_replace->srcdev,
-+						      cache, found_key.offset))
-+			ro_set = 0;
+ 	*bbio_ret = bbio;
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index d4edcc5edcfc..a50c441115ab 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -11,6 +11,7 @@
+ #include "disk-io.h"
+ #include "block-group.h"
+ #include "transaction.h"
++#include "dev-replace.h"
+ 
+ /* Maximum number of zones to report per blkdev_report_zones() call */
+ #define BTRFS_REPORT_NR_ZONES   4096
+@@ -1039,6 +1040,8 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
+ 	for (i = 0; i < map->num_stripes; i++) {
+ 		bool is_sequential;
+ 		struct blk_zone zone;
++		struct btrfs_dev_replace *dev_replace = &fs_info->dev_replace;
++		int dev_replace_is_ongoing = 0;
+ 
+ 		device = map->stripes[i].dev;
+ 		physical = map->stripes[i].physical;
+@@ -1065,6 +1068,14 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
+ 		 */
+ 		btrfs_dev_clear_zone_empty(device, physical);
+ 
++		down_read(&dev_replace->rwsem);
++		dev_replace_is_ongoing =
++			btrfs_dev_replace_is_ongoing(dev_replace);
++		if (dev_replace_is_ongoing && dev_replace->tgtdev != NULL)
++			btrfs_dev_clear_zone_empty(dev_replace->tgtdev,
++						   physical);
++		up_read(&dev_replace->rwsem);
 +
-+done:
- 		down_write(&dev_replace->rwsem);
- 		dev_replace->cursor_left = dev_replace->cursor_right;
- 		dev_replace->item_needs_writeback = 1;
+ 		/*
+ 		 * The group is mapped to a sequential zone. Get the zone write
+ 		 * pointer to determine the allocation offset within the zone.
 -- 
 2.27.0
 
