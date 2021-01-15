@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2A52F7346
+	by mail.lfdr.de (Postfix) with ESMTP id F3D412F7348
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 08:00:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730227AbhAOG7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 01:59:20 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41680 "EHLO
+        id S1730285AbhAOG7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 01:59:23 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41681 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730008AbhAOG7T (ORCPT
+        with ESMTP id S1730008AbhAOG7W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 01:59:19 -0500
+        Fri, 15 Jan 2021 01:59:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1610693958; x=1642229958;
+  t=1610693961; x=1642229961;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=pSZERuJD86LxlnqxkApvgrloFWpKf3y7EDgp8rxmJ8A=;
-  b=DlyH8yR8lf7HGqOIgN6lrSRqi6S9r52QysyvxA6JcCLURU/VAPdBnyO8
-   9vVd01qEb97eF0VfDqpnzE9ZmDlevPePYiJAElLKBxHKl1NACSDX7o26G
-   FYtMPxXh8w5E1fDc/znp134ijLe5dKyLwQOoBG6IBsJ714YU7MmICowTl
-   TydjbraQip2YIqlStgBdUpdjJpBriHjzha68A07/6byGDbwFpurp/o1YS
-   MibY9DT/bPyzDPmh0IhAG8C20ubjNhVdN8avTS3fl3bp7EcsWPp4dt1vN
-   CmAOcnFHutPZPdtjDEhsQiIRgDc2Lr/JOLiO/Xneb71faqJsRgJKHwxwl
+  bh=GAnczFidO7iFYKvl2xGT3RTr3YtuD9PBLHPuewv8gkY=;
+  b=NlnSofVHnW7AtWx2krNhYIKttq2LVoAPvPjra0LgHpAxQWL1yD8Fbdce
+   qUERWqKG0dI+v8sMWGHU9/Opel3d7J9EvODq1GvRb7jsMshql0mhSOH/F
+   jWdVj6CKWZ5NMkeAo+yow9aulO5MCsIhaUVWqo6+AMueIBX2P2a6Z8cXS
+   O/pLuKgHW5u/7cxZLeUi1PwbzGnXvl8AT7OZhvRR3A/y0v7dLwiDjv4pU
+   YN67qAiVepLwEChbmrx4hc2SGqosz/1Yo7/iGPYWp+KdVKP+lBQK8x6we
+   iOJW6E9XfYi5bR1cP8qlbQ2cdPVwesMVBRfN6Wnt7/QIy+3tlpeaQucDO
    g==;
-IronPort-SDR: sZOv0YF3r5/kI1ucJnO29kf1790rsA8iZI+tytWTxv/x02sldvin0hc9O0IgwdOMRou/TiWtDe
- Xr0Ae4mCuAeSmxtBsoyNzQrw/bP9eVjXejzxVt7wXtMxZxAF5kZ8Ul5uAyRK10Yir44qleisaR
- 2WlfQGA5k4t6/K6OIRPlzM1mHVFJDUVQUX2LWDIED348od90oAbJ3OctH6Lnu/78Ar35CJs5gv
- XE3SNzQbX01p2nS7aoojqWBRs6cKTlS4vt2LxHzdilr80V+H2nImk+VAFM5mQNazd0m/rgj2cM
- sv4=
+IronPort-SDR: GKy95HN+m2tQ3Jz1iDUHP+8N2ftR5gbQioZDc3QeONmHpMpfYNF6zUYbAXNV/AQCyvE0uUwN2E
+ oBlJ/lTczfYlK6JLopBIpn6h17cbRcAehVyX+Jr8rJigdboXIVaIl5zRFGg+pb/VTQeoL+KuyP
+ jyCR3ILO/exfctlHUMXcJhsIgcSzmDN0bz8ea6NtqPl28vJlvkRgqHkYsnEAXECzh4CXLIOJsZ
+ rtFjZxIWsfiEmTXIz+o1H8J39J5eEGy4cXNCyHwwCNUr5gV6UgkWDEP+xcYR1OZNlC4pcSKjZs
+ vw4=
 X-IronPort-AV: E=Sophos;i="5.79,348,1602518400"; 
-   d="scan'208";a="161928273"
+   d="scan'208";a="161928276"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2021 14:55:51 +0800
-IronPort-SDR: rY6qp9BKjni+4bZeKHhp6KGJBIEBVSaAdfqKdRHIojqBpDNH3OI365nZwTNRyHbsm8fC7E87Km
- mVDMvYThKxK9mu52WEAhHwHuX3m1ZxVbNDCecsfsvTPYxhptuqx0dtHcTwCZzE23dJa4KgOzU0
- vfn/HhC+cB1095TAwNYfBEoXK5ug1PPUYWhi/fD9ZCkiq+BjCsS8wgKKNzbbX8i3sTfz4FwhTo
- YYfgNX99p00T++lIX2Sw7OdDR54VsiPNSaczr+FRyi2dbJuHKD1COvG8m4VKk3Dnxiy+Ed5UtR
- iFBzVLMxkSyrnIesQeFfr3Kd
+  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2021 14:55:53 +0800
+IronPort-SDR: 3WJLzoHWF9r1MXFb+Mqa8gtQp3MRxrY+xGDgkgO/nru89+AklOKZJEJz8sXzoOWO7J021Ev3qI
+ kjCpb+ghZJ8jvsjp4Um5gGGo9t25N6Hpi2Zgf7GLJt8jaHRYbrqHelsX7SMB3UQlEMl2cyPmLN
+ 9bTrAJxUxGZT/YsYPFNuB3rGxm1C26biKU3OxqFONMWHoNOX3ElYkM7VafWBc73PXcg+ertKTl
+ B/O4Uqq/TNmJ8YQRFvEX2LfpIuRHkREhLgiF9HaaTqroBNyj/yuejdh1ACqaHP15zTrtUJB/3X
+ G2IwMkg7IkCcEOmILk4lv3fx
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2021 22:40:33 -0800
-IronPort-SDR: B13D6lOAcF86JWkGUQ4Zoq89UJYpLFKbFyBdXkWki42kYBRDKZt9RR24HaXNFkEfio7JnUSKHu
- Ae+HhOTJ7q4PAdIhtSEGj2ArDgnX371wcHUlgyFi8NlUSBW3V5ZWu8DzLmSIgXXZ4YSM5QsyHv
- X34ie5Yb1BgLuj4ArsdAgcjEVXndHx351bJfq4BIuuGrErAlCKskOjYN64hkoxsfuqXQOaFA0t
- OPuEuIx24QZpZ8XX11HudYytuZKZ0DBozR5wyGrHZlNVXiIxZtorAYoMo8xncRtp6TRJ3QInI9
- za0=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jan 2021 22:40:35 -0800
+IronPort-SDR: RjPpNew1xyFprClUzFU6Mu+UhTt8Svniorc11O05rzxWy9zojjPK3vWwFDMnu2DbWBo5oKAAUY
+ ed7AqCA/C7L8gHTw8g6xNE1Hjbl6zVh5HRJ7k66eGQRoZxCHIDSevFI2xMzICVDzBXeUp0XyTU
+ MRG6ufQ8S1KjvMGbSaw8GXoqu36OL/vK4dZ30BNkaXT9Bp6cLmz4Q9i1rabL4InUE71LTOxRTk
+ r3f7lFad7hKO2mF6mECH2KlEygyqVeF24rfA1aAFh8CImTa8izJKgF5ofL8AujE2ybxtELhX8v
+ sv8=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 14 Jan 2021 22:55:50 -0800
-Received: (nullmailer pid 1916466 invoked by uid 1000);
+  by uls-op-cesaip01.wdc.com with SMTP; 14 Jan 2021 22:55:52 -0800
+Received: (nullmailer pid 1916468 invoked by uid 1000);
         Fri, 15 Jan 2021 06:55:02 -0000
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
@@ -57,11 +57,11 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v12 23/41] btrfs: extend btrfs_rmap_block for specifying a device
-Date:   Fri, 15 Jan 2021 15:53:27 +0900
-Message-Id: <02a9e2dd2d839fb694d5bfeb15fe6cc86a886f8a.1610693037.git.naohiro.aota@wdc.com>
+Subject: [PATCH v12 24/41] btrfs: cache if block-group is on a sequential zone
+Date:   Fri, 15 Jan 2021 15:53:28 +0900
+Message-Id: <327e5c00dd98a9bdb70e3ec7da74a315fd08c551.1610693037.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1610693036.git.naohiro.aota@wdc.com>
 References: <cover.1610693036.git.naohiro.aota@wdc.com>
@@ -71,139 +71,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-btrfs_rmap_block currently reverse-maps the physical addresses on all
-devices to the corresponding logical addresses.
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-This commit extends the function to match to a specified device. The old
-functionality of querying all devices is left intact by specifying NULL as
-target device.
-
-We pass block_device instead of btrfs_device to __btrfs_rmap_block. This
-function is intended to reverse-map the result of bio, which only have
-block_device.
-
-This commit also exports the function for later use.
+In zoned mode, cache if a block-group is on a sequential write only zone.
+On sequential write only zones, we can use REQ_OP_ZONE_APPEND for writing
+of data, therefore provide btrfs_use_zone_append() to figure out if I/O is
+targeting a sequential write only zone and we can use said
+REQ_OP_ZONE_APPEND for data writing.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/btrfs/block-group.c            | 20 ++++++++++++++------
- fs/btrfs/block-group.h            |  8 +++-----
- fs/btrfs/tests/extent-map-tests.c |  2 +-
- 3 files changed, 18 insertions(+), 12 deletions(-)
+ fs/btrfs/block-group.h |  2 ++
+ fs/btrfs/zoned.c       | 29 +++++++++++++++++++++++++++++
+ fs/btrfs/zoned.h       |  5 +++++
+ 3 files changed, 36 insertions(+)
 
-diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-index f7c85cc81d1e..7083189884de 100644
---- a/fs/btrfs/block-group.c
-+++ b/fs/btrfs/block-group.c
-@@ -1576,8 +1576,11 @@ static void set_avail_alloc_bits(struct btrfs_fs_info *fs_info, u64 flags)
- }
- 
- /**
-- * btrfs_rmap_block - Map a physical disk address to a list of logical addresses
-+ * btrfs_rmap_block - Map a physical disk address to a list of logical
-+ *                    addresses
-  * @chunk_start:   logical address of block group
-+ * @bdev:	   physical device to resolve. Can be NULL to indicate any
-+ *                 device.
-  * @physical:	   physical address to map to logical addresses
-  * @logical:	   return array of logical addresses which map to @physical
-  * @naddrs:	   length of @logical
-@@ -1587,9 +1590,9 @@ static void set_avail_alloc_bits(struct btrfs_fs_info *fs_info, u64 flags)
-  * Used primarily to exclude those portions of a block group that contain super
-  * block copies.
-  */
--EXPORT_FOR_TESTS
- int btrfs_rmap_block(struct btrfs_fs_info *fs_info, u64 chunk_start,
--		     u64 physical, u64 **logical, int *naddrs, int *stripe_len)
-+		     struct block_device *bdev, u64 physical, u64 **logical,
-+		     int *naddrs, int *stripe_len)
- {
- 	struct extent_map *em;
- 	struct map_lookup *map;
-@@ -1607,6 +1610,7 @@ int btrfs_rmap_block(struct btrfs_fs_info *fs_info, u64 chunk_start,
- 	map = em->map_lookup;
- 	data_stripe_length = em->orig_block_len;
- 	io_stripe_size = map->stripe_len;
-+	chunk_start = em->start;
- 
- 	/* For RAID5/6 adjust to a full IO stripe length */
- 	if (map->type & BTRFS_BLOCK_GROUP_RAID56_MASK)
-@@ -1621,14 +1625,18 @@ int btrfs_rmap_block(struct btrfs_fs_info *fs_info, u64 chunk_start,
- 	for (i = 0; i < map->num_stripes; i++) {
- 		bool already_inserted = false;
- 		u64 stripe_nr;
-+		u64 offset;
- 		int j;
- 
- 		if (!in_range(physical, map->stripes[i].physical,
- 			      data_stripe_length))
- 			continue;
- 
-+		if (bdev && map->stripes[i].dev->bdev != bdev)
-+			continue;
-+
- 		stripe_nr = physical - map->stripes[i].physical;
--		stripe_nr = div64_u64(stripe_nr, map->stripe_len);
-+		stripe_nr = div64_u64_rem(stripe_nr, map->stripe_len, &offset);
- 
- 		if (map->type & BTRFS_BLOCK_GROUP_RAID10) {
- 			stripe_nr = stripe_nr * map->num_stripes + i;
-@@ -1642,7 +1650,7 @@ int btrfs_rmap_block(struct btrfs_fs_info *fs_info, u64 chunk_start,
- 		 * instead of map->stripe_len
- 		 */
- 
--		bytenr = chunk_start + stripe_nr * io_stripe_size;
-+		bytenr = chunk_start + stripe_nr * io_stripe_size + offset;
- 
- 		/* Ensure we don't add duplicate addresses */
- 		for (j = 0; j < nr; j++) {
-@@ -1684,7 +1692,7 @@ static int exclude_super_stripes(struct btrfs_block_group *cache)
- 
- 	for (i = 0; i < BTRFS_SUPER_MIRROR_MAX; i++) {
- 		bytenr = btrfs_sb_offset(i);
--		ret = btrfs_rmap_block(fs_info, cache->start,
-+		ret = btrfs_rmap_block(fs_info, cache->start, NULL,
- 				       bytenr, &logical, &nr, &stripe_len);
- 		if (ret)
- 			return ret;
 diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
-index 0f3c62c561bc..9df00ada09f9 100644
+index 9df00ada09f9..a1d96c4cfa3b 100644
 --- a/fs/btrfs/block-group.h
 +++ b/fs/btrfs/block-group.h
-@@ -277,6 +277,9 @@ void btrfs_put_block_group_cache(struct btrfs_fs_info *info);
- int btrfs_free_block_groups(struct btrfs_fs_info *info);
- void btrfs_wait_space_cache_v1_finished(struct btrfs_block_group *cache,
- 				struct btrfs_caching_control *caching_ctl);
-+int btrfs_rmap_block(struct btrfs_fs_info *fs_info, u64 chunk_start,
-+		       struct block_device *bdev, u64 physical, u64 **logical,
-+		       int *naddrs, int *stripe_len);
+@@ -184,6 +184,8 @@ struct btrfs_block_group {
+ 	/* Record locked full stripes for RAID5/6 block group */
+ 	struct btrfs_full_stripe_locks_tree full_stripe_locks_root;
  
- static inline u64 btrfs_data_alloc_profile(struct btrfs_fs_info *fs_info)
- {
-@@ -303,9 +306,4 @@ static inline int btrfs_block_group_done(struct btrfs_block_group *cache)
- void btrfs_freeze_block_group(struct btrfs_block_group *cache);
- void btrfs_unfreeze_block_group(struct btrfs_block_group *cache);
- 
--#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
--int btrfs_rmap_block(struct btrfs_fs_info *fs_info, u64 chunk_start,
--		     u64 physical, u64 **logical, int *naddrs, int *stripe_len);
--#endif
--
- #endif /* BTRFS_BLOCK_GROUP_H */
-diff --git a/fs/btrfs/tests/extent-map-tests.c b/fs/btrfs/tests/extent-map-tests.c
-index 57379e96ccc9..c0aefe6dee0b 100644
---- a/fs/btrfs/tests/extent-map-tests.c
-+++ b/fs/btrfs/tests/extent-map-tests.c
-@@ -507,7 +507,7 @@ static int test_rmap_block(struct btrfs_fs_info *fs_info,
- 		goto out_free;
++	/* Flag indicating this block-group is placed on a sequential zone */
++	bool seq_zone;
+ 	/*
+ 	 * Allocation offset for the block group to implement sequential
+ 	 * allocation. This is used only with ZONED mode enabled.
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index 2b02a38b11f9..fed014211f32 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -1103,6 +1103,9 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
+ 		}
  	}
  
--	ret = btrfs_rmap_block(fs_info, em->start, btrfs_sb_offset(1),
-+	ret = btrfs_rmap_block(fs_info, em->start, NULL, btrfs_sb_offset(1),
- 			       &logical, &out_ndaddrs, &out_stripe_len);
- 	if (ret || (out_ndaddrs == 0 && test->expected_mapped_addr)) {
- 		test_err("didn't rmap anything but expected %d",
++	if (num_sequential > 0)
++		cache->seq_zone = true;
++
+ 	if (num_conventional > 0) {
+ 		/*
+ 		 * Avoid calling calculate_alloc_pointer() for new BG. It
+@@ -1223,3 +1226,29 @@ void btrfs_free_redirty_list(struct btrfs_transaction *trans)
+ 	}
+ 	spin_unlock(&trans->releasing_ebs_lock);
+ }
++
++bool btrfs_use_zone_append(struct btrfs_inode *inode, struct extent_map *em)
++{
++	struct btrfs_fs_info *fs_info = inode->root->fs_info;
++	struct btrfs_block_group *cache;
++	bool ret = false;
++
++	if (!btrfs_is_zoned(fs_info))
++		return false;
++
++	if (!fs_info->max_zone_append_size)
++		return false;
++
++	if (!is_data_inode(&inode->vfs_inode))
++		return false;
++
++	cache = btrfs_lookup_block_group(fs_info, em->block_start);
++	ASSERT(cache);
++	if (!cache)
++		return false;
++
++	ret = cache->seq_zone;
++	btrfs_put_block_group(cache);
++
++	return ret;
++}
+diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
+index 331951978487..92888eb86055 100644
+--- a/fs/btrfs/zoned.h
++++ b/fs/btrfs/zoned.h
+@@ -46,6 +46,7 @@ void btrfs_calc_zone_unusable(struct btrfs_block_group *cache);
+ void btrfs_redirty_list_add(struct btrfs_transaction *trans,
+ 			    struct extent_buffer *eb);
+ void btrfs_free_redirty_list(struct btrfs_transaction *trans);
++bool btrfs_use_zone_append(struct btrfs_inode *inode, struct extent_map *em);
+ #else /* CONFIG_BLK_DEV_ZONED */
+ static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+ 				     struct blk_zone *zone)
+@@ -134,6 +135,10 @@ static inline void btrfs_redirty_list_add(struct btrfs_transaction *trans,
+ 					  struct extent_buffer *eb) { }
+ static inline void btrfs_free_redirty_list(struct btrfs_transaction *trans) { }
+ 
++bool btrfs_use_zone_append(struct btrfs_inode *inode, struct extent_map *em)
++{
++	return false;
++}
+ #endif
+ 
+ static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
 -- 
 2.27.0
 
