@@ -2,153 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26ACA2F85FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 21:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67AB92F881D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 23:06:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388679AbhAOUDI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jan 2021 15:03:08 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:27269 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388656AbhAOUDD (ORCPT
+        id S1726570AbhAOWER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jan 2021 17:04:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49588 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725918AbhAOWEQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jan 2021 15:03:03 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-79-PS3OFpBZPgGXINPuMHjjeQ-1; Fri, 15 Jan 2021 20:01:22 +0000
-X-MC-Unique: PS3OFpBZPgGXINPuMHjjeQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 15 Jan 2021 20:01:15 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 15 Jan 2021 20:01:15 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'sonicadvance1@gmail.com'" <sonicadvance1@gmail.com>
-CC:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Michal Simek" <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Borislav Petkov" <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        David Rientjes <rientjes@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "Christian Brauner" <christian.brauner@ubuntu.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oleg Nesterov <oleg@redhat.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "Suren Baghdasaryan" <surenb@google.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Jan Kara <jack@suse.cz>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: RE: [PATCH] Adds a new ioctl32 syscall for backwards compatibility
- layers
-Thread-Topic: [PATCH] Adds a new ioctl32 syscall for backwards compatibility
- layers
-Thread-Index: AQHW6wzXd1V6Thk8U0iiUgMFo8hTJqopEBwA
-Date:   Fri, 15 Jan 2021 20:01:15 +0000
-Message-ID: <b15672b1caec4cf980f2753d06b03596@AcuMS.aculab.com>
-References: <20210106064807.253112-1-Sonicadvance1@gmail.com>
- <20210115070326.294332-1-Sonicadvance1@gmail.com>
-In-Reply-To: <20210115070326.294332-1-Sonicadvance1@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 15 Jan 2021 17:04:16 -0500
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91BE3C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:03:36 -0800 (PST)
+Received: by mail-qv1-xf2f.google.com with SMTP id l14so4734413qvh.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jan 2021 14:03:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BI7NmpJ8bb6Ryf6z7JDJSpiAPrw0wXW+V+3D6pFFPP4=;
+        b=zT/XDvR0DDjHutPcSmbdNheGNE2vTq489LcaWpBzHR6KFg3arUrjznQSLt53RYoUYc
+         062FwPpcHI3n+bIiQLk6qYQ3GtRL6sTVrBl3bb1+6UclNoZxxBt+JyegfcjkHy9shDNZ
+         M5R3QhNhZ8Gm1kWm7vU/tb7xkzCKAw4EsyvH8n4/KaMg/BHFxuoO0kiHU5XDeiSu13gM
+         tdWabdQmfydUc/nSZYEVVkOAFjWY8xnGd0XB+Z0gwGOg2SYwyAqRo/D4yIGeMefgUQvp
+         4MhfTMIN4+mfeRsMq9ntkQaH4LV46QSKK5gShK3Lyn53AVY8OlrOgI51pNu5jyJWUVWt
+         TXkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BI7NmpJ8bb6Ryf6z7JDJSpiAPrw0wXW+V+3D6pFFPP4=;
+        b=iohcL/obIsio34UUK0NIPs/uTrobf1GJs5xqjeUxsPYgVKuu/gdvcm01HY5OEuQImO
+         CXsZeUvrU8qEsQytSqagiDkzMBcfezDMuNetgrRRXt2erCE7OZOGcrFD+AAw4BaKZHGt
+         EkdKg7pLUdsaiBvi78b5FRfpp3TFpNUEvHZtLRpZaVFFge5baXgQHxTUSNhntuBJ5ozc
+         qZO/xchwkHlMgMtflKJAYAuB/l4oYLkqVtWXlyaMJJ4VL3veYp8vqh5L5E2duH66h0hi
+         kYhHcFdpVrm0UOWM15pMr2M7h+Z1KMGytCC84gNRp2C8egsv9nUXd5YXruFUVpTxoTfA
+         dr0w==
+X-Gm-Message-State: AOAM530CJ3dEEbM7FbnJxKMueW8k+MbUPJg2DX92EeN/mCs9hocRO+Qx
+        nSa2Y8c7tT+0pyOiGHGJTLmG9Q==
+X-Google-Smtp-Source: ABdhPJy84w//V2a86cpwW34/OVJ6oIcEoSgdqnDzutmJ8gO5nFYD0WYb1eN0xClPl1zYF5rRI90t3g==
+X-Received: by 2002:a05:6214:a14:: with SMTP id dw20mr14125886qvb.43.1610748215770;
+        Fri, 15 Jan 2021 14:03:35 -0800 (PST)
+Received: from ?IPv6:2620:10d:c0a8:11e1::105d? ([2620:10d:c091:480::1:cc17])
+        by smtp.gmail.com with ESMTPSA id i13sm5756623qkk.83.2021.01.15.14.03.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Jan 2021 14:03:35 -0800 (PST)
+Subject: Re: [PATCH v12 01/41] block: add bio_add_zone_append_page
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <cover.1610693036.git.naohiro.aota@wdc.com>
+ <8d02dae71ff7ec934bc3155850e2e2b030b7dbbe.1610693037.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <53a3b32d-c0ba-aa8c-1f2c-bed851cdf806@toxicpanda.com>
+Date:   Fri, 15 Jan 2021 17:03:33 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+In-Reply-To: <8d02dae71ff7ec934bc3155850e2e2b030b7dbbe.1610693037.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: sonicadvance1@gmail.com
-> Sent: 15 January 2021 07:03
-> Problem presented:
-> A backwards compatibility layer that allows running x86-64 and x86
-> processes inside of an AArch64 process.
->   - CPU is emulated
->   - Syscall interface is mostly passthrough
->   - Some syscalls require patching or emulation depending on behaviour
->   - Not viable from the emulator design to use an AArch32 host process
+On 1/15/21 1:53 AM, Naohiro Aota wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
+> Add bio_add_zone_append_page(), a wrapper around bio_add_hw_page() which
+> is intended to be used by file systems that directly add pages to a bio
+> instead of using bio_iov_iter_get_pages().
+> 
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-You are going to need to add all the x86 compatibility code into
-your arm64 kernel.
-This is likely to be different from the 32bit arm compatibility
-because 64bit items are only aligned on 32bit boundaries.
-The x86 x32 compatibility will be more like the 32bit arm 'compat'
-code - I'm pretty sure arm32 64bit aligned 64bit data.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-You'll then need to remember how the process entered the kernel
-to work out which compatibility code to invoke.
-This is what x86 does.
-It allows a single process to do all three types of system call.
+Thanks,
 
-Trying to 'patch up' structures outside the kernel, or in the
-syscall interface code will always cause grief somewhere.
-The only sane place is in the code that uses the structures.
-Which, for ioctls, means inside the driver that parses them.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Josef
