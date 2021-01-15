@@ -2,142 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 813482F6EA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jan 2021 23:56:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E34822F7046
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jan 2021 02:58:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730994AbhANWwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jan 2021 17:52:34 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:39220 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730988AbhANWwe (ORCPT
+        id S1731760AbhAOB45 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jan 2021 20:56:57 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:39635 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbhAOB4t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jan 2021 17:52:34 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10EMoD9f047144;
-        Thu, 14 Jan 2021 22:51:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : in-reply-to : references : date : message-id : mime-version :
- content-type; s=corp-2020-01-29;
- bh=1GIYbQk4Gp7v6M1E5BZJYVNgEi14/UhOP10cB+FUS7U=;
- b=knIQ32GTS4wk9eBHaer7lidjtvEI5JRPAFIVQS7OREkAa0MPJvCA1WTYbJbuJqYrAoyf
- wR3mJzDynMFEPn+/kYt+PbVZf1N1kIz/D8gjIKkc+wSOLOvxaaqZVt0SeOuBHR3c6FXp
- kCsuEvbrWtckScgxbpnpw0wb3jgIFrWbzNx9pn6QFSeZ9uqIbjllR5ZfgQG7Kp4jrWJv
- /NNKFEuBJkV6UJpQrGEr/sRuPscJHS1P5D5ZzMqVxtZrNlLzHIxNIjugYFqOZtRizSTb
- tPBCHcsBlnYmEVdqIYnHlfWr0A9cFCeaY67Al0/NKL96AzhkDzFe6QViRvJ1yACYbwVv EQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 360kd02j9v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jan 2021 22:51:29 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10EMoeUa044319;
-        Thu, 14 Jan 2021 22:51:29 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 360kfa695g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jan 2021 22:51:29 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10EMpK1v016566;
-        Thu, 14 Jan 2021 22:51:21 GMT
-Received: from localhost (/10.159.145.187)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Jan 2021 14:51:20 -0800
-From:   Stephen Brennan <stephen.s.brennan@oracle.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4] proc: Allow pid_revalidate() during LOOKUP_RCU
-In-Reply-To: <20210106003803.GA3579531@ZenIV.linux.org.uk>
-References: <20210104232123.31378-1-stephen.s.brennan@oracle.com>
- <20210105055935.GT3579531@ZenIV.linux.org.uk>
- <20210105165005.GV3579531@ZenIV.linux.org.uk>
- <20210105195937.GX3579531@ZenIV.linux.org.uk>
- <87a6tnge5k.fsf@stepbren-lnx.us.oracle.com>
- <CAHC9VhQnQW8RvTzyb4MTAvGZ7b=AHJXS8PzD=egTcpdDz73Yzg@mail.gmail.com>
- <20210106003803.GA3579531@ZenIV.linux.org.uk>
-Date:   Thu, 14 Jan 2021 14:51:17 -0800
-Message-ID: <87k0sfyvx6.fsf@stepbren-lnx.us.oracle.com>
+        Thu, 14 Jan 2021 20:56:49 -0500
+Received: by mail-io1-f70.google.com with SMTP id n9so11656219iog.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jan 2021 17:56:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=ncZ/WzJQUIaZu3+7m5TtE1ri5ZOaqLZKDq6RjJFvj+w=;
+        b=FhKPf047akR5Ic6xOAno8v4dRUrt9WvHkpM8g2Vutq9dPkHuaYbvQQMccO+FbUnM97
+         1bSoxVkRpMXuOUnQazWx4bZC6JFQJs1iB1V7QyzPSpUVGpjXSqlPdd4z9s7mzJR14svy
+         RZHJ1jvR++fYX+TqBztwNZUB4YFZQL/5/zde6HDrkLCYJ9sYyCwtgsKGfmjyrQ+QdDhR
+         3MpQR9WhzK1z7FTnHGr5clX4cYk0eDBdHY0exyI6zG6+QVdHbsV0G/40BdYDxKK7j6ss
+         tMs/S4WH5CgPoCLYdSePFW717KM0cyt6IFGsrzJzdAbuF8OTgeRo6XbCUVsGxTk3/PqY
+         j3JA==
+X-Gm-Message-State: AOAM531U2XYz2+XL0f9rJ/VzID45JPk64JjNPHGcGyK7tpxOvoDGYUCd
+        JfPk4vyRLErMAuWlBtSTA+TuIaT9KIYiZtcR8fwwlu/jcnKl
+X-Google-Smtp-Source: ABdhPJzcQ8wyRdLc8a7inJRiioJ0+IrT14u7jjxP9VGFzlE0bTFYJ0MvV9pxct46dDj7tGP4U7c/A90KqTlPUY7sdjqxkbRGNE+f
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9864 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 bulkscore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101140132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9864 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
- impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101140132
+X-Received: by 2002:a92:1589:: with SMTP id 9mr8729309ilv.39.1610675768680;
+ Thu, 14 Jan 2021 17:56:08 -0800 (PST)
+Date:   Thu, 14 Jan 2021 17:56:08 -0800
+In-Reply-To: <f45bb2df-5ef0-bc36-8afb-2c03257cc2c1@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000a65ee05b8e6adc1@google.com>
+Subject: Re: general protection fault in io_uring_setup
+From:   syzbot <syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
-> OTTH, it's not really needed there - see vfs.git #work.audit
-> for (untested) turning that sucker non-blocking.  I hadn't tried
-> a followup that would get rid of the entire AVC_NONBLOCKING thing yet,
-> but I suspect that it should simplify the things in there nicely...
+Hello,
 
-I went ahead and pulled down this branch and combined it with my
-pid_revalidate change. Further, I audited all the inode get_link and
-permission() implementations, as well as dentry d_revalidate()
-implementations, in fs/proc (more on that below). Together, all these
-patches have run stable under a steady high load of concurrent PS
-processes on a 104CPU machine for over an hour, and greatly reduced the
-%sys utilization which the patch originally addressed. How would you
-like to proceed with the #work.audit changes? I could include them in a
-v5 of this patch series.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Regarding my audit (ha) of dentry and inode functions in the fs/proc/
-directory:
+Reported-and-tested-by: syzbot+06b7d55a62acca161485@syzkaller.appspotmail.com
 
-* get_link() receives a NULL dentry pointer when called in RCU mode.
-* permission() receives MAY_NOT_BLOCK in the mode parameter when called
-  from RCU.
-* d_revalidate() receives LOOKUP_RCU in flags.
+Tested on:
 
-There were generally three groups I found. Group (1) are functions which
-contain a check at the top of the function and return -ECHILD, and so
-appear to be trivially RCU safe (although this is by dropping out of RCU
-completely). Group (2) are functions which have no explicit check, but
-on my audit, I was confident that there were no sleeping function calls,
-and thus were RCU safe as is. Group (3) are functions which appeared to
-be unsafe for some reason or another.
+commit:         06585c49 io_uring: do sqo disable on install_fd error
+git tree:       git://git.kernel.dk/linux-block
+kernel config:  https://syzkaller.appspot.com/x/.config?x=54595eacbd613c0d
+dashboard link: https://syzkaller.appspot.com/bug?extid=06b7d55a62acca161485
+compiler:       clang version 11.0.1
 
-Group (1):
- proc_ns_get_link()
- proc_pid_get_link()
- map_files_d_revalidate()
- proc_misc_d_revalidate()
- tid_fd_revalidate()
-
-Group (2):
- proc_get_link()
- proc_self_get_link()
- proc_thread_self_get_link()
- proc_fd_permission()
-
-Group (3):
- pid_revalidate()            -- addressed by my patch
- proc_map_files_get_link()
- proc_pid_permission()       -- addressed by Al's work.audit branch
-
-proc_map_files_get_link() calls capable() which ends up calling a
-security hook, which can get into the audit guts, and so I marked it as
-potentially unsafe, and added a patch to bail out of this function
-before the capable() check. However, I doubt this is really necessary.
-
-So to conclude, depending on how Al wants to move forward with the
-work.audit branch, I could send a full series with the proposed changes.
-
-Stephen
+Note: testing is done by a robot and is best-effort only.
