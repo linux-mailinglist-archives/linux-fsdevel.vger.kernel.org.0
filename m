@@ -2,103 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94B132F8E9F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Jan 2021 19:18:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A2672F8ED4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Jan 2021 20:07:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbhAPSSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Jan 2021 13:18:33 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:51181 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbhAPSSd (ORCPT
+        id S1727137AbhAPTGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 Jan 2021 14:06:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35740 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbhAPTGr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Jan 2021 13:18:33 -0500
-Received: by mail-io1-f72.google.com with SMTP id p77so11497427iod.17
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Jan 2021 10:18:17 -0800 (PST)
+        Sat, 16 Jan 2021 14:06:47 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 875D5C061574
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Jan 2021 11:06:07 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id m5so7134416pjv.5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Jan 2021 11:06:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Q5S9A5hSN6OK2jkdC8onzYIcAjQqz9ljUhJQSNopCiU=;
+        b=ofgzkeumhQ31AH+DaOz1hPbk+oasRYqSqfozQSwbypqfvhKnrdFnoNrfE0pa+8lXKy
+         BtfQiCCS2/CU7zo9o5on7BV8LUP1qjp26SzW1YyaDq+3RiH46GS1q4Vq1q0fxJvJZe47
+         ZnljJ1/emajlUi6vE6Jas4mup5vQXLOWLrHKZmLZtTx3iiXVSedpcarZwCihFU08aVwP
+         nNOyex++Hzcm019CYi2KiDJuW0nwNkgzsy5PWRoH+nzzPJKOcgQf4XHCUzYdn2TOOpJr
+         SQdZySb7Kq/ZibRvd2tB3mEOtxx4rzlz011xsCjvStQKybDa27l2E6XfI9DS2U88SZvT
+         X92Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=xmu1bAJMqYAQJZd2tpHte/jVzTDcoISvLjpkL3yBNXk=;
-        b=dgZIHdlX6Sm6xFlapVqLsqdYTYcE7s/FJppZzRGqwsaBMvQQlSF/g+ptL7WLc5jM4R
-         /uJujHQKlkWDSS8vkh19cNvK+C9r7djoDv1Fu9aGP2XVBBLCTx/VgyilntIyO98MiK/A
-         KYzfraZHryzRXYQ0uYn3JWgnHvHrgp0Z6It+5EZWbYF4CGVEKyi+S1pHZFMvOCSFN5CA
-         9Mzplef4yCNRyI4z2rWOpA4dZXARKDT/oQLTTQ8UMLvRiYRRlbBRSzQ1/ML9gAj7k9Qg
-         c+1GM7BlVAyfsS1v148oiI7LoIsAAROp46uVtsPO5E71zm0tn5J33NL71notKg1kyhsn
-         VZVg==
-X-Gm-Message-State: AOAM531FzepNd8yxybg966SpJT/eg/FcZpYmmOpEJp5BGhvv0JyrYG8D
-        m+w86hZtCfTFGtistbnYaH52Nk3fJf2/RPcqM+A+/VWQU1XK
-X-Google-Smtp-Source: ABdhPJxzX7+ZImt+e5kh0Ekrc1+vQpIc2kaW7a8DlwiGv80W7dn/0vHbU9l4ZHIhrE7K8TO7fl0zzmceiFZBj06mFHYUBjBOwR86
-MIME-Version: 1.0
-X-Received: by 2002:a92:c002:: with SMTP id q2mr15171843ild.186.1610805796695;
- Sat, 16 Jan 2021 06:03:16 -0800 (PST)
-Date:   Sat, 16 Jan 2021 06:03:16 -0800
-In-Reply-To: <0000000000002c365205b8f26d09@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000050736105b904f335@google.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q5S9A5hSN6OK2jkdC8onzYIcAjQqz9ljUhJQSNopCiU=;
+        b=cpJ6cUSE1CcpETAaeHHBie21dJ/uQKPkbp6c0zJFEUJbK1brweIdHSTNNV6qdDS2K2
+         nVXTdPGfEKLCLZjyjc+KUcISz2fgb8t3ELtZDgm6KvuPGIOGkLu6TUmeyETsspGH/F5l
+         kLr21QsOFInCeWeVqhw7M8hZULiR16Z2+4+4CQRF3QjTPv4h/j7/XN8UCGAQBIKx4EfY
+         EQwIX/hWTFP2AGdNUhdmDyCMcIetJ66CBX2Q+rdHxKLzZz54hAhMKO/IpLIZecFkoQvP
+         Yt0H83VDreAcoaPve3h59e9BSePsLZR2647Q7GlEwgKrypTHvBkVYXYO+e7dfXPmJBn7
+         0kmg==
+X-Gm-Message-State: AOAM531EL6EgzsL9EY3T2HKtYMyb46AnqWC8dmu3ceasNhd+L9VCcSco
+        2IO+ubko+XfqUKtlvQiopyR5LA==
+X-Google-Smtp-Source: ABdhPJy/16+Tkq1kSaSsq3wdAC2u6nss8jxuN656VC1ZwoI1qOQzaXLK3PMvWocaRyTd96keNKEpFQ==
+X-Received: by 2002:a17:902:854b:b029:db:c725:edcd with SMTP id d11-20020a170902854bb02900dbc725edcdmr18556127plo.64.1610823966705;
+        Sat, 16 Jan 2021 11:06:06 -0800 (PST)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id x81sm1770299pfc.46.2021.01.16.11.06.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Jan 2021 11:06:06 -0800 (PST)
 Subject: Re: WARNING in io_uring_flush
-From:   syzbot <syzbot+a32b546d58dde07875a1@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+To:     syzbot <syzbot+a32b546d58dde07875a1@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, hdanton@sina.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <00000000000050736105b904f335@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <29e3c654-a1ca-e0ca-2af9-948feb5b00b5@kernel.dk>
+Date:   Sat, 16 Jan 2021 12:06:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <00000000000050736105b904f335@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+#syz test: git://git.kernel.dk/linux-block io_uring-5.11
 
-HEAD commit:    1d94330a Merge tag 'for-5.11/dm-fixes-1' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13210c3b500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c60c9ff9cc916cbc
-dashboard link: https://syzkaller.appspot.com/bug?extid=a32b546d58dde07875a1
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d14c58d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a2feb8d00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a32b546d58dde07875a1@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 8613 at fs/io_uring.c:9096 io_uring_flush+0x326/0x3a0 fs/io_uring.c:9096
-Modules linked in:
-CPU: 1 PID: 8613 Comm: syz-executor948 Not tainted 5.11.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_uring_flush+0x326/0x3a0 fs/io_uring.c:9096
-Code: e9 58 fe ff ff e8 aa e3 9a ff 49 c7 84 24 a0 00 00 00 00 00 00 00 e9 aa fe ff ff e8 74 9e dd ff e9 91 fd ff ff e8 8a e3 9a ff <0f> 0b e9 51 ff ff ff e8 6e 9e dd ff e9 06 fd ff ff 4c 89 f7 e8 61
-RSP: 0018:ffffc90001a4faa0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff88801113b780 RSI: ffffffff81d7e636 RDI: 0000000000000003
-RBP: ffff88801c862280 R08: 0000000000000000 R09: 00000000196e5401
-R10: ffffffff81d7e585 R11: 0000000000000000 R12: ffff888019724000
-R13: ffff8880196e5401 R14: ffff888019724040 R15: ffff8880197240d0
-FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000025f8e000 CR4: 0000000000350ef0
-Call Trace:
- filp_close+0xb4/0x170 fs/open.c:1280
- close_files fs/file.c:401 [inline]
- put_files_struct fs/file.c:416 [inline]
- put_files_struct+0x1cc/0x350 fs/file.c:413
- exit_files+0x7e/0xa0 fs/file.c:433
- do_exit+0xc22/0x2ae0 kernel/exit.c:820
- do_group_exit+0x125/0x310 kernel/exit.c:922
- get_signal+0x3e9/0x20a0 kernel/signal.c:2770
- arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
- handle_signal_work kernel/entry/common.c:147 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x148/0x250 kernel/entry/common.c:201
- __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x446b69
-Code: Unable to access opcode bytes at RIP 0x446b3f.
-RSP: 002b:00007fbb80bcecf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00000000006dbc28 RCX: 0000000000446b69
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00000000006dbc28
-RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
-R13: 00007ffc1b88469f R14: 00007fbb80bcf9c0 R15: 00000000006dbc2c
+-- 
+Jens Axboe
 
