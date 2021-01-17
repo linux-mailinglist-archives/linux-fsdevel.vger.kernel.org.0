@@ -2,131 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D25962F9561
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Jan 2021 22:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8A02F958F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Jan 2021 22:35:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730343AbhAQVHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Jan 2021 16:07:24 -0500
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:44711 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726785AbhAQVHW (ORCPT
+        id S1729493AbhAQVe6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Jan 2021 16:34:58 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45155 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728859AbhAQVev (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Jan 2021 16:07:22 -0500
+        Sun, 17 Jan 2021 16:34:51 -0500
 Received: from dread.disaster.area (pa49-181-54-82.pa.nsw.optusnet.com.au [49.181.54.82])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id AB1B4D5ED06;
-        Mon, 18 Jan 2021 08:06:22 +1100 (AEDT)
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D0ACC3C3002;
+        Mon, 18 Jan 2021 08:34:02 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1l1FFd-0011Hk-2N; Mon, 18 Jan 2021 08:06:21 +1100
-Date:   Mon, 18 Jan 2021 08:06:21 +1100
+        id 1l1FgP-0011iI-QW; Mon, 18 Jan 2021 08:34:01 +1100
+Date:   Mon, 18 Jan 2021 08:34:01 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 37/42] xfs: support idmapped mounts
-Message-ID: <20210117210621.GA78941@dread.disaster.area>
-References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210112220124.837960-38-christian.brauner@ubuntu.com>
- <20210114205154.GL331610@dread.disaster.area>
- <20210114221048.ppf2pfuxrjak4kvm@wittgenstein>
+To:     Avi Kivity <avi@scylladb.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        andres@anarazel.de
+Subject: Re: [RFC] xfs: reduce sub-block DIO serialisation
+Message-ID: <20210117213401.GB78941@dread.disaster.area>
+References: <20210112010746.1154363-1-david@fromorbit.com>
+ <32f99253-fe56-9198-e47c-7eb0e24fdf73@scylladb.com>
+ <20210112221324.GU331610@dread.disaster.area>
+ <0f0706f9-92ab-6b38-f3ab-b91aaf4343d1@scylladb.com>
+ <20210113203809.GF331610@dread.disaster.area>
+ <50362fc8-3d5e-cd93-4e55-f3ecddc21780@scylladb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20210114221048.ppf2pfuxrjak4kvm@wittgenstein>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <50362fc8-3d5e-cd93-4e55-f3ecddc21780@scylladb.com>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
         a=NAd5MxazP4FGoF8nXO8esw==:117 a=NAd5MxazP4FGoF8nXO8esw==:17
-        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
-        a=QsOiS33c3F2EFrvaDEcA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=8nJEP1OIZ-IA:10 a=EmqxpYm9HcoA:10 a=VwQbUJbxAAAA:8 a=Eg5pMCMCAAAA:8
+        a=7-415B0cAAAA:8 a=b_iBPZYbKWB04z0B_q8A:9 a=wPNLvfGTeEIA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=0UDKrKjV3BTaI6JRjsAj:22
+        a=biEYGPWJfzWAr4FL6Ov7:22 a=pHzHmUro8NiASowvMSCR:22
+        a=n87TN5wuljxrRezIQYnT:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 11:10:48PM +0100, Christian Brauner wrote:
-> On Fri, Jan 15, 2021 at 07:51:54AM +1100, Dave Chinner wrote:
-> > On Tue, Jan 12, 2021 at 11:01:19PM +0100, Christian Brauner wrote:
-> > > From: Christoph Hellwig <hch@lst.de>
+On Thu, Jan 14, 2021 at 08:48:36AM +0200, Avi Kivity wrote:
+> On 1/13/21 10:38 PM, Dave Chinner wrote:
+> > On Wed, Jan 13, 2021 at 10:00:37AM +0200, Avi Kivity wrote:
+> > > On 1/13/21 12:13 AM, Dave Chinner wrote:
+> > > > On Tue, Jan 12, 2021 at 10:01:35AM +0200, Avi Kivity wrote:
+> > > > > On 1/12/21 3:07 AM, Dave Chinner wrote:
+> > > > > > Hi folks,
+> > > > > > 
+> > > > > > This is the XFS implementation on the sub-block DIO optimisations
+> > > > > > for written extents that I've mentioned on #xfs and a couple of
+> > > > > > times now on the XFS mailing list.
+> > > > > > 
+> > > > > > It takes the approach of using the IOMAP_NOWAIT non-blocking
+> > > > > > IO submission infrastructure to optimistically dispatch sub-block
+> > > > > > DIO without exclusive locking. If the extent mapping callback
+> > > > > > decides that it can't do the unaligned IO without extent
+> > > > > > manipulation, sub-block zeroing, blocking or splitting the IO into
+> > > > > > multiple parts, it aborts the IO with -EAGAIN. This allows the high
+> > > > > > level filesystem code to then take exclusive locks and resubmit the
+> > > > > > IO once it has guaranteed no other IO is in progress on the inode
+> > > > > > (the current implementation).
+> > > > > Can you expand on the no-splitting requirement? Does it involve only
+> > > > > splitting by XFS (IO spans >1 extents) or lower layers (RAID)?
+> > > > XFS only.
 > > > 
-> > > Enable idmapped mounts for xfs. This basically just means passing down
-> > > the user_namespace argument from the VFS methods down to where it is
-> > > passed to helper.
+> > > Ok, that is somewhat under control as I can provide an extent hint, and wish
+> > > really hard that the filesystem isn't fragmented.
 > > > 
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ....
-> > > @@ -654,6 +658,7 @@ xfs_vn_change_ok(
-> > >   */
-> > >  static int
-> > >  xfs_setattr_nonsize(
-> > > +	struct user_namespace	*mnt_userns,
-> > >  	struct xfs_inode	*ip,
-> > >  	struct iattr		*iattr)
-> > >  {
-> > > @@ -813,7 +818,7 @@ xfs_setattr_nonsize(
-> > >  	 * 	     Posix ACL code seems to care about this issue either.
-> > >  	 */
-> > >  	if (mask & ATTR_MODE) {
-> > > -		error = posix_acl_chmod(&init_user_ns, inode, inode->i_mode);
-> > > +		error = posix_acl_chmod(mnt_userns, inode, inode->i_mode);
-> > >  		if (error)
-> > >  			return error;
-> > >  	}
-> > > @@ -868,7 +873,7 @@ xfs_setattr_size(
-> > >  		 * Use the regular setattr path to update the timestamps.
-> > >  		 */
-> > >  		iattr->ia_valid &= ~ATTR_SIZE;
-> > > -		return xfs_setattr_nonsize(ip, iattr);
-> > > +		return xfs_setattr_nonsize(&init_user_ns, ip, iattr);
-> > 
-> > Shouldn't that be passing mnt_userns?
+> > > 
+> > > > > The reason I'm concerned is that it's the constraint that the application
+> > > > > has least control over. I guess I could use RWF_NOWAIT to avoid blocking my
+> > > > > main thread (but last time I tried I'd get occasional EIOs that frightened
+> > > > > me off that).
+> > > > Spurious EIO from RWF_NOWAIT is a bug that needs to be fixed. DO you
+> > > > have any details?
+> > > > 
+> > > I reported it in [1]. It's long since gone since I disabled RWF_NOWAIT. It
+> > > was relatively rare, sometimes happening in continuous integration runs that
+> > > take hours, and sometimes not.
+> > > 
+> > > 
+> > > I expect it's fixed by now since io_uring relies on it. Maybe I should turn
+> > > it on for kernels > some_random_version.
+> > > 
+> > > 
+> > > [1] https://lore.kernel.org/lkml/9bab0f40-5748-f147-efeb-5aac4fd44533@scylladb.com/t/#u
+> > Yeah, as I thought. Usage of REQ_NOWAIT with filesystem based IO is
+> > simply broken - it causes spurious IO failures to be reported to IO
+> > completion callbacks and so are very difficult to track and/or
+> > retry. iomap does not use REQ_NOWAIT at all, so you should not ever
+> > see this from XFS or ext4 DIO anymore...
 > 
-> Hey Dave,
-> 
-> Thanks for taking a look.
-> 
-> This is the time updating codepath.
+> What kernel version would be good?
 
-Yes, I understand the code path, that's why I asked the question and
-commented that it's a landmine. That is, if in future we ever need
-to do anything that is is in any way namespace related in the
-truncate path, the wrong thing will happen because we are passing
-the wrong namespace into that function.
+For ext4? >= 5.5 was when it was converted to the iomap DIO path
+should be safe.  Before taht it would use the old DIO path which
+sets REQ_NOWAIT when IOCB_NOWAIT (i.e. RWF_NOWAIT) was set for the
+IO.
 
-Please just pass down the correct namespace for the operation even
-though we don't currently require it for the operations being
-performed in that path.
+Btrfs is an even more recent convert to iomap-based dio (5.9?).
+
+The REQ_NOWAIT behaviour was introduced into the old DIO path back
+in 4.13 by commit 03a07c92a9ed ("block: return on congested block
+device") and was intended to support RWF_NOWAIT on raw block
+devices.  Hence it was not added to the iomap path as block devices
+don't use that path.
+
+Other examples of how REQ_NOWAIT breaks filesystems was a io_uring
+hack to force REQ_NOWAIT IO behaviour through filesystems via
+"nowait block plugs" resulted in XFS filesystem shutdowns because
+of unexpected IO errors during journal writes:
+
+https://lore.kernel.org/linux-xfs/20200915113327.GA1554921@bfoster/
+
+There have been patches proposed to add REQ_NOWAIT to the iomap DIO
+code proporsed, but they've all been NACKed because of the fact it
+will break filesystem-based RWF_NOWAIT DIO.
+
+So, long story short: On XFS you are fine on all kernels. On all
+other block based filesystems you need <4.13, except for ext4 where
+>= 5.5 and btrfs where >=5.9 will work correctly.
+
+> commit 4503b7676a2e0abe69c2f2c0d8b03aec53f2f048
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Mon Jun 1 10:00:27 2020 -0600
+> 
+>     io_uring: catch -EIO from buffered issue request failure
+> 
+>     -EIO bubbles up like -EAGAIN if we fail to allocate a request at the
+>     lower level. Play it safe and treat it like -EAGAIN in terms of sync
+>     retry, to avoid passing back an errant -EIO.
+> 
+>     Catch some of these early for block based file, as non-mq devices
+>     generally do not support NOWAIT. That saves us some overhead by
+>     not first trying, then retrying from async context. We can go straight
+>     to async punt instead.
+> 
+>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> but this looks to be io_uring specific fix (somewhat frightening too), not
+> removal of REQ_NOWAIT.
+
+That looks like a similar case to the one I mention above where
+io_uring and REQ_NOWAIT aren't playing well with others....
 
 Cheers,
 
