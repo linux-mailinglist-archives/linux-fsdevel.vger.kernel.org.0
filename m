@@ -2,111 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E76F2F94A8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Jan 2021 19:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FE102F9518
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Jan 2021 21:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729927AbhAQSdV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Jan 2021 13:33:21 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:23037 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729934AbhAQSdS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Jan 2021 13:33:18 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-165-qzM2FzfaOG6j69VeZBrcNw-1; Sun, 17 Jan 2021 18:31:37 +0000
-X-MC-Unique: qzM2FzfaOG6j69VeZBrcNw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Sun, 17 Jan 2021 18:31:36 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Sun, 17 Jan 2021 18:31:36 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>, Andy Lutomirski <luto@kernel.org>
-CC:     Arnd Bergmann <arnd@kernel.org>,
-        Ryan Houdek <sonicadvance1@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Amanieu d'Antras <amanieu@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joe Perches <joe@perches.com>, Jan Kara <jack@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: RE: [PATCH] Adds a new ioctl32 syscall for backwards compatibility
- layers
-Thread-Topic: [PATCH] Adds a new ioctl32 syscall for backwards compatibility
- layers
-Thread-Index: AQHW6+b/d1V6Thk8U0iiUgMFo8hTJqosJEIw
-Date:   Sun, 17 Jan 2021 18:31:36 +0000
-Message-ID: <cc3ce5e484f041948cb008f7508c968b@AcuMS.aculab.com>
-References: <20210106064807.253112-1-Sonicadvance1@gmail.com>
- <CAK8P3a2tV3HzPpbCR7mAeutx38_D2d-vfpEgpXv+GW_98w3VSQ@mail.gmail.com>
- <CABnRqDfQ5Qfa2ybut0qXcKuYnsMcG7+9gqjL-e7nZF1bkvhPRw@mail.gmail.com>
- <CAK8P3a2vfVfEWTk1ig349LGqt8bkK8YQWjE6PRyx+xvgYx7-gA@mail.gmail.com>
- <CALCETrUtyVaGSE9fcFAkhrGCpkyYcYnZb6tj8227o2EH5hgOfg@mail.gmail.com>
- <20210116090721.GA30277@lst.de>
-In-Reply-To: <20210116090721.GA30277@lst.de>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1728733AbhAQUUz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Jan 2021 15:20:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728732AbhAQUUr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 17 Jan 2021 15:20:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 291F4206F6;
+        Sun, 17 Jan 2021 20:20:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610914806;
+        bh=T5D+im4onKTFpain7lHAmx32O/a8JhqFsNsIAl2PpPw=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=lVy7hw/Q+6bdjLConOCc4EZXEgosiRyUNvR53MieDh7hpCUoQQZHbZEzOwF7EpxDE
+         4arCUKtJrmRTF8ZLd0rtzJp3m3YCD8013w/bpX3si7I4Ly46sCV+9lkclbTUmb5+8F
+         QJQ+CCacSbH/FwrB6Xqh/yZRGxpP8R6YPuXs99qUv5xDdUDWDjsXpfNzNgJdfW5ii9
+         OCuu9eJNvDdzZxIgT3DClTI5If7QHqZNf2NQHP2sc2tXQP2+LnAzgtBlqmIn8Ab7+b
+         O2pVsvsmPmRAEtl+pBIQDYItMx/JEHNjWbzk/9nYxhotI19WLYQFwkb3GHJZYT0e/F
+         d+fCY1JmXSARg==
+Received: from pdx-korg-docbuild-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-1.ci.codeaurora.org (Postfix) with ESMTP id 1699660077;
+        Sun, 17 Jan 2021 20:20:06 +0000 (UTC)
+Subject: Re: [git pull] vfs.git fixes
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210117032115.GG3579531@ZenIV.linux.org.uk>
+References: <20210117032115.GG3579531@ZenIV.linux.org.uk>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210117032115.GG3579531@ZenIV.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+X-PR-Tracked-Commit-Id: d36a1dd9f77ae1e72da48f4123ed35627848507d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a527a2b32d20a2bd8070f49e98cb1a89b0c98bb3
+Message-Id: <161091480602.19660.12485024734325890961.pr-tracker-bot@kernel.org>
+Date:   Sun, 17 Jan 2021 20:20:06 +0000
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig
-> Sent: 16 January 2021 09:07
-...
-> > I personally would like to see in_compat_syscall() go away,
-> > but some other people (Hi, Christoph!) disagree, and usage seems to be
-> > increasing, not decreasing.
-> 
-> I'm absolutely against it going away.  in_compat_syscall helped to
-> remove so much crap compared to the explicit compat syscalls.
+The pull request you sent on Sun, 17 Jan 2021 03:21:15 +0000:
 
-The only other real option is to pass the 'syscall type' explicitly
-through all the layers into every piece of code that might need it.
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
 
-So passing it as a 'parameter' that is (probably) current->syscall_type
-does make sense.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a527a2b32d20a2bd8070f49e98cb1a89b0c98bb3
 
-It might even make sense have separate bits for the required emulations.
-So you'd have separate bits for '32bit pointers' and '64bit items 32bit
-aligned' (etc).
+Thank you!
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
