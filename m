@@ -2,60 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8796B2F9053
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Jan 2021 04:22:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7557E2F915F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Jan 2021 09:33:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbhAQDWD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Jan 2021 22:22:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56134 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726831AbhAQDWC (ORCPT
+        id S1728120AbhAQIcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Jan 2021 03:32:36 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:39761 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727663AbhAQI2D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Jan 2021 22:22:02 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 296AEC061573;
-        Sat, 16 Jan 2021 19:21:22 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1l0yct-00Awrb-Qi; Sun, 17 Jan 2021 03:21:15 +0000
-Date:   Sun, 17 Jan 2021 03:21:15 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git fixes
-Message-ID: <20210117032115.GG3579531@ZenIV.linux.org.uk>
+        Sun, 17 Jan 2021 03:28:03 -0500
+Received: by mail-io1-f71.google.com with SMTP id i143so874226ioa.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Jan 2021 00:27:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=cGMwwg6/VNTni+wpFF2nllzxeO74CGTK6I717v9SIzw=;
+        b=rRHGKDS9FFQD2At24NQB6ok/Sb+cKZosJJkhbHVzlY5oYRAMcTusI0INb/uQmZWPAo
+         k/kRBhDg3/Ijsg1n+KWEc8Cu40Bo9BRmA6e3MU40wUu27gaRQGvvfZ7EZNLFE2aVosp/
+         uYxWp6D+1hEmhaoyCg7kAz/BWHRmljli48H29sIhFjfiGJoV26leV+BQKUXbKGPpEcoB
+         mII3ZCq0pKy+UhERBUMVBU9vtJV83EqfIQZD4q8Y+oqvY9E8ANy1QpOhTZCZbEIt/Z/1
+         IkdBY5Nqli0UU6KgE7gA4tuMeKep/tEkBLkuDAcf28O/6QASdki2sXcRu6VHPOS9UG2v
+         96rw==
+X-Gm-Message-State: AOAM530uhWsCtmQYGhEcYd92s8EcDuwxUVgqmol4lPgWNf5FiYc8SUdh
+        vEYm6xH4CIW3WK24/O/gGNAnCn8X601KtHsP3+QBeJBLbisL
+X-Google-Smtp-Source: ABdhPJzVmIN8D3KBsTdjunnTCp3kbcm7pPriB6VJsohy45Qq4CWh56rJGuPjuT6x+2YOPAKvwPSjF66QRomC5yHWHYrNKJNMOzZJ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a92:8b84:: with SMTP id i126mr15704090ild.62.1610872042350;
+ Sun, 17 Jan 2021 00:27:22 -0800 (PST)
+Date:   Sun, 17 Jan 2021 00:27:22 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dcecd505b9145f53@google.com>
+Subject: WARNING in io_wq_submit_work
+From:   syzbot <syzbot+f655445043a26a7cfab8@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Several assorted fixes.  I still think that audit ->d_name race
-is better fixed that way for the benefit of backports, with any fancier
-variants done on top of that.
+Hello,
 
-The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
+syzbot found the following issue on:
 
-  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
+HEAD commit:    0da0a8a0 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f2309f500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ee2266946ed36986
+dashboard link: https://syzkaller.appspot.com/bug?extid=f655445043a26a7cfab8
+compiler:       clang version 11.0.1
 
-are available in the git repository at:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f655445043a26a7cfab8@syzkaller.appspotmail.com
 
-for you to fetch changes up to d36a1dd9f77ae1e72da48f4123ed35627848507d:
+------------[ cut here ]------------
+do not call blocking ops when !TASK_RUNNING; state=2 set at [<00000000ced9dbfc>] prepare_to_wait+0x1f4/0x3b0 kernel/sched/wait.c:262
+WARNING: CPU: 1 PID: 19888 at kernel/sched/core.c:7853 __might_sleep+0xed/0x100 kernel/sched/core.c:7848
+Modules linked in:
+CPU: 0 PID: 19888 Comm: syz-executor.3 Not tainted 5.11.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__might_sleep+0xed/0x100 kernel/sched/core.c:7848
+Code: fc ff df 41 80 3c 06 00 74 08 48 89 ef e8 cb 2e 6c 00 48 8b 4d 00 48 c7 c7 c0 d4 0d 8a 48 89 de 48 89 ca 31 c0 e8 23 5e f3 ff <0f> 0b eb 8e 0f 1f 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89
+RSP: 0018:ffffc900089df3c0 EFLAGS: 00010246
+RAX: 24183d53a1679b00 RBX: 0000000000000002 RCX: ffff888013853780
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffff888013854d98 R08: ffffffff8163c792 R09: ffffed10173a60b8
+R10: ffffed10173a60b8 R11: 0000000000000000 R12: ffffffff8a0e5f60
+R13: ffff888013853798 R14: 1ffff1100270a9b3 R15: 00000000000003a7
+FS:  00007fe439981700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000016b538d CR3: 0000000026e00000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+Call Trace:
+ __mutex_lock_common+0xc4/0x2ef0 kernel/locking/mutex.c:935
+ __mutex_lock kernel/locking/mutex.c:1103 [inline]
+ mutex_lock_nested+0x1a/0x20 kernel/locking/mutex.c:1118
+ io_wq_submit_work+0x39a/0x720 fs/io_uring.c:6411
+ io_run_cancel fs/io-wq.c:856 [inline]
+ io_wqe_cancel_pending_work fs/io-wq.c:990 [inline]
+ io_wq_cancel_cb+0x614/0xcb0 fs/io-wq.c:1027
+ io_uring_cancel_files fs/io_uring.c:8874 [inline]
+ io_uring_cancel_task_requests fs/io_uring.c:8952 [inline]
+ __io_uring_files_cancel+0x115d/0x19e0 fs/io_uring.c:9038
+ io_uring_files_cancel include/linux/io_uring.h:51 [inline]
+ do_exit+0x2e6/0x2490 kernel/exit.c:780
+ do_group_exit+0x168/0x2d0 kernel/exit.c:922
+ get_signal+0x16b5/0x2030 kernel/signal.c:2770
+ arch_do_signal_or_restart+0x8e/0x6a0 arch/x86/kernel/signal.c:811
+ handle_signal_work kernel/entry/common.c:147 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+ exit_to_user_mode_prepare+0xac/0x1e0 kernel/entry/common.c:201
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+ syscall_exit_to_user_mode+0x48/0x190 kernel/entry/common.c:302
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45e219
+Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fe439980cf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 000000000119bf88 RCX: 000000000045e219
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000119bf88
+RBP: 000000000119bf80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000119bf8c
+R13: 00007ffe7c5112ff R14: 00007fe4399819c0 R15: 000000000119bf8c
 
-  dump_common_audit_data(): fix racy accesses to ->d_name (2021-01-16 15:11:35 -0500)
 
-----------------------------------------------------------------
-Al Viro (2):
-      umount(2): move the flag validity checks first
-      dump_common_audit_data(): fix racy accesses to ->d_name
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Christoph Hellwig (1):
-      iov_iter: fix the uaccess area in copy_compat_iovec_from_user
-
- fs/namespace.c       | 7 +++++--
- lib/iov_iter.c       | 2 +-
- security/lsm_audit.c | 7 +++++--
- 3 files changed, 11 insertions(+), 5 deletions(-)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
