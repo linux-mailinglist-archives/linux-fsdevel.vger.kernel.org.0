@@ -2,257 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C94F2F9EFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 13:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 028462FA04B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 13:48:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391314AbhARMCD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 07:02:03 -0500
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:47018 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391295AbhARMBw (ORCPT
+        id S2404094AbhARMra (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 07:47:30 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:50399 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404156AbhARMqv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 07:01:52 -0500
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 20887241;
-        Mon, 18 Jan 2021 15:01:05 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1610971265;
-        bh=vHceS8rgoIK1PXhk2Onpa85/3bo7y8S6c44QIUn8Dvc=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=jS4AH8DQGIGzee+RTZzQr1+93TWOpdYVffshauAgsvCmw+ZGAdun0SXEzxVWoJCht
-         y+E+f93NL5IEg7UOfLmxKyXwhqg+Ugj1UFks8SWhBrEcjtjJZHznKGUkfrjM6gaC4s
-         rpSu9oN5BZRcU/rFozo9JxmTng45o8uOaUxJ+TJU=
-Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Mon, 18 Jan 2021 15:01:04 +0300
-Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
- by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Mon, 18 Jan 2021 15:01:04 +0300
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     Kari Argillander <kari.argillander@gmail.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pali@kernel.org" <pali@kernel.org>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        "aaptel@suse.com" <aaptel@suse.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "joe@perches.com" <joe@perches.com>,
-        "mark@harmstone.com" <mark@harmstone.com>,
-        "nborisov@suse.com" <nborisov@suse.com>,
-        "linux-ntfs-dev@lists.sourceforge.net" 
-        <linux-ntfs-dev@lists.sourceforge.net>,
-        "anton@tuxera.com" <anton@tuxera.com>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        "andy.lavr@gmail.com" <andy.lavr@gmail.com>
-Subject: RE: [PATCH v17 05/10] fs/ntfs3: Add attrib operations
-Thread-Topic: [PATCH v17 05/10] fs/ntfs3: Add attrib operations
-Thread-Index: AQHW34lESlOgt0gdi0CCf1q7eejdPqoWbvYAgBbwkNA=
-Date:   Mon, 18 Jan 2021 12:01:04 +0000
-Message-ID: <4f25e89e96e644cfb0d200332a02efaf@paragon-software.com>
-References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
- <20201231152401.3162425-6-almaz.alexandrovich@paragon-software.com>
- <20210104002554.gdxoyu2q2aaae5ph@kari-VirtualBox>
-In-Reply-To: <20210104002554.gdxoyu2q2aaae5ph@kari-VirtualBox>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.30.0.64]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 18 Jan 2021 07:46:51 -0500
+Received: by mail-io1-f71.google.com with SMTP id p77so19428649iod.17
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 04:46:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=YJ2ANZh2M04vWIUzXzQCuyA7q10YXGQQfQOyJ16QsJQ=;
+        b=lkJzS3zRsOGKmSanMDjuJyiBdhHzO8r3kqEJ+11pi/TU6fe2O/TElAvweiObrFldQo
+         QoRVIgDzJEzJNVRTt32hPFwzu6+q4v2AdB5bdMTTPEkVKHR87bqp4o4TzUwB+29+pufz
+         v5Nij+Tf5IUCzJNSZtww2r1dHLQ/hvFUsH0bS4NcewWKhijXscR/F1tBnaF9PaZ+u8b6
+         R/x+puW+orLO5lU1EEa3WhaD2VwnzY5m3I6GoRDE2aWqy+HM9DVi/fPQZF5+qxUg7ifa
+         dqmsLsXuG+pvhVioMW5GuWqDXWAnjK3PQOkvkaoMIKd7v6G9oZ7Ck+a5I0UDFzO+G6v/
+         HWhw==
+X-Gm-Message-State: AOAM533PjbOmxKf3b82t3fAa/qdMGUBOvWyX3eQFKmiEic6laYk10opf
+        IU4HTihQ6hdpjKFUNuyfItPR6hd+ijavsKDrNjKisYiib1LW
+X-Google-Smtp-Source: ABdhPJyvUCul7O32EEGQQpAgC1b3Kmj9J0hr07NS4qMNTULjpHrJ7HHEC4Gn8bVciPY4mooj+jjd4oOi/jKLw1acis6LzuYEZgP+
 MIME-Version: 1.0
+X-Received: by 2002:a92:85d4:: with SMTP id f203mr5939706ilh.232.1610973970611;
+ Mon, 18 Jan 2021 04:46:10 -0800 (PST)
+Date:   Mon, 18 Jan 2021 04:46:10 -0800
+In-Reply-To: <1e51be0f-98a1-6dd2-63da-02e92e79a4ef@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000042c22b05b92c1b44@google.com>
+Subject: Re: WARNING in io_disable_sqo_submit
+From:   syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Kari Argillander <kari.argillander@gmail.com>
-Sent: Monday, January 4, 2021 3:26 AM
-> To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> Cc: linux-fsdevel@vger.kernel.org; viro@zeniv.linux.org.uk; linux-kernel@=
-vger.kernel.org; pali@kernel.org; dsterba@suse.cz;
-> aaptel@suse.com; willy@infradead.org; rdunlap@infradead.org; joe@perches.=
-com; mark@harmstone.com; nborisov@suse.com;
-> linux-ntfs-dev@lists.sourceforge.net; anton@tuxera.com; dan.carpenter@ora=
-cle.com; hch@lst.de; ebiggers@kernel.org;
-> andy.lavr@gmail.com
-> Subject: Re: [PATCH v17 05/10] fs/ntfs3: Add attrib operations
->=20
-> On Thu, Dec 31, 2020 at 06:23:56PM +0300, Konstantin Komarov wrote:
-> > This adds attrib operations
-> >
-> > Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software=
-.com>
-> > ---
-> >  fs/ntfs3/attrib.c   | 2081 +++++++++++++++++++++++++++++++++++++++++++
-> >  fs/ntfs3/attrlist.c |  463 ++++++++++
-> >  fs/ntfs3/xattr.c    | 1072 ++++++++++++++++++++++
-> >  3 files changed, 3616 insertions(+)
-> >  create mode 100644 fs/ntfs3/attrib.c
-> >  create mode 100644 fs/ntfs3/attrlist.c
-> >  create mode 100644 fs/ntfs3/xattr.c
-> >
-> > diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
->=20
-> > +/*
-> > + * al_find_ex
-> > + *
-> > + * finds the first le in the list which matches type, name and vcn
-> > + * Returns NULL if not found
-> > + */
-> > +struct ATTR_LIST_ENTRY *al_find_ex(struct ntfs_inode *ni,
-> > +				   struct ATTR_LIST_ENTRY *le,
-> > +				   enum ATTR_TYPE type, const __le16 *name,
-> > +				   u8 name_len, const CLST *vcn)
-> > +{
-> > +	struct ATTR_LIST_ENTRY *ret =3D NULL;
-> > +	u32 type_in =3D le32_to_cpu(type);
-> > +
-> > +	while ((le =3D al_enumerate(ni, le))) {
-> > +		u64 le_vcn;
-> > +		int diff;
-> > +
-> > +		/* List entries are sorted by type, name and vcn */
->=20
-> Isn't name sorted with upcase sort.
->=20
+Hello,
 
-Hi! You are correct. Will be fixed in v18.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in io_sq_thread_stop
 
-> > +		diff =3D le32_to_cpu(le->type) - type_in;
-> > +		if (diff < 0)
-> > +			continue;
-> > +
-> > +		if (diff > 0)
-> > +			return ret;
-> > +
-> > +		if (le->name_len !=3D name_len)
-> > +			continue;
-> > +
-> > +		if (name_len &&
-> > +		    memcmp(le_name(le), name, name_len * sizeof(short)))
-> > +			continue;
->=20
-> So does this compare name correctly? So it is caller responsible that
-> name is up_cased? Or does it even mater.
->=20
-> And this will check every name in right type. Why not use name_cmp and
-> then we know if we over. It might be because performance. But maybe
-> we can check that like every 10 iteration or something.
->=20
+INFO: task kworker/u4:0:8 blocked for more than 143 seconds.
+      Not tainted 5.11.0-rc1-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u4:0    state:D stack:24056 pid:    8 ppid:     2 flags:0x00004000
+Workqueue: events_unbound io_ring_exit_work
+Call Trace:
+ context_switch kernel/sched/core.c:4313 [inline]
+ __schedule+0x90c/0x21a0 kernel/sched/core.c:5064
+ schedule+0xcf/0x270 kernel/sched/core.c:5143
+ schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1854
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common kernel/sched/completion.c:106 [inline]
+ wait_for_common kernel/sched/completion.c:117 [inline]
+ wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
+ kthread_park+0x122/0x1b0 kernel/kthread.c:557
+ io_sq_thread_park fs/io_uring.c:7445 [inline]
+ io_sq_thread_park fs/io_uring.c:7439 [inline]
+ io_sq_thread_stop+0xfe/0x570 fs/io_uring.c:7463
+ io_finish_async fs/io_uring.c:7481 [inline]
+ io_ring_ctx_free fs/io_uring.c:8646 [inline]
+ io_ring_exit_work+0x62/0x6d0 fs/io_uring.c:8739
+ process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
 
-Now name check will be only for list_entry with vcn=3D=3D0.
+Showing all locks held in the system:
+3 locks held by kworker/u4:0/8:
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
+ #1: ffffc90000cd7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
+ #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7444 [inline]
+ #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7439 [inline]
+ #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_stop+0xd6/0x570 fs/io_uring.c:7463
+1 lock held by khungtaskd/1647:
+ #0: ffffffff8b373aa0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
+1 lock held by in:imklog/8164:
+ #0: ffff8880151b8870 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:947
+2 locks held by kworker/u4:6/8415:
+2 locks held by kworker/0:4/8690:
+ #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+ #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+ #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+ #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+ #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
+ #1: ffffc9000288fda8 ((work_completion)(&rew.rew_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
+1 lock held by syz-executor.3/8865:
+ #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+1 lock held by syz-executor.2/8867:
+ #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+2 locks held by syz-executor.5/8869:
+ #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+ #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
+ #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x4f2/0x610 kernel/rcu/tree_exp.h:836
+1 lock held by syz-executor.4/8870:
+ #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+1 lock held by syz-executor.0/8872:
+ #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+1 lock held by syz-executor.1/8873:
+ #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
 
-> > +		if (!vcn)
-> > +			return le;
-> > +
-> > +		le_vcn =3D le64_to_cpu(le->vcn);
-> > +		if (*vcn =3D=3D le_vcn)
-> > +			return le;
-> > +
-> > +		if (*vcn < le_vcn)
-> > +			return ret;
-> > +
-> > +		ret =3D le;
->=20
-> So we still have wrong vcn at this point. And we save that so we can
-> return it. What happens if we will not found right one. Atlest function
-> comment say that we should return NULL if we do not found matching entry.
->=20
+=============================================
 
-Can't agree here.
-E.g. given list_entry: 0, 67, 89, 110, 137.
-The function will return 89 as the similar thread stores the info about vcn=
-=3D=3D100.
+NMI backtrace for cpu 1
+CPU: 1 PID: 1647 Comm: khungtaskd Not tainted 5.11.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:120
+ nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
+ watchdog+0xd43/0xfa0 kernel/hung_task.c:294
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 8415 Comm: kworker/u4:6 Not tainted 5.11.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: bat_events batadv_nc_worker
+RIP: 0010:__this_cpu_preempt_check+0xd/0x20 lib/smp_processor_id.c:70
+Code: 00 00 48 c7 c6 00 d9 9e 89 48 c7 c7 40 d9 9e 89 e9 98 fe ff ff 0f 1f 84 00 00 00 00 00 55 48 89 fd 0f 1f 44 00 00 48 89 ee 5d <48> c7 c7 80 d9 9e 89 e9 77 fe ff ff cc cc cc cc cc cc cc 0f 1f 44
+RSP: 0018:ffffc9000c507af0 EFLAGS: 00000046
+RAX: 0000000000000001 RBX: 0000000000000000 RCX: 1ffffffff1a077ab
+RDX: 0000000000000000 RSI: ffffffff894bac40 RDI: ffffffff894bac40
+RBP: ffffffff8b3739e0 R08: 0000000000000000 R09: ffffffff8d038b8f
+R10: fffffbfff1a07171 R11: 0000000000000000 R12: 0000000000000001
+R13: ffff88802f858bc0 R14: 00000000ffffffff R15: ffffffff889a5430
+FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbcc03ca000 CR3: 0000000011523000 CR4: 0000000000350ef0
+Call Trace:
+ lockdep_recursion_inc kernel/locking/lockdep.c:432 [inline]
+ lock_is_held_type+0x34/0x100 kernel/locking/lockdep.c:5475
+ lock_is_held include/linux/lockdep.h:271 [inline]
+ rcu_read_lock_sched_held+0x3a/0x70 kernel/rcu/update.c:123
+ trace_lock_release include/trace/events/lock.h:58 [inline]
+ lock_release+0x5b7/0x710 kernel/locking/lockdep.c:5448
+ __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:174 [inline]
+ _raw_spin_unlock_bh+0x12/0x30 kernel/locking/spinlock.c:207
+ spin_unlock_bh include/linux/spinlock.h:399 [inline]
+ batadv_nc_purge_paths+0x2a5/0x3a0 net/batman-adv/network-coding.c:467
+ batadv_nc_worker+0x831/0xe50 net/batman-adv/network-coding.c:716
+ process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
 
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/*
-> > + * al_find_le_to_insert
-> > + *
-> > + * finds the first list entry which matches type, name and vcn
->=20
-> This comment seems wrong? This seems to find insert point for new
-> le.
->=20
 
-Thanks for this. Fixed.
+Tested on:
 
-> > + * Returns NULL if not found
-> > + */
-> > +static struct ATTR_LIST_ENTRY *
-> > +al_find_le_to_insert(struct ntfs_inode *ni, enum ATTR_TYPE type,
-> > +		     const __le16 *name, u8 name_len, const CLST *vcn)
-> > +{
-> > +	struct ATTR_LIST_ENTRY *le =3D NULL, *prev;
-> > +	u32 type_in =3D le32_to_cpu(type);
-> > +	int diff;
-> > +
-> > +	/* List entries are sorted by type, name, vcn */
-> > +next:
-> > +	le =3D al_enumerate(ni, prev =3D le);
-> > +	if (!le)
-> > +		goto out;
-> > +	diff =3D le32_to_cpu(le->type) - type_in;
-> > +	if (diff < 0)
-> > +		goto next;
-> > +	if (diff > 0)
-> > +		goto out;
-> > +
-> > +	if (ntfs_cmp_names(name, name_len, le_name(le), le->name_len, NULL) >=
- 0)
-> > +		goto next;
->=20
-> Why not go out if compare is < 0. In my mind this will totally ignore
-> name and next just find right vcn (or we come next ID) and call it a day.
->=20
-
-Will be fixed in v18 as well.
-
-> NAME	VCN
-> [AAB]	[2] <- Looks insert point for this.
->=20
-> [AAA]	[1]
-> [AAB]	[1]
-> 	    <- This is right point.
-> [AAC]	[1]
-> 	    <- But we tell that insert point is here.
-> [AAD]	[2]
->=20
-> I might be totally wrong but please tell me what I'm missing.
->=20
-> > +	if (!vcn || *vcn > le64_to_cpu(le->vcn))
-> > +		goto next;
-> > +
-> > +out:
-> > +	if (!le)
-> > +		le =3D prev ? Add2Ptr(prev, le16_to_cpu(prev->size)) :
-> > +			    ni->attr_list.le;
-> > +
-> > +	return le;
-> > +}
->=20
-> There seems to be lot of linear list search. Do you think it will be
-> benefital to code binary or jump search for them? Just asking for
-> intrest. Might be that it will not benefit at all but just thinking
-> here.
->=20
-> I might try to do that in some point if someone see point of that.
-
-It's nice idea, we will appreciate such patch. But please keep in mind that
-binary search will outperform linear dramatically only for heavily fragment=
-ed files.
-By the way, the same idea of replacing linear with binary search is impleme=
-nted in
-index.c (please refer to NTFS3_INDEX_BINARY_SEARCH).
-
-Also, your notes on attrlist.c led us to refactor this file. Thanks once ag=
-ain!
+commit:         a1235e44 io_uring: cancel all requests on task exit
+git tree:       git://git.kernel.dk/linux-block io_uring-5.11
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c53584d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c6b6b5cccb0f38f2
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
+compiler:       gcc (GCC) 10.1.0-syz 20200507
 
