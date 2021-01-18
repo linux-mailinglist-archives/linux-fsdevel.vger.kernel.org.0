@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 772322FAA94
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 20:52:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E80A2FAAA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 20:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437592AbhARTuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 14:50:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38444 "EHLO
+        id S2437160AbhARTwh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 14:52:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437516AbhARTuJ (ORCPT
+        with ESMTP id S2437648AbhARTwZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 14:50:09 -0500
+        Mon, 18 Jan 2021 14:52:25 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD392C061574;
-        Mon, 18 Jan 2021 11:49:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 085EEC061575;
+        Mon, 18 Jan 2021 11:51:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=bIxy2918VTI/e0vrLhym3Q4NRvVKOvIY9noXGvh99xQ=; b=aimzW/1xdrhwEPeB+jCokxr/X5
-        CujuRvkI52jO67hhT+/Oh3fS1Jh+ms+p/a+0yDRLYnBaAmlI1jTErbUcVRvBxvj1sfrosXwdEzM4K
-        OvXHRCermkP0sjH8WKf7H/UJ44JUMJxWD+2pg3KI0xJYeQSJ/dclE283tSors1UXxk7QNrj8e9kry
-        ZJbZFObxoyG5gCtqe5LiQpa/xk6Oom/6MgVgMYz7ugmWoXshLS1uWNXN4ACpd+UOtw0j0BKgb4cd3
-        Z+uHsxaXzS7RfNa2D4545ZbTS2a86RkUwwvfcAayMp79Yxy5An8tfQhGtPBim0F39aOrQ7I5PCIq7
-        3KR6fy/g==;
+        bh=GFU7XYjfNerPPKIUP8QqhZ90IIH25bwdEuMGLrzjIrs=; b=moPv6CKiPo/0j/9fZ1CO+NV+QW
+        J515yjKvjtjkNQ+o2dEJP0yAx5okvL1jpkwxtrMhrJvK8RJ0lnSPwDrs1Z2U7XmTCY0f9TTZGSMkq
+        0vdEiAcV91+cyT4CMCh7tJbzAC0WWAJ+oqyLEflCVSfQMm/fA5RxPWXHTbhUjFSsCbuRwqZsS3RDv
+        WJZ8aSUUV9ecADad6BLsCUHUe6gvgX6JHrxXU/M7zc18+HgA1iYWt3rB8YKHUkcPJK0cEzoFYM2x8
+        EQdjvnnem31tu+arERmMxikaIcd+JL79JW+TRQ0yVwdOSwS66tz9GNTPAqmEo4TC7kppotX19JPt8
+        opFOloNw==;
 Received: from 089144206130.atnat0015.highway.bob.at ([89.144.206.130] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1l1aWZ-00DJig-TT; Mon, 18 Jan 2021 19:49:19 +0000
+        id 1l1aYt-00DJxA-7s; Mon, 18 Jan 2021 19:51:41 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, avi@scylladb.com,
         Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH 05/11] xfs: simplify the read/write tracepoints
-Date:   Mon, 18 Jan 2021 20:35:10 +0100
-Message-Id: <20210118193516.2915706-6-hch@lst.de>
+Subject: [PATCH 06/11] xfs: improve the reflink_bounce_dio_write tracepoint
+Date:   Mon, 18 Jan 2021 20:35:11 +0100
+Message-Id: <20210118193516.2915706-7-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210118193516.2915706-1-hch@lst.de>
 References: <20210118193516.2915706-1-hch@lst.de>
@@ -45,139 +45,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pass the iocb and iov_iter to the tracepoints and leave decoding of
-actual arguments to the code only run when tracing is enabled.
+Use a more suitable event class.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Dave Chinner <dchinner@redhat.com>
 ---
- fs/xfs/xfs_file.c  | 20 ++++++++------------
- fs/xfs/xfs_trace.h | 18 +++++++++---------
- 2 files changed, 17 insertions(+), 21 deletions(-)
+ fs/xfs/xfs_file.c  | 2 +-
+ fs/xfs/xfs_trace.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 97836ec53397d4..aa64e78fc3c467 100644
+index aa64e78fc3c467..a696bd34f71d21 100644
 --- a/fs/xfs/xfs_file.c
 +++ b/fs/xfs/xfs_file.c
-@@ -220,12 +220,11 @@ xfs_file_dio_read(
- 	struct iov_iter		*to)
- {
- 	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
--	size_t			count = iov_iter_count(to);
- 	ssize_t			ret;
- 
--	trace_xfs_file_direct_read(ip, count, iocb->ki_pos);
-+	trace_xfs_file_direct_read(iocb, to);
- 
--	if (!count)
-+	if (!iov_iter_count(to))
- 		return 0; /* skip atime */
- 
- 	file_accessed(iocb->ki_filp);
-@@ -246,12 +245,11 @@ xfs_file_dax_read(
- 	struct iov_iter		*to)
- {
- 	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
--	size_t			count = iov_iter_count(to);
- 	ssize_t			ret = 0;
- 
--	trace_xfs_file_dax_read(ip, count, iocb->ki_pos);
-+	trace_xfs_file_dax_read(iocb, to);
- 
--	if (!count)
-+	if (!iov_iter_count(to))
- 		return 0; /* skip atime */
- 
- 	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
-@@ -272,7 +270,7 @@ xfs_file_buffered_read(
- 	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
- 	ssize_t			ret;
- 
--	trace_xfs_file_buffered_read(ip, iov_iter_count(to), iocb->ki_pos);
-+	trace_xfs_file_buffered_read(iocb, to);
- 
- 	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
- 	if (ret)
-@@ -599,7 +597,7 @@ xfs_file_dio_write(
- 		iolock = XFS_IOLOCK_SHARED;
- 	}
- 
--	trace_xfs_file_direct_write(ip, count, iocb->ki_pos);
-+	trace_xfs_file_direct_write(iocb, from);
- 	/*
- 	 * If unaligned, this is the only IO in-flight. Wait on it before we
- 	 * release the iolock to prevent subsequent overlapping IO.
-@@ -622,7 +620,6 @@ xfs_file_dax_write(
- 	struct xfs_inode	*ip = XFS_I(inode);
- 	int			iolock = XFS_IOLOCK_EXCL;
- 	ssize_t			ret, error = 0;
--	size_t			count;
- 	loff_t			pos;
- 
- 	ret = xfs_ilock_iocb(iocb, iolock);
-@@ -633,9 +630,8 @@ xfs_file_dax_write(
- 		goto out;
- 
- 	pos = iocb->ki_pos;
--	count = iov_iter_count(from);
- 
--	trace_xfs_file_dax_write(ip, count, pos);
-+	trace_xfs_file_dax_write(iocb, from);
- 	ret = dax_iomap_rw(iocb, from, &xfs_direct_write_iomap_ops);
- 	if (ret > 0 && iocb->ki_pos > i_size_read(inode)) {
- 		i_size_write(inode, iocb->ki_pos);
-@@ -683,7 +679,7 @@ xfs_file_buffered_write(
- 	/* We can write back this queue in page reclaim */
- 	current->backing_dev_info = inode_to_bdi(inode);
- 
--	trace_xfs_file_buffered_write(ip, iov_iter_count(from), iocb->ki_pos);
-+	trace_xfs_file_buffered_write(iocb, from);
- 	ret = iomap_file_buffered_write(iocb, from,
- 			&xfs_buffered_write_iomap_ops);
- 	if (likely(ret >= 0))
+@@ -560,7 +560,7 @@ xfs_file_dio_write(
+ 		 * files yet, as we can't unshare a partial block.
+ 		 */
+ 		if (xfs_is_cow_inode(ip)) {
+-			trace_xfs_reflink_bounce_dio_write(ip, iocb->ki_pos, count);
++			trace_xfs_reflink_bounce_dio_write(iocb, from);
+ 			return -ENOTBLK;
+ 		}
+ 		iolock = XFS_IOLOCK_EXCL;
 diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 5a263ae3d4f008..a6d04d860a565e 100644
+index a6d04d860a565e..0cfd65cd67c190 100644
 --- a/fs/xfs/xfs_trace.h
 +++ b/fs/xfs/xfs_trace.h
-@@ -1287,8 +1287,8 @@ TRACE_EVENT(xfs_log_assign_tail_lsn,
- )
+@@ -1321,6 +1321,8 @@ DEFINE_RW_EVENT(xfs_file_dax_read);
+ DEFINE_RW_EVENT(xfs_file_buffered_write);
+ DEFINE_RW_EVENT(xfs_file_direct_write);
+ DEFINE_RW_EVENT(xfs_file_dax_write);
++DEFINE_RW_EVENT(xfs_reflink_bounce_dio_write);
++
  
- DECLARE_EVENT_CLASS(xfs_file_class,
--	TP_PROTO(struct xfs_inode *ip, size_t count, loff_t offset),
--	TP_ARGS(ip, count, offset),
-+	TP_PROTO(struct kiocb *iocb, struct iov_iter *iter),
-+	TP_ARGS(iocb, iter),
- 	TP_STRUCT__entry(
- 		__field(dev_t, dev)
- 		__field(xfs_ino_t, ino)
-@@ -1297,11 +1297,11 @@ DECLARE_EVENT_CLASS(xfs_file_class,
- 		__field(size_t, count)
- 	),
- 	TP_fast_assign(
--		__entry->dev = VFS_I(ip)->i_sb->s_dev;
--		__entry->ino = ip->i_ino;
--		__entry->size = ip->i_d.di_size;
--		__entry->offset = offset;
--		__entry->count = count;
-+		__entry->dev = file_inode(iocb->ki_filp)->i_sb->s_dev;
-+		__entry->ino = XFS_I(file_inode(iocb->ki_filp))->i_ino;
-+		__entry->size = XFS_I(file_inode(iocb->ki_filp))->i_d.di_size;
-+		__entry->offset = iocb->ki_pos;
-+		__entry->count = iov_iter_count(iter);
- 	),
- 	TP_printk("dev %d:%d ino 0x%llx size 0x%llx offset 0x%llx count 0x%zx",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
-@@ -1313,8 +1313,8 @@ DECLARE_EVENT_CLASS(xfs_file_class,
+ DECLARE_EVENT_CLASS(xfs_imap_class,
+ 	TP_PROTO(struct xfs_inode *ip, xfs_off_t offset, ssize_t count,
+@@ -3294,8 +3296,6 @@ DEFINE_INODE_IREC_EVENT(xfs_reflink_cow_found);
+ DEFINE_INODE_IREC_EVENT(xfs_reflink_cow_enospc);
+ DEFINE_INODE_IREC_EVENT(xfs_reflink_convert_cow);
  
- #define DEFINE_RW_EVENT(name)		\
- DEFINE_EVENT(xfs_file_class, name,	\
--	TP_PROTO(struct xfs_inode *ip, size_t count, loff_t offset),	\
--	TP_ARGS(ip, count, offset))
-+	TP_PROTO(struct kiocb *iocb, struct iov_iter *iter),		\
-+	TP_ARGS(iocb, iter))
- DEFINE_RW_EVENT(xfs_file_buffered_read);
- DEFINE_RW_EVENT(xfs_file_direct_read);
- DEFINE_RW_EVENT(xfs_file_dax_read);
+-DEFINE_SIMPLE_IO_EVENT(xfs_reflink_bounce_dio_write);
+-
+ DEFINE_SIMPLE_IO_EVENT(xfs_reflink_cancel_cow_range);
+ DEFINE_SIMPLE_IO_EVENT(xfs_reflink_end_cow);
+ DEFINE_INODE_IREC_EVENT(xfs_reflink_cow_remap);
 -- 
 2.29.2
 
