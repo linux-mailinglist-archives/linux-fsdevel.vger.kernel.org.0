@@ -2,137 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC8202FABF5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 21:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D10422FACC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 22:36:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436982AbhARU4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 15:56:41 -0500
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:36086 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388548AbhARU4L (ORCPT
+        id S2394822AbhARVgJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 16:36:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53112 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389454AbhARKDc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 15:56:11 -0500
-Received: from dread.disaster.area (pa49-181-54-82.pa.nsw.optusnet.com.au [49.181.54.82])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id C6BC9766A23;
-        Tue, 19 Jan 2021 07:55:21 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1l1bYX-001MOF-1O; Tue, 19 Jan 2021 07:55:21 +1100
-Date:   Tue, 19 Jan 2021 07:55:21 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        avi@scylladb.com, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH 11/11] xfs: reduce exclusive locking on unaligned dio
-Message-ID: <20210118205521.GF78941@dread.disaster.area>
-References: <20210118193516.2915706-1-hch@lst.de>
- <20210118193516.2915706-12-hch@lst.de>
+        Mon, 18 Jan 2021 05:03:32 -0500
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220EEC061575;
+        Mon, 18 Jan 2021 02:02:20 -0800 (PST)
+Received: by mail-pg1-x536.google.com with SMTP id p18so10596042pgm.11;
+        Mon, 18 Jan 2021 02:02:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u0FOmzDZmk+RTcNWhNFAwsw/QXvXPx1t1kmnlGL7Ml4=;
+        b=pQ8CHoBpqH/kB2/AsbSyH/z6bRNRXb5zD9PTlyEBiEjpxwXT4IWVUTzutdnUMpezWD
+         9kLTG+21uaWeYk4vgwV3JiBIVVWHsUwVRAojA4WGKJ5/TNA/trvDDlGiltGAhAIv6nb/
+         DvdafN+nZBiqN1oqB3F6KH3KGXrSsDD6E1910g3ZGlgpskMlhyXU/gwVDB9WHY5r3fCY
+         QGFRZ6YqEhUO8MgxK4WgG+XBEXUyDhDcUzKQF/25635P72VSRFXkvHuqnxrxUbSg4DFa
+         RKsx6yelS6q8bIRlvje/OG2vuaI8plyiEHDfGtFxFccHRod4yhfqHfsyiZQtvO8e5Nwi
+         +puQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u0FOmzDZmk+RTcNWhNFAwsw/QXvXPx1t1kmnlGL7Ml4=;
+        b=oJNfhm3FjW6RThD/sD6DNBXkw+s+aMetDBcagJejiqcQ4s162lhDtcaI+IK0cctJt+
+         at/3+wDoa2O8gGSJPgIY0wL0k+1h3EHBtLiMuK3NfUHg3Oel/+Fb2y2CUqkq94bI/3x/
+         OGF196sze0rocTf+qUnl49q0b88s6iNp1OhgNAM3sZPYMAw6/Y8Q8FZQY+8xKSFSt87K
+         j8sby81oamsRqQKJyIYsQQyKLwrfPu1GppFGnUten2lAq1cGA51CU5NGgV6kRTRV09To
+         AxDvZ1K5jvus31ZWmYNJI11ckpZYeUE24fdYMir1HQ34GODPBlno7iyOk8bYL8RTnZTH
+         F+JA==
+X-Gm-Message-State: AOAM531HvGP8QdqTJq9UJ8X3lUB6p1MXggw5R9Qp6e3toYDWBLhdihXK
+        QgGAg00wjJAFyfdDa+XWsY4BOXJCi3l+rLdfgbQ=
+X-Google-Smtp-Source: ABdhPJySPSGdHUH+ZvJKOjKcaZ4mf37K5+6HxotmPOlywyp6HnN7j4tELiDqh3CPosgIggQSBwqjLqN5PPKmpcQPFUg=
+X-Received: by 2002:a63:4b16:: with SMTP id y22mr25224503pga.203.1610964139615;
+ Mon, 18 Jan 2021 02:02:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210118193516.2915706-12-hch@lst.de>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
-        a=NAd5MxazP4FGoF8nXO8esw==:117 a=NAd5MxazP4FGoF8nXO8esw==:17
-        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=ajihwpiV6h8_n8UpGEgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20210116220950.47078-1-timur@kernel.org> <20210116220950.47078-2-timur@kernel.org>
+In-Reply-To: <20210116220950.47078-2-timur@kernel.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 18 Jan 2021 12:03:08 +0200
+Message-ID: <CAHp75Vdk6y8dGNJOswZwfOeva_sqVcw-f=yYgf_rptjHXxfZvw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] [v2] lib/hexdump: introduce DUMP_PREFIX_UNHASHED for
+ unhashed addresses
+To:     Timur Tabi <timur@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, roman.fietze@magna.com,
+        Kees Cook <keescook@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        linux-mm <linux-mm@kvack.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Vaibhav Jain <vaibhav@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 08:35:16PM +0100, Christoph Hellwig wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> Attempt shared locking for unaligned DIO, but only if the the
-> underlying extent is already allocated and in written state. On
-> failure, retry with the existing exclusive locking.
-....
-> @@ -590,19 +617,27 @@ xfs_file_dio_write_unaligned(
->  		goto out_unlock;
->  
->  	/*
-> -	 * If we are doing unaligned I/O, we can't allow any other overlapping
-> -	 * I/O in-flight at the same time or we risk data corruption. Wait for
-> -	 * all other I/O to drain before we submit.
-> +	 * If we are doing exclusive unaligned IO, we can't allow any other
-> +	 * overlapping IO in-flight at the same time or we risk data corruption.
-> +	 * Wait for all other IO to drain before we submit.
->  	 */
-> -	inode_dio_wait(VFS_I(ip));
-> +	if (!(flags & IOMAP_DIO_UNALIGNED))
-> +		inode_dio_wait(VFS_I(ip));
->  
-> -	/*
-> -	 * This must be the only I/O in-flight. Wait on it before we release the
-> -	 * iolock to prevent subsequent overlapping I/O.
-> -	 */
->  	trace_xfs_file_direct_write(iocb, from);
->  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
-> -			   &xfs_dio_write_ops, IOMAP_DIO_FORCE_WAIT);
-> +			   &xfs_dio_write_ops, flags);
-> +	/*
-> +	 * Retry unaligned IO with exclusive blocking semantics if the DIO
-> +	 * layer rejected it for mapping or locking reasons. If we are doing
-> +	 * nonblocking user IO, propagate the error.
-> +	 */
-> +	if (ret == -EAGAIN && !(iocb->ki_flags & IOCB_NOWAIT)) {
-> +		ASSERT(flags & IOMAP_DIO_UNALIGNED);
-> +		xfs_iunlock(ip, iolock);
-> +		goto retry_exclusive;
-> +	}
-> +
->  out_unlock:
->  	if (iolock)
->  		xfs_iunlock(ip, iolock);
+On Sun, Jan 17, 2021 at 12:12 AM Timur Tabi <timur@kernel.org> wrote:
 
-Do we ever get here without holding the iolock anymore?
+(Hint: -v<n> to the git format-patch will create a versioned subject
+prefix for you automatically)
 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 7b9ff824e82d48..dc8c86e98b99bf 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -784,15 +784,30 @@ xfs_direct_write_iomap_begin(
->  		goto allocate_blocks;
->  
->  	/*
-> -	 * NOWAIT IO needs to span the entire requested IO with a single map so
-> -	 * that we avoid partial IO failures due to the rest of the IO range not
-> -	 * covered by this map triggering an EAGAIN condition when it is
-> -	 * subsequently mapped and aborting the IO.
-> +	 * NOWAIT and unaligned IO needs to span the entire requested IO with a
-> +	 * single map so that we avoid partial IO failures due to the rest of
-> +	 * the IO range not covered by this map triggering an EAGAIN condition
-> +	 * when it is subsequently mapped and aborting the IO.
->  	 */
-> -	if ((flags & IOMAP_NOWAIT) &&
-> -	    !imap_spans_range(&imap, offset_fsb, end_fsb)) {
-> +	if (flags & (IOMAP_NOWAIT | IOMAP_UNALIGNED)) {
->  		error = -EAGAIN;
-> -		goto out_unlock;
-> +		if (!imap_spans_range(&imap, offset_fsb, end_fsb))
-> +			goto out_unlock;
-> +	}
-> +
-> +	/*
-> +	 * For unsigned I/O we can't convert an unwritten extents if the I/O is
-> +	 * not block size aligned, as such a conversion would have to do
-> +	 * sub-block zeroing, and that can only be done under an exclusive
-> +	 * IOLOCK. Hence if this is not a written extent, return EAGAIN to tell
-> +	 * the caller to try again.
-> +	 */
+> Hashed addresses are useless in hexdumps unless you're comparing
+> with other hashed addresses, which is unlikely.  However, there's
+> no need to break existing code, so introduce a new prefix type
+> that prints unhashed addresses.
 
-A few typos in that comment :)
+Any user of this? (For the record, I don't see any other mail except this one)
 
-	/*
-	 * For unaligned IO, we cannot convert unwritten extents without
-	 * requiring sub-block zeroing. This can only be done under an exclusive
-	 * IOLOCK, hence return -EAGAIN if this is not a written extent to tell
-	 * the caller to try again.
-	 */
+...
 
-Cheers,
+>  enum {
+>         DUMP_PREFIX_NONE,
+>         DUMP_PREFIX_ADDRESS,
+> -       DUMP_PREFIX_OFFSET
+> +       DUMP_PREFIX_OFFSET,
+> +       DUMP_PREFIX_UNHASHED,
 
-Dave.
+Since it's an address, I would like to group them together, i.e. put
+after DUMP_PREFIX_ADDRESS.
+Perhaps even add _ADDRESS to DUMP_PREFIX_UNHASHED, but this maybe too long.
+
+>  };
+
+...
+
+> + * @prefix_type: controls whether prefix of an offset, hashed address,
+> + *  unhashed address, or none is printed (%DUMP_PREFIX_OFFSET,
+> + *  %DUMP_PREFIX_ADDRESS, %DUMP_PREFIX_UNHASHED, %DUMP_PREFIX_NONE)
+
+Yeah, exactly, here you use different ordering.
+
+...
+
+> + * @prefix_type: controls whether prefix of an offset, hashed address,
+> + *  unhashed address, or none is printed (%DUMP_PREFIX_OFFSET,
+> + *  %DUMP_PREFIX_ADDRESS, %DUMP_PREFIX_UNHASHED, %DUMP_PREFIX_NONE)
+
+In both cases I would rather use colon and list one per line. What do you think?
+
+...
+
+> +               case DUMP_PREFIX_UNHASHED:
+
+Here is a third type of ordering, can you please be consistent?
+
+>                 case DUMP_PREFIX_ADDRESS:
+
+...
+
+> + * @prefix_type: controls whether prefix of an offset, hashed address,
+> + *  unhashed address, or none is printed (%DUMP_PREFIX_OFFSET,
+> + *  %DUMP_PREFIX_ADDRESS, %DUMP_PREFIX_UNHASHED, %DUMP_PREFIX_NONE)
+
+As above.
+
+...
+
+> +               case DUMP_PREFIX_UNHASHED:
+
+As above.
+
+>                 case DUMP_PREFIX_ADDRESS:
+
+
 -- 
-Dave Chinner
-david@fromorbit.com
+With Best Regards,
+Andy Shevchenko
