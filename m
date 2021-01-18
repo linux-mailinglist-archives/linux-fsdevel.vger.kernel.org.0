@@ -2,177 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 028462FA04B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 13:48:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95B3B2FA1F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 14:46:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404094AbhARMra (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 07:47:30 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:50399 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404156AbhARMqv (ORCPT
+        id S2404745AbhARNnG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 08:43:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43798 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404737AbhARNm7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 07:46:51 -0500
-Received: by mail-io1-f71.google.com with SMTP id p77so19428649iod.17
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 04:46:35 -0800 (PST)
+        Mon, 18 Jan 2021 08:42:59 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36A18C061574;
+        Mon, 18 Jan 2021 05:42:17 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id v184so9592618wma.1;
+        Mon, 18 Jan 2021 05:42:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=q5isUwhLkIrwtYU6nmgpmTKGhNdkuDOrfeEhUb5gcvA=;
+        b=G2O5upPd2pC3Tnob5zTrjjGwRG4GBgaBrojfzoYZ84o2PQDqoUqZnlOLKEzek2K+zl
+         WO7DmjhUFIJ2AW3wFC+SR+QnDz3AMbVXZjon50dfpx6igjzvkkKmLBE0Aad1FeAZiC9a
+         h8vRvD5neo0+La701dKo3lZJHFIzi2YPb6LkgHslroE6SVy2PIx1w8Mbk2tHVmEU1Yyc
+         c68jkA1mAljySRaILsZuijeQXanV/g4ZXVtLa8PFjo8mEUUHtVYzYhsilQxbtD+sVCOo
+         IAfp4wKhNeAUBcC12uN6S2b62lG5QukWUVcwrUwZiaMToCoKFhrjB4SgzcP9dLdOIh56
+         TsRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=YJ2ANZh2M04vWIUzXzQCuyA7q10YXGQQfQOyJ16QsJQ=;
-        b=lkJzS3zRsOGKmSanMDjuJyiBdhHzO8r3kqEJ+11pi/TU6fe2O/TElAvweiObrFldQo
-         QoRVIgDzJEzJNVRTt32hPFwzu6+q4v2AdB5bdMTTPEkVKHR87bqp4o4TzUwB+29+pufz
-         v5Nij+Tf5IUCzJNSZtww2r1dHLQ/hvFUsH0bS4NcewWKhijXscR/F1tBnaF9PaZ+u8b6
-         R/x+puW+orLO5lU1EEa3WhaD2VwnzY5m3I6GoRDE2aWqy+HM9DVi/fPQZF5+qxUg7ifa
-         dqmsLsXuG+pvhVioMW5GuWqDXWAnjK3PQOkvkaoMIKd7v6G9oZ7Ck+a5I0UDFzO+G6v/
-         HWhw==
-X-Gm-Message-State: AOAM533PjbOmxKf3b82t3fAa/qdMGUBOvWyX3eQFKmiEic6laYk10opf
-        IU4HTihQ6hdpjKFUNuyfItPR6hd+ijavsKDrNjKisYiib1LW
-X-Google-Smtp-Source: ABdhPJyvUCul7O32EEGQQpAgC1b3Kmj9J0hr07NS4qMNTULjpHrJ7HHEC4Gn8bVciPY4mooj+jjd4oOi/jKLw1acis6LzuYEZgP+
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=q5isUwhLkIrwtYU6nmgpmTKGhNdkuDOrfeEhUb5gcvA=;
+        b=OkpaWUFgvs0PYQMysmg2FEkQKD9A9MuNbwPr/BSNecJo2DNlaV8F5Lpw3pZKRO9Q+I
+         1ygix9QYyX4cPvibowbjdSuMAuBm+2PdML6jsTTk+bRIvzIC6SYLOlxYTvP4zhfHqGrh
+         1VTAj5xFeUzdhj9OONXVkYmaTj+e9kGJTIUCneFpbcCmOr0a8jOurcuUACHoftvoRiok
+         VPJ7UIzcdLWpk/Betfr2ENzvw+mlEDSqh+ZNlG5GFyB0u1XxuW0m50NBqu5/kjgiQpNG
+         LnEt5etdmDjtNYHohTGM4iUSY1f6mn6wHx3V4lkvfYHAYTrF/1KI9Fvn96z5n67bIXUt
+         hDXg==
+X-Gm-Message-State: AOAM533YhhYAHgN5EVqcFQLVArZQLW6cYM5LW7yik+obPKnSJI0xogzp
+        4AqrX+kAs6QXqeElr0TdbcM=
+X-Google-Smtp-Source: ABdhPJzoK1VolekfvjLQEc6HBtz4xTC11RI2s8YqOS6Ibyk5Uo5LWtl87LZhRtYJxzjv0LQ0vd++7A==
+X-Received: by 2002:a1c:a1c1:: with SMTP id k184mr20790767wme.101.1610977335972;
+        Mon, 18 Jan 2021 05:42:15 -0800 (PST)
+Received: from ?IPv6:2a02:8010:64ea:0:fad1:11ff:fead:57db? ([2a02:8010:64ea:0:fad1:11ff:fead:57db])
+        by smtp.googlemail.com with ESMTPSA id z6sm25197472wmi.15.2021.01.18.05.42.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Jan 2021 05:42:15 -0800 (PST)
+Sender: Mark Harmstone <mark.harmstone@gmail.com>
+Subject: Re: [PATCH v17 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Kari Argillander <kari.argillander@gmail.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pali@kernel.org" <pali@kernel.org>,
+        "dsterba@suse.cz" <dsterba@suse.cz>,
+        "aaptel@suse.com" <aaptel@suse.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "joe@perches.com" <joe@perches.com>,
+        "nborisov@suse.com" <nborisov@suse.com>,
+        "linux-ntfs-dev@lists.sourceforge.net" 
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        "anton@tuxera.com" <anton@tuxera.com>,
+        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "andy.lavr@gmail.com" <andy.lavr@gmail.com>
+References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
+ <20201231152401.3162425-9-almaz.alexandrovich@paragon-software.com>
+ <20210103220739.2gkh6gy3iatv4fog@kari-VirtualBox>
+ <baa71c9fa715473e87172c3afa3cc7d2@paragon-software.com>
+From:   Mark Harmstone <mark@harmstone.com>
+Message-ID: <548f5de7-9e24-c1bc-3ef5-641bc8a3dd37@harmstone.com>
+Date:   Mon, 18 Jan 2021 13:42:14 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-X-Received: by 2002:a92:85d4:: with SMTP id f203mr5939706ilh.232.1610973970611;
- Mon, 18 Jan 2021 04:46:10 -0800 (PST)
-Date:   Mon, 18 Jan 2021 04:46:10 -0800
-In-Reply-To: <1e51be0f-98a1-6dd2-63da-02e92e79a4ef@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000042c22b05b92c1b44@google.com>
-Subject: Re: WARNING in io_disable_sqo_submit
-From:   syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <baa71c9fa715473e87172c3afa3cc7d2@paragon-software.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 18/1/21 11:43 am, Konstantin Komarov wrote:
+> From: Kari Argillander <kari.argillander@gmail.com>
+> Sent: Monday, January 4, 2021 1:08 AM
+>> To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+>> Cc: linux-fsdevel@vger.kernel.org; viro@zeniv.linux.org.uk; linux-kernel@vger.kernel.org; pali@kernel.org; dsterba@suse.cz;
+>> aaptel@suse.com; willy@infradead.org; rdunlap@infradead.org; joe@perches.com; mark@harmstone.com; nborisov@suse.com;
+>> linux-ntfs-dev@lists.sourceforge.net; anton@tuxera.com; dan.carpenter@oracle.com; hch@lst.de; ebiggers@kernel.org;
+>> andy.lavr@gmail.com
+>> Subject: Re: [PATCH v17 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
+>>
+>> On Thu, Dec 31, 2020 at 06:23:59PM +0300, Konstantin Komarov wrote:
+>>> This adds Kconfig, Makefile and doc
+>>>
+>>> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+>>> ---
+>>>  Documentation/filesystems/ntfs3.rst | 107 ++++++++++++++++++++++++++++
+>>>  fs/ntfs3/Kconfig                    |  41 +++++++++++
+>>>  fs/ntfs3/Makefile                   |  31 ++++++++
+>> Also Documentation/filesystems/index.rst should contain ntfs3.
+>>
+>>>  3 files changed, 179 insertions(+)
+>>>  create mode 100644 Documentation/filesystems/ntfs3.rst
+>>>  create mode 100644 fs/ntfs3/Kconfig
+>>>  create mode 100644 fs/ntfs3/Makefile
+>>>
+>>> diff --git a/fs/ntfs3/Kconfig b/fs/ntfs3/Kconfig
+>>> new file mode 100644
+>>> index 000000000000..f9b732f4a5a0
+>>> --- /dev/null
+>>> +++ b/fs/ntfs3/Kconfig
+>>> @@ -0,0 +1,41 @@
+>>> +# SPDX-License-Identifier: GPL-2.0-only
+>>> +config NTFS3_FS
+>>> +	tristate "NTFS Read-Write file system support"
+>>> +	select NLS
+>>> +	help
+>>> +	  Windows OS native file system (NTFS) support up to NTFS version 3.1.
+>>> +
+>>> +	  Y or M enables the NTFS3 driver with full features enabled (read,
+>>> +	  write, journal replaying, sparse/compressed files support).
+>>> +	  File system type to use on mount is "ntfs3". Module name (M option)
+>>> +	  is also "ntfs3".
+>>> +
+>>> +	  Documentation: <file:Documentation/filesystems/ntfs3.rst>
+>>> +
+>>> +config NTFS3_64BIT_CLUSTER
+>>> +	bool "64 bits per NTFS clusters"
+>>> +	depends on NTFS3_FS && 64BIT
+>>> +	help
+>>> +	  Windows implementation of ntfs.sys uses 32 bits per clusters.
+>>> +	  If activated 64 bits per clusters you will be able to use 4k cluster
+>>> +	  for 16T+ volumes. Windows will not be able to mount such volumes.
+>>> +
+>>> +	  It is recommended to say N here.
+>>> +
+>>> +config NTFS3_LZX_XPRESS
+>>> +	bool "activate support of external compressions lzx/xpress"
+>>> +	depends on NTFS3_FS
+>>> +	help
+>>> +	  In Windows 10 one can use command "compact" to compress any files.
+>>> +	  4 possible variants of compression are: xpress4k, xpress8k, xpress16 and lzx.
+>>> +	  To read such "compacted" files say Y here.
+>> It would be nice that we tell what is recommend. I think that this is recommend.
+>> Of course if this use lot's of resource that is different story but I do not
+>> think that is the case.
+>>
+>>> +
+>>> +config NTFS3_POSIX_ACL
+>>> +	bool "NTFS POSIX Access Control Lists"
+>>> +	depends on NTFS3_FS
+>>> +	select FS_POSIX_ACL
+>>> +	help
+>>> +	  POSIX Access Control Lists (ACLs) support additional access rights
+>>> +	  for users and groups beyond the standard owner/group/world scheme,
+>>> +	  and this option selects support for ACLs specifically for ntfs
+>>> +	  filesystems.
+>> Same here. Let's suggest what user should do. Is this recommend if we wan't
+>> to use volume also in Windows?
+> Hi! All done, thanks for pointing these out.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in io_sq_thread_stop
+Is the existence of NTFS3_64BIT_CLUSTER wise? I mean, what on earth is the
+point of an NTFS volume that Windows refuses to read?
 
-INFO: task kworker/u4:0:8 blocked for more than 143 seconds.
-      Not tainted 5.11.0-rc1-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u4:0    state:D stack:24056 pid:    8 ppid:     2 flags:0x00004000
-Workqueue: events_unbound io_ring_exit_work
-Call Trace:
- context_switch kernel/sched/core.c:4313 [inline]
- __schedule+0x90c/0x21a0 kernel/sched/core.c:5064
- schedule+0xcf/0x270 kernel/sched/core.c:5143
- schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1854
- do_wait_for_common kernel/sched/completion.c:85 [inline]
- __wait_for_common kernel/sched/completion.c:106 [inline]
- wait_for_common kernel/sched/completion.c:117 [inline]
- wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
- kthread_park+0x122/0x1b0 kernel/kthread.c:557
- io_sq_thread_park fs/io_uring.c:7445 [inline]
- io_sq_thread_park fs/io_uring.c:7439 [inline]
- io_sq_thread_stop+0xfe/0x570 fs/io_uring.c:7463
- io_finish_async fs/io_uring.c:7481 [inline]
- io_ring_ctx_free fs/io_uring.c:8646 [inline]
- io_ring_exit_work+0x62/0x6d0 fs/io_uring.c:8739
- process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-
-Showing all locks held in the system:
-3 locks held by kworker/u4:0/8:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
- #1: ffffc90000cd7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
- #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7444 [inline]
- #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7439 [inline]
- #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_stop+0xd6/0x570 fs/io_uring.c:7463
-1 lock held by khungtaskd/1647:
- #0: ffffffff8b373aa0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
-1 lock held by in:imklog/8164:
- #0: ffff8880151b8870 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:947
-2 locks held by kworker/u4:6/8415:
-2 locks held by kworker/0:4/8690:
- #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
- #1: ffffc9000288fda8 ((work_completion)(&rew.rew_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
-1 lock held by syz-executor.3/8865:
- #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-1 lock held by syz-executor.2/8867:
- #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-2 locks held by syz-executor.5/8869:
- #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
- #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
- #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x4f2/0x610 kernel/rcu/tree_exp.h:836
-1 lock held by syz-executor.4/8870:
- #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-1 lock held by syz-executor.0/8872:
- #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-1 lock held by syz-executor.1/8873:
- #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1647 Comm: khungtaskd Not tainted 5.11.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:120
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
- watchdog+0xd43/0xfa0 kernel/hung_task.c:294
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 8415 Comm: kworker/u4:6 Not tainted 5.11.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: bat_events batadv_nc_worker
-RIP: 0010:__this_cpu_preempt_check+0xd/0x20 lib/smp_processor_id.c:70
-Code: 00 00 48 c7 c6 00 d9 9e 89 48 c7 c7 40 d9 9e 89 e9 98 fe ff ff 0f 1f 84 00 00 00 00 00 55 48 89 fd 0f 1f 44 00 00 48 89 ee 5d <48> c7 c7 80 d9 9e 89 e9 77 fe ff ff cc cc cc cc cc cc cc 0f 1f 44
-RSP: 0018:ffffc9000c507af0 EFLAGS: 00000046
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: 1ffffffff1a077ab
-RDX: 0000000000000000 RSI: ffffffff894bac40 RDI: ffffffff894bac40
-RBP: ffffffff8b3739e0 R08: 0000000000000000 R09: ffffffff8d038b8f
-R10: fffffbfff1a07171 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff88802f858bc0 R14: 00000000ffffffff R15: ffffffff889a5430
-FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbcc03ca000 CR3: 0000000011523000 CR4: 0000000000350ef0
-Call Trace:
- lockdep_recursion_inc kernel/locking/lockdep.c:432 [inline]
- lock_is_held_type+0x34/0x100 kernel/locking/lockdep.c:5475
- lock_is_held include/linux/lockdep.h:271 [inline]
- rcu_read_lock_sched_held+0x3a/0x70 kernel/rcu/update.c:123
- trace_lock_release include/trace/events/lock.h:58 [inline]
- lock_release+0x5b7/0x710 kernel/locking/lockdep.c:5448
- __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:174 [inline]
- _raw_spin_unlock_bh+0x12/0x30 kernel/locking/spinlock.c:207
- spin_unlock_bh include/linux/spinlock.h:399 [inline]
- batadv_nc_purge_paths+0x2a5/0x3a0 net/batman-adv/network-coding.c:467
- batadv_nc_worker+0x831/0xe50 net/batman-adv/network-coding.c:716
- process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-
-
-Tested on:
-
-commit:         a1235e44 io_uring: cancel all requests on task exit
-git tree:       git://git.kernel.dk/linux-block io_uring-5.11
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c53584d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c6b6b5cccb0f38f2
-dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+If NTFS was properly documented by Microsoft, fair enough, but AFAIK it's
+defined by what ntfs.sys does. I don't think we should be extending the
+specification like this.
 
