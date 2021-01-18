@@ -2,140 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA8DF2F9710
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 02:03:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FFE72F98A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 05:28:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730732AbhARBDG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Jan 2021 20:03:06 -0500
-Received: from m43-15.mailgun.net ([69.72.43.15]:39357 "EHLO
-        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730631AbhARBAs (ORCPT
+        id S1729456AbhARE17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Jan 2021 23:27:59 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:40372 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728602AbhARE16 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Jan 2021 20:00:48 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1610931628; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=W0TJ8/n2INVwFiJw8glTp0w73GvcGCa4UXpVcoAlADo=; b=sSsQ+VhyPvaFng4lA/KQQ2/TToiThqXsL6dsyt+v9l8VXw5vY1C5V3ifK5n8ieJ+ivsiGI7K
- hBQxJHEfAYnRN6BumPrXwGQWWa99/HQd7LNZL+pPYzwpNIHjJ8D2BpPtTgo59zt8Zn84AxVT
- 46zSacVKDk9WRNm0E7ycCZAZ6V4=
-X-Mailgun-Sending-Ip: 69.72.43.15
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 6004dd8b859d74370d9e66f0 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 18 Jan 2021 00:59:55
- GMT
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DA9E2C43463; Mon, 18 Jan 2021 00:59:54 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        NICE_REPLY_A,SPF_FAIL,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [192.168.1.10] (cpe-75-83-25-192.socal.res.rr.com [75.83.25.192])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 95F0DC433ED;
-        Mon, 18 Jan 2021 00:59:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95F0DC433ED
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=sidgup@codeaurora.org
-Subject: Re: PROBLEM: Firmware loader fallback mechanism no longer works with
- sendfile
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mcgrof@kernel.org, rafael@kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "psodagud@codeaurora.org" <psodagud@codeaurora.org>
-References: <7e6f44b1-a0d2-d1d1-9c11-dcea163f8f03@codeaurora.org>
- <X/QJCgoLPhfECEmP@kroah.com>
- <180bdfaf-8c84-6946-b46f-3729d4eb17cc@codeaurora.org>
- <X/WSA7nmsUSrpsfr@kroah.com>
- <62583aaa-d557-8c9a-5959-52c9efad1fe3@codeaurora.org>
- <X/hv634I9JOoHZRk@kroah.com>
- <1adf9aa4-ed7e-8f05-a354-57419d61ec18@codeaurora.org>
- <YAHAzW1cVSaMzBYj@kroah.com>
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-Message-ID: <be2ae542-b543-173d-d256-b4203aad7756@codeaurora.org>
-Date:   Sun, 17 Jan 2021 16:59:52 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Sun, 17 Jan 2021 23:27:58 -0500
+Received: by mail-io1-f69.google.com with SMTP id l18so27258469iok.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Jan 2021 20:27:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=qC8G0IPXg9beaQej+tLqh5V/dMR/FwgnyQdMvOOVq98=;
+        b=LSTKBcqDcWpkC2mxPIefOClk9C1ms1QwmOu9+zOHiRwh/hhNRDM62GCIjrecxMOLqy
+         I4yf0czNA8YEnufeLa4t0H8gzIsshX7ffugn1UtqdOyim7M/G1ogSLz2lsJeJeVm0v6h
+         QtKEN8A9QI0aCSSlY45H3DiGdpsTe66pA0xzR5so3a5cBnjTLGYxdur8jtdYVkzBDKY7
+         ttcPjWa4QpyJUAOsMOcpOwiwJVcPSsia+JokxOBJJxPhBEInpv3FrAW5EZJGbTO8lZ9B
+         CMSvoJAZyA4+RqomStXDeWeo+F1Cbgz6BxLnpN5lkUCe41ldfKLHdSJuHykik6suGBeA
+         ffww==
+X-Gm-Message-State: AOAM532qj2u7VWzhLN6iFf440/MAXUTa3cvnVq6YdhSdwlQkzWS3zFYY
+        lmuZFxsIG5dMvziKHOsoptzclmfjOCUsNVwaVjb8mfpdseaP
+X-Google-Smtp-Source: ABdhPJxcjLG96jCODEMWVyf7lnLaM1Jx6ebp8DYdB5L4tSPIAZywJDtkn0sLJ8ywd+/kXYFXE0aYokKBeNSDkSIQtgcdfKIXwUoS
 MIME-Version: 1.0
-In-Reply-To: <YAHAzW1cVSaMzBYj@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-Received: by 2002:a6b:9346:: with SMTP id v67mr15981999iod.108.1610944037885;
+ Sun, 17 Jan 2021 20:27:17 -0800 (PST)
+Date:   Sun, 17 Jan 2021 20:27:17 -0800
+In-Reply-To: <000000000000f054d005b8f87274@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000219cec05b9252334@google.com>
+Subject: Re: WARNING in io_disable_sqo_submit
+From:   syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+syzbot has found a reproducer for the following issue on:
 
-On 1/15/2021 8:20 AM, Greg KH wrote:
-> On Tue, Jan 12, 2021 at 10:31:26AM -0800, Siddharth Gupta wrote:
->> On 1/8/2021 6:44 AM, Greg KH wrote:
->>> On Thu, Jan 07, 2021 at 02:03:47PM -0800, Siddharth Gupta wrote:
->>>> On 1/6/2021 2:33 AM, Greg KH wrote:
->>>>>>>> Since the binary attributes don't support splice_{read,write} functions the
->>>>>>>> calls to splice_{read,write} used the default kernel_{read,write} functions.
->>>>>>>> With the above change this results in an -EINVAL return from
->>>>>>>> do_splice_from[4].
->>>>>>>>
->>>>>>>> This essentially means that sendfile will not work for any binary attribute
->>>>>>>> in the sysfs.
->>>>>>> Have you tried fixing this with a patch much like what we did for the
->>>>>>> proc files that needed this?  If not, can you?
->>>>>> I am not aware of this fix, could you provide me a link for reference? I
->>>>>> will try it out.
->>>>> Look at the series of commits starting at fe33850ff798 ("proc: wire up
->>>>> generic_file_splice_read for iter ops") for how this was fixed in procfs
->>>>> as an example of what also needs to be done for binary sysfs files.
->>>> I tried to follow these fixes, but I am unfamiliar with fs code. I don't see
->>>> the generic_file_splice_write function anymore on newer kernels, also AFAICT
->>>> kernfs_ops does not define {read,write}_iter operations. If the solution is
->>>> simple and someone could provide the patches I would be happy to test them
->>>> out. If not, some more information about how to proceed would be nice.
->>> Can you try this tiny patch out below?
->> Sorry for the delay, I tried out the patch, but I am still seeing the error.
->> Please take a look at these logs with
->> android running in the userspace[1]:
->>
->> [   62.295056][  T249] remoteproc remoteproc1: powering up
->> xxxxxxxx.remoteproc-cdsp
->> [   62.304138][  T249] remoteproc remoteproc1: Direct firmware load for
->> cdsp.mdt failed with error -2
->> [   62.312976][  T249] remoteproc remoteproc1: Falling back to sysfs
->> fallback for: cdsp.mdt
->> [   62.469748][  T394] ueventd: firmware: loading 'cdsp.mdt' for '/devices/platform/soc/xxxxxxxx.remoteproc-cdsp/remoteproc/remoteproc1/cdsp.mdt'
->> [   62.498700][  T394] ueventd: firmware: sendfile failed { '/sys/devices/platform/soc/xxxxxxxx.remoteproc-cdsp/remoteproc/remoteproc1/cdsp.mdt',
->> 'cdsp.mdt' }: Invalid argument
->>
->> Thanks,
->> Sid
->>
->> [1]: https://android.googlesource.com/platform/system/core/+/refs/heads/master/init/firmware_handler.cpp#57
-> Thanks for letting me know.  I'll try to work on this on Monday and add
-> splice to the in-kernel firmware testing suite, as it would have caught
-> this...
-If my understanding is correct these default (or generic if you prefer)
-functions require the write_iter[1] and read_iter[2] file ops to be 
-defined for
-kernfs_file_fops. Are there any similar default {write,read}_iter 
-functions that
-I can use, or do these need to be thin wrappers for the read function[3] 
-for bin
-attributes itself?
+HEAD commit:    a1339d63 Merge tag 'powerpc-5.11-4' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17532a58d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c60c9ff9cc916cbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f207c7500000
 
-Thanks,
-Sid
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com
 
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/splice.c#n686
-[2]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/splice.c#n311
-[3]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/sysfs/file.c#n235
-> greg k-h
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9113 at fs/io_uring.c:8917 io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
+Modules linked in:
+CPU: 1 PID: 9113 Comm: syz-executor.0 Not tainted 5.11.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
+Code: e0 07 83 c0 03 38 d0 7c 04 84 d2 75 2e 83 8b 14 01 00 00 01 4c 89 e7 e8 31 0a 24 07 5b 5d 41 5c e9 98 e1 9a ff e8 93 e1 9a ff <0f> 0b e9 00 ff ff ff e8 a7 a1 dd ff e9 37 ff ff ff e8 6d a1 dd ff
+RSP: 0018:ffffc9000311fe98 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888024b43000 RCX: 0000000000000000
+RDX: ffff888147071bc0 RSI: ffffffff81d7e82d RDI: ffff888024b430d0
+RBP: ffff8880115d1900 R08: 0000000000000000 R09: 0000000014555c01
+R10: ffffffff81d7eae5 R11: 0000000000000001 R12: ffff888024b43000
+R13: ffff888014555c01 R14: ffff888024b43040 R15: ffff888024b430d0
+FS:  00007f85abf55700(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd3adeb5000 CR3: 00000000115d2000 CR4: 0000000000350ef0
+Call Trace:
+ io_uring_flush+0x28b/0x3a0 fs/io_uring.c:9134
+ filp_close+0xb4/0x170 fs/open.c:1280
+ close_fd+0x5c/0x80 fs/file.c:626
+ __do_sys_close fs/open.c:1299 [inline]
+ __se_sys_close fs/open.c:1297 [inline]
+ __x64_sys_close+0x2f/0xa0 fs/open.c:1297
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45e219
+Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f85abf54c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 000000000045e219
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 000000000119bfb0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000119bf8c
+R13: 00007ffe5217973f R14: 00007f85abf559c0 R15: 000000000119bf8c
+
