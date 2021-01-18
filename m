@@ -2,467 +2,262 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52F7D2FAAC4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 20:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D4622FAACF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 21:01:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437687AbhART6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 14:58:43 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:46803 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437697AbhARTyh (ORCPT
+        id S2437775AbhARUBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 15:01:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393975AbhART71 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 14:54:37 -0500
-Received: from [192.168.100.1] ([82.252.149.54]) by mrelayeu.kundenserver.de
- (mreue109 [213.165.67.119]) with ESMTPSA (Nemesis) id
- 1M4bA0-1l123l1oso-001fdq; Mon, 18 Jan 2021 20:51:27 +0100
-Subject: Re: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
-To:     Jan Kiszka <jan.kiszka@siemens.com>, linux-kernel@vger.kernel.org
-Cc:     Greg Kurz <groug@kaod.org>, Jann Horn <jannh@google.com>,
-        Andrei Vagin <avagin@gmail.com>, linux-api@vger.kernel.org,
-        Dmitry Safonov <dima@arista.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Henning Schild <henning.schild@siemens.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goate?= =?UTF-8?Q?r?= <clg@kaod.org>
-References: <20191216091220.465626-1-laurent@vivier.eu>
- <20191216091220.465626-2-laurent@vivier.eu>
- <4fabc6a4-0e8d-11ad-5757-467f15dc96ee@siemens.com>
-From:   Laurent Vivier <laurent@vivier.eu>
-Message-ID: <8eb5498d-89f6-e39e-d757-404cc3cfaa5c@vivier.eu>
-Date:   Mon, 18 Jan 2021 20:51:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Mon, 18 Jan 2021 14:59:27 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00B30C061574;
+        Mon, 18 Jan 2021 11:58:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=O3LHRV1hWrygHrKF3DVJwXx3o+cv5Wux85x4vm5AJSU=; b=UrfNoXU44QuODbkFxoAt+XBoPq
+        TmTxD9YBM1Qvy6tf1ZhfB4X6s6dLRilwamqajpuixwJvHfzKI37MkdWlk9+Lm8PLTqBf//gCRUQl7
+        lSYichN3DFSlgADy6bTVQm1MOhxCJJMFjDmtC0BoVHooXJSshr0nwQ2k98f77Q7WwtMEBOusHwKTr
+        XNAVRSiRqe4JO87MPYqhlB2enF6mrL4CRnsI8ZIF1tQp81AuH/7k7ve20ITt4/x9mtgebf6OmStQR
+        5WkOqhJIgqHK7oV9zz2S/iWmL1wbUh5i1uF1GiuRU2CvhkDOahHYlhJWpl4G4KhoEdfpmFb+z2b4E
+        6pBeAvgQ==;
+Received: from 089144206130.atnat0015.highway.bob.at ([89.144.206.130] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1l1afj-00DKT4-5g; Mon, 18 Jan 2021 19:58:44 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, avi@scylladb.com
+Subject: [PATCH 09/11] iomap: pass a flags argument to iomap_dio_rw
+Date:   Mon, 18 Jan 2021 20:35:14 +0100
+Message-Id: <20210118193516.2915706-10-hch@lst.de>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210118193516.2915706-1-hch@lst.de>
+References: <20210118193516.2915706-1-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <4fabc6a4-0e8d-11ad-5757-467f15dc96ee@siemens.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:vGCdNoXg98BTa/6NlWBXiaJ+fVxZTS3UKDE8Bmz2DJ8pM7h44Sl
- +6vd7L7qqmQMSf0I45qdd+W9mKe8Y/GO1FiRI7l5w3G68E2b/8r+PlXBMmgrEvIoo75E2YT
- bgqZg2S/FIbFJFyvoZVtpSd7txnbC7OCe3thH0PnB0Wi/XjsVq1T3rZLqk0LolZlNC7Tb5i
- iBXhBhoYnL6ktYNyDOVxA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:mJgANQA/Y/8=:X9nYmDUIXu5kS+4eQ8QozS
- +TZ+9M2Nc7HwsfV9d7UONJGZVnsuOUh06xoYgqYHCHKHRYHhSoLjfwKZqmePemJqUYjAn9LeZ
- tv/xKQcnu6eJSIy1pxOv1xaDmZM9UpM1S1zmM7IJCrNfx+GNebm33rzgUoQGbdsaRGycsI5ep
- K8J5siwhSPQh4H+9VOWCP/CCROXvzMbYCfQtUTlP0l408o1v3pbs7c/6Lr6JRkG5LfRbs5ksL
- 99zHs8jJsEgjtdQ0tZvHn62AinApMNgOHedtnHr8y/vy2BJpTf4DKKLO4TGGzSZLaeqWEoCE/
- Cwz3wIbfU8zYJXnGfQGh7Xt7maKX8jTcv0wkqfS+27Qphl9D3RjGbWMVKJiZUdFebIVW+a5ip
- BfvgUn1681ACRmK5vavYsJLivTwVGinB641jYRg40UoF9ZvE4fceushgo1Y3svLMT4AvJrMdq
- wMv3Ox/UmA==
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Le 08/01/2021 à 09:22, Jan Kiszka a écrit :
-> On 16.12.19 10:12, Laurent Vivier wrote:
->> This patch allows to have a different binfmt_misc configuration
->> for each new user namespace. By default, the binfmt_misc configuration
->> is the one of the previous level, but if the binfmt_misc filesystem is
->> mounted in the new namespace a new empty binfmt instance is created and
->> used in this namespace.
->>
->> For instance, using "unshare" we can start a chroot of another
->> architecture and configure the binfmt_misc interpreter without being root
->> to run the binaries in this chroot.
->>
->> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
->> Acked-by: Andrei Vagin <avagin@gmail.com>
->> Tested-by: Henning Schild <henning.schild@siemens.com>
->> ---
->>  fs/binfmt_misc.c               | 115 +++++++++++++++++++++++++--------
->>  include/linux/user_namespace.h |  15 +++++
->>  kernel/user.c                  |  14 ++++
->>  kernel/user_namespace.c        |   3 +
->>  4 files changed, 119 insertions(+), 28 deletions(-)
->>
->> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
->> index cdb45829354d..17fa1f56ca2e 100644
->> --- a/fs/binfmt_misc.c
->> +++ b/fs/binfmt_misc.c
->> @@ -40,9 +40,6 @@ enum {
->>  	VERBOSE_STATUS = 1 /* make it zero to save 400 bytes kernel memory */
->>  };
->>  
->> -static LIST_HEAD(entries);
->> -static int enabled = 1;
->> -
->>  enum {Enabled, Magic};
->>  #define MISC_FMT_PRESERVE_ARGV0 (1 << 31)
->>  #define MISC_FMT_OPEN_BINARY (1 << 30)
->> @@ -62,10 +59,7 @@ typedef struct {
->>  	struct file *interp_file;
->>  } Node;
->>  
->> -static DEFINE_RWLOCK(entries_lock);
->>  static struct file_system_type bm_fs_type;
->> -static struct vfsmount *bm_mnt;
->> -static int entry_count;
->>  
->>  /*
->>   * Max length of the register string.  Determined by:
->> @@ -82,18 +76,37 @@ static int entry_count;
->>   */
->>  #define MAX_REGISTER_LENGTH 1920
->>  
->> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
->> +{
->> +	struct binfmt_namespace *b_ns;
->> +
->> +	while (ns) {
->> +		b_ns = READ_ONCE(ns->binfmt_ns);
->> +		if (b_ns)
->> +			return b_ns;
->> +		ns = ns->parent;
->> +	}
->> +	/* as the first user namespace is initialized with
->> +	 * &init_binfmt_ns we should never come here
->> +	 * but we try to stay safe by logging a warning
->> +	 * and returning a sane value
->> +	 */
->> +	WARN_ON_ONCE(1);
->> +	return &init_binfmt_ns;
->> +}
->> +
->>  /*
->>   * Check if we support the binfmt
->>   * if we do, return the node, else NULL
->>   * locking is done in load_misc_binary
->>   */
->> -static Node *check_file(struct linux_binprm *bprm)
->> +static Node *check_file(struct binfmt_namespace *ns, struct linux_binprm *bprm)
->>  {
->>  	char *p = strrchr(bprm->interp, '.');
->>  	struct list_head *l;
->>  
->>  	/* Walk all the registered handlers. */
->> -	list_for_each(l, &entries) {
->> +	list_for_each(l, &ns->entries) {
->>  		Node *e = list_entry(l, Node, list);
->>  		char *s;
->>  		int j;
->> @@ -135,17 +148,18 @@ static int load_misc_binary(struct linux_binprm *bprm)
->>  	struct file *interp_file = NULL;
->>  	int retval;
->>  	int fd_binary = -1;
->> +	struct binfmt_namespace *ns = binfmt_ns(current_user_ns());
->>  
->>  	retval = -ENOEXEC;
->> -	if (!enabled)
->> +	if (!ns->enabled)
->>  		return retval;
->>  
->>  	/* to keep locking time low, we copy the interpreter string */
->> -	read_lock(&entries_lock);
->> -	fmt = check_file(bprm);
->> +	read_lock(&ns->entries_lock);
->> +	fmt = check_file(ns, bprm);
->>  	if (fmt)
->>  		dget(fmt->dentry);
->> -	read_unlock(&entries_lock);
->> +	read_unlock(&ns->entries_lock);
->>  	if (!fmt)
->>  		return retval;
->>  
->> @@ -611,19 +625,19 @@ static void bm_evict_inode(struct inode *inode)
->>  	kfree(e);
->>  }
->>  
->> -static void kill_node(Node *e)
->> +static void kill_node(struct binfmt_namespace *ns, Node *e)
->>  {
->>  	struct dentry *dentry;
->>  
->> -	write_lock(&entries_lock);
->> +	write_lock(&ns->entries_lock);
->>  	list_del_init(&e->list);
->> -	write_unlock(&entries_lock);
->> +	write_unlock(&ns->entries_lock);
->>  
->>  	dentry = e->dentry;
->>  	drop_nlink(d_inode(dentry));
->>  	d_drop(dentry);
->>  	dput(dentry);
->> -	simple_release_fs(&bm_mnt, &entry_count);
->> +	simple_release_fs(&ns->bm_mnt, &ns->entry_count);
->>  }
->>  
->>  /* /<entry> */
->> @@ -653,6 +667,9 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
->>  	struct dentry *root;
->>  	Node *e = file_inode(file)->i_private;
->>  	int res = parse_command(buffer, count);
->> +	struct binfmt_namespace *ns;
->> +
->> +	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
->>  
->>  	switch (res) {
->>  	case 1:
->> @@ -669,7 +686,7 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
->>  		inode_lock(d_inode(root));
->>  
->>  		if (!list_empty(&e->list))
->> -			kill_node(e);
->> +			kill_node(ns, e);
->>  
->>  		inode_unlock(d_inode(root));
->>  		break;
->> @@ -695,6 +712,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->>  	struct inode *inode;
->>  	struct super_block *sb = file_inode(file)->i_sb;
->>  	struct dentry *root = sb->s_root, *dentry;
->> +	struct binfmt_namespace *ns;
->>  	int err = 0;
->>  
->>  	e = create_entry(buffer, count);
->> @@ -718,7 +736,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->>  	if (!inode)
->>  		goto out2;
->>  
->> -	err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
->> +	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
->> +	err = simple_pin_fs(&bm_fs_type, &ns->bm_mnt,
->> +			    &ns->entry_count);
->>  	if (err) {
->>  		iput(inode);
->>  		inode = NULL;
->> @@ -727,12 +747,16 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->>  
->>  	if (e->flags & MISC_FMT_OPEN_FILE) {
->>  		struct file *f;
->> +		const struct cred *old_cred;
->>  
->> +		old_cred = override_creds(file->f_cred);
->>  		f = open_exec(e->interpreter);
->> +		revert_creds(old_cred);
->>  		if (IS_ERR(f)) {
->>  			err = PTR_ERR(f);
->>  			pr_notice("register: failed to install interpreter file %s\n", e->interpreter);
->> -			simple_release_fs(&bm_mnt, &entry_count);
->> +			simple_release_fs(&ns->bm_mnt,
->> +					  &ns->entry_count);
->>  			iput(inode);
->>  			inode = NULL;
->>  			goto out2;
->> @@ -745,9 +769,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->>  	inode->i_fop = &bm_entry_operations;
->>  
->>  	d_instantiate(dentry, inode);
->> -	write_lock(&entries_lock);
->> -	list_add(&e->list, &entries);
->> -	write_unlock(&entries_lock);
->> +	write_lock(&ns->entries_lock);
->> +	list_add(&e->list, &ns->entries);
->> +	write_unlock(&ns->entries_lock);
->>  
->>  	err = 0;
->>  out2:
->> @@ -772,7 +796,9 @@ static const struct file_operations bm_register_operations = {
->>  static ssize_t
->>  bm_status_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
->>  {
->> -	char *s = enabled ? "enabled\n" : "disabled\n";
->> +	struct binfmt_namespace *ns =
->> +				binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
->> +	char *s = ns->enabled ? "enabled\n" : "disabled\n";
->>  
->>  	return simple_read_from_buffer(buf, nbytes, ppos, s, strlen(s));
->>  }
->> @@ -780,25 +806,28 @@ bm_status_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
->>  static ssize_t bm_status_write(struct file *file, const char __user *buffer,
->>  		size_t count, loff_t *ppos)
->>  {
->> +	struct binfmt_namespace *ns;
->>  	int res = parse_command(buffer, count);
->>  	struct dentry *root;
->>  
->> +	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
->>  	switch (res) {
->>  	case 1:
->>  		/* Disable all handlers. */
->> -		enabled = 0;
->> +		ns->enabled = 0;
->>  		break;
->>  	case 2:
->>  		/* Enable all handlers. */
->> -		enabled = 1;
->> +		ns->enabled = 1;
->>  		break;
->>  	case 3:
->>  		/* Delete all handlers. */
->>  		root = file_inode(file)->i_sb->s_root;
->>  		inode_lock(d_inode(root));
->>  
->> -		while (!list_empty(&entries))
->> -			kill_node(list_first_entry(&entries, Node, list));
->> +		while (!list_empty(&ns->entries))
->> +			kill_node(ns, list_first_entry(&ns->entries,
->> +						       Node, list));
->>  
->>  		inode_unlock(d_inode(root));
->>  		break;
->> @@ -825,24 +854,53 @@ static const struct super_operations s_ops = {
->>  static int bm_fill_super(struct super_block *sb, struct fs_context *fc)
->>  {
->>  	int err;
->> +	struct user_namespace *ns = sb->s_user_ns;
->>  	static const struct tree_descr bm_files[] = {
->>  		[2] = {"status", &bm_status_operations, S_IWUSR|S_IRUGO},
->>  		[3] = {"register", &bm_register_operations, S_IWUSR},
->>  		/* last one */ {""}
->>  	};
->>  
->> +	/* create a new binfmt namespace
->> +	 * if we are not in the first user namespace
->> +	 * but the binfmt namespace is the first one
->> +	 */
->> +	if (READ_ONCE(ns->binfmt_ns) == NULL) {
->> +		struct binfmt_namespace *new_ns;
->> +
->> +		new_ns = kmalloc(sizeof(struct binfmt_namespace),
->> +				 GFP_KERNEL);
->> +		if (new_ns == NULL)
->> +			return -ENOMEM;
->> +		INIT_LIST_HEAD(&new_ns->entries);
->> +		new_ns->enabled = 1;
->> +		rwlock_init(&new_ns->entries_lock);
->> +		new_ns->bm_mnt = NULL;
->> +		new_ns->entry_count = 0;
->> +		/* ensure new_ns is completely initialized before sharing it */
->> +		smp_wmb();
->> +		WRITE_ONCE(ns->binfmt_ns, new_ns);
->> +	}
->> +
->>  	err = simple_fill_super(sb, BINFMTFS_MAGIC, bm_files);
->>  	if (!err)
->>  		sb->s_op = &s_ops;
->>  	return err;
->>  }
->>  
->> +static void bm_free(struct fs_context *fc)
->> +{
->> +	if (fc->s_fs_info)
->> +		put_user_ns(fc->s_fs_info);
->> +}
->> +
->>  static int bm_get_tree(struct fs_context *fc)
->>  {
->> -	return get_tree_single(fc, bm_fill_super);
->> +	return get_tree_keyed(fc, bm_fill_super, get_user_ns(fc->user_ns));
->>  }
->>  
->>  static const struct fs_context_operations bm_context_ops = {
->> +	.free		= bm_free,
->>  	.get_tree	= bm_get_tree,
->>  };
->>  
->> @@ -861,6 +919,7 @@ static struct file_system_type bm_fs_type = {
->>  	.owner		= THIS_MODULE,
->>  	.name		= "binfmt_misc",
->>  	.init_fs_context = bm_init_fs_context,
->> +	.fs_flags	= FS_USERNS_MOUNT,
->>  	.kill_sb	= kill_litter_super,
->>  };
->>  MODULE_ALIAS_FS("binfmt_misc");
->> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
->> index fb9f4f799554..16e6f3a97a01 100644
->> --- a/include/linux/user_namespace.h
->> +++ b/include/linux/user_namespace.h
->> @@ -52,6 +52,18 @@ enum ucount_type {
->>  	UCOUNT_COUNTS,
->>  };
->>  
->> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
->> +struct binfmt_namespace {
->> +	struct list_head entries;
->> +	rwlock_t entries_lock;
->> +	int enabled;
->> +	struct vfsmount *bm_mnt;
->> +	int entry_count;
->> +} __randomize_layout;
->> +
->> +extern struct binfmt_namespace init_binfmt_ns;
->> +#endif
->> +
->>  struct user_namespace {
->>  	struct uid_gid_map	uid_map;
->>  	struct uid_gid_map	gid_map;
->> @@ -86,6 +98,9 @@ struct user_namespace {
->>  #endif
->>  	struct ucounts		*ucounts;
->>  	int ucount_max[UCOUNT_COUNTS];
->> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
->> +	struct binfmt_namespace *binfmt_ns;
->> +#endif
->>  } __randomize_layout;
->>  
->>  struct ucounts {
->> diff --git a/kernel/user.c b/kernel/user.c
->> index 5235d7f49982..092b2b4d47a6 100644
->> --- a/kernel/user.c
->> +++ b/kernel/user.c
->> @@ -20,6 +20,17 @@
->>  #include <linux/user_namespace.h>
->>  #include <linux/proc_ns.h>
->>  
->> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
->> +struct binfmt_namespace init_binfmt_ns = {
->> +	.entries = LIST_HEAD_INIT(init_binfmt_ns.entries),
->> +	.enabled = 1,
->> +	.entries_lock = __RW_LOCK_UNLOCKED(init_binfmt_ns.entries_lock),
->> +	.bm_mnt = NULL,
->> +	.entry_count = 0,
->> +};
->> +EXPORT_SYMBOL_GPL(init_binfmt_ns);
->> +#endif
->> +
->>  /*
->>   * userns count is 1 for root user, 1 for init_uts_ns,
->>   * and 1 for... ?
->> @@ -67,6 +78,9 @@ struct user_namespace init_user_ns = {
->>  	.keyring_name_list = LIST_HEAD_INIT(init_user_ns.keyring_name_list),
->>  	.keyring_sem = __RWSEM_INITIALIZER(init_user_ns.keyring_sem),
->>  #endif
->> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
->> +	.binfmt_ns = &init_binfmt_ns,
->> +#endif
->>  };
->>  EXPORT_SYMBOL_GPL(init_user_ns);
->>  
->> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
->> index 8eadadc478f9..f42c32269e20 100644
->> --- a/kernel/user_namespace.c
->> +++ b/kernel/user_namespace.c
->> @@ -191,6 +191,9 @@ static void free_user_ns(struct work_struct *work)
->>  			kfree(ns->projid_map.forward);
->>  			kfree(ns->projid_map.reverse);
->>  		}
->> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
->> +		kfree(ns->binfmt_ns);
->> +#endif
->>  		retire_userns_sysctls(ns);
->>  		key_free_user_ns(ns);
->>  		ns_free_inum(&ns->ns);
->>
-> 
-> What happened with this proposal since then?
-> 
-> As there is quite some delay between the feature finally hitting
-> upstream and a random distro-based containter host providing it to
-> unprivileged users, the longer we wait, the longer the pain persists
-> (e.g. when building cross-arch containers or when dealing with different
-> qemu-user-static versions...). Is there anything we can do to help with it?
+Pass a set of flags to iomap_dio_rw instead of the boolean
+wait_for_completion argument.  The IOMAP_DIO_FORCE_WAIT flag
+replaces the wait_for_completion, but only needs to be passed
+when the iocb isn't synchronous to start with to simplify the
+callers.
 
-Hi Jan,
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/btrfs/file.c       |  7 +++----
+ fs/ext4/file.c        |  5 ++---
+ fs/gfs2/file.c        |  7 ++-----
+ fs/iomap/direct-io.c  | 11 +++++------
+ fs/xfs/xfs_file.c     |  7 +++----
+ fs/zonefs/super.c     |  4 ++--
+ include/linux/iomap.h | 10 ++++++++--
+ 7 files changed, 25 insertions(+), 26 deletions(-)
 
-I'm sorry, but I have no time to work on this for the moment.
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 0e41459b8de667..ddfd2e2adedf58 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1949,8 +1949,8 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
+ 		goto buffered;
+ 	}
+ 
+-	dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops,
+-			     &btrfs_dio_ops, is_sync_kiocb(iocb));
++	dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
++			     0);
+ 
+ 	btrfs_inode_unlock(inode, ilock_flags);
+ 
+@@ -3622,8 +3622,7 @@ static ssize_t btrfs_direct_read(struct kiocb *iocb, struct iov_iter *to)
+ 		return 0;
+ 
+ 	btrfs_inode_lock(inode, BTRFS_ILOCK_SHARED);
+-	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
+-			   is_sync_kiocb(iocb));
++	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops, 0);
+ 	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+ 	return ret;
+ }
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 349b27f0dda0cb..194f5d00fa3267 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -74,8 +74,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		return generic_file_read_iter(iocb, to);
+ 	}
+ 
+-	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL,
+-			   is_sync_kiocb(iocb));
++	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0);
+ 	inode_unlock_shared(inode);
+ 
+ 	file_accessed(iocb->ki_filp);
+@@ -550,7 +549,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (ilock_shared)
+ 		iomap_ops = &ext4_iomap_overwrite_ops;
+ 	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+-			   is_sync_kiocb(iocb) || unaligned_io || extend);
++			   (unaligned_io || extend) ? IOMAP_DIO_FORCE_WAIT : 0);
+ 	if (ret == -ENOTBLK)
+ 		ret = 0;
+ 
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index b39b339feddc93..89609c2997177a 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -797,9 +797,7 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
+ 	if (ret)
+ 		goto out_uninit;
+ 
+-	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
+-			   is_sync_kiocb(iocb));
+-
++	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0);
+ 	gfs2_glock_dq(gh);
+ out_uninit:
+ 	gfs2_holder_uninit(gh);
+@@ -833,8 +831,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+ 	if (offset + len > i_size_read(&ip->i_inode))
+ 		goto out;
+ 
+-	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
+-			   is_sync_kiocb(iocb));
++	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0);
+ 	if (ret == -ENOTBLK)
+ 		ret = 0;
+ out:
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 604103ab76f9c5..32dbbf7dd4aadb 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -420,13 +420,15 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+ struct iomap_dio *
+ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+-		bool wait_for_completion)
++		unsigned int dio_flags)
+ {
+ 	struct address_space *mapping = iocb->ki_filp->f_mapping;
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	size_t count = iov_iter_count(iter);
+ 	loff_t pos = iocb->ki_pos;
+ 	loff_t end = iocb->ki_pos + count - 1, ret = 0;
++	bool wait_for_completion =
++		is_sync_kiocb(iocb) || (dio_flags & IOMAP_DIO_FORCE_WAIT);
+ 	unsigned int iomap_flags = IOMAP_DIRECT;
+ 	struct blk_plug plug;
+ 	struct iomap_dio *dio;
+@@ -434,9 +436,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	if (!count)
+ 		return NULL;
+ 
+-	if (WARN_ON(is_sync_kiocb(iocb) && !wait_for_completion))
+-		return ERR_PTR(-EIO);
+-
+ 	dio = kmalloc(sizeof(*dio), GFP_KERNEL);
+ 	if (!dio)
+ 		return ERR_PTR(-ENOMEM);
+@@ -598,11 +597,11 @@ EXPORT_SYMBOL_GPL(__iomap_dio_rw);
+ ssize_t
+ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+-		bool wait_for_completion)
++		unsigned int flags)
+ {
+ 	struct iomap_dio *dio;
+ 
+-	dio = __iomap_dio_rw(iocb, iter, ops, dops, wait_for_completion);
++	dio = __iomap_dio_rw(iocb, iter, ops, dops, flags);
+ 	if (IS_ERR_OR_NULL(dio))
+ 		return PTR_ERR_OR_ZERO(dio);
+ 	return iomap_dio_complete(dio);
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index bffd7240cefb7f..b181db42f2f32f 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -232,8 +232,7 @@ xfs_file_dio_read(
+ 	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
+ 	if (ret)
+ 		return ret;
+-	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL,
+-			is_sync_kiocb(iocb));
++	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0);
+ 	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+ 
+ 	return ret;
+@@ -535,7 +534,7 @@ xfs_file_dio_write_aligned(
+ 	}
+ 	trace_xfs_file_direct_write(iocb, from);
+ 	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+-			   &xfs_dio_write_ops, is_sync_kiocb(iocb));
++			   &xfs_dio_write_ops, 0);
+ out_unlock:
+ 	if (iolock)
+ 		xfs_iunlock(ip, iolock);
+@@ -603,7 +602,7 @@ xfs_file_dio_write_unaligned(
+ 	 */
+ 	trace_xfs_file_direct_write(iocb, from);
+ 	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+-			   &xfs_dio_write_ops, true);
++			   &xfs_dio_write_ops, IOMAP_DIO_FORCE_WAIT);
+ out_unlock:
+ 	if (iolock)
+ 		xfs_iunlock(ip, iolock);
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index bec47f2d074beb..0e7ab0bc00ae8e 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -780,7 +780,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 		ret = zonefs_file_dio_append(iocb, from);
+ 	else
+ 		ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
+-				   &zonefs_write_dio_ops, sync);
++				   &zonefs_write_dio_ops, 0);
+ 	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
+ 	    (ret > 0 || ret == -EIOCBQUEUED)) {
+ 		if (ret > 0)
+@@ -917,7 +917,7 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		}
+ 		file_accessed(iocb->ki_filp);
+ 		ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops,
+-				   &zonefs_read_dio_ops, is_sync_kiocb(iocb));
++				   &zonefs_read_dio_ops, 0);
+ 	} else {
+ 		ret = generic_file_read_iter(iocb, to);
+ 		if (ret == -EIO)
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 5bd3cac4df9cb4..b322598dc10ec0 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -256,12 +256,18 @@ struct iomap_dio_ops {
+ 			struct bio *bio, loff_t file_offset);
+ };
+ 
++/*
++ * Wait for the I/O to complete in iomap_dio_rw even if the kiocb is not
++ * synchronous.
++ */
++#define IOMAP_DIO_FORCE_WAIT	(1 << 0)
++
+ ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+-		bool wait_for_completion);
++		unsigned int flags);
+ struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+-		bool wait_for_completion);
++		unsigned int flags);
+ ssize_t iomap_dio_complete(struct iomap_dio *dio);
+ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+ 
+-- 
+2.29.2
 
-So, if someone else wants to address problems of this current version I will be happy (I can help a
-little).
-
-Thanks,
-Laurent
