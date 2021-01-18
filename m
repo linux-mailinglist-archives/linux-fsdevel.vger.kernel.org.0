@@ -2,141 +2,399 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA0A2F9B98
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 09:57:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5B212F9D15
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 11:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387991AbhARI4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 03:56:54 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:48028 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387940AbhARI4r (ORCPT
+        id S2388596AbhARKrG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 05:47:06 -0500
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:57393 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388951AbhARJgS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 03:56:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1610960205; x=1642496205;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=OorG9cK9Ae2APBL7+MFIdiCcA4w2cwLIS6Q1jFK0AhI=;
-  b=h3BGFq+VSk/Od+ww3hYWS1TB4E8jWlAcvoRAB9Lns92aXwmteIeIDIMC
-   GFUU6lo2PXAHE2GME9UVLop74JufpsO1q1A6g0o1J2kQtrmnbTdOf0W6S
-   LfrAcxrSDFvEnZw+4n0gTMs0RE4DMYDPMTbpSp/7VZD/inJ7+5JrVr+2D
-   SeqA+KPGyiHt0y5uyBhJ77XQfk8Eb5Vrd7uAw6Gn1JcfCvvW5bF3iLHqO
-   7KLlDxEBPwfh5SGxKujJzDYBOmePDwTNW3qt7/nbetl6azcj/YiDIxCzU
-   o4DQ3vBkhDQBrDvXnXStaOG89xnMZiJc2Hqaynv4u+pGHC2tfH3TxrD54
-   w==;
-IronPort-SDR: f4FZmxvxcOQ87rQV8v8Vus/cYk/CM2mCMNVciF6oWFUvz2qdtEgbJ/zVgycvYFMlvuG2O2Lkao
- rPTG2X+TYmaQwT33wlM0rl4mdylA5jeY1/DmZy88V113lE/hpuEPgWn3y+DSb8K8oT6yaftPWN
- dnzh5+5pPU3/+BhqUeDW9iSxstKqFprUWlHCibtbICfcB41SwH58MZzuPltFigg8+PmeNp5Qe0
- 6eVCfzUOKbgg0x+C9AIUIUCMyVjavkpvtrhJ8fGoCl0xIKgkTRiAZKXhRyFCvGGsvFDbpzZIxY
- Qn8=
-X-IronPort-AV: E=Sophos;i="5.79,355,1602518400"; 
-   d="scan'208";a="268009149"
-Received: from mail-bn8nam12lp2175.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.175])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Jan 2021 16:55:37 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jC40WqBP/jvd6/AHckhGL4/kF/0vza2wr9wVfrMpoKscY8vmBy/MRYh9dJ5BIHgqmHGmemSir0vwM9nuV4eHYXvDVEmWrsaYcpuEK0TtI9E6kJ2yN9ySrwhXjIW4Kf+FXHDAKk4Pi63Bd3bkCqJzs5380Rx28Vb0icnHg9T/Uol5iU0Y/QsMYAtsPTbNmM7A6+iLyEQM8PGSGP/tj57XGkmWjQQeKwS/XG0gkAaJUMsdrFfNKxcCVyePVuDENwn7KaQ5hQYOPPOaCKLXhlIk1j96KI164A2c1Euzqk8gaiggihgPfqHW4drBxCL4Lp7tr6k3Wtm8cT0b94whmncLyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G2ZvcLV+17IW43hsPQ9o/PcZ/QbQJIqDCsKD635FkN8=;
- b=QG89SXCHZyfHzt0NA2f2hmxkFhnYt95uu8JFIOYkf/SUWg0Rmhumm5FN1lXzcJiCqrukJb6c7Rfh64uEMf9J5/I4KBZzgTu959pgxv/l2XDNfNeGT2VffWZNJZbGCVdCMR+e2WAdwwrj54nwErlN9sLfj5AU84aYdOvaWRQmpHZLX8bQmkcpwXGKgcpS3gikuhfEblR22auE9Jyc1UulWF+xgu60b09x6PbWIMJMYzQVhZ0YuqPNL4mpCVI0RdWEFoj4j7HorYdsMpxTu5fu2xBnOTMKL1WS4lZvpRqAf8unujpMkcgwT3+5gZNbZEeCR7swernv/ncVJtlV0Tv+Hg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 18 Jan 2021 04:36:18 -0500
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 04BDD82074;
+        Mon, 18 Jan 2021 12:35:06 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G2ZvcLV+17IW43hsPQ9o/PcZ/QbQJIqDCsKD635FkN8=;
- b=gLWY5f+Re2WwgruqMCtKltjxztTz4EA3ZVZGndSVnqmklVfQFgAXSwcEBJ3ITZObw7HX4QuLBer1cukLLTNvE0HjxOGRUVor9ZbTl9H/ejSA7qDb3OMUSprXgS42fdaBOw+QMBOufRYZ2WWBKTzhrZ42xuKd7bJW70N08dlXpBY=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN2PR04MB2240.namprd04.prod.outlook.com
- (2603:10b6:804:e::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3763.12; Mon, 18 Jan
- 2021 08:55:36 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::146f:bed3:ce59:c87e]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::146f:bed3:ce59:c87e%3]) with mapi id 15.20.3763.014; Mon, 18 Jan 2021
- 08:55:36 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>
-CC:     "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v12 05/41] btrfs: release path before calling into
- btrfs_load_block_group_zone_info
-Thread-Topic: [PATCH v12 05/41] btrfs: release path before calling into
- btrfs_load_block_group_zone_info
-Thread-Index: AQHW6wthcM4npzKSMUeHMA/mGsCCyA==
-Date:   Mon, 18 Jan 2021 08:55:36 +0000
-Message-ID: <SN4PR0401MB35982E318D23D91BC093637E9BA40@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <cover.1610693036.git.naohiro.aota@wdc.com>
- <0786a9782ec6306cddb0a2808116c3f95a88849b.1610693037.git.naohiro.aota@wdc.com>
- <8f7434ae-fdb8-32be-f781-a47f32ace949@toxicpanda.com>
-Accept-Language: en-US
+        d=paragon-software.com; s=mail; t=1610962506;
+        bh=0uRs6X/nEb5Hp6vrw8vJZxCQ51MaQnJYk7+aDEmyQyw=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=hKurjRgOKVVaidFj2rFVhkTbU9x+Ym9j86GJ2tzIot3mOVLdiycIMgQ+qoVO3xj/t
+         dM/KbgjO3+6fA9+7er4P42rd8BgxFw8uzh4+Q2fV00x7IGDZJxmUZQDeKvV3BvY7l7
+         32dL3Ob9/h7BK8xizqzTTAy0kDmtcZ02ojIjuCHo=
+Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Mon, 18 Jan 2021 12:35:05 +0300
+Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
+ by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
+ id 15.01.1847.003; Mon, 18 Jan 2021 12:35:05 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     Kari Argillander <kari.argillander@gmail.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pali@kernel.org" <pali@kernel.org>,
+        "dsterba@suse.cz" <dsterba@suse.cz>,
+        "aaptel@suse.com" <aaptel@suse.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "joe@perches.com" <joe@perches.com>,
+        "mark@harmstone.com" <mark@harmstone.com>,
+        "nborisov@suse.com" <nborisov@suse.com>,
+        "linux-ntfs-dev@lists.sourceforge.net" 
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        "anton@tuxera.com" <anton@tuxera.com>,
+        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        "andy.lavr@gmail.com" <andy.lavr@gmail.com>
+Subject: RE: [PATCH v17 02/10] fs/ntfs3: Add initialization of super block
+Thread-Topic: [PATCH v17 02/10] fs/ntfs3: Add initialization of super block
+Thread-Index: AQHW34lDSM77DZhIDU+vJCA3qNRrR6oWIfSAgBcXH+A=
+Date:   Mon, 18 Jan 2021 09:35:05 +0000
+Message-ID: <750a0cef33f34c0989cacfb0bcd4ac5e@paragon-software.com>
+References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
+ <20201231152401.3162425-3-almaz.alexandrovich@paragon-software.com>
+ <20210103195017.fim2msuzj3kup6rq@kari-VirtualBox>
+In-Reply-To: <20210103195017.fim2msuzj3kup6rq@kari-VirtualBox>
+Accept-Language: ru-RU, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: toxicpanda.com; dkim=none (message not signed)
- header.d=none;toxicpanda.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2001:a62:15c4:1c01:a8cb:1595:5b20:8662]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 8bade78f-6a84-4749-39b8-08d8bb8ed2ab
-x-ms-traffictypediagnostic: SN2PR04MB2240:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN2PR04MB22407DE6C1999A3573C4E76B9BA40@SN2PR04MB2240.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:68;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ib6GlsI6OMw8uMoNCGAVZLM9Wix8kfXOz1YkKGiiujEKbbuvKxR18eRsHrg2LHgxpk8sQPVF2pGG3rfVpJ06xXDRChVybdlHowEAe1DGqmoHWXUrlRQ5L3Zv3g/RLax9Db2+9jHxTS2zd9UFJJKsy7J3gedsRUh6iJ21uDDy8rysAqHD/VILsPHr6KuSvNEh70y5lEaYGOMDiGlXlLuiyVC5VOxSrY36pdl58kFW+8BFvhMKPtKJRVnNaxmw2DEcU6Lb+42q/wkgHqwHGyRQU8ZayAH8EhxooAvg2irWY3HtD4gwRcs4eocyy7vS0Xy/jcIKysb+LkL6MauKBf2q/ndryaoRh9TUOI4MHQQai4OnT+ZIek2VOzqDAvjJigCuHhPec6w6Gdb1krpQtuqLAw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39860400002)(366004)(346002)(396003)(376002)(86362001)(66446008)(52536014)(54906003)(91956017)(2906002)(55016002)(5660300002)(558084003)(8676002)(478600001)(66476007)(9686003)(66556008)(7696005)(110136005)(33656002)(186003)(64756008)(4326008)(66946007)(316002)(71200400001)(76116006)(6506007)(53546011)(8936002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?WNZ90kwcRgT+hGtDwd9ohWD5rP8466exdO4MwWhteh1sukvFsZHp7XKZiPzP?=
- =?us-ascii?Q?0Aho7DMjt+cKBku2wJYMy68rEswcHAGCq2nxjgDOB9hfq4V47pBBaYJYFnZZ?=
- =?us-ascii?Q?+mxSX0kC1n8ugNLomAAMjQVNvI6+dCS7TzjGj2fjWwR1SKAFCM8SXH3bBQjU?=
- =?us-ascii?Q?Lfn1tJn4Hp1WG2+zMQjWn5JZVn2QsviHIIRL92FhJnJp2bj/q+eqCyfjLP8o?=
- =?us-ascii?Q?Dq7UBwF17NYiV20HQda83ppPg7yhqGlhsipVScG66EKeplQDgWIxaSH4sCal?=
- =?us-ascii?Q?8ezyX37AnW2Cx69P9rzW4q8e5uX87ESGhcc8536sYpVAzrXN0fL3/uT2oP5K?=
- =?us-ascii?Q?B2u7MWvL7x1IfAuJMv84s98nfxyV68nhCynXjwdU6Z/lFMiz0+w+DZ76sykZ?=
- =?us-ascii?Q?LBgoTYPPNkCI22Rqdh0FQRA46I1B95tAkjhj43p04nN2dGiOIiLCQ2NTPSs1?=
- =?us-ascii?Q?+zm9nXhjzBE3fcaZkYRe+M8F7UVJ4PjEryNZDzAL8f9BLMOMMJj3asXQ2XG0?=
- =?us-ascii?Q?DOsOMZoE7FwP4j4MBgc+GmEUaBwVP3hR6W3tmpot0yq2KmXN2/iRa36X1AbD?=
- =?us-ascii?Q?SYlLmu6IvNn8/dzQFggUf+1D1T3uEo65nSVRGGY4TQ/Glt+W/Y62vlP0Tmja?=
- =?us-ascii?Q?N3PzLkv5i7+JRECZ1kxITwYK0Y2dvVT56z84zHiWa4605vXhn1ROEM+qBBmU?=
- =?us-ascii?Q?1kITxSzobfSZ4DvXw943VTUpKpPJdjompHoljgW95+aloZ///f4ZTKFhjCIa?=
- =?us-ascii?Q?3W2zw/FLviC5mTjXUhPckEbTECzLEsECuM4RaLmDXGNOKIxpk4KvP7ymLu42?=
- =?us-ascii?Q?nX3JYKWLV7mxZItl/L4H0C2Uaz74h716Vvwnzhsf1r3ckSm+MsOsjrmeB92g?=
- =?us-ascii?Q?4pmXTLYFUPSAMGFMJFY9BimpH1ISIfZw2p9GN4RdH/94mv9Q0qJXh3CvbeYh?=
- =?us-ascii?Q?9t1hWayaey0wgvlWMr7/wPyPYJwgSqA2OHRKFDoeONCplgwkEbmRNMq5i68B?=
- =?us-ascii?Q?fQPzp8nRN/PJM9c/JAfNOvSiBzDAnqNZaoSj2Sa+PXH5+acgUx0tnA3LAYb7?=
- =?us-ascii?Q?gkidXlVe?=
+x-originating-ip: [172.30.0.64]
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bade78f-6a84-4749-39b8-08d8bb8ed2ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jan 2021 08:55:36.6302
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IYhrwFYHs75C5uDOv/h+94EcksNfzRo8CIi0VAO6N9TclqQY4bWLkQitkSP2GqCPZ7tOLQHdGoIQ18PDcHZLy7gZmlkKMyUMteS9b9S6o5g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR04MB2240
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15/01/2021 23:22, Josef Bacik wrote:=0A=
-> You're releasing the path and then reading from it, a potential UAF.  Tha=
-nks,=0A=
-=0A=
-*\@#%! I'm stupid, fixed for v13.=0A=
+From: Kari Argillander <kari.argillander@gmail.com>
+Sent: Sunday, January 3, 2021 10:50 PM
+> To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> Cc: linux-fsdevel@vger.kernel.org; viro@zeniv.linux.org.uk; linux-kernel@=
+vger.kernel.org; pali@kernel.org; dsterba@suse.cz;
+> aaptel@suse.com; willy@infradead.org; rdunlap@infradead.org; joe@perches.=
+com; mark@harmstone.com; nborisov@suse.com;
+> linux-ntfs-dev@lists.sourceforge.net; anton@tuxera.com; dan.carpenter@ora=
+cle.com; hch@lst.de; ebiggers@kernel.org;
+> andy.lavr@gmail.com
+> Subject: Re: [PATCH v17 02/10] fs/ntfs3: Add initialization of super bloc=
+k
+>=20
+> On Thu, Dec 31, 2020 at 06:23:53PM +0300, Konstantin Komarov wrote:
+>=20
+> > diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+>=20
+> > +int ntfs_loadlog_and_replay(struct ntfs_inode *ni, struct ntfs_sb_info=
+ *sbi)
+> > +{
+> > +	int err =3D 0;
+> > +	struct super_block *sb =3D sbi->sb;
+> > +	struct inode *inode =3D &ni->vfs_inode;
+> > +	struct MFT_REF ref;
+> > +
+> > +	/* Check for 4GB */
+> > +	if (inode->i_size >=3D 0x100000000ull) {
+> > +		ntfs_err(sb, "$LogFile is too big");
+> > +		err =3D -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	sbi->flags |=3D NTFS_FLAGS_LOG_REPLAYING;
+> > +
+> > +	ref.low =3D cpu_to_le32(MFT_REC_MFT);
+> > +	ref.high =3D 0;
+> > +	ref.seq =3D cpu_to_le16(1);
+> > +
+> > +	inode =3D ntfs_iget5(sb, &ref, NULL);
+> > +
+> > +	if (IS_ERR(inode))
+> > +		inode =3D NULL;
+> > +
+> > +	if (!inode) {
+> > +		/* Try to use mft copy */
+> > +		u64 t64 =3D sbi->mft.lbo;
+> > +
+> > +		sbi->mft.lbo =3D sbi->mft.lbo2;
+> > +		inode =3D ntfs_iget5(sb, &ref, NULL);
+> > +		sbi->mft.lbo =3D t64;
+> > +		if (IS_ERR(inode))
+> > +			inode =3D NULL;
+> > +	}
+> > +
+> > +	if (!inode) {
+> > +		err =3D -EINVAL;
+> > +		ntfs_err(sb, "Failed to load $MFT.");
+> > +		goto out;
+> > +	}
+> > +
+> > +	sbi->mft.ni =3D ntfs_i(inode);
+> > +
+> > +	err =3D ni_load_all_mi(sbi->mft.ni);
+> > +	if (!err)
+> > +		err =3D log_replay(ni);
+>=20
+> We only get error from log_replay if
+>=20
+> > +
+> > +	iput(inode);
+> > +	sbi->mft.ni =3D NULL;
+> > +
+> > +	sync_blockdev(sb->s_bdev);
+> > +	invalidate_bdev(sb->s_bdev);
+> > +
+> > +	/* reinit MFT */
+> > +	if (sbi->flags & NTFS_FLAGS_NEED_REPLAY) {
+> > +		err =3D 0;
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (sb_rdonly(sb))
+> > +		goto out;
+>=20
+> we get here. Is this a intentional? Probably but I'm just checking.
+>=20
+
+Hi Kari! Thanks for your attention on our patches.
+This may be indeed quite entangled, here are the cases needed to be
+covered:
+1) !err && !(sbi->flags & NTFS_FLAGS_NEED_REPLAY) - ok
+2) err && !(sbi->flags & NTFS_FLAGS_NEED_REPLAY) - no memory,
+  io error, etc on prepare to replay stage
+3) !err && (sbi->flags & NTFS_FLAGS_NEED_REPLAY) -
+  journal is not empty, storage is readonly or unsupported log version
+4) err && (sbi->flags & NTFS_FLAGS_NEED_REPLAY) - no memory, io error,
+  etc while replaying
+Distinction is that, cases 2/3 lead to mount error every time, while
+case 4 permits read-only mount.
+
+> > diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+>=20
+> > +int ntfs_create_inode(struct inode *dir, struct dentry *dentry,
+> > +		      const struct cpu_str *uni, umode_t mode, dev_t dev,
+> > +		      const char *symname, u32 size, int excl,
+> > +		      struct ntfs_fnd *fnd, struct inode **new_inode)
+> > +{
+>=20
+> > +#ifdef CONFIG_NTFS3_FS_POSIX_ACL
+>=20
+> In Kconfig this is NTFS3_POSIX_ACL. This repeat every file.
+>=20
+
+This is OK. You may refer to similar parts of ext4/btrfs sources as a
+reference:
+fs/ext4/Kconfig or fs/btrfs/Kconfig
+
+> > +int ntfs_unlink_inode(struct inode *dir, const struct dentry *dentry)
+> > +{
+> > +	int err;
+> > +	struct super_block *sb =3D dir->i_sb;
+> > +	struct ntfs_sb_info *sbi =3D sb->s_fs_info;
+> > +	struct inode *inode =3D d_inode(dentry);
+> > +	struct ntfs_inode *ni =3D ntfs_i(inode);
+> > +	const struct qstr *name =3D &dentry->d_name;
+> > +	struct ntfs_inode *dir_ni =3D ntfs_i(dir);
+> > +	struct ntfs_index *indx =3D &dir_ni->dir;
+> > +	struct cpu_str *uni =3D NULL;
+> > +	struct ATTR_FILE_NAME *fname;
+> > +	u8 name_type;
+> > +	struct ATTR_LIST_ENTRY *le;
+> > +	struct MFT_REF ref;
+> > +	bool is_dir =3D S_ISDIR(inode->i_mode);
+> > +	struct INDEX_ROOT *dir_root;
+> > +
+> > +	dir_root =3D indx_get_root(indx, dir_ni, NULL, NULL);
+> > +	if (!dir_root)
+> > +		return -EINVAL;
+> > +
+> > +	ni_lock(ni);
+> > +
+> > +	if (is_dir && !dir_is_empty(inode)) {
+> > +		err =3D -ENOTEMPTY;
+> > +		goto out1;
+> > +	}
+> > +
+> > +	if (ntfs_is_meta_file(sbi, inode->i_ino)) {
+> > +		err =3D -EINVAL;
+> > +		goto out1;
+> > +	}
+> > +
+> > +	/* allocate PATH_MAX bytes */
+> > +	uni =3D __getname();
+> > +	if (!uni) {
+> > +		err =3D -ENOMEM;
+> > +		goto out1;
+> > +	}
+> > +
+> > +	/* Convert input string to unicode */
+> > +	err =3D ntfs_nls_to_utf16(sbi, name->name, name->len, uni, NTFS_NAME_=
+LEN,
+> > +				UTF16_HOST_ENDIAN);
+> > +	if (err < 0)
+> > +		goto out4;
+> > +
+> > +	le =3D NULL;
+>=20
+> Little bit random place for this. Do we even need to NULL le.
+>=20
+
+Thanks. Inititialization is moved to to the place where ni_fname_name
+is being called.
+> > +
+> > +	/*mark rw ntfs as dirty. it will be cleared at umount*/
+> > +	ntfs_set_state(sbi, NTFS_DIRTY_DIRTY);
+> > +
+> > +	/* find name in record */
+> > +#ifdef NTFS3_64BIT_CLUSTER
+> > +	ref.low =3D cpu_to_le32(dir->i_ino & 0xffffffff);
+> > +	ref.high =3D cpu_to_le16(dir->i_ino >> 32);
+> > +#else
+> > +	ref.low =3D cpu_to_le32(dir->i_ino & 0xffffffff);
+> > +	ref.high =3D 0;
+> > +#endif
+> > +	ref.seq =3D dir_ni->mi.mrec->seq;
+> > +
+> > +	fname =3D ni_fname_name(ni, uni, &ref, &le);
+>=20
+> > diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+>=20
+> > +#ifdef CONFIG_PRINTK
+> > +/*
+> > + * Trace warnings/notices/errors
+> > + * Thanks Joe Perches <joe@perches.com> for implementation
+> > + */
+> > +void ntfs_printk(const struct super_block *sb, const char *fmt, ...)
+> > +{
+> > +	struct va_format vaf;
+> > +	va_list args;
+> > +	int level;
+> > +	struct ntfs_sb_info *sbi =3D sb->s_fs_info;
+> > +
+> > +	/*should we use different ratelimits for warnings/notices/errors? */
+> > +	if (!___ratelimit(&sbi->msg_ratelimit, "ntfs3"))
+> > +		return;
+> > +
+> > +	va_start(args, fmt);
+> > +
+> > +	level =3D printk_get_level(fmt);
+> > +	vaf.fmt =3D printk_skip_level(fmt);
+> > +	vaf.va =3D &args;
+> > +	printk("%c%cntfs3: %s: %pV\n", KERN_SOH_ASCII, level, sb->s_id, &vaf)=
+;
+> > +
+> > +	va_end(args);
+> > +}
+> > +
+> > +static char s_name_buf[512];
+> > +static atomic_t s_name_buf_cnt =3D ATOMIC_INIT(1); // 1 means 'free s_=
+name_buf'
+> > +
+> > +/* print warnings/notices/errors about inode using name or inode numbe=
+r */
+> > +void ntfs_inode_printk(struct inode *inode, const char *fmt, ...)
+> > +{
+> > +	struct super_block *sb =3D inode->i_sb;
+> > +	struct ntfs_sb_info *sbi =3D sb->s_fs_info;
+> > +	char *name;
+> > +	va_list args;
+> > +	struct va_format vaf;
+> > +	int level;
+> > +
+> > +	if (!___ratelimit(&sbi->msg_ratelimit, "ntfs3"))
+> > +		return;
+> > +
+> > +	if (atomic_dec_and_test(&s_name_buf_cnt)) {
+> > +		/* use static allocated buffer */
+> > +		name =3D s_name_buf;
+> > +	} else {
+> > +		name =3D kmalloc(sizeof(s_name_buf), GFP_NOFS);
+> > +	}
+> > +
+> > +	if (name) {
+> > +		struct dentry *dentry =3D d_find_alias(inode);
+> > +		const u32 name_len =3D ARRAY_SIZE(s_name_buf) - 1;
+> > +
+> > +		if (dentry) {
+> > +			spin_lock(&dentry->d_lock);
+> > +			snprintf(name, name_len, "%s", dentry->d_name.name);
+> > +			spin_unlock(&dentry->d_lock);
+> > +			dput(dentry);
+> > +			name[name_len] =3D 0; /* to be sure*/
+> > +		} else {
+> > +			name[0] =3D 0;
+> > +		}
+> > +	}
+> > +
+> > +	va_start(args, fmt);
+> > +
+> > +	level =3D printk_get_level(fmt);
+> > +	vaf.fmt =3D printk_skip_level(fmt);
+> > +	vaf.va =3D &args;
+> > +
+> > +	printk("%c%cntfs3: %s: ino=3D%lx, \"%s\" %pV\n", KERN_SOH_ASCII, leve=
+l,
+> > +	       sb->s_id, inode->i_ino, name ? name : "", &vaf);
+> > +
+> > +	va_end(args);
+> > +
+> > +	atomic_inc(&s_name_buf_cnt);
+> > +	if (name !=3D s_name_buf)
+> > +		kfree(name);
+> > +}
+> > +#endif
+>=20
+> Should these be in debug.c or something? Atleast I do not see point why
+> they are in super.c.
+>=20
+Overall, the problem file name may be omitted, but it seems to be useful fo=
+r
+debug purposes. This code is placed into super.c because ntfs_printk is des=
+cribed there.
+
+> > +static int __init init_ntfs_fs(void)
+> > +{
+> > +	int err;
+> > +
+> > +#ifdef NTFS3_INDEX_BINARY_SEARCH
+> > +	pr_notice("ntfs3: +index binary search\n");
+> > +#endif
+> > +
+> > +#ifdef NTFS3_CHECK_FREE_CLST
+> > +	pr_notice("ntfs3: +check free clusters\n");
+> > +#endif
+> > +
+> > +#if NTFS_LINK_MAX < 0xffff
+> > +	pr_notice("ntfs3: max link count %u\n", NTFS_LINK_MAX);
+> > +#endif
+> > +
+> > +#ifdef NTFS3_64BIT_CLUSTER
+> > +	pr_notice("ntfs3: 64 bits per cluster\n");
+> > +#else
+> > +	pr_notice("ntfs3: 32 bits per cluster\n");
+> > +#endif
+> > +#ifdef CONFIG_NTFS3_LZX_XPRESS
+> > +	pr_notice("ntfs3: read-only lzx/xpress compression included\n");
+> > +#endif
+> > +
+> > +	ntfs_inode_cachep =3D kmem_cache_create(
+> > +		"ntfs_inode_cache", sizeof(struct ntfs_inode), 0,
+> > +		(SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD | SLAB_ACCOUNT),
+> > +		init_once);
+> > +	if (!ntfs_inode_cachep) {
+> > +		err =3D -ENOMEM;
+> > +		goto failed;
+> > +	}
+> > +
+> > +	err =3D register_filesystem(&ntfs_fs_type);
+> > +	if (!err)
+> > +		return 0;
+>=20
+> Do we need kmem_cache_destroy() here if err?
+>=20
+Thanks, this will be fixed in v18.
+> > +
+> > +failed:
+> > +	return err;
+> > +}
