@@ -2,83 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CD842FA808
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 18:55:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F169E2FA86D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 19:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436703AbhARRyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 12:54:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436729AbhARRxz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 12:53:55 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E27D422227;
-        Mon, 18 Jan 2021 17:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610992393;
-        bh=2BUVn/G7ZLhzQ7BKdANSYLDJE9+tWZ93amHRzaBmVy4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mS0liz8ZtG5Own/099bZ5X2A2wNMH5QZuZxd+Fmu7bCe+6hkLbY1Ayn1YmyPhqA05
-         N2C2CJ4Pqck6/pkECVwQ9XOj49W06S3PF0Bg9B9n81vq84DEwgK6YKDn2saDAkGDFn
-         x9tA9f/NS+c+yICAaSokw0nB4iNJW4IroYHqT4CyaFyV/T4Mq/0AI8j9aCszK4+/6g
-         x/Osw1OAhwbHLBsJfDCrt+oj3OCnqi7u0+SYVw69PQ+2bUSRLT3PDe+Bl4MJ0s6/7h
-         /2YQvHO558YN6bkPMUW0i9mSZvBtVDGEJhs1OWfmTAru+QIxBn1Um+zMgak1pJJmPn
-         E8r4pTTfHyF+Q==
-Subject: Re: [PATCH 1/2] [v2] lib/hexdump: introduce DUMP_PREFIX_UNHASHED for
- unhashed addresses
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, roman.fietze@magna.com,
-        Kees Cook <keescook@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        linux-mm <linux-mm@kvack.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-References: <20210116220950.47078-1-timur@kernel.org>
- <20210116220950.47078-2-timur@kernel.org>
- <CAHp75Vdk6y8dGNJOswZwfOeva_sqVcw-f=yYgf_rptjHXxfZvw@mail.gmail.com>
- <b39866a4-19cd-879b-1f3e-44126caf9193@kernel.org>
- <20210118171411.GG4077@smile.fi.intel.com>
-From:   Timur Tabi <timur@kernel.org>
-Message-ID: <ac04b231-863a-fa7c-08d7-563620d40c29@kernel.org>
-Date:   Mon, 18 Jan 2021 11:53:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S2407060AbhARRVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 12:21:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391575AbhARRCi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 Jan 2021 12:02:38 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4B1C061574;
+        Mon, 18 Jan 2021 09:01:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=GiGV59fseE/dUGuOBWZVrWWnl8FxLW/HEwRXpXDCibY=; b=U5T8xGax/StZjW8cKV+M0UUYMa
+        ES4mcbkGJPkHuRYCaaYSOTBMPKg7gR9F25yoWnhoiBYsEjRzTYRjbPu+yLtxardh3R4kb5p6cb1dA
+        tp/E9mV+5pxhrGUsUj0iaqtvoVhj7+yrp1MH54/eRiNw8SJC3VPvdRBC4QisJAGj5JKry2TFZaK7I
+        AwhWPSKRPjLdvuGOMlWvUCUtREJ4k586x43/h3JOxjPSbiyi90+gzylpY0f+xpl1un3fsBkDg4y/L
+        cCV9KHhGVMO+D/KN1D7HPJnhC9zEN0asFqLtsa8XAKhmDtMZuvarzSS5wKlJwl2eZMUfzgcPghtcs
+        Rk7MHMJw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l1XuZ-00D7HK-6p; Mon, 18 Jan 2021 17:01:51 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/27] mm: Introduce struct folio
+Date:   Mon, 18 Jan 2021 17:01:22 +0000
+Message-Id: <20210118170148.3126186-2-willy@infradead.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210118170148.3126186-1-willy@infradead.org>
+References: <20210118170148.3126186-1-willy@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20210118171411.GG4077@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/18/21 11:14 AM, Andy Shevchenko wrote:
-> But isn't it good to expose those issues (and fix them)?
+We have trouble keeping track of whether we've already called
+compound_head() to ensure we're not operating on a tail page.  Further,
+it's never clear whether we intend a struct page to refer to PAGE_SIZE
+bytes or page_size(compound_head(page)).
 
-I suppose.
+Introduce a new type 'struct folio' that always refers to an entire
+(possibly compound) page, and points to the head page (or base page).
 
->>> Perhaps even add _ADDRESS to DUMP_PREFIX_UNHASHED, but this maybe too
->> long.
->>
->> I think DUMP_PREFIX_ADDRESS_UNHASHED is too long.
-> What about introducing new two like these:
-> 
-> 	DUMP_PREFIX_OFFSET,
-> 	DUMP_PREFIX_ADDRESS,
-> 	DUMP_PREFIX_ADDR_UNHASHED,
-> 	DUMP_PREFIX_ADDR_HASHED,
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/mm.h       | 26 ++++++++++++++++++++++++++
+ include/linux/mm_types.h | 17 +++++++++++++++++
+ 2 files changed, 43 insertions(+)
 
-I think we're approaching bike-shedding.  DUMP_PREFIX_ADDR_HASHED and 
-DUMP_PREFIX_ADDRESS are the same thing.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a5d618d08506..0858af6479a3 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -924,6 +924,11 @@ static inline unsigned int compound_order(struct page *page)
+ 	return page[1].compound_order;
+ }
+ 
++static inline unsigned int folio_order(struct folio *folio)
++{
++	return compound_order(&folio->page);
++}
++
+ static inline bool hpage_pincount_available(struct page *page)
+ {
+ 	/*
+@@ -975,6 +980,26 @@ static inline unsigned int page_shift(struct page *page)
+ 
+ void free_compound_page(struct page *page);
+ 
++static inline unsigned long folio_nr_pages(struct folio *folio)
++{
++	return compound_nr(&folio->page);
++}
++
++static inline struct folio *next_folio(struct folio *folio)
++{
++	return folio + folio_nr_pages(folio);
++}
++
++static inline unsigned int folio_shift(struct folio *folio)
++{
++	return PAGE_SHIFT + folio_order(folio);
++}
++
++static inline size_t folio_size(struct folio *folio)
++{
++	return PAGE_SIZE << folio_order(folio);
++}
++
+ #ifdef CONFIG_MMU
+ /*
+  * Do pte_mkwrite, but only if the vma says VM_WRITE.  We do this when
+@@ -1615,6 +1640,7 @@ extern void pagefault_out_of_memory(void);
+ 
+ #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
+ #define offset_in_thp(page, p)	((unsigned long)(p) & (thp_size(page) - 1))
++#define offset_in_folio(folio, p) ((unsigned long)(p) & (folio_size(folio) - 1))
+ 
+ /*
+  * Flags passed to show_mem() and show_free_areas() to suppress output in
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 07d9acb5b19c..875dc6cd6ad2 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -223,6 +223,23 @@ struct page {
+ #endif
+ } _struct_page_alignment;
+ 
++/*
++ * A struct folio is either a base (order-0) page or the head page of
++ * a compound page.
++ */
++struct folio {
++	struct page page;
++};
++
++static inline struct folio *page_folio(struct page *page)
++{
++	unsigned long head = READ_ONCE(page->compound_head);
++
++	if (unlikely(head & 1))
++		return (struct folio *)(head - 1);
++	return (struct folio *)page;
++}
++
+ static inline atomic_t *compound_mapcount_ptr(struct page *page)
+ {
+ 	return &page[1].compound_mapcount;
+-- 
+2.29.2
 
-I don't want people to have to move from DUMP_PREFIX_ADDRESS to some 
-other enum for no change in functionality.  I'm willing to rearrange the 
-code so that it's enumerated more consistently, but I don't think 
-there's anything wrong with DUMP_PREFIX_UNHASHED.  It's succinct and clear.
