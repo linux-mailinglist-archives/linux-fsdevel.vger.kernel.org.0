@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E012FA775
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 18:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 514EF2FA753
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jan 2021 18:20:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407144AbhARRVf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 12:21:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58870 "EHLO
+        id S2407042AbhARRUS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 12:20:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406863AbhARRDX (ORCPT
+        with ESMTP id S2391921AbhARRDY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 12:03:23 -0500
+        Mon, 18 Jan 2021 12:03:24 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F25C061793;
-        Mon, 18 Jan 2021 09:02:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F7EC061795;
+        Mon, 18 Jan 2021 09:02:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=6YK8dxrIi6WHXmqxTYcAlqgkXxY6OI1r+h3iSsQcrI0=; b=C3raeL3Kn0g4dP57UwlPf+W+w1
-        ASPS/ph0PPLk1lgQZSN/QUf9GAS7hOISsupaAtKqlnnUSnkdFPekYxYrvlvbhJdi0LAyJS2C96Ho0
-        CQR7vQqZvS9L7t5gO37j7uy/Giixv3ZY2PYPlcU/PPNd4QyHuRfa7DPlZvaGfO0w+l9l/6GcP7pwe
-        53OlfOQFz81F3x9OEhRNtacl6pHmBhipXMC7iOuC9xFTW/vWXjtUtX3GvVhhYte3EXUwfzAxp5SZj
-        LvOKX7ERIP0GzFHjICjw052chJUNhQZOOHWh6CmHzdRwdxa3HGc5lVzxaqHXU7LksNxIHFDn+pSmT
-        NyUJteVQ==;
+        bh=QtagCdqlQRSTNk83TE6iZzeshtghM/dQX9PoljD/GxI=; b=NHUggwmMfkx38kuG5SvJRxpVR6
+        FYsVmuQLHbSJVFSXVNFO8MLK+5pkUCBJZpaVi/8jESUN7vQ7Wq0c6MHQL8hQ2BCmcVWtP9PNI6bzz
+        95FsUNZtsAZ4F1G8fjg+rvNJyylih4YBWh10q1AeE097TLQwEfK5VWS70/xDCAWv6WhYrVUnfvrVI
+        FUxEtk+APnGrR9NNyWD27mRadHobF0i/0wBo+aRtkwCXRy0fD0f/9XaEBVykTv698GiDaihlnmBvf
+        VGK0O9yEKhKH6kYmr/Re1/400/oFkSGxwMgVjGeka1AJSqar1zGPZiXz4xShs03nmoo0uU8EZTteB
+        31bZL/3w==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l1Xum-00D7Iv-FV; Mon, 18 Jan 2021 17:02:05 +0000
+        id 1l1Xuo-00D7J7-6s; Mon, 18 Jan 2021 17:02:06 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/27] mm/util: Add folio_mapping and folio_file_mapping
-Date:   Mon, 18 Jan 2021 17:01:31 +0000
-Message-Id: <20210118170148.3126186-11-willy@infradead.org>
+Subject: [PATCH v2 11/27] mm/memcg: Add folio_memcg, lock_folio_memcg and unlock_folio_memcg
+Date:   Mon, 18 Jan 2021 17:01:32 +0000
+Message-Id: <20210118170148.3126186-12-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210118170148.3126186-1-willy@infradead.org>
 References: <20210118170148.3126186-1-willy@infradead.org>
@@ -43,135 +43,153 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These are the folio equivalent of page_mapping() and page_file_mapping().
-Adjust page_file_mapping() and page_mapping_file() to use folios
-internally.
+The memcontrol code already assumes that page_memcg() will be called
+with a non-tail page, so make that more natural by wrapping it with a
+folio API.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/mm.h | 23 +++++++++++++++--------
- mm/swapfile.c      |  6 +++---
- mm/util.c          | 20 ++++++++++----------
- 3 files changed, 28 insertions(+), 21 deletions(-)
+ include/linux/memcontrol.h | 16 ++++++++++++++++
+ mm/memcontrol.c            | 36 ++++++++++++++++++++++++------------
+ 2 files changed, 40 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 380328930d6c..46cee44c0c68 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1586,17 +1586,25 @@ void page_address_init(void);
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 7a38a1517a05..89aaa22506e6 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -383,6 +383,11 @@ static inline struct mem_cgroup *page_memcg(struct page *page)
+ 	return (struct mem_cgroup *)(memcg_data & ~MEMCG_DATA_FLAGS_MASK);
+ }
  
- extern void *page_rmapping(struct page *page);
- extern struct anon_vma *page_anon_vma(struct page *page);
--extern struct address_space *page_mapping(struct page *page);
-+struct address_space *folio_mapping(struct folio *);
-+struct address_space *__folio_file_mapping(struct folio *);
- 
--extern struct address_space *__page_file_mapping(struct page *);
-+static inline struct address_space *page_mapping(struct page *page)
++static inline struct mem_cgroup *folio_memcg(struct folio *folio)
 +{
-+	return folio_mapping(page_folio(page));
-+}
- 
--static inline
--struct address_space *page_file_mapping(struct page *page)
-+static inline struct address_space *folio_file_mapping(struct folio *folio)
- {
--	if (unlikely(PageSwapCache(page)))
--		return __page_file_mapping(page);
-+	if (unlikely(FolioSwapCache(folio)))
-+		return __folio_file_mapping(folio);
- 
--	return page->mapping;
-+	return folio->page.mapping;
++	return page_memcg(&folio->page);
 +}
 +
-+static inline struct address_space *page_file_mapping(struct page *page)
+ /*
+  * page_memcg_rcu - locklessly get the memory cgroup associated with a page
+  * @page: a pointer to the page struct
+@@ -869,8 +874,10 @@ void mem_cgroup_print_oom_group(struct mem_cgroup *memcg);
+ extern bool cgroup_memory_noswap;
+ #endif
+ 
++struct mem_cgroup *lock_folio_memcg(struct folio *folio);
+ struct mem_cgroup *lock_page_memcg(struct page *page);
+ void __unlock_page_memcg(struct mem_cgroup *memcg);
++void unlock_folio_memcg(struct folio *folio);
+ void unlock_page_memcg(struct page *page);
+ 
+ /*
+@@ -1298,6 +1305,11 @@ mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+ {
+ }
+ 
++static inline struct mem_cgroup *lock_folio_memcg(struct folio *folio)
 +{
-+	return folio_file_mapping(page_folio(page));
++	return NULL;
++}
++
+ static inline struct mem_cgroup *lock_page_memcg(struct page *page)
+ {
+ 	return NULL;
+@@ -1307,6 +1319,10 @@ static inline void __unlock_page_memcg(struct mem_cgroup *memcg)
+ {
  }
  
- extern pgoff_t __page_file_index(struct page *page);
-@@ -1613,7 +1621,6 @@ static inline pgoff_t page_index(struct page *page)
++static inline void unlock_folio_memcg(struct folio *folio)
++{
++}
++
+ static inline void unlock_page_memcg(struct page *page)
+ {
+ }
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 1b1ec0c1b6f8..d5ec868cd9f7 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2140,19 +2140,18 @@ void mem_cgroup_print_oom_group(struct mem_cgroup *memcg)
  }
  
- bool page_mapped(struct page *page);
--struct address_space *page_mapping(struct page *page);
- struct address_space *page_mapping_file(struct page *page);
- 
- /*
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 9fffc5af29d1..ddb734fccfc3 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3551,11 +3551,11 @@ struct swap_info_struct *page_swap_info(struct page *page)
- /*
-  * out-of-line __page_file_ methods to avoid include hell.
+ /**
+- * lock_page_memcg - lock a page and memcg binding
+- * @page: the page
++ * lock_folio_memcg - lock a folio and memcg binding
++ * @folio: the folio
+  *
+- * This function protects unlocked LRU pages from being moved to
++ * This function protects unlocked LRU folios from being moved to
+  * another cgroup.
+  *
+  * It ensures lifetime of the returned memcg. Caller is responsible
+- * for the lifetime of the page; __unlock_page_memcg() is available
+- * when @page might get freed inside the locked section.
++ * for the lifetime of the folio; __unlock_folio_memcg() is available
++ * when @folio might get freed inside the locked section.
   */
--struct address_space *__page_file_mapping(struct page *page)
-+struct address_space *__folio_file_mapping(struct folio *folio)
+-struct mem_cgroup *lock_page_memcg(struct page *page)
++struct mem_cgroup *lock_folio_memcg(struct folio *folio)
  {
--	return page_swap_info(page)->swap_file->f_mapping;
-+	return page_swap_info(&folio->page)->swap_file->f_mapping;
- }
--EXPORT_SYMBOL_GPL(__page_file_mapping);
-+EXPORT_SYMBOL_GPL(__folio_file_mapping);
+-	struct page *head = compound_head(page); /* rmap on tail pages */
+ 	struct mem_cgroup *memcg;
+ 	unsigned long flags;
  
- pgoff_t __page_file_index(struct page *page)
- {
-diff --git a/mm/util.c b/mm/util.c
-index c37e24d5fa43..c052c39b9f1c 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -686,39 +686,39 @@ struct anon_vma *page_anon_vma(struct page *page)
- 	return __page_rmapping(page);
- }
- 
--struct address_space *page_mapping(struct page *page)
-+struct address_space *folio_mapping(struct folio *folio)
- {
- 	struct address_space *mapping;
- 
--	page = compound_head(page);
--
- 	/* This happens if someone calls flush_dcache_page on slab page */
--	if (unlikely(PageSlab(page)))
-+	if (unlikely(FolioSlab(folio)))
+@@ -2172,7 +2171,7 @@ struct mem_cgroup *lock_page_memcg(struct page *page)
+ 	if (mem_cgroup_disabled())
+ 		return NULL;
+ again:
+-	memcg = page_memcg(head);
++	memcg = folio_memcg(folio);
+ 	if (unlikely(!memcg))
  		return NULL;
  
--	if (unlikely(PageSwapCache(page))) {
-+	if (unlikely(FolioSwapCache(folio))) {
- 		swp_entry_t entry;
+@@ -2186,7 +2185,7 @@ struct mem_cgroup *lock_page_memcg(struct page *page)
+ 		return memcg;
  
--		entry.val = page_private(page);
-+		entry.val = folio_private(folio);
- 		return swap_address_space(entry);
+ 	spin_lock_irqsave(&memcg->move_lock, flags);
+-	if (memcg != page_memcg(head)) {
++	if (memcg != folio_memcg(folio)) {
+ 		spin_unlock_irqrestore(&memcg->move_lock, flags);
+ 		goto again;
  	}
+@@ -2201,6 +2200,12 @@ struct mem_cgroup *lock_page_memcg(struct page *page)
  
--	mapping = page->mapping;
-+	mapping = folio->page.mapping;
- 	if ((unsigned long)mapping & PAGE_MAPPING_ANON)
- 		return NULL;
- 
- 	return (void *)((unsigned long)mapping & ~PAGE_MAPPING_FLAGS);
+ 	return memcg;
  }
--EXPORT_SYMBOL(page_mapping);
-+EXPORT_SYMBOL(folio_mapping);
- 
- /*
-  * For file cache pages, return the address_space, otherwise return NULL
-  */
- struct address_space *page_mapping_file(struct page *page)
- {
--	if (unlikely(PageSwapCache(page)))
-+	struct folio *folio = page_folio(page);
++EXPORT_SYMBOL(lock_folio_memcg);
 +
-+	if (unlikely(FolioSwapCache(folio)))
- 		return NULL;
--	return page_mapping(page);
-+	return folio_mapping(folio);
++struct mem_cgroup *lock_page_memcg(struct page *page)
++{
++	return lock_folio_memcg(page_folio(page));
++}
+ EXPORT_SYMBOL(lock_page_memcg);
+ 
+ /**
+@@ -2223,15 +2228,22 @@ void __unlock_page_memcg(struct mem_cgroup *memcg)
+ 	rcu_read_unlock();
  }
  
- /* Slow path of page_mapcount() for compound pages */
++/**
++ * unlock_folio_memcg - unlock a folio and memcg binding
++ * @folio: the folio
++ */
++void unlock_folio_memcg(struct folio *folio)
++{
++	__unlock_page_memcg(folio_memcg(folio));
++}
++
+ /**
+  * unlock_page_memcg - unlock a page and memcg binding
+  * @page: the page
+  */
+ void unlock_page_memcg(struct page *page)
+ {
+-	struct page *head = compound_head(page);
+-
+-	__unlock_page_memcg(page_memcg(head));
++	unlock_folio_memcg(page_folio(page));
+ }
+ EXPORT_SYMBOL(unlock_page_memcg);
+ 
 -- 
 2.29.2
 
