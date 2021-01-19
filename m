@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9FE22FC3DC
+	by mail.lfdr.de (Postfix) with ESMTP id 5D69E2FC3DB
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 23:40:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403986AbhASOcH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 09:32:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46512 "EHLO
+        id S2405143AbhASOcc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 09:32:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387665AbhASJiH (ORCPT
+        with ESMTP id S1728901AbhASJju (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:38:07 -0500
+        Tue, 19 Jan 2021 04:39:50 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F81C061573;
-        Tue, 19 Jan 2021 01:37:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2783C061573;
+        Tue, 19 Jan 2021 01:39:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=lkd5BoXRXZXegz0OAW0KP/ZWkeXWrChLRnyeG1Ce6eM=; b=Mh9s8AHw1yhDl8mLTSrmKY92NR
-        qApA5C2Sos5Xw/oxVQZ4P5QVp9lEKDefhVdmrQUrH4hnXHygg1L6hlz7MR64dWZ0fsWJrBcgjJat8
-        A5SrHVAImT3UUPZBGl78jzF32nOeqYKjCVEZ1wMgFhr3vrU9LvZSW8jcXxQcavpg7ztYyySly00pg
-        syGJXrpNCNL+2IkOt4s8RfVfDqcT0PH+xeiBhjJx43VBcL0Sm8DSEFFPDMpoBCr68OnYzR00zBD0/
-        0VSK5NkCJvCBzhPLkK/E46VBpO/yV08GyBZYo/yhBPdrQDK4UM4EgtrJTiNuUNzDrJ9vbVDl8ra5x
-        PZFa4w3g==;
+        bh=Q/D2JdF5j8WZ+eKrcjnyASbc7aIzC7mYZI2IulQrCZ0=; b=pYLEJ7WC/RXDg1o4DBU2/cYVuP
+        Thgszt4zS9vHR1ZzFkVfHFaq1An+xzuYhjmHGYfEGH/w1mvDYtsxJkvxjdijEkrW+9Q8RQjCoeV/a
+        pUUSvTQ3kmaehzhkFCYjBIezEzhtRJJrMRSkyjfoN/JRYFi1KcdgajxMoM3Lmw/x8CaIuoT94Jx1K
+        kE8A0QccedAW01CvNMlV8yVmzmoPnSd9xe6mxVj9PnrIk1DHEVZNB7eMwjvMh1bhH3wgq/cmOEIbm
+        +XJx6IsUUV7dnjNZhRkWd8N4D6wg6xV/W0a7XP7UrSYwTA1aam8Xgr0tTNiYKlN8DzjhcwDujK82l
+        SrUjaoBg==;
 Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l1nRw-00E7p7-2E; Tue, 19 Jan 2021 09:37:21 +0000
-Date:   Tue, 19 Jan 2021 09:37:20 +0000
+        id 1l1nTM-00E7ta-3U; Tue, 19 Jan 2021 09:38:54 +0000
+Date:   Tue, 19 Jan 2021 09:38:48 +0000
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -65,33 +65,18 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 22/42] open: handle idmapped mounts in do_truncate()
-Message-ID: <20210119093720.GG3364550@infradead.org>
+Subject: Re: [PATCH v5 23/42] open: handle idmapped mounts
+Message-ID: <20210119093848.GH3364550@infradead.org>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210112220124.837960-23-christian.brauner@ubuntu.com>
+ <20210112220124.837960-24-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210112220124.837960-23-christian.brauner@ubuntu.com>
+In-Reply-To: <20210112220124.837960-24-christian.brauner@ubuntu.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 12, 2021 at 11:01:04PM +0100, Christian Brauner wrote:
-> @@ -930,8 +932,12 @@ void dump_truncate(struct coredump_params *cprm)
->  
->  	if (file->f_op->llseek && file->f_op->llseek != no_llseek) {
->  		offset = file->f_op->llseek(file, 0, SEEK_CUR);
-> -		if (i_size_read(file->f_mapping->host) < offset)
-> -			do_truncate(file->f_path.dentry, offset, 0, file);
-> +		if (i_size_read(file->f_mapping->host) < offset) {
-> +			struct user_namespace *mnt_userns;
-> +
-> +			mnt_userns = file_user_ns(file);
-> +			do_truncate(mnt_userns, file->f_path.dentry, offset, 0, file);
-> +		}
-
-I think we can skip the local variable here.  In fact for all callers
-of do_truncate except vfs_truncate a little file_truncate helper that
-takes a struct file would help readability a lot.
+I think path_permission() and file_persmission() helpers would reduce
+the clutter a lot here.
