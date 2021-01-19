@@ -2,141 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45CE62FC11A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 21:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5D02FC12B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 21:38:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391183AbhASU1b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 15:27:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45152 "EHLO
+        id S2391403AbhASUfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 15:35:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391951AbhASU0X (ORCPT
+        with ESMTP id S1730238AbhASUf2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 15:26:23 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA58BC0613ED;
-        Tue, 19 Jan 2021 12:25:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3skarH8usgooZsIjjZg9m11Y8vaFLaunY8jfnB6wGPQ=; b=IcFHUlBLm4M8B7XITZrlaPwJZk
-        PxLbfPfkfkOKcDtLlhfkXiUHka5CvTPb7hLgrgmT3Ja+UqcHjN9zY1H6Tmg+WZOu5IRktFRwdo/cS
-        V9j3hg1Ow8RITENXtDtJLmBCwghrrgT8ZPHCKw/4HQvv4xpai+rfbtNKnht6rSRWFZHmep0AFdaLc
-        WpT0BIFZXKaOI1hvNwPxLTcH2Gpj0LlBuWbpsOxA9rDZtRWPCXjXziJFZX6g2OZYB33LP00RMcFkb
-        3de7nf3N03r6bUtfXPBA8XywS5tDj8kVNevPplCpPm+FZKgebPUFH+9MEl3Zc+oBbVK/fmh04LESS
-        xKXNl/dg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l1xW1-00EmeP-RV; Tue, 19 Jan 2021 20:22:22 +0000
-Date:   Tue, 19 Jan 2021 20:22:13 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>
-Subject: Re: [PATCH v14 05/10] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-ID: <20210119202213.GI2260413@casper.infradead.org>
-References: <20201203062949.5484-1-rppt@kernel.org>
- <20201203062949.5484-6-rppt@kernel.org>
+        Tue, 19 Jan 2021 15:35:28 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C8BC061573;
+        Tue, 19 Jan 2021 12:34:47 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id v24so24346382lfr.7;
+        Tue, 19 Jan 2021 12:34:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=oGyeQId7ghuiubDiteHOq99u7bCiW9P86xlgrtBuPx0=;
+        b=ptoZk/WdXfRsTKZwQ/J1ogvUQcEJs0Bqc8KV5FSG1R53TtpZZGpl0xldd5lU4FK54g
+         fqvDz2igNb0eBNZWQnIX1doIRYsK0IbvN+NlEVzXJMIg4b066h5FCltE9iEgMjY4sgIo
+         7vBTUALabI7sCL9p1UYjK57H24yE8IyUpbOTUqtaOaZyNeqZJJMz8Cb7uF3YPjdyDRNG
+         I0qfNoplfJx7ofCcoH2Fv5y1SdwXmL7RSo5xv/x44xe9mpvKOBRG/Be18qBdQIrSBtv5
+         +8mvR+wDyBjDtWOJJLKQyn4Fpn/5O94lsK46H0ZdMrnutMhYbxUqlIjQMQehNOJz7Tba
+         mWtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=oGyeQId7ghuiubDiteHOq99u7bCiW9P86xlgrtBuPx0=;
+        b=nUBq3/EQXlPrNr7OW4oNaEICWNfItAoCUEwa27WjHRXrKwolU3mq/ySQl2oYLOqePF
+         hmrAgor/rIyTReRtbt8Qp6yqcNe5kPcxlfk7BDk9q303Dkj4cX4rrfxQbZS5UI/yIBjg
+         H3lWS9jsefU84OkExMAj3M96KHCuh9UrG1xJrnexNJcN12Ll/DsaHPagjAx77q+PppB2
+         VprEYG5pWroE5g8PUBGS+kWFInzjvZIVWkzIRVZHKuf/pSiwwYCUIG9BZowqaJd38fO4
+         68VSAJHx0kGyQThH0exCPQoBOs4ECAcQptkKC3rPKdt8W5YoIqDCIHy4DoWG3ytQcxQL
+         mCjQ==
+X-Gm-Message-State: AOAM5333/4ptvbbx4PlxJJ8gVLYWdfIMJciqmX9q1MBMWTh6HLM91DZ+
+        LTgEU85zPEpbWrft0fo2vHY=
+X-Google-Smtp-Source: ABdhPJyZLECKkiiifagCkcTDcdstvBbQwLIeZMHqCpHWXAxvJ1OI4a3UyiJnO4JWjsb4gz0a1SR3aw==
+X-Received: by 2002:a05:6512:338e:: with SMTP id h14mr2618345lfg.324.1611088485999;
+        Tue, 19 Jan 2021 12:34:45 -0800 (PST)
+Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
+        by smtp.gmail.com with ESMTPSA id f18sm2375871lfh.137.2021.01.19.12.34.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jan 2021 12:34:45 -0800 (PST)
+Date:   Tue, 19 Jan 2021 22:34:42 +0200
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
+        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com, hch@lst.de,
+        ebiggers@kernel.org, andy.lavr@gmail.com
+Subject: Re: [PATCH v17 01/10] fs/ntfs3: Add headers and misc files
+Message-ID: <20210119203442.ricoppwmw662bjkd@kari-VirtualBox>
+References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
+ <20201231152401.3162425-2-almaz.alexandrovich@paragon-software.com>
+ <20210103231755.bcmyalz3maq4ama2@kari-VirtualBox>
+ <20210119104339.GA2674@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201203062949.5484-6-rppt@kernel.org>
+In-Reply-To: <20210119104339.GA2674@kadam>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 03, 2020 at 08:29:44AM +0200, Mike Rapoport wrote:
-> +static vm_fault_t secretmem_fault(struct vm_fault *vmf)
-> +{
-> +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-> +	struct inode *inode = file_inode(vmf->vma->vm_file);
-> +	pgoff_t offset = vmf->pgoff;
-> +	vm_fault_t ret = 0;
-> +	unsigned long addr;
-> +	struct page *page;
-> +	int err;
-> +
-> +	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
-> +		return vmf_error(-EINVAL);
-> +
-> +	page = find_get_page(mapping, offset);
-> +	if (!page) {
-> +
-> +		page = secretmem_alloc_page(vmf->gfp_mask);
-> +		if (!page)
-> +			return vmf_error(-ENOMEM);
+On Tue, Jan 19, 2021 at 01:43:39PM +0300, Dan Carpenter wrote:
+> On Mon, Jan 04, 2021 at 01:17:55AM +0200, Kari Argillander wrote:
+> > On Thu, Dec 31, 2020 at 06:23:52PM +0300, Konstantin Komarov wrote:
+> > 
+> > > +int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
+> > > +		   const u16 *upcase)
+> > > +{
+> > > +	int diff;
+> > > +	size_t len = l1 < l2 ? l1 : l2;
+> > 
+> > I notice that these functions might call both ignore case and upcase in a row.
+> > record.c - compare_attr()
+> > index.c - cmp_fnames()
+> > 
+> > So maybe we can add bool bothcases.
+> > 
+> > int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
+> > 		   const u16 *upcase, bool bothcase)
+> > {
+> > 	int diff1 = 0;
+> > 	int diff2;
+> > 	size_t len = l1 < l2 ? l1 : l2;
+> 
+> size_t len = min(l1, l2);
+> 
+> I wonder if this could be a Coccinelle script?
 
-Just use VM_FAULT_OOM directly.
+Yeah I have to also confess that I just copy paste that. Didn't use
+brain yet. Atleast to me it wasn't crystal clear right away what that
+does. So Coccinelle script would definetly be good idea.
 
-> +		err = add_to_page_cache(page, mapping, offset, vmf->gfp_mask);
-> +		if (unlikely(err))
-> +			goto err_put_page;
+Someone has atleast made it https://github.com/bhumikagoyal/coccinelle_scripts
+I wonder if we need to add cases also in "backwards". Haven't test these.
+If patch is prefered from me then I can send it but someone else can
+also send it.
 
-What if the error is EEXIST because somebody else raced with you to add
-a new page to the page cache?
+@@
+type T;
+T x;
+T y;
+@@
+(
+- x < y ? x : y
++ min(x,y)
+|
+- x > y ? x : y
++ max(x,y)
+|
+- x < y ? y : x
++ max(x,y)
+|
+- x > y ? y : x
++ min(x,y)
+) 
 
-> +		err = set_direct_map_invalid_noflush(page, 1);
-> +		if (err)
-> +			goto err_del_page_cache;
-
-Does this work correctly if somebody else has a reference to the page
-in the meantime?
-
-> +		addr = (unsigned long)page_address(page);
-> +		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
-> +
-> +		__SetPageUptodate(page);
-
-Once you've added it to the cache, somebody else can come along and try
-to lock it.  They will set PageWaiter.  Now you call __SetPageUptodate
-and wipe out their PageWaiter bit.  So you won't wake them up when you
-unlock.
-
-You can call __SetPageUptodate before adding it to the page cache,
-but once it's visible to another thread, you can't do that.
-
-> +		ret = VM_FAULT_LOCKED;
-> +	}
-> +
-> +	vmf->page = page;
-
-You're supposed to return the page locked, so use find_lock_page() instead
-of find_get_page().
-
-> +	return ret;
-> +
-> +err_del_page_cache:
-> +	delete_from_page_cache(page);
-> +err_put_page:
-> +	put_page(page);
-> +	return vmf_error(err);
-> +}
