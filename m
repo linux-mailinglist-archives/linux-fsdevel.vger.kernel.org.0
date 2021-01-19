@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 307922FB453
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 09:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D17CC2FB432
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 09:37:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388785AbhASFXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 00:23:21 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:34502 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389640AbhASFHk (ORCPT
+        id S2388914AbhASFX0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 00:23:26 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:47326 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389743AbhASFHs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 00:07:40 -0500
+        Tue, 19 Jan 2021 00:07:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611032860; x=1642568860;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2EwAg85Rl2+jMe62nRnS8RL98bOCXmnfO5riJrV6i0c=;
-  b=GjcXuKIfE7oPUJJM/Wi2vVnUpYud2gKvIpltIXHVNrAg3RsXPu43SSpM
-   wIW3+AVU6/Swl0XW8ZahSdWTuFz45x0PRFdfyO6jSRBESB3FGqMrqsV51
-   LqkiqQ6Mgcp5WA0fCSeOO9AkjTdUCbrZXnNCSfz2UwQChlBG1Ttqr5VHX
-   GXRzXfm92QORv96J/4QuRWF+9tkr+pcO4FELeyKPoafSsntR2wTSd/PaH
-   Iw7sQzoXv+E9E2JN2DSUUWOHaWKDpdqLHfZz17GiunoEXJigP+2IH4ZKA
-   x4hjKdDD2Xj6pDfIKfk4mM4S2sDepgL7SmTMUx4dUWt2yBgJNl9B9ln3F
+  t=1611032869; x=1642568869;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xDvxltQy2dTITc0BsqVzj/cnHCYvpegwiBh4lFEjP/k=;
+  b=Wir5F5YopwXlsvgDcLDoZ3FKAlZ+VLjP1B1A9A8OrTqJLbXIRlORGMMp
+   UVg1WXqvIQT4xVQ3p2kg9Lu3gaDv+gwJeKT0n30io6fo91Ny11jY3TmuI
+   hSg5+Xva3mkzhQhkX2o/csLA0hn7A+hblPbHDmtx66Q7A7xHknzq2QNGJ
+   PPbatY2dsk68/UIIy95IZymooNSEl2UOjtxUz3XAGy02oNTML/bsBJ90I
+   R09Qing8/xZOcnXSTztVWHgEFLa/B7X6dIFECxaJVSc83egNvgwjfB2G2
+   4Q6Lgsa2hbki1xu0dtJ410x8fgOdVoHt66TqlZH0N5DaNy939yh/KISBp
    w==;
-IronPort-SDR: 7F9V8E2gCFx1ENrckraC/aOPabyshxzdGR1mhufNzVCSB1ZQqnbgSiAulHQ+fQrQf0VUfZp2RQ
- lD9qauiuxEBB9PMtkyVUCtlbRRvbja4mqWOP92mvguWXYPFPRt0ywXlzt4nwaxSEuykNRTLHwY
- 46Oyg2LmyN3IKgagwVvK4ScZzXbnceF3nrKIl0BsSg9m7EerKdRxhTPeeLR437E7+7EOo/WM3N
- rxvlmtGFm6UcYsU0Qk1//34mDVQN7IyG+xRcn7TqkyNt+L1lv3J+Us9C6/ANlf4U03PgJBiMf4
- 7rY=
+IronPort-SDR: Nd3u0eOpJnMy1aeTSCWniaL1n3jNvOybHVlQ9X0lZVbXiYns0fw9Seh4n8aJFNGN8pxvmJs9rj
+ aCecUHgq1UsGmTDdA4GhXkaoCsLeKzvXn3qdYG5xgZn+mnmWl+d8XK+kmDGYLoILWcvLKIrNfN
+ /jidUSGjRic0KVmryU9fzoi8KTt5Tpi0eJoDZuiKxSEW1T1JTWkFIpkak46Z1MhkgBv2g7ylDL
+ R/XmhzCEW0evABpwrGcBTnXHNtYcD5NhGrsmgRoNtvRRkP/8PLbTroXAtHq6bXUwp0ltSMMzOU
+ Rvk=
 X-IronPort-AV: E=Sophos;i="5.79,357,1602518400"; 
-   d="scan'208";a="268080837"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Jan 2021 13:06:34 +0800
-IronPort-SDR: nICJNTCp5DZTCdEW+BDS8Z2snIrYrlMGiOG+8k41nZ+toTeWOlVhexX9dHTlwiqlcEC7mJSKUG
- Iy/fc+BGI7Gq8Tc8eNWRNodotuWudKLMuHWvPgvyglmYCy3CVY5v6y+KCctMt1KQr1t/A5vu6G
- EU8YQ12jfB7JSDNqLnc6qhTKltQXkH+QIkeCJgH1ExuBNJ/LLJLVkSZoi6pcXoZsChyTgxhzzc
- M/7G2USRTjBZjdX6m3rZ7UDS60bVW6YpGRy6Hay6Zi1n8mTtRVmKMccQ45eAk1w07M3Ya+tZ9I
- WeterqNf9O4H/xA4G74z3xOk
+   d="scan'208";a="158940407"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Jan 2021 13:06:43 +0800
+IronPort-SDR: bHl2h3ZxK7UAozU1UsVLBuh9gd823Lvj1Udw5BZky1lXAsx5WTijRR/JWVnWfL7NS8Q7SSBfT4
+ RkYee7caNWQzO4fVyRQD4FtrSAGvTOqBq5+pe0vaOWN1rntux8iVEwg700nkPqIcsxwRJGsQhw
+ ti2MNTZDVWZElTssfabASie/wTn0I1uKcB7+iLItMBzwiQXVFBHG+xQAY0Y1UFkBk2QBkquELf
+ FJldlkWJuDyOlMXlkvp4WfcKA4sVGwnmMykqAQ2gxWxg2rY5DZ5VJc/DgPUpUoRCtRTHdIdGTK
+ 0KGgiGtKDnmaKrUQYFnS4aZG
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 20:49:09 -0800
-IronPort-SDR: w8TQaHPmOf4afpFLhHFiHm4s9YBVvwz1nCheCJ4OBOH8yQ2UY0NC3Tt/JdFHF9KkeR+DlxZGUH
- e7bQB+02ddXqKaR8b/7v1Y7wXKviC9dKqJTPF9aSTC9cHooTn06sxWBBnh6ybRkpJPiq1eaXml
- Li9XSEIsEl1dTBAvxWyxQKBso9dBp+WZiRKxmJUsbAqs+G/qtiWTWXlVZWjYoZKV0OKSYwZfdM
- WxDGvor0MhqHOPvWCUI9b0h4sFeSeNraJk/cdT+mEYZtqS1ubVV2lyl7ZqDz6u2Z/jCzzw/RkG
- Jdo=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 20:49:17 -0800
+IronPort-SDR: +NpnU1qF6QR8N8XBneIu3ZiZvasLVseQjYJJ1MMaKJ+OglnqkmtIQug/+7v1w/r2fkDf84edQB
+ DjafWMcc4nOfiH+Mk03qupgTmYSJWzjHG319wMnHdznvAZeqQCPvdsGd5DhsBkszoippTGcVSA
+ HK0sa0ldtVZMuvow8gFchGX7RsHVWH4qFN2Kntl3WSC7I2G5w7F3PvWz0KvKk1ACpfqrdG9xEj
+ nchAe07v2IYGlvMXlxEBOdpBs6EbbN/Fyy3RtZL7kH3VABJ8RZFvQM1pZVPOuoiP0DweMhWYKY
+ mtU=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 18 Jan 2021 21:06:34 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 18 Jan 2021 21:06:42 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -70,112 +70,99 @@ Cc:     jfs-discussion@lists.sourceforge.net, dm-devel@redhat.com,
         osandov@fb.com, bvanassche@acm.org, gustavo@embeddedor.com,
         asml.silence@gmail.com, jefflexu@linux.alibaba.com,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [RFC PATCH 00/37] block: introduce bio_init_fields()
-Date:   Mon, 18 Jan 2021 21:05:54 -0800
-Message-Id: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 01/37] block: introduce bio_init_fields() helper
+Date:   Mon, 18 Jan 2021 21:05:55 -0800
+Message-Id: <20210119050631.57073-2-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
+In-Reply-To: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
+References: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+There are several places in the file-system, block layer, device drivers
+where struct bio members such as bdev, sector, private, end io callback,
+io priority, write hints are initialized where we can use a helper
+function.
 
-This is a *compile only RFC* which adds a generic helper to initialize
-the various fields of the bio that is repeated all the places in
-file-systems, block layer, and drivers.
+This pach introduces a helper function which we use in the block lyaer
+code. Subsequent patches use this function to reduce repeated code.
 
-The new helper allows callers to initialize various members such as
-bdev, sector, private, end io callback, io priority, and write hints.
+Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+---
+ block/blk-lib.c     | 13 +++++--------
+ include/linux/bio.h | 13 +++++++++++++
+ 2 files changed, 18 insertions(+), 8 deletions(-)
 
-The objective of this RFC is to only start a discussion, this it not 
-completely tested at all.                                                                                                            
-Following diff shows code level benefits of this helper :-
- 38 files changed, 124 insertions(+), 236 deletions(-)
-
--ck
-
-Chaitanya Kulkarni (37):
-  block: introduce bio_init_fields() helper
-  fs: use bio_init_fields in block_dev
-  btrfs: use bio_init_fields in disk-io
-  btrfs: use bio_init_fields in volumes
-  ext4: use bio_init_fields in page_io
-  gfs2: use bio_init_fields in lops
-  gfs2: use bio_init_fields in meta_io
-  gfs2: use bio_init_fields in ops_fstype
-  iomap: use bio_init_fields in buffered-io
-  iomap: use bio_init_fields in direct-io
-  jfs: use bio_init_fields in logmgr
-  zonefs: use bio_init_fields in append
-  drdb: use bio_init_fields in actlog
-  drdb: use bio_init_fields in bitmap
-  drdb: use bio_init_fields in receiver
-  floppy: use bio_init_fields
-  pktcdvd: use bio_init_fields
-  bcache: use bio_init_fields in journal
-  bcache: use bio_init_fields in super
-  bcache: use bio_init_fields in writeback
-  dm-bufio: use bio_init_fields
-  dm-crypt: use bio_init_fields
-  dm-zoned: use bio_init_fields metadata
-  dm-zoned: use bio_init_fields target
-  dm-zoned: use bio_init_fields
-  dm log writes: use bio_init_fields
-  nvmet: use bio_init_fields in bdev-ns
-  target: use bio_init_fields in iblock
-  btrfs: use bio_init_fields in scrub
-  fs: use bio_init_fields in buffer
-  eros: use bio_init_fields in data
-  eros: use bio_init_fields in zdata
-  jfs: use bio_init_fields in metadata
-  nfs: use bio_init_fields in blocklayout
-  ocfs: use bio_init_fields in heartbeat
-  xfs: use bio_init_fields in xfs_buf
-  xfs: use bio_init_fields in xfs_log
-
- block/blk-lib.c                     | 13 +++++--------
- drivers/block/drbd/drbd_actlog.c    |  5 +----
- drivers/block/drbd/drbd_bitmap.c    |  5 +----
- drivers/block/drbd/drbd_receiver.c  | 11 +++--------
- drivers/block/floppy.c              |  5 +----
- drivers/block/pktcdvd.c             | 12 ++++--------
- drivers/md/bcache/journal.c         | 21 ++++++++-------------
- drivers/md/bcache/super.c           | 19 +++++--------------
- drivers/md/bcache/writeback.c       | 14 ++++++--------
- drivers/md/dm-bufio.c               |  5 +----
- drivers/md/dm-crypt.c               |  4 +---
- drivers/md/dm-log-writes.c          | 21 ++++++---------------
- drivers/md/dm-zoned-metadata.c      | 15 +++++----------
- drivers/md/dm-zoned-target.c        |  9 +++------
- drivers/md/md.c                     |  6 ++----
- drivers/nvme/target/io-cmd-bdev.c   |  4 +---
- drivers/target/target_core_iblock.c | 11 +++--------
- fs/block_dev.c                      | 17 +++++------------
- fs/btrfs/disk-io.c                  | 11 ++++-------
- fs/btrfs/scrub.c                    |  6 ++----
- fs/btrfs/volumes.c                  |  4 +---
- fs/buffer.c                         |  7 ++-----
- fs/erofs/data.c                     |  6 ++----
- fs/erofs/zdata.c                    |  9 +++------
- fs/ext4/page-io.c                   |  6 ++----
- fs/gfs2/lops.c                      |  6 ++----
- fs/gfs2/meta_io.c                   |  5 ++---
- fs/gfs2/ops_fstype.c                |  7 ++-----
- fs/iomap/buffered-io.c              |  5 ++---
- fs/iomap/direct-io.c                | 15 +++++----------
- fs/jfs/jfs_logmgr.c                 | 16 ++++------------
- fs/jfs/jfs_metapage.c               | 16 +++++++---------
- fs/nfs/blocklayout/blocklayout.c    |  8 ++------
- fs/ocfs2/cluster/heartbeat.c        |  4 +---
- fs/xfs/xfs_buf.c                    |  6 ++----
- fs/xfs/xfs_log.c                    |  6 ++----
- fs/zonefs/super.c                   |  7 +++----
- include/linux/bio.h                 | 13 +++++++++++++
- 38 files changed, 124 insertions(+), 236 deletions(-)
-
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 752f9c722062..5ee488c1bcc6 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -95,8 +95,7 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 		WARN_ON_ONCE((req_sects << 9) > UINT_MAX);
+ 
+ 		bio = blk_next_bio(bio, 0, gfp_mask);
+-		bio->bi_iter.bi_sector = sector;
+-		bio_set_dev(bio, bdev);
++		bio_init_fields(bio, bdev, sector, NULL, NULL, 0, 0);
+ 		bio_set_op_attrs(bio, op, 0);
+ 
+ 		bio->bi_iter.bi_size = req_sects << 9;
+@@ -189,8 +188,7 @@ static int __blkdev_issue_write_same(struct block_device *bdev, sector_t sector,
+ 
+ 	while (nr_sects) {
+ 		bio = blk_next_bio(bio, 1, gfp_mask);
+-		bio->bi_iter.bi_sector = sector;
+-		bio_set_dev(bio, bdev);
++		bio_init_fields(bio, bdev, sector, NULL, NULL, 0, 0);
+ 		bio->bi_vcnt = 1;
+ 		bio->bi_io_vec->bv_page = page;
+ 		bio->bi_io_vec->bv_offset = 0;
+@@ -265,8 +263,7 @@ static int __blkdev_issue_write_zeroes(struct block_device *bdev,
+ 
+ 	while (nr_sects) {
+ 		bio = blk_next_bio(bio, 0, gfp_mask);
+-		bio->bi_iter.bi_sector = sector;
+-		bio_set_dev(bio, bdev);
++		bio_init_fields(bio, bdev, sector, NULL, NULL, 0, 0);
+ 		bio->bi_opf = REQ_OP_WRITE_ZEROES;
+ 		if (flags & BLKDEV_ZERO_NOUNMAP)
+ 			bio->bi_opf |= REQ_NOUNMAP;
+@@ -317,8 +314,8 @@ static int __blkdev_issue_zero_pages(struct block_device *bdev,
+ 	while (nr_sects != 0) {
+ 		bio = blk_next_bio(bio, __blkdev_sectors_to_bio_pages(nr_sects),
+ 				   gfp_mask);
+-		bio->bi_iter.bi_sector = sector;
+-		bio_set_dev(bio, bdev);
++		bio_init_fields(bio, bdev, sector, NULL, NULL, 0, 0);
++
+ 		bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
+ 
+ 		while (nr_sects != 0) {
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 1edda614f7ce..fbeaa5e42a5d 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -820,4 +820,17 @@ static inline void bio_set_polled(struct bio *bio, struct kiocb *kiocb)
+ 		bio->bi_opf |= REQ_NOWAIT;
+ }
+ 
++static inline void bio_init_fields(struct bio *bio, struct block_device *bdev,
++				   sector_t sect, void *priv,
++				   bio_end_io_t *end_io,
++				   unsigned short prio, unsigned short whint)
++{
++	bio_set_dev(bio, bdev);
++	bio->bi_iter.bi_sector = sect;
++	bio->bi_private = priv;
++	bio->bi_end_io = end_io;
++	bio->bi_ioprio = prio;
++	bio->bi_write_hint = whint;
++}
++
+ #endif /* __LINUX_BIO_H */
 -- 
 2.22.1
 
