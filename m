@@ -2,103 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFD232FC3C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 23:40:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8CE2FC3C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 23:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405564AbhASOdW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 09:33:22 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:51649 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387730AbhASKtj (ORCPT
+        id S2405617AbhASOdl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 09:33:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47022 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389615AbhASLwd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 05:49:39 -0500
-Received: by mail-io1-f69.google.com with SMTP id y20so31654984ioy.18
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 02:48:43 -0800 (PST)
+        Tue, 19 Jan 2021 06:52:33 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8299FC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 03:51:52 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id a9so15978676wrt.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 03:51:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=6iDFCX/Z/S1DDiXef9jT5XZ0zdxhee10Uz0yBq4fmLI=;
+        b=QqsAM21tvQy240MStC/Wl/85ukbKXUGN12T1rk/U+IBfPIKSbGuQtc99ACPsUVyOMg
+         TM9Hn4Tr5OMuohwsIVex/Wt39moLYN56iIhJypZvpGoXf2M/NiqMK6AatMTKeJ+U15ny
+         S7l4nw3RqV/yNhKnnj7kzwPpqzsIZWweRIzjkvZCf0Z90Wq/60DaAb6cV4c4rclap5hJ
+         SYQFYSlwKeCYz3LJzZyvZWZRa9hxXj0Z9ercJ5SwYPpBHmw/fUIZ1pgHqIqGMBMRWSoB
+         MOw7TWlHfbAT27JgvCi6lufI/QTReDK0dQ73jhkbC3t9jW7TtEN4MGd3HFu1v1xm9YeU
+         nPew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=BNpQVX1O+cyOBMkR/TOJl1Zoq0gO8cOFzbu0wo8ajm0=;
-        b=jaAHiQc7fd4S1aNTyQwOI3HdeEH6C/06Hhz82awmmS0VjFHcSFiMFWgBVg7fQj49x/
-         q/w0vh4z2I/n+pS0MVJI6Vm52Hrl7ZqgDOreEa7ukZTPXMOcTPhCsiu53F8NMvwBt95f
-         LZwxbu2dNvzyNGBDXNUw8HzsPW9AR0LuxMxsTswWuISn7b/IOrQ+4NOJ5Sf7TvTF+c9Q
-         dJRNfFWXi3KwCMN1nKFAcmm7lcAhe6P4iIC2ZkuTxXLFzkkzfWtWhMivRZil3t/7VQ24
-         yJuaO7C9BApXP6VK+Ngm7mguadfXA3naIfPw5OJ1HVzSGY9cFw7shtrkYvMLNb7uqU5o
-         +jnw==
-X-Gm-Message-State: AOAM531X/r06Zszx5262jfxD5zCf7otUOo2a61adc7yjOqj129ZAzeBM
-        bFm/TGJdIt0U5ot9nR4ndd6CQM44S9rRTTH2ytYG+ygpCJjb
-X-Google-Smtp-Source: ABdhPJwRZGICyAc9YguweoA/wKY6u6SOwFq+oTtQJm/1QiI83UN8virOQhf9L37lRF2ihWnI28mucskkdNWBC+/E1HBw5hcBKcrH
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6iDFCX/Z/S1DDiXef9jT5XZ0zdxhee10Uz0yBq4fmLI=;
+        b=PmoAsMjoZeoS/f+Yjq1WUg5NSnfy9kzCXsNx5VQOnC8hDWRJtRMjh2bWEb+65dBzQ1
+         z/4/CF3QVnsNJHX2aHTVdwAqFJ0BZNhWL0ADx/gFN0S6dJua33HMMUSf9DSYpY6En7pa
+         HW3DDgPqW5VRCWupU2Nr1QVB/WHcgnnU+QuJrANHDstKX/z7CNHTvtMBLYwevtzZRkSp
+         hopCJR0wF4P6T+RSoh6jIAQdmDZqtPv77V0hdh1iLfMrwDFPzJfOcIi8n00W5IOuYVVR
+         fJ2JxDcN+xRkRaaS/WhAhklx9e5cdnN7EFtMugDz4FDAq42EnvMDdtno37/Ubd/jVWgo
+         ho4w==
+X-Gm-Message-State: AOAM532POkWEOZtJL6cbkZ4mQ3ItCaNgJlEMwv/53Xwk4J9+Ia6lwOHN
+        4srDOxvUvJrfkN9DLy4y+XgaAQ==
+X-Google-Smtp-Source: ABdhPJyzJT4CuiBOarxBJeUfrd160m0ck9QZcO6qU8n5MNGyn9JvKHa3WlsD5Hy0FO/d0GbFGCxj1Q==
+X-Received: by 2002:a05:6000:1362:: with SMTP id q2mr1103822wrz.341.1611057111289;
+        Tue, 19 Jan 2021 03:51:51 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:210:41d4:8c90:d38:455d])
+        by smtp.gmail.com with ESMTPSA id g184sm4269649wma.16.2021.01.19.03.51.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jan 2021 03:51:50 -0800 (PST)
+Date:   Tue, 19 Jan 2021 11:51:49 +0000
+From:   Alessio Balsini <balsini@android.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Akilesh Kailash <akailash@google.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Peng Tao <bergwolf@gmail.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND V11 3/7] fuse: Definitions and ioctl for
+ passthrough
+Message-ID: <YAbH1YuffGDXt67h@google.com>
+References: <20210118192748.584213-1-balsini@android.com>
+ <20210118192748.584213-4-balsini@android.com>
+ <CAOQ4uxj-Ncm7nKBZE_homGu_kcF0w1JtYcC9zg2=uWT591Ggbw@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c8d:: with SMTP id w13mr2751807ill.301.1611053297346;
- Tue, 19 Jan 2021 02:48:17 -0800 (PST)
-Date:   Tue, 19 Jan 2021 02:48:17 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000080aeb405b93e9309@google.com>
-Subject: WARNING in mntput_no_expire
-From:   syzbot <syzbot+c19357b59a4b43938b97@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxj-Ncm7nKBZE_homGu_kcF0w1JtYcC9zg2=uWT591Ggbw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Jan 19, 2021 at 08:33:16AM +0200, Amir Goldstein wrote:
+> On Mon, Jan 18, 2021 at 9:28 PM Alessio Balsini <balsini@android.com> wrote:
+> >
+> > Expose the FUSE_PASSTHROUGH interface to user space and declare all the
+> > basic data structures and functions as the skeleton on top of which the
+> > FUSE passthrough functionality will be built.
+> >
+> > As part of this, introduce the new FUSE passthrough ioctl(), which
+> > allows the FUSE daemon to specify a direct connection between a FUSE
+> > file and a lower file system file. Such ioctl() requires users pace to
+> > pass the file descriptor of one of its opened files through the
+> > fuse_passthrough_out data structure introduced in this patch. This
+> > structure includes extra fields for possible future extensions.
+> > Also, add the passthrough functions for the set-up and tear-down of the
+> > data structures and locks that will be used both when fuse_conns and
+> > fuse_files are created/deleted.
+> >
+> > Signed-off-by: Alessio Balsini <balsini@android.com>
+> > ---
+> [...]
+> 
+> > @@ -699,6 +700,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+> >         INIT_LIST_HEAD(&fc->bg_queue);
+> >         INIT_LIST_HEAD(&fc->entry);
+> >         INIT_LIST_HEAD(&fc->devices);
+> > +       idr_init(&fc->passthrough_req);
+> >         atomic_set(&fc->num_waiting, 0);
+> >         fc->max_background = FUSE_DEFAULT_MAX_BACKGROUND;
+> >         fc->congestion_threshold = FUSE_DEFAULT_CONGESTION_THRESHOLD;
+> > @@ -1052,6 +1054,12 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+> >                                 fc->handle_killpriv_v2 = 1;
+> >                                 fm->sb->s_flags |= SB_NOSEC;
+> >                         }
+> > +                       if (arg->flags & FUSE_PASSTHROUGH) {
+> > +                               fc->passthrough = 1;
+> > +                               /* Prevent further stacking */
+> > +                               fm->sb->s_stack_depth =
+> > +                                       FILESYSTEM_MAX_STACK_DEPTH + 1;
+> > +                       }
+> 
+> Hi Allesio,
+> 
+> I'm sorry I missed the discussion on v10 patch, but this looks wrong.
+> First of all, assigning a value above a declared MAX_ is misleading
+> and setting a trap for someone else to trip in the future.
+> 
+> While this may be just a semantic mistake, the code that checks for
+> (passthrough_sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH)
+> is just cheating.
+> 
+> fuse_file_{read,write}_iter are stacked operations, no different in any way
+> than overlayfs and ecryptfs stacked file operations.
+> 
+> Peng Tao mentioned a case of passthrough to overlayfs over ecryptfs [1].
+> If anyone really thinks this use case is interesting enough (I doubt it), then
+> they may propose to bump up FILESYSTEM_MAX_STACK_DEPTH to 3,
+> but not to cheat around the currently defined maximum.
+> 
+> So please set s_max_depth to FILESYSTEM_MAX_STACK_DEPTH and
+> restore your v10 check of
+> passthrough_sb->s_stack_depth >= FILESYSTEM_MAX_STACK_DEPTH
+> 
+> Your commit message sounds as if the only purpose of this check is to
+> prevent stacking of FUSE passthrough on top of each other, but that
+> is not enough.
+> 
+> Thanks,
+> Amir.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/CA+a=Yy6S9spMLr9BqyO1qvU52iAAXU3i9eVtb81SnrzjkCwO5Q@mail.gmail.com/
 
-syzbot found the following issue on:
 
-HEAD commit:    b3a3cbde Add linux-next specific files for 20210115
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e9fb98d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6ea08dae6aab586f
-dashboard link: https://syzkaller.appspot.com/bug?extid=c19357b59a4b43938b97
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+Hi Amir,
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The stacking solution in V10 works for me and, as we agreed last time,
+we would still be able to update the stacking policy with FUSE
+passthrough as soon as some use cases find it beneficial.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c19357b59a4b43938b97@syzkaller.appspotmail.com
+Our use case in Android is somewhat simple and it's difficult for me to
+think of how this stacking can be useful or limiting to the different
+use cases. It's anyway worth highlighting that if FUSE passthrough is
+disabled, as it is by default, the FUSE behavior remains exactly the
+same as it was before this series.
+For my limited use cases experience here, I have no personal preferences
+on the stacking policy I'm just trying to do the right thing based on
+the feedback from the community :)
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8486 at fs/namespace.c:1160 mntput_no_expire+0xb47/0xd40 fs/namespace.c:1160
-Modules linked in:
-CPU: 0 PID: 8486 Comm: syz-executor.2 Not tainted 5.11.0-rc3-next-20210115-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:mntput_no_expire+0xb47/0xd40 fs/namespace.c:1160
-Code: ff 48 c7 c2 a0 b5 58 89 be c2 02 00 00 48 c7 c7 60 b5 58 89 c6 05 ef f5 25 0b 01 e8 6b e0 f0 06 e9 3f fd ff ff e8 49 5a a9 ff <0f> 0b e9 fc fc ff ff e8 3d 5a a9 ff e8 98 97 95 ff 31 ff 89 c5 89
-RSP: 0018:ffffc900016cfcf8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 1ffff920002d9fa5 RCX: 0000000000000000
-RDX: ffff88801b0e8000 RSI: ffffffff81c9aec7 RDI: 0000000000000003
-RBP: ffff8880136e9000 R08: 0000000000000000 R09: ffffffff8ed3d86f
-R10: ffffffff81c9abc1 R11: 0000000000000001 R12: 0000000000000008
-R13: ffffc900016cfd48 R14: dffffc0000000000 R15: 00000000ffffffff
-FS:  00000000019ec940(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffdd486d7c CR3: 0000000051c48000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- path_umount+0x7c9/0x1240 fs/namespace.c:1739
- ksys_umount fs/namespace.c:1758 [inline]
- __do_sys_umount fs/namespace.c:1763 [inline]
- __se_sys_umount fs/namespace.c:1761 [inline]
- __x64_sys_umount+0x159/0x180 fs/namespace.c:1761
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x460c47
-Code: 64 89 04 25 d0 02 00 00 58 5f ff d0 48 89 c7 e8 2f be ff ff 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 ad 89 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffdd487488 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000460c47
-RDX: 00000000004033a8 RSI: 0000000000000002 RDI: 00007fffdd487530
-RBP: 00000000000456eb R08: 0000000000000000 R09: 000000000000000b
-R10: 0000000000000005 R11: 0000000000000246 R12: 00007fffdd4885e0
-R13: 00000000019eda60 R14: 0000000000000000 R15: 0000000000045444
+I can change this policy back as this was in V10, but at the same time I
+don't want to put extra effort/confusion in the mailing list and to
+Miklos with the next patch version. So I'm going to post the diff to
+bring back the stacking policy as it was in V10 in reply to "[PATCH
+RESEND V11 4/7] fuse: Passthrough initialization and release" and wait
+for the community consensus before sending out the V12.
 
+Thanks again for helpful feedback!
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Cheers,
+Alessio
