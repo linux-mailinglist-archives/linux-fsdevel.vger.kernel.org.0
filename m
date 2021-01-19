@@ -2,341 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0695C2FB993
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 15:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD282FBB26
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 16:28:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405608AbhASOdj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 09:33:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387793AbhASLuU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 06:50:20 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9A07022DD3;
-        Tue, 19 Jan 2021 11:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611056979;
-        bh=ZgIU27w3FETjaR2QKFzazWTre2YNu51/x6Mln/h4RYs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TUfiw3V26qVobQilVW6oH4ys4uRRvsZrsA/zjiZkKQcYMN/4fX+aCAxZaOcsBTRrK
-         YZYzlM4wxBb0/X70svX9ZEh1ctfN549ZcbbJ4NJI//hOwB5WJJ7NqHT6uDZXyYZYTO
-         FrygnMRHAIv2v0xLAv691FT1tFicGXdXbGs11qqixw7yk3c4ZYNeJrvyobCmPf1PYU
-         ocmudjWc/HrqWszSszGvlnIExLNwsF8KDPvVKSpHX0DLNuZZa1xXfcNjJ/SAzqRu2j
-         yHde8KXmKtV3OAynuRrpMH/aq5tOfrWNP0XeJuGGvxRdBomk4fOjILEV/duwp3uoY+
-         42pQjhwmBV3Yg==
-Message-ID: <9820d213cefd20f90227ed5a73a55fa41d4df6da.camel@kernel.org>
-Subject: Re: [PATCH v4] overlay: Implement volatile-specific fsync error
- behaviour
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Sargun Dhillon <sargun@sargun.me>, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>,
-        Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Date:   Tue, 19 Jan 2021 06:49:36 -0500
-In-Reply-To: <20210108001043.12683-1-sargun@sargun.me>
-References: <20210108001043.12683-1-sargun@sargun.me>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+        id S2390647AbhASP1b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 10:27:31 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:33541 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391376AbhASPYk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Jan 2021 10:24:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611069794;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=s9RbCrtn53b3CeRcYuUYD71valu6+pdVw5hOh6A/cdY=;
+        b=JjnkpaflbmLyUpLDPJGEiH1McEZh7ysZG+PgMkKp10zxROomz0/fvoj24AOndU+ps5xPSn
+        S8m/T09bHs/8ToaEHk6UPLI8j1kuuZVv1L7cNFcXwo4twoFfmscrqI6awSJEHfg0vLJ0HY
+        X72BRDwlDV7wVFjVex4NVglnS9NvZQo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-580-dAQpbTE1M5-C2zr5tN0rxg-1; Tue, 19 Jan 2021 10:23:12 -0500
+X-MC-Unique: dAQpbTE1M5-C2zr5tN0rxg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F2E0B800D53;
+        Tue, 19 Jan 2021 15:23:10 +0000 (UTC)
+Received: from bfoster (ovpn-114-23.rdu2.redhat.com [10.10.114.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3CB8819CA8;
+        Tue, 19 Jan 2021 15:23:10 +0000 (UTC)
+Date:   Tue, 19 Jan 2021 10:23:08 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        avi@scylladb.com, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH 03/11] xfs: cleanup the read/write helper naming
+Message-ID: <20210119152308.GC1646807@bfoster>
+References: <20210118193516.2915706-1-hch@lst.de>
+ <20210118193516.2915706-4-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210118193516.2915706-4-hch@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2021-01-07 at 16:10 -0800, Sargun Dhillon wrote:
-> Overlayfs's volatile option allows the user to bypass all forced sync calls
-> to the upperdir filesystem. This comes at the cost of safety. We can never
-> ensure that the user's data is intact, but we can make a best effort to
-> expose whether or not the data is likely to be in a bad state.
+On Mon, Jan 18, 2021 at 08:35:08PM +0100, Christoph Hellwig wrote:
+> Drop a few pointless aio_ prefixes.
 > 
-> The best way to handle this in the time being is that if an overlayfs's
-> upperdir experiences an error after a volatile mount occurs, that error
-> will be returned on fsync, fdatasync, sync, and syncfs. This is
-> contradictory to the traditional behaviour of VFS which fails the call
-> once, and only raises an error if a subsequent fsync error has occurred,
-> and been raised by the filesystem.
-> 
-> One awkward aspect of the patch is that we have to manually set the
-> superblock's errseq_t after the sync_fs callback as opposed to just
-> returning an error from syncfs. This is because the call chain looks
-> something like this:
-> 
-> sys_syncfs ->
-> 	sync_filesystem ->
-> 		__sync_filesystem ->
-> 			/* The return value is ignored here
-> 			sb->s_op->sync_fs(sb)
-> 			_sync_blockdev
-> 		/* Where the VFS fetches the error to raise to userspace */
-> 		errseq_check_and_advance
-> 
-> Because of this we call errseq_set every time the sync_fs callback occurs.
-> Due to the nature of this seen / unseen dichotomy, if the upperdir is an
-> inconsistent state at the initial mount time, overlayfs will refuse to
-> mount, as overlayfs cannot get a snapshot of the upperdir's errseq that
-> will increment on error until the user calls syncfs.
-> 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Fixes: c86243b090bc ("ovl: provide a mount option "volatile"")
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> Cc: Jeff Layton <jlayton@redhat.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
 > ---
->  Documentation/filesystems/overlayfs.rst |  8 ++++++
->  fs/overlayfs/file.c                     |  5 ++--
->  fs/overlayfs/overlayfs.h                |  1 +
->  fs/overlayfs/ovl_entry.h                |  2 ++
->  fs/overlayfs/readdir.c                  |  5 ++--
->  fs/overlayfs/super.c                    | 34 ++++++++++++++++++++-----
->  fs/overlayfs/util.c                     | 27 ++++++++++++++++++++
->  7 files changed, 71 insertions(+), 11 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
-> index 580ab9a0fe31..137afeb3f581 100644
-> --- a/Documentation/filesystems/overlayfs.rst
-> +++ b/Documentation/filesystems/overlayfs.rst
-> @@ -575,6 +575,14 @@ without significant effort.
->  The advantage of mounting with the "volatile" option is that all forms of
->  sync calls to the upper filesystem are omitted.
->  
-> 
-> 
-> 
-> +In order to avoid a giving a false sense of safety, the syncfs (and fsync)
-> +semantics of volatile mounts are slightly different than that of the rest of
-> +VFS.  If any writeback error occurs on the upperdir's filesystem after a
-> +volatile mount takes place, all sync functions will return an error.  Once this
-> +condition is reached, the filesystem will not recover, and every subsequent sync
-> +call will return an error, even if the upperdir has not experience a new error
-> +since the last sync call.
-> +
->  When overlay is mounted with "volatile" option, the directory
->  "$workdir/work/incompat/volatile" is created.  During next mount, overlay
->  checks for this directory and refuses to mount if present. This is a strong
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index a1f72ac053e5..5c5c3972ebd0 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -445,8 +445,9 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->  	const struct cred *old_cred;
->  	int ret;
->  
-> 
-> 
-> 
-> -	if (!ovl_should_sync(OVL_FS(file_inode(file)->i_sb)))
-> -		return 0;
-> +	ret = ovl_sync_status(OVL_FS(file_inode(file)->i_sb));
-> +	if (ret <= 0)
-> +		return ret;
->  
-> 
-> 
-> 
->  	ret = ovl_real_fdget_meta(file, &real, !datasync);
->  	if (ret)
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index f8880aa2ba0e..9f7af98ae200 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -322,6 +322,7 @@ int ovl_check_metacopy_xattr(struct ovl_fs *ofs, struct dentry *dentry);
->  bool ovl_is_metacopy_dentry(struct dentry *dentry);
->  char *ovl_get_redirect_xattr(struct ovl_fs *ofs, struct dentry *dentry,
->  			     int padding);
-> +int ovl_sync_status(struct ovl_fs *ofs);
->  
-> 
-> 
-> 
->  static inline bool ovl_is_impuredir(struct super_block *sb,
->  				    struct dentry *dentry)
-> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> index 1b5a2094df8e..b208eba5d0b6 100644
-> --- a/fs/overlayfs/ovl_entry.h
-> +++ b/fs/overlayfs/ovl_entry.h
-> @@ -79,6 +79,8 @@ struct ovl_fs {
->  	atomic_long_t last_ino;
->  	/* Whiteout dentry cache */
->  	struct dentry *whiteout;
-> +	/* r/o snapshot of upperdir sb's only taken on volatile mounts */
-> +	errseq_t errseq;
->  };
->  
-> 
-> 
-> 
->  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 01620ebae1bd..a273ef901e57 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -909,8 +909,9 @@ static int ovl_dir_fsync(struct file *file, loff_t start, loff_t end,
->  	struct file *realfile;
->  	int err;
->  
-> 
-> 
-> 
-> -	if (!ovl_should_sync(OVL_FS(file->f_path.dentry->d_sb)))
-> -		return 0;
-> +	err = ovl_sync_status(OVL_FS(file->f_path.dentry->d_sb));
-> +	if (err <= 0)
-> +		return err;
->  
-> 
-> 
-> 
->  	realfile = ovl_dir_real_file(file, true);
->  	err = PTR_ERR_OR_ZERO(realfile);
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 290983bcfbb3..d23177a53c95 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -261,11 +261,20 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
->  	struct super_block *upper_sb;
->  	int ret;
->  
-> 
-> 
-> 
-> -	if (!ovl_upper_mnt(ofs))
-> -		return 0;
-> +	ret = ovl_sync_status(ofs);
-> +	/*
-> +	 * We have to always set the err, because the return value isn't
-> +	 * checked in syncfs, and instead indirectly return an error via
-> +	 * the sb's writeback errseq, which VFS inspects after this call.
-> +	 */
-> +	if (ret < 0) {
-> +		errseq_set(&sb->s_wb_err, -EIO);
-> +		return -EIO;
-> +	}
-> +
 
-Apologies for the late review:
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 
-You're converting the error you got back from errseq_check to -EIO
-unconditionally here. Why? Would it not be better to just pass the error
-through? Like this:
-
-if (ret < 0) {
-	errseq_set(&sb->s_wb_err, ret);
-	return ret;
-}
-
-?
-
-> +	if (!ret)
-> +		return ret;
->  
+>  fs/xfs/xfs_file.c | 30 +++++++++++++++---------------
+>  1 file changed, 15 insertions(+), 15 deletions(-)
 > 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index fb4e6f2852bb8b..ae7313ccaa11ed 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -215,7 +215,7 @@ xfs_ilock_iocb(
+>  }
+>  
+>  STATIC ssize_t
+> -xfs_file_dio_aio_read(
+> +xfs_file_dio_read(
+>  	struct kiocb		*iocb,
+>  	struct iov_iter		*to)
+>  {
+> @@ -265,7 +265,7 @@ xfs_file_dax_read(
+>  }
+>  
+>  STATIC ssize_t
+> -xfs_file_buffered_aio_read(
+> +xfs_file_buffered_read(
+>  	struct kiocb		*iocb,
+>  	struct iov_iter		*to)
+>  {
+> @@ -300,9 +300,9 @@ xfs_file_read_iter(
+>  	if (IS_DAX(inode))
+>  		ret = xfs_file_dax_read(iocb, to);
+>  	else if (iocb->ki_flags & IOCB_DIRECT)
+> -		ret = xfs_file_dio_aio_read(iocb, to);
+> +		ret = xfs_file_dio_read(iocb, to);
+>  	else
+> -		ret = xfs_file_buffered_aio_read(iocb, to);
+> +		ret = xfs_file_buffered_read(iocb, to);
+>  
+>  	if (ret > 0)
+>  		XFS_STATS_ADD(mp, xs_read_bytes, ret);
+> @@ -317,7 +317,7 @@ xfs_file_read_iter(
+>   * if called for a direct write beyond i_size.
+>   */
+>  STATIC ssize_t
+> -xfs_file_aio_write_checks(
+> +xfs_file_write_checks(
+>  	struct kiocb		*iocb,
+>  	struct iov_iter		*from,
+>  	int			*iolock)
+> @@ -502,7 +502,7 @@ static const struct iomap_dio_ops xfs_dio_write_ops = {
+>  };
+>  
+>  /*
+> - * xfs_file_dio_aio_write - handle direct IO writes
+> + * xfs_file_dio_write - handle direct IO writes
+>   *
+>   * Lock the inode appropriately to prepare for and issue a direct IO write.
+>   * By separating it from the buffered write path we remove all the tricky to
+> @@ -527,7 +527,7 @@ static const struct iomap_dio_ops xfs_dio_write_ops = {
+>   * negative return values.
+>   */
+>  STATIC ssize_t
+> -xfs_file_dio_aio_write(
+> +xfs_file_dio_write(
+>  	struct kiocb		*iocb,
+>  	struct iov_iter		*from)
+>  {
+> @@ -549,7 +549,7 @@ xfs_file_dio_aio_write(
+>  	/*
+>  	 * Don't take the exclusive iolock here unless the I/O is unaligned to
+>  	 * the file system block size.  We don't need to consider the EOF
+> -	 * extension case here because xfs_file_aio_write_checks() will relock
+> +	 * extension case here because xfs_file_write_checks() will relock
+>  	 * the inode as necessary for EOF zeroing cases and fill out the new
+>  	 * inode size as appropriate.
+>  	 */
+> @@ -580,7 +580,7 @@ xfs_file_dio_aio_write(
+>  		xfs_ilock(ip, iolock);
+>  	}
+>  
+> -	ret = xfs_file_aio_write_checks(iocb, from, &iolock);
+> +	ret = xfs_file_write_checks(iocb, from, &iolock);
+>  	if (ret)
+>  		goto out;
+>  	count = iov_iter_count(from);
+> @@ -590,7 +590,7 @@ xfs_file_dio_aio_write(
+>  	 * in-flight at the same time or we risk data corruption. Wait for all
+>  	 * other IO to drain before we submit. If the IO is aligned, demote the
+>  	 * iolock if we had to take the exclusive lock in
+> -	 * xfs_file_aio_write_checks() for other reasons.
+> +	 * xfs_file_write_checks() for other reasons.
+>  	 */
+>  	if (unaligned_io) {
+>  		inode_dio_wait(inode);
+> @@ -634,7 +634,7 @@ xfs_file_dax_write(
+>  	ret = xfs_ilock_iocb(iocb, iolock);
+>  	if (ret)
+>  		return ret;
+> -	ret = xfs_file_aio_write_checks(iocb, from, &iolock);
+> +	ret = xfs_file_write_checks(iocb, from, &iolock);
+>  	if (ret)
+>  		goto out;
+>  
+> @@ -663,7 +663,7 @@ xfs_file_dax_write(
+>  }
+>  
+>  STATIC ssize_t
+> -xfs_file_buffered_aio_write(
+> +xfs_file_buffered_write(
+>  	struct kiocb		*iocb,
+>  	struct iov_iter		*from)
+>  {
+> @@ -682,7 +682,7 @@ xfs_file_buffered_aio_write(
+>  	iolock = XFS_IOLOCK_EXCL;
+>  	xfs_ilock(ip, iolock);
+>  
+> -	ret = xfs_file_aio_write_checks(iocb, from, &iolock);
+> +	ret = xfs_file_write_checks(iocb, from, &iolock);
+>  	if (ret)
+>  		goto out;
+>  
+> @@ -769,12 +769,12 @@ xfs_file_write_iter(
+>  		 * CoW.  In all other directio scenarios we do not
+>  		 * allow an operation to fall back to buffered mode.
+>  		 */
+> -		ret = xfs_file_dio_aio_write(iocb, from);
+> +		ret = xfs_file_dio_write(iocb, from);
+>  		if (ret != -ENOTBLK)
+>  			return ret;
+>  	}
+>  
+> -	return xfs_file_buffered_aio_write(iocb, from);
+> +	return xfs_file_buffered_write(iocb, from);
+>  }
+>  
+>  static void
+> -- 
+> 2.29.2
 > 
-> 
-> -	if (!ovl_should_sync(ofs))
-> -		return 0;
->  	/*
->  	 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
->  	 * All the super blocks will be iterated, including upper_sb.
-> @@ -1927,6 +1936,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  	sb->s_op = &ovl_super_operations;
->  
-> 
-> 
-> 
->  	if (ofs->config.upperdir) {
-> +		struct super_block *upper_sb;
-> +
->  		if (!ofs->config.workdir) {
->  			pr_err("missing 'workdir'\n");
->  			goto out_err;
-> @@ -1936,6 +1947,16 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  		if (err)
->  			goto out_err;
->  
-> 
-> 
-> 
-> +		upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
-> +		if (!ovl_should_sync(ofs)) {
-> +			ofs->errseq = errseq_sample(&upper_sb->s_wb_err);
-> +			if (errseq_check(&upper_sb->s_wb_err, ofs->errseq)) {
-> +				err = -EIO;
-> +				pr_err("Cannot mount volatile when upperdir has an unseen error. Sync upperdir fs to clear state.\n");
-> +				goto out_err;
-> +			}
-> +		}
-> +
->  		err = ovl_get_workdir(sb, ofs, &upperpath);
->  		if (err)
->  			goto out_err;
-> @@ -1943,9 +1964,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  		if (!ofs->workdir)
->  			sb->s_flags |= SB_RDONLY;
->  
-> 
-> 
-> 
-> -		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
-> -		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> -
-> +		sb->s_stack_depth = upper_sb->s_stack_depth;
-> +		sb->s_time_gran = upper_sb->s_time_gran;
->  	}
->  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
->  	err = PTR_ERR(oe);
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 23f475627d07..6e7b8c882045 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -950,3 +950,30 @@ char *ovl_get_redirect_xattr(struct ovl_fs *ofs, struct dentry *dentry,
->  	kfree(buf);
->  	return ERR_PTR(res);
->  }
-> +
-> +/*
-> + * ovl_sync_status() - Check fs sync status for volatile mounts
-> + *
-> + * Returns 1 if this is not a volatile mount and a real sync is required.
-> + *
-> + * Returns 0 if syncing can be skipped because mount is volatile, and no errors
-> + * have occurred on the upperdir since the mount.
-> + *
-> + * Returns -errno if it is a volatile mount, and the error that occurred since
-> + * the last mount. If the error code changes, it'll return the latest error
-> + * code.
-> + */
-> +
-> +int ovl_sync_status(struct ovl_fs *ofs)
-> +{
-> +	struct vfsmount *mnt;
-> +
-> +	if (ovl_should_sync(ofs))
-> +		return 1;
-> +
-> +	mnt = ovl_upper_mnt(ofs);
-> +	if (!mnt)
-> +		return 0;
-> +
-> +	return errseq_check(&mnt->mnt_sb->s_wb_err, ofs->errseq);
-> +}
-
-Aside from my minor question about converting the error unconditionally,
-this all looks fine. You can add:
- 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
-Nice work!
 
