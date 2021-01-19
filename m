@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA8CE2FC3C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 23:40:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C20B22FC3C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 23:40:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405617AbhASOdl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 09:33:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47022 "EHLO
+        id S1733215AbhASOe0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 09:34:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389615AbhASLwd (ORCPT
+        with ESMTP id S2387438AbhASMG5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 06:52:33 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8299FC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 03:51:52 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id a9so15978676wrt.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 03:51:52 -0800 (PST)
+        Tue, 19 Jan 2021 07:06:57 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0472BC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 04:06:15 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id y17so19482782wrr.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 04:06:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=6iDFCX/Z/S1DDiXef9jT5XZ0zdxhee10Uz0yBq4fmLI=;
-        b=QqsAM21tvQy240MStC/Wl/85ukbKXUGN12T1rk/U+IBfPIKSbGuQtc99ACPsUVyOMg
-         TM9Hn4Tr5OMuohwsIVex/Wt39moLYN56iIhJypZvpGoXf2M/NiqMK6AatMTKeJ+U15ny
-         S7l4nw3RqV/yNhKnnj7kzwPpqzsIZWweRIzjkvZCf0Z90Wq/60DaAb6cV4c4rclap5hJ
-         SYQFYSlwKeCYz3LJzZyvZWZRa9hxXj0Z9ercJ5SwYPpBHmw/fUIZ1pgHqIqGMBMRWSoB
-         MOw7TWlHfbAT27JgvCi6lufI/QTReDK0dQ73jhkbC3t9jW7TtEN4MGd3HFu1v1xm9YeU
-         nPew==
+        bh=8e/D2faN6CtLGH+7k+u4qfYvc54TqKJTGm6NyieDxDg=;
+        b=GjCDE34Gg9IhslKROIfwXQhzH0RvJZrHAEVbsMdEZJS9kFGMDDV+Pkc/FBC95cNJHu
+         NXmeHeR7sKJ3/Vmkgv4RfRoZ/RjHlQD7p90FlDyEzRvFrCtQtKFN5JyvQ7N/d5XKaLch
+         zbLoUOO5K77hY87xpm3ttxwil7Hx5GdInN6Op7xEo6JEUywCeYNqrv0j2t4H0CZwoLhw
+         V0iyIDFPBCkoO+5UXjidEsLwP6vWd7XygXOQk5CLMwuaEe4BIGrRUaMYgbtczDQKpwsi
+         IEsVWqlI2MoeTgbFH9/BuB5Mo7syqL7hVqAf90EHY+JgSR7G3806XW667BmxM8egpq6D
+         BKRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=6iDFCX/Z/S1DDiXef9jT5XZ0zdxhee10Uz0yBq4fmLI=;
-        b=PmoAsMjoZeoS/f+Yjq1WUg5NSnfy9kzCXsNx5VQOnC8hDWRJtRMjh2bWEb+65dBzQ1
-         z/4/CF3QVnsNJHX2aHTVdwAqFJ0BZNhWL0ADx/gFN0S6dJua33HMMUSf9DSYpY6En7pa
-         HW3DDgPqW5VRCWupU2Nr1QVB/WHcgnnU+QuJrANHDstKX/z7CNHTvtMBLYwevtzZRkSp
-         hopCJR0wF4P6T+RSoh6jIAQdmDZqtPv77V0hdh1iLfMrwDFPzJfOcIi8n00W5IOuYVVR
-         fJ2JxDcN+xRkRaaS/WhAhklx9e5cdnN7EFtMugDz4FDAq42EnvMDdtno37/Ubd/jVWgo
-         ho4w==
-X-Gm-Message-State: AOAM532POkWEOZtJL6cbkZ4mQ3ItCaNgJlEMwv/53Xwk4J9+Ia6lwOHN
-        4srDOxvUvJrfkN9DLy4y+XgaAQ==
-X-Google-Smtp-Source: ABdhPJyzJT4CuiBOarxBJeUfrd160m0ck9QZcO6qU8n5MNGyn9JvKHa3WlsD5Hy0FO/d0GbFGCxj1Q==
-X-Received: by 2002:a05:6000:1362:: with SMTP id q2mr1103822wrz.341.1611057111289;
-        Tue, 19 Jan 2021 03:51:51 -0800 (PST)
+        bh=8e/D2faN6CtLGH+7k+u4qfYvc54TqKJTGm6NyieDxDg=;
+        b=IGDLIiSDHqRil3ECC9Cb3FUXv5TJ/j+tditOcyvJh1NI5m9dclcMDH5gYFeT8cjZ51
+         LnoZcXYR9EmKKdL1rzd37x3pmPuMRmRsVC23iT5e0CnqxbVhASk6EzFGRyTTvQAom2M3
+         WO9NmWedgLOaWt/nFz6czaLXvRfkQYrkW12Iq/DCSBN+/syE2YBRuJO/z9ofY4flxYmE
+         mDc6OalJBRMB8fzA8P9W6SMaMgVsrSTyNYbhrrAybRsuZOBFtPenWXY9ecHKvEG1obSd
+         oeD207gHxkoILd0yEyGNHh5pllmS8bOEsUcX325zh4ieFv2vkU/hsjA/Dv56EJDEl0aJ
+         9QoA==
+X-Gm-Message-State: AOAM530I/jH7AaoBdGI0EWBRbOJTkA/CBQBmd3bEs5UB2CULAnfC03zv
+        GG2itOnqwvMzxwgyieQ5RkVEOw==
+X-Google-Smtp-Source: ABdhPJzqhQ7FAQvj0zxxjmN0Vv3vciyX8X7Lx4xNOPidRNEFxZK2jL+G3FI9AOxJKIn9j9yJfJVjlw==
+X-Received: by 2002:a5d:4712:: with SMTP id y18mr4145624wrq.229.1611057974449;
+        Tue, 19 Jan 2021 04:06:14 -0800 (PST)
 Received: from google.com ([2a00:79e0:d:210:41d4:8c90:d38:455d])
-        by smtp.gmail.com with ESMTPSA id g184sm4269649wma.16.2021.01.19.03.51.50
+        by smtp.gmail.com with ESMTPSA id k16sm4128570wmj.45.2021.01.19.04.06.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 03:51:50 -0800 (PST)
-Date:   Tue, 19 Jan 2021 11:51:49 +0000
+        Tue, 19 Jan 2021 04:06:13 -0800 (PST)
+Date:   Tue, 19 Jan 2021 12:06:12 +0000
 From:   Alessio Balsini <balsini@android.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alessio Balsini <balsini@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Akilesh Kailash <akailash@google.com>,
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Akilesh Kailash <akailash@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
         Antonio SJ Musumeci <trapexit@spawn.link>,
         David Anderson <dvander@google.com>,
         Giuseppe Scrivano <gscrivan@redhat.com>,
@@ -64,119 +63,243 @@ Cc:     Alessio Balsini <balsini@android.com>,
         Peng Tao <bergwolf@gmail.com>,
         Stefano Duo <duostefano93@gmail.com>,
         Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND V11 3/7] fuse: Definitions and ioctl for
- passthrough
-Message-ID: <YAbH1YuffGDXt67h@google.com>
+        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND V11 4/7] fuse: Passthrough initialization and
+ release
+Message-ID: <YAbLNAaeOVAfArqD@google.com>
 References: <20210118192748.584213-1-balsini@android.com>
- <20210118192748.584213-4-balsini@android.com>
- <CAOQ4uxj-Ncm7nKBZE_homGu_kcF0w1JtYcC9zg2=uWT591Ggbw@mail.gmail.com>
+ <20210118192748.584213-5-balsini@android.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxj-Ncm7nKBZE_homGu_kcF0w1JtYcC9zg2=uWT591Ggbw@mail.gmail.com>
+In-Reply-To: <20210118192748.584213-5-balsini@android.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 08:33:16AM +0200, Amir Goldstein wrote:
-> On Mon, Jan 18, 2021 at 9:28 PM Alessio Balsini <balsini@android.com> wrote:
-> >
-> > Expose the FUSE_PASSTHROUGH interface to user space and declare all the
-> > basic data structures and functions as the skeleton on top of which the
-> > FUSE passthrough functionality will be built.
-> >
-> > As part of this, introduce the new FUSE passthrough ioctl(), which
-> > allows the FUSE daemon to specify a direct connection between a FUSE
-> > file and a lower file system file. Such ioctl() requires users pace to
-> > pass the file descriptor of one of its opened files through the
-> > fuse_passthrough_out data structure introduced in this patch. This
-> > structure includes extra fields for possible future extensions.
-> > Also, add the passthrough functions for the set-up and tear-down of the
-> > data structures and locks that will be used both when fuse_conns and
-> > fuse_files are created/deleted.
-> >
-> > Signed-off-by: Alessio Balsini <balsini@android.com>
-> > ---
-> [...]
+On Mon, Jan 18, 2021 at 07:27:45PM +0000, Alessio Balsini wrote:
+> Implement the FUSE passthrough ioctl() that associates the lower
+> (passthrough) file system file with the fuse_file.
 > 
-> > @@ -699,6 +700,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
-> >         INIT_LIST_HEAD(&fc->bg_queue);
-> >         INIT_LIST_HEAD(&fc->entry);
-> >         INIT_LIST_HEAD(&fc->devices);
-> > +       idr_init(&fc->passthrough_req);
-> >         atomic_set(&fc->num_waiting, 0);
-> >         fc->max_background = FUSE_DEFAULT_MAX_BACKGROUND;
-> >         fc->congestion_threshold = FUSE_DEFAULT_CONGESTION_THRESHOLD;
-> > @@ -1052,6 +1054,12 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
-> >                                 fc->handle_killpriv_v2 = 1;
-> >                                 fm->sb->s_flags |= SB_NOSEC;
-> >                         }
-> > +                       if (arg->flags & FUSE_PASSTHROUGH) {
-> > +                               fc->passthrough = 1;
-> > +                               /* Prevent further stacking */
-> > +                               fm->sb->s_stack_depth =
-> > +                                       FILESYSTEM_MAX_STACK_DEPTH + 1;
-> > +                       }
+> The file descriptor passed to the ioctl() by the FUSE daemon is used to
+> access the relative file pointer, that will be copied to the fuse_file
+> data structure to consolidate the link between the FUSE and lower file
+> system.
 > 
-> Hi Allesio,
+> To enable the passthrough mode, user space triggers the
+> FUSE_DEV_IOC_PASSTHROUGH_OPEN ioctl() and, if the call succeeds,
+> receives back an identifier that will be used at open/create response
+> time in the fuse_open_out field to associate the FUSE file to the lower
+> file system file.
+> The value returned by the ioctl() to user space can be:
+> - > 0: success, the identifier can be used as part of an open/create
+>   reply.
+> - < 0: an error occurred.
+> The value 0 has been left unused for backward compatibility: the
+> fuse_open_out field that is used to pass the passthrough_fh back to the
+> kernel uses the same bits that were previously as struct padding,
+> zero-initialized in the common libfuse implementation. Removing the 0
+> value fixes the ambiguity between the case in which 0 corresponds to a
+> real passthrough_fh or a missing implementation, simplifying the user
+> space implementation.
 > 
-> I'm sorry I missed the discussion on v10 patch, but this looks wrong.
-> First of all, assigning a value above a declared MAX_ is misleading
-> and setting a trap for someone else to trip in the future.
+> For the passthrough mode to be successfully activated, the lower file
+> system file must implement both read_iter and write_iter file
+> operations. This extra check avoids special pseudo files to be targeted
+> for this feature.
+> Passthrough comes with another limitation: if a FUSE file systems
+> enables passthrough, this feature is no more available to other FUSE
+> file systems stacked on top of it. This check is only performed when
+> FUSE passthrough is requested for a specific file and would simply
+> prevent the use of FUSE passthrough for that file, not limiting other
+> file operations.
 > 
-> While this may be just a semantic mistake, the code that checks for
-> (passthrough_sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH)
-> is just cheating.
+> Signed-off-by: Alessio Balsini <balsini@android.com>
+> ---
+>  fs/fuse/inode.c       |  5 +++
+>  fs/fuse/passthrough.c | 87 ++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 90 insertions(+), 2 deletions(-)
 > 
-> fuse_file_{read,write}_iter are stacked operations, no different in any way
-> than overlayfs and ecryptfs stacked file operations.
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index d5c46eafb419..bc327789f25d 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1133,6 +1133,11 @@ EXPORT_SYMBOL_GPL(fuse_send_init);
+>  
+>  static int free_fuse_passthrough(int id, void *p, void *data)
+>  {
+> +	struct fuse_passthrough *passthrough = (struct fuse_passthrough *)p;
+> +
+> +	fuse_passthrough_release(passthrough);
+> +	kfree(p);
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+> index 594060c654f8..cf720ca14a45 100644
+> --- a/fs/fuse/passthrough.c
+> +++ b/fs/fuse/passthrough.c
+> @@ -3,19 +3,102 @@
+>  #include "fuse_i.h"
+>  
+>  #include <linux/fuse.h>
+> +#include <linux/idr.h>
+>  
+>  int fuse_passthrough_open(struct fuse_dev *fud,
+>  			  struct fuse_passthrough_out *pto)
+>  {
+> -	return -EINVAL;
+> +	int res;
+> +	struct file *passthrough_filp;
+> +	struct fuse_conn *fc = fud->fc;
+> +	struct inode *passthrough_inode;
+> +	struct super_block *passthrough_sb;
+> +	struct fuse_passthrough *passthrough;
+> +
+> +	if (!fc->passthrough)
+> +		return -EPERM;
+> +
+> +	/* This field is reserved for future implementation */
+> +	if (pto->len != 0)
+> +		return -EINVAL;
+> +
+> +	passthrough_filp = fget(pto->fd);
+> +	if (!passthrough_filp) {
+> +		pr_err("FUSE: invalid file descriptor for passthrough.\n");
+> +		return -EBADF;
+> +	}
+> +
+> +	if (!passthrough_filp->f_op->read_iter ||
+> +	    !passthrough_filp->f_op->write_iter) {
+> +		pr_err("FUSE: passthrough file misses file operations.\n");
+> +		res = -EBADF;
+> +		goto err_free_file;
+> +	}
+> +
+> +	passthrough_inode = file_inode(passthrough_filp);
+> +	passthrough_sb = passthrough_inode->i_sb;
+> +	if (passthrough_sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
+> +		pr_err("FUSE: fs stacking depth exceeded for passthrough\n");
+> +		res = -EINVAL;
+> +		goto err_free_file;
+> +	}
+> +
+> +	passthrough = kmalloc(sizeof(struct fuse_passthrough), GFP_KERNEL);
+> +	if (!passthrough) {
+> +		res = -ENOMEM;
+> +		goto err_free_file;
+> +	}
+> +
+> +	passthrough->filp = passthrough_filp;
+> +
+> +	idr_preload(GFP_KERNEL);
+> +	spin_lock(&fc->passthrough_req_lock);
+> +	res = idr_alloc(&fc->passthrough_req, passthrough, 1, 0, GFP_ATOMIC);
+> +	spin_unlock(&fc->passthrough_req_lock);
+> +	idr_preload_end();
+> +
+> +	if (res > 0)
+> +		return res;
+> +
+> +	fuse_passthrough_release(passthrough);
+> +	kfree(passthrough);
+> +
+> +err_free_file:
+> +	fput(passthrough_filp);
+> +
+> +	return res;
+>  }
+>  
+>  int fuse_passthrough_setup(struct fuse_conn *fc, struct fuse_file *ff,
+>  			   struct fuse_open_out *openarg)
+>  {
+> -	return -EINVAL;
+> +	struct fuse_passthrough *passthrough;
+> +	int passthrough_fh = openarg->passthrough_fh;
+> +
+> +	if (!fc->passthrough)
+> +		return -EPERM;
+> +
+> +	/* Default case, passthrough is not requested */
+> +	if (passthrough_fh <= 0)
+> +		return -EINVAL;
+> +
+> +	spin_lock(&fc->passthrough_req_lock);
+> +	passthrough = idr_remove(&fc->passthrough_req, passthrough_fh);
+> +	spin_unlock(&fc->passthrough_req_lock);
+> +
+> +	if (!passthrough)
+> +		return -EINVAL;
+> +
+> +	ff->passthrough = *passthrough;
+> +	kfree(passthrough);
+> +
+> +	return 0;
+>  }
+>  
+>  void fuse_passthrough_release(struct fuse_passthrough *passthrough)
+>  {
+> +	if (passthrough->filp) {
+> +		fput(passthrough->filp);
+> +		passthrough->filp = NULL;
+> +	}
+>  }
+> -- 
+> 2.30.0.284.gd98b1dd5eaa7-goog
 > 
-> Peng Tao mentioned a case of passthrough to overlayfs over ecryptfs [1].
-> If anyone really thinks this use case is interesting enough (I doubt it), then
-> they may propose to bump up FILESYSTEM_MAX_STACK_DEPTH to 3,
-> but not to cheat around the currently defined maximum.
-> 
-> So please set s_max_depth to FILESYSTEM_MAX_STACK_DEPTH and
-> restore your v10 check of
-> passthrough_sb->s_stack_depth >= FILESYSTEM_MAX_STACK_DEPTH
-> 
-> Your commit message sounds as if the only purpose of this check is to
-> prevent stacking of FUSE passthrough on top of each other, but that
-> is not enough.
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/CA+a=Yy6S9spMLr9BqyO1qvU52iAAXU3i9eVtb81SnrzjkCwO5Q@mail.gmail.com/
 
+Hi,
 
-Hi Amir,
+As Amir was noticing, the stacking policy proposed in this series (as
+opposed to V10) is not enough to ensure that the same file undergoes
+multiple FUSE passthrough paths, moreover, checking for:
 
-The stacking solution in V10 works for me and, as we agreed last time,
-we would still be able to update the stacking policy with FUSE
-passthrough as soon as some use cases find it beneficial.
+  passthrough_sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH
 
-Our use case in Android is somewhat simple and it's difficult for me to
-think of how this stacking can be useful or limiting to the different
-use cases. It's anyway worth highlighting that if FUSE passthrough is
-disabled, as it is by default, the FUSE behavior remains exactly the
-same as it was before this series.
-For my limited use cases experience here, I have no personal preferences
-on the stacking policy I'm just trying to do the right thing based on
-the feedback from the community :)
+looks misleading and hacky.
+The simplest solution at this point in time would be to just go back to
+the policy introduced in V10 and, if for some use use cases FUSE
+passthrough is desirable in systems where complex stackings are
+involved, the stacking policy can be revisited.
 
-I can change this policy back as this was in V10, but at the same time I
-don't want to put extra effort/confusion in the mailing list and to
-Miklos with the next patch version. So I'm going to post the diff to
-bring back the stacking policy as it was in V10 in reply to "[PATCH
-RESEND V11 4/7] fuse: Passthrough initialization and release" and wait
-for the community consensus before sending out the V12.
+Before sending out the V12 of this series, I would love to have the
+consensus both from the community and from Miklos on what is the best
+way to go.
 
-Thanks again for helpful feedback!
+Here follows a simple diff that restores the policy as in V10.
 
-Cheers,
+Thanks,
 Alessio
+
+---8<---
+
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index bc327789f25d..7ebc398fbacb 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1058,7 +1058,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+                                fc->passthrough = 1;
+                                /* Prevent further stacking */
+                                fm->sb->s_stack_depth =
+-                                       FILESYSTEM_MAX_STACK_DEPTH + 1;
++                                       FILESYSTEM_MAX_STACK_DEPTH;
+                        }
+                } else {
+                        ra_pages = fc->max_read / PAGE_SIZE;
+diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+index cf720ca14a45..cf993e83803e 100644
+--- a/fs/fuse/passthrough.c
++++ b/fs/fuse/passthrough.c
+@@ -37,7 +37,7 @@ int fuse_passthrough_open(struct fuse_dev *fud,
+
+        passthrough_inode = file_inode(passthrough_filp);
+        passthrough_sb = passthrough_inode->i_sb;
+-       if (passthrough_sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
++       if (passthrough_sb->s_stack_depth >= FILESYSTEM_MAX_STACK_DEPTH) {
+                pr_err("FUSE: fs stacking depth exceeded for passthrough\n");
+                res = -EINVAL;
+                goto err_free_file;
+
+--->8---
