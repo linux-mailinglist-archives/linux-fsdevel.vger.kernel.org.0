@@ -2,155 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7F422FAF31
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 04:45:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FDAC2FAF4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 05:06:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728717AbhASDox (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 22:44:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
+        id S1730073AbhASEFc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 23:05:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728690AbhASDor (ORCPT
+        with ESMTP id S1729991AbhASEDw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 22:44:47 -0500
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC0FC061575
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 19:44:07 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id m6so11418288pfm.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 19:44:07 -0800 (PST)
+        Mon, 18 Jan 2021 23:03:52 -0500
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5698C061573;
+        Mon, 18 Jan 2021 20:03:11 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id j3so664710ljb.9;
+        Mon, 18 Jan 2021 20:03:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=/q04Qijbrtl7abjswNGUBJoouDR9KZ4AGaHH4rlP2KY=;
-        b=r5bPJWvRlFSKgksrAIbNf93/4kv/hO8kdTSG8UHzD2y8CtPRHkub6TAIv5DUTIjEeL
-         6Wly1efHI5tItuz3le41iA0Hi1hJ5QK7BUQ6uTp/E25J26ikBqncTDAteD9Lh/slyiNZ
-         bWpbJTVQiQ55rgJZm7mTBeEOPfbQB5RLa1lt1q7Gh1HzruL8im1M1Y077BHS50aS1GHm
-         lpHRm/icNGRh/VCuq4MLVyfuW0UBuwxa1Nb9LGMTJTtRB5LAXHbxymXm81T0sFCdSBk8
-         pFgN7HoEdpYNFxK/yA817w9NUcsi2gg+MY80fmN/4kdMwpBkpn9bnN435IrwCl2oiqbN
-         3pUQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=QZbf/tHbkOzK8ODkUs/F8ksdfv4bYbCZtEAyN+1lVFc=;
+        b=iVnWB8g7Mb83HtkOHXTgAAGhI+6AjJvG/pcT/37eoLcFloQ7bshMYzCdKzuXiYtu9C
+         2pT94OxVUO01ZH2VUgNxYfjxZ1Z9m0boIi1t9Ttgv431AtXwDNCTY8fgQjJliVoJTTiw
+         1tmdP6DmaB8Q8+tlN4a+xX3Z9hRlIf5bfrGZAJxh5ZPhkxBp073OAVhMoH/7XBXXQeA7
+         6k3ey+t4CzFZV4h/zUZDMHasukBWA6mFJKNzMzQUI5xbDdf+XiwawcVUxOXWixZExl2s
+         MGffl9DJj/piFYXmXLU0+Bax31gph70GjwcXn5GxoRdgUg20zIjrjGGSQ6aVARJMTyji
+         FODA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=/q04Qijbrtl7abjswNGUBJoouDR9KZ4AGaHH4rlP2KY=;
-        b=eMb9Yn2cnbCdIQeIN3iemjoJ03jWiF9K+VUGZintLQAhaGLlmuqq1KksoP/7UzfkRt
-         DBbKG9/SieykgKKlo9epdiDejY8tthVgfZRN9qoGh2IDa6gh8GKOTx9WPABwzHBy02Gd
-         9JfM73F/lmvyLlLfNLPhuQrGYFIp3q6E/QS98PyHdR/LaXlnqFOGfKV5SwAXIplgx8xa
-         exkVjLZePRUawcr+hk2m4RIG9clnVQ1kXaE9PsJgA6KNvf0XIUfgOBLfsDFsltwYpeFz
-         EfHxazAPkJfTRWqXczw1NNVid0xY+boSh1IkgSoGkwNbyASNEgpIINC5YxKLGuQ7pzIj
-         +6Iw==
-X-Gm-Message-State: AOAM531dRrnoCumgu9hAFnpGIqM9q1ZP7YNE1YZNqnt3wPHTs8CZZrtn
-        MrfbV4X+SRB4BVPtmksnVx7jbA==
-X-Google-Smtp-Source: ABdhPJxsLd7xSWR3cUMbggUmXRw0HDCJ8gzKN5LVt3Rrnv3wsTZ+Fe+eALrsKl74cOEWjp4xgNVZsw==
-X-Received: by 2002:a63:1c13:: with SMTP id c19mr2563638pgc.359.1611027846835;
-        Mon, 18 Jan 2021 19:44:06 -0800 (PST)
-Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id f29sm16822840pgm.76.2021.01.18.19.44.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jan 2021 19:44:05 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <6D9D9B4D-65E5-4993-AC08-080B677BA78E@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_CF7582DE-2906-4EF2-9ED9-35596B0D02B6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
- extents?
-Date:   Mon, 18 Jan 2021 20:44:04 -0700
-In-Reply-To: <6d982635-d978-e044-4cca-c140401eb0d3@scylladb.com>
-Cc:     Andres Freund <andres@anarazel.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
-To:     Avi Kivity <avi@scylladb.com>
-References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
- <20210104181958.GE6908@magnolia>
- <20210104191058.sryksqjnjjnn5raa@alap3.anarazel.de>
- <f6f75f11-5d5b-ae63-d584-4b6f09ff401e@scylladb.com>
- <20210112181600.GA1228497@infradead.org>
- <C8811877-48A9-4199-9F28-20F5B071AE36@dilger.ca>
- <20210112184339.GA1238746@infradead.org>
- <1C33DEE4-8BE9-4BF3-A589-E11532382B36@dilger.ca>
- <20210112211445.GC1164248@magnolia>
- <20210112213633.fb4tjlgvo6tznfr4@alap3.anarazel.de>
- <6d982635-d978-e044-4cca-c140401eb0d3@scylladb.com>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QZbf/tHbkOzK8ODkUs/F8ksdfv4bYbCZtEAyN+1lVFc=;
+        b=lw9jnxMwCtLnGU7FLIvPDnDd5MgRPSsWa08RzBLJsLSPajV7KLhB/pp1GJo/YjFUdD
+         0S/vkPB+7rG0cQsbbnBCJAAv+CI+U3s3LQKdr22i7sn5E6LbJV95GjSGE6NV1CfIGChT
+         bWQ09TNxKCOjO/O9yfylFBFEwfgHoV3LxDMkCVhFYttXG3FXRRfIYWtuM86EXjIqp4H/
+         hRWtG94WIIcWd/htLmXl2uyh2DhGO2vvjfMfzyVK3YPY7EwHsvLqBqq616uWb3RgorKz
+         rMPv9sbQ52A5TdILvkviHYD6JDPnnehLOyziSNmPg2/oyS5/KclbALSSvgNSogL7zINd
+         reLg==
+X-Gm-Message-State: AOAM533tI/PiHltUuhVhxDCVxHaATOgh4K0hIZxBXiXo/aM7jVs6aU/s
+        xRXHKhDu852VXUUW+wWoqqU=
+X-Google-Smtp-Source: ABdhPJztuSTxXLHjG6KJRw+QmajmQ+obnrUe+m87VL+zG528ca+DEStlj15L6rJRijL33pXbavz1gA==
+X-Received: by 2002:a2e:b80d:: with SMTP id u13mr1025962ljo.143.1611028990209;
+        Mon, 18 Jan 2021 20:03:10 -0800 (PST)
+Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
+        by smtp.gmail.com with ESMTPSA id r201sm2135071lff.268.2021.01.18.20.03.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Jan 2021 20:03:09 -0800 (PST)
+Date:   Tue, 19 Jan 2021 06:03:06 +0200
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
+        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com
+Subject: Re: [PATCH v17 02/10] fs/ntfs3: Add initialization of super block
+Message-ID: <20210119040306.54lm6oyeiarjrb2w@kari-VirtualBox>
+References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
+ <20201231152401.3162425-3-almaz.alexandrovich@paragon-software.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201231152401.3162425-3-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Dec 31, 2020 at 06:23:53PM +0300, Konstantin Komarov wrote:
+> diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
 
---Apple-Mail=_CF7582DE-2906-4EF2-9ED9-35596B0D02B6
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+> +void fnd_clear(struct ntfs_fnd *fnd)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < fnd->level; i++) {
+> +		struct indx_node *n = fnd->nodes[i];
+> +
+> +		if (!n)
+> +			continue;
+> +
+> +		put_indx_node(n);
+> +		fnd->nodes[i] = NULL;
+> +	}
+> +	fnd->level = 0;
+> +	fnd->root_de = NULL;
+> +}
+> +
+> +static int fnd_push(struct ntfs_fnd *fnd, struct indx_node *n,
+> +		    struct NTFS_DE *e)
+> +{
+> +	int i;
+> +
+> +	i = fnd->level;
+> +	if (i < 0 || i >= ARRAY_SIZE(fnd->nodes))
+> +		return -EINVAL;
+> +	fnd->nodes[i] = n;
+> +	fnd->de[i] = e;
+> +	fnd->level += 1;
+> +	return 0;
+> +}
+> +
+> +static struct indx_node *fnd_pop(struct ntfs_fnd *fnd)
+> +{
+> +	struct indx_node *n;
+> +	int i = fnd->level;
+> +
+> +	i -= 1;
+> +	n = fnd->nodes[i];
+> +	fnd->nodes[i] = NULL;
+> +	fnd->level = i;
+> +
+> +	return n;
+> +}
+> +
+> +static bool fnd_is_empty(struct ntfs_fnd *fnd)
+> +{
+> +	if (!fnd->level)
+> +		return !fnd->root_de;
+> +
+> +	return !fnd->de[fnd->level - 1];
+> +}
+> +
+> +struct ntfs_fnd *fnd_get(struct ntfs_index *indx)
+> +{
+> +	struct ntfs_fnd *fnd = ntfs_alloc(sizeof(struct ntfs_fnd), 1);
+> +
+> +	if (!fnd)
+> +		return NULL;
+> +
+> +	return fnd;
+> +}
 
-On Jan 13, 2021, at 12:44 AM, Avi Kivity <avi@scylladb.com> wrote:
->=20
-> On 1/12/21 11:36 PM, Andres Freund wrote:
->> Hi,
->>=20
->> On 2021-01-12 13:14:45 -0800, Darrick J. Wong wrote:
->>> ALLOCSP64 can only allocate pre-zeroed blocks as part of extending =
-EOF,
->>> whereas a new FZERO flag means that we can pre-zero an arbitrary =
-range
->>> of bytes in a file.  I don't know if Avi or Andres' usecases demand =
-that
->>> kind of flexibilty but I know I'd rather go for the more powerful
->>> interface.
->> Postgres/I don't at the moment have a need to allocate "written" =
-zeroed
->> space anywhere but EOF. I can see some potential uses for more =
-flexible
->> pre-zeroing in the future though, but not very near term.
->>=20
->=20
-> I also agree that it's better not to have the kernel fall back =
-internally on writing zeros, letting userspace do that. The assumption =
-is that WRITE SAME will be O(1)-ish and so can bypass scheduling =
-decisions, but if we need to write zeros, better let the application =
-throttle the rate.
+This should be initilized. What about that indx. Is that neccasarry?
+Also no need to check NULL because if it is NULL we can just return it. 
 
-Writing zeroes from userspace has a *lot* more overhead when there is a =
-network
-filesystem involved.  It would be better to generate the zeroes on the =
-server,
-or directly in the disk than sending GB of zeroes over the network.
+> +
+> +void fnd_put(struct ntfs_fnd *fnd)
+> +{
+> +	if (!fnd)
+> +		return;
+> +	fnd_clear(fnd);
+> +	ntfs_free(fnd);
+> +}
 
+> +/*
+> + * indx_insert_entry
+> + *
+> + * inserts new entry into index
+> + */
+> +int indx_insert_entry(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +		      const struct NTFS_DE *new_de, const void *ctx,
+> +		      struct ntfs_fnd *fnd)
+> +{
+> +	int err;
+> +	int diff;
+> +	struct NTFS_DE *e;
+> +	struct ntfs_fnd *fnd_a = NULL;
+> +	struct INDEX_ROOT *root;
+> +
+> +	if (!fnd) {
+> +		fnd_a = fnd_get(indx);
 
-Cheers, Andreas
+Here we get uninitilized fnd.
 
+> +		if (!fnd_a) {
+> +			err = -ENOMEM;
+> +			goto out1;
+> +		}
+> +		fnd = fnd_a;
+> +	}
+> +
+> +	root = indx_get_root(indx, ni, NULL, NULL);
+> +	if (!root) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (fnd_is_empty(fnd)) {
 
+And example here we try to touch it.
 
-
-
-
---Apple-Mail=_CF7582DE-2906-4EF2-9ED9-35596B0D02B6
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmAGVYQACgkQcqXauRfM
-H+DLKQ/9GRaFCst/9Bjwd/poEF5jxdM6qxtvLh1IreNdo5xYT9CWaWcV9RGSCTud
-TPy82XDn/ml2FBV2XLsxyOXv5bjG89/Y1EWQpbsrF3p+mxak2+Qw/0PqL1sJSi7H
-kb7hVGrB16n6mLKUZpnHSMiXBl/1K8Mq3YWPY43svLd7l2zCpC6TpgzCYfxpdgid
-c7T9wifVH4gPz8A/PQ26MAL9oABbozDOak3ZdOJQrMWnlfqG18MtGArwAbxWG2c2
-feMxx8givW6DXtxgk9OMyZYAwYrb6hGc4hK3f7r1SO6zaaCfpvUt7pupGjT15vTn
-ZtxHQDgb4bgb/DI5NFPxB0+0a9+oO1nW/oU6Fhccl6bwVpdtFUrCJOa1D0pRuVlU
-zdr4jVOCrsGmXDtPvJtWFrLuPgj8SVwuBvuPWaxWSTgZ/ADewV4lp0NhZymmmvVL
-FzNE1ta9Z9QO3oC+FH679/xuIAReBKmQudS9dfLgVrEhhevuRqfVWnL9fP1svK+U
-85tBBYgOZDe4V5rA/c+nIhGmG37cE5y1Ei5ngaDf/jiL+V728W561dT7DYU0+CjE
-T3LLNhYGj991vpFZBs3jn+/87gtdilP+me2OjpFug8jyL7wFbOquhXIgdE3WLUlr
-wIq3T3GDX7afC3jEN8JXEoV0oZidbBUsUdCoDfLWpJ+zQdjXfY8=
-=imFu
------END PGP SIGNATURE-----
-
---Apple-Mail=_CF7582DE-2906-4EF2-9ED9-35596B0D02B6--
+> +		/* Find the spot the tree where we want to insert the new entry. */
+> +		err = indx_find(indx, ni, root, new_de + 1,
+> +				le16_to_cpu(new_de->key_size), ctx, &diff, &e,
+> +				fnd);
+> +		if (err)
+> +			goto out;
+> +
+> +		if (!diff) {
+> +			err = -EEXIST;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	if (!fnd->level) {
+> +		/* The root is also a leaf, so we'll insert the new entry into it. */
+> +		err = indx_insert_into_root(indx, ni, new_de, fnd->root_de, ctx,
+> +					    fnd);
+> +		if (err)
+> +			goto out;
+> +	} else {
+> +		/* found a leaf buffer, so we'll insert the new entry into it.*/
+> +		err = indx_insert_into_buffer(indx, ni, root, new_de, ctx,
+> +					      fnd->level - 1, fnd);
+> +		if (err)
+> +			goto out;
+> +	}
+> +
+> +out:
+> +	fnd_put(fnd_a);
+> +out1:
+> +	return err;
+> +}
