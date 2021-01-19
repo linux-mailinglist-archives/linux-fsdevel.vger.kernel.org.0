@@ -2,135 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7242FAE0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 01:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7F422FAF31
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 04:45:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732662AbhASA3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 19:29:35 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:56114 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730466AbhASA3e (ORCPT
+        id S1728717AbhASDox (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jan 2021 22:44:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728690AbhASDor (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 19:29:34 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10J0FU5n168357;
-        Tue, 19 Jan 2021 00:28:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=2ao4MDsp9rAiFU5VVLiQKoMbqbNy+6VSRgxjFTFpfm0=;
- b=CXpAPQDQvmEFuXyUwTY54YwH7UfNZYOpKhTgNxWW9phfEdIfXz6ZpN+gvX8akbI82+4k
- 893+MFl8PWfoSvAbVijFmOAgvIqBVP+fgctR0+PjiWLrXSFXLyoWyKNKO6dsdLAbvarm
- OHUTByHA8RO8f4KkZ0VbFF/nSzPMLd8sUBj9cCw3Zq0UfxYhoggGOUm//YylKDhRojb/
- vgasZ2lQpQcMeZ74VBfFwtm8t2akoADY3rGgPkepsRAP0E9gg2QZarHE8ZmesUHvnYSH
- RhoRuKhqEcD0zmv5pbP1OrUhr+dxTDXRu7Apfq7WghqDzAv5T5jerpYVN0+w4veYYWTn 3w== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 363xyhpae7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jan 2021 00:28:37 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10J0EtD1169971;
-        Tue, 19 Jan 2021 00:28:36 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 3649wqk5h7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jan 2021 00:28:36 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 10J0SYm5024413;
-        Tue, 19 Jan 2021 00:28:34 GMT
-Received: from [192.168.10.137] (/39.109.186.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Jan 2021 16:28:34 -0800
-Subject: Re: [PATCH v12 08/41] btrfs: allow zoned mode on non-zoned block
- devices
-To:     Naohiro Aota <naohiro.aota@wdc.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
+        Mon, 18 Jan 2021 22:44:47 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC0FC061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 19:44:07 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id m6so11418288pfm.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 19:44:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=/q04Qijbrtl7abjswNGUBJoouDR9KZ4AGaHH4rlP2KY=;
+        b=r5bPJWvRlFSKgksrAIbNf93/4kv/hO8kdTSG8UHzD2y8CtPRHkub6TAIv5DUTIjEeL
+         6Wly1efHI5tItuz3le41iA0Hi1hJ5QK7BUQ6uTp/E25J26ikBqncTDAteD9Lh/slyiNZ
+         bWpbJTVQiQ55rgJZm7mTBeEOPfbQB5RLa1lt1q7Gh1HzruL8im1M1Y077BHS50aS1GHm
+         lpHRm/icNGRh/VCuq4MLVyfuW0UBuwxa1Nb9LGMTJTtRB5LAXHbxymXm81T0sFCdSBk8
+         pFgN7HoEdpYNFxK/yA817w9NUcsi2gg+MY80fmN/4kdMwpBkpn9bnN435IrwCl2oiqbN
+         3pUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=/q04Qijbrtl7abjswNGUBJoouDR9KZ4AGaHH4rlP2KY=;
+        b=eMb9Yn2cnbCdIQeIN3iemjoJ03jWiF9K+VUGZintLQAhaGLlmuqq1KksoP/7UzfkRt
+         DBbKG9/SieykgKKlo9epdiDejY8tthVgfZRN9qoGh2IDa6gh8GKOTx9WPABwzHBy02Gd
+         9JfM73F/lmvyLlLfNLPhuQrGYFIp3q6E/QS98PyHdR/LaXlnqFOGfKV5SwAXIplgx8xa
+         exkVjLZePRUawcr+hk2m4RIG9clnVQ1kXaE9PsJgA6KNvf0XIUfgOBLfsDFsltwYpeFz
+         EfHxazAPkJfTRWqXczw1NNVid0xY+boSh1IkgSoGkwNbyASNEgpIINC5YxKLGuQ7pzIj
+         +6Iw==
+X-Gm-Message-State: AOAM531dRrnoCumgu9hAFnpGIqM9q1ZP7YNE1YZNqnt3wPHTs8CZZrtn
+        MrfbV4X+SRB4BVPtmksnVx7jbA==
+X-Google-Smtp-Source: ABdhPJxsLd7xSWR3cUMbggUmXRw0HDCJ8gzKN5LVt3Rrnv3wsTZ+Fe+eALrsKl74cOEWjp4xgNVZsw==
+X-Received: by 2002:a63:1c13:: with SMTP id c19mr2563638pgc.359.1611027846835;
+        Mon, 18 Jan 2021 19:44:06 -0800 (PST)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id f29sm16822840pgm.76.2021.01.18.19.44.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jan 2021 19:44:05 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <6D9D9B4D-65E5-4993-AC08-080B677BA78E@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_CF7582DE-2906-4EF2-9ED9-35596B0D02B6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: fallocate(FALLOC_FL_ZERO_RANGE_BUT_REALLY) to avoid unwritten
+ extents?
+Date:   Mon, 18 Jan 2021 20:44:04 -0700
+In-Reply-To: <6d982635-d978-e044-4cca-c140401eb0d3@scylladb.com>
+Cc:     Andres Freund <andres@anarazel.de>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-References: <cover.1610693036.git.naohiro.aota@wdc.com>
- <b80a551167d92406924050e9ccbcd872f84fa857.1610693037.git.naohiro.aota@wdc.com>
- <e026431f-1cbe-fd28-c4f8-0bee4b26de16@toxicpanda.com>
- <20210118141555.lljrdbuhok4y4d23@naota.dhcp.fujisawa.hgst.com>
-From:   Anand Jain <anand.jain@oracle.com>
-Message-ID: <be54fab4-216e-ca83-346b-a3fcf096be40@oracle.com>
-Date:   Tue, 19 Jan 2021 08:28:29 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.1
-MIME-Version: 1.0
-In-Reply-To: <20210118141555.lljrdbuhok4y4d23@naota.dhcp.fujisawa.hgst.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9868 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- spamscore=0 phishscore=0 malwarescore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101190000
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9868 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- malwarescore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501 spamscore=0
- mlxscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101190000
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+To:     Avi Kivity <avi@scylladb.com>
+References: <20201230062819.yinrrp6uwfegsqo3@alap3.anarazel.de>
+ <20210104181958.GE6908@magnolia>
+ <20210104191058.sryksqjnjjnn5raa@alap3.anarazel.de>
+ <f6f75f11-5d5b-ae63-d584-4b6f09ff401e@scylladb.com>
+ <20210112181600.GA1228497@infradead.org>
+ <C8811877-48A9-4199-9F28-20F5B071AE36@dilger.ca>
+ <20210112184339.GA1238746@infradead.org>
+ <1C33DEE4-8BE9-4BF3-A589-E11532382B36@dilger.ca>
+ <20210112211445.GC1164248@magnolia>
+ <20210112213633.fb4tjlgvo6tznfr4@alap3.anarazel.de>
+ <6d982635-d978-e044-4cca-c140401eb0d3@scylladb.com>
+X-Mailer: Apple Mail (2.3273)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18/1/21 10:15 pm, Naohiro Aota wrote:
-> On Fri, Jan 15, 2021 at 05:07:26PM -0500, Josef Bacik wrote:
->> On 1/15/21 1:53 AM, Naohiro Aota wrote:
->>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>
->>> Run zoned btrfs mode on non-zoned devices. This is done by "slicing
->>> up" the block-device into static sized chunks and fake a conventional 
->>> zone
->>> on each of them. The emulated zone size is determined from the size of
->>> device extent.
->>>
->>> This is mainly aimed at testing parts of the zoned mode, i.e. the zoned
->>> chunk allocator, on regular block devices.
->>>
->>> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
->>> ---
->>>  fs/btrfs/zoned.c | 149 +++++++++++++++++++++++++++++++++++++++++++----
->>>  fs/btrfs/zoned.h |  14 +++--
->>>  2 files changed, 147 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
->>> index 684dad749a8c..13b240e5db4e 100644
->>> --- a/fs/btrfs/zoned.c
->>> +++ b/fs/btrfs/zoned.c
->>> @@ -119,6 +119,37 @@ static inline u32 sb_zone_number(int shift, int 
->>> mirror)
->>>      return 0;
->>>  }
->>> +/*
->>> + * Emulate blkdev_report_zones() for a non-zoned device. It slice up
->>> + * the block device into static sized chunks and fake a conventional 
->>> zone
->>> + * on each of them.
->>> + */
->>> +static int emulate_report_zones(struct btrfs_device *device, u64 pos,
->>> +                struct blk_zone *zones, unsigned int nr_zones)
->>> +{
->>> +    const sector_t zone_sectors =
->>> +        device->fs_info->zone_size >> SECTOR_SHIFT;
->>> +    sector_t bdev_size = device->bdev->bd_part->nr_sects;
->>
->> This needs to be changed to bdev_nr_sectors(), it fails to compile on 
->> misc-next.  This patch also fails to apply to misc-next as well. Thanks,
->>
->> Josef
-> 
-> Oh, I'll rebase on the latest misc-next and fix them all in v13. Thanks.
+
+--Apple-Mail=_CF7582DE-2906-4EF2-9ED9-35596B0D02B6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Jan 13, 2021, at 12:44 AM, Avi Kivity <avi@scylladb.com> wrote:
+>=20
+> On 1/12/21 11:36 PM, Andres Freund wrote:
+>> Hi,
+>>=20
+>> On 2021-01-12 13:14:45 -0800, Darrick J. Wong wrote:
+>>> ALLOCSP64 can only allocate pre-zeroed blocks as part of extending =
+EOF,
+>>> whereas a new FZERO flag means that we can pre-zero an arbitrary =
+range
+>>> of bytes in a file.  I don't know if Avi or Andres' usecases demand =
+that
+>>> kind of flexibilty but I know I'd rather go for the more powerful
+>>> interface.
+>> Postgres/I don't at the moment have a need to allocate "written" =
+zeroed
+>> space anywhere but EOF. I can see some potential uses for more =
+flexible
+>> pre-zeroing in the future though, but not very near term.
+>>=20
+>=20
+> I also agree that it's better not to have the kernel fall back =
+internally on writing zeros, letting userspace do that. The assumption =
+is that WRITE SAME will be O(1)-ish and so can bypass scheduling =
+decisions, but if we need to write zeros, better let the application =
+throttle the rate.
+
+Writing zeroes from userspace has a *lot* more overhead when there is a =
+network
+filesystem involved.  It would be better to generate the zeroes on the =
+server,
+or directly in the disk than sending GB of zeroes over the network.
 
 
-Patch 12 was conflicting in zone.c which was due to line number changes,
-and again I was stuck with the patch 19 due to conflicts. I will wait 
-for v13.
+Cheers, Andreas
 
-Thanks, Anand
+
+
+
+
+
+--Apple-Mail=_CF7582DE-2906-4EF2-9ED9-35596B0D02B6
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmAGVYQACgkQcqXauRfM
+H+DLKQ/9GRaFCst/9Bjwd/poEF5jxdM6qxtvLh1IreNdo5xYT9CWaWcV9RGSCTud
+TPy82XDn/ml2FBV2XLsxyOXv5bjG89/Y1EWQpbsrF3p+mxak2+Qw/0PqL1sJSi7H
+kb7hVGrB16n6mLKUZpnHSMiXBl/1K8Mq3YWPY43svLd7l2zCpC6TpgzCYfxpdgid
+c7T9wifVH4gPz8A/PQ26MAL9oABbozDOak3ZdOJQrMWnlfqG18MtGArwAbxWG2c2
+feMxx8givW6DXtxgk9OMyZYAwYrb6hGc4hK3f7r1SO6zaaCfpvUt7pupGjT15vTn
+ZtxHQDgb4bgb/DI5NFPxB0+0a9+oO1nW/oU6Fhccl6bwVpdtFUrCJOa1D0pRuVlU
+zdr4jVOCrsGmXDtPvJtWFrLuPgj8SVwuBvuPWaxWSTgZ/ADewV4lp0NhZymmmvVL
+FzNE1ta9Z9QO3oC+FH679/xuIAReBKmQudS9dfLgVrEhhevuRqfVWnL9fP1svK+U
+85tBBYgOZDe4V5rA/c+nIhGmG37cE5y1Ei5ngaDf/jiL+V728W561dT7DYU0+CjE
+T3LLNhYGj991vpFZBs3jn+/87gtdilP+me2OjpFug8jyL7wFbOquhXIgdE3WLUlr
+wIq3T3GDX7afC3jEN8JXEoV0oZidbBUsUdCoDfLWpJ+zQdjXfY8=
+=imFu
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_CF7582DE-2906-4EF2-9ED9-35596B0D02B6--
