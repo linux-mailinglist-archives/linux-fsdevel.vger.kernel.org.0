@@ -2,217 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FDAC2FAF4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 05:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1842FB044
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 06:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730073AbhASEFc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jan 2021 23:05:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59254 "EHLO
+        id S1726424AbhASFUf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 00:20:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729991AbhASEDw (ORCPT
+        with ESMTP id S1726747AbhASFFP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jan 2021 23:03:52 -0500
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5698C061573;
-        Mon, 18 Jan 2021 20:03:11 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id j3so664710ljb.9;
-        Mon, 18 Jan 2021 20:03:11 -0800 (PST)
+        Tue, 19 Jan 2021 00:05:15 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1EACC061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 21:04:34 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id j12so4360700pfj.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 21:04:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=QZbf/tHbkOzK8ODkUs/F8ksdfv4bYbCZtEAyN+1lVFc=;
-        b=iVnWB8g7Mb83HtkOHXTgAAGhI+6AjJvG/pcT/37eoLcFloQ7bshMYzCdKzuXiYtu9C
-         2pT94OxVUO01ZH2VUgNxYfjxZ1Z9m0boIi1t9Ttgv431AtXwDNCTY8fgQjJliVoJTTiw
-         1tmdP6DmaB8Q8+tlN4a+xX3Z9hRlIf5bfrGZAJxh5ZPhkxBp073OAVhMoH/7XBXXQeA7
-         6k3ey+t4CzFZV4h/zUZDMHasukBWA6mFJKNzMzQUI5xbDdf+XiwawcVUxOXWixZExl2s
-         MGffl9DJj/piFYXmXLU0+Bax31gph70GjwcXn5GxoRdgUg20zIjrjGGSQ6aVARJMTyji
-         FODA==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8jWaaLZ6u+//lYSPDVEE3dbvuuSNRm/3gTqtS9kbnx0=;
+        b=ji14BKRL8km3ujzp9UXDrCdLxYqio1bJdNPB8i24chKWjS842AG68AXO7EXyNe4GOy
+         tN7mQEJa6LUIT8EwlVa84DC9oYeQTUFIjbRBN+VgJ6RWzfhdp3ykNONliiDnxzkhDppT
+         4Zr9/ylh3jUWmyUJiSC+s8pxZcrSkDNUmVGCtMq0N9o7yfnw8KKfL4eHBPLKScP7vOyl
+         OT9Rd6r6vHjAhX9YeMznm0doniZwc6cnT+2mdrKp7IL0QoAtQIUQq4lRetEogSRL5Ua4
+         Xvd5N8keEi8DwbTw5+y0Ai3RWeC2+Ua7Omu4/KSKGnp+HRBRXJMBEFxnryorxyaf+0lw
+         yiEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=QZbf/tHbkOzK8ODkUs/F8ksdfv4bYbCZtEAyN+1lVFc=;
-        b=lw9jnxMwCtLnGU7FLIvPDnDd5MgRPSsWa08RzBLJsLSPajV7KLhB/pp1GJo/YjFUdD
-         0S/vkPB+7rG0cQsbbnBCJAAv+CI+U3s3LQKdr22i7sn5E6LbJV95GjSGE6NV1CfIGChT
-         bWQ09TNxKCOjO/O9yfylFBFEwfgHoV3LxDMkCVhFYttXG3FXRRfIYWtuM86EXjIqp4H/
-         hRWtG94WIIcWd/htLmXl2uyh2DhGO2vvjfMfzyVK3YPY7EwHsvLqBqq616uWb3RgorKz
-         rMPv9sbQ52A5TdILvkviHYD6JDPnnehLOyziSNmPg2/oyS5/KclbALSSvgNSogL7zINd
-         reLg==
-X-Gm-Message-State: AOAM533tI/PiHltUuhVhxDCVxHaATOgh4K0hIZxBXiXo/aM7jVs6aU/s
-        xRXHKhDu852VXUUW+wWoqqU=
-X-Google-Smtp-Source: ABdhPJztuSTxXLHjG6KJRw+QmajmQ+obnrUe+m87VL+zG528ca+DEStlj15L6rJRijL33pXbavz1gA==
-X-Received: by 2002:a2e:b80d:: with SMTP id u13mr1025962ljo.143.1611028990209;
-        Mon, 18 Jan 2021 20:03:10 -0800 (PST)
-Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
-        by smtp.gmail.com with ESMTPSA id r201sm2135071lff.268.2021.01.18.20.03.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8jWaaLZ6u+//lYSPDVEE3dbvuuSNRm/3gTqtS9kbnx0=;
+        b=IIuQPKjjTree0AVYZaTuX9QC8Z7Bzg8lq8wCUpCk03WL3celz+Q1dyRqFgGtj1BwIv
+         /5HRv8t6VD7Ewn3+avKG46J8W16LneM2BoaA2PyctTNx9AkvIp+408pE1jpmS02d0BpA
+         qGxAfgp+LSucshjFyvKEpxXNzs2cvJoNIX7TL8XoEmzWACUuCuFr7EuSI63WOwHkeSqG
+         Td4uU2NLbvA442xzyT/7fY9d3ofndZo+Ard984nXaSBC42O4rqjxaYgQ90xXCs7dgvUB
+         qk8m5vTNDuAX10E98QvvofDir71rf38PhRBrXr7m2/72mV1MWcq7kTSd1h2p/MDyeOmz
+         Urww==
+X-Gm-Message-State: AOAM532hg1PwOJflk7p/4CRE9M+W45Jjnq7Wt9bh6Ubc216PyI93zkGl
+        NpCPxsJhWrhQBxVoJ9emrlyG
+X-Google-Smtp-Source: ABdhPJyFpBRTz/MrkTBJo4nBAwtDEt9Gy16vrdty4l78WVcz2wkkIZh+z2RUkx80eIw41g+lZuUNbg==
+X-Received: by 2002:a62:8fca:0:b029:1a9:39bc:ed37 with SMTP id n193-20020a628fca0000b02901a939bced37mr2632663pfd.61.1611032674277;
+        Mon, 18 Jan 2021 21:04:34 -0800 (PST)
+Received: from localhost ([139.177.225.243])
+        by smtp.gmail.com with ESMTPSA id m27sm641344pgn.62.2021.01.18.21.04.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jan 2021 20:03:09 -0800 (PST)
-Date:   Tue, 19 Jan 2021 06:03:06 +0200
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com
-Subject: Re: [PATCH v17 02/10] fs/ntfs3: Add initialization of super block
-Message-ID: <20210119040306.54lm6oyeiarjrb2w@kari-VirtualBox>
-References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
- <20201231152401.3162425-3-almaz.alexandrovich@paragon-software.com>
+        Mon, 18 Jan 2021 21:04:33 -0800 (PST)
+From:   Xie Yongji <xieyongji@bytedance.com>
+To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
+        sgarzare@redhat.com, parav@nvidia.com, bob.liu@oracle.com,
+        hch@infradead.org, rdunlap@infradead.org, willy@infradead.org,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
+        corbet@lwn.net
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC v3 00/11] Introduce VDUSE - vDPA Device in Userspace
+Date:   Tue, 19 Jan 2021 12:59:09 +0800
+Message-Id: <20210119045920.447-1-xieyongji@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201231152401.3162425-3-almaz.alexandrovich@paragon-software.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 31, 2020 at 06:23:53PM +0300, Konstantin Komarov wrote:
-> diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+This series introduces a framework, which can be used to implement
+vDPA Devices in a userspace program. The work consist of two parts:
+control path forwarding and data path offloading.
 
-> +void fnd_clear(struct ntfs_fnd *fnd)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < fnd->level; i++) {
-> +		struct indx_node *n = fnd->nodes[i];
-> +
-> +		if (!n)
-> +			continue;
-> +
-> +		put_indx_node(n);
-> +		fnd->nodes[i] = NULL;
-> +	}
-> +	fnd->level = 0;
-> +	fnd->root_de = NULL;
-> +}
-> +
-> +static int fnd_push(struct ntfs_fnd *fnd, struct indx_node *n,
-> +		    struct NTFS_DE *e)
-> +{
-> +	int i;
-> +
-> +	i = fnd->level;
-> +	if (i < 0 || i >= ARRAY_SIZE(fnd->nodes))
-> +		return -EINVAL;
-> +	fnd->nodes[i] = n;
-> +	fnd->de[i] = e;
-> +	fnd->level += 1;
-> +	return 0;
-> +}
-> +
-> +static struct indx_node *fnd_pop(struct ntfs_fnd *fnd)
-> +{
-> +	struct indx_node *n;
-> +	int i = fnd->level;
-> +
-> +	i -= 1;
-> +	n = fnd->nodes[i];
-> +	fnd->nodes[i] = NULL;
-> +	fnd->level = i;
-> +
-> +	return n;
-> +}
-> +
-> +static bool fnd_is_empty(struct ntfs_fnd *fnd)
-> +{
-> +	if (!fnd->level)
-> +		return !fnd->root_de;
-> +
-> +	return !fnd->de[fnd->level - 1];
-> +}
-> +
-> +struct ntfs_fnd *fnd_get(struct ntfs_index *indx)
-> +{
-> +	struct ntfs_fnd *fnd = ntfs_alloc(sizeof(struct ntfs_fnd), 1);
-> +
-> +	if (!fnd)
-> +		return NULL;
-> +
-> +	return fnd;
-> +}
+In the control path, the VDUSE driver will make use of message
+mechnism to forward the config operation from vdpa bus driver
+to userspace. Userspace can use read()/write() to receive/reply
+those control messages.
 
-This should be initilized. What about that indx. Is that neccasarry?
-Also no need to check NULL because if it is NULL we can just return it. 
+In the data path, the core is mapping dma buffer into VDUSE
+daemon's address space, which can be implemented in different ways
+depending on the vdpa bus to which the vDPA device is attached.
 
-> +
-> +void fnd_put(struct ntfs_fnd *fnd)
-> +{
-> +	if (!fnd)
-> +		return;
-> +	fnd_clear(fnd);
-> +	ntfs_free(fnd);
-> +}
+In virtio-vdpa case, we implements a MMU-based on-chip IOMMU driver with
+bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
+buffer is reside in a userspace memory region which can be shared to the
+VDUSE userspace processs via transferring the shmfd.
 
-> +/*
-> + * indx_insert_entry
-> + *
-> + * inserts new entry into index
-> + */
-> +int indx_insert_entry(struct ntfs_index *indx, struct ntfs_inode *ni,
-> +		      const struct NTFS_DE *new_de, const void *ctx,
-> +		      struct ntfs_fnd *fnd)
-> +{
-> +	int err;
-> +	int diff;
-> +	struct NTFS_DE *e;
-> +	struct ntfs_fnd *fnd_a = NULL;
-> +	struct INDEX_ROOT *root;
-> +
-> +	if (!fnd) {
-> +		fnd_a = fnd_get(indx);
+The details and our user case is shown below:
 
-Here we get uninitilized fnd.
+------------------------    -------------------------   ----------------------------------------------
+|            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
+|       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
+|       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
+------------+-----------     -----------+------------   -------------+----------------------+---------
+            |                           |                            |                      |
+            |                           |                            |                      |
+------------+---------------------------+----------------------------+----------------------+---------
+|    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
+|    -------+--------           --------+--------            -------+--------          -----+----    |
+|           |                           |                           |                       |        |
+| ----------+----------       ----------+-----------         -------+-------                |        |
+| | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
+| ----------+----------       ----------+-----------         -------+-------                |        |
+|           |      virtio bus           |                           |                       |        |
+|   --------+----+-----------           |                           |                       |        |
+|                |                      |                           |                       |        |
+|      ----------+----------            |                           |                       |        |
+|      | virtio-blk device |            |                           |                       |        |
+|      ----------+----------            |                           |                       |        |
+|                |                      |                           |                       |        |
+|     -----------+-----------           |                           |                       |        |
+|     |  virtio-vdpa driver |           |                           |                       |        |
+|     -----------+-----------           |                           |                       |        |
+|                |                      |                           |    vdpa bus           |        |
+|     -----------+----------------------+---------------------------+------------           |        |
+|                                                                                        ---+---     |
+-----------------------------------------------------------------------------------------| NIC |------
+                                                                                         ---+---
+                                                                                            |
+                                                                                   ---------+---------
+                                                                                   | Remote Storages |
+                                                                                   -------------------
 
-> +		if (!fnd_a) {
-> +			err = -ENOMEM;
-> +			goto out1;
-> +		}
-> +		fnd = fnd_a;
-> +	}
-> +
-> +	root = indx_get_root(indx, ni, NULL, NULL);
-> +	if (!root) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (fnd_is_empty(fnd)) {
+We make use of it to implement a block device connecting to
+our distributed storage, which can be used both in containers and
+VMs. Thus, we can have an unified technology stack in this two cases.
 
-And example here we try to touch it.
+To test it with null-blk:
 
-> +		/* Find the spot the tree where we want to insert the new entry. */
-> +		err = indx_find(indx, ni, root, new_de + 1,
-> +				le16_to_cpu(new_de->key_size), ctx, &diff, &e,
-> +				fnd);
-> +		if (err)
-> +			goto out;
-> +
-> +		if (!diff) {
-> +			err = -EEXIST;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	if (!fnd->level) {
-> +		/* The root is also a leaf, so we'll insert the new entry into it. */
-> +		err = indx_insert_into_root(indx, ni, new_de, fnd->root_de, ctx,
-> +					    fnd);
-> +		if (err)
-> +			goto out;
-> +	} else {
-> +		/* found a leaf buffer, so we'll insert the new entry into it.*/
-> +		err = indx_insert_into_buffer(indx, ni, root, new_de, ctx,
-> +					      fnd->level - 1, fnd);
-> +		if (err)
-> +			goto out;
-> +	}
-> +
-> +out:
-> +	fnd_put(fnd_a);
-> +out1:
-> +	return err;
-> +}
+  $ qemu-storage-daemon \
+      --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+      --monitor chardev=charmonitor \
+      --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
+      --export vduse-blk,id=test,node-name=disk0,writable=on,vduse-id=1,num-queues=16,queue-size=128
+
+The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
+
+Future work:
+  - Improve performance (e.g. zero copy implementation in datapath)
+  - Config interrupt support
+  - Userspace library (find a way to reuse device emulation code in qemu/rust-vmm)
+
+This is now based on below series:
+https://lore.kernel.org/netdev/20201112064005.349268-1-parav@nvidia.com/
+
+V2 to V3:
+- Rework the MMU-based IOMMU driver
+- Use the iova domain as iova allocator instead of genpool
+- Support transferring vma->vm_file in vhost-vdpa
+- Add SVA support in vhost-vdpa
+- Remove the patches on bounce pages reclaim
+
+V1 to V2:
+- Add vhost-vdpa support
+- Add some documents
+- Based on the vdpa management tool
+- Introduce a workqueue for irq injection
+- Replace interval tree with array map to store the iova_map
+
+Xie Yongji (11):
+  eventfd: track eventfd_signal() recursion depth separately in different cases
+  eventfd: Increase the recursion depth of eventfd_signal()
+  vdpa: Remove the restriction that only supports virtio-net devices
+  vhost-vdpa: protect concurrent access to vhost device iotlb
+  vdpa: shared virtual addressing support
+  vhost-vdpa: Add an opaque pointer for vhost IOTLB
+  vdpa: Pass the netlink attributes to ops.dev_add()
+  vduse: Introduce VDUSE - vDPA Device in Userspace
+  vduse: Add VDUSE_GET_DEV ioctl
+  vduse: grab the module's references until there is no vduse device
+  vduse: Introduce a workqueue for irq injection
+
+ Documentation/driver-api/vduse.rst                 |   85 ++
+ Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
+ drivers/vdpa/Kconfig                               |    7 +
+ drivers/vdpa/Makefile                              |    1 +
+ drivers/vdpa/ifcvf/ifcvf_main.c                    |    2 +-
+ drivers/vdpa/mlx5/net/mlx5_vnet.c                  |    2 +-
+ drivers/vdpa/vdpa.c                                |    7 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c                   |   17 +-
+ drivers/vdpa/vdpa_user/Makefile                    |    5 +
+ drivers/vdpa/vdpa_user/eventfd.c                   |  229 ++++
+ drivers/vdpa/vdpa_user/eventfd.h                   |   48 +
+ drivers/vdpa/vdpa_user/iova_domain.c               |  426 +++++++
+ drivers/vdpa/vdpa_user/iova_domain.h               |   68 ++
+ drivers/vdpa/vdpa_user/vduse.h                     |   62 +
+ drivers/vdpa/vdpa_user/vduse_dev.c                 | 1249 ++++++++++++++++++++
+ drivers/vhost/iotlb.c                              |    5 +-
+ drivers/vhost/vdpa.c                               |  130 +-
+ drivers/vhost/vhost.c                              |    4 +-
+ fs/aio.c                                           |    3 +-
+ fs/eventfd.c                                       |   20 +-
+ include/linux/eventfd.h                            |    5 +-
+ include/linux/vdpa.h                               |   17 +-
+ include/linux/vhost_iotlb.h                        |    8 +-
+ include/uapi/linux/vdpa.h                          |    1 +
+ include/uapi/linux/vduse.h                         |  126 ++
+ 25 files changed, 2458 insertions(+), 70 deletions(-)
+ create mode 100644 Documentation/driver-api/vduse.rst
+ create mode 100644 drivers/vdpa/vdpa_user/Makefile
+ create mode 100644 drivers/vdpa/vdpa_user/eventfd.c
+ create mode 100644 drivers/vdpa/vdpa_user/eventfd.h
+ create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
+ create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
+ create mode 100644 drivers/vdpa/vdpa_user/vduse.h
+ create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
+ create mode 100644 include/uapi/linux/vduse.h
+
+-- 
+2.11.0
+
