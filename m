@@ -2,143 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A31DA2FB191
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 07:37:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C757F2FB26B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 08:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbhASGe7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 01:34:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729409AbhASGeI (ORCPT
+        id S2389495AbhASF2S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 00:28:18 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:51850 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388688AbhASFLK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 01:34:08 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5026CC061573;
-        Mon, 18 Jan 2021 22:33:28 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id q1so37498857ion.8;
-        Mon, 18 Jan 2021 22:33:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l6x6S6V7QqaCecRtSu4BVeMkktffIYWiGzWsttlVG90=;
-        b=boi99NBW5OJuvA/Hx9NZrGLvag/X1H6xRs6skEbNsfWkKLaP/r/WMVh/EoZ5EqBIV6
-         XkLtlOrkOmYZzI2h7uLNAh7rsVto0m9ZqrjKgP+X1MX3R+dt6tkKflKaLBcbLq/SEzLF
-         tIhbuhq/jDRfl1bP1CuFELvTh8LNd2xzwjsVUwMvTIKTDIl2tcuZv1nIOADy6Cq60H1P
-         /CHwLagd5+roW9AMiAXWW9T5SK8soJd77RVPGAyew23bKqXBZQsePpsyj25aHe92h9Cs
-         z5QDS3sdAV+oPV6Nn7IPyUt4G1Q7VKMZ6lpEXaEPsghwqvarV+Ai4/HxsAZU9DFdvu9L
-         Qsvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l6x6S6V7QqaCecRtSu4BVeMkktffIYWiGzWsttlVG90=;
-        b=VO9/1AQS5JCbK0ewc/wHXIrTzexAZVahzRY09SDjaYDDzMgW0e1rOY9XnbhKs/KfBT
-         itdEneyPSwa++8YvT6CBX6pFvEKIVYs7xAJmrSvt4wNimdWaIOcaOyFgZdKcfKEgmwc2
-         SbWFNBEp1Bv8KucogXf4lNNLfIrPckeham5pZVaHmt/SjO0MTBanSw1SRC10DnLkKRrv
-         nbSQAG7g0pXFGfqDvOnE3Fkuge2mNLCCjXEVZU1o3XdHf+HzmpCUq/NXyOAjFuT7U7jK
-         RTU8Z0GmKXywqYjWkmOqVN+7+gmD0XOteB9ZaY87kcX2oJb1pKXGu+EawXIGcuAqE7ah
-         PrPg==
-X-Gm-Message-State: AOAM530kab6ODjsUeal23GDPDCzhn4xr5XrF7H2FxaHwdMZ6+Lrevn49
-        xBtgv5gqKZg9bHKmG0O8YWoSSkhuQz1FyIv14GI=
-X-Google-Smtp-Source: ABdhPJzq2DbzRn0vb3Itf6IiI3hLJ6h5DadfQ0C7y0LCnwOWHXzQH71EUqZQcMXpNpbUNhv/D6YNhelbDuoDyO8M66g=
-X-Received: by 2002:a92:6403:: with SMTP id y3mr2235438ilb.72.1611038007420;
- Mon, 18 Jan 2021 22:33:27 -0800 (PST)
+        Tue, 19 Jan 2021 00:11:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1611033069; x=1642569069;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=SmRmSEecsPl0dNDxe5lwcfSlZzCbmw+NJIUAkJff7lg=;
+  b=TTvy6az7YfZu3I6RHd9uyLCVnwXWebTAMf6S3xktUuhs2h78+C557uVM
+   OXZgNjJv/UDCvBCzFeQfbVEXTWjwsOvM+wlLiXN8UA9BjePci4j0t4P41
+   phrft7eVbfhtyXDCj8lo7A8of6OfMNgxv2DFo7mf9/Hcz1ROOc/dWQ7aJ
+   sjlri9n9IXMxZCXufh9lcUrMV/GrBq9rB+RBN/dh2BXwLgojReARvZtdh
+   qoDyg8ZTm1hovQHzy3pIMGTJL5bbZ+BsLhyh8yrsjvi2VmHkE7RpD2XL1
+   ZVxncMm2bbNwqwib8zyO5q19tpa36deIcvYCjXIHeeTHQWVL3s59PjfBp
+   Q==;
+IronPort-SDR: kdIIt2x5PMEjTb4EGFggpfl2dYfQSP2xDtYm8mdeYH9f7qSSxJPAzzb88WjlqscRztf9vZyP+b
+ vhQOor71N7fuZ/YmXovuKjf11uBcQFvNusA2qzMpBdFq+cf7QDww22iX65ytM5RuX4K7cbXjvK
+ Npe4W67SABEJgoC8q6QzihocwyA2irnL2mDeWA5NH0apI8P5RftybOIQpALQclkBz0qdcMkLWn
+ QHlxUgOOs3s7xwVoq8aFuBuyQPYX4HYZrBd451ytL2c0kFFHZzRQGh2SvdzQIK090J1FNiMJmF
+ DL4=
+X-IronPort-AV: E=Sophos;i="5.79,357,1602518400"; 
+   d="scan'208";a="157763889"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Jan 2021 13:08:14 +0800
+IronPort-SDR: LRuwxLsfABgj/FCitJ0WnK7Gjvqvg6JtsxJOwfFIj2l4BDUeLDVqxwb8vvGjnII3F0zTIsz7Hg
+ rNlUiU8qFPgYVZGXHuLfVWEAHJO+lSgJKLtPPd9OLxtfSHEkOJpPWoWQ77jERR+EHu+2SEdrDR
+ 2gck+Umd+1Ctbn6H/dAAkP5xYvUnceNTw8BphGocZ4LPmS8SKHdNy7IALc/BjWXNTwK4VP+G5Q
+ Rz8YIopnF85w26xAJHC88oJJ2QoWS2RMnI7cw41qWtr1PAnqyv+ix63ozfXpfgTrp48v0vSPbG
+ efVVa6oioVUBcBumGIvxib5f
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 20:52:52 -0800
+IronPort-SDR: p1tcnYwAx/l/NVCOSE++cI0sO4XNQ+lbfc67fxaPGZ0Kwcqxhdz9+u3CPNrCwOw83oDaMA1Qjm
+ ESU3xmsUtmMt60eRcgdVRVFxzLHWW7CqjKNcfNh1+RIHGbsJ3Ai97YW6MaxhVDB0yLEg9IysxE
+ 83VZ2vSeY/l/vgDGSUb38hhYRsZT54dyq7c3WndcswTCZVlwVMvWGE4bWezbXz6r57OZtdR1bX
+ 3lpkUR2AIs9h1PW1353M+8ODhhBWH9ueZ25tUnouwQQq8n8IP+3JRSYVgmwudbuVJ26I/RNNul
+ ogs=
+WDCIronportException: Internal
+Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
+  by uls-op-cesaip02.wdc.com with ESMTP; 18 Jan 2021 21:08:14 -0800
+From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+To:     linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com
+Cc:     jfs-discussion@lists.sourceforge.net, dm-devel@redhat.com,
+        axboe@kernel.dk, philipp.reisner@linbit.com,
+        lars.ellenberg@linbit.com, efremov@linux.com, colyli@suse.de,
+        kent.overstreet@gmail.com, agk@redhat.com, snitzer@redhat.com,
+        song@kernel.org, hch@lst.de, sagi@grimberg.me,
+        martin.petersen@oracle.com, viro@zeniv.linux.org.uk, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, rpeterso@redhat.com, agruenba@redhat.com,
+        darrick.wong@oracle.com, shaggy@kernel.org, damien.lemoal@wdc.com,
+        naohiro.aota@wdc.com, jth@kernel.org, tj@kernel.org,
+        osandov@fb.com, bvanassche@acm.org, gustavo@embeddedor.com,
+        asml.silence@gmail.com, jefflexu@linux.alibaba.com,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 14/37] drdb: use bio_init_fields in bitmap
+Date:   Mon, 18 Jan 2021 21:06:08 -0800
+Message-Id: <20210119050631.57073-15-chaitanya.kulkarni@wdc.com>
+X-Mailer: git-send-email 2.22.1
+In-Reply-To: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
+References: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
 MIME-Version: 1.0
-References: <20210118192748.584213-1-balsini@android.com> <20210118192748.584213-4-balsini@android.com>
-In-Reply-To: <20210118192748.584213-4-balsini@android.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 19 Jan 2021 08:33:16 +0200
-Message-ID: <CAOQ4uxj-Ncm7nKBZE_homGu_kcF0w1JtYcC9zg2=uWT591Ggbw@mail.gmail.com>
-Subject: Re: [PATCH RESEND V11 3/7] fuse: Definitions and ioctl for passthrough
-To:     Alessio Balsini <balsini@android.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Akilesh Kailash <akailash@google.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 9:28 PM Alessio Balsini <balsini@android.com> wrote:
->
-> Expose the FUSE_PASSTHROUGH interface to user space and declare all the
-> basic data structures and functions as the skeleton on top of which the
-> FUSE passthrough functionality will be built.
->
-> As part of this, introduce the new FUSE passthrough ioctl(), which
-> allows the FUSE daemon to specify a direct connection between a FUSE
-> file and a lower file system file. Such ioctl() requires users pace to
-> pass the file descriptor of one of its opened files through the
-> fuse_passthrough_out data structure introduced in this patch. This
-> structure includes extra fields for possible future extensions.
-> Also, add the passthrough functions for the set-up and tear-down of the
-> data structures and locks that will be used both when fuse_conns and
-> fuse_files are created/deleted.
->
-> Signed-off-by: Alessio Balsini <balsini@android.com>
-> ---
-[...]
+Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+---
+ drivers/block/drbd/drbd_bitmap.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> @@ -699,6 +700,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
->         INIT_LIST_HEAD(&fc->bg_queue);
->         INIT_LIST_HEAD(&fc->entry);
->         INIT_LIST_HEAD(&fc->devices);
-> +       idr_init(&fc->passthrough_req);
->         atomic_set(&fc->num_waiting, 0);
->         fc->max_background = FUSE_DEFAULT_MAX_BACKGROUND;
->         fc->congestion_threshold = FUSE_DEFAULT_CONGESTION_THRESHOLD;
-> @@ -1052,6 +1054,12 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
->                                 fc->handle_killpriv_v2 = 1;
->                                 fm->sb->s_flags |= SB_NOSEC;
->                         }
-> +                       if (arg->flags & FUSE_PASSTHROUGH) {
-> +                               fc->passthrough = 1;
-> +                               /* Prevent further stacking */
-> +                               fm->sb->s_stack_depth =
-> +                                       FILESYSTEM_MAX_STACK_DEPTH + 1;
-> +                       }
+diff --git a/drivers/block/drbd/drbd_bitmap.c b/drivers/block/drbd/drbd_bitmap.c
+index df53dca5d02c..4fd9746af469 100644
+--- a/drivers/block/drbd/drbd_bitmap.c
++++ b/drivers/block/drbd/drbd_bitmap.c
+@@ -1006,13 +1006,10 @@ static void bm_page_io_async(struct drbd_bm_aio_ctx *ctx, int page_nr) __must_ho
+ 		bm_store_page_idx(page, page_nr);
+ 	} else
+ 		page = b->bm_pages[page_nr];
+-	bio_set_dev(bio, device->ldev->md_bdev);
+-	bio->bi_iter.bi_sector = on_disk_sector;
++	bio_init_fields(bio, device->ldev->md_bdev, on_disk_sector, ctx, drbd_bm_endio, 0, 0);
+ 	/* bio_add_page of a single page to an empty bio will always succeed,
+ 	 * according to api.  Do we want to assert that? */
+ 	bio_add_page(bio, page, len, 0);
+-	bio->bi_private = ctx;
+-	bio->bi_end_io = drbd_bm_endio;
+ 	bio_set_op_attrs(bio, op, 0);
+ 
+ 	if (drbd_insert_fault(device, (op == REQ_OP_WRITE) ? DRBD_FAULT_MD_WR : DRBD_FAULT_MD_RD)) {
+-- 
+2.22.1
 
-Hi Allesio,
-
-I'm sorry I missed the discussion on v10 patch, but this looks wrong.
-First of all, assigning a value above a declared MAX_ is misleading
-and setting a trap for someone else to trip in the future.
-
-While this may be just a semantic mistake, the code that checks for
-(passthrough_sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH)
-is just cheating.
-
-fuse_file_{read,write}_iter are stacked operations, no different in any way
-than overlayfs and ecryptfs stacked file operations.
-
-Peng Tao mentioned a case of passthrough to overlayfs over ecryptfs [1].
-If anyone really thinks this use case is interesting enough (I doubt it), then
-they may propose to bump up FILESYSTEM_MAX_STACK_DEPTH to 3,
-but not to cheat around the currently defined maximum.
-
-So please set s_max_depth to FILESYSTEM_MAX_STACK_DEPTH and
-restore your v10 check of
-passthrough_sb->s_stack_depth >= FILESYSTEM_MAX_STACK_DEPTH
-
-Your commit message sounds as if the only purpose of this check is to
-prevent stacking of FUSE passthrough on top of each other, but that
-is not enough.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/CA+a=Yy6S9spMLr9BqyO1qvU52iAAXU3i9eVtb81SnrzjkCwO5Q@mail.gmail.com/
