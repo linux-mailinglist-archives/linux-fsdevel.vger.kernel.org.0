@@ -2,130 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E59D2FC20B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 22:17:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D81112FC258
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 22:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391818AbhASVMj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 16:12:39 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:47868 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391929AbhASVMY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 16:12:24 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1l1yHc-0074ac-TD; Tue, 19 Jan 2021 14:11:24 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1l1yHb-009ut1-VR; Tue, 19 Jan 2021 14:11:24 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <code@tyhicks.com>
-References: <20210119162204.2081137-1-mszeredi@redhat.com>
-Date:   Tue, 19 Jan 2021 15:10:14 -0600
-In-Reply-To: <20210119162204.2081137-1-mszeredi@redhat.com> (Miklos Szeredi's
-        message of "Tue, 19 Jan 2021 17:22:02 +0100")
-Message-ID: <87y2go8wg9.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1728438AbhASV2o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 16:28:44 -0500
+Received: from mga18.intel.com ([134.134.136.126]:42599 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728240AbhASV2b (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Jan 2021 16:28:31 -0500
+IronPort-SDR: 72ni/KFBgk+YP/Wlm546mnDbqjAtJy7EOtkbD7K1Rr3Mw75IifTiqng5YYimZM1fvMUo3xqq5V
+ uAgtB8IwCXjg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9869"; a="166664203"
+X-IronPort-AV: E=Sophos;i="5.79,359,1602572400"; 
+   d="scan'208";a="166664203"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2021 13:27:41 -0800
+IronPort-SDR: P6ghof8VsZCwvLMgDArcumBkIipxBpZWHcQpMan8DxUGhHvmA2hVZCbwDoMwDBg0YOm7K/1Zj0
+ m8FUkoXD5QiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,359,1602572400"; 
+   d="scan'208";a="569864077"
+Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
+  by orsmga005.jf.intel.com with ESMTP; 19 Jan 2021 13:27:41 -0800
+Received: from fmsmsx608.amr.corp.intel.com (10.18.126.88) by
+ fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 19 Jan 2021 13:27:40 -0800
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx608.amr.corp.intel.com (10.18.126.88) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Tue, 19 Jan 2021 13:27:40 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.1713.5; Tue, 19 Jan 2021 13:27:40 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xpx8CztDYbWxOvj4tZ3WJqq4vyT09/rDkbBk2MBz3z9Ocbwf16lIdlTkz1Mc0iJYqgBWpeLcUMv19Aua20UM0efnWeFR6eLJ2JCCCRYZHT5Zt2mX3AR4WgIX65nCl/PIr71+6aHH1ateITVQTclbCn8h3bljDwjei5f8kxR2UxFhSLXu7MTI57EqjVfM3a0UqWa3eRKaOw9LcqoWYrnPvoOIh8HuRFGkmG9EhcNUxwG8JxxeKueN/6YfMGxVDje5vzem7Dv1XAOsXlpjCHWLyuna8EPD2Mjm20HWOgxO7RMz1d+a5bHZ/jrjE7gavcfTOmlXeOzFVyQWt8OkllJQ2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SGu50+mbopfR/Rfngtz2ffbbdyYso5DxG/Ys5uymjl4=;
+ b=mE7CYaP+fy/Mw5lu2a5LnOtKPZjSRQsRSMI0kVVHm6Axj16Wb1ndvfTju9k425AD5SDUXhUPJDHXYRgTJfT9EmbZWnvKUDbitwJj6b8PpZpnWIkqpUKZLNuArD8s8iZvUnx+ucyv9VrC/GOs2xjqHlw6H18FWkj/GoLQTTkeMNT2sPoOjvKdMTX/30u2NUS9azXpXkp4RFzPbmg69mP7yV9ty+mQikLqNOXcHQWFC7P6Rif2nKc5mS70O93rA+mU9LdP+Waslb4FaaeXPM0OHAZy2PEYf44xeKFtyoWHnqrqSQmLGAJY2VUSupYwuQmkfY+FP24bAz4s8ll0nuX2yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SGu50+mbopfR/Rfngtz2ffbbdyYso5DxG/Ys5uymjl4=;
+ b=dYH+bgyHvRIyqmj//v04ict7TB+xHgSQY1AFumZOZcPnYHCIIgDKKyuLq0I91O6GZ+fR98SPcPQGSqjt0F+q0EsfElCFsGOOb7bYy3A8syrfa8NekuLuvSn98lCtStkcEzUksUvMuDm6oU8pGXU+qCqsmLG2wqxUfTwTL5GQz4s=
+Received: from DM5PR11MB1707.namprd11.prod.outlook.com (2603:10b6:3:14::23) by
+ DM6PR11MB3753.namprd11.prod.outlook.com (2603:10b6:5:141::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3763.14; Tue, 19 Jan 2021 21:27:37 +0000
+Received: from DM5PR11MB1707.namprd11.prod.outlook.com
+ ([fe80::516f:5c83:c08f:9074]) by DM5PR11MB1707.namprd11.prod.outlook.com
+ ([fe80::516f:5c83:c08f:9074%12]) with mapi id 15.20.3763.014; Tue, 19 Jan
+ 2021 21:27:37 +0000
+From:   "Chiappero, Marco" <marco.chiappero@intel.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Linux FS Devel" <linux-fsdevel@vger.kernel.org>
+CC:     "Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>
+Subject: Correct debugfs file removal pattern
+Thread-Topic: Correct debugfs file removal pattern
+Thread-Index: AdboFB18ZkWRHmjrQUqmo41EwPm22w==
+Date:   Tue, 19 Jan 2021 21:27:36 +0000
+Message-ID: <DM5PR11MB1707D6FCF5F9CDF83174B83DE8A30@DM5PR11MB1707.namprd11.prod.outlook.com>
+Accept-Language: en-IE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+dlp-version: 11.5.1.3
+authentication-results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=intel.com;
+x-originating-ip: [37.228.229.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ff34ebf0-929e-4d71-dc46-08d8bcc10af5
+x-ms-traffictypediagnostic: DM6PR11MB3753:
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR11MB375391BFE791981634EB391EE8A30@DM6PR11MB3753.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: qdB6PFBABOqJDX7TpCOKUsLDIvri4kRBhTFtyoOxwPQez9WK6M8PYvFRQ9bqkPVo92cLLiHHJ2HstXbuMecbpdHobGjxJHl/thwsxC79vEvTNQPLg8jzOJ0+jcidDHhBb3N0m2uPiPyBOUq+ToCITI+w6GSM68Ds4LsUc9+ttbmP2hrr6I3edZmHjUWjQIEXj/WHSscQ8c6NsMjTkUmS74ETAiaZ4zGzpOOp6lycPKiK5leHI/CzeJIPYmS8Fg/VvJa9zcS8ZxYSnWPbP5m9oEe6dMkiPgSvnH5PFLSQO1hHs8DyZpF0LJ4JkNzlIhCPkwYnizsDyGppzJr2jDERSn5PYIG5m/pKaz/Uv5ljhkxE2JYMl0uZGD5muYgHKWVBI4asntte/dVPqPVkFCUEfP0wq/KcTRLttVEVjpdfuYbH2s+S/Y48HeWCNICQqKMM
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR11MB1707.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(346002)(396003)(39860400002)(376002)(136003)(64756008)(66446008)(66476007)(55016002)(66556008)(9686003)(5660300002)(26005)(66946007)(76116006)(8936002)(86362001)(107886003)(8676002)(83380400001)(186003)(6506007)(4326008)(7696005)(316002)(478600001)(450100002)(71200400001)(33656002)(110136005)(52536014)(2906002)(554374003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?JFMePTLdOPvQ69haR4WwLAhKDEcqgkh0SXAvXLEPQNotxlSIOW8pAB8Ja4v0?=
+ =?us-ascii?Q?UJtezxVg37dqZ5lBcrdpkaVCNBNWZCGliFqOWQJEFjwldLzb3WQwUoP2Z6ha?=
+ =?us-ascii?Q?IIUj2k3V4TdZ05cUcPCAxhXETySEFplWs1nOa0NSeAbQ3EGesq1vMA3MNCef?=
+ =?us-ascii?Q?4syASg9jnRJQY/OiGNziPzf4IOs9Fzk9eMWucy3JPJqYXt1u37HSaEjO8uLK?=
+ =?us-ascii?Q?DDu6IrgXuBUbgminqnpoVOyLSZ6Fh45bg0QCH6I/APlyIcUuRVoLJKDYeUX9?=
+ =?us-ascii?Q?5q6gQnHR7OTrKjqJ93+EGFG7TCeqEFppoGtVFXUYqc0p53FDn4f4rhJ9BJH3?=
+ =?us-ascii?Q?9t0Eu7mX4h7vk/kqSuzSrtBW82KnvDK5mwmOF6g/AXnJf0lZl8QsTNbr8A7G?=
+ =?us-ascii?Q?LZNBPJuo+uo0ppakPgeBomuT9ZePn4pSNcT7mlzcB6rN4wNZxD501Y8M7NW/?=
+ =?us-ascii?Q?68BNNYnQ3107uHRoyfbQcWoGJS36aO04C3bp4L84kkD1RfcyT1aUmUwcVX5y?=
+ =?us-ascii?Q?ee/+f7KE2rZAg77RsNhk75CuJSGPqjHZzJBW8ya4C6Vwxig/YAwcD0mkCGtV?=
+ =?us-ascii?Q?1huic/lhlZ2GnydoyioPvtCl9lU/40p/5zo7ym6GIQr7G1+KQBECDeNrcWqp?=
+ =?us-ascii?Q?/2yA4obRDhhOZItO0CoYb4GyXhIV0mwCWwDCYcRuB4A2TEONh+U8ACIgQXZt?=
+ =?us-ascii?Q?+XQ6k7MX8gdArd3pkq2D0w0t6CaLh6BBzo/Y44bBRLXZP/FpKYICE8Qw88G2?=
+ =?us-ascii?Q?94AlG6Jo5fi7iwqD664W4ssswps+BIa28AR58P2LyX3/W1n4NozPPVPRumY1?=
+ =?us-ascii?Q?Fpi1HSo2KlRoWLlHeiS7TGz7QBO1p21I76Qr32JzCjtRlTw2ohgVetb14xvx?=
+ =?us-ascii?Q?ZOTMAeDOEAcOksmuP2lmRpihb7p24PANg3AGbQe2rWZkGRdSzs9kU1vsvCkh?=
+ =?us-ascii?Q?s1MLcxXHWytvbUX7z60CVuykayUweAgr5tDy2sqgZYY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1l1yHb-009ut1-VR;;;mid=<87y2go8wg9.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/4Ah3dTvupV5EVHSjncD8jAwEeZNW5C5M=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
-        version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Miklos Szeredi <mszeredi@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 400 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.8 (1.0%), b_tie_ro: 2.6 (0.6%), parse: 0.65
-        (0.2%), extract_message_metadata: 2.5 (0.6%), get_uri_detail_list:
-        1.11 (0.3%), tests_pri_-1000: 2.8 (0.7%), tests_pri_-950: 1.03 (0.3%),
-        tests_pri_-900: 0.82 (0.2%), tests_pri_-90: 153 (38.3%), check_bayes:
-        152 (38.0%), b_tokenize: 4.8 (1.2%), b_tok_get_all: 7 (1.7%),
-        b_comp_prob: 1.63 (0.4%), b_tok_touch_all: 136 (33.9%), b_finish: 0.72
-        (0.2%), tests_pri_0: 221 (55.3%), check_dkim_signature: 0.39 (0.1%),
-        check_dkim_adsp: 2.3 (0.6%), poll_dns_idle: 0.88 (0.2%), tests_pri_10:
-        2.3 (0.6%), tests_pri_500: 6 (1.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 0/2] capability conversion fixes
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR11MB1707.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff34ebf0-929e-4d71-dc46-08d8bcc10af5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2021 21:27:36.9960
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: txgJLt9skVKCh2WzTumaDJv+b5l/CFnBt2itb/zYvLLunShINZr8krZPsQSYusGuZwErbyS8ztVT9Uy5ldfcEyTf42k2vbL526ng5yabrfI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3753
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <mszeredi@redhat.com> writes:
+Hi,
 
-> It turns out overlayfs is actually okay wrt. mutliple conversions, because
-> it uses the right context for lower operations.  I.e. before calling
-> vfs_{set,get}xattr() on underlying fs, it overrides creds with that of the
-> mounter, so the current user ns will now match that of
-> overlay_sb->s_user_ns, meaning that the caps will be converted to just the
-> right format for the next layer
->
-> OTOH ecryptfs, which is the only other one affected by commit 7c03e2cda4a5
-> ("vfs: move cap_convert_nscap() call into vfs_setxattr()") needs to be
-> fixed up, since it doesn't do the cap override thing that overlayfs does.
->
-> I don't have an ecryptfs setup, so untested, but it's a fairly trivial
-> change.
->
-> My other observation was that cap_inode_getsecurity() messes up conversion
-> of caps in more than one case.  This is independent of the overlayfs user
-> ns enablement but affects it as well.
->
-> Maybe we can revisit the infrastructure improvements we discussed, but I
-> think these fixes are more appropriate for the current cycle.
+I'm looking to expose some information through a debugfs file, however I'm =
+not entirely clear with the correct steps for file removal upon module unlo=
+ading. I'm asking this because I would expect debugfs_remove() to wait unti=
+l every open file has been closed when using debugfs_create_file (not debug=
+fs_create_file_unsafe), as per debugfs_file_put() documentation:
 
-I mostly agree.  Fixing the bugs in a back-portable way is important.
+ * Up to a matching call to debugfs_file_put(), any successive call
+ * into the file removing functions debugfs_remove() and
+ * debugfs_remove_recursive() will block.
 
-However we need to sort out the infrastructure, and implementation.
+Unfortunately it's not what I'm seeing when removing the module with one fi=
+le kept open (leading to a page fault when eventually closing the file). So=
+, is this the expected behaviour? If so, what is the right approach for wai=
+ting, inotify or fsnotify? Any suggestion on what the best pattern would be=
+?
 
-As far as I can tell it is only the fact that overlayfs does not support
-the new mount api aka fs_context that allows this fix to work and be
-correct.
+Thank you,
+Marco
 
-I believe the new mount api would allow specifying a different userns
-thatn curent_user_ns for the overlay filesystem and that would break
-this.
-
-So while I agree with the making a minimal fix for now.  We need a good
-fix because this code is much too subtle, and it can break very easily
-with no one noticing.
-
-Eric
-
-
-
-
-
-> Thanks,
-> Miklos
->
-> Miklos Szeredi (2):
->   ecryptfs: fix uid translation for setxattr on security.capability
->   security.capability: fix conversions on getxattr
->
->  fs/ecryptfs/inode.c  | 10 +++++--
->  security/commoncap.c | 67 ++++++++++++++++++++++++++++----------------
->  2 files changed, 50 insertions(+), 27 deletions(-)
+--------------------------------------------------------------
+Intel Research and Development Ireland Limited
+Registered in Ireland
+Registered Office: Collinstown Industrial Park, Leixlip, County Kildare
+Registered Number: 308263
