@@ -2,104 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3B302FBB1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 16:27:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80DFD2FBB22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 16:27:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391503AbhASPZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 10:25:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23868 "EHLO
+        id S2390135AbhASP0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 10:26:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42212 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389567AbhASPZF (ORCPT
+        by vger.kernel.org with ESMTP id S2390869AbhASPZY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 10:25:05 -0500
+        Tue, 19 Jan 2021 10:25:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611069818;
+        s=mimecast20190719; t=1611069836;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=6IOCzEEZmUBeZWP6WWqnV6vKo2Y6IOb3KpA7/jr14dc=;
-        b=N+cpATNQ/GSJjJ1VGt+8ElnoK3D/9IqAQkncBwcdHcXp2xNntOO7jsJex6cpdsR/cwBvvZ
-        7750Au075wfV4tMZGpo8PFCdfv5ikE3yNqW8hdwmZrl4PTGjCromxjbjJvg95nJGY1GVY3
-        01sfFMeGs8Y8TUobpB3L1XmBJmvHP0M=
+        bh=a+cxKsMKCCjDUZToTcmQ9jZuDcH5xKSPCL0jMRb9jEE=;
+        b=dxX+iSaL7BvmQm1ursKYWZRIHR7ZU7SfeSBgUV4cBAEG0XD7uMD+/o4Lo6HUCqQUIkxiNM
+        5XI8TUL/qjAjhMR0Wf8RPQxr/icnq6KOZgLindbtAqHazpVwsITJtRLNkYDU6+ru6CQute
+        sWveUSGeF4QPP8zcCT70zm68WNhYjFI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-597-npNQoGZ1MTq9SYFFB1BAAg-1; Tue, 19 Jan 2021 10:23:36 -0500
-X-MC-Unique: npNQoGZ1MTq9SYFFB1BAAg-1
+ us-mta-600-IAbgqDAXMxSsABLmqtGZlg-1; Tue, 19 Jan 2021 10:23:52 -0500
+X-MC-Unique: IAbgqDAXMxSsABLmqtGZlg-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 61F6D1005D5F;
-        Tue, 19 Jan 2021 15:23:35 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A45471081B38;
+        Tue, 19 Jan 2021 15:23:51 +0000 (UTC)
 Received: from bfoster (ovpn-114-23.rdu2.redhat.com [10.10.114.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A7645D968;
-        Tue, 19 Jan 2021 15:23:34 +0000 (UTC)
-Date:   Tue, 19 Jan 2021 10:23:32 -0500
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1FAAE5D9FC;
+        Tue, 19 Jan 2021 15:23:51 +0000 (UTC)
+Date:   Tue, 19 Jan 2021 10:23:49 -0500
 From:   Brian Foster <bfoster@redhat.com>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        avi@scylladb.com, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH 06/11] xfs: improve the reflink_bounce_dio_write
- tracepoint
-Message-ID: <20210119152332.GF1646807@bfoster>
+        avi@scylladb.com
+Subject: Re: [PATCH 08/11] iomap: rename the flags variable in __iomap_dio_rw
+Message-ID: <20210119152349.GH1646807@bfoster>
 References: <20210118193516.2915706-1-hch@lst.de>
- <20210118193516.2915706-7-hch@lst.de>
+ <20210118193516.2915706-9-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210118193516.2915706-7-hch@lst.de>
+In-Reply-To: <20210118193516.2915706-9-hch@lst.de>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 18, 2021 at 08:35:11PM +0100, Christoph Hellwig wrote:
-> Use a more suitable event class.
+On Mon, Jan 18, 2021 at 08:35:13PM +0100, Christoph Hellwig wrote:
+> Rename flags to iomap_flags to make the usage a little more clear.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
 > ---
 
 Reviewed-by: Brian Foster <bfoster@redhat.com>
 
->  fs/xfs/xfs_file.c  | 2 +-
->  fs/xfs/xfs_trace.h | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+>  fs/iomap/direct-io.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index aa64e78fc3c467..a696bd34f71d21 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -560,7 +560,7 @@ xfs_file_dio_write(
->  		 * files yet, as we can't unshare a partial block.
->  		 */
->  		if (xfs_is_cow_inode(ip)) {
-> -			trace_xfs_reflink_bounce_dio_write(ip, iocb->ki_pos, count);
-> +			trace_xfs_reflink_bounce_dio_write(iocb, from);
->  			return -ENOTBLK;
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 933f234d5becd0..604103ab76f9c5 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -427,7 +427,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	size_t count = iov_iter_count(iter);
+>  	loff_t pos = iocb->ki_pos;
+>  	loff_t end = iocb->ki_pos + count - 1, ret = 0;
+> -	unsigned int flags = IOMAP_DIRECT;
+> +	unsigned int iomap_flags = IOMAP_DIRECT;
+>  	struct blk_plug plug;
+>  	struct iomap_dio *dio;
+>  
+> @@ -461,7 +461,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		if (iter_is_iovec(iter))
+>  			dio->flags |= IOMAP_DIO_DIRTY;
+>  	} else {
+> -		flags |= IOMAP_WRITE;
+> +		iomap_flags |= IOMAP_WRITE;
+>  		dio->flags |= IOMAP_DIO_WRITE;
+>  
+>  		/* for data sync or sync, we need sync completion processing */
+> @@ -483,7 +483,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  			ret = -EAGAIN;
+>  			goto out_free_dio;
 >  		}
->  		iolock = XFS_IOLOCK_EXCL;
-> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-> index a6d04d860a565e..0cfd65cd67c190 100644
-> --- a/fs/xfs/xfs_trace.h
-> +++ b/fs/xfs/xfs_trace.h
-> @@ -1321,6 +1321,8 @@ DEFINE_RW_EVENT(xfs_file_dax_read);
->  DEFINE_RW_EVENT(xfs_file_buffered_write);
->  DEFINE_RW_EVENT(xfs_file_direct_write);
->  DEFINE_RW_EVENT(xfs_file_dax_write);
-> +DEFINE_RW_EVENT(xfs_reflink_bounce_dio_write);
-> +
+> -		flags |= IOMAP_NOWAIT;
+> +		iomap_flags |= IOMAP_NOWAIT;
+>  	}
 >  
->  DECLARE_EVENT_CLASS(xfs_imap_class,
->  	TP_PROTO(struct xfs_inode *ip, xfs_off_t offset, ssize_t count,
-> @@ -3294,8 +3296,6 @@ DEFINE_INODE_IREC_EVENT(xfs_reflink_cow_found);
->  DEFINE_INODE_IREC_EVENT(xfs_reflink_cow_enospc);
->  DEFINE_INODE_IREC_EVENT(xfs_reflink_convert_cow);
+>  	ret = filemap_write_and_wait_range(mapping, pos, end);
+> @@ -514,7 +514,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
 >  
-> -DEFINE_SIMPLE_IO_EVENT(xfs_reflink_bounce_dio_write);
-> -
->  DEFINE_SIMPLE_IO_EVENT(xfs_reflink_cancel_cow_range);
->  DEFINE_SIMPLE_IO_EVENT(xfs_reflink_end_cow);
->  DEFINE_INODE_IREC_EVENT(xfs_reflink_cow_remap);
+>  	blk_start_plug(&plug);
+>  	do {
+> -		ret = iomap_apply(inode, pos, count, flags, ops, dio,
+> +		ret = iomap_apply(inode, pos, count, iomap_flags, ops, dio,
+>  				iomap_dio_actor);
+>  		if (ret <= 0) {
+>  			/* magic error code to fall back to buffered I/O */
 > -- 
 > 2.29.2
 > 
