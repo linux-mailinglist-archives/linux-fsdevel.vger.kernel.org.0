@@ -2,129 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A5D02FC12B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 21:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9DA2FC1EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 22:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391403AbhASUfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 15:35:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47114 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730238AbhASUf2 (ORCPT
+        id S2389170AbhASVIs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 16:08:48 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:49448 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388912AbhASVIF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 15:35:28 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C8BC061573;
-        Tue, 19 Jan 2021 12:34:47 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id v24so24346382lfr.7;
-        Tue, 19 Jan 2021 12:34:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oGyeQId7ghuiubDiteHOq99u7bCiW9P86xlgrtBuPx0=;
-        b=ptoZk/WdXfRsTKZwQ/J1ogvUQcEJs0Bqc8KV5FSG1R53TtpZZGpl0xldd5lU4FK54g
-         fqvDz2igNb0eBNZWQnIX1doIRYsK0IbvN+NlEVzXJMIg4b066h5FCltE9iEgMjY4sgIo
-         7vBTUALabI7sCL9p1UYjK57H24yE8IyUpbOTUqtaOaZyNeqZJJMz8Cb7uF3YPjdyDRNG
-         I0qfNoplfJx7ofCcoH2Fv5y1SdwXmL7RSo5xv/x44xe9mpvKOBRG/Be18qBdQIrSBtv5
-         +8mvR+wDyBjDtWOJJLKQyn4Fpn/5O94lsK46H0ZdMrnutMhYbxUqlIjQMQehNOJz7Tba
-         mWtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oGyeQId7ghuiubDiteHOq99u7bCiW9P86xlgrtBuPx0=;
-        b=nUBq3/EQXlPrNr7OW4oNaEICWNfItAoCUEwa27WjHRXrKwolU3mq/ySQl2oYLOqePF
-         hmrAgor/rIyTReRtbt8Qp6yqcNe5kPcxlfk7BDk9q303Dkj4cX4rrfxQbZS5UI/yIBjg
-         H3lWS9jsefU84OkExMAj3M96KHCuh9UrG1xJrnexNJcN12Ll/DsaHPagjAx77q+PppB2
-         VprEYG5pWroE5g8PUBGS+kWFInzjvZIVWkzIRVZHKuf/pSiwwYCUIG9BZowqaJd38fO4
-         68VSAJHx0kGyQThH0exCPQoBOs4ECAcQptkKC3rPKdt8W5YoIqDCIHy4DoWG3ytQcxQL
-         mCjQ==
-X-Gm-Message-State: AOAM5333/4ptvbbx4PlxJJ8gVLYWdfIMJciqmX9q1MBMWTh6HLM91DZ+
-        LTgEU85zPEpbWrft0fo2vHY=
-X-Google-Smtp-Source: ABdhPJyZLECKkiiifagCkcTDcdstvBbQwLIeZMHqCpHWXAxvJ1OI4a3UyiJnO4JWjsb4gz0a1SR3aw==
-X-Received: by 2002:a05:6512:338e:: with SMTP id h14mr2618345lfg.324.1611088485999;
-        Tue, 19 Jan 2021 12:34:45 -0800 (PST)
-Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
-        by smtp.gmail.com with ESMTPSA id f18sm2375871lfh.137.2021.01.19.12.34.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 12:34:45 -0800 (PST)
-Date:   Tue, 19 Jan 2021 22:34:42 +0200
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com, hch@lst.de,
-        ebiggers@kernel.org, andy.lavr@gmail.com
-Subject: Re: [PATCH v17 01/10] fs/ntfs3: Add headers and misc files
-Message-ID: <20210119203442.ricoppwmw662bjkd@kari-VirtualBox>
-References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
- <20201231152401.3162425-2-almaz.alexandrovich@paragon-software.com>
- <20210103231755.bcmyalz3maq4ama2@kari-VirtualBox>
- <20210119104339.GA2674@kadam>
+        Tue, 19 Jan 2021 16:08:05 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l1yDh-008bE6-7d; Tue, 19 Jan 2021 14:07:21 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l1yDg-009tuJ-7a; Tue, 19 Jan 2021 14:07:20 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <code@tyhicks.com>
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+        <20210119162204.2081137-2-mszeredi@redhat.com>
+Date:   Tue, 19 Jan 2021 15:06:10 -0600
+In-Reply-To: <20210119162204.2081137-2-mszeredi@redhat.com> (Miklos Szeredi's
+        message of "Tue, 19 Jan 2021 17:22:03 +0100")
+Message-ID: <87a6t4ab7h.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210119104339.GA2674@kadam>
+Content-Type: text/plain
+X-XM-SPF: eid=1l1yDg-009tuJ-7a;;;mid=<87a6t4ab7h.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX192I2sk61mecKt+hRhFGN4NPXzT2CICcgs=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 453 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 13 (2.8%), b_tie_ro: 11 (2.5%), parse: 1.02
+        (0.2%), extract_message_metadata: 16 (3.5%), get_uri_detail_list: 1.65
+        (0.4%), tests_pri_-1000: 15 (3.2%), tests_pri_-950: 1.34 (0.3%),
+        tests_pri_-900: 1.09 (0.2%), tests_pri_-90: 169 (37.3%), check_bayes:
+        159 (35.1%), b_tokenize: 7 (1.5%), b_tok_get_all: 37 (8.1%),
+        b_comp_prob: 2.8 (0.6%), b_tok_touch_all: 109 (24.0%), b_finish: 1.01
+        (0.2%), tests_pri_0: 226 (49.8%), check_dkim_signature: 0.61 (0.1%),
+        check_dkim_adsp: 2.3 (0.5%), poll_dns_idle: 0.61 (0.1%), tests_pri_10:
+        2.1 (0.5%), tests_pri_500: 6 (1.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/2] ecryptfs: fix uid translation for setxattr on security.capability
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 01:43:39PM +0300, Dan Carpenter wrote:
-> On Mon, Jan 04, 2021 at 01:17:55AM +0200, Kari Argillander wrote:
-> > On Thu, Dec 31, 2020 at 06:23:52PM +0300, Konstantin Komarov wrote:
-> > 
-> > > +int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
-> > > +		   const u16 *upcase)
-> > > +{
-> > > +	int diff;
-> > > +	size_t len = l1 < l2 ? l1 : l2;
-> > 
-> > I notice that these functions might call both ignore case and upcase in a row.
-> > record.c - compare_attr()
-> > index.c - cmp_fnames()
-> > 
-> > So maybe we can add bool bothcases.
-> > 
-> > int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
-> > 		   const u16 *upcase, bool bothcase)
-> > {
-> > 	int diff1 = 0;
-> > 	int diff2;
-> > 	size_t len = l1 < l2 ? l1 : l2;
-> 
-> size_t len = min(l1, l2);
-> 
-> I wonder if this could be a Coccinelle script?
+Miklos Szeredi <mszeredi@redhat.com> writes:
 
-Yeah I have to also confess that I just copy paste that. Didn't use
-brain yet. Atleast to me it wasn't crystal clear right away what that
-does. So Coccinelle script would definetly be good idea.
+> Prior to commit 7c03e2cda4a5 ("vfs: move cap_convert_nscap() call into
+> vfs_setxattr()") the translation of nscap->rootid did not take stacked
+> filesystems (overlayfs and ecryptfs) into account.
+>
+> That patch fixed the overlay case, but made the ecryptfs case worse.
+>
+> Restore old the behavior for ecryptfs that existed before the overlayfs
+> fix.  This does not fix ecryptfs's handling of complex user namespace
+> setups, but it does make sure existing setups don't regress.
 
-Someone has atleast made it https://github.com/bhumikagoyal/coccinelle_scripts
-I wonder if we need to add cases also in "backwards". Haven't test these.
-If patch is prefered from me then I can send it but someone else can
-also send it.
+Today vfs_setxattr handles handles a delegated_inode and breaking
+leases.  Code that is enabled with CONFIG_FILE_LOCKING.  So unless
+I am missing something this introduces a different regression into
+ecryptfs.
 
-@@
-type T;
-T x;
-T y;
-@@
-(
-- x < y ? x : y
-+ min(x,y)
-|
-- x > y ? x : y
-+ max(x,y)
-|
-- x < y ? y : x
-+ max(x,y)
-|
-- x > y ? y : x
-+ min(x,y)
-) 
+>
+> Reported-by: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Tyler Hicks <code@tyhicks.com>
+> Fixes: 7c03e2cda4a5 ("vfs: move cap_convert_nscap() call into vfs_setxattr()")
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/ecryptfs/inode.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index e23752d9a79f..58d0f7187997 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -1016,15 +1016,19 @@ ecryptfs_setxattr(struct dentry *dentry, struct inode *inode,
+>  {
+>  	int rc;
+>  	struct dentry *lower_dentry;
+> +	struct inode *lower_inode;
+>  
+>  	lower_dentry = ecryptfs_dentry_to_lower(dentry);
+> -	if (!(d_inode(lower_dentry)->i_opflags & IOP_XATTR)) {
+> +	lower_inode = d_inode(lower_dentry);
+> +	if (!(lower_inode->i_opflags & IOP_XATTR)) {
+>  		rc = -EOPNOTSUPP;
+>  		goto out;
+>  	}
+> -	rc = vfs_setxattr(lower_dentry, name, value, size, flags);
+> +	inode_lock(lower_inode);
+> +	rc = __vfs_setxattr_locked(lower_dentry, name, value, size, flags, NULL);
+> +	inode_unlock(lower_inode);
+>  	if (!rc && inode)
+> -		fsstack_copy_attr_all(inode, d_inode(lower_dentry));
+> +		fsstack_copy_attr_all(inode, lower_inode);
+>  out:
+>  	return rc;
+>  }
 
+Eric
