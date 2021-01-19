@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4173A2FB98D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 15:36:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B852FB98F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 15:36:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405531AbhASOdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 09:33:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48170 "EHLO
+        id S2405545AbhASOdR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 09:33:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388061AbhASJpr (ORCPT
+        with ESMTP id S2388296AbhASJqw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:45:47 -0500
+        Tue, 19 Jan 2021 04:46:52 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5442AC061573;
-        Tue, 19 Jan 2021 01:45:07 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F57C061573;
+        Tue, 19 Jan 2021 01:46:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=UzM7VPbA6ht8reQZldqIccNk0/ZodUfZYpRl6ZxyhOY=; b=HWTfOADjpl0bWqTZOX96sWLbgP
-        UZrgWf1YFxsSo3wsTKYWo49DGht0i/v4+sXZM9cx7gDGpWeluUjzibf875E2N3ShAkCj77CzjAYQa
-        0zqYGcG8hBmfcxjNhmWyYYCjM5qHr1VX4JZuoCQrD/5KMfhIpRYxAUsIEvqjEEugNBTja2fgvDgvL
-        igj6jF/rTKMg9790fblIsP13l1Sl8ia1axY0o72NtvEJow+YPETBX0x0QZ0wiN/fRaieLTmUsPeEm
-        eJ9x0E4nXMEwVyVn4fLPaxoTy8SVKEYCoq9OZwL3cceWUiIBUT62eSirbN703i82eiB1dA07U8Czm
-        XbXSYZBA==;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=NR8j/MWlkQlAYWwyyPe6lVQHJ6
+        XfT8RXMPsqC8HiUId2Y1GeAidCIEcQHEfncYgXLiQOxRWRAlEcFZ6FtUIdqtL/j/dzO4zawfrgGIC
+        lK4D9Z1XIw05z3hikMSe4Ai93vwZp50zj+2irALoFKEE3bqQ6YhQIcUwq24CVI9PWpn1Zfjfs0g9H
+        z/5YMqP9BkrKUrAvSdrW/dVGuwyweDBUbbQhlP0TO7RjtK0B72F34/iv/0489cVtW44S8sLeiY6qp
+        QPDOqCCtXIy77rLnmGjIlf5bA89o5USVB0StJ0/pxLrwnAkZM56pU1yNSqqiJhmyP+n8f7N57gy6Z
+        E4G1wXPg==;
 Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l1nZP-00E8T5-5L; Tue, 19 Jan 2021 09:45:03 +0000
-Date:   Tue, 19 Jan 2021 09:45:03 +0000
+        id 1l1na6-00E8VU-Iz; Tue, 19 Jan 2021 09:45:51 +0000
+Date:   Tue, 19 Jan 2021 09:45:46 +0000
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -65,21 +65,19 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 31/42] exec: handle idmapped mounts
-Message-ID: <20210119094503.GO3364550@infradead.org>
+Subject: Re: [PATCH v5 32/42] fs: make helpers idmap mount aware
+Message-ID: <20210119094546.GP3364550@infradead.org>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210112220124.837960-32-christian.brauner@ubuntu.com>
+ <20210112220124.837960-33-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210112220124.837960-32-christian.brauner@ubuntu.com>
+In-Reply-To: <20210112220124.837960-33-christian.brauner@ubuntu.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This could use file_user_ns.
-
-Otherwise looks good:
+Looks good,
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
