@@ -2,110 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 923D52FB3D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 09:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74ED92FB466
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jan 2021 09:43:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389635AbhASFZv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 00:25:51 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:34702 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731930AbhASFJn (ORCPT
+        id S1727010AbhASFVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 00:21:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44156 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbhASFFT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 00:09:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611032983; x=1642568983;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7b7Ba/mkSpgZ58joyvKPrAaGG8qz0lkQcstbC0iRpPI=;
-  b=hoCPR6+JPwXb4NUidO7PPWk6+QxAL1MfjG31vE0x/o2DtQQXtFLjxavg
-   JXYklM0do/i5rnr42DwRO0LJZh7j9s5QtXDNdkTQ0emYyx6n/Vv2hV98u
-   xZGz1W1S+Psydrb+82nhBTe6iyPEtJbFjaXItDiQpp4WBnW8n9n8WHycs
-   ysd+uazr8/pR/nKtHF+qsZg6yHIrCQ1MpayDWC3HQQ2gZgwF9wsAQCwi3
-   kqoHGMXNejyNklDwAm79q3aFi9cWuVfpYB76me4nBcksW/+3Kondk0ne2
-   zzAXddAS1ysJIcdx1t9LyQPrITia+P1UsUJckefqF+nmrIoSJ8RCh4u3C
-   w==;
-IronPort-SDR: eZ9GzOW6ryJEvDPSNJqna3IvNIoXm61TE9qccZ3A3l0qmG08arebgpnGe4kLVuQsBPR7ZlrD8u
- UvchH8taBhvY5zEWi9e4IOEJD9hG7i4I3ZG8QB7h43S84atVVxLtmmgfRPpCaZuM3fsjvdA7EA
- gUIUzcrJeTnsLFD2RCMV0RXt1xXmVUQI6p3ZMiO8atB9eEcRFUcylw81NPqZYNdKwga+KFG9Tp
- eJcnf4Quruy1olcCSupPGVivQvP6/IfTZwpMs1okEl9+IDIdyEDbx59Evu416ZMKXGG4B+fTgV
- XLU=
-X-IronPort-AV: E=Sophos;i="5.79,357,1602518400"; 
-   d="scan'208";a="268081044"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Jan 2021 13:08:30 +0800
-IronPort-SDR: ZMezbSDwWuYFWdC7DWvizZCfAHGg6wc/P1xL8z2y/3gZ2MDS36R+ED/AN2d7MSfFTGU+KGsiJL
- +uJi0muOvTBGiCF9Wy+AJTqelwkp5kX4JQMwxwztJ2uwunGJesMrzeuUkNUfD1SklAw6GlsZZN
- vT5Xxu2TQheAm8IQIuqHGtM2AIbLzWY9/jqw9FSj8aVW7fwS2iL56l8SlIwznFL5rLPVA4BlHM
- 37iXVQRXW/cdlYLd59mZfeRYpY8NO4JpvGekPR+HYFfy6DHlZ5Y9oKvTjCuf+qcbcHTniJk/zD
- gbRMPSotBf3S4fA2IxleOW+p
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 20:53:07 -0800
-IronPort-SDR: P5c68+r5a8DOSQsRGC/PLvFBWof3CYBSZ78/AjZxxbqEhqAxt84O9ZWicHnuz+rOOqV7roKTgj
- twniYUPk2fiAD8Xe2xt0+bCng/kmhe4tRAPsXmMChVmLYeVESDqX1Ch12ppq+swuJrohwMf670
- nW4oFOXw5mZvfoBvM6DRJldmElTkBvSEiHsn4Z6Lj6HNC6nwKfOy7ls60P38dBSPu32aUdCyrJ
- 9Xni8CwHGVPZR+TCQgcaFbT87hN7DOlLc38PrOokHP4ypmvZX5OCF+2Q9DRTOOHIgCBKFlVNcC
- QQI=
-WDCIronportException: Internal
-Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 18 Jan 2021 21:08:30 -0800
-From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-To:     linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        drbd-dev@lists.linbit.com, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com
-Cc:     jfs-discussion@lists.sourceforge.net, dm-devel@redhat.com,
-        axboe@kernel.dk, philipp.reisner@linbit.com,
-        lars.ellenberg@linbit.com, efremov@linux.com, colyli@suse.de,
-        kent.overstreet@gmail.com, agk@redhat.com, snitzer@redhat.com,
-        song@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, viro@zeniv.linux.org.uk, clm@fb.com,
-        josef@toxicpanda.com, dsterba@suse.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, rpeterso@redhat.com, agruenba@redhat.com,
-        darrick.wong@oracle.com, shaggy@kernel.org, damien.lemoal@wdc.com,
-        naohiro.aota@wdc.com, jth@kernel.org, tj@kernel.org,
-        osandov@fb.com, bvanassche@acm.org, gustavo@embeddedor.com,
-        asml.silence@gmail.com, jefflexu@linux.alibaba.com,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [RFC PATCH 16/37] floppy: use bio_init_fields
-Date:   Mon, 18 Jan 2021 21:06:10 -0800
-Message-Id: <20210119050631.57073-17-chaitanya.kulkarni@wdc.com>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
-References: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
+        Tue, 19 Jan 2021 00:05:19 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D3B0C0613C1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 21:04:38 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id m6so11526380pfk.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jan 2021 21:04:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=hq6cLGhX+YOdloZCBCv76n2UjaYC8NZfkFs6/p+ZtOg=;
+        b=W8y876Dbq8gZuEg5QYXKhKTizoMMwtFxcmKeIZtDQdx+XEt3dW/eHtSMhQvknQYW4K
+         DnsCpn+GirhCRLFyk/uVDaIJoXZgyWsH6gU53zdrGPud9lsener1pfIQEwdiCZRktfE+
+         Ne1ZR7dli2HUDcE+3V2rbyvftav5V4WgBCwhpQ0bHoynV0GboyaGO/cjnRSZdzh0GmFw
+         r/A5ZX/PxqxanTpbUqh+VaClMqoh4p4eePPZY6MRWFJ7BiyHJsTxQWwUiwGliuSOKvLc
+         PCreg4kS3gTI+lm3d0KE5HrHAWJ4B0/fMhjVOWrn+u+7Kwg0P9wxlbpTSDhJDbdRaU+G
+         Y9Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hq6cLGhX+YOdloZCBCv76n2UjaYC8NZfkFs6/p+ZtOg=;
+        b=Gn83+uzupmxPvoXC28d1dO4UIzUBGn482OAQ1aTrQlfbY4XjuVzeQn1O0C0gQt1Gw9
+         D/3b79PCXMHAdpW/YZMQBCRzM9GGYf7M6Twv8BBhdnWem+kqfESoUQsc+MoSlkiWPAjn
+         AqTU7FZ9j5dl1A2frZEv1aYVsDueIBsiE9IApK/K3YdHJihwKKOK0YTqjP0b01p/R+qL
+         rkLOasoTPkkinfqU8pdpPla3VjrcwJWEG2q5LEpV3W/ezhYy2QkauTYQff1qDgMtUN54
+         StyMXf+5N3DPFU4hHy2d/Ytojrc1U+xFpZM0rfyN7WQs1z8LHW5iZZrzTWB2QHTepz6W
+         1FXw==
+X-Gm-Message-State: AOAM530TarKWWO+8ucTZJ4jmHFMdI5CziT7TQoMA9YRNrmeGJw/ZuDKP
+        c6FmcwkmSSwiBFT2LO9zfUbo
+X-Google-Smtp-Source: ABdhPJwhMmXGRAF9exzwdYFbs4DDh7HaNjaSgRVmLvyUt1TO1CzzbUW14r26LDKrseM7tbJ/BRrzFA==
+X-Received: by 2002:a62:ddcd:0:b029:1a6:99ff:a75e with SMTP id w196-20020a62ddcd0000b02901a699ffa75emr2486197pff.42.1611032678076;
+        Mon, 18 Jan 2021 21:04:38 -0800 (PST)
+Received: from localhost ([139.177.225.243])
+        by smtp.gmail.com with ESMTPSA id gv22sm1047509pjb.56.2021.01.18.21.04.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Jan 2021 21:04:37 -0800 (PST)
+From:   Xie Yongji <xieyongji@bytedance.com>
+To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
+        sgarzare@redhat.com, parav@nvidia.com, bob.liu@oracle.com,
+        hch@infradead.org, rdunlap@infradead.org, willy@infradead.org,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
+        corbet@lwn.net
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC v3 01/11] eventfd: track eventfd_signal() recursion depth separately in different cases
+Date:   Tue, 19 Jan 2021 12:59:10 +0800
+Message-Id: <20210119045920.447-2-xieyongji@bytedance.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210119045920.447-1-xieyongji@bytedance.com>
+References: <20210119045920.447-1-xieyongji@bytedance.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
----
- drivers/block/floppy.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Now we have a global percpu counter to limit the recursion depth
+of eventfd_signal(). This can avoid deadlock or stack overflow.
+But in stack overflow case, it should be OK to increase the
+recursion depth if needed. So we add a percpu counter in eventfd_ctx
+to limit the recursion depth for deadlock case. Then it could be
+fine to increase the global percpu counter later.
 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index dfe1dfc901cc..1237b64bb37b 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -4219,13 +4219,10 @@ static int __floppy_read_block_0(struct block_device *bdev, int drive)
- 	cbdata.drive = drive;
+Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+---
+ fs/aio.c                |  3 ++-
+ fs/eventfd.c            | 20 +++++++++++++++++++-
+ include/linux/eventfd.h |  5 +----
+ 3 files changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index 1f32da13d39e..5d82903161f5 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1698,7 +1698,8 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+ 		list_del(&iocb->ki_list);
+ 		iocb->ki_res.res = mangle_poll(mask);
+ 		req->done = true;
+-		if (iocb->ki_eventfd && eventfd_signal_count()) {
++		if (iocb->ki_eventfd &&
++			eventfd_signal_count(iocb->ki_eventfd)) {
+ 			iocb = NULL;
+ 			INIT_WORK(&req->work, aio_poll_put_work);
+ 			schedule_work(&req->work);
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index e265b6dd4f34..2df24f9bada3 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -25,6 +25,8 @@
+ #include <linux/idr.h>
+ #include <linux/uio.h>
  
- 	bio_init(&bio, &bio_vec, 1);
--	bio_set_dev(&bio, bdev);
-+	bio_init_fields(&bio, bdev, 0, &cbdata, floppy_rb0_cb, 0, 0);
- 	bio_add_page(&bio, page, block_size(bdev), 0);
++#define EVENTFD_WAKE_DEPTH 0
++
+ DEFINE_PER_CPU(int, eventfd_wake_count);
  
--	bio.bi_iter.bi_sector = 0;
- 	bio.bi_flags |= (1 << BIO_QUIET);
--	bio.bi_private = &cbdata;
--	bio.bi_end_io = floppy_rb0_cb;
- 	bio_set_op_attrs(&bio, REQ_OP_READ, 0);
+ static DEFINE_IDA(eventfd_ida);
+@@ -42,9 +44,17 @@ struct eventfd_ctx {
+ 	 */
+ 	__u64 count;
+ 	unsigned int flags;
++	int __percpu *wake_count;
+ 	int id;
+ };
  
- 	init_completion(&cbdata.complete);
++bool eventfd_signal_count(struct eventfd_ctx *ctx)
++{
++	return (this_cpu_read(*ctx->wake_count) ||
++		this_cpu_read(eventfd_wake_count) > EVENTFD_WAKE_DEPTH);
++}
++EXPORT_SYMBOL_GPL(eventfd_signal_count);
++
+ /**
+  * eventfd_signal - Adds @n to the eventfd counter.
+  * @ctx: [in] Pointer to the eventfd context.
+@@ -71,17 +81,19 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
+ 	 * it returns true, the eventfd_signal() call should be deferred to a
+ 	 * safe context.
+ 	 */
+-	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
++	if (WARN_ON_ONCE(eventfd_signal_count(ctx)))
+ 		return 0;
+ 
+ 	spin_lock_irqsave(&ctx->wqh.lock, flags);
+ 	this_cpu_inc(eventfd_wake_count);
++	this_cpu_inc(*ctx->wake_count);
+ 	if (ULLONG_MAX - ctx->count < n)
+ 		n = ULLONG_MAX - ctx->count;
+ 	ctx->count += n;
+ 	if (waitqueue_active(&ctx->wqh))
+ 		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
+ 	this_cpu_dec(eventfd_wake_count);
++	this_cpu_dec(*ctx->wake_count);
+ 	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
+ 
+ 	return n;
+@@ -92,6 +104,7 @@ static void eventfd_free_ctx(struct eventfd_ctx *ctx)
+ {
+ 	if (ctx->id >= 0)
+ 		ida_simple_remove(&eventfd_ida, ctx->id);
++	free_percpu(ctx->wake_count);
+ 	kfree(ctx);
+ }
+ 
+@@ -423,6 +436,11 @@ static int do_eventfd(unsigned int count, int flags)
+ 
+ 	kref_init(&ctx->kref);
+ 	init_waitqueue_head(&ctx->wqh);
++	ctx->wake_count = alloc_percpu(int);
++	if (!ctx->wake_count) {
++		kfree(ctx);
++		return -ENOMEM;
++	}
+ 	ctx->count = count;
+ 	ctx->flags = flags;
+ 	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
+diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+index fa0a524baed0..1a11ebbd74a9 100644
+--- a/include/linux/eventfd.h
++++ b/include/linux/eventfd.h
+@@ -45,10 +45,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt);
+ 
+ DECLARE_PER_CPU(int, eventfd_wake_count);
+ 
+-static inline bool eventfd_signal_count(void)
+-{
+-	return this_cpu_read(eventfd_wake_count);
+-}
++bool eventfd_signal_count(struct eventfd_ctx *ctx);
+ 
+ #else /* CONFIG_EVENTFD */
+ 
 -- 
-2.22.1
+2.11.0
 
