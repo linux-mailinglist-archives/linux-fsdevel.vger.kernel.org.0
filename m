@@ -2,147 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EBA62FC96E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 04:49:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE7BF2FC9B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 05:05:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731298AbhATDst (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 22:48:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:46161 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730846AbhATDsc (ORCPT
+        id S1731573AbhATEFG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 23:05:06 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:55369 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730009AbhATEAG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 22:48:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611114426;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=61kBWcJtmQFIvGjS1IKO0RhJ1LrkMQqyt5uWZQ6fQwI=;
-        b=drzcBildpBfVKwNRMcXrrI6TCa3LtZS6Wc7PiUZVdI69Lcq1NZUyi+HPViP/egi4HukCfW
-        6iPNmU/i/J7e4gVbFbXPrxTq4+HJUO6nhiHA/JHp0pBXagM1Ln0RKU26H9WtcdInHsHlW8
-        KMXyDYUiHeFFAy1SU+ClMAQnqZxWEAw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-60-pTfqDSdGP9CR1YEzofLBAw-1; Tue, 19 Jan 2021 22:47:02 -0500
-X-MC-Unique: pTfqDSdGP9CR1YEzofLBAw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AD934800D53;
-        Wed, 20 Jan 2021 03:47:00 +0000 (UTC)
-Received: from [10.72.13.124] (ovpn-13-124.pek2.redhat.com [10.72.13.124])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0DB3E9CA0;
-        Wed, 20 Jan 2021 03:46:39 +0000 (UTC)
-Subject: Re: [RFC v3 03/11] vdpa: Remove the restriction that only supports
- virtio-net devices
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        bob.liu@oracle.com, hch@infradead.org, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210119045920.447-1-xieyongji@bytedance.com>
- <20210119045920.447-4-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <310d7793-e4ff-fba3-f358-418cb64c7988@redhat.com>
-Date:   Wed, 20 Jan 2021 11:46:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 19 Jan 2021 23:00:06 -0500
+Received: by mail-io1-f72.google.com with SMTP id j25so39566158iog.22
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 19:59:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=pveP83Yk7K0d5WBq+35hC0CXs3D/scBCKZJxfY0uhYQ=;
+        b=Nh9rWgxW8RsUDBLY/maB7XWaiRye14md8HFNcXV/s5AWueOvLGyMkhxBxIfWL2ckfe
+         0yMG9FJ/c/5ZDbTx1JAcTC3KdNbAJeZ5xP5SzHcJEmQu6hW4tXKEV6CQ80ZC6WrLATy1
+         mcV/dZbY8teweRXZPIGHNWYDXjgY8Js8/OaIW2HTsAUn/Mp/pPpXKghFDzGg8Vk5LkFB
+         V48PF1clL5b0e66U57C1lOAYezah8mIv/4GCJCruKkFnBf1K44tBAzL/tuVEtMh+Kz73
+         Hj0aX47ZkBV2u/sgXsF+AECf0ZWnaCMrYwNxK/9CXsFo9F2iMETawh8K7S/8q+rLSFIQ
+         9P2A==
+X-Gm-Message-State: AOAM530MQgwfAc1iQQeYTpacI8hOGc1Vq9bp10YnpN/6o8S6PDeg2osc
+        iAdGpWQBN6cs1L+RqvKGVV7TONn5xOCX0Xc8rsxDM4G8El9v
+X-Google-Smtp-Source: ABdhPJzIsgdiwElT0nZcwjdSSUK7orxipUME4z4qUz1YAzvQj8yY2z8kXyRF+7YmOSO9l1A0KS/2JVcd7AwNMEDomew6PQ3soPZ7
 MIME-Version: 1.0
-In-Reply-To: <20210119045920.447-4-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Received: by 2002:a05:6e02:1908:: with SMTP id w8mr6245044ilu.229.1611115165061;
+ Tue, 19 Jan 2021 19:59:25 -0800 (PST)
+Date:   Tue, 19 Jan 2021 19:59:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001b164705b94cfb58@google.com>
+Subject: WARNING: suspicious RCU usage in inode_security
+From:   syzbot <syzbot+37978b81dea56c7a4249@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
 
-On 2021/1/19 下午12:59, Xie Yongji wrote:
-> With VDUSE, we should be able to support all kinds of virtio devices.
->
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> ---
->   drivers/vhost/vdpa.c | 29 +++--------------------------
->   1 file changed, 3 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> index 29ed4173f04e..448be7875b6d 100644
-> --- a/drivers/vhost/vdpa.c
-> +++ b/drivers/vhost/vdpa.c
-> @@ -22,6 +22,7 @@
->   #include <linux/nospec.h>
->   #include <linux/vhost.h>
->   #include <linux/virtio_net.h>
-> +#include <linux/virtio_blk.h>
->   
->   #include "vhost.h"
->   
-> @@ -185,26 +186,6 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
->   	return 0;
->   }
->   
-> -static int vhost_vdpa_config_validate(struct vhost_vdpa *v,
-> -				      struct vhost_vdpa_config *c)
-> -{
-> -	long size = 0;
-> -
-> -	switch (v->virtio_id) {
-> -	case VIRTIO_ID_NET:
-> -		size = sizeof(struct virtio_net_config);
-> -		break;
-> -	}
-> -
-> -	if (c->len == 0)
-> -		return -EINVAL;
-> -
-> -	if (c->len > size - c->off)
-> -		return -E2BIG;
-> -
-> -	return 0;
-> -}
+syzbot found the following issue on:
+
+HEAD commit:    82821be8 Merge tag 'arm64-fixes' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a3da20d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=70f222f8a2ffcbde
+dashboard link: https://syzkaller.appspot.com/bug?extid=37978b81dea56c7a4249
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+37978b81dea56c7a4249@syzkaller.appspotmail.com
+
+=============================
+WARNING: suspicious RCU usage
+5.11.0-rc3-syzkaller #0 Not tainted
+-----------------------------
+kernel/sched/core.c:7867 Illegal context switch in RCU-bh read-side critical section!
+
+other info that might help us debug this:
 
 
-I think we should use a separate patch for this.
+rcu_scheduler_active = 2, debug_locks = 0
+1 lock held by kworker/u17:3/10446:
+ #0: ffff888014f94c00 (&sig->cred_guard_mutex){+.+.}-{3:3}, at: prepare_bprm_creds fs/exec.c:1462 [inline]
+ #0: ffff888014f94c00 (&sig->cred_guard_mutex){+.+.}-{3:3}, at: bprm_execve+0xb2/0x19a0 fs/exec.c:1794
 
-Thanks
+stack backtrace:
+CPU: 1 PID: 10446 Comm: kworker/u17:3 Not tainted 5.11.0-rc3-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:120
+ ___might_sleep+0x229/0x2c0 kernel/sched/core.c:7867
+ __inode_security_revalidate security/selinux/hooks.c:259 [inline]
+ inode_security+0x5d/0x130 security/selinux/hooks.c:296
+ selinux_file_permission+0x140/0x520 security/selinux/hooks.c:3549
+ security_file_permission+0x56/0x560 security/security.c:1448
+ rw_verify_area+0x115/0x350 fs/read_write.c:400
+ kernel_read+0x2a/0x70 fs/read_write.c:469
+ prepare_binprm fs/exec.c:1646 [inline]
+ search_binary_handler fs/exec.c:1700 [inline]
+ exec_binprm fs/exec.c:1757 [inline]
+ bprm_execve fs/exec.c:1826 [inline]
+ bprm_execve+0x740/0x19a0 fs/exec.c:1788
+ kernel_execve+0x370/0x460 fs/exec.c:1969
+ call_usermodehelper_exec_async+0x2de/0x580 kernel/umh.c:110
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
 
 
-> -
->   static long vhost_vdpa_get_config(struct vhost_vdpa *v,
->   				  struct vhost_vdpa_config __user *c)
->   {
-> @@ -215,7 +196,7 @@ static long vhost_vdpa_get_config(struct vhost_vdpa *v,
->   
->   	if (copy_from_user(&config, c, size))
->   		return -EFAULT;
-> -	if (vhost_vdpa_config_validate(v, &config))
-> +	if (config.len == 0)
->   		return -EINVAL;
->   	buf = kvzalloc(config.len, GFP_KERNEL);
->   	if (!buf)
-> @@ -243,7 +224,7 @@ static long vhost_vdpa_set_config(struct vhost_vdpa *v,
->   
->   	if (copy_from_user(&config, c, size))
->   		return -EFAULT;
-> -	if (vhost_vdpa_config_validate(v, &config))
-> +	if (config.len == 0)
->   		return -EINVAL;
->   	buf = kvzalloc(config.len, GFP_KERNEL);
->   	if (!buf)
-> @@ -1025,10 +1006,6 @@ static int vhost_vdpa_probe(struct vdpa_device *vdpa)
->   	int minor;
->   	int r;
->   
-> -	/* Currently, we only accept the network devices. */
-> -	if (ops->get_device_id(vdpa) != VIRTIO_ID_NET)
-> -		return -ENOTSUPP;
-> -
->   	v = kzalloc(sizeof(*v), GFP_KERNEL | __GFP_RETRY_MAYFAIL);
->   	if (!v)
->   		return -ENOMEM;
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
