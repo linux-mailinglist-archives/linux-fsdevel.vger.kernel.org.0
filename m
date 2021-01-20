@@ -2,135 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 587E52FC904
+	by mail.lfdr.de (Postfix) with ESMTP id C4FAD2FC905
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 04:35:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732041AbhATC3v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 21:29:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730082AbhATB2h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 20:28:37 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7379323357;
-        Wed, 20 Jan 2021 01:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611106016;
-        bh=xdzNkLEH3zCwrxG009T3Crurf4ry+SI4WtpFGzT8TkQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J0Hwy9l0/mxT1mMl0hIURsg2ZuSGcki6Snidhowl5MsRgFS5AOlcgDYwVQOqusVYm
-         CDIuK9Az7prJA5M/K7FJeHzmKDdUoQ7WJrS/+Ougy6assO26/0c1i4aIx1/gNb4i6L
-         Kkv2EVApctFO2tLr3aiwyAdmix1wFTHOFjzGuxS/5aVCrLAb4fK6+hO3n0HMMgaYGb
-         p9vcy/pzPwwui5QgATcV7w+NBTx8dDqKGo+Xy+3RrZ3ULm8j/hwiHfbcRhIzycqSsd
-         bPmUw2NbHSZUkZxBtAMAyxR7ZU9DOnN7kYpWgeUkOMWlZUzzaKQ1iIHreakmMmOicq
-         UfKv1+YlWmWCw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marcelo Diop-Gonzalez <marcelo827@gmail.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 41/45] io_uring: flush timeouts that should already have expired
-Date:   Tue, 19 Jan 2021 20:25:58 -0500
-Message-Id: <20210120012602.769683-41-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210120012602.769683-1-sashal@kernel.org>
-References: <20210120012602.769683-1-sashal@kernel.org>
+        id S1732067AbhATC34 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 21:29:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731390AbhATC0u (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Jan 2021 21:26:50 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088A2C061757
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 18:26:09 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id by1so24970193ejc.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 18:26:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DBePnOAwZBQb0dFg0gQ+d7YGVLbKQhuKKUpxdihg8xw=;
+        b=LB6kDMOtqkpE7gTzQl38DEPBvXbLSTBlsbJxXoOYf8YjfF5k3es63847L/iApG8tyu
+         GU79SOybW0byS1xGi1kEI42XZfpf5a4JhXNwXYGsmvehOvqkt2M9KFWzQm/uSqrVJhAj
+         CaHl8G12wqKvSw5Ox8KrDo5kFWFoFzZ6TYbSCth/TKonjHa0KVF6wdLBdwnINl87uExX
+         d6VMJOWD1vrRgAkrABgI/Oatatd6mW+xjawoN0FSYtgjVllaRBZCRApdd0CN+A8rqUaZ
+         a2F50mlbMVLmPyeG7goZTEvELwU9kDZOzBR9f9D3VFpRZuBktM+Cm4UDvgUEU8CFnmH6
+         BGlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DBePnOAwZBQb0dFg0gQ+d7YGVLbKQhuKKUpxdihg8xw=;
+        b=ZiJUdrogSYa2mxZUQrsgQ6csDB0p+6wR5CCRXYv281fXxFlNVupgRgqPUrUJQUn/qI
+         K/TjDMaPS+0A/L7WfBczlHw9NALiF/AP0JRCzNKk1ou+epvhP/iVpCkO2FVT44juZ378
+         W0Aq6W3hgN1t9P+Lfy8BdIxqZ3PB3YneAgaHCWlI4AqmeQU7Ls11fFlvFGn/oj76lwFt
+         +25BRHNRl/VTEwsZaHR1q+qCW9r9HLJSXtQCTkdFDkgJXHibvGL66LAG5firwke1mdJI
+         7+SKxcNaA9GRM648csPtbjNFyRU/I2X5n2qZ0cZdywnDrOx4n21lrY6QoLQbO+QT2fek
+         0e1A==
+X-Gm-Message-State: AOAM5300IokSNXIPEB9Bf4AdJ5FKFudOaGXs1tskxKmxG7IcnFDnC59c
+        5HOJ0DeEc1Vzo0C4pGXAsWBAaWxj0501LvHF17xj
+X-Google-Smtp-Source: ABdhPJzbiYr+nq4JjIVaAfFEWXYt26uUaLS8YnaaZ4H3bL6ASL47qMuMWg0GdgC4s7ZNiHZxzUxSwnHbPEPhV9hKXNw=
+X-Received: by 2002:a17:906:5254:: with SMTP id y20mr4656020ejm.174.1611109567772;
+ Tue, 19 Jan 2021 18:26:07 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20210119045920.447-1-xieyongji@bytedance.com> <20210119050756.600-1-xieyongji@bytedance.com>
+ <20210119050756.600-2-xieyongji@bytedance.com> <20210119075359.00204ca6@lwn.net>
+In-Reply-To: <20210119075359.00204ca6@lwn.net>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Wed, 20 Jan 2021 10:25:57 +0800
+Message-ID: <CACycT3uN+CJ8x_9mqA9oNzXBB+XojkMVibk_sP-ug3QGJP7yUw@mail.gmail.com>
+Subject: Re: Re: [RFC v3 08/11] vduse: Introduce VDUSE - vDPA Device in Userspace
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
+        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, bcrl@kvack.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
+On Tue, Jan 19, 2021 at 10:54 PM Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> X-Gm-Spam: 0
+> X-Gm-Phishy: 0
+>
+> On Tue, 19 Jan 2021 13:07:53 +0800
+> Xie Yongji <xieyongji@bytedance.com> wrote:
+>
+> > diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
+> > new file mode 100644
+> > index 000000000000..9418a7f6646b
+> > --- /dev/null
+> > +++ b/Documentation/driver-api/vduse.rst
+> > @@ -0,0 +1,85 @@
+> > +==================================
+> > +VDUSE - "vDPA Device in Userspace"
+> > +==================================
+>
+> Thanks for documenting this feature!  You will, though, need to add this
+> new document to Documentation/driver-api/index.rst for it to be included
+> in the docs build.
+>
+> That said, this would appear to be documentation for user space, right?
+> So the userspace-api manual is probably a more appropriate place for it.
+>
 
-[ Upstream commit f010505b78a4fa8d5b6480752566e7313fb5ca6e ]
+Will do it. Thanks for the reminder!
 
-Right now io_flush_timeouts() checks if the current number of events
-is equal to ->timeout.target_seq, but this will miss some timeouts if
-there have been more than 1 event added since the last time they were
-flushed (possible in io_submit_flush_completions(), for example). Fix
-it by recording the last sequence at which timeouts were flushed so
-that the number of events seen can be compared to the number of events
-needed without overflow.
-
-Signed-off-by: Marcelo Diop-Gonzalez <marcelo827@gmail.com>
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 34 ++++++++++++++++++++++++++++++----
- 1 file changed, 30 insertions(+), 4 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4833b68f1a1cc..7e7103c57ec26 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -353,6 +353,7 @@ struct io_ring_ctx {
- 		unsigned		cq_entries;
- 		unsigned		cq_mask;
- 		atomic_t		cq_timeouts;
-+		unsigned		cq_last_tm_flush;
- 		unsigned long		cq_check_overflow;
- 		struct wait_queue_head	cq_wait;
- 		struct fasync_struct	*cq_fasync;
-@@ -1519,19 +1520,38 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
- 
- static void io_flush_timeouts(struct io_ring_ctx *ctx)
- {
--	while (!list_empty(&ctx->timeout_list)) {
-+	u32 seq;
-+
-+	if (list_empty(&ctx->timeout_list))
-+		return;
-+
-+	seq = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
-+
-+	do {
-+		u32 events_needed, events_got;
- 		struct io_kiocb *req = list_first_entry(&ctx->timeout_list,
- 						struct io_kiocb, timeout.list);
- 
- 		if (io_is_timeout_noseq(req))
- 			break;
--		if (req->timeout.target_seq != ctx->cached_cq_tail
--					- atomic_read(&ctx->cq_timeouts))
-+
-+		/*
-+		 * Since seq can easily wrap around over time, subtract
-+		 * the last seq at which timeouts were flushed before comparing.
-+		 * Assuming not more than 2^31-1 events have happened since,
-+		 * these subtractions won't have wrapped, so we can check if
-+		 * target is in [last_seq, current_seq] by comparing the two.
-+		 */
-+		events_needed = req->timeout.target_seq - ctx->cq_last_tm_flush;
-+		events_got = seq - ctx->cq_last_tm_flush;
-+		if (events_got < events_needed)
- 			break;
- 
- 		list_del_init(&req->timeout.list);
- 		io_kill_timeout(req);
--	}
-+	} while (!list_empty(&ctx->timeout_list));
-+
-+	ctx->cq_last_tm_flush = seq;
- }
- 
- static void io_commit_cqring(struct io_ring_ctx *ctx)
-@@ -5580,6 +5600,12 @@ static int io_timeout(struct io_kiocb *req)
- 	tail = ctx->cached_cq_tail - atomic_read(&ctx->cq_timeouts);
- 	req->timeout.target_seq = tail + off;
- 
-+	/* Update the last seq here in case io_flush_timeouts() hasn't.
-+	 * This is safe because ->completion_lock is held, and submissions
-+	 * and completions are never mixed in the same ->completion_lock section.
-+	 */
-+	ctx->cq_last_tm_flush = tail;
-+
- 	/*
- 	 * Insertion sort, ensuring the first entry in the list is always
- 	 * the one we need first.
--- 
-2.27.0
-
+Thanks,
+Yongji
