@@ -2,289 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF0C02FCB55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 08:13:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE8F12FCB67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 08:22:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbhATHLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 02:11:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43714 "EHLO
+        id S1727482AbhATHVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 02:21:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbhATHLs (ORCPT
+        with ESMTP id S1726213AbhATHVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 02:11:48 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F5C9C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 23:11:08 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id b2so24489712edm.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 23:11:08 -0800 (PST)
+        Wed, 20 Jan 2021 02:21:31 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF676C061575;
+        Tue, 19 Jan 2021 23:20:50 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id f11so24863813ljm.8;
+        Tue, 19 Jan 2021 23:20:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=017oWWIlxOT6VivhQTE1Gu4oh0UA53Mgq621dR6TrCw=;
-        b=DhcEFXZf9/GwXCjSaJJugCF9/T8eosnex9uUo7fCJhb9U/bEKuac1i2pUWDeCAqFsN
-         4rLZcgSTUMmbwM3WeVMoiIhzsbcaytX8TxOarNBww+ITFIH4ErWnA2eu3ZPxJPidiNhw
-         jGFRXzYMzYPnFaQSrgSX+zOiZsW3kK04VP9BOkx4cIWq6epgn997K/Ggg7OnNEvR/TaV
-         BxTb7OPYFzfMFxNPv7agZtDdjCxpFv/NT5O3vgft8CDomH8n+IBbBkj7aR6qmmOC2MSy
-         aBVn2ooIzJHfEeFAKBmW1PDa6CmlYloJkIwXRdojGHDWO3bhzs9gWoVM1AUGDoovAQvI
-         rZOg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fkwpiRhcbAY/Xrd8puZlohXc8HqWP1iUu7DJdV7kfmc=;
+        b=aVGobaf0ycMJLbgf0f4UyuTWvrUUAtp+mY6iFDdZLI0xMORlP8OBvXhnIwMJOvQmDc
+         /5yFMUMMES0ORDIsRLMzhQB+N3CxQg0+1LG9j0fd04TFKMiabxZwdaoWLPaMYvC8yFb4
+         7FYFunesP6et8SvXL0Pc9Ct4nyLdVgNQziDmNHkf0Tio88KsA6Xfm+zyA9CchhsGzo0f
+         ifcVABwBKo/7Cbx1eNzMq1M+5OJw1bySGd9d1TFba81CyTFBaMlE5/tjMQFENCDxCGfI
+         ks09hALb3xSpNfkgurG6gmNiS8313eGyPwUNpRI6Wlln/NnVXiDvYwkewrIHVpn7qcnd
+         c7Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=017oWWIlxOT6VivhQTE1Gu4oh0UA53Mgq621dR6TrCw=;
-        b=ewJVK4sXubfKAVr5tLhJzaYOdaQfviFXnE+voAqPWQ/ow9TIk3x+xECnaMaQWdmwYI
-         lWY3/yueKQAAq2J4GUeV6Wr6CL1Ke3dweymhpdowFJpgbYpCl47g99UZjrwvtLb/YULo
-         EoqGgZLjCcmsRMpr2AXfuL4Or6HASIpSliQmBem+TcoyVdQdJqS8auUXKp9H5dSp94M5
-         JSbYzVnAT384UIM9EgFKpmIqgS2p7Gx+rKlDIDIoyPpjo2tc5XC63lYuWoUanBaIqFAF
-         PTLuox5AiL89erDMglhBhZ4R9opOX7MwaMcdUjx5QfR6v2u3we+9kC88P8XC12lylpKg
-         564g==
-X-Gm-Message-State: AOAM5339oBEMHRA1/qacdNA1Kb6ujlkt+NYFudBMPTt8mEL6eKjPbHp/
-        mB3bbE4v64YBwwqMUsxhE1iA8GUPdfXmhOyN1tS5
-X-Google-Smtp-Source: ABdhPJwSiBeJuuQDrdZ4fEW9g9dq5wHp1uj9C97rstkocLBjIyjy5cgwh07ORTk7lR0GXzI9szQBUJmnuhdFA+d1mT8=
-X-Received: by 2002:a05:6402:228a:: with SMTP id cw10mr6098248edb.195.1611126666903;
- Tue, 19 Jan 2021 23:11:06 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fkwpiRhcbAY/Xrd8puZlohXc8HqWP1iUu7DJdV7kfmc=;
+        b=O+fDc2rxjFlq0z7uhAN7I+meYsXghFsX+gofs1uD6yOTywN0MQOpgblpqwfrYGwvjN
+         ShWA50m1Z59Rbdca0klEG5d5WbHew9xcPLnIXkZxaIu6kShDZXRXV+wPIt/QLBQAyqCH
+         3ZvZWyekRsvtOwwOJf2+FU510MNxstGPXr5llErv+Lndcw6Ehcf6eT5axrBX/5W94CXq
+         0iuD6Wdv9vlWLKMcZoYnV9Ksuu+WiFV8UtCE2vWf/DoIy3cNTn3009M7hxaHdCQzSE9v
+         EBdmqCNxqhRzDN9y9KRGQjdELU0PukGtzKCv/fYLte0FGGi+vs1jf+CiPcWhOm3oHAsh
+         sCRw==
+X-Gm-Message-State: AOAM531mJfnMfOAzpQBVT6FSXaINpCluFWiDQWlUbMxy8eeP0UzP2AX8
+        sPEHpVCyUW5mm7ZfbM6ovyA=
+X-Google-Smtp-Source: ABdhPJyc6hbY0x8yj+/thIn/8laQ02tnHOZuDloG7PvHASPSyzPfEzks74VFN5SJkJOpuLpvdZaUog==
+X-Received: by 2002:a2e:b8d1:: with SMTP id s17mr2741420ljp.269.1611127249385;
+        Tue, 19 Jan 2021 23:20:49 -0800 (PST)
+Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
+        by smtp.gmail.com with ESMTPSA id j2sm120324lfe.134.2021.01.19.23.20.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jan 2021 23:20:48 -0800 (PST)
+Date:   Wed, 20 Jan 2021 09:20:46 +0200
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
+        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com
+Subject: Re: [PATCH v17 02/10] fs/ntfs3: Add initialization of super block
+Message-ID: <20210120072046.p26xlv33ul4lr2vs@kari-VirtualBox>
+References: <20201231152401.3162425-1-almaz.alexandrovich@paragon-software.com>
+ <20201231152401.3162425-3-almaz.alexandrovich@paragon-software.com>
+ <20210119040306.54lm6oyeiarjrb2w@kari-VirtualBox>
 MIME-Version: 1.0
-References: <20210119045920.447-1-xieyongji@bytedance.com> <20210119045920.447-6-xieyongji@bytedance.com>
- <3d58d50c-935a-a827-e261-59282f4c8577@redhat.com>
-In-Reply-To: <3d58d50c-935a-a827-e261-59282f4c8577@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 20 Jan 2021 15:10:56 +0800
-Message-ID: <CACycT3vXCaSc9Er3yzRAzf8-eEFgpQYmEaDy3129xPdb4AFdmA@mail.gmail.com>
-Subject: Re: Re: [RFC v3 05/11] vdpa: shared virtual addressing support
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210119040306.54lm6oyeiarjrb2w@kari-VirtualBox>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 1:55 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> On 2021/1/19 =E4=B8=8B=E5=8D=8812:59, Xie Yongji wrote:
-> > This patches introduces SVA (Shared Virtual Addressing)
-> > support for vDPA device. During vDPA device allocation,
-> > vDPA device driver needs to indicate whether SVA is
-> > supported by the device. Then vhost-vdpa bus driver
-> > will not pin user page and transfer userspace virtual
-> > address instead of physical address during DMA mapping.
-> >
-> > Suggested-by: Jason Wang <jasowang@redhat.com>
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >   drivers/vdpa/ifcvf/ifcvf_main.c   |  2 +-
-> >   drivers/vdpa/mlx5/net/mlx5_vnet.c |  2 +-
-> >   drivers/vdpa/vdpa.c               |  5 ++++-
-> >   drivers/vdpa/vdpa_sim/vdpa_sim.c  |  3 ++-
-> >   drivers/vhost/vdpa.c              | 35 +++++++++++++++++++++++-------=
------
-> >   include/linux/vdpa.h              | 10 +++++++---
-> >   6 files changed, 38 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf=
-_main.c
-> > index 23474af7da40..95c4601f82f5 100644
-> > --- a/drivers/vdpa/ifcvf/ifcvf_main.c
-> > +++ b/drivers/vdpa/ifcvf/ifcvf_main.c
-> > @@ -439,7 +439,7 @@ static int ifcvf_probe(struct pci_dev *pdev, const =
-struct pci_device_id *id)
-> >
-> >       adapter =3D vdpa_alloc_device(struct ifcvf_adapter, vdpa,
-> >                                   dev, &ifc_vdpa_ops,
-> > -                                 IFCVF_MAX_QUEUE_PAIRS * 2, NULL);
-> > +                                 IFCVF_MAX_QUEUE_PAIRS * 2, NULL, fals=
-e);
-> >       if (adapter =3D=3D NULL) {
-> >               IFCVF_ERR(pdev, "Failed to allocate vDPA structure");
-> >               return -ENOMEM;
-> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/=
-mlx5_vnet.c
-> > index 77595c81488d..05988d6907f2 100644
-> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > @@ -1959,7 +1959,7 @@ static int mlx5v_probe(struct auxiliary_device *a=
-dev,
-> >       max_vqs =3D min_t(u32, max_vqs, MLX5_MAX_SUPPORTED_VQS);
-> >
-> >       ndev =3D vdpa_alloc_device(struct mlx5_vdpa_net, mvdev.vdev, mdev=
-->device, &mlx5_vdpa_ops,
-> > -                              2 * mlx5_vdpa_max_qps(max_vqs), NULL);
-> > +                              2 * mlx5_vdpa_max_qps(max_vqs), NULL, fa=
-lse);
-> >       if (IS_ERR(ndev))
-> >               return PTR_ERR(ndev);
-> >
-> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> > index 32bd48baffab..50cab930b2e5 100644
-> > --- a/drivers/vdpa/vdpa.c
-> > +++ b/drivers/vdpa/vdpa.c
-> > @@ -72,6 +72,7 @@ static void vdpa_release_dev(struct device *d)
-> >    * @nvqs: number of virtqueues supported by this device
-> >    * @size: size of the parent structure that contains private data
-> >    * @name: name of the vdpa device; optional.
-> > + * @sva: indicate whether SVA (Shared Virtual Addressing) is supported
-> >    *
-> >    * Driver should use vdpa_alloc_device() wrapper macro instead of
-> >    * using this directly.
-> > @@ -81,7 +82,8 @@ static void vdpa_release_dev(struct device *d)
-> >    */
-> >   struct vdpa_device *__vdpa_alloc_device(struct device *parent,
-> >                                       const struct vdpa_config_ops *con=
-fig,
-> > -                                     int nvqs, size_t size, const char=
- *name)
-> > +                                     int nvqs, size_t size, const char=
- *name,
-> > +                                     bool sva)
-> >   {
-> >       struct vdpa_device *vdev;
-> >       int err =3D -EINVAL;
-> > @@ -108,6 +110,7 @@ struct vdpa_device *__vdpa_alloc_device(struct devi=
-ce *parent,
-> >       vdev->config =3D config;
-> >       vdev->features_valid =3D false;
-> >       vdev->nvqs =3D nvqs;
-> > +     vdev->sva =3D sva;
-> >
-> >       if (name)
-> >               err =3D dev_set_name(&vdev->dev, "%s", name);
-> > diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/v=
-dpa_sim.c
-> > index 85776e4e6749..03c796873a6b 100644
-> > --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> > +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> > @@ -367,7 +367,8 @@ static struct vdpasim *vdpasim_create(const char *n=
-ame)
-> >       else
-> >               ops =3D &vdpasim_net_config_ops;
-> >
-> > -     vdpasim =3D vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops, VD=
-PASIM_VQ_NUM, name);
-> > +     vdpasim =3D vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops,
-> > +                             VDPASIM_VQ_NUM, name, false);
-> >       if (!vdpasim)
-> >               goto err_alloc;
-> >
-> > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> > index 4a241d380c40..36b6950ba37f 100644
-> > --- a/drivers/vhost/vdpa.c
-> > +++ b/drivers/vhost/vdpa.c
-> > @@ -486,21 +486,25 @@ static long vhost_vdpa_unlocked_ioctl(struct file=
- *filep,
-> >   static void vhost_vdpa_iotlb_unmap(struct vhost_vdpa *v, u64 start, u=
-64 last)
-> >   {
-> >       struct vhost_dev *dev =3D &v->vdev;
-> > +     struct vdpa_device *vdpa =3D v->vdpa;
-> >       struct vhost_iotlb *iotlb =3D dev->iotlb;
-> >       struct vhost_iotlb_map *map;
-> >       struct page *page;
-> >       unsigned long pfn, pinned;
-> >
-> >       while ((map =3D vhost_iotlb_itree_first(iotlb, start, last)) !=3D=
- NULL) {
-> > -             pinned =3D map->size >> PAGE_SHIFT;
-> > -             for (pfn =3D map->addr >> PAGE_SHIFT;
-> > -                  pinned > 0; pfn++, pinned--) {
-> > -                     page =3D pfn_to_page(pfn);
-> > -                     if (map->perm & VHOST_ACCESS_WO)
-> > -                             set_page_dirty_lock(page);
-> > -                     unpin_user_page(page);
-> > +             if (!vdpa->sva) {
-> > +                     pinned =3D map->size >> PAGE_SHIFT;
-> > +                     for (pfn =3D map->addr >> PAGE_SHIFT;
-> > +                          pinned > 0; pfn++, pinned--) {
-> > +                             page =3D pfn_to_page(pfn);
-> > +                             if (map->perm & VHOST_ACCESS_WO)
-> > +                                     set_page_dirty_lock(page);
-> > +                             unpin_user_page(page);
-> > +                     }
-> > +                     atomic64_sub(map->size >> PAGE_SHIFT,
-> > +                                     &dev->mm->pinned_vm);
-> >               }
-> > -             atomic64_sub(map->size >> PAGE_SHIFT, &dev->mm->pinned_vm=
-);
-> >               vhost_iotlb_map_free(iotlb, map);
-> >       }
-> >   }
-> > @@ -558,13 +562,15 @@ static int vhost_vdpa_map(struct vhost_vdpa *v,
-> >               r =3D iommu_map(v->domain, iova, pa, size,
-> >                             perm_to_iommu_flags(perm));
-> >       }
-> > -
-> > -     if (r)
-> > +     if (r) {
-> >               vhost_iotlb_del_range(dev->iotlb, iova, iova + size - 1);
-> > -     else
-> > +             return r;
-> > +     }
+On Tue, Jan 19, 2021 at 06:03:06AM +0200, Kari Argillander wrote:
+> On Thu, Dec 31, 2020 at 06:23:53PM +0300, Konstantin Komarov wrote:
+> > diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+
+> > +struct ntfs_fnd *fnd_get(struct ntfs_index *indx)
+> > +{
+> > +	struct ntfs_fnd *fnd = ntfs_alloc(sizeof(struct ntfs_fnd), 1);
 > > +
-> > +     if (!vdpa->sva)
-> >               atomic64_add(size >> PAGE_SHIFT, &dev->mm->pinned_vm);
-> >
-> > -     return r;
-> > +     return 0;
-> >   }
-> >
-> >   static void vhost_vdpa_unmap(struct vhost_vdpa *v, u64 iova, u64 size=
-)
-> > @@ -589,6 +595,7 @@ static int vhost_vdpa_process_iotlb_update(struct v=
-host_vdpa *v,
-> >                                          struct vhost_iotlb_msg *msg)
-> >   {
-> >       struct vhost_dev *dev =3D &v->vdev;
-> > +     struct vdpa_device *vdpa =3D v->vdpa;
-> >       struct vhost_iotlb *iotlb =3D dev->iotlb;
-> >       struct page **page_list;
-> >       unsigned long list_size =3D PAGE_SIZE / sizeof(struct page *);
-> > @@ -607,6 +614,10 @@ static int vhost_vdpa_process_iotlb_update(struct =
-vhost_vdpa *v,
-> >                                   msg->iova + msg->size - 1))
-> >               return -EEXIST;
-> >
-> > +     if (vdpa->sva)
-> > +             return vhost_vdpa_map(v, msg->iova, msg->size,
-> > +                                   msg->uaddr, msg->perm);
+> > +	if (!fnd)
+> > +		return NULL;
 > > +
-> >       /* Limit the use of memory for bookkeeping */
-> >       page_list =3D (struct page **) __get_free_page(GFP_KERNEL);
-> >       if (!page_list)
-> > diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> > index cb5a3d847af3..f86869651614 100644
-> > --- a/include/linux/vdpa.h
-> > +++ b/include/linux/vdpa.h
-> > @@ -44,6 +44,7 @@ struct vdpa_parent_dev;
-> >    * @config: the configuration ops for this device.
-> >    * @index: device index
-> >    * @features_valid: were features initialized? for legacy guests
-> > + * @sva: indicate whether SVA (Shared Virtual Addressing) is supported
->
->
-> Rethink about this. I think we probably need a better name other than
-> "sva" since kernel already use that for shared virtual address space.
-> But actually we don't the whole virtual address space.
->
+> > +	return fnd;
+> > +}
+> 
+> This should be initilized. What about that indx. Is that neccasarry?
+> Also no need to check NULL because if it is NULL we can just return it. 
 
-This flag is used to tell vhost-vdpa bus driver to transfer virtual
-addresses instead of physical addresses. So how about "use_va=E2=80=9C,
-=E2=80=9Dneed_va" or "va=E2=80=9C?
+Sorry about initilized part. Didn't notice it was kzalloc. Other parts
+are still relevent.
 
-> And I guess this can not work for the device that use platform IOMMU, so
-> we should check and fail if sva && !(dma_map || set_map).
->
-
-Agree.
-
-Thanks,
-Yongji
