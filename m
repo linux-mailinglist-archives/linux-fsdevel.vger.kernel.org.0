@@ -2,126 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9FD2FC9D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 05:19:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54DBB2FC9F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 05:28:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbhATES1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 23:18:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33166 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730673AbhATEMv (ORCPT
+        id S1726362AbhATE0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 23:26:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60589 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731670AbhATEZw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 23:12:51 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB52C061575
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 20:12:10 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id dj23so21567905edb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 20:12:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=l9avflWFeErte6PCdfopkFmndIBocFK+Q/nYZfMSQqE=;
-        b=C8X9zRKkt17O637vlA0w7Ei2ZWLSxfOvwrDoOnZpbpLWanHhida3po4heO9YLgkL3h
-         g2rrWM4q75sYgbOcuT7R8Ysq6PNPhyXKwYCrjVwhODO9wH7K/Gp58yjltLJy8hTUDhcW
-         mhLTWMHNIL7Yw9j/eKbhiPuLvflwpUv1jEhGT8drp9zHGpHcuTWMTzmgCQdBAjeu4ehj
-         JlUn/H9Jv4OVBsFlsxG5It9Y90VjsRyGEnCvK8hN94PMvlxdcocSL8tIcgPUxTKL+uPo
-         8Cvia917hnJtJNAsi9qYcfBvhbbNHwORUEA86Z5/h++2U2xB5oXsd4p+RLPy9O13E7J3
-         CPVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=l9avflWFeErte6PCdfopkFmndIBocFK+Q/nYZfMSQqE=;
-        b=g4rceV3ImXJ+qem6J0jC6osClkx+oM7mDzu33L+j1hGQEEh67Ck2SaqbGH0YyHLwRG
-         ViNbf1qQT+UtTWEg4JoYrELnfnBPrhCaYsj1Ubhyu2TnvOwLOhI8YRs8anDv2JeKrrtU
-         /R65teJT7JIChYcFwus6QgBT7NI3faK20vA/LGPCz1kmiH+tqJQv3KSS3hogDKsKT+zC
-         mJdCuigOOMWPUkOkSebhxlLaVsXZXNmpGxRwcBr2INpHWyZZZ5eCw30HX/gMXIk/srx/
-         Cp56OXh95SXJ985Oal3za0Ri5MCVrC6X/joqS0yeT3HfEbULn0lbmD1tYqxyiCSJc1h0
-         CUNQ==
-X-Gm-Message-State: AOAM533ORTXYoFvYklhG8Q7uTOBx9KEKBY7F9rcZ6EMuee/JvZt3h9lY
-        GKRMN895bAAN424mnPP2KdGm1Nb7rp9w+E1JcRxGtQCDPH0rBA==
-X-Google-Smtp-Source: ABdhPJxaTZmcMRWRWf1kOl8EoB4XcBiaPjcSic8IErTq56RdAQHmLAtfGaZyRwaI/gCzOTN5YYo0k2RdctfiDacqV4Y=
-X-Received: by 2002:a05:6402:5107:: with SMTP id m7mr3750536edd.52.1611115929077;
- Tue, 19 Jan 2021 20:12:09 -0800 (PST)
+        Tue, 19 Jan 2021 23:25:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611116665;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jIuh7SxU93BuybyBivroDVvSIaVYcMTbwm+jPxQBIoI=;
+        b=AlacIp37xqliptgyseY8BKg0L15OCJaxynKnnbwHKxn++fVW8EPyPP9xCaP9tXvdcjcdes
+        eO15TWgING2oZby03Thxh3VRXWpnsn3sxV3vEukFBu7VYdq6+HdOufWoYQBSGcrpuSMoIh
+        YTkR+xs2qtg/DDjjJDlh0Zkc/jAapEI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-544-lp2UjuhQMDGbIaW0q_X0HA-1; Tue, 19 Jan 2021 23:24:22 -0500
+X-MC-Unique: lp2UjuhQMDGbIaW0q_X0HA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78A1F800D53;
+        Wed, 20 Jan 2021 04:24:20 +0000 (UTC)
+Received: from [10.72.13.124] (ovpn-13-124.pek2.redhat.com [10.72.13.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 43D835D74B;
+        Wed, 20 Jan 2021 04:24:08 +0000 (UTC)
+Subject: Re: [RFC v3 01/11] eventfd: track eventfd_signal() recursion depth
+ separately in different cases
+To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
+        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
+        bob.liu@oracle.com, hch@infradead.org, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <20210119045920.447-1-xieyongji@bytedance.com>
+ <20210119045920.447-2-xieyongji@bytedance.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <e8a2cc15-80f5-01e0-75ec-ea6281fda0eb@redhat.com>
+Date:   Wed, 20 Jan 2021 12:24:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210119213727.pkiuSGW9i%akpm@linux-foundation.org> <5f8e2ede-5836-45e1-d8d7-ae949775e76e@infradead.org>
-In-Reply-To: <5f8e2ede-5836-45e1-d8d7-ae949775e76e@infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 19 Jan 2021 20:12:01 -0800
-Message-ID: <CAPcyv4iX+7LAgAeSqx7Zw-Zd=ZV9gBv8Bo7oTbwCOOqJoZ3+Yg@mail.gmail.com>
-Subject: Re: [PATCH -mmotm] mm/memory_hotplug: fix for CONFIG_ZONE_DEVICE not enabled
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.cz>, mm-commits@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210119045920.447-2-xieyongji@bytedance.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 7:05 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix memory_hotplug.c when CONFIG_ZONE_DEVICE is not enabled.
->
-> Fixes this build error:
->
-> ../mm/memory_hotplug.c: In function =E2=80=98move_pfn_range_to_zone=E2=80=
-=99:
-> ../mm/memory_hotplug.c:772:24: error: =E2=80=98ZONE_DEVICE=E2=80=99 undec=
-lared (first use in this function); did you mean =E2=80=98ZONE_MOVABLE=E2=
-=80=99?
->   if (zone_idx(zone) =3D=3D ZONE_DEVICE) {
 
-Thanks Randy. Apologies for the thrash, obviously the kbuild-robot
-does not include a CONFIG_ZONE_DEVICE=3Dn.
+On 2021/1/19 下午12:59, Xie Yongji wrote:
+> Now we have a global percpu counter to limit the recursion depth
+> of eventfd_signal(). This can avoid deadlock or stack overflow.
+> But in stack overflow case, it should be OK to increase the
+> recursion depth if needed. So we add a percpu counter in eventfd_ctx
+> to limit the recursion depth for deadlock case. Then it could be
+> fine to increase the global percpu counter later.
 
-I'd prefer to fix this without adding ifdefery in a .c file with
-something like this:
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 0b5c44f730b4..66ba38dae9ba 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -885,6 +885,18 @@ static inline int local_memory_node(int node_id)
-{ return node_id; };
-  */
- #define zone_idx(zone)         ((zone) - (zone)->zone_pgdat->node_zones)
+I wonder whether or not it's worth to introduce percpu for each eventfd.
 
-+#ifdef CONFIG_ZONE_DEVICE
-+static inline bool zone_is_zone_device(struct zone *zone)
-+{
-+       return zone_idx(zone) =3D=3D ZONE_DEVICE;
-+}
-+#else
-+static inline bool zone_is_zone_device(struct zone *zone)
-+{
-+       return false;
-+}
-+#endif
-+
- /*
-  * Returns true if a zone has pages managed by the buddy allocator.
-  * All the reclaim decisions have to use this function rather than
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index c78a1bef561b..710e469fb3a1 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -769,7 +769,7 @@ void __ref move_pfn_range_to_zone(struct zone
-*zone, unsigned long start_pfn,
-         * ZONE_DEVICE pages in an otherwise  ZONE_{NORMAL,MOVABLE}
-         * section.
-         */
--       if (zone_idx(zone) =3D=3D ZONE_DEVICE) {
-+       if (zone_is_zone_device(zone)) {
-                if (!IS_ALIGNED(start_pfn, PAGES_PER_SECTION))
-                        section_taint_zone_device(start_pfn);
-                if (!IS_ALIGNED(start_pfn + nr_pages, PAGES_PER_SECTION))
+How about simply check if eventfd_signal_count() is greater than 2?
+
+Thanks
+
+
+>
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> ---
+>   fs/aio.c                |  3 ++-
+>   fs/eventfd.c            | 20 +++++++++++++++++++-
+>   include/linux/eventfd.h |  5 +----
+>   3 files changed, 22 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 1f32da13d39e..5d82903161f5 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1698,7 +1698,8 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+>   		list_del(&iocb->ki_list);
+>   		iocb->ki_res.res = mangle_poll(mask);
+>   		req->done = true;
+> -		if (iocb->ki_eventfd && eventfd_signal_count()) {
+> +		if (iocb->ki_eventfd &&
+> +			eventfd_signal_count(iocb->ki_eventfd)) {
+>   			iocb = NULL;
+>   			INIT_WORK(&req->work, aio_poll_put_work);
+>   			schedule_work(&req->work);
+> diff --git a/fs/eventfd.c b/fs/eventfd.c
+> index e265b6dd4f34..2df24f9bada3 100644
+> --- a/fs/eventfd.c
+> +++ b/fs/eventfd.c
+> @@ -25,6 +25,8 @@
+>   #include <linux/idr.h>
+>   #include <linux/uio.h>
+>   
+> +#define EVENTFD_WAKE_DEPTH 0
+> +
+>   DEFINE_PER_CPU(int, eventfd_wake_count);
+>   
+>   static DEFINE_IDA(eventfd_ida);
+> @@ -42,9 +44,17 @@ struct eventfd_ctx {
+>   	 */
+>   	__u64 count;
+>   	unsigned int flags;
+> +	int __percpu *wake_count;
+>   	int id;
+>   };
+>   
+> +bool eventfd_signal_count(struct eventfd_ctx *ctx)
+> +{
+> +	return (this_cpu_read(*ctx->wake_count) ||
+> +		this_cpu_read(eventfd_wake_count) > EVENTFD_WAKE_DEPTH);
+> +}
+> +EXPORT_SYMBOL_GPL(eventfd_signal_count);
+> +
+>   /**
+>    * eventfd_signal - Adds @n to the eventfd counter.
+>    * @ctx: [in] Pointer to the eventfd context.
+> @@ -71,17 +81,19 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
+>   	 * it returns true, the eventfd_signal() call should be deferred to a
+>   	 * safe context.
+>   	 */
+> -	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
+> +	if (WARN_ON_ONCE(eventfd_signal_count(ctx)))
+>   		return 0;
+>   
+>   	spin_lock_irqsave(&ctx->wqh.lock, flags);
+>   	this_cpu_inc(eventfd_wake_count);
+> +	this_cpu_inc(*ctx->wake_count);
+>   	if (ULLONG_MAX - ctx->count < n)
+>   		n = ULLONG_MAX - ctx->count;
+>   	ctx->count += n;
+>   	if (waitqueue_active(&ctx->wqh))
+>   		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
+>   	this_cpu_dec(eventfd_wake_count);
+> +	this_cpu_dec(*ctx->wake_count);
+>   	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
+>   
+>   	return n;
+> @@ -92,6 +104,7 @@ static void eventfd_free_ctx(struct eventfd_ctx *ctx)
+>   {
+>   	if (ctx->id >= 0)
+>   		ida_simple_remove(&eventfd_ida, ctx->id);
+> +	free_percpu(ctx->wake_count);
+>   	kfree(ctx);
+>   }
+>   
+> @@ -423,6 +436,11 @@ static int do_eventfd(unsigned int count, int flags)
+>   
+>   	kref_init(&ctx->kref);
+>   	init_waitqueue_head(&ctx->wqh);
+> +	ctx->wake_count = alloc_percpu(int);
+> +	if (!ctx->wake_count) {
+> +		kfree(ctx);
+> +		return -ENOMEM;
+> +	}
+>   	ctx->count = count;
+>   	ctx->flags = flags;
+>   	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
+> diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+> index fa0a524baed0..1a11ebbd74a9 100644
+> --- a/include/linux/eventfd.h
+> +++ b/include/linux/eventfd.h
+> @@ -45,10 +45,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt);
+>   
+>   DECLARE_PER_CPU(int, eventfd_wake_count);
+>   
+> -static inline bool eventfd_signal_count(void)
+> -{
+> -	return this_cpu_read(eventfd_wake_count);
+> -}
+> +bool eventfd_signal_count(struct eventfd_ctx *ctx);
+>   
+>   #else /* CONFIG_EVENTFD */
+>   
+
