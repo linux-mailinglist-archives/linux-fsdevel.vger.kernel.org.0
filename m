@@ -2,94 +2,281 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A9542FCA18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 05:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C8292FCAE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 07:04:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbhATEuT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 23:50:19 -0500
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:52082 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727683AbhATErs (ORCPT
+        id S1728156AbhATF5s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 00:57:48 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:21590 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726334AbhATF50 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 23:47:48 -0500
-Received: from dread.disaster.area (pa49-180-243-77.pa.nsw.optusnet.com.au [49.180.243.77])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id C28BD114056B;
-        Wed, 20 Jan 2021 15:47:01 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1l25OW-000Pbc-9B; Wed, 20 Jan 2021 15:47:00 +1100
-Date:   Wed, 20 Jan 2021 15:47:00 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Zhongwei Cai <sunrise_l@sjtu.edu.cn>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Laight <David.Laight@aculab.com>,
-        Mingkai Dong <mingkaidong@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Wang Jianchao <jianchao.wan9@gmail.com>,
-        Rajesh Tadakamadla <rajesh.tadakamadla@hpe.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: Expense of read_iter
-Message-ID: <20210120044700.GA4626@dread.disaster.area>
-References: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com>
- <20210107151125.GB5270@casper.infradead.org>
- <17045315-CC1F-4165-B8E3-BA55DD16D46B@gmail.com>
- <2041983017.5681521.1610459100858.JavaMail.zimbra@sjtu.edu.cn>
- <alpine.LRH.2.02.2101131008530.27448@file01.intranet.prod.int.rdu2.redhat.com>
- <1224425872.715547.1610703643424.JavaMail.zimbra@sjtu.edu.cn>
+        Wed, 20 Jan 2021 00:57:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611122158;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q8SbE5PdHAcpmt+ukP9VF3z2TekafV+3DGaZfD9WNrk=;
+        b=fVdpwYirtKmS41wJPS8r5or5Pqb7h29ESFQJJ94vhhuw+VFq6oi5JVQMZ/86sDVX+tEttG
+        YMQiWch6LbcdzR/yxXE1Ld2sOqRJmAYTRvQYOniH/sts2JwmoVnkfN6SHqcDdUBHZlwI7Y
+        5D+imnxQ2WiWu0nOGK7sdrK36z3jNWY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-266-IKneJktcMtWVGUomDOwycg-1; Wed, 20 Jan 2021 00:55:54 -0500
+X-MC-Unique: IKneJktcMtWVGUomDOwycg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A40711005504;
+        Wed, 20 Jan 2021 05:55:51 +0000 (UTC)
+Received: from [10.72.13.124] (ovpn-13-124.pek2.redhat.com [10.72.13.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9489960C0F;
+        Wed, 20 Jan 2021 05:55:37 +0000 (UTC)
+Subject: Re: [RFC v3 05/11] vdpa: shared virtual addressing support
+To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
+        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
+        bob.liu@oracle.com, hch@infradead.org, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <20210119045920.447-1-xieyongji@bytedance.com>
+ <20210119045920.447-6-xieyongji@bytedance.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <3d58d50c-935a-a827-e261-59282f4c8577@redhat.com>
+Date:   Wed, 20 Jan 2021 13:55:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1224425872.715547.1610703643424.JavaMail.zimbra@sjtu.edu.cn>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=juxvdbeFDU67v5YkIhU0sw==:117 a=juxvdbeFDU67v5YkIhU0sw==:17
-        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
-        a=9YBCWnU3LXitusiQSpoA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20210119045920.447-6-xieyongji@bytedance.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 05:40:43PM +0800, Zhongwei Cai wrote:
-> On Thu, 14 Jan 2021, Mikulas wrote:
-> For Ext4-dax, the overhead of dax_iomap_rw is significant
-> compared to the overhead of struct iov_iter. Although methods
-> proposed by Mikulas can eliminate the overhead of iov_iter
-> well, they can not be applied in Ext4-dax unless we implement an
-> internal "read" method in Ext4-dax.
-> 
-> For Ext4-dax, there could be two approaches to optimizing:
-> 1) implementing the internal "read" method without the complexity
-> of iterators and dax_iomap_rw;
 
-Please do not go an re-invent the wheel just for ext4. If there's a
-problem in a shared path - ext2, FUSE and XFS all use dax_iomap_rw()
-as well, so any improvements to that path benefit all DAX users, not
-just ext4.
+On 2021/1/19 下午12:59, Xie Yongji wrote:
+> This patches introduces SVA (Shared Virtual Addressing)
+> support for vDPA device. During vDPA device allocation,
+> vDPA device driver needs to indicate whether SVA is
+> supported by the device. Then vhost-vdpa bus driver
+> will not pin user page and transfer userspace virtual
+> address instead of physical address during DMA mapping.
+>
+> Suggested-by: Jason Wang <jasowang@redhat.com>
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> ---
+>   drivers/vdpa/ifcvf/ifcvf_main.c   |  2 +-
+>   drivers/vdpa/mlx5/net/mlx5_vnet.c |  2 +-
+>   drivers/vdpa/vdpa.c               |  5 ++++-
+>   drivers/vdpa/vdpa_sim/vdpa_sim.c  |  3 ++-
+>   drivers/vhost/vdpa.c              | 35 +++++++++++++++++++++++------------
+>   include/linux/vdpa.h              | 10 +++++++---
+>   6 files changed, 38 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf_main.c
+> index 23474af7da40..95c4601f82f5 100644
+> --- a/drivers/vdpa/ifcvf/ifcvf_main.c
+> +++ b/drivers/vdpa/ifcvf/ifcvf_main.c
+> @@ -439,7 +439,7 @@ static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>   
+>   	adapter = vdpa_alloc_device(struct ifcvf_adapter, vdpa,
+>   				    dev, &ifc_vdpa_ops,
+> -				    IFCVF_MAX_QUEUE_PAIRS * 2, NULL);
+> +				    IFCVF_MAX_QUEUE_PAIRS * 2, NULL, false);
+>   	if (adapter == NULL) {
+>   		IFCVF_ERR(pdev, "Failed to allocate vDPA structure");
+>   		return -ENOMEM;
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> index 77595c81488d..05988d6907f2 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -1959,7 +1959,7 @@ static int mlx5v_probe(struct auxiliary_device *adev,
+>   	max_vqs = min_t(u32, max_vqs, MLX5_MAX_SUPPORTED_VQS);
+>   
+>   	ndev = vdpa_alloc_device(struct mlx5_vdpa_net, mvdev.vdev, mdev->device, &mlx5_vdpa_ops,
+> -				 2 * mlx5_vdpa_max_qps(max_vqs), NULL);
+> +				 2 * mlx5_vdpa_max_qps(max_vqs), NULL, false);
+>   	if (IS_ERR(ndev))
+>   		return PTR_ERR(ndev);
+>   
+> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> index 32bd48baffab..50cab930b2e5 100644
+> --- a/drivers/vdpa/vdpa.c
+> +++ b/drivers/vdpa/vdpa.c
+> @@ -72,6 +72,7 @@ static void vdpa_release_dev(struct device *d)
+>    * @nvqs: number of virtqueues supported by this device
+>    * @size: size of the parent structure that contains private data
+>    * @name: name of the vdpa device; optional.
+> + * @sva: indicate whether SVA (Shared Virtual Addressing) is supported
+>    *
+>    * Driver should use vdpa_alloc_device() wrapper macro instead of
+>    * using this directly.
+> @@ -81,7 +82,8 @@ static void vdpa_release_dev(struct device *d)
+>    */
+>   struct vdpa_device *__vdpa_alloc_device(struct device *parent,
+>   					const struct vdpa_config_ops *config,
+> -					int nvqs, size_t size, const char *name)
+> +					int nvqs, size_t size, const char *name,
+> +					bool sva)
+>   {
+>   	struct vdpa_device *vdev;
+>   	int err = -EINVAL;
+> @@ -108,6 +110,7 @@ struct vdpa_device *__vdpa_alloc_device(struct device *parent,
+>   	vdev->config = config;
+>   	vdev->features_valid = false;
+>   	vdev->nvqs = nvqs;
+> +	vdev->sva = sva;
+>   
+>   	if (name)
+>   		err = dev_set_name(&vdev->dev, "%s", name);
+> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> index 85776e4e6749..03c796873a6b 100644
+> --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> @@ -367,7 +367,8 @@ static struct vdpasim *vdpasim_create(const char *name)
+>   	else
+>   		ops = &vdpasim_net_config_ops;
+>   
+> -	vdpasim = vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops, VDPASIM_VQ_NUM, name);
+> +	vdpasim = vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops,
+> +				VDPASIM_VQ_NUM, name, false);
+>   	if (!vdpasim)
+>   		goto err_alloc;
+>   
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index 4a241d380c40..36b6950ba37f 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -486,21 +486,25 @@ static long vhost_vdpa_unlocked_ioctl(struct file *filep,
+>   static void vhost_vdpa_iotlb_unmap(struct vhost_vdpa *v, u64 start, u64 last)
+>   {
+>   	struct vhost_dev *dev = &v->vdev;
+> +	struct vdpa_device *vdpa = v->vdpa;
+>   	struct vhost_iotlb *iotlb = dev->iotlb;
+>   	struct vhost_iotlb_map *map;
+>   	struct page *page;
+>   	unsigned long pfn, pinned;
+>   
+>   	while ((map = vhost_iotlb_itree_first(iotlb, start, last)) != NULL) {
+> -		pinned = map->size >> PAGE_SHIFT;
+> -		for (pfn = map->addr >> PAGE_SHIFT;
+> -		     pinned > 0; pfn++, pinned--) {
+> -			page = pfn_to_page(pfn);
+> -			if (map->perm & VHOST_ACCESS_WO)
+> -				set_page_dirty_lock(page);
+> -			unpin_user_page(page);
+> +		if (!vdpa->sva) {
+> +			pinned = map->size >> PAGE_SHIFT;
+> +			for (pfn = map->addr >> PAGE_SHIFT;
+> +			     pinned > 0; pfn++, pinned--) {
+> +				page = pfn_to_page(pfn);
+> +				if (map->perm & VHOST_ACCESS_WO)
+> +					set_page_dirty_lock(page);
+> +				unpin_user_page(page);
+> +			}
+> +			atomic64_sub(map->size >> PAGE_SHIFT,
+> +					&dev->mm->pinned_vm);
+>   		}
+> -		atomic64_sub(map->size >> PAGE_SHIFT, &dev->mm->pinned_vm);
+>   		vhost_iotlb_map_free(iotlb, map);
+>   	}
+>   }
+> @@ -558,13 +562,15 @@ static int vhost_vdpa_map(struct vhost_vdpa *v,
+>   		r = iommu_map(v->domain, iova, pa, size,
+>   			      perm_to_iommu_flags(perm));
+>   	}
+> -
+> -	if (r)
+> +	if (r) {
+>   		vhost_iotlb_del_range(dev->iotlb, iova, iova + size - 1);
+> -	else
+> +		return r;
+> +	}
+> +
+> +	if (!vdpa->sva)
+>   		atomic64_add(size >> PAGE_SHIFT, &dev->mm->pinned_vm);
+>   
+> -	return r;
+> +	return 0;
+>   }
+>   
+>   static void vhost_vdpa_unmap(struct vhost_vdpa *v, u64 iova, u64 size)
+> @@ -589,6 +595,7 @@ static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
+>   					   struct vhost_iotlb_msg *msg)
+>   {
+>   	struct vhost_dev *dev = &v->vdev;
+> +	struct vdpa_device *vdpa = v->vdpa;
+>   	struct vhost_iotlb *iotlb = dev->iotlb;
+>   	struct page **page_list;
+>   	unsigned long list_size = PAGE_SIZE / sizeof(struct page *);
+> @@ -607,6 +614,10 @@ static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
+>   				    msg->iova + msg->size - 1))
+>   		return -EEXIST;
+>   
+> +	if (vdpa->sva)
+> +		return vhost_vdpa_map(v, msg->iova, msg->size,
+> +				      msg->uaddr, msg->perm);
+> +
+>   	/* Limit the use of memory for bookkeeping */
+>   	page_list = (struct page **) __get_free_page(GFP_KERNEL);
+>   	if (!page_list)
+> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> index cb5a3d847af3..f86869651614 100644
+> --- a/include/linux/vdpa.h
+> +++ b/include/linux/vdpa.h
+> @@ -44,6 +44,7 @@ struct vdpa_parent_dev;
+>    * @config: the configuration ops for this device.
+>    * @index: device index
+>    * @features_valid: were features initialized? for legacy guests
+> + * @sva: indicate whether SVA (Shared Virtual Addressing) is supported
 
-> 2) optimizing how dax_iomap_rw works.
-> Since dax_iomap_rw requires ext4_iomap_begin, which further involves
-> the iomap structure and others (e.g., journaling status locks in Ext4),
-> we think implementing the internal "read" method would be easier.
 
-Maybe it is, but it's also very selfish. The DAX iomap path was
-written to be correct for all users, not inecessarily provide
-optimal performance. There will be lots of things that could be done
-to optimise it, so rather than creating a special snowflake in ext4
-that makes DAX in ext4 much harder to maintain for non-ext4 DAX
-developers, please work to improve the common DAX IO path and so
-provide the same benefit to all the filesystems that use it.
+Rethink about this. I think we probably need a better name other than 
+"sva" since kernel already use that for shared virtual address space. 
+But actually we don't the whole virtual address space.
 
-Cheers,
+And I guess this can not work for the device that use platform IOMMU, so 
+we should check and fail if sva && !(dma_map || set_map).
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks
+
+
+>    * @nvqs: maximum number of supported virtqueues
+>    * @pdev: parent device pointer; caller must setup when registering device as part
+>    *	  of dev_add() parentdev ops callback before invoking _vdpa_register_device().
+> @@ -54,6 +55,7 @@ struct vdpa_device {
+>   	const struct vdpa_config_ops *config;
+>   	unsigned int index;
+>   	bool features_valid;
+> +	bool sva;
+>   	int nvqs;
+>   	struct vdpa_parent_dev *pdev;
+>   };
+> @@ -250,14 +252,16 @@ struct vdpa_config_ops {
+>   
+>   struct vdpa_device *__vdpa_alloc_device(struct device *parent,
+>   					const struct vdpa_config_ops *config,
+> -					int nvqs, size_t size, const char *name);
+> +					int nvqs, size_t size,
+> +					const char *name, bool sva);
+>   
+> -#define vdpa_alloc_device(dev_struct, member, parent, config, nvqs, name)   \
+> +#define vdpa_alloc_device(dev_struct, member, parent, config, \
+> +			  nvqs, name, sva) \
+>   			  container_of(__vdpa_alloc_device( \
+>   				       parent, config, nvqs, \
+>   				       sizeof(dev_struct) + \
+>   				       BUILD_BUG_ON_ZERO(offsetof( \
+> -				       dev_struct, member)), name), \
+> +				       dev_struct, member)), name, sva), \
+>   				       dev_struct, member)
+>   
+>   int vdpa_register_device(struct vdpa_device *vdev);
+
