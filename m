@@ -2,194 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A60262FC89C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 04:19:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE86B2FC873
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 04:07:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731341AbhATCoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 21:44:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42244 "EHLO
+        id S2389746AbhATDGA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 22:06:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729314AbhATCni (ORCPT
+        with ESMTP id S1730075AbhATDFv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 21:43:38 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FE3C061757
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 18:42:57 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id w1so31380687ejf.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 18:42:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JR8SOonsoVeZ8kYkjCoOcP9efLU2rmV1xGsQBGl12Mw=;
-        b=K/xcQwvp8OcJzvLXD291/b7JN2ZLqodtGv+7Nc0UWpyntg59mfHj33rmittUV2AFnz
-         S7ugw2f8IUSpP1WGldlG+cW4o0MhDDed80uoEYHZYt9djdB4HusYu/I3mGpt/JmsmauH
-         Gk9NDjKk8lkF3IYBqCcbQHgVWlmTPQbAp7+cInFCQFNmUAAL4/SvH9Yz27CGGa9kuAhd
-         Mw6iu9VJyp+G0lYkZKi1sxTBkf8tFYzKNll2ROGtd+e56MbsAIVXbKlBCvfsZEoDdVp8
-         LPdC1foVlfmVPp0Lmak81wwlPtFKBdVpq59g0ue/nHkGFbAHHuPHF/cDtYDfuGlpNn+t
-         wHQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JR8SOonsoVeZ8kYkjCoOcP9efLU2rmV1xGsQBGl12Mw=;
-        b=Cs62gHY7hr4lhBJovQU27qeNHsvE2uPu8IyJXZBg6yZil3E7/PWiiUVAG31HJFPwPB
-         yQuWm3gNypHyF+v3TdxnBcS2MhK/byIdfbNAg2X39v0lO8fRmXn/HMb3DWd9iUh7fZC+
-         Td88lTT1GyHyykiEgDUVqMdLCNal2MwxmLog5/DEaG45cnncOsdrtjJf4L04klrQ4Naz
-         hWR7fod0yoHMW7fAVyFLDpQCdw7nOZYG1qV3LrVd/4llU5wDNBnh33S4+roKhw0EUb6+
-         EEOXM+yXqlcTvBxdrCjIFWAg4/MPSg2omCbh/6HrOU7RK9NkrfM76qHAm3gqcuX4msV+
-         f/4A==
-X-Gm-Message-State: AOAM531e4XJxBYazg4fqr6DsWimpoi13oss8TdX3FMUTQdmwYtmjn1I7
-        YgZ29G245++88lfwEj2+1nC9L8JK2xeQkM+jxKAJ
-X-Google-Smtp-Source: ABdhPJwEQPIeZ/X4lntOaNcOvhEGY9W1dEeC5jUwXvKMinslpAWrnkhUJi+jpqR6Zcv4ZbBNsvWC8O9kA6bt7S6H+D8=
-X-Received: by 2002:a17:906:d0c2:: with SMTP id bq2mr4751150ejb.1.1611110576230;
- Tue, 19 Jan 2021 18:42:56 -0800 (PST)
+        Tue, 19 Jan 2021 22:05:51 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B519C061575;
+        Tue, 19 Jan 2021 19:05:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=cW9dntD9nGh8jVvLhLWe1YqLbc1l7R2XancWLaWAZn0=; b=dgyGnH/9OA6cRq6lOqC17NWXBn
+        gsp7Y/bP2Mx6Mn6cLhVLZKkA3Ag4+5tx3c8Xj5IvsYuBrpU3H6G+VpTi/+KjbDjF2lYqYRjlbDPVF
+        1lD8TU9+2869FaBaX5vemMdnDMY+YQ5lBKSEV7OJgkuN/XtXLeQuoHFBoAM+gtEaCXgwnAE9wQFa8
+        hUUi5BWLiS4bzljjOGy0dcFYLwBj2sHdQfuND27PUEUfsMd/yCjjYmvDdcjRn43bQMSNccI23+XRQ
+        keHOdcCVx4Y5eiO/QqVj4UMPt9eFHQZxRHyF78k31EThdlA31a8lgXgw60M6KIQnKIXApSSZD4R2r
+        suBkbohA==;
+Received: from [2601:1c0:6280:3f0::9abc]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1l23nm-0004q5-Ox; Wed, 20 Jan 2021 03:04:59 +0000
+Subject: [PATCH -mmotm] mm/memory_hotplug: fix for CONFIG_ZONE_DEVICE not
+ enabled
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20210119213727.pkiuSGW9i%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <5f8e2ede-5836-45e1-d8d7-ae949775e76e@infradead.org>
+Date:   Tue, 19 Jan 2021 19:04:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-References: <20210119045920.447-1-xieyongji@bytedance.com> <20210119050756.600-1-xieyongji@bytedance.com>
- <20210119050756.600-2-xieyongji@bytedance.com> <cfdc418c-7559-c6b1-6d8d-8f3a91a24f2b@infradead.org>
-In-Reply-To: <cfdc418c-7559-c6b1-6d8d-8f3a91a24f2b@infradead.org>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 20 Jan 2021 10:42:45 +0800
-Message-ID: <CACycT3vyt24GyF8dcp8NgtaYJ_f17SPHnyzi17TrVG4RoX=cYA@mail.gmail.com>
-Subject: Re: Re: [RFC v3 08/11] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210119213727.pkiuSGW9i%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 1:54 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> Hi,
->
-> Documentation comments only:
->
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Will fix it.
+Fix memory_hotplug.c when CONFIG_ZONE_DEVICE is not enabled.
 
-Thanks,
-Yongji
+Fixes this build error:
 
+../mm/memory_hotplug.c: In function ‘move_pfn_range_to_zone’:
+../mm/memory_hotplug.c:772:24: error: ‘ZONE_DEVICE’ undeclared (first use in this function); did you mean ‘ZONE_MOVABLE’?
+  if (zone_idx(zone) == ZONE_DEVICE) {
 
-> On 1/18/21 9:07 PM, Xie Yongji wrote:
-> >
-> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > ---
-> >  Documentation/driver-api/vduse.rst                 |   85 ++
-> >
-> > diff --git a/Documentation/driver-api/vduse.rst b/Documentation/driver-api/vduse.rst
-> > new file mode 100644
-> > index 000000000000..9418a7f6646b
-> > --- /dev/null
-> > +++ b/Documentation/driver-api/vduse.rst
-> > @@ -0,0 +1,85 @@
-> > +==================================
-> > +VDUSE - "vDPA Device in Userspace"
-> > +==================================
-> > +
-> > +vDPA (virtio data path acceleration) device is a device that uses a
-> > +datapath which complies with the virtio specifications with vendor
-> > +specific control path. vDPA devices can be both physically located on
-> > +the hardware or emulated by software. VDUSE is a framework that makes it
-> > +possible to implement software-emulated vDPA devices in userspace.
-> > +
-> > +How VDUSE works
-> > +------------
-> > +Each userspace vDPA device is created by the VDUSE_CREATE_DEV ioctl on
-> > +the VDUSE character device (/dev/vduse). Then a file descriptor pointing
-> > +to the new resources will be returned, which can be used to implement the
-> > +userspace vDPA device's control path and data path.
-> > +
-> > +To implement control path, the read/write operations to the file descriptor
-> > +will be used to receive/reply the control messages from/to VDUSE driver.
-> > +Those control messages are mostly based on the vdpa_config_ops which defines
-> > +a unified interface to control different types of vDPA device.
-> > +
-> > +The following types of messages are provided by the VDUSE framework now:
-> > +
-> > +- VDUSE_SET_VQ_ADDR: Set the addresses of the different aspects of virtqueue.
-> > +
-> > +- VDUSE_SET_VQ_NUM: Set the size of virtqueue
-> > +
-> > +- VDUSE_SET_VQ_READY: Set ready status of virtqueue
-> > +
-> > +- VDUSE_GET_VQ_READY: Get ready status of virtqueue
-> > +
-> > +- VDUSE_SET_VQ_STATE: Set the state (last_avail_idx) for virtqueue
-> > +
-> > +- VDUSE_GET_VQ_STATE: Get the state (last_avail_idx) for virtqueue
-> > +
-> > +- VDUSE_SET_FEATURES: Set virtio features supported by the driver
-> > +
-> > +- VDUSE_GET_FEATURES: Get virtio features supported by the device
-> > +
-> > +- VDUSE_SET_STATUS: Set the device status
-> > +
-> > +- VDUSE_GET_STATUS: Get the device status
-> > +
-> > +- VDUSE_SET_CONFIG: Write to device specific configuration space
-> > +
-> > +- VDUSE_GET_CONFIG: Read from device specific configuration space
-> > +
-> > +- VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping in device IOTLB
-> > +
-> > +Please see include/linux/vdpa.h for details.
-> > +
-> > +In the data path, vDPA device's iova regions will be mapped into userspace with
-> > +the help of VDUSE_IOTLB_GET_FD ioctl on the userspace vDPA device fd:
-> > +
-> > +- VDUSE_IOTLB_GET_FD: get the file descriptor to iova region. Userspace can
-> > +  access this iova region by passing the fd to mmap(2).
-> > +
-> > +Besides, the eventfd mechanism is used to trigger interrupt callbacks and
-> > +receive virtqueue kicks in userspace. The following ioctls on the userspace
-> > +vDPA device fd are provided to support that:
-> > +
-> > +- VDUSE_VQ_SETUP_KICKFD: set the kickfd for virtqueue, this eventfd is used
-> > +  by VDUSE driver to notify userspace to consume the vring.
-> > +
-> > +- VDUSE_VQ_SETUP_IRQFD: set the irqfd for virtqueue, this eventfd is used
-> > +  by userspace to notify VDUSE driver to trigger interrupt callbacks.
-> > +
-> > +MMU-based IOMMU Driver
-> > +----------------------
-> > +In virtio-vdpa case, VDUSE framework implements a MMU-based on-chip IOMMU
->
->                                                    an MMU-based
->
-> > +driver to support mapping the kernel dma buffer into the userspace iova
->
->                                         DMA
->
-> > +region dynamically.
-> > +
-> > +The basic idea behind this driver is treating MMU (VA->PA) as IOMMU (IOVA->PA).
-> > +The driver will set up MMU mapping instead of IOMMU mapping for the DMA transfer
-> > +so that the userspace process is able to use its virtual address to access
-> > +the dma buffer in kernel.
->
->        DMA
->
-> > +
-> > +And to avoid security issue, a bounce-buffering mechanism is introduced to
-> > +prevent userspace accessing the original buffer directly which may contain other
-> > +kernel data. During the mapping, unmapping, the driver will copy the data from
-> > +the original buffer to the bounce buffer and back, depending on the direction of
-> > +the transfer. And the bounce-buffer addresses will be mapped into the user address
-> > +space instead of the original one.
->
->
-> thanks.
-> --
-> ~Randy
->
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+---
+ mm/memory_hotplug.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- mmotm-2021-0119-1336.orig/mm/memory_hotplug.c
++++ mmotm-2021-0119-1336/mm/memory_hotplug.c
+@@ -769,12 +769,14 @@ void __ref move_pfn_range_to_zone(struct
+ 	 * ZONE_DEVICE pages in an otherwise  ZONE_{NORMAL,MOVABLE}
+ 	 * section.
+ 	 */
++#ifdef CONFIG_ZONE_DEVICE
+ 	if (zone_idx(zone) == ZONE_DEVICE) {
+ 		if (!IS_ALIGNED(start_pfn, PAGES_PER_SECTION))
+ 			section_taint_zone_device(start_pfn);
+ 		if (!IS_ALIGNED(start_pfn + nr_pages, PAGES_PER_SECTION))
+ 			section_taint_zone_device(start_pfn + nr_pages);
+ 	}
++#endif
+ 
+ 	/*
+ 	 * TODO now we have a visible range of pages which are not associated
+
