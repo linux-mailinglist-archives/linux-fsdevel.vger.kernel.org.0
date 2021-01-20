@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A1DE2FCB36
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 07:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF0C02FCB55
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 08:13:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbhATGyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 01:54:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39902 "EHLO
+        id S1726486AbhATHLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 02:11:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbhATGyL (ORCPT
+        with ESMTP id S1728546AbhATHLs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 01:54:11 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59EA9C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 22:52:50 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id b21so15623752edy.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 22:52:50 -0800 (PST)
+        Wed, 20 Jan 2021 02:11:48 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F5C9C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 23:11:08 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id b2so24489712edm.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 23:11:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=OUwyk7xtJXT5NiDavD07ZTFekT45AnyTwd1+tu8BV2s=;
-        b=pnwim4oCTPJUkeAUxNAT5zomyWF/8LBZ1cr/prJSrtoyHr6HXwRulATLeGbM/zO+Ds
-         iqSkBnm5FA9GpCYr9mahnXVLdDvm3bdZX5GeRjmIUXWkd0oW4aY7i0dX6thJBZ3mMVSV
-         kWWzYR0S87bDJHTos/rkGTLnwTAx9SG+OZRig4PiWcIGWCrfXuJmOjX0DzJnInkNrP35
-         pB4N6RKJdbQJV87bfF3r/Bm8NHvVpa5erF24fOAXjjbO5h7EtqLSRTdmt2rPNoqOJQ/v
-         xZ5GndPVEXc7GmGALiHmeXTnM/YhXGYk4iKYyiuWGdXGm8MYsZHmPZawRrhsinkdASfM
-         xHOw==
+        bh=017oWWIlxOT6VivhQTE1Gu4oh0UA53Mgq621dR6TrCw=;
+        b=DhcEFXZf9/GwXCjSaJJugCF9/T8eosnex9uUo7fCJhb9U/bEKuac1i2pUWDeCAqFsN
+         4rLZcgSTUMmbwM3WeVMoiIhzsbcaytX8TxOarNBww+ITFIH4ErWnA2eu3ZPxJPidiNhw
+         jGFRXzYMzYPnFaQSrgSX+zOiZsW3kK04VP9BOkx4cIWq6epgn997K/Ggg7OnNEvR/TaV
+         BxTb7OPYFzfMFxNPv7agZtDdjCxpFv/NT5O3vgft8CDomH8n+IBbBkj7aR6qmmOC2MSy
+         aBVn2ooIzJHfEeFAKBmW1PDa6CmlYloJkIwXRdojGHDWO3bhzs9gWoVM1AUGDoovAQvI
+         rZOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OUwyk7xtJXT5NiDavD07ZTFekT45AnyTwd1+tu8BV2s=;
-        b=BYpwiPvr+dtIo23ecz+ymttPWKf5YYT9PJIWkyPaHGd8ft+khR8fvhndk1yHOkcWQI
-         EHrcKiZW+gjYjZ/1VZd1Yn8vbsCWw0vgum/0hrZwInDYIeizTHro00yMdiUkZ2aMhVd6
-         a+eiar7N1T5Agmi9rxPohD1tLyWLsgcyAy6Pw3HYLsTj9NaiHIa0xywm/OhkrJyGYQ0E
-         Khwc2ExF6kOalYmRlr6E31Q2wSdNfd0cwnJEgxXLOVP36OPz+NK+HqhxgdRuNiIwCjLV
-         99h8eiuWkK1hve6wTOgFt6htSWs4vZGUM+GgHhDdV5IzfNQekkiyj1VHJlpgFgWEAKQn
-         MyNw==
-X-Gm-Message-State: AOAM532SD0gCa5c0iby0XZlSiPweHLnQGdd6ONW16I7RoDpe+nv0Rku4
-        B+BjrkWbHmpKeAKHua0oSpzM+La7GhxXZTPGvAJs
-X-Google-Smtp-Source: ABdhPJz8mSZjfHOOyqb5onfPHShDdIVRGCg/2N4z9UKpZS1PnUlAPw4lgExHz6G+gVcVSgVIvukJvyXD7wAAibCHYOw=
-X-Received: by 2002:a05:6402:407:: with SMTP id q7mr6214637edv.312.1611125568895;
- Tue, 19 Jan 2021 22:52:48 -0800 (PST)
+        bh=017oWWIlxOT6VivhQTE1Gu4oh0UA53Mgq621dR6TrCw=;
+        b=ewJVK4sXubfKAVr5tLhJzaYOdaQfviFXnE+voAqPWQ/ow9TIk3x+xECnaMaQWdmwYI
+         lWY3/yueKQAAq2J4GUeV6Wr6CL1Ke3dweymhpdowFJpgbYpCl47g99UZjrwvtLb/YULo
+         EoqGgZLjCcmsRMpr2AXfuL4Or6HASIpSliQmBem+TcoyVdQdJqS8auUXKp9H5dSp94M5
+         JSbYzVnAT384UIM9EgFKpmIqgS2p7Gx+rKlDIDIoyPpjo2tc5XC63lYuWoUanBaIqFAF
+         PTLuox5AiL89erDMglhBhZ4R9opOX7MwaMcdUjx5QfR6v2u3we+9kC88P8XC12lylpKg
+         564g==
+X-Gm-Message-State: AOAM5339oBEMHRA1/qacdNA1Kb6ujlkt+NYFudBMPTt8mEL6eKjPbHp/
+        mB3bbE4v64YBwwqMUsxhE1iA8GUPdfXmhOyN1tS5
+X-Google-Smtp-Source: ABdhPJwSiBeJuuQDrdZ4fEW9g9dq5wHp1uj9C97rstkocLBjIyjy5cgwh07ORTk7lR0GXzI9szQBUJmnuhdFA+d1mT8=
+X-Received: by 2002:a05:6402:228a:: with SMTP id cw10mr6098248edb.195.1611126666903;
+ Tue, 19 Jan 2021 23:11:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20210119045920.447-1-xieyongji@bytedance.com> <20210119045920.447-2-xieyongji@bytedance.com>
- <e8a2cc15-80f5-01e0-75ec-ea6281fda0eb@redhat.com>
-In-Reply-To: <e8a2cc15-80f5-01e0-75ec-ea6281fda0eb@redhat.com>
+References: <20210119045920.447-1-xieyongji@bytedance.com> <20210119045920.447-6-xieyongji@bytedance.com>
+ <3d58d50c-935a-a827-e261-59282f4c8577@redhat.com>
+In-Reply-To: <3d58d50c-935a-a827-e261-59282f4c8577@redhat.com>
 From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 20 Jan 2021 14:52:38 +0800
-Message-ID: <CACycT3sN0+dg-NubAK+N-DWf3UDXwWh=RyRX-qC9fwdg3QaLWA@mail.gmail.com>
-Subject: Re: Re: [RFC v3 01/11] eventfd: track eventfd_signal() recursion
- depth separately in different cases
+Date:   Wed, 20 Jan 2021 15:10:56 +0800
+Message-ID: <CACycT3vXCaSc9Er3yzRAzf8-eEFgpQYmEaDy3129xPdb4AFdmA@mail.gmail.com>
+Subject: Re: Re: [RFC v3 05/11] vdpa: shared virtual addressing support
 To:     Jason Wang <jasowang@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>, sgarzare@redhat.com,
@@ -70,26 +69,222 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 12:24 PM Jason Wang <jasowang@redhat.com> wrote:
+On Wed, Jan 20, 2021 at 1:55 PM Jason Wang <jasowang@redhat.com> wrote:
 >
 >
 > On 2021/1/19 =E4=B8=8B=E5=8D=8812:59, Xie Yongji wrote:
-> > Now we have a global percpu counter to limit the recursion depth
-> > of eventfd_signal(). This can avoid deadlock or stack overflow.
-> > But in stack overflow case, it should be OK to increase the
-> > recursion depth if needed. So we add a percpu counter in eventfd_ctx
-> > to limit the recursion depth for deadlock case. Then it could be
-> > fine to increase the global percpu counter later.
+> > This patches introduces SVA (Shared Virtual Addressing)
+> > support for vDPA device. During vDPA device allocation,
+> > vDPA device driver needs to indicate whether SVA is
+> > supported by the device. Then vhost-vdpa bus driver
+> > will not pin user page and transfer userspace virtual
+> > address instead of physical address during DMA mapping.
+> >
+> > Suggested-by: Jason Wang <jasowang@redhat.com>
+> > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> > ---
+> >   drivers/vdpa/ifcvf/ifcvf_main.c   |  2 +-
+> >   drivers/vdpa/mlx5/net/mlx5_vnet.c |  2 +-
+> >   drivers/vdpa/vdpa.c               |  5 ++++-
+> >   drivers/vdpa/vdpa_sim/vdpa_sim.c  |  3 ++-
+> >   drivers/vhost/vdpa.c              | 35 +++++++++++++++++++++++-------=
+-----
+> >   include/linux/vdpa.h              | 10 +++++++---
+> >   6 files changed, 38 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf=
+_main.c
+> > index 23474af7da40..95c4601f82f5 100644
+> > --- a/drivers/vdpa/ifcvf/ifcvf_main.c
+> > +++ b/drivers/vdpa/ifcvf/ifcvf_main.c
+> > @@ -439,7 +439,7 @@ static int ifcvf_probe(struct pci_dev *pdev, const =
+struct pci_device_id *id)
+> >
+> >       adapter =3D vdpa_alloc_device(struct ifcvf_adapter, vdpa,
+> >                                   dev, &ifc_vdpa_ops,
+> > -                                 IFCVF_MAX_QUEUE_PAIRS * 2, NULL);
+> > +                                 IFCVF_MAX_QUEUE_PAIRS * 2, NULL, fals=
+e);
+> >       if (adapter =3D=3D NULL) {
+> >               IFCVF_ERR(pdev, "Failed to allocate vDPA structure");
+> >               return -ENOMEM;
+> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/=
+mlx5_vnet.c
+> > index 77595c81488d..05988d6907f2 100644
+> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > @@ -1959,7 +1959,7 @@ static int mlx5v_probe(struct auxiliary_device *a=
+dev,
+> >       max_vqs =3D min_t(u32, max_vqs, MLX5_MAX_SUPPORTED_VQS);
+> >
+> >       ndev =3D vdpa_alloc_device(struct mlx5_vdpa_net, mvdev.vdev, mdev=
+->device, &mlx5_vdpa_ops,
+> > -                              2 * mlx5_vdpa_max_qps(max_vqs), NULL);
+> > +                              2 * mlx5_vdpa_max_qps(max_vqs), NULL, fa=
+lse);
+> >       if (IS_ERR(ndev))
+> >               return PTR_ERR(ndev);
+> >
+> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> > index 32bd48baffab..50cab930b2e5 100644
+> > --- a/drivers/vdpa/vdpa.c
+> > +++ b/drivers/vdpa/vdpa.c
+> > @@ -72,6 +72,7 @@ static void vdpa_release_dev(struct device *d)
+> >    * @nvqs: number of virtqueues supported by this device
+> >    * @size: size of the parent structure that contains private data
+> >    * @name: name of the vdpa device; optional.
+> > + * @sva: indicate whether SVA (Shared Virtual Addressing) is supported
+> >    *
+> >    * Driver should use vdpa_alloc_device() wrapper macro instead of
+> >    * using this directly.
+> > @@ -81,7 +82,8 @@ static void vdpa_release_dev(struct device *d)
+> >    */
+> >   struct vdpa_device *__vdpa_alloc_device(struct device *parent,
+> >                                       const struct vdpa_config_ops *con=
+fig,
+> > -                                     int nvqs, size_t size, const char=
+ *name)
+> > +                                     int nvqs, size_t size, const char=
+ *name,
+> > +                                     bool sva)
+> >   {
+> >       struct vdpa_device *vdev;
+> >       int err =3D -EINVAL;
+> > @@ -108,6 +110,7 @@ struct vdpa_device *__vdpa_alloc_device(struct devi=
+ce *parent,
+> >       vdev->config =3D config;
+> >       vdev->features_valid =3D false;
+> >       vdev->nvqs =3D nvqs;
+> > +     vdev->sva =3D sva;
+> >
+> >       if (name)
+> >               err =3D dev_set_name(&vdev->dev, "%s", name);
+> > diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/v=
+dpa_sim.c
+> > index 85776e4e6749..03c796873a6b 100644
+> > --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> > +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> > @@ -367,7 +367,8 @@ static struct vdpasim *vdpasim_create(const char *n=
+ame)
+> >       else
+> >               ops =3D &vdpasim_net_config_ops;
+> >
+> > -     vdpasim =3D vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops, VD=
+PASIM_VQ_NUM, name);
+> > +     vdpasim =3D vdpa_alloc_device(struct vdpasim, vdpa, NULL, ops,
+> > +                             VDPASIM_VQ_NUM, name, false);
+> >       if (!vdpasim)
+> >               goto err_alloc;
+> >
+> > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> > index 4a241d380c40..36b6950ba37f 100644
+> > --- a/drivers/vhost/vdpa.c
+> > +++ b/drivers/vhost/vdpa.c
+> > @@ -486,21 +486,25 @@ static long vhost_vdpa_unlocked_ioctl(struct file=
+ *filep,
+> >   static void vhost_vdpa_iotlb_unmap(struct vhost_vdpa *v, u64 start, u=
+64 last)
+> >   {
+> >       struct vhost_dev *dev =3D &v->vdev;
+> > +     struct vdpa_device *vdpa =3D v->vdpa;
+> >       struct vhost_iotlb *iotlb =3D dev->iotlb;
+> >       struct vhost_iotlb_map *map;
+> >       struct page *page;
+> >       unsigned long pfn, pinned;
+> >
+> >       while ((map =3D vhost_iotlb_itree_first(iotlb, start, last)) !=3D=
+ NULL) {
+> > -             pinned =3D map->size >> PAGE_SHIFT;
+> > -             for (pfn =3D map->addr >> PAGE_SHIFT;
+> > -                  pinned > 0; pfn++, pinned--) {
+> > -                     page =3D pfn_to_page(pfn);
+> > -                     if (map->perm & VHOST_ACCESS_WO)
+> > -                             set_page_dirty_lock(page);
+> > -                     unpin_user_page(page);
+> > +             if (!vdpa->sva) {
+> > +                     pinned =3D map->size >> PAGE_SHIFT;
+> > +                     for (pfn =3D map->addr >> PAGE_SHIFT;
+> > +                          pinned > 0; pfn++, pinned--) {
+> > +                             page =3D pfn_to_page(pfn);
+> > +                             if (map->perm & VHOST_ACCESS_WO)
+> > +                                     set_page_dirty_lock(page);
+> > +                             unpin_user_page(page);
+> > +                     }
+> > +                     atomic64_sub(map->size >> PAGE_SHIFT,
+> > +                                     &dev->mm->pinned_vm);
+> >               }
+> > -             atomic64_sub(map->size >> PAGE_SHIFT, &dev->mm->pinned_vm=
+);
+> >               vhost_iotlb_map_free(iotlb, map);
+> >       }
+> >   }
+> > @@ -558,13 +562,15 @@ static int vhost_vdpa_map(struct vhost_vdpa *v,
+> >               r =3D iommu_map(v->domain, iova, pa, size,
+> >                             perm_to_iommu_flags(perm));
+> >       }
+> > -
+> > -     if (r)
+> > +     if (r) {
+> >               vhost_iotlb_del_range(dev->iotlb, iova, iova + size - 1);
+> > -     else
+> > +             return r;
+> > +     }
+> > +
+> > +     if (!vdpa->sva)
+> >               atomic64_add(size >> PAGE_SHIFT, &dev->mm->pinned_vm);
+> >
+> > -     return r;
+> > +     return 0;
+> >   }
+> >
+> >   static void vhost_vdpa_unmap(struct vhost_vdpa *v, u64 iova, u64 size=
+)
+> > @@ -589,6 +595,7 @@ static int vhost_vdpa_process_iotlb_update(struct v=
+host_vdpa *v,
+> >                                          struct vhost_iotlb_msg *msg)
+> >   {
+> >       struct vhost_dev *dev =3D &v->vdev;
+> > +     struct vdpa_device *vdpa =3D v->vdpa;
+> >       struct vhost_iotlb *iotlb =3D dev->iotlb;
+> >       struct page **page_list;
+> >       unsigned long list_size =3D PAGE_SIZE / sizeof(struct page *);
+> > @@ -607,6 +614,10 @@ static int vhost_vdpa_process_iotlb_update(struct =
+vhost_vdpa *v,
+> >                                   msg->iova + msg->size - 1))
+> >               return -EEXIST;
+> >
+> > +     if (vdpa->sva)
+> > +             return vhost_vdpa_map(v, msg->iova, msg->size,
+> > +                                   msg->uaddr, msg->perm);
+> > +
+> >       /* Limit the use of memory for bookkeeping */
+> >       page_list =3D (struct page **) __get_free_page(GFP_KERNEL);
+> >       if (!page_list)
+> > diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> > index cb5a3d847af3..f86869651614 100644
+> > --- a/include/linux/vdpa.h
+> > +++ b/include/linux/vdpa.h
+> > @@ -44,6 +44,7 @@ struct vdpa_parent_dev;
+> >    * @config: the configuration ops for this device.
+> >    * @index: device index
+> >    * @features_valid: were features initialized? for legacy guests
+> > + * @sva: indicate whether SVA (Shared Virtual Addressing) is supported
 >
 >
-> I wonder whether or not it's worth to introduce percpu for each eventfd.
->
-> How about simply check if eventfd_signal_count() is greater than 2?
+> Rethink about this. I think we probably need a better name other than
+> "sva" since kernel already use that for shared virtual address space.
+> But actually we don't the whole virtual address space.
 >
 
-It can't avoid deadlock in this way. So we need a percpu counter for
-each eventfd to limit the recursion depth for deadlock cases. And
-using a global percpu counter to avoid stack overflow.
+This flag is used to tell vhost-vdpa bus driver to transfer virtual
+addresses instead of physical addresses. So how about "use_va=E2=80=9C,
+=E2=80=9Dneed_va" or "va=E2=80=9C?
+
+> And I guess this can not work for the device that use platform IOMMU, so
+> we should check and fail if sva && !(dma_map || set_map).
+>
+
+Agree.
 
 Thanks,
 Yongji
