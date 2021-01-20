@@ -2,377 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F542FC65F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 02:22:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E322FC6E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 02:38:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbhATBWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 20:22:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbhATBWO (ORCPT
+        id S1728007AbhATBhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 20:37:02 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:36010 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728956AbhATBgs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 20:22:14 -0500
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA0D6C0613C1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 17:21:27 -0800 (PST)
-Received: by mail-io1-xd36.google.com with SMTP id n2so26528470iom.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jan 2021 17:21:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1fyXimJDrov7QZJkTrvHUtn5wYDcEWoA48xerkmgwic=;
-        b=x3dTvDuC5jB1ZHh/3fZcm3du+I0KfAjyhNHTCf/8ptnCK+hZ0WG6fzGRs8CimZIWd1
-         HQERYJbNLn8pQBrKzZiVdM49WxARodzWUTQy4QqXikmiNRQcQdPOUqXr9aBlkpmSPV8P
-         xB5soK6knU9RCACEUJvEZzTPX4zJmj7tqoqMY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1fyXimJDrov7QZJkTrvHUtn5wYDcEWoA48xerkmgwic=;
-        b=SRY6q9Fsk5BU1cBfrvuU0nSTH2QvKaRH0VQ2ac9W48hj/QFG1IL8csx3ik+z4plk/Z
-         NPUCzij5dzKUeZrtQV8YdMzOzXDAsMybj2xhFwtwFumZo9vfsbVsAbGnh/RZl8dMHAT8
-         kxgPRKZvcOC5sXiMepvVuYdH0UxxOIZKy1mroY5EgUGAVs3NbD3rQ6L285wmSgyP2xTz
-         XCInp7bPWYGidE5mJxq1etz+Gr4s/UPNVRcMywu8EIbXSdaNB83Xn7o+IANaZs/H/XpU
-         kXWsPT2sAAlDma9joeWI1+2d9NyJ0QN8Q/gHaKK7J+JfyXYjR/wtasK8/6psyFpiOhnZ
-         Vr1Q==
-X-Gm-Message-State: AOAM531HrK5E5xI6aPKA05kT35suWkIvnxAY8h3brO7fiXoUyjfEsWfB
-        2Rft7iq/+CFYVz9Jodu/jU/wgQ==
-X-Google-Smtp-Source: ABdhPJyCrU5zWOW7mUMVfyKptfC2KTC3/UccP9Y9H9nshQIAb2rS1aWQrwb9epB5fzcPuq2vcp1eOg==
-X-Received: by 2002:a92:c986:: with SMTP id y6mr5938529iln.125.1611105686905;
-        Tue, 19 Jan 2021 17:21:26 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id t7sm329963ilg.9.2021.01.19.17.21.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jan 2021 17:21:26 -0800 (PST)
-Date:   Wed, 20 Jan 2021 01:21:25 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        Amir Goldstein <amir73il@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>,
-        Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4] overlay: Implement volatile-specific fsync error
- behaviour
-Message-ID: <20210120012124.GA3923@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20210108001043.12683-1-sargun@sargun.me>
- <9820d213cefd20f90227ed5a73a55fa41d4df6da.camel@kernel.org>
+        Tue, 19 Jan 2021 20:36:48 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l22Pf-000s1Q-M7; Tue, 19 Jan 2021 18:35:59 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l22Pe-00Aw4B-Ln; Tue, 19 Jan 2021 18:35:59 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Serge E . Hallyn" <serge@hallyn.com>
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+        <20210119162204.2081137-3-mszeredi@redhat.com>
+Date:   Tue, 19 Jan 2021 19:34:49 -0600
+In-Reply-To: <20210119162204.2081137-3-mszeredi@redhat.com> (Miklos Szeredi's
+        message of "Tue, 19 Jan 2021 17:22:04 +0100")
+Message-ID: <8735yw8k7a.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9820d213cefd20f90227ed5a73a55fa41d4df6da.camel@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-XM-SPF: eid=1l22Pe-00Aw4B-Ln;;;mid=<8735yw8k7a.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19ENBj119UF+ufFlQellSdzGmdBO3hQ/RE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 487 ms - load_scoreonly_sql: 0.09 (0.0%),
+        signal_user_changed: 13 (2.6%), b_tie_ro: 11 (2.2%), parse: 1.54
+        (0.3%), extract_message_metadata: 15 (3.2%), get_uri_detail_list: 3.0
+        (0.6%), tests_pri_-1000: 14 (2.8%), tests_pri_-950: 1.36 (0.3%),
+        tests_pri_-900: 1.04 (0.2%), tests_pri_-90: 78 (16.1%), check_bayes:
+        77 (15.8%), b_tokenize: 10 (2.0%), b_tok_get_all: 8 (1.7%),
+        b_comp_prob: 2.6 (0.5%), b_tok_touch_all: 52 (10.8%), b_finish: 0.90
+        (0.2%), tests_pri_0: 342 (70.3%), check_dkim_signature: 0.66 (0.1%),
+        check_dkim_adsp: 2.3 (0.5%), poll_dns_idle: 0.61 (0.1%), tests_pri_10:
+        3.2 (0.7%), tests_pri_500: 14 (2.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 06:49:36AM -0500, Jeff Layton wrote:
-> On Thu, 2021-01-07 at 16:10 -0800, Sargun Dhillon wrote:
-> > Overlayfs's volatile option allows the user to bypass all forced sync calls
-> > to the upperdir filesystem. This comes at the cost of safety. We can never
-> > ensure that the user's data is intact, but we can make a best effort to
-> > expose whether or not the data is likely to be in a bad state.
-> > 
-> > The best way to handle this in the time being is that if an overlayfs's
-> > upperdir experiences an error after a volatile mount occurs, that error
-> > will be returned on fsync, fdatasync, sync, and syncfs. This is
-> > contradictory to the traditional behaviour of VFS which fails the call
-> > once, and only raises an error if a subsequent fsync error has occurred,
-> > and been raised by the filesystem.
-> > 
-> > One awkward aspect of the patch is that we have to manually set the
-> > superblock's errseq_t after the sync_fs callback as opposed to just
-> > returning an error from syncfs. This is because the call chain looks
-> > something like this:
-> > 
-> > sys_syncfs ->
-> > 	sync_filesystem ->
-> > 		__sync_filesystem ->
-> > 			/* The return value is ignored here
-> > 			sb->s_op->sync_fs(sb)
-> > 			_sync_blockdev
-> > 		/* Where the VFS fetches the error to raise to userspace */
-> > 		errseq_check_and_advance
-> > 
-> > Because of this we call errseq_set every time the sync_fs callback occurs.
-> > Due to the nature of this seen / unseen dichotomy, if the upperdir is an
-> > inconsistent state at the initial mount time, overlayfs will refuse to
-> > mount, as overlayfs cannot get a snapshot of the upperdir's errseq that
-> > will increment on error until the user calls syncfs.
-> > 
-> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > Fixes: c86243b090bc ("ovl: provide a mount option "volatile"")
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: linux-unionfs@vger.kernel.org
-> > Cc: stable@vger.kernel.org
-> > Cc: Jeff Layton <jlayton@redhat.com>
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Amir Goldstein <amir73il@gmail.com>
-> > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > ---
-> >  Documentation/filesystems/overlayfs.rst |  8 ++++++
-> >  fs/overlayfs/file.c                     |  5 ++--
-> >  fs/overlayfs/overlayfs.h                |  1 +
-> >  fs/overlayfs/ovl_entry.h                |  2 ++
-> >  fs/overlayfs/readdir.c                  |  5 ++--
-> >  fs/overlayfs/super.c                    | 34 ++++++++++++++++++++-----
-> >  fs/overlayfs/util.c                     | 27 ++++++++++++++++++++
-> >  7 files changed, 71 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
-> > index 580ab9a0fe31..137afeb3f581 100644
-> > --- a/Documentation/filesystems/overlayfs.rst
-> > +++ b/Documentation/filesystems/overlayfs.rst
-> > @@ -575,6 +575,14 @@ without significant effort.
-> >  The advantage of mounting with the "volatile" option is that all forms of
-> >  sync calls to the upper filesystem are omitted.
-> >  
-> > 
-> > 
-> > 
-> > +In order to avoid a giving a false sense of safety, the syncfs (and fsync)
-> > +semantics of volatile mounts are slightly different than that of the rest of
-> > +VFS.  If any writeback error occurs on the upperdir's filesystem after a
-> > +volatile mount takes place, all sync functions will return an error.  Once this
-> > +condition is reached, the filesystem will not recover, and every subsequent sync
-> > +call will return an error, even if the upperdir has not experience a new error
-> > +since the last sync call.
-> > +
-> >  When overlay is mounted with "volatile" option, the directory
-> >  "$workdir/work/incompat/volatile" is created.  During next mount, overlay
-> >  checks for this directory and refuses to mount if present. This is a strong
-> > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> > index a1f72ac053e5..5c5c3972ebd0 100644
-> > --- a/fs/overlayfs/file.c
-> > +++ b/fs/overlayfs/file.c
-> > @@ -445,8 +445,9 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
-> >  	const struct cred *old_cred;
-> >  	int ret;
-> >  
-> > 
-> > 
-> > 
-> > -	if (!ovl_should_sync(OVL_FS(file_inode(file)->i_sb)))
-> > -		return 0;
-> > +	ret = ovl_sync_status(OVL_FS(file_inode(file)->i_sb));
-> > +	if (ret <= 0)
-> > +		return ret;
-> >  
-> > 
-> > 
-> > 
-> >  	ret = ovl_real_fdget_meta(file, &real, !datasync);
-> >  	if (ret)
-> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> > index f8880aa2ba0e..9f7af98ae200 100644
-> > --- a/fs/overlayfs/overlayfs.h
-> > +++ b/fs/overlayfs/overlayfs.h
-> > @@ -322,6 +322,7 @@ int ovl_check_metacopy_xattr(struct ovl_fs *ofs, struct dentry *dentry);
-> >  bool ovl_is_metacopy_dentry(struct dentry *dentry);
-> >  char *ovl_get_redirect_xattr(struct ovl_fs *ofs, struct dentry *dentry,
-> >  			     int padding);
-> > +int ovl_sync_status(struct ovl_fs *ofs);
-> >  
-> > 
-> > 
-> > 
-> >  static inline bool ovl_is_impuredir(struct super_block *sb,
-> >  				    struct dentry *dentry)
-> > diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> > index 1b5a2094df8e..b208eba5d0b6 100644
-> > --- a/fs/overlayfs/ovl_entry.h
-> > +++ b/fs/overlayfs/ovl_entry.h
-> > @@ -79,6 +79,8 @@ struct ovl_fs {
-> >  	atomic_long_t last_ino;
-> >  	/* Whiteout dentry cache */
-> >  	struct dentry *whiteout;
-> > +	/* r/o snapshot of upperdir sb's only taken on volatile mounts */
-> > +	errseq_t errseq;
-> >  };
-> >  
-> > 
-> > 
-> > 
-> >  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> > diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> > index 01620ebae1bd..a273ef901e57 100644
-> > --- a/fs/overlayfs/readdir.c
-> > +++ b/fs/overlayfs/readdir.c
-> > @@ -909,8 +909,9 @@ static int ovl_dir_fsync(struct file *file, loff_t start, loff_t end,
-> >  	struct file *realfile;
-> >  	int err;
-> >  
-> > 
-> > 
-> > 
-> > -	if (!ovl_should_sync(OVL_FS(file->f_path.dentry->d_sb)))
-> > -		return 0;
-> > +	err = ovl_sync_status(OVL_FS(file->f_path.dentry->d_sb));
-> > +	if (err <= 0)
-> > +		return err;
-> >  
-> > 
-> > 
-> > 
-> >  	realfile = ovl_dir_real_file(file, true);
-> >  	err = PTR_ERR_OR_ZERO(realfile);
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index 290983bcfbb3..d23177a53c95 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -261,11 +261,20 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
-> >  	struct super_block *upper_sb;
-> >  	int ret;
-> >  
-> > 
-> > 
-> > 
-> > -	if (!ovl_upper_mnt(ofs))
-> > -		return 0;
-> > +	ret = ovl_sync_status(ofs);
-> > +	/*
-> > +	 * We have to always set the err, because the return value isn't
-> > +	 * checked in syncfs, and instead indirectly return an error via
-> > +	 * the sb's writeback errseq, which VFS inspects after this call.
-> > +	 */
-> > +	if (ret < 0) {
-> > +		errseq_set(&sb->s_wb_err, -EIO);
-> > +		return -EIO;
-> > +	}
-> > +
-> 
-> Apologies for the late review:
-> 
-> You're converting the error you got back from errseq_check to -EIO
-> unconditionally here. Why? Would it not be better to just pass the error
-> through? Like this:
-> 
+Miklos Szeredi <mszeredi@redhat.com> writes:
 
-I believe Vivek brought this up as a potentially confusing issue. For
-example, you can end up with an ENOSPC on a write, and then delete
-a file, and still get ENOSPC. It's just easier to return EIO, given
-there's not really anything the user can do to recover the system.
+> If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+> currently return in v2 format unconditionally.
+>
+> This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+> and so the same conversions performed on it.
+>
+> If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
+> that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+> user namespace in case of v2) cannot be mapped in the current user
+> namespace.
 
+This looks like a good cleanup.
 
-> if (ret < 0) {
-> 	errseq_set(&sb->s_wb_err, ret);
-> 	return ret;
-> }
-> 
-> ?
-> 
-> > +	if (!ret)
-> > +		return ret;
-> >  
-> > 
-> > 
-> > 
-> > -	if (!ovl_should_sync(ofs))
-> > -		return 0;
-> >  	/*
-> >  	 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
-> >  	 * All the super blocks will be iterated, including upper_sb.
-> > @@ -1927,6 +1936,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
-> >  	sb->s_op = &ovl_super_operations;
-> >  
-> > 
-> > 
-> > 
-> >  	if (ofs->config.upperdir) {
-> > +		struct super_block *upper_sb;
-> > +
-> >  		if (!ofs->config.workdir) {
-> >  			pr_err("missing 'workdir'\n");
-> >  			goto out_err;
-> > @@ -1936,6 +1947,16 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
-> >  		if (err)
-> >  			goto out_err;
-> >  
-> > 
-> > 
-> > 
-> > +		upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
-> > +		if (!ovl_should_sync(ofs)) {
-> > +			ofs->errseq = errseq_sample(&upper_sb->s_wb_err);
-> > +			if (errseq_check(&upper_sb->s_wb_err, ofs->errseq)) {
-> > +				err = -EIO;
-> > +				pr_err("Cannot mount volatile when upperdir has an unseen error. Sync upperdir fs to clear state.\n");
-> > +				goto out_err;
-> > +			}
-> > +		}
-> > +
-> >  		err = ovl_get_workdir(sb, ofs, &upperpath);
-> >  		if (err)
-> >  			goto out_err;
-> > @@ -1943,9 +1964,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
-> >  		if (!ofs->workdir)
-> >  			sb->s_flags |= SB_RDONLY;
-> >  
-> > 
-> > 
-> > 
-> > -		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
-> > -		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> > -
-> > +		sb->s_stack_depth = upper_sb->s_stack_depth;
-> > +		sb->s_time_gran = upper_sb->s_time_gran;
-> >  	}
-> >  	oe = ovl_get_lowerstack(sb, splitlower, numlower, ofs, layers);
-> >  	err = PTR_ERR(oe);
-> > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> > index 23f475627d07..6e7b8c882045 100644
-> > --- a/fs/overlayfs/util.c
-> > +++ b/fs/overlayfs/util.c
-> > @@ -950,3 +950,30 @@ char *ovl_get_redirect_xattr(struct ovl_fs *ofs, struct dentry *dentry,
-> >  	kfree(buf);
-> >  	return ERR_PTR(res);
-> >  }
-> > +
-> > +/*
-> > + * ovl_sync_status() - Check fs sync status for volatile mounts
-> > + *
-> > + * Returns 1 if this is not a volatile mount and a real sync is required.
-> > + *
-> > + * Returns 0 if syncing can be skipped because mount is volatile, and no errors
-> > + * have occurred on the upperdir since the mount.
-> > + *
-> > + * Returns -errno if it is a volatile mount, and the error that occurred since
-> > + * the last mount. If the error code changes, it'll return the latest error
-> > + * code.
-> > + */
-> > +
-> > +int ovl_sync_status(struct ovl_fs *ofs)
-> > +{
-> > +	struct vfsmount *mnt;
-> > +
-> > +	if (ovl_should_sync(ofs))
-> > +		return 1;
-> > +
-> > +	mnt = ovl_upper_mnt(ofs);
-> > +	if (!mnt)
-> > +		return 0;
-> > +
-> > +	return errseq_check(&mnt->mnt_sb->s_wb_err, ofs->errseq);
-> > +}
-> 
-> Aside from my minor question about converting the error unconditionally,
-> this all looks fine. You can add:
+I do wonder how well this works with stacking.  In particular
+ovl_xattr_set appears to call vfs_getxattr without overriding the creds.
+What the purpose of that is I haven't quite figured out.  It looks like
+it is just a probe to see if an xattr is present so maybe it is ok.
+
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  security/commoncap.c | 67 ++++++++++++++++++++++++++++----------------
+>  1 file changed, 43 insertions(+), 24 deletions(-)
+>
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index bacc1111d871..c9d99f8f4c82 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -371,10 +371,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+>  {
+>  	int size, ret;
+>  	kuid_t kroot;
+> +	__le32 nsmagic, magic;
+>  	uid_t root, mappedroot;
+>  	char *tmpbuf = NULL;
+>  	struct vfs_cap_data *cap;
+> -	struct vfs_ns_cap_data *nscap;
+> +	struct vfs_ns_cap_data *nscap = NULL;
+>  	struct dentry *dentry;
+>  	struct user_namespace *fs_ns;
 >  
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> 
-> Nice work!
-> 
-Thanks!
+> @@ -396,46 +397,61 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+>  	fs_ns = inode->i_sb->s_user_ns;
+>  	cap = (struct vfs_cap_data *) tmpbuf;
+>  	if (is_v2header((size_t) ret, cap)) {
+> -		/* If this is sizeof(vfs_cap_data) then we're ok with the
+> -		 * on-disk value, so return that.  */
+> -		if (alloc)
+> -			*buffer = tmpbuf;
+> -		else
+> -			kfree(tmpbuf);
+> -		return ret;
+> -	} else if (!is_v3header((size_t) ret, cap)) {
+> -		kfree(tmpbuf);
+> -		return -EINVAL;
+> +		root = 0;
+> +	} else if (is_v3header((size_t) ret, cap)) {
+> +		nscap = (struct vfs_ns_cap_data *) tmpbuf;
+> +		root = le32_to_cpu(nscap->rootid);
+> +	} else {
+> +		size = -EINVAL;
+> +		goto out_free;
+>  	}
+>  
+> -	nscap = (struct vfs_ns_cap_data *) tmpbuf;
+> -	root = le32_to_cpu(nscap->rootid);
+>  	kroot = make_kuid(fs_ns, root);
+>  
+>  	/* If the root kuid maps to a valid uid in current ns, then return
+>  	 * this as a nscap. */
+>  	mappedroot = from_kuid(current_user_ns(), kroot);
+>  	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
+> +		size = sizeof(struct vfs_ns_cap_data);
+>  		if (alloc) {
+> -			*buffer = tmpbuf;
+> +			if (!nscap) {
+> +				/* v2 -> v3 conversion */
+> +				nscap = kzalloc(size, GFP_ATOMIC);
+> +				if (!nscap) {
+> +					size = -ENOMEM;
+> +					goto out_free;
+> +				}
+> +				nsmagic = VFS_CAP_REVISION_3;
+> +				magic = le32_to_cpu(cap->magic_etc);
+> +				if (magic & VFS_CAP_FLAGS_EFFECTIVE)
+> +					nsmagic |= VFS_CAP_FLAGS_EFFECTIVE;
+> +				memcpy(&nscap->data, &cap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+> +				nscap->magic_etc = cpu_to_le32(nsmagic);
+> +			} else {
+> +				/* use allocated v3 buffer */
+> +				tmpbuf = NULL;
+> +			}
+>  			nscap->rootid = cpu_to_le32(mappedroot);
+> -		} else
+> -			kfree(tmpbuf);
+> -		return size;
+> +			*buffer = nscap;
+> +		}
+> +		goto out_free;
+>  	}
+>  
+>  	if (!rootid_owns_currentns(kroot)) {
+> -		kfree(tmpbuf);
+> -		return -EOPNOTSUPP;
+> +		size = -EOVERFLOW;
+> +		goto out_free;
+>  	}
+>  
+>  	/* This comes from a parent namespace.  Return as a v2 capability */
+>  	size = sizeof(struct vfs_cap_data);
+>  	if (alloc) {
+> -		*buffer = kmalloc(size, GFP_ATOMIC);
+> -		if (*buffer) {
+> -			struct vfs_cap_data *cap = *buffer;
+> -			__le32 nsmagic, magic;
+> +		if (nscap) {
+> +			/* v3 -> v2 conversion */
+> +			cap = kzalloc(size, GFP_ATOMIC);
+> +			if (!cap) {
+> +				size = -ENOMEM;
+> +				goto out_free;
+> +			}
+>  			magic = VFS_CAP_REVISION_2;
+>  			nsmagic = le32_to_cpu(nscap->magic_etc);
+>  			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
+> @@ -443,9 +459,12 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+>  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+>  			cap->magic_etc = cpu_to_le32(magic);
+>  		} else {
+> -			size = -ENOMEM;
+> +			/* use unconverted v2 */
+> +			tmpbuf = NULL;
+>  		}
+> +		*buffer = cap;
+>  	}
+> +out_free:
+>  	kfree(tmpbuf);
+>  	return size;
+>  }
