@@ -2,190 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54DBB2FC9F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 05:28:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A9542FCA18
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 05:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbhATE0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jan 2021 23:26:50 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60589 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731670AbhATEZw (ORCPT
+        id S1726594AbhATEuT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jan 2021 23:50:19 -0500
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:52082 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727683AbhATErs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jan 2021 23:25:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611116665;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jIuh7SxU93BuybyBivroDVvSIaVYcMTbwm+jPxQBIoI=;
-        b=AlacIp37xqliptgyseY8BKg0L15OCJaxynKnnbwHKxn++fVW8EPyPP9xCaP9tXvdcjcdes
-        eO15TWgING2oZby03Thxh3VRXWpnsn3sxV3vEukFBu7VYdq6+HdOufWoYQBSGcrpuSMoIh
-        YTkR+xs2qtg/DDjjJDlh0Zkc/jAapEI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-544-lp2UjuhQMDGbIaW0q_X0HA-1; Tue, 19 Jan 2021 23:24:22 -0500
-X-MC-Unique: lp2UjuhQMDGbIaW0q_X0HA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78A1F800D53;
-        Wed, 20 Jan 2021 04:24:20 +0000 (UTC)
-Received: from [10.72.13.124] (ovpn-13-124.pek2.redhat.com [10.72.13.124])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 43D835D74B;
-        Wed, 20 Jan 2021 04:24:08 +0000 (UTC)
-Subject: Re: [RFC v3 01/11] eventfd: track eventfd_signal() recursion depth
- separately in different cases
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        bob.liu@oracle.com, hch@infradead.org, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210119045920.447-1-xieyongji@bytedance.com>
- <20210119045920.447-2-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <e8a2cc15-80f5-01e0-75ec-ea6281fda0eb@redhat.com>
-Date:   Wed, 20 Jan 2021 12:24:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 19 Jan 2021 23:47:48 -0500
+Received: from dread.disaster.area (pa49-180-243-77.pa.nsw.optusnet.com.au [49.180.243.77])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id C28BD114056B;
+        Wed, 20 Jan 2021 15:47:01 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1l25OW-000Pbc-9B; Wed, 20 Jan 2021 15:47:00 +1100
+Date:   Wed, 20 Jan 2021 15:47:00 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Zhongwei Cai <sunrise_l@sjtu.edu.cn>
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Laight <David.Laight@aculab.com>,
+        Mingkai Dong <mingkaidong@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Wang Jianchao <jianchao.wan9@gmail.com>,
+        Rajesh Tadakamadla <rajesh.tadakamadla@hpe.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: Expense of read_iter
+Message-ID: <20210120044700.GA4626@dread.disaster.area>
+References: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com>
+ <20210107151125.GB5270@casper.infradead.org>
+ <17045315-CC1F-4165-B8E3-BA55DD16D46B@gmail.com>
+ <2041983017.5681521.1610459100858.JavaMail.zimbra@sjtu.edu.cn>
+ <alpine.LRH.2.02.2101131008530.27448@file01.intranet.prod.int.rdu2.redhat.com>
+ <1224425872.715547.1610703643424.JavaMail.zimbra@sjtu.edu.cn>
 MIME-Version: 1.0
-In-Reply-To: <20210119045920.447-2-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1224425872.715547.1610703643424.JavaMail.zimbra@sjtu.edu.cn>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=juxvdbeFDU67v5YkIhU0sw==:117 a=juxvdbeFDU67v5YkIhU0sw==:17
+        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
+        a=9YBCWnU3LXitusiQSpoA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jan 15, 2021 at 05:40:43PM +0800, Zhongwei Cai wrote:
+> On Thu, 14 Jan 2021, Mikulas wrote:
+> For Ext4-dax, the overhead of dax_iomap_rw is significant
+> compared to the overhead of struct iov_iter. Although methods
+> proposed by Mikulas can eliminate the overhead of iov_iter
+> well, they can not be applied in Ext4-dax unless we implement an
+> internal "read" method in Ext4-dax.
+> 
+> For Ext4-dax, there could be two approaches to optimizing:
+> 1) implementing the internal "read" method without the complexity
+> of iterators and dax_iomap_rw;
 
-On 2021/1/19 下午12:59, Xie Yongji wrote:
-> Now we have a global percpu counter to limit the recursion depth
-> of eventfd_signal(). This can avoid deadlock or stack overflow.
-> But in stack overflow case, it should be OK to increase the
-> recursion depth if needed. So we add a percpu counter in eventfd_ctx
-> to limit the recursion depth for deadlock case. Then it could be
-> fine to increase the global percpu counter later.
+Please do not go an re-invent the wheel just for ext4. If there's a
+problem in a shared path - ext2, FUSE and XFS all use dax_iomap_rw()
+as well, so any improvements to that path benefit all DAX users, not
+just ext4.
 
+> 2) optimizing how dax_iomap_rw works.
+> Since dax_iomap_rw requires ext4_iomap_begin, which further involves
+> the iomap structure and others (e.g., journaling status locks in Ext4),
+> we think implementing the internal "read" method would be easier.
 
-I wonder whether or not it's worth to introduce percpu for each eventfd.
+Maybe it is, but it's also very selfish. The DAX iomap path was
+written to be correct for all users, not inecessarily provide
+optimal performance. There will be lots of things that could be done
+to optimise it, so rather than creating a special snowflake in ext4
+that makes DAX in ext4 much harder to maintain for non-ext4 DAX
+developers, please work to improve the common DAX IO path and so
+provide the same benefit to all the filesystems that use it.
 
-How about simply check if eventfd_signal_count() is greater than 2?
+Cheers,
 
-Thanks
-
-
->
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> ---
->   fs/aio.c                |  3 ++-
->   fs/eventfd.c            | 20 +++++++++++++++++++-
->   include/linux/eventfd.h |  5 +----
->   3 files changed, 22 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 1f32da13d39e..5d82903161f5 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1698,7 +1698,8 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
->   		list_del(&iocb->ki_list);
->   		iocb->ki_res.res = mangle_poll(mask);
->   		req->done = true;
-> -		if (iocb->ki_eventfd && eventfd_signal_count()) {
-> +		if (iocb->ki_eventfd &&
-> +			eventfd_signal_count(iocb->ki_eventfd)) {
->   			iocb = NULL;
->   			INIT_WORK(&req->work, aio_poll_put_work);
->   			schedule_work(&req->work);
-> diff --git a/fs/eventfd.c b/fs/eventfd.c
-> index e265b6dd4f34..2df24f9bada3 100644
-> --- a/fs/eventfd.c
-> +++ b/fs/eventfd.c
-> @@ -25,6 +25,8 @@
->   #include <linux/idr.h>
->   #include <linux/uio.h>
->   
-> +#define EVENTFD_WAKE_DEPTH 0
-> +
->   DEFINE_PER_CPU(int, eventfd_wake_count);
->   
->   static DEFINE_IDA(eventfd_ida);
-> @@ -42,9 +44,17 @@ struct eventfd_ctx {
->   	 */
->   	__u64 count;
->   	unsigned int flags;
-> +	int __percpu *wake_count;
->   	int id;
->   };
->   
-> +bool eventfd_signal_count(struct eventfd_ctx *ctx)
-> +{
-> +	return (this_cpu_read(*ctx->wake_count) ||
-> +		this_cpu_read(eventfd_wake_count) > EVENTFD_WAKE_DEPTH);
-> +}
-> +EXPORT_SYMBOL_GPL(eventfd_signal_count);
-> +
->   /**
->    * eventfd_signal - Adds @n to the eventfd counter.
->    * @ctx: [in] Pointer to the eventfd context.
-> @@ -71,17 +81,19 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
->   	 * it returns true, the eventfd_signal() call should be deferred to a
->   	 * safe context.
->   	 */
-> -	if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
-> +	if (WARN_ON_ONCE(eventfd_signal_count(ctx)))
->   		return 0;
->   
->   	spin_lock_irqsave(&ctx->wqh.lock, flags);
->   	this_cpu_inc(eventfd_wake_count);
-> +	this_cpu_inc(*ctx->wake_count);
->   	if (ULLONG_MAX - ctx->count < n)
->   		n = ULLONG_MAX - ctx->count;
->   	ctx->count += n;
->   	if (waitqueue_active(&ctx->wqh))
->   		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
->   	this_cpu_dec(eventfd_wake_count);
-> +	this_cpu_dec(*ctx->wake_count);
->   	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
->   
->   	return n;
-> @@ -92,6 +104,7 @@ static void eventfd_free_ctx(struct eventfd_ctx *ctx)
->   {
->   	if (ctx->id >= 0)
->   		ida_simple_remove(&eventfd_ida, ctx->id);
-> +	free_percpu(ctx->wake_count);
->   	kfree(ctx);
->   }
->   
-> @@ -423,6 +436,11 @@ static int do_eventfd(unsigned int count, int flags)
->   
->   	kref_init(&ctx->kref);
->   	init_waitqueue_head(&ctx->wqh);
-> +	ctx->wake_count = alloc_percpu(int);
-> +	if (!ctx->wake_count) {
-> +		kfree(ctx);
-> +		return -ENOMEM;
-> +	}
->   	ctx->count = count;
->   	ctx->flags = flags;
->   	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-> diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
-> index fa0a524baed0..1a11ebbd74a9 100644
-> --- a/include/linux/eventfd.h
-> +++ b/include/linux/eventfd.h
-> @@ -45,10 +45,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt);
->   
->   DECLARE_PER_CPU(int, eventfd_wake_count);
->   
-> -static inline bool eventfd_signal_count(void)
-> -{
-> -	return this_cpu_read(eventfd_wake_count);
-> -}
-> +bool eventfd_signal_count(struct eventfd_ctx *ctx);
->   
->   #else /* CONFIG_EVENTFD */
->   
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
