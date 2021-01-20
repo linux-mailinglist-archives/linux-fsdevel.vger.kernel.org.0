@@ -2,155 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98EB62FD39B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 16:14:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8653F2FD3DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 16:23:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731366AbhATPLq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 10:11:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48730 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390990AbhATPGO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 10:06:14 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7A01A23356;
-        Wed, 20 Jan 2021 15:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611155125;
-        bh=9874V4EQF8pGhQeRtiLlHuHTZWGypK1q+CZx02TXhZM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uVer5+wzd/VviGPx62NgeNadLX736EMkLOQOVHuy+k8sx0BcR+ivCEkKsnZIoxtnT
-         GpWkXKSHUVrX3tMi+iQiZNVYUchhp0zB4TrjPy0CuHAyWgurs4kWeeuPwxfawgBGve
-         xWg9JGEgJG54bZgaB141RZ4cuaX9zxlmp5uYxxVFC9vITcsuqfvwAakLkytsiWOGfL
-         pNtcU5EE62T/qNQ15LxVmcJccjD7XRVg6hOvj3C8536te+4LBKab+YM8J44PRYhLZX
-         NgPhXfCDCBlcUFMljfwDktrV1a/D2LNFJaqimj3Xi9rVUzUTR1HHM4iQVtrs0WE0Q2
-         /+v3XgxNylKfQ==
-Date:   Wed, 20 Jan 2021 17:05:10 +0200
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>
-Subject: Re: [PATCH v14 05/10] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-ID: <20210120150510.GO1106298@kernel.org>
-References: <20201203062949.5484-1-rppt@kernel.org>
- <20201203062949.5484-6-rppt@kernel.org>
- <20210119202213.GI2260413@casper.infradead.org>
+        id S2387726AbhATPXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 10:23:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33022 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388178AbhATPJn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Jan 2021 10:09:43 -0500
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C96C061793
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jan 2021 07:09:06 -0800 (PST)
+Received: by mail-vs1-xe34.google.com with SMTP id f22so4743359vsk.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jan 2021 07:09:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J62/J/XAou8PPpMjptVAh595wK8zuN47tW6YivACb7g=;
+        b=OfRbWIubxlxgLCcsHqbz9LwPT3gkD3ESK6NBQ7MWo1wulug7Z1X4vpjlbY/d8VIdUC
+         lYz8M3B14Nn4CpafRYpyhqkorfXnKAfp2XPodHkgA9hS1y84zHJ7rV9pX+++85eK22M9
+         bKTchAZJ+wB5smg9s0G+HEy2TlfTt42QDOocY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J62/J/XAou8PPpMjptVAh595wK8zuN47tW6YivACb7g=;
+        b=bjKdDDzU93w05FAC64biVN4msktNh3RbaBkZKK7fKZ08OftdjxJWop0dHz8yzJ4TVC
+         ePkzqNV3KLfSzNksrAJ3+o8k8dBS2zDgrUMXl3GgJjEtt07UqDCYt1CWXiL5Ope6KLKq
+         COqQlV/YvYgPDuBFccuodWyQM4757YvVE5ExciLMJLStB7T9b/J47x8fh63dqYLqMkUT
+         KrDTHjlZxoyOrDl1izfv0HS0VNDTLfjFh9H1xpxLal1OeGPZ+XQvvq414dam4x0mOhLl
+         GNHba+yjrdkpedJcfzIviMiVWGfaWYXS2pMuVQzP8xSKA+bJiH7E2ztCUUwhNIwGRonx
+         /Ezg==
+X-Gm-Message-State: AOAM530zmEqGRujEaE362EQIvivB8zRKKoaU7ZmPUWlCV/Hvc0Kuly10
+        66WYGRBISdNQOQnX9YGDldZ2O5UXw+A4pi5v9LRB6A==
+X-Google-Smtp-Source: ABdhPJyL8DZfH4426aeReArAsYtr4ShME3vG0GcZmg75V2ocaT9ah7XkNI+SEMx/OLns92YbF0aFV3Pp+yJszLUIlO0=
+X-Received: by 2002:a67:f991:: with SMTP id b17mr6900762vsq.0.1611155345960;
+ Wed, 20 Jan 2021 07:09:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210119202213.GI2260413@casper.infradead.org>
+References: <20210108001043.12683-1-sargun@sargun.me>
+In-Reply-To: <20210108001043.12683-1-sargun@sargun.me>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 20 Jan 2021 16:08:55 +0100
+Message-ID: <CAJfpegvm0o=rF7SJHQgkWZ-MdDkjLrnTcUunQiq8L9GT6==q1A@mail.gmail.com>
+Subject: Re: [PATCH v4] overlay: Implement volatile-specific fsync error behaviour
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     overlayfs <linux-unionfs@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>,
+        Jan Kara <jack@suse.cz>, stable <stable@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 08:22:13PM +0000, Matthew Wilcox wrote:
-> On Thu, Dec 03, 2020 at 08:29:44AM +0200, Mike Rapoport wrote:
-> > +static vm_fault_t secretmem_fault(struct vm_fault *vmf)
-> > +{
-> > +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-> > +	struct inode *inode = file_inode(vmf->vma->vm_file);
-> > +	pgoff_t offset = vmf->pgoff;
-> > +	vm_fault_t ret = 0;
-> > +	unsigned long addr;
-> > +	struct page *page;
-> > +	int err;
-> > +
-> > +	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
-> > +		return vmf_error(-EINVAL);
-> > +
-> > +	page = find_get_page(mapping, offset);
-> > +	if (!page) {
-> > +
-> > +		page = secretmem_alloc_page(vmf->gfp_mask);
-> > +		if (!page)
-> > +			return vmf_error(-ENOMEM);
-> 
-> Just use VM_FAULT_OOM directly.
- 
-Ok.
+On Fri, Jan 8, 2021 at 1:10 AM Sargun Dhillon <sargun@sargun.me> wrote:
+>
+> Overlayfs's volatile option allows the user to bypass all forced sync calls
+> to the upperdir filesystem. This comes at the cost of safety. We can never
+> ensure that the user's data is intact, but we can make a best effort to
+> expose whether or not the data is likely to be in a bad state.
+>
+> The best way to handle this in the time being is that if an overlayfs's
+> upperdir experiences an error after a volatile mount occurs, that error
+> will be returned on fsync, fdatasync, sync, and syncfs. This is
+> contradictory to the traditional behaviour of VFS which fails the call
+> once, and only raises an error if a subsequent fsync error has occurred,
+> and been raised by the filesystem.
+>
+> One awkward aspect of the patch is that we have to manually set the
+> superblock's errseq_t after the sync_fs callback as opposed to just
+> returning an error from syncfs. This is because the call chain looks
+> something like this:
+>
+> sys_syncfs ->
+>         sync_filesystem ->
+>                 __sync_filesystem ->
+>                         /* The return value is ignored here
+>                         sb->s_op->sync_fs(sb)
+>                         _sync_blockdev
+>                 /* Where the VFS fetches the error to raise to userspace */
+>                 errseq_check_and_advance
+>
+> Because of this we call errseq_set every time the sync_fs callback occurs.
+> Due to the nature of this seen / unseen dichotomy, if the upperdir is an
+> inconsistent state at the initial mount time, overlayfs will refuse to
+> mount, as overlayfs cannot get a snapshot of the upperdir's errseq that
+> will increment on error until the user calls syncfs.
 
-> > +		err = add_to_page_cache(page, mapping, offset, vmf->gfp_mask);
-> > +		if (unlikely(err))
-> > +			goto err_put_page;
-> 
-> What if the error is EEXIST because somebody else raced with you to add
-> a new page to the page cache?
+Thanks, this makes sense.  Queued for v4.11.
 
-Right, for -EEXIST I need a retry here, thanks.
-
-> > +		err = set_direct_map_invalid_noflush(page, 1);
-> > +		if (err)
-> > +			goto err_del_page_cache;
-> 
-> Does this work correctly if somebody else has a reference to the page
-> in the meantime?
-
-Yes, it does. If somebody else won the race that page was dropped from the
-direct map and this call would be essentially a nop. And anyway, the very
-next patch changes the way pages are removed from the direct map ;-)
-
-> > +		addr = (unsigned long)page_address(page);
-> > +		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
-> > +
-> > +		__SetPageUptodate(page);
-> 
-> Once you've added it to the cache, somebody else can come along and try
-> to lock it.  They will set PageWaiter.  Now you call __SetPageUptodate
-> and wipe out their PageWaiter bit.  So you won't wake them up when you
-> unlock.
-> 
-> You can call __SetPageUptodate before adding it to the page cache,
-> but once it's visible to another thread, you can't do that.
-
-Will fix.
-
-> > +		ret = VM_FAULT_LOCKED;
-> > +	}
-> > +
-> > +	vmf->page = page;
-> 
-> You're supposed to return the page locked, so use find_lock_page() instead
-> of find_get_page().
-
-Ok/
- 
-> > +	return ret;
-> > +
-> > +err_del_page_cache:
-> > +	delete_from_page_cache(page);
-> > +err_put_page:
-> > +	put_page(page);
-> > +	return vmf_error(err);
-> > +}
-
--- 
-Sincerely yours,
-Mike.
+Miklos
