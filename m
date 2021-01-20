@@ -2,104 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8653F2FD3DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 16:23:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBB852FD3A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 16:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387726AbhATPXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 10:23:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388178AbhATPJn (ORCPT
+        id S2389903AbhATPOa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 10:14:30 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:24745 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390642AbhATPNg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 10:09:43 -0500
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C96C061793
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jan 2021 07:09:06 -0800 (PST)
-Received: by mail-vs1-xe34.google.com with SMTP id f22so4743359vsk.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jan 2021 07:09:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J62/J/XAou8PPpMjptVAh595wK8zuN47tW6YivACb7g=;
-        b=OfRbWIubxlxgLCcsHqbz9LwPT3gkD3ESK6NBQ7MWo1wulug7Z1X4vpjlbY/d8VIdUC
-         lYz8M3B14Nn4CpafRYpyhqkorfXnKAfp2XPodHkgA9hS1y84zHJ7rV9pX+++85eK22M9
-         bKTchAZJ+wB5smg9s0G+HEy2TlfTt42QDOocY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J62/J/XAou8PPpMjptVAh595wK8zuN47tW6YivACb7g=;
-        b=bjKdDDzU93w05FAC64biVN4msktNh3RbaBkZKK7fKZ08OftdjxJWop0dHz8yzJ4TVC
-         ePkzqNV3KLfSzNksrAJ3+o8k8dBS2zDgrUMXl3GgJjEtt07UqDCYt1CWXiL5Ope6KLKq
-         COqQlV/YvYgPDuBFccuodWyQM4757YvVE5ExciLMJLStB7T9b/J47x8fh63dqYLqMkUT
-         KrDTHjlZxoyOrDl1izfv0HS0VNDTLfjFh9H1xpxLal1OeGPZ+XQvvq414dam4x0mOhLl
-         GNHba+yjrdkpedJcfzIviMiVWGfaWYXS2pMuVQzP8xSKA+bJiH7E2ztCUUwhNIwGRonx
-         /Ezg==
-X-Gm-Message-State: AOAM530zmEqGRujEaE362EQIvivB8zRKKoaU7ZmPUWlCV/Hvc0Kuly10
-        66WYGRBISdNQOQnX9YGDldZ2O5UXw+A4pi5v9LRB6A==
-X-Google-Smtp-Source: ABdhPJyL8DZfH4426aeReArAsYtr4ShME3vG0GcZmg75V2ocaT9ah7XkNI+SEMx/OLns92YbF0aFV3Pp+yJszLUIlO0=
-X-Received: by 2002:a67:f991:: with SMTP id b17mr6900762vsq.0.1611155345960;
- Wed, 20 Jan 2021 07:09:05 -0800 (PST)
+        Wed, 20 Jan 2021 10:13:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611155530;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=m0WX/IW9qTI7pWygS2OV9t8yQ+iugqSZyKKAWy8i8Ng=;
+        b=LglTVpRC/1kMWL8D0GxEMi88e62kV1LijsabXZ/58WW8nJ76dToeLP4xkR5MpBn9dyuuTf
+        7/Ey65RUJRx6rJrqLSvg9e6pF1+BbiMlDsrrJj+rEC7Ht3RYJ09Mfqvuchq40y1AnY8Gij
+        96Zrrq37aWv+Za0BS7S6+d0palFmHKc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-212-i0lmVuOrNH2l7F-G-gW3wA-1; Wed, 20 Jan 2021 10:12:08 -0500
+X-MC-Unique: i0lmVuOrNH2l7F-G-gW3wA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3DE2D8066E5;
+        Wed, 20 Jan 2021 15:12:05 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 926EA608BA;
+        Wed, 20 Jan 2021 15:12:04 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 10KFC4DG027528;
+        Wed, 20 Jan 2021 10:12:04 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 10KFC1Sq027524;
+        Wed, 20 Jan 2021 10:12:01 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 20 Jan 2021 10:12:01 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Jan Kara <jack@suse.cz>
+cc:     Dave Chinner <david@fromorbit.com>,
+        Zhongwei Cai <sunrise_l@sjtu.edu.cn>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Laight <David.Laight@aculab.com>,
+        Mingkai Dong <mingkaidong@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Wang Jianchao <jianchao.wan9@gmail.com>,
+        Rajesh Tadakamadla <rajesh.tadakamadla@hpe.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: Expense of read_iter
+In-Reply-To: <20210120141834.GA24063@quack2.suse.cz>
+Message-ID: <alpine.LRH.2.02.2101200951070.24430@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com> <20210107151125.GB5270@casper.infradead.org> <17045315-CC1F-4165-B8E3-BA55DD16D46B@gmail.com> <2041983017.5681521.1610459100858.JavaMail.zimbra@sjtu.edu.cn>
+ <alpine.LRH.2.02.2101131008530.27448@file01.intranet.prod.int.rdu2.redhat.com> <1224425872.715547.1610703643424.JavaMail.zimbra@sjtu.edu.cn> <20210120044700.GA4626@dread.disaster.area> <20210120141834.GA24063@quack2.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-References: <20210108001043.12683-1-sargun@sargun.me>
-In-Reply-To: <20210108001043.12683-1-sargun@sargun.me>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 20 Jan 2021 16:08:55 +0100
-Message-ID: <CAJfpegvm0o=rF7SJHQgkWZ-MdDkjLrnTcUunQiq8L9GT6==q1A@mail.gmail.com>
-Subject: Re: [PATCH v4] overlay: Implement volatile-specific fsync error behaviour
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     overlayfs <linux-unionfs@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>,
-        Jan Kara <jack@suse.cz>, stable <stable@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 8, 2021 at 1:10 AM Sargun Dhillon <sargun@sargun.me> wrote:
->
-> Overlayfs's volatile option allows the user to bypass all forced sync calls
-> to the upperdir filesystem. This comes at the cost of safety. We can never
-> ensure that the user's data is intact, but we can make a best effort to
-> expose whether or not the data is likely to be in a bad state.
->
-> The best way to handle this in the time being is that if an overlayfs's
-> upperdir experiences an error after a volatile mount occurs, that error
-> will be returned on fsync, fdatasync, sync, and syncfs. This is
-> contradictory to the traditional behaviour of VFS which fails the call
-> once, and only raises an error if a subsequent fsync error has occurred,
-> and been raised by the filesystem.
->
-> One awkward aspect of the patch is that we have to manually set the
-> superblock's errseq_t after the sync_fs callback as opposed to just
-> returning an error from syncfs. This is because the call chain looks
-> something like this:
->
-> sys_syncfs ->
->         sync_filesystem ->
->                 __sync_filesystem ->
->                         /* The return value is ignored here
->                         sb->s_op->sync_fs(sb)
->                         _sync_blockdev
->                 /* Where the VFS fetches the error to raise to userspace */
->                 errseq_check_and_advance
->
-> Because of this we call errseq_set every time the sync_fs callback occurs.
-> Due to the nature of this seen / unseen dichotomy, if the upperdir is an
-> inconsistent state at the initial mount time, overlayfs will refuse to
-> mount, as overlayfs cannot get a snapshot of the upperdir's errseq that
-> will increment on error until the user calls syncfs.
 
-Thanks, this makes sense.  Queued for v4.11.
 
-Miklos
+On Wed, 20 Jan 2021, Jan Kara wrote:
+
+> Yeah, I agree. I'm against ext4 private solution for this read problem. And
+> I'm also against duplicating ->read_iter functionatily in ->read handler.
+> The maintenance burden of this code duplication is IMHO just too big. We
+> rather need to improve the generic code so that the fast path is faster.
+> And every filesystem will benefit because this is not ext4 specific
+> problem.
+> 
+> 								Honza
+
+Do you have some idea how to optimize the generic code that calls 
+->read_iter?
+
+vfs_read calls ->read if it is present. If not, it calls new_sync_read. 
+new_sync_read's frame size is 128 bytes - it holds the structures iovec, 
+kiocb and iov_iter. new_sync_read calls ->read_iter.
+
+I have found out that the cost of calling new_sync_read is 3.3%, Zhongwei 
+found out 3.9%. (the benchmark repeatedy reads the same 4k page)
+
+I don't see any way how to optimize new_sync_read or how to reduce its 
+frame size. Do you?
+
+Mikulas
+
