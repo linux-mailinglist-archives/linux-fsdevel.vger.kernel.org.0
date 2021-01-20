@@ -2,113 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D932FCCA9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 09:26:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C3462FCD17
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 10:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730542AbhATIY3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 03:24:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58834 "EHLO
+        id S1728354AbhATJBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 04:01:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730705AbhATIWX (ORCPT
+        with ESMTP id S1728291AbhATJAk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 03:22:23 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4A7C061757;
-        Wed, 20 Jan 2021 00:21:42 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id e22so21542066iog.6;
-        Wed, 20 Jan 2021 00:21:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ckod8j91Qi1DFD/kQoVWkbJoQXBZcjK1wtV0ATcUQS4=;
-        b=X/rqTxDQ3/3/Mb+AyfVGzWo0uKr/8VwPBod5eEQ/3WzYj9LA9JkkP0s7efJWpyHJyv
-         uGaDKod0AthztJ6VgM720hMH33rzYPfhWhqGoDprnTnGbpNt1nR0FvS3Y/eZvduYpWRd
-         nQY2u5AIB0WcdJ6puc7KxZADEcDVQU+4tpvOFC9K1kvIFfBW77G0EXC2Be9azC40Lf2h
-         pd/7ZzmNtitia9hdUN02iP2MLQo4UqPk/3hcwWRLGSClpRLqfgTSBlWPHY3T4121X537
-         mxiRVYBgXBjOUoSRpZIlWYk9OrmHAotc77YQ0LKLbz6UWGnKl+/pa205AAjNi/Yo/PW2
-         8fjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ckod8j91Qi1DFD/kQoVWkbJoQXBZcjK1wtV0ATcUQS4=;
-        b=cfAwgT+3+JWDbkBJrkKQohr/I1OM/PrnqikspWNKi1mTReLNIIsL3D5K1OJhb8Py7o
-         uuC0mzzlEeCD1qmv2R6gs8IdCPI4RlQd8brlA1lih/SgXXHn08P0bzSWwt0L+Cvmk/GQ
-         mbdeHfc+ZBNhaIFJcuYA0Jqvj2azGvuDmlsg34y4ezuMwSgxOAb9Y+toXXmWqgDDXBko
-         J+92VmK6Ja9Y4fGkOp7+UGKlTsQjAY0H4+TSAoa3yRAsTnFy11zlFRuPCUIiXceeUJMc
-         IQ0PHV05+HzgzUWKm6MOzWpDBylyUfBI+OWLXNgKAKw6v9GN+RTY3EM13CWvxN3rmiE/
-         dlWQ==
-X-Gm-Message-State: AOAM531wwiCpZeUu0mwRzHsM15hQmTkM4EfCCjXbaJUe03WpxLG64yrZ
-        cQCqgm0hx8jYa5Cfo+myGk6LDsGwrQeLxp32k1w=
-X-Google-Smtp-Source: ABdhPJy/tIFj/SFzluX9jG+hsUT9Z9au+kFYwYw184+PdNOXw2/iycfQQO5TlTYjToFPhShbm/yKfUh6A4imPOSUvvc=
-X-Received: by 2002:a05:6e02:5d1:: with SMTP id l17mr6776029ils.154.1611130901150;
- Wed, 20 Jan 2021 00:21:41 -0800 (PST)
+        Wed, 20 Jan 2021 04:00:40 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2672C061575;
+        Wed, 20 Jan 2021 00:46:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=RaWLb5cuOxioAYXgsdU/4k1ily/oqbSWtIgPbTftsvU=; b=s/AYqCvKSMxlrqVI39kGzkvJ4D
+        SOw3rkTBfb/Y6ft2Eyhm+uD468TO6pnm5AsvXgJcK67X7JKDEJEwqb5FmYnpyc4RrraF8UmSwlYcs
+        NFWwPKPBJSOpq1DX6bzqgLh/ticV4GVt0b5O7ULzUwBFmfMbkeWE1bLYahKJZ5+9XXTwUhwJiL7ed
+        bhTSuPmw0kyEfj/ptp/PuBciYBJdhod9ECMH3FLWx8qcoGCeXKlO7gm2BAEmie1djvH9ZLBwEY9Q4
+        We/GMZ99CpMoTGOkX+4Ypg5LZviZzDzKtn5KjrXQBNRSalACfHrcxt8lVrsoDLFBJDrmuQyrShk1A
+        kKjv42Yw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l298Q-00FRAi-Av; Wed, 20 Jan 2021 08:46:39 +0000
+Date:   Wed, 20 Jan 2021 08:46:38 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "J. Bruce Fields" <bfields@redhat.com>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <schumakeranna@gmail.com>,
+        Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH 2/3] nfsd: move change attribute generation to filesystem
+Message-ID: <20210120084638.GA3678536@infradead.org>
+References: <1611084297-27352-1-git-send-email-bfields@redhat.com>
+ <1611084297-27352-3-git-send-email-bfields@redhat.com>
 MIME-Version: 1.0
-References: <20201116044529.1028783-1-dkadashev@gmail.com> <X8oWEkb1Cb9ssxnx@carbon.v>
- <CAOKbgA7MdAF1+MQePoZHALxNC5ye207ET=4JCqvdNcrGTcrkpw@mail.gmail.com> <faf1a897-3acf-dd82-474d-dadd9fa9a752@kernel.dk>
-In-Reply-To: <faf1a897-3acf-dd82-474d-dadd9fa9a752@kernel.dk>
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Wed, 20 Jan 2021 15:21:28 +0700
-Message-ID: <CAOKbgA7wLAeNo_La=jjL8JtPz1FhvssLOgWb91T_PzP+c83h7A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     viro@zeniv.linux.org.uk, io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1611084297-27352-3-git-send-email-bfields@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 15, 2020 at 11:20 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/15/20 4:43 AM, Dmitry Kadashev wrote:
-> > On Fri, Dec 4, 2020 at 5:57 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
-> >>
-> >> On Mon, Nov 16, 2020 at 11:45:27AM +0700, Dmitry Kadashev wrote:
-> >>> This adds mkdirat support to io_uring and is heavily based on recently
-> >>> added renameat() / unlinkat() support.
-> >>>
-> >>> The first patch is preparation with no functional changes, makes
-> >>> do_mkdirat accept struct filename pointer rather than the user string.
-> >>>
-> >>> The second one leverages that to implement mkdirat in io_uring.
-> >>>
-> >>> Based on for-5.11/io_uring.
-> >>>
-> >>> Dmitry Kadashev (2):
-> >>>   fs: make do_mkdirat() take struct filename
-> >>>   io_uring: add support for IORING_OP_MKDIRAT
-> >>>
-> >>>  fs/internal.h                 |  1 +
-> >>>  fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
-> >>>  fs/namei.c                    | 20 ++++++++----
-> >>>  include/uapi/linux/io_uring.h |  1 +
-> >>>  4 files changed, 74 insertions(+), 6 deletions(-)
-> >>>
-> >>> --
-> >>> 2.28.0
-> >>>
-> >>
-> >> Hi Al Viro,
-> >>
-> >> Ping. Jens mentioned before that this looks fine by him, but you or
-> >> someone from fsdevel should approve the namei.c part first.
-> >
-> > Another ping.
-> >
-> > Jens, you've mentioned the patch looks good to you, and with quite
-> > similar changes (unlinkat, renameat) being sent for 5.11 is there
-> > anything that I can do to help this to be accepted (not necessarily
-> > for 5.11 at this point)?
->
-> Since we're aiming for 5.12 at this point, let's just hold off a bit and
-> see if Al gets time to ack/review the VFS side of things. There's no
-> immediate rush.
->
-> It's on my TODO list, so we'll get there eventually.
+On Tue, Jan 19, 2021 at 02:24:56PM -0500, J. Bruce Fields wrote:
+> From: "J. Bruce Fields" <bfields@redhat.com>
+> 
+> After this, only filesystems lacking change attribute support will leave
+> the fetch_iversion export op NULL.
+> 
+> This seems cleaner to me, and will allow some minor optimizations in the
+> nfsd code.
 
-Another reminder, since afaict 5.12 stuff is being merged now.
-
--- 
-Dmitry Kadashev
+Another indirect call just to fetch the change attribute (which happens
+a lot IIRC) does not seem very optimal to me.  And the fact that we need
+three duplicate implementations also is not very nice.
