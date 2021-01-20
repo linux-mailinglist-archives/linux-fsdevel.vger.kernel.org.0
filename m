@@ -2,47 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F17C2FE2FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 07:39:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE132FE2F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 07:35:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387599AbhATXpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 18:45:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51032 "EHLO
+        id S2387725AbhATXqU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 18:46:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48105 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728192AbhATWXI (ORCPT
+        by vger.kernel.org with ESMTP id S1731508AbhATWXW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:23:08 -0500
+        Wed, 20 Jan 2021 17:23:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611181296;
+        s=mimecast20190719; t=1611181316;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ZkCTUh6YIpz/AUkWavZvz8nrC1gxZflHJ+My0TUlYq8=;
-        b=IWTlpI18BdGNb8bCQlxL3IJuhfPpWpOhdBZ4nzBJXW0h2O/JRnmiHZJ89kDlSZBgpbABSz
-        fyo2o1kMWhVvbdgAeaQ2bTSbpFQHM4HDZm63wlce968NR2QuUO0pnPIAaTZE6doajpO6hC
-        JQzP6EKgRL48tfenENZRF9BQQJqyF/Y=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YDYFlUMcHb7rqZcW5EVf9/4GBcX/Hls07OkMcI3MsDw=;
+        b=BziS5uQiNnagfMwiIGmyYaNWqUkW5c7707yrKrf0RzEVEjTnb6mgMaML6KwpoV3cBUtM4s
+        /CMCodKXkyQierjujkLea13ByyuN4lH0vc4MNAq/B7w9YiUU79WFZtXtNQCi5ezUWO1Knq
+        mhbjGToXXHJHudo9NWi82EhRskBWMkM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-468-4jyfIjAkMxSc_5pS-0UlJg-1; Wed, 20 Jan 2021 17:21:34 -0500
-X-MC-Unique: 4jyfIjAkMxSc_5pS-0UlJg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-555-xFaa4qPFOFiVEU1Og4XnsQ-1; Wed, 20 Jan 2021 17:21:54 -0500
+X-MC-Unique: xFaa4qPFOFiVEU1Og4XnsQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CA4DD800D55;
-        Wed, 20 Jan 2021 22:21:31 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A5A95801817;
+        Wed, 20 Jan 2021 22:21:52 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 61F231992D;
-        Wed, 20 Jan 2021 22:21:25 +0000 (UTC)
-Subject: [RFC][PATCH 00/25] Network fs helper library & fscache kiocb API
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DE53972161;
+        Wed, 20 Jan 2021 22:21:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 02/25] vm: Add wait/unlock functions for PG_fscache
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Takashi Iwai <tiwai@suse.de>, Matthew Wilcox <willy@infradead.org>,
-        linux-afs@lists.infradead.org,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
+Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -50,155 +52,89 @@ Cc:     Takashi Iwai <tiwai@suse.de>, Matthew Wilcox <willy@infradead.org>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 20 Jan 2021 22:21:24 +0000
-Message-ID: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
+Date:   Wed, 20 Jan 2021 22:21:49 +0000
+Message-ID: <161118130899.1232039.12854903243561277618.stgit@warthog.procyon.org.uk>
+In-Reply-To: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
+References: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Add functions to unlock and wait for unlock of PG_fscache analogously with
+those for PG_lock.
 
-Here's a set of patches to do two things:
-
- (1) Add a helper library to handle the new VM readahead interface.  This
-     is intended to be used unconditionally by the filesystem (whether or
-     not caching is enabled) and provides a common framework for doing
-     caching, transparent huge pages and, in the future, possibly fscrypt
-     and read bandwidth maximisation.  It also allows the netfs and the
-     cache to align, expand and slice up a read request from the VM in
-     various ways; the netfs need only provide a function to read a stretch
-     of data to the pagecache and the helper takes care of the rest.
-
- (2) Add an alternative fscache/cachfiles I/O API that uses the kiocb
-     facility to do async DIO to transfer data to/from the netfs's pages,
-     rather than using readpage with wait queue snooping on one side and
-     vfs_write() on the other.  It also uses less memory, since it doesn't
-     do buffered I/O on the backing file.
-
-     Note that this uses SEEK_HOLE/SEEK_DATA to locate the data available
-     to be read from the cache.  Whilst this is an improvement from the
-     bmap interface, it still has a problem with regard to a modern
-     extent-based filesystem inserting or removing bridging blocks of
-     zeros.  Fixing that requires a much greater overhaul.
-
-This is a step towards overhauling the fscache API.  The change is opt-in
-on the part of the network filesystem.  A netfs should not try to mix the
-old and the new API because of conflicting ways of handling pages and the
-PG_fscache page flag and because it would be mixing DIO with buffered I/O.
-Further, the helper library can't be used with the old API.
-
-This does not change any of the fscache cookie handling APIs or the way
-invalidation is done.
-
-In the near term, I intend to deprecate and remove the old I/O API
-(fscache_allocate_page{,s}(), fscache_read_or_alloc_page{,s}(),
-fscache_write_page() and fscache_uncache_page()) and eventually replace
-most of fscache/cachefiles with something simpler and easier to follow.
-
-The patchset contains four parts:
-
- (1) Some helper patches, including provision of an ITER_XARRAY iov
-     iterator and a function to do readahead expansion.
-
- (2) Patches to add the netfs helper library.
-
- (3) A patch to add the fscache/cachefiles kiocb API
-
- (4) Patches to add support in AFS for this.
-
-With this, AFS without a cache passes all expected xfstests; with a cache,
-there's an extra failure, but that's also there before these patches.
-Fixing that probably requires a greater overhaul.
-
-These patches can be found also on:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-netfs-lib
-
-David
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-David Howells (24):
-      iov_iter: Add ITER_XARRAY
-      vm: Add wait/unlock functions for PG_fscache
-      mm: Implement readahead_control pageset expansion
-      vfs: Export rw_verify_area() for use by cachefiles
-      netfs: Make a netfs helper module
-      netfs: Provide readahead and readpage netfs helpers
-      netfs: Add tracepoints
-      netfs: Gather stats
-      netfs: Add write_begin helper
-      netfs: Define an interface to talk to a cache
-      fscache, cachefiles: Add alternate API to use kiocb for read/write to cache
-      afs: Disable use of the fscache I/O routines
-      afs: Pass page into dirty region helpers to provide THP size
-      afs: Print the operation debug_id when logging an unexpected data version
-      afs: Move key to afs_read struct
-      afs: Don't truncate iter during data fetch
-      afs: Log remote unmarshalling errors
-      afs: Set up the iov_iter before calling afs_extract_data()
-      afs: Use ITER_XARRAY for writing
-      afs: Wait on PG_fscache before modifying/releasing a page
-      afs: Extract writeback extension into its own function
-      afs: Prepare for use of THPs
-      afs: Use the fs operation ops to handle FetchData completion
-      afs: Use new fscache read helper API
 
-Takashi Iwai (1):
-      cachefiles: Drop superfluous readpages aops NULL check
+ include/linux/pagemap.h |   14 ++++++++++++++
+ mm/filemap.c            |   18 ++++++++++++++++++
+ 2 files changed, 32 insertions(+)
 
-
- fs/Kconfig                    |    1 +
- fs/Makefile                   |    1 +
- fs/afs/Kconfig                |    1 +
- fs/afs/dir.c                  |  225 ++++---
- fs/afs/file.c                 |  472 ++++----------
- fs/afs/fs_operation.c         |    4 +-
- fs/afs/fsclient.c             |  108 ++--
- fs/afs/inode.c                |    7 +-
- fs/afs/internal.h             |   57 +-
- fs/afs/rxrpc.c                |  150 ++---
- fs/afs/write.c                |  610 ++++++++++--------
- fs/afs/yfsclient.c            |   82 +--
- fs/cachefiles/Makefile        |    1 +
- fs/cachefiles/interface.c     |    5 +-
- fs/cachefiles/internal.h      |    9 +
- fs/cachefiles/rdwr.c          |    2 -
- fs/cachefiles/rdwr2.c         |  406 ++++++++++++
- fs/fscache/Makefile           |    3 +-
- fs/fscache/internal.h         |    3 +
- fs/fscache/page.c             |    2 +-
- fs/fscache/page2.c            |  116 ++++
- fs/fscache/stats.c            |    1 +
- fs/internal.h                 |    5 -
- fs/netfs/Kconfig              |   23 +
- fs/netfs/Makefile             |    5 +
- fs/netfs/internal.h           |   97 +++
- fs/netfs/read_helper.c        | 1142 +++++++++++++++++++++++++++++++++
- fs/netfs/stats.c              |   57 ++
- fs/read_write.c               |    1 +
- include/linux/fs.h            |    1 +
- include/linux/fscache-cache.h |    4 +
- include/linux/fscache.h       |   28 +-
- include/linux/netfs.h         |  167 +++++
- include/linux/pagemap.h       |   16 +
- include/net/af_rxrpc.h        |    2 +-
- include/trace/events/afs.h    |   74 +--
- include/trace/events/netfs.h  |  201 ++++++
- mm/filemap.c                  |   18 +
- mm/readahead.c                |   70 ++
- net/rxrpc/recvmsg.c           |    9 +-
- 40 files changed, 3171 insertions(+), 1015 deletions(-)
- create mode 100644 fs/cachefiles/rdwr2.c
- create mode 100644 fs/fscache/page2.c
- create mode 100644 fs/netfs/Kconfig
- create mode 100644 fs/netfs/Makefile
- create mode 100644 fs/netfs/internal.h
- create mode 100644 fs/netfs/read_helper.c
- create mode 100644 fs/netfs/stats.c
- create mode 100644 include/linux/netfs.h
- create mode 100644 include/trace/events/netfs.h
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index d5570deff400..1fa160e682fa 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -591,6 +591,7 @@ extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
+ extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+ 				unsigned int flags);
+ extern void unlock_page(struct page *page);
++extern void unlock_page_fscache(struct page *page);
+ 
+ /*
+  * Return true if the page was successfully locked
+@@ -681,6 +682,19 @@ static inline int wait_on_page_locked_killable(struct page *page)
+ 	return wait_on_page_bit_killable(compound_head(page), PG_locked);
+ }
+ 
++/**
++ * wait_on_page_fscache - Wait for PG_fscache to be cleared on a page
++ * @page: The page
++ *
++ * Wait for the fscache mark to be removed from a page, usually signifying the
++ * completion of a write from that page to the cache.
++ */
++static inline void wait_on_page_fscache(struct page *page)
++{
++	if (PagePrivate2(page))
++		wait_on_page_bit(compound_head(page), PG_fscache);
++}
++
+ extern void put_and_wait_on_page_locked(struct page *page);
+ 
+ void wait_on_page_writeback(struct page *page);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 5c9d564317a5..91fcae006d64 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1466,6 +1466,24 @@ void unlock_page(struct page *page)
+ }
+ EXPORT_SYMBOL(unlock_page);
+ 
++/**
++ * unlock_page_fscache - Unlock a page pinned with PG_fscache
++ * @page: The page
++ *
++ * Unlocks the page and wakes up sleepers in wait_on_page_fscache().  Also
++ * wakes those waiting for the lock and writeback bits because the wakeup
++ * mechanism is shared.  But that's OK - those sleepers will just go back to
++ * sleep.
++ */
++void unlock_page_fscache(struct page *page)
++{
++	page = compound_head(page);
++	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
++	clear_bit_unlock(PG_fscache, &page->flags);
++	wake_up_page_bit(page, PG_fscache);
++}
++EXPORT_SYMBOL(unlock_page_fscache);
++
+ /**
+  * end_page_writeback - end writeback against a page
+  * @page: the page
 
 
