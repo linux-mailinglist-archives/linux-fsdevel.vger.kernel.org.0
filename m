@@ -2,478 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB9AA2FD7E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 19:10:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20F282FD821
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 19:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391907AbhATSJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 13:09:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45380 "EHLO mail.kernel.org"
+        id S2391925AbhATSSS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 13:18:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404269AbhATSI6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 13:08:58 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A60E233FC;
-        Wed, 20 Jan 2021 18:08:02 +0000 (UTC)
+        id S2391868AbhATSR7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Jan 2021 13:17:59 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5C833233ED;
+        Wed, 20 Jan 2021 18:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611166091;
-        bh=QCyk29L+/YnC25PEa9uZAFcJZDrkvY6AexHtzQsre5w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qNsXlbvuEpyfSKiSj13QG4OovEJkUVuHWrWPAjeIef1Unt/KsmVjFJNTPiqjz7Lzv
-         GSpAk35ye3X+Aiii1x+CZii5aQfu5/DL43kGO/AfIKGJzlY2GbNONZaZuO9Ir3ZlPt
-         cgctwsjKlLzQgNQMuveCn5U3cYAT0ofQHkrj6X7bnS7jxQiD3+7tvch6UNis0ugpwz
-         nV7z2m+eqRJUQGu7CZE1lT1G8QhEOuBNcUYIJR7HUr790a78+q01CTL7xCyM7Y1YkC
-         HpIaHD9T6DrmWg4F0CUIV+KEsqO1sjhcC2Arz9UaqTYcy5MeBj6/It6Ie0KipiK8bq
-         dd90J8BLxsiqQ==
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v15 11/11] secretmem: test: add basic selftest for memfd_secret(2)
-Date:   Wed, 20 Jan 2021 20:06:12 +0200
-Message-Id: <20210120180612.1058-12-rppt@kernel.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20210120180612.1058-1-rppt@kernel.org>
-References: <20210120180612.1058-1-rppt@kernel.org>
+        s=k20201202; t=1611166625;
+        bh=MXcL5xxpoxbaBs8ogNANUaj+c2tAvr/SBQjpEvQ+pKE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ygd3KdPMRG9N2ax87S+X19TxQxafd6MDGZ5EBirS5Ig8nfXW6jgjJa3TOpOZ1+Qi5
+         cP5GnySM2SWuC0/kbYGKIpKGttZ5lJJg8hB8GrQ3IRrRW1F6zCK2P31o7QTUJOLR8H
+         79oKK+C/DsvgsxrpZnzSbsh2s8ZOsK5WhRJifEZYCt4wvOOsS4OFnQqG49O4OUr3ck
+         vvIUABMhPHzrauSphnCa/XLFXQ210V4yS8roHOJjRNm22qbNKBZyg8EriO0wUFEbWn
+         VHQpZjgzfPo5d5sUM8quVgCrMMzwt3Qgs/umvPMDi2hv9pkussCgeXuoHMmJYwljmu
+         47kK8dTwYvvjQ==
+Date:   Wed, 20 Jan 2021 10:17:04 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        avi@scylladb.com
+Subject: Re: [PATCH 09/11] iomap: pass a flags argument to iomap_dio_rw
+Message-ID: <20210120181704.GB3134581@magnolia>
+References: <20210118193516.2915706-1-hch@lst.de>
+ <20210118193516.2915706-10-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210118193516.2915706-10-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Rapoport <rppt@linux.ibm.com>
+On Mon, Jan 18, 2021 at 08:35:14PM +0100, Christoph Hellwig wrote:
+> Pass a set of flags to iomap_dio_rw instead of the boolean
+> wait_for_completion argument.  The IOMAP_DIO_FORCE_WAIT flag
+> replaces the wait_for_completion, but only needs to be passed
+> when the iocb isn't synchronous to start with to simplify the
+> callers.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/btrfs/file.c       |  7 +++----
+>  fs/ext4/file.c        |  5 ++---
+>  fs/gfs2/file.c        |  7 ++-----
+>  fs/iomap/direct-io.c  | 11 +++++------
+>  fs/xfs/xfs_file.c     |  7 +++----
+>  fs/zonefs/super.c     |  4 ++--
+>  include/linux/iomap.h | 10 ++++++++--
+>  7 files changed, 25 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index 0e41459b8de667..ddfd2e2adedf58 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -1949,8 +1949,8 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
+>  		goto buffered;
+>  	}
+>  
+> -	dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops,
+> -			     &btrfs_dio_ops, is_sync_kiocb(iocb));
+> +	dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
+> +			     0);
+>  
+>  	btrfs_inode_unlock(inode, ilock_flags);
+>  
+> @@ -3622,8 +3622,7 @@ static ssize_t btrfs_direct_read(struct kiocb *iocb, struct iov_iter *to)
+>  		return 0;
+>  
+>  	btrfs_inode_lock(inode, BTRFS_ILOCK_SHARED);
+> -	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
+> -			   is_sync_kiocb(iocb));
+> +	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops, 0);
+>  	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+>  	return ret;
+>  }
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 349b27f0dda0cb..194f5d00fa3267 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -74,8 +74,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  		return generic_file_read_iter(iocb, to);
+>  	}
+>  
+> -	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL,
+> -			   is_sync_kiocb(iocb));
+> +	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0);
+>  	inode_unlock_shared(inode);
+>  
+>  	file_accessed(iocb->ki_filp);
+> @@ -550,7 +549,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	if (ilock_shared)
+>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+> -			   is_sync_kiocb(iocb) || unaligned_io || extend);
+> +			   (unaligned_io || extend) ? IOMAP_DIO_FORCE_WAIT : 0);
+>  	if (ret == -ENOTBLK)
+>  		ret = 0;
+>  
+> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> index b39b339feddc93..89609c2997177a 100644
+> --- a/fs/gfs2/file.c
+> +++ b/fs/gfs2/file.c
+> @@ -797,9 +797,7 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
+>  	if (ret)
+>  		goto out_uninit;
+>  
+> -	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
+> -			   is_sync_kiocb(iocb));
+> -
+> +	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0);
+>  	gfs2_glock_dq(gh);
+>  out_uninit:
+>  	gfs2_holder_uninit(gh);
+> @@ -833,8 +831,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+>  	if (offset + len > i_size_read(&ip->i_inode))
+>  		goto out;
+>  
+> -	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
+> -			   is_sync_kiocb(iocb));
+> +	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0);
+>  	if (ret == -ENOTBLK)
+>  		ret = 0;
+>  out:
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 604103ab76f9c5..32dbbf7dd4aadb 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -420,13 +420,15 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  struct iomap_dio *
+>  __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		bool wait_for_completion)
+> +		unsigned int dio_flags)
+>  {
+>  	struct address_space *mapping = iocb->ki_filp->f_mapping;
+>  	struct inode *inode = file_inode(iocb->ki_filp);
+>  	size_t count = iov_iter_count(iter);
+>  	loff_t pos = iocb->ki_pos;
+>  	loff_t end = iocb->ki_pos + count - 1, ret = 0;
+> +	bool wait_for_completion =
+> +		is_sync_kiocb(iocb) || (dio_flags & IOMAP_DIO_FORCE_WAIT);
+>  	unsigned int iomap_flags = IOMAP_DIRECT;
+>  	struct blk_plug plug;
+>  	struct iomap_dio *dio;
+> @@ -434,9 +436,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (!count)
+>  		return NULL;
+>  
+> -	if (WARN_ON(is_sync_kiocb(iocb) && !wait_for_completion))
+> -		return ERR_PTR(-EIO);
+> -
+>  	dio = kmalloc(sizeof(*dio), GFP_KERNEL);
+>  	if (!dio)
+>  		return ERR_PTR(-ENOMEM);
+> @@ -598,11 +597,11 @@ EXPORT_SYMBOL_GPL(__iomap_dio_rw);
+>  ssize_t
+>  iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		bool wait_for_completion)
+> +		unsigned int flags)
 
-The test verifies that file descriptor created with memfd_secret does
-not allow read/write operations, that secret memory mappings respect
-RLIMIT_MEMLOCK and that remote accesses with process_vm_read() and
-ptrace() to the secret memory fail.
+Can this be named "dio_flags", since it's passed directly into
+__iomap_dio_rw?
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Elena Reshetova <elena.reshetova@intel.com>
-Cc: Hagen Paul Pfeifer <hagen@jauu.net>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: James Bottomley <jejb@linux.ibm.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Palmer Dabbelt <palmerdabbelt@google.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tycho Andersen <tycho@tycho.ws>
-Cc: Will Deacon <will@kernel.org>
----
- tools/testing/selftests/vm/.gitignore     |   1 +
- tools/testing/selftests/vm/Makefile       |   3 +-
- tools/testing/selftests/vm/memfd_secret.c | 296 ++++++++++++++++++++++
- tools/testing/selftests/vm/run_vmtests    |  17 ++
- 4 files changed, 316 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/vm/memfd_secret.c
+>  {
+>  	struct iomap_dio *dio;
+>  
+> -	dio = __iomap_dio_rw(iocb, iter, ops, dops, wait_for_completion);
+> +	dio = __iomap_dio_rw(iocb, iter, ops, dops, flags);
+>  	if (IS_ERR_OR_NULL(dio))
+>  		return PTR_ERR_OR_ZERO(dio);
+>  	return iomap_dio_complete(dio);
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index bffd7240cefb7f..b181db42f2f32f 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -232,8 +232,7 @@ xfs_file_dio_read(
+>  	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
+>  	if (ret)
+>  		return ret;
+> -	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL,
+> -			is_sync_kiocb(iocb));
+> +	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0);
+>  	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+>  
+>  	return ret;
+> @@ -535,7 +534,7 @@ xfs_file_dio_write_aligned(
+>  	}
+>  	trace_xfs_file_direct_write(iocb, from);
+>  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+> -			   &xfs_dio_write_ops, is_sync_kiocb(iocb));
+> +			   &xfs_dio_write_ops, 0);
+>  out_unlock:
+>  	if (iolock)
+>  		xfs_iunlock(ip, iolock);
+> @@ -603,7 +602,7 @@ xfs_file_dio_write_unaligned(
+>  	 */
+>  	trace_xfs_file_direct_write(iocb, from);
+>  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+> -			   &xfs_dio_write_ops, true);
+> +			   &xfs_dio_write_ops, IOMAP_DIO_FORCE_WAIT);
+>  out_unlock:
+>  	if (iolock)
+>  		xfs_iunlock(ip, iolock);
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index bec47f2d074beb..0e7ab0bc00ae8e 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -780,7 +780,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+>  		ret = zonefs_file_dio_append(iocb, from);
+>  	else
+>  		ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
+> -				   &zonefs_write_dio_ops, sync);
+> +				   &zonefs_write_dio_ops, 0);
+>  	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
+>  	    (ret > 0 || ret == -EIOCBQUEUED)) {
+>  		if (ret > 0)
+> @@ -917,7 +917,7 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  		}
+>  		file_accessed(iocb->ki_filp);
+>  		ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops,
+> -				   &zonefs_read_dio_ops, is_sync_kiocb(iocb));
+> +				   &zonefs_read_dio_ops, 0);
+>  	} else {
+>  		ret = generic_file_read_iter(iocb, to);
+>  		if (ret == -EIO)
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 5bd3cac4df9cb4..b322598dc10ec0 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -256,12 +256,18 @@ struct iomap_dio_ops {
+>  			struct bio *bio, loff_t file_offset);
+>  };
+>  
+> +/*
+> + * Wait for the I/O to complete in iomap_dio_rw even if the kiocb is not
+> + * synchronous.
+> + */
+> +#define IOMAP_DIO_FORCE_WAIT	(1 << 0)
+> +
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		bool wait_for_completion);
+> +		unsigned int flags);
+>  struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		bool wait_for_completion);
+> +		unsigned int flags);
 
-diff --git a/tools/testing/selftests/vm/.gitignore b/tools/testing/selftests/vm/.gitignore
-index 9a35c3f6a557..c8deddc81e7a 100644
---- a/tools/testing/selftests/vm/.gitignore
-+++ b/tools/testing/selftests/vm/.gitignore
-@@ -21,4 +21,5 @@ va_128TBswitch
- map_fixed_noreplace
- write_to_hugetlbfs
- hmm-tests
-+memfd_secret
- local_config.*
-diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-index d42115e4284d..0200fb61646c 100644
---- a/tools/testing/selftests/vm/Makefile
-+++ b/tools/testing/selftests/vm/Makefile
-@@ -34,6 +34,7 @@ TEST_GEN_FILES += khugepaged
- TEST_GEN_FILES += map_fixed_noreplace
- TEST_GEN_FILES += map_hugetlb
- TEST_GEN_FILES += map_populate
-+TEST_GEN_FILES += memfd_secret
- TEST_GEN_FILES += mlock-random-test
- TEST_GEN_FILES += mlock2-tests
- TEST_GEN_FILES += mremap_dontunmap
-@@ -133,7 +134,7 @@ warn_32bit_failure:
- endif
- endif
- 
--$(OUTPUT)/mlock-random-test: LDLIBS += -lcap
-+$(OUTPUT)/mlock-random-test $(OUTPUT)/memfd_secret: LDLIBS += -lcap
- 
- $(OUTPUT)/gup_test: ../../../../mm/gup_test.h
- 
-diff --git a/tools/testing/selftests/vm/memfd_secret.c b/tools/testing/selftests/vm/memfd_secret.c
-new file mode 100644
-index 000000000000..c878c2b841fc
---- /dev/null
-+++ b/tools/testing/selftests/vm/memfd_secret.c
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright IBM Corporation, 2020
-+ *
-+ * Author: Mike Rapoport <rppt@linux.ibm.com>
-+ */
-+
-+#define _GNU_SOURCE
-+#include <sys/uio.h>
-+#include <sys/mman.h>
-+#include <sys/wait.h>
-+#include <sys/types.h>
-+#include <sys/ptrace.h>
-+#include <sys/syscall.h>
-+#include <sys/resource.h>
-+#include <sys/capability.h>
-+
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <stdio.h>
-+
-+#include "../kselftest.h"
-+
-+#define fail(fmt, ...) ksft_test_result_fail(fmt, ##__VA_ARGS__)
-+#define pass(fmt, ...) ksft_test_result_pass(fmt, ##__VA_ARGS__)
-+#define skip(fmt, ...) ksft_test_result_skip(fmt, ##__VA_ARGS__)
-+
-+#ifdef __NR_memfd_secret
-+
-+#define PATTERN	0x55
-+
-+static const int prot = PROT_READ | PROT_WRITE;
-+static const int mode = MAP_SHARED;
-+
-+static unsigned long page_size;
-+static unsigned long mlock_limit_cur;
-+static unsigned long mlock_limit_max;
-+
-+static int memfd_secret(unsigned long flags)
-+{
-+	return syscall(__NR_memfd_secret, flags);
-+}
-+
-+static void test_file_apis(int fd)
-+{
-+	char buf[64];
-+
-+	if ((read(fd, buf, sizeof(buf)) >= 0) ||
-+	    (write(fd, buf, sizeof(buf)) >= 0) ||
-+	    (pread(fd, buf, sizeof(buf), 0) >= 0) ||
-+	    (pwrite(fd, buf, sizeof(buf), 0) >= 0))
-+		fail("unexpected file IO\n");
-+	else
-+		pass("file IO is blocked as expected\n");
-+}
-+
-+static void test_mlock_limit(int fd)
-+{
-+	size_t len;
-+	char *mem;
-+
-+	len = mlock_limit_cur;
-+	mem = mmap(NULL, len, prot, mode, fd, 0);
-+	if (mem == MAP_FAILED) {
-+		fail("unable to mmap secret memory\n");
-+		return;
-+	}
-+	munmap(mem, len);
-+
-+	len = mlock_limit_max * 2;
-+	mem = mmap(NULL, len, prot, mode, fd, 0);
-+	if (mem != MAP_FAILED) {
-+		fail("unexpected mlock limit violation\n");
-+		munmap(mem, len);
-+		return;
-+	}
-+
-+	pass("mlock limit is respected\n");
-+}
-+
-+static void try_process_vm_read(int fd, int pipefd[2])
-+{
-+	struct iovec liov, riov;
-+	char buf[64];
-+	char *mem;
-+
-+	if (read(pipefd[0], &mem, sizeof(mem)) < 0) {
-+		fail("pipe write: %s\n", strerror(errno));
-+		exit(KSFT_FAIL);
-+	}
-+
-+	liov.iov_len = riov.iov_len = sizeof(buf);
-+	liov.iov_base = buf;
-+	riov.iov_base = mem;
-+
-+	if (process_vm_readv(getppid(), &liov, 1, &riov, 1, 0) < 0) {
-+		if (errno == ENOSYS)
-+			exit(KSFT_SKIP);
-+		exit(KSFT_PASS);
-+	}
-+
-+	exit(KSFT_FAIL);
-+}
-+
-+static void try_ptrace(int fd, int pipefd[2])
-+{
-+	pid_t ppid = getppid();
-+	int status;
-+	char *mem;
-+	long ret;
-+
-+	if (read(pipefd[0], &mem, sizeof(mem)) < 0) {
-+		perror("pipe write");
-+		exit(KSFT_FAIL);
-+	}
-+
-+	ret = ptrace(PTRACE_ATTACH, ppid, 0, 0);
-+	if (ret) {
-+		perror("ptrace_attach");
-+		exit(KSFT_FAIL);
-+	}
-+
-+	ret = waitpid(ppid, &status, WUNTRACED);
-+	if ((ret != ppid) || !(WIFSTOPPED(status))) {
-+		fprintf(stderr, "weird waitppid result %ld stat %x\n",
-+			ret, status);
-+		exit(KSFT_FAIL);
-+	}
-+
-+	if (ptrace(PTRACE_PEEKDATA, ppid, mem, 0))
-+		exit(KSFT_PASS);
-+
-+	exit(KSFT_FAIL);
-+}
-+
-+static void check_child_status(pid_t pid, const char *name)
-+{
-+	int status;
-+
-+	waitpid(pid, &status, 0);
-+
-+	if (WIFEXITED(status) && WEXITSTATUS(status) == KSFT_SKIP) {
-+		skip("%s is not supported\n", name);
-+		return;
-+	}
-+
-+	if ((WIFEXITED(status) && WEXITSTATUS(status) == KSFT_PASS) ||
-+	    WIFSIGNALED(status)) {
-+		pass("%s is blocked as expected\n", name);
-+		return;
-+	}
-+
-+	fail("%s: unexpected memory access\n", name);
-+}
-+
-+static void test_remote_access(int fd, const char *name,
-+			       void (*func)(int fd, int pipefd[2]))
-+{
-+	int pipefd[2];
-+	pid_t pid;
-+	char *mem;
-+
-+	if (pipe(pipefd)) {
-+		fail("pipe failed: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	pid = fork();
-+	if (pid < 0) {
-+		fail("fork failed: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	if (pid == 0) {
-+		func(fd, pipefd);
-+		return;
-+	}
-+
-+	mem = mmap(NULL, page_size, prot, mode, fd, 0);
-+	if (mem == MAP_FAILED) {
-+		fail("Unable to mmap secret memory\n");
-+		return;
-+	}
-+
-+	ftruncate(fd, page_size);
-+	memset(mem, PATTERN, page_size);
-+
-+	if (write(pipefd[1], &mem, sizeof(mem)) < 0) {
-+		fail("pipe write: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	check_child_status(pid, name);
-+}
-+
-+static void test_process_vm_read(int fd)
-+{
-+	test_remote_access(fd, "process_vm_read", try_process_vm_read);
-+}
-+
-+static void test_ptrace(int fd)
-+{
-+	test_remote_access(fd, "ptrace", try_ptrace);
-+}
-+
-+static int set_cap_limits(rlim_t max)
-+{
-+	struct rlimit new;
-+	cap_t cap = cap_init();
-+
-+	new.rlim_cur = max;
-+	new.rlim_max = max;
-+	if (setrlimit(RLIMIT_MEMLOCK, &new)) {
-+		perror("setrlimit() returns error");
-+		return -1;
-+	}
-+
-+	/* drop capabilities including CAP_IPC_LOCK */
-+	if (cap_set_proc(cap)) {
-+		perror("cap_set_proc() returns error");
-+		return -2;
-+	}
-+
-+	return 0;
-+}
-+
-+static void prepare(void)
-+{
-+	struct rlimit rlim;
-+
-+	page_size = sysconf(_SC_PAGE_SIZE);
-+	if (!page_size)
-+		ksft_exit_fail_msg("Failed to get page size %s\n",
-+				   strerror(errno));
-+
-+	if (getrlimit(RLIMIT_MEMLOCK, &rlim))
-+		ksft_exit_fail_msg("Unable to detect mlock limit: %s\n",
-+				   strerror(errno));
-+
-+	mlock_limit_cur = rlim.rlim_cur;
-+	mlock_limit_max = rlim.rlim_max;
-+
-+	printf("page_size: %ld, mlock.soft: %ld, mlock.hard: %ld\n",
-+	       page_size, mlock_limit_cur, mlock_limit_max);
-+
-+	if (page_size > mlock_limit_cur)
-+		mlock_limit_cur = page_size;
-+	if (page_size > mlock_limit_max)
-+		mlock_limit_max = page_size;
-+
-+	if (set_cap_limits(mlock_limit_max))
-+		ksft_exit_fail_msg("Unable to set mlock limit: %s\n",
-+				   strerror(errno));
-+}
-+
-+#define NUM_TESTS 4
-+
-+int main(int argc, char *argv[])
-+{
-+	int fd;
-+
-+	prepare();
-+
-+	ksft_print_header();
-+	ksft_set_plan(NUM_TESTS);
-+
-+	fd = memfd_secret(0);
-+	if (fd < 0) {
-+		if (errno == ENOSYS)
-+			ksft_exit_skip("memfd_secret is not supported\n");
-+		else
-+			ksft_exit_fail_msg("memfd_secret failed: %s\n",
-+					   strerror(errno));
-+	}
-+
-+	test_mlock_limit(fd);
-+	test_file_apis(fd);
-+	test_process_vm_read(fd);
-+	test_ptrace(fd);
-+
-+	close(fd);
-+
-+	ksft_exit(!ksft_get_fail_cnt());
-+}
-+
-+#else /* __NR_memfd_secret */
-+
-+int main(int argc, char *argv[])
-+{
-+	printf("skip: skipping memfd_secret test (missing __NR_memfd_secret)\n");
-+	return KSFT_SKIP;
-+}
-+
-+#endif /* __NR_memfd_secret */
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
-index e953f3cd9664..95a67382f132 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -346,4 +346,21 @@ else
- 	exitcode=1
- fi
- 
-+echo "running memfd_secret test"
-+echo "------------------------------------"
-+./memfd_secret
-+ret_val=$?
-+
-+if [ $ret_val -eq 0 ]; then
-+	echo "[PASS]"
-+elif [ $ret_val -eq $ksft_skip ]; then
-+	echo "[SKIP]"
-+	exitcode=$ksft_skip
-+else
-+	echo "[FAIL]"
-+	exitcode=1
-+fi
-+
-+exit $exitcode
-+
- exit $exitcode
--- 
-2.28.0
+...and please make the naming of that last parameter consistent with the
+definitions. :)
 
+Everything else here looks ok to me.
+
+--D
+
+>  ssize_t iomap_dio_complete(struct iomap_dio *dio);
+>  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+>  
+> -- 
+> 2.29.2
+> 
