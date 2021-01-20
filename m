@@ -2,28 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B43A2FD4FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 17:09:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05CAA2FD4F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jan 2021 17:09:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403780AbhATQIK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 11:08:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42852 "EHLO mx2.suse.de"
+        id S2391142AbhATQHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 11:07:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42856 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391398AbhATQHB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 11:07:01 -0500
+        id S2391401AbhATQHA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Jan 2021 11:07:00 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id EA4F7AC85;
+        by mx2.suse.de (Postfix) with ESMTP id EBD0DAF32;
         Wed, 20 Jan 2021 16:06:18 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B0A311E082A; Wed, 20 Jan 2021 17:06:18 +0100 (CET)
+        id B4D381E0831; Wed, 20 Jan 2021 17:06:18 +0100 (CET)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     Matthew Wilcox <willy@infradead.org>, <linux-ext4@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 2/3] mm: Provide address_space operation for filling pages for read
-Date:   Wed, 20 Jan 2021 17:06:10 +0100
-Message-Id: <20210120160611.26853-3-jack@suse.cz>
+        Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH 3/3] ext4: Fix stale data exposure when read races with hole punch
+Date:   Wed, 20 Jan 2021 17:06:11 +0100
+Message-Id: <20210120160611.26853-4-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210120160611.26853-1-jack@suse.cz>
 References: <20210120160611.26853-1-jack@suse.cz>
@@ -33,110 +34,117 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide an address_space operation for filling pages needed for read
-into page cache. Filesystems can use this operation to seriealize
-page cache filling with e.g. hole punching properly.
+Hole puching currently evicts pages from page cache and then goes on to
+remove blocks from the inode. This happens under both i_mmap_sem and
+i_rwsem held exclusively which provides appropriate serialization with
+racing page faults. However there is currently nothing that prevents
+ordinary read(2) from racing with the hole punch and instantiating page
+cache page after hole punching has evicted page cache but before it has
+removed blocks from the inode. This page cache page will be mapping soon
+to be freed block and that can lead to returning stale data to userspace
+or even filesystem corruption.
 
+Fix the problem by protecting reads as well as readahead requests with
+i_mmap_sem.
+
+CC: stable@vger.kernel.org
+Reported-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- include/linux/fs.h |  5 +++++
- mm/filemap.c       | 32 ++++++++++++++++++++++++++------
- 2 files changed, 31 insertions(+), 6 deletions(-)
+ fs/ext4/file.c  | 16 ++++++++++++++++
+ fs/ext4/inode.c | 21 +++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd47deea7c17..1d3f963d0d99 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -381,6 +381,9 @@ struct address_space_operations {
- 	int (*readpages)(struct file *filp, struct address_space *mapping,
- 			struct list_head *pages, unsigned nr_pages);
- 	void (*readahead)(struct readahead_control *);
-+	/* Fill in uptodate pages for kiocb into page cache and pagep array */
-+	int (*fill_pages)(struct kiocb *, size_t len, bool partial_page,
-+			  struct page **pagep, unsigned int nr_pages);
- 
- 	int (*write_begin)(struct file *, struct address_space *mapping,
- 				loff_t pos, unsigned len, unsigned flags,
-@@ -2962,6 +2965,8 @@ extern ssize_t generic_write_checks(struct kiocb *, struct iov_iter *);
- extern int generic_write_check_limits(struct file *file, loff_t pos,
- 		loff_t *count);
- extern int generic_file_rw_checks(struct file *file_in, struct file *file_out);
-+extern int generic_file_buffered_read_get_pages(struct kiocb *iocb, size_t len,
-+		bool partial_page, struct page **pages, unsigned int nr);
- extern ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		struct iov_iter *to, ssize_t already_read);
- extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 7029bada8e90..5b594dd245e0 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2333,10 +2333,24 @@ generic_file_buffered_read_no_cached_page(struct kiocb *iocb)
- 	return generic_file_buffered_read_readpage(iocb, filp, mapping, page);
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 349b27f0dda0..d66f7c08b123 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -30,6 +30,7 @@
+ #include <linux/uio.h>
+ #include <linux/mman.h>
+ #include <linux/backing-dev.h>
++#include <linux/fadvise.h>
+ #include "ext4.h"
+ #include "ext4_jbd2.h"
+ #include "xattr.h"
+@@ -131,6 +132,20 @@ static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return generic_file_read_iter(iocb, to);
  }
  
--static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
--						size_t len, bool partial_page,
--						struct page **pages,
--						unsigned int nr)
-+/**
-+ * generic_file_buffered_read_get_pages - generic routine to fill in page cache
-+ *	pages for a read
-+ * @iocb:	the iocb to read
-+ * @len:	number of bytes to read
-+ * @partial_page:	are partially uptodate pages accepted by read?
-+ * @pages:	array where to fill in found pages
-+ * @nr:		number of pages in the @pages array
-+ *
-+ * Fill pages into page cache and @pages array needed for a read of length @len
-+ * described by @iocb.
-+ *
-+ * Return:
-+ * Number of pages filled in the array
-+ */
-+int generic_file_buffered_read_get_pages(struct kiocb *iocb, size_t len,
-+					 bool partial_page,
-+					 struct page **pages, unsigned int nr)
- {
- 	struct file *filp = iocb->ki_filp;
- 	struct address_space *mapping = filp->f_mapping;
-@@ -2419,6 +2433,7 @@ static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
- 	 */
- 	goto find_page;
- }
-+EXPORT_SYMBOL(generic_file_buffered_read_get_pages);
- 
- /**
-  * generic_file_buffered_read - generic file read routine
-@@ -2447,6 +2462,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 	unsigned int nr_pages = min_t(unsigned int, 512,
- 			((iocb->ki_pos + iter->count + PAGE_SIZE - 1) >> PAGE_SHIFT) -
- 			(iocb->ki_pos >> PAGE_SHIFT));
-+	int (*fill_pages)(struct kiocb *, size_t, bool, struct page **,
-+			  unsigned int) = mapping->a_ops->fill_pages;
- 	int i, pg_nr, error = 0;
- 	bool writably_mapped;
- 	loff_t isize, end_offset;
-@@ -2456,6 +2473,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 	if (unlikely(!iov_iter_count(iter)))
- 		return 0;
- 
-+	if (!fill_pages)
-+		fill_pages = generic_file_buffered_read_get_pages;
++static int ext4_fadvise(struct file *filp, loff_t start, loff_t end, int advice)
++{
++	struct inode *inode = file_inode(filp);
++	int ret;
 +
- 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
++	/* Readahead needs protection from hole punching and similar ops */
++	if (advice == POSIX_FADV_WILLNEED)
++		down_read(&EXT4_I(inode)->i_mmap_sem);
++	ret = generic_fadvise(filp, start, end, advice);
++	if (advice == POSIX_FADV_WILLNEED)
++		up_read(&EXT4_I(inode)->i_mmap_sem);
++	return ret;
++}
++
+ /*
+  * Called when an inode is released. Note that this is different
+  * from ext4_file_open: open gets called at every open, but release
+@@ -911,6 +926,7 @@ const struct file_operations ext4_file_operations = {
+ 	.splice_read	= generic_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.fallocate	= ext4_fallocate,
++	.fadvise	= ext4_fadvise,
+ };
  
- 	if (nr_pages > ARRAY_SIZE(pages_onstack))
-@@ -2478,8 +2498,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 			iocb->ki_flags |= IOCB_NOWAIT;
+ const struct inode_operations ext4_file_inode_operations = {
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index c173c8405856..a01569f2fa49 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3646,9 +3646,28 @@ static int ext4_iomap_swap_activate(struct swap_info_struct *sis,
+ 				       &ext4_iomap_report_ops);
+ }
  
- 		i = 0;
--		pg_nr = generic_file_buffered_read_get_pages(iocb, iter->count,
--				!iov_iter_is_pipe(iter), pages, nr_pages);
-+		pg_nr = fill_pages(iocb, iter->count, !iov_iter_is_pipe(iter),
-+				   pages, nr_pages);
- 		if (pg_nr < 0) {
- 			error = pg_nr;
- 			break;
++static int ext4_fill_pages(struct kiocb *iocb, size_t len, bool partial_page,
++			   struct page **pagep, unsigned int nr_pages)
++{
++	struct ext4_inode_info *ei = EXT4_I(iocb->ki_filp->f_mapping->host);
++	int ret;
++
++	/*
++	 * Protect adding of pages into page cache against hole punching and
++	 * other cache manipulation functions so that we don't expose
++	 * potentially stale user data.
++	 */
++	down_read(&ei->i_mmap_sem);
++	ret = generic_file_buffered_read_get_pages(iocb, len, partial_page,
++						   pagep, nr_pages);
++	up_read(&ei->i_mmap_sem);
++	return ret;
++}
++
+ static const struct address_space_operations ext4_aops = {
+ 	.readpage		= ext4_readpage,
+ 	.readahead		= ext4_readahead,
++	.fill_pages		= ext4_fill_pages,
+ 	.writepage		= ext4_writepage,
+ 	.writepages		= ext4_writepages,
+ 	.write_begin		= ext4_write_begin,
+@@ -3667,6 +3686,7 @@ static const struct address_space_operations ext4_aops = {
+ static const struct address_space_operations ext4_journalled_aops = {
+ 	.readpage		= ext4_readpage,
+ 	.readahead		= ext4_readahead,
++	.fill_pages		= ext4_fill_pages,
+ 	.writepage		= ext4_writepage,
+ 	.writepages		= ext4_writepages,
+ 	.write_begin		= ext4_write_begin,
+@@ -3684,6 +3704,7 @@ static const struct address_space_operations ext4_journalled_aops = {
+ static const struct address_space_operations ext4_da_aops = {
+ 	.readpage		= ext4_readpage,
+ 	.readahead		= ext4_readahead,
++	.fill_pages		= ext4_fill_pages,
+ 	.writepage		= ext4_writepage,
+ 	.writepages		= ext4_writepages,
+ 	.write_begin		= ext4_da_write_begin,
 -- 
 2.26.2
 
