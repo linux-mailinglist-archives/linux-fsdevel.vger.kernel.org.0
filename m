@@ -2,112 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E79412FF48C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 20:32:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 744EF2FF515
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 20:50:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbhAUTcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 14:32:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34008 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725775AbhAUTFE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 14:05:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611255783;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q9aC69Rrd685E5LorLOvTrA44ELra9S4V5jph1Dfqxg=;
-        b=LyyT+Pg2KaHVr0sD0BC74NsLOy8cevivdasiyT4k1lq/bo2bgEMfYnajYxxVnlMXTA3FgQ
-        zzBs7//SOGdVpvVPmnq3wBL4R13uvxgknxuJ4LNSFRM/MqVisx7y0LRfYQPWU0sqf7D87t
-        K5PmOPqz3kTKpK+XlQlYiftggb/t4nc=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-591-eoU_fNgrOWmLGAjofuNDkw-1; Thu, 21 Jan 2021 13:59:31 -0500
-X-MC-Unique: eoU_fNgrOWmLGAjofuNDkw-1
-Received: by mail-qv1-f70.google.com with SMTP id t16so2113726qvk.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jan 2021 10:59:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Q9aC69Rrd685E5LorLOvTrA44ELra9S4V5jph1Dfqxg=;
-        b=BTCeAJ5N6eZ1XZNsFqMjMuPB0W9ydhUvybv7WZr1yMYjyG/IgrG5eHwrcXZGIKK0CT
-         kSd4guH3cwNSWlut5Zr3eUINbEPfgmc69LiXFfPJglok8bxTpy8JxW1gDahhkZztRlRm
-         PykSkac4vjI4OVF/6wkEsYOxdnXIqdGbtoJ6j2HQHRAALz3pmLDrf/S+BSbVgEBYk5Aj
-         XrCT9S/TpFL/DZrs70k+Ee/0a1noBLyU6bEnlj9U707XCJvhk3rr+OkVl8Ikp5qNwib/
-         u2xZVqN669ER+tsiaA8Z+Oc3jvfu0zneEn1ZQoAumRzoDSMPHr7d4h7EoHUZ3vreJXpa
-         pz4w==
-X-Gm-Message-State: AOAM532gj+jw0vGn/r6f106FYdRzaFGbV6rgsrRoz0xQ8F6UsoumLrUT
-        WQ36QfFU4up/PMhMOeojdiEj1izZtql0ENZKy78zqPQEwXMmQgirxdwhJ1EbN63iU1GNmNKi14w
-        ZwhKx53Rb/ecAwRsGM/uR0FctEg==
-X-Received: by 2002:a37:4905:: with SMTP id w5mr1238051qka.332.1611255571021;
-        Thu, 21 Jan 2021 10:59:31 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwpPfqGEB5hWMaS7ODRJG0nJlz/OA1oFXO3oLmpasvHghnddIsNoZXPMGIOq60g/FNnFLxxvQ==
-X-Received: by 2002:a37:4905:: with SMTP id w5mr1238009qka.332.1611255570798;
-        Thu, 21 Jan 2021 10:59:30 -0800 (PST)
-Received: from xz-x1 ([142.126.83.202])
-        by smtp.gmail.com with ESMTPSA id u5sm4409823qka.86.2021.01.21.10.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jan 2021 10:59:30 -0800 (PST)
-Date:   Thu, 21 Jan 2021 13:59:28 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Steven Price <steven.price@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Adam Ruprecht <ruprecht@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH 6/9] userfaultfd: disable huge PMD sharing for MINOR
- registered VMAs
-Message-ID: <20210121185928.GF260413@xz-x1>
-References: <20210115190451.3135416-1-axelrasmussen@google.com>
- <20210115190451.3135416-7-axelrasmussen@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210115190451.3135416-7-axelrasmussen@google.com>
+        id S1727703AbhAUTte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 14:49:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48780 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727635AbhAUTtO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 14:49:14 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 5FE9E23A54;
+        Thu, 21 Jan 2021 19:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611258514;
+        bh=yDF9P0+5W9PnKS+KIbofT4+KmzXhU0eU7ow1dA3bT5Y=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=ekK5EV7sDPsxY5vzRcv4/EPm2sadqcvwYsRsOzxspv8N/O7Nhyea4f5zAwu7sarCQ
+         piznnjLFD1gd2y/e6oFJs3fma6LXsL07YDRGK4e/O65UxP3mN9k2UcGfu3wdcqOlr3
+         wTUq4EiXQRvuws6/F/PuZ6gYcZvPn3DJxJrH3cau1eP7eD4dT1tnfxr3gn0S078goe
+         TOYEZ6rtli1nYD1C1EC3S9WznBvnlzPw1yRMGnxhROk4rWatE6rSpvI9RkyR3PuTd+
+         lZsMD3qhOLYO00RyCZKhn7+omuxDuFyTom8BKKctgBA1F/zrDzL8ieJd90V3KPQCh4
+         PGJQbRljvXRXA==
+Received: from pdx-korg-docbuild-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-1.ci.codeaurora.org (Postfix) with ESMTP id 5851E60192;
+        Thu, 21 Jan 2021 19:48:34 +0000 (UTC)
+Subject: Re: [GIT PULL] Fs & udf fixes for v5.11-rc5
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210121131759.GE24063@quack2.suse.cz>
+References: <20210121131759.GE24063@quack2.suse.cz>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210121131759.GE24063@quack2.suse.cz>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.11-rc5
+X-PR-Tracked-Commit-Id: 5cdc4a6950a883594e9640b1decb3fcf6222a594
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9f29bd8b2e7132b409178d1367dae1813017bd0e
+Message-Id: <161125851435.32181.18328989751826713032.pr-tracker-bot@kernel.org>
+Date:   Thu, 21 Jan 2021 19:48:34 +0000
+To:     Jan Kara <jack@suse.cz>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 11:04:48AM -0800, Axel Rasmussen wrote:
-> As the comment says: for the MINOR fault use case, although the page
-> might be present and populated in the other (non-UFFD-registered) half
-> of the shared mapping, it may be out of date, and we explicitly want
-> userspace to get a minor fault so it can check and potentially update
-> the page's contents.
-> 
-> Huge PMD sharing would prevent these faults from occurring for
-> suitably aligned areas, so disable it upon UFFD registration.
-> 
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+The pull request you sent on Thu, 21 Jan 2021 14:17:59 +0100:
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.11-rc5
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9f29bd8b2e7132b409178d1367dae1813017bd0e
+
+Thank you!
 
 -- 
-Peter Xu
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
