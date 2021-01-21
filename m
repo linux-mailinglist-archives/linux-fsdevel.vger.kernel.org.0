@@ -2,59 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 744EF2FF515
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 20:50:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 586892FF587
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 21:12:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbhAUTte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 14:49:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48780 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727635AbhAUTtO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 14:49:14 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 5FE9E23A54;
-        Thu, 21 Jan 2021 19:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611258514;
-        bh=yDF9P0+5W9PnKS+KIbofT4+KmzXhU0eU7ow1dA3bT5Y=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=ekK5EV7sDPsxY5vzRcv4/EPm2sadqcvwYsRsOzxspv8N/O7Nhyea4f5zAwu7sarCQ
-         piznnjLFD1gd2y/e6oFJs3fma6LXsL07YDRGK4e/O65UxP3mN9k2UcGfu3wdcqOlr3
-         wTUq4EiXQRvuws6/F/PuZ6gYcZvPn3DJxJrH3cau1eP7eD4dT1tnfxr3gn0S078goe
-         TOYEZ6rtli1nYD1C1EC3S9WznBvnlzPw1yRMGnxhROk4rWatE6rSpvI9RkyR3PuTd+
-         lZsMD3qhOLYO00RyCZKhn7+omuxDuFyTom8BKKctgBA1F/zrDzL8ieJd90V3KPQCh4
-         PGJQbRljvXRXA==
-Received: from pdx-korg-docbuild-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-1.ci.codeaurora.org (Postfix) with ESMTP id 5851E60192;
-        Thu, 21 Jan 2021 19:48:34 +0000 (UTC)
-Subject: Re: [GIT PULL] Fs & udf fixes for v5.11-rc5
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210121131759.GE24063@quack2.suse.cz>
-References: <20210121131759.GE24063@quack2.suse.cz>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210121131759.GE24063@quack2.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.11-rc5
-X-PR-Tracked-Commit-Id: 5cdc4a6950a883594e9640b1decb3fcf6222a594
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9f29bd8b2e7132b409178d1367dae1813017bd0e
-Message-Id: <161125851435.32181.18328989751826713032.pr-tracker-bot@kernel.org>
-Date:   Thu, 21 Jan 2021 19:48:34 +0000
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        id S1727008AbhAUUKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 15:10:55 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36287 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727006AbhAUUKE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 15:10:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611259718;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gVx+gkEsYNOgT30sFBYpj+A2NREDHbQJA4mbAzV8q/8=;
+        b=P26DjrFA12ail1kIUQd6yGKXkM42Z0jQ+rPrarD9NBXfWqWLduEUfq1tn0YYmjj0CRgSBF
+        sgMlNsBmhtNw553IJC90Z+V0rpLL9NmUC23vl0OqgGQt14crpukSY8vFRCnlwq6/8fHLeP
+        z/xsCJr6jPW0lARvczie9Btw4Aoe7jM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-150-4DhkOkagMbGcw0RHcFnQ4g-1; Thu, 21 Jan 2021 15:08:34 -0500
+X-MC-Unique: 4DhkOkagMbGcw0RHcFnQ4g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E3B6180A094;
+        Thu, 21 Jan 2021 20:08:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D670150DD2;
+        Thu, 21 Jan 2021 20:08:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210121190937.GE20964@fieldses.org>
+References: <20210121190937.GE20964@fieldses.org> <20210121174306.GB20964@fieldses.org> <20210121164645.GA20964@fieldses.org> <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk> <1794286.1611248577@warthog.procyon.org.uk> <1851804.1611255313@warthog.procyon.org.uk>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-afs@lists.infradead.org, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 00/25] Network fs helper library & fscache kiocb API
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1856290.1611259704.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 21 Jan 2021 20:08:24 +0000
+Message-ID: <1856291.1611259704@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Thu, 21 Jan 2021 14:17:59 +0100:
+J. Bruce Fields <bfields@fieldses.org> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.11-rc5
+> > J. Bruce Fields <bfields@fieldses.org> wrote:
+> > =
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9f29bd8b2e7132b409178d1367dae1813017bd0e
+> > > > Fixing this requires a much bigger overhaul of cachefiles than thi=
+s patchset
+> > > > performs.
+> > > =
 
-Thank you!
+> > > That sounds like "sometimes you may get file corruption and there's
+> > > nothing you can do about it".  But I know people actually use fscach=
+e,
+> > > so it must be reliable at least for some use cases.
+> > =
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> > Yes.  That's true for the upstream code because that uses bmap.
+> =
+
+> Sorry, when you say "that's true", what part are you referring to?
+
+Sometimes, theoretically, you may get file corruption due to this.
+
+> > I'm switching
+> > to use SEEK_HOLE/SEEK_DATA to get rid of the bmap usage, but it doesn'=
+t change
+> > the issue.
+> > =
+
+> > > Is it that those "bridging" blocks only show up in certain corner ca=
+ses
+> > > that users can arrange to avoid?  Or that it's OK as long as you use
+> > > certain specific file systems whose behavior goes beyond what's
+> > > technically required by the bamp or seek interfaces?
+> > =
+
+> > That's a question for the xfs, ext4 and btrfs maintainers, and may var=
+y
+> > between kernel versions and fsck or filesystem packing utility version=
+s.
+> =
+
+> So, I'm still confused: there must be some case where we know fscache
+> actually works reliably and doesn't corrupt your data, right?
+
+Using ext2/3, for example.  I don't know under what circumstances xfs, ext=
+4
+and btrfs might insert/remove blocks of zeros, but I'm told it can happen.
+
+David
+
