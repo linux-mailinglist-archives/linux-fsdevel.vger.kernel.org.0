@@ -2,119 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 586892FF587
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 21:12:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 504D42FF5F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 21:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbhAUUKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 15:10:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36287 "EHLO
+        id S1726672AbhAUUeq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 15:34:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36799 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727006AbhAUUKE (ORCPT
+        by vger.kernel.org with ESMTP id S1725883AbhAUU33 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 15:10:04 -0500
+        Thu, 21 Jan 2021 15:29:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611259718;
+        s=mimecast20190719; t=1611260882;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gVx+gkEsYNOgT30sFBYpj+A2NREDHbQJA4mbAzV8q/8=;
-        b=P26DjrFA12ail1kIUQd6yGKXkM42Z0jQ+rPrarD9NBXfWqWLduEUfq1tn0YYmjj0CRgSBF
-        sgMlNsBmhtNw553IJC90Z+V0rpLL9NmUC23vl0OqgGQt14crpukSY8vFRCnlwq6/8fHLeP
-        z/xsCJr6jPW0lARvczie9Btw4Aoe7jM=
+        bh=ZM6fDETjG/OSIznEV8j1/yCgekfI8hxlFIQEzJi1LHc=;
+        b=WcHwg7NNpHdp+LbL5NAEj2Gy3pYIbO5EGpxt0LURy8TbXQduxL+6VJrBm4yIRpU+BwYauV
+        USuGWqvr3yw1cgoWgA2sK8/PGZOhRLQIkgLDylXwhR52vJjer5ktVPdrDKNL6mqbbJgz+/
+        2eIQb1sZwQy3moJmH1DqIPTvzrgYaoE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-150-4DhkOkagMbGcw0RHcFnQ4g-1; Thu, 21 Jan 2021 15:08:34 -0500
-X-MC-Unique: 4DhkOkagMbGcw0RHcFnQ4g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-495-u041yri1OwCN7zre_Q3n-w-1; Thu, 21 Jan 2021 15:27:59 -0500
+X-MC-Unique: u041yri1OwCN7zre_Q3n-w-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E3B6180A094;
-        Thu, 21 Jan 2021 20:08:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D670150DD2;
-        Thu, 21 Jan 2021 20:08:24 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210121190937.GE20964@fieldses.org>
-References: <20210121190937.GE20964@fieldses.org> <20210121174306.GB20964@fieldses.org> <20210121164645.GA20964@fieldses.org> <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk> <1794286.1611248577@warthog.procyon.org.uk> <1851804.1611255313@warthog.procyon.org.uk>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-afs@lists.infradead.org, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 00/25] Network fs helper library & fscache kiocb API
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2CD438066E5;
+        Thu, 21 Jan 2021 20:27:58 +0000 (UTC)
+Received: from pick.fieldses.org (ovpn-121-75.rdu2.redhat.com [10.10.121.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 00A526EF45;
+        Thu, 21 Jan 2021 20:27:57 +0000 (UTC)
+Received: by pick.fieldses.org (Postfix, from userid 2815)
+        id D725B1204AB; Thu, 21 Jan 2021 15:27:56 -0500 (EST)
+Date:   Thu, 21 Jan 2021 15:27:56 -0500
+From:   "J. Bruce Fields" <bfields@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <schumakeranna@gmail.com>,
+        Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH 2/3] nfsd: move change attribute generation to filesystem
+Message-ID: <20210121202756.GA13298@pick.fieldses.org>
+References: <1611084297-27352-1-git-send-email-bfields@redhat.com>
+ <1611084297-27352-3-git-send-email-bfields@redhat.com>
+ <20210120084638.GA3678536@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1856290.1611259704.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 21 Jan 2021 20:08:24 +0000
-Message-ID: <1856291.1611259704@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210120084638.GA3678536@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-J. Bruce Fields <bfields@fieldses.org> wrote:
+On Wed, Jan 20, 2021 at 08:46:38AM +0000, Christoph Hellwig wrote:
+> On Tue, Jan 19, 2021 at 02:24:56PM -0500, J. Bruce Fields wrote:
+> > From: "J. Bruce Fields" <bfields@redhat.com>
+> > 
+> > After this, only filesystems lacking change attribute support will leave
+> > the fetch_iversion export op NULL.
+> > 
+> > This seems cleaner to me, and will allow some minor optimizations in the
+> > nfsd code.
+> 
+> Another indirect call just to fetch the change attribute (which happens
+> a lot IIRC) does not seem very optimal to me.
 
-> > J. Bruce Fields <bfields@fieldses.org> wrote:
-> > =
+In the next patch we're removing an fh_getattr (vfs_getattr) in the case
+we call the new op, so that's typically a net decrease in indirect
+calls.
 
-> > > > Fixing this requires a much bigger overhaul of cachefiles than thi=
-s patchset
-> > > > performs.
-> > > =
+Though maybe we could use a flag here and do without either.
 
-> > > That sounds like "sometimes you may get file corruption and there's
-> > > nothing you can do about it".  But I know people actually use fscach=
-e,
-> > > so it must be reliable at least for some use cases.
-> > =
+> And the fact that we need three duplicate implementations also is not
+> very nice.
 
-> > Yes.  That's true for the upstream code because that uses bmap.
-> =
+Ext4 and xfs are identical, btrfs is a little different since it doesn't
+consult I_VERSION.  (And then there's nfs, which uses the origin
+server's i_version if it can.)
 
-> Sorry, when you say "that's true", what part are you referring to?
+I also have a vague idea that some filesystem-specific improvements
+might be possible.  (E.g., if a filesystem had some kind of boot count
+in the superblock, maybe that would be a better way to prevent the
+change attribute from going backwards on reboot than the thing
+generic_fetch_iversion is currently doing with ctime.  But I have no
+concrete plan there, maybe I'm dreaming.)
 
-Sometimes, theoretically, you may get file corruption due to this.
-
-> > I'm switching
-> > to use SEEK_HOLE/SEEK_DATA to get rid of the bmap usage, but it doesn'=
-t change
-> > the issue.
-> > =
-
-> > > Is it that those "bridging" blocks only show up in certain corner ca=
-ses
-> > > that users can arrange to avoid?  Or that it's OK as long as you use
-> > > certain specific file systems whose behavior goes beyond what's
-> > > technically required by the bamp or seek interfaces?
-> > =
-
-> > That's a question for the xfs, ext4 and btrfs maintainers, and may var=
-y
-> > between kernel versions and fsck or filesystem packing utility version=
-s.
-> =
-
-> So, I'm still confused: there must be some case where we know fscache
-> actually works reliably and doesn't corrupt your data, right?
-
-Using ext2/3, for example.  I don't know under what circumstances xfs, ext=
-4
-and btrfs might insert/remove blocks of zeros, but I'm told it can happen.
-
-David
+--b.
 
