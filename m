@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 606492FF70B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 22:20:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E31402FF709
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 22:20:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbhAUVSp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 16:18:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50602 "EHLO
+        id S1727184AbhAUVSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 16:18:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727237AbhAUUyr (ORCPT
+        with ESMTP id S1727150AbhAUUyr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 21 Jan 2021 15:54:47 -0500
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C3FC0617A7;
-        Thu, 21 Jan 2021 12:51:28 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DMF1C0swwzMqZy0;
-        Thu, 21 Jan 2021 21:51:27 +0100 (CET)
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF99C061351
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jan 2021 12:51:32 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DMF1H1H7czMpt8X;
+        Thu, 21 Jan 2021 21:51:31 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DMF1B4S8Hzlh8TD;
-        Thu, 21 Jan 2021 21:51:26 +0100 (CET)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DMF1G4XvDzlh8T4;
+        Thu, 21 Jan 2021 21:51:30 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
         "Serge E . Hallyn" <serge@hallyn.com>
@@ -42,10 +42,12 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v27 02/12] landlock: Add ruleset and domain management
-Date:   Thu, 21 Jan 2021 21:51:09 +0100
-Message-Id: <20210121205119.793296-3-mic@digikod.net>
+        John Johansen <john.johansen@canonical.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: [PATCH v27 05/12] LSM: Infrastructure management of the superblock
+Date:   Thu, 21 Jan 2021 21:51:12 +0100
+Message-Id: <20210121205119.793296-6-mic@digikod.net>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210121205119.793296-1-mic@digikod.net>
 References: <20210121205119.793296-1-mic@digikod.net>
@@ -56,832 +58,528 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
 
-A Landlock ruleset is mainly a red-black tree with Landlock rules as
-nodes.  This enables quick update and lookup to match a requested
-access, e.g. to a file.  A ruleset is usable through a dedicated file
-descriptor (cf. following commit implementing syscalls) which enables a
-process to create and populate a ruleset with new rules.
+Move management of the superblock->sb_security blob out of the
+individual security modules and into the security infrastructure.
+Instead of allocating the blobs from within the modules, the modules
+tell the infrastructure how much space is required, and the space is
+allocated there.
 
-A domain is a ruleset tied to a set of processes.  This group of rules
-defines the security policy enforced on these processes and their future
-children.  A domain can transition to a new domain which is the
-intersection of all its constraints and those of a ruleset provided by
-the current process.  This modification only impact the current process.
-This means that a process can only gain more constraints (i.e. lose
-accesses) over time.
-
-Cc: James Morris <jmorris@namei.org>
-Cc: Jann Horn <jannh@google.com>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 ---
 
 Changes since v26:
-* Fix spelling.
+* Rebase on commit b159e86b5a2a ("selinux: drop super_block backpointer
+  from superblock_security_struct").  No change in the patch itself,
+  only a trivial conflict because of an updated nearby line in
+  selinux_set_mnt_opts() variable declarations.
 
-Changes since v25:
-* Add build-time checks for the num_layers and num_rules variables
-  according to LANDLOCK_MAX_NUM_LAYERS and LANDLOCK_MAX_NUM_RULES, and
-  move these limits to a dedicated file.
-* Cosmetic variable renames.
-
-Changes since v24:
-* Update struct landlock_rule with a layer stack.  This reverts "Always
-  intersect access rights" from v24 and also adds the ability to tie
-  access rights with their policy layer.  As noted by Jann Horn, always
-  intersecting access rights made some use cases uselessly more
-  difficult to handle in user space.  Thanks to this new stack, we still
-  have a deterministic policy behavior whatever their level in the stack
-  of policies, while using a "union" of accesses when building a
-  ruleset.  The implementation use a FAM to keep the access checks quick
-  and memory efficient (4 bytes per layer per inode).  Update
-  insert_rule() accordingly.
-
-Changes since v23:
-* Always intersect access rights.  Following the filesystem change
-  logic, make ruleset updates more consistent by always intersecting
-  access rights (boolean AND) instead of combining them (boolean OR) for
-  the same layer.  This defensive approach could also help avoid user
-  space to inadvertently allow multiple access rights for the same
-  object (e.g.  write and execute access on a path hierarchy) instead of
-  dealing with such inconsistency.  This can happen when there is no
-  deduplication of objects (e.g. paths and underlying inodes) whereas
-  they get different access rights with landlock_add_rule(2).
-* Add extra checks to make sure that:
-  - there is always an (allocated) object in each used rules;
-  - when updating a ruleset with a new rule (i.e. not merging two
-    rulesets), the ruleset doesn't contain multiple layers.
-* Hide merge parameter from the public landlock_insert_rule() API.  This
-  helps avoid misuse of this function.
-* Replace a remaining hardcoded 1 with SINGLE_DEPTH_NESTING.
-
-Changes since v22:
-* Explicitely use RB_ROOT and SINGLE_DEPTH_NESTING (suggested by Jann
-  Horn).
-* Improve comments and fix spelling (suggested by Jann Horn).
-
-Changes since v21:
-* Add and clean up comments.
-
-Changes since v18:
-* Account rulesets to kmemcg.
-* Remove struct holes.
-* Cosmetic changes.
+Changes since v20:
+* Remove all Reviewed-by except Stephen Smalley:
+  https://lore.kernel.org/lkml/CAEjxPJ7ARJO57MBW66=xsBzMMRb=9uLgqocK5eskHCaiVMx7Vw@mail.gmail.com/
+* Cosmetic fix in the commit message.
 
 Changes since v17:
-* Move include/uapi/linux/landlock.h and _LANDLOCK_ACCESS_FS_* to a
-  following patch.
-
-Changes since v16:
-* Allow enforcement of empty ruleset, which enables deny-all policies.
-
-Changes since v15:
-* Replace layer_levels and layer_depth with a bitfield of layers, cf.
-  filesystem commit.
-* Rename the LANDLOCK_ACCESS_FS_{UNLINK,RMDIR} with
-  LANDLOCK_ACCESS_FS_REMOVE_{FILE,DIR} because it makes sense to use
-  them for the action of renaming a file or a directory, which may lead
-  to the removal of the source file or directory.  Removes the
-  LANDLOCK_ACCESS_FS_{LINK_TO,RENAME_FROM,RENAME_TO} which are now
-  replaced with LANDLOCK_ACCESS_FS_REMOVE_{FILE,DIR} and
-  LANDLOCK_ACCESS_FS_MAKE_* .
-* Update the documentation accordingly and highlight how the access
-  rights are taken into account.
-* Change nb_rules from atomic_t to u32 because it is not use anymore by
-  show_fdinfo().
-* Add safeguard for level variables types.
-* Check max number of rules.
-* Replace struct landlock_access (self and beneath bitfields) with one
-  bitfield.
-* Remove useless variable.
-* Add comments.
-
-Changes since v14:
-* Simplify the object, rule and ruleset management at the expense of a
-  less aggressive memory freeing (contributed by Jann Horn, with
-  additional modifications):
-  - Make a domain immutable (remove the opportunistic cleaning).
-  - Remove RCU pointers.
-  - Merge struct landlock_ref and struct landlock_ruleset_elem into
-    landlock_rule: get ride of rule's RCU.
-  - Adjust union.
-  - Remove the landlock_insert_rule() check about a new object with the
-    same address as a previously disabled one, because it is not
-    possible to disable a rule anymore.
-  Cf. https://lore.kernel.org/lkml/CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com/
-* Fix nested domains by implementing a notion of layer level and depth:
-  - Update landlock_insert_rule() to manage such layers.
-  - Add an inherit_ruleset() helper to properly create a new domain.
-  - Rename landlock_find_access() to landlock_find_rule() and return a
-    full rule reference.
-  - Add a layer_level and a layer_depth fields to struct landlock_rule.
-  - Add a top_layer_level field to struct landlock_ruleset.
-* Remove access rights that may be required for FD-only requests:
-  truncate, getattr, lock, chmod, chown, chgrp, ioctl.  This will be
-  handle in a future evolution of Landlock, but right now the goal is to
-  lighten the code to ease review.
-* Remove LANDLOCK_ACCESS_FS_OPEN and rename
-  LANDLOCK_ACCESS_FS_{READ,WRITE} with a FILE suffix.
-* Rename LANDLOCK_ACCESS_FS_READDIR to match the *_FILE pattern.
-* Remove LANDLOCK_ACCESS_FS_MAP which was useless.
-* Fix memory leak in put_hierarchy() (reported by Jann Horn).
-* Fix user-after-free and rename free_ruleset() (reported by Jann Horn).
-* Replace the for loops with rbtree_postorder_for_each_entry_safe().
-* Constify variables.
-* Only use refcount_inc() through getter helpers.
-* Change Landlock_insert_ruleset_access() to
-  Landlock_insert_ruleset_rule().
-* Rename landlock_put_ruleset_enqueue() to landlock_put_ruleset_deferred().
-* Improve kernel documentation and add a warning about the unhandled
-  access/syscall families.
-* Move ABI check to syscall.c .
-
-Changes since v13:
-* New implementation, inspired by the previous inode eBPF map, but
-  agnostic to the underlying kernel object.
-
-Previous changes:
-https://lore.kernel.org/lkml/20190721213116.23476-7-mic@digikod.net/
+* Rebase the original LSM stacking patch from v5.3 to v5.7: I fixed some
+  diff conflicts caused by code moves and function renames in
+  selinux/include/objsec.h and selinux/hooks.c .  I checked that it
+  builds but I didn't test the changes for SELinux nor SMACK.
+  https://lore.kernel.org/r/20190829232935.7099-2-casey@schaufler-ca.com
 ---
- security/landlock/Makefile  |   2 +-
- security/landlock/limits.h  |  17 ++
- security/landlock/ruleset.c | 462 ++++++++++++++++++++++++++++++++++++
- security/landlock/ruleset.h | 161 +++++++++++++
- 4 files changed, 641 insertions(+), 1 deletion(-)
- create mode 100644 security/landlock/limits.h
- create mode 100644 security/landlock/ruleset.c
- create mode 100644 security/landlock/ruleset.h
+ include/linux/lsm_hooks.h         |  1 +
+ security/security.c               | 46 ++++++++++++++++++++----
+ security/selinux/hooks.c          | 58 ++++++++++++-------------------
+ security/selinux/include/objsec.h |  6 ++++
+ security/selinux/ss/services.c    |  3 +-
+ security/smack/smack.h            |  6 ++++
+ security/smack/smack_lsm.c        | 35 +++++--------------
+ 7 files changed, 85 insertions(+), 70 deletions(-)
 
-diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-index cb6deefbf4c0..d846eba445bb 100644
---- a/security/landlock/Makefile
-+++ b/security/landlock/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index a19adef1f088..970106d98306 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1563,6 +1563,7 @@ struct lsm_blob_sizes {
+ 	int	lbs_cred;
+ 	int	lbs_file;
+ 	int	lbs_inode;
++	int	lbs_superblock;
+ 	int	lbs_ipc;
+ 	int	lbs_msg_msg;
+ 	int	lbs_task;
+diff --git a/security/security.c b/security/security.c
+index 7b09cfbae94f..9f979d4afe6c 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -203,6 +203,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ 	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
+ 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
+ 	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
++	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
+ 	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
+ }
  
--landlock-y := object.o
-+landlock-y := object.o ruleset.o
-diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-new file mode 100644
-index 000000000000..b734f597bb0e
---- /dev/null
-+++ b/security/landlock/limits.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Landlock LSM - Limits for different components
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#ifndef _SECURITY_LANDLOCK_LIMITS_H
-+#define _SECURITY_LANDLOCK_LIMITS_H
-+
-+#include <linux/limits.h>
-+
-+#define LANDLOCK_MAX_NUM_LAYERS		64
-+#define LANDLOCK_MAX_NUM_RULES		U32_MAX
-+
-+#endif /* _SECURITY_LANDLOCK_LIMITS_H */
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-new file mode 100644
-index 000000000000..bf7ff66c1b12
---- /dev/null
-+++ b/security/landlock/ruleset.c
-@@ -0,0 +1,462 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Landlock LSM - Ruleset management
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/bug.h>
-+#include <linux/compiler_types.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/kernel.h>
-+#include <linux/lockdep.h>
-+#include <linux/overflow.h>
-+#include <linux/rbtree.h>
-+#include <linux/refcount.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/workqueue.h>
-+
-+#include "limits.h"
-+#include "object.h"
-+#include "ruleset.h"
-+
-+static struct landlock_ruleset *create_ruleset(void)
-+{
-+	struct landlock_ruleset *new_ruleset;
-+
-+	new_ruleset = kzalloc(sizeof(*new_ruleset), GFP_KERNEL_ACCOUNT);
-+	if (!new_ruleset)
-+		return ERR_PTR(-ENOMEM);
-+	refcount_set(&new_ruleset->usage, 1);
-+	mutex_init(&new_ruleset->lock);
-+	new_ruleset->root = RB_ROOT;
-+	/*
-+	 * hierarchy = NULL
-+	 * num_rules = 0
-+	 * num_layers = 0
-+	 * fs_access_mask = 0
-+	 */
-+	return new_ruleset;
-+}
-+
-+struct landlock_ruleset *landlock_create_ruleset(const u32 fs_access_mask)
-+{
-+	struct landlock_ruleset *new_ruleset;
-+
-+	/* Informs about useless ruleset. */
-+	if (!fs_access_mask)
-+		return ERR_PTR(-ENOMSG);
-+	new_ruleset = create_ruleset();
-+	if (!IS_ERR(new_ruleset))
-+		new_ruleset->fs_access_mask = fs_access_mask;
-+	return new_ruleset;
-+}
-+
-+static void build_check_rule(void)
-+{
-+	const struct landlock_rule rule = {
-+		.num_layers = ~0,
-+	};
-+
-+	BUILD_BUG_ON(rule.num_layers < LANDLOCK_MAX_NUM_LAYERS);
-+}
-+
-+static struct landlock_rule *create_rule(
-+		struct landlock_object *const object,
-+		const struct landlock_layer (*const layers)[],
-+		const u32 num_layers,
-+		const struct landlock_layer *const new_layer)
-+{
-+	struct landlock_rule *new_rule;
-+	u32 new_num_layers = num_layers;
-+
-+	build_check_rule();
-+	if (new_layer) {
-+		/* Should already be checked by merge_ruleset(). */
-+		if (WARN_ON_ONCE(num_layers == LANDLOCK_MAX_NUM_LAYERS))
-+			return ERR_PTR(-E2BIG);
-+		new_num_layers++;
-+	}
-+	new_rule = kzalloc(struct_size(new_rule, layers, new_num_layers),
-+			GFP_KERNEL_ACCOUNT);
-+	if (!new_rule)
-+		return ERR_PTR(-ENOMEM);
-+	RB_CLEAR_NODE(&new_rule->node);
-+	landlock_get_object(object);
-+	new_rule->object = object;
-+	new_rule->num_layers = new_num_layers;
-+	if (new_layer)
-+		/* Push a copy of @new_layer on the layer stack. */
-+		new_rule->layers[0] = *new_layer;
-+	/* Copies the original layer stack. */
-+	memcpy(&new_rule->layers[new_layer ? 1 : 0], layers,
-+			flex_array_size(new_rule, layers, num_layers));
-+	return new_rule;
-+}
-+
-+static void put_rule(struct landlock_rule *const rule)
-+{
-+	might_sleep();
-+	if (!rule)
-+		return;
-+	landlock_put_object(rule->object);
-+	kfree(rule);
-+}
-+
-+static void build_check_ruleset(void)
-+{
-+	const struct landlock_ruleset ruleset = {
-+		.num_rules = ~0,
-+		.num_layers = ~0,
-+	};
-+
-+	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
-+	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
-+}
-+
+@@ -333,12 +334,13 @@ static void __init ordered_lsm_init(void)
+ 	for (lsm = ordered_lsms; *lsm; lsm++)
+ 		prepare_lsm(*lsm);
+ 
+-	init_debug("cred blob size     = %d\n", blob_sizes.lbs_cred);
+-	init_debug("file blob size     = %d\n", blob_sizes.lbs_file);
+-	init_debug("inode blob size    = %d\n", blob_sizes.lbs_inode);
+-	init_debug("ipc blob size      = %d\n", blob_sizes.lbs_ipc);
+-	init_debug("msg_msg blob size  = %d\n", blob_sizes.lbs_msg_msg);
+-	init_debug("task blob size     = %d\n", blob_sizes.lbs_task);
++	init_debug("cred blob size       = %d\n", blob_sizes.lbs_cred);
++	init_debug("file blob size       = %d\n", blob_sizes.lbs_file);
++	init_debug("inode blob size      = %d\n", blob_sizes.lbs_inode);
++	init_debug("ipc blob size        = %d\n", blob_sizes.lbs_ipc);
++	init_debug("msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
++	init_debug("superblock blob size = %d\n", blob_sizes.lbs_superblock);
++	init_debug("task blob size       = %d\n", blob_sizes.lbs_task);
+ 
+ 	/*
+ 	 * Create any kmem_caches needed for blobs
+@@ -670,6 +672,27 @@ static void __init lsm_early_task(struct task_struct *task)
+ 		panic("%s: Early task alloc failed.\n", __func__);
+ }
+ 
 +/**
-+ * insert_rule - Create and insert a rule in a ruleset
++ * lsm_superblock_alloc - allocate a composite superblock blob
++ * @sb: the superblock that needs a blob
 + *
-+ * @ruleset: The ruleset to be updated.
-+ * @object: The object to build the new rule with.  The underlying kernel
-+ *          object must be held by the caller.
-+ * @layers: One or multiple layers to be copied into the new rule.
-+ * @num_layers: The number of @layers entries.
-+
-+ * When user space requests to add a new rule to a ruleset, @layers only
-+ * contains one entry and this entry is not assigned to any level.  In this
-+ * case, the new rule will extend @ruleset, similarly to a boolean OR between
-+ * access rights.
++ * Allocate the superblock blob for all the modules
 + *
-+ * When merging a ruleset in a domain, or copying a domain, @layers will be
-+ * added to @ruleset as new constraints, similarly to a boolean AND between
-+ * access rights.
++ * Returns 0, or -ENOMEM if memory can't be allocated.
 + */
-+static int insert_rule(struct landlock_ruleset *const ruleset,
-+		struct landlock_object *const object,
-+		const struct landlock_layer (*const layers)[],
-+		size_t num_layers)
++static int lsm_superblock_alloc(struct super_block *sb)
 +{
-+	struct rb_node **walker_node;
-+	struct rb_node *parent_node = NULL;
-+	struct landlock_rule *new_rule;
-+
-+	might_sleep();
-+	lockdep_assert_held(&ruleset->lock);
-+	if (WARN_ON_ONCE(!object || !layers))
-+		return -ENOENT;
-+	walker_node = &(ruleset->root.rb_node);
-+	while (*walker_node) {
-+		struct landlock_rule *const this = rb_entry(*walker_node,
-+				struct landlock_rule, node);
-+
-+		if (this->object != object) {
-+			parent_node = *walker_node;
-+			if (this->object < object)
-+				walker_node = &((*walker_node)->rb_right);
-+			else
-+				walker_node = &((*walker_node)->rb_left);
-+			continue;
-+		}
-+
-+		/* Only a single-level layer should match an existing rule. */
-+		if (WARN_ON_ONCE(num_layers != 1))
-+			return -EINVAL;
-+
-+		/* If there is a matching rule, updates it. */
-+		if ((*layers)[0].level == 0) {
-+			/*
-+			 * Extends access rights when the request comes from
-+			 * landlock_add_rule(2), i.e. @ruleset is not a domain.
-+			 */
-+			if (WARN_ON_ONCE(this->num_layers != 1))
-+				return -EINVAL;
-+			if (WARN_ON_ONCE(this->layers[0].level != 0))
-+				return -EINVAL;
-+			this->layers[0].access |= (*layers)[0].access;
-+			return 0;
-+		}
-+
-+		if (WARN_ON_ONCE(this->layers[0].level == 0))
-+			return -EINVAL;
-+
-+		/*
-+		 * Intersects access rights when it is a merge between a
-+		 * ruleset and a domain.
-+		 */
-+		new_rule = create_rule(object, &this->layers, this->num_layers,
-+				&(*layers)[0]);
-+		if (IS_ERR(new_rule))
-+			return PTR_ERR(new_rule);
-+		rb_replace_node(&this->node, &new_rule->node, &ruleset->root);
-+		put_rule(this);
++	if (blob_sizes.lbs_superblock == 0) {
++		sb->s_security = NULL;
 +		return 0;
 +	}
 +
-+	/* There is no match for @object. */
-+	build_check_ruleset();
-+	if (ruleset->num_rules == LANDLOCK_MAX_NUM_RULES)
-+		return -E2BIG;
-+	new_rule = create_rule(object, layers, num_layers, NULL);
-+	if (IS_ERR(new_rule))
-+		return PTR_ERR(new_rule);
-+	rb_link_node(&new_rule->node, parent_node, walker_node);
-+	rb_insert_color(&new_rule->node, &ruleset->root);
-+	ruleset->num_rules++;
++	sb->s_security = kzalloc(blob_sizes.lbs_superblock, GFP_KERNEL);
++	if (sb->s_security == NULL)
++		return -ENOMEM;
 +	return 0;
 +}
 +
-+static void build_check_layer(void)
-+{
-+	const struct landlock_layer layer = {
-+		.level = ~0,
-+	};
+ /*
+  * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+  * can be accessed with:
+@@ -867,12 +890,21 @@ int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *
+ 
+ int security_sb_alloc(struct super_block *sb)
+ {
+-	return call_int_hook(sb_alloc_security, 0, sb);
++	int rc = lsm_superblock_alloc(sb);
 +
-+	BUILD_BUG_ON(layer.level < LANDLOCK_MAX_NUM_LAYERS);
++	if (unlikely(rc))
++		return rc;
++	rc = call_int_hook(sb_alloc_security, 0, sb);
++	if (unlikely(rc))
++		security_sb_free(sb);
++	return rc;
+ }
+ 
+ void security_sb_free(struct super_block *sb)
+ {
+ 	call_void_hook(sb_free_security, sb);
++	kfree(sb->s_security);
++	sb->s_security = NULL;
+ }
+ 
+ void security_free_mnt_opts(void **mnt_opts)
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 644b17ec9e63..ecf0ca8c3108 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -322,7 +322,7 @@ static void inode_free_security(struct inode *inode)
+ 
+ 	if (!isec)
+ 		return;
+-	sbsec = inode->i_sb->s_security;
++	sbsec = selinux_superblock(inode->i_sb);
+ 	/*
+ 	 * As not all inode security structures are in a list, we check for
+ 	 * empty list outside of the lock to make sure that we won't waste
+@@ -340,13 +340,6 @@ static void inode_free_security(struct inode *inode)
+ 	}
+ }
+ 
+-static void superblock_free_security(struct super_block *sb)
+-{
+-	struct superblock_security_struct *sbsec = sb->s_security;
+-	sb->s_security = NULL;
+-	kfree(sbsec);
+-}
+-
+ struct selinux_mnt_opts {
+ 	const char *fscontext, *context, *rootcontext, *defcontext;
+ };
+@@ -458,7 +451,7 @@ static int selinux_is_genfs_special_handling(struct super_block *sb)
+ 
+ static int selinux_is_sblabel_mnt(struct super_block *sb)
+ {
+-	struct superblock_security_struct *sbsec = sb->s_security;
++	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 
+ 	/*
+ 	 * IMPORTANT: Double-check logic in this function when adding a new
+@@ -486,7 +479,7 @@ static int selinux_is_sblabel_mnt(struct super_block *sb)
+ 
+ static int sb_finish_set_opts(struct super_block *sb)
+ {
+-	struct superblock_security_struct *sbsec = sb->s_security;
++	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 	struct dentry *root = sb->s_root;
+ 	struct inode *root_inode = d_backing_inode(root);
+ 	int rc = 0;
+@@ -599,7 +592,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 				unsigned long *set_kern_flags)
+ {
+ 	const struct cred *cred = current_cred();
+-	struct superblock_security_struct *sbsec = sb->s_security;
++	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 	struct dentry *root = sb->s_root;
+ 	struct selinux_mnt_opts *opts = mnt_opts;
+ 	struct inode_security_struct *root_isec;
+@@ -836,8 +829,8 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ static int selinux_cmp_sb_context(const struct super_block *oldsb,
+ 				    const struct super_block *newsb)
+ {
+-	struct superblock_security_struct *old = oldsb->s_security;
+-	struct superblock_security_struct *new = newsb->s_security;
++	struct superblock_security_struct *old = selinux_superblock(oldsb);
++	struct superblock_security_struct *new = selinux_superblock(newsb);
+ 	char oldflags = old->flags & SE_MNTMASK;
+ 	char newflags = new->flags & SE_MNTMASK;
+ 
+@@ -869,8 +862,9 @@ static int selinux_sb_clone_mnt_opts(const struct super_block *oldsb,
+ 					unsigned long *set_kern_flags)
+ {
+ 	int rc = 0;
+-	const struct superblock_security_struct *oldsbsec = oldsb->s_security;
+-	struct superblock_security_struct *newsbsec = newsb->s_security;
++	const struct superblock_security_struct *oldsbsec =
++						selinux_superblock(oldsb);
++	struct superblock_security_struct *newsbsec = selinux_superblock(newsb);
+ 
+ 	int set_fscontext =	(oldsbsec->flags & FSCONTEXT_MNT);
+ 	int set_context =	(oldsbsec->flags & CONTEXT_MNT);
+@@ -1049,7 +1043,7 @@ static int show_sid(struct seq_file *m, u32 sid)
+ 
+ static int selinux_sb_show_options(struct seq_file *m, struct super_block *sb)
+ {
+-	struct superblock_security_struct *sbsec = sb->s_security;
++	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 	int rc;
+ 
+ 	if (!(sbsec->flags & SE_SBINITIALIZED))
+@@ -1399,7 +1393,7 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+ 	if (isec->sclass == SECCLASS_FILE)
+ 		isec->sclass = inode_mode_to_security_class(inode->i_mode);
+ 
+-	sbsec = inode->i_sb->s_security;
++	sbsec = selinux_superblock(inode->i_sb);
+ 	if (!(sbsec->flags & SE_SBINITIALIZED)) {
+ 		/* Defer initialization until selinux_complete_init,
+ 		   after the initial policy is loaded and the security
+@@ -1750,7 +1744,8 @@ selinux_determine_inode_label(const struct task_security_struct *tsec,
+ 				 const struct qstr *name, u16 tclass,
+ 				 u32 *_new_isid)
+ {
+-	const struct superblock_security_struct *sbsec = dir->i_sb->s_security;
++	const struct superblock_security_struct *sbsec =
++						selinux_superblock(dir->i_sb);
+ 
+ 	if ((sbsec->flags & SE_SBINITIALIZED) &&
+ 	    (sbsec->behavior == SECURITY_FS_USE_MNTPOINT)) {
+@@ -1781,7 +1776,7 @@ static int may_create(struct inode *dir,
+ 	int rc;
+ 
+ 	dsec = inode_security(dir);
+-	sbsec = dir->i_sb->s_security;
++	sbsec = selinux_superblock(dir->i_sb);
+ 
+ 	sid = tsec->sid;
+ 
+@@ -1930,7 +1925,7 @@ static int superblock_has_perm(const struct cred *cred,
+ 	struct superblock_security_struct *sbsec;
+ 	u32 sid = cred_sid(cred);
+ 
+-	sbsec = sb->s_security;
++	sbsec = selinux_superblock(sb);
+ 	return avc_has_perm(&selinux_state,
+ 			    sid, sbsec->sid, SECCLASS_FILESYSTEM, perms, ad);
+ }
+@@ -2559,11 +2554,7 @@ static void selinux_bprm_committed_creds(struct linux_binprm *bprm)
+ 
+ static int selinux_sb_alloc_security(struct super_block *sb)
+ {
+-	struct superblock_security_struct *sbsec;
+-
+-	sbsec = kzalloc(sizeof(struct superblock_security_struct), GFP_KERNEL);
+-	if (!sbsec)
+-		return -ENOMEM;
++	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 
+ 	mutex_init(&sbsec->lock);
+ 	INIT_LIST_HEAD(&sbsec->isec_head);
+@@ -2571,16 +2562,10 @@ static int selinux_sb_alloc_security(struct super_block *sb)
+ 	sbsec->sid = SECINITSID_UNLABELED;
+ 	sbsec->def_sid = SECINITSID_FILE;
+ 	sbsec->mntpoint_sid = SECINITSID_UNLABELED;
+-	sb->s_security = sbsec;
+ 
+ 	return 0;
+ }
+ 
+-static void selinux_sb_free_security(struct super_block *sb)
+-{
+-	superblock_free_security(sb);
+-}
+-
+ static inline int opt_len(const char *s)
+ {
+ 	bool open_quote = false;
+@@ -2659,7 +2644,7 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ static int selinux_sb_remount(struct super_block *sb, void *mnt_opts)
+ {
+ 	struct selinux_mnt_opts *opts = mnt_opts;
+-	struct superblock_security_struct *sbsec = sb->s_security;
++	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 	u32 sid;
+ 	int rc;
+ 
+@@ -2897,7 +2882,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 	int rc;
+ 	char *context;
+ 
+-	sbsec = dir->i_sb->s_security;
++	sbsec = selinux_superblock(dir->i_sb);
+ 
+ 	newsid = tsec->create_sid;
+ 
+@@ -3142,7 +3127,7 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
+ 	if (!selinux_initialized(&selinux_state))
+ 		return (inode_owner_or_capable(inode) ? 0 : -EPERM);
+ 
+-	sbsec = inode->i_sb->s_security;
++	sbsec = selinux_superblock(inode->i_sb);
+ 	if (!(sbsec->flags & SBLABEL_MNT))
+ 		return -EOPNOTSUPP;
+ 
+@@ -3384,13 +3369,14 @@ static int selinux_inode_setsecurity(struct inode *inode, const char *name,
+ 				     const void *value, size_t size, int flags)
+ {
+ 	struct inode_security_struct *isec = inode_security_novalidate(inode);
+-	struct superblock_security_struct *sbsec = inode->i_sb->s_security;
++	struct superblock_security_struct *sbsec;
+ 	u32 newsid;
+ 	int rc;
+ 
+ 	if (strcmp(name, XATTR_SELINUX_SUFFIX))
+ 		return -EOPNOTSUPP;
+ 
++	sbsec = selinux_superblock(inode->i_sb);
+ 	if (!(sbsec->flags & SBLABEL_MNT))
+ 		return -EOPNOTSUPP;
+ 
+@@ -6882,6 +6868,7 @@ struct lsm_blob_sizes selinux_blob_sizes __lsm_ro_after_init = {
+ 	.lbs_inode = sizeof(struct inode_security_struct),
+ 	.lbs_ipc = sizeof(struct ipc_security_struct),
+ 	.lbs_msg_msg = sizeof(struct msg_security_struct),
++	.lbs_superblock = sizeof(struct superblock_security_struct),
+ };
+ 
+ #ifdef CONFIG_PERF_EVENTS
+@@ -6982,7 +6969,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_committing_creds, selinux_bprm_committing_creds),
+ 	LSM_HOOK_INIT(bprm_committed_creds, selinux_bprm_committed_creds),
+ 
+-	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
+ 	LSM_HOOK_INIT(sb_free_mnt_opts, selinux_free_mnt_opts),
+ 	LSM_HOOK_INIT(sb_remount, selinux_sb_remount),
+ 	LSM_HOOK_INIT(sb_kern_mount, selinux_sb_kern_mount),
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index ca4d7ab6a835..2953132408bf 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -188,4 +188,10 @@ static inline u32 current_sid(void)
+ 	return tsec->sid;
+ }
+ 
++static inline struct superblock_security_struct *selinux_superblock(
++					const struct super_block *superblock)
++{
++	return superblock->s_security + selinux_blob_sizes.lbs_superblock;
 +}
 +
-+int landlock_insert_rule(struct landlock_ruleset *const ruleset,
-+		struct landlock_object *const object, const u32 access)
+ #endif /* _SELINUX_OBJSEC_H_ */
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 597b79703584..74e3905dd9c5 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -47,6 +47,7 @@
+ #include <linux/sched.h>
+ #include <linux/audit.h>
+ #include <linux/vmalloc.h>
++#include <linux/lsm_hooks.h>
+ #include <net/netlabel.h>
+ 
+ #include "flask.h"
+@@ -2873,7 +2874,7 @@ int security_fs_use(struct selinux_state *state, struct super_block *sb)
+ 	struct sidtab *sidtab;
+ 	int rc = 0;
+ 	struct ocontext *c;
+-	struct superblock_security_struct *sbsec = sb->s_security;
++	struct superblock_security_struct *sbsec = selinux_superblock(sb);
+ 	const char *fstype = sb->s_type->name;
+ 
+ 	if (!selinux_initialized(state)) {
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index a9768b12716b..7077b18c79ec 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -357,6 +357,12 @@ static inline struct smack_known **smack_ipc(const struct kern_ipc_perm *ipc)
+ 	return ipc->security + smack_blob_sizes.lbs_ipc;
+ }
+ 
++static inline struct superblock_smack *smack_superblock(
++					const struct super_block *superblock)
 +{
-+	struct landlock_layer layers[] = {{
-+		.access = access,
-+		/* When @level is zero, insert_rule() extends @ruleset. */
-+		.level = 0,
-+	}};
-+
-+	build_check_layer();
-+	return insert_rule(ruleset, object, &layers, ARRAY_SIZE(layers));
++	return superblock->s_security + smack_blob_sizes.lbs_superblock;
 +}
 +
-+static inline void get_hierarchy(struct landlock_hierarchy *const hierarchy)
-+{
-+	if (hierarchy)
-+		refcount_inc(&hierarchy->usage);
-+}
-+
-+static void put_hierarchy(struct landlock_hierarchy *hierarchy)
-+{
-+	while (hierarchy && refcount_dec_and_test(&hierarchy->usage)) {
-+		const struct landlock_hierarchy *const freeme = hierarchy;
-+
-+		hierarchy = hierarchy->parent;
-+		kfree(freeme);
-+	}
-+}
-+
-+static int merge_ruleset(struct landlock_ruleset *const dst,
-+		struct landlock_ruleset *const src)
-+{
-+	struct landlock_rule *walker_rule, *next_rule;
-+	int err = 0;
-+
-+	might_sleep();
-+	if (!src)
-+		return 0;
-+	/* Only merge into a domain. */
-+	if (WARN_ON_ONCE(!dst || !dst->hierarchy))
-+		return -EINVAL;
-+
-+	/*
-+	 * The ruleset being modified (@dst) is locked first, then the ruleset
-+	 * being copied (@src).
-+	 */
-+	mutex_lock(&dst->lock);
-+	mutex_lock_nested(&src->lock, SINGLE_DEPTH_NESTING);
-+	/*
-+	 * Makes a new layer, but only increments the number of layers after
-+	 * the rules are inserted.  The layer 0 is invalid, and the last layer
-+	 * is then LANDLOCK_MAX_NUM_LAYERS.
-+	 */
-+	if (dst->num_layers == LANDLOCK_MAX_NUM_LAYERS) {
-+		err = -E2BIG;
-+		goto out_unlock;
-+	}
-+	dst->fs_access_mask |= src->fs_access_mask;
-+
-+	/* Merges the @src tree. */
-+	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
-+			&src->root, node) {
-+		struct landlock_layer layers[] = {{
-+			.level = dst->num_layers + 1,
-+		}};
-+
-+		if (WARN_ON_ONCE(walker_rule->num_layers != 1)) {
-+			err = -EINVAL;
-+			goto out_unlock;
-+		}
-+		if (WARN_ON_ONCE(walker_rule->layers[0].level != 0)) {
-+			err = -EINVAL;
-+			goto out_unlock;
-+		}
-+		layers[0].access = walker_rule->layers[0].access;
-+		err = insert_rule(dst, walker_rule->object, &layers,
-+				ARRAY_SIZE(layers));
-+		if (err)
-+			goto out_unlock;
-+	}
-+	dst->num_layers++;
-+
-+out_unlock:
-+	mutex_unlock(&src->lock);
-+	mutex_unlock(&dst->lock);
-+	return err;
-+}
-+
-+static struct landlock_ruleset *inherit_ruleset(
-+		struct landlock_ruleset *const parent)
-+{
-+	struct landlock_rule *walker_rule, *next_rule;
-+	struct landlock_ruleset *new_ruleset;
-+	int err = 0;
-+
-+	might_sleep();
-+	new_ruleset = create_ruleset();
-+	if (IS_ERR(new_ruleset))
-+		return new_ruleset;
-+
-+	new_ruleset->hierarchy = kzalloc(sizeof(*new_ruleset->hierarchy),
-+			GFP_KERNEL_ACCOUNT);
-+	if (!new_ruleset->hierarchy) {
-+		err = -ENOMEM;
-+		goto out_put_ruleset;
-+	}
-+	refcount_set(&new_ruleset->hierarchy->usage, 1);
-+	if (!parent)
-+		return new_ruleset;
-+
-+	mutex_lock(&new_ruleset->lock);
-+	mutex_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
-+
-+	/* Copies the @parent tree. */
-+	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
-+			&parent->root, node) {
-+		err = insert_rule(new_ruleset, walker_rule->object,
-+				&walker_rule->layers, walker_rule->num_layers);
-+		if (err)
-+			goto out_unlock;
-+	}
-+	new_ruleset->num_layers = parent->num_layers;
-+	new_ruleset->fs_access_mask = parent->fs_access_mask;
-+	if (WARN_ON_ONCE(!parent->hierarchy)) {
-+		err = -EINVAL;
-+		goto out_unlock;
-+	}
-+	get_hierarchy(parent->hierarchy);
-+	new_ruleset->hierarchy->parent = parent->hierarchy;
-+
-+	mutex_unlock(&parent->lock);
-+	mutex_unlock(&new_ruleset->lock);
-+	return new_ruleset;
-+
-+out_unlock:
-+	mutex_unlock(&parent->lock);
-+	mutex_unlock(&new_ruleset->lock);
-+
-+out_put_ruleset:
-+	landlock_put_ruleset(new_ruleset);
-+	return ERR_PTR(err);
-+}
-+
-+static void free_ruleset(struct landlock_ruleset *const ruleset)
-+{
-+	struct landlock_rule *freeme, *next;
-+
-+	might_sleep();
-+	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root,
-+			node)
-+		put_rule(freeme);
-+	put_hierarchy(ruleset->hierarchy);
-+	kfree(ruleset);
-+}
-+
-+void landlock_put_ruleset(struct landlock_ruleset *const ruleset)
-+{
-+	might_sleep();
-+	if (ruleset && refcount_dec_and_test(&ruleset->usage))
-+		free_ruleset(ruleset);
-+}
-+
-+static void free_ruleset_work(struct work_struct *const work)
-+{
-+	struct landlock_ruleset *ruleset;
-+
-+	ruleset = container_of(work, struct landlock_ruleset, work_free);
-+	free_ruleset(ruleset);
-+}
-+
-+void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset)
-+{
-+	if (ruleset && refcount_dec_and_test(&ruleset->usage)) {
-+		INIT_WORK(&ruleset->work_free, free_ruleset_work);
-+		schedule_work(&ruleset->work_free);
-+	}
-+}
-+
-+/**
-+ * landlock_merge_ruleset - Merge a ruleset with a domain
-+ *
-+ * @parent: Parent domain.
-+ * @ruleset: New ruleset to be merged.
-+ *
-+ * Returns the intersection of @parent and @ruleset, or returns @parent if
-+ * @ruleset is empty, or returns a duplicate of @ruleset if @parent is empty.
-+ */
-+struct landlock_ruleset *landlock_merge_ruleset(
-+		struct landlock_ruleset *const parent,
-+		struct landlock_ruleset *const ruleset)
-+{
-+	struct landlock_ruleset *new_dom;
-+	int err;
-+
-+	might_sleep();
-+	/*
-+	 * Merging duplicates a ruleset, so a new ruleset cannot be
-+	 * the same as the parent, but they can have similar content.
-+	 */
-+	if (WARN_ON_ONCE(!ruleset || parent == ruleset)) {
-+		landlock_get_ruleset(parent);
-+		return parent;
-+	}
-+
-+	new_dom = inherit_ruleset(parent);
-+	if (IS_ERR(new_dom))
-+		return new_dom;
-+
-+	err = merge_ruleset(new_dom, ruleset);
-+	if (err) {
-+		landlock_put_ruleset(new_dom);
-+		return ERR_PTR(err);
-+	}
-+	return new_dom;
-+}
-+
-+/*
-+ * The returned access has the same lifetime as @ruleset.
-+ */
-+const struct landlock_rule *landlock_find_rule(
-+		const struct landlock_ruleset *const ruleset,
-+		const struct landlock_object *const object)
-+{
-+	const struct rb_node *node;
-+
-+	if (!object)
-+		return NULL;
-+	node = ruleset->root.rb_node;
-+	while (node) {
-+		struct landlock_rule *this = rb_entry(node,
-+				struct landlock_rule, node);
-+
-+		if (this->object == object)
-+			return this;
-+		if (this->object < object)
-+			node = node->rb_right;
-+		else
-+			node = node->rb_left;
-+	}
-+	return NULL;
-+}
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-new file mode 100644
-index 000000000000..df009af9e012
---- /dev/null
-+++ b/security/landlock/ruleset.h
-@@ -0,0 +1,161 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Landlock LSM - Ruleset management
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#ifndef _SECURITY_LANDLOCK_RULESET_H
-+#define _SECURITY_LANDLOCK_RULESET_H
-+
-+#include <linux/mutex.h>
-+#include <linux/rbtree.h>
-+#include <linux/refcount.h>
-+#include <linux/workqueue.h>
-+
-+#include "object.h"
-+
-+/**
-+ * struct landlock_layer - Access rights for a given layer
-+ */
-+struct landlock_layer {
-+	/**
-+	 * @level: Position of this layer in the layer stack.
-+	 */
-+	u16 level;
-+	/**
-+	 * @access: Bitfield of allowed actions on the kernel object.  They are
-+	 * relative to the object type (e.g. %LANDLOCK_ACTION_FS_READ).
-+	 */
-+	u16 access;
-+};
-+
-+/**
-+ * struct landlock_rule - Access rights tied to an object
-+ */
-+struct landlock_rule {
-+	/**
-+	 * @node: Node in the ruleset's red-black tree.
-+	 */
-+	struct rb_node node;
-+	/**
-+	 * @object: Pointer to identify a kernel object (e.g. an inode).  This
-+	 * is used as a key for this ruleset element.  This pointer is set once
-+	 * and never modified.  It always points to an allocated object because
-+	 * each rule increments the refcount of its object.
-+	 */
-+	struct landlock_object *object;
-+	/**
-+	 * @num_layers: Number of entries in @layers.
-+	 */
-+	u32 num_layers;
-+	/**
-+	 * @layers: Stack of layers, from the newest to the latest, implemented
-+	 * as a flexible array member.
-+	 */
-+	struct landlock_layer layers[];
-+};
-+
-+/**
-+ * struct landlock_hierarchy - Node in a ruleset hierarchy
-+ */
-+struct landlock_hierarchy {
-+	/**
-+	 * @parent: Pointer to the parent node, or NULL if it is a root
-+	 * Landlock domain.
-+	 */
-+	struct landlock_hierarchy *parent;
-+	/**
-+	 * @usage: Number of potential children domains plus their parent
-+	 * domain.
-+	 */
-+	refcount_t usage;
-+};
-+
-+/**
-+ * struct landlock_ruleset - Landlock ruleset
-+ *
-+ * This data structure must contain unique entries, be updatable, and quick to
-+ * match an object.
-+ */
-+struct landlock_ruleset {
-+	/**
-+	 * @root: Root of a red-black tree containing &struct landlock_rule
-+	 * nodes.  Once a ruleset is tied to a process (i.e. as a domain), this
-+	 * tree is immutable until @usage reaches zero.
-+	 */
-+	struct rb_root root;
-+	/**
-+	 * @hierarchy: Enables hierarchy identification even when a parent
-+	 * domain vanishes.  This is needed for the ptrace protection.
-+	 */
-+	struct landlock_hierarchy *hierarchy;
-+	union {
-+		/**
-+		 * @work_free: Enables to free a ruleset within a lockless
-+		 * section.  This is only used by
-+		 * landlock_put_ruleset_deferred() when @usage reaches zero.
-+		 * The fields @lock, @usage, @num_layers, @num_rules and
-+		 * @fs_access_mask are then unused.
-+		 */
-+		struct work_struct work_free;
-+		struct {
-+			/**
-+			 * @lock: Guards against concurrent modifications of
-+			 * @root, if @usage is greater than zero.
-+			 */
-+			struct mutex lock;
-+			/**
-+			 * @usage: Number of processes (i.e. domains) or file
-+			 * descriptors referencing this ruleset.
-+			 */
-+			refcount_t usage;
-+			/**
-+			 * @num_rules: Number of non-overlapping (i.e. not for
-+			 * the same object) rules in this ruleset.
-+			 */
-+			u32 num_rules;
-+			/**
-+			 * @num_layers: Number of layers that are used in this
-+			 * ruleset.  This enables to check that all the layers
-+			 * allow an access request.  A value of 0 identifies a
-+			 * non-merged ruleset (i.e. not a domain).
-+			 */
-+			u32 num_layers;
-+			/**
-+			 * @fs_access_mask: Contains the subset of filesystem
-+			 * actions that are restricted by a ruleset.  This is
-+			 * used when merging rulesets and for user space
-+			 * backward compatibility (i.e. future-proof).  Set
-+			 * once and never changed for the lifetime of the
-+			 * ruleset.
-+			 */
-+			u32 fs_access_mask;
-+		};
-+	};
-+};
-+
-+struct landlock_ruleset *landlock_create_ruleset(const u32 fs_access_mask);
-+
-+void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
-+void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
-+
-+int landlock_insert_rule(struct landlock_ruleset *const ruleset,
-+		struct landlock_object *const object, const u32 access);
-+
-+struct landlock_ruleset *landlock_merge_ruleset(
-+		struct landlock_ruleset *const parent,
-+		struct landlock_ruleset *const ruleset);
-+
-+const struct landlock_rule *landlock_find_rule(
-+		const struct landlock_ruleset *const ruleset,
-+		const struct landlock_object *const object);
-+
-+static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
-+{
-+	if (ruleset)
-+		refcount_inc(&ruleset->usage);
-+}
-+
-+#endif /* _SECURITY_LANDLOCK_RULESET_H */
+ /*
+  * Is the directory transmuting?
+  */
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index f69c3dd9a0c6..767084dc2c29 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -535,12 +535,7 @@ static int smack_syslog(int typefrom_file)
+  */
+ static int smack_sb_alloc_security(struct super_block *sb)
+ {
+-	struct superblock_smack *sbsp;
+-
+-	sbsp = kzalloc(sizeof(struct superblock_smack), GFP_KERNEL);
+-
+-	if (sbsp == NULL)
+-		return -ENOMEM;
++	struct superblock_smack *sbsp = smack_superblock(sb);
+ 
+ 	sbsp->smk_root = &smack_known_floor;
+ 	sbsp->smk_default = &smack_known_floor;
+@@ -549,22 +544,10 @@ static int smack_sb_alloc_security(struct super_block *sb)
+ 	/*
+ 	 * SMK_SB_INITIALIZED will be zero from kzalloc.
+ 	 */
+-	sb->s_security = sbsp;
+ 
+ 	return 0;
+ }
+ 
+-/**
+- * smack_sb_free_security - free a superblock blob
+- * @sb: the superblock getting the blob
+- *
+- */
+-static void smack_sb_free_security(struct super_block *sb)
+-{
+-	kfree(sb->s_security);
+-	sb->s_security = NULL;
+-}
+-
+ struct smack_mnt_opts {
+ 	const char *fsdefault, *fsfloor, *fshat, *fsroot, *fstransmute;
+ };
+@@ -772,7 +755,7 @@ static int smack_set_mnt_opts(struct super_block *sb,
+ {
+ 	struct dentry *root = sb->s_root;
+ 	struct inode *inode = d_backing_inode(root);
+-	struct superblock_smack *sp = sb->s_security;
++	struct superblock_smack *sp = smack_superblock(sb);
+ 	struct inode_smack *isp;
+ 	struct smack_known *skp;
+ 	struct smack_mnt_opts *opts = mnt_opts;
+@@ -871,7 +854,7 @@ static int smack_set_mnt_opts(struct super_block *sb,
+  */
+ static int smack_sb_statfs(struct dentry *dentry)
+ {
+-	struct superblock_smack *sbp = dentry->d_sb->s_security;
++	struct superblock_smack *sbp = smack_superblock(dentry->d_sb);
+ 	int rc;
+ 	struct smk_audit_info ad;
+ 
+@@ -905,7 +888,7 @@ static int smack_bprm_creds_for_exec(struct linux_binprm *bprm)
+ 	if (isp->smk_task == NULL || isp->smk_task == bsp->smk_task)
+ 		return 0;
+ 
+-	sbsp = inode->i_sb->s_security;
++	sbsp = smack_superblock(inode->i_sb);
+ 	if ((sbsp->smk_flags & SMK_SB_UNTRUSTED) &&
+ 	    isp->smk_task != sbsp->smk_root)
+ 		return 0;
+@@ -1157,7 +1140,7 @@ static int smack_inode_rename(struct inode *old_inode,
+  */
+ static int smack_inode_permission(struct inode *inode, int mask)
+ {
+-	struct superblock_smack *sbsp = inode->i_sb->s_security;
++	struct superblock_smack *sbsp = smack_superblock(inode->i_sb);
+ 	struct smk_audit_info ad;
+ 	int no_block = mask & MAY_NOT_BLOCK;
+ 	int rc;
+@@ -1398,7 +1381,7 @@ static int smack_inode_removexattr(struct dentry *dentry, const char *name)
+ 	 */
+ 	if (strcmp(name, XATTR_NAME_SMACK) == 0) {
+ 		struct super_block *sbp = dentry->d_sb;
+-		struct superblock_smack *sbsp = sbp->s_security;
++		struct superblock_smack *sbsp = smack_superblock(sbp);
+ 
+ 		isp->smk_inode = sbsp->smk_default;
+ 	} else if (strcmp(name, XATTR_NAME_SMACKEXEC) == 0)
+@@ -1668,7 +1651,7 @@ static int smack_mmap_file(struct file *file,
+ 	isp = smack_inode(file_inode(file));
+ 	if (isp->smk_mmap == NULL)
+ 		return 0;
+-	sbsp = file_inode(file)->i_sb->s_security;
++	sbsp = smack_superblock(file_inode(file)->i_sb);
+ 	if (sbsp->smk_flags & SMK_SB_UNTRUSTED &&
+ 	    isp->smk_mmap != sbsp->smk_root)
+ 		return -EACCES;
+@@ -3283,7 +3266,7 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+ 		return;
+ 
+ 	sbp = inode->i_sb;
+-	sbsp = sbp->s_security;
++	sbsp = smack_superblock(sbp);
+ 	/*
+ 	 * We're going to use the superblock default label
+ 	 * if there's no label on the file.
+@@ -4696,6 +4679,7 @@ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
+ 	.lbs_inode = sizeof(struct inode_smack),
+ 	.lbs_ipc = sizeof(struct smack_known *),
+ 	.lbs_msg_msg = sizeof(struct smack_known *),
++	.lbs_superblock = sizeof(struct superblock_smack),
+ };
+ 
+ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+@@ -4707,7 +4691,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
+ 
+ 	LSM_HOOK_INIT(sb_alloc_security, smack_sb_alloc_security),
+-	LSM_HOOK_INIT(sb_free_security, smack_sb_free_security),
+ 	LSM_HOOK_INIT(sb_free_mnt_opts, smack_free_mnt_opts),
+ 	LSM_HOOK_INIT(sb_eat_lsm_opts, smack_sb_eat_lsm_opts),
+ 	LSM_HOOK_INIT(sb_statfs, smack_sb_statfs),
 -- 
 2.30.0
 
