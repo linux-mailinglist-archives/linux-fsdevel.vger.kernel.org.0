@@ -2,101 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2602FE679
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 10:38:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49DB42FE8F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 12:39:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbhAUJgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 04:36:42 -0500
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:51558 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728438AbhAUJgh (ORCPT
+        id S1730429AbhAULiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 06:38:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730427AbhAULhy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 04:36:37 -0500
-Received: from dread.disaster.area (pa49-180-243-77.pa.nsw.optusnet.com.au [49.180.243.77])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id B5D24114066A;
-        Thu, 21 Jan 2021 20:35:49 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1l2WNZ-000pA8-1m; Thu, 21 Jan 2021 20:35:49 +1100
-Date:   Thu, 21 Jan 2021 20:35:49 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        avi@scylladb.com, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH 11/11] xfs: reduce exclusive locking on unaligned dio
-Message-ID: <20210121093549.GC4662@dread.disaster.area>
-References: <20210121085906.322712-1-hch@lst.de>
- <20210121085906.322712-12-hch@lst.de>
+        Thu, 21 Jan 2021 06:37:54 -0500
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9E38C061575
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jan 2021 03:37:12 -0800 (PST)
+Received: by mail-lj1-x22e.google.com with SMTP id n8so2111095ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jan 2021 03:37:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=FZJxCH0OsqEzYmKuMeqKpZV0Tof/u9872jT4sxBx5JI=;
+        b=WQ6l0VPSKZK3Kci3aUSh+N/QnOmbtV0Wzvjo0p5h7WlHdkDtilalcoHyYCrul2Z3bi
+         cdCAtFcV3OMLukiQ9ZJBbPjEEL+SisKPP8T1Hm+Zx7ae6ew+tDllOPe8UEUJtFGDMU5h
+         TjN5zCgphcN/aQezaSswGvSzVDeH7BLuBcUzprqpYQUnec+wPNFG32Yz0YcoacghEskh
+         C1ny5LPVGLaWpfwTYKtKuMIj6SWWCmS6VL6efbvYZflDS01VPgA3JyXNCrJmm9NHZ9Hw
+         4FyS41IkrqkFgotn0EONSYIEozscEkTCLuXFYQMtezBo8NfHwNRWZmvpzHUOJyPYBwby
+         IkkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=FZJxCH0OsqEzYmKuMeqKpZV0Tof/u9872jT4sxBx5JI=;
+        b=SO+YIOsTBvo6+8MZn5gNeKvGTw3Cd6OBLn+dwK8t6bmV2vgVEAJjwqeOI9XaskpPTY
+         WVeSU6DXZuZvj/yx4iN0VSRRDThctI7nl29igyQJWwZ7d9eLVFEG3VJ8XqkZeb8huQTe
+         GXUv+4q75MaX5FUUIbRvqY+QeAnnrIMrjJ98HuzLMzItGMimFOVNUMVa/jg7yLG0j32w
+         wxRFwfUDjYkPM9dqfKlEFXzwbxumUZ9zKzB9ZEl6+yMabrAC6beMl/QMEO9BQ9497XgK
+         MY8SnMdWIPqGvVJsiLK4cfehBRVlRWrVjS2PTllSaD4k+ETla1VoUI1dq/85VE3mfwoV
+         8s3A==
+X-Gm-Message-State: AOAM531tQDS/xPAwKqwSGuO91rsN/25CjfKd/hraEaOBqWY4c6Tm+YRm
+        Af3z6miBg09PNxe6d8dKMkmyFtaZ4rEXRPBr/v4=
+X-Google-Smtp-Source: ABdhPJwulecW4pl7tbDonEdKSFBa5orC0FaMXZweKG4/NyGP+OIxPa+HVJujHc1ynk2AIERqUPV0mJBNQGXvjtAeYIE=
+X-Received: by 2002:a2e:6c0a:: with SMTP id h10mr6833396ljc.149.1611229031184;
+ Thu, 21 Jan 2021 03:37:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210121085906.322712-12-hch@lst.de>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=juxvdbeFDU67v5YkIhU0sw==:117 a=juxvdbeFDU67v5YkIhU0sw==:17
-        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=20KFwNOVAAAA:8 a=in2YdIHcAAAA:8
-        a=7-415B0cAAAA:8 a=OdnFOmsemsuJ_AWq354A:9 a=CjuIK1q_8ugA:10
-        a=jvJaD-jWAXz1fu1h5wd8:22 a=biEYGPWJfzWAr4FL6Ov7:22
+Received: by 2002:a2e:b5b7:0:0:0:0:0 with HTTP; Thu, 21 Jan 2021 03:37:10
+ -0800 (PST)
+Reply-To: mohamadazzam690@gmail.com
+From:   "Mr. Mohamad Azzam" <sophiathomas328@gmail.com>
+Date:   Wed, 20 Jan 2021 23:37:10 -1200
+Message-ID: <CAHOKbSwtehgc7X1H6Os7SZFO_aoAmSHGtH-=+Vd-Rb1-tuW8EQ@mail.gmail.com>
+Subject: Please i need your assistance,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 09:59:06AM +0100, Christoph Hellwig wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> Attempt shared locking for unaligned DIO, but only if the the
-> underlying extent is already allocated and in written state. On
-> failure, retry with the existing exclusive locking.
-> 
-> Test case is fio randrw of 512 byte IOs using AIO and an iodepth of
-> 32 IOs.
-> 
-> Vanilla:
-> 
->   READ: bw=4560KiB/s (4670kB/s), 4560KiB/s-4560KiB/s (4670kB/s-4670kB/s), io=134MiB (140MB), run=30001-30001msec
->   WRITE: bw=4567KiB/s (4676kB/s), 4567KiB/s-4567KiB/s (4676kB/s-4676kB/s), io=134MiB (140MB), run=30001-30001msec
-> 
-> Patched:
->    READ: bw=37.6MiB/s (39.4MB/s), 37.6MiB/s-37.6MiB/s (39.4MB/s-39.4MB/s), io=1127MiB (1182MB), run=30002-30002msec
->   WRITE: bw=37.6MiB/s (39.4MB/s), 37.6MiB/s-37.6MiB/s (39.4MB/s-39.4MB/s), io=1128MiB (1183MB), run=30002-30002msec
-> 
-> That's an improvement from ~18k IOPS to a ~150k IOPS, which is
-> about the IOPS limit of the VM block device setup I'm testing on.
-> 
-> 4kB block IO comparison:
-> 
->    READ: bw=296MiB/s (310MB/s), 296MiB/s-296MiB/s (310MB/s-310MB/s), io=8868MiB (9299MB), run=30002-30002msec
->   WRITE: bw=296MiB/s (310MB/s), 296MiB/s-296MiB/s (310MB/s-310MB/s), io=8878MiB (9309MB), run=30002-30002msec
-> 
-> Which is ~150k IOPS, same as what the test gets for sub-block
-> AIO+DIO writes with this patch.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> [hch: rebased, split unaligned from nowait]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+I am contacting you independently of my investigation in my bank and
+no one is informed of this communication. I need your urgent
+assistance in transferring the sum of $13.5million dollars to Your
+private account, that belongs to one of our late foreign customer who
+died a longtime with his supposed NEXT OF KIN since the year 2008.
 
-Looks good, minor nit:
+The money has been here in our Bank lying dormant for years now
+without anybody coming for the claim of it as the deceased relation. I
+want to release the money to you as the relative to our deceased
+customer, the Banking laws here does not allow such money to stay more
+than 15years, because the money will be recalled to the Bank Treasury
+account as unclaimed fund.
 
-> +	/*
-> +	 * For overwrite only I/O, we cannot convert unwritten extents without
-> +	 * requiring sub-block zeroing.  This can only be done under an
-> +	 * exclusive IOLOCK, hence return -EAGAIN if this is not a written
-> +	 * extent to tell the caller to try again.
-> +	 */
-> +	if (flags & IOMAP_OVERWRITE_ONLY) {
-> +		error = -EAGAIN;
-> +		if (imap.br_state != XFS_EXT_NORM &&
-> +		    ((offset & mp->m_blockmask) ||
-> +		     ((offset + length) & mp->m_blockmask)))
-> +			goto out_unlock;
+I am ready to share with you 40% for you and 60% for me, by indicating
+your interest I will send you the full details on how the business
+will be executed without any hitch.
 
-Why not use the ((offset | length) & mp->blockmask) form of
-alignment checking here?
+I will be waiting for your urgent response including your mobile that
+is in what sap for easy communication. Here is my Private Email
+address (mohamadazzam690@gmail.com)
 
-Other than that,
+Thanks.
+Here is my mobile number and whatsApp +0022669813005
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-
--- 
-Dave Chinner
-david@fromorbit.com
+Best Regards,
+Mr. Mohamad Azzam
