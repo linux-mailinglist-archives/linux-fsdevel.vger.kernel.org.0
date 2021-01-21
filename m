@@ -2,95 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F31182FE0CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 05:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 666262FE24F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 07:10:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbhAUEfJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 23:35:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36950 "EHLO
+        id S1726518AbhAUGEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 01:04:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbhAUEdo (ORCPT
+        with ESMTP id S2393499AbhAUDBc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 23:33:44 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843EDC061575
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jan 2021 20:33:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=rpTvJL1A2NKaaXMolrRyE/n5dCLdNDYCD9/y3G0JDA8=; b=asA5cEYNDJQcFBV8NKMmwBe9iE
-        zXDb8RPzqCKNwkATsnFAOOn8xcnliFmzlQ1r7vNsfREH7CLbS4jwABsWiv6fOHQwzNKATfpMOcFHO
-        avBgF6pCKIhEPpXT8S4OW5s/yW3+ITKhId7Qn3fclXnVRtxZrnpZTSH0ToeAC0lPQDw/WVGSuHI6N
-        Cp+YWp0mXfjMbXWuB+9itXvzPqtVE/ZucLlWsGeD8CocCjddR07zcFMo/pOzBUydUe0oW/S5bEHEz
-        u0do8qq6ymK/lIjojPFikgl906Qw+wY+9+GSH2AZZBKxOspKKrYFl4BhP6Gkb/LUunD56Ey+MEGDJ
-        4ZPdtSqQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l2RcW-00GbuN-7e; Thu, 21 Jan 2021 04:31:18 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     Christoph Hellwig <hch@lst.de>, kent.overstreet@gmail.com,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v4 18/18] mm/filemap: Simplify generic_file_read_iter
-Date:   Thu, 21 Jan 2021 04:16:16 +0000
-Message-Id: <20210121041616.3955703-19-willy@infradead.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210121041616.3955703-1-willy@infradead.org>
-References: <20210121041616.3955703-1-willy@infradead.org>
+        Wed, 20 Jan 2021 22:01:32 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD714C0613CF;
+        Wed, 20 Jan 2021 19:00:51 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id l9so583797ejx.3;
+        Wed, 20 Jan 2021 19:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YdnR/g1AUsA802dFK4Bs9r1QCNRoeBKoAACTpgBxsAQ=;
+        b=S82oKn6Q+hAvCVWp3R9ocfOXM2/txxi1xOjHxUHmByrZ8kBz2L+vdZmpZsEoegtsH7
+         kEKPOe4hs5bnGP8bgsWbRPouosUnKNj9uWM25NvOl6npKH6Q3aIq351tyu35oZ16Gcd9
+         gI+/RZHwBoUQXrBob5pPzeDFlql7a72PNMpdC/G6NQL7jOeLy08k8OzSFgGhZ/81pKeb
+         bfGMAqvNxE6MPJJ+X7pfFTpMlP/b5cWbsk8wBXFKl5pUb3B1PIYLs2reLAOvnsUFUsv7
+         f1sf/+zO67e9eDmjS0bptW4tw0r9uzixuWtFOktEToRwo2mwE5lw5fhIJQSO5xGWaVtk
+         y6dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YdnR/g1AUsA802dFK4Bs9r1QCNRoeBKoAACTpgBxsAQ=;
+        b=ez9h2LlsuvWrYsPqp/PeF+WDfmqlNQbArORHLxSXOEglSJoXQgGO1qbofj49C2zR76
+         QME0+VhhuRakNmZQnYNwAFqJvBRjzcDp0+VKXHnG4i/lnLcHmAa2pXvd6VXi6VUtvEK5
+         5mKu3fvHenQji/0UfwZXh/NjDnGUZALGS/2NV89BOrO6+c36vb9l+M9L/CxOwJ4UJPh0
+         Ne8St4Uf0E3tocdo+8rQoWoz8qVD8VkpbtO8o5rsHAmLwSO3siEMI0+savsequQ2NRi/
+         r+VoaiNwHEA+MIzFlvu93p0EVMdO+H+N1Dz+0KppinyKsSBfQK+nZec+hZwGwnRJUi4n
+         Nx6g==
+X-Gm-Message-State: AOAM533fZeGuuVM+IMtHB9WAYJBYPR0JZRgY7vVzIWcez9FSQvyRRlJD
+        1I8IP3oT954QEQz91EpA0C2vILPUd4rAc4wHnmE=
+X-Google-Smtp-Source: ABdhPJx4hIKkKiU2iBKXjdqE5eWNNe7e0osIQ9gJJ07rfesCCPovnPnhiYH+s1vpHW57b+spuuKB7GPDWGgtgfAiGN4=
+X-Received: by 2002:a17:906:9619:: with SMTP id s25mr7999226ejx.345.1611198050485;
+ Wed, 20 Jan 2021 19:00:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
+In-Reply-To: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
+From:   Julian Calaby <julian.calaby@gmail.com>
+Date:   Thu, 21 Jan 2021 14:00:38 +1100
+Message-ID: <CAGRGNgWLspr6M1COgX9cuDDgYdiXvQQjWQb7XYLsmFpfMYt0sA@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/37] block: introduce bio_init_fields()
+To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Cc:     linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        drbd-dev@lists.linbit.com, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        jfs-discussion@lists.sourceforge.net, dm-devel@redhat.com,
+        Jens Axboe <axboe@kernel.dk>, philipp.reisner@linbit.com,
+        lars.ellenberg@linbit.com, Denis Efremov <efremov@linux.com>,
+        colyli@suse.de, kent.overstreet@gmail.com, agk@redhat.com,
+        snitzer@redhat.com, song@kernel.org,
+        Christoph Hellwig <hch@lst.de>, sagi@grimberg.me,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, rpeterso@redhat.com, agruenba@redhat.com,
+        darrick.wong@oracle.com, shaggy@kernel.org, damien.lemoal@wdc.com,
+        naohiro.aota@wdc.com, jth@kernel.org, Tejun Heo <tj@kernel.org>,
+        osandov@fb.com, bvanassche@acm.org, gustavo@embeddedor.com,
+        asml.silence@gmail.com, jefflexu@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+Hi Chaitanya,
 
-Avoid the pointless goto out just for returning retval.
+On Tue, Jan 19, 2021 at 5:01 PM Chaitanya Kulkarni
+<chaitanya.kulkarni@wdc.com> wrote:
+>
+> Hi,
+>
+> This is a *compile only RFC* which adds a generic helper to initialize
+> the various fields of the bio that is repeated all the places in
+> file-systems, block layer, and drivers.
+>
+> The new helper allows callers to initialize various members such as
+> bdev, sector, private, end io callback, io priority, and write hints.
+>
+> The objective of this RFC is to only start a discussion, this it not
+> completely tested at all.
+> Following diff shows code level benefits of this helper :-
+>  38 files changed, 124 insertions(+), 236 deletions(-)
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- mm/filemap.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+On a more abstract note, I don't think this diffstat is actually
+illustrating the benefits of this as much as you think it is.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 50d87aff0ef86..bcaaaf7f55ab7 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2529,7 +2529,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	ssize_t retval = 0;
- 
- 	if (!count)
--		goto out; /* skip atime */
-+		return 0; /* skip atime */
- 
- 	if (iocb->ki_flags & IOCB_DIRECT) {
- 		struct file *file = iocb->ki_filp;
-@@ -2547,7 +2547,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 						iocb->ki_pos,
- 					        iocb->ki_pos + count - 1);
- 			if (retval < 0)
--				goto out;
-+				return retval;
- 		}
- 
- 		file_accessed(file);
-@@ -2570,12 +2570,10 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		 */
- 		if (retval < 0 || !count || iocb->ki_pos >= size ||
- 		    IS_DAX(inode))
--			goto out;
-+			return retval;
- 	}
- 
--	retval = filemap_read(iocb, iter, retval);
--out:
--	return retval;
-+	return filemap_read(iocb, iter, retval);
- }
- EXPORT_SYMBOL(generic_file_read_iter);
- 
+Yeah, we've reduced the code by 112 lines, but that's barely half the
+curn here. It looks, from the diffstat, that you've effectively
+reduced 2 lines into 1. That isn't much of a saving.
+
+Thanks,
+
 -- 
-2.29.2
+Julian Calaby
 
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
