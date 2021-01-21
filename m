@@ -2,285 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD682FF3F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 20:12:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 197732FF40C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 20:16:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbhAUTMa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 14:12:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726576AbhAUTMU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 14:12:20 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CDF9723A5E;
-        Thu, 21 Jan 2021 19:01:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611255698;
-        bh=ddH61A7+enAHtNbwBP89IPjITRYDat/cDncWCEptzO0=;
+        id S1727000AbhAUTMv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 14:12:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56940 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbhAUTK4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 14:10:56 -0500
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A1C8C061756;
+        Thu, 21 Jan 2021 11:09:38 -0800 (PST)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 7790068A6; Thu, 21 Jan 2021 14:09:37 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 7790068A6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1611256177;
+        bh=N/byAs1v6tc9Fx3ki4Hix9OpQ2b4N7bUlr5L+Udyz04=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ur7QdmIPow1LEEw7wuJF00G+0sLhAYWmr2I3UTToXWNiap7JMQHJaj871zIPncFPV
-         ImvhTu9tgsFsQ+APRILQqC9JQK6SImreE5GD3i3LB3NWAX/iFX3UmvkoDZw7ZgfnNx
-         21x3/gzN6PuNhxETCzOTL/ybS1vNGofoZSCEYINQMkumDAwcvHfT/h7P+VeAX1Ztuj
-         QpA2pOF0DEtcQUIJBDu0V/iR8TI72FgckwSEpZIsvrFrgB1WPlEibjCYqQ7KPLtM++
-         OILdfvBVgh6KDrBauXCQ5PrrknGP0VZrG8AEe+BEwViNHk+YDWSVvZUkLrIzIAGExn
-         TW3BNFkT/khiw==
-Date:   Thu, 21 Jan 2021 11:01:38 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Brian Foster <bfoster@redhat.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, avi@scylladb.com,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH 11/11] xfs: reduce exclusive locking on unaligned dio
-Message-ID: <20210121190138.GE1282159@magnolia>
-References: <20210121085906.322712-1-hch@lst.de>
- <20210121085906.322712-12-hch@lst.de>
- <20210121133334.GB1793795@bfoster>
+        b=v12SGAI5TdTGVdUXLNRFq4bYEJiB3wwXNox11gArFVnndbZSQLf36kKRFo95UyeQY
+         CO7QjlprxG0AHzpbsAXIme2ZNIcWn0te5LWMp6nGA+4cNMBpacJ9xmATTjhLCoftDm
+         vFchlftsuiau3nyD/mo1dMyfCGV87yqk3pnkw+U0=
+Date:   Thu, 21 Jan 2021 14:09:37 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-afs@lists.infradead.org, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 00/25] Network fs helper library & fscache kiocb API
+Message-ID: <20210121190937.GE20964@fieldses.org>
+References: <20210121174306.GB20964@fieldses.org>
+ <20210121164645.GA20964@fieldses.org>
+ <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
+ <1794286.1611248577@warthog.procyon.org.uk>
+ <1851804.1611255313@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210121133334.GB1793795@bfoster>
+In-Reply-To: <1851804.1611255313@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 08:33:34AM -0500, Brian Foster wrote:
-> On Thu, Jan 21, 2021 at 09:59:06AM +0100, Christoph Hellwig wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > Attempt shared locking for unaligned DIO, but only if the the
-> > underlying extent is already allocated and in written state. On
-> > failure, retry with the existing exclusive locking.
-> > 
-> > Test case is fio randrw of 512 byte IOs using AIO and an iodepth of
-> > 32 IOs.
-> > 
-> > Vanilla:
-> > 
-> >   READ: bw=4560KiB/s (4670kB/s), 4560KiB/s-4560KiB/s (4670kB/s-4670kB/s), io=134MiB (140MB), run=30001-30001msec
-> >   WRITE: bw=4567KiB/s (4676kB/s), 4567KiB/s-4567KiB/s (4676kB/s-4676kB/s), io=134MiB (140MB), run=30001-30001msec
-> > 
-> > Patched:
-> >    READ: bw=37.6MiB/s (39.4MB/s), 37.6MiB/s-37.6MiB/s (39.4MB/s-39.4MB/s), io=1127MiB (1182MB), run=30002-30002msec
-> >   WRITE: bw=37.6MiB/s (39.4MB/s), 37.6MiB/s-37.6MiB/s (39.4MB/s-39.4MB/s), io=1128MiB (1183MB), run=30002-30002msec
-> > 
-> > That's an improvement from ~18k IOPS to a ~150k IOPS, which is
-> > about the IOPS limit of the VM block device setup I'm testing on.
-> > 
-> > 4kB block IO comparison:
-> > 
-> >    READ: bw=296MiB/s (310MB/s), 296MiB/s-296MiB/s (310MB/s-310MB/s), io=8868MiB (9299MB), run=30002-30002msec
-> >   WRITE: bw=296MiB/s (310MB/s), 296MiB/s-296MiB/s (310MB/s-310MB/s), io=8878MiB (9309MB), run=30002-30002msec
-> > 
-> > Which is ~150k IOPS, same as what the test gets for sub-block
-> > AIO+DIO writes with this patch.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > [hch: rebased, split unaligned from nowait]
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  fs/xfs/xfs_file.c  | 87 ++++++++++++++++++++++++++++++++--------------
-> >  fs/xfs/xfs_iomap.c | 30 +++++++++++-----
-> >  2 files changed, 83 insertions(+), 34 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > index b181db42f2f32f..33899a5cca53f9 100644
-> > --- a/fs/xfs/xfs_file.c
-> > +++ b/fs/xfs/xfs_file.c
-> > @@ -544,22 +544,35 @@ xfs_file_dio_write_aligned(
-> >  /*
-> >   * Handle block unaligned direct IO writes
-> >   *
-> > - * In most cases direct IO writes will be done holding IOLOCK_SHARED, allowing
-> > - * them to be done in parallel with reads and other direct IO writes.  However,
-> > - * if the I/O is not aligned to filesystem blocks, the direct I/O layer may
-> > - * need to do sub-block zeroing and that requires serialisation against other
-> > - * direct I/Os to the same block. In this case we need to serialise the
-> > - * submission of the unaligned I/Os so that we don't get racing block zeroing in
-> > - * the dio layer.
-> > + * In most cases direct IO writes will be done holding IOLOCK_SHARED
-> > + * allowing them to be done in parallel with reads and other direct IO writes.
-> > + * However, if the IO is not aligned to filesystem blocks, the direct IO layer
-> > + * may need to do sub-block zeroing and that requires serialisation against other
-> > + * direct IOs to the same block. In the case where sub-block zeroing is not
-> > + * required, we can do concurrent sub-block dios to the same block successfully.
-> >   *
-> > - * To provide the same serialisation for AIO, we also need to wait for
-> > + * Hence we have two cases here - the shared, optimisitic fast path for written
-
-"optimistic"
-
-> > + * extents, and everything else that needs exclusive IO path access across the
-> > + * entire IO.
-> > + *
-> > + * For the first case, we do all the checks we need at the mapping layer in the
-> > + * DIO code as part of the existing NOWAIT infrastructure. Hence all we need to
-> > + * do to support concurrent subblock dio is first try a non-blocking submission.
-> > + * If that returns -EAGAIN, then we simply repeat the IO submission with full
-> > + * IO exclusivity guaranteed so that we avoid racing sub-block zeroing.
-> > + *
+On Thu, Jan 21, 2021 at 06:55:13PM +0000, David Howells wrote:
+> J. Bruce Fields <bfields@fieldses.org> wrote:
 > 
-> The above paragraph still implicitly refers to the original NOWAIT based
-> implementation. I'd suggest to tweak it to something like:
-> 
-> "The mapping layer of the dio code performs all the checks required to
-> distinguish between the shared (overwrite) and exclusive cases. Hence to
-> support concurrent unaligned dio, first submit the request in overwrite
-> only mode. If that returns -EAGAIN, sub-block zeroing is required.
-> Repeat the submission with full IO exclusivity to avoid races."
-
-FWIW I like this version better, because the fact that we reuse the
-existing 'nowait' switching to handle unaligned direct writes is a minor
-implementation detail here.
-
-I think I'm about ready to RVB this, but there are enough small loose
-ends that I'll wait for the next version. :)
-
---D
-
-> That aside, I still find the single mapping requirement a bit
-> unfortunate, but otherwise the code LGTM:
-> 
-> Reviewed-by: Brian Foster <bfoster@redhat.com>
-> 
-> > + * The only wrinkle in this case is that the iomap DIO code always does
-> > + * partial tail sub-block zeroing for post-EOF writes. Hence for any IO that
-> > + * _ends_ past the current EOF we need to run with full exclusivity. Note that
-> > + * we also check for the start of IO being beyond EOF because then zeroing
-> > + * between the old EOF and the start of the IO is required and that also
-> > + * requires exclusivity. Hence we avoid lock cycles and blocking under
-> > + * IOCB_NOWAIT for this situation, too.
-> > + *
-> > + * To provide the exclusivity required when using AIO, we also need to wait for
-> >   * outstanding IOs to complete so that unwritten extent conversion is completed
-> >   * before we try to map the overlapping block. This is currently implemented by
-> >   * hitting it with a big hammer (i.e. inode_dio_wait()).
-> > - *
-> > - * This means that unaligned dio writes always block. There is no "nowait" fast
-> > - * path in this code - if IOCB_NOWAIT is set we simply return -EAGAIN up front
-> > - * and we don't have to worry about that anymore.
-> >   */
-> >  static noinline ssize_t
-> >  xfs_file_dio_write_unaligned(
-> > @@ -567,13 +580,27 @@ xfs_file_dio_write_unaligned(
-> >  	struct kiocb		*iocb,
-> >  	struct iov_iter		*from)
-> >  {
-> > -	int			iolock = XFS_IOLOCK_EXCL;
-> > +	size_t			isize = i_size_read(VFS_I(ip));
-> > +	size_t			count = iov_iter_count(from);
-> > +	int			iolock = XFS_IOLOCK_SHARED;
-> > +	unsigned int		flags = IOMAP_DIO_OVERWRITE_ONLY;
-> >  	ssize_t			ret;
-> >  
-> > -	/* unaligned dio always waits, bail */
-> > -	if (iocb->ki_flags & IOCB_NOWAIT)
-> > -		return -EAGAIN;
-> > -	xfs_ilock(ip, iolock);
-> > +	/*
-> > +	 * Extending writes need exclusivity because of the sub-block zeroing
-> > +	 * that the DIO code always does for partial tail blocks beyond EOF.
-> > +	 */
-> > +	if (iocb->ki_pos > isize || iocb->ki_pos + count >= isize) {
-> > +retry_exclusive:
-> > +		if (iocb->ki_flags & IOCB_NOWAIT)
-> > +			return -EAGAIN;
-> > +		iolock = XFS_IOLOCK_EXCL;
-> > +		flags = IOMAP_DIO_FORCE_WAIT;
-> > +	}
-> > +
-> > +	ret = xfs_ilock_iocb(iocb, iolock);
-> > +	if (ret)
-> > +		return ret;
-> >  
-> >  	/*
-> >  	 * We can't properly handle unaligned direct I/O to reflink files yet,
-> > @@ -590,19 +617,27 @@ xfs_file_dio_write_unaligned(
-> >  		goto out_unlock;
-> >  
-> >  	/*
-> > -	 * If we are doing unaligned I/O, we can't allow any other overlapping
-> > -	 * I/O in-flight at the same time or we risk data corruption. Wait for
-> > -	 * all other I/O to drain before we submit.
-> > +	 * If we are doing exclusive unaligned IO, we can't allow any other
-> > +	 * overlapping IO in-flight at the same time or we risk data corruption.
-> > +	 * Wait for all other IO to drain before we submit.
-> >  	 */
-> > -	inode_dio_wait(VFS_I(ip));
-> > +	if (flags & IOMAP_DIO_FORCE_WAIT)
-> > +		inode_dio_wait(VFS_I(ip));
-> >  
-> > -	/*
-> > -	 * This must be the only I/O in-flight. Wait on it before we release the
-> > -	 * iolock to prevent subsequent overlapping I/O.
-> > -	 */
-> >  	trace_xfs_file_direct_write(iocb, from);
-> >  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
-> > -			   &xfs_dio_write_ops, IOMAP_DIO_FORCE_WAIT);
-> > +			   &xfs_dio_write_ops, flags);
-> > +	/*
-> > +	 * Retry unaligned IO with exclusive blocking semantics if the DIO
-> > +	 * layer rejected it for mapping or locking reasons. If we are doing
-> > +	 * nonblocking user IO, propagate the error.
-> > +	 */
-> > +	if (ret == -EAGAIN && !(iocb->ki_flags & IOCB_NOWAIT)) {
-> > +		ASSERT(flags & IOMAP_DIO_OVERWRITE_ONLY);
-> > +		xfs_iunlock(ip, iolock);
-> > +		goto retry_exclusive;
-> > +	}
-> > +
-> >  out_unlock:
-> >  	if (iolock)
-> >  		xfs_iunlock(ip, iolock);
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index 7b9ff824e82d48..596af78f910596 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -784,15 +784,29 @@ xfs_direct_write_iomap_begin(
-> >  		goto allocate_blocks;
-> >  
-> >  	/*
-> > -	 * NOWAIT IO needs to span the entire requested IO with a single map so
-> > -	 * that we avoid partial IO failures due to the rest of the IO range not
-> > -	 * covered by this map triggering an EAGAIN condition when it is
-> > -	 * subsequently mapped and aborting the IO.
-> > +	 * NOWAIT and OVERWRITE needs to span the entire requested IO with a
-> > +	 * single map so that we avoid partial IO failures due to the rest of
-> > +	 * the IO range not covered by this map triggering an EAGAIN condition
-> > +	 * when it is subsequently mapped and aborting the IO.
-> >  	 */
-> > -	if ((flags & IOMAP_NOWAIT) &&
-> > -	    !imap_spans_range(&imap, offset_fsb, end_fsb)) {
-> > +	if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY)) {
-> >  		error = -EAGAIN;
-> > -		goto out_unlock;
-> > +		if (!imap_spans_range(&imap, offset_fsb, end_fsb))
-> > +			goto out_unlock;
-> > +	}
-> > +
-> > +	/*
-> > +	 * For overwrite only I/O, we cannot convert unwritten extents without
-> > +	 * requiring sub-block zeroing.  This can only be done under an
-> > +	 * exclusive IOLOCK, hence return -EAGAIN if this is not a written
-> > +	 * extent to tell the caller to try again.
-> > +	 */
-> > +	if (flags & IOMAP_OVERWRITE_ONLY) {
-> > +		error = -EAGAIN;
-> > +		if (imap.br_state != XFS_EXT_NORM &&
-> > +		    ((offset & mp->m_blockmask) ||
-> > +		     ((offset + length) & mp->m_blockmask)))
-> > +			goto out_unlock;
-> >  	}
-> >  
-> >  	xfs_iunlock(ip, lockmode);
-> > @@ -801,7 +815,7 @@ xfs_direct_write_iomap_begin(
-> >  
-> >  allocate_blocks:
-> >  	error = -EAGAIN;
-> > -	if (flags & IOMAP_NOWAIT)
-> > +	if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY))
-> >  		goto out_unlock;
-> >  
-> >  	/*
-> > -- 
-> > 2.29.2
+> > > Fixing this requires a much bigger overhaul of cachefiles than this patchset
+> > > performs.
 > > 
+> > That sounds like "sometimes you may get file corruption and there's
+> > nothing you can do about it".  But I know people actually use fscache,
+> > so it must be reliable at least for some use cases.
 > 
+> Yes.  That's true for the upstream code because that uses bmap.
+
+Sorry, when you say "that's true", what part are you referring to?
+
+> I'm switching
+> to use SEEK_HOLE/SEEK_DATA to get rid of the bmap usage, but it doesn't change
+> the issue.
+> 
+> > Is it that those "bridging" blocks only show up in certain corner cases
+> > that users can arrange to avoid?  Or that it's OK as long as you use
+> > certain specific file systems whose behavior goes beyond what's
+> > technically required by the bamp or seek interfaces?
+> 
+> That's a question for the xfs, ext4 and btrfs maintainers, and may vary
+> between kernel versions and fsck or filesystem packing utility versions.
+
+So, I'm still confused: there must be some case where we know fscache
+actually works reliably and doesn't corrupt your data, right?
+
+--b.
