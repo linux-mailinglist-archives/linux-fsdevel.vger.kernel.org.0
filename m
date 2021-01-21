@@ -2,221 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB6772FDD72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 00:56:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 196B72FDE66
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 02:03:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404438AbhATXyw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jan 2021 18:54:52 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47801 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733008AbhATW1X (ORCPT
+        id S2391411AbhAUBBx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jan 2021 20:01:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38114 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392874AbhAUAPt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:27:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611181556;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TVQXfMRgcYF74aRdJN1EqRV7ahJ/l5qJeAzL/vDKTfE=;
-        b=WCuwU06d2rLBqxVWDmxUxGvFTIaO7lxiQxHHe9lpcwxwhde1R/nVFg9O1izgOZn11923mQ
-        Bnw/eAjFOEXR3Pu5DiXBTn+nHnj6xRvxKTj/Yj9L8zJkRZ36aLJLGyPBvLTrbVbroVT8J9
-        jo8VlTkIIuAHBGeP08Ux1zjIEKzBUbA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-425-xPH-US10MAuyz48DdtuL0w-1; Wed, 20 Jan 2021 17:25:55 -0500
-X-MC-Unique: xPH-US10MAuyz48DdtuL0w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 02EE0835DE0;
-        Wed, 20 Jan 2021 22:25:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 13D2562462;
-        Wed, 20 Jan 2021 22:25:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 22/25] afs: Extract writeback extension into its own function
-From:   David Howells <dhowells@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
+        Wed, 20 Jan 2021 19:15:49 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2187CC061575;
+        Wed, 20 Jan 2021 16:15:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=cwu2zXGrhPIC6ERSbgMr9vODEIjubNUIY3egpnasEkM=; b=Titc2oh6mm6H8HrBnURdMCnuAy
+        B7tmu7WO5lk/dTol8pnvJFj1ALNIg2a0ayyvvXkEw9Hp66wKGgQ/BlGHZARXS97TlLGZY8EiZPMmA
+        ut30VcvnrKuPicxn8sbUQh1rQkfX6UOTVdhCPtU2awociCaRbIMPQ6MoLPRkjOOtwQ9FsIa0xGjnZ
+        /CSZq9i88CQi3WQl2rKH0j35vKzcRO3qR1A3h4r5WrMR6t4JOLRaCJ41q5mPTRUZf67Q1bFGxlKNx
+        5TkXSuCjJgxzJqjcJLYOACHaEtsrrVT7zqfOOOSI8cncXQ7oKbdLlZuACe9kpbaLDbLfrC+jRu/zm
+        xaT3mp2g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l2Nah-00GNk2-9O; Thu, 21 Jan 2021 00:12:57 +0000
+Date:   Thu, 21 Jan 2021 00:12:47 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 20 Jan 2021 22:25:46 +0000
-Message-ID: <161118154610.1232039.1765365632920504822.stgit@warthog.procyon.org.uk>
-In-Reply-To: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
-References: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v15 07/11] secretmem: use PMD-size pages to amortize
+ direct map fragmentation
+Message-ID: <20210121001247.GN2260413@casper.infradead.org>
+References: <20210120180612.1058-1-rppt@kernel.org>
+ <20210120180612.1058-8-rppt@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210120180612.1058-8-rppt@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Extract writeback extension into its own function to break up the writeback
-function a bit.
+On Wed, Jan 20, 2021 at 08:06:08PM +0200, Mike Rapoport wrote:
+> +static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
+>  {
+> +	unsigned long nr_pages = (1 << PMD_PAGE_ORDER);
+> +	struct gen_pool *pool = ctx->pool;
+> +	unsigned long addr;
+> +	struct page *page;
+> +	int err;
+> +
+> +	page = cma_alloc(secretmem_cma, nr_pages, PMD_SIZE, gfp & __GFP_NOWARN);
+> +	if (!page)
+> +		return -ENOMEM;
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/afs/write.c |  109 ++++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 67 insertions(+), 42 deletions(-)
-
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index e1791de90478..89c804bfe253 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -490,47 +490,25 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter,
- }
- 
- /*
-- * Synchronously write back the locked page and any subsequent non-locked dirty
-- * pages.
-+ * Extend the region to be written back to include subsequent contiguously
-+ * dirty pages if possible, but don't sleep while doing so.
-+ *
-+ * If this page holds new content, then we can include filler zeros in the
-+ * writeback.
-  */
--static int afs_write_back_from_locked_page(struct address_space *mapping,
--					   struct writeback_control *wbc,
--					   struct page *primary_page,
--					   pgoff_t final_page)
-+static void afs_extend_writeback(struct address_space *mapping,
-+				 struct afs_vnode *vnode,
-+				 long *_count,
-+				 pgoff_t start,
-+				 pgoff_t final_page,
-+				 unsigned *_offset,
-+				 unsigned *_to,
-+				 bool new_content)
- {
--	struct afs_vnode *vnode = AFS_FS_I(mapping->host);
--	struct iov_iter iter;
- 	struct page *pages[8], *page;
--	unsigned long count, priv;
--	unsigned n, offset, to, f, t;
--	pgoff_t start, first, last;
--	loff_t i_size, pos, end;
--	int loop, ret;
--
--	_enter(",%lx", primary_page->index);
--
--	count = 1;
--	if (test_set_page_writeback(primary_page))
--		BUG();
--
--	/* Find all consecutive lockable dirty pages that have contiguous
--	 * written regions, stopping when we find a page that is not
--	 * immediately lockable, is not dirty or is missing, or we reach the
--	 * end of the range.
--	 */
--	start = primary_page->index;
--	priv = page_private(primary_page);
--	offset = afs_page_dirty_from(primary_page, priv);
--	to = afs_page_dirty_to(primary_page, priv);
--	trace_afs_page_dirty(vnode, tracepoint_string("store"), primary_page);
--
--	WARN_ON(offset == to);
--	if (offset == to)
--		trace_afs_page_dirty(vnode, tracepoint_string("WARN"), primary_page);
--
--	if (start >= final_page ||
--	    (to < PAGE_SIZE && !test_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags)))
--		goto no_more;
-+	unsigned long count = *_count, priv;
-+	unsigned offset = *_offset, to = *_to, n, f, t;
-+	int loop;
- 
- 	start++;
- 	do {
-@@ -551,8 +529,7 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
- 
- 		for (loop = 0; loop < n; loop++) {
- 			page = pages[loop];
--			if (to != PAGE_SIZE &&
--			    !test_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags))
-+			if (to != PAGE_SIZE && !new_content)
- 				break;
- 			if (page->index > final_page)
- 				break;
-@@ -566,8 +543,7 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
- 			priv = page_private(page);
- 			f = afs_page_dirty_from(page, priv);
- 			t = afs_page_dirty_to(page, priv);
--			if (f != 0 &&
--			    !test_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags)) {
-+			if (f != 0 && !new_content) {
- 				unlock_page(page);
- 				break;
- 			}
-@@ -593,6 +569,55 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
- 	} while (start <= final_page && count < 65536);
- 
- no_more:
-+	*_count = count;
-+	*_offset = offset;
-+	*_to = to;
-+}
-+
-+/*
-+ * Synchronously write back the locked page and any subsequent non-locked dirty
-+ * pages.
-+ */
-+static int afs_write_back_from_locked_page(struct address_space *mapping,
-+					   struct writeback_control *wbc,
-+					   struct page *primary_page,
-+					   pgoff_t final_page)
-+{
-+	struct afs_vnode *vnode = AFS_FS_I(mapping->host);
-+	struct iov_iter iter;
-+	unsigned long count, priv;
-+	unsigned offset, to;
-+	pgoff_t start, first, last;
-+	loff_t i_size, pos, end;
-+	bool new_content = test_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags);
-+	int ret;
-+
-+	_enter(",%lx", primary_page->index);
-+
-+	count = 1;
-+	if (test_set_page_writeback(primary_page))
-+		BUG();
-+
-+	/* Find all consecutive lockable dirty pages that have contiguous
-+	 * written regions, stopping when we find a page that is not
-+	 * immediately lockable, is not dirty or is missing, or we reach the
-+	 * end of the range.
-+	 */
-+	start = primary_page->index;
-+	priv = page_private(primary_page);
-+	offset = afs_page_dirty_from(primary_page, priv);
-+	to = afs_page_dirty_to(primary_page, priv);
-+	trace_afs_page_dirty(vnode, tracepoint_string("store"), primary_page);
-+
-+	WARN_ON(offset == to);
-+	if (offset == to)
-+		trace_afs_page_dirty(vnode, tracepoint_string("WARN"), primary_page);
-+
-+	if (start < final_page &&
-+	    (to == PAGE_SIZE || new_content))
-+		afs_extend_writeback(mapping, vnode, &count, start, final_page,
-+				     &offset, &to, new_content);
-+
- 	/* We now have a contiguous set of dirty pages, each with writeback
- 	 * set; the first page is still locked at this point, but all the rest
- 	 * have been unlocked.
-
+Does cma_alloc() zero the pages it allocates?  If not, where do we avoid
+leaking kernel memory to userspace?
 
