@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BCE72FEA6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 13:44:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C5712FEA18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 13:31:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731207AbhAUMky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 07:40:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56098 "EHLO mail.kernel.org"
+        id S1731183AbhAUMa3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 07:30:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730059AbhAUM3U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 07:29:20 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 415B923975;
-        Thu, 21 Jan 2021 12:28:29 +0000 (UTC)
+        id S1729851AbhAUM3s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 07:29:48 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9461D23A00;
+        Thu, 21 Jan 2021 12:28:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611232119;
-        bh=lGsR1oZQWwxrLD73NqWDDlcprqNKrjsYY6yQD4YnAwM=;
+        s=k20201202; t=1611232129;
+        bh=9kaVLl7ns6FDXpeBythPZbgRKr2kk8KbnqpQJU19OBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OmfGefjPZ6vZW2FiRxHuNGxYQtb3ojIv6QoYROWeRY+vql8fwNK/Q8hxytlQcBVXa
-         AkrqF+bTztUajCMt0orcEvEzxxQKd5fprHnXTyb4c8/X2+QG8A8+aVc6l7yiLp6vPX
-         IObYUFUmGJwhObNkhskUMPdD98D5B+YmbMJJnlYk5qhQuo4aAi/E/6AF/maRRlg1Pf
-         r1BWldbN2kB535i+GEOQCAQzQ+xfpf9okxBXVgUoY/BrqtIiRLf9ccUKOEFCxWWHQC
-         c8ZLmK4LC5aj1W/z4iOZuvhR+pXeLqe0b3U+BQY8a5yTSJOLxbagnbgJHxkJY0rbEF
-         JFM81UUI9LK9w==
+        b=HnqgRuO0LOTHyk6g9Xvq1dFVel9zw9hTm8TQQVORwQic36aIup+MTwSMASfaZvf1o
+         IEVGsxlFFfJ65h/VpDsDNUHorY/gwoZOvTmr7B36D636ZdGudu7wXdmB3XNRwCa0w1
+         yWknpajjb73468E9zw++w3gkPg1xIeyETOKKeBNAPQ/iW/LpD27xTsgv7XdF0grw6r
+         SZy1m6Uc8YAsXF0lpWvbcgmVHRd+k5NH3LaiggM4EEbBfKral7IAsyFX9dzOsF9xuN
+         Y+oCaINMAuMtRU4hpKXeGa3Vjc+OoGxWaIa434FZ0xh8Anc0Or/4E8XXyIF7/dkAaz
+         klUi9VNgb9kWQ==
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -58,9 +58,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
         Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v16 06/11] mm: introduce memfd_secret system call to create "secret" memory areas
-Date:   Thu, 21 Jan 2021 14:27:18 +0200
-Message-Id: <20210121122723.3446-7-rppt@kernel.org>
+Subject: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize direct map fragmentation
+Date:   Thu, 21 Jan 2021 14:27:19 +0200
+Message-Id: <20210121122723.3446-8-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20210121122723.3446-1-rppt@kernel.org>
 References: <20210121122723.3446-1-rppt@kernel.org>
@@ -72,33 +72,23 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-Introduce "memfd_secret" system call with the ability to create memory
-areas visible only in the context of the owning process and not mapped not
-only to other processes but in the kernel page tables as well.
+Removing a PAGE_SIZE page from the direct map every time such page is
+allocated for a secret memory mapping will cause severe fragmentation of
+the direct map. This fragmentation can be reduced by using PMD-size pages
+as a pool for small pages for secret memory mappings.
 
-The user will create a file descriptor using the memfd_secret() system
-call. The memory areas created by mmap() calls from this file descriptor
-will be unmapped from the kernel direct map and they will be only mapped in
-the page table of the owning mm.
+Add a gen_pool per secretmem inode and lazily populate this pool with
+PMD-size pages.
 
-The secret memory remains accessible in the process context using uaccess
-primitives, but it is not accessible using direct/linear map addresses.
+As pages allocated by secretmem become unmovable, use CMA to back large
+page caches so that page allocator won't be surprised by failing attempt to
+migrate these pages.
 
-Functions in the follow_page()/get_user_page() family will refuse to return
-a page that belongs to the secret memory area.
-
-A page that was a part of the secret memory area is cleared when it is
-freed.
-
-The following example demonstrates creation of a secret mapping (error
-handling is omitted):
-
-	fd = memfd_secret(0);
-	ftruncate(fd, MAP_SIZE);
-	ptr = mmap(NULL, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+The CMA area used by secretmem is controlled by the "secretmem=" kernel
+parameter. This allows explicit control over the memory available for
+secretmem and provides upper hard limit for secretmem consumption.
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Hagen Paul Pfeifer <hagen@jauu.net>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>
@@ -109,6 +99,7 @@ Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: David Hildenbrand <david@redhat.com>
 Cc: Elena Reshetova <elena.reshetova@intel.com>
+Cc: Hagen Paul Pfeifer <hagen@jauu.net>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: James Bottomley <jejb@linux.ibm.com>
@@ -128,418 +119,306 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tycho Andersen <tycho@tycho.ws>
 Cc: Will Deacon <will@kernel.org>
 ---
- include/linux/secretmem.h  |  24 ++++
- include/uapi/linux/magic.h |   1 +
- kernel/sys_ni.c            |   2 +
- mm/Kconfig                 |   3 +
- mm/Makefile                |   1 +
- mm/gup.c                   |  10 ++
- mm/secretmem.c             | 278 +++++++++++++++++++++++++++++++++++++
- 7 files changed, 319 insertions(+)
- create mode 100644 include/linux/secretmem.h
- create mode 100644 mm/secretmem.c
+ mm/Kconfig     |   2 +
+ mm/secretmem.c | 175 +++++++++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 150 insertions(+), 27 deletions(-)
 
-diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-new file mode 100644
-index 000000000000..70e7db9f94fe
---- /dev/null
-+++ b/include/linux/secretmem.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _LINUX_SECRETMEM_H
-+#define _LINUX_SECRETMEM_H
-+
-+#ifdef CONFIG_SECRETMEM
-+
-+bool vma_is_secretmem(struct vm_area_struct *vma);
-+bool page_is_secretmem(struct page *page);
-+
-+#else
-+
-+static inline bool vma_is_secretmem(struct vm_area_struct *vma)
-+{
-+	return false;
-+}
-+
-+static inline bool page_is_secretmem(struct page *page)
-+{
-+	return false;
-+}
-+
-+#endif /* CONFIG_SECRETMEM */
-+
-+#endif /* _LINUX_SECRETMEM_H */
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index f3956fc11de6..35687dcb1a42 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -97,5 +97,6 @@
- #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
- #define Z3FOLD_MAGIC		0x33
- #define PPC_CMM_MAGIC		0xc7571590
-+#define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
- 
- #endif /* __LINUX_MAGIC_H__ */
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 769ad6225ab1..869aa6b5bf34 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -355,6 +355,8 @@ COND_SYSCALL(pkey_mprotect);
- COND_SYSCALL(pkey_alloc);
- COND_SYSCALL(pkey_free);
- 
-+/* memfd_secret */
-+COND_SYSCALL(memfd_secret);
- 
- /*
-  * Architecture specific weak syscall entries.
 diff --git a/mm/Kconfig b/mm/Kconfig
-index 24c045b24b95..5f8243442f66 100644
+index 5f8243442f66..ec35bf406439 100644
 --- a/mm/Kconfig
 +++ b/mm/Kconfig
-@@ -872,4 +872,7 @@ config MAPPING_DIRTY_HELPERS
- config KMAP_LOCAL
- 	bool
+@@ -874,5 +874,7 @@ config KMAP_LOCAL
  
-+config SECRETMEM
-+	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
-+
+ config SECRETMEM
+ 	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
++	select GENERIC_ALLOCATOR
++	select CMA
+ 
  endmenu
-diff --git a/mm/Makefile b/mm/Makefile
-index 72227b24a616..b2a564eec27f 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -120,3 +120,4 @@ obj-$(CONFIG_MEMFD_CREATE) += memfd.o
- obj-$(CONFIG_MAPPING_DIRTY_HELPERS) += mapping_dirty_helpers.o
- obj-$(CONFIG_PTDUMP_CORE) += ptdump.o
- obj-$(CONFIG_PAGE_REPORTING) += page_reporting.o
-+obj-$(CONFIG_SECRETMEM) += secretmem.o
-diff --git a/mm/gup.c b/mm/gup.c
-index e4c224cd9661..3e086b073624 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -10,6 +10,7 @@
- #include <linux/rmap.h>
- #include <linux/swap.h>
- #include <linux/swapops.h>
-+#include <linux/secretmem.h>
- 
- #include <linux/sched/signal.h>
- #include <linux/rwsem.h>
-@@ -759,6 +760,9 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
- 	struct follow_page_context ctx = { NULL };
- 	struct page *page;
- 
-+	if (vma_is_secretmem(vma))
-+		return NULL;
-+
- 	page = follow_page_mask(vma, address, foll_flags, &ctx);
- 	if (ctx.pgmap)
- 		put_dev_pagemap(ctx.pgmap);
-@@ -892,6 +896,9 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
- 	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
- 		return -EOPNOTSUPP;
- 
-+	if (vma_is_secretmem(vma))
-+		return -EFAULT;
-+
- 	if (write) {
- 		if (!(vm_flags & VM_WRITE)) {
- 			if (!(gup_flags & FOLL_FORCE))
-@@ -2031,6 +2038,9 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
- 		page = pte_page(pte);
- 
-+		if (page_is_secretmem(page))
-+			goto pte_unmap;
-+
- 		head = try_grab_compound_head(page, 1, flags);
- 		if (!head)
- 			goto pte_unmap;
 diff --git a/mm/secretmem.c b/mm/secretmem.c
-new file mode 100644
-index 000000000000..904351d12c33
---- /dev/null
+index 904351d12c33..469211c7cc3a 100644
+--- a/mm/secretmem.c
 +++ b/mm/secretmem.c
-@@ -0,0 +1,278 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright IBM Corporation, 2020
-+ *
-+ * Author: Mike Rapoport <rppt@linux.ibm.com>
-+ */
+@@ -7,12 +7,15 @@
+ 
+ #include <linux/mm.h>
+ #include <linux/fs.h>
++#include <linux/cma.h>
+ #include <linux/mount.h>
+ #include <linux/memfd.h>
+ #include <linux/bitops.h>
+ #include <linux/printk.h>
+ #include <linux/pagemap.h>
++#include <linux/genalloc.h>
+ #include <linux/syscalls.h>
++#include <linux/memblock.h>
+ #include <linux/pseudo_fs.h>
+ #include <linux/secretmem.h>
+ #include <linux/set_memory.h>
+@@ -35,24 +38,94 @@
+ #define SECRETMEM_FLAGS_MASK	SECRETMEM_MODE_MASK
+ 
+ struct secretmem_ctx {
++	struct gen_pool *pool;
+ 	unsigned int mode;
+ };
+ 
+-static struct page *secretmem_alloc_page(gfp_t gfp)
++static struct cma *secretmem_cma;
 +
-+#include <linux/mm.h>
-+#include <linux/fs.h>
-+#include <linux/mount.h>
-+#include <linux/memfd.h>
-+#include <linux/bitops.h>
-+#include <linux/printk.h>
-+#include <linux/pagemap.h>
-+#include <linux/syscalls.h>
-+#include <linux/pseudo_fs.h>
-+#include <linux/secretmem.h>
-+#include <linux/set_memory.h>
-+#include <linux/sched/signal.h>
++static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
+ {
++	unsigned long nr_pages = (1 << PMD_PAGE_ORDER);
++	struct gen_pool *pool = ctx->pool;
++	unsigned long addr;
++	struct page *page;
++	int i, err;
 +
-+#include <uapi/linux/magic.h>
++	page = cma_alloc(secretmem_cma, nr_pages, PMD_SIZE, gfp & __GFP_NOWARN);
++	if (!page)
++		return -ENOMEM;
 +
-+#include <asm/tlbflush.h>
+ 	/*
+-	 * FIXME: use a cache of large pages to reduce the direct map
+-	 * fragmentation
++	 * clear the data left from the prevoius user before dropping the
++	 * pages from the direct map
+ 	 */
+-	return alloc_page(gfp | __GFP_ZERO);
++	for (i = 0; i < nr_pages; i++)
++		clear_highpage(page + i);
 +
-+#include "internal.h"
++	err = set_direct_map_invalid_noflush(page, nr_pages);
++	if (err)
++		goto err_cma_release;
 +
-+#undef pr_fmt
-+#define pr_fmt(fmt) "secretmem: " fmt
++	addr = (unsigned long)page_address(page);
++	err = gen_pool_add(pool, addr, PMD_SIZE, NUMA_NO_NODE);
++	if (err)
++		goto err_set_direct_map;
 +
-+/*
-+ * Define mode and flag masks to allow validation of the system call
-+ * parameters.
-+ */
-+#define SECRETMEM_MODE_MASK	(0x0)
-+#define SECRETMEM_FLAGS_MASK	SECRETMEM_MODE_MASK
++	flush_tlb_kernel_range(addr, addr + PMD_SIZE);
 +
-+struct secretmem_ctx {
-+	unsigned int mode;
-+};
++	return 0;
 +
-+static struct page *secretmem_alloc_page(gfp_t gfp)
-+{
++err_set_direct_map:
 +	/*
-+	 * FIXME: use a cache of large pages to reduce the direct map
-+	 * fragmentation
++	 * If a split of PUD-size page was required, it already happened
++	 * when we marked the pages invalid which guarantees that this call
++	 * won't fail
 +	 */
-+	return alloc_page(gfp | __GFP_ZERO);
++	set_direct_map_default_noflush(page, nr_pages);
++err_cma_release:
++	cma_release(secretmem_cma, page, nr_pages);
++	return err;
 +}
 +
-+static vm_fault_t secretmem_fault(struct vm_fault *vmf)
++static void secretmem_free_page(struct secretmem_ctx *ctx, struct page *page)
 +{
-+	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-+	struct inode *inode = file_inode(vmf->vma->vm_file);
-+	pgoff_t offset = vmf->pgoff;
++	unsigned long addr = (unsigned long)page_address(page);
++	struct gen_pool *pool = ctx->pool;
++
++	gen_pool_free(pool, addr, PAGE_SIZE);
++}
++
++static struct page *secretmem_alloc_page(struct secretmem_ctx *ctx,
++					 gfp_t gfp)
++{
++	struct gen_pool *pool = ctx->pool;
 +	unsigned long addr;
 +	struct page *page;
 +	int err;
 +
-+	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
-+		return vmf_error(-EINVAL);
-+
-+retry:
-+	page = find_lock_page(mapping, offset);
-+	if (!page) {
-+		page = secretmem_alloc_page(vmf->gfp_mask);
-+		if (!page)
-+			return VM_FAULT_OOM;
-+
-+		err = set_direct_map_invalid_noflush(page, 1);
-+		if (err) {
-+			put_page(page);
-+			return vmf_error(err);
-+		}
-+
-+		__SetPageUptodate(page);
-+		err = add_to_page_cache(page, mapping, offset, vmf->gfp_mask);
-+		if (unlikely(err)) {
-+			put_page(page);
-+			if (err == -EEXIST)
-+				goto retry;
-+			goto err_restore_direct_map;
-+		}
-+
-+		addr = (unsigned long)page_address(page);
-+		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
++	if (gen_pool_avail(pool) < PAGE_SIZE) {
++		err = secretmem_pool_increase(ctx, gfp);
++		if (err)
++			return NULL;
 +	}
 +
-+	vmf->page = page;
-+	return VM_FAULT_LOCKED;
++	addr = gen_pool_alloc(pool, PAGE_SIZE);
++	if (!addr)
++		return NULL;
 +
-+err_restore_direct_map:
-+	/*
-+	 * If a split of large page was required, it already happened
-+	 * when we marked the page invalid which guarantees that this call
-+	 * won't fail
-+	 */
-+	set_direct_map_default_noflush(page, 1);
-+	return vmf_error(err);
-+}
++	page = virt_to_page(addr);
++	get_page(page);
 +
-+static const struct vm_operations_struct secretmem_vm_ops = {
-+	.fault = secretmem_fault,
-+};
++	return page;
+ }
+ 
+ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+ {
++	struct secretmem_ctx *ctx = vmf->vma->vm_file->private_data;
+ 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+ 	pgoff_t offset = vmf->pgoff;
+-	unsigned long addr;
+ 	struct page *page;
+ 	int err;
+ 
+@@ -62,40 +135,25 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+ retry:
+ 	page = find_lock_page(mapping, offset);
+ 	if (!page) {
+-		page = secretmem_alloc_page(vmf->gfp_mask);
++		page = secretmem_alloc_page(ctx, vmf->gfp_mask);
+ 		if (!page)
+ 			return VM_FAULT_OOM;
+ 
+-		err = set_direct_map_invalid_noflush(page, 1);
+-		if (err) {
+-			put_page(page);
+-			return vmf_error(err);
+-		}
+-
+ 		__SetPageUptodate(page);
+ 		err = add_to_page_cache(page, mapping, offset, vmf->gfp_mask);
+ 		if (unlikely(err)) {
++			secretmem_free_page(ctx, page);
+ 			put_page(page);
+ 			if (err == -EEXIST)
+ 				goto retry;
+-			goto err_restore_direct_map;
++			return vmf_error(err);
+ 		}
+ 
+-		addr = (unsigned long)page_address(page);
+-		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
++		set_page_private(page, (unsigned long)ctx);
+ 	}
+ 
+ 	vmf->page = page;
+ 	return VM_FAULT_LOCKED;
+-
+-err_restore_direct_map:
+-	/*
+-	 * If a split of large page was required, it already happened
+-	 * when we marked the page invalid which guarantees that this call
+-	 * won't fail
+-	 */
+-	set_direct_map_default_noflush(page, 1);
+-	return vmf_error(err);
+ }
+ 
+ static const struct vm_operations_struct secretmem_vm_ops = {
+@@ -141,8 +199,9 @@ static int secretmem_migratepage(struct address_space *mapping,
+ 
+ static void secretmem_freepage(struct page *page)
+ {
+-	set_direct_map_default_noflush(page, 1);
+-	clear_highpage(page);
++	struct secretmem_ctx *ctx = (struct secretmem_ctx *)page_private(page);
 +
-+static int secretmem_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	unsigned long len = vma->vm_end - vma->vm_start;
-+
-+	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
-+		return -EINVAL;
-+
-+	if (mlock_future_check(vma->vm_mm, vma->vm_flags | VM_LOCKED, len))
-+		return -EAGAIN;
-+
-+	vma->vm_ops = &secretmem_vm_ops;
-+	vma->vm_flags |= VM_LOCKED;
-+
-+	return 0;
-+}
-+
-+bool vma_is_secretmem(struct vm_area_struct *vma)
-+{
-+	return vma->vm_ops == &secretmem_vm_ops;
-+}
-+
-+static const struct file_operations secretmem_fops = {
-+	.mmap		= secretmem_mmap,
-+};
-+
-+static bool secretmem_isolate_page(struct page *page, isolate_mode_t mode)
-+{
-+	return false;
-+}
-+
-+static int secretmem_migratepage(struct address_space *mapping,
-+				 struct page *newpage, struct page *page,
-+				 enum migrate_mode mode)
-+{
-+	return -EBUSY;
-+}
-+
-+static void secretmem_freepage(struct page *page)
-+{
-+	set_direct_map_default_noflush(page, 1);
-+	clear_highpage(page);
-+}
-+
-+static const struct address_space_operations secretmem_aops = {
-+	.freepage	= secretmem_freepage,
-+	.migratepage	= secretmem_migratepage,
-+	.isolate_page	= secretmem_isolate_page,
-+};
-+
-+bool page_is_secretmem(struct page *page)
-+{
-+	struct address_space *mapping = page_mapping(page);
-+
-+	if (!mapping)
-+		return false;
-+
-+	return mapping->a_ops == &secretmem_aops;
-+}
-+
-+static struct vfsmount *secretmem_mnt;
-+
-+static struct file *secretmem_file_create(unsigned long flags)
-+{
-+	struct file *file = ERR_PTR(-ENOMEM);
-+	struct secretmem_ctx *ctx;
-+	struct inode *inode;
-+
-+	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-+	if (IS_ERR(inode))
-+		return ERR_CAST(inode);
-+
-+	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		goto err_free_inode;
-+
-+	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
-+				 O_RDWR, &secretmem_fops);
-+	if (IS_ERR(file))
++	secretmem_free_page(ctx, page);
+ }
+ 
+ static const struct address_space_operations secretmem_aops = {
+@@ -177,13 +236,18 @@ static struct file *secretmem_file_create(unsigned long flags)
+ 	if (!ctx)
+ 		goto err_free_inode;
+ 
++	ctx->pool = gen_pool_create(PAGE_SHIFT, NUMA_NO_NODE);
++	if (!ctx->pool)
 +		goto err_free_ctx;
 +
-+	mapping_set_unevictable(inode->i_mapping);
+ 	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
+ 				 O_RDWR, &secretmem_fops);
+ 	if (IS_ERR(file))
+-		goto err_free_ctx;
++		goto err_free_pool;
+ 
+ 	mapping_set_unevictable(inode->i_mapping);
+ 
++	inode->i_private = ctx;
+ 	inode->i_mapping->private_data = ctx;
+ 	inode->i_mapping->a_ops = &secretmem_aops;
+ 
+@@ -197,6 +261,8 @@ static struct file *secretmem_file_create(unsigned long flags)
+ 
+ 	return file;
+ 
++err_free_pool:
++	gen_pool_destroy(ctx->pool);
+ err_free_ctx:
+ 	kfree(ctx);
+ err_free_inode:
+@@ -215,6 +281,9 @@ SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
+ 	if (flags & ~(SECRETMEM_FLAGS_MASK | O_CLOEXEC))
+ 		return -EINVAL;
+ 
++	if (!secretmem_cma)
++		return -ENOMEM;
 +
-+	inode->i_mapping->private_data = ctx;
-+	inode->i_mapping->a_ops = &secretmem_aops;
+ 	fd = get_unused_fd_flags(flags & O_CLOEXEC);
+ 	if (fd < 0)
+ 		return fd;
+@@ -235,11 +304,37 @@ SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
+ 	return err;
+ }
+ 
++static void secretmem_cleanup_chunk(struct gen_pool *pool,
++				    struct gen_pool_chunk *chunk, void *data)
++{
++	unsigned long start = chunk->start_addr;
++	unsigned long end = chunk->end_addr;
++	struct page *page = virt_to_page(start);
++	unsigned long nr_pages = (end - start + 1) / PAGE_SIZE;
++	int i;
 +
-+	/* pretend we are a normal file with zero size */
-+	inode->i_mode |= S_IFREG;
-+	inode->i_size = 0;
++	set_direct_map_default_noflush(page, nr_pages);
 +
-+	file->private_data = ctx;
++	for (i = 0; i < nr_pages; i++)
++		clear_highpage(page + i);
 +
-+	ctx->mode = flags & SECRETMEM_MODE_MASK;
-+
-+	return file;
-+
-+err_free_ctx:
-+	kfree(ctx);
-+err_free_inode:
-+	iput(inode);
-+	return file;
++	cma_release(secretmem_cma, page, nr_pages);
 +}
 +
-+SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
++static void secretmem_cleanup_pool(struct secretmem_ctx *ctx)
 +{
-+	struct file *file;
-+	int fd, err;
++	struct gen_pool *pool = ctx->pool;
 +
-+	/* make sure local flags do not confict with global fcntl.h */
-+	BUILD_BUG_ON(SECRETMEM_FLAGS_MASK & O_CLOEXEC);
++	gen_pool_for_each_chunk(pool, secretmem_cleanup_chunk, ctx);
++	gen_pool_destroy(pool);
++}
 +
-+	if (flags & ~(SECRETMEM_FLAGS_MASK | O_CLOEXEC))
-+		return -EINVAL;
+ static void secretmem_evict_inode(struct inode *inode)
+ {
+ 	struct secretmem_ctx *ctx = inode->i_private;
+ 
+ 	truncate_inode_pages_final(&inode->i_data);
++	secretmem_cleanup_pool(ctx);
+ 	clear_inode(inode);
+ 	kfree(ctx);
+ }
+@@ -276,3 +371,29 @@ static int secretmem_init(void)
+ 	return ret;
+ }
+ fs_initcall(secretmem_init);
 +
-+	fd = get_unused_fd_flags(flags & O_CLOEXEC);
-+	if (fd < 0)
-+		return fd;
++static int __init secretmem_setup(char *str)
++{
++	phys_addr_t align = PMD_SIZE;
++	unsigned long reserved_size;
++	int err;
 +
-+	file = secretmem_file_create(flags);
-+	if (IS_ERR(file)) {
-+		err = PTR_ERR(file);
-+		goto err_put_fd;
++	reserved_size = memparse(str, NULL);
++	if (!reserved_size)
++		return 0;
++
++	if (reserved_size * 2 > PUD_SIZE)
++		align = PUD_SIZE;
++
++	err = cma_declare_contiguous(0, reserved_size, 0, align, 0, false,
++				     "secretmem", &secretmem_cma);
++	if (err) {
++		pr_err("failed to create CMA: %d\n", err);
++		return err;
 +	}
 +
-+	file->f_flags |= O_LARGEFILE;
-+
-+	fd_install(fd, file);
-+	return fd;
-+
-+err_put_fd:
-+	put_unused_fd(fd);
-+	return err;
-+}
-+
-+static void secretmem_evict_inode(struct inode *inode)
-+{
-+	struct secretmem_ctx *ctx = inode->i_private;
-+
-+	truncate_inode_pages_final(&inode->i_data);
-+	clear_inode(inode);
-+	kfree(ctx);
-+}
-+
-+static const struct super_operations secretmem_super_ops = {
-+	.evict_inode = secretmem_evict_inode,
-+};
-+
-+static int secretmem_init_fs_context(struct fs_context *fc)
-+{
-+	struct pseudo_fs_context *ctx = init_pseudo(fc, SECRETMEM_MAGIC);
-+
-+	if (!ctx)
-+		return -ENOMEM;
-+	ctx->ops = &secretmem_super_ops;
++	pr_info("reserved %luM\n", reserved_size >> 20);
 +
 +	return 0;
 +}
-+
-+static struct file_system_type secretmem_fs = {
-+	.name		= "secretmem",
-+	.init_fs_context = secretmem_init_fs_context,
-+	.kill_sb	= kill_anon_super,
-+};
-+
-+static int secretmem_init(void)
-+{
-+	int ret = 0;
-+
-+	secretmem_mnt = kern_mount(&secretmem_fs);
-+	if (IS_ERR(secretmem_mnt))
-+		ret = PTR_ERR(secretmem_mnt);
-+
-+	return ret;
-+}
-+fs_initcall(secretmem_init);
++__setup("secretmem=", secretmem_setup);
 -- 
 2.28.0
 
