@@ -2,168 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1BE72FEED6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 16:33:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 874E12FEF53
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 16:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732970AbhAUPan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 10:30:43 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54090 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731136AbhAUNWN (ORCPT
+        id S2387486AbhAUPo2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 10:44:28 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:40314 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728642AbhAUNVX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 08:22:13 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l2Ztt-0005g7-Cs; Thu, 21 Jan 2021 13:21:25 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Cc:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v6 16/40] open: handle idmapped mounts
-Date:   Thu, 21 Jan 2021 14:19:35 +0100
-Message-Id: <20210121131959.646623-17-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
-MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=YKSd0FdGGLgCSTeDw7b6sTvRU/kXPfMpmc0z0c+ceJs=; m=QtXKH7l01QTmlgDZWGGLs41QsIHJYr2I07NJQrbQhUc=; p=UQ8ZL9iZHePP4j74jgLUJqMxCUpzv40jcAqgWmdc+iM=; g=fc42bb0317f59f78c12f1f5b6f750e685efc9c8e
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHQEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9pAAKCRCRxhvAZXjcom58APiYXnz MLA9PdyDTNWHJ1hzxQwmhv0RHo0AradNsIDslAQDIvEnNGlH+yVfr0r/waOULLGeiGRFi0nzVv0+4 7M8YDg==
-Content-Transfer-Encoding: 8bit
+        Thu, 21 Jan 2021 08:21:23 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10LDEIqj072777;
+        Thu, 21 Jan 2021 13:20:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=1ICsrqapL3ySfipx1CqkUwjx8sVX170UdxFWoaZRPKg=;
+ b=Dwf3AeNzs9pJLPymom3kFuVhbJLNe5LImJzpT7QXc0tv6KrL8rA8Cx9eIEP+jEx9ZwPG
+ wv3N0N2+0HFu3L+GPrp62abNO+x5sN7Y3dQKeJgGWU9YvFt9LwIaMRCoYo548czWd4w2
+ X8bBAlZ4zjAhPc50vV6vSwvdUb+kBztFYpAJgs2GM46neQhTkJ1UIXCjNcYzokMn/wEY
+ KtKX+p7CeAiDOZ1kps+eqfEXNfxWn9hcrw+wRArNywZM2T8HukVf9N9+5vSp350jPifP
+ DZc74YmzA1ti6Pz3k/h7WImUWSedNaz9VB9Ls5+APQBNpUxQuZMZ+SpwpFpp88kG0bwU qg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 3668qmy8xu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jan 2021 13:20:36 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10LDFj0K106656;
+        Thu, 21 Jan 2021 13:20:35 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 3668rexqa7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jan 2021 13:20:35 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10LDKZJ7123118;
+        Thu, 21 Jan 2021 13:20:35 GMT
+Received: from gmananth-linux.oraclecorp.com (dhcp-10-166-171-141.vpn.oracle.com [10.166.171.141])
+        by userp3030.oracle.com with ESMTP id 3668rexq88-1;
+        Thu, 21 Jan 2021 13:20:35 +0000
+From:   Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     viro@zeniv.linux.org.uk, matthew.wilcox@oracle.com,
+        khlebnikov@yandex-team.ru, gautham.ananthakrishna@oracle.com
+Subject: [PATCH RFC 0/6] fix the negative dentres bloating system memory usage
+Date:   Thu, 21 Jan 2021 18:49:39 +0530
+Message-Id: <1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9870 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
+ phishscore=0 clxscore=1011 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101210072
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For core file operations such as changing directories or chrooting,
-determining file access, changing mode or ownership the vfs will verify
-that the caller is privileged over the inode. Extend the various helpers
-to handle idmapped mounts. If the inode is accessed through an idmapped
-mount map it into the mount's user namespace. Afterwards the permissions
-checks are identical to non-idmapped mounts. When changing file
-ownership we need to map the uid and gid from the mount's user
-namespace. If the initial user namespace is passed nothing changes so
-non-idmapped mounts will see identical behavior as before.
+For most filesystems result of every negative lookup is cached, content of
+directories is usually cached too. Production of negative dentries isn't
+limited with disk speed. It's really easy to generate millions of them if
+system has enough memory.
 
-Link: https://lore.kernel.org/r/20210112220124.837960-24-christian.brauner@ubuntu.com
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-unchanged
+Getting this memory back ins't that easy because slab frees pages only when
+all related objects are gone. While dcache shrinker works in LRU order.
 
-/* v3 */
-- David Howells <dhowells@redhat.com>:
-  - Remove mnt_idmapped() check after removing mnt_idmapped() helper in earlier
-    patches.
+Typical scenario is an idle system where some process periodically creates
+temporary files and removes them. After some time, memory will be filled
+with negative dentries for these random file names.
 
-/* v4 */
-- Serge Hallyn <serge@hallyn.com>:
-  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
-    terminology consistent.
+Simple lookup of random names also generates negative dentries very fast.
+Constant flow of such negative denries drains all other inactive caches.
+Too many negative dentries in the system can cause memory fragmentation
+and memory compaction.
 
-/* v5 */
-unchanged
-base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+Negative dentries are linked into siblings list along with normal positive
+dentries. Some operations walks dcache tree but looks only for positive
+dentries: most important is fsnotify/inotify. Hordes of negative dentries
+slow down these operations significantly.
 
-- Christoph Hellwig <hch@lst.de>:
-  - Use new file_mnt_user_ns() helper.
+Time of dentry lookup is usually unaffected because hash table grows along
+with size of memory. Unless somebody especially crafts hash collisions.
 
-/* v6 */
-base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+This patch set solves all of these problems:
 
-- Christoph Hellwig <hch@lst.de>:
-  - Make use of new path_permission() helper.
----
- fs/open.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Move negative denries to the end of sliblings list, thus walkers could
+skip them at first sight (patches 1-4).
 
-diff --git a/fs/open.c b/fs/open.c
-index 8b3f3eb652d0..4ec3979d0466 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -438,7 +438,7 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
- 			goto out_path_release;
- 	}
- 
--	res = inode_permission(&init_user_ns, inode, mode | MAY_ACCESS);
-+	res = inode_permission(mnt_user_ns(path.mnt), inode, mode | MAY_ACCESS);
- 	/* SuS v2 requires we report a read only fs too */
- 	if (res || !(mode & S_IWOTH) || special_file(inode->i_mode))
- 		goto out_path_release;
-@@ -582,8 +582,8 @@ int chmod_common(const struct path *path, umode_t mode)
- 		goto out_unlock;
- 	newattrs.ia_mode = (mode & S_IALLUGO) | (inode->i_mode & ~S_IALLUGO);
- 	newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
--	error = notify_change(&init_user_ns, path->dentry, &newattrs,
--			      &delegated_inode);
-+	error = notify_change(mnt_user_ns(path->mnt), path->dentry,
-+			      &newattrs, &delegated_inode);
- out_unlock:
- 	inode_unlock(inode);
- 	if (delegated_inode) {
-@@ -644,6 +644,7 @@ SYSCALL_DEFINE2(chmod, const char __user *, filename, umode_t, mode)
- 
- int chown_common(const struct path *path, uid_t user, gid_t group)
- {
-+	struct user_namespace *mnt_userns;
- 	struct inode *inode = path->dentry->d_inode;
- 	struct inode *delegated_inode = NULL;
- 	int error;
-@@ -654,6 +655,10 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	uid = make_kuid(current_user_ns(), user);
- 	gid = make_kgid(current_user_ns(), group);
- 
-+	mnt_userns = mnt_user_ns(path->mnt);
-+	uid = kuid_from_mnt(mnt_userns, uid);
-+	gid = kgid_from_mnt(mnt_userns, gid);
-+
- retry_deleg:
- 	newattrs.ia_valid =  ATTR_CTIME;
- 	if (user != (uid_t) -1) {
-@@ -674,7 +679,7 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	inode_lock(inode);
- 	error = security_path_chown(path, uid, gid);
- 	if (!error)
--		error = notify_change(&init_user_ns, path->dentry, &newattrs,
-+		error = notify_change(mnt_userns, path->dentry, &newattrs,
- 				      &delegated_inode);
- 	inode_unlock(inode);
- 	if (delegated_inode) {
+Keep in dcache at most three unreferenced negative denties in row in each
+hash bucket (patches 5-6).
+
+We tested this patch set recently and found it limiting negative dentry to a
+small part of total memory. The following is the test result we ran on two
+types of servers, one is 256G memory with 24 CPUS and another is 3T memory
+with 384 CPUS. The test case is using a lot of processes to generate negative
+dentry in parallel, the following is the test result after 72 hours, the
+negative dentry number is stable around that number even after running longer
+for much longer time. Without the patch set, in less than half an hour 197G was
+taken by negative dentry on 256G system, in 1 day 2.4T was taken on 3T system.
+
+system memory   neg-dentry-number   neg-dentry-mem-usage
+256G            55259084            10.6G
+3T              202306756           38.8G
+
+For perf test, we ran the following, and no regression found.
+
+1. create 1M negative dentry and then touch them to convert them to positive
+   dentry
+
+2. create 10K/100K/1M files
+
+3. remove 10K/100K/1M files
+
+4. kernel compile
+
+To verify the fsnotify fix, we used inotifywait to watch file create/open in
+some directory where there is a lot of negative dentry, without the patch set,
+the system would run into soft lockup, with it, no soft lockup was found.
+
+We also tried to defeat the limitation by making different processes generate
+negative dentry with the same name, that will make one negative dentry being
+accessed couple times around same time, DCACHE_REFERENCED will be set on it
+and it can't be trimmed easily.
+
+There were a lot of customer cases on this issue. It makes no sense to leave
+so many negative dentry, it just causes memory fragmentation and compaction
+and does not help a lot.
+
+Konstantin Khlebnikov (6):
+  dcache: sweep cached negative dentries to the end of list of siblings
+  fsnotify: stop walking child dentries if remaining tail is negative
+  dcache: add action D_WALK_SKIP_SIBLINGS to d_walk()
+  dcache: stop walking siblings if remaining dentries all negative
+  dcache: push releasing dentry lock into sweep_negative
+  dcache: prevent flooding with negative dentries
+
+ fs/dcache.c            | 135 +++++++++++++++++++++++++++++++++++++++++++++++--
+ fs/libfs.c             |   3 ++
+ fs/notify/fsnotify.c   |   6 ++-
+ include/linux/dcache.h |   6 +++
+ 4 files changed, 145 insertions(+), 5 deletions(-)
+
 -- 
-2.30.0
+1.8.3.1
 
