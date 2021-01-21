@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F09262FEF2F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 16:42:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD812FEEE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 16:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731894AbhAUNVs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 08:21:48 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53786 "EHLO
+        id S1731943AbhAUNWK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 08:22:10 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53815 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731816AbhAUNVZ (ORCPT
+        with ESMTP id S1731750AbhAUNV0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 08:21:25 -0500
+        Thu, 21 Jan 2021 08:21:26 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l2Zt1-0005g7-TV; Thu, 21 Jan 2021 13:20:32 +0000
+        id 1l2Zt6-0005g7-BI; Thu, 21 Jan 2021 13:20:36 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
@@ -52,280 +52,308 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v6 03/40] fs: add file and path permissions helpers
-Date:   Thu, 21 Jan 2021 14:19:22 +0100
-Message-Id: <20210121131959.646623-4-christian.brauner@ubuntu.com>
+Subject: [PATCH v6 04/40] capability: handle idmapped mounts
+Date:   Thu, 21 Jan 2021 14:19:23 +0100
+Message-Id: <20210121131959.646623-5-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=EPGeccrW2ND6sEpUnqQWbJwVn6//nORjnK8IWU4CF0s=; m=jt/t+jriCkeKCD//7Jka1ydzn2GvYl+uifElu/w/ryk=; p=3/e8UsyR5VgYfXV6lXbZvOEZRVy3SJYhqT7zv3IWG78=; g=781dcf4cb525770f61fcb94f6f378ed86904f06c
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9owAKCRCRxhvAZXjcom/7AP0aUrt 81FdUoZP/syHyN2DRxUz08P8UjRoZe1pjLq7DYgEAs/b6nrnXUBrctKKGN+rlnZHHSlNShp4uugis FcrYUwg=
+X-Patch-Hashes: v=1; h=sha256; i=ePMljlU6SgOW2CsGAJQU42bgWmfl/2527kQxnJ4/OsA=; m=uZrGytpJK66vmcdQIAh4cQdVJC13QtEwI23m6gY7HP0=; p=6gsyRJF9Cy+pgOpvfHsdU+9ldB5Vob1j3CDvrGaQbz4=; g=dc88c5c3ca2aa4fedbfca69f25f903ea5e4373f7
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9owAKCRCRxhvAZXjcoh1WAP4vJLa HkhHZNwp7eLXt0Xqy0n3knklgTzgBa1xAE/mhUAEAhA7WVoNwiY7xYMqlb29ha7Iy6LdtwwZPwqQw 1zu/LAA=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add two simple helpers to check permissions on a file and path
-respectively and convert over some callers. It simplifies quite a few
-codepaths and also reduces the churn in later patches quite a bit.
-Christoph also correctly points out that this makes codepaths (e.g.
-ioctls) way easier to follow that would otherwise have to do more
-complex argument passing than necessary.
+In order to determine whether a caller holds privilege over a given
+inode the capability framework exposes the two helpers
+privileged_wrt_inode_uidgid() and capable_wrt_inode_uidgid(). The former
+verifies that the inode has a mapping in the caller's user namespace and
+the latter additionally verifies that the caller has the requested
+capability in their current user namespace.
+If the inode is accessed through an idmapped mount map it into the
+mount's user namespace. Afterwards the checks are identical to
+non-idmapped inodes. If the initial user namespace is passed all
+operations are a nop so non-idmapped mounts will not see a change in
+behavior.
 
-Link: https://lore.kernel.org/r/20210112220124.837960-16-christian.brauner@ubuntu.com
+Link: https://lore.kernel.org/r/20210112220124.837960-11-christian.brauner@ubuntu.com
+Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
-Suggested-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Serge Hallyn <serge@hallyn.com>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch not present
+- Christoph Hellwig <hch@lst.de>:
+  - Don't pollute the vfs with additional helpers simply extend the existing
+    helpers with an additional argument and switch all callers.
 
 /* v3 */
-patch not present
+unchanged
 
 /* v4 */
-patch not present
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 
 /* v5 */
-patch not present
+unchanged
+base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 
 /* v6 */
 base-commit: 19c329f6808995b142b3966301f217c831e7cf31
 
 - Christoph Hellwig <hch@lst.de>:
-  - Make file_user_ns() static inline.
-  - Add file_permission() and path_permission() helpers.
+  - Remove "extern" from headers.
+  - Wrap lines over 80 chars.
 ---
- fs/init.c                          | 6 +++---
- fs/notify/fanotify/fanotify_user.c | 2 +-
- fs/notify/inotify/inotify_user.c   | 2 +-
- fs/open.c                          | 6 +++---
- fs/udf/file.c                      | 2 +-
- fs/verity/enable.c                 | 2 +-
- include/linux/fs.h                 | 8 ++++++++
- kernel/bpf/inode.c                 | 2 +-
- kernel/sys.c                       | 2 +-
- mm/madvise.c                       | 2 +-
- mm/memcontrol.c                    | 2 +-
- mm/mincore.c                       | 2 +-
- net/unix/af_unix.c                 | 2 +-
- 13 files changed, 24 insertions(+), 16 deletions(-)
+ fs/attr.c                  |  8 ++++----
+ fs/exec.c                  |  3 ++-
+ fs/inode.c                 |  3 ++-
+ fs/namei.c                 | 13 ++++++++-----
+ fs/overlayfs/super.c       |  2 +-
+ fs/posix_acl.c             |  2 +-
+ fs/xfs/xfs_ioctl.c         |  2 +-
+ include/linux/capability.h |  7 +++++--
+ kernel/capability.c        | 14 +++++++++-----
+ security/commoncap.c       |  5 +++--
+ 10 files changed, 36 insertions(+), 23 deletions(-)
 
-diff --git a/fs/init.c b/fs/init.c
-index e9c320a48cf1..02723bea8499 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -49,7 +49,7 @@ int __init init_chdir(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
-+	error = path_permission(&path, MAY_EXEC | MAY_CHDIR);
- 	if (!error)
- 		set_fs_pwd(current->fs, &path);
- 	path_put(&path);
-@@ -64,7 +64,7 @@ int __init init_chroot(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
-+	error = path_permission(&path, MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
- 	error = -EPERM;
-@@ -118,7 +118,7 @@ int __init init_eaccess(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(d_inode(path.dentry), MAY_ACCESS);
-+	error = path_permission(&path, MAY_ACCESS);
- 	path_put(&path);
- 	return error;
- }
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index dcab112e1f00..64cfc1a3015d 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -702,7 +702,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+diff --git a/fs/attr.c b/fs/attr.c
+index b4bbdbd4c8ca..d270f640a192 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -23,7 +23,7 @@ static bool chown_ok(const struct inode *inode, kuid_t uid)
+ 	if (uid_eq(current_fsuid(), inode->i_uid) &&
+ 	    uid_eq(uid, inode->i_uid))
+ 		return true;
+-	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if (capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_CHOWN))
+ 		return true;
+ 	if (uid_eq(inode->i_uid, INVALID_UID) &&
+ 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
+@@ -36,7 +36,7 @@ static bool chgrp_ok(const struct inode *inode, kgid_t gid)
+ 	if (uid_eq(current_fsuid(), inode->i_uid) &&
+ 	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
+ 		return true;
+-	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if (capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_CHOWN))
+ 		return true;
+ 	if (gid_eq(inode->i_gid, INVALID_GID) &&
+ 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
+@@ -92,7 +92,7 @@ int setattr_prepare(struct dentry *dentry, struct iattr *attr)
+ 		/* Also check the setgid bit! */
+ 		if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
+ 				inode->i_gid) &&
+-		    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++		    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 			attr->ia_mode &= ~S_ISGID;
  	}
  
- 	/* you can only watch an inode if you have read permissions on it */
--	ret = inode_permission(path->dentry->d_inode, MAY_READ);
-+	ret = path_permission(path, MAY_READ);
- 	if (ret) {
- 		path_put(path);
- 		goto out;
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 59c177011a0f..e1155d32ef6f 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -352,7 +352,7 @@ static int inotify_find_inode(const char __user *dirname, struct path *path,
- 	if (error)
- 		return error;
- 	/* you can only watch an inode if you have read permissions on it */
--	error = inode_permission(path->dentry->d_inode, MAY_READ);
-+	error = path_permission(path, MAY_READ);
- 	if (error) {
- 		path_put(path);
- 		return error;
-diff --git a/fs/open.c b/fs/open.c
-index 1e06e443a565..cd1efd254cad 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -492,7 +492,7 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
- 	if (error)
- 		goto out;
+@@ -193,7 +193,7 @@ void setattr_copy(struct inode *inode, const struct iattr *attr)
+ 		umode_t mode = attr->ia_mode;
  
--	error = inode_permission(path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
-+	error = path_permission(&path, MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
+ 		if (!in_group_p(inode->i_gid) &&
+-		    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++		    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 			mode &= ~S_ISGID;
+ 		inode->i_mode = mode;
+ 	}
+diff --git a/fs/exec.c b/fs/exec.c
+index 5d4d52039105..89d4780ff48f 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1411,7 +1411,8 @@ void would_dump(struct linux_binprm *bprm, struct file *file)
+ 		/* Ensure mm->user_ns contains the executable */
+ 		user_ns = old = bprm->mm->user_ns;
+ 		while ((user_ns != &init_user_ns) &&
+-		       !privileged_wrt_inode_uidgid(user_ns, inode))
++		       !privileged_wrt_inode_uidgid(user_ns, &init_user_ns,
++						    inode))
+ 			user_ns = user_ns->parent;
  
-@@ -521,7 +521,7 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
- 	if (!d_can_lookup(f.file->f_path.dentry))
- 		goto out_putf;
+ 		if (old != user_ns) {
+diff --git a/fs/inode.c b/fs/inode.c
+index 6442d97d9a4a..cd40cbf87ce4 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2146,7 +2146,8 @@ void inode_init_owner(struct inode *inode, const struct inode *dir,
+ 			mode |= S_ISGID;
+ 		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
+ 			 !in_group_p(inode->i_gid) &&
+-			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
++			 !capable_wrt_inode_uidgid(&init_user_ns, dir,
++						   CAP_FSETID))
+ 			mode &= ~S_ISGID;
+ 	} else
+ 		inode->i_gid = current_fsgid();
+diff --git a/fs/namei.c b/fs/namei.c
+index 78443a85480a..fd4724bce4f5 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -357,10 +357,11 @@ int generic_permission(struct inode *inode, int mask)
+ 	if (S_ISDIR(inode->i_mode)) {
+ 		/* DACs are overridable for directories */
+ 		if (!(mask & MAY_WRITE))
+-			if (capable_wrt_inode_uidgid(inode,
++			if (capable_wrt_inode_uidgid(&init_user_ns, inode,
+ 						     CAP_DAC_READ_SEARCH))
+ 				return 0;
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_OVERRIDE))
+ 			return 0;
+ 		return -EACCES;
+ 	}
+@@ -370,7 +371,8 @@ int generic_permission(struct inode *inode, int mask)
+ 	 */
+ 	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
+ 	if (mask == MAY_READ)
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_READ_SEARCH))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_READ_SEARCH))
+ 			return 0;
+ 	/*
+ 	 * Read/write DACs are always overridable.
+@@ -378,7 +380,8 @@ int generic_permission(struct inode *inode, int mask)
+ 	 * at least one exec bit set.
+ 	 */
+ 	if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_OVERRIDE))
+ 			return 0;
  
--	error = inode_permission(file_inode(f.file), MAY_EXEC | MAY_CHDIR);
-+	error = file_permission(f.file, MAY_EXEC | MAY_CHDIR);
- 	if (!error)
- 		set_fs_pwd(current->fs, &f.file->f_path);
- out_putf:
-@@ -540,7 +540,7 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
- 	if (error)
- 		goto out;
+ 	return -EACCES;
+@@ -2659,7 +2662,7 @@ int __check_sticky(struct inode *dir, struct inode *inode)
+ 		return 0;
+ 	if (uid_eq(dir->i_uid, fsuid))
+ 		return 0;
+-	return !capable_wrt_inode_uidgid(inode, CAP_FOWNER);
++	return !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FOWNER);
+ }
+ EXPORT_SYMBOL(__check_sticky);
  
--	error = inode_permission(path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
-+	error = path_permission(&path, MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 2bd570cbe8a4..88d877787770 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1017,7 +1017,7 @@ ovl_posix_acl_xattr_set(const struct xattr_handler *handler,
+ 	if (unlikely(inode->i_mode & S_ISGID) &&
+ 	    handler->flags == ACL_TYPE_ACCESS &&
+ 	    !in_group_p(inode->i_gid) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_FSETID)) {
++	    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID)) {
+ 		struct iattr iattr = { .ia_valid = ATTR_KILL_SGID };
  
-diff --git a/fs/udf/file.c b/fs/udf/file.c
-index ad8eefad27d7..3671a40ed3c3 100644
---- a/fs/udf/file.c
-+++ b/fs/udf/file.c
-@@ -183,7 +183,7 @@ long udf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	long old_block, new_block;
- 	int result;
+ 		err = ovl_setattr(dentry, &iattr);
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 95882b3f5f62..4ca6d53c6f0a 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -656,7 +656,7 @@ int posix_acl_update_mode(struct inode *inode, umode_t *mode_p,
+ 	if (error == 0)
+ 		*acl = NULL;
+ 	if (!in_group_p(inode->i_gid) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++	    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 		mode &= ~S_ISGID;
+ 	*mode_p = mode;
+ 	return 0;
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 3fbd98f61ea5..97bd29fc8c43 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1502,7 +1502,7 @@ xfs_ioctl_setattr(
+ 	 */
  
--	if (inode_permission(inode, MAY_READ) != 0) {
-+	if (file_permission(filp, MAY_READ) != 0) {
- 		udf_debug("no permission to access inode %lu\n", inode->i_ino);
+ 	if ((VFS_I(ip)->i_mode & (S_ISUID|S_ISGID)) &&
+-	    !capable_wrt_inode_uidgid(VFS_I(ip), CAP_FSETID))
++	    !capable_wrt_inode_uidgid(&init_user_ns, VFS_I(ip), CAP_FSETID))
+ 		VFS_I(ip)->i_mode &= ~(S_ISUID|S_ISGID);
+ 
+ 	/* Change the ownerships and register project quota modifications */
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index b2f698915c0f..62bfa3ed84d7 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -247,8 +247,11 @@ static inline bool ns_capable_setid(struct user_namespace *ns, int cap)
+ 	return true;
+ }
+ #endif /* CONFIG_MULTIUSER */
+-extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode);
+-extern bool capable_wrt_inode_uidgid(const struct inode *inode, int cap);
++bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++				 struct user_namespace *mnt_userns,
++				 const struct inode *inode);
++bool capable_wrt_inode_uidgid(struct user_namespace *mnt_userns,
++			      const struct inode *inode, int cap);
+ extern bool file_ns_capable(const struct file *file, struct user_namespace *ns, int cap);
+ extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
+ static inline bool perfmon_capable(void)
+diff --git a/kernel/capability.c b/kernel/capability.c
+index de7eac903a2a..46a361dde042 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -484,10 +484,12 @@ EXPORT_SYMBOL(file_ns_capable);
+  *
+  * Return true if the inode uid and gid are within the namespace.
+  */
+-bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode)
++bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++				 struct user_namespace *mnt_userns,
++				 const struct inode *inode)
+ {
+-	return kuid_has_mapping(ns, inode->i_uid) &&
+-		kgid_has_mapping(ns, inode->i_gid);
++	return kuid_has_mapping(ns, i_uid_into_mnt(mnt_userns, inode)) &&
++	       kgid_has_mapping(ns, i_gid_into_mnt(mnt_userns, inode));
+ }
+ 
+ /**
+@@ -499,11 +501,13 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *
+  * its own user namespace and that the given inode's uid and gid are
+  * mapped into the current user namespace.
+  */
+-bool capable_wrt_inode_uidgid(const struct inode *inode, int cap)
++bool capable_wrt_inode_uidgid(struct user_namespace *mnt_userns,
++			      const struct inode *inode, int cap)
+ {
+ 	struct user_namespace *ns = current_user_ns();
+ 
+-	return ns_capable(ns, cap) && privileged_wrt_inode_uidgid(ns, inode);
++	return ns_capable(ns, cap) &&
++	       privileged_wrt_inode_uidgid(ns, mnt_userns, inode);
+ }
+ EXPORT_SYMBOL(capable_wrt_inode_uidgid);
+ 
+diff --git a/security/commoncap.c b/security/commoncap.c
+index bacc1111d871..88ee345f7bfa 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -489,7 +489,7 @@ int cap_convert_nscap(struct dentry *dentry, const void **ivalue, size_t size)
+ 		return -EINVAL;
+ 	if (!validheader(size, cap))
+ 		return -EINVAL;
+-	if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
++	if (!capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_SETFCAP))
  		return -EPERM;
+ 	if (size == XATTR_CAPS_SZ_2)
+ 		if (ns_capable(inode->i_sb->s_user_ns, CAP_SETFCAP))
+@@ -956,7 +956,8 @@ int cap_inode_removexattr(struct dentry *dentry, const char *name)
+ 		struct inode *inode = d_backing_inode(dentry);
+ 		if (!inode)
+ 			return -EINVAL;
+-		if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
++		if (!capable_wrt_inode_uidgid(&init_user_ns, inode,
++					      CAP_SETFCAP))
+ 			return -EPERM;
+ 		return 0;
  	}
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index f7e997a01ad0..77e159a0346b 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -369,7 +369,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
- 	 * has verity enabled, and to stabilize the data being hashed.
- 	 */
- 
--	err = inode_permission(inode, MAY_WRITE);
-+	err = file_permission(filp, MAY_WRITE);
- 	if (err)
- 		return err;
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3165998e2294..bcd17097d441 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2812,6 +2812,14 @@ static inline int bmap(struct inode *inode,  sector_t *block)
- extern int notify_change(struct dentry *, struct iattr *, struct inode **);
- extern int inode_permission(struct inode *, int);
- extern int generic_permission(struct inode *, int);
-+static inline int file_permission(struct file *file, int mask)
-+{
-+	return inode_permission(file_inode(file), mask);
-+}
-+static inline int path_permission(const struct path *path, int mask)
-+{
-+	return inode_permission(d_inode(path->dentry), mask);
-+}
- extern int __check_sticky(struct inode *dir, struct inode *inode);
- 
- static inline bool execute_ok(struct inode *inode)
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index dd4b7fd60ee7..8962f139521e 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -507,7 +507,7 @@ static void *bpf_obj_do_get(const char __user *pathname,
- 		return ERR_PTR(ret);
- 
- 	inode = d_backing_inode(path.dentry);
--	ret = inode_permission(inode, ACC_MODE(flags));
-+	ret = path_permission(&path, ACC_MODE(flags));
- 	if (ret)
- 		goto out;
- 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 51f00fe20e4d..138fb253b344 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -1848,7 +1848,7 @@ static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
- 	if (!S_ISREG(inode->i_mode) || path_noexec(&exe.file->f_path))
- 		goto exit;
- 
--	err = inode_permission(inode, MAY_EXEC);
-+	err = file_permission(exe.file, MAY_EXEC);
- 	if (err)
- 		goto exit;
- 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 6a660858784b..175c5582d8a9 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -540,7 +540,7 @@ static inline bool can_do_pageout(struct vm_area_struct *vma)
- 	 * opens a side channel.
- 	 */
- 	return inode_owner_or_capable(file_inode(vma->vm_file)) ||
--		inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
-+	       file_permission(vma->vm_file, MAY_WRITE) == 0;
- }
- 
- static long madvise_pageout(struct vm_area_struct *vma,
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 605f671203ef..cf9076f58582 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4899,7 +4899,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 
- 	/* the process need read permission on control file */
- 	/* AV: shouldn't we check that it's been opened for read instead? */
--	ret = inode_permission(file_inode(cfile.file), MAY_READ);
-+	ret = file_permission(cfile.file, MAY_READ);
- 	if (ret < 0)
- 		goto out_put_cfile;
- 
-diff --git a/mm/mincore.c b/mm/mincore.c
-index 02db1a834021..7bdb4673f776 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -167,7 +167,7 @@ static inline bool can_do_mincore(struct vm_area_struct *vma)
- 	 * mappings, which opens a side channel.
- 	 */
- 	return inode_owner_or_capable(file_inode(vma->vm_file)) ||
--		inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
-+	       file_permission(vma->vm_file, MAY_WRITE) == 0;
- }
- 
- static const struct mm_walk_ops mincore_walk_ops = {
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 41c3303c3357..18453d15dddf 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -936,7 +936,7 @@ static struct sock *unix_find_other(struct net *net,
- 		if (err)
- 			goto fail;
- 		inode = d_backing_inode(path.dentry);
--		err = inode_permission(inode, MAY_WRITE);
-+		err = path_permission(&path, MAY_WRITE);
- 		if (err)
- 			goto put_fail;
- 
 -- 
 2.30.0
 
