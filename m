@@ -2,141 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A1672FF3A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 19:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1792FF41A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 20:18:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbhAUSyQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 13:54:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48769 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727056AbhAUSyD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 13:54:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611255156;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9dViudQ3lb05x7W07+1rvaBJLRkqsQmlwfw0YFNbKhk=;
-        b=LkV+bRsArE3C7PSlJj494ghg4yiuNHWEFgXELlrCL4jHDU0XP3/nHoUCBOWjoV5IJcckkU
-        39CmMJ+kSYlXGpoMscg0z33QlIW56bxz2IbBz4D0+GwuET4wC4G5lyU/iUAKIj376u+3Dz
-        rR7sA3ysHtqRnV87B5JtBkqd5sftjYg=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-85-m2bajtJ-NAyiw4eY6lXeYQ-1; Thu, 21 Jan 2021 13:52:33 -0500
-X-MC-Unique: m2bajtJ-NAyiw4eY6lXeYQ-1
-Received: by mail-qk1-f198.google.com with SMTP id g5so2271909qke.22
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jan 2021 10:52:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9dViudQ3lb05x7W07+1rvaBJLRkqsQmlwfw0YFNbKhk=;
-        b=LC8Oxesiq5qiABeh0e+H+THssnnaXvapXqRZwGbTnC4alUI+ELs9Osy2J889r9NXE0
-         VGdj6H1TZiRSyLIj+YSj93S2++8LI3G2cfIPFFuedsYq2ZCCsPJBNiqQH0v8ctYdpvUH
-         /KhGGbzKHX+sOW7Zbx7pz4aJFaTIAnUrLqVEhf019yVXacWV/RUdaPKQlQ7dXOegwNo4
-         cvJdG2/TsM4/tC3Gdv+vBYpCgEjJFBAVBTE9w/FW5hlgcVm/SiJNUbKqwgF3BEd5r7aH
-         aH4cT+F/apjC4ZlCp95bNbSA7i22i9N/D6/U+qlCMzPpTCkz4UTQTdDbjR9gzq+m1AMD
-         mk7g==
-X-Gm-Message-State: AOAM532p7ELyDwF1mvF9Qswe4KoytBE+mlxUx47kuJhDcoVxIGkvFBQL
-        37gJEew/K3ghtZdZy1/TMogpTwgunrPOs7trn+/itW6IQzIU6ZosTZ6allVWOcrhISoLXpsrgD8
-        5g5fd8iEyUZRljjTB/SVgRdMESw==
-X-Received: by 2002:a0c:a5a5:: with SMTP id z34mr964527qvz.59.1611255153386;
-        Thu, 21 Jan 2021 10:52:33 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx+t6w7Xqx74qVrhjLt4C+TV/igg6sGjjWeLwYgwcTDBDVePcoDrMGpdJssFcXjs87Jbc1oiQ==
-X-Received: by 2002:a0c:a5a5:: with SMTP id z34mr964502qvz.59.1611255153199;
-        Thu, 21 Jan 2021 10:52:33 -0800 (PST)
-Received: from xz-x1 ([142.126.83.202])
-        by smtp.gmail.com with ESMTPSA id i129sm4225591qkd.114.2021.01.21.10.52.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jan 2021 10:52:32 -0800 (PST)
-Date:   Thu, 21 Jan 2021 13:52:30 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Steven Price <steven.price@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Adam Ruprecht <ruprecht@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH 2/9] hugetlb/userfaultfd: Forbid huge pmd sharing when
- uffd enabled
-Message-ID: <20210121185230.GE260413@xz-x1>
-References: <20210115190451.3135416-1-axelrasmussen@google.com>
- <20210115190451.3135416-3-axelrasmussen@google.com>
+        id S1726840AbhAUTRb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 14:17:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39726 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727120AbhAUTRT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 14:17:19 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 721C223136;
+        Thu, 21 Jan 2021 18:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611255215;
+        bh=t4/uV51BVDZZJNH0464zaiT+avbcZsim2cFKf5yq/Rg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qiAx2akzlgaIsmsRkwRfRNFUAR5MOJ6mTig102LV3OyalPSKd3UEptytwlCYTmY3Z
+         8shyLy65liDmwR97zQerDgWY1AyenAxHmY3iMpNDAHuS6x3FLgzhTMVVqmgezkDYMR
+         ntyksrnf+iYY0OoVsSmfqJIoKjlWwcQYBiHDLZK2crTv1a7E5M4Zno5qKhSXd5ChLN
+         9qs9KYU3Hk9Z4azJ5dIXMA2cp7FFJymrFWZyFB+fJpHMhtnWfN+f/dT8VT2dXxD7Ee
+         UJ9VHOi6hKmjmq9ntkS/W0nUVEzCqY7439hGnZ3M4RU+OCeyUosnqA45eMdOpTabPz
+         YOgegBtsFTvjA==
+Date:   Thu, 21 Jan 2021 10:53:34 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        avi@scylladb.com, Brian Foster <bfoster@redhat.com>
+Subject: Re: [PATCH 09/11] iomap: pass a flags argument to iomap_dio_rw
+Message-ID: <20210121185334.GC1282159@magnolia>
+References: <20210121085906.322712-1-hch@lst.de>
+ <20210121085906.322712-10-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210115190451.3135416-3-axelrasmussen@google.com>
+In-Reply-To: <20210121085906.322712-10-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 11:04:44AM -0800, Axel Rasmussen wrote:
+On Thu, Jan 21, 2021 at 09:59:04AM +0100, Christoph Hellwig wrote:
+> Pass a set of flags to iomap_dio_rw instead of the boolean
+> wait_for_completion argument.  The IOMAP_DIO_FORCE_WAIT flag
+> replaces the wait_for_completion, but only needs to be passed
+> when the iocb isn't synchronous to start with to simplify the
+> callers.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Brian Foster <bfoster@redhat.com>
 
-[...]
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-> @@ -947,4 +948,15 @@ static inline __init void hugetlb_cma_check(void)
->  }
->  #endif
+--D
+
+> ---
+>  fs/btrfs/file.c       |  7 +++----
+>  fs/ext4/file.c        |  5 ++---
+>  fs/gfs2/file.c        |  7 ++-----
+>  fs/iomap/direct-io.c  | 11 +++++------
+>  fs/xfs/xfs_file.c     |  7 +++----
+>  fs/zonefs/super.c     |  4 ++--
+>  include/linux/iomap.h | 10 ++++++++--
+>  7 files changed, 25 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index 0e41459b8de667..ddfd2e2adedf58 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -1949,8 +1949,8 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
+>  		goto buffered;
+>  	}
 >  
-> +static inline bool want_pmd_share(struct vm_area_struct *vma)
-> +{
-> +#ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-> +	if (uffd_disable_huge_pmd_share(vma))
-> +		return false;
-> +	return true;
-> +#else
-> +	return false;
-> +#endif
-> +}
-
-I got syzbot complains about this chunk when compile some other archs outside
-x86, probably because CONFIG_ARCH_WANT_HUGE_PMD_SHARE can be defined without
-CONFIG_USERFAULTFD.  I don't know why it didn't complain here, so just a fyi
-that I've pushed some new version to the online repo so that they should have
-been fixed.  For example, for this patch:
-
-https://github.com/xzpeter/linux/commit/0fd01db2c9ac3ab8600f3f7df23cf28fddcfee1b
-
-static inline bool want_pmd_share(struct vm_area_struct *vma)
-{
-#ifdef CONFIG_USERFAULTFD
-	if (uffd_disable_huge_pmd_share(vma))
-		return false;
-#endif
-
-#ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-	return true;
-#else
-	return false;
-#endif
-}
-
-Thanks,
-
--- 
-Peter Xu
-
+> -	dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops,
+> -			     &btrfs_dio_ops, is_sync_kiocb(iocb));
+> +	dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
+> +			     0);
+>  
+>  	btrfs_inode_unlock(inode, ilock_flags);
+>  
+> @@ -3622,8 +3622,7 @@ static ssize_t btrfs_direct_read(struct kiocb *iocb, struct iov_iter *to)
+>  		return 0;
+>  
+>  	btrfs_inode_lock(inode, BTRFS_ILOCK_SHARED);
+> -	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
+> -			   is_sync_kiocb(iocb));
+> +	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops, 0);
+>  	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+>  	return ret;
+>  }
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 349b27f0dda0cb..194f5d00fa3267 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -74,8 +74,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  		return generic_file_read_iter(iocb, to);
+>  	}
+>  
+> -	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL,
+> -			   is_sync_kiocb(iocb));
+> +	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0);
+>  	inode_unlock_shared(inode);
+>  
+>  	file_accessed(iocb->ki_filp);
+> @@ -550,7 +549,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	if (ilock_shared)
+>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+> -			   is_sync_kiocb(iocb) || unaligned_io || extend);
+> +			   (unaligned_io || extend) ? IOMAP_DIO_FORCE_WAIT : 0);
+>  	if (ret == -ENOTBLK)
+>  		ret = 0;
+>  
+> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> index b39b339feddc93..89609c2997177a 100644
+> --- a/fs/gfs2/file.c
+> +++ b/fs/gfs2/file.c
+> @@ -797,9 +797,7 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
+>  	if (ret)
+>  		goto out_uninit;
+>  
+> -	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
+> -			   is_sync_kiocb(iocb));
+> -
+> +	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0);
+>  	gfs2_glock_dq(gh);
+>  out_uninit:
+>  	gfs2_holder_uninit(gh);
+> @@ -833,8 +831,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+>  	if (offset + len > i_size_read(&ip->i_inode))
+>  		goto out;
+>  
+> -	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
+> -			   is_sync_kiocb(iocb));
+> +	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0);
+>  	if (ret == -ENOTBLK)
+>  		ret = 0;
+>  out:
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 604103ab76f9c5..947343730e2c93 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -420,13 +420,15 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  struct iomap_dio *
+>  __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		bool wait_for_completion)
+> +		unsigned int dio_flags)
+>  {
+>  	struct address_space *mapping = iocb->ki_filp->f_mapping;
+>  	struct inode *inode = file_inode(iocb->ki_filp);
+>  	size_t count = iov_iter_count(iter);
+>  	loff_t pos = iocb->ki_pos;
+>  	loff_t end = iocb->ki_pos + count - 1, ret = 0;
+> +	bool wait_for_completion =
+> +		is_sync_kiocb(iocb) || (dio_flags & IOMAP_DIO_FORCE_WAIT);
+>  	unsigned int iomap_flags = IOMAP_DIRECT;
+>  	struct blk_plug plug;
+>  	struct iomap_dio *dio;
+> @@ -434,9 +436,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (!count)
+>  		return NULL;
+>  
+> -	if (WARN_ON(is_sync_kiocb(iocb) && !wait_for_completion))
+> -		return ERR_PTR(-EIO);
+> -
+>  	dio = kmalloc(sizeof(*dio), GFP_KERNEL);
+>  	if (!dio)
+>  		return ERR_PTR(-ENOMEM);
+> @@ -598,11 +597,11 @@ EXPORT_SYMBOL_GPL(__iomap_dio_rw);
+>  ssize_t
+>  iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		bool wait_for_completion)
+> +		unsigned int dio_flags)
+>  {
+>  	struct iomap_dio *dio;
+>  
+> -	dio = __iomap_dio_rw(iocb, iter, ops, dops, wait_for_completion);
+> +	dio = __iomap_dio_rw(iocb, iter, ops, dops, dio_flags);
+>  	if (IS_ERR_OR_NULL(dio))
+>  		return PTR_ERR_OR_ZERO(dio);
+>  	return iomap_dio_complete(dio);
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index bffd7240cefb7f..b181db42f2f32f 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -232,8 +232,7 @@ xfs_file_dio_read(
+>  	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
+>  	if (ret)
+>  		return ret;
+> -	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL,
+> -			is_sync_kiocb(iocb));
+> +	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0);
+>  	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+>  
+>  	return ret;
+> @@ -535,7 +534,7 @@ xfs_file_dio_write_aligned(
+>  	}
+>  	trace_xfs_file_direct_write(iocb, from);
+>  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+> -			   &xfs_dio_write_ops, is_sync_kiocb(iocb));
+> +			   &xfs_dio_write_ops, 0);
+>  out_unlock:
+>  	if (iolock)
+>  		xfs_iunlock(ip, iolock);
+> @@ -603,7 +602,7 @@ xfs_file_dio_write_unaligned(
+>  	 */
+>  	trace_xfs_file_direct_write(iocb, from);
+>  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+> -			   &xfs_dio_write_ops, true);
+> +			   &xfs_dio_write_ops, IOMAP_DIO_FORCE_WAIT);
+>  out_unlock:
+>  	if (iolock)
+>  		xfs_iunlock(ip, iolock);
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index bec47f2d074beb..0e7ab0bc00ae8e 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -780,7 +780,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+>  		ret = zonefs_file_dio_append(iocb, from);
+>  	else
+>  		ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
+> -				   &zonefs_write_dio_ops, sync);
+> +				   &zonefs_write_dio_ops, 0);
+>  	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
+>  	    (ret > 0 || ret == -EIOCBQUEUED)) {
+>  		if (ret > 0)
+> @@ -917,7 +917,7 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  		}
+>  		file_accessed(iocb->ki_filp);
+>  		ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops,
+> -				   &zonefs_read_dio_ops, is_sync_kiocb(iocb));
+> +				   &zonefs_read_dio_ops, 0);
+>  	} else {
+>  		ret = generic_file_read_iter(iocb, to);
+>  		if (ret == -EIO)
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 5bd3cac4df9cb4..be4e1e1e01e801 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -256,12 +256,18 @@ struct iomap_dio_ops {
+>  			struct bio *bio, loff_t file_offset);
+>  };
+>  
+> +/*
+> + * Wait for the I/O to complete in iomap_dio_rw even if the kiocb is not
+> + * synchronous.
+> + */
+> +#define IOMAP_DIO_FORCE_WAIT	(1 << 0)
+> +
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		bool wait_for_completion);
+> +		unsigned int dio_flags);
+>  struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		bool wait_for_completion);
+> +		unsigned int dio_flags);
+>  ssize_t iomap_dio_complete(struct iomap_dio *dio);
+>  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+>  
+> -- 
+> 2.29.2
+> 
