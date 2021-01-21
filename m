@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D9A2FEC18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 14:36:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBC452FEBF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 14:34:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732530AbhAUNgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 08:36:02 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55343 "EHLO
+        id S1732176AbhAUNcv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 08:32:51 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55172 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732322AbhAUNdu (ORCPT
+        with ESMTP id S1731430AbhAUNcH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 08:33:50 -0500
+        Thu, 21 Jan 2021 08:32:07 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l2ZvE-0005g7-Ks; Thu, 21 Jan 2021 13:22:48 +0000
+        id 1l2ZvJ-0005g7-5f; Thu, 21 Jan 2021 13:22:53 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
@@ -51,363 +51,1614 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        =?UTF-8?q?Mauricio=20V=C3=A1squez=20Bernal?= <mauricio@kinvolk.io>
-Subject: [PATCH v6 35/40] fs: introduce MOUNT_ATTR_IDMAP
-Date:   Thu, 21 Jan 2021 14:19:54 +0100
-Message-Id: <20210121131959.646623-36-christian.brauner@ubuntu.com>
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v6 36/40] tests: add mount_setattr() selftests
+Date:   Thu, 21 Jan 2021 14:19:55 +0100
+Message-Id: <20210121131959.646623-37-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Patch-Hashes: v=1; h=sha256; i=GYBYwKZNDijutmVrBepxrBfFO75BWdoBVtOTOIdJMkE=; m=g2OTP5WhmjQoF4YIz2CErqPQQ+/BcQ7bZDA/hJnmTx4=; p=pLgwfiRIfyez30F/gXKXFmr2v9NKbMEDUbGPPwZQMoE=; g=ca28a99329fde4f12d172e5c620040de51d3dbec
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9pwAKCRCRxhvAZXjcomdeAP9lW0x Kssz2dnQVjCnCI9CPd0QVBxllhW82htHW/CFstQEA5bQb6KnS7tLEd2U0fC1XZwuq+sIQ8qR6Wkww XqcX6AQ=
+X-Patch-Hashes: v=1; h=sha256; i=LBuIblkAhmSYhmbpfnjqwRafbbM2vrHdlAWh3mc5iqw=; m=2maKW/zZlPAVJrdM6kNzR0fhaHJ93Kb3ianb8IKjhYk=; p=kEzWUlk/ns9SW3I22aH5sqMGLwGUW+rLr4cV1Kllg/E=; g=eefe9b38721555eb68cc95dd3b4350ef2b5380cd
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9pwAKCRCRxhvAZXjcomKyAP4qDDr zR5rPhAuZdLjFoL6lQ3LBnMxIjTIlkBNzc9V9lQEAzmeDe38g2tiHEpkxD2JxDwjpPCdk6CqeyutN tKZ8uA4=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce a new mount bind mount property to allow idmapping mounts. The
-MOUNT_ATTR_IDMAP flag can be set via the new mount_setattr() syscall
-together with a file descriptor referring to a user namespace.
+Add a range of selftests for the new mount_setattr() syscall to verify
+that it works as expected. This tests that:
+- no invalid flags can be specified
+- changing properties of a single mount works and leaves other mounts in
+  the mount tree unchanged
+- changing a mount tre to read-only when one of the mounts has writers
+  fails and leaves the whole mount tree unchanged
+- changing mount properties from multiple threads works
+- changing atime settings works
+- changing mount propagation works
+- changing the mount options of a mount tree where the individual mounts
+  in the tree have different mount options only changes the flags that
+  were requested to change
+- changing mount options from another mount namespace fails
+- changing mount options from another user namespace fails
+- idmapped mounts
 
-The user namespace referenced by the namespace file descriptor will be
-attached to the bind mount. All interactions with the filesystem going
-through that mount will be mapped according to the mapping specified in
-the user namespace attached to it.
+Note, the main test-suite for idmapped mounts is part of xfstests and is
+pretty huge. These tests here just make sure that the syscalls bits work
+correctly.
 
-Using user namespaces to mark mounts means we can reuse all the existing
-infrastructure in the kernel that already exists to handle idmappings
-and can also use this for permission checking to allow unprivileged user
-to create idmapped mounts in the future.
+ TAP version 13
+ 1..20
+ # Starting 20 tests from 3 test cases.
+ #  RUN           mount_setattr.invalid_attributes ...
+ #            OK  mount_setattr.invalid_attributes
+ ok 1 mount_setattr.invalid_attributes
+ #  RUN           mount_setattr.extensibility ...
+ #            OK  mount_setattr.extensibility
+ ok 2 mount_setattr.extensibility
+ #  RUN           mount_setattr.basic ...
+ #            OK  mount_setattr.basic
+ ok 3 mount_setattr.basic
+ #  RUN           mount_setattr.basic_recursive ...
+ #            OK  mount_setattr.basic_recursive
+ ok 4 mount_setattr.basic_recursive
+ #  RUN           mount_setattr.mount_has_writers ...
+ #            OK  mount_setattr.mount_has_writers
+ ok 5 mount_setattr.mount_has_writers
+ #  RUN           mount_setattr.mixed_mount_options ...
+ #            OK  mount_setattr.mixed_mount_options
+ ok 6 mount_setattr.mixed_mount_options
+ #  RUN           mount_setattr.time_changes ...
+ #            OK  mount_setattr.time_changes
+ ok 7 mount_setattr.time_changes
+ #  RUN           mount_setattr.multi_threaded ...
+ #            OK  mount_setattr.multi_threaded
+ ok 8 mount_setattr.multi_threaded
+ #  RUN           mount_setattr.wrong_user_namespace ...
+ #            OK  mount_setattr.wrong_user_namespace
+ ok 9 mount_setattr.wrong_user_namespace
+ #  RUN           mount_setattr.wrong_mount_namespace ...
+ #            OK  mount_setattr.wrong_mount_namespace
+ ok 10 mount_setattr.wrong_mount_namespace
+ #  RUN           mount_setattr_idmapped.invalid_fd_negative ...
+ #            OK  mount_setattr_idmapped.invalid_fd_negative
+ ok 11 mount_setattr_idmapped.invalid_fd_negative
+ #  RUN           mount_setattr_idmapped.invalid_fd_large ...
+ #            OK  mount_setattr_idmapped.invalid_fd_large
+ ok 12 mount_setattr_idmapped.invalid_fd_large
+ #  RUN           mount_setattr_idmapped.invalid_fd_closed ...
+ #            OK  mount_setattr_idmapped.invalid_fd_closed
+ ok 13 mount_setattr_idmapped.invalid_fd_closed
+ #  RUN           mount_setattr_idmapped.invalid_fd_initial_userns ...
+ #            OK  mount_setattr_idmapped.invalid_fd_initial_userns
+ ok 14 mount_setattr_idmapped.invalid_fd_initial_userns
+ #  RUN           mount_setattr_idmapped.attached_mount_inside_current_mount_namespace ...
+ #            OK  mount_setattr_idmapped.attached_mount_inside_current_mount_namespace
+ ok 15 mount_setattr_idmapped.attached_mount_inside_current_mount_namespace
+ #  RUN           mount_setattr_idmapped.attached_mount_outside_current_mount_namespace ...
+ #            OK  mount_setattr_idmapped.attached_mount_outside_current_mount_namespace
+ ok 16 mount_setattr_idmapped.attached_mount_outside_current_mount_namespace
+ #  RUN           mount_setattr_idmapped.detached_mount_inside_current_mount_namespace ...
+ #            OK  mount_setattr_idmapped.detached_mount_inside_current_mount_namespace
+ ok 17 mount_setattr_idmapped.detached_mount_inside_current_mount_namespace
+ #  RUN           mount_setattr_idmapped.detached_mount_outside_current_mount_namespace ...
+ #            OK  mount_setattr_idmapped.detached_mount_outside_current_mount_namespace
+ ok 18 mount_setattr_idmapped.detached_mount_outside_current_mount_namespace
+ #  RUN           mount_setattr_idmapped.change_idmapping ...
+ #            OK  mount_setattr_idmapped.change_idmapping
+ ok 19 mount_setattr_idmapped.change_idmapping
+ #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
+ #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
+ ok 20 mount_setattr_idmapped.idmap_mount_tree_invalid
+ # PASSED: 20 / 20 tests passed.
+ # Totals: pass:20 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-Idmapping a mount is decoupled from the caller's user and mount
-namespace. This means idmapped mounts can be created in the initial
-user namespace which is an important use-case for systemd-homed,
-portable usb-sticks between systems, sharing data between the initial
-user namespace and unprivileged containers, and other use-cases that
-have been brought up. For example, assume a home directory where all
-files are owned by uid and gid 1000 and the home directory is brought to
-a new laptop where the user has id 12345. The system administrator can
-simply create a mount of this home directory with a mapping of
-1000:12345:1 and other mappings to indicate the ids should be kept.
-(With this it is e.g. also possible to create idmapped mounts on the
-host with an identity mapping 1:1:100000 where the root user is not
-mapped. A user with root access that e.g. has been pivot rooted into
-such a mount on the host will be not be able to execute, read, write, or
-create files as root.)
-
-Given that mapping a mount is decoupled from the caller's user namespace
-a sufficiently privileged process such as a container manager can set up
-an idmapped mount for the container and the container can simply pivot
-root to it. There's no need for the container to do anything. The mount
-will appear correctly mapped independent of the user namespace the
-container uses. This means we don't need to mark a mount as idmappable.
-
-In order to create an idmapped mount the caller must currently be
-privileged in the user namespace of the superblock the mount belongs to.
-Once a mount has been idmapped we don't allow it to change its mapping.
-This keeps permission checking and life-cycle management simple. Users
-wanting to change the idmapped can always create a new detached mount
-with a different idmapping.
-
-Link: https://lore.kernel.org/r/20210112220124.837960-41-christian.brauner@ubuntu.com
+Link: https://lore.kernel.org/r/20210112220124.837960-8-christian.brauner@ubuntu.com
+Link: https://lore.kernel.org/r/20210112220124.837960-42-christian.brauner@ubuntu.com
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Mauricio Vásquez Bernal <mauricio@kinvolk.io>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-- Christoph Hellwig <hch@lst.de>:
-  - Drop kconfig option to make vfs idmappings unconditional.
-  - Move introduction of MOUNT_ATTR_IDMAP to the end of the series after all
-    internal changes have been done.
-  - Move MOUNT_ATTR_IDMAP handling from build_mount_kattr() to separate
-    build_mount_idmapped() helper.
-  - Move MNT_IDMAPPED handling from do_mount_setattr() into separate
-    do_mount_idmap() helper.
-  - Use more helpers instead of one big function for mount attribute changes.
-- Mauricio Vásquez Bernal <mauricio@kinvolk.io>:
-  - Recalculate flags before checking can_change_locked_flags().
+unchanged
 
 /* v3 */
-- David Howells <dhowells@redhat.com>:
-  - Use smp_load_acquire() and smp_store_release() in mnt_user_ns() and do_idmap_mount().
-- Remove all references to MNT_IDMAPPED now that the flag has been removed.
+- Christoph Hellwig <hch@lst.de>, Darrick J. Wong <darrick.wong@oracle.com>:
+  - Port main test-suite to xfstests.
 
 /* v4 */
-- Serge Hallyn <serge@hallyn.com>:
-  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
-    terminology consistent.
+unchanged
 
 /* v5 */
 unchanged
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 
 /* v6 */
+unchanged
 base-commit: 19c329f6808995b142b3966301f217c831e7cf31
-
-- Christoph Hellwig <hch@lst.de>:
-  - Include userns_fd in MOUNT_ATTR_SIZE_VER0 instead of introducing a
-    separate MOUNT_ATTR_SIZE_VER1.
 ---
- fs/namespace.c             | 115 +++++++++++++++++++++++++++++++++++--
- fs/proc_namespace.c        |   3 +
- include/linux/mount.h      |   3 +-
- include/uapi/linux/mount.h |   4 +-
- 4 files changed, 119 insertions(+), 6 deletions(-)
+ tools/testing/selftests/Makefile              |    1 +
+ .../selftests/mount_setattr/.gitignore        |    1 +
+ .../testing/selftests/mount_setattr/Makefile  |    7 +
+ tools/testing/selftests/mount_setattr/config  |    1 +
+ .../mount_setattr/mount_setattr_test.c        | 1424 +++++++++++++++++
+ 5 files changed, 1434 insertions(+)
+ create mode 100644 tools/testing/selftests/mount_setattr/.gitignore
+ create mode 100644 tools/testing/selftests/mount_setattr/Makefile
+ create mode 100644 tools/testing/selftests/mount_setattr/config
+ create mode 100644 tools/testing/selftests/mount_setattr/mount_setattr_test.c
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index dda1aac8bf5b..584496abc3e8 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -25,6 +25,7 @@
- #include <linux/proc_ns.h>
- #include <linux/magic.h>
- #include <linux/memblock.h>
-+#include <linux/proc_fs.h>
- #include <linux/task_work.h>
- #include <linux/sched/task.h>
- #include <uapi/linux/mount.h>
-@@ -79,6 +80,7 @@ struct mount_kattr {
- 	unsigned int propagation;
- 	unsigned int lookup_flags;
- 	bool recurse;
-+	struct user_namespace *mnt_userns;
- };
- 
- /* /sys/fs */
-@@ -3477,7 +3479,7 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
- 	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV | \
- 	 MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME | MOUNT_ATTR_NODIRATIME)
- 
--#define MOUNT_SETATTR_VALID_FLAGS FSMOUNT_VALID_FLAGS
-+#define MOUNT_SETATTR_VALID_FLAGS (FSMOUNT_VALID_FLAGS | MOUNT_ATTR_IDMAP)
- 
- #define MOUNT_SETATTR_PROPAGATION_FLAGS \
- 	(MS_UNBINDABLE | MS_PRIVATE | MS_SLAVE | MS_SHARED)
-@@ -3845,6 +3847,32 @@ static unsigned int recalc_flags(struct mount_kattr *kattr, struct mount *mnt)
- 	return flags;
- }
- 
-+static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 8a917cb4426a..157179afd5b7 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -33,6 +33,7 @@ TARGETS += memfd
+ TARGETS += memory-hotplug
+ TARGETS += mincore
+ TARGETS += mount
++TARGETS += mount_setattr
+ TARGETS += mqueue
+ TARGETS += net
+ TARGETS += net/forwarding
+diff --git a/tools/testing/selftests/mount_setattr/.gitignore b/tools/testing/selftests/mount_setattr/.gitignore
+new file mode 100644
+index 000000000000..5f74d8488472
+--- /dev/null
++++ b/tools/testing/selftests/mount_setattr/.gitignore
+@@ -0,0 +1 @@
++mount_setattr_test
+diff --git a/tools/testing/selftests/mount_setattr/Makefile b/tools/testing/selftests/mount_setattr/Makefile
+new file mode 100644
+index 000000000000..2250f7dcb81e
+--- /dev/null
++++ b/tools/testing/selftests/mount_setattr/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for mount selftests.
++CFLAGS = -g -I../../../../usr/include/ -Wall -O2 -pthread
++
++TEST_GEN_FILES += mount_setattr_test
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/mount_setattr/config b/tools/testing/selftests/mount_setattr/config
+new file mode 100644
+index 000000000000..416bd53ce982
+--- /dev/null
++++ b/tools/testing/selftests/mount_setattr/config
+@@ -0,0 +1 @@
++CONFIG_USER_NS=y
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+new file mode 100644
+index 000000000000..4e94e566e040
+--- /dev/null
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -0,0 +1,1424 @@
++// SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
++#include <sched.h>
++#include <stdio.h>
++#include <errno.h>
++#include <pthread.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/mount.h>
++#include <sys/wait.h>
++#include <sys/vfs.h>
++#include <sys/statvfs.h>
++#include <sys/sysinfo.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <grp.h>
++#include <stdbool.h>
++#include <stdarg.h>
++
++#include "../kselftest_harness.h"
++
++#ifndef CLONE_NEWNS
++#define CLONE_NEWNS 0x00020000
++#endif
++
++#ifndef CLONE_NEWUSER
++#define CLONE_NEWUSER 0x10000000
++#endif
++
++#ifndef MS_REC
++#define MS_REC 16384
++#endif
++
++#ifndef MS_RELATIME
++#define MS_RELATIME (1 << 21)
++#endif
++
++#ifndef MS_STRICTATIME
++#define MS_STRICTATIME (1 << 24)
++#endif
++
++#ifndef MOUNT_ATTR_RDONLY
++#define MOUNT_ATTR_RDONLY 0x00000001
++#endif
++
++#ifndef MOUNT_ATTR_NOSUID
++#define MOUNT_ATTR_NOSUID 0x00000002
++#endif
++
++#ifndef MOUNT_ATTR_NOEXEC
++#define MOUNT_ATTR_NOEXEC 0x00000008
++#endif
++
++#ifndef MOUNT_ATTR_NODIRATIME
++#define MOUNT_ATTR_NODIRATIME 0x00000080
++#endif
++
++#ifndef MOUNT_ATTR__ATIME
++#define MOUNT_ATTR__ATIME 0x00000070
++#endif
++
++#ifndef MOUNT_ATTR_RELATIME
++#define MOUNT_ATTR_RELATIME 0x00000000
++#endif
++
++#ifndef MOUNT_ATTR_NOATIME
++#define MOUNT_ATTR_NOATIME 0x00000010
++#endif
++
++#ifndef MOUNT_ATTR_STRICTATIME
++#define MOUNT_ATTR_STRICTATIME 0x00000020
++#endif
++
++#ifndef AT_RECURSIVE
++#define AT_RECURSIVE 0x8000
++#endif
++
++#ifndef MS_SHARED
++#define MS_SHARED (1 << 20)
++#endif
++
++#define DEFAULT_THREADS 4
++#define ptr_to_int(p) ((int)((intptr_t)(p)))
++#define int_to_ptr(u) ((void *)((intptr_t)(u)))
++
++#ifndef __NR_mount_setattr
++	#if defined __alpha__
++		#define __NR_mount_setattr 552
++	#elif defined _MIPS_SIM
++		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
++			#define __NR_mount_setattr (442 + 4000)
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
++			#define __NR_mount_setattr (442 + 6000)
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
++			#define __NR_mount_setattr (442 + 5000)
++		#endif
++	#elif defined __ia64__
++		#define __NR_mount_setattr (442 + 1024)
++	#else
++		#define __NR_mount_setattr 442
++	#endif
++
++struct mount_attr {
++	__u64 attr_set;
++	__u64 attr_clr;
++	__u64 propagation;
++	__u64 userns_fd;
++};
++#endif
++
++#ifndef __NR_open_tree
++	#if defined __alpha__
++		#define __NR_open_tree 538
++	#elif defined _MIPS_SIM
++		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
++			#define __NR_open_tree 4428
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
++			#define __NR_open_tree 6428
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
++			#define __NR_open_tree 5428
++		#endif
++	#elif defined __ia64__
++		#define __NR_open_tree (428 + 1024)
++	#else
++		#define __NR_open_tree 428
++	#endif
++#endif
++
++#ifndef MOUNT_ATTR_IDMAP
++#define MOUNT_ATTR_IDMAP 0x00100000
++#endif
++
++static inline int sys_mount_setattr(int dfd, const char *path, unsigned int flags,
++				    struct mount_attr *attr, size_t size)
 +{
-+	struct vfsmount *m = &mnt->mnt;
++	return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
++}
 +
-+	if (!kattr->mnt_userns)
-+		return 0;
++#ifndef OPEN_TREE_CLONE
++#define OPEN_TREE_CLONE 1
++#endif
 +
-+	/*
-+	 * Once a mount has been idmapped we don't allow it to change its
-+	 * mapping. It makes things simpler and callers can just create
-+	 * another bind-mount they can idmap if they want to.
-+	 */
-+	if (mnt_user_ns(m) != &init_user_ns)
-+		return -EPERM;
++#ifndef OPEN_TREE_CLOEXEC
++#define OPEN_TREE_CLOEXEC O_CLOEXEC
++#endif
 +
-+	/* The underlying filesystem doesn't support idmapped mounts yet. */
-+	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
-+		return -EINVAL;
++#ifndef AT_RECURSIVE
++#define AT_RECURSIVE 0x8000 /* Apply to the entire subtree */
++#endif
 +
-+	/* We're not controlling the superblock. */
-+	if (!ns_capable(m->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
-+		return -EPERM;
++static inline int sys_open_tree(int dfd, const char *filename, unsigned int flags)
++{
++	return syscall(__NR_open_tree, dfd, filename, flags);
++}
++
++static ssize_t write_nointr(int fd, const void *buf, size_t count)
++{
++	ssize_t ret;
++
++	do {
++		ret = write(fd, buf, count);
++	} while (ret < 0 && errno == EINTR);
++
++	return ret;
++}
++
++static int write_file(const char *path, const void *buf, size_t count)
++{
++	int fd;
++	ssize_t ret;
++
++	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY | O_NOFOLLOW);
++	if (fd < 0)
++		return -1;
++
++	ret = write_nointr(fd, buf, count);
++	close(fd);
++	if (ret < 0 || (size_t)ret != count)
++		return -1;
 +
 +	return 0;
 +}
 +
- static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
- 					   struct mount *mnt, int *err)
- {
-@@ -3869,6 +3897,10 @@ static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
- 			goto out;
- 		}
- 
-+		*err = can_idmap_mount(kattr, m);
-+		if (*err)
-+			goto out;
-+
- 		last = m;
- 
- 		if ((kattr->attr_set & MNT_READONLY) &&
-@@ -3883,6 +3915,18 @@ static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
- 	return last;
- }
- 
-+static void do_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
++static int create_and_enter_userns(void)
 +{
-+	struct user_namespace *mnt_userns;
++	uid_t uid;
++	gid_t gid;
++	char map[100];
 +
-+	if (!kattr->mnt_userns)
-+		return;
++	uid = getuid();
++	gid = getgid();
 +
-+	mnt_userns = get_user_ns(kattr->mnt_userns);
-+	/* Pairs with smp_load_acquire() in mnt_user_ns(). */
-+	smp_store_release(&mnt->mnt.mnt_userns, mnt_userns);
++	if (unshare(CLONE_NEWUSER))
++		return -1;
++
++	if (write_file("/proc/self/setgroups", "deny", sizeof("deny") - 1) &&
++	    errno != ENOENT)
++		return -1;
++
++	snprintf(map, sizeof(map), "0 %d 1", uid);
++	if (write_file("/proc/self/uid_map", map, strlen(map)))
++		return -1;
++
++
++	snprintf(map, sizeof(map), "0 %d 1", gid);
++	if (write_file("/proc/self/gid_map", map, strlen(map)))
++		return -1;
++
++	if (setgid(0))
++		return -1;
++
++	if (setuid(0))
++		return -1;
++
++	return 0;
 +}
 +
- static void mount_setattr_commit(struct mount_kattr *kattr,
- 				 struct mount *mnt, struct mount *last,
- 				 int err)
-@@ -3893,6 +3937,7 @@ static void mount_setattr_commit(struct mount_kattr *kattr,
- 		if (!err) {
- 			unsigned int flags;
- 
-+			do_idmap_mount(kattr, m);
- 			flags = recalc_flags(kattr, m);
- 			WRITE_ONCE(m->mnt.mnt_flags, flags);
- 		}
-@@ -3965,7 +4010,62 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
- 	return err;
- }
- 
--static int build_mount_kattr(const struct mount_attr *attr,
-+static int build_mount_idmapped(const struct mount_attr *attr, size_t usize,
-+				struct mount_kattr *kattr, unsigned int flags)
++static int prepare_unpriv_mountns(void)
 +{
-+	int err = 0;
-+	struct ns_common *ns;
-+	struct user_namespace *mnt_userns;
-+	struct file *file;
++	if (create_and_enter_userns())
++		return -1;
 +
-+	if (!((attr->attr_set | attr->attr_clr) & MOUNT_ATTR_IDMAP))
-+		return 0;
++	if (unshare(CLONE_NEWNS))
++		return -1;
 +
-+	/*
-+	 * We currently do not support clearing an idmapped mount. If this ever
-+	 * is a use-case we can revisit this but for now let's keep it simple
-+	 * and not allow it.
-+	 */
-+	if (attr->attr_clr & MOUNT_ATTR_IDMAP)
++	if (mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0))
++		return -1;
++
++	return 0;
++}
++
++static int read_mnt_flags(const char *path)
++{
++	int ret;
++	struct statvfs stat;
++	unsigned int mnt_flags;
++
++	ret = statvfs(path, &stat);
++	if (ret != 0)
 +		return -EINVAL;
 +
-+	if (attr->userns_fd > INT_MAX)
++	if (stat.f_flag &
++	    ~(ST_RDONLY | ST_NOSUID | ST_NODEV | ST_NOEXEC | ST_NOATIME |
++	      ST_NODIRATIME | ST_RELATIME | ST_SYNCHRONOUS | ST_MANDLOCK))
 +		return -EINVAL;
 +
-+	file = fget(attr->userns_fd);
-+	if (!file)
-+		return -EBADF;
++	mnt_flags = 0;
++	if (stat.f_flag & ST_RDONLY)
++		mnt_flags |= MS_RDONLY;
++	if (stat.f_flag & ST_NOSUID)
++		mnt_flags |= MS_NOSUID;
++	if (stat.f_flag & ST_NODEV)
++		mnt_flags |= MS_NODEV;
++	if (stat.f_flag & ST_NOEXEC)
++		mnt_flags |= MS_NOEXEC;
++	if (stat.f_flag & ST_NOATIME)
++		mnt_flags |= MS_NOATIME;
++	if (stat.f_flag & ST_NODIRATIME)
++		mnt_flags |= MS_NODIRATIME;
++	if (stat.f_flag & ST_RELATIME)
++		mnt_flags |= MS_RELATIME;
++	if (stat.f_flag & ST_SYNCHRONOUS)
++		mnt_flags |= MS_SYNCHRONOUS;
++	if (stat.f_flag & ST_MANDLOCK)
++		mnt_flags |= ST_MANDLOCK;
 +
-+	if (!proc_ns_file(file)) {
-+		err = -EINVAL;
-+		goto out_fput;
++	return mnt_flags;
++}
++
++static char *get_field(char *src, int nfields)
++{
++	int i;
++	char *p = src;
++
++	for (i = 0; i < nfields; i++) {
++		while (*p && *p != ' ' && *p != '\t')
++			p++;
++
++		if (!*p)
++			break;
++
++		p++;
 +	}
 +
-+	ns = get_proc_ns(file_inode(file));
-+	if (ns->ops->type != CLONE_NEWUSER) {
-+		err = -EINVAL;
-+		goto out_fput;
++	return p;
++}
++
++static void null_endofword(char *word)
++{
++	while (*word && *word != ' ' && *word != '\t')
++		word++;
++	*word = '\0';
++}
++
++static bool is_shared_mount(const char *path)
++{
++	size_t len = 0;
++	char *line = NULL;
++	FILE *f = NULL;
++
++	f = fopen("/proc/self/mountinfo", "re");
++	if (!f)
++		return false;
++
++	while (getline(&line, &len, f) != -1) {
++		char *opts, *target;
++
++		target = get_field(line, 4);
++		if (!target)
++			continue;
++
++		opts = get_field(target, 2);
++		if (!opts)
++			continue;
++
++		null_endofword(target);
++
++		if (strcmp(target, path) != 0)
++			continue;
++
++		null_endofword(opts);
++		if (strstr(opts, "shared:"))
++			return true;
 +	}
++
++	free(line);
++	fclose(f);
++
++	return false;
++}
++
++static void *mount_setattr_thread(void *data)
++{
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID,
++		.attr_clr	= 0,
++		.propagation	= MS_SHARED,
++	};
++
++	if (sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)))
++		pthread_exit(int_to_ptr(-1));
++
++	pthread_exit(int_to_ptr(0));
++}
++
++/* Attempt to de-conflict with the selftests tree. */
++#ifndef SKIP
++#define SKIP(s, ...)	XFAIL(s, ##__VA_ARGS__)
++#endif
++
++static bool mount_setattr_supported(void)
++{
++	int ret;
++
++	ret = sys_mount_setattr(-EBADF, "", AT_EMPTY_PATH, NULL, 0);
++	if (ret < 0 && errno == ENOSYS)
++		return false;
++
++	return true;
++}
++
++FIXTURE(mount_setattr) {
++};
++
++FIXTURE_SETUP(mount_setattr)
++{
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_EQ(prepare_unpriv_mountns(), 0);
++
++	(void)umount2("/mnt", MNT_DETACH);
++	(void)umount2("/tmp", MNT_DETACH);
++
++	ASSERT_EQ(mount("testing", "/tmp", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/tmp/B", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/tmp/B/BB", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B/BB", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/mnt/A", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt/A", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/mnt/A/AA", 0777), 0);
++
++	ASSERT_EQ(mount("/tmp", "/mnt/A/AA", NULL, MS_BIND | MS_REC, NULL), 0);
++
++	ASSERT_EQ(mkdir("/mnt/B", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt/B", "ramfs",
++			MS_NOATIME | MS_NODEV | MS_NOSUID, 0), 0);
++
++	ASSERT_EQ(mkdir("/mnt/B/BB", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B/BB", "devpts",
++			MS_RELATIME | MS_NOEXEC | MS_RDONLY, 0), 0);
++}
++
++FIXTURE_TEARDOWN(mount_setattr)
++{
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	(void)umount2("/mnt/A", MNT_DETACH);
++	(void)umount2("/tmp", MNT_DETACH);
++}
++
++TEST_F(mount_setattr, invalid_attributes)
++{
++	struct mount_attr invalid_attr = {
++		.attr_set = (1U << 31),
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++
++	invalid_attr.attr_set	= 0;
++	invalid_attr.attr_clr	= (1U << 31);
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++
++	invalid_attr.attr_clr		= 0;
++	invalid_attr.propagation	= (1U << 31);
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++
++	invalid_attr.attr_set		= (1U << 31);
++	invalid_attr.attr_clr		= (1U << 31);
++	invalid_attr.propagation	= (1U << 31);
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++
++	ASSERT_NE(sys_mount_setattr(-1, "mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++}
++
++TEST_F(mount_setattr, extensibility)
++{
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	char *s = "dummy";
++	struct mount_attr invalid_attr = {};
++	struct mount_attr_large {
++		struct mount_attr attr1;
++		struct mount_attr attr2;
++		struct mount_attr attr3;
++	} large_attr = {};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, NULL,
++				    sizeof(invalid_attr)), 0);
++	ASSERT_EQ(errno, EFAULT);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, (void *)s,
++				    sizeof(invalid_attr)), 0);
++	ASSERT_EQ(errno, EINVAL);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr, 0), 0);
++	ASSERT_EQ(errno, EINVAL);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr) / 2), 0);
++	ASSERT_EQ(errno, EINVAL);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr) / 2), 0);
++	ASSERT_EQ(errno, EINVAL);
++
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE,
++				    (void *)&large_attr, sizeof(large_attr)), 0);
++
++	large_attr.attr3.attr_set = MOUNT_ATTR_RDONLY;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE,
++				    (void *)&large_attr, sizeof(large_attr)), 0);
++
++	large_attr.attr3.attr_set = 0;
++	large_attr.attr1.attr_set = MOUNT_ATTR_RDONLY;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE,
++				    (void *)&large_attr, sizeof(large_attr)), 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_RDONLY;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++}
++
++TEST_F(mount_setattr, basic)
++{
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
++		.attr_clr	= MOUNT_ATTR__ATIME,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", 0, &attr, sizeof(attr)), 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_RDONLY;
++	expected_flags |= MS_NOEXEC;
++	expected_flags &= ~MS_NOATIME;
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, old_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, old_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, old_flags);
++}
++
++TEST_F(mount_setattr, basic_recursive)
++{
++	int fd;
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
++		.attr_clr	= MOUNT_ATTR__ATIME,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_RDONLY;
++	expected_flags |= MS_NOEXEC;
++	expected_flags &= ~MS_NOATIME;
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_clr = MOUNT_ATTR_RDONLY;
++	attr.propagation = MS_SHARED;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags &= ~MS_RDONLY;
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B/BB"), true);
++
++	fd = open("/mnt/A/AA/B/b", O_RDWR | O_CLOEXEC | O_CREAT | O_EXCL, 0777);
++	ASSERT_GE(fd, 0);
 +
 +	/*
-+	 * The init_user_ns is used to indicate that a vfsmount is not idmapped.
-+	 * This is simpler than just having to treat NULL as unmapped. Users
-+	 * wanting to idmap a mount to init_user_ns can just use a namespace
-+	 * with an identity mapping.
++	 * We're holding a fd open for writing so this needs to fail somewhere
++	 * in the middle and the mount options need to be unchanged.
 +	 */
-+	mnt_userns = container_of(ns, struct user_namespace, ns);
-+	if (mnt_userns == &init_user_ns) {
-+		err = -EPERM;
-+		goto out_fput;
-+	}
-+	kattr->mnt_userns = get_user_ns(mnt_userns);
++	attr.attr_set = MOUNT_ATTR_RDONLY;
++	ASSERT_LT(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
 +
-+out_fput:
-+	fput(file);
-+	return err;
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B/BB"), true);
++
++	EXPECT_EQ(close(fd), 0);
 +}
 +
-+static int build_mount_kattr(const struct mount_attr *attr, size_t usize,
- 			     struct mount_kattr *kattr, unsigned int flags)
- {
- 	unsigned int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
-@@ -4029,7 +4129,13 @@ static int build_mount_kattr(const struct mount_attr *attr,
- 			return -EINVAL;
- 	}
- 
--	return 0;
-+	return build_mount_idmapped(attr, usize, kattr, flags);
-+}
-+
-+static void finish_mount_kattr(struct mount_kattr *kattr)
++TEST_F(mount_setattr, mount_has_writers)
 +{
-+	put_user_ns(kattr->mnt_userns);
-+	kattr->mnt_userns = NULL;
- }
- 
- SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
-@@ -4067,7 +4173,7 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
- 	    attr.propagation == 0)
- 		return 0;
- 
--	err = build_mount_kattr(&attr, &kattr, flags);
-+	err = build_mount_kattr(&attr, usize, &kattr, flags);
- 	if (err)
- 		return err;
- 
-@@ -4076,6 +4182,7 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
- 		return err;
- 
- 	err = do_mount_setattr(&target, &kattr);
-+	finish_mount_kattr(&kattr);
- 	path_put(&target);
- 	return err;
- }
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index eafb75755fa3..392ef5162655 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -79,6 +79,9 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
- 		if (mnt->mnt_flags & fs_infop->flag)
- 			seq_puts(m, fs_infop->str);
- 	}
++	int fd, dfd;
++	unsigned int old_flags = 0, new_flags = 0;
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
++		.attr_clr	= MOUNT_ATTR__ATIME,
++		.propagation	= MS_SHARED,
++	};
 +
-+	if (mnt_user_ns(mnt) != &init_user_ns)
-+		seq_puts(m, ",idmapped");
- }
- 
- static inline void mangle(struct seq_file *m, const char *s)
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index 52de25e08319..161f4419db6c 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -77,7 +77,8 @@ struct vfsmount {
- 
- static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
- {
--	return mnt->mnt_userns;
-+	/* Pairs with smp_store_release() in do_idmap_mount(). */
-+	return smp_load_acquire(&mnt->mnt_userns);
- }
- 
- struct file; /* forward dec */
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 2255624e91c8..e6524ead2b7b 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -119,6 +119,7 @@ enum fsconfig_command {
- #define MOUNT_ATTR_NOATIME	0x00000010 /* - Do not update access times. */
- #define MOUNT_ATTR_STRICTATIME	0x00000020 /* - Always perform atime updates */
- #define MOUNT_ATTR_NODIRATIME	0x00000080 /* Do not update directory access times */
-+#define MOUNT_ATTR_IDMAP	0x00100000 /* Idmap mount to @userns_fd in struct mount_attr. */
- 
- /*
-  * mount_setattr()
-@@ -127,9 +128,10 @@ struct mount_attr {
- 	__u64 attr_set;
- 	__u64 attr_clr;
- 	__u64 propagation;
-+	__u64 userns_fd;
- };
- 
- /* List of all mount_attr versions. */
--#define MOUNT_ATTR_SIZE_VER0	24 /* sizeof first published struct */
-+#define MOUNT_ATTR_SIZE_VER0	32 /* sizeof first published struct */
- 
- #endif /* _UAPI_LINUX_MOUNT_H */
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	fd = open("/mnt/A/AA/B/b", O_RDWR | O_CLOEXEC | O_CREAT | O_EXCL, 0777);
++	ASSERT_GE(fd, 0);
++
++	/*
++	 * We're holding a fd open to a mount somwhere in the middle so this
++	 * needs to fail somewhere in the middle. After this the mount options
++	 * need to be unchanged.
++	 */
++	ASSERT_LT(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, old_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A"), false);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, old_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA"), false);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, old_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B"), false);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, old_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B/BB"), false);
++
++	dfd = open("/mnt/A/AA/B", O_DIRECTORY | O_CLOEXEC);
++	ASSERT_GE(dfd, 0);
++	EXPECT_EQ(fsync(dfd), 0);
++	EXPECT_EQ(close(dfd), 0);
++
++	EXPECT_EQ(fsync(fd), 0);
++	EXPECT_EQ(close(fd), 0);
++
++	/* All writers are gone so this should succeed. */
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++}
++
++TEST_F(mount_setattr, mixed_mount_options)
++{
++	unsigned int old_flags1 = 0, old_flags2 = 0, new_flags = 0, expected_flags = 0;
++	struct mount_attr attr = {
++		.attr_clr = MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME,
++		.attr_set = MOUNT_ATTR_RELATIME,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags1 = read_mnt_flags("/mnt/B");
++	ASSERT_GT(old_flags1, 0);
++
++	old_flags2 = read_mnt_flags("/mnt/B/BB");
++	ASSERT_GT(old_flags2, 0);
++
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/B", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags = old_flags2;
++	expected_flags &= ~(MS_RDONLY | MS_NOEXEC | MS_NOATIME | MS_NOSUID);
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	expected_flags = old_flags2;
++	expected_flags &= ~(MS_RDONLY | MS_NOEXEC | MS_NOATIME | MS_NOSUID);
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++}
++
++TEST_F(mount_setattr, time_changes)
++{
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_NODIRATIME | MOUNT_ATTR_NOATIME,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_set = MOUNT_ATTR_STRICTATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_set = MOUNT_ATTR_STRICTATIME | MOUNT_ATTR_NOATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_set = MOUNT_ATTR_STRICTATIME | MOUNT_ATTR_NOATIME;
++	attr.attr_clr = MOUNT_ATTR__ATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_set = 0;
++	attr.attr_clr = MOUNT_ATTR_STRICTATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_clr = MOUNT_ATTR_NOATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	attr.attr_set = MOUNT_ATTR_NODIRATIME | MOUNT_ATTR_NOATIME;
++	attr.attr_clr = MOUNT_ATTR__ATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_NOATIME;
++	expected_flags |= MS_NODIRATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_set &= ~MOUNT_ATTR_NOATIME;
++	attr.attr_set |= MOUNT_ATTR_RELATIME;
++	attr.attr_clr |= MOUNT_ATTR__ATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags &= ~MS_NOATIME;
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_set &= ~MOUNT_ATTR_RELATIME;
++	attr.attr_set |= MOUNT_ATTR_STRICTATIME;
++	attr.attr_clr |= MOUNT_ATTR__ATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags &= ~MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_set &= ~MOUNT_ATTR_STRICTATIME;
++	attr.attr_set |= MOUNT_ATTR_NOATIME;
++	attr.attr_clr |= MOUNT_ATTR__ATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags |= MS_NOATIME;
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_clr = MOUNT_ATTR_NODIRATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags &= ~MS_NODIRATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++}
++
++TEST_F(mount_setattr, multi_threaded)
++{
++	int i, j, nthreads, ret = 0;
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	pthread_attr_t pattr;
++	pthread_t threads[DEFAULT_THREADS];
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	/* Try to change mount options from multiple threads. */
++	nthreads = get_nprocs_conf();
++	if (nthreads > DEFAULT_THREADS)
++		nthreads = DEFAULT_THREADS;
++
++	pthread_attr_init(&pattr);
++	for (i = 0; i < nthreads; i++)
++		ASSERT_EQ(pthread_create(&threads[i], &pattr, mount_setattr_thread, NULL), 0);
++
++	for (j = 0; j < i; j++) {
++		void *retptr = NULL;
++
++		EXPECT_EQ(pthread_join(threads[j], &retptr), 0);
++
++		ret += ptr_to_int(retptr);
++		EXPECT_EQ(ret, 0);
++	}
++	pthread_attr_destroy(&pattr);
++
++	ASSERT_EQ(ret, 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_RDONLY;
++	expected_flags |= MS_NOSUID;
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B/BB"), true);
++}
++
++TEST_F(mount_setattr, wrong_user_namespace)
++{
++	int ret;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_RDONLY,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	EXPECT_EQ(create_and_enter_userns(), 0);
++	ret = sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr));
++	ASSERT_LT(ret, 0);
++	ASSERT_EQ(errno, EPERM);
++}
++
++TEST_F(mount_setattr, wrong_mount_namespace)
++{
++	int fd, ret;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_RDONLY,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	fd = open("/mnt/A", O_DIRECTORY | O_CLOEXEC);
++	ASSERT_GE(fd, 0);
++
++	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
++
++	ret = sys_mount_setattr(fd, "", AT_EMPTY_PATH | AT_RECURSIVE, &attr, sizeof(attr));
++	ASSERT_LT(ret, 0);
++	ASSERT_EQ(errno, EINVAL);
++}
++
++FIXTURE(mount_setattr_idmapped) {
++};
++
++FIXTURE_SETUP(mount_setattr_idmapped)
++{
++	int img_fd = -EBADF;
++
++	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
++
++	ASSERT_EQ(mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0), 0);
++
++	(void)umount2("/mnt", MNT_DETACH);
++	(void)umount2("/tmp", MNT_DETACH);
++
++	ASSERT_EQ(mount("testing", "/tmp", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/tmp/B", 0777), 0);
++	ASSERT_EQ(mknodat(-EBADF, "/tmp/B/b", S_IFREG | 0644, 0), 0);
++	ASSERT_EQ(chown("/tmp/B/b", 0, 0), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/tmp/B/BB", 0777), 0);
++	ASSERT_EQ(mknodat(-EBADF, "/tmp/B/BB/b", S_IFREG | 0644, 0), 0);
++	ASSERT_EQ(chown("/tmp/B/BB/b", 0, 0), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B/BB", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/mnt/A", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt/A", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/mnt/A/AA", 0777), 0);
++
++	ASSERT_EQ(mount("/tmp", "/mnt/A/AA", NULL, MS_BIND | MS_REC, NULL), 0);
++
++	ASSERT_EQ(mkdir("/mnt/B", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt/B", "ramfs",
++			MS_NOATIME | MS_NODEV | MS_NOSUID, 0), 0);
++
++	ASSERT_EQ(mkdir("/mnt/B/BB", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B/BB", "devpts",
++			MS_RELATIME | MS_NOEXEC | MS_RDONLY, 0), 0);
++
++	ASSERT_EQ(mkdir("/mnt/C", 0777), 0);
++	ASSERT_EQ(mkdir("/mnt/D", 0777), 0);
++	img_fd = openat(-EBADF, "/mnt/C/ext4.img", O_CREAT | O_WRONLY, 0600);
++	ASSERT_GE(img_fd, 0);
++	ASSERT_EQ(ftruncate(img_fd, 1024 * 2048), 0);
++	ASSERT_EQ(system("mkfs.ext4 -q /mnt/C/ext4.img"), 0);
++	ASSERT_EQ(system("mount -o loop -t ext4 /mnt/C/ext4.img /mnt/D/"), 0);
++	ASSERT_EQ(close(img_fd), 0);
++}
++
++FIXTURE_TEARDOWN(mount_setattr_idmapped)
++{
++	(void)umount2("/mnt/A", MNT_DETACH);
++	(void)umount2("/tmp", MNT_DETACH);
++}
++
++/**
++ * Validate that negative fd values are rejected.
++ */
++TEST_F(mount_setattr_idmapped, invalid_fd_negative)
++{
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_IDMAP,
++		.userns_fd	= -EBADF,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_NE(sys_mount_setattr(-1, "/", 0, &attr, sizeof(attr)), 0) {
++		TH_LOG("failure: created idmapped mount with negative fd");
++	}
++}
++
++/**
++ * Validate that excessively large fd values are rejected.
++ */
++TEST_F(mount_setattr_idmapped, invalid_fd_large)
++{
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_IDMAP,
++		.userns_fd	= INT64_MAX,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_NE(sys_mount_setattr(-1, "/", 0, &attr, sizeof(attr)), 0) {
++		TH_LOG("failure: created idmapped mount with too large fd value");
++	}
++}
++
++/**
++ * Validate that closed fd values are rejected.
++ */
++TEST_F(mount_setattr_idmapped, invalid_fd_closed)
++{
++	int fd;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	fd = open("/dev/null", O_RDONLY | O_CLOEXEC);
++	ASSERT_GE(fd, 0);
++	ASSERT_GE(close(fd), 0);
++
++	attr.userns_fd = fd;
++	ASSERT_NE(sys_mount_setattr(-1, "/", 0, &attr, sizeof(attr)), 0) {
++		TH_LOG("failure: created idmapped mount with closed fd");
++	}
++}
++
++/**
++ * Validate that the initial user namespace is rejected.
++ */
++TEST_F(mount_setattr_idmapped, invalid_fd_initial_userns)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC | OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	attr.userns_fd = open("/proc/1/ns/user", O_RDONLY | O_CLOEXEC);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(errno, EPERM);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++static int map_ids(pid_t pid, unsigned long nsid, unsigned long hostid,
++		   unsigned long range)
++{
++	char map[100], procfile[256];
++
++	snprintf(procfile, sizeof(procfile), "/proc/%d/uid_map", pid);
++	snprintf(map, sizeof(map), "%lu %lu %lu", nsid, hostid, range);
++	if (write_file(procfile, map, strlen(map)))
++		return -1;
++
++
++	snprintf(procfile, sizeof(procfile), "/proc/%d/gid_map", pid);
++	snprintf(map, sizeof(map), "%lu %lu %lu", nsid, hostid, range);
++	if (write_file(procfile, map, strlen(map)))
++		return -1;
++
++	return 0;
++}
++
++#define __STACK_SIZE (8 * 1024 * 1024)
++static pid_t do_clone(int (*fn)(void *), void *arg, int flags)
++{
++	void *stack;
++
++	stack = malloc(__STACK_SIZE);
++	if (!stack)
++		return -ENOMEM;
++
++#ifdef __ia64__
++	return __clone2(fn, stack, __STACK_SIZE, flags | SIGCHLD, arg, NULL);
++#else
++	return clone(fn, stack + __STACK_SIZE, flags | SIGCHLD, arg, NULL);
++#endif
++}
++
++static int get_userns_fd_cb(void *data)
++{
++	return kill(getpid(), SIGSTOP);
++}
++
++static int wait_for_pid(pid_t pid)
++{
++	int status, ret;
++
++again:
++	ret = waitpid(pid, &status, 0);
++	if (ret == -1) {
++		if (errno == EINTR)
++			goto again;
++
++		return -1;
++	}
++
++	if (!WIFEXITED(status))
++		return -1;
++
++	return WEXITSTATUS(status);
++}
++
++static int get_userns_fd(unsigned long nsid, unsigned long hostid, unsigned long range)
++{
++	int ret;
++	pid_t pid;
++	char path[256];
++
++	pid = do_clone(get_userns_fd_cb, NULL, CLONE_NEWUSER);
++	if (pid < 0)
++		return -errno;
++
++	ret = map_ids(pid, nsid, hostid, range);
++	if (ret < 0)
++		return ret;
++
++	snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
++	ret = open(path, O_RDONLY | O_CLOEXEC);
++	kill(pid, SIGKILL);
++	wait_for_pid(pid);
++	return ret;
++}
++
++/**
++ * Validate that an attached mount in our mount namespace can be idmapped.
++ * (The kernel enforces that the mount's mount namespace and the caller's mount
++ *  namespace match.)
++ */
++TEST_F(mount_setattr_idmapped, attached_mount_inside_current_mount_namespace)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC);
++	ASSERT_GE(open_tree_fd, 0);
++
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++/**
++ * Validate that idmapping a mount is rejected if the mount's mount namespace
++ * and our mount namespace don't match.
++ * (The kernel enforces that the mount's mount namespace and the caller's mount
++ *  namespace match.)
++ */
++TEST_F(mount_setattr_idmapped, attached_mount_outside_current_mount_namespace)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC);
++	ASSERT_GE(open_tree_fd, 0);
++
++	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
++
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,
++				    sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++/**
++ * Validate that an attached mount in our mount namespace can be idmapped.
++ */
++TEST_F(mount_setattr_idmapped, detached_mount_inside_current_mount_namespace)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC |
++				     OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	/* Changing mount properties on a detached mount. */
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "",
++				    AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++/**
++ * Validate that a detached mount not in our mount namespace can be idmapped.
++ */
++TEST_F(mount_setattr_idmapped, detached_mount_outside_current_mount_namespace)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC |
++				     OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
++
++	/* Changing mount properties on a detached mount. */
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "",
++				    AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++/**
++ * Validate that currently changing the idmapping of an idmapped mount fails.
++ */
++TEST_F(mount_setattr_idmapped, change_idmapping)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC |
++				     OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "",
++				    AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++
++	/* Change idmapping on a detached mount that is already idmapped. */
++	attr.userns_fd	= get_userns_fd(0, 20000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++static bool expected_uid_gid(int dfd, const char *path, int flags,
++			     uid_t expected_uid, gid_t expected_gid)
++{
++	int ret;
++	struct stat st;
++
++	ret = fstatat(dfd, path, &st, flags);
++	if (ret < 0)
++		return false;
++
++	return st.st_uid == expected_uid && st.st_gid == expected_gid;
++}
++
++TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
++	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/A",
++				     AT_RECURSIVE |
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC |
++				     OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++
++	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
++	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
++	ASSERT_EQ(expected_uid_gid(open_tree_fd, "B/b", 0, 0, 0), 0);
++	ASSERT_EQ(expected_uid_gid(open_tree_fd, "B/BB/b", 0, 0, 0), 0);
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.30.0
 
