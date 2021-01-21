@@ -2,117 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A4B2FEECF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 16:31:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A5D62FEFD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 17:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732983AbhAUPaq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 10:30:46 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:46040 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731924AbhAUNWL (ORCPT
+        id S1730048AbhAUQIj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 11:08:39 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23957 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732237AbhAUQH4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 08:22:11 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10LDDfln043163;
-        Thu, 21 Jan 2021 13:21:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=m2knT8uSI6MLG69Ij4awUn0WhOK6WWXgzwRlQjg273U=;
- b=NUNs4uOJ1YNaFJUN18BDLqeYKsrNxZ2U0j9SnM1jH08gmuKtV/Llw6L1qOOzqUG8PccB
- sTYIdaGy7B6hnYUOhoP2PRQeLOV4OJVjQwHuSDB1+4SJO/T5m8cThriPn0XQsGDYT6ZO
- d2GFjVmel3tjP1XDYA5ZzwcJBuYeO+4R3jGEC+H7z2KFET7ph+5bFF0K0kgYAZ03HFjn
- cm6diN/JDzuIFtdXLWr6189cWN68e+djsIhcsoUf/AH7avReVXRJF0cuzYRfa3PblbhX
- uNgY8rH3oVjqOxNYHFpnI2LZyjrZfY7wdbBG0DzaIq+sCtY6ruYbtg0d6uMk2aT9Puwe pg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 3668qaf9jc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jan 2021 13:21:12 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10LDFkhP106711;
-        Thu, 21 Jan 2021 13:21:12 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 3668rexr2m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jan 2021 13:21:12 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10LDKZJB123118;
-        Thu, 21 Jan 2021 13:21:12 GMT
-Received: from gmananth-linux.oraclecorp.com (dhcp-10-166-171-141.vpn.oracle.com [10.166.171.141])
-        by userp3030.oracle.com with ESMTP id 3668rexq88-3;
-        Thu, 21 Jan 2021 13:21:12 +0000
-From:   Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     viro@zeniv.linux.org.uk, matthew.wilcox@oracle.com,
-        khlebnikov@yandex-team.ru, gautham.ananthakrishna@oracle.com
-Subject: [PATCH RFC 2/6] fsnotify: stop walking child dentries if remaining tail is negative
-Date:   Thu, 21 Jan 2021 18:49:41 +0530
-Message-Id: <1611235185-1685-3-git-send-email-gautham.ananthakrishna@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com>
-References: <1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9870 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
- impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0 mlxlogscore=973
- lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101210072
+        Thu, 21 Jan 2021 11:07:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611245190;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ghSQldHnSV4jEn/ZPu5R3O+xcFRIxfAiUKuyClRAeXw=;
+        b=RNb/J0gh9x3WtGsuAUFFkjxbjD4drFAF0oEyZF10JhIQS0nzjgVcvDKP8V7MEzd8NXLblF
+        x+J0GDHA2WxFwJAwUxha9ZqEmADEVl8Wn1XZKfsudgaI0Ayz7mI6Xg6ONHNmE5x/DZqTV1
+        S+KbZvHc41orUcJ18x1hh4CYt10rPY4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-65-1PsCEpKXOM6q52LxuR5Vpg-1; Thu, 21 Jan 2021 11:06:23 -0500
+X-MC-Unique: 1PsCEpKXOM6q52LxuR5Vpg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 747841005513;
+        Thu, 21 Jan 2021 16:06:12 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AE6D861F55;
+        Thu, 21 Jan 2021 16:06:11 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 10LG6Bio019315;
+        Thu, 21 Jan 2021 11:06:11 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 10LG6A87019311;
+        Thu, 21 Jan 2021 11:06:10 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Thu, 21 Jan 2021 11:06:10 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Zhongwei Cai <sunrise_l@sjtu.edu.cn>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        David Laight <David.Laight@aculab.com>,
+        Mingkai Dong <mingkaidong@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Wang Jianchao <jianchao.wan9@gmail.com>,
+        Rajesh Tadakamadla <rajesh.tadakamadla@hpe.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: Expense of read_iter
+In-Reply-To: <20210121154744.GQ2260413@casper.infradead.org>
+Message-ID: <alpine.LRH.2.02.2101211101190.18413@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2101061245100.30542@file01.intranet.prod.int.rdu2.redhat.com> <20210107151125.GB5270@casper.infradead.org> <17045315-CC1F-4165-B8E3-BA55DD16D46B@gmail.com> <2041983017.5681521.1610459100858.JavaMail.zimbra@sjtu.edu.cn>
+ <alpine.LRH.2.02.2101131008530.27448@file01.intranet.prod.int.rdu2.redhat.com> <1224425872.715547.1610703643424.JavaMail.zimbra@sjtu.edu.cn> <20210120044700.GA4626@dread.disaster.area> <20210120141834.GA24063@quack2.suse.cz>
+ <alpine.LRH.2.02.2101200951070.24430@file01.intranet.prod.int.rdu2.redhat.com> <20210121154744.GQ2260413@casper.infradead.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-When notification starts/stops listening events from inode's children it
-have to update dentry->d_flags of all positive child dentries. Scanning
-may took a long time if directory has a lot of negative child dentries.
 
-This is main beneficiary of sweeping cached negative dentries to the end.
+On Thu, 21 Jan 2021, Matthew Wilcox wrote:
 
-Before patch:
+> On Wed, Jan 20, 2021 at 10:12:01AM -0500, Mikulas Patocka wrote:
+> > Do you have some idea how to optimize the generic code that calls 
+> > ->read_iter?
+> 
+> Yes.
+> 
+> > It might be better to maintain an f_iocb_flags in the
+> > struct file and just copy that unconditionally.  We'd need to remember
+> > to update it in fcntl(F_SETFL), but I think that's the only place.
+> 
+> Want to give that a try?
 
-nr_dentry = 24172597    24.2M
-nr_buckets = 8388608    2.9 avg
-nr_unused = 24158110    99.9%
-nr_negative = 24142810  99.9%
+Yes - send me the patch and I'll benchmark it.
 
-inotify time: 0.507182 seconds
-
-After patch:
-
-nr_dentry = 24562747    24.6M
-nr_buckets = 8388608    2.9 avg
-nr_unused = 24548714    99.9%
-nr_negative = 24543867  99.9%
-
-inotify time: 0.000010 seconds
-
-Negative dentries no longer slow down inotify op at parent directory.
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
----
- fs/notify/fsnotify.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 8d3ad5e..4ccb59d 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -127,8 +127,12 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
- 		 * original inode) */
- 		spin_lock(&alias->d_lock);
- 		list_for_each_entry(child, &alias->d_subdirs, d_child) {
--			if (!child->d_inode)
-+			if (!child->d_inode) {
-+				/* all remaining children are negative */
-+				if (d_is_tail_negative(child))
-+					break;
- 				continue;
-+			}
- 
- 			spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
- 			if (watched)
--- 
-1.8.3.1
+Mikulas
 
