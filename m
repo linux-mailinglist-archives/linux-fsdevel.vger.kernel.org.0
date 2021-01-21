@@ -2,88 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 197732FF40C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 20:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BDC52FF3EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 20:12:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbhAUTMv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 14:12:51 -0500
+        id S1726082AbhAUTL1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 14:11:27 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbhAUTK4 (ORCPT
+        with ESMTP id S1727013AbhAUTLX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 14:10:56 -0500
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A1C8C061756;
-        Thu, 21 Jan 2021 11:09:38 -0800 (PST)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 7790068A6; Thu, 21 Jan 2021 14:09:37 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 7790068A6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1611256177;
-        bh=N/byAs1v6tc9Fx3ki4Hix9OpQ2b4N7bUlr5L+Udyz04=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v12SGAI5TdTGVdUXLNRFq4bYEJiB3wwXNox11gArFVnndbZSQLf36kKRFo95UyeQY
-         CO7QjlprxG0AHzpbsAXIme2ZNIcWn0te5LWMp6nGA+4cNMBpacJ9xmATTjhLCoftDm
-         vFchlftsuiau3nyD/mo1dMyfCGV87yqk3pnkw+U0=
-Date:   Thu, 21 Jan 2021 14:09:37 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-afs@lists.infradead.org, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
+        Thu, 21 Jan 2021 14:11:23 -0500
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 686F7C061756;
+        Thu, 21 Jan 2021 11:11:08 -0800 (PST)
+Received: from lwn.net (unknown [IPv6:2601:281:8300:104d::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 67463615C;
+        Thu, 21 Jan 2021 19:09:55 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 67463615C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1611256197; bh=0PfEGC/cPJ5o5ce4iP7kPM3qg+xRX/ZAzMq8mA7LR+w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LfmTwdSQP3IBIFsgIimE+P0zc4qOuRRENhFAbFZ81/G0xiY0DScELhTCtldW3XIfz
+         Ugs8obCBqzDnsrsJoi5krEbWrGHjyZPpGee+9oAGUJ1ZDXrSP/jMHtPw39Va3bBst2
+         L4SlcWZ4eBnLVGq3hawDKWCzzYzGfx0DG20ajnIZZRO05FEVzu6Z6QH1o0t7hxv9Z5
+         FAGLGDnT/R3zaflLKjCnNdzZoWBPmMbSxH+vE+gp8swBNJrsI901YZhh5xO0J5KAQE
+         q+gS4MkjsOprcfN5wLvJLeHWfw2eGdzUGLUYeV2MifPW5V3sfXPnjMGNWyuhz0xfWx
+         Q0+/sodoN2x/A==
+Date:   Thu, 21 Jan 2021 12:09:54 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 00/25] Network fs helper library & fscache kiocb API
-Message-ID: <20210121190937.GE20964@fieldses.org>
-References: <20210121174306.GB20964@fieldses.org>
- <20210121164645.GA20964@fieldses.org>
- <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
- <1794286.1611248577@warthog.procyon.org.uk>
- <1851804.1611255313@warthog.procyon.org.uk>
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Evgeniy Polyakov <zbr@ioremap.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jon Maloy <jmaloy@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Gong <richard.gong@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Will Drewry <wad@chromium.org>,
+        Ying Xue <ying.xue@windriver.com>,
+        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net
+Subject: Re: [PATCH v6 00/16] Fix several bad kernel-doc markups
+Message-ID: <20210121120954.5ed4c3b2@lwn.net>
+In-Reply-To: <cover.1610610937.git.mchehab+huawei@kernel.org>
+References: <cover.1610610937.git.mchehab+huawei@kernel.org>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1851804.1611255313@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 06:55:13PM +0000, David Howells wrote:
-> J. Bruce Fields <bfields@fieldses.org> wrote:
-> 
-> > > Fixing this requires a much bigger overhaul of cachefiles than this patchset
-> > > performs.
-> > 
-> > That sounds like "sometimes you may get file corruption and there's
-> > nothing you can do about it".  But I know people actually use fscache,
-> > so it must be reliable at least for some use cases.
-> 
-> Yes.  That's true for the upstream code because that uses bmap.
+On Thu, 14 Jan 2021 09:04:36 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Sorry, when you say "that's true", what part are you referring to?
-
-> I'm switching
-> to use SEEK_HOLE/SEEK_DATA to get rid of the bmap usage, but it doesn't change
-> the issue.
+> 1)  10 remaining fixup patches from the series I sent back on Dec, 1st:
 > 
-> > Is it that those "bridging" blocks only show up in certain corner cases
-> > that users can arrange to avoid?  Or that it's OK as long as you use
-> > certain specific file systems whose behavior goes beyond what's
-> > technically required by the bamp or seek interfaces?
-> 
-> That's a question for the xfs, ext4 and btrfs maintainers, and may vary
-> between kernel versions and fsck or filesystem packing utility versions.
+>    parport: fix a kernel-doc markup
+>    rapidio: fix kernel-doc a markup
+>    fs: fix kernel-doc markups
+>    pstore/zone: fix a kernel-doc markup
+>    firmware: stratix10-svc: fix kernel-doc markups
+>    connector: fix a kernel-doc markup
+>    lib/crc7: fix a kernel-doc markup
+>    memblock: fix kernel-doc markups
+>    w1: fix a kernel-doc markup
+>    selftests: kselftest_harness.h: partially fix kernel-doc markups
 
-So, I'm still confused: there must be some case where we know fscache
-actually works reliably and doesn't corrupt your data, right?
+A week later none of these have shown up in linux-next, so I went ahead
+and applied the set.
 
---b.
+Thanks,
+
+jon
