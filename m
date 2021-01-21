@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A332FEC16
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 14:36:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0D9A2FEC18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jan 2021 14:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732515AbhAUNfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 08:35:40 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55327 "EHLO
+        id S1732530AbhAUNgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 08:36:02 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55343 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732321AbhAUNds (ORCPT
+        with ESMTP id S1732322AbhAUNdu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 08:33:48 -0500
+        Thu, 21 Jan 2021 08:33:50 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l2ZvA-0005g7-2O; Thu, 21 Jan 2021 13:22:44 +0000
+        id 1l2ZvE-0005g7-Ks; Thu, 21 Jan 2021 13:22:48 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
@@ -51,700 +51,363 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v6 34/40] fs: add mount_setattr()
-Date:   Thu, 21 Jan 2021 14:19:53 +0100
-Message-Id: <20210121131959.646623-35-christian.brauner@ubuntu.com>
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        =?UTF-8?q?Mauricio=20V=C3=A1squez=20Bernal?= <mauricio@kinvolk.io>
+Subject: [PATCH v6 35/40] fs: introduce MOUNT_ATTR_IDMAP
+Date:   Thu, 21 Jan 2021 14:19:54 +0100
+Message-Id: <20210121131959.646623-36-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=W+eEJHNrlkV/b8gMOjwmCnJaxH/2Jd0g2RrCW3G+aTQ=; m=U71svJN7r/b7LHpE1HwvRJDwbna6nsrLs5YIYe412Ic=; p=zWmthK3AD0xkaks/A0cg6bqEKrvlf66UClWc3tdrakc=; g=910d34e2f2b0669ccec8e26298612b0e999f506b
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9pgAKCRCRxhvAZXjcos37AQDPSn+ g6LmrzbfmZ2mqCVEVxS/SAFGurkxMGK66UmsgywD8C2j9Uh98e5ttMQih8f3ribI7EjzzccfJ9CAC WsOLuwE=
+Content-Type: text/plain; charset=UTF-8
+X-Patch-Hashes: v=1; h=sha256; i=GYBYwKZNDijutmVrBepxrBfFO75BWdoBVtOTOIdJMkE=; m=g2OTP5WhmjQoF4YIz2CErqPQQ+/BcQ7bZDA/hJnmTx4=; p=pLgwfiRIfyez30F/gXKXFmr2v9NKbMEDUbGPPwZQMoE=; g=ca28a99329fde4f12d172e5c620040de51d3dbec
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9pwAKCRCRxhvAZXjcomdeAP9lW0x Kssz2dnQVjCnCI9CPd0QVBxllhW82htHW/CFstQEA5bQb6KnS7tLEd2U0fC1XZwuq+sIQ8qR6Wkww XqcX6AQ=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This implements the missing mount_setattr() syscall. While the new mount
-api allows to change the properties of a superblock there is currently
-no way to change the properties of a mount or a mount tree using file
-descriptors which the new mount api is based on. In addition the old
-mount api has the restriction that mount options cannot be applied
-recursively. This hasn't changed since changing mount options on a
-per-mount basis was implemented in [1] and has been a frequent request
-not just for convenience but also for security reasons. The legacy
-mount syscall is unable to accommodate this behavior without introducing
-a whole new set of flags because MS_REC | MS_REMOUNT | MS_BIND |
-MS_RDONLY | MS_NOEXEC | [...] only apply the mount option to the topmost
-mount. Changing MS_REC to apply to the whole mount tree would mean
-introducing a significant uapi change and would likely cause significant
-regressions.
+Introduce a new mount bind mount property to allow idmapping mounts. The
+MOUNT_ATTR_IDMAP flag can be set via the new mount_setattr() syscall
+together with a file descriptor referring to a user namespace.
 
-The new mount_setattr() syscall allows to recursively clear and set
-mount options in one shot. Multiple calls to change mount options
-requesting the same changes are idempotent:
+The user namespace referenced by the namespace file descriptor will be
+attached to the bind mount. All interactions with the filesystem going
+through that mount will be mapped according to the mapping specified in
+the user namespace attached to it.
 
-int mount_setattr(int dfd, const char *path, unsigned flags,
-                  struct mount_attr *uattr, size_t usize);
+Using user namespaces to mark mounts means we can reuse all the existing
+infrastructure in the kernel that already exists to handle idmappings
+and can also use this for permission checking to allow unprivileged user
+to create idmapped mounts in the future.
 
-Flags to modify path resolution behavior are specified in the @flags
-argument. Currently, AT_EMPTY_PATH, AT_RECURSIVE, AT_SYMLINK_NOFOLLOW,
-and AT_NO_AUTOMOUNT are supported. If useful, additional lookup flags to
-restrict path resolution as introduced with openat2() might be supported
-in the future.
+Idmapping a mount is decoupled from the caller's user and mount
+namespace. This means idmapped mounts can be created in the initial
+user namespace which is an important use-case for systemd-homed,
+portable usb-sticks between systems, sharing data between the initial
+user namespace and unprivileged containers, and other use-cases that
+have been brought up. For example, assume a home directory where all
+files are owned by uid and gid 1000 and the home directory is brought to
+a new laptop where the user has id 12345. The system administrator can
+simply create a mount of this home directory with a mapping of
+1000:12345:1 and other mappings to indicate the ids should be kept.
+(With this it is e.g. also possible to create idmapped mounts on the
+host with an identity mapping 1:1:100000 where the root user is not
+mapped. A user with root access that e.g. has been pivot rooted into
+such a mount on the host will be not be able to execute, read, write, or
+create files as root.)
 
-The mount_setattr() syscall can be expected to grow over time and is
-designed with extensibility in mind. It follows the extensible syscall
-pattern we have used with other syscalls such as openat2(), clone3(),
-sched_{set,get}attr(), and others.
-The set of mount options is passed in the uapi struct mount_attr which
-currently has the following layout:
+Given that mapping a mount is decoupled from the caller's user namespace
+a sufficiently privileged process such as a container manager can set up
+an idmapped mount for the container and the container can simply pivot
+root to it. There's no need for the container to do anything. The mount
+will appear correctly mapped independent of the user namespace the
+container uses. This means we don't need to mark a mount as idmappable.
 
-struct mount_attr {
-	__u64 attr_set;
-	__u64 attr_clr;
-	__u64 propagation;
-};
+In order to create an idmapped mount the caller must currently be
+privileged in the user namespace of the superblock the mount belongs to.
+Once a mount has been idmapped we don't allow it to change its mapping.
+This keeps permission checking and life-cycle management simple. Users
+wanting to change the idmapped can always create a new detached mount
+with a different idmapping.
 
-The @attr_set and @attr_clr members are used to clear and set mount
-options. This way a user can e.g. request that a set of flags is to be
-raised such as turning mounts readonly by raising MOUNT_ATTR_RDONLY in
-@attr_set while at the same time requesting that another set of flags is
-to be lowered such as removing noexec from a mount tree by specifying
-MOUNT_ATTR_NOEXEC in @attr_clr.
-
-Note, since the MOUNT_ATTR_<atime> values are an enum starting from 0,
-not a bitmap, users wanting to transition to a different atime setting
-cannot simply specify the atime setting in @attr_set, but must also
-specify MOUNT_ATTR__ATIME in the @attr_clr field. So we ensure that
-MOUNT_ATTR__ATIME can't be partially set in @attr_clr and that @attr_set
-can't have any atime bits set if MOUNT_ATTR__ATIME isn't set in
-@attr_clr.
-
-The @propagation field lets callers specify the propagation type of a
-mount tree. Propagation is a single property that has four different
-settings and as such is not really a flag argument but an enum.
-Specifically, it would be unclear what setting and clearing propagation
-settings in combination would amount to. The legacy mount() syscall thus
-forbids the combination of multiple propagation settings too. The goal
-is to keep the semantics of mount propagation somewhat simple as they
-are overly complex as it is.
-
-[1]: commit 2e4b7fcd9260 ("[PATCH] r/o bind mounts: honor mount writer counts at remount")
-
-Link: https://lore.kernel.org/r/20210112220124.837960-7-christian.brauner@ubuntu.com
+Link: https://lore.kernel.org/r/20210112220124.837960-41-christian.brauner@ubuntu.com
+Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Mauricio Vásquez Bernal <mauricio@kinvolk.io>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
 - Christoph Hellwig <hch@lst.de>:
-  - Split into multiple helpers.
+  - Drop kconfig option to make vfs idmappings unconditional.
+  - Move introduction of MOUNT_ATTR_IDMAP to the end of the series after all
+    internal changes have been done.
+  - Move MOUNT_ATTR_IDMAP handling from build_mount_kattr() to separate
+    build_mount_idmapped() helper.
+  - Move MNT_IDMAPPED handling from do_mount_setattr() into separate
+    do_mount_idmap() helper.
+  - Use more helpers instead of one big function for mount attribute changes.
+- Mauricio Vásquez Bernal <mauricio@kinvolk.io>:
+  - Recalculate flags before checking can_change_locked_flags().
 
 /* v3 */
-- kernel test robot <lkp@intel.com>:
-  - Fix unknown __u64 type by including linux/types.h in linux/mount.h.
+- David Howells <dhowells@redhat.com>:
+  - Use smp_load_acquire() and smp_store_release() in mnt_user_ns() and do_idmap_mount().
+- Remove all references to MNT_IDMAPPED now that the flag has been removed.
 
 /* v4 */
-- Christoph Hellwig <hch@lst.de>:
-  - Make sure lines wrap at 80 chars.
-  - Move struct mount_kattr out of the internal.h header and completely
-    into fs/namespace.c as it's not used outside of that file.
-  - Add missing space between ( and { when initializing mount_kattr.
-  - Split flag validation and calculation into separate preparatory
-    patch.
-  - Simplify flag validation in build_mount_kattr() to avoid
-    upper_32_bits() and lower_32_bits() calls. This will also lead to
-    better code generation.
-  - Remove new propagation enums and simply use the old flags.
-  - Strictly adhere to 80 char limit.
-  - Restructure the time setting code in build_mount_kattr().
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 
 /* v5 */
+unchanged
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 
-- Christoph Hellwig <hch@lst.de>:
-  - Simplify mount propagation flag checking.
-  - Wrap overly long line.
-
 /* v6 */
-unchanged
 base-commit: 19c329f6808995b142b3966301f217c831e7cf31
----
- arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
- arch/arm/tools/syscall.tbl                  |   1 +
- arch/arm64/include/asm/unistd.h             |   2 +-
- arch/arm64/include/asm/unistd32.h           |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
- arch/s390/kernel/syscalls/syscall.tbl       |   1 +
- arch/sh/kernel/syscalls/syscall.tbl         |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
- fs/namespace.c                              | 260 ++++++++++++++++++++
- include/linux/syscalls.h                    |   4 +
- include/uapi/asm-generic/unistd.h           |   4 +-
- include/uapi/linux/mount.h                  |  14 ++
- tools/include/uapi/asm-generic/unistd.h     |   4 +-
- 23 files changed, 303 insertions(+), 3 deletions(-)
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index a6617067dbe6..02f0244e005c 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -481,3 +481,4 @@
- 549	common	faccessat2			sys_faccessat2
- 550	common	process_madvise			sys_process_madvise
- 551	common	epoll_pwait2			sys_epoll_pwait2
-+552	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 20e1170e2e0a..dcc1191291a2 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -455,3 +455,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 86a9d7b3eabe..949788f5ba40 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		442
-+#define __NR_compat_syscalls		443
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index cccfbbefbf95..3d874f624056 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -891,6 +891,8 @@ __SYSCALL(__NR_faccessat2, sys_faccessat2)
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
- #define __NR_epoll_pwait2 441
- __SYSCALL(__NR_epoll_pwait2, compat_sys_epoll_pwait2)
-+#define __NR_mount_setattr 442
-+__SYSCALL(__NR_mount_setattr, sys_mount_setattr)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index bfc00f2bd437..d89231166e19 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -362,3 +362,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 7fe4e45c864c..72bde6707dd3 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -441,3 +441,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index a522adf194ab..d603a5ec9338 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -447,3 +447,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 0f03ad223f33..8fd8c1790941 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -380,3 +380,4 @@
- 439	n32	faccessat2			sys_faccessat2
- 440	n32	process_madvise			sys_process_madvise
- 441	n32	epoll_pwait2			compat_sys_epoll_pwait2
-+442	n32	mount_setattr			sys_mount_setattr
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 91649690b52f..169f21438065 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -356,3 +356,4 @@
- 439	n64	faccessat2			sys_faccessat2
- 440	n64	process_madvise			sys_process_madvise
- 441	n64	epoll_pwait2			sys_epoll_pwait2
-+442	n64	mount_setattr			sys_mount_setattr
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 4bad0c40aed6..090d29ca80ff 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -429,3 +429,4 @@
- 439	o32	faccessat2			sys_faccessat2
- 440	o32	process_madvise			sys_process_madvise
- 441	o32	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	o32	mount_setattr			sys_mount_setattr
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 6bcc31966b44..271a92519683 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -439,3 +439,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index f744eb5cba88..72e5aa67ab8a 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -531,3 +531,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index d443423495e5..3abef2144dac 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -444,3 +444,4 @@
- 439  common	faccessat2		sys_faccessat2			sys_faccessat2
- 440  common	process_madvise		sys_process_madvise		sys_process_madvise
- 441  common	epoll_pwait2		sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442  common	mount_setattr		sys_mount_setattr		sys_mount_setattr
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 9df40ac0ebc0..d08eebad6b7f 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -444,3 +444,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 40d8c7cd8298..84403a99039c 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -487,3 +487,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 874aeacde2dd..a1c9f496fca6 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -446,3 +446,4 @@
- 439	i386	faccessat2		sys_faccessat2
- 440	i386	process_madvise		sys_process_madvise
- 441	i386	epoll_pwait2		sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	i386	mount_setattr		sys_mount_setattr
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 78672124d28b..7bf01cbe582f 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -363,6 +363,7 @@
- 439	common	faccessat2		sys_faccessat2
- 440	common	process_madvise		sys_process_madvise
- 441	common	epoll_pwait2		sys_epoll_pwait2
-+442	common	mount_setattr		sys_mount_setattr
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 46116a28eeed..365a9b849224 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -412,3 +412,4 @@
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
- 441	common	epoll_pwait2			sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
+- Christoph Hellwig <hch@lst.de>:
+  - Include userns_fd in MOUNT_ATTR_SIZE_VER0 instead of introducing a
+    separate MOUNT_ATTR_SIZE_VER1.
+---
+ fs/namespace.c             | 115 +++++++++++++++++++++++++++++++++++--
+ fs/proc_namespace.c        |   3 +
+ include/linux/mount.h      |   3 +-
+ include/uapi/linux/mount.h |   4 +-
+ 4 files changed, 119 insertions(+), 6 deletions(-)
+
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 00ed0d6cb2ee..dda1aac8bf5b 100644
+index dda1aac8bf5b..584496abc3e8 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -73,6 +73,14 @@ static DECLARE_RWSEM(namespace_sem);
- static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
- static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+@@ -25,6 +25,7 @@
+ #include <linux/proc_ns.h>
+ #include <linux/magic.h>
+ #include <linux/memblock.h>
++#include <linux/proc_fs.h>
+ #include <linux/task_work.h>
+ #include <linux/sched/task.h>
+ #include <uapi/linux/mount.h>
+@@ -79,6 +80,7 @@ struct mount_kattr {
+ 	unsigned int propagation;
+ 	unsigned int lookup_flags;
+ 	bool recurse;
++	struct user_namespace *mnt_userns;
+ };
  
-+struct mount_kattr {
-+	unsigned int attr_set;
-+	unsigned int attr_clr;
-+	unsigned int propagation;
-+	unsigned int lookup_flags;
-+	bool recurse;
-+};
-+
  /* /sys/fs */
- struct kobject *fs_kobj;
- EXPORT_SYMBOL_GPL(fs_kobj);
-@@ -3469,6 +3477,11 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+@@ -3477,7 +3479,7 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
  	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV | \
  	 MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME | MOUNT_ATTR_NODIRATIME)
  
-+#define MOUNT_SETATTR_VALID_FLAGS FSMOUNT_VALID_FLAGS
-+
-+#define MOUNT_SETATTR_PROPAGATION_FLAGS \
-+	(MS_UNBINDABLE | MS_PRIVATE | MS_SLAVE | MS_SHARED)
-+
- static unsigned int attr_flags_to_mnt_flags(u64 attr_flags)
- {
- 	unsigned int mnt_flags = 0;
-@@ -3820,6 +3833,253 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	return error;
+-#define MOUNT_SETATTR_VALID_FLAGS FSMOUNT_VALID_FLAGS
++#define MOUNT_SETATTR_VALID_FLAGS (FSMOUNT_VALID_FLAGS | MOUNT_ATTR_IDMAP)
+ 
+ #define MOUNT_SETATTR_PROPAGATION_FLAGS \
+ 	(MS_UNBINDABLE | MS_PRIVATE | MS_SLAVE | MS_SHARED)
+@@ -3845,6 +3847,32 @@ static unsigned int recalc_flags(struct mount_kattr *kattr, struct mount *mnt)
+ 	return flags;
  }
  
-+static unsigned int recalc_flags(struct mount_kattr *kattr, struct mount *mnt)
++static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
 +{
-+	unsigned int flags = mnt->mnt.mnt_flags;
++	struct vfsmount *m = &mnt->mnt;
 +
-+	/*  flags to clear */
-+	flags &= ~kattr->attr_clr;
-+	/* flags to raise */
-+	flags |= kattr->attr_set;
-+
-+	return flags;
-+}
-+
-+static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
-+					   struct mount *mnt, int *err)
-+{
-+	struct mount *m = mnt, *last = NULL;
-+
-+	if (!is_mounted(&m->mnt)) {
-+		*err = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (!(mnt_has_parent(m) ? check_mnt(m) : is_anon_ns(m->mnt_ns))) {
-+		*err = -EINVAL;
-+		goto out;
-+	}
-+
-+	do {
-+		unsigned int flags;
-+
-+		flags = recalc_flags(kattr, m);
-+		if (!can_change_locked_flags(m, flags)) {
-+			*err = -EPERM;
-+			goto out;
-+		}
-+
-+		last = m;
-+
-+		if ((kattr->attr_set & MNT_READONLY) &&
-+		    !(m->mnt.mnt_flags & MNT_READONLY)) {
-+			*err = mnt_hold_writers(m);
-+			if (*err)
-+				goto out;
-+		}
-+	} while (kattr->recurse && (m = next_mnt(m, mnt)));
-+
-+out:
-+	return last;
-+}
-+
-+static void mount_setattr_commit(struct mount_kattr *kattr,
-+				 struct mount *mnt, struct mount *last,
-+				 int err)
-+{
-+	struct mount *m = mnt;
-+
-+	do {
-+		if (!err) {
-+			unsigned int flags;
-+
-+			flags = recalc_flags(kattr, m);
-+			WRITE_ONCE(m->mnt.mnt_flags, flags);
-+		}
-+
-+		/*
-+		 * We either set MNT_READONLY above so make it visible
-+		 * before ~MNT_WRITE_HOLD or we failed to recursively
-+		 * apply mount options.
-+		 */
-+		if ((kattr->attr_set & MNT_READONLY) &&
-+		    (m->mnt.mnt_flags & MNT_WRITE_HOLD))
-+			mnt_unhold_writers(m);
-+
-+		if (!err && kattr->propagation)
-+			change_mnt_propagation(m, kattr->propagation);
-+
-+		/*
-+		 * On failure, only cleanup until we found the first mount
-+		 * we failed to handle.
-+		 */
-+		if (err && m == last)
-+			break;
-+	} while (kattr->recurse && (m = next_mnt(m, mnt)));
-+
-+	if (!err)
-+		touch_mnt_namespace(mnt->mnt_ns);
-+}
-+
-+static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
-+{
-+	struct mount *mnt = real_mount(path->mnt), *last = NULL;
-+	int err = 0;
-+
-+	if (path->dentry != mnt->mnt.mnt_root)
-+		return -EINVAL;
-+
-+	if (kattr->propagation) {
-+		/*
-+		 * Only take namespace_lock() if we're actually changing
-+		 * propagation.
-+		 */
-+		namespace_lock();
-+		if (kattr->propagation == MS_SHARED) {
-+			err = invent_group_ids(mnt, kattr->recurse);
-+			if (err) {
-+				namespace_unlock();
-+				return err;
-+			}
-+		}
-+	}
-+
-+	lock_mount_hash();
++	if (!kattr->mnt_userns)
++		return 0;
 +
 +	/*
-+	 * Get the mount tree in a shape where we can change mount
-+	 * properties without failure.
++	 * Once a mount has been idmapped we don't allow it to change its
++	 * mapping. It makes things simpler and callers can just create
++	 * another bind-mount they can idmap if they want to.
 +	 */
-+	last = mount_setattr_prepare(kattr, mnt, &err);
-+	if (last) /* Commit all changes or revert to the old state. */
-+		mount_setattr_commit(kattr, mnt, last, err);
++	if (mnt_user_ns(m) != &init_user_ns)
++		return -EPERM;
 +
-+	unlock_mount_hash();
-+
-+	if (kattr->propagation) {
-+		namespace_unlock();
-+		if (err)
-+			cleanup_group_ids(mnt, NULL);
-+	}
-+
-+	return err;
-+}
-+
-+static int build_mount_kattr(const struct mount_attr *attr,
-+			     struct mount_kattr *kattr, unsigned int flags)
-+{
-+	unsigned int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
-+
-+	if (flags & AT_NO_AUTOMOUNT)
-+		lookup_flags &= ~LOOKUP_AUTOMOUNT;
-+	if (flags & AT_SYMLINK_NOFOLLOW)
-+		lookup_flags &= ~LOOKUP_FOLLOW;
-+	if (flags & AT_EMPTY_PATH)
-+		lookup_flags |= LOOKUP_EMPTY;
-+
-+	*kattr = (struct mount_kattr) {
-+		.lookup_flags	= lookup_flags,
-+		.recurse	= !!(flags & AT_RECURSIVE),
-+	};
-+
-+	if (attr->propagation & ~MOUNT_SETATTR_PROPAGATION_FLAGS)
-+		return -EINVAL;
-+	if (hweight32(attr->propagation & MOUNT_SETATTR_PROPAGATION_FLAGS) > 1)
-+		return -EINVAL;
-+	kattr->propagation = attr->propagation;
-+
-+	if ((attr->attr_set | attr->attr_clr) & ~MOUNT_SETATTR_VALID_FLAGS)
++	/* The underlying filesystem doesn't support idmapped mounts yet. */
++	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
 +		return -EINVAL;
 +
-+	kattr->attr_set = attr_flags_to_mnt_flags(attr->attr_set);
-+	kattr->attr_clr = attr_flags_to_mnt_flags(attr->attr_clr);
-+
-+	/*
-+	 * Since the MOUNT_ATTR_<atime> values are an enum, not a bitmap,
-+	 * users wanting to transition to a different atime setting cannot
-+	 * simply specify the atime setting in @attr_set, but must also
-+	 * specify MOUNT_ATTR__ATIME in the @attr_clr field.
-+	 * So ensure that MOUNT_ATTR__ATIME can't be partially set in
-+	 * @attr_clr and that @attr_set can't have any atime bits set if
-+	 * MOUNT_ATTR__ATIME isn't set in @attr_clr.
-+	 */
-+	if (attr->attr_clr & MOUNT_ATTR__ATIME) {
-+		if ((attr->attr_clr & MOUNT_ATTR__ATIME) != MOUNT_ATTR__ATIME)
-+			return -EINVAL;
-+
-+		/*
-+		 * Clear all previous time settings as they are mutually
-+		 * exclusive.
-+		 */
-+		kattr->attr_clr |= MNT_RELATIME | MNT_NOATIME;
-+		switch (attr->attr_set & MOUNT_ATTR__ATIME) {
-+		case MOUNT_ATTR_RELATIME:
-+			kattr->attr_set |= MNT_RELATIME;
-+			break;
-+		case MOUNT_ATTR_NOATIME:
-+			kattr->attr_set |= MNT_NOATIME;
-+			break;
-+		case MOUNT_ATTR_STRICTATIME:
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	} else {
-+		if (attr->attr_set & MOUNT_ATTR__ATIME)
-+			return -EINVAL;
-+	}
++	/* We're not controlling the superblock. */
++	if (!ns_capable(m->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
 +
 +	return 0;
 +}
 +
-+SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
-+		unsigned int, flags, struct mount_attr __user *, uattr,
-+		size_t, usize)
+ static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
+ 					   struct mount *mnt, int *err)
+ {
+@@ -3869,6 +3897,10 @@ static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
+ 			goto out;
+ 		}
+ 
++		*err = can_idmap_mount(kattr, m);
++		if (*err)
++			goto out;
++
+ 		last = m;
+ 
+ 		if ((kattr->attr_set & MNT_READONLY) &&
+@@ -3883,6 +3915,18 @@ static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
+ 	return last;
+ }
+ 
++static void do_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
 +{
-+	int err;
-+	struct path target;
-+	struct mount_attr attr;
-+	struct mount_kattr kattr;
++	struct user_namespace *mnt_userns;
 +
-+	BUILD_BUG_ON(sizeof(struct mount_attr) != MOUNT_ATTR_SIZE_VER0);
++	if (!kattr->mnt_userns)
++		return;
 +
-+	if (flags & ~(AT_EMPTY_PATH |
-+		      AT_RECURSIVE |
-+		      AT_SYMLINK_NOFOLLOW |
-+		      AT_NO_AUTOMOUNT))
-+		return -EINVAL;
++	mnt_userns = get_user_ns(kattr->mnt_userns);
++	/* Pairs with smp_load_acquire() in mnt_user_ns(). */
++	smp_store_release(&mnt->mnt.mnt_userns, mnt_userns);
++}
 +
-+	if (unlikely(usize > PAGE_SIZE))
-+		return -E2BIG;
-+	if (unlikely(usize < MOUNT_ATTR_SIZE_VER0))
-+		return -EINVAL;
+ static void mount_setattr_commit(struct mount_kattr *kattr,
+ 				 struct mount *mnt, struct mount *last,
+ 				 int err)
+@@ -3893,6 +3937,7 @@ static void mount_setattr_commit(struct mount_kattr *kattr,
+ 		if (!err) {
+ 			unsigned int flags;
+ 
++			do_idmap_mount(kattr, m);
+ 			flags = recalc_flags(kattr, m);
+ 			WRITE_ONCE(m->mnt.mnt_flags, flags);
+ 		}
+@@ -3965,7 +4010,62 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
+ 	return err;
+ }
+ 
+-static int build_mount_kattr(const struct mount_attr *attr,
++static int build_mount_idmapped(const struct mount_attr *attr, size_t usize,
++				struct mount_kattr *kattr, unsigned int flags)
++{
++	int err = 0;
++	struct ns_common *ns;
++	struct user_namespace *mnt_userns;
++	struct file *file;
 +
-+	if (!may_mount())
-+		return -EPERM;
-+
-+	err = copy_struct_from_user(&attr, sizeof(attr), uattr, usize);
-+	if (err)
-+		return err;
-+
-+	/* Don't bother walking through the mounts if this is a nop. */
-+	if (attr.attr_set == 0 &&
-+	    attr.attr_clr == 0 &&
-+	    attr.propagation == 0)
++	if (!((attr->attr_set | attr->attr_clr) & MOUNT_ATTR_IDMAP))
 +		return 0;
 +
-+	err = build_mount_kattr(&attr, &kattr, flags);
-+	if (err)
-+		return err;
++	/*
++	 * We currently do not support clearing an idmapped mount. If this ever
++	 * is a use-case we can revisit this but for now let's keep it simple
++	 * and not allow it.
++	 */
++	if (attr->attr_clr & MOUNT_ATTR_IDMAP)
++		return -EINVAL;
 +
-+	err = user_path_at(dfd, path, kattr.lookup_flags, &target);
-+	if (err)
-+		return err;
++	if (attr->userns_fd > INT_MAX)
++		return -EINVAL;
 +
-+	err = do_mount_setattr(&target, &kattr);
-+	path_put(&target);
++	file = fget(attr->userns_fd);
++	if (!file)
++		return -EBADF;
++
++	if (!proc_ns_file(file)) {
++		err = -EINVAL;
++		goto out_fput;
++	}
++
++	ns = get_proc_ns(file_inode(file));
++	if (ns->ops->type != CLONE_NEWUSER) {
++		err = -EINVAL;
++		goto out_fput;
++	}
++
++	/*
++	 * The init_user_ns is used to indicate that a vfsmount is not idmapped.
++	 * This is simpler than just having to treat NULL as unmapped. Users
++	 * wanting to idmap a mount to init_user_ns can just use a namespace
++	 * with an identity mapping.
++	 */
++	mnt_userns = container_of(ns, struct user_namespace, ns);
++	if (mnt_userns == &init_user_ns) {
++		err = -EPERM;
++		goto out_fput;
++	}
++	kattr->mnt_userns = get_user_ns(mnt_userns);
++
++out_fput:
++	fput(file);
 +	return err;
 +}
 +
- static void __init init_mount_tree(void)
++static int build_mount_kattr(const struct mount_attr *attr, size_t usize,
+ 			     struct mount_kattr *kattr, unsigned int flags)
  {
- 	struct vfsmount *mnt;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 7688bc983de5..cd7b5c817ba2 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -68,6 +68,7 @@ union bpf_attr;
- struct io_uring_params;
- struct clone_args;
- struct open_how;
-+struct mount_attr;
+ 	unsigned int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
+@@ -4029,7 +4129,13 @@ static int build_mount_kattr(const struct mount_attr *attr,
+ 			return -EINVAL;
+ 	}
  
- #include <linux/types.h>
- #include <linux/aio_abi.h>
-@@ -1028,6 +1029,9 @@ asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
- asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
- 			       int to_dfd, const char __user *to_path,
- 			       unsigned int ms_flags);
-+asmlinkage long sys_mount_setattr(int dfd, const char __user *path,
-+				  unsigned int flags,
-+				  struct mount_attr __user *uattr, size_t usize);
- asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
- asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
- 			     const void __user *value, int aux);
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 728752917785..ce58cff99b66 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -861,9 +861,11 @@ __SYSCALL(__NR_faccessat2, sys_faccessat2)
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
- #define __NR_epoll_pwait2 441
- __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
-+#define __NR_mount_setattr 442
-+__SYSCALL(__NR_mount_setattr, sys_mount_setattr)
+-	return 0;
++	return build_mount_idmapped(attr, usize, kattr, flags);
++}
++
++static void finish_mount_kattr(struct mount_kattr *kattr)
++{
++	put_user_ns(kattr->mnt_userns);
++	kattr->mnt_userns = NULL;
+ }
  
- #undef __NR_syscalls
--#define __NR_syscalls 442
-+#define __NR_syscalls 443
+ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
+@@ -4067,7 +4173,7 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
+ 	    attr.propagation == 0)
+ 		return 0;
  
- /*
-  * 32 bit systems traditionally used different
+-	err = build_mount_kattr(&attr, &kattr, flags);
++	err = build_mount_kattr(&attr, usize, &kattr, flags);
+ 	if (err)
+ 		return err;
+ 
+@@ -4076,6 +4182,7 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
+ 		return err;
+ 
+ 	err = do_mount_setattr(&target, &kattr);
++	finish_mount_kattr(&kattr);
+ 	path_put(&target);
+ 	return err;
+ }
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index eafb75755fa3..392ef5162655 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -79,6 +79,9 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		if (mnt->mnt_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
++
++	if (mnt_user_ns(mnt) != &init_user_ns)
++		seq_puts(m, ",idmapped");
+ }
+ 
+ static inline void mangle(struct seq_file *m, const char *s)
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index 52de25e08319..161f4419db6c 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -77,7 +77,8 @@ struct vfsmount {
+ 
+ static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
+ {
+-	return mnt->mnt_userns;
++	/* Pairs with smp_store_release() in do_idmap_mount(). */
++	return smp_load_acquire(&mnt->mnt_userns);
+ }
+ 
+ struct file; /* forward dec */
 diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index dd8306ea336c..2255624e91c8 100644
+index 2255624e91c8..e6524ead2b7b 100644
 --- a/include/uapi/linux/mount.h
 +++ b/include/uapi/linux/mount.h
-@@ -1,6 +1,8 @@
- #ifndef _UAPI_LINUX_MOUNT_H
- #define _UAPI_LINUX_MOUNT_H
- 
-+#include <linux/types.h>
-+
- /*
-  * These are the fs-independent mount-flags: up to 32 flags are supported
-  *
-@@ -118,4 +120,16 @@ enum fsconfig_command {
+@@ -119,6 +119,7 @@ enum fsconfig_command {
+ #define MOUNT_ATTR_NOATIME	0x00000010 /* - Do not update access times. */
  #define MOUNT_ATTR_STRICTATIME	0x00000020 /* - Always perform atime updates */
  #define MOUNT_ATTR_NODIRATIME	0x00000080 /* Do not update directory access times */
- 
-+/*
-+ * mount_setattr()
-+ */
-+struct mount_attr {
-+	__u64 attr_set;
-+	__u64 attr_clr;
-+	__u64 propagation;
-+};
-+
-+/* List of all mount_attr versions. */
-+#define MOUNT_ATTR_SIZE_VER0	24 /* sizeof first published struct */
-+
- #endif /* _UAPI_LINUX_MOUNT_H */
-diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
-index 728752917785..ce58cff99b66 100644
---- a/tools/include/uapi/asm-generic/unistd.h
-+++ b/tools/include/uapi/asm-generic/unistd.h
-@@ -861,9 +861,11 @@ __SYSCALL(__NR_faccessat2, sys_faccessat2)
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
- #define __NR_epoll_pwait2 441
- __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
-+#define __NR_mount_setattr 442
-+__SYSCALL(__NR_mount_setattr, sys_mount_setattr)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 442
-+#define __NR_syscalls 443
++#define MOUNT_ATTR_IDMAP	0x00100000 /* Idmap mount to @userns_fd in struct mount_attr. */
  
  /*
-  * 32 bit systems traditionally used different
+  * mount_setattr()
+@@ -127,9 +128,10 @@ struct mount_attr {
+ 	__u64 attr_set;
+ 	__u64 attr_clr;
+ 	__u64 propagation;
++	__u64 userns_fd;
+ };
+ 
+ /* List of all mount_attr versions. */
+-#define MOUNT_ATTR_SIZE_VER0	24 /* sizeof first published struct */
++#define MOUNT_ATTR_SIZE_VER0	32 /* sizeof first published struct */
+ 
+ #endif /* _UAPI_LINUX_MOUNT_H */
 -- 
 2.30.0
 
