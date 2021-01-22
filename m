@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62EBC2FFC85
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 07:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B1992FFC87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 07:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbhAVGXi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 01:23:38 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:51039 "EHLO
+        id S1726472AbhAVGYG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 01:24:06 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:51100 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbhAVGXa (ORCPT
+        with ESMTP id S1726498AbhAVGYD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 01:23:30 -0500
+        Fri, 22 Jan 2021 01:24:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611296609; x=1642832609;
+  t=1611296642; x=1642832642;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=miwcS2PUXlaNgE1YrtKyGZ/a7gdhwX7SYGwz74INDPs=;
-  b=T0wF8BM30en6vKOrPoOv618KQi8aTFFHZCouCtQwiKKpoDb90pM67rCz
-   hR67YbqzCDTMgbburVGBkbg1I7GwEuj202T/xyR7AW3SiLYNVg5iSt6Cl
-   H/xW2Rv09zi+ZX0/cfOElnQrjpqEeMwEQsfgN4/hGjB45pR5sfjQjqAdt
-   2Ez8WEx571zx2RvnVjwkaCuzaaXXtgb5Le1X+VQmB5pBNHjYplF1iqPak
-   K11606+8ndEC1Ko5LVAy+LcfrPuVUKpQ9h+ftvlgdD0oOZtr7mM9/H0j/
-   MV9t4C9+PEPiXAoJMrftd9mJuABzgGnBw7FgfXWSmUu0njqet0Tsl9+1M
-   g==;
-IronPort-SDR: fwC42muGmJChA8mvmU/xo1AcYUwrFS+5YKWyKfSZ+/3lvLyzWVsfymQGdifTeLdIAVD6JK9Bme
- P7RKVvUH/Y+nVVQCJt6p5xaMyy7cSaJx4E5BPwNY0fB7EbQdTCjt72tMUGf9Q0brdfX+LJv1z2
- E4j9wAsiwXkKkHYoBITWqPHYNCD0q/Z2gQYS4cUU+I7Z17iZ8FQrloFO46b7cbh3myY4insUTC
- 4kVSuQtnAIK9IyrWBRE9cTtbjKWEnjA2QuMnqSpCXsi3gQBanfwIrgOkBPJ1jcXa6Xj21OpCsq
- Lw8=
+  bh=A8PFG3Diie06Y2nM5+Pb7vgzC9jKX3Ev6iZz/zowzC8=;
+  b=p6DyVdOBewDyYOsvxS1dP1D3bkVatYN+Vt95AdEzWm8MHLLj5EXfcSK0
+   8tvxXP/g8aeNbZTz5fM2A7zjhgFF/oEUU8eKSm9f9wqzBs0kuH7JAL+oN
+   CypJEUM9itPI1cnH+0HlCnjrLFg86wv6s7uAR6p0gmyJJ3Yqs05rLGEDL
+   svm35XFcsjpbDCNKA7OqKBX6ex0pyXbmRwbc1KhL7eDli07SUMNWT3dkT
+   YUp5eoaGwYCBpqLW6Lj3XjjcgpxMC+sNpZaFx2M947RPfIv1CCxFto4QX
+   VXWGzfP+Wg6OkgL4xQdgoYhUWPIm1+4dsY25docMyPaTQCiRcVic2j+3L
+   Q==;
+IronPort-SDR: /VugOEtwZpT1qQlCR4AtQDu72sXUEeg1yKGm5tYSUW2gXm2Z/HwV7NW42rl3TpohZIDSq02rOQ
+ RkALELQE1dTCZDWsTQ0Iguuc0Ah8S6XelPTu9fORT625VkmVxzfmJMz3qQFRmd/EoykgqN/VDA
+ Bfgd8ww/vDZ4DG2JFgjR+3ANqEH8VJiqOUta/WOJNQB8VbIY81BxhebK4qkDNr9XpbOcdum71W
+ SOjD4nfTfq1QjjkzzT+bsvP1BqnXgD1Fy5bH4gMjVC5c307lxlJIDUE+xPash5n6asY7XkYC0g
+ cyM=
 X-IronPort-AV: E=Sophos;i="5.79,365,1602518400"; 
-   d="scan'208";a="268391922"
+   d="scan'208";a="268391930"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Jan 2021 14:22:24 +0800
-IronPort-SDR: /oCxIRLMwKzHN6LM1F9zTbrTPDcX5C9Zxp5gZREi0bSApsqxuBpdhjqBaMwoy3YT1E6bqZKevL
- gCBSZpxk4rgA1Ig/6eeBZ2wzkmvSK4tzDi+BZykfzsKrweFiKiAu3hpoXekCqyOhFCPIjYi1Ue
- /y1xH0k9JB3Ic/bQZle8C092JqRu65eq4KfQYVtBxM6DU7eWU/dK2NCY2gVQPSUdysEYf/OTw0
- ddOB3UzU2LJ8KE7Vg6RUCx4QQA61kdeL549GHxsngxHSnfcDsl9rY5bronqJnJHuuqbdAAbG/2
- bOMCVtv/8f6JZliGffWaLpaW
+  by ob1.hgst.iphmx.com with ESMTP; 22 Jan 2021 14:22:26 +0800
+IronPort-SDR: VgaYJaJj80H8TIsJGjdzUtAP/BNwExgAEc3J1jNFh6cmZCLsi37QTmhk9nJOH74Cu516h1awgA
+ 1zf05AhxebznRe2d0UFp7F/wHUmYlKQNjZzI7CUgcqRfTK51+uTaW3VuKFRVtz2VSBb1ZsTiDS
+ 4KhYBQq6UAppKO4KblbX8H1Z/tc8NeykDnAqE85PqQILW9GdPb7Gk8VFvJrkMag7uNKA4otoGm
+ t7xUYaQs4c2mqyvt5sT7Jcpkve6T/GeQB76VfanwUuE/lkLCHS6sykoKaOZTyPicjWFCuLFvNK
+ CPkF9GAZjau9Dw15LqxN7dey
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 22:04:56 -0800
-IronPort-SDR: HVTPAkVEIdKbaPlnG0E3aWuDuclsvegqFUtTMbS7upRjpE7XrjdxTDjxGP3BGtiCAfnCJPT+Nq
- PpFDsV79mzQFHpBrQz+RhJVL7QkHmhB8uvcBx5rvJfMFCwy0r1sbxkO++roSQfIpL7AiP975P+
- xG1UoAzoeeSSwLVPwdrFrIrCCxD8wZ3UgYS3LT/aq9wr8SJ7PYba+TscTcY+8b6fkLdpJGun5F
- quKfWUYFa8ktvPggFfcY4hOjA9kLHentlkiUZQ9um91cW24dJLFSSNQ7y6CInGeH3xrI9oOFcH
- 4Qk=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 22:04:57 -0800
+IronPort-SDR: vGAsk6CPFqXXaa+ws/f/0hx7GaMoS+W56abJrEPNamrzQXHrUgngAdP0LUBOGpGqu+ijFVenpo
+ K42ZBpOevmTelGMQZOhqXoTVWDduomA1/RDNx1JHmH8XmGADNd0smPGLp3Mz6VjsSCG35Xn9WA
+ x4wQIaK6LyREpMC+a4zL1HwQoLQJdY98aZy4N9XJ0FfWhYC0G0Y91cCKRRwjqekct1ltlLEja9
+ z5r+lkbFDyShndzjmjqovS7kk4b09/FetkSS+bVcBGs00Rhgp9vlqJbBHxHOrEf9colTVKOUYL
+ aZ8=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 21 Jan 2021 22:22:22 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 21 Jan 2021 22:22:24 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
@@ -56,10 +56,10 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Naohiro Aota <naohiro.aota@wdc.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v13 02/42] iomap: support REQ_OP_ZONE_APPEND
-Date:   Fri, 22 Jan 2021 15:21:02 +0900
-Message-Id: <cd649d35d422b897c9b3569263cd1ed6e4ab96af.1611295439.git.naohiro.aota@wdc.com>
+        Josef Bacik <josef@toxicpanda.com>
+Subject: [PATCH v13 03/42] btrfs: defer loading zone info after opening trees
+Date:   Fri, 22 Jan 2021 15:21:03 +0900
+Message-Id: <6863be2df7ec31c8a8266342c5b7e4bfb8c8a5b7.1611295439.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1611295439.git.naohiro.aota@wdc.com>
 References: <cover.1611295439.git.naohiro.aota@wdc.com>
@@ -69,119 +69,129 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A ZONE_APPEND bio must follow hardware restrictions (e.g. not exceeding
-max_zone_append_sectors) not to be split. bio_iov_iter_get_pages builds
-such restricted bio using __bio_iov_append_get_pages if bio_op(bio) ==
-REQ_OP_ZONE_APPEND.
+This is preparation patch to implement zone emulation on a regular device.
 
-To utilize it, we need to set the bio_op before calling
-bio_iov_iter_get_pages(). This commit introduces IOMAP_F_ZONE_APPEND, so
-that iomap user can set the flag to indicate they want REQ_OP_ZONE_APPEND
-and restricted bio.
+To emulate zoned mode on a regular (non-zoned) device, we need to decide an
+emulating zone size. Instead of making it compile-time static value, we'll
+make it configurable at mkfs time. Since we have one zone == one device
+extent restriction, we can determine the emulated zone size from the size
+of a device extent. We can extend btrfs_get_dev_zone_info() to show a
+regular device filled with conventional zones once the zone size is
+decided.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+The current call site of btrfs_get_dev_zone_info() during the mount process
+is earlier than reading the trees, so we can't slice a regular device to
+conventional zones. This patch defers the loading of zone info to
+open_ctree() to load the emulated zone size from a device extent.
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/iomap/direct-io.c  | 43 +++++++++++++++++++++++++++++++++++++------
- include/linux/iomap.h |  1 +
- 2 files changed, 38 insertions(+), 6 deletions(-)
+ fs/btrfs/disk-io.c | 13 +++++++++++++
+ fs/btrfs/volumes.c |  4 ----
+ fs/btrfs/zoned.c   | 24 ++++++++++++++++++++++++
+ fs/btrfs/zoned.h   |  7 +++++++
+ 4 files changed, 44 insertions(+), 4 deletions(-)
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 933f234d5bec..2273120d8ed7 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -201,6 +201,34 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
- 	iomap_dio_submit_bio(dio, iomap, bio, pos);
- }
- 
-+/*
-+ * Figure out the bio's operation flags from the dio request, the
-+ * mapping, and whether or not we want FUA.  Note that we can end up
-+ * clearing the WRITE_FUA flag in the dio request.
-+ */
-+static inline unsigned int
-+iomap_dio_bio_opflags(struct iomap_dio *dio, struct iomap *iomap, bool use_fua)
-+{
-+	unsigned int opflags = REQ_SYNC | REQ_IDLE;
-+
-+	if (!(dio->flags & IOMAP_DIO_WRITE)) {
-+		WARN_ON_ONCE(iomap->flags & IOMAP_F_ZONE_APPEND);
-+		return REQ_OP_READ;
-+	}
-+
-+	if (iomap->flags & IOMAP_F_ZONE_APPEND)
-+		opflags |= REQ_OP_ZONE_APPEND;
-+	else
-+		opflags |= REQ_OP_WRITE;
-+
-+	if (use_fua)
-+		opflags |= REQ_FUA;
-+	else
-+		dio->flags &= ~IOMAP_DIO_WRITE_FUA;
-+
-+	return opflags;
-+}
-+
- static loff_t
- iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		struct iomap_dio *dio, struct iomap *iomap)
-@@ -208,6 +236,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
- 	unsigned int fs_block_size = i_blocksize(inode), pad;
- 	unsigned int align = iov_iter_alignment(dio->submit.iter);
-+	unsigned int bio_opf;
- 	struct bio *bio;
- 	bool need_zeroout = false;
- 	bool use_fua = false;
-@@ -263,6 +292,13 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 			iomap_dio_zero(dio, iomap, pos - pad, pad);
- 	}
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 5473bed6a7e8..39cbe10a81b6 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -3257,6 +3257,19 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
+ 	if (ret)
+ 		goto fail_tree_roots;
  
 +	/*
-+	 * Set the operation flags early so that bio_iov_iter_get_pages
-+	 * can set up the page vector appropriately for a ZONE_APPEND
-+	 * operation.
++	 * Get zone type information of zoned block devices. This will also
++	 * handle emulation of the zoned mode for btrfs if a regular device has
++	 * the zoned incompat feature flag set.
 +	 */
-+	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
++	ret = btrfs_get_dev_zone_info_all_devices(fs_info);
++	if (ret) {
++		btrfs_err(fs_info,
++			  "failed to read device zone info: %d",
++			  ret);
++		goto fail_block_groups;
++	}
 +
- 	do {
- 		size_t n;
- 		if (dio->error) {
-@@ -278,6 +314,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		bio->bi_ioprio = dio->iocb->ki_ioprio;
- 		bio->bi_private = dio;
- 		bio->bi_end_io = iomap_dio_bio_end_io;
-+		bio->bi_opf = bio_opf;
+ 	/*
+ 	 * If we have a uuid root and we're not being told to rescan we need to
+ 	 * check the generation here so we can set the
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index badb972919eb..bb3f341f6a22 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -669,10 +669,6 @@ static int btrfs_open_one_device(struct btrfs_fs_devices *fs_devices,
+ 	clear_bit(BTRFS_DEV_STATE_IN_FS_METADATA, &device->dev_state);
+ 	device->mode = flags;
  
- 		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
- 		if (unlikely(ret)) {
-@@ -293,14 +330,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+-	ret = btrfs_get_dev_zone_info(device);
+-	if (ret != 0)
+-		goto error_free_page;
+-
+ 	fs_devices->open_devices++;
+ 	if (test_bit(BTRFS_DEV_STATE_WRITEABLE, &device->dev_state) &&
+ 	    device->devid != BTRFS_DEV_REPLACE_DEVID) {
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index c38846659019..bcabdb2c97f1 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -143,6 +143,30 @@ static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
+ 	return 0;
+ }
  
- 		n = bio->bi_iter.bi_size;
- 		if (dio->flags & IOMAP_DIO_WRITE) {
--			bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_IDLE;
--			if (use_fua)
--				bio->bi_opf |= REQ_FUA;
--			else
--				dio->flags &= ~IOMAP_DIO_WRITE_FUA;
- 			task_io_account_write(n);
- 		} else {
--			bio->bi_opf = REQ_OP_READ;
- 			if (dio->flags & IOMAP_DIO_DIRTY)
- 				bio_set_pages_dirty(bio);
- 		}
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 5bd3cac4df9c..8ebb1fa6f3b7 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -55,6 +55,7 @@ struct vm_fault;
- #define IOMAP_F_SHARED		0x04
- #define IOMAP_F_MERGED		0x08
- #define IOMAP_F_BUFFER_HEAD	0x10
-+#define IOMAP_F_ZONE_APPEND	0x20
++int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_info *fs_info)
++{
++	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
++	struct btrfs_device *device;
++	int ret = 0;
++
++	if (!btrfs_fs_incompat(fs_info, ZONED))
++		return 0;
++
++	mutex_lock(&fs_devices->device_list_mutex);
++	list_for_each_entry(device, &fs_devices->devices, dev_list) {
++		/* We can skip reading of zone info for missing devices */
++		if (!device->bdev)
++			continue;
++
++		ret = btrfs_get_dev_zone_info(device);
++		if (ret)
++			break;
++	}
++	mutex_unlock(&fs_devices->device_list_mutex);
++
++	return ret;
++}
++
+ int btrfs_get_dev_zone_info(struct btrfs_device *device)
+ {
+ 	struct btrfs_zoned_device_info *zone_info = NULL;
+diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
+index 8abe2f83272b..5e0e7de84a82 100644
+--- a/fs/btrfs/zoned.h
++++ b/fs/btrfs/zoned.h
+@@ -25,6 +25,7 @@ struct btrfs_zoned_device_info {
+ #ifdef CONFIG_BLK_DEV_ZONED
+ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+ 		       struct blk_zone *zone);
++int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_info *fs_info);
+ int btrfs_get_dev_zone_info(struct btrfs_device *device);
+ void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
+ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
+@@ -42,6 +43,12 @@ static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+ 	return 0;
+ }
  
- /*
-  * Flags set by the core iomap code during operations:
++static inline int btrfs_get_dev_zone_info_all_devices(
++	struct btrfs_fs_info *fs_info)
++{
++	return 0;
++}
++
+ static inline int btrfs_get_dev_zone_info(struct btrfs_device *device)
+ {
+ 	return 0;
 -- 
 2.27.0
 
