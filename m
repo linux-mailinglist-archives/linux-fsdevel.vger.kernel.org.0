@@ -2,229 +2,314 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9CA300AF1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 19:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F57300AAE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 19:11:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbhAVSRL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 13:17:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47798 "EHLO mail.kernel.org"
+        id S1729496AbhAVR6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 12:58:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729391AbhAVRZL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 12:25:11 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3F7F423A79;
-        Fri, 22 Jan 2021 17:24:29 +0000 (UTC)
+        id S1729591AbhAVRwh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Jan 2021 12:52:37 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2DD2323AAA;
+        Fri, 22 Jan 2021 17:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611336269;
-        bh=VmhreHBRc+uSYw1n1T7+PqGworpyKNH58W1UGFW5a8Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oADccpI1N+b3kvAoDl7YV++ICHaE7NWdOpilnAtQaS6zTJUtsHyej7HpyumoDM7bX
-         jbSxbYCpoCqK4dEHEEe1T1/BWv7W46AXykeHKjmcyKWwCiOoyF5uZeYnbuyyLkD2MN
-         2AszV/jiMcOiDA/PvcHVDRQwBRNK5YRYwUcX9veCMM1izreRYGbTE7u49Rs1e83wIz
-         CCh4VdLwBeky4cFALfm3VTkwCisn/oXYPo2+IEKYerutbq7bP9ifybkGcCCb8IqSaq
-         wnEpvGiRhuSgBJLYpymx4aHCO+lijR3RHTOh1Llx7PGslnfesSEjN5+xJ08Ioqtfvy
-         XSlZ+1Jc+/Qmg==
-Date:   Fri, 22 Jan 2021 09:24:28 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        avi@scylladb.com, Dave Chinner <dchinner@redhat.com>,
-        Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCH 11/11] xfs: reduce exclusive locking on unaligned dio
-Message-ID: <20210122172428.GF1282159@magnolia>
-References: <20210122162043.616755-1-hch@lst.de>
- <20210122162043.616755-12-hch@lst.de>
+        s=k20201202; t=1611337884;
+        bh=ZmC/Z8c2ub1C7KMD2cN83t8AzeiWrrEekRlNmXdgI38=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=E1YqlOEPWLh6RsaLKJW30ig0iwygO6rNHwEv0OrzmF1jk8OqJe/fkl3LhLs690LPK
+         QDqntWzSA81dGZ/DVJOciw0+jnnVoaM5rp1dD1ed/1tIn4XEuxKb6EQaF5Ytxhl5Cs
+         8i9xsmf9pFVZf7P5xI8zuWhWi/2lsJzt2O8viGapcQsEVr3jlIQQs3HaLegnsD9HE5
+         +swGh42FWvg9qQESA00MMNmo8mgtRrHg01tdIktjcma26LYO2Xn2D6a0YcgPTcLQQg
+         uCAK+fGa7REfU29sjST+D3mxBkANmV7IW9yAC3JowdWZUS5JhZgpss/j/nNLBdcuwg
+         jwucEvoAq+WQA==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        willy@infradead.org, linux-cachefs@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 4/6] ceph: convert readpage to fscache read helper
+Date:   Fri, 22 Jan 2021 12:51:16 -0500
+Message-Id: <20210122175119.364381-5-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210122175119.364381-1-jlayton@kernel.org>
+References: <20210122175119.364381-1-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210122162043.616755-12-hch@lst.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 05:20:43PM +0100, Christoph Hellwig wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> Attempt shared locking for unaligned DIO, but only if the the
-> underlying extent is already allocated and in written state. On
-> failure, retry with the existing exclusive locking.
-> 
-> Test case is fio randrw of 512 byte IOs using AIO and an iodepth of
-> 32 IOs.
-> 
-> Vanilla:
-> 
->   READ: bw=4560KiB/s (4670kB/s), 4560KiB/s-4560KiB/s (4670kB/s-4670kB/s), io=134MiB (140MB), run=30001-30001msec
->   WRITE: bw=4567KiB/s (4676kB/s), 4567KiB/s-4567KiB/s (4676kB/s-4676kB/s), io=134MiB (140MB), run=30001-30001msec
-> 
-> Patched:
->    READ: bw=37.6MiB/s (39.4MB/s), 37.6MiB/s-37.6MiB/s (39.4MB/s-39.4MB/s), io=1127MiB (1182MB), run=30002-30002msec
->   WRITE: bw=37.6MiB/s (39.4MB/s), 37.6MiB/s-37.6MiB/s (39.4MB/s-39.4MB/s), io=1128MiB (1183MB), run=30002-30002msec
-> 
-> That's an improvement from ~18k IOPS to a ~150k IOPS, which is
-> about the IOPS limit of the VM block device setup I'm testing on.
-> 
-> 4kB block IO comparison:
-> 
->    READ: bw=296MiB/s (310MB/s), 296MiB/s-296MiB/s (310MB/s-310MB/s), io=8868MiB (9299MB), run=30002-30002msec
->   WRITE: bw=296MiB/s (310MB/s), 296MiB/s-296MiB/s (310MB/s-310MB/s), io=8878MiB (9309MB), run=30002-30002msec
-> 
-> Which is ~150k IOPS, same as what the test gets for sub-block
-> AIO+DIO writes with this patch.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> [hch: rebased, split unaligned from nowait]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Brian Foster <bfoster@redhat.com>
+Have the ceph KConfig select NETFS_SUPPORT. Add a new netfs ops
+structure and the operations for it. Convert ceph_readpage to use
+the new netfs_readpage helper.
 
-Looks good to me now,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/Kconfig |   1 +
+ fs/ceph/addr.c  | 149 ++++++++++++++++++++++++++++++++++++++++++++----
+ fs/ceph/cache.h |  36 ++++++++++++
+ 3 files changed, 176 insertions(+), 10 deletions(-)
 
---D
+diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
+index 471e40156065..94df854147d3 100644
+--- a/fs/ceph/Kconfig
++++ b/fs/ceph/Kconfig
+@@ -6,6 +6,7 @@ config CEPH_FS
+ 	select LIBCRC32C
+ 	select CRYPTO_AES
+ 	select CRYPTO
++	select NETFS_SUPPORT
+ 	default n
+ 	help
+ 	  Choose Y or M here to include support for mounting the
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index f554667e1e91..986c9c56653f 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -12,6 +12,7 @@
+ #include <linux/signal.h>
+ #include <linux/iversion.h>
+ #include <linux/ktime.h>
++#include <linux/netfs.h>
+ 
+ #include "super.h"
+ #include "mds_client.h"
+@@ -182,6 +183,144 @@ static int ceph_releasepage(struct page *page, gfp_t gfp_flags)
+ 	return !PagePrivate(page);
+ }
+ 
++static bool ceph_netfs_clamp_length(struct netfs_read_subrequest *subreq)
++{
++	struct inode *inode = subreq->rreq->mapping->host;
++	struct ceph_inode_info *ci = ceph_inode(inode);
++	u64 objno, objoff;
++	u32 xlen;
++
++	/* Truncate the extent at the end of the current object */
++	ceph_calc_file_object_mapping(&ci->i_layout, subreq->start, subreq->len,
++				      &objno, &objoff, &xlen);
++	subreq->len = xlen;
++	return true;
++}
++
++static void finish_netfs_read(struct ceph_osd_request *req)
++{
++	struct ceph_fs_client *fsc = ceph_inode_to_client(req->r_inode);
++	struct ceph_osd_data *osd_data = osd_req_op_extent_osd_data(req, 0);
++	struct netfs_read_subrequest *subreq = req->r_priv;
++	int num_pages;
++	int err = req->r_result;
++
++	ceph_update_read_latency(&fsc->mdsc->metric, req->r_start_latency,
++				 req->r_end_latency, err);
++
++	dout("%s: result %d subreq->len=%zu i_size=%lld\n", __func__, req->r_result,
++	     subreq->len, i_size_read(req->r_inode));
++
++	/* no object means success but no data */
++	if (err == -ENOENT)
++		err = 0;
++	else if (err == -EBLOCKLISTED)
++		fsc->blocklisted = true;
++
++	if (err >= 0 && err < subreq->len)
++		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++
++	netfs_subreq_terminated(subreq, err);
++
++	num_pages = calc_pages_for(osd_data->alignment, osd_data->length);
++	ceph_put_page_vector(osd_data->pages, num_pages, false);
++	iput(req->r_inode);
++}
++
++static void ceph_netfs_issue_op(struct netfs_read_subrequest *subreq)
++{
++	struct netfs_read_request *rreq = subreq->rreq;
++	struct inode *inode = rreq->mapping->host;
++	struct ceph_inode_info *ci = ceph_inode(inode);
++	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
++	struct ceph_osd_request *req = NULL;
++	struct ceph_vino vino = ceph_vino(inode);
++	struct iov_iter iter;
++	struct page **pages;
++	size_t page_off;
++	int err = 0;
++	u64 len = subreq->len;
++
++	req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout, vino, subreq->start, &len,
++			0, 1, CEPH_OSD_OP_READ,
++			CEPH_OSD_FLAG_READ | fsc->client->osdc.client->options->read_from_replica,
++			NULL, ci->i_truncate_seq, ci->i_truncate_size, false);
++	if (IS_ERR(req)) {
++		err = PTR_ERR(req);
++		goto out;
++	}
++
++	dout("%s: pos=%llu orig_len=%zu len=%llu\n", __func__, subreq->start, subreq->len, len);
++	iov_iter_xarray(&iter, READ, &rreq->mapping->i_pages, subreq->start, len);
++	len = iov_iter_get_pages_alloc(&iter, &pages, len, &page_off);
++	if (len < 0) {
++		err = len;
++		dout("%s: iov_ter_get_pages_alloc returned %d\n", __func__, err);
++		goto out;
++	}
++
++	/* should always give us a page-aligned read */
++	WARN_ON_ONCE(page_off);
++
++	osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, false);
++	req->r_callback = finish_netfs_read;
++	req->r_priv = subreq;
++	req->r_inode = inode;
++	ihold(inode);
++
++	err = ceph_osdc_start_request(req->r_osdc, req, false);
++	if (err)
++		iput(inode);
++out:
++	if (req)
++		ceph_osdc_put_request(req);
++	if (err)
++		netfs_subreq_terminated(subreq, err);
++	dout("%s: result %d\n", __func__, err);
++}
++
++static void ceph_init_rreq(struct netfs_read_request *rreq, struct file *file)
++{
++}
++
++const struct netfs_read_request_ops ceph_readpage_netfs_ops = {
++	.init_rreq		= ceph_init_rreq,
++	.is_cache_enabled	= ceph_is_cache_enabled,
++	.begin_cache_operation	= ceph_begin_cache_operation,
++	.issue_op		= ceph_netfs_issue_op,
++	.clamp_length		= ceph_netfs_clamp_length,
++};
++
++/* read a single page, without unlocking it. */
++static int ceph_readpage(struct file *filp, struct page *page)
++{
++	struct inode *inode = file_inode(filp);
++	struct ceph_inode_info *ci = ceph_inode(inode);
++	struct ceph_vino vino = ceph_vino(inode);
++	u64 off = page_offset(page);
++	u64 len = PAGE_SIZE;
++
++	if (ci->i_inline_version != CEPH_INLINE_NONE) {
++		/*
++		 * Uptodate inline data should have been added
++		 * into page cache while getting Fcr caps.
++		 */
++		if (off == 0) {
++			unlock_page(page);
++			return -EINVAL;
++		}
++		zero_user_segment(page, 0, PAGE_SIZE);
++		SetPageUptodate(page);
++		unlock_page(page);
++		return 0;
++	}
++
++	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
++	     vino.ino, vino.snap, filp, off, len, page, page->index);
++
++	return netfs_readpage(filp, page, &ceph_readpage_netfs_ops, NULL);
++}
++
+ /* read a single page, without unlocking it. */
+ static int ceph_do_readpage(struct file *filp, struct page *page)
+ {
+@@ -252,16 +391,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ 	return err < 0 ? err : 0;
+ }
+ 
+-static int ceph_readpage(struct file *filp, struct page *page)
+-{
+-	int r = ceph_do_readpage(filp, page);
+-	if (r != -EINPROGRESS)
+-		unlock_page(page);
+-	else
+-		r = 0;
+-	return r;
+-}
+-
+ /*
+  * Finish an async read(ahead) op.
+  */
+diff --git a/fs/ceph/cache.h b/fs/ceph/cache.h
+index 10c21317b62f..1409d6149281 100644
+--- a/fs/ceph/cache.h
++++ b/fs/ceph/cache.h
+@@ -9,6 +9,8 @@
+ #ifndef _CEPH_CACHE_H
+ #define _CEPH_CACHE_H
+ 
++#include <linux/netfs.h>
++
+ #ifdef CONFIG_CEPH_FSCACHE
+ 
+ extern struct fscache_netfs ceph_cache_netfs;
+@@ -35,11 +37,31 @@ static inline void ceph_fscache_inode_init(struct ceph_inode_info *ci)
+ 	ci->fscache = NULL;
+ }
+ 
++static inline struct fscache_cookie *ceph_fscache_cookie(struct ceph_inode_info *ci)
++{
++	return ci->fscache;
++}
++
+ static inline void ceph_fscache_invalidate(struct inode *inode)
+ {
+ 	fscache_invalidate(ceph_inode(inode)->fscache);
+ }
+ 
++static inline bool ceph_is_cache_enabled(struct inode *inode)
++{
++	struct fscache_cookie *cookie = ceph_fscache_cookie(ceph_inode(inode));
++
++	if (!cookie)
++		return false;
++	return fscache_cookie_enabled(cookie);
++}
++
++static inline int ceph_begin_cache_operation(struct netfs_read_request *rreq)
++{
++	struct fscache_cookie *cookie = ceph_fscache_cookie(ceph_inode(rreq->inode));
++
++	return fscache_begin_read_operation(rreq, cookie);
++}
+ #else
+ 
+ static inline int ceph_fscache_register(void)
+@@ -65,6 +87,11 @@ static inline void ceph_fscache_inode_init(struct ceph_inode_info *ci)
+ {
+ }
+ 
++static inline struct fscache_cookie *ceph_fscache_cookie(struct ceph_inode_info *ci)
++{
++	return NULL;
++}
++
+ static inline void ceph_fscache_register_inode_cookie(struct inode *inode)
+ {
+ }
+@@ -82,6 +109,15 @@ static inline void ceph_fscache_invalidate(struct inode *inode)
+ {
+ }
+ 
++static inline bool ceph_is_cache_enabled(struct inode *inode)
++{
++	return false;
++}
++
++static inline int ceph_begin_cache_operation(struct netfs_read_request *rreq)
++{
++	return -ENOBUFS;
++}
+ #endif
+ 
+ #endif /* _CEPH_CACHE_H */
+-- 
+2.29.2
 
-> ---
->  fs/xfs/xfs_file.c  | 58 +++++++++++++++++++++++++++++++++++-----------
->  fs/xfs/xfs_iomap.c | 29 ++++++++++++++++-------
->  2 files changed, 66 insertions(+), 21 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index c60ff7b5dd829e..39695b59dfcc92 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -544,10 +544,13 @@ xfs_file_dio_write_aligned(
->   * to do sub-block zeroing and that requires serialisation against other direct
->   * I/O to the same block.  In this case we need to serialise the submission of
->   * the unaligned I/O so that we don't get racing block zeroing in the dio layer.
-> + * In the case where sub-block zeroing is not required, we can do concurrent
-> + * sub-block dios to the same block successfully.
->   *
-> - * This means that unaligned dio writes always block. There is no "nowait" fast
-> - * path in this code - if IOCB_NOWAIT is set we simply return -EAGAIN up front
-> - * and we don't have to worry about that anymore.
-> + * Optimistically submit the I/O using the shared lock first, but use the
-> + * IOMAP_DIO_OVERWRITE_ONLY flag to tell the lower layers to return -EAGAIN
-> + * if block allocation or partial block zeroing would be required.  In that case
-> + * we try again with the exclusive lock.
->   */
->  static noinline ssize_t
->  xfs_file_dio_write_unaligned(
-> @@ -555,13 +558,28 @@ xfs_file_dio_write_unaligned(
->  	struct kiocb		*iocb,
->  	struct iov_iter		*from)
->  {
-> -	int			iolock = XFS_IOLOCK_EXCL;
-> +	size_t			isize = i_size_read(VFS_I(ip));
-> +	size_t			count = iov_iter_count(from);
-> +	int			iolock = XFS_IOLOCK_SHARED;
-> +	unsigned int		flags = IOMAP_DIO_OVERWRITE_ONLY;
->  	ssize_t			ret;
->  
-> -	/* unaligned dio always waits, bail */
-> -	if (iocb->ki_flags & IOCB_NOWAIT)
-> -		return -EAGAIN;
-> -	xfs_ilock(ip, iolock);
-> +	/*
-> +	 * Extending writes need exclusivity because of the sub-block zeroing
-> +	 * that the DIO code always does for partial tail blocks beyond EOF, so
-> +	 * don't even bother trying the fast path in this case.
-> +	 */
-> +	if (iocb->ki_pos > isize || iocb->ki_pos + count >= isize) {
-> +retry_exclusive:
-> +		if (iocb->ki_flags & IOCB_NOWAIT)
-> +			return -EAGAIN;
-> +		iolock = XFS_IOLOCK_EXCL;
-> +		flags = IOMAP_DIO_FORCE_WAIT;
-> +	}
-> +
-> +	ret = xfs_ilock_iocb(iocb, iolock);
-> +	if (ret)
-> +		return ret;
->  
->  	/*
->  	 * We can't properly handle unaligned direct I/O to reflink files yet,
-> @@ -578,15 +596,29 @@ xfs_file_dio_write_unaligned(
->  		goto out_unlock;
->  
->  	/*
-> -	 * If we are doing unaligned I/O, this must be the only I/O in-flight.
-> -	 * Otherwise we risk data corruption due to unwritten extent conversions
-> -	 * from the AIO end_io handler.  Wait for all other I/O to drain first.
-> +	 * If we are doing exclusive unaligned I/O, this must be the only I/O
-> +	 * in-flight.  Otherwise we risk data corruption due to unwritten extent
-> +	 * conversions from the AIO end_io handler.  Wait for all other I/O to
-> +	 * drain first.
->  	 */
-> -	inode_dio_wait(VFS_I(ip));
-> +	if (flags & IOMAP_DIO_FORCE_WAIT)
-> +		inode_dio_wait(VFS_I(ip));
->  
->  	trace_xfs_file_direct_write(iocb, from);
->  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
-> -			   &xfs_dio_write_ops, IOMAP_DIO_FORCE_WAIT);
-> +			   &xfs_dio_write_ops, flags);
-> +
-> +	/*
-> +	 * Retry unaligned I/O with exclusive blocking semantics if the DIO
-> +	 * layer rejected it for mapping or locking reasons. If we are doing
-> +	 * nonblocking user I/O, propagate the error.
-> +	 */
-> +	if (ret == -EAGAIN && !(iocb->ki_flags & IOCB_NOWAIT)) {
-> +		ASSERT(flags & IOMAP_DIO_OVERWRITE_ONLY);
-> +		xfs_iunlock(ip, iolock);
-> +		goto retry_exclusive;
-> +	}
-> +
->  out_unlock:
->  	if (iolock)
->  		xfs_iunlock(ip, iolock);
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 7b9ff824e82d48..ef76f775fabf11 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -784,15 +784,28 @@ xfs_direct_write_iomap_begin(
->  		goto allocate_blocks;
->  
->  	/*
-> -	 * NOWAIT IO needs to span the entire requested IO with a single map so
-> -	 * that we avoid partial IO failures due to the rest of the IO range not
-> -	 * covered by this map triggering an EAGAIN condition when it is
-> -	 * subsequently mapped and aborting the IO.
-> +	 * NOWAIT and OVERWRITE I/O needs to span the entire requested I/O with
-> +	 * a single map so that we avoid partial IO failures due to the rest of
-> +	 * the I/O range not covered by this map triggering an EAGAIN condition
-> +	 * when it is subsequently mapped and aborting the I/O.
->  	 */
-> -	if ((flags & IOMAP_NOWAIT) &&
-> -	    !imap_spans_range(&imap, offset_fsb, end_fsb)) {
-> +	if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY)) {
->  		error = -EAGAIN;
-> -		goto out_unlock;
-> +		if (!imap_spans_range(&imap, offset_fsb, end_fsb))
-> +			goto out_unlock;
-> +	}
-> +
-> +	/*
-> +	 * For overwrite only I/O, we cannot convert unwritten extents without
-> +	 * requiring sub-block zeroing.  This can only be done under an
-> +	 * exclusive IOLOCK, hence return -EAGAIN if this is not a written
-> +	 * extent to tell the caller to try again.
-> +	 */
-> +	if (flags & IOMAP_OVERWRITE_ONLY) {
-> +		error = -EAGAIN;
-> +		if (imap.br_state != XFS_EXT_NORM &&
-> +	            ((offset | length) & mp->m_blockmask))
-> +			goto out_unlock;
->  	}
->  
->  	xfs_iunlock(ip, lockmode);
-> @@ -801,7 +814,7 @@ xfs_direct_write_iomap_begin(
->  
->  allocate_blocks:
->  	error = -EAGAIN;
-> -	if (flags & IOMAP_NOWAIT)
-> +	if (flags & (IOMAP_NOWAIT | IOMAP_OVERWRITE_ONLY))
->  		goto out_unlock;
->  
->  	/*
-> -- 
-> 2.29.2
-> 
