@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2E2C2FFCC9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 07:31:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D2D92FFCDD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 07:33:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbhAVGaN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 01:30:13 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:51138 "EHLO
+        id S1727035AbhAVGcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 01:32:36 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:51039 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbhAVG3U (ORCPT
+        with ESMTP id S1726974AbhAVGaT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 01:29:20 -0500
+        Fri, 22 Jan 2021 01:30:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611296960; x=1642832960;
+  t=1611297019; x=1642833019;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=KniscivBnmSPeKpF8HfbtvbLDZRK/U7ytCGfrgiswNM=;
-  b=D+YH+zn1mGY+XHULXIf2j4Fojxt9lu38/+OHKl2qOp2DnID/5gO0bXHg
-   uA75YL7NEf/BmRl9ZosybU9uMvaG6kTUL6O/xBersYTKVW5RErgQCQfvH
-   /1k4Z+a9S0+/1a1S+bB0Eqfu3cU6LxuUMdD7sdBXQgSFuOQ6RXOfEBNKA
-   Qe0f/FGSqwyjZeo63gs03uLoF9alVp/yT3V3Rt2QbzlIOSM4O63x+nWno
-   x52TqgLt9UWvv3HzMBLe+aCkZUkITonTL71+mt9snJeQcYSyHD7dow6MY
-   OPF6D+5ZvkEyBjtQnJvt0Lp5m3AnnO3EfIXT4gOpqQTXqYLfaBGZ1RBjk
-   g==;
-IronPort-SDR: d6YkMsrFLQuy2kDG764bbyXXlV/JCc25pPu8gdYCTSMYh16vfSI8amM3Fycej5VUSWrq3JucNs
- J7FrEkYjuOjAIGhprbLjtaI5Q7yxyc3jEsbfDGrk1aXcmx83leq2vmCCAYP3dmbQBOJHb7jbu1
- y0cu5m0PEcT5CSAen7hB+A00mYf/ylkFh9FGvpF2hINeyXmx2u5IyqNSRQj9wI552beatDlSka
- qgWBOitMXt/Re4w1c9a/6qalm99o08IUmRAhg6g8GMSnwkKwrIcjIFGSoj3U2h32wZBbVwSeam
- PmY=
+  bh=mMmFlm1ADxq3dYqfU0mxrP6qLI19NJyl4vx6551H+1s=;
+  b=RMVBDivLnm8yAkDymkakd1Ec4IEmcx7zIi+cTlrIGoLIG1/dCI3cIxT8
+   bnDfBgvuiVeRK8dNAV8kSQTSJ5kujSNFyk45+C/7me55ug1Jz2ZRtTkjr
+   u4KHvSUv9OXD1eY4b7bPEeMjxjQtixYFGwgrrTMB9CA8yvIrDQJr7qL9Q
+   xNmd2XzqeFRBl2YIQTQJSq0pOx4BBfcg7qDat4wa7UCncOxKb264GobhV
+   tab8lc6lXIRizaLBjTB/RzExmE20hvb8TDVebE66EUbdc3Z1Eb6gztHlf
+   IX/B1RRsrUwwndd2NmpJ7WUn8hEiFBNCHw2LKCQO4PlXe1kwybW9Ghtoe
+   A==;
+IronPort-SDR: fp06muvTz2FyX1kaTu66n9ATV/nySIQZvJNJk5TQEe9t3ReojQplY0+GhEYMrbMcx0YLCc1dXR
+ oTD6IZCwwql1S8G8QuD+cU4pPxJLyXABx2NRaOyQoiMwynYyhYCh/07g3u+j7mNkku7s3HYKtk
+ +ADUb7dBosVLbzJ2T5eS79RDbxZdofp2BzjM7BPkGdY4nKj+872vIqBS1HMYdfRsveAMVZb+37
+ STcQPQXkSD+H4bcP+EEbJ5FTecWgC5BCHaLjlcv+2fnffR6xI88uYcGJKikDmrLjUzHOaaAgZF
+ 5lA=
 X-IronPort-AV: E=Sophos;i="5.79,365,1602518400"; 
-   d="scan'208";a="268392088"
+   d="scan'208";a="268392091"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Jan 2021 14:23:24 +0800
-IronPort-SDR: QSfD5IyTHDkcqMfIqpHt7iJkCs7Atdnui/dApvvWn5c/ULR7MfGhcjIoZcZ5Cug5S4NrSBVff6
- A6b3lIj1MT6qvZxcQPiJKSu4eng2h/GERiIlUjDTT5GSeg8rSa/oJkqGSWp5iXK9TP2ZWf3XDy
- 1UZzMcOoFfHdWQh9z9M0NkPpGtCLe700rvIA7hIDeZpuuSyilHjvDG/gE4KieR/wAT3sKRDRPE
- CvqJVVoPeELt31ngia6Y/u9mkbbhoHC43u/vM983bBVYdbMPbWfGcfQMcIRPA8RFG6YSDjfjfg
- Mxuo6vUDlzKQqBc/b7l7dGcM
+  by ob1.hgst.iphmx.com with ESMTP; 22 Jan 2021 14:23:26 +0800
+IronPort-SDR: WmZmx0zT0rW7Rt3neLtFdHnXCWnSxlLnIJTa6JWw/8PUIruG1uzONRI+1u618zdOj/MP66NnPD
+ Tkx2V58IK/r2ulfy+g6kti5eXmsOV3EhmNwUH0UNMu29cMAzXx/z7ERQMWxJYOUkcX5j2Qa2B/
+ KVFFKT1mZf27SiOQ0txRMldVascfK9izLduLlByuW/s1KqnVCxEwAnzuH5RHDqpp2YDnPx7XGM
+ 65kmWXdzBCAfzaWYX2f6hDrojgcvvAD0IsFGJqleTrD/zZ0zETZN8RNZxWACsO+FIln5dnRY8t
+ kjxqck6k4atdiRXZjfVCI/lF
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 22:05:56 -0800
-IronPort-SDR: QOVkWQZJZNY93FwRLN1WvjCkOUBxGKEv9lRovHau/OlI/kphk4dPIvmlEcGoARFUgWnJw5ZIxV
- noZK1IzRzUBbad+jcKTuxmU+KHrOXK9Y8R3Ci+EENRkE5QyXml3BpzAMXAClOdET+YIVq1djoT
- I8RnQB+HindTvygs+s5AV+PJLEjvJiFn8E7JRdfQxuYYURu8k3F6Kj3M+gZl4/Jpmp/oAI/tGD
- NkphWcWa83Wxh259Q8M5FQhDsD20vVyTNNicJaQ+svciILJOhPQvYUoTaZ/9shxPF35YfPkVKl
- B4g=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 22:05:57 -0800
+IronPort-SDR: 544bDMKixWiEQUPiNojbFMrcWZRfa/U/Lezd71ivZnwASOPIlDwCMoHSTClT51BczOhxfei5wZ
+ wHTUL3G3Ojobjnz8tJ7pXJQwLFPIPj9OtlHA60WPGFdo19qRKJKKtI/kceNmQDzzCfbRUP9joI
+ 55kRNoMw7Tt13y61WIdbMyTM0ReRwWGHssGwWkOtzcpWkA/uTQwKORnyhPnowZPoVksOQxGWwD
+ RSdQNcnTSE92hZKalI6PDkaDxceEmJFb6pZaQOeuapTpwNbx3I6YFP0E3zk4pBP1DEEzUIt4Gi
+ eF0=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 21 Jan 2021 22:23:22 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 21 Jan 2021 22:23:24 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
@@ -56,10 +56,11 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Naohiro Aota <naohiro.aota@wdc.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v13 38/42] btrfs: relocate block group to repair IO failure in ZONED
-Date:   Fri, 22 Jan 2021 15:21:38 +0900
-Message-Id: <68afb2cd7ac6399a7b781cda41d9ad4b282288c7.1611295439.git.naohiro.aota@wdc.com>
+        Josef Bacik <josef@toxicpanda.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v13 39/42] btrfs: split alloc_log_tree()
+Date:   Fri, 22 Jan 2021 15:21:39 +0900
+Message-Id: <074f66f9d68a916d5c897b08c80860375fbfb974.1611295439.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1611295439.git.naohiro.aota@wdc.com>
 References: <cover.1611295439.git.naohiro.aota@wdc.com>
@@ -69,183 +70,118 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When btrfs find a checksum error and if the file system has a mirror of the
-damaged data, btrfs read the correct data from the mirror and write the
-data to damaged blocks. This repairing, however, is against the sequential
-write required rule.
+This is a preparation for the next patch. This commit split
+alloc_log_tree() to allocating tree structure part (remains in
+alloc_log_tree()) and allocating tree node part (moved in
+btrfs_alloc_log_tree_node()). The latter part is also exported to be used
+in the next patch.
 
-We can consider three methods to repair an IO failure in ZONED mode:
-(1) Reset and rewrite the damaged zone
-(2) Allocate new device extent and replace the damaged device extent to the
-    new extent
-(3) Relocate the corresponding block group
-
-Method (1) is most similar to a behavior done with regular devices.
-However, it also wipes non-damaged data in the same device extent, and so
-it unnecessary degrades non-damaged data.
-
-Method (2) is much like device replacing but done in the same device. It is
-safe because it keeps the device extent until the replacing finish.
-However, extending device replacing is non-trivial. It assumes
-"src_dev->physical == dst_dev->physical". Also, the extent mapping
-replacing function should be extended to support replacing device extent
-position in one device.
-
-Method (3) invokes relocation of the damaged block group, so it is
-straightforward to implement. It relocates all the mirrored device extents,
-so it is, potentially, a more costly operation than method (1) or (2). But
-it relocates only using extents which reduce the total IO size.
-
-Let's apply method (3) for now. In the future, we can extend device-replace
-and apply method (2).
-
-For protecting a block group gets relocated multiple time with multiple IO
-errors, this commit introduces "relocating_repair" bit to show it's now
-relocating to repair IO failures. Also it uses a new kthread
-"btrfs-relocating-repair", not to block IO path with relocating process.
-
-This commit also supports repairing in the scrub process.
-
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/block-group.h |  1 +
- fs/btrfs/extent_io.c   |  3 ++
- fs/btrfs/scrub.c       |  3 ++
- fs/btrfs/volumes.c     | 71 ++++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/volumes.h     |  1 +
- 5 files changed, 79 insertions(+)
+ fs/btrfs/disk-io.c | 33 +++++++++++++++++++++++++++------
+ fs/btrfs/disk-io.h |  2 ++
+ 2 files changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
-index 3dec66ed36cb..36654bcd2a83 100644
---- a/fs/btrfs/block-group.h
-+++ b/fs/btrfs/block-group.h
-@@ -96,6 +96,7 @@ struct btrfs_block_group {
- 	unsigned int has_caching_ctl:1;
- 	unsigned int removed:1;
- 	unsigned int to_copy:1;
-+	unsigned int relocating_repair:1;
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 5d14100ecf72..2e2f09a46f45 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1197,7 +1197,6 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
+ 					 struct btrfs_fs_info *fs_info)
+ {
+ 	struct btrfs_root *root;
+-	struct extent_buffer *leaf;
  
- 	int disk_cache_state;
+ 	root = btrfs_alloc_root(fs_info, BTRFS_TREE_LOG_OBJECTID, GFP_NOFS);
+ 	if (!root)
+@@ -1207,6 +1206,14 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
+ 	root->root_key.type = BTRFS_ROOT_ITEM_KEY;
+ 	root->root_key.offset = BTRFS_TREE_LOG_OBJECTID;
  
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index ed976f6e620c..70a296087711 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -2258,6 +2258,9 @@ int repair_io_failure(struct btrfs_fs_info *fs_info, u64 ino, u64 start,
- 	ASSERT(!(fs_info->sb->s_flags & SB_RDONLY));
- 	BUG_ON(!mirror_num);
- 
-+	if (btrfs_is_zoned(fs_info))
-+		return btrfs_repair_one_zone(fs_info, logical);
++	return root;
++}
 +
- 	bio = btrfs_io_bio_alloc(1);
- 	bio->bi_iter.bi_size = 0;
- 	map_length = length;
-diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index 2f577f3b1c31..d0c47ef72d46 100644
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -857,6 +857,9 @@ static int scrub_handle_errored_block(struct scrub_block *sblock_to_check)
- 	have_csum = sblock_to_check->pagev[0]->have_csum;
- 	dev = sblock_to_check->pagev[0]->dev;
- 
-+	if (btrfs_is_zoned(fs_info) && !sctx->is_dev_replace)
-+		return btrfs_repair_one_zone(fs_info, logical);
++int btrfs_alloc_log_tree_node(struct btrfs_trans_handle *trans,
++			      struct btrfs_root *root)
++{
++	struct extent_buffer *leaf;
 +
  	/*
- 	 * We must use GFP_NOFS because the scrub task might be waiting for a
- 	 * worker task executing this function and in turn a transaction commit
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index a99735dda515..0f6a79e67666 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -7990,3 +7990,74 @@ bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr)
- 	spin_unlock(&fs_info->swapfile_pins_lock);
- 	return node != NULL;
- }
-+
-+static int relocating_repair_kthread(void *data)
-+{
-+	struct btrfs_block_group *cache = (struct btrfs_block_group *) data;
-+	struct btrfs_fs_info *fs_info = cache->fs_info;
-+	u64 target;
-+	int ret = 0;
-+
-+	target = cache->start;
-+	btrfs_put_block_group(cache);
-+
-+	if (!btrfs_exclop_start(fs_info, BTRFS_EXCLOP_BALANCE)) {
-+		btrfs_info(fs_info,
-+			   "zoned: skip relocating block group %llu to repair: EBUSY",
-+			   target);
-+		return -EBUSY;
-+	}
-+
-+	mutex_lock(&fs_info->delete_unused_bgs_mutex);
-+
-+	/* Ensure Block Group still exists */
-+	cache = btrfs_lookup_block_group(fs_info, target);
-+	if (!cache)
-+		goto out;
-+
-+	if (!cache->relocating_repair)
-+		goto out;
-+
-+	ret = btrfs_may_alloc_data_chunk(fs_info, target);
-+	if (ret < 0)
-+		goto out;
-+
-+	btrfs_info(fs_info, "zoned: relocating block group %llu to repair IO failure",
-+		   target);
-+	ret = btrfs_relocate_chunk(fs_info, target);
-+
-+out:
-+	if (cache)
-+		btrfs_put_block_group(cache);
-+	mutex_unlock(&fs_info->delete_unused_bgs_mutex);
-+	btrfs_exclop_finish(fs_info);
-+
-+	return ret;
-+}
-+
-+int btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical)
-+{
-+	struct btrfs_block_group *cache;
-+
-+	/* Do not attempt to repair in degraded state */
-+	if (btrfs_test_opt(fs_info, DEGRADED))
-+		return 0;
-+
-+	cache = btrfs_lookup_block_group(fs_info, logical);
-+	if (!cache)
-+		return 0;
-+
-+	spin_lock(&cache->lock);
-+	if (cache->relocating_repair) {
-+		spin_unlock(&cache->lock);
-+		btrfs_put_block_group(cache);
-+		return 0;
-+	}
-+	cache->relocating_repair = 1;
-+	spin_unlock(&cache->lock);
-+
-+	kthread_run(relocating_repair_kthread, cache,
-+		    "btrfs-relocating-repair");
+ 	 * DON'T set SHAREABLE bit for log trees.
+ 	 *
+@@ -1219,26 +1226,33 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
+ 
+ 	leaf = btrfs_alloc_tree_block(trans, root, 0, BTRFS_TREE_LOG_OBJECTID,
+ 			NULL, 0, 0, 0, BTRFS_NESTING_NORMAL);
+-	if (IS_ERR(leaf)) {
+-		btrfs_put_root(root);
+-		return ERR_CAST(leaf);
+-	}
++	if (IS_ERR(leaf))
++		return PTR_ERR(leaf);
+ 
+ 	root->node = leaf;
+ 
+ 	btrfs_mark_buffer_dirty(root->node);
+ 	btrfs_tree_unlock(root->node);
+-	return root;
 +
 +	return 0;
-+}
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index 0bcf87a9e594..54f475e0c702 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -597,5 +597,6 @@ void btrfs_scratch_superblocks(struct btrfs_fs_info *fs_info,
- int btrfs_bg_type_to_factor(u64 flags);
- const char *btrfs_bg_type_to_raid_name(u64 flags);
- int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info);
-+int btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical);
+ }
  
- #endif
+ int btrfs_init_log_root_tree(struct btrfs_trans_handle *trans,
+ 			     struct btrfs_fs_info *fs_info)
+ {
+ 	struct btrfs_root *log_root;
++	int ret;
+ 
+ 	log_root = alloc_log_tree(trans, fs_info);
+ 	if (IS_ERR(log_root))
+ 		return PTR_ERR(log_root);
++
++	ret = btrfs_alloc_log_tree_node(trans, log_root);
++	if (ret) {
++		btrfs_put_root(log_root);
++		return ret;
++	}
++
+ 	WARN_ON(fs_info->log_root_tree);
+ 	fs_info->log_root_tree = log_root;
+ 	return 0;
+@@ -1250,11 +1264,18 @@ int btrfs_add_log_tree(struct btrfs_trans_handle *trans,
+ 	struct btrfs_fs_info *fs_info = root->fs_info;
+ 	struct btrfs_root *log_root;
+ 	struct btrfs_inode_item *inode_item;
++	int ret;
+ 
+ 	log_root = alloc_log_tree(trans, fs_info);
+ 	if (IS_ERR(log_root))
+ 		return PTR_ERR(log_root);
+ 
++	ret = btrfs_alloc_log_tree_node(trans, log_root);
++	if (ret) {
++		btrfs_put_root(log_root);
++		return ret;
++	}
++
+ 	log_root->last_trans = trans->transid;
+ 	log_root->root_key.offset = root->root_key.objectid;
+ 
+diff --git a/fs/btrfs/disk-io.h b/fs/btrfs/disk-io.h
+index 9f4a2a1e3d36..0e7e9526b6a8 100644
+--- a/fs/btrfs/disk-io.h
++++ b/fs/btrfs/disk-io.h
+@@ -120,6 +120,8 @@ blk_status_t btrfs_wq_submit_bio(struct inode *inode, struct bio *bio,
+ 				 extent_submit_bio_start_t *submit_bio_start);
+ blk_status_t btrfs_submit_bio_done(void *private_data, struct bio *bio,
+ 			  int mirror_num);
++int btrfs_alloc_log_tree_node(struct btrfs_trans_handle *trans,
++			      struct btrfs_root *root);
+ int btrfs_init_log_root_tree(struct btrfs_trans_handle *trans,
+ 			     struct btrfs_fs_info *fs_info);
+ int btrfs_add_log_tree(struct btrfs_trans_handle *trans,
 -- 
 2.27.0
 
