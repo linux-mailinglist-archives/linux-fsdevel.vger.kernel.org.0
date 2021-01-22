@@ -2,102 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 022B4300AD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 19:19:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B923B300AD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 19:19:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729272AbhAVRXj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 12:23:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46202 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729423AbhAVQNR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 11:13:17 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D69A9C0613D6;
-        Fri, 22 Jan 2021 08:12:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=H2OcqOIMq0mcv5yQgY/W8VUwwxU4vHAWx5dRYzYPb2U=; b=I0D4E/EtTL95duVjzt01mHGoVU
-        foiuIH3AEhr3uDWLJmuJHac2e2oZAohCznE89JQCJXdmISMqKDTKQsNRvC0kMldRfoXOX+CKdcYwj
-        kX1ofuUXbyQyIEkuIXg2DqP5Ll1ctUNv/w1wcqT5wiYIRc7NLlmHVLn7oIEXsEVOybqe7H1l1f7Jw
-        6vJEyFckzSICuwnvXwCTtx4pzsFG1Kvxl+yeiW3NOQhGB+uqYPvdHYOa+TSItOHy7MbYrALr156BM
-        hmZ5/npfFDHzzqq8wepllJFFO3ThmrtsNUwmmeLww0BHorc4E9JH0d+RqtJhuIbAp080PficLddlt
-        cSIJSvtw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l2z20-000weN-6H; Fri, 22 Jan 2021 16:11:43 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 14/18] mm/filemap: Split filemap_readahead out of filemap_get_pages
-Date:   Fri, 22 Jan 2021 16:01:36 +0000
-Message-Id: <20210122160140.223228-15-willy@infradead.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210122160140.223228-1-willy@infradead.org>
-References: <20210122160140.223228-1-willy@infradead.org>
+        id S1729396AbhAVRZO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 12:25:14 -0500
+Received: from verein.lst.de ([213.95.11.211]:37413 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729850AbhAVRVO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Jan 2021 12:21:14 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 573FD68B05; Fri, 22 Jan 2021 18:20:27 +0100 (CET)
+Date:   Fri, 22 Jan 2021 18:20:27 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 15/40] open: handle idmapped mounts in do_truncate()
+Message-ID: <20210122172027.GA20347@lst.de>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-16-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210121131959.646623-16-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This simplifies the error handling.
+Looks good,
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Kent Overstreet <kent.overstreet@gmail.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- mm/filemap.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index a3ebc6082022e..ba20baef9056c 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2342,6 +2342,17 @@ static int filemap_create_page(struct file *file,
- 	return error;
- }
- 
-+static int filemap_readahead(struct kiocb *iocb, struct file *file,
-+		struct address_space *mapping, struct page *page,
-+		pgoff_t last_index)
-+{
-+	if (iocb->ki_flags & IOCB_NOIO)
-+		return -EAGAIN;
-+	page_cache_async_readahead(mapping, &file->f_ra, file, page,
-+			page->index, last_index - page->index);
-+	return 0;
-+}
-+
- static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
- 		struct pagevec *pvec)
- {
-@@ -2379,17 +2390,15 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
- got_pages:
- 	{
- 		struct page *page = pvec->pages[pvec->nr - 1];
--		pgoff_t pg_index = page->index;
- 
- 		if (PageReadahead(page)) {
--			if (iocb->ki_flags & IOCB_NOIO) {
-+			err = filemap_readahead(iocb, filp, mapping, page,
-+					last_index);
-+			if (err) {
- 				put_page(page);
- 				pvec->nr--;
--				err = -EAGAIN;
- 				goto err;
- 			}
--			page_cache_async_readahead(mapping, ra, filp, page,
--					pg_index, last_index - pg_index);
- 		}
- 
- 		if (!PageUptodate(page)) {
--- 
-2.29.2
-
