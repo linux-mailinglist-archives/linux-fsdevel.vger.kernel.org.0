@@ -2,116 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AD77300CBA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 20:38:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EE1300E15
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 21:49:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728559AbhAVTe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 14:34:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58709 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730149AbhAVSsV (ORCPT
+        id S1728474AbhAVUti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 15:49:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730111AbhAVUsD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 13:48:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611341214;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DgZksRNGLKOso9EgtpnMOO8M2vQqiNnVtzZmopG4+kA=;
-        b=V8ADB3R3aL2R6XwZ3za1TxLhTx6hVcVYYwibYp4Q+l/vOElf+asSSOZ8KEa+zcarRBJjOY
-        Sgkia6zjHuZzhUHCNlhb+Av6pcavrlN9e0ZKVSNsN6snKW8VL/gIvr3MHk7VnqES9WpFDD
-        ZbPnoQ+/4bJOepxcEVJ1E/WRTTRg1bA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-575-O781iRt_O3SMO4zdn1AXmA-1; Fri, 22 Jan 2021 13:46:52 -0500
-X-MC-Unique: O781iRt_O3SMO4zdn1AXmA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C2775107ACE8;
-        Fri, 22 Jan 2021 18:46:50 +0000 (UTC)
-Received: from pick.fieldses.org (ovpn-118-99.rdu2.redhat.com [10.10.118.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A0969CA0;
-        Fri, 22 Jan 2021 18:46:50 +0000 (UTC)
-Received: by pick.fieldses.org (Postfix, from userid 2815)
-        id EEBD81204EC; Fri, 22 Jan 2021 13:46:48 -0500 (EST)
-Date:   Fri, 22 Jan 2021 13:46:48 -0500
-From:   "J. Bruce Fields" <bfields@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <schumakeranna@gmail.com>,
-        Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: [PATCH 2/3] nfsd: move change attribute generation to filesystem
-Message-ID: <20210122184648.GD52753@pick.fieldses.org>
-References: <1611084297-27352-1-git-send-email-bfields@redhat.com>
- <1611084297-27352-3-git-send-email-bfields@redhat.com>
- <20210120084638.GA3678536@infradead.org>
- <20210121202756.GA13298@pick.fieldses.org>
- <20210122082059.GA119852@infradead.org>
- <20210122144753.GA52753@pick.fieldses.org>
- <20210122173248.GB241302@infradead.org>
+        Fri, 22 Jan 2021 15:48:03 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F56C06178B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 12:47:16 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id c132so4621796pga.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 12:47:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SbGUA0qvIztEUivipPk+uMPWbkIun+CS9rfwLtftEGA=;
+        b=VNTaJQyzqgMUf2bykgCnP/0Smb9RZ3fUkY1bEEk0/v6X4HX6oU3NemRHThtrG/kbcX
+         X3w5dDAAhHOK5QHszpgqjOM9XEgwqx5MIf92WdRwsZguEkhOLh9s5uTpvJSJ3F9O74cP
+         0G93EHMthoPDEY/0FZWvccvTreM7iKLv/ykz5mVpaDk4+snLs0gJNLNYiB9TLxbyj5aN
+         dGduN1uYnike/yE+BktozbvjaYaGjENqSNaEo/abdjPidhrWi5goDiSz7SPPfk3KfCz1
+         VPZYmI1mxOix4FZV5zs0VXMv2i8iJhAMnprc4RxaQEx076n4+22aJ0SCBacBCTq9yJEM
+         iHJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SbGUA0qvIztEUivipPk+uMPWbkIun+CS9rfwLtftEGA=;
+        b=b3Wn+irnKvDiZI+b0KhzAd6e6hRTH6enEu4qwg6lffTZSLng1bpBO8OgREy2b/UNr+
+         EZupyiXWh/vN/4RmsRWOIyvTrIgBmrbTPKkvJPH5nZx74nGgdOrNJpzgilLdx9z/z885
+         Mad1hvr6AaNeSfL+r87LxUgv0E0KYcva/1bbqWMJ3VS8laSZOWwF8D31gFrCxgxzPsgC
+         uN/VAKsiTwLc7wMWc/S74VA3+Pzoa7IK0jIOXOogU6B/tZWIVNxgisqyaSPUQ48KHqBH
+         FFxRs7UhtAasCChtfdSekXaW6Np++7hAtDqJbnIQZRMJ6az7Dbh4PKF7jmSHdN1N/VeN
+         COAQ==
+X-Gm-Message-State: AOAM531gXtyUwTNTMYuj/jNyFrRP9HTl9OWkttnjnBeDkUwpovbRu7gd
+        VQXvSG+9kTjnnZSPpEvqrz7wivZav2vE+Q==
+X-Google-Smtp-Source: ABdhPJy9fUypKEpbuM+Oepmztp98ZRomAQTyUsNmVY9Wx7Vnjv2cdEOp/sBHsDoiGH/+F+d3tCWHMQ==
+X-Received: by 2002:a62:aa06:0:b029:19d:f4d3:335e with SMTP id e6-20020a62aa060000b029019df4d3335emr1611187pff.60.1611348435252;
+        Fri, 22 Jan 2021 12:47:15 -0800 (PST)
+Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:ea88])
+        by smtp.gmail.com with ESMTPSA id j18sm4092900pfc.99.2021.01.22.12.47.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Jan 2021 12:47:14 -0800 (PST)
+From:   Omar Sandoval <osandov@osandov.com>
+To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH v7 00/10] fs: interface for directly reading/writing compressed data
+Date:   Fri, 22 Jan 2021 12:46:46 -0800
+Message-Id: <cover.1611346706.git.osandov@fb.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210122173248.GB241302@infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 05:32:48PM +0000, Christoph Hellwig wrote:
-> On Fri, Jan 22, 2021 at 09:47:53AM -0500, J. Bruce Fields wrote:
-> > > > I also have a vague idea that some filesystem-specific improvements
-> > > > might be possible.  (E.g., if a filesystem had some kind of boot count
-> > > > in the superblock, maybe that would be a better way to prevent the
-> > > > change attribute from going backwards on reboot than the thing
-> > > > generic_fetch_iversion is currently doing with ctime.  But I have no
-> > > > concrete plan there, maybe I'm dreaming.)
-> > > 
-> > > Even without the ctime i_version never goes backward, what is the
-> > > problem here?
-> > 
-> > Suppose a modification bumps the change attribute, a client reads
-> > the new value of the change attribute before it's committed to disk,
-> > then the server crashes.  After the server comes back up, the client
-> > requests the change attribute again and sees an older value.
-> 
-> So all metadata operations kicked off by nfsd are synchronous due
-> to ->commit_metadata/sync_inode_metadata, so this could only happen
-> for operations not kicked off by nfsd.
+From: Omar Sandoval <osandov@fb.com>
 
-Plain old nfs write also bumps the change attribute.
+This series adds an API for reading compressed data on a filesystem
+without decompressing it as well as support for writing compressed data
+directly to the filesystem. As with the previous submissions, I've
+included a man page patch describing the API. I have test cases
+(including fsstress support) and example programs which I'll send up
+[1].
 
-> More importanly ctime will
-> also be lost as i_version and the ctime are commited together.
+The main use-case is Btrfs send/receive: currently, when sending data
+from one compressed filesystem to another, the sending side decompresses
+the data and the receiving side recompresses it before writing it out.
+This is wasteful and can be avoided if we can just send and write
+compressed extents. The patches implementing the send/receive support
+will be sent shortly.
 
-That's not the reason for using ctime.
+Patches 1-3 add the VFS support and UAPI. Patch 4 is a fix that this
+series depends on; it can be merged independently. Patches 5-8 are Btrfs
+prep patches. Patch 9 adds Btrfs encoded read support and patch 10 adds
+Btrfs encoded write support.
 
-The ctime is so that change attributes due to new changes that happen
-after the boot will not collide with change attributes used before.
+These patches are based on Dave Sterba's Btrfs misc-next branch [2],
+which is in turn currently based on v5.11-rc4.
 
-So:
+Changes since v6 [3]:
 
-	0. file has change attribute i.
-	1. write bumps change attribute to i+1.
-	2. client fetches new data and change attribute i+1.
-	3. server crashes and comes back up.
-	4. a new write with different data bumps change attribute to i+1.
-	5. client fetches change attribute again, incorrectly concludes
-	   its data cache is still correct.
+- Dropped O_CLOEXEC requirement for O_ALLOW_ENCODED.
+- Readded lost FMODE_ENCODED_IO check.
+- Used macros instead of enum for ENCODED_IOV_COMPRESSION_* and
+  ENCODED_IOV_ENCRYPTION_*.
+- Moved encoded I/O definitions to their own UAPI header file.
+- Fixed style nits.
+- Added reviewed-bys.
+- Addressed man page nits.
 
-Including the ctime ensures the change attributes at step 2 and 4 are no
-longer the same.
+1: https://github.com/osandov/xfstests/tree/rwf-encoded
+2: https://github.com/kdave/btrfs-devel/tree/misc-next
+3: https://lore.kernel.org/linux-btrfs/cover.1605723568.git.osandov@fb.com/
 
-> > That's actually not too bad.  What I'd mainly like to avoid is
-> > incrementing the change attribute further and risking reuse of an old
-> > value for a different new state of the file.
-> 
-> Ok but that is an issue if we need to deal with changes that did not
-> come in through NFSD.
+Omar Sandoval (10):
+  iov_iter: add copy_struct_from_iter()
+  fs: add O_ALLOW_ENCODED open flag
+  fs: add RWF_ENCODED for reading/writing compressed data
+  btrfs: fix check_data_csum() error message for direct I/O
+  btrfs: don't advance offset for compressed bios in
+    btrfs_csum_one_bio()
+  btrfs: add ram_bytes and offset to btrfs_ordered_extent
+  btrfs: support different disk extent size for delalloc
+  btrfs: optionally extend i_size in cow_file_range_inline()
+  btrfs: implement RWF_ENCODED reads
+  btrfs: implement RWF_ENCODED writes
 
-Those matter too, of course.
+ Documentation/filesystems/encoded_io.rst |  74 ++
+ Documentation/filesystems/index.rst      |   1 +
+ arch/alpha/include/uapi/asm/fcntl.h      |   1 +
+ arch/parisc/include/uapi/asm/fcntl.h     |   1 +
+ arch/sparc/include/uapi/asm/fcntl.h      |   1 +
+ fs/btrfs/compression.c                   |  12 +-
+ fs/btrfs/compression.h                   |   6 +-
+ fs/btrfs/ctree.h                         |   9 +-
+ fs/btrfs/delalloc-space.c                |  18 +-
+ fs/btrfs/file-item.c                     |  35 +-
+ fs/btrfs/file.c                          |  46 +-
+ fs/btrfs/inode.c                         | 936 ++++++++++++++++++++---
+ fs/btrfs/ordered-data.c                  |  80 +-
+ fs/btrfs/ordered-data.h                  |  18 +-
+ fs/btrfs/relocation.c                    |   4 +-
+ fs/fcntl.c                               |  10 +-
+ fs/namei.c                               |   4 +
+ fs/read_write.c                          | 168 +++-
+ include/linux/encoded_io.h               |  17 +
+ include/linux/fcntl.h                    |   2 +-
+ include/linux/fs.h                       |  13 +
+ include/linux/uio.h                      |   2 +
+ include/uapi/asm-generic/fcntl.h         |   4 +
+ include/uapi/linux/encoded_io.h          |  30 +
+ include/uapi/linux/fs.h                  |   5 +-
+ lib/iov_iter.c                           |  82 ++
+ 26 files changed, 1378 insertions(+), 201 deletions(-)
+ create mode 100644 Documentation/filesystems/encoded_io.rst
+ create mode 100644 include/linux/encoded_io.h
+ create mode 100644 include/uapi/linux/encoded_io.h
 
---b.
+-- 
+2.30.0
 
