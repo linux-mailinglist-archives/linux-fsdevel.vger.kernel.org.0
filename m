@@ -2,314 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA30300A7C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 19:00:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D562300AD0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 19:19:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbhAVR60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 12:58:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53944 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729289AbhAVRxC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 12:53:02 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E19B323AC0;
-        Fri, 22 Jan 2021 17:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611337886;
-        bh=ydxEs9Whkod0VN9TjVjM1PoZcIsQiU4uGTvxkHheazk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nO2QSxL9s3oYk4QBFS1ryuUZu9th3PcMqBCTfHZLteqwvagUcEgvm6n3f2gW0TtSO
-         VnJMqwPCg5f/kvQ+1+tqYujtKTYKzVYPxF+6+pU9lfI1xLqzgMKdj31f2E0qaOPQW3
-         PhQYVCaoCRiZR8ACqZnsdZo6UplQjwcBWe2qfb/TFku/pVPy7tQzBi96MsD4Sw2ZeB
-         OBTRXLRxh1U2htRpfjzb5At9E4gNDM+q+Y5ykSoFU5Fe7WQ35M/Rg3O4cbybrKVywl
-         crcEf0Ya+KuwFdjWOhIEe8XKfQvfHO+R9dZvWF04v+b3Jn3YpPf04oL9/lA3mCdg4W
-         P5j82NN2QGCrw==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        willy@infradead.org, linux-cachefs@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 6/6] ceph: convert ceph_readpages to ceph_readahead
-Date:   Fri, 22 Jan 2021 12:51:18 -0500
-Message-Id: <20210122175119.364381-7-jlayton@kernel.org>
+        id S1729120AbhAVRWt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 12:22:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44510 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729507AbhAVQFU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Jan 2021 11:05:20 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D43C061793;
+        Fri, 22 Jan 2021 08:04:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=Xjym9lcL0CxKzUararhEBi3kSrlAKm+bXyK6l1ORLjE=; b=FGYXtlxIJvPCIiOqQR0M1ZHLC8
+        5AzpbpS9EeuHIzh+NMA6ca8Q6lvkmyxYD76jR9JhhKm5iYY0T1e5RbDKFl0UqvrXsWOMQUgVB7S3Z
+        BRFoqAtBnRs6K75+ZBBJgEGoPX6eGjXpmF0i8/ZvbMKyvn99zAFOIRmVilDrxZbU8EAl2K1wP8gTJ
+        3gzvo8h/XWw5gjt7+CFvumE5tFhnm3qapaF3CnqoKwx/HBe/XL1oDtqDHx0Po1ye6pnQZdbTbGMrK
+        jvilDFdzdxnVcMaiHS+1poRQ+fD7xjtEcUgX88MOUXO2Qr46Eh3YY0HI37gxNxGipmSlad74Z0AOT
+        zpwbDhQw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l2yu8-000wCI-H1; Fri, 22 Jan 2021 16:03:26 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v5 03/18] mm/filemap: Convert filemap_get_pages to take a pagevec
+Date:   Fri, 22 Jan 2021 16:01:25 +0000
+Message-Id: <20210122160140.223228-4-willy@infradead.org>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210122175119.364381-1-jlayton@kernel.org>
-References: <20210122175119.364381-1-jlayton@kernel.org>
+In-Reply-To: <20210122160140.223228-1-willy@infradead.org>
+References: <20210122160140.223228-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert ceph_readpages to ceph_readahead and make it use
-netfs_readahead. With this we can rip out a lot of the old
-readpage/readpages infrastructure.
+Using a pagevec lets us keep the pages and the number of pages together
+which simplifies a lot of the calling conventions.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ceph/addr.c | 229 ++++++++-----------------------------------------
- 1 file changed, 34 insertions(+), 195 deletions(-)
+ mm/filemap.c | 82 ++++++++++++++++++++++++----------------------------
+ 1 file changed, 38 insertions(+), 44 deletions(-)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index b3b58285a997..d671c0cb1893 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -321,214 +321,53 @@ static int ceph_readpage(struct file *filp, struct page *page)
- 	return netfs_readpage(filp, page, &ceph_readpage_netfs_ops, NULL);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index a5c4f7ddfc40c..ca4141dd63a4b 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2338,22 +2338,22 @@ static struct page *filemap_create_page(struct kiocb *iocb,
  }
  
--/*
-- * Finish an async read(ahead) op.
-- */
--static void finish_read(struct ceph_osd_request *req)
-+static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
+ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+-		struct page **pages, unsigned int nr)
++		struct pagevec *pvec)
  {
--	struct inode *inode = req->r_inode;
--	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
--	struct ceph_osd_data *osd_data;
--	int rc = req->r_result <= 0 ? req->r_result : 0;
--	int bytes = req->r_result >= 0 ? req->r_result : 0;
--	int num_pages;
--	int i;
--
--	dout("finish_read %p req %p rc %d bytes %d\n", inode, req, rc, bytes);
--	if (rc == -EBLOCKLISTED)
--		ceph_inode_to_client(inode)->blocklisted = true;
--
--	/* unlock all pages, zeroing any data we didn't read */
--	osd_data = osd_req_op_extent_osd_data(req, 0);
--	BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_PAGES);
--	num_pages = calc_pages_for((u64)osd_data->alignment,
--					(u64)osd_data->length);
--	for (i = 0; i < num_pages; i++) {
--		struct page *page = osd_data->pages[i];
--
--		if (rc < 0 && rc != -ENOENT)
--			goto unlock;
--		if (bytes < (int)PAGE_SIZE) {
--			/* zero (remainder of) page */
--			int s = bytes < 0 ? 0 : bytes;
--			zero_user_segment(page, s, PAGE_SIZE);
--		}
-- 		dout("finish_read %p uptodate %p idx %lu\n", inode, page,
--		     page->index);
--		flush_dcache_page(page);
--		SetPageUptodate(page);
--unlock:
--		unlock_page(page);
--		put_page(page);
--		bytes -= PAGE_SIZE;
--	}
--
--	ceph_update_read_latency(&fsc->mdsc->metric, req->r_start_latency,
--				 req->r_end_latency, rc);
--
--	kfree(osd_data->pages);
--}
--
--/*
-- * start an async read(ahead) operation.  return nr_pages we submitted
-- * a read for on success, or negative error code.
-- */
--static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
--		      struct list_head *page_list, int max)
--{
--	struct ceph_osd_client *osdc =
--		&ceph_inode_to_client(inode)->client->osdc;
-+	struct inode *inode = mapping->host;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
--	struct page *page = lru_to_page(page_list);
--	struct ceph_vino vino;
--	struct ceph_osd_request *req;
--	u64 off;
--	u64 len;
--	int i;
--	struct page **pages;
--	pgoff_t next_index;
--	int nr_pages = 0;
--	int got = 0;
--	int ret = 0;
--
--	if (!rw_ctx) {
--		/* caller of readpages does not hold buffer and read caps
--		 * (fadvise, madvise and readahead cases) */
--		int want = CEPH_CAP_FILE_CACHE;
--		ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want,
--					true, &got);
--		if (ret < 0) {
--			dout("start_read %p, error getting cap\n", inode);
--		} else if (!(got & want)) {
--			dout("start_read %p, no cache cap\n", inode);
--			ret = 0;
--		}
--		if (ret <= 0) {
--			if (got)
--				ceph_put_cap_refs(ci, got);
--			while (!list_empty(page_list)) {
--				page = lru_to_page(page_list);
--				list_del(&page->lru);
--				put_page(page);
--			}
--			return ret;
--		}
--	}
--
--	off = (u64) page_offset(page);
--
--	/* count pages */
--	next_index = page->index;
--	list_for_each_entry_reverse(page, page_list, lru) {
--		if (page->index != next_index)
--			break;
--		nr_pages++;
--		next_index++;
--		if (max && nr_pages == max)
--			break;
--	}
--	len = nr_pages << PAGE_SHIFT;
--	dout("start_read %p nr_pages %d is %lld~%lld\n", inode, nr_pages,
--	     off, len);
--	vino = ceph_vino(inode);
--	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len,
--				    0, 1, CEPH_OSD_OP_READ,
--				    CEPH_OSD_FLAG_READ, NULL,
--				    ci->i_truncate_seq, ci->i_truncate_size,
--				    false);
--	if (IS_ERR(req)) {
--		ret = PTR_ERR(req);
--		goto out;
--	}
--
--	/* build page vector */
--	nr_pages = calc_pages_for(0, len);
--	pages = kmalloc_array(nr_pages, sizeof(*pages), GFP_KERNEL);
--	if (!pages) {
--		ret = -ENOMEM;
--		goto out_put;
--	}
--	for (i = 0; i < nr_pages; ++i) {
--		page = list_entry(page_list->prev, struct page, lru);
--		BUG_ON(PageLocked(page));
--		list_del(&page->lru);
--
-- 		dout("start_read %p adding %p idx %lu\n", inode, page,
--		     page->index);
--		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
--					  GFP_KERNEL)) {
--			put_page(page);
--			dout("start_read %p add_to_page_cache failed %p\n",
--			     inode, page);
--			nr_pages = i;
--			if (nr_pages > 0) {
--				len = nr_pages << PAGE_SHIFT;
--				osd_req_op_extent_update(req, 0, len);
--				break;
--			}
--			goto out_pages;
--		}
--		pages[i] = page;
--	}
--	osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, false);
--	req->r_callback = finish_read;
--	req->r_inode = inode;
--
--	dout("start_read %p starting %p %lld~%lld\n", inode, req, off, len);
--	ret = ceph_osdc_start_request(osdc, req, false);
--	if (ret < 0)
--		goto out_pages;
--	ceph_osdc_put_request(req);
-+	int got = (int)(uintptr_t)priv;
+ 	struct file *filp = iocb->ki_filp;
+ 	struct address_space *mapping = filp->f_mapping;
+ 	struct file_ra_state *ra = &filp->f_ra;
+ 	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
+ 	pgoff_t last_index = (iocb->ki_pos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
+-	int i, j, nr_got, err = 0;
++	unsigned int nr = min_t(unsigned long, last_index - index, PAGEVEC_SIZE);
++	int i, j, err = 0;
  
--	/* After adding locked pages to page cache, the inode holds cache cap.
--	 * So we can drop our cap refs. */
- 	if (got)
- 		ceph_put_cap_refs(ci, got);
--
--	return nr_pages;
--
--out_pages:
--	for (i = 0; i < nr_pages; ++i)
--		unlock_page(pages[i]);
--	ceph_put_page_vector(pages, nr_pages, false);
--out_put:
--	ceph_osdc_put_request(req);
--out:
--	if (got)
--		ceph_put_cap_refs(ci, got);
--	return ret;
- }
-+const struct netfs_read_request_ops ceph_readahead_netfs_ops = {
-+	.init_rreq		= ceph_init_rreq,
-+	.is_cache_enabled	= ceph_is_cache_enabled,
-+	.begin_cache_operation	= ceph_begin_cache_operation,
-+	.issue_op		= ceph_netfs_issue_op,
-+	.clamp_length		= ceph_netfs_clamp_length,
-+	.cleanup		= ceph_readahead_cleanup,
-+};
+-	nr = min_t(unsigned long, last_index - index, nr);
+ find_page:
+ 	if (fatal_signal_pending(current))
+ 		return -EINTR;
  
--
--/*
-- * Read multiple pages.  Leave pages we don't read + unlock in page_list;
-- * the caller (VM) cleans them up.
-- */
--static int ceph_readpages(struct file *file, struct address_space *mapping,
--			  struct list_head *page_list, unsigned nr_pages)
-+static void ceph_readahead(struct readahead_control *ractl)
- {
--	struct inode *inode = file_inode(file);
--	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
--	struct ceph_file_info *fi = file->private_data;
-+	struct inode *inode = file_inode(ractl->file);
-+	struct ceph_file_info *fi = ractl->file->private_data;
- 	struct ceph_rw_context *rw_ctx;
--	int rc = 0;
--	int max = 0;
-+	int got = 0;
-+	int ret = 0;
+-	nr_got = find_get_pages_contig(mapping, index, nr, pages);
+-	if (nr_got)
++	pvec->nr = find_get_pages_contig(mapping, index, nr, pvec->pages);
++	if (pvec->nr)
+ 		goto got_pages;
  
- 	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
--		return -EINVAL;
-+		return;
+ 	if (iocb->ki_flags & IOCB_NOIO)
+@@ -2361,17 +2361,17 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
  
- 	rw_ctx = ceph_find_rw_context(fi);
--	max = fsc->mount_options->rsize >> PAGE_SHIFT;
--	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
--	     inode, file, rw_ctx, nr_pages, max);
--	while (!list_empty(page_list)) {
--		rc = start_read(inode, rw_ctx, page_list, max);
--		if (rc < 0)
--			goto out;
-+	if (!rw_ctx) {
-+		/*
-+		 * readahead callers do not necessarily hold Fcb caps
-+		 * (e.g. fadvise, madvise).
-+		 */
-+		int want = CEPH_CAP_FILE_CACHE;
-+
-+		ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
-+		if (ret < 0)
-+			dout("start_read %p, error getting cap\n", inode);
-+		else if (!(got & want))
-+			dout("start_read %p, no cache cap\n", inode);
-+
-+		if (ret <= 0)
-+			return;
+ 	page_cache_sync_readahead(mapping, ra, filp, index, last_index - index);
+ 
+-	nr_got = find_get_pages_contig(mapping, index, nr, pages);
+-	if (nr_got)
++	pvec->nr = find_get_pages_contig(mapping, index, nr, pvec->pages);
++	if (pvec->nr)
+ 		goto got_pages;
+ 
+-	pages[0] = filemap_create_page(iocb, iter);
+-	err = PTR_ERR_OR_ZERO(pages[0]);
+-	if (!IS_ERR_OR_NULL(pages[0]))
+-		nr_got = 1;
++	pvec->pages[0] = filemap_create_page(iocb, iter);
++	err = PTR_ERR_OR_ZERO(pvec->pages[0]);
++	if (!IS_ERR_OR_NULL(pvec->pages[0]))
++		pvec->nr = 1;
+ got_pages:
+-	for (i = 0; i < nr_got; i++) {
+-		struct page *page = pages[i];
++	for (i = 0; i < pvec->nr; i++) {
++		struct page *page = pvec->pages[i];
+ 		pgoff_t pg_index = index + i;
+ 		loff_t pg_pos = max(iocb->ki_pos,
+ 				    (loff_t) pg_index << PAGE_SHIFT);
+@@ -2379,9 +2379,9 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 
+ 		if (PageReadahead(page)) {
+ 			if (iocb->ki_flags & IOCB_NOIO) {
+-				for (j = i; j < nr_got; j++)
+-					put_page(pages[j]);
+-				nr_got = i;
++				for (j = i; j < pvec->nr; j++)
++					put_page(pvec->pages[j]);
++				pvec->nr = i;
+ 				err = -EAGAIN;
+ 				break;
+ 			}
+@@ -2392,9 +2392,9 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 		if (!PageUptodate(page)) {
+ 			if ((iocb->ki_flags & IOCB_NOWAIT) ||
+ 			    ((iocb->ki_flags & IOCB_WAITQ) && i)) {
+-				for (j = i; j < nr_got; j++)
+-					put_page(pages[j]);
+-				nr_got = i;
++				for (j = i; j < pvec->nr; j++)
++					put_page(pvec->pages[j]);
++				pvec->nr = i;
+ 				err = -EAGAIN;
+ 				break;
+ 			}
+@@ -2402,17 +2402,17 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 			page = filemap_update_page(iocb, filp, iter, page,
+ 					pg_pos, pg_count);
+ 			if (IS_ERR_OR_NULL(page)) {
+-				for (j = i + 1; j < nr_got; j++)
+-					put_page(pages[j]);
+-				nr_got = i;
++				for (j = i + 1; j < pvec->nr; j++)
++					put_page(pvec->pages[j]);
++				pvec->nr = i;
+ 				err = PTR_ERR_OR_ZERO(page);
+ 				break;
+ 			}
+ 		}
  	}
--out:
--	dout("readpages %p file %p ret %d\n", inode, file, rc);
--	return rc;
-+	netfs_readahead(ractl, &ceph_readahead_netfs_ops, (void *)(uintptr_t)got);
- }
  
- struct ceph_writeback_ctl
-@@ -1481,7 +1320,7 @@ static ssize_t ceph_direct_io(struct kiocb *iocb, struct iov_iter *iter)
+-	if (likely(nr_got))
+-		return nr_got;
++	if (likely(pvec->nr))
++		return 0;
+ 	if (err)
+ 		return err;
+ 	/*
+@@ -2444,11 +2444,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 	struct file_ra_state *ra = &filp->f_ra;
+ 	struct address_space *mapping = filp->f_mapping;
+ 	struct inode *inode = mapping->host;
+-	struct page *pages[PAGEVEC_SIZE];
+-	unsigned int nr_pages = min_t(unsigned int, PAGEVEC_SIZE,
+-			((iocb->ki_pos + iter->count + PAGE_SIZE - 1) >> PAGE_SHIFT) -
+-			(iocb->ki_pos >> PAGE_SHIFT));
+-	int i, pg_nr, error = 0;
++	struct pagevec pvec;
++	int i, error = 0;
+ 	bool writably_mapped;
+ 	loff_t isize, end_offset;
  
- const struct address_space_operations ceph_aops = {
- 	.readpage = ceph_readpage,
--	.readpages = ceph_readpages,
-+	.readahead = ceph_readahead,
- 	.writepage = ceph_writepage,
- 	.writepages = ceph_writepages_start,
- 	.write_begin = ceph_write_begin,
+@@ -2470,12 +2467,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 		if ((iocb->ki_flags & IOCB_WAITQ) && written)
+ 			iocb->ki_flags |= IOCB_NOWAIT;
+ 
+-		i = 0;
+-		pg_nr = filemap_get_pages(iocb, iter, pages, nr_pages);
+-		if (pg_nr < 0) {
+-			error = pg_nr;
++		error = filemap_get_pages(iocb, iter, &pvec);
++		if (error < 0)
+ 			break;
+-		}
+ 
+ 		/*
+ 		 * i_size must be checked after we know the pages are Uptodate.
+@@ -2491,9 +2485,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 
+ 		end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
+ 
+-		while ((iocb->ki_pos >> PAGE_SHIFT) + pg_nr >
++		while ((iocb->ki_pos >> PAGE_SHIFT) + pvec.nr >
+ 		       (end_offset + PAGE_SIZE - 1) >> PAGE_SHIFT)
+-			put_page(pages[--pg_nr]);
++			put_page(pvec.pages[--pvec.nr]);
+ 
+ 		/*
+ 		 * Once we start copying data, we don't want to be touching any
+@@ -2507,11 +2501,11 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 		 */
+ 		if (iocb->ki_pos >> PAGE_SHIFT !=
+ 		    ra->prev_pos >> PAGE_SHIFT)
+-			mark_page_accessed(pages[0]);
+-		for (i = 1; i < pg_nr; i++)
+-			mark_page_accessed(pages[i]);
++			mark_page_accessed(pvec.pages[0]);
++		for (i = 1; i < pagevec_count(&pvec); i++)
++			mark_page_accessed(pvec.pages[i]);
+ 
+-		for (i = 0; i < pg_nr; i++) {
++		for (i = 0; i < pagevec_count(&pvec); i++) {
+ 			unsigned int offset = iocb->ki_pos & ~PAGE_MASK;
+ 			unsigned int bytes = min_t(loff_t, end_offset - iocb->ki_pos,
+ 						   PAGE_SIZE - offset);
+@@ -2523,9 +2517,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 			 * before reading the page on the kernel side.
+ 			 */
+ 			if (writably_mapped)
+-				flush_dcache_page(pages[i]);
++				flush_dcache_page(pvec.pages[i]);
+ 
+-			copied = copy_page_to_iter(pages[i], offset, bytes, iter);
++			copied = copy_page_to_iter(pvec.pages[i], offset, bytes, iter);
+ 
+ 			written += copied;
+ 			iocb->ki_pos += copied;
+@@ -2537,8 +2531,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 			}
+ 		}
+ put_pages:
+-		for (i = 0; i < pg_nr; i++)
+-			put_page(pages[i]);
++		for (i = 0; i < pagevec_count(&pvec); i++)
++			put_page(pvec.pages[i]);
+ 	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
+ 
+ 	file_accessed(filp);
 -- 
 2.29.2
 
