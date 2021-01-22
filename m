@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82DF92FFAF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 04:23:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D790F2FFB0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 04:29:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbhAVDWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 22:22:54 -0500
-Received: from namei.org ([65.99.196.166]:52580 "EHLO mail.namei.org"
+        id S1726379AbhAVD3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 22:29:13 -0500
+Received: from namei.org ([65.99.196.166]:52658 "EHLO mail.namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725984AbhAVDWw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 22:22:52 -0500
+        id S1726127AbhAVD3E (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 22:29:04 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id F0A468CE;
-        Fri, 22 Jan 2021 03:21:18 +0000 (UTC)
-Date:   Fri, 22 Jan 2021 14:21:18 +1100 (AEDT)
+        by mail.namei.org (Postfix) with ESMTPS id 39EC949C;
+        Fri, 22 Jan 2021 03:27:31 +0000 (UTC)
+Date:   Fri, 22 Jan 2021 14:27:31 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -48,12 +48,11 @@ cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Tycho Andersen <tycho@tycho.pizza>
-Subject: Re: [PATCH v6 09/40] xattr: handle idmapped mounts
-In-Reply-To: <20210121131959.646623-10-christian.brauner@ubuntu.com>
-Message-ID: <ca7b62bc-37d1-839-5bde-caaa661079ce@namei.org>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-10-christian.brauner@ubuntu.com>
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 10/40] commoncap: handle idmapped mounts
+In-Reply-To: <20210121131959.646623-11-christian.brauner@ubuntu.com>
+Message-ID: <9ce6066-6162-2398-342b-d18f99c3970@namei.org>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-11-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
@@ -62,29 +61,16 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, 21 Jan 2021, Christian Brauner wrote:
 
-> From: Tycho Andersen <tycho@tycho.pizza>
-> 
-> When interacting with extended attributes the vfs verifies that the
-> caller is privileged over the inode with which the extended attribute is
-> associated. For posix access and posix default extended attributes a uid
-> or gid can be stored on-disk. Let the functions handle posix extended
-> attributes on idmapped mounts. If the inode is accessed through an
-> idmapped mount we need to map it according to the mount's user
-> namespace. Afterwards the checks are identical to non-idmapped mounts.
-> This has no effect for e.g. security xattrs since they don't store uids
-> or gids and don't perform permission checks on them like posix acls do.
-> 
-> Link: https://lore.kernel.org/r/20210112220124.837960-17-christian.brauner@ubuntu.com
+> Link: https://lore.kernel.org/r/20210112220124.837960-18-christian.brauner@ubuntu.com
 > Cc: Christoph Hellwig <hch@lst.de>
 > Cc: David Howells <dhowells@redhat.com>
 > Cc: Al Viro <viro@zeniv.linux.org.uk>
 > Cc: linux-fsdevel@vger.kernel.org
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Tycho Andersen <tycho@tycho.pizza>
 > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
 
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+Acked-by: James Morris <jamorris@linux.microsoft.com>
 
 
 -- 
