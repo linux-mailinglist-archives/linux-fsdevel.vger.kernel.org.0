@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B46482FFBCD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 05:37:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A17B2FFBDC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 05:39:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbhAVEhI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 23:37:08 -0500
-Received: from namei.org ([65.99.196.166]:53148 "EHLO mail.namei.org"
+        id S1726574AbhAVEj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 23:39:26 -0500
+Received: from namei.org ([65.99.196.166]:53212 "EHLO mail.namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbhAVEhH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 23:37:07 -0500
+        id S1725912AbhAVEjX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 23:39:23 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id 2A83F1BC;
-        Fri, 22 Jan 2021 04:35:34 +0000 (UTC)
-Date:   Fri, 22 Jan 2021 15:35:34 +1100 (AEDT)
+        by mail.namei.org (Postfix) with ESMTPS id DB2BD49C;
+        Fri, 22 Jan 2021 04:37:49 +0000 (UTC)
+Date:   Fri, 22 Jan 2021 15:37:49 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -49,10 +49,11 @@ cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 23/40] exec: handle idmapped mounts
-In-Reply-To: <20210121131959.646623-24-christian.brauner@ubuntu.com>
-Message-ID: <48878557-bda5-b5e5-a6a9-f737ccc357b9@namei.org>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-24-christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v6 27/40] ecryptfs: do not mount on top of idmapped
+ mounts
+In-Reply-To: <20210121131959.646623-28-christian.brauner@ubuntu.com>
+Message-ID: <4ea72812-fee1-e838-9f91-4019adf3359a@namei.org>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-28-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
@@ -61,21 +62,15 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, 21 Jan 2021, Christian Brauner wrote:
 
-> When executing a setuid binary the kernel will verify in bprm_fill_uid()
-> that the inode has a mapping in the caller's user namespace before
-> setting the callers uid and gid. Let bprm_fill_uid() handle idmapped
-> mounts. If the inode is accessed through an idmapped mount it is mapped
-> according to the mount's user namespace. Afterwards the checks are
-> identical to non-idmapped mounts. If the initial user namespace is
-> passed nothing changes so non-idmapped mounts will see identical
-> behavior as before.
+> Prevent ecryptfs from being mounted on top of idmapped mounts.
+> Stacking filesystems need to be prevented from being mounted on top of
+> idmapped mounts until they have have been converted to handle this.
 > 
-> Link: https://lore.kernel.org/r/20210112220124.837960-32-christian.brauner@ubuntu.com
+> Link: https://lore.kernel.org/r/20210112220124.837960-39-christian.brauner@ubuntu.com
 > Cc: Christoph Hellwig <hch@lst.de>
 > Cc: David Howells <dhowells@redhat.com>
 > Cc: Al Viro <viro@zeniv.linux.org.uk>
 > Cc: linux-fsdevel@vger.kernel.org
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
 
