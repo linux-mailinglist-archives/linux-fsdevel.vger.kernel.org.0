@@ -2,208 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDF830099F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 18:24:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B43473009A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 18:31:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbhAVRXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 12:23:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56366 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728674AbhAVREX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 12:04:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BC4ACAF55;
-        Fri, 22 Jan 2021 16:49:12 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id a70283ca;
-        Fri, 22 Jan 2021 16:50:03 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 08/17] ceph: add routine to create fscrypt
- context prior to RPC
-References: <20210120182847.644850-1-jlayton@kernel.org>
-        <20210120182847.644850-9-jlayton@kernel.org>
-Date:   Fri, 22 Jan 2021 16:50:03 +0000
-In-Reply-To: <20210120182847.644850-9-jlayton@kernel.org> (Jeff Layton's
-        message of "Wed, 20 Jan 2021 13:28:38 -0500")
-Message-ID: <87tur8532c.fsf@suse.de>
+        id S1728136AbhAVRYI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 12:24:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60154 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728912AbhAVRSk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Jan 2021 12:18:40 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2F8C061788
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 09:17:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=e9tNa+DNAK/w7dHpnhE9CZv0XhYPTiZ1o5OgFm/xBsA=; b=HGrf2jV89DXp1qFlvf/Z0Zxq1W
+        ywMouOAB70GaSgY+sA4xH55a6JvJmXF7I1ynCpLdj4kEhi69eEXkSq31X9Ap+eamSVGjTxE2QdwCv
+        12hNDxJfSkz0mqtyfts/2VdvLRupP2l/bmIHKeRgUNy7p/iThlHlNTAudehFMwFMgRJH+ll6CzzAG
+        VG2vpsnzXwC+AXh0xgmu3Hc/TPpIxl9L3qaRiF4wva225YhzJJqXdaPsKjxCvM8M1jKxZziqBlktN
+        xNg4dTWlPTfpyu2mdr0PFIyOzsylQNh3kpA9sh4Vnoo5a8+05GDkPmL1k+w3hcZj6dXlqt2WWfGBo
+        6X0Z+T6g==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l303O-0010KD-C7; Fri, 22 Jan 2021 17:17:01 +0000
+Date:   Fri, 22 Jan 2021 17:16:58 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org, kernel@pengutronix.de,
+        Jan Kara <jack@suse.com>
+Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
+Message-ID: <20210122171658.GA237653@infradead.org>
+References: <20210122151536.7982-1-s.hauer@pengutronix.de>
+ <20210122151536.7982-2-s.hauer@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210122151536.7982-2-s.hauer@pengutronix.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+On Fri, Jan 22, 2021 at 04:15:29PM +0100, Sascha Hauer wrote:
+> This patch introduces the Q_PATH flag to the quotactl cmd argument.
+> When given, the path given in the special argument to quotactl will
+> be the mount path where the filesystem is mounted, instead of a path
+> to the block device.
+> This is necessary for filesystems which do not have a block device as
+> backing store. Particularly this is done for upcoming UBIFS support.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-> After pre-creating a new inode, do an fscrypt prepare on it, fetch a
-> new encryption context and then marshal that into the security context
-> to be sent along with the RPC.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/crypto.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/ceph/crypto.h | 12 ++++++++++
->  fs/ceph/inode.c  |  9 +++++--
->  fs/ceph/super.h  |  3 +++
->  4 files changed, 83 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> index 879d9a0d3751..f037a4939026 100644
-> --- a/fs/ceph/crypto.c
-> +++ b/fs/ceph/crypto.c
-> @@ -46,3 +46,64 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
+I hate overloading quotactl even more.  Why not add a new quotactl_path
+syscall instead?
+
+> +static struct super_block *quotactl_sb(dev_t dev, int cmd)
 >  {
->  	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
->  }
+>  	struct super_block *sb;
+>  	bool excl = false, thawed = false;
+>  
+>  	if (quotactl_cmd_onoff(cmd)) {
+>  		excl = true;
+> @@ -901,12 +887,50 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
+>  		goto retry;
+>  	}
+>  	return sb;
+> +}
 > +
-> +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-> +				 struct ceph_acl_sec_ctx *as)
+> +/*
+> + * look up a superblock on which quota ops will be performed
+> + * - use the name of a block device to find the superblock thereon
+> + */
+> +static struct super_block *quotactl_block(const char __user *special, int cmd)
 > +{
-> +	int ret, ctxsize;
-> +	size_t name_len;
-> +	char *name;
-> +	struct ceph_pagelist *pagelist = as->pagelist;
-> +	bool encrypted = false;
+> +#ifdef CONFIG_BLOCK
+> +	struct filename *tmp = getname(special);
+> +	int error;
+> +	dev_t dev;
+>  
+> +	if (IS_ERR(tmp))
+> +		return ERR_CAST(tmp);
+> +	error = lookup_bdev(tmp->name, &dev);
+> +	putname(tmp);
+> +	if (error)
+> +		return ERR_PTR(error);
 > +
-> +	ret = fscrypt_prepare_new_inode(dir, inode, &encrypted);
-> +	if (ret)
-> +		return ret;
-> +	if (!encrypted)
-> +		return 0;
-> +
-> +	inode->i_flags |= S_ENCRYPTED;
-> +
-> +	ctxsize = fscrypt_context_for_new_inode(&as->fscrypt, inode);
-> +	if (ctxsize < 0)
-> +		return ctxsize;
-> +
-> +	/* marshal it in page array */
-> +	if (!pagelist) {
-> +		pagelist = ceph_pagelist_alloc(GFP_KERNEL);
-> +		if (!pagelist)
-> +			return -ENOMEM;
-> +		ret = ceph_pagelist_reserve(pagelist, PAGE_SIZE);
-> +		if (ret)
-> +			goto out;
-> +		ceph_pagelist_encode_32(pagelist, 1);
-> +	}
-> +
-> +	name = CEPH_XATTR_NAME_ENCRYPTION_CONTEXT;
-> +	name_len = strlen(name);
-> +	ret = ceph_pagelist_reserve(pagelist, 4 * 2 + name_len + ctxsize);
-> +	if (ret)
-> +		goto out;
-> +
-> +	if (as->pagelist) {
-> +		BUG_ON(pagelist->length <= sizeof(__le32));
-> +		if (list_is_singular(&pagelist->head)) {
-> +			le32_add_cpu((__le32*)pagelist->mapped_tail, 1);
-> +		} else {
-> +			struct page *page = list_first_entry(&pagelist->head,
-> +							     struct page, lru);
-> +			void *addr = kmap_atomic(page);
-> +			le32_add_cpu((__le32*)addr, 1);
-> +			kunmap_atomic(addr);
-> +		}
-> +	}
-> +
+> +	return quotactl_sb(dev, cmd);
+>  #else
+>  	return ERR_PTR(-ENODEV);
+>  #endif
 
-I've been staring at this function for a bit.  And at this point I would
-expect something like this:
-
-	} else
-		as->pagelist = pagelist;
-
-as I'm not seeing pagelist being used anywhere if it's allocated in this
+Normal kernel style would be to keep the ifdef entirely outside the
 function.
 
-Cheers,
--- 
-Luis
-
-> 
-> +	ceph_pagelist_encode_32(pagelist, name_len);
-> +	ceph_pagelist_append(pagelist, name, name_len);
-> +	ceph_pagelist_encode_32(pagelist, ctxsize);
-> +	ceph_pagelist_append(pagelist, as->fscrypt, ctxsize);
-> +out:
-> +	if (pagelist && !as->pagelist)
-> +		ceph_pagelist_release(pagelist);
-> +	return ret;
-> +}
-> diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-> index 0dd043b56096..cc4e481bf13a 100644
-> --- a/fs/ceph/crypto.h
-> +++ b/fs/ceph/crypto.h
-> @@ -18,6 +18,9 @@ static inline void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
->  	fscrypt_free_dummy_policy(&fsc->dummy_enc_policy);
->  }
->  
-> +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-> +				 struct ceph_acl_sec_ctx *as);
-> +
->  #else /* CONFIG_FS_ENCRYPTION */
->  
->  static inline void ceph_fscrypt_set_ops(struct super_block *sb)
-> @@ -27,6 +30,15 @@ static inline void ceph_fscrypt_set_ops(struct super_block *sb)
->  static inline void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
->  {
->  }
-> +
-> +static inline int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-> +						struct ceph_acl_sec_ctx *as)
+> +static struct super_block *quotactl_path(const char __user *special, int cmd)
 > +{
-> +	if (IS_ENCRYPTED(dir))
-> +		return -EOPNOTSUPP;
-> +	return 0;
-> +}
+> +	struct super_block *sb;
+> +	struct path path;
+> +	int error;
 > +
->  #endif /* CONFIG_FS_ENCRYPTION */
->  
->  #endif
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index d004f294a256..2854711e8988 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -83,12 +83,17 @@ struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
->  			goto out_err;
->  	}
->  
-> +	inode->i_state = 0;
-> +	inode->i_mode = *mode;
-> +
->  	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
->  	if (err < 0)
->  		goto out_err;
->  
-> -	inode->i_state = 0;
-> -	inode->i_mode = *mode;
-> +	err = ceph_fscrypt_prepare_context(dir, inode, as_ctx);
-> +	if (err)
-> +		goto out_err;
-> +
->  	return inode;
->  out_err:
->  	iput(inode);
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 7a022c7c38b6..2411813ab552 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -1031,6 +1031,9 @@ struct ceph_acl_sec_ctx {
->  #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
->  	void *sec_ctx;
->  	u32 sec_ctxlen;
-> +#endif
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	u8	fscrypt[FSCRYPT_SET_CONTEXT_MAX_SIZE];
->  #endif
->  	struct ceph_pagelist *pagelist;
->  };
-> -- 
->
-> 2.29.2
->
+> +	error = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
+> +			   &path);
 
+This adds an overly long line.
+
+> +	if (error)
+> +		return ERR_PTR(error);
+> +
+> +	sb = quotactl_sb(path.mnt->mnt_sb->s_dev, cmd);
+
+I think quotactl_sb should take the superblock directly.  This will
+need a little refactoring of user_get_super, but will lead to much
+better logic.
