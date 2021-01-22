@@ -2,83 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80ADC300A2F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 18:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 183F4300A64
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 18:59:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbhAVRl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 12:41:59 -0500
-Received: from verein.lst.de ([213.95.11.211]:37560 "EHLO verein.lst.de"
+        id S1729571AbhAVRwY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 12:52:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729413AbhAVRfY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 12:35:24 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 4C3BC68BFE; Fri, 22 Jan 2021 18:34:40 +0100 (CET)
-Date:   Fri, 22 Jan 2021 18:34:40 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Mauricio =?iso-8859-1?Q?V=E1squez?= Bernal 
-        <mauricio@kinvolk.io>
-Subject: Re: [PATCH v6 35/40] fs: introduce MOUNT_ATTR_IDMAP
-Message-ID: <20210122173440.GA20821@lst.de>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-36-christian.brauner@ubuntu.com> <20210122173340.GA20658@lst.de>
+        id S1729400AbhAVRwB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Jan 2021 12:52:01 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B5DFC23A79;
+        Fri, 22 Jan 2021 17:51:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611337881;
+        bh=aXohzE1fQDUVmRxIyf/Y3FvhHEDTX6DSYkej4pWfR0U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JAev7YRmy/xfSN9o/HFB2t4m0B8FzqwnnFmt9R06LKkLn5aF/FbLnYJM27kHekq00
+         RqGa4Zqos8yRvI/QboBQMFUDFsgLnjLSubzzLM95wzWj7spe5lN0YhzkbLab1vLcSM
+         yfgh/bnOyOS6Ftud8OBQxx5MrWBPgE3Y5ytgyWcoUN3u9JCqOj62NPL/pSHD4wQNSs
+         1yxp0L+4BK0iiOJRlrStQCIlTfpA7zWo1wCyY/1n8zhi9Dyj2q23f5HNQ0Q+luZCfB
+         LfSbj8BOHuqmXtZnkNF1NFv00teZuNXNjoWY/ilIqatdnAp/jEY3kI7VUihZxSfzF4
+         SVDdI/4KFuKZg==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        willy@infradead.org, linux-cachefs@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/6] ceph: convert buffered read codepaths to new netfs API
+Date:   Fri, 22 Jan 2021 12:51:12 -0500
+Message-Id: <20210122175119.364381-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210122173340.GA20658@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 06:33:40PM +0100, Christoph Hellwig wrote:
-> >  /*
-> >   * mount_setattr()
-> > @@ -127,9 +128,10 @@ struct mount_attr {
-> >  	__u64 attr_set;
-> >  	__u64 attr_clr;
-> >  	__u64 propagation;
-> > +	__u64 userns_fd;
-> >  };
-> >  
-> >  /* List of all mount_attr versions. */
-> > -#define MOUNT_ATTR_SIZE_VER0	24 /* sizeof first published struct */
-> > +#define MOUNT_ATTR_SIZE_VER0	32 /* sizeof first published struct */
-> 
-> I think this hunk needs to go into the patch adding the structure.
+This patchset coverts ceph to use the new netfs API that David Howells
+has proposed [1]. It's a substantial reduction in code in the ceph layer
+itself, but the main impetus is to allow the VM, filesystem and fscache
+to better work together to optimize readahead on network filesystems.
 
-But except for that the patch looks fine:
+I think the resulting code is also easier to understand, and should be
+more maintainable as a lot of the pagecache handling is now done at the
+netfs layer.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This has been lightly tested with xfstests. With fscache disabled, I saw
+no regressions. With fscache enabled, I still hit some bugs down in the
+fscache layer itself, but those seem to be present without this set as
+well. This doesn't seem to make any of that worse.
+
+[1]: https://lore.kernel.org/ceph-devel/1856291.1611259704@warthog.procyon.org.uk/T/#t
+
+Jeff Layton (6):
+  ceph: disable old fscache readpage handling
+  ceph: rework PageFsCache handling
+  ceph: fix invalidation
+  ceph: convert readpage to fscache read helper
+  ceph: plug write_begin into read helper
+  ceph: convert ceph_readpages to ceph_readahead
+
+ fs/ceph/Kconfig |   1 +
+ fs/ceph/addr.c  | 536 +++++++++++++++++++-----------------------------
+ fs/ceph/cache.c | 123 -----------
+ fs/ceph/cache.h | 101 +++------
+ fs/ceph/caps.c  |  10 +-
+ fs/ceph/inode.c |   1 +
+ 6 files changed, 236 insertions(+), 536 deletions(-)
+
+-- 
+2.29.2
+
