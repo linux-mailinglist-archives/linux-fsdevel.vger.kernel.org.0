@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E45F12FFCDA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 07:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDFB52FFCE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 07:33:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbhAVGYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 01:24:19 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:51034 "EHLO
+        id S1726935AbhAVGdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 01:33:25 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:51117 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbhAVGYK (ORCPT
+        with ESMTP id S1726518AbhAVGYQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 01:24:10 -0500
+        Fri, 22 Jan 2021 01:24:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611296650; x=1642832650;
+  t=1611296655; x=1642832655;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=I8LrIa6gECYZDXtQkC4uR5xH8wik8We3GtwQpzwZDMQ=;
-  b=om/VNzq0Q/IS+J9tz8vAe/dCkZerYSxhJVJrkWP6808SFg+Gm0JJ1NuD
-   LE/LmUUcmQj9MMHOdviBlWwZJxd2G71kvL71mxiS25BpGbkY5NZIOi1jw
-   oGBbZC28ayktI3vYtfwbxYwGKe7XZtsVzNlAS5bSrvhq6vXMBHmLAhxa6
-   u9ad7ikzXCxgeO67FhkeWSXrOgZ03WYhvNX2QRKl36taILWTBmBgz+bLS
-   liZUoThpeNlRDR0lWoE0qKOelVzaXHZ+rk8CXoZ0oPBaFokgHP4Oo8qOS
-   2TSTxSDSpBi7i4vSo5asw3EEATl+o2kVngNXS6jPPP2sdFtpC94uBrHmj
-   g==;
-IronPort-SDR: f0TCIH70QaBsPjN0d4vb/heuwHKc40ADL8JINprlxPDhvm+GoJJ/seG9WSlyA6RZtOl81npvCn
- hpwcmKkzngppo+pNh9hnNp2+D/EQQ04HPNwdnt0lfSTYA4Q/NIdg5j3tS2Oc/IOOilxGZU+bSt
- HqPAFQjuwFbCTkrMHnH2VNK4WWolWZ1vMoVku605Y+zY132TDWToPgYVgkkYzNUzZH6LZ5QXM7
- czsYXY4R6Qx3ERWyjV72cDqkdk088WSd/o2zz2Ni71vb+lotfjiySAeIqlEzjCtrZ5uEuJxHNX
- 6NM=
+  bh=W00A4ElYUxWqx3pZQThpqSdlc1PopF9tk891Iam97g0=;
+  b=NsyUc4w0DSRMU8xDpMCP/Hw+RVo1bBsJkNdx/VbmhwrljUbr1Lm9/mLL
+   FgmPNM8pKVWB8f6IMrT19x21U4UEnfvHzMKdToN4zUhc5iRPSTdrJ6BB/
+   mfLpiluV/I1x/14TMpJvVYf0cleF5r/JU9nugNxbofBYh72pPk6ANql6K
+   0znP3DmEL8YzKVl85aEM5ZKnxOTGRSIqDFtQOWw+S4kI8XYiX44B/qx4I
+   9FBrpVBzS4Q2Vkc/YPPbDYYfOz4qv8SzW++u59OKgIiZdZ/DAiL4uCp/l
+   EdNebNEQzIwj5dB9dD9Ruy3c/V4qVmIpGkH5woiCtQ07ZGoYYHgCClTUI
+   A==;
+IronPort-SDR: sOLIAeJgKsrvuCzlYU3SS5lx4UrmZwmR06EgvzbyIF9RP7IZWnR1Ry24lxnUCdDI8DUHmXWTUR
+ TANG3qqAVwA0hGo7LY50QdTmc/TPVDwq66WeUuWDyUtayri4Nq56b9o8I0CO4GDCn3T83yYWhI
+ xMWnU/4kFrAdQkxTGM5jyHtcru5DZgCaOL4+Eexo7NE6cIzC1xk83cfNvTpr2iCcfRbH/X1owZ
+ dQ3BPqXcG1r80osx2D4Ko6htcDAp0Tfm6HH//8nlc24zN3TtY6Ko2PAtmbA8OikXKR+18gS2dw
+ hLQ=
 X-IronPort-AV: E=Sophos;i="5.79,365,1602518400"; 
-   d="scan'208";a="268391939"
+   d="scan'208";a="268391956"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Jan 2021 14:22:29 +0800
-IronPort-SDR: QkwOp3mzFGQ+WueVIwTSho0OTVmrSB066XAeSuPGPwATe1IhQW0DcRk4xO1/fqz+0VYIX0Qxyt
- KfJyoKuMa6lHvvVbbDM9fPvq9V3b9bM3iCxrkoOUPmQdDtMozWonS4kmTdHrtH5RpyTFPKJFjG
- v52AmDSm9/B8Pe+jYdq/BRNZqWa3oiVJhWz7VDEfq6akBBhvEOXx9Ur1RGfx04cDhC4Xjl9gb4
- 3If72ysNzou7qJT+pL4mRqWPnF+a9I5l1h+vn4c5HiDqVMrYAhhqWJhHtCn2sT1Db4pVfgeizh
- Z/+H5ktPXhFAeRmHD/p2O8A5
+  by ob1.hgst.iphmx.com with ESMTP; 22 Jan 2021 14:22:32 +0800
+IronPort-SDR: FwpCZHtsc9P0qdCtKdx5GRhCUqklPms5xzFGUyUcAQy04qkqt8cgGQMbf25taLf8OdXub5NukV
+ gQ2KIqcXpoNS00cdCweuh+Z38eUfxbu1rceg5F3MXVzoJyplaNsVRVoRfcS6Th8LwfGpFU+Z/j
+ Yl2Zp/iwOIj50ldH/oy3oHM7hoghY3X3WTnnsqeX7npgAa2Uagaoc8FbFvHEr3snvjDY3AQujb
+ nS2vXVEgPSjAP8KpVfOLvjO5B3xv77Xss6bYhpqbeXIIxmQ1qHbKQQjfJODjSQY5yY9urE5TGD
+ kjcp3RlZTPX6RC14XSWJfBLT
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 22:05:01 -0800
-IronPort-SDR: GYPVu1TtWTgGcJEReCT9FU2wRhDD16NVnqxf+lwlQUMrspqx6hGxBQITREE9Ir3BAAznRR2E8v
- 9waDynpaxibn1LpkiibRvoH5yF4ZO6F89i+c5onT0BG9mmuPuP8w5+JbZnOGfzqH5zh4VCcb+m
- cT2gDP+t9lsqyfziqcP8JGRM8VGEwe+bmOvUIRHQ7A9H1lOOFzd+yymvLdYdQ1vModqohMbdOv
- WHvAxU8Bs7t1FAa21SUqPxg/woquyjC8AWM6iTvjhtaIDTKNM7TS+M1s1NY1Nn+lINZ30NuTcM
- 5RE=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 22:05:04 -0800
+IronPort-SDR: FJAjOkRi8Hoiclmmkk/J0XyduzZbt0eNyznGPNmLbYM/Sk+61YiKy1fbjoOSlxpwJnSCyo+zvl
+ 26uQm4eHkLueVd0UPr7Kwzz1O2ZgywvR1Haw51RBdvfU7kbHUdRlmJiFE8cCiMeu4sKo8aAn+S
+ +dQ96RU4d2iCG1M9L3IAEOjMEJQ2zUVbdgZq7zmGNH4pTb8OcgXrDGyXQ/Q+Fmg0t6CbcRDlt4
+ UZvL/ABBYsYvHuokXZy6aZyBS9ZgQyT0ibJrfn23N88KT5G21nnRBPwYccHDalBcMkCDWmk6BZ
+ Nu4=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 21 Jan 2021 22:22:27 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 21 Jan 2021 22:22:31 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v13 05/42] btrfs: release path before calling into btrfs_load_block_group_zone_info
-Date:   Fri, 22 Jan 2021 15:21:05 +0900
-Message-Id: <9caf351d3da77e5b9f781226b2c199b570cccb62.1611295439.git.naohiro.aota@wdc.com>
+        Naohiro Aota <naohiro.aota@wdc.com>
+Subject: [PATCH v13 07/42] btrfs: disallow fitrim in ZONED mode
+Date:   Fri, 22 Jan 2021 15:21:07 +0900
+Message-Id: <51f6f258af8d5de433c3437c26a98936a69eea7e.1611295439.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1611295439.git.naohiro.aota@wdc.com>
 References: <cover.1611295439.git.naohiro.aota@wdc.com>
@@ -68,99 +68,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+The implementation of fitrim is depending on space cache, which is not used
+and disabled for zoned btrfs' extent allocator. So the current code does
+not work with zoned btrfs. In the future, we can implement fitrim for zoned
+btrfs by enabling space cache (but, only for fitrim) or scanning the extent
+tree at fitrim time. But, for now, disallow fitrim in ZONED mode.
 
-Since we have no write pointer in conventional zones, we cannot determine
-the allocation offset from it. Instead, we set the allocation offset after
-the highest addressed extent. This is done by reading the extent tree in
-btrfs_load_block_group_zone_info().
-
-However, this function is called from btrfs_read_block_groups(), so the
-read lock for the tree node can recursively taken.
-
-To avoid this unsafe locking scenario, release the path before reading the
-extent tree to get the allocation offset.
-
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/block-group.c | 39 ++++++++++++++++++---------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+ fs/btrfs/ioctl.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-index 0886e81e5540..60d843f341aa 100644
---- a/fs/btrfs/block-group.c
-+++ b/fs/btrfs/block-group.c
-@@ -1797,24 +1797,8 @@ static int check_chunk_block_group_mappings(struct btrfs_fs_info *fs_info)
- 	return ret;
- }
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 7f2935ea8d3a..f05b0b8b1595 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -527,6 +527,14 @@ static noinline int btrfs_ioctl_fitrim(struct btrfs_fs_info *fs_info,
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
  
--static void read_block_group_item(struct btrfs_block_group *cache,
--				 struct btrfs_path *path,
--				 const struct btrfs_key *key)
--{
--	struct extent_buffer *leaf = path->nodes[0];
--	struct btrfs_block_group_item bgi;
--	int slot = path->slots[0];
--
--	cache->length = key->offset;
--
--	read_extent_buffer(leaf, &bgi, btrfs_item_ptr_offset(leaf, slot),
--			   sizeof(bgi));
--	cache->used = btrfs_stack_block_group_used(&bgi);
--	cache->flags = btrfs_stack_block_group_flags(&bgi);
--}
--
- static int read_one_block_group(struct btrfs_fs_info *info,
--				struct btrfs_path *path,
-+				struct btrfs_block_group_item *bgi,
- 				const struct btrfs_key *key,
- 				int need_clear)
- {
-@@ -1829,7 +1813,9 @@ static int read_one_block_group(struct btrfs_fs_info *info,
- 	if (!cache)
- 		return -ENOMEM;
- 
--	read_block_group_item(cache, path, key);
-+	cache->length = key->offset;
-+	cache->used = btrfs_stack_block_group_used(bgi);
-+	cache->flags = btrfs_stack_block_group_flags(bgi);
- 
- 	set_free_space_tree_thresholds(cache);
- 
-@@ -1988,19 +1974,30 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
- 		need_clear = 1;
- 
- 	while (1) {
-+		struct btrfs_block_group_item bgi;
-+		struct extent_buffer *leaf;
-+		int slot;
++	/*
++	 * btrfs_trim_block_group() is depending on space cache, which is
++	 * not available in ZONED mode. So, disallow fitrim in ZONED mode
++	 * for now.
++	 */
++	if (btrfs_is_zoned(fs_info))
++		return -EOPNOTSUPP;
 +
- 		ret = find_first_block_group(info, path, &key);
- 		if (ret > 0)
- 			break;
- 		if (ret != 0)
- 			goto error;
- 
--		btrfs_item_key_to_cpu(path->nodes[0], &key, path->slots[0]);
--		ret = read_one_block_group(info, path, &key, need_clear);
-+		leaf = path->nodes[0];
-+		slot = path->slots[0];
-+
-+		read_extent_buffer(leaf, &bgi,
-+				   btrfs_item_ptr_offset(leaf, slot),
-+				   sizeof(bgi));
-+
-+		btrfs_item_key_to_cpu(leaf, &key, slot);
-+		btrfs_release_path(path);
-+		ret = read_one_block_group(info, &bgi, &key, need_clear);
- 		if (ret < 0)
- 			goto error;
- 		key.objectid += key.offset;
- 		key.offset = 0;
--		btrfs_release_path(path);
- 	}
- 	btrfs_release_path(path);
- 
+ 	/*
+ 	 * If the fs is mounted with nologreplay, which requires it to be
+ 	 * mounted in RO mode as well, we can not allow discard on free space
 -- 
 2.27.0
 
