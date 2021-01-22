@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4DBC2FFB16
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 04:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E10A42FFB67
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 04:50:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbhAVDai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 22:30:38 -0500
-Received: from namei.org ([65.99.196.166]:52706 "EHLO mail.namei.org"
+        id S1726481AbhAVDtf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 22:49:35 -0500
+Received: from namei.org ([65.99.196.166]:52776 "EHLO mail.namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbhAVDaS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 22:30:18 -0500
+        id S1726030AbhAVDtc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 22:49:32 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id 3328849C;
-        Fri, 22 Jan 2021 03:28:46 +0000 (UTC)
-Date:   Fri, 22 Jan 2021 14:28:46 +1100 (AEDT)
+        by mail.namei.org (Postfix) with ESMTPS id 1847E8CE;
+        Fri, 22 Jan 2021 03:47:59 +0000 (UTC)
+Date:   Fri, 22 Jan 2021 14:47:59 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -49,10 +49,11 @@ cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 11/40] stat: handle idmapped mounts
-In-Reply-To: <20210121131959.646623-12-christian.brauner@ubuntu.com>
-Message-ID: <841ffb88-b1a6-2497-a68a-f89ad903dd8@namei.org>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-12-christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v6 12/40] namei: handle idmapped mounts in may_*()
+ helpers
+In-Reply-To: <20210121131959.646623-13-christian.brauner@ubuntu.com>
+Message-ID: <2ec5e6b6-768c-dad-3365-53c129579eb@namei.org>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-13-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
@@ -61,20 +62,26 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, 21 Jan 2021, Christian Brauner wrote:
 
-> The generic_fillattr() helper fills in the basic attributes associated
-> with an inode. Enable it to handle idmapped mounts. If the inode is
-> accessed through an idmapped mount map it into the mount's user
-> namespace before we store the uid and gid. If the initial user namespace
-> is passed nothing changes so non-idmapped mounts will see identical
-> behavior as before.
+> The may_follow_link(), may_linkat(), may_lookup(), may_open(),
+> may_o_create(), may_create_in_sticky(), may_delete(), and may_create()
+> helpers determine whether the caller is privileged enough to perform the
+> associated operations. Let them handle idmapped mounts by mapping the
+> inode or fsids according to the mount's user namespace. Afterwards the
+> checks are identical to non-idmapped inodes. The patch takes care to
+> retrieve the mount's user namespace right before performing permission
+> checks and passing it down into the fileystem so the user namespace
+> can't change in between by someone idmapping a mount that is currently
+> not idmapped. If the initial user namespace is passed nothing changes so
+> non-idmapped mounts will see identical behavior as before.
 > 
-> Link: https://lore.kernel.org/r/20210112220124.837960-19-christian.brauner@ubuntu.com
+> Link: https://lore.kernel.org/r/20210112220124.837960-20-christian.brauner@ubuntu.com
 > Cc: Christoph Hellwig <hch@lst.de>
 > Cc: David Howells <dhowells@redhat.com>
 > Cc: Al Viro <viro@zeniv.linux.org.uk>
 > Cc: linux-fsdevel@vger.kernel.org
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
 > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+
 
 Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
