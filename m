@@ -2,372 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66474300F2B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 22:50:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB1A300FF1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 23:27:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbhAVVsl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 16:48:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58936 "EHLO
+        id S1729626AbhAVW1J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 17:27:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729902AbhAVVdX (ORCPT
+        with ESMTP id S1730431AbhAVTxu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 16:33:23 -0500
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02479C06121E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 13:29:48 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id b62so6806974ybg.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 13:29:47 -0800 (PST)
+        Fri, 22 Jan 2021 14:53:50 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAF60C061786
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 11:53:00 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id a9so6187014wrt.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 11:53:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=oyJPgV8K8S4Gy85BdBGkEQvANvVvyKl4H3j8LjEJSkE=;
-        b=tNWMz1T6VAVzfCMKayP6joEVQcsl0ckxcCtaLlFHKRsWwZT3LvvsXhqTJnvPpoNapO
-         2yU0b0VewiEe/pQaadXpk2vQzGVZbixUD6mWyGISWJvKncrYbHs5agjZdJZSoG0lbnln
-         vdSA5I4q/EdFSRsZfx0+5QGJtszigak61IYouH7JRIuqD2MHuHpJCs8yM1Aui66qC79B
-         V6swJB/FN4sIM5qBqK9hka7oE5uUUAFOdO6UmzHZb4YlR/8jfVpVzAzocJfrl1uveT0K
-         6mBQ+HpjfNvRlzII7ilj7JaodgUKXs93Eq1JcCGuP9rIfoJRgRH7V20ZtZEeTHpt6aHN
-         p1wA==
+        d=arista.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PoUmh0Zl4Lb/uiEcNMHSPKB/LP5kBHU4jtL2CNFSwg0=;
+        b=Edv6LgmbQVxdfoYI4iSF5u5Zu1luRTcHIoKh+PkgJyW3e75qA0YgQxa2mtpt0oXyrB
+         rk028dil8ZU4RT2qmFI6yyzYzSY/Dn+wbycdNJLpbLK5kRivbnd3cyTFHq+X2MwvAiL6
+         Ip5DTRHUaHOSriYo9VaWAB8d3/qH+AGQzr3zRCF3VAB5HKzw6U1bK+xjSK4+FAztvd53
+         Tw1nhSn3hYHfGXup7hzP2A2cr08hXlqM87aWrL1nqF0F05TGK+Cqx8n414NzxaF1tIYN
+         8qIlabiR7ljBHs6Scll61MPzSqXCwJx6iF9N5nHiqnw4U9kZkfi9VtDfX1dmr2IvlAeQ
+         LKPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=oyJPgV8K8S4Gy85BdBGkEQvANvVvyKl4H3j8LjEJSkE=;
-        b=CDGUUizKTpPCncN5uyeVefIjk9WjcGUllHLhmb1iTLnHpyXl4MXv3QdHCQb0csqzUc
-         rE5ExwSd5HAn/t/3tmMIT74PRWrnWaBt2xNpIOVGUlcV5Gc5RtkbjEgFWmztjufNqGCB
-         +0QHqdYk++jWzmjgBYs8XgUMqEppmhDtXM3zPiz6Bpry8PP08vWITFmW1z9TuJOX97uq
-         nstdRPrQw77X0cisWKUPcCmi0sA89n9bzBLSGrLuifbe6G1mUR4EEVzhNLAedqRuuI3c
-         qGJYAImspsxr9ZhbHgHAXSy3SPskV6e95SwxshQiJu5qSXBHMD68XqvbuSQLcfeCzo4V
-         xCZg==
-X-Gm-Message-State: AOAM530Ml2WohOvcDIwKgCNolex/Lf/R61fIwY44+YV6z/rTB/05gqEp
-        kS/od5P+gdrMhIXUBzGoJrim8p0CswASJj/mScaf
-X-Google-Smtp-Source: ABdhPJxWOJPOiqunhzfIGFFGLX3nPJSRdmL3Qlw2GVHGQhAQ+/A5ecz1muqQSmII28M/3eqFLOxGgB1V44OClbATek7V
-Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
-X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:f693:9fff:feef:c8f8])
- (user=axelrasmussen job=sendgmr) by 2002:a25:d450:: with SMTP id
- m77mr9217137ybf.234.1611350987109; Fri, 22 Jan 2021 13:29:47 -0800 (PST)
-Date:   Fri, 22 Jan 2021 13:29:26 -0800
-In-Reply-To: <20210122212926.3457593-1-axelrasmussen@google.com>
-Message-Id: <20210122212926.3457593-10-axelrasmussen@google.com>
-Mime-Version: 1.0
-References: <20210122212926.3457593-1-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.30.0.280.ga3ce27912f-goog
-Subject: [PATCH v2 9/9] userfaultfd/selftests: add test exercising minor fault handling
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PoUmh0Zl4Lb/uiEcNMHSPKB/LP5kBHU4jtL2CNFSwg0=;
+        b=V/sk13ESAIOj9uQLHPKNr7m6aCccsQoXl4wXBpwpEbCva8/+muVrhg1TuNCBevgzUo
+         gi4EYjXGOnyBtTZZoWzm7ASTVTNttFJAcetTbCuHAXO55H6/40qoO9AdyydDgBSHSbjE
+         GswnhHJ7HLiEYDkcRrBS9FFwyhGAX13ksfr2vbPAp/XpqOM5sc1wjWHSVbW1JVM+27pZ
+         63bHDuu2uePvxjPJB2h5k4rq+Jk4qC+pnqbSR6vA4EOjJVu88LlwmOdgW1VR79PBDy6q
+         sYboELmcEif4wZTMdt40hyaq9hd+v6TXdNpzPYa+XeM+I0qAMGkY+wCj3f7bkrv2BgKY
+         A41A==
+X-Gm-Message-State: AOAM5305HeB2aHmCsmC3Tev45BR9wCdIF3Yac+4chBZx+41NBEgtEL+j
+        lGz1ovvYwXLXbOmeVdJGTG8k2w==
+X-Google-Smtp-Source: ABdhPJxMgUW7s07FwzLU3EyePjayZSFS+FWRLnpef3DwMsKkS7JflDGbeSTF677fq/i3IA8hi3MSJg==
+X-Received: by 2002:a05:6000:1d0:: with SMTP id t16mr6094745wrx.203.1611345179578;
+        Fri, 22 Jan 2021 11:52:59 -0800 (PST)
+Received: from ?IPv6:2a02:8084:e84:2480:228:f8ff:fe6f:83a8? ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
+        by smtp.gmail.com with ESMTPSA id d3sm6023321wrp.79.2021.01.22.11.52.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Jan 2021 11:52:58 -0800 (PST)
+Subject: Re: [PATCH 6/6] mm: Forbid splitting special mappings
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Brian Geffon <bgeffon@google.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>,
-        Michel Lespinasse <walken@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Steven Price <steven.price@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Adam Ruprecht <ruprecht@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Oliver Upton <oupton@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Minchan Kim <minchan@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20201013013416.390574-1-dima@arista.com>
+ <20201013013416.390574-7-dima@arista.com>
+ <20210122125858.GC24102@willie-the-truck>
+ <20210122130003.GD24102@willie-the-truck>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <6afa94d4-40d9-3a34-381d-f14d07338628@arista.com>
+Date:   Fri, 22 Jan 2021 19:52:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
+MIME-Version: 1.0
+In-Reply-To: <20210122130003.GD24102@willie-the-truck>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix a dormant bug in userfaultfd_events_test(), where we did
-`return faulting_process(0)` instead of `exit(faulting_process(0))`.
-This caused the forked process to keep running, trying to execute any
-further test cases after the events test in parallel with the "real"
-process.
+On 1/22/21 1:00 PM, Will Deacon wrote:
+> On Fri, Jan 22, 2021 at 12:58:58PM +0000, Will Deacon wrote:
+>> On Tue, Oct 13, 2020 at 02:34:16AM +0100, Dmitry Safonov wrote:
+>>> Don't allow splitting of vm_special_mapping's.
+>>> It affects vdso/vvar areas. Uprobes have only one page in xol_area so
+>>> they aren't affected.
+>>>
+>>> Those restrictions were enforced by checks in .mremap() callbacks.
+>>> Restrict resizing with generic .split() callback.
+>>>
+>>> Signed-off-by: Dmitry Safonov <dima@arista.com>
+>>> ---
+>>>  arch/arm/kernel/vdso.c    |  9 ---------
+>>>  arch/arm64/kernel/vdso.c  | 41 +++------------------------------------
+>>>  arch/mips/vdso/genvdso.c  |  4 ----
+>>>  arch/s390/kernel/vdso.c   | 11 +----------
+>>>  arch/x86/entry/vdso/vma.c | 17 ----------------
+>>>  mm/mmap.c                 | 12 ++++++++++++
+>>>  6 files changed, 16 insertions(+), 78 deletions(-)
+>>
+>> For arm64:
+>>
+>> Acked-by: Will Deacon <will@kernel.org>
+> 
+> Wait -- this got merged ages ago! Why am I reading such old email?
 
-Add a simple test case which exercises minor faults. In short, it does
-the following:
+It's alright, thanks for looking at this again!
 
-1. "Sets up" an area (area_dst) and a second shared mapping to the same
-   underlying pages (area_dst_alias).
-
-2. Register one of these areas with userfaultfd, in minor fault mode.
-
-3. Start a second thread to handle any minor faults.
-
-4. Populate the underlying pages with the non-UFFD-registered side of
-   the mapping. Basically, memset() each page with some arbitrary
-   contents.
-
-5. Then, using the UFFD-registered mapping, read all of the page
-   contents, asserting that the contents match expectations (we expect
-   the minor fault handling thread can modify the page contents before
-   resolving the fault).
-
-The minor fault handling thread, upon receiving an event, flips all the
-bits (~) in that page, just to prove that it can modify it in some
-arbitrary way. Then it issues a UFFDIO_CONTINUE ioctl, to setup the
-mapping and resolve the fault. The reading thread should wake up and see
-this modification.
-
-Currently the minor fault test is only enabled in hugetlb_shared mode,
-as this is the only configuration the kernel feature supports.
-
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- tools/testing/selftests/vm/userfaultfd.c | 147 ++++++++++++++++++++++-
- 1 file changed, 143 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 92b8ec423201..73a72a3c4189 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -81,6 +81,8 @@ static volatile bool test_uffdio_copy_eexist = true;
- static volatile bool test_uffdio_zeropage_eexist = true;
- /* Whether to test uffd write-protection */
- static bool test_uffdio_wp = false;
-+/* Whether to test uffd minor faults */
-+static bool test_uffdio_minor = false;
- 
- static bool map_shared;
- static int huge_fd;
-@@ -96,6 +98,7 @@ struct uffd_stats {
- 	int cpu;
- 	unsigned long missing_faults;
- 	unsigned long wp_faults;
-+	unsigned long minor_faults;
- };
- 
- /* pthread_mutex_t starts at page offset 0 */
-@@ -153,17 +156,19 @@ static void uffd_stats_reset(struct uffd_stats *uffd_stats,
- 		uffd_stats[i].cpu = i;
- 		uffd_stats[i].missing_faults = 0;
- 		uffd_stats[i].wp_faults = 0;
-+		uffd_stats[i].minor_faults = 0;
- 	}
- }
- 
- static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
- {
- 	int i;
--	unsigned long long miss_total = 0, wp_total = 0;
-+	unsigned long long miss_total = 0, wp_total = 0, minor_total = 0;
- 
- 	for (i = 0; i < n_cpus; i++) {
- 		miss_total += stats[i].missing_faults;
- 		wp_total += stats[i].wp_faults;
-+		minor_total += stats[i].minor_faults;
- 	}
- 
- 	printf("userfaults: %llu missing (", miss_total);
-@@ -172,6 +177,9 @@ static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
- 	printf("\b), %llu wp (", wp_total);
- 	for (i = 0; i < n_cpus; i++)
- 		printf("%lu+", stats[i].wp_faults);
-+	printf("\b), %llu minor (", minor_total);
-+	for (i = 0; i < n_cpus; i++)
-+		printf("%lu+", stats[i].minor_faults);
- 	printf("\b)\n");
- }
- 
-@@ -328,7 +336,7 @@ static struct uffd_test_ops shmem_uffd_test_ops = {
- };
- 
- static struct uffd_test_ops hugetlb_uffd_test_ops = {
--	.expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC,
-+	.expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC & ~(1 << _UFFDIO_CONTINUE),
- 	.allocate_area	= hugetlb_allocate_area,
- 	.release_pages	= hugetlb_release_pages,
- 	.alias_mapping = hugetlb_alias_mapping,
-@@ -362,6 +370,22 @@ static void wp_range(int ufd, __u64 start, __u64 len, bool wp)
- 	}
- }
- 
-+static void continue_range(int ufd, __u64 start, __u64 len)
-+{
-+	struct uffdio_continue req;
-+
-+	req.range.start = start;
-+	req.range.len = len;
-+	req.mode = 0;
-+
-+	if (ioctl(ufd, UFFDIO_CONTINUE, &req)) {
-+		fprintf(stderr,
-+			"UFFDIO_CONTINUE failed for address 0x%" PRIx64 "\n",
-+			(uint64_t)start);
-+		exit(1);
-+	}
-+}
-+
- static void *locking_thread(void *arg)
- {
- 	unsigned long cpu = (unsigned long) arg;
-@@ -569,8 +593,32 @@ static void uffd_handle_page_fault(struct uffd_msg *msg,
- 	}
- 
- 	if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP) {
-+		/* Write protect page faults */
- 		wp_range(uffd, msg->arg.pagefault.address, page_size, false);
- 		stats->wp_faults++;
-+	} else if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_MINOR) {
-+		uint8_t *area;
-+		int b;
-+
-+		/*
-+		 * Minor page faults
-+		 *
-+		 * To prove we can modify the original range for testing
-+		 * purposes, we're going to bit flip this range before
-+		 * continuing.
-+		 *
-+		 * Note that this requires all minor page fault tests operate on
-+		 * area_dst (non-UFFD-registered) and area_dst_alias
-+		 * (UFFD-registered).
-+		 */
-+
-+		area = (uint8_t *)(area_dst +
-+				   ((char *)msg->arg.pagefault.address -
-+				    area_dst_alias));
-+		for (b = 0; b < page_size; ++b)
-+			area[b] = ~area[b];
-+		continue_range(uffd, msg->arg.pagefault.address, page_size);
-+		stats->minor_faults++;
- 	} else {
- 		/* Missing page faults */
- 		if (bounces & BOUNCE_VERIFY &&
-@@ -1112,7 +1160,7 @@ static int userfaultfd_events_test(void)
- 	}
- 
- 	if (!pid)
--		return faulting_process(0);
-+		exit(faulting_process(0));
- 
- 	waitpid(pid, &err, 0);
- 	if (err) {
-@@ -1215,6 +1263,95 @@ static int userfaultfd_sig_test(void)
- 	return userfaults != 0;
- }
- 
-+static int userfaultfd_minor_test(void)
-+{
-+	struct uffdio_register uffdio_register;
-+	unsigned long expected_ioctls;
-+	unsigned long p;
-+	pthread_t uffd_mon;
-+	uint8_t expected_byte;
-+	void *expected_page;
-+	char c;
-+	struct uffd_stats stats = { 0 };
-+
-+	if (!test_uffdio_minor)
-+		return 0;
-+
-+	printf("testing minor faults: ");
-+	fflush(stdout);
-+
-+	if (uffd_test_ops->release_pages(area_dst))
-+		return 1;
-+
-+	if (userfaultfd_open(0))
-+		return 1;
-+
-+	uffdio_register.range.start = (unsigned long)area_dst_alias;
-+	uffdio_register.range.len = nr_pages * page_size;
-+	uffdio_register.mode = UFFDIO_REGISTER_MODE_MINOR;
-+	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register)) {
-+		fprintf(stderr, "register failure\n");
-+		exit(1);
-+	}
-+
-+	expected_ioctls = uffd_test_ops->expected_ioctls;
-+	expected_ioctls |= 1 << _UFFDIO_CONTINUE;
-+	if ((uffdio_register.ioctls & expected_ioctls) != expected_ioctls) {
-+		fprintf(stderr, "unexpected missing ioctl(s)\n");
-+		exit(1);
-+	}
-+
-+	/*
-+	 * After registering with UFFD, populate the non-UFFD-registered side of
-+	 * the shared mapping. This should *not* trigger any UFFD minor faults.
-+	 */
-+	for (p = 0; p < nr_pages; ++p) {
-+		memset(area_dst + (p * page_size), p % ((uint8_t)-1),
-+		       page_size);
-+	}
-+
-+	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, &stats)) {
-+		perror("uffd_poll_thread create");
-+		exit(1);
-+	}
-+
-+	/*
-+	 * Read each of the pages back using the UFFD-registered mapping. We
-+	 * expect that the first time we touch a page, it will result in a minor
-+	 * fault. uffd_poll_thread will resolve the fault by bit-flipping the
-+	 * page's contents, and then issuing a CONTINUE ioctl.
-+	 */
-+
-+	if (posix_memalign(&expected_page, page_size, page_size)) {
-+		fprintf(stderr, "out of memory\n");
-+		return 1;
-+	}
-+
-+	for (p = 0; p < nr_pages; ++p) {
-+		expected_byte = ~((uint8_t)(p % ((uint8_t)-1)));
-+		memset(expected_page, expected_byte, page_size);
-+		if (my_bcmp(expected_page, area_dst_alias + (p * page_size),
-+			    page_size)) {
-+			fprintf(stderr,
-+				"unexpected page contents after minor fault\n");
-+			exit(1);
-+		}
-+	}
-+
-+	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c)) {
-+		perror("pipe write");
-+		exit(1);
-+	}
-+	if (pthread_join(uffd_mon, NULL))
-+		return 1;
-+
-+	close(uffd);
-+
-+	uffd_stats_report(&stats, 1);
-+
-+	return stats.minor_faults != nr_pages;
-+}
-+
- static int userfaultfd_stress(void)
- {
- 	void *area;
-@@ -1413,7 +1550,7 @@ static int userfaultfd_stress(void)
- 
- 	close(uffd);
- 	return userfaultfd_zeropage_test() || userfaultfd_sig_test()
--		|| userfaultfd_events_test();
-+		|| userfaultfd_events_test() || userfaultfd_minor_test();
- }
- 
- /*
-@@ -1454,6 +1591,8 @@ static void set_test_type(const char *type)
- 		map_shared = true;
- 		test_type = TEST_HUGETLB;
- 		uffd_test_ops = &hugetlb_uffd_test_ops;
-+		/* Minor faults require shared hugetlb; only enable here. */
-+		test_uffdio_minor = true;
- 	} else if (!strcmp(type, "shmem")) {
- 		map_shared = true;
- 		test_type = TEST_SHMEM;
 -- 
-2.30.0.280.ga3ce27912f-goog
-
+          Dmitry
