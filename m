@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B082FFCA6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 07:27:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC3B2FFCA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 07:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbhAVG0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 01:26:50 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:51138 "EHLO
+        id S1726886AbhAVG0l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 01:26:41 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:51100 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbhAVG0P (ORCPT
+        with ESMTP id S1726871AbhAVG0a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 01:26:15 -0500
+        Fri, 22 Jan 2021 01:26:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611296774; x=1642832774;
+  t=1611296790; x=1642832790;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=0hlh/nk+eI9NxaEmuQbJ4vSowBJ1lLOdbFOWcJflPo0=;
-  b=Piq57/W2tpGa96aXJCDRyBcdeFB6qhAUrECfLlQVbOHZxBtZng0kGi7p
-   ERLzROCK1jilkFll+BLjQtJrMS8nT4DJ4+osaUGtx6J6XJwAuVWyJ931U
-   q5ljgUjHhWz5szu/ALiFRBXkHp+pVwXnBVFADeOdXzYSb/I6y4BguyCFP
-   K34Km8H9FHnVmjusMawTcMosbS9UZ31AjL/temuoxsDrU0jxbkpAhz/ic
-   7hUDO1WhoxloXhMQZTySXUTLGlvg0U8/OyXbWbtHQQbdjkJycqqeD/+V2
-   kZyTJXuMg4oPqLaGXGKOYDUDLaVZ/5uzWWUEz/udxsNvl0eXXYpHrWgLg
+  bh=pgsN3LbRWcYhTz/c3eMHZXbqSnd3OFOK49SDAdOmhZQ=;
+  b=qiuwFjWP12hkQZSuOMzhm3nBIUNR96b9Bm8SqcbkgCcZn0+LNuFKexIK
+   9otFFFyA6b4Z40QzjWDSVUaw2X9RsURAG6y/L7K6QoQABa73eDxQPLb6h
+   5fJypMlbFXMcm4KEmsjxjT3TwM00KNDcKOZWz3GJRMUICaOd0IVY+FN6H
+   gHX9TxtVwJmP9RR9LdvLEya97Ap3Rbmbu8ZRVdoMsllwxee381+v9/BFq
+   PdWKbROtunvhPksuWA1ZjkJT3GfeOKjvxPWChaUArU9bg4ImsLkIdHqyc
+   rzQ2CT5H2fjDqsZA8lJcsJizXfLSZrFKxNBYmJcE199YvI3Np+2VgXWZr
    g==;
-IronPort-SDR: +0h1RoJZ+u3K+sJA7BVL49GoAoWArg0zOcVvGpOeiFhONeBMNba8tRtIARfpTejVr20zvdJoo+
- AbLDFKcKA5AUEkwB/vq6Gprm/hFKKsQ3D26GAJUDiBu6kUiVdAW0iAXOqKzGdDDyjNA7dogsDf
- zr4wtI87pBoBgZ5hTCgU1/5aUuc3eH53253jFRiDN71V/7w3Fyp8GSCgp8FXil4ZY8l74QCeL4
- nloMwGfgPqe9n06ATeSPbvHyEzHd4b6AajR6iKCYFjlV5n1umyMfOjyJaYwggKcTBKFgLzL9lm
- UZc=
+IronPort-SDR: yrC/EHI5ewdaPVQF0PHuhGjmrZOK/XHoyIZpdOkYxg/mNIdP7AjthW5myIFSsMmVMhyvFCCQBY
+ 5jYqkEo9WUUC/cqzUm2dQ3dj7bcsFz/x+hZC9qEouhFLHQO0hOD1d3bmDHpegSYiJM5rqG83Ji
+ qUm3/FIPX5HWDqKlydtq8NJD3a3gCY7gt3z5Cjk80By0Y9C07wIqtAjCHjwkikLGkh0ilj2l85
+ HTNyQFe+91/MpdHum16GvJ+fsY7vviBK2RVC8Z22+gzVKbLCTq0jYvwodaVemSYs7FTs9OqkJm
+ dbw=
 X-IronPort-AV: E=Sophos;i="5.79,365,1602518400"; 
-   d="scan'208";a="268392006"
+   d="scan'208";a="268392008"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Jan 2021 14:22:54 +0800
-IronPort-SDR: ZLrS/a4byBIF7rEDJQOad3pgQ3ZLt6osW0JWDXyZCuD3XtZxhvIG+oZsX013GHvTg8TTUtapuF
- 8Lhmp9WgFjhgOEQYhjaowzO9Zlr9i3fG/ASLAFJrNGHO6r8A8Qg5Yq4mc9WmDVuambqanRsqEO
- 7f+n8vUpTlk2RcNSQQm/hKBd6Ab9gPYaGcsPixLc+Ut63atqSln+cFdiSFRTCmTFsFA28wBdkE
- 45QDSp72VhIcCuGrqDVc3bDWCEqFFrN6RnMmCRTGPp7/SbY2wvMnCDouj3vc1YCwmEPLUi4RkU
- 1bnsd6/f+06PEILRBciNiZag
+  by ob1.hgst.iphmx.com with ESMTP; 22 Jan 2021 14:22:55 +0800
+IronPort-SDR: +fsgt/UaDB2+Oxc3X5oyTru6W/hb1ub7O1uKY27aOByOTURV9cNaQi5EZnRA6T+N2lUjjIiCiP
+ 06b+rpIRS/jpuRX4/Oh+4pRH0joOVJeLaIWTRDlF/IWjtgZoP+L8PhM7MU/36G467+crHlV8iT
+ BZuJpopmtd/e7Ojwvb+HJ6XZvFogvVtk2Fb4jMvUznaaBaTeQvUatyb2GP3j6gzZnJqLFkD1Hc
+ fTC9D/PAe1bUb15RgihMIJ9jMcLN2OU+LfPFT7Zr+ch5kBNKrFNgyN0QVMw4L3wQyYjY6oF+l4
+ UtED5vPRksi9kB9St5u25oCj
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 22:05:25 -0800
-IronPort-SDR: XqkitWtHKW9XAvBgXkYZvqXGhGkD0plzspqL2zkJ1x1nBXCRnR+si9gdMV2aR1KyXX/h+cw/wS
- SW9Q61E13OJTw8fuQLWw8PiRw6ktXOuc+aKk90ekVnBrrpfXB6z/eGjaSMZn1+STrAC1SsfMSR
- y8gGylqaSdUC7PjjQ9xDIjD3eblpPInDY5iAZ0G6R4TO50oOO1vHOwIgj2Ku8jh7y7RTVa4I7x
- fd5K3pVJxSmsiYy4DVRYg5VMLaTAnXCGnB1j5Ax22/gBPPyjtWKnkaX/8L8mWdDK4HbrKtn5n4
- OpU=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 22:05:27 -0800
+IronPort-SDR: wClXVor2ktw31FZiTWm3Itr/b5Biuhb/BenM5sb9yeJgKPCfAvVSpErVANVuPcPGH2WOzwujoH
+ 0Hik7XOvZwnaJSmnwsv459rUWtL/TzID/Pu/mlXWaLD0M50xD8Abn6zeUh7277B7YivDoAPwqD
+ 9eR14DEjxw53vP5lJzCx+TIzPBydV8QXaVyFShSd/egCVlTS6/WUT1gHrvpJaiXtbtEq1raUtH
+ j6bAPHc7k/VUVzx50my56C9YIqQKjiTe/CRoQysLsei7DlG0n5GLiZUD7s7NJ16jIHOkqDaWM2
+ 89M=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 21 Jan 2021 22:22:52 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 21 Jan 2021 22:22:54 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Naohiro Aota <naohiro.aota@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v13 20/42] btrfs: use bio_add_zone_append_page for zoned btrfs
-Date:   Fri, 22 Jan 2021 15:21:20 +0900
-Message-Id: <5079f58020ef53a905ffdf8f7ec25b103d88f0bb.1611295439.git.naohiro.aota@wdc.com>
+Subject: [PATCH v13 21/42] btrfs: handle REQ_OP_ZONE_APPEND as writing
+Date:   Fri, 22 Jan 2021 15:21:21 +0900
+Message-Id: <0b48ccedf7a0982cca507db3b973a8a57a1f277a.1611295439.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1611295439.git.naohiro.aota@wdc.com>
 References: <cover.1611295439.git.naohiro.aota@wdc.com>
@@ -69,88 +69,136 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Zoned device has its own hardware restrictions e.g. max_zone_append_size
-when using REQ_OP_ZONE_APPEND. To follow the restrictions, use
-bio_add_zone_append_page() instead of bio_add_page(). We need target device
-to use bio_add_zone_append_page(), so this commit reads the chunk
-information to memoize the target device to btrfs_io_bio(bio)->device.
-
-Currently, zoned btrfs only supports SINGLE profile. In the feature,
-btrfs_io_bio can hold extent_map and check the restrictions for all the
-devices the bio will be mapped.
+ZONED btrfs uses REQ_OP_ZONE_APPEND bios for writing to actual devices. Let
+btrfs_end_bio() and btrfs_op be aware of it.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/extent_io.c | 30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ fs/btrfs/disk-io.c |  4 ++--
+ fs/btrfs/inode.c   | 10 +++++-----
+ fs/btrfs/volumes.c |  8 ++++----
+ fs/btrfs/volumes.h |  1 +
+ 4 files changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index df7665cdbb2c..9c8faaf260ee 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -3082,6 +3082,7 @@ static bool btrfs_bio_add_page(struct bio *bio, struct page *page,
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index d530bceb8f9b..ba0ca953f7e5 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -652,7 +652,7 @@ static void end_workqueue_bio(struct bio *bio)
+ 	fs_info = end_io_wq->info;
+ 	end_io_wq->status = bio->bi_status;
+ 
+-	if (bio_op(bio) == REQ_OP_WRITE) {
++	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
+ 		if (end_io_wq->metadata == BTRFS_WQ_ENDIO_METADATA)
+ 			wq = fs_info->endio_meta_write_workers;
+ 		else if (end_io_wq->metadata == BTRFS_WQ_ENDIO_FREE_SPACE)
+@@ -828,7 +828,7 @@ blk_status_t btrfs_submit_metadata_bio(struct inode *inode, struct bio *bio,
+ 	int async = check_async_write(fs_info, BTRFS_I(inode));
+ 	blk_status_t ret;
+ 
+-	if (bio_op(bio) != REQ_OP_WRITE) {
++	if (btrfs_op(bio) != BTRFS_MAP_WRITE) {
+ 		/*
+ 		 * called for a read, do the setup so that checksum validation
+ 		 * can happen in the async kernel threads
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index ef6cb7b620d0..2e1c1f37b3f6 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2252,7 +2252,7 @@ blk_status_t btrfs_submit_data_bio(struct inode *inode, struct bio *bio,
+ 	if (btrfs_is_free_space_inode(BTRFS_I(inode)))
+ 		metadata = BTRFS_WQ_ENDIO_FREE_SPACE;
+ 
+-	if (bio_op(bio) != REQ_OP_WRITE) {
++	if (btrfs_op(bio) != BTRFS_MAP_WRITE) {
+ 		ret = btrfs_bio_wq_end_io(fs_info, bio, metadata);
+ 		if (ret)
+ 			goto out;
+@@ -7682,7 +7682,7 @@ static void btrfs_dio_private_put(struct btrfs_dio_private *dip)
+ 	if (!refcount_dec_and_test(&dip->refs))
+ 		return;
+ 
+-	if (bio_op(dip->dio_bio) == REQ_OP_WRITE) {
++	if (btrfs_op(dip->dio_bio) == BTRFS_MAP_WRITE) {
+ 		__endio_write_update_ordered(BTRFS_I(dip->inode),
+ 					     dip->logical_offset,
+ 					     dip->bytes,
+@@ -7848,7 +7848,7 @@ static inline blk_status_t btrfs_submit_dio_bio(struct bio *bio,
  {
- 	sector_t sector = disk_bytenr >> SECTOR_SHIFT;
- 	bool contig;
-+	int ret;
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+ 	struct btrfs_dio_private *dip = bio->bi_private;
+-	bool write = bio_op(bio) == REQ_OP_WRITE;
++	bool write = btrfs_op(bio) == BTRFS_MAP_WRITE;
+ 	blk_status_t ret;
  
- 	if (prev_bio_flags != bio_flags)
- 		return false;
-@@ -3096,7 +3097,12 @@ static bool btrfs_bio_add_page(struct bio *bio, struct page *page,
- 	if (btrfs_bio_fits_in_stripe(page, size, bio, bio_flags))
- 		return false;
+ 	/* Check btrfs_submit_bio_hook() for rules about async submit. */
+@@ -7898,7 +7898,7 @@ static struct btrfs_dio_private *btrfs_create_dio_private(struct bio *dio_bio,
+ 							  struct inode *inode,
+ 							  loff_t file_offset)
+ {
+-	const bool write = (bio_op(dio_bio) == REQ_OP_WRITE);
++	const bool write = (btrfs_op(dio_bio) == BTRFS_MAP_WRITE);
+ 	const bool csum = !(BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM);
+ 	size_t dip_size;
+ 	struct btrfs_dio_private *dip;
+@@ -7928,7 +7928,7 @@ static struct btrfs_dio_private *btrfs_create_dio_private(struct bio *dio_bio,
+ static blk_qc_t btrfs_submit_direct(struct inode *inode, struct iomap *iomap,
+ 		struct bio *dio_bio, loff_t file_offset)
+ {
+-	const bool write = (bio_op(dio_bio) == REQ_OP_WRITE);
++	const bool write = (btrfs_op(dio_bio) == BTRFS_MAP_WRITE);
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+ 	const bool raid56 = (btrfs_data_alloc_profile(fs_info) &
+ 			     BTRFS_BLOCK_GROUP_RAID56_MASK);
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 2d52330f26b5..e69754af2eba 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6455,7 +6455,7 @@ static void btrfs_end_bio(struct bio *bio)
+ 			struct btrfs_device *dev = btrfs_io_bio(bio)->device;
  
--	return bio_add_page(bio, page, size, pg_offset) == size;
-+	if (bio_op(bio) == REQ_OP_ZONE_APPEND)
-+		ret = bio_add_zone_append_page(bio, page, size, pg_offset);
-+	else
-+		ret = bio_add_page(bio, page, size, pg_offset);
-+
-+	return ret == size;
- }
+ 			ASSERT(dev->bdev);
+-			if (bio_op(bio) == REQ_OP_WRITE)
++			if (btrfs_op(bio) == BTRFS_MAP_WRITE)
+ 				btrfs_dev_stat_inc_and_print(dev,
+ 						BTRFS_DEV_STAT_WRITE_ERRS);
+ 			else if (!(bio->bi_opf & REQ_RAHEAD))
+@@ -6568,10 +6568,10 @@ blk_status_t btrfs_map_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
+ 	atomic_set(&bbio->stripes_pending, bbio->num_stripes);
  
- /*
-@@ -3127,7 +3133,9 @@ static int submit_extent_page(unsigned int opf,
- 	int ret = 0;
- 	struct bio *bio;
- 	size_t io_size = min_t(size_t, size, PAGE_SIZE);
--	struct extent_io_tree *tree = &BTRFS_I(page->mapping->host)->io_tree;
-+	struct btrfs_inode *inode = BTRFS_I(page->mapping->host);
-+	struct extent_io_tree *tree = &inode->io_tree;
-+	struct btrfs_fs_info *fs_info = inode->root->fs_info;
- 
- 	ASSERT(bio_ret);
- 
-@@ -3158,11 +3166,27 @@ static int submit_extent_page(unsigned int opf,
- 	if (wbc) {
- 		struct block_device *bdev;
- 
--		bdev = BTRFS_I(page->mapping->host)->root->fs_info->fs_devices->latest_bdev;
-+		bdev = fs_info->fs_devices->latest_bdev;
- 		bio_set_dev(bio, bdev);
- 		wbc_init_bio(wbc, bio);
- 		wbc_account_cgroup_owner(wbc, page, io_size);
- 	}
-+	if (btrfs_is_zoned(fs_info) &&
-+	    bio_op(bio) == REQ_OP_ZONE_APPEND) {
-+		struct extent_map *em;
-+		struct map_lookup *map;
-+
-+		em = btrfs_get_chunk_map(fs_info, disk_bytenr, io_size);
-+		if (IS_ERR(em))
-+			return PTR_ERR(em);
-+
-+		map = em->map_lookup;
-+		/* We only support SINGLE profile for now */
-+		ASSERT(map->num_stripes == 1);
-+		btrfs_io_bio(bio)->device = map->stripes[0].dev;
-+
-+		free_extent_map(em);
-+	}
- 
- 	*bio_ret = bio;
- 
+ 	if ((bbio->map_type & BTRFS_BLOCK_GROUP_RAID56_MASK) &&
+-	    ((bio_op(bio) == REQ_OP_WRITE) || (mirror_num > 1))) {
++	    ((btrfs_op(bio) == BTRFS_MAP_WRITE) || (mirror_num > 1))) {
+ 		/* In this case, map_length has been set to the length of
+ 		   a single stripe; not the whole write */
+-		if (bio_op(bio) == REQ_OP_WRITE) {
++		if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
+ 			ret = raid56_parity_write(fs_info, bio, bbio,
+ 						  map_length);
+ 		} else {
+@@ -6594,7 +6594,7 @@ blk_status_t btrfs_map_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
+ 		dev = bbio->stripes[dev_nr].dev;
+ 		if (!dev || !dev->bdev || test_bit(BTRFS_DEV_STATE_MISSING,
+ 						   &dev->dev_state) ||
+-		    (bio_op(first_bio) == REQ_OP_WRITE &&
++		    (btrfs_op(first_bio) == BTRFS_MAP_WRITE &&
+ 		    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state))) {
+ 			bbio_error(bbio, first_bio, logical);
+ 			continue;
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index 98a447badd6a..0bcf87a9e594 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -423,6 +423,7 @@ static inline enum btrfs_map_op btrfs_op(struct bio *bio)
+ 	case REQ_OP_DISCARD:
+ 		return BTRFS_MAP_DISCARD;
+ 	case REQ_OP_WRITE:
++	case REQ_OP_ZONE_APPEND:
+ 		return BTRFS_MAP_WRITE;
+ 	default:
+ 		WARN_ON_ONCE(1);
 -- 
 2.27.0
 
