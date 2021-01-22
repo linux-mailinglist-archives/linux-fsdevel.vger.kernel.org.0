@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61D523006F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 16:18:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 280F8300704
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 16:21:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbhAVPQw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 10:16:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33936 "EHLO
+        id S1727378AbhAVPTy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 10:19:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728700AbhAVPQX (ORCPT
+        with ESMTP id S1729097AbhAVPRa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 10:16:23 -0500
+        Fri, 22 Jan 2021 10:17:30 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E2AC06174A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 07:15:43 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21CC2C0617A7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 07:16:23 -0800 (PST)
 Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1l2yA1-0004Bq-HD; Fri, 22 Jan 2021 16:15:41 +0100
+        id 1l2yA1-0004Bs-HA; Fri, 22 Jan 2021 16:15:41 +0100
 Received: from sha by dude02.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1l2yA0-0003qg-N6; Fri, 22 Jan 2021 16:15:40 +0100
+        id 1l2yA0-0003ql-OG; Fri, 22 Jan 2021 16:15:40 +0100
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
         kernel@pengutronix.de, Jan Kara <jack@suse.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 1/8] quota: Allow to pass mount path to quotactl
-Date:   Fri, 22 Jan 2021 16:15:29 +0100
-Message-Id: <20210122151536.7982-2-s.hauer@pengutronix.de>
+Subject: [PATCH 2/8] ubifs: move checks and preparation into setflags()
+Date:   Fri, 22 Jan 2021 16:15:30 +0100
+Message-Id: <20210122151536.7982-3-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210122151536.7982-1-s.hauer@pengutronix.de>
 References: <20210122151536.7982-1-s.hauer@pengutronix.de>
@@ -44,152 +44,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch introduces the Q_PATH flag to the quotactl cmd argument.
-When given, the path given in the special argument to quotactl will
-be the mount path where the filesystem is mounted, instead of a path
-to the block device.
-This is necessary for filesystems which do not have a block device as
-backing store. Particularly this is done for upcoming UBIFS support.
+setflags() can be reused for upcoming FS_IOC_FS[SG]ETXATTR ioctl support.
+In preparation for that move the checks and preparation into that
+function so we can reuse them as well.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- fs/quota/quota.c           | 66 ++++++++++++++++++++++++++++----------
- include/uapi/linux/quota.h |  1 +
- 2 files changed, 50 insertions(+), 17 deletions(-)
+ fs/ubifs/ioctl.c | 46 +++++++++++++++++++++++++++-------------------
+ 1 file changed, 27 insertions(+), 19 deletions(-)
 
-diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index 6d16b2be5ac4..f653b27a9a4e 100644
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -17,6 +17,7 @@
- #include <linux/capability.h>
- #include <linux/quotaops.h>
- #include <linux/types.h>
-+#include <linux/mount.h>
- #include <linux/writeback.h>
- #include <linux/nospec.h>
- #include "compat.h"
-@@ -859,25 +860,10 @@ static bool quotactl_cmd_onoff(int cmd)
- 		 (cmd == Q_XQUOTAON) || (cmd == Q_XQUOTAOFF);
+diff --git a/fs/ubifs/ioctl.c b/fs/ubifs/ioctl.c
+index 4363d85a3fd4..b64a9cec7d47 100644
+--- a/fs/ubifs/ioctl.c
++++ b/fs/ubifs/ioctl.c
+@@ -101,18 +101,35 @@ static int ubifs2ioctl(int ubifs_flags)
+ 	return ioctl_flags;
  }
  
--/*
-- * look up a superblock on which quota ops will be performed
-- * - use the name of a block device to find the superblock thereon
-- */
--static struct super_block *quotactl_block(const char __user *special, int cmd)
-+static struct super_block *quotactl_sb(dev_t dev, int cmd)
+-static int setflags(struct inode *inode, int flags)
++static int setflags(struct file *file, int flags)
  {
--#ifdef CONFIG_BLOCK
- 	struct super_block *sb;
--	struct filename *tmp = getname(special);
- 	bool excl = false, thawed = false;
--	int error;
--	dev_t dev;
--
--	if (IS_ERR(tmp))
--		return ERR_CAST(tmp);
--	error = lookup_bdev(tmp->name, &dev);
--	putname(tmp);
--	if (error)
--		return ERR_PTR(error);
+ 	int oldflags, err, release;
++	struct inode *inode = file_inode(file);
+ 	struct ubifs_inode *ui = ubifs_inode(inode);
+ 	struct ubifs_info *c = inode->i_sb->s_fs_info;
+ 	struct ubifs_budget_req req = { .dirtied_ino = 1,
+ 					.dirtied_ino_d = ui->data_len };
  
- 	if (quotactl_cmd_onoff(cmd)) {
- 		excl = true;
-@@ -901,12 +887,50 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
- 		goto retry;
- 	}
- 	return sb;
-+}
+-	err = ubifs_budget_space(c, &req);
++	if (IS_RDONLY(inode))
++		return -EROFS;
 +
-+/*
-+ * look up a superblock on which quota ops will be performed
-+ * - use the name of a block device to find the superblock thereon
-+ */
-+static struct super_block *quotactl_block(const char __user *special, int cmd)
-+{
-+#ifdef CONFIG_BLOCK
-+	struct filename *tmp = getname(special);
-+	int error;
-+	dev_t dev;
++	if (!inode_owner_or_capable(inode))
++		return -EACCES;
++
++	/*
++	 * Make sure the file-system is read-write and make sure it
++	 * will not become read-only while we are changing the flags.
++	 */
++	err = mnt_want_write_file(file);
+ 	if (err)
+ 		return err;
  
-+	if (IS_ERR(tmp))
-+		return ERR_CAST(tmp);
-+	error = lookup_bdev(tmp->name, &dev);
-+	putname(tmp);
-+	if (error)
-+		return ERR_PTR(error);
++	dbg_gen("set flags: %#x, i_flags %#x", flags, inode->i_flags);
 +
-+	return quotactl_sb(dev, cmd);
- #else
- 	return ERR_PTR(-ENODEV);
- #endif
++	err = ubifs_budget_space(c, &req);
++	if (err)
++		goto out_drop;
++
+ 	mutex_lock(&ui->ui_mutex);
+ 	oldflags = ubifs2ioctl(ui->flags);
+ 	err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
+@@ -131,11 +148,17 @@ static int setflags(struct inode *inode, int flags)
+ 		ubifs_release_budget(c, &req);
+ 	if (IS_SYNC(inode))
+ 		err = write_inode_now(inode, 1);
++
++	mnt_drop_write_file(file);
++
+ 	return err;
+ 
+ out_unlock:
+ 	mutex_unlock(&ui->ui_mutex);
+ 	ubifs_release_budget(c, &req);
++out_drop:
++	mnt_drop_write_file(file);
++
+ 	return err;
  }
  
-+static struct super_block *quotactl_path(const char __user *special, int cmd)
-+{
-+	struct super_block *sb;
-+	struct path path;
-+	int error;
-+
-+	error = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
-+			   &path);
-+	if (error)
-+		return ERR_PTR(error);
-+
-+	sb = quotactl_sb(path.mnt->mnt_sb->s_dev, cmd);
-+
-+	path_put(&path);
-+
-+	return sb;
-+}
-+
- /*
-  * This is the system call interface. This communicates with
-  * the user-level programs. Currently this only supports diskquota
-@@ -920,6 +944,7 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
- 	struct super_block *sb = NULL;
- 	struct path path, *pathp = NULL;
- 	int ret;
-+	bool q_path;
+@@ -152,12 +175,6 @@ long ubifs_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		return put_user(flags, (int __user *) arg);
  
- 	cmds = cmd >> SUBCMDSHIFT;
- 	type = cmd & SUBCMDMASK;
-@@ -927,6 +952,9 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
- 	if (type >= MAXQUOTAS)
- 		return -EINVAL;
+ 	case FS_IOC_SETFLAGS: {
+-		if (IS_RDONLY(inode))
+-			return -EROFS;
+-
+-		if (!inode_owner_or_capable(inode))
+-			return -EACCES;
+-
+ 		if (get_user(flags, (int __user *) arg))
+ 			return -EFAULT;
  
-+	q_path = cmds & Q_PATH;
-+	cmds &= ~Q_PATH;
+@@ -168,17 +185,8 @@ long ubifs_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		if (!S_ISDIR(inode->i_mode))
+ 			flags &= ~FS_DIRSYNC_FL;
+ 
+-		/*
+-		 * Make sure the file-system is read-write and make sure it
+-		 * will not become read-only while we are changing the flags.
+-		 */
+-		err = mnt_want_write_file(file);
+-		if (err)
+-			return err;
+-		dbg_gen("set flags: %#x, i_flags %#x", flags, inode->i_flags);
+-		err = setflags(inode, flags);
+-		mnt_drop_write_file(file);
+-		return err;
 +
- 	/*
- 	 * As a special case Q_SYNC can be called without a specific device.
- 	 * It will iterate all superblocks that have quota enabled and call
-@@ -951,7 +979,11 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
- 			pathp = &path;
++		return setflags(file, flags);
  	}
- 
--	sb = quotactl_block(special, cmds);
-+	if (q_path)
-+		sb = quotactl_path(special, cmds);
-+	else
-+		sb = quotactl_block(special, cmds);
-+
- 	if (IS_ERR(sb)) {
- 		ret = PTR_ERR(sb);
- 		goto out;
-diff --git a/include/uapi/linux/quota.h b/include/uapi/linux/quota.h
-index f17c9636a859..e1787c0df601 100644
---- a/include/uapi/linux/quota.h
-+++ b/include/uapi/linux/quota.h
-@@ -71,6 +71,7 @@
- #define Q_GETQUOTA 0x800007	/* get user quota structure */
- #define Q_SETQUOTA 0x800008	/* set user quota structure */
- #define Q_GETNEXTQUOTA 0x800009	/* get disk limits and usage >= ID */
-+#define Q_PATH     0x400000	/* quotactl special arg contains mount path */
- 
- /* Quota format type IDs */
- #define	QFMT_VFS_OLD 1
+ 	case FS_IOC_SET_ENCRYPTION_POLICY: {
+ 		struct ubifs_info *c = inode->i_sb->s_fs_info;
 -- 
 2.20.1
 
