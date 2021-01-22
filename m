@@ -2,24 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A30F93004FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 15:12:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00DEC300512
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 15:15:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbhAVOLH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 09:11:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34332 "EHLO mail.kernel.org"
+        id S1728412AbhAVOO6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 09:14:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728190AbhAVOKT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 09:10:19 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CB78A23A5E;
-        Fri, 22 Jan 2021 14:09:06 +0000 (UTC)
+        id S1728358AbhAVON2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Jan 2021 09:13:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5364E23AA3;
+        Fri, 22 Jan 2021 14:10:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1611324547;
-        bh=0xLiq19uuF+LFA0yw7Rwauxqd1irVWHtnuE67K59/lY=;
+        s=korg; t=1611324646;
+        bh=zPb3uoCMpMg0zIdBDDDosH3CoWb00JMVhzJ0D614Sfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z133FksUKLkAoNSRUMI/UME1nI7iFHxqwaceIJSFVkQNlXP6WReYp3Nqp2ym+DQzL
-         eWdDSRVtUPji/XyBkFB5e9BQU7gDPuMdc9BjwgHcPXV1ADUqVtE4n/m3xMNxLTd7Jv
-         dGRNXxa7P5ygDjAWjMQxD2820or/OxSxdrIH/c7o=
+        b=u83cQdirnwFeD9/ilIBOM6VMOBOesrM++RGq45UGlM8dl4Cs0PsMUNWKcWWMdjIDy
+         7HpOe+X+zuGvV+lPjHPePjD7dm1Cegb0f/hdywddkJlUkEaehyb9VI2R/rah0gndIY
+         jK9XPJRg5YwsDCNhfyQ769+Xm8dCS+vIqahFb18A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,12 +32,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 07/31] arch/arc: add copy_user_page() to <asm/page.h> to fix build error on ARC
-Date:   Fri, 22 Jan 2021 15:08:21 +0100
-Message-Id: <20210122135732.165180021@linuxfoundation.org>
+Subject: [PATCH 4.9 10/35] arch/arc: add copy_user_page() to <asm/page.h> to fix build error on ARC
+Date:   Fri, 22 Jan 2021 15:10:12 +0100
+Message-Id: <20210122135732.747017067@linuxfoundation.org>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210122135731.873346566@linuxfoundation.org>
-References: <20210122135731.873346566@linuxfoundation.org>
+In-Reply-To: <20210122135732.357969201@linuxfoundation.org>
+References: <20210122135732.357969201@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -77,11 +77,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
-index 8f1145ed0046f..fd2c88ef2e2b8 100644
+index ffb5f33475f19..f0f43eb709d2f 100644
 --- a/arch/arc/include/asm/page.h
 +++ b/arch/arc/include/asm/page.h
-@@ -17,6 +17,7 @@
- #define free_user_page(page, addr)	free_page(addr)
+@@ -13,6 +13,7 @@
+ #ifndef __ASSEMBLY__
  
  #define clear_page(paddr)		memset((paddr), 0, PAGE_SIZE)
 +#define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
