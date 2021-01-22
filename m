@@ -2,107 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F9130099C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 18:24:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FA97300985
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 18:23:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728844AbhAVRWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 12:22:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44498 "EHLO
+        id S1728777AbhAVQu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 11:50:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729503AbhAVQFT (ORCPT
+        with ESMTP id S1729650AbhAVQXy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 11:05:19 -0500
-Received: from mail-oo1-xc32.google.com (mail-oo1-xc32.google.com [IPv6:2607:f8b0:4864:20::c32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 197EBC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 08:04:39 -0800 (PST)
-Received: by mail-oo1-xc32.google.com with SMTP id v19so1508041ooj.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 08:04:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tyhicks-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uOcDAQTvbMFsGW2wN4EW2b9gto6d910RnbvMcnDkd/c=;
-        b=bXsPFrB1DV10D190ze4iNrrBtwxSSmGn8GrafBPD8BtyliQHqw2ujTyLDkoZ5OWg96
-         6mipU1MFOuHREzL57e6Q38tAtdqs11tzO6y7rYligD0OnUaG7xcUlS0KmEkfAM0Yswgu
-         l++pDvDOnvP/GdecS4qp8nK7kjhRgr4yIBykvRURR76yz2BEwPVLZ3CX8agwcxDDHSFr
-         QiXBIbhIQPDcMg2oRqrarqb5vDUym50sSShT5GnuyVhklzDs16MyaduLffdt/dXgdOnO
-         Xk4kYv3OylnZ5xhixhBLqJ58EZw1FUQbqz4w08kgeUSkYT3jgBjpggdnOyWhVRE7Czu1
-         kV7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uOcDAQTvbMFsGW2wN4EW2b9gto6d910RnbvMcnDkd/c=;
-        b=dNNDby4t0BvZUFtIibr7QmnOAu2bIq5Gn5rMDOhW1YVDYnrw+NoMPkin1Z4uEF754s
-         HHtBYsrfToM9LZVq/pJHgh+fGAbHPbK1jJo44MjjEKj3ACC0jwlbrSj4N6TWhWiySXVj
-         F4NEIw+ROwwkPkcRFnoSZtfwzSuDuaIYYo5qBj2JxDL63q4itXzfwBVskiA2sQJJdxOP
-         yliUPvYEbypUNpYTIoN0fWwgeh9lSFMdd69mNhv+sxlZdpEntMNu1n1Fgc/rm7JO+GE5
-         sr0IHR1I2E3VmffQ6Cg0Djx0VBwje02FP8ioSgwBjVT7gFrfUALi9AKgZrPkQQBa4XyB
-         w9Yw==
-X-Gm-Message-State: AOAM533kAs7VTDuDrN5T8+5K9BrbmaFeaKenVxyZavyiQsoILxCcsOT2
-        +rwqXBH9At2noY4lycLMGURYYw==
-X-Google-Smtp-Source: ABdhPJzIjq8M1jb98C+LunJrol58KNv9YwNRZtbUnN8EKKfvwE3/ZyEzVUyiSlU2AxPGpBEkCN2gaA==
-X-Received: by 2002:a4a:94cc:: with SMTP id l12mr4259445ooi.70.1611331478531;
-        Fri, 22 Jan 2021 08:04:38 -0800 (PST)
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net. [162.237.133.238])
-        by smtp.gmail.com with ESMTPSA id q6sm1743948otm.68.2021.01.22.08.04.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jan 2021 08:04:37 -0800 (PST)
-Date:   Fri, 22 Jan 2021 10:04:19 -0600
-From:   Tyler Hicks <code@tyhicks.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH 1/2] ecryptfs: fix uid translation for setxattr on
- security.capability
-Message-ID: <20210122160419.GA81247@sequoia>
-References: <20210119162204.2081137-1-mszeredi@redhat.com>
- <20210119162204.2081137-2-mszeredi@redhat.com>
- <87a6t4ab7h.fsf@x220.int.ebiederm.org>
- <CAJfpegvy4u9cC7SXWqteg54q-96fH3SqqfEybcQtAMxsewAGYg@mail.gmail.com>
+        Fri, 22 Jan 2021 11:23:54 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B535C0613D6;
+        Fri, 22 Jan 2021 08:23:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=nmbJnm50gZMOc+7PIT6wU2c1XXrqeE+TUm7Cw7Zy394=; b=h6Z17Sj4n8EOAU0uLOogjb9AS1
+        chcTwmbMzQVmY2eh03mUZDYIrwnhhk9Uq2Zzms6rtzlAmj7l/8UKzfqyUeY3w5wvNCy4m8+1dFkmD
+        o7kKc10SFC/fMbxsIrX7FDfPgTgfwQTh5Y/moY7xzgeAsRJf1XRCl0oUq5jw9ZpNfk6LWrjpY73ji
+        e6A7LyeXzE1bCeu2Et0CvE+GVnC7kfdisXM3/+VLIKXnkv/PC/BhndeO8C7EfpbYV84ESUJru9O6K
+        /pcBZjwfGKAtxwfeB3c/hIBSZLVEICTYkwEKo11gW1G48HI8/VSg07TbQcyDgrLCvaVPWA0zRaikm
+        XnaLnYrQ==;
+Received: from 089144206130.atnat0015.highway.bob.at ([89.144.206.130] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1l2zD5-000xDY-2H; Fri, 22 Jan 2021 16:23:02 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, avi@scylladb.com
+Subject: reduce sub-block DIO serialisation v4
+Date:   Fri, 22 Jan 2021 17:20:32 +0100
+Message-Id: <20210122162043.616755-1-hch@lst.de>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegvy4u9cC7SXWqteg54q-96fH3SqqfEybcQtAMxsewAGYg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-01-20 08:52:27, Miklos Szeredi wrote:
-> On Tue, Jan 19, 2021 at 10:11 PM Eric W. Biederman
-> <ebiederm@xmission.com> wrote:
-> >
-> > Miklos Szeredi <mszeredi@redhat.com> writes:
-> >
-> > > Prior to commit 7c03e2cda4a5 ("vfs: move cap_convert_nscap() call into
-> > > vfs_setxattr()") the translation of nscap->rootid did not take stacked
-> > > filesystems (overlayfs and ecryptfs) into account.
-> > >
-> > > That patch fixed the overlay case, but made the ecryptfs case worse.
-> > >
-> > > Restore old the behavior for ecryptfs that existed before the overlayfs
-> > > fix.  This does not fix ecryptfs's handling of complex user namespace
-> > > setups, but it does make sure existing setups don't regress.
-> >
-> > Today vfs_setxattr handles handles a delegated_inode and breaking
-> > leases.  Code that is enabled with CONFIG_FILE_LOCKING.  So unless
-> > I am missing something this introduces a different regression into
-> > ecryptfs.
-> 
-> This is in line with all the other cases of ecryptfs passing NULL as
-> delegated inode.
-> 
-> I'll defer this to the maintainer of ecryptfs.
+This takes the approach from Dave, but adds a new flag instead of abusing
+the nowait one, and keeps a simpler calling convention for iomap_dio_rw.
 
-eCryptfs cannot be exported so I do not think this proposed fix to
-ecryptfs_setxattr() creates a new regression wrt inode delegation.
+Changes since v3:
+ - further comment improvements
+ - micro-optimize an alignment check
 
-Tyler
+Changes since v2:
+ - add another sanity check in __iomap_dio_rw
+ - rename IOMAP_DIO_UNALIGNED to IOMAP_DIO_OVERWRITE_ONLY
+ - use more consistent parameter naming
+ - improve a few comments
+ - cleanup an if statement
 
-> 
-> Thanks,
-> Miklos
+Changes since v1:
+ - rename the new flags
+ - add an EOF check for subblock I/O
+ - minor cleanups
