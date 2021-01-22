@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5BD13000CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 11:56:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 050563000C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 11:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbhAVJ3u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 04:29:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33324 "EHLO
+        id S1727436AbhAVJ3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 04:29:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbhAVIlC (ORCPT
+        with ESMTP id S1727146AbhAVIlh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 03:41:02 -0500
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C75C061786;
-        Fri, 22 Jan 2021 00:40:18 -0800 (PST)
-Received: by mail-oi1-x231.google.com with SMTP id q25so5212394oij.10;
-        Fri, 22 Jan 2021 00:40:18 -0800 (PST)
+        Fri, 22 Jan 2021 03:41:37 -0500
+Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A05AC06174A;
+        Fri, 22 Jan 2021 00:40:57 -0800 (PST)
+Received: by mail-oo1-xc2c.google.com with SMTP id y72so704143ooa.5;
+        Fri, 22 Jan 2021 00:40:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:reply-to:from:date:message-id
          :subject:to:cc;
-        bh=e0T/0FMUpYKFq5BQWC0q9ZRuoujNmvORYqx5Qnxrd6U=;
-        b=Qg+bUYVKucO99QnqOD4irrWaQBQMH2hjBBwXFRQi8Pojs8JiwApZXHdXhzAXyM5Pqc
-         a+tQUweISQZagSTAGPD69wWhU8GeHSF5kqApp1qa/mBCX2KaFLKcf0Auzv3t4naom4dc
-         1gU8KN3/z5DcOduhiBWp++lA9Vf3QqS5FTK0BDE8E2pJz2pp76Lzr4tpAZfHFkOdhEdI
-         oN7dqVOhUeojDRk2v6aaAzKTnU4jCSm3crS9fVvVPFpLcV28nkOpJLC+8F17KHKV0hI1
-         NMf/rZw7ZMWZexe2AepQEVVARyALk8OczObHNBX2K+bOnM6zUSJYqqT6zgBFAD1wzWXv
-         HfNQ==
+        bh=vYZ4kaGGeeIlMEyYkA+xlQJt3yvEaAvxGbfej6Rp5qY=;
+        b=CXpdV1bM/VZYk+G12m+P+BAkF0ek3cYnb7ECqPgjb1MfxdQXDyeOmADCUP4TQQTynW
+         pZ/G6yyeNs6+oMSpoKjT/4PJxYEJtUGc24ww0e2vv93hD3RF6cRZxOxE6vRzCFjTIpJB
+         coQmTeKr8n4xZC0SnWyBXfGFwfdzeVqlkn8DQ7I5zv8+1a9MPzCYkIrQl/4hlsFr+gwq
+         0kbFFFp+2hRSShJNyyEjE20qKYqfyAqQVaFfogm04B+Hck6wff7y5kQPvh8YrcWTSK7J
+         NY8pPD0aPR6IaFIjNBZi76Jg9VNfei1Lhe43D6nrNtVOrZ/ECitSyEgHMgHuMvyfTMHF
+         db9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
          :from:date:message-id:subject:to:cc;
-        bh=e0T/0FMUpYKFq5BQWC0q9ZRuoujNmvORYqx5Qnxrd6U=;
-        b=R7qVdj0YvRNF6xv2FnDefesiUni2EEPR7tMRvF3k0e1GbHRb316IOF4iQ5bEuelGSx
-         xfMkbLlvVo0O+NifzWNxzyd4sjk6I/ph3RzhhEPoVK29SLZAZ03g4N9n0G/nG033Pyrz
-         itWPotGFOyBrLlLlcXZMXErODP7Y/U+ycNI/r5LsAwpNSZnIR6qkdjRMMnsoARnZzN6V
-         cL4rru58lFO1syEbGZp80UFJhJvnNJaPxcBRrSAgxhf6m6an7siSI1MPmq12NvPdRDwM
-         tZeweXPO1J+KDvOs4bZlsCXxF7vgdcBDLUKCtfw8NHmgrwHNPg32KHwVJBaVMMTFkQvb
-         aUPA==
-X-Gm-Message-State: AOAM530alvsGJPoF8CJ3Z7dCmZ4Gvo1+KhnXWBiN28nvDNdK44EbChiX
-        NG5j87OqKu+EuFRfb8rIPEzMDY9yRSaZu+C8pAM=
-X-Google-Smtp-Source: ABdhPJxO03NnkN0i+zF1FsF5GZIM81INjIxkYX25MAI0FxT8LEV/GLpukpWNGekHxp3VyVrLV2Dp109fDZqLDGQ89bA=
-X-Received: by 2002:aca:ded4:: with SMTP id v203mr2551827oig.148.1611304817605;
- Fri, 22 Jan 2021 00:40:17 -0800 (PST)
+        bh=vYZ4kaGGeeIlMEyYkA+xlQJt3yvEaAvxGbfej6Rp5qY=;
+        b=Ecdq5OxHpKPcwKzH03jtM7IxYbIFfLVbpZI3DB7D+Nj4VVwmL6eIeDpxKtouibJO39
+         AP4hTAjgAdtbuzvBSj2X1rbHKv/x7JQGKeDf0/bvnTywE1VaAn1eAxqMqMJTWCmlGl9a
+         eWzrs5wIQpvM/ECh9vwEa8uH2OzaeeLt71ZpjKCK4zsGVHAUJ8H9VfEHIrL+UaonSaWu
+         LrUMm4Y96M55PgAHKsKfXDKZBblzS41rzmjsn70fgMWfJQ1DaLSO5vFvMkDQvWSI9zzF
+         pbq2WroaE3/Vqx95rw+CrWWurgv4HxPvU2a8lq4TxovaicbXpaTWW/9prjozIqMmL7HI
+         wu7w==
+X-Gm-Message-State: AOAM530ZzeJjBd6oTd02TacMVgcl4H3+fiLe5Af0OOBLOOYGY10znGAR
+        mkEyZSyUgqVAjjuSHQDUT6SMsTAMQXFCWkoAhi8=
+X-Google-Smtp-Source: ABdhPJwLzAr9HJcVEn2sw6T+5mRcd3ah3U8DYUiZ6CJbxhKmPl02xVBrqvdYquWyQUJxbssho1YO3M3uFoWwfXBuQW4=
+X-Received: by 2002:a4a:eb18:: with SMTP id f24mr2960922ooj.80.1611304856758;
+ Fri, 22 Jan 2021 00:40:56 -0800 (PST)
 MIME-Version: 1.0
 References: <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk>
- <159827189767.306468.1803062787718957199.stgit@warthog.procyon.org.uk>
-In-Reply-To: <159827189767.306468.1803062787718957199.stgit@warthog.procyon.org.uk>
+ <159827191245.306468.4903071494263813779.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159827191245.306468.4903071494263813779.stgit@warthog.procyon.org.uk>
 Reply-To: mtk.manpages@gmail.com
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Fri, 22 Jan 2021 09:40:06 +0100
-Message-ID: <CAKgNAkj=1y51Yei9FchAEKEm=mgY_soVfn-58mRC+Z2Ae2HZZw@mail.gmail.com>
-Subject: Re: [PATCH 3/5] Add manpage for fspick(2)
+Date:   Fri, 22 Jan 2021 09:40:45 +0100
+Message-ID: <CAKgNAkjp0GOaqt3q9n=E9EereUMGRP8L6Dvn-MsCuntuT2Un7w@mail.gmail.com>
+Subject: Re: [PATCH 5/5] Add manpage for fsconfig(2)
 To:     David Howells <dhowells@redhat.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
@@ -74,21 +74,21 @@ Michael
 
 On Mon, 24 Aug 2020 at 14:25, David Howells <dhowells@redhat.com> wrote:
 >
-> Add a manual page to document the fspick() system call.
+> Add a manual page to document the fsconfig() system call.
 >
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 >
->  man2/fspick.2 |  180 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 180 insertions(+)
->  create mode 100644 man2/fspick.2
+>  man2/fsconfig.2 |  277 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 277 insertions(+)
+>  create mode 100644 man2/fsconfig.2
 >
-> diff --git a/man2/fspick.2 b/man2/fspick.2
+> diff --git a/man2/fsconfig.2 b/man2/fsconfig.2
 > new file mode 100644
-> index 000000000..72bf645dd
+> index 000000000..da53d2fcb
 > --- /dev/null
-> +++ b/man2/fspick.2
-> @@ -0,0 +1,180 @@
+> +++ b/man2/fsconfig.2
+> @@ -0,0 +1,277 @@
 > +'\" t
 > +.\" Copyright (c) 2020 David Howells <dhowells@redhat.com>
 > +.\"
@@ -114,121 +114,212 @@ On Mon, 24 Aug 2020 at 14:25, David Howells <dhowells@redhat.com> wrote:
 > +.\" the source, must acknowledge the copyright and authors of this work.
 > +.\" %%%LICENSE_END
 > +.\"
-> +.TH FSPICK 2 2020-08-24 "Linux" "Linux Programmer's Manual"
+> +.TH FSCONFIG 2 2020-08-24 "Linux" "Linux Programmer's Manual"
 > +.SH NAME
-> +fspick \- Select filesystem for reconfiguration
+> +fsconfig \- Filesystem parameterisation
 > +.SH SYNOPSIS
 > +.nf
 > +.B #include <sys/types.h>
 > +.B #include <sys/mount.h>
 > +.B #include <unistd.h>
-> +.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
+> +.B #include <sys/mount.h>
 > +.PP
-> +.BI "int fspick(int " dirfd ", const char *" pathname ", unsigned int " flags );
+> +.BI "int fsconfig(int *" fd ", unsigned int " cmd ", const char *" key ,
+> +.br
+> +.BI "             const void __user *" value ", int " aux ");"
+> +.br
+> +.BI
 > +.fi
 > +.PP
 > +.IR Note :
 > +There is no glibc wrapper for this system call.
 > +.SH DESCRIPTION
 > +.PP
-> +.BR fspick ()
-> +creates a new filesystem configuration context within the kernel and attaches a
-> +pre-existing superblock to it so that it can be reconfigured (similar to
-> +.BR mount (8)
-> +with the "-o remount" option).  The configuration context is marked as being in
-> +reconfiguration mode and attached to a file descriptor, which is returned to
-> +the caller.  The file descriptor can be marked close-on-exec by setting
-> +.B FSPICK_CLOEXEC
-> +in
-> +.IR flags .
-> +.PP
-> +The target is whichever superblock backs the object determined by
-> +.IR dfd ", " pathname " and " flags .
-> +The following can be set in
-> +.I flags
-> +to control the pathwalk to that object:
-> +.TP
-> +.B FSPICK_SYMLINK_NOFOLLOW
-> +Don't follow symbolic links in the final component of the path.
-> +.TP
-> +.B FSPICK_NO_AUTOMOUNT
-> +Don't follow automounts in the final component of the path.
-> +.TP
-> +.B FSPICK_EMPTY_PATH
-> +Allow an empty string to be specified as the pathname.  This allows
-> +.I dirfd
-> +to specify the target mount exactly.
-> +.PP
-> +After calling fspick(), the file descriptor should be passed to the
-> +.BR fsconfig (2)
-> +system call, using that to specify the desired changes to filesystem and
-> +security parameters.
-> +.PP
-> +When the parameters are all set, the
 > +.BR fsconfig ()
-> +system call should then be called again with
+> +is used to supply parameters to and issue commands against a filesystem
+> +configuration context as set up by
+> +.BR fsopen (2)
+> +or
+> +.BR fspick (2).
+> +The context is supplied attached to the file descriptor specified by
+> +.I fd
+> +argument.
+> +.PP
+> +The
+> +.I cmd
+> +argument indicates the command to be issued, where some of the commands simply
+> +supply parameters to the context.  The meaning of
+> +.IR key ", " value " and " aux
+> +are command-dependent; unless required for the command, these should be set to
+> +NULL or 0.
+> +.PP
+> +The available commands are:
+> +.TP
+> +.B FSCONFIG_SET_FLAG
+> +Set the parameter named by
+> +.IR key
+> +to true.  This may fail with error
+> +.B EINVAL
+> +if the parameter requires an argument.
+> +.TP
+> +.B FSCONFIG_SET_STRING
+> +Set the parameter named by
+> +.I key
+> +to a string.  This may fail with error
+> +.B EINVAL
+> +if the parser doesn't want a parameter here, wants a non-string or the string
+> +cannot be interpreted appropriately.
+> +.I value
+> +points to a NUL-terminated string.
+> +.TP
+> +.B FSCONFIG_SET_BINARY
+> +Set the parameter named by
+> +.I key
+> +to be a binary blob argument.  This may cause
+> +.B EINVAL
+> +to be returned if the filesystem parser isn't expecting a binary blob and it
+> +can't be converted to something usable.
+> +.I value
+> +points to the data and
+> +.I aux
+> +indicates the size of the data.
+> +.TP
+> +.B FSCONFIG_SET_PATH
+> +Set the parameter named by
+> +.I key
+> +to the object at the provided path.
+> +.I value
+> +should point to a NUL-terminated pathname string and aux may indicate
+> +.B AT_FDCWD
+> +or a file descriptor indicating a directory from which to begin a relative
+> +path resolution.  This may fail with error
+> +.B EINVAL
+> +if the parameter isn't expecting a path; it may also fail if the path cannot
+> +be resolved with the typcal errors for that
+> +.RB "(" ENOENT ", " ENOTDIR ", " EPERM ", " EACCES ", etc.)."
+> +.IP
+> +Note that FSCONFIG_SET_STRING can be used instead, implying AT_FDCWD.
+> +.TP
+> +.B FSCONFIG_SET_PATH_EMPTY
+> +As FSCONFIG_SET_PATH, but with
+> +.B AT_EMPTY_PATH
+> +applied to the pathwalk.
+> +.TP
+> +.B FSCONFIG_SET_FD
+> +Set the parameter named by
+> +.I key
+> +to the file descriptor specified by
+> +.IR aux .
+> +This will fail with
+> +.B EINVAL
+> +if the parameter doesn't expect a file descriptor or
+> +.B EBADF
+> +if the file descriptor is invalid.
+> +.IP
+> +Note that FSCONFIG_SET_STRING can be used instead with the file descriptor
+> +passed as a decimal string.
+> +.TP
+> +.B FSCONFIG_CMD_CREATE
+> +This command triggers the filesystem to take the parameters set in the context
+> +and to try to create filesystem representation in the kernel.  If an existing
+> +representation can be shared, the filesystem may do that instead if the
+> +parameters permit.  This is intended for use with
+> +.BR fsopen (2).
+> +.TP
 > +.B FSCONFIG_CMD_RECONFIGURE
-> +as the command argument to effect the reconfiguration.
+> +This command causes the driver to alter the parameters of an already live
+> +filesystem instance according to the parameters stored in the context.  This
+> +is intended for use with
+> +.BR fspick (2),
+> +but may also by used against the context created by
+> +.BR fsopen()
+> +after
+> +.BR fsmount (2)
+> +has been called on it.
+> +
+> +.\"________________________________________________________
+> +.SH EXAMPLES
 > +.PP
-> +After the reconfiguration has taken place, the context is wiped clean (apart
-> +from the superblock attachment, which remains) and can be reused to make
-> +another reconfiguration.
+> +.in +4n
+> +.nf
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> +
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "user_xattr", "false", 0);
+> +
+> +fsconfig(sfd, FSCONFIG_SET_BINARY, "ms_pac", pac_buffer, pac_size);
+> +
+> +fsconfig(sfd, FSCONFIG_SET_PATH, "journal", "/dev/sdd4", AT_FDCWD);
+> +
+> +dirfd = open("/dev/", O_PATH);
+> +fsconfig(sfd, FSCONFIG_SET_PATH, "journal", "sdd4", dirfd);
+> +
+> +fd = open("/overlays/mine/", O_PATH);
+> +fsconfig(sfd, FSCONFIG_SET_PATH_EMPTY, "lower_dir", "", fd);
+> +
+> +pipe(pipefds);
+> +fsconfig(sfd, FSCONFIG_SET_FD, "fd", NULL, pipefds[1]);
+> +.fi
+> +.in
 > +.PP
-> +The file descriptor also serves as a channel by which more comprehensive error,
-> +warning and information messages may be retrieved from the kernel using
-> +.BR read (2).
-> +.SS Message Retrieval Interface
-> +The context file descriptor may be queried for message strings at any time by
-> +calling
-> +.BR read (2)
-> +on the file descriptor.  This will return formatted messages that are prefixed
-> +to indicate their class:
-> +.TP
-> +\fB"e <message>"\fP
-> +An error message string was logged.
-> +.TP
-> +\fB"i <message>"\fP
-> +An informational message string was logged.
-> +.TP
-> +\fB"w <message>"\fP
-> +An warning message string was logged.
-> +.PP
-> +Messages are removed from the queue as they're read and the queue has a limited
-> +depth of 8 messages, so it's possible for some to get lost.
 > +.SH RETURN VALUE
-> +On success, the function returns a file descriptor.  On error, \-1 is returned,
-> +and
+> +On success, the function returns 0.  On error, \-1 is returned, and
 > +.I errno
 > +is set appropriately.
 > +.SH ERRORS
-> +The error values given below result from filesystem type independent errors.
-> +Additionally, each filesystem type may have its own special errors and its own
-> +special behavior.  See the Linux kernel source code for details.
+> +The error values given below result from filesystem type independent
+> +errors.
+> +Each filesystem type may have its own special errors and its
+> +own special behavior.
+> +See the Linux kernel source code for details.
 > +.TP
 > +.B EACCES
 > +A component of a path was not searchable.
 > +(See also
 > +.BR path_resolution (7).)
 > +.TP
+> +.B EACCES
+> +Mounting a read-only filesystem was attempted without specifying the
+> +.RB ' ro '
+> +parameter.
+> +.TP
+> +.B EACCES
+> +A specified block device is located on a filesystem mounted with the
+> +.B MS_NODEV
+> +option.
+> +.\" mtk: Probably: write permission is required for MS_BIND, with
+> +.\" the error EPERM if not present; CAP_DAC_OVERRIDE is required.
+> +.TP
+> +.B EBADF
+> +The file descriptor given by
+> +.I fd
+> +or possibly by
+> +.I aux
+> +(depending on the command) is invalid.
+> +.TP
+> +.B EBUSY
+> +The context attached to
+> +.I fd
+> +is in the wrong state for the given command.
+> +.TP
+> +.B EBUSY
+> +The filesystem representation cannot be reconfigured read-only because it still
+> +holds files open for writing.
+> +.TP
 > +.B EFAULT
-> +.I pathname
-> +points outside the user address space.
+> +One of the pointer arguments points outside the accessible address space.
 > +.TP
 > +.B EINVAL
-> +.I flags
-> +includes an undefined value.
+> +.I fd
+> +does not refer to a filesystem configuration context.
+> +.TP
+> +.B EINVAL
+> +One of the source parameters referred to an invalid superblock.
 > +.TP
 > +.B ELOOP
 > +Too many links encountered during pathname resolution.
 > +.TP
-> +.B EMFILE
-> +The system has too many open files to create more.
-> +.TP
-> +.B ENFILE
-> +The process has too many open files to create more.
-> +.TP
 > +.B ENAMETOOLONG
-> +A pathname was longer than
+> +A path name was longer than
 > +.BR MAXPATHLEN .
 > +.TP
 > +.B ENOENT
@@ -237,38 +328,44 @@ On Mon, 24 Aug 2020 at 14:25, David Howells <dhowells@redhat.com> wrote:
 > +.B ENOMEM
 > +The kernel could not allocate sufficient memory to complete the call.
 > +.TP
+> +.B ENOTBLK
+> +Once of the parameters does not refer to a block device (and a device was
+> +required).
+> +.TP
+> +.B ENOTDIR
+> +.IR pathname ,
+> +or a prefix of
+> +.IR source ,
+> +is not a directory.
+> +.TP
+> +.B EOPNOTSUPP
+> +The command given by
+> +.I cmd
+> +was not valid.
+> +.TP
+> +.B ENXIO
+> +The major number of a block device parameter is out of range.
+> +.TP
 > +.B EPERM
 > +The caller does not have the required privileges.
 > +.SH CONFORMING TO
 > +These functions are Linux-specific and should not be used in programs intended
 > +to be portable.
 > +.SH VERSIONS
-> +.BR fsopen "(), " fsmount "() and " fspick ()
-> +were added to Linux in kernel 5.2.
-> +.SH EXAMPLES
-> +To illustrate the process, here's an example whereby this can be used to
-> +reconfigure a filesystem:
-> +.PP
-> +.in +4n
-> +.nf
-> +sfd = fspick(AT_FDCWD, "/mnt", FSPICK_NO_AUTOMOUNT | FSPICK_CLOEXEC);
-> +fsconfig(sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> +fsconfig(sfd, FSCONFIG_SET_STRING, "user_xattr", "false", 0);
-> +fsconfig(sfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
-> +.fi
-> +.in
-> +.PP
+> +.BR fsconfig ()
+> +was added to Linux in kernel 5.2.
 > +.SH NOTES
 > +Glibc does not (yet) provide a wrapper for the
-> +.BR fspick "()"
+> +.BR fsconfig ()
 > +system call; call it using
 > +.BR syscall (2).
 > +.SH SEE ALSO
 > +.BR mountpoint (1),
-> +.BR fsconfig (2),
+> +.BR fsmount (2),
 > +.BR fsopen (2),
-> +.BR path_resolution (7),
-> +.BR mount (8)
+> +.BR fspick (2),
+> +.BR mount_namespaces (7),
+> +.BR path_resolution (7)
 >
 >
 
