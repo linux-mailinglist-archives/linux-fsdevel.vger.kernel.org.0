@@ -2,97 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B0830086E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 17:18:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E5A5300849
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 17:11:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729491AbhAVQRL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 11:17:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46944 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729557AbhAVQQv (ORCPT
+        id S1729407AbhAVQIq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 11:08:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28910 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729551AbhAVQI1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 11:16:51 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD7E7C06174A;
-        Fri, 22 Jan 2021 08:15:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=mw1PgASVvzvnZ/mdEiLUwI2zgqaIpbnSB3KmajCDg3c=; b=i3zZ+JVUpCCuZmhey68sNtPI4U
-        JEkV2uJnFz2GWqvhJO/N+xXQKgtnQjcDjfyHj+ydGEek+ErXFpCB+dcV5/DvSAxf+mniFU3ZooQbR
-        tn4iJ/9a+28/PuPUUC+mCXtkC7D6mMLJWIioeWEt5ZVaFROroOFlR1IEYyEWZ7sBgQLKTQzTyJ0No
-        oA5UtG8QVbg0KXAnxImKNaS+Tc00OfgNGxW0RQFlb8EQNoU1HnZjCt1P2Gq/r1nruklb7n4H+f20e
-        dpEX6nhT3FyZF5mMLsOoL7dV1S0YVYoJrr/5c95A0cjlfhdfhWCNWg+ZY26rgMPac1Xd6peFb6185
-        wD1LWSOw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l2z4F-000wlr-Ri; Fri, 22 Jan 2021 16:14:04 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Fri, 22 Jan 2021 11:08:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611331620;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LxEIC8hGatT2o24RK/5B1chyfP2tF4vZvBCyA+dON/4=;
+        b=Y7hsAtYYnc/JZKobskOxYidVuXpQN6j3IN7ndP4R6BydWPRvYcm3Skf8pqdSDEXR4docl5
+        C+pNvBWbWEECx5m8walyTF6RTmA8ken3nXcA2tYq9w32NjBY+xZfmvFXBfs37URrPjVEEd
+        xU4RYIFGN2HBRB+5N6+IUlSS1WqbIx8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-319-WxgM7MKlOBu2zSsKQiqVFw-1; Fri, 22 Jan 2021 11:06:58 -0500
+X-MC-Unique: WxgM7MKlOBu2zSsKQiqVFw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78A118144E0;
+        Fri, 22 Jan 2021 16:06:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A07F418993;
+        Fri, 22 Jan 2021 16:06:47 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210122160129.GB18583@fieldses.org>
+References: <20210122160129.GB18583@fieldses.org> <20210121190937.GE20964@fieldses.org> <20210121174306.GB20964@fieldses.org> <20210121164645.GA20964@fieldses.org> <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk> <1794286.1611248577@warthog.procyon.org.uk> <1851804.1611255313@warthog.procyon.org.uk> <1856291.1611259704@warthog.procyon.org.uk>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Takashi Iwai <tiwai@suse.de>,
         Matthew Wilcox <willy@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH v5 18/18] mm/filemap: Simplify generic_file_read_iter
-Date:   Fri, 22 Jan 2021 16:01:40 +0000
-Message-Id: <20210122160140.223228-19-willy@infradead.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210122160140.223228-1-willy@infradead.org>
-References: <20210122160140.223228-1-willy@infradead.org>
+        linux-afs@lists.infradead.org, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 00/25] Network fs helper library & fscache kiocb API
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2085146.1611331606.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 22 Jan 2021 16:06:46 +0000
+Message-ID: <2085147.1611331606@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+J. Bruce Fields <bfields@fieldses.org> wrote:
 
-Avoid the pointless goto out just for returning retval.
+> > J. Bruce Fields <bfields@fieldses.org> wrote:
+> > > So, I'm still confused: there must be some case where we know fscach=
+e
+> > > actually works reliably and doesn't corrupt your data, right?
+> > =
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- mm/filemap.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> > Using ext2/3, for example.  I don't know under what circumstances xfs,=
+ ext4
+> > and btrfs might insert/remove blocks of zeros, but I'm told it can hap=
+pen.
+> =
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ef910eca9e1a2..f5903494cf173 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2555,7 +2555,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	ssize_t retval = 0;
- 
- 	if (!count)
--		goto out; /* skip atime */
-+		return 0; /* skip atime */
- 
- 	if (iocb->ki_flags & IOCB_DIRECT) {
- 		struct file *file = iocb->ki_filp;
-@@ -2573,7 +2573,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 						iocb->ki_pos,
- 					        iocb->ki_pos + count - 1);
- 			if (retval < 0)
--				goto out;
-+				return retval;
- 		}
- 
- 		file_accessed(file);
-@@ -2597,12 +2597,10 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		 */
- 		if (retval < 0 || !count || iocb->ki_pos >= size ||
- 		    IS_DAX(inode))
--			goto out;
-+			return retval;
- 	}
- 
--	retval = filemap_read(iocb, iter, retval);
--out:
--	return retval;
-+	return filemap_read(iocb, iter, retval);
- }
- EXPORT_SYMBOL(generic_file_read_iter);
- 
--- 
-2.29.2
+> Do ext2/3 work well for fscache in other ways?
+
+Ext3 shouldn't be a problem.  That's what I used when developing it.  I'm =
+not
+sure if ext2 supports xattrs, though.
+
+David
 
