@@ -2,94 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00DEC300512
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 15:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05CC13005DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 15:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbhAVOO6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 09:14:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35858 "EHLO mail.kernel.org"
+        id S1728507AbhAVOnd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 09:43:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60932 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728358AbhAVON2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 09:13:28 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5364E23AA3;
-        Fri, 22 Jan 2021 14:10:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1611324646;
-        bh=zPb3uoCMpMg0zIdBDDDosH3CoWb00JMVhzJ0D614Sfo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u83cQdirnwFeD9/ilIBOM6VMOBOesrM++RGq45UGlM8dl4Cs0PsMUNWKcWWMdjIDy
-         7HpOe+X+zuGvV+lPjHPePjD7dm1Cegb0f/hdywddkJlUkEaehyb9VI2R/rah0gndIY
-         jK9XPJRg5YwsDCNhfyQ769+Xm8dCS+vIqahFb18A=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 10/35] arch/arc: add copy_user_page() to <asm/page.h> to fix build error on ARC
-Date:   Fri, 22 Jan 2021 15:10:12 +0100
-Message-Id: <20210122135732.747017067@linuxfoundation.org>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210122135732.357969201@linuxfoundation.org>
-References: <20210122135732.357969201@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728612AbhAVOdQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Jan 2021 09:33:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id D71C5ADA2;
+        Fri, 22 Jan 2021 14:32:32 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 94D161E14C3; Fri, 22 Jan 2021 15:32:32 +0100 (CET)
+Date:   Fri, 22 Jan 2021 15:32:32 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 0/3 RFC] fs: Hole punch vs page cache filling races
+Message-ID: <20210122143232.GA1175@quack2.suse.cz>
+References: <20210120160611.26853-1-jack@suse.cz>
+ <20210121192755.GC4127393@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210121192755.GC4127393@casper.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu 21-01-21 19:27:55, Matthew Wilcox wrote:
+> On Wed, Jan 20, 2021 at 05:06:08PM +0100, Jan Kara wrote:
+> > Hello,
+> > 
+> > Amir has reported [1] a that ext4 has a potential issues when reads can race
+> > with hole punching possibly exposing stale data from freed blocks or even
+> > corrupting filesystem when stale mapping data gets used for writeout. The
+> > problem is that during hole punching, new page cache pages can get instantiated
+> > in a punched range after truncate_inode_pages() has run but before the
+> > filesystem removes blocks from the file.  In principle any filesystem
+> > implementing hole punching thus needs to implement a mechanism to block
+> > instantiating page cache pages during hole punching to avoid this race. This is
+> > further complicated by the fact that there are multiple places that can
+> > instantiate pages in page cache.  We can have regular read(2) or page fault
+> > doing this but fadvise(2) or madvise(2) can also result in reading in page
+> > cache pages through force_page_cache_readahead().
+> 
+> Doesn't this indicate that we're doing truncates in the wrong order?
+> ie first we should deallocate the blocks, then we should free the page
+> cache that was caching the contents of those blocks.  We'd need to
+> make sure those pages in the page cache don't get written back to disc
+> (either by taking pages in the page cache off the lru list or having
+> the filesystem handle writeback of pages to a freed extent as a no-op).
 
-[ Upstream commit 8a48c0a3360bf2bf4f40c980d0ec216e770e58ee ]
+Well, it depends on how much you wish to complicate the matters :).
+Filesystems have metadata information attached to pages (e.g. buffer
+heads), once you are removing blocks from a file, this information is
+becoming stale. So it makes perfect sense to first evict page cache to
+remove this metadata caching information and then remove blocks from
+on-disk structures.
 
-fs/dax.c uses copy_user_page() but ARC does not provide that interface,
-resulting in a build error.
+You can obviously try to do it the other way around - i.e., first remove
+blocks from on-disk structures and then remove the cached information from
+the page cache. But then you have to make sure stale cached information
+isn't used until everything is in sync. So whichever way you slice it, you
+have information in two places, you need to keep it in sync and you need
+some synchronization between different updaters of this information
+in both places so that they cannot get those two places out of sync...
 
-Provide copy_user_page() in <asm/page.h>.
+TLDR: I don't see much benefit in switching the ordering.
 
-../fs/dax.c: In function 'copy_cow_page_dax':
-../fs/dax.c:702:2: error: implicit declaration of function 'copy_user_page'; did you mean 'copy_to_user_page'? [-Werror=implicit-function-declaration]
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Dan Williams <dan.j.williams@intel.com>
-#Acked-by: Vineet Gupta <vgupta@synopsys.com> # v1
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-nvdimm@lists.01.org
-#Reviewed-by: Ira Weiny <ira.weiny@intel.com> # v2
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arc/include/asm/page.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
-index ffb5f33475f19..f0f43eb709d2f 100644
---- a/arch/arc/include/asm/page.h
-+++ b/arch/arc/include/asm/page.h
-@@ -13,6 +13,7 @@
- #ifndef __ASSEMBLY__
- 
- #define clear_page(paddr)		memset((paddr), 0, PAGE_SIZE)
-+#define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- #define copy_page(to, from)		memcpy((to), (from), PAGE_SIZE)
- 
- struct vm_area_struct;
+								Honza
 -- 
-2.27.0
-
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
