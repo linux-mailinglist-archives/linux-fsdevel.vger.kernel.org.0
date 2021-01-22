@@ -2,115 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0060A3005DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 15:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 147DE3005FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 15:51:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbhAVOnf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 09:43:35 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:33796 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728817AbhAVOnH (ORCPT
+        id S1728728AbhAVOtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 09:49:39 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:46941 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728860AbhAVOt2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 09:43:07 -0500
-Received: by mail-io1-f71.google.com with SMTP id k1so9070628ioc.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jan 2021 06:42:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=fE5kJzZFX6LHuXma+wdOzaWCPrGgoY6ccmowLSXJbw8=;
-        b=UYDA2aQLmAwjecKvDqnlOeLyTHsFTiNpqkCC2RpftvnrNrQmXsKkhBMWppllEKCxAb
-         FOwxPLvG7NmBZXtYwuAilQWBR/dI205JVypnrB2kZ/f94hTm9aaM6035EBGv2DoX4Uyh
-         dzG6OpCOxJX0e9XM6Q2jvWg3QEG5rO8VB8rFKUKWYOniTbuU7N3tzIS3TTNf4vJcQdc2
-         1RnkMIlqhOCoULfMIToplDWINlkSmQoJorFQe0hYVwr3iiutt5v+cKiAp/BV2I7/8k/D
-         MKWYKMmsOftsuEYLlT7DLrywlKGqUoyyBzeReWrHExl9GHZeCSC6L30ZrlLuEhjJgzoc
-         7OfQ==
-X-Gm-Message-State: AOAM532lWjXTLBHAnkatTas6Fex92zaX+/U0rQ3hN9iAzEGfNHMA0+V6
-        89gbPybUUS+Wgx8yggj8OKrXg3ift3CsC4cpAgsl2i1zZWUC
-X-Google-Smtp-Source: ABdhPJy7sTfsf/GJiCetI3voox1xPReGN1JRyYVuh7bfA3ZkebO6Ez0+j85tSElA8UsaBeIl2Xmle4DRPKaQBnwwcqRpdfQTkxhZ
+        Fri, 22 Jan 2021 09:49:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611326877;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PgyZJSwtqIgwqYrJxFOaG0Fx5oWxu4/J+hWDwv7TtTQ=;
+        b=FxpBSNVmlbq4nq2e8HKnG5vV/cVEe72jbNvlx6676GMCnjK74LniZ4Q6rGd414FMVna1gj
+        KZtr5s5PCOvqzFoO0cJFuahlxijA1LhJg7QfjVLfQ7jGuyxGfsomrqjfe1HZzpVrGp4uhd
+        8DDuqRqBMKn6Y4LiRXRL04Rw/7OHd3Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-180-jvQ__wgONxeW8icT-BZWiw-1; Fri, 22 Jan 2021 09:47:56 -0500
+X-MC-Unique: jvQ__wgONxeW8icT-BZWiw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8DD8C800D55;
+        Fri, 22 Jan 2021 14:47:54 +0000 (UTC)
+Received: from pick.fieldses.org (ovpn-118-99.rdu2.redhat.com [10.10.118.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B17560BF3;
+        Fri, 22 Jan 2021 14:47:54 +0000 (UTC)
+Received: by pick.fieldses.org (Postfix, from userid 2815)
+        id 3D4DA1204EC; Fri, 22 Jan 2021 09:47:53 -0500 (EST)
+Date:   Fri, 22 Jan 2021 09:47:53 -0500
+From:   "J. Bruce Fields" <bfields@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <schumakeranna@gmail.com>,
+        Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH 2/3] nfsd: move change attribute generation to filesystem
+Message-ID: <20210122144753.GA52753@pick.fieldses.org>
+References: <1611084297-27352-1-git-send-email-bfields@redhat.com>
+ <1611084297-27352-3-git-send-email-bfields@redhat.com>
+ <20210120084638.GA3678536@infradead.org>
+ <20210121202756.GA13298@pick.fieldses.org>
+ <20210122082059.GA119852@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:944a:: with SMTP id x10mr3644441ior.30.1611326546207;
- Fri, 22 Jan 2021 06:42:26 -0800 (PST)
-Date:   Fri, 22 Jan 2021 06:42:26 -0800
-In-Reply-To: <000000000000f054d005b8f87274@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000676bd105b97e329a@google.com>
-Subject: Re: WARNING in io_disable_sqo_submit
-From:   syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, davem@davemloft.net,
-        hdanton@sina.com, io-uring@vger.kernel.org,
-        johannes.berg@intel.com, johannes@sipsolutions.net,
-        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210122082059.GA119852@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Fri, Jan 22, 2021 at 08:20:59AM +0000, Christoph Hellwig wrote:
+> On Thu, Jan 21, 2021 at 03:27:56PM -0500, J. Bruce Fields wrote:
+> > I also have a vague idea that some filesystem-specific improvements
+> > might be possible.  (E.g., if a filesystem had some kind of boot count
+> > in the superblock, maybe that would be a better way to prevent the
+> > change attribute from going backwards on reboot than the thing
+> > generic_fetch_iversion is currently doing with ctime.  But I have no
+> > concrete plan there, maybe I'm dreaming.)
+> 
+> Even without the ctime i_version never goes backward, what is the
+> problem here?
 
-HEAD commit:    9f29bd8b Merge tag 'fs_for_v5.11-rc5' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=169f4e9f500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=39701af622f054a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1156bd20d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ce819f500000
+Suppose a modification bumps the change attribute, a client reads
+the new value of the change attribute before it's committed to disk,
+then the server crashes.  After the server comes back up, the client
+requests the change attribute again and sees an older value.
 
-The issue was bisected to:
+That's actually not too bad.  What I'd mainly like to avoid is
+incrementing the change attribute further and risking reuse of an old
+value for a different new state of the file.
 
-commit dcd479e10a0510522a5d88b29b8f79ea3467d501
-Author: Johannes Berg <johannes.berg@intel.com>
-Date:   Fri Oct 9 12:17:11 2020 +0000
+Which is why generic_fetch_iversion is adding the ctime in the higher
+bits.
 
-    mac80211: always wind down STA state
+So we depend on good time for correctness.  Trond has had some concerns
+about that.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13b8b83b500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1078b83b500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b8b83b500000
+Something like a boot counter might be more reliable.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com
-Fixes: dcd479e10a05 ("mac80211: always wind down STA state")
+Another interesting case is after restore from backup.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8572 at fs/io_uring.c:8917 io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
-Modules linked in:
-CPU: 1 PID: 8572 Comm: syz-executor518 Not tainted 5.11.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_disable_sqo_submit+0x13d/0x180 fs/io_uring.c:8917
-Code: e0 07 83 c0 03 38 d0 7c 04 84 d2 75 2e 83 8b 14 01 00 00 01 4c 89 e7 e8 d1 6d 25 07 5b 5d 41 5c e9 48 22 9b ff e8 43 22 9b ff <0f> 0b e9 00 ff ff ff e8 87 a1 dd ff e9 37 ff ff ff e8 4d a1 dd ff
-RSP: 0018:ffffc90001c17df0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88801c409000 RCX: 0000000000000000
-RDX: ffff8880287e8040 RSI: ffffffff81d7aa8d RDI: ffff88801c4090d0
-RBP: ffff8880198a1780 R08: 0000000000000000 R09: 0000000012c8a801
-R10: ffffffff81d7ad45 R11: 0000000000000001 R12: ffff88801c409000
-R13: ffff888012c8a801 R14: ffff88801c409040 R15: ffff88801c4090d0
-FS:  00007f60e950b700(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f60e950adb8 CR3: 0000000015b41000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- io_uring_flush+0x28b/0x3a0 fs/io_uring.c:9134
- filp_close+0xb4/0x170 fs/open.c:1280
- do_dup2+0x294/0x520 fs/file.c:1024
- ksys_dup3+0x22f/0x360 fs/file.c:1136
- __do_sys_dup2 fs/file.c:1162 [inline]
- __se_sys_dup2 fs/file.c:1150 [inline]
- __x64_sys_dup2+0x71/0x3a0 fs/file.c:1150
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x447019
-Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 06 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f60e950ace8 EFLAGS: 00000246 ORIG_RAX: 0000000000000021
-RAX: ffffffffffffffda RBX: 00000000006dbc38 RCX: 0000000000447019
-RDX: 0000000000447019 RSI: 0000000000000003 RDI: 0000000000000005
-RBP: 00000000006dbc30 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc3c
-R13: 00007ffc5b18d21f R14: 00007f60e950b9c0 R15: 00000000006dbc30
+--b.
 
