@@ -2,140 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8DB1300A2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 18:51:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 089DB300A2E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 18:51:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbhAVRli (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jan 2021 12:41:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51008 "EHLO mail.kernel.org"
+        id S1728944AbhAVRls (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jan 2021 12:41:48 -0500
+Received: from verein.lst.de ([213.95.11.211]:37533 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729539AbhAVRdl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jan 2021 12:33:41 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4494F239D4;
-        Fri, 22 Jan 2021 17:32:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611336777;
-        bh=Ur7upKT7YbgDOcapu/JArHDsI4zcwel1UvVwI6HDudw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=uWcq7n1E8sK28Avr7NVza87ZyLg4/ZmAVhy1gNoSQOuPvkK9zK1qmj/Bjky3AxMCR
-         jMU4V4a5nsHWRRr3YCnD2hLI+J8vgScO+X3xMKzSwqHuXfrKpQrvcUMgxlHDmMXoxw
-         QbuLMhW+93CbXJ16nZ8hHMR5S3wIfkcF5nzj81Ywc7s6J4zDc3A6mWl2aA2KBMZuHB
-         dFEZyT2rHCHg+GnyiDLBxl/Z307mhiEpOEtsQ2gw61u6plI/KNTVuHgoblcN33V7BX
-         93JERb6fk6nS+EHKWkJkClJE1lELvcivN2G5wqy4IO1hFSgiRGdGk2FF2rBA14Xk9f
-         scpfGzKrp3ZEw==
-Message-ID: <d4f84211f017280cd1dd98bcdee99d11621c5d7f.camel@kernel.org>
-Subject: Re: [RFC PATCH v4 08/17] ceph: add routine to create fscrypt
- context prior to RPC
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 22 Jan 2021 12:32:56 -0500
-In-Reply-To: <87tur8532c.fsf@suse.de>
-References: <20210120182847.644850-1-jlayton@kernel.org>
-         <20210120182847.644850-9-jlayton@kernel.org> <87tur8532c.fsf@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+        id S1730109AbhAVRe0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Jan 2021 12:34:26 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 7138F68B05; Fri, 22 Jan 2021 18:33:40 +0100 (CET)
+Date:   Fri, 22 Jan 2021 18:33:40 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Mauricio =?iso-8859-1?Q?V=E1squez?= Bernal 
+        <mauricio@kinvolk.io>
+Subject: Re: [PATCH v6 35/40] fs: introduce MOUNT_ATTR_IDMAP
+Message-ID: <20210122173340.GA20658@lst.de>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-36-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210121131959.646623-36-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-01-22 at 16:50 +0000, Luis Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
-> 
-> > After pre-creating a new inode, do an fscrypt prepare on it, fetch a
-> > new encryption context and then marshal that into the security context
-> > to be sent along with the RPC.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/crypto.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  fs/ceph/crypto.h | 12 ++++++++++
-> >  fs/ceph/inode.c  |  9 +++++--
-> >  fs/ceph/super.h  |  3 +++
-> >  4 files changed, 83 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> > index 879d9a0d3751..f037a4939026 100644
-> > --- a/fs/ceph/crypto.c
-> > +++ b/fs/ceph/crypto.c
-> > @@ -46,3 +46,64 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
-> >  {
-> >  	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
-> >  }
-> > +
-> > +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-> > +				 struct ceph_acl_sec_ctx *as)
-> > +{
-> > +	int ret, ctxsize;
-> > +	size_t name_len;
-> > +	char *name;
-> > +	struct ceph_pagelist *pagelist = as->pagelist;
-> > +	bool encrypted = false;
-> > +
-> > +	ret = fscrypt_prepare_new_inode(dir, inode, &encrypted);
-> > +	if (ret)
-> > +		return ret;
-> > +	if (!encrypted)
-> > +		return 0;
-> > +
-> > +	inode->i_flags |= S_ENCRYPTED;
-> > +
-> > +	ctxsize = fscrypt_context_for_new_inode(&as->fscrypt, inode);
-> > +	if (ctxsize < 0)
-> > +		return ctxsize;
-> > +
-> > +	/* marshal it in page array */
-> > +	if (!pagelist) {
-> > +		pagelist = ceph_pagelist_alloc(GFP_KERNEL);
-> > +		if (!pagelist)
-> > +			return -ENOMEM;
-> > +		ret = ceph_pagelist_reserve(pagelist, PAGE_SIZE);
-> > +		if (ret)
-> > +			goto out;
-> > +		ceph_pagelist_encode_32(pagelist, 1);
-> > +	}
-> > +
-> > +	name = CEPH_XATTR_NAME_ENCRYPTION_CONTEXT;
-> > +	name_len = strlen(name);
-> > +	ret = ceph_pagelist_reserve(pagelist, 4 * 2 + name_len + ctxsize);
-> > +	if (ret)
-> > +		goto out;
-> > +
-> > +	if (as->pagelist) {
-> > +		BUG_ON(pagelist->length <= sizeof(__le32));
-> > +		if (list_is_singular(&pagelist->head)) {
-> > +			le32_add_cpu((__le32*)pagelist->mapped_tail, 1);
-> > +		} else {
-> > +			struct page *page = list_first_entry(&pagelist->head,
-> > +							     struct page, lru);
-> > +			void *addr = kmap_atomic(page);
-> > +			le32_add_cpu((__le32*)addr, 1);
-> > +			kunmap_atomic(addr);
-> > +		}
-> > +	}
-> > +
-> 
-> I've been staring at this function for a bit.  And at this point I would
-> expect something like this:
-> 
-> 	} else
-> 		as->pagelist = pagelist;
-> 
-> as I'm not seeing pagelist being used anywhere if it's allocated in this
-> function.
-> 
+>  /*
+>   * mount_setattr()
+> @@ -127,9 +128,10 @@ struct mount_attr {
+>  	__u64 attr_set;
+>  	__u64 attr_clr;
+>  	__u64 propagation;
+> +	__u64 userns_fd;
+>  };
+>  
+>  /* List of all mount_attr versions. */
+> -#define MOUNT_ATTR_SIZE_VER0	24 /* sizeof first published struct */
+> +#define MOUNT_ATTR_SIZE_VER0	32 /* sizeof first published struct */
 
-It gets used near the end, in the ceph_pagelist_append calls. Once we've
-appended the xattr, we don't need the pagelist anymore and can free it.
-
-That said, the whole way the ceph_pagelist stuff is managed is weird.
-I'm not clear why it was done that way, and maybe we ought to rework
-this, SELinux and ACL handling to not use them.
-
-I think that's a cleanup for another day.
--- 
-Jeff Layton <jlayton@kernel.org>
-
+I think this hunk needs to go into the patch adding the structure.
