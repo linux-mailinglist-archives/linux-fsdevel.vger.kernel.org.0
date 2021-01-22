@@ -2,111 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E99A2FF98F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 01:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FCE02FFAB6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jan 2021 03:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725831AbhAVApZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jan 2021 19:45:25 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41964 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbhAVApZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jan 2021 19:45:25 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 1C4C61F4486F
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     jack@suse.com, viro@zeniv.linux.org.uk, amir73il@gmail.com,
-        dhowells@redhat.com, david@fromorbit.com, darrick.wong@oracle.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [RFC] Filesystem error notifications proposal
-Organization: Collabora
-References: <87lfcne59g.fsf@collabora.com> <YAoDz6ODFV2roDIj@mit.edu>
-Date:   Thu, 21 Jan 2021 21:44:35 -0300
-In-Reply-To: <YAoDz6ODFV2roDIj@mit.edu> (Theodore Ts'o's message of "Thu, 21
-        Jan 2021 17:44:31 -0500")
-Message-ID: <87pn1xdclo.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        id S1726309AbhAVC4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jan 2021 21:56:43 -0500
+Received: from namei.org ([65.99.196.166]:52304 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725283AbhAVC4m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Jan 2021 21:56:42 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id D4D118CE;
+        Fri, 22 Jan 2021 02:55:08 +0000 (UTC)
+Date:   Fri, 22 Jan 2021 13:55:08 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?ISO-8859-15?Q?St=E9phane_Graber?= <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 03/40] fs: add file and path permissions helpers
+In-Reply-To: <20210121131959.646623-4-christian.brauner@ubuntu.com>
+Message-ID: <8c172a1d-e0ae-9796-f5f5-def7fc3de3@namei.org>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-4-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
+On Thu, 21 Jan 2021, Christian Brauner wrote:
 
-> On Wed, Jan 20, 2021 at 05:13:15PM -0300, Gabriel Krisman Bertazi wrote:
->>   - The implementation allowed an error string description (equivalent
->>     to what would be thrown in dmesg) that is too short, as it needs to
->>     fit in a single notification.
->
-> ... or we need to have some kind of contnuation system where the text
-> string is broken across multiple notification, with some kind of
-> notification id umber.
+> Add two simple helpers to check permissions on a file and path
+> respectively and convert over some callers. It simplifies quite a few
+> codepaths and also reduces the churn in later patches quite a bit.
+> Christoph also correctly points out that this makes codepaths (e.g.
+> ioctls) way easier to follow that would otherwise have to do more
+> complex argument passing than necessary.
+> 
+> Link: https://lore.kernel.org/r/20210112220124.837960-16-christian.brauner@ubuntu.com
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Suggested-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Hi Ted,
 
-This is something I'd like to avoid.  A notification broken in several
-parts is subject to being partially overwritten by another notification
-before it is fully read by userspace.  we can workaround it, of course,
-but the added complexity would be unnecessary if only we had a large
-enough notification - or one with a flexible size.  Consider that we
-have the entire context of the notification at the moment it happens, so
-we can always know the size we need before doing any allocations.
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
->>   - Visibility of objects.  A bind mount of a subtree shouldn't receive
->>     notifications of objects outside of that bind mount.
->
-> So this is scope creep beyond the original goals of the project.  I
-> understand that there is a desire by folks in the community to support
-> various containerization use cases where only only a portion of file
-> system is visible in a container due to a bind mount.
->
-> However, we need to recall that ext4_error messages can originate in
-> fairly deep inside the ext4 file system.  They indicate major problems
-> with the file system --- the kind that might require drastic system
-> administration reaction.  As such, at the point where we discover a
-> problem with an inode, that part of the ext4 code might not have
-> access to the pathname that was used to originally access the inode.
->
-> We might be inside a workqueue handler, for example, so we might not
-> even running in the same process that had been containerized.  We
-> might be holding various file system mutexes or even in some cases a
-> spinlock.
-
-I see.  But the visibility is of a watcher who can see an object, not
-the application that caused the error.  The fact that the error happened
-outside the context of the containerized process should not be a problem
-here, right?  As long as the watcher is watching a mountpoint that can
-reach the failed inode, that inode should be accessible to the watcher
-and it should receive a notification. No?
-
-I don't mean to sound dense.  I understand the memory allocation &
-locking argument.  But I don't understand why an error identified in a
-workqueue context would be different from an error in a process
-context.
-
-> What follows from that is that it's not really going to be possible to
-> filter notifications to a subtree.  Furthermore, if fanotify requires
-> memory allocation, that's going to be problematic, we may not be in a
-> context where memory allocation is possible.  So for that reason, it's
-> not clear to me that fanotify is going to be a good match for this use
-> case.
-
-I see.  Do you think we would be able to refactor the error handling
-code, such that we can drop spinlocks and do some non-reclaiming
-allocations at least?  I noticed Google's code seems to survive doing
-some allocations with GFP_ATOMIC in their internal-to-Google netlink
-notification system, and even GFP_KERNEL on some other scenarios.  I
-might not be seeing the full picture though.
-
-I think changing fanotify to avoid allocations in the submission path
-might be just intrusive enough for the patch to be rejected by Jan. If
-we cannot do allocations at all, I would suggest I move this feature out
-of fanotify, but stick with fsnotify, for its ability to link
-inodes/mntpoints/superblock.
 
 -- 
-Gabriel Krisman Bertazi
+James Morris
+<jmorris@namei.org>
+
