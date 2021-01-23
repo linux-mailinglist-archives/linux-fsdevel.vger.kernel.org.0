@@ -2,290 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B393014E9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 12:52:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD4130154C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 13:55:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbhAWLwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jan 2021 06:52:23 -0500
-Received: from hmm.wantstofly.org ([213.239.204.108]:40402 "EHLO
-        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbhAWLwW (ORCPT
+        id S1725440AbhAWMzJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jan 2021 07:55:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58918 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbhAWMzI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jan 2021 06:52:22 -0500
-X-Greylist: delayed 585 seconds by postgrey-1.27 at vger.kernel.org; Sat, 23 Jan 2021 06:52:20 EST
-Received: by mail.wantstofly.org (Postfix, from userid 1000)
-        id 9010F7F43D; Sat, 23 Jan 2021 13:41:52 +0200 (EET)
-Date:   Sat, 23 Jan 2021 13:41:52 +0200
-From:   Lennert Buytenhek <buytenh@wantstofly.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
-Message-ID: <20210123114152.GA120281@wantstofly.org>
+        Sat, 23 Jan 2021 07:55:08 -0500
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C91C06174A;
+        Sat, 23 Jan 2021 04:54:27 -0800 (PST)
+Received: by mail-io1-xd2b.google.com with SMTP id h11so16859054ioh.11;
+        Sat, 23 Jan 2021 04:54:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vFLJjQ6GqDf6idhlAi7eZoIx97QCRlqrFdGfzJJ1rlI=;
+        b=d4CXAsK3TvxYJlbIcevCNHu7IncLMYzngiUYcUXsK05J5OX96uHRlBJ1A01TVAaI37
+         KBKIu6cqZ4xwU2bf0SB0n7Rywn72a0mpRGAQTcecM89BFWPMP9ZONZj6MguRXDSEeqNj
+         ZXFSN035Exc35JzeVJbEVwK094uyaRh6BapOMIvxscm9bGrPBFJr+spIgsd9A0cdpsCj
+         T5qWKF4gJrFEbDj4nsGb5K8GlrERjp+RFlkPaEMD3wqme5+O5B7wZGeeFpEUzmZm+utV
+         IdatRNqpESnsLPxPZkawPFme6J0kAAOxKZDUkES2xZ1VMH9cTOFbd7KQv6IilJq1gL2w
+         ppaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vFLJjQ6GqDf6idhlAi7eZoIx97QCRlqrFdGfzJJ1rlI=;
+        b=g4dd5rDpOkz4YaCLAJUupjlnrX6D0fe3czgtCHUp+Ye9IjTfVFvEnSLnrTY4ifWa7H
+         xn1DdP/01Otm5FXuBQ2bxVwKPjvqRbNJoc6kfLng/8NaZht1p0eD/d8pyVBZD5d995TD
+         wDO49FOLaHl8sn7LromVkq0yCqXNwMW7+qZ4gDF7rAJiyq3Qf0HIoggKVdr/bqO3gzol
+         lt/08zohCRQIgpwsGwuI0wmBe9xEiee+4ct7rCP8me0cj1gMpv/iXmSiOWvWbUu9JYfY
+         HscNkLrgfH7nXDQ/OA2p7TmULnWKy9AmKpK+8IMBuIHcfKiUWCuk/DvDb9yeGj+B532E
+         oJ8g==
+X-Gm-Message-State: AOAM5337LWMbYGxRIcd7hgO7FJF/3W98H1CgA/Tpiq1bIgHpCxbBnogI
+        IjsywPv5BPtcXnFQwtJWv2gJ6ZPFzzlfvuwNFS6yuZICqoo=
+X-Google-Smtp-Source: ABdhPJyF0PNGZ5r9X5aqDEIxp+y5yAC+gKMzkLKLPeF951kWCaM6ULxT2iKCgI6cCObRKCk9ec4QF7X3FnRTOMRbZRQ=
+X-Received: by 2002:a05:6e02:eb0:: with SMTP id u16mr388035ilj.250.1611406467216;
+ Sat, 23 Jan 2021 04:54:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20201130030039.596801-1-sargun@sargun.me> <CAMp4zn-c6gOPTPBqqkPoQi3NVeZ0yW-WfVPFzpDiazj8PeUgBw@mail.gmail.com>
+ <CAOQ4uxhU=eWAfTn8DJ7x4NZ2PO9Q9V7Ohpj9aTasXg3KcfFpMA@mail.gmail.com>
+ <CAMp4zn9sdpk1A1hYpDjS_774UscYZ1sztCsLdfshs=pXEYf0NQ@mail.gmail.com> <CAJfpeguLFoLD8BYuNAAwV+F0583aujNBqto3QnFjeV+z4LszDA@mail.gmail.com>
+In-Reply-To: <CAJfpeguLFoLD8BYuNAAwV+F0583aujNBqto3QnFjeV+z4LszDA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 23 Jan 2021 14:54:16 +0200
+Message-ID: <CAOQ4uxg=H46mVHeXFN-Sjd85TKRFawe0ZDqossg_Hn8BULWHkw@mail.gmail.com>
+Subject: Re: [PATCH] overlay: Plumb through flush method
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-IORING_OP_GETDENTS64 behaves like getdents64(2) and takes the same
-arguments.
+On Wed, Jan 20, 2021 at 5:24 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Thu, Dec 3, 2020 at 7:32 PM Sargun Dhillon <sargun@sargun.me> wrote:
+> >
+> > On Thu, Dec 3, 2020 at 2:32 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > On Thu, Dec 3, 2020 at 12:16 PM Sargun Dhillon <sargun@sargun.me> wrote:
+> > > >
+> > > > On Sun, Nov 29, 2020 at 7:00 PM Sargun Dhillon <sargun@sargun.me> wrote:
+> > > > >
+> > > > > Filesystems can implement their own flush method that release
+> > > > > resources, or manipulate caches. Currently if one of these
+> > > > > filesystems is used with overlayfs, the flush method is not called.
+> > > > >
+> > > > > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> > > > > Cc: linux-fsdevel@vger.kernel.org
+> > > > > Cc: linux-unionfs@vger.kernel.org
+> > > > > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > > > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > > > ---
+> > > > >  fs/overlayfs/file.c | 11 +++++++++++
+> > > > >  1 file changed, 11 insertions(+)
+> > > > >
+> > > > > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> > > > > index efccb7c1f9bc..802259f33c28 100644
+> > > > > --- a/fs/overlayfs/file.c
+> > > > > +++ b/fs/overlayfs/file.c
+> > > > > @@ -787,6 +787,16 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
+> > > > >                             remap_flags, op);
+> > > > >  }
+> > > > >
+> > > > > +static int ovl_flush(struct file *file, fl_owner_t id)
+> > > > > +{
+> > > > > +       struct file *realfile = file->private_data;
+> > > > > +
+> > > > > +       if (realfile->f_op->flush)
+> > > > > +               return realfile->f_op->flush(realfile, id);
+> > > > > +
+> > > > > +       return 0;
+> > > > > +}
+> > > > > +
+> > > > >  const struct file_operations ovl_file_operations = {
+> > > > >         .open           = ovl_open,
+> > > > >         .release        = ovl_release,
+> > > > > @@ -798,6 +808,7 @@ const struct file_operations ovl_file_operations = {
+> > > > >         .fallocate      = ovl_fallocate,
+> > > > >         .fadvise        = ovl_fadvise,
+> > > > >         .unlocked_ioctl = ovl_ioctl,
+> > > > > +       .flush          = ovl_flush,
+> > > > >  #ifdef CONFIG_COMPAT
+> > > > >         .compat_ioctl   = ovl_compat_ioctl,
+> > > > >  #endif
+> > > > > --
+> > > > > 2.25.1
+> > > > >
+> > > >
+> > > > Amir, Miklos,
+> > > > Is this acceptable? I discovered this being a problem when we had the discussion
+> > > > of whether the volatile fs should return an error on close on dirty files.
+> > >
+> > > Yes, looks ok.
+> > > Maybe we want to check if the realfile is upper although
+> > > maybe flush can release resources also on read only fs?
+> > >
+> > > >
+> > > > It seems like it would be useful if anyone uses NFS, or CIFS as an upperdir.
+> > >
+> > > They are not supported as upperdir. only FUSE is.
+> > >
+> > > Thanks,
+> > > Amir.
+> >
+> > VFS does it on read-only files / mounts, so we should probably do the
+> > same thing.
+>
+> Right, but it should handle files copied up after the oipen (i.e. call
+> ovl_real_fdget() to get the real file).
+>
 
-Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
----
-This seems to work OK, but I'd appreciate a review from someone more
-familiar with io_uring internals than I am, as I'm not entirely sure
-I did everything quite right.
+Applied patch is missing fdput() xfstests fail.
+Following tested fix.
 
-A dumb test program for IORING_OP_GETDENTS64 is available here:
+Thanks,
+Amir.
 
-	https://krautbox.wantstofly.org/~buytenh/uringfind.c
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -693,12 +693,17 @@ static int ovl_flush(struct file *file, fl_owner_t id)
+        int err;
 
-This does more or less what find(1) does: it scans recursively through
-a directory tree and prints the names of all directories and files it
-encounters along the way -- but then using io_uring.  (The uring version
-prints the names of encountered files and directories in an order that's
-determined by SQE completion order, which is somewhat nondeterministic
-and likely to differ between runs.)
-
-On a directory tree with 14-odd million files in it that's on a
-six-drive (spinning disk) btrfs raid, find(1) takes:
-
-	# echo 3 > /proc/sys/vm/drop_caches 
-	# time find /mnt/repo > /dev/null
-
-	real    24m7.815s
-	user    0m15.015s
-	sys     0m48.340s
-	#
-
-And the io_uring version takes:
-
-	# echo 3 > /proc/sys/vm/drop_caches 
-	# time ./uringfind /mnt/repo > /dev/null
-
-	real    10m29.064s
-	user    0m4.347s
-	sys     0m1.677s
-	#
-
-These timings are repeatable and consistent to within a few seconds.
-
-(btrfs seems to be sending most metadata reads to the same drive in the
-array during this test, even though this filesystem is using the raid1c4
-profile for metadata, so I suspect that more drive-level parallelism can
-be extracted with some btrfs tweaks.)
-
-The fully cached case also shows some speedup for the io_uring version:
-
-	# time find /mnt/repo > /dev/null
-
-	real    0m5.223s
-	user    0m1.926s
-	sys     0m3.268s
-	#
-
-vs:
-
-	# time ./uringfind /mnt/repo > /dev/null
-
-	real    0m3.604s
-	user    0m2.417s
-	sys     0m0.793s
-	#
-
-That said, the point of this patch isn't primarily to enable
-lightning-fast find(1) or du(1), but more to complete the set of
-filesystem I/O primitives available via io_uring, so that applications
-can do all of their filesystem I/O using the same mechanism, without
-having to manually punt some of their work out to worker threads -- and
-indeed, an object storage backend server that I wrote a while ago can
-run with a pure io_uring based event loop with this patch.
-
-One open question is whether IORING_OP_GETDENTS64 should be more like
-pread(2) and allow passing in a starting offset to read from the
-directory from.  (This would require some more surgery in fs/readdir.c.)
-
- fs/io_uring.c                 |   51 ++++++++++++++++++++++++++++++++++++++++++
- fs/readdir.c                  |   25 ++++++++++++++------
- include/linux/fs.h            |    4 +++
- include/uapi/linux/io_uring.h |    1 
- 4 files changed, 73 insertions(+), 8 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 985a9e3f976d..5d79b9668ee0 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -572,6 +572,12 @@ struct io_unlink {
- 	struct filename			*filename;
- };
- 
-+struct io_getdents64 {
-+	struct file			*file;
-+	struct linux_dirent64 __user	*dirent;
-+	unsigned int			count;
-+};
+        err = ovl_real_fdget(file, &real);
+-       if (!err && real.file->f_op->flush) {
++       if (err)
++               return err;
 +
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -699,6 +705,7 @@ struct io_kiocb {
- 		struct io_shutdown	shutdown;
- 		struct io_rename	rename;
- 		struct io_unlink	unlink;
-+		struct io_getdents64	getdents64;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -987,6 +994,11 @@ static const struct io_op_def io_op_defs[] = {
- 		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
- 						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
- 	},
-+	[IORING_OP_GETDENTS64] = {
-+		.needs_file		= 1,
-+		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
-+						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
-+	},
- };
- 
- enum io_mem_account {
-@@ -4552,6 +4564,40 @@ static int io_sync_file_range(struct io_kiocb *req, bool force_nonblock)
- 	return 0;
++       if (real.file->f_op->flush) {
+                old_cred = ovl_override_creds(file_inode(file)->i_sb);
+                err = real.file->f_op->flush(real.file, id);
+                revert_creds(old_cred);
+        }
+
++       fdput(real);
++
+        return err;
  }
- 
-+static int io_getdents64_prep(struct io_kiocb *req,
-+			      const struct io_uring_sqe *sqe)
-+{
-+	struct io_getdents64 *getdents64 = &req->getdents64;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->off || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+
-+	getdents64->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	getdents64->count = READ_ONCE(sqe->len);
-+	return 0;
-+}
-+
-+static int io_getdents64(struct io_kiocb *req, bool force_nonblock)
-+{
-+	struct io_getdents64 *getdents64 = &req->getdents64;
-+	int ret;
-+
-+	/* getdents64 always requires a blocking context */
-+	if (force_nonblock)
-+		return -EAGAIN;
-+
-+	ret = vfs_getdents64(req->file, getdents64->dirent, getdents64->count);
-+	if (ret < 0) {
-+		if (ret == -ERESTARTSYS)
-+			ret = -EINTR;
-+		req_set_fail_links(req);
-+	}
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- #if defined(CONFIG_NET)
- static int io_setup_async_msg(struct io_kiocb *req,
- 			      struct io_async_msghdr *kmsg)
-@@ -6078,6 +6124,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_renameat_prep(req, sqe);
- 	case IORING_OP_UNLINKAT:
- 		return io_unlinkat_prep(req, sqe);
-+	case IORING_OP_GETDENTS64:
-+		return io_getdents64_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6337,6 +6385,9 @@ static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
- 	case IORING_OP_UNLINKAT:
- 		ret = io_unlinkat(req, force_nonblock);
- 		break;
-+	case IORING_OP_GETDENTS64:
-+		ret = io_getdents64(req, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/fs/readdir.c b/fs/readdir.c
-index 19434b3c982c..5310677d5d36 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -348,10 +348,9 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
- 	return -EFAULT;
- }
- 
--SYSCALL_DEFINE3(getdents64, unsigned int, fd,
--		struct linux_dirent64 __user *, dirent, unsigned int, count)
-+int vfs_getdents64(struct file *file, struct linux_dirent64 __user *dirent,
-+		   unsigned int count)
- {
--	struct fd f;
- 	struct getdents_callback64 buf = {
- 		.ctx.actor = filldir64,
- 		.count = count,
-@@ -359,11 +358,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
- 	};
- 	int error;
- 
--	f = fdget_pos(fd);
--	if (!f.file)
--		return -EBADF;
--
--	error = iterate_dir(f.file, &buf.ctx);
-+	error = iterate_dir(file, &buf.ctx);
- 	if (error >= 0)
- 		error = buf.error;
- 	if (buf.prev_reclen) {
-@@ -376,6 +371,20 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
- 		else
- 			error = count - buf.count;
- 	}
-+	return error;
-+}
-+
-+SYSCALL_DEFINE3(getdents64, unsigned int, fd,
-+		struct linux_dirent64 __user *, dirent, unsigned int, count)
-+{
-+	struct fd f;
-+	int error;
-+
-+	f = fdget_pos(fd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	error = vfs_getdents64(f.file, dirent, count);
- 	fdput_pos(f);
- 	return error;
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd47deea7c17..602202a8fc1f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3109,6 +3109,10 @@ extern const struct inode_operations simple_symlink_inode_operations;
- 
- extern int iterate_dir(struct file *, struct dir_context *);
- 
-+struct linux_dirent64;
-+int vfs_getdents64(struct file *file, struct linux_dirent64 __user *dirent,
-+		   unsigned int count);
-+
- int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,
- 		int flags);
- int vfs_fstat(int fd, struct kstat *stat);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index d31a2a1e8ef9..5602414735f7 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -137,6 +137,7 @@ enum {
- 	IORING_OP_SHUTDOWN,
- 	IORING_OP_RENAMEAT,
- 	IORING_OP_UNLINKAT,
-+	IORING_OP_GETDENTS64,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
