@@ -2,168 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD4130154C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 13:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9299C301555
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 14:11:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725440AbhAWMzJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jan 2021 07:55:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58918 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725287AbhAWMzI (ORCPT
+        id S1725765AbhAWNLB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jan 2021 08:11:01 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:45691 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbhAWNK7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jan 2021 07:55:08 -0500
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C91C06174A;
-        Sat, 23 Jan 2021 04:54:27 -0800 (PST)
-Received: by mail-io1-xd2b.google.com with SMTP id h11so16859054ioh.11;
-        Sat, 23 Jan 2021 04:54:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vFLJjQ6GqDf6idhlAi7eZoIx97QCRlqrFdGfzJJ1rlI=;
-        b=d4CXAsK3TvxYJlbIcevCNHu7IncLMYzngiUYcUXsK05J5OX96uHRlBJ1A01TVAaI37
-         KBKIu6cqZ4xwU2bf0SB0n7Rywn72a0mpRGAQTcecM89BFWPMP9ZONZj6MguRXDSEeqNj
-         ZXFSN035Exc35JzeVJbEVwK094uyaRh6BapOMIvxscm9bGrPBFJr+spIgsd9A0cdpsCj
-         T5qWKF4gJrFEbDj4nsGb5K8GlrERjp+RFlkPaEMD3wqme5+O5B7wZGeeFpEUzmZm+utV
-         IdatRNqpESnsLPxPZkawPFme6J0kAAOxKZDUkES2xZ1VMH9cTOFbd7KQv6IilJq1gL2w
-         ppaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vFLJjQ6GqDf6idhlAi7eZoIx97QCRlqrFdGfzJJ1rlI=;
-        b=g4dd5rDpOkz4YaCLAJUupjlnrX6D0fe3czgtCHUp+Ye9IjTfVFvEnSLnrTY4ifWa7H
-         xn1DdP/01Otm5FXuBQ2bxVwKPjvqRbNJoc6kfLng/8NaZht1p0eD/d8pyVBZD5d995TD
-         wDO49FOLaHl8sn7LromVkq0yCqXNwMW7+qZ4gDF7rAJiyq3Qf0HIoggKVdr/bqO3gzol
-         lt/08zohCRQIgpwsGwuI0wmBe9xEiee+4ct7rCP8me0cj1gMpv/iXmSiOWvWbUu9JYfY
-         HscNkLrgfH7nXDQ/OA2p7TmULnWKy9AmKpK+8IMBuIHcfKiUWCuk/DvDb9yeGj+B532E
-         oJ8g==
-X-Gm-Message-State: AOAM5337LWMbYGxRIcd7hgO7FJF/3W98H1CgA/Tpiq1bIgHpCxbBnogI
-        IjsywPv5BPtcXnFQwtJWv2gJ6ZPFzzlfvuwNFS6yuZICqoo=
-X-Google-Smtp-Source: ABdhPJyF0PNGZ5r9X5aqDEIxp+y5yAC+gKMzkLKLPeF951kWCaM6ULxT2iKCgI6cCObRKCk9ec4QF7X3FnRTOMRbZRQ=
-X-Received: by 2002:a05:6e02:eb0:: with SMTP id u16mr388035ilj.250.1611406467216;
- Sat, 23 Jan 2021 04:54:27 -0800 (PST)
+        Sat, 23 Jan 2021 08:10:59 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1l3Ify-0007vJ-RG; Sat, 23 Jan 2021 13:10:03 +0000
+Date:   Sat, 23 Jan 2021 14:09:58 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 05/39] namei: make permission helpers idmapped mount
+ aware
+Message-ID: <20210123130958.3t6kvgkl634njpsm@wittgenstein>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+ <20210121131959.646623-6-christian.brauner@ubuntu.com>
+ <20210122222632.GB25405@fieldses.org>
 MIME-Version: 1.0
-References: <20201130030039.596801-1-sargun@sargun.me> <CAMp4zn-c6gOPTPBqqkPoQi3NVeZ0yW-WfVPFzpDiazj8PeUgBw@mail.gmail.com>
- <CAOQ4uxhU=eWAfTn8DJ7x4NZ2PO9Q9V7Ohpj9aTasXg3KcfFpMA@mail.gmail.com>
- <CAMp4zn9sdpk1A1hYpDjS_774UscYZ1sztCsLdfshs=pXEYf0NQ@mail.gmail.com> <CAJfpeguLFoLD8BYuNAAwV+F0583aujNBqto3QnFjeV+z4LszDA@mail.gmail.com>
-In-Reply-To: <CAJfpeguLFoLD8BYuNAAwV+F0583aujNBqto3QnFjeV+z4LszDA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 23 Jan 2021 14:54:16 +0200
-Message-ID: <CAOQ4uxg=H46mVHeXFN-Sjd85TKRFawe0ZDqossg_Hn8BULWHkw@mail.gmail.com>
-Subject: Re: [PATCH] overlay: Plumb through flush method
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210122222632.GB25405@fieldses.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 5:24 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Thu, Dec 3, 2020 at 7:32 PM Sargun Dhillon <sargun@sargun.me> wrote:
-> >
-> > On Thu, Dec 3, 2020 at 2:32 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Thu, Dec 3, 2020 at 12:16 PM Sargun Dhillon <sargun@sargun.me> wrote:
-> > > >
-> > > > On Sun, Nov 29, 2020 at 7:00 PM Sargun Dhillon <sargun@sargun.me> wrote:
-> > > > >
-> > > > > Filesystems can implement their own flush method that release
-> > > > > resources, or manipulate caches. Currently if one of these
-> > > > > filesystems is used with overlayfs, the flush method is not called.
-> > > > >
-> > > > > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > > > > Cc: linux-fsdevel@vger.kernel.org
-> > > > > Cc: linux-unionfs@vger.kernel.org
-> > > > > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > > > > Cc: Amir Goldstein <amir73il@gmail.com>
-> > > > > ---
-> > > > >  fs/overlayfs/file.c | 11 +++++++++++
-> > > > >  1 file changed, 11 insertions(+)
-> > > > >
-> > > > > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> > > > > index efccb7c1f9bc..802259f33c28 100644
-> > > > > --- a/fs/overlayfs/file.c
-> > > > > +++ b/fs/overlayfs/file.c
-> > > > > @@ -787,6 +787,16 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
-> > > > >                             remap_flags, op);
-> > > > >  }
-> > > > >
-> > > > > +static int ovl_flush(struct file *file, fl_owner_t id)
-> > > > > +{
-> > > > > +       struct file *realfile = file->private_data;
-> > > > > +
-> > > > > +       if (realfile->f_op->flush)
-> > > > > +               return realfile->f_op->flush(realfile, id);
-> > > > > +
-> > > > > +       return 0;
-> > > > > +}
-> > > > > +
-> > > > >  const struct file_operations ovl_file_operations = {
-> > > > >         .open           = ovl_open,
-> > > > >         .release        = ovl_release,
-> > > > > @@ -798,6 +808,7 @@ const struct file_operations ovl_file_operations = {
-> > > > >         .fallocate      = ovl_fallocate,
-> > > > >         .fadvise        = ovl_fadvise,
-> > > > >         .unlocked_ioctl = ovl_ioctl,
-> > > > > +       .flush          = ovl_flush,
-> > > > >  #ifdef CONFIG_COMPAT
-> > > > >         .compat_ioctl   = ovl_compat_ioctl,
-> > > > >  #endif
-> > > > > --
-> > > > > 2.25.1
-> > > > >
-> > > >
-> > > > Amir, Miklos,
-> > > > Is this acceptable? I discovered this being a problem when we had the discussion
-> > > > of whether the volatile fs should return an error on close on dirty files.
-> > >
-> > > Yes, looks ok.
-> > > Maybe we want to check if the realfile is upper although
-> > > maybe flush can release resources also on read only fs?
-> > >
-> > > >
-> > > > It seems like it would be useful if anyone uses NFS, or CIFS as an upperdir.
-> > >
-> > > They are not supported as upperdir. only FUSE is.
-> > >
-> > > Thanks,
-> > > Amir.
-> >
-> > VFS does it on read-only files / mounts, so we should probably do the
-> > same thing.
->
-> Right, but it should handle files copied up after the oipen (i.e. call
-> ovl_real_fdget() to get the real file).
->
+On Fri, Jan 22, 2021 at 05:26:32PM -0500, J. Bruce Fields wrote:
+> If I NFS-exported an idmapped mount, I think I'd expect idmapped clients
+> to see the mapped IDs.
+> 
+> Looks like that means taking the user namespace from the struct
+> svc_export everwhere, for example:
+> 
+> On Thu, Jan 21, 2021 at 02:19:24PM +0100, Christian Brauner wrote:
+> > index 66f2ef67792a..8d90796e236a 100644
+> > --- a/fs/nfsd/nfsfh.c
+> > +++ b/fs/nfsd/nfsfh.c
+> > @@ -40,7 +40,8 @@ static int nfsd_acceptable(void *expv, struct dentry *dentry)
+> >  		/* make sure parents give x permission to user */
+> >  		int err;
+> >  		parent = dget_parent(tdentry);
+> > -		err = inode_permission(d_inode(parent), MAY_EXEC);
+> > +		err = inode_permission(&init_user_ns,
+> > +				       d_inode(parent), MAY_EXEC);
+> 
+> 		err = inode_permission(exp->ex_path.mnt->mnt_userns,
+> 				      d_inode(parent, MAY_EXEC);
 
-Applied patch is missing fdput() xfstests fail.
-Following tested fix.
+Hey Bruce, thanks! Imho, the clean approach for now is to not export
+idmapped mounts until we have ported that part of nfs similar to what we
+do for stacking filesystems for now. I've tested and taken this patch
+into my tree:
 
-Thanks,
-Amir.
+---
+From 7a6a53bca1ecd8db872de1ee81d1a57e1829e525 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Sat, 23 Jan 2021 12:00:02 +0100
+Subject: [PATCH] nfs: do not export idmapped mounts
 
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -693,12 +693,17 @@ static int ovl_flush(struct file *file, fl_owner_t id)
-        int err;
+Prevent nfs from exporting idmapped mounts until we have ported it to
+support exporting idmapped mounts.
 
-        err = ovl_real_fdget(file, &real);
--       if (!err && real.file->f_op->flush) {
-+       if (err)
-+               return err;
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: "J. Bruce Fields" <bfields@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+/* v2 */
+
+/* v3 */
+
+/* v4 */
+
+/* v5 */
+
+/* v5 */
+patch introduced
+base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+---
+ fs/nfsd/export.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+index 81e7bb12aca6..e456421f68b4 100644
+--- a/fs/nfsd/export.c
++++ b/fs/nfsd/export.c
+@@ -369,8 +369,9 @@ static struct svc_export *svc_export_update(struct svc_export *new,
+ 					    struct svc_export *old);
+ static struct svc_export *svc_export_lookup(struct svc_export *);
+ 
+-static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
++static int check_export(struct path *path, int *flags, unsigned char *uuid)
+ {
++	struct inode *inode = d_inode(path->dentry);
+ 
+ 	/*
+ 	 * We currently export only dirs, regular files, and (for v4
+@@ -394,6 +395,7 @@ static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
+ 	 *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
+ 	 * 2:  We must be able to find an inode from a filehandle.
+ 	 *       This means that s_export_op must be set.
++	 * 3: We must not currently be on an idmapped mount.
+ 	 */
+ 	if (!(inode->i_sb->s_type->fs_flags & FS_REQUIRES_DEV) &&
+ 	    !(*flags & NFSEXP_FSID) &&
+@@ -408,6 +410,11 @@ static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
+ 		return -EINVAL;
+ 	}
+ 
++	if (mnt_user_ns(path->mnt) != &init_user_ns) {
++		dprintk("exp_export: export of idmapped mounts not yet supported.\n");
++		return -EINVAL;
++	}
 +
-+       if (real.file->f_op->flush) {
-                old_cred = ovl_override_creds(file_inode(file)->i_sb);
-                err = real.file->f_op->flush(real.file, id);
-                revert_creds(old_cred);
-        }
+ 	if (inode->i_sb->s_export_op->flags & EXPORT_OP_NOSUBTREECHK &&
+ 	    !(*flags & NFSEXP_NOSUBTREECHECK)) {
+ 		dprintk("%s: %s does not support subtree checking!\n",
+@@ -636,8 +643,7 @@ static int svc_export_parse(struct cache_detail *cd, char *mesg, int mlen)
+ 				goto out4;
+ 		}
+ 
+-		err = check_export(d_inode(exp.ex_path.dentry), &exp.ex_flags,
+-				   exp.ex_uuid);
++		err = check_export(&exp.ex_path, &exp.ex_flags, exp.ex_uuid);
+ 		if (err)
+ 			goto out4;
+ 		/*
+-- 
+2.30.0
 
-+       fdput(real);
-+
-        return err;
- }
