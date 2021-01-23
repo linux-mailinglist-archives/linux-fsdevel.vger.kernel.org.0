@@ -2,174 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9299C301555
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 14:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E039B30156E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 14:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725765AbhAWNLB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jan 2021 08:11:01 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:45691 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbhAWNK7 (ORCPT
+        id S1725768AbhAWNb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jan 2021 08:31:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38560 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbhAWNbw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jan 2021 08:10:59 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l3Ify-0007vJ-RG; Sat, 23 Jan 2021 13:10:03 +0000
-Date:   Sat, 23 Jan 2021 14:09:58 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 05/39] namei: make permission helpers idmapped mount
- aware
-Message-ID: <20210123130958.3t6kvgkl634njpsm@wittgenstein>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
- <20210121131959.646623-6-christian.brauner@ubuntu.com>
- <20210122222632.GB25405@fieldses.org>
+        Sat, 23 Jan 2021 08:31:52 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D816BC06174A
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jan 2021 05:31:11 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id d81so17088989iof.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jan 2021 05:31:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y/ASTo4x1dp/9IOXsFyJIcvrNT9Jd2BimdYdXK+Ukg8=;
+        b=EiL0KnHr+T21/1rBPD3i2kBbOJeJAukWZ/tA8dAVFYAisRkA3fB2R5BhlDgMzqy+y9
+         GdDwyKORyJitYckUFNlHosUbLRjU5hM67NeI6Wr1fiKN2TEPZ6POO0Ec/jKt6RdUbFzO
+         YRFBXZQb0FG9QCH5jg+iPECVLXLGRchIOciumL+UUO/ThAmw17P4mVLrIgQ1HtEH+Zko
+         8PckBtYvPOlYupWDFe0BBBDIbc/CYNkAZiQ0BqnMaoOsIhRtaEkBdn08Xbvwh62MBLPK
+         jolQdI8XvaZNKlnaTnm+ra6e73a0ht+QMrQh/+eJIv5njXz6k3nUp+WAUawKH5PkE1x5
+         Ce7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y/ASTo4x1dp/9IOXsFyJIcvrNT9Jd2BimdYdXK+Ukg8=;
+        b=dXtlAfSrvIi8w5fd48M7xpLx8gxbUtPtt32hQWOmQnS3W51zhryGSJBXwaJuBCipCE
+         OoUm7x5dlOGMIaXhF0JEFstp3kyyS1VlaGPcz1QbarpjZIvzCLnsF6Pl+HurqdY7s0rA
+         K//X6BK0vRfZvlh4mKhNx4odM0Q0l7c6Bs6YFlEex8akmB7hikZGbMop9mgGV5FR5Jel
+         EJP5LYJA+ZZZLZHzCOY/T6gV7IPiyBcH0qHHW8ofqMuSN8BuyiYwvgxag48dYAWojmd5
+         o6iwYfU4ngBMhgLoeHx6LqNhEUO/UMUwTupvQIo0pJCUZU6726tOus/85MvQC5Zf+yPg
+         FTIA==
+X-Gm-Message-State: AOAM530lOcpHYb6+455IdE7HmoV3lv3L/G6JSZfSLB5mI/KOMbcO0sUD
+        gb90llSItmkC7081+liNoKlkG4Vt6EylLJopCP55XC2pO7w=
+X-Google-Smtp-Source: ABdhPJy8n/Pj8QxpX6hh+8kLZZPNJdBcf90meWoo2ULJFocnalnJZHQxK1jajXRyjKvIsAFX2Nj4FsG78egK+5pTrMw=
+X-Received: by 2002:a05:6e02:14ce:: with SMTP id o14mr3092075ilk.9.1611408670694;
+ Sat, 23 Jan 2021 05:31:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210122222632.GB25405@fieldses.org>
+References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-9-amir73il@gmail.com>
+ <20200226091804.GD10728@quack2.suse.cz> <CAOQ4uxiXbGF+RRUmnP4Sbub+3TxEavmCvi0AYpwHuLepqexdCA@mail.gmail.com>
+ <20200226143843.GT10728@quack2.suse.cz> <CAOQ4uxh+Mpr-f3LY5PHNDtCoqTrey69-339DabzSkhRR4cbUYA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxh+Mpr-f3LY5PHNDtCoqTrey69-339DabzSkhRR4cbUYA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 23 Jan 2021 15:30:59 +0200
+Message-ID: <CAOQ4uxj_C4EbzwwcrE09P5Z83WqmwNVdeZRJ6qNaThM3pkUinQ@mail.gmail.com>
+Subject: Re: fanotify_merge improvements
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 05:26:32PM -0500, J. Bruce Fields wrote:
-> If I NFS-exported an idmapped mount, I think I'd expect idmapped clients
-> to see the mapped IDs.
-> 
-> Looks like that means taking the user namespace from the struct
-> svc_export everwhere, for example:
-> 
-> On Thu, Jan 21, 2021 at 02:19:24PM +0100, Christian Brauner wrote:
-> > index 66f2ef67792a..8d90796e236a 100644
-> > --- a/fs/nfsd/nfsfh.c
-> > +++ b/fs/nfsd/nfsfh.c
-> > @@ -40,7 +40,8 @@ static int nfsd_acceptable(void *expv, struct dentry *dentry)
-> >  		/* make sure parents give x permission to user */
-> >  		int err;
-> >  		parent = dget_parent(tdentry);
-> > -		err = inode_permission(d_inode(parent), MAY_EXEC);
-> > +		err = inode_permission(&init_user_ns,
-> > +				       d_inode(parent), MAY_EXEC);
-> 
-> 		err = inode_permission(exp->ex_path.mnt->mnt_userns,
-> 				      d_inode(parent, MAY_EXEC);
+On Fri, Jan 22, 2021 at 3:59 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > > > Hum, now thinking about this, maybe we could clean this up even a bit more.
+> > > > event->inode is currently used only by inotify and fanotify for merging
+> > > > purposes. Now inotify could use its 'wd' instead of inode with exactly the
+> > > > same results, fanotify path or fid check is at least as strong as the inode
+> > > > check. So only for the case of pure "inode" events, we need to store inode
+> > > > identifier in struct fanotify_event - and we can do that in the union with
+> > > > struct path and completely remove the 'inode' member from fsnotify_event.
+> > > > Am I missing something?
+> > >
+> > > That generally sounds good and I did notice it is strange that wd is not
+> > > being compared.  However, I think I was worried that comparing fid+name
+> > > (in following patches) would be more expensive than comparing dentry (or
+> > > object inode) as a "rule out first" in merge, so I preferred to keep the
+> > > tag/dentry/id comparison for fanotify_fid case.
+> >
+> > Yes, that could be a concern.
+> >
+> > > Given this analysis (and assuming it is correct), would you like me to
+> > > just go a head with the change suggested above? or anything beyond that?
+> >
+> > Let's go just with the change suggested above for now. We can work on this
+> > later (probably with optimizing of the fanotify merging code).
+> >
+>
+> Hi Jan,
+>
+> Recap:
+> - fanotify_merge is very inefficient and uses extensive CPU if queue contains
+>   many events, so it is rather easy for a poorly written listener to
+> cripple the system
+> - You had an idea to store in event->objectid a hash of all the compared
+>   fields (e.g. fid+name)
+> - I think you had an idea to keep a hash table of events in the queue
+> to find the
+>   merge candidates faster
+> - For internal uses, I carry a patch that limits the linear search for
+> last 128 events
+>   which is enough to relieve the CPU overuse in case of unattended long queues
+>
+> I tried looking into implementing the hash table idea, assuming I understood you
+> correctly and I struggled to choose appropriate table sizes. It seemed to make
+> sense to use a global hash table, such as inode/dentry cache for all the groups
+> but that would add complexity to locking rules of queue/dequeue and
+> group cleanup.
+>
+> A simpler solution I considered, similar to my 128 events limit patch,
+> is to limit
+> the linear search to events queued in the last X seconds.
+> The rationale is that event merging is not supposed to be long term at all.
+> If a listener fails to perform read from the queue, it is not fsnotify's job to
+> try and keep the queue compact. I think merging events mechanism was
+> mainly meant to merge short bursts of events on objects, which are quite
+> common and surely can happen concurrently on several objects.
+>
+> My intuition is that making event->objectid into event->hash in addition
+> to limiting the age of events to merge would address the real life workloads.
+> One question if we do choose this approach is what should the age limit be?
+> Should it be configurable? Default to infinity and let distro cap the age or
+> provide a sane default by kernel while slightly changing behavior (yes please).
+>
+> What are your thoughts about this?
 
-Hey Bruce, thanks! Imho, the clean approach for now is to not export
-idmapped mounts until we have ported that part of nfs similar to what we
-do for stacking filesystems for now. I've tested and taken this patch
-into my tree:
+Aha! found it:
+https://lore.kernel.org/linux-fsdevel/20200227112755.GZ10728@quack2.suse.cz/
+You suggested a small hash table per group (128 slots).
 
----
-From 7a6a53bca1ecd8db872de1ee81d1a57e1829e525 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Sat, 23 Jan 2021 12:00:02 +0100
-Subject: [PATCH] nfs: do not export idmapped mounts
+My intuition is that this will not be good enough for the worst case, which is
+not that hard to hit is real life:
+1. Listener sets FAN_UNLIMITED_QUEUE
+2. Listener adds a FAN_MARK_FILESYSTEM watch
+3. Many thousands of events are queued
+4. Listener lingers (due to bad implementation?) in reading events
+5. Every single event now incurs a huge fanotify_merge() cost
 
-Prevent nfs from exporting idmapped mounts until we have ported it to
-support exporting idmapped mounts.
+Reducing the cost of merge from O(N) to O(N/128) doesn't really fix the problem.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: "J. Bruce Fields" <bfields@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
+> Do you have a better idea maybe?
 
-/* v3 */
-
-/* v4 */
-
-/* v5 */
-
-/* v5 */
-patch introduced
-base-commit: 19c329f6808995b142b3966301f217c831e7cf31
----
- fs/nfsd/export.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-index 81e7bb12aca6..e456421f68b4 100644
---- a/fs/nfsd/export.c
-+++ b/fs/nfsd/export.c
-@@ -369,8 +369,9 @@ static struct svc_export *svc_export_update(struct svc_export *new,
- 					    struct svc_export *old);
- static struct svc_export *svc_export_lookup(struct svc_export *);
- 
--static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
-+static int check_export(struct path *path, int *flags, unsigned char *uuid)
- {
-+	struct inode *inode = d_inode(path->dentry);
- 
- 	/*
- 	 * We currently export only dirs, regular files, and (for v4
-@@ -394,6 +395,7 @@ static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
- 	 *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
- 	 * 2:  We must be able to find an inode from a filehandle.
- 	 *       This means that s_export_op must be set.
-+	 * 3: We must not currently be on an idmapped mount.
- 	 */
- 	if (!(inode->i_sb->s_type->fs_flags & FS_REQUIRES_DEV) &&
- 	    !(*flags & NFSEXP_FSID) &&
-@@ -408,6 +410,11 @@ static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
- 		return -EINVAL;
- 	}
- 
-+	if (mnt_user_ns(path->mnt) != &init_user_ns) {
-+		dprintk("exp_export: export of idmapped mounts not yet supported.\n");
-+		return -EINVAL;
-+	}
-+
- 	if (inode->i_sb->s_export_op->flags & EXPORT_OP_NOSUBTREECHK &&
- 	    !(*flags & NFSEXP_NOSUBTREECHECK)) {
- 		dprintk("%s: %s does not support subtree checking!\n",
-@@ -636,8 +643,7 @@ static int svc_export_parse(struct cache_detail *cd, char *mesg, int mlen)
- 				goto out4;
- 		}
- 
--		err = check_export(d_inode(exp.ex_path.dentry), &exp.ex_flags,
--				   exp.ex_uuid);
-+		err = check_export(&exp.ex_path, &exp.ex_flags, exp.ex_uuid);
- 		if (err)
- 			goto out4;
- 		/*
--- 
-2.30.0
-
+Thanks,
+Amir.
