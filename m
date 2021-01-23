@@ -2,143 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E039B30156E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 14:32:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A10D301755
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 18:40:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725768AbhAWNb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jan 2021 08:31:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38560 "EHLO
+        id S1725910AbhAWRiN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jan 2021 12:38:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbhAWNbw (ORCPT
+        with ESMTP id S1726159AbhAWRiJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jan 2021 08:31:52 -0500
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D816BC06174A
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jan 2021 05:31:11 -0800 (PST)
-Received: by mail-io1-xd2d.google.com with SMTP id d81so17088989iof.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jan 2021 05:31:11 -0800 (PST)
+        Sat, 23 Jan 2021 12:38:09 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98458C061786
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jan 2021 09:37:28 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id m6so5881071pfm.6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jan 2021 09:37:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y/ASTo4x1dp/9IOXsFyJIcvrNT9Jd2BimdYdXK+Ukg8=;
-        b=EiL0KnHr+T21/1rBPD3i2kBbOJeJAukWZ/tA8dAVFYAisRkA3fB2R5BhlDgMzqy+y9
-         GdDwyKORyJitYckUFNlHosUbLRjU5hM67NeI6Wr1fiKN2TEPZ6POO0Ec/jKt6RdUbFzO
-         YRFBXZQb0FG9QCH5jg+iPECVLXLGRchIOciumL+UUO/ThAmw17P4mVLrIgQ1HtEH+Zko
-         8PckBtYvPOlYupWDFe0BBBDIbc/CYNkAZiQ0BqnMaoOsIhRtaEkBdn08Xbvwh62MBLPK
-         jolQdI8XvaZNKlnaTnm+ra6e73a0ht+QMrQh/+eJIv5njXz6k3nUp+WAUawKH5PkE1x5
-         Ce7g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zyXonzKaM8k6OOnkDrxM5pAHWQEmapPZdcJnRLpZOUY=;
+        b=1LTdiGYKSeYUIoLVn2hyU/Aq/Ef1TzWLSzSD+FI3sw9U60YDuJtu7JswiavSVAD2FR
+         /wx1dUpnFU0P9teymLn8RbM+6wPArUxVrpJAPyj/jwbC2ndC3SpT9hNPRiYKROFvr3eh
+         jo39gcx0X///m5tIIj2w+vq9yqm47ecbGqOjENWReEygvWp0ejCcUTiBXs6s8NrnVjTj
+         wW0ngs+NBKLdPx/bgkZuDVOp8VdXKJ/YqylCYbsv37ZaJns9BPK33g90be2br47t+mjt
+         iDORfZdudab53iEvgWcrL9UwiAl7jKSW5+SHajADgP23KGzNjnnTvN9VZI6CElBFs/L6
+         8b7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y/ASTo4x1dp/9IOXsFyJIcvrNT9Jd2BimdYdXK+Ukg8=;
-        b=dXtlAfSrvIi8w5fd48M7xpLx8gxbUtPtt32hQWOmQnS3W51zhryGSJBXwaJuBCipCE
-         OoUm7x5dlOGMIaXhF0JEFstp3kyyS1VlaGPcz1QbarpjZIvzCLnsF6Pl+HurqdY7s0rA
-         K//X6BK0vRfZvlh4mKhNx4odM0Q0l7c6Bs6YFlEex8akmB7hikZGbMop9mgGV5FR5Jel
-         EJP5LYJA+ZZZLZHzCOY/T6gV7IPiyBcH0qHHW8ofqMuSN8BuyiYwvgxag48dYAWojmd5
-         o6iwYfU4ngBMhgLoeHx6LqNhEUO/UMUwTupvQIo0pJCUZU6726tOus/85MvQC5Zf+yPg
-         FTIA==
-X-Gm-Message-State: AOAM530lOcpHYb6+455IdE7HmoV3lv3L/G6JSZfSLB5mI/KOMbcO0sUD
-        gb90llSItmkC7081+liNoKlkG4Vt6EylLJopCP55XC2pO7w=
-X-Google-Smtp-Source: ABdhPJy8n/Pj8QxpX6hh+8kLZZPNJdBcf90meWoo2ULJFocnalnJZHQxK1jajXRyjKvIsAFX2Nj4FsG78egK+5pTrMw=
-X-Received: by 2002:a05:6e02:14ce:: with SMTP id o14mr3092075ilk.9.1611408670694;
- Sat, 23 Jan 2021 05:31:10 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zyXonzKaM8k6OOnkDrxM5pAHWQEmapPZdcJnRLpZOUY=;
+        b=bIVty19cfQbBv9AqSbK01CrGZlvBrY6dLime40DZT5fdLfypnP3dvkFms1YUuQq0CE
+         OBRtc890v7ikrPTeHodfVxCMPJCKVa5byTJTxvu9fHJ2J5aKHR1f7wX4g+dbr/DPRFdm
+         B7/czvbAzvNliSmEU1FR1QOJGOv9SnX6D85Wrf9LnjmgRM1rJ1ZN5ClG0mzGTJkIWlWp
+         t9Yje12dFgu31U2oCU6JXmTLxUUlgjKiAWNM8YX0HrPnDF8CiggmTci/zproseKKoFH4
+         R5M1Kll/1QfVSmYIZQg+FEk1GtLFa1Je7/6mcLNWwMLW/bg18ferRdmB7+6ZF841f/rs
+         /9Eg==
+X-Gm-Message-State: AOAM5300mXrK2giRuREkzMnadN1/eTYYeA25sDOL5IsCCFS2jcHX/VkO
+        OnoKnQ2oo+ScRkTOLfLPj+Rbxg==
+X-Google-Smtp-Source: ABdhPJxRf5qjlvC4skWicX7l2XytqhLPOkLd7uFj0eop1zrDNaLQPmktHwtTCqnRJB5DzSvImpcCcw==
+X-Received: by 2002:a63:5b1a:: with SMTP id p26mr10584754pgb.76.1611423447701;
+        Sat, 23 Jan 2021 09:37:27 -0800 (PST)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id r14sm12893895pgi.27.2021.01.23.09.37.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Jan 2021 09:37:26 -0800 (PST)
+Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
+To:     Lennert Buytenhek <buytenh@wantstofly.org>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+References: <20210123114152.GA120281@wantstofly.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b5b978ee-1a56-ead7-43bc-83ae2398b160@kernel.dk>
+Date:   Sat, 23 Jan 2021 10:37:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-9-amir73il@gmail.com>
- <20200226091804.GD10728@quack2.suse.cz> <CAOQ4uxiXbGF+RRUmnP4Sbub+3TxEavmCvi0AYpwHuLepqexdCA@mail.gmail.com>
- <20200226143843.GT10728@quack2.suse.cz> <CAOQ4uxh+Mpr-f3LY5PHNDtCoqTrey69-339DabzSkhRR4cbUYA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh+Mpr-f3LY5PHNDtCoqTrey69-339DabzSkhRR4cbUYA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 23 Jan 2021 15:30:59 +0200
-Message-ID: <CAOQ4uxj_C4EbzwwcrE09P5Z83WqmwNVdeZRJ6qNaThM3pkUinQ@mail.gmail.com>
-Subject: Re: fanotify_merge improvements
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210123114152.GA120281@wantstofly.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 3:59 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > > > Hum, now thinking about this, maybe we could clean this up even a bit more.
-> > > > event->inode is currently used only by inotify and fanotify for merging
-> > > > purposes. Now inotify could use its 'wd' instead of inode with exactly the
-> > > > same results, fanotify path or fid check is at least as strong as the inode
-> > > > check. So only for the case of pure "inode" events, we need to store inode
-> > > > identifier in struct fanotify_event - and we can do that in the union with
-> > > > struct path and completely remove the 'inode' member from fsnotify_event.
-> > > > Am I missing something?
-> > >
-> > > That generally sounds good and I did notice it is strange that wd is not
-> > > being compared.  However, I think I was worried that comparing fid+name
-> > > (in following patches) would be more expensive than comparing dentry (or
-> > > object inode) as a "rule out first" in merge, so I preferred to keep the
-> > > tag/dentry/id comparison for fanotify_fid case.
-> >
-> > Yes, that could be a concern.
-> >
-> > > Given this analysis (and assuming it is correct), would you like me to
-> > > just go a head with the change suggested above? or anything beyond that?
-> >
-> > Let's go just with the change suggested above for now. We can work on this
-> > later (probably with optimizing of the fanotify merging code).
-> >
->
-> Hi Jan,
->
-> Recap:
-> - fanotify_merge is very inefficient and uses extensive CPU if queue contains
->   many events, so it is rather easy for a poorly written listener to
-> cripple the system
-> - You had an idea to store in event->objectid a hash of all the compared
->   fields (e.g. fid+name)
-> - I think you had an idea to keep a hash table of events in the queue
-> to find the
->   merge candidates faster
-> - For internal uses, I carry a patch that limits the linear search for
-> last 128 events
->   which is enough to relieve the CPU overuse in case of unattended long queues
->
-> I tried looking into implementing the hash table idea, assuming I understood you
-> correctly and I struggled to choose appropriate table sizes. It seemed to make
-> sense to use a global hash table, such as inode/dentry cache for all the groups
-> but that would add complexity to locking rules of queue/dequeue and
-> group cleanup.
->
-> A simpler solution I considered, similar to my 128 events limit patch,
-> is to limit
-> the linear search to events queued in the last X seconds.
-> The rationale is that event merging is not supposed to be long term at all.
-> If a listener fails to perform read from the queue, it is not fsnotify's job to
-> try and keep the queue compact. I think merging events mechanism was
-> mainly meant to merge short bursts of events on objects, which are quite
-> common and surely can happen concurrently on several objects.
->
-> My intuition is that making event->objectid into event->hash in addition
-> to limiting the age of events to merge would address the real life workloads.
-> One question if we do choose this approach is what should the age limit be?
-> Should it be configurable? Default to infinity and let distro cap the age or
-> provide a sane default by kernel while slightly changing behavior (yes please).
->
-> What are your thoughts about this?
+On 1/23/21 4:41 AM, Lennert Buytenhek wrote:
+> IORING_OP_GETDENTS64 behaves like getdents64(2) and takes the same
+> arguments.
+> 
+> Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
+> ---
+> This seems to work OK, but I'd appreciate a review from someone more
+> familiar with io_uring internals than I am, as I'm not entirely sure
+> I did everything quite right.
+> 
+> A dumb test program for IORING_OP_GETDENTS64 is available here:
+> 
+> 	https://krautbox.wantstofly.org/~buytenh/uringfind.c
+> 
+> This does more or less what find(1) does: it scans recursively through
+> a directory tree and prints the names of all directories and files it
+> encounters along the way -- but then using io_uring.  (The uring version
+> prints the names of encountered files and directories in an order that's
+> determined by SQE completion order, which is somewhat nondeterministic
+> and likely to differ between runs.)
+> 
+> On a directory tree with 14-odd million files in it that's on a
+> six-drive (spinning disk) btrfs raid, find(1) takes:
+> 
+> 	# echo 3 > /proc/sys/vm/drop_caches 
+> 	# time find /mnt/repo > /dev/null
+> 
+> 	real    24m7.815s
+> 	user    0m15.015s
+> 	sys     0m48.340s
+> 	#
+> 
+> And the io_uring version takes:
+> 
+> 	# echo 3 > /proc/sys/vm/drop_caches 
+> 	# time ./uringfind /mnt/repo > /dev/null
+> 
+> 	real    10m29.064s
+> 	user    0m4.347s
+> 	sys     0m1.677s
+> 	#
+> 
+> These timings are repeatable and consistent to within a few seconds.
+> 
+> (btrfs seems to be sending most metadata reads to the same drive in the
+> array during this test, even though this filesystem is using the raid1c4
+> profile for metadata, so I suspect that more drive-level parallelism can
+> be extracted with some btrfs tweaks.)
+> 
+> The fully cached case also shows some speedup for the io_uring version:
+> 
+> 	# time find /mnt/repo > /dev/null
+> 
+> 	real    0m5.223s
+> 	user    0m1.926s
+> 	sys     0m3.268s
+> 	#
+> 
+> vs:
+> 
+> 	# time ./uringfind /mnt/repo > /dev/null
+> 
+> 	real    0m3.604s
+> 	user    0m2.417s
+> 	sys     0m0.793s
+> 	#
+> 
+> That said, the point of this patch isn't primarily to enable
+> lightning-fast find(1) or du(1), but more to complete the set of
+> filesystem I/O primitives available via io_uring, so that applications
+> can do all of their filesystem I/O using the same mechanism, without
+> having to manually punt some of their work out to worker threads -- and
+> indeed, an object storage backend server that I wrote a while ago can
+> run with a pure io_uring based event loop with this patch.
 
-Aha! found it:
-https://lore.kernel.org/linux-fsdevel/20200227112755.GZ10728@quack2.suse.cz/
-You suggested a small hash table per group (128 slots).
+The results look nice for sure. Once concern is that io_uring generally
+guarantees that any state passed in is stable once submit is done. For
+the below implementation, that doesn't hold as the linux_dirent64 isn't
+used until later in the process. That means if you do:
 
-My intuition is that this will not be good enough for the worst case, which is
-not that hard to hit is real life:
-1. Listener sets FAN_UNLIMITED_QUEUE
-2. Listener adds a FAN_MARK_FILESYSTEM watch
-3. Many thousands of events are queued
-4. Listener lingers (due to bad implementation?) in reading events
-5. Every single event now incurs a huge fanotify_merge() cost
+submit_getdents64(ring)
+{
+	struct linux_dirent64 dent;
+	struct io_uring_sqe *sqe;
 
-Reducing the cost of merge from O(N) to O(N/128) doesn't really fix the problem.
+	sqe = io_uring_get_sqe(ring);
+	io_uring_prep_getdents64(sqe, ..., &dent);
+	io_uring_submit(ring);
+}
 
-> Do you have a better idea maybe?
+other_func(ring)
+{
+	struct io_uring_cqe *cqe;
 
-Thanks,
-Amir.
+	submit_getdents64(ring);
+	io_uring_wait_cqe(ring, &cqe);
+	
+}
+
+then the kernel side might get garbage by the time the sqe is actually
+submitted. This is true because you don't use it inline, only from the
+out-of-line async context. Usually this is solved by having the prep
+side copy in the necessary state, eg see io_openat2_prep() for how we
+make filename and open_how stable by copying them into kernel memory.
+That ensures that if/when these operations need to go async and finish
+out-of-line, the contents are stable and there's no requirement for the
+application to keep them valid once submission is done.
+
+Not sure how best to solve that, since the vfs side relies heavily on
+linux_dirent64 being a user pointer...
+
+Outside of that, implementation looks straight forward.
+
+-- 
+Jens Axboe
+
