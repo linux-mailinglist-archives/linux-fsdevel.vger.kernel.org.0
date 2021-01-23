@@ -2,185 +2,268 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A10D301755
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 18:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D19301769
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jan 2021 18:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725910AbhAWRiN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jan 2021 12:38:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbhAWRiJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jan 2021 12:38:09 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98458C061786
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jan 2021 09:37:28 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id m6so5881071pfm.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jan 2021 09:37:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zyXonzKaM8k6OOnkDrxM5pAHWQEmapPZdcJnRLpZOUY=;
-        b=1LTdiGYKSeYUIoLVn2hyU/Aq/Ef1TzWLSzSD+FI3sw9U60YDuJtu7JswiavSVAD2FR
-         /wx1dUpnFU0P9teymLn8RbM+6wPArUxVrpJAPyj/jwbC2ndC3SpT9hNPRiYKROFvr3eh
-         jo39gcx0X///m5tIIj2w+vq9yqm47ecbGqOjENWReEygvWp0ejCcUTiBXs6s8NrnVjTj
-         wW0ngs+NBKLdPx/bgkZuDVOp8VdXKJ/YqylCYbsv37ZaJns9BPK33g90be2br47t+mjt
-         iDORfZdudab53iEvgWcrL9UwiAl7jKSW5+SHajADgP23KGzNjnnTvN9VZI6CElBFs/L6
-         8b7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zyXonzKaM8k6OOnkDrxM5pAHWQEmapPZdcJnRLpZOUY=;
-        b=bIVty19cfQbBv9AqSbK01CrGZlvBrY6dLime40DZT5fdLfypnP3dvkFms1YUuQq0CE
-         OBRtc890v7ikrPTeHodfVxCMPJCKVa5byTJTxvu9fHJ2J5aKHR1f7wX4g+dbr/DPRFdm
-         B7/czvbAzvNliSmEU1FR1QOJGOv9SnX6D85Wrf9LnjmgRM1rJ1ZN5ClG0mzGTJkIWlWp
-         t9Yje12dFgu31U2oCU6JXmTLxUUlgjKiAWNM8YX0HrPnDF8CiggmTci/zproseKKoFH4
-         R5M1Kll/1QfVSmYIZQg+FEk1GtLFa1Je7/6mcLNWwMLW/bg18ferRdmB7+6ZF841f/rs
-         /9Eg==
-X-Gm-Message-State: AOAM5300mXrK2giRuREkzMnadN1/eTYYeA25sDOL5IsCCFS2jcHX/VkO
-        OnoKnQ2oo+ScRkTOLfLPj+Rbxg==
-X-Google-Smtp-Source: ABdhPJxRf5qjlvC4skWicX7l2XytqhLPOkLd7uFj0eop1zrDNaLQPmktHwtTCqnRJB5DzSvImpcCcw==
-X-Received: by 2002:a63:5b1a:: with SMTP id p26mr10584754pgb.76.1611423447701;
-        Sat, 23 Jan 2021 09:37:27 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id r14sm12893895pgi.27.2021.01.23.09.37.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Jan 2021 09:37:26 -0800 (PST)
-Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
-To:     Lennert Buytenhek <buytenh@wantstofly.org>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
-References: <20210123114152.GA120281@wantstofly.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b5b978ee-1a56-ead7-43bc-83ae2398b160@kernel.dk>
-Date:   Sat, 23 Jan 2021 10:37:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726094AbhAWRxx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jan 2021 12:53:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39526 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725765AbhAWRxt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 23 Jan 2021 12:53:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 14175AD18;
+        Sat, 23 Jan 2021 17:53:07 +0000 (UTC)
+Date:   Sat, 23 Jan 2021 18:52:59 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        mhocko@suse.com, song.bao.hua@hisilicon.com, david@redhat.com,
+        naoya.horiguchi@nec.com, duanxiongchun@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13 03/12] mm: hugetlb: free the vmemmap pages associated
+ with each HugeTLB page
+Message-ID: <20210123175259.GA3555@localhost.localdomain>
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-4-songmuchun@bytedance.com>
 MIME-Version: 1.0
-In-Reply-To: <20210123114152.GA120281@wantstofly.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210117151053.24600-4-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/23/21 4:41 AM, Lennert Buytenhek wrote:
-> IORING_OP_GETDENTS64 behaves like getdents64(2) and takes the same
-> arguments.
+On Sun, Jan 17, 2021 at 11:10:44PM +0800, Muchun Song wrote:
+> Every HugeTLB has more than one struct page structure. We __know__ that
+> we only use the first 4(HUGETLB_CGROUP_MIN_ORDER) struct page structures
+> to store metadata associated with each HugeTLB.
 > 
-> Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
-> ---
-> This seems to work OK, but I'd appreciate a review from someone more
-> familiar with io_uring internals than I am, as I'm not entirely sure
-> I did everything quite right.
+> There are a lot of struct page structures associated with each HugeTLB
+> page. For tail pages, the value of compound_head is the same. So we can
+> reuse first page of tail page structures. We map the virtual addresses
+> of the remaining pages of tail page structures to the first tail page
+> struct, and then free these page frames. Therefore, we need to reserve
+> two pages as vmemmap areas.
 > 
-> A dumb test program for IORING_OP_GETDENTS64 is available here:
+> When we allocate a HugeTLB page from the buddy, we can free some vmemmap
+> pages associated with each HugeTLB page. It is more appropriate to do it
+> in the prep_new_huge_page().
 > 
-> 	https://krautbox.wantstofly.org/~buytenh/uringfind.c
+> The free_vmemmap_pages_per_hpage(), which indicates how many vmemmap
+> pages associated with a HugeTLB page can be freed, returns zero for
+> now, which means the feature is disabled. We will enable it once all
+> the infrastructure is there.
 > 
-> This does more or less what find(1) does: it scans recursively through
-> a directory tree and prints the names of all directories and files it
-> encounters along the way -- but then using io_uring.  (The uring version
-> prints the names of encountered files and directories in an order that's
-> determined by SQE completion order, which is somewhat nondeterministic
-> and likely to differ between runs.)
-> 
-> On a directory tree with 14-odd million files in it that's on a
-> six-drive (spinning disk) btrfs raid, find(1) takes:
-> 
-> 	# echo 3 > /proc/sys/vm/drop_caches 
-> 	# time find /mnt/repo > /dev/null
-> 
-> 	real    24m7.815s
-> 	user    0m15.015s
-> 	sys     0m48.340s
-> 	#
-> 
-> And the io_uring version takes:
-> 
-> 	# echo 3 > /proc/sys/vm/drop_caches 
-> 	# time ./uringfind /mnt/repo > /dev/null
-> 
-> 	real    10m29.064s
-> 	user    0m4.347s
-> 	sys     0m1.677s
-> 	#
-> 
-> These timings are repeatable and consistent to within a few seconds.
-> 
-> (btrfs seems to be sending most metadata reads to the same drive in the
-> array during this test, even though this filesystem is using the raid1c4
-> profile for metadata, so I suspect that more drive-level parallelism can
-> be extracted with some btrfs tweaks.)
-> 
-> The fully cached case also shows some speedup for the io_uring version:
-> 
-> 	# time find /mnt/repo > /dev/null
-> 
-> 	real    0m5.223s
-> 	user    0m1.926s
-> 	sys     0m3.268s
-> 	#
-> 
-> vs:
-> 
-> 	# time ./uringfind /mnt/repo > /dev/null
-> 
-> 	real    0m3.604s
-> 	user    0m2.417s
-> 	sys     0m0.793s
-> 	#
-> 
-> That said, the point of this patch isn't primarily to enable
-> lightning-fast find(1) or du(1), but more to complete the set of
-> filesystem I/O primitives available via io_uring, so that applications
-> can do all of their filesystem I/O using the same mechanism, without
-> having to manually punt some of their work out to worker threads -- and
-> indeed, an object storage backend server that I wrote a while ago can
-> run with a pure io_uring based event loop with this patch.
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-The results look nice for sure. Once concern is that io_uring generally
-guarantees that any state passed in is stable once submit is done. For
-the below implementation, that doesn't hold as the linux_dirent64 isn't
-used until later in the process. That means if you do:
+Overall looks good to me.
+A few nits below, plus what Mike has already said.
 
-submit_getdents64(ring)
-{
-	struct linux_dirent64 dent;
-	struct io_uring_sqe *sqe;
+I was playing the other day (just for un) to see how hard would be to adapt
+this to ppc64 but did not have the time :-)
 
-	sqe = io_uring_get_sqe(ring);
-	io_uring_prep_getdents64(sqe, ..., &dent);
-	io_uring_submit(ring);
-}
+> --- /dev/null
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -0,0 +1,211 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Free some vmemmap pages of HugeTLB
+> + *
+> + * Copyright (c) 2020, Bytedance. All rights reserved.
+> + *
+> + *     Author: Muchun Song <songmuchun@bytedance.com>
+> + *
+> + * The struct page structures (page structs) are used to describe a physical
+> + * page frame. By default, there is a one-to-one mapping from a page frame to
+> + * it's corresponding page struct.
+> + *
+> + * The HugeTLB pages consist of multiple base page size pages and is supported
+"HugeTLB pages ..."
 
-other_func(ring)
-{
-	struct io_uring_cqe *cqe;
+> + * When the system boot up, every HugeTLB page has more than one struct page
+> + * structs whose size is (unit: pages):
+              ^^^^ which?
+> + *
+> + *    struct_size = HugeTLB_Size / PAGE_SIZE * sizeof(struct page) / PAGE_SIZE
+> + *
+> + * Where HugeTLB_Size is the size of the HugeTLB page. We know that the size
+> + * of the HugeTLB page is always n times PAGE_SIZE. So we can get the following
+> + * relationship.
+> + *
+> + *    HugeTLB_Size = n * PAGE_SIZE
+> + *
+> + * Then,
+> + *
+> + *    struct_size = n * PAGE_SIZE / PAGE_SIZE * sizeof(struct page) / PAGE_SIZE
+> + *                = n * sizeof(struct page) / PAGE_SIZE
+> + *
+> + * We can use huge mapping at the pud/pmd level for the HugeTLB page.
+> + *
+> + * For the HugeTLB page of the pmd level mapping, then
+> + *
+> + *    struct_size = n * sizeof(struct page) / PAGE_SIZE
+> + *                = PAGE_SIZE / sizeof(pte_t) * sizeof(struct page) / PAGE_SIZE
+> + *                = sizeof(struct page) / sizeof(pte_t)
+> + *                = 64 / 8
+> + *                = 8 (pages)
+> + *
+> + * Where n is how many pte entries which one page can contains. So the value of
+> + * n is (PAGE_SIZE / sizeof(pte_t)).
+> + *
+> + * This optimization only supports 64-bit system, so the value of sizeof(pte_t)
+> + * is 8. And this optimization also applicable only when the size of struct page
+> + * is a power of two. In most cases, the size of struct page is 64 (e.g. x86-64
+> + * and arm64). So if we use pmd level mapping for a HugeTLB page, the size of
+> + * struct page structs of it is 8 pages whose size depends on the size of the
+> + * base page.
+> + *
+> + * For the HugeTLB page of the pud level mapping, then
+> + *
+> + *    struct_size = PAGE_SIZE / sizeof(pmd_t) * struct_size(pmd)
+> + *                = PAGE_SIZE / 8 * 8 (pages)
+> + *                = PAGE_SIZE (pages)
 
-	submit_getdents64(ring);
-	io_uring_wait_cqe(ring, &cqe);
-	
-}
+I would try to condense above information and focus on what are the
+key points you want people to get.
+E.g: A 2MB HugeTLB page on x86_64 consists in 8 page frames while 1GB
+HugeTLB page consists in 4096.
+If you do not want to be that specific you can always write down the
+formula, and maybe put the X86_64 example at the end.
+But as I said, I would try to make it more brief.
 
-then the kernel side might get garbage by the time the sqe is actually
-submitted. This is true because you don't use it inline, only from the
-out-of-line async context. Usually this is solved by having the prep
-side copy in the necessary state, eg see io_openat2_prep() for how we
-make filename and open_how stable by copying them into kernel memory.
-That ensures that if/when these operations need to go async and finish
-out-of-line, the contents are stable and there's no requirement for the
-application to keep them valid once submission is done.
+Maybe others disagree though.
 
-Not sure how best to solve that, since the vfs side relies heavily on
-linux_dirent64 being a user pointer...
 
-Outside of that, implementation looks straight forward.
+> + *
+> + * Where the struct_size(pmd) is the size of the struct page structs of a
+> + * HugeTLB page of the pmd level mapping.
+
+[...]
+
+> +void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+> +{
+> +	unsigned long vmemmap_addr = (unsigned long)head;
+> +	unsigned long vmemmap_end, vmemmap_reuse;
+> +
+> +	if (!free_vmemmap_pages_per_hpage(h))
+> +		return;
+> +
+> +	vmemmap_addr += RESERVE_VMEMMAP_SIZE;
+> +	vmemmap_end = vmemmap_addr + free_vmemmap_pages_size_per_hpage(h);
+> +	vmemmap_reuse = vmemmap_addr - PAGE_SIZE;
+> +
+
+I would like to see a comment there explaining why those variables get
+they value they do.
+
+> +/**
+> + * vmemmap_remap_walk - walk vmemmap page table
+> + *
+> + * @remap_pte:		called for each non-empty PTE (lowest-level) entry.
+> + * @reuse_page:		the page which is reused for the tail vmemmap pages.
+> + * @reuse_addr:		the virtual address of the @reuse_page page.
+> + * @vmemmap_pages:	the list head of the vmemmap pages that can be freed.
+
+Let us align the tabs there.
+
+> +static void vmemmap_pte_range(pmd_t *pmd, unsigned long addr,
+> +			      unsigned long end,
+> +			      struct vmemmap_remap_walk *walk)
+> +{
+> +	pte_t *pte;
+> +
+> +	pte = pte_offset_kernel(pmd, addr);
+> +
+> +	/*
+> +	 * The reuse_page is found 'first' in table walk before we start
+> +	 * remapping (which is calling @walk->remap_pte).
+> +	 */
+> +	if (walk->reuse_addr == addr) {
+> +		BUG_ON(pte_none(*pte));
+
+If it is found first, would not be
+
+        if (!walk->reuse_page) {
+                BUG_ON(walk->reuse_addr != addr)
+                ...
+        }
+
+more intuitive?
+
+
+> +static void vmemmap_remap_range(unsigned long start, unsigned long end,
+> +				struct vmemmap_remap_walk *walk)
+> +{
+> +	unsigned long addr = start;
+> +	unsigned long next;
+> +	pgd_t *pgd;
+> +
+> +	VM_BUG_ON(!IS_ALIGNED(start, PAGE_SIZE));
+> +	VM_BUG_ON(!IS_ALIGNED(end, PAGE_SIZE));
+> +
+> +	pgd = pgd_offset_k(addr);
+> +	do {
+> +		BUG_ON(pgd_none(*pgd));
+> +
+> +		next = pgd_addr_end(addr, end);
+> +		vmemmap_p4d_range(pgd, addr, next, walk);
+> +	} while (pgd++, addr = next, addr != end);
+> +
+> +	/*
+> +	 * We do not change the mapping of the vmemmap virtual address range
+> +	 * [@start, @start + PAGE_SIZE) which is belong to the reuse range.
+                                        "which belongs to"
+
+> +	 * So we not need to flush the TLB.
+> +	 */
+> +	flush_tlb_kernel_range(start - PAGE_SIZE, end);
+
+you already commented on on this one.
+
+> +/**
+> + * vmemmap_remap_free - remap the vmemmap virtual address range [@start, @end)
+> + *			to the page which @reuse is mapped, then free vmemmap
+> + *			pages.
+> + * @start:	start address of the vmemmap virtual address range.
+
+Well, it is the start address of the range we want to remap.
+Reading it made me think that it is really the __start__ address
+of the vmemmap range.
+
+> +void vmemmap_remap_free(unsigned long start, unsigned long end,
+> +			unsigned long reuse)
+> +{
+> +	LIST_HEAD(vmemmap_pages);
+> +	struct vmemmap_remap_walk walk = {
+> +		.remap_pte	= vmemmap_remap_pte,
+> +		.reuse_addr	= reuse,
+> +		.vmemmap_pages	= &vmemmap_pages,
+> +	};
+> +
+> +	/*
+> +	 * In order to make remapping routine most efficient for the huge pages,
+> +	 * the routine of vmemmap page table walking has the following rules
+> +	 * (see more details from the vmemmap_pte_range()):
+> +	 *
+> +	 * - The @reuse address is part of the range that we are walking.
+> +	 * - The @reuse address is the first in the complete range.
+> +	 *
+> +	 * So we need to make sure that @start and @reuse meet the above rules.
+
+You say that "reuse" and "start" need to meet some  rules, but in the
+paragraph above you only seem to point "reuse" rules?
+
 
 -- 
-Jens Axboe
-
+Oscar Salvador
+SUSE L3
