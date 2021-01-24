@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1CE9301E37
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Jan 2021 19:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7939301E3A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Jan 2021 19:43:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbhAXSm5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Jan 2021 13:42:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45022 "EHLO
+        id S1726458AbhAXSm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Jan 2021 13:42:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbhAXSmu (ORCPT
+        with ESMTP id S1726440AbhAXSmw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Jan 2021 13:42:50 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 289DFC061574;
-        Sun, 24 Jan 2021 10:42:10 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id ox12so14899822ejb.2;
-        Sun, 24 Jan 2021 10:42:10 -0800 (PST)
+        Sun, 24 Jan 2021 13:42:52 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6264C06174A;
+        Sun, 24 Jan 2021 10:42:11 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id kg20so14374940ejc.4;
+        Sun, 24 Jan 2021 10:42:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=e7DyMrkgaySDQMQXMq4Je81e5wgMMtBnYP+qxy2+eu8=;
-        b=T1KMCDffEixhIL+LblRJHub8ZpTgofZ+WOexctlfpsVE7Ue83Ir2lcsNMfCEV38a1I
-         YBgozE29dWH8A1AHxggPwgOxoNBC3FpT809lyILdeD9lBaHmjH5l5ubSy7qswLsZk8xz
-         CVK0Ob4KC3hKXxRzTE1KGAfEuIRGHRWVJ4MosKMKFqEmBiW60znhlbgUemfc1RystAPd
-         7tK+U6roqadz1xsoGdEW80zx30cYdm7piglghhBhaY8yvLsvqbtoWMZVTL6f7FwtL3J/
-         Sb8Ew0IO2OxUXTvkBoE14kjN+MpFA4/yILmS8GIvWr9vJ/TURYPeLjgS/b/LH4kdRTy0
-         tFRg==
+        bh=G3BlEFlRgLFVotdB02FrjvyaBpSzpnrT7MrYnf5yVs4=;
+        b=LcCLcyenJUR/k2rxUS4c8qV16qqm2ZjRs38tT6wwV4hxgbFRANUGL5VwhDythDxXOs
+         hiLq3PUFMOocUT4zrV4Ji536wpyes0yTboV9dRHiVst6fibKVwVYsuWAPj8r93wbAfsJ
+         FN589dZPN2XqX1GJMAirwETrRblOCOucsd/lGD47SXO31GDLdUf0a/gMRusWN+zDPqxO
+         AeDA9Dnr7F0gM31oc2j86vcpWLg1RG9BrcxrvSe2BoaGtZyUCEaZmvB5aYQO4ObXhmP5
+         0z9S2P4wbNbB3FsK3Tv4dKzgn1s3j4SRkAX4S2OpM0Ii64/FdQQ3z27BHsQ3kcR7IBGU
+         ClLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=e7DyMrkgaySDQMQXMq4Je81e5wgMMtBnYP+qxy2+eu8=;
-        b=Pijw7WnEMF3hw9EvXgIbG0q+iLN/DzlQLubJSPNWKYD8XgP44LmUPTYiCQsYqcgFfJ
-         JpI7bkcKo1mdZfkopXo53yBnSabmWOpNyd7ruuWtIrWbBQpYcvp/NpAfdzlcbGJW+xx5
-         ZH5/RqOhOsge1N8YFtBhLOLZeP8XdktrsOJUabqbrCYdk79tWIS185CHwAA/YKpKymNc
-         LTqYEGnHLSLf2N3yWGv9XAJAmr+BFAookpl0gKXRiQmatGMjcej2QCv64YQffkf5bePW
-         d76JVozqmlhSe2uHUCF1tgatwVjlWdQB/JKn168lw2hHcfKpfVKKLiai5dTaxYVxPURA
-         fT5Q==
-X-Gm-Message-State: AOAM531vpr55L1noAnciyVISfaiys2M10QxNHhLq824nTZ5uQNEEz+gv
-        qa3zqL7cFvUFTxAaddentc0=
-X-Google-Smtp-Source: ABdhPJx8f0ceoOnTy2aT3yWKl8NejBeyQZg+YQkyFdWwg4H+F2so/BefmND9F+hEYh5bXH4wv8PElQ==
-X-Received: by 2002:a17:906:578e:: with SMTP id k14mr1291957ejq.243.1611513728857;
-        Sun, 24 Jan 2021 10:42:08 -0800 (PST)
+        bh=G3BlEFlRgLFVotdB02FrjvyaBpSzpnrT7MrYnf5yVs4=;
+        b=nxShe8is8b4jIjcJYMqt1q60HIeQ2wkFa3MN3wdmgPPdptkhg3tqy1Oq/gMkogCEJ7
+         dh2mFKSyb9Gv2L7wCR5ha58S/7aeR6PbVVzHqeeWDWwbigkjHNWVu1+19Y6rPWGOx7d1
+         99Zgh8Bkjd2oFnfcn9P4danwHkEB0/x2MhgVFZK2hqKmCJWt48LfS6KjEYJ5YBCjYVaN
+         A5OVxZFlXBJWCqvd67bO+tb/5v93Kum07b80OGKCceQgPkL+B43TCbrZ0pSyG04bdA3M
+         THS1mQXYZ5jTB/PrTO6UEL994ytCQSoQenf1GWVVKprOHZNLvwR3GSiP93y398f1MM2Z
+         uIhw==
+X-Gm-Message-State: AOAM533BK14wsT0a7RsFXUj4wirLBJbryAV/CMdeujqtW//wQyOWY4uG
+        nQM3vFmIOe6KVlfX02e2zk0=
+X-Google-Smtp-Source: ABdhPJzwtE9O4TbxMERQemArqLbHqkBxn36y8fVhtmZGnjxpMpunChvNv6KZoXnFSUSRopyqoKAg4Q==
+X-Received: by 2002:a17:906:388a:: with SMTP id q10mr1485450ejd.496.1611513730373;
+        Sun, 24 Jan 2021 10:42:10 -0800 (PST)
 Received: from localhost.localdomain ([31.210.181.203])
-        by smtp.gmail.com with ESMTPSA id t9sm7260266ejc.51.2021.01.24.10.42.07
+        by smtp.gmail.com with ESMTPSA id t9sm7260266ejc.51.2021.01.24.10.42.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Jan 2021 10:42:08 -0800 (PST)
+        Sun, 24 Jan 2021 10:42:09 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [RFC][PATCH 1/2] fanotify: configurable limits via sysfs
-Date:   Sun, 24 Jan 2021 20:42:03 +0200
-Message-Id: <20210124184204.899729-2-amir73il@gmail.com>
+Subject: [RFC][PATCH 2/2] fanotify: support limited functionality for unprivileged users
+Date:   Sun, 24 Jan 2021 20:42:04 +0200
+Message-Id: <20210124184204.899729-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210124184204.899729-1-amir73il@gmail.com>
 References: <20210124184204.899729-1-amir73il@gmail.com>
@@ -64,376 +64,175 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fanotify has some hardcoded limits. The only APIs to escape those limits
-are FAN_UNLIMITED_QUEUE and FAN_UNLIMITED_MARKS.
+Add limited support for unprivileged fanotify event listener.
+An unprivileged event listener does not get an open file descriptor in
+the event nor the process pid of another process.  An unprivileged event
+listener cannot request permission events, cannot set mount/filesystem
+marks and cannot request unlimited queue/marks.
 
-Allow finer grained tuning of the system limits via sysfs tunables under
-/proc/sys/fs/fanotify/, similar to tunables under /proc/sys/fs/inotify,
-with some minor differences.
+This enables the limited functionality similar to inotify when watching a
+set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
+requiring SYS_CAP_ADMIN privileges.
 
-- max_queued_events - global system tunable for group queue size limit.
-  Like the inotify tunable with the same name, it defaults to 16384 and
-  applies on initialization of a new group.
+The FAN_REPORT_DFID_NAME init flag, provide a method for an unprivileged
+event listener watching a set of directories (with FAN_EVENT_ON_CHILD)
+to monitor all changes inside those directories.
 
-- max_listener_marks - global system tunable of marks limit per group.
-  Defaults to 8192. inotify has no per group marks limit.
+This typically requires that the listener keeps a map of watched directory
+fid to dirfd (O_PATH), where fid is obtained with name_to_handle_at()
+before starting to watch for changes.
 
-- max_user_marks - user ns tunable for marks limit per user.
-  Like the inotify tunable named max_user_watches, it defaults to 1048576
-  and is accounted for every containing user ns.
+When getting an event, the reported fid of the parent should be resolved
+to dirfd and fstatsat(2) with dirfd and name should be used to query the
+state of the filesystem entry.
 
-- max_user_listeners - user ns tunable for number of listeners per user.
-  Like the inotify tunable named max_user_instances, it defaults to 128
-  and is accounted for every containing user ns.
+Note that even though events do not report the event creator pid,
+fanotify does not merge similar events on the same object that were
+generated by different processes. This is aligned with exiting behavior
+when generating processes are outside of the listener pidns (which
+results in reporting 0 pid to listener).
 
-The slightly different tunable names are derived from the "listener" and
-"mark" terminology used in the fanotify man pages.
-
-max_listener_marks was kept for compatibility with legacy fanotify
-behavior. Given that inotify max_user_instances was increased from 8192
-to 1048576 in kernel v5.10, we may want to consider changing also the
-default for max_listener_marks or remove it completely, leaving only the
-per user marks limit.
-
-Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c      |  14 ++--
- fs/notify/fanotify/fanotify_user.c | 106 ++++++++++++++++++++++++-----
- include/linux/fanotify.h           |   3 +
- include/linux/fsnotify_backend.h   |   2 +-
- include/linux/sched/user.h         |   3 -
- include/linux/user_namespace.h     |   4 ++
- kernel/sysctl.c                    |  12 +++-
- kernel/ucount.c                    |   4 ++
- 8 files changed, 121 insertions(+), 27 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 49 +++++++++++++++++++++++++++---
+ fs/notify/fdinfo.c                 |  3 +-
+ include/linux/fanotify.h           | 16 ++++++++++
+ 3 files changed, 62 insertions(+), 6 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 1192c9953620..aaa81ce916c3 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -736,11 +736,8 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
- 
- static void fanotify_free_group_priv(struct fsnotify_group *group)
- {
--	struct user_struct *user;
--
--	user = group->fanotify_data.user;
--	atomic_dec(&user->fanotify_listeners);
--	free_uid(user);
-+	if (group->fanotify_data.ucounts)
-+		dec_ucount(group->fanotify_data.ucounts, UCOUNT_FANOTIFY_LISTENERS);
- }
- 
- static void fanotify_free_path_event(struct fanotify_event *event)
-@@ -796,6 +793,12 @@ static void fanotify_free_event(struct fsnotify_event *fsn_event)
- 	}
- }
- 
-+static void fanotify_freeing_mark(struct fsnotify_mark *mark,
-+				  struct fsnotify_group *group)
-+{
-+	dec_ucount(group->fanotify_data.ucounts, UCOUNT_FANOTIFY_MARKS);
-+}
-+
- static void fanotify_free_mark(struct fsnotify_mark *fsn_mark)
- {
- 	kmem_cache_free(fanotify_mark_cache, fsn_mark);
-@@ -805,5 +808,6 @@ const struct fsnotify_ops fanotify_fsnotify_ops = {
- 	.handle_event = fanotify_handle_event,
- 	.free_group_priv = fanotify_free_group_priv,
- 	.free_event = fanotify_free_event,
-+	.freeing_mark = fanotify_freeing_mark,
- 	.free_mark = fanotify_free_mark,
- };
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index b78dd1f88f7c..4ade3f9df337 100644
+index 4ade3f9df337..b70de273eedb 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -27,8 +27,65 @@
- #include "fanotify.h"
- 
- #define FANOTIFY_DEFAULT_MAX_EVENTS	16384
--#define FANOTIFY_DEFAULT_MAX_MARKS	8192
-+#define FANOTIFY_OLD_DEFAULT_MAX_MARKS	8192
- #define FANOTIFY_DEFAULT_MAX_LISTENERS	128
-+/*
-+ * Legacy fanotify marks limits is per group and we introduced an additional
-+ * limit of marks per user, similar to inotify.  Effectively, the legacy limit
-+ * of fanotify marks per user is <max marks per group> * <max groups per user>.
-+ * This default limit (1M) also happens to match the increased limit for inotify
-+ * max_user_watches since v5.10.
-+ */
-+#define FANOTIFY_DEFAULT_MAX_LISTENER_MARKS \
-+	FANOTIFY_OLD_DEFAULT_MAX_MARKS
-+#define FANOTIFY_DEFAULT_MAX_USER_MARKS	\
-+	(FANOTIFY_DEFAULT_MAX_LISTENER_MARKS * FANOTIFY_DEFAULT_MAX_LISTENERS)
-+
-+/* configurable via /proc/sys/fs/fanotify/ */
-+static int fanotify_max_queued_events __read_mostly;
-+static int fanotify_max_listener_marks __read_mostly;
-+
-+#ifdef CONFIG_SYSCTL
-+
-+#include <linux/sysctl.h>
-+
-+struct ctl_table fanotify_table[] = {
-+	{
-+		.procname	= "max_user_listeners",
-+		.data		= &init_user_ns.ucount_max[UCOUNT_FANOTIFY_LISTENERS],
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+	},
-+	{
-+		.procname	= "max_user_marks",
-+		.data		= &init_user_ns.ucount_max[UCOUNT_FANOTIFY_MARKS],
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+	},
-+	{
-+		.procname	= "max_listener_marks",
-+		.data		= &fanotify_max_listener_marks,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO
-+	},
-+	{
-+		.procname	= "max_queued_events",
-+		.data		= &fanotify_max_queued_events,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO
-+	},
-+	{ }
-+};
-+#endif /* CONFIG_SYSCTL */
-+
- 
- /*
-  * All flags that may be specified in parameter event_f_flags of fanotify_init.
-@@ -822,24 +879,36 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
- 						   unsigned int type,
- 						   __kernel_fsid_t *fsid)
- {
-+	struct ucounts *ucounts = group->fanotify_data.ucounts;
- 	struct fsnotify_mark *mark;
- 	int ret;
- 
--	if (atomic_read(&group->num_marks) > group->fanotify_data.max_marks)
+@@ -397,9 +397,21 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	metadata.vers = FANOTIFY_METADATA_VERSION;
+ 	metadata.reserved = 0;
+ 	metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
+-	metadata.pid = pid_vnr(event->pid);
 +	/*
-+	 * Enfore global limit of marks per group and limit of marks per user
-+	 * for the user that initiated the group in all containing user ns.
++	 * An unprivileged event listener does not get an open file descriptor
++	 * in the event nor another generating process pid. If the event was
++	 * generated by the unprivileged process itself, self pid is reported.
++	 * We may relax this in the future by checking calling process access
++	 * permissions to the object.
 +	 */
-+	if (atomic_read(&group->num_marks) > group->fanotify_data.max_marks ||
-+	    !inc_ucount(ucounts->ns, ucounts->uid, UCOUNT_FANOTIFY_MARKS))
- 		return ERR_PTR(-ENOSPC);
++	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) ||
++	    task_tgid(current) == event->pid)
++		metadata.pid = pid_vnr(event->pid);
++	else
++		metadata.pid = 0;
  
- 	mark = kmem_cache_alloc(fanotify_mark_cache, GFP_KERNEL);
--	if (!mark)
--		return ERR_PTR(-ENOMEM);
-+	if (!mark) {
-+		ret = -ENOMEM;
-+		goto out_dec_ucounts;
-+	}
- 
- 	fsnotify_init_mark(mark, group);
- 	ret = fsnotify_add_mark_locked(mark, connp, type, 0, fsid);
- 	if (ret) {
- 		fsnotify_put_mark(mark);
--		return ERR_PTR(ret);
-+		goto out_dec_ucounts;
- 	}
- 
- 	return mark;
-+
-+out_dec_ucounts:
-+	dec_ucount(ucounts, UCOUNT_FANOTIFY_MARKS);
-+	return ERR_PTR(ret);
- }
- 
- 
-@@ -924,7 +993,6 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- {
- 	struct fsnotify_group *group;
+-	if (path && path->mnt && path->dentry) {
++	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
++	    path && path->mnt && path->dentry) {
+ 		fd = create_fd(group, path, &f);
+ 		if (fd < 0)
+ 			return fd;
+@@ -995,12 +1007,29 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
  	int f_flags, fd;
--	struct user_struct *user;
  	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
  	unsigned int class = flags & FANOTIFY_CLASS_BITS;
++	unsigned int internal_flags = 0;
  
-@@ -963,12 +1031,6 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	if ((fid_mode & FAN_REPORT_NAME) && !(fid_mode & FAN_REPORT_DIR_FID))
- 		return -EINVAL;
+ 	pr_debug("%s: flags=%x event_f_flags=%x\n",
+ 		 __func__, flags, event_f_flags);
  
--	user = get_current_user();
--	if (atomic_read(&user->fanotify_listeners) > FANOTIFY_DEFAULT_MAX_LISTENERS) {
--		free_uid(user);
--		return -EMFILE;
--	}
--
- 	f_flags = O_RDWR | FMODE_NONOTIFY;
- 	if (flags & FAN_CLOEXEC)
- 		f_flags |= O_CLOEXEC;
-@@ -978,13 +1040,18 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	/* fsnotify_alloc_group takes a ref.  Dropped in fanotify_release */
- 	group = fsnotify_alloc_user_group(&fanotify_fsnotify_ops);
- 	if (IS_ERR(group)) {
--		free_uid(user);
- 		return PTR_ERR(group);
+-	if (!capable(CAP_SYS_ADMIN))
+-		return -EPERM;
++	if (!capable(CAP_SYS_ADMIN)) {
++		/*
++		 * An unprivileged user can setup an unprivileged listener with
++		 * limited functionality - an unprivileged event listener cannot
++		 * request permission events, cannot set mount/filesystem marks
++		 * and cannot request unlimited queue/marks.
++		 */
++		if ((flags & ~FANOTIFY_UNPRIV_INIT_FLAGS) ||
++		    class != FAN_CLASS_NOTIF)
++			return -EPERM;
++
++		/*
++		 * We set the internal flag FANOTIFY_UNPRIV on the group, so we
++		 * know that we need to limit setting mount/filesystem marks on
++		 * this group and avoid providing pid and open fd in the event.
++		 */
++		internal_flags |= FANOTIFY_UNPRIV;
++	}
+ 
+ #ifdef CONFIG_AUDITSYSCALL
+ 	if (flags & ~(FANOTIFY_INIT_FLAGS | FAN_ENABLE_AUDIT))
+@@ -1051,7 +1080,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 		goto out_destroy_group;
  	}
  
--	group->fanotify_data.user = user;
-+	/* Enforce listeners limits per user in all containing user ns */
-+	group->fanotify_data.ucounts = inc_ucount(current_user_ns(), current_euid(),
-+						  UCOUNT_FANOTIFY_LISTENERS);
-+	if (!group->fanotify_data.ucounts) {
-+		fd = -EMFILE;
-+		goto out_destroy_group;
-+	}
-+
- 	group->fanotify_data.flags = flags;
--	atomic_inc(&user->fanotify_listeners);
+-	group->fanotify_data.flags = flags;
++	group->fanotify_data.flags = flags | internal_flags;
  	group->memcg = get_mem_cgroup_from_mm(current->mm);
  
  	group->overflow_event = fanotify_alloc_overflow_event();
-@@ -1019,7 +1086,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 			goto out_destroy_group;
- 		group->max_events = UINT_MAX;
- 	} else {
--		group->max_events = FANOTIFY_DEFAULT_MAX_EVENTS;
-+		group->max_events = fanotify_max_queued_events;
- 	}
+@@ -1247,6 +1276,15 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		goto fput_and_out;
+ 	group = f.file->private_data;
  
- 	if (flags & FAN_UNLIMITED_MARKS) {
-@@ -1028,7 +1095,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 			goto out_destroy_group;
- 		group->fanotify_data.max_marks = UINT_MAX;
- 	} else {
--		group->fanotify_data.max_marks = FANOTIFY_DEFAULT_MAX_MARKS;
-+		group->fanotify_data.max_marks = fanotify_max_listener_marks;
- 	}
- 
- 	if (flags & FAN_ENABLE_AUDIT) {
-@@ -1326,6 +1393,11 @@ static int __init fanotify_user_setup(void)
- 			KMEM_CACHE(fanotify_perm_event, SLAB_PANIC);
- 	}
- 
-+	fanotify_max_queued_events = FANOTIFY_DEFAULT_MAX_EVENTS;
-+	fanotify_max_listener_marks = FANOTIFY_DEFAULT_MAX_LISTENER_MARKS;
-+	init_user_ns.ucount_max[UCOUNT_FANOTIFY_LISTENERS] = FANOTIFY_DEFAULT_MAX_LISTENERS;
-+	init_user_ns.ucount_max[UCOUNT_FANOTIFY_MARKS] = FANOTIFY_DEFAULT_MAX_USER_MARKS;
++	/*
++	 * An unprivileged event listener is not allowed to watch a mount
++	 * point nor a filesystem.
++	 */
++	ret = -EPERM;
++	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
++	    mark_type != FAN_MARK_INODE)
++		goto fput_and_out;
 +
- 	return 0;
+ 	/*
+ 	 * group->priority == FS_PRIO_0 == FAN_CLASS_NOTIF.  These are not
+ 	 * allowed to set permissions events.
+@@ -1379,6 +1417,7 @@ SYSCALL32_DEFINE6(fanotify_mark,
+  */
+ static int __init fanotify_user_setup(void)
+ {
++	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_FLAGS);
+ 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
+ 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+ 
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index f0d6b54be412..57f0d5d9f934 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -144,7 +144,8 @@ void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
+ 	struct fsnotify_group *group = f->private_data;
+ 
+ 	seq_printf(m, "fanotify flags:%x event-flags:%x\n",
+-		   group->fanotify_data.flags, group->fanotify_data.f_flags);
++		   group->fanotify_data.flags & FANOTIFY_INIT_FLAGS,
++		   group->fanotify_data.f_flags);
+ 
+ 	show_fdinfo(m, f, fanotify_fdinfo);
  }
- device_initcall(fanotify_user_setup);
 diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 3e9c56ee651f..031a97d8369a 100644
+index 031a97d8369a..a573c1028c14 100644
 --- a/include/linux/fanotify.h
 +++ b/include/linux/fanotify.h
-@@ -2,8 +2,11 @@
- #ifndef _LINUX_FANOTIFY_H
- #define _LINUX_FANOTIFY_H
+@@ -28,6 +28,22 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+ 				 FAN_CLOEXEC | FAN_NONBLOCK | \
+ 				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS)
  
-+#include <linux/sysctl.h>
- #include <uapi/linux/fanotify.h>
- 
-+extern struct ctl_table fanotify_table[]; /* for sysctl */
++/* Internal flags */
++#define FANOTIFY_UNPRIV		0x80000000
++#define FANOTIFY_INTERNAL_FLAGS	(FANOTIFY_UNPRIV)
 +
- #define FAN_GROUP_FLAG(group, flag) \
- 	((group)->fanotify_data.flags & (flag))
++/*
++ * fanotify_init() flags allowed for unprivileged listener.
++ * FAN_CLASS_NOTIF in this mask is purely semantic because it is zero,
++ * but it is the only class we allow for unprivileged listener.
++ * Since unprivileged listener does not provide file descriptors in events,
++ * reporting file handles makes sense, but it is not a must.
++ * FAN_REPORT_TID does not make sense for unprivileged listener, which uses
++ * event->pid only to filter out events generated by listener process itself.
++ */
++#define FANOTIFY_UNPRIV_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
++					 FAN_CLASS_NOTIF | FANOTIFY_FID_BITS)
++
+ #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
+ 				 FAN_MARK_FILESYSTEM)
  
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index e5409b83e731..2179f06f6e89 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -240,7 +240,7 @@ struct fsnotify_group {
- 			int flags;           /* flags from fanotify_init() */
- 			int f_flags; /* event_f_flags from fanotify_init() */
- 			unsigned int max_marks;
--			struct user_struct *user;
-+			struct ucounts *ucounts;
- 		} fanotify_data;
- #endif /* CONFIG_FANOTIFY */
- 	};
-diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
-index a8ec3b6093fc..3632c5d6ec55 100644
---- a/include/linux/sched/user.h
-+++ b/include/linux/sched/user.h
-@@ -14,9 +14,6 @@ struct user_struct {
- 	refcount_t __count;	/* reference count */
- 	atomic_t processes;	/* How many processes does this user have? */
- 	atomic_t sigpending;	/* How many pending signals does this user have? */
--#ifdef CONFIG_FANOTIFY
--	atomic_t fanotify_listeners;
--#endif
- #ifdef CONFIG_EPOLL
- 	atomic_long_t epoll_watches; /* The number of file descriptors currently watched */
- #endif
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index 64cf8ebdc4ec..d8e6ff5e1040 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -49,6 +49,10 @@ enum ucount_type {
- #ifdef CONFIG_INOTIFY_USER
- 	UCOUNT_INOTIFY_INSTANCES,
- 	UCOUNT_INOTIFY_WATCHES,
-+#endif
-+#ifdef CONFIG_FANOTIFY
-+	UCOUNT_FANOTIFY_LISTENERS,
-+	UCOUNT_FANOTIFY_MARKS,
- #endif
- 	UCOUNT_COUNTS,
- };
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index c9fbdd848138..46c86830b811 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -148,6 +148,9 @@ static unsigned long hung_task_timeout_max = (LONG_MAX/HZ);
- #ifdef CONFIG_INOTIFY_USER
- #include <linux/inotify.h>
- #endif
-+#ifdef CONFIG_FANOTIFY
-+#include <linux/fanotify.h>
-+#endif
- 
- #ifdef CONFIG_PROC_SYSCTL
- 
-@@ -3258,7 +3261,14 @@ static struct ctl_table fs_table[] = {
- 		.mode		= 0555,
- 		.child		= inotify_table,
- 	},
--#endif	
-+#endif
-+#ifdef CONFIG_FANOTIFY
-+	{
-+		.procname	= "fanotify",
-+		.mode		= 0555,
-+		.child		= fanotify_table,
-+	},
-+#endif
- #ifdef CONFIG_EPOLL
- 	{
- 		.procname	= "epoll",
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index 11b1596e2542..edeabc5de28f 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -73,6 +73,10 @@ static struct ctl_table user_table[] = {
- #ifdef CONFIG_INOTIFY_USER
- 	UCOUNT_ENTRY("max_inotify_instances"),
- 	UCOUNT_ENTRY("max_inotify_watches"),
-+#endif
-+#ifdef CONFIG_FANOTIFY
-+	UCOUNT_ENTRY("max_fanotify_listeners"),
-+	UCOUNT_ENTRY("max_fanotify_marks"),
- #endif
- 	{ }
- };
 -- 
 2.25.1
 
