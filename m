@@ -2,237 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7939301E3A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Jan 2021 19:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B44F6301F2E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Jan 2021 23:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbhAXSm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Jan 2021 13:42:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45030 "EHLO
+        id S1725986AbhAXWTl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Jan 2021 17:19:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbhAXSmw (ORCPT
+        with ESMTP id S1726023AbhAXWTg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Jan 2021 13:42:52 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6264C06174A;
-        Sun, 24 Jan 2021 10:42:11 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id kg20so14374940ejc.4;
-        Sun, 24 Jan 2021 10:42:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=G3BlEFlRgLFVotdB02FrjvyaBpSzpnrT7MrYnf5yVs4=;
-        b=LcCLcyenJUR/k2rxUS4c8qV16qqm2ZjRs38tT6wwV4hxgbFRANUGL5VwhDythDxXOs
-         hiLq3PUFMOocUT4zrV4Ji536wpyes0yTboV9dRHiVst6fibKVwVYsuWAPj8r93wbAfsJ
-         FN589dZPN2XqX1GJMAirwETrRblOCOucsd/lGD47SXO31GDLdUf0a/gMRusWN+zDPqxO
-         AeDA9Dnr7F0gM31oc2j86vcpWLg1RG9BrcxrvSe2BoaGtZyUCEaZmvB5aYQO4ObXhmP5
-         0z9S2P4wbNbB3FsK3Tv4dKzgn1s3j4SRkAX4S2OpM0Ii64/FdQQ3z27BHsQ3kcR7IBGU
-         ClLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=G3BlEFlRgLFVotdB02FrjvyaBpSzpnrT7MrYnf5yVs4=;
-        b=nxShe8is8b4jIjcJYMqt1q60HIeQ2wkFa3MN3wdmgPPdptkhg3tqy1Oq/gMkogCEJ7
-         dh2mFKSyb9Gv2L7wCR5ha58S/7aeR6PbVVzHqeeWDWwbigkjHNWVu1+19Y6rPWGOx7d1
-         99Zgh8Bkjd2oFnfcn9P4danwHkEB0/x2MhgVFZK2hqKmCJWt48LfS6KjEYJ5YBCjYVaN
-         A5OVxZFlXBJWCqvd67bO+tb/5v93Kum07b80OGKCceQgPkL+B43TCbrZ0pSyG04bdA3M
-         THS1mQXYZ5jTB/PrTO6UEL994ytCQSoQenf1GWVVKprOHZNLvwR3GSiP93y398f1MM2Z
-         uIhw==
-X-Gm-Message-State: AOAM533BK14wsT0a7RsFXUj4wirLBJbryAV/CMdeujqtW//wQyOWY4uG
-        nQM3vFmIOe6KVlfX02e2zk0=
-X-Google-Smtp-Source: ABdhPJzwtE9O4TbxMERQemArqLbHqkBxn36y8fVhtmZGnjxpMpunChvNv6KZoXnFSUSRopyqoKAg4Q==
-X-Received: by 2002:a17:906:388a:: with SMTP id q10mr1485450ejd.496.1611513730373;
-        Sun, 24 Jan 2021 10:42:10 -0800 (PST)
-Received: from localhost.localdomain ([31.210.181.203])
-        by smtp.gmail.com with ESMTPSA id t9sm7260266ejc.51.2021.01.24.10.42.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Jan 2021 10:42:09 -0800 (PST)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [RFC][PATCH 2/2] fanotify: support limited functionality for unprivileged users
-Date:   Sun, 24 Jan 2021 20:42:04 +0200
-Message-Id: <20210124184204.899729-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210124184204.899729-1-amir73il@gmail.com>
-References: <20210124184204.899729-1-amir73il@gmail.com>
+        Sun, 24 Jan 2021 17:19:36 -0500
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E041C061573;
+        Sun, 24 Jan 2021 14:18:56 -0800 (PST)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 5BB366F0B; Sun, 24 Jan 2021 17:18:54 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 5BB366F0B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1611526734;
+        bh=+WeIqs20uLR2t89mwWhzLJ7HD1CUH+AoqxAA94UkyAw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T3knNZXlNMSdp0ZFF271zh05uh8dHtzIU5n+EpzP+DShDIuwCv24ngiDLH3dX2iVG
+         Q+/8hT7i78v4LjbweP0IxzBfSSQzshrnzEr/vDeCGI1IjRI4h2ck9ommwbgtFT/5jF
+         XuegkZX7zWCzW/QKQGrcLiSurCj4zEDOFTsYQn2c=
+Date:   Sun, 24 Jan 2021 17:18:54 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 05/39] namei: make permission helpers idmapped mount
+ aware
+Message-ID: <20210124221854.GA1487@fieldses.org>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+ <20210121131959.646623-6-christian.brauner@ubuntu.com>
+ <20210122222632.GB25405@fieldses.org>
+ <20210123130958.3t6kvgkl634njpsm@wittgenstein>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210123130958.3t6kvgkl634njpsm@wittgenstein>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add limited support for unprivileged fanotify event listener.
-An unprivileged event listener does not get an open file descriptor in
-the event nor the process pid of another process.  An unprivileged event
-listener cannot request permission events, cannot set mount/filesystem
-marks and cannot request unlimited queue/marks.
+On Sat, Jan 23, 2021 at 02:09:58PM +0100, Christian Brauner wrote:
+> On Fri, Jan 22, 2021 at 05:26:32PM -0500, J. Bruce Fields wrote:
+> > If I NFS-exported an idmapped mount, I think I'd expect idmapped clients
+> > to see the mapped IDs.
+> > 
+> > Looks like that means taking the user namespace from the struct
+> > svc_export everwhere, for example:
+> > 
+> > On Thu, Jan 21, 2021 at 02:19:24PM +0100, Christian Brauner wrote:
+> > > index 66f2ef67792a..8d90796e236a 100644
+> > > --- a/fs/nfsd/nfsfh.c
+> > > +++ b/fs/nfsd/nfsfh.c
+> > > @@ -40,7 +40,8 @@ static int nfsd_acceptable(void *expv, struct dentry *dentry)
+> > >  		/* make sure parents give x permission to user */
+> > >  		int err;
+> > >  		parent = dget_parent(tdentry);
+> > > -		err = inode_permission(d_inode(parent), MAY_EXEC);
+> > > +		err = inode_permission(&init_user_ns,
+> > > +				       d_inode(parent), MAY_EXEC);
+> > 
+> > 		err = inode_permission(exp->ex_path.mnt->mnt_userns,
+> > 				      d_inode(parent, MAY_EXEC);
+> 
+> Hey Bruce, thanks! Imho, the clean approach for now is to not export
+> idmapped mounts until we have ported that part of nfs similar to what we
+> do for stacking filesystems for now. I've tested and taken this patch
+> into my tree:
 
-This enables the limited functionality similar to inotify when watching a
-set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
-requiring SYS_CAP_ADMIN privileges.
+Oh good, thanks.  My real fear was that we'd fix this up later and leave
+users in a situation where the server exposes different IDs depending on
+kernel version, which would be a mess.  Looks like this should avoid
+that.
 
-The FAN_REPORT_DFID_NAME init flag, provide a method for an unprivileged
-event listener watching a set of directories (with FAN_EVENT_ON_CHILD)
-to monitor all changes inside those directories.
+As for making idmapped mounts actually work with nfsd--are you planning
+to do that, or do you need me to?  I hope the patch is straightforward;
+I'm more worried testing it.
 
-This typically requires that the listener keeps a map of watched directory
-fid to dirfd (O_PATH), where fid is obtained with name_to_handle_at()
-before starting to watch for changes.
+--b.
 
-When getting an event, the reported fid of the parent should be resolved
-to dirfd and fstatsat(2) with dirfd and name should be used to query the
-state of the filesystem entry.
-
-Note that even though events do not report the event creator pid,
-fanotify does not merge similar events on the same object that were
-generated by different processes. This is aligned with exiting behavior
-when generating processes are outside of the listener pidns (which
-results in reporting 0 pid to listener).
-
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify_user.c | 49 +++++++++++++++++++++++++++---
- fs/notify/fdinfo.c                 |  3 +-
- include/linux/fanotify.h           | 16 ++++++++++
- 3 files changed, 62 insertions(+), 6 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 4ade3f9df337..b70de273eedb 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -397,9 +397,21 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	metadata.vers = FANOTIFY_METADATA_VERSION;
- 	metadata.reserved = 0;
- 	metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
--	metadata.pid = pid_vnr(event->pid);
-+	/*
-+	 * An unprivileged event listener does not get an open file descriptor
-+	 * in the event nor another generating process pid. If the event was
-+	 * generated by the unprivileged process itself, self pid is reported.
-+	 * We may relax this in the future by checking calling process access
-+	 * permissions to the object.
-+	 */
-+	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) ||
-+	    task_tgid(current) == event->pid)
-+		metadata.pid = pid_vnr(event->pid);
-+	else
-+		metadata.pid = 0;
- 
--	if (path && path->mnt && path->dentry) {
-+	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
-+	    path && path->mnt && path->dentry) {
- 		fd = create_fd(group, path, &f);
- 		if (fd < 0)
- 			return fd;
-@@ -995,12 +1007,29 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	int f_flags, fd;
- 	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
- 	unsigned int class = flags & FANOTIFY_CLASS_BITS;
-+	unsigned int internal_flags = 0;
- 
- 	pr_debug("%s: flags=%x event_f_flags=%x\n",
- 		 __func__, flags, event_f_flags);
- 
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
-+	if (!capable(CAP_SYS_ADMIN)) {
-+		/*
-+		 * An unprivileged user can setup an unprivileged listener with
-+		 * limited functionality - an unprivileged event listener cannot
-+		 * request permission events, cannot set mount/filesystem marks
-+		 * and cannot request unlimited queue/marks.
-+		 */
-+		if ((flags & ~FANOTIFY_UNPRIV_INIT_FLAGS) ||
-+		    class != FAN_CLASS_NOTIF)
-+			return -EPERM;
-+
-+		/*
-+		 * We set the internal flag FANOTIFY_UNPRIV on the group, so we
-+		 * know that we need to limit setting mount/filesystem marks on
-+		 * this group and avoid providing pid and open fd in the event.
-+		 */
-+		internal_flags |= FANOTIFY_UNPRIV;
-+	}
- 
- #ifdef CONFIG_AUDITSYSCALL
- 	if (flags & ~(FANOTIFY_INIT_FLAGS | FAN_ENABLE_AUDIT))
-@@ -1051,7 +1080,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 		goto out_destroy_group;
- 	}
- 
--	group->fanotify_data.flags = flags;
-+	group->fanotify_data.flags = flags | internal_flags;
- 	group->memcg = get_mem_cgroup_from_mm(current->mm);
- 
- 	group->overflow_event = fanotify_alloc_overflow_event();
-@@ -1247,6 +1276,15 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 		goto fput_and_out;
- 	group = f.file->private_data;
- 
-+	/*
-+	 * An unprivileged event listener is not allowed to watch a mount
-+	 * point nor a filesystem.
-+	 */
-+	ret = -EPERM;
-+	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
-+	    mark_type != FAN_MARK_INODE)
-+		goto fput_and_out;
-+
- 	/*
- 	 * group->priority == FS_PRIO_0 == FAN_CLASS_NOTIF.  These are not
- 	 * allowed to set permissions events.
-@@ -1379,6 +1417,7 @@ SYSCALL32_DEFINE6(fanotify_mark,
-  */
- static int __init fanotify_user_setup(void)
- {
-+	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_FLAGS);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
- 
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index f0d6b54be412..57f0d5d9f934 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -144,7 +144,8 @@ void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
- 	struct fsnotify_group *group = f->private_data;
- 
- 	seq_printf(m, "fanotify flags:%x event-flags:%x\n",
--		   group->fanotify_data.flags, group->fanotify_data.f_flags);
-+		   group->fanotify_data.flags & FANOTIFY_INIT_FLAGS,
-+		   group->fanotify_data.f_flags);
- 
- 	show_fdinfo(m, f, fanotify_fdinfo);
- }
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 031a97d8369a..a573c1028c14 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -28,6 +28,22 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
- 				 FAN_CLOEXEC | FAN_NONBLOCK | \
- 				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS)
- 
-+/* Internal flags */
-+#define FANOTIFY_UNPRIV		0x80000000
-+#define FANOTIFY_INTERNAL_FLAGS	(FANOTIFY_UNPRIV)
-+
-+/*
-+ * fanotify_init() flags allowed for unprivileged listener.
-+ * FAN_CLASS_NOTIF in this mask is purely semantic because it is zero,
-+ * but it is the only class we allow for unprivileged listener.
-+ * Since unprivileged listener does not provide file descriptors in events,
-+ * reporting file handles makes sense, but it is not a must.
-+ * FAN_REPORT_TID does not make sense for unprivileged listener, which uses
-+ * event->pid only to filter out events generated by listener process itself.
-+ */
-+#define FANOTIFY_UNPRIV_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
-+					 FAN_CLASS_NOTIF | FANOTIFY_FID_BITS)
-+
- #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
- 				 FAN_MARK_FILESYSTEM)
- 
--- 
-2.25.1
-
+> 
+> ---
+> >From 7a6a53bca1ecd8db872de1ee81d1a57e1829e525 Mon Sep 17 00:00:00 2001
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+> Date: Sat, 23 Jan 2021 12:00:02 +0100
+> Subject: [PATCH] nfs: do not export idmapped mounts
+> 
+> Prevent nfs from exporting idmapped mounts until we have ported it to
+> support exporting idmapped mounts.
+> 
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: "J. Bruce Fields" <bfields@redhat.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+> /* v2 */
+> 
+> /* v3 */
+> 
+> /* v4 */
+> 
+> /* v5 */
+> 
+> /* v5 */
+> patch introduced
+> base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+> ---
+>  fs/nfsd/export.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> index 81e7bb12aca6..e456421f68b4 100644
+> --- a/fs/nfsd/export.c
+> +++ b/fs/nfsd/export.c
+> @@ -369,8 +369,9 @@ static struct svc_export *svc_export_update(struct svc_export *new,
+>  					    struct svc_export *old);
+>  static struct svc_export *svc_export_lookup(struct svc_export *);
+>  
+> -static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
+> +static int check_export(struct path *path, int *flags, unsigned char *uuid)
+>  {
+> +	struct inode *inode = d_inode(path->dentry);
+>  
+>  	/*
+>  	 * We currently export only dirs, regular files, and (for v4
+> @@ -394,6 +395,7 @@ static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
+>  	 *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
+>  	 * 2:  We must be able to find an inode from a filehandle.
+>  	 *       This means that s_export_op must be set.
+> +	 * 3: We must not currently be on an idmapped mount.
+>  	 */
+>  	if (!(inode->i_sb->s_type->fs_flags & FS_REQUIRES_DEV) &&
+>  	    !(*flags & NFSEXP_FSID) &&
+> @@ -408,6 +410,11 @@ static int check_export(struct inode *inode, int *flags, unsigned char *uuid)
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (mnt_user_ns(path->mnt) != &init_user_ns) {
+> +		dprintk("exp_export: export of idmapped mounts not yet supported.\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	if (inode->i_sb->s_export_op->flags & EXPORT_OP_NOSUBTREECHK &&
+>  	    !(*flags & NFSEXP_NOSUBTREECHECK)) {
+>  		dprintk("%s: %s does not support subtree checking!\n",
+> @@ -636,8 +643,7 @@ static int svc_export_parse(struct cache_detail *cd, char *mesg, int mlen)
+>  				goto out4;
+>  		}
+>  
+> -		err = check_export(d_inode(exp.ex_path.dentry), &exp.ex_flags,
+> -				   exp.ex_uuid);
+> +		err = check_export(&exp.ex_path, &exp.ex_flags, exp.ex_uuid);
+>  		if (err)
+>  			goto out4;
+>  		/*
+> -- 
+> 2.30.0
