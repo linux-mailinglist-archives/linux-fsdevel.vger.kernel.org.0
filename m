@@ -2,43 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F034302F37
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 23:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 035A8302F6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 23:51:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732887AbhAYVff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 16:35:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46748 "EHLO
+        id S1732146AbhAYWvh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 17:51:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32519 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732837AbhAYVeQ (ORCPT
+        by vger.kernel.org with ESMTP id S1732865AbhAYVfP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 16:34:16 -0500
+        Mon, 25 Jan 2021 16:35:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611610367;
+        s=mimecast20190719; t=1611610422;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hX62zxZiL5wAvS6FKZw3P4+KXmTSpb/ti3ySPUoRqzI=;
-        b=CrVtPiOCLsfIixv9zZ61/nmCiF/5D/OHEQa4pYM87xyaQVJSMHGbVPRldy/p43YT82ZMWg
-        IG6XaWjkNGc5jKC9r01bekR+nNXf6/moz3U6mSFNnr0P6ETBSRm5pP++B3z7swG990JVz9
-        VEr5xpYbdublLWG2oeE/LIE3WLR8QxI=
+        bh=pYJgL9LK9rSIKWVgFalSzYYYdU21hFgzxSciVNpHbLQ=;
+        b=WmRmB+0tPMkKpuBW00spPXOij4FdsnGZXzYTdAcjd5mboP3CraznIle6jSzQ2K2Aan9eu2
+        tG/DHz7302tpmkKyS5VWQplQD9Mw+GJdIxIZf0wf7KR7xrWOPqtb2t3Rg2FkiCr2jhhf/3
+        54GMpczsJcFCALfK/NQHazIgRaBgbEs=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-499-i9y9N7isP7W83uOUb9bN0w-1; Mon, 25 Jan 2021 16:32:43 -0500
-X-MC-Unique: i9y9N7isP7W83uOUb9bN0w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-483-BRdgQwU2Mu21iy-0CfjCxg-1; Mon, 25 Jan 2021 16:33:38 -0500
+X-MC-Unique: BRdgQwU2Mu21iy-0CfjCxg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C6A0A802B40;
-        Mon, 25 Jan 2021 21:32:41 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8FECF8735C2;
+        Mon, 25 Jan 2021 21:33:36 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2348460938;
-        Mon, 25 Jan 2021 21:32:36 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 401BB5D6AB;
+        Mon, 25 Jan 2021 21:33:28 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 09/32] netfs: Add write_begin helper
+Subject: [PATCH 13/32] afs: Pass page into dirty region helpers to provide THP
+ size
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -52,303 +53,337 @@ Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 25 Jan 2021 21:32:35 +0000
-Message-ID: <161161035539.2537118.15674887534950908530.stgit@warthog.procyon.org.uk>
+Date:   Mon, 25 Jan 2021 21:33:27 +0000
+Message-ID: <161161040747.2537118.11435394902674511430.stgit@warthog.procyon.org.uk>
 In-Reply-To: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
 References: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a helper to do the pre-reading work for the netfs write_begin address
-space op.
+Pass a pointer to the page being accessed into the dirty region helpers so
+that the size of the page can be determined in case it's a transparent huge
+page.
+
+This also required the page to be passed into the afs_page_dirty trace
+point - so there's no need to specifically pass in the index or private
+data as these can be retrieved directly from the page struct.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/netfs/internal.h          |    2 +
- fs/netfs/read_helper.c       |  165 ++++++++++++++++++++++++++++++++++++++++++
- fs/netfs/stats.c             |   10 ++-
- include/linux/netfs.h        |    8 ++
- include/trace/events/netfs.h |    4 +
- 5 files changed, 185 insertions(+), 4 deletions(-)
+ fs/afs/file.c              |   20 +++++++--------
+ fs/afs/internal.h          |   16 ++++++------
+ fs/afs/write.c             |   60 ++++++++++++++++++--------------------------
+ include/trace/events/afs.h |   23 ++++++++++-------
+ 4 files changed, 55 insertions(+), 64 deletions(-)
 
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index 98b6f4516da1..b7f2c4459f33 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -34,8 +34,10 @@ extern atomic_t netfs_n_rh_read_failed;
- extern atomic_t netfs_n_rh_zero;
- extern atomic_t netfs_n_rh_short_read;
- extern atomic_t netfs_n_rh_write;
-+extern atomic_t netfs_n_rh_write_begin;
- extern atomic_t netfs_n_rh_write_done;
- extern atomic_t netfs_n_rh_write_failed;
-+extern atomic_t netfs_n_rh_write_zskip;
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index 6d43713fde01..21868bfc3a44 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -515,8 +515,8 @@ static void afs_invalidate_dirty(struct page *page, unsigned int offset,
+ 		return;
  
+ 	/* We may need to shorten the dirty region */
+-	f = afs_page_dirty_from(priv);
+-	t = afs_page_dirty_to(priv);
++	f = afs_page_dirty_from(page, priv);
++	t = afs_page_dirty_to(page, priv);
  
- static inline void netfs_stat(atomic_t *stat)
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 275ac37e2834..eb34c368617d 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -760,3 +760,168 @@ int netfs_readpage(struct file *file,
+ 	if (t <= offset || f >= end)
+ 		return; /* Doesn't overlap */
+@@ -534,17 +534,17 @@ static void afs_invalidate_dirty(struct page *page, unsigned int offset,
+ 	if (f == t)
+ 		goto undirty;
+ 
+-	priv = afs_page_dirty(f, t);
++	priv = afs_page_dirty(page, f, t);
+ 	set_page_private(page, priv);
+-	trace_afs_page_dirty(vnode, tracepoint_string("trunc"), page->index, priv);
++	trace_afs_page_dirty(vnode, tracepoint_string("trunc"), page);
+ 	return;
+ 
+ undirty:
+-	trace_afs_page_dirty(vnode, tracepoint_string("undirty"), page->index, priv);
++	trace_afs_page_dirty(vnode, tracepoint_string("undirty"), page);
+ 	clear_page_dirty_for_io(page);
+ full_invalidate:
+-	priv = (unsigned long)detach_page_private(page);
+-	trace_afs_page_dirty(vnode, tracepoint_string("inval"), page->index, priv);
++	detach_page_private(page);
++	trace_afs_page_dirty(vnode, tracepoint_string("inval"), page);
+ }
+ 
+ /*
+@@ -572,7 +572,6 @@ static void afs_invalidatepage(struct page *page, unsigned int offset,
+ static int afs_releasepage(struct page *page, gfp_t gfp_flags)
+ {
+ 	struct afs_vnode *vnode = AFS_FS_I(page->mapping->host);
+-	unsigned long priv;
+ 
+ 	_enter("{{%llx:%llu}[%lu],%lx},%x",
+ 	       vnode->fid.vid, vnode->fid.vnode, page->index, page->flags,
+@@ -581,9 +580,8 @@ static int afs_releasepage(struct page *page, gfp_t gfp_flags)
+ 	/* deny if page is being written to the cache and the caller hasn't
+ 	 * elected to wait */
+ 	if (PagePrivate(page)) {
+-		priv = (unsigned long)detach_page_private(page);
+-		trace_afs_page_dirty(vnode, tracepoint_string("rel"),
+-				     page->index, priv);
++		detach_page_private(page);
++		trace_afs_page_dirty(vnode, tracepoint_string("rel"), page);
+ 	}
+ 
+ 	/* indicate that the page can be released */
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 0d150a29e39e..cd545e7dbfb8 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -875,31 +875,31 @@ struct afs_vnode_cache_aux {
+ #define __AFS_PAGE_PRIV_MMAPPED	0x8000UL
+ #endif
+ 
+-static inline unsigned int afs_page_dirty_resolution(void)
++static inline unsigned int afs_page_dirty_resolution(struct page *page)
+ {
+-	int shift = PAGE_SHIFT - (__AFS_PAGE_PRIV_SHIFT - 1);
++	int shift = thp_order(page) + PAGE_SHIFT - (__AFS_PAGE_PRIV_SHIFT - 1);
+ 	return (shift > 0) ? shift : 0;
+ }
+ 
+-static inline size_t afs_page_dirty_from(unsigned long priv)
++static inline size_t afs_page_dirty_from(struct page *page, unsigned long priv)
+ {
+ 	unsigned long x = priv & __AFS_PAGE_PRIV_MASK;
+ 
+ 	/* The lower bound is inclusive */
+-	return x << afs_page_dirty_resolution();
++	return x << afs_page_dirty_resolution(page);
+ }
+ 
+-static inline size_t afs_page_dirty_to(unsigned long priv)
++static inline size_t afs_page_dirty_to(struct page *page, unsigned long priv)
+ {
+ 	unsigned long x = (priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV_MASK;
+ 
+ 	/* The upper bound is immediately beyond the region */
+-	return (x + 1) << afs_page_dirty_resolution();
++	return (x + 1) << afs_page_dirty_resolution(page);
+ }
+ 
+-static inline unsigned long afs_page_dirty(size_t from, size_t to)
++static inline unsigned long afs_page_dirty(struct page *page, size_t from, size_t to)
+ {
+-	unsigned int res = afs_page_dirty_resolution();
++	unsigned int res = afs_page_dirty_resolution(page);
+ 	from >>= res;
+ 	to = (to - 1) >> res;
+ 	return (to << __AFS_PAGE_PRIV_SHIFT) | from;
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 92eaa88000d7..9d0cef35ecba 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -112,15 +112,14 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
+ 	t = f = 0;
+ 	if (PagePrivate(page)) {
+ 		priv = page_private(page);
+-		f = afs_page_dirty_from(priv);
+-		t = afs_page_dirty_to(priv);
++		f = afs_page_dirty_from(page, priv);
++		t = afs_page_dirty_to(page, priv);
+ 		ASSERTCMP(f, <=, t);
+ 	}
+ 
+ 	if (f != t) {
+ 		if (PageWriteback(page)) {
+-			trace_afs_page_dirty(vnode, tracepoint_string("alrdy"),
+-					     page->index, priv);
++			trace_afs_page_dirty(vnode, tracepoint_string("alrdy"), page);
+ 			goto flush_conflicting_write;
+ 		}
+ 		/* If the file is being filled locally, allow inter-write
+@@ -204,21 +203,19 @@ int afs_write_end(struct file *file, struct address_space *mapping,
+ 
+ 	if (PagePrivate(page)) {
+ 		priv = page_private(page);
+-		f = afs_page_dirty_from(priv);
+-		t = afs_page_dirty_to(priv);
++		f = afs_page_dirty_from(page, priv);
++		t = afs_page_dirty_to(page, priv);
+ 		if (from < f)
+ 			f = from;
+ 		if (to > t)
+ 			t = to;
+-		priv = afs_page_dirty(f, t);
++		priv = afs_page_dirty(page, f, t);
+ 		set_page_private(page, priv);
+-		trace_afs_page_dirty(vnode, tracepoint_string("dirty+"),
+-				     page->index, priv);
++		trace_afs_page_dirty(vnode, tracepoint_string("dirty+"), page);
+ 	} else {
+-		priv = afs_page_dirty(from, to);
++		priv = afs_page_dirty(page, from, to);
+ 		attach_page_private(page, (void *)priv);
+-		trace_afs_page_dirty(vnode, tracepoint_string("dirty"),
+-				     page->index, priv);
++		trace_afs_page_dirty(vnode, tracepoint_string("dirty"), page);
+ 	}
+ 
+ 	set_page_dirty(page);
+@@ -321,7 +318,6 @@ static void afs_pages_written_back(struct afs_vnode *vnode,
+ 				   pgoff_t first, pgoff_t last)
+ {
+ 	struct pagevec pv;
+-	unsigned long priv;
+ 	unsigned count, loop;
+ 
+ 	_enter("{%llx:%llu},{%lx-%lx}",
+@@ -340,9 +336,9 @@ static void afs_pages_written_back(struct afs_vnode *vnode,
+ 		ASSERTCMP(pv.nr, ==, count);
+ 
+ 		for (loop = 0; loop < count; loop++) {
+-			priv = (unsigned long)detach_page_private(pv.pages[loop]);
++			detach_page_private(pv.pages[loop]);
+ 			trace_afs_page_dirty(vnode, tracepoint_string("clear"),
+-					     pv.pages[loop]->index, priv);
++					     pv.pages[loop]);
+ 			end_page_writeback(pv.pages[loop]);
+ 		}
+ 		first += count;
+@@ -516,15 +512,13 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
+ 	 */
+ 	start = primary_page->index;
+ 	priv = page_private(primary_page);
+-	offset = afs_page_dirty_from(priv);
+-	to = afs_page_dirty_to(priv);
+-	trace_afs_page_dirty(vnode, tracepoint_string("store"),
+-			     primary_page->index, priv);
++	offset = afs_page_dirty_from(primary_page, priv);
++	to = afs_page_dirty_to(primary_page, priv);
++	trace_afs_page_dirty(vnode, tracepoint_string("store"), primary_page);
+ 
+ 	WARN_ON(offset == to);
+ 	if (offset == to)
+-		trace_afs_page_dirty(vnode, tracepoint_string("WARN"),
+-				     primary_page->index, priv);
++		trace_afs_page_dirty(vnode, tracepoint_string("WARN"), primary_page);
+ 
+ 	if (start >= final_page ||
+ 	    (to < PAGE_SIZE && !test_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags)))
+@@ -562,8 +556,8 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
+ 			}
+ 
+ 			priv = page_private(page);
+-			f = afs_page_dirty_from(priv);
+-			t = afs_page_dirty_to(priv);
++			f = afs_page_dirty_from(page, priv);
++			t = afs_page_dirty_to(page, priv);
+ 			if (f != 0 &&
+ 			    !test_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags)) {
+ 				unlock_page(page);
+@@ -571,8 +565,7 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
+ 			}
+ 			to = t;
+ 
+-			trace_afs_page_dirty(vnode, tracepoint_string("store+"),
+-					     page->index, priv);
++			trace_afs_page_dirty(vnode, tracepoint_string("store+"), page);
+ 
+ 			if (!clear_page_dirty_for_io(page))
+ 				BUG();
+@@ -861,14 +854,13 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 	 */
+ 	wait_on_page_writeback(vmf->page);
+ 
+-	priv = afs_page_dirty(0, PAGE_SIZE);
++	priv = afs_page_dirty(vmf->page, 0, PAGE_SIZE);
+ 	priv = afs_page_dirty_mmapped(priv);
+-	trace_afs_page_dirty(vnode, tracepoint_string("mkwrite"),
+-			     vmf->page->index, priv);
+ 	if (PagePrivate(vmf->page))
+ 		set_page_private(vmf->page, priv);
+ 	else
+ 		attach_page_private(vmf->page, (void *)priv);
++	trace_afs_page_dirty(vnode, tracepoint_string("mkwrite"), vmf->page);
+ 	file_update_time(file);
+ 
+ 	sb_end_pagefault(inode->i_sb);
+@@ -921,17 +913,15 @@ int afs_launder_page(struct page *page)
+ 		f = 0;
+ 		t = PAGE_SIZE;
+ 		if (PagePrivate(page)) {
+-			f = afs_page_dirty_from(priv);
+-			t = afs_page_dirty_to(priv);
++			f = afs_page_dirty_from(page, priv);
++			t = afs_page_dirty_to(page, priv);
+ 		}
+ 
+-		trace_afs_page_dirty(vnode, tracepoint_string("launder"),
+-				     page->index, priv);
++		trace_afs_page_dirty(vnode, tracepoint_string("launder"), page);
+ 		ret = afs_store_data(mapping, page->index, page->index, t, f, true);
+ 	}
+ 
+-	priv = (unsigned long)detach_page_private(page);
+-	trace_afs_page_dirty(vnode, tracepoint_string("laundered"),
+-			     page->index, priv);
++	detach_page_private(page);
++	trace_afs_page_dirty(vnode, tracepoint_string("laundered"), page);
  	return ret;
  }
- EXPORT_SYMBOL(netfs_readpage);
-+
-+static void netfs_clear_thp(struct page *page)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < thp_nr_pages(page); i++)
-+		clear_highpage(page + i);
-+}
-+
-+/**
-+ * netfs_write_begin - Helper to prepare for writing
-+ * @file: The file to read from
-+ * @mapping: The mapping to read from
-+ * @pos: File position at which the write will begin
-+ * @len: The length of the write in this page
-+ * @flags: AOP_* flags
-+ * @_page: Where to put the resultant page
-+ * @_fsdata: Place for the netfs to store a cookie
-+ * @ops: The network filesystem's operations for the helper to use
-+ * @netfs_priv: Private netfs data to be retained in the request
-+ *
-+ * Pre-read data for a write-begin request by drawing data from the cache if
-+ * possible, or the netfs if not.  Space beyond the EOF is zero-filled.
-+ * Multiple I/O requests from different sources will get munged together.  If
-+ * necessary, the readahead window can be expanded in either direction to a
-+ * more convenient alighment for RPC efficiency or to make storage in the cache
-+ * feasible.
-+ *
-+ * The calling netfs must provide a table of operations, only one of which,
-+ * issue_op, is mandatory.
-+ *
-+ * The check_write_begin() operation can be provided to check for and flush
-+ * conflicting writes once the page is grabbed and locked.  It is passed a
-+ * pointer to the fsdata cookie that gets returned to the VM to be passed to
-+ * write_end.  It is permitted to sleep.  It should return 0 if the request
-+ * should go ahead; unlock the page and return -EAGAIN to cause the page to be
-+ * regot; or return an error.
-+ *
-+ * This is usable whether or not caching is enabled.
-+ */
-+int netfs_write_begin(struct file *file, struct address_space *mapping,
-+		      loff_t pos, unsigned int len, unsigned int flags,
-+		      struct page **_page, void **_fsdata,
-+		      const struct netfs_read_request_ops *ops,
-+		      void *netfs_priv)
-+{
-+	struct netfs_read_request *rreq;
-+	struct page *page, *xpage;
-+	struct inode *inode = file_inode(file);
-+	unsigned int debug_index = 0;
-+	pgoff_t index = pos >> PAGE_SHIFT;
-+	int pos_in_page = pos & ~PAGE_MASK;
-+	loff_t size;
-+	int ret;
-+
-+	struct readahead_control ractl = {
-+		.file		= file,
-+		.mapping	= mapping,
-+		._index		= index,
-+		._nr_pages	= 0,
-+	};
-+
-+retry:
-+	page = grab_cache_page_write_begin(mapping, index, 0);
-+	if (!page)
-+		return -ENOMEM;
-+
-+	if (ops->check_write_begin) {
-+		/* Allow the netfs (eg. ceph) to flush conflicts. */
-+		ret = ops->check_write_begin(file, pos, len, page, _fsdata);
-+		if (ret < 0) {
-+			if (ret == -EAGAIN)
-+				goto retry;
-+			goto error;
-+		}
-+	}
-+
-+	if (PageUptodate(page))
-+		goto have_page;
-+
-+	/* If the page is beyond the EOF, we want to clear it - unless it's
-+	 * within the cache granule containing the EOF, in which case we need
-+	 * to preload the granule.
-+	 */
-+	size = i_size_read(inode);
-+	if (!ops->is_cache_enabled(inode) &&
-+	    ((pos_in_page == 0 && len == thp_size(page)) ||
-+	     (pos >= size) ||
-+	     (pos_in_page == 0 && (pos + len) >= size))) {
-+		netfs_clear_thp(page);
-+		SetPageUptodate(page);
-+		netfs_stat(&netfs_n_rh_write_zskip);
-+		goto have_page_no_wait;
-+	}
-+
-+	ret = -ENOMEM;
-+	rreq = netfs_alloc_read_request(ops, netfs_priv, file);
-+	if (!rreq)
-+		goto error;
-+	rreq->mapping		= page->mapping;
-+	rreq->start		= page->index * PAGE_SIZE;
-+	rreq->len		= thp_size(page);
-+	rreq->no_unlock_page	= page->index;
-+	__set_bit(NETFS_RREQ_NO_UNLOCK_PAGE, &rreq->flags);
-+	netfs_priv = NULL;
-+
-+	netfs_stat(&netfs_n_rh_write_begin);
-+	trace_netfs_read(rreq, pos, len, netfs_read_trace_write_begin);
-+
-+	/* Expand the request to meet caching requirements and download
-+	 * preferences.
-+	 */
-+	ractl._nr_pages = thp_nr_pages(page);
-+	netfs_rreq_expand(rreq, &ractl);
-+	netfs_get_read_request(rreq);
-+
-+	/* We hold the page locks, so we can drop the references */
-+	while ((xpage = readahead_page(&ractl)))
-+		if (xpage != page)
-+			put_page(xpage);
-+
-+	atomic_set(&rreq->nr_rd_ops, 1);
-+	do {
-+		if (!netfs_rreq_submit_slice(rreq, &debug_index))
-+			break;
-+
-+	} while (rreq->submitted < rreq->len);
-+
-+	// TODO: If we didn't submit enough readage, we need to clean up
-+
-+	/* Keep nr_rd_ops incremented so that the ref always belongs to us, and
-+	 * the service code isn't punted off to a random thread pool to
-+	 * process.
-+	 */
-+	for (;;) {
-+		wait_var_event(&rreq->nr_rd_ops, atomic_read(&rreq->nr_rd_ops) == 1);
-+		netfs_rreq_assess(rreq);
-+		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
-+			break;
-+		cond_resched();
-+	}
-+
-+	ret = rreq->error;
-+	netfs_put_read_request(rreq);
-+	if (ret < 0)
-+		goto error;
-+
-+have_page:
-+	wait_on_page_fscache(page);
-+have_page_no_wait:
-+	if (netfs_priv)
-+		ops->cleanup(netfs_priv, mapping);
-+	*_page = page;
-+	_leave(" = 0");
-+	return 0;
-+
-+error:
-+	unlock_page(page);
-+	put_page(page);
-+	if (netfs_priv)
-+		ops->cleanup(netfs_priv, mapping);
-+	_leave(" = %d", ret);
-+	return ret;
-+}
-+EXPORT_SYMBOL(netfs_write_begin);
-diff --git a/fs/netfs/stats.c b/fs/netfs/stats.c
-index df6ff5718f25..dd7ad66ed07e 100644
---- a/fs/netfs/stats.c
-+++ b/fs/netfs/stats.c
-@@ -24,19 +24,23 @@ atomic_t netfs_n_rh_read_failed;
- atomic_t netfs_n_rh_zero;
- atomic_t netfs_n_rh_short_read;
- atomic_t netfs_n_rh_write;
-+atomic_t netfs_n_rh_write_begin;
- atomic_t netfs_n_rh_write_done;
- atomic_t netfs_n_rh_write_failed;
-+atomic_t netfs_n_rh_write_zskip;
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index 4a5cc8c64be3..9203cf6a8c53 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -969,30 +969,33 @@ TRACE_EVENT(afs_dir_check_failed,
+ 	    );
  
- void netfs_stats_show(struct seq_file *m)
- {
--	seq_printf(m, "RdHelp : RA=%u RP=%u rr=%u sr=%u\n",
-+	seq_printf(m, "RdHelp : RA=%u RP=%u WB=%u rr=%u sr=%u\n",
- 		   atomic_read(&netfs_n_rh_readahead),
- 		   atomic_read(&netfs_n_rh_readpage),
-+		   atomic_read(&netfs_n_rh_write_begin),
- 		   atomic_read(&netfs_n_rh_rreq),
- 		   atomic_read(&netfs_n_rh_sreq));
--	seq_printf(m, "RdHelp : ZR=%u sh=%u\n",
-+	seq_printf(m, "RdHelp : ZR=%u sh=%u sk=%u\n",
- 		   atomic_read(&netfs_n_rh_zero),
--		   atomic_read(&netfs_n_rh_short_read));
-+		   atomic_read(&netfs_n_rh_short_read),
-+		   atomic_read(&netfs_n_rh_write_zskip));
- 	seq_printf(m, "RdHelp : DL=%u ds=%u df=%u di=%u\n",
- 		   atomic_read(&netfs_n_rh_download),
- 		   atomic_read(&netfs_n_rh_download_done),
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 92a08d8b8e61..5b54f6637c22 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -87,11 +87,14 @@ struct netfs_read_request {
-  * Operations the network filesystem can/must provide to the helpers.
-  */
- struct netfs_read_request_ops {
-+	bool (*is_cache_enabled)(struct inode *inode);
- 	void (*init_rreq)(struct netfs_read_request *rreq, struct file *file);
- 	void (*expand_readahead)(struct netfs_read_request *rreq);
- 	bool (*clamp_length)(struct netfs_read_subrequest *subreq);
- 	void (*issue_op)(struct netfs_read_subrequest *subreq);
- 	bool (*is_still_valid)(struct netfs_read_request *rreq);
-+	int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
-+				 struct page *page, void **_fsdata);
- 	void (*done)(struct netfs_read_request *rreq);
- 	void (*cleanup)(struct address_space *mapping, void *netfs_priv);
- };
-@@ -104,6 +107,11 @@ extern int netfs_readpage(struct file *,
- 			  struct page *,
- 			  const struct netfs_read_request_ops *,
- 			  void *);
-+extern int netfs_write_begin(struct file *, struct address_space *,
-+			     loff_t, unsigned int, unsigned int, struct page **,
-+			     void **,
-+			     const struct netfs_read_request_ops *,
-+			     void *);
+ TRACE_EVENT(afs_page_dirty,
+-	    TP_PROTO(struct afs_vnode *vnode, const char *where,
+-		     pgoff_t page, unsigned long priv),
++	    TP_PROTO(struct afs_vnode *vnode, const char *where, struct page *page),
  
- extern void netfs_subreq_terminated(struct netfs_read_subrequest *, ssize_t);
- extern void netfs_stats_show(struct seq_file *);
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index 12ad382764c5..a2bf6cd84bd4 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -22,6 +22,7 @@ enum netfs_read_trace {
- 	netfs_read_trace_expanded,
- 	netfs_read_trace_readahead,
- 	netfs_read_trace_readpage,
-+	netfs_read_trace_write_begin,
- };
+-	    TP_ARGS(vnode, where, page, priv),
++	    TP_ARGS(vnode, where, page),
  
- enum netfs_rreq_trace {
-@@ -50,7 +51,8 @@ enum netfs_sreq_trace {
- #define netfs_read_traces					\
- 	EM(netfs_read_trace_expanded,		"EXPANDED ")	\
- 	EM(netfs_read_trace_readahead,		"READAHEAD")	\
--	E_(netfs_read_trace_readpage,		"READPAGE ")
-+	EM(netfs_read_trace_readpage,		"READPAGE ")	\
-+	E_(netfs_read_trace_write_begin,	"WRITEBEGN")
+ 	    TP_STRUCT__entry(
+ 		    __field(struct afs_vnode *,		vnode		)
+ 		    __field(const char *,		where		)
+ 		    __field(pgoff_t,			page		)
+-		    __field(unsigned long,		priv		)
++		    __field(unsigned long,		from		)
++		    __field(unsigned long,		to		)
+ 			     ),
  
- #define netfs_rreq_traces					\
- 	EM(netfs_rreq_trace_assess,		"ASSESS")	\
+ 	    TP_fast_assign(
+ 		    __entry->vnode = vnode;
+ 		    __entry->where = where;
+-		    __entry->page = page;
+-		    __entry->priv = priv;
++		    __entry->page = page->index;
++		    __entry->from = afs_page_dirty_from(page, page->private);
++		    __entry->to = afs_page_dirty_to(page, page->private);
++		    __entry->to |= (afs_is_page_dirty_mmapped(page->private) ?
++				    (1UL << (BITS_PER_LONG - 1)) : 0);
+ 			   ),
+ 
+-	    TP_printk("vn=%p %lx %s %zx-%zx%s",
++	    TP_printk("vn=%p %lx %s %lx-%lx%s",
+ 		      __entry->vnode, __entry->page, __entry->where,
+-		      afs_page_dirty_from(__entry->priv),
+-		      afs_page_dirty_to(__entry->priv),
+-		      afs_is_page_dirty_mmapped(__entry->priv) ? " M" : "")
++		      __entry->from,
++		      __entry->to & ~(1UL << (BITS_PER_LONG - 1)),
++		      __entry->to & (1UL << (BITS_PER_LONG - 1)) ? " M" : "")
+ 	    );
+ 
+ TRACE_EVENT(afs_call_state,
 
 
