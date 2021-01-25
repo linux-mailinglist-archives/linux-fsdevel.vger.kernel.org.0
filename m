@@ -2,54 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F1C9302D1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:00:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E76E302D24
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbhAYU6F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 15:58:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
+        id S1732195AbhAYVBW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 16:01:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731702AbhAYU57 (ORCPT
+        with ESMTP id S1732176AbhAYVAa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 15:57:59 -0500
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69489C061573
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 12:57:14 -0800 (PST)
-Received: by mail-qk1-x732.google.com with SMTP id v126so13897359qkd.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 12:57:14 -0800 (PST)
+        Mon, 25 Jan 2021 16:00:30 -0500
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BCECC061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 12:59:50 -0800 (PST)
+Received: by mail-qt1-x82c.google.com with SMTP id v3so10759742qtw.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 12:59:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=niKnqml7zC5pFULMCBl20DPmuabrsvNS8Avv00VlMWE=;
-        b=nTwcgXacBOWIyO17J3T7x4kCqlbmnHrOXW8cNj49+Sti0s/kd5lxVHG5FYAW3uiJpi
-         BITVuCZSXrV6IF4DeVo9wp0meCHiPwz7ThSz1kzfwWxFdt2QwObyj4EN3eeLr4WGNhGb
-         lqKl3P8odkxgN6z8fZG+9l0sU29VH5dnb0zoNd1A7mvV59SYS+S9J+wh2PvbXjQ0jMaU
-         TvMLpsfScaxEVmSRfFTnJkvaXGOx2kpdlDT5+NUSCnImbmsMzK3LfPl9Qx8Ljx7mfAvZ
-         Jlf2W7tMNMeaW2PQ3pAtE0cNOwSbI73W94MEbOX+dmgfEHdKo8fkbNUQZ/wvi9oRsGjM
-         1FyQ==
+        bh=JJNWcMOWzRaag3SBCPIuuG3V8rOucOBbI9b8+CXDIO0=;
+        b=mCwNAdUhFxM1x6BU9SHecQkP0XKWNsVDuGrXcNiaFpZnyd2FCzdA9LYEDYGuWgaBOS
+         YGGTa7k2LocdTXi4ioRJXlxxdLVPBMuh1ATzRyKdMpHPageYuJrnqEG7jysVGnjzL2Zo
+         7q5F/4WtYPab4jsH9mPygYI6ns7SN+s/p0dSdsd/zmiuJcDBY+tDQ5vaAnJfcOo7atco
+         iTDhuUwKelHV3y2ob/NwojMcdHUDDy8OTtptN8ZiHMvDUV8QgZ0qgeltL+BEYRdvezAv
+         uLBypQyjkty1Mcu9eEfGdANFcCW6qnZ5GHKjPg2rdiPh9p9K5NLOE4j7WkNiGtLmJyGX
+         r1rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=niKnqml7zC5pFULMCBl20DPmuabrsvNS8Avv00VlMWE=;
-        b=D/CpeCBfrDN9BPY+LcE16c8spkZ1VUr4aKwdCczeWovRfBPLfrv/nQZszfQjPpcU5M
-         Ncw9mveR8tMP13Y/VVEgzpl/HYsM/AufGNj5CK+3vf8A8PGkQ8OIrPB3FaHrkl8EIM7r
-         0X+yKh2CaLzAkYdJfdHKKR4z0y13m0cWHUnZL8dIHsEa4128thvAU3LT8Up4V6eL3Fxq
-         Tid/Qxnc3MtDIMbo/Bh+LqB+c4ZRwAftI0NO4JO/1T0IyIKD0wpTURVWi3NdEZSkq5lk
-         2gKS/B/on5rwvgZrMZM5ReQHHFVu8RrwnsEoRmFnT2hbJJ+6Y5y/nx6Edd8fHLZY2B6I
-         9RFQ==
-X-Gm-Message-State: AOAM530/+AQZDtHkXtx3scrNXSzs6MlBlZi13uVrOidIs26dc87iV9V+
-        VQ136ru2mL7Y7yLloCUA9ptFxA==
-X-Google-Smtp-Source: ABdhPJzPgdW3PPLtjzqPd28b002hA5VqIxXzmwvjqq0kI3Uga2Y7QtGJeuapu9ljTVXbLg6lKogZCQ==
-X-Received: by 2002:ae9:e716:: with SMTP id m22mr2753241qka.245.1611608233438;
-        Mon, 25 Jan 2021 12:57:13 -0800 (PST)
+        bh=JJNWcMOWzRaag3SBCPIuuG3V8rOucOBbI9b8+CXDIO0=;
+        b=RyCfLugiGDUtadPd/6jvS0HimL/cpU7cDbz6jACicYusGa+fkL3RHbcC0uP2mXUuO8
+         SvaRU9+nyNQFWtbCEH6S3vX/qXT8mlEpOmPl984cDXvlKvZ2tZIk4rbBE7G79Ak0QiIh
+         37OYmTYgb6Zv5ffeukLhX6tTEkoDJkfVSoeLgsgsLS43hGGmujqBbmvejTCV5fgshoxR
+         il3CaOZrlqO90q7xRogEQ9JnjVOTtSxT8QRc1/TrIllFP1yOZlF/5Lyiv3QmQ4hrgNKa
+         AONCDp7aexQdj/KKPKHujMiC0D58iQTq+owH2jk/dV3s8s+f0ncuwSlmOfFv5Ue4V3dx
+         nm9w==
+X-Gm-Message-State: AOAM531MHzhClfRtBv5uqwwZLA9tOEfb8CdxoNBEfY+PPiq8tQnHTsDX
+        i1q3ghF5o/lBc0muaFMDVG0vVA==
+X-Google-Smtp-Source: ABdhPJwjHGGpnI+Y4Q5fI8hJKvjpozuCCSlNPbHk6TkYeK0ZOSf/+6lz7Yp2jOBeANZUheR7REX2+g==
+X-Received: by 2002:ac8:4e8b:: with SMTP id 11mr2318597qtp.292.1611608389721;
+        Mon, 25 Jan 2021 12:59:49 -0800 (PST)
 Received: from ?IPv6:2620:10d:c0a8:11c1::12e0? ([2620:10d:c091:480::1:8a2c])
-        by smtp.gmail.com with ESMTPSA id l22sm3537574qtl.96.2021.01.25.12.57.11
+        by smtp.gmail.com with ESMTPSA id r54sm12564072qtr.70.2021.01.25.12.59.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 12:57:12 -0800 (PST)
-Subject: Re: [PATCH v7 02/10] fs: add O_ALLOW_ENCODED open flag
+        Mon, 25 Jan 2021 12:59:49 -0800 (PST)
+Subject: Re: [PATCH v7 04/10] btrfs: fix check_data_csum() error message for
+ direct I/O
 To:     Omar Sandoval <osandov@osandov.com>, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -58,14 +59,14 @@ Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
         Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
         kernel-team@fb.com
 References: <cover.1611346706.git.osandov@fb.com>
- <09988d880282a6ef0dd04d1fce7db1dbbd2d335c.1611346706.git.osandov@fb.com>
+ <3a20de6d6ea2a8ebbed0637480f9aa8fff8da19c.1611346706.git.osandov@fb.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <53d9bf65-7076-c136-b464-f5c35de37790@toxicpanda.com>
-Date:   Mon, 25 Jan 2021 15:57:10 -0500
+Message-ID: <6233a6de-664d-cdf8-92fd-09ad2b5380a9@toxicpanda.com>
+Date:   Mon, 25 Jan 2021 15:59:47 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-In-Reply-To: <09988d880282a6ef0dd04d1fce7db1dbbd2d335c.1611346706.git.osandov@fb.com>
+In-Reply-To: <3a20de6d6ea2a8ebbed0637480f9aa8fff8da19c.1611346706.git.osandov@fb.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,22 +77,12 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 1/22/21 3:46 PM, Omar Sandoval wrote:
 > From: Omar Sandoval <osandov@fb.com>
 > 
-> The upcoming RWF_ENCODED operation introduces some security concerns:
+> Commit 1dae796aabf6 ("btrfs: inode: sink parameter start and len to
+> check_data_csum()") replaced the start parameter to check_data_csum()
+> with page_offset(), but page_offset() is not meaningful for direct I/O
+> pages. Bring back the start parameter.
 > 
-> 1. Compressed writes will pass arbitrary data to decompression
->     algorithms in the kernel.
-> 2. Compressed reads can leak truncated/hole punched data.
-> 
-> Therefore, we need to require privilege for RWF_ENCODED. It's not
-> possible to do the permissions checks at the time of the read or write
-> because, e.g., io_uring submits IO from a worker thread. So, add an open
-> flag which requires CAP_SYS_ADMIN. It can also be set and cleared with
-> fcntl(). The flag is not cleared in any way on fork or exec.
-> 
-> Note that the usual issue that unknown open flags are ignored doesn't
-> really matter for O_ALLOW_ENCODED; if the kernel doesn't support
-> O_ALLOW_ENCODED, then it doesn't support RWF_ENCODED, either.
-> 
+> Fixes: 265d4ac03fdf ("btrfs: sink parameter start and len to check_data_csum")
 > Signed-off-by: Omar Sandoval <osandov@fb.com>
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
