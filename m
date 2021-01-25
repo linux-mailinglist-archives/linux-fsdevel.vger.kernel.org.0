@@ -2,66 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27A593049B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 189253049AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:14:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732553AbhAZFYb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:24:31 -0500
-Received: from wnbcorp.com ([175.126.38.143]:46897 "EHLO blank.cafe24.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727639AbhAYMKk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 07:10:40 -0500
-Received: from [100.118.101.189] (188-207-118-161.mobile.kpn.net [188.207.118.161])
-        (authenticated bits=0)
-        by blank.cafe24.com (8.14.4/8.14.4) with ESMTP id 10IGqYAR024452;
-        Tue, 19 Jan 2021 01:53:23 +0900
-Message-Id: <202101181653.10IGqYAR024452@blank.cafe24.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1732598AbhAZFYh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:24:37 -0500
+Received: from relay.sw.ru ([185.231.240.75]:40670 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728228AbhAYMnb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Jan 2021 07:43:31 -0500
+Received: from [192.168.15.14]
+        by relay.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1l3xLj-000T1I-8x; Mon, 25 Jan 2021 11:35:51 +0300
+Subject: Re: [v4 PATCH 04/11] mm: vmscan: remove memcg_shrinker_map_size
+To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, shakeelb@google.com,
+        david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
+        akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210121230621.654304-1-shy828301@gmail.com>
+ <20210121230621.654304-5-shy828301@gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <af9204cb-2298-ee7c-5307-295d33befd8a@virtuozzo.com>
+Date:   Mon, 25 Jan 2021 11:35:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: YOU HAVE WON
-To:     Recipients <lottonlxxx@europe.com>
-From:   lottonlxxx@europe.com
-Date:   Mon, 18 Jan 2021 17:53:25 +0100
-Reply-To: johnsonwilson389@gmail.com
+In-Reply-To: <20210121230621.654304-5-shy828301@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-LOTTO.NL,
-2391  Beds 152 Koningin Julianaplein 21,
-Den Haag-Netherlands.
-(Lotto affiliate with Subscriber Agents).
-From: Susan Console
-(Lottery Coordinator)
-Website: www.lotto.nl
+On 22.01.2021 02:06, Yang Shi wrote:
+> Both memcg_shrinker_map_size and shrinker_nr_max is maintained, but actually the
+> map size can be calculated via shrinker_nr_max, so it seems unnecessary to keep both.
+> Remove memcg_shrinker_map_size since shrinker_nr_max is also used by iterating the
+> bit map.
+> 
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> ---
+>  mm/vmscan.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index d3f3701dfcd2..40e7751ef961 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -185,8 +185,7 @@ static LIST_HEAD(shrinker_list);
+>  static DECLARE_RWSEM(shrinker_rwsem);
+>  
+>  #ifdef CONFIG_MEMCG
+> -
+> -static int memcg_shrinker_map_size;
+> +static int shrinker_nr_max;
+>  
+>  static void free_shrinker_map_rcu(struct rcu_head *head)
+>  {
+> @@ -248,7 +247,7 @@ int alloc_shrinker_maps(struct mem_cgroup *memcg)
+>  		return 0;
+>  
+>  	down_write(&shrinker_rwsem);
+> -	size = memcg_shrinker_map_size;
+> +	size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+>  	for_each_node(nid) {
+>  		map = kvzalloc_node(sizeof(*map) + size, GFP_KERNEL, nid);
+>  		if (!map) {
+> @@ -266,10 +265,11 @@ int alloc_shrinker_maps(struct mem_cgroup *memcg)
+>  static int expand_shrinker_maps(int new_id)
+>  {
+>  	int size, old_size, ret = 0;
+> +	int new_nr_max = new_id + 1;
+>  	struct mem_cgroup *memcg;
+>  
+> -	size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> -	old_size = memcg_shrinker_map_size;
+> +	size = (new_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+> +	old_size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+>
+>  	if (size <= old_size)
+>  		return 0;
 
-Sir/Madam,
+This looks a BUG:
 
-CONGRATULATIONS!!!
+expand_shrinker_maps(id == 1)
+{
+	old_size = 64;
+	size = 64;
+	
+	===>return 0 and shrinker_nr_max remains 0.
+}
 
-We are pleased to inform you of the result of the Lotto NL Winners International programs held on the 16th of January 2021.  Your e-mail address attached to ticket #: 00903228100 with prize # 778009/UK drew €1,000,000.00 which was first in the 2nd class of the draws. you are to receive €1,000,000.00 (One Million Euros). Because of mix up in cash
-pay-outs, we ask that you keep your winning information confidential until your money (€1,000,000.00) has been fully remitted to you by our accredited pay-point bank. 
+Then shrink_slab_memcg() misses this shrinker since shrinker_nr_max == 0.
 
-This measure must be adhere to  avoid loss of your cash prize-winners of our cash prizes are advised to adhere to these instructions to forestall the abuse of this program by other participants.  
-
-It's important to note that this draws were conducted formally, and winners are selected through an internet ballot system from 60,000 individual and companies e-mail addresses - the draws are conducted around the world through our internet based ballot system. The promotion is sponsored and promoted Lotto NL. 
-
-We congratulate you once again. We hope you will use part of it in our next draws; the jackpot winning is €85million.  Remember, all winning must be claimed not later than 20 days. After this date all unclaimed cash prize will be forfeited and included in the next sweepstake.  Please, in order to avoid unnecessary delays and complications remember to quote personal and winning numbers in all correspondence with us.
-
-Congratulations once again from all members of Lotto NL. Thank you for being part of our promotional program.
-
-To file for the release of your winnings you are advice to contact our Foreign Transfer Manager:
-
-MR. WILSON WARREN JOHNSON
-
-Tel: +31-620-561-787
-
-Fax: +31-84-438-5342
-
-Email: johnsonwilson389@gmail.com
-
-
+>  
+> @@ -286,9 +286,10 @@ static int expand_shrinker_maps(int new_id)
+>  			goto out;
+>  		}
+>  	} while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
+> +
+>  out:
+>  	if (!ret)
+> -		memcg_shrinker_map_size = size;
+> +		shrinker_nr_max = new_nr_max;
+>  
+>  	return ret;
+>  }
+> @@ -321,7 +322,6 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
+>  #define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
+>  
+>  static DEFINE_IDR(shrinker_idr);
+> -static int shrinker_nr_max;
+>  
+>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+>  {
+> @@ -338,8 +338,6 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+>  			idr_remove(&shrinker_idr, id);
+>  			goto unlock;
+>  		}
+> -
+> -		shrinker_nr_max = id + 1;
+>  	}
+>  	shrinker->id = id;
+>  	ret = 0;
+> 
 
