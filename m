@@ -2,90 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2983031F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 03:42:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 869D73031F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 03:40:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbhAYQAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 11:00:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36094 "EHLO
+        id S1730652AbhAYQVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 11:21:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730594AbhAYP7X (ORCPT
+        with ESMTP id S1730628AbhAYQVe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 10:59:23 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E71DC061786
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 07:58:43 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id jx18so3475169pjb.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 07:58:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ydjA7lxNDcY9m5HH4n1Isbc66o3HKVgUPIygbXwoUMM=;
-        b=bI02x67oVJOucPOxKOB9n3X6KcNxCqIpxk5n0fxC4X/uFlQaaUy+xP+qcDK0qgJA7t
-         mWFK2tKkiqtuWxZJvB44mpmemEF/S+YGxTW9vjz8KWnzcutGYJEs+vjezSfpdlvaat30
-         NrMsLYnxAPDb/60yNPxEjnOGe2XeZLZa2qteFs3BDDpQq8v+NYEA0j27JKKvD8Jo9hGB
-         m1FubjB+dKRDuIvGoJ5Krq3haj3y4rnOv+TQTyR+lsKZVtOzTkhokVPN9B3vqb9Kf/tF
-         OgnBEzoTN7wXg3qcCOF4/ajnPQb9aZOpN8ShjkT8r+GX28FyVyVD2Nsgv5WX9h7sZf9A
-         iVhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ydjA7lxNDcY9m5HH4n1Isbc66o3HKVgUPIygbXwoUMM=;
-        b=A7derPXUcOdaZO5cxr1VoVhDK3hTxVymqPwdqIROxgRWHtlrTU734HvHaKyRW6e+8S
-         fFrOBKVDn6kFz5+QW3cbYuFnP0gvbURzwsnHmZzkdmaJP2/4Nb+QngasFtXxwl2E2bsQ
-         Bfz2J1a160K0loFJfMs7BWG3jgYFtR4zFV4bvn+7n2zFK35bvQwwSxLZ898+HcHVqTOM
-         4DR2qoTH3vJkYIacLfRH2MbLM2kwP4tb9OL5fz6VIWiOwcmw4UNPzVgbdix/7F+ayAKV
-         clcAwLNyLI1FKzcSuBjfpNxkIlz2nbCEcWKy0v3O//GCyCzJVZt6RGAGDdVDtfQY6AKz
-         MDCA==
-X-Gm-Message-State: AOAM533yGuL0iopkvQm2pwjhkjybBIJmEgfgLnOQ3NDoUeLyNw1bXTVP
-        rTFdUBjeBaLw4WMhm5r7RDJWuA==
-X-Google-Smtp-Source: ABdhPJxvYFudM0/t7uvN4OEM1XLPVgOQbMzfZischKww36TwjmQpcH3dkzLr1QJ1pvzT7oKrjCpfaw==
-X-Received: by 2002:a17:90a:6f05:: with SMTP id d5mr843071pjk.145.1611590322691;
-        Mon, 25 Jan 2021 07:58:42 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id i25sm16942011pgb.33.2021.01.25.07.58.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 07:58:41 -0800 (PST)
-Subject: Re: [PATCH v3 0/7] no-copy bvec
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-block@vger.kernel.org
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        Mon, 25 Jan 2021 11:21:34 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266FCC06178C;
+        Mon, 25 Jan 2021 08:20:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=IJWSMxQ0cSD59sZdRy00Q/p6Rk88W9Y0AQrU4XxStZg=; b=PuPaQ600mHPoHQdKyO6XI5TBrm
+        CnXgjHw3HKWzCm5rtjfhkN6pBiyt2h/9yeDanzks13gq46MuMu5ie6WAiuNN2m/RkKR/rpK0Ta+ng
+        fHJqJV/J5ZL7Mm56BAbERsDJQvtiznZxtFYP1h0WIVW4cRUSWOgeXte9ZAwEUfG7Limi/SljDPwHf
+        3LMXYk3STX6IxUUL3ZYWCYEFfmPendGeUlO+ZrAdcgyCMSmB3rEIdQrHxVOnGrHC53/rZBPfRUW94
+        buoqllvpB2FvdrEAlQBBWi7qPaBsXDmTgOiFPH1Y4lZIdk+po0IBNUEGXYPVncthQFPVdxLrQWtZK
+        FRfe61ig==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l44Y6-004OSf-8C; Mon, 25 Jan 2021 16:17:11 +0000
+Date:   Mon, 25 Jan 2021 16:17:06 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-doc@vger.kernel.org
-References: <cover.1610170479.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b1d0ae2a-a4ca-2b41-b8df-4c8036afe781@kernel.dk>
-Date:   Mon, 25 Jan 2021 08:58:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v16 08/11] secretmem: add memcg accounting
+Message-ID: <20210125161706.GE308988@casper.infradead.org>
+References: <20210121122723.3446-1-rppt@kernel.org>
+ <20210121122723.3446-9-rppt@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <cover.1610170479.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210121122723.3446-9-rppt@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/9/21 9:02 AM, Pavel Begunkov wrote:
-> Currently, when iomap and block direct IO gets a bvec based iterator
-> the bvec will be copied, with all other accounting that takes much
-> CPU time and causes additional allocation for larger bvecs. The
-> patchset makes it to reuse the passed in iter bvec.
+On Thu, Jan 21, 2021 at 02:27:20PM +0200, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> 
+> Account memory consumed by secretmem to memcg. The accounting is updated
+> when the memory is actually allocated and freed.
 
-Applied, thanks.
+I think this is wrong.  It fails to account subsequent allocators from
+the same PMD.  If you want to track like this, you need separate pools
+per memcg.
 
--- 
-Jens Axboe
+I think you shouldn't try to track like this; better to just track on
+a per-page basis.  After all, the page allocator doesn't track order-10
+pages to the memcg that initially caused them to be split.
 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> Acked-by: Roman Gushchin <guro@fb.com>
+> Reviewed-by: Shakeel Butt <shakeelb@google.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Christopher Lameter <cl@linux.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Elena Reshetova <elena.reshetova@intel.com>
+> Cc: Hagen Paul Pfeifer <hagen@jauu.net>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: James Bottomley <jejb@linux.ibm.com>
+> Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Palmer Dabbelt <palmerdabbelt@google.com>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Tycho Andersen <tycho@tycho.ws>
+> Cc: Will Deacon <will@kernel.org>
+> ---
+>  mm/filemap.c   |  3 ++-
+>  mm/secretmem.c | 36 +++++++++++++++++++++++++++++++++++-
+>  2 files changed, 37 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 2d0c6721879d..bb28dd6d9e22 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -42,6 +42,7 @@
+>  #include <linux/psi.h>
+>  #include <linux/ramfs.h>
+>  #include <linux/page_idle.h>
+> +#include <linux/secretmem.h>
+>  #include "internal.h"
+>  
+>  #define CREATE_TRACE_POINTS
+> @@ -839,7 +840,7 @@ noinline int __add_to_page_cache_locked(struct page *page,
+>  	page->mapping = mapping;
+>  	page->index = offset;
+>  
+> -	if (!huge) {
+> +	if (!huge && !page_is_secretmem(page)) {
+>  		error = mem_cgroup_charge(page, current->mm, gfp);
+>  		if (error)
+>  			goto error;
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 469211c7cc3a..05026460e2ee 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/memblock.h>
+>  #include <linux/pseudo_fs.h>
+>  #include <linux/secretmem.h>
+> +#include <linux/memcontrol.h>
+>  #include <linux/set_memory.h>
+>  #include <linux/sched/signal.h>
+>  
+> @@ -44,6 +45,32 @@ struct secretmem_ctx {
+>  
+>  static struct cma *secretmem_cma;
+>  
+> +static int secretmem_account_pages(struct page *page, gfp_t gfp, int order)
+> +{
+> +	int err;
+> +
+> +	err = memcg_kmem_charge_page(page, gfp, order);
+> +	if (err)
+> +		return err;
+> +
+> +	/*
+> +	 * seceremem caches are unreclaimable kernel allocations, so treat
+> +	 * them as unreclaimable slab memory for VM statistics purposes
+> +	 */
+> +	mod_lruvec_page_state(page, NR_SLAB_UNRECLAIMABLE_B,
+> +			      PAGE_SIZE << order);
+> +
+> +	return 0;
+> +}
+> +
+> +static void secretmem_unaccount_pages(struct page *page, int order)
+> +{
+> +
+> +	mod_lruvec_page_state(page, NR_SLAB_UNRECLAIMABLE_B,
+> +			      -PAGE_SIZE << order);
+> +	memcg_kmem_uncharge_page(page, order);
+> +}
+> +
+>  static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
+>  {
+>  	unsigned long nr_pages = (1 << PMD_PAGE_ORDER);
+> @@ -56,6 +83,10 @@ static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
+>  	if (!page)
+>  		return -ENOMEM;
+>  
+> +	err = secretmem_account_pages(page, gfp, PMD_PAGE_ORDER);
+> +	if (err)
+> +		goto err_cma_release;
+> +
+>  	/*
+>  	 * clear the data left from the prevoius user before dropping the
+>  	 * pages from the direct map
+> @@ -65,7 +96,7 @@ static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
+>  
+>  	err = set_direct_map_invalid_noflush(page, nr_pages);
+>  	if (err)
+> -		goto err_cma_release;
+> +		goto err_memcg_uncharge;
+>  
+>  	addr = (unsigned long)page_address(page);
+>  	err = gen_pool_add(pool, addr, PMD_SIZE, NUMA_NO_NODE);
+> @@ -83,6 +114,8 @@ static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
+>  	 * won't fail
+>  	 */
+>  	set_direct_map_default_noflush(page, nr_pages);
+> +err_memcg_uncharge:
+> +	secretmem_unaccount_pages(page, PMD_PAGE_ORDER);
+>  err_cma_release:
+>  	cma_release(secretmem_cma, page, nr_pages);
+>  	return err;
+> @@ -314,6 +347,7 @@ static void secretmem_cleanup_chunk(struct gen_pool *pool,
+>  	int i;
+>  
+>  	set_direct_map_default_noflush(page, nr_pages);
+> +	secretmem_unaccount_pages(page, PMD_PAGE_ORDER);
+>  
+>  	for (i = 0; i < nr_pages; i++)
+>  		clear_highpage(page + i);
+> -- 
+> 2.28.0
+> 
