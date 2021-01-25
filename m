@@ -2,138 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B26302299
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 08:56:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 427D13023D4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 11:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbhAYH4R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 02:56:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727236AbhAYHz4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 02:55:56 -0500
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB2BC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 23:54:43 -0800 (PST)
-Received: by mail-vs1-xe36.google.com with SMTP id f22so6701916vsk.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 23:54:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=shLCHFFMB4DAp0A0ILgc+eh2S2wXCYfyelqnf4KL6us=;
-        b=Px9KUJsGwJ+VtNulQrpo/gNubEPUdjzL9axWZwpaxfB/oLoVrtc0t1GYJCMzKHcXDV
-         9l6qQIgZcF4L1+IAccLk1ZVIAxm/s0IaiWoE+lC4RDtEB8AVaSimH+KNn/RfinTLPu3C
-         fQeytqMsM3ShLU1d/TSI7rWDnJmmkSacvXy3k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=shLCHFFMB4DAp0A0ILgc+eh2S2wXCYfyelqnf4KL6us=;
-        b=Tqrm2UECUt3KOot04FMCi+8MPohnvkl0EwtdFN6IKoo4/W8Ygg9zE0RWFYxjOTyKay
-         MEvs2etL8zeBg50aNEYdLFVzbMX0WowsUMKSWafz6euAwwi9rt+6JEuqMQzlmCzoj79g
-         o+p8xYy7lYM/jlz8QC2UobuPVkRzScCQdsAfjdLkcxuA5XuIRD+kib7sZMSC2+vpBfnj
-         DvHtFTu6OknFdFeNlID/DWHLtLJGb5mjTa2AH/uK8XncPmMOEYJtnNtQl8c0pg9aPt5s
-         OoKvWM+vyBPQt1zYIWEnxEzKCkmCm0kAp7m9zDshOxdLpSZbHd36UOYWnpohnEGaojRK
-         SAAg==
-X-Gm-Message-State: AOAM531wanO7jUidFE61AbjNFgwDEw2pQFvJqmWcFmgkpft1P0+tQKA3
-        T8DKAaELy7f329Dx5jqs3fG9Xi+nbbBIGjbuisd+cg==
-X-Google-Smtp-Source: ABdhPJxq6uXHnDY4RVG3ffjbpATtyupiGISReVdidQGDUJdMst+TXrrJKK/Vy7bMu/1qDhBMrWXBpYi1MsH/3SjYMfE=
-X-Received: by 2002:a67:6b46:: with SMTP id g67mr4296vsc.60.1611561282606;
- Sun, 24 Jan 2021 23:54:42 -0800 (PST)
+        id S1727652AbhAYKsN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 05:48:13 -0500
+Received: from relay.sw.ru ([185.231.240.75]:49414 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727635AbhAYKrk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Jan 2021 05:47:40 -0500
+Received: from [192.168.15.14]
+        by relay.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1l3yGy-000TKx-0R; Mon, 25 Jan 2021 12:35:00 +0300
+Subject: Re: [v4 PATCH 08/11] mm: vmscan: use per memcg nr_deferred of
+ shrinker
+To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, shakeelb@google.com,
+        david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
+        akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210121230621.654304-1-shy828301@gmail.com>
+ <20210121230621.654304-9-shy828301@gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <bbfaaf59-ad56-81ef-347b-92003b8cbebe@virtuozzo.com>
+Date:   Mon, 25 Jan 2021 12:35:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Mon, 25 Jan 2021 15:54:31 +0800
-Message-ID: <CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com>
-Subject: [BUG] copy_file_range with sysfs file as input
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dave Chinner <dchinner@redhat.com>
-Cc:     Luis Lozano <llozano@chromium.org>, iant@google.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210121230621.654304-9-shy828301@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi copy_file_range experts,
+On 22.01.2021 02:06, Yang Shi wrote:
+> Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's nr_deferred
+> will be used in the following cases:
+>     1. Non memcg aware shrinkers
+>     2. !CONFIG_MEMCG
+>     3. memcg is disabled by boot parameter
+> 
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> ---
+>  mm/vmscan.c | 81 +++++++++++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 69 insertions(+), 12 deletions(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 722aa71b13b2..d8e77ea13815 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -359,6 +359,27 @@ static void unregister_memcg_shrinker(struct shrinker *shrinker)
+>  	up_write(&shrinker_rwsem);
+>  }
+>  
+> +static long count_nr_deferred_memcg(int nid, struct shrinker *shrinker,
+> +				    struct mem_cgroup *memcg)
+> +{
+> +	struct shrinker_info *info;
+> +
+> +	info = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
+> +					 true);
 
-We hit this interesting issue when upgrading Go compiler from 1.13 to
-1.15 [1]. Basically we use Go's `io.Copy` to copy the content of
-`/sys/kernel/debug/tracing/trace` to a temporary file.
+Since now these rcu_dereference_protected() are in separate functions and there is
+no taking a lock near them, it seems it would be better to underling the desired
+lock with rcu_dereference_protected(, lockdep_assert_held(lock_you_need_here_locked));
 
-Under the hood, Go now uses `copy_file_range` syscall to optimize the
-copy operation. However, that fails to copy any content when the input
-file is from sysfs/tracefs, with an apparent size of 0 (but there is
-still content when you `cat` it, of course).
 
-A repro case is available in comment7 (adapted from the man page),
-also copied below [2].
+> +	return atomic_long_xchg(&info->nr_deferred[shrinker->id], 0);
+> +}
+> +
+> +static long set_nr_deferred_memcg(long nr, int nid, struct shrinker *shrinker,
+> +				  struct mem_cgroup *memcg)
+> +{
+> +	struct shrinker_info *info;
+> +
+> +	info = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
+> +					 true);
+> +
+> +	return atomic_long_add_return(nr, &info->nr_deferred[shrinker->id]);
+> +}
+> +
+>  static bool cgroup_reclaim(struct scan_control *sc)
+>  {
+>  	return sc->target_mem_cgroup;
+> @@ -397,6 +418,18 @@ static void unregister_memcg_shrinker(struct shrinker *shrinker)
+>  {
+>  }
+>  
+> +static long count_nr_deferred_memcg(int nid, struct shrinker *shrinker,
+> +				    struct mem_cgroup *memcg)
+> +{
+> +	return 0;
+> +}
+> +
+> +static long set_nr_deferred_memcg(long nr, int nid, struct shrinker *shrinker,
+> +				  struct mem_cgroup *memcg)
+> +{
+> +	return 0;
+> +}
+> +
+>  static bool cgroup_reclaim(struct scan_control *sc)
+>  {
+>  	return false;
+> @@ -408,6 +441,39 @@ static bool writeback_throttling_sane(struct scan_control *sc)
+>  }
+>  #endif
+>  
+> +static long count_nr_deferred(struct shrinker *shrinker,
+> +			      struct shrink_control *sc)
+> +{
+> +	int nid = sc->nid;
+> +
+> +	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+> +		nid = 0;
+> +
+> +	if (sc->memcg &&
+> +	    (shrinker->flags & SHRINKER_MEMCG_AWARE))
+> +		return count_nr_deferred_memcg(nid, shrinker,
+> +					       sc->memcg);
+> +
+> +	return atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
+> +}
+> +
+> +
+> +static long set_nr_deferred(long nr, struct shrinker *shrinker,
+> +			    struct shrink_control *sc)
+> +{
+> +	int nid = sc->nid;
+> +
+> +	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+> +		nid = 0;
+> +
+> +	if (sc->memcg &&
+> +	    (shrinker->flags & SHRINKER_MEMCG_AWARE))
+> +		return set_nr_deferred_memcg(nr, nid, shrinker,
+> +					     sc->memcg);
+> +
+> +	return atomic_long_add_return(nr, &shrinker->nr_deferred[nid]);
+> +}
+> +
+>  /*
+>   * This misses isolated pages which are not accounted for to save counters.
+>   * As the data only determines if reclaim or compaction continues, it is
+> @@ -544,14 +610,10 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>  	long freeable;
+>  	long nr;
+>  	long new_nr;
+> -	int nid = shrinkctl->nid;
+>  	long batch_size = shrinker->batch ? shrinker->batch
+>  					  : SHRINK_BATCH;
+>  	long scanned = 0, next_deferred;
+>  
+> -	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+> -		nid = 0;
+> -
+>  	freeable = shrinker->count_objects(shrinker, shrinkctl);
+>  	if (freeable == 0 || freeable == SHRINK_EMPTY)
+>  		return freeable;
+> @@ -561,7 +623,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>  	 * and zero it so that other concurrent shrinker invocations
+>  	 * don't also do this scanning work.
+>  	 */
+> -	nr = atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
+> +	nr = count_nr_deferred(shrinker, shrinkctl);
+>  
+>  	total_scan = nr;
+>  	if (shrinker->seeks) {
+> @@ -652,14 +714,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>  		next_deferred = 0;
+>  	/*
+>  	 * move the unused scan count back into the shrinker in a
+> -	 * manner that handles concurrent updates. If we exhausted the
+> -	 * scan, there is no need to do an update.
+> +	 * manner that handles concurrent updates.
+>  	 */
+> -	if (next_deferred > 0)
+> -		new_nr = atomic_long_add_return(next_deferred,
+> -						&shrinker->nr_deferred[nid]);
+> -	else
+> -		new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
+> +	new_nr = set_nr_deferred(next_deferred, shrinker, shrinkctl);
+>  
+>  	trace_mm_shrink_slab_end(shrinker, shrinkctl->nid, freed, nr, new_nr, total_scan);
+>  	return freed;
+> 
 
-Output looks like this (on kernels 5.4.89 (chromeos), 5.7.17 and
-5.10.3 (chromeos))
-$ ./copyfrom /sys/kernel/debug/tracing/trace x
-0 bytes copied
-$ cat x
-$ cat /sys/kernel/debug/tracing/trace
-# tracer: nop
-#
-# entries-in-buffer/entries-written: 0/0   #P:8
-#
-#                                _-----=> irqs-off
-#                               / _----=> need-resched
-#                              | / _---=> hardirq/softirq
-#                              || / _--=> preempt-depth
-#                              ||| /     delay
-#           TASK-PID     CPU#  ||||   TIMESTAMP  FUNCTION
-#              | |         |   ||||      |         |
-
-I can try to dig further, but thought you'd like to get a bug report
-as soon as possible.
-
-Thanks,
-
-Nicolas
-
-[1] http://issuetracker.google.com/issues/178332739
-[2]
-#define _GNU_SOURCE
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <unistd.h>
-
-int
-main(int argc, char **argv)
-{
-        int fd_in, fd_out;
-        loff_t ret;
-
-        if (argc != 3) {
-                fprintf(stderr, "Usage: %s <source> <destination>\n", argv[0]);
-                exit(EXIT_FAILURE);
-        }
-
-        fd_in = open(argv[1], O_RDONLY);
-        if (fd_in == -1) {
-                perror("open (argv[1])");
-                exit(EXIT_FAILURE);
-        }
-
-        fd_out = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0644);
-        if (fd_out == -1) {
-                perror("open (argv[2])");
-                exit(EXIT_FAILURE);
-        }
-
-        ret = copy_file_range(fd_in, NULL, fd_out, NULL, 1024, 0);
-        if (ret == -1) {
-                perror("copy_file_range");
-                exit(EXIT_FAILURE);
-        }
-        printf("%d bytes copied\n", (int)ret);
-
-        close(fd_in);
-        close(fd_out);
-        exit(EXIT_SUCCESS);
-}
