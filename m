@@ -2,25 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A0D5304998
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7981F30499C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:11:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbhAZFZv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:25:51 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51410 "EHLO
+        id S1732022AbhAZFZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:25:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52059 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730672AbhAYQpn (ORCPT
+        with ESMTP id S1728867AbhAYRHd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 11:45:43 -0500
+        Mon, 25 Jan 2021 12:07:33 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l44yF-00055J-1o; Mon, 25 Jan 2021 16:44:07 +0000
-Date:   Mon, 25 Jan 2021 17:44:04 +0100
+        id 1l45K7-0006lj-0h; Mon, 25 Jan 2021 17:06:43 +0000
+Date:   Mon, 25 Jan 2021 18:06:40 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
         John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
@@ -45,7 +46,6 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Aleksa Sarai <cyphar@cyphar.com>,
         Lennart Poettering <lennart@poettering.net>,
         smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
         Kees Cook <keescook@chromium.org>,
         Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -54,35 +54,42 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org
 Subject: Re: [PATCH v6 23/40] exec: handle idmapped mounts
-Message-ID: <20210125164404.aullgl3vlajgkef3@wittgenstein>
+Message-ID: <20210125170640.6ycsyod2ftxnzjzy@wittgenstein>
 References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
  <20210121131959.646623-24-christian.brauner@ubuntu.com>
  <875z3l0y56.fsf@x220.int.ebiederm.org>
+ <20210125164404.aullgl3vlajgkef3@wittgenstein>
+ <20210125170316.GA8345@mail.hallyn.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <875z3l0y56.fsf@x220.int.ebiederm.org>
+In-Reply-To: <20210125170316.GA8345@mail.hallyn.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 10:39:01AM -0600, Eric W. Biederman wrote:
-> Christian Brauner <christian.brauner@ubuntu.com> writes:
+On Mon, Jan 25, 2021 at 11:03:16AM -0600, Serge Hallyn wrote:
+> On Mon, Jan 25, 2021 at 05:44:04PM +0100, Christian Brauner wrote:
+> > On Mon, Jan 25, 2021 at 10:39:01AM -0600, Eric W. Biederman wrote:
+> > > Christian Brauner <christian.brauner@ubuntu.com> writes:
+> > > 
+> > > > When executing a setuid binary the kernel will verify in bprm_fill_uid()
+> > > > that the inode has a mapping in the caller's user namespace before
+> > > > setting the callers uid and gid. Let bprm_fill_uid() handle idmapped
+> > > > mounts. If the inode is accessed through an idmapped mount it is mapped
+> > > > according to the mount's user namespace. Afterwards the checks are
+> > > > identical to non-idmapped mounts. If the initial user namespace is
+> > > > passed nothing changes so non-idmapped mounts will see identical
+> > > > behavior as before.
+> > > 
+> > > This does not handle the v3 capabilites xattr with embeds a uid.
+> > > So at least at that level you are missing some critical conversions.
+> > 
+> > Thanks for looking. Vfs v3 caps are handled earlier in the series. I'm
+> > not sure what you're referring to here. There are tests in xfstests that
+> > verify vfs3 capability behavior.
 > 
-> > When executing a setuid binary the kernel will verify in bprm_fill_uid()
-> > that the inode has a mapping in the caller's user namespace before
-> > setting the callers uid and gid. Let bprm_fill_uid() handle idmapped
-> > mounts. If the inode is accessed through an idmapped mount it is mapped
-> > according to the mount's user namespace. Afterwards the checks are
-> > identical to non-idmapped mounts. If the initial user namespace is
-> > passed nothing changes so non-idmapped mounts will see identical
-> > behavior as before.
-> 
-> This does not handle the v3 capabilites xattr with embeds a uid.
-> So at least at that level you are missing some critical conversions.
+> *just* to make sure i'm not misunderstanding - s/vfs3/v3/ right?
 
-Thanks for looking. Vfs v3 caps are handled earlier in the series. I'm
-not sure what you're referring to here. There are tests in xfstests that
-verify vfs3 capability behavior.
-
-Christian
+Yes, in my mind it's always as "vfs v3 caps -> vfs3 caps". Sorry for the
+confusion.
