@@ -2,174 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 86D30302159
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 05:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC1C3302192
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 06:09:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbhAYEo7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Jan 2021 23:44:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60322 "EHLO
+        id S1726371AbhAYFHU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 00:07:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbhAYEo4 (ORCPT
+        with ESMTP id S1725272AbhAYFHT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Jan 2021 23:44:56 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C179CC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 20:44:15 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id u11so6807616plg.13
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 20:44:15 -0800 (PST)
+        Mon, 25 Jan 2021 00:07:19 -0500
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10F7AC06174A
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 21:06:39 -0800 (PST)
+Received: by mail-pg1-x52e.google.com with SMTP id g15so8106440pgu.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 21:06:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=Cs4J9GskE01nDEYOQ3KQaCkKWwKmXBxrzRzzc8/wsJI=;
-        b=vKDGB28J3loZxpQQsNi0tNE+SmHzbz+XjsHet5K38mYCsN/wRrMJ3w6ilbulurzxlr
-         zk8AlS2RjecXSxSJgrDrDWWoEiQBDcNS0I+9/ko/vKi0Uo+911tqx3a7b+YwIotsAxhm
-         Q/+L0YI5UyS77khX4HdMn5b9itjjqzBZ09yTMGPzA4XfTSeVBJO01nEmFSxUi/KPcfvu
-         s+4g6M9sGLonmuMuaB9Rv5LDbbkDciPtgOO3QaQJoV2LHnK46WR+7Fd+RoYG5plOsc5h
-         JYuslMfgZmChOKNZRvuKjV+8pi0kauS7MxwDIX4M/olD3LiysBq8BnLey0ViiOFPATEG
-         fWtw==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F+LeAZ3S+m2I2AXil2lfLUpMV0pLG8mixzK8f2VmApw=;
+        b=aT/9rd5uVrMHlG0kkM6L/ia4xQjNlHVLs7Yo1N4ieoOC/buPWE6taP44/uPWB4C4QO
+         b4Ru5GuscZDSNJZXEJiW7nIKDqISX1Hch5YioyQWLgtUxJgFCt2wFEINniJJUcfUR+QV
+         E/ALPWnPNg64mfGe/PwI4ngpWA40dORyhsKBNSsjjR9b1/mt1Fw/K9wR2onR0mtBbHck
+         RJixkzeApzAPHTz97k94LyHMkdHedYZwexLkyikaPapRTrmJbYT9NsSRRSJGLsF3eI0v
+         0ov0SQNfDeV7KWf9t8lB0gTOuX/ObgtvKeMdtzrOT+997Ci7dj4f1Thrw4XhS0sxvZhh
+         r/QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=Cs4J9GskE01nDEYOQ3KQaCkKWwKmXBxrzRzzc8/wsJI=;
-        b=EAqZdx2mSHS1ohNea59W/LoOfwwUq+ayShr0ogXMPJ/T7kp8VaR2yE/L8HaaoTbfDh
-         VqXRbeCaLF25iC1UwaDPRMIqP8rwvIrPn9sevVlN+Ry10CvrGnVnfIzwxSwgYtOw6hZs
-         kFcQn0XhF13YBmv3K0qjMsZFQ3tCiQMCtTGwkdd7tAe4q3oLAmAUfylfe69D8rsFefRT
-         x4MrqFHm2bOmV2UqBXa5S1tTW5T0oXRTFaEI/6VWzuQN+ob8KkJjJyQbg33+GmAiHd5J
-         Jl2WpQLO9aHf5bMwnho9kFZ846mCVwtnWPfFOIR8Xjl/3JqLW7h3u7SveR3ENlrs6H4t
-         RhEg==
-X-Gm-Message-State: AOAM532roTsJ47RUBFTL4dUEM7KQ9sHhzqvtlK2veEdhcZsn27/+efI4
-        1IavjdQu+XjGS9zUUZPVn34TlSRWo3vnWA==
-X-Google-Smtp-Source: ABdhPJzdALFDfkb7y4OVT7WVh3vG/AkOBJGgvUGXL6FDtcp2jkAl9T/cDXJUkTTlcwuAX76Tuy4Tmw==
-X-Received: by 2002:a17:902:d64d:b029:de:8aaa:d6ba with SMTP id y13-20020a170902d64db02900de8aaad6bamr18034012plh.0.1611549855312;
-        Sun, 24 Jan 2021 20:44:15 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id md7sm16622324pjb.52.2021.01.24.20.44.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Jan 2021 20:44:14 -0800 (PST)
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] fs: provide locked helper variant of close_fd_get_file()
-Message-ID: <61657916-6513-1a80-1434-d689ebb18709@kernel.dk>
-Date:   Sun, 24 Jan 2021 21:44:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F+LeAZ3S+m2I2AXil2lfLUpMV0pLG8mixzK8f2VmApw=;
+        b=jR3SeBSpXQKeBkd8p/78xYGSj+tmn7oumC//YwuZ6LsvO3Z/oDfJXNHNxrr2OplxRX
+         vXDc7OgMXMKGV13yIGV3gwwPlvnLbFnel8IQkR3jY+3kBhhI0vaQj2a3ijsxTxnLAwPv
+         /IP6P0ArteE3UyRje4QkAMtwVVg7Z2SwCXlEU5egGiZbQespRK8RfsKt++Z81QqiNYIR
+         lSIBJxKuVBBtjaKWwNfAmYq9J11FuiZTKvCsErJUIJ1BdBQ58FcgjvfZKkls/FP4Nw5W
+         bnSdltFO2vFp8VAL7co3MuI0sKYPHVIfIIO0EskhrenJM6iLJ+L1mcwyr05S2QTU4Jgb
+         4K8A==
+X-Gm-Message-State: AOAM530Bav+1owWVmPaPMJ3S45NOHoqssEQeqqSZXhnEbdQdm+LytHAB
+        TpZ9dbrJCuJoRxeZ4q6fLBg4GMphj4onZJm7moR4ug==
+X-Google-Smtp-Source: ABdhPJy+Le05w7oqogZ0luTwVIsG6PienApfkykZwVB3DkAUwmltvOrYL6hQhvcX2VeH0nh0dnEHd1r+rretXXAsrPE=
+X-Received: by 2002:a63:1f21:: with SMTP id f33mr319808pgf.31.1611551198624;
+ Sun, 24 Jan 2021 21:06:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-3-songmuchun@bytedance.com> <472a58b9-12cb-3c3-d132-13dbae5174f0@google.com>
+ <CAMZfGtUGT6UP3aBEGmMvahOu5akvqoVoiXQqQvAdY82P6VGiTg@mail.gmail.com> <eef4ff8b-f3e3-6ae0-bae8-243bd0c8add0@infradead.org>
+In-Reply-To: <eef4ff8b-f3e3-6ae0-bae8-243bd0c8add0@infradead.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 25 Jan 2021 13:06:02 +0800
+Message-ID: <CAMZfGtV5rcCq6EGFAG4joRfWht0=1WE6Oik7LgNUPr-_iNX4Xg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v13 02/12] mm: hugetlb: introduce a new
+ config HUGETLB_PAGE_FREE_VMEMMAP
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Assumes current->files->file_lock is already held on invocation. Helps
-the caller check the file before removing the fd, if it needs to.
+On Mon, Jan 25, 2021 at 12:09 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 1/24/21 8:06 PM, Muchun Song wrote:
+> > On Mon, Jan 25, 2021 at 7:58 AM David Rientjes <rientjes@google.com> wrote:
+> >>
+> >>
+> >> On Sun, 17 Jan 2021, Muchun Song wrote:
+> >>
+> >>> The HUGETLB_PAGE_FREE_VMEMMAP option is used to enable the freeing
+> >>> of unnecessary vmemmap associated with HugeTLB pages. The config
+> >>> option is introduced early so that supporting code can be written
+> >>> to depend on the option. The initial version of the code only
+> >>> provides support for x86-64.
+> >>>
+> >>> Like other code which frees vmemmap, this config option depends on
+> >>> HAVE_BOOTMEM_INFO_NODE. The routine register_page_bootmem_info() is
+> >>> used to register bootmem info. Therefore, make sure
+> >>> register_page_bootmem_info is enabled if HUGETLB_PAGE_FREE_VMEMMAP
+> >>> is defined.
+> >>>
+> >>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> >>> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> >>> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+> >>> ---
+> >>>  arch/x86/mm/init_64.c |  2 +-
+> >>>  fs/Kconfig            | 18 ++++++++++++++++++
+> >>>  2 files changed, 19 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> >>> index 0a45f062826e..0435bee2e172 100644
+> >>> --- a/arch/x86/mm/init_64.c
+> >>> +++ b/arch/x86/mm/init_64.c
+> >>> @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
+> >>>
+> >>>  static void __init register_page_bootmem_info(void)
+> >>>  {
+> >>> -#ifdef CONFIG_NUMA
+> >>> +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
+> >>>       int i;
+> >>>
+> >>>       for_each_online_node(i)
+> >>> diff --git a/fs/Kconfig b/fs/Kconfig
+> >>> index 976e8b9033c4..e7c4c2a79311 100644
+> >>> --- a/fs/Kconfig
+> >>> +++ b/fs/Kconfig
+> >>> @@ -245,6 +245,24 @@ config HUGETLBFS
+> >>>  config HUGETLB_PAGE
+> >>>       def_bool HUGETLBFS
+> >>>
+> >>> +config HUGETLB_PAGE_FREE_VMEMMAP
+> >>> +     def_bool HUGETLB_PAGE
+> >>
+> >> I'm not sure I understand the rationale for providing this help text if
+> >> this is def_bool depending on CONFIG_HUGETLB_PAGE.  Are you intending that
+> >> this is actually configurable and we want to provide guidance to the admin
+> >> on when to disable it (which it currently doesn't)?  If not, why have the
+> >> help text?
+> >
+> > This is __not__ configurable. Seems like a comment to help others
+> > understand this option. Like Randy said.
+>
+> Yes, it could be written with '#' (or "comment") comment syntax instead of as help text.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
+Got it. I will update in the next version. Thanks.
 
-Al, I need this to get rid of the two-stage operation that io_uring
-currently does for close operations. It's proving to be quite a headache
-in terms of cancelation, since we must complete part 2 if we did part 1.
-If we provide this locked variant helper, then we can ensure that we the
-close as one operation, nicely fixing that problem instead of needing to
-hack around it.
-
- fs/file.c     | 36 +++++++++++++++++++++++++-----------
- fs/internal.h |  1 +
- 2 files changed, 26 insertions(+), 11 deletions(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index dab120b71e44..f3a4bac2cbe9 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -22,6 +22,8 @@
- #include <linux/close_range.h>
- #include <net/sock.h>
- 
-+#include "internal.h"
-+
- unsigned int sysctl_nr_open __read_mostly = 1024*1024;
- unsigned int sysctl_nr_open_min = BITS_PER_LONG;
- /* our min() is unusable in constant expressions ;-/ */
-@@ -732,36 +734,48 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
- }
- 
- /*
-- * variant of close_fd that gets a ref on the file for later fput.
-- * The caller must ensure that filp_close() called on the file, and then
-- * an fput().
-+ * See close_fd_get_file() below, this variant assumes current->files->file_lock
-+ * is held.
-  */
--int close_fd_get_file(unsigned int fd, struct file **res)
-+int __close_fd_get_file(unsigned int fd, struct file **res)
- {
- 	struct files_struct *files = current->files;
- 	struct file *file;
- 	struct fdtable *fdt;
- 
--	spin_lock(&files->file_lock);
- 	fdt = files_fdtable(files);
- 	if (fd >= fdt->max_fds)
--		goto out_unlock;
-+		goto out_err;
- 	file = fdt->fd[fd];
- 	if (!file)
--		goto out_unlock;
-+		goto out_err;
- 	rcu_assign_pointer(fdt->fd[fd], NULL);
- 	__put_unused_fd(files, fd);
--	spin_unlock(&files->file_lock);
- 	get_file(file);
- 	*res = file;
- 	return 0;
--
--out_unlock:
--	spin_unlock(&files->file_lock);
-+out_err:
- 	*res = NULL;
- 	return -ENOENT;
- }
- 
-+/*
-+ * variant of close_fd that gets a ref on the file for later fput.
-+ * The caller must ensure that filp_close() called on the file, and then
-+ * an fput().
-+ */
-+int close_fd_get_file(unsigned int fd, struct file **res)
-+{
-+	struct files_struct *files = current->files;
-+	int ret;
-+
-+	spin_lock(&files->file_lock);
-+	ret = __close_fd_get_file(fd, res);
-+	spin_unlock(&files->file_lock);
-+
-+	return ret;
-+}
-+
- void do_close_on_exec(struct files_struct *files)
- {
- 	unsigned i;
-diff --git a/fs/internal.h b/fs/internal.h
-index 77c50befbfbe..c6c85f6ad598 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -132,6 +132,7 @@ extern struct file *do_file_open_root(struct dentry *, struct vfsmount *,
- 		const char *, const struct open_flags *);
- extern struct open_how build_open_how(int flags, umode_t mode);
- extern int build_open_flags(const struct open_how *how, struct open_flags *op);
-+extern int __close_fd_get_file(unsigned int fd, struct file **res);
- 
- long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
- int chmod_common(const struct path *path, umode_t mode);
--- 
-2.30.0
-
--- 
-Jens Axboe
-
+>
+> thanks.
+>
+> >>
+> >>> +     depends on X86_64
+> >>> +     depends on SPARSEMEM_VMEMMAP
+> >>> +     depends on HAVE_BOOTMEM_INFO_NODE
+> >>> +     help
+> >>> +       The option HUGETLB_PAGE_FREE_VMEMMAP allows for the freeing of
+> >>> +       some vmemmap pages associated with pre-allocated HugeTLB pages.
+> >>> +       For example, on X86_64 6 vmemmap pages of size 4KB each can be
+> >>> +       saved for each 2MB HugeTLB page.  4094 vmemmap pages of size 4KB
+> >>> +       each can be saved for each 1GB HugeTLB page.
+> >>> +
+> >>> +       When a HugeTLB page is allocated or freed, the vmemmap array
+> >>> +       representing the range associated with the page will need to be
+> >>> +       remapped.  When a page is allocated, vmemmap pages are freed
+> >>> +       after remapping.  When a page is freed, previously discarded
+> >>> +       vmemmap pages must be allocated before remapping.
+> >>> +
+> >>>  config MEMFD_CREATE
+> >>>       def_bool TMPFS || HUGETLBFS
+> >>>
+> >
+>
+>
+> --
+> ~Randy
+>
