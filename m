@@ -2,151 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6FE0302CB6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 21:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7CE302CDE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 21:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732285AbhAYUjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 15:39:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732362AbhAYUik (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 15:38:40 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 91CB422583;
-        Mon, 25 Jan 2021 20:37:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611607079;
-        bh=IOywRg3GDIp5qw973MK7y5yXs1Lb3QGx/m0aTLci+8U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kUUf1umrvsvzEnHLD/If2qEqPV3xkaCUiDrTJ27zAd114SH+48jmUsmGHzymQiiXm
-         ukYaLN4oVDgPPO2RweaQBFYPjRzT/IFsXvtbmxVSPt4QQAbKfuStOiGhS9yVa3U4rR
-         Udf4CdHMI6/nsXQf5exMGG1+ALo8HK4qITS6Ff4w6XQWnxPdslzFuICvzbZR9JQN14
-         jnUbHZDX4Ay9LbWSV9cEHsT3Q9gk4IWCmhjICJ4qEWjw079ITpOOhImXmLDAY3tUHq
-         A5AlmoRGyqwzmoupzoeBhrtVNpcRAU63qarMfz9TCy1rnthYFYQAEAR90uxHBqqDR6
-         k6NxIuWuduJiQ==
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     stable@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.14 3/3] fs: fix lazytime expiration handling in __writeback_single_inode()
-Date:   Mon, 25 Jan 2021 12:37:44 -0800
-Message-Id: <20210125203744.325479-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210125203744.325479-1-ebiggers@kernel.org>
-References: <20210125203744.325479-1-ebiggers@kernel.org>
+        id S1732200AbhAYUol (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 15:44:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732174AbhAYUoZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Jan 2021 15:44:25 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50144C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 12:43:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=50rdGGRcUaSkPpis7lUfu3LrVnBfoRkaHShYQAQljW4=; b=rNyfrzJJFlsslQGGX976kUrj14
+        qY5AVfDFICTZjzTsCoZ+4TO735fTLbAkzmOdCHo/KD2vt65u/osgVXyZ0DOOGv4mkGv9xyHfQXx8j
+        PTgGQ3jlJPKhk4cNtju5TmP4PVpeEKNjEJeyRH1WD9hQC/AKp8y9BgH1uUorzbFRGiMwGrWaycJI/
+        q5Hr/5PcoHLYfc2na36Wo3deya2bFao1a3cOU+F3fvgzlu1fAddpTT+JYJjqXkzcnlcYpZ3UQL2vw
+        CjbPG9gIMd9yhih2uo16nLMCI9lrX1hRDG+akVoxmLE5q9QUnYK9uABcW0QyurnmFX4n4poy6L//a
+        W15JiESg==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l48hF-004ddP-FH; Mon, 25 Jan 2021 20:42:54 +0000
+Date:   Mon, 25 Jan 2021 20:42:49 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org, kernel@pengutronix.de,
+        Jan Kara <jack@suse.com>
+Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
+Message-ID: <20210125204249.GA1103662@infradead.org>
+References: <20210122151536.7982-1-s.hauer@pengutronix.de>
+ <20210122151536.7982-2-s.hauer@pengutronix.de>
+ <20210122171658.GA237653@infradead.org>
+ <20210125083854.GB31738@pengutronix.de>
+ <20210125154507.GH1175@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210125154507.GH1175@quack2.suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Mon, Jan 25, 2021 at 04:45:07PM +0100, Jan Kara wrote:
+> > What do you mean by "take"? Take the superblock as an argument to
+> > quotactl_sb() or take a reference to the superblock?
+> > Sorry, I don't really get where you aiming at.
+> 
+> I think Christoph was pointing at the fact it is suboptimal to search for
+> superblock by device number when you already have a pointer to it.  And I
+> guess he was suggesting we could pass 'sb' pointer to quotactl_sb() when we
+> already have it. Although to be honest, I'm not sure how Christoph imagines
+> the refactoring of user_get_super() he mentions - when we have a path
+> looked up through user_path(), that pins the superblock the path is on so
+> it cannot be unmounted. So perhaps quotactl_sb() can done like:
 
-commit 1e249cb5b7fc09ff216aa5a12f6c302e434e88f9 upstream.
+I don't think we need a quotactl_sb at all, do_quotactl is in fact a
+pretty good abstraction as-is.
 
-When lazytime is enabled and an inode is being written due to its
-in-memory updated timestamps having expired, either due to a sync() or
-syncfs() system call or due to dirtytime_expire_interval having elapsed,
-the VFS needs to inform the filesystem so that the filesystem can copy
-the inode's timestamps out to the on-disk data structures.
+For the path based one we just need to factor out a little helper
+to set excl and thaw and then call it like:
 
-This is done by __writeback_single_inode() calling
-mark_inode_dirty_sync(), which then calls ->dirty_inode(I_DIRTY_SYNC).
+	sb = path.dentry->d_inode->i_sb;
 
-However, this occurs after __writeback_single_inode() has already
-cleared the dirty flags from ->i_state.  This causes two bugs:
+	if (excl)
+		down_write(&sb->s_umount);
+	else
+		down_read(&sb->s_umount);
+	if (thawed && sb->s_writers.frozen != SB_UNFROZEN)
+		ret = -EBUSY;
+	else
+		ret = do_quotactl(sb, type, cmds, id, addr, &path);
+	if (excl)
+		up_write(&sb->s_umount);
+	else
+		up_read(&sb->s_umount);
 
-- mark_inode_dirty_sync() redirties the inode, causing it to remain
-  dirty.  This wastefully causes the inode to be written twice.  But
-  more importantly, it breaks cases where sync_filesystem() is expected
-  to clean dirty inodes.  This includes the FS_IOC_REMOVE_ENCRYPTION_KEY
-  ioctl (as reported at
-  https://lore.kernel.org/r/20200306004555.GB225345@gmail.com), as well
-  as possibly filesystem freezing (freeze_super()).
-
-- Since ->i_state doesn't contain I_DIRTY_TIME when ->dirty_inode() is
-  called from __writeback_single_inode() for lazytime expiration,
-  xfs_fs_dirty_inode() ignores the notification.  (XFS only cares about
-  lazytime expirations, and it assumes that i_state will contain
-  I_DIRTY_TIME during those.)  Therefore, lazy timestamps aren't
-  persisted by sync(), syncfs(), or dirtytime_expire_interval on XFS.
-
-Fix this by moving the call to mark_inode_dirty_sync() to earlier in
-__writeback_single_inode(), before the dirty flags are cleared from
-i_state.  This makes filesystems be properly notified of the timestamp
-expiration, and it avoids incorrectly redirtying the inode.
-
-This fixes xfstest generic/580 (which tests
-FS_IOC_REMOVE_ENCRYPTION_KEY) when run on ext4 or f2fs with lazytime
-enabled.  It also fixes the new lazytime xfstest I've proposed, which
-reproduces the above-mentioned XFS bug
-(https://lore.kernel.org/r/20210105005818.92978-1-ebiggers@kernel.org).
-
-Alternatively, we could call ->dirty_inode(I_DIRTY_SYNC) directly.  But
-due to the introduction of I_SYNC_QUEUED, mark_inode_dirty_sync() is the
-right thing to do because mark_inode_dirty_sync() now knows not to move
-the inode to a writeback list if it is currently queued for sync.
-
-Fixes: 0ae45f63d4ef ("vfs: add support for a lazytime mount option")
-Cc: stable@vger.kernel.org
-Depends-on: 5afced3bf281 ("writeback: Avoid skipping inode writeback")
-Link: https://lore.kernel.org/r/20210112190253.64307-2-ebiggers@kernel.org
-Suggested-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/fs-writeback.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index d6c05e5bdacb8..384f95e1936dd 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1390,21 +1390,25 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
- 	}
- 
- 	/*
--	 * Some filesystems may redirty the inode during the writeback
--	 * due to delalloc, clear dirty metadata flags right before
--	 * write_inode()
-+	 * If the inode has dirty timestamps and we need to write them, call
-+	 * mark_inode_dirty_sync() to notify the filesystem about it and to
-+	 * change I_DIRTY_TIME into I_DIRTY_SYNC.
- 	 */
--	spin_lock(&inode->i_lock);
--
--	dirty = inode->i_state & I_DIRTY;
- 	if ((inode->i_state & I_DIRTY_TIME) &&
--	    ((dirty & I_DIRTY_INODE) ||
--	     wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
-+	    (wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
- 	     time_after(jiffies, inode->dirtied_time_when +
- 			dirtytime_expire_interval * HZ))) {
--		dirty |= I_DIRTY_TIME;
- 		trace_writeback_lazytime(inode);
-+		mark_inode_dirty_sync(inode);
- 	}
-+
-+	/*
-+	 * Some filesystems may redirty the inode during the writeback
-+	 * due to delalloc, clear dirty metadata flags right before
-+	 * write_inode()
-+	 */
-+	spin_lock(&inode->i_lock);
-+	dirty = inode->i_state & I_DIRTY;
- 	inode->i_state &= ~dirty;
- 
- 	/*
-@@ -1425,8 +1429,6 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
- 
- 	spin_unlock(&inode->i_lock);
- 
--	if (dirty & I_DIRTY_TIME)
--		mark_inode_dirty_sync(inode);
- 	/* Don't write the inode if only I_DIRTY_PAGES was set */
- 	if (dirty & ~I_DIRTY_PAGES) {
- 		int err = write_inode(inode, wbc);
--- 
-2.30.0
-
+as there is no good reason to bring over the somewhat strange wait until
+unfrozen semantics to a new syscall.
