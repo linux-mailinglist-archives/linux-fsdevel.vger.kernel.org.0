@@ -2,151 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB093302C38
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 21:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA0A302D16
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbhAYUGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 15:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732129AbhAYUGO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 15:06:14 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2899D2256F;
-        Mon, 25 Jan 2021 20:05:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611605133;
-        bh=wkDbYeKsRn8HwxdmZsARzT8h8vPg1Cc5yFk5/VNY0wg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2FJn+28ty3dOcK9H7CV6Ad8nhLNwJwTgd3N2dL8XDRS7rlyVaUE7gdDmduIraleu
-         OFR+nBTmdWq0OyH6QasmClwkCq6ImUDJuZNjjG7JSaQ0ZifjGrSVPWTIyLn8WX6ZgD
-         isVEmguHo0JhNOq8f1/SAWx13wD1SicGbh5mlftkicuuYi9P5DXggJ2JfaFeTdpeZ2
-         vy/j+kotj7GerZ6R7bh+vBScowWZcmGMbsrIGLbTW3PSs9dBDTHi1jeoHRfNRVH9P3
-         1eEJmEFb9ZCqR+lgvptVzU64zPcQbxQhQf9Cd6Pb/fA+i66L89gbHqek06C9vJsYtH
-         ga5Slbp4IgBmA==
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     stable@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.19 2/2] fs: fix lazytime expiration handling in __writeback_single_inode()
-Date:   Mon, 25 Jan 2021 12:05:09 -0800
-Message-Id: <20210125200509.261295-3-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210125200509.261295-1-ebiggers@kernel.org>
-References: <20210125200509.261295-1-ebiggers@kernel.org>
+        id S1726231AbhAYTrj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 14:47:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732043AbhAYTpg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Jan 2021 14:45:36 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE9CC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 11:44:54 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id t8so9470498ljk.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 11:44:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3WM7O3cFXlBvf9L+JSljulU1VqAKIV6MOBvv4sGCgAo=;
+        b=bE4C3quK2HDDkj26kdNPWzzjWPJqC6vm0bloEDWUNyPFOUw/Hd2xJAzElEcs8nGEg0
+         EjlC6Ers2ip8/6SQHU3BfPgXJM9zl4IGrcNx1WGwJze+7ej4FV4Lwr5QEsWkvkP0Ydpz
+         1gHgEYj3p4d1BRXNyDsqZIkpi2texxN2333flJWGLuH/ZPiYmgXthyLOVooPEUUAkV9t
+         3uMpIAsEfp6vEIj/zp0NgPom2Jfw2M36H8u0aNZ2jQStbcM6FMY2BdEFpuQOBw1TGqZS
+         SB2KRxzk39vpuVtDPgtykyA7wthBxIlUvsP4/w6PDgG7PoD0Y+mqzDisdSv88bGGEL4h
+         vFTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3WM7O3cFXlBvf9L+JSljulU1VqAKIV6MOBvv4sGCgAo=;
+        b=cXu/YsNJ5BUA0ESRrpsw7/j8lQ6vGtgopW565wN/i95QOecHjTeRDxN6O70NLfpyFL
+         5BInx4EEP/N2C+QwgnBVbhra9bKUzLnWO2rgzeAf4p/9ou+hMMsK9C5g/AgMd47cXwAS
+         FUK4ewvrMKHpfVteqzkHEI9DGjBOCDCTYrkW85vlFli+Nblt7KeZhp0pdiHiVD6TKLvL
+         E6NS/kgbYVe3AH6bSFrx6tZqM6kNn3FuZE5Jk/WREqWPoAmUWtK/rrEHUTt2YGrdzwFZ
+         dHHr4gWXMhwoqLJBnzMlr9/NWD4/CB71Z5BCzpqzNgJGdg3u3vzYPCL/lu/rCuV44fe9
+         hJZA==
+X-Gm-Message-State: AOAM531Gm7nz/2c6CKMM2SO1v0xNu+NFDIL7XzUkH1ZrwTzWkYm2tiJo
+        JIHrLiqbEqsPfwSAncLKs/aPZf+yP41drtLaiS7Sxg==
+X-Google-Smtp-Source: ABdhPJyz7ezOW9tfl6zZZo+mvc87esNONMJ7E+44it5FYrCAKvXvoGtLXV+JdM1CXX8QLRo395Et0gTSFI2ObwYAtF0=
+X-Received: by 2002:a2e:8005:: with SMTP id j5mr979607ljg.34.1611603893145;
+ Mon, 25 Jan 2021 11:44:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com>
+In-Reply-To: <CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com>
+From:   Ian Lance Taylor <iant@google.com>
+Date:   Mon, 25 Jan 2021 11:44:39 -0800
+Message-ID: <CAKOQZ8zDb8i+CetLbGEubWFs+C_4WOkKvNsS=g0OhSvk2tQuNg@mail.gmail.com>
+Subject: Re: [BUG] copy_file_range with sysfs file as input
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Luis Lozano <llozano@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Thanks for the note.  I'm not a kernel developer, but to me this
+sounds like a kernel bug.  It seems particularly unfortunate that
+copy_file_range returns 0 in this case.  From the perspective of the
+Go standard library, what we would need is some mechanism to detect
+when the copy_file_range system call will not or did not work
+correctly.  As the biggest hammer, we currently only call
+copy_file_range on kernel versions 5.3 and newer.  We can bump that
+requirement if necessary.
 
-commit 1e249cb5b7fc09ff216aa5a12f6c302e434e88f9 upstream.
+Please feel free to open a bug about this at https://golang.org/issue,
+but we'll need guidance as to what we should do to avoid the problem.
+Thanks.
 
-When lazytime is enabled and an inode is being written due to its
-in-memory updated timestamps having expired, either due to a sync() or
-syncfs() system call or due to dirtytime_expire_interval having elapsed,
-the VFS needs to inform the filesystem so that the filesystem can copy
-the inode's timestamps out to the on-disk data structures.
+Ian
 
-This is done by __writeback_single_inode() calling
-mark_inode_dirty_sync(), which then calls ->dirty_inode(I_DIRTY_SYNC).
-
-However, this occurs after __writeback_single_inode() has already
-cleared the dirty flags from ->i_state.  This causes two bugs:
-
-- mark_inode_dirty_sync() redirties the inode, causing it to remain
-  dirty.  This wastefully causes the inode to be written twice.  But
-  more importantly, it breaks cases where sync_filesystem() is expected
-  to clean dirty inodes.  This includes the FS_IOC_REMOVE_ENCRYPTION_KEY
-  ioctl (as reported at
-  https://lore.kernel.org/r/20200306004555.GB225345@gmail.com), as well
-  as possibly filesystem freezing (freeze_super()).
-
-- Since ->i_state doesn't contain I_DIRTY_TIME when ->dirty_inode() is
-  called from __writeback_single_inode() for lazytime expiration,
-  xfs_fs_dirty_inode() ignores the notification.  (XFS only cares about
-  lazytime expirations, and it assumes that i_state will contain
-  I_DIRTY_TIME during those.)  Therefore, lazy timestamps aren't
-  persisted by sync(), syncfs(), or dirtytime_expire_interval on XFS.
-
-Fix this by moving the call to mark_inode_dirty_sync() to earlier in
-__writeback_single_inode(), before the dirty flags are cleared from
-i_state.  This makes filesystems be properly notified of the timestamp
-expiration, and it avoids incorrectly redirtying the inode.
-
-This fixes xfstest generic/580 (which tests
-FS_IOC_REMOVE_ENCRYPTION_KEY) when run on ext4 or f2fs with lazytime
-enabled.  It also fixes the new lazytime xfstest I've proposed, which
-reproduces the above-mentioned XFS bug
-(https://lore.kernel.org/r/20210105005818.92978-1-ebiggers@kernel.org).
-
-Alternatively, we could call ->dirty_inode(I_DIRTY_SYNC) directly.  But
-due to the introduction of I_SYNC_QUEUED, mark_inode_dirty_sync() is the
-right thing to do because mark_inode_dirty_sync() now knows not to move
-the inode to a writeback list if it is currently queued for sync.
-
-Fixes: 0ae45f63d4ef ("vfs: add support for a lazytime mount option")
-Cc: stable@vger.kernel.org
-Depends-on: 5afced3bf281 ("writeback: Avoid skipping inode writeback")
-Link: https://lore.kernel.org/r/20210112190253.64307-2-ebiggers@kernel.org
-Suggested-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/fs-writeback.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 96cdce0144efc..f2d0c4acb3cbb 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1393,21 +1393,25 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
- 	}
- 
- 	/*
--	 * Some filesystems may redirty the inode during the writeback
--	 * due to delalloc, clear dirty metadata flags right before
--	 * write_inode()
-+	 * If the inode has dirty timestamps and we need to write them, call
-+	 * mark_inode_dirty_sync() to notify the filesystem about it and to
-+	 * change I_DIRTY_TIME into I_DIRTY_SYNC.
- 	 */
--	spin_lock(&inode->i_lock);
--
--	dirty = inode->i_state & I_DIRTY;
- 	if ((inode->i_state & I_DIRTY_TIME) &&
--	    ((dirty & I_DIRTY_INODE) ||
--	     wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
-+	    (wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
- 	     time_after(jiffies, inode->dirtied_time_when +
- 			dirtytime_expire_interval * HZ))) {
--		dirty |= I_DIRTY_TIME;
- 		trace_writeback_lazytime(inode);
-+		mark_inode_dirty_sync(inode);
- 	}
-+
-+	/*
-+	 * Some filesystems may redirty the inode during the writeback
-+	 * due to delalloc, clear dirty metadata flags right before
-+	 * write_inode()
-+	 */
-+	spin_lock(&inode->i_lock);
-+	dirty = inode->i_state & I_DIRTY;
- 	inode->i_state &= ~dirty;
- 
- 	/*
-@@ -1428,8 +1432,6 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
- 
- 	spin_unlock(&inode->i_lock);
- 
--	if (dirty & I_DIRTY_TIME)
--		mark_inode_dirty_sync(inode);
- 	/* Don't write the inode if only I_DIRTY_PAGES was set */
- 	if (dirty & ~I_DIRTY_PAGES) {
- 		int err = write_inode(inode, wbc);
--- 
-2.30.0
-
+On Sun, Jan 24, 2021 at 11:54 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
+>
+> Hi copy_file_range experts,
+>
+> We hit this interesting issue when upgrading Go compiler from 1.13 to
+> 1.15 [1]. Basically we use Go's `io.Copy` to copy the content of
+> `/sys/kernel/debug/tracing/trace` to a temporary file.
+>
+> Under the hood, Go now uses `copy_file_range` syscall to optimize the
+> copy operation. However, that fails to copy any content when the input
+> file is from sysfs/tracefs, with an apparent size of 0 (but there is
+> still content when you `cat` it, of course).
+>
+> A repro case is available in comment7 (adapted from the man page),
+> also copied below [2].
+>
+> Output looks like this (on kernels 5.4.89 (chromeos), 5.7.17 and
+> 5.10.3 (chromeos))
+> $ ./copyfrom /sys/kernel/debug/tracing/trace x
+> 0 bytes copied
+> $ cat x
+> $ cat /sys/kernel/debug/tracing/trace
+> # tracer: nop
+> #
+> # entries-in-buffer/entries-written: 0/0   #P:8
+> #
+> #                                _-----=> irqs-off
+> #                               / _----=> need-resched
+> #                              | / _---=> hardirq/softirq
+> #                              || / _--=> preempt-depth
+> #                              ||| /     delay
+> #           TASK-PID     CPU#  ||||   TIMESTAMP  FUNCTION
+> #              | |         |   ||||      |         |
+>
+> I can try to dig further, but thought you'd like to get a bug report
+> as soon as possible.
+>
+> Thanks,
+>
+> Nicolas
+>
+> [1] http://issuetracker.google.com/issues/178332739
+> [2]
+> #define _GNU_SOURCE
+> #include <fcntl.h>
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <sys/stat.h>
+> #include <sys/syscall.h>
+> #include <unistd.h>
+>
+> int
+> main(int argc, char **argv)
+> {
+>         int fd_in, fd_out;
+>         loff_t ret;
+>
+>         if (argc != 3) {
+>                 fprintf(stderr, "Usage: %s <source> <destination>\n", argv[0]);
+>                 exit(EXIT_FAILURE);
+>         }
+>
+>         fd_in = open(argv[1], O_RDONLY);
+>         if (fd_in == -1) {
+>                 perror("open (argv[1])");
+>                 exit(EXIT_FAILURE);
+>         }
+>
+>         fd_out = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+>         if (fd_out == -1) {
+>                 perror("open (argv[2])");
+>                 exit(EXIT_FAILURE);
+>         }
+>
+>         ret = copy_file_range(fd_in, NULL, fd_out, NULL, 1024, 0);
+>         if (ret == -1) {
+>                 perror("copy_file_range");
+>                 exit(EXIT_FAILURE);
+>         }
+>         printf("%d bytes copied\n", (int)ret);
+>
+>         close(fd_in);
+>         close(fd_out);
+>         exit(EXIT_SUCCESS);
+> }
