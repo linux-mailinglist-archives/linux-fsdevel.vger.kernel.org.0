@@ -2,65 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 259F330213F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 05:39:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D30302159
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 05:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbhAYEjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Jan 2021 23:39:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59056 "EHLO
+        id S1727176AbhAYEo7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Jan 2021 23:44:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbhAYEjF (ORCPT
+        with ESMTP id S1727167AbhAYEo4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Jan 2021 23:39:05 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20844C061756
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 20:38:22 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id p15so7594753pjv.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 20:38:22 -0800 (PST)
+        Sun, 24 Jan 2021 23:44:56 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C179CC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 20:44:15 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id u11so6807616plg.13
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Jan 2021 20:44:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rlMwQ4UjBqmcnnv1HhqFR3ddy1dMdXnd73kPoCOEZvE=;
-        b=yisTh96BqCkWR0r0M/ANAEEgksMvN0KVBU/cXRNOSB9gT3E47W3ZSagLUVoJSLTGkR
-         Zsk13ZZzvxn9v8LuBERIJ4suZIBb3mfgydATGN6t2XGPI+0voxL/hdolqAoW/QAxDxCY
-         KL5T1syIcS7UReS9L7JJkxKJDg/ia3U4RxrcKmMzwvQHWFwCh+bEtq7FLTbJvvCx7hA6
-         1KaLsFYZZAKbEyXIbzWgw35q0swdIsshIkN5I7UT2lU1SnrpxDmFRUWkTDczpsdi+Ekw
-         Q1tdIzJzy6YEuFa163hN9J9ofmjzEUtFz7O7cfUYE4ngYNxnerCsCTmmlFTzuAoDCzh9
-         cREg==
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=Cs4J9GskE01nDEYOQ3KQaCkKWwKmXBxrzRzzc8/wsJI=;
+        b=vKDGB28J3loZxpQQsNi0tNE+SmHzbz+XjsHet5K38mYCsN/wRrMJ3w6ilbulurzxlr
+         zk8AlS2RjecXSxSJgrDrDWWoEiQBDcNS0I+9/ko/vKi0Uo+911tqx3a7b+YwIotsAxhm
+         Q/+L0YI5UyS77khX4HdMn5b9itjjqzBZ09yTMGPzA4XfTSeVBJO01nEmFSxUi/KPcfvu
+         s+4g6M9sGLonmuMuaB9Rv5LDbbkDciPtgOO3QaQJoV2LHnK46WR+7Fd+RoYG5plOsc5h
+         JYuslMfgZmChOKNZRvuKjV+8pi0kauS7MxwDIX4M/olD3LiysBq8BnLey0ViiOFPATEG
+         fWtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rlMwQ4UjBqmcnnv1HhqFR3ddy1dMdXnd73kPoCOEZvE=;
-        b=Rw0WxfswpAdioA/OVmYZHn6avIaAQ6SvVJ9eg49sVgtVdpxvTsXvhNcnxK//s4ik+G
-         uY7wu2Zb9wxvmaRkGqojjokAiuIvC5+iHpVScHcF1Zujp2Dr91eHBqa3rJBdq4c5vdVx
-         +1MNmuJcS4lkv67vLWdXipRGOvO0jAAx2DU9dJLqi8m3rAgYOR7sDG6UFUSe2ZdKIRqU
-         dbiDfhF5zPU3r7/kndGJ/K91oDghwtfvRKmDuGYecmoahdSx5zgl+Ne5zYaX5o9gAyBN
-         yaUmoH3M6OFqMghItZal2b6kKe3xPz2idjrUKhl4WHQ+8I5Eck27dyrp5P5mxItL2SNe
-         sGsQ==
-X-Gm-Message-State: AOAM532I1UxYmcaCMnIqzMisTMtEDN+LGaLA/CfGjfaM2M6/CigM+EJB
-        x25CFH/1pZJCDUp7j7U52viceEi3jXisMg==
-X-Google-Smtp-Source: ABdhPJyFGLdEb+gj8r0CQ9KO/ejVuv34dIniR9rCF1+N6QiTicDB6ra3qUnKXSowzZP3twaAnFB8Fw==
-X-Received: by 2002:a17:90a:1e65:: with SMTP id w92mr19679023pjw.64.1611549501368;
-        Sun, 24 Jan 2021 20:38:21 -0800 (PST)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=Cs4J9GskE01nDEYOQ3KQaCkKWwKmXBxrzRzzc8/wsJI=;
+        b=EAqZdx2mSHS1ohNea59W/LoOfwwUq+ayShr0ogXMPJ/T7kp8VaR2yE/L8HaaoTbfDh
+         VqXRbeCaLF25iC1UwaDPRMIqP8rwvIrPn9sevVlN+Ry10CvrGnVnfIzwxSwgYtOw6hZs
+         kFcQn0XhF13YBmv3K0qjMsZFQ3tCiQMCtTGwkdd7tAe4q3oLAmAUfylfe69D8rsFefRT
+         x4MrqFHm2bOmV2UqBXa5S1tTW5T0oXRTFaEI/6VWzuQN+ob8KkJjJyQbg33+GmAiHd5J
+         Jl2WpQLO9aHf5bMwnho9kFZ846mCVwtnWPfFOIR8Xjl/3JqLW7h3u7SveR3ENlrs6H4t
+         RhEg==
+X-Gm-Message-State: AOAM532roTsJ47RUBFTL4dUEM7KQ9sHhzqvtlK2veEdhcZsn27/+efI4
+        1IavjdQu+XjGS9zUUZPVn34TlSRWo3vnWA==
+X-Google-Smtp-Source: ABdhPJzdALFDfkb7y4OVT7WVh3vG/AkOBJGgvUGXL6FDtcp2jkAl9T/cDXJUkTTlcwuAX76Tuy4Tmw==
+X-Received: by 2002:a17:902:d64d:b029:de:8aaa:d6ba with SMTP id y13-20020a170902d64db02900de8aaad6bamr18034012plh.0.1611549855312;
+        Sun, 24 Jan 2021 20:44:15 -0800 (PST)
 Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id x125sm14516720pgb.35.2021.01.24.20.38.20
+        by smtp.gmail.com with ESMTPSA id md7sm16622324pjb.52.2021.01.24.20.44.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Jan 2021 20:38:20 -0800 (PST)
-Subject: Re: [PATCH 1/2] fs: make do_mkdirat() take struct filename
-To:     Dmitry Kadashev <dkadashev@gmail.com>, io-uring@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-References: <20201116044529.1028783-1-dkadashev@gmail.com>
- <20201116044529.1028783-2-dkadashev@gmail.com>
+        Sun, 24 Jan 2021 20:44:14 -0800 (PST)
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <027e8488-2654-12cd-d525-37f249954b4d@kernel.dk>
-Date:   Sun, 24 Jan 2021 21:38:19 -0700
+Subject: [PATCH] fs: provide locked helper variant of close_fd_get_file()
+Message-ID: <61657916-6513-1a80-1434-d689ebb18709@kernel.dk>
+Date:   Sun, 24 Jan 2021 21:44:13 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201116044529.1028783-2-dkadashev@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,91 +65,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/15/20 9:45 PM, Dmitry Kadashev wrote:
-> Pass in the struct filename pointers instead of the user string, and
-> update the three callers to do the same. This is heavily based on
-> commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
-> 
-> This behaves like do_unlinkat() and do_renameat2().
+Assumes current->files->file_lock is already held on invocation. Helps
+the caller check the file before removing the fd, if it needs to.
 
-Al, are you OK with this patch? Leaving it quoted, though you should
-have the original too.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
 
-> 
-> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
-> ---
->  fs/internal.h |  1 +
->  fs/namei.c    | 20 ++++++++++++++------
->  2 files changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 6fd14ea213c3..23b8b427dbd2 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -80,6 +80,7 @@ long do_unlinkat(int dfd, struct filename *name);
->  int may_linkat(struct path *link);
->  int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
->  		 struct filename *newname, unsigned int flags);
-> +long do_mkdirat(int dfd, struct filename *name, umode_t mode);
->  
->  /*
->   * namespace.c
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 03d0e11e4f36..9d26a51f3f54 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3654,17 +3654,23 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->  }
->  EXPORT_SYMBOL(vfs_mkdir);
->  
-> -static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
-> +long do_mkdirat(int dfd, struct filename *name, umode_t mode)
->  {
->  	struct dentry *dentry;
->  	struct path path;
->  	int error;
->  	unsigned int lookup_flags = LOOKUP_DIRECTORY;
->  
-> +	if (IS_ERR(name))
-> +		return PTR_ERR(name);
-> +
->  retry:
-> -	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
-> -	if (IS_ERR(dentry))
-> -		return PTR_ERR(dentry);
-> +	name->refcnt++; /* filename_create() drops our ref */
-> +	dentry = filename_create(dfd, name, &path, lookup_flags);
-> +	if (IS_ERR(dentry)) {
-> +		error = PTR_ERR(dentry);
-> +		goto out;
-> +	}
->  
->  	if (!IS_POSIXACL(path.dentry->d_inode))
->  		mode &= ~current_umask();
-> @@ -3676,17 +3682,19 @@ static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
->  		lookup_flags |= LOOKUP_REVAL;
->  		goto retry;
->  	}
-> +out:
-> +	putname(name);
->  	return error;
->  }
->  
->  SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
->  {
-> -	return do_mkdirat(dfd, pathname, mode);
-> +	return do_mkdirat(dfd, getname(pathname), mode);
->  }
->  
->  SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
->  {
-> -	return do_mkdirat(AT_FDCWD, pathname, mode);
-> +	return do_mkdirat(AT_FDCWD, getname(pathname), mode);
->  }
->  
->  int vfs_rmdir(struct inode *dir, struct dentry *dentry)
-> 
+Al, I need this to get rid of the two-stage operation that io_uring
+currently does for close operations. It's proving to be quite a headache
+in terms of cancelation, since we must complete part 2 if we did part 1.
+If we provide this locked variant helper, then we can ensure that we the
+close as one operation, nicely fixing that problem instead of needing to
+hack around it.
 
+ fs/file.c     | 36 +++++++++++++++++++++++++-----------
+ fs/internal.h |  1 +
+ 2 files changed, 26 insertions(+), 11 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index dab120b71e44..f3a4bac2cbe9 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -22,6 +22,8 @@
+ #include <linux/close_range.h>
+ #include <net/sock.h>
+ 
++#include "internal.h"
++
+ unsigned int sysctl_nr_open __read_mostly = 1024*1024;
+ unsigned int sysctl_nr_open_min = BITS_PER_LONG;
+ /* our min() is unusable in constant expressions ;-/ */
+@@ -732,36 +734,48 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+ }
+ 
+ /*
+- * variant of close_fd that gets a ref on the file for later fput.
+- * The caller must ensure that filp_close() called on the file, and then
+- * an fput().
++ * See close_fd_get_file() below, this variant assumes current->files->file_lock
++ * is held.
+  */
+-int close_fd_get_file(unsigned int fd, struct file **res)
++int __close_fd_get_file(unsigned int fd, struct file **res)
+ {
+ 	struct files_struct *files = current->files;
+ 	struct file *file;
+ 	struct fdtable *fdt;
+ 
+-	spin_lock(&files->file_lock);
+ 	fdt = files_fdtable(files);
+ 	if (fd >= fdt->max_fds)
+-		goto out_unlock;
++		goto out_err;
+ 	file = fdt->fd[fd];
+ 	if (!file)
+-		goto out_unlock;
++		goto out_err;
+ 	rcu_assign_pointer(fdt->fd[fd], NULL);
+ 	__put_unused_fd(files, fd);
+-	spin_unlock(&files->file_lock);
+ 	get_file(file);
+ 	*res = file;
+ 	return 0;
+-
+-out_unlock:
+-	spin_unlock(&files->file_lock);
++out_err:
+ 	*res = NULL;
+ 	return -ENOENT;
+ }
+ 
++/*
++ * variant of close_fd that gets a ref on the file for later fput.
++ * The caller must ensure that filp_close() called on the file, and then
++ * an fput().
++ */
++int close_fd_get_file(unsigned int fd, struct file **res)
++{
++	struct files_struct *files = current->files;
++	int ret;
++
++	spin_lock(&files->file_lock);
++	ret = __close_fd_get_file(fd, res);
++	spin_unlock(&files->file_lock);
++
++	return ret;
++}
++
+ void do_close_on_exec(struct files_struct *files)
+ {
+ 	unsigned i;
+diff --git a/fs/internal.h b/fs/internal.h
+index 77c50befbfbe..c6c85f6ad598 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -132,6 +132,7 @@ extern struct file *do_file_open_root(struct dentry *, struct vfsmount *,
+ 		const char *, const struct open_flags *);
+ extern struct open_how build_open_how(int flags, umode_t mode);
+ extern int build_open_flags(const struct open_how *how, struct open_flags *op);
++extern int __close_fd_get_file(unsigned int fd, struct file **res);
+ 
+ long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
+ int chmod_common(const struct path *path, umode_t mode);
+-- 
+2.30.0
 
 -- 
 Jens Axboe
