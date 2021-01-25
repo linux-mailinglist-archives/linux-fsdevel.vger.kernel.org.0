@@ -2,113 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03E17302E0B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2945302E7F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:58:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732816AbhAYViN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 16:38:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732797AbhAYViG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 16:38:06 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 743FA208C7;
-        Mon, 25 Jan 2021 21:36:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611610595;
-        bh=ajaCsDQ6e4U1hUENrIDNUbcuSNalQWKY+iQc4S18YHs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cfQR8nUEYwM75PG5OUFV5JcmnnumpQwkS1CnVqcT2d4p/kUpcS/2u20YYyJroZRCW
-         Jbt8N0i9NWstZhVeQAoWuL0s1n+n5az5ZLRoklNtsiaP1TJWCjFUBgluHnK4qcx2vR
-         E16vQW+kwJovzCui9zqUqcbslF/9K9Il+/0P40Td3raK5Q2WzGx+8y38H1+/m5CZ3T
-         SSW4VXI/VuuQaVG+TxLnGPfGOo0qcOYMor1OjHyeeaSkuT9z8sM7rhBjawSDsbXbG4
-         xDuvORI7oTg4YIT62Z9kQe6ps0I6CSs8pq6QDrPQmTgAxuIU4vdgt6s4t3c2vLy5LL
-         LDqeEHslmluVA==
-Date:   Mon, 25 Jan 2021 23:36:18 +0200
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        id S1733071AbhAYV4s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 16:56:48 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30319 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732775AbhAYViE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Jan 2021 16:38:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611610598;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PdWJ4bVY9thyqHryVHuwVIJS4CpzrVpasqjIys1aHWc=;
+        b=dbL3rbq3lk63pGRn9PAM2BvaD2DBvsKl6lq4d+dOlR7p0o6xk0FmUnud8qlsyXU6uVT8Jy
+        blTeVRumHUxRE+bYXLQjRnoZGPUZR5T7jhS0/qQ/9JfsM9PQOlZEs+HkqnPIdaPg3Lcy4j
+        44aBtVo7/efNky+Yd+RldYewBn0MyZ8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-189-XhdXvk5IOuuHds0NLC6eMQ-1; Mon, 25 Jan 2021 16:36:35 -0500
+X-MC-Unique: XhdXvk5IOuuHds0NLC6eMQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5E5521015EC7;
+        Mon, 25 Jan 2021 21:36:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 758107445D;
+        Mon, 25 Jan 2021 21:36:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 28/32] NFS: Call readpage_async_filler() from
+ nfs_readpage_async()
+From:   David Howells <dhowells@redhat.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Dave Wysochanski <dwysocha@redhat.com>, dhowells@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v16 06/11] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-ID: <20210125213618.GL6332@kernel.org>
-References: <20210121122723.3446-1-rppt@kernel.org>
- <20210121122723.3446-7-rppt@kernel.org>
- <20210125170122.GU827@dhcp22.suse.cz>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 25 Jan 2021 21:36:25 +0000
+Message-ID: <161161058568.2537118.17174981646903311352.stgit@warthog.procyon.org.uk>
+In-Reply-To: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
+References: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210125170122.GU827@dhcp22.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 06:01:22PM +0100, Michal Hocko wrote:
-> On Thu 21-01-21 14:27:18, Mike Rapoport wrote:
-> > From: Mike Rapoport <rppt@linux.ibm.com>
-> > 
-> > Introduce "memfd_secret" system call with the ability to create memory
-> > areas visible only in the context of the owning process and not mapped not
-> > only to other processes but in the kernel page tables as well.
-> > 
-> > The user will create a file descriptor using the memfd_secret() system
-> > call. The memory areas created by mmap() calls from this file descriptor
-> > will be unmapped from the kernel direct map and they will be only mapped in
-> > the page table of the owning mm.
-> > 
-> > The secret memory remains accessible in the process context using uaccess
-> > primitives, but it is not accessible using direct/linear map addresses.
-> > 
-> > Functions in the follow_page()/get_user_page() family will refuse to return
-> > a page that belongs to the secret memory area.
-> > 
-> > A page that was a part of the secret memory area is cleared when it is
-> > freed.
-> > 
-> > The following example demonstrates creation of a secret mapping (error
-> > handling is omitted):
-> > 
-> > 	fd = memfd_secret(0);
-> > 	ftruncate(fd, MAP_SIZE);
-> > 	ptr = mmap(NULL, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-> 
-> I do not see any access control or permission model for this feature.
-> Is this feature generally safe to anybody?
+From: Dave Wysochanski <dwysocha@redhat.com>
 
-The mappings obey memlock limit. Besides, this feature should be enabled
-explicitly at boot with the kernel parameter that says what is the maximal
-memory size secretmem can consume.
+Refactor slightly so nfs_readpage_async() calls into
+readpage_async_filler().
 
--- 
-Sincerely yours,
-Mike.
+Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
+---
+
+ fs/nfs/read.c |   28 +++++++++++-----------------
+ 1 file changed, 11 insertions(+), 17 deletions(-)
+
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index 5fda30742a32..1401f1c734c0 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -119,31 +119,22 @@ struct nfs_readdesc {
+ 	struct nfs_open_context *ctx;
+ };
+ 
++static int readpage_async_filler(void *data, struct page *page);
++
+ int nfs_readpage_async(void *data, struct inode *inode,
+ 		       struct page *page)
+ {
+ 	struct nfs_readdesc *desc = (struct nfs_readdesc *)data;
+-	struct nfs_page	*new;
+-	unsigned int len;
+ 	struct nfs_pgio_mirror *pgm;
+-
+-	len = nfs_page_length(page);
+-	if (len == 0)
+-		return nfs_return_empty_page(page);
+-	new = nfs_create_request(desc->ctx, page, 0, len);
+-	if (IS_ERR(new)) {
+-		unlock_page(page);
+-		return PTR_ERR(new);
+-	}
+-	if (len < PAGE_SIZE)
+-		zero_user_segment(page, len, PAGE_SIZE);
++	int error;
+ 
+ 	nfs_pageio_init_read(&desc->pgio, inode, false,
+ 			     &nfs_async_read_completion_ops);
+-	if (!nfs_pageio_add_request(&desc->pgio, new)) {
+-		nfs_list_remove_request(new);
+-		nfs_readpage_release(new, desc->pgio.pg_error);
+-	}
++
++	error = readpage_async_filler(desc, page);
++	if (error)
++		goto out;
++
+ 	nfs_pageio_complete(&desc->pgio);
+ 
+ 	/* It doesn't make sense to do mirrored reads! */
+@@ -153,6 +144,9 @@ int nfs_readpage_async(void *data, struct inode *inode,
+ 	NFS_I(inode)->read_io += pgm->pg_bytes_written;
+ 
+ 	return desc->pgio.pg_error < 0 ? desc->pgio.pg_error : 0;
++
++out:
++	return error;
+ }
+ 
+ static void nfs_page_group_set_uptodate(struct nfs_page *req)
+
+
