@@ -2,224 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA0A3049C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:16:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C3873049C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:16:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732474AbhAZFYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:24:03 -0500
-Received: from relay.sw.ru ([185.231.240.75]:46278 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbhAYKoP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 05:44:15 -0500
-Received: from [192.168.15.14]
-        by relay.sw.ru with esmtp (Exim 4.94)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1l3yDA-000TI6-5a; Mon, 25 Jan 2021 12:31:04 +0300
-Subject: Re: [v4 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
-To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, shakeelb@google.com,
-        david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
-        akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210121230621.654304-1-shy828301@gmail.com>
- <20210121230621.654304-8-shy828301@gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <1c621cd8-7d13-ddfa-bb83-d4260a1bb754@virtuozzo.com>
-Date:   Mon, 25 Jan 2021 12:31:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        id S1732460AbhAZFXq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:23:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39866 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727102AbhAYJpv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Jan 2021 04:45:51 -0500
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CD1C06178C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 01:34:46 -0800 (PST)
+Received: by mail-pf1-x433.google.com with SMTP id m6so8085176pfk.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 01:34:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z8nrxtJb3XhTbQvd5j67XtkO/vay+xDoaZCK/pVC+LY=;
+        b=OffTwV4C2tkYhMHP6e+JkFb3UOud8nOV2gy5gMoKIW5bnZNdA+5n248fLiUoZ3y0N7
+         LvcraooP074rVny2vjWLcEzJUsyOgrGRAxb3225v3IAGn/yUOM08NmGUYwN3mE3kaoB0
+         u4YaR8QdfYX9ZiiNyuEUTNrdV/JhUilTlAVCMs99kfebStJUoBYBv5gqCKS8HRhVLxRx
+         2jVdPLkW8gspVaGYIaZqtha4Tvrx9gdQRI/9QIZvFxN5+R/GRrw2Jb17Qli5+89HuJaR
+         oXVh/O53vepMV9itsBDojL2HUASfwpKoMbAtL3qeww3Zfoooe4VH4a8gbNMEaAQXTK/o
+         rPxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z8nrxtJb3XhTbQvd5j67XtkO/vay+xDoaZCK/pVC+LY=;
+        b=IY+2yjsC6wEd/icL55uznPbdfhQe90wz1tx0duH2HC3EUhnduQU4yARL/GYqreHLJZ
+         twP6qU59mvi/IrUqYrRDJRioGuoLJI2ODN6gOdPjRxK0REJiHLANufjhLPhtWUOfqiJw
+         GK/qPdAjP26cQHBr6Dn7fqwEyRjzpJT+931s5fnUy7KnJLUgiqsS/3Ajs1eilRj8lq8l
+         QnhdEit1JVSCLCFXgm6oQl74Wj2hGgvSCfo+EOwI3R1zsQA00mIf/yAGywhFQbwzeQJ/
+         U5wCYjWVYptavsXIm9p1fqJ0vFTJVc5adv+gdLhUSv07zJjA3rhXi1XRMoreyRXBi7uM
+         rzEg==
+X-Gm-Message-State: AOAM533GoBGJEXz2wjYwfOGM8WXJJNB4qxs2LxWLfw43lqrZkRoDnRmE
+        7ycVqxc7CIOfwDaQnPaYrzQVanDmK+SRFi2aYsKCmA==
+X-Google-Smtp-Source: ABdhPJxVx55V16cI4xy7oBEQg8xxEV5bUx60rUKse8vz37JdPHqIzHsWLuoVk+Wl8tff+ZV+FKqr9jBd+q5Qmp1fQDY=
+X-Received: by 2002:a62:7694:0:b029:1b9:8d43:95af with SMTP id
+ r142-20020a6276940000b02901b98d4395afmr17392890pfc.2.1611567285933; Mon, 25
+ Jan 2021 01:34:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210121230621.654304-8-shy828301@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-6-songmuchun@bytedance.com> <6a68fde-583d-b8bb-a2c8-fbe32e03b@google.com>
+ <CAMZfGtXpg30RhrPm836S6Tr09ynKRPG=_DXtXt9sVTTponnC-g@mail.gmail.com>
+ <CAMZfGtX19x8m+Bkvj+8Ue31m5L_4DmgtZevp2fd++JL7nuSzWw@mail.gmail.com> <552e8214-bc6f-8d90-0ed8-b3aff75d0e47@redhat.com>
+In-Reply-To: <552e8214-bc6f-8d90-0ed8-b3aff75d0e47@redhat.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 25 Jan 2021 17:34:09 +0800
+Message-ID: <CAMZfGtWK=zBri_zAx=uP_dLv2Kh-2_vfjAyN7XtESwqukg5Eug@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v13 05/12] mm: hugetlb: allocate the
+ vmemmap pages associated with each HugeTLB page
+To:     David Hildenbrand <david@redhat.com>
+Cc:     David Rientjes <rientjes@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22.01.2021 02:06, Yang Shi wrote:
-> Currently the number of deferred objects are per shrinker, but some slabs, for example,
-> vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
-> 
-> The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
-> excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
-> may suffer from over shrink, excessive reclaim latency, etc.
-> 
-> For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
-> heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
-> might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
-> 
-> We observed this hit in our production environment which was running vfs heavy workload
-> shown as the below tracing log:
-> 
-> <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
-> cache items 246404277 delta 31345 total_scan 123202138
-> <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
-> last shrinker return val 123186855
-> 
-> The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
-> This also resulted in significant amount of page caches were dropped due to inodes eviction.
-> 
-> Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
-> better isolation.
-> 
-> When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
-> would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
-> 
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> ---
->  include/linux/memcontrol.h |  7 +++---
->  mm/vmscan.c                | 49 +++++++++++++++++++++++++-------------
->  2 files changed, 36 insertions(+), 20 deletions(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 62b888b88a5f..e0384367e07d 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -93,12 +93,13 @@ struct lruvec_stat {
->  };
->  
->  /*
-> - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
-> - * which have elements charged to this memcg.
-> + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
-> + * shrinkers, which have elements charged to this memcg.
->   */
->  struct shrinker_info {
->  	struct rcu_head rcu;
-> -	unsigned long map[];
-> +	unsigned long *map;
-> +	atomic_long_t *nr_deferred;
->  };
->  
->  /*
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 018e1beb24c9..722aa71b13b2 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -192,11 +192,13 @@ static void free_shrinker_info_rcu(struct rcu_head *head)
->  	kvfree(container_of(head, struct shrinker_info, rcu));
->  }
->  
-> -static int expand_one_shrinker_info(struct mem_cgroup *memcg,
-> -				   int size, int old_size)
-> +static int expand_one_shrinker_info(struct mem_cgroup *memcg, int nr_max,
-> +				    int m_size, int d_size,
-> +				    int old_m_size, int old_d_size)
->  {
->  	struct shrinker_info *new, *old;
->  	int nid;
-> +	int size = m_size + d_size;
->  
->  	for_each_node(nid) {
->  		old = rcu_dereference_protected(
-> @@ -209,9 +211,16 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
->  		if (!new)
->  			return -ENOMEM;
->  
-> -		/* Set all old bits, clear all new bits */
-> -		memset(new->map, (int)0xff, old_size);
-> -		memset((void *)new->map + old_size, 0, size - old_size);
-> +		new->map = (unsigned long *)(new + 1);
-> +		new->nr_deferred = (atomic_long_t *)(new->map +
-> +					nr_max / BITS_PER_LONG + 1);
+On Mon, Jan 25, 2021 at 5:15 PM David Hildenbrand <david@redhat.com> wrote:
+>
+> On 25.01.21 08:41, Muchun Song wrote:
+> > On Mon, Jan 25, 2021 at 2:40 PM Muchun Song <songmuchun@bytedance.com> wrote:
+> >>
+> >> On Mon, Jan 25, 2021 at 8:05 AM David Rientjes <rientjes@google.com> wrote:
+> >>>
+> >>>
+> >>> On Sun, 17 Jan 2021, Muchun Song wrote:
+> >>>
+> >>>> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> >>>> index ce4be1fa93c2..3b146d5949f3 100644
+> >>>> --- a/mm/sparse-vmemmap.c
+> >>>> +++ b/mm/sparse-vmemmap.c
+> >>>> @@ -29,6 +29,7 @@
+> >>>>  #include <linux/sched.h>
+> >>>>  #include <linux/pgtable.h>
+> >>>>  #include <linux/bootmem_info.h>
+> >>>> +#include <linux/delay.h>
+> >>>>
+> >>>>  #include <asm/dma.h>
+> >>>>  #include <asm/pgalloc.h>
+> >>>> @@ -40,7 +41,8 @@
+> >>>>   * @remap_pte:               called for each non-empty PTE (lowest-level) entry.
+> >>>>   * @reuse_page:              the page which is reused for the tail vmemmap pages.
+> >>>>   * @reuse_addr:              the virtual address of the @reuse_page page.
+> >>>> - * @vmemmap_pages:   the list head of the vmemmap pages that can be freed.
+> >>>> + * @vmemmap_pages:   the list head of the vmemmap pages that can be freed
+> >>>> + *                   or is mapped from.
+> >>>>   */
+> >>>>  struct vmemmap_remap_walk {
+> >>>>       void (*remap_pte)(pte_t *pte, unsigned long addr,
+> >>>> @@ -50,6 +52,10 @@ struct vmemmap_remap_walk {
+> >>>>       struct list_head *vmemmap_pages;
+> >>>>  };
+> >>>>
+> >>>> +/* The gfp mask of allocating vmemmap page */
+> >>>> +#define GFP_VMEMMAP_PAGE             \
+> >>>> +     (GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_NOWARN | __GFP_THISNODE)
+> >>>> +
+> >>>
+> >>> This is unnecessary, just use the gfp mask directly in allocator.
+> >>
+> >> Will do. Thanks.
+> >>
+> >>>
+> >>>>  static void vmemmap_pte_range(pmd_t *pmd, unsigned long addr,
+> >>>>                             unsigned long end,
+> >>>>                             struct vmemmap_remap_walk *walk)
+> >>>> @@ -228,6 +234,75 @@ void vmemmap_remap_free(unsigned long start, unsigned long end,
+> >>>>       free_vmemmap_page_list(&vmemmap_pages);
+> >>>>  }
+> >>>>
+> >>>> +static void vmemmap_restore_pte(pte_t *pte, unsigned long addr,
+> >>>> +                             struct vmemmap_remap_walk *walk)
+> >>>> +{
+> >>>> +     pgprot_t pgprot = PAGE_KERNEL;
+> >>>> +     struct page *page;
+> >>>> +     void *to;
+> >>>> +
+> >>>> +     BUG_ON(pte_page(*pte) != walk->reuse_page);
+> >>>> +
+> >>>> +     page = list_first_entry(walk->vmemmap_pages, struct page, lru);
+> >>>> +     list_del(&page->lru);
+> >>>> +     to = page_to_virt(page);
+> >>>> +     copy_page(to, (void *)walk->reuse_addr);
+> >>>> +
+> >>>> +     set_pte_at(&init_mm, addr, pte, mk_pte(page, pgprot));
+> >>>> +}
+> >>>> +
+> >>>> +static void alloc_vmemmap_page_list(struct list_head *list,
+> >>>> +                                 unsigned long start, unsigned long end)
+> >>>> +{
+> >>>> +     unsigned long addr;
+> >>>> +
+> >>>> +     for (addr = start; addr < end; addr += PAGE_SIZE) {
+> >>>> +             struct page *page;
+> >>>> +             int nid = page_to_nid((const void *)addr);
+> >>>> +
+> >>>> +retry:
+> >>>> +             page = alloc_pages_node(nid, GFP_VMEMMAP_PAGE, 0);
+> >>>> +             if (unlikely(!page)) {
+> >>>> +                     msleep(100);
+> >>>> +                     /*
+> >>>> +                      * We should retry infinitely, because we cannot
+> >>>> +                      * handle allocation failures. Once we allocate
+> >>>> +                      * vmemmap pages successfully, then we can free
+> >>>> +                      * a HugeTLB page.
+> >>>> +                      */
+> >>>> +                     goto retry;
+> >>>
+> >>> Ugh, I don't think this will work, there's no guarantee that we'll ever
+> >>> succeed and now we can't free a 2MB hugepage because we cannot allocate a
+> >>> 4KB page.  We absolutely have to ensure we make forward progress here.
+> >>
+> >> This can trigger a OOM when there is no memory and kill someone to release
+> >> some memory. Right?
+> >>
+> >>>
+> >>> We're going to be freeing the hugetlb page after this succeeeds, can we
+> >>> not use part of the hugetlb page that we're freeing for this memory
+> >>> instead?
+> >>
+> >> It seems a good idea. We can try to allocate memory firstly, if successful,
+> >> just use the new page to remap (it can reduce memory fragmentation).
+> >> If not, we can use part of the hugetlb page to remap. What's your opinion
+> >> about this?
+> >
+> > If the HugeTLB page is a gigantic page which is allocated from
+> > CMA. In this case, we cannot use part of the hugetlb page to remap.
+> > Right?
+>
+> Right; and I don't think the "reuse part of a huge page as vmemmap while
+> freeing, while that part itself might not have a proper vmemmap yet (or
+> might cover itself now)" is particularly straight forward. Maybe I'm
+> wrong :)
+>
+> Also, watch out for huge pages on ZONE_MOVABLE, in that case you also
+> shouldn't allocate the vmemmap from there ...
 
-Why not
+Yeah, you are right. So I tend to trigger OOM to kill other processes to
+reclaim some memory when we allocate memory fails.
 
-		new->nr_deferred = (void *)new->map + m_size;
-?
-
-> +
-> +		/* map: set all old bits, clear all new bits */
-> +		memset(new->map, (int)0xff, old_m_size);
-> +		memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
-> +		/* nr_deferred: copy old values, clear all new values */
-> +		memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
-> +		memset((void *)new->nr_deferred + old_d_size, 0, d_size - old_d_size);
->  
->  		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
->  		call_rcu(&old->rcu, free_shrinker_info_rcu);
-> @@ -226,9 +235,6 @@ void free_shrinker_info(struct mem_cgroup *memcg)
->  	struct shrinker_info *info;
->  	int nid;
->  
-> -	if (mem_cgroup_is_root(memcg))
-> -		return;
-> -
->  	for_each_node(nid) {
->  		pn = mem_cgroup_nodeinfo(memcg, nid);
->  		info = rcu_dereference_protected(pn->shrinker_info, true);
-> @@ -242,12 +248,13 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->  {
->  	struct shrinker_info *info;
->  	int nid, size, ret = 0;
-> -
-> -	if (mem_cgroup_is_root(memcg))
-> -		return 0;
-> +	int m_size, d_size = 0;
->  
->  	down_write(&shrinker_rwsem);
-> -	size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
-> +	m_size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
-> +	d_size = shrinker_nr_max * sizeof(atomic_long_t);
-> +	size = m_size + d_size;
-> +
->  	for_each_node(nid) {
->  		info = kvzalloc_node(sizeof(*info) + size, GFP_KERNEL, nid);
->  		if (!info) {
-> @@ -255,6 +262,9 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->  			ret = -ENOMEM;
->  			break;
->  		}
-> +		info->map = (unsigned long *)(info + 1);
-> +		info->nr_deferred = (atomic_long_t *)(info->map +
-> +					shrinker_nr_max / BITS_PER_LONG + 1);
-
-Why not:
-		info->nr_deferred = (void*)info->map + m_size;
-?
-
->  		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->  	}
->  	up_write(&shrinker_rwsem);
-> @@ -266,10 +276,16 @@ static int expand_shrinker_info(int new_id)
->  {
->  	int size, old_size, ret = 0;
->  	int new_nr_max = new_id + 1;
-> +	int m_size, d_size = 0;
-> +	int old_m_size, old_d_size = 0;
->  	struct mem_cgroup *memcg;
->  
-> -	size = (new_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
-> -	old_size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
-> +	m_size = (new_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
-> +	d_size = new_nr_max * sizeof(atomic_long_t);
-> +	size = m_size + d_size;
-> +	old_m_size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
-
-Could you please pack this twice repeating pattern into some macro? E.g.,
-
-#define NR_MAX_TO_SHR_MAP_SIZE(nr_max)	\
-	((nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long))
-
-> +	old_d_size = shrinker_nr_max * sizeof(atomic_long_t);
-> +	old_size = old_m_size + old_d_size;
->  	if (size <= old_size)
->  		return 0;
->  
-> @@ -278,9 +294,8 @@ static int expand_shrinker_info(int new_id)
->  
->  	memcg = mem_cgroup_iter(NULL, NULL, NULL);
->  	do {
-> -		if (mem_cgroup_is_root(memcg))
-> -			continue;
-> -		ret = expand_one_shrinker_info(memcg, size, old_size);
-> +		ret = expand_one_shrinker_info(memcg, new_nr_max, m_size, d_size,
-> +					       old_m_size, old_d_size);
->  		if (ret) {
->  			mem_cgroup_iter_break(NULL, memcg);
->  			goto out;
-> 
-
+>
+> --
+> Thanks,
+>
+> David / dhildenb
+>
