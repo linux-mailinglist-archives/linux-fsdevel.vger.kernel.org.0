@@ -2,94 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7981F30499C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:11:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69EAD30499E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:11:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732022AbhAZFZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:25:59 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52059 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728867AbhAYRHd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 12:07:33 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l45K7-0006lj-0h; Mon, 25 Jan 2021 17:06:43 +0000
-Date:   Mon, 25 Jan 2021 18:06:40 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 23/40] exec: handle idmapped mounts
-Message-ID: <20210125170640.6ycsyod2ftxnzjzy@wittgenstein>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
- <20210121131959.646623-24-christian.brauner@ubuntu.com>
- <875z3l0y56.fsf@x220.int.ebiederm.org>
- <20210125164404.aullgl3vlajgkef3@wittgenstein>
- <20210125170316.GA8345@mail.hallyn.com>
+        id S1732403AbhAZF0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:26:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727610AbhAYSms (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Jan 2021 13:42:48 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 07A5A230FF;
+        Mon, 25 Jan 2021 18:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611600113;
+        bh=BcQjpfINfveQmERew10h4a0n6dN8EsCa5I5lsAkb6Uo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qisl3plDrCd6OrPM4RX01TZ3EzRVZhIIPqBvHsMU53MkaYfxvUrLMMHNJjTnFHqBT
+         tjxUPpYruIOFMXnbKbEymBeQIUOepUclZLvugJfkFZvVa/A3ngMw7W5V4eBOAF/RDV
+         siJKR4b4zuOFcB+BSX7G4VbVlna5M+qfEwOoSkYEb3V7I7AjHuVC8Yz5iVshQ6H850
+         XQXewvlYPcHUIYFplER/X1iD3GkzAK89IibAPUjuUDLP4H9IbLKlbA13f/OGkTJNkq
+         qBqFGHMZozKrQY/hicThNo7ZOqu7H651159DR5T626+ks2I4/+SyZFE8CXknWOHxGo
+         S0AP3otBlibjw==
+Date:   Mon, 25 Jan 2021 10:41:45 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Victor Hsieh <victorhsieh@google.com>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-api@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 0/6] fs-verity: add an ioctl to read verity metadata
+Message-ID: <YA8Q6XLrLaaeMQeJ@sol.localdomain>
+References: <20210115181819.34732-1-ebiggers@kernel.org>
+ <CAFCauYN12bWRn2N+uP455KuRmz7CQkCBXnz0B2sr5kCQtpJo4A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210125170316.GA8345@mail.hallyn.com>
+In-Reply-To: <CAFCauYN12bWRn2N+uP455KuRmz7CQkCBXnz0B2sr5kCQtpJo4A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 11:03:16AM -0600, Serge Hallyn wrote:
-> On Mon, Jan 25, 2021 at 05:44:04PM +0100, Christian Brauner wrote:
-> > On Mon, Jan 25, 2021 at 10:39:01AM -0600, Eric W. Biederman wrote:
-> > > Christian Brauner <christian.brauner@ubuntu.com> writes:
-> > > 
-> > > > When executing a setuid binary the kernel will verify in bprm_fill_uid()
-> > > > that the inode has a mapping in the caller's user namespace before
-> > > > setting the callers uid and gid. Let bprm_fill_uid() handle idmapped
-> > > > mounts. If the inode is accessed through an idmapped mount it is mapped
-> > > > according to the mount's user namespace. Afterwards the checks are
-> > > > identical to non-idmapped mounts. If the initial user namespace is
-> > > > passed nothing changes so non-idmapped mounts will see identical
-> > > > behavior as before.
-> > > 
-> > > This does not handle the v3 capabilites xattr with embeds a uid.
-> > > So at least at that level you are missing some critical conversions.
-> > 
-> > Thanks for looking. Vfs v3 caps are handled earlier in the series. I'm
-> > not sure what you're referring to here. There are tests in xfstests that
-> > verify vfs3 capability behavior.
+On Fri, Jan 22, 2021 at 03:26:48PM -0800, Victor Hsieh wrote:
+> LGTM. Thanks!
 > 
-> *just* to make sure i'm not misunderstanding - s/vfs3/v3/ right?
+> Reviewed-by: Victor Hsieh <victorhsieh@google.com>
+> 
+> On Fri, Jan 15, 2021 at 10:19 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > [This patchset applies to v5.11-rc3]
+> >
+> > Add an ioctl FS_IOC_READ_VERITY_METADATA which allows reading verity
+> > metadata from a file that has fs-verity enabled, including:
 
-Yes, in my mind it's always as "vfs v3 caps -> vfs3 caps". Sorry for the
-confusion.
+Thanks Victor.  Does anyone else have comments on this patchset?
+
+- Eric
