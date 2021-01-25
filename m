@@ -2,148 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2293D3049CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:16:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32C9C3049CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:16:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732422AbhAZFXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:23:21 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:27194 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbhAYJPX (ORCPT
+        id S1726738AbhAZFX1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:23:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:26440 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726226AbhAYJRc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 04:15:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611566123; x=1643102123;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=wPaNZM1vZ3d+d47pOpYeOndobOK6jBxEFz+/lfRvwFU=;
-  b=Y5aFyoUqlPcQ4Db9Y1cqxOU6QVNLkf5o3dPIFmAqWBSMaMh9av+tdxdO
-   F5XwXdpbF0+XQoBCzspShWB57+VlPlGML9Qe0UmejR1fI28LEBd6L9Hsx
-   TDZOT5AcC2E6yDbt4h2yesa829gAZjwOeC1+o7uC8bBEKjDyd9WyzPot1
-   INk68plRqdTVTyruI1BBxt3J4zmGxgZR/mx/tuUIHUpgUPSM+LW0i3y2C
-   +THH2W66IbLAvsZupU/f3Vr8Ml+2j14WnJk8cSX3Qfqdc6djwnUw/FOJ5
-   HoTlhXx8PUIIR/VfddiBRuq1MIEtq0yP+ortmKguTsA02Sd5UpKE72LhK
-   Q==;
-IronPort-SDR: ybn72KGwRgPmM3D4At6aKELwBv/6D2K41S2FIZvviTQGnvV8hb0WLolOkUBTEKJJ/W7Haow+0Y
- CKnasmSowkw7OVxVKsG3iHz6QdTupmi+zQgtk46ysWWiAr9Ie02yLv3HfntMQjIqYD1ynSMjbT
- eoiMmWDQq4Bio9m00WarXZvISZXM+zY6Q3AF8jUzi5va2Z1s0H0IxERPf8B2FP7VKxvgjSjjLJ
- f9X6TcOx1Ib9NF9e4PVapSSfu3dJDutZkuhYKtWRt5HGVOq2J5LOdFMkfBYaVBHmcCklK9wfiu
- JNs=
-X-IronPort-AV: E=Sophos;i="5.79,373,1602518400"; 
-   d="scan'208";a="158239963"
-Received: from mail-bl2nam02lp2051.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.51])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Jan 2021 17:02:57 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j0+j7/hmXzUFpJfEvPyAe6Ug5Xn2xjdaJ725BzS9GyVTljkiMTu4lF7+sonPn2ciFrUZxS6HPpun6YdXtf7Sk0TbsUDSMBJ/ViAlzY3yk8UVr7V41/KwNAc6GR7avNc57PiwyBZ0Qe/jctJBHAE6lr8LByacLCQt4rOL6w8sF99srTe7yjKCNC7UetfdxUM0N9JuPh+Fx7a/Gn3dbI8f80b5pzsRrgiKTIbgJGXJK9HIKPHiD6vLtqYGBdV7fFtdFD9LGC5Hjw8aAD3UcV1bV9DXf2Ydv/xb08oh4edLLTOdYgawvYmpJHNbbyRSFYEjG51NUTwObZWI49v5JYHNlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G6W5ti7F0DEKeflpVd/qaWyOFiAf8XdEtshNR2ADxQU=;
- b=AfMW/MZaXq5HbU8Eb+HPjWTd6K9e9t6SPT8SMvoaXAI4kR9qyFE2mEJeKMW62j12drCMb9yllVu7Sx+OjX742xOwmg5NN6e+j3gldzhbSiirBjoBhfaUJ8PXKmGlzYIY5NyUsMNOPhROTK0jw2oSf+8fXSfbCjvGQSapCeXQ7cmDgOsEYQiejHx1wboPdqqzUGfpp+3CwoPTHO95T3D+YWuKYHsd6+dnlfNxplSY9ycMrrgar+IpN1d6AT1VDiIO9hUiRI3Y04/ZxUJFZgnz+F1xg8TU6LiR+3KQLZlmGJofGzR451RwzPFaCouEUaVAc4SNvfqWSQYd7JwJC7dY5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G6W5ti7F0DEKeflpVd/qaWyOFiAf8XdEtshNR2ADxQU=;
- b=gtB28MFMAOKYMpEV+8lgIKqPFFpvduX5CN5uaWRpRvNOh0BPeaQ8DDHMHrb4cJiXVkTWYp9eB/y8mxyu209JUD+SknGZ4Au6HLIA4CEOrmijt/9uenEKW3QRre+5V3hpm6J0s9IIL0wSt0PYxZdmjMmSxOOwfQnfyxzfUvL5/8U=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN6PR04MB5408.namprd04.prod.outlook.com
- (2603:10b6:805:104::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.11; Mon, 25 Jan
- 2021 09:02:55 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::c19b:805:20e0:6274]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::c19b:805:20e0:6274%6]) with mapi id 15.20.3784.017; Mon, 25 Jan 2021
- 09:02:55 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>
-CC:     "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v13 22/42] btrfs: split ordered extent when bio is sent
-Thread-Topic: [PATCH v13 22/42] btrfs: split ordered extent when bio is sent
-Thread-Index: AQHW8IfvPraG/TW9u0miP5VLw5sG9Q==
-Date:   Mon, 25 Jan 2021 09:02:55 +0000
-Message-ID: <SN4PR0401MB35987DF6B8CF50F0AD68C6C99BBD9@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <cover.1611295439.git.naohiro.aota@wdc.com>
- <25b86d9571b1af386f1711d0d0ae626ae6a86b35.1611295439.git.naohiro.aota@wdc.com>
- <e265540c-9613-9473-f7e6-0f55d455b18e@toxicpanda.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: toxicpanda.com; dkim=none (message not signed)
- header.d=none;toxicpanda.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 5304d52d-f700-4ed9-8ae1-08d8c1100113
-x-ms-traffictypediagnostic: SN6PR04MB5408:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR04MB54085E2870B00D98553469209BBD9@SN6PR04MB5408.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: K6hSC/i16ubVAawFvaHYV0Ug4+XwL3Qh6LRFuL2W1Z7zB1uDVvW3pj/dwmz+sXNbZC5+AuerktT9ew1RFBES62IPIDfRoBwxi6ossCr2HQimP0vYpIuH2udSV+DCb8NzB9kAYiIGqMzlSIr3NU35TBJT70c/LMIIY2H8X7J0wt23bQvyjYghlph+hBxR7ESeSjFsZdZoQSS/+4QagsCdcul9AKrZIdSsEXVN3F7Oh7cIFB1hxt2CqK7Eqnufgcx4vofxKUTSiM7jjKgkfiR6i0ZKeg7IMJ8Z4cP+AjRF3GqFNoxTk3G//4YZ41m6yfVD9yIGIrq9fh/7NO/YpqdqjBg8q4Wkhz6uyg6wA0r24kcd30Q0sNAEn/gV0XX4Cdf3Lo2rX3VuR9ZIol+5xRPBDQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(39860400002)(136003)(396003)(346002)(4744005)(66946007)(76116006)(8936002)(66476007)(7696005)(91956017)(6506007)(9686003)(71200400001)(110136005)(4326008)(52536014)(33656002)(478600001)(66446008)(66556008)(86362001)(64756008)(8676002)(316002)(186003)(55016002)(26005)(83380400001)(2906002)(53546011)(5660300002)(54906003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?hUP+oozKOiLhJgjNyLgflR3SBUi558ciSalkTuNIW32VQS8u4P2h/ibRHX8O?=
- =?us-ascii?Q?OYmrPoMJgr4d5z9nNxzRxd8cd429SNoPk8G2+WVPodjOxDdirb8grK43iI8L?=
- =?us-ascii?Q?0e4tXORMrfcCd84ApgykK5NpOc+rIuyHBC9xCE2KJOtsPusgLLuhZRCRhVJq?=
- =?us-ascii?Q?P41FjJZYH3ehhtnczlDbmo7FSGx40GBCgWHjgcjKk84JTWpON7viSdb1gZqa?=
- =?us-ascii?Q?IeTJ7kksO2+8zUXyax44vo5AT4kcttBEOQT3o7fPHeVa0xAiXrBjteg+LGvG?=
- =?us-ascii?Q?hlrsfjXrMIgWZtd8vZrLSyqz7slRvvfCn16/GQXEY3nK3voyE8Lniw8kjajD?=
- =?us-ascii?Q?J9oLUKQ/dAe3kXSXxWUMeuVaS6WcFw/51ON0v8pvh70AFVTH1BcLq1vxKGRD?=
- =?us-ascii?Q?GPad7Xi+lmB4M4PDCjiRG5LpsCtsi+VaAQsBneT10wksRvphlx+q/lb8h1JJ?=
- =?us-ascii?Q?yurawQZMTAAw+ZxZHKF0tZehn91DqgA2BhN/ynUGdJIxoLmsG7awYjC2vR/8?=
- =?us-ascii?Q?Iie0evz/j+VMAdTyF+OeuBMZ4WXZfdemVqVpg/Aw3YyzFVenXMyKwK2m7Ja3?=
- =?us-ascii?Q?drGkCCiajetC74ImcrOAypg3Fe56y16CaMZGPatEFCXjnTrS4xEXCFVaLHd6?=
- =?us-ascii?Q?E4UbzQ1BEkHw4286/PNMw2tAgTdhME9caXPxoIPTU2qw1zgFD9WCCi6wGJZR?=
- =?us-ascii?Q?JuTu1ZTgrwTrJRn+fewGwXhOTP/8rY1pn456gbSPyR3ijES/zje8rLEXCNLD?=
- =?us-ascii?Q?r97iMchExdJtBooAeLFLrLqZRpz/SOBJyYZ+o6zAuo6z2rM7CIDrHXQxMNZC?=
- =?us-ascii?Q?0kjLfVnNcTjtGMkiIVrQd+OSq2csMylhg7LGXfuWk24Hu7KPjxslFkgihY7l?=
- =?us-ascii?Q?ijDuGaCi8DV8vVdR2M/Vn8VjfL19eUVTN72LagbD/T+JTZdbO7LFHrxdOnVC?=
- =?us-ascii?Q?9Pl+8aas/iIU0Z9+YcHJwqyjmGHVjo6T9tg3uGabR2uH3R7E+H3H6gu7IxFy?=
- =?us-ascii?Q?h6HB?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 25 Jan 2021 04:17:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611566152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OHyRB4r9LsoAmUVFq/tMDsAJkKe9tgKuKFCVx0tyrGk=;
+        b=KFDpfT9oXzepiiTqyJ8Ro4YjDVGY6Qcz5MNg/KN7luiIUC2OQ0f4oQVn4radYP7tOJDWoy
+        xr+F1voT8jWWnWGAvdF6ca9RmoGCQ5Z1WR9vCIiF2PL/3Qdsgt4NToq56+l0ia4hjXNrqj
+        9Gus1aQdUjdi1Ez+0dZX9DeVuSuCqM0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-586-I5ZD6akYP2mVebhc7q7IgQ-1; Mon, 25 Jan 2021 04:15:50 -0500
+X-MC-Unique: I5ZD6akYP2mVebhc7q7IgQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0CC04879500;
+        Mon, 25 Jan 2021 09:15:46 +0000 (UTC)
+Received: from [10.36.115.13] (ovpn-115-13.ams2.redhat.com [10.36.115.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE6A65D9D7;
+        Mon, 25 Jan 2021 09:15:37 +0000 (UTC)
+Subject: Re: [External] Re: [PATCH v13 05/12] mm: hugetlb: allocate the
+ vmemmap pages associated with each HugeTLB page
+To:     Muchun Song <songmuchun@bytedance.com>,
+        David Rientjes <rientjes@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-6-songmuchun@bytedance.com>
+ <6a68fde-583d-b8bb-a2c8-fbe32e03b@google.com>
+ <CAMZfGtXpg30RhrPm836S6Tr09ynKRPG=_DXtXt9sVTTponnC-g@mail.gmail.com>
+ <CAMZfGtX19x8m+Bkvj+8Ue31m5L_4DmgtZevp2fd++JL7nuSzWw@mail.gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <552e8214-bc6f-8d90-0ed8-b3aff75d0e47@redhat.com>
+Date:   Mon, 25 Jan 2021 10:15:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5304d52d-f700-4ed9-8ae1-08d8c1100113
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2021 09:02:55.3371
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 567EDgWT8pG0wjYJDz9fxPbXoXwHl7grySVNaPSxpyssCWhP0yUZUEHfq7XHISHlpei1b6bD6d+bcgleM2JbKMC5T/ufbGF9sV0kQgrxc2o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5408
+In-Reply-To: <CAMZfGtX19x8m+Bkvj+8Ue31m5L_4DmgtZevp2fd++JL7nuSzWw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22/01/2021 16:24, Josef Bacik wrote:=0A=
->> +	em_new =3D create_io_em(inode, em->start + pre, len,=0A=
->> +			      em->start + pre, em->block_start + pre, len,=0A=
->> +			      len, len, BTRFS_COMPRESS_NONE,=0A=
->> +			      BTRFS_ORDERED_REGULAR);=0A=
-> This bit confuses me, the io_em is just so we have a mapping to an area t=
-hat's =0A=
-> being written to, and this is created at ordered extent time.  I get why =
-we need =0A=
-> to split up the ordered extent, but the existing io_em should be fine, ri=
-ght? =0A=
-=0A=
-unpin_extent_cache() needs em->start !=3D start or it'll WARN there, I'll a=
-dd a comment.=0A=
+On 25.01.21 08:41, Muchun Song wrote:
+> On Mon, Jan 25, 2021 at 2:40 PM Muchun Song <songmuchun@bytedance.com> wrote:
+>>
+>> On Mon, Jan 25, 2021 at 8:05 AM David Rientjes <rientjes@google.com> wrote:
+>>>
+>>>
+>>> On Sun, 17 Jan 2021, Muchun Song wrote:
+>>>
+>>>> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+>>>> index ce4be1fa93c2..3b146d5949f3 100644
+>>>> --- a/mm/sparse-vmemmap.c
+>>>> +++ b/mm/sparse-vmemmap.c
+>>>> @@ -29,6 +29,7 @@
+>>>>  #include <linux/sched.h>
+>>>>  #include <linux/pgtable.h>
+>>>>  #include <linux/bootmem_info.h>
+>>>> +#include <linux/delay.h>
+>>>>
+>>>>  #include <asm/dma.h>
+>>>>  #include <asm/pgalloc.h>
+>>>> @@ -40,7 +41,8 @@
+>>>>   * @remap_pte:               called for each non-empty PTE (lowest-level) entry.
+>>>>   * @reuse_page:              the page which is reused for the tail vmemmap pages.
+>>>>   * @reuse_addr:              the virtual address of the @reuse_page page.
+>>>> - * @vmemmap_pages:   the list head of the vmemmap pages that can be freed.
+>>>> + * @vmemmap_pages:   the list head of the vmemmap pages that can be freed
+>>>> + *                   or is mapped from.
+>>>>   */
+>>>>  struct vmemmap_remap_walk {
+>>>>       void (*remap_pte)(pte_t *pte, unsigned long addr,
+>>>> @@ -50,6 +52,10 @@ struct vmemmap_remap_walk {
+>>>>       struct list_head *vmemmap_pages;
+>>>>  };
+>>>>
+>>>> +/* The gfp mask of allocating vmemmap page */
+>>>> +#define GFP_VMEMMAP_PAGE             \
+>>>> +     (GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_NOWARN | __GFP_THISNODE)
+>>>> +
+>>>
+>>> This is unnecessary, just use the gfp mask directly in allocator.
+>>
+>> Will do. Thanks.
+>>
+>>>
+>>>>  static void vmemmap_pte_range(pmd_t *pmd, unsigned long addr,
+>>>>                             unsigned long end,
+>>>>                             struct vmemmap_remap_walk *walk)
+>>>> @@ -228,6 +234,75 @@ void vmemmap_remap_free(unsigned long start, unsigned long end,
+>>>>       free_vmemmap_page_list(&vmemmap_pages);
+>>>>  }
+>>>>
+>>>> +static void vmemmap_restore_pte(pte_t *pte, unsigned long addr,
+>>>> +                             struct vmemmap_remap_walk *walk)
+>>>> +{
+>>>> +     pgprot_t pgprot = PAGE_KERNEL;
+>>>> +     struct page *page;
+>>>> +     void *to;
+>>>> +
+>>>> +     BUG_ON(pte_page(*pte) != walk->reuse_page);
+>>>> +
+>>>> +     page = list_first_entry(walk->vmemmap_pages, struct page, lru);
+>>>> +     list_del(&page->lru);
+>>>> +     to = page_to_virt(page);
+>>>> +     copy_page(to, (void *)walk->reuse_addr);
+>>>> +
+>>>> +     set_pte_at(&init_mm, addr, pte, mk_pte(page, pgprot));
+>>>> +}
+>>>> +
+>>>> +static void alloc_vmemmap_page_list(struct list_head *list,
+>>>> +                                 unsigned long start, unsigned long end)
+>>>> +{
+>>>> +     unsigned long addr;
+>>>> +
+>>>> +     for (addr = start; addr < end; addr += PAGE_SIZE) {
+>>>> +             struct page *page;
+>>>> +             int nid = page_to_nid((const void *)addr);
+>>>> +
+>>>> +retry:
+>>>> +             page = alloc_pages_node(nid, GFP_VMEMMAP_PAGE, 0);
+>>>> +             if (unlikely(!page)) {
+>>>> +                     msleep(100);
+>>>> +                     /*
+>>>> +                      * We should retry infinitely, because we cannot
+>>>> +                      * handle allocation failures. Once we allocate
+>>>> +                      * vmemmap pages successfully, then we can free
+>>>> +                      * a HugeTLB page.
+>>>> +                      */
+>>>> +                     goto retry;
+>>>
+>>> Ugh, I don't think this will work, there's no guarantee that we'll ever
+>>> succeed and now we can't free a 2MB hugepage because we cannot allocate a
+>>> 4KB page.  We absolutely have to ensure we make forward progress here.
+>>
+>> This can trigger a OOM when there is no memory and kill someone to release
+>> some memory. Right?
+>>
+>>>
+>>> We're going to be freeing the hugetlb page after this succeeeds, can we
+>>> not use part of the hugetlb page that we're freeing for this memory
+>>> instead?
+>>
+>> It seems a good idea. We can try to allocate memory firstly, if successful,
+>> just use the new page to remap (it can reduce memory fragmentation).
+>> If not, we can use part of the hugetlb page to remap. What's your opinion
+>> about this?
+> 
+> If the HugeTLB page is a gigantic page which is allocated from
+> CMA. In this case, we cannot use part of the hugetlb page to remap.
+> Right?
+
+Right; and I don't think the "reuse part of a huge page as vmemmap while
+freeing, while that part itself might not have a proper vmemmap yet (or
+might cover itself now)" is particularly straight forward. Maybe I'm
+wrong :)
+
+Also, watch out for huge pages on ZONE_MOVABLE, in that case you also
+shouldn't allocate the vmemmap from there ...
+
+-- 
+Thanks,
+
+David / dhildenb
+
