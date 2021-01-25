@@ -2,143 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 643AE30329B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 04:17:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C31E30327E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 04:12:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbhAYJWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 04:22:54 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:13642 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbhAYJU0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 04:20:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611566425; x=1643102425;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=uRJcKx81fJuavLhsSBHghPySJYEvX4LQ0TuErL4NTzg=;
-  b=j1kv9h2FsBZPzelQ8Fxd1W/rKRJTxc83WxnnOGywSDrWNs/z55Y2P6MW
-   41EBgVRtzqZU2PB5nH14VH00YDLDsh2OR2wIGDfMV7Yzza0eq2fOvp9ue
-   g+sipQbzaVKrUmT46JwnZkuD9dLoUkYosVyNWL2DUWzsBEukcHXdkcAlV
-   BdD+m95kS4sfi6n5Jkta9y7WrWUfanPEPUX0epHHTGnq01gLGgTLNHFQC
-   9aNnnlsDh0sTFHSosl7IZ6RIQXTNkngKL3hPkiPwu9xdos/G5b9pJwLIa
-   fySnIOsO4lTgKKF+1x0Ri+xSyfCa2fFZxNfTsfDb5KPsf0T0OMjKv+zAs
-   A==;
-IronPort-SDR: zhn/mhSkpL7qGuxXhJ0xtJ/7i0RFoPqjKlWHjuDvOhkne/PATRNvBTohdDh9HZKHcvbSJWFH1B
- 511DuWAizbYNJj7b3r9gF8xcFB/2si7S5dnofIYATUc6Bs74EZpiuKwQC7H6wX+Z1ZygZgMWKR
- i81AaZSZVCTckeE4vcj+AGw0YV6BD/A1SQgJ6pKe4iFpkOPspCsToWcPm+NL+JiyXtR9AzJe6Q
- EgkLfWeMqA8x1AqTbXIYwfA5MB8UgxBHKpQtLGvVpACfcaKKnB9zFzDWztKz0dcW/c3BgvHthP
- F88=
-X-IronPort-AV: E=Sophos;i="5.79,373,1602518400"; 
-   d="scan'208";a="268597579"
-Received: from mail-co1nam11lp2176.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.176])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Jan 2021 16:56:30 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EkNrUvmHLpj25Nxiix1MMviSb9jIMUd2aNMywLwfPwR5N53DUFUOpTSCZ/1q2HNNBUFDegQLjD1IgiH8UIf5IwlXmR3N/OjYswNIEaYwH7ua7G44KXrAzW3IM8d/hynGh6KY2MhtkChlL+pTXvzoXvf8X9idBe1GjKzpH6Gwa6qZx6C2rFFDdW8RWgGMoVw46bnjwQuP4cDSXTIOXK10UwR52d+51nZ0p/uLFG9kcLyBxGfDaoW+/tNl/JjalM1/XiSAZdp/7sgA3tVWUXzn0QbaX0+a+TLmExGBFl3Ti/wdBMDGqDe/qokvE8epFMtoHq9T1MUkO2BH7qJIpiGhhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=neMrZQ7UBSOSCTdytXEuUu6lfwZ+qXQU3ja01lwBj30=;
- b=EhUibeE4L39NAGgZ0xC5zjXf3LK4qe07kpCgVvMb+w1MXq2PU7ppU/NQAis8Vx6LyY2sKhya/7H9DRkEEDNIUe93nCEddRuy2GB98MhBy4Vj7nMMwDkxpeliXaoy5ipWAP4WH19cSz3HY7fBo5VtJw1C69qvcwfwBjGQoz5zzjs3Q4D9zng7r+8CGNFsTt2EZGxPc5IQOnxesVoJW6L/pT2W9CogFT9PaF4wDFIWNeIOEgINm5A9Tf69f6EVI8hMMsWePmUoMa5MWXPwF73LK2bPsk3kzm/sY+mCPlaG5jSyNcSEPsDtjF3hc1PlLg4nd848WhQ4MmshHDCNLfShnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=neMrZQ7UBSOSCTdytXEuUu6lfwZ+qXQU3ja01lwBj30=;
- b=GcPtPRqNyY7h65/Il5bcvHFokJdmoqVaquXUYRpOdbOcTODmlCiJPmItt6blpRZvb0vkdoU/GgfQQnloplnNVw/FQJcE6ApPiQkVglTTn6jnKLC70uriCV+h0QbrTw05ElQtDidsF3eAeRT3dsvwKe3JtGR/HtXNUAAp1JronEQ=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.17; Mon, 25 Jan
- 2021 08:56:30 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::c19b:805:20e0:6274]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::c19b:805:20e0:6274%6]) with mapi id 15.20.3784.017; Mon, 25 Jan 2021
- 08:56:29 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>
-CC:     "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v13 22/42] btrfs: split ordered extent when bio is sent
-Thread-Topic: [PATCH v13 22/42] btrfs: split ordered extent when bio is sent
-Thread-Index: AQHW8IfvPraG/TW9u0miP5VLw5sG9Q==
-Date:   Mon, 25 Jan 2021 08:56:29 +0000
-Message-ID: <SN4PR0401MB35989156A42BA764116B57B29BBD9@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <cover.1611295439.git.naohiro.aota@wdc.com>
- <25b86d9571b1af386f1711d0d0ae626ae6a86b35.1611295439.git.naohiro.aota@wdc.com>
- <e265540c-9613-9473-f7e6-0f55d455b18e@toxicpanda.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: toxicpanda.com; dkim=none (message not signed)
- header.d=none;toxicpanda.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 2f1a20c4-1d86-4a90-5857-08d8c10f1b4e
-x-ms-traffictypediagnostic: SN4PR0401MB3598:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN4PR0401MB35987308F2EE65A6298D7F3E9BBD9@SN4PR0401MB3598.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:2887;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: AW3XVbdVwUaltiF/EBegrYYou30H7ZklcrDW+vOr75hkLIqLg67pk20mY0ujkWDdxbbIeRK0fELlJc8lD2TlAMVXY9m3KjpvGTXlsP0VXDcu5fnzks/E/J35hw6lLBXrHDILR3QjdVM0sNncZ37zpyd6KG4Wi3fsTg7hYD2yoNwVRrNZ5FaV2OW+DAZWakjh9dl+X1DDPGH6/ndfB1fkCbcMs7TxNJeiJDdUtodfQVXt8Ap70bKlGYFvXBK1iSif2B+D+acdDaiQIF+33sk2r3i+DbV+vN32ASWYr21gndqqGQ9nXDSN5w7E6DPhI68lGranAzV3ghlPhmtqTs7Fw+18dc4k9qg8hL4RSMME4p2uDiciBlQB/6K7L3owIeTh+ZD6EH+HTvA/QMNfV3b/8Q==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(39860400002)(366004)(346002)(136003)(396003)(9686003)(478600001)(83380400001)(91956017)(5660300002)(55016002)(110136005)(33656002)(66946007)(186003)(2906002)(66476007)(8676002)(26005)(53546011)(64756008)(66446008)(66556008)(6506007)(7696005)(4326008)(8936002)(86362001)(76116006)(52536014)(71200400001)(558084003)(316002)(54906003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?SernjOzFRIJHdDNsrpUg9FdpM3zxyq2aIldlZGBWOrbbOXpB/HRARhc6Wy8N?=
- =?us-ascii?Q?d9qxNpqoI1o5NW8iZ2iBFaivmRXeutqc5In50KJe43gBzs0yzhBfml2czaCF?=
- =?us-ascii?Q?QqM9EoNiUobG1YRCV04NnoZmYVkiS8fBZ6tq/o+62D/nQI4InifX0cVMve55?=
- =?us-ascii?Q?eyYikcQL79XmhuVSVi1n44bjirYmEaKWV7hclX6VKvauEv9UcaI+iMIpP2VD?=
- =?us-ascii?Q?Ya0yX9iwCfnPQ4rMrW08G5dOgfIDLAsBgJn9Sh5eo2sru4QxT5OIO6431g/h?=
- =?us-ascii?Q?4H53urvBDw8s+E05qBSPrGlQIqEk6XPRENSaCYujYr1n3f9vwKty6079MWS7?=
- =?us-ascii?Q?W+n9W2e4K9TauC+ShUOsNPTrG8e7tUOMHMC3ep6B7JES+SEhajelTqaPSvq3?=
- =?us-ascii?Q?A3kwyd4sK1RUJAhOhgh12AM2ghHUdzHOttJ0R+QPwdUFio7LineEEZfWLB4a?=
- =?us-ascii?Q?2K0GPa/KYD8sWdbDyOXt5fEB+I5kReZjVNtyKxBIJRusqwUfjpwxEj9KzY9T?=
- =?us-ascii?Q?2w4NvlsrCeqLdpwL3kpXgloplXoPJVROg3vbGkKD+hWfdvDTnb5ygLr1pFWA?=
- =?us-ascii?Q?CPTFMe+lW0h4Zh9zqdIQ8gxor/7vztYl3QWpuqrz4h1Pgxf6kRY25G0p21j4?=
- =?us-ascii?Q?FPhgRJakn9HMv6mVFbkUUo4UFne3KLfr3QUHzj+G9WS9d05k8GoEBuRS5NbP?=
- =?us-ascii?Q?8D36tMcotzD9sJzw5XIyszmZsE/YqhFBpa3V1d7dVxXGLz8p2FJlrhOAFkye?=
- =?us-ascii?Q?yFOVfwzBSgth8yeJkEk+VNGLxER0xKBezueM/xAjcZEFvS21Sp8JZtN+MX6c?=
- =?us-ascii?Q?NVtJ9ReOIm+4U8A9AbFMZoIujpK3tgwx71g6o5QWpPUdQUPZzMR5GkdfR1Su?=
- =?us-ascii?Q?7XIGXi7KQwA7JdTbZ6aZXkyBOfafCSWGplfBeOMY67HW3xGdDSGdPPEf7sX3?=
- =?us-ascii?Q?4ON5UiFs62ig0ZrV6VQL4PasIjfQEBTbOjwq3seaIR9GnJJvHCybi4wuUcm1?=
- =?us-ascii?Q?I0OK?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727410AbhAYKQW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 05:16:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46902 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727379AbhAYKPO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Jan 2021 05:15:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 3C7F2AF0F;
+        Mon, 25 Jan 2021 10:13:10 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 629e0216;
+        Mon, 25 Jan 2021 10:14:02 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 05/17] ceph: crypto context handling for ceph
+References: <20210120182847.644850-1-jlayton@kernel.org>
+        <20210120182847.644850-6-jlayton@kernel.org> <87y2gk53ft.fsf@suse.de>
+        <48cd711c7f99e6bd52f4ba0565eb54589843ac89.camel@kernel.org>
+Date:   Mon, 25 Jan 2021 10:14:01 +0000
+In-Reply-To: <48cd711c7f99e6bd52f4ba0565eb54589843ac89.camel@kernel.org> (Jeff
+        Layton's message of "Fri, 22 Jan 2021 12:26:38 -0500")
+Message-ID: <874kj5wcgm.fsf@suse.de>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f1a20c4-1d86-4a90-5857-08d8c10f1b4e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2021 08:56:29.9105
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: u83sSkE0zNQ516IbDopKU7cpQGcPf7LMzHk/uXBicnjGhUGUYOpQwBJ2iiT972wGnGNKgoancTcb5B28v4gic9DF3MKgoXY9yOyJeoa7HNo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3598
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22/01/2021 16:24, Josef Bacik wrote:=0A=
->> +	/* We cannot split a waited ordered extent */=0A=
->> +	if (WARN_ON_ONCE(wq_has_sleeper(&ordered->wait))) {=0A=
->> +		ret =3D -EINVAL;=0A=
->> +		goto out;=0A=
->> +	}=0A=
-=0A=
-Oops that must be a leftover from debugging. Though we never hit that=0A=
-WARN().=0A=
+Jeff Layton <jlayton@kernel.org> writes:
+
+> On Fri, 2021-01-22 at 16:41 +0000, Luis Henriques wrote:
+>> Jeff Layton <jlayton@kernel.org> writes:
+>> 
+>> > Store the fscrypt context for an inode as an encryption.ctx xattr.
+>> > When we get a new inode in a trace, set the S_ENCRYPTED bit if
+>> > the xattr blob has an encryption.ctx xattr.
+>> > 
+>> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>> > ---
+>> >  fs/ceph/Makefile |  1 +
+>> >  fs/ceph/crypto.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>> >  fs/ceph/crypto.h | 24 ++++++++++++++++++++++++
+>> >  fs/ceph/inode.c  |  6 ++++++
+>> >  fs/ceph/super.c  |  3 +++
+>> >  fs/ceph/super.h  |  1 +
+>> >  fs/ceph/xattr.c  | 32 ++++++++++++++++++++++++++++++++
+>> >  7 files changed, 109 insertions(+)
+>> >  create mode 100644 fs/ceph/crypto.c
+>> >  create mode 100644 fs/ceph/crypto.h
+>> > 
+>> > diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
+>> > index 50c635dc7f71..1f77ca04c426 100644
+>> > --- a/fs/ceph/Makefile
+>> > +++ b/fs/ceph/Makefile
+>> > @@ -12,3 +12,4 @@ ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
+>> >  
+>> > 
+>> > 
+>> > 
+>> >  ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
+>> >  ceph-$(CONFIG_CEPH_FS_POSIX_ACL) += acl.o
+>> > +ceph-$(CONFIG_FS_ENCRYPTION) += crypto.o
+>> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+>> > new file mode 100644
+>> > index 000000000000..dbe8b60fd1b0
+>> > --- /dev/null
+>> > +++ b/fs/ceph/crypto.c
+>> > @@ -0,0 +1,42 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +#include <linux/ceph/ceph_debug.h>
+>> > +#include <linux/xattr.h>
+>> > +#include <linux/fscrypt.h>
+>> > +
+>> > +#include "super.h"
+>> > +#include "crypto.h"
+>> > +
+>> > +static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
+>> > +{
+>> > +	return __ceph_getxattr(inode, CEPH_XATTR_NAME_ENCRYPTION_CONTEXT, ctx, len);
+>> > +}
+>> > +
+>> > +static int ceph_crypt_set_context(struct inode *inode, const void *ctx, size_t len, void *fs_data)
+>> > +{
+>> > +	int ret;
+>> > +
+>> > +	WARN_ON_ONCE(fs_data);
+>> > +	ret = __ceph_setxattr(inode, CEPH_XATTR_NAME_ENCRYPTION_CONTEXT, ctx, len, XATTR_CREATE);
+>> > +	if (ret == 0)
+>> > +		inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
+>> > +	return ret;
+>> > +}
+>> > +
+>> > +static bool ceph_crypt_empty_dir(struct inode *inode)
+>> > +{
+>> > +	struct ceph_inode_info *ci = ceph_inode(inode);
+>> > +
+>> > +	return ci->i_rsubdirs + ci->i_rfiles == 1;
+>> > +}
+>> 
+>> This is very tricky, as this check can't really guaranty that the
+>> directory is empty.  We need to make sure no other client has access to
+>> this directory during the whole operation of setting policy.  Would it be
+>> enough to ensure we have Fxc here?
+>> 
+>
+> That's a good point. Yes, we probably should do just that. I'll take a
+> look and see what we need as far as caps go to ensure exclusion.
+>
+> empty_dir is only called when setting the context, so we can grab cap
+> refs at that point and then just check to make sure it's empty here.
+>
+>> > +
+...
+>> > +static struct fscrypt_operations ceph_fscrypt_ops = {
+>> > +/* Return true if inode's xattr blob has an xattr named "name" */
+>> > +bool ceph_inode_has_xattr(struct ceph_inode_info *ci, const char *name)
+>> > +{
+>> > +	void *p, *end;
+>> > +	u32 numattr;
+>> > +	size_t namelen;
+>> > +
+>> > +	lockdep_assert_held(&ci->i_ceph_lock);
+>> > +
+>> > +	if (!ci->i_xattrs.blob || ci->i_xattrs.blob->vec.iov_len <= 4)
+>> > +		return false;
+>> > +
+>> > +	namelen = strlen(name);
+>> > +	p = ci->i_xattrs.blob->vec.iov_base;
+>> > +	end = p + ci->i_xattrs.blob->vec.iov_len;
+>> > +	ceph_decode_32_safe(&p, end, numattr, bad);
+>> > +
+>> > +	while (numattr--) {
+>> > +		u32 len;
+>> > +
+>> > +		ceph_decode_32_safe(&p, end, len, bad);
+>> > +		ceph_decode_need(&p, end, len, bad);
+>> > +		if (len == namelen && !memcmp(p, name, len))
+>> > +			return true;
+>> > +		p += len;
+>> > +		ceph_decode_32_safe(&p, end, len, bad);
+>> > +		ceph_decode_skip_n(&p, end, len, bad);
+>> > +	}
+>> > +bad:
+>> > +	return false;
+>> > +}
+>> 
+>> I wonder if it wouldn't be better have an extra flag in struct
+>> ceph_inode_info instead of having to go through the xattr list every time
+>> we update an inode with data from the MDS.
+>> 
+>
+> It is ugly, I'll grant you that. A flag in ceph_inode_info won't really
+> help though. We'd need some sort of flag in the inode info transmitted
+> from the MDS.
+>
+> For now, we only call this for I_NEW inodes, but now I'm wondering if we
+> need to check it every time, to ensure that everything works if you see
+> the directory before another client encrypts it.
+>
+> We may want to extend the protocol with such a flag, but the xattr
+> buffer is not usually that long. For now, I'm inclined to live with
+> parsing this info each time.
+
+Ok, makes sense.  Thanks for clarifying.  I guess that getting the Fxc
+caps when encrypting a dir (setting the context) may actually prevent the
+race you mention anyway.
+
+Cheers,
+-- 
+Luis
