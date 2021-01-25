@@ -2,106 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BEBDD302E8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 23:00:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 828E6302E4C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:49:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732412AbhAYV7S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 16:59:18 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28802 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732999AbhAYVhn (ORCPT
+        id S1733014AbhAYVsr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 16:48:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53624 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732830AbhAYVia (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 16:37:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611610574;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=m/jJWmyA2+poctNq5G0VdmcEbmCQkA+CfKhQbvw3Sok=;
-        b=SHFwIlhANGe2k5WY2e6kbl7sRJQJqjDJVg1VcBXxs0gFUYCpRkqPqsSKen/WILXEXYrHn3
-        aZlDm+/OOJUBs9BW9s/9FgnRkmvxdqkoeCe1IJLPWqJ5m0unWSMlC+Y0ukUJt8pWFF4FBc
-        UMoiLrc1T2lWNFKGyg9ERzR0A3lVBPU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-463-9_HLUwZmOv2dJ-b2PcUTtQ-1; Mon, 25 Jan 2021 16:36:10 -0500
-X-MC-Unique: 9_HLUwZmOv2dJ-b2PcUTtQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 557E08735C1;
-        Mon, 25 Jan 2021 21:36:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 827814D;
-        Mon, 25 Jan 2021 21:36:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 26/32] NFS: In nfs_readpage() only increment NFSIOS_READPAGES
- when read succeeds
-From:   David Howells <dhowells@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Dave Wysochanski <dwysocha@redhat.com>, dhowells@redhat.com,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 25 Jan 2021 21:36:01 +0000
-Message-ID: <161161056169.2537118.7782201331459075721.stgit@warthog.procyon.org.uk>
-In-Reply-To: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
-References: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Mon, 25 Jan 2021 16:38:30 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53555C061573
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 13:36:22 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id q20so9158380pfu.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 13:36:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vbflCwsTzdwckYq+nt69B7PshniTZLSQZH2EgtCpbjY=;
+        b=MisYfjeV1+yJJ3EyNZVbYKhxvcL1wdfp1GqYzgg9aS0kBU94oBe/N6zUSbMWDLG830
+         YkS4v+Hst0dNPffxnmExEbjnK45EgbnlofP9DWgU9FUMyW7mg7h8fvOUG7UPxTS7Wgbt
+         gTyEQcQLXFphymi9GsX8nBAPRJ5l1X40+e5JdBLk7YkXcbswQjYIckZtHxkDbKKnEtNZ
+         ynMGBjJtS2gGBxzv7q7q2G4T8oTW0b5iadd7f77fpVH9Xgyrzo0SciZMPTIwdKPhETJ5
+         xjJ4T2hW2j/jbGFHJGfWlsK3nguhKrfxqsgWC7zzs4RiYUHpy67GR/d4cdpgkewwejQA
+         +nMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vbflCwsTzdwckYq+nt69B7PshniTZLSQZH2EgtCpbjY=;
+        b=sQePuONmGuV6ghdD2T267n74OreiopkIRSAr/SCAp6e75McLaanewGZbU1FtGRFSm9
+         HVm3APB7LRYiQLfAMNmZFwO5ZvpMFVBghaWl4N5J/GNErcDjK9CBqakIHwVGeYMC1H4M
+         kccsyhl/sXin/dfgy+DQt4rHhVrGI2HGt1Z2Zk3hc3hU9PC/x+FgY7bXJBnZ94W8MDTS
+         YF8XOoLDwq0QAZD5x0DwxKwSIgUynOcGfXyn0YNChbQiOO57CAps7GokUyqkumtbx9Wx
+         HbptvP7K+q41FtYWLnfbGzcZCYwEdk2vr8Zu1eG77ub8GfhipNsGIhXfVGKbyuz242nv
+         rpQQ==
+X-Gm-Message-State: AOAM533rdwXOCZsXQT9x05a2+GaxUDKCGM/lo6fgsazd7LDLawpxvRmT
+        mmvahLuqpJZg7J1eWG/5g/3j0EQf3MBnKQ==
+X-Google-Smtp-Source: ABdhPJyi3f44AaldZMWwmJEJwDD7SHMh1XbqHzmCX87Sv4/Q9ziBfSw/HSo3aH7WyjHYY/jwk5ojGw==
+X-Received: by 2002:a62:7e46:0:b029:19e:786b:9615 with SMTP id z67-20020a627e460000b029019e786b9615mr2274628pfc.37.1611610581555;
+        Mon, 25 Jan 2021 13:36:21 -0800 (PST)
+Received: from localhost.localdomain (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id i3sm9638913pfq.194.2021.01.25.13.36.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Jan 2021 13:36:21 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Subject: [PATCHSET RFC] support RESOLVE_CACHED for statx
+Date:   Mon, 25 Jan 2021 14:36:11 -0700
+Message-Id: <20210125213614.24001-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dave Wysochanski <dwysocha@redhat.com>
+Hi,
 
-There is a small inconsistency with nfs_readpage() vs nfs_readpages() with
-regards to NFSIOS_READPAGES.  In readpage we unconditionally increment
-NFSIOS_READPAGES at the top, which means even if the read fails.  In
-readpages, we increment NFSIOS_READPAGES at the bottom based on how
-many pages were successfully read.  Change readpage to be consistent with
-readpages and so NFSIOS_READPAGES only reflects successful, non-fscache
-reads.
+This is a followup to the RESOLVE_CACHED addition that allows us to
+speedup the io_uring open side (and enable RESOLVE_CACHED through
+openat2). Mostly straight forward, as you can see from patch 1, this
+just adds AT_STATX_CACHED that sits on top of that. Patch 2 is the
+mostly ugly part, but not sure how we can do this any better - we need
+to ensure that any sort of revalidation or sync in ->getattr() honors
+it too. Patch 3 is just adapting to this in io_uring.
 
-Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
----
+ fs/9p/vfs_inode.c          |  2 ++
+ fs/afs/inode.c             |  3 +++
+ fs/ceph/inode.c            |  2 ++
+ fs/cifs/inode.c            |  3 +++
+ fs/coda/inode.c            |  7 ++++++-
+ fs/ecryptfs/inode.c        |  3 +++
+ fs/fuse/dir.c              |  2 ++
+ fs/gfs2/inode.c            |  2 ++
+ fs/io_uring.c              | 21 ++++++++++++++-------
+ fs/kernfs/inode.c          |  8 +++++++-
+ fs/nfs/inode.c             |  3 +++
+ fs/ocfs2/file.c            |  3 +++
+ fs/orangefs/inode.c        |  3 +++
+ fs/stat.c                  |  4 +++-
+ fs/ubifs/dir.c             |  7 ++++++-
+ fs/udf/symlink.c           |  3 +++
+ fs/vboxsf/utils.c          |  4 ++++
+ include/uapi/linux/fcntl.h |  2 ++
+ 18 files changed, 71 insertions(+), 11 deletions(-)
 
- fs/nfs/read.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nfs/read.c b/fs/nfs/read.c
-index a05fb3904ddf..1153c4e0a155 100644
---- a/fs/nfs/read.c
-+++ b/fs/nfs/read.c
-@@ -319,7 +319,6 @@ int nfs_readpage(struct file *filp, struct page *page)
- 	dprintk("NFS: nfs_readpage (%p %ld@%lu)\n",
- 		page, PAGE_SIZE, page_index(page));
- 	nfs_inc_stats(inode, NFSIOS_VFSREADPAGE);
--	nfs_add_stats(inode, NFSIOS_READPAGES, 1);
- 
- 	/*
- 	 * Try to flush any pending writes to the file..
-@@ -359,6 +358,7 @@ int nfs_readpage(struct file *filp, struct page *page)
- 		if (!PageUptodate(page) && !ret)
- 			ret = xchg(&ctx->error, 0);
- 	}
-+	nfs_add_stats(inode, NFSIOS_READPAGES, 1);
- out:
- 	put_nfs_open_context(ctx);
- 	return ret;
+-- 
+Jens Axboe
 
 
