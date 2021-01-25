@@ -2,283 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAD0A302DA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:28:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F00B5302DE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:35:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732506AbhAYVTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 16:19:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732535AbhAYVSX (ORCPT
+        id S1732753AbhAYVcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 16:32:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57938 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732173AbhAYVcf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 16:18:23 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CEC2C061794;
-        Mon, 25 Jan 2021 13:17:00 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id 6so20125837ejz.5;
-        Mon, 25 Jan 2021 13:17:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dwqXqhjQ8zEPnFxA0A+0bd5DdgcE17BPfbHWcB0f6ys=;
-        b=LCDRx6bSq74Was2Bk6Rk2Ikl1TrmFK4GgYZmZWa1RnXfjayQ9/xUkjDED948ynxDzC
-         kUF/kr10hC8z6CHGku4M8tL457UUGkyF3o0YwfLVWCe9kgS9RofDeCz6kzZ06zXTWeYy
-         O5ZcScxT4zg97Sj8uuaaYBKEuNYdCYCPrTw9dYHH533JRAA9Hs3MWN6w4VLZ7IGWSwja
-         SlxHzzi7YgEJFSiMNgH7/NhbbTVISHYUyQwzpW1QqnuWNmOZIaZk8+mIEaSN8I+mTTWz
-         t23sSioUtO6zgufuNvSr4McT27eZBV9GNQ7UuC+cprAWf2P6BbJxxHL33MJJ/UYxDjfg
-         maZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dwqXqhjQ8zEPnFxA0A+0bd5DdgcE17BPfbHWcB0f6ys=;
-        b=NDtiP5nBF+wp9Vkjn7j4F/X9Iw8F8puMiviI9uP39J6T7Jcc+j7mi2f4m/rfRbcztg
-         7DJxjFin6d/NgI9lp66nGO3OPQli4tU/LpR2rBK4xllL/zByRXMyL9KLZWoo3lpKRPBl
-         TdU+raAe05cAHuw8k8XrbelWMq+AYpt/zdUrX+wCPCe7kic9Zpj9xldcJWZsP3d8CDQF
-         u659HCWr1g+Vp49Qq/bgpo90OA9PYUdaE8xHvrx75oniN+Qv6rU23EUO+jnZi/cqe/Y1
-         t3g9O3k9Ce8t4tjDY1yn2G5u793hoXt64k/cw9doQBLg1JtTnJr9afzo4Hvqrg9kqJOb
-         JIyQ==
-X-Gm-Message-State: AOAM5306NMvIcRdHCtWcPDIggrFgRVmM3cFKwqQQvkm8bPrBztjvSp6a
-        fSDJXWd+CTgQEU2dJFM1ULfyy8Iz4DPrhDOw1z8=
-X-Google-Smtp-Source: ABdhPJx0r28g69ouyKcK0BLxv3/RM/72ferKw/WSDH564mxsmHe0pp/HLAUOb2MwZrvrJwVdkIvPvDsE1mZCEB55lnc=
-X-Received: by 2002:a17:906:e42:: with SMTP id q2mr1544379eji.25.1611609418997;
- Mon, 25 Jan 2021 13:16:58 -0800 (PST)
+        Mon, 25 Jan 2021 16:32:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611610264;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=A6SKlxCDsYxb+LTCgnFQKtSg53KqZyewCqb9ymOXWxY=;
+        b=PqaEzviRoe1A7lDZhkaQijpd2O1RfsRzYoMYiEm3d+s2NyEWy+srsHkHNn5rDz4TklPsuL
+        ysX++PMM29w5h6ESMdjfkbbCA1ZsR+EfbTzRro7vOlWw73DugUWwieRfXq1D6Wp5cPWIlv
+        gIxYGJaEqC2JBC4qPrZUkuW5FLaE4ys=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-511-PBQQrQrpPguFBRI--bmU3w-1; Mon, 25 Jan 2021 16:31:00 -0500
+X-MC-Unique: PBQQrQrpPguFBRI--bmU3w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E1ECA10054FF;
+        Mon, 25 Jan 2021 21:30:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D1FE10013C1;
+        Mon, 25 Jan 2021 21:30:51 +0000 (UTC)
+Subject: [PATCH 00/32] Network fs helper library & fscache kiocb API [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     linux-afs@lists.infradead.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 25 Jan 2021 21:30:50 +0000
+Message-ID: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210121230621.654304-1-shy828301@gmail.com> <20210121230621.654304-9-shy828301@gmail.com>
- <bbfaaf59-ad56-81ef-347b-92003b8cbebe@virtuozzo.com>
-In-Reply-To: <bbfaaf59-ad56-81ef-347b-92003b8cbebe@virtuozzo.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 25 Jan 2021 13:16:47 -0800
-Message-ID: <CAHbLzkoHSxZp0e6-xnOUdexXVmb5ORwQnjVugy9pEtwLuyAihg@mail.gmail.com>
-Subject: Re: [v4 PATCH 08/11] mm: vmscan: use per memcg nr_deferred of shrinker
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Roman Gushchin <guro@fb.com>, Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 1:35 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On 22.01.2021 02:06, Yang Shi wrote:
-> > Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's =
-nr_deferred
-> > will be used in the following cases:
-> >     1. Non memcg aware shrinkers
-> >     2. !CONFIG_MEMCG
-> >     3. memcg is disabled by boot parameter
-> >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  mm/vmscan.c | 81 +++++++++++++++++++++++++++++++++++++++++++++--------
-> >  1 file changed, 69 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 722aa71b13b2..d8e77ea13815 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -359,6 +359,27 @@ static void unregister_memcg_shrinker(struct shrin=
-ker *shrinker)
-> >       up_write(&shrinker_rwsem);
-> >  }
-> >
-> > +static long count_nr_deferred_memcg(int nid, struct shrinker *shrinker=
-,
-> > +                                 struct mem_cgroup *memcg)
-> > +{
-> > +     struct shrinker_info *info;
-> > +
-> > +     info =3D rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker=
-_info,
-> > +                                      true);
->
-> Since now these rcu_dereference_protected() are in separate functions and=
- there is
-> no taking a lock near them, it seems it would be better to underling the =
-desired
-> lock with rcu_dereference_protected(, lockdep_assert_held(lock_you_need_h=
-ere_locked));
 
-Sure. Will incorporate in v5. BTW I noticed using
-lockdep_assert_held() in the parameter of the functions will result in
-compilation failure with gcc 10.0.1 (shipped with Fedora 32), but fine
-with gcc 8.3.1.
+Here's a set of patches to do two things:
 
-In file included from ./include/linux/rbtree.h:22,
-                 from ./include/linux/mm_types.h:10,
-                 from ./include/linux/mmzone.h:21,
-                 from ./include/linux/gfp.h:6,
-                 from ./include/linux/mm.h:10,
-                 from mm/vmscan.c:15:
-mm/vmscan.c: In function =E2=80=98shrinker_info_protected=E2=80=99:
-./include/linux/lockdep.h:386:34: error: expected expression before =E2=80=
-=98do=E2=80=99
-  386 | #define lockdep_assert_held(l)   do { (void)(l); } while (0)
-      |                                  ^~
-./include/linux/rcupdate.h:337:52: note: in definition of macro
-=E2=80=98RCU_LOCKDEP_WARN=E2=80=99
-  337 | #define RCU_LOCKDEP_WARN(c, s) do { } while (0 && (c))
-      |                                                    ^
-./include/linux/rcupdate.h:554:2: note: in expansion of macro
-=E2=80=98__rcu_dereference_protected=E2=80=99
-  554 |  __rcu_dereference_protected((p), (c), __rcu)
-      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-mm/vmscan.c:389:9: note: in expansion of macro =E2=80=98rcu_dereference_pro=
-tected=E2=80=99
-  389 |  return rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_in=
-fo,
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-mm/vmscan.c:390:7: note: in expansion of macro =E2=80=98lockdep_assert_held=
-=E2=80=99
-  390 |       lockdep_assert_held(&shrinker_rwsem));
-      |       ^~~~~~~~~~~~~~~~~~~
+ (1) Add a helper library to handle the new VM readahead interface.  This
+     is intended to be used unconditionally by the filesystem (whether or
+     not caching is enabled) and provides a common framework for doing
+     caching, transparent huge pages and, in the future, possibly fscrypt
+     and read bandwidth maximisation.  It also allows the netfs and the
+     cache to align, expand and slice up a read request from the VM in
+     various ways; the netfs need only provide a function to read a stretch
+     of data to the pagecache and the helper takes care of the rest.
+
+ (2) Add an alternative fscache/cachfiles I/O API that uses the kiocb
+     facility to do async DIO to transfer data to/from the netfs's pages,
+     rather than using readpage with wait queue snooping on one side and
+     vfs_write() on the other.  It also uses less memory, since it doesn't
+     do buffered I/O on the backing file.
+
+     Note that this uses SEEK_HOLE/SEEK_DATA to locate the data available
+     to be read from the cache.  Whilst this is an improvement from the
+     bmap interface, it still has a problem with regard to a modern
+     extent-based filesystem inserting or removing bridging blocks of
+     zeros.  Fixing that requires a much greater overhaul.
+
+This is a step towards overhauling the fscache API.  The change is opt-in
+on the part of the network filesystem.  A netfs should not try to mix the
+old and the new API because of conflicting ways of handling pages and the
+PG_fscache page flag and because it would be mixing DIO with buffered I/O.
+Further, the helper library can't be used with the old API.
+
+This does not change any of the fscache cookie handling APIs or the way
+invalidation is done.
+
+In the near term, I intend to deprecate and remove the old I/O API
+(fscache_allocate_page{,s}(), fscache_read_or_alloc_page{,s}(),
+fscache_write_page() and fscache_uncache_page()) and eventually replace
+most of fscache/cachefiles with something simpler and easier to follow.
+
+The patchset contains five parts:
+
+ (1) Some helper patches, including provision of an ITER_XARRAY iov
+     iterator and a function to do readahead expansion.
+
+ (2) Patches to add the netfs helper library.
+
+ (3) A patch to add the fscache/cachefiles kiocb API
+
+ (4) Patches to add support in AFS for this.
+
+ (5) Patches from David Wysochanski to add support in NFS for this.
+
+Jeff Layton also has patches for Ceph for this, though they're not included
+on this branch.
+
+With this, AFS without a cache passes all expected xfstests; with a cache,
+there's an extra failure, but that's also there before these patches.
+Fixing that probably requires a greater overhaul.  Ceph and NFS also pass
+the expected tests.
+
+These patches can be found also on:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-netfs-lib
 
 
-I didn't dig into the root cause. Just use lockdep_is_held() instead
-of lockdep_assert_held().
+Changes
+=======
 
->
->
-> > +     return atomic_long_xchg(&info->nr_deferred[shrinker->id], 0);
-> > +}
-> > +
-> > +static long set_nr_deferred_memcg(long nr, int nid, struct shrinker *s=
-hrinker,
-> > +                               struct mem_cgroup *memcg)
-> > +{
-> > +     struct shrinker_info *info;
-> > +
-> > +     info =3D rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker=
-_info,
-> > +                                      true);
-> > +
-> > +     return atomic_long_add_return(nr, &info->nr_deferred[shrinker->id=
-]);
-> > +}
-> > +
-> >  static bool cgroup_reclaim(struct scan_control *sc)
-> >  {
-> >       return sc->target_mem_cgroup;
-> > @@ -397,6 +418,18 @@ static void unregister_memcg_shrinker(struct shrin=
-ker *shrinker)
-> >  {
-> >  }
-> >
-> > +static long count_nr_deferred_memcg(int nid, struct shrinker *shrinker=
-,
-> > +                                 struct mem_cgroup *memcg)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> > +static long set_nr_deferred_memcg(long nr, int nid, struct shrinker *s=
-hrinker,
-> > +                               struct mem_cgroup *memcg)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> >  static bool cgroup_reclaim(struct scan_control *sc)
-> >  {
-> >       return false;
-> > @@ -408,6 +441,39 @@ static bool writeback_throttling_sane(struct scan_=
-control *sc)
-> >  }
-> >  #endif
-> >
-> > +static long count_nr_deferred(struct shrinker *shrinker,
-> > +                           struct shrink_control *sc)
-> > +{
-> > +     int nid =3D sc->nid;
-> > +
-> > +     if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
-> > +             nid =3D 0;
-> > +
-> > +     if (sc->memcg &&
-> > +         (shrinker->flags & SHRINKER_MEMCG_AWARE))
-> > +             return count_nr_deferred_memcg(nid, shrinker,
-> > +                                            sc->memcg);
-> > +
-> > +     return atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
-> > +}
-> > +
-> > +
-> > +static long set_nr_deferred(long nr, struct shrinker *shrinker,
-> > +                         struct shrink_control *sc)
-> > +{
-> > +     int nid =3D sc->nid;
-> > +
-> > +     if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
-> > +             nid =3D 0;
-> > +
-> > +     if (sc->memcg &&
-> > +         (shrinker->flags & SHRINKER_MEMCG_AWARE))
-> > +             return set_nr_deferred_memcg(nr, nid, shrinker,
-> > +                                          sc->memcg);
-> > +
-> > +     return atomic_long_add_return(nr, &shrinker->nr_deferred[nid]);
-> > +}
-> > +
-> >  /*
-> >   * This misses isolated pages which are not accounted for to save coun=
-ters.
-> >   * As the data only determines if reclaim or compaction continues, it =
-is
-> > @@ -544,14 +610,10 @@ static unsigned long do_shrink_slab(struct shrink=
-_control *shrinkctl,
-> >       long freeable;
-> >       long nr;
-> >       long new_nr;
-> > -     int nid =3D shrinkctl->nid;
-> >       long batch_size =3D shrinker->batch ? shrinker->batch
-> >                                         : SHRINK_BATCH;
-> >       long scanned =3D 0, next_deferred;
-> >
-> > -     if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
-> > -             nid =3D 0;
-> > -
-> >       freeable =3D shrinker->count_objects(shrinker, shrinkctl);
-> >       if (freeable =3D=3D 0 || freeable =3D=3D SHRINK_EMPTY)
-> >               return freeable;
-> > @@ -561,7 +623,7 @@ static unsigned long do_shrink_slab(struct shrink_c=
-ontrol *shrinkctl,
-> >        * and zero it so that other concurrent shrinker invocations
-> >        * don't also do this scanning work.
-> >        */
-> > -     nr =3D atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
-> > +     nr =3D count_nr_deferred(shrinker, shrinkctl);
-> >
-> >       total_scan =3D nr;
-> >       if (shrinker->seeks) {
-> > @@ -652,14 +714,9 @@ static unsigned long do_shrink_slab(struct shrink_=
-control *shrinkctl,
-> >               next_deferred =3D 0;
-> >       /*
-> >        * move the unused scan count back into the shrinker in a
-> > -      * manner that handles concurrent updates. If we exhausted the
-> > -      * scan, there is no need to do an update.
-> > +      * manner that handles concurrent updates.
-> >        */
-> > -     if (next_deferred > 0)
-> > -             new_nr =3D atomic_long_add_return(next_deferred,
-> > -                                             &shrinker->nr_deferred[ni=
-d]);
-> > -     else
-> > -             new_nr =3D atomic_long_read(&shrinker->nr_deferred[nid]);
-> > +     new_nr =3D set_nr_deferred(next_deferred, shrinker, shrinkctl);
-> >
-> >       trace_mm_shrink_slab_end(shrinker, shrinkctl->nid, freed, nr, new=
-_nr, total_scan);
-> >       return freed;
-> >
->
->
+ (v2) Fix some bugs and add NFS support.
+
+David
+---
+Dave Wysochanski (8):
+      NFS: Clean up nfs_readpage() and nfs_readpages()
+      NFS: In nfs_readpage() only increment NFSIOS_READPAGES when read succeeds
+      NFS: Refactor nfs_readpage() and nfs_readpage_async() to use nfs_readdesc
+      NFS: Call readpage_async_filler() from nfs_readpage_async()
+      NFS: Add nfs_pageio_complete_read() and remove nfs_readpage_async()
+      NFS: Allow internal use of read structs and functions
+      NFS: Convert to the netfs API and nfs_readpage to use netfs_readpage
+      NFS: Convert readpage to readahead and use netfs_readahead for fscache
+
+David Howells (24):
+      iov_iter: Add ITER_XARRAY
+      vm: Add wait/unlock functions for PG_fscache
+      mm: Implement readahead_control pageset expansion
+      vfs: Export rw_verify_area() for use by cachefiles
+      netfs: Make a netfs helper module
+      netfs: Provide readahead and readpage netfs helpers
+      netfs: Add tracepoints
+      netfs: Gather stats
+      netfs: Add write_begin helper
+      netfs: Define an interface to talk to a cache
+      fscache, cachefiles: Add alternate API to use kiocb for read/write to cache
+      afs: Disable use of the fscache I/O routines
+      afs: Pass page into dirty region helpers to provide THP size
+      afs: Print the operation debug_id when logging an unexpected data version
+      afs: Move key to afs_read struct
+      afs: Don't truncate iter during data fetch
+      afs: Log remote unmarshalling errors
+      afs: Set up the iov_iter before calling afs_extract_data()
+      afs: Use ITER_XARRAY for writing
+      afs: Wait on PG_fscache before modifying/releasing a page
+      afs: Extract writeback extension into its own function
+      afs: Prepare for use of THPs
+      afs: Use the fs operation ops to handle FetchData completion
+      afs: Use new fscache read helper API
+
+
+ fs/Kconfig                    |    1 +
+ fs/Makefile                   |    1 +
+ fs/afs/Kconfig                |    1 +
+ fs/afs/dir.c                  |  225 ++++---
+ fs/afs/file.c                 |  472 ++++----------
+ fs/afs/fs_operation.c         |    4 +-
+ fs/afs/fsclient.c             |  108 +--
+ fs/afs/inode.c                |    7 +-
+ fs/afs/internal.h             |   57 +-
+ fs/afs/rxrpc.c                |  150 ++---
+ fs/afs/write.c                |  610 +++++++++--------
+ fs/afs/yfsclient.c            |   82 +--
+ fs/cachefiles/Makefile        |    1 +
+ fs/cachefiles/interface.c     |    5 +-
+ fs/cachefiles/internal.h      |    9 +
+ fs/cachefiles/rdwr2.c         |  412 ++++++++++++
+ fs/fscache/Kconfig            |    1 +
+ fs/fscache/Makefile           |    3 +-
+ fs/fscache/internal.h         |    3 +
+ fs/fscache/page.c             |    2 +-
+ fs/fscache/page2.c            |  116 ++++
+ fs/fscache/stats.c            |    1 +
+ fs/internal.h                 |    5 -
+ fs/netfs/Kconfig              |   23 +
+ fs/netfs/Makefile             |    5 +
+ fs/netfs/internal.h           |   97 +++
+ fs/netfs/read_helper.c        | 1155 +++++++++++++++++++++++++++++++++
+ fs/netfs/stats.c              |   59 ++
+ fs/nfs/file.c                 |    2 +-
+ fs/nfs/fscache.c              |  206 +++---
+ fs/nfs/fscache.h              |   66 +-
+ fs/nfs/internal.h             |    8 +
+ fs/nfs/pagelist.c             |    2 +
+ fs/nfs/read.c                 |  244 ++++---
+ fs/read_write.c               |    1 +
+ include/linux/fs.h            |    1 +
+ include/linux/fscache-cache.h |    4 +
+ include/linux/fscache.h       |   28 +-
+ include/linux/netfs.h         |  167 +++++
+ include/linux/nfs_fs.h        |    5 +-
+ include/linux/nfs_iostat.h    |    2 +-
+ include/linux/nfs_page.h      |    1 +
+ include/linux/nfs_xdr.h       |    1 +
+ include/linux/pagemap.h       |   16 +
+ include/net/af_rxrpc.h        |    2 +-
+ include/trace/events/afs.h    |   74 +--
+ include/trace/events/netfs.h  |  201 ++++++
+ mm/filemap.c                  |   18 +
+ mm/readahead.c                |   70 ++
+ net/rxrpc/recvmsg.c           |    9 +-
+ 50 files changed, 3457 insertions(+), 1286 deletions(-)
+ create mode 100644 fs/cachefiles/rdwr2.c
+ create mode 100644 fs/fscache/page2.c
+ create mode 100644 fs/netfs/Kconfig
+ create mode 100644 fs/netfs/Makefile
+ create mode 100644 fs/netfs/internal.h
+ create mode 100644 fs/netfs/read_helper.c
+ create mode 100644 fs/netfs/stats.c
+ create mode 100644 include/linux/netfs.h
+ create mode 100644 include/trace/events/netfs.h
+
+
