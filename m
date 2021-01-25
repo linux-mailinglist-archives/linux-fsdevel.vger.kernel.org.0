@@ -2,88 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD7CE302CDE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 21:48:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1C9302D1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jan 2021 22:00:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732200AbhAYUol (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jan 2021 15:44:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41912 "EHLO
+        id S1732309AbhAYU6F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jan 2021 15:58:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732174AbhAYUoZ (ORCPT
+        with ESMTP id S1731702AbhAYU57 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 15:44:25 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50144C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 12:43:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=50rdGGRcUaSkPpis7lUfu3LrVnBfoRkaHShYQAQljW4=; b=rNyfrzJJFlsslQGGX976kUrj14
-        qY5AVfDFICTZjzTsCoZ+4TO735fTLbAkzmOdCHo/KD2vt65u/osgVXyZ0DOOGv4mkGv9xyHfQXx8j
-        PTgGQ3jlJPKhk4cNtju5TmP4PVpeEKNjEJeyRH1WD9hQC/AKp8y9BgH1uUorzbFRGiMwGrWaycJI/
-        q5Hr/5PcoHLYfc2na36Wo3deya2bFao1a3cOU+F3fvgzlu1fAddpTT+JYJjqXkzcnlcYpZ3UQL2vw
-        CjbPG9gIMd9yhih2uo16nLMCI9lrX1hRDG+akVoxmLE5q9QUnYK9uABcW0QyurnmFX4n4poy6L//a
-        W15JiESg==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l48hF-004ddP-FH; Mon, 25 Jan 2021 20:42:54 +0000
-Date:   Mon, 25 Jan 2021 20:42:49 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org, kernel@pengutronix.de,
-        Jan Kara <jack@suse.com>
-Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
-Message-ID: <20210125204249.GA1103662@infradead.org>
-References: <20210122151536.7982-1-s.hauer@pengutronix.de>
- <20210122151536.7982-2-s.hauer@pengutronix.de>
- <20210122171658.GA237653@infradead.org>
- <20210125083854.GB31738@pengutronix.de>
- <20210125154507.GH1175@quack2.suse.cz>
+        Mon, 25 Jan 2021 15:57:59 -0500
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69489C061573
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 12:57:14 -0800 (PST)
+Received: by mail-qk1-x732.google.com with SMTP id v126so13897359qkd.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 12:57:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=niKnqml7zC5pFULMCBl20DPmuabrsvNS8Avv00VlMWE=;
+        b=nTwcgXacBOWIyO17J3T7x4kCqlbmnHrOXW8cNj49+Sti0s/kd5lxVHG5FYAW3uiJpi
+         BITVuCZSXrV6IF4DeVo9wp0meCHiPwz7ThSz1kzfwWxFdt2QwObyj4EN3eeLr4WGNhGb
+         lqKl3P8odkxgN6z8fZG+9l0sU29VH5dnb0zoNd1A7mvV59SYS+S9J+wh2PvbXjQ0jMaU
+         TvMLpsfScaxEVmSRfFTnJkvaXGOx2kpdlDT5+NUSCnImbmsMzK3LfPl9Qx8Ljx7mfAvZ
+         Jlf2W7tMNMeaW2PQ3pAtE0cNOwSbI73W94MEbOX+dmgfEHdKo8fkbNUQZ/wvi9oRsGjM
+         1FyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=niKnqml7zC5pFULMCBl20DPmuabrsvNS8Avv00VlMWE=;
+        b=D/CpeCBfrDN9BPY+LcE16c8spkZ1VUr4aKwdCczeWovRfBPLfrv/nQZszfQjPpcU5M
+         Ncw9mveR8tMP13Y/VVEgzpl/HYsM/AufGNj5CK+3vf8A8PGkQ8OIrPB3FaHrkl8EIM7r
+         0X+yKh2CaLzAkYdJfdHKKR4z0y13m0cWHUnZL8dIHsEa4128thvAU3LT8Up4V6eL3Fxq
+         Tid/Qxnc3MtDIMbo/Bh+LqB+c4ZRwAftI0NO4JO/1T0IyIKD0wpTURVWi3NdEZSkq5lk
+         2gKS/B/on5rwvgZrMZM5ReQHHFVu8RrwnsEoRmFnT2hbJJ+6Y5y/nx6Edd8fHLZY2B6I
+         9RFQ==
+X-Gm-Message-State: AOAM530/+AQZDtHkXtx3scrNXSzs6MlBlZi13uVrOidIs26dc87iV9V+
+        VQ136ru2mL7Y7yLloCUA9ptFxA==
+X-Google-Smtp-Source: ABdhPJzPgdW3PPLtjzqPd28b002hA5VqIxXzmwvjqq0kI3Uga2Y7QtGJeuapu9ljTVXbLg6lKogZCQ==
+X-Received: by 2002:ae9:e716:: with SMTP id m22mr2753241qka.245.1611608233438;
+        Mon, 25 Jan 2021 12:57:13 -0800 (PST)
+Received: from ?IPv6:2620:10d:c0a8:11c1::12e0? ([2620:10d:c091:480::1:8a2c])
+        by smtp.gmail.com with ESMTPSA id l22sm3537574qtl.96.2021.01.25.12.57.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Jan 2021 12:57:12 -0800 (PST)
+Subject: Re: [PATCH v7 02/10] fs: add O_ALLOW_ENCODED open flag
+To:     Omar Sandoval <osandov@osandov.com>, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+References: <cover.1611346706.git.osandov@fb.com>
+ <09988d880282a6ef0dd04d1fce7db1dbbd2d335c.1611346706.git.osandov@fb.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <53d9bf65-7076-c136-b464-f5c35de37790@toxicpanda.com>
+Date:   Mon, 25 Jan 2021 15:57:10 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210125154507.GH1175@quack2.suse.cz>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <09988d880282a6ef0dd04d1fce7db1dbbd2d335c.1611346706.git.osandov@fb.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 04:45:07PM +0100, Jan Kara wrote:
-> > What do you mean by "take"? Take the superblock as an argument to
-> > quotactl_sb() or take a reference to the superblock?
-> > Sorry, I don't really get where you aiming at.
+On 1/22/21 3:46 PM, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
 > 
-> I think Christoph was pointing at the fact it is suboptimal to search for
-> superblock by device number when you already have a pointer to it.  And I
-> guess he was suggesting we could pass 'sb' pointer to quotactl_sb() when we
-> already have it. Although to be honest, I'm not sure how Christoph imagines
-> the refactoring of user_get_super() he mentions - when we have a path
-> looked up through user_path(), that pins the superblock the path is on so
-> it cannot be unmounted. So perhaps quotactl_sb() can done like:
+> The upcoming RWF_ENCODED operation introduces some security concerns:
+> 
+> 1. Compressed writes will pass arbitrary data to decompression
+>     algorithms in the kernel.
+> 2. Compressed reads can leak truncated/hole punched data.
+> 
+> Therefore, we need to require privilege for RWF_ENCODED. It's not
+> possible to do the permissions checks at the time of the read or write
+> because, e.g., io_uring submits IO from a worker thread. So, add an open
+> flag which requires CAP_SYS_ADMIN. It can also be set and cleared with
+> fcntl(). The flag is not cleared in any way on fork or exec.
+> 
+> Note that the usual issue that unknown open flags are ignored doesn't
+> really matter for O_ALLOW_ENCODED; if the kernel doesn't support
+> O_ALLOW_ENCODED, then it doesn't support RWF_ENCODED, either.
+> 
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
 
-I don't think we need a quotactl_sb at all, do_quotactl is in fact a
-pretty good abstraction as-is.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-For the path based one we just need to factor out a little helper
-to set excl and thaw and then call it like:
+Thanks,
 
-	sb = path.dentry->d_inode->i_sb;
-
-	if (excl)
-		down_write(&sb->s_umount);
-	else
-		down_read(&sb->s_umount);
-	if (thawed && sb->s_writers.frozen != SB_UNFROZEN)
-		ret = -EBUSY;
-	else
-		ret = do_quotactl(sb, type, cmds, id, addr, &path);
-	if (excl)
-		up_write(&sb->s_umount);
-	else
-		up_read(&sb->s_umount);
-
-as there is no good reason to bring over the somewhat strange wait until
-unfrozen semantics to a new syscall.
+Josef
