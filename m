@@ -2,137 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E33593034C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 06:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77FCA3034CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 06:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731678AbhAZF1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:27:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730057AbhAZBxp (ORCPT
+        id S1732569AbhAZF2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:28:02 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:33033 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731787AbhAZC3t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 20:53:45 -0500
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3604C0617AB
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 17:53:01 -0800 (PST)
-Received: by mail-ot1-x32c.google.com with SMTP id a109so14840196otc.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 17:53:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tyhicks-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xxAVgjAWeUTEVk1HKoPhPhQyjhCFuGz73HIshLBYon4=;
-        b=riPm+/XUbjsAldf1p8jPot+uVTxVczaBXz0aEQG7pvqrNi1989sRc/7cbedqpPJPx9
-         nzsf66cprhMZT2cJbOEQAnxvi48Dds+OfeLAYrGgEbRez4WPjZ7WxbOHuJSganDrzCSi
-         Y/15cdUHCTLPzgEzBOxIy8h27TyTOwjjBZpGjsievDj3LuyRVXuBDwo3n1ZT3pXS2N7V
-         2vlii1CFP1R7IoYfng2lqfkebgwsEVGHnh6Rd/Ok01UoeEZjeakwah+DQcwmHUu1F+uF
-         AeglkbPIhIr6BMfzKfqBgePaBlZrhitoSQuxrRHN8B3xZo/nro6oNYhHlsOgx0FMwri0
-         b7mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xxAVgjAWeUTEVk1HKoPhPhQyjhCFuGz73HIshLBYon4=;
-        b=InHutj8mI3RDjohAbw35KByPzQ7DonpqGNZi76lDzEIrvus9f+J2iA6DPtpXHQJK//
-         rk+i0GnLwq4WENFa2Mq7gxo4AkKPRYSa24+CCuQuHpP3DWeqtWTLJVebqnIi2gTlmM//
-         LiSqVUbbRloW6/tEhH42nHmIqaC1fhsXLtc3dffNYukmW9lzQD0ojE1sGxiWBjWis2LS
-         nyqeReVvIBYOfZlDrTLFf1OBnhotn6142yxUqy2RoKAqHoksUdXicnCJanU3JpouF22t
-         UDdpLL21hhxsb2dpugMAt4Cidl4rk5w8eL5MlasPb7C93aGDzhGQVur8AGB0Jq7eqvA0
-         pLQw==
-X-Gm-Message-State: AOAM531ly5flK5Ky9Ayd67P5Xili5Y4lnGbruLQW1Kgn/D6IYHu/kRrE
-        cPNF87TF+X4I+hAipn/Nl6qhtw==
-X-Google-Smtp-Source: ABdhPJwmBKO2BxEJEdzwgX6J9ip8RQTuHi2fV5X10UwC0NNCZWDYPMwTCr8sBOgxExy4ZelLMj18eA==
-X-Received: by 2002:a05:6830:1545:: with SMTP id l5mr2484767otp.61.1611625981223;
-        Mon, 25 Jan 2021 17:53:01 -0800 (PST)
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net. [162.237.133.238])
-        by smtp.gmail.com with ESMTPSA id y10sm2846742ooy.11.2021.01.25.17.53.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jan 2021 17:53:00 -0800 (PST)
-Date:   Mon, 25 Jan 2021 19:52:59 -0600
-From:   Tyler Hicks <code@tyhicks.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH 1/2] ecryptfs: fix uid translation for setxattr on
- security.capability
-Message-ID: <20210126015259.GC81247@sequoia>
-References: <20210119162204.2081137-1-mszeredi@redhat.com>
- <20210119162204.2081137-2-mszeredi@redhat.com>
- <20210122183141.GB81247@sequoia>
- <CAOssrKd-P=4n-nzhjnvnChbCkcrAaLC=NjmCTDRHtzRtzJaU-g@mail.gmail.com>
+        Mon, 25 Jan 2021 21:29:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1611628189; x=1643164189;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=U2Q3c4GwozAQUdaajpyHuDs/frhojOzH17vuDUHkLHw=;
+  b=O5bfiUEzREFo7FLlZ4vYF2x0tXjXtK5jkrC4JFrID+R7wH4vo1iPvAXX
+   FvUwzKuNfRT6MRqMIx+c5oYUQPg+m+tBrY+VwbQC8tYpcxwsBH93Pq8ai
+   R0iFcjZctTBXnPbFnV3HdNR5GXLC+O7rOJkC7ZEpj5ouThB7RaIJUUxZu
+   ISjMQZlxTQ1CyKP04I0740pqlC5iFfy/PFriIiZmsHzaHHBxKyeqH9Hs1
+   obyI8Mf1sQjaQWlYydcgzmrQbUF7MYMH3xYfcS5SjrY3avMrKC0ieOxiO
+   zbwnM4CJ6uVWX3nUI+W12y1Ei/0ie2b+z8CdDhqui9x8DPhpzWvxhjLzO
+   g==;
+IronPort-SDR: Sh8oZs8cWX+7yKw/8NQhkR45/BwUijsWy5HsulOLq7m0Kd7hXgjUq5kndNoqJugYKkmkwjxs2J
+ p/KDnkJtD3KINLHN3GbsigkG5Q9CuXF9ohKk9v3d1LOJlyAXfCTCH7FQQFQRykIgje8V/t+sXz
+ tos4uWelaAAkQa5iSD1CWhwwpEUJYrSAGBzKEaQTtFAm4IXHkO70HrFF0LT519Ew3kjd1IEv0r
+ Wk/k3r7Cefs66YH37H4+EhFObO39rah+uNEc40D8ZhibXurpftneJd7Z+ZCRMDJ3BWAtkMogpz
+ Nxk=
+X-IronPort-AV: E=Sophos;i="5.79,375,1602518400"; 
+   d="scan'208";a="159483512"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 26 Jan 2021 10:26:09 +0800
+IronPort-SDR: 4Nn25OZWP+y0kIhosZ0sL94t/Pp620nnif3uKm8MqYd9kA5oZvH4hqSdMUEqHFj9RPo0rudS3L
+ maS3huZ17sDA6vRkPrWzlpT0+81h6/CU0cNmc1hsZ3SHWpBG0+K+PHVy87ybzop6rgpEM8jxlY
+ KZL+sOGFtkPZNCxhV/gjsTARb9WMlXvdNnOxdzMFJl+S+AqxtY3Qz0jDbecWefrKf0eBFKA2OE
+ puJyu7Nf1QJYmSp0hEdyqj++3fb0/nVpZqmIf2x9UfOaydFFtg2yqRDmI69GUYYtr1Rq2WvMpU
+ bz0g1t5/mrta3a0r1tmw/Ukg
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2021 18:10:36 -0800
+IronPort-SDR: YA5IfCmLzewVhqRdpi2e9LPRFK6pOkhuEgSzFvIZw9Bmq6Hce0EtBd7RF65ilZ9S+AEGdIF0pH
+ rwvaYHK3NKJrMROgWdqzpB11AAE38hD/ACkicEKEutU85bxLbOBR0+zIqCgqhV6fiG5kXmomRN
+ kuXXsNTn1kNn3XsYZR2F0bUrsVvIjYUjqZTem/ddUCIZQZqQ6KSp3u6BN5+ylpb7x5wOnrHmrt
+ N3HIAL2fRyjNhPXeJSoeJ+wDMOuox9Ka5+e6Mr9NCuyB3XKabSP3byY46SXTAfDdNPfY0eeCPf
+ 2Bs=
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip02.wdc.com with ESMTP; 25 Jan 2021 18:26:08 -0800
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Josef Bacik <josef@toxicpanda.com>
+Subject: [PATCH v14 06/42] btrfs: do not load fs_info->zoned from incompat flag
+Date:   Tue, 26 Jan 2021 11:24:44 +0900
+Message-Id: <a5df66e698c59ab058cece26456520d882d2f4be.1611627788.git.naohiro.aota@wdc.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <cover.1611627788.git.naohiro.aota@wdc.com>
+References: <cover.1611627788.git.naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOssrKd-P=4n-nzhjnvnChbCkcrAaLC=NjmCTDRHtzRtzJaU-g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-01-25 14:25:38, Miklos Szeredi wrote:
-> On Fri, Jan 22, 2021 at 7:31 PM Tyler Hicks <code@tyhicks.com> wrote:
-> >
-> > On 2021-01-19 17:22:03, Miklos Szeredi wrote:
-> > > Prior to commit 7c03e2cda4a5 ("vfs: move cap_convert_nscap() call into
-> > > vfs_setxattr()") the translation of nscap->rootid did not take stacked
-> > > filesystems (overlayfs and ecryptfs) into account.
-> > >
-> > > That patch fixed the overlay case, but made the ecryptfs case worse.
-> >
-> > Thanks for sending a fix!
-> >
-> > I know that you don't have an eCryptfs setup to test with but I'm at a
-> > loss about how to test this from the userns/fscaps side of things. Do
-> > you have a sequence of unshare/setcap/getcap commands that I can run on
-> > a file inside of an eCryptfs mount to verify that the bug exists after
-> > 7c03e2cda4a5 and then again to verify that this patch fixes the bug?
-> 
-> You need two terminals:
-> $ = <USER>
-> # = root
-> 
-> $ unshare -Um
-> $ echo $$
-> <PID>
-> # echo "0 1000 1" > uid_map
-> # cp uid_map gid_map
-> # echo 1000 2000 1 >> uid_map
-> # echo 2000 3000 1 >> uid_map
-> # cat uid_map > /proc/<PID>/uid_map
-> # cat gid_map > /proc/<PID>/gid_map
-> $ mkdir ~/tmp ~/mnt
-> $ mount -t tmpfs tmpfs ~/tmp
-> $ pwd
-> /home/<USER>
-> # nsenter -t <PID> -m
-> # [setup ecryptfs on /home/<USER>/mnt using /home/<USER>/tmp]
-> $ cd ~/mnt
-> $ touch test
-> $ /sbin/setcap -n 1000 cap_dac_override+eip test
-> $ /sbin/getcap -n test
-> test = cap_dac_override+eip [rootid=1000]
-> 
-> Without the patch, I'm thinking that it will do a double translate and
-> end up with rootid=2000 in the user namespace, but I might well have
-> messed it up...
-> 
-> Let me know how this goes.
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Spot-on instructions. Thank you for taking the time to provide the
-steps.
+Don't set the zoned flag in fs_info when encountering the
+BTRFS_FEATURE_INCOMPAT_ZONED on mount. The zoned flag in fs_info is in a
+union together with the zone_size, so setting it too early will result in
+setting an incorrect zone_size as well.
 
-I was able to repro the bug and verify the fix. The change visually
-looks good to me and it passed through the eCryptfs regression tests.
+Once the correct zone_size is read from the device, we can rely on the
+zoned flag in fs_info as well to determine if the filesystem is running in
+zoned mode.
 
-I've pushed it to the eCryptfs next branch and I plan to submit it to
-Linus on Thursday. Thanks again!
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+---
+ fs/btrfs/disk-io.c | 2 --
+ fs/btrfs/zoned.c   | 8 ++++++++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-Tyler
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 39cbe10a81b6..76ab86dacc8d 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -3136,8 +3136,6 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
+ 	if (features & BTRFS_FEATURE_INCOMPAT_SKINNY_METADATA)
+ 		btrfs_info(fs_info, "has skinny extents");
+ 
+-	fs_info->zoned = (features & BTRFS_FEATURE_INCOMPAT_ZONED);
+-
+ 	/*
+ 	 * flag our filesystem as having big metadata blocks if
+ 	 * they are bigger than the page size
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index 87172ce7173b..315cd5189781 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -431,6 +431,14 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+ 	fs_info->zone_size = zone_size;
+ 	fs_info->max_zone_append_size = max_zone_append_size;
+ 
++	/*
++	 * Check mount options here, because we might change fs_info->zoned
++	 * from fs_info->zone_size.
++	 */
++	ret = btrfs_check_mountopts_zoned(fs_info);
++	if (ret)
++		goto out;
++
+ 	btrfs_info(fs_info, "zoned mode enabled with zone size %llu", zone_size);
+ out:
+ 	return ret;
+-- 
+2.27.0
 
-> 
-> Thanks,
-> Miklos
-> 
