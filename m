@@ -2,98 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C85613049A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:11:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB70D304989
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:06:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbhAZF0j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:26:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46684 "EHLO
+        id S1732769AbhAZF1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:27:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730536AbhAZBb7 (ORCPT
+        with ESMTP id S1731267AbhAZBzJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 20:31:59 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1785C061222
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 16:51:07 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id q2so5965373plk.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 16:51:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.ionos.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uPJlUchjV+OaTIftOWbXEjVwG0d/bApny8LKz3OH9do=;
-        b=Fn4EVg48BXJQ0XVCGo4P1/CcZQYyaUjR593N0Mrt0Pa+QokgKItCP+8Jqv/2LG0i6e
-         ZOE+o7Kp6TSk5kE5z/p+B9iYW/TEKeeUZ38hHU2REBudTZapniqQIgruui5UYR2CX3jM
-         XMAbvuY6JHqMBPOAxvGF/pd+dD2JXyjuQuYgOdpBoKEe5OkwN21A1Oz9evbFfBDmAQvY
-         7WFdRbpEZ2liR9Ig+qsbIiWSj+GDDvognZEVlwuSJJV6ndniZaVtaxhiGOys5MNoWytQ
-         gQ7Z3yycyJCcMckSCcJGV82qUswKaz/f7sRYaD0P22YuS9ZNrnmyYgBqU8O8EcKu5dJk
-         dg7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uPJlUchjV+OaTIftOWbXEjVwG0d/bApny8LKz3OH9do=;
-        b=V+XnaBs4UL03jauHBl94du5KtpfTA0JLcQe2dFKot8avSEFCJqKSEuvhb4w31Jg4bv
-         9yLfAOOqE3cmsPLXWNsVmK0rCwCUnw9FUG9gGTNF717RmhbRAzTnW6LicLui0iZEcPB1
-         BjgAAmc6Xw6iH+T4o5QlOAMJ2DhbFnUKwO15Sr9dx5d/LK0EQ2dDD0lo5qlovGp5pFfl
-         vebed+fHufts8IbZIumQzR6P5+BtSwD05phRiwYcygASU7wPSGD+xTuyBQMd4MsVAXd5
-         eIKZsKi5vsUvl9MD3znHSpmlSZPz1ur/TLCbtOJuD65Hc2w9JDoTuzjPiPFFqe+XPt7Y
-         zQcw==
-X-Gm-Message-State: AOAM533IjQS5kp8rizmL5E/ttOlaRIxA01Q13r3bV+lW7LKB1F2dX4Gj
-        Gqp9l0KFTTbCvuTIswMZCfO2tw==
-X-Google-Smtp-Source: ABdhPJzzs4C/lNGU5gJfjXLgueQ6h//2HOCs2JEgJn8fHs+SjPK/bp53wfdpI/yc0gqOKDwXYe/jwg==
-X-Received: by 2002:a17:902:c284:b029:df:c0d8:6b7 with SMTP id i4-20020a170902c284b02900dfc0d806b7mr3120918pld.34.1611622266246;
-        Mon, 25 Jan 2021 16:51:06 -0800 (PST)
-Received: from [10.8.1.5] ([185.125.207.232])
-        by smtp.gmail.com with ESMTPSA id r7sm3940119pfc.26.2021.01.25.16.50.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 16:51:05 -0800 (PST)
-Subject: Re: [PATCH v2 08/10] md: Implement ->corrupted_range()
-To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        darrick.wong@oracle.com, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@lst.de, song@kernel.org, rgoldwyn@suse.de,
-        qi.fuli@fujitsu.com, y-goto@fujitsu.com
-References: <20210125225526.1048877-1-ruansy.fnst@cn.fujitsu.com>
- <20210125225526.1048877-9-ruansy.fnst@cn.fujitsu.com>
-From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Message-ID: <6100b7ca-7968-e1ea-84b8-074dc216a453@cloud.ionos.com>
-Date:   Tue, 26 Jan 2021 01:50:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 25 Jan 2021 20:55:09 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F71C061224;
+        Mon, 25 Jan 2021 17:38:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=I4QtGGdUD49OQbpnA/+iW6hZGEJcEQdxNTE3QJXFu+k=; b=th6+D7onHmuxEzk677tybiCqfY
+        hhGc9w/VT61khYhuxx2E1kXIsOZGSF8+E1JP2Cvik6UBR/5b9Nw1Gin/GJ/RDDPaHQuwd8aX3Z5R6
+        LuJpCUqsZxHBgVXAyJOFwvagUUVKqq/2tD0/zQ5NLUIocvQ3sFd+r65lKsnAv70oMOdY65n7/vmc0
+        5u4hBE/tFpodrVaPe+lRr8QseonmbE9ty/7mie8ThsqBBqlrcHJgYHdXAyo8VhXZYJeq+djp+RU1Z
+        bkG5n7D1xoNHEi6ZrSR5P+ndK11HLCtkbsp86N94CxpjEcmp6tYmalu5GJ74rGgTmoQ4gK9HCOanm
+        TCWQ7O8g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l4DH9-004uVe-DU; Tue, 26 Jan 2021 01:36:32 +0000
+Date:   Tue, 26 Jan 2021 01:36:11 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 32/32] NFS: Convert readpage to readahead and use
+ netfs_readahead for fscache
+Message-ID: <20210126013611.GI308988@casper.infradead.org>
+References: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
+ <161161064956.2537118.3354798147866150631.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20210125225526.1048877-9-ruansy.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161161064956.2537118.3354798147866150631.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+For Subject: s/readpage/readpages/
 
-On 1/25/21 23:55, Shiyang Ruan wrote:
-> With the support of ->rmap(), it is possible to obtain the superblock on
-> a mapped device.
-> 
-> If a pmem device is used as one target of mapped device, we cannot
-> obtain its superblock directly.  With the help of SYSFS, the mapped
-> device can be found on the target devices.  So, we iterate the
-> bdev->bd_holder_disks to obtain its mapped device.
-> 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-> ---
->   drivers/md/dm.c       | 61 +++++++++++++++++++++++++++++++++++++++++++
->   drivers/nvdimm/pmem.c | 11 +++-----
->   fs/block_dev.c        | 42 ++++++++++++++++++++++++++++-
->   include/linux/genhd.h |  2 ++
->   4 files changed, 107 insertions(+), 9 deletions(-)
+On Mon, Jan 25, 2021 at 09:37:29PM +0000, David Howells wrote:
+> +int __nfs_readahead_from_fscache(struct nfs_readdesc *desc,
+> +				 struct readahead_control *rac)
 
-I can't see md raid is involved here, perhaps dm-devel need to be cced 
-instead of raid list. And the subject need to be changed as well.
+I thought you wanted it called ractl instead of rac?  That's what I've
+been using in new code.
 
-Thanks,
-Guoqing
+> -	dfprintk(FSCACHE, "NFS: nfs_getpages_from_fscache (0x%p/%u/0x%p)\n",
+> -		 nfs_i_fscache(inode), npages, inode);
+> +	dfprintk(FSCACHE, "NFS: nfs_readahead_from_fscache (0x%p/0x%p)\n",
+> +		 nfs_i_fscache(inode), inode);
+
+We do have readahead_count() if this is useful information to be logging.
+
+> +static inline int nfs_readahead_from_fscache(struct nfs_readdesc *desc,
+> +					     struct readahead_control *rac)
+>  {
+> -	if (NFS_I(inode)->fscache)
+> -		return __nfs_readpages_from_fscache(ctx, inode, mapping, pages,
+> -						    nr_pages);
+> +	if (NFS_I(rac->mapping->host)->fscache)
+> +		return __nfs_readahead_from_fscache(desc, rac);
+>  	return -ENOBUFS;
+>  }
+
+Not entirely sure that it's worth having the two functions separated any more.
+
+>  	/* attempt to read as many of the pages as possible from the cache
+>  	 * - this returns -ENOBUFS immediately if the cookie is negative
+>  	 */
+> -	ret = nfs_readpages_from_fscache(desc.ctx, inode, mapping,
+> -					 pages, &nr_pages);
+> +	ret = nfs_readahead_from_fscache(&desc, rac);
+>  	if (ret == 0)
+>  		goto read_complete; /* all pages were read */
+>  
+>  	nfs_pageio_init_read(&desc.pgio, inode, false,
+>  			     &nfs_async_read_completion_ops);
+>  
+> -	ret = read_cache_pages(mapping, pages, readpage_async_filler, &desc);
+> +	while ((page = readahead_page(rac))) {
+> +		ret = readpage_async_filler(&desc, page);
+> +		put_page(page);
+> +	}
+
+I thought with the new API we didn't need to do this kind of thing
+any more?  ie no matter whether fscache is configured in or not, it'll
+submit the I/Os.
