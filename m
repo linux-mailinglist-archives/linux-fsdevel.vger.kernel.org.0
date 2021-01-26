@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA593041AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 16:10:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AE3F3041C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 16:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406204AbhAZPJd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 10:09:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54100 "EHLO
+        id S2406127AbhAZPL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 10:11:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406191AbhAZPJN (ORCPT
+        with ESMTP id S2406065AbhAZPLq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 10:09:13 -0500
+        Tue, 26 Jan 2021 10:11:46 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 998B9C061A29;
-        Tue, 26 Jan 2021 07:08:33 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475E6C061A31;
+        Tue, 26 Jan 2021 07:11:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Zy1yNACJwx6tY0xAylbc3LmDKE7IpoPxR60kvFb5LRI=; b=ocoLOdEDKDs0IuNFSP9sgoTODv
-        18PH5yYdILklt5Kcbk4RaNOumpH/dPygxlzzOi0F7kge6uR6vZPdKOW23YBL+UfRU3Hg53gGT+sdE
-        L7Y2itAvM/yrtkW1Yulc5ANGTeem5ElQyw2MEJgaPcXb0rn6g2dRNjlXdsW0AdM00QuSgAQRTCF5i
-        sG2hDmNa2gYg0o6VdGGNL4b7gjHoC3baCaLKFSmUBDtBto5EYLtmHVEA+eucEAVTT7YHamKlXI/RV
-        cpzfxttXq3A3lFAC2B/WVmkxfelzhSzKudfS/jGmRwK27WhKvXoxcGP+EjBP96ON1vw/v2NYKF3Kb
-        R3kKKz6w==;
+        bh=o7VUFbuCs40X37XHTmVmjDE9l+0qzfo+L5D5+3HB/Xs=; b=aV79kHDk99zhkL6s5WblnMsXYm
+        MUeYdtQAir6ZpBM6WxTX2uHNWa9GoJblM5+y9lvBViksx2RanhFgtOVoykjDrNKUAASUImAhQ2S9S
+        kCfJVL4xwzijj26ZqmZV0RNsrXFPbf4N+/Nr6bUnSe70GhYydpXzWfT1u3SDcEBkvvxsPZwC5/Opl
+        QrXnJfVNQdYsJMZo5rcHFwaYuDhpw+B9jZZ2qD3QFDvKwydp8nBngTufhjUIOGN8sMm7ejCwV76Ba
+        wQKngqSt6P9/gxTf3mYfoWEoeugpEM9qEEobeCMKiVADWZmeomcieNiE/g3oi2zy++X/iQc0gI0gY
+        x6aONCMg==;
 Received: from [2001:4bb8:191:e347:5918:ac86:61cb:8801] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1l4Pt5-005n5W-9A; Tue, 26 Jan 2021 15:04:44 +0000
+        id 1l4PuS-005nI7-1q; Tue, 26 Jan 2021 15:06:07 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>
 Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -46,9 +46,9 @@ Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
         linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 07/17] f2fs: use blkdev_issue_flush in __submit_flush_wait
-Date:   Tue, 26 Jan 2021 15:52:37 +0100
-Message-Id: <20210126145247.1964410-8-hch@lst.de>
+Subject: [PATCH 08/17] f2fs: remove FAULT_ALLOC_BIO
+Date:   Tue, 26 Jan 2021 15:52:38 +0100
+Message-Id: <20210126145247.1964410-9-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210126145247.1964410-1-hch@lst.de>
 References: <20210126145247.1964410-1-hch@lst.de>
@@ -59,64 +59,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the blkdev_issue_flush helper instead of duplicating it.
+Sleeping bio allocations do not fail, which means that injecting an error
+into sleeping bio allocations is a little silly.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/f2fs/data.c    |  3 ++-
- fs/f2fs/f2fs.h    |  1 -
- fs/f2fs/segment.c | 12 +-----------
- 3 files changed, 3 insertions(+), 13 deletions(-)
+ Documentation/filesystems/f2fs.rst |  1 -
+ fs/f2fs/data.c                     | 29 ++++-------------------------
+ fs/f2fs/f2fs.h                     |  1 -
+ fs/f2fs/super.c                    |  1 -
+ 4 files changed, 4 insertions(+), 28 deletions(-)
 
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index dae15c96e659e2..624f5f3ed93e86 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -179,7 +179,6 @@ fault_type=%d		 Support configuring fault injection type, should be
+ 			 FAULT_KVMALLOC		  0x000000002
+ 			 FAULT_PAGE_ALLOC	  0x000000004
+ 			 FAULT_PAGE_GET		  0x000000008
+-			 FAULT_ALLOC_BIO	  0x000000010
+ 			 FAULT_ALLOC_NID	  0x000000020
+ 			 FAULT_ORPHAN		  0x000000040
+ 			 FAULT_BLOCK		  0x000000080
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8cbf0315975228..0cf0c605992431 100644
+index 0cf0c605992431..9fb6be65592b1f 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -56,7 +56,8 @@ static inline struct bio *__f2fs_bio_alloc(gfp_t gfp_mask,
- 	return bio_alloc_bioset(gfp_mask, nr_iovecs, &f2fs_bioset);
+@@ -50,28 +50,6 @@ void f2fs_destroy_bioset(void)
+ 	bioset_exit(&f2fs_bioset);
  }
  
--struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi, int npages, bool noio)
-+static struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi, int npages,
-+		bool noio)
+-static inline struct bio *__f2fs_bio_alloc(gfp_t gfp_mask,
+-						unsigned int nr_iovecs)
+-{
+-	return bio_alloc_bioset(gfp_mask, nr_iovecs, &f2fs_bioset);
+-}
+-
+-static struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi, int npages,
+-		bool noio)
+-{
+-	if (noio) {
+-		/* No failure on bio allocation */
+-		return __f2fs_bio_alloc(GFP_NOIO, npages);
+-	}
+-
+-	if (time_to_inject(sbi, FAULT_ALLOC_BIO)) {
+-		f2fs_show_injection_info(sbi, FAULT_ALLOC_BIO);
+-		return NULL;
+-	}
+-
+-	return __f2fs_bio_alloc(GFP_KERNEL, npages);
+-}
+-
+ static bool __is_cp_guaranteed(struct page *page)
  {
- 	if (noio) {
- 		/* No failure on bio allocation */
+ 	struct address_space *mapping = page->mapping;
+@@ -433,7 +411,7 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
+ 	struct f2fs_sb_info *sbi = fio->sbi;
+ 	struct bio *bio;
+ 
+-	bio = f2fs_bio_alloc(sbi, npages, true);
++	bio = bio_alloc_bioset(GFP_NOIO, npages, &f2fs_bioset);
+ 
+ 	f2fs_target_device(sbi, fio->new_blkaddr, bio);
+ 	if (is_read_io(fio->op)) {
+@@ -1029,8 +1007,9 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ 	struct bio_post_read_ctx *ctx;
+ 	unsigned int post_read_steps = 0;
+ 
+-	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES),
+-								for_write);
++	bio = bio_alloc_bioset(for_write ? GFP_NOIO : GFP_KERNEL,
++			       min_t(int, nr_pages, BIO_MAX_PAGES),
++			       &f2fs_bioset);
+ 	if (!bio)
+ 		return ERR_PTR(-ENOMEM);
+ 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index bb11759191dcc9..902bd3267c03e1 100644
+index 902bd3267c03e1..6c78365d80ceb5 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3424,7 +3424,6 @@ void f2fs_destroy_checkpoint_caches(void);
-  */
- int __init f2fs_init_bioset(void);
- void f2fs_destroy_bioset(void);
--struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi, int npages, bool noio);
- int f2fs_init_bio_entry_cache(void);
- void f2fs_destroy_bio_entry_cache(void);
- void f2fs_submit_bio(struct f2fs_sb_info *sbi,
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index deca74cb17dfd8..c495f170ee400b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -566,17 +566,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi, bool from_bg)
- static int __submit_flush_wait(struct f2fs_sb_info *sbi,
- 				struct block_device *bdev)
- {
--	struct bio *bio;
--	int ret;
--
--	bio = f2fs_bio_alloc(sbi, 0, false);
--	if (!bio)
--		return -ENOMEM;
--
--	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH;
--	bio_set_dev(bio, bdev);
--	ret = submit_bio_wait(bio);
--	bio_put(bio);
-+	int ret = blkdev_issue_flush(bdev);
- 
- 	trace_f2fs_issue_flush(bdev, test_opt(sbi, NOBARRIER),
- 				test_opt(sbi, FLUSH_MERGE), ret);
+@@ -43,7 +43,6 @@ enum {
+ 	FAULT_KVMALLOC,
+ 	FAULT_PAGE_ALLOC,
+ 	FAULT_PAGE_GET,
+-	FAULT_ALLOC_BIO,
+ 	FAULT_ALLOC_NID,
+ 	FAULT_ORPHAN,
+ 	FAULT_BLOCK,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index b4a07fe62d1a58..3a312642907e86 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -45,7 +45,6 @@ const char *f2fs_fault_name[FAULT_MAX] = {
+ 	[FAULT_KVMALLOC]	= "kvmalloc",
+ 	[FAULT_PAGE_ALLOC]	= "page alloc",
+ 	[FAULT_PAGE_GET]	= "page get",
+-	[FAULT_ALLOC_BIO]	= "alloc bio",
+ 	[FAULT_ALLOC_NID]	= "alloc nid",
+ 	[FAULT_ORPHAN]		= "orphan",
+ 	[FAULT_BLOCK]		= "no more block",
 -- 
 2.29.2
 
