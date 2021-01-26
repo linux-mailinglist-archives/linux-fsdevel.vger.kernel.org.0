@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0DB3041E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 16:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D69F93041FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 16:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406092AbhAZPM6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 10:12:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54858 "EHLO
+        id S2392691AbhAZPOq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 10:14:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392761AbhAZPMt (ORCPT
+        with ESMTP id S1730814AbhAZPOe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 10:12:49 -0500
+        Tue, 26 Jan 2021 10:14:34 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F86BC061D7F;
-        Tue, 26 Jan 2021 07:12:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BC12C061A31;
+        Tue, 26 Jan 2021 07:13:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=HErhv54QBaSjoGpiWf1SZ+x2VawfdyThF54vo2cmZ+0=; b=psFgtPRZ6D/21BqcKKyxXBT5zV
-        Arh/O5/9ipibQp28daCFwPAkwEfB8+qxTkARKVHVe011bePjLLoCZIAzrYjP3M/HV6EqUx4is00Yk
-        kOABbaz6Etshz/WgzYdyqQE+9HKqaXrdoZVODEsiOGiRPyCkiK74I61FXpT/fV0sHhSRmxgTQ0iBY
-        SFDBTDTQ5plMii25HFVgTG3Wg/BO1lFNS1S2Mmjf3GTuH1SDsGuByg0C1MHlYmglHBfP0gXy8clgd
-        Ld4f4GtTIzjg/E/zIYg1Xr48+Gj7Jvj4OIzkm7oxnKOobS8TWjPxW+tR7kP9DT95SnrWdUOiZj+ok
-        zlSx8+ow==;
+        bh=jUX/nPv36iBJWdAHLrELJid7jXvEdNR6cRFF7NPxZ3A=; b=IpTioxravckm1qWlFlhuTXqcRU
+        NUrQRXmnYaUUkiw+vad9k9lpdmMyYrpgXEgukSClL8PPJYRMAlC6PbXKGyHzkg4QgCq5ytPbIctU0
+        Wu+AAg1vTUjodle4xRBeGFJxUuV90SjBomvdcXWoLsGxNckVxTg/NO0lV2QQg3NnOBl2C8ucoaGEh
+        e1e0LT8AvFm3CKPyjDORVskFTIoraKd9UA3fA3R7jCx0mHdzlJoYhJv4fTxkNjiCdEnjZjfhVcdEP
+        wpDTJ0dmomAG1DDIPybWzoJF6Nb0MGrzyoAKs8QVsymaQzhznpqBFzqeBp8JY+LKtIDBeAIgk0+OS
+        j0VgL1sQ==;
 Received: from [2001:4bb8:191:e347:5918:ac86:61cb:8801] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1l4PwO-005nSC-70; Tue, 26 Jan 2021 15:07:53 +0000
+        id 1l4Pxm-005nbR-LQ; Tue, 26 Jan 2021 15:09:37 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>
 Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -46,9 +46,9 @@ Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
         linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 09/17] drbd: remove bio_alloc_drbd
-Date:   Tue, 26 Jan 2021 15:52:39 +0100
-Message-Id: <20210126145247.1964410-10-hch@lst.de>
+Subject: [PATCH 10/17] drbd: remove drbd_req_make_private_bio
+Date:   Tue, 26 Jan 2021 15:52:40 +0100
+Message-Id: <20210126145247.1964410-11-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210126145247.1964410-1-hch@lst.de>
 References: <20210126145247.1964410-1-hch@lst.de>
@@ -59,81 +59,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Given that drbd_md_io_bio_set is initialized during module initialization
-and the module fails to load if the initialization fails there is no need
-to fall back to plain bio_alloc.
+Open code drbd_req_make_private_bio in the two callers to prepare
+for further changes.  Also don't bother to initialize bi_next as the
+bio code already does that that.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/drbd/drbd_actlog.c |  2 +-
- drivers/block/drbd/drbd_bitmap.c |  2 +-
- drivers/block/drbd/drbd_int.h    |  2 --
- drivers/block/drbd/drbd_main.c   | 13 -------------
- 4 files changed, 2 insertions(+), 17 deletions(-)
+ drivers/block/drbd/drbd_req.c    |  5 ++++-
+ drivers/block/drbd/drbd_req.h    | 12 ------------
+ drivers/block/drbd/drbd_worker.c |  5 ++++-
+ 3 files changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_actlog.c b/drivers/block/drbd/drbd_actlog.c
-index 7227fc7ab8ed1e..72cf7603d51fc7 100644
---- a/drivers/block/drbd/drbd_actlog.c
-+++ b/drivers/block/drbd/drbd_actlog.c
-@@ -138,7 +138,7 @@ static int _drbd_md_sync_page_io(struct drbd_device *device,
- 		op_flags |= REQ_FUA | REQ_PREFLUSH;
- 	op_flags |= REQ_SYNC;
+diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
+index ea0f31ab334361..9dbb660a7d7c8e 100644
+--- a/drivers/block/drbd/drbd_req.c
++++ b/drivers/block/drbd/drbd_req.c
+@@ -30,7 +30,10 @@ static struct drbd_request *drbd_req_new(struct drbd_device *device, struct bio
+ 		return NULL;
+ 	memset(req, 0, sizeof(*req));
  
--	bio = bio_alloc_drbd(GFP_NOIO);
-+	bio = bio_alloc_bioset(GFP_NOIO, 1, &drbd_md_io_bio_set);
- 	bio_set_dev(bio, bdev->md_bdev);
- 	bio->bi_iter.bi_sector = sector;
- 	err = -EIO;
-diff --git a/drivers/block/drbd/drbd_bitmap.c b/drivers/block/drbd/drbd_bitmap.c
-index df53dca5d02c7e..c1f816f896a89a 100644
---- a/drivers/block/drbd/drbd_bitmap.c
-+++ b/drivers/block/drbd/drbd_bitmap.c
-@@ -976,7 +976,7 @@ static void drbd_bm_endio(struct bio *bio)
+-	drbd_req_make_private_bio(req, bio_src);
++	req->private_bio = bio_clone_fast(bio_src, GFP_NOIO, &drbd_io_bio_set);
++	req->private_bio->bi_private = req;
++	req->private_bio->bi_end_io = drbd_request_endio;
++
+ 	req->rq_state = (bio_data_dir(bio_src) == WRITE ? RQ_WRITE : 0)
+ 		      | (bio_op(bio_src) == REQ_OP_WRITE_SAME ? RQ_WSAME : 0)
+ 		      | (bio_op(bio_src) == REQ_OP_WRITE_ZEROES ? RQ_ZEROES : 0)
+diff --git a/drivers/block/drbd/drbd_req.h b/drivers/block/drbd/drbd_req.h
+index 55bb0f8721faa3..511f39a08de453 100644
+--- a/drivers/block/drbd/drbd_req.h
++++ b/drivers/block/drbd/drbd_req.h
+@@ -256,18 +256,6 @@ enum drbd_req_state_bits {
+ #define MR_WRITE       1
+ #define MR_READ        2
  
- static void bm_page_io_async(struct drbd_bm_aio_ctx *ctx, int page_nr) __must_hold(local)
- {
--	struct bio *bio = bio_alloc_drbd(GFP_NOIO);
-+	struct bio *bio = bio_alloc_bioset(GFP_NOIO, 1, &drbd_md_io_bio_set);
- 	struct drbd_device *device = ctx->device;
- 	struct drbd_bitmap *b = device->bitmap;
- 	struct page *page;
-diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
-index b2c93a29c251fd..02db50d7e4c668 100644
---- a/drivers/block/drbd/drbd_int.h
-+++ b/drivers/block/drbd/drbd_int.h
-@@ -1422,8 +1422,6 @@ extern mempool_t drbd_md_io_page_pool;
- /* We also need to make sure we get a bio
-  * when we need it for housekeeping purposes */
- extern struct bio_set drbd_md_io_bio_set;
--/* to allocate from that set */
--extern struct bio *bio_alloc_drbd(gfp_t gfp_mask);
- 
- /* And a bio_set for cloning */
- extern struct bio_set drbd_io_bio_set;
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index 1c8c18b2a25f33..788dd97e6026b8 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -138,19 +138,6 @@ static const struct block_device_operations drbd_ops = {
- 	.release	= drbd_release,
- };
- 
--struct bio *bio_alloc_drbd(gfp_t gfp_mask)
+-static inline void drbd_req_make_private_bio(struct drbd_request *req, struct bio *bio_src)
 -{
 -	struct bio *bio;
+-	bio = bio_clone_fast(bio_src, GFP_NOIO, &drbd_io_bio_set);
 -
--	if (!bioset_initialized(&drbd_md_io_bio_set))
--		return bio_alloc(gfp_mask, 1);
+-	req->private_bio = bio;
 -
--	bio = bio_alloc_bioset(gfp_mask, 1, &drbd_md_io_bio_set);
--	if (!bio)
--		return NULL;
--	return bio;
+-	bio->bi_private  = req;
+-	bio->bi_end_io   = drbd_request_endio;
+-	bio->bi_next     = NULL;
 -}
 -
- #ifdef __CHECKER__
- /* When checking with sparse, and this is an inline function, sparse will
-    give tons of false positives. When this is a real functions sparse works.
+ /* Short lived temporary struct on the stack.
+  * We could squirrel the error to be returned into
+  * bio->bi_iter.bi_size, or similar. But that would be too ugly. */
+diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
+index 02044ab7f767d5..64563bfdf0da02 100644
+--- a/drivers/block/drbd/drbd_worker.c
++++ b/drivers/block/drbd/drbd_worker.c
+@@ -1523,8 +1523,11 @@ int w_restart_disk_io(struct drbd_work *w, int cancel)
+ 	if (bio_data_dir(req->master_bio) == WRITE && req->rq_state & RQ_IN_ACT_LOG)
+ 		drbd_al_begin_io(device, &req->i);
+ 
+-	drbd_req_make_private_bio(req, req->master_bio);
++	req->private_bio = bio_clone_fast(req->master_bio, GFP_NOIO,
++					  &drbd_io_bio_set);
+ 	bio_set_dev(req->private_bio, device->ldev->backing_bdev);
++	req->private_bio->bi_private = req;
++	req->private_bio->bi_end_io = drbd_request_endio;
+ 	submit_bio_noacct(req->private_bio);
+ 
+ 	return 0;
 -- 
 2.29.2
 
