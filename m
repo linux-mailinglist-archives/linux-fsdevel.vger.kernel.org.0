@@ -2,113 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1C6305CF0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:20:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E528F305CEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S313359AbhAZWi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 17:38:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37728 "EHLO
+        id S313076AbhAZWjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 17:39:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405545AbhAZUZ3 (ORCPT
+        with ESMTP id S1727790AbhAZU65 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 15:25:29 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26276C061786;
-        Tue, 26 Jan 2021 12:24:49 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id d4so10416762plh.5;
-        Tue, 26 Jan 2021 12:24:49 -0800 (PST)
+        Tue, 26 Jan 2021 15:58:57 -0500
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063B9C061574;
+        Tue, 26 Jan 2021 12:58:17 -0800 (PST)
+Received: by mail-oi1-x22a.google.com with SMTP id h192so20071808oib.1;
+        Tue, 26 Jan 2021 12:58:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1cudNhAMfB/FNnO4Nfbnzqpu5VBUIwtW0BBCCWOr4ao=;
-        b=okEnGG//pva3FMm7+RQuqg3HjT6TuPB9G/HWJYN4D7a69egyS0VYX+j2NcX0rtqfMx
-         1wZ66PW1Lp/QBlFLsjTh6++IQ/YzkyKnsqgZK5oPJU4DLZbZJK8ICOq9t3lZDdpkB1pO
-         fajg2mPDaxDO8So+orz5lAgMXf6vEeSwW8KgrA+vmH4gNw33RVKwMG2y4uQzH/R7g2Ym
-         /0fOM4XSuQz9a8/FSx39lySghSLAwNhk90EgWrpfB+c5OmrKqEfKhqxs/XXnCC4azjTL
-         p8t61CcwzLqdmMv+Ke8sFeYU6PPsetdA1QzuB0X9TFIsLKUHFXEphvYwtjyPldGJ3oPu
-         JWlA==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=H6VwC/RDojdwh9voZtX18IiDAm2ZmQUukm2lKn3UJ5Y=;
+        b=JSN4ry1UaxIVmfChf8FWEDtWchWKdUb9bzFhj6sY5GRYZXbbKT3TviRuCHH2NbjSQ4
+         iiZ8s7BIPCGAsMiyFzC0iN4Y8aASRpufFEgGFVDFAXWhTqnameHbKoGwTthtCADgcWeK
+         oiOp3yZ/veHElzvGmbT8LtaLZCMB4DyrtHD85mHD1ZS+iyU8xv39+rdVJT2r8NKUkm9i
+         BQapQx0AuRuiPDPfk7gpYjvQyHXJz/8ku1eIDhF3yqWpmo+uO9wpSJrNkifHeqvA+9aU
+         02VtbwyMfRC3RShw9RoA4XldErD5Q1buHJxipvIwZz2KgjVKJG0U/KK4dZkXGtvnHkUD
+         VEYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1cudNhAMfB/FNnO4Nfbnzqpu5VBUIwtW0BBCCWOr4ao=;
-        b=ncJQtqGe/OMI2ZpeBBOxFePTmsBh+xZCJQ2C5xxAxzUmdAw7gxYgBzw7ZjHuOgtJNh
-         /j7qJh9NDAbuA797tRi5pe6pIuHPrMHYw0SJWe2eY7xgxYzuDfNMl/01mzp3Si5iIrab
-         B9/Yq/TYHv19ibaYtu4hz10x/Jzl5ixgYVPgMdhssO1R7fMU4Ip9xsb5KxVcBWfUF+93
-         EacgkNs6+DNNkZdBwye8lSRl103B4RugCuPC9Pw+CwQNVp7NIXR+xGZzYw9Hx82LXZbd
-         /Ux99yFlDImGh6t0kVcc5kYBIb9ZI8cDnDqOTtfRbpCIF5UysF8ldwhfJGuqyP6nxQkV
-         JDLQ==
-X-Gm-Message-State: AOAM5335IAExN276ILR55mKIVe3aHVIdbCjsHbMXdWMm2y98a/2CfMd1
-        mMuTC22b+gjA6xYz1j7Uen8=
-X-Google-Smtp-Source: ABdhPJzK7Kn4mm8q2nP95CoOy5hXdg0H+PpAN9AJ0CABoyuge53sptw7H1bXl1bPLLzeM8G/GYhKsw==
-X-Received: by 2002:a17:902:778e:b029:de:b475:c430 with SMTP id o14-20020a170902778eb02900deb475c430mr7872809pll.53.1611692688717;
-        Tue, 26 Jan 2021 12:24:48 -0800 (PST)
-Received: from localhost.localdomain (c-73-241-149-213.hsd1.ca.comcast.net. [73.241.149.213])
-        by smtp.googlemail.com with ESMTPSA id u12sm18697124pgi.91.2021.01.26.12.24.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 12:24:48 -0800 (PST)
-From:   noah <goldstein.w.n@gmail.com>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        goldstein.w.n@gmail.com
-Subject: [PATCH] io_uring: Add skip option for __io_sqe_files_update
-Date:   Tue, 26 Jan 2021 15:23:28 -0500
-Message-Id: <20210126202326.3143037-1-goldstein.w.n@gmail.com>
-X-Mailer: git-send-email 2.29.2
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=H6VwC/RDojdwh9voZtX18IiDAm2ZmQUukm2lKn3UJ5Y=;
+        b=JoutgSAfv0hrEeDRPQ5zgrtQ0iDXk+cIPnNQzAA3JdzvZ993Eo81Hc6wxPJ2FGQHVX
+         Y3NmNRN24LqqaK8lnUICWcYVm3+UvWRpSrjheOtgBKNYr4asb4wHOUvKNInzGAAVSROw
+         5M4OXWhknd8YoZM2XNjPPOPc7ZlaI1f1GzgVVm7HXjnzEXT+Jh/kaDrjQcuCicBe8qH2
+         Jlwvc80D51mCU8gD3jrhcZGJAwJaL8Ukq4/TO9sq7o06sV/PBJyx+3Lh7eD06/YoBXPr
+         3MtDK/9JAplITAwaHfQi8LfbUWbLrCllXWL9IWX2MVz7pb7IZP0yKXr9MKnnLkIsem3o
+         +vbQ==
+X-Gm-Message-State: AOAM533U0P2NhkS419MmQ7jUS6fTSBfYq6wy2UDkpl15p+/z+K3kT7Zu
+        qsnTgnZN3XscjGgOnTtjd4ABwCtjzPBD3ngyGKi1tqmyGJPBsw==
+X-Google-Smtp-Source: ABdhPJynzWLFJ0cDmqbyP47K0kZSFrosJ+i0B9NjQX49gINPQYPli7ciyy0EWY7u7Lh7fgpei8B0gdnQFLry5/dcuTk=
+X-Received: by 2002:a54:458f:: with SMTP id z15mr997411oib.139.1611694696095;
+ Tue, 26 Jan 2021 12:58:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+From:   Amy Parker <enbyamy@gmail.com>
+Date:   Tue, 26 Jan 2021 12:58:05 -0800
+Message-ID: <CAE1WUT55QViS=XE9QUTDp1KQ1_5fwuddLY3+2XSrMdoOuCOyYg@mail.gmail.com>
+Subject: [PATCH 1/2] fs/efs/inode.c: follow style guide
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch adds support for skipping a file descriptor when using
-IORING_REGISTER_FILES_UPDATE.  __io_sqe_files_update will skip fds set
-to IORING_REGISTER_FILES_SKIP. IORING_REGISTER_FILES_SKIP is inturn
-added as a #define in io_uring.h
+This patch updates inode.c for EFS to follow the kernel style guide.
 
-Signed-off-by: noah <goldstein.w.n@gmail.com>
+Signed-off-by: Amy Parker <enbyamy@gmail.com>
 ---
-Supporting documentation and tests in liburing can be added in PR284
-(https://github.com/axboe/liburing/pull/284) if this patch is applied.
-    
- fs/io_uring.c                 | 3 +++
- include/uapi/linux/io_uring.h | 7 +++++++
- 2 files changed, 10 insertions(+)
+fs/efs/inode.c | 64 +++++++++++++++++++++++++-------------------------
+1 file changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2c307dea162b..03748faa5295 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8039,6 +8039,9 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 			err = -EFAULT;
- 			break;
- 		}
-+		if (fd == IORING_REGISTER_FILES_SKIP)
-+			continue;
+diff --git a/fs/efs/inode.c b/fs/efs/inode.c
+index 89e73a6f0d36..4e81e7a15afb 100644
+--- a/fs/efs/inode.c
++++ b/fs/efs/inode.c
+@@ -109,9 +109,9 @@ struct inode *efs_iget(struct super_block *super,
+unsigned long ino)
+       /* this is the number of blocks in the file */
+       if (inode->i_size == 0) {
+               inode->i_blocks = 0;
+-       } else {
++       else
+               inode->i_blocks = ((inode->i_size - 1) >>
+EFS_BLOCKSIZE_BITS) + 1;
+-       }
 +
- 		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
- 		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
- 		index = i & IORING_FILE_TABLE_MASK;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index f9f106c54d90..e8b481040fb3 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -298,6 +298,13 @@ struct io_uring_rsrc_update {
- 	__aligned_u64 data;
- };
- 
-+/*
-+ * fd value in *((__s32 *)io_uring_rsrc_update->data)
-+ */
-+
-+/* Skip updating fd indexes set to this value */
-+#define IORING_REGISTER_FILES_SKIP  (-2)
-+
- #define IO_URING_OP_SUPPORTED	(1U << 0)
- 
- struct io_uring_probe_op {
--- 
+
+       rdev = be16_to_cpu(efs_inode->di_u.di_dev.odev);
+       if (rdev == 0xffff) {
+@@ -120,15 +120,16 @@ struct inode *efs_iget(struct super_block
+*super, unsigned long ino)
+                       device = 0;
+               else
+                       device = MKDEV(sysv_major(rdev), sysv_minor(rdev));
+-       } else
++       } else {
+               device = old_decode_dev(rdev);
++    }
+
+       /* get the number of extents for this object */
+       in->numextents = be16_to_cpu(efs_inode->di_numextents);
+       in->lastextent = 0;
+
+       /* copy the extents contained within the inode to memory */
+-       for(i = 0; i < EFS_DIRECTEXTENTS; i++) {
++       for (i = 0; i < EFS_DIRECTEXTENTS; i++) {
+               extent_copy(&(efs_inode->di_u.di_extents[i]), &(in->extents[i]));
+               if (i < in->numextents && in->extents[i].cooked.ex_magic != 0) {
+                       pr_warn("extent %d has bad magic number in inode %lu\n",
+@@ -142,28 +143,28 @@ struct inode *efs_iget(struct super_block
+*super, unsigned long ino)
+       pr_debug("efs_iget(): inode %lu, extents %d, mode %o\n",
+                inode->i_ino, in->numextents, inode->i_mode);
+       switch (inode->i_mode & S_IFMT) {
+-               case S_IFDIR:
+-                       inode->i_op = &efs_dir_inode_operations;
+-                       inode->i_fop = &efs_dir_operations;
+-                       break;
+-               case S_IFREG:
+-                       inode->i_fop = &generic_ro_fops;
+-                       inode->i_data.a_ops = &efs_aops;
+-                       break;
+-               case S_IFLNK:
+-                       inode->i_op = &page_symlink_inode_operations;
+-                       inode_nohighmem(inode);
+-                       inode->i_data.a_ops = &efs_symlink_aops;
+-                       break;
+-               case S_IFCHR:
+-               case S_IFBLK:
+-               case S_IFIFO:
+-                       init_special_inode(inode, inode->i_mode, device);
+-                       break;
+-               default:
+-                       pr_warn("unsupported inode mode %o\n", inode->i_mode);
+-                       goto read_inode_error;
+-                       break;
++    case S_IFDIR:
++        inode->i_op = &efs_dir_inode_operations;
++        inode->i_fop = &efs_dir_operations;
++        break;
++    case S_IFREG:
++        inode->i_fop = &generic_ro_fops;
++        inode->i_data.a_ops = &efs_aops;
++        break;
++    case S_IFLNK:
++        inode->i_op = &page_symlink_inode_operations;
++        inode_nohighmem(inode);
++        inode->i_data.a_ops = &efs_symlink_aops;
++        break;
++    case S_IFCHR:
++    case S_IFBLK:
++    case S_IFIFO:
++        init_special_inode(inode, inode->i_mode, device);
++        break;
++    default:
++        pr_warn("unsupported inode mode %o\n", inode->i_mode);
++        goto read_inode_error;
++        break;
+       }
+
+       unlock_new_inode(inode);
+@@ -189,11 +190,10 @@ efs_extent_check(efs_extent *ptr, efs_block_t
+block, struct efs_sb_info *
+sb) {
+       length = ptr->cooked.ex_length;
+       offset = ptr->cooked.ex_offset;
+
+-       if ((block >= offset) && (block < offset+length)) {
++       if ((block >= offset) && (block < offset+length))
+               return(sb->fs_start + start + block - offset);
+-       } else {
++       else
+               return 0;
+-       }
+}
+
+efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
+@@ -225,7 +225,7 @@ efs_block_t efs_map_block(struct inode *inode,
+efs_block_t block) {
+                * check the stored extents in the inode
+                * start with next extent and check forwards
+                */
+-               for(dirext = 1; dirext < direxts; dirext++) {
++               for (dirext = 1; dirext < direxts; dirext++) {
+                       cur = (last + dirext) % in->numextents;
+                       if ((result =
+efs_extent_check(&in->extents[cur], block, sb))) {
+                               in->lastextent = cur;
+@@ -242,7 +242,7 @@ efs_block_t efs_map_block(struct inode *inode,
+efs_block_t block) {
+       direxts = in->extents[0].cooked.ex_offset;
+       indexts = in->numextents;
+
+-       for(indext = 0; indext < indexts; indext++) {
++       for (indext = 0; indext < indexts; indext++) {
+               cur = (last + indext) % indexts;
+
+               /*
+@@ -253,7 +253,7 @@ efs_block_t efs_map_block(struct inode *inode,
+efs_block_t block) {
+                *
+                */
+               ibase = 0;
+-               for(dirext = 0; cur < ibase && dirext < direxts; dirext++) {
++               for (dirext = 0; cur < ibase && dirext < direxts; dirext++) {
+                       ibase += in->extents[dirext].cooked.ex_length *
+                               (EFS_BLOCKSIZE / sizeof(efs_extent));
+               }
+--
 2.29.2
-
