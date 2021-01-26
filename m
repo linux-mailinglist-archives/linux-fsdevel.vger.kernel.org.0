@@ -2,545 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D64C304972
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:02:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F737304C27
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 23:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732875AbhAZF2b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:28:31 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:38250 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731805AbhAZCaY (ORCPT
+        id S1726931AbhAZW21 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 17:28:27 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:59671 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbhAZElB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 21:30:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611628223; x=1643164223;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hw5rz406n16kqVNs0O4FE53tJCJ27kTzImUMixMpf4g=;
-  b=dvCN6gO+BGWYYgX3svM/Und4OjntESKZ5ObXiYZhmP1t2e5Fbj+hf6ft
-   wMGmCmzwIYITXFN7eMgDxF4fayTc4gASTavM3xJ9C+YZFaCphr0bN+GcQ
-   npENsvwrvf1yDNLXr9+QoQJkUhVuwHkuouVwMbx7KEDBUypK1R7dnNPWe
-   wW/RkEujT6ZiEPHWaKTQfQPM7FId0Hqodp54Vg3d9i/PFwZ4SRCCqpLY7
-   0Hcv4WrPCNl8nDpvwdhGPhHCT5ue7ffIUgAUHzGRUdnG/WFgsQ6EpmtKX
-   prLhiy3Dcvzf9bzk8AO5eOOvGofD2RSmv4vtbS2fI1M2SQ1UHq04ZACII
-   A==;
-IronPort-SDR: icecB777p5ZYMn9AJOnQsq4pT0qMYYtknu+fBrFO2N3lPlLg9Z9Nkdx5iF5lhq1hwdSSaw/Hz0
- cVgUMumyL97gME4AJRszqXpqDJxxnRqo0gl+HNUOODJAfHBR7K+8JGp3mmaROY3h2T2Wfp1VLF
- NrXRc+UMVeSUXNmzCfHR8cN/YvOgnS2HZI1BT3xhBly0xuPObRTMLaVA528gLjGE/s5YoI73P0
- 1WwbO8bsj8MjFHu2TPXRp7wTLYZYFDocuq0lkT9N3X0b/fqlwRByFBOcMI1YpQ41eyFgkVoCpY
- mYE=
-X-IronPort-AV: E=Sophos;i="5.79,375,1602518400"; 
-   d="scan'208";a="159483523"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Jan 2021 10:26:15 +0800
-IronPort-SDR: vqNrrgqo0MgZ7hCGpTkVg61gvJgcPryiolmcaM9WD7rMH39LkqrS3GNBMGHIMIdQBfwWNAcVHp
- 3XSNmBUvThGPJdBisinckvk3renu8rr7pMWy7LSqOB8rND9VbwkZLvsql+DRqg1ExjYqNhww0y
- Y+2JPnjG1e5cHmdd4xUD4tayh0TKSJjOvrqRbIjiCPGqduhmlsiXTXJS7U24D1vqjb+nvAqbVl
- UrAkZj9IF54st1SuSK0edJAOc0Bbd0ZGjC2SlLmowE100ndxwEYdUA6I0aCNh9V1gMPbt9/f1b
- Y2PolCbuzYZOZdemd3M+xQ5g
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2021 18:10:41 -0800
-IronPort-SDR: SbTx6CXEWA9TKWwOCqmNbJPXmInez6xPbOAiNaZvs3jAwxm9UICRqygkVedgyEx5FLVM/TGriU
- Hz8ncT7inLyKyxUbN7oWKo6sYAMfbeR3l8yDbqyYP4ZUbw4xdKP2/dTnz3UtUyqbUKf3JvY3s5
- yVMx2Bf/oDQ5XwZu+EfHBAB3/8x1i5ClBUauI1yhScfZvxjJ9IUcohz5oUa+sN17nwGZpuyySm
- 1CdSSgwmHsL+NobHWsmabO1vs7Tv5M4svh/9xpdWCie8eQOtagek/+2n+2HmrdIjEmw4AzlDQi
- 8WY=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 25 Jan 2021 18:26:13 -0800
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
-Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v14 09/42] btrfs: implement zoned chunk allocator
-Date:   Tue, 26 Jan 2021 11:24:47 +0900
-Message-Id: <aed311f8c69c4cce78a46b41629f56bbb6d52b4f.1611627788.git.naohiro.aota@wdc.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <cover.1611627788.git.naohiro.aota@wdc.com>
-References: <cover.1611627788.git.naohiro.aota@wdc.com>
+        Mon, 25 Jan 2021 23:41:01 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210126044017epoutp0440e45e1ac018728bf47b960d15603877~drmtSLyB22232322323epoutp04a
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jan 2021 04:40:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210126044017epoutp0440e45e1ac018728bf47b960d15603877~drmtSLyB22232322323epoutp04a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1611636017;
+        bh=0IF6BKuNDCmj4pH28NoauTZPK6sU7R4F7lqSF+hRVKs=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=Um4y5e3d3SO7nues++Ymn50ASVPZHYeE59iB8sHh0TIrDgyjYDC6Vr2iPOCAMShnK
+         AavsdBoHXq3djQmCgmigqYrDqf7tVZweghGsi44O5cd4neb/hXiJ3egdbTD7ykES/4
+         uvNc8h4iGWZKY10BLJENU6VL7Wr3Xga9CvgOgJGU=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210126044011epcas1p26622df0da60c9f1939d6f80e95bf85b5~drmnsy4m-3034030340epcas1p2N;
+        Tue, 26 Jan 2021 04:40:11 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4DPvDB39V6z4x9QF; Tue, 26 Jan
+        2021 04:40:10 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1E.A1.63458.A2D9F006; Tue, 26 Jan 2021 13:40:10 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210126044008epcas1p221ba5820bc563ab57424806003dd5f79~drmlNhZIN0935609356epcas1p2X;
+        Tue, 26 Jan 2021 04:40:08 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210126044008epsmtrp2389eb38a9d75e8653ce7bf7aff9cc33c~drmlMuWuD2174521745epsmtrp2Y;
+        Tue, 26 Jan 2021 04:40:08 +0000 (GMT)
+X-AuditID: b6c32a36-6c9ff7000000f7e2-95-600f9d2aa1c6
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D0.EB.08745.82D9F006; Tue, 26 Jan 2021 13:40:08 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210126044008epsmtip1a7a1868a6e334a04496ba5086efe424c~drmlDUX9G0712007120epsmtip1K;
+        Tue, 26 Jan 2021 04:40:08 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Matthew Wilcox'" <willy@infradead.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sj1557.seo@samsung.com>, <syzkaller-bugs@googlegroups.com>,
+        "'syzbot'" <syzbot+da4fe66aaadd3c2e2d1c@syzkaller.appspotmail.com>
+In-Reply-To: <20210125183918.GH308988@casper.infradead.org>
+Subject: RE: UBSAN: shift-out-of-bounds in exfat_fill_super
+Date:   Tue, 26 Jan 2021 13:40:08 +0900
+Message-ID: <051e01d6f39d$537a0910$fa6e1b30$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKx/jOXwjWHcb1Mo6E7TSXbn6EBcQJApmhQAe65oTeoYcKoMA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdlhTT1drLn+CwcYNohZ79p5ksbi8aw6b
+        xZZ/R1gt7l1ntLixZS6zxe8fc9gc2Dz2TDzJ5rF5hZZH35ZVjB4z36p5fN4kF8AalWOTkZqY
+        klqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA7ReSaEsMacUKBSQ
+        WFyspG9nU5RfWpKqkJFfXGKrlFqQklNgaFCgV5yYW1yal66XnJ9rZWhgYGQKVJmQk3Fh5072
+        giNsFYc/xTYwTmLtYuTkkBAwkdi89gqQzcUhJLCDUeJA1w52COcTo8S1hm9MEM5nRokLq7sY
+        YVrWvT3FApHYxSjRtPQtVMtLRolPG2eygFSxCehK/Puznw3EFhHQkeh6uR1sCbPACUaJK3dO
+        g23nFLCW+LrrJ1iDMJA95elusAYWAVWJ/90NYHFeAUuJI1dPMELYghInZz4BizMLyEtsfzuH
+        GeIkBYmfT5cBzeQAWuYk8XumBkSJiMTszjZmkL0SAr0cEh/WzQSrkRBwkbg51xCiVVji1fEt
+        7BC2lMTnd3vZIEqqJT7uh5rewSjx4rsthG0scXP9BrApzAKaEut36UOEFSV2/p7LCLGVT+Ld
+        1x6oRbwSHW1CECWqEn2XDjNB2NISXe0f2CcwKs1C8tYsJG/NQnL/LIRlCxhZVjGKpRYU56an
+        FhsWGCFH9SZGcMLUMtvBOOntB71DjEwcjIcYJTiYlUR4d+vxJAjxpiRWVqUW5ccXleakFh9i
+        NAUG9ERmKdHkfGDKziuJNzQ1MjY2tjAxMzczNVYS5000eBAvJJCeWJKanZpakFoE08fEwSnV
+        wDTvYFZh9qV02cSK++rdPGnht5feWTznz0fe8xaTXafm7n758tSEco3a4mKPOct8Fkb73nJM
+        Ob2qdMaVY2naX6Ybrr9xK3BzzDpZg4WC88WUZxrNPlC8OfC185yJj+Je7JFlum8sKZ3KpaYW
+        vNoiPdNuTe+d7VWzUr2b1mxxF5BQto2Y4Gsuz2yxNiR2yZMb9yYvXWJz3qbVZ+X7n+z/4msf
+        bhKqubTvgtLRx3riAubfpyRxL36YyLOs+U5+0upZLwOWneY6G1S+u6NssaP36wrhh7/sNL8s
+        jrdMe/K0Qlg65MDuu87nom/pJp9rZJ9hrvDdTy3/Ufm/4AM/glYFXpojGKOzotadZ1bEfI+6
+        omtKLMUZiYZazEXFiQA+k5uiIQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnK7GXP4Eg/t3zSz27D3JYnF51xw2
+        iy3/jrBa3LvOaHFjy1xmi98/5rA5sHnsmXiSzWPzCi2Pvi2rGD1mvlXz+LxJLoA1issmJTUn
+        syy1SN8ugSvjws6d7AVH2CoOf4ptYJzE2sXIySEhYCKx7u0pli5GLg4hgR2MEh+mPWeESEhL
+        HDtxhrmLkQPIFpY4fLgYouY5o0THhOMsIDVsAroS//7sZwOxRQR0JLpebmcFKWIWOMMo8b3r
+        OtTUbYwSD9Z+AOvgFLCW+LrrJ5gtDGRPebobrJtFQFXif3cDWJxXwFLiyNUTjBC2oMTJmU9Y
+        QK5gFtCTaNsIFmYWkJfY/nYOM8ShChI/ny5jBSkREXCS+D1TA6JERGJ2ZxvzBEbhWUgGzUIY
+        NAvJoFlIOhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOHC2tHYx7Vn3QO8TI
+        xMF4iFGCg1lJhHe3Hk+CEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NTC1KL
+        YLJMHJxSDUzLXpqbBb9yMl/64hN3b1f7ne3Vk0/Nq5H5oltw9W2T+DXXpa7ij+cyq0tdLpjV
+        Huyf0rO7aX2j5Z6pSp9ZDEQ2n17EP5VN/5rweg8xvZ6V5xpWmpy+mDVTonyXfNuBjxr2Et9X
+        yD+xel3Mxf79ze52FqMzLqXFpq80Nn+/vc81fEv9vbcGyeytIova+ouNxH9qHumTmBSl7j3v
+        n847+a0Tlx4/LC/82ylr4du1WWvOX8w4Muk6U/3H9gO3/bc8Mt7P9d9zkdjs68u2p3+/PcNm
+        fePZf8zdK8UKj2x/L6bcvty10mzK5OTlaf5vZCo1gvgU+4xON4gJqdZmSheYznKIWGenkVbZ
+        cP1+6DyFh5eUWIozEg21mIuKEwF2b5WbCwMAAA==
+X-CMS-MailID: 20210126044008epcas1p221ba5820bc563ab57424806003dd5f79
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210125184007epcas1p39999c1e4325b738e4ff5e42899b8f6b7
+References: <000000000000c2865c05b9bcee02@google.com>
+        <CGME20210125184007epcas1p39999c1e4325b738e4ff5e42899b8f6b7@epcas1p3.samsung.com>
+        <20210125183918.GH308988@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This commit implements a zoned chunk/dev_extent allocator. The zoned
-allocator aligns the device extents to zone boundaries, so that a zone
-reset affects only the device extent and does not change the state of
-blocks in the neighbor device extents.
-
-Also, it checks that a region allocation is not overlapping any of the
-super block zones, and ensures the region is empty.
-
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
----
- fs/btrfs/volumes.c | 169 ++++++++++++++++++++++++++++++++++++++++-----
- fs/btrfs/volumes.h |   1 +
- fs/btrfs/zoned.c   | 144 ++++++++++++++++++++++++++++++++++++++
- fs/btrfs/zoned.h   |  25 +++++++
- 4 files changed, 323 insertions(+), 16 deletions(-)
-
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index bb3f341f6a22..27208139d6e2 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -1414,11 +1414,62 @@ static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
- 		 * make sure to start at an offset of at least 1MB.
- 		 */
- 		return max_t(u64, start, SZ_1M);
-+	case BTRFS_CHUNK_ALLOC_ZONED:
-+		/*
-+		 * We don't care about the starting region like regular
-+		 * allocator, because we anyway use/reserve the first two
-+		 * zones for superblock logging.
-+		 */
-+		return ALIGN(start, device->zone_info->zone_size);
- 	default:
- 		BUG();
- 	}
- }
- 
-+static bool dev_extent_hole_check_zoned(struct btrfs_device *device,
-+					u64 *hole_start, u64 *hole_size,
-+					u64 num_bytes)
-+{
-+	u64 zone_size = device->zone_info->zone_size;
-+	u64 pos;
-+	int ret;
-+	int changed = 0;
-+
-+	ASSERT(IS_ALIGNED(*hole_start, zone_size));
-+
-+	while (*hole_size > 0) {
-+		pos = btrfs_find_allocatable_zones(device, *hole_start,
-+						   *hole_start + *hole_size,
-+						   num_bytes);
-+		if (pos != *hole_start) {
-+			*hole_size = *hole_start + *hole_size - pos;
-+			*hole_start = pos;
-+			changed = 1;
-+			if (*hole_size < num_bytes)
-+				break;
-+		}
-+
-+		ret = btrfs_ensure_empty_zones(device, pos, num_bytes);
-+
-+		/* Range is ensured to be empty */
-+		if (!ret)
-+			return changed;
-+
-+		/* Given hole range was invalid (outside of device) */
-+		if (ret == -ERANGE) {
-+			*hole_start += *hole_size;
-+			*hole_size = 0;
-+			return 1;
-+		}
-+
-+		*hole_start += zone_size;
-+		*hole_size -= zone_size;
-+		changed = 1;
-+	}
-+
-+	return changed;
-+}
-+
- /**
-  * dev_extent_hole_check - check if specified hole is suitable for allocation
-  * @device:	the device which we have the hole
-@@ -1435,24 +1486,39 @@ static bool dev_extent_hole_check(struct btrfs_device *device, u64 *hole_start,
- 	bool changed = false;
- 	u64 hole_end = *hole_start + *hole_size;
- 
--	/*
--	 * Check before we set max_hole_start, otherwise we could end up
--	 * sending back this offset anyway.
--	 */
--	if (contains_pending_extent(device, hole_start, *hole_size)) {
--		if (hole_end >= *hole_start)
--			*hole_size = hole_end - *hole_start;
--		else
--			*hole_size = 0;
--		changed = true;
--	}
-+	for (;;) {
-+		/*
-+		 * Check before we set max_hole_start, otherwise we could end up
-+		 * sending back this offset anyway.
-+		 */
-+		if (contains_pending_extent(device, hole_start, *hole_size)) {
-+			if (hole_end >= *hole_start)
-+				*hole_size = hole_end - *hole_start;
-+			else
-+				*hole_size = 0;
-+			changed = true;
-+		}
-+
-+		switch (device->fs_devices->chunk_alloc_policy) {
-+		case BTRFS_CHUNK_ALLOC_REGULAR:
-+			/* No extra check */
-+			break;
-+		case BTRFS_CHUNK_ALLOC_ZONED:
-+			if (dev_extent_hole_check_zoned(device, hole_start,
-+							hole_size, num_bytes)) {
-+				changed = true;
-+				/*
-+				 * The changed hole can contain pending
-+				 * extent. Loop again to check that.
-+				 */
-+				continue;
-+			}
-+			break;
-+		default:
-+			BUG();
-+		}
- 
--	switch (device->fs_devices->chunk_alloc_policy) {
--	case BTRFS_CHUNK_ALLOC_REGULAR:
--		/* No extra check */
- 		break;
--	default:
--		BUG();
- 	}
- 
- 	return changed;
-@@ -1505,6 +1571,9 @@ static int find_free_dev_extent_start(struct btrfs_device *device,
- 
- 	search_start = dev_extent_search_start(device, search_start);
- 
-+	WARN_ON(device->zone_info &&
-+		!IS_ALIGNED(num_bytes, device->zone_info->zone_size));
-+
- 	path = btrfs_alloc_path();
- 	if (!path)
- 		return -ENOMEM;
-@@ -4899,6 +4968,37 @@ static void init_alloc_chunk_ctl_policy_regular(
- 	ctl->dev_extent_min = BTRFS_STRIPE_LEN * ctl->dev_stripes;
- }
- 
-+static void init_alloc_chunk_ctl_policy_zoned(
-+				      struct btrfs_fs_devices *fs_devices,
-+				      struct alloc_chunk_ctl *ctl)
-+{
-+	u64 zone_size = fs_devices->fs_info->zone_size;
-+	u64 limit;
-+	int min_num_stripes = ctl->devs_min * ctl->dev_stripes;
-+	int min_data_stripes = (min_num_stripes - ctl->nparity) / ctl->ncopies;
-+	u64 min_chunk_size = min_data_stripes * zone_size;
-+	u64 type = ctl->type;
-+
-+	ctl->max_stripe_size = zone_size;
-+	if (type & BTRFS_BLOCK_GROUP_DATA) {
-+		ctl->max_chunk_size = round_down(BTRFS_MAX_DATA_CHUNK_SIZE,
-+						 zone_size);
-+	} else if (type & BTRFS_BLOCK_GROUP_METADATA) {
-+		ctl->max_chunk_size = ctl->max_stripe_size;
-+	} else if (type & BTRFS_BLOCK_GROUP_SYSTEM) {
-+		ctl->max_chunk_size = 2 * ctl->max_stripe_size;
-+		ctl->devs_max = min_t(int, ctl->devs_max,
-+				      BTRFS_MAX_DEVS_SYS_CHUNK);
-+	}
-+
-+	/* We don't want a chunk larger than 10% of writable space */
-+	limit = max(round_down(div_factor(fs_devices->total_rw_bytes, 1),
-+			       zone_size),
-+		    min_chunk_size);
-+	ctl->max_chunk_size = min(limit, ctl->max_chunk_size);
-+	ctl->dev_extent_min = zone_size * ctl->dev_stripes;
-+}
-+
- static void init_alloc_chunk_ctl(struct btrfs_fs_devices *fs_devices,
- 				 struct alloc_chunk_ctl *ctl)
- {
-@@ -4919,6 +5019,9 @@ static void init_alloc_chunk_ctl(struct btrfs_fs_devices *fs_devices,
- 	case BTRFS_CHUNK_ALLOC_REGULAR:
- 		init_alloc_chunk_ctl_policy_regular(fs_devices, ctl);
- 		break;
-+	case BTRFS_CHUNK_ALLOC_ZONED:
-+		init_alloc_chunk_ctl_policy_zoned(fs_devices, ctl);
-+		break;
- 	default:
- 		BUG();
- 	}
-@@ -5045,6 +5148,38 @@ static int decide_stripe_size_regular(struct alloc_chunk_ctl *ctl,
- 	return 0;
- }
- 
-+static int decide_stripe_size_zoned(struct alloc_chunk_ctl *ctl,
-+				    struct btrfs_device_info *devices_info)
-+{
-+	u64 zone_size = devices_info[0].dev->zone_info->zone_size;
-+	/* Number of stripes that count for block group size */
-+	int data_stripes;
-+
-+	/*
-+	 * It should hold because:
-+	 *    dev_extent_min == dev_extent_want == zone_size * dev_stripes
-+	 */
-+	ASSERT(devices_info[ctl->ndevs - 1].max_avail == ctl->dev_extent_min);
-+
-+	ctl->stripe_size = zone_size;
-+	ctl->num_stripes = ctl->ndevs * ctl->dev_stripes;
-+	data_stripes = (ctl->num_stripes - ctl->nparity) / ctl->ncopies;
-+
-+	/* stripe_size is fixed in ZONED. Reduce ndevs instead. */
-+	if (ctl->stripe_size * data_stripes > ctl->max_chunk_size) {
-+		ctl->ndevs = div_u64(div_u64(ctl->max_chunk_size * ctl->ncopies,
-+					     ctl->stripe_size) + ctl->nparity,
-+				     ctl->dev_stripes);
-+		ctl->num_stripes = ctl->ndevs * ctl->dev_stripes;
-+		data_stripes = (ctl->num_stripes - ctl->nparity) / ctl->ncopies;
-+		ASSERT(ctl->stripe_size * data_stripes <= ctl->max_chunk_size);
-+	}
-+
-+	ctl->chunk_size = ctl->stripe_size * data_stripes;
-+
-+	return 0;
-+}
-+
- static int decide_stripe_size(struct btrfs_fs_devices *fs_devices,
- 			      struct alloc_chunk_ctl *ctl,
- 			      struct btrfs_device_info *devices_info)
-@@ -5072,6 +5207,8 @@ static int decide_stripe_size(struct btrfs_fs_devices *fs_devices,
- 	switch (fs_devices->chunk_alloc_policy) {
- 	case BTRFS_CHUNK_ALLOC_REGULAR:
- 		return decide_stripe_size_regular(ctl, devices_info);
-+	case BTRFS_CHUNK_ALLOC_ZONED:
-+		return decide_stripe_size_zoned(ctl, devices_info);
- 	default:
- 		BUG();
- 	}
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index 1997a4649a66..98a447badd6a 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -213,6 +213,7 @@ BTRFS_DEVICE_GETSET_FUNCS(bytes_used);
- 
- enum btrfs_chunk_allocation_policy {
- 	BTRFS_CHUNK_ALLOC_REGULAR,
-+	BTRFS_CHUNK_ALLOC_ZONED,
- };
- 
- /*
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index f0af88d497c7..e829fa2df8ac 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -1,11 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+#include <linux/bitops.h>
- #include <linux/slab.h>
- #include <linux/blkdev.h>
- #include "ctree.h"
- #include "volumes.h"
- #include "zoned.h"
- #include "rcu-string.h"
-+#include "disk-io.h"
- 
- /* Maximum number of zones to report per blkdev_report_zones() call */
- #define BTRFS_REPORT_NR_ZONES   4096
-@@ -557,6 +559,7 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
- 
- 	fs_info->zone_size = zone_size;
- 	fs_info->max_zone_append_size = max_zone_append_size;
-+	fs_info->fs_devices->chunk_alloc_policy = BTRFS_CHUNK_ALLOC_ZONED;
- 
- 	/*
- 	 * Check mount options here, because we might change fs_info->zoned
-@@ -779,3 +782,144 @@ int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror)
- 				sb_zone << zone_sectors_shift,
- 				zone_sectors * BTRFS_NR_SB_LOG_ZONES, GFP_NOFS);
- }
-+
-+/*
-+ * btrfs_check_allocatable_zones - find allocatable zones within give region
-+ * @device:	the device to allocate a region
-+ * @hole_start: the position of the hole to allocate the region
-+ * @num_bytes:	the size of wanted region
-+ * @hole_size:	the size of hole
-+ * @return:	position of allocatable zones
-+ *
-+ * Allocatable region should not contain any superblock locations.
-+ */
-+u64 btrfs_find_allocatable_zones(struct btrfs_device *device, u64 hole_start,
-+				 u64 hole_end, u64 num_bytes)
-+{
-+	struct btrfs_zoned_device_info *zinfo = device->zone_info;
-+	u8 shift = zinfo->zone_size_shift;
-+	u64 nzones = num_bytes >> shift;
-+	u64 pos = hole_start;
-+	u64 begin, end;
-+	bool have_sb;
-+	int i;
-+
-+	ASSERT(IS_ALIGNED(hole_start, zinfo->zone_size));
-+	ASSERT(IS_ALIGNED(num_bytes, zinfo->zone_size));
-+
-+	while (pos < hole_end) {
-+		begin = pos >> shift;
-+		end = begin + nzones;
-+
-+		if (end > zinfo->nr_zones)
-+			return hole_end;
-+
-+		/* Check if zones in the region are all empty */
-+		if (btrfs_dev_is_sequential(device, pos) &&
-+		    find_next_zero_bit(zinfo->empty_zones, end, begin) != end) {
-+			pos += zinfo->zone_size;
-+			continue;
-+		}
-+
-+		have_sb = false;
-+		for (i = 0; i < BTRFS_SUPER_MIRROR_MAX; i++) {
-+			u32 sb_zone;
-+			u64 sb_pos;
-+
-+			sb_zone = sb_zone_number(shift, i);
-+			if (!(end <= sb_zone ||
-+			      sb_zone + BTRFS_NR_SB_LOG_ZONES <= begin)) {
-+				have_sb = true;
-+				pos = ((u64)sb_zone + BTRFS_NR_SB_LOG_ZONES) << shift;
-+				break;
-+			}
-+
-+			/*
-+			 * We also need to exclude regular superblock
-+			 * positions
-+			 */
-+			sb_pos = btrfs_sb_offset(i);
-+			if (!(pos + num_bytes <= sb_pos ||
-+			      sb_pos + BTRFS_SUPER_INFO_SIZE <= pos)) {
-+				have_sb = true;
-+				pos = ALIGN(sb_pos + BTRFS_SUPER_INFO_SIZE,
-+					    zinfo->zone_size);
-+				break;
-+			}
-+		}
-+		if (!have_sb)
-+			break;
-+	}
-+
-+	return pos;
-+}
-+
-+int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
-+			    u64 length, u64 *bytes)
-+{
-+	int ret;
-+
-+	*bytes = 0;
-+	ret = blkdev_zone_mgmt(device->bdev, REQ_OP_ZONE_RESET,
-+			       physical >> SECTOR_SHIFT, length >> SECTOR_SHIFT,
-+			       GFP_NOFS);
-+	if (ret)
-+		return ret;
-+
-+	*bytes = length;
-+	while (length) {
-+		btrfs_dev_set_zone_empty(device, physical);
-+		physical += device->zone_info->zone_size;
-+		length -= device->zone_info->zone_size;
-+	}
-+
-+	return 0;
-+}
-+
-+int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size)
-+{
-+	struct btrfs_zoned_device_info *zinfo = device->zone_info;
-+	u8 shift = zinfo->zone_size_shift;
-+	unsigned long begin = start >> shift;
-+	unsigned long end = (start + size) >> shift;
-+	u64 pos;
-+	int ret;
-+
-+	ASSERT(IS_ALIGNED(start, zinfo->zone_size));
-+	ASSERT(IS_ALIGNED(size, zinfo->zone_size));
-+
-+	if (end > zinfo->nr_zones)
-+		return -ERANGE;
-+
-+	/* All the zones are conventional */
-+	if (find_next_bit(zinfo->seq_zones, begin, end) == end)
-+		return 0;
-+
-+	/* All the zones are sequential and empty */
-+	if (find_next_zero_bit(zinfo->seq_zones, begin, end) == end &&
-+	    find_next_zero_bit(zinfo->empty_zones, begin, end) == end)
-+		return 0;
-+
-+	for (pos = start; pos < start + size; pos += zinfo->zone_size) {
-+		u64 reset_bytes;
-+
-+		if (!btrfs_dev_is_sequential(device, pos) ||
-+		    btrfs_dev_is_empty_zone(device, pos))
-+			continue;
-+
-+		/* Free regions should be empty */
-+		btrfs_warn_in_rcu(
-+			device->fs_info,
-+			"zoned: resetting device %s (devid %llu) zone %llu for allocation",
-+			rcu_str_deref(device->name), device->devid,
-+			pos >> shift);
-+		WARN_ON_ONCE(1);
-+
-+		ret = btrfs_reset_device_zone(device, pos, zinfo->zone_size,
-+					      &reset_bytes);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-index 058a57317c05..de5901f5ae66 100644
---- a/fs/btrfs/zoned.h
-+++ b/fs/btrfs/zoned.h
-@@ -36,6 +36,11 @@ int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
- 			  u64 *bytenr_ret);
- void btrfs_advance_sb_log(struct btrfs_device *device, int mirror);
- int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror);
-+u64 btrfs_find_allocatable_zones(struct btrfs_device *device, u64 hole_start,
-+				 u64 hole_end, u64 num_bytes);
-+int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
-+			    u64 length, u64 *bytes);
-+int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size);
- #else /* CONFIG_BLK_DEV_ZONED */
- static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
- 				     struct blk_zone *zone)
-@@ -92,6 +97,26 @@ static inline int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror
- 	return 0;
- }
- 
-+static inline u64 btrfs_find_allocatable_zones(struct btrfs_device *device,
-+					       u64 hole_start, u64 hole_end,
-+					       u64 num_bytes)
-+{
-+	return hole_start;
-+}
-+
-+static inline int btrfs_reset_device_zone(struct btrfs_device *device,
-+					  u64 physical, u64 length, u64 *bytes)
-+{
-+	*bytes = 0;
-+	return 0;
-+}
-+
-+static inline int btrfs_ensure_empty_zones(struct btrfs_device *device,
-+					   u64 start, u64 size)
-+{
-+	return 0;
-+}
-+
- #endif
- 
- static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
--- 
-2.27.0
+> On Mon, Jan 25, 2021 at 09:33:14AM -0800, syzbot wrote:
+> > UBSAN: shift-out-of-bounds in fs/exfat/super.c:471:28 shift exponent
+> > 4294967294 is too large for 32-bit type 'int'
+> 
+> This is an integer underflow:
+> 
+>         sbi->dentries_per_clu = 1 <<
+>                 (sbi->cluster_size_bits - DENTRY_SIZE_BITS);
+> 
+> I think the problem is that there is no validation of sect_per_clus_bits.
+> We should check it is at least DENTRY_SIZE_BITS and probably that it's less than ... 16?  64?  I don't
+> know what legitimate values are in this field, but I would imagine that 255 is completely unacceptable.
+exfat specification describe sect_per_clus_bits field of boot sector could be at most 32 and
+at least 0. And sect_size_bits can also affect this calculation, It also needs validation.
+I will fix it.
+Thanks!
 
