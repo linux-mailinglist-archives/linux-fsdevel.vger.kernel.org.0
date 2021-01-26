@@ -2,133 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 279CF303E8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 14:24:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1F0303EA6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 14:26:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391712AbhAZMp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 07:45:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27799 "EHLO
+        id S2391708AbhAZN0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 08:26:06 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27678 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731338AbhAZKBd (ORCPT
+        by vger.kernel.org with ESMTP id S2391731AbhAZJy5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 05:01:33 -0500
+        Tue, 26 Jan 2021 04:54:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611655205;
+        s=mimecast20190719; t=1611654809;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kElVC+jkHLstLVhvoAPiIFDGEp54B3rvncUWM43dOQw=;
-        b=DdR/2vq2nEet8tbYkQNIlMz5/Huhmk2JXM5+1LGNEvf2u0nbq50PsdjBSFhVDv6FgzlfpZ
-        prgSlB6YGV53fAQIvenmKaHXAki/EuchZefgt+beGPuKhx4LYjQKIVk7/VbXAtFW0qDijU
-        pGlSq2O5xyukpq/FgouyDyNpnoVxUhQ=
+        bh=IUod4ETbztcXWv5kUceZZzVauSHrXgAqLfR6bEGhJrw=;
+        b=gcQISBwjC9oS0YagKFO5AQYmS2voSMsXxTmgFug/MdXAEeO+UtfevQrezyPmjZRnNIjrU7
+        a0NZFSatD17LO+pv3X0tRSbKq4WIDT5+eqhfr6ZPUgIH5zPitvPXJ3fho8BRcRJfq6n0wc
+        yA+HPGx1rQ05MgFs4176KyIBnTtq7lE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-140-kXrSMgh9PS6y4-sMWhagKQ-1; Tue, 26 Jan 2021 03:17:43 -0500
-X-MC-Unique: kXrSMgh9PS6y4-sMWhagKQ-1
+ us-mta-74-Upuk_9QSN6-qAucf0rE94A-1; Tue, 26 Jan 2021 04:53:25 -0500
+X-MC-Unique: Upuk_9QSN6-qAucf0rE94A-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 07CAD107ACF6;
-        Tue, 26 Jan 2021 08:17:41 +0000 (UTC)
-Received: from [10.72.12.70] (ovpn-12-70.pek2.redhat.com [10.72.12.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E668E1A839;
-        Tue, 26 Jan 2021 08:17:29 +0000 (UTC)
-Subject: Re: [RFC v3 11/11] vduse: Introduce a workqueue for irq injection
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        bob.liu@oracle.com, hch@infradead.org, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210119045920.447-1-xieyongji@bytedance.com>
- <20210119050756.600-1-xieyongji@bytedance.com>
- <20210119050756.600-5-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <9cacd59d-1063-7a1f-9831-8728eb1d1c15@redhat.com>
-Date:   Tue, 26 Jan 2021 16:17:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7562F107ACFB;
+        Tue, 26 Jan 2021 09:53:19 +0000 (UTC)
+Received: from [10.36.114.192] (ovpn-114-192.ams2.redhat.com [10.36.114.192])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 024AB19D80;
+        Tue, 26 Jan 2021 09:53:09 +0000 (UTC)
+Subject: Re: [PATCH v16 06/11] mm: introduce memfd_secret system call to
+ create "secret" memory areas
+To:     Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+References: <20210121122723.3446-1-rppt@kernel.org>
+ <20210121122723.3446-7-rppt@kernel.org> <20210125170122.GU827@dhcp22.suse.cz>
+ <20210125213618.GL6332@kernel.org> <20210126071614.GX827@dhcp22.suse.cz>
+ <20210126083311.GN6332@kernel.org> <20210126090013.GF827@dhcp22.suse.cz>
+ <20210126092011.GP6332@kernel.org> <20210126094903.GI827@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <23850371-a19f-51fa-d813-6e78624ee8f8@redhat.com>
+Date:   Tue, 26 Jan 2021 10:53:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-In-Reply-To: <20210119050756.600-5-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210126094903.GI827@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 26.01.21 10:49, Michal Hocko wrote:
+> On Tue 26-01-21 11:20:11, Mike Rapoport wrote:
+>> On Tue, Jan 26, 2021 at 10:00:13AM +0100, Michal Hocko wrote:
+>>> On Tue 26-01-21 10:33:11, Mike Rapoport wrote:
+>>>> On Tue, Jan 26, 2021 at 08:16:14AM +0100, Michal Hocko wrote:
+>>>>> On Mon 25-01-21 23:36:18, Mike Rapoport wrote:
+>>>>>> On Mon, Jan 25, 2021 at 06:01:22PM +0100, Michal Hocko wrote:
+>>>>>>> On Thu 21-01-21 14:27:18, Mike Rapoport wrote:
+>>>>>>>> From: Mike Rapoport <rppt@linux.ibm.com>
+>>>>>>>>
+>>>>>>>> Introduce "memfd_secret" system call with the ability to create memory
+>>>>>>>> areas visible only in the context of the owning process and not mapped not
+>>>>>>>> only to other processes but in the kernel page tables as well.
+>>>>>>>>
+>>>>>>>> The user will create a file descriptor using the memfd_secret() system
+>>>>>>>> call. The memory areas created by mmap() calls from this file descriptor
+>>>>>>>> will be unmapped from the kernel direct map and they will be only mapped in
+>>>>>>>> the page table of the owning mm.
+>>>>>>>>
+>>>>>>>> The secret memory remains accessible in the process context using uaccess
+>>>>>>>> primitives, but it is not accessible using direct/linear map addresses.
+>>>>>>>>
+>>>>>>>> Functions in the follow_page()/get_user_page() family will refuse to return
+>>>>>>>> a page that belongs to the secret memory area.
+>>>>>>>>
+>>>>>>>> A page that was a part of the secret memory area is cleared when it is
+>>>>>>>> freed.
+>>>>>>>>
+>>>>>>>> The following example demonstrates creation of a secret mapping (error
+>>>>>>>> handling is omitted):
+>>>>>>>>
+>>>>>>>> 	fd = memfd_secret(0);
+>>>>>>>> 	ftruncate(fd, MAP_SIZE);
+>>>>>>>> 	ptr = mmap(NULL, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+>>>>>>>
+>>>>>>> I do not see any access control or permission model for this feature.
+>>>>>>> Is this feature generally safe to anybody?
+>>>>>>
+>>>>>> The mappings obey memlock limit. Besides, this feature should be enabled
+>>>>>> explicitly at boot with the kernel parameter that says what is the maximal
+>>>>>> memory size secretmem can consume.
+>>>>>
+>>>>> Why is such a model sufficient and future proof? I mean even when it has
+>>>>> to be enabled by an admin it is still all or nothing approach. Mlock
+>>>>> limit is not really useful because it is per mm rather than per user.
+>>>>>
+>>>>> Is there any reason why this is allowed for non-privileged processes?
+>>>>> Maybe this has been discussed in the past but is there any reason why
+>>>>> this cannot be done by a special device which will allow to provide at
+>>>>> least some permission policy?
+>>>>  
+>>>> Why this should not be allowed for non-privileged processes? This behaves
+>>>> similarly to mlocked memory, so I don't see a reason why secretmem should
+>>>> have different permissions model.
+>>>
+>>> Because appart from the reclaim aspect it fragments the direct mapping
+>>> IIUC. That might have an impact on all others, right?
+>>
+>> It does fragment the direct map, but first it only splits 1G pages to 2M
+>> pages and as was discussed several times already it's not that clear which
+>> page size in the direct map is the best and this is very much workload
+>> dependent.
+> 
+> I do appreciate this has been discussed but this changelog is not
+> specific on any of that reasoning and I am pretty sure nobody will
+> remember details in few years in the future. Also some numbers would be
+> appropriate.
+> 
+>> These are the results of the benchmarks I've run with the default direct
+>> mapping covered with 1G pages, with disabled 1G pages using "nogbpages" in
+>> the kernel command line and with the entire direct map forced to use 4K
+>> pages using a simple patch to arch/x86/mm/init.c.
+>>
+>> https://docs.google.com/spreadsheets/d/1tdD-cu8e93vnfGsTFxZ5YdaEfs2E1GELlvWNOGkJV2U/edit?usp=sharing
+> 
+> A good start for the data I am asking above.
 
-On 2021/1/19 下午1:07, Xie Yongji wrote:
-> This patch introduces a dedicated workqueue for irq injection
-> so that we are able to do some performance tuning for it.
->
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+I assume you've seen the benchmark results provided by Xing Zhengjun
 
+https://lore.kernel.org/linux-mm/213b4567-46ce-f116-9cdf-bbd0c884eb3c@linux.intel.com/
 
-If we want the split like this.
+-- 
+Thanks,
 
-It might be better to:
-
-1) implement a simple irq injection on the ioctl context in patch 8
-2) add the dedicated workqueue injection in this patch
-
-Since my understanding is that
-
-1) the function looks more isolated for readers
-2) the difference between sysctl vs workqueue should be more obvious 
-than system wq vs dedicated wq
-3) a chance to describe why workqueue is needed in the commit log in 
-this patch
-
-Thanks
-
-
-> ---
->   drivers/vdpa/vdpa_user/eventfd.c | 10 +++++++++-
->   1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/vdpa/vdpa_user/eventfd.c b/drivers/vdpa/vdpa_user/eventfd.c
-> index dbffddb08908..caf7d8d68ac0 100644
-> --- a/drivers/vdpa/vdpa_user/eventfd.c
-> +++ b/drivers/vdpa/vdpa_user/eventfd.c
-> @@ -18,6 +18,7 @@
->   #include "eventfd.h"
->   
->   static struct workqueue_struct *vduse_irqfd_cleanup_wq;
-> +static struct workqueue_struct *vduse_irq_wq;
->   
->   static void vduse_virqfd_shutdown(struct work_struct *work)
->   {
-> @@ -57,7 +58,7 @@ static int vduse_virqfd_wakeup(wait_queue_entry_t *wait, unsigned int mode,
->   	__poll_t flags = key_to_poll(key);
->   
->   	if (flags & EPOLLIN)
-> -		schedule_work(&virqfd->inject);
-> +		queue_work(vduse_irq_wq, &virqfd->inject);
->   
->   	if (flags & EPOLLHUP) {
->   		spin_lock(&vq->irq_lock);
-> @@ -165,11 +166,18 @@ int vduse_virqfd_init(void)
->   	if (!vduse_irqfd_cleanup_wq)
->   		return -ENOMEM;
->   
-> +	vduse_irq_wq = alloc_workqueue("vduse-irq", WQ_SYSFS | WQ_UNBOUND, 0);
-> +	if (!vduse_irq_wq) {
-> +		destroy_workqueue(vduse_irqfd_cleanup_wq);
-> +		return -ENOMEM;
-> +	}
-> +
->   	return 0;
->   }
->   
->   void vduse_virqfd_exit(void)
->   {
-> +	destroy_workqueue(vduse_irq_wq);
->   	destroy_workqueue(vduse_irqfd_cleanup_wq);
->   }
->   
+David / dhildenb
 
