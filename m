@@ -2,133 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E001A305CE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:19:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2002305D10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S313650AbhAZWjy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 17:39:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44978 "EHLO
+        id S238402AbhA0N0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 08:26:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729668AbhAZU67 (ORCPT
+        with ESMTP id S313561AbhAZWgc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 15:58:59 -0500
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5EC7C06174A;
-        Tue, 26 Jan 2021 12:58:18 -0800 (PST)
-Received: by mail-ot1-x329.google.com with SMTP id n42so17627445ota.12;
-        Tue, 26 Jan 2021 12:58:18 -0800 (PST)
+        Tue, 26 Jan 2021 17:36:32 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FB04C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jan 2021 14:35:49 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id g3so10601980plp.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jan 2021 14:35:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=jjW5OEcZEFJ6u5ebD6rDQaRdPlzKWugxX9448B0qRJs=;
-        b=QFHep74mF1ZAnLEgFtqjI+6kUUvf4aq0kOEwKAyrJrvGDbG3OqL7k0JAFn8VIGdwzf
-         GT9xOBfp1NXnpDQK1TQzlzmPurx+2aWYhzvaiUqDoA9VHqO04zlE+6YqsmKSgp2CFUgI
-         q9vAMUcCr3QKWOGiDz62wV9ERC+xOL/E8fRzMjH9IsAcWgZsH53m/2uPoApuic0rsYVH
-         WMe69hSMJac19/8CtDzP7rLLXZOV+CWsCMEstkVXocs/h8e1RRHLhOJE9QqURiTBWyxy
-         saaUtYq3lqIXa5OBxYpQNeFZrYoE+wavVwWVFig5oA1HwoOt2uDZn1sPdM6BmmzDmNTn
-         OSXw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=U/gTopYltrrJc1dTREuk/A2wQizUgvSrGUICEAeE/K8=;
+        b=Lob7zMlJuqwewE7KfMTDtxoQ1xEaslixZrytqcBXDc8eLSMjCC6VVyxqXxx5bat3s5
+         jFpE/NxC5P7ARuCB/vU9lapdSWd4jbv6X2bIcsof7H3bIN0jHXOs4HtZoWsPicYwbEB2
+         MNsOmcT+DtYGPqoQKK/Wp7tQp6BvyaMXg9ctBAseuFZg/EDHA/1WNOMQzc1YsAj1BP7f
+         Kf8ZZzcrLVijyUXFzrTnZWWDv83faPW5q730fJ1qjXglY2LR/QZUs7vyq7cwek9Z2E55
+         f6X7zSI4HtErssMsdXDYTgXtx+IfPuhGOVTaytV7FfuF+rjTPXVBJCb4hi8KqfjM0yLK
+         FkOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=jjW5OEcZEFJ6u5ebD6rDQaRdPlzKWugxX9448B0qRJs=;
-        b=tvFrPQ1Ex9oBEM702CDna7UgurbR6Ps0r1dXwjpE/YdbFPbaZ0RfjPuNnablOd9VtH
-         xPSNNgupTvdDq4FoL9CvTwSuKA35tBaWpEsjom6EJv9aq115mpXeKjwUjOLcHYeJHNC+
-         3FDpVH4lyVAB3OPfKRbUiHJSIC++Hhgn7FcSKWnkJ8HF5k8sDsYlq7FQ0E9KqoJdA/uR
-         gMxHP9Mrlv/5S6AAX0u/WIcpcqpcCaFKIjY7ZAJlXCcUcclnGXt+M2O3qSq5ePMV73iV
-         7J+ZF8cmLGoGoUFro92FY6yRrnvbH8ttto+BjmeB6xj8GOlg+1RvSNzv0/bQ0piqxDwM
-         x20g==
-X-Gm-Message-State: AOAM531/30manfPk19D3HIL5OBYH8qWBK3+EOnG5qfbOBGdlKDgPadSP
-        BfMWqYWMVzbsqH+UUgG5kDTlgTYPVsu8KNcdaXDR8ILYQoCEXw==
-X-Google-Smtp-Source: ABdhPJyYuoQT7bg2Zstgv6iLeM0JmdIyGPiL+piwLs0XE3t2Yl5890z8EWEuA3mPoz4RCIInx5aui/vrMA+OANPM+f4=
-X-Received: by 2002:a05:6830:15c5:: with SMTP id j5mr5283017otr.185.1611694697939;
- Tue, 26 Jan 2021 12:58:17 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=U/gTopYltrrJc1dTREuk/A2wQizUgvSrGUICEAeE/K8=;
+        b=t27+O9Zbu0EQNml8sGM0O+oQ0AD8XVf7lFRGfAycb5g32EPlvLgW4gDdS2/sNIVw1P
+         XVr2rLOQ8c5A1F+sQVp95wIz6H1lxHSOHFiLAOjarPh3pwTNnt4PmORYZ8WVX9qocV+R
+         12HPpaNQNfj1TfNhLDWrolHrfPshSYeSLFxU03qF7hJ0Rce+d0+Kb7SAyV/Of5Y56QAH
+         dfeNnGK82bNECB+yazI1d1M/wws9e+38RKBuJ3qbEL2ZGF2m1bdOZ9u+PtZgWWyN5ASP
+         i5hOfr91cJnjcNxyPJ7T1cKhA0Cp0ha33JCjJKEQEXm5YvGR1UDJZ6McKgX48MWZh2t4
+         Cl4A==
+X-Gm-Message-State: AOAM531p3XaoO+B0SUEppQjkokKsgAHZHswPsP7dVY1cdyE2dk3LeoDP
+        3mcLf6I1biLrXRxA1+tVPLpkTL6iQXCiFA==
+X-Google-Smtp-Source: ABdhPJyoObj/wMoAZnPVEU/T4hv96oHZNGqRP7y0lw/jJ0yjTaifCzkMrIVJeyB00nsWRX5D/0XTXA==
+X-Received: by 2002:a17:90a:578a:: with SMTP id g10mr2070988pji.74.1611700548683;
+        Tue, 26 Jan 2021 14:35:48 -0800 (PST)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id y10sm107012pff.197.2021.01.26.14.35.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Jan 2021 14:35:48 -0800 (PST)
+Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
+To:     Dmitry Kadashev <dkadashev@gmail.com>, io-uring@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+References: <20201116044529.1028783-1-dkadashev@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3bb5781b-8e48-e4db-a832-333c01dba8ab@kernel.dk>
+Date:   Tue, 26 Jan 2021 15:35:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Tue, 26 Jan 2021 12:58:06 -0800
-Message-ID: <CAE1WUT7agR9YvnK8+11yFU1sGwOxXchpP0PQeuPziKvw6GFrMQ@mail.gmail.com>
-Subject: [PATCH 2/2] fs/efs: fix style guide for namei.c and super.c
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201116044529.1028783-1-dkadashev@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch updates various styling in namei.c and super.c to follow
-the kernel style guide.
+On 11/15/20 9:45 PM, Dmitry Kadashev wrote:
+> This adds mkdirat support to io_uring and is heavily based on recently
+> added renameat() / unlinkat() support.
+> 
+> The first patch is preparation with no functional changes, makes
+> do_mkdirat accept struct filename pointer rather than the user string.
+> 
+> The second one leverages that to implement mkdirat in io_uring.
+> 
+> Based on for-5.11/io_uring.
 
-Signed-off-by: Amy Parker <enbyamy@gmail.com>
----
-fs/efs/namei.c |  2 +-
-fs/efs/super.c | 13 +++++++------
-2 files changed, 8 insertions(+), 7 deletions(-)
+I want to tentatively queue this up. Do you have the liburing support
+and test case(s) for it as well that you can send?
 
-diff --git a/fs/efs/namei.c b/fs/efs/namei.c
-index 38961ee1d1af..65d9c7f4d0c0 100644
---- a/fs/efs/namei.c
-+++ b/fs/efs/namei.c
-@@ -28,7 +28,7 @@ static efs_ino_t efs_find_entry(struct inode *inode,
-const char *name, int le
-n)
-               pr_warn("%s(): directory size not a multiple of EFS_DIRBSIZE\n",
-                       __func__);
+-- 
+Jens Axboe
 
--       for(block = 0; block < inode->i_blocks; block++) {
-+       for (block = 0; block < inode->i_blocks; block++) {
-
-               bh = sb_bread(inode->i_sb, efs_bmap(inode, block));
-               if (!bh) {
-diff --git a/fs/efs/super.c b/fs/efs/super.c
-index 62b155b9366b..d55c481796f1 100644
---- a/fs/efs/super.c
-+++ b/fs/efs/super.c
-@@ -170,7 +170,7 @@ static efs_block_t efs_validate_vh(struct
-volume_header *vh) {
-       }
-
-       ui = ((__be32 *) (vh + 1)) - 1;
--       for(csum = 0; ui >= ((__be32 *) vh);) {
-+       for (csum = 0; ui >= ((__be32 *) vh);) {
-               cs = *ui--;
-               csum += be32_to_cpu(cs);
-       }
-@@ -182,11 +182,11 @@ static efs_block_t efs_validate_vh(struct
-volume_header *vh) {
-#ifdef DEBUG
-       pr_debug("bf: \"%16s\"\n", vh->vh_bootfile);
-
--       for(i = 0; i < NVDIR; i++) {
-+       for (i = 0; i < NVDIR; i++) {
-               int     j;
-               char    name[VDNAMESIZE+1];
-
--               for(j = 0; j < VDNAMESIZE; j++) {
-+               for (j = 0; j < VDNAMESIZE; j++) {
-                       name[j] = vh->vh_vd[i].vd_name[j];
-               }
-               name[j] = (char) 0;
-@@ -199,9 +199,9 @@ static efs_block_t efs_validate_vh(struct
-volume_header *vh) {
-       }
-#endif
-
--       for(i = 0; i < NPARTAB; i++) {
-+       for (i = 0; i < NPARTAB; i++) {
-               pt_type = (int) be32_to_cpu(vh->vh_pt[i].pt_type);
--               for(pt_entry = sgi_pt_types; pt_entry->pt_name; pt_entry++) {
-+               for (pt_entry = sgi_pt_types; pt_entry->pt_name; pt_entry++) {
-                       if (pt_type == pt_entry->pt_type) break;
-               }
-#ifdef DEBUG
-@@ -222,7 +222,8 @@ static efs_block_t efs_validate_vh(struct
-volume_header *vh) {
-       if (slice == -1) {
-               pr_notice("partition table contained no EFS partitions\n");
-#ifdef DEBUG
--       } else {
-+       }
-+       else {
-               pr_info("using slice %d (type %s, offset 0x%x)\n", slice,
-                       (pt_entry->pt_name) ? pt_entry->pt_name : "unknown",
-                       sblock);
---
-2.29.2
