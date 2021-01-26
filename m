@@ -2,127 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC89304C60
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 23:41:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B524304C68
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 23:41:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbhAZWk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 17:40:26 -0500
-Received: from mail.efficios.com ([167.114.26.124]:48022 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728502AbhAZU7d (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 15:59:33 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 5697B303303;
-        Tue, 26 Jan 2021 15:58:47 -0500 (EST)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ksCNnvqxkXSD; Tue, 26 Jan 2021 15:58:47 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 0A249303185;
-        Tue, 26 Jan 2021 15:58:47 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0A249303185
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1611694727;
-        bh=I3/hpZJOIu/7e1K9VjmD2SsXkD5x8/h5pPXc/jkuDZI=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=AgpVk5yoo8Vvagw7pEGFbYl0UWx8JTPBbv96HkM3q0dSD5pF3TS2rRxxfNi1+RyIY
-         LwGaFwqLjsnDZzJ2Mxin36ZGswCrASMhYAhdI72Tpwj47jFtmNYl3jvsFYmZbr6oyb
-         GgwmX7hp46IMeTsHvCZUeFe6PlRQHw93NMhCYqQxLlXj8fjj16U9VbdOI2I6Fvm+zO
-         h/vCoyaavAIF4ZwdB1rW3LwZj2riMILUwE9h6mB23LRIK4uVx9lH6nZrGSftUASsbY
-         Dn6yjyjneZfrGLbbf1WbyXqtcJ5uNjBralovdsCVeo8+2BChDPc9OdTCzb5kRfGboR
-         bz3aQLjeODcgg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id UdTi47ARWm6H; Tue, 26 Jan 2021 15:58:46 -0500 (EST)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id EBD14302E59;
-        Tue, 26 Jan 2021 15:58:46 -0500 (EST)
-Date:   Tue, 26 Jan 2021 15:58:46 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Piotr Figiel <figiel@google.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Michel Lespinasse <walken@google.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        paulmck <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Peter Oskolkov <posk@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Chris Kennelly <ckennelly@google.com>,
-        Paul Turner <pjt@google.com>
-Message-ID: <177374191.8780.1611694726862.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20210126185412.175204-1-figiel@google.com>
-References: <20210126185412.175204-1-figiel@google.com>
-Subject: Re: [PATCH v3] fs/proc: Expose RSEQ configuration
+        id S1729639AbhAZWk6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 17:40:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726902AbhAZVvr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Jan 2021 16:51:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E0E7A20449;
+        Tue, 26 Jan 2021 21:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611697866;
+        bh=uF4Zh493+gdGT/Bg0kWKqJydeGxsHWjFoA7xBs16rsw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lCGLIreDb/5Hwx8N2JmnAiiS0jiqRFkx5lWB+dYgajzTx5WDO2x1R1zbHYLyQO1UE
+         98ScSw7v1shjHJr3DWN8DeVEKxjccGxz8l94yiaaEhvMgOjW92D6rHh7wIPb+Z8Wcf
+         /WrH9o9CZLj9VLpBgdfMlPa9On6Ygs1IpZ1Ijf2DQsb5xhrrGFiJVmYaEU6R3mgkut
+         QaKR1+XYY5LF7MORkDaq36e+R/ZWRbwey+gnJIfZYHPT0K+eh+0B9d6nRjRnNDd/S0
+         dIZkNMAj/KUbyyLBEMzujKws37eYXRnxT13Nwk2S64RN7RIaBpTrze3+70kHOv4aD1
+         nwTbNcB4SZj3w==
+Date:   Tue, 26 Jan 2021 13:51:04 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>,
+        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-nilfs@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Chao Yu <chao@kernel.org>, linux-nfs@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org, drbd-dev@tron.linbit.com,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        linux-block@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 03/17] blk-crypto: use bio_kmalloc in blk_crypto_clone_bio
+Message-ID: <YBCOyBxDnSsT4jzU@sol.localdomain>
+References: <20210126145247.1964410-1-hch@lst.de>
+ <20210126145247.1964410-4-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3991 (ZimbraWebClient - FF84 (Linux)/8.8.15_GA_3980)
-Thread-Topic: fs/proc: Expose RSEQ configuration
-Thread-Index: qgjz5+Hm+HS9/yWT0voBbZMBiZa9vQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210126145247.1964410-4-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ On Jan 26, 2021, at 1:54 PM, Piotr Figiel figiel@google.com wrote:
-[...]
-> diff --git a/kernel/rseq.c b/kernel/rseq.c
-> index a4f86a9d6937..6aea67878065 100644
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-> @@ -322,8 +322,10 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32,
-> rseq_len,
-> 		ret = rseq_reset_rseq_cpu_id(current);
-> 		if (ret)
-> 			return ret;
-> +		task_lock(current);
-> 		current->rseq = NULL;
-> 		current->rseq_sig = 0;
-> +		task_unlock(current);
-> 		return 0;
-> 	}
+On Tue, Jan 26, 2021 at 03:52:33PM +0100, Christoph Hellwig wrote:
+> Use bio_kmalloc instead of open coding it.
 > 
-> @@ -353,8 +355,10 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32,
-> rseq_len,
-> 		return -EINVAL;
-> 	if (!access_ok(rseq, rseq_len))
-> 		return -EFAULT;
-> +	task_lock(current);
-> 	current->rseq = rseq;
-> 	current->rseq_sig = sig;
-> +	task_unlock(current);
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  block/blk-crypto-fallback.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
+> index 50c225398e4d60..e8327c50d7c9f4 100644
+> --- a/block/blk-crypto-fallback.c
+> +++ b/block/blk-crypto-fallback.c
+> @@ -164,7 +164,7 @@ static struct bio *blk_crypto_clone_bio(struct bio *bio_src)
+>  	struct bio_vec bv;
+>  	struct bio *bio;
+>  
+> -	bio = bio_alloc_bioset(GFP_NOIO, bio_segments(bio_src), NULL);
+> +	bio = bio_kmalloc(GFP_NOIO, bio_segments(bio_src));
+>  	if (!bio)
+>  		return NULL;
+>  	bio->bi_bdev		= bio_src->bi_bdev;
+> -- 
 
-So AFAIU, the locks are there to make sure that whenever a user-space thread reads
-that state through that new /proc file ABI, it observes coherent "rseq" vs "rseq_sig"
-values. However, I'm not convinced this is the right approach to consistency here.
+Looks good,
 
-Because if you add locking as done here, you ensure that the /proc file reader
-sees coherent values, but between the point where those values are read from
-kernel-space, copied to user-space, and then acted upon by user-space, those can
-very well have become outdated if the observed process runs concurrently.
-
-So my understanding here is that the only non-racy way to effectively use those
-values is to either read them from /proc/self/* (from the thread owning the task struct),
-or to ensure that the thread is stopped/frozen while the read is done.
-
-Maybe we should consider validating that the proc file is used from the right context
-(from self or when the target thread is stopped/frozen) rather than add dubious locking ?
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Reviewed-by: Eric Biggers <ebiggers@google.com>
