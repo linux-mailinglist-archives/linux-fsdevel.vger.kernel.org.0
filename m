@@ -2,115 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24943304122
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 15:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B097230412F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 15:59:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405997AbhAZO6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 09:58:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51636 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405967AbhAZO6L (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 09:58:11 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36854C0698C2;
-        Tue, 26 Jan 2021 06:57:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=DlGuhvUuF5545bhBTyuoYUED18e0Xo1tptPGH+ZCVWM=; b=jMQTwjqfgxOzhYVUlZs0z9WFMS
-        HRM3mdeuPCtX41haFTd6hK9e25Otzz6mCyGNcv34gLl3lwXKlK5lNyLTebUWNNaFab+hdAbStB327
-        6X13dSBciQr1C4yXzcvGmt62gd3mz/quTqo9WjsRSWJx4E4YtRztVJUQF2aYf33t7c4ozLh5cmFBq
-        jtTnUIVw6VgPNfzXwq64Crdqp9Bei9fIWZOg+evdMuBCYdR8RMjwHbP99COwLm/oF7u4+vzFrU+Tm
-        2WUpSisrQMH9uO9aOlv+vEiHmHKQMMIj8qQj2cijQqFQjcvZAiJ5jVKPz8liZXt3v3QT/yndTE765
-        OTjGoq6g==;
-Received: from [2001:4bb8:191:e347:5918:ac86:61cb:8801] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1l4Pi4-005luv-Pc; Tue, 26 Jan 2021 14:53:04 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        linux-nilfs@vger.kernel.org, dm-devel@redhat.com,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: misc bio allocation cleanups
-Date:   Tue, 26 Jan 2021 15:52:30 +0100
-Message-Id: <20210126145247.1964410-1-hch@lst.de>
-X-Mailer: git-send-email 2.29.2
+        id S2390955AbhAZO71 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 09:59:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55792 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391635AbhAZO7J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Jan 2021 09:59:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5FA2DAB9F;
+        Tue, 26 Jan 2021 14:58:27 +0000 (UTC)
+Date:   Tue, 26 Jan 2021 15:58:19 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        mike.kravetz@oracle.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        mhocko@suse.com, song.bao.hua@hisilicon.com,
+        naoya.horiguchi@nec.com, duanxiongchun@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13 05/12] mm: hugetlb: allocate the vmemmap pages
+ associated with each HugeTLB page
+Message-ID: <20210126145819.GB16870@linux>
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-6-songmuchun@bytedance.com>
+ <20210126092942.GA10602@linux>
+ <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jens,
+On Tue, Jan 26, 2021 at 10:36:21AM +0100, David Hildenbrand wrote:
+> I think either keep it completely simple (only free vmemmap of hugetlb
+> pages allocated early during boot - which is what's not sufficient for
+> some use cases) or implement the full thing properly (meaning, solve
+> most challenging issues to get the basics running).
+> 
+> I don't want to have some easy parts of complex features merged (e.g.,
+> breaking other stuff as you indicate below), and later finding out "it's
+> not that easy" again and being stuck with it forever.
 
-this series contains various cleanups for how bios are allocated or
-initialized plus related fallout.
+Well, we could try to do an optimistic allocation, without tricky loopings.
+If that fails, refuse to shrink the pool at that moment.
 
-Diffstat:
- Documentation/filesystems/f2fs.rst |    1 
- block/bio.c                        |  167 ++++++++++++++++++-------------------
- block/blk-crypto-fallback.c        |    2 
- block/blk-flush.c                  |   17 +--
- drivers/block/drbd/drbd_actlog.c   |    2 
- drivers/block/drbd/drbd_bitmap.c   |    2 
- drivers/block/drbd/drbd_int.h      |    2 
- drivers/block/drbd/drbd_main.c     |   13 --
- drivers/block/drbd/drbd_req.c      |    5 -
- drivers/block/drbd/drbd_req.h      |   12 --
- drivers/block/drbd/drbd_worker.c   |    5 -
- drivers/md/dm-clone-target.c       |   14 ---
- drivers/md/dm-zoned-metadata.c     |    6 -
- drivers/md/md.c                    |   48 +++-------
- drivers/md/md.h                    |    2 
- drivers/md/raid1.c                 |    2 
- drivers/md/raid10.c                |    2 
- drivers/md/raid5-ppl.c             |    2 
- drivers/md/raid5.c                 |  108 +++++++++--------------
- drivers/nvme/target/io-cmd-bdev.c  |    2 
- fs/block_dev.c                     |    2 
- fs/btrfs/volumes.c                 |    2 
- fs/exfat/file.c                    |    2 
- fs/ext4/fast_commit.c              |    4 
- fs/ext4/fsync.c                    |    2 
- fs/ext4/ialloc.c                   |    2 
- fs/ext4/super.c                    |    2 
- fs/f2fs/data.c                     |   28 ------
- fs/f2fs/f2fs.h                     |    2 
- fs/f2fs/segment.c                  |   12 --
- fs/f2fs/super.c                    |    1 
- fs/fat/file.c                      |    2 
- fs/hfsplus/inode.c                 |    2 
- fs/hfsplus/super.c                 |    2 
- fs/jbd2/checkpoint.c               |    2 
- fs/jbd2/commit.c                   |    4 
- fs/jbd2/recovery.c                 |    2 
- fs/libfs.c                         |    2 
- fs/nfs/blocklayout/blocklayout.c   |    5 -
- fs/nilfs2/segbuf.c                 |    4 
- fs/nilfs2/the_nilfs.h              |    2 
- fs/ocfs2/file.c                    |    2 
- fs/reiserfs/file.c                 |    2 
- fs/xfs/xfs_super.c                 |    2 
- fs/zonefs/super.c                  |    4 
- include/linux/bio.h                |    6 -
- include/linux/blkdev.h             |    4 
- include/linux/swap.h               |    1 
- mm/page_io.c                       |   45 ++-------
- mm/swapfile.c                      |   10 --
- 50 files changed, 213 insertions(+), 363 deletions(-)
+The user could always try to shrink it later via /proc/sys/vm/nr_hugepages
+interface.
+
+But I am just thinking out loud..
+
+> > Of course, this means that e.g: memory-hotplug (hot-remove) will not fully work
+> > when this in place, but well.
+> 
+> Can you elaborate? Are we're talking about having hugepages in
+> ZONE_MOVABLE that are not migratable (and/or dissolvable) anymore? Than
+> a clear NACK from my side.
+
+Pretty much, yeah. 
+
+
+-- 
+Oscar Salvador
+SUSE L3
