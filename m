@@ -2,156 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12D38305D1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57879305D13
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:27:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S313544AbhAZWgU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 17:36:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28334 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388338AbhAZTMe (ORCPT
+        id S313555AbhAZWgZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 17:36:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387745AbhAZTS5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 14:12:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611688267;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dhSDWdgO45oMOw4U14ZD4IpWy4LqGlGQzgyJ+NX3F9s=;
-        b=RV5i8IOr+AD8PVlARWPcj/V3Aef7XJUDwmYp5eA/FXlu1pwjmupvJxXEwK1Uo16ilnfxLn
-        GcXdeVs+2L8BuReRVm+aybpV5CZvGOjSQTbXA2ASq2Q3e+CksGM9aM+gQU8WNiOL0okA5w
-        A4+2vLSlAQ2GZaVbrhEu56Ntl3ONE1M=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-251-0FpfIJZsODOUscNHd-2Xww-1; Tue, 26 Jan 2021 14:11:04 -0500
-X-MC-Unique: 0FpfIJZsODOUscNHd-2Xww-1
-Received: by mail-ej1-f71.google.com with SMTP id hd8so3831613ejc.22
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jan 2021 11:11:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dhSDWdgO45oMOw4U14ZD4IpWy4LqGlGQzgyJ+NX3F9s=;
-        b=LqW2LslwQl5rXYzBMvwoU8sc+KTILPfN1Wdo/IQaO1NTByxwCh+odC4UHMhJAuCYF4
-         pbk+Vk0Agx2N1Vi/IHOuzM3u5/0Sq4GGXzRLU204UMC5MNnrDzQTgpF4ZMnfceNRuSz+
-         fU3DxULxahfjRb8SRlGn9bIhe4vrOmAsZi4OhMaZqfqOV9MYH+Vr47f0XUKn340kndlX
-         7ozKQmBr46P84XEP7wg9kHp3FgVNjwsgfadNz9mOrNQqZyInpJ5STVhwiconKQ6XfyyI
-         mtpR9H3B8YPdLgkC3/O96mVvrAeBO85KNurWe+LVRNN1UN8dtVantqu5Rxd4r8bqAwue
-         xUoA==
-X-Gm-Message-State: AOAM532WaHKqUf0ZHQpd2/uzxhv3RC0JoSHtf8ikZ9JRKwzsf4QxlBcE
-        GcxfTsLVTDWzf2z1/JfA0APSMAwkWpQd3Lw95zzqL6NB4M7RXG5gkQVt0kfTajNAYCW/NSNzL/j
-        k9WaPVuytRyl8pjk3+5E9iRVfXBPiE854BM8BxqLToA==
-X-Received: by 2002:aa7:ce87:: with SMTP id y7mr5760852edv.211.1611688263259;
-        Tue, 26 Jan 2021 11:11:03 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw9khL2OyLeDGiHbXxhgFxEoiQEWhWSGq0ZEPFvGyzCXtwZceNpjSLzAw970dmzg8NCnH9M4SKeWZSU2be3AaE=
-X-Received: by 2002:aa7:ce87:: with SMTP id y7mr5760842edv.211.1611688263103;
- Tue, 26 Jan 2021 11:11:03 -0800 (PST)
+        Tue, 26 Jan 2021 14:18:57 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29947C061574;
+        Tue, 26 Jan 2021 11:18:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=slbT+XV5IE8VlhB70udS4atkkfpdMMLuQ7GIBp0RBvY=; b=C2rEE33vnYai734zBLsuFL9aG4
+        MNup863NI8PrQ3APIkLyQk9w9x0tYnR+OsyN/nXcRDk/Ix86FCEpaLgo1opMfqxM2BSnuSoPjIFzd
+        eJ3sotklgF+5uPlKc/ZTdf+9dU/4STj+HdQ8iROmY5JKUyZCF26KElLiXOW9kc6djm+wgFyAWQljK
+        0woqfCt7EXqSxcGXrgPY4SQecQolxcNf1Weq22USyr04mtCabWoJ+bbMUYWfwNrUqeNjwNMQT6G68
+        aAnY940HpeLoNgk3l9swl8E5fIhUUybMDLE7G2a2vn7HDtyr/dV2WO9Fom/hxaK9Fyp4uHfgUyRRS
+        a1lNZIwA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l4Tq0-006Aqj-CU; Tue, 26 Jan 2021 19:17:31 +0000
+Date:   Tue, 26 Jan 2021 19:17:16 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Amy Parker <enbyamy@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Getting a new fs in the kernel
+Message-ID: <20210126191716.GN308988@casper.infradead.org>
+References: <CAE1WUT7xJyx_gbxJu3r9DJGbqSkWZa-moieiDWC0bue2CxwAwg@mail.gmail.com>
 MIME-Version: 1.0
-References: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
- <161161064956.2537118.3354798147866150631.stgit@warthog.procyon.org.uk>
- <20210126013611.GI308988@casper.infradead.org> <D6C85B77-17CA-4BA6-9C2C-C63A8AF613AB@oracle.com>
-In-Reply-To: <D6C85B77-17CA-4BA6-9C2C-C63A8AF613AB@oracle.com>
-From:   David Wysochanski <dwysocha@redhat.com>
-Date:   Tue, 26 Jan 2021 14:10:26 -0500
-Message-ID: <CALF+zOm++OzAebR4wu+Hdf8Aa8GpXZu8Am9eVajVUiDMBJE63w@mail.gmail.com>
-Subject: Re: [PATCH 32/32] NFS: Convert readpage to readahead and use
- netfs_readahead for fscache
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs <linux-cachefs@redhat.com>,
-        "linux-afs@lists.infradead.org" <linux-afs@lists.infradead.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "v9fs-developer@lists.sourceforge.net" 
-        <v9fs-developer@lists.sourceforge.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE1WUT7xJyx_gbxJu3r9DJGbqSkWZa-moieiDWC0bue2CxwAwg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 10:25 AM Chuck Lever <chuck.lever@oracle.com> wrote:
->
->
->
-> > On Jan 25, 2021, at 8:36 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> >
-> > For Subject: s/readpage/readpages/
-> >
-> > On Mon, Jan 25, 2021 at 09:37:29PM +0000, David Howells wrote:
-> >> +int __nfs_readahead_from_fscache(struct nfs_readdesc *desc,
-> >> +                             struct readahead_control *rac)
-> >
-> > I thought you wanted it called ractl instead of rac?  That's what I've
-> > been using in new code.
-> >
-> >> -    dfprintk(FSCACHE, "NFS: nfs_getpages_from_fscache (0x%p/%u/0x%p)\n",
-> >> -             nfs_i_fscache(inode), npages, inode);
-> >> +    dfprintk(FSCACHE, "NFS: nfs_readahead_from_fscache (0x%p/0x%p)\n",
-> >> +             nfs_i_fscache(inode), inode);
-> >
-> > We do have readahead_count() if this is useful information to be logging.
->
-> As a sidebar, the Linux NFS community is transitioning to tracepoints.
-> It would be helpful (but not completely necessary) to use tracepoints
-> in new code instead of printk.
->
+On Tue, Jan 26, 2021 at 08:23:03AM -0800, Amy Parker wrote:
+> Kernel development newcomer here. I've begun creating a concept for a
+> new filesystem, and ideally once it's completed, rich, and stable I'd
+> try to get it into the kernel.
+> 
+> What would be the process for this? I'd assume a patch sequence, but
+> they'd all be dependent on each other, and sending in tons of
+> dependent patches doesn't sound like a great idea. I've seen requests
+> for pulls, but since I'm new here I don't really know what to do.
 
-The netfs API has a lot of good tracepoints and to be honest I think we can
-get rid of fscache's rpcdebug, but let me take a closer look to be
-sure.  I didn't use rpcdebug much, if at all, in the latest rounds of debugging.
+Hi Amy,
 
+Writing a new filesystem is fun!  Everyone should do it.
 
+Releasing a filesystem is gut-churning.  You're committing to a filesystem
+format that has to be supported for ~ever.
 
->
-> >> +static inline int nfs_readahead_from_fscache(struct nfs_readdesc *desc,
-> >> +                                         struct readahead_control *rac)
-> >> {
-> >> -    if (NFS_I(inode)->fscache)
-> >> -            return __nfs_readpages_from_fscache(ctx, inode, mapping, pages,
-> >> -                                                nr_pages);
-> >> +    if (NFS_I(rac->mapping->host)->fscache)
-> >> +            return __nfs_readahead_from_fscache(desc, rac);
-> >>      return -ENOBUFS;
-> >> }
-> >
-> > Not entirely sure that it's worth having the two functions separated any more.
-> >
-> >>      /* attempt to read as many of the pages as possible from the cache
-> >>       * - this returns -ENOBUFS immediately if the cookie is negative
-> >>       */
-> >> -    ret = nfs_readpages_from_fscache(desc.ctx, inode, mapping,
-> >> -                                     pages, &nr_pages);
-> >> +    ret = nfs_readahead_from_fscache(&desc, rac);
-> >>      if (ret == 0)
-> >>              goto read_complete; /* all pages were read */
-> >>
-> >>      nfs_pageio_init_read(&desc.pgio, inode, false,
-> >>                           &nfs_async_read_completion_ops);
-> >>
-> >> -    ret = read_cache_pages(mapping, pages, readpage_async_filler, &desc);
-> >> +    while ((page = readahead_page(rac))) {
-> >> +            ret = readpage_async_filler(&desc, page);
-> >> +            put_page(page);
-> >> +    }
-> >
-> > I thought with the new API we didn't need to do this kind of thing
-> > any more?  ie no matter whether fscache is configured in or not, it'll
-> > submit the I/Os.
->
-> --
-> Chuck Lever
->
->
->
+Supporting a new filesystem is a weighty responsibility.  People are
+depending on you to store their data reliably.  And they demand boring
+and annoying features like xattrs, acls, support for time after 2038.
 
+We have quite a lot of actively developed filesystems for users to choose
+from already -- ext4, btrfs, xfs are the main three.  So you're going
+to face a challenge persuading people to switch.
+
+Finally, each filesystem represents a (small) maintainance burden to
+people who need to make changes that cross all filesystems.  So it'd
+be nice to have a good justification for why we should include that
+cost.
+
+Depending exactly what your concept is, it might make more sense to
+make it part of an existing filesystem.  Or develop it separately
+and have an existing filesystem integrate it.
+
+Anyway, I've been at this for twenty years, so maybe I'm just grouchy
+about new filesystems.  By all means work on it and see if it makes
+sense, but there's a fairly low probability that it gets merged.
