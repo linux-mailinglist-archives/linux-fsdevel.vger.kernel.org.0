@@ -2,176 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78A97303D07
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 13:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 279CF303E8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 14:24:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbhAZMac (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 07:30:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47432 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404336AbhAZMaZ (ORCPT
+        id S2391712AbhAZMp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 07:45:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27799 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731338AbhAZKBd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 07:30:25 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF50AC0611C2;
-        Tue, 26 Jan 2021 04:29:44 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id g3so22683225ejb.6;
-        Tue, 26 Jan 2021 04:29:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=59cFXkwJWPJ9ngel/GaPYAwLL/Yt3i4uFuJVUmWJiBU=;
-        b=eYKRW0ofXu/TXhGWrYJhDPR0vwCuh/Ctcl75nycp/j5GJkVP+yeVid4f54KD3EGypM
-         Q0VXiXk+N0OcigXhej4mxyiKFfXp5M+5q8gWHmVbVqfsd6UgkFSUXnmufGkBSwWqN0gj
-         toSL/Ztt1tvXCHOXo2jdwLD4XS5VEKkbapnygfQ/VoEfaxqMKAMUx27/vQt5M5F+INXc
-         pt7Dr2fjKt9j5djAe4z6WvbBlYG7vth+Fdhj/UoyqMWsX1kE8eTpDetcIyGVU+w22YD5
-         iujVYdwRSA+htC6Z4wC5fAic7Z7w6p1ifHNwfl77KbuhDQcrAz3OVYj4jai0g//YRLY/
-         cLBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=59cFXkwJWPJ9ngel/GaPYAwLL/Yt3i4uFuJVUmWJiBU=;
-        b=iZuNjFSOCMYSMbxTJpaHY0M0mZKN+CukGLj34mVO49gylRfhcVrNnnLqhdCBFOr/W8
-         fWIci/r5Kx5mpFS7PYLPuPjh+b0ZmLXxJmVnkhAzuSuJiolEq4Coy9Gw+shYLSxOnD6y
-         s0Sdx6caG2TOJ33hgi+vbtKwdy0Hmrh78QAioj96xfI0BejulpgbrDkrU8qEknRRdozj
-         yiV9EGQBs8TPDiB2YhMqvL6DLL9HDmBZEpbJjgNXpMkU7ICmWOF4uBFuy6PGduMkvBUo
-         cir8D3JAnHvacE8v+oa2zxM3QeOPAQP8nLiKWEbXXswNdI8CKYq7yEodcG/WeHvZNkt/
-         EWsg==
-X-Gm-Message-State: AOAM533HauaPdwybzd8B4Ux/Tg8bRNL+626wRRgRKNAQqHOX2KQkvBQ8
-        sICLxDD6HFrjF0n33t5KIc8Y3o2kPq6dKg==
-X-Google-Smtp-Source: ABdhPJytcU2baOqtTSXldY3lyoYk04HfdBN6EqAzpXbNLwdVOLfcj+RII6QyHLNKHxXZUqDA3RE1MQ==
-X-Received: by 2002:a17:906:1c42:: with SMTP id l2mr3368734ejg.390.1611664183294;
-        Tue, 26 Jan 2021 04:29:43 -0800 (PST)
-Received: from [192.168.8.156] ([148.252.129.161])
-        by smtp.gmail.com with ESMTPSA id ah12sm4387531ejc.70.2021.01.26.04.29.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Jan 2021 04:29:42 -0800 (PST)
-To:     Noah Goldstein <goldstein.w.n@gmail.com>
-Cc:     noah <goldstein.n@wustl.edu>, Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20201220065025.116516-1-goldstein.w.n@gmail.com>
- <0cdf2aac-6364-742d-debb-cfd58b4c6f2b@gmail.com>
- <20201222021043.GA139782@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH] fs: io_uring.c: Add skip option for __io_sqe_files_update
-Message-ID: <32c9ce7e-569d-3f94-535e-00e072de772e@gmail.com>
-Date:   Tue, 26 Jan 2021 12:26:02 +0000
+        Tue, 26 Jan 2021 05:01:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611655205;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kElVC+jkHLstLVhvoAPiIFDGEp54B3rvncUWM43dOQw=;
+        b=DdR/2vq2nEet8tbYkQNIlMz5/Huhmk2JXM5+1LGNEvf2u0nbq50PsdjBSFhVDv6FgzlfpZ
+        prgSlB6YGV53fAQIvenmKaHXAki/EuchZefgt+beGPuKhx4LYjQKIVk7/VbXAtFW0qDijU
+        pGlSq2O5xyukpq/FgouyDyNpnoVxUhQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-140-kXrSMgh9PS6y4-sMWhagKQ-1; Tue, 26 Jan 2021 03:17:43 -0500
+X-MC-Unique: kXrSMgh9PS6y4-sMWhagKQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 07CAD107ACF6;
+        Tue, 26 Jan 2021 08:17:41 +0000 (UTC)
+Received: from [10.72.12.70] (ovpn-12-70.pek2.redhat.com [10.72.12.70])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E668E1A839;
+        Tue, 26 Jan 2021 08:17:29 +0000 (UTC)
+Subject: Re: [RFC v3 11/11] vduse: Introduce a workqueue for irq injection
+To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
+        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
+        bob.liu@oracle.com, hch@infradead.org, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <20210119045920.447-1-xieyongji@bytedance.com>
+ <20210119050756.600-1-xieyongji@bytedance.com>
+ <20210119050756.600-5-xieyongji@bytedance.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <9cacd59d-1063-7a1f-9831-8728eb1d1c15@redhat.com>
+Date:   Tue, 26 Jan 2021 16:17:28 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201222021043.GA139782@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20210119050756.600-5-xieyongji@bytedance.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22/12/2020 02:10, Noah Goldstein wrote:
-> On Sun, Dec 20, 2020 at 03:18:05PM +0000, Pavel Begunkov wrote:
->> On 20/12/2020 06:50, noah wrote:> From: noah <goldstein.n@wustl.edu>
->>>
->>> This patch makes it so that specify a file descriptor value of -2 will
->>> skip updating the corresponding fixed file index.
->>>
->>> This will allow for users to reduce the number of syscalls necessary
->>> to update a sparse file range when using the fixed file option.
->>
->> Answering the github thread -- it's indeed a simple change, I had it the
->> same day you posted the issue. See below it's a bit cleaner. However, I
->> want to first review "io_uring: buffer registration enhancements", and
->> if it's good, for easier merging/etc I'd rather prefer to let it go
->> first (even if partially).
 
-Noah, want to give it a try? I've just sent a prep patch, with it you
-can implement it cleaner with one continue.
+On 2021/1/19 下午1:07, Xie Yongji wrote:
+> This patch introduces a dedicated workqueue for irq injection
+> so that we are able to do some performance tuning for it.
+>
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 941fe9b64fd9..b3ae9d5da17e 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -7847,9 +7847,8 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->>  	if (IS_ERR(ref_node))
->>  		return PTR_ERR(ref_node);
->>  
->> -	done = 0;
->>  	fds = u64_to_user_ptr(up->fds);
->> -	while (nr_args) {
->> +	for (done = 0; done < nr_args; done++) {
->>  		struct fixed_file_table *table;
->>  		unsigned index;
->>  
->> @@ -7858,7 +7857,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->>  			err = -EFAULT;
->>  			break;
->>  		}
->> -		i = array_index_nospec(up->offset, ctx->nr_user_files);
->> +		if (fd == IORING_REGISTER_FILES_SKIP)
->> +			continue;
->> +
->> +		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
->>  		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
->>  		index = i & IORING_FILE_TABLE_MASK;
->>  		if (table->files[index]) {
->> @@ -7896,9 +7898,6 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
->>  				break;
->>  			}
->>  		}
->> -		nr_args--;
->> -		done++;
->> -		up->offset++;
->>  	}
->>  
->>  	if (needs_switch) {
 
--- 
-Pavel Begunkov
+If we want the split like this.
+
+It might be better to:
+
+1) implement a simple irq injection on the ioctl context in patch 8
+2) add the dedicated workqueue injection in this patch
+
+Since my understanding is that
+
+1) the function looks more isolated for readers
+2) the difference between sysctl vs workqueue should be more obvious 
+than system wq vs dedicated wq
+3) a chance to describe why workqueue is needed in the commit log in 
+this patch
+
+Thanks
+
+
+> ---
+>   drivers/vdpa/vdpa_user/eventfd.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/vdpa/vdpa_user/eventfd.c b/drivers/vdpa/vdpa_user/eventfd.c
+> index dbffddb08908..caf7d8d68ac0 100644
+> --- a/drivers/vdpa/vdpa_user/eventfd.c
+> +++ b/drivers/vdpa/vdpa_user/eventfd.c
+> @@ -18,6 +18,7 @@
+>   #include "eventfd.h"
+>   
+>   static struct workqueue_struct *vduse_irqfd_cleanup_wq;
+> +static struct workqueue_struct *vduse_irq_wq;
+>   
+>   static void vduse_virqfd_shutdown(struct work_struct *work)
+>   {
+> @@ -57,7 +58,7 @@ static int vduse_virqfd_wakeup(wait_queue_entry_t *wait, unsigned int mode,
+>   	__poll_t flags = key_to_poll(key);
+>   
+>   	if (flags & EPOLLIN)
+> -		schedule_work(&virqfd->inject);
+> +		queue_work(vduse_irq_wq, &virqfd->inject);
+>   
+>   	if (flags & EPOLLHUP) {
+>   		spin_lock(&vq->irq_lock);
+> @@ -165,11 +166,18 @@ int vduse_virqfd_init(void)
+>   	if (!vduse_irqfd_cleanup_wq)
+>   		return -ENOMEM;
+>   
+> +	vduse_irq_wq = alloc_workqueue("vduse-irq", WQ_SYSFS | WQ_UNBOUND, 0);
+> +	if (!vduse_irq_wq) {
+> +		destroy_workqueue(vduse_irqfd_cleanup_wq);
+> +		return -ENOMEM;
+> +	}
+> +
+>   	return 0;
+>   }
+>   
+>   void vduse_virqfd_exit(void)
+>   {
+> +	destroy_workqueue(vduse_irq_wq);
+>   	destroy_workqueue(vduse_irqfd_cleanup_wq);
+>   }
+>   
+
