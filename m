@@ -2,108 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 887B03040E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 15:51:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 762A0304113
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 15:57:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391197AbhAZOvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 09:51:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:48035 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391288AbhAZJiF (ORCPT
+        id S2391525AbhAZO4k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 09:56:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51272 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391482AbhAZO4e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 04:38:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611653799;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oNqVieVd9v1G344GzpIPbD3/DSjB6v+2rop/NW6XtKU=;
-        b=hsyFOEe0ll0azuBECxMEHDIow/YZybt/koSsuzK6UkWagNzbGqEROgZeIoC84XfO87K1t+
-        ufA1P4KwjNLPstsQeezjLPEhnjVIsq0f/Ki0GWkUJz0biilMv0ePvquyBrIRIEuOiXgLXy
-        TqHKL41Xxg04ZUl6al22/FMrwPlbgpE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-440-U-Izs0d0Oeif6_p39Ww8hw-1; Tue, 26 Jan 2021 04:36:33 -0500
-X-MC-Unique: U-Izs0d0Oeif6_p39Ww8hw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7BD021005504;
-        Tue, 26 Jan 2021 09:36:29 +0000 (UTC)
-Received: from [10.36.114.192] (ovpn-114-192.ams2.redhat.com [10.36.114.192])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1481D60871;
-        Tue, 26 Jan 2021 09:36:21 +0000 (UTC)
-Subject: Re: [PATCH v13 05/12] mm: hugetlb: allocate the vmemmap pages
- associated with each HugeTLB page
-To:     Oscar Salvador <osalvador@suse.de>,
-        Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        mhocko@suse.com, song.bao.hua@hisilicon.com,
-        naoya.horiguchi@nec.com, duanxiongchun@bytedance.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-References: <20210117151053.24600-1-songmuchun@bytedance.com>
- <20210117151053.24600-6-songmuchun@bytedance.com>
- <20210126092942.GA10602@linux>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com>
-Date:   Tue, 26 Jan 2021 10:36:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Tue, 26 Jan 2021 09:56:34 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42E88C061A29;
+        Tue, 26 Jan 2021 06:55:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AfVmvy0+ars8vSXgUaa4Ou66AyTq8tua1GFfd4k4JEw=; b=nAP0nDbV1kwONwbXFxyftiqDWQ
+        jHiVYK1NDKnF8QM69l3dG2FMsAL3iwGEI4VIpsVWD8NwGnDS/qwfGpm/s7IvdCmdZxN6z0NBOUOMX
+        YsXcAxL04Ph78LoBwNMMvjI8JoSKao4Y2A92kUpREHLGb8TP6wqGFn4Z5Qa6E4pplksDWHdn/YL/T
+        u1awwBPfVKq2MKlAnFFBbUPwFq/kxETbl3BSIto9xDeIvrQZNrjdM6PseQVL1Nu+JuoDOKC4BRjze
+        R1vY4iXhTAIC177ONzK6Rj9jUVuhpyOkmi7Bw4tq7Ewm0jKEb9qOFULDXkvUQhNufow0/F7nS9cKe
+        A0rXnu7Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l4Pe2-005lWp-2r; Tue, 26 Jan 2021 14:48:57 +0000
+Date:   Tue, 26 Jan 2021 14:48:38 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v16 08/11] secretmem: add memcg accounting
+Message-ID: <20210126144838.GL308988@casper.infradead.org>
+References: <20210121122723.3446-1-rppt@kernel.org>
+ <20210121122723.3446-9-rppt@kernel.org>
+ <20210125165451.GT827@dhcp22.suse.cz>
+ <20210125213817.GM6332@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210126092942.GA10602@linux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210125213817.GM6332@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26.01.21 10:29, Oscar Salvador wrote:
-> On Sun, Jan 17, 2021 at 11:10:46PM +0800, Muchun Song wrote:
->> When we free a HugeTLB page to the buddy allocator, we should allocate the
->> vmemmap pages associated with it. We can do that in the __free_hugepage()
->> before freeing it to buddy.
->>
->> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+On Mon, Jan 25, 2021 at 11:38:17PM +0200, Mike Rapoport wrote:
+> I cannot use __GFP_ACCOUNT because cma_alloc() does not use gfp.
+> Besides, kmem accounting with __GFP_ACCOUNT does not seem
+> to update stats and there was an explicit request for statistics:
+>  
+> https://lore.kernel.org/lkml/CALo0P13aq3GsONnZrksZNU9RtfhMsZXGWhK1n=xYJWQizCd4Zw@mail.gmail.com/
 > 
-> This series has grown a certain grade of madurity and improvment, but it seems
-> to me that we have been stuck in this patch (and patch#4) for quite some time.
+> As for (ab)using NR_SLAB_UNRECLAIMABLE_B, as it was already discussed here:
 > 
-> Would it be acceptable for a first implementation to not let hugetlb pages to
-> be freed when this feature is in use?
-> This would simplify things for now, as we could get rid of patch#4 and patch#5.
-> We can always extend functionality once this has been merged, right?
-
-I think either keep it completely simple (only free vmemmap of hugetlb
-pages allocated early during boot - which is what's not sufficient for
-some use cases) or implement the full thing properly (meaning, solve
-most challenging issues to get the basics running).
-
-I don't want to have some easy parts of complex features merged (e.g.,
-breaking other stuff as you indicate below), and later finding out "it's
-not that easy" again and being stuck with it forever.
-
+> https://lore.kernel.org/lkml/20201129172625.GD557259@kernel.org/
 > 
-> Of course, this means that e.g: memory-hotplug (hot-remove) will not fully work
-> when this in place, but well.
+> I think that a dedicated stats counter would be too much at the moment and
+> NR_SLAB_UNRECLAIMABLE_B is the only explicit stat for unreclaimable memory.
 
-Can you elaborate? Are we're talking about having hugepages in
-ZONE_MOVABLE that are not migratable (and/or dissolvable) anymore? Than
-a clear NACK from my side.
-
--- 
-Thanks,
-
-David / dhildenb
-
+That's not true -- Mlocked is also unreclaimable.  And doesn't this
+feel more like mlocked memory than unreclaimable slab?  It's also
+Unevictable, so could be counted there instead.
