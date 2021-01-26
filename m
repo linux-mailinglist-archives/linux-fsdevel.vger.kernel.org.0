@@ -2,116 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCB4E3037C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 09:23:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A05D83038EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 10:25:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388820AbhAZIWO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 03:22:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:54270 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389822AbhAZIVK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 03:21:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611649184;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        id S2389576AbhAZJYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 04:24:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57472 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389361AbhAZJTr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Jan 2021 04:19:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1611652532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=dMTvjaMSAfTTa27ylw0ds1j6FG5ed6ihblNq6KfLvCg=;
-        b=bZBLDyENzXuzZRxelnFdJP7t9f+PFLBVPeZszFxEYzfZWzCy399RRxemPBaJS/UAAF80Xn
-        jsBE7jmetKw48+hvZydtaDmi2pECeMv4OJov1CBkpWLBNJqxVYG/h3dM4jHP/4HRe/yFB9
-        gPtavWxN4NOPoMJqJT569g4IrMDlM5c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-282-THLH8a-qP6-IH6UDIF3e1g-1; Tue, 26 Jan 2021 03:19:39 -0500
-X-MC-Unique: THLH8a-qP6-IH6UDIF3e1g-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 67674195D563;
-        Tue, 26 Jan 2021 08:19:37 +0000 (UTC)
-Received: from [10.72.12.70] (ovpn-12-70.pek2.redhat.com [10.72.12.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F9E560C47;
-        Tue, 26 Jan 2021 08:19:26 +0000 (UTC)
-Subject: Re: [RFC v3 08/11] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        bob.liu@oracle.com, hch@infradead.org, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210119045920.447-1-xieyongji@bytedance.com>
- <20210119050756.600-1-xieyongji@bytedance.com>
- <20210119050756.600-2-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <1f419a24-cd53-bd73-5b8a-8ab5d976a490@redhat.com>
-Date:   Tue, 26 Jan 2021 16:19:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=8+K0oyxRY1+vhNkSeXzm8M4Y2R64gVVtCdOHelIF+V8=;
+        b=kShKTVasjKcQgyk49obmmqJEv3Z3d6D+KjtCoEjGXxzkEZlE9pddLwPnfiYIY421ESnwFk
+        s121ANy6h6Uf22zm4fCv1pqav6eTOcya5rAIE9EhMH1YsS7w7Ixp5ITIzE4PQfYNNMffQz
+        Deb5a3d+IUk2PpGiCwbgFZJfGrBkuvI=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 36ABFB293;
+        Tue, 26 Jan 2021 09:15:32 +0000 (UTC)
+Date:   Tue, 26 Jan 2021 10:15:27 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v16 08/11] secretmem: add memcg accounting
+Message-ID: <20210126091527.GG827@dhcp22.suse.cz>
+References: <20210121122723.3446-1-rppt@kernel.org>
+ <20210121122723.3446-9-rppt@kernel.org>
+ <20210125165451.GT827@dhcp22.suse.cz>
+ <20210125213817.GM6332@kernel.org>
+ <20210126073142.GY827@dhcp22.suse.cz>
+ <20210126085654.GO6332@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210119050756.600-2-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210126085654.GO6332@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 2021/1/19 下午1:07, Xie Yongji wrote:
-> This VDUSE driver enables implementing vDPA devices in userspace.
-> Both control path and data path of vDPA devices will be able to
-> be handled in userspace.
->
-> In the control path, the VDUSE driver will make use of message
-> mechnism to forward the config operation from vdpa bus driver
-> to userspace. Userspace can use read()/write() to receive/reply
-> those control messages.
->
-> In the data path, VDUSE_IOTLB_GET_FD ioctl will be used to get
-> the file descriptors referring to vDPA device's iova regions. Then
-> userspace can use mmap() to access those iova regions. Besides,
-> the eventfd mechanism is used to trigger interrupt callbacks and
-> receive virtqueue kicks in userspace.
->
-> Signed-off-by: Xie Yongji<xieyongji@bytedance.com>
+On Tue 26-01-21 10:56:54, Mike Rapoport wrote:
+> On Tue, Jan 26, 2021 at 08:31:42AM +0100, Michal Hocko wrote:
+> > On Mon 25-01-21 23:38:17, Mike Rapoport wrote:
+> > > On Mon, Jan 25, 2021 at 05:54:51PM +0100, Michal Hocko wrote:
+> > > > On Thu 21-01-21 14:27:20, Mike Rapoport wrote:
+> > > > > From: Mike Rapoport <rppt@linux.ibm.com>
+> > > > > 
+> > > > > Account memory consumed by secretmem to memcg. The accounting is updated
+> > > > > when the memory is actually allocated and freed.
+> > > > 
+> > > > What does this mean?
+> > > 
+> > > That means that the accounting is updated when secretmem does cma_alloc()
+> > > and cma_relase().
+> > > 
+> > > > What are the lifetime rules?
+> > > 
+> > > Hmm, what do you mean by lifetime rules?
+> > 
+> > OK, so let's start by reservation time (mmap time right?) then the
+> > instantiation time (faulting in memory). What if the calling process of
+> > the former has a different memcg context than the later. E.g. when you
+> > send your fd or inherited fd over fork will move to a different memcg.
+> > 
+> > What about freeing path? E.g. when you punch a hole in the middle of
+> > a mapping?
+> > 
+> > Please make sure to document all this.
+>  
+> So, does something like this answer your question:
+> 
 > ---
->   Documentation/driver-api/vduse.rst                 |   85 ++
->   Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
->   drivers/vdpa/Kconfig                               |    7 +
->   drivers/vdpa/Makefile                              |    1 +
->   drivers/vdpa/vdpa_user/Makefile                    |    5 +
->   drivers/vdpa/vdpa_user/eventfd.c                   |  221 ++++
->   drivers/vdpa/vdpa_user/eventfd.h                   |   48 +
->   drivers/vdpa/vdpa_user/iova_domain.c               |  426 +++++++
->   drivers/vdpa/vdpa_user/iova_domain.h               |   68 ++
->   drivers/vdpa/vdpa_user/vduse.h                     |   62 +
->   drivers/vdpa/vdpa_user/vduse_dev.c                 | 1217 ++++++++++++++++++++
->   include/uapi/linux/vdpa.h                          |    1 +
->   include/uapi/linux/vduse.h                         |  125 ++
->   13 files changed, 2267 insertions(+)
->   create mode 100644 Documentation/driver-api/vduse.rst
->   create mode 100644 drivers/vdpa/vdpa_user/Makefile
->   create mode 100644 drivers/vdpa/vdpa_user/eventfd.c
->   create mode 100644 drivers/vdpa/vdpa_user/eventfd.h
->   create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
->   create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
->   create mode 100644 drivers/vdpa/vdpa_user/vduse.h
->   create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
->   create mode 100644 include/uapi/linux/vduse.h
+> The memory cgroup is charged when secremem allocates pages from CMA to
+> increase large pages pool during ->fault() processing.
 
+OK so that is when the memory is faulted in. Good that is a standard
+model we have. The memcg context of the creator of the secret memory is
+not really important. So whoever has created is not charged.
 
-Btw, if you could split this into three parts:
+> The pages are uncharged from memory cgroup when they are released back to
+> CMA at the time secretme inode is evicted.
+> ---
 
-1) iova domain
-2) vduse device
-3) doc
+so effectivelly when they are unmapped, right? This is similar to
+anonymous memory.
 
-It would be more easier for the reviewers.
+As I've said it would be really great to have this life cycle documented
+properly.
 
-Thanks
+> > Please note that this all is a user visible stuff that will become PITA
+> > (if possible) to change later on. You should really have strong
+> > arguments in your justification here.
+> 
+> I think that adding a dedicated counter for few 2M areas per container is
+> not worth the churn. 
 
+What kind of churn you have in mind? What is the downside?
+
+> When we'll get to the point that secretmem can be used to back the entire
+> guest memory we can add a new counter and it does not seem to PITA to me.
+
+What does really prevent a larger use with this implementation?
+
+-- 
+Michal Hocko
+SUSE Labs
