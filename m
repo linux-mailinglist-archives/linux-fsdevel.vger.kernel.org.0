@@ -2,106 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB70D304989
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:06:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC264304987
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 21:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732769AbhAZF1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:27:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52196 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731267AbhAZBzJ (ORCPT
+        id S1732779AbhAZF1V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:27:21 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:11876 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730651AbhAZCIP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 20:55:09 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F71C061224;
-        Mon, 25 Jan 2021 17:38:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=I4QtGGdUD49OQbpnA/+iW6hZGEJcEQdxNTE3QJXFu+k=; b=th6+D7onHmuxEzk677tybiCqfY
-        hhGc9w/VT61khYhuxx2E1kXIsOZGSF8+E1JP2Cvik6UBR/5b9Nw1Gin/GJ/RDDPaHQuwd8aX3Z5R6
-        LuJpCUqsZxHBgVXAyJOFwvagUUVKqq/2tD0/zQ5NLUIocvQ3sFd+r65lKsnAv70oMOdY65n7/vmc0
-        5u4hBE/tFpodrVaPe+lRr8QseonmbE9ty/7mie8ThsqBBqlrcHJgYHdXAyo8VhXZYJeq+djp+RU1Z
-        bkG5n7D1xoNHEi6ZrSR5P+ndK11HLCtkbsp86N94CxpjEcmp6tYmalu5GJ74rGgTmoQ4gK9HCOanm
-        TCWQ7O8g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l4DH9-004uVe-DU; Tue, 26 Jan 2021 01:36:32 +0000
-Date:   Tue, 26 Jan 2021 01:36:11 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 32/32] NFS: Convert readpage to readahead and use
- netfs_readahead for fscache
-Message-ID: <20210126013611.GI308988@casper.infradead.org>
-References: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
- <161161064956.2537118.3354798147866150631.stgit@warthog.procyon.org.uk>
+        Mon, 25 Jan 2021 21:08:15 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4DPqpT3CBsz7ZQW;
+        Tue, 26 Jan 2021 10:06:09 +0800 (CST)
+Received: from [10.174.179.117] (10.174.179.117) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 26 Jan 2021 10:07:11 +0800
+Subject: Re: [PATCH v13 02/12] mm: hugetlb: introduce a new config
+ HUGETLB_PAGE_FREE_VMEMMAP
+To:     Muchun Song <songmuchun@bytedance.com>
+CC:     <duanxiongchun@bytedance.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <corbet@lwn.net>,
+        <mike.kravetz@oracle.com>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <bp@alien8.de>, <x86@kernel.org>,
+        <hpa@zytor.com>, <dave.hansen@linux.intel.com>, <luto@kernel.org>,
+        <peterz@infradead.org>, <viro@zeniv.linux.org.uk>,
+        <akpm@linux-foundation.org>, <paulmck@kernel.org>,
+        <mchehab+huawei@kernel.org>, <pawan.kumar.gupta@linux.intel.com>,
+        <rdunlap@infradead.org>, <oneukum@suse.com>,
+        <anshuman.khandual@arm.com>, <jroedel@suse.de>,
+        <almasrymina@google.com>, <rientjes@google.com>,
+        <willy@infradead.org>, <osalvador@suse.de>, <mhocko@suse.com>,
+        <song.bao.hua@hisilicon.com>, <david@redhat.com>,
+        <naoya.horiguchi@nec.com>
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-3-songmuchun@bytedance.com>
+From:   Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <474cca65-c184-293a-a71d-b373aae4dfb1@huawei.com>
+Date:   Tue, 26 Jan 2021 10:07:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161161064956.2537118.3354798147866150631.stgit@warthog.procyon.org.uk>
+In-Reply-To: <20210117151053.24600-3-songmuchun@bytedance.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.117]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-For Subject: s/readpage/readpages/
-
-On Mon, Jan 25, 2021 at 09:37:29PM +0000, David Howells wrote:
-> +int __nfs_readahead_from_fscache(struct nfs_readdesc *desc,
-> +				 struct readahead_control *rac)
-
-I thought you wanted it called ractl instead of rac?  That's what I've
-been using in new code.
-
-> -	dfprintk(FSCACHE, "NFS: nfs_getpages_from_fscache (0x%p/%u/0x%p)\n",
-> -		 nfs_i_fscache(inode), npages, inode);
-> +	dfprintk(FSCACHE, "NFS: nfs_readahead_from_fscache (0x%p/0x%p)\n",
-> +		 nfs_i_fscache(inode), inode);
-
-We do have readahead_count() if this is useful information to be logging.
-
-> +static inline int nfs_readahead_from_fscache(struct nfs_readdesc *desc,
-> +					     struct readahead_control *rac)
+Hi:
+On 2021/1/17 23:10, Muchun Song wrote:
+> The HUGETLB_PAGE_FREE_VMEMMAP option is used to enable the freeing
+> of unnecessary vmemmap associated with HugeTLB pages. The config
+> option is introduced early so that supporting code can be written
+> to depend on the option. The initial version of the code only
+> provides support for x86-64.
+> 
+> Like other code which frees vmemmap, this config option depends on
+> HAVE_BOOTMEM_INFO_NODE. The routine register_page_bootmem_info() is
+> used to register bootmem info. Therefore, make sure
+> register_page_bootmem_info is enabled if HUGETLB_PAGE_FREE_VMEMMAP
+> is defined.
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+> ---
+>  arch/x86/mm/init_64.c |  2 +-
+>  fs/Kconfig            | 18 ++++++++++++++++++
+>  2 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index 0a45f062826e..0435bee2e172 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
+>  
+>  static void __init register_page_bootmem_info(void)
 >  {
-> -	if (NFS_I(inode)->fscache)
-> -		return __nfs_readpages_from_fscache(ctx, inode, mapping, pages,
-> -						    nr_pages);
-> +	if (NFS_I(rac->mapping->host)->fscache)
-> +		return __nfs_readahead_from_fscache(desc, rac);
->  	return -ENOBUFS;
->  }
-
-Not entirely sure that it's worth having the two functions separated any more.
-
->  	/* attempt to read as many of the pages as possible from the cache
->  	 * - this returns -ENOBUFS immediately if the cookie is negative
->  	 */
-> -	ret = nfs_readpages_from_fscache(desc.ctx, inode, mapping,
-> -					 pages, &nr_pages);
-> +	ret = nfs_readahead_from_fscache(&desc, rac);
->  	if (ret == 0)
->  		goto read_complete; /* all pages were read */
+> -#ifdef CONFIG_NUMA
+> +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
+>  	int i;
 >  
->  	nfs_pageio_init_read(&desc.pgio, inode, false,
->  			     &nfs_async_read_completion_ops);
+>  	for_each_online_node(i)
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index 976e8b9033c4..e7c4c2a79311 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -245,6 +245,24 @@ config HUGETLBFS
+>  config HUGETLB_PAGE
+>  	def_bool HUGETLBFS
 >  
-> -	ret = read_cache_pages(mapping, pages, readpage_async_filler, &desc);
-> +	while ((page = readahead_page(rac))) {
-> +		ret = readpage_async_filler(&desc, page);
-> +		put_page(page);
-> +	}
+> +config HUGETLB_PAGE_FREE_VMEMMAP
+> +	def_bool HUGETLB_PAGE
+> +	depends on X86_64
+> +	depends on SPARSEMEM_VMEMMAP
+> +	depends on HAVE_BOOTMEM_INFO_NODE
+> +	help
+> +	  The option HUGETLB_PAGE_FREE_VMEMMAP allows for the freeing of
+> +	  some vmemmap pages associated with pre-allocated HugeTLB pages.
+> +	  For example, on X86_64 6 vmemmap pages of size 4KB each can be
+> +	  saved for each 2MB HugeTLB page.  4094 vmemmap pages of size 4KB
+> +	  each can be saved for each 1GB HugeTLB page.
+> +
+> +	  When a HugeTLB page is allocated or freed, the vmemmap array
+> +	  representing the range associated with the page will need to be
+> +	  remapped.  When a page is allocated, vmemmap pages are freed
+> +	  after remapping.  When a page is freed, previously discarded
+> +	  vmemmap pages must be allocated before remapping.
+> +
+>  config MEMFD_CREATE
+>  	def_bool TMPFS || HUGETLBFS
+>  
+> 
 
-I thought with the new API we didn't need to do this kind of thing
-any more?  ie no matter whether fscache is configured in or not, it'll
-submit the I/Os.
+LGTM. Thanks.
+
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
