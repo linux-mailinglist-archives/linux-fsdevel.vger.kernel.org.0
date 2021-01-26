@@ -2,122 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80EBC305CF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:21:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C1C6305CF0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:20:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S313591AbhAZWiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 17:38:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37328 "EHLO
+        id S313359AbhAZWi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 17:38:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731688AbhAZUXn (ORCPT
+        with ESMTP id S2405545AbhAZUZ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 15:23:43 -0500
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5F9C061574;
-        Tue, 26 Jan 2021 12:23:02 -0800 (PST)
-Received: by mail-ot1-x330.google.com with SMTP id n42so17525796ota.12;
-        Tue, 26 Jan 2021 12:23:02 -0800 (PST)
+        Tue, 26 Jan 2021 15:25:29 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26276C061786;
+        Tue, 26 Jan 2021 12:24:49 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id d4so10416762plh.5;
+        Tue, 26 Jan 2021 12:24:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4sHBqGg7Zd3ZBa+/Y7qm8JDSQDKowoxEDhktZKpfDVQ=;
-        b=KXkx5d4sUxYTOvTF7gRRbxw6TEVZKzwoeFBBK196bvyMZF6pXhkZJdSpYACAEPyxmj
-         lOZN2dN7p0wDndRogQn7Pd/iANbqMzsLBvhJ4Kk0EJ6SETv7jqp086n+f9T3OMtpZdoA
-         0mBxUKf4Lgddj5VSxdTmKVBY0eCSsGPLCLQur4FxOss08zRpUHwlU+hTpYxjv7l34dF3
-         w5YGCd3xdUUMao6VeF/77/VIB2F6BBE16R93DZ89disPYcyzdae4N7NFL5+AAPCbW7gO
-         8sA0O7pRIcRgWhqRSW/FCddtvVTvaC6CvjkYh2SXDfSDHXL+5FmJ9K4fvtUmUHjYMfHI
-         VHiw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1cudNhAMfB/FNnO4Nfbnzqpu5VBUIwtW0BBCCWOr4ao=;
+        b=okEnGG//pva3FMm7+RQuqg3HjT6TuPB9G/HWJYN4D7a69egyS0VYX+j2NcX0rtqfMx
+         1wZ66PW1Lp/QBlFLsjTh6++IQ/YzkyKnsqgZK5oPJU4DLZbZJK8ICOq9t3lZDdpkB1pO
+         fajg2mPDaxDO8So+orz5lAgMXf6vEeSwW8KgrA+vmH4gNw33RVKwMG2y4uQzH/R7g2Ym
+         /0fOM4XSuQz9a8/FSx39lySghSLAwNhk90EgWrpfB+c5OmrKqEfKhqxs/XXnCC4azjTL
+         p8t61CcwzLqdmMv+Ke8sFeYU6PPsetdA1QzuB0X9TFIsLKUHFXEphvYwtjyPldGJ3oPu
+         JWlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4sHBqGg7Zd3ZBa+/Y7qm8JDSQDKowoxEDhktZKpfDVQ=;
-        b=oI9fPjh8MZE/YB8qD4MpR/W5FrkB0CN5yn2227dACqilHfsq0CuGyvnZAtezK4gXna
-         G4OnEOmHJbN7XSa3Rp3sBADicqfBocy681Z0cWX6gKj5PVGfBx68CKDnDMqe/PrUrEo0
-         kuuMhXaVdd43IRRL1Lt40MBCNnHJUpGm0/44t5b7DpF8jOXmMWa2EhyWC8mBUmGSX+1x
-         uHndX+3B2HlerVMSImgkBirbjhctwr0nQ0idPDjEAA1tY6yS6PWuo1udQT0Cr0Zrh+6k
-         tQD9hm6HupK1vGjcC7w8vhXsTed6954gniHBaDforUX3lfunPjdvTUvhvpSjQGET7cBO
-         MIdg==
-X-Gm-Message-State: AOAM5336mmzrS+Ip5Y7pEpsIWZHZwJrHpLoMLp8lsF4Q+hL8Hd0d13NR
-        IkLM/16r/U8GkC4SInvTkVX+VGWyZfDGbbZLpXNWcY8a6Eg=
-X-Google-Smtp-Source: ABdhPJydJKwYgmzSRDhy0oro307T8H3VsrUeyubaJ7SnbCg8rmXVAf+p/W3wSMTP/4Kl09XSM0cOPtcphypPBNDeVGY=
-X-Received: by 2002:a9d:1421:: with SMTP id h30mr5365576oth.45.1611692581570;
- Tue, 26 Jan 2021 12:23:01 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1cudNhAMfB/FNnO4Nfbnzqpu5VBUIwtW0BBCCWOr4ao=;
+        b=ncJQtqGe/OMI2ZpeBBOxFePTmsBh+xZCJQ2C5xxAxzUmdAw7gxYgBzw7ZjHuOgtJNh
+         /j7qJh9NDAbuA797tRi5pe6pIuHPrMHYw0SJWe2eY7xgxYzuDfNMl/01mzp3Si5iIrab
+         B9/Yq/TYHv19ibaYtu4hz10x/Jzl5ixgYVPgMdhssO1R7fMU4Ip9xsb5KxVcBWfUF+93
+         EacgkNs6+DNNkZdBwye8lSRl103B4RugCuPC9Pw+CwQNVp7NIXR+xGZzYw9Hx82LXZbd
+         /Ux99yFlDImGh6t0kVcc5kYBIb9ZI8cDnDqOTtfRbpCIF5UysF8ldwhfJGuqyP6nxQkV
+         JDLQ==
+X-Gm-Message-State: AOAM5335IAExN276ILR55mKIVe3aHVIdbCjsHbMXdWMm2y98a/2CfMd1
+        mMuTC22b+gjA6xYz1j7Uen8=
+X-Google-Smtp-Source: ABdhPJzK7Kn4mm8q2nP95CoOy5hXdg0H+PpAN9AJ0CABoyuge53sptw7H1bXl1bPLLzeM8G/GYhKsw==
+X-Received: by 2002:a17:902:778e:b029:de:b475:c430 with SMTP id o14-20020a170902778eb02900deb475c430mr7872809pll.53.1611692688717;
+        Tue, 26 Jan 2021 12:24:48 -0800 (PST)
+Received: from localhost.localdomain (c-73-241-149-213.hsd1.ca.comcast.net. [73.241.149.213])
+        by smtp.googlemail.com with ESMTPSA id u12sm18697124pgi.91.2021.01.26.12.24.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 12:24:48 -0800 (PST)
+From:   noah <goldstein.w.n@gmail.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        goldstein.w.n@gmail.com
+Subject: [PATCH] io_uring: Add skip option for __io_sqe_files_update
+Date:   Tue, 26 Jan 2021 15:23:28 -0500
+Message-Id: <20210126202326.3143037-1-goldstein.w.n@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <CAE1WUT7xJyx_gbxJu3r9DJGbqSkWZa-moieiDWC0bue2CxwAwg@mail.gmail.com>
- <20210126191716.GN308988@casper.infradead.org>
-In-Reply-To: <20210126191716.GN308988@casper.infradead.org>
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Tue, 26 Jan 2021 12:22:50 -0800
-Message-ID: <CAE1WUT61OwLSSRCvEe3FLjAASre42iOe=UfPX4uDbDrQ11PAYg@mail.gmail.com>
-Subject: Re: Getting a new fs in the kernel
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 11:18 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Tue, Jan 26, 2021 at 08:23:03AM -0800, Amy Parker wrote:
-> > Kernel development newcomer here. I've begun creating a concept for a
-> > new filesystem, and ideally once it's completed, rich, and stable I'd
-> > try to get it into the kernel.
-> >
-> > What would be the process for this? I'd assume a patch sequence, but
-> > they'd all be dependent on each other, and sending in tons of
-> > dependent patches doesn't sound like a great idea. I've seen requests
-> > for pulls, but since I'm new here I don't really know what to do.
->
-> Hi Amy,
->
-> Writing a new filesystem is fun!  Everyone should do it.
->
-> Releasing a filesystem is gut-churning.  You're committing to a filesystem
-> format that has to be supported for ~ever.
+This patch adds support for skipping a file descriptor when using
+IORING_REGISTER_FILES_UPDATE.  __io_sqe_files_update will skip fds set
+to IORING_REGISTER_FILES_SKIP. IORING_REGISTER_FILES_SKIP is inturn
+added as a #define in io_uring.h
 
-I'm bored and need something to dedicate myself to as a long-term commitment.
+Signed-off-by: noah <goldstein.w.n@gmail.com>
+---
+Supporting documentation and tests in liburing can be added in PR284
+(https://github.com/axboe/liburing/pull/284) if this patch is applied.
+    
+ fs/io_uring.c                 | 3 +++
+ include/uapi/linux/io_uring.h | 7 +++++++
+ 2 files changed, 10 insertions(+)
 
->
-> Supporting a new filesystem is a weighty responsibility.  People are
-> depending on you to store their data reliably.  And they demand boring
-> and annoying features like xattrs, acls, support for time after 2038.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2c307dea162b..03748faa5295 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8039,6 +8039,9 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if (fd == IORING_REGISTER_FILES_SKIP)
++			continue;
++
+ 		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
+ 		table = &ctx->file_data->table[i >> IORING_FILE_TABLE_SHIFT];
+ 		index = i & IORING_FILE_TABLE_MASK;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index f9f106c54d90..e8b481040fb3 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -298,6 +298,13 @@ struct io_uring_rsrc_update {
+ 	__aligned_u64 data;
+ };
+ 
++/*
++ * fd value in *((__s32 *)io_uring_rsrc_update->data)
++ */
++
++/* Skip updating fd indexes set to this value */
++#define IORING_REGISTER_FILES_SKIP  (-2)
++
+ #define IO_URING_OP_SUPPORTED	(1U << 0)
+ 
+ struct io_uring_probe_op {
+-- 
+2.29.2
 
-
-
->
-> We have quite a lot of actively developed filesystems for users to choose
-> from already -- ext4, btrfs, xfs are the main three.  So you're going
-> to face a challenge persuading people to switch.
->
-
-Yeah, understandable.
-
-> Finally, each filesystem represents a (small) maintainance burden to
-> people who need to make changes that cross all filesystems.  So it'd
-> be nice to have a good justification for why we should include that
-> cost.
-
-Alright, I'll keep that in mind.
-
->
-> Depending exactly what your concept is, it might make more sense to
-> make it part of an existing filesystem.  Or develop it separately
-> and have an existing filesystem integrate it.
-
-That's what other people have suggested as well, so I'll start
-considering trying to add any features I come up with into other
-filesystems as well.
-
->
-> Anyway, I've been at this for twenty years, so maybe I'm just grouchy
-> about new filesystems.  By all means work on it and see if it makes
-> sense, but there's a fairly low probability that it gets merged.
-
-Alright. Thanks for the advice!
-
-Best regards,
-Amy Parker
-(she/her/hers)
