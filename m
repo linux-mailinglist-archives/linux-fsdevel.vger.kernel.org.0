@@ -2,104 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0B32304C42
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 23:38:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F589304C47
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 23:38:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbhAZWfq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 17:35:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44070 "EHLO
+        id S1729060AbhAZWfu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 17:35:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393932AbhAZSoG (ORCPT
+        with ESMTP id S1729776AbhAZSzC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 13:44:06 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0CBAC061573;
-        Tue, 26 Jan 2021 10:43:26 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id u4so2762377pjn.4;
-        Tue, 26 Jan 2021 10:43:26 -0800 (PST)
+        Tue, 26 Jan 2021 13:55:02 -0500
+Received: from mail-qv1-xf4a.google.com (mail-qv1-xf4a.google.com [IPv6:2607:f8b0:4864:20::f4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3823BC0613ED
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jan 2021 10:54:22 -0800 (PST)
+Received: by mail-qv1-xf4a.google.com with SMTP id h13so1608222qvs.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jan 2021 10:54:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U3RPz+yz5AMp3COYBrptJ7ltjHtzj0/cdcpauOw8WBU=;
-        b=X9aY9/+Zz6rhHUHSCZi31LIkXY402OPSNF3bjd6GPjxm8bY4WDKzggONJr69N4Ix4L
-         Nw05q4kEsfsEsKecwQFLcm/cWozvVyRgoOUk+RmDk+SS9UdPE8/VkxMkr4YemvykFzhn
-         V++o1omImUL9IBmeNUXQiWL0QpbIUR1m5g+aBGI7qdyCK2BFQ5NuQ4cfrd/Vp5/Rb3g5
-         7L3OosH1bkTXY+Z1GyobTc6ag2rF+3FS7tf9gi8OEPZvMjhxjYWmVnKuOs8CPx1Fg37I
-         nHGaWfVRVZrgD0qABG2SByGBi9iTMPRViI25LYaHCAWuHNyRMAEPBAbd/bzDGglCFYib
-         8buw==
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=bO5cG8RVFSJvcHYvzxJ3sDdtOfyds0IikppF+3dZPH4=;
+        b=jaKm19MgC/4JoiUqQYSkY3kVyuBbW2s9EX7C+M/+OpxZNu37WkSkjZuPcw4e4RHLJw
+         gcFMX73CbuI88zfcfGIKpVhmbdYgIO0j59R6vK9mh14t4DHIPNPaty55w6eLo5WSmQjh
+         RWZNCQAoM8pYj/ouEhx33f97ToHjKpm4m+BvHtw5vpxs0QebRmUKKIXLRTvdpWha6zfn
+         bl9ZR4bUz9T1Up/zrJxBsUrGA9r2pwEAcDLIQ0zMmvGWyTd5qpgjZNjRsx9VxbIOTfV+
+         wp/pc+r2ms6vFYp55VmfJKifXRVV63luHOc39zcOpUPbYmCYVhGgfYtlZP+4pGZ79Loi
+         Z/Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U3RPz+yz5AMp3COYBrptJ7ltjHtzj0/cdcpauOw8WBU=;
-        b=QZOoKaDOLjsMHc0kakWYcUMlU0saYRzAO8ztke9/eVRnRGjYiUDG4/lYUdqUyzGjXb
-         BinCkJ/fV6QOSg6a8yNdD9cCzgzNC68BS0kv/X5oohQSCuCI0FhhBvZcnB6Z4I7bRwXW
-         1onkHEfdYpi6hShIw00qz2zTFDo1wdnDX8Z7p92FxsV5V1h496cVfsYE9ltLBR90itgP
-         qwp35yI994ADTafGPp2ZSj8A1v+1NR3YeYOYpLkgLqUuxhHfon/4N8qFD7NfeezSvrxO
-         giAvyWx3jlrjTQuIKoMS5R3p8n79N6I64sK6rfB3H05B+iNPiC0MxzFmtJHwTqbrF7UD
-         IOTw==
-X-Gm-Message-State: AOAM531LKOUpdAb+6G4t8pj71pWFxLo8w7R5qSHLQ7CsUHfUuFmocHnJ
-        cKDSkTJCXxxUH/nDaJiSV+DaXYP/3F7wRIM1n5M=
-X-Google-Smtp-Source: ABdhPJz0urdgQobV9Pm2eFglcydn6H6KKBed1DlnJTCPTUYjCfBAxGqjD4LQfmC85lP4UALqC0O4vD4il/DeUkg3UrI=
-X-Received: by 2002:a17:90b:716:: with SMTP id s22mr1156878pjz.223.1611686606310;
- Tue, 26 Jan 2021 10:43:26 -0800 (PST)
-MIME-Version: 1.0
-References: <20201220065025.116516-1-goldstein.w.n@gmail.com>
- <0cdf2aac-6364-742d-debb-cfd58b4c6f2b@gmail.com> <20201222021043.GA139782@gmail.com>
- <32c9ce7e-569d-3f94-535e-00e072de772e@gmail.com> <CAFUsyf+m8SseZ1NzZoYJe4KSH30v-XJeP5P9FvtxQT_5bvsK9Q@mail.gmail.com>
- <792d56e4-b258-65b4-d0b5-dbfd728d5a02@gmail.com>
-In-Reply-To: <792d56e4-b258-65b4-d0b5-dbfd728d5a02@gmail.com>
-From:   Noah Goldstein <goldstein.w.n@gmail.com>
-Date:   Tue, 26 Jan 2021 13:43:15 -0500
-Message-ID: <CAFUsyfK8OSDzfNCCwVPD8O=Fp0XSHWQ+HRCiC36BA-rH+c9D7g@mail.gmail.com>
-Subject: Re: [PATCH] fs: io_uring.c: Add skip option for __io_sqe_files_update
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     noah <goldstein.n@wustl.edu>, Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "open list:IO_URING" <io-uring@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=bO5cG8RVFSJvcHYvzxJ3sDdtOfyds0IikppF+3dZPH4=;
+        b=b1BU24aA5YuGKDXhaFZE7UHRh3Cyeyu+KJy/FLjFa88+YUOryJJKV/7ptD+zOAgOpa
+         buZpZZrN3QgN3AqSSIZ3z32+mQ+FSBjsidBYhJK9pqmdbS7Ey5mi8uc9q8KO8UDT7ng1
+         Pp3dzdvC+90ivHYIuQO4boJnFT7pT9/mr9pVsTU8djsz5ao/l3yVNc9/zt81D5nhv+im
+         6nEgHQpP0jyvqloHyQo6i2gT7G2zvXAadnkmWkeMasWOHmoVCy1+dPGNV99Dm03qbdQ2
+         XXDK/MNLf2dbXGfavgNvbaV65NmCYgkiPVutMGvXTEhlo+rFanA5BbsQl2x8QxDUKbZd
+         oDSw==
+X-Gm-Message-State: AOAM530C/+QX/3wjXui7MiIVtaUIyJieYi4DUiavvxEeQm06g0T11eGs
+        0MCYrv49zzvc6qMxwlTd8hemELymrEk=
+X-Google-Smtp-Source: ABdhPJzgifMCVdj2wd8NTgdTqCAaqPNmob6DgKLSL5+bY5GcQy0FrmWK2lvoSqwKoNI1I6x3mlnToJMV1M4=
+Sender: "figiel via sendgmr" <figiel@odra.waw.corp.google.com>
+X-Received: from odra.waw.corp.google.com ([2a00:79e0:2:11:1ea0:b8ff:fe79:fe73])
+ (user=figiel job=sendgmr) by 2002:a0c:fdec:: with SMTP id m12mr7025364qvu.11.1611687261291;
+ Tue, 26 Jan 2021 10:54:21 -0800 (PST)
+Date:   Tue, 26 Jan 2021 19:54:12 +0100
+Message-Id: <20210126185412.175204-1-figiel@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.30.0.280.ga3ce27912f-goog
+Subject: [PATCH v3] fs/proc: Expose RSEQ configuration
+From:   Piotr Figiel <figiel@google.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Michel Lespinasse <walken@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        mathieu.desnoyers@efficios.com, viro@zeniv.linux.org.uk,
+        peterz@infradead.org, paulmck@kernel.org, boqun.feng@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        posk@google.com, kyurtsever@google.com, ckennelly@google.com,
+        pjt@google.com, Piotr Figiel <figiel@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 12:24 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->
-> On 26/01/2021 17:14, Noah Goldstein wrote:
-> > On Tue, Jan 26, 2021 at 7:29 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >>
-> >> On 22/12/2020 02:10, Noah Goldstein wrote:
-> >>> On Sun, Dec 20, 2020 at 03:18:05PM +0000, Pavel Begunkov wrote:
-> >>>> On 20/12/2020 06:50, noah wrote:> From: noah <goldstein.n@wustl.edu>
-> >>>>>
-> >>>>> This patch makes it so that specify a file descriptor value of -2 will
-> >>>>> skip updating the corresponding fixed file index.
-> >>>>>
-> >>>>> This will allow for users to reduce the number of syscalls necessary
-> >>>>> to update a sparse file range when using the fixed file option.
-> >>>>
-> >>>> Answering the github thread -- it's indeed a simple change, I had it the
-> >>>> same day you posted the issue. See below it's a bit cleaner. However, I
-> >>>> want to first review "io_uring: buffer registration enhancements", and
-> >>>> if it's good, for easier merging/etc I'd rather prefer to let it go
-> >>>> first (even if partially).
-> >>
-> >> Noah, want to give it a try? I've just sent a prep patch, with it you
-> >> can implement it cleaner with one continue.
-> >
-> >  Absolutely. Will get on it ASAP.
->
-> Perfect. Even better if you add a liburing test
->
-> --
-> Pavel Begunkov
+For userspace checkpoint and restore (C/R) some way of getting process
+state containing RSEQ configuration is needed.
 
-Do you think the return value should not include files skipped?
+There are two ways this information is going to be used:
+ - to re-enable RSEQ for threads which had it enabled before C/R
+ - to detect if a thread was in a critical section during C/R
 
-i.e register fds[1, 2, 3, -1] with no errors returns 4. should fds[1,
-2, -2, -1] return 3 or 4 do you think?
+Since C/R preserves TLS memory and addresses RSEQ ABI will be restored
+using the address registered before C/R.
 
-Personally think the latter makes more sense. Thoughts?
+Detection whether the thread is in a critical section during C/R is
+needed to enforce behavior of RSEQ abort during C/R. Attaching with
+ptrace() before registers are dumped itself doesn't cause RSEQ abort.
+Restoring the instruction pointer within the critical section is
+problematic because rseq_cs may get cleared before the control is
+passed to the migrated application code leading to RSEQ invariants not
+being preserved.
+
+To achieve above goals expose the RSEQ structure address and the
+signature value with the new per-thread procfs file "rseq".
+
+Signed-off-by: Piotr Figiel <figiel@google.com>
+
+---
+
+v3:
+ - added locking so that the proc file always shows consistent pair of
+   RSEQ ABI address and the signature
+ - changed string formatting to use %px for the RSEQ ABI address
+v2:
+ - fixed string formatting for 32-bit architectures
+v1:
+ - https://lkml.kernel.org/r/20210113174127.2500051-1-figiel@google.com
+
+---
+ fs/exec.c      |  2 ++
+ fs/proc/base.c | 22 ++++++++++++++++++++++
+ kernel/rseq.c  |  4 ++++
+ 3 files changed, 28 insertions(+)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 5d4d52039105..5d84f98847f1 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1830,7 +1830,9 @@ static int bprm_execve(struct linux_binprm *bprm,
+ 	/* execve succeeded */
+ 	current->fs->in_exec = 0;
+ 	current->in_execve = 0;
++	task_lock(current);
+ 	rseq_execve(current);
++	task_unlock(current);
+ 	acct_update_integrals(current);
+ 	task_numa_free(current, false);
+ 	return retval;
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b3422cda2a91..89232329d966 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -662,6 +662,22 @@ static int proc_pid_syscall(struct seq_file *m, struct pid_namespace *ns,
+ 
+ 	return 0;
+ }
++
++#ifdef CONFIG_RSEQ
++static int proc_pid_rseq(struct seq_file *m, struct pid_namespace *ns,
++				struct pid *pid, struct task_struct *task)
++{
++	int res = lock_trace(task);
++
++	if (res)
++		return res;
++	task_lock(task);
++	seq_printf(m, "%px %08x\n", task->rseq, task->rseq_sig);
++	task_unlock(task);
++	unlock_trace(task);
++	return 0;
++}
++#endif /* CONFIG_RSEQ */
+ #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
+ 
+ /************************************************************************/
+@@ -3182,6 +3198,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	REG("comm",      S_IRUGO|S_IWUSR, proc_pid_set_comm_operations),
+ #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
+ 	ONE("syscall",    S_IRUSR, proc_pid_syscall),
++#ifdef CONFIG_RSEQ
++	ONE("rseq",       S_IRUSR, proc_pid_rseq),
++#endif
+ #endif
+ 	REG("cmdline",    S_IRUGO, proc_pid_cmdline_ops),
+ 	ONE("stat",       S_IRUGO, proc_tgid_stat),
+@@ -3522,6 +3541,9 @@ static const struct pid_entry tid_base_stuff[] = {
+ 			 &proc_pid_set_comm_operations, {}),
+ #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
+ 	ONE("syscall",   S_IRUSR, proc_pid_syscall),
++#ifdef CONFIG_RSEQ
++	ONE("rseq",      S_IRUSR, proc_pid_rseq),
++#endif
+ #endif
+ 	REG("cmdline",   S_IRUGO, proc_pid_cmdline_ops),
+ 	ONE("stat",      S_IRUGO, proc_tid_stat),
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index a4f86a9d6937..6aea67878065 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -322,8 +322,10 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+ 		ret = rseq_reset_rseq_cpu_id(current);
+ 		if (ret)
+ 			return ret;
++		task_lock(current);
+ 		current->rseq = NULL;
+ 		current->rseq_sig = 0;
++		task_unlock(current);
+ 		return 0;
+ 	}
+ 
+@@ -353,8 +355,10 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+ 		return -EINVAL;
+ 	if (!access_ok(rseq, rseq_len))
+ 		return -EFAULT;
++	task_lock(current);
+ 	current->rseq = rseq;
+ 	current->rseq_sig = sig;
++	task_unlock(current);
+ 	/*
+ 	 * If rseq was previously inactive, and has just been
+ 	 * registered, ensure the cpu_id_start and cpu_id fields
+-- 
+2.30.0.280.ga3ce27912f-goog
+
