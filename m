@@ -2,151 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2674A3034F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 06:32:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4C33036FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 08:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387686AbhAZFae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:30:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732373AbhAZDvm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 22:51:42 -0500
-Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ADF8C061756
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 19:51:02 -0800 (PST)
-Received: by mail-vk1-xa2e.google.com with SMTP id j67so3606298vkh.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 19:51:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ERr5chMqnNNOJKWjJQq+7FvSss//dhrARZABMDducAA=;
-        b=W/5lZiBQNy1JWJYiV5a6JWLJcRKAUyoKq3slnRqZSP4vOjPev+cn+lNyupPDziwn9w
-         6+WUe48shBn7tR9tR/udXYSJT0Dww3knoEu2UWFmh1ZQQlAQst0b15RVbB0Hrl/7QD3D
-         mRUVvAHou5iwmkNVsSVglunqWxGATL+TT9hgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ERr5chMqnNNOJKWjJQq+7FvSss//dhrARZABMDducAA=;
-        b=R3noRtMsR7mJ423ObBzCeuySyHeELVeG5htKJfHj5WZHDnFPKQZRIT7Yq7LHSwdkDR
-         BV7D8taAxML+4hf2rm7sFLJXBime+vQxyn2DLfxySr8VCfJgoxRl6MOs28ZPfdnYJMYE
-         7khLJwwI+Auim7yECjQXz0bLdSroPHqUxqInxjHOUB7CzSEWoRlNShEw8UyRHTS754Cf
-         fZl1OK2QEf9+5xWL29rPTQ7suly+59hAiSFSRm8VZsnXgzM18d2DiVHa3xYVVeZKCghj
-         4g+l1+Mscm5Lx/eCMGcamolLL1omW0ZYF+pu4sZusqyUVty2aaAQuQb72TCjUQbEjuQz
-         3srA==
-X-Gm-Message-State: AOAM531ixgJDmkPdNXzE/4O6CaYW1OdxpIFpnQvcRDinDDWF+AZDOOv7
-        +WoA4hE11PQmzk82N39rArj9FYmsa8nB9uv+DxUysQ==
-X-Google-Smtp-Source: ABdhPJz69r02bEWD3eKp0baSYASMm3Qknvcg9NadY9ZzXeYK9s/g659l+yUCcvs8dDhMVq9K3yZ9udvKzrJCk0SJcmw=
-X-Received: by 2002:ac5:ce9b:: with SMTP id 27mr3045021vke.9.1611633061185;
- Mon, 25 Jan 2021 19:51:01 -0800 (PST)
-MIME-Version: 1.0
-References: <CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com>
- <20210126013414.GE4626@dread.disaster.area>
-In-Reply-To: <20210126013414.GE4626@dread.disaster.area>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Tue, 26 Jan 2021 11:50:50 +0800
-Message-ID: <CANMq1KAgD_98607w308h3QSGaiRTkyVThmWmUuExxqh3r+tZsA@mail.gmail.com>
-Subject: Re: [BUG] copy_file_range with sysfs file as input
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Luis Lozano <llozano@chromium.org>, iant@google.com
-Content-Type: text/plain; charset="UTF-8"
+        id S2389255AbhAZHCQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 02:02:16 -0500
+Received: from m42-8.mailgun.net ([69.72.42.8]:57729 "EHLO m42-8.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389325AbhAZG7z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Jan 2021 01:59:55 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1611644359; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=2/LGePk6+KJcWt28ddrE+6l1qc8VxrblsvOgqgDiP+U=; b=Zbi2+skGF0CH0tiREmFn7LD0gdSAElQzSoxkXpozWQK6oOviUJUs6MmrM27oZohm8r1TyJ0L
+ TF8N9TrbgObAUaTBENn7L5IR8vX56T+eRWS7pR13LqRhd4KFKc96ZD7Kzrdx2liqhkazpKhy
+ l06Rr5yWbr1ZD6izt5hh9E5iNe0=
+X-Mailgun-Sending-Ip: 69.72.42.8
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 600fbda1ad4c9e395bd0fe84 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 26 Jan 2021 06:58:41
+ GMT
+Sender: cgoldswo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5F6D8C43465; Tue, 26 Jan 2021 06:58:41 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL
+        autolearn=no autolearn_force=no version=3.4.0
+Received: from cgoldswo-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: cgoldswo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 37E05C433C6;
+        Tue, 26 Jan 2021 06:58:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 37E05C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=cgoldswo@codeaurora.org
+From:   Chris Goldsworthy <cgoldswo@codeaurora.org>
+To:     viro@zeniv.linux.org.uk
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Goldsworthy <cgoldswo@codeaurora.org>
+Subject: [PATCH v4] Resolve LRU page-pinning issue for file-backed pages 
+Date:   Mon, 25 Jan 2021 22:58:29 -0800
+Message-Id: <cover.1611642038.git.cgoldswo@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 9:34 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Mon, Jan 25, 2021 at 03:54:31PM +0800, Nicolas Boichat wrote:
-> > Hi copy_file_range experts,
-> >
-> > We hit this interesting issue when upgrading Go compiler from 1.13 to
-> > 1.15 [1]. Basically we use Go's `io.Copy` to copy the content of
-> > `/sys/kernel/debug/tracing/trace` to a temporary file.
-> >
-> > Under the hood, Go now uses `copy_file_range` syscall to optimize the
-> > copy operation. However, that fails to copy any content when the input
-> > file is from sysfs/tracefs, with an apparent size of 0 (but there is
-> > still content when you `cat` it, of course).
-> >
-> > A repro case is available in comment7 (adapted from the man page),
-> > also copied below [2].
-> >
-> > Output looks like this (on kernels 5.4.89 (chromeos), 5.7.17 and
-> > 5.10.3 (chromeos))
-> > $ ./copyfrom /sys/kernel/debug/tracing/trace x
-> > 0 bytes copied
->
-> That's basically telling you that copy_file_range() was unable to
-> copy anything. The man page says:
->
-> RETURN VALUE
->        Upon  successful  completion,  copy_file_range() will return
->        the number of bytes copied between files.  This could be less
->        than the length originally requested.  If the file offset
->        of fd_in is at or past the end of file, no bytes are copied,
->        and copy_file_range() returns zero.
->
-> THe man page explains it perfectly.
+It is possible for file-backed pages to end up in a contiguous memory area
+(CMA), such that the relevant page must be migrated using the .migratepage()
+callback when its backing physical memory is selected for use in an CMA
+allocation (through cma_alloc()).  However, if a set of address space
+operations (AOPs) for a file-backed page lacks a migratepage() page call-back,
+fallback_migrate_page() will be used instead, which through
+try_to_release_page() calls try_to_free_buffers() (which is called directly or
+through a try_to_free_buffers() callback.  try_to_free_buffers() in turn calls
+drop_buffers()
 
-I'm not that confident the explanation is perfect ,-)
+drop_buffers() itself can fail due to the buffer_head associated with a page
+being busy. However, it is possible that the buffer_head is on an LRU list for
+a CPU, such that we can try removing the buffer_head from that list, in order
+to successfully release the page.  Do this.
 
-How does one define "EOF"? The read manpage
-(https://man7.org/linux/man-pages/man2/read.2.html) defines it as a
-zero return value. I don't think using the inode file size is
-standard. Seems like the kernel is not even trying to read from the
-source file here.
+v1: https://lore.kernel.org/lkml/cover.1606194703.git.cgoldswo@codeaurora.org/T/#m3a44b5745054206665455625ccaf27379df8a190
+Original version of the patch (with updates to make to account for changes in
+on_each_cpu_cond()).
 
-In any case, I can fix this issue by dropping the count check here:
-https://elixir.bootlin.com/linux/latest/source/fs/read_write.c#L1445 .
-I'll send a patch so that we can discuss based on that.
+v2: https://lore.kernel.org/lkml/cover.1609829465.git.cgoldswo@codeaurora.org/
+Follow Matthew Wilcox's suggestion of reducing the number of calls to
+on_each_cpu_cond(), by iterating over a page's busy buffer_heads inside of
+on_each_cpu_cond(). To copy from his e-mail, we go from:
 
-> Look at the trace file you are
-> trying to copy:
->
-> $ ls -l /sys/kernel/debug/tracing/trace
-> -rw-r--r-- 1 root root 0 Jan 19 12:17 /sys/kernel/debug/tracing/trace
-> $ cat /sys/kernel/debug/tracing/trace
-> tracer: nop
-> #
-> # entries-in-buffer/entries-written: 0/0   #P:8
-> #
-> #                              _-----=> irqs-off
-> #                             / _----=> need-resched
-> #                            | / _---=> hardirq/softirq
-> #                            || / _--=> preempt-depth
-> #                            ||| /     delay
-> #           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
-> #              | |       |   ||||       |         |
->
-> Yup, the sysfs file reports it's size as zero length, so the CFR
-> syscall is saying "there's nothing to copy from this empty file" and
-> so correctly is returning zero without even trying to copy anything
-> because the file offset is at EOF...
->
-> IOWs, there's no copy_file_range() bug here - it's behaving as
-> documented.
->
-> 'cat' "works" in this situation because it doesn't check the file
-> size and just attempts to read unconditionally from the file. Hence
-> it happily returns non-existent stale data from busted filesystem
-> implementations that allow data to be read from beyond EOF...
+for_each_buffer
+	for_each_cpu
+		for_each_lru_entry
 
-`cp` also works, so does `dd` and basically any other file operation.
+to:
 
-(and I wouldn't call procfs, sysfs, debugfs and friends "busted", they
-are just... special)
+for_each_cpu
+	for_each_buffer
+		for_each_lru_entry
 
+This is done using xarrays, which I found to be the cleanest data structure to
+use, though a pre-allocated array of page_size(page) / bh->b_size elements might
+be more performant.
 
->
-> Cheers,
->
-> Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+v3: Replace xas_for_each() with xa_for_each() to account for proper locking.
+
+v4: Fix an iteration error.
+
+Laura Abbott (1):
+  fs/buffer.c: Revoke LRU when trying to drop buffers
+
+ fs/buffer.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 74 insertions(+), 5 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
