@@ -2,94 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B13213034BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 06:27:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B5173034BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 06:27:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732735AbhAZF0m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 00:26:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46768 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732035AbhAZBex (ORCPT
+        id S1732616AbhAZF0p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 00:26:45 -0500
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:58188 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732057AbhAZBfD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jan 2021 20:34:53 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B7ACC0698D2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 17:31:27 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id n25so10216094pgb.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 17:31:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+rOSxpCfLAi+4QJn/ZTJAaummeegtELcLiTveho04CI=;
-        b=UWaIPOZf1DpySwiZueylaccUXpXV1AN3+j8atad1KjzH/D/RpVZ5l3hlQX/v5oUmQH
-         d3rRICZorJEri3Z9iIv8Xy9j5+GmIpUwhq5XlDgIEQNezEsvAJ5QySUzt0YkAtJi7FJg
-         2hPIkp5ch6/wxqNbXuDfRqo7R3JqhVBrINHt8DA1I77ZyirpwmrEaAjeD0wRhdpUwD1T
-         TrWsXqb3WJttrUzvpgMj24wvmEwzfpnvTCjaS8iJWpHf4foo1y3yODbwm8wIP8PM5GoO
-         JAyLjYIzmMIJq6RfbD8giu3rLNshfBq49R0FHmCJ2Y+H31acHyUXjvJkjxdMmMSE64cC
-         Q3jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+rOSxpCfLAi+4QJn/ZTJAaummeegtELcLiTveho04CI=;
-        b=ou3NI00Evc3P5EjHq5rxwtV0XEwoe+jk6EXBGllAVmqq37GsQ2uF6hpkJREmc1Vhd6
-         v5pF0UWRMxOfCyeMYI2K79k2PlDmtTpRz9VZlW7mqNAOtxTUkpPSNAv/nFlSQbn1mNby
-         yUzD94rhBzCMpxsSU1ZoML/u36gcsr4bpXub8Ylxehgr8t5887Su+Vm70PH2Gsmfq6EY
-         PZDet0lBajykLQkF/pw7J2LXckHegAz/bqFPJnc0hs40PLvW2daW382VHnfSRoziyCuM
-         c4uDZur7klz+VKWUWXbDYHdnpxv+BogfyLnUk2Shr4/IpFQTT4NzQ2gQoLVeK71BNNj1
-         98Vw==
-X-Gm-Message-State: AOAM530cEW1ssc1ek8jEpnjBfphHcy9NEH67kj4xkTSMCfEA5fCxj1Hr
-        dLWxTlNOi/4g5Pn98cZxLruEKQ==
-X-Google-Smtp-Source: ABdhPJw/yNerFPWKVzIuL4CAI1D9Rd3HaYaJUu8ucVQX0KM9Vcty8CEowP26G39ZecukCySc5mtwJg==
-X-Received: by 2002:a62:445:0:b029:19c:162b:bbef with SMTP id 66-20020a6204450000b029019c162bbbefmr2932755pfe.40.1611624686612;
-        Mon, 25 Jan 2021 17:31:26 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id i1sm18858666pfb.54.2021.01.25.17.31.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 17:31:25 -0800 (PST)
-Subject: Re: [PATCHSET RFC] support RESOLVE_CACHED for statx
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210125213614.24001-1-axboe@kernel.dk>
- <CAHk-=whh=+nkoZFqb1zztY9kUo-Ua75+zY16HeU_3j1RV4JR0Q@mail.gmail.com>
- <4bd713e8-58e7-e961-243e-dbbdc2a1f60c@kernel.dk>
- <CAHk-=wgdL-5=7dxpertTre5+3a5Y+D7e+BJ2aVb=-cceKKcJ5w@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <add91ec9-da8f-1eed-5c54-c94281b5ca99@kernel.dk>
-Date:   Mon, 25 Jan 2021 18:31:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 25 Jan 2021 20:35:03 -0500
+Received: from dread.disaster.area (pa49-180-243-77.pa.nsw.optusnet.com.au [49.180.243.77])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id EE17B90CF;
+        Tue, 26 Jan 2021 12:34:14 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1l4DFG-002QrL-6o; Tue, 26 Jan 2021 12:34:14 +1100
+Date:   Tue, 26 Jan 2021 12:34:14 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Luis Lozano <llozano@chromium.org>, iant@google.com
+Subject: Re: [BUG] copy_file_range with sysfs file as input
+Message-ID: <20210126013414.GE4626@dread.disaster.area>
+References: <CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgdL-5=7dxpertTre5+3a5Y+D7e+BJ2aVb=-cceKKcJ5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
+        a=juxvdbeFDU67v5YkIhU0sw==:117 a=juxvdbeFDU67v5YkIhU0sw==:17
+        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
+        a=Gx1m1vkv1q0fsgJoGIkA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/25/21 6:28 PM, Linus Torvalds wrote:
-> On Mon, Jan 25, 2021 at 5:06 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Which ones in particular? Outside of the afs one you looked a below,
->> the rest should all be of the "need to do IO of some sort" and hence
->> -EAGAIN is reasonable.
+On Mon, Jan 25, 2021 at 03:54:31PM +0800, Nicolas Boichat wrote:
+> Hi copy_file_range experts,
 > 
-> Several of them only do the IO conditionally, which was what I reacted
-> to in at least cifs.
+> We hit this interesting issue when upgrading Go compiler from 1.13 to
+> 1.15 [1]. Basically we use Go's `io.Copy` to copy the content of
+> `/sys/kernel/debug/tracing/trace` to a temporary file.
 > 
-> But I think it's ok to start out doing it unconditionally, and make it
-> fancier if/when/as people notice or care.
+> Under the hood, Go now uses `copy_file_range` syscall to optimize the
+> copy operation. However, that fails to copy any content when the input
+> file is from sysfs/tracefs, with an apparent size of 0 (but there is
+> still content when you `cat` it, of course).
+> 
+> A repro case is available in comment7 (adapted from the man page),
+> also copied below [2].
+> 
+> Output looks like this (on kernels 5.4.89 (chromeos), 5.7.17 and
+> 5.10.3 (chromeos))
+> $ ./copyfrom /sys/kernel/debug/tracing/trace x
+> 0 bytes copied
 
-Agree, that was the point I was trying to make in the reply. I'd rather
-start simpler and talk to folks about improving it, looping in the
-relevant developers for that. I'll leave it as-is for now, modulo the
-afs one which was definitely just a mistake.
+That's basically telling you that copy_file_range() was unable to
+copy anything. The man page says:
 
+RETURN VALUE
+       Upon  successful  completion,  copy_file_range() will return
+       the number of bytes copied between files.  This could be less
+       than the length originally requested.  If the file offset
+       of fd_in is at or past the end of file, no bytes are copied,
+       and copy_file_range() returns zero.
+
+THe man page explains it perfectly. Look at the trace file you are
+trying to copy:
+
+$ ls -l /sys/kernel/debug/tracing/trace
+-rw-r--r-- 1 root root 0 Jan 19 12:17 /sys/kernel/debug/tracing/trace
+$ cat /sys/kernel/debug/tracing/trace
+tracer: nop
+#
+# entries-in-buffer/entries-written: 0/0   #P:8
+#
+#                              _-----=> irqs-off
+#                             / _----=> need-resched
+#                            | / _---=> hardirq/softirq
+#                            || / _--=> preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+
+Yup, the sysfs file reports it's size as zero length, so the CFR
+syscall is saying "there's nothing to copy from this empty file" and
+so correctly is returning zero without even trying to copy anything
+because the file offset is at EOF...
+
+IOWs, there's no copy_file_range() bug here - it's behaving as
+documented.
+
+'cat' "works" in this situation because it doesn't check the file
+size and just attempts to read unconditionally from the file. Hence
+it happily returns non-existent stale data from busted filesystem
+implementations that allow data to be read from beyond EOF...
+
+Cheers,
+
+Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com
