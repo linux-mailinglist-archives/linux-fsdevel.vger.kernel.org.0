@@ -2,157 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC4A304507
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 18:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 261B3304504
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jan 2021 18:21:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391056AbhAZRVf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 12:21:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60272 "EHLO mx2.suse.de"
+        id S2390860AbhAZRVK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 12:21:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58664 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389511AbhAZHyX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 02:54:23 -0500
+        id S2387605AbhAZHtG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Jan 2021 02:49:06 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1611646304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7zMRtj92K4aLVsKF/LtuTzpzMNc9rmo/TxWykS3K0E0=;
-        b=fbzVzS60+bW4/eLvVlMg8GidpFB1jBrR7hcptqrY8DOrxY95Wqr6BYjafHEM6FDX7G5i/a
-        47NUGFfcrm6l+Of7J1sWw4Lzuue/Bl54LKMg59hi6hWCs5djiniqInQ7mh6N/vOqeVmO+1
-        dcHiiymtcGUHsS6UXafRNc9p1dmXURc=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3F491AE61;
-        Tue, 26 Jan 2021 07:31:44 +0000 (UTC)
-Date:   Tue, 26 Jan 2021 08:31:42 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        by mx2.suse.de (Postfix) with ESMTP id CF3AEAD4E;
+        Tue, 26 Jan 2021 07:48:24 +0000 (UTC)
+Date:   Tue, 26 Jan 2021 08:48:20 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Muchun Song <songmuchun@bytedance.com>,
         David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        David Rientjes <rientjes@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v16 08/11] secretmem: add memcg accounting
-Message-ID: <20210126073142.GY827@dhcp22.suse.cz>
-References: <20210121122723.3446-1-rppt@kernel.org>
- <20210121122723.3446-9-rppt@kernel.org>
- <20210125165451.GT827@dhcp22.suse.cz>
- <20210125213817.GM6332@kernel.org>
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
+        <naoya.horiguchi@nec.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [External] Re: [PATCH v13 05/12] mm: hugetlb: allocate the
+ vmemmap pages associated with each HugeTLB page
+Message-ID: <20210126074815.GA8809@linux>
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-6-songmuchun@bytedance.com>
+ <6a68fde-583d-b8bb-a2c8-fbe32e03b@google.com>
+ <CAMZfGtXpg30RhrPm836S6Tr09ynKRPG=_DXtXt9sVTTponnC-g@mail.gmail.com>
+ <CAMZfGtX19x8m+Bkvj+8Ue31m5L_4DmgtZevp2fd++JL7nuSzWw@mail.gmail.com>
+ <552e8214-bc6f-8d90-0ed8-b3aff75d0e47@redhat.com>
+ <CAMZfGtWK=zBri_zAx=uP_dLv2Kh-2_vfjAyN7XtESwqukg5Eug@mail.gmail.com>
+ <b8ef43c1-e4b5-eae2-0cdf-1ce25accc36f@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210125213817.GM6332@kernel.org>
+In-Reply-To: <b8ef43c1-e4b5-eae2-0cdf-1ce25accc36f@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 25-01-21 23:38:17, Mike Rapoport wrote:
-> On Mon, Jan 25, 2021 at 05:54:51PM +0100, Michal Hocko wrote:
-> > On Thu 21-01-21 14:27:20, Mike Rapoport wrote:
-> > > From: Mike Rapoport <rppt@linux.ibm.com>
-> > > 
-> > > Account memory consumed by secretmem to memcg. The accounting is updated
-> > > when the memory is actually allocated and freed.
-> > 
-> > What does this mean?
+On Mon, Jan 25, 2021 at 03:25:35PM -0800, Mike Kravetz wrote:
+> IIUC, even non-gigantic hugetlb pages can exist in CMA.  They can be migrated
+> out of CMA if needed (except free pages in the pool, but that is a separate
+> issue David H already noted in another thread).
+
+Yeah, as discussed I am taking a look at that.
+ 
+> When we first started discussing this patch set, one suggestion was to force
+> hugetlb pool pages to be allocated at boot time and never permit them to be
+> freed back to the buddy allocator.  A primary reason for the suggestion was
+> to avoid this issue of needing to allocate memory when freeing a hugetlb page
+> to buddy.  IMO, that would be an unreasonable restriction for many existing
+> hugetlb use cases.
+
+AFAIK it was suggested as a way to simplify things in the first go of this
+patchset.
+Please note that the first versions of this patchset was dealing with PMD
+mapped vmemmap pages and overall it was quite convulated for a first
+version.
+Since then, things had simplified quite a lot (e.g: we went from 22 patches to 12),
+so I do not feel the need to force the pages to be allocated at boot time.
+
+> A simple thought is that we simply fail the 'freeing hugetlb page to buddy'
+> if we can not allocate the required vmemmap pages.  However, as David R says
+> freeing hugetlb pages to buddy is a reasonable way to free up memory in oom
+> situations.  However, failing the operation 'might' be better than looping
+> forever trying to allocate the pages needed?  As mentioned in the previous
+> patch, it would be better to use GFP_ATOMIC to at least dip into reserves if
+> we can.
+
+I also agree that GFP_ATOMIC might make some sense.
+If the system is under memory pressure, I think it is best if we go the extra
+mile in order to free up to 4096 pages or 512 pages.
+Otherwise we might have a nice hugetlb page we might not need and a lack of
+memory.
+
+> I think using pages of the hugetlb for vmemmap to cover pages of the hugetlb
+> is the only way we can guarantee success of freeing a hugetlb page to buddy.
+> However, this should only only be used when there is no other option and could
+> result in vmemmap pages residing in CMA or ZONE_MOVABLE.  I'm not sure how
+> much better this is than failing the free to buddy operation.
+
+And how would you tell when there is no other option?
+
+> I don't have a solution.  Just wanted to share some thoughts.
 > 
-> That means that the accounting is updated when secretmem does cma_alloc()
-> and cma_relase().
-> 
-> > What are the lifetime rules?
-> 
-> Hmm, what do you mean by lifetime rules?
+> BTW, just thought of something else.  Consider offlining a memory section that
+> contains a free hugetlb page.  The offline code will try to disolve the hugetlb
+> page (free to buddy).  So, vmemmap pages will need to be allocated.  We will
+> try to allocate vmemap pages on the same node as the hugetlb page.  But, if
+> this memory section is the last of the node all the pages will have been
+> isolated and no allocations will succeed.  Is that a possible scenario, or am
+> I just having too many negative thoughts?
 
-OK, so let's start by reservation time (mmap time right?) then the
-instantiation time (faulting in memory). What if the calling process of
-the former has a different memcg context than the later. E.g. when you
-send your fd or inherited fd over fork will move to a different memcg.
+IIUC, GFP_ATOMIC will reset ALLOC_CPUSET flags at some point and the nodemask will
+be cleared, so I guess the system will try to allocate from another node.
+But I am not sure about that one.
 
-What about freeing path? E.g. when you punch a hole in the middle of
-a mapping?
+I would like to hear Michal's thoughts on this.
 
-Please make sure to document all this.
 
-> > [...]
-> > 
-> > > +static int secretmem_account_pages(struct page *page, gfp_t gfp, int order)
-> > > +{
-> > > +	int err;
-> > > +
-> > > +	err = memcg_kmem_charge_page(page, gfp, order);
-> > > +	if (err)
-> > > +		return err;
-> > > +
-> > > +	/*
-> > > +	 * seceremem caches are unreclaimable kernel allocations, so treat
-> > > +	 * them as unreclaimable slab memory for VM statistics purposes
-> > > +	 */
-> > > +	mod_lruvec_page_state(page, NR_SLAB_UNRECLAIMABLE_B,
-> > > +			      PAGE_SIZE << order);
-> > 
-> > A lot of memcg accounted memory is not reclaimable. Why do you abuse
-> > SLAB counter when this is not a slab owned memory? Why do you use the
-> > kmem accounting API when __GFP_ACCOUNT should give you the same without
-> > this details?
-> 
-> I cannot use __GFP_ACCOUNT because cma_alloc() does not use gfp.
-
-Other people are working on this to change. But OK, I do see that this
-can be done later but it looks rather awkward.
-
-> Besides, kmem accounting with __GFP_ACCOUNT does not seem
-> to update stats and there was an explicit request for statistics:
->  
-> https://lore.kernel.org/lkml/CALo0P13aq3GsONnZrksZNU9RtfhMsZXGWhK1n=xYJWQizCd4Zw@mail.gmail.com/
-
-charging and stats are two different things. You can still take care of
-your stats without explicitly using the charging API. But this is a mere
-detail. It just hit my eyes.
-
-> As for (ab)using NR_SLAB_UNRECLAIMABLE_B, as it was already discussed here:
-> 
-> https://lore.kernel.org/lkml/20201129172625.GD557259@kernel.org/
-
-Those arguments should be a part of the changelof.
-
-> I think that a dedicated stats counter would be too much at the moment and
-> NR_SLAB_UNRECLAIMABLE_B is the only explicit stat for unreclaimable memory.
-
-Why do you think it would be too much? If the secret memory becomes a
-prevalent memory user because it will happen to back the whole virtual
-machine then hiding it into any existing counter would be less than
-useful.
-
-Please note that this all is a user visible stuff that will become PITA
-(if possible) to change later on. You should really have strong
-arguments in your justification here.
 -- 
-Michal Hocko
-SUSE Labs
+Oscar Salvador
+SUSE L3
