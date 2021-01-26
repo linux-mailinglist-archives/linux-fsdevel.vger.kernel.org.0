@@ -2,159 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D264F305D57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:37:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B98305D42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:32:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S313224AbhAZWdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 17:33:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46314 "EHLO
+        id S313298AbhAZWfI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jan 2021 17:35:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387714AbhAZFvJ (ORCPT
+        with ESMTP id S2389571AbhAZRPd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 00:51:09 -0500
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64693C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 21:50:29 -0800 (PST)
-Received: by mail-pg1-x532.google.com with SMTP id p18so10827811pgm.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jan 2021 21:50:29 -0800 (PST)
+        Tue, 26 Jan 2021 12:15:33 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BE0C0617AB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jan 2021 09:15:18 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id e9so10140869plh.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jan 2021 09:15:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6hQh9xucPDb8N6xyy474SDbEP/uNP4NQsuioCdvk19o=;
-        b=a+udas64ePBT8ikC13g16EZbNKiyk1L2mcgjemzexLqsCW+U0bizKIALhjcWtG/j2i
-         V4pqWFPXYvh6y8fih7Y3ADZdSUHUt1aSoTLWLLM+8StMMWzmrcKnwX2rgz2+zlF64WWn
-         HSVwQOAoMFrKRe+TxPEdKRnpxGX2TRM3UvurI=
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=1OK/MeZJl5NxcxE5Dh3B9A8mhymxtTUZmx4FhDUsbPY=;
+        b=YSoe4Og20hwhN3jDWuBKZemxXDk8zdksEMCbNyCSJd3tiWbTzRb+W9uW3a5uOhG3d9
+         rg8Sy/x3/uSR/WISwkBhusJBuXFs4f4Ew4Qx/Jzz/Shs4zEFqL8mf+4nDfgloe3+rFjh
+         4Z5CzHrhnd+Yh7ACoDyVMAdTdaDgSzVskofOCzQ4mBFt704fFg4xFGcjrPN1kfXdrT1A
+         eC6JVtYjxgYOjvXJVp+Mv7Je+LLbaqnJqm4jymgtvDrLgw/wy6XLpaQf5gKF5P9Wm3O1
+         C5Y6xZVt9ubUtDF9Vz8Bfte6yAyhuafOIDPoBiVOVPPaIsdz+9USmmhqKflYgYDbObVx
+         5sNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6hQh9xucPDb8N6xyy474SDbEP/uNP4NQsuioCdvk19o=;
-        b=JypX0lLnp9WUoNGkw5VaauLNWfFgULTLAngtYAhBa5Y8awn5ei2KXRQjWKCsiyrDGI
-         JNm27X5XfsjwXH+973V5H/B1+XMLpj5S2t+Iz+L7XGod0oc2RRxQ5+LSpbcPqj6d35zP
-         NMTAZV9cHF3JNddJx22mb9rd6HyFPSY0wp+zIksvlVlj1Z2jpIS+DsDY74dy5TZbFNNM
-         AfPIywcmaOoZ1+xSFqI7VJT5p6yeR7buBIfAib7pdXAukOLT9S24da1qEYuYU/PHVUEn
-         HW8zQ3TeVODtSsWNMKHZMr5K3d5B0pcViKTvJHmUxPe7izI8tBleddK6/4gMHn/QMSCZ
-         dTcw==
-X-Gm-Message-State: AOAM531ALvfbGUUlnDo6uF+PcypgNJIIw0hXO0IT3jCzXke+9lMNz7To
-        uaEPxSKsx7ki+7OI+Eq/N1oWe3+TEXKQqA==
-X-Google-Smtp-Source: ABdhPJwvkUbWuPxcPS1nBQYiFVPoOVWKBaDqRW/eItWWfUwyzTIR3SXdibpFIWmtRkxAMTTSksHpYA==
-X-Received: by 2002:a63:5a4c:: with SMTP id k12mr4221493pgm.95.1611640228657;
-        Mon, 25 Jan 2021 21:50:28 -0800 (PST)
-Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:50cc:9282:4fdd:3979])
-        by smtp.gmail.com with ESMTPSA id c8sm17544003pfo.148.2021.01.25.21.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jan 2021 21:50:28 -0800 (PST)
-From:   Nicolas Boichat <drinkcat@chromium.org>
-To:     "Darrick J . Wong" <djwong@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: generic_copy_file_checks: Do not adjust count based on file size
-Date:   Tue, 26 Jan 2021 13:50:22 +0800
-Message-Id: <20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid>
-X-Mailer: git-send-email 2.30.0.280.ga3ce27912f-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=1OK/MeZJl5NxcxE5Dh3B9A8mhymxtTUZmx4FhDUsbPY=;
+        b=e14LPofO9/rYow8afK00+bbpFPTWRmsay9iDwJ7VZIDjT2MM1FSVh9Dz/PVnFFAy7Y
+         lBf0qTE6YjXK6iXGUgC1Lz/nKARJTWGGiY+5MFZaZpbGgpwvkMQC+l2Lj+RzUWOpuTeF
+         uSKQ6zw7KaeWizF6iYDOj6GodbdQcFcFWEQLLbRbzb/fnZy7X8B0LaVjINmnK418gYK5
+         ccHqRentpiBNZX6k+NX0e/5hlEdXF8A9QKiIp/bCWdXPjM+4K4/bdUO+IbbjNXmanpZA
+         MWJEcJNMHnqvxhEN9VpnK2wAx4L2zYOxkIeGPMdDQhSke3zxY6sIHD8ktCTF2IwCOmAV
+         lBIg==
+X-Gm-Message-State: AOAM531MmcCsggdZ9UrDJrelk9RU33kpK8Xk3LEH77nwf04o0PMV4qIH
+        fJPAbEdgMAhaSmR+wPOGtheABA==
+X-Google-Smtp-Source: ABdhPJzOSgrY4m5BUz2N9eCvyppN9VeNapOvVp4cm1RzAFoqiJTviLaRuKIxY/kCtYXUJmQ2bygfSQ==
+X-Received: by 2002:a17:90a:f309:: with SMTP id ca9mr807823pjb.11.1611681318027;
+        Tue, 26 Jan 2021 09:15:18 -0800 (PST)
+Received: from [192.168.10.175] (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id c11sm2783512pjv.3.2021.01.26.09.15.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Jan 2021 09:15:17 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andreas Dilger <adilger@dilger.ca>
+Mime-Version: 1.0 (1.0)
+Subject: Re: Getting a new fs in the kernel
+Date:   Tue, 26 Jan 2021 10:15:15 -0700
+Message-Id: <D66E412C-ED63-4FF7-A0F9-C78EF846AAF4@dilger.ca>
+References: <CAE1WUT7xJyx_gbxJu3r9DJGbqSkWZa-moieiDWC0bue2CxwAwg@mail.gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CAE1WUT7xJyx_gbxJu3r9DJGbqSkWZa-moieiDWC0bue2CxwAwg@mail.gmail.com>
+To:     Amy Parker <enbyamy@gmail.com>
+X-Mailer: iPhone Mail (18B92)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-copy_file_range (which calls generic_copy_file_checks) uses the
-inode file size to adjust the copy count parameter. This breaks
-with special filesystems like procfs/sysfs, where the file size
-appears to be zero, but content is actually returned when a read
-operation is performed.
+On Jan 26, 2021, at 09:25, Amy Parker <enbyamy@gmail.com> wrote:
+>=20
+> =EF=BB=BFKernel development newcomer here. I've begun creating a concept f=
+or a
+> new filesystem, and ideally once it's completed, rich, and stable I'd
+> try to get it into the kernel.
 
-This commit ignores the source file size, and makes copy_file_range
-match the end of file behaviour documented in POSIX's "read",
-where 0 is returned to mark EOF. This would allow "cp" and other
-standard tools to make use of copy_file_range with the exact same
-behaviour as they had in the past.
+Hello Amy, and welcome.=20
 
-Fixes: 96e6e8f4a68d ("vfs: add missing checks to copy_file_range")
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
----
-This can be reproduced with this simple test case:
- #define _GNU_SOURCE
- #include <fcntl.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <sys/stat.h>
- #include <unistd.h>
+I guess the first question to ask is what would be unique and valuable
+about the new filesystem compared to existing filesystems in the kernel?
 
- int
- main(int argc, char **argv)
- {
-   int fd_in, fd_out;
-   loff_t ret;
+Given that maintaining a new filesystem adds ongoing maintenance
+efforts, there has to be some added value before it would be accepted.
+Also, given that filesystems are storing critical data for users, and
+problems in the code can lead to data loss that can't be fixed by a reboot,
+like many other software bugs, it takes a very long time for filesystems
+to become stable enough for general use (the general rule of thumb is 10
+years before a new filesystem is stable enough for general use).=20
 
-   fd_in = open("/proc/version", O_RDONLY);
-   fd_out = open("version", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+Often, if you have ideas for new functionality, it makes more sense to
+add this into the framework of an existing filesystem (e.g. data verity,
+data encryption, metadata checksum, DAX, etc. were all added to ext4).
 
-   do {
-     ret = copy_file_range(fd_in, NULL, fd_out, NULL, 1024, 0);
-     printf("%d bytes copied\n", (int)ret);
-   } while (ret > 0);
+Not only does this simplify efforts in terms of ongoing maintenance, but
+it also means many more users will benefit from your development effort
+in a much shorter timeframe. Otherwise, users would have to stop
+using their existing filesystem before
+they started using yours, and that is
+a very slow process, because your filesystem would have to be much
+better at *something* before they would make that switch.=20
 
-   return 0;
- }
+> What would be the process for this? I'd assume a patch sequence, but
+> they'd all be dependent on each other, and sending in tons of
+> dependent patches doesn't sound like a great idea. I've seen requests
+> for pulls, but since I'm new here I don't really know what to do.
 
-Without this patch, `version` output file is empty, and no bytes
-are copied:
-0 bytes copied
+Probably the first step, before submitting any patches, would be to
+provide a description of your work, and how it improves on the current
+filesystems in the kernel. It may be that there are existing projects that
+duplicate this effort, and combining resources will result in a 100% done
+filesystem rather than two 80% done
+projects...
 
-With this patch, the loop runs twice and the content of the file
-is copied:
-315 bytes copied
-0 bytes copied
+Note that I don't want to discourage you from participating in the Linux
+filesystem development community, but there are definitely considerations
+going both ways wrt. accepting a new filesystem into the kernel. It may be
+that your ideas, time, and efforts are better spent in contributing to an
+exiting project.  It may also be that you have something groundbreaking
+work, and I look forward to reading about what that is.=20
 
-We hit this issue when upgrading Go compiler from 1.13 to 1.15 [1],
-as we use Go's `io.Copy` to copy the content of
-`/sys/kernel/debug/tracing/trace` to a temporary file.
-
-Under the hood, Go 1.15 uses `copy_file_range` syscall to optimize the
-copy operation. However, that fails to copy any content when the input
-file is from sysfs/tracefs, with an apparent size of 0 (but there is
-still content when you `cat` it, of course).
-
-[1] http://issuetracker.google.com/issues/178332739
-
- fs/read_write.c | 8 --------
- 1 file changed, 8 deletions(-)
-
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 75f764b43418..7236146f6ad7 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1424,7 +1424,6 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
- 	struct inode *inode_in = file_inode(file_in);
- 	struct inode *inode_out = file_inode(file_out);
- 	uint64_t count = *req_count;
--	loff_t size_in;
- 	int ret;
- 
- 	ret = generic_file_rw_checks(file_in, file_out);
-@@ -1442,13 +1441,6 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
- 	if (pos_in + count < pos_in || pos_out + count < pos_out)
- 		return -EOVERFLOW;
- 
--	/* Shorten the copy to EOF */
--	size_in = i_size_read(inode_in);
--	if (pos_in >= size_in)
--		count = 0;
--	else
--		count = min(count, size_in - (uint64_t)pos_in);
--
- 	ret = generic_write_check_limits(file_out, pos_out, &count);
- 	if (ret)
- 		return ret;
--- 
-2.30.0.280.ga3ce27912f-goog
-
+Cheers, Andreas=
