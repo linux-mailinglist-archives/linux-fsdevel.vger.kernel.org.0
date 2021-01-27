@@ -2,68 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4758F3060CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 17:17:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC4D3060F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 17:24:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237005AbhA0QRc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 11:17:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39186 "EHLO
+        id S237133AbhA0QYH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 11:24:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343960AbhA0QPo (ORCPT
+        with ESMTP id S1343587AbhA0QXa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 11:15:44 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC59C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 08:15:03 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id b8so1284378plh.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 08:15:03 -0800 (PST)
+        Wed, 27 Jan 2021 11:23:30 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EC54C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 08:22:50 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id g15so1671094pjd.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 08:22:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xiqRpJ5Ht6dR1wStXAMqrua7i2NfwhoL7Gu6JxmbtR0=;
-        b=uWA0sCspPE3AkDSyaNYslh7VDfnSpKOfrK0nXICZYMMjajQojSrQhAYij265UzsGks
-         VwWSj6yZAjVHCk2OLX+cBU2oQvVQDWNbB2quFe5YO+SFCSMrhwIXcicULLZldCXP1EHI
-         9/HeEq5Z0t5qQzwbGRPMsEimr0xkKw7XxYAtyUbkp6n5xXYk6Db8dJk9LtFfjSStcDDj
-         DyMuTkfxZ0Ako7l26doxamMLFxkz3DPmZFj0f6kSDn5YhvDNx2WonCGf0HyHUirBMUOH
-         oXPJQwBPU4sNNuf6M5qw1GF2SUOpgCZ6jotLwVlzOeEnUy0oKgVGD/R0vFYhPirac8oj
-         PxSg==
+        bh=TVjq9S8vPnIaMaJuKUlW9AEfrTuqdOcWOcfrMncSWG8=;
+        b=MSwLyioJQHmb3RlWN5K/h0uCtQwuaTflKp4FvbqSJzDh+ijpnoSGkjnrg0bMXr75bn
+         QOcgxcMfAQhpl8vFKZOJFTqcd2YRMtk9enO2yAEYF9ykZBArE+IYcr2l/lxj1gbYwfnW
+         LCZylyc17znb9pcfUGlnSwYmT5dxXP8fiCR25+QUf4EfvTtPm4jkLYYmtqxCzVKx10H2
+         5HjvUtO943SH4+dD6DARX8sdz77VWGfS/GWz3VaKoejOlLOzlOhfE8wx5rVMZOxGbg50
+         5J6NTqjydgV5jLgspOH0d8Tu/wP/FfxPT3I60VKD5yfy9pJ1mCP2zBe4/NSTn9MBHHBu
+         1VXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xiqRpJ5Ht6dR1wStXAMqrua7i2NfwhoL7Gu6JxmbtR0=;
-        b=EVpMfgOu3l2wKMA2iDeLg6fi7zi5bRXB+65xecPmRKVuk8dSi7mcmWdBWOSZ5PZmbi
-         Gm1Z/SWeDU9sPR8s6kM8ZVaNimU1jtRnz85ygPHg/t9mz0N9l89vkNwmSYdQsfU/yR+h
-         j9//WCBxj19vGuKYBcM0FF2YdQIpdjROOj8vXAVV/xa7O6FFXXViou+PEXIN5MWLAip6
-         BJQqNJdjGP6JUyDtdtUpkxU++yB4Ei3qpdKWHkZCAXJEI2wO1Jg2laF3GyeN60ZXbdrU
-         7KgoXvItq9VX9DEHQmMqMZeZMf6oDIESMrxLLS8hn7hv/5E9synF2Zy3cOrxkahI2uJI
-         2Qvw==
-X-Gm-Message-State: AOAM532zomrLXomeWPuwUO9SDbwgoHBBTSNwZQFOz6VfKdv6CZb4wecr
-        xuqNhSGBjpqxk4cb5lP3+64mqw==
-X-Google-Smtp-Source: ABdhPJzsswtHV3w92LRCKEE7cnjcT4Vnr+fzOt1CqP/Koqrj3vZY9dGwAEokGdDdFpPClOtSAuHMbA==
-X-Received: by 2002:a17:902:eccb:b029:de:8483:505d with SMTP id a11-20020a170902eccbb02900de8483505dmr12053475plh.63.1611764103374;
-        Wed, 27 Jan 2021 08:15:03 -0800 (PST)
+        bh=TVjq9S8vPnIaMaJuKUlW9AEfrTuqdOcWOcfrMncSWG8=;
+        b=X26efgEKfciVuJxcu3fLU6VvJRdI2uAaWRJH9EnN1Kb7egYU9v/KifUSBpeDB7o2xI
+         /i33fdEAtSllm6cWStBxLC6R5WAQm8aAMqn7njgcAff+2ynDrQv7SDo3lQzXp1sTd1Dw
+         geZIgqUVFU6/W4JjwFBvhK3qi+1Cp5a0eHgYG8jeILLWNMbD22YDSYKSr3kLpCuP9iyp
+         M3oTgUUQaoog2B/Ne5RxSwJL7C1OfUltkvLzbGWjfq4sqkFvqtdRbWCyBIfQWokzt2/h
+         icKVh9i8yKi8KspRMFMn4wzUrqu/mHf7shTPjn0UpfzpRS0+DiTZE8uUjrP4OKUn2qrx
+         1ViQ==
+X-Gm-Message-State: AOAM531cVJC227Zp31WnKQqybstG83RlN51F5KPyFx4j6n9v6f5ustll
+        Q7kbHNw6mq0kRdqp+5Vc+Zcw5oZ3J5LLWA==
+X-Google-Smtp-Source: ABdhPJzmzHNGRy7gsxRAlKffUjZofNt/Y279WX8g0zuIMUfGldmkIIeLNyGOkRskF48NZdhidRDKyA==
+X-Received: by 2002:a17:902:f68d:b029:e1:d20:8641 with SMTP id l13-20020a170902f68db02900e10d208641mr1155803plg.81.1611764569786;
+        Wed, 27 Jan 2021 08:22:49 -0800 (PST)
 Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id u12sm2775076pgi.91.2021.01.27.08.15.01
+        by smtp.gmail.com with ESMTPSA id s24sm2873032pfd.118.2021.01.27.08.22.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 08:15:02 -0800 (PST)
-Subject: Re: [PATCH] Revert "block: simplify set_init_blocksize" to regain
- lost performance
-To:     Maxim Mikityanskiy <maxtram95@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210126195907.2273494-1-maxtram95@gmail.com>
+        Wed, 27 Jan 2021 08:22:49 -0800 (PST)
+Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     io-uring <io-uring@vger.kernel.org>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+References: <20201116044529.1028783-1-dkadashev@gmail.com>
+ <3bb5781b-8e48-e4db-a832-333c01dba8ab@kernel.dk>
+ <CAOKbgA6CAe22WknmGC7-bYDkwHRLBVqm9vUq6tz7Qp9ZECztpQ@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <eac57824-f2eb-9a81-aa5f-3fd62f8e531d@kernel.dk>
-Date:   Wed, 27 Jan 2021 09:15:02 -0700
+Message-ID: <86ab3221-ea4f-3578-6937-8ec2c191c6af@kernel.dk>
+Date:   Wed, 27 Jan 2021 09:22:49 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210126195907.2273494-1-maxtram95@gmail.com>
+In-Reply-To: <CAOKbgA6CAe22WknmGC7-bYDkwHRLBVqm9vUq6tz7Qp9ZECztpQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,40 +70,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/26/21 12:59 PM, Maxim Mikityanskiy wrote:
-> The cited commit introduced a serious regression with SATA write speed,
-> as found by bisecting. This patch reverts this commit, which restores
-> write speed back to the values observed before this commit.
+On 1/27/21 4:06 AM, Dmitry Kadashev wrote:
+> On Wed, Jan 27, 2021 at 5:35 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 11/15/20 9:45 PM, Dmitry Kadashev wrote:
+>>> This adds mkdirat support to io_uring and is heavily based on recently
+>>> added renameat() / unlinkat() support.
+>>>
+>>> The first patch is preparation with no functional changes, makes
+>>> do_mkdirat accept struct filename pointer rather than the user string.
+>>>
+>>> The second one leverages that to implement mkdirat in io_uring.
+>>>
+>>> Based on for-5.11/io_uring.
+>>
+>> I want to tentatively queue this up. Do you have the liburing support
+>> and test case(s) for it as well that you can send?
 > 
-> The performance tests were done on a Helios4 NAS (2nd batch) with 4 HDDs
-> (WD8003FFBX) using dd (bs=1M count=2000). "Direct" is a test with a
-> single HDD, the rest are different RAID levels built over the first
-> partitions of 4 HDDs. Test results are in MB/s, R is read, W is write.
-> 
->                 | Direct | RAID0 | RAID10 f2 | RAID10 n2 | RAID6
-> ----------------+--------+-------+-----------+-----------+--------
-> 9011495c9466    | R:256  | R:313 | R:276     | R:313     | R:323
-> (before faulty) | W:254  | W:253 | W:195     | W:204     | W:117
-> ----------------+--------+-------+-----------+-----------+--------
-> 5ff9f19231a0    | R:257  | R:398 | R:312     | R:344     | R:391
-> (faulty commit) | W:154  | W:122 | W:67.7    | W:66.6    | W:67.2
-> ----------------+--------+-------+-----------+-----------+--------
-> 5.10.10         | R:256  | R:401 | R:312     | R:356     | R:375
-> unpatched       | W:149  | W:123 | W:64      | W:64.1    | W:61.5
-> ----------------+--------+-------+-----------+-----------+--------
-> 5.10.10         | R:255  | R:396 | R:312     | R:340     | R:393
-> patched         | W:247  | W:274 | W:220     | W:225     | W:121
-> 
-> Applying this patch doesn't hurt read performance, while improves the
-> write speed by 1.5x - 3.5x (more impact on RAID tests). The write speed
-> is restored back to the state before the faulty commit, and even a bit
-> higher in RAID tests (which aren't HDD-bound on this device) - that is
-> likely related to other optimizations done between the faulty commit and
-> 5.10.10 which also improved the read speed.
+> I do, I've sent it in the past, here it is:
+> https://lore.kernel.org/io-uring/20201116051005.1100302-1-dkadashev@gmail.com/
 
-Can't argue with these numbers, and while this should probably get
-fixed up instead, let's leave that for future kernels. I'll apply this
-for 5.11, thanks.
+I thought so, thanks. I'll queue it up once we have agreement on the
+kernel side.
+
+> I need to (figure out the way to) fix the kernel / namei side after Al's
+> comments though.
+
+Thanks, yes please do and re-post it.
 
 -- 
 Jens Axboe
