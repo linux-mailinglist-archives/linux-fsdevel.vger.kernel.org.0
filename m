@@ -2,62 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 695C830602D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 16:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6746A306041
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 16:54:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235104AbhA0Pth (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 10:49:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33082 "EHLO
+        id S235493AbhA0Pxb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 10:53:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236396AbhA0Prg (ORCPT
+        with ESMTP id S236621AbhA0Pwh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 10:47:36 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 114B8C061574;
-        Wed, 27 Jan 2021 07:46:30 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id by1so3342132ejc.0;
-        Wed, 27 Jan 2021 07:46:29 -0800 (PST)
+        Wed, 27 Jan 2021 10:52:37 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D746C061573;
+        Wed, 27 Jan 2021 07:51:54 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id bx12so3006353edb.8;
+        Wed, 27 Jan 2021 07:51:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R6ZtaEsn6Sf5kkQW+eu8pA6vL+665kl4n5FmAL3X834=;
-        b=qc1n+BUSQE/jRJWgJTsugV3ZKoeDqi6vXjTgRGQTTvxmixuE4nNxGdSng2g/nOwJK6
-         x6lrwbQEntwyqkYr4GZHkdpguGIXT8gF+b33DgJbHvbgLen+ax4hHCatHjS101kMG7yE
-         b85Eq7FQonWY/DTLYf7mHYpkutnS/1SICpeDddCllvBrrKgYnQjMQXodz2KLTc3MJpfM
-         SOJkb9Xs0GB5TM6Lm23shPDLZIK5A/xMN10E8lkIz4dc1NFTRZqxp3o7DyGm5rDL+GKP
-         phArhTh/55ZzXeeZx9DCo7nRsHJ7xiwPw/q5arDYddVjv2NDQXW0iG1LPJyu+hFiNVwR
-         d/vw==
+        bh=JVlzrgK9SUerNgH3pE4q6TjesJOSjQO6YHuJJtZtBgI=;
+        b=D4eLJNoK6h+kZQnchbdA1XMPrifYaJoLZm0XDkP0+XhtheaOEpc+aiRQd8L8KOAbvE
+         G1IBUvjiseWUZMwBfK/RvP5nY/xAzNHnxOJu3SyjEr+16rEOxzeHIL8G8hXfSl36R55u
+         PS7dXudzhYklk34XVE4OHHU88zipw+YVgXkNV/xmx6xPW6QrGZ4X758At5XPHfWPhCy3
+         Ihzc4KTdxQQB+srnPP9UbSEtzf+cAndDgsHZU/3gXAYovQgUbqdb+IY/GNCCek1ZqDZh
+         bltBjGtaDMipWoIo61BtXv+H90v8pNO1G0rpg9SD1FqJe5N6Pl3qz/6sN1tEHrzQQoPB
+         bhRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=R6ZtaEsn6Sf5kkQW+eu8pA6vL+665kl4n5FmAL3X834=;
-        b=smuY9qgXAciAZq14nfAsWG900Blmv6afAw6Gj802qwRyD5XRzxYeonaTGPVL2/oQBZ
-         //T3BW/QamZA2k2juce7Slt9X+OejNGY9GlYq9phcwbraYiHv65QVXZnIFbpE/Mk52Q6
-         rfUiswhlEVEG3uK29u2Uf6cEAfA0xduIMzfbqvtrUxfkdKf8Wnk1YUZgTTGGUkhTGlHZ
-         f6SW9AHYtEKQCgVy2gXuh1hSEnVrr45pKlryZYgq/jZCEC+h158GZygJMwZ2nO211Hvt
-         D1JTwRzpVhXTKShfAQsd7TszCrTGkJH6l4twFxVMbBSWs9Vrq0VaFhY+nkTrJRE5hdU2
-         btdg==
-X-Gm-Message-State: AOAM532c0xvV+IDQCAtK3+5d9WcSS2MHm+PJi3YIXWWwDiB9DmMvYuLu
-        4r3n4AOjvoS1xRq/l2YgQrI=
-X-Google-Smtp-Source: ABdhPJz7cdpvTQKpJpMQS9aa2CgqNKsN+IY4UfJZS5pk04mER3fbg7VqI2ouR0mJ/O949IBOxqI4qQ==
-X-Received: by 2002:a17:906:90c3:: with SMTP id v3mr7493267ejw.461.1611762388705;
-        Wed, 27 Jan 2021 07:46:28 -0800 (PST)
+        bh=JVlzrgK9SUerNgH3pE4q6TjesJOSjQO6YHuJJtZtBgI=;
+        b=RWE0EyIRVfDIepwymyih/sWRLKKQjNmiujfzTmqcT2vwefwTF3oyRGjOHoYy1MuyML
+         2Deu+qceWtlq82NeknwEz5NSkKQKdzSefJ/ymdO8QxoV/A5RmMP1ribvW+CBmRNNrMa+
+         TcB2nXsufncZxKwZZFWQIxUEEV4mn3BtncwSfUsrhNOV3EBxd5kBVGLio6KXt4VT9wvS
+         dzGt4R7j5Gkfy7v4iJerQnOz9+k/VVFBkVv/FCAWcMljA5GsWJmz8mx89filo5ZKXf48
+         uydEyNz3dJUbGwtZ9mmgtrf9Ps6gRZOzsqnsDNkI1JGINKf+zK4AfL+TiC7erxQwVRWt
+         OvZw==
+X-Gm-Message-State: AOAM532rOjA39wA8LTivVC2zllhAeFvMsLg0HrMIKh/Fcc0b/wtShqua
+        /Zgh58ELU+HjjnMijxHNgJoUfZgEDPs=
+X-Google-Smtp-Source: ABdhPJz5K4BNsOMsWFKFdItRQ7KGAqEGO8Wkwdf78h8YPOkn8lMpVfoojhLQ4x2My8ddA4agmrdFYw==
+X-Received: by 2002:a05:6402:19a:: with SMTP id r26mr10080427edv.54.1611762712451;
+        Wed, 27 Jan 2021 07:51:52 -0800 (PST)
 Received: from [192.168.8.160] ([148.252.129.161])
-        by smtp.gmail.com with ESMTPSA id ke7sm1019020ejc.7.2021.01.27.07.46.27
+        by smtp.gmail.com with ESMTPSA id f16sm1004796ejh.88.2021.01.27.07.51.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 07:46:28 -0800 (PST)
-Subject: Re: [RFC PATCH 0/4] Asynchronous passthrough ioctl
-To:     Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me
-Cc:     linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        javier.gonz@samsung.com, nj.shetty@samsung.com,
-        selvakuma.s1@samsung.com
-References: <CGME20210127150134epcas5p251fc1de3ff3581dd4c68b3fbe0b9dd91@epcas5p2.samsung.com>
- <20210127150029.13766-1-joshi.k@samsung.com>
+        Wed, 27 Jan 2021 07:51:51 -0800 (PST)
+Subject: Re: [PATCH] iov_iter: optimise iter type checking
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     David Laight <David.Laight@aculab.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <a8cdb781384791c30e30036aced4c027c5dfea86.1605969341.git.asml.silence@gmail.com>
+ <6e795064-fdbd-d354-4b01-a4f7409debf5@gmail.com>
+ <54cd4d1b-d7ec-a74c-8be0-e48780609d56@gmail.com>
+ <20210109170359.GT3579531@ZenIV.linux.org.uk>
+ <b04df39d77114547811d7bfc2c0d4c8c@AcuMS.aculab.com>
+ <1783c58f-1016-0c6b-be7f-a93bc2f8f2a4@gmail.com>
+ <20210116051818.GF3579531@ZenIV.linux.org.uk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -102,12 +106,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <489691ce-3b1e-30ce-9f72-d32389e33901@gmail.com>
-Date:   Wed, 27 Jan 2021 15:42:46 +0000
+Message-ID: <ed385c4d-99ca-d7aa-8874-96e3c6b743bb@gmail.com>
+Date:   Wed, 27 Jan 2021 15:48:10 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20210127150029.13766-1-joshi.k@samsung.com>
+In-Reply-To: <20210116051818.GF3579531@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -115,85 +119,352 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 27/01/2021 15:00, Kanchan Joshi wrote:
-> This RFC patchset adds asynchronous ioctl capability for NVMe devices.
-> Purpose of RFC is to get the feedback and optimize the path.
+On 16/01/2021 05:18, Al Viro wrote:
+> On Sat, Jan 09, 2021 at 10:11:09PM +0000, Pavel Begunkov wrote:
 > 
-> At the uppermost io-uring layer, a new opcode IORING_OP_IOCTL_PT is
-> presented to user-space applications. Like regular-ioctl, it takes
-> ioctl opcode and an optional argument (ioctl-specific input/output
-> parameter). Unlike regular-ioctl, it is made to skip the block-layer
-> and reach directly to the underlying driver (nvme in the case of this
-> patchset). This path between io-uring and nvme is via a newly
-> introduced block-device operation "async_ioctl". This operation
-> expects io-uring to supply a callback function which can be used to
-> report completion at later stage.
+>>> Does any code actually look at the fields as a pair?
+>>> Would it even be better to use separate bytes?
+>>> Even growing the on-stack structure by a word won't really matter.
+>>
+>> u8 type, rw;
+>>
+>> That won't bloat the struct. I like the idea. If used together compilers
+>> can treat it as u16.
 > 
-> For a regular ioctl, NVMe driver submits the command to the device and
-> the submitter (task) is made to wait until completion arrives. For
-> async-ioctl, completion is decoupled from submission. Submitter goes
-> back to its business without waiting for nvme-completion. When
-> nvme-completion arrives, it informs io-uring via the registered
-> completion-handler. But some ioctls may require updating certain
-> ioctl-specific fields which can be accessed only in context of the
-> submitter task. For that reason, NVMe driver uses task-work infra for
-> that ioctl-specific update. Since task-work is not exported, it cannot
-> be referenced when nvme is compiled as a module. Therefore, one of the
-> patch exports task-work API.
-> 
-> Here goes example of usage (pseudo-code).
-> Actual nvme-cli source, modified to issue all ioctls via this opcode
-> is present at-
-> https://github.com/joshkan/nvme-cli/commit/a008a733f24ab5593e7874cfbc69ee04e88068c5
+> Reasonable, and from what I remember from looking through the users,
+> no readers will bother with looking at both at the same time.
 
-see https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops
+Al, are you going turn it into a patch, or prefer me to take over?
 
-Looks like good time to bring that branch/discussion back
 
-> 
-> With regular ioctl-
-> int nvme_submit_passthru(int fd, unsigned long ioctl_cmd,
->                          struct nvme_passthru_cmd *cmd)
+> On the write side... it's only set in iov_iter_{kvec,bvec,pipe,discard,init}.
+> I sincerely doubt anyone would give a fuck, not to mention that something
+> like
+> void iov_iter_pipe(struct iov_iter *i, unsigned int direction,
+>                         struct pipe_inode_info *pipe,
+>                         size_t count)
 > {
-> 	return ioctl(fd, ioctl_cmd, cmd);
+>         BUG_ON(direction != READ);
+>         WARN_ON(pipe_full(pipe->head, pipe->tail, pipe->ring_size));
+> 	*i = (struct iov_iter) {
+> 		.iter_type = ITER_PIPE,
+> 		.data_source = false,
+> 		.pipe = pipe,
+> 		.head = pipe->head,
+> 		.start_head = pipe->head,
+> 		.count = count,
+> 		.iov_offset = 0
+> 	};
 > }
 > 
-> With uring passthru ioctl-
-> int nvme_submit_passthru(int fd, unsigned long ioctl_cmd,
->                          struct nvme_passthru_cmd *cmd)
-> {
-> 	return uring_ioctl(fd, ioctl_cmd, cmd);
-> }
-> int uring_ioctl(int fd, unsinged long cmd, u64 arg)
-> {
-> 	sqe = io_uring_get_sqe(ring);
+> would make more sense anyway - we do want to overwrite everything in the
+> object, and let the compiler do whatever it likes to do.
 > 
-> 	/* prepare sqe */
-> 	sqe->fd = fd;
-> 	sqe->opcode = IORING_OP_IOCTL_PT;
-> 	sqe->ioctl_cmd = cmd;
-> 	sqe->ioctl_arg = arg;
+> So... something like (completely untested) variant below, perhaps?
 > 
-> 	/* submit sqe */
-> 	io_uring_submit(ring);
-> 
-> 	/* reap completion and obtain result */
-> 	io_uring_wait_cqe(ring, &cqe);
-> 	printf("ioctl result =%d\n", cqe->res)
-> }
-> 
-> Kanchan Joshi (4):
->   block: introduce async ioctl operation
->   kernel: export task_work_add
->   nvme: add async ioctl support
->   io_uring: add async passthrough ioctl support
-> 
->  drivers/nvme/host/core.c      | 347 +++++++++++++++++++++++++++-------
->  fs/io_uring.c                 |  77 ++++++++
->  include/linux/blkdev.h        |  12 ++
->  include/uapi/linux/io_uring.h |   7 +-
->  kernel/task_work.c            |   2 +-
->  5 files changed, 376 insertions(+), 69 deletions(-)
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 72d88566694e..ed8ad2c5d384 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -19,20 +19,16 @@ struct kvec {
+>  
+>  enum iter_type {
+>  	/* iter types */
+> -	ITER_IOVEC = 4,
+> -	ITER_KVEC = 8,
+> -	ITER_BVEC = 16,
+> -	ITER_PIPE = 32,
+> -	ITER_DISCARD = 64,
+> +	ITER_IOVEC,
+> +	ITER_KVEC,
+> +	ITER_BVEC,
+> +	ITER_PIPE,
+> +	ITER_DISCARD
+>  };
+>  
+>  struct iov_iter {
+> -	/*
+> -	 * Bit 0 is the read/write bit, set if we're writing.
+> -	 * Bit 1 is the BVEC_FLAG_NO_REF bit, set if type is a bvec and
+> -	 * the caller isn't expecting to drop a page reference when done.
+> -	 */
+> -	unsigned int type;
+> +	u8 iter_type;
+> +	bool data_source;
+>  	size_t iov_offset;
+>  	size_t count;
+>  	union {
+> @@ -52,7 +48,7 @@ struct iov_iter {
+>  
+>  static inline enum iter_type iov_iter_type(const struct iov_iter *i)
+>  {
+> -	return i->type & ~(READ | WRITE);
+> +	return i->iter_type;
+>  }
+>  
+>  static inline bool iter_is_iovec(const struct iov_iter *i)
+> @@ -82,7 +78,7 @@ static inline bool iov_iter_is_discard(const struct iov_iter *i)
+>  
+>  static inline unsigned char iov_iter_rw(const struct iov_iter *i)
+>  {
+> -	return i->type & (READ | WRITE);
+> +	return i->data_source ? WRITE : READ;
+>  }
+>  
+>  /*
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 1635111c5bd2..133c03b2dcae 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -81,19 +81,18 @@
+>  #define iterate_all_kinds(i, n, v, I, B, K) {			\
+>  	if (likely(n)) {					\
+>  		size_t skip = i->iov_offset;			\
+> -		if (unlikely(i->type & ITER_BVEC)) {		\
+> +		if (likely(i->iter_type == ITER_IOVEC)) {	\
+> +			const struct iovec *iov;		\
+> +			struct iovec v;				\
+> +			iterate_iovec(i, n, v, iov, skip, (I))	\
+> +		} else if (i->iter_type == ITER_BVEC) {		\
+>  			struct bio_vec v;			\
+>  			struct bvec_iter __bi;			\
+>  			iterate_bvec(i, n, v, __bi, skip, (B))	\
+> -		} else if (unlikely(i->type & ITER_KVEC)) {	\
+> +		} else if (i->iter_type == ITER_KVEC) {		\
+>  			const struct kvec *kvec;		\
+>  			struct kvec v;				\
+>  			iterate_kvec(i, n, v, kvec, skip, (K))	\
+> -		} else if (unlikely(i->type & ITER_DISCARD)) {	\
+> -		} else {					\
+> -			const struct iovec *iov;		\
+> -			struct iovec v;				\
+> -			iterate_iovec(i, n, v, iov, skip, (I))	\
+>  		}						\
+>  	}							\
+>  }
+> @@ -103,7 +102,17 @@
+>  		n = i->count;					\
+>  	if (i->count) {						\
+>  		size_t skip = i->iov_offset;			\
+> -		if (unlikely(i->type & ITER_BVEC)) {		\
+> +		if (likely(i->iter_type == ITER_IOVEC)) {	\
+> +			const struct iovec *iov;		\
+> +			struct iovec v;				\
+> +			iterate_iovec(i, n, v, iov, skip, (I))	\
+> +			if (skip == iov->iov_len) {		\
+> +				iov++;				\
+> +				skip = 0;			\
+> +			}					\
+> +			i->nr_segs -= iov - i->iov;		\
+> +			i->iov = iov;				\
+> +		} else if (i->iter_type == ITER_BVEC) {		\
+>  			const struct bio_vec *bvec = i->bvec;	\
+>  			struct bio_vec v;			\
+>  			struct bvec_iter __bi;			\
+> @@ -111,7 +120,7 @@
+>  			i->bvec = __bvec_iter_bvec(i->bvec, __bi);	\
+>  			i->nr_segs -= i->bvec - bvec;		\
+>  			skip = __bi.bi_bvec_done;		\
+> -		} else if (unlikely(i->type & ITER_KVEC)) {	\
+> +		} else if (i->iter_type == ITER_KVEC) {		\
+>  			const struct kvec *kvec;		\
+>  			struct kvec v;				\
+>  			iterate_kvec(i, n, v, kvec, skip, (K))	\
+> @@ -121,18 +130,8 @@
+>  			}					\
+>  			i->nr_segs -= kvec - i->kvec;		\
+>  			i->kvec = kvec;				\
+> -		} else if (unlikely(i->type & ITER_DISCARD)) {	\
+> +		} else if (i->iter_type == ITER_DISCARD) {	\
+>  			skip += n;				\
+> -		} else {					\
+> -			const struct iovec *iov;		\
+> -			struct iovec v;				\
+> -			iterate_iovec(i, n, v, iov, skip, (I))	\
+> -			if (skip == iov->iov_len) {		\
+> -				iov++;				\
+> -				skip = 0;			\
+> -			}					\
+> -			i->nr_segs -= iov - i->iov;		\
+> -			i->iov = iov;				\
+>  		}						\
+>  		i->count -= n;					\
+>  		i->iov_offset = skip;				\
+> @@ -434,7 +433,7 @@ int iov_iter_fault_in_readable(struct iov_iter *i, size_t bytes)
+>  	int err;
+>  	struct iovec v;
+>  
+> -	if (!(i->type & (ITER_BVEC|ITER_KVEC))) {
+> +	if (i->iter_type == ITER_IOVEC) {
+>  		iterate_iovec(i, bytes, v, iov, skip, ({
+>  			err = fault_in_pages_readable(v.iov_base, v.iov_len);
+>  			if (unlikely(err))
+> @@ -450,19 +449,26 @@ void iov_iter_init(struct iov_iter *i, unsigned int direction,
+>  			size_t count)
+>  {
+>  	WARN_ON(direction & ~(READ | WRITE));
+> -	direction &= READ | WRITE;
+>  
+>  	/* It will get better.  Eventually... */
+> -	if (uaccess_kernel()) {
+> -		i->type = ITER_KVEC | direction;
+> -		i->kvec = (struct kvec *)iov;
+> -	} else {
+> -		i->type = ITER_IOVEC | direction;
+> -		i->iov = iov;
+> -	}
+> -	i->nr_segs = nr_segs;
+> -	i->iov_offset = 0;
+> -	i->count = count;
+> +	if (uaccess_kernel())
+> +		*i = (struct iov_iter) {
+> +			.iter_type = ITER_KVEC,
+> +			.data_source = direction,
+> +			.kvec = (struct kvec *)iov,
+> +			.nr_segs = nr_segs,
+> +			.iov_offset = 0,
+> +			.count = count
+> +		};
+> +	else
+> +		*i = (struct iov_iter) {
+> +			.iter_type = ITER_IOVEC,
+> +			.data_source = direction,
+> +			.iov = iov,
+> +			.nr_segs = nr_segs,
+> +			.iov_offset = 0,
+> +			.count = count
+> +		};
+>  }
+>  EXPORT_SYMBOL(iov_iter_init);
+>  
+> @@ -915,17 +921,20 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+>  {
+>  	if (unlikely(!page_copy_sane(page, offset, bytes)))
+>  		return 0;
+> -	if (i->type & (ITER_BVEC|ITER_KVEC)) {
+> +	if (likely(i->iter_type == ITER_IOVEC))
+> +		return copy_page_to_iter_iovec(page, offset, bytes, i);
+> +	if (i->iter_type == ITER_BVEC || i->iter_type == ITER_KVEC) {
+>  		void *kaddr = kmap_atomic(page);
+>  		size_t wanted = copy_to_iter(kaddr + offset, bytes, i);
+>  		kunmap_atomic(kaddr);
+>  		return wanted;
+> -	} else if (unlikely(iov_iter_is_discard(i)))
+> -		return bytes;
+> -	else if (likely(!iov_iter_is_pipe(i)))
+> -		return copy_page_to_iter_iovec(page, offset, bytes, i);
+> -	else
+> +	}
+> +	if (i->iter_type == ITER_PIPE)
+>  		return copy_page_to_iter_pipe(page, offset, bytes, i);
+> +	if (i->iter_type == ITER_DISCARD)
+> +		return bytes;
+> +	WARN_ON(1);
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(copy_page_to_iter);
+>  
+> @@ -934,17 +943,16 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+>  {
+>  	if (unlikely(!page_copy_sane(page, offset, bytes)))
+>  		return 0;
+> -	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
+> -		WARN_ON(1);
+> -		return 0;
+> -	}
+> -	if (i->type & (ITER_BVEC|ITER_KVEC)) {
+> +	if (likely(i->iter_type == ITER_IOVEC))
+> +		return copy_page_from_iter_iovec(page, offset, bytes, i);
+> +	if (i->iter_type == ITER_BVEC || i->iter_type == ITER_KVEC) {
+>  		void *kaddr = kmap_atomic(page);
+>  		size_t wanted = _copy_from_iter(kaddr + offset, bytes, i);
+>  		kunmap_atomic(kaddr);
+>  		return wanted;
+> -	} else
+> -		return copy_page_from_iter_iovec(page, offset, bytes, i);
+> +	}
+> +	WARN_ON(1);
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(copy_page_from_iter);
+>  
+> @@ -1172,11 +1180,14 @@ void iov_iter_kvec(struct iov_iter *i, unsigned int direction,
+>  			size_t count)
+>  {
+>  	WARN_ON(direction & ~(READ | WRITE));
+> -	i->type = ITER_KVEC | (direction & (READ | WRITE));
+> -	i->kvec = kvec;
+> -	i->nr_segs = nr_segs;
+> -	i->iov_offset = 0;
+> -	i->count = count;
+> +	*i = (struct iov_iter) {
+> +		.iter_type = ITER_KVEC,
+> +		.data_source = direction,
+> +		.kvec = kvec,
+> +		.nr_segs = nr_segs,
+> +		.iov_offset = 0,
+> +		.count = count
+> +	};
+>  }
+>  EXPORT_SYMBOL(iov_iter_kvec);
+>  
+> @@ -1185,11 +1196,14 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int direction,
+>  			size_t count)
+>  {
+>  	WARN_ON(direction & ~(READ | WRITE));
+> -	i->type = ITER_BVEC | (direction & (READ | WRITE));
+> -	i->bvec = bvec;
+> -	i->nr_segs = nr_segs;
+> -	i->iov_offset = 0;
+> -	i->count = count;
+> +	*i = (struct iov_iter) {
+> +		.iter_type = ITER_BVEC,
+> +		.data_source = direction,
+> +		.bvec = bvec,
+> +		.nr_segs = nr_segs,
+> +		.iov_offset = 0,
+> +		.count = count
+> +	};
+>  }
+>  EXPORT_SYMBOL(iov_iter_bvec);
+>  
+> @@ -1199,12 +1213,15 @@ void iov_iter_pipe(struct iov_iter *i, unsigned int direction,
+>  {
+>  	BUG_ON(direction != READ);
+>  	WARN_ON(pipe_full(pipe->head, pipe->tail, pipe->ring_size));
+> -	i->type = ITER_PIPE | READ;
+> -	i->pipe = pipe;
+> -	i->head = pipe->head;
+> -	i->iov_offset = 0;
+> -	i->count = count;
+> -	i->start_head = i->head;
+> +        *i = (struct iov_iter) {
+> +		.iter_type = ITER_PIPE,
+> +		.data_source = false,
+> +		.pipe = pipe,
+> +		.head = pipe->head,
+> +		.start_head = pipe->head,
+> +		.count = count,
+> +		.iov_offset = 0
+> +	};
+>  }
+>  EXPORT_SYMBOL(iov_iter_pipe);
+>  
+> @@ -1220,9 +1237,11 @@ EXPORT_SYMBOL(iov_iter_pipe);
+>  void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count)
+>  {
+>  	BUG_ON(direction != READ);
+> -	i->type = ITER_DISCARD | READ;
+> -	i->count = count;
+> -	i->iov_offset = 0;
+> +	*i = (struct iov_iter) {
+> +		.iter_type = ITER_DISCARD,
+> +		.data_source = false,
+> +		.count = count,
+> +	};
+>  }
+>  EXPORT_SYMBOL(iov_iter_discard);
+>  
 > 
 
 -- 
