@@ -2,146 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D50023058A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 11:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BC8F3058D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 11:53:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236076AbhA0Kkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 05:40:42 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28449 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235098AbhA0Kh7 (ORCPT
+        id S233602AbhA0KvX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 05:51:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53510 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236238AbhA0Ksu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 05:37:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611743793;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=SCPzZ58zrnooW9g+/emDghb7lm/E/AgOMGI9bAy3zYE=;
-        b=e5GJqwMa9axlJcsX5B1CCDT5Q4Q5YFdeXL9vBLMBTDgpx5oHIIKxd7RZsOn5z4qcIuqKad
-        Xcr/RUCBIlAhhGLBWsMgRUsLd+/dEABCACPio6kO5T0QdQPsgRDuSNgLWax+NndopR4p7j
-        py/Hf4buG8m6l5AU47tjRU4Ime/lHQQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-71-lIVf9Fe2Nnu587VehfUqmw-1; Wed, 27 Jan 2021 05:36:29 -0500
-X-MC-Unique: lIVf9Fe2Nnu587VehfUqmw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 769BE190B2A2;
-        Wed, 27 Jan 2021 10:36:25 +0000 (UTC)
-Received: from [10.36.114.237] (ovpn-114-237.ams2.redhat.com [10.36.114.237])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 504195C5FD;
-        Wed, 27 Jan 2021 10:36:16 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
-        mike.kravetz@oracle.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        mhocko@suse.com, song.bao.hua@hisilicon.com,
-        naoya.horiguchi@nec.com, duanxiongchun@bytedance.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-References: <20210117151053.24600-1-songmuchun@bytedance.com>
- <20210117151053.24600-6-songmuchun@bytedance.com>
- <20210126092942.GA10602@linux>
- <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com>
- <20210126145819.GB16870@linux>
- <259b9669-0515-01a2-d714-617011f87194@redhat.com>
- <20210126153448.GA17455@linux>
- <9475b139-1b33-76c7-ef5c-d43d2ea1dba5@redhat.com>
-Organization: Red Hat GmbH
-Subject: Re: [PATCH v13 05/12] mm: hugetlb: allocate the vmemmap pages
- associated with each HugeTLB page
-Message-ID: <e28399e1-3a24-0f22-b057-76e7c7e70017@redhat.com>
-Date:   Wed, 27 Jan 2021 11:36:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Wed, 27 Jan 2021 05:48:50 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54503C06178C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 02:47:58 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id t12so1521705ljc.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 02:47:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nt9pdiLty5VAzHiVzQ9Z0VE2Bkzi2Zy4BkFRJGQTy+s=;
+        b=RkI69ax2YOOuKLnURhraOk6rkuVkZAdIrcLC8ROzb78X3XKcsHv7ZkY1MlD4SJgGMv
+         mvSeWdPu6cvDFRvCbp1iTBbLA1Zl8F7eXpM479ayN+NeCBRjUZ9u4HUy3EzFV1sYTJcy
+         PYB/fNUbJlr64E477+47TxBf7b4ryCO7tAewLY6czi6NhEMjHxiI15j/4hIaqSUmrqvt
+         hnkovTZkaCRWB504JvBAbJB02VSyoiNAOfs8HPotmXVpd8A4rbeS6mMZhro1+rQDyfcn
+         ljPWQoMwPkLz6Wc1OU0ppRL02EqrNXZCGQXG1ygbkLlN+Jif1Tk4RsoVvqn8fhhDYg0j
+         bsvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nt9pdiLty5VAzHiVzQ9Z0VE2Bkzi2Zy4BkFRJGQTy+s=;
+        b=hJin9K/l+oKRx+3FusJaD7eUoblzjbMpCkndc5qwa1p6tkwcvatEBfN/W3CG/km1Be
+         clzpatgcRyF/6oVLZl83Z4a2w7wm0BZsjb3ohCYigr+8SfM2zCUT97tpg2xNhz4rClHi
+         OCXWTkFbHMU8EscOZxFqQJzsVC/VQEilXyzRUZeUJc6zuW4vcR+BeyCcDiWj5oEdK71Q
+         rzN61LxXiyc06IkR1CMsKfv7jTut3iBWW9BdTH0d60XiEQDNdl1szXkNidF0cUNQmzKB
+         aBcNRAJk4VyWrMUi8gWpY7oB/q2kxtpKP8mnaFjRCfWNHJ6LSBGZ+0z1foQn9++c4FUn
+         u9qQ==
+X-Gm-Message-State: AOAM530ejncW29ynslV1Mk3k2tlRsrfX3HvLb8/ewLzR5HoHb4u06rjo
+        6w2Byn7kTptVO5zl4m6wa1UDlikQXqCAQfXOBClAAA==
+X-Google-Smtp-Source: ABdhPJwad4Dbjby0b67biXG1UmzBFT032qoQOR80f/hQK6P7qLf8Q2hmv4TTfsdOlkWpWnRX5IIbsSeyI8gxECdjNcI=
+X-Received: by 2002:a2e:908e:: with SMTP id l14mr5465324ljg.226.1611744476438;
+ Wed, 27 Jan 2021 02:47:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9475b139-1b33-76c7-ef5c-d43d2ea1dba5@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <20210126225138.1823266-1-kaleshsingh@google.com>
+In-Reply-To: <20210126225138.1823266-1-kaleshsingh@google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 27 Jan 2021 11:47:29 +0100
+Message-ID: <CAG48ez2tc_GSPYdgGqTRotUp6NqFoUKdoN_p978+BOLoD_Fdjw@mail.gmail.com>
+Subject: Re: [PATCH] procfs/dmabuf: Add /proc/<pid>/task/<tid>/dmabuf_fds
+To:     Kalesh Singh <kaleshsingh@google.com>
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        kernel-team <kernel-team@android.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Michel Lespinasse <walken@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        Yafang Shao <laoar.shao@gmail.com>, Hui Su <sh_def@163.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26.01.21 16:56, David Hildenbrand wrote:
-> On 26.01.21 16:34, Oscar Salvador wrote:
->> On Tue, Jan 26, 2021 at 04:10:53PM +0100, David Hildenbrand wrote:
->>> The real issue seems to be discarding the vmemmap on any memory that has
->>> movability constraints - CMA and ZONE_MOVABLE; otherwise, as discussed, we
->>> can reuse parts of the thingy we're freeing for the vmemmap. Not that it
->>> would be ideal: that once-a-huge-page thing will never ever be a huge page
->>> again - but if it helps with OOM in corner cases, sure.
->>
->> Yes, that is one way, but I am not sure how hard would it be to implement.
->> Plus the fact that as you pointed out, once that memory is used for vmemmap
->> array, we cannot use it again.
->> Actually, we would fragment the memory eventually?
->>
->>> Possible simplification: don't perform the optimization for now with free
->>> huge pages residing on ZONE_MOVABLE or CMA. Certainly not perfect: what
->>> happens when migrating a huge page from ZONE_NORMAL to (ZONE_MOVABLE|CMA)?
->>
->> But if we do not allow theose pages to be in ZONE_MOVABLE or CMA, there is no
->> point in migrate them, right?
-> 
-> Well, memory unplug "could" still work and migrate them and
-> alloc_contig_range() "could in the future" still want to migrate them
-> (virtio-mem, gigantic pages, powernv memtrace). Especially, the latter
-> two don't work with ZONE_MOVABLE/CMA. But, I mean, it would be fair
-> enough to say "there are no guarantees for
-> alloc_contig_range()/offline_pages() with ZONE_NORMAL, so we can break
-> these use cases when a magic switch is flipped and make these pages
-> non-migratable anymore".
-> 
-> I assume compaction doesn't care about huge pages either way, not sure
-> about numa balancing etc.
-> 
-> 
-> However, note that there is a fundamental issue with any approach that
-> allocates a significant amount of unmovable memory for user-space
-> purposes (excluding CMA allocations for unmovable stuff, CMA is
-> special): pairing it with ZONE_MOVABLE becomes very tricky as your user
-> space might just end up eating all kernel memory, although the system
-> still looks like there is plenty of free memory residing in
-> ZONE_MOVABLE. I mentioned that in the context of secretmem in a reduced
-> form as well.
-> 
-> We theoretically have that issue with dynamic allocation of gigantic
-> pages, but it's something a user explicitly/rarely triggers and it can
-> be documented to cause problems well enough. We'll have the same issue
-> with GUP+ZONE_MOVABLE that Pavel is fixing right now - but GUP is
-> already known to be broken in various ways and that it has to be treated
-> in a special way. I'd like to limit the nasty corner cases.
-> 
-> Of course, we could have smart rules like "don't online memory to
-> ZONE_MOVABLE automatically when the magic switch is active". That's just
-> ugly, but could work.
-> 
++jeffv from Android
 
-Extending on that, I just discovered that only x86-64, ppc64, and arm64 
-really support hugepage migration.
+On Tue, Jan 26, 2021 at 11:51 PM Kalesh Singh <kaleshsingh@google.com> wrot=
+e:
+> In order to measure how much memory a process actually consumes, it is
+> necessary to include the DMA buffer sizes for that process in the memory
+> accounting. Since the handle to DMA buffers are raw FDs, it is important
+> to be able to identify which processes have FD references to a DMA buffer=
+.
 
-Maybe one approach with the "magic switch" really would be to disable 
-hugepage migration completely in hugepage_migration_supported(), and 
-consequently making hugepage_movable_supported() always return false.
+Or you could try to let the DMA buffer take a reference on the
+mm_struct and account its size into the mm_struct? That would probably
+be nicer to work with than having to poke around in procfs separately
+for DMA buffers.
 
-Huge pages would never get placed onto ZONE_MOVABLE/CMA and cannot be 
-migrated. The problem I describe would apply (careful with using 
-ZONE_MOVABLE), but well, it can at least be documented.
+> Currently, DMA buffer FDs can be accounted using /proc/<pid>/fd/* and
+> /proc/<pid>/fdinfo -- both of which are only root readable, as follows:
 
--- 
-Thanks,
+That's not quite right. They can both also be accessed by the user
+owning the process. Also, fdinfo is a standard interface for
+inspecting process state that doesn't permit reading process memory or
+manipulating process state - so I think it would be fine to permit
+access to fdinfo under a PTRACE_MODE_READ_FSCRED check, just like the
+interface you're suggesting.
 
-David / dhildenb
+>   1. Do a readlink on each FD.
+>   2. If the target path begins with "/dmabuf", then the FD is a dmabuf FD=
+.
+>   3. stat the file to get the dmabuf inode number.
+>   4. Read/ proc/<pid>/fdinfo/<fd>, to get the DMA buffer size.
+>
+> Android captures per-process system memory state when certain low memory
+> events (e.g a foreground app kill) occur, to identify potential memory
+> hoggers. To include a process=E2=80=99s dmabuf usage as part of its memor=
+y state,
+> the data collection needs to be fast enough to reflect the memory state a=
+t
+> the time of such events.
+>
+> Since reading /proc/<pid>/fd/ and /proc/<pid>/fdinfo/ requires root
+> privileges, this approach is not suitable for production builds.
 
+It should be easy to add enough information to /proc/<pid>/fdinfo/ so
+that you don't need to look at /proc/<pid>/fd/ anymore.
+
+> Granting
+> root privileges even to a system process increases the attack surface and
+> is highly undesirable. Additionally this is slow as it requires many
+> context switches for searching and getting the dma-buf info.
+
+What do you mean by "context switches"? Task switches or kernel/user
+transitions (e.g. via syscall)?
+
+> With the addition of per-buffer dmabuf stats in sysfs [1], the DMA buffer
+> details can be queried using their unique inode numbers.
+>
+> This patch proposes adding a /proc/<pid>/task/<tid>/dmabuf_fds interface.
+>
+> /proc/<pid>/task/<tid>/dmabuf_fds contains a list of inode numbers for
+> every DMA buffer FD that the task has. Entries with the same inode
+> number can appear more than once, indicating the total FD references
+> for the associated DMA buffer.
+>
+> If a thread shares the same files as the group leader then its
+> dmabuf_fds file will be empty, as these dmabufs are reported by the
+> group leader.
+>
+> The interface requires PTRACE_MODE_READ_FSCRED (same as /proc/<pid>/maps)
+> and allows the efficient accounting of per-process DMA buffer usage witho=
+ut
+> requiring root privileges. (See data below)
+
+I'm not convinced that introducing a new procfs file for this is the
+right way to go. And the idea of having to poke into multiple
+different files in procfs and in sysfs just to be able to compute a
+proper memory usage score for a process seems weird to me. "How much
+memory is this process using" seems like the kind of question the
+kernel ought to be able to answer (and the kernel needs to be able to
+answer somewhat accurately so that its own OOM killer can do its job
+properly)?
