@@ -2,75 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EFCA3060F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 17:27:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0373306110
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 17:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237091AbhA0Q1C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 11:27:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235122AbhA0Q1A (ORCPT
+        id S1344000AbhA0Qao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 11:30:44 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:31212 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1343732AbhA0QaX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 11:27:00 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C78C061574;
-        Wed, 27 Jan 2021 08:26:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XeayQu8Z7eVgXskFL8EGTZVPJCUNtquB2mc3XL06JbM=; b=Qw9sgKIECO6GIPDIPG6CIQTiA9
-        4fIDaVX2zjwK56xMBXxpb0Zh+vV210bcNgERKA7qc5xiNec8aMhzm2BA922Mkrxh7BdPLHiUD05Vd
-        PL0BUHM9SksSjCfj38UwYk5xcrxQOdwsGCaxivj8l0RpP1q3bphG0DeQWGGKCef9xrjDas8PQk1N5
-        +XuDEbz5a7AjC2iNcjv4vlXoQL1QMpedmt0NJIyzXCusO/ziVTbWnrmMeOl9/Fhp4h7OntcP7dmNA
-        8qnkj6DPLwcJzNjz8XKaYuKGPv73/fGA3ZR43greZSL0KUe+lUuLPxFXPhIzDAkOBNOlLhR/0faSq
-        9JiAiw0Q==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l4ndk-007ES0-SR; Wed, 27 Jan 2021 16:25:58 +0000
-Date:   Wed, 27 Jan 2021 16:25:56 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org, kernel@pengutronix.de,
-        Jan Kara <jack@suse.com>, linux-api@vger.kernel.org
-Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
-Message-ID: <20210127162556.GA1721964@infradead.org>
-References: <20210122151536.7982-1-s.hauer@pengutronix.de>
- <20210122151536.7982-2-s.hauer@pengutronix.de>
- <20210122171658.GA237653@infradead.org>
- <20210125083854.GB31738@pengutronix.de>
- <20210125154507.GH1175@quack2.suse.cz>
- <20210126104557.GB28722@pengutronix.de>
- <20210127144646.GB13717@quack2.suse.cz>
+        Wed, 27 Jan 2021 11:30:23 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id uk-mta-4-OneHWQocNNiSYulcGjezNQ-1;
+ Wed, 27 Jan 2021 16:28:40 +0000
+X-MC-Unique: OneHWQocNNiSYulcGjezNQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 27 Jan 2021 16:28:38 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 27 Jan 2021 16:28:38 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Pavel Begunkov' <asml.silence@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] iov_iter: optimise iter type checking
+Thread-Topic: [PATCH] iov_iter: optimise iter type checking
+Thread-Index: AQHW5qm9/hT6YRd33Eq5lMaMuw9mB6of0+hQgBvncPiAAAmTEA==
+Date:   Wed, 27 Jan 2021 16:28:38 +0000
+Message-ID: <6f7ba1dbbc4749f09ae44aafc6ada284@AcuMS.aculab.com>
+References: <a8cdb781384791c30e30036aced4c027c5dfea86.1605969341.git.asml.silence@gmail.com>
+ <6e795064-fdbd-d354-4b01-a4f7409debf5@gmail.com>
+ <54cd4d1b-d7ec-a74c-8be0-e48780609d56@gmail.com>
+ <20210109170359.GT3579531@ZenIV.linux.org.uk>
+ <b04df39d77114547811d7bfc2c0d4c8c@AcuMS.aculab.com>
+ <1783c58f-1016-0c6b-be7f-a93bc2f8f2a4@gmail.com>
+ <20210116051818.GF3579531@ZenIV.linux.org.uk>
+ <ed385c4d-99ca-d7aa-8874-96e3c6b743bb@gmail.com>
+In-Reply-To: <ed385c4d-99ca-d7aa-8874-96e3c6b743bb@gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210127144646.GB13717@quack2.suse.cz>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 03:46:46PM +0100, Jan Kara wrote:
-> In a puristic world they'd be 9 different syscalls ... or somewhat less
-> because Q_GETNEXTQUOTA is a superset of Q_GETQUOTA, we could drop Q_SYNC
-> and Q_GETFMT because they have dubious value these days so we'd be left
-> with 6. I don't have a strong opinion whether 6 syscalls are worth the
-> cleanliness or whether we should go with just one new quotactl_path()
-> syscall. I've CCed linux-api in case other people have opinion.
-> 
-> Anyway, even if we go with single quotactl_path() syscall we should remove
-> the duplication between VFS and XFS quotactls when we are creating a new
-> syscall. Thoughts?
+RnJvbTogUGF2ZWwgQmVndW5rb3YNCj4gU2VudDogMjcgSmFudWFyeSAyMDIxIDE1OjQ4DQo+IA0K
+PiBPbiAxNi8wMS8yMDIxIDA1OjE4LCBBbCBWaXJvIHdyb3RlOg0KPiA+IE9uIFNhdCwgSmFuIDA5
+LCAyMDIxIGF0IDEwOjExOjA5UE0gKzAwMDAsIFBhdmVsIEJlZ3Vua292IHdyb3RlOg0KPiA+DQo+
+ID4+PiBEb2VzIGFueSBjb2RlIGFjdHVhbGx5IGxvb2sgYXQgdGhlIGZpZWxkcyBhcyBhIHBhaXI/
+DQo+ID4+PiBXb3VsZCBpdCBldmVuIGJlIGJldHRlciB0byB1c2Ugc2VwYXJhdGUgYnl0ZXM/DQo+
+ID4+PiBFdmVuIGdyb3dpbmcgdGhlIG9uLXN0YWNrIHN0cnVjdHVyZSBieSBhIHdvcmQgd29uJ3Qg
+cmVhbGx5IG1hdHRlci4NCj4gPj4NCj4gPj4gdTggdHlwZSwgcnc7DQo+ID4+DQo+ID4+IFRoYXQg
+d29uJ3QgYmxvYXQgdGhlIHN0cnVjdC4gSSBsaWtlIHRoZSBpZGVhLiBJZiB1c2VkIHRvZ2V0aGVy
+IGNvbXBpbGVycw0KPiA+PiBjYW4gdHJlYXQgaXQgYXMgdTE2Lg0KPiA+DQo+ID4gUmVhc29uYWJs
+ZSwgYW5kIGZyb20gd2hhdCBJIHJlbWVtYmVyIGZyb20gbG9va2luZyB0aHJvdWdoIHRoZSB1c2Vy
+cywNCj4gPiBubyByZWFkZXJzIHdpbGwgYm90aGVyIHdpdGggbG9va2luZyBhdCBib3RoIGF0IHRo
+ZSBzYW1lIHRpbWUuDQo+IA0KPiBBbCwgYXJlIHlvdSBnb2luZyB0dXJuIGl0IGludG8gYSBwYXRj
+aCwgb3IgcHJlZmVyIG1lIHRvIHRha2Ugb3Zlcj8NCg0KSSdkIGRlZmluaXRlbHkgbGVhdmUgdGhl
+IHR5cGUgYXMgYSBiaXRtYXAuDQoNCkl0IG1heSBiZSB1c2VmdWwgdG8gYWRkIElURVJfSU9WRUNf
+U0lOR0xFIHRvIG9wdGltaXNlIHNvbWUNCnZlcnkgY29tbW9uIHBhdGhzIGZvciB1c2VyIGlvdmVj
+IHdpdGggb25seSBhIHNpbmdsZSBidWZmZXIuDQpCdXQgeW91J2QgcHJvYmFibHkgd2FudCB0byBr
+ZWVwIHRoZSBmdWxsIHZlcnNpb24gZm9yDQptb3JlIHVudXN1YWwgKG9yIGFscmVhZHkgZXhwZW5z
+aXZlKSBjYXNlcy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
+QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
+aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-I thunk the multiplexer is just fine.  We don't really need Q_SYNC
-for a new syscall.  For XFS vs classic VFS quota we probably don't
-need to duplicate the two data structure, but we need to make sure we
-catch the superset of the information if we want to disable the old
-ones.
-
-So I suspect just supporting evrything excpt for the global Q_SYNC
-and reusing do_quotactl as-is is the most maintainable and easiest
-to understand way forward.
