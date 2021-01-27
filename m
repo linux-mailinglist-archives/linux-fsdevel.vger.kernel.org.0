@@ -2,133 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC9EE305D6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3CA2305DDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 15:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbhA0NmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 08:42:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34036 "EHLO
+        id S232689AbhA0OHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 09:07:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231196AbhA0Nla (ORCPT
+        with ESMTP id S233800AbhA0OGG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 08:41:30 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72B2C061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 05:40:49 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id p15so1935077wrq.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 05:40:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ut1wpPTIfgnn/vBXNh4Zm9DnQde/13g8LB3xXa5ADwc=;
-        b=uP+ZFiQvIWr7dGlnG7w4JM9eXIsJAsTa/ghknwwy5ZFOvH9BXSqVHvtjSGbiHB88k4
-         glmOo3H+yB2GLb8No6KDul2LTRdEJxAw985UlMcoP9fWaiMVg3/cRmb9SjPwijJkE9Ig
-         ++zTu6n6zG3+SCyK5t8kJXYSUQNJ1hAvnRENRpJ4GMEkoHQ2ltsCNAhnFuOpAACWdkmU
-         Zqu1/vmW1NUnB0r1pjZ/8cochpfna/Wy88gLuVt0gnegDKPiDek7QlaximA3jlNxlbib
-         iWgaSehQCSMAlL90nPhXqldT9ADBtFCnHU89GsipprpTafd+tLeY3JsKJ6j9U6Kh4w9w
-         TRpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ut1wpPTIfgnn/vBXNh4Zm9DnQde/13g8LB3xXa5ADwc=;
-        b=ipUdg/jwjJ2i+HVaxwHfM+2y2X/+vvWxALyj2CfdomaI7FVLtunbc3u4gHUvYvyQum
-         PPJFqaeigz4hcirXwD2+q995J9z/j0mmhI4Sx58CpRexiQi8y1NI1rFM4+9KsCk7wVls
-         3z+bUzqIU7UYi/v6f65Wz8jZGO+24HmrSxB1eStAxJ83BQEfZ5P2yAtcbpnOLEj/1Ujf
-         1RQJdzLbFRTCZC9ugznC9U4cG3l7lf1G7THndXM+UanThKjo70JJzFTiS5MQTYoFxs39
-         /o0Z6P4rGsDtw9YzEk4wW7s9MpIDcujRVb3CsCMNge+cXQLmAM7f85sQ10VYDg+6nenS
-         aMZg==
-X-Gm-Message-State: AOAM533xEUc3wAI2p9epxUw32RjIrhOp++FtCo+zMZLmFcHbjbKg+gNK
-        qJKydQIW/mYYY/cU2yqY0pOnLQ==
-X-Google-Smtp-Source: ABdhPJzrwczNYHNOaS9EkacIC3ae0J6dCCn0Prj1GFoTmWaJOwiWlZyca/ZnRFBNApdjJdaB53YdUQ==
-X-Received: by 2002:a5d:4203:: with SMTP id n3mr11255881wrq.49.1611754848751;
-        Wed, 27 Jan 2021 05:40:48 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:210:811b:8e2:92b4:d783])
-        by smtp.gmail.com with ESMTPSA id s4sm3001940wrt.85.2021.01.27.05.40.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Jan 2021 05:40:48 -0800 (PST)
-Date:   Wed, 27 Jan 2021 13:40:46 +0000
-From:   Alessio Balsini <balsini@android.com>
-To:     qxy <qxy65535@gmail.com>
-Cc:     Alessio Balsini <balsini@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Akilesh Kailash <akailash@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND V12 2/8] fuse: 32-bit user space ioctl compat for
- fuse device
-Message-ID: <YBFtXqgvcXW5fFCR@google.com>
-References: <20210125153057.3623715-1-balsini@android.com>
- <20210125153057.3623715-3-balsini@android.com>
- <CAMAHBGzkfEd9-1u0iKXp65ReJQgUi_=4sMpmfkwEOaMp6Ux7pg@mail.gmail.com>
+        Wed, 27 Jan 2021 09:06:06 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F14C061573
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 06:05:26 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1l4lRj-0008SV-2i; Wed, 27 Jan 2021 15:05:23 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1l4lRW-00024o-JR; Wed, 27 Jan 2021 15:05:10 +0100
+Date:   Wed, 27 Jan 2021 15:05:10 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org, kernel@pengutronix.de,
+        Jan Kara <jack@suse.com>
+Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
+Message-ID: <20210127140510.GI28722@pengutronix.de>
+References: <20210122151536.7982-1-s.hauer@pengutronix.de>
+ <20210122151536.7982-2-s.hauer@pengutronix.de>
+ <20210122171658.GA237653@infradead.org>
+ <20210125083854.GB31738@pengutronix.de>
+ <20210125154507.GH1175@quack2.suse.cz>
+ <20210125204249.GA1103662@infradead.org>
+ <20210126131752.GB10966@quack2.suse.cz>
+ <20210126133406.GA1346375@infradead.org>
+ <20210126161829.GG10966@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMAHBGzkfEd9-1u0iKXp65ReJQgUi_=4sMpmfkwEOaMp6Ux7pg@mail.gmail.com>
+In-Reply-To: <20210126161829.GG10966@quack2.suse.cz>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 14:59:08 up 56 days,  2:26, 96 users,  load average: 0.05, 0.07,
+ 0.08
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 08:15:19PM +0800, qxy wrote:
-> Hi Allesio,
+On Tue, Jan 26, 2021 at 05:18:29PM +0100, Jan Kara wrote:
+> On Tue 26-01-21 13:34:06, Christoph Hellwig wrote:
+> > On Tue, Jan 26, 2021 at 02:17:52PM +0100, Jan Kara wrote:
+> > > Well, I don't think that "wait until unfrozen" is that strange e.g. for
+> > > Q_SETQUOTA - it behaves like setxattr() or any other filesystem
+> > > modification operation. And IMO it is desirable that filesystem freezing is
+> > > transparent for operations like these. For stuff like Q_QUOTAON, I agree
+> > > that returning EBUSY makes sense but then I'm not convinced it's really
+> > > simpler or more useful behavior...
+> > 
+> > If we want it to behave like other syscalls we'll just need to throw in
+> > a mnt_want_write/mnt_drop_write pair.  Than it behaves exactly like other
+> > syscalls.
 > 
-> Thank you for your supply for 32-bit user space.
-> Actually we have already met this issue on our product and we resolved it
-> like this:
-> 
-> Project *platform/external/libfuse*
-> diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-> index e9d4f1a..fe0cb6d 100644
-> --- a/include/fuse_kernel.h
-> +++ b/include/fuse_kernel.h
-> @@ -562,7 +562,11 @@
->          uint32_t fd;
->          /* For future implementation */
->          uint32_t len;
-> -        void *   vec;
-> +        union {
-> +                void *   vec;
-> +                /* compatible for 32-bit libfuse and 64-bit kernel */
-> +                uint64_t padding;
-> +        };
->  };
-> 
-> However, if we need to use *vec in the future,  we still need to do more in
-> 32-bit libfuse to work with 64-bit kernel :(
-> 
+> Right, we could do that. I'd just note that the "wait until unfrozen" and
+> holding of sb->s_umount semaphore is equivalent to
+> mnt_want_write/mnt_drop_write pair. But I agree
+> mnt_want_write/mnt_drop_write is easier to understand and there's no reason
+> not to use it. So I'm for that simplification in the new syscall.
 
-Good point.
-What I had in mind as a possible use was the possibility of enabling
-passthrough for only a few regions of the file, similar to fuse2.
-But it doesn't really make sense to define the data structure fields for
-uncertain future extensions, so what we could do is:
+Due to the user_path_at() to the mountpoint the fs won't go away, so I
+guess for non-exclusive, non-write quota command I don't need any
+additional locking. For non-exclusive, write commands I'll need a
+mnt_want_write/mnt_drop_write pair. What about the exclusive, write
+commands (Q_QUOTAON/Q_QUOTAOFF)?
 
-struct fuse_passthrough_out {
-+	uint32_t	size;	// Size of this data structure
-	uint32_t	fd;
--	/* For future implementation */
--	uint32_t	len;
--	void		*vec;
-};
+Sascha
 
-Similar to what "struct sched_attr" does.
-This is probably the most flexible solution, that would allow to extend
-this data structure in the future with no headaches both in kernel and
-user space.
-What do you think?
-
-Thanks!
-Alessio
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
