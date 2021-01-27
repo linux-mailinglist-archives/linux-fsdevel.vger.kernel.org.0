@@ -2,138 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6398305D3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC9EE305D6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 14:42:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S313384AbhAZWfl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jan 2021 17:35:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56148 "EHLO
+        id S229563AbhA0NmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 08:42:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbhAZR3H (ORCPT
+        with ESMTP id S231196AbhA0Nla (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jan 2021 12:29:07 -0500
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93FA3C061573;
-        Tue, 26 Jan 2021 09:28:23 -0800 (PST)
-Received: by mail-ot1-x329.google.com with SMTP id d7so9230291otf.3;
-        Tue, 26 Jan 2021 09:28:23 -0800 (PST)
+        Wed, 27 Jan 2021 08:41:30 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72B2C061756
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 05:40:49 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id p15so1935077wrq.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 05:40:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=oE+4O1Wh9Zqz46DBqGL2Qpek/W+/I2Xiwsv0KyiP524=;
-        b=d/8WnMnaF/quGeEMZHiT8Zxqe19lgsTBzzWcgEN0yqpm1dZJahR99+OO6cqNRErnZ7
-         Ugu0nqiFCxkaGMfbkKoaH+4lYOV5eAxo7af+c2540odlOiP33+6R2rpqcBAdeVQmr5ou
-         Dw+KEt3tCUKd9+8gQOkMEwmYocbeYKnse7owIKBqX/vw4SPnFuW7HckgmTXW0AdRor6H
-         VfSBgiszgdcKKSwstWHStqgkPpO8ybR6ReMPzT4dcY3B7J0aZRT0AoMOItrb5rXAz6Xl
-         hSfn6EnbpITrAbrmhlp17qGmxFCvlTwhnH4Enjx4DMxweP2RbXbHaeCsg/qvI+sVi+Ra
-         v1+Q==
+        d=android.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ut1wpPTIfgnn/vBXNh4Zm9DnQde/13g8LB3xXa5ADwc=;
+        b=uP+ZFiQvIWr7dGlnG7w4JM9eXIsJAsTa/ghknwwy5ZFOvH9BXSqVHvtjSGbiHB88k4
+         glmOo3H+yB2GLb8No6KDul2LTRdEJxAw985UlMcoP9fWaiMVg3/cRmb9SjPwijJkE9Ig
+         ++zTu6n6zG3+SCyK5t8kJXYSUQNJ1hAvnRENRpJ4GMEkoHQ2ltsCNAhnFuOpAACWdkmU
+         Zqu1/vmW1NUnB0r1pjZ/8cochpfna/Wy88gLuVt0gnegDKPiDek7QlaximA3jlNxlbib
+         iWgaSehQCSMAlL90nPhXqldT9ADBtFCnHU89GsipprpTafd+tLeY3JsKJ6j9U6Kh4w9w
+         TRpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=oE+4O1Wh9Zqz46DBqGL2Qpek/W+/I2Xiwsv0KyiP524=;
-        b=U8GFD2mytrXd3Gtpi4TnW54v5j4D++sa9hXOpJvaPOpIc63ESc+v2pgGtqvJTkFBux
-         guELYEemvQWnV4C0yvPPe3gUpQ+aFkCD6ytK6SzFOneTP9OBFzHuHAF7k+X+lqPR9pkw
-         7TErzfuSWxrZ5pgd3iGUzYvh7UEXoOCxYb0oeZ8qpPwVd6YCzT3mkdTT0Ez770GOl+DH
-         DeRylfG35tICUkqKB2Dqne3ugrmubDWen0YCiXrgFNNPHhW9iDtDYjIYTIyn0RrOiRUO
-         +UpWLbYt/tUxODBj7cbwq5cjMuw287n+degVzta4O5silUAkRWGgrHrkkxB4KF1/yxVY
-         46sQ==
-X-Gm-Message-State: AOAM530ZjqF3Qv9DLOy3/+5CwPrrtRJAdlZzgsYfw0U2tT8kmm7rNxix
-        4tHflXqYmXnPCNKsCIW20CIpaIpZg5M5+TI6m6KBQFlgwKM=
-X-Google-Smtp-Source: ABdhPJw6e0y83C2uAxHk92Y53Wt13i5KjU/L806bk8n6MArQlkQlijvn3RHOgS1tETkAAOXJxLvORZ22zGpHEU0ayas=
-X-Received: by 2002:a05:6830:15c5:: with SMTP id j5mr4736245otr.185.1611682102975;
- Tue, 26 Jan 2021 09:28:22 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ut1wpPTIfgnn/vBXNh4Zm9DnQde/13g8LB3xXa5ADwc=;
+        b=ipUdg/jwjJ2i+HVaxwHfM+2y2X/+vvWxALyj2CfdomaI7FVLtunbc3u4gHUvYvyQum
+         PPJFqaeigz4hcirXwD2+q995J9z/j0mmhI4Sx58CpRexiQi8y1NI1rFM4+9KsCk7wVls
+         3z+bUzqIU7UYi/v6f65Wz8jZGO+24HmrSxB1eStAxJ83BQEfZ5P2yAtcbpnOLEj/1Ujf
+         1RQJdzLbFRTCZC9ugznC9U4cG3l7lf1G7THndXM+UanThKjo70JJzFTiS5MQTYoFxs39
+         /o0Z6P4rGsDtw9YzEk4wW7s9MpIDcujRVb3CsCMNge+cXQLmAM7f85sQ10VYDg+6nenS
+         aMZg==
+X-Gm-Message-State: AOAM533xEUc3wAI2p9epxUw32RjIrhOp++FtCo+zMZLmFcHbjbKg+gNK
+        qJKydQIW/mYYY/cU2yqY0pOnLQ==
+X-Google-Smtp-Source: ABdhPJzrwczNYHNOaS9EkacIC3ae0J6dCCn0Prj1GFoTmWaJOwiWlZyca/ZnRFBNApdjJdaB53YdUQ==
+X-Received: by 2002:a5d:4203:: with SMTP id n3mr11255881wrq.49.1611754848751;
+        Wed, 27 Jan 2021 05:40:48 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:210:811b:8e2:92b4:d783])
+        by smtp.gmail.com with ESMTPSA id s4sm3001940wrt.85.2021.01.27.05.40.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jan 2021 05:40:48 -0800 (PST)
+Date:   Wed, 27 Jan 2021 13:40:46 +0000
+From:   Alessio Balsini <balsini@android.com>
+To:     qxy <qxy65535@gmail.com>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Akilesh Kailash <akailash@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Peng Tao <bergwolf@gmail.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
+        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND V12 2/8] fuse: 32-bit user space ioctl compat for
+ fuse device
+Message-ID: <YBFtXqgvcXW5fFCR@google.com>
+References: <20210125153057.3623715-1-balsini@android.com>
+ <20210125153057.3623715-3-balsini@android.com>
+ <CAMAHBGzkfEd9-1u0iKXp65ReJQgUi_=4sMpmfkwEOaMp6Ux7pg@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAE1WUT7xJyx_gbxJu3r9DJGbqSkWZa-moieiDWC0bue2CxwAwg@mail.gmail.com>
- <D66E412C-ED63-4FF7-A0F9-C78EF846AAF4@dilger.ca>
-In-Reply-To: <D66E412C-ED63-4FF7-A0F9-C78EF846AAF4@dilger.ca>
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Tue, 26 Jan 2021 09:28:11 -0800
-Message-ID: <CAE1WUT5phUhqhQgsC82c8pZXBPZ3Aj+TarpGwhSFP=XK6jHQog@mail.gmail.com>
-Subject: Re: Getting a new fs in the kernel
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMAHBGzkfEd9-1u0iKXp65ReJQgUi_=4sMpmfkwEOaMp6Ux7pg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 9:15 AM Andreas Dilger <adilger@dilger.ca> wrote:
->
-> On Jan 26, 2021, at 09:25, Amy Parker <enbyamy@gmail.com> wrote:
-> >
-> > =EF=BB=BFKernel development newcomer here. I've begun creating a concep=
-t for a
-> > new filesystem, and ideally once it's completed, rich, and stable I'd
-> > try to get it into the kernel.
->
-> Hello Amy, and welcome.
->
-> I guess the first question to ask is what would be unique and valuable
-> about the new filesystem compared to existing filesystems in the kernel?
+On Wed, Jan 27, 2021 at 08:15:19PM +0800, qxy wrote:
+> Hi Allesio,
+> 
+> Thank you for your supply for 32-bit user space.
+> Actually we have already met this issue on our product and we resolved it
+> like this:
+> 
+> Project *platform/external/libfuse*
+> diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
+> index e9d4f1a..fe0cb6d 100644
+> --- a/include/fuse_kernel.h
+> +++ b/include/fuse_kernel.h
+> @@ -562,7 +562,11 @@
+>          uint32_t fd;
+>          /* For future implementation */
+>          uint32_t len;
+> -        void *   vec;
+> +        union {
+> +                void *   vec;
+> +                /* compatible for 32-bit libfuse and 64-bit kernel */
+> +                uint64_t padding;
+> +        };
+>  };
+> 
+> However, if we need to use *vec in the future,  we still need to do more in
+> 32-bit libfuse to work with 64-bit kernel :(
+> 
 
-Currently planning those bits out.
+Good point.
+What I had in mind as a possible use was the possibility of enabling
+passthrough for only a few regions of the file, similar to fuse2.
+But it doesn't really make sense to define the data structure fields for
+uncertain future extensions, so what we could do is:
 
->
-> Given that maintaining a new filesystem adds ongoing maintenance
-> efforts, there has to be some added value before it would be accepted.
-> Also, given that filesystems are storing critical data for users, and
-> problems in the code can lead to data loss that can't be fixed by a reboo=
-t,
-> like many other software bugs, it takes a very long time for filesystems
-> to become stable enough for general use (the general rule of thumb is 10
-> years before a new filesystem is stable enough for general use).
+struct fuse_passthrough_out {
++	uint32_t	size;	// Size of this data structure
+	uint32_t	fd;
+-	/* For future implementation */
+-	uint32_t	len;
+-	void		*vec;
+};
 
-Yeah, I understood that. Wasn't expecting this to go quickly or
-anything, just wanted to know for the future.
+Similar to what "struct sched_attr" does.
+This is probably the most flexible solution, that would allow to extend
+this data structure in the future with no headaches both in kernel and
+user space.
+What do you think?
 
->
-> Often, if you have ideas for new functionality, it makes more sense to
-> add this into the framework of an existing filesystem (e.g. data verity,
-> data encryption, metadata checksum, DAX, etc. were all added to ext4).
+Thanks!
+Alessio
 
-Been considering doing this too.
-
->
-> Not only does this simplify efforts in terms of ongoing maintenance, but
-> it also means many more users will benefit from your development effort
-> in a much shorter timeframe. Otherwise, users would have to stop
-> using their existing filesystem before
-> they started using yours, and that is
-> a very slow process, because your filesystem would have to be much
-> better at *something* before they would make that switch.
-
-True, alright.
-
->
-> > What would be the process for this? I'd assume a patch sequence, but
-> > they'd all be dependent on each other, and sending in tons of
-> > dependent patches doesn't sound like a great idea. I've seen requests
-> > for pulls, but since I'm new here I don't really know what to do.
->
-> Probably the first step, before submitting any patches, would be to
-> provide a description of your work, and how it improves on the current
-> filesystems in the kernel. It may be that there are existing projects tha=
-t
-> duplicate this effort, and combining resources will result in a 100% done
-> filesystem rather than two 80% done
-> projects...
-
-Alright, if I continue on with this I'll do that.
-
->
-> Note that I don't want to discourage you from participating in the Linux
-> filesystem development community, but there are definitely considerations
-> going both ways wrt. accepting a new filesystem into the kernel. It may b=
-e
-> that your ideas, time, and efforts are better spent in contributing to an
-> exiting project.  It may also be that you have something groundbreaking
-> work, and I look forward to reading about what that is.
-
-Alright, thank you so much!
-
-Best regards,
-Amy Parker
-(she/her/hers)
