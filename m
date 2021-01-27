@@ -2,155 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2462D3062F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 19:04:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F223062FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 19:05:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344290AbhA0SDw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 13:03:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34298 "EHLO
+        id S1343786AbhA0SFA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 13:05:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344148AbhA0SDu (ORCPT
+        with ESMTP id S1344338AbhA0SEe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 13:03:50 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BDAFC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 10:03:35 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id u17so2805431iow.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 10:03:35 -0800 (PST)
+        Wed, 27 Jan 2021 13:04:34 -0500
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A37C061756
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 10:03:53 -0800 (PST)
+Received: by mail-qk1-x72a.google.com with SMTP id a19so2638375qka.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 10:03:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ICtM5qXt0L6KNk45JUcfuMMhgtG4qG1PrQsw3/aAIog=;
-        b=EscJWmFgIMv5tVe8RJSRYTdowBrjX336GSH1c2V3VL6T3nmad3ZeGibO+Rk9uXSBRq
-         czXzHSWuninhlGxVTpz9C9IqLoj/LG+uEJjVmtWWnBj+ldKudod7Oi6iUf5MEZYoeG1H
-         PRwTZeATzC7YKpL958u4cH/C+cF0nhlA51P/qgYC5ZLkDivkdcwI1TdzS29V9+V8occx
-         8hjqYFWVUWRId27FJEQBsyw3l6WabgpOcOyOrqt4GSn57YBBfaHWGOIjHn/MuF4aWh9p
-         Y3/lTWMNquqrRpg0rMiC5BrEiQzWTiQ7uvMEJ0yFkg8anah2rR04YR3+azAY4t57R/d/
-         m6Rg==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4rPnUBxqM9G//9qOahLs/sqsjnaOAWtvt4RahjK16Io=;
+        b=Hs2ULQi2fn7qbjMoL3CTXn8N9CbwumqD/j3rTIruytU+XgHRSrQyw1uGg1YbAWX/H0
+         3bBcGEugqz16dCJ+jaOMj3t+Eni2UpwQnHI4WahoCfYgHJyn1MbxzVN4JZ1tXtToNEr5
+         iB2ucn93nR/PnFhIzXXugzRmj9TIZyPWDdKtDzKUUrrsE1Zx298sSPTTfD5G2ZGnIw3T
+         XOKZfOa//mjhr8RNppX7yh1KHppABdYziF4cC8DIM3Oy84s/BPHya5vcwsNvmB3fa9aN
+         wq4oboFRHcqdE1F29v5DUMtQMvNsEKynI0yOgMGIeHUz5jh5X51tgthYW0MZjI5USDW3
+         YSIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ICtM5qXt0L6KNk45JUcfuMMhgtG4qG1PrQsw3/aAIog=;
-        b=GxshtqPIZwPVHampFPQVcdxfMmq48Yhh1jS5NL/Q7mXwVxiBETeA/nXbTT5scAK6gL
-         M8OrsEfWWSehECqe7Mg1ABoi1Ez48kE57EGILwxb68fs11+ybaYP1z04m9nu5uuRZ1rU
-         QTDTnLGzENV3YeIBj4HnmMx8lJWjf8EDU5MvHO/8mGNXLWEQlj5+vaoJ3bdQ022NxF01
-         E7IFFO2R92PeMSOGezye/SxRZUfoXiiD/uHWK2jC7GoVoR2NSYGk+7EG4S0VcRnaH4u/
-         D+qt2peKdrrJ9YkG1FMbzXJQklHH3RlG+8RJPvljtyxw6S7KmFfya0cvZzx0BpS4dBaA
-         eBDA==
-X-Gm-Message-State: AOAM533StTqJhTu/UQkvyiUh7mI8cXBMzhxDT2B7JU0ol2CUcafM8PW5
-        rmpKTz1wAr09fgrqVFXXnLZLf/4stCbMn+iPdeg=
-X-Google-Smtp-Source: ABdhPJzmm8Tk7F3uOGQwffbePTYl4ofJv5NJSGKPNFwA156ZmJBXlEaxtGwLpj+Ez06OwnbdZG37M+5xurwKjg8oCf0=
-X-Received: by 2002:a05:6638:116:: with SMTP id x22mr10068872jao.93.1611770614896;
- Wed, 27 Jan 2021 10:03:34 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4rPnUBxqM9G//9qOahLs/sqsjnaOAWtvt4RahjK16Io=;
+        b=PWgAMYgCzo5DCUDD6mmVIMGGk783DalpnmlFtD2pyy5IMWvHUSpPyQ7ObTDLtcf6BK
+         E1fqq9GCLawxGW1ubKEmrYYdu/sy12DBpyC+yggnZkv2u3XVCdBNytccsdRZC2T8xP2Z
+         ygOvayPSKE6MDG2GegNkcXdL6kbQzXclOPFJV/NkYf0B2tJwIKgHCgkChUAr7cAw2ICL
+         5d/7aosKoQ8j4IiJj5JFI4Xz+QTCzjlrfSusYYZSKxVSAvXvoiCCCs8h0XKFhGwBYMvW
+         LrxXSVAzKyKniS0tk0V38PiOvPVsBaN9fsZ6542hDYqWdYK+wjq4G1D7B3nqYldhwVbu
+         lNJA==
+X-Gm-Message-State: AOAM531E6glY9PRxfYKgcqxRGtPNWdPE93uT1ZyEiLys/QjElqSu4O1l
+        oGkWyrVcW9ZMidTSYjKDlY3U/g==
+X-Google-Smtp-Source: ABdhPJzId3KvIqJDJtpQpeAHUX93XlW64tCFrI4jvwLDR8RCIYAMydCiNsdnFq9+7dRo2Jt9VNDn7w==
+X-Received: by 2002:a05:620a:b04:: with SMTP id t4mr2672162qkg.392.1611770632039;
+        Wed, 27 Jan 2021 10:03:52 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id g128sm1579216qkd.91.2021.01.27.10.03.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Jan 2021 10:03:51 -0800 (PST)
+Subject: Re: [PATCH v14 12/42] btrfs: calculate allocation offset for
+ conventional zones
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <cover.1611627788.git.naohiro.aota@wdc.com>
+ <583b2d2e286c482f9bcd53c71043a1be1a1c3cec.1611627788.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <6b8a86e8-b0cf-a188-a92c-b38be2146ccf@toxicpanda.com>
+Date:   Wed, 27 Jan 2021 13:03:47 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-References: <20200217131455.31107-9-amir73il@gmail.com> <20200226091804.GD10728@quack2.suse.cz>
- <CAOQ4uxiXbGF+RRUmnP4Sbub+3TxEavmCvi0AYpwHuLepqexdCA@mail.gmail.com>
- <20200226143843.GT10728@quack2.suse.cz> <CAOQ4uxh+Mpr-f3LY5PHNDtCoqTrey69-339DabzSkhRR4cbUYA@mail.gmail.com>
- <CAOQ4uxj_C4EbzwwcrE09P5Z83WqmwNVdeZRJ6qNaThM3pkUinQ@mail.gmail.com>
- <20210125130149.GC1175@quack2.suse.cz> <CAOQ4uxiSSYr4bejwZBBPDjs1Vg_BUSSjY4YiUAgri=adHdOLuQ@mail.gmail.com>
- <20210127112416.GB3108@quack2.suse.cz> <CAOQ4uxhqm4kZ4sDpYqnknRTMbwfTft5zr=3P+ijV8ex5C_+y-w@mail.gmail.com>
- <20210127151525.GC13717@quack2.suse.cz>
-In-Reply-To: <20210127151525.GC13717@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 27 Jan 2021 20:03:23 +0200
-Message-ID: <CAOQ4uxhJJ9OJChGmf=wA_P80mGMqVaRStc0MM=ZiVZe2cbtEPA@mail.gmail.com>
-Subject: Re: fanotify_merge improvements
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <583b2d2e286c482f9bcd53c71043a1be1a1c3cec.1611627788.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 5:15 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 27-01-21 14:57:56, Amir Goldstein wrote:
-> > On Wed, Jan 27, 2021 at 1:24 PM Jan Kara <jack@suse.cz> wrote:
-> > > > - With multi queue, high bit of obejctid will be masked for merge compare.
-> > > > - Instead, they will be used to store the next_qid to read from
-> > > >
-> > > > For example:
-> > > > - event #1 is added to queue 6
-> > > > - set group->last_qid = 6
-> > > > - set group->next_qid = 6 (because group->num_events == 1)
-> > > > - event #2 is added to queue 13
-> > > > - the next_qid bits of the last event in last_qid (6) queue are set to 13
-> > > > - set group->last_qid = 13
-> > > >
-> > > > - read() checks value of group->next_qid and reads the first event
-> > > > from queue 6 (event #1)
-> > > > - event #1 has 13 stored in next_qid bits so set group->next_qid = 13
-> > > > - read() reads first event from queue 13 (event #2)
-> > >
-> > > That's an interesting idea. I like it and I think it would work. Just
-> > > instead of masking, I'd use bitfields. Or we could just restrict objectid
-> > > to 32-bits and use remaining 32-bits for the next_qid pointer. I know it
-> > > will waste some bits but 32-bits of objectid should provide us with enough
-> > > space to avoid doing full event comparison in most cases
-> >
-> > Certainly.
-> > The entire set of objects to compare is going to be limited to 128*128,
-> > so 32bit should be plenty of hash bits.
-> > Simplicity is preferred.
-> >
-> > >  - BTW WRT naming I
-> > > find 'qid' somewhat confusing. Can we call it say 'next_bucket' or
-> > > something like that?
-> > >
-> >
-> > Sure. If its going to be 32bit, I can just call it next_key for simplicity
-> > and store the next event key instead of the next event bucket.
-> >
-> > > > Permission events require special care, but that is the idea of a simple
-> > > > singly linked list using qid's for reading events by insert order and
-> > > > merging by hashed queue.
-> > >
-> > > Why are permission events special in this regard?
-> > >
-> >
-> > They are not removed from the head of the queue, so
-> > middle event next_key may need to be updated when they
-> > are removed.
->
-> Oh, you mean the special case when we receive a signal and thus remove
-> permission event from a notification queue? I forgot about that one and
-> yes, it needs a special handling...
->
-> > I guess since permission events are not merged, they could
-> > use their own queue. If we do not care about ordering of
-> > permission events and non-permission events, we can treat this
-> > as a priority queue and it will simplify things considerably.
-> > Boosting priority of blocking hooks seems like the right thing to do.
-> > I wonder if we could make that change?
->
-> Yes, permission events are not merged and I'm not aware of any users
-> actually mixing permission and other events in a notification group. OTOH
-> I'm somewhat reluctant to reorder events that much. It could break
-> someone, it could starve notification events, etc. AFAIU the pain with
-> permission events is updating the ->next_key field in case we want to remove
-> unreported permission event. Finding previous entry with this scheme is
-> indeed somewhat painful (we'd have to walk the queue which requires
-> maintaining 'cur' pointer for every queue). So maybe growing fsnotify_event
-> by one pointer to contain single linked list for a hash chain would be
-> simplest in the end? Then removing from the hash chain in the corner case of
-> tearing permission event out is simple enough...
->
+On 1/25/21 9:24 PM, Naohiro Aota wrote:
+> Conventional zones do not have a write pointer, so we cannot use it to
+> determine the allocation offset if a block group contains a conventional
+> zone.
+> 
+> But instead, we can consider the end of the last allocated extent in the
+> block group as an allocation offset.
+> 
+> For new block group, we cannot calculate the allocation offset by
+> consulting the extent tree, because it can cause deadlock by taking extent
+> buffer lock after chunk mutex (which is already taken in
+> btrfs_make_block_group()). Since it is a new block group, we can simply set
+> the allocation offset to 0, anyway.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-Better to disable the multi queue for the very uninteresting corner case (mixing
-permissions and non permissions) . The simplest thing to do is to enable multi
-queue only for FAN_CLASS_NOTIF. I suppose users do not use high priority
-classes for non-permission event use case and if they do, they will get less
-merged events - no big deal.
-
-The important things we get are:
-1. Code remains simple
-2. Deterministic CPU usage (linear search is capped to 128 events)
-3. In the most common use case of async change listener we can merge
-    events on up to 16K unique objects which should be sufficient
-
-I'll try to write this up.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
 Thanks,
-Amir.
+
+Josef
