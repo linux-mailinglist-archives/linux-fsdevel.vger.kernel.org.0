@@ -2,1210 +2,871 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0353C3064A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 21:02:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 632513064E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jan 2021 21:16:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232454AbhA0T7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 14:59:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58998 "EHLO
+        id S231502AbhA0UQc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 15:16:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232304AbhA0T6m (ORCPT
+        with ESMTP id S231349AbhA0UQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 14:58:42 -0500
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [IPv6:2001:1600:3:17::42af])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7BAEC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 11:57:56 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DQvWj41CkzMqTdN;
-        Wed, 27 Jan 2021 20:57:05 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DQvWf4CLZzlh8T9;
-        Wed, 27 Jan 2021 20:57:02 +0100 (CET)
-Subject: Re: [PATCH v27 07/12] landlock: Support filesystem access-control
-To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        Wed, 27 Jan 2021 15:16:27 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52DE8C061573;
+        Wed, 27 Jan 2021 12:15:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Type:In-Reply-To:MIME-Version:
+        Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=EVeMPTCZ6f0E2SJv28oV5HuVoqxIBwGOiCnwsZjoAkY=; b=1sYRxuzaWwZ0pVg8Uh2y+eNDOY
+        ydFhQ7kVrk+Pc+Dr7ucw2leKlkZ90DafzzEM8dq+M4FhNzlL0SeRSu1edUyNxd5PRFs9iq+pTQVnA
+        MtYohcEjjgd8mdWhn0HegVf3Sq+HO7KcXc4WbrtsHVfWpTzowLfZLcdUdcEo5dNyWBTb/O9/9dr1F
+        i8vQUNEZSgNP2+IAFgIXovg+PUgBWmoTZe9qxCalT/7IG8RGZNCwZZOILFeOIAuHSl43QMJotmCTI
+        hUyrQoSXR8mfRQA+80lXe0X2YBYSLib5mj//gRsqD5VLp+GLjgm1chOzsC+lZOsdhJueYCRbCBNTx
+        U2DhH5NQ==;
+Received: from [2601:1c0:6280:3f0::7650]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1l4rDx-0000Os-KI; Wed, 27 Jan 2021 20:15:34 +0000
+Subject: Re: mmotm 2021-01-25-21-18 uploaded (octeontx2)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210121205119.793296-1-mic@digikod.net>
- <20210121205119.793296-8-mic@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <7103eef1-cedc-f9e5-de31-f0702e7a6ade@digikod.net>
-Date:   Wed, 27 Jan 2021 20:57:05 +0100
-User-Agent: 
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Srujana Challa <schalla@marvell.com>
+References: <20210126051917.rcgrHGfQS%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <fe531e3e-15d7-720d-f2af-2606cf774975@infradead.org>
+Date:   Wed, 27 Jan 2021 12:15:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20210121205119.793296-8-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210126051917.rcgrHGfQS%akpm@linux-foundation.org>
+Content-Type: multipart/mixed;
+ boundary="------------5A34F0CEA50EC39BBD942CE4"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I found a corner-case which is not well handled, e.g.
-* layer1 only restricts X access and allows X access for /a
--> X is allowed for /a
-* layer2 only restricts Y access and allows Y access for /a/b
--> X is not allowed for /a anymore because now the path walk for /a
-doesn't encounter a layer 2 rule
+This is a multi-part message in MIME format.
+--------------5A34F0CEA50EC39BBD942CE4
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-I'm working on a fix and I'll send a new patch series soon. Stay tune!
+On 1/25/21 9:19 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2021-01-25-21-18 has been uploaded to
+> 
+>    https://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> https://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> https://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+
+on x86_64:
+
+WARNING: unmet direct dependencies detected for OCTEONTX2_MBOX
+  Depends on [n]: NETDEVICES [=n] && ETHERNET [=n] && NET_VENDOR_MARVELL [=n]
+  Selected by [m]:
+  - CRYPTO_DEV_OCTEONTX2_CPT [=m] && CRYPTO [=y] && CRYPTO_HW [=y] && (ARM64 || COMPILE_TEST [=y]) && PCI_MSI [=y] && 64BIT [=y] && CRYPTO_LIB_AES [=y]
+
+and build errors:
+
+ERROR: modpost: "otx2_mbox_reset" [drivers/crypto/marvell/octeontx2/octeontx2-cptvf.ko] undefined!
+ERROR: modpost: "otx2_mbox_destroy" [drivers/crypto/marvell/octeontx2/octeontx2-cptvf.ko] undefined!
+ERROR: modpost: "otx2_mbox_wait_for_rsp" [drivers/crypto/marvell/octeontx2/octeontx2-cptvf.ko] undefined!
+ERROR: modpost: "otx2_mbox_msg_send" [drivers/crypto/marvell/octeontx2/octeontx2-cptvf.ko] undefined!
+ERROR: modpost: "otx2_mbox_init" [drivers/crypto/marvell/octeontx2/octeontx2-cptvf.ko] undefined!
+ERROR: modpost: "otx2_mbox_alloc_msg_rsp" [drivers/crypto/marvell/octeontx2/octeontx2-cptvf.ko] undefined!
+ERROR: modpost: "otx2_reply_invalid_msg" [drivers/crypto/marvell/octeontx2/octeontx2-cpt.ko] undefined!
+ERROR: modpost: "otx2_mbox_reset" [drivers/crypto/marvell/octeontx2/octeontx2-cpt.ko] undefined!
+ERROR: modpost: "otx2_mbox_destroy" [drivers/crypto/marvell/octeontx2/octeontx2-cpt.ko] undefined!
+ERROR: modpost: "otx2_mbox_wait_for_rsp" [drivers/crypto/marvell/octeontx2/octeontx2-cpt.ko] undefined!
+ERROR: modpost: "otx2_mbox_msg_send" [drivers/crypto/marvell/octeontx2/octeontx2-cpt.ko] undefined!
+ERROR: modpost: "otx2_mbox_init" [drivers/crypto/marvell/octeontx2/octeontx2-cpt.ko] undefined!
+ERROR: modpost: "otx2_mbox_alloc_msg_rsp" [drivers/crypto/marvell/octeontx2/octeontx2-cpt.ko] undefined!
 
 
-On 21/01/2021 21:51, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
-> 
-> Thanks to the Landlock objects and ruleset, it is possible to identify
-> inodes according to a process's domain.  To enable an unprivileged
-> process to express a file hierarchy, it first needs to open a directory
-> (or a file) and pass this file descriptor to the kernel through
-> landlock_add_rule(2).  When checking if a file access request is
-> allowed, we walk from the requested dentry to the real root, following
-> the different mount layers.  The access to each "tagged" inodes are
-> collected according to their rule layer level, and ANDed to create
-> access to the requested file hierarchy.  This makes possible to identify
-> a lot of files without tagging every inodes nor modifying the
-> filesystem, while still following the view and understanding the user
-> has from the filesystem.
-> 
-> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
-> keep the same struct inodes for the same inodes whereas these inodes are
-> in use.
-> 
-> This commit adds a minimal set of supported filesystem access-control
-> which doesn't enable to restrict all file-related actions.  This is the
-> result of multiple discussions to minimize the code of Landlock to ease
-> review.  Thanks to the Landlock design, extending this access-control
-> without breaking user space will not be a problem.  Moreover, seccomp
-> filters can be used to restrict the use of syscall families which may
-> not be currently handled by Landlock.
-> 
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Jeff Dike <jdike@addtoit.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> ---
-> 
-> Changes since v26:
-> * Check each rule of a path to enable a more permissive and pragmatic
->   access control per layer.  Suggested by Jann Horn:
->   https://lore.kernel.org/lkml/CAG48ez1O0VTwEiRd3KqexoF78WR+cmP5bGk5Kh5Cs7aPepiDVg@mail.gmail.com/
-> * Rename check_access_path_continue() to unmask_layers() and make it
->   return the new layer mask.
-> * Avoid double domain check in hook_file_open().
-> * In the documentation, add utime(2) as another example of unhandled
->   syscalls.  Indeed, using `touch` to test write access may be tempting.
-> * Remove outdated comment about OverlayFS.
-> * Rename the landlock.h ifdef to align with most similar files.
-> * Fix spelling.
-> 
-> Changes since v25:
-> * Move build_check_layer() to ruleset.c, and add built-time checks for
->   the fs_access_mask and access variables according to
->   _LANDLOCK_ACCESS_FS_MASK.
-> * Move limits to a dedicated file and rename them:
->   _LANDLOCK_ACCESS_FS_LAST and _LANDLOCK_ACCESS_FS_MASK.
-> * Set build_check_layer() as non-inline to trigger a warning if it is
->   not called.
-> * Use BITS_PER_TYPE() macro.
-> * Rename function to landlock_add_fs_hooks().
-> * Cosmetic variable renames.
-> 
-> Changes since v24:
-> * Use the new struct landlock_rule and landlock_layer to not mix
->   accesses from different layers.  Revert "Enforce deterministic
->   interleaved path rules" from v24, and fix the layer check.  This
->   enables to follow a sane semantic: an access is granted if, for each
->   policy layer, at least one rule encountered on the pathwalk grants the
->   access, regardless of their position in the layer stack (suggested by
->   Jann Horn).  See layout1.interleaved_masked_accesses tests from
->   tools/testing/selftests/landlock/fs_test.c for corner cases.
-> * Add build-time checks for layers.
-> * Use the new landlock_insert_rule() API.
-> 
-> Changes since v23:
-> * Enforce deterministic interleaved path rules.  To have consistent
->   layered rules, granting access to a path implies that all accesses
->   tied to inodes, from the requested file to the real root, must be
->   checked.  Otherwise, stacked rules may result to overzealous
->   restrictions.  By excluding the ability to add exceptions in the same
->   layer (e.g. /a allowed, /a/b denied, and /a/b/c allowed), we get
->   deterministic interleaved path rules.  This removes an optimization
->   which could be replaced by a proper cache mechanism.  This also
->   further simplifies and explain check_access_path_continue().
-> * Fix memory allocation error handling in landlock_create_object()
->   calls.  This prevent to inadvertently hold an inode.
-> * In get_inode_object(), improve comments, make code more readable and
->   move kfree() call out of the lock window.
-> * Use the simplified landlock_insert_rule() API.
-> 
-> Changes since v22:
-> * Simplify check_access_path_continue() (suggested by Jann Horn).
-> * Remove prefetch() call for now (suggested by Jann Horn).
-> * Fix spelling and remove superfluous comment (spotted by Jann Horn).
-> * Cosmetic variable renaming.
-> 
-> Changes since v21:
-> * Rename ARCH_EPHEMERAL_STATES to ARCH_EPHEMERAL_INODES (suggested by
->   James Morris).
-> * Remove the LANDLOCK_ACCESS_FS_CHROOT right because chroot(2) (which
->   requires CAP_SYS_CHROOT) doesn't enable to bypass Landlock (as tests
->   demonstrate it), and because it is often used by sandboxes, it would
->   be counterproductive to forbid it.  This also reduces the code size.
-> * Clean up documentation.
-> 
-> Changes since v19:
-> * Fix spelling (spotted by Randy Dunlap).
-> 
-> Changes since v18:
-> * Remove useless include.
-> * Fix spelling.
-> 
-> Changes since v17:
-> * Replace landlock_release_inodes() with security_sb_delete() (requested
->   by James Morris).
-> * Replace struct super_block->s_landlock_inode_refs with the LSM
->   infrastructure management of the superblock (requested by James
->   Morris).
-> * Fix mknod restriction with a zero mode (spotted by Vincent Dagonneau).
-> * Minimize executed code in path_mknod and file_open hooks when the
->   current tasks is not sandboxed.
-> * Remove useless checks on the file pointer and inode in
->   hook_file_open() .
-> * Constify domain pointers.
-> * Rename inode_landlock() to landlock_inode().
-> * Import include/uapi/linux/landlock.h and _LANDLOCK_ACCESS_FS_* from
->   the ruleset and domain management patch.
-> * Explain the rational of this minimal set of access-control.
->   https://lore.kernel.org/lkml/f646e1c7-33cf-333f-070c-0a40ad0468cd@digikod.net/
-> 
-> Changes since v16:
-> * Add ARCH_EPHEMERAL_STATES and enable it for UML.
-> 
-> Changes since v15:
-> * Replace layer_levels and layer_depth with a bitfield of layers: this
->   enables to properly manage superset and subset of access rights,
->   whatever their order in the stack of layers.
->   Cf. https://lore.kernel.org/lkml/e07fe473-1801-01cc-12ae-b3167f95250e@digikod.net/
-> * Allow to open pipes and similar special files through /proc/self/fd/.
-> * Properly handle internal filesystems such as nsfs: always allow these
->   kind of roots because disconnected path cannot be evaluated.
-> * Remove the LANDLOCK_ACCESS_FS_LINK_TO and
->   LANDLOCK_ACCESS_FS_RENAME_{TO,FROM}, but use the
->   LANDLOCK_ACCESS_FS_REMOVE_{FILE,DIR} and LANDLOCK_ACCESS_FS_MAKE_*
->   instead.  Indeed, it is not possible for now (and not really useful)
->   to express the semantic of a source and a destination.
-> * Check access rights to remove a directory or a file with rename(2).
-> * Forbid reparenting when linking or renaming.  This is needed to easily
->   protect against possible privilege escalation by changing the place of
->   a file or directory in relation to an enforced access policy (from the
->   set of layers).  This will be relaxed in the future.
-> * Update hooks to take into account replacement of the object's self and
->   beneath access bitfields with one.  Simplify the code.
-> * Check file related access rights.
-> * Check d_is_negative() instead of !d_backing_inode() in
->   check_access_path_continue(), and continue the path walk while there
->   is no mapped inode e.g., with rename(2).
-> * Check private inode in check_access_path().
-> * Optimize get_file_access() when dealing with a directory.
-> * Add missing atomic.h .
-> 
-> Changes since v14:
-> * Simplify the object, rule and ruleset management at the expense of a
->   less aggressive memory freeing (contributed by Jann Horn, with
->   additional modifications):
->   - Rewrite release_inode() to use inode->sb->s_landlock_inode_refs.
->   - Remove useless checks in landlock_release_inodes(), clean object
->     pointer according to the new struct landlock_object and wait for all
->     iput() to complete.
->   - Rewrite get_inode_object() according to the new struct
->     landlock_object.  If there is a race-condition when cleaning up an
->     object, we retry until the concurrent thread finished the object
->     cleaning.
->   Cf. https://lore.kernel.org/lkml/CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com/
-> * Fix nested domains by implementing a notion of layer level and depth:
->   - Check for matching level ranges when walking through a file path.
->   - Only allow access if every layer granted the access request.
-> * Handles files without mount points (e.g. pipes).
-> * Hardens path walk by checking inode pointer values.
-> * Prefetches d_parent when walking to the root directory.
-> * Remove useless inode_alloc_security hook() (suggested by Jann Horn):
->   already initialized by lsm_inode_alloc().
-> * Remove the inode_free_security hook.
-> * Remove access checks that may be required for FD-only requests:
->   truncate, getattr, lock, chmod, chown, chgrp, ioctl.  This will be
->   handle in a future evolution of Landlock, but right now the goal is to
->   lighten the code to ease review.
-> * Constify variables.
-> * Move ABI checks into syscall.c .
-> * Cosmetic variable renames.
-> 
-> Changes since v11:
-> * Add back, revamp and make a fully working filesystem access-control
->   based on paths and inodes.
-> * Remove the eBPF dependency.
-> 
-> Previous changes:
-> https://lore.kernel.org/lkml/20190721213116.23476-6-mic@digikod.net/
-> ---
->  MAINTAINERS                   |   1 +
->  arch/Kconfig                  |   7 +
->  arch/um/Kconfig               |   1 +
->  include/uapi/linux/landlock.h |  75 ++++
->  security/landlock/Kconfig     |   2 +-
->  security/landlock/Makefile    |   2 +-
->  security/landlock/fs.c        | 621 ++++++++++++++++++++++++++++++++++
->  security/landlock/fs.h        |  56 +++
->  security/landlock/limits.h    |   4 +
->  security/landlock/ruleset.c   |   4 +
->  security/landlock/setup.c     |   7 +
->  security/landlock/setup.h     |   2 +
->  12 files changed, 780 insertions(+), 2 deletions(-)
->  create mode 100644 include/uapi/linux/landlock.h
->  create mode 100644 security/landlock/fs.c
->  create mode 100644 security/landlock/fs.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 74406a6bc6ee..572e4288c60f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9942,6 +9942,7 @@ L:	linux-security-module@vger.kernel.org
->  S:	Supported
->  W:	https://landlock.io
->  T:	git https://github.com/landlock-lsm/linux.git
-> +F:	include/uapi/linux/landlock.h
->  F:	security/landlock/
->  K:	landlock
->  K:	LANDLOCK
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 24862d15f3a3..54999569c755 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -946,6 +946,13 @@ config COMPAT_32BIT_TIME
->  config ARCH_NO_PREEMPT
->  	bool
->  
-> +config ARCH_EPHEMERAL_INODES
-> +	def_bool n
-> +	help
-> +	  An arch should select this symbol if it doesn't keep track of inode
-> +	  instances on its own, but instead relies on something else (e.g. the host
-> +	  kernel for an UML kernel).
-> +
->  config ARCH_SUPPORTS_RT
->  	bool
->  
-> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
-> index 34d302d1a07f..451787332335 100644
-> --- a/arch/um/Kconfig
-> +++ b/arch/um/Kconfig
-> @@ -5,6 +5,7 @@ menu "UML-specific options"
->  config UML
->  	bool
->  	default y
-> +	select ARCH_EPHEMERAL_INODES
->  	select ARCH_HAS_KCOV
->  	select ARCH_NO_PREEMPT
->  	select HAVE_ARCH_AUDITSYSCALL
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> new file mode 100644
-> index 000000000000..f69877099c8e
-> --- /dev/null
-> +++ b/include/uapi/linux/landlock.h
-> @@ -0,0 +1,75 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * Landlock - User space API
-> + *
-> + * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2018-2020 ANSSI
-> + */
-> +
-> +#ifndef _UAPI_LINUX_LANDLOCK_H
-> +#define _UAPI_LINUX_LANDLOCK_H
-> +
-> +/**
-> + * DOC: fs_access
-> + *
-> + * A set of actions on kernel objects may be defined by an attribute (e.g.
-> + * &struct landlock_path_beneath_attr) including a bitmask of access.
-> + *
-> + * Filesystem flags
-> + * ~~~~~~~~~~~~~~~~
-> + *
-> + * These flags enable to restrict a sandboxed process to a set of actions on
-> + * files and directories.  Files or directories opened before the sandboxing
-> + * are not subject to these restrictions.
-> + *
-> + * A file can only receive these access rights:
-> + *
-> + * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
-> + * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access.
-> + * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
-> + *
-> + * A directory can receive access rights related to files or directories.  The
-> + * following access right is applied to the directory itself, and the
-> + * directories beneath it:
-> + *
-> + * - %LANDLOCK_ACCESS_FS_READ_DIR: Open a directory or list its content.
-> + *
-> + * However, the following access rights only apply to the content of a
-> + * directory, not the directory itself:
-> + *
-> + * - %LANDLOCK_ACCESS_FS_REMOVE_DIR: Remove an empty directory or rename one.
-> + * - %LANDLOCK_ACCESS_FS_REMOVE_FILE: Unlink (or rename) a file.
-> + * - %LANDLOCK_ACCESS_FS_MAKE_CHAR: Create (or rename or link) a character
-> + *   device.
-> + * - %LANDLOCK_ACCESS_FS_MAKE_DIR: Create (or rename) a directory.
-> + * - %LANDLOCK_ACCESS_FS_MAKE_REG: Create (or rename or link) a regular file.
-> + * - %LANDLOCK_ACCESS_FS_MAKE_SOCK: Create (or rename or link) a UNIX domain
-> + *   socket.
-> + * - %LANDLOCK_ACCESS_FS_MAKE_FIFO: Create (or rename or link) a named pipe.
-> + * - %LANDLOCK_ACCESS_FS_MAKE_BLOCK: Create (or rename or link) a block device.
-> + * - %LANDLOCK_ACCESS_FS_MAKE_SYM: Create (or rename or link) a symbolic link.
-> + *
-> + * .. warning::
-> + *
-> + *   It is currently not possible to restrict some file-related actions
-> + *   accessible through these syscall families: :manpage:`chdir(2)`,
-> + *   :manpage:`truncate(2)`, :manpage:`stat(2)`, :manpage:`flock(2)`,
-> + *   :manpage:`chmod(2)`, :manpage:`chown(2)`, :manpage:`setxattr(2)`,
-> + *   :manpage:`utime(2)`, :manpage:`ioctl(2)`, :manpage:`fcntl(2)`.
-> + *   Future Landlock evolutions will enable to restrict them.
-> + */
-> +#define LANDLOCK_ACCESS_FS_EXECUTE			(1ULL << 0)
-> +#define LANDLOCK_ACCESS_FS_WRITE_FILE			(1ULL << 1)
-> +#define LANDLOCK_ACCESS_FS_READ_FILE			(1ULL << 2)
-> +#define LANDLOCK_ACCESS_FS_READ_DIR			(1ULL << 3)
-> +#define LANDLOCK_ACCESS_FS_REMOVE_DIR			(1ULL << 4)
-> +#define LANDLOCK_ACCESS_FS_REMOVE_FILE			(1ULL << 5)
-> +#define LANDLOCK_ACCESS_FS_MAKE_CHAR			(1ULL << 6)
-> +#define LANDLOCK_ACCESS_FS_MAKE_DIR			(1ULL << 7)
-> +#define LANDLOCK_ACCESS_FS_MAKE_REG			(1ULL << 8)
-> +#define LANDLOCK_ACCESS_FS_MAKE_SOCK			(1ULL << 9)
-> +#define LANDLOCK_ACCESS_FS_MAKE_FIFO			(1ULL << 10)
-> +#define LANDLOCK_ACCESS_FS_MAKE_BLOCK			(1ULL << 11)
-> +#define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
-> +
-> +#endif /* _UAPI_LINUX_LANDLOCK_H */
-> diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
-> index 42a659e81196..e4b9d453bc70 100644
-> --- a/security/landlock/Kconfig
-> +++ b/security/landlock/Kconfig
-> @@ -2,7 +2,7 @@
->  
->  config SECURITY_LANDLOCK
->  	bool "Landlock support"
-> -	depends on SECURITY
-> +	depends on SECURITY && !ARCH_EPHEMERAL_INODES
->  	select SECURITY_PATH
->  	help
->  	  Landlock is a safe sandboxing mechanism that enables processes to
-> diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-> index f1d1eb72fa76..92e3d80ab8ed 100644
-> --- a/security/landlock/Makefile
-> +++ b/security/landlock/Makefile
-> @@ -1,4 +1,4 @@
->  obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
->  
->  landlock-y := setup.o object.o ruleset.o \
-> -	cred.o ptrace.o
-> +	cred.o ptrace.o fs.o
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> new file mode 100644
-> index 000000000000..27f5d40038b1
-> --- /dev/null
-> +++ b/security/landlock/fs.c
-> @@ -0,0 +1,621 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Landlock LSM - Filesystem management and hooks
-> + *
-> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2018-2020 ANSSI
-> + */
-> +
-> +#include <linux/atomic.h>
-> +#include <linux/bitops.h>
-> +#include <linux/bits.h>
-> +#include <linux/compiler_types.h>
-> +#include <linux/dcache.h>
-> +#include <linux/err.h>
-> +#include <linux/fs.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/limits.h>
-> +#include <linux/list.h>
-> +#include <linux/lsm_hooks.h>
-> +#include <linux/mount.h>
-> +#include <linux/namei.h>
-> +#include <linux/path.h>
-> +#include <linux/rcupdate.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/stat.h>
-> +#include <linux/types.h>
-> +#include <linux/wait_bit.h>
-> +#include <linux/workqueue.h>
-> +#include <uapi/linux/landlock.h>
-> +
-> +#include "common.h"
-> +#include "cred.h"
-> +#include "fs.h"
-> +#include "limits.h"
-> +#include "object.h"
-> +#include "ruleset.h"
-> +#include "setup.h"
-> +
-> +/* Underlying object management */
-> +
-> +static void release_inode(struct landlock_object *const object)
-> +	__releases(object->lock)
-> +{
-> +	struct inode *const inode = object->underobj;
-> +	struct super_block *sb;
-> +
-> +	if (!inode) {
-> +		spin_unlock(&object->lock);
-> +		return;
-> +	}
-> +
-> +	spin_lock(&inode->i_lock);
-> +	/*
-> +	 * Make sure that if the filesystem is concurrently unmounted,
-> +	 * hook_sb_delete() will wait for us to finish iput().
-> +	 */
-> +	sb = inode->i_sb;
-> +	atomic_long_inc(&landlock_superblock(sb)->inode_refs);
-> +	rcu_assign_pointer(landlock_inode(inode)->object, NULL);
-> +	spin_unlock(&inode->i_lock);
-> +	spin_unlock(&object->lock);
-> +	/*
-> +	 * Now, new rules can safely be tied to @inode.
-> +	 */
-> +
-> +	iput(inode);
-> +	if (atomic_long_dec_and_test(&landlock_superblock(sb)->inode_refs))
-> +		wake_up_var(&landlock_superblock(sb)->inode_refs);
-> +}
-> +
-> +static const struct landlock_object_underops landlock_fs_underops = {
-> +	.release = release_inode
-> +};
-> +
-> +/* Ruleset management */
-> +
-> +static struct landlock_object *get_inode_object(struct inode *const inode)
-> +{
-> +	struct landlock_object *object, *new_object;
-> +	struct landlock_inode_security *inode_sec = landlock_inode(inode);
-> +
-> +	rcu_read_lock();
-> +retry:
-> +	object = rcu_dereference(inode_sec->object);
-> +	if (object) {
-> +		if (likely(refcount_inc_not_zero(&object->usage))) {
-> +			rcu_read_unlock();
-> +			return object;
-> +		}
-> +		/*
-> +		 * We are racing with release_inode(), the object is going
-> +		 * away.  Wait for release_inode(), then retry.
-> +		 */
-> +		spin_lock(&object->lock);
-> +		spin_unlock(&object->lock);
-> +		goto retry;
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	/*
-> +	 * If there is no object tied to @inode, then create a new one (without
-> +	 * holding any locks).
-> +	 */
-> +	new_object = landlock_create_object(&landlock_fs_underops, inode);
-> +	if (IS_ERR(new_object))
-> +		return new_object;
-> +
-> +	spin_lock(&inode->i_lock);
-> +	object = rcu_dereference_protected(inode_sec->object,
-> +			lockdep_is_held(&inode->i_lock));
-> +	if (unlikely(object)) {
-> +		/* Someone else just created the object, bail out and retry. */
-> +		spin_unlock(&inode->i_lock);
-> +		kfree(new_object);
-> +
-> +		rcu_read_lock();
-> +		goto retry;
-> +	}
-> +
-> +	rcu_assign_pointer(inode_sec->object, new_object);
-> +	/*
-> +	 * @inode will be released by hook_sb_delete() on its superblock
-> +	 * shutdown.
-> +	 */
-> +	ihold(inode);
-> +	spin_unlock(&inode->i_lock);
-> +	return new_object;
-> +}
-> +
-> +/* All access rights that can be tied to files. */
-> +#define ACCESS_FILE ( \
-> +	LANDLOCK_ACCESS_FS_EXECUTE | \
-> +	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-> +	LANDLOCK_ACCESS_FS_READ_FILE)
-> +
-> +/*
-> + * @path: Should have been checked by get_path_from_fd().
-> + */
-> +int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
-> +		const struct path *const path, u32 access_rights)
-> +{
-> +	int err;
-> +	struct landlock_object *object;
-> +
-> +	/* Files only get access rights that make sense. */
-> +	if (!d_is_dir(path->dentry) && (access_rights | ACCESS_FILE) !=
-> +			ACCESS_FILE)
-> +		return -EINVAL;
-> +
-> +	/* Transforms relative access rights to absolute ones. */
-> +	access_rights |= LANDLOCK_MASK_ACCESS_FS & ~ruleset->fs_access_mask;
-> +	object = get_inode_object(d_backing_inode(path->dentry));
-> +	if (IS_ERR(object))
-> +		return PTR_ERR(object);
-> +	mutex_lock(&ruleset->lock);
-> +	err = landlock_insert_rule(ruleset, object, access_rights);
-> +	mutex_unlock(&ruleset->lock);
-> +	/*
-> +	 * No need to check for an error because landlock_insert_rule()
-> +	 * increments the refcount for the new object if needed.
-> +	 */
-> +	landlock_put_object(object);
-> +	return err;
-> +}
-> +
-> +/* Access-control management */
-> +
-> +static inline u64 unmask_layers(
-> +		const struct landlock_ruleset *const domain,
-> +		const struct path *const path, const u32 access_request,
-> +		u64 layer_mask)
-> +{
-> +	const struct landlock_rule *rule;
-> +	const struct inode *inode;
-> +	size_t i;
-> +
-> +	if (d_is_negative(path->dentry))
-> +		/* Continues to walk while there is no mapped inode. */
-> +		return layer_mask;
-> +	inode = d_backing_inode(path->dentry);
-> +	rcu_read_lock();
-> +	rule = landlock_find_rule(domain,
-> +			rcu_dereference(landlock_inode(inode)->object));
-> +	rcu_read_unlock();
-> +	if (!rule)
-> +		return layer_mask;
-> +
-> +	/*
-> +	 * An access is granted if, for each policy layer, at least one rule
-> +	 * encountered on the pathwalk grants the requested accesses,
-> +	 * regardless of their position in the layer stack.  We must then check
-> +	 * the remaining layers for each inode, from the last added layer to
-> +	 * the first one.
-> +	 */
-> +	for (i = 0; i < rule->num_layers; i++) {
-> +		const struct landlock_layer *const layer = &rule->layers[i];
-> +		const u64 layer_level = BIT_ULL(layer->level - 1);
-> +
-> +		if ((layer->access & access_request) == access_request) {
-> +			layer_mask &= ~layer_level;
-> +
-> +			if (layer_mask == 0)
-> +				return layer_mask;
-> +		}
-> +	}
-> +	return layer_mask;
-> +}
-> +
-> +static int check_access_path(const struct landlock_ruleset *const domain,
-> +		const struct path *const path, u32 access_request)
-> +{
-> +	bool allowed = false;
-> +	struct path walker_path;
-> +	u64 layer_mask;
-> +
-> +	/* Make sure all layers can be checked. */
-> +	BUILD_BUG_ON(BITS_PER_TYPE(layer_mask) < LANDLOCK_MAX_NUM_LAYERS);
-> +
-> +	if (WARN_ON_ONCE(!domain || !path))
-> +		return 0;
-> +	/*
-> +	 * Allows access to pseudo filesystems that will never be mountable
-> +	 * (e.g. sockfs, pipefs), but can still be reachable through
-> +	 * /proc/self/fd .
-> +	 */
-> +	if ((path->dentry->d_sb->s_flags & SB_NOUSER) ||
-> +			(d_is_positive(path->dentry) &&
-> +			 unlikely(IS_PRIVATE(d_backing_inode(path->dentry)))))
-> +		return 0;
-> +	if (WARN_ON_ONCE(domain->num_layers < 1))
-> +		return -EACCES;
-> +
-> +	layer_mask = GENMASK_ULL(domain->num_layers - 1, 0);
-> +	/*
-> +	 * An access request that is not handled by the domain should be
-> +	 * allowed.
-> +	 */
-> +	access_request &= domain->fs_access_mask;
-> +	if (access_request == 0)
-> +		return 0;
-> +	walker_path = *path;
-> +	path_get(&walker_path);
-> +	/*
-> +	 * We need to walk through all the hierarchy to not miss any relevant
-> +	 * restriction.
-> +	 */
-> +	while (true) {
-> +		struct dentry *parent_dentry;
-> +
-> +		layer_mask = unmask_layers(domain, &walker_path,
-> +				access_request, layer_mask);
-> +		if (layer_mask == 0) {
-> +			/* Stops when a rule from each layer grants access. */
-> +			allowed = true;
-> +			break;
-> +		}
-> +
-> +jump_up:
-> +		if (walker_path.dentry == walker_path.mnt->mnt_root) {
-> +			if (follow_up(&walker_path)) {
-> +				/* Ignores hidden mount points. */
-> +				goto jump_up;
-> +			} else {
-> +				/*
-> +				 * Stops at the real root.  Denies access
-> +				 * because not all layers have granted access.
-> +				 */
-> +				allowed = false;
-> +				break;
-> +			}
-> +		}
-> +		if (unlikely(IS_ROOT(walker_path.dentry))) {
-> +			/*
-> +			 * Stops at disconnected root directories.  Only allows
-> +			 * access to internal filesystems (e.g. nsfs, which is
-> +			 * reachable through /proc/self/ns).
-> +			 */
-> +			allowed = !!(walker_path.mnt->mnt_flags & MNT_INTERNAL);
-> +			break;
-> +		}
-> +		parent_dentry = dget_parent(walker_path.dentry);
-> +		dput(walker_path.dentry);
-> +		walker_path.dentry = parent_dentry;
-> +	}
-> +	path_put(&walker_path);
-> +	return allowed ? 0 : -EACCES;
-> +}
-> +
-> +static inline int current_check_access_path(const struct path *const path,
-> +		const u32 access_request)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	if (!dom)
-> +		return 0;
-> +	return check_access_path(dom, path, access_request);
-> +}
-> +
-> +/* Super-block hooks */
-> +
-> +/*
-> + * Release the inodes used in a security policy.
-> + *
-> + * Cf. fsnotify_unmount_inodes()
-> + */
-> +static void hook_sb_delete(struct super_block *const sb)
-> +{
-> +	struct inode *inode, *iput_inode = NULL;
-> +
-> +	if (!landlock_initialized)
-> +		return;
-> +
-> +	spin_lock(&sb->s_inode_list_lock);
-> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> +		struct landlock_inode_security *inode_sec =
-> +			landlock_inode(inode);
-> +		struct landlock_object *object;
-> +		bool do_put = false;
-> +
-> +		rcu_read_lock();
-> +		object = rcu_dereference(inode_sec->object);
-> +		if (!object) {
-> +			rcu_read_unlock();
-> +			continue;
-> +		}
-> +
-> +		spin_lock(&object->lock);
-> +		if (object->underobj) {
-> +			object->underobj = NULL;
-> +			do_put = true;
-> +			spin_lock(&inode->i_lock);
-> +			rcu_assign_pointer(inode_sec->object, NULL);
-> +			spin_unlock(&inode->i_lock);
-> +		}
-> +		spin_unlock(&object->lock);
-> +		rcu_read_unlock();
-> +		if (!do_put)
-> +			/*
-> +			 * A concurrent iput() in release_inode() is ongoing
-> +			 * and we will just wait for it to finish.
-> +			 */
-> +			continue;
-> +
-> +		/*
-> +		 * At this point, we own the ihold() reference that was
-> +		 * originally set up by get_inode_object(). Therefore we can
-> +		 * drop the list lock and know that the inode won't disappear
-> +		 * from under us until the next loop walk.
-> +		 */
-> +		spin_unlock(&sb->s_inode_list_lock);
-> +		/*
-> +		 * We can now actually put the previous inode, which is not
-> +		 * needed anymore for the loop walk.
-> +		 */
-> +		if (iput_inode)
-> +			iput(iput_inode);
-> +		iput_inode = inode;
-> +		spin_lock(&sb->s_inode_list_lock);
-> +	}
-> +	spin_unlock(&sb->s_inode_list_lock);
-> +	if (iput_inode)
-> +		iput(iput_inode);
-> +
-> +	/*
-> +	 * Wait for pending iput() in release_inode().
-> +	 */
-> +	wait_var_event(&landlock_superblock(sb)->inode_refs, !atomic_long_read(
-> +				&landlock_superblock(sb)->inode_refs));
-> +}
-> +
-> +/*
-> + * Because a Landlock security policy is defined according to the filesystem
-> + * layout (i.e. the mount namespace), changing it may grant access to files not
-> + * previously allowed.
-> + *
-> + * To make it simple, deny any filesystem layout modification by landlocked
-> + * processes.  Non-landlocked processes may still change the namespace of a
-> + * landlocked process, but this kind of threat must be handled by a system-wide
-> + * access-control security policy.
-> + *
-> + * This could be lifted in the future if Landlock can safely handle mount
-> + * namespace updates requested by a landlocked process.  Indeed, we could
-> + * update the current domain (which is currently read-only) by taking into
-> + * account the accesses of the source and the destination of a new mount point.
-> + * However, it would also require to make all the child domains dynamically
-> + * inherit these new constraints.  Anyway, for backward compatibility reasons,
-> + * a dedicated user space option would be required (e.g. as a ruleset command
-> + * option).
-> + */
-> +static int hook_sb_mount(const char *const dev_name,
-> +		const struct path *const path, const char *const type,
-> +		const unsigned long flags, void *const data)
-> +{
-> +	if (!landlock_get_current_domain())
-> +		return 0;
-> +	return -EPERM;
-> +}
-> +
-> +static int hook_move_mount(const struct path *const from_path,
-> +		const struct path *const to_path)
-> +{
-> +	if (!landlock_get_current_domain())
-> +		return 0;
-> +	return -EPERM;
-> +}
-> +
-> +/*
-> + * Removing a mount point may reveal a previously hidden file hierarchy, which
-> + * may then grant access to files, which may have previously been forbidden.
-> + */
-> +static int hook_sb_umount(struct vfsmount *const mnt, const int flags)
-> +{
-> +	if (!landlock_get_current_domain())
-> +		return 0;
-> +	return -EPERM;
-> +}
-> +
-> +static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
-> +{
-> +	if (!landlock_get_current_domain())
-> +		return 0;
-> +	return -EPERM;
-> +}
-> +
-> +/*
-> + * pivot_root(2), like mount(2), changes the current mount namespace.  It must
-> + * then be forbidden for a landlocked process.
-> + *
-> + * However, chroot(2) may be allowed because it only changes the relative root
-> + * directory of the current process.  Moreover, it can be used to restrict the
-> + * view of the filesystem.
-> + */
-> +static int hook_sb_pivotroot(const struct path *const old_path,
-> +		const struct path *const new_path)
-> +{
-> +	if (!landlock_get_current_domain())
-> +		return 0;
-> +	return -EPERM;
-> +}
-> +
-> +/* Path hooks */
-> +
-> +static inline u32 get_mode_access(const umode_t mode)
-> +{
-> +	switch (mode & S_IFMT) {
-> +	case S_IFLNK:
-> +		return LANDLOCK_ACCESS_FS_MAKE_SYM;
-> +	case 0:
-> +		/* A zero mode translates to S_IFREG. */
-> +	case S_IFREG:
-> +		return LANDLOCK_ACCESS_FS_MAKE_REG;
-> +	case S_IFDIR:
-> +		return LANDLOCK_ACCESS_FS_MAKE_DIR;
-> +	case S_IFCHR:
-> +		return LANDLOCK_ACCESS_FS_MAKE_CHAR;
-> +	case S_IFBLK:
-> +		return LANDLOCK_ACCESS_FS_MAKE_BLOCK;
-> +	case S_IFIFO:
-> +		return LANDLOCK_ACCESS_FS_MAKE_FIFO;
-> +	case S_IFSOCK:
-> +		return LANDLOCK_ACCESS_FS_MAKE_SOCK;
-> +	default:
-> +		WARN_ON_ONCE(1);
-> +		return 0;
-> +	}
-> +}
-> +
-> +/*
-> + * Creating multiple links or renaming may lead to privilege escalations if not
-> + * handled properly.  Indeed, we must be sure that the source doesn't gain more
-> + * privileges by being accessible from the destination.  This is getting more
-> + * complex when dealing with multiple layers.  The whole picture can be seen as
-> + * a multilayer partial ordering problem.  A future version of Landlock will
-> + * deal with that.
-> + */
-> +static int hook_path_link(struct dentry *const old_dentry,
-> +		const struct path *const new_dir,
-> +		struct dentry *const new_dentry)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	if (!dom)
-> +		return 0;
-> +	/* The mount points are the same for old and new paths, cf. EXDEV. */
-> +	if (old_dentry->d_parent != new_dir->dentry)
-> +		/* For now, forbid reparenting. */
-> +		return -EACCES;
-> +	if (unlikely(d_is_negative(old_dentry)))
-> +		return -EACCES;
-> +	return check_access_path(dom, new_dir,
-> +			get_mode_access(d_backing_inode(old_dentry)->i_mode));
-> +}
-> +
-> +static inline u32 maybe_remove(const struct dentry *const dentry)
-> +{
-> +	if (d_is_negative(dentry))
-> +		return 0;
-> +	return d_is_dir(dentry) ? LANDLOCK_ACCESS_FS_REMOVE_DIR :
-> +		LANDLOCK_ACCESS_FS_REMOVE_FILE;
-> +}
-> +
-> +static int hook_path_rename(const struct path *const old_dir,
-> +		struct dentry *const old_dentry,
-> +		const struct path *const new_dir,
-> +		struct dentry *const new_dentry)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	if (!dom)
-> +		return 0;
-> +	/* The mount points are the same for old and new paths, cf. EXDEV. */
-> +	if (old_dir->dentry != new_dir->dentry)
-> +		/* For now, forbid reparenting. */
-> +		return -EACCES;
-> +	if (WARN_ON_ONCE(d_is_negative(old_dentry)))
-> +		return -EACCES;
-> +	/* RENAME_EXCHANGE is handled because directories are the same. */
-> +	return check_access_path(dom, old_dir, maybe_remove(old_dentry) |
-> +			maybe_remove(new_dentry) |
-> +			get_mode_access(d_backing_inode(old_dentry)->i_mode));
-> +}
-> +
-> +static int hook_path_mkdir(const struct path *const dir,
-> +		struct dentry *const dentry, const umode_t mode)
-> +{
-> +	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_MAKE_DIR);
-> +}
-> +
-> +static int hook_path_mknod(const struct path *const dir,
-> +		struct dentry *const dentry, const umode_t mode,
-> +		const unsigned int dev)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	if (!dom)
-> +		return 0;
-> +	return check_access_path(dom, dir, get_mode_access(mode));
-> +}
-> +
-> +static int hook_path_symlink(const struct path *const dir,
-> +		struct dentry *const dentry, const char *const old_name)
-> +{
-> +	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_MAKE_SYM);
-> +}
-> +
-> +static int hook_path_unlink(const struct path *const dir,
-> +		struct dentry *const dentry)
-> +{
-> +	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_FILE);
-> +}
-> +
-> +static int hook_path_rmdir(const struct path *const dir,
-> +		struct dentry *const dentry)
-> +{
-> +	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
-> +}
-> +
-> +/* File hooks */
-> +
-> +static inline u32 get_file_access(const struct file *const file)
-> +{
-> +	u32 access = 0;
-> +
-> +	if (file->f_mode & FMODE_READ) {
-> +		/* A directory can only be opened in read mode. */
-> +		if (S_ISDIR(file_inode(file)->i_mode))
-> +			return LANDLOCK_ACCESS_FS_READ_DIR;
-> +		access = LANDLOCK_ACCESS_FS_READ_FILE;
-> +	}
-> +	if (file->f_mode & FMODE_WRITE)
-> +		access |= LANDLOCK_ACCESS_FS_WRITE_FILE;
-> +	/* __FMODE_EXEC is indeed part of f_flags, not f_mode. */
-> +	if (file->f_flags & __FMODE_EXEC)
-> +		access |= LANDLOCK_ACCESS_FS_EXECUTE;
-> +	return access;
-> +}
-> +
-> +static int hook_file_open(struct file *const file)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	if (!dom)
-> +		return 0;
-> +	/*
-> +	 * Because a file may be opened with O_PATH, get_file_access() may
-> +	 * return 0.  This case will be handled with a future Landlock
-> +	 * evolution.
-> +	 */
-> +	return check_access_path(dom, &file->f_path, get_file_access(file));
-> +}
-> +
-> +static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
-> +	LSM_HOOK_INIT(sb_delete, hook_sb_delete),
-> +	LSM_HOOK_INIT(sb_mount, hook_sb_mount),
-> +	LSM_HOOK_INIT(move_mount, hook_move_mount),
-> +	LSM_HOOK_INIT(sb_umount, hook_sb_umount),
-> +	LSM_HOOK_INIT(sb_remount, hook_sb_remount),
-> +	LSM_HOOK_INIT(sb_pivotroot, hook_sb_pivotroot),
-> +
-> +	LSM_HOOK_INIT(path_link, hook_path_link),
-> +	LSM_HOOK_INIT(path_rename, hook_path_rename),
-> +	LSM_HOOK_INIT(path_mkdir, hook_path_mkdir),
-> +	LSM_HOOK_INIT(path_mknod, hook_path_mknod),
-> +	LSM_HOOK_INIT(path_symlink, hook_path_symlink),
-> +	LSM_HOOK_INIT(path_unlink, hook_path_unlink),
-> +	LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
-> +
-> +	LSM_HOOK_INIT(file_open, hook_file_open),
-> +};
-> +
-> +__init void landlock_add_fs_hooks(void)
-> +{
-> +	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
-> +			LANDLOCK_NAME);
-> +}
-> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-> new file mode 100644
-> index 000000000000..9f14ec4d8d48
-> --- /dev/null
-> +++ b/security/landlock/fs.h
-> @@ -0,0 +1,56 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Landlock LSM - Filesystem management and hooks
-> + *
-> + * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2018-2020 ANSSI
-> + */
-> +
-> +#ifndef _SECURITY_LANDLOCK_FS_H
-> +#define _SECURITY_LANDLOCK_FS_H
-> +
-> +#include <linux/fs.h>
-> +#include <linux/init.h>
-> +#include <linux/rcupdate.h>
-> +
-> +#include "ruleset.h"
-> +#include "setup.h"
-> +
-> +struct landlock_inode_security {
-> +	/*
-> +	 * @object: Weak pointer to an allocated object.  All writes (i.e.
-> +	 * creating a new object or removing one) are protected by the
-> +	 * underlying inode->i_lock.  Disassociating @object from the inode is
-> +	 * additionally protected by @object->lock, from the time @object's
-> +	 * usage refcount drops to zero to the time this pointer is nulled out.
-> +	 * Cf. release_inode().
-> +	 */
-> +	struct landlock_object __rcu *object;
-> +};
-> +
-> +struct landlock_superblock_security {
-> +	/*
-> +	 * @inode_refs: References to Landlock underlying objects.
-> +	 * Cf. struct super_block->s_fsnotify_inode_refs .
-> +	 */
-> +	atomic_long_t inode_refs;
-> +};
-> +
-> +static inline struct landlock_inode_security *landlock_inode(
-> +		const struct inode *const inode)
-> +{
-> +	return inode->i_security + landlock_blob_sizes.lbs_inode;
-> +}
-> +
-> +static inline struct landlock_superblock_security *landlock_superblock(
-> +		const struct super_block *const superblock)
-> +{
-> +	return superblock->s_security + landlock_blob_sizes.lbs_superblock;
-> +}
-> +
-> +__init void landlock_add_fs_hooks(void);
-> +
-> +int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
-> +		const struct path *const path, u32 access_hierarchy);
-> +
-> +#endif /* _SECURITY_LANDLOCK_FS_H */
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index b734f597bb0e..2a0a1095ee27 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -10,8 +10,12 @@
->  #define _SECURITY_LANDLOCK_LIMITS_H
->  
->  #include <linux/limits.h>
-> +#include <uapi/linux/landlock.h>
->  
->  #define LANDLOCK_MAX_NUM_LAYERS		64
->  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
->  
-> +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_MAKE_SYM
-> +#define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
-> +
->  #endif /* _SECURITY_LANDLOCK_LIMITS_H */
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index bf7ff66c1b12..548636a68b48 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -112,10 +112,12 @@ static void build_check_ruleset(void)
->  	const struct landlock_ruleset ruleset = {
->  		.num_rules = ~0,
->  		.num_layers = ~0,
-> +		.fs_access_mask = ~0,
->  	};
->  
->  	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
->  	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
-> +	BUILD_BUG_ON(ruleset.fs_access_mask < LANDLOCK_MASK_ACCESS_FS);
->  }
->  
->  /**
-> @@ -214,9 +216,11 @@ static void build_check_layer(void)
->  {
->  	const struct landlock_layer layer = {
->  		.level = ~0,
-> +		.access = ~0,
->  	};
->  
->  	BUILD_BUG_ON(layer.level < LANDLOCK_MAX_NUM_LAYERS);
-> +	BUILD_BUG_ON(layer.access < LANDLOCK_MASK_ACCESS_FS);
->  }
->  
->  int landlock_insert_rule(struct landlock_ruleset *const ruleset,
-> diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-> index a5d6ef334991..f8e8e980454c 100644
-> --- a/security/landlock/setup.c
-> +++ b/security/landlock/setup.c
-> @@ -11,17 +11,24 @@
->  
->  #include "common.h"
->  #include "cred.h"
-> +#include "fs.h"
->  #include "ptrace.h"
->  #include "setup.h"
->  
-> +bool landlock_initialized __lsm_ro_after_init = false;
-> +
->  struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
->  	.lbs_cred = sizeof(struct landlock_cred_security),
-> +	.lbs_inode = sizeof(struct landlock_inode_security),
-> +	.lbs_superblock = sizeof(struct landlock_superblock_security),
->  };
->  
->  static int __init landlock_init(void)
->  {
->  	landlock_add_cred_hooks();
->  	landlock_add_ptrace_hooks();
-> +	landlock_add_fs_hooks();
-> +	landlock_initialized = true;
->  	pr_info("Up and running.\n");
->  	return 0;
->  }
-> diff --git a/security/landlock/setup.h b/security/landlock/setup.h
-> index 9fdbf33fcc33..1daffab1ab4b 100644
-> --- a/security/landlock/setup.h
-> +++ b/security/landlock/setup.h
-> @@ -11,6 +11,8 @@
->  
->  #include <linux/lsm_hooks.h>
->  
-> +extern bool landlock_initialized;
-> +
->  extern struct lsm_blob_sizes landlock_blob_sizes;
->  
->  #endif /* _SECURITY_LANDLOCK_SETUP_H */
-> 
+Full randconfig file is attached.
+
+
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+
+
+--------------5A34F0CEA50EC39BBD942CE4
+Content-Type: application/gzip;
+ name="config-r7419.gz"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="config-r7419.gz"
+
+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
+1J/FXIUOY9OT0qBAX93hpKTuPmMlIC090PbkfgBFcH3ZmHqknnmY30rI+un14/6P5/P77EMK
+/DLiyvPHn09wUlOmgdkv8F0+7t8ezx/2cJvk3wQlo3HZehkmAf9CuK+VQVcHJeqMYxHBo3B7
+0Z+E18kzEN5A22JGKXCPYYyGNJdSH1+J3//9/RXk8P7yfJ69v57PD38J1OUZG0Yx1hpDuFfI
+h0ghA1ijv2ARKMcpFKCXXgkaaUeDGaybMQXKuvCRrYHPhlVFvF0vDYu7gNLdcr9d49YLScDV
+eWxfU0i5YlpF4tVi6S/Ur3YWa3R9g1WzhcPgFc7Wc891vkL7bvtV7atraMZV4gi9QRbouoyW
+difSuNxYsB78yi6wpiVwDXH5WADgO+jNZrfYKczEBuCE2o7wEEFUXvH6Sy9xgXqcDcCpNJqc
+m8dBz04lP+/0Q1yKt1ag/ZeQ/tOyv0DOHZkw2oQdaNN2wkdNlGMmttLe+MO5DVIQsdS4UIK8
+0OKwrnWFVNmeq/ULLB4IVAu3p3rULICxYLHo52bz/Ey40QwT/GyrtTZ+KZmpWPI0cSBS7kYF
+vlhllIlaEO4g4WoRifTaF/bUA0oO29y40N54oqGgVdB6GlD4WuSyutR2u1JtXg6VJPF3oaA5
+38q6FmJU42aQkaBXlpQRXog0g4awAOZhtzgMvalsQmJInLYM60R9H83URzILkDsfSya083V1
+wnqzGAuCwlu+biJ/5fK05TMmTTnd6tAcEkZGMs3ETovQ7t2Un6iwG3FJei+JWIs8glcJiH4/
+lXf8S0a1wenvvSl/yEObMYMEQOTOAAmjdwZDfihS3WHrgjDmJfA9PlU2oQ7AdEYGE5hdmUot
+RrWliiWD2a3x4t4oy8RYi7kip3smKahWlgSNxZvmB+CsZirZGfpZxCJpub8bMz2XDE4LOHl+
+glxayAJuSqEIlLOOs37zg/7lmTwHh12iPREe+wyVJjQ3rLHsKOD4EFQ1eTrJUUNRHeKhrFqa
+YNqXInLM5ArO4jyBHuGXgoqIq+i1RaCUNKufmmdQ1yN+ZeM+lAWNESKjM5XKDkzWqDEUMHXU
+HMC1nDZ32j0UR0RFXFwQRm2BJ8cV4PhhjFQM9bKD1ggd/dgNfsWR226mbjr80pzjimSz1FzA
+YIMfooYejJPXIaz6tIMRptVc0rap+CjjesshxqqHuvSrCfkbTtmdA6z1K4ULTOnCDioM8ryq
+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
+--------------5A34F0CEA50EC39BBD942CE4--
