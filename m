@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 38391306F24
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:27:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 977B6306EFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:23:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231985AbhA1HXo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 02:23:44 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:20080 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231828AbhA1HRF (ORCPT
+        id S231778AbhA1HVf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 02:21:35 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:57290 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231767AbhA1HTA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 02:17:05 -0500
+        Thu, 28 Jan 2021 02:19:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611818225; x=1643354225;
+  t=1611818340; x=1643354340;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=NNQh//SoJS4GqMqJS7HaqIWs/nAFaMjGpU2K0hvKGW0=;
-  b=gvfotP0RwFBJqCXqMZ+ZKGM191kUg25EU6MK8yv3WQ0V/snj6gO89p3J
-   h+XgNTXnBSDKn9sVdo/brk4CHsYcfR1FHgktQQwmxZcRXPYEzGIiRr5oL
-   Z8v7fX/DrdBbZaJz5SD2hdvN/QJljTxgqDFPAn8eI3LX5bw9Efol1ifGB
-   6+HIiGLTfey68aJ8RuZBvtU0pg+Pv5Kl8aFoAWGw0HTdrhhw0z/9BT6Vc
-   GHPVDh+REdiUHiEqaJS2LO04+EQUiJ2Ae5MH8NovD0So9om9Bvz33AZfB
-   X+qCIg4TQeU6pbiwX2uy/39s1GfxEOmDtRUKzIQNf4PIlH/sCDqRHm5ya
-   g==;
-IronPort-SDR: T8cN/SXMGXs01AM3btMmAlP2SoYkUicsWVAABXP2iQU2x8JpoqKTUJx1q5qphxJjCMBNKk/IPP
- wcodnznz7X6ITvHGg6I4G9xwDnZbaJVvXmFLn+Nj482O/ABalHVq1f8x18M4VpFZa77mrfTBo0
- MukhsN1D8OeDHOtVvD2LCAoH3bwM3fbduBL5+hFwNkixJGxih35xHNpMt4QB8nxooz9Z++wY6t
- zjUUuacLny/qIwc5aOeFlEEj7Aid+scIfUTbneyQtWIpa49b2M3P8kMH/VvA40e+d3WWaqSvQO
- P+c=
+  bh=Y9+Mnjxua+V7f2wybPN6k7Lk3+3v11itMxG4MZ3QMkM=;
+  b=D8Lf58isT4tO+ZqWCDov+/9wpJaDfthIekt4f1gcRkM7TXulFX3N66uE
+   qYARWilUxfAaoRBboavkY+imFd4pSqVsr5ioZLLZSRBL6ogfzH+bzy1AV
+   eqGKDPScPogvq75qKAz7BUDQKh8LinCn0zt0woZ7V2NpNpuOq/EJwZPjt
+   xphH/7ftXJNjR1/aaet6yJC12KI2Jbybvc6EBHLqnwCWdH6PZMhn0/e6v
+   ojHhANebRYkJwTAhmiWikL4o5fwKmJxlOsGlazICa1TizXm+PYlUkOeQK
+   E5VnEvoaR9MmWSv4wox4q0Inisn3lei/lb1pKxdBkJeuIJrlVpxcR4g3D
+   Q==;
+IronPort-SDR: BEOT6T0S0JHif5Zht8zGfgNYtkvaRTuVAF2eQEM8BtpqcpsRUl8+RQG1rH0Gx6hJMgILsM4TZG
+ PD4pv600QfiHVpNHy13n4U/t3s7hs+rbItNB/2gnMpgVUrHW+GPRC8hEsWDW3x+rqN0jKOtz2f
+ 3zwotWw6rgawP9hIrG3y7d48I2vlEPjVKiZQzgWWtg43alSDh8LTGAgXywnNeL13GJsuw3ivNJ
+ 0N5XEvWMI8UFuddGSCqBKV8ZwhhDyT3+RC3hTxnFlA3HBmT2onh76QzcFsEU7crfp7kIl/E1Sz
+ oo4=
 X-IronPort-AV: E=Sophos;i="5.79,381,1602518400"; 
-   d="scan'208";a="159694047"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:15:48 +0800
-IronPort-SDR: qAU03RrSdOiwnJjFFrvvUjM72ZP2hpgiroryL03FcPC++SaJdvC1G7sBvSLTTocT4Dp5GtXvYN
- rSZAWUUD3qQA0AVRYNz0VCTqYAB5Dwjne34oC7XF65gdeKx9azUnSeSZRqyc2cOvrdg9+iyLt9
- QRxIlkUDki5MdLOPS11ob0V33gSuhsD3vcnFN/21chgPF38p1HwsH6Kglgjb0D16WCUthYpL/7
- cZJCU5jYvyEG0uk46CGNddwXNqPr37v8nU/TvbY+Oj1DwnI2WpGje0RcWVBZzUS/Lo5LUs4Qcd
- o7WyY60qBjCA7BvtTcu+4EoO
+   d="scan'208";a="162963489"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:15:56 +0800
+IronPort-SDR: hbecLVCywuig10fnW9UamuqOmBTZsuxtI69DAuuoMxBB3mr5/0rJYjVbndQJn5ysIx+R7dbGao
+ snxNqWqunZOCg5PpNUChl0tXPGrzySwkm/ophB/xIuEJM6EMgJ19P9a1/qNcDyiLMwMtuk7Ua+
+ v4kMBUdA5SVrIHuggLfTQwN+agVx2yOIUHrpe/b77oHjDPo26X7PR0Orm86E5d87YX0J5ASXDC
+ jvJp8Xvnya5PU2IvO9VfaS3mwL/XvLLi9rgneCqXsML0N/PIKL+1e1IvaqN1SQKvfhoDjO0QXb
+ NXN6v5PPtlRgTI6fE943lILI
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:58:06 -0800
-IronPort-SDR: QLHAdyBGhpMGQ+9sBMvXF0omk88B/E7BRqUoQLtstkadK8XTqcLBOvZ/pjpZSQe5Fab6+IJLIs
- ck58Xl2YqFxcQH934VbGmHAxVZYNpxUZEqIAo35K+cwpiHURts0rCHDJ2TNufJwwd/0szVEfZu
- V2kbFpOqLyVucrhtvqpRhrkBznCSCkx3a3rZqsYu2xJ2ZrJKihugfXyvxYjD/F6eNL2QYyPhq5
- GySOsYgZ6Jfrk4o/qsLABBe1b7+pVB/jDQ0aaMBZEhc+3I3KzSll4D3O/V1q5DDbYD+ht9Zxf5
- kSQ=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 23:00:15 -0800
+IronPort-SDR: MJghY7CI3VIGR5/IaW1FKfL3TP8YTcGZMlKgwb78Me3B/B/3apRuuzh9zoIBvsafPZo8P1zI7O
+ tvlMLEPWxNEsao+d+OWmeAfzkHQtyrR4CezWVDYJlrvLmf+2864qvNG9WiZqHSu38lUOwqOgWr
+ BwUEJ5wQyzZ3OCyeIORv7uUc6VzLa9ZZ6RiC/IlKAQuXNbiGRl7btRhvnWciISjEw6c6WHvSr7
+ U7MWRK7LEz7DNkLYA3LIdhi5N4PJW+ftjhgTNZ5eyVeVGIhgT6If8NwOmXnpUTI7IymY6dp08v
+ 5GE=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:15:48 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:15:56 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         dm-devel@redhat.com, linux-block@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc:     axboe@kernel.dk, philipp.reisner@linbit.com,
         alex.shi@linux.alibaba.com, asml.silence@gmail.com,
         ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
         bvanassche@acm.org, jefflexu@linux.alibaba.com
-Subject: [RFC PATCH 30/34] hfsplus: use bio_new in hfsplus_submit_bio()
-Date:   Wed, 27 Jan 2021 23:11:29 -0800
-Message-Id: <20210128071133.60335-31-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 31/34] iomap: use bio_new in iomap_readpage_actor
+Date:   Wed, 27 Jan 2021 23:11:30 -0800
+Message-Id: <20210128071133.60335-32-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
 In-Reply-To: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
 References: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
@@ -89,25 +89,45 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- fs/hfsplus/wrapper.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/iomap/buffered-io.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/fs/hfsplus/wrapper.c b/fs/hfsplus/wrapper.c
-index 0350dc7821bf..8341ee6c9b31 100644
---- a/fs/hfsplus/wrapper.c
-+++ b/fs/hfsplus/wrapper.c
-@@ -64,10 +64,7 @@ int hfsplus_submit_bio(struct super_block *sb, sector_t sector,
- 	offset = start & (io_size - 1);
- 	sector &= ~((io_size >> HFSPLUS_SECTOR_SHIFT) - 1);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 16a1e82e3aeb..08d119b62cf5 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -241,6 +241,9 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	struct page *page = ctx->cur_page;
+ 	struct iomap_page *iop = iomap_page_create(inode, page);
+ 	bool same_page = false, is_contig = false;
++	struct block_device *bdev = iomap->bdev;
++	unsigned opf = ctx->rac ? REQ_RAHEAD : 0;
++	unsigned op = REQ_OP_READ;
+ 	loff_t orig_pos = pos;
+ 	unsigned poff, plen;
+ 	sector_t sector;
+@@ -285,19 +288,14 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
  
--	bio = bio_alloc(GFP_NOIO, 1);
--	bio->bi_iter.bi_sector = sector;
--	bio_set_dev(bio, sb->s_bdev);
--	bio_set_op_attrs(bio, op, op_flags);
-+	bio = bio_new(sb->s_bdev, sector, op, op_flags, 1, GFP_NOIO);
+ 		if (ctx->rac) /* same as readahead_gfp_mask */
+ 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
+-		ctx->bio = bio_alloc(gfp, min(BIO_MAX_PAGES, nr_vecs));
++		ctx->bio = bio_new(bdev, sector, op, opf, gfp, nr_vecs);
+ 		/*
+ 		 * If the bio_alloc fails, try it again for a single page to
+ 		 * avoid having to deal with partial page reads.  This emulates
+ 		 * what do_mpage_readpage does.
+ 		 */
+ 		if (!ctx->bio)
+-			ctx->bio = bio_alloc(orig_gfp, 1);
+-		ctx->bio->bi_opf = REQ_OP_READ;
+-		if (ctx->rac)
+-			ctx->bio->bi_opf |= REQ_RAHEAD;
+-		ctx->bio->bi_iter.bi_sector = sector;
+-		bio_set_dev(ctx->bio, iomap->bdev);
++			ctx->bio = bio_new(bdev, sector, op, opf, orig_gfp, 1);
+ 		ctx->bio->bi_end_io = iomap_read_end_io;
+ 	}
  
- 	if (op != WRITE && data)
- 		*data = (u8 *)buf + offset;
 -- 
 2.22.1
 
