@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B516307C4E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 18:25:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7967307C5C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 18:28:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233044AbhA1RZD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 12:25:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53102 "EHLO mail.kernel.org"
+        id S233055AbhA1R1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 12:27:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233041AbhA1RWd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 12:22:33 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 14BA564E14;
-        Thu, 28 Jan 2021 17:21:52 +0000 (UTC)
+        id S232965AbhA1RYo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 12:24:44 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B21F464DF9;
+        Thu, 28 Jan 2021 17:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611854512;
-        bh=3wcbDXIsfKokQbmfUCYjGrgS3GF5z08Qdptdga5fUN4=;
+        s=k20201202; t=1611854642;
+        bh=Zs2s8ZvTIPYGR4BFwbfSOZLDbQpy7x8YdhBNvxD8Dok=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QWOP7EPqmN6b3MiW9yEAgNNtNjSRtrXyFEpjaAGYBZII1sVNYI1YtSMwAvt9fuQBa
-         67CiLo3o5RvfcoATyHS1j02NITEEA3iqExwlLXezGs5RMp4QWJbqX9Dn+nc6m+I4rS
-         ryQ81C45k5DR4mIk6Zm2DTepJlJx7ughkR/Vt0AUwH3+rYDSQLjDOWM7DJGp0ETUnl
-         xurghfp/gRCwfqedNMDMPHZbg7F0alqw1H/gKUa0SjDmFnvopggMP4TjgUC2t6LP2S
-         1ujXulQBT2zqjOQLupxjXSsgT0HMqyI+WyoITl6y/0OvHf8iHp4HzyLmR4yVI/FSxp
-         yznAeENjD3n6w==
-Date:   Thu, 28 Jan 2021 09:21:51 -0800
+        b=dYixlgG2K3aWwDLaJowzYgnOFmByUyz6PjYTAvhTfbvB+e9gPk0mBgRRvBez32mDu
+         g+/BEjUeO2s7tBkV+OtFiT2UlC3mn8gjSXsXC5Xpxm6KRmfDNpc8Z7+gIuibodKK4H
+         l1i2cwlyEJsSukyTcGjNrcpQfEjVAbCBE6DwgrePquTtnF0XcOLlk2eq3YbBOrXlcF
+         50KQtEwBjnE5+b+zJhPCQRu9YN8ISWqvJskcg8GQfdpqKteYo166Aso1a23IfJvuVj
+         VfAojNA36QPu6qz6sKkxuvacugxCY5JwWT3tNh6OxRrRzVwkEqP+vyF3JrdyJAT+Ys
+         o8BRepJ02vTLA==
+Date:   Thu, 28 Jan 2021 09:24:02 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -49,48 +49,50 @@ Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         alex.shi@linux.alibaba.com, asml.silence@gmail.com,
         ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
         bvanassche@acm.org, jefflexu@linux.alibaba.com
-Subject: Re: [RFC PATCH 27/34] xfs: use bio_new in xfs_buf_ioapply_map
-Message-ID: <20210128172151.GN7698@magnolia>
+Subject: Re: [RFC PATCH 18/34] iomap: use bio_new in iomap_dio_bio_actor
+Message-ID: <20210128172402.GO7698@magnolia>
 References: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
- <20210128071133.60335-28-chaitanya.kulkarni@wdc.com>
+ <20210128071133.60335-19-chaitanya.kulkarni@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210128071133.60335-28-chaitanya.kulkarni@wdc.com>
+In-Reply-To: <20210128071133.60335-19-chaitanya.kulkarni@wdc.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 11:11:26PM -0800, Chaitanya Kulkarni wrote:
+On Wed, Jan 27, 2021 at 11:11:17PM -0800, Chaitanya Kulkarni wrote:
 > Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+> ---
+>  fs/iomap/direct-io.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f6c557a1bd25..0737192f7e5c 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -267,9 +267,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  			goto out;
+>  		}
+>  
+> -		bio = bio_alloc(GFP_KERNEL, nr_pages);
+> -		bio_set_dev(bio, iomap->bdev);
+> -		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+> +		bio = bio_new(iomap->bdev, iomap_sector(iomap, pos), 0, 0,
+> +			      nr_pages, GFP_KERNEL);
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+op == 0?  It seems a little odd to me that we'd set the field to zero
+and then construct bi_opf later.
+
+It also strikes me as a little strange that bi_opf is combined from the
+third and fourth parameters, but maybe some day you'll want to do some
+parameter verification on debug kernels or something...?
 
 --D
 
-> ---
->  fs/xfs/xfs_buf.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index f8400bbd6473..3ff6235e4f94 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -1507,12 +1507,10 @@ xfs_buf_ioapply_map(
->  	atomic_inc(&bp->b_io_remaining);
->  	nr_pages = min(total_nr_pages, BIO_MAX_PAGES);
->  
-> -	bio = bio_alloc(GFP_NOIO, nr_pages);
-> -	bio_set_dev(bio, bp->b_target->bt_bdev);
-> -	bio->bi_iter.bi_sector = sector;
-> +	bio = bio_new(bp->b_target->bt_bdev, sector, op, 0, nr_pages,
-> +		      GFP_NOIO);
->  	bio->bi_end_io = xfs_buf_bio_end_io;
->  	bio->bi_private = bp;
-> -	bio->bi_opf = op;
->  
->  	for (; size && nr_pages; nr_pages--, page_index++) {
->  		int	rbytes, nbytes = PAGE_SIZE - offset;
+>  		bio->bi_write_hint = dio->iocb->ki_hint;
+>  		bio->bi_ioprio = dio->iocb->ki_ioprio;
+>  		bio->bi_private = dio;
 > -- 
 > 2.22.1
 > 
