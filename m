@@ -2,280 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A99730820D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 00:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4C2308218
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 00:49:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231292AbhA1Xnv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 18:43:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49152 "EHLO
+        id S231131AbhA1Xsv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 18:48:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231302AbhA1Xnm (ORCPT
+        with ESMTP id S229530AbhA1Xsu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 18:43:42 -0500
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F49C061756
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 15:42:59 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id f8so4795052ybc.18
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 15:42:59 -0800 (PST)
+        Thu, 28 Jan 2021 18:48:50 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA96DC061573;
+        Thu, 28 Jan 2021 15:48:09 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id gx5so10356156ejb.7;
+        Thu, 28 Jan 2021 15:48:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=2r6tvyDCTSBwqDaCUfRDjKrL2ZfCPZdNc0evgB4+htg=;
-        b=rAvb46fAKFTd7I92vqZO2ublYai5pwWwwxRivandkCZkYILkpfCBvI7ENANgj6nTmu
-         J7t38CkOmWwHI5g6OTyk19qHyRrbrXBG8g/t7lixZCyRiKHv8vJs9HUVtuOi97aGQQlD
-         DkKxeHv2ATFpqWthG+og7FRYFRJigs1JeLusZgYSPIgQxmM0rbzWzSNhfo7dO0ey0Oec
-         UL4OzpJ4582qkcXynSZKK+Bo/JGxKiWiSLmjpczpem5pkntNmK2m5udHBF8eJQPYsodi
-         9689xDFUROQ+kObekvzpgt3CT12por7HPyFja7cpJORsO0grIU00gMGyMcqQr0qztWwe
-         AEUw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MDptI0q5U2/k2B8+Dz8XvhuiC5p5Hg1baqnbya2iA58=;
+        b=KrMIGBIJjYTOYTJaUf/dWAxgCpZjVe7BL453jkSk8NzKOXuenPQHDs4bDK6hLyU9/c
+         W69nCP88c/yFbqyJgqMxBWQSvGfUaHFICxVld+pQ5G9A6YznDKqsdGGY/6lWM12KY9Kx
+         FXVtPOq1n7JQcZme766f5TXo3PDrylPiiu7USTDHW/0EPaAJjQPDXpU+oOOwcjo8G/jY
+         lmCbB5b7bF9ZSXqlVFz3+n/G4iEnIfXzIZpQF1B5MRYyhFeZ5NzBP17ffDnPAN7YV9vd
+         Vxjk/PGmJnwqhgnHBGBeVHcdGyJMyVkrQ8rJeQTKcrQepBsPLSugUN7BRnWvGgge+cPY
+         mS+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=2r6tvyDCTSBwqDaCUfRDjKrL2ZfCPZdNc0evgB4+htg=;
-        b=W12L8m9twn2hwg66Gz9bVuRfyCFM5/TMsbZ4b/9wNWt1qQt/OiUDiKPgXtN3CpTt8H
-         6Xzqhty7Px32D4nkIzpkW/Lm/NPav3lznvb9Ex3KbU08s98jSTr2Y9r1jXwvzuslLUCM
-         0/Pa6BoMagVcNiG4K0PpgM8K6BrvLtYpCjgkSWk6KwCqi7sXYuTOKrU0LoN+9r+dlrhF
-         JJtwBJgJLi/5sTHNkqXt3/GMXrHU8qkvciZUj7STxK0/LHEQMcsipuPQ7WeY+3DifiOb
-         tm3e8U81RPdGHP1XzJIdjfxUbktfpxptdB9Xhze2BVvIDlFASJ7S7VsOMPwTJNMwyH/c
-         ABHA==
-X-Gm-Message-State: AOAM53261p6BC8oOYhDIGkYXl8W+4nBOoasdowr5PgmcoXo6wOTWeRLj
-        NCqVCGbLGT93DuH4jv+wi6VgccioYSzi8q+nySnh
-X-Google-Smtp-Source: ABdhPJzZsBf3lwAiXH5GxtgZbfkPs6vA5IOh0gyBt0x/xNmGivnJbv8X8jFWBxi8uYD1w9d2fuoPRf/OJdmd88yR8eLI
-Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
-X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:f693:9fff:feef:c8f8])
- (user=axelrasmussen job=sendgmr) by 2002:a25:ab6a:: with SMTP id
- u97mr2221894ybi.471.1611877378172; Thu, 28 Jan 2021 15:42:58 -0800 (PST)
-Date:   Thu, 28 Jan 2021 15:42:42 -0800
-In-Reply-To: <20210128224819.2651899-2-axelrasmussen@google.com>
-Message-Id: <20210128234242.2677079-1-axelrasmussen@google.com>
-Mime-Version: 1.0
-References: <20210128224819.2651899-2-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.30.0.365.g02bc693789-goog
-Subject: [PATCH v4 1/9] hugetlb: Pass vma into huge_pte_alloc()
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MDptI0q5U2/k2B8+Dz8XvhuiC5p5Hg1baqnbya2iA58=;
+        b=a/IJ32W9iqSipLzfXA6fcvzm1o0hj/7H0CNgyShmKnyPk1d+04VkRir7MMrbimfnSj
+         hfK2LO4N9DTT2xVVAPamj83C+mh09sA1G8KMA2uusY3A88lRib+sOn0Ea9ujN4Un7ZKB
+         5DPCjjeKcwYNNmTzbbANTPwzHfN88ecwAuEpQOnj6OE0KIiDMVqpTFKgAZqzj7PQUGcI
+         kOpzSaguxpPTWSoJVDd5dTyB8B9dwDsyHHo9kCzmG7Lk88uxuoAjyoWoZbcRgEazyvat
+         vRUOwKEE/FBcxDTcyvzxkLorvzC+SBXV0ljK7JIFFOSahMIxbkn26o8Moh+/4BeZvtT4
+         MPnA==
+X-Gm-Message-State: AOAM532l7uF29pgstiUMXT+mT7RrnpbUHqiDNY+BOO+whGm3KDU7IN0V
+        zBz5a9Q2a4lyPEACa+27e80XWDsJ/FW8bS59zi0=
+X-Google-Smtp-Source: ABdhPJxHWY3YYf7E4ssc7BG59Xe9mPWshRcDa2IS/0fi1MiGaCNL8O2JDnmyd35cPnb+xMgZIQ9zwdiwKRWRghIOsoo=
+X-Received: by 2002:a17:906:f841:: with SMTP id ks1mr1855372ejb.507.1611877688626;
+ Thu, 28 Jan 2021 15:48:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20210127233345.339910-1-shy828301@gmail.com> <20210127233345.339910-7-shy828301@gmail.com>
+ <df26e4ae-ec84-227e-08e1-5849f7fb7be3@suse.cz>
+In-Reply-To: <df26e4ae-ec84-227e-08e1-5849f7fb7be3@suse.cz>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 28 Jan 2021 15:47:57 -0800
+Message-ID: <CAHbLzkr1ab9c6hMQgtF7Ys--9LsdDGAi0SqotHwpTzvv0wJ2TA@mail.gmail.com>
+Subject: Re: [v5 PATCH 06/11] mm: vmscan: use a new flag to indicate shrinker
+ is registered
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Steven Price <steven.price@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Adam Ruprecht <ruprecht@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Oliver Upton <oupton@google.com>
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Peter Xu <peterx@redhat.com>
+On Thu, Jan 28, 2021 at 9:56 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> On 1/28/21 12:33 AM, Yang Shi wrote:
+> > Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
+> > This approach is fine with nr_deferred at the shrinker level, but the following
+> > patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
+> > shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
+> > from unregistering correctly.
+> >
+> > Remove SHRINKER_REGISTERING since we could check if shrinker is registered
+> > successfully by the new flag.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  include/linux/shrinker.h |  7 ++++---
+> >  mm/vmscan.c              | 27 +++++++++------------------
+> >  2 files changed, 13 insertions(+), 21 deletions(-)
+> >
+> > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> > index 0f80123650e2..1eac79ce57d4 100644
+> > --- a/include/linux/shrinker.h
+> > +++ b/include/linux/shrinker.h
+> > @@ -79,13 +79,14 @@ struct shrinker {
+> >  #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
+> >
+> >  /* Flags */
+> > -#define SHRINKER_NUMA_AWARE  (1 << 0)
+> > -#define SHRINKER_MEMCG_AWARE (1 << 1)
+> > +#define SHRINKER_REGISTERED  (1 << 0)
+> > +#define SHRINKER_NUMA_AWARE  (1 << 1)
+> > +#define SHRINKER_MEMCG_AWARE (1 << 2)
+> >  /*
+> >   * It just makes sense when the shrinker is also MEMCG_AWARE for now,
+> >   * non-MEMCG_AWARE shrinker should not have this flag set.
+> >   */
+> > -#define SHRINKER_NONSLAB     (1 << 2)
+> > +#define SHRINKER_NONSLAB     (1 << 3)
+> >
+> >  extern int prealloc_shrinker(struct shrinker *shrinker);
+> >  extern void register_shrinker_prepared(struct shrinker *shrinker);
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 92e917033797..256896d157d4 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -308,19 +308,6 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
+> >       }
+> >  }
+> >
+> > -/*
+> > - * We allow subsystems to populate their shrinker-related
+> > - * LRU lists before register_shrinker_prepared() is called
+> > - * for the shrinker, since we don't want to impose
+> > - * restrictions on their internal registration order.
+> > - * In this case shrink_slab_memcg() may find corresponding
+> > - * bit is set in the shrinkers map.
+> > - *
+> > - * This value is used by the function to detect registering
+> > - * shrinkers and to skip do_shrink_slab() calls for them.
+> > - */
+> > -#define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
+> > -
+> >  static DEFINE_IDR(shrinker_idr);
+> >
+> >  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> > @@ -329,7 +316,7 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> >
+> >       down_write(&shrinker_rwsem);
+> >       /* This may call shrinker, so it must use down_read_trylock() */
+> > -     id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
+> > +     id = idr_alloc(&shrinker_idr, NULL, 0, 0, GFP_KERNEL);
+>
+> Is it still needed to register a NULL and then replace it with real pointer,
+> given the SHRINKER_REGISTERED flag?
 
-It is a preparation work to be able to behave differently in the per
-architecture huge_pte_alloc() according to different VMA attributes.
+Good question. Should not need this alloc-replace sequence anymore.
+The shrinker_slab_memcg() should see SHRINKER_REGISTERED set when the
+shrinker is really registered since the registration is protected by
+write shrinker_rwsem.
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
-[axelrasmussen@google.com: fixed typo in arch/mips/mm/hugetlbpage.c]
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- arch/arm64/mm/hugetlbpage.c   | 2 +-
- arch/ia64/mm/hugetlbpage.c    | 3 ++-
- arch/mips/mm/hugetlbpage.c    | 4 ++--
- arch/parisc/mm/hugetlbpage.c  | 2 +-
- arch/powerpc/mm/hugetlbpage.c | 3 ++-
- arch/s390/mm/hugetlbpage.c    | 2 +-
- arch/sh/mm/hugetlbpage.c      | 2 +-
- arch/sparc/mm/hugetlbpage.c   | 2 +-
- include/linux/hugetlb.h       | 2 +-
- mm/hugetlb.c                  | 6 +++---
- mm/userfaultfd.c              | 2 +-
- 11 files changed, 16 insertions(+), 14 deletions(-)
+Will fix this in v6.
 
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index 55ecf6de9ff7..5b32ec888698 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -252,7 +252,7 @@ void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr,
- 		set_pte(ptep, pte);
- }
-
--pte_t *huge_pte_alloc(struct mm_struct *mm,
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
- 		      unsigned long addr, unsigned long sz)
- {
- 	pgd_t *pgdp;
-diff --git a/arch/ia64/mm/hugetlbpage.c b/arch/ia64/mm/hugetlbpage.c
-index b331f94d20ac..f993cb36c062 100644
---- a/arch/ia64/mm/hugetlbpage.c
-+++ b/arch/ia64/mm/hugetlbpage.c
-@@ -25,7 +25,8 @@ unsigned int hpage_shift = HPAGE_SHIFT_DEFAULT;
- EXPORT_SYMBOL(hpage_shift);
-
- pte_t *
--huge_pte_alloc(struct mm_struct *mm, unsigned long addr, unsigned long sz)
-+huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
-+	       unsigned long addr, unsigned long sz)
- {
- 	unsigned long taddr = htlbpage_to_page(addr);
- 	pgd_t *pgd;
-diff --git a/arch/mips/mm/hugetlbpage.c b/arch/mips/mm/hugetlbpage.c
-index b9f76f433617..7eaff5b07873 100644
---- a/arch/mips/mm/hugetlbpage.c
-+++ b/arch/mips/mm/hugetlbpage.c
-@@ -21,8 +21,8 @@
- #include <asm/tlb.h>
- #include <asm/tlbflush.h>
-
--pte_t *huge_pte_alloc(struct mm_struct *mm, unsigned long addr,
--		      unsigned long sz)
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
-+		      unsigned long addr, unsigned long sz)
- {
- 	pgd_t *pgd;
- 	p4d_t *p4d;
-diff --git a/arch/parisc/mm/hugetlbpage.c b/arch/parisc/mm/hugetlbpage.c
-index d7ba014a7fbb..e141441bfa64 100644
---- a/arch/parisc/mm/hugetlbpage.c
-+++ b/arch/parisc/mm/hugetlbpage.c
-@@ -44,7 +44,7 @@ hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- }
-
-
--pte_t *huge_pte_alloc(struct mm_struct *mm,
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
- 			unsigned long addr, unsigned long sz)
- {
- 	pgd_t *pgd;
-diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
-index 8b3cc4d688e8..d57276b8791c 100644
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -106,7 +106,8 @@ static int __hugepte_alloc(struct mm_struct *mm, hugepd_t *hpdp,
-  * At this point we do the placement change only for BOOK3S 64. This would
-  * possibly work on other subarchs.
-  */
--pte_t *huge_pte_alloc(struct mm_struct *mm, unsigned long addr, unsigned long sz)
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
-+		      unsigned long addr, unsigned long sz)
- {
- 	pgd_t *pg;
- 	p4d_t *p4;
-diff --git a/arch/s390/mm/hugetlbpage.c b/arch/s390/mm/hugetlbpage.c
-index 3b5a4d25ca9b..da36d13ffc16 100644
---- a/arch/s390/mm/hugetlbpage.c
-+++ b/arch/s390/mm/hugetlbpage.c
-@@ -189,7 +189,7 @@ pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 	return pte;
- }
-
--pte_t *huge_pte_alloc(struct mm_struct *mm,
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
- 			unsigned long addr, unsigned long sz)
- {
- 	pgd_t *pgdp;
-diff --git a/arch/sh/mm/hugetlbpage.c b/arch/sh/mm/hugetlbpage.c
-index 220d7bc43d2b..999ab5916e69 100644
---- a/arch/sh/mm/hugetlbpage.c
-+++ b/arch/sh/mm/hugetlbpage.c
-@@ -21,7 +21,7 @@
- #include <asm/tlbflush.h>
- #include <asm/cacheflush.h>
-
--pte_t *huge_pte_alloc(struct mm_struct *mm,
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
- 			unsigned long addr, unsigned long sz)
- {
- 	pgd_t *pgd;
-diff --git a/arch/sparc/mm/hugetlbpage.c b/arch/sparc/mm/hugetlbpage.c
-index ad4b42f04988..04d8790f6c32 100644
---- a/arch/sparc/mm/hugetlbpage.c
-+++ b/arch/sparc/mm/hugetlbpage.c
-@@ -279,7 +279,7 @@ unsigned long pud_leaf_size(pud_t pud) { return 1UL << tte_to_shift(*(pte_t *)&p
- unsigned long pmd_leaf_size(pmd_t pmd) { return 1UL << tte_to_shift(*(pte_t *)&pmd); }
- unsigned long pte_leaf_size(pte_t pte) { return 1UL << tte_to_shift(pte); }
-
--pte_t *huge_pte_alloc(struct mm_struct *mm,
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
- 			unsigned long addr, unsigned long sz)
- {
- 	pgd_t *pgd;
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index ebca2ef02212..1e0abb609976 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -161,7 +161,7 @@ extern struct list_head huge_boot_pages;
-
- /* arch callbacks */
-
--pte_t *huge_pte_alloc(struct mm_struct *mm,
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
- 			unsigned long addr, unsigned long sz);
- pte_t *huge_pte_offset(struct mm_struct *mm,
- 		       unsigned long addr, unsigned long sz);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 18f6ee317900..07b23c81b1db 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3766,7 +3766,7 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
- 		src_pte = huge_pte_offset(src, addr, sz);
- 		if (!src_pte)
- 			continue;
--		dst_pte = huge_pte_alloc(dst, addr, sz);
-+		dst_pte = huge_pte_alloc(dst, vma, addr, sz);
- 		if (!dst_pte) {
- 			ret = -ENOMEM;
- 			break;
-@@ -4503,7 +4503,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 */
- 	mapping = vma->vm_file->f_mapping;
- 	i_mmap_lock_read(mapping);
--	ptep = huge_pte_alloc(mm, haddr, huge_page_size(h));
-+	ptep = huge_pte_alloc(mm, vma, haddr, huge_page_size(h));
- 	if (!ptep) {
- 		i_mmap_unlock_read(mapping);
- 		return VM_FAULT_OOM;
-@@ -5392,7 +5392,7 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
- #endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
-
- #ifdef CONFIG_ARCH_WANT_GENERAL_HUGETLB
--pte_t *huge_pte_alloc(struct mm_struct *mm,
-+pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
- 			unsigned long addr, unsigned long sz)
- {
- 	pgd_t *pgd;
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 7423808640ef..b2ce61c1b50d 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -290,7 +290,7 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
- 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
-
- 		err = -ENOMEM;
--		dst_pte = huge_pte_alloc(dst_mm, dst_addr, vma_hpagesize);
-+		dst_pte = huge_pte_alloc(dst_mm, dst_vma, dst_addr, vma_hpagesize);
- 		if (!dst_pte) {
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 			i_mmap_unlock_read(mapping);
---
-2.30.0.365.g02bc693789-goog
-
+>
+> >       if (id < 0)
+> >               goto unlock;
+> >
+> > @@ -496,6 +483,7 @@ void register_shrinker_prepared(struct shrinker *shrinker)
+> >       if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> >               idr_replace(&shrinker_idr, shrinker, shrinker->id);
+> >  #endif
+> > +     shrinker->flags |= SHRINKER_REGISTERED;
+> >       up_write(&shrinker_rwsem);
+> >  }
+> >
+> > @@ -515,13 +503,16 @@ EXPORT_SYMBOL(register_shrinker);
+> >   */
+> >  void unregister_shrinker(struct shrinker *shrinker)
+> >  {
+> > -     if (!shrinker->nr_deferred)
+> > +     if (!(shrinker->flags & SHRINKER_REGISTERED))
+> >               return;
+> > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> > -             unregister_memcg_shrinker(shrinker);
+> > +
+> >       down_write(&shrinker_rwsem);
+> >       list_del(&shrinker->list);
+> > +     shrinker->flags &= ~SHRINKER_REGISTERED;
+> >       up_write(&shrinker_rwsem);
+> > +
+> > +     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> > +             unregister_memcg_shrinker(shrinker);
+> >       kfree(shrinker->nr_deferred);
+> >       shrinker->nr_deferred = NULL;
+> >  }
+> > @@ -687,7 +678,7 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+> >               struct shrinker *shrinker;
+> >
+> >               shrinker = idr_find(&shrinker_idr, i);
+> > -             if (unlikely(!shrinker || shrinker == SHRINKER_REGISTERING)) {
+> > +             if (unlikely(!shrinker || !(shrinker->flags & SHRINKER_REGISTERED))) {
+> >                       if (!shrinker)
+> >                               clear_bit(i, info->map);
+> >                       continue;
+> >
+>
