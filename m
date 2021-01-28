@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0CA4306E6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8214F306E8B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231676AbhA1HOB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 02:14:01 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:56994 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231573AbhA1HNX (ORCPT
+        id S231623AbhA1HPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 02:15:09 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:51552 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231432AbhA1HOA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 02:13:23 -0500
+        Thu, 28 Jan 2021 02:14:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611818002; x=1643354002;
+  t=1611818173; x=1643354173;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=H5WYNiBvrNWIzR/dDsyAI0RzKPxZxlDuB4vWYUDlMrE=;
-  b=Iim5nwTGI7yhSjWqgCP9AnvImgBcpQAxBkfzAuq0ppTUFAIPudxpDELI
-   L08+VwxtTU7Jm9nC402MDzUtPP7EG6W+wY7om9GQdWFB7wf84s3GdChjh
-   pcTma2sUSG/2knixQKW38Ci5GuFAnPvgMaRKO+hMswAEQyUGOaYv1H1N5
-   ZQyHbygrBQbaIF568wGBw0jHqD19TAI5KPib8Sm8j0etT5ocqkWUvh65d
-   k1nuA2ohR4/a/0dkH2NbFgpn7QrlqrU1w1YAISwwMi8dzm95pRgzw+5Kn
-   xMHT8QCW3pHydAEfrZzF6yFPkjbBqwUbEgngzq3r2Y3iwpxUV2FFsSHpR
-   A==;
-IronPort-SDR: E9JrzyeQqe1pQFSde2SOQOK0XNlbDCUvLxewlnS1WtOFgxiUtsKegOXv/Mk3pz30DVu+yQBvUS
- UHCqVUPHXlFiYZ7LBFVTvMIvK/WtSuh7miKHhwAvehpGByCK5berzCtGLhphias34o15GcZKLA
- AcCe5g+pL3jvKhh+98SCfRtTbkF5cX2Uv99bemWfo6KnYMtuUNDWsydXC86vPvAj4OTavgFbN3
- u37jr4rHTPwu5kiEj0vLZXT/488OtAjjfKZ/lUCVylJM3JjZPYT6CDp3ZUJdxH/S1Zw+2zO0DG
- Xmg=
+  bh=ebUREFacDD1ljG2MqWB5dUmMjUM91D8UhGi2M79Y0SA=;
+  b=FdbFsRi8aPHIvnVYN0nor7Mx6o6KjTthZFg62zi8AryvpaZ3xe4tMk0F
+   LaPts8xr6x2oBPscqas7rEdlxLbpkpKTgVAqCnrq6UdsuYb7fzeSa2F8Z
+   eEEYLIWmHt1wiwx+EzA2i14YTCpLO2YYjXk5Fr5vtLOXkBc2cO2eawoQ/
+   4OlR6rYRiQ37X0fMVh6vjETUFyBPWJB15ixWjuCdEWDtbw25DzPCA6PSU
+   jLXWhjUZohsLqbP4XOxRLBTaaRQi4hR+FWJubBfOY1ry2n2l/nK1KdtQm
+   JtkJ5v9uGPjbo1NEE41wJWAX6a3TNQCnxJnoeO+2RiZ2HUkz0wTCyRY7e
+   Q==;
+IronPort-SDR: HzPerQaiztFUEasMSGBL7pufEwyW6IIqPAvQBON6N3S3qbv2A/1T6LTjYaiTF4Ys5SbmFbwQh7
+ YPboUWym3b+HtkZAcFyRMxwHIjXcO7RpDGDJAVRLx1zi5Z+hea9ap6MZHbNrBvN3ce/90zv1hm
+ mIxPdZZeQKw+DHdc0Im435VhTXy3E8CO66bwvyOJouUTqtibzAJ4057uiZNbkkpHGWJsx42QEA
+ /ACZSERNohlfRoHrjMf+9mSJqoiwlyDPkzzEvQLbMJnnhfI0QqL/5HXAUxEUTzIH6vdwczF1Nr
+ yds=
 X-IronPort-AV: E=Sophos;i="5.79,381,1602518400"; 
-   d="scan'208";a="162963137"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:12:16 +0800
-IronPort-SDR: 2pclH1G0KEXMBdYyJXwGIaiNxvPd8YeJd7/cw8NzdW/uA4XEF2scdf7sw8QvdtcnNzWWhRikAO
- rWD6sAP5mbN4ArPNu1kHS9i0WXu+Dt7wTDtCpGgIsdzUH63GucwPYvntzjU2Oz80TTe60grf3T
- OB+yjfwhmnzJaQo4ASI9jMkEXCQePbbFzD/wXC3yyPl4PlujZsT4Avyw2edMGHmqh2ROTGWZWZ
- Q4tOYIjAALAIwRmgGTAIbGFo0FE6LPaiNqvWkgFx5oE65sYn64X5y9P60fQsy3Xk2Q9aqObdv7
- x3ZbEeUVDgpOBVOT/ms9aKtB
+   d="scan'208";a="262548946"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:14:34 +0800
+IronPort-SDR: QDmlDniK+Qg2wmCIrPidpFhBCW4Gs2rBnZVvp0UJtmX7iw51NrOfmxDB3vABBV5Y///TftVWbw
+ C3vN34g0s+vhOOj9aMfsP0NCmUMxrAD3hvvdvhIxqmnY28R2IZVjEOstkF8aMK69VBp/PrmZeN
+ lB6462D1Snv0shDe59MOlVfNEX1cQuVxfcQtx1amHQ7IxaIjPZXOsWYWZysqq99Yx3mxiAim+f
+ NQsJGXf011KB06lmXp3si6yLr25GGmDlwo39F0ICU5r9LyIjhQ35O6E+JpFcUhSstH/8se00Sx
+ kKtuVS1qJi2PkmFdrn+EONtS
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:54:34 -0800
-IronPort-SDR: sJ1sB4+NIXrk86BqB2mBiNRkLb2CtaUtTUjLUptuVolKqncgiWgms0hBmEnyXBHOe2LGJgTWAc
- Mtkqx7/Ji/KEF3P2zVgoCc4AZmvUpaw07sB7pwwqNDwBZIjeJgdIawB6xDKz7hKZuinbJ6FPFN
- v+digmuqEID+qvvg+Pvdb6mLkPbYX8es6TqyRNtA6iTBnQbrstI0JA9CgrvLf0RhQ0DnF83KdI
- QwpSDAYi/vWthDgyxzldo4sKChZfQfmY/MjRYeTOvpJG4q5JRSujoZAO3KJfZIMHz0OJMVK9L1
- YPQ=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:55:11 -0800
+IronPort-SDR: PY5y9iQTPaVno0Uv+vDzXalBIBo52CYeNhdpn1c7TxoOle28qWYUG06GBXepBaS7SSBSs9yjco
+ 7juMCiLNAFC5Fl7+86T3v8dT5wViZ/r3nWsFgtnjfanPUZXEs47a6Ez/SVmFCas+uBcEU4K0rz
+ 829GMnmof7Vria8o+CPxuoND3CfaQPgb+QYuf0lvO7BAPoDvQAY10VoO7lep1Qta/l6nA5+vbg
+ ht+uppfjRckOmE5ekZUsc4vMGzhgqqwVxG/dC7eG99G+et4hw+q4h30FxFyz73HjopgItSw/2N
+ PHA=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:12:16 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:12:53 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         dm-devel@redhat.com, linux-block@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc:     axboe@kernel.dk, philipp.reisner@linbit.com,
         alex.shi@linux.alibaba.com, asml.silence@gmail.com,
         ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
         bvanassche@acm.org, jefflexu@linux.alibaba.com
-Subject: [RFC PATCH 04/34] drdb: use bio_new() in submit_one_flush
-Date:   Wed, 27 Jan 2021 23:11:03 -0800
-Message-Id: <20210128071133.60335-5-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 08/34] dm-zoned: use bio_new in get_mblock_slow
+Date:   Wed, 27 Jan 2021 23:11:07 -0800
+Message-Id: <20210128071133.60335-9-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
 In-Reply-To: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
 References: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
@@ -89,36 +89,35 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- drivers/block/drbd/drbd_receiver.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/md/dm-zoned-metadata.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index e1cd3427b28b..b86bbf725cbd 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -1277,8 +1277,10 @@ static void one_flush_endio(struct bio *bio)
+diff --git a/drivers/md/dm-zoned-metadata.c b/drivers/md/dm-zoned-metadata.c
+index 039d17b28938..e6252f48a49c 100644
+--- a/drivers/md/dm-zoned-metadata.c
++++ b/drivers/md/dm-zoned-metadata.c
+@@ -550,7 +550,8 @@ static struct dmz_mblock *dmz_get_mblock_slow(struct dmz_metadata *zmd,
+ 	if (!mblk)
+ 		return ERR_PTR(-ENOMEM);
  
- static void submit_one_flush(struct drbd_device *device, struct issue_flush_context *ctx)
- {
--	struct bio *bio = bio_alloc(GFP_NOIO, 0);
-+	struct block_device *bdev = device->ldev->backing_bdev;
-+	struct bio *bio = bio_new(bdev, 0, REQ_OP_FLUSH, REQ_PREFLUSH, 0, GFP_NOIO);
- 	struct one_flush_context *octx = kmalloc(sizeof(*octx), GFP_NOIO);
-+
- 	if (!bio || !octx) {
- 		drbd_warn(device, "Could not allocate a bio, CANNOT ISSUE FLUSH\n");
- 		/* FIXME: what else can I do now?  disconnecting or detaching
-@@ -1296,10 +1298,8 @@ static void submit_one_flush(struct drbd_device *device, struct issue_flush_cont
+-	bio = bio_alloc(GFP_NOIO, 1);
++	bio = bio_new(dev->bdev, dmz_blk2sect(block), REQ_OP_READ,
++		      REQ_META | REQ_PRIO, 1, GFP_NOIO);
+ 	if (!bio) {
+ 		dmz_free_mblock(zmd, mblk);
+ 		return ERR_PTR(-ENOMEM);
+@@ -577,11 +578,8 @@ static struct dmz_mblock *dmz_get_mblock_slow(struct dmz_metadata *zmd,
+ 	spin_unlock(&zmd->mblk_lock);
  
- 	octx->device = device;
- 	octx->ctx = ctx;
--	bio_set_dev(bio, device->ldev->backing_bdev);
- 	bio->bi_private = octx;
- 	bio->bi_end_io = one_flush_endio;
--	bio->bi_opf = REQ_OP_FLUSH | REQ_PREFLUSH;
+ 	/* Submit read BIO */
+-	bio->bi_iter.bi_sector = dmz_blk2sect(block);
+-	bio_set_dev(bio, dev->bdev);
+ 	bio->bi_private = mblk;
+ 	bio->bi_end_io = dmz_mblock_bio_end_io;
+-	bio_set_op_attrs(bio, REQ_OP_READ, REQ_META | REQ_PRIO);
+ 	bio_add_page(bio, mblk->page, DMZ_BLOCK_SIZE, 0);
+ 	submit_bio(bio);
  
- 	device->flush_jif = jiffies;
- 	set_bit(FLUSH_PENDING, &device->flags);
 -- 
 2.22.1
 
