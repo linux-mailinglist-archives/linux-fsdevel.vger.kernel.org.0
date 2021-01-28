@@ -2,126 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD7330783C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 15:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C25BD307848
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 15:40:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231607AbhA1Ogl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 09:36:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44442 "EHLO
+        id S231649AbhA1Oiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 09:38:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231406AbhA1Ogk (ORCPT
+        with ESMTP id S231389AbhA1Oir (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 09:36:40 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CFC9C061574;
-        Thu, 28 Jan 2021 06:36:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eMiQNUP0n0G3ycNQCqSn5IKupnPYtgpP83gkRapKZ50=; b=PMiKegf7nFbAFT7A/yr6S9Of3X
-        l/Tk50wVtTWJIGj4Q0IZ4rjAIV73GsoECACwNWr7h+YhkNRSbvUDq4F/bJfnzHrhk3nb+qcnXNebO
-        VGNP8wNtHM3gxw1q7/fwbpEVTUAobA4QCthEcpZMN1r8WVhyw78OmaOiAgUzI3pBeo++t+hGOdeij
-        S29uWoYTnNSWbrAK6BFR+Jvln3HWZH4BQa6UgyrFErixYBrarbew1NlgBgMH3xSGDf266CO9Rt/xU
-        Vr0k35uDqf3Z80jANglxmxSlQIqrKLg3snXIYipVpU4d87PF54WogWf2ZA733U//kjiRJjjrLAiKo
-        96Cg1ipg==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l58Om-008ZaH-KK; Thu, 28 Jan 2021 14:35:54 +0000
-Date:   Thu, 28 Jan 2021 14:35:52 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, kernel@pengutronix.de,
-        Jan Kara <jack@suse.com>, Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH 1/2] quota: Add mountpath based quota support
-Message-ID: <20210128143552.GA2042235@infradead.org>
-References: <20210128141713.25223-1-s.hauer@pengutronix.de>
- <20210128141713.25223-2-s.hauer@pengutronix.de>
+        Thu, 28 Jan 2021 09:38:47 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 738EAC0613ED
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 06:38:06 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id o20so4121506pfu.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 06:38:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+K9aRikhzkU/M83eoE775gCY9CV/6b9E2oecU5axx5g=;
+        b=UMAxMG1FLhDbDsBf51QXNFGmn0mwp++nMNGqrEfynUCJ3cWwcCSGds0fZsfDoQcBak
+         fsOVcl9etsXuKbnwhMZaLdlg4Yk13sr4vdMkubJLJ4PNmbcG0h1JAhdI8+5M9cz7Xi8D
+         YLOnI+VT7aOwynM7CQhRpsjkkP3o2bSU0Go28TanqY25/coaBtUgo5t4X2jpI1g9Ce6w
+         vivCVWOe1k+QAwpqX5tkcfXer2T9txbbdWncaalBy+TrL+oaiWfsWhxbuw53sZyVNibV
+         w3YEc9V2PEX+gLzWSsQedWAzZDBW87S0K5flsI7JSdkqpG/9TMmwqoIlURSlPYxOmtYT
+         yuKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+K9aRikhzkU/M83eoE775gCY9CV/6b9E2oecU5axx5g=;
+        b=WeHlKs7YBJzZSSt79JVmhMkUALxm3j7XEOSIR+5rrGbu0vy7En3paqizrOSM6qfHGf
+         hyx0oWx6tFtKUdoXb9x2OnzsM/ncPDF9aWtYV5p2P43mdXn4PxCY4SFTteAm/xmWuM6k
+         Rw5Sm0/820ydsDR9BBFCddyRFKLhs82c/xEMiJbGGGsGC3NnVMuYDskW4+glFF6qApuq
+         NnDNesFyqh8TB+MM4wnHLYUCbWX1ckdFAEUcaY7vupZOXb7uzU/SFLcv+eBxL4wJt/xg
+         bJwYCvC2BCEf+6JBmWD6hchK9IeFcmufahI1o/5j3xD/0YLrbGdoyEk8E6Fg9kxQjSo+
+         RbPw==
+X-Gm-Message-State: AOAM531MPNCGkyd+VQ6P0CQYoyYz1PE76NqQgKjyX8w0+KOAznH5Pz6X
+        nrfA1Mx1zt3UIJDHPAfKoqfFEQ==
+X-Google-Smtp-Source: ABdhPJxoXLGAyp++HZF4CXIJUzkqE1H0ePUwPy8jBDvALyGIXU+gMp1KP4aQg31Mh8+DlsvT8IOp8w==
+X-Received: by 2002:a63:e109:: with SMTP id z9mr16757589pgh.5.1611844685941;
+        Thu, 28 Jan 2021 06:38:05 -0800 (PST)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id b62sm6249262pfg.58.2021.01.28.06.38.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Jan 2021 06:38:05 -0800 (PST)
+Subject: Re: [RFC PATCH 0/4] Asynchronous passthrough ioctl
+To:     Kanchan Joshi <joshiiitr@gmail.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Javier Gonzalez <javier.gonz@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Selvakumar S <selvakuma.s1@samsung.com>
+References: <CGME20210127150134epcas5p251fc1de3ff3581dd4c68b3fbe0b9dd91@epcas5p2.samsung.com>
+ <20210127150029.13766-1-joshi.k@samsung.com>
+ <489691ce-3b1e-30ce-9f72-d32389e33901@gmail.com>
+ <a287bd9e-3474-83a4-e5c2-98df17214dc7@gmail.com>
+ <CA+1E3rJHHFyjwv7Kp32E9H-cf5ksh0pOHSVdGoTpktQrB8SE6A@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2d37d0ca-5853-4bb6-1582-551b9044040c@kernel.dk>
+Date:   Thu, 28 Jan 2021 07:38:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210128141713.25223-2-s.hauer@pengutronix.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CA+1E3rJHHFyjwv7Kp32E9H-cf5ksh0pOHSVdGoTpktQrB8SE6A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +	uint cmds, type;
-> +	struct super_block *sb = NULL;
+On 1/28/21 5:04 AM, Kanchan Joshi wrote:
+> On Wed, Jan 27, 2021 at 9:32 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> On 27/01/2021 15:42, Pavel Begunkov wrote:
+>>> On 27/01/2021 15:00, Kanchan Joshi wrote:
+>>>> This RFC patchset adds asynchronous ioctl capability for NVMe devices.
+>>>> Purpose of RFC is to get the feedback and optimize the path.
+>>>>
+>>>> At the uppermost io-uring layer, a new opcode IORING_OP_IOCTL_PT is
+>>>> presented to user-space applications. Like regular-ioctl, it takes
+>>>> ioctl opcode and an optional argument (ioctl-specific input/output
+>>>> parameter). Unlike regular-ioctl, it is made to skip the block-layer
+>>>> and reach directly to the underlying driver (nvme in the case of this
+>>>> patchset). This path between io-uring and nvme is via a newly
+>>>> introduced block-device operation "async_ioctl". This operation
+>>>> expects io-uring to supply a callback function which can be used to
+>>>> report completion at later stage.
+>>>>
+>>>> For a regular ioctl, NVMe driver submits the command to the device and
+>>>> the submitter (task) is made to wait until completion arrives. For
+>>>> async-ioctl, completion is decoupled from submission. Submitter goes
+>>>> back to its business without waiting for nvme-completion. When
+>>>> nvme-completion arrives, it informs io-uring via the registered
+>>>> completion-handler. But some ioctls may require updating certain
+>>>> ioctl-specific fields which can be accessed only in context of the
+>>>> submitter task. For that reason, NVMe driver uses task-work infra for
+>>>> that ioctl-specific update. Since task-work is not exported, it cannot
+>>>> be referenced when nvme is compiled as a module. Therefore, one of the
+>>>> patch exports task-work API.
+>>>>
+>>>> Here goes example of usage (pseudo-code).
+>>>> Actual nvme-cli source, modified to issue all ioctls via this opcode
+>>>> is present at-
+>>>> https://github.com/joshkan/nvme-cli/commit/a008a733f24ab5593e7874cfbc69ee04e88068c5
+>>>
+>>> see https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops
+>>>
+>>> Looks like good time to bring that branch/discussion back
+>>
+>> a bit more context:
+>> https://github.com/axboe/liburing/issues/270
+> 
+> Thanks, it looked good. It seems key differences (compared to
+> uring-patch that I posted) are -
+> 1. using file-operation instead of block-dev operation.
 
-I don't think sb needs the NULL initialization.
+Right, it's meant to span wider than just block devices.
 
-> +	struct path path, *pathp = NULL;
-> +	struct path mountpath;
-> +	bool excl = false, thawed = false;
-> +	int ret;
-> +
-> +	cmds = cmd >> SUBCMDSHIFT;
-> +	type = cmd & SUBCMDMASK;
+> 2. repurpose the sqe memory for ioctl-cmd. If an application does
+> ioctl with <=40 bytes of cmd, it does not have to allocate ioctl-cmd.
+> That's nifty. We still need to support passing larger-cmd (e.g.
+> nvme-passthru ioctl takes 72 bytes) but that shouldn't get too
+> difficult I suppose.
 
-Personal pet peeve: it would be nice to just initialize cmds and
-type on their declaration line, or while we're at it declutter
-this a bit and remove the separate cmds variable:
+It's actually 48 bytes in the as-posted version, and I've bumped it to
+56 bytes in the latest branch. So not quite enough for everything,
+nothing ever will be, but should work for a lot of cases without
+requiring per-command allocations just for the actual command.
 
-	unsigned int type = cmd & SUBCMDMASK;
+> And for some ioctls, driver may still need to use task-work to update
+> the user-space pointers (embedded in uring/ioctl cmd) during
+> completion.
+> 
+> @Jens - will it be fine if I start looking at plumbing nvme-part of
+> this series on top of your work?
 
+Sure, go ahead. Just beware that things are still changing, so you might
+have to adapt it a few times. It's still early days, but I do think
+that's the way forward in providing controlled access to what is
+basically async ioctls.
 
-	cmd >>= SUBCMDSHIFT;
+-- 
+Jens Axboe
 
-> +	/*
-> +	 * Path for quotaon has to be resolved before grabbing superblock
-> +	 * because that gets s_umount sem which is also possibly needed by path
-> +	 * resolution (think about autofs) and thus deadlocks could arise.
-> +	 */
-> +	if (cmds == Q_QUOTAON) {
-> +		ret = user_path_at(AT_FDCWD, addr,
-> +				   LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &path);
-> +		if (ret)
-> +			pathp = ERR_PTR(ret);
-> +		else
-> +			pathp = &path;
-> +	}
-> +
-> +	ret = user_path_at(AT_FDCWD, mountpoint,
-> +			     LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &mountpath);
-> +	if (ret)
-> +		goto out;
-
-I don't think we need two path lookups here, we can path the same path
-to the command for quotaon.
-
-
-> +	if (quotactl_cmd_onoff(cmds)) {
-> +		excl = true;
-> +		thawed = true;
-> +	} else if (quotactl_cmd_write(cmds)) {
-> +		thawed = true;
-> +	}
-> +
-> +	if (thawed) {
-> +		ret = mnt_want_write(mountpath.mnt);
-> +		if (ret)
-> +			goto out1;
-> +	}
-> +
-> +	sb = mountpath.dentry->d_inode->i_sb;
-> +
-> +	if (excl)
-> +		down_write(&sb->s_umount);
-> +	else
-> +		down_read(&sb->s_umount);
-
-Given how cheap quotactl_cmd_onoff and quotactl_cmd_write are we
-could probably simplify this down do:
-
-	if (quotactl_cmd_write(cmd)) {
-		ret = mnt_want_write(path.mnt);
-		if (ret)
-			goto out1;
-	}
-	if (quotactl_cmd_onoff(cmd))
-		down_write(&sb->s_umount);
-	else
-		down_read(&sb->s_umount);
-
-and duplicate the checks after the do_quotactl call.
