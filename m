@@ -2,126 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4F83306CA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 06:14:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66506306D25
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 06:59:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229900AbhA1FN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 00:13:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36736 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229764AbhA1FNW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 00:13:22 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2E85C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 21:12:41 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id d2so5163344edz.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 21:12:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=w7bUuFkBOqiFGHoWpYP/8lza5MlN1CX7f/Y5G0iwmRU=;
-        b=j2hEU/KWkXGVVH+ch0cS5cyOHjtPOSbDfzGE8B81uihUhUuS3Js5J5C7O7MtepZY1D
-         w1n1WJJkcAZTYlbkRtHYfJR/eu4mzpi2Lkg1H3fFSnOBdt39Z9JGnUOg0/svpWfB8bYG
-         nAf5m93CN3CcIdGLFoETwqhQapm8zs+8NQmliIlOnyFbnvAtWYnhb+qtw2oHps3jtcHw
-         EvYRz7R5Jia+uihrVVv7R3JSQrlTm2zXkGMATauvZ3APpi506fMIgZXoCMarZl4WNSEF
-         dAZqCHHIHg1SVyEWrq4X3sKeXTMhLEX5i/ATaZWfr+IfuWRCGs5CemifQk4fKulxAqx0
-         cP5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=w7bUuFkBOqiFGHoWpYP/8lza5MlN1CX7f/Y5G0iwmRU=;
-        b=KGBVpK9RPIuFX8mX9gpMF9uwVazJov995wQ+T6sJAO7yhySViDjOjXUpCrlw8d2QlM
-         iArxtXLFPsshm4/LogOxc0KZqoA4gJhcmHQk4sZwLWEBODaZXpC+dcmjURHlE+sQy1dT
-         kF6LJt4QhXSwX+wOSWbfrrOTGgMIW60t8II3/lQqYzOpNIDu7AweM2tHj+fdRf/wXuw0
-         rF818wyxzNEYa0g2HuarMZlIVty7B6yafS6fTqSoGWLmP9fBsPnlrHW2sXkLOndPws5F
-         aUsAo/Q2TpNgdTVwSiTxrjIEsxQWLbk0118xPRFbJq/7lzjputyYC59CrdeFoGVjECvk
-         KhIw==
-X-Gm-Message-State: AOAM530ComtLnZm0Y3eGzsOf9adzYX4ORXoJhUIvs7QBHO+3u22ZUPLS
-        j1hvtjd5VbmX2j7uMZWYaxaZ9Semejk2xrk5vTcY
-X-Google-Smtp-Source: ABdhPJwr3+ZJm/6huSh5k/rIH9fxlwkVCiX9PiNhFux7J7cGSiziy85qtSbmXbkpsMhQD3vp1/3P++ZTLayN+RnwQSo=
-X-Received: by 2002:a05:6402:228a:: with SMTP id cw10mr11831605edb.195.1611810760599;
- Wed, 27 Jan 2021 21:12:40 -0800 (PST)
+        id S229774AbhA1F6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 00:58:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229709AbhA1F6L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 00:58:11 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8A87961492;
+        Thu, 28 Jan 2021 05:57:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611813450;
+        bh=tkmtX+dK1acIF/V8vLO4Zz9EhD8ThQEJ94dsj2/XvNs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Tr90wUH6j79pbhc4xcWnqvj3+95HpXolmXg3M9kao2ljsCTFGWldwU398cwpzHOgQ
+         4rsPkF898piXzONLgzjiR/EOiLUO/A2+p4p+8WrOkXMfbI2T08S0s1Sm/dK1UA3oXW
+         NZW+IF8P492CbWizuprbQ8EzzZ2Iv+uiqFTUHFmkP1MEgj6I/cQ0I/+SsHRBggv5Fx
+         TC06VolCb8/tvr7HVrSTelh8fXQdoPX1c3eQ79yO6dpdGtmkUeDbmTvEFF0XxhMzn8
+         l3cgyIbVg1L08EDRfHhYJrQ+XlcVC/PJLw/xZ68/OpV8QkggiKb14FRFo9yvRO4ZZB
+         uCahBq7Zj9iuw==
+Date:   Wed, 27 Jan 2021 21:57:26 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Luis Lozano <llozano@chromium.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] fs: generic_copy_file_checks: Do not adjust count based
+ on file size
+Message-ID: <20210128055726.GF7695@magnolia>
+References: <20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid>
+ <20210126233840.GG4626@dread.disaster.area>
+ <CANMq1KBcs+S02T=76V6YMwTprUx6ucTK8d+ZKG2VmekbXPBZnA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210119045920.447-1-xieyongji@bytedance.com> <20210119045920.447-2-xieyongji@bytedance.com>
- <e8a2cc15-80f5-01e0-75ec-ea6281fda0eb@redhat.com> <CACycT3sN0+dg-NubAK+N-DWf3UDXwWh=RyRX-qC9fwdg3QaLWA@mail.gmail.com>
- <6a5f0186-c2e3-4603-9826-50d5c68a3fda@redhat.com> <CACycT3sqDgccOfNcY_FNcHDqJ2DeMbigdFuHYm9DxWWMjkL7CQ@mail.gmail.com>
- <b5c9f2d4-5b95-4552-3886-f5cbcb7de232@redhat.com> <4e482f00-163a-f957-4665-141502cf4dff@kernel.dk>
-In-Reply-To: <4e482f00-163a-f957-4665-141502cf4dff@kernel.dk>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 28 Jan 2021 13:12:29 +0800
-Message-ID: <CACycT3sdPHCCv9_SpK2xWAsSxrfiRg0Xu0ifrdLusrZuwMOHig@mail.gmail.com>
-Subject: Re: Re: [RFC v3 01/11] eventfd: track eventfd_signal() recursion
- depth separately in different cases
-To:     Jens Axboe <axboe@kernel.dk>, Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANMq1KBcs+S02T=76V6YMwTprUx6ucTK8d+ZKG2VmekbXPBZnA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 28, 2021 at 11:08 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 1/27/21 8:04 PM, Jason Wang wrote:
+On Thu, Jan 28, 2021 at 08:46:04AM +0800, Nicolas Boichat wrote:
+> On Wed, Jan 27, 2021 at 7:38 AM Dave Chinner <david@fromorbit.com> wrote:
 > >
-> > On 2021/1/27 =E4=B8=8B=E5=8D=885:11, Yongji Xie wrote:
-> >> On Wed, Jan 27, 2021 at 11:38 AM Jason Wang <jasowang@redhat.com> wrot=
-e:
-> >>>
-> >>> On 2021/1/20 =E4=B8=8B=E5=8D=882:52, Yongji Xie wrote:
-> >>>> On Wed, Jan 20, 2021 at 12:24 PM Jason Wang <jasowang@redhat.com> wr=
-ote:
-> >>>>> On 2021/1/19 =E4=B8=8B=E5=8D=8812:59, Xie Yongji wrote:
-> >>>>>> Now we have a global percpu counter to limit the recursion depth
-> >>>>>> of eventfd_signal(). This can avoid deadlock or stack overflow.
-> >>>>>> But in stack overflow case, it should be OK to increase the
-> >>>>>> recursion depth if needed. So we add a percpu counter in eventfd_c=
-tx
-> >>>>>> to limit the recursion depth for deadlock case. Then it could be
-> >>>>>> fine to increase the global percpu counter later.
-> >>>>> I wonder whether or not it's worth to introduce percpu for each eve=
-ntfd.
-> >>>>>
-> >>>>> How about simply check if eventfd_signal_count() is greater than 2?
-> >>>>>
-> >>>> It can't avoid deadlock in this way.
-> >>>
-> >>> I may miss something but the count is to avoid recursive eventfd call=
-.
-> >>> So for VDUSE what we suffers is e.g the interrupt injection path:
-> >>>
-> >>> userspace write IRQFD -> vq->cb() -> another IRQFD.
-> >>>
-> >>> It looks like increasing EVENTFD_WAKEUP_DEPTH should be sufficient?
-> >>>
-> >> Actually I mean the deadlock described in commit f0b493e ("io_uring:
-> >> prevent potential eventfd recursion on poll"). It can break this bug
-> >> fix if we just increase EVENTFD_WAKEUP_DEPTH.
+> > On Tue, Jan 26, 2021 at 01:50:22PM +0800, Nicolas Boichat wrote:
+> > > copy_file_range (which calls generic_copy_file_checks) uses the
+> > > inode file size to adjust the copy count parameter. This breaks
+> > > with special filesystems like procfs/sysfs, where the file size
+> > > appears to be zero, but content is actually returned when a read
+> > > operation is performed.
+> > >
+> > > This commit ignores the source file size, and makes copy_file_range
+> > > match the end of file behaviour documented in POSIX's "read",
+> > > where 0 is returned to mark EOF. This would allow "cp" and other
+> > > standard tools to make use of copy_file_range with the exact same
+> > > behaviour as they had in the past.
+> > >
+> > > Fixes: 96e6e8f4a68d ("vfs: add missing checks to copy_file_range")
+> > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 > >
+> > Nack.
+> 
+> Thanks Dave and Al for the detailed explanations.
+> 
 > >
-> > Ok, so can wait do something similar in that commit? (using async stuff=
-s
-> > like wq).
->
-> io_uring should be fine in current kernels, but aio would still be
-> affected by this. But just in terms of recursion, bumping it one more
-> should probably still be fine.
->
+> > As I've explained, this is intentional and bypassing it is not a
+> > work around for enabling cfr on filesystems that produce ephemeral,
+> > volatile read-once data using seq-file pipes that masquerade as
+> > regular files with zero size. These files are behaving like pipes
+> > and only work because the VFS has to support read() and friends from
+> > pipes that don't publish the amount of data they contain to the VFS
+> > inode.
+> >
+> > copy_file_range() does not support such behaviour.
+> >
+> > copy_file_range() -writes- data, so we have to check that those
+> > writes do not extend past boundaries that the destination inode
+> > imposes on the operation. e.g. maximum offset limits, whether the
+> > ranges overlap in the same file, etc.
+> >
+> > Hence we need to know how much data there is present to copy before
+> > we can check if it is safe to perform the -write- of the data we are
+> > going to read. Hence we cannot safely support data sources that
+> > cannot tell us how much data is present before we start the copy
+> > operation.
+> >
+> > IOWs, these source file EOF restrictions are required by the write
+> > side of copy_file_range(), not the read side.
+> >
+> > > ---
+> > > This can be reproduced with this simple test case:
+> > >  #define _GNU_SOURCE
+> > >  #include <fcntl.h>
+> > >  #include <stdio.h>
+> > >  #include <stdlib.h>
+> > >  #include <sys/stat.h>
+> > >  #include <unistd.h>
+> > >
+> > >  int
+> > >  main(int argc, char **argv)
+> > >  {
+> > >    int fd_in, fd_out;
+> > >    loff_t ret;
+> > >
+> > >    fd_in = open("/proc/version", O_RDONLY);
+> > >    fd_out = open("version", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+> > >
+> > >    do {
+> > >      ret = copy_file_range(fd_in, NULL, fd_out, NULL, 1024, 0);
+> > >      printf("%d bytes copied\n", (int)ret);
+> > >    } while (ret > 0);
+> > >
+> > >    return 0;
+> > >  }
+> > >
+> > > Without this patch, `version` output file is empty, and no bytes
+> > > are copied:
+> > > 0 bytes copied
+> >
+> > $ ls -l /proc/version
+> > -r--r--r-- 1 root root 0 Jan 20 17:25 /proc/version
+> > $
+> >
+> > It's a zero length file.
+> >
+> > sysfs does this just fine - it's regular files have a size of
+> > at least PAGE_SIZE rather than zero, and so copy_file_range works
+> > just fine on them:
+> >
+> > $ ls -l /sys/block/nvme0n1/capability
+> > -r--r--r-- 1 root root 4096 Jan 27 08:41 /sys/block/nvme0n1/capability
+> > $ cat /sys/block/nvme0n1/capability
+> > 50
+> > $ xfs_io -f -c "copy_range -s 0 -d 0 -l 4096 /sys/block/nvme0n1/capability" /tmp/foo
+> > $ sudo cat /tmp/foo
+> > 50
+> >
+> > And the behaviour is exactly as you'd expect a read() loop to copy
+> > the file to behave:
+> >
+> > openat(AT_FDCWD, "/tmp/foo", O_RDWR|O_CREAT, 0600) = 3
+> > ....
+> > openat(AT_FDCWD, "/sys/block/nvme0n1/capability", O_RDONLY) = 4
+> > copy_file_range(4, [0], 3, [0], 4096, 0) = 3
+> > copy_file_range(4, [3], 3, [3], 4093, 0) = 0
+> > close(4)
+> >
+> > See? Inode size of 4096 means there's a maximum of 4kB of data that
+> > can be read from this file.  copy_file_range() now behaves exactly
+> > as read() would, returning a short copy and then 0 bytes to indicate
+> > EOF.
+> 
+> Unless the content happens to be larger than PAGE_SIZE, then
+> copy_file_range would only copy the beginning of the file. And as Al
+> explained, this will still break in case of short writes.
+> 
+> >
+> > If you want ephemeral data pipes masquerading as regular files to
+> > work with copy_file_range, then the filesystem implementation needs
+> > to provide the VFS with a data size that indicates the maximum
+> > amount of data that the pipe can produce in a continuous read loop.
+> > Otherwise we cannot validate the range of the write we may be asked
+> > to perform...
+> >
+> > > Under the hood, Go 1.15 uses `copy_file_range` syscall to optimize the
+> > > copy operation. However, that fails to copy any content when the input
+> > > file is from sysfs/tracefs, with an apparent size of 0 (but there is
+> > > still content when you `cat` it, of course).
+> >
+> > Libraries using copy_file_range() must be prepared for it to fail
+> > and fall back to normal copy mechanisms.
+> 
+> How is userspace suppose to detect that? (checking for 0 file size
+> won't work with the example above)
+> 
+> > Of course, with these
+> > special zero length files that contain ephemeral data, userspace can't
+> > actually tell that they contain data from userspace using stat(). So
+> > as far as userspace is concerned, copy_file_range() correctly
+> > returned zero bytes copied from a zero byte long file and there's
+> > nothing more to do.
+> >
+> > This zero length file behaviour is, fundamentally, a kernel
+> > filesystem implementation bug, not a copy_file_range() bug.
+> 
+> Okay, so, based on this and Al's reply, I see 2 things we can do:
+>  1. Go should probably not use copy_file_range in a common library
+> function, as I don't see any easy way to detect this scenario
+> currently (detect 0 size? sure, but that won't work with the example
+> you provide above). And the man page should document this behaviour
+> more explicitly to prevent further incorrect usage.
+>  2. Can procfs/sysfs/debugfs and friends explicitly prevent usage of
+> copy_file_range? (based on Al's reply, there seems to be no way to
+> implement it correctly as seeking in such files will not work in case
+> of short writes)
 
-OK, I see. It should be easy to avoid the A-A deadlock during coding.
+One /could/ make those three provide a phony CFR implementation that
+would return -EOPNOTSUPP, though like others have said, it's weird to
+have regular files that aren't quite regular.  Not sure where that
+leaves them, though...
 
-Thanks,
-Yongji
+--D
+
+> 
+> Thanks,
+> 
+> >
+> > Cheers,
+> >
+> > Dave.
+> > --
+> > Dave Chinner
+> > david@fromorbit.com
