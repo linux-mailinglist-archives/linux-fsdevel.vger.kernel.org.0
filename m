@@ -2,150 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14A16306B75
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 04:13:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D39CD306B89
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 04:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231177AbhA1DNo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 22:13:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:58966 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229728AbhA1DNe (ORCPT
+        id S231158AbhA1DWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 22:22:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229748AbhA1DWF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 22:13:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611803528;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DcrTmjoadIb7p2OxWm6C9AN0UzP4YCS8NJ0a7dpGJ98=;
-        b=iRxUA8xwPuntLKakKQke54oZ/v1F5Tfi520WXEcQ/cz0sjskvXro3pCa0F0sfUkJhNFe5q
-        tNONq6+XX+mRRviWs46xyFphDBODMxasUQ8qEUoTySRTtUTizWvPFV9hHyJKE7O29arTI1
-        bzTl4l+wsGPi+n2yt4CL5XIvi8cEIfQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-482-zc4-TNbrNLWVbKrUpxayDQ-1; Wed, 27 Jan 2021 22:12:04 -0500
-X-MC-Unique: zc4-TNbrNLWVbKrUpxayDQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 362EE1005586;
-        Thu, 28 Jan 2021 03:12:02 +0000 (UTC)
-Received: from [10.72.12.167] (ovpn-12-167.pek2.redhat.com [10.72.12.167])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 649365D9E3;
-        Thu, 28 Jan 2021 03:11:51 +0000 (UTC)
-Subject: Re: [RFC v3 03/11] vdpa: Remove the restriction that only supports
- virtio-net devices
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, parav@nvidia.com, bob.liu@oracle.com,
-        hch@infradead.org, rdunlap@infradead.org, willy@infradead.org,
-        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
-        corbet@lwn.net, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210119045920.447-1-xieyongji@bytedance.com>
- <20210119045920.447-4-xieyongji@bytedance.com>
- <310d7793-e4ff-fba3-f358-418cb64c7988@redhat.com>
- <20210120110832.oijcmywq7pf7psg3@steredhat>
- <1979cffc-240e-a9f9-b0ab-84a1f82ac81e@redhat.com>
- <20210127085728.j6x5yzrldp2wp55c@steredhat>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <3cb239f5-fdd5-8311-35a0-c0f50b552521@redhat.com>
-Date:   Thu, 28 Jan 2021 11:11:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 27 Jan 2021 22:22:05 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49ACC061573;
+        Wed, 27 Jan 2021 19:21:24 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id h192so4618708oib.1;
+        Wed, 27 Jan 2021 19:21:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7D7Kv+sjYJAWD/JXyGJ1S45dldYp/5GoVGVph94OBPk=;
+        b=RzCv6WlKg0nA0ksFmTRvveWqgbbyGPwRr3X6/uxvokMAWTlDMSlVlTzIOxEnM7L6QV
+         hBbZJGQSwbY8pWztHzLPOQcQ/0aA1MVU9zgNP0zYypwkfzhNoSkTyNsTpJyAGh6JlYIH
+         psZImE0VwacO8QrX9KCBBVlN5ejXnFppYZcSlEjcib/0EDtir2MdMMM9MfSGspSEcEIv
+         IEEHYVWAIucsXUeEMuW9h89U3nyMKcBYGQh+Slo81McoxJAgPKgWyDfU4lEOgfPl2ms3
+         Ft5s3+qEkDNOxw4j8VrrDiUJWkUQW6xgOa6wOjnwWLRIS6zkmVjGoaPhaP9Ip9M0sb6T
+         2aGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7D7Kv+sjYJAWD/JXyGJ1S45dldYp/5GoVGVph94OBPk=;
+        b=XyfID70wbN3/rIJ6pau/2fGnxKSlfgU18mbV0Kv+3SB1gQJxmjmEJbtp1IvDKPAiJf
+         y4G4GI4tTzX7w3t+nxqfjwSfJs92OcLR827DvuG238muCq/KFpy4iypEHaY2TF6/mqka
+         EOZ18QqYRNcKm2E7KLpVfCD3j3ILzX4gy606jjBLFwbGYahS1Z1D39+YNJ4JJp5TltvQ
+         GQ6upTos0DiRY1qG+94r3rm+MFjpiIozrVnObB4YrPVd0mhQZw54OGN9s3igtiIhNO7H
+         4MRPtkWfOUbk7YLB0RXVyK9imTJwZ5yCZaFp1EZKgtFSl+OwNR9+Oz891aXwU9c2ZNzT
+         arqw==
+X-Gm-Message-State: AOAM531IAQVpWPvWeojG46HcFiTlxYfDJ+I8+6ISMma+tNiz9pjpL4Ao
+        hNjewzTw1kOaFtMxcxBaVGuilbmTqp0KEUGvZuFPDEEcxbo=
+X-Google-Smtp-Source: ABdhPJx7TuyrvGnfkiFQ0BDnRyFprq7jtt3djhlO3E4V6QJan5FV176uIaPsIW/MTe/lLQDw6MpPKrmbTQZibX8ctX4=
+X-Received: by 2002:aca:d5c5:: with SMTP id m188mr5488249oig.114.1611804084325;
+ Wed, 27 Jan 2021 19:21:24 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210127085728.j6x5yzrldp2wp55c@steredhat>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <CAE1WUT7xJyx_gbxJu3r9DJGbqSkWZa-moieiDWC0bue2CxwAwg@mail.gmail.com>
+ <BYAPR04MB4965F2E2624369B34346CC5686BC9@BYAPR04MB4965.namprd04.prod.outlook.com>
+ <YBD72wlZC323yhqZ@mit.edu>
+In-Reply-To: <YBD72wlZC323yhqZ@mit.edu>
+From:   Amy Parker <enbyamy@gmail.com>
+Date:   Wed, 27 Jan 2021 19:21:13 -0800
+Message-ID: <CAE1WUT65q1RZjths-EoKtMLNKUX17A9vzfpUXcYtS5dxTf6AbA@mail.gmail.com>
+Subject: Re: Getting a new fs in the kernel
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 2021/1/27 下午4:57, Stefano Garzarella wrote:
-> On Wed, Jan 27, 2021 at 11:33:03AM +0800, Jason Wang wrote:
->>
->> On 2021/1/20 下午7:08, Stefano Garzarella wrote:
->>> On Wed, Jan 20, 2021 at 11:46:38AM +0800, Jason Wang wrote:
->>>>
->>>> On 2021/1/19 下午12:59, Xie Yongji wrote:
->>>>> With VDUSE, we should be able to support all kinds of virtio devices.
->>>>>
->>>>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
->>>>> ---
->>>>>  drivers/vhost/vdpa.c | 29 +++--------------------------
->>>>>  1 file changed, 3 insertions(+), 26 deletions(-)
->>>>>
->>>>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
->>>>> index 29ed4173f04e..448be7875b6d 100644
->>>>> --- a/drivers/vhost/vdpa.c
->>>>> +++ b/drivers/vhost/vdpa.c
->>>>> @@ -22,6 +22,7 @@
->>>>>  #include <linux/nospec.h>
->>>>>  #include <linux/vhost.h>
->>>>>  #include <linux/virtio_net.h>
->>>>> +#include <linux/virtio_blk.h>
->>>>>  #include "vhost.h"
->>>>> @@ -185,26 +186,6 @@ static long vhost_vdpa_set_status(struct 
->>>>> vhost_vdpa *v, u8 __user *statusp)
->>>>>      return 0;
->>>>>  }
->>>>> -static int vhost_vdpa_config_validate(struct vhost_vdpa *v,
->>>>> -                      struct vhost_vdpa_config *c)
->>>>> -{
->>>>> -    long size = 0;
->>>>> -
->>>>> -    switch (v->virtio_id) {
->>>>> -    case VIRTIO_ID_NET:
->>>>> -        size = sizeof(struct virtio_net_config);
->>>>> -        break;
->>>>> -    }
->>>>> -
->>>>> -    if (c->len == 0)
->>>>> -        return -EINVAL;
->>>>> -
->>>>> -    if (c->len > size - c->off)
->>>>> -        return -E2BIG;
->>>>> -
->>>>> -    return 0;
->>>>> -}
->>>>
->>>>
->>>> I think we should use a separate patch for this.
->>>
->>> For the vdpa-blk simulator I had the same issues and I'm adding a 
->>> .get_config_size() callback to vdpa devices.
->>>
->>> Do you think make sense or is better to remove this check in 
->>> vhost/vdpa, delegating the boundaries checks to 
->>> get_config/set_config callbacks.
->>
->>
->> A question here. How much value could we gain from get_config_size() 
->> consider we can let vDPA parent to validate the length in its 
->> get_config().
->>
+On Tue, Jan 26, 2021 at 9:36 PM Theodore Ts'o <tytso@mit.edu> wrote:
 >
-> I agree, most of the implementations already validate the length, the 
-> only gain is an error returned since get_config() is void, but 
-> eventually we can add a return value to it.
+> On Tue, Jan 26, 2021 at 07:06:55PM +0000, Chaitanya Kulkarni wrote:
+> > From what I've seen you can post the long patch-series as an RFC and get the
+> >
+> > discussion started.
+> >
+> > The priority should be ease of review and not the total patch-count.
+>
+> File systems are also complicated enough that it's useful to make the
+> patches available via a git repo, and it's highly recommended that you
+> are rebasing it against the latest kernel on a regular basis.
 
-
-Right, one problem here is that. For the virito path, its get_config() 
-returns void. So we can not propagate error to virtio drivers. But it 
-might not be a big issue since we trust kernel virtio driver.
-
-So I think it makes sense to change the return value in the vdpa config ops.
-
-Thanks
-
+Was already setting up some local git infrastructure for this.
 
 >
-> Thanks,
-> Stefano
->
+> I also strongly recommend that once you get something that mostly
+> works, that you start doing regression testing of the file system.
 
+"'Regression testing? What's that? If it compiles, it is good; if it
+boots up, it is perfect."
+
+In all seriousness, though, yeah, already been planning for stuff like that.
+
+> Most of the major file systems in Linux use xfstests for their
+> testing.
+
+Decently familiar with xfstests, used it for some previous change
+testing I had to do.
+
+> One of the things that I've done is to package up xfstests
+> as a test appliance, suitable for running under KVM or using Google
+> Compute Engine, as a VM, to make it super easy for people to run
+> regression tests.  (One of my original goals for packaging it up was
+> to make it easy for graduate students who were creating research file
+> systems to try running regression tests so they could find potential
+> problems --- and understand how hard it is to make a robust,
+> production-ready file system, by giving them a realtively well
+> documented, turn-key system for running file system regression tests.)
+>
+> For more information, see:
+>
+>     https://thunk.org/gce-xfstests
+>     https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
+>     https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-xfstests.md
+>     https://github.com/tytso/xfstests-bld/blob/master/Documentation/gce-xfstests.md
+
+Thank you so much for that!
+
+>
+> The final thing I'll point out is that file system development is a
+> team sport.  Industry estimates are that it takes between 50 and 200
+> person-years to create a production-ready, general purpose enterprise
+> file system.  For example, ZFS took seven years to develop, starting
+> with a core team of 4, and growing to over 14 developers by the time
+> it was announced.  And that didn't include all of the QA, release
+> engineering, testers, performance engineers, to get it integrated into
+> the Solaris product.  Even after it was announced, it was a good four
+> years before customers trusted it for production workloads.
+
+Wasn't expecting to do that completely solo, I get that it takes a
+significant amount of people time to build something as important as a
+production filesystem. Once I get some basic stuff lined out for it,
+if I decide to continue, already working on getting people to help
+assist with its development.
+
+>
+> If you look at the major file systems in Linux: ext4, xfs, btrfs,
+> f2fs, etc., you'll find that none of them are solo endeavors, and all
+> of them have multiple companies who are employing the developers who
+> work on them.  Figuring out how to convince companies that there are
+> good business reasons for them to support the developers of your file
+> system is important, since in order to keep things going for the long
+> haul, it really needs to be more than a single person's hobby.
+
+Yeah, got that.
+
+>
+> Good luck!
+>
+>                                         - Ted
+
+Thank you!
+
+Best regards,
+Amy Parker
+(she/her/hers)
