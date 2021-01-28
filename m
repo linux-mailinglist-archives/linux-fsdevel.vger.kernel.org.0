@@ -2,41 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A73FD306C46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 05:33:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4F83306CA5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 06:14:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231263AbhA1Ect (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 23:32:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31711 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229528AbhA1Ecs (ORCPT
+        id S229900AbhA1FN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 00:13:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36736 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229764AbhA1FNW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 23:32:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611808282;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9NCZe85xmzeU0w+bJ6oE1HvmZ9MVGIS2YzFczMlWDrw=;
-        b=KRf1TM7eJPGTaWYwN1xKjBo79cr11BJ4d2s79ciSKAd525G1bNj/6kw46sHJy2MlS7VolY
-        nwra0pQREHlNNUQF+yUmzq8K9EtD8guQHIxRq7fftV2T896sdhF81Y2fxOl3wmT7Dti43d
-        jsb2vNQXU6aF95fCopQvhXqXaNEZep8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-16-rl1Hd8ASP-Cc1ju6c1ceNg-1; Wed, 27 Jan 2021 23:31:20 -0500
-X-MC-Unique: rl1Hd8ASP-Cc1ju6c1ceNg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8D323801FCC;
-        Thu, 28 Jan 2021 04:31:18 +0000 (UTC)
-Received: from [10.72.12.167] (ovpn-12-167.pek2.redhat.com [10.72.12.167])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6A1685C1BB;
-        Thu, 28 Jan 2021 04:31:03 +0000 (UTC)
-Subject: Re: [RFC v3 01/11] eventfd: track eventfd_signal() recursion depth
- separately in different cases
-To:     Yongji Xie <xieyongji@bytedance.com>
+        Thu, 28 Jan 2021 00:13:22 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2E85C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 21:12:41 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id d2so5163344edz.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 21:12:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=w7bUuFkBOqiFGHoWpYP/8lza5MlN1CX7f/Y5G0iwmRU=;
+        b=j2hEU/KWkXGVVH+ch0cS5cyOHjtPOSbDfzGE8B81uihUhUuS3Js5J5C7O7MtepZY1D
+         w1n1WJJkcAZTYlbkRtHYfJR/eu4mzpi2Lkg1H3fFSnOBdt39Z9JGnUOg0/svpWfB8bYG
+         nAf5m93CN3CcIdGLFoETwqhQapm8zs+8NQmliIlOnyFbnvAtWYnhb+qtw2oHps3jtcHw
+         EvYRz7R5Jia+uihrVVv7R3JSQrlTm2zXkGMATauvZ3APpi506fMIgZXoCMarZl4WNSEF
+         dAZqCHHIHg1SVyEWrq4X3sKeXTMhLEX5i/ATaZWfr+IfuWRCGs5CemifQk4fKulxAqx0
+         cP5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=w7bUuFkBOqiFGHoWpYP/8lza5MlN1CX7f/Y5G0iwmRU=;
+        b=KGBVpK9RPIuFX8mX9gpMF9uwVazJov995wQ+T6sJAO7yhySViDjOjXUpCrlw8d2QlM
+         iArxtXLFPsshm4/LogOxc0KZqoA4gJhcmHQk4sZwLWEBODaZXpC+dcmjURHlE+sQy1dT
+         kF6LJt4QhXSwX+wOSWbfrrOTGgMIW60t8II3/lQqYzOpNIDu7AweM2tHj+fdRf/wXuw0
+         rF818wyxzNEYa0g2HuarMZlIVty7B6yafS6fTqSoGWLmP9fBsPnlrHW2sXkLOndPws5F
+         aUsAo/Q2TpNgdTVwSiTxrjIEsxQWLbk0118xPRFbJq/7lzjputyYC59CrdeFoGVjECvk
+         KhIw==
+X-Gm-Message-State: AOAM530ComtLnZm0Y3eGzsOf9adzYX4ORXoJhUIvs7QBHO+3u22ZUPLS
+        j1hvtjd5VbmX2j7uMZWYaxaZ9Semejk2xrk5vTcY
+X-Google-Smtp-Source: ABdhPJwr3+ZJm/6huSh5k/rIH9fxlwkVCiX9PiNhFux7J7cGSiziy85qtSbmXbkpsMhQD3vp1/3P++ZTLayN+RnwQSo=
+X-Received: by 2002:a05:6402:228a:: with SMTP id cw10mr11831605edb.195.1611810760599;
+ Wed, 27 Jan 2021 21:12:40 -0800 (PST)
+MIME-Version: 1.0
+References: <20210119045920.447-1-xieyongji@bytedance.com> <20210119045920.447-2-xieyongji@bytedance.com>
+ <e8a2cc15-80f5-01e0-75ec-ea6281fda0eb@redhat.com> <CACycT3sN0+dg-NubAK+N-DWf3UDXwWh=RyRX-qC9fwdg3QaLWA@mail.gmail.com>
+ <6a5f0186-c2e3-4603-9826-50d5c68a3fda@redhat.com> <CACycT3sqDgccOfNcY_FNcHDqJ2DeMbigdFuHYm9DxWWMjkL7CQ@mail.gmail.com>
+ <b5c9f2d4-5b95-4552-3886-f5cbcb7de232@redhat.com> <4e482f00-163a-f957-4665-141502cf4dff@kernel.dk>
+In-Reply-To: <4e482f00-163a-f957-4665-141502cf4dff@kernel.dk>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Thu, 28 Jan 2021 13:12:29 +0800
+Message-ID: <CACycT3sdPHCCv9_SpK2xWAsSxrfiRg0Xu0ifrdLusrZuwMOHig@mail.gmail.com>
+Subject: Re: Re: [RFC v3 01/11] eventfd: track eventfd_signal() recursion
+ depth separately in different cases
+To:     Jens Axboe <axboe@kernel.dk>, Jason Wang <jasowang@redhat.com>
 Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         Stefano Garzarella <sgarzare@redhat.com>,
@@ -44,82 +63,65 @@ Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
         Randy Dunlap <rdunlap@infradead.org>,
         Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, bcrl@kvack.org, Jonathan Corbet <corbet@lwn.net>,
+        bcrl@kvack.org, Jonathan Corbet <corbet@lwn.net>,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org
-References: <20210119045920.447-1-xieyongji@bytedance.com>
- <20210119045920.447-2-xieyongji@bytedance.com>
- <e8a2cc15-80f5-01e0-75ec-ea6281fda0eb@redhat.com>
- <CACycT3sN0+dg-NubAK+N-DWf3UDXwWh=RyRX-qC9fwdg3QaLWA@mail.gmail.com>
- <6a5f0186-c2e3-4603-9826-50d5c68a3fda@redhat.com>
- <CACycT3sqDgccOfNcY_FNcHDqJ2DeMbigdFuHYm9DxWWMjkL7CQ@mail.gmail.com>
- <b5c9f2d4-5b95-4552-3886-f5cbcb7de232@redhat.com>
- <CACycT3u6Ayf_X8Mv4EvF+B=B4OzFSK8ygvJMRnO6CDgYF13Qnw@mail.gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <9226c594-e045-544d-4e46-c4c3c9c573a9@redhat.com>
-Date:   Thu, 28 Jan 2021 12:31:01 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CACycT3u6Ayf_X8Mv4EvF+B=B4OzFSK8ygvJMRnO6CDgYF13Qnw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 2021/1/28 上午11:52, Yongji Xie wrote:
-> On Thu, Jan 28, 2021 at 11:05 AM Jason Wang <jasowang@redhat.com> wrote:
->>
->> On 2021/1/27 下午5:11, Yongji Xie wrote:
->>> On Wed, Jan 27, 2021 at 11:38 AM Jason Wang <jasowang@redhat.com> wrote:
->>>> On 2021/1/20 下午2:52, Yongji Xie wrote:
->>>>> On Wed, Jan 20, 2021 at 12:24 PM Jason Wang <jasowang@redhat.com> wrote:
->>>>>> On 2021/1/19 下午12:59, Xie Yongji wrote:
->>>>>>> Now we have a global percpu counter to limit the recursion depth
->>>>>>> of eventfd_signal(). This can avoid deadlock or stack overflow.
->>>>>>> But in stack overflow case, it should be OK to increase the
->>>>>>> recursion depth if needed. So we add a percpu counter in eventfd_ctx
->>>>>>> to limit the recursion depth for deadlock case. Then it could be
->>>>>>> fine to increase the global percpu counter later.
->>>>>> I wonder whether or not it's worth to introduce percpu for each eventfd.
->>>>>>
->>>>>> How about simply check if eventfd_signal_count() is greater than 2?
->>>>>>
->>>>> It can't avoid deadlock in this way.
->>>> I may miss something but the count is to avoid recursive eventfd call.
->>>> So for VDUSE what we suffers is e.g the interrupt injection path:
->>>>
->>>> userspace write IRQFD -> vq->cb() -> another IRQFD.
->>>>
->>>> It looks like increasing EVENTFD_WAKEUP_DEPTH should be sufficient?
->>>>
->>> Actually I mean the deadlock described in commit f0b493e ("io_uring:
->>> prevent potential eventfd recursion on poll"). It can break this bug
->>> fix if we just increase EVENTFD_WAKEUP_DEPTH.
->>
->> Ok, so can wait do something similar in that commit? (using async stuffs
->> like wq).
->>
-> We can do that. But it will reduce the performance. Because the
-> eventfd recursion will be triggered every time kvm kick eventfd in
-> vhost-vdpa cases:
+On Thu, Jan 28, 2021 at 11:08 AM Jens Axboe <axboe@kernel.dk> wrote:
 >
-> KVM write KICKFD -> ops->kick_vq -> VDUSE write KICKFD
+> On 1/27/21 8:04 PM, Jason Wang wrote:
+> >
+> > On 2021/1/27 =E4=B8=8B=E5=8D=885:11, Yongji Xie wrote:
+> >> On Wed, Jan 27, 2021 at 11:38 AM Jason Wang <jasowang@redhat.com> wrot=
+e:
+> >>>
+> >>> On 2021/1/20 =E4=B8=8B=E5=8D=882:52, Yongji Xie wrote:
+> >>>> On Wed, Jan 20, 2021 at 12:24 PM Jason Wang <jasowang@redhat.com> wr=
+ote:
+> >>>>> On 2021/1/19 =E4=B8=8B=E5=8D=8812:59, Xie Yongji wrote:
+> >>>>>> Now we have a global percpu counter to limit the recursion depth
+> >>>>>> of eventfd_signal(). This can avoid deadlock or stack overflow.
+> >>>>>> But in stack overflow case, it should be OK to increase the
+> >>>>>> recursion depth if needed. So we add a percpu counter in eventfd_c=
+tx
+> >>>>>> to limit the recursion depth for deadlock case. Then it could be
+> >>>>>> fine to increase the global percpu counter later.
+> >>>>> I wonder whether or not it's worth to introduce percpu for each eve=
+ntfd.
+> >>>>>
+> >>>>> How about simply check if eventfd_signal_count() is greater than 2?
+> >>>>>
+> >>>> It can't avoid deadlock in this way.
+> >>>
+> >>> I may miss something but the count is to avoid recursive eventfd call=
+.
+> >>> So for VDUSE what we suffers is e.g the interrupt injection path:
+> >>>
+> >>> userspace write IRQFD -> vq->cb() -> another IRQFD.
+> >>>
+> >>> It looks like increasing EVENTFD_WAKEUP_DEPTH should be sufficient?
+> >>>
+> >> Actually I mean the deadlock described in commit f0b493e ("io_uring:
+> >> prevent potential eventfd recursion on poll"). It can break this bug
+> >> fix if we just increase EVENTFD_WAKEUP_DEPTH.
+> >
+> >
+> > Ok, so can wait do something similar in that commit? (using async stuff=
+s
+> > like wq).
 >
-> Thanks,
-> Yongji
+> io_uring should be fine in current kernels, but aio would still be
+> affected by this. But just in terms of recursion, bumping it one more
+> should probably still be fine.
+>
 
+OK, I see. It should be easy to avoid the A-A deadlock during coding.
 
-Right, I think in the future we need to find a way to let KVM to wakeup 
-VDUSE directly.
-
-Havn't had a deep thought but it might work like irq bypass manager.
-
-Thanks
-
-
+Thanks,
+Yongji
