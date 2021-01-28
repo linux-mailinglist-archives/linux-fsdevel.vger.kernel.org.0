@@ -2,156 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8AD530819B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 23:59:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF3B3081AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 00:08:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231410AbhA1W6D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 17:58:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37572 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231203AbhA1W5S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 17:57:18 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 357B3AE56;
-        Thu, 28 Jan 2021 22:56:26 +0000 (UTC)
-From:   NeilBrown <neilb@suse.de>
-To:     Xin Long <lucien.xin@gmail.com>, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Date:   Fri, 29 Jan 2021 09:56:17 +1100
-Cc:     NeilBrown <neilb@suse.com>
-Subject: Re: [PATCH] seq_read: move count check against iov_iter_count after
- calling op show
-In-Reply-To: <91568e002fed69425485c17de223bef0ff660f3a.1611313420.git.lucien.xin@gmail.com>
-References: <91568e002fed69425485c17de223bef0ff660f3a.1611313420.git.lucien.xin@gmail.com>
-Message-ID: <87r1m4fz72.fsf@notabene.neil.brown.name>
+        id S231351AbhA1XH5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 18:07:57 -0500
+Received: from hmm.wantstofly.org ([213.239.204.108]:50856 "EHLO
+        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229757AbhA1XHz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 18:07:55 -0500
+Received: by mail.wantstofly.org (Postfix, from userid 1000)
+        id EB62C7F45D; Fri, 29 Jan 2021 01:07:10 +0200 (EET)
+Date:   Fri, 29 Jan 2021 01:07:10 +0200
+From:   Lennert Buytenhek <buytenh@wantstofly.org>
+To:     David Laight <David.Laight@aculab.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
+Message-ID: <20210128230710.GA190469@wantstofly.org>
+References: <20210123114152.GA120281@wantstofly.org>
+ <a99467bab6d64a7f9057181d979ec563@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a99467bab6d64a7f9057181d979ec563@AcuMS.aculab.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Sun, Jan 24, 2021 at 10:21:38PM +0000, David Laight wrote:
 
-On Fri, Jan 22 2021, Xin Long wrote:
+> > One open question is whether IORING_OP_GETDENTS64 should be more like
+> > pread(2) and allow passing in a starting offset to read from the
+> > directory from.  (This would require some more surgery in fs/readdir.c.)
+> 
+> Since directories are seekable this ought to work.
+> Modulo horrid issues with 32bit file offsets.
 
-> In commit 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code
-> and interface"), it broke a behavior: op show() is always called when op
-> next() returns an available obj.
+The incremental patch below does this.  (It doesn't apply cleanly on
+top of v1 of the IORING_OP_GETDENTS patch as I have other changes in
+my tree -- I'm including it just to illustrate the changes that would
+make this work.)
 
-Interesting.  I was not aware that some callers assumed this guarantee.
-If we are going to support it (which seems reasonable) we should add a
-statement of this guarantee to the documentation -
-Documentation/filesystems/seq_file.rst.
-Maybe a new paragraph after "Finally, the show() function ..."
-
-   Note that show() will *always* be called after a successful start()
-   or next() call, so that it can release any resources (such as
-   ref-counts) that was acquired by those calls.
+This change seems to work, and makes IORING_OP_GETDENTS take an
+explicitly specified directory offset (instead of using the file's
+->f_pos), making it more like pread(2), and I like the change from
+a conceptual point of view, but it's a bit ugly around
+iterate_dir_use_ctx_pos().  Any thoughts on how to do this more
+cleanly (without breaking iterate_dir() semantics)?
 
 
->
-> This caused a refcnt leak in net/sctp/proc.c, as of the seq_operations
-> sctp_assoc_ops, transport obj is held in op next() and released in op
-> show().
->
-> Here fix it by moving count check against iov_iter_count after calling
-> op show() so that op show() can still be called when op next() returns
-> an available obj.
->
-> Note that m->index needs to increase so that op start() could go fetch
-> the next obj in the next round.
+> You'd need to return the final offset to allow another
+> read to continue from the end position.
 
-This is certainly wrong.
-As the introduction in my patch said:
+We can use the ->d_off value as returned in the last struct
+linux_dirent64 as the directory offset to continue reading from
+with the next IORING_OP_GETDENTS call, illustrated by the patch
+to uringfind.c at the bottom.
 
-    A large part of achieving this is to *always* call ->next after ->show
-    has successfully stored all of an entry in the buffer.  Never just
-    increment the index instead.
 
-Incrementing ->index in common seq_file code is wrong.
 
-As we are no longer calling ->next after a successful ->show, we need to
-make that ->show appear unsuccessful so that it will be retried.  This
-is done be setting "m->count =3D offs".
-So the moved code below becomes
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 13dd29f8ebb3..0f9707ed9294 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -576,6 +576,7 @@ struct io_getdents {
+ 	struct file			*file;
+ 	struct linux_dirent64 __user	*dirent;
+ 	unsigned int			count;
++	loff_t				pos;
+ };
+ 
+ struct io_completion {
+@@ -4584,9 +4585,10 @@ static int io_getdents_prep(struct io_kiocb *req,
+ 
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
+-	if (sqe->ioprio || sqe->off || sqe->rw_flags || sqe->buf_index)
++	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
+ 		return -EINVAL;
+ 
++	getdents->pos = READ_ONCE(sqe->off);
+ 	getdents->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	getdents->count = READ_ONCE(sqe->len);
+ 	return 0;
+@@ -4601,7 +4603,8 @@ static int io_getdents(struct io_kiocb *req, bool force_nonblock)
+ 	if (force_nonblock)
+ 		return -EAGAIN;
+ 
+-	ret = vfs_getdents(req->file, getdents->dirent, getdents->count);
++	ret = vfs_getdents(req->file, getdents->dirent, getdents->count,
++			   &getdents->pos);
+ 	if (ret < 0) {
+ 		if (ret == -ERESTARTSYS)
+ 			ret = -EINTR;
+diff --git a/fs/readdir.c b/fs/readdir.c
+index f52167c1eb61..d6bd78f6350a 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -37,7 +37,7 @@
+ } while (0)
+ 
+ 
+-int iterate_dir(struct file *file, struct dir_context *ctx)
++int iterate_dir_use_ctx_pos(struct file *file, struct dir_context *ctx)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	bool shared = false;
+@@ -60,12 +60,10 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
+ 
+ 	res = -ENOENT;
+ 	if (!IS_DEADDIR(inode)) {
+-		ctx->pos = file->f_pos;
+ 		if (shared)
+ 			res = file->f_op->iterate_shared(file, ctx);
+ 		else
+ 			res = file->f_op->iterate(file, ctx);
+-		file->f_pos = ctx->pos;
+ 		fsnotify_access(file);
+ 		file_accessed(file);
+ 	}
+@@ -76,6 +74,17 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
+ out:
+ 	return res;
+ }
++
++int iterate_dir(struct file *file, struct dir_context *ctx)
++{
++	int res;
++
++	ctx->pos = file->f_pos;
++	res = iterate_dir_use_ctx_pos(file, ctx);
++	file->f_pos = ctx->pos;
++
++	return res;
++}
+ EXPORT_SYMBOL(iterate_dir);
+ 
+ /*
+@@ -349,16 +358,18 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ }
+ 
+ int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+-		 unsigned int count)
++		 unsigned int count, loff_t *pos)
+ {
+ 	struct getdents_callback64 buf = {
+ 		.ctx.actor = filldir64,
++		.ctx.pos = *pos,
+ 		.count = count,
+ 		.current_dir = dirent
+ 	};
+ 	int error;
+ 
+-	error = iterate_dir(file, &buf.ctx);
++	error = iterate_dir_use_ctx_pos(file, &buf.ctx);
++	*pos = buf.ctx.pos;
+ 	if (error >= 0)
+ 		error = buf.error;
+ 	if (buf.prev_reclen) {
+@@ -384,7 +395,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+ 	if (!f.file)
+ 		return -EBADF;
+ 
+-	error = vfs_getdents(f.file, dirent, count);
++	error = vfs_getdents(f.file, dirent, count, &f.file->f_pos);
+ 	fdput_pos(f);
+ 	return error;
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 114885d3f6c4..4d9d96163f92 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3107,11 +3107,12 @@ const char *simple_get_link(struct dentry *, struct inode *,
+ 			    struct delayed_call *);
+ extern const struct inode_operations simple_symlink_inode_operations;
+ 
++extern int iterate_dir_use_ctx_pos(struct file *, struct dir_context *);
+ extern int iterate_dir(struct file *, struct dir_context *);
+ 
+ struct linux_dirent64;
+ int vfs_getdents(struct file *file, struct linux_dirent64 __user *dirent,
+-		 unsigned int count);
++		 unsigned int count, loff_t *pos);
+ 
+ int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,
+ 		int flags);
 
-  if (m->count >=3D iov_iter_count(iter)) {
-  	/* That record is more than we want, so discard it */
-        m->count =3D offs;
-        break;
-  }
 
-Possibly that can be merged into the preceding 'if'.
 
-Also the traverse() function contains a call to ->next that is not
-reliably followed by a call to ->show, even when successful.  That needs
-to be fixed too.
+Corresponding uringfind.c change:
 
-Thanks,
-NeilBrown
-
-=20=20=20=20=20=20=20=20
-
->
-> Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and=
- interface")
-> Reported-by: Prijesh <prpatel@redhat.com>
-> Signed-off-by: Xin Long <lucien.xin@gmail.com>
-> ---
->  fs/seq_file.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/seq_file.c b/fs/seq_file.c
-> index 03a369c..da304f7 100644
-> --- a/fs/seq_file.c
-> +++ b/fs/seq_file.c
-> @@ -264,8 +264,6 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_=
-iter *iter)
->  		}
->  		if (!p || IS_ERR(p))	// no next record for us
->  			break;
-> -		if (m->count >=3D iov_iter_count(iter))
-> -			break;
->  		err =3D m->op->show(m, p);
->  		if (err > 0) {		// ->show() says "skip it"
->  			m->count =3D offs;
-> @@ -273,6 +271,10 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov=
-_iter *iter)
->  			m->count =3D offs;
->  			break;
->  		}
-> +		if (m->count >=3D iov_iter_count(iter)) {
-> +			m->index++;
-> +			break;
-> +		}
->  	}
->  	m->op->stop(m, p);
->  	n =3D copy_to_iter(m->buf, m->count, iter);
-> --=20
-> 2.1.0
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJCBAEBCAAsFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAmATQRQOHG5laWxiQHN1
-c2UuZGUACgkQOeye3VZigbmBmw//ZgljgQEZM9tSIHvyHES5/JJuA6zPo/0DVbV5
-/GZcGgGM/vXR1+4YcGp0eGXxm1WAq/3mcQvIAMwy6uQvWOHnU2G5qUOB2CO0SkdD
-xR3Hta0I2atXXRErkVNL0/R8MAUAg54jMRe6yMQy6eSgm724Qml2+5/oP3hR4LwI
-vZXGuZ5O9wZqIvz2VnAmEMe0w+MPWCeGZyYfPh3KlUL53/MNxAO4ePu+aZX0vUeE
-NrGBi3D1sJp+8bLgDnVh5oX8GlLEpzZsozwFQdSQT2YS25gKArEmbOq5gIEV3FP9
-U0Bz4C+gLwzzQn0ballrGjc6H+cHGdRgGBzLNPlh7wXgFaaPeaUA7MfZjDsTRoo9
-QIffI3Haq39NfGY8kU8ii5uEL/1kbsg6Gb1/d1iRBxuM2hBuT0jXYRKi1exoNuXd
-YGyes5UiOxocir30Kk9tHEl9E0EwvzyhMO0N8w1rCgSLKWlUTBdFNKtZgYaECtNh
-6EzaX+3FkzFo2s8eE4EWPpQV02W8mVlwz7tUJ5jj2zj7TUYDQvldwDjlFlrB1BDL
-1bhM8vPRAWLa4ZkE5WK3PsmMTpo6vcxekV+Aptfwvuk3FPSrLLlAHGqv1c0ssva1
-luuuWAp+lO/cntSep6re5nQoBX3oAG/MJqtq5MC1eP9UHSheRq03J+fTb6HZFV3V
-KOTVvc4=
-=s/XX
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/uringfind.c b/uringfind.c
+index 4282296..e140388 100644
+--- a/uringfind.c
++++ b/uringfind.c
+@@ -22,9 +22,10 @@ struct linux_dirent64 {
+ };
+ 
+ static inline void io_uring_prep_getdents(struct io_uring_sqe *sqe, int fd,
+-					  void *buf, unsigned int count)
++					  void *buf, unsigned int count,
++					  uint64_t off)
+ {
+-	io_uring_prep_rw(IORING_OP_GETDENTS, sqe, fd, buf, count, 0);
++	io_uring_prep_rw(IORING_OP_GETDENTS, sqe, fd, buf, count, off);
+ }
+ 
+ 
+@@ -38,6 +39,7 @@ struct dir {
+ 
+ 	struct dir	*parent;
+ 	int		fd;
++	uint64_t	off;
+ 	uint8_t		buf[16384];
+ 	char		name[0];
+ };
+@@ -131,7 +133,8 @@ static void schedule_readdir(struct dir *dir)
+ 	struct io_uring_sqe *sqe;
+ 
+ 	sqe = get_sqe();
+-	io_uring_prep_getdents(sqe, dir->fd, dir->buf, sizeof(dir->buf));
++	io_uring_prep_getdents(sqe, dir->fd, dir->buf, sizeof(dir->buf),
++			       dir->off);
+ 	io_uring_sqe_set_data(sqe, dir);
+ }
+ 
+@@ -145,6 +148,7 @@ static void opendir_completion(struct dir *dir, int ret)
+ 	}
+ 
+ 	dir->fd = ret;
++	dir->off = 0;
+ 	schedule_readdir(dir);
+ }
+ 
+@@ -179,6 +183,7 @@ static void readdir_completion(struct dir *dir, int ret)
+ 				schedule_opendir(dir, dent->d_name);
+ 		}
+ 
++		dir->off = dent->d_off;
+ 		bufp += dent->d_reclen;
+ 	}
+ 
