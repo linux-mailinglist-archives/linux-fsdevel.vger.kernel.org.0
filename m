@@ -2,171 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EA86307078
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 09:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58A8B307084
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 09:03:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232306AbhA1H5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 02:57:08 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:22235 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231630AbhA1HM5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 02:12:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611817976; x=1643353976;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BWhCtPmFmY8SRwjALXcTfESKnsKfTCmOrzddkgcZe24=;
-  b=faLGKvi9FFV57Q0dVYgonwYrSTczxE9mFzdDUiyH3A743tinm8FHpmYz
-   E84KWYZzllaXLzXqmEQ3vDkz3D8fsHBtSi4Hmv/1R+AeQBknTP0ot2Svv
-   rnDYlpCWtEJ2+q1R44DxVzeuA5GnmFibXE1B6D+5DQso/hdAwQoFVa5pT
-   CLQn2gu7AeGLEYqMTzcoV59mbnaInDk5X20SLVrY6g8oA6DjKhe5i6x2+
-   WTW7Ce2WfoH/L9CLkjXMJ2Ixf1nQnpqJivqFH3mN0W6kUljS2DJh2UW3A
-   Q25yxzK7UVPZBNsUgpZo4nVvY5QMoYY170OhpNR7KneK5MlK1nUkKKU7H
-   A==;
-IronPort-SDR: VT21les7nQG03JqHJ+I6EARWf5lMn66DxTi2QYbOMs2YfDOw2AniSPT+pjejA5tq7xp1aaI8NN
- IJyHOrnvEj1JtURy8HGmu0MgaB3qFyIEUADD5Ek4rL9/qSDzGRwHO6xyMdhO+CtZpDm/nh3433
- uqgijKjcu6L3970RM639kqqPrmUmIl7WoTjb0NNVH7bhLYWGI4IDe794zDrJ4IASxPghSaTjLe
- TOkBT9TLksFi3mVkIqXo6YzEuM9Kaiezl7crmDupPQhL0bBL9PWXidnupZGcR3WjWU0VGSuTZw
- LNA=
-X-IronPort-AV: E=Sophos;i="5.79,381,1602518400"; 
-   d="scan'208";a="158517186"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:11:38 +0800
-IronPort-SDR: w5IsHUigPS/mWpQBf9qBrfSIaakaFZLRWoHP6+aNWprDyks+eKEz/GYBDl9uDW4vjngYTV/B2D
- IFvxlHDM6q/6/9nde34O8UYBh6I0uIn3r+BtZNG8Q1Tp2UBHT91nGmc+bRVSX0vH6wYM+9iszA
- F/KYhmG/TW8AEVRLeQEnipOU8wNqnajsU2fYF/lAkiJR/GA7ObRI9w0PiHGbcZOSAzOETqvDL8
- hpZV/LAw9Bj86sme5bSbMQqxe65yf8vYoskZfjC3ApT6ZscD9accTAHZbY6UsQpC8kRLHHWojB
- s+1/3Wcsa3O5HFCg61j2s/8m
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:55:58 -0800
-IronPort-SDR: 61Jf/0E9AfrbFBR+VL+aX9SYCVB0aW8ut/7/jLtTqvhkleWzu7b9JjkuOaGgMYwgMXw5C5Sybl
- VeNQs3LEjTqxDsR0ZyK8GA/cVYEZNMX2maaVF3ljBoeSQOO/ApbWgebfLMlSCkYd12pl+6neKj
- zn8nHOcIOMnNA2IBKV67KMXVLkXTllokNu+jCcdgoa5YFwfQecWL2vYSP5hgldmlqCiXple2ew
- fybG/wLzJMKvqPxvYQ59ATt+ZGQv1DjVDDtxXyNp0NJ+IswNbwLOu8d1uiq12NaSa1/W79MYTO
- wq8=
-WDCIronportException: Internal
-Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:11:38 -0800
-From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        xen-devel@lists.xenproject.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-pm@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     axboe@kernel.dk, philipp.reisner@linbit.com,
-        lars.ellenberg@linbit.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com, minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com, agk@redhat.com,
-        snitzer@redhat.com, hch@lst.de, sagi@grimberg.me,
-        chaitanya.kulkarni@wdc.com, martin.petersen@oracle.com,
-        viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org,
-        ebiggers@kernel.org, djwong@kernel.org, shaggy@kernel.org,
-        konishi.ryusuke@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
-        joseph.qi@linux.alibaba.com, damien.lemoal@wdc.com,
-        naohiro.aota@wdc.com, jth@kernel.org, rjw@rjwysocki.net,
-        len.brown@intel.com, pavel@ucw.cz, akpm@linux-foundation.org,
-        hare@suse.de, gustavoars@kernel.org, tiwai@suse.de,
-        alex.shi@linux.alibaba.com, asml.silence@gmail.com,
-        ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
-        bvanassche@acm.org, jefflexu@linux.alibaba.com
-Subject: [RFC PATCH 00/34] block: introduce bio_new()
-Date:   Wed, 27 Jan 2021 23:10:59 -0800
-Message-Id: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
-X-Mailer: git-send-email 2.22.1
+        id S232217AbhA1IBN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 03:01:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53210 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232200AbhA1IAJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 03:00:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1611820740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Sq6KOdfLPXiwAuLXOW7YjreGdGoulD4muuz4Tw4c0dA=;
+        b=BBuX1zyPDBli1wq3/9ieGxAyz7RNNE/U3jwTMZy/jhv7Vz+6hkiEhsZ79YzZbH8kl5y2Bm
+        A9arQ9DBK0SAyY7kgadriTJZxWkFGt/xnQF6rpi0s9gD2VaxeLaXb3fFpVR4Dc2f3dqqCc
+        OMJ50VBVtpJWHyvl89S1QLIePOScOWk=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id D57F3AD18;
+        Thu, 28 Jan 2021 07:58:59 +0000 (UTC)
+Date:   Thu, 28 Jan 2021 08:58:58 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v16 08/11] secretmem: add memcg accounting
+Message-ID: <YBJuwqItjCemDN5L@dhcp22.suse.cz>
+References: <20210121122723.3446-1-rppt@kernel.org>
+ <20210121122723.3446-9-rppt@kernel.org>
+ <20210125165451.GT827@dhcp22.suse.cz>
+ <20210125213817.GM6332@kernel.org>
+ <20210126144838.GL308988@casper.infradead.org>
+ <20210126150555.GU827@dhcp22.suse.cz>
+ <20210127184213.GA919963@carbon.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210127184213.GA919963@carbon.dhcp.thefacebook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed 27-01-21 10:42:13, Roman Gushchin wrote:
+> On Tue, Jan 26, 2021 at 04:05:55PM +0100, Michal Hocko wrote:
+> > On Tue 26-01-21 14:48:38, Matthew Wilcox wrote:
+> > > On Mon, Jan 25, 2021 at 11:38:17PM +0200, Mike Rapoport wrote:
+> > > > I cannot use __GFP_ACCOUNT because cma_alloc() does not use gfp.
+> > > > Besides, kmem accounting with __GFP_ACCOUNT does not seem
+> > > > to update stats and there was an explicit request for statistics:
+> > > >  
+> > > > https://lore.kernel.org/lkml/CALo0P13aq3GsONnZrksZNU9RtfhMsZXGWhK1n=xYJWQizCd4Zw@mail.gmail.com/
+> > > > 
+> > > > As for (ab)using NR_SLAB_UNRECLAIMABLE_B, as it was already discussed here:
+> > > > 
+> > > > https://lore.kernel.org/lkml/20201129172625.GD557259@kernel.org/
+> > > > 
+> > > > I think that a dedicated stats counter would be too much at the moment and
+> > > > NR_SLAB_UNRECLAIMABLE_B is the only explicit stat for unreclaimable memory.
+> > > 
+> > > That's not true -- Mlocked is also unreclaimable.  And doesn't this
+> > > feel more like mlocked memory than unreclaimable slab?  It's also
+> > > Unevictable, so could be counted there instead.
+> > 
+> > yes, that is indeed true, except the unreclaimable counter is tracking
+> > the unevictable LRUs. These pages are not on any LRU and that can cause
+> > some confusion. Maybe they shouldn't be so special and they should live
+> > on unevistable LRU and get their stats automagically.
+> > 
+> > I definitely do agree that this would be a better fit than NR_SLAB
+> > abuse. But considering that this is somehow even more special than mlock
+> > then a dedicated counter sounds as even better fit.
+> 
+> I think it depends on how large these areas will be in practice.
+> If they will be measured in single or double digits MBs, a separate entry
+> is hardly a good choice: because of the batching the displayed value
+> will be in the noise range, plus every new vmstat item adds to the
+> struct mem_cgroup size.
+> 
+> If it will be measured in GBs, of course, a separate counter is preferred.
+> So I'd suggest to go with NR_SLAB (which should have been named NR_KMEM)
+> as now and conditionally switch to a separate counter later.
 
-This is a *compile only RFC* which adds a generic helper to initialize
-the various fields of the bio that is repeated all the places in
-file-systems, block layer, and drivers.
+I really do not think the overall usage matters when it comes to abusing
+other counters. Changing this in future will be always tricky and there
+always be our favorite "Can this break userspace" question. Yes we dared
+to change meaning of some counters but this is not generally possible.
+Just have a look how accounting shmem as a page cache has turned out
+being much more tricky than many like.
 
-The new helper allows callers to initialize non-optional members of bio
-such as bdev, sector, op, opflags, max_bvecs and gfp_mask by
-encapsulating new bio allocation with bio alloc with initialization
-at one place.
-
-The objective of this RFC is to only start a discussion, this it not 
-completely tested at all.
-
--ck                         
-
-Chaitanya Kulkarni (34):
-  block: move common code into blk_next_bio()
-  block: introduce and use bio_new
-  drdb: use bio_new in drdb
-  drdb: use bio_new() in submit_one_flush
-  xen-blkback: use bio_new
-  zram: use bio_new
-  dm: use bio_new in dm-log-writes
-  dm-zoned: use bio_new in get_mblock_slow
-  dm-zoned: use bio_new in dmz_write_mblock
-  dm-zoned: use bio_new in dmz_rdwr_block
-  nvmet: use bio_new in nvmet_bdev_execute_rw
-  scsi: target/iblock: use bio_new
-  block: use bio_new in __blkdev_direct_IO
-  fs/buffer: use bio_new in submit_bh_wbc
-  fscrypt: use bio_new in fscrypt_zeroout_range
-  fs/direct-io: use bio_new in dio_bio_alloc
-  iomap: use bio_new in iomap_dio_zero
-  iomap: use bio_new in iomap_dio_bio_actor
-  fs/jfs/jfs_logmgr.c: use bio_new in lbmRead
-  fs/jfs/jfs_logmgr.c: use bio_new in lbmStartIO
-  fs/jfs/jfs_metapage.c: use bio_new in metapage_writepage
-  fs/jfs/jfs_metapage.c: use bio_new in metapage_readpage
-  fs/mpage.c: use bio_new mpage_alloc
-  fs/nilfs: use bio_new nilfs_alloc_seg_bio
-  ocfs/cluster: use bio_new in dm-log-writes
-  xfs: use bio_new in xfs_rw_bdev
-  xfs: use bio_new in xfs_buf_ioapply_map
-  zonefs: use bio_new
-  power/swap: use bio_new in hib_submit_io
-  hfsplus: use bio_new in hfsplus_submit_bio()
-  iomap: use bio_new in iomap_readpage_actor
-  mm: use bio_new in __swap_writepage
-  mm: use bio_new in swap_readpage
-  mm: add swap_bio_new common bio helper
-
- block/blk-lib.c                     | 34 ++++++++++-------------------
- block/blk-zoned.c                   |  4 +---
- block/blk.h                         |  5 +++--
- drivers/block/drbd/drbd_receiver.c  | 12 +++++-----
- drivers/block/xen-blkback/blkback.c | 20 +++++++++++------
- drivers/block/zram/zram_drv.c       |  5 ++---
- drivers/md/dm-log-writes.c          | 30 +++++++++----------------
- drivers/md/dm-zoned-metadata.c      | 18 +++++----------
- drivers/nvme/target/io-cmd-bdev.c   |  9 +++-----
- drivers/target/target_core_iblock.c |  5 ++---
- fs/block_dev.c                      |  6 ++---
- fs/buffer.c                         | 16 ++++++--------
- fs/crypto/bio.c                     |  5 ++---
- fs/direct-io.c                      |  6 ++---
- fs/hfsplus/wrapper.c                |  5 +----
- fs/iomap/buffered-io.c              | 12 +++++-----
- fs/iomap/direct-io.c                | 11 ++++------
- fs/jfs/jfs_logmgr.c                 | 13 ++++-------
- fs/jfs/jfs_metapage.c               | 15 +++++--------
- fs/mpage.c                          | 18 +++++----------
- fs/nilfs2/segbuf.c                  | 10 ++-------
- fs/ocfs2/cluster/heartbeat.c        |  6 ++---
- fs/xfs/xfs_bio_io.c                 |  7 ++----
- fs/xfs/xfs_buf.c                    |  6 ++---
- fs/zonefs/super.c                   |  6 ++---
- include/linux/bio.h                 | 25 +++++++++++++++++++++
- kernel/power/swap.c                 |  7 +++---
- mm/page_io.c                        | 30 +++++++++++++------------
- 28 files changed, 151 insertions(+), 195 deletions(-)
-
+Really if a separate counter is a big deal, for which I do not see any
+big reason, then this should be accounted as unevictable (as suggested
+by Matthew) and ideally pages of those mappings should be sitting in the
+unevictable LRU as well unless there is a strong reason against.
 -- 
-2.22.1
-
+Michal Hocko
+SUSE Labs
