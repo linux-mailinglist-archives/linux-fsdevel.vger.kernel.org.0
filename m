@@ -2,93 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85C9C306E33
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:12:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0CA4306E6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:15:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbhA1HKS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 02:10:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60736 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231526AbhA1HG3 (ORCPT
+        id S231676AbhA1HOB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 02:14:01 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:56994 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231573AbhA1HNX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 02:06:29 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B0AC0612F2;
-        Wed, 27 Jan 2021 23:05:46 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id r14so5087623ljc.2;
-        Wed, 27 Jan 2021 23:05:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=k6Ja0b6no5eZDxYMF3LcCjisrlOc+aXrwQbbpI1j+FU=;
-        b=vR3wxqh/qmhwGrbVwupmBVa176b9HWbzlBi+iHpE2Ycg3SLdVUaFFVWJRoDflvOdUM
-         aWsfXml59wmBYin5SlN4xPN6RcIK4dNQcXmOWado8NdbDeiQYMEx9jUwc2FSefBaZsTb
-         UppvhET8UGl0VaK3nPfEI3NeSolRoxAjUmD/Twjh8E4UabvGtnBhvdK4Pp/0MfZgKspn
-         EbnXKBnWSLwOuA8eGVoZOC1ie3IunASVVcj3NKoElHEMt6SbJYta7lDwO2SMVvg2m/by
-         5Dg/ReU5K8DaNZiZQw6REGpMyc2vLhV0PBbGGTcgWEnqc/YsiI2u5nxThcqW1igtLrDg
-         FA3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=k6Ja0b6no5eZDxYMF3LcCjisrlOc+aXrwQbbpI1j+FU=;
-        b=K4JqbH8wUDlP7lFfPGYVY7wrFfnhHQGNU5Trq4enNO1XIGPg5B3nWAFCQ/U7KEJ0Pw
-         Xs0qkA4hz5m03J8Ata3pMF70gj3FX6qOBRNK/x85SO4hhv/6ct5+kYloyGSI8ccJwMKE
-         Agr1UJp4Ul7uH+npAtYIgIT9fnIpPlSL7ABL9k5+O/yKfx2ZP2eBKPydEdgZsZ1rl9zc
-         yvDY01QIbd9c0LNRDE8+tj3xVCFiDIXqCknZg9tt7mayjHwzYh+buKQpQ8wYM4oWso+K
-         gRNzTyqtVyNaS8TqAuAOYy+4he+gUzNTK3qAJ+okiFfz07bbkjB8b6K4PjXQCO3oXxTV
-         edVA==
-X-Gm-Message-State: AOAM5330UdMKEX8VvlVhsh3ASdHsQMpXrsAJLKRQSGdUK1eniTMWlDyC
-        qlWBJA7dQQ6ZfCVplSR21UAiSlXdyQBeFg==
-X-Google-Smtp-Source: ABdhPJyBKxRLdlULivn3zwS67VsgEmgyzQZjno9E0hYhphWAEuj721B0R/ffUiJ+gvuTBqvxO9A/aw==
-X-Received: by 2002:a2e:964f:: with SMTP id z15mr7511737ljh.368.1611817544692;
-        Wed, 27 Jan 2021 23:05:44 -0800 (PST)
-Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
-        by smtp.gmail.com with ESMTPSA id r2sm1324510lff.143.2021.01.27.23.05.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Jan 2021 23:05:44 -0800 (PST)
-Date:   Thu, 28 Jan 2021 09:05:41 +0200
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Mark Harmstone <mark@harmstone.com>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com
-Subject: Re: [PATCH v18 01/10] fs/ntfs3: Add headers and misc files
-Message-ID: <20210128070541.ynzsgpniyo2xe23k@kari-VirtualBox>
-References: <20210122140159.4095083-1-almaz.alexandrovich@paragon-software.com>
- <20210122140159.4095083-2-almaz.alexandrovich@paragon-software.com>
- <45515008-e4a9-26e3-3ce4-026bfacf7d53@harmstone.com>
+        Thu, 28 Jan 2021 02:13:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1611818002; x=1643354002;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=H5WYNiBvrNWIzR/dDsyAI0RzKPxZxlDuB4vWYUDlMrE=;
+  b=Iim5nwTGI7yhSjWqgCP9AnvImgBcpQAxBkfzAuq0ppTUFAIPudxpDELI
+   L08+VwxtTU7Jm9nC402MDzUtPP7EG6W+wY7om9GQdWFB7wf84s3GdChjh
+   pcTma2sUSG/2knixQKW38Ci5GuFAnPvgMaRKO+hMswAEQyUGOaYv1H1N5
+   ZQyHbygrBQbaIF568wGBw0jHqD19TAI5KPib8Sm8j0etT5ocqkWUvh65d
+   k1nuA2ohR4/a/0dkH2NbFgpn7QrlqrU1w1YAISwwMi8dzm95pRgzw+5Kn
+   xMHT8QCW3pHydAEfrZzF6yFPkjbBqwUbEgngzq3r2Y3iwpxUV2FFsSHpR
+   A==;
+IronPort-SDR: E9JrzyeQqe1pQFSde2SOQOK0XNlbDCUvLxewlnS1WtOFgxiUtsKegOXv/Mk3pz30DVu+yQBvUS
+ UHCqVUPHXlFiYZ7LBFVTvMIvK/WtSuh7miKHhwAvehpGByCK5berzCtGLhphias34o15GcZKLA
+ AcCe5g+pL3jvKhh+98SCfRtTbkF5cX2Uv99bemWfo6KnYMtuUNDWsydXC86vPvAj4OTavgFbN3
+ u37jr4rHTPwu5kiEj0vLZXT/488OtAjjfKZ/lUCVylJM3JjZPYT6CDp3ZUJdxH/S1Zw+2zO0DG
+ Xmg=
+X-IronPort-AV: E=Sophos;i="5.79,381,1602518400"; 
+   d="scan'208";a="162963137"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:12:16 +0800
+IronPort-SDR: 2pclH1G0KEXMBdYyJXwGIaiNxvPd8YeJd7/cw8NzdW/uA4XEF2scdf7sw8QvdtcnNzWWhRikAO
+ rWD6sAP5mbN4ArPNu1kHS9i0WXu+Dt7wTDtCpGgIsdzUH63GucwPYvntzjU2Oz80TTe60grf3T
+ OB+yjfwhmnzJaQo4ASI9jMkEXCQePbbFzD/wXC3yyPl4PlujZsT4Avyw2edMGHmqh2ROTGWZWZ
+ Q4tOYIjAALAIwRmgGTAIbGFo0FE6LPaiNqvWkgFx5oE65sYn64X5y9P60fQsy3Xk2Q9aqObdv7
+ x3ZbEeUVDgpOBVOT/ms9aKtB
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:54:34 -0800
+IronPort-SDR: sJ1sB4+NIXrk86BqB2mBiNRkLb2CtaUtTUjLUptuVolKqncgiWgms0hBmEnyXBHOe2LGJgTWAc
+ Mtkqx7/Ji/KEF3P2zVgoCc4AZmvUpaw07sB7pwwqNDwBZIjeJgdIawB6xDKz7hKZuinbJ6FPFN
+ v+digmuqEID+qvvg+Pvdb6mLkPbYX8es6TqyRNtA6iTBnQbrstI0JA9CgrvLf0RhQ0DnF83KdI
+ QwpSDAYi/vWthDgyxzldo4sKChZfQfmY/MjRYeTOvpJG4q5JRSujoZAO3KJfZIMHz0OJMVK9L1
+ YPQ=
+WDCIronportException: Internal
+Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:12:16 -0800
+From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        xen-devel@lists.xenproject.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-pm@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     axboe@kernel.dk, philipp.reisner@linbit.com,
+        lars.ellenberg@linbit.com, konrad.wilk@oracle.com,
+        roger.pau@citrix.com, minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com, agk@redhat.com,
+        snitzer@redhat.com, hch@lst.de, sagi@grimberg.me,
+        chaitanya.kulkarni@wdc.com, martin.petersen@oracle.com,
+        viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org,
+        ebiggers@kernel.org, djwong@kernel.org, shaggy@kernel.org,
+        konishi.ryusuke@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
+        joseph.qi@linux.alibaba.com, damien.lemoal@wdc.com,
+        naohiro.aota@wdc.com, jth@kernel.org, rjw@rjwysocki.net,
+        len.brown@intel.com, pavel@ucw.cz, akpm@linux-foundation.org,
+        hare@suse.de, gustavoars@kernel.org, tiwai@suse.de,
+        alex.shi@linux.alibaba.com, asml.silence@gmail.com,
+        ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
+        bvanassche@acm.org, jefflexu@linux.alibaba.com
+Subject: [RFC PATCH 04/34] drdb: use bio_new() in submit_one_flush
+Date:   Wed, 27 Jan 2021 23:11:03 -0800
+Message-Id: <20210128071133.60335-5-chaitanya.kulkarni@wdc.com>
+X-Mailer: git-send-email 2.22.1
+In-Reply-To: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
+References: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45515008-e4a9-26e3-3ce4-026bfacf7d53@harmstone.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 02:55:30PM +0000, Mark Harmstone wrote:
-> On 22/1/21 2:01 pm, Konstantin Komarov wrote:
-> > diff --git a/fs/ntfs3/upcase.c b/fs/ntfs3/upcase.c
+Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+---
+ drivers/block/drbd/drbd_receiver.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> > +static inline u16 upcase_unicode_char(const u16 *upcase, u16 chr)
-> > +{
-> > +	if (chr < 'a')
-> > +		return chr;
-> > +
-> > +	if (chr <= 'z')
-> > +		return chr - ('a' - 'A');
-> > +
-> > +	return upcase[chr];
-> > +}
-> 
-> Shouldn't upcase_unicode_char be using the NTFS pseudo-file $UpCase?
-> That way you should also be covered for other bicameral alphabets.
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index e1cd3427b28b..b86bbf725cbd 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -1277,8 +1277,10 @@ static void one_flush_endio(struct bio *bio)
+ 
+ static void submit_one_flush(struct drbd_device *device, struct issue_flush_context *ctx)
+ {
+-	struct bio *bio = bio_alloc(GFP_NOIO, 0);
++	struct block_device *bdev = device->ldev->backing_bdev;
++	struct bio *bio = bio_new(bdev, 0, REQ_OP_FLUSH, REQ_PREFLUSH, 0, GFP_NOIO);
+ 	struct one_flush_context *octx = kmalloc(sizeof(*octx), GFP_NOIO);
++
+ 	if (!bio || !octx) {
+ 		drbd_warn(device, "Could not allocate a bio, CANNOT ISSUE FLUSH\n");
+ 		/* FIXME: what else can I do now?  disconnecting or detaching
+@@ -1296,10 +1298,8 @@ static void submit_one_flush(struct drbd_device *device, struct issue_flush_cont
+ 
+ 	octx->device = device;
+ 	octx->ctx = ctx;
+-	bio_set_dev(bio, device->ldev->backing_bdev);
+ 	bio->bi_private = octx;
+ 	bio->bi_end_io = one_flush_endio;
+-	bio->bi_opf = REQ_OP_FLUSH | REQ_PREFLUSH;
+ 
+ 	device->flush_jif = jiffies;
+ 	set_bit(FLUSH_PENDING, &device->flags);
+-- 
+2.22.1
 
-return upcase[chr] is just for that? Upcase table from $UpCase is constucted
-in super.c and this will get it in and use it.
