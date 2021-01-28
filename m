@@ -2,194 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DBAB307BD5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 18:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB3F307BA5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 18:02:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232541AbhA1RJi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 12:09:38 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:39878 "EHLO mail.hallyn.com"
+        id S232848AbhA1RBS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 12:01:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232738AbhA1Q7t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 11:59:49 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 5334E11D4; Thu, 28 Jan 2021 10:58:52 -0600 (CST)
-Date:   Thu, 28 Jan 2021 10:58:52 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
-Message-ID: <20210128165852.GA20974@mail.hallyn.com>
-References: <20210119162204.2081137-1-mszeredi@redhat.com>
- <20210119162204.2081137-3-mszeredi@redhat.com>
- <8735yw8k7a.fsf@x220.int.ebiederm.org>
+        id S232683AbhA1RA2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 12:00:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0EEE564E0E;
+        Thu, 28 Jan 2021 16:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611853187;
+        bh=f6FDYR+2fbZ3ZjuVDKmJrkeFHlqyA4P3vGdmoyOPa1M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Rzag2xxRHgFBGSJ365/QUldWd9CTCZVGt3cs71rJutBhKs94QB4O0wVHJ78U0xIF9
+         n96V7cXtAmPsB9hu9gUYvKXwcH1SXtYNdkFw15Hr/lW1MQ6ApKzq4voIl5psE+u1SS
+         oIYlBt3CEfmzYKr/W9GKeV1ES9XtHwmC1KiXTL4cmN2/9EoY9kXCbDD71u9sIp+Nfr
+         FbyyfdHM+E5ZA+F8801PzzCElIq3kyLXwweF8LRAnfmH79wwG+57YuSijr3uE7kbk9
+         /DpcS6Ckt3f1RwDjmwI1QhKt/MkNHods9aX+BJj1ComGJOXJH3o25qnvlVltgShwCo
+         r/bA/dJbtb2Sw==
+Date:   Thu, 28 Jan 2021 08:59:46 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        xen-devel@lists.xenproject.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-pm@vger.kernel.org,
+        linux-mm@kvack.org, axboe@kernel.dk, philipp.reisner@linbit.com,
+        lars.ellenberg@linbit.com, konrad.wilk@oracle.com,
+        roger.pau@citrix.com, minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com, agk@redhat.com,
+        snitzer@redhat.com, hch@lst.de, sagi@grimberg.me,
+        martin.petersen@oracle.com, viro@zeniv.linux.org.uk, tytso@mit.edu,
+        jaegeuk@kernel.org, ebiggers@kernel.org, shaggy@kernel.org,
+        konishi.ryusuke@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
+        joseph.qi@linux.alibaba.com, damien.lemoal@wdc.com,
+        naohiro.aota@wdc.com, jth@kernel.org, rjw@rjwysocki.net,
+        len.brown@intel.com, pavel@ucw.cz, akpm@linux-foundation.org,
+        hare@suse.de, gustavoars@kernel.org, tiwai@suse.de,
+        alex.shi@linux.alibaba.com, asml.silence@gmail.com,
+        ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
+        bvanassche@acm.org, jefflexu@linux.alibaba.com
+Subject: Re: [RFC PATCH 17/34] iomap: use bio_new in iomap_dio_zero
+Message-ID: <20210128165946.GL7698@magnolia>
+References: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
+ <20210128071133.60335-18-chaitanya.kulkarni@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8735yw8k7a.fsf@x220.int.ebiederm.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20210128071133.60335-18-chaitanya.kulkarni@wdc.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
-> Miklos Szeredi <mszeredi@redhat.com> writes:
+On Wed, Jan 27, 2021 at 11:11:16PM -0800, Chaitanya Kulkarni wrote:
+> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+
+Looks ok to me,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/iomap/direct-io.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
-> > currently return in v2 format unconditionally.
-> >
-> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
-> > and so the same conversions performed on it.
-> >
-> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
-> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
-> > user namespace in case of v2) cannot be mapped in the current user
-> > namespace.
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index ea1e8f696076..f6c557a1bd25 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -189,15 +189,13 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+>  	int flags = REQ_SYNC | REQ_IDLE;
+>  	struct bio *bio;
+>  
+> -	bio = bio_alloc(GFP_KERNEL, 1);
+> -	bio_set_dev(bio, iomap->bdev);
+> -	bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+> +	bio = bio_new(iomap->bdev, iomap_sector(iomap, pos), REQ_OP_WRITE,
+> +		      flags, 1, GFP_KERNEL);
+>  	bio->bi_private = dio;
+>  	bio->bi_end_io = iomap_dio_bio_end_io;
+>  
+>  	get_page(page);
+>  	__bio_add_page(bio, page, len, 0);
+> -	bio_set_op_attrs(bio, REQ_OP_WRITE, flags);
+>  	iomap_dio_submit_bio(dio, iomap, bio, pos);
+>  }
+>  
+> -- 
+> 2.22.1
 > 
-> This looks like a good cleanup.
-
-Sorry, I'm not following.  Why is this a good cleanup?  Why should
-the xattr be shown as faked v3 in this case?
-
-A separate question below.
-
-> I do wonder how well this works with stacking.  In particular
-> ovl_xattr_set appears to call vfs_getxattr without overriding the creds.
-> What the purpose of that is I haven't quite figured out.  It looks like
-> it is just a probe to see if an xattr is present so maybe it is ok.
-> 
-> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> >
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
-> >  security/commoncap.c | 67 ++++++++++++++++++++++++++++----------------
-> >  1 file changed, 43 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/security/commoncap.c b/security/commoncap.c
-> > index bacc1111d871..c9d99f8f4c82 100644
-> > --- a/security/commoncap.c
-> > +++ b/security/commoncap.c
-> > @@ -371,10 +371,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
-> >  {
-> >  	int size, ret;
-> >  	kuid_t kroot;
-> > +	__le32 nsmagic, magic;
-> >  	uid_t root, mappedroot;
-> >  	char *tmpbuf = NULL;
-> >  	struct vfs_cap_data *cap;
-> > -	struct vfs_ns_cap_data *nscap;
-> > +	struct vfs_ns_cap_data *nscap = NULL;
-> >  	struct dentry *dentry;
-> >  	struct user_namespace *fs_ns;
-> >  
-> > @@ -396,46 +397,61 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
-> >  	fs_ns = inode->i_sb->s_user_ns;
-> >  	cap = (struct vfs_cap_data *) tmpbuf;
-> >  	if (is_v2header((size_t) ret, cap)) {
-> > -		/* If this is sizeof(vfs_cap_data) then we're ok with the
-> > -		 * on-disk value, so return that.  */
-> > -		if (alloc)
-> > -			*buffer = tmpbuf;
-> > -		else
-> > -			kfree(tmpbuf);
-> > -		return ret;
-> > -	} else if (!is_v3header((size_t) ret, cap)) {
-> > -		kfree(tmpbuf);
-> > -		return -EINVAL;
-> > +		root = 0;
-> > +	} else if (is_v3header((size_t) ret, cap)) {
-> > +		nscap = (struct vfs_ns_cap_data *) tmpbuf;
-> > +		root = le32_to_cpu(nscap->rootid);
-> > +	} else {
-> > +		size = -EINVAL;
-> > +		goto out_free;
-> >  	}
-> >  
-> > -	nscap = (struct vfs_ns_cap_data *) tmpbuf;
-> > -	root = le32_to_cpu(nscap->rootid);
-> >  	kroot = make_kuid(fs_ns, root);
-> >  
-> >  	/* If the root kuid maps to a valid uid in current ns, then return
-> >  	 * this as a nscap. */
-> >  	mappedroot = from_kuid(current_user_ns(), kroot);
-> >  	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
-> > +		size = sizeof(struct vfs_ns_cap_data);
-> >  		if (alloc) {
-> > -			*buffer = tmpbuf;
-> > +			if (!nscap) {
-> > +				/* v2 -> v3 conversion */
-> > +				nscap = kzalloc(size, GFP_ATOMIC);
-> > +				if (!nscap) {
-> > +					size = -ENOMEM;
-> > +					goto out_free;
-> > +				}
-> > +				nsmagic = VFS_CAP_REVISION_3;
-> > +				magic = le32_to_cpu(cap->magic_etc);
-> > +				if (magic & VFS_CAP_FLAGS_EFFECTIVE)
-> > +					nsmagic |= VFS_CAP_FLAGS_EFFECTIVE;
-> > +				memcpy(&nscap->data, &cap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
-> > +				nscap->magic_etc = cpu_to_le32(nsmagic);
-> > +			} else {
-> > +				/* use allocated v3 buffer */
-> > +				tmpbuf = NULL;
-> > +			}
-> >  			nscap->rootid = cpu_to_le32(mappedroot);
-> > -		} else
-> > -			kfree(tmpbuf);
-> > -		return size;
-> > +			*buffer = nscap;
-> > +		}
-> > +		goto out_free;
-> >  	}
-> >  
-> >  	if (!rootid_owns_currentns(kroot)) {
-> > -		kfree(tmpbuf);
-> > -		return -EOPNOTSUPP;
-> > +		size = -EOVERFLOW;
-
-Why this change?  Christian (cc:d) noticed that this is a user visible change.
-Without this change, if you are in a userns which has different rootid, the
-EOVERFLOW tells vfs_getxattr to vall back to __vfs_getxattr() and so you can
-see the v3 capability with its rootid.
-
-With this change, you instead just get EOVERFLOW.
-
-> > +		goto out_free;
-> >  	}
-> >  
-> >  	/* This comes from a parent namespace.  Return as a v2 capability */
-> >  	size = sizeof(struct vfs_cap_data);
-> >  	if (alloc) {
-> > -		*buffer = kmalloc(size, GFP_ATOMIC);
-> > -		if (*buffer) {
-> > -			struct vfs_cap_data *cap = *buffer;
-> > -			__le32 nsmagic, magic;
-> > +		if (nscap) {
-> > +			/* v3 -> v2 conversion */
-> > +			cap = kzalloc(size, GFP_ATOMIC);
-> > +			if (!cap) {
-> > +				size = -ENOMEM;
-> > +				goto out_free;
-> > +			}
-> >  			magic = VFS_CAP_REVISION_2;
-> >  			nsmagic = le32_to_cpu(nscap->magic_etc);
-> >  			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
-> > @@ -443,9 +459,12 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
-> >  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
-> >  			cap->magic_etc = cpu_to_le32(magic);
-> >  		} else {
-> > -			size = -ENOMEM;
-> > +			/* use unconverted v2 */
-> > +			tmpbuf = NULL;
-> >  		}
-> > +		*buffer = cap;
-> >  	}
-> > +out_free:
-> >  	kfree(tmpbuf);
-> >  	return size;
-> >  }
