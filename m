@@ -2,126 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AEC2307B6A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 17:54:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C30C307B9B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 18:02:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232702AbhA1QyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 11:54:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50228 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232716AbhA1Qxq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 11:53:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 10056AD3E;
-        Thu, 28 Jan 2021 16:53:05 +0000 (UTC)
-Subject: Re: [v5 PATCH 04/11] mm: vmscan: remove memcg_shrinker_map_size
-To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, ktkhai@virtuozzo.com,
-        shakeelb@google.com, david@fromorbit.com, hannes@cmpxchg.org,
-        mhocko@suse.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210127233345.339910-1-shy828301@gmail.com>
- <20210127233345.339910-5-shy828301@gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <255b9236-3e0b-f6f6-4a72-5e69351a979a@suse.cz>
-Date:   Thu, 28 Jan 2021 17:53:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        id S232758AbhA1Q76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 11:59:58 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:37655 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232700AbhA1Q7E (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 11:59:04 -0500
+Received: by mail-il1-f197.google.com with SMTP id g3so5229349ild.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 08:58:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=5eUqdE/qujF2vvImOu8U/X+yORx2488KJ3tM2EhWIwA=;
+        b=LqniA3yD96cgWRqK1fnu+ASPg8Ny63bhJRsZeV/6kVF40Gu2PY0WBo6i/KLKj6aJR0
+         JLtbD4A/SPIO5+tuNbsyOo+SaC35WMVSqqYmbRg4WtL/OwA8smutSHELgrUzREm14IGq
+         bf1moS+G/MEjtORkcolWthr3tVqeWxKzhvwDxDOerVBDJf7RvJVaZBM/hUGe2E17f3zG
+         iRrWcTZI1uwlmebKNtcAoM5PReF+1f/08+tKX7HEGRyda6fYGy3c9YDKpKsMkLvVz56m
+         FZgLEVoJ9zuOnPRH4hH1I4MrW4Jneh9XliEEIj9DPHhgZYh0cFBuQh8tQbPghjne5wRk
+         JM7A==
+X-Gm-Message-State: AOAM533HM0cihGWXyuDNWtVyxC4KyKjSgshndRMoU/P2yrVJcPMQi14q
+        YApXNccVswY0THxDtEhlSVi8V0sq2nki7PwwzaiK3e12/nvj
+X-Google-Smtp-Source: ABdhPJzMwFJzkhTkWR833kFFG/6fGVR8ITXflyktlRRtWM7Pk+UN2ysf2xkXY2VNVOR+vaPD3DbtpvVuPJ/YhOtzo0JO33KbOUFY
 MIME-Version: 1.0
-In-Reply-To: <20210127233345.339910-5-shy828301@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:8aa:: with SMTP id a10mr13493652ilt.157.1611853103590;
+ Thu, 28 Jan 2021 08:58:23 -0800 (PST)
+Date:   Thu, 28 Jan 2021 08:58:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ab74fb05b9f8cb0a@google.com>
+Subject: BUG: corrupted list in io_file_get
+From:   syzbot <syzbot+6879187cf57845801267@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/28/21 12:33 AM, Yang Shi wrote:
-> Both memcg_shrinker_map_size and shrinker_nr_max is maintained, but actually the
-> map size can be calculated via shrinker_nr_max, so it seems unnecessary to keep both.
-> Remove memcg_shrinker_map_size since shrinker_nr_max is also used by iterating the
-> bit map.
-> 
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> ---
->  mm/vmscan.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index d3f3701dfcd2..847369c19775 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -185,8 +185,7 @@ static LIST_HEAD(shrinker_list);
->  static DECLARE_RWSEM(shrinker_rwsem);
->  
->  #ifdef CONFIG_MEMCG
-> -
-> -static int memcg_shrinker_map_size;
-> +static int shrinker_nr_max;
->  
->  static void free_shrinker_map_rcu(struct rcu_head *head)
->  {
-> @@ -248,7 +247,7 @@ int alloc_shrinker_maps(struct mem_cgroup *memcg)
->  		return 0;
->  
->  	down_write(&shrinker_rwsem);
-> -	size = memcg_shrinker_map_size;
-> +	size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
->  	for_each_node(nid) {
->  		map = kvzalloc_node(sizeof(*map) + size, GFP_KERNEL, nid);
->  		if (!map) {
-> @@ -266,12 +265,13 @@ int alloc_shrinker_maps(struct mem_cgroup *memcg)
->  static int expand_shrinker_maps(int new_id)
->  {
->  	int size, old_size, ret = 0;
-> +	int new_nr_max = new_id + 1;
->  	struct mem_cgroup *memcg;
->  
-> -	size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
-> -	old_size = memcg_shrinker_map_size;
-> +	size = (new_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
-> +	old_size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+Hello,
 
-What's wrong with using DIV_ROUND_UP() here?
+syzbot found the following issue on:
 
->  	if (size <= old_size)
-> -		return 0;
-> +		goto out;
+HEAD commit:    76c057c8 Merge branch 'parisc-5.11-2' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11959454d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=96b123631a6700e9
+dashboard link: https://syzkaller.appspot.com/bug?extid=6879187cf57845801267
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a3872cd00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ab17a4d00000
 
-Can this even happen? Seems to me it can't, so just remove this?
+The issue was bisected to:
 
->  
->  	if (!root_mem_cgroup)
->  		goto out;
-> @@ -286,9 +286,10 @@ static int expand_shrinker_maps(int new_id)
->  			goto out;
->  		}
->  	} while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
-> +
->  out:
->  	if (!ret)
-> -		memcg_shrinker_map_size = size;
-> +		shrinker_nr_max = new_nr_max;
->  
->  	return ret;
->  }
-> @@ -321,7 +322,6 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
->  #define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
->  
->  static DEFINE_IDR(shrinker_idr);
-> -static int shrinker_nr_max;
->  
->  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->  {
-> @@ -338,8 +338,6 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->  			idr_remove(&shrinker_idr, id);
->  			goto unlock;
->  		}
-> -
-> -		shrinker_nr_max = id + 1;
->  	}
->  	shrinker->id = id;
->  	ret = 0;
-> 
+commit 02a13674fa0e8dd326de8b9f4514b41b03d99003
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Sat Jan 23 22:49:31 2021 +0000
 
+    io_uring: account io_uring internal files as REQ_F_INFLIGHT
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14d1bf44d00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16d1bf44d00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d1bf44d00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6879187cf57845801267@syzkaller.appspotmail.com
+Fixes: 02a13674fa0e ("io_uring: account io_uring internal files as REQ_F_INFLIGHT")
+
+list_add double add: new=ffff888017eaa080, prev=ffff88801a9cb520, next=ffff888017eaa080.
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:29!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 8481 Comm: syz-executor556 Not tainted 5.11.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__list_add_valid.cold+0x26/0x3c lib/list_debug.c:29
+Code: 04 c3 fb fa 4c 89 e1 48 c7 c7 e0 de 9e 89 e8 9e 43 f3 ff 0f 0b 48 89 f2 4c 89 e1 48 89 ee 48 c7 c7 20 e0 9e 89 e8 87 43 f3 ff <0f> 0b 48 89 f1 48 c7 c7 a0 df 9e 89 4c 89 e6 e8 73 43 f3 ff 0f 0b
+RSP: 0018:ffffc90000fef938 EFLAGS: 00010086
+RAX: 0000000000000058 RBX: ffff888017eaa000 RCX: 0000000000000000
+RDX: ffff88801f3ed340 RSI: ffffffff815b6285 RDI: fffff520001fdf19
+RBP: ffff888017eaa080 R08: 0000000000000058 R09: 0000000000000000
+R10: ffffffff815af45e R11: 0000000000000000 R12: ffff888017eaa080
+R13: ffff888014901900 R14: ffff88801a9cb000 R15: ffff88801a9cb520
+FS:  0000000002395880(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff04f95b6c0 CR3: 000000001a4f2000 CR4: 0000000000350ef0
+Call Trace:
+ __list_add include/linux/list.h:67 [inline]
+ list_add include/linux/list.h:86 [inline]
+ io_file_get+0x8cc/0xdb0 fs/io_uring.c:6466
+ __io_splice_prep+0x1bc/0x530 fs/io_uring.c:3866
+ io_splice_prep fs/io_uring.c:3920 [inline]
+ io_req_prep+0x3546/0x4e80 fs/io_uring.c:6081
+ io_queue_sqe+0x609/0x10d0 fs/io_uring.c:6628
+ io_submit_sqe fs/io_uring.c:6705 [inline]
+ io_submit_sqes+0x1495/0x2720 fs/io_uring.c:6953
+ __do_sys_io_uring_enter+0x107d/0x1f30 fs/io_uring.c:9353
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x440569
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe38c5c5a8 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 0000000000401e00 RCX: 0000000000440569
+RDX: 0000000000000000 RSI: 000000000000450c RDI: 0000000000000004
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000401d70
+R13: 0000000000401e00 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 3c68392a0f24e7a0 ]---
+RIP: 0010:__list_add_valid.cold+0x26/0x3c lib/list_debug.c:29
+Code: 04 c3 fb fa 4c 89 e1 48 c7 c7 e0 de 9e 89 e8 9e 43 f3 ff 0f 0b 48 89 f2 4c 89 e1 48 89 ee 48 c7 c7 20 e0 9e 89 e8 87 43 f3 ff <0f> 0b 48 89 f1 48 c7 c7 a0 df 9e 89 4c 89 e6 e8 73 43 f3 ff 0f 0b
+RSP: 0018:ffffc90000fef938 EFLAGS: 00010086
+RAX: 0000000000000058 RBX: ffff888017eaa000 RCX: 0000000000000000
+RDX: ffff88801f3ed340 RSI: ffffffff815b6285 RDI: fffff520001fdf19
+RBP: ffff888017eaa080 R08: 0000000000000058 R09: 0000000000000000
+R10: ffffffff815af45e R11: 0000000000000000 R12: ffff888017eaa080
+R13: ffff888014901900 R14: ffff88801a9cb000 R15: ffff88801a9cb520
+FS:  0000000002395880(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff04f95b6c0 CR3: 000000001a4f2000 CR4: 0000000000350ef0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
