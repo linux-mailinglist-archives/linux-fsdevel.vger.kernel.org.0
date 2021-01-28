@@ -2,79 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B385307439
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 11:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CCA13074A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 12:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231165AbhA1Kzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 05:55:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42888 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229486AbhA1Kzn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 05:55:43 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3300BABC4;
-        Thu, 28 Jan 2021 10:55:02 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 75DFC1E14D9; Thu, 28 Jan 2021 11:55:01 +0100 (CET)
-Date:   Thu, 28 Jan 2021 11:55:01 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     bingjingc <bingjingc@synology.com>
-Cc:     viro@zeniv.linux.org.uk, jack@suse.com, jack@suse.cz,
-        axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cccheng@synology.com,
-        robbieko@synology.com, willy@infradead.org, rdunlap@infradead.org
-Subject: Re: [PATCH v2 0/3] handle large user and group ID for isofs and udf
-Message-ID: <20210128105501.GC3324@quack2.suse.cz>
-References: <1611817947-2839-1-git-send-email-bingjingc@synology.com>
+        id S231220AbhA1LWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 06:22:00 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43882 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231217AbhA1LV7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 06:21:59 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10SBIhWQ103838;
+        Thu, 28 Jan 2021 11:21:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=5XnYtNjfLwCxDEEu1MyK0MKlb4ykYdFBX2bnmXug3e8=;
+ b=p9pz/qqDE76LblRc+JtVZiOBwy9sStLJ5e+XTaM2UIrwiDVoUlhb66E8Lvgpt+CLpoDg
+ a8NxY4gvUxSNi3GNV+Dy3cIFOUPkhjOFU5dIFh1Uj2hKeqz52tvwpaTDPOq7lSZg66zD
+ afTLidhzXu6/Z8xn4Lc/07YdrXiusQ7ZkJjwk0foWJ6pzupt/rfvrJ/jtleF7UFzsAF0
+ UZZ3m4VFu9vEAz32PqQ8lfckw5FHoOe0/nWXDau61WpyIX4MnIacpWBrP7blHP62P1Lq
+ kEnL6uh1XWzHngMbhQwnikVFxbaefLJSQgbGOEamrae0FEqLYjHb2k5OACzcDNAKP6uV yw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 368brkujx3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 28 Jan 2021 11:21:16 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10SBLCtJ001840;
+        Thu, 28 Jan 2021 11:21:13 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 368wcqjmsa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 28 Jan 2021 11:21:13 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10SBL8aS009894;
+        Thu, 28 Jan 2021 11:21:08 GMT
+Received: from mwanda (/10.175.203.176)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 28 Jan 2021 03:21:07 -0800
+Date:   Thu, 28 Jan 2021 14:21:02 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     christian.brauner@ubuntu.com
+Cc:     linux-fsdevel@vger.kernel.org, lkp@intel.com, kbuild@lists.01.org
+Subject: [bug report] attr: handle idmapped mounts
+Message-ID: <YBKeHne9FZ42mich@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1611817947-2839-1-git-send-email-bingjingc@synology.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9877 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=800 bulkscore=0 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101280057
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9877 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=742
+ lowpriorityscore=0 spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101280057
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 28-01-21 15:12:27, bingjingc wrote:
-> From: BingJing Chang <bingjingc@synology.com>
-> 
-> The uid/gid (unsigned int) of a domain user may be larger than INT_MAX.
-> The parse_options of isofs and udf will return 0, and mount will fail
-> with -EINVAL. These patches try to handle large user and group ID.
-> 
-> BingJing Chang (3):
->   parser: add unsigned int parser
->   isofs: handle large user and group ID
->   udf: handle large user and group ID
+Hello Christian Brauner,
 
-Thanks for your patches! Just two notes:
+The patch 2f221d6f7b88: "attr: handle idmapped mounts" from Jan 21,
+2021, leads to the following static checker warning:
 
-1) I don't think Matthew Wilcox gave you his Reviewed-by tag (at least I
-didn't see such email). Generally the rule is that the developer has to
-explicitely write in his email that you can attach his Reviewed-by tag for
-it to be valid.
+	fs/attr.c:129 setattr_prepare()
+	warn: inconsistent indenting
 
-2) Please split the cleanup of kernel doc comments in lib/parser.c in a
-separate patch. It is unrelated to adding parse_uint() function so it
-belongs into a separate patch (we occasionally do include small unrelated
-cleanups if they are on the same line we change anyway but your changes
-definitely triggered my treshold of this should be a separate patch).
+fs/attr.c
+   124		/* Make sure a caller can chmod. */
+   125		if (ia_valid & ATTR_MODE) {
+   126			if (!inode_owner_or_capable(mnt_userns, inode))
+   127				return -EPERM;
+   128			/* Also check the setgid bit! */
+   129	               if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
+      ^^^^^^^^^^^^^^^^^
+The patch accidentally swapped tabs for spaces.
 
-Thanks!
+The kbuild-bot is supposed to warn about these, but I searched on the
+lore.kernel.org thread and didn't see a warning.
+https://lore.kernel.org/containers/20210121131959.646623-8-christian.brauner@ubuntu.com/
+Presumably it is coming soon.
 
-								Honza
+   130	                                i_gid_into_mnt(mnt_userns, inode)) &&
+   131	                    !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
+   132				attr->ia_mode &= ~S_ISGID;
+   133		}
 
-> 
->  fs/isofs/inode.c       |  9 +++++----
->  fs/udf/super.c         |  9 +++++----
->  include/linux/parser.h |  1 +
->  lib/parser.c           | 44 +++++++++++++++++++++++++++++++++-----------
->  4 files changed, 44 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+regards,
+dan carpenter
