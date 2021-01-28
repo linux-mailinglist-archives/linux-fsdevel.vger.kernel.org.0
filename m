@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A5A3306F5F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4DA4306EDB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231694AbhA1H13 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 02:27:29 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:57290 "EHLO
+        id S231703AbhA1HTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 02:19:20 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:57181 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231751AbhA1HQU (ORCPT
+        with ESMTP id S231572AbhA1HRb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 02:16:20 -0500
+        Thu, 28 Jan 2021 02:17:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611818179; x=1643354179;
+  t=1611818251; x=1643354251;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=hTRBelY7PTDZbFRPdQdHgUhYseaoF0bY2tLyF8ypbSg=;
-  b=MR4/Iae6SqQcHNtvKmTIeaPfY8MBQQxd4OvUkOQeqLrkEWKm+OuRUDs1
-   LdnySIasC3TGTrtsrJWwGUm6rYh7lyZQCIk9U9E1m/4gWXrbwob4ByO/j
-   jJwbU5i3RRLKiW9orvE4LIWICwdtRgxFFUnJVa3oc/IDCW5EobTFBBHYI
-   fE1rT8+F04QQYh1AQWS7NXawMD4jPsAtoAHCHuXvlCIvOs0SF9Acv6QB5
-   xPXzcKOWPQjx6nu8+ZHl9gwKXnIa2PigBTTjWiphNFfAUiSNvh2g4Zj9e
-   c7Ue4TrpQDL0SH+uWzJm7pb9e9x3+cqhh3LXt0oTu3eVShlNqG+IzNssh
-   w==;
-IronPort-SDR: 1iPLAwuFAvhaoaOhxIKxQzuMbC+N1b8e9fmYZtJ74cRTpEgM0v3u+i+BCmzbEw792/cHIqfGWx
- zfn9mw5ytgwqDRBQruUaCzsUKIqlE04eW058FvdQ4/5KzxqGs0kCkt6Ev1gtt0r9MXCCchD98n
- adkDvUrPSXUa61G8N1IVAt+iy72iGdt8wxBhblsQBfSfkRxF8NaDwezSr3j8NCs/hJY/+LzDXY
- BJe9Jr0SeK0bcCtU/boxjSZ6Jd6t3lyksFCLAfLNNbyjTdG1I0HQWGHGr56N3Ozk3SxiGjhIeu
- bLU=
+  bh=MfH3EN2qKmNoDMJp2ceJniIXfb1rQ8RA/+9VrY6oRvA=;
+  b=S812DaT5dNFMTZM6mTYUywIA4Jt0bfIA9X6YyM50dVlq6vG1eBnKXeeb
+   CIwXfBMWRt8xeFQfEozSf9Jo7aRuMs722dpubbdmbsgsIPYbm07F5W3qN
+   N/VuJpfpvv1kNZvyMrPT/+tqO3jX9AGIpfhN0859e5ZCeimi17rCjYKDc
+   ttDU5S6rtRCfxRcBt+N+v7tOEZf1es3TWG66+sekaFcEY/izQGvjeekYu
+   0dtt4gQYAGeZaFjDs8j0Z326+1FC3a3+Rg1DrLpRTnJ9pTrmIB7xM512+
+   Tcx7rf19iD0U64PzvqQjlCbezr/QvuDInnzibccPU87qtWWULe2d8RUpp
+   A==;
+IronPort-SDR: GlGP9xUUqzhnLgCrFwUyf/m0tGv3QGr3/SI9QFn+PxDHEAvwEoPKy7t+t2TR2KerGlU2Sw0ACH
+ aAKbnKK6RbAWOU9HTbAUbv5wFgX1TsHt1fV09zWOIFDoG4611EX5psaC+pdMEGFhRC+s5ORVwF
+ esw+W6OeDQM46IeFfVP06CVqzZs0ZWhOgGzjojXpzrLAiXHhPxnS3bDjf+R5RtOaAZq4pO9XaT
+ 0/podBQWLHkyvbZva2E6P1/aeHEvXYIOe/lFhwsYu020iBIMiAeGrMuQ4U0cSCYqVQgs1sr6sH
+ iHc=
 X-IronPort-AV: E=Sophos;i="5.79,381,1602518400"; 
-   d="scan'208";a="162963406"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:15:02 +0800
-IronPort-SDR: rBLGRSpa1L4IN+0/zJ9EkmyM3Rl0LtTJDDFnCrXDZ7sHoIw4PLMFJTiWic5MpYRayvrDH9z2Ad
- jmAEjmuABBbF2cP1ntHNAlEvhHVWXr8LgHtW91GtwXd9BjBy7Tp0xxTqnKZPyts3ByEgGrVyvu
- btKHMFp7ygMctNhz6alG+uvdeG7hIVJKd5xC8uPG4IbcX0ddcdOf37KPyHaisQaw/Lk1PYrb22
- z+XMAydnNPIk9MQFen4J7pihuXouqmaTF43oaBxEJWJJsQP63UGX/c6MBSRzswgcY+AgOHjT3p
- qjjHG3gAZLbhEeg4Ain2T/ha
+   d="scan'208";a="162963424"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:15:08 +0800
+IronPort-SDR: QIBK2IZGYxS5hXEaV3tW7htdfBWPEr6h2Uv1qKVLhlTfVSUFlbqdNlYfJFMjyJyJwDYPv0OvUG
+ YbHJAnJvrRy2ZnpXjfAgxBo+RSwsdcVFRx/eGzZ6fUn/kmVF3utNLQOan6Ma/UDB70b37RUGdA
+ ItNOYTNvPQmKgRdT6KYfJC/Qza4omOBXZjhgSGZGKHVnH10BMyLLwDLC9wzd+169arrvSTzzME
+ 1t07X0l6cZpdvvDg87KqJPN5+gMhUHgsX4W9omC8DOd/mcva75CFXDmiqWjr78g8xoH29VrqDm
+ 89qLFGJ4kWKIQjT1LPwCBTQ9
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:57:20 -0800
-IronPort-SDR: RvbuIrKpOmmqZ+oQPbnvg4P9b6yDctCj11PDSHseFUe3NzGe7aNswGzNT7aYrNNymGc7RRLBwA
- EyS5TC5ya2f1DBzchV289rrRJN4G30R6UcKQHWHLCT1EqyVYm8BdK2p8B74xj927ubYpSXJJYX
- yqNCzY6cgWt8a45E/OUvNDiMBg+lmhS8FA2ZqgTfl/62S3ZiS0x0JS7q7oikS9hfGQV2kW1Mb+
- vR4fnDhlmPbHKapqq2eTmDAeG1Ipck513pFwPBeDtMk5IkG3qgl83KvWp5povuzxSWxrnJjDon
- 5kw=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:59:28 -0800
+IronPort-SDR: +1TgXZ9HjoaS+86zh+aLwx6S7ZpAYQ4FpPhwS5t1uQfka+31mML1LQsLKCwFYYGr030vY+BCmC
+ AGfrPosPVl95WjEssU5DCDJZAyR1khEX1jpqrqTT8P7u968xhLua2/lVUN5jQ7ABVZJAwAp2MY
+ 3XKOPyoMsT52VNuagfol6rCenkg2OIsIErUkF58mfwGPLsAlDeR+kVK0eqUX532NsUF4ctVre4
+ Iqd0vyO+udw10x//vZBdiK4usAo9yvQxvOxxYG203IoYDBmyGC3oa9VGSQBs+2yVysQ7ZPCJPH
+ kDc=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:15:02 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:15:08 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         dm-devel@redhat.com, linux-block@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc:     axboe@kernel.dk, philipp.reisner@linbit.com,
         alex.shi@linux.alibaba.com, asml.silence@gmail.com,
         ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
         bvanassche@acm.org, jefflexu@linux.alibaba.com
-Subject: [RFC PATCH 24/34] fs/nilfs: use bio_new nilfs_alloc_seg_bio
-Date:   Wed, 27 Jan 2021 23:11:23 -0800
-Message-Id: <20210128071133.60335-25-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 25/34] ocfs/cluster: use bio_new in dm-log-writes
+Date:   Wed, 27 Jan 2021 23:11:24 -0800
+Message-Id: <20210128071133.60335-26-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
 In-Reply-To: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
 References: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
@@ -89,31 +89,40 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- fs/nilfs2/segbuf.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ fs/ocfs2/cluster/heartbeat.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
-index 1e75417bfe6e..df352cab7a93 100644
---- a/fs/nilfs2/segbuf.c
-+++ b/fs/nilfs2/segbuf.c
-@@ -383,15 +383,9 @@ static int nilfs_segbuf_submit_bio(struct nilfs_segment_buffer *segbuf,
- static struct bio *nilfs_alloc_seg_bio(struct the_nilfs *nilfs, sector_t start,
- 				       int nr_vecs)
- {
--	struct bio *bio;
-+	sector_t sect = start << (nilfs->ns_blocksize_bits - 9);
+diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+index 0179a73a3fa2..b34518036446 100644
+--- a/fs/ocfs2/cluster/heartbeat.c
++++ b/fs/ocfs2/cluster/heartbeat.c
+@@ -515,12 +515,13 @@ static struct bio *o2hb_setup_one_bio(struct o2hb_region *reg,
+ 	unsigned int cs = *current_slot;
+ 	struct bio *bio;
+ 	struct page *page;
++	sector_t sect = (reg->hr_start_block + cs) << (bits - 9);
  
--	bio = bio_alloc(GFP_NOIO, nr_vecs);
--	if (likely(bio)) {
--		bio_set_dev(bio, nilfs->ns_bdev);
--		bio->bi_iter.bi_sector =
--			start << (nilfs->ns_blocksize_bits - 9);
--	}
--	return bio;
-+	return bio_new(nilfs->ns_bdev, sect, 0, 0, nr_vecs, GFP_NOIO);
- }
+ 	/* Testing has shown this allocation to take long enough under
+ 	 * GFP_KERNEL that the local node can get fenced. It would be
+ 	 * nicest if we could pre-allocate these bios and avoid this
+ 	 * all together. */
+-	bio = bio_alloc(GFP_ATOMIC, 16);
++	bio = bio_new(reg->hr_bdev, sect, op, op_flags, 16, GFP_ATOMIC);
+ 	if (!bio) {
+ 		mlog(ML_ERROR, "Could not alloc slots BIO!\n");
+ 		bio = ERR_PTR(-ENOMEM);
+@@ -528,11 +529,8 @@ static struct bio *o2hb_setup_one_bio(struct o2hb_region *reg,
+ 	}
  
- static void nilfs_segbuf_prepare_write(struct nilfs_segment_buffer *segbuf,
+ 	/* Must put everything in 512 byte sectors for the bio... */
+-	bio->bi_iter.bi_sector = (reg->hr_start_block + cs) << (bits - 9);
+-	bio_set_dev(bio, reg->hr_bdev);
+ 	bio->bi_private = wc;
+ 	bio->bi_end_io = o2hb_bio_end_io;
+-	bio_set_op_attrs(bio, op, op_flags);
+ 
+ 	vec_start = (cs << bits) % PAGE_SIZE;
+ 	while(cs < max_slots) {
 -- 
 2.22.1
 
