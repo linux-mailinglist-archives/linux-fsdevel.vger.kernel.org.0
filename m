@@ -2,104 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC41F307A26
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 16:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED12D307A3D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 17:05:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232006AbhA1P5b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 10:57:31 -0500
-Received: from gentwo.org ([3.19.106.255]:44642 "EHLO gentwo.org"
+        id S229786AbhA1QDS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 11:03:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39250 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229885AbhA1P53 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 10:57:29 -0500
-Received: by gentwo.org (Postfix, from userid 1002)
-        id 70A813F4C1; Thu, 28 Jan 2021 15:56:36 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by gentwo.org (Postfix) with ESMTP id 6DA583F461;
-        Thu, 28 Jan 2021 15:56:36 +0000 (UTC)
-Date:   Thu, 28 Jan 2021 15:56:36 +0000 (UTC)
-From:   Christoph Lameter <cl@linux.com>
-X-X-Sender: cl@www.lameter.com
-To:     Michal Hocko <mhocko@suse.com>
-cc:     Mike Rapoport <rppt@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize
- direct map fragmentation
-In-Reply-To: <YBLA7sEKn01HXd/U@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.22.394.2101281549390.11861@www.lameter.com>
-References: <20210121122723.3446-1-rppt@kernel.org> <20210121122723.3446-8-rppt@kernel.org> <20210126114657.GL827@dhcp22.suse.cz> <303f348d-e494-e386-d1f5-14505b5da254@redhat.com> <20210126120823.GM827@dhcp22.suse.cz> <20210128092259.GB242749@kernel.org>
- <YBK1kqL7JA7NePBQ@dhcp22.suse.cz> <alpine.DEB.2.22.394.2101281326360.10563@www.lameter.com> <YBLA7sEKn01HXd/U@dhcp22.suse.cz>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        id S229551AbhA1QDO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 11:03:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 050F6AC41;
+        Thu, 28 Jan 2021 16:02:33 +0000 (UTC)
+Subject: Re: [v5 PATCH 01/11] mm: vmscan: use nid from shrink_control for
+ tracepoint
+To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, ktkhai@virtuozzo.com,
+        shakeelb@google.com, david@fromorbit.com, hannes@cmpxchg.org,
+        mhocko@suse.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210127233345.339910-1-shy828301@gmail.com>
+ <20210127233345.339910-2-shy828301@gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <621d771e-5d28-9f5f-662b-9f4d81c0ef04@suse.cz>
+Date:   Thu, 28 Jan 2021 17:02:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20210127233345.339910-2-shy828301@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 28 Jan 2021, Michal Hocko wrote:
+On 1/28/21 12:33 AM, Yang Shi wrote:
+> The tracepoint's nid should show what node the shrink happens on, the start tracepoint
+> uses nid from shrinkctl, but the nid might be set to 0 before end tracepoint if the
+> shrinker is not NUMA aware, so the traceing log may show the shrink happens on one
+> node but end up on the other node.  It seems confusing.  And the following patch
+> will remove using nid directly in do_shrink_slab(), this patch also helps cleanup
+> the code.
+> 
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
 
-> > > If you kill the allocating process then yes, it would work, but your
-> > > process might be the very last to be selected.
-> >
-> > OOMs are different if you have a "constrained allocation". In that case it
-> > is the fault of the process who wanted memory with certain conditions.
-> > That memory is not available. General memory is available though. In that
-> > case the allocating process is killed.
->
-> I do not see this implementation would do anything like that. Neither
-> anything like that implemented in the oom killer. Constrained
-> allocations (cpusets/memcg/mempolicy) only do restrict their selection
-> to processes which belong to the same domain. So I am not really sure
-> what you are referring to. The is only a global knob to _always_ kill
-> the allocating process on OOM.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Constrained allocations refer to allocations where the NUMA nodes are
-restricted or something else does not allow the use of arbitrary memory.
-The OOM killer changes its behavior. In the past we fell back to killing
-the calling process.
-
-See constrained_alloc() in mm/oom_kill.c
-
-static const char * const oom_constraint_text[] = {
-        [CONSTRAINT_NONE] = "CONSTRAINT_NONE",
-        [CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
-        [CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
-        [CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
-};
-
-/*
- * Determine the type of allocation constraint.
- */
-static enum oom_constraint constrained_alloc(struct oom_control *oc)
-{
+> ---
+>  mm/vmscan.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index b1b574ad199d..b512dd5e3a1c 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -535,7 +535,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>  	else
+>  		new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
+>  
+> -	trace_mm_shrink_slab_end(shrinker, nid, freed, nr, new_nr, total_scan);
+> +	trace_mm_shrink_slab_end(shrinker, shrinkctl->nid, freed, nr, new_nr, total_scan);
+>  	return freed;
+>  }
+>  
+> 
 
