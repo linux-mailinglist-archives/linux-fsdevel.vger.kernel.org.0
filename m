@@ -2,188 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD4F306DC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 07:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11386306E0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:06:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbhA1GoK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 01:44:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56110 "EHLO
+        id S229652AbhA1HEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 02:04:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbhA1GoJ (ORCPT
+        with ESMTP id S229551AbhA1HEu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 01:44:09 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40850C061573
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 22:43:29 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id kg20so6148185ejc.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jan 2021 22:43:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=o7+Pby8e2R99rOdoZOYeLtvRv3cjQ5UmuprwF9knKn8=;
-        b=FFkqqprW75VlMmYs0znavBz5Q8Im1qY/XXrSman/lI4JZjc70ahX5oJMarnuCUbvIc
-         yZ1PO0awLHDxRVQsekuHK0W0fjN1P3xj/vnWSCuxh+FGguxGJqHeBTamRPSsOpcLPJlz
-         RElSMf4RCt6SztKZV13T4N1a/B1NIGDCa9g7OYhoP3wXWITTGmjMgPTPpXf++r+QF+mQ
-         g3clKrEH/ZX0cs6Y/gtQnZk2vd3PrZnR745SG2n/AtNyKppbBvjX1cZrjRGs/4V0pYNr
-         sNGo1V52kAFsMCZj5YJvLWhY6e8rkmwdDIiMFqLcaImeViBDxAD0gQNJoh5JkEEYtLLB
-         6t7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=o7+Pby8e2R99rOdoZOYeLtvRv3cjQ5UmuprwF9knKn8=;
-        b=Mg3WdZGWfauwwAMhScHmKbX/tKgi094M0sQCcIRFRXam+HTg5BloklcwCKUVXTwdOx
-         mlalRyEl7orM8PVeEKhtG/IwbXhgWV8YJDS01DtNNfHZQWLYDVXAhuOiHPr2FAha2CNC
-         n5HsNFCSIkJxVoU+6/DfjQofUGS6BV92N1m3ZiIl8b/sU1Yyi+mfK9vFiYW1W47ACO5y
-         DGw6tDJBgn9yKdYjl39iRbsPe64uwVCo6Son+Vie6V9ZNo679vXuWbchEwzm2Y/CZ0/b
-         DSLXmZpGsaDXJTw5vdLHRzghcFVMZOG15necCrIwH0QgeTsdxgLTvsoqm32T9CGf0Fh0
-         diUA==
-X-Gm-Message-State: AOAM533TwaZaDCmFzUtG2ZFFWxpT+G/S6OWEnF6EHiSF885YrYV6jz2u
-        SDTxE3Idq+zk/lEANImLhO4Lw1gCxeO1OfhdpLtJ
-X-Google-Smtp-Source: ABdhPJwJNvRpomqMRznRTxiFyPthpJuctZnqW2JgzR705CTKACKbSdDjP/NBg+4Y0UDASwp10FKgqn5Bn/zS0xEdqFY=
-X-Received: by 2002:a17:906:128e:: with SMTP id k14mr9414841ejb.427.1611816208026;
- Wed, 27 Jan 2021 22:43:28 -0800 (PST)
+        Thu, 28 Jan 2021 02:04:50 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD44C061573;
+        Wed, 27 Jan 2021 23:04:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=xTj5iUr2pNOoeNVjs1n88tIxBjCvKioFx6e9RyoCseM=; b=dz2TgDLK5eoH2z4ZCfs/qT5PIV
+        IaRzVY2+eFwm52EJfrNvLBC6Wd1hJNVg7QlsnIQFcXfyDKod78aGFtup/wxdWpT7+vHPPsMe5IVTZ
+        zQs1+jXDUBcNUaMTMz40LzbVWZ54ILVqxDm6PUl+qSFvwfIDnh2O6LbX2osrfHcAWihdX+zBnmC1z
+        B1rJgb99SVAWNOzzU3HlOqJDhPrFp0zOihrDsqeRNjcJ3Am5ECf7OoFiH+n7WbnmEd3rAoYJnKqY7
+        Mq2tTcOEmeXIOEDBURdhn8Os4toUDxKjLZ+40iQD+Jzbck7fDGE3LAF0q31ug/Xxp1wxDWFWX5rxm
+        B+anS/gQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l51LZ-00845z-RY; Thu, 28 Jan 2021 07:04:06 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/25] Page folios
+Date:   Thu, 28 Jan 2021 07:03:39 +0000
+Message-Id: <20210128070404.1922318-1-willy@infradead.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <20210119045920.447-1-xieyongji@bytedance.com> <20210119050756.600-1-xieyongji@bytedance.com>
- <20210119050756.600-2-xieyongji@bytedance.com> <1bb3af07-0ec2-109c-d6d1-83d4d1f410c3@redhat.com>
- <CACycT3uJtKqEp7CHBKhvmSL41gTrCcMrt_-tacGCbX1nabuG6w@mail.gmail.com>
- <ea170064-6fcf-133b-f3bd-d1f1862d4143@redhat.com> <CACycT3upvTrkm5Cd6KzphSk=FYDjAVCbFJ0CLmha5sP_h=5KGg@mail.gmail.com>
- <bdb57829-d4a4-eaca-d43b-70d39df96bf6@redhat.com>
-In-Reply-To: <bdb57829-d4a4-eaca-d43b-70d39df96bf6@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Thu, 28 Jan 2021 14:43:17 +0800
-Message-ID: <CACycT3sfd8LOS+3w1LGZe1CaUD3B-3ga2OqKBxA_vhaOL0kg2g@mail.gmail.com>
-Subject: Re: Re: [RFC v3 08/11] vduse: Introduce VDUSE - vDPA Device in Userspace
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 28, 2021 at 2:14 PM Jason Wang <jasowang@redhat.com> wrote:
->
->
-> On 2021/1/28 =E4=B8=8B=E5=8D=882:03, Yongji Xie wrote:
-> >>>>> +
-> >>>>> +static const struct file_operations vduse_domain_fops =3D {
-> >>>>> +     .mmap =3D vduse_domain_mmap,
-> >>>>> +     .release =3D vduse_domain_release,
-> >>>>> +};
-> >>>> It's better to explain the reason for introducing a dedicated file f=
-or
-> >>>> mmap() here.
-> >>>>
-> >>> To make the implementation of iova_domain independent with vduse_dev.
-> >> My understanding is that, the only usage for this is to:
-> >>
-> >> 1) support different type of iova mappings
-> >> 2) or switch between iova domain mappings
-> >>
-> >> But I can't think of a need for this.
-> >>
-> > For example, share one iova_domain between several vduse devices.
->
->
-> Interesting.
->
->
-> >
-> > And it will be helpful if we want to split this patch into iova domain
-> > part and vduse device part. Because the page fault handler should be
-> > paired with dma_map/dma_unmap.
->
->
-> Ok.
->
-> [...]
->
->
-> >
-> >>>> This looks not safe, let's use idr here.
-> >>>>
-> >>> Could you give more details? Looks like idr should not used in this
-> >>> case which can not tolerate failure. And using a list to store the ms=
-g
-> >>> is better than using idr when the msg needs to be re-inserted in some
-> >>> cases.
-> >> My understanding is the "unique" (probably need a better name) is a
-> >> token that is used to uniquely identify a message. The reply from
-> >> userspace is required to write with exact the same token(unique). IDR
-> >> seems better but consider we can hardly hit 64bit overflow, atomic mig=
-ht
-> >> be OK as well.
-> >>
-> >> Btw, under what case do we need to do "re-inserted"?
-> >>
-> > When userspace daemon receive the message but doesn't reply it before c=
-rash.
->
->
-> Do we have code to do this?
->
+Some functions which take a struct page as an argument operate on
+PAGE_SIZE bytes.  Others operate on the entire compound page if
+passed either a head or tail page.  Others operate on the compound
+page if passed a head page, but PAGE_SIZE bytes if passed a tail page.
+Yet others either BUG or do the wrong thing if passed a tail page.
 
-Yes, in patch 9.
+This patch series starts to resolve this ambiguity by introducing a new
+type, the struct folio.  A function which takes a struct folio argument
+declares that it will operate on the entire page.  In return, the caller
+guarantees that the pointer it is passing does not point to a tail page.
 
->
-> >
-> >>>> So we had multiple types of requests/responses, is this better to
-> >>>> introduce a queue based admin interface other than ioctl?
-> >>>>
-> >>> Sorry, I didn't get your point. What do you mean by queue-based admin
-> >>> interface? Virtqueue-based?
-> >> Yes, a queue(virtqueue). The commands could be passed through the queu=
-e.
-> >> (Just an idea, not sure it's worth)
-> >>
-> > I considered it before. But I found it still needs some extra works
-> > (setup eventfd, set vring base and so on) to setup the admin virtqueue
-> > before using it for communication. So I turn to use this simple way.
->
->
-> Yes. We might consider it in the future.
->
+This allows us to do less work.  Now we have a type that is guaranteed
+not to be a tail page, we can avoid calling compound_head().  That saves
+us hundreds of bytes of text and even manages to reduce the amount of
+data in the kernel image somehow.
 
-Agree.
+The focus for this patch series is on introducing infrastructure.
+The big correctness proof that exists in this patch series is to make
+it clear that one cannot wait (for the page lock or writeback) on a
+tail page.  I don't believe there were any places which could miss a
+wakeup due to this, but it's hard to prove that without struct folio.
+Now the compiler proves it for us.
 
->
->
-> >
-> >>>> Any reason for such IOTLB invalidation here?
-> >>>>
-> >>> As I mentioned before, this is used to notify userspace to update the
-> >>> IOTLB. Mainly for virtio-vdpa case.
-> >> So the question is, usually, there could be several times of status
-> >> setting during driver initialization. Do we really need to update IOTL=
-B
-> >> every time?
-> >>
-> > I think we can check whether there are some changes after the last
-> > IOTLB updating here.
->
->
-> So the question still, except reset (write 0), any other status that can
-> affect IOTLB?
->
+v3:
+ - Rebase on next-20210127.  Two major sources of conflict, the
+   generic_file_buffered_read refactoring (in akpm tree) and the
+   fscache work (in dhowells tree).  Not sure how this patch series
+   can get merged with these two sources of conflict?
+v2:
+ - Pare patch series back to just infrastructure and the page waiting
+   parts.
 
-OK, I get your point. The status would not affect IOTLB. The reason
-why we do IOTLB updating here is we can't do it in dma_map_ops which
-might work in an atomic context. So I want to notify userspace to
-update IOTLB before I/O is processed. Of course, it's not a must
-because userspace can manually query it.
+Matthew Wilcox (Oracle) (25):
+  mm: Introduce struct folio
+  mm: Add folio_pgdat
+  mm/vmstat: Add folio stat wrappers
+  mm/debug: Add VM_BUG_ON_FOLIO and VM_WARN_ON_ONCE_FOLIO
+  mm: Add put_folio
+  mm: Add get_folio
+  mm: Create FolioFlags
+  mm: Handle per-folio private data
+  mm: Add folio_index, folio_page and folio_contains
+  mm/util: Add folio_mapping and folio_file_mapping
+  mm/memcg: Add folio_memcg, lock_folio_memcg and unlock_folio_memcg
+  mm/memcg: Add mem_cgroup_folio_lruvec
+  mm: Add unlock_folio
+  mm: Add lock_folio
+  mm: Add lock_folio_killable
+  mm: Convert lock_page_async to lock_folio_async
+  mm/filemap: Convert end_page_writeback to end_folio_writeback
+  mm: Convert wait_on_page_bit to wait_on_folio_bit
+  mm: Add wait_for_stable_folio and wait_on_folio_writeback
+  mm: Add wait_on_folio_locked & wait_on_folio_locked_killable
+  mm: Convert lock_page_or_retry to lock_folio_or_retry
+  mm/filemap: Convert wake_up_page_bit to wake_up_folio_bit
+  mm: Convert test_clear_page_writeback to test_clear_folio_writeback
+  mm/filemap: Convert page wait queues to be folios
+  cachefiles: Switch to wait_page_key
 
-Thanks,
-Yongji
+ fs/afs/write.c             |  31 +++---
+ fs/cachefiles/rdwr.c       |  13 ++-
+ fs/io_uring.c              |   2 +-
+ include/linux/memcontrol.h |  22 ++++
+ include/linux/mm.h         |  88 ++++++++++++----
+ include/linux/mm_types.h   |  33 ++++++
+ include/linux/mmdebug.h    |  20 ++++
+ include/linux/netfs.h      |   5 +
+ include/linux/page-flags.h | 106 +++++++++++++++----
+ include/linux/pagemap.h    | 201 ++++++++++++++++++++++++-----------
+ include/linux/vmstat.h     |  60 +++++++++++
+ mm/filemap.c               | 207 ++++++++++++++++++-------------------
+ mm/memcontrol.c            |  36 ++++---
+ mm/memory.c                |  10 +-
+ mm/page-writeback.c        |  48 ++++-----
+ mm/swapfile.c              |   6 +-
+ mm/util.c                  |  20 ++--
+ 17 files changed, 621 insertions(+), 287 deletions(-)
+
+-- 
+2.29.2
+
