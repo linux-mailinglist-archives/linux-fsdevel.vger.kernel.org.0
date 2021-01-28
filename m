@@ -2,101 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D54553075B4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 13:16:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A69E3075D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 13:23:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231383AbhA1MOr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 07:14:47 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:54601 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231363AbhA1MOZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 07:14:25 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=56;SR=0;TI=SMTPD_---0UN8ZMkY_1611836008;
-Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UN8ZMkY_1611836008)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 28 Jan 2021 20:13:29 +0800
-Subject: Re: [RFC PATCH 25/34] ocfs/cluster: use bio_new in dm-log-writes
-To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        xen-devel@lists.xenproject.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-pm@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     axboe@kernel.dk, philipp.reisner@linbit.com,
-        lars.ellenberg@linbit.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com, minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com, agk@redhat.com,
-        snitzer@redhat.com, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, viro@zeniv.linux.org.uk, tytso@mit.edu,
-        jaegeuk@kernel.org, ebiggers@kernel.org, djwong@kernel.org,
-        shaggy@kernel.org, konishi.ryusuke@gmail.com, mark@fasheh.com,
-        jlbec@evilplan.org, damien.lemoal@wdc.com, naohiro.aota@wdc.com,
-        jth@kernel.org, rjw@rjwysocki.net, len.brown@intel.com,
-        pavel@ucw.cz, akpm@linux-foundation.org, hare@suse.de,
-        gustavoars@kernel.org, tiwai@suse.de, alex.shi@linux.alibaba.com,
-        asml.silence@gmail.com, ming.lei@redhat.com, tj@kernel.org,
-        osandov@fb.com, bvanassche@acm.org, jefflexu@linux.alibaba.com
-References: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
- <20210128071133.60335-26-chaitanya.kulkarni@wdc.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <8ba2c461-6042-757d-a3c1-0490932e749e@linux.alibaba.com>
-Date:   Thu, 28 Jan 2021 20:13:28 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.1
+        id S231297AbhA1MVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 07:21:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46068 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231183AbhA1MVv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 07:21:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 408A5AC45;
+        Thu, 28 Jan 2021 12:21:10 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 855d98e6;
+        Thu, 28 Jan 2021 12:22:03 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 17/17] ceph: add fscrypt ioctls
+References: <20210120182847.644850-1-jlayton@kernel.org>
+        <20210120182847.644850-18-jlayton@kernel.org>
+Date:   Thu, 28 Jan 2021 12:22:02 +0000
+In-Reply-To: <20210120182847.644850-18-jlayton@kernel.org> (Jeff Layton's
+        message of "Wed, 20 Jan 2021 13:28:47 -0500")
+Message-ID: <87y2gdi74l.fsf@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20210128071133.60335-26-chaitanya.kulkarni@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I think you send a wrong subject by mistake.
+Jeff Layton <jlayton@kernel.org> writes:
 
-Thanks,
-Joseph
-
-On 1/28/21 3:11 PM, Chaitanya Kulkarni wrote:
-> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+> Most of the ioctls, we gate on the MDS feature support. The exception is
+> the key removal and status functions that we still want to work if the
+> MDS's were to (inexplicably) lose the feature.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/ocfs2/cluster/heartbeat.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-> index 0179a73a3fa2..b34518036446 100644
-> --- a/fs/ocfs2/cluster/heartbeat.c
-> +++ b/fs/ocfs2/cluster/heartbeat.c
-> @@ -515,12 +515,13 @@ static struct bio *o2hb_setup_one_bio(struct o2hb_region *reg,
->  	unsigned int cs = *current_slot;
->  	struct bio *bio;
->  	struct page *page;
-> +	sector_t sect = (reg->hr_start_block + cs) << (bits - 9);
+>  fs/ceph/ioctl.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>
+> diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+> index 6e061bf62ad4..832909f3eb1b 100644
+> --- a/fs/ceph/ioctl.c
+> +++ b/fs/ceph/ioctl.c
+> @@ -6,6 +6,7 @@
+>  #include "mds_client.h"
+>  #include "ioctl.h"
+>  #include <linux/ceph/striper.h>
+> +#include <linux/fscrypt.h>
 >  
->  	/* Testing has shown this allocation to take long enough under
->  	 * GFP_KERNEL that the local node can get fenced. It would be
->  	 * nicest if we could pre-allocate these bios and avoid this
->  	 * all together. */
-> -	bio = bio_alloc(GFP_ATOMIC, 16);
-> +	bio = bio_new(reg->hr_bdev, sect, op, op_flags, 16, GFP_ATOMIC);
->  	if (!bio) {
->  		mlog(ML_ERROR, "Could not alloc slots BIO!\n");
->  		bio = ERR_PTR(-ENOMEM);
-> @@ -528,11 +529,8 @@ static struct bio *o2hb_setup_one_bio(struct o2hb_region *reg,
+>  /*
+>   * ioctls
+> @@ -268,8 +269,29 @@ static long ceph_ioctl_syncio(struct file *file)
+>  	return 0;
+>  }
+>  
+> +static int vet_mds_for_fscrypt(struct file *file)
+> +{
+> +	int i, ret = -EOPNOTSUPP;
+> +	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
+> +
+> +	mutex_lock(&mdsc->mutex);
+> +	for (i = 0; i < mdsc->max_sessions; i++) {
+> +		struct ceph_mds_session *s = __ceph_lookup_mds_session(mdsc, i);
+> +
+> +		if (!s)
+> +			continue;
+> +		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
+> +			ret = 0;
+
+And another one, I believe...?  We need this here:
+
+		ceph_put_mds_session(s);
+
+Also, isn't this logic broken?  Shouldn't we walk through all the sessions
+and return 0 only if they all have that feature bit set?
+
+Cheers,
+-- 
+Luis
+
+> +		break;
+> +	}
+> +	mutex_unlock(&mdsc->mutex);
+> +	return ret;
+> +}
+> +
+>  long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  {
+> +	int ret;
+> +
+>  	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+>  	switch (cmd) {
+>  	case CEPH_IOC_GET_LAYOUT:
+> @@ -289,6 +311,45 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  
+>  	case CEPH_IOC_SYNCIO:
+>  		return ceph_ioctl_syncio(file);
+> +
+> +	case FS_IOC_SET_ENCRYPTION_POLICY:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_set_policy(file, (const void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_POLICY:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
+> +
+> +	case FS_IOC_ADD_ENCRYPTION_KEY:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_add_key(file, (void __user *)arg);
+> +
+> +	case FS_IOC_REMOVE_ENCRYPTION_KEY:
+> +		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
+> +
+> +	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
+> +		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
+> +		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
+> +
+> +	case FS_IOC_GET_ENCRYPTION_NONCE:
+> +		ret = vet_mds_for_fscrypt(file);
+> +		if (ret)
+> +			return ret;
+> +		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
 >  	}
 >  
->  	/* Must put everything in 512 byte sectors for the bio... */
-> -	bio->bi_iter.bi_sector = (reg->hr_start_block + cs) << (bits - 9);
-> -	bio_set_dev(bio, reg->hr_bdev);
->  	bio->bi_private = wc;
->  	bio->bi_end_io = o2hb_bio_end_io;
-> -	bio_set_op_attrs(bio, op, op_flags);
->  
->  	vec_start = (cs << bits) % PAGE_SIZE;
->  	while(cs < max_slots) {
-> 
+>  	return -ENOTTY;
+> -- 
+>
+> 2.29.2
+>
