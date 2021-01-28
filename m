@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F1630805A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 22:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 086DA308072
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 22:24:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231375AbhA1VRu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 16:17:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
+        id S231491AbhA1VXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 16:23:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231378AbhA1VRf (ORCPT
+        with ESMTP id S229819AbhA1VXR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 16:17:35 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32FEC061574;
-        Thu, 28 Jan 2021 13:16:54 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id j13so8303806edp.2;
-        Thu, 28 Jan 2021 13:16:54 -0800 (PST)
+        Thu, 28 Jan 2021 16:23:17 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28831C061573;
+        Thu, 28 Jan 2021 13:22:37 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id g1so8299013edu.4;
+        Thu, 28 Jan 2021 13:22:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6Bn/uZbi53prTbKMwEZWHXl6XCtApRQIRtzYnDibrEI=;
-        b=M1Xs1mWrpvwVSmNxKUfVObBna2/o8jikxGlcqEeHhf0DSudNj8QY6OAX3C7uy2Dpx/
-         1MZMRcZeq4VuYtZTJjUVrNOseOr8M/B75LrHOC+GhGpocyFVVJRDP7TdB09LgRzkIvZM
-         By9mh5EVAdU0FegixQb+tT5mLFvocEcYinNP5sBPh25nKxAwSZvDdbzX5VoG0zMcTUK9
-         LBYCgT62MIreVF/Ke+S7X1DhrrxB+SKiJ72osOSrGkg790v42NGClbocqMbpYCFWoARD
-         VmgwKYP4Aq1VGBmw/tAhIGRAsE899bCnYJ8Kf3HdmPScPV4Dx3xBHBlJDVFL88vm1f28
-         dxgw==
+        bh=iky+DugOhX1hDNU3AWl/82OLUGd7e4uUQOiW57Oek80=;
+        b=USzLlpmi1mBOqEu9XY81zRzzf+qzbqJv194UHN5m5M+QpQ0uKDo+sBGdT0gQy8jNMK
+         o5vc0IP99E2JOhGR/e8aBVRdzRET0CJa3NQIZok5SKcuNYvr/kLx1FYUpMbeg6yDBcsy
+         8XC6N3guc2KshmE+DF/+3hfJJiEEULacyTThIoOb7FN1IdoSOGmo4CiN3SUkPyyYGFb2
+         z4J5ZSG+5kra4ru8YMsy9SKz+2IML0VPlOhMFdNI0PgJndwmxFVqX+UMu7b+lXNy7+Px
+         dh0Ujyy65MmDvQrtN4rHwAYIIGz3vHAn6uJEJuhCFLi7Czc3nv3D2NCszIewnk1vxBHJ
+         y/6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6Bn/uZbi53prTbKMwEZWHXl6XCtApRQIRtzYnDibrEI=;
-        b=tQtq2v8PbdGVZdA1izCOrgNR56zs+NQaXV/pWkZZ/jYoMZk3z+bWeyHcTjlxmQ6oZ9
-         9aODpY4LZCz6gzGXXhRRL5DK+2RnOoYa4KscTjFPTiAuebUJSZG1hxmAf4VIqpvNQ8hJ
-         NADy7mc+54AYw9ewXCGkOlUAbSnIYepSzNg0eMKQ0FskV5csdTgME3rKPj4qaZTuiemR
-         WcYnxiF+3ZFGsqEh+U/m6acnvl8TCsmDv+TO0aqNEZNaxYsjmWGEjnoqQetkuT06tQ/R
-         WzRpRsNfA8ElccLYX4m9PrFyhwV9/infZ8GPnlkZB6tXD8NvrKPeLHqosbyJFI/DCKeR
-         ESmg==
-X-Gm-Message-State: AOAM5317/v+UITeXvTqt32ri0IisNzMm44zJFgc2hqauMgaKQtt090Fl
-        gWBX9CXGkrlYwb0MPuK8nE8jtRHcFLEubGo9NFg=
-X-Google-Smtp-Source: ABdhPJy9bs5zjsAcg8AJRyenRTcYrzHPwabscBl9E9PA/LMnOGH2QrK37cEXMePa86ZjH47zlOt/oZjVyiAUvhdIHHc=
-X-Received: by 2002:a05:6402:312e:: with SMTP id dd14mr1780887edb.366.1611868613546;
- Thu, 28 Jan 2021 13:16:53 -0800 (PST)
+        bh=iky+DugOhX1hDNU3AWl/82OLUGd7e4uUQOiW57Oek80=;
+        b=XRKxhTWieu0gspZFMq0NiKneqj0tUpoMAV9THr9fNjeJ0Y5u4ehQJU3gJVzCu+mAmj
+         FxBSflY4PDxzdv5TcZiU57BFvYP2LILudjwQUp2Fhwxlzl+r0C2/CMB8nvMF8+ITmYvt
+         3BDJdGerEpVDMhaEPzvACMqlCiuXSCDOSp2uO0abQGrrFQfSre/VJfpZn2UcE1xc+FtJ
+         tcVwi++ygvcKZ4yET3UxRHDNwQZEwoMCifwiwx0/XPMpOIMi+HyFaGBYT62n6Sna1PgP
+         cFVPWdWH9Rbq0Y3AMSJyLsuys90uFyEMuFnmE7xv0luAbuDXxbBfjGunnxF0u3Xqq9SV
+         LK+Q==
+X-Gm-Message-State: AOAM531il807MsZp3VsJnx8U9AYHoRAsnUGeRQGsHPbTNcHo66rfDpTi
+        w3YcStDPmJ37qo92F04Atq+Id5bWOq2RaiwYKUA=
+X-Google-Smtp-Source: ABdhPJwbu0bZDCE0LMnecgpA/vbNy1VOG2Gthhi97YaSV3LvX82i39z8aXTCyggUdueGOuBBwISGHCnSt9U8RpOtrVY=
+X-Received: by 2002:a05:6402:312e:: with SMTP id dd14mr1801362edb.366.1611868955853;
+ Thu, 28 Jan 2021 13:22:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20210127233345.339910-1-shy828301@gmail.com> <20210127233345.339910-3-shy828301@gmail.com>
- <4b0a6d22-e29b-fb85-b05f-b9f9f62ca8ea@suse.cz>
-In-Reply-To: <4b0a6d22-e29b-fb85-b05f-b9f9f62ca8ea@suse.cz>
+References: <20210127233345.339910-1-shy828301@gmail.com> <20210127233345.339910-5-shy828301@gmail.com>
+ <255b9236-3e0b-f6f6-4a72-5e69351a979a@suse.cz>
+In-Reply-To: <255b9236-3e0b-f6f6-4a72-5e69351a979a@suse.cz>
 From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 28 Jan 2021 13:16:41 -0800
-Message-ID: <CAHbLzkoW_vQNgfwrVRy4hXaJkqW+era885dFQZfZy-OHZOOZdg@mail.gmail.com>
-Subject: Re: [v5 PATCH 02/11] mm: vmscan: consolidate shrinker_maps handling code
+Date:   Thu, 28 Jan 2021 13:22:23 -0800
+Message-ID: <CAHbLzkrN2aW03TUrC3sOANS7YV6+KMisDtsXDH2W42-1tOJziw@mail.gmail.com>
+Subject: Re: [v5 PATCH 04/11] mm: vmscan: remove memcg_shrinker_map_size
 To:     Vlastimil Babka <vbabka@suse.cz>
 Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
         Shakeel Butt <shakeelb@google.com>,
@@ -67,67 +67,103 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 28, 2021 at 8:10 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+On Thu, Jan 28, 2021 at 8:53 AM Vlastimil Babka <vbabka@suse.cz> wrote:
 >
 > On 1/28/21 12:33 AM, Yang Shi wrote:
-> > The shrinker map management is not purely memcg specific, it is at the intersection
-> > between memory cgroup and shrinkers.  It's allocation and assignment of a structure,
-> > and the only memcg bit is the map is being stored in a memcg structure.  So move the
-> > shrinker_maps handling code into vmscan.c for tighter integration with shrinker code,
-> > and remove the "memcg_" prefix.  There is no functional change.
+> > Both memcg_shrinker_map_size and shrinker_nr_max is maintained, but actually the
+> > map size can be calculated via shrinker_nr_max, so it seems unnecessary to keep both.
+> > Remove memcg_shrinker_map_size since shrinker_nr_max is also used by iterating the
+> > bit map.
 > >
 > > Signed-off-by: Yang Shi <shy828301@gmail.com>
->
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
->
-> Nits below:
->
-> > @@ -1581,10 +1581,10 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
-> >       return false;
-> >  }
+> > ---
+> >  mm/vmscan.c | 18 ++++++++----------
+> >  1 file changed, 8 insertions(+), 10 deletions(-)
 > >
-> > -extern int memcg_expand_shrinker_maps(int new_id);
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index d3f3701dfcd2..847369c19775 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -185,8 +185,7 @@ static LIST_HEAD(shrinker_list);
+> >  static DECLARE_RWSEM(shrinker_rwsem);
+> >
+> >  #ifdef CONFIG_MEMCG
 > > -
-> > -extern void memcg_set_shrinker_bit(struct mem_cgroup *memcg,
-> > -                                int nid, int shrinker_id);
-> > +extern int alloc_shrinker_maps(struct mem_cgroup *memcg);
-> > +extern void free_shrinker_maps(struct mem_cgroup *memcg);
-> > +extern void set_shrinker_bit(struct mem_cgroup *memcg,
-> > +                          int nid, int shrinker_id);
->
-> "extern" is unnecessary and people seem to be removing them nowadays when
-> touching the code
-
-OK, will fix in v6.
-
->
-> >  /*
-> >   * We allow subsystems to populate their shrinker-related
-> >   * LRU lists before register_shrinker_prepared() is called
-> > @@ -212,7 +338,7 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
-> >               goto unlock;
+> > -static int memcg_shrinker_map_size;
+> > +static int shrinker_nr_max;
 > >
-> >       if (id >= shrinker_nr_max) {
-> > -             if (memcg_expand_shrinker_maps(id)) {
-> > +             if (expand_shrinker_maps(id)) {
+> >  static void free_shrinker_map_rcu(struct rcu_head *head)
+> >  {
+> > @@ -248,7 +247,7 @@ int alloc_shrinker_maps(struct mem_cgroup *memcg)
+> >               return 0;
+> >
+> >       down_write(&shrinker_rwsem);
+> > -     size = memcg_shrinker_map_size;
+> > +     size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+> >       for_each_node(nid) {
+> >               map = kvzalloc_node(sizeof(*map) + size, GFP_KERNEL, nid);
+> >               if (!map) {
+> > @@ -266,12 +265,13 @@ int alloc_shrinker_maps(struct mem_cgroup *memcg)
+> >  static int expand_shrinker_maps(int new_id)
+> >  {
+> >       int size, old_size, ret = 0;
+> > +     int new_nr_max = new_id + 1;
+> >       struct mem_cgroup *memcg;
+> >
+> > -     size = DIV_ROUND_UP(new_id + 1, BITS_PER_LONG) * sizeof(unsigned long);
+> > -     old_size = memcg_shrinker_map_size;
+> > +     size = (new_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+> > +     old_size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+>
+> What's wrong with using DIV_ROUND_UP() here?
+
+I don't think there is anything wrong with DIV_ROUND_UP. Should be
+just different taste and result in shorter statement.
+
+>
+> >       if (size <= old_size)
+> > -             return 0;
+> > +             goto out;
+>
+> Can this even happen? Seems to me it can't, so just remove this?
+
+Yes, it can. The maps use unsigned long value for bitmap, so any
+shrinker ID < 31 would fall into the same unsigned long, so we may see
+size <= old_size, but we need increase shrinker_nr_max since
+expand_shrinker_maps() is called iff id >= shrinker_nr_max.
+
+>
+> >
+> >       if (!root_mem_cgroup)
+> >               goto out;
+> > @@ -286,9 +286,10 @@ static int expand_shrinker_maps(int new_id)
+> >                       goto out;
+> >               }
+> >       } while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
+> > +
+> >  out:
+> >       if (!ret)
+> > -             memcg_shrinker_map_size = size;
+> > +             shrinker_nr_max = new_nr_max;
+> >
+> >       return ret;
+> >  }
+> > @@ -321,7 +322,6 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
+> >  #define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
+> >
+> >  static DEFINE_IDR(shrinker_idr);
+> > -static int shrinker_nr_max;
+> >
+> >  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> >  {
+> > @@ -338,8 +338,6 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
 > >                       idr_remove(&shrinker_idr, id);
 > >                       goto unlock;
 > >               }
-> > @@ -601,7 +727,7 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
->
-> Above this is a comment about barriers in memcg_set_shrinker_bit() that should
-> be updated.
-
-Thanks for catching this. Will fix in v6.
-
->
-> >                       if (ret == SHRINK_EMPTY)
-> >                               ret = 0;
-> >                       else
-> > -                             memcg_set_shrinker_bit(memcg, nid, i);
-> > +                             set_shrinker_bit(memcg, nid, i);
-> >               }
-> >               freed += ret;
-> >
+> > -
+> > -             shrinker_nr_max = id + 1;
+> >       }
+> >       shrinker->id = id;
+> >       ret = 0;
 > >
 >
