@@ -2,117 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1497E307335
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 10:54:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7DFF30735B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 11:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbhA1Jxh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 04:53:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40200 "EHLO
+        id S232357AbhA1KCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 05:02:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231561AbhA1Jxc (ORCPT
+        with ESMTP id S231267AbhA1KCS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 04:53:32 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 834D1C061573
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 01:52:52 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id z6so4670410wrq.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 01:52:52 -0800 (PST)
+        Thu, 28 Jan 2021 05:02:18 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E641AC061573;
+        Thu, 28 Jan 2021 02:01:36 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id a8so6798090lfi.8;
+        Thu, 28 Jan 2021 02:01:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LOnRPtszV3PaUWg2pyJqFO41MhBKeHyNAsRjEwvHkC0=;
-        b=tDCPeWK1QWM9E1Za6fnY1S1SxWvoWPBZyhd5Pp6WsnhkRdcWyG32A1C826+1DTYrns
-         doj6dhlpQ1uyNvIR70PW5YdnGZ/kkvHIYtskI0Yo2VH1q7GflE35p2Ho5qgbXO0D/uQ0
-         /69suVYb3VotOiyEHZXI7Nun0wSC5qfcpI1OMCR1jtynq2su/mqm0iKqsQ1EjAQBec/9
-         VyhlTNE6XmqBVPiU+0b0Cuqo7q1mdHXmGsuP3lyJsKfQRi6SOJOaLgBgZOZXvnU0T/kS
-         UW/m9Rv8aNLySIipWgDQU9cz8IncsKn0SIgzmnc6GCRqGaq4DU5412WXvl4J4R+XaMQJ
-         B6yw==
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version;
+        bh=w7zs4vtlCOUzPk4JPVodMGjOwCX7vvMr8Eyh0CtBlKY=;
+        b=aBdiFZ6Y4Kp+nOhlgpCK6Z6WTIvAH7uPf6Dw5GNH8lHwqAWrTPwgv7vL2KYjq02Vzf
+         shdsv89u8LsaAAr4C9B70PX49KyEWjk11sBOUQy5cKQC7sAnotKMqxOnFd5pwGXnuYyy
+         l4f3pSmC2a8RsLkHnRek405USQ2daHF00hHJonK1HWU4GiqNMZaAeTUGMoThii0wUOzP
+         NDy6YjY8kZgEdVBQIdn4njsH+p0ACV44wG9Nd5DeSV8KqfTab60BZgHhtRoUq+xmcC5v
+         I+zA3q+ohcTZQbquqDT8HBeN8YzAWKtplRBAFKkGxorn+I+YQQvbBqrzdDKBAsHw2dtU
+         037A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LOnRPtszV3PaUWg2pyJqFO41MhBKeHyNAsRjEwvHkC0=;
-        b=meV3XyhqymPgn+gA4agJhSNYOu4KAAlDBcUy7FKEt20Jnqw+8LgC+c1xTjnMemRtdt
-         +U096uRPIQJZwnEJ0+5F9HTLWq5bFkwXSaeGKCR6tpVnTsbdl4abfFVqnRXQkOjMRFKZ
-         ML5pC97/E5WE20US/NZ0e8At+pvhp0hgtkbXnf2jhrP+O0dL3ywp9A0+W/+BNXq7B0tp
-         ic4mh7C3BJ4kOM1n4v0i54mas7zxqxBYOQXXw2KvMqdTNh0j1kyIk8t1QmoO7O/hPqPc
-         6lg1GK0P3hIbDJ0hQyk3zg+AL0smSoSdQqRGWBUXGfGiPIZOi8+2xDyIaYhjRuVD+qNr
-         qaRg==
-X-Gm-Message-State: AOAM5318AbVuPZ1mUv8ql6mygOVjWdLv0MTtXMuPnUQKD5plWiBHkeEP
-        0v6W1lTeUITeYIsf2FTxkRIECW/AxkVmZfhV+KP0dGu91aAY7Q==
-X-Google-Smtp-Source: ABdhPJwHETQJvwhUbgSeS4QIEKD5IvRwVjZI//YrF1rIab9o79Tvfqo/xz+jIY8t8FIJmZx+RIWn01qCuURxcn7La7g=
-X-Received: by 2002:a5d:4a0d:: with SMTP id m13mr15441223wrq.395.1611827570762;
- Thu, 28 Jan 2021 01:52:50 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version;
+        bh=w7zs4vtlCOUzPk4JPVodMGjOwCX7vvMr8Eyh0CtBlKY=;
+        b=oQ8AleDfmz1mLGLP5QEKKcjP/PUKYwB+aS7fH3FwnANGjxJFk7GvskSnTPfULf4l6G
+         ckKJ7Mnh0jaD/gwNb+CTdSUR5v/Cs3yfzNVTCfRdG8HbpyVAn13ImK/J2cmSCu8Tqdpm
+         gD5PxQvVwLS5plNfehibC80jKLpAkPNsUGnjVKMnUJwolZVhlQxNtqjmv4csky1H+o5k
+         qj9ZVP3niZKz/dvjz3+CK8AcdU/qPB4tHRz0M6vhNK+IiSXxg84PfQfIkv+1z08DqtQO
+         GdlLd0NmJGDUDgl6mDfhOau77PJav3tMhP7bIOG6gzP8GuERcpIS5OdI+ZtlESzo0pZQ
+         g+5A==
+X-Gm-Message-State: AOAM532suIXNBBI2/3FAc6Z+AeTGtDhMDdeT/CaiQSSmcLpYu6P25wRr
+        oBSb/FOBW/dHJs1kJzJnpvA=
+X-Google-Smtp-Source: ABdhPJzKkeFNRZJelT7Yxb3Qx2K7wJW+lwf6EmPqVdUlg7UlihZ29bW2xvQP6sUABgj7ntHv7PIcuQ==
+X-Received: by 2002:a19:7507:: with SMTP id y7mr6874145lfe.334.1611828094763;
+        Thu, 28 Jan 2021 02:01:34 -0800 (PST)
+Received: from eldfell ([194.136.85.206])
+        by smtp.gmail.com with ESMTPSA id y20sm1830647ljh.124.2021.01.28.02.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Jan 2021 02:01:34 -0800 (PST)
+Date:   Thu, 28 Jan 2021 12:01:30 +0200
+From:   Pekka Paalanen <ppaalanen@gmail.com>
+To:     Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Cc:     Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        dri-devel@lists.freedesktop.org, Andrei Vagin <avagin@gmail.com>,
+        Kalesh Singh <kaleshsingh@google.com>, Hui Su <sh_def@163.com>,
+        Michel Lespinasse <walken@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        kernel-team <kernel-team@android.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linaro-mm-sig@lists.linaro.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] procfs/dmabuf: Add /proc/<pid>/task/<tid>/dmabuf_fds
+Message-ID: <20210128120130.50aa9a74@eldfell>
+In-Reply-To: <ea04b552-7345-b7d5-60fe-7a22515ea63a@amd.com>
+References: <20210126225138.1823266-1-kaleshsingh@google.com>
+        <CAG48ez2tc_GSPYdgGqTRotUp6NqFoUKdoN_p978+BOLoD_Fdjw@mail.gmail.com>
+        <YBFG/zBxgnapqLAK@dhcp22.suse.cz>
+        <ea04b552-7345-b7d5-60fe-7a22515ea63a@amd.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <91568e002fed69425485c17de223bef0ff660f3a.1611313420.git.lucien.xin@gmail.com>
-In-Reply-To: <91568e002fed69425485c17de223bef0ff660f3a.1611313420.git.lucien.xin@gmail.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Thu, 28 Jan 2021 17:52:39 +0800
-Message-ID: <CADvbK_eJA5ZaEK928k+jt9QxHAYjZm5Xg7JUG5rCwTSfuGbisA@mail.gmail.com>
-Subject: Re: [PATCH] seq_read: move count check against iov_iter_count after
- calling op show
-To:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     NeilBrown <neilb@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EjrvI7yGo=jgR=BTk/_==YI"; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+--Sig_/EjrvI7yGo=jgR=BTk/_==YI
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Anyone working on reviewing this?
-Neil?
+On Wed, 27 Jan 2021 12:01:55 +0100
+Christian K=C3=B6nig <christian.koenig@amd.com> wrote:
 
-On Fri, Jan 22, 2021 at 7:03 PM Xin Long <lucien.xin@gmail.com> wrote:
->
-> In commit 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code
-> and interface"), it broke a behavior: op show() is always called when op
-> next() returns an available obj.
->
-> This caused a refcnt leak in net/sctp/proc.c, as of the seq_operations
-> sctp_assoc_ops, transport obj is held in op next() and released in op
-> show().
->
-> Here fix it by moving count check against iov_iter_count after calling
-> op show() so that op show() can still be called when op next() returns
-> an available obj.
->
-> Note that m->index needs to increase so that op start() could go fetch
-> the next obj in the next round.
->
-> Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and interface")
-> Reported-by: Prijesh <prpatel@redhat.com>
-> Signed-off-by: Xin Long <lucien.xin@gmail.com>
-> ---
->  fs/seq_file.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/seq_file.c b/fs/seq_file.c
-> index 03a369c..da304f7 100644
-> --- a/fs/seq_file.c
-> +++ b/fs/seq_file.c
-> @@ -264,8 +264,6 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->                 }
->                 if (!p || IS_ERR(p))    // no next record for us
->                         break;
-> -               if (m->count >= iov_iter_count(iter))
-> -                       break;
->                 err = m->op->show(m, p);
->                 if (err > 0) {          // ->show() says "skip it"
->                         m->count = offs;
-> @@ -273,6 +271,10 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->                         m->count = offs;
->                         break;
->                 }
-> +               if (m->count >= iov_iter_count(iter)) {
-> +                       m->index++;
-> +                       break;
-> +               }
->         }
->         m->op->stop(m, p);
->         n = copy_to_iter(m->buf, m->count, iter);
-> --
-> 2.1.0
->
+> Somewhat correct. This interface here really doesn't make sense since=20
+> the file descriptor representation of DMA-buf is only meant to be used=20
+> for short term usage.
+>=20
+> E.g. the idea is that you can export a DMA-buf fd from your device=20
+> driver, transfer that to another process and then import it again into a=
+=20
+> device driver.
+>=20
+> Keeping a long term reference to a DMA-buf fd sounds like a design bug=20
+> in userspace to me.
+
+Except keeping the fd is exactly what userspace must do if it wishes to
+re-use the buffer without passing a new fd over IPC again. Particularly
+Wayland compositors need to keep the client buffer dmabuf fd open after
+receiving it, so that they can re-import it to EGL to ensure updated
+contents are correctly flushed as EGL has no other API for it.
+
+That is my vague understanding, and what Weston implements. You can say
+it's a bad userspace API design in EGL, but what else can we do?
+
+However, in the particular case of Wayland, the shared dmabufs should
+be accounted to the Wayland client process. OOM-killing the client
+process will eventually free the dmabuf, also the Wayland server
+references to it. Killing the Wayland server (compositor, display
+server) OTOH is something that should not be done as long as there are
+e.g. Wayland clients to be killed.
+
+Unfortunately(?), Wayland clients do not have a reason to keep the
+dmabuf fd open themselves, so they probably close it as soon as it has
+been sent to a display server. So the process that should be OOM-killed
+does not have an open fd for the dmabuf (but probably has something
+else, but not an mmap for CPU). Buffer re-use in Wayland does not
+require re-sending the dmabuf fd over IPC.
+
+(In general, dmabufs are never mmapped for CPU. They are accessed by
+devices.)
+
+
+Thanks,
+pq
+
+--Sig_/EjrvI7yGo=jgR=BTk/_==YI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAmASi3oACgkQI1/ltBGq
+qqdcrA//X9uN75QyHDm8jqei3p8rmD/duy0jDCn6W2DbNy+6VM79pp8ZjqqdpeEp
+ZLe9ivqRVUOCUclKfiG2d0/vdgYwU2xnkWYSz0KUNP5pVE+4nZY3O/SA+SQcefkg
+KwfFhyM0XXm8eTVLVl5h+1dMMQ8tWkXpEwXqed4l0/478wepY8srMWoH3YRBxpiE
+q/PSkaWrRegUA8nYHp65kLVAAgP2kOeylAO/DmmtGye12AGMlNESNJHYuHPyc/wT
+Aos56muFTYYGhkICx+eqTsJBCr8mk32rFyIj/dinUcXUyvbj+sUt9eTZVAazsjjx
+NLC3zr3OSnKjQz2+kkXeGIHqTBCEWXFw3VHsPQLv7pf6XPqxJVoWtgHvzvTVduzo
+3Oxff1eYaBN54Evn1xLWLdEGhqc7wqH6RFYDnKhbOxWmBujXHpdF8Ge5xNfPauBP
+gFAtgtHJIyyu/j+CCCo1z25ToKsGTuiJnbXalIrlmWNeIq8m7XKZ3JjhR3WYZOJU
+MEOXDkeVcodCfo0ZueGvTj5meY6eJ1LIBdWBmT0h1/xA/fBocbRADBFgez42NN5s
+ro5soi7B49KRuSygUPsaSMnjpr32NwCIrQIzGtZQzgJVfRPSdke9ZD1wNle9jAXY
+B7ZbDZmlD1St8rxL+usyhRjZdUoKXjfG8d72ss37EHIhch+3CEQ=
+=oEE0
+-----END PGP SIGNATURE-----
+
+--Sig_/EjrvI7yGo=jgR=BTk/_==YI--
