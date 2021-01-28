@@ -2,103 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE1C306E39
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85C9C306E33
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:12:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231325AbhA1HLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 02:11:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60718 "EHLO
+        id S231547AbhA1HKS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 02:10:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231523AbhA1HGY (ORCPT
+        with ESMTP id S231526AbhA1HG3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 02:06:24 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1921FC0613D6;
-        Wed, 27 Jan 2021 23:05:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=43/VxbjgF1d+lqCVoRqMGOOZKkNxMV3cxvVD4xj/5Vg=; b=eoxGiwKniaXvCyUEsta93p/vBg
-        ayvcosloEkSWSiKDTQOiM+dr0QYaan8kwACr4ZdhQ54DCTkkRG8awmpKApC1ijlVsYj2jDv9QEidS
-        lTQ5B/Hn1DssUZ/XKqz2AiG3TKTdXtn1NQl3WLEh/DskApjo6/yiEbzIOnDBwq8xZ7kex/BcEm8wC
-        U6thgJBSlOKocD7+pyzW0E9iBtr6LbK5zLVQhqBfa5Up+ekDbaDrwDz3mSFqdPfXyd02judYILuBj
-        DzM4+0E4Yvhyc1Y+Eon6F1q4yHwDSRDwKDgryTYkvcrVv8GDS7JoPTJ2VOTQ9bEqxU1LDek5JrI5u
-        ScJ8iHkQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l51MN-008494-ID; Thu, 28 Jan 2021 07:04:56 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 25/25] cachefiles: Switch to wait_page_key
-Date:   Thu, 28 Jan 2021 07:04:04 +0000
-Message-Id: <20210128070404.1922318-26-willy@infradead.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210128070404.1922318-1-willy@infradead.org>
-References: <20210128070404.1922318-1-willy@infradead.org>
+        Thu, 28 Jan 2021 02:06:29 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B0AC0612F2;
+        Wed, 27 Jan 2021 23:05:46 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id r14so5087623ljc.2;
+        Wed, 27 Jan 2021 23:05:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=k6Ja0b6no5eZDxYMF3LcCjisrlOc+aXrwQbbpI1j+FU=;
+        b=vR3wxqh/qmhwGrbVwupmBVa176b9HWbzlBi+iHpE2Ycg3SLdVUaFFVWJRoDflvOdUM
+         aWsfXml59wmBYin5SlN4xPN6RcIK4dNQcXmOWado8NdbDeiQYMEx9jUwc2FSefBaZsTb
+         UppvhET8UGl0VaK3nPfEI3NeSolRoxAjUmD/Twjh8E4UabvGtnBhvdK4Pp/0MfZgKspn
+         EbnXKBnWSLwOuA8eGVoZOC1ie3IunASVVcj3NKoElHEMt6SbJYta7lDwO2SMVvg2m/by
+         5Dg/ReU5K8DaNZiZQw6REGpMyc2vLhV0PBbGGTcgWEnqc/YsiI2u5nxThcqW1igtLrDg
+         FA3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=k6Ja0b6no5eZDxYMF3LcCjisrlOc+aXrwQbbpI1j+FU=;
+        b=K4JqbH8wUDlP7lFfPGYVY7wrFfnhHQGNU5Trq4enNO1XIGPg5B3nWAFCQ/U7KEJ0Pw
+         Xs0qkA4hz5m03J8Ata3pMF70gj3FX6qOBRNK/x85SO4hhv/6ct5+kYloyGSI8ccJwMKE
+         Agr1UJp4Ul7uH+npAtYIgIT9fnIpPlSL7ABL9k5+O/yKfx2ZP2eBKPydEdgZsZ1rl9zc
+         yvDY01QIbd9c0LNRDE8+tj3xVCFiDIXqCknZg9tt7mayjHwzYh+buKQpQ8wYM4oWso+K
+         gRNzTyqtVyNaS8TqAuAOYy+4he+gUzNTK3qAJ+okiFfz07bbkjB8b6K4PjXQCO3oXxTV
+         edVA==
+X-Gm-Message-State: AOAM5330UdMKEX8VvlVhsh3ASdHsQMpXrsAJLKRQSGdUK1eniTMWlDyC
+        qlWBJA7dQQ6ZfCVplSR21UAiSlXdyQBeFg==
+X-Google-Smtp-Source: ABdhPJyBKxRLdlULivn3zwS67VsgEmgyzQZjno9E0hYhphWAEuj721B0R/ffUiJ+gvuTBqvxO9A/aw==
+X-Received: by 2002:a2e:964f:: with SMTP id z15mr7511737ljh.368.1611817544692;
+        Wed, 27 Jan 2021 23:05:44 -0800 (PST)
+Received: from kari-VirtualBox (87-95-193-210.bb.dnainternet.fi. [87.95.193.210])
+        by smtp.gmail.com with ESMTPSA id r2sm1324510lff.143.2021.01.27.23.05.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jan 2021 23:05:44 -0800 (PST)
+Date:   Thu, 28 Jan 2021 09:05:41 +0200
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Mark Harmstone <mark@harmstone.com>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
+        joe@perches.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com
+Subject: Re: [PATCH v18 01/10] fs/ntfs3: Add headers and misc files
+Message-ID: <20210128070541.ynzsgpniyo2xe23k@kari-VirtualBox>
+References: <20210122140159.4095083-1-almaz.alexandrovich@paragon-software.com>
+ <20210122140159.4095083-2-almaz.alexandrovich@paragon-software.com>
+ <45515008-e4a9-26e3-3ce4-026bfacf7d53@harmstone.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45515008-e4a9-26e3-3ce4-026bfacf7d53@harmstone.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Cachefiles was relying on wait_page_key and wait_bit_key being the
-same layout, which is fragile.  Now that wait_page_key is exposed in
-the pagemap.h header, we can remove that fragility.  Also switch it
-to use the folio directly instead of the page.
+On Fri, Jan 22, 2021 at 02:55:30PM +0000, Mark Harmstone wrote:
+> On 22/1/21 2:01 pm, Konstantin Komarov wrote:
+> > diff --git a/fs/ntfs3/upcase.c b/fs/ntfs3/upcase.c
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/cachefiles/rdwr.c    | 13 ++++++-------
- include/linux/pagemap.h |  1 -
- 2 files changed, 6 insertions(+), 8 deletions(-)
+> > +static inline u16 upcase_unicode_char(const u16 *upcase, u16 chr)
+> > +{
+> > +	if (chr < 'a')
+> > +		return chr;
+> > +
+> > +	if (chr <= 'z')
+> > +		return chr - ('a' - 'A');
+> > +
+> > +	return upcase[chr];
+> > +}
+> 
+> Shouldn't upcase_unicode_char be using the NTFS pseudo-file $UpCase?
+> That way you should also be covered for other bicameral alphabets.
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index e027c718ca01..b1dbc484a9c7 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -24,22 +24,21 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
- 		container_of(wait, struct cachefiles_one_read, monitor);
- 	struct cachefiles_object *object;
- 	struct fscache_retrieval *op = monitor->op;
--	struct wait_bit_key *key = _key;
--	struct page *page = wait->private;
-+	struct wait_page_key *key = _key;
-+	struct folio *folio = wait->private;
- 
- 	ASSERT(key);
- 
- 	_enter("{%lu},%u,%d,{%p,%u}",
- 	       monitor->netfs_page->index, mode, sync,
--	       key->flags, key->bit_nr);
-+	       key->folio, key->bit_nr);
- 
--	if (key->flags != &page->flags ||
--	    key->bit_nr != PG_locked)
-+	if (key->folio != folio || key->bit_nr != PG_locked)
- 		return 0;
- 
--	_debug("--- monitor %p %lx ---", page, page->flags);
-+	_debug("--- monitor %p %lx ---", folio, folio->page.flags);
- 
--	if (!PageUptodate(page) && !PageError(page)) {
-+	if (!FolioUptodate(folio) && !FolioError(folio)) {
- 		/* unlocked, not uptodate and not erronous? */
- 		_debug("page probably truncated");
- 	}
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index f0a601f6d68c..e8d8c66b027e 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -592,7 +592,6 @@ static inline pgoff_t linear_page_index(struct vm_area_struct *vma,
- 	return pgoff;
- }
- 
--/* This has the same layout as wait_bit_key - see fs/cachefiles/rdwr.c */
- struct wait_page_key {
- 	struct folio *folio;
- 	int bit_nr;
--- 
-2.29.2
-
+return upcase[chr] is just for that? Upcase table from $UpCase is constucted
+in super.c and this will get it in and use it.
