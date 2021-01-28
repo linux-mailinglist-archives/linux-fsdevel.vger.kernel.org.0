@@ -2,112 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AEA430811C
+	by mail.lfdr.de (Postfix) with ESMTP id EB91930811E
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 23:30:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231377AbhA1W3R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 17:29:17 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54004 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231308AbhA1W3Q (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 17:29:16 -0500
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 10SMSGDb012771
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jan 2021 17:28:17 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 5C43715C344F; Thu, 28 Jan 2021 17:28:16 -0500 (EST)
-Date:   Thu, 28 Jan 2021 17:28:16 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     jack@suse.com, viro@zeniv.linux.org.uk, amir73il@gmail.com,
-        dhowells@redhat.com, david@fromorbit.com, darrick.wong@oracle.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [RFC] Filesystem error notifications proposal
-Message-ID: <YBM6gAB5c2zZZsx1@mit.edu>
-References: <87lfcne59g.fsf@collabora.com>
- <YAoDz6ODFV2roDIj@mit.edu>
- <87pn1xdclo.fsf@collabora.com>
+        id S231384AbhA1W3x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 17:29:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52292 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231185AbhA1W3w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 17:29:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C239FAC60;
+        Thu, 28 Jan 2021 22:29:10 +0000 (UTC)
+Date:   Thu, 28 Jan 2021 23:29:06 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        mike.kravetz@oracle.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        mhocko@suse.com, song.bao.hua@hisilicon.com,
+        naoya.horiguchi@nec.com, duanxiongchun@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13 05/12] mm: hugetlb: allocate the vmemmap pages
+ associated with each HugeTLB page
+Message-ID: <20210128222906.GA3826@localhost.localdomain>
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-6-songmuchun@bytedance.com>
+ <20210126092942.GA10602@linux>
+ <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com>
+ <20210126145819.GB16870@linux>
+ <259b9669-0515-01a2-d714-617011f87194@redhat.com>
+ <20210126153448.GA17455@linux>
+ <9475b139-1b33-76c7-ef5c-d43d2ea1dba5@redhat.com>
+ <e28399e1-3a24-0f22-b057-76e7c7e70017@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87pn1xdclo.fsf@collabora.com>
+In-Reply-To: <e28399e1-3a24-0f22-b057-76e7c7e70017@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 09:44:35PM -0300, Gabriel Krisman Bertazi wrote:
-> > We might be inside a workqueue handler, for example, so we might not
-> > even running in the same process that had been containerized.  We
-> > might be holding various file system mutexes or even in some cases a
-> > spinlock.
+On Wed, Jan 27, 2021 at 11:36:15AM +0100, David Hildenbrand wrote:
+> Extending on that, I just discovered that only x86-64, ppc64, and arm64
+> really support hugepage migration.
 > 
-> I see.  But the visibility is of a watcher who can see an object, not
-> the application that caused the error.  The fact that the error happened
-> outside the context of the containerized process should not be a problem
-> here, right?  As long as the watcher is watching a mountpoint that can
-> reach the failed inode, that inode should be accessible to the watcher
-> and it should receive a notification. No?
+> Maybe one approach with the "magic switch" really would be to disable
+> hugepage migration completely in hugepage_migration_supported(), and
+> consequently making hugepage_movable_supported() always return false.
 
-Right.  But the corruption might be an attempt to free a block which
-is already freed.  The corruption is in a block allocation bitmap; and
-at the point where we notice this (in the journal commit callback
-function), ext4 has no idea what inode the block was originally
-associated with, let *alone* the directory pathname that the inode was
-associated with.  So how do we figure out whether or not the watcher
-"can see the object"?
+Ok, so migration would not fork for these pages, and since them would
+lay in !ZONE_MOVABLE there is no guarantee we can unplug the memory.
+Well, we really cannot unplug it unless the hugepage is not used
+(it can be dissolved at least).
 
-In other words, there is a large set of file system corruptions where
-it is impossible to map it to the question "will it be visible to the
-watcher"?
+Now to the allocation-when-freeing.
+Current implementation uses GFP_ATOMIC(or wants to use) + forever loop.
+One of the problems I see with GFP_ATOMIC is that gives you access
+to memory reserves, but there are more users using those reserves.
+Then, worst-scenario case we need to allocate 16MB order-0 pages
+to free up 1GB hugepage, so the question would be whether reserves
+really scale to 16MB + more users accessing reserves.
 
-> > What follows from that is that it's not really going to be possible to
-> > filter notifications to a subtree.  Furthermore, if fanotify requires
-> > memory allocation, that's going to be problematic, we may not be in a
-> > context where memory allocation is possible.  So for that reason, it's
-> > not clear to me that fanotify is going to be a good match for this use
-> > case.
-> 
-> I see.  Do you think we would be able to refactor the error handling
-> code, such that we can drop spinlocks and do some non-reclaiming
-> allocations at least?  I noticed Google's code seems to survive doing
-> some allocations with GFP_ATOMIC in their internal-to-Google netlink
-> notification system, and even GFP_KERNEL on some other scenarios.  I
-> might not be seeing the full picture though.
+As I said, if anything I would go for an optimistic allocation-try
+, if we fail just refuse to shrink the pool.
+User can always try to shrink it later again via /sys interface.
 
-It would be ***hard***.  The problem is that the spinlocks may be held
-in functions higher up in the callchain from where the error was
-detected.  So what you're proposing would involve analyzing and
-potentially refactoring *all* of the call sites for the ext4_error*()
-functions.
+Since hugepages would not be longer in ZONE_MOVABLE/CMA and are not
+expected to be migratable, is that ok?
 
-> I think changing fanotify to avoid allocations in the submission path
-> might be just intrusive enough for the patch to be rejected by Jan. If
-> we cannot do allocations at all, I would suggest I move this feature out
-> of fanotify, but stick with fsnotify, for its ability to link
-> inodes/mntpoints/superblock.
+Using the hugepage for the vmemmap array was brought up several times,
+but that would imply fragmenting memory over time.
 
-At least for Google's use case, what we really need to know is the
-there has been some kind of file system corruption.  It would be
-*nice* if the full ext4 error message is sent to userspace via
-fsnotify, but for our specific use case, if we lose parts of the
-notification because the file system is so corrupted that fsnotify is
-getting flooded with problems, it really isn't end of the world.  So
-long as we know which block device the file system error was
-associated with, that's actually the most important thing that we need.
+All in all seems to be overly complicated (I might be wrong).
 
-In the worst case, we can always ssh to machine and grab the logs from
-/var/log/messages.  And realistically, if the file system is so sick
-that we're getting flooding with gazillion of errors, some of the
-messages are going to get lost whether they are sent via syslog or the
-serial console --- or fsnotify.  So that's no worse than what we all
-have today.  If we can get the *first* error, that's actually going to
-be the most useful one, anyway.
 
-Cheers,
+> Huge pages would never get placed onto ZONE_MOVABLE/CMA and cannot be
+> migrated. The problem I describe would apply (careful with using
+> ZONE_MOVABLE), but well, it can at least be documented.
 
-					- Ted
+I am not a page allocator expert but cannot the allocation fallback
+to ZONE_MOVABLE under memory shortage on other zones?
+
+
+-- 
+Oscar Salvador
+SUSE L3
