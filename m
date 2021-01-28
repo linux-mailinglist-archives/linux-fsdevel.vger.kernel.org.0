@@ -2,90 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63AC930707A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 09:03:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EA86307078
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 09:03:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232315AbhA1H5N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 02:57:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60708 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231148AbhA1HFd (ORCPT
+        id S232306AbhA1H5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 02:57:08 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:22235 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231630AbhA1HM5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 02:05:33 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D3FC06178B;
-        Wed, 27 Jan 2021 23:04:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=CxWQAtXy3I5lAmgNKcG2Me1pceWaP119juUXd37vOB0=; b=O+0Akf1AaopB68IjGsMsfPRYER
-        jlSVynuejYtvR5pZldi6C6xIU88xCQn9wG52bUrJlPVuOwAX1hvA9vH2ESN5L4CUf1YPO2rBVXo48
-        xl+h5iXc++BIFSi6HqytNWZqAbp8gvRXyoPBEOga29LjSLzwox3oxWMhqPnmz3t9WJm/VOydPvTzo
-        IoUE7LtDZhL8MT+ByIfsuPegVNTKu/eFjQZmwLQxY8SPdDvPpDbS38wKPmax7TiSs4sBeumx3YC4y
-        vq0Q4PRTk1UBWGwWdizC/QepOiVnNwJ4utpo9LKRc9Suxd1GHEWi+o0VyYwCaj5RE2XMAiyPeorud
-        fyYyDh9Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l51Lo-00847T-RK; Thu, 28 Jan 2021 07:04:21 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/25] mm: Add folio_index, folio_page and folio_contains
-Date:   Thu, 28 Jan 2021 07:03:48 +0000
-Message-Id: <20210128070404.1922318-10-willy@infradead.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210128070404.1922318-1-willy@infradead.org>
-References: <20210128070404.1922318-1-willy@infradead.org>
+        Thu, 28 Jan 2021 02:12:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1611817976; x=1643353976;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BWhCtPmFmY8SRwjALXcTfESKnsKfTCmOrzddkgcZe24=;
+  b=faLGKvi9FFV57Q0dVYgonwYrSTczxE9mFzdDUiyH3A743tinm8FHpmYz
+   E84KWYZzllaXLzXqmEQ3vDkz3D8fsHBtSi4Hmv/1R+AeQBknTP0ot2Svv
+   rnDYlpCWtEJ2+q1R44DxVzeuA5GnmFibXE1B6D+5DQso/hdAwQoFVa5pT
+   CLQn2gu7AeGLEYqMTzcoV59mbnaInDk5X20SLVrY6g8oA6DjKhe5i6x2+
+   WTW7Ce2WfoH/L9CLkjXMJ2Ixf1nQnpqJivqFH3mN0W6kUljS2DJh2UW3A
+   Q25yxzK7UVPZBNsUgpZo4nVvY5QMoYY170OhpNR7KneK5MlK1nUkKKU7H
+   A==;
+IronPort-SDR: VT21les7nQG03JqHJ+I6EARWf5lMn66DxTi2QYbOMs2YfDOw2AniSPT+pjejA5tq7xp1aaI8NN
+ IJyHOrnvEj1JtURy8HGmu0MgaB3qFyIEUADD5Ek4rL9/qSDzGRwHO6xyMdhO+CtZpDm/nh3433
+ uqgijKjcu6L3970RM639kqqPrmUmIl7WoTjb0NNVH7bhLYWGI4IDe794zDrJ4IASxPghSaTjLe
+ TOkBT9TLksFi3mVkIqXo6YzEuM9Kaiezl7crmDupPQhL0bBL9PWXidnupZGcR3WjWU0VGSuTZw
+ LNA=
+X-IronPort-AV: E=Sophos;i="5.79,381,1602518400"; 
+   d="scan'208";a="158517186"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:11:38 +0800
+IronPort-SDR: w5IsHUigPS/mWpQBf9qBrfSIaakaFZLRWoHP6+aNWprDyks+eKEz/GYBDl9uDW4vjngYTV/B2D
+ IFvxlHDM6q/6/9nde34O8UYBh6I0uIn3r+BtZNG8Q1Tp2UBHT91nGmc+bRVSX0vH6wYM+9iszA
+ F/KYhmG/TW8AEVRLeQEnipOU8wNqnajsU2fYF/lAkiJR/GA7ObRI9w0PiHGbcZOSAzOETqvDL8
+ hpZV/LAw9Bj86sme5bSbMQqxe65yf8vYoskZfjC3ApT6ZscD9accTAHZbY6UsQpC8kRLHHWojB
+ s+1/3Wcsa3O5HFCg61j2s/8m
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:55:58 -0800
+IronPort-SDR: 61Jf/0E9AfrbFBR+VL+aX9SYCVB0aW8ut/7/jLtTqvhkleWzu7b9JjkuOaGgMYwgMXw5C5Sybl
+ VeNQs3LEjTqxDsR0ZyK8GA/cVYEZNMX2maaVF3ljBoeSQOO/ApbWgebfLMlSCkYd12pl+6neKj
+ zn8nHOcIOMnNA2IBKV67KMXVLkXTllokNu+jCcdgoa5YFwfQecWL2vYSP5hgldmlqCiXple2ew
+ fybG/wLzJMKvqPxvYQ59ATt+ZGQv1DjVDDtxXyNp0NJ+IswNbwLOu8d1uiq12NaSa1/W79MYTO
+ wq8=
+WDCIronportException: Internal
+Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:11:38 -0800
+From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        xen-devel@lists.xenproject.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-pm@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     axboe@kernel.dk, philipp.reisner@linbit.com,
+        lars.ellenberg@linbit.com, konrad.wilk@oracle.com,
+        roger.pau@citrix.com, minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com, agk@redhat.com,
+        snitzer@redhat.com, hch@lst.de, sagi@grimberg.me,
+        chaitanya.kulkarni@wdc.com, martin.petersen@oracle.com,
+        viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org,
+        ebiggers@kernel.org, djwong@kernel.org, shaggy@kernel.org,
+        konishi.ryusuke@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
+        joseph.qi@linux.alibaba.com, damien.lemoal@wdc.com,
+        naohiro.aota@wdc.com, jth@kernel.org, rjw@rjwysocki.net,
+        len.brown@intel.com, pavel@ucw.cz, akpm@linux-foundation.org,
+        hare@suse.de, gustavoars@kernel.org, tiwai@suse.de,
+        alex.shi@linux.alibaba.com, asml.silence@gmail.com,
+        ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
+        bvanassche@acm.org, jefflexu@linux.alibaba.com
+Subject: [RFC PATCH 00/34] block: introduce bio_new()
+Date:   Wed, 27 Jan 2021 23:10:59 -0800
+Message-Id: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
+X-Mailer: git-send-email 2.22.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-folio_index() is the equivalent of page_index() for folios.  folio_page()
-finds the page in a folio for a page cache index.  folio_contains()
-tells you whether a folio contains a particular page cache index.
+Hi,
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/pagemap.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+This is a *compile only RFC* which adds a generic helper to initialize
+the various fields of the bio that is repeated all the places in
+file-systems, block layer, and drivers.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 83d24b41fb04..86956e97cd5e 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -447,6 +447,29 @@ static inline bool thp_contains(struct page *head, pgoff_t index)
- 	return page_index(head) == (index & ~(thp_nr_pages(head) - 1UL));
- }
- 
-+static inline pgoff_t folio_index(struct folio *folio)
-+{
-+        if (unlikely(FolioSwapCache(folio)))
-+                return __page_file_index(&folio->page);
-+        return folio->page.index;
-+}
-+
-+static inline struct page *folio_page(struct folio *folio, pgoff_t index)
-+{
-+	index -= folio_index(folio);
-+	VM_BUG_ON_FOLIO(index >= folio_nr_pages(folio), folio);
-+	return &folio->page + index;
-+}
-+
-+/* Does this folio contain this index? */
-+static inline bool folio_contains(struct folio *folio, pgoff_t index)
-+{
-+	/* HugeTLBfs indexes the page cache in units of hpage_size */
-+	if (PageHuge(&folio->page))
-+		return folio->page.index == index;
-+	return index - folio_index(folio) < folio_nr_pages(folio);
-+}
-+
- /*
-  * Given the page we found in the page cache, return the page corresponding
-  * to this index in the file
+The new helper allows callers to initialize non-optional members of bio
+such as bdev, sector, op, opflags, max_bvecs and gfp_mask by
+encapsulating new bio allocation with bio alloc with initialization
+at one place.
+
+The objective of this RFC is to only start a discussion, this it not 
+completely tested at all.
+
+-ck                         
+
+Chaitanya Kulkarni (34):
+  block: move common code into blk_next_bio()
+  block: introduce and use bio_new
+  drdb: use bio_new in drdb
+  drdb: use bio_new() in submit_one_flush
+  xen-blkback: use bio_new
+  zram: use bio_new
+  dm: use bio_new in dm-log-writes
+  dm-zoned: use bio_new in get_mblock_slow
+  dm-zoned: use bio_new in dmz_write_mblock
+  dm-zoned: use bio_new in dmz_rdwr_block
+  nvmet: use bio_new in nvmet_bdev_execute_rw
+  scsi: target/iblock: use bio_new
+  block: use bio_new in __blkdev_direct_IO
+  fs/buffer: use bio_new in submit_bh_wbc
+  fscrypt: use bio_new in fscrypt_zeroout_range
+  fs/direct-io: use bio_new in dio_bio_alloc
+  iomap: use bio_new in iomap_dio_zero
+  iomap: use bio_new in iomap_dio_bio_actor
+  fs/jfs/jfs_logmgr.c: use bio_new in lbmRead
+  fs/jfs/jfs_logmgr.c: use bio_new in lbmStartIO
+  fs/jfs/jfs_metapage.c: use bio_new in metapage_writepage
+  fs/jfs/jfs_metapage.c: use bio_new in metapage_readpage
+  fs/mpage.c: use bio_new mpage_alloc
+  fs/nilfs: use bio_new nilfs_alloc_seg_bio
+  ocfs/cluster: use bio_new in dm-log-writes
+  xfs: use bio_new in xfs_rw_bdev
+  xfs: use bio_new in xfs_buf_ioapply_map
+  zonefs: use bio_new
+  power/swap: use bio_new in hib_submit_io
+  hfsplus: use bio_new in hfsplus_submit_bio()
+  iomap: use bio_new in iomap_readpage_actor
+  mm: use bio_new in __swap_writepage
+  mm: use bio_new in swap_readpage
+  mm: add swap_bio_new common bio helper
+
+ block/blk-lib.c                     | 34 ++++++++++-------------------
+ block/blk-zoned.c                   |  4 +---
+ block/blk.h                         |  5 +++--
+ drivers/block/drbd/drbd_receiver.c  | 12 +++++-----
+ drivers/block/xen-blkback/blkback.c | 20 +++++++++++------
+ drivers/block/zram/zram_drv.c       |  5 ++---
+ drivers/md/dm-log-writes.c          | 30 +++++++++----------------
+ drivers/md/dm-zoned-metadata.c      | 18 +++++----------
+ drivers/nvme/target/io-cmd-bdev.c   |  9 +++-----
+ drivers/target/target_core_iblock.c |  5 ++---
+ fs/block_dev.c                      |  6 ++---
+ fs/buffer.c                         | 16 ++++++--------
+ fs/crypto/bio.c                     |  5 ++---
+ fs/direct-io.c                      |  6 ++---
+ fs/hfsplus/wrapper.c                |  5 +----
+ fs/iomap/buffered-io.c              | 12 +++++-----
+ fs/iomap/direct-io.c                | 11 ++++------
+ fs/jfs/jfs_logmgr.c                 | 13 ++++-------
+ fs/jfs/jfs_metapage.c               | 15 +++++--------
+ fs/mpage.c                          | 18 +++++----------
+ fs/nilfs2/segbuf.c                  | 10 ++-------
+ fs/ocfs2/cluster/heartbeat.c        |  6 ++---
+ fs/xfs/xfs_bio_io.c                 |  7 ++----
+ fs/xfs/xfs_buf.c                    |  6 ++---
+ fs/zonefs/super.c                   |  6 ++---
+ include/linux/bio.h                 | 25 +++++++++++++++++++++
+ kernel/power/swap.c                 |  7 +++---
+ mm/page_io.c                        | 30 +++++++++++++------------
+ 28 files changed, 151 insertions(+), 195 deletions(-)
+
 -- 
-2.29.2
+2.22.1
 
