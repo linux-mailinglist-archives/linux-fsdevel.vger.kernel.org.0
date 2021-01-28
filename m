@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 673A5306A38
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 02:17:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA4683069FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 02:13:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232000AbhA1BRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 20:17:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35340 "EHLO mail.kernel.org"
+        id S229722AbhA1BM1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 20:12:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231730AbhA1BGL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 20:06:11 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4D91164DD0;
-        Thu, 28 Jan 2021 01:03:32 +0000 (UTC)
+        id S231636AbhA1BGZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Jan 2021 20:06:25 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0088D64DCE;
+        Thu, 28 Jan 2021 01:04:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611795812;
-        bh=tJuLCkaxnqYFnC3r4DDt1NFER2ZydcgjYXSW64W0n78=;
+        s=k20201202; t=1611795845;
+        bh=tVVuAyOty2J2zwRZ1GGh6jSI0htfqaaI5V39TI/biX4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bQ0WUeJJGsK0Ef7i48tLegB0bL49nSgKQV3db8BbdYYhYQATxe49hr5ITwO1GqBaF
-         dQNAReA97gXP9sYyVlbY2x2os7sGYmA5dKeSVxHyUgEI8/wRWMeIgIElw6NCmbqTc3
-         o2BYVmgStiM1aZaChJnQuygCyfwtjdyLQ7hTSQg0dPhKIq7kflaHMrRBALTGQFXyuK
-         cLpdqffNoScVa9T+kYFIStTBGgNYoCoaQVYdxc81z9e2p4rrN/yJCvtPGqXSyxraGh
-         T86ZyDcSZyCwi0jmPjOMJxjK2bNngiy03BDJJEOYggkEVX3XT9+ANu9KWNZn6nf10k
-         VL4TZ+EOV+GdQ==
-Date:   Wed, 27 Jan 2021 17:03:30 -0800
+        b=rX8+tGmjK4HZRxJeNRJXwHMp7cpW4zsy07142IuVVl7vnuRzCtXMv5SBwnwV8/IjM
+         Xy4g0LS9QmH92jXsgRVKq9LbTrrsqOzIhA80y8Rmv0BjxYVq7+ZtzBfb6Vr3JTgV0+
+         lAY6S+ucDmEN5/TPTXHpFMZSN5lQbcUEbu0ENlhMKG2JNMcZyUDK1fDz0i31m6B3Ki
+         ia2XdIP7IMkWTsQtOS2mE8ka2FM/NWps5eZ8cxdfbHfjkWOYYn5O0NTkWm6NPwTa61
+         G9vp64k9im3YRp3Zrvc/UBZjSXeMeO2p4j9fnwrSbuBzAHoG6bcG8wdtwDmW5Lnggw
+         HLTcIwzb8nY2g==
+Date:   Wed, 27 Jan 2021 17:04:03 -0800
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-api@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
         Victor Hsieh <victorhsieh@google.com>
-Subject: Re: [PATCH 3/6] fs-verity: add FS_IOC_READ_VERITY_METADATA ioctl
-Message-ID: <YBINYhAlBhQogk/+@google.com>
+Subject: Re: [PATCH 1/6] fs-verity: factor out fsverity_get_descriptor()
+Message-ID: <YBINg601GssLLfAh@google.com>
 References: <20210115181819.34732-1-ebiggers@kernel.org>
- <20210115181819.34732-4-ebiggers@kernel.org>
+ <20210115181819.34732-2-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210115181819.34732-4-ebiggers@kernel.org>
+In-Reply-To: <20210115181819.34732-2-ebiggers@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -45,323 +45,237 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 01/15, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Add an ioctl FS_IOC_READ_VERITY_METADATA which will allow reading verity
-> metadata from a file that has fs-verity enabled, including:
+> The FS_IOC_READ_VERITY_METADATA ioctl will need to return the fs-verity
+> descriptor (and signature) to userspace.
 > 
-> - The Merkle tree
-> - The fsverity_descriptor (not including the signature if present)
-> - The built-in signature, if present
+> There are a few ways we could implement this:
 > 
-> This ioctl has similar semantics to pread().  It is passed the type of
-> metadata to read (one of the above three), and a buffer, offset, and
-> size.  It returns the number of bytes read or an error.
+> - Save a copy of the descriptor (and signature) in the fsverity_info
+>   struct that hangs off of the in-memory inode.  However, this would
+>   waste memory since most of the time it wouldn't be needed.
 > 
-> Separate patches will add support for each of the above metadata types.
-> This patch just adds the ioctl itself.
+> - Regenerate the descriptor from the merkle_tree_params in the
+>   fsverity_info.  However, this wouldn't work for the signature, nor for
+>   the salt which the merkle_tree_params only contains indirectly as part
+>   of the 'hashstate'.  It would also be error-prone.
 > 
-> This ioctl doesn't make any assumption about where the metadata is
-> stored on-disk.  It does assume the metadata is in a stable format, but
-> that's basically already the case:
+> - Just get them from the filesystem again.  The disadvantage is that in
+>   general we can't trust that they haven't been maliciously changed
+>   since the file has opened.  However, the use cases for
+>   FS_IOC_READ_VERITY_METADATA don't require that it verifies the chain
+>   of trust.  So this is okay as long as we do some basic validation.
 > 
-> - The Merkle tree and fsverity_descriptor are defined by how fs-verity
->   file digests are computed; see the "File digest computation" section
->   of Documentation/filesystems/fsverity.rst.  Technically, the way in
->   which the levels of the tree are ordered relative to each other wasn't
->   previously specified, but it's logical to put the root level first.
+> In preparation for implementing the third option, factor out a helper
+> function fsverity_get_descriptor() which gets the descriptor (and
+> appended signature) from the filesystem and does some basic validation.
 > 
-> - The built-in signature is the value passed to FS_IOC_ENABLE_VERITY.
-> 
-> This ioctl is useful because it allows writing a server program that
-> takes a verity file and serves it to a client program, such that the
-> client can do its own fs-verity compatible verification of the file.
-> This only makes sense if the client doesn't trust the server and if the
-> server needs to provide the storage for the client.
-> 
-> More concretely, there is interest in using this ability in Android to
-> export APK files (which are protected by fs-verity) to "protected VMs".
-> This would use Protected KVM (https://lwn.net/Articles/836693), which
-> provides an isolated execution environment without having to trust the
-> traditional "host".  A "guest" VM can boot from a signed image and
-> perform specific tasks in a minimum trusted environment using files that
-> have fs-verity enabled on the host, without trusting the host or
-> requiring that the guest has its own trusted storage.
-> 
-> Technically, it would be possible to duplicate the metadata and store it
-> in separate files for serving.  However, that would be less efficient
-> and would require extra care in userspace to maintain file consistency.
-> 
-> In addition to the above, the ability to read the built-in signatures is
-> useful because it allows a system that is using the in-kernel signature
-> verification to migrate to userspace signature verification.
+> As part of this, start checking the sig_size field for overflow.
+> Currently fsverity_verify_signature() does this.  But the new ioctl will
+> need this too, so do it earlier.
 > 
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
 > ---
->  Documentation/filesystems/fsverity.rst | 57 ++++++++++++++++++++++++++
->  fs/ext4/ioctl.c                        |  7 ++++
->  fs/f2fs/file.c                         | 11 +++++
->  fs/verity/Makefile                     |  1 +
->  fs/verity/read_metadata.c              | 55 +++++++++++++++++++++++++
->  include/linux/fsverity.h               | 12 ++++++
->  include/uapi/linux/fsverity.h          | 10 +++++
->  7 files changed, 153 insertions(+)
->  create mode 100644 fs/verity/read_metadata.c
+>  fs/verity/fsverity_private.h |   7 +-
+>  fs/verity/open.c             | 130 +++++++++++++++++++++++------------
+>  2 files changed, 91 insertions(+), 46 deletions(-)
 > 
-> diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
-> index e0204a23e997e..9ef7a7de60085 100644
-> --- a/Documentation/filesystems/fsverity.rst
-> +++ b/Documentation/filesystems/fsverity.rst
-> @@ -217,6 +217,63 @@ FS_IOC_MEASURE_VERITY can fail with the following errors:
->  - ``EOVERFLOW``: the digest is longer than the specified
->    ``digest_size`` bytes.  Try providing a larger buffer.
+> diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+> index 6413d28664d6d..6c9caccc06021 100644
+> --- a/fs/verity/fsverity_private.h
+> +++ b/fs/verity/fsverity_private.h
+> @@ -122,12 +122,17 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
+>  				     const u8 *salt, size_t salt_size);
 >  
-> +FS_IOC_READ_VERITY_METADATA
-> +---------------------------
-> +
-> +The FS_IOC_READ_VERITY_METADATA ioctl reads verity metadata from a
-> +verity file.  This ioctl is available since Linux v5.12.
-> +
-> +This ioctl allows writing a server program that takes a verity file
-> +and serves it to a client program, such that the client can do its own
-> +fs-verity compatible verification of the file.  This only makes sense
-> +if the client doesn't trust the server and if the server needs to
-> +provide the storage for the client.
-> +
-> +This is a fairly specialized use case, and most fs-verity users won't
-> +need this ioctl.
-> +
-> +This ioctl takes in a pointer to the following structure::
-> +
-> +   struct fsverity_read_metadata_arg {
-> +           __u64 metadata_type;
-> +           __u64 offset;
-> +           __u64 length;
-> +           __u64 buf_ptr;
-> +           __u64 __reserved;
-> +   };
-> +
-> +``metadata_type`` specifies the type of metadata to read.
-> +
-> +The semantics are similar to those of ``pread()``.  ``offset``
-> +specifies the offset in bytes into the metadata item to read from, and
-> +``length`` specifies the maximum number of bytes to read from the
-> +metadata item.  ``buf_ptr`` is the pointer to the buffer to read into,
-> +cast to a 64-bit integer.  ``__reserved`` must be 0.  On success, the
-> +number of bytes read is returned.  0 is returned at the end of the
-> +metadata item.  The returned length may be less than ``length``, for
-> +example if the ioctl is interrupted.
-> +
-> +The metadata returned by FS_IOC_READ_VERITY_METADATA isn't guaranteed
-> +to be authenticated against the file digest that would be returned by
-> +`FS_IOC_MEASURE_VERITY`_, as the metadata is expected to be used to
-> +implement fs-verity compatible verification anyway (though absent a
-> +malicious disk, the metadata will indeed match).  E.g. to implement
-> +this ioctl, the filesystem is allowed to just read the Merkle tree
-> +blocks from disk without actually verifying the path to the root node.
-> +
-> +FS_IOC_READ_VERITY_METADATA can fail with the following errors:
-> +
-> +- ``EFAULT``: the caller provided inaccessible memory
-> +- ``EINTR``: the ioctl was interrupted before any data was read
-> +- ``EINVAL``: reserved fields were set, or ``offset + length``
-> +  overflowed
-> +- ``ENODATA``: the file is not a verity file
-> +- ``ENOTTY``: this type of filesystem does not implement fs-verity, or
-> +  this ioctl is not yet implemented on it
-> +- ``EOPNOTSUPP``: the kernel was not configured with fs-verity
-> +  support, or the filesystem superblock has not had the 'verity'
-> +  feature enabled on it.  (See `Filesystem support`_.)
-> +
->  FS_IOC_GETFLAGS
->  ---------------
+>  struct fsverity_info *fsverity_create_info(const struct inode *inode,
+> -					   void *desc, size_t desc_size);
+> +					   struct fsverity_descriptor *desc,
+> +					   size_t desc_size);
 >  
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index 524e134324475..56dc58adba8ac 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -1306,6 +1306,12 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  			return -EOPNOTSUPP;
->  		return fsverity_ioctl_measure(filp, (void __user *)arg);
+>  void fsverity_set_info(struct inode *inode, struct fsverity_info *vi);
 >  
-> +	case FS_IOC_READ_VERITY_METADATA:
-> +		if (!ext4_has_feature_verity(sb))
-> +			return -EOPNOTSUPP;
-> +		return fsverity_ioctl_read_metadata(filp,
-> +						    (const void __user *)arg);
+>  void fsverity_free_info(struct fsverity_info *vi);
+>  
+> +int fsverity_get_descriptor(struct inode *inode,
+> +			    struct fsverity_descriptor **desc_ret,
+> +			    size_t *desc_size_ret);
 > +
->  	default:
->  		return -ENOTTY;
->  	}
-> @@ -1388,6 +1394,7 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  	case FS_IOC_GETFSMAP:
->  	case FS_IOC_ENABLE_VERITY:
->  	case FS_IOC_MEASURE_VERITY:
-> +	case FS_IOC_READ_VERITY_METADATA:
->  	case EXT4_IOC_CLEAR_ES_CACHE:
->  	case EXT4_IOC_GETSTATE:
->  	case EXT4_IOC_GET_ES_CACHE:
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index f585545277d77..d0aefb5b97fac 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3357,6 +3357,14 @@ static int f2fs_ioc_measure_verity(struct file *filp, unsigned long arg)
->  	return fsverity_ioctl_measure(filp, (void __user *)arg);
+>  int __init fsverity_init_info_cache(void);
+>  void __init fsverity_exit_info_cache(void);
+>  
+> diff --git a/fs/verity/open.c b/fs/verity/open.c
+> index 228d0eca3e2e5..a987bb785e9b0 100644
+> --- a/fs/verity/open.c
+> +++ b/fs/verity/open.c
+> @@ -142,45 +142,17 @@ static int compute_file_digest(struct fsverity_hash_alg *hash_alg,
 >  }
 >  
-> +static int f2fs_ioc_read_verity_metadata(struct file *filp, unsigned long arg)
-> +{
-> +	if (!f2fs_sb_has_verity(F2FS_I_SB(file_inode(filp))))
-> +		return -EOPNOTSUPP;
-> +
-> +	return fsverity_ioctl_read_metadata(filp, (const void __user *)arg);
-> +}
-> +
->  static int f2fs_ioc_getfslabel(struct file *filp, unsigned long arg)
+>  /*
+> - * Validate the given fsverity_descriptor and create a new fsverity_info from
+> - * it.  The signature (if present) is also checked.
+> + * Create a new fsverity_info from the given fsverity_descriptor (with optional
+> + * appended signature), and check the signature if present.  The
+> + * fsverity_descriptor must have already undergone basic validation.
+>   */
+>  struct fsverity_info *fsverity_create_info(const struct inode *inode,
+> -					   void *_desc, size_t desc_size)
+> +					   struct fsverity_descriptor *desc,
+> +					   size_t desc_size)
 >  {
->  	struct inode *inode = file_inode(filp);
-> @@ -4272,6 +4280,8 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  		return f2fs_ioc_enable_verity(filp, arg);
->  	case FS_IOC_MEASURE_VERITY:
->  		return f2fs_ioc_measure_verity(filp, arg);
-> +	case FS_IOC_READ_VERITY_METADATA:
-> +		return f2fs_ioc_read_verity_metadata(filp, arg);
->  	case FS_IOC_GETFSLABEL:
->  		return f2fs_ioc_getfslabel(filp, arg);
->  	case FS_IOC_SETFSLABEL:
-> @@ -4523,6 +4533,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  	case F2FS_IOC_RESIZE_FS:
->  	case FS_IOC_ENABLE_VERITY:
->  	case FS_IOC_MEASURE_VERITY:
-> +	case FS_IOC_READ_VERITY_METADATA:
->  	case FS_IOC_GETFSLABEL:
->  	case FS_IOC_SETFSLABEL:
->  	case F2FS_IOC_GET_COMPRESS_BLOCKS:
-> diff --git a/fs/verity/Makefile b/fs/verity/Makefile
-> index 570e9136334d4..435559a4fa9ea 100644
-> --- a/fs/verity/Makefile
-> +++ b/fs/verity/Makefile
-> @@ -5,6 +5,7 @@ obj-$(CONFIG_FS_VERITY) += enable.o \
->  			   init.o \
->  			   measure.o \
->  			   open.o \
-> +			   read_metadata.o \
->  			   verify.o
+> -	struct fsverity_descriptor *desc = _desc;
+>  	struct fsverity_info *vi;
+>  	int err;
 >  
->  obj-$(CONFIG_FS_VERITY_BUILTIN_SIGNATURES) += signature.o
-> diff --git a/fs/verity/read_metadata.c b/fs/verity/read_metadata.c
-> new file mode 100644
-> index 0000000000000..43be990fd53e4
-> --- /dev/null
-> +++ b/fs/verity/read_metadata.c
-> @@ -0,0 +1,55 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Ioctl to read verity metadata
-> + *
-> + * Copyright 2021 Google LLC
-> + */
-> +
-> +#include "fsverity_private.h"
-> +
-> +#include <linux/uaccess.h>
-> +
-> +/**
-> + * fsverity_ioctl_read_metadata() - read verity metadata from a file
-> + * @filp: file to read the metadata from
-> + * @uarg: user pointer to fsverity_read_metadata_arg
-> + *
-> + * Return: length read on success, 0 on EOF, -errno on failure
-> + */
-> +int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg)
-> +{
-> +	struct inode *inode = file_inode(filp);
-> +	const struct fsverity_info *vi;
-> +	struct fsverity_read_metadata_arg arg;
-> +	int length;
-> +	void __user *buf;
-> +
-> +	vi = fsverity_get_info(inode);
-> +	if (!vi)
-> +		return -ENODATA; /* not a verity file */
-> +	/*
-> +	 * Note that we don't have to explicitly check that the file is open for
-> +	 * reading, since verity files can only be opened for reading.
-> +	 */
-> +
-> +	if (copy_from_user(&arg, uarg, sizeof(arg)))
-> +		return -EFAULT;
-> +
-> +	if (arg.__reserved)
-> +		return -EINVAL;
-> +
-> +	/* offset + length must not overflow. */
-> +	if (arg.offset + arg.length < arg.offset)
-> +		return -EINVAL;
-> +
-> +	/* Ensure that the return value will fit in INT_MAX. */
-> +	length = min_t(u64, arg.length, INT_MAX);
-> +
-> +	buf = u64_to_user_ptr(arg.buf_ptr);
-> +
-> +	switch (arg.metadata_type) {
-> +	default:
-> +		return -EINVAL;
+> -	if (desc_size < sizeof(*desc)) {
+> -		fsverity_err(inode, "Unrecognized descriptor size: %zu bytes",
+> -			     desc_size);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (desc->version != 1) {
+> -		fsverity_err(inode, "Unrecognized descriptor version: %u",
+> -			     desc->version);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (memchr_inv(desc->__reserved, 0, sizeof(desc->__reserved))) {
+> -		fsverity_err(inode, "Reserved bits set in descriptor");
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (desc->salt_size > sizeof(desc->salt)) {
+> -		fsverity_err(inode, "Invalid salt_size: %u", desc->salt_size);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (le64_to_cpu(desc->data_size) != inode->i_size) {
+> -		fsverity_err(inode,
+> -			     "Wrong data_size: %llu (desc) != %lld (inode)",
+> -			     le64_to_cpu(desc->data_size), inode->i_size);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+>  	vi = kmem_cache_zalloc(fsverity_info_cachep, GFP_KERNEL);
+>  	if (!vi)
+>  		return ERR_PTR(-ENOMEM);
+> @@ -245,15 +217,57 @@ void fsverity_free_info(struct fsverity_info *vi)
+>  	kmem_cache_free(fsverity_info_cachep, vi);
+>  }
+>  
+> -/* Ensure the inode has an ->i_verity_info */
+> -static int ensure_verity_info(struct inode *inode)
+> +static bool validate_fsverity_descriptor(struct inode *inode,
+> +					 const struct fsverity_descriptor *desc,
+> +					 size_t desc_size)
+>  {
+> -	struct fsverity_info *vi = fsverity_get_info(inode);
+> -	struct fsverity_descriptor *desc;
+> -	int res;
+> +	if (desc_size < sizeof(*desc)) {
+> +		fsverity_err(inode, "Unrecognized descriptor size: %zu bytes",
+> +			     desc_size);
+> +		return false;
 > +	}
+>  
+> -	if (vi)
+> -		return 0;
+> +	if (desc->version != 1) {
+> +		fsverity_err(inode, "Unrecognized descriptor version: %u",
+> +			     desc->version);
+> +		return false;
+> +	}
+> +
+> +	if (memchr_inv(desc->__reserved, 0, sizeof(desc->__reserved))) {
+> +		fsverity_err(inode, "Reserved bits set in descriptor");
+> +		return false;
+> +	}
+> +
+> +	if (desc->salt_size > sizeof(desc->salt)) {
+> +		fsverity_err(inode, "Invalid salt_size: %u", desc->salt_size);
+> +		return false;
+> +	}
+> +
+> +	if (le64_to_cpu(desc->data_size) != inode->i_size) {
+> +		fsverity_err(inode,
+> +			     "Wrong data_size: %llu (desc) != %lld (inode)",
+> +			     le64_to_cpu(desc->data_size), inode->i_size);
+> +		return false;
+> +	}
+> +
+> +	if (le32_to_cpu(desc->sig_size) > desc_size - sizeof(*desc)) {
+> +		fsverity_err(inode, "Signature overflows verity descriptor");
+> +		return false;
+> +	}
+> +
+> +	return true;
 > +}
-> +EXPORT_SYMBOL_GPL(fsverity_ioctl_read_metadata);
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index c1144a4503920..b568b3c7d095e 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -138,6 +138,10 @@ int fsverity_file_open(struct inode *inode, struct file *filp);
->  int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr);
->  void fsverity_cleanup_inode(struct inode *inode);
->  
-> +/* read_metadata.c */
 > +
-> +int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg);
-> +
->  /* verify.c */
+> +/*
+> + * Read the inode's fsverity_descriptor (with optional appended signature) from
+> + * the filesystem, and do basic validation of it.
+> + */
+> +int fsverity_get_descriptor(struct inode *inode,
+> +			    struct fsverity_descriptor **desc_ret,
+> +			    size_t *desc_size_ret)
+> +{
+> +	int res;
+> +	struct fsverity_descriptor *desc;
 >  
->  bool fsverity_verify_page(struct page *page);
-> @@ -183,6 +187,14 @@ static inline void fsverity_cleanup_inode(struct inode *inode)
->  {
+>  	res = inode->i_sb->s_vop->get_verity_descriptor(inode, NULL, 0);
+>  	if (res < 0) {
+> @@ -272,20 +286,46 @@ static int ensure_verity_info(struct inode *inode)
+>  	res = inode->i_sb->s_vop->get_verity_descriptor(inode, desc, res);
+>  	if (res < 0) {
+>  		fsverity_err(inode, "Error %d reading verity descriptor", res);
+> -		goto out_free_desc;
+> +		kfree(desc);
+> +		return res;
+> +	}
+> +
+> +	if (!validate_fsverity_descriptor(inode, desc, res)) {
+> +		kfree(desc);
+> +		return -EINVAL;
+>  	}
+>  
+> -	vi = fsverity_create_info(inode, desc, res);
+> +	*desc_ret = desc;
+> +	*desc_size_ret = res;
+> +	return 0;
+> +}
+> +
+> +/* Ensure the inode has an ->i_verity_info */
+> +static int ensure_verity_info(struct inode *inode)
+> +{
+> +	struct fsverity_info *vi = fsverity_get_info(inode);
+> +	struct fsverity_descriptor *desc;
+> +	size_t desc_size;
+> +	int err;
+> +
+> +	if (vi)
+> +		return 0;
+> +
+> +	err = fsverity_get_descriptor(inode, &desc, &desc_size);
+> +	if (err)
+> +		return err;
+> +
+> +	vi = fsverity_create_info(inode, desc, desc_size);
+>  	if (IS_ERR(vi)) {
+> -		res = PTR_ERR(vi);
+> +		err = PTR_ERR(vi);
+>  		goto out_free_desc;
+>  	}
+>  
+>  	fsverity_set_info(inode, vi);
+> -	res = 0;
+> +	err = 0;
+>  out_free_desc:
+>  	kfree(desc);
+> -	return res;
+> +	return err;
 >  }
 >  
-> +/* read_metadata.c */
-> +
-> +static inline int fsverity_ioctl_read_metadata(struct file *filp,
-> +					       const void __user *uarg)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
->  /* verify.c */
->  
->  static inline bool fsverity_verify_page(struct page *page)
-> diff --git a/include/uapi/linux/fsverity.h b/include/uapi/linux/fsverity.h
-> index 33f44156f8ea5..e062751294d01 100644
-> --- a/include/uapi/linux/fsverity.h
-> +++ b/include/uapi/linux/fsverity.h
-> @@ -83,7 +83,17 @@ struct fsverity_formatted_digest {
->  	__u8 digest[];
->  };
->  
-> +struct fsverity_read_metadata_arg {
-> +	__u64 metadata_type;
-> +	__u64 offset;
-> +	__u64 length;
-> +	__u64 buf_ptr;
-> +	__u64 __reserved;
-> +};
-> +
->  #define FS_IOC_ENABLE_VERITY	_IOW('f', 133, struct fsverity_enable_arg)
->  #define FS_IOC_MEASURE_VERITY	_IOWR('f', 134, struct fsverity_digest)
-> +#define FS_IOC_READ_VERITY_METADATA \
-> +	_IOWR('f', 135, struct fsverity_read_metadata_arg)
->  
->  #endif /* _UAPI_LINUX_FSVERITY_H */
+>  /**
 > -- 
 > 2.30.0
