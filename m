@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24310306EC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4D4D306EEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 08:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231806AbhA1HSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 02:18:44 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:22642 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231766AbhA1HQi (ORCPT
+        id S231880AbhA1HUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 02:20:39 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:16412 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231794AbhA1HSV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 02:16:38 -0500
+        Thu, 28 Jan 2021 02:18:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611818198; x=1643354198;
+  t=1611818300; x=1643354300;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=cXmRF2Su1ZKio9gUSME8BeoE9pXLYvn976s4DXPYmio=;
-  b=VaRBQ6YxKGKjVtoTNFVcQ5uwyV87uSnQ7g1GH2DOTzYIUnvDgh/3pnKE
-   /6qmQKjJI29qIF9h0U2L37C1hAnmLD3TkRAOOYS5JCmnTEOs7xjEZ3zi3
-   wxMmAwn5P9qVLYDSBNIZJjzsCDc3x/xaBMb6DEWAoSfK4/eX5nFPatvJX
-   oFthhgRjSiESz2YFRw3k/XxdWHWXVFaHKlvD0mlbyLp7dkA9a5wdP8YMS
-   Flpov46QwiAUkh+6kTZ+pwvIpz+myS3O2hQ8MF0BVAN1UAgAoDYS/s7Uz
-   4IddvzOz00DNCLhF6mQ3+AGfHzdAjrSt+lNIQrzgBF8SnvVnuloqBu6Q/
-   Q==;
-IronPort-SDR: qouX7FEWYku/EIcaLeSvDRO+nyGygc86CJQZ/lACj5d19vSYhuJ2gxYOfp9F/nXKdgSYK92iTr
- J6AE7z08It9HOwE2pVMP+g9PqCSufiBc29kc0/jOxhuL6J4VAwA2/ChXsqwlAOXViWOs6J81VX
- ESOTyhs79gzXc/mAzlsUWoqdKioxtVzk40e0opML6S2FMalHHgK+OiHrpOvLELog3no8jQyqnH
- OtFcCx32NR++XVsPwWMLlZJ/rif6zEzrLNqw7opEEeRPOPP0a9sBViXLeVMkCHThUiLTtm8YGu
- RtM=
+  bh=mX0lBXgZV5dDDUNO5/xUPQTxA6WXojrnDbaB4rJIAQ4=;
+  b=UK3xJc9Kn5/HSinlww6nzCs/tKuhxqRKodiCtpnJoCPY0TE6ieP/wMSo
+   QOi6ZRGelo9Bwop4R+gTYy6+Ar2jTl2CNF7F49z+9l0WEVwWmemw1iRTp
+   RhHI6vAomRNSROk2hK/lv0QA7c2QJ7pn2jdKbsJPCw1xdhkmu59Z96W9c
+   o9M+jF777WFB5DTNfhM6juMhHEH41PSjzYrrQVXLOsyCgI2nvXQaBHJYu
+   hqK5QJHdQVI+tHoYg/QC6gP/dlUAi1vnP+2t1oET/HfA2J85uNH+F/SYr
+   MVU7zBVwIjzut/Xi/f/7dFwVaIxZQ7Sr0hYI3wivzRwK5xmWha2uybFz0
+   A==;
+IronPort-SDR: IP02B0t48+ZS6eTsMOy5CC4RvdEC+J4WI9rOgdDEL6i+HX6ygrGDYLvMrfBXB2nTQ5LpDFtVWv
+ gMdNsHFU2JezHpKEkqwybnwgmcuI798F/kciBpPZolNLi9bp8xTa+4HfW6fHo1GbxKRjrxMjfp
+ 7eQRFkGemN5ylmzRa/Ukp+ERpUbpL99IpOCxK/EX5Pa3CE9GzgMFXlFqRpWaaSm/bzJFEde46p
+ hhsPPIEmSkbCxIhNlqeNlH1u1W9MFYS+buMJDv/j50PjkY5wwj3vJBsqGN6j6S9bsklmwl3iDU
+ TzU=
 X-IronPort-AV: E=Sophos;i="5.79,381,1602518400"; 
-   d="scan'208";a="158517539"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:15:32 +0800
-IronPort-SDR: F7D+JzTIMNuOM9rJE9rzREWmu3a0T7ckKAGVF47FdUVeiVjpgSf0x03/GemY2eE2EGoGHzHnSA
- WKHWnPkM9aQPHSnKTf5Ke7RvxvdU7Xd6iU6jFQJ/LM9Hse5xpvBepv5X6uPX5msmvWG6EcMU0s
- Hk+bWOzZJAyWfOsrGVj6WjTEUd7skZ4DGKzt9TkRgMQ6JLgsbCpCupvMVhRFNVwIh10oQopAfs
- 2lhR9odEZL1hzlV1xJmQRPgoI76/vIBgJgI5JpeWn4dwqLrq1gqKR9eo4A79TAeA+VZoXGsFQY
- oVbd22FYkDwLZU1ciz2nNIJf
+   d="scan'208";a="158518438"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2021 15:15:39 +0800
+IronPort-SDR: 4Shp0a9OlbAOH2CLBuUtXbd+Bd5iM/1YmLPuWzuCX8Y3r04Ee/2cIPh0Zs23g6TRb0TXi4GG7g
+ JNHZPStpg0g3A4hGYg+hkzLSApvbGQqHQhvj/pG9ufJK7xcXmdUr5+s8gCA9VYUPlFQ13d69+8
+ FWvE2wiURnHEUwCGdMXd1g966XZn5RFqVeDduSg0FzqH10abFQxea6BhWdkpq4oI1C1AaRvc1h
+ SbylIYTBak8uc2nt1vQ0wghyDCCwhFzdt31mVfM2BnQxSElL0yLvkVA7PVmdz3MmyvJGE8J09a
+ 9dKJ64EPHArlVy0q24EEbj/h
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:57:50 -0800
-IronPort-SDR: m+UU9TJBIXCvSyFz/7O2vaYmlOCexk8ewW0e2kOKkWSuwpQEVFGI+DHENO7Q1Bf8IQzN352Mi5
- 5dDETfg3/zd0aL0yHDjcbUD/eS6byN5dveWHS0JlUn01j5YdJYnuzvRhCyGEwEvsPLeiwlo6h7
- h47UPjLb7UDOPAPFC4EqcqtJYlkeHUwpVqBF6C8WUdWbiBbzIaj0jcLgB21R8kA1PJHycwAnr3
- 51c0CVR8EMmKQ6pEvymjZcIoINYcADZvl3xn96JSQjk6KW59eeMqwpBFLuZiCrCp4Zkdz1bD1j
- kZU=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2021 22:59:59 -0800
+IronPort-SDR: +tiKd6++/IklFSy7iDJaHbayhG5AQMYy46sQaNwq7O80dac1IZ8ZNlxjx4DxYbXvKYV6ua9+Jn
+ RJlpIO7cWN3eoJjRXIKMWDgWPb2hxGv4A2WF6qkOCUmJWGu679NggrholDw0Y/zhUvvPmDPwT6
+ YMwbiHmVzfz4ihKs4Lc84G8Ml2oUugQkKwA3saHG7RouPgTCEOWIbUjZGA0E7lav6RMiRyuWgb
+ NQVibBmtLzaPM7sNDSYSURpVt5muhPgCfKQdUKPwhH4mY9hUDkI5QyIoSDd8h2S0Ai5kAfU9pn
+ AHM=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:15:32 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jan 2021 23:15:39 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         dm-devel@redhat.com, linux-block@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc:     axboe@kernel.dk, philipp.reisner@linbit.com,
         alex.shi@linux.alibaba.com, asml.silence@gmail.com,
         ming.lei@redhat.com, tj@kernel.org, osandov@fb.com,
         bvanassche@acm.org, jefflexu@linux.alibaba.com
-Subject: [RFC PATCH 28/34] zonefs: use bio_new
-Date:   Wed, 27 Jan 2021 23:11:27 -0800
-Message-Id: <20210128071133.60335-29-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 29/34] power/swap: use bio_new in hib_submit_io
+Date:   Wed, 27 Jan 2021 23:11:28 -0800
+Message-Id: <20210128071133.60335-30-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
 In-Reply-To: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
 References: <20210128071133.60335-1-chaitanya.kulkarni@wdc.com>
@@ -89,38 +89,30 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- fs/zonefs/super.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ kernel/power/swap.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index ab68e27bb322..620d67965a22 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -661,6 +661,7 @@ static const struct iomap_dio_ops zonefs_write_dio_ops = {
- 
- static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index c73f2e295167..e92e36c053a6 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -271,13 +271,12 @@ static int hib_submit_io(int op, int op_flags, pgoff_t page_off, void *addr,
+ 		struct hib_bio_batch *hb)
  {
-+	unsigned int op = REQ_OP_ZONE_APPEND | REQ_SYNC | REQ_IDLE;
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 	struct zonefs_inode_info *zi = ZONEFS_I(inode);
- 	struct block_device *bdev = inode->i_sb->s_bdev;
-@@ -678,15 +679,12 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
- 	if (!nr_pages)
- 		return 0;
+ 	struct page *page = virt_to_page(addr);
++	sector_t sect = page_off * (PAGE_SIZE >> 9);
+ 	struct bio *bio;
+ 	int error = 0;
  
--	bio = bio_alloc(GFP_NOFS, nr_pages);
-+	bio = bio_new(bdev, zi->i_zsector, op, 0, GFP_NOFS, nr_pages);
- 	if (!bio)
- 		return -ENOMEM;
+-	bio = bio_alloc(GFP_NOIO | __GFP_HIGH, 1);
+-	bio->bi_iter.bi_sector = page_off * (PAGE_SIZE >> 9);
+-	bio_set_dev(bio, hib_resume_bdev);
+-	bio_set_op_attrs(bio, op, op_flags);
++	bio = bio_new(hib_resume_bdev, sect, op, op_flags, 1,
++		      GFP_NOIO | __GFP_HIGH);
  
--	bio_set_dev(bio, bdev);
--	bio->bi_iter.bi_sector = zi->i_zsector;
- 	bio->bi_write_hint = iocb->ki_hint;
- 	bio->bi_ioprio = iocb->ki_ioprio;
--	bio->bi_opf = REQ_OP_ZONE_APPEND | REQ_SYNC | REQ_IDLE;
- 	if (iocb->ki_flags & IOCB_DSYNC)
- 		bio->bi_opf |= REQ_FUA;
- 
+ 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+ 		pr_err("Adding page to bio failed at %llu\n",
 -- 
 2.22.1
 
