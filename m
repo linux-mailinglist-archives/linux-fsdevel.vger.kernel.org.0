@@ -2,78 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED41E307FC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 21:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD8F307FDC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 21:50:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbhA1UjY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 15:39:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37774 "EHLO
+        id S231344AbhA1Utm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 15:49:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbhA1UjY (ORCPT
+        with ESMTP id S229646AbhA1Uta (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 15:39:24 -0500
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39FB8C061788
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 12:38:12 -0800 (PST)
-Received: by mail-vs1-xe2c.google.com with SMTP id b5so3744882vsh.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 12:38:12 -0800 (PST)
+        Thu, 28 Jan 2021 15:49:30 -0500
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF979C061574;
+        Thu, 28 Jan 2021 12:48:49 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id n2so7031215iom.7;
+        Thu, 28 Jan 2021 12:48:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8KPgt9hBeVcEo5Nho0Ik1gkLx7dER9AD9O3f4dkEfDM=;
-        b=LCM7oE/eDXhBiFGmQ+Q7GUkb33VZwMTOs6c+QMmmtTshjoGqrJch7qKjp3VgVrjLGo
-         0DGsKGDL+zECFRWW9m76RiQ+77fnJjO9wvDhlugmouvNCUj/jpz0PzDOHDUnQJYgTNsN
-         8fMlfmaw0EuBzGRkL6Ta+ZNUJKnBJBofqcJyE=
+        bh=qdoEjK6WmyZe9D8sv9PM+Lkh5UShPE1H2BMAI6rL4mM=;
+        b=bEMcf+0G8+LpCT33Bdzu4oxYnH9lg3WhORjDhmjqZJlvu8/SjAvLA/ulKCX/guPcj9
+         AXGe6k4RGTPTqLkx6iw1P5zr+U92ek2+wRE11YCfS4oVqIj1uD65nTtHc7su2thWHY7p
+         Rtx1e60brbze3+EfTgtMntaESUSjFNxMF4LmYP38B38sw6O3J7/5p4eY0IxKrmfv20C8
+         wzSklEl6HcSYG6TeQ/fO36tAh8XADiyKrgC31A+4Ua2XLCZJl9avNkQ+vY3mB7EmS4x6
+         pIzsUolto0uGdywGMgC0xGXDqAa2QfpTW+fgysNV8IhykCpAjDfOTSi97md1bHkXhETm
+         lWCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8KPgt9hBeVcEo5Nho0Ik1gkLx7dER9AD9O3f4dkEfDM=;
-        b=CvKJl/Dc2PNOIWiLoNrv4xFnrrH43O29173OE3+iuF6oREr5h1wRbqes2H7kdEaIp/
-         8WEekoGnV/QA3eegSZk3jGq0snBRwC9hNqW3t4bE4KPdR23/OGVSWwg9F5KB+89ulR1/
-         vj4Bhr2RRj7FhZnfiFv31pceMdt28ZA3I87al92i5qR0HlHnolruYFAvuh3HHft9viOv
-         GId2exwEzXVwIl57XR6SlKEwdCGFwp6la78+46cWIBQNZjLCRPzpJVMIhF1aPReFwK9J
-         ou75TV/sVa0T+0G/ptpYL2cwTsqzl6zsnw7tr8cPGJLjPVBYqCYlSqVeAtd4AWtWfErm
-         X9BQ==
-X-Gm-Message-State: AOAM53093pKPmmctM8ITi469dXDdz/2WW1YXgV/7wpHriyIKYR83i0ru
-        1D/5Y3IxDpXfWUong4yraD69eQVcGjHCU1hcftj3QA==
-X-Google-Smtp-Source: ABdhPJzX/gZhVjy5xbZXs4+sI7wH7G5vQ7HSsfArwt+AUTKX6c8cJkmXmX6BOemJlLH0uq/Hd1IX4Q3wYAZvMD4Uwqo=
-X-Received: by 2002:a67:c992:: with SMTP id y18mr896831vsk.7.1611866291533;
- Thu, 28 Jan 2021 12:38:11 -0800 (PST)
+        bh=qdoEjK6WmyZe9D8sv9PM+Lkh5UShPE1H2BMAI6rL4mM=;
+        b=qXvjXevzlnDj3NY3fsQqA5oUEnFWjdPKOlbcv/nkPtDgAQifj5pq9EDXo/n6U6Vznp
+         OSFrPRGX/HEPpDI7YJl2tpR2IgHbDHrQO+va0Lsb0y9fJLVzEJwUj4CHWk8YTWd6Jy6w
+         ldRB0Tu8VTonh5X24ZBwsk+P2FVvmmzm+oB0BL3kXXcGDMp0RLCsa2RJy6HOgGJu+sIc
+         ycmStlRJuQNtrpsCDnw1PNZaNJLlOZFsZpKDJV8Yrvr/jfNdd4rDKmuTwrxokWvzfr/x
+         1lmwsMvk0KsAXjRymnT1b+W8x5YFLtukNRu+a1P4JYeM767emPiQuKln0YmH1zo9oy7j
+         CMmw==
+X-Gm-Message-State: AOAM5325JFKx7b+LjMKD+ShewsRJ3yhFsgUFP9kGzfvjvtG3Iv8m+u5j
+        IZDAY9cYZs3P4lmvp9dJPgGYn0akzQEvcAv7lcrU7MPeHBw=
+X-Google-Smtp-Source: ABdhPJwEfQfxpnmTaXxKdFQhLhUuZKcJjUgIqb4XWB6FsQSdQVE00jXzdZ/moiHqw0bN9zCv9h/LM28RVuL5Uoy9YRA=
+X-Received: by 2002:a6b:2bca:: with SMTP id r193mr1102442ior.167.1611866929271;
+ Thu, 28 Jan 2021 12:48:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20210119162204.2081137-1-mszeredi@redhat.com> <20210119162204.2081137-3-mszeredi@redhat.com>
- <8735yw8k7a.fsf@x220.int.ebiederm.org> <20210128165852.GA20974@mail.hallyn.com>
- <87o8h8x1a6.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87o8h8x1a6.fsf@x220.int.ebiederm.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 28 Jan 2021 21:38:00 +0100
-Message-ID: <CAJfpegv8e5+xn2X8-QrNnu0QJbe=CoK-DWNOdTV9EdrHrJvtEg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
+References: <20210126134103.240031-1-jlayton@kernel.org> <CAOi1vP-3Ma4LdCcu6sPpwVbmrto5HnOAsJ6r9_973hYY3ODBUQ@mail.gmail.com>
+ <2301cde67ae7aa54d860fc3962aeb8ed85744c75.camel@kernel.org>
+In-Reply-To: <2301cde67ae7aa54d860fc3962aeb8ed85744c75.camel@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 28 Jan 2021 21:48:44 +0100
+Message-ID: <CAOi1vP_7dfuKgQxFpyeUDMJBGm=cnQSvYHDnU=6YPTzbB9+d6w@mail.gmail.com>
+Subject: Re: [PATCH 0/6] ceph: convert to new netfs read helpers
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-cachefs@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 28, 2021 at 9:24 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+On Thu, Jan 28, 2021 at 1:52 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Wed, 2021-01-27 at 23:50 +0100, Ilya Dryomov wrote:
+> > On Tue, Jan 26, 2021 at 2:41 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > >
+> > > This patchset converts ceph to use the new netfs readpage, write_begin,
+> > > and readahead helpers to handle buffered reads. This is a substantial
+> > > reduction in code in ceph, but shouldn't really affect functionality in
+> > > any way.
+> > >
+> > > Ilya, if you don't have any objections, I'll plan to let David pull this
+> > > series into his tree to be merged with the netfs API patches themselves.
+> >
+> > Sure, that works for me.
+> >
+> > I would have expected that the new netfs infrastructure is pushed
+> > to a public branch that individual filesystems could peruse, but since
+> > David's set already includes patches for AFS and NFS, let's tag along.
+> >
+> > Thanks,
+> >
+> >                 Ilya
+>
+> David has a fscache-netfs-lib branch that has all of the infrastructure
+> changes. See:
+>
+>     https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-netfs-lib
 
-> <aside>
-> From our previous discussions I would also argue it would be good
-> if there was a bypass that skipped all conversions if the reader
-> and the filesystem are in the same user namespace.
-> </aside>
-
-That's however just an optimization (AFAICS) that only makes sense if
-it helps a read world workload.   I'm not convinced that that's the
-case.
+I saw that, but AFAICS it hasn't been declared public (as in suitable
+for other people to base their work on, with the promise that history
+won't get rewritten.  It is branched off of what looks like a random
+snapshot of Linus' tree instead of a release point, etc.
 
 Thanks,
-Miklos
+
+                Ilya
