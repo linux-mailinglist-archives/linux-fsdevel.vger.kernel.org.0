@@ -2,184 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5C2306B07
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 03:22:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7D9306B5F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jan 2021 04:06:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231219AbhA1CVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jan 2021 21:21:11 -0500
-Received: from mail.synology.com ([211.23.38.101]:51962 "EHLO synology.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231204AbhA1CUx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jan 2021 21:20:53 -0500
-Received: from localhost.localdomain (unknown [10.17.32.161])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S231131AbhA1DG2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jan 2021 22:06:28 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46702 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229817AbhA1DG0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Jan 2021 22:06:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611803100;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZtvGjwvPJQPTd5iszx1z5cgMmarf/C6MBn65XN9DRzU=;
+        b=U/Fp2NoCkI6yeq6CNly09sbU/OX/oWM6yNobWO3+lgVPeldnCVkWXnMMe2gtYuKc86HtP+
+        p0IIfzXFaBrx4nm/F4dct0nO1ZYAwSYSAHAaCNuIMHfqTP1+BUv0lTgnuNE5QXLHpWgr5E
+        nBvITbN7i73V6pxYRkqs1gMfzpCWmHg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-445-jvgTJUraNSKs0lUfxy9d5A-1; Wed, 27 Jan 2021 22:04:58 -0500
+X-MC-Unique: jvgTJUraNSKs0lUfxy9d5A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by synology.com (Postfix) with ESMTPSA id 98DD3CE781CA;
-        Thu, 28 Jan 2021 10:20:11 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
-        t=1611800411; bh=Ml/b5oOFCX4UpBoR+iFec6zbr09wPprtwU9FAP+aKdI=;
-        h=From:To:Cc:Subject:Date;
-        b=ZrXDdAiFalHJUNRDweURhwaRuqqU/ys6eDz7Uv2GGmnpL0hpu1/RjCOibBDii99In
-         /XuVgt4Vbtl+eqdNVXllQxXukeEDpkGlTroleHLep5j9P9hYylPkR6R7K2589ktglA
-         Z3XRb4TUp9fu4WTyU7/cVG0RvD1MVvvEuKprslNM=
-From:   bingjingc <bingjingc@synology.com>
-To:     viro@zeniv.linux.org.uk, jack@suse.com, jack@suse.cz,
-        axboe@kernel.dk, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, cccheng@synology.com,
-        bingjingc@synology.com, robbieko@synology.com
-Subject: [PATCH 3/3] parser: add unsigned int parser
-Date:   Thu, 28 Jan 2021 10:20:01 +0800
-Message-Id: <1611800401-9790-1-git-send-email-bingjingc@synology.com>
-X-Mailer: git-send-email 2.7.4
-X-Synology-MCP-Status: no
-X-Synology-Spam-Flag: no
-X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
-X-Synology-Virus-Status: no
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CDBA1107ACE3;
+        Thu, 28 Jan 2021 03:04:55 +0000 (UTC)
+Received: from [10.72.12.167] (ovpn-12-167.pek2.redhat.com [10.72.12.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D36235D9E3;
+        Thu, 28 Jan 2021 03:04:43 +0000 (UTC)
+Subject: Re: [RFC v3 01/11] eventfd: track eventfd_signal() recursion depth
+ separately in different cases
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, bcrl@kvack.org, Jonathan Corbet <corbet@lwn.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <20210119045920.447-1-xieyongji@bytedance.com>
+ <20210119045920.447-2-xieyongji@bytedance.com>
+ <e8a2cc15-80f5-01e0-75ec-ea6281fda0eb@redhat.com>
+ <CACycT3sN0+dg-NubAK+N-DWf3UDXwWh=RyRX-qC9fwdg3QaLWA@mail.gmail.com>
+ <6a5f0186-c2e3-4603-9826-50d5c68a3fda@redhat.com>
+ <CACycT3sqDgccOfNcY_FNcHDqJ2DeMbigdFuHYm9DxWWMjkL7CQ@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <b5c9f2d4-5b95-4552-3886-f5cbcb7de232@redhat.com>
+Date:   Thu, 28 Jan 2021 11:04:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CACycT3sqDgccOfNcY_FNcHDqJ2DeMbigdFuHYm9DxWWMjkL7CQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: BingJing Chang <bingjingc@synology.com>
 
-Will be used by fs parsing options
+On 2021/1/27 下午5:11, Yongji Xie wrote:
+> On Wed, Jan 27, 2021 at 11:38 AM Jason Wang <jasowang@redhat.com> wrote:
+>>
+>> On 2021/1/20 下午2:52, Yongji Xie wrote:
+>>> On Wed, Jan 20, 2021 at 12:24 PM Jason Wang <jasowang@redhat.com> wrote:
+>>>> On 2021/1/19 下午12:59, Xie Yongji wrote:
+>>>>> Now we have a global percpu counter to limit the recursion depth
+>>>>> of eventfd_signal(). This can avoid deadlock or stack overflow.
+>>>>> But in stack overflow case, it should be OK to increase the
+>>>>> recursion depth if needed. So we add a percpu counter in eventfd_ctx
+>>>>> to limit the recursion depth for deadlock case. Then it could be
+>>>>> fine to increase the global percpu counter later.
+>>>> I wonder whether or not it's worth to introduce percpu for each eventfd.
+>>>>
+>>>> How about simply check if eventfd_signal_count() is greater than 2?
+>>>>
+>>> It can't avoid deadlock in this way.
+>>
+>> I may miss something but the count is to avoid recursive eventfd call.
+>> So for VDUSE what we suffers is e.g the interrupt injection path:
+>>
+>> userspace write IRQFD -> vq->cb() -> another IRQFD.
+>>
+>> It looks like increasing EVENTFD_WAKEUP_DEPTH should be sufficient?
+>>
+> Actually I mean the deadlock described in commit f0b493e ("io_uring:
+> prevent potential eventfd recursion on poll"). It can break this bug
+> fix if we just increase EVENTFD_WAKEUP_DEPTH.
 
-Reviewed-by: Robbie Ko<robbieko@synology.com>
-Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
-Signed-off-by: BingJing Chang <bingjingc@synology.com>
----
- fs/isofs/inode.c       | 16 ++--------------
- fs/udf/super.c         | 16 ++--------------
- include/linux/parser.h |  1 +
- lib/parser.c           | 22 ++++++++++++++++++++++
- 4 files changed, 27 insertions(+), 28 deletions(-)
 
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index 342ac19..21edc42 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -335,18 +335,6 @@ static const match_table_t tokens = {
- 	{Opt_err, NULL}
- };
- 
--static int isofs_match_uint(substring_t *s, unsigned int *res)
--{
--	int err = -ENOMEM;
--	char *buf = match_strdup(s);
--
--	if (buf) {
--		err = kstrtouint(buf, 10, res);
--		kfree(buf);
--	}
--	return err;
--}
--
- static int parse_options(char *options, struct iso9660_options *popt)
- {
- 	char *p;
-@@ -447,7 +435,7 @@ static int parse_options(char *options, struct iso9660_options *popt)
- 		case Opt_ignore:
- 			break;
- 		case Opt_uid:
--			if (isofs_match_uint(&args[0], &uv))
-+			if (match_uint(&args[0], &uv))
- 				return 0;
- 			popt->uid = make_kuid(current_user_ns(), uv);
- 			if (!uid_valid(popt->uid))
-@@ -455,7 +443,7 @@ static int parse_options(char *options, struct iso9660_options *popt)
- 			popt->uid_set = 1;
- 			break;
- 		case Opt_gid:
--			if (isofs_match_uint(&args[0], &uv))
-+			if (match_uint(&args[0], &uv))
- 				return 0;
- 			popt->gid = make_kgid(current_user_ns(), uv);
- 			if (!gid_valid(popt->gid))
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index efeac8c..2f83c12 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -454,18 +454,6 @@ static const match_table_t tokens = {
- 	{Opt_err,	NULL}
- };
- 
--static int udf_match_uint(substring_t *s, unsigned int *res)
--{
--	int err = -ENOMEM;
--	char *buf = match_strdup(s);
--
--	if (buf) {
--		err = kstrtouint(buf, 10, res);
--		kfree(buf);
--	}
--	return err;
--}
--
- static int udf_parse_options(char *options, struct udf_options *uopt,
- 			     bool remount)
- {
-@@ -521,7 +509,7 @@ static int udf_parse_options(char *options, struct udf_options *uopt,
- 			uopt->flags &= ~(1 << UDF_FLAG_USE_SHORT_AD);
- 			break;
- 		case Opt_gid:
--			if (udf_match_uint(args, &uv))
-+			if (match_uint(args, &uv))
- 				return 0;
- 			uopt->gid = make_kgid(current_user_ns(), uv);
- 			if (!gid_valid(uopt->gid))
-@@ -529,7 +517,7 @@ static int udf_parse_options(char *options, struct udf_options *uopt,
- 			uopt->flags |= (1 << UDF_FLAG_GID_SET);
- 			break;
- 		case Opt_uid:
--			if (udf_match_uint(args, &uv))
-+			if (match_uint(args, &uv))
- 				return 0;
- 			uopt->uid = make_kuid(current_user_ns(), uv);
- 			if (!uid_valid(uopt->uid))
-diff --git a/include/linux/parser.h b/include/linux/parser.h
-index 89e2b23..dd79f45 100644
---- a/include/linux/parser.h
-+++ b/include/linux/parser.h
-@@ -29,6 +29,7 @@ typedef struct {
- 
- int match_token(char *, const match_table_t table, substring_t args[]);
- int match_int(substring_t *, int *result);
-+int match_uint(substring_t *s, unsigned int *result);
- int match_u64(substring_t *, u64 *result);
- int match_octal(substring_t *, int *result);
- int match_hex(substring_t *, int *result);
-diff --git a/lib/parser.c b/lib/parser.c
-index f5b3e5d..2ec9c4f 100644
---- a/lib/parser.c
-+++ b/lib/parser.c
-@@ -189,6 +189,28 @@ int match_int(substring_t *s, int *result)
- EXPORT_SYMBOL(match_int);
- 
- /**
-+ * match_uint: - scan a decimal representation of an integer from a substring_t
-+ * @s: substring_t to be scanned
-+ * @result: resulting integer on success
-+ *
-+ * Description: Attempts to parse the &substring_t @s as a decimal integer. On
-+ * success, sets @result to the integer represented by the string and returns 0.
-+ * Returns -ENOMEM, -EINVAL, or -ERANGE on failure.
-+ */
-+int match_uint(substring_t *s, unsigned int *result)
-+{
-+	int err = -ENOMEM;
-+	char *buf = match_strdup(s);
-+
-+	if (buf) {
-+		err = kstrtouint(buf, 10, result);
-+		kfree(buf);
-+	}
-+	return err;
-+}
-+EXPORT_SYMBOL(match_uint);
-+
-+/**
-  * match_u64: - scan a decimal representation of a u64 from
-  *                  a substring_t
-  * @s: substring_t to be scanned
--- 
-2.7.4
+Ok, so can wait do something similar in that commit? (using async stuffs 
+like wq).
+
+Thanks
+
+
+>
+> Thanks,
+> Yongji
+>
 
