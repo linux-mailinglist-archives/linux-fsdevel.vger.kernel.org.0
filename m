@@ -2,56 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3CF308BBA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 18:43:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4EB308BBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 18:43:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232317AbhA2Rhy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 12:37:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52228 "EHLO
+        id S232330AbhA2Rh7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 12:37:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232564AbhA2Rfu (ORCPT
+        with ESMTP id S232568AbhA2Rfw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 12:35:50 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E5D5C06121D;
-        Fri, 29 Jan 2021 09:34:07 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id a10so14171749ejg.10;
-        Fri, 29 Jan 2021 09:34:07 -0800 (PST)
+        Fri, 29 Jan 2021 12:35:52 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0544C0613D6;
+        Fri, 29 Jan 2021 09:34:42 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id d2so11480209edz.3;
+        Fri, 29 Jan 2021 09:34:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7AbfFtW9wjNzPs2gb41cdBCub4AmtYQa567TAt7+eSk=;
-        b=fW09b7DjNMdUBdGrzUnBPYnJQoxcpvZfhOdZRUUN8LVpRoqTFls+GYUVapTLD50Ncj
-         8klaOvFrq0xq8j7jHwtdPzDmqVoVJATwx/yrpDzOQxyrDXRWFEQMvmWmhW8/qXqHpChT
-         LCLb4Qx0CQ6qmGhQVqNcM+4ZrhKKQA8lRRrZIDr0bzanBZ0axODSaFJUJS44Rw/WSf6O
-         TjPk+oAl+wltEU3xuMxf0sBPTLRNpas/EGXBRPEIjc/DBpUiTrdD1mOz8dSGxfqC/9W7
-         D81UFARhYPvHQ+vHpqRt2ZxS1cSAS5/W6vlEYyAjJ78GO50Be3NWej4lYhF0CNZ+idEp
-         IyEA==
+        bh=Omw5Ys8o3vFL1EfQiRnB9qvp9jJo/sSZIBuGwWy4rQw=;
+        b=P0udmoE4cNOfopGGDdUneugQsQ/x1aX+JDuhmR0HowCh/+jrrZGT2l7oaPkNT9lnYH
+         bzg6zxVIcGudkcFcuY5TF5P8XLde+LRySzA5DOaAtkYCU1l6IRJdbmObU7g0RxyCrARy
+         QbdDYAY5Ky2ij5Vy+Ge8Du2yFvoXqGMXowlM8E2DAfcD6u2z0esPkAAoiNZusd43i9zd
+         K5kiUvDV+xHSZpYgIXgilfjFPZHdbBau5ttK3/s/KShoF+EAjmddHnpaZGWH7uO7ccfc
+         hsnURnsttDRemCYnJQR9/bmiMNZCpbj1I76rNb5p1UYnKgqXkru9zjBRkBQ2okGMAkiH
+         RO7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7AbfFtW9wjNzPs2gb41cdBCub4AmtYQa567TAt7+eSk=;
-        b=O4z6p3bBgMJaa2oP8qi4PhlUWcHeEZb90NV5MryVMwz8SUDJvmMnPnYieDH8w+vcqH
-         NSAIrhHni+xwQJUtqCcb+UEGRlzFGhndVM6ae18vDhpD3pNMLGRz5SrZtCTbQSIkWL7R
-         MV7j+cX2G/q4a9W7tG4u4J6pwnaVwNHSyfMnsd/NCDFrHvqliH5Ks6qJ34GKQpNsEs7d
-         q0N6pTb7l+NxqOGb4blB1KJfKoo/2klBUkPj+fOio5t+d6EIr3K0z2vcBi50bvY7azEQ
-         ppvsGy55EKPJi6jGEIszB/K3kik8aNLzZjuhxl3M0xBmmc9+LGCwX7yELvL3QSVa5S33
-         HrTw==
-X-Gm-Message-State: AOAM532nhGOxsXjrNb+uBS1B50RQZbGJVbLDDv8tIcz5XEHyI1rPHka8
-        PXBHOLuXdG5ZldgAq8xVP2ReUt76hfqPEQXfjeU=
-X-Google-Smtp-Source: ABdhPJzYUJW1OR8R+UztcPHrZXughbTxpfWpXdcqwJUSnF2pkMIirzRuTWc1h4+yC9UeHD+OMQUVIa6MP+ZB1tC1wjs=
-X-Received: by 2002:a17:906:3945:: with SMTP id g5mr5881621eje.514.1611941646057;
- Fri, 29 Jan 2021 09:34:06 -0800 (PST)
+        bh=Omw5Ys8o3vFL1EfQiRnB9qvp9jJo/sSZIBuGwWy4rQw=;
+        b=L/IcI6HgHS8UEI24Jg0LKYkZF9a8yOlSXomhssIwx2f11nSr2wMxAHFEsQcPaWNW3j
+         6euiv3BeVZCwG+os3Pup1+z0fgxqChlFQILav4QvWaT91k6gP6F1VYaMAIwLftbw3qPt
+         gmY1zu+oeNe4oklVEVGuRt/rOyVufhxzFZKOEOkqAG9wtcBVMpEfEGWydGIwrUrbf7f4
+         tnBe+mRd02gRwr3LMEETq7ZZF3kNxPilsYxntnN1UGRMP4c6BZWulFlDHUkV37wLhGFp
+         cfauXK2yAJYuRtf3aRJDRyBtyfSD8vK1glsRKpt7HVbWujuvapoOe8Cd9GhC4et0Hve0
+         t2WA==
+X-Gm-Message-State: AOAM533oZAx5IOqvqG2lgkG+3xLImn1/BWIi86y45+d9Nrxixhs0dG2v
+        wYrZNp3GzSgdehIIzPtGL5U7A9FtlAJJjGtNAEk=
+X-Google-Smtp-Source: ABdhPJzJ9q7GFSTWtDLwX7jFAbH8oqLzoNJhAF7eKIMW47rYuGUgnjAMcsfVYtTT854WgHhPgyCIDk2+eJs4bi/x/ss=
+X-Received: by 2002:a50:e8c1:: with SMTP id l1mr6358721edn.168.1611941681756;
+ Fri, 29 Jan 2021 09:34:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20210127233345.339910-1-shy828301@gmail.com> <20210127233345.339910-9-shy828301@gmail.com>
- <f205b9b8-5fdd-1c76-25ed-d96ed608c14c@suse.cz>
-In-Reply-To: <f205b9b8-5fdd-1c76-25ed-d96ed608c14c@suse.cz>
+References: <20210127233345.339910-1-shy828301@gmail.com> <20210127233345.339910-10-shy828301@gmail.com>
+ <a519ccbd-7fae-ae8a-9900-bd49a758b5c8@suse.cz>
+In-Reply-To: <a519ccbd-7fae-ae8a-9900-bd49a758b5c8@suse.cz>
 From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 29 Jan 2021 09:33:54 -0800
-Message-ID: <CAHbLzkq-U3PO+V0a0BRkcT2xd3A7U5Gz_5n7ff8gRcFHTaw3yg@mail.gmail.com>
-Subject: Re: [v5 PATCH 08/11] mm: vmscan: use per memcg nr_deferred of shrinker
+Date:   Fri, 29 Jan 2021 09:34:29 -0800
+Message-ID: <CAHbLzkocuf94V4eegX2G=7GS=Q1Vbt8xrbs-8ASeYjNQfceOQQ@mail.gmail.com>
+Subject: Re: [v5 PATCH 09/11] mm: vmscan: don't need allocate
+ shrinker->nr_deferred for memcg aware shrinkers
 To:     Vlastimil Babka <vbabka@suse.cz>
 Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
         Shakeel Butt <shakeelb@google.com>,
@@ -67,49 +68,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 29, 2021 at 7:13 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+On Fri, Jan 29, 2021 at 7:40 AM Vlastimil Babka <vbabka@suse.cz> wrote:
 >
 > On 1/28/21 12:33 AM, Yang Shi wrote:
-> > Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's nr_deferred
-> > will be used in the following cases:
-> >     1. Non memcg aware shrinkers
-> >     2. !CONFIG_MEMCG
-> >     3. memcg is disabled by boot parameter
+> > Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
+> > allocate shrinker->nr_deferred for such shrinkers anymore.
+> >
+> > The prealloc_memcg_shrinker() would return -ENOSYS if !CONFIG_MEMCG or memcg is disabled
+> > by kernel command line, then shrinker's SHRINKER_MEMCG_AWARE flag would be cleared.
+> > This makes the implementation of this patch simpler.
 > >
 > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  mm/vmscan.c | 87 ++++++++++++++++++++++++++++++++++++++++++++---------
-> >  1 file changed, 73 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 20be0db291fe..e1f8960f5cf6 100644
 >
-> ...
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 >
-> > @@ -653,14 +717,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> >               next_deferred = 0;
-> >       /*
-> >        * move the unused scan count back into the shrinker in a
-> > -      * manner that handles concurrent updates. If we exhausted the
-> > -      * scan, there is no need to do an update.
-> > +      * manner that handles concurrent updates.
-> >        */
-> > -     if (next_deferred > 0)
-> > -             new_nr = atomic_long_add_return(next_deferred,
-> > -                                             &shrinker->nr_deferred[nid]);
-> > -     else
-> > -             new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
+> > @@ -525,8 +528,20 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
+> >   */
+> >  int prealloc_shrinker(struct shrinker *shrinker)
+> >  {
+> > -     unsigned int size = sizeof(*shrinker->nr_deferred);
+> > +     unsigned int size;
+> > +     int err;
+> > +
+> > +     if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+> > +             err = prealloc_memcg_shrinker(shrinker);
+> > +             if (!err)
+> > +                     return 0;
 >
-> Why not keep this write avoidance if next_deferred == 0 in the new helper?
+> Nit: this err == 0 case is covered below:
 
-Because IMHO the write avoidance may not make too much difference
-since nr_deferred was updated for the most cases per my tracing
-result. So I thought this would make the code more clean.
+Aha, thanks. Will fix in v6.
 
 >
-> > +     new_nr = set_nr_deferred(next_deferred, shrinker, shrinkctl);
+> > +             if (err != -ENOSYS)
+> > +                     return err;
+> > +
+> > +             shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
+> > +     }
 > >
-> >       trace_mm_shrink_slab_end(shrinker, shrinkctl->nid, freed, nr, new_nr, total_scan);
-> >       return freed;
+> > +     size = sizeof(*shrinker->nr_deferred);
+> >       if (shrinker->flags & SHRINKER_NUMA_AWARE)
+> >               size *= nr_node_ids;
 > >
->
