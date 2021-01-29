@@ -2,141 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D331308D65
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 20:36:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1A2308D67
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 20:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233003AbhA2T1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 14:27:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48306 "EHLO
+        id S233009AbhA2T1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 14:27:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232855AbhA2T1K (ORCPT
+        with ESMTP id S232855AbhA2T1R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 14:27:10 -0500
+        Fri, 29 Jan 2021 14:27:17 -0500
 Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5285EC061573;
-        Fri, 29 Jan 2021 11:26:30 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07F07C061574;
+        Fri, 29 Jan 2021 11:27:02 -0800 (PST)
 Received: by fieldses.org (Postfix, from userid 2815)
-        id B520B4163; Fri, 29 Jan 2021 14:26:29 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org B520B4163
+        id 7A2254163; Fri, 29 Jan 2021 14:27:01 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 7A2254163
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1611948389;
-        bh=IKc4YVXlVWfq6OM6YgIY+dz4pchSgHfEqRNyoKpUKQA=;
-        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
-        b=BhvXmL6yOG+7ocg5WqrxnR+u+TZp1aJVeaGF0bUkRkz0gwoEiLtJJnm2dhJ1g4jl3
-         GyFQAgoa6KROzYTJDR5j9zgHjNdSVwP750a/lGfRz7ri6+XrJbBzJGVTjcwqoaaM4o
-         2HfJN7pkyKwKa+VZRFVzdU/8TT+61gbkA2/Gdmcw=
-Date:   Fri, 29 Jan 2021 14:26:29 -0500
+        s=default; t=1611948421;
+        bh=Czt3r+DII0qD79e+XDEsUiPQlCPOuV8iSW4i1vozb+8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cMQpszRGMhwbbGuK/BZ9DB3fryZxvUhKKBw3H85anxYNPA8OVrSPULJsKsHwHgFYh
+         anIOtEZeNVlWSQ9PVxujP+gOSotRy2Ind+fOTw08so9petmb704BQsF2/zE8Pnt1fZ
+         YmbpBpsLyoq9E3zx3CStYrN6jWfnAD+woZJs17yg=
+Date:   Fri, 29 Jan 2021 14:27:01 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <schumakeranna@gmail.com>,
         Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH 1/2 v2] nfs: use change attribute for NFS re-exports
-Message-ID: <20210129192629.GC8033@fieldses.org>
+Subject: [PATCH 2/2 v2] nfsd: skip some unnecessary stats in the v4 case
+Message-ID: <20210129192701.GD8033@fieldses.org>
 References: <1611084297-27352-1-git-send-email-bfields@redhat.com>
  <1611084297-27352-3-git-send-email-bfields@redhat.com>
  <20210120084638.GA3678536@infradead.org>
  <20210121202756.GA13298@pick.fieldses.org>
  <20210122082059.GA119852@infradead.org>
+ <20210129192629.GC8033@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210122082059.GA119852@infradead.org>
+In-Reply-To: <20210129192629.GC8033@fieldses.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "J. Bruce Fields" <bfields@redhat.com>
 
-When exporting NFS, we may as well use the real change attribute
-returned by the original server instead of faking up a change attribute
-from the ctime.
-
-Note we can't do that by setting I_VERSION--that would also turn on the
-logic in iversion.h which treats the lower bit specially, and that
-doesn't make sense for NFS.
-
-So instead we define a new export operation for filesystems like NFS
-that want to manage the change attribute themselves.
+In the typical case of v4 and an i_version-supporting filesystem, we can
+skip a stat which is only required to fake up a change attribute from
+ctime.
 
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 ---
- fs/nfs/export.c          | 18 ++++++++++++++++++
- fs/nfsd/nfsfh.h          |  5 ++++-
- include/linux/exportfs.h |  1 +
- 3 files changed, 23 insertions(+), 1 deletion(-)
+ fs/nfsd/nfs3xdr.c | 42 +++++++++++++++++++++++++-----------------
+ 1 file changed, 25 insertions(+), 17 deletions(-)
 
-diff --git a/fs/nfs/export.c b/fs/nfs/export.c
-index 7412bb164fa7..f2b34cfe286c 100644
---- a/fs/nfs/export.c
-+++ b/fs/nfs/export.c
-@@ -167,10 +167,28 @@ nfs_get_parent(struct dentry *dentry)
- 	return parent;
+diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
+index 821db21ba072..8bcda5274089 100644
+--- a/fs/nfsd/nfs3xdr.c
++++ b/fs/nfsd/nfs3xdr.c
+@@ -252,6 +252,11 @@ encode_wcc_data(struct svc_rqst *rqstp, __be32 *p, struct svc_fh *fhp)
+ 	return encode_post_op_attr(rqstp, p, fhp);
  }
  
-+static u64 nfs_fetch_iversion(struct inode *inode)
++static bool fs_supports_change_attribute(struct super_block *sb)
 +{
-+	struct nfs_server *server = NFS_SERVER(inode);
-+
-+	/* Is this the right call?: */
-+	nfs_revalidate_inode(server, inode);
-+	/*
-+	 * Also, note we're ignoring any returned error.  That seems to be
-+	 * the practice for cache consistency information elsewhere in
-+	 * the server, but I'm not sure why.
-+	 */
-+	if (server->nfs_client->rpc_ops->version >= 4)
-+		return inode_peek_iversion_raw(inode);
-+	else
-+		return time_to_chattr(&inode->i_ctime);
++	return sb->s_flags & SB_I_VERSION || sb->s_export_op->fetch_iversion;
 +}
 +
- const struct export_operations nfs_export_ops = {
- 	.encode_fh = nfs_encode_fh,
- 	.fh_to_dentry = nfs_fh_to_dentry,
- 	.get_parent = nfs_get_parent,
-+	.fetch_iversion = nfs_fetch_iversion,
- 	.flags = EXPORT_OP_NOWCC|EXPORT_OP_NOSUBTREECHK|
- 		EXPORT_OP_CLOSE_BEFORE_UNLINK|EXPORT_OP_REMOTE_FS|
- 		EXPORT_OP_NOATOMIC_ATTR,
-diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
-index cb20c2cd3469..f58933519f38 100644
---- a/fs/nfsd/nfsfh.h
-+++ b/fs/nfsd/nfsfh.h
-@@ -12,6 +12,7 @@
- #include <linux/sunrpc/svc.h>
- #include <uapi/linux/nfsd/nfsfh.h>
- #include <linux/iversion.h>
-+#include <linux/exportfs.h>
+ /*
+  * Fill in the pre_op attr for the wcc data
+  */
+@@ -260,24 +265,25 @@ void fill_pre_wcc(struct svc_fh *fhp)
+ 	struct inode    *inode;
+ 	struct kstat	stat;
+ 	bool v4 = (fhp->fh_maxsize == NFS4_FHSIZE);
+-	__be32 err;
  
- static inline __u32 ino_t_to_u32(ino_t ino)
- {
-@@ -264,7 +265,9 @@ fh_clear_wcc(struct svc_fh *fhp)
- static inline u64 nfsd4_change_attribute(struct kstat *stat,
- 					 struct inode *inode)
- {
--	if (IS_I_VERSION(inode)) {
-+	if (inode->i_sb->s_export_op->fetch_iversion)
-+		return inode->i_sb->s_export_op->fetch_iversion(inode);
-+	else if (IS_I_VERSION(inode)) {
- 		u64 chattr;
+ 	if (fhp->fh_no_wcc || fhp->fh_pre_saved)
+ 		return;
+ 	inode = d_inode(fhp->fh_dentry);
+-	err = fh_getattr(fhp, &stat);
+-	if (err) {
+-		/* Grab the times from inode anyway */
+-		stat.mtime = inode->i_mtime;
+-		stat.ctime = inode->i_ctime;
+-		stat.size  = inode->i_size;
++	if (fs_supports_change_attribute(inode->i_sb) || !v4) {
++		__be32 err = fh_getattr(fhp, &stat);
++		if (err) {
++			/* Grab the times from inode anyway */
++			stat.mtime = inode->i_mtime;
++			stat.ctime = inode->i_ctime;
++			stat.size  = inode->i_size;
++		}
++		fhp->fh_pre_mtime = stat.mtime;
++		fhp->fh_pre_ctime = stat.ctime;
++		fhp->fh_pre_size  = stat.size;
+ 	}
+ 	if (v4)
+ 		fhp->fh_pre_change = nfsd4_change_attribute(&stat, inode);
  
- 		chattr =  stat->ctime.tv_sec;
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index 9f4d4bcbf251..fe848901fcc3 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -213,6 +213,7 @@ struct export_operations {
- 			  bool write, u32 *device_generation);
- 	int (*commit_blocks)(struct inode *inode, struct iomap *iomaps,
- 			     int nr_iomaps, struct iattr *iattr);
-+	u64 (*fetch_iversion)(struct inode *);
- #define	EXPORT_OP_NOWCC			(0x1) /* don't collect v3 wcc data */
- #define	EXPORT_OP_NOSUBTREECHK		(0x2) /* no subtree checking */
- #define	EXPORT_OP_CLOSE_BEFORE_UNLINK	(0x4) /* close files before unlink */
+-	fhp->fh_pre_mtime = stat.mtime;
+-	fhp->fh_pre_ctime = stat.ctime;
+-	fhp->fh_pre_size  = stat.size;
+ 	fhp->fh_pre_saved = true;
+ }
+ 
+@@ -288,7 +294,6 @@ void fill_post_wcc(struct svc_fh *fhp)
+ {
+ 	bool v4 = (fhp->fh_maxsize == NFS4_FHSIZE);
+ 	struct inode *inode = d_inode(fhp->fh_dentry);
+-	__be32 err;
+ 
+ 	if (fhp->fh_no_wcc)
+ 		return;
+@@ -296,12 +301,15 @@ void fill_post_wcc(struct svc_fh *fhp)
+ 	if (fhp->fh_post_saved)
+ 		printk("nfsd: inode locked twice during operation.\n");
+ 
+-	err = fh_getattr(fhp, &fhp->fh_post_attr);
+-	if (err) {
+-		fhp->fh_post_saved = false;
+-		fhp->fh_post_attr.ctime = inode->i_ctime;
+-	} else
+-		fhp->fh_post_saved = true;
++	fhp->fh_post_saved = true;
++
++	if (fs_supports_change_attribute(inode->i_sb) || !v4) {
++		__be32 err = fh_getattr(fhp, &fhp->fh_post_attr);
++		if (err) {
++			fhp->fh_post_saved = false;
++			fhp->fh_post_attr.ctime = inode->i_ctime;
++		}
++	}
+ 	if (v4)
+ 		fhp->fh_post_change =
+ 			nfsd4_change_attribute(&fhp->fh_post_attr, inode);
 -- 
 2.29.2
 
