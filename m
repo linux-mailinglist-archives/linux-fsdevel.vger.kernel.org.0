@@ -2,105 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 502F43087BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 11:20:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BFB130889D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 12:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232167AbhA2KOb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 05:14:31 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:60803 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232537AbhA2KIF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 05:08:05 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-137-v6Jt3agKMwqMraTT9paTTw-1; Fri, 29 Jan 2021 09:41:42 +0000
-X-MC-Unique: v6Jt3agKMwqMraTT9paTTw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 29 Jan 2021 09:41:36 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 29 Jan 2021 09:41:36 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Lennert Buytenhek' <buytenh@wantstofly.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-CC:     Jens Axboe <axboe@kernel.dk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: RE: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
-Thread-Topic: [RFC PATCH] io_uring: add support for IORING_OP_GETDENTS64
-Thread-Index: AQHW8X6IGyYpVbXZsUSWaK/6c3T86ao3WrlQgAZW5gCAAK5iEA==
-Date:   Fri, 29 Jan 2021 09:41:36 +0000
-Message-ID: <a375e8ae82bb4b28ac97557f40f6e9c1@AcuMS.aculab.com>
-References: <20210123114152.GA120281@wantstofly.org>
- <a99467bab6d64a7f9057181d979ec563@AcuMS.aculab.com>
- <20210128230710.GA190469@wantstofly.org>
-In-Reply-To: <20210128230710.GA190469@wantstofly.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S232318AbhA2LvR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 06:51:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52542 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232310AbhA2K0S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Jan 2021 05:26:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1611908593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=s/Q67vMMYuPsjuSK9sLzU1LCeFaWe4xF/l4UFNZMONQ=;
+        b=AVLJQflv/+SYkSv4ERXyiT7/jY3GzNjJm97jAboIN3LMwVBbN2x7H/KCFiEihomOMdrfsH
+        gcyRhiH9LkuycXyRf5uQ6UzJ7Ci67vQ0hTzLhrvCsqWvWU3wqQc1iBhmw76ZvSCZGUhLvj
+        8w0LFU8kORoRU9LyGyyHc/SD3SCCYBo=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8D1A8AFEC;
+        Fri, 29 Jan 2021 08:23:13 +0000 (UTC)
+Date:   Fri, 29 Jan 2021 09:23:12 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     James Bottomley <jejb@linux.ibm.com>
+Cc:     Mike Rapoport <rppt@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize
+ direct map fragmentation
+Message-ID: <YBPF8ETGBHUzxaZR@dhcp22.suse.cz>
+References: <20210121122723.3446-1-rppt@kernel.org>
+ <20210121122723.3446-8-rppt@kernel.org>
+ <20210126114657.GL827@dhcp22.suse.cz>
+ <303f348d-e494-e386-d1f5-14505b5da254@redhat.com>
+ <20210126120823.GM827@dhcp22.suse.cz>
+ <20210128092259.GB242749@kernel.org>
+ <YBK1kqL7JA7NePBQ@dhcp22.suse.cz>
+ <73738cda43236b5ac2714e228af362b67a712f5d.camel@linux.ibm.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73738cda43236b5ac2714e228af362b67a712f5d.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Lennert Buytenhek
-> Sent: 28 January 2021 23:07
-> 
-> On Sun, Jan 24, 2021 at 10:21:38PM +0000, David Laight wrote:
-> 
-> > > One open question is whether IORING_OP_GETDENTS64 should be more like
-> > > pread(2) and allow passing in a starting offset to read from the
-> > > directory from.  (This would require some more surgery in fs/readdir.c.)
-> >
-> > Since directories are seekable this ought to work.
-> > Modulo horrid issues with 32bit file offsets.
-> 
-> The incremental patch below does this.  (It doesn't apply cleanly on
-> top of v1 of the IORING_OP_GETDENTS patch as I have other changes in
-> my tree -- I'm including it just to illustrate the changes that would
-> make this work.)
-> 
-> This change seems to work, and makes IORING_OP_GETDENTS take an
-> explicitly specified directory offset (instead of using the file's
-> ->f_pos), making it more like pread(2), and I like the change from
-> a conceptual point of view, but it's a bit ugly around
-> iterate_dir_use_ctx_pos().  Any thoughts on how to do this more
-> cleanly (without breaking iterate_dir() semantics)?
+On Thu 28-01-21 13:05:02, James Bottomley wrote:
+> Obviously the API choice could be revisited
+> but do you have anything to add over the previous discussion, or is
+> this just to get your access control?
 
-I had a further thought...
-I presume the basic operation is:
-	lock(file);
-	do_getents(); // Updates file->offset
-	unlock(file);
+Well, access control is certainly one thing which I still believe is
+missing. But if there is a general agreement that the direct map
+manipulation is not that critical then this will become much less of a
+problem of course.
 
-Which means you can implement an offset by saving, updating
-and restoring file->offset while the lock is held.
+It all boils down whether secret memory is a scarce resource. With the
+existing implementation it really is. It is effectivelly repeating
+same design errors as hugetlb did. And look now, we have a subtle and
+convoluted reservation code to track mmap requests and we have a cgroup
+controller to, guess what, have at least some control over distribution
+if the preallocated pool. See where am I coming from?
 
-This is a bit like the completely broken pread() in uclibc
-which uses two lseek() calls to set and restore the offset.
-Whoever wrote that needs shooting - worse than useless.
-
-Glibc is as bad:
-	// Don't even ask what glibc's clock_nanosleep() does, you don't want to know.
-	while (syscall(SYS_clock_nanosleep, CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, NULL)
-
-   David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+If the secret memory is more in line with mlock without any imposed
+limit (other than available memory) in the end then, sure, using the same
+access control as mlock sounds reasonable. Btw. if this is really
+just a more restrictive mlock then is there any reason to not hook this
+into the existing mlock infrastructure (e.g. MCL_EXCLUSIVE)?
+Implications would be that direct map would be handled on instantiation/tear
+down paths, migration would deal with the same (if possible). Other than
+that it would be mlock like.
+-- 
+Michal Hocko
+SUSE Labs
