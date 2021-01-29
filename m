@@ -2,286 +2,490 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11A583082F9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 02:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4532530848E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 05:40:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231739AbhA2BII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 20:08:08 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:49480 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231127AbhA2BHm (ORCPT
+        id S231607AbhA2Ejp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 23:39:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55982 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229786AbhA2Ejn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 20:07:42 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10T140gQ091288;
-        Fri, 29 Jan 2021 01:04:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2020-01-29;
- bh=GY0YClb9ibNdjvt0wz9i68Gu7oFX74vT33q2+Ynm0HY=;
- b=ufHRsQPOGA2bk0gFgagOCLPNqrzybo6QYcFWTUqF3e1gPwozqfInDJ4WwOsXMOanoSzi
- PGk3hkKcKKbNmDT7FSe0yVat3wJWnCwBIk5L0KMufM0qHKjAjrbGso5gVE4Jb9x5Jo5q
- aUjaAzvQv+e21kpAuxD5332fKPmHYxjXMu3mSMuT//7SFIlKMoVJcDUjine/8ZYQP8Rn
- B9nA6HaPdQOjftwsUMQYSfxI0ApL8OgRVmigIh5VwJc6BNLqJdQ4DLb7Rt34DQBzdTLK
- dhiKjdltqOVGw5y1A1CsdRuMSJtC609np0g8EAyvVNZxbipL61P3Zlsq0d8YTfzQJV91 aQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 368b7r6vbn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Jan 2021 01:04:37 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10T0dtK7084325;
-        Fri, 29 Jan 2021 01:04:37 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
-        by userp3020.oracle.com with ESMTP id 368wjutub8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Jan 2021 01:04:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MXZZXx70Fq5jLWBecyKCVRy/hU+PzChOvc+0lMK8nCPSY61zU1jkROgDYa+mWJKhSFrqHA+6cpeGJjveGPRgNPClyiD+ckHjdlq3YIKUynSfHf9Xww0or2PbGuHA5jHtVTabLNCX8MYJnnJva4q6MPCcJSV/qTYqQcp7UyeiNOPd9PBt4ACeWE0/3m4G5yKQdwkske1PWRMvgxsAneKUkn48L7uldjieFfSkfS+mcPww6BaP2Li5+rXyRwn6NgHI9Stco08TdeWV/l/HZv7Ig9nU2QL6BZM+/KUOmcm0pn+3rJpLjfCoGkk8X0b+mboXZZ1L+fELFr1q/ORm1UR5UA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GY0YClb9ibNdjvt0wz9i68Gu7oFX74vT33q2+Ynm0HY=;
- b=Ls884xyA2ek34eRkj7WzU6dAkDANhIlUZ39ojOZYn+4TU0G5bhvwNOA5RFg5f551R41GykDJ2/RJJKmTo06FUe5dFBDlgleBuXszVLaFXEMWpx/n+gohsK47diQvHriLjvb5wlzkJxO5x8sXRaR8JbEPcbLYL5NkKge4/XO9Hof4FW5e2KI1zhoWA3X0z5JFMC3Nzrp2zYbtplNRwXZhuOISRaIfBRUQakWafeu8sTL9oddjB0ldKvAxMEy53tuf4BSHfk9kzMsdPofKoN+Ct5f9K75tG34+X21XbdnP0Ree74yacAjItKscLnq2yxHzSJyQQp1wOGqsOLk8o1MCWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GY0YClb9ibNdjvt0wz9i68Gu7oFX74vT33q2+Ynm0HY=;
- b=sNRwTzrR69wXE9CShCQIiGM8FfCTZz7UtoqBv5Sg2h64CP4o8NQrlFDi0M4OuqiUAS5HNA0oFuh5wfs+ve+y8n1yZ9QaKf1ko1Rt3QchbWGy4437+PURxZJTqk5+iUgt8O7Mxiyi8nXuWBQTmse7SygwBuKyfOqmgh2V+SRoyuQ=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
-Received: from MWHPR10MB1389.namprd10.prod.outlook.com (2603:10b6:300:21::22)
- by MWHPR1001MB2109.namprd10.prod.outlook.com (2603:10b6:301:2b::33) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.13; Fri, 29 Jan
- 2021 01:04:34 +0000
-Received: from MWHPR10MB1389.namprd10.prod.outlook.com
- ([fe80::897d:a360:92db:3074]) by MWHPR10MB1389.namprd10.prod.outlook.com
- ([fe80::897d:a360:92db:3074%5]) with mapi id 15.20.3784.019; Fri, 29 Jan 2021
- 01:04:34 +0000
-Subject: Re: [External] Re: [PATCH v13 05/12] mm: hugetlb: allocate the
- vmemmap pages associated with each HugeTLB page
-To:     Muchun Song <songmuchun@bytedance.com>,
-        David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20210117151053.24600-1-songmuchun@bytedance.com>
- <20210117151053.24600-6-songmuchun@bytedance.com>
- <20210126092942.GA10602@linux>
- <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com>
- <20210126145819.GB16870@linux>
- <259b9669-0515-01a2-d714-617011f87194@redhat.com>
- <20210126153448.GA17455@linux>
- <9475b139-1b33-76c7-ef5c-d43d2ea1dba5@redhat.com>
- <e28399e1-3a24-0f22-b057-76e7c7e70017@redhat.com>
- <CAMZfGtWCu95Qve8p9mH7C7rm=F+znsc8+VL_6Z-_k4e5hAHzhA@mail.gmail.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <e200c17e-5c95-025e-37a7-af7cfbb05b18@oracle.com>
-Date:   Thu, 28 Jan 2021 17:04:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-In-Reply-To: <CAMZfGtWCu95Qve8p9mH7C7rm=F+znsc8+VL_6Z-_k4e5hAHzhA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [50.38.35.18]
-X-ClientProxiedBy: MW4PR03CA0223.namprd03.prod.outlook.com
- (2603:10b6:303:b9::18) To MWHPR10MB1389.namprd10.prod.outlook.com
- (2603:10b6:300:21::22)
+        Thu, 28 Jan 2021 23:39:43 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BF13C061573;
+        Thu, 28 Jan 2021 20:39:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=nEtul7DoKn2zwPSKwp/23QA1717hspP/mFMGJHbteWs=; b=ftA9pnWNGNjFjNS5OdMQK+5uln
+        4+9bkU7XbWN2Hyy7kca57MBKtSfO+b2WqDs7i6RhSvhLv4hPCMnaCD+bDZoJhvReBamguXA2BDnzC
+        J+IYlpv2Y76qLTtQuUMuOUhFwrL0iZvOmhJcN0dyUffmxEDxIol2yf8Or6EyIll+1TtR8C01HVg7r
+        tHPuxPR7jUX5OjIGVdsT8w4O6FDDrU8yYcebh3AkVTk6NrPffjXetkXCNQ8W7/rcuY/toJdfxCbXh
+        iPpXHu5Sfs+7sZ6ROPzvG5ZBUR/2OSHR8qB/93j2Khh47p5dKLe+RGgSnaM8XyEpknc692pFHADak
+        kGAgA9+Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l5LYh-009NwR-CT; Fri, 29 Jan 2021 04:38:59 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2] block: Add bio_max_segs
+Date:   Fri, 29 Jan 2021 04:38:57 +0000
+Message-Id: <20210129043857.2236940-1-willy@infradead.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.2.112] (50.38.35.18) by MW4PR03CA0223.namprd03.prod.outlook.com (2603:10b6:303:b9::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.17 via Frontend Transport; Fri, 29 Jan 2021 01:04:33 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3f92f2ee-cc16-4f28-7434-08d8c3f1d739
-X-MS-TrafficTypeDiagnostic: MWHPR1001MB2109:
-X-Microsoft-Antispam-PRVS: <MWHPR1001MB21098639C2E32B56DA052227E2B99@MWHPR1001MB2109.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +WZM+OI8KrL0rxUgbgAjtbNcgWZQBo4xI2bPxWGXsLg4d4vKqVMqmL7uVi+Bd/Mz3QN87mGd2muKp2AC1d2JY5ZufcYn3Mg6DYfQ6CnLR3pcOrsSzdZGQLNNnpdBtIDOcdcnMvBJN5x4ZWwOxw+6ojda2vnJPLGKaMF1ob/aEvgHLujbPHr/j/Yp3h+OGOJqJsiGiFUWB4EYWAZjFEt9AMX6N1a6pAapnGJs0dyrpl/CCu9cqJ7EQhNPrt+Jyyn60O19k3AshiYssDTsW4wpsBRtTsuc82AnY8AdI+1fd2D7TDvRexYoOXR+1yYAtjbd8+b7yVyoUuifcE+ow/gSJdc7y2y6VSVhd9z2da20xEuH/iL2YTmNXxw8pFDbyu5F4GCmvJEnTFZ0rdfGPfoJ37GOG82kkRO+DzNxVYoNaCHMRmp42TDY6ixY7a4MXVoVL7Ay5emSixAPDWRC22wAz4KGuNSFtYNJ8UTXGNxL+fLnccsOETj3hY4LJodLWJh67HtBrRFHWXq5chOePGZWrzIAqw5h1nltyTz1Cn3xRc+daiHvbsinR/7oT9fF8xim1upNMBPnJurD1XONFH4ERMWFcJOLZhWAaJzTf39MnOU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR10MB1389.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(39860400002)(136003)(346002)(396003)(366004)(31696002)(4326008)(31686004)(86362001)(52116002)(66946007)(83380400001)(110136005)(16576012)(316002)(7416002)(7406005)(5660300002)(8676002)(186003)(956004)(2906002)(16526019)(44832011)(53546011)(66556008)(66476007)(36756003)(8936002)(2616005)(478600001)(26005)(54906003)(6486002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?K0lUeHRyME1uRDhKSEtaU1o0Ti9hYVN2aWV6Y2tJREtJREZ0VGQwUDZQRU9N?=
- =?utf-8?B?VUZDYWdzNWRrQlVNVU9zZUtsZUl2S1Fhci9tV2c3SE40Y0JqeTJNaUMrVmxk?=
- =?utf-8?B?czk1Z25YcURMRzljOStuSnB2YUYvSTJNYnhUcmljZjdlbHNaTEY3VndDOGJk?=
- =?utf-8?B?MlRmbGMxR3Q5eURYQm9GcUx3UzZmUTE2c2hzRkpJNklIQzFxUi9iZVQ4allE?=
- =?utf-8?B?bjFpaDBOa0ovV1NSTk9oWEt4NkZhcjI0djlOYmJsYmk2RmpRdnlja0VHMy84?=
- =?utf-8?B?ZGE2SWIrZFdRUFpFakVsSy9hTGU3ZGh3ZnpjTElTazZhVTBGazMxaUR0cnZi?=
- =?utf-8?B?WEZjWVozdzRLOUFhY3ZQa05mZ2thc3I2ZVc1dkhrd3ZjV2lVbHVaRElQUStR?=
- =?utf-8?B?MkQ0SFV5UEd0UU9OQTQyckhaNWREL0JMTzJUalBrSFRpOU80MU5pa1l1WUZH?=
- =?utf-8?B?cHNCTzRwYS8yOEVYc3pvQm1DRHM5UkxFQjA3emdrMjBLdllKaGVEdUdDNDdj?=
- =?utf-8?B?bXAyZ29NcTBpaGVBbFdnZ0s2bndwbFE1MWpwV3plU2E1aS82NElFSHltTHZw?=
- =?utf-8?B?a202S1ovU1JtUDhReHBnNlNNY0xMOGpmMEI5a2t0UE5adE1RVDExeGxNMkVj?=
- =?utf-8?B?QyswUFlXeUFkSFpNUWY3U2xma0I4RGtZTW1iNFdwTjVjVEJpQU5ZUCtsdU1F?=
- =?utf-8?B?bE1KQjVnZkJrWjNodEp4SDAxam1TbS9QL0xoeFRrQitSZ293cDJyTzNaYkNi?=
- =?utf-8?B?N1U4Y1pSZ2ZvNlUyUVJEbkxqczE3N2g5WDN2T3lMVDNFU2Ftd3M0NmJwRTYx?=
- =?utf-8?B?UngrT1lJMnpJYVo1eFE4YTcyZVZ2UHV0Tmh4bE1YOWNTdXNUN1BoaHVoRFpH?=
- =?utf-8?B?ZHhhd1ZHVk5PeGw0blFBSk9FZTRpa2xnMzB5N0VPbFhPNE16UmM3Q3N0U1Fy?=
- =?utf-8?B?OFltdzdEbktFT3NMYlF6TEJvbEo1R3NLR1NmUHFuTGZkY3l5bFBzb0x5MkM1?=
- =?utf-8?B?R2ZjWWFvaGNObEs4L002eEFMQTNldms3V25jamtwdmZpZUFCUzJ5MmQ3cFpk?=
- =?utf-8?B?TVZwdnRnSDVYUjVsNjJ1RWNSRlB3OHhua245Z1dvRHJEZ1Qzc2tlZjRubC9q?=
- =?utf-8?B?NTdlOGlZYy9Hb01BeHd3Rmh2QjJDbG4wZEVxTWdnZks3WFpQZEU0cGtMWkZo?=
- =?utf-8?B?cVJHMUpUaHF0dlpLOGEza2JBR1RCS0pOYlZBSTk3cVR3bk00bXBWL1JKSDg4?=
- =?utf-8?B?MkVmNTBhNG1qTGNhVk43Mm1hN1NjZG5Zd1JPOFBMMjdYcXZ2OWJWT2xuTCtk?=
- =?utf-8?B?aCs3djdsNFdkN1hDVXlCalRrWUpHRWFVdjlyeFlFUEVuUUZFTjZjT1Y1a0t0?=
- =?utf-8?B?K1JMWCtiYlphUHJwSGpXRGlsa2xDWVRuSSs2T1lwc1hUeU5HclV2TWFtK3hD?=
- =?utf-8?Q?1uOTAfSJ?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f92f2ee-cc16-4f28-7434-08d8c3f1d739
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR10MB1389.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2021 01:04:34.2034
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7Qk8MtHS0Cf4vAm8UVR/p6uQhp2T/GjKNTnLkS6JTT60oX9WOyxI0j2YscjCjIkvlX6zQTV5erkmSdAk6D/BKQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1001MB2109
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9878 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0
- adultscore=0 mlxscore=0 malwarescore=0 spamscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101290001
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9878 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 phishscore=0
- adultscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 mlxscore=0 clxscore=1015 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101290002
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/28/21 4:37 AM, Muchun Song wrote:
-> On Wed, Jan 27, 2021 at 6:36 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 26.01.21 16:56, David Hildenbrand wrote:
->>> On 26.01.21 16:34, Oscar Salvador wrote:
->>>> On Tue, Jan 26, 2021 at 04:10:53PM +0100, David Hildenbrand wrote:
->>>>> The real issue seems to be discarding the vmemmap on any memory that has
->>>>> movability constraints - CMA and ZONE_MOVABLE; otherwise, as discussed, we
->>>>> can reuse parts of the thingy we're freeing for the vmemmap. Not that it
->>>>> would be ideal: that once-a-huge-page thing will never ever be a huge page
->>>>> again - but if it helps with OOM in corner cases, sure.
->>>>
->>>> Yes, that is one way, but I am not sure how hard would it be to implement.
->>>> Plus the fact that as you pointed out, once that memory is used for vmemmap
->>>> array, we cannot use it again.
->>>> Actually, we would fragment the memory eventually?
->>>>
->>>>> Possible simplification: don't perform the optimization for now with free
->>>>> huge pages residing on ZONE_MOVABLE or CMA. Certainly not perfect: what
->>>>> happens when migrating a huge page from ZONE_NORMAL to (ZONE_MOVABLE|CMA)?
->>>>
->>>> But if we do not allow theose pages to be in ZONE_MOVABLE or CMA, there is no
->>>> point in migrate them, right?
->>>
->>> Well, memory unplug "could" still work and migrate them and
->>> alloc_contig_range() "could in the future" still want to migrate them
->>> (virtio-mem, gigantic pages, powernv memtrace). Especially, the latter
->>> two don't work with ZONE_MOVABLE/CMA. But, I mean, it would be fair
->>> enough to say "there are no guarantees for
->>> alloc_contig_range()/offline_pages() with ZONE_NORMAL, so we can break
->>> these use cases when a magic switch is flipped and make these pages
->>> non-migratable anymore".
->>>
->>> I assume compaction doesn't care about huge pages either way, not sure
->>> about numa balancing etc.
->>>
->>>
->>> However, note that there is a fundamental issue with any approach that
->>> allocates a significant amount of unmovable memory for user-space
->>> purposes (excluding CMA allocations for unmovable stuff, CMA is
->>> special): pairing it with ZONE_MOVABLE becomes very tricky as your user
->>> space might just end up eating all kernel memory, although the system
->>> still looks like there is plenty of free memory residing in
->>> ZONE_MOVABLE. I mentioned that in the context of secretmem in a reduced
->>> form as well.
->>>
->>> We theoretically have that issue with dynamic allocation of gigantic
->>> pages, but it's something a user explicitly/rarely triggers and it can
->>> be documented to cause problems well enough. We'll have the same issue
->>> with GUP+ZONE_MOVABLE that Pavel is fixing right now - but GUP is
->>> already known to be broken in various ways and that it has to be treated
->>> in a special way. I'd like to limit the nasty corner cases.
->>>
->>> Of course, we could have smart rules like "don't online memory to
->>> ZONE_MOVABLE automatically when the magic switch is active". That's just
->>> ugly, but could work.
->>>
->>
->> Extending on that, I just discovered that only x86-64, ppc64, and arm64
->> really support hugepage migration.
->>
->> Maybe one approach with the "magic switch" really would be to disable
->> hugepage migration completely in hugepage_migration_supported(), and
->> consequently making hugepage_movable_supported() always return false.
->>
->> Huge pages would never get placed onto ZONE_MOVABLE/CMA and cannot be
->> migrated. The problem I describe would apply (careful with using
->> ZONE_MOVABLE), but well, it can at least be documented.
-> 
-> Thanks for your explanation.
-> 
-> All thinking seems to be introduced by encountering OOM. :-(
+It's often inconvenient to use BIO_MAX_PAGES due to min() requiring the
+sign to be the same.  Introduce bio_max_segs() and change BIO_MAX_PAGES to
+be unsigned to make it easier for the users.
 
-Yes.  Or, I think about it as the problem of not being able to dissolve (free
-to buddy) a hugetlb page.  We can not dissolve because we can not allocate
-vmemmap for all sumpages.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+v2:
+ - Rename from bio_limit() to bio_max_segs()
+ - Rebase on next-20210128
+ - Use DIV_ROUND_UP in dm-log-writes.c
+ - Use DIV_ROUND_UP in iomap/buffered-io.c
 
-> In order to move forward and free the hugepage. We should add some
-> restrictions below.
-> 
-> 1. Only free the hugepage which is allocated from the ZONE_NORMAL.
-Corrected: Only vmemmap optimize hugepages in ZONE_NORMAL
+ block/blk-map.c                     |  4 +---
+ drivers/block/xen-blkback/blkback.c |  4 +---
+ drivers/md/dm-io.c                  |  4 ++--
+ drivers/md/dm-log-writes.c          | 10 +++++-----
+ drivers/nvme/target/io-cmd-bdev.c   |  8 ++++----
+ drivers/nvme/target/passthru.c      |  4 ++--
+ drivers/target/target_core_iblock.c |  9 +++------
+ drivers/target/target_core_pscsi.c  |  2 +-
+ fs/block_dev.c                      | 10 +++++-----
+ fs/direct-io.c                      |  2 +-
+ fs/erofs/data.c                     |  4 +---
+ fs/ext4/readpage.c                  |  3 +--
+ fs/f2fs/data.c                      |  3 +--
+ fs/f2fs/node.c                      |  2 +-
+ fs/iomap/buffered-io.c              |  4 ++--
+ fs/mpage.c                          |  4 +---
+ fs/nfs/blocklayout/blocklayout.c    |  6 +++---
+ fs/xfs/xfs_bio_io.c                 |  2 +-
+ fs/xfs/xfs_buf.c                    |  4 ++--
+ include/linux/bio.h                 |  7 ++++++-
+ 20 files changed, 44 insertions(+), 52 deletions(-)
 
-> 2. Disable hugepage migration when this feature is enabled.
-
-I am not sure if we want to fully disable migration.  I may be misunderstanding
-but the thought was to prevent migration between some movability types.  It
-seems we should be able to migrate form ZONE_NORMAL to ZONE_NORMAL.
-
-Also, if we do allow huge pages without vmemmap optimization in MOVABLE or CMA
-then we should allow those to be migrated to NORMAL?  Or is there a reason why
-we should prevent that.
-
-> 3. Using GFP_ATOMIC to allocate vmemmap pages firstly (it can reduce
->    memory fragmentation), if it fails, we use part of the hugepage to
->    remap.
-
-I honestly am not sure about this.  This would only happen for pages in
-NORMAL.  The only time using part of the huge page for vmemmap would help is
-if we are trying to dissolve huge pages to free up memory for other uses.
-
-> What's your opinion about this? Should we take this approach?
-
-I think trying to solve all the issues that could happen as the result of
-not being able to dissolve a hugetlb page has made this extremely complex.
-I know this is something we need to address/solve.  We do not want to add
-more unexpected behavior in corner cases.  However, I can not help but think
-about similar issues today.  For example, if a huge page is in use in
-ZONE_MOVABLE or CMA there is no guarantee that it can be migrated today.
-Correct?  We may need to allocate another huge page for the target of the
-migration, and there is no guarantee we can do that.
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 21630dccac62..369e204d14d0 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -150,9 +150,7 @@ static int bio_copy_user_iov(struct request *rq, struct rq_map_data *map_data,
+ 	bmd->is_our_pages = !map_data;
+ 	bmd->is_null_mapped = (map_data && map_data->null_mapped);
+ 
+-	nr_pages = DIV_ROUND_UP(offset + len, PAGE_SIZE);
+-	if (nr_pages > BIO_MAX_PAGES)
+-		nr_pages = BIO_MAX_PAGES;
++	nr_pages = bio_max_segs(DIV_ROUND_UP(offset + len, PAGE_SIZE));
+ 
+ 	ret = -ENOMEM;
+ 	bio = bio_kmalloc(gfp_mask, nr_pages);
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index 9ebf53903d7b..2d5ebf2c321b 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -1322,9 +1322,7 @@ static int dispatch_rw_block_io(struct xen_blkif_ring *ring,
+ 				     pages[i]->page,
+ 				     seg[i].nsec << 9,
+ 				     seg[i].offset) == 0)) {
+-
+-			int nr_iovecs = min_t(int, (nseg-i), BIO_MAX_PAGES);
+-			bio = bio_alloc(GFP_KERNEL, nr_iovecs);
++			bio = bio_alloc(GFP_KERNEL, bio_max_segs(nseg - i));
+ 			if (unlikely(bio == NULL))
+ 				goto fail_put_bio;
+ 
+diff --git a/drivers/md/dm-io.c b/drivers/md/dm-io.c
+index 4312007d2d34..2d3cda0acacb 100644
+--- a/drivers/md/dm-io.c
++++ b/drivers/md/dm-io.c
+@@ -341,8 +341,8 @@ static void do_region(int op, int op_flags, unsigned region,
+ 			num_bvecs = 1;
+ 			break;
+ 		default:
+-			num_bvecs = min_t(int, BIO_MAX_PAGES,
+-					  dm_sector_div_up(remaining, (PAGE_SIZE >> SECTOR_SHIFT)));
++			num_bvecs = bio_max_segs(dm_sector_div_up(remaining,
++						(PAGE_SIZE >> SECTOR_SHIFT)));
+ 		}
+ 
+ 		bio = bio_alloc_bioset(GFP_NOIO, num_bvecs, &io->client->bios);
+diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
+index e3d35c6c9f71..57882654ffee 100644
+--- a/drivers/md/dm-log-writes.c
++++ b/drivers/md/dm-log-writes.c
+@@ -264,15 +264,14 @@ static int write_inline_data(struct log_writes_c *lc, void *entry,
+ 			     size_t entrylen, void *data, size_t datalen,
+ 			     sector_t sector)
+ {
+-	int num_pages, bio_pages, pg_datalen, pg_sectorlen, i;
++	int bio_pages, pg_datalen, pg_sectorlen, i;
+ 	struct page *page;
+ 	struct bio *bio;
+ 	size_t ret;
+ 	void *ptr;
+ 
+ 	while (datalen) {
+-		num_pages = ALIGN(datalen, PAGE_SIZE) >> PAGE_SHIFT;
+-		bio_pages = min(num_pages, BIO_MAX_PAGES);
++		bio_pages = bio_max_segs(DIV_ROUND_UP(datalen, PAGE_SIZE));
+ 
+ 		atomic_inc(&lc->io_blocks);
+ 
+@@ -364,7 +363,7 @@ static int log_one_block(struct log_writes_c *lc,
+ 		goto out;
+ 
+ 	atomic_inc(&lc->io_blocks);
+-	bio = bio_alloc(GFP_KERNEL, min(block->vec_cnt, BIO_MAX_PAGES));
++	bio = bio_alloc(GFP_KERNEL, bio_max_segs(block->vec_cnt));
+ 	if (!bio) {
+ 		DMERR("Couldn't alloc log bio");
+ 		goto error;
+@@ -386,7 +385,8 @@ static int log_one_block(struct log_writes_c *lc,
+ 		if (ret != block->vecs[i].bv_len) {
+ 			atomic_inc(&lc->io_blocks);
+ 			submit_bio(bio);
+-			bio = bio_alloc(GFP_KERNEL, min(block->vec_cnt - i, BIO_MAX_PAGES));
++			bio = bio_alloc(GFP_KERNEL,
++					bio_max_segs(block->vec_cnt - i));
+ 			if (!bio) {
+ 				DMERR("Couldn't alloc log bio");
+ 				goto error;
+diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
+index bf6e0ac9ad28..86703a0bdc2a 100644
+--- a/drivers/nvme/target/io-cmd-bdev.c
++++ b/drivers/nvme/target/io-cmd-bdev.c
+@@ -185,7 +185,7 @@ static int nvmet_bdev_alloc_bip(struct nvmet_req *req, struct bio *bio,
+ 	}
+ 
+ 	bip = bio_integrity_alloc(bio, GFP_NOIO,
+-		min_t(unsigned int, req->metadata_sg_cnt, BIO_MAX_PAGES));
++					bio_max_segs(req->metadata_sg_cnt));
+ 	if (IS_ERR(bip)) {
+ 		pr_err("Unable to allocate bio_integrity_payload\n");
+ 		return PTR_ERR(bip);
+@@ -225,7 +225,7 @@ static int nvmet_bdev_alloc_bip(struct nvmet_req *req, struct bio *bio,
+ 
+ static void nvmet_bdev_execute_rw(struct nvmet_req *req)
+ {
+-	int sg_cnt = req->sg_cnt;
++	unsigned int sg_cnt = req->sg_cnt;
+ 	struct bio *bio;
+ 	struct scatterlist *sg;
+ 	struct blk_plug plug;
+@@ -263,7 +263,7 @@ static void nvmet_bdev_execute_rw(struct nvmet_req *req)
+ 		bio = &req->b.inline_bio;
+ 		bio_init(bio, req->inline_bvec, ARRAY_SIZE(req->inline_bvec));
+ 	} else {
+-		bio = bio_alloc(GFP_KERNEL, min(sg_cnt, BIO_MAX_PAGES));
++		bio = bio_alloc(GFP_KERNEL, bio_max_segs(sg_cnt));
+ 	}
+ 	bio_set_dev(bio, req->ns->bdev);
+ 	bio->bi_iter.bi_sector = sector;
+@@ -290,7 +290,7 @@ static void nvmet_bdev_execute_rw(struct nvmet_req *req)
+ 				}
+ 			}
+ 
+-			bio = bio_alloc(GFP_KERNEL, min(sg_cnt, BIO_MAX_PAGES));
++			bio = bio_alloc(GFP_KERNEL, bio_max_segs(sg_cnt));
+ 			bio_set_dev(bio, req->ns->bdev);
+ 			bio->bi_iter.bi_sector = sector;
+ 			bio->bi_opf = op;
+diff --git a/drivers/nvme/target/passthru.c b/drivers/nvme/target/passthru.c
+index cbc88acdd233..dc902555a35c 100644
+--- a/drivers/nvme/target/passthru.c
++++ b/drivers/nvme/target/passthru.c
+@@ -26,7 +26,7 @@ static u16 nvmet_passthru_override_id_ctrl(struct nvmet_req *req)
+ 	struct nvme_ctrl *pctrl = ctrl->subsys->passthru_ctrl;
+ 	u16 status = NVME_SC_SUCCESS;
+ 	struct nvme_id_ctrl *id;
+-	int max_hw_sectors;
++	unsigned int max_hw_sectors;
+ 	int page_shift;
+ 
+ 	id = kzalloc(sizeof(*id), GFP_KERNEL);
+@@ -198,7 +198,7 @@ static int nvmet_passthru_map_sg(struct nvmet_req *req, struct request *rq)
+ 		bio = &req->p.inline_bio;
+ 		bio_init(bio, req->inline_bvec, ARRAY_SIZE(req->inline_bvec));
+ 	} else {
+-		bio = bio_alloc(GFP_KERNEL, min(req->sg_cnt, BIO_MAX_PAGES));
++		bio = bio_alloc(GFP_KERNEL, bio_max_segs(req->sg_cnt));
+ 		bio->bi_end_io = bio_put;
+ 	}
+ 	bio->bi_opf = req_op(rq);
+diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
+index 8ed93fd205c7..ee3d52061281 100644
+--- a/drivers/target/target_core_iblock.c
++++ b/drivers/target/target_core_iblock.c
+@@ -315,10 +315,8 @@ iblock_get_bio(struct se_cmd *cmd, sector_t lba, u32 sg_num, int op,
+ 	 * Only allocate as many vector entries as the bio code allows us to,
+ 	 * we'll loop later on until we have handled the whole request.
+ 	 */
+-	if (sg_num > BIO_MAX_PAGES)
+-		sg_num = BIO_MAX_PAGES;
+-
+-	bio = bio_alloc_bioset(GFP_NOIO, sg_num, &ib_dev->ibd_bio_set);
++	bio = bio_alloc_bioset(GFP_NOIO, bio_max_segs(sg_num),
++				&ib_dev->ibd_bio_set);
+ 	if (!bio) {
+ 		pr_err("Unable to allocate memory for bio\n");
+ 		return NULL;
+@@ -638,8 +636,7 @@ iblock_alloc_bip(struct se_cmd *cmd, struct bio *bio,
+ 		return -ENODEV;
+ 	}
+ 
+-	bip = bio_integrity_alloc(bio, GFP_NOIO,
+-			min_t(unsigned int, cmd->t_prot_nents, BIO_MAX_PAGES));
++	bip = bio_integrity_alloc(bio, GFP_NOIO, bio_max_segs(cmd->t_prot_nents));
+ 	if (IS_ERR(bip)) {
+ 		pr_err("Unable to allocate bio_integrity_payload\n");
+ 		return PTR_ERR(bip);
+diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
+index 33770e5808ce..3cbc074992bc 100644
+--- a/drivers/target/target_core_pscsi.c
++++ b/drivers/target/target_core_pscsi.c
+@@ -881,7 +881,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+ 
+ 			if (!bio) {
+ new_bio:
+-				nr_vecs = min_t(int, BIO_MAX_PAGES, nr_pages);
++				nr_vecs = bio_max_segs(nr_pages);
+ 				nr_pages -= nr_vecs;
+ 				/*
+ 				 * Calls bio_kmalloc() and sets bio->bi_end_io()
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index cf933048f139..9be7ad01110b 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -213,7 +213,7 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
+ 
+ static ssize_t
+ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
+-		int nr_pages)
++		unsigned int nr_pages)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct block_device *bdev = I_BDEV(bdev_file_inode(file));
+@@ -347,8 +347,8 @@ static void blkdev_bio_end_io(struct bio *bio)
+ 	}
+ }
+ 
+-static ssize_t
+-__blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
++static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
++		unsigned int nr_pages)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = bdev_file_inode(file);
+@@ -478,7 +478,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+ static ssize_t
+ blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ {
+-	int nr_pages;
++	unsigned int nr_pages;
+ 
+ 	if (!iov_iter_count(iter))
+ 		return 0;
+@@ -487,7 +487,7 @@ blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	if (is_sync_kiocb(iocb) && nr_pages <= BIO_MAX_PAGES)
+ 		return __blkdev_direct_IO_simple(iocb, iter, nr_pages);
+ 
+-	return __blkdev_direct_IO(iocb, iter, min(nr_pages, BIO_MAX_PAGES));
++	return __blkdev_direct_IO(iocb, iter, bio_max_segs(nr_pages));
+ }
+ 
+ static __init int blkdev_init(void)
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 0957e1bb8eb2..b61491bf3166 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -695,7 +695,7 @@ static inline int dio_new_bio(struct dio *dio, struct dio_submit *sdio,
+ 	if (ret)
+ 		goto out;
+ 	sector = start_sector << (sdio->blkbits - 9);
+-	nr_pages = min(sdio->pages_in_io, BIO_MAX_PAGES);
++	nr_pages = bio_max_segs(sdio->pages_in_io);
+ 	BUG_ON(nr_pages <= 0);
+ 	dio_bio_alloc(dio, sdio, map_bh->b_bdev, sector, nr_pages);
+ 	sdio->boundary = 0;
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index ea4f693bee22..f88851c5c250 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -215,10 +215,8 @@ static inline struct bio *erofs_read_raw_page(struct bio *bio,
+ 		/* max # of continuous pages */
+ 		if (nblocks > DIV_ROUND_UP(map.m_plen, PAGE_SIZE))
+ 			nblocks = DIV_ROUND_UP(map.m_plen, PAGE_SIZE);
+-		if (nblocks > BIO_MAX_PAGES)
+-			nblocks = BIO_MAX_PAGES;
+ 
+-		bio = bio_alloc(GFP_NOIO, nblocks);
++		bio = bio_alloc(GFP_NOIO, bio_max_segs(nblocks));
+ 
+ 		bio->bi_end_io = erofs_readendio;
+ 		bio_set_dev(bio, sb->s_bdev);
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index f014c5e473a9..3db923403505 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -371,8 +371,7 @@ int ext4_mpage_readpages(struct inode *inode,
+ 			 * bio_alloc will _always_ be able to allocate a bio if
+ 			 * __GFP_DIRECT_RECLAIM is set, see bio_alloc_bioset().
+ 			 */
+-			bio = bio_alloc(GFP_KERNEL,
+-				min_t(int, nr_pages, BIO_MAX_PAGES));
++			bio = bio_alloc(GFP_KERNEL, bio_max_segs(nr_pages));
+ 			fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
+ 						  GFP_KERNEL);
+ 			ext4_set_bio_post_read_ctx(bio, inode, page->index);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 862df2477a5d..79008dcf7125 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -969,8 +969,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ 	unsigned int post_read_steps = 0;
+ 
+ 	bio = bio_alloc_bioset(for_write ? GFP_NOIO : GFP_KERNEL,
+-			       min_t(int, nr_pages, BIO_MAX_PAGES),
+-			       &f2fs_bioset);
++			       bio_max_segs(nr_pages), &f2fs_bioset);
+ 	if (!bio)
+ 		return ERR_PTR(-ENOMEM);
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index a8a0fb890e8d..4b0e2e3c2c88 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2747,7 +2747,7 @@ int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+ 	sum_entry = &sum->entries[0];
+ 
+ 	for (i = 0; i < last_offset; i += nrpages, addr += nrpages) {
+-		nrpages = min(last_offset - i, BIO_MAX_PAGES);
++		nrpages = bio_max_segs(last_offset - i);
+ 
+ 		/* readahead node pages */
+ 		f2fs_ra_meta_pages(sbi, addr, nrpages, META_POR, true);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 16a1e82e3aeb..0d9d1a6a947e 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -278,14 +278,14 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	if (!is_contig || bio_full(ctx->bio, plen)) {
+ 		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+ 		gfp_t orig_gfp = gfp;
+-		int nr_vecs = (length + PAGE_SIZE - 1) >> PAGE_SHIFT;
++		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
+ 
+ 		if (ctx->bio)
+ 			submit_bio(ctx->bio);
+ 
+ 		if (ctx->rac) /* same as readahead_gfp_mask */
+ 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
+-		ctx->bio = bio_alloc(gfp, min(BIO_MAX_PAGES, nr_vecs));
++		ctx->bio = bio_alloc(gfp, bio_max_segs(nr_vecs));
+ 		/*
+ 		 * If the bio_alloc fails, try it again for a single page to
+ 		 * avoid having to deal with partial page reads.  This emulates
+diff --git a/fs/mpage.c b/fs/mpage.c
+index 830e6cc2a9e7..961234d68779 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -304,9 +304,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 				goto out;
+ 		}
+ 		args->bio = mpage_alloc(bdev, blocks[0] << (blkbits - 9),
+-					min_t(int, args->nr_pages,
+-					      BIO_MAX_PAGES),
+-					gfp);
++					bio_max_segs(args->nr_pages), gfp);
+ 		if (args->bio == NULL)
+ 			goto confused;
+ 	}
+diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
+index 1a96ce28efb0..fe860c538747 100644
+--- a/fs/nfs/blocklayout/blocklayout.c
++++ b/fs/nfs/blocklayout/blocklayout.c
+@@ -115,13 +115,13 @@ bl_submit_bio(struct bio *bio)
+ 	return NULL;
+ }
+ 
+-static struct bio *
+-bl_alloc_init_bio(int npg, struct block_device *bdev, sector_t disk_sector,
++static struct bio *bl_alloc_init_bio(unsigned int npg,
++		struct block_device *bdev, sector_t disk_sector,
+ 		bio_end_io_t end_io, struct parallel_io *par)
+ {
+ 	struct bio *bio;
+ 
+-	npg = min(npg, BIO_MAX_PAGES);
++	npg = bio_max_segs(npg);
+ 	bio = bio_alloc(GFP_NOIO, npg);
+ 	if (bio) {
+ 		bio->bi_iter.bi_sector = disk_sector;
+diff --git a/fs/xfs/xfs_bio_io.c b/fs/xfs/xfs_bio_io.c
+index e2148f2d5d6b..17f36db2f792 100644
+--- a/fs/xfs/xfs_bio_io.c
++++ b/fs/xfs/xfs_bio_io.c
+@@ -6,7 +6,7 @@
+ 
+ static inline unsigned int bio_max_vecs(unsigned int count)
+ {
+-	return min_t(unsigned, howmany(count, PAGE_SIZE), BIO_MAX_PAGES);
++	return bio_max_segs(howmany(count, PAGE_SIZE));
+ }
+ 
+ int
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index f6e5235df7c9..37a1d12762d8 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -1480,7 +1480,7 @@ xfs_buf_ioapply_map(
+ 	int		op)
+ {
+ 	int		page_index;
+-	int		total_nr_pages = bp->b_page_count;
++	unsigned int	total_nr_pages = bp->b_page_count;
+ 	int		nr_pages;
+ 	struct bio	*bio;
+ 	sector_t	sector =  bp->b_maps[map].bm_bn;
+@@ -1505,7 +1505,7 @@ xfs_buf_ioapply_map(
+ 
+ next_chunk:
+ 	atomic_inc(&bp->b_io_remaining);
+-	nr_pages = min(total_nr_pages, BIO_MAX_PAGES);
++	nr_pages = bio_max_segs(total_nr_pages);
+ 
+ 	bio = bio_alloc(GFP_NOIO, nr_pages);
+ 	bio_set_dev(bio, bp->b_target->bt_bdev);
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index c74857cf1252..354747bbb939 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -20,7 +20,12 @@
+ #define BIO_BUG_ON
+ #endif
+ 
+-#define BIO_MAX_PAGES		256
++#define BIO_MAX_PAGES		256U
++
++static inline unsigned int bio_max_segs(unsigned int nr_segs)
++{
++	return min(nr_segs, BIO_MAX_PAGES);
++}
+ 
+ #define bio_prio(bio)			(bio)->bi_ioprio
+ #define bio_set_prio(bio, prio)		((bio)->bi_ioprio = prio)
 -- 
-Mike Kravetz
+2.29.2
+
