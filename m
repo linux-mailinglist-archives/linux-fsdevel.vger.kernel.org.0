@@ -2,70 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7911C308BCA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 18:43:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EABC308BC6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 18:43:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231511AbhA2RnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 12:43:09 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:50983 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232651AbhA2RhA (ORCPT
+        id S231691AbhA2RmH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 12:42:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53322 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232582AbhA2Riy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 12:37:00 -0500
-Received: by mail-il1-f198.google.com with SMTP id x11so8265239ill.17
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Jan 2021 09:36:33 -0800 (PST)
+        Fri, 29 Jan 2021 12:38:54 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37E90C061574;
+        Fri, 29 Jan 2021 09:38:14 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id n6so11438856edt.10;
+        Fri, 29 Jan 2021 09:38:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XnJUFKT7mpJJkpoBZtT7iuNHzt9Orb+KaxsIyTb16E0=;
+        b=COLNvH5yFRc1iWLXYNI9oTIMBzlO2VZPd5qpEtrEHo3ATyUwzRkkJJpBybh7Sz+E7U
+         KvaZ9Bxx2aaqlmREglpeNGMhk56HaIXO0h+lDWOxIaJZ+ZTGyU2lVMXVkGt/rllLdPpF
+         B4uGOZbB57eHeRUTts2Dtf9oq72yibbhAsgUzQAD2FNZioeMUtQZoSOPk3hlhlpKE3BB
+         DoP8GVKEZp8ANV7wNZzt7gBfCS236/IPAc6fIBZ3A68VtKn92HJ9+ckCmbBH8jrVgKkw
+         J/7fnDwyuruh8q8W9YgQljs3+wtLFQAiY72nmWSD/mYM1/TLTzCL8XphSe8jnRCsH8ZX
+         FSng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=lfC0qpdQ1T9Xl29m7ejvYwmPN8ZlSIQE5xkZ0CP3l2o=;
-        b=lNbRO33iNh0u1z2CyukoKAkizdYNYrhYknsE+Exg68m/sSG5Vvhk732D7046/TrVVa
-         Cu+QsQqz6L2E+gBg4rl6H1Rj0ehHWl/XVZ+D5RIODq5a6O8bSaqBeY8megl66NVNg9C1
-         ZXsNc1MboB0PFsEtvvT8ZytcuIGs92N/3ZR1LYpyKFevtyPu0WhvHQi+YNsenXF0EXZw
-         lZpI1CF2P0COmQEzOpbM5f/9Hnv1qKnwBVIPMs6NCMiOWyyYGE4feE9OHEKX5M77yFwN
-         MWZ11ltg/Cxa139htd1NzY5rTw039SxZgFAT2ZR75wqaNJsYjaLSYdQfzjaSuBp5521H
-         XiBg==
-X-Gm-Message-State: AOAM5318w9xHDnptJBvUIQ9YKVDL4HrDYQIA9lY25T4CH7nrT5iUsfj6
-        VgV1MIAsN6FheiI+JcFpzn5A3+zQeU/PeRzoqaC/kmg8zbfM
-X-Google-Smtp-Source: ABdhPJwBqVzozXEi/mXDr2fTOIGUbDevyAvTt6YrjOmicFDrPHmlaw/gllzSdTT6n1lw8j4CnDsCEL4/dHr1l1MlNOZe/mz1iRWI
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XnJUFKT7mpJJkpoBZtT7iuNHzt9Orb+KaxsIyTb16E0=;
+        b=EgdY/wOWgN9CkaDFpzxQmjFUg3Fv671HzdLl9lAndyFNQxDQCXmAsS1sO1jI5cXmQM
+         CFZgKwXsKzNhMNXCdFItg195ZcnAuarunFBMJf/kChbZ3w6jflK61oRxVLxvXtzY7wlp
+         0sTgdRR5gZeIyYtpmpJdrbyTuRRHZbwwv5MYhdR85XuOjfV78lNtJQFjmpyd11em8O9g
+         hQ1+1pL05NBBzRZHFvnk8jzjtKH6JBsdGxgkMRpr3q+c8hW5R9/hyHJHrKWg+YEJT2mH
+         pDU/Bohgk4jYU7Yiu0tKhexyeSVKb15J/Zkdq3wxjoqyB+gwmdPtnfDgX4IfoV1Z8WEI
+         yBHQ==
+X-Gm-Message-State: AOAM531CAnfb+lP4dab6bYwCcsRG0gJ0SvL/jO275ZZLMkzGkNHNtS/a
+        +d1tRbil3EbP7th5D/4MMB1YBu0/viz4ZxCrGMs=
+X-Google-Smtp-Source: ABdhPJxd629ibdjBhMM1erN6M0LiJ+fYgjJUKGph/ldUDOSSCcPf87XqaVqV8gqhPLw7e+VdSYNXLyCfr+VoUSdorV4=
+X-Received: by 2002:a05:6402:312e:: with SMTP id dd14mr6486295edb.366.1611941892968;
+ Fri, 29 Jan 2021 09:38:12 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f107:: with SMTP id e7mr4301666iog.191.1611941767913;
- Fri, 29 Jan 2021 09:36:07 -0800 (PST)
-Date:   Fri, 29 Jan 2021 09:36:07 -0800
-In-Reply-To: <000000000000d4b96a05aedda7e2@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000079a40e05ba0d702f@google.com>
-Subject: Re: possible deadlock in send_sigio (2)
-From:   syzbot <syzbot+907b8537e3b0e55151fc@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, boqun.feng@gmail.com, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org
+References: <20210127233345.339910-1-shy828301@gmail.com> <20210127233345.339910-11-shy828301@gmail.com>
+ <0eee1cbd-4149-9f03-615d-18c81b8a85af@suse.cz>
+In-Reply-To: <0eee1cbd-4149-9f03-615d-18c81b8a85af@suse.cz>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Fri, 29 Jan 2021 09:38:01 -0800
+Message-ID: <CAHbLzkoE9DN7_5VCfy7yaVPKnrqW6ohCMxpvmKMC3-Tw5-pGgA@mail.gmail.com>
+Subject: Re: [v5 PATCH 10/11] mm: memcontrol: reparent nr_deferred when memcg offline
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On Fri, Jan 29, 2021 at 7:52 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> On 1/28/21 12:33 AM, Yang Shi wrote:
+> > Now shrinker's nr_deferred is per memcg for memcg aware shrinkers, add to parent's
+> > corresponding nr_deferred when memcg offline.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>
+> A question somewhat outside of the scope of the series. Should we shrink before
+> reparenting on memcg offline? Would it make more sense than assume the kmemcg
+> objects that are still cached are used also by others?
 
-commit 8d1ddb5e79374fb277985a6b3faa2ed8631c5b4c
-Author: Boqun Feng <boqun.feng@gmail.com>
-Date:   Thu Nov 5 06:23:51 2020 +0000
+TBH, I'm not sure. I think it depends on workload. For example, the
+build server may prefer to keep the objects cached since the samce
+objects may be reused by multiple build jobs.
 
-    fcntl: Fix potential deadlock in send_sig{io, urg}()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17455db4d00000
-start commit:   7b1b868e Merge tag 'for-linus' of git://git.kernel.org/pub..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3416bb960d5c705d
-dashboard link: https://syzkaller.appspot.com/bug?extid=907b8537e3b0e55151fc
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163e046b500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f8b623500000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fcntl: Fix potential deadlock in send_sig{io, urg}()
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
+> > ---
+> >  include/linux/memcontrol.h |  1 +
+> >  mm/memcontrol.c            |  1 +
+> >  mm/vmscan.c                | 31 +++++++++++++++++++++++++++++++
+> >  3 files changed, 33 insertions(+)
+> >
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index e0384367e07d..fe1375f08881 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -1586,6 +1586,7 @@ extern int alloc_shrinker_info(struct mem_cgroup *memcg);
+> >  extern void free_shrinker_info(struct mem_cgroup *memcg);
+> >  extern void set_shrinker_bit(struct mem_cgroup *memcg,
+> >                            int nid, int shrinker_id);
+> > +extern void reparent_shrinker_deferred(struct mem_cgroup *memcg);
+> >  #else
+> >  #define mem_cgroup_sockets_enabled 0
+> >  static inline void mem_cgroup_sk_alloc(struct sock *sk) { };
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index f64ad0d044d9..21f36b73f36a 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -5282,6 +5282,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+> >       page_counter_set_low(&memcg->memory, 0);
+> >
+> >       memcg_offline_kmem(memcg);
+> > +     reparent_shrinker_deferred(memcg);
+> >       wb_memcg_offline(memcg);
+> >
+> >       drain_all_stock(memcg);
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 0373d7619d7b..55ad91a26ba3 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -386,6 +386,37 @@ static long set_nr_deferred_memcg(long nr, int nid, struct shrinker *shrinker,
+> >       return atomic_long_add_return(nr, &info->nr_deferred[shrinker->id]);
+> >  }
+> >
+> > +static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
+> > +                                                  int nid)
+> > +{
+> > +     return rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
+> > +                                      lockdep_is_held(&shrinker_rwsem));
+> > +}
+> > +
+> > +void reparent_shrinker_deferred(struct mem_cgroup *memcg)
+> > +{
+> > +     int i, nid;
+> > +     long nr;
+> > +     struct mem_cgroup *parent;
+> > +     struct shrinker_info *child_info, *parent_info;
+> > +
+> > +     parent = parent_mem_cgroup(memcg);
+> > +     if (!parent)
+> > +             parent = root_mem_cgroup;
+> > +
+> > +     /* Prevent from concurrent shrinker_info expand */
+> > +     down_read(&shrinker_rwsem);
+> > +     for_each_node(nid) {
+> > +             child_info = shrinker_info_protected(memcg, nid);
+> > +             parent_info = shrinker_info_protected(parent, nid);
+> > +             for (i = 0; i < shrinker_nr_max; i++) {
+> > +                     nr = atomic_long_read(&child_info->nr_deferred[i]);
+> > +                     atomic_long_add(nr, &parent_info->nr_deferred[i]);
+> > +             }
+> > +     }
+> > +     up_read(&shrinker_rwsem);
+> > +}
+> > +
+> >  static bool cgroup_reclaim(struct scan_control *sc)
+> >  {
+> >       return sc->target_mem_cgroup;
+> >
+>
