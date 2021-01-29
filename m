@@ -2,135 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4499308632
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 08:07:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DDCF308657
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 08:24:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232026AbhA2HE4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 02:04:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229786AbhA2HEy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 02:04:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6692D60234;
-        Fri, 29 Jan 2021 07:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611903853;
-        bh=B8baj/kr8egXx07AKTfXmu2q+uVtPa7Wa10vxWLTyX4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FU1gKzkR0Kkuw4BUPc2Ykvl/qSOzFXlBbHnlbTvI/BhKT7ahDUpGEZB46gpU40Y83
-         MoHNwFp1wY6tLb5AUTCsnEfd/AMZYsjtoOTM/ubtkBakz4JEJpx2QSQ5qDWK5JBhpB
-         4v3NJredQAUcuf0ikqua2sKTx8pGC/pdnTjma60/EtjBbJKLV0sBexjvYgwWm6cmAr
-         6YkTn12NhzoZ5vWMbb1h+pYot7MLL4lAT5rK7YbxkDbSaKqIWEB24dlTSavj0W7G0i
-         ikyrL756m9C6l5UyrhfShwTx10Viq23ua1S5t39e8a1T6A4j5m1JHtrkXMph6V4jLt
-         ck06v8VwMSCEw==
-Date:   Fri, 29 Jan 2021 09:03:55 +0200
-From:   Mike Rapoport <rppt@kernel.org>
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize
- direct map fragmentation
-Message-ID: <20210129070355.GC242749@kernel.org>
-References: <20210121122723.3446-1-rppt@kernel.org>
- <20210121122723.3446-8-rppt@kernel.org>
- <20210126114657.GL827@dhcp22.suse.cz>
- <303f348d-e494-e386-d1f5-14505b5da254@redhat.com>
- <20210126120823.GM827@dhcp22.suse.cz>
- <20210128092259.GB242749@kernel.org>
- <YBK1kqL7JA7NePBQ@dhcp22.suse.cz>
- <2b6a5f22f0b062432186b89eeef58e2ba45e09c1.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b6a5f22f0b062432186b89eeef58e2ba45e09c1.camel@linux.ibm.com>
+        id S230411AbhA2HWG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 02:22:06 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:32245 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230249AbhA2HWE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Jan 2021 02:22:04 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210129072120epoutp02be8251e0d991a77bf2779aa686411aec~eovLqAe8N2148021480epoutp020
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Jan 2021 07:21:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210129072120epoutp02be8251e0d991a77bf2779aa686411aec~eovLqAe8N2148021480epoutp020
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1611904880;
+        bh=ZxUrhT4XL07XoRUNd+S7dt9dlQeeyIZW/iU9uD3HH7w=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=PAvZ1apRc8JRBO5v3rHTpHBkb5s2qXgfrLkNg8D7WX1UKXgdC/odOZgxUTcfa6PVo
+         x/WnKBJg4tC4B0fxPFRz/cuayOUuEjdIjNU+Y0U4lgYjZCo9aT1z5qb2mpaPnP1HNr
+         yozcRLxQ3ub/+8psEefkI0twgfd79ntKFDR2pECQ=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210129072120epcas1p1e3f86d83e9259d06dc8c30e3c4ccb6e4~eovLGo8vf0192401924epcas1p12;
+        Fri, 29 Jan 2021 07:21:20 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.160]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4DRpfl2bJ9z4x9Q1; Fri, 29 Jan
+        2021 07:21:19 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2D.D3.63458.E67B3106; Fri, 29 Jan 2021 16:21:18 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210129072117epcas1p29cfb23f0ff88f659b404b1d54fb44ee8~eovI7NpQm0549805498epcas1p2l;
+        Fri, 29 Jan 2021 07:21:17 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210129072117epsmtrp207fd2d2ecd1e7d4710a918ef042602be~eovI6h68I0251502515epsmtrp2K;
+        Fri, 29 Jan 2021 07:21:17 +0000 (GMT)
+X-AuditID: b6c32a36-6dfff7000000f7e2-e5-6013b76e4740
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        58.63.08745.D67B3106; Fri, 29 Jan 2021 16:21:17 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.88.103.87]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210129072117epsmtip1cd58d4e706a6f6603289a2b94cf4e57f~eovIwxIoa0277902779epsmtip16;
+        Fri, 29 Jan 2021 07:21:17 +0000 (GMT)
+From:   Namjae Jeon <namjae.jeon@samsung.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     willy@infradead.org, rdunlap@infradead.org, sj1557.seo@samsung.com,
+        Namjae Jeon <namjae.jeon@samsung.com>, stable@vger.kernel.org
+Subject: [PATCH] exfat: fix shift-out-of-bounds in exfat_fill_super()
+Date:   Fri, 29 Jan 2021 16:12:21 +0900
+Message-Id: <20210129071222.7582-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7bCmnm7eduEEgzkzhS327D3JYvFjer3F
+        2zvTWSy2/DvCarFg4yNGi98/5rA5sHlsXqHl0bdlFaPH501yAcxROTYZqYkpqUUKqXnJ+SmZ
+        eem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QFuVFMoSc0qBQgGJxcVK+nY2Rfml
+        JakKGfnFJbZKqQUpOQWGBgV6xYm5xaV56XrJ+blWhgYGRqZAlQk5GU8P/mMvmKxYMeHxAqYG
+        xhfSXYycHBICJhIvFi5l6mLk4hAS2MEoMfPrXmYI5xOjxO0v3VDOZ0aJ2X0L2WFazt3ZywqR
+        2MUosabrEwtIAqxl9/uaLkYODjYBbYk/W0RBTBEBRYnL751AypkF2hklZh2czwxSLizgKrF+
+        /RlWEJtFQFViy+l9YGN4Bawl7jzfxwixS15i9YYDYEdICExnl9g77SMTRMJFYvKbWVAHCUu8
+        Or4FypaS+PxuLxvIYgmBaomP+5khwh2MEi++20LYxhI3129gBSlhFtCUWL9LHyKsKLHz91yw
+        tcwCfBLvvvawQkzhlehoE4IoUZXou3QY6gBpia72D1BLPSSerfzMCAmEWIlHT9+wT2CUnYWw
+        YAEj4ypGsdSC4tz01GLDAiPkKNrECE5HWmY7GCe9/aB3iJGJg/EQowQHs5II79s5QglCvCmJ
+        lVWpRfnxRaU5qcWHGE2BwTWRWUo0OR+YEPNK4g1NjYyNjS1MzMzNTI2VxHkTDR7ECwmkJ5ak
+        ZqemFqQWwfQxcXBKNTCJK+R88Srg8BN38n65x5o1+6nfBok5q/46B00wPb9t1++8dJUYu2Db
+        LZxCSzKvKT9hD/wl9XGlhXpx3vQeadXfCw5fT987g+ed86onlifWT0v5t2wF/z43tehp6o35
+        K8J2/e+OLLp2ok5M0tG07MD3f+e6yhf/2CuV2pilv3XVxN630XLuJx+L2esvuVGmWLCPf7ad
+        3szqG/e1c4xs+wVLRZ0iDrhvDTxQZ7PwyuzSszwrti6xXrCBrSZQ8v4boTNzimaWTu589d60
+        e4fL5Ydvyu7mMHXPCFAsW2iTm6mV3Whz6Oo1y+tr1rAfmiPi8PJtBCtb56YOPe47z7OTPXje
+        rHSq/cr0g/fdtkv2SaFKLMUZiYZazEXFiQD/ITyR0AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFJMWRmVeSWpSXmKPExsWy7bCSnG7uduEEg4bZxhZ79p5ksfgxvd7i
+        7Z3pLBZb/h1htViw8RGjxe8fc9gc2Dw2r9Dy6NuyitHj8ya5AOYoLpuU1JzMstQifbsEroyn
+        B/+xF0xWrJjweAFTA+ML6S5GTg4JAROJc3f2soLYQgI7GCU+HROAiEtLHDtxhrmLkQPIFpY4
+        fLgYouQDo8SRB/IgYTYBbYk/W0RBTBEBRYnL7526GLk4mAV6GSWaWrYyg5QLC7hKrF9/Bmw6
+        i4CqxJbT+1hAbF4Ba4k7z/cxQmySl1i94QDzBEaeBYwMqxglUwuKc9Nziw0LjPJSy/WKE3OL
+        S/PS9ZLzczcxgoNDS2sH455VH/QOMTJxMB5ilOBgVhLhfTtHKEGINyWxsiq1KD++qDQntfgQ
+        ozQHi5I474Wuk/FCAumJJanZqakFqUUwWSYOTqkGppklMlEXvhj/7Tjk4lYdeXVvs53TT52X
+        259JzzozYeZBq0frjkzRPrfI5f5m1rzafxmG9lvF+gRaz+6cefXT2lcyyX0Vye9bUwtCb6ye
+        Z3/DuY37zITKY1p6heuXbeSZNWnug/WmS04sziv8Oen9kq0XFd90mJ6dPOFczPkwSy9loxtl
+        Mss3BAn2xkj+Oj2b/1qOzoWFVWmG75LPnWF2TXT4dWPSw5YPV6ZIKx/7s2mdg+jleSKPvkg+
+        rpMy+L9m5/r+XJvc7Fv2GV9kEt67X+f6s3aFsdOZ888Fc1atyD7YdKGdq/RJ09Ni8btXGi3u
+        efYY/z4Tmjo/1qB76aRzy822PdUqDfq+7mNNJS//arupSizFGYmGWsxFxYkArwc/CX0CAAA=
+X-CMS-MailID: 20210129072117epcas1p29cfb23f0ff88f659b404b1d54fb44ee8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210129072117epcas1p29cfb23f0ff88f659b404b1d54fb44ee8
+References: <CGME20210129072117epcas1p29cfb23f0ff88f659b404b1d54fb44ee8@epcas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 28, 2021 at 07:28:57AM -0800, James Bottomley wrote:
-> On Thu, 2021-01-28 at 14:01 +0100, Michal Hocko wrote:
-> > On Thu 28-01-21 11:22:59, Mike Rapoport wrote:
-> [...]
-> > > One of the major pushbacks on the first RFC [1] of the concept was
-> > > about the direct map fragmentation. I tried really hard to find
-> > > data that shows what is the performance difference with different
-> > > page sizes in the direct map and I didn't find anything.
-> > > 
-> > > So presuming that large pages do provide advantage the first
-> > > implementation of secretmem used PMD_ORDER allocations to amortise
-> > > the effect of the direct map fragmentation and then handed out 4k
-> > > pages at each fault. In addition there was an option to reserve a
-> > > finite pool at boot time and limit secretmem allocations only to
-> > > that pool.
-> > > 
-> > > At some point David suggested to use CMA to improve overall
-> > > flexibility [3], so I switched secretmem to use CMA.
-> > > 
-> > > Now, with the data we have at hand (my benchmarks and Intel's
-> > > report David mentioned) I'm even not sure this whole pooling even
-> > > required.
-> > 
-> > I would still like to understand whether that data is actually
-> > representative. With some underlying reasoning rather than I have run
-> > these XYZ benchmarks and numbers do not look terrible.
-> 
-> My theory, and the reason I made Mike run the benchmarks, is that our
-> fear of TLB miss has been alleviated by CPU speculation advances over
-> the years.  You can appreciate this if you think that both Intel and
-> AMD have increased the number of levels in the page table to
-> accommodate larger virtual memory size 5 instead of 3.  That increases
-> the length of the page walk nearly 2x in a physical system and even
-> more in a virtual system.  Unless this were massively optimized,
-> systems would have slowed down significantly.  Using 2M pages only
-> eliminates one level and 2G pages eliminates 2, so I theorized that
-> actually fragmentation wouldn't be the significant problem we once
-> thought it was and asked Mike to benchmark it.
-> 
-> The benchmarks show that indeed, it isn't a huge change in the data TLB
-> miss time, I suspect because data is nicely continuous nowadays and the
-> prediction that goes into the CPU optimizations quite easy.  ITLB
-> fragmentation actually seems to be quite a bit worse, likely because we
-> still don't have branch prediction down to an exact science.
+syzbot reported a warning which could cause shift-out-of-bounds issue.
 
-Another thing is that normally useful work done by userspace so data
-accesses are dominated by userspace and any change in dTLB miss rate for
-kernel data accesses is only a small fraction of all misses.
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0x183/0x22e lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:148 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x432/0x4d0 lib/ubsan.c:395
+ exfat_read_boot_sector fs/exfat/super.c:471 [inline]
+ __exfat_fill_super fs/exfat/super.c:556 [inline]
+ exfat_fill_super+0x2acb/0x2d00 fs/exfat/super.c:624
+ get_tree_bdev+0x406/0x630 fs/super.c:1291
+ vfs_get_tree+0x86/0x270 fs/super.c:1496
+ do_new_mount fs/namespace.c:2881 [inline]
+ path_mount+0x1937/0x2c50 fs/namespace.c:3211
+ do_mount fs/namespace.c:3224 [inline]
+ __do_sys_mount fs/namespace.c:3432 [inline]
+ __se_sys_mount+0x2f9/0x3b0 fs/namespace.c:3409
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-> James
-> 
-> 
+exfat specification describe sect_per_clus_bits field of boot sector
+could be at most 16 and at least 0. And sect_size_bits can also
+affect this calculation, It also needs validation.
+This patch add validation for sect_per_clus_bits and sect_size_bits
+field of boot sector.
 
+Fixes: 719c1e182916 ("exfat: add super block operations")
+Cc: stable@vger.kernel.org # v5.9+
+Reported-by: syzbot+da4fe66aaadd3c2e2d1c@syzkaller.appspotmail.com
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+---
+ fs/exfat/exfat_raw.h |  4 ++++
+ fs/exfat/super.c     | 31 ++++++++++++++++++++++++++-----
+ 2 files changed, 30 insertions(+), 5 deletions(-)
+
+diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
+index 6aec6288e1f2..7c4c356efa5f 100644
+--- a/fs/exfat/exfat_raw.h
++++ b/fs/exfat/exfat_raw.h
+@@ -77,6 +77,10 @@
+ 
+ #define EXFAT_FILE_NAME_LEN		15
+ 
++#define EXFAT_MIN_SECT_SIZE_BITS	9
++#define EXFAT_MAX_SECT_SIZE_BITS	12
++#define EXFAT_MAX_SECT_PER_CLUS_BITS	16
++
+ /* EXFAT: Main and Backup Boot Sector (512 bytes) */
+ struct boot_sector {
+ 	__u8	jmp_boot[BOOTSEC_JUMP_BOOT_LEN];
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 87be5bfc31eb..ac5a8f7d2397 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -381,8 +381,7 @@ static int exfat_calibrate_blocksize(struct super_block *sb, int logical_sect)
+ {
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 
+-	if (!is_power_of_2(logical_sect) ||
+-	    logical_sect < 512 || logical_sect > 4096) {
++	if (!is_power_of_2(logical_sect)) {
+ 		exfat_err(sb, "bogus logical sector size %u", logical_sect);
+ 		return -EIO;
+ 	}
+@@ -451,6 +450,25 @@ static int exfat_read_boot_sector(struct super_block *sb)
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * sect_size_bits could be at least 9 and at most 12.
++	 */
++	if (p_boot->sect_size_bits < EXFAT_MIN_SECT_SIZE_BITS ||
++	    p_boot->sect_size_bits > EXFAT_MAX_SECT_SIZE_BITS) {
++		exfat_err(sb, "bogus sector size bits : %u\n",
++				p_boot->sect_size_bits);
++		return -EINVAL;
++	}
++
++	/*
++	 * sect_per_clus_bits could be at least 0 and at most 16.
++	 */
++	if (p_boot->sect_per_clus_bits > EXFAT_MAX_SECT_PER_CLUS_BITS) {
++		exfat_err(sb, "bogus sectors bits per cluster : %u\n",
++				p_boot->sect_per_clus_bits);
++		return -EINVAL;
++	}
++
+ 	sbi->sect_per_clus = 1 << p_boot->sect_per_clus_bits;
+ 	sbi->sect_per_clus_bits = p_boot->sect_per_clus_bits;
+ 	sbi->cluster_size_bits = p_boot->sect_per_clus_bits +
+@@ -477,16 +495,19 @@ static int exfat_read_boot_sector(struct super_block *sb)
+ 	sbi->used_clusters = EXFAT_CLUSTERS_UNTRACKED;
+ 
+ 	/* check consistencies */
+-	if (sbi->num_FAT_sectors << p_boot->sect_size_bits <
+-	    sbi->num_clusters * 4) {
++	if ((u64)sbi->num_FAT_sectors << p_boot->sect_size_bits <
++	    (u64)sbi->num_clusters * 4) {
+ 		exfat_err(sb, "bogus fat length");
+ 		return -EINVAL;
+ 	}
++
+ 	if (sbi->data_start_sector <
+-	    sbi->FAT1_start_sector + sbi->num_FAT_sectors * p_boot->num_fats) {
++	    (u64)sbi->FAT1_start_sector +
++	    (u64)sbi->num_FAT_sectors * p_boot->num_fats) {
+ 		exfat_err(sb, "bogus data start sector");
+ 		return -EINVAL;
+ 	}
++
+ 	if (sbi->vol_flags & VOLUME_DIRTY)
+ 		exfat_warn(sb, "Volume was not properly unmounted. Some data may be corrupt. Please run fsck.");
+ 	if (sbi->vol_flags & MEDIA_FAILURE)
 -- 
-Sincerely yours,
-Mike.
+2.17.1
+
