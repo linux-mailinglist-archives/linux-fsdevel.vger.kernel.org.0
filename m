@@ -2,239 +2,270 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2C0308B45
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 18:18:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD08D308B69
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 18:32:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232467AbhA2RQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 12:16:01 -0500
-Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:58008 "EHLO
-        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232433AbhA2ROd (ORCPT
+        id S231610AbhA2RVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 12:21:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231307AbhA2RVD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 12:14:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
-        t=1611940404;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=q0WslrzyvNbD/LC/THzDFyY2adL+VV62HuHSO0mWonk=;
-        b=GyZnRUDKIf23ve0X+njiFFSdAzlmP+IjecH61/qB8fWysEkP3UoQpmMYomWtWGc9vpnC/1
-        Ujrp75A03yD85Q53NF+C8yLTdXrijTA17FV9GJYJoLSHhfnO+5LgWPyEkGIx7KcqnlqCRF
-        j27EHAk+wlrh96ekKO6G+/GLQca+0ow=
-Received: from EUR03-DB5-obe.outbound.protection.outlook.com
- (mail-db5eur03lp2057.outbound.protection.outlook.com [104.47.10.57]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- de-mta-20-alTweLuINiG6uL7ZduCfAQ-1; Fri, 29 Jan 2021 18:13:22 +0100
-X-MC-Unique: alTweLuINiG6uL7ZduCfAQ-1
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UJgRQfDiAS3leRBg9nR/VbPdRnTMYaw+fGGYWUeUQsV2gsYbxmKBB00aC/Ow8gHUtRG3Ee/ON7SvoXvZXviztIjO4GRN61g5iENk4XQEpBBl9TRQcajmywShDGXiPEHAFzVwbzheynZr6vM+eGfo4IYdRSu5qCvxdZwci81C/AbcjkPHRX3RlLgH9V4wO6wSUUXmWiuHqGhqCCJVMaeOJFZXJJ9Gi0fGDG922xiYWIwOR5o/uOaktYT0ypf6FIS7dgZRIBh+254XpQvy9DQvcsvw/wcfmJ2EELnyTmA+pbo7Xrb9Jxt3pmui8rEc15rTgYLPEsKLcimk7CB8mtFZgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i9luHzFU775/t+txmVLD1zwMZS+Q/+7ffZyMA7RQsYc=;
- b=mariTrUDLyIFbrbiWfMDI3Pi5jLf07GC/CUe7r7OObw7tFfuQ/r8FocTuq3nBRK4v163DD1coPB3n7qzg1lo1La467VySrPpMyQK+8owytAadEG1mNkLQewshnKGykpZuKvr7mEJ2b97TfTFa4Kab8O6HvXHoZJvVztWYDAhNMkynAGg0sTgdozDSUMsGppP7Zod/VGAIWCwUmYo0PLPDvVeE5JAHcl9hpo4CeZCr8b5gWd2Uk7lBwv0LHuD7BogZe3HXRxt0tr2rZEOU4qwKiBd4o2Eo44QA/eppNR0M89eUs+jVDSsFv6YKbSBtbWeAZDDHPRbdsAOPwSqiDovbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=suse.com;
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
- by VI1PR04MB5213.eurprd04.prod.outlook.com (2603:10a6:803:54::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.17; Fri, 29 Jan
- 2021 17:13:20 +0000
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9%4]) with mapi id 15.20.3805.016; Fri, 29 Jan 2021
- 17:13:20 +0000
-From:   =?UTF-8?q?Aur=C3=A9lien=20Aptel?= <aaptel@suse.com>
-To:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-CC:     smfrench@gmail.com, Aurelien Aptel <aaptel@suse.com>,
-        Paulo Alcantara <pc@cjr.nz>
-Subject: [PATCH v1] cifs: make nested cifs mount point dentries always valid to deal with signaled 'df'
-Date:   Fri, 29 Jan 2021 18:13:16 +0100
-Message-ID: <20210129171316.13160-1-aaptel@suse.com>
-X-Mailer: git-send-email 2.29.2
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-Originating-IP: [2003:fa:705:9f78:7b0f:e618:4073:cda]
-X-ClientProxiedBy: ZR0P278CA0123.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:20::20) To VI1PR0402MB3359.eurprd04.prod.outlook.com
- (2603:10a6:803:3::28)
+        Fri, 29 Jan 2021 12:21:03 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB05C061573;
+        Fri, 29 Jan 2021 09:20:23 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id b21so11404211edy.6;
+        Fri, 29 Jan 2021 09:20:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GmK3IzpJWn5KGZ5UlnNgN27t0epkFS6p45KMYMsykiU=;
+        b=cEhmA8h01GMLKZFbPOWD8j861LbXVvV2stJwNJ+jstgYa5oRXJnLLAqeJVknD75dxK
+         ttRjSHHfPvMHyhSnZTxXuasvcpB4aOoLhHc+q2EhJVSJD6xbWADt8mPX7o/exIlz0ip4
+         dHahBOGom9YUSR6iG06mb1mKUdlW+3E/0rGKobLITfFeHEJu43BkUxuFd5DyR9GGbqVh
+         4WowTuh+Y1PCZyuD4/CrMeXf+rk063ruuTq2GBNZtmmkaSvgiw0X88QIifyzkD+IKm/4
+         GF1KN/nxfZ3baXkrZjDgpC5g3DOdK/PcPK/RyXkoaSfSJOJwGJetNDAAt61woEFH7dw2
+         s3eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GmK3IzpJWn5KGZ5UlnNgN27t0epkFS6p45KMYMsykiU=;
+        b=AyiaXbbdL+1EM8OpRXzG4N77fpa8udP3qPdkC8c4HGHKgWgzpFsbgnQpqEHot1q2d0
+         UQlvYUcxY1b5dBBsbd5EE1oNDJUlUr9+yUvborTTMAnf4NtyM1Jrf99ZLtauB310vUtF
+         NLcq8eJZMB9naNJFjlMN2jbbX5vKoMemexzg1mWxCs9QROP0JKZIiT7sEdfqXqf+XKO3
+         JPtZFqRwuglEEwLDZR4ZQerYSTyLKsBa6w3Vt6vt3YmI42l6P0vWTr1pyJ1DhgX5bSEv
+         mb9SjTBLig7EIuqeQ+J6H5wbi6Ap9dhj7zxN2MhcaHWCtZR17x9egqZeW9OPPOKN9hq/
+         yYew==
+X-Gm-Message-State: AOAM5335JvxM+Uzzq+bppyLkYyUtniy1SrSpdVI0vpD+y2cc3Wl8valb
+        XHxmpo0KC8/VTfOKPtXfDrn4QIM8nFWc8aTPEvc=
+X-Google-Smtp-Source: ABdhPJwI0SHZKLLzSY2MpKzQDtb0rzu7IhLBL/C8lwU/t4ppFNWnlokejqzJnyYjPdlD1+OaFaEwvqhffgv6JvFQEkg=
+X-Received: by 2002:a05:6402:312e:: with SMTP id dd14mr6382931edb.366.1611940821747;
+ Fri, 29 Jan 2021 09:20:21 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost (2003:fa:705:9f78:7b0f:e618:4073:cda) by ZR0P278CA0123.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:20::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.18 via Frontend Transport; Fri, 29 Jan 2021 17:13:20 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 246a3c87-fb4a-4acf-2890-08d8c4792d33
-X-MS-TrafficTypeDiagnostic: VI1PR04MB5213:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR04MB5213F2602932B4A00FC6845BA8B99@VI1PR04MB5213.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:546;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5+F52aQ2A1QB7KDvVYMXerGcJsBFwBAF56iDc/pooiZ8dpibSlWxa9XTB459edHKEIqDIBaMxsRpD6Kx1bkypYBqT6dsT899nmNzH+zT5D4bPf3pbaw0u4z5ZArB4xH1is596pyPnyl+5sDCjmOyQel2g6PLkLyB7P0uXhp5wcg/hpf/SgtJFeGFBop1xe3mt5vNQgyI0xqYHod/uFU5hFzJZyNivipx2zqNaP5yv+/ZyP4xo855t6N+9UXU1Qs/H0mmRPfFA9L+ya4/RSDEzkT5KsXhJI9wSHzd15s5csbGsxFKwsjactJDp/pAuAMlGXn4LFcMayZR/vfWcuyvS/racGip+R5aW/2vl8ReS3+5K3WH4nn2dFXe7lfCZF23qR0OGEJbe4ODBWNcNz104kkBbCGWAB0NwhIXxgq9NHA+9rl0Awi1BHmBu10em4be5H5Rw/B3F3HTTPhjle4w3g4+KtVdSUP+tyqmb9nnCRzYsB45iBThJxXZKJOok8848Y7Jg7kUmUaUe1dpU1hEM+IBzVoLJ2HZESDrwc6nNqXPzlB+ZY/eqrl8LSu+UGJnE5jxPXoyjitJZ8vdiPufa3xwwuLtPOu4lZ0z10IPx5fAv6DNe6VOMYkDrzPT8eoU6wrlMU4+ldzNJJ1jsEDEZztgb1E6sH495uM0Z8N41yxO+2qR/fRQeqOLS+06lfNFkkyRBRE91ULHpzft6uXgiOhMc28gCrTOw2sU3ePqJar86jS2IdDdPIETJHWBksncqI1GUA3buCjMJrlYzL0BsDH+2O3w1UVSFHSH3Ei6FmAMPH+ihjSwVWTf5A5Cuv15yJ+dCi8bQqcj9JMAnBPQbkSj/c8ilRo1FoHWIoU0i3OiSl7Fii/qp0NDotNlSNrHkdKg/KCy338SUpgBfB5ncg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:OSPM;SFS:(346002)(366004)(396003)(136003)(39860400002)(376002)(66946007)(1076003)(66556008)(6666004)(16526019)(186003)(8676002)(6486002)(66476007)(478600001)(316002)(86362001)(8936002)(5660300002)(2616005)(2906002)(52116002)(4326008)(36756003)(54906003)(83380400001)(6496006)(23200700001);DIR:OUT;SFP:1501;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?PQQB14zvBwHIGNF0jseKEXP7Gxa0bqHB2O/bPYSm3LwIosD1McgjIyD3Dc5e?=
- =?us-ascii?Q?k2WzHwthI51WkumgnBq8iA9qXktqQSuXM8qkjmUhIM9jPL34+hy0SSP8sjuo?=
- =?us-ascii?Q?U6Xu5Rvhta4pS/1WOjX1iIPT1zMO51sw7R2Ne89ad929PG0qk07HZozdtiig?=
- =?us-ascii?Q?gnwr2ucRZ9t6u2uXwRxmFmph1s9AmD/HY9LdFkEkRo8rU186J1xSm80NEBnv?=
- =?us-ascii?Q?0cMT7mLxzIgaNB8bmzRI5bVwbxNKQpm/tJpwlecofJDmw2h4gkz0cUrRXqSK?=
- =?us-ascii?Q?VkQokznBYQI4Mmq+9fRwFZKluA9hylM8mK2rv+xwqqBu9T3rcbZBrOcFtLaU?=
- =?us-ascii?Q?sO1jN0Odjp+maup8gIMfjARd0oyOFPbklup60HBgYAE9Q0jJAtq324f4e+4u?=
- =?us-ascii?Q?awK6ud2etLClWll9PjKg/UOZCGqShARvAx9yZzV6RofjF+KQDhn8QKY3+zOz?=
- =?us-ascii?Q?2nYZVO7c2sN12MKuW0w5VG0fAyW7V/64hA79DeiF1UfzmkZe7MJ/ORpHR0Df?=
- =?us-ascii?Q?6GDMFtQjqGmwAW/UasAsbd4+sVuaU8+ANsNQl9K8rXhegcvOPci4vXmSaJrD?=
- =?us-ascii?Q?pkEOtdw88oKrSaBoGXPQFU7hvt4/yGgMZt/v6Io02Kwmi/1BdLcSvAtSC+Xg?=
- =?us-ascii?Q?oMSZ+JmvfLbh3g7V7FoGEdEVDWGFwXUjlPBD4ArtFdvXyqjtc+w4wFi4MbEG?=
- =?us-ascii?Q?2syIQnAb22fb0RYuk697AaHNGnnYnzPVqXCCQmlP5HgYE0Dc4H9jNLWvtivO?=
- =?us-ascii?Q?lAZY7z+KpkuxBflzwIIPhe/W/15qPLn2ZhBcXtdpy/FM8VgU3bm/eFAVQ9SY?=
- =?us-ascii?Q?8x2bxx8Z02Tka61kihcZXQBMjOr3kbdOMcIHck2MpUEYwFf9c5Lm1xsFo5xT?=
- =?us-ascii?Q?F7vE3tlaBv6Gv81RPbRpydzo/JRkpAAU2wxmxo/yLIuCF/WEy0R07oK+/Tpl?=
- =?us-ascii?Q?NAluEWXtzg8CTWbzX4p3Jjfnc6olgeY5djn2CjnbZxLDSeY011dEZy2K/3Vs?=
- =?us-ascii?Q?GjWs8XLuPzKn0UJhhj5xudKA3kn/xb6gbOX0RDy6DV1zDnnz3ikTeczKQwdB?=
- =?us-ascii?Q?ovBKzh+QRDrflg5NEU6If1u/GBdpvh/6HuEa+FfpQytATh9iXVhX1aRSKgmK?=
- =?us-ascii?Q?ixYEwAMCwjWI?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 246a3c87-fb4a-4acf-2890-08d8c4792d33
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2021 17:13:20.2448
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qrMX32EEpwsBxFiI4RBAV+KRIZiblbT2gnAvX6ez88hxT4US1rtFuGn4Pwqqq5Ol
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5213
+References: <20210127233345.339910-1-shy828301@gmail.com> <20210127233345.339910-8-shy828301@gmail.com>
+ <6b0638ba-2513-67f5-8ef1-9e60a7d9ded6@suse.cz>
+In-Reply-To: <6b0638ba-2513-67f5-8ef1-9e60a7d9ded6@suse.cz>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Fri, 29 Jan 2021 09:20:09 -0800
+Message-ID: <CAHbLzkpiDBMRRerr7iXtj40p=RVLTmWoWoOQbdkvG7Tsi4iirw@mail.gmail.com>
+Subject: Re: [v5 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Aurelien Aptel <aaptel@suse.com>
+On Fri, Jan 29, 2021 at 5:00 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> On 1/28/21 12:33 AM, Yang Shi wrote:
+> > Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> >
+> > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> > may suffer from over shrink, excessive reclaim latency, etc.
+> >
+> > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> >
+> > We observed this hit in our production environment which was running vfs heavy workload
+> > shown as the below tracing log:
+> >
+> > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> > cache items 246404277 delta 31345 total_scan 123202138
+> > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> > last shrinker return val 123186855
+> >
+> > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> > This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> >
+> > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> > better isolation.
+> >
+> > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  include/linux/memcontrol.h |  7 +++---
+> >  mm/vmscan.c                | 48 +++++++++++++++++++++++++-------------
+> >  2 files changed, 36 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index 62b888b88a5f..e0384367e07d 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -93,12 +93,13 @@ struct lruvec_stat {
+> >  };
+> >
+> >  /*
+> > - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> > - * which have elements charged to this memcg.
+> > + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
+> > + * shrinkers, which have elements charged to this memcg.
+> >   */
+> >  struct shrinker_info {
+> >       struct rcu_head rcu;
+> > -     unsigned long map[];
+> > +     unsigned long *map;
+> > +     atomic_long_t *nr_deferred;
+> >  };
+> >
+> >  /*
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 256896d157d4..20be0db291fe 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -187,16 +187,21 @@ static DECLARE_RWSEM(shrinker_rwsem);
+> >  #ifdef CONFIG_MEMCG
+> >  static int shrinker_nr_max;
+> >
+> > +#define NR_MAX_TO_SHR_MAP_SIZE(nr_max)       \
+> > +     ((nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long))
+>
+> Could have been part of patch 4 already. And yeah, using DIV_ROUND_UP(), as
+> being hidden in a macro makes the "shorter statement" benefit disappear :)
+>
+> > +
+> >  static void free_shrinker_info_rcu(struct rcu_head *head)
+> >  {
+> >       kvfree(container_of(head, struct shrinker_info, rcu));
+> >  }
+> >
+> >  static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> > -                                int size, int old_size)
+> > +                                 int m_size, int d_size,
+> > +                                 int old_m_size, int old_d_size)
+> >  {
+> >       struct shrinker_info *new, *old;
+> >       int nid;
+> > +     int size = m_size + d_size;
+> >
+> >       for_each_node(nid) {
+> >               old = rcu_dereference_protected(
+> > @@ -209,9 +214,15 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> >               if (!new)
+> >                       return -ENOMEM;
+> >
+> > -             /* Set all old bits, clear all new bits */
+> > -             memset(new->map, (int)0xff, old_size);
+> > -             memset((void *)new->map + old_size, 0, size - old_size);
+> > +             new->map = (unsigned long *)(new + 1);
+> > +             new->nr_deferred = (void *)new->map + m_size;
+>
+> This better be aligned to sizeof(atomic_long_t). Can we be sure about that?
 
-Assuming
-- //HOST/a is mounted on /mnt
-- //HOST/b is mounted on /mnt/b
+Good point. No, if unsigned long is 32 bit on some 64 bit machines.
 
-On a slow connection, running 'df' and killing it while it's
-processing /mnt/b can make cifs_get_inode_info() returns -ERESTARTSYS.
+> Also it's all quite ugly and complex. Is it worth it? What about just leaving
+> map as it is and allocating a nr_deferred array separately, i.e.:
+>
+>   struct shrinker_info {
+>         struct rcu_head rcu;
+>         atomic_long_t *nr_deferred; // allocated separately
+>         unsigned long map[];
+>   };
 
-This triggers the following chain of events:
-=3D> the dentry revalidation fail
-=3D> dentry is put and released
-=3D> superblock associated with the dentry is put
-=3D> /mnt/b is unmounted
+So, you mean we allocate shrinker info with map array in the first
+step, then allocate nr_deferred? It is ok, but I'm afraid the error
+handling may make the code not that clean as what you expect since we
+have to call kvmalloc() twice. And we still need to do all the
+initialization and copy work. So, eventually we just replace the
+pointer assignment to error handling. I'm not quite sure if it is
+worth it. The nested error handling might be more error prone.
 
-This quick fix makes cifs_d_revalidate() always succeed (mark as
-valid) on cifs dentries which are also mount points.
-
-Signed-off-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
----
-
-I have managed to reproduce this bug with the following script.  It
-uses tc with netem discipline (CONFIG_NET_SCH_NETEM=3Dy) to simulate
-network delays.
-
-#!/bin/bash
-
-#
-# reproducing bsc#1177440
-#
-# nested mount point gets unmounted when process is signaled
-#
-set -e
-
-share1=3D//192.168.2.110/scratch
-share2=3D//192.168.2.110/test
-opts=3D"username=3Dadministrator,password=3Daaptel-42,vers=3D1.0,actimeo=3D=
-0"
-
-cleanup() {
-    # reset delay
-    tc qdisc del dev eth0 root
-    mount|grep -q /mnt/nest/a && umount /mnt/nest/a
-    mount|grep -q /mnt/nest && umount /mnt/nest
-
-    echo 'module cifs -p' > /sys/kernel/debug/dynamic_debug/control
-    echo 'file fs/cifs/* -p' > /sys/kernel/debug/dynamic_debug/control
-    echo 0 > /proc/fs/cifs/cifsFYI
-    echo 0 > /sys/module/dns_resolver/parameters/debug
-    echo 1 > /proc/sys/kernel/printk_ratelimit
-   =20
-}
-
-trap cleanup EXIT
-
-nbcifs() {
-    mount|grep cifs|wc -l
-}
-
-reset() {
-    echo "unmounting and reloading cifs.ko"
-    mount|grep -q /mnt/nest/a && umount /mnt/nest/a
-    mount|grep -q /mnt/nest && umount /mnt/nest
-    sleep 1
-    lsmod|grep -q cifs && ( modprobe -r cifs &> /dev/null || true )
-    lsmod|grep -q cifs || ( modprobe cifs &> /dev/null  || true )
-}
-
-mnt() {
-    dmesg --clear
-    echo 'module cifs +p' > /sys/kernel/debug/dynamic_debug/control
-    echo 'file fs/cifs/* +p' > /sys/kernel/debug/dynamic_debug/control
-    echo 1 > /proc/fs/cifs/cifsFYI
-    echo 1 > /sys/module/dns_resolver/parameters/debug
-    echo 0 > /proc/sys/kernel/printk_ratelimit
-
-    echo "mounting"
-    mkdir -p /mnt/nest
-    mount.cifs $share1 /mnt/nest -o "$opts"
-    mkdir -p /mnt/nest/a
-    mount.cifs $share2 /mnt/nest/a -o "$opts"
-}
-
-# add fake delay
-tc qdisc add dev eth0 root netem delay 300ms
-
-while :; do
-    reset
-    mnt
-    n=3D$(nbcifs)   =20
-    echo "starting df with $n mounts"
-    df &=20
-    pid=3D$!
-    sleep 1.5
-    kill $pid || true
-    x=3D$(nbcifs)
-    echo "stopping with $x mounts"
-    if [ $x -lt $n ]; then
-        echo "lost mounts"
-        dmesg > kernel.log
-        exit 1
-    fi
-done
-
-
-
-fs/cifs/dir.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index 68900f1629bff..876ef01628538 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -741,6 +741,10 @@ cifs_d_revalidate(struct dentry *direntry, unsigned in=
-t flags)
- 	if (flags & LOOKUP_RCU)
- 		return -ECHILD;
-=20
-+	/* nested cifs mount point are always valid */
-+	if (d_mountpoint(direntry))
-+		return 1;
-+
- 	if (d_really_is_positive(direntry)) {
- 		inode =3D d_inode(direntry);
- 		if ((flags & LOOKUP_REVAL) && !CIFS_CACHE_READ(CIFS_I(inode)))
---=20
-2.29.2
-
+>
+> > +             /* map: set all old bits, clear all new bits */
+> > +             memset(new->map, (int)0xff, old_m_size);
+> > +             memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
+> > +             /* nr_deferred: copy old values, clear all new values */
+> > +             memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
+> > +             memset((void *)new->nr_deferred + old_d_size, 0, d_size - old_d_size);
+> >
+> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+> >               call_rcu(&old->rcu, free_shrinker_info_rcu);
+> > @@ -226,9 +237,6 @@ void free_shrinker_info(struct mem_cgroup *memcg)
+> >       struct shrinker_info *info;
+> >       int nid;
+> >
+> > -     if (mem_cgroup_is_root(memcg))
+> > -             return;
+> > -
+> >       for_each_node(nid) {
+> >               pn = mem_cgroup_nodeinfo(memcg, nid);
+> >               info = rcu_dereference_protected(pn->shrinker_info, true);
+> > @@ -242,12 +250,13 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+> >  {
+> >       struct shrinker_info *info;
+> >       int nid, size, ret = 0;
+> > -
+> > -     if (mem_cgroup_is_root(memcg))
+> > -             return 0;
+> > +     int m_size, d_size = 0;
+> >
+> >       down_write(&shrinker_rwsem);
+> > -     size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+> > +     m_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > +     d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> > +     size = m_size + d_size;
+> > +
+> >       for_each_node(nid) {
+> >               info = kvzalloc_node(sizeof(*info) + size, GFP_KERNEL, nid);
+> >               if (!info) {
+> > @@ -255,6 +264,8 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+> >                       ret = -ENOMEM;
+> >                       break;
+> >               }
+> > +             info->map = (unsigned long *)(info + 1);
+> > +             info->nr_deferred = (void *)info->map + m_size;
+> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+> >       }
+> >       up_write(&shrinker_rwsem);
+> > @@ -266,10 +277,16 @@ static int expand_shrinker_info(int new_id)
+> >  {
+> >       int size, old_size, ret = 0;
+> >       int new_nr_max = new_id + 1;
+> > +     int m_size, d_size = 0;
+> > +     int old_m_size, old_d_size = 0;
+> >       struct mem_cgroup *memcg;
+> >
+> > -     size = (new_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+> > -     old_size = (shrinker_nr_max / BITS_PER_LONG + 1) * sizeof(unsigned long);
+> > +     m_size = NR_MAX_TO_SHR_MAP_SIZE(new_nr_max);
+> > +     d_size = new_nr_max * sizeof(atomic_long_t);
+> > +     size = m_size + d_size;
+> > +     old_m_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > +     old_d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> > +     old_size = old_m_size + old_d_size;
+> >       if (size <= old_size)
+> >               goto out;
+> >
+> > @@ -278,9 +295,8 @@ static int expand_shrinker_info(int new_id)
+> >
+> >       memcg = mem_cgroup_iter(NULL, NULL, NULL);
+> >       do {
+> > -             if (mem_cgroup_is_root(memcg))
+> > -                     continue;
+> > -             ret = expand_one_shrinker_info(memcg, size, old_size);
+> > +             ret = expand_one_shrinker_info(memcg, m_size, d_size,
+> > +                                            old_m_size, old_d_size);
+> >               if (ret) {
+> >                       mem_cgroup_iter_break(NULL, memcg);
+> >                       goto out;
+> >
+>
