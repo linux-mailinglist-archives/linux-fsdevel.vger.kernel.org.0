@@ -2,206 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FEEC30861E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 08:02:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6AE4308621
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 08:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232165AbhA2G6C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 01:58:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57188 "EHLO
+        id S232252AbhA2G6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 01:58:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231977AbhA2G5y (ORCPT
+        with ESMTP id S232143AbhA2G6P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 01:57:54 -0500
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57DFC061573
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 22:57:14 -0800 (PST)
-Received: by mail-pf1-x434.google.com with SMTP id t29so5629335pfg.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 22:57:14 -0800 (PST)
+        Fri, 29 Jan 2021 01:58:15 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E10C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 22:57:35 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id b2so11094449lfq.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 22:57:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TbuleYwe5NvwJojz+4aOt8A66WvfcU/0PeNJr1ClLeM=;
-        b=nBYq60FCybEbi705MaQVQBD560R6is7L09GfIIAOZ+XUgkuhtMr6vpKMGJYfpcP2/C
-         /tR+5bo1yUoVQkm/j3lecucbC/OOaG9/7VyuZcnzUSASJZXIsekF0oBlwGjtkJCVu2yg
-         zDnk/cm8mY41bA/lgcnAYb7WTgQ1pfvIUwwPI420UqWXkgit7AgWRG5v31gzxqf+ymtC
-         mN6WlsCyTyxgtc+HIY32Ty1o0RZYFpc43VTnLarPU94L3cdanP4M6ktWN/nc4CSr981d
-         DSkx0viJASulvmpQu++VsZtNqzNhJy2AQFQ1I0A7dMHtmAdv3Sbs9a7xNmorN+E46fUC
-         LJcw==
+        bh=NEM0fiit64y7fKRGqdUpVYOmOrer0iqc3oPGOWs5w6c=;
+        b=YYjBkzdRUrbi0suoXfv7bYkrsHH4ehZQUzOnqO1W/G1bm41C9a+9TqhDPcTWj9Eore
+         AYCYIPFK1CJ94yLeszgdTRHu8ToSv4CMp2sNcR9q1VsZX/q/pCfAtLflWd5vdkeg3tYG
+         krIcnreyq6nwKPVC/nn80ISV2R7Nj2PnYeDCSSSRPyJSjFxuPifWkJ4RGK/K85sSF3EJ
+         L9ZMD+0ob+WN78m+UiLlQhH45Q+zsXiKQ43lV2dIs45Jz+ZyzBv97/cKer5w5lH8TqFi
+         dcSntEdkGTGrmfii/5kFfrWnEUIvR/2l8NvdQuZUyvnZmB/h1pXyybTKRpNdLPHQJZtc
+         N+yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TbuleYwe5NvwJojz+4aOt8A66WvfcU/0PeNJr1ClLeM=;
-        b=eBuo25XwDrt61UIxGc8D4G34KSi3MVVc40ux1IHcXrhBIytjcc9vZNcbj7L+C4EJnP
-         itjtewR0+VXLFJV8qUfbC+DXTF3mDGnUWyP9f2EdFIYGmEIv8QP3aeFShDtkxjKgC9Ow
-         LSWXM1nlYPMalxzMckJycj5LBlyseCH46BYnjYjh7JF8n0jOXotK1Ob3Id4IzcAOAHdt
-         rsOCZ3gjfZxDwRn6Vn45o7gmyMbmKEUZUyBQqz4bNddzh53e8/Aw4CsdXBduX2sPNGQ5
-         eJK33GJwgr9AEJKk9NjGNW551gC/INQJye66KBjlX4b+LnlpJiqYxe+BM8apxsOWm2EH
-         dQLg==
-X-Gm-Message-State: AOAM530xDUIHRlDkM+7hJkuM2e2Wrg5iwSSUN/p5i26uc7/rgoMUdgir
-        aqGVpJNPYsFbWCiu/Ki6rugPsYmf7ab+SaM6Yz57jQ==
-X-Google-Smtp-Source: ABdhPJzDbWkHuF3yE1SwKxbTcZlixSLpsO95Cov3oCPm9dJ66DrTvWGCs6cK7qWQRkEcJATRiILuvPSB1lQ5oFobVFE=
-X-Received: by 2002:a63:50a:: with SMTP id 10mr3283849pgf.273.1611903434093;
- Thu, 28 Jan 2021 22:57:14 -0800 (PST)
+        bh=NEM0fiit64y7fKRGqdUpVYOmOrer0iqc3oPGOWs5w6c=;
+        b=pvTvQxWWcz18SK9ToMJazuaKqfU28UHvk8mBq4vP1zsa8JQ+qR94PuZcicYf6PYYKj
+         LcvBz1UYYW/ZVtyxKmNKHNFL1DQIPZ+049H4UneJ9Gwvt9IsFFMQd5CudPD2g9UOUn4G
+         R/qrMRS0MewR57H0VXebcvnVr4zcNRr+kn1MqQQywFZO5EQKlao38D30nTnNcT+E0vAk
+         uX+XZs9u+coA3+D9vP4sn5NmOZp+9/oDZ3v7wjC3DrCHvpQ1dEZTtBM8qZw077ygh2WL
+         /3lURPoZkyEkyn3/tkT6Sb5ADVbn3p93+SLfLFgYxs1Gx8GBNrUhFm6SFAQhbaxvb9Eu
+         iv1A==
+X-Gm-Message-State: AOAM531DGmvgDjESZEaIAy/qwmU0E01GKsnFkOsUV8zSG3LmnjGGH9ZC
+        MeS5LDDtD/HM96usTiSrH7nNBSNsvEPmzXHkQmM=
+X-Google-Smtp-Source: ABdhPJzt4HaTgVAdig40x5krcp6hI5He4vBn5zqyEgWt3KbrLk/+Jl2ZyF3UTHjma/ZkfWzqee+vArxH7tO3MZiTrqA=
+X-Received: by 2002:a19:750b:: with SMTP id y11mr1456204lfe.479.1611903454015;
+ Thu, 28 Jan 2021 22:57:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20210117151053.24600-1-songmuchun@bytedance.com>
- <20210117151053.24600-6-songmuchun@bytedance.com> <20210126092942.GA10602@linux>
- <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com> <20210126145819.GB16870@linux>
- <259b9669-0515-01a2-d714-617011f87194@redhat.com> <20210126153448.GA17455@linux>
- <9475b139-1b33-76c7-ef5c-d43d2ea1dba5@redhat.com> <e28399e1-3a24-0f22-b057-76e7c7e70017@redhat.com>
- <CAMZfGtWCu95Qve8p9mH7C7rm=F+znsc8+VL_6Z-_k4e5hAHzhA@mail.gmail.com> <e200c17e-5c95-025e-37a7-af7cfbb05b18@oracle.com>
-In-Reply-To: <e200c17e-5c95-025e-37a7-af7cfbb05b18@oracle.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 29 Jan 2021 14:56:35 +0800
-Message-ID: <CAMZfGtWvDCaN7M9CHNx3O_OQvH8+HN_xg=uc3aUOUeqqB_--ZQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v13 05/12] mm: hugetlb: allocate the
- vmemmap pages associated with each HugeTLB page
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <91568e002fed69425485c17de223bef0ff660f3a.1611313420.git.lucien.xin@gmail.com>
+ <87r1m4fz72.fsf@notabene.neil.brown.name>
+In-Reply-To: <87r1m4fz72.fsf@notabene.neil.brown.name>
+From:   Xin Long <lucien.xin@gmail.com>
+Date:   Fri, 29 Jan 2021 14:57:22 +0800
+Message-ID: <CADvbK_ehp0GaX8+9XOu0igCmDaVfj+WV1880qBwtbfePbK1QqA@mail.gmail.com>
+Subject: Re: [PATCH] seq_read: move count check against iov_iter_count after
+ calling op show
+To:     NeilBrown <neilb@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        NeilBrown <neilb@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 29, 2021 at 9:04 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->
-> On 1/28/21 4:37 AM, Muchun Song wrote:
-> > On Wed, Jan 27, 2021 at 6:36 PM David Hildenbrand <david@redhat.com> wrote:
-> >>
-> >> On 26.01.21 16:56, David Hildenbrand wrote:
-> >>> On 26.01.21 16:34, Oscar Salvador wrote:
-> >>>> On Tue, Jan 26, 2021 at 04:10:53PM +0100, David Hildenbrand wrote:
-> >>>>> The real issue seems to be discarding the vmemmap on any memory that has
-> >>>>> movability constraints - CMA and ZONE_MOVABLE; otherwise, as discussed, we
-> >>>>> can reuse parts of the thingy we're freeing for the vmemmap. Not that it
-> >>>>> would be ideal: that once-a-huge-page thing will never ever be a huge page
-> >>>>> again - but if it helps with OOM in corner cases, sure.
-> >>>>
-> >>>> Yes, that is one way, but I am not sure how hard would it be to implement.
-> >>>> Plus the fact that as you pointed out, once that memory is used for vmemmap
-> >>>> array, we cannot use it again.
-> >>>> Actually, we would fragment the memory eventually?
-> >>>>
-> >>>>> Possible simplification: don't perform the optimization for now with free
-> >>>>> huge pages residing on ZONE_MOVABLE or CMA. Certainly not perfect: what
-> >>>>> happens when migrating a huge page from ZONE_NORMAL to (ZONE_MOVABLE|CMA)?
-> >>>>
-> >>>> But if we do not allow theose pages to be in ZONE_MOVABLE or CMA, there is no
-> >>>> point in migrate them, right?
-> >>>
-> >>> Well, memory unplug "could" still work and migrate them and
-> >>> alloc_contig_range() "could in the future" still want to migrate them
-> >>> (virtio-mem, gigantic pages, powernv memtrace). Especially, the latter
-> >>> two don't work with ZONE_MOVABLE/CMA. But, I mean, it would be fair
-> >>> enough to say "there are no guarantees for
-> >>> alloc_contig_range()/offline_pages() with ZONE_NORMAL, so we can break
-> >>> these use cases when a magic switch is flipped and make these pages
-> >>> non-migratable anymore".
-> >>>
-> >>> I assume compaction doesn't care about huge pages either way, not sure
-> >>> about numa balancing etc.
-> >>>
-> >>>
-> >>> However, note that there is a fundamental issue with any approach that
-> >>> allocates a significant amount of unmovable memory for user-space
-> >>> purposes (excluding CMA allocations for unmovable stuff, CMA is
-> >>> special): pairing it with ZONE_MOVABLE becomes very tricky as your user
-> >>> space might just end up eating all kernel memory, although the system
-> >>> still looks like there is plenty of free memory residing in
-> >>> ZONE_MOVABLE. I mentioned that in the context of secretmem in a reduced
-> >>> form as well.
-> >>>
-> >>> We theoretically have that issue with dynamic allocation of gigantic
-> >>> pages, but it's something a user explicitly/rarely triggers and it can
-> >>> be documented to cause problems well enough. We'll have the same issue
-> >>> with GUP+ZONE_MOVABLE that Pavel is fixing right now - but GUP is
-> >>> already known to be broken in various ways and that it has to be treated
-> >>> in a special way. I'd like to limit the nasty corner cases.
-> >>>
-> >>> Of course, we could have smart rules like "don't online memory to
-> >>> ZONE_MOVABLE automatically when the magic switch is active". That's just
-> >>> ugly, but could work.
-> >>>
-> >>
-> >> Extending on that, I just discovered that only x86-64, ppc64, and arm64
-> >> really support hugepage migration.
-> >>
-> >> Maybe one approach with the "magic switch" really would be to disable
-> >> hugepage migration completely in hugepage_migration_supported(), and
-> >> consequently making hugepage_movable_supported() always return false.
-> >>
-> >> Huge pages would never get placed onto ZONE_MOVABLE/CMA and cannot be
-> >> migrated. The problem I describe would apply (careful with using
-> >> ZONE_MOVABLE), but well, it can at least be documented.
-> >
-> > Thanks for your explanation.
-> >
-> > All thinking seems to be introduced by encountering OOM. :-(
->
-> Yes.  Or, I think about it as the problem of not being able to dissolve (free
-> to buddy) a hugetlb page.  We can not dissolve because we can not allocate
-> vmemmap for all sumpages.
->
-> > In order to move forward and free the hugepage. We should add some
-> > restrictions below.
-> >
-> > 1. Only free the hugepage which is allocated from the ZONE_NORMAL.
-> Corrected: Only vmemmap optimize hugepages in ZONE_NORMAL
->
-> > 2. Disable hugepage migration when this feature is enabled.
->
-> I am not sure if we want to fully disable migration.  I may be misunderstanding
-> but the thought was to prevent migration between some movability types.  It
-> seems we should be able to migrate form ZONE_NORMAL to ZONE_NORMAL.
->
-> Also, if we do allow huge pages without vmemmap optimization in MOVABLE or CMA
-> then we should allow those to be migrated to NORMAL?  Or is there a reason why
-> we should prevent that.
->
-> > 3. Using GFP_ATOMIC to allocate vmemmap pages firstly (it can reduce
-> >    memory fragmentation), if it fails, we use part of the hugepage to
-> >    remap.
->
-> I honestly am not sure about this.  This would only happen for pages in
-> NORMAL.  The only time using part of the huge page for vmemmap would help is
-> if we are trying to dissolve huge pages to free up memory for other uses.
->
-> > What's your opinion about this? Should we take this approach?
->
-> I think trying to solve all the issues that could happen as the result of
-> not being able to dissolve a hugetlb page has made this extremely complex.
-> I know this is something we need to address/solve.  We do not want to add
-> more unexpected behavior in corner cases.  However, I can not help but think
-> about similar issues today.  For example, if a huge page is in use in
-> ZONE_MOVABLE or CMA there is no guarantee that it can be migrated today.
-> Correct?  We may need to allocate another huge page for the target of the
-> migration, and there is no guarantee we can do that.
+Hi, Neil,
 
-Yeah. Adding more restrictions makes things more complex. As you
-and Oscar said, refusing to free hugepage when allocating
-vmemmap pages fail may be an easy way now.
+Thanks for reviewing, more below.
 
-> --
-> Mike Kravetz
+On Fri, Jan 29, 2021 at 6:56 AM NeilBrown <neilb@suse.de> wrote:
+>
+> On Fri, Jan 22 2021, Xin Long wrote:
+>
+> > In commit 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code
+> > and interface"), it broke a behavior: op show() is always called when op
+> > next() returns an available obj.
+>
+> Interesting.  I was not aware that some callers assumed this guarantee.
+> If we are going to support it (which seems reasonable) we should add a
+> statement of this guarantee to the documentation -
+> Documentation/filesystems/seq_file.rst.
+> Maybe a new paragraph after "Finally, the show() function ..."
+>
+>    Note that show() will *always* be called after a successful start()
+>    or next() call, so that it can release any resources (such as
+>    ref-counts) that was acquired by those calls.
+OK, that's good, will add it.
+>
+>
+> >
+> > This caused a refcnt leak in net/sctp/proc.c, as of the seq_operations
+> > sctp_assoc_ops, transport obj is held in op next() and released in op
+> > show().
+> >
+> > Here fix it by moving count check against iov_iter_count after calling
+> > op show() so that op show() can still be called when op next() returns
+> > an available obj.
+> >
+> > Note that m->index needs to increase so that op start() could go fetch
+> > the next obj in the next round.
+>
+> This is certainly wrong.
+> As the introduction in my patch said:
+>
+>     A large part of achieving this is to *always* call ->next after ->show
+>     has successfully stored all of an entry in the buffer.  Never just
+>     increment the index instead.
+Understand.
+
+>
+> Incrementing ->index in common seq_file code is wrong.
+>
+> As we are no longer calling ->next after a successful ->show, we need to
+> make that ->show appear unsuccessful so that it will be retried.  This
+> is done be setting "m->count = offs".
+> So the moved code below becomes
+>
+>   if (m->count >= iov_iter_count(iter)) {
+>         /* That record is more than we want, so discard it */
+>         m->count = offs;
+>         break;
+>   }
+But I'm not sure if this's a better way, as discarding it means the last
+show() call is just a waste, next time it has to call show() for that
+obj again. Note that this is a different case from [1] (show() call
+actually failed) and [2](the buffer overflowed), and it makes sense
+to call show() again due to [1] and [2] next time.
+
+                if (err > 0) { <---[1]
+                        m->count = offs;
+                } else if (err || seq_has_overflowed(m)) { <--- [2]
+                        m->count = offs;
+                        break;
+                }
+                 if (m->count >= iov_iter_count(iter)) { <---[3]
+
+But for this one [3], all it needs is just enter into seq_read again and
+do the copying, no need to discard it.
+
+>
+> Possibly that can be merged into the preceding 'if'.
+>
+> Also the traverse() function contains a call to ->next that is not
+> reliably followed by a call to ->show, even when successful.  That needs
+> to be fixed too.
+Right, But I don't see a way here other than Incrementing m->index in
+traverse():
+
+@@ -114,16 +114,19 @@ static int traverse(struct seq_file *m, loff_t offset)
+                }
+                if (seq_has_overflowed(m))
+                        goto Eoverflow;
+-               p = m->op->next(m, p, &m->index);
+                if (pos + m->count > offset) {
+                        m->from = offset - pos;
+                        m->count -= m->from;
++                       m->index++;
+                        break;
+                }
+                pos += m->count;
+                m->count = 0;
+-               if (pos == offset)
++               if (pos == offset) {
++                       m->index++;
+                        break;
++               }
++               p = m->op->next(m, p, &m->index);
+        }
+
+>
+> Thanks,
+> NeilBrown
+>
+>
+>
+> >
+> > Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and interface")
+> > Reported-by: Prijesh <prpatel@redhat.com>
+> > Signed-off-by: Xin Long <lucien.xin@gmail.com>
+> > ---
+> >  fs/seq_file.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/seq_file.c b/fs/seq_file.c
+> > index 03a369c..da304f7 100644
+> > --- a/fs/seq_file.c
+> > +++ b/fs/seq_file.c
+> > @@ -264,8 +264,6 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >               }
+> >               if (!p || IS_ERR(p))    // no next record for us
+> >                       break;
+> > -             if (m->count >= iov_iter_count(iter))
+> > -                     break;
+> >               err = m->op->show(m, p);
+> >               if (err > 0) {          // ->show() says "skip it"
+> >                       m->count = offs;
+> > @@ -273,6 +271,10 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >                       m->count = offs;
+> >                       break;
+> >               }
+> > +             if (m->count >= iov_iter_count(iter)) {
+> > +                     m->index++;
+> > +                     break;
+> > +             }
+> >       }
+> >       m->op->stop(m, p);
+> >       n = copy_to_iter(m->buf, m->count, iter);
+> > --
+> > 2.1.0
