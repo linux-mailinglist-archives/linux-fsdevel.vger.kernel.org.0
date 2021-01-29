@@ -2,100 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C714C308F14
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 22:16:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6956309058
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 23:59:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233404AbhA2VLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 16:11:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42466 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233399AbhA2VLi (ORCPT
+        id S231132AbhA2W5l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 17:57:41 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:37276 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229683AbhA2W5j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 16:11:38 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20EFBC061574;
-        Fri, 29 Jan 2021 13:10:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=nKkcRmmPEgVIlUYC0hUi7DE2b8+YDtqtGJ0z4kX1lMw=; b=Sx8K+MCbPxbAsbIGnw0vwOauEv
-        B2M4fFMnFPvEcE4Vco+HTMQzVfjGzSkxbZnKlSAbCoX+UqK+4wxIQ30ThfACaUtrQzEEpXbrD7u2H
-        K4XA/pyLSpuZBaO8TocHWcq7prBgMItcJjpzA9I/y9zSG2s+8wzES+4QH6rfEAAnJakQ4oojFJ9cq
-        RXtdQkSu4bdwI7DEMYF7flH8Age+k+kBzrWHsiP7FDTU3YMcIojispqSWo0Psvk63VW6VihX3WezO
-        saLTQxwamd+oLLtPvx9tCv+rMOebQDH5oQhgHfRizB7a7FfIQkPRvcMfBlPbQVskuGtcuK+k4srxC
-        zHVt4ePw==;
-Received: from [2601:1c0:6280:3f0::7650]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1l5b2d-0005VS-IH; Fri, 29 Jan 2021 21:10:55 +0000
-Subject: Re: [PATCH] exfat: fix shift-out-of-bounds in exfat_fill_super()
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     willy@infradead.org, sj1557.seo@samsung.com, stable@vger.kernel.org
-References: <CGME20210129072117epcas1p29cfb23f0ff88f659b404b1d54fb44ee8@epcas1p2.samsung.com>
- <20210129071222.7582-1-namjae.jeon@samsung.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <67a65e15-dd17-85fd-cf91-0b9ad5f43b49@infradead.org>
-Date:   Fri, 29 Jan 2021 13:10:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        Fri, 29 Jan 2021 17:57:39 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l5ch8-00El2W-7c; Fri, 29 Jan 2021 15:56:50 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l5ch7-002DyO-3c; Fri, 29 Jan 2021 15:56:49 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+        <20210119162204.2081137-3-mszeredi@redhat.com>
+        <8735yw8k7a.fsf@x220.int.ebiederm.org>
+        <20210128165852.GA20974@mail.hallyn.com>
+        <87o8h8x1a6.fsf@x220.int.ebiederm.org>
+        <20210129154839.GC1130@mail.hallyn.com>
+Date:   Fri, 29 Jan 2021 16:55:29 -0600
+In-Reply-To: <20210129154839.GC1130@mail.hallyn.com> (Serge E. Hallyn's
+        message of "Fri, 29 Jan 2021 09:48:39 -0600")
+Message-ID: <87im7fuzdq.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20210129071222.7582-1-namjae.jeon@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1l5ch7-002DyO-3c;;;mid=<87im7fuzdq.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19X3waKsp4zjyMN3J12N2O9HZ4lenytO+A=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;"Serge E. Hallyn" <serge@hallyn.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 397 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 9 (2.4%), b_tie_ro: 8 (2.0%), parse: 1.01 (0.3%),
+        extract_message_metadata: 14 (3.5%), get_uri_detail_list: 1.68 (0.4%),
+        tests_pri_-1000: 5.0 (1.3%), tests_pri_-950: 1.28 (0.3%),
+        tests_pri_-900: 1.08 (0.3%), tests_pri_-90: 56 (14.2%), check_bayes:
+        55 (13.8%), b_tokenize: 8 (1.9%), b_tok_get_all: 7 (1.6%),
+        b_comp_prob: 2.6 (0.7%), b_tok_touch_all: 34 (8.7%), b_finish: 1.04
+        (0.3%), tests_pri_0: 276 (69.5%), check_dkim_signature: 0.77 (0.2%),
+        check_dkim_adsp: 2.6 (0.7%), poll_dns_idle: 0.31 (0.1%), tests_pri_10:
+        3.8 (1.0%), tests_pri_500: 25 (6.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/28/21 11:12 PM, Namjae Jeon wrote:
-> syzbot reported a warning which could cause shift-out-of-bounds issue.
-> 
-> Call Trace:
->  __dump_stack lib/dump_stack.c:79 [inline]
->  dump_stack+0x183/0x22e lib/dump_stack.c:120
->  ubsan_epilogue lib/ubsan.c:148 [inline]
->  __ubsan_handle_shift_out_of_bounds+0x432/0x4d0 lib/ubsan.c:395
->  exfat_read_boot_sector fs/exfat/super.c:471 [inline]
->  __exfat_fill_super fs/exfat/super.c:556 [inline]
->  exfat_fill_super+0x2acb/0x2d00 fs/exfat/super.c:624
->  get_tree_bdev+0x406/0x630 fs/super.c:1291
->  vfs_get_tree+0x86/0x270 fs/super.c:1496
->  do_new_mount fs/namespace.c:2881 [inline]
->  path_mount+0x1937/0x2c50 fs/namespace.c:3211
->  do_mount fs/namespace.c:3224 [inline]
->  __do_sys_mount fs/namespace.c:3432 [inline]
->  __se_sys_mount+0x2f9/0x3b0 fs/namespace.c:3409
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> exfat specification describe sect_per_clus_bits field of boot sector
-> could be at most 16 and at least 0. And sect_size_bits can also
-> affect this calculation, It also needs validation.
-> This patch add validation for sect_per_clus_bits and sect_size_bits
-> field of boot sector.
-> 
-> Fixes: 719c1e182916 ("exfat: add super block operations")
-> Cc: stable@vger.kernel.org # v5.9+
-> Reported-by: syzbot+da4fe66aaadd3c2e2d1c@syzkaller.appspotmail.com
-> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+"Serge E. Hallyn" <serge@hallyn.com> writes:
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+> On Thu, Jan 28, 2021 at 02:19:13PM -0600, Eric W. Biederman wrote:
+>> "Serge E. Hallyn" <serge@hallyn.com> writes:
+>> 
+>> > On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
+>> >> Miklos Szeredi <mszeredi@redhat.com> writes:
+>> >> 
+>> >> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+>> >> > currently return in v2 format unconditionally.
+>> >> >
+>> >> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+>> >> > and so the same conversions performed on it.
+>> >> >
+>> >> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
+>> >> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+>> >> > user namespace in case of v2) cannot be mapped in the current user
+>> >> > namespace.
+>> >> 
+>> >> This looks like a good cleanup.
+>> >
+>> > Sorry, I'm not following.  Why is this a good cleanup?  Why should
+>> > the xattr be shown as faked v3 in this case?
+>> 
+>> If the reader is in &init_user_ns.  If the filesystem was mounted in a
+>> user namespace.   Then the reader looses the information that the
+>
+> Can you be more precise about "filesystem was mounted in a user namespace"?
+> Is this a FUSE thing, the fs is marked as being mounted in a non-init userns?
+> If that's a possible case, then yes that must be represented as v3.  Using
+> is_v2header() may be the simpler way to check for that, but the more accurate
+> check would be "is it v2 header and mounted by init_user_ns".
 
-[  172.721719] exFAT-fs (loop0): bogus sector size bits : 0
+I think the filesystems current relevant are fuse,overlayfs,ramfs,tmpfs.
 
-[  172.721736] exFAT-fs (loop0): failed to read boot sector
-[  172.721744] exFAT-fs (loop0): failed to recognize exfat type
+> Basically yes, in as many cases as possible we want to just give a v2
+> cap because more userspace knows what to do with that, but a non-init-userns
+> mounted fs which provides a v2 fscap should have it represented as v3 cap
+> with rootid being the kuid that owns the userns.
 
-Thanks.
+That is the case we that is being fixed in the patch.
 
-> ---
->  fs/exfat/exfat_raw.h |  4 ++++
->  fs/exfat/super.c     | 31 ++++++++++++++++++++++++++-----
->  2 files changed, 30 insertions(+), 5 deletions(-)
+> Or am I still thinking wrongly?  Wouldn't be entirely surprised :)
 
+No you got it.
 
--- 
-~Randy
-
+Eric
