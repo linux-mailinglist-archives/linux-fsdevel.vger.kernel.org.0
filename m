@@ -2,139 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 666A230859F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 07:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BDF83085CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 07:33:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232132AbhA2GSB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 01:18:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231977AbhA2GRh (ORCPT
+        id S232172AbhA2G30 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 01:29:26 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:4889 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S232155AbhA2G3S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 01:17:37 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 954EAC061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 22:16:57 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id cq1so5231999pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 22:16:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IVLhRnuvVbWMIlCeZcR36K8LU3Zj15Td3oSsxTVm3dw=;
-        b=Si4B7X6KLGW5Z89xZzVDHl7Skoe89UmiKGduLwtiFh0G2ErduZLcoyhzxfb8G5ThI4
-         syF50PNuDAMILs8Gbg3zVHAZgxzjYwu3Uw/rNASkDR2t4GqLp1BCz97iLqdk77dYA4c3
-         2CkKQdm+NEK6TlvP3w9vWyB3cGnovx1bDqRVEFI1RGuFthcCxJwnq2yoH7dGXiwhK+NG
-         r0P2bc3WoSPjpzim4kOkGEgTHCPAxXV8ZbURzJNwTJ2lhdkX9bfbopWe/xjDpIAL3prB
-         c/pTLgzzEXjCsYV5TlheMKOfuCAisunpmi0HckFP+fJtJ5ubMdQc7AsA3gMnJSt8Jmkw
-         oBPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IVLhRnuvVbWMIlCeZcR36K8LU3Zj15Td3oSsxTVm3dw=;
-        b=KR+8doUUziY8+7Rs7HX0f2nSKc70xx80rcc5wX4msBAMxsHJ+/HuAW40ocgMybLRCB
-         XckKeMmcE2NsGpahoE4ze0nSUGz1uvmm5nGTUeQTpwUABchEgiMkbYoa2sY1XZmgfpNT
-         X0q5KJg6Xh8EcLqF5KFEofS+1JtQxvH9EEVweNr9bzGshGCMFxYmy8w9UO82WEkT7q+w
-         Q+G2J7LZhhIPDAV0jQeN3zhoiRCSiaESEm2/BKbrqguPb8mUIgjEvFGCpCoB+5WfSrNE
-         GrZyJ11Um0fqlQTc6m9V62CKMI0q1DEcobVFrLzl+gmE79m6tciPsCPhKjUBIDM6h++w
-         7jjg==
-X-Gm-Message-State: AOAM530S9hUE/84jP2GVsCS9Lxyyy5M58dZcVh13HjnaPMVtcrGhjiqr
-        m8h5OHcn+o25VmBO2gCo0phTGQW9jzZHG1Md0ww3mg==
-X-Google-Smtp-Source: ABdhPJzlRocofXXUHhMpeg+wl6mPPzL5KoQPKYz1IbQOQ5+sTLmTyjhkh9y85ZPhI/SVxjYO862v/1WfnMigBDp1NyQ=
-X-Received: by 2002:a17:902:8503:b029:dc:44f:62d8 with SMTP id
- bj3-20020a1709028503b02900dc044f62d8mr2746955plb.34.1611901017151; Thu, 28
- Jan 2021 22:16:57 -0800 (PST)
+        Fri, 29 Jan 2021 01:29:18 -0500
+X-IronPort-AV: E=Sophos;i="5.79,384,1602518400"; 
+   d="scan'208";a="103973619"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 29 Jan 2021 14:28:05 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 304B448990D2;
+        Fri, 29 Jan 2021 14:28:01 +0800 (CST)
+Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Fri, 29 Jan 2021 14:28:01 +0800
+Received: from irides.mr.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Fri, 29 Jan 2021 14:28:01 +0800
+From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <dm-devel@redhat.com>
+CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@lst.de>, <agk@redhat.com>,
+        <snitzer@redhat.com>, <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>,
+        <y-goto@fujitsu.com>
+Subject: [PATCH RESEND v2 00/10] fsdax: introduce fs query to support reflink
+Date:   Fri, 29 Jan 2021 14:27:47 +0800
+Message-ID: <20210129062757.1594130-1-ruansy.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-References: <20210117151053.24600-1-songmuchun@bytedance.com>
- <20210117151053.24600-6-songmuchun@bytedance.com> <20210126092942.GA10602@linux>
- <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com> <20210126145819.GB16870@linux>
- <259b9669-0515-01a2-d714-617011f87194@redhat.com> <20210126153448.GA17455@linux>
- <9475b139-1b33-76c7-ef5c-d43d2ea1dba5@redhat.com> <e28399e1-3a24-0f22-b057-76e7c7e70017@redhat.com>
- <20210128222906.GA3826@localhost.localdomain>
-In-Reply-To: <20210128222906.GA3826@localhost.localdomain>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 29 Jan 2021 14:16:19 +0800
-Message-ID: <CAMZfGtW7Bc-QhjW7MJyVwYXPEihbKyAE20NLgs3mVmgALh_X2A@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v13 05/12] mm: hugetlb: allocate the
- vmemmap pages associated with each HugeTLB page
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 304B448990D2.AA014
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 29, 2021 at 6:29 AM Oscar Salvador <osalvador@suse.de> wrote:
->
-> On Wed, Jan 27, 2021 at 11:36:15AM +0100, David Hildenbrand wrote:
-> > Extending on that, I just discovered that only x86-64, ppc64, and arm64
-> > really support hugepage migration.
-> >
-> > Maybe one approach with the "magic switch" really would be to disable
-> > hugepage migration completely in hugepage_migration_supported(), and
-> > consequently making hugepage_movable_supported() always return false.
->
-> Ok, so migration would not fork for these pages, and since them would
-> lay in !ZONE_MOVABLE there is no guarantee we can unplug the memory.
-> Well, we really cannot unplug it unless the hugepage is not used
-> (it can be dissolved at least).
->
-> Now to the allocation-when-freeing.
-> Current implementation uses GFP_ATOMIC(or wants to use) + forever loop.
-> One of the problems I see with GFP_ATOMIC is that gives you access
-> to memory reserves, but there are more users using those reserves.
-> Then, worst-scenario case we need to allocate 16MB order-0 pages
-> to free up 1GB hugepage, so the question would be whether reserves
-> really scale to 16MB + more users accessing reserves.
->
-> As I said, if anything I would go for an optimistic allocation-try
-> , if we fail just refuse to shrink the pool.
-> User can always try to shrink it later again via /sys interface.
+This patchset is aimed to support shared pages tracking for fsdax.
 
-Yeah. It seems that this is the easy way to move on.
+Resend V2:
+  - Cc dm-devel instead of linux-raid
 
-Thanks.
+Change from V1:
+  - Add the old memory-failure handler back for rolling back
+  - Add callback in MD's ->rmap() to support multiple mapping of dm device
+  - Add judgement for CONFIG_SYSFS
+  - Add pfn_valid() judgement in hwpoison_filter()
+  - Rebased to v5.11-rc5
 
->
-> Since hugepages would not be longer in ZONE_MOVABLE/CMA and are not
-> expected to be migratable, is that ok?
->
-> Using the hugepage for the vmemmap array was brought up several times,
-> but that would imply fragmenting memory over time.
->
-> All in all seems to be overly complicated (I might be wrong).
->
->
-> > Huge pages would never get placed onto ZONE_MOVABLE/CMA and cannot be
-> > migrated. The problem I describe would apply (careful with using
-> > ZONE_MOVABLE), but well, it can at least be documented.
->
-> I am not a page allocator expert but cannot the allocation fallback
-> to ZONE_MOVABLE under memory shortage on other zones?
->
->
-> --
-> Oscar Salvador
-> SUSE L3
+Change from RFC v3:
+  - Do not lock dax entry in memory failure handler
+  - Add a helper function for corrupted_range
+  - Add restrictions in xfs code
+  - Fix code style
+  - remove the useless association and lock in fsdax
+
+Change from RFC v2:
+  - Adjust the order of patches
+  - Divide the infrastructure and the drivers that use it
+  - Rebased to v5.10
+
+Change from RFC v1:
+  - Introduce ->block_lost() for block device
+  - Support mapped device
+  - Add 'not available' warning for realtime device in XFS
+  - Rebased to v5.10-rc1
+
+This patchset moves owner tracking from dax_assocaite_entry() to pmem
+device driver, by introducing an interface ->memory_failure() of struct
+pagemap.  This interface is called by memory_failure() in mm, and
+implemented by pmem device.  Then pmem device calls its ->corrupted_range()
+to find the filesystem which the corrupted data located in, and call
+filesystem handler to track files or metadata assocaited with this page.
+Finally we are able to try to fix the corrupted data in filesystem and do
+other necessary processing, such as killing processes who are using the
+files affected.
+
+The call trace is like this:
+memory_failure()
+ pgmap->ops->memory_failure()      => pmem_pgmap_memory_failure()
+  gendisk->fops->corrupted_range() => - pmem_corrupted_range()
+                                      - md_blk_corrupted_range()
+   sb->s_ops->currupted_range()    => xfs_fs_corrupted_range()
+    xfs_rmap_query_range()
+     xfs_currupt_helper()
+      * corrupted on metadata
+          try to recover data, call xfs_force_shutdown()
+      * corrupted on file data 
+          try to recover data, call mf_dax_mapping_kill_procs()
+
+The fsdax & reflink support for XFS is not contained in this patchset.
+
+(Rebased on v5.11-rc5)
+
+Shiyang Ruan (10):
+  pagemap: Introduce ->memory_failure()
+  blk: Introduce ->corrupted_range() for block device
+  fs: Introduce ->corrupted_range() for superblock
+  mm, fsdax: Refactor memory-failure handler for dax mapping
+  mm, pmem: Implement ->memory_failure() in pmem driver
+  pmem: Implement ->corrupted_range() for pmem driver
+  dm: Introduce ->rmap() to find bdev offset
+  md: Implement ->corrupted_range()
+  xfs: Implement ->corrupted_range() for XFS
+  fs/dax: Remove useless functions
+
+ block/genhd.c                 |   6 ++
+ drivers/md/dm-linear.c        |  20 ++++
+ drivers/md/dm.c               |  61 +++++++++++
+ drivers/nvdimm/pmem.c         |  44 ++++++++
+ fs/block_dev.c                |  42 +++++++-
+ fs/dax.c                      |  63 ++++-------
+ fs/xfs/xfs_fsops.c            |   5 +
+ fs/xfs/xfs_mount.h            |   1 +
+ fs/xfs/xfs_super.c            | 109 +++++++++++++++++++
+ include/linux/blkdev.h        |   2 +
+ include/linux/dax.h           |   1 +
+ include/linux/device-mapper.h |   5 +
+ include/linux/fs.h            |   2 +
+ include/linux/genhd.h         |   3 +
+ include/linux/memremap.h      |   8 ++
+ include/linux/mm.h            |   9 ++
+ mm/memory-failure.c           | 190 +++++++++++++++++++++++-----------
+ 17 files changed, 466 insertions(+), 105 deletions(-)
+
+-- 
+2.30.0
+
+
+
