@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C73B23084B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 05:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8FF13084BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 05:54:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231987AbhA2Exo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jan 2021 23:53:44 -0500
-Received: from mail.synology.com ([211.23.38.101]:44588 "EHLO synology.com"
+        id S231995AbhA2EyI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jan 2021 23:54:08 -0500
+Received: from mail.synology.com ([211.23.38.101]:44922 "EHLO synology.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232007AbhA2Exd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jan 2021 23:53:33 -0500
+        id S231967AbhA2EyH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Jan 2021 23:54:07 -0500
 Received: from localhost.localdomain (unknown [10.17.36.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by synology.com (Postfix) with ESMTPSA id 3ADA6CE781CF;
-        Fri, 29 Jan 2021 12:52:51 +0800 (CST)
+        by synology.com (Postfix) with ESMTPSA id 1D884CE781E9;
+        Fri, 29 Jan 2021 12:53:25 +0800 (CST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
-        t=1611895971; bh=Zin92eGm3uQ3NA2MvXwbiph99acq62tN+NV0r8KQUNg=;
+        t=1611896005; bh=4kMZ5zHLO27hnJMdGRSP6MiFaltvcjzGh8J9HyAvWxQ=;
         h=From:To:Cc:Subject:Date;
-        b=W7tkzYH0p+RtQcDOs1TU9AcWxYKAgXWenV4G+QdRvCfCDJxpd16vWdmMZVuFFB6/D
-         rh86LUlypGcpYLeqgwaW2Mw3G9Lw4cd/zZ+trjDpA+j84rtrwZ0hteb7NM9I7OMaP8
-         OKetVteEeKmotnz7/3lKXl22tmaM4/SR5aWFFtCc=
+        b=ZiPKK1kzcOBvIRAfUPUu1IkVUx2vsk2pygJ17GkVbO/FQ0hzlPJ9sUDOYzx3gYuiR
+         BYuMKf6uM0wvml0+siiXnhorscO3pJcmrQvjsEEpLR5EFWv+4bsFAsLi/7MlNw9FRn
+         sZEKB1Zpz+Dad4BzPwdeKAZV0KQEOHFw/d7Ku9wg=
 From:   bingjingc <bingjingc@synology.com>
 To:     viro@zeniv.linux.org.uk, jack@suse.com, jack@suse.cz,
         axboe@kernel.dk, linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, cccheng@synology.com,
         bingjingc@synology.com, robbieko@synology.com, willy@infradead.org,
         rdunlap@infradead.org, miklos@szeredi.hu
-Subject: [PATCH v3 1/3] parser: add unsigned int parser
-Date:   Fri, 29 Jan 2021 12:52:42 +0800
-Message-Id: <20210129045242.10268-1-bingjingc@synology.com>
+Subject: [PATCH v3 2/3] isofs: handle large user and group ID
+Date:   Fri, 29 Jan 2021 12:53:15 +0800
+Message-Id: <20210129045315.10375-1-bingjingc@synology.com>
 X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,61 +44,56 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: BingJing Chang <bingjingc@synology.com>
 
-Will be used by fs parsing options
+If uid or gid of mount options is larger than INT_MAX, isofs_fill_super
+will return -EINVAL.
 
-Reviewed-by: Robbie Ko<robbieko@synology.com>
+The problem can be encountered by a domain user or reproduced via:
+mount -o loop,uid=2147483648 ubuntu-16.04.6-server-amd64.iso /mnt
+
+This can be fixed as commit 233a01fa9c4c ("fuse: handle large user and
+group ID").
+
+Reviewed-by: Robbie Ko <robbieko@synology.com>
 Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
 Signed-off-by: BingJing Chang <bingjingc@synology.com>
 ---
- include/linux/parser.h |  1 +
- lib/parser.c           | 22 ++++++++++++++++++++++
- 2 files changed, 23 insertions(+)
+ fs/isofs/inode.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/parser.h b/include/linux/parser.h
-index 89e2b23..dd79f45 100644
---- a/include/linux/parser.h
-+++ b/include/linux/parser.h
-@@ -29,6 +29,7 @@ typedef struct {
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index ec90773..21edc42 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -339,6 +339,7 @@ static int parse_options(char *options, struct iso9660_options *popt)
+ {
+ 	char *p;
+ 	int option;
++	unsigned int uv;
  
- int match_token(char *, const match_table_t table, substring_t args[]);
- int match_int(substring_t *, int *result);
-+int match_uint(substring_t *s, unsigned int *result);
- int match_u64(substring_t *, u64 *result);
- int match_octal(substring_t *, int *result);
- int match_hex(substring_t *, int *result);
-diff --git a/lib/parser.c b/lib/parser.c
-index f5b3e5d..7785e41 100644
---- a/lib/parser.c
-+++ b/lib/parser.c
-@@ -188,6 +188,28 @@ int match_int(substring_t *s, int *result)
- }
- EXPORT_SYMBOL(match_int);
- 
-+/*
-+ * match_uint - scan a decimal representation of an integer from a substring_t
-+ * @s: substring_t to be scanned
-+ * @result: resulting integer on success
-+ *
-+ * Description: Attempts to parse the &substring_t @s as a decimal integer. On
-+ * success, sets @result to the integer represented by the string and returns 0.
-+ * Returns -ENOMEM, -EINVAL, or -ERANGE on failure.
-+ */
-+int match_uint(substring_t *s, unsigned int *result)
-+{
-+	int err = -ENOMEM;
-+	char *buf = match_strdup(s);
-+
-+	if (buf) {
-+		err = kstrtouint(buf, 10, result);
-+		kfree(buf);
-+	}
-+	return err;
-+}
-+EXPORT_SYMBOL(match_uint);
-+
- /**
-  * match_u64: - scan a decimal representation of a u64 from
-  *                  a substring_t
+ 	popt->map = 'n';
+ 	popt->rock = 1;
+@@ -434,17 +435,17 @@ static int parse_options(char *options, struct iso9660_options *popt)
+ 		case Opt_ignore:
+ 			break;
+ 		case Opt_uid:
+-			if (match_int(&args[0], &option))
++			if (match_uint(&args[0], &uv))
+ 				return 0;
+-			popt->uid = make_kuid(current_user_ns(), option);
++			popt->uid = make_kuid(current_user_ns(), uv);
+ 			if (!uid_valid(popt->uid))
+ 				return 0;
+ 			popt->uid_set = 1;
+ 			break;
+ 		case Opt_gid:
+-			if (match_int(&args[0], &option))
++			if (match_uint(&args[0], &uv))
+ 				return 0;
+-			popt->gid = make_kgid(current_user_ns(), option);
++			popt->gid = make_kgid(current_user_ns(), uv);
+ 			if (!gid_valid(popt->gid))
+ 				return 0;
+ 			popt->gid_set = 1;
 -- 
 2.7.4
 
