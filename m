@@ -2,142 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C2623085D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 07:33:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FEEC30861E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 08:02:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232227AbhA2Gaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 01:30:39 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:32276 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232218AbhA2GaL (ORCPT
+        id S232165AbhA2G6C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 01:58:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57188 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231977AbhA2G5y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 01:30:11 -0500
-X-IronPort-AV: E=Sophos;i="5.79,384,1602518400"; 
-   d="scan'208";a="103973638"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 29 Jan 2021 14:28:18 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 14C804CE6791;
-        Fri, 29 Jan 2021 14:28:15 +0800 (CST)
-Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Fri, 29 Jan 2021 14:28:15 +0800
-Received: from irides.mr.mr.mr (10.167.225.141) by
- G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Fri, 29 Jan 2021 14:28:15 +0800
-From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <dm-devel@redhat.com>
-CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@lst.de>, <agk@redhat.com>,
-        <snitzer@redhat.com>, <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>,
-        <y-goto@fujitsu.com>
-Subject: [PATCH RESEND v2 10/10] fs/dax: Remove useless functions
-Date:   Fri, 29 Jan 2021 14:27:57 +0800
-Message-ID: <20210129062757.1594130-11-ruansy.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210129062757.1594130-1-ruansy.fnst@cn.fujitsu.com>
-References: <20210129062757.1594130-1-ruansy.fnst@cn.fujitsu.com>
+        Fri, 29 Jan 2021 01:57:54 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57DFC061573
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 22:57:14 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id t29so5629335pfg.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jan 2021 22:57:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TbuleYwe5NvwJojz+4aOt8A66WvfcU/0PeNJr1ClLeM=;
+        b=nBYq60FCybEbi705MaQVQBD560R6is7L09GfIIAOZ+XUgkuhtMr6vpKMGJYfpcP2/C
+         /tR+5bo1yUoVQkm/j3lecucbC/OOaG9/7VyuZcnzUSASJZXIsekF0oBlwGjtkJCVu2yg
+         zDnk/cm8mY41bA/lgcnAYb7WTgQ1pfvIUwwPI420UqWXkgit7AgWRG5v31gzxqf+ymtC
+         mN6WlsCyTyxgtc+HIY32Ty1o0RZYFpc43VTnLarPU94L3cdanP4M6ktWN/nc4CSr981d
+         DSkx0viJASulvmpQu++VsZtNqzNhJy2AQFQ1I0A7dMHtmAdv3Sbs9a7xNmorN+E46fUC
+         LJcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TbuleYwe5NvwJojz+4aOt8A66WvfcU/0PeNJr1ClLeM=;
+        b=eBuo25XwDrt61UIxGc8D4G34KSi3MVVc40ux1IHcXrhBIytjcc9vZNcbj7L+C4EJnP
+         itjtewR0+VXLFJV8qUfbC+DXTF3mDGnUWyP9f2EdFIYGmEIv8QP3aeFShDtkxjKgC9Ow
+         LSWXM1nlYPMalxzMckJycj5LBlyseCH46BYnjYjh7JF8n0jOXotK1Ob3Id4IzcAOAHdt
+         rsOCZ3gjfZxDwRn6Vn45o7gmyMbmKEUZUyBQqz4bNddzh53e8/Aw4CsdXBduX2sPNGQ5
+         eJK33GJwgr9AEJKk9NjGNW551gC/INQJye66KBjlX4b+LnlpJiqYxe+BM8apxsOWm2EH
+         dQLg==
+X-Gm-Message-State: AOAM530xDUIHRlDkM+7hJkuM2e2Wrg5iwSSUN/p5i26uc7/rgoMUdgir
+        aqGVpJNPYsFbWCiu/Ki6rugPsYmf7ab+SaM6Yz57jQ==
+X-Google-Smtp-Source: ABdhPJzDbWkHuF3yE1SwKxbTcZlixSLpsO95Cov3oCPm9dJ66DrTvWGCs6cK7qWQRkEcJATRiILuvPSB1lQ5oFobVFE=
+X-Received: by 2002:a63:50a:: with SMTP id 10mr3283849pgf.273.1611903434093;
+ Thu, 28 Jan 2021 22:57:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 14C804CE6791.AECA7
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
+References: <20210117151053.24600-1-songmuchun@bytedance.com>
+ <20210117151053.24600-6-songmuchun@bytedance.com> <20210126092942.GA10602@linux>
+ <6fe52a7e-ebd8-f5ce-1fcd-5ed6896d3797@redhat.com> <20210126145819.GB16870@linux>
+ <259b9669-0515-01a2-d714-617011f87194@redhat.com> <20210126153448.GA17455@linux>
+ <9475b139-1b33-76c7-ef5c-d43d2ea1dba5@redhat.com> <e28399e1-3a24-0f22-b057-76e7c7e70017@redhat.com>
+ <CAMZfGtWCu95Qve8p9mH7C7rm=F+znsc8+VL_6Z-_k4e5hAHzhA@mail.gmail.com> <e200c17e-5c95-025e-37a7-af7cfbb05b18@oracle.com>
+In-Reply-To: <e200c17e-5c95-025e-37a7-af7cfbb05b18@oracle.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Fri, 29 Jan 2021 14:56:35 +0800
+Message-ID: <CAMZfGtWvDCaN7M9CHNx3O_OQvH8+HN_xg=uc3aUOUeqqB_--ZQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v13 05/12] mm: hugetlb: allocate the
+ vmemmap pages associated with each HugeTLB page
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since owner tarcking is triggerred by pmem device, these functions are
-useless.  So remove it.
+On Fri, Jan 29, 2021 at 9:04 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>
+> On 1/28/21 4:37 AM, Muchun Song wrote:
+> > On Wed, Jan 27, 2021 at 6:36 PM David Hildenbrand <david@redhat.com> wrote:
+> >>
+> >> On 26.01.21 16:56, David Hildenbrand wrote:
+> >>> On 26.01.21 16:34, Oscar Salvador wrote:
+> >>>> On Tue, Jan 26, 2021 at 04:10:53PM +0100, David Hildenbrand wrote:
+> >>>>> The real issue seems to be discarding the vmemmap on any memory that has
+> >>>>> movability constraints - CMA and ZONE_MOVABLE; otherwise, as discussed, we
+> >>>>> can reuse parts of the thingy we're freeing for the vmemmap. Not that it
+> >>>>> would be ideal: that once-a-huge-page thing will never ever be a huge page
+> >>>>> again - but if it helps with OOM in corner cases, sure.
+> >>>>
+> >>>> Yes, that is one way, but I am not sure how hard would it be to implement.
+> >>>> Plus the fact that as you pointed out, once that memory is used for vmemmap
+> >>>> array, we cannot use it again.
+> >>>> Actually, we would fragment the memory eventually?
+> >>>>
+> >>>>> Possible simplification: don't perform the optimization for now with free
+> >>>>> huge pages residing on ZONE_MOVABLE or CMA. Certainly not perfect: what
+> >>>>> happens when migrating a huge page from ZONE_NORMAL to (ZONE_MOVABLE|CMA)?
+> >>>>
+> >>>> But if we do not allow theose pages to be in ZONE_MOVABLE or CMA, there is no
+> >>>> point in migrate them, right?
+> >>>
+> >>> Well, memory unplug "could" still work and migrate them and
+> >>> alloc_contig_range() "could in the future" still want to migrate them
+> >>> (virtio-mem, gigantic pages, powernv memtrace). Especially, the latter
+> >>> two don't work with ZONE_MOVABLE/CMA. But, I mean, it would be fair
+> >>> enough to say "there are no guarantees for
+> >>> alloc_contig_range()/offline_pages() with ZONE_NORMAL, so we can break
+> >>> these use cases when a magic switch is flipped and make these pages
+> >>> non-migratable anymore".
+> >>>
+> >>> I assume compaction doesn't care about huge pages either way, not sure
+> >>> about numa balancing etc.
+> >>>
+> >>>
+> >>> However, note that there is a fundamental issue with any approach that
+> >>> allocates a significant amount of unmovable memory for user-space
+> >>> purposes (excluding CMA allocations for unmovable stuff, CMA is
+> >>> special): pairing it with ZONE_MOVABLE becomes very tricky as your user
+> >>> space might just end up eating all kernel memory, although the system
+> >>> still looks like there is plenty of free memory residing in
+> >>> ZONE_MOVABLE. I mentioned that in the context of secretmem in a reduced
+> >>> form as well.
+> >>>
+> >>> We theoretically have that issue with dynamic allocation of gigantic
+> >>> pages, but it's something a user explicitly/rarely triggers and it can
+> >>> be documented to cause problems well enough. We'll have the same issue
+> >>> with GUP+ZONE_MOVABLE that Pavel is fixing right now - but GUP is
+> >>> already known to be broken in various ways and that it has to be treated
+> >>> in a special way. I'd like to limit the nasty corner cases.
+> >>>
+> >>> Of course, we could have smart rules like "don't online memory to
+> >>> ZONE_MOVABLE automatically when the magic switch is active". That's just
+> >>> ugly, but could work.
+> >>>
+> >>
+> >> Extending on that, I just discovered that only x86-64, ppc64, and arm64
+> >> really support hugepage migration.
+> >>
+> >> Maybe one approach with the "magic switch" really would be to disable
+> >> hugepage migration completely in hugepage_migration_supported(), and
+> >> consequently making hugepage_movable_supported() always return false.
+> >>
+> >> Huge pages would never get placed onto ZONE_MOVABLE/CMA and cannot be
+> >> migrated. The problem I describe would apply (careful with using
+> >> ZONE_MOVABLE), but well, it can at least be documented.
+> >
+> > Thanks for your explanation.
+> >
+> > All thinking seems to be introduced by encountering OOM. :-(
+>
+> Yes.  Or, I think about it as the problem of not being able to dissolve (free
+> to buddy) a hugetlb page.  We can not dissolve because we can not allocate
+> vmemmap for all sumpages.
+>
+> > In order to move forward and free the hugepage. We should add some
+> > restrictions below.
+> >
+> > 1. Only free the hugepage which is allocated from the ZONE_NORMAL.
+> Corrected: Only vmemmap optimize hugepages in ZONE_NORMAL
+>
+> > 2. Disable hugepage migration when this feature is enabled.
+>
+> I am not sure if we want to fully disable migration.  I may be misunderstanding
+> but the thought was to prevent migration between some movability types.  It
+> seems we should be able to migrate form ZONE_NORMAL to ZONE_NORMAL.
+>
+> Also, if we do allow huge pages without vmemmap optimization in MOVABLE or CMA
+> then we should allow those to be migrated to NORMAL?  Or is there a reason why
+> we should prevent that.
+>
+> > 3. Using GFP_ATOMIC to allocate vmemmap pages firstly (it can reduce
+> >    memory fragmentation), if it fails, we use part of the hugepage to
+> >    remap.
+>
+> I honestly am not sure about this.  This would only happen for pages in
+> NORMAL.  The only time using part of the huge page for vmemmap would help is
+> if we are trying to dissolve huge pages to free up memory for other uses.
+>
+> > What's your opinion about this? Should we take this approach?
+>
+> I think trying to solve all the issues that could happen as the result of
+> not being able to dissolve a hugetlb page has made this extremely complex.
+> I know this is something we need to address/solve.  We do not want to add
+> more unexpected behavior in corner cases.  However, I can not help but think
+> about similar issues today.  For example, if a huge page is in use in
+> ZONE_MOVABLE or CMA there is no guarantee that it can be migrated today.
+> Correct?  We may need to allocate another huge page for the target of the
+> migration, and there is no guarantee we can do that.
 
-Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
----
- fs/dax.c | 46 ----------------------------------------------
- 1 file changed, 46 deletions(-)
+Yeah. Adding more restrictions makes things more complex. As you
+and Oscar said, refusing to free hugepage when allocating
+vmemmap pages fail may be an easy way now.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index c64c3a0e76a6..e20a5df03eec 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -323,48 +323,6 @@ static unsigned long dax_end_pfn(void *entry)
- 	for (pfn = dax_to_pfn(entry); \
- 			pfn < dax_end_pfn(entry); pfn++)
- 
--/*
-- * TODO: for reflink+dax we need a way to associate a single page with
-- * multiple address_space instances at different linear_page_index()
-- * offsets.
-- */
--static void dax_associate_entry(void *entry, struct address_space *mapping,
--		struct vm_area_struct *vma, unsigned long address)
--{
--	unsigned long size = dax_entry_size(entry), pfn, index;
--	int i = 0;
--
--	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
--		return;
--
--	index = linear_page_index(vma, address & ~(size - 1));
--	for_each_mapped_pfn(entry, pfn) {
--		struct page *page = pfn_to_page(pfn);
--
--		WARN_ON_ONCE(page->mapping);
--		page->mapping = mapping;
--		page->index = index + i++;
--	}
--}
--
--static void dax_disassociate_entry(void *entry, struct address_space *mapping,
--		bool trunc)
--{
--	unsigned long pfn;
--
--	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
--		return;
--
--	for_each_mapped_pfn(entry, pfn) {
--		struct page *page = pfn_to_page(pfn);
--
--		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
--		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
--		page->mapping = NULL;
--		page->index = 0;
--	}
--}
--
- static struct page *dax_busy_page(void *entry)
- {
- 	unsigned long pfn;
-@@ -543,7 +501,6 @@ static void *grab_mapping_entry(struct xa_state *xas,
- 			xas_lock_irq(xas);
- 		}
- 
--		dax_disassociate_entry(entry, mapping, false);
- 		xas_store(xas, NULL);	/* undo the PMD join */
- 		dax_wake_entry(xas, entry, true);
- 		mapping->nrexceptional--;
-@@ -680,7 +637,6 @@ static int __dax_invalidate_entry(struct address_space *mapping,
- 	    (xas_get_mark(&xas, PAGECACHE_TAG_DIRTY) ||
- 	     xas_get_mark(&xas, PAGECACHE_TAG_TOWRITE)))
- 		goto out;
--	dax_disassociate_entry(entry, mapping, trunc);
- 	xas_store(&xas, NULL);
- 	mapping->nrexceptional--;
- 	ret = 1;
-@@ -774,8 +730,6 @@ static void *dax_insert_entry(struct xa_state *xas,
- 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
- 		void *old;
- 
--		dax_disassociate_entry(entry, mapping, false);
--		dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address);
- 		/*
- 		 * Only swap our new entry into the page cache if the current
- 		 * entry is a zero page or an empty entry.  If a normal PTE or
--- 
-2.30.0
-
-
-
+> --
+> Mike Kravetz
