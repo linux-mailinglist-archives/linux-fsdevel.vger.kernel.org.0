@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21248308571
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 07:08:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E3F308580
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jan 2021 07:16:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232024AbhA2GB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jan 2021 01:01:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45212 "EHLO
+        id S232048AbhA2GIj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jan 2021 01:08:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229927AbhA2GBw (ORCPT
+        with ESMTP id S232021AbhA2GIi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jan 2021 01:01:52 -0500
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11977C061756;
-        Thu, 28 Jan 2021 22:01:12 -0800 (PST)
-Received: by mail-io1-xd34.google.com with SMTP id u17so8181818iow.1;
-        Thu, 28 Jan 2021 22:01:12 -0800 (PST)
+        Fri, 29 Jan 2021 01:08:38 -0500
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5C4C061573;
+        Thu, 28 Jan 2021 22:07:57 -0800 (PST)
+Received: by mail-il1-x12b.google.com with SMTP id z18so7338115ile.9;
+        Thu, 28 Jan 2021 22:07:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=I7Jf4w2xQmonkgOSIoCWrc0+He7UNn5JipXpaAB81cg=;
-        b=r70zrkvIb3T0rBH5Z2812Vuxjmhp2HQrxUhsJAvYWEv8Nc6dww2sKXdShoNWfpDe0l
-         FosQjsrtPB7nsNNeaa9uk+SdRiNKSj/2QcCgESa3wE8qY6rkjUpwa+KG5oXFAAwxHQVF
-         E1MwCx6X52VGXNtbzXHGvZETNhjX4l3FJKC/rbPNmlOWMUu2UzNR4lzC2z9zL8pujS5y
-         2Kof7uqiBRc+RvqvfLhbGnYH7QihgpkD+SSCAxm1uKOxsQCv/p9+CX/O6TWPZLArNQHK
-         ssLCzcTh1j6TxbFLjZtOOF7/OHfdXoUJszw7y+WEzTkm6MGrDRl1NRqMIqUtH1kQ0FBK
-         IMJg==
+        bh=RSMECV3esitGF7SoTH5ZSvyrofHyqxLrUOwc0nwKDZg=;
+        b=lfoedfgpPKqTdp+Bi4CfR3TLngUx+rgjXEmO1XUI0kUKFrd5kpE1684PiF+b7tijIv
+         hZ//L6xU3FsLdGjlGgpHut3/JiYrTxbe63DYLiV5c8cWqtIP42xHa4cbjsCnAsKo+JdA
+         o7ncZa+kxYApdu4pfRJGNc7PLIA7ebhckn+mdOAj1DArPymqQq1XUmPyjuM+Xg13j5B+
+         trv5mWakvDNX/GDUun74mZF1yv8F2mqS9X7qRttRIXjX50YQgh+QCE/PSm6Nq6y6z/Nv
+         cuqya5/yyx22E1OwemJJq20iW1TL60iFpsBNSVwziRKcjKtELGqFyml0YvoT1sXgVljg
+         3i+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=I7Jf4w2xQmonkgOSIoCWrc0+He7UNn5JipXpaAB81cg=;
-        b=AyDYsLSlFLx0n2SGsNF/z89a2tZUlmqTXz7Spk1ivuPFBJ7Yvuij2zu2bMM9sfecW+
-         Fyr5g3DCgXMuAj6Zyfwza3XCM1xtdAC3/j3VMQvcJ+wADrbUQDqF+9NXJX+84DmXIV6t
-         7nbivzNR26gqccIXN9ihU4/GMhlTxgsePDTHOn4Rw2WnylZwopEVXCVzKGrri+V5vqgX
-         EJ2wMLGeuJe38EyVUImL5iQYaC6x5kGT+LjIVVn4brdwmlpyKUhZu8105gq3oQS4jYhs
-         bvWAJXB/nIHUyyB/Vsf5aMMt3/iZx/KrUKN36f3M2SSOGriHx4yyv1Cj6E2PMkWsPA0c
-         RBKA==
-X-Gm-Message-State: AOAM532XZ1niOjSnJoFH4kEzPsXjZy4aq8pKmGiIkbbf0Xtq+8l+KVNp
-        LNNWrlmtH+oV6lEEUZdG1ZvZLQyhDl3OWKdRZjHlRy/M3uQiZg==
-X-Google-Smtp-Source: ABdhPJxFpR3aT0BQY0meTLiJwXYnAk7p0kzsniXup3IColeXcgDuwcom/2i2lyMLAgcPN5I0dB7OCiSur35i35eXS20=
-X-Received: by 2002:a05:6602:144:: with SMTP id v4mr2671045iot.168.1611900070495;
- Thu, 28 Jan 2021 22:01:10 -0800 (PST)
+        bh=RSMECV3esitGF7SoTH5ZSvyrofHyqxLrUOwc0nwKDZg=;
+        b=Eg+y/Fd5G+WAmGLGZmiUqRMV59XHSeWiXkRk0nfyztfjVSYMcEM0iKfUjxN/+YBSQ8
+         vq0fURQq9QA/m+m0OodKnlL70jnqHkBReEYZQZdl9yHTpm9/NKWUQR5MleRfl5OQXnFT
+         r48lM0fa3TuVIiqCr6zi4eEoOmdT8CdjHgJIlZOXw53JvppWz3g53D+kjQ/BIluil03n
+         axjx7dhr6cKdA2LUVxbXXgRP9ReOjxp6TMXo55Xo9o2Xky+1CJj/PLDmx3aW5VGCJyZk
+         3Uvm2rATKJwgg5IrNvnS/8QjYHLY3J8i3dqTo8afmuUlyCpvAhHEDBm2aPqEtm8lrY6X
+         bEzA==
+X-Gm-Message-State: AOAM532nyar5qWdHAbTdYQgxaoOeUdiEz2ho8ETpgJ/0r6bL/zjutCT0
+        q4EeUlxBNp8LDnMLFoJKAnMpt+9VBSVoXFEKLIGxm9nWalwQew==
+X-Google-Smtp-Source: ABdhPJzlVxghmhTq5y989GBcCRqNLVnFNeht1dy96750qJfRfAX21Yeiywv5LKrS/GnAgp+ZDxMbrz2I/MS970gNIuE=
+X-Received: by 2002:a92:6511:: with SMTP id z17mr167202ilb.232.1611900476921;
+ Thu, 28 Jan 2021 22:07:56 -0800 (PST)
 MIME-Version: 1.0
-References: <1611800401-9790-1-git-send-email-bingjingc@synology.com>
- <CAJfpegtDbDzSCgv-D66-5dAA=pDxMGN_aMTVcNPzWNibt2smLw@mail.gmail.com> <939d2196-8468-4d93-b976-70f3d8ac83de@Mail>
-In-Reply-To: <939d2196-8468-4d93-b976-70f3d8ac83de@Mail>
+References: <1611817983-2892-1-git-send-email-bingjingc@synology.com>
+ <9e867a74-89c0-e0da-b166-e9824372e181@infradead.org> <6862f3e8-5eb6-4364-a05e-d4ad23d1d37d@Mail>
+In-Reply-To: <6862f3e8-5eb6-4364-a05e-d4ad23d1d37d@Mail>
 From:   bingjing chang <bxxxjxxg@gmail.com>
-Date:   Fri, 29 Jan 2021 14:00:59 +0800
-Message-ID: <CAMmgxWFMBxg47J_Zjdfm5i36m3TMf2VEzoeREGKD6VFJXcbN3A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] parser: add unsigned int parser
-To:     Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 29 Jan 2021 14:07:46 +0800
+Message-ID: <CAMmgxWEm-yLzxjFrnvjjtDMtim2FDrqxJQucgs40nBSW6Hj_1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] parser: add unsigned int parser
+To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>,
         Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         cccheng@synology.com, robbieko@synology.com,
+        Matthew Wilcox <willy@infradead.org>,
         bingjingc <bingjingc@synology.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -64,71 +65,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Miklos,
+Hi Randy,
 
-Thank you for your mail. Please see my message below.
+Thank you for talking to me the correct kernel-doc format. :)
+
+I also split the cleanup of kernel doc comments into an independent
+patch due to Jan's comments and submitted it. Thank you.
 
 bingjingc <bingjingc@synology.com> =E6=96=BC 2021=E5=B9=B41=E6=9C=8829=E6=
-=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=881:50=E5=AF=AB=E9=81=93=EF=BC=9A
+=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=881:51=E5=AF=AB=E9=81=93=EF=BC=9A
 >
 > [loop bxxxjxxg@gmail.com] in order to reply in plain-text
-> Miklos Szeredi <miklos@szeredi.hu> =E6=96=BC 2021-01-28 16:37 =E5=AF=AB=
+> Randy Dunlap <rdunlap@infradead.org> =E6=96=BC 2021-01-29 05:26 =E5=AF=AB=
 =E9=81=93=EF=BC=9A
 >
-> On Thu, Jan 28, 2021 at 3:21 AM bingjingc <bingjingc@synology.com> wrote:
-> >
+> On 1/27/21 11:13 PM, bingjingc wrote:
 > > From: BingJing Chang <bingjingc@synology.com>
 > >
-> > Will be used by fs parsing options
+> > Will be used by fs parsing options & fix kernel-doc typos
 > >
 > > Reviewed-by: Robbie Ko<robbieko@synology.com>
 > > Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
+> > Reviewed-by: Matthew Wilcox <willy@infradead.org>
+> > Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+>
+> You should drop my Reviewed-by: also, until I explicitly
+> reply with that.
+>
 > > Signed-off-by: BingJing Chang <bingjingc@synology.com>
 > > ---
-> >  fs/isofs/inode.c       | 16 ++--------------
-> >  fs/udf/super.c         | 16 ++--------------
 > >  include/linux/parser.h |  1 +
-> >  lib/parser.c           | 22 ++++++++++++++++++++++
-> >  4 files changed, 27 insertions(+), 28 deletions(-)
-> >
-> > diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-> > index 342ac19..21edc42 100644
-> > --- a/fs/isofs/inode.c
-> > +++ b/fs/isofs/inode.c
-> > @@ -335,18 +335,6 @@ static const match_table_t tokens =3D {
-> >         {Opt_err, NULL}
-> >  };
-> >
-> > -static int isofs_match_uint(substring_t *s, unsigned int *res)
-> > -{
-> > -       int err =3D -ENOMEM;
-> > -       char *buf =3D match_strdup(s);
-> > -
-> > -       if (buf) {
-> > -               err =3D kstrtouint(buf, 10, res);
-> > -               kfree(buf);
-> > -       }
-> > -       return err;
-> > -}
+> >  lib/parser.c           | 44 +++++++++++++++++++++++++++++++++---------=
+--
+> >  2 files changed, 34 insertions(+), 11 deletions(-)
 >
-> I don't see how adding this function and removing it in the same
-> series makes any sense.
-
-That's true. Simple and clear is better.
-I used to think that the acceptance of patch can be 3/3 or 2/3.
-And I was not sure are there needs for making match_uint
-as shared lib. So I made the first patch.
-
-I simplify them. Please see the third patch, thanks!
-
+> The kernel-doc changes do look good. :)
 >
-> Why not make this the first patch in the series, simplifying everything?
+> thanks.
+> --
+> ~Randy
 >
-> And while at it the referenced fuse implementation can also be
-> converted (as a separate patch).
->
-> Thanks,
-> Miklos
 
 Thanks,
 BingJing
