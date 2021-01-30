@@ -2,87 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C1303092E2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Jan 2021 10:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C46D30940E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Jan 2021 11:11:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233244AbhA3JIZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Jan 2021 04:08:25 -0500
-Received: from mail-m17637.qiye.163.com ([59.111.176.37]:57050 "EHLO
-        mail-m17637.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230248AbhA3JIA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Jan 2021 04:08:00 -0500
-Received: from SZ-11126892.vivo.xyz (unknown [58.251.74.231])
-        by mail-m17637.qiye.163.com (Hmail) with ESMTPA id E9513980229;
-        Sat, 30 Jan 2021 16:50:28 +0800 (CST)
-From:   Fengnan Chang <changfengnan@vivo.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org,
-        Fengnan Chang <changfengnan@vivo.com>
-Subject: [PATCH v2] fuse: use newer inode info when writeback cache is enabled
-Date:   Sat, 30 Jan 2021 16:50:03 +0800
-Message-Id: <20210130085003.1392-1-changfengnan@vivo.com>
-X-Mailer: git-send-email 2.29.2.windows.2
+        id S231814AbhA3KJg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Jan 2021 05:09:36 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:45820 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231765AbhA3CJD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Jan 2021 21:09:03 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id D174C9AC; Fri, 29 Jan 2021 20:06:52 -0600 (CST)
+Date:   Fri, 29 Jan 2021 20:06:52 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
+Message-ID: <20210130020652.GB7163@mail.hallyn.com>
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+ <20210119162204.2081137-3-mszeredi@redhat.com>
+ <8735yw8k7a.fsf@x220.int.ebiederm.org>
+ <20210128165852.GA20974@mail.hallyn.com>
+ <87o8h8x1a6.fsf@x220.int.ebiederm.org>
+ <20210129154839.GC1130@mail.hallyn.com>
+ <87im7fuzdq.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
-        oVCBIfWUFZTkMYQxlLSBhIQ01CVkpNSkpCQk1NSUJKT0lVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWU
-        FZT0tIVUpKSkNITVVLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mhw6HDo4MD8XCzE1PjgQLDYu
-        HT8wChhVSlVKTUpKQkJNTUlCTkpCVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
-        WU5DVUlOSlVMT1VJSEpZV1kIAVlBSUNMSDcG
-X-HM-Tid: 0a77527c8844d992kuwse9513980229
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87im7fuzdq.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When writeback cache is enabled, the inode information in cached is
-considered new by default, and the inode information of lowerfs is
-stale.
-When a lower fs is mount in a different directory through different
-connection, for example PATHA and PATHB, since writeback cache is
-enabled by default, when the file is modified through PATHA, viewing the
-same file from the PATHB, PATHB will think that cached inode is newer
-than lowerfs, resulting in file size and time from under PATHA and PATHB
-is inconsistent.
-Add a judgment condition to check whether to use the info in the cache
-according to mtime.
+On Fri, Jan 29, 2021 at 04:55:29PM -0600, Eric W. Biederman wrote:
+> "Serge E. Hallyn" <serge@hallyn.com> writes:
+> 
+> > On Thu, Jan 28, 2021 at 02:19:13PM -0600, Eric W. Biederman wrote:
+> >> "Serge E. Hallyn" <serge@hallyn.com> writes:
+> >> 
+> >> > On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
+> >> >> Miklos Szeredi <mszeredi@redhat.com> writes:
+> >> >> 
+> >> >> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+> >> >> > currently return in v2 format unconditionally.
+> >> >> >
+> >> >> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+> >> >> > and so the same conversions performed on it.
+> >> >> >
+> >> >> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
+> >> >> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+> >> >> > user namespace in case of v2) cannot be mapped in the current user
+> >> >> > namespace.
+> >> >> 
+> >> >> This looks like a good cleanup.
+> >> >
+> >> > Sorry, I'm not following.  Why is this a good cleanup?  Why should
+> >> > the xattr be shown as faked v3 in this case?
+> >> 
+> >> If the reader is in &init_user_ns.  If the filesystem was mounted in a
+> >> user namespace.   Then the reader looses the information that the
+> >
+> > Can you be more precise about "filesystem was mounted in a user namespace"?
+> > Is this a FUSE thing, the fs is marked as being mounted in a non-init userns?
+> > If that's a possible case, then yes that must be represented as v3.  Using
+> > is_v2header() may be the simpler way to check for that, but the more accurate
+> > check would be "is it v2 header and mounted by init_user_ns".
+> 
+> I think the filesystems current relevant are fuse,overlayfs,ramfs,tmpfs.
+> 
+> > Basically yes, in as many cases as possible we want to just give a v2
+> > cap because more userspace knows what to do with that, but a non-init-userns
+> > mounted fs which provides a v2 fscap should have it represented as v3 cap
+> > with rootid being the kuid that owns the userns.
+> 
+> That is the case we that is being fixed in the patch.
+> 
+> > Or am I still thinking wrongly?  Wouldn't be entirely surprised :)
+> 
+> No you got it.
 
-Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
----
- fs/fuse/inode.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index b0e18b470e91..55fdafcaca34 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -182,7 +182,10 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
- 	inode->i_atime.tv_sec   = attr->atime;
- 	inode->i_atime.tv_nsec  = attr->atimensec;
- 	/* mtime from server may be stale due to local buffered write */
--	if (!fc->writeback_cache || !S_ISREG(inode->i_mode)) {
-+	if (!fc->writeback_cache || !S_ISREG(inode->i_mode)
-+		|| (attr->mtime > inode->i_mtime.tv_sec)
-+		|| ((attr->mtime == inode->i_mtime.tv_sec)
-+			&& (attr->mtimensec >= inode->i_mtime.tv_nsec))) {
- 		inode->i_mtime.tv_sec   = attr->mtime;
- 		inode->i_mtime.tv_nsec  = attr->mtimensec;
- 		inode->i_ctime.tv_sec   = attr->ctime;
-@@ -241,8 +244,12 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
- 	 * extend local i_size without keeping userspace server in sync. So,
- 	 * attr->size coming from server can be stale. We cannot trust it.
- 	 */
--	if (!is_wb || !S_ISREG(inode->i_mode))
-+	if (!is_wb || !S_ISREG(inode->i_mode)
-+		|| (attr->mtime > inode->i_mtime.tv_sec)
-+		|| ((attr->mtime == inode->i_mtime.tv_sec)
-+			&& (attr->mtimensec >= inode->i_mtime.tv_nsec))) {
- 		i_size_write(inode, attr->size);
-+	}
- 	spin_unlock(&fi->lock);
-
- 	if (!is_wb && S_ISREG(inode->i_mode)) {
---
-2.29.0
+So then can we make faking a v3 gated on whether
+    sb->s_user_ns != &init_user_ns ?
 
