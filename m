@@ -2,182 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C43D309DCF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Jan 2021 17:11:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3740309EEB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Jan 2021 21:29:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231364AbhAaQLY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 31 Jan 2021 11:11:24 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:59000 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231262AbhAaQLR (ORCPT
+        id S232091AbhAaU3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 31 Jan 2021 15:29:10 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:44520 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231420AbhAaU1c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 31 Jan 2021 11:11:17 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10VCFDQ8192764;
-        Sun, 31 Jan 2021 12:21:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2020-01-29;
- bh=RXelkZefKUeyIb8bAuHIb8zg4NxN269MzGy4b54TG5I=;
- b=uuZgRc41Yr/XBfp7eDbxHqnMHm6RYv9sEtsU6fRcjzD+h9vXn7fTIu9Suucjv4SFitr5
- TSuE1RGlbXnWgvYfHwY1HHlQ6l/i28Z00wqf+mRdbsOJFEbZUdkaz2ZQeMvbeougFYZD
- Vcq/Z77aX/s230eB7yi5rgBPq47tuQsrcPMtyrguIpm/DpIrUv0znZLF/sJDi9Y7X0bn
- g8SpbhB99hJUldIixcdN+jqEGVMNzeNPCjv3q5k6cdy3PYfS07nZdKdeFbUySFfj6q1A
- 1o8RRkixvzaN0PyKYS5XRFCEQrRQUDQwojNxH+PeiZrycencHtVssmAuJXUxpZKS1rZr EQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 36cydkj821-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 31 Jan 2021 12:21:40 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10VCK25j196413;
-        Sun, 31 Jan 2021 12:21:40 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2100.outbound.protection.outlook.com [104.47.55.100])
-        by userp3020.oracle.com with ESMTP id 36dh7nmyfr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 31 Jan 2021 12:21:39 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZvkKtaeKZlM+AHRH5fXLySc/+pHDc4paKoF3jVIejGI6/JWy8mSQSqjQkkmsSGrLUZyt0QM1jXBiosMohR7H7ZT1PkyzABIgIuon85iYcNaqiZag9I0POFrAHhFqphNQDe34CX+SkHjLPPZ3/EvLnOYfArBWnzYLfdIyozQQZdMT3oUyCaSyOP5HKI12pE3MX1/YLJlWBdCnzb8FDu6neWwwMIs00DeuP5+QkXHEms8NK5aTiAGCM499x030UnjQOO+CRmmLQzc2oIH+AxagRtQNdfl6eTF9WAfox94ORIVaLVbsky9zxKjuiUkWq2fu4jQnfC+TQexuTnN8L+NAqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RXelkZefKUeyIb8bAuHIb8zg4NxN269MzGy4b54TG5I=;
- b=cj2aEGBJBH4iBVEBva5RCFp64diH2HXwQUWrQJri+UaB5oZrK3ztW3OVPESM+aCa5z1Tuo2H81gyuS+TVxQpOJvcQWJcE+1fR69li50OlLBhpd67PZ0wPuGizoRyuxAtHRVKVfP4TrVI6IjZMoEHNGDQkNY2CU59bGXuSBThSjr3LHxQPSPL2yL4O/X8HGTNHXf35K28t2IzulsY4AXQKY3FHZrbh4QRHdR4XPXI01A23vYolYVcZoen1I1sEWOEPE45o+4fvOaSEWFr5DmG7E1VEWjBbHw2XXu55FfcBVlizmwPUNvP5fnrfA8oqTrNnjCCiIGzC3NdJjbQQ/AsFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RXelkZefKUeyIb8bAuHIb8zg4NxN269MzGy4b54TG5I=;
- b=xacLqozssTQg0uQlzHwROkUm5IGw38fjroq/5Nxy7ZY7JcntxN8dOpwHTrF5r3DUQCLYqoSq6e3mZWaVY8qC9S+R2UdkX4Iv5+0UYsbSITktLK69NOMq5mdJLoqgOWfDrKB+d5mH1YKS5Y2NACw7bOzaamSzIAtpJwznmTy7Mfg=
-Authentication-Results: toxicpanda.com; dkim=none (message not signed)
- header.d=none;toxicpanda.com; dmarc=none action=none header.from=oracle.com;
-Received: from BN6PR10MB1683.namprd10.prod.outlook.com (2603:10b6:405:b::15)
- by BN8PR10MB3700.namprd10.prod.outlook.com (2603:10b6:408:bc::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3763.10; Sun, 31 Jan
- 2021 12:21:37 +0000
-Received: from BN6PR10MB1683.namprd10.prod.outlook.com
- ([fe80::44c4:3dbe:4b78:f69a]) by BN6PR10MB1683.namprd10.prod.outlook.com
- ([fe80::44c4:3dbe:4b78:f69a%3]) with mapi id 15.20.3805.024; Sun, 31 Jan 2021
- 12:21:37 +0000
-Subject: Re: [PATCH v14 17/42] btrfs: enable to mount ZONED incompat flag
-To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        dsterba@suse.com
-Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>
-References: <cover.1611627788.git.naohiro.aota@wdc.com>
- <51183faaa8afba3858bb48be627ef5072d268fc1.1611627788.git.naohiro.aota@wdc.com>
-From:   Anand Jain <anand.jain@oracle.com>
-Message-ID: <86fa2506-ffa6-8d5e-f0f5-fac0e8b3ebfc@oracle.com>
-Date:   Sun, 31 Jan 2021 20:21:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
-In-Reply-To: <51183faaa8afba3858bb48be627ef5072d268fc1.1611627788.git.naohiro.aota@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [2406:3003:2006:2288:c074:cdb6:65f3:80b1]
-X-ClientProxiedBy: SG2PR06CA0219.apcprd06.prod.outlook.com
- (2603:1096:4:68::27) To BN6PR10MB1683.namprd10.prod.outlook.com
- (2603:10b6:405:b::15)
+        Sun, 31 Jan 2021 15:27:32 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l6HGT-009MEC-Oc; Sun, 31 Jan 2021 11:16:01 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l6HGS-007la5-Nm; Sun, 31 Jan 2021 11:16:01 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+        <20210119162204.2081137-3-mszeredi@redhat.com>
+        <8735yw8k7a.fsf@x220.int.ebiederm.org>
+        <20210128165852.GA20974@mail.hallyn.com>
+        <87o8h8x1a6.fsf@x220.int.ebiederm.org>
+        <20210129154839.GC1130@mail.hallyn.com>
+        <87im7fuzdq.fsf@x220.int.ebiederm.org>
+        <20210130020652.GB7163@mail.hallyn.com>
+Date:   Sun, 31 Jan 2021 12:14:39 -0600
+In-Reply-To: <20210130020652.GB7163@mail.hallyn.com> (Serge E. Hallyn's
+        message of "Fri, 29 Jan 2021 20:06:52 -0600")
+Message-ID: <87h7mxotww.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2406:3003:2006:2288:c074:cdb6:65f3:80b1] (2406:3003:2006:2288:c074:cdb6:65f3:80b1) by SG2PR06CA0219.apcprd06.prod.outlook.com (2603:1096:4:68::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16 via Frontend Transport; Sun, 31 Jan 2021 12:21:34 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 21cdfd48-13c4-4be0-48e7-08d8c5e2c107
-X-MS-TrafficTypeDiagnostic: BN8PR10MB3700:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BN8PR10MB3700C03786B1849AD7C47D12E5B79@BN8PR10MB3700.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:411;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VI4wqbpAfYclO9W9n7UZYorRyyS9TIS49JLSe9mcBAg79OysKFl+geYyTE3flLbFBKlW3K3FVH/tQZADlGrcIs56I+8fVSr3gEDqt/RoIWQqg0v7CbdJazqKUHwpcL0auM/6tav/Pbm8Nxjpd3l9yE7WwrV+bSYQYLCUaAHZC+IdxQGkG1UlRdQ7lN0InsxgDeBbip1P7yCDr9zVcQH1w12fgNZZ/cPaosYsx3XBm4c50GAIPWSHCW8It++TU4Mm6xic/ckfArsnCRjlsv5DbIR189HeDB5f+jkfwSqVlp8pAIagxc1lH5J63kMbiCCmu5Bq1KfgbSEWZVVywjj48EncTTHoQxoKBiKhA+Cul63LL8qRnDklGs++H4pl4thoqXVlFbC82j7YldhSKh9gmY+5BaUusCUXzPEFBbnaOOw8QpnjFIvqFh7v8vAOr/YJ7Ox0m6AWqqOKcuFc5qJVTBm3MTDbyksXNYyrKp3/BCH6+F6+a5zjdU6HSby8vX9pOgzx9kEHmUUrar2kkCvFtuYBu37jkrSN9E864jz1O3PQ3vGltJw5MSU10sESbmU1kNR58Z0pmkGv8BnC/369A+GaD9BiWMPi1Mr5ylPZ+MA=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR10MB1683.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(136003)(366004)(39860400002)(396003)(376002)(478600001)(4326008)(66476007)(36756003)(316002)(31686004)(66556008)(86362001)(16526019)(6666004)(2906002)(8676002)(83380400001)(31696002)(2616005)(66946007)(186003)(44832011)(6486002)(5660300002)(4744005)(8936002)(54906003)(53546011)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?TC8zNE9Rb1U1RlBlZldxUkFOUlZ4Yit5dkQ4WmJQNXVyZkl0c2pKdlFtbWRj?=
- =?utf-8?B?NmJHMHdLRm1BS2JGNGhBZHh4QityQXlVS3hRVzFYT2hzSlVEWDd3aU1Ua0hZ?=
- =?utf-8?B?djJKTW8rcWJBN1lXYnZ2SHc5dWNxTDV5TmdQTjVuUi9ydlZUYlEvdG5mL0V3?=
- =?utf-8?B?cHYvaGpRenhSaS9ubTE0UWdVSDZvVFRJSjIvZFl4ZzQ5SmMzQ2xJZ25FYml4?=
- =?utf-8?B?R0owcjk0STV1K2pUZ0VLcmd3OUFVMldITXZUTSs4U05FUGtjc3B3Uy9aczhT?=
- =?utf-8?B?b0dsYW1laXVlaUJhRGhFZkVOWmlSQWtod2kva2grMi9TYXJLRUR0aERnOXEv?=
- =?utf-8?B?ZkJYWlRhczhlbWxzaXBQTVhuRllHbmxEb1lzRGJKVDEybWNkS0xrZzFNanh4?=
- =?utf-8?B?ck90SzVNSVZycG90YUNHQXdlS1RzamNtMitmcVM5eWhRMkJidyt4S0ttejhw?=
- =?utf-8?B?d0xNYnJqekJWZFRpdnpTQzIzcFpjeTBDOS9hbEljaW9YWXdYbk9HMkllYUlB?=
- =?utf-8?B?N0YvZGVSMW5vOUhRZis0OUlIcHhVS2RDVlRSY3dMNE9xeGY1eGVHc21oRGV1?=
- =?utf-8?B?WFRBSmVDOUR1TGczQzVpVDlNN2NkU2czZ1NzUWlOa2ZFRU5DcEIrTFo3cWhE?=
- =?utf-8?B?TCtsSC9kYWEvaExWWXNOSEkxSzl0Uis3eXlIZGVaMlZ6S29lbEpLT1pXRkcx?=
- =?utf-8?B?RHJMdStSZVZWV2VvM21ia1I4aFF6R2pnYmUvWTZUN0JYSEhmMUdpb2lyMjhj?=
- =?utf-8?B?SXlGTmlkZ0RlbnpvbTlyZFFxSjhvRG9sNFM5RjhsaEZUaEtnYnRkaVBwc1o2?=
- =?utf-8?B?c1JXM3Z1WmN5enRpWjlOK3JFOVBIMWNTelgwSWh5NGlHc1pQODkxdkJjNDZp?=
- =?utf-8?B?c2JyVnovYk9LOHIxQU9iU3k5dk1mVWpMUnZVMEluYklHVk10Unh5eFdzZm41?=
- =?utf-8?B?NHU2N0ZqREcvYVgwd0xiYmpmN2NzWkJ3bk5TUVpDaVRoeUZ1dVE5ZTNTTkdH?=
- =?utf-8?B?aXRMdGl0YjBiSWs1VnVxMVVxR2w2QVZ3ZVBBU3RieUFiVVNvUjJwc3Njdk83?=
- =?utf-8?B?TU15ZCtreTE4TW9OY3kwSWZ4V294VkpMb3BpaHZjYVRMc1pVb202UlVhenJi?=
- =?utf-8?B?OUV4SW1zMWRqYXNycE02T2pEZHptaWJkc2lsanR5RVRoOXFVb1lIR04wNjdt?=
- =?utf-8?B?Kzh4cXRBT1h4MGwrZ1M2N3JYWmUzZ3ZVNU5IODZadzBPTE13VUNPRXhTRWZq?=
- =?utf-8?B?aVd2VnFDcldQTGZzeEdEUFp0aVc3STZJWlZZTEkzcExFdVN3NGk1Q0VUUUxB?=
- =?utf-8?B?R3I5b0VHUU1yeFZqTVF0K0lKVU5Uc0RZV0tCQ3lmWXQxWFR6SlY0Y0RyUmxD?=
- =?utf-8?B?ZU5mMjVERlBjS1dmWUxQZW9tTG0xbG93MWN3MWIwdlJhbHJRcDdFRXBpUDFB?=
- =?utf-8?B?K3Uvd3VOV3grR2I2YktOVm1uRnlFYWxnMnVBOVlRQURjbDNtbFhGN0tvYUtj?=
- =?utf-8?Q?PB1XzYcciNN43vlVDeFSI1mMuy8?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21cdfd48-13c4-4be0-48e7-08d8c5e2c107
-X-MS-Exchange-CrossTenant-AuthSource: BN6PR10MB1683.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2021 12:21:37.0413
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PUWz3h8X7SYL90blm9r6Ya2oz/NNpaNMcykGPO1tRZSfT5bUqdDVW1ZBFYvDpiMU2ioRTDKmt7sd2wx4GcRDVQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR10MB3700
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9880 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- suspectscore=0 spamscore=0 mlxlogscore=999 phishscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101310067
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9880 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 clxscore=1015
- spamscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101310066
+Content-Type: text/plain
+X-XM-SPF: eid=1l6HGS-007la5-Nm;;;mid=<87h7mxotww.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+rdqZ6i33bsph+88xrIBEvUyfFA5QciIc=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;"Serge E. Hallyn" <serge@hallyn.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 464 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 11 (2.3%), b_tie_ro: 9 (2.0%), parse: 0.91 (0.2%),
+         extract_message_metadata: 13 (2.7%), get_uri_detail_list: 2.4 (0.5%),
+        tests_pri_-1000: 4.5 (1.0%), tests_pri_-950: 1.24 (0.3%),
+        tests_pri_-900: 1.01 (0.2%), tests_pri_-90: 92 (19.8%), check_bayes:
+        90 (19.4%), b_tokenize: 8 (1.8%), b_tok_get_all: 8 (1.8%),
+        b_comp_prob: 3.0 (0.7%), b_tok_touch_all: 67 (14.4%), b_finish: 0.97
+        (0.2%), tests_pri_0: 329 (71.0%), check_dkim_signature: 0.54 (0.1%),
+        check_dkim_adsp: 2.0 (0.4%), poll_dns_idle: 0.48 (0.1%), tests_pri_10:
+        2.1 (0.5%), tests_pri_500: 7 (1.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/26/2021 10:24 AM, Naohiro Aota wrote:
-> This final patch adds the ZONED incompat flag to
-> BTRFS_FEATURE_INCOMPAT_SUPP and enables btrfs to mount ZONED flagged file
-> system.
-> 
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+"Serge E. Hallyn" <serge@hallyn.com> writes:
 
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
+> On Fri, Jan 29, 2021 at 04:55:29PM -0600, Eric W. Biederman wrote:
+>> "Serge E. Hallyn" <serge@hallyn.com> writes:
+>> 
+>> > On Thu, Jan 28, 2021 at 02:19:13PM -0600, Eric W. Biederman wrote:
+>> >> "Serge E. Hallyn" <serge@hallyn.com> writes:
+>> >> 
+>> >> > On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
+>> >> >> Miklos Szeredi <mszeredi@redhat.com> writes:
+>> >> >> 
+>> >> >> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+>> >> >> > currently return in v2 format unconditionally.
+>> >> >> >
+>> >> >> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+>> >> >> > and so the same conversions performed on it.
+>> >> >> >
+>> >> >> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
+>> >> >> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+>> >> >> > user namespace in case of v2) cannot be mapped in the current user
+>> >> >> > namespace.
+>> >> >> 
+>> >> >> This looks like a good cleanup.
+>> >> >
+>> >> > Sorry, I'm not following.  Why is this a good cleanup?  Why should
+>> >> > the xattr be shown as faked v3 in this case?
+>> >> 
+>> >> If the reader is in &init_user_ns.  If the filesystem was mounted in a
+>> >> user namespace.   Then the reader looses the information that the
+>> >
+>> > Can you be more precise about "filesystem was mounted in a user namespace"?
+>> > Is this a FUSE thing, the fs is marked as being mounted in a non-init userns?
+>> > If that's a possible case, then yes that must be represented as v3.  Using
+>> > is_v2header() may be the simpler way to check for that, but the more accurate
+>> > check would be "is it v2 header and mounted by init_user_ns".
+>> 
+>> I think the filesystems current relevant are fuse,overlayfs,ramfs,tmpfs.
+>> 
+>> > Basically yes, in as many cases as possible we want to just give a v2
+>> > cap because more userspace knows what to do with that, but a non-init-userns
+>> > mounted fs which provides a v2 fscap should have it represented as v3 cap
+>> > with rootid being the kuid that owns the userns.
+>> 
+>> That is the case we that is being fixed in the patch.
+>> 
+>> > Or am I still thinking wrongly?  Wouldn't be entirely surprised :)
+>> 
+>> No you got it.
+>
+> So then can we make faking a v3 gated on whether
+>     sb->s_user_ns != &init_user_ns ?
 
-Thanks, Anand
+Sort of.
 
-> ---
->   fs/btrfs/ctree.h | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index ed6bb46a2572..29976d37f4f9 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -298,7 +298,8 @@ struct btrfs_super_block {
->   	 BTRFS_FEATURE_INCOMPAT_SKINNY_METADATA |	\
->   	 BTRFS_FEATURE_INCOMPAT_NO_HOLES	|	\
->   	 BTRFS_FEATURE_INCOMPAT_METADATA_UUID	|	\
-> -	 BTRFS_FEATURE_INCOMPAT_RAID1C34)
-> +	 BTRFS_FEATURE_INCOMPAT_RAID1C34	|	\
-> +	 BTRFS_FEATURE_INCOMPAT_ZONED)
->   
->   #define BTRFS_FEATURE_INCOMPAT_SAFE_SET			\
->   	(BTRFS_FEATURE_INCOMPAT_EXTENDED_IREF)
-> 
+What Miklos's patch implements is always treating a v2 cap xattr on disk
+as v3 internally.
+
+>  	if (is_v2header((size_t) ret, cap)) {
+>  		root = 0;
+>  	} else if (is_v3header((size_t) ret, cap)) {
+>  		nscap = (struct vfs_ns_cap_data *) tmpbuf;
+>  		root = le32_to_cpu(nscap->rootid);
+>  	} else {
+>  		size = -EINVAL;
+>  		goto out_free;
+>  	}
+
+Then v3 is returned if:
+>  	/* If the root kuid maps to a valid uid in current ns, then return
+>  	 * this as a nscap. */
+>  	mappedroot = from_kuid(current_user_ns(), kroot);
+>  	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
+
+After that we verify that the fs capability can be seen by the caller
+as a v2 cap xattr with:
+
+> >  	if (!rootid_owns_currentns(kroot)) {
+> > 		size = -EOVERFLOW;
+> > 		goto out_free;
+
+Anything that passes that test and does not encounter a memory
+allocation error is returned as a v2.
+
+...
+
+Which in practice does mean that if sb->s_user_ns != &init_user_ns, 
+then mappedroot != 0, and is returned as a v3.
+
+The rest of the logic takes care of all of the other crazy silly
+combinations.  Like a user namespace that identity maps uid 0,
+and then mounts a filesystem.
+
+Eric
+
+
 
