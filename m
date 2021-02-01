@@ -2,107 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 130EE30AA5E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 16:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 270A930AAED
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 16:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231325AbhBAPBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 10:01:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35554 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231268AbhBAPB3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 10:01:29 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 052EEC061788;
-        Mon,  1 Feb 2021 07:00:56 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l6ah0-008abO-Ec; Mon, 01 Feb 2021 15:00:42 +0000
-Date:   Mon, 1 Feb 2021 15:00:42 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Dmitry Kadashev <dkadashev@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: make do_mkdirat() take struct filename
-Message-ID: <20210201150042.GQ740243@zeniv-ca>
-References: <20201116044529.1028783-1-dkadashev@gmail.com>
- <20201116044529.1028783-2-dkadashev@gmail.com>
- <027e8488-2654-12cd-d525-37f249954b4d@kernel.dk>
- <20210126225504.GM740243@zeniv-ca>
- <CAOKbgA4fTyiU4Xi7zqELT+WeU79S07JF4krhNv3Nq_DS61xa-A@mail.gmail.com>
+        id S229646AbhBAPSq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 10:18:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49492 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229696AbhBAPSf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Feb 2021 10:18:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 46D07AD18;
+        Mon,  1 Feb 2021 15:17:52 +0000 (UTC)
+Subject: Re: [v5 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210127233345.339910-1-shy828301@gmail.com>
+ <20210127233345.339910-8-shy828301@gmail.com>
+ <6b0638ba-2513-67f5-8ef1-9e60a7d9ded6@suse.cz>
+ <CAHbLzkpiDBMRRerr7iXtj40p=RVLTmWoWoOQbdkvG7Tsi4iirw@mail.gmail.com>
+ <CAHbLzkrg8OYqbKevdV_6qJ5L9P-_8ui=HAgm-0o69yKLtMg8tQ@mail.gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <0ce8b6e4-5abb-3edb-8423-f6c222420a89@suse.cz>
+Date:   Mon, 1 Feb 2021 16:17:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOKbgA4fTyiU4Xi7zqELT+WeU79S07JF4krhNv3Nq_DS61xa-A@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <CAHbLzkrg8OYqbKevdV_6qJ5L9P-_8ui=HAgm-0o69yKLtMg8tQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 01, 2021 at 06:09:01PM +0700, Dmitry Kadashev wrote:
+On 1/29/21 7:04 PM, Yang Shi wrote:
 
-> Hi Al,
+>> > > @@ -209,9 +214,15 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+>> > >               if (!new)
+>> > >                       return -ENOMEM;
+>> > >
+>> > > -             /* Set all old bits, clear all new bits */
+>> > > -             memset(new->map, (int)0xff, old_size);
+>> > > -             memset((void *)new->map + old_size, 0, size - old_size);
+>> > > +             new->map = (unsigned long *)(new + 1);
+>> > > +             new->nr_deferred = (void *)new->map + m_size;
+>> >
+>> > This better be aligned to sizeof(atomic_long_t). Can we be sure about that?
+>>
+>> Good point. No, if unsigned long is 32 bit on some 64 bit machines.
 > 
-> I think I need more guidance here. First of all, I've based that code on
-> commit 7cdfa44227b0 ("vfs: Fix refcounting of filenames in fs_parser"), which
-> does exactly the same refcount bump in fs_parser.c for filename_lookup().  I'm
-> not saying it's a good excuse to introduce more code like that if that's a bad
-> code though.
+> I think we could just change map to "u64" and guarantee struct
+> shrinker_info is aligned to 64 bit.
 
-It is a bad code.  If you look at that function, you'll see that the entire
-mess around put_f is rather hard to follow and reason about.  That's a function
-with no users, and I'm not sure we want to keep it long-term.
-
-> What I _am_ saying is we probably want to make the approaches consistent (at
-> least eventually), which means we'd need the same "don't drop the name" variant
-> of filename_lookup?
-
-"don't drop the name on success", similar to what filename_parentat() does.
-
-> And given the fact filename_parentat (used from
-> filename_create) drops the name on error it looks like we'd need another copy of
-> it too?
-
-No need.
-
-> Do you think it's really worth it or maybe all of these functions will
-> make things more confusing? (from the looks of it right now the convention is
-> that the `struct filename` ownership is always transferred when it is passed as
-> an arg)
-> 
-> Also, do you have a good name for such functions that do not drop the name?
-> 
-> And, just for my education, can you explain why the reference counting for
-> struct filename exists if it's considered a bad practice to increase the
-> reference counter (assuming the cleanup code is correct)?
-
-The last one is the easiest to answer - we want to keep the imported strings
-around for audit.  It's not so much a proper refcounting as it is "we might
-want freeing delayed" implemented as refcount.
-
-As for do_mkdirat(), you probably want semantics similar to do_unlinkat(), i.e.
-have it consume the argument passed to it.  The main complication comes
-from ESTALE retries; want -ESTALE from ->mkdir() itself to trigger "redo
-filename_parentat() with LOOKUP_REVAL, then try the rest one more time".
-For which you need to keep filename around.  OK, so you want a variant of
-filename_create() that would _not_ consume the filename on success (i.e.
-act as filename_parentat() itself does).  Which is trivial to implement -
-just rename filename_create() to __filename_create() and remove one of
-two putname() in there, leaving just the one in failure exits.  Then
-filename_create() itself becomes simply
-
-static inline struct dentry *filename_create(int dfd, struct filename *name,
-                                struct path *path, unsigned int lookup_flags)
-{
-	struct dentry *res = __filename_create(dfd, name, path, lookup_flags);
-	if (!IS_ERR(res))
-		putname(name);
-	return res;
-}
-
-and in your do_mkdirat() replacement use
-	dentry = __filename_create(dfd, filename, &path, lookup_flags);
-instead of
-        dentry = user_path_create(dfd, pathname, &path, lookup_flags);
-and add
-	putname(filename);
-in the very end.  All it takes...
+What about changing to order, nr_deferred before map? Then the atomics are at
+the beginning of allocated area, thus aligned.
