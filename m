@@ -2,144 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B2630A56C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 11:34:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7481730A636
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 12:09:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233187AbhBAKdC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 05:33:02 -0500
-Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:29456 "EHLO
-        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233183AbhBAKc7 (ORCPT
+        id S233332AbhBALId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 06:08:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41900 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233013AbhBALI3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 05:32:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
-        t=1612175511;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=k+M7Q1CnqP86CHAkLEEHGEGXuEq0C2Ximm+9ASMR5Yg=;
-        b=hRGSYoPi7V6kJ82LAj4WlNk+wX4L/cNLQM4ySy+fpy0zNyMlBAYYo6eTAhh+086ZhF2D6m
-        k5DPVPCpfPD++aZZbl3Ui1UFuLm8gGjrWZ/0aoOA94rRFASSaoIWTT6zp61WRoaAOgflDn
-        1EmBVj0aaf8QQZ9TxclJqkzCnC1ZmHQ=
-Received: from EUR03-VE1-obe.outbound.protection.outlook.com
- (mail-ve1eur03lp2054.outbound.protection.outlook.com [104.47.9.54]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- de-mta-34-a8ilU4f6Nz-kaQhy7GgBDw-1; Mon, 01 Feb 2021 11:31:50 +0100
-X-MC-Unique: a8ilU4f6Nz-kaQhy7GgBDw-1
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QSxrJs6D/6mj6HbkQxeEzjoTJY1hwXBP/SN8gj4ia08AdA2UGV+qUw1wqUWN9UaNMXyFKlNENaFZFg9IE63w+DO5/ZZKAwx4K2zSMe5FQQzHPN8LszOg1IxWLJT3G665/QmeZVQYprAC8qIaq1Knv6vhpDFbzcSb+1onldqQg8tvzmMHOMtbX6Oh3xoYrrAyQrl2Ij1UWHnCGL31DkGceu4PO6oPGgN3NdrGP+FmbJWsYX9L+K53wIPCZ0a6prBumke3gqqFxWVCTgbWAP+uCLHQCPqF+Dn4YOBOVSEo97+GDuF+iEo/OEgV9oZek0XoldyVZv7mUxX2kVlxCLQI4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k+M7Q1CnqP86CHAkLEEHGEGXuEq0C2Ximm+9ASMR5Yg=;
- b=CbrMk/KTiWmxWHn9ko3lS8uY4SO1/cLSNYuSyLYMWxplZpS0aHF49oo3paA32QP6/SxN53CeUudSdbZW6xfOvP8ZrRmMg/VWLSu73Whtna0xoy3ULqyNky0XOD5Qb2S8wwedOHqRzjVz1qnV4/2hQINBt6qJi/OZXEMtXpmCQQ4Le5Gqn70XjV1AXXjRBofiiPlPRpNUgj+8rketMKtdMnrbs0NNIqSVXVT9lx8202LAgjuB+zMVTisffQ+fMwhdh/nf7Dvm92zkqVKusCBuhuJdbg4lIx6nD63JD03kAf8xvK7hvTo62yD6EJSWc0a87rS/rsR6Avbm3t2tZGaoFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=suse.com;
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
- by VI1PR04MB5920.eurprd04.prod.outlook.com (2603:10a6:803:ed::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.17; Mon, 1 Feb
- 2021 10:31:48 +0000
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9%4]) with mapi id 15.20.3805.022; Mon, 1 Feb 2021
- 10:31:48 +0000
-From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-To:     Shyam Prasad N <nspmangalore@gmail.com>
-Cc:     CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        Steve French <smfrench@gmail.com>, Paulo Alcantara <pc@cjr.nz>
-Subject: Re: [PATCH v1] cifs: make nested cifs mount point dentries always
- valid to deal with signaled 'df'
-In-Reply-To: <CANT5p=ofvpimU9Z7jwj4cPXXa1E4KkcijYrxbVKQZf5JDiR-1g@mail.gmail.com>
-References: <20210129171316.13160-1-aaptel@suse.com>
- <CANT5p=ofvpimU9Z7jwj4cPXXa1E4KkcijYrxbVKQZf5JDiR-1g@mail.gmail.com>
-Date:   Mon, 01 Feb 2021 11:31:45 +0100
-Message-ID: <877dns9izy.fsf@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [2003:fa:705:9f12:fb7a:e8aa:e796:34d1]
-X-ClientProxiedBy: GV0P278CA0020.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:710:28::7) To VI1PR0402MB3359.eurprd04.prod.outlook.com
- (2603:10a6:803:3::28)
+        Mon, 1 Feb 2021 06:08:29 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618CAC061573;
+        Mon,  1 Feb 2021 03:07:48 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id 6so16093243wri.3;
+        Mon, 01 Feb 2021 03:07:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LcOqa57+wDWNXngr1Vsho/uylvVvhlNXId8LmNBtEKY=;
+        b=r+pgbrgIosJZzK1av8jh3I3H8mkjmc5/J+/SFoTDBksYii4iXOy+cDs9yJt3Vhp++e
+         k58naFBNReRaNuhNGsCUok9POzyt+AW/q0MV6eEJn9dYJOxAWoI2l4PlU/+WPWC8Kp5Z
+         P5Nze/hcYNb/eXx3oH4bAK73EIeq4sUweT9Y8LyFWsp9QJ7eRGYrfiicI8rp7EbVZUW2
+         VZC6r6jEBq9iIO5B7D3mcGX5D/akIIkGRBmyHaAZmJ6Kd95A52Apn2q1dOUsBrzFa5+D
+         7RFQWUIfOU4TpVRA9qhj8hn9TLEK5TvrX3yHTOTk6qfAveHBk4pJFDBG0zp/Y60q8kM2
+         dVcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LcOqa57+wDWNXngr1Vsho/uylvVvhlNXId8LmNBtEKY=;
+        b=Pu92E9vPXecCOolMCqUDPuzo561w7SMEm+ykWD+fS8Ry9tcdy7CxRgtVKyu9p5Ggqs
+         MSG9iqUhm23pW2gsSbZIkZsblFQjEdZcsyPyUf91shzBWX3n5Hus0NmmXiYPi2tq+OXs
+         LfcpZ9h1yp2GHIecdWh+uynaKkYyogYXL7VVB2gMsOm7nKIqP5CzneTPaLXLXH+Ghrwk
+         lbkrKTVe1R0t010GNM3CcqJ0XkWsPNJ9V6zag70zLsdj3tgmKrZA97myLMxPA/MhQc/p
+         iUi06zDGCeRmSfSDfHlxLjF1K7gfQ5m1FlYL+w+YN5bSj7d5zFGxfegEAmdyufHuss+Q
+         lRGQ==
+X-Gm-Message-State: AOAM531NNhXr3OZpomeulKyNSKoE7ToldEZbJyC1SOBcs8QPiV9FMoD4
+        5ii2hQhUrIVg27TS4YvwmrI=
+X-Google-Smtp-Source: ABdhPJxBoDXxVVioQkDc8o6hCNsXGI2LrfOAXF0qzKWo0r/johOUVMC9FvyxKGHwem0+IroBQMAm4Q==
+X-Received: by 2002:a5d:4d4c:: with SMTP id a12mr2906503wru.154.1612177666912;
+        Mon, 01 Feb 2021 03:07:46 -0800 (PST)
+Received: from [192.168.8.166] ([185.69.145.241])
+        by smtp.gmail.com with ESMTPSA id a27sm26243131wrc.94.2021.02.01.03.07.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Feb 2021 03:07:46 -0800 (PST)
+Subject: Re: WARNING in io_disable_sqo_submit
+To:     syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <00000000000042c22b05b92c1b44@google.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
+ bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
+ 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
+ +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
+ W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
+ CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
+ Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
+ EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
+ jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
+ NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
+ bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
+ PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
+ Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
+ Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
+ xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
+ aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
+ HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
+ 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
+ 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
+ 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
+ M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
+ reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
+ IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
+ dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
+ Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
+ jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
+ Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
+ dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
+ xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
+ DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
+ F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
+ 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
+ aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
+ 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
+ LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
+ uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
+ rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
+ 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
+ JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
+ UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
+ m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
+ OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
+Message-ID: <39ebb181-6760-cdfd-88f8-5578ad4d7c85@gmail.com>
+Date:   Mon, 1 Feb 2021 11:04:04 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost (2003:fa:705:9f12:fb7a:e8aa:e796:34d1) by GV0P278CA0020.CHEP278.PROD.OUTLOOK.COM (2603:10a6:710:28::7) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.17 via Frontend Transport; Mon, 1 Feb 2021 10:31:47 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7b80d334-8cbf-4aae-8850-08d8c69c9471
-X-MS-TrafficTypeDiagnostic: VI1PR04MB5920:
-X-Microsoft-Antispam-PRVS: <VI1PR04MB59207875CD187A8ADCA87A51A8B69@VI1PR04MB5920.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: dbbSQUTvSCFVY5gh9wr12qUc+tjkkHwCjyhI0pEp5ztEW/bZsqtSQw8mP/g7gKDDBkzeZymdm4xfQw2XeFQP/wVXUB1rpf+kwxQgzeFYanXBJrhZudSQecWnrOUo9A4MPXV35QgCYRMTqJl3fs5GU2eo7X7APwXDDjVD5ncv5hiJrx/2jHVLnqBJ0Gut9SPcx61K2Efx8sZqcMUhL24tXjEwTrc06K3CKw13NIXj+qawZR8Z67vuSYdPPq53gbBXRH4O9/0zKCjGOp6ZsU8C/EeJV5TJFaxJRDEcJWWJ4t6pWJ8NoLggq+4ZAik1CwhIhmSUaiLgqFzRgBujrTGYH4In35EPM/phUeLMLJy2L6LUa+WJb3HdfQV+QDe86XzYRX9d2hvDOwJ4wQ8JMYZBV4hpAvQ282E5bNMlm7VEypJ+SBlLInwEf6/jU1vnd/siJRhAKV+va9rjJtosIFeuePyW/J52Nv92jWQsWZgS/m0kT+wbjcj551rZ6xedCjQGYxpbRejt3Sbx+cYKg+CVew==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(346002)(136003)(366004)(376002)(39860400002)(54906003)(2906002)(8936002)(6916009)(2616005)(36756003)(6496006)(52116002)(4326008)(8676002)(316002)(66556008)(66476007)(66946007)(86362001)(5660300002)(6486002)(16526019)(186003)(478600001)(83380400001)(66574015)(4744005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?MUlmY293WG1iQ3pkUzhaaGhtRFZDY1NJK3c5T3R2MWxPZWJYNGVGb0djOW1N?=
- =?utf-8?B?R3VSbmp6SklzaEFhVG5melRTeTA2YU44MUg4OXpSdERtbGpMakI1QmJqVWRF?=
- =?utf-8?B?NWRQb25uQ2NxakRmMEZpNS9vM3NDUWlOb1BHL3p2MUIvRHdWdW1jWGJzU3lI?=
- =?utf-8?B?a21uN3FJeTBuQVhROHhIeENGcko5d1NEd0RqdkUwOUxaNEhRdmVpUEZFeURI?=
- =?utf-8?B?a2ZYQlg4WGp4Qm5ocTFYbXBVbDk1eGp1RzNRa1RQenFFNDBSd3JqdDV3elZ6?=
- =?utf-8?B?Qzl4MWRIL2NHODN5SlRYUURUMDMwSXJjSS9ONDhwdittMUdsZTlWcjlld1Rk?=
- =?utf-8?B?YnRSNEVhRnZ6MVNxaUpsZW85ZGJhMzJzbW0vdU5MZ3JsMWdybTdNSmwxaGx3?=
- =?utf-8?B?UHpGQUxmRDNveHBLM0crSHNzTlBxd0hIWG5PWnY3b2I2cWRDUW5MdjdhOExH?=
- =?utf-8?B?ZzR0T0Y5T2NzMXN3eFd6UXBTL2UzK3lRcWphd3F1NGRRUTJUalRIWkwveUp2?=
- =?utf-8?B?Z2tST28xYlB3dXA1ZmhvWFNPZXNuRDFYNTRaQWFoTmsySXI1QysvUUhabFZP?=
- =?utf-8?B?WVNmVERMcld4MStMeTl4VVZsNXNUSU0yL0xMMXVZY0NSai82bk0zZXZuNDRQ?=
- =?utf-8?B?SFpYa0Nib2lEUzFuVVFBSFhKQmFCcVRhY2hlZ205eFlVMXhuUFVGVzcvQUMv?=
- =?utf-8?B?WDlLU2dORTEwbTRmQnBoaHZIWnYzQnREZ0ltODhwWmdjVHJuUVlTeUlOUkhw?=
- =?utf-8?B?TDlnMllyU2svUkFpaWVzN3VYaVJWLytrOStsL0tSYklwU29tQWYxUC9nWHFm?=
- =?utf-8?B?Rlp6V1RIYVUxWnVvYzdNS0hIQTRHU1NpYlBrMjJvZTFMc3BuNXNkeTRYTG5W?=
- =?utf-8?B?UklkTGlyNHB0Nlhtb01RREtiZWZiZWZ4eGlDd3l2Z29XRmhCZGxrbVlORWg4?=
- =?utf-8?B?MGluQllGUTlvcWtxeUZFaEgzT3hoVmU3NnBjTnN4OTNXdkVxcytadjdkeWtP?=
- =?utf-8?B?azNySzhuWHNxMWczaVpBaUcxTmlLa2MxdkN5UTl3UTBEUVllZFV4M2ZpQ1Zh?=
- =?utf-8?B?Vk95b3M3NWVZSDZ1Q2YzVW9jbU9ZU0hKVVhHcTZtSkIwcWJGZDJ0eCtTTXhH?=
- =?utf-8?B?L1ltM3RYVkh6b1d0YitHL2JlalVvODdCRFFPMDlXV2dEekl6WklkUDVMdVNE?=
- =?utf-8?B?cmpZMVA0bVlaWC9TaGhCREVGbm5qVVA5UnBETFJQcFZ5djFpRGwrVElUR1p3?=
- =?utf-8?B?MGFmbXQ5WE1FUkgyblpOcTZkY0U3TlpHNTBjMFlJN2F4Z0tCUTVlQk5XZmor?=
- =?utf-8?B?ampQNVFWa1oyRFlFV0k4enRNMmVlOUZFUEs3MnkvLzVSV293THd2akxVTS9z?=
- =?utf-8?B?WGFYMVRTUmxHTmVKbzhWczFESEovQVFZQW9aalpPcmNZVzZISmF3RWtIZEtW?=
- =?utf-8?B?U281ZFJ2cFRtclVRd1JKajZtQTV2ZitwR1NnV2lrZ0t5MnFoZW91QURvRG4v?=
- =?utf-8?Q?dtyyvZZ50BXYWQIKYlRPIhWYo3W?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b80d334-8cbf-4aae-8850-08d8c69c9471
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2021 10:31:48.2340
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oAXAk0rSwzmaz4Dg5z3gOeypmIGsGd9C96dUThBkcTXa8ou/bPdc29BMeAbVzYBI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5920
+In-Reply-To: <00000000000042c22b05b92c1b44@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Shyam Prasad N <nspmangalore@gmail.com> writes:
-> Going by the documentation of d_revalidate:
->> This function should return a positive value if the dentry is still
->> valid, and zero or a negative error code if it isn't.
->
-> In case of error, can we try returning the rc itself (rather than 0),
-> and see if VFS avoids a dentry put?
-> Because theoretically, the call execution has failed, and the dentry
-> is not found to be invalid.
+On 18/01/2021 12:46, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> INFO: task hung in io_sq_thread_stop
 
-AFAIK mount points are pinned, you cannot rm or mv them so it seems we
-could make them always valid. I don't know if there are deeper and more
-subtle implications.
+#syz test: git://git.kernel.dk/linux-block for-5.12/io_uring
 
-The recent signal fixes are not fixing this issue.
+> INFO: task kworker/u4:0:8 blocked for more than 143 seconds.
+>       Not tainted 5.11.0-rc1-syzkaller #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/u4:0    state:D stack:24056 pid:    8 ppid:     2 flags:0x00004000
+> Workqueue: events_unbound io_ring_exit_work
+> Call Trace:
+>  context_switch kernel/sched/core.c:4313 [inline]
+>  __schedule+0x90c/0x21a0 kernel/sched/core.c:5064
+>  schedule+0xcf/0x270 kernel/sched/core.c:5143
+>  schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1854
+>  do_wait_for_common kernel/sched/completion.c:85 [inline]
+>  __wait_for_common kernel/sched/completion.c:106 [inline]
+>  wait_for_common kernel/sched/completion.c:117 [inline]
+>  wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
+>  kthread_park+0x122/0x1b0 kernel/kthread.c:557
+>  io_sq_thread_park fs/io_uring.c:7445 [inline]
+>  io_sq_thread_park fs/io_uring.c:7439 [inline]
+>  io_sq_thread_stop+0xfe/0x570 fs/io_uring.c:7463
+>  io_finish_async fs/io_uring.c:7481 [inline]
+>  io_ring_ctx_free fs/io_uring.c:8646 [inline]
+>  io_ring_exit_work+0x62/0x6d0 fs/io_uring.c:8739
+>  process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
+>  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+> 
+> Showing all locks held in the system:
+> 3 locks held by kworker/u4:0/8:
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+>  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
+>  #1: ffffc90000cd7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
+>  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7444 [inline]
+>  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7439 [inline]
+>  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_stop+0xd6/0x570 fs/io_uring.c:7463
+> 1 lock held by khungtaskd/1647:
+>  #0: ffffffff8b373aa0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
+> 1 lock held by in:imklog/8164:
+>  #0: ffff8880151b8870 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:947
+> 2 locks held by kworker/u4:6/8415:
+> 2 locks held by kworker/0:4/8690:
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
+>  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
+>  #1: ffffc9000288fda8 ((work_completion)(&rew.rew_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
+> 1 lock held by syz-executor.3/8865:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 1 lock held by syz-executor.2/8867:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 2 locks held by syz-executor.5/8869:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+>  #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
+>  #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x4f2/0x610 kernel/rcu/tree_exp.h:836
+> 1 lock held by syz-executor.4/8870:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 1 lock held by syz-executor.0/8872:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 1 lock held by syz-executor.1/8873:
+>  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
+> 
+> =============================================
+> 
+> NMI backtrace for cpu 1
+> CPU: 1 PID: 1647 Comm: khungtaskd Not tainted 5.11.0-rc1-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:79 [inline]
+>  dump_stack+0x107/0x163 lib/dump_stack.c:120
+>  nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
+>  nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
+>  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
+>  watchdog+0xd43/0xfa0 kernel/hung_task.c:294
+>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+> Sending NMI from CPU 1 to CPUs 0:
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 8415 Comm: kworker/u4:6 Not tainted 5.11.0-rc1-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Workqueue: bat_events batadv_nc_worker
+> RIP: 0010:__this_cpu_preempt_check+0xd/0x20 lib/smp_processor_id.c:70
+> Code: 00 00 48 c7 c6 00 d9 9e 89 48 c7 c7 40 d9 9e 89 e9 98 fe ff ff 0f 1f 84 00 00 00 00 00 55 48 89 fd 0f 1f 44 00 00 48 89 ee 5d <48> c7 c7 80 d9 9e 89 e9 77 fe ff ff cc cc cc cc cc cc cc 0f 1f 44
+> RSP: 0018:ffffc9000c507af0 EFLAGS: 00000046
+> RAX: 0000000000000001 RBX: 0000000000000000 RCX: 1ffffffff1a077ab
+> RDX: 0000000000000000 RSI: ffffffff894bac40 RDI: ffffffff894bac40
+> RBP: ffffffff8b3739e0 R08: 0000000000000000 R09: ffffffff8d038b8f
+> R10: fffffbfff1a07171 R11: 0000000000000000 R12: 0000000000000001
+> R13: ffff88802f858bc0 R14: 00000000ffffffff R15: ffffffff889a5430
+> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fbcc03ca000 CR3: 0000000011523000 CR4: 0000000000350ef0
+> Call Trace:
+>  lockdep_recursion_inc kernel/locking/lockdep.c:432 [inline]
+>  lock_is_held_type+0x34/0x100 kernel/locking/lockdep.c:5475
+>  lock_is_held include/linux/lockdep.h:271 [inline]
+>  rcu_read_lock_sched_held+0x3a/0x70 kernel/rcu/update.c:123
+>  trace_lock_release include/trace/events/lock.h:58 [inline]
+>  lock_release+0x5b7/0x710 kernel/locking/lockdep.c:5448
+>  __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:174 [inline]
+>  _raw_spin_unlock_bh+0x12/0x30 kernel/locking/spinlock.c:207
+>  spin_unlock_bh include/linux/spinlock.h:399 [inline]
+>  batadv_nc_purge_paths+0x2a5/0x3a0 net/batman-adv/network-coding.c:467
+>  batadv_nc_worker+0x831/0xe50 net/batman-adv/network-coding.c:716
+>  process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
+>  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
+>  kthread+0x3b1/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+> 
+> 
+> Tested on:
+> 
+> commit:         a1235e44 io_uring: cancel all requests on task exit
+> git tree:       git://git.kernel.dk/linux-block io_uring-5.11
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10c53584d00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c6b6b5cccb0f38f2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> 
 
-Cheers,
---=20
-Aur=C3=A9lien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, D=
-E
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
-nchen)
-
+-- 
+Pavel Begunkov
