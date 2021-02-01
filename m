@@ -2,112 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE5E30AD20
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 17:53:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C069F30AD3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 17:58:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbhBAQxZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 11:53:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231816AbhBAQww (ORCPT
+        id S231855AbhBAQ6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 11:58:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8474 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231751AbhBAQ6C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 11:52:52 -0500
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 848B4C061573;
-        Mon,  1 Feb 2021 08:52:11 -0800 (PST)
-Received: by mail-yb1-xb2b.google.com with SMTP id c3so7105291ybi.3;
-        Mon, 01 Feb 2021 08:52:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=qwbW8G2z+R0H/rCyvA3OX5oL3/sVr/Ik7CWUFrD1gK0=;
-        b=AcgWNjhEOmIqNn+8fbSA0R8peOZboUMDNz4Z66znf5ipLz7lG2iL7z4aw2wsoF2DPA
-         C/0gANRHZzfDIJ942NK4vvO7Wn+4jOta1hqr5p8k79YQhq5+MXmgZWSlbKUQVGTTYv7d
-         +AMBVNAqUinemuF0jy6aGkkSZN/+QiOLlnO3JaCeppk0jUK+T2I8f9p+oLVqcJb+tkey
-         oAhxq5dxvTxd0Lf+3phhwY6Bi30EShmWS+8bWv2GxFEMSj2uymmWxdbA1Ap8v1G78e06
-         Zh6TY1u7NbV9hiIbsjU5CvKmV4gxVjJ770J/GgFEf947nkJTnOsMHpDX/9CWH/bFCJP3
-         RBGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=qwbW8G2z+R0H/rCyvA3OX5oL3/sVr/Ik7CWUFrD1gK0=;
-        b=CWUsfnvHFuzwymQudUzW3gFr3BOF+VvOB0i3N3fhJ1UCQ9UlbVcdsrKZ1aZKAncekR
-         5yOWw2orxyvrn/gKA7pdtm1Z9cZoLnbYyWqB2BWftPNBQSFl2liyJhXtwF32ekY1ZW72
-         nDDsfbHRE7jzeYne+eeeODTD3H1Pt7nPS5LcdsriloZMwwMX/+kqYnPHkxLUhnlhIGM+
-         S0Ch2UOUi2a0MCJaOzgkKRLCy4BSzHiFGGWCuZGM9K1Ufr8RqS0zEDKJF2ThyV7hCsQw
-         lZqo4/jXLAsgCJbp2sJTeHKQ54B5GECNNFeVGP42uJp7vfvTS3luPopW2v/VCBoKoPVP
-         XhzQ==
-X-Gm-Message-State: AOAM530w0QydfJOvlhKwXkflrqXfnqcZGAtRPl0Gu05Gf/402by/Q+MT
-        ilsFYpXMB6dha/LNVqT8WKH7Y6tEScqPrXd28FftGBhygw6aCg==
-X-Google-Smtp-Source: ABdhPJzpIYSB/LthDOVcsjTRxnlJdUqXnDKCUzYw7u83inL19YdICaPa+PqcTEDZFxnN9nPTj6yLQLqhBOqANUwiIRs=
-X-Received: by 2002:a25:c605:: with SMTP id k5mr15317930ybf.34.1612198330634;
- Mon, 01 Feb 2021 08:52:10 -0800 (PST)
-MIME-Version: 1.0
-References: <20210129171316.13160-1-aaptel@suse.com> <CANT5p=ofvpimU9Z7jwj4cPXXa1E4KkcijYrxbVKQZf5JDiR-1g@mail.gmail.com>
- <877dns9izy.fsf@suse.com>
-In-Reply-To: <877dns9izy.fsf@suse.com>
-From:   Shyam Prasad N <nspmangalore@gmail.com>
-Date:   Mon, 1 Feb 2021 22:21:59 +0530
-Message-ID: <CANT5p=oSrrCbCdXZSbjmPDM4P=z=1c=kj9w1DDTJO5UhtREo8g@mail.gmail.com>
-Subject: Re: [PATCH v1] cifs: make nested cifs mount point dentries always
- valid to deal with signaled 'df'
-To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
-Cc:     CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        Steve French <smfrench@gmail.com>, Paulo Alcantara <pc@cjr.nz>
+        Mon, 1 Feb 2021 11:58:02 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 111GglEJ113096;
+        Mon, 1 Feb 2021 11:56:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : reply-to : to : cc : date : in-reply-to : references : content-type
+ : mime-version : content-transfer-encoding; s=pp1;
+ bh=wT7a/liLBSfcD7N/UPbkV3RD/KslWeh4NLQG5EPJ7nQ=;
+ b=kXkBzChwTSaNHsMVY+LTYccolmWv+mZ3ZGn7eEUUvVLxfBBPI8zUta1XvW7g70uLasS9
+ d0kJKgQu1dnLNQXDFjIopZmB9sTHhJDP3oPSyrFyYZArItFkrYbc0fnPmsfx4LaO19/B
+ gS3Uixq/pAGwHT/prSDU8KzbQN5/ynJ+Ukn891aJzwdQslDSjiXbXsHV4bYfJjVJ8WEF
+ At5mCisx5yq+hfISjZTWjkCnERXf9VUD7yAJaJeyECDFSM3fRjdUzxLOBdyJJ3y9Vl6d
+ Qu5S+5LmA7rR1AuPmGiirOyAgBqXBXMd37MobQIK9K4Qmw9U2wP/9xPBaN10moKzV8Pu Yg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36en3vs16b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 01 Feb 2021 11:56:31 -0500
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 111GgxhQ114162;
+        Mon, 1 Feb 2021 11:56:30 -0500
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36en3vs155-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 01 Feb 2021 11:56:30 -0500
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 111GfuSI009246;
+        Mon, 1 Feb 2021 16:56:28 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma03dal.us.ibm.com with ESMTP id 36eheka7ga-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 01 Feb 2021 16:56:28 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 111GuRjN23003516
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 1 Feb 2021 16:56:27 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 692A278063;
+        Mon,  1 Feb 2021 16:56:27 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CD187806B;
+        Mon,  1 Feb 2021 16:56:20 +0000 (GMT)
+Received: from jarvis.int.hansenpartnership.com (unknown [9.85.153.205])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon,  1 Feb 2021 16:56:20 +0000 (GMT)
+Message-ID: <6de6b9f9c2d28eecc494e7db6ffbedc262317e11.camel@linux.ibm.com>
+Subject: Re: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize
+ direct map fragmentation
+From:   James Bottomley <jejb@linux.ibm.com>
+Reply-To: jejb@linux.ibm.com
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Mike Rapoport <rppt@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Date:   Mon, 01 Feb 2021 08:56:19 -0800
+In-Reply-To: <YBPF8ETGBHUzxaZR@dhcp22.suse.cz>
+References: <20210121122723.3446-1-rppt@kernel.org>
+         <20210121122723.3446-8-rppt@kernel.org>
+         <20210126114657.GL827@dhcp22.suse.cz>
+         <303f348d-e494-e386-d1f5-14505b5da254@redhat.com>
+         <20210126120823.GM827@dhcp22.suse.cz> <20210128092259.GB242749@kernel.org>
+         <YBK1kqL7JA7NePBQ@dhcp22.suse.cz>
+         <73738cda43236b5ac2714e228af362b67a712f5d.camel@linux.ibm.com>
+         <YBPF8ETGBHUzxaZR@dhcp22.suse.cz>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.34.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
+ definitions=2021-02-01_06:2021-01-29,2021-02-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxlogscore=818 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1015 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102010084
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I'm okay with returning valid for directory mount point.
+On Fri, 2021-01-29 at 09:23 +0100, Michal Hocko wrote:
+> On Thu 28-01-21 13:05:02, James Bottomley wrote:
+> > Obviously the API choice could be revisited
+> > but do you have anything to add over the previous discussion, or is
+> > this just to get your access control?
+> 
+> Well, access control is certainly one thing which I still believe is
+> missing. But if there is a general agreement that the direct map
+> manipulation is not that critical then this will become much less of
+> a problem of course.
 
-But the point that I'm trying to make here is that VFS reacts
-differently when d_validate returns an error VS when it just returns
-invalid:
-https://elixir.bootlin.com/linux/latest/source/fs/namei.c#L1409
+The secret memory is a scarce resource but it's not a facility that
+should only be available to some users.
 
-Notice how it calls d_invalidate only when there's no error. And
-d_invalidate seems to have detach_mounts.
-It is likely that the umount happens there.
+> It all boils down whether secret memory is a scarce resource. With
+> the existing implementation it really is. It is effectivelly
+> repeating same design errors as hugetlb did. And look now, we have a
+> subtle and convoluted reservation code to track mmap requests and we
+> have a cgroup controller to, guess what, have at least some control
+> over distribution if the preallocated pool. See where am I coming
+> from?
 
-I'm suggesting that we should return errors inside d_validate
-handlers, rather than just 0 or 1.
-Makes sense?
+I'm fairly sure rlimit is the correct way to control this.  The
+subtlety in both rlimit and memcg tracking comes from deciding to
+account under an existing category rather than having our own new one. 
+People don't like new stuff in accounting because it requires
+modifications to everything in userspace.  Accounting under and
+existing limit keeps userspace the same but leads to endless arguments
+about which limit it should be under.  It took us several patch set
+iterations to get to a fragile consensus on this which you're now
+disrupting for reasons you're not making clear.
 
-Regards,
-Shyam
+> If the secret memory is more in line with mlock without any imposed
+> limit (other than available memory) in the end then, sure, using the
+> same access control as mlock sounds reasonable. Btw. if this is
+> really just a more restrictive mlock then is there any reason to not
+> hook this into the existing mlock infrastructure (e.g.
+> MCL_EXCLUSIVE)? Implications would be that direct map would be
+> handled on instantiation/tear down paths, migration would deal with
+> the same (if possible). Other than that it would be mlock like.
 
-On Mon, Feb 1, 2021 at 4:01 PM Aur=C3=A9lien Aptel <aaptel@suse.com> wrote:
->
-> Shyam Prasad N <nspmangalore@gmail.com> writes:
-> > Going by the documentation of d_revalidate:
-> >> This function should return a positive value if the dentry is still
-> >> valid, and zero or a negative error code if it isn't.
-> >
-> > In case of error, can we try returning the rc itself (rather than 0),
-> > and see if VFS avoids a dentry put?
-> > Because theoretically, the call execution has failed, and the dentry
-> > is not found to be invalid.
->
-> AFAIK mount points are pinned, you cannot rm or mv them so it seems we
-> could make them always valid. I don't know if there are deeper and more
-> subtle implications.
->
-> The recent signal fixes are not fixing this issue.
->
-> Cheers,
-> --
-> Aur=C3=A9lien Aptel / SUSE Labs Samba Team
-> GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-> SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg,=
- DE
-> GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=
-=BCnchen)
->
+In the very first patch set we proposed a mmap flag to do this.  Under
+detailed probing it emerged that this suffers from several design
+problems: the KVM people want VMM to be able to remove the secret
+memory range from the process; there may be situations where sharing is
+useful and some people want to be able to seal the operations.  All of
+this ended up convincing everyone that a file descriptor based approach
+was better than a mmap one.
+
+James
 
 
---=20
--Shyam
