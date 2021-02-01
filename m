@@ -2,248 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7481730A636
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 12:09:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5100430A630
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 12:07:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233332AbhBALId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 06:08:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41900 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233013AbhBALI3 (ORCPT
+        id S233556AbhBALHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 06:07:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21379 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233520AbhBALGy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 06:08:29 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618CAC061573;
-        Mon,  1 Feb 2021 03:07:48 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id 6so16093243wri.3;
-        Mon, 01 Feb 2021 03:07:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LcOqa57+wDWNXngr1Vsho/uylvVvhlNXId8LmNBtEKY=;
-        b=r+pgbrgIosJZzK1av8jh3I3H8mkjmc5/J+/SFoTDBksYii4iXOy+cDs9yJt3Vhp++e
-         k58naFBNReRaNuhNGsCUok9POzyt+AW/q0MV6eEJn9dYJOxAWoI2l4PlU/+WPWC8Kp5Z
-         P5Nze/hcYNb/eXx3oH4bAK73EIeq4sUweT9Y8LyFWsp9QJ7eRGYrfiicI8rp7EbVZUW2
-         VZC6r6jEBq9iIO5B7D3mcGX5D/akIIkGRBmyHaAZmJ6Kd95A52Apn2q1dOUsBrzFa5+D
-         7RFQWUIfOU4TpVRA9qhj8hn9TLEK5TvrX3yHTOTk6qfAveHBk4pJFDBG0zp/Y60q8kM2
-         dVcg==
+        Mon, 1 Feb 2021 06:06:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612177527;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Y6CC4m3ZKiHoeJ4vm73j2nwZCcKHfss+LOR/CL/RX4k=;
+        b=MC+FWyFwkO9XE0TI/UVXO0Yy0KHyJQMAbpIWq0u8yzUn5SMoINCDk8DRXzOc9oPt8VeqiA
+        qRj++yC1J6XeRxsCllbEobPYv/v08DaSMs+lsdxLICEOlciMZpAtIQQuAjQsUIdCCzeqgp
+        4YBMOpmbrxmkYzRZeVnVb9VzwfrLXy0=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-259-seZgmEYXN2ObxFiBMCHC2Q-1; Mon, 01 Feb 2021 06:05:26 -0500
+X-MC-Unique: seZgmEYXN2ObxFiBMCHC2Q-1
+Received: by mail-wr1-f71.google.com with SMTP id u15so621838wrn.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Feb 2021 03:05:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LcOqa57+wDWNXngr1Vsho/uylvVvhlNXId8LmNBtEKY=;
-        b=Pu92E9vPXecCOolMCqUDPuzo561w7SMEm+ykWD+fS8Ry9tcdy7CxRgtVKyu9p5Ggqs
-         MSG9iqUhm23pW2gsSbZIkZsblFQjEdZcsyPyUf91shzBWX3n5Hus0NmmXiYPi2tq+OXs
-         LfcpZ9h1yp2GHIecdWh+uynaKkYyogYXL7VVB2gMsOm7nKIqP5CzneTPaLXLXH+Ghrwk
-         lbkrKTVe1R0t010GNM3CcqJ0XkWsPNJ9V6zag70zLsdj3tgmKrZA97myLMxPA/MhQc/p
-         iUi06zDGCeRmSfSDfHlxLjF1K7gfQ5m1FlYL+w+YN5bSj7d5zFGxfegEAmdyufHuss+Q
-         lRGQ==
-X-Gm-Message-State: AOAM531NNhXr3OZpomeulKyNSKoE7ToldEZbJyC1SOBcs8QPiV9FMoD4
-        5ii2hQhUrIVg27TS4YvwmrI=
-X-Google-Smtp-Source: ABdhPJxBoDXxVVioQkDc8o6hCNsXGI2LrfOAXF0qzKWo0r/johOUVMC9FvyxKGHwem0+IroBQMAm4Q==
-X-Received: by 2002:a5d:4d4c:: with SMTP id a12mr2906503wru.154.1612177666912;
-        Mon, 01 Feb 2021 03:07:46 -0800 (PST)
-Received: from [192.168.8.166] ([185.69.145.241])
-        by smtp.gmail.com with ESMTPSA id a27sm26243131wrc.94.2021.02.01.03.07.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Feb 2021 03:07:46 -0800 (PST)
-Subject: Re: WARNING in io_disable_sqo_submit
-To:     syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000042c22b05b92c1b44@google.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <39ebb181-6760-cdfd-88f8-5578ad4d7c85@gmail.com>
-Date:   Mon, 1 Feb 2021 11:04:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Y6CC4m3ZKiHoeJ4vm73j2nwZCcKHfss+LOR/CL/RX4k=;
+        b=W0R6sm1o0XXzAipOsShg5mr9QE1nDYtFQnX9DirNm1TvK5grj/sQ/VT5UlvZk1/NXR
+         chnT1+942aUGvSsOOWejoI2/bbizzgt7c+9F0h2fAMz8X3zSxWnSb9CZJfeuP+/zUg2I
+         +g7d5RERT+zTsGsS/v/eVu2jjtk2f9Kjd7tbn3mFjA0CMoWvuYETZK7zAu1kjBdxzu2/
+         ZdlDB24kDjWPk1qBWb8Gdjja3lZVECgNFEjQy8z7NGTYJNxZRhU1nEuQ9EQKrPDu9cHU
+         9bq8Dm37x/eiaRcQiMMXdOEbNtbMSFJDLxilrGOKoNmr/bAy6LzOtcYgX3FmzyoRgSUN
+         qH9w==
+X-Gm-Message-State: AOAM533If1wLGlFuPcRXlqLrEBt6DTtHgThH90XA3MbliGrknxV5Dydu
+        xMubtCjxN6jz0hv9ZTBhzB5oJcWJCBapnX7IvSk195+QiWOKRKJ9zZarF84/h3S8mrRWdJhCqY9
+        Eq6qFP4D6ve5tPzU3Fl6rVAubdA==
+X-Received: by 2002:a05:6000:1841:: with SMTP id c1mr17214341wri.278.1612177525192;
+        Mon, 01 Feb 2021 03:05:25 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzMK79Mkew2h7U0GFOcmTtXkC8lH41EmCO+/jdmYzyRwl+sN2j7/Tb0HGWZdqr6tf0uwtKU+w==
+X-Received: by 2002:a05:6000:1841:: with SMTP id c1mr17214306wri.278.1612177524950;
+        Mon, 01 Feb 2021 03:05:24 -0800 (PST)
+Received: from steredhat (host-79-34-249-199.business.telecomitalia.it. [79.34.249.199])
+        by smtp.gmail.com with ESMTPSA id s23sm20251966wmc.35.2021.02.01.03.05.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Feb 2021 03:05:23 -0800 (PST)
+Date:   Mon, 1 Feb 2021 12:05:21 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Parav Pandit <parav@nvidia.com>, Bob Liu <bob.liu@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC v3 03/11] vdpa: Remove the restriction that only supports
+ virtio-net devices
+Message-ID: <20210201110521.o3m6temcw3nmkiea@steredhat>
+References: <20210119045920.447-1-xieyongji@bytedance.com>
+ <20210119045920.447-4-xieyongji@bytedance.com>
+ <310d7793-e4ff-fba3-f358-418cb64c7988@redhat.com>
+ <20210120110832.oijcmywq7pf7psg3@steredhat>
+ <1979cffc-240e-a9f9-b0ab-84a1f82ac81e@redhat.com>
+ <20210127085728.j6x5yzrldp2wp55c@steredhat>
+ <3cb239f5-fdd5-8311-35a0-c0f50b552521@redhat.com>
+ <20210129150359.caitcskrfhqed73z@steredhat>
+ <CACycT3sTx+NGg1iB8gmFbOPfzCvnq5F0nd2ePGs2_BUeU=-2_Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <00000000000042c22b05b92c1b44@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACycT3sTx+NGg1iB8gmFbOPfzCvnq5F0nd2ePGs2_BUeU=-2_Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18/01/2021 12:46, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> INFO: task hung in io_sq_thread_stop
+On Sat, Jan 30, 2021 at 07:33:08PM +0800, Yongji Xie wrote:
+>On Fri, Jan 29, 2021 at 11:04 PM Stefano Garzarella <sgarzare@redhat.com> wrote:
+>>
+>> On Thu, Jan 28, 2021 at 11:11:49AM +0800, Jason Wang wrote:
+>> >
+>> >On 2021/1/27 下午4:57, Stefano Garzarella wrote:
+>> >>On Wed, Jan 27, 2021 at 11:33:03AM +0800, Jason Wang wrote:
+>> >>>
+>> >>>On 2021/1/20 下午7:08, Stefano Garzarella wrote:
+>> >>>>On Wed, Jan 20, 2021 at 11:46:38AM +0800, Jason Wang wrote:
+>> >>>>>
+>> >>>>>On 2021/1/19 下午12:59, Xie Yongji wrote:
+>> >>>>>>With VDUSE, we should be able to support all kinds of virtio devices.
+>> >>>>>>
+>> >>>>>>Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+>> >>>>>>---
+>> >>>>>> drivers/vhost/vdpa.c | 29 +++--------------------------
+>> >>>>>> 1 file changed, 3 insertions(+), 26 deletions(-)
+>> >>>>>>
+>> >>>>>>diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+>> >>>>>>index 29ed4173f04e..448be7875b6d 100644
+>> >>>>>>--- a/drivers/vhost/vdpa.c
+>> >>>>>>+++ b/drivers/vhost/vdpa.c
+>> >>>>>>@@ -22,6 +22,7 @@
+>> >>>>>> #include <linux/nospec.h>
+>> >>>>>> #include <linux/vhost.h>
+>> >>>>>> #include <linux/virtio_net.h>
+>> >>>>>>+#include <linux/virtio_blk.h>
+>> >>>>>> #include "vhost.h"
+>> >>>>>>@@ -185,26 +186,6 @@ static long
+>> >>>>>>vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user
+>> >>>>>>*statusp)
+>> >>>>>>     return 0;
+>> >>>>>> }
+>> >>>>>>-static int vhost_vdpa_config_validate(struct vhost_vdpa *v,
+>> >>>>>>-                      struct vhost_vdpa_config *c)
+>> >>>>>>-{
+>> >>>>>>-    long size = 0;
+>> >>>>>>-
+>> >>>>>>-    switch (v->virtio_id) {
+>> >>>>>>-    case VIRTIO_ID_NET:
+>> >>>>>>-        size = sizeof(struct virtio_net_config);
+>> >>>>>>-        break;
+>> >>>>>>-    }
+>> >>>>>>-
+>> >>>>>>-    if (c->len == 0)
+>> >>>>>>-        return -EINVAL;
+>> >>>>>>-
+>> >>>>>>-    if (c->len > size - c->off)
+>> >>>>>>-        return -E2BIG;
+>> >>>>>>-
+>> >>>>>>-    return 0;
+>> >>>>>>-}
+>> >>>>>
+>> >>>>>
+>> >>>>>I think we should use a separate patch for this.
+>> >>>>
+>> >>>>For the vdpa-blk simulator I had the same issues and I'm adding
+>> >>>>a .get_config_size() callback to vdpa devices.
+>> >>>>
+>> >>>>Do you think make sense or is better to remove this check in
+>> >>>>vhost/vdpa, delegating the boundaries checks to
+>> >>>>get_config/set_config callbacks.
+>> >>>
+>> >>>
+>> >>>A question here. How much value could we gain from
+>> >>>get_config_size() consider we can let vDPA parent to validate the
+>> >>>length in its get_config().
+>> >>>
+>> >>
+>> >>I agree, most of the implementations already validate the length,
+>> >>the only gain is an error returned since get_config() is void, but
+>> >>eventually we can add a return value to it.
+>> >
+>> >
+>> >Right, one problem here is that. For the virito path, its get_config()
+>> >returns void. So we can not propagate error to virtio drivers. But it
+>> >might not be a big issue since we trust kernel virtio driver.
+>> >
+>> >So I think it makes sense to change the return value in the vdpa config ops.
+>>
+>> Thanks for your feedback!
+>>
+>> @Xie do you plan to do this?
+>>
+>> Otherwise I can do in my vdpa-blk-sim series, where for now I used this
+>> patch as is.
+>>
+>
+>Hi Stefano, please do in your vdpa-blk-sim series. I have no plan for 
+>it now.
 
-#syz test: git://git.kernel.dk/linux-block for-5.12/io_uring
+Okay, I'll do it.
 
-> INFO: task kworker/u4:0:8 blocked for more than 143 seconds.
->       Not tainted 5.11.0-rc1-syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/u4:0    state:D stack:24056 pid:    8 ppid:     2 flags:0x00004000
-> Workqueue: events_unbound io_ring_exit_work
-> Call Trace:
->  context_switch kernel/sched/core.c:4313 [inline]
->  __schedule+0x90c/0x21a0 kernel/sched/core.c:5064
->  schedule+0xcf/0x270 kernel/sched/core.c:5143
->  schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1854
->  do_wait_for_common kernel/sched/completion.c:85 [inline]
->  __wait_for_common kernel/sched/completion.c:106 [inline]
->  wait_for_common kernel/sched/completion.c:117 [inline]
->  wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
->  kthread_park+0x122/0x1b0 kernel/kthread.c:557
->  io_sq_thread_park fs/io_uring.c:7445 [inline]
->  io_sq_thread_park fs/io_uring.c:7439 [inline]
->  io_sq_thread_stop+0xfe/0x570 fs/io_uring.c:7463
->  io_finish_async fs/io_uring.c:7481 [inline]
->  io_ring_ctx_free fs/io_uring.c:8646 [inline]
->  io_ring_exit_work+0x62/0x6d0 fs/io_uring.c:8739
->  process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
->  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
->  kthread+0x3b1/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> 
-> Showing all locks held in the system:
-> 3 locks held by kworker/u4:0/8:
->  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
->  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
->  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
->  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
->  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
->  #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
->  #1: ffffc90000cd7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
->  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7444 [inline]
->  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7439 [inline]
->  #2: ffff88801bfd4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_stop+0xd6/0x570 fs/io_uring.c:7463
-> 1 lock held by khungtaskd/1647:
->  #0: ffffffff8b373aa0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
-> 1 lock held by in:imklog/8164:
->  #0: ffff8880151b8870 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:947
-> 2 locks held by kworker/u4:6/8415:
-> 2 locks held by kworker/0:4/8690:
->  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
->  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
->  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
->  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
->  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
->  #0: ffff88801007c538 ((wq_completion)rcu_gp){+.+.}-{0:0}, at: process_one_work+0x871/0x15f0 kernel/workqueue.c:2246
->  #1: ffffc9000288fda8 ((work_completion)(&rew.rew_work)){+.+.}-{0:0}, at: process_one_work+0x8a5/0x15f0 kernel/workqueue.c:2250
-> 1 lock held by syz-executor.3/8865:
->  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-> 1 lock held by syz-executor.2/8867:
->  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-> 2 locks held by syz-executor.5/8869:
->  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
->  #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:290 [inline]
->  #1: ffffffff8b37c368 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x4f2/0x610 kernel/rcu/tree_exp.h:836
-> 1 lock held by syz-executor.4/8870:
->  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-> 1 lock held by syz-executor.0/8872:
->  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-> 1 lock held by syz-executor.1/8873:
->  #0: ffff888146ddcd88 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x41/0x540 net/netfilter/x_tables.c:1206
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 1647 Comm: khungtaskd Not tainted 5.11.0-rc1-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:79 [inline]
->  dump_stack+0x107/0x163 lib/dump_stack.c:120
->  nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
->  nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
->  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
->  watchdog+0xd43/0xfa0 kernel/hung_task.c:294
->  kthread+0x3b1/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> Sending NMI from CPU 1 to CPUs 0:
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 8415 Comm: kworker/u4:6 Not tainted 5.11.0-rc1-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: bat_events batadv_nc_worker
-> RIP: 0010:__this_cpu_preempt_check+0xd/0x20 lib/smp_processor_id.c:70
-> Code: 00 00 48 c7 c6 00 d9 9e 89 48 c7 c7 40 d9 9e 89 e9 98 fe ff ff 0f 1f 84 00 00 00 00 00 55 48 89 fd 0f 1f 44 00 00 48 89 ee 5d <48> c7 c7 80 d9 9e 89 e9 77 fe ff ff cc cc cc cc cc cc cc 0f 1f 44
-> RSP: 0018:ffffc9000c507af0 EFLAGS: 00000046
-> RAX: 0000000000000001 RBX: 0000000000000000 RCX: 1ffffffff1a077ab
-> RDX: 0000000000000000 RSI: ffffffff894bac40 RDI: ffffffff894bac40
-> RBP: ffffffff8b3739e0 R08: 0000000000000000 R09: ffffffff8d038b8f
-> R10: fffffbfff1a07171 R11: 0000000000000000 R12: 0000000000000001
-> R13: ffff88802f858bc0 R14: 00000000ffffffff R15: ffffffff889a5430
-> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fbcc03ca000 CR3: 0000000011523000 CR4: 0000000000350ef0
-> Call Trace:
->  lockdep_recursion_inc kernel/locking/lockdep.c:432 [inline]
->  lock_is_held_type+0x34/0x100 kernel/locking/lockdep.c:5475
->  lock_is_held include/linux/lockdep.h:271 [inline]
->  rcu_read_lock_sched_held+0x3a/0x70 kernel/rcu/update.c:123
->  trace_lock_release include/trace/events/lock.h:58 [inline]
->  lock_release+0x5b7/0x710 kernel/locking/lockdep.c:5448
->  __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:174 [inline]
->  _raw_spin_unlock_bh+0x12/0x30 kernel/locking/spinlock.c:207
->  spin_unlock_bh include/linux/spinlock.h:399 [inline]
->  batadv_nc_purge_paths+0x2a5/0x3a0 net/batman-adv/network-coding.c:467
->  batadv_nc_worker+0x831/0xe50 net/batman-adv/network-coding.c:716
->  process_one_work+0x98d/0x15f0 kernel/workqueue.c:2275
->  worker_thread+0x64c/0x1120 kernel/workqueue.c:2421
->  kthread+0x3b1/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> 
-> 
-> Tested on:
-> 
-> commit:         a1235e44 io_uring: cancel all requests on task exit
-> git tree:       git://git.kernel.dk/linux-block io_uring-5.11
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10c53584d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c6b6b5cccb0f38f2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> 
+Thanks,
+Stefano
 
--- 
-Pavel Begunkov
