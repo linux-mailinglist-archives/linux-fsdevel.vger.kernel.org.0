@@ -2,179 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E51730AB91
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 16:38:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B20CB30ABE3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 16:51:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231664AbhBAPhN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 10:37:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43202 "EHLO
+        id S231342AbhBAPth (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 10:49:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231259AbhBAPhL (ORCPT
+        with ESMTP id S231326AbhBAPte (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 10:37:11 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B399EC061573;
-        Mon,  1 Feb 2021 07:36:30 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id g10so17066915wrx.1;
-        Mon, 01 Feb 2021 07:36:30 -0800 (PST)
+        Mon, 1 Feb 2021 10:49:34 -0500
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96509C061573;
+        Mon,  1 Feb 2021 07:48:54 -0800 (PST)
+Received: by mail-qk1-x735.google.com with SMTP id x81so16652976qkb.0;
+        Mon, 01 Feb 2021 07:48:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Io1hDqqBt5odDujW2OOi0bpS8IsMUxoXmDL819C2qRE=;
-        b=S2WzmItpZ0kiP+co5licM5qC9sKFxoxEODotFJ7x3OAFLopB7VX0P9aFEVZn3IPi+x
-         l+bD1dbuQWL9RxFsOWpZY10XVM0q5zQntVUSaycC9bmer4cn16K/V6yz3w6dPRIibwXX
-         jALlphG/gEwXdLLN9/iZjQeeyE1c5+6e31zCKWQxmy4nCkVXYT+CC0p8DlJblm/WaB/h
-         PF5n+YCpk6cNMpVYMbGB7aos1iLvPVjI1r1aXRJSQVT38TEjUzcV9GzQiSd1SjWASeGF
-         YQBWYmZ+O2GwLbXnIK/8zouwuXYdqIO6OkRE4NMzyaB+lUJp79/Q7e3OO8M0Yqdi+3kw
-         457Q==
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=hUMMXC5iDRXzXVIcbJwpI6flgqD4hERm6u8i4HWSxbI=;
+        b=c9mYmNDvjIgJTKoJoiGyQxS14o4yCswbYSMfREBhPIjSpMWY+GSYosP4gIYX5JkNPW
+         gZwzSieP3HQwst8/59b0rFQhLXu23NfE1hvVuBtGPL51RLKsgU88a8jCdniCQgQ5Pk6l
+         B09cK+GER7AJ0yoQ/nDwhk1OJuN/g++0ncCQXHDxjY2hkF1GD6CbPgeqtXRm+wbHfTvt
+         r6PPDmUVpb9zsLlwnaA5/PHhVDTkZ2b8hF9rZqsxDz5Khotm6v7kbqZiD2X73nqXMeuq
+         vnPT/aM63US5DKLOLRLf0tSTcQpMjSFzxvrT0bUqkiUeIUWdnXWPjM4JVrYee/Ez3oJ7
+         WWhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Io1hDqqBt5odDujW2OOi0bpS8IsMUxoXmDL819C2qRE=;
-        b=T+sODJ+/4kEK8h65HJtnmV04zouDxPPT8y4GakXBZ87DWUR4ISA+xKQHWghwGQvA2t
-         dyni5t6L7OViVand3XyTNXaFLNKog0NiD/rfEkUsU3nzgc3SvVYenEdpSHhXnuHqcakC
-         c7wNjgOUL+aH69R0r2Gq3/Bkcub2wsUag5bJiguU6U6ajl+k8QqAFw0RwJGSsWo2NUhH
-         WvbScJHxNc8nz8RWl6+XioFQn/63i+ddVPz0WYspakkdF407MJgXuWyYWeikMR3DkERO
-         SuBpC5x9BtoNrpBxHPSwQSJYracIWA7ucX/j14q+Sgo6meYTKIxJJqRlDn6Tu4bpXGsw
-         aXWA==
-X-Gm-Message-State: AOAM531HlPi0HdZbpFaasQuIZHbp1RG16KzlerIyPOSqJaHlyb8pLI2E
-        9jPVXm/bTTf2icxBH6v95DY=
-X-Google-Smtp-Source: ABdhPJxnT3n1o6bFCgrV69f1cb558uzCSiZJGnuwsnE9dkzfIMIxpXr5WvUEQOjoAelWX7OTAC94Ug==
-X-Received: by 2002:adf:9523:: with SMTP id 32mr19439442wrs.361.1612193789489;
-        Mon, 01 Feb 2021 07:36:29 -0800 (PST)
-Received: from [192.168.8.166] ([185.69.145.241])
-        by smtp.gmail.com with ESMTPSA id a16sm26817032wrr.89.2021.02.01.07.36.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Feb 2021 07:36:28 -0800 (PST)
-Subject: Re: WARNING in io_disable_sqo_submit
-To:     syzbot <syzbot+2f5d1785dc624932da78@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000052e4f305ba4807ca@google.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <06380635-4410-477f-6b92-468ab5d289c2@gmail.com>
-Date:   Mon, 1 Feb 2021 15:32:46 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=hUMMXC5iDRXzXVIcbJwpI6flgqD4hERm6u8i4HWSxbI=;
+        b=rpr2fEa0KMw8um82ekc5rCkV9JCTCOek6h3o1dHjQyUcs/vsglcTtsVJveKKtOwrdl
+         FM6qMcAitcrcEaENPj2v75PgiO5Ev45AjNyLkHrsWS2PrMOJKQehxYGQRiTOuHYYNeuT
+         MRuuOgHELpaiemtkdti65KIR9imis42srnYiUXo7L9LhdWlUCN+d1UsYBHY0X6yUCQ/Z
+         sltJYghWSG8lSrLE9po+GVLbPnktjXww76HVy4Cuu499hdGbQDQw58xqiFR5PajuhaL/
+         w7gtplAoXnSNefvFenovSP/nWjdadGA+1DgHjOGpUlEtjwhd9tHSn+OBqnj2JIbCV65u
+         vfyg==
+X-Gm-Message-State: AOAM533ALcxYi2eiIExBWHFFOryqWKBzeyF1C43gkiTsuQNiT30sApRA
+        wbAfGEW6xoDbEpg8EiDcT2mzGIbKFoi8QuX5QbM=
+X-Google-Smtp-Source: ABdhPJy55LKieQvNyu+GmwsuMEITyRMrGrvgSt3FFIkyp0j98/Se4pgW12FGtwO0A90VUA9NShib+gHGYKwCk3LLwao=
+X-Received: by 2002:a37:4c8:: with SMTP id 191mr15853830qke.338.1612194533837;
+ Mon, 01 Feb 2021 07:48:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <00000000000052e4f305ba4807ca@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1611627788.git.naohiro.aota@wdc.com> <cf8cd6170bd2283524a89a8192eeaba769a98fd6.1611627788.git.naohiro.aota@wdc.com>
+In-Reply-To: <cf8cd6170bd2283524a89a8192eeaba769a98fd6.1611627788.git.naohiro.aota@wdc.com>
+Reply-To: fdmanana@gmail.com
+From:   Filipe Manana <fdmanana@gmail.com>
+Date:   Mon, 1 Feb 2021 15:48:42 +0000
+Message-ID: <CAL3q7H5pv416FVwThOHe+M3L5B-z_n6_ZGQQxsUq5vC5fsAoJw@mail.gmail.com>
+Subject: Re: [PATCH v14 41/42] btrfs: serialize log transaction on ZONED mode
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, hare@suse.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/02/2021 15:30, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> WARNING in io_uring_cancel_task_requests
+On Tue, Jan 26, 2021 at 5:53 AM Naohiro Aota <naohiro.aota@wdc.com> wrote:
+>
+> This is the 2/3 patch to enable tree-log on ZONED mode.
+>
+> Since we can start more than one log transactions per subvolume
+> simultaneously, nodes from multiple transactions can be allocated
+> interleaved. Such mixed allocation results in non-sequential writes at th=
+e
+> time of log transaction commit. The nodes of the global log root tree
+> (fs_info->log_root_tree), also have the same mixed allocation problem.
+>
+> This patch serializes log transactions by waiting for a committing
+> transaction when someone tries to start a new transaction, to avoid the
+> mixed allocation problem. We must also wait for running log transactions
+> from another subvolume, but there is no easy way to detect which subvolum=
+e
+> root is running a log transaction. So, this patch forbids starting a new
+> log transaction when other subvolumes already allocated the global log ro=
+ot
+> tree.
+>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>  fs/btrfs/tree-log.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
+> diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+> index 930e752686b4..71a1c0b5bc26 100644
+> --- a/fs/btrfs/tree-log.c
+> +++ b/fs/btrfs/tree-log.c
+> @@ -105,6 +105,7 @@ static noinline int replay_dir_deletes(struct btrfs_t=
+rans_handle *trans,
+>                                        struct btrfs_root *log,
+>                                        struct btrfs_path *path,
+>                                        u64 dirid, int del_all);
+> +static void wait_log_commit(struct btrfs_root *root, int transid);
+>
+>  /*
+>   * tree logging is a special write ahead log used to make sure that
+> @@ -140,6 +141,7 @@ static int start_log_trans(struct btrfs_trans_handle =
+*trans,
+>  {
+>         struct btrfs_fs_info *fs_info =3D root->fs_info;
+>         struct btrfs_root *tree_root =3D fs_info->tree_root;
+> +       const bool zoned =3D btrfs_is_zoned(fs_info);
+>         int ret =3D 0;
+>
+>         /*
+> @@ -160,12 +162,20 @@ static int start_log_trans(struct btrfs_trans_handl=
+e *trans,
+>
+>         mutex_lock(&root->log_mutex);
+>
+> +again:
+>         if (root->log_root) {
+> +               int index =3D (root->log_transid + 1) % 2;
+> +
+>                 if (btrfs_need_log_full_commit(trans)) {
+>                         ret =3D -EAGAIN;
+>                         goto out;
+>                 }
+>
+> +               if (zoned && atomic_read(&root->log_commit[index])) {
+> +                       wait_log_commit(root, root->log_transid - 1);
+> +                       goto again;
+> +               }
+> +
+>                 if (!root->log_start_pid) {
+>                         clear_bit(BTRFS_ROOT_MULTI_LOG_TASKS, &root->stat=
+e);
+>                         root->log_start_pid =3D current->pid;
+> @@ -173,6 +183,17 @@ static int start_log_trans(struct btrfs_trans_handle=
+ *trans,
+>                         set_bit(BTRFS_ROOT_MULTI_LOG_TASKS, &root->state)=
+;
+>                 }
+>         } else {
+> +               if (zoned) {
+> +                       mutex_lock(&fs_info->tree_log_mutex);
+> +                       if (fs_info->log_root_tree)
+> +                               ret =3D -EAGAIN;
+> +                       else
+> +                               ret =3D btrfs_init_log_root_tree(trans, f=
+s_info);
+> +                       mutex_unlock(&fs_info->tree_log_mutex);
+> +               }
 
-#syz fix: io_uring: fix sqo ownership false positive warning
+Hum, so looking at this in the for-next branch, this does not seem to
+make much sense now, probably because these patches started to be
+developed before the following commit that landed in 5.10:
 
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 10843 at fs/io_uring.c:9039 io_uring_cancel_task_requests+0xe55/0x10c0 fs/io_uring.c:9039
-> Modules linked in:
-> CPU: 1 PID: 10843 Comm: syz-executor.3 Not tainted 5.11.0-rc5-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:io_uring_cancel_task_requests+0xe55/0x10c0 fs/io_uring.c:9039
-> Code: 00 00 e9 1c fe ff ff 48 8b 7c 24 18 e8 14 21 db ff e9 f2 fc ff ff 48 8b 7c 24 18 e8 05 21 db ff e9 64 f2 ff ff e8 9b a0 98 ff <0f> 0b e9 ed f2 ff ff e8 ff 20 db ff e9 c8 f5 ff ff 4c 89 ef e8 72
-> RSP: 0018:ffffc9000cc37950 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff888027fcc000 RCX: 0000000000000000
-> RDX: ffff888045a1a040 RSI: ffffffff81da2255 RDI: ffff888027fcc0d0
-> RBP: ffff888027fcc0e8 R08: 0000000000000000 R09: ffff888045a1a047
-> R10: ffffffff81da14cf R11: 0000000000000000 R12: ffff888027fcc000
-> R13: ffff888045a1a040 R14: ffff88802e748000 R15: ffff88803ca86018
-> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f09d5e60d40 CR3: 0000000028319000 CR4: 00000000001506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  io_uring_flush+0x47b/0x6e0 fs/io_uring.c:9224
->  filp_close+0xb4/0x170 fs/open.c:1286
->  close_files fs/file.c:403 [inline]
->  put_files_struct fs/file.c:418 [inline]
->  put_files_struct+0x1cc/0x350 fs/file.c:415
->  exit_files+0x7e/0xa0 fs/file.c:435
->  do_exit+0xc22/0x2ae0 kernel/exit.c:820
->  do_group_exit+0x125/0x310 kernel/exit.c:922
->  get_signal+0x427/0x20f0 kernel/signal.c:2773
->  arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
->  handle_signal_work kernel/entry/common.c:147 [inline]
->  exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
->  exit_to_user_mode_prepare+0x148/0x250 kernel/entry/common.c:201
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
->  syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x465b09
-> Code: Unable to access opcode bytes at RIP 0x465adf.
-> RSP: 002b:00007f21a56f2108 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
-> RAX: 0000000000000004 RBX: 000000000056c0b0 RCX: 0000000000465b09
-> RDX: 00000000206d4000 RSI: 00000000200002c0 RDI: 0000000000000187
-> RBP: 00000000200002c0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-> R13: 00000000206d4000 R14: 0000000000000000 R15: 0000000020ee7000
-> 
-> 
-> Tested on:
-> 
-> commit:         1d538571 io_uring: check kthread parked flag before sqthre..
-> git tree:       git://git.kernel.dk/linux-block for-5.12/io_uring
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14532690d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fe3e1032f57d6d25
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2f5d1785dc624932da78
-> compiler:       
-> 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
+id=3D47876f7ceffa0e6af7476e052b3c061f1f2c1d9f
 
--- 
-Pavel Begunkov
+So if we are the first task doing an fsync after a transaction commit,
+and there are no other concurrent tasks doing an fsync:
+
+1) We create fs_info->log_root_tree at the top of start_log_trans()
+because test_bit(BTRFS_ROOT_HAS_LOG_TREE, &tree_root->state) returns
+false;
+
+2) Then, we enter this code for zoned mode only, and
+fs_info->log_root_tree is not NULL, because we just created it before,
+so we always return
+     -EAGAIN and every fsync is converted to a full transaction commit.
+
+For this case, of no concurrency, and being the first task doing an
+fsync, it was not supposed to fallback to a transaction commit - that
+defeats the goal of this patch unless I missed something.
+
+Also, fs_info->log_root_tree is protected by tree_root->log_mutex and
+not anymore by fs_info->tree_log_mutex (since that specific commit).
+
+> +               if (ret)
+> +                       goto out;
+
+Also this "if (ret)" check could be moved inside the previous "if
+(zoned)" block after unlocking the mutex.
+
+Thanks, sorry for the very late review.
+
+> +
+>                 ret =3D btrfs_add_log_tree(trans, root);
+>                 if (ret)
+>                         goto out;
+> @@ -201,14 +222,22 @@ static int start_log_trans(struct btrfs_trans_handl=
+e *trans,
+>   */
+>  static int join_running_log_trans(struct btrfs_root *root)
+>  {
+> +       const bool zoned =3D btrfs_is_zoned(root->fs_info);
+>         int ret =3D -ENOENT;
+>
+>         if (!test_bit(BTRFS_ROOT_HAS_LOG_TREE, &root->state))
+>                 return ret;
+>
+>         mutex_lock(&root->log_mutex);
+> +again:
+>         if (root->log_root) {
+> +               int index =3D (root->log_transid + 1) % 2;
+> +
+>                 ret =3D 0;
+> +               if (zoned && atomic_read(&root->log_commit[index])) {
+> +                       wait_log_commit(root, root->log_transid - 1);
+> +                       goto again;
+> +               }
+>                 atomic_inc(&root->log_writers);
+>         }
+>         mutex_unlock(&root->log_mutex);
+> --
+> 2.27.0
+>
+
+
+--=20
+Filipe David Manana,
+
+=E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you're=
+ right.=E2=80=9D
