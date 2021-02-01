@@ -2,96 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E03F30AD77
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 18:12:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E4630AD9A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 18:18:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbhBARKk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 12:10:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35106 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbhBARKi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 12:10:38 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6DA3C061756;
-        Mon,  1 Feb 2021 09:09:58 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id rv9so25496654ejb.13;
-        Mon, 01 Feb 2021 09:09:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8vgOK0RvUyqfEu6HnO0iJIO2aZLK2TMzDkhHoYS2ukk=;
-        b=rHT2bxfQfwZ5mWMk3cDrJ0W1k76tdrPy1AjhRMRXzlGdmEZkPZRyGI0/Cc04fgPGKV
-         S1yiAre1hIGD25E4/RD85YQB5rRHo7GzgexDIU8MtX8M0aWGchMPtLSkXdlFvnD+8eaQ
-         Xwd5jyOvOCav4GCtdW1nIm5u3Dfalt7QjDKwfI8vAJvsG3xVKimYvdYiZzSlnUB+X48k
-         FXxEbXxgcoxCfPU3BFO47EKWIIiwqCfIWl7+dA6fQkYeAbjuGikrSjuBJgo2tibO+v8D
-         nliHJdH0wNTqaMobFYhCAbsgFyw4JMvZxRQtx4qAM9Vp6iedQT9nu52xfDkx2nX7oWhk
-         1lfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8vgOK0RvUyqfEu6HnO0iJIO2aZLK2TMzDkhHoYS2ukk=;
-        b=q1BtuqtA+M3Y5rHiWNq9fW1+to5YcIvrCUCLcVuFjIpuwnV81bAfBEho67nfarvIZt
-         QvYC5F2iqDjzFXwIy8C1XWcKFtHyGSIIKSJWsqtJdrxFazylbXuGKhUUKrhukX5tuiGq
-         m4PvGffiy7c67wzfo1nlkkq26FphViBKkiNQ+ZIq+ToUVu999am9k57brskfNVTYvXrk
-         CnSRfpaJGcpqp6d0Rh+lVGvaCZL4Ky5+wj7MFPDIJr/nlAsyZfRR+T67HRN6ZVIzXZzT
-         xXl6mm7ErwwPo5mpkz0b5sVMB5+SyH2K83ga/8KzF0OhtBDTLty2rVfBfzG+EmhUy4as
-         3atg==
-X-Gm-Message-State: AOAM531AIIUKLfrz3oqCd5ndrh+Mvf/lHQCVDRDoQIirn5XqW7Rnz/4w
-        aWJ066gj4pnJ5OlenV2vto2zzfG+ltEHmlU4O4k=
-X-Google-Smtp-Source: ABdhPJz6meD3gcE/W4R+mj1RkbAqoBFuOOgqCaC+W8HFvdgeR0IXmG7m/hBapbHz45BHGcRZxk8cai3PHauyIhjFFzQ=
-X-Received: by 2002:a17:906:f841:: with SMTP id ks1mr18656870ejb.507.1612199397448;
- Mon, 01 Feb 2021 09:09:57 -0800 (PST)
+        id S232025AbhBARSF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 12:18:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58212 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231864AbhBARR7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Feb 2021 12:17:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5DC5BAC3A;
+        Mon,  1 Feb 2021 17:17:18 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id b2ac17a6;
+        Mon, 1 Feb 2021 17:18:13 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 15/17] ceph: make d_revalidate call fscrypt
+ revalidator for encrypted dentries
+References: <20210120182847.644850-1-jlayton@kernel.org>
+        <20210120182847.644850-16-jlayton@kernel.org>
+Date:   Mon, 01 Feb 2021 17:18:07 +0000
+In-Reply-To: <20210120182847.644850-16-jlayton@kernel.org> (Jeff Layton's
+        message of "Wed, 20 Jan 2021 13:28:45 -0500")
+Message-ID: <87zh0nyaeo.fsf@suse.de>
 MIME-Version: 1.0
-References: <20210127233345.339910-1-shy828301@gmail.com> <20210127233345.339910-8-shy828301@gmail.com>
- <6b0638ba-2513-67f5-8ef1-9e60a7d9ded6@suse.cz> <CAHbLzkpiDBMRRerr7iXtj40p=RVLTmWoWoOQbdkvG7Tsi4iirw@mail.gmail.com>
- <CAHbLzkrg8OYqbKevdV_6qJ5L9P-_8ui=HAgm-0o69yKLtMg8tQ@mail.gmail.com> <0ce8b6e4-5abb-3edb-8423-f6c222420a89@suse.cz>
-In-Reply-To: <0ce8b6e4-5abb-3edb-8423-f6c222420a89@suse.cz>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 1 Feb 2021 09:09:45 -0800
-Message-ID: <CAHbLzkpCLxzy-whY8jiSw59V-tmq=VgDuxyUcdRkWrgkZnxC2w@mail.gmail.com>
-Subject: Re: [v5 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 1, 2021 at 7:17 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 1/29/21 7:04 PM, Yang Shi wrote:
->
-> >> > > @@ -209,9 +214,15 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
-> >> > >               if (!new)
-> >> > >                       return -ENOMEM;
-> >> > >
-> >> > > -             /* Set all old bits, clear all new bits */
-> >> > > -             memset(new->map, (int)0xff, old_size);
-> >> > > -             memset((void *)new->map + old_size, 0, size - old_size);
-> >> > > +             new->map = (unsigned long *)(new + 1);
-> >> > > +             new->nr_deferred = (void *)new->map + m_size;
-> >> >
-> >> > This better be aligned to sizeof(atomic_long_t). Can we be sure about that?
-> >>
-> >> Good point. No, if unsigned long is 32 bit on some 64 bit machines.
-> >
-> > I think we could just change map to "u64" and guarantee struct
-> > shrinker_info is aligned to 64 bit.
->
-> What about changing to order, nr_deferred before map? Then the atomics are at
-> the beginning of allocated area, thus aligned.
+Jeff Layton <jlayton@kernel.org> writes:
 
-Yes, it works too. The rcu_head is guaranteed to have aligned at sizeof(void *).
+> If we have a dentry which represents a no-key name, then we need to test
+> whether the parent directory's encryption key has since been added.  Do
+> that before we test anything else about the dentry.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/dir.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 236c381ab6bd..cb7ff91a243a 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -1726,6 +1726,10 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  	dout("d_revalidate %p '%pd' inode %p offset 0x%llx\n", dentry,
+>  	     dentry, inode, ceph_dentry(dentry)->offset);
+>  
+> +	valid = fscrypt_d_revalidate(dentry, flags);
+> +	if (valid <= 0)
+> +		return valid;
+> +
 
-Will fix in v6.
+This one took me a while to figure out, but eventually got there.
+Initially I was seeing this error:
+
+crypt: ceph: 1 inode(s) still busy after removing key with identifier f019f4a1c5d5665675218f89fccfa3c7, including ino 1099511627791
+
+and, when umounting the filesystem I would get the warning in
+fs/dcache.c:1623.
+
+Anyway, the patch below should fix it.
+
+Unfortunately I didn't had a lot of time to look into the -experimental
+branch yet.  On my TODO list for the next few days.
+
+Cheers,
+-- 
+Luis
+
+
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index ae0890be0c9d..d3ac39c6645f 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1781,7 +1781,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 
+ 	valid = fscrypt_d_revalidate(dentry, flags);
+ 	if (valid <= 0)
+-		return valid;
++		goto out;
+ 
+ 	mdsc = ceph_sb_to_client(dir->i_sb)->mdsc;
+ 
+@@ -1853,6 +1853,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	if (!valid)
+ 		ceph_dir_clear_complete(dir);
+ 
++out:
+ 	if (!(flags & LOOKUP_RCU))
+ 		dput(parent);
+ 	return valid;
+
+
+
+>  	mdsc = ceph_sb_to_client(dir->i_sb)->mdsc;
+>  
+>  	/* always trust cached snapped dentries, snapdir dentry */
+> -- 
+>
+> 2.29.2
+>
