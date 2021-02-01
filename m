@@ -2,103 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB97130AD17
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 17:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE5E30AD20
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 17:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231778AbhBAQwI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 11:52:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59288 "EHLO
+        id S229793AbhBAQxZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 11:53:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231757AbhBAQwB (ORCPT
+        with ESMTP id S231816AbhBAQww (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 11:52:01 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B082AC061786;
-        Mon,  1 Feb 2021 08:51:19 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id a12so23740104lfb.1;
-        Mon, 01 Feb 2021 08:51:19 -0800 (PST)
+        Mon, 1 Feb 2021 11:52:52 -0500
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 848B4C061573;
+        Mon,  1 Feb 2021 08:52:11 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id c3so7105291ybi.3;
+        Mon, 01 Feb 2021 08:52:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wF7mWC2M9iBBc+ACGYALfCAPMzd/Re2kA54W5usB+9c=;
-        b=cOQzkJjTPteBDAyEwI88kZ6IB+wiDX+1y1GIGJanexyB8HynFGGumgPPIB53qiYArs
-         +e7ZbAKr52jZx90yInF//sIz6yDHJwouIdUUpr7f+3RpMaze56OrOgLqkai2EYjbnhH4
-         +TjotrLukfQlGShqfr5pes94GebIp75G5LolNlKBcwL38rvVt6GF8CQLI1q9GB1HPcmR
-         z6CAHvTshHpQ4KeHiHwtBkg9OEvkkecyzIew0dLXYR5N/LDEFQ7bsggyocEzRyVr7DKk
-         qvBdOSvfJVBUqSYoCtiKeZRvkxoEahCvcvZBJrQYAMMjBUSPic/kfUiYpdD6bVKsvhMk
-         3tsw==
+         :cc:content-transfer-encoding;
+        bh=qwbW8G2z+R0H/rCyvA3OX5oL3/sVr/Ik7CWUFrD1gK0=;
+        b=AcgWNjhEOmIqNn+8fbSA0R8peOZboUMDNz4Z66znf5ipLz7lG2iL7z4aw2wsoF2DPA
+         C/0gANRHZzfDIJ942NK4vvO7Wn+4jOta1hqr5p8k79YQhq5+MXmgZWSlbKUQVGTTYv7d
+         +AMBVNAqUinemuF0jy6aGkkSZN/+QiOLlnO3JaCeppk0jUK+T2I8f9p+oLVqcJb+tkey
+         oAhxq5dxvTxd0Lf+3phhwY6Bi30EShmWS+8bWv2GxFEMSj2uymmWxdbA1Ap8v1G78e06
+         Zh6TY1u7NbV9hiIbsjU5CvKmV4gxVjJ770J/GgFEf947nkJTnOsMHpDX/9CWH/bFCJP3
+         RBGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wF7mWC2M9iBBc+ACGYALfCAPMzd/Re2kA54W5usB+9c=;
-        b=Y1pQjEKYg8M5tDAuMWB4GcZzrE/9wTMdeoSK3zTO8Ie8CPtT/aXFYg5Ry0jIzTH4BL
-         hfTDPIRhNJlcCth2pmSezZwXG/ExkjqcJlSICKlGBVgCUhZ9mrYOVOTXebKj7gMVMFne
-         QoEA71I8Ja3KtmGmKL3kiaQt7JOUsYa2ylLVQ4IazLu8hS6Qvd96nSDb2Zi/gs704+jN
-         dSXZXcpAiijuuoPx0lpyrJp/IHJFbI2i28m+AjSpQKL7rdJ47/BdXHBm3AVykzc06X6y
-         +Z/YG6IIErZ+mY/kxUgsEkGqLcC0Z4JTq2IroRkCH3g++Lw9RMdpm5QP6+fZ2Y2KaK+C
-         2ZMw==
-X-Gm-Message-State: AOAM532zBjWeFqWbNmQ8LrshOAig7XrSIqpPc59SeL9DZItPDQNgD3/z
-        y3xyZF2rgys3ycL90szgqgTGD1ad9PrR9VHuhgY=
-X-Google-Smtp-Source: ABdhPJwU19Ykz6zVy5HPScLPfN7sZ41eNDew+I/XiJKnUJb0R2TV/4YtlOqZLFcdbXx3hMrOMozaP/L2VFq0o4gRw5Y=
-X-Received: by 2002:a19:ec03:: with SMTP id b3mr9452260lfa.608.1612198278259;
- Mon, 01 Feb 2021 08:51:18 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qwbW8G2z+R0H/rCyvA3OX5oL3/sVr/Ik7CWUFrD1gK0=;
+        b=CWUsfnvHFuzwymQudUzW3gFr3BOF+VvOB0i3N3fhJ1UCQ9UlbVcdsrKZ1aZKAncekR
+         5yOWw2orxyvrn/gKA7pdtm1Z9cZoLnbYyWqB2BWftPNBQSFl2liyJhXtwF32ekY1ZW72
+         nDDsfbHRE7jzeYne+eeeODTD3H1Pt7nPS5LcdsriloZMwwMX/+kqYnPHkxLUhnlhIGM+
+         S0Ch2UOUi2a0MCJaOzgkKRLCy4BSzHiFGGWCuZGM9K1Ufr8RqS0zEDKJF2ThyV7hCsQw
+         lZqo4/jXLAsgCJbp2sJTeHKQ54B5GECNNFeVGP42uJp7vfvTS3luPopW2v/VCBoKoPVP
+         XhzQ==
+X-Gm-Message-State: AOAM530w0QydfJOvlhKwXkflrqXfnqcZGAtRPl0Gu05Gf/402by/Q+MT
+        ilsFYpXMB6dha/LNVqT8WKH7Y6tEScqPrXd28FftGBhygw6aCg==
+X-Google-Smtp-Source: ABdhPJzpIYSB/LthDOVcsjTRxnlJdUqXnDKCUzYw7u83inL19YdICaPa+PqcTEDZFxnN9nPTj6yLQLqhBOqANUwiIRs=
+X-Received: by 2002:a25:c605:: with SMTP id k5mr15317930ybf.34.1612198330634;
+ Mon, 01 Feb 2021 08:52:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20201007152355.2446741-1-Kenny.Ho@amd.com> <CAOWid-d=a1Q3R92s7GrzxWhXx7_dc8NQvQg7i7RYTVv3+jHxkQ@mail.gmail.com>
- <20201103053244.khibmr66p7lhv7ge@ast-mbp.dhcp.thefacebook.com>
- <CAOWid-eQSPru0nm8+Xo3r6C0pJGq+5r8mzM8BL2dgNn2c9mt2Q@mail.gmail.com>
- <CAADnVQKuoZDB-Xga5STHdGSxvSP=B6jQ40kLdpL1u+J98bv65A@mail.gmail.com>
- <CAOWid-czZphRz6Y-H3OcObKCH=bLLC3=bOZaSB-6YBE56+Qzrg@mail.gmail.com>
- <20201103210418.q7hddyl7rvdplike@ast-mbp.dhcp.thefacebook.com>
- <CAOWid-djQ_NRfCbOTnZQ-A8Pr7jMP7KuZEJDSsvzWkdw7qc=yA@mail.gmail.com>
- <20201103232805.6uq4zg3gdvw2iiki@ast-mbp.dhcp.thefacebook.com> <YBgU9Vu0BGV8kCxD@phenom.ffwll.local>
-In-Reply-To: <YBgU9Vu0BGV8kCxD@phenom.ffwll.local>
-From:   Kenny Ho <y2kenny@gmail.com>
-Date:   Mon, 1 Feb 2021 11:51:07 -0500
-Message-ID: <CAOWid-eXMqcNpjFxbcuUDU7Y-CCYJRNT_9mzqFYm1jeCPdADGQ@mail.gmail.com>
-Subject: Re: [RFC] Add BPF_PROG_TYPE_CGROUP_IOCTL
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Dave Airlie <airlied@gmail.com>, Kenny Ho <Kenny.Ho@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>, bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Brian Welty <brian.welty@intel.com>
+References: <20210129171316.13160-1-aaptel@suse.com> <CANT5p=ofvpimU9Z7jwj4cPXXa1E4KkcijYrxbVKQZf5JDiR-1g@mail.gmail.com>
+ <877dns9izy.fsf@suse.com>
+In-Reply-To: <877dns9izy.fsf@suse.com>
+From:   Shyam Prasad N <nspmangalore@gmail.com>
+Date:   Mon, 1 Feb 2021 22:21:59 +0530
+Message-ID: <CANT5p=oSrrCbCdXZSbjmPDM4P=z=1c=kj9w1DDTJO5UhtREo8g@mail.gmail.com>
+Subject: Re: [PATCH v1] cifs: make nested cifs mount point dentries always
+ valid to deal with signaled 'df'
+To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
+Cc:     CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        Steve French <smfrench@gmail.com>, Paulo Alcantara <pc@cjr.nz>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Resent in plain text.]
+I'm okay with returning valid for directory mount point.
 
-On Mon, Feb 1, 2021 at 9:49 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> - there's been a pile of cgroups proposal to manage gpus at the drm
->   subsystem level, some by Kenny, and frankly this at least looks a bit
->   like a quick hack to sidestep the consensus process for that.
-No Daniel, this is quick *draft* to get a conversation going.  Bpf was
-actually a path suggested by Tejun back in 2018 so I think you are
-mischaracterizing this quite a bit.
+But the point that I'm trying to make here is that VFS reacts
+differently when d_validate returns an error VS when it just returns
+invalid:
+https://elixir.bootlin.com/linux/latest/source/fs/namei.c#L1409
 
-"2018-11-20 Kenny Ho:
-To put the questions in more concrete terms, let say a user wants to
- expose certain part of a gpu to a particular cgroup similar to the
- way selective cpu cores are exposed to a cgroup via cpuset, how
- should we go about enabling such functionality?
+Notice how it calls d_invalidate only when there's no error. And
+d_invalidate seems to have detach_mounts.
+It is likely that the umount happens there.
 
-2018-11-20 Tejun Heo:
-Do what the intel driver or bpf is doing?  It's not difficult to hook
-into cgroup for identification purposes."
+I'm suggesting that we should return errors inside d_validate
+handlers, rather than just 0 or 1.
+Makes sense?
 
-Kenny
+Regards,
+Shyam
+
+On Mon, Feb 1, 2021 at 4:01 PM Aur=C3=A9lien Aptel <aaptel@suse.com> wrote:
+>
+> Shyam Prasad N <nspmangalore@gmail.com> writes:
+> > Going by the documentation of d_revalidate:
+> >> This function should return a positive value if the dentry is still
+> >> valid, and zero or a negative error code if it isn't.
+> >
+> > In case of error, can we try returning the rc itself (rather than 0),
+> > and see if VFS avoids a dentry put?
+> > Because theoretically, the call execution has failed, and the dentry
+> > is not found to be invalid.
+>
+> AFAIK mount points are pinned, you cannot rm or mv them so it seems we
+> could make them always valid. I don't know if there are deeper and more
+> subtle implications.
+>
+> The recent signal fixes are not fixing this issue.
+>
+> Cheers,
+> --
+> Aur=C3=A9lien Aptel / SUSE Labs Samba Team
+> GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+> SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg,=
+ DE
+> GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=
+=BCnchen)
+>
+
+
+--=20
+-Shyam
