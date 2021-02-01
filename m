@@ -2,59 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7B1E30B36C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 00:24:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1C130B3A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 00:44:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbhBAXXe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 18:23:34 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47097 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229476AbhBAXXa (ORCPT
+        id S229629AbhBAXoG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 18:44:06 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:55406 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229524AbhBAXoF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 18:23:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612221723;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JXealjKRFD0r2pq7PhUr7p4RbntHdqXsJgCcMNzSn98=;
-        b=W+QnMGnUV5PvvC6swOo7K7BCSyHy84IsAYAkK+abb9Czv0aJFDb1CL7p48RuhojvaqvuiP
-        zxw6HMYZ1zDSdKn6AsaQ+qTk3IeD1WOo38XVp5amK0qG+Ruph/0CESCUxZwlp7bm+mFHhq
-        9x+LL+LxdAeF1/gICQgif8vGBoRVJz0=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-539-rX0cfUcSNFO2AVoclLIprw-1; Mon, 01 Feb 2021 18:22:00 -0500
-X-MC-Unique: rX0cfUcSNFO2AVoclLIprw-1
-Received: by mail-qt1-f199.google.com with SMTP id o7so11752415qtw.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Feb 2021 15:22:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JXealjKRFD0r2pq7PhUr7p4RbntHdqXsJgCcMNzSn98=;
-        b=AFQjy5iJYLRgFolmZB6AvyqhvDCw7hBjxyt5RYl5CkQbwea0ayTRx+SXXvJ1E04olz
-         ESUKI678JFZ8AUpK+aJCUwz65qSqFU3iNs/eEIBhaFfY2wblxBmwasidfCThd1QmvIj1
-         qGSokqgqdCjcZUjkYH4FuJV54aK6O1eB5WaG+geThok5j14QCBAAFhsq4n60B2mmX6Ju
-         RoVB/kS+frh/oBciF0VByt/xYXrLqDCdV/kPvup4x6YACUMe8QqVn+YjnMpswsWVJNkI
-         Q98fchNbIxtGd15RHCqXFBbdpRcRmnacvAESaXeKMavxEZK3RvUp3tnjV4apFMbcA1km
-         k7Ng==
-X-Gm-Message-State: AOAM531x9lyghkBJVBEnSZL+hCZWAw2b1X3QwGgwKh/XNvQivLvsxJNT
-        XHxKLZkY+18NoSvM5G8atJSYySg0y1iK62UyWlCJBlf/U9RObkdwYbx8rsZ3ohfPMuh1Vtvy32B
-        61RuFzips9zc1vQXM/7g5a0SQmA==
-X-Received: by 2002:a37:a955:: with SMTP id s82mr18552937qke.121.1612221719634;
-        Mon, 01 Feb 2021 15:21:59 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzS+3wDmDxJ77Mv8mHl7zqigCXAmGJWxZRWwAqLuTopvy7+5ZDn3Q72W9Q6xnbA4goZHL5uNQ==
-X-Received: by 2002:a37:a955:: with SMTP id s82mr18552913qke.121.1612221719336;
-        Mon, 01 Feb 2021 15:21:59 -0800 (PST)
-Received: from xz-x1 ([142.126.83.202])
-        by smtp.gmail.com with ESMTPSA id n24sm14841134qtv.26.2021.02.01.15.21.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Feb 2021 15:21:58 -0800 (PST)
-Date:   Mon, 1 Feb 2021 18:21:55 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Axel Rasmussen <axelrasmussen@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mon, 1 Feb 2021 18:44:05 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 111Ndoih028154;
+        Mon, 1 Feb 2021 23:42:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=Lo6lRtBvWPzycM+EVZElZRRV7xRUHZvpeQCm7FDkkbw=;
+ b=HXNgxmV6M4xwvacDQqwI5QT2XjrTfx6ylu016W4PDb3NTa/wWpNfiXAGXeq3N702tOEm
+ jV5abh7kEvotl2PA3vAn3kRNwqE90CaPTJKxUa3nSmomadnqtbkWpRiotaE1KEnvLk5c
+ JICmyxDn232Mu61kuNYxrbMN1kmI2Q68hRHRuQa08VRBkB7VhyD3RA9f/ibFB1QzmAWa
+ AMARjvY4wcpMShXJY032Wem/MtmO31tTwsH9VCLA8zaGYIVU+IPvaaplJmojr+alQ+pk
+ etdTpHDxz+kpqL8jd+mO4lF8hyuvDjskuCs7H+SjKMu8cH+sOlnIMRXR+6oncn1MJk4r CA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 36cvyar9fc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Feb 2021 23:42:09 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 111NfTFl189972;
+        Mon, 1 Feb 2021 23:42:09 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+        by aserp3030.oracle.com with ESMTP id 36dh1n4kfg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Feb 2021 23:42:09 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TRcMlWDsVQZ5y4A3ndKEEIWS8lrifGM7WYtZ+7WU371lkkeh3pKEwHwEMVMWwSF9xjxvQGu7/Ci/J6xmhENn/4XQMwocM+WTQ11o5R/psPN2FuvRhRK/9hn3tOEmVyv4eoWp3n+biYVnOgKRk6NajToe/WYHN1fpOcKy2E5sDjUiAWrqJqiSdLKbyC6X8v/zP42MKHEtGX8FDuqcmyVQ38JmySD0K6OY7TA/9GV9AWtOl1/P2GNmCXTLJND1TwP2ZRy82y3pcS/IninooshRshp2/pzh81jO27Ssq7xKGV1oSXMm9QEn08Vf71jAlEyZcDCkDa2RK6ViKEYNbGzRfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lo6lRtBvWPzycM+EVZElZRRV7xRUHZvpeQCm7FDkkbw=;
+ b=F/5dvEib7oArdaqSY4tAee/M60nDSqYtFf03RUDzbEBKaeqsOtb8iYL9V38xJRE2ioiVophPvIJC44H2BVy4nwY3CxD5oS0G2O2X1jEGdt7VIOJLbISYKckDWdmkkG4HkOiQNzH20HXxUJQjfzopSdxeTFKEa8JOdmj5xtfqbEiCqghxELHriyAXw/BWW5QtG/58AaYYV5gqaZlb801bpLCiAXhpH9A7nAJiwrEF5OL5z9G6+W1rX1yPnlDqnH6EzqHk7OyI1umVn4MEkAPOxZb2eHZ9Iam5hiuQn77wrf+mz/tn4rBMvRdNxL/FMH2zWamY/CCCSg49rzMIFPwFSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lo6lRtBvWPzycM+EVZElZRRV7xRUHZvpeQCm7FDkkbw=;
+ b=cVkAK4gSlXf3IcNk+DXkfahasebehwx8HaoCI4zfk/kxGdH/ooHfkWqgkfkeMO+LvGX+8bPJEssqbQZ97jqLlPKZ1h/k0VZK/XAPCKIVY2a9M3pvmMv3jVYDJhJRPSCg3UJT1lZkaDLpU51eCErzgOXPOfYk1DI6a1ak240vaC4=
+Authentication-Results: google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR10MB1389.namprd10.prod.outlook.com (2603:10b6:300:21::22)
+ by MWHPR10MB1693.namprd10.prod.outlook.com (2603:10b6:301:a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16; Mon, 1 Feb
+ 2021 23:42:05 +0000
+Received: from MWHPR10MB1389.namprd10.prod.outlook.com
+ ([fe80::897d:a360:92db:3074]) by MWHPR10MB1389.namprd10.prod.outlook.com
+ ([fe80::897d:a360:92db:3074%5]) with mapi id 15.20.3805.026; Mon, 1 Feb 2021
+ 23:42:05 +0000
+Subject: Re: [PATCH v3 7/9] userfaultfd: add UFFDIO_CONTINUE ioctl
+To:     Peter Xu <peterx@redhat.com>,
+        Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -67,116 +77,189 @@ Cc:     Axel Rasmussen <axelrasmussen@google.com>,
         Lokesh Gidra <lokeshgidra@google.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
         Michel Lespinasse <walken@google.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
         Shawn Anastasio <shawn@anastas.io>,
         Steven Rostedt <rostedt@goodmis.org>,
         Steven Price <steven.price@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
         Adam Ruprecht <ruprecht@google.com>,
         Cannon Matthews <cannonmatthews@google.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
         David Rientjes <rientjes@google.com>,
         Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v3 4/9] hugetlb/userfaultfd: Unshare all pmds for
- hugetlbfs when register wp
-Message-ID: <20210201232155.GL260413@xz-x1>
 References: <20210128224819.2651899-1-axelrasmussen@google.com>
- <20210128224819.2651899-5-axelrasmussen@google.com>
- <bdac0f96-1d6a-6450-c58a-6902d985e3e0@oracle.com>
-MIME-Version: 1.0
+ <20210128224819.2651899-8-axelrasmussen@google.com>
+ <20210201192120.GG260413@xz-x1>
+ <CAJHvVciv0-Xq75TKB=g=Sb+HmwMdJEd+CHg885TWX2svYCwFiQ@mail.gmail.com>
+ <20210201224034.GK260413@xz-x1>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <1b26bd45-085b-b249-a1f6-beefff8648a6@oracle.com>
+Date:   Mon, 1 Feb 2021 15:42:02 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+In-Reply-To: <20210201224034.GK260413@xz-x1>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bdac0f96-1d6a-6450-c58a-6902d985e3e0@oracle.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [50.38.35.18]
+X-ClientProxiedBy: MWHPR11CA0031.namprd11.prod.outlook.com
+ (2603:10b6:300:115::17) To MWHPR10MB1389.namprd10.prod.outlook.com
+ (2603:10b6:300:21::22)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.2.112] (50.38.35.18) by MWHPR11CA0031.namprd11.prod.outlook.com (2603:10b6:300:115::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16 via Frontend Transport; Mon, 1 Feb 2021 23:42:03 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 98f82ade-18de-4288-2c16-08d8c70afac3
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1693:
+X-Microsoft-Antispam-PRVS: <MWHPR10MB1693DD516E2154D6151273D2E2B69@MWHPR10MB1693.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HX02Q+ijQEBFloJbHlhJGKdjoPVN9X7uW4JHZyhbLtXnOLJs6oNxDauUD1EG7Qq+a01nB31kOIifRh21mhpSOs33fwi8QUE/+A8jHtmC8vWsBOe2IyyUvHDp/+O867lfCwgrGZdU5TIG+zd/jxZjqu+2oll4NMoL1008LH6MEDX+PoIDDuk8NOp0CDPA07M8U0EPltTr1vxT92TXPxlMBmpu6AwL3TvxC9HkkPpAyMXQx5DIBZABiC6V/f5moTq7uQYdLpr9IeaHSD3/M61UsJVoukjpLQ2L03vdf93qNj+ajZsxllf21wse0bWOPHNWdykw6cJ6VM1LW/pEa2BBvrLiJSCKRADtNxU43Jram/hsHLz1yEts0zxsO5+s7r6Sa/2GUS19urZACrv5x/Y1X8G+Sf376IKjcyBkSOJe57sMrmQRRSlk20NyFHBZEPkzf0118UGchwJIJdLkJlti9QtpxmKQBMU0YSQAeeAEHR2LvTq+Gsc994fAAmDmQtnyeoeHKbO2WuYC1yTC/pu9ap3gUaUZhgUsbmwRZb7JNuULfNyBJYE6hcBjjwb3/lfvX5hg6SeKyvDx5/Ko/NZV1vOvxS6tQ4AtKT1j78fPpVo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR10MB1389.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(376002)(136003)(346002)(366004)(396003)(2906002)(31696002)(86362001)(5660300002)(8936002)(53546011)(36756003)(478600001)(2616005)(956004)(44832011)(31686004)(83380400001)(4326008)(7406005)(7416002)(66946007)(66556008)(66476007)(16526019)(6486002)(26005)(52116002)(8676002)(54906003)(110136005)(186003)(16576012)(316002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?dkt3TE5CVTdtbFhGK1RKRG11YWFRWkFha2NVQmpWVlVZK3hmQmlUVWhyZjZs?=
+ =?utf-8?B?T3pEV1VJd2wxaEFSMDhFTDhITk9PenFFVWFMdm9JcEY5T1QxOUx6RHRsa2lr?=
+ =?utf-8?B?RkM5S1BrUTJPSHlFYmFudklJV0dyQVhLR3BuQ0EzTVp2ZDQzdkxic0MrVWdC?=
+ =?utf-8?B?emRGVzZLWVBFMjA5WEVzcGR3elBOUnU0a0ZibDZ3T2FWQU5PN3VIRnVXN2Vw?=
+ =?utf-8?B?SUtnSzU0bjRwR2dka3FMbUQ4MHBOMWloL3NTWEd1dTMzUklURzI3MklhZDBN?=
+ =?utf-8?B?OGp3UE54OGFYcGhFeGdZaG8xL3RIZkJERXNvb29NNzluWWd3a096ZGpmM3BL?=
+ =?utf-8?B?SVBWbjdKazRONENESTNVZHhnNjI3MWFyaTFIc2xwMHhwVldySExNRlBkRnpm?=
+ =?utf-8?B?N0NQUGQrNEZmenZlZG1SNzNaWmk2UVBteWcybGJZTXlscHhoWkdpcFFYVld0?=
+ =?utf-8?B?NFFLWlRIbkZlMWFLTFVYcDhwTHdLM1RyTVBCVi9rQmg2QU9LS09tYlV6RzVr?=
+ =?utf-8?B?SVM2WTJxbVVhdmN6WFA4ZDVQTDdGTWhuSkhySnBBU0UwMnE1Nkg0UTRrR09E?=
+ =?utf-8?B?VVZQRVE1a080U1JqQm15dU1QM0tySzg5dTcyMmdiS0dXMWZMaUk3aytNL3NR?=
+ =?utf-8?B?eTlDTFVEdG5IRVlzMU1WM3ZFYnI0MXdnQVl4elZkaGRwYlphVGRCVWQvK09x?=
+ =?utf-8?B?ck1pSGZjTjYweHNMOVo5Rjg3UllsL0ZQWVhnNlhNU2VycFR5dDM2aEVUcFhT?=
+ =?utf-8?B?eU1wOG4rTE5hTHBDNmxxMGNoWjNZKzNoSkI3S2dGdTI5RTBYSkE5NHFNWnlH?=
+ =?utf-8?B?elBNaSs4eGJiSXh4cDVMVXhELzlRNkVjWWJxTmlUZ1BQS1hDdDhYS3oxbkdB?=
+ =?utf-8?B?cGc3TFNSekM2ekxLQ2QvRWZuNWYzM1BVTUExOHM2REsxNUhVYUZqbzl4UGNR?=
+ =?utf-8?B?MWJ5bmgyUk85MXM1TjloWHFrNkVROTJKZ09rdE1QaTFDV3JPaUdCNUtzYTBH?=
+ =?utf-8?B?TWFjTlRESGZQY2pORXI4R3hSR1o3aGozd0MrcXlJNzNzU3V6WENIaTJZWmZJ?=
+ =?utf-8?B?MWZ1QVJKRFpiVk93YWJZelNiTjZPYUhJVkR1elJIZzRBRjdDekhEUnpnSUNS?=
+ =?utf-8?B?eHEyMVNxUVhTYVJ2VnZ5ZDRpQzJibU5CQ094cXpPMGEwOUk1cEZDcjdCelNl?=
+ =?utf-8?B?QkpqNmRERHkybUR1TkJ6MU5aUnp0QWUyZ2xLaitDWkcrSjJuT2s2UTBHbWNV?=
+ =?utf-8?B?dXdod2paWHpaYS9jMmptQ3lTN21nMUFiZStFVm1vY0x5TTNOVFlqb1BrbWZC?=
+ =?utf-8?B?bGFGSjI4N045bmxiVzRzSXZ6OHRuSUo3bFJhQ1NLVDc4Ynp0VWpmZVdGanYr?=
+ =?utf-8?B?OWpKakdrV2xid3JmZDNiMDVrNzZsYWlnY2xNODNRSGdVWVB6b0J3dlVRclhs?=
+ =?utf-8?Q?aQqTRtug?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98f82ade-18de-4288-2c16-08d8c70afac3
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR10MB1389.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2021 23:42:04.9217
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TzZ4G8QhtYgd5kdXmLzCyP69o3yTqizI8YpRck4UXgxeBqh4iEk25+bFysF5DwZ6au4sUiqCbycj9clfMe0ZJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1693
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9882 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102010133
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9882 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 impostorscore=0
+ mlxscore=0 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102010132
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 01, 2021 at 02:33:20PM -0800, Mike Kravetz wrote:
-> On 1/28/21 2:48 PM, Axel Rasmussen wrote:
-> > From: Peter Xu <peterx@redhat.com>
-> > 
-> > Huge pmd sharing for hugetlbfs is racy with userfaultfd-wp because
-> > userfaultfd-wp is always based on pgtable entries, so they cannot be shared.
-> > 
-> > Walk the hugetlb range and unshare all such mappings if there is, right before
-> > UFFDIO_REGISTER will succeed and return to userspace.
-> > 
-> > This will pair with want_pmd_share() in hugetlb code so that huge pmd sharing
-> > is completely disabled for userfaultfd-wp registered range.
-> > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> > ---
-> >  fs/userfaultfd.c             | 45 ++++++++++++++++++++++++++++++++++++
-> >  include/linux/mmu_notifier.h |  1 +
-> >  2 files changed, 46 insertions(+)
-> > 
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index 894cc28142e7..2c6706ac2504 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/sched/signal.h>
-> >  #include <linux/sched/mm.h>
-> >  #include <linux/mm.h>
-> > +#include <linux/mmu_notifier.h>
-> >  #include <linux/poll.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/seq_file.h>
-> > @@ -1190,6 +1191,47 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
-> >  	}
-> >  }
-> >  
-> > +/*
-> > + * This function will unconditionally remove all the shared pmd pgtable entries
-> > + * within the specific vma for a hugetlbfs memory range.
-> > + */
-> > +static void hugetlb_unshare_all_pmds(struct vm_area_struct *vma)
-> > +{
-> > +#ifdef CONFIG_HUGETLB_PAGE
-> > +	struct hstate *h = hstate_vma(vma);
-> > +	unsigned long sz = huge_page_size(h);
-> > +	struct mm_struct *mm = vma->vm_mm;
-> > +	struct mmu_notifier_range range;
-> > +	unsigned long address;
-> > +	spinlock_t *ptl;
-> > +	pte_t *ptep;
-> > +
+On 2/1/21 2:40 PM, Peter Xu wrote:
+> On Mon, Feb 01, 2021 at 02:11:55PM -0800, Axel Rasmussen wrote:
+>> On Mon, Feb 1, 2021 at 11:21 AM Peter Xu <peterx@redhat.com> wrote:
+>>>
+>>> On Thu, Jan 28, 2021 at 02:48:17PM -0800, Axel Rasmussen wrote:
+>>>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>>>> index f94a35296618..79e1f0155afa 100644
+>>>> --- a/include/linux/hugetlb.h
+>>>> +++ b/include/linux/hugetlb.h
+>>>> @@ -135,11 +135,14 @@ void hugetlb_show_meminfo(void);
+>>>>  unsigned long hugetlb_total_pages(void);
+>>>>  vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>>>>                       unsigned long address, unsigned int flags);
+>>>> +#ifdef CONFIG_USERFAULTFD
+>>>
+>>> I'm confused why this is needed.. hugetlb_mcopy_atomic_pte() should only be
+>>> called in userfaultfd.c, but if without uffd config set it won't compile
+>>> either:
+>>>
+>>>         obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
+>>
+>> With this series as-is, but *without* the #ifdef CONFIG_USERFAULTFD
+>> here, we introduce a bunch of build warnings like this:
+>>
+>>
+>>
+>> In file included from ./include/linux/migrate.h:8:0,
+>>                  from kernel/sched/sched.h:53,
+>>                  from kernel/sched/isolation.c:10:
+>> ./include/linux/hugetlb.h:143:12: warning: 'enum mcopy_atomic_mode'
+>> declared inside parameter list
+>>      struct page **pagep);
+>>             ^
+>> ./include/linux/hugetlb.h:143:12: warning: its scope is only this
+>> definition or declaration, which is probably not what you want
+>>
+>> And similarly we get an error about the "mode" parameter having an
+>> incomplete type in hugetlb.c.
+>>
+>>
+>>
+>> This is because enum mcopy_atomic_mode is defined in userfaultfd_k.h,
+>> and that entire header is wrapped in a #ifdef CONFIG_USERFAULTFD. So
+>> we either need to define enum mcopy_atomic_mode unconditionally, or we
+>> need to #ifdef CONFIG_USERFAULTFD the references to it also.
+>>
+>> - I opted not to move it outside the #ifdef CONFIG_USERFAULTFD in
+>> userfaultfd_k.h (defining it unconditionally), because that seemed
+>> messy to me.
+>> - I opted not to define it unconditionally in hugetlb.h, because we'd
+>> have to move it to userfaultfd_k.h anyway when shmem or other users
+>> are introduced. I'm planning to send a series to add this a few days
+>> or so after this series is merged, so it seems churn-y to move it
+>> then.
+>> - It seemed optimal to not compile hugetlb_mcopy_atomic_pte anyway
+>> (even ignoring adding the continue ioctl), since as you point out
+>> userfaultfd is the only caller.
+>>
+>> Hopefully this clarifies this and the next two comments. Let me know
+>> if you still feel strongly, I don't hate any of the alternatives, just
+>> wanted to clarify that I had considered them and thought this approach
+>> was best.
 > 
-> Perhaps we should add a quick to see if vma is sharable.  Might be as
-> simple as !(vma->vm_flags & VM_MAYSHARE).  I see a comment/question in
-> a later patch about only doing minor fault processing on shared mappings.
-
-Yes, that comment was majorly about shmem though - I believe shared case should
-still be the major one, especially for hugetlbfs.
-
-So what I was thinking is something like: one non-uffd process use shared
-mapping of the file, meanwhile the other uffd process used private mapping on
-the same file.  When the uffd process access page it could fault in the page
-cache and continued by UFFDIO_CONTINUE, however when it writes it'll COW into
-private pages.  Something like that.  Not sure whether it's useful, but I just
-don't see why we should block that case.
-
+> Then I'd suggest you use a standalone patch to put hugetlb_mcopy_atomic_pte()
+> into CONFIG_USERFAULTFD blocks, then propose your change with the minor mode.
+> Note that there're two hugetlb_mcopy_atomic_pte() defined in hugetlb.h.
+> Although I don't think it a problem since the other one is inlined - I think
+> you should still put that one into the same ifdef:
 > 
-> Code below looks fine, but it would be a wast to do all that for a vma
-> that could not be shared.
+> #ifdef CONFIG_USERFAULTFD
+> static inline int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+> 						pte_t *dst_pte,
+> 						struct vm_area_struct *dst_vma,
+> 						unsigned long dst_addr,
+> 						unsigned long src_addr,
+> 						struct page **pagep)
+> {
+> 	BUG();
+> 	return 0;
+> }
+> #endif /* CONFIG_USERFAULTFD */
+> 
+> Let's also see whether Mike would have a preference on this.
+> 
 
-Right, still better to check it.
-
-Mike, I agree with all your comments on the initial 4 patches, thanks for the
-input!  To make Axel's life easier, I've modified them locally and pushed since
-after all I'll do it in my series too (I also picked Mike's r-b on patch 3):
-
-https://github.com/xzpeter/linux/commits/uffd-wp-shmem-hugetlbfs
-
-Axel, feel free to fetch from it directly.
-
-Thanks,
+No real preference.  Just need to fix up the argument list in that
+second definition.
 
 -- 
-Peter Xu
-
+Mike Kravetz
