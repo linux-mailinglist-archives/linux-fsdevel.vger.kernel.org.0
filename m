@@ -2,90 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA0830AB43
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 16:29:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A19130AB60
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 16:32:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbhBAP22 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 10:28:28 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29608 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231651AbhBAP1W (ORCPT
+        id S231796AbhBAPb1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 10:31:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41850 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231771AbhBAPaw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 10:27:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612193156;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BEb2rLftFspGJmXbmXNZKP/pR0mJXCcoYLxWcopTgkE=;
-        b=CUQJ080EoCYth5wLtQnHk4oNuS87FKoZCSZy0gEpsmeccNa0hEoeuzNzlDeoIa9J/SpkYI
-        5BC3nfL74B/7p5YSmIF3+Tx1MFH3kgLUHgmV49NEy/OfqnWg0mZk1PuVGhT4PhEFfVy7Ak
-        L3Gp992bs30yYr0GOUaTqEeOQp+Imls=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-537-4FQFVO3JPaSRNa_zDuxQ_w-1; Mon, 01 Feb 2021 10:25:50 -0500
-X-MC-Unique: 4FQFVO3JPaSRNa_zDuxQ_w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C0CD6100C661;
-        Mon,  1 Feb 2021 15:25:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D2425D749;
-        Mon,  1 Feb 2021 15:25:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOi1vP_7dfuKgQxFpyeUDMJBGm=cnQSvYHDnU=6YPTzbB9+d6w@mail.gmail.com>
-References: <CAOi1vP_7dfuKgQxFpyeUDMJBGm=cnQSvYHDnU=6YPTzbB9+d6w@mail.gmail.com> <20210126134103.240031-1-jlayton@kernel.org> <CAOi1vP-3Ma4LdCcu6sPpwVbmrto5HnOAsJ6r9_973hYY3ODBUQ@mail.gmail.com> <2301cde67ae7aa54d860fc3962aeb8ed85744c75.camel@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-cachefs@redhat.com
-Subject: Re: [PATCH 0/6] ceph: convert to new netfs read helpers
+        Mon, 1 Feb 2021 10:30:52 -0500
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F083C061786;
+        Mon,  1 Feb 2021 07:29:53 -0800 (PST)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l6b99-008atG-Br; Mon, 01 Feb 2021 15:29:47 +0000
+Date:   Mon, 1 Feb 2021 15:29:47 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Dmitry Kadashev <dkadashev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: make do_mkdirat() take struct filename
+Message-ID: <20210201152947.GR740243@zeniv-ca>
+References: <20201116044529.1028783-1-dkadashev@gmail.com>
+ <20201116044529.1028783-2-dkadashev@gmail.com>
+ <027e8488-2654-12cd-d525-37f249954b4d@kernel.dk>
+ <20210126225504.GM740243@zeniv-ca>
+ <CAOKbgA4fTyiU4Xi7zqELT+WeU79S07JF4krhNv3Nq_DS61xa-A@mail.gmail.com>
+ <20210201150042.GQ740243@zeniv-ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4171609.1612193143.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 01 Feb 2021 15:25:43 +0000
-Message-ID: <4171610.1612193143@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210201150042.GQ740243@zeniv-ca>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ilya Dryomov <idryomov@gmail.com> wrote:
+On Mon, Feb 01, 2021 at 03:00:42PM +0000, Al Viro wrote:
 
-> > David has a fscache-netfs-lib branch that has all of the infrastructur=
-e
-> > changes. See:
-> >
-> >     https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.=
-git/log/?h=3Dfscache-netfs-lib
-> =
+> The last one is the easiest to answer - we want to keep the imported strings
+> around for audit.  It's not so much a proper refcounting as it is "we might
+> want freeing delayed" implemented as refcount.
 
-> I saw that, but AFAICS it hasn't been declared public (as in suitable
-> for other people to base their work on, with the promise that history
-> won't get rewritten.
-
-My intention to avoid modifying it further, except for extra fix patches
-stacked on the end if necessary, as I want to try to avoid jinxing it from
-getting pulled in the next merge window.
-
-> It is branched off of what looks like a random snapshot of Linus' tree
-> instead of a release point, etc.
-
-Yeah, sorry about that.  I took what was current linus/master at the time =
-I
-cut the branch with the intention of trying to get it into linux-next befo=
-re
--rc5 was tagged (ie. >3 weeks before the merge window), but including the
-X.509 crash fix.
-
-David
-
+BTW, regarding io_uring + audit interactions - just how is that supposed to
+work if you offload any work that might lead to audit records (on permission
+checks, etc.) to helper threads?
