@@ -2,65 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E03F830A39D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 09:54:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC57E30A39F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 09:54:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232032AbhBAIyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 03:54:05 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:59326 "EHLO
+        id S232452AbhBAIyb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 03:54:31 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:59406 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229736AbhBAIyD (ORCPT
+        with ESMTP id S231915AbhBAIy3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 03:54:03 -0500
+        Mon, 1 Feb 2021 03:54:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612169643; x=1643705643;
+  t=1612169668; x=1643705668;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=rNLPMXJ7FaWzp+mFx4pkiefigAZutewdrtCsPMpvjOY=;
-  b=FNGWFQSQUxUu0S/qw4Bn9nhXfphjIN8O1i1R4qsF6LlqA0drGMJJTaWl
-   ZXnOCqyAcC+Ovxt9aYVics/himwF6B8H4tTo+Sk+IblJXPMmXdWCys0oP
-   86eOWBR50QXWXmekgFI3AmFe+QAFSeLRnMi/vwD7xOD6yYtssAK17otRh
-   zxkioLAa9ZS9lQDoOw+bR1lHbKvyFM2gqnRQDyzJc3lH6o1A7Pv26GfLz
-   vrjHWt0NHjnm/vrEkeQeubXwuNZ3Uvo+gJBw6dMRQ671/xCjb2y5mv7EV
-   5Vz4acgjnsYOj9C8E3pkq7ZeqwBuXth7GPZv415FYx+mdapW/7Q+pe1o8
-   Q==;
-IronPort-SDR: +8PTDpWKc1GHnuKlzcpH2SDgFCgZUGCrCkcsu6oHTZvs27yiX5CglLExVfzORDFRUCaApffxVM
- 9RVV7+6qs2kruu3XbwowEdcKSZbA+Lz6s4sbLw5Ue0sonWlSzBjWqtNQB2/r+Y6Lc5CAO+fxTr
- aESfrKAE1/7IDwnwVpjU1bcN70QMUsUm5QLoZt3TcU/ikrxhDJ0r3zxcXGHffNIs2maFEmNLpx
- 24xSFmgaXegeGmczFT61Hjj4bt3udy2rGVNiKd2DAIJkod/0iwJugwcmjTguhWunIZRFAGS1qN
- +IM=
+  bh=P7dGYzeLWW4wl8EYqV0toxgCzcdURANZDs1hKBF78b0=;
+  b=U0kxzg4dQk3nyyAEBGGdT/3bc5WbVa37A2c6K4nUeDjGCynjQd9o5gBt
+   W9Fea1ia8hhhv13HUwcgbiI8zupTVMVTWxKaXY63E/OCLGfWr3glQ9B2W
+   SU+CU8D0aapu2a45kM3RABO/WR4H7TrLWBhdxlrArFkq2I6plwmChhd5A
+   kWg2qwIc05V19uO//7fqA1Jh7tSY7Sq/IV9c3Imh9lHXKlPA083B+sGoN
+   Rle5aIfAfRafe6DraNlNVQuJXW3LgAg79bf5NJCnoiORjAVPhNZWDWn9p
+   a357j2qSP9LBDT2elvmJdF32ezluACqnfMIx8JFLcfJ5JrIii+JSNLppx
+   A==;
+IronPort-SDR: kBP7i78lc9yIUy+dQqLG42RuPt2QMZ3UtsifgqZlJahAabarN2ejTb0omn81BhSzeqz9fM9l7N
+ rWQYj4IumQZFf/x/9fYb3rzvKTp/8VrxVGphLRLFue481hg9A4S0kpc/vAYsLpw/IGiFiokcPF
+ W1xfCqRLebzK3kooxe7lGn0gS30jX2hGuuye7ok3v0U6AOiHcMJnrd9xBfXcr00NhV7CPM28pm
+ p7nV1Xx7P2X5K2jT/A7q6nyY5Dn0aqGow8iqJgI34Vb0DrfaXJnAG1JjT+LWl2XfDvIoVS11Yf
+ /ls=
 X-IronPort-AV: E=Sophos;i="5.79,392,1602518400"; 
-   d="scan'208";a="158797704"
+   d="scan'208";a="158797708"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Feb 2021 16:52:19 +0800
-IronPort-SDR: l11Zv8QbwiXm6h0NhwXBtlyJM1VBxXr1g4a0XL6EZCVWVfAEHn9l/BHI/Tb8RzM+SmrkEbcHQY
- /KP2BfADOK9Mf+jSHx7LcClJAsbmTMLMCpyEsdJmrDiBeB6JBgB1IeZQytbxEri9aPzEiAFsR6
- L+Yffudev/+pPk6Fnxlz3bLUobW7VYHTRQIjpfGygpcD0gh++cfEt9aCmpU8kGT0QY9D8vQKej
- 76n75D7vCRg4TqofQ3QjJv7hK5B7NgEVM+Tvt2473gXRAVvsp1XJ/Dfz+MiAozB7c0uI4enPci
- gJmkIYyPGe25GCP5CwLaCYgs
+  by ob1.hgst.iphmx.com with ESMTP; 01 Feb 2021 16:52:23 +0800
+IronPort-SDR: bxvQg72kNKDjMKOhHWLOFeKLmqTrpnC5B/qQG+ocslNTlFGBnCQWWby8v6xbq4bUqAVhc5ffHO
+ LJ3Fx4j34tpQem+8s5bkvrC3dxM7TH7lUyOeEK/CLCIzHQt91urjEInwjiLbQrfD8XkNWe5OWv
+ oVOz0A5qVWlWjdopnOvQ9xBn0lc9Xt4hjoCw87VYX1kmE5Uv+844vZeRhem02IW06G6npv4D01
+ eX5Axx68plIjtoEd+p+Ka254yr7OpLxuL56fy0yNLc0OjaAp5dpC3r0WGp46D/4OuczvsEWmPZ
+ zrWXAoyA4A/08zUt0Jd7/odO
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 00:36:30 -0800
-IronPort-SDR: poHiwu5gFiofK/tSU57rT0ALWE5XJXInXriy37VsKyXRTJa+VBDtL1Z/PVG5QfO168jeGWD2kw
- A96CPnSgPJvZCWsW9lBSBiTKkqDfITAKIFgRAby7fuURV1Vo/w6aHEbOgltJ9K7CiSj5jCvTZo
- fSVZ3hwzcugtU54LDc1Imoh/3roNrq/djTxOJHI1C/CSbFXOFpPlBYFEaZd2hc1Efw7MIRxNPq
- OtBhr6s0V3MVx7qFf2Xp2/cKLabf6U/A3cNSmNLZTmOu6SO56JgYbw4QnzwbYVPpNDETcxSBiY
- 500=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2021 00:36:34 -0800
+IronPort-SDR: 7/8Y5EVz2Hr+tlGAWztCNwWy9+oLVrlOVgQzPbA/GUGvThihy13LqGfdn+F/2r15eZZsQwWtel
+ Pzwew2Qrr0DEmorIw5Dn9Sjer32063yA5ZrQ7afyEZShXzB2ZrjKHQ2T3I0wXQlPMioOuMTh3M
+ I24j2pzc5vPfkVY8OkQl82nf7vz8/xYNY8Fb6ZJxKAZiBdD7NyEup/XJhmIjaoZSNyyYIZ8h4+
+ sd3ZVwT1Xh4tTLu/BpfkHy/nxxapUIpySz96K1admvSPo8CPubqY0wvJclWgcZBLkH7TWn+Gqm
+ a9s=
 WDCIronportException: Internal
 Received: from 7459l3apk6t.hitachigst.global (HELO naota-xeon.wdc.com) ([10.84.71.70])
-  by uls-op-cesaip01.wdc.com with ESMTP; 01 Feb 2021 00:52:18 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 01 Feb 2021 00:52:22 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Julia Lawall <julia.lawall@inria.fr>,
         Anand Jain <anand.jain@oracle.com>,
         Josef Bacik <josef@toxicpanda.com>,
-        linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>,
-        kernel test robot <lkp@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH for-next 2/3] btrfs: properly unlock log_mutex in error case
-Date:   Mon,  1 Feb 2021 17:52:03 +0900
-Message-Id: <20210201085204.700090-3-naohiro.aota@wdc.com>
+        linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
+Subject: [PATCH for-next 3/3] btrfs: fix a typo in comment
+Date:   Mon,  1 Feb 2021 17:52:04 +0900
+Message-Id: <20210201085204.700090-4-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210201085204.700090-1-naohiro.aota@wdc.com>
 References: <20210201085204.700090-1-naohiro.aota@wdc.com>
@@ -70,28 +68,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We need to unlock log_root_tree->log_mutex in case of an error.
-
-Fixes: 122cfba0d2eb ("btrfs: reorder log node allocation")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+Fixes: 9e802babe329 ("btrfs: allow zoned mode on non-zoned block devices")
+Reported-by: Anand Jain <anand.jain@oracle.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/tree-log.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/zoned.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index 1dd7e34fe484..ed101420934c 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3164,6 +3164,7 @@ int btrfs_sync_log(struct btrfs_trans_handle *trans,
- 		ret = btrfs_alloc_log_tree_node(trans, log_root_tree);
- 		if (ret) {
- 			mutex_unlock(&fs_info->tree_log_mutex);
-+			mutex_unlock(&log_root_tree->log_mutex);
- 			goto out;
- 		}
- 	}
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index 362df27040ff..746066d2fd3c 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -490,7 +490,7 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+ 
+ 		model = bdev_zoned_model(device->bdev);
+ 		/*
+-		 * A Host-Managed zoned device msut be used as a zoned
++		 * A Host-Managed zoned device must be used as a zoned
+ 		 * device. A Host-Aware zoned device and a non-zoned devices
+ 		 * can be treated as a zoned device, if ZONED flag is
+ 		 * enabled in the superblock.
 -- 
 2.30.0
 
