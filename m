@@ -2,207 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BCF9309FD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 02:05:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61833309FEA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Feb 2021 02:18:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbhBABE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 31 Jan 2021 20:04:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53582 "EHLO
+        id S231148AbhBABRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 31 Jan 2021 20:17:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbhBABEH (ORCPT
+        with ESMTP id S231145AbhBABRV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 31 Jan 2021 20:04:07 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6054CC061573;
-        Sun, 31 Jan 2021 17:03:27 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id u15so9062877plf.1;
-        Sun, 31 Jan 2021 17:03:27 -0800 (PST)
+        Sun, 31 Jan 2021 20:17:21 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 445CFC0613ED
+        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jan 2021 17:16:40 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id m12so160943pjs.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jan 2021 17:16:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HHTgRPDaj1JDsiKjlc8F/LkMGWq5sipTZH1ZsYplwI0=;
-        b=WxTSAw0vOhWFuX0UI6eCbQhxizJ5TQMsJxY7kktLvfjO46sNnyE74m5QV8g1MzKcnS
-         8cRs/J9sb8hvBAgqR3VGmrvjy2bASm1RGpM3cd3gtlxFTKxZzLqbaaNjvFNiaDVIfOeF
-         CHqY9IiOCmnm8OivkQCrtClW9S3aZIa1b/s/tBP/j3zwUhLNEPXKIMWgxcwRZEsXeupI
-         BGD7J1bUaYQcq1WlMkItw0+d0/unqDEjGhgPq4hx0YCfH2SDQusptws4Sl+V1hzjFfcX
-         gfKIkLs0q4yos07ShIHiQz/85bAWPdbv3p3dEj82ckaIJzvNbbK3ytMwGEUziWMGMlKY
-         0pHQ==
+        d=cloud.ionos.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RLU8sNVXRSwQvcQ9Qv8D6rwZxuEAO9er5VHUrLUQ6lo=;
+        b=L2BSNt7JuuX3qwrFkNZjtFXfNANw5QJ85Zzv/tI14dXMoLSgBfFXpzNkCEQk/s7y+n
+         c9pr4KSWgfja57hPagkEj3aixUcSalBsGKYezPNuM5yfObu8/dbV04WdroKRi/Rd0a4w
+         O7Op0qUxgDVAKuovjloSRmC6zp8ufwg0s/wfHy8/sbP+huWE2bBFaNK0SHu7Z66ebzwf
+         r4vJ8bEssS00XyFQhuv1gG82ev6Tu8DEyCSdg7CFvkSrHv19xK7s2AvSa8t8Cq2ux+g+
+         DWjitlTOE0tXzXdee8aSLYl8CyS9NTAnBlNZXO4d2SLYFiJ/RLu6oOcYTz2Iw+p3kOZx
+         L3SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=HHTgRPDaj1JDsiKjlc8F/LkMGWq5sipTZH1ZsYplwI0=;
-        b=c22KYQMMzOX/tVoLQhiP1kob603J8Oj/H4cahbEzrSyv65OLh/tIeEauRWzFDxC/Cr
-         G8VUvrD/LZCAy0A+6W1CSluD/59FmCkaorvInK+oxpWD5MITiQj0CUPbWeqHtajDeFVr
-         ZcL+Dc3/IBzYNO0EWXHT1wztQLXd/3D8YEDS1WsbZTwaMlln8McJ+7FsZFDKdbJf4vwN
-         JsdESvIf7P7CpfGqOqMSFNWjR2+FCzCzjml8V0OrvkABYrZBfASomiyQAGOEEf8wTSJa
-         Cb96a8/xbEnO7KrHTQxQPcR/vQnpIqt8YGnGkEhxBLXbzc/9zVt/no7KB7f0L6Q4/usw
-         na4Q==
-X-Gm-Message-State: AOAM531jn5F2y6P0uaD9SUFATgIBLfHfslTH1onpcSneNGGkH4JNrwgn
-        gpOdnWEaIBoApmDoflE3P7o=
-X-Google-Smtp-Source: ABdhPJySg4lY4SBh3D+Vt+eImNi1ovIOOwQcU7t5749m6LAAxadtOX7+PjtqhwlbXD43kjdxjLMIFw==
-X-Received: by 2002:a17:90b:1992:: with SMTP id mv18mr15280132pjb.174.1612141406865;
-        Sun, 31 Jan 2021 17:03:26 -0800 (PST)
-Received: from localhost.localdomain ([27.122.242.75])
-        by smtp.gmail.com with ESMTPSA id o190sm15219481pga.2.2021.01.31.17.03.23
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 31 Jan 2021 17:03:25 -0800 (PST)
-From:   Hyeongseok Kim <hyeongseok@gmail.com>
-To:     namjae.jeon@samsung.com, sj1557.seo@samsung.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hyeongseok Kim <hyeongseok@gmail.com>
-Subject: [PATCH v2] exfat: improve performance of exfat_free_cluster when using dirsync mount option
-Date:   Mon,  1 Feb 2021 10:02:46 +0900
-Message-Id: <20210201010246.25873-1-hyeongseok@gmail.com>
-X-Mailer: git-send-email 2.27.0.83.g0313f36
+        bh=RLU8sNVXRSwQvcQ9Qv8D6rwZxuEAO9er5VHUrLUQ6lo=;
+        b=jcL2SOoVuEGld9LkvRliARlHxuyizswFSSe/attBaIe6+ectrxooNGQ4aeYjVEzcQJ
+         lsae5TkRFTculFIBbllracZc8ekv0+qCTHK3t0g0URFCVMzduRDBgvv+ENo6tE5fteDh
+         HMJge3YLm1btMT1leAYIEL0JONqBEYO4MqigMYuHp4YvpygqCCqQJv98ETicOkUZ7W6Z
+         TZs7HOO1n2jasf/Q4R1Yzn/LnbTOYv/6Zh5JYGGJKbzV32gCXuet8oxp8/86vQ35UDHX
+         hkBYhx1OJuAL6Ygwycp973otnG6YceTDBlSll8Q87xLJlDByHs4Vz1Zpwr0fTY4EaD46
+         sYRA==
+X-Gm-Message-State: AOAM530zGXd5cF24Q8Cdm5nM8DfmUfWbJU16JrAIf9K9jbsRQwCpiXFx
+        TDiJqlTGZURnLvZ4nZO/nxH/kw==
+X-Google-Smtp-Source: ABdhPJy+7Y+iue1isMhdjoV1Xc/lHilNv71BbVLNluwnVBC9ltGuPGGKpSfDIeSgGZuBP/PW2ylyQQ==
+X-Received: by 2002:a17:90a:7c08:: with SMTP id v8mr14272367pjf.135.1612142198128;
+        Sun, 31 Jan 2021 17:16:38 -0800 (PST)
+Received: from [10.8.1.62] ([89.187.162.118])
+        by smtp.gmail.com with ESMTPSA id a37sm15527889pgm.79.2021.01.31.17.16.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Jan 2021 17:16:37 -0800 (PST)
+Subject: Re: misc bio allocation cleanups
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Song Liu <song@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        linux-nilfs@vger.kernel.org, dm-devel@redhat.com,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+References: <20210126145247.1964410-1-hch@lst.de>
+From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Message-ID: <9d376309-5d67-d859-1ad0-a669bdb75cdd@cloud.ionos.com>
+Date:   Mon, 1 Feb 2021 02:16:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210126145247.1964410-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are stressful update of cluster allocation bitmap when using
-dirsync mount option which is doing sync buffer on every cluster bit
-clearing. This could result in performance degradation when deleting
-big size file.
-Fix to update only when the bitmap buffer index is changed would make
-less disk access, improving performance especially for truncate operation.
+Hi Christoph,
 
-Testing with Samsung 256GB sdcard, mounted with dirsync option
-(mount -t exfat /dev/block/mmcblk0p1 /temp/mount -o dirsync)
+I tried with latest for-5.12/block branch, and got below issue when 
+trying to create raid1 array.
 
-Remove 4GB file, blktrace result.
-[Before] : 39 secs.
-Total (blktrace):
- Reads Queued:      0,        0KiB   Writes Queued:      32775,    16387KiB
- Read Dispatches:   0,        0KiB   Write Dispatches:   32775,    16387KiB
- Reads Requeued:    0                Writes Requeued:        0
- Reads Completed:   0,        0KiB   Writes Completed:   32775,    16387KiB
- Read Merges:       0,        0KiB   Write Merges:           0,        0KiB
- IO unplugs:        2                Timer unplugs:          0
+[   80.605832] BUG: kernel NULL pointer dereference, address: 
+0000000000000018
+[   80.606159] #PF: supervisor read access in kernel mode
+[   80.606159] #PF: error_code(0x0000) - not-present page
+[   80.606159] PGD 0 P4D 0
+[   80.606159] Oops: 0000 [#1] SMP NOPTI
+[   80.606159] CPU: 1 PID: 207 Comm: mdadm Not tainted 5.11.0-rc5+ #37
+[   80.606159] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
+BIOS 1.10.2-1ubuntu1 04/01/2014
+[   80.606159] RIP: 0010:bdev_read_only+0x0/0x30
+[   80.606159] Code: 89 df 5b 5d e9 71 21 e7 ff 81 e6 ff ff 0f 00 48 c7 
+c7 40 99 d9 9e e8 0f e5 04 00 eb a0 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 
+00 <80> 7f 18 00 b8 01 00 00 00 75 11 48 8b 97 60 03 00 00 48 8b 4a 40
+[   80.606159] RSP: 0018:ffffb14f405dfd38 EFLAGS: 00000246
+[   80.606159] RAX: 0000000000000000 RBX: ffff9b0e0863b018 RCX: 
+ffff9b0e01edc000
+[   80.606159] RDX: ffff9b0e01b54c00 RSI: ffff9b0e0863b000 RDI: 
+0000000000000000
+[   80.606159] RBP: ffff9b0e01272200 R08: 0000000000000000 R09: 
+0000000000000000
+[   80.606159] R10: ffffee978004da40 R11: 0000000000000cc0 R12: 
+ffff9b0e0863b000
+[   80.606159] R13: ffff9b0e01f2cc00 R14: ffff9b0e0863b000 R15: 
+0000000000000000
+[   80.606159] FS:  00007f522ec65740(0000) GS:ffff9b0e7bc80000(0000) 
+knlGS:0000000000000000
+[   80.606159] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   80.606159] CR2: 0000000000000018 CR3: 0000000001364000 CR4: 
+00000000000006e0
+[   80.606159] Call Trace:
+[   80.606159]  bind_rdev_to_array+0x2f7/0x380
+[   80.606159]  ? cred_has_capability+0x80/0x120
+[   80.606159]  md_add_new_disk+0x204/0x630
+[   80.606159]  ? security_capable+0x33/0x50
+[   80.606159]  md_ioctl+0xee7/0x1690
+[   80.606159]  ? selinux_file_ioctl+0x143/0x200
+[   80.606159]  blkdev_ioctl+0x1ff/0x240
+[   80.606159]  block_ioctl+0x34/0x40
+[   80.606159]  __x64_sys_ioctl+0x89/0xc0
+[   80.606159]  do_syscall_64+0x33/0x40
+[   80.606159]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   80.606159] RIP: 0033:0x7f522e564317
+[   80.606159] Code: b3 66 90 48 8b 05 71 4b 2d 00 64 c7 00 26 00 00 00 
+48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 
+05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 41 4b 2d 00 f7 d8 64 89 01 48
+[   80.606159] RSP: 002b:00007ffc3abd96f8 EFLAGS: 00000246 ORIG_RAX: 
+0000000000000010
+[   80.606159] RAX: ffffffffffffffda RBX: 00005653ee690350 RCX: 
+00007f522e564317
+[   80.606159] RDX: 00005653ee694058 RSI: 0000000040140921 RDI: 
+0000000000000004
+[   80.606159] RBP: 00005653ee690410 R08: 00007f522e839db0 R09: 
+0000000000000000
+[   80.606159] R10: 00005653ee690010 R11: 0000000000000246 R12: 
+0000000000000000
+[   80.606159] R13: 0000000000000000 R14: 0000000000000000 R15: 
+00005653ee694010
+[   80.606159] Modules linked in:
+[   80.606159] CR2: 0000000000000018
+[   80.622996] ---[ end trace 22144b856a3c1001 ]---
+[   80.623285] RIP: 0010:bdev_read_only+0x0/0x30
+[   80.623501] Code: 89 df 5b 5d e9 71 21 e7 ff 81 e6 ff ff 0f 00 48 c7 
+c7 40 99 d9 9e e8 0f e5 04 00 eb a0 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 
+00 <80> 7f 18 00 b8 01 00 00 00 75 11 48 8b 97 60 03 00 00 48 8b 4a 40
+[   80.624544] RSP: 0018:ffffb14f405dfd38 EFLAGS: 00000246
+[   80.624788] RAX: 0000000000000000 RBX: ffff9b0e0863b018 RCX: 
+ffff9b0e01edc000
+[   80.625136] RDX: ffff9b0e01b54c00 RSI: ffff9b0e0863b000 RDI: 
+0000000000000000
+[   80.625449] RBP: ffff9b0e01272200 R08: 0000000000000000 R09: 
+0000000000000000
+[   80.625761] R10: ffffee978004da40 R11: 0000000000000cc0 R12: 
+ffff9b0e0863b000
+[   80.626112] R13: ffff9b0e01f2cc00 R14: ffff9b0e0863b000 R15: 
+0000000000000000
+[   80.626429] FS:  00007f522ec65740(0000) GS:ffff9b0e7bc80000(0000) 
+knlGS:0000000000000000
+[   80.626784] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   80.627035] CR2: 0000000000000018 CR3: 0000000001364000 CR4: 
+00000000000006e0
+Killed
 
-[After] : 1 sec.
-Total (blktrace):
- Reads Queued:      0,        0KiB   Writes Queued:         13,        6KiB
- Read Dispatches:   0,        0KiB   Write Dispatches:      13,        6KiB
- Reads Requeued:    0                Writes Requeued:        0
- Reads Completed:   0,        0KiB   Writes Completed:      13,        6KiB
- Read Merges:       0,        0KiB   Write Merges:           0,        0KiB
- IO unplugs:        1                Timer unplugs:          0
 
-Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
----
- fs/exfat/balloc.c   |  4 ++--
- fs/exfat/exfat_fs.h |  2 +-
- fs/exfat/fatent.c   | 43 +++++++++++++++++++++++++++++++++++++------
- 3 files changed, 40 insertions(+), 9 deletions(-)
-
-diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
-index a987919686c0..761c79c3a4ba 100644
---- a/fs/exfat/balloc.c
-+++ b/fs/exfat/balloc.c
-@@ -166,7 +166,7 @@ int exfat_set_bitmap(struct inode *inode, unsigned int clu)
-  * If the value of "clu" is 0, it means cluster 2 which is the first cluster of
-  * the cluster heap.
-  */
--void exfat_clear_bitmap(struct inode *inode, unsigned int clu)
-+void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)
- {
- 	int i, b;
- 	unsigned int ent_idx;
-@@ -180,7 +180,7 @@ void exfat_clear_bitmap(struct inode *inode, unsigned int clu)
- 	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
- 
- 	clear_bit_le(b, sbi->vol_amap[i]->b_data);
--	exfat_update_bh(sbi->vol_amap[i], IS_DIRSYNC(inode));
-+	exfat_update_bh(sbi->vol_amap[i], sync);
- 
- 	if (opts->discard) {
- 		int ret_discard;
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index b8f0e829ecbd..764bc645241e 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -408,7 +408,7 @@ int exfat_count_num_clusters(struct super_block *sb,
- int exfat_load_bitmap(struct super_block *sb);
- void exfat_free_bitmap(struct exfat_sb_info *sbi);
- int exfat_set_bitmap(struct inode *inode, unsigned int clu);
--void exfat_clear_bitmap(struct inode *inode, unsigned int clu);
-+void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync);
- unsigned int exfat_find_free_bitmap(struct super_block *sb, unsigned int clu);
- int exfat_count_used_clusters(struct super_block *sb, unsigned int *ret_count);
- 
-diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
-index c3c9afee7418..7b2e8af17193 100644
---- a/fs/exfat/fatent.c
-+++ b/fs/exfat/fatent.c
-@@ -157,6 +157,7 @@ int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain)
- 	unsigned int clu;
- 	struct super_block *sb = inode->i_sb;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	int cur_cmap_i, next_cmap_i;
- 
- 	/* invalid cluster number */
- 	if (p_chain->dir == EXFAT_FREE_CLUSTER ||
-@@ -176,21 +177,51 @@ int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain)
- 
- 	clu = p_chain->dir;
- 
-+	cur_cmap_i = next_cmap_i =
-+		BITMAP_OFFSET_SECTOR_INDEX(sb, CLUSTER_TO_BITMAP_ENT(clu));
-+
- 	if (p_chain->flags == ALLOC_NO_FAT_CHAIN) {
-+		unsigned int last_cluster = p_chain->dir + p_chain->size - 1;
- 		do {
--			exfat_clear_bitmap(inode, clu);
--			clu++;
-+			bool sync = false;
-+
-+			if (clu < last_cluster)
-+				next_cmap_i =
-+				  BITMAP_OFFSET_SECTOR_INDEX(sb, CLUSTER_TO_BITMAP_ENT(clu+1));
- 
-+			/* flush bitmap only if index would be changed or for last cluster */
-+			if (clu == last_cluster || cur_cmap_i != next_cmap_i) {
-+				sync = true;
-+				cur_cmap_i = next_cmap_i;
-+			}
-+
-+			exfat_clear_bitmap(inode, clu, (sync && IS_DIRSYNC(inode)));
-+			clu++;
- 			num_clusters++;
- 		} while (num_clusters < p_chain->size);
- 	} else {
- 		do {
--			exfat_clear_bitmap(inode, clu);
--
--			if (exfat_get_next_cluster(sb, &clu))
--				goto dec_used_clus;
-+			bool sync = false;
-+			unsigned int n_clu = clu;
-+			int err = exfat_get_next_cluster(sb, &n_clu);
-+
-+			if (err || n_clu == EXFAT_EOF_CLUSTER)
-+				sync = true;
-+			else
-+				next_cmap_i =
-+				  BITMAP_OFFSET_SECTOR_INDEX(sb, CLUSTER_TO_BITMAP_ENT(n_clu));
-+
-+			if (cur_cmap_i != next_cmap_i) {
-+				sync = true;
-+				cur_cmap_i = next_cmap_i;
-+			}
- 
-+			exfat_clear_bitmap(inode, clu, (sync && IS_DIRSYNC(inode)));
-+			clu = n_clu;
- 			num_clusters++;
-+
-+			if (err)
-+				goto dec_used_clus;
- 		} while (clu != EXFAT_EOF_CLUSTER);
- 	}
- 
--- 
-2.27.0.83.g0313f36
-
+Thanks,
+Guoqing
