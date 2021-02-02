@@ -2,142 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF5430B449
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 01:48:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD91B30B4BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 02:35:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231223AbhBBArZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 19:47:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48722 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbhBBArY (ORCPT
+        id S231196AbhBBBfC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 20:35:02 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38505 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230527AbhBBBfB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 19:47:24 -0500
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56834C061573
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Feb 2021 16:46:44 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id h14so18271572otr.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Feb 2021 16:46:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WH6UCRamzAhKYnpldxr0hXAVPURIDRKU7CFvf5itX0A=;
-        b=j0Yf9DRn64cU7+TwHA+p+7dluOx1mTeDwZDjNr8i9XNKyPplUkdwWZcobAuYaUWwO/
-         Z8O9rYIGERC390kAZUlxNvpKH6jxA4//70IO1yw4kh1p0qbNtejDJYiZzZ5UaIbWy/nI
-         jQkBVUD0PI4/NNbHDGENDW14d8v9V4F2qE3jf2r+C7y1EM8wNGMZ4m5zrnXodJ1bkLJn
-         n8IVOjdVnLoEKBnMI5v+tbIN17AzDU/EFUZ1WpmJBDjLYvPlxPj+6g4xA8bdix37fn0b
-         Vk2hMtEX9gdEuzqncx45RWi8+Z/Kw4YrzT2m/2z0UMJqlOOBQdLQtynuAkvz8rNXyIgw
-         pJKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WH6UCRamzAhKYnpldxr0hXAVPURIDRKU7CFvf5itX0A=;
-        b=WdB9/AdEcL+w98Jc7tQffoHZ1wHvcgq9lZCf8achjGDJeiy2c/VLyrtiJwNrcsswUT
-         utfxLW2PK3Shlr5sYvv6eEUvmWflI/ZVzvTw9hu0mE5yWnOdhn2SSPsQW9BM4pA587li
-         Pm0Qd1rxYNgxzdMCjVWA39wlzqkq6IjFXLFJqqicSyEFccS+bNO4AepzL/x4EaGuCdFk
-         Tr0SBNdgg/jxHVX6DZXztTySxTZDbbFq9Js8bBXPKE/5f0NnoVQSlJwfDXisV+tJreCP
-         WsxdafwpP/0JkqntjOtQkZMKrkEpVJwMzTVLQGonhVXvHHCAGahrBQ5xpwwLgwA0eUx9
-         2bJw==
-X-Gm-Message-State: AOAM533UuJxlGGOO5ljUsuoYYiRCuJctG1L82FPFtX2VqJjb4jkakJRY
-        t3xKMJrNfhsX3S5vtg7v4WkT7rJ1RHeOrQ7a3UE=
-X-Google-Smtp-Source: ABdhPJzdgscs8ENbeHZ7FxXqfh8U/YkcPXJvzmJ7IHhxmm62kVEWof3ZFsz5KE/fnrfR+Yqs0lR2/DSn+qvUnRTC3NA=
-X-Received: by 2002:a05:6830:15c5:: with SMTP id j5mr13610430otr.185.1612226803629;
- Mon, 01 Feb 2021 16:46:43 -0800 (PST)
-MIME-Version: 1.0
-References: <CAE1WUT63RUz0r2LaJZ7hvayzfLadEdsZjymg8UYU481de+6wLA@mail.gmail.com>
- <759c43fe-c482-4eaf-8f5e-b82985bbc7da@infradead.org>
-In-Reply-To: <759c43fe-c482-4eaf-8f5e-b82985bbc7da@infradead.org>
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Mon, 1 Feb 2021 16:46:32 -0800
-Message-ID: <CAE1WUT5=xXUcS2m=2bCh_5F7xduh3+mKShVOOZ1Ny17hF=M+Sg@mail.gmail.com>
-Subject: Re: Using bit shifts for VXFS file modes
-To:     Randy Dunlap <rdunlap@infradead.org>
+        Mon, 1 Feb 2021 20:35:01 -0500
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 1121V5Ce026106
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 1 Feb 2021 20:31:06 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 52EE015C39E2; Mon,  1 Feb 2021 20:31:05 -0500 (EST)
+Date:   Mon, 1 Feb 2021 20:31:05 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Amy Parker <enbyamy@gmail.com>
 Cc:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: Using bit shifts for VXFS file modes
+Message-ID: <YBirWYRuq2ONxt/y@mit.edu>
+References: <CAE1WUT63RUz0r2LaJZ7hvayzfLadEdsZjymg8UYU481de+6wLA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE1WUT63RUz0r2LaJZ7hvayzfLadEdsZjymg8UYU481de+6wLA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 1, 2021 at 4:21 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 2/1/21 3:49 PM, Amy Parker wrote:
-> > Hello filesystem developers!
-> >
-> > I was scouting through the FreeVXFS code, when I came across this in
-> > fs/freevxfs/vxfs.h:
-> >
-> > enum vxfs_mode {
-> >         VXFS_ISUID = 0x00000800, /* setuid */
-> >         VXFS_ISGID = 0x00000400, /* setgid */
-> >         VXFS_ISVTX = 0x00000200, /* sticky bit */
-> >         VXFS_IREAD = 0x00000100, /* read */
-> >         VXFS_IWRITE = 0x00000080, /* write */
-> >         VXFS_IEXEC = 0x00000040, /* exec */
-> >
-> > Especially in an expanded form like this, these are ugly to read, and
-> > a pain to work with.
-> >
-> > An example of potentially a better method, from fs/dax.c:
-> >
-> > #define DAX_SHIFT (4)
-> > #define DAX_LOCKED (1UL << 0)
-> > #define DAX_PMD (1UL << 1)
-> > #define DAX_ZERO_PAGE (1UL << 2)
-> > #define DAX_EMPTY (1UL << 3)
-> >
-> > Pardon the space condensation - my email client is not functioning properly.
->
-> That's the gmail web interface, right?
+On Mon, Feb 01, 2021 at 03:49:20PM -0800, Amy Parker wrote:
+> Hello filesystem developers!
+> 
+> I was scouting through the FreeVXFS code, when I came across this in
+> fs/freevxfs/vxfs.h:
+> 
+> enum vxfs_mode {
+>         VXFS_ISUID = 0x00000800, /* setuid */
+>         VXFS_ISGID = 0x00000400, /* setgid */
+>         VXFS_ISVTX = 0x00000200, /* sticky bit */
+>         VXFS_IREAD = 0x00000100, /* read */
+>         VXFS_IWRITE = 0x00000080, /* write */
+>         VXFS_IEXEC = 0x00000040, /* exec */
 
-Sadly for now yes. Currently migrating to my own local email system -
-just waiting on a domain purchase.
+The main reason why some developers prefer to using enum is because it
+allows the compiler to do type checking.  Also some people prefer
+using hex digits because it becomes easier for people who are looking
+at hex dumps.  So for example:
 
-> I believe that you can use a real email client to talk to
-> smtp.gmail.com and it won't mangle spaces in your emails.
+typedef enum {
+        EXT4_IGET_NORMAL =      0,
+        EXT4_IGET_SPECIAL =     0x0001, /* OK to iget a system inode */
+        EXT4_IGET_HANDLE =      0x0002  /* Inode # is from a handle */
+} ext4_iget_flags;
 
-I've tried - smtp.gmail.com either requires:
-- OAuth2: doesn't work for most things
-- App passwords: not used by any email client dev with a touch of respect
+> Anyways, I believe using bit shifts to represent different file modes
+> would be a much better idea - no runtime penalty as they get
+> calculated into constants at compile time, and significantly easier
+> for the average user to read.
 
->
-> > Anyways, I believe using bit shifts to represent different file modes
-> > would be a much better idea - no runtime penalty as they get
-> > calculated into constants at compile time, and significantly easier
-> > for the average user to read.
-> >
-> > Any thoughts on this?
->
-> It's all just opinions. :)
+That's a matter of personal preference; and I'll note that it's not a
+matter of what is better for average users, but rather the average
+file system developer.  Some people find octal easier, because that
+was what Digital Equipment Corporation (DEC) systems tended to use,
+and early Unix was developed on PDP-11.  So that's why octal gets used
+in the man page for chmod, e.g.:
 
-Sure, it's just opinions, but this is about making stuff easier to
-work with for the average kernel monkey.
+#define S_IRUSR 00400
+#define S_IWUSR 00200
+#define S_IXUSR 00100
 
->
-> I find the hex number list easier to read .. and the values are
+#define S_IRGRP 00040
+#define S_IWGRP 00020
+#define S_IXGRP 00010
 
-Fair, wonder what the average person would think? When trying to help
-others understand hex I usually show representations in bitshift form
-so they can get the place value nature.
+Personally, *I* find this easier to read than
 
-> right there in front of you when debugging, instead of having to
-> determine what 1 << 9 is.
+#define S_IRGRP (1U << 5)
+#define S_IWGRP (1U << 4)
+#define S_IXGRP (1U << 3)
 
-Maybe, but it takes barely more time to find the ninth digit of the
-hex expression when debugging. Plus, since you're counting the places
-in - you're a lot less likely to accidentally select the wrong one
-when you're debugging if you're just eyeballing the values.
+But perhaps that's because I can convert between octal and binary in
+my sleep (having learned how to toggle in disk bootstraps into the
+front console of a PDP-8i[1] when I was in grade school).
 
-Perhaps adding a docstring above this with maps of the bitshifts to
-their raw hex equivalents set as current could be a good idea?
+[1] https://www.vintagecomputer.net/digital/pdp8i/Digital_PDP8i_a.JPG
 
->
-> cheers.
-> --
-> ~Randy
->
+> Any thoughts on this?
 
-Best regards,
-Amy Parker
-(she/her/hers)
+I don't think there's a right answer here.  In some cases, hex will be
+better; in some cases, octal (especially as far as Unix permissions is
+concerned); and in other cases, perhaps using bit shifts is more important.
+
+A lot depends on how you plan can use it, and your past experiewnce.
+Maybe you can take left shift numbers and be able to translate that to
+hex when looking at kernel oops messages; I can't, but I can take hex
+definiions and can take something like 0xA453 and map that to what
+flags are set that are defined using hex constants.
+
+Cheers,
+
+						- Ted
