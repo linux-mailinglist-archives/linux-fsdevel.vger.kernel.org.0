@@ -2,31 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD91B30B4BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 02:35:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8C8B30B4D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 02:49:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbhBBBfC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Feb 2021 20:35:02 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38505 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230527AbhBBBfB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Feb 2021 20:35:01 -0500
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 1121V5Ce026106
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 1 Feb 2021 20:31:06 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 52EE015C39E2; Mon,  1 Feb 2021 20:31:05 -0500 (EST)
-Date:   Mon, 1 Feb 2021 20:31:05 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
+        id S230029AbhBBBso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Feb 2021 20:48:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229852AbhBBBsn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Feb 2021 20:48:43 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 07A6A64E92;
+        Tue,  2 Feb 2021 01:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612230483;
+        bh=hdTZZ+CrwqEkg3W5j8UkFRDDjf3qMrGRiVjorKoXwAY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GR/R8UVlpEEal8KvIiWojfsScHvh7t+SGtXBzlEZ6naDkbWLfcqZf7Fz+CajyZmgU
+         EvVwatv/hPXz/BCyjfVZ7tusS6XTNjJVK0ESNfgL+EIv5RcQhExhvB6Tv7HDxVLbyo
+         K3dmXhxzgk3Wkf08ivxKvUnVWANGu9ypRCA6ITBHKtLtb7PyAqNX2inAHcjR1smIS3
+         X20HQJe69p3hScEHCqjcVN8Ymn5TEcePg9YsT2ja5S0rDVNqCYzWJv20xl++WK5io4
+         U15q57Vr7pLVM4svDHZlH7m1oSy5saBaaoQ4EkgvDjzTHu/LV9qUgW+cpNAdw7N+2h
+         OGjRCvowHIAEg==
+Date:   Mon, 1 Feb 2021 17:48:02 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Amy Parker <enbyamy@gmail.com>
 Cc:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>
 Subject: Re: Using bit shifts for VXFS file modes
-Message-ID: <YBirWYRuq2ONxt/y@mit.edu>
+Message-ID: <20210202014802.GB7187@magnolia>
 References: <CAE1WUT63RUz0r2LaJZ7hvayzfLadEdsZjymg8UYU481de+6wLA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -49,62 +52,38 @@ On Mon, Feb 01, 2021 at 03:49:20PM -0800, Amy Parker wrote:
 >         VXFS_IREAD = 0x00000100, /* read */
 >         VXFS_IWRITE = 0x00000080, /* write */
 >         VXFS_IEXEC = 0x00000040, /* exec */
+> 
+> Especially in an expanded form like this, these are ugly to read, and
+> a pain to work with.
 
-The main reason why some developers prefer to using enum is because it
-allows the compiler to do type checking.  Also some people prefer
-using hex digits because it becomes easier for people who are looking
-at hex dumps.  So for example:
+I would personally just change those to use the constants in
+include/uapi/linux/stat.h.  They're userspace ABI and I don't think
+anyone's going to come up with a good reason to change the numbering
+after nearly 50 years.
 
-typedef enum {
-        EXT4_IGET_NORMAL =      0,
-        EXT4_IGET_SPECIAL =     0x0001, /* OK to iget a system inode */
-        EXT4_IGET_HANDLE =      0x0002  /* Inode # is from a handle */
-} ext4_iget_flags;
+That said, on the general principle of "anything you touch you get to
+QA" I would leave it alone.
 
+--D
+
+> 
+> An example of potentially a better method, from fs/dax.c:
+> 
+> #define DAX_SHIFT (4)
+> #define DAX_LOCKED (1UL << 0)
+> #define DAX_PMD (1UL << 1)
+> #define DAX_ZERO_PAGE (1UL << 2)
+> #define DAX_EMPTY (1UL << 3)
+> 
+> Pardon the space condensation - my email client is not functioning properly.
+> 
 > Anyways, I believe using bit shifts to represent different file modes
 > would be a much better idea - no runtime penalty as they get
 > calculated into constants at compile time, and significantly easier
 > for the average user to read.
-
-That's a matter of personal preference; and I'll note that it's not a
-matter of what is better for average users, but rather the average
-file system developer.  Some people find octal easier, because that
-was what Digital Equipment Corporation (DEC) systems tended to use,
-and early Unix was developed on PDP-11.  So that's why octal gets used
-in the man page for chmod, e.g.:
-
-#define S_IRUSR 00400
-#define S_IWUSR 00200
-#define S_IXUSR 00100
-
-#define S_IRGRP 00040
-#define S_IWGRP 00020
-#define S_IXGRP 00010
-
-Personally, *I* find this easier to read than
-
-#define S_IRGRP (1U << 5)
-#define S_IWGRP (1U << 4)
-#define S_IXGRP (1U << 3)
-
-But perhaps that's because I can convert between octal and binary in
-my sleep (having learned how to toggle in disk bootstraps into the
-front console of a PDP-8i[1] when I was in grade school).
-
-[1] https://www.vintagecomputer.net/digital/pdp8i/Digital_PDP8i_a.JPG
-
+> 
 > Any thoughts on this?
-
-I don't think there's a right answer here.  In some cases, hex will be
-better; in some cases, octal (especially as far as Unix permissions is
-concerned); and in other cases, perhaps using bit shifts is more important.
-
-A lot depends on how you plan can use it, and your past experiewnce.
-Maybe you can take left shift numbers and be able to translate that to
-hex when looking at kernel oops messages; I can't, but I can take hex
-definiions and can take something like 0xA453 and map that to what
-flags are set that are defined using hex constants.
-
-Cheers,
-
-						- Ted
+> 
+> Best regards,
+> Amy Parker
+> (she/her/hers)
