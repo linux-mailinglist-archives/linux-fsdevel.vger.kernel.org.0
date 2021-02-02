@@ -2,252 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E64B30C810
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 18:40:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FDE30C83E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 18:48:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237619AbhBBRka (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Feb 2021 12:40:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237604AbhBBRiZ (ORCPT
+        id S237856AbhBBRp5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Feb 2021 12:45:57 -0500
+Received: from de-smtp-delivery-102.mimecast.com ([194.104.109.102]:33210 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237823AbhBBRoK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Feb 2021 12:38:25 -0500
-Received: from mail-lj1-x249.google.com (mail-lj1-x249.google.com [IPv6:2a00:1450:4864:20::249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC047C061793
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Feb 2021 09:37:41 -0800 (PST)
-Received: by mail-lj1-x249.google.com with SMTP id o8so5219981ljp.15
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Feb 2021 09:37:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=Yw2AQQjjN0qlybNUjTs4aWik4pvcwC2CB37OFNajzDc=;
-        b=rUQDpLeqLdk5w526Fchik4CgVhp8n9H/4HYuYgHbqVQzdpib3ketb8+tnpB3o0B+Ty
-         cKh7MHwtHw701wAxuG+UsrxfBeJsTsZynkyO6r+N3S+TIj6c4FizbFLD7GztnTntFHnZ
-         gsSzsbXXMLDrszd3BDAQM1YNEphB6CZXZ/9AZmpXHYfvOXTkUy/d8jlN1/4d2wMA7rbp
-         ju8p8cViWLsM+oBuJFzi/ouTETYDPDTq7DS0nrFC46ZFC36bzHHRdptfjjFXfusRQn3K
-         e4BhoBlEZlaDkzlK3AbURrWoyJGwpgU5NOza3tXHxR56Pd11zv79a52zzeHHroM/AvRE
-         cBZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=Yw2AQQjjN0qlybNUjTs4aWik4pvcwC2CB37OFNajzDc=;
-        b=KublewrTibItr5lOwmiahVPGh94rKBQBDVdFfvkwrSp3OlUmvi+UInvGiXXAbj677x
-         L95nGT1wbk2JuQ61NcN5JqV4+bAr0xkQz+c7/a2LFkDzaJW1ARUdmwA/op3Sz/Bxr4YC
-         r0oiZtyo+IN+iL9GrhH4vCEh5dYRnWnmQqgpDUlQ2OgP9luX+dm0kpsJ+BYKxOpDkVCk
-         GEe2K2B7i+w8/MHPZLnmgILdMhf2yzN0ZBFkl3lwUEEJcEYj2g1PzmaBFrooT4nqCsGs
-         SlV90j4ijRK2gKltUC5RuEnrZO66IcswszN86rSpCmEjaYnKIo5Mpj4Uj6HK+E3+ULtc
-         EqFA==
-X-Gm-Message-State: AOAM530WwjIJruj2nvXDVXB8TiinBdv97Oo7rnAOvLX6KLlS7zxsegv3
-        KxvkIPydvR8BBtR5uZYwxsdcSlOx4o0=
-X-Google-Smtp-Source: ABdhPJyyIQn9cQEMrxTgNqGI7l8PM5GsGgXUNIEpSUKpS2z5j4iyNlyqBnf88lwm0YC7rIRyYgYQjVdegf0=
-Sender: "figiel via sendgmr" <figiel@odra.waw.corp.google.com>
-X-Received: from odra.waw.corp.google.com ([2a00:79e0:2:11:1ea0:b8ff:fe79:fe73])
- (user=figiel job=sendgmr) by 2002:a05:6512:228b:: with SMTP id
- f11mr11712619lfu.78.1612287459908; Tue, 02 Feb 2021 09:37:39 -0800 (PST)
-Date:   Tue,  2 Feb 2021 18:37:09 +0100
-Message-Id: <20210202173709.4104221-1-figiel@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-Subject: [PATCH v4] fs/proc: Expose RSEQ configuration
-From:   Piotr Figiel <figiel@google.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Michel Lespinasse <walken@google.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        mathieu.desnoyers@efficios.com, viro@zeniv.linux.org.uk,
-        peterz@infradead.org, paulmck@kernel.org, boqun.feng@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        posk@google.com, kyurtsever@google.com, ckennelly@google.com,
-        pjt@google.com, Piotr Figiel <figiel@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 2 Feb 2021 12:44:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1612287781;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HGcnKVUALzGGga4EVprl6Cu07r8GRqHpwFmuqLlvnO4=;
+        b=TUn3v9hZvDpGfUPmqDZ7iGI7IkHkpWVDQP8KY4E8XRNFy0YRKnlS7ysfMVxSt1C+9lbBMj
+        Bgj2NXgvJuK0XW+GruY70aTSkUgDgbBBNml0GhUDxvtkGZqLuuT7jcwQuHMnT5jDQAoV5M
+        q8JBF29all685DySoNWNf6dcAwM7RrM=
+Received: from EUR03-DB5-obe.outbound.protection.outlook.com
+ (mail-db5eur03lp2057.outbound.protection.outlook.com [104.47.10.57]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ de-mta-13-qgW0Yw_LMTqSbqH4mzKAhw-1; Tue, 02 Feb 2021 18:43:00 +0100
+X-MC-Unique: qgW0Yw_LMTqSbqH4mzKAhw-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HgKgWn/43czZANi5B39mzKnFyCYwTr60sxrcYKAJdaAxaUKY+H7PZuegEfmoYDAwCD/3psW12gM6t9GDQsErURWcfc7eEU0x1Js4F02FxlLtSNIDXzeOr8ZPqwPjtdh3o1ucZLdjx9oupXV/axrgTmwiV9A8tiu7ZdDTw9tUMOMTqk0enhbwDL15GID2ckTBgume9G5bmyfPyz73TwvBp61wlk6EPHN8ukRIwYWI4UxrlgNIXy8oo5RByYArx3a1tbXccE6ILGj3DCLc/0aMy5VixuAME7eU8BSv7/HQnRmPSXLeMWBEmX0s7P+HT3C5l48cB23dg8rN6zZR2LNF7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PJsEHSSTZ6DgO8gx+SOhxzgHvw7aWzR1qoEfzaMA2Vk=;
+ b=S/r/uGniVmSbOQhlj3ynyPdDeQmuezI9SKLLy0zwUToa5vCwLu6CSvPd52oo3myq/r7DcfRdFISfyoGCbd2OWLarSVc4WzV/rRHLAKMm5tt+RM7o03z71AtRo09TkkAbHVgeiOxBcLSyxUl55nOdy1cULBVWGazCUt2zKUV0NJS/bdK/7jW65b6dOmlk5EglNFiF2FTsHscgbaoD2071l1lTIwH7PUvwICQSJdoxJhe4rzKY37MHVwP4pwE1Gth/4RhsS+ZU3eFh4dDIfc5D8KrHKW23S3Vb4ujDMf0wwdcYOZMLSxgUbuVacj6f5e8+bkrqoeKRe+JQ2t2YiQU5FA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=suse.com;
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
+ by VI1PR04MB5215.eurprd04.prod.outlook.com (2603:10a6:803:59::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.17; Tue, 2 Feb
+ 2021 17:42:57 +0000
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::9c1d:89de:a08e:ccc9]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::9c1d:89de:a08e:ccc9%4]) with mapi id 15.20.3805.022; Tue, 2 Feb 2021
+ 17:42:57 +0000
+From:   =?UTF-8?q?Aur=C3=A9lien=20Aptel?= <aaptel@suse.com>
+To:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+CC:     smfrench@gmail.com, Aurelien Aptel <aaptel@suse.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>
+Subject: [PATCH v3] cifs: report error instead of invalid when revalidating a dentry fails
+Date:   Tue,  2 Feb 2021 18:42:55 +0100
+Message-ID: <20210202174255.4269-1-aaptel@suse.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <CANT5p=pK3hQNTvsR-WUmtrQFuKngx+A1iYfd0JXyb0WHqpfKMA@mail.gmail.com>
+References: <CANT5p=pK3hQNTvsR-WUmtrQFuKngx+A1iYfd0JXyb0WHqpfKMA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [2003:fa:705:9f33:33e3:4e11:8cc3:3b4d]
+X-ClientProxiedBy: ZR0P278CA0016.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:16::26) To VI1PR0402MB3359.eurprd04.prod.outlook.com
+ (2603:10a6:803:3::28)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (2003:fa:705:9f33:33e3:4e11:8cc3:3b4d) by ZR0P278CA0016.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.17 via Frontend Transport; Tue, 2 Feb 2021 17:42:57 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c3f6c55c-df9f-4d8c-b251-08d8c7a1fa33
+X-MS-TrafficTypeDiagnostic: VI1PR04MB5215:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR04MB52152115A2EDAB82FD41F8A2A8B59@VI1PR04MB5215.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1775;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: E6tCMpCgpm+HFLsmvVgPwGGRY/oZv6xEUwznIzyr4fdTrp/g7/TNaQXB9jVmp3vUpq+D1iA8rGMqBaP7/4KO+9X3vlvQx03ULuEe3xbBQm+USQcdFWhbRWIyMZqTNkYwWhpibW1gRh3qeP3OcsQYgluiR4b0i3zUQ2zslrdwwI5HoQ6+S8KEsF5+xBhBdQ+VferGCTeuWPb2JnUfeyiHQMIzzyLVg6TLI0yd8eeIMbA+5Q7ri/1jsJCn9V7JhX15tZ/Q6nvMojJPtDLWSiwQ8MPInsfWc6ek6YBH5YaaOJRdiqY14gWY3vLScakuxLJoAyuScjk8vtJBgwFGeAG3Or8pcCDOdRvXvcAk76omp+UCN+QvKo1dTv9K+n2eSbLzRQpHRqNiAaoQDmqDAoc/xxF0yPRJoWvq7r65+wIl3XV/jHlcYtJD1Y4i7MYdgh7SIYoLya2Qn8YlF9fheIyQ9MePiz2cRwzz21/qGZ9rMMWwqgs4DZYxMAK+2yCYaslv7bKZ0W2ZUhklstVyUBkupNotdjl0Rdae6kAt8/29a/MjBc1EvXFO4E4sJVsO4IkyaJD12sQFBqqtL21JKe/deo47G2dCL+xVhSmUZqMJFOgulOxS1JAXLTlWFMGE6GML2RFnR9PcV8vDIELuQYhGheg/6ZFqtDH4LwQnXayiAOOZx7nV8mF2tCD0HB+SteDTcEA+7yCAL3Lxz/1UPBahTpS4Y9ZUDk7DFcwjDKhXRK7wEtUYGhDFnCPrD1fzEcJWSnygoEotKu3aZGXJsGuaN6oxUcpoQIyEQbIHfG/I1+39rcg+VOykKP26tbc6Y0i3UThuIMBE4hx+ZRWj8pe2O2z7P4HWJ2W0V8jF01XoBGZ06GVfgZ8mKGW1FeRDBQ2yirwVs3zFn7E7cwlHDD/kZQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:OSPM;SFS:(366004)(136003)(396003)(39860400002)(346002)(376002)(316002)(54906003)(83380400001)(478600001)(2616005)(6486002)(36756003)(8936002)(6496006)(52116002)(8676002)(66946007)(86362001)(2906002)(1076003)(186003)(66556008)(66476007)(16526019)(5660300002)(4326008)(23200700001);DIR:OUT;SFP:1501;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?kx2MnQgyIvDzKKVo182nNTKtJ7ui0pzyNZMaFC9/IlfVx2tFT0aBwE2XOsoT?=
+ =?us-ascii?Q?UvBvuJDgQ1yAWgSeQCyinPU9pAJVU5NHi6jecwGyD17hrpZJQfBlW83k0d4X?=
+ =?us-ascii?Q?Qi5YWA45U+xjQ5vngfUqlkTFBScJHRBvA7TYkgJeefCE2iJbs/bw/GcvEMF2?=
+ =?us-ascii?Q?SQNPIYX6D85cAxwE5vitGGIiP8qcUOtYCbCah7WZRObnGQTpqxFlxONsorqk?=
+ =?us-ascii?Q?nyPeyRdDEZlid0xnOqleUKL0Kr7R+EP3PcslHam2ydfdJaZzu0fQ2eRZY6BS?=
+ =?us-ascii?Q?uBeezserujpovCuWvPed79HwwlqNJxT+d8MagUyiMsMbSjqTg+S3Qo3pPVSU?=
+ =?us-ascii?Q?rcLZFynK8jzB6iI4WSlDeDyEwuKmHtZzDhosS5KGBLUoBpMSzta9Et17m8XI?=
+ =?us-ascii?Q?zsIOSTf4UjnCxcorsKobTjPRPBituOuFVPYosh35A7EyTdbPTS+Sn272wGfI?=
+ =?us-ascii?Q?dKHjze5OrPFJlcMomNCWwEUsZ/At0oxTv1wqxsrsZcCVQbApl+SOO8U33sqH?=
+ =?us-ascii?Q?LS51FrndQqeCmEv83vhd9KEjRUhsiEMWviM/9SaKdlkuUKf0fPUDJcf3PhiW?=
+ =?us-ascii?Q?//kHGcoxjiHLJHkQ2XRNpWhx7H2wOcneuCLOqOtIdtHRWjdICw5skkQ/Frez?=
+ =?us-ascii?Q?4PWYXje4DqP56xn3wAxxTG7A4mn4CUPs3/yvRAv4SYZLGZkkh235otdTUAW4?=
+ =?us-ascii?Q?l55ceAu3OykkydrdLiuSsgGTJDk+CB70O/MFd19eVwDbavhwRvr/RpI6nfN3?=
+ =?us-ascii?Q?uYcrvX7pfT3AC9nAwU5RJZF3C/Ehx2JnmdZ1fxb+Q5ES8FGJXpWZkV0DO4r2?=
+ =?us-ascii?Q?PL75llUue8q6A3BoxgNXR5hEnEHQFtLy34v0JlNeddtshXuBRn57JWbOmoG0?=
+ =?us-ascii?Q?b8BeGCcQJE2M6Yzukrxo/ArBveYMoMfBF1nBjCnM+0CeRoyTx48pnctzffPY?=
+ =?us-ascii?Q?dRrQ8TMDHjzEzQARmkgLtTNMBlHj3rpta28BZ4zWez+f1OGLeQUFMtoi7iJt?=
+ =?us-ascii?Q?FEYazTtZzmyru7Spsx75PEHqVwz45bVK1Nx5qXq04RAMOLq+ZIJz+NPfmV74?=
+ =?us-ascii?Q?W/yLjskGRsixpbk7hbCNt3ySzYzfmfO0iUgUmTapYr9Y2HBlIHPIRw9jAs5j?=
+ =?us-ascii?Q?8ngXsjPd9ObG?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3f6c55c-df9f-4d8c-b251-08d8c7a1fa33
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2021 17:42:57.5358
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mYViI+c6CdK9qrlAFOAhqseN8rR66Cd0ExQlxoFwKB4mQnXAUygPV01XD2NCbQLv
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5215
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For userspace checkpoint and restore (C/R) some way of getting process
-state containing RSEQ configuration is needed.
+From: Aurelien Aptel <aaptel@suse.com>
 
-There are two ways this information is going to be used:
- - to re-enable RSEQ for threads which had it enabled before C/R
- - to detect if a thread was in a critical section during C/R
+Assuming
+- //HOST/a is mounted on /mnt
+- //HOST/b is mounted on /mnt/b
 
-Since C/R preserves TLS memory and addresses RSEQ ABI will be restored
-using the address registered before C/R.
+On a slow connection, running 'df' and killing it while it's
+processing /mnt/b can make cifs_get_inode_info() returns -ERESTARTSYS.
 
-Detection whether the thread is in a critical section during C/R is
-needed to enforce behavior of RSEQ abort during C/R. Attaching with
-ptrace() before registers are dumped itself doesn't cause RSEQ abort.
-Restoring the instruction pointer within the critical section is
-problematic because rseq_cs may get cleared before the control is
-passed to the migrated application code leading to RSEQ invariants not
-being preserved.
+This triggers the following chain of events:
+=3D> the dentry revalidation fail
+=3D> dentry is put and released
+=3D> superblock associated with the dentry is put
+=3D> /mnt/b is unmounted
 
-To achieve above goals expose the RSEQ ABI address and the signature
-value with the new procfs file "/proc/<pid>/rseq".
+This patch makes cifs_d_revalidate() return the error instead of
+0 (invalid) when cifs_revalidate_dentry() fails, except for ENOENT
+where that error means the dentry is invalid.
 
-Signed-off-by: Piotr Figiel <figiel@google.com>
-
+Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+Suggested-by: Shyam Prasad N <nspmangalore@gmail.com>
 ---
+ fs/cifs/dir.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-v4:
- - added documentation and extended comment before task_lock()
-v3:
- - added locking so that the proc file always shows consistent pair of
-   RSEQ ABI address and the signature
- - changed string formatting to use %px for the RSEQ ABI address
-v2:
- - fixed string formatting for 32-bit architectures
-v1:
- - https://lkml.kernel.org/r/20210113174127.2500051-1-figiel@google.com
-
----
- Documentation/filesystems/proc.rst | 16 ++++++++++++++++
- fs/exec.c                          |  2 ++
- fs/proc/base.c                     | 22 ++++++++++++++++++++++
- include/linux/sched/task.h         |  3 ++-
- kernel/rseq.c                      |  4 ++++
- 5 files changed, 46 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 2fa69f710e2a..d887666dc849 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -47,6 +47,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
-   3.10  /proc/<pid>/timerslack_ns - Task timerslack value
-   3.11	/proc/<pid>/patch_state - Livepatch patch operation state
-   3.12	/proc/<pid>/arch_status - Task architecture specific information
-+  3.13	/proc/<pid>/rseq - RSEQ configuration state
- 
-   4	Configuring procfs
-   4.1	Mount options
-@@ -2131,6 +2132,21 @@ AVX512_elapsed_ms
-   the task is unlikely an AVX512 user, but depends on the workload and the
-   scheduling scenario, it also could be a false negative mentioned above.
- 
-+3.13	/proc/<pid>/rseq - RSEQ configuration state
-+---------------------------------------------------
-+This file provides RSEQ configuration of a thread. Available fields correspond
-+to the rseq() syscall parameters and are:
-+
-+ - RSEQ ABI structure address shared between the kernel and user-space
-+ - signature value expected before the abort handler code
-+
-+Both values are in hexadecimal format, for example::
-+
-+	# cat /proc/12345/rseq
-+	0000abcdef12340 aabb0011
-+
-+This file is only present if CONFIG_RSEQ is enabled.
-+
- Chapter 4: Configuring procfs
- =============================
- 
-diff --git a/fs/exec.c b/fs/exec.c
-index 5d4d52039105..5d84f98847f1 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1830,7 +1830,9 @@ static int bprm_execve(struct linux_binprm *bprm,
- 	/* execve succeeded */
- 	current->fs->in_exec = 0;
- 	current->in_execve = 0;
-+	task_lock(current);
- 	rseq_execve(current);
-+	task_unlock(current);
- 	acct_update_integrals(current);
- 	task_numa_free(current, false);
- 	return retval;
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index b3422cda2a91..89232329d966 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -662,6 +662,22 @@ static int proc_pid_syscall(struct seq_file *m, struct pid_namespace *ns,
- 
- 	return 0;
- }
-+
-+#ifdef CONFIG_RSEQ
-+static int proc_pid_rseq(struct seq_file *m, struct pid_namespace *ns,
-+				struct pid *pid, struct task_struct *task)
-+{
-+	int res = lock_trace(task);
-+
-+	if (res)
-+		return res;
-+	task_lock(task);
-+	seq_printf(m, "%px %08x\n", task->rseq, task->rseq_sig);
-+	task_unlock(task);
-+	unlock_trace(task);
-+	return 0;
-+}
-+#endif /* CONFIG_RSEQ */
- #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
- 
- /************************************************************************/
-@@ -3182,6 +3198,9 @@ static const struct pid_entry tgid_base_stuff[] = {
- 	REG("comm",      S_IRUGO|S_IWUSR, proc_pid_set_comm_operations),
- #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
- 	ONE("syscall",    S_IRUSR, proc_pid_syscall),
-+#ifdef CONFIG_RSEQ
-+	ONE("rseq",       S_IRUSR, proc_pid_rseq),
-+#endif
- #endif
- 	REG("cmdline",    S_IRUGO, proc_pid_cmdline_ops),
- 	ONE("stat",       S_IRUGO, proc_tgid_stat),
-@@ -3522,6 +3541,9 @@ static const struct pid_entry tid_base_stuff[] = {
- 			 &proc_pid_set_comm_operations, {}),
- #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
- 	ONE("syscall",   S_IRUSR, proc_pid_syscall),
-+#ifdef CONFIG_RSEQ
-+	ONE("rseq",      S_IRUSR, proc_pid_rseq),
-+#endif
- #endif
- 	REG("cmdline",   S_IRUGO, proc_pid_cmdline_ops),
- 	ONE("stat",      S_IRUGO, proc_tid_stat),
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index c0f71f2e7160..b6d085ac571b 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -155,7 +155,8 @@ static inline struct vm_struct *task_stack_vm_area(const struct task_struct *t)
-  * Protects ->fs, ->files, ->mm, ->group_info, ->comm, keyring
-  * subscriptions and synchronises with wait4().  Also used in procfs.  Also
-  * pins the final release of task.io_context.  Also protects ->cpuset and
-- * ->cgroup.subsys[]. And ->vfork_done.
-+ * ->cgroup.subsys[]. And ->vfork_done. And ->rseq and ->rseq_sig to
-+ * synchronize changes with procfs reader.
-  *
-  * Nests both inside and outside of read_lock(&tasklist_lock).
-  * It must not be nested with write_lock_irq(&tasklist_lock),
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index a4f86a9d6937..6aea67878065 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -322,8 +322,10 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
- 		ret = rseq_reset_rseq_cpu_id(current);
- 		if (ret)
- 			return ret;
-+		task_lock(current);
- 		current->rseq = NULL;
- 		current->rseq_sig = 0;
-+		task_unlock(current);
- 		return 0;
- 	}
- 
-@@ -353,8 +355,10 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
- 		return -EINVAL;
- 	if (!access_ok(rseq, rseq_len))
- 		return -EFAULT;
-+	task_lock(current);
- 	current->rseq = rseq;
- 	current->rseq_sig = sig;
-+	task_unlock(current);
- 	/*
- 	 * If rseq was previously inactive, and has just been
- 	 * registered, ensure the cpu_id_start and cpu_id fields
--- 
-2.30.0.478.g8a0d178c01-goog
+diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+index 68900f1629bff..868c0b7263ec0 100644
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -737,6 +737,7 @@ static int
+ cifs_d_revalidate(struct dentry *direntry, unsigned int flags)
+ {
+ 	struct inode *inode;
++	int rc;
+=20
+ 	if (flags & LOOKUP_RCU)
+ 		return -ECHILD;
+@@ -746,8 +747,11 @@ cifs_d_revalidate(struct dentry *direntry, unsigned in=
+t flags)
+ 		if ((flags & LOOKUP_REVAL) && !CIFS_CACHE_READ(CIFS_I(inode)))
+ 			CIFS_I(inode)->time =3D 0; /* force reval */
+=20
+-		if (cifs_revalidate_dentry(direntry))
+-			return 0;
++		rc =3D cifs_revalidate_dentry(direntry);
++		if (rc) {
++			cifs_dbg(FYI, "cifs_revalidate_dentry failed with rc=3D%d", rc);
++			return rc =3D=3D -ENOENT ? 0 : rc;
++		}
+ 		else {
+ 			/*
+ 			 * If the inode wasn't known to be a dfs entry when
+--=20
+2.29.2
 
