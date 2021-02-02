@@ -2,138 +2,252 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 719EC30C803
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 18:40:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E64B30C810
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 18:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236607AbhBBRiJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Feb 2021 12:38:09 -0500
-Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:60731 "EHLO
-        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237611AbhBBRf2 (ORCPT
+        id S237619AbhBBRka (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Feb 2021 12:40:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237604AbhBBRiZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Feb 2021 12:35:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
-        t=1612287259;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rKxtAvIGXb32R8HRQAZat/oSz8cai+cGvtkCQm8CgvI=;
-        b=H0vBPvfX/KEUPpqHLBeaYuJ2CdJiZ4qTyrmgZK6pv2ZQudZkuFvJG0/86/GBhEY+w8Nz2E
-        B9J4xm800wNxXsctTXjTkQ/SaKcdsWcAM9GMuPQ4OgMJlSHqjZY45XctAEox3Aa0pZv+iw
-        D1Gikb+LU7fHxW8bB9CRixBgKcgmHqI=
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (mail-db8eur05lp2108.outbound.protection.outlook.com [104.47.17.108])
- (Using TLS) by relay.mimecast.com with ESMTP id
- de-mta-38-tITc2xmePy-t9OJHx-BRqg-1; Tue, 02 Feb 2021 18:34:17 +0100
-X-MC-Unique: tITc2xmePy-t9OJHx-BRqg-1
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VD5LaqUV+w6mywzkcjBfrVwXXEDw95xynplmfb7is7JX3vJ5+ER3U1FBd09+V3Umgkn0tA8FvL82gDigTQxLg88QyTNtfOYD0YqJKeTiwYKnFSdPyThE3HDUQ4vMFcV3QbpETpNL4SKkqjy4HD0cVyPleClUkHXhTUfIcZ8N7n1pH7JiXTxe0VuWtVc5hNV6mlRl/BfDsedzYnXQpMZ3Nv9aHXOz6DwRl/lHSLalR6obCJqX5ucID/artVNbkQoXAao+LgBmYD0C6GDd4IZaPeUPyex0J6MoHd0X9baGQ0HD+xjAB9nKY64McmwkClJ8pRRUSMfInMXWSkOzdshP7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rKxtAvIGXb32R8HRQAZat/oSz8cai+cGvtkCQm8CgvI=;
- b=lBMtG9JcUXLbEKZHhuzn1TcBMts4T6eUmL8eG7V6YJku8fFuwISpdjXfCXPl+KoOdUcOdV18MX55SFf/qNYG6vnxpiWGWtG/3AydjyQCcHtMd6akRCwLDVPs7Rc1uoUNX4m+9GP6wa94dm0LHuKD94hZxhyQa+dksVhLHWz6opXvxTuRui1Z75yQCHtvJY/i3yqxrC9m4jrjqpqrtXxN1YLBlQUcI3FZTNroA4B+DEckiZUFYPr5DDSlNoI+3SG29L74pyT9nD4fQHt3+hQ7eiVVNP3/lKDtuXCcvCLFNd8YEQxh7rJfsrA20Ajlj3ZiCe75ALGzuiaDJ2X7WoUm/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=suse.com;
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
- by VE1PR04MB6526.eurprd04.prod.outlook.com (2603:10a6:803:11d::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.17; Tue, 2 Feb
- 2021 17:34:16 +0000
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9%4]) with mapi id 15.20.3805.022; Tue, 2 Feb 2021
- 17:34:16 +0000
-From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-To:     Shyam Prasad N <nspmangalore@gmail.com>
-Cc:     CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        Steve French <smfrench@gmail.com>
-Subject: Re: [PATCH v2] cifs: report error instead of invalid when
- revalidating a dentry fails
-In-Reply-To: <CANT5p=pK3hQNTvsR-WUmtrQFuKngx+A1iYfd0JXyb0WHqpfKMA@mail.gmail.com>
-References: <CANT5p=oSrrCbCdXZSbjmPDM4P=z=1c=kj9w1DDTJO5UhtREo8g@mail.gmail.com>
- <20210202111607.16372-1-aaptel@suse.com>
- <CANT5p=pK3hQNTvsR-WUmtrQFuKngx+A1iYfd0JXyb0WHqpfKMA@mail.gmail.com>
-Date:   Tue, 02 Feb 2021 18:34:15 +0100
-Message-ID: <87r1ly8jc8.fsf@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [2003:fa:705:9f33:33e3:4e11:8cc3:3b4d]
-X-ClientProxiedBy: ZRAP278CA0011.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:10::21) To VI1PR0402MB3359.eurprd04.prod.outlook.com
- (2603:10a6:803:3::28)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost (2003:fa:705:9f33:33e3:4e11:8cc3:3b4d) by ZRAP278CA0011.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:10::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16 via Frontend Transport; Tue, 2 Feb 2021 17:34:16 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3bd52352-f9a6-4b1f-e667-08d8c7a0c390
-X-MS-TrafficTypeDiagnostic: VE1PR04MB6526:
-X-Microsoft-Antispam-PRVS: <VE1PR04MB652631046450713224A071C0A8B59@VE1PR04MB6526.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: uvml+08+SgLek+MxusX1RqhcU1oyifMncVFyNvITUIDcF4cWKQnYNrfr1TpLT/Ko4QQ5WIXqmxlmU9d36c6xZ8u8+68eRzf3tKw81FXxZdCe6Mldcx/UGonRfwz2oUhikiXhBP6pGSrQC79Nvsi13XXvu/dFixw1Y6WKKtjJDMrRgZf3GhG9WYcjghWeHm1oUzzlna5LkCDckiovBA6NnU0tFfJja4eaMkuQyEI0FNTfzwOgqeEyrTMj1fQT+98T81T1FGmOPMf44AhZNYNYnAiCsbx9H1PhmIO8AWdVcj7tXvMsccRXvIe3p4b051rgxD4SN1WNk2t1x1LZ2FNZHaWVvaKtwe9aev1a9SJMk6ZOcUVzD/8YF7rlYe/XI2wG/cQkmC+0f8JyhPYojmBZFpp80stkaDuj3EwdNDWhajJWHjSvVpS/PyX9m4Y8OOK9DU5sjwbJbO0FqD01lJeuvECOqyRId7DEgyk0LViggUutnGTuPinnO97aTHA/WQnsXs52h/YA/MTsrNxwjfVGCQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(39850400004)(376002)(396003)(346002)(366004)(6496006)(36756003)(8676002)(2616005)(66556008)(4326008)(66574015)(83380400001)(316002)(478600001)(6916009)(52116002)(5660300002)(66946007)(54906003)(66476007)(86362001)(8936002)(6486002)(186003)(2906002)(4744005)(16526019);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?bmY5bi82ZWw0VEpGbWtnNmYyb0JSTE0wYUd3NDdEMnRkMGUzM3VUeWozbjFH?=
- =?utf-8?B?Z2tmV0EzNS9KZkd5VXE0MEwzRjNVa1RQa0VaZHRaUDEyTnRjQ1p2V0FVU0NB?=
- =?utf-8?B?QkZ1Ynp5c29TVUpiSmZmRVgzMm5ZdjA0UG9XRkxYNS9XSnpKZGg5b3p4S3hB?=
- =?utf-8?B?OEZLT1MvYXpvaEFaOHpDZFp4VUY2L1l3Qk82TFl0WFFxV1lDOWtZUTEzdWl6?=
- =?utf-8?B?cG1rVG9JNEdUQkM1TzZjYUZMVFQ1MGJvbGkzQ1ZYM01yeHMwNFk1NFNhMlJS?=
- =?utf-8?B?WUdGVHM3OFU3aWp0OVFaSC94ZGdRb3M3SWpIai9WSExCL3FYZVg1TUxzdzFI?=
- =?utf-8?B?dXJKOGV5MkhRckczM1ozRFRYWTVUNVFhd0Q4SHp5TjhiV2dqUUM0ZFRXdnhs?=
- =?utf-8?B?blkvTTdVSHdVK01nWk5QNHVDQ3RuK1VuNmczbjk1R2UvUXdwYzh6RDZPdGJB?=
- =?utf-8?B?UVdPQk45L0RnOEZxRTRRNVZEd1VNbDNWc1N5R0EvZHFnNHArdFBrV3libDVR?=
- =?utf-8?B?S1Zaa3lscGo4ZnhXYXQ4UXRqVnlHUnVlcjY2SFI3a0hxSVJuWWRNT1k0S045?=
- =?utf-8?B?ekFjQ2FCVmh2aUExYVlabDEvQldiaXV3WDlreEphcjdMQ1VYRzBQbW5vazhY?=
- =?utf-8?B?VUJ5WWlyRnU5QURVYUkrcFd1a2Rka0lOaUNBUDk4VTYxTHlWbmdGSXZoWTQ0?=
- =?utf-8?B?dmNsTWNUNXZ0cGkwVkxnZzFKTDFwVG9rbXFHT2lYZEg3d0p1ZVgyWkZtemNQ?=
- =?utf-8?B?eVVCcWxzYytPbmJVaXNCcEp4em1DYzBOZW0zUG9PRVhSQ0VIRUt6dUQ0TWFC?=
- =?utf-8?B?dzliaFJpZEdQVWZpWHNtYmR2djN0b05zRDlhU2h0ZURkWDRQOEloa25tU1hE?=
- =?utf-8?B?em8rM0ttcGMvKzdjQWY2S3NDUFRPUVB0M1RUZFFjcks1TWtkTkNMUFdiVysw?=
- =?utf-8?B?S09EZ2FoK3lYZHI3REMwaEZHSXJuREs3bFlNdC9DV0xuNTM4eC9OKzh6bW54?=
- =?utf-8?B?L3R6NE1Fc0tsWnZuT1dWN1dlRWRTZHZGVEx0UTI4d1kyQmUvNHlIRllIVE9Q?=
- =?utf-8?B?QWRha3ZVUUYzTXVGMWNtVHEzaXBhTUk2dmNxUDJ6cnQwOGJTSGhndWdiVjRn?=
- =?utf-8?B?bS9pRmh6NnFMUm9KTU5ab3pPakozd2x3UjFaT2dFMC9JY3JZcU1oUmU0dkVx?=
- =?utf-8?B?VytzYTVsQkRDamNXRUdIaFd6d2JHWWdwcGk4eHd4d0czZU90TXBRK0tmRlVz?=
- =?utf-8?B?U1NCRkwyZFlFWGNsMFZOT1Y0Z0tBNkZTeHo1VWFvc2RxMHEvSVYyRlFJb1ZY?=
- =?utf-8?B?YmVaeDVPUGVBSGdPL05waW45cGRpR3RoOVVnTWpiOE5Na3pBc1lZVXl1ZGRD?=
- =?utf-8?B?SGRISFVCTFlBOFJCaFZUMUFEdzAxMm81UlEvbGNRQkRwSG1NWE9EbHZwMGNK?=
- =?utf-8?B?dWZ1NWo5RnNtRXRmQWJiMVBHdU5hZTdjQktKKzZjZDhWNnpsUzdvR0QrcDRi?=
- =?utf-8?Q?Hgz5bY4EUptVEy4JIOsm5UTA7JR?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3bd52352-f9a6-4b1f-e667-08d8c7a0c390
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2021 17:34:16.4632
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: V9hi4LcMe5oKpC5VLn/xz0j1UVtxm2jJjV+leraY2+056/Yy53V42Tuke/tBgiEO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6526
+        Tue, 2 Feb 2021 12:38:25 -0500
+Received: from mail-lj1-x249.google.com (mail-lj1-x249.google.com [IPv6:2a00:1450:4864:20::249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC047C061793
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Feb 2021 09:37:41 -0800 (PST)
+Received: by mail-lj1-x249.google.com with SMTP id o8so5219981ljp.15
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Feb 2021 09:37:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=Yw2AQQjjN0qlybNUjTs4aWik4pvcwC2CB37OFNajzDc=;
+        b=rUQDpLeqLdk5w526Fchik4CgVhp8n9H/4HYuYgHbqVQzdpib3ketb8+tnpB3o0B+Ty
+         cKh7MHwtHw701wAxuG+UsrxfBeJsTsZynkyO6r+N3S+TIj6c4FizbFLD7GztnTntFHnZ
+         gsSzsbXXMLDrszd3BDAQM1YNEphB6CZXZ/9AZmpXHYfvOXTkUy/d8jlN1/4d2wMA7rbp
+         ju8p8cViWLsM+oBuJFzi/ouTETYDPDTq7DS0nrFC46ZFC36bzHHRdptfjjFXfusRQn3K
+         e4BhoBlEZlaDkzlK3AbURrWoyJGwpgU5NOza3tXHxR56Pd11zv79a52zzeHHroM/AvRE
+         cBZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=Yw2AQQjjN0qlybNUjTs4aWik4pvcwC2CB37OFNajzDc=;
+        b=KublewrTibItr5lOwmiahVPGh94rKBQBDVdFfvkwrSp3OlUmvi+UInvGiXXAbj677x
+         L95nGT1wbk2JuQ61NcN5JqV4+bAr0xkQz+c7/a2LFkDzaJW1ARUdmwA/op3Sz/Bxr4YC
+         r0oiZtyo+IN+iL9GrhH4vCEh5dYRnWnmQqgpDUlQ2OgP9luX+dm0kpsJ+BYKxOpDkVCk
+         GEe2K2B7i+w8/MHPZLnmgILdMhf2yzN0ZBFkl3lwUEEJcEYj2g1PzmaBFrooT4nqCsGs
+         SlV90j4ijRK2gKltUC5RuEnrZO66IcswszN86rSpCmEjaYnKIo5Mpj4Uj6HK+E3+ULtc
+         EqFA==
+X-Gm-Message-State: AOAM530WwjIJruj2nvXDVXB8TiinBdv97Oo7rnAOvLX6KLlS7zxsegv3
+        KxvkIPydvR8BBtR5uZYwxsdcSlOx4o0=
+X-Google-Smtp-Source: ABdhPJyyIQn9cQEMrxTgNqGI7l8PM5GsGgXUNIEpSUKpS2z5j4iyNlyqBnf88lwm0YC7rIRyYgYQjVdegf0=
+Sender: "figiel via sendgmr" <figiel@odra.waw.corp.google.com>
+X-Received: from odra.waw.corp.google.com ([2a00:79e0:2:11:1ea0:b8ff:fe79:fe73])
+ (user=figiel job=sendgmr) by 2002:a05:6512:228b:: with SMTP id
+ f11mr11712619lfu.78.1612287459908; Tue, 02 Feb 2021 09:37:39 -0800 (PST)
+Date:   Tue,  2 Feb 2021 18:37:09 +0100
+Message-Id: <20210202173709.4104221-1-figiel@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
+Subject: [PATCH v4] fs/proc: Expose RSEQ configuration
+From:   Piotr Figiel <figiel@google.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Michel Lespinasse <walken@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        mathieu.desnoyers@efficios.com, viro@zeniv.linux.org.uk,
+        peterz@infradead.org, paulmck@kernel.org, boqun.feng@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        posk@google.com, kyurtsever@google.com, ckennelly@google.com,
+        pjt@google.com, Piotr Figiel <figiel@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Shyam Prasad N <nspmangalore@gmail.com> writes:
-> What does cifs_revalidate_dentry return when the dentry is no longer exis=
-ts?
-> I'm guessing that it'll return some error (ENOENT?). Do we need to
-> treat that as a special case and return 0 (invalid)?
+For userspace checkpoint and restore (C/R) some way of getting process
+state containing RSEQ configuration is needed.
 
-Yes it seems to return ENOENT; I'll send a v3. Are there other errors we
-should consider?
+There are two ways this information is going to be used:
+ - to re-enable RSEQ for threads which had it enabled before C/R
+ - to detect if a thread was in a critical section during C/R
 
-Cheers,
---=20
-Aur=C3=A9lien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, D=
-E
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
-nchen)
+Since C/R preserves TLS memory and addresses RSEQ ABI will be restored
+using the address registered before C/R.
+
+Detection whether the thread is in a critical section during C/R is
+needed to enforce behavior of RSEQ abort during C/R. Attaching with
+ptrace() before registers are dumped itself doesn't cause RSEQ abort.
+Restoring the instruction pointer within the critical section is
+problematic because rseq_cs may get cleared before the control is
+passed to the migrated application code leading to RSEQ invariants not
+being preserved.
+
+To achieve above goals expose the RSEQ ABI address and the signature
+value with the new procfs file "/proc/<pid>/rseq".
+
+Signed-off-by: Piotr Figiel <figiel@google.com>
+
+---
+
+v4:
+ - added documentation and extended comment before task_lock()
+v3:
+ - added locking so that the proc file always shows consistent pair of
+   RSEQ ABI address and the signature
+ - changed string formatting to use %px for the RSEQ ABI address
+v2:
+ - fixed string formatting for 32-bit architectures
+v1:
+ - https://lkml.kernel.org/r/20210113174127.2500051-1-figiel@google.com
+
+---
+ Documentation/filesystems/proc.rst | 16 ++++++++++++++++
+ fs/exec.c                          |  2 ++
+ fs/proc/base.c                     | 22 ++++++++++++++++++++++
+ include/linux/sched/task.h         |  3 ++-
+ kernel/rseq.c                      |  4 ++++
+ 5 files changed, 46 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 2fa69f710e2a..d887666dc849 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -47,6 +47,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
+   3.10  /proc/<pid>/timerslack_ns - Task timerslack value
+   3.11	/proc/<pid>/patch_state - Livepatch patch operation state
+   3.12	/proc/<pid>/arch_status - Task architecture specific information
++  3.13	/proc/<pid>/rseq - RSEQ configuration state
+ 
+   4	Configuring procfs
+   4.1	Mount options
+@@ -2131,6 +2132,21 @@ AVX512_elapsed_ms
+   the task is unlikely an AVX512 user, but depends on the workload and the
+   scheduling scenario, it also could be a false negative mentioned above.
+ 
++3.13	/proc/<pid>/rseq - RSEQ configuration state
++---------------------------------------------------
++This file provides RSEQ configuration of a thread. Available fields correspond
++to the rseq() syscall parameters and are:
++
++ - RSEQ ABI structure address shared between the kernel and user-space
++ - signature value expected before the abort handler code
++
++Both values are in hexadecimal format, for example::
++
++	# cat /proc/12345/rseq
++	0000abcdef12340 aabb0011
++
++This file is only present if CONFIG_RSEQ is enabled.
++
+ Chapter 4: Configuring procfs
+ =============================
+ 
+diff --git a/fs/exec.c b/fs/exec.c
+index 5d4d52039105..5d84f98847f1 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1830,7 +1830,9 @@ static int bprm_execve(struct linux_binprm *bprm,
+ 	/* execve succeeded */
+ 	current->fs->in_exec = 0;
+ 	current->in_execve = 0;
++	task_lock(current);
+ 	rseq_execve(current);
++	task_unlock(current);
+ 	acct_update_integrals(current);
+ 	task_numa_free(current, false);
+ 	return retval;
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b3422cda2a91..89232329d966 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -662,6 +662,22 @@ static int proc_pid_syscall(struct seq_file *m, struct pid_namespace *ns,
+ 
+ 	return 0;
+ }
++
++#ifdef CONFIG_RSEQ
++static int proc_pid_rseq(struct seq_file *m, struct pid_namespace *ns,
++				struct pid *pid, struct task_struct *task)
++{
++	int res = lock_trace(task);
++
++	if (res)
++		return res;
++	task_lock(task);
++	seq_printf(m, "%px %08x\n", task->rseq, task->rseq_sig);
++	task_unlock(task);
++	unlock_trace(task);
++	return 0;
++}
++#endif /* CONFIG_RSEQ */
+ #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
+ 
+ /************************************************************************/
+@@ -3182,6 +3198,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	REG("comm",      S_IRUGO|S_IWUSR, proc_pid_set_comm_operations),
+ #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
+ 	ONE("syscall",    S_IRUSR, proc_pid_syscall),
++#ifdef CONFIG_RSEQ
++	ONE("rseq",       S_IRUSR, proc_pid_rseq),
++#endif
+ #endif
+ 	REG("cmdline",    S_IRUGO, proc_pid_cmdline_ops),
+ 	ONE("stat",       S_IRUGO, proc_tgid_stat),
+@@ -3522,6 +3541,9 @@ static const struct pid_entry tid_base_stuff[] = {
+ 			 &proc_pid_set_comm_operations, {}),
+ #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
+ 	ONE("syscall",   S_IRUSR, proc_pid_syscall),
++#ifdef CONFIG_RSEQ
++	ONE("rseq",      S_IRUSR, proc_pid_rseq),
++#endif
+ #endif
+ 	REG("cmdline",   S_IRUGO, proc_pid_cmdline_ops),
+ 	ONE("stat",      S_IRUGO, proc_tid_stat),
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index c0f71f2e7160..b6d085ac571b 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -155,7 +155,8 @@ static inline struct vm_struct *task_stack_vm_area(const struct task_struct *t)
+  * Protects ->fs, ->files, ->mm, ->group_info, ->comm, keyring
+  * subscriptions and synchronises with wait4().  Also used in procfs.  Also
+  * pins the final release of task.io_context.  Also protects ->cpuset and
+- * ->cgroup.subsys[]. And ->vfork_done.
++ * ->cgroup.subsys[]. And ->vfork_done. And ->rseq and ->rseq_sig to
++ * synchronize changes with procfs reader.
+  *
+  * Nests both inside and outside of read_lock(&tasklist_lock).
+  * It must not be nested with write_lock_irq(&tasklist_lock),
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index a4f86a9d6937..6aea67878065 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -322,8 +322,10 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+ 		ret = rseq_reset_rseq_cpu_id(current);
+ 		if (ret)
+ 			return ret;
++		task_lock(current);
+ 		current->rseq = NULL;
+ 		current->rseq_sig = 0;
++		task_unlock(current);
+ 		return 0;
+ 	}
+ 
+@@ -353,8 +355,10 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+ 		return -EINVAL;
+ 	if (!access_ok(rseq, rseq_len))
+ 		return -EFAULT;
++	task_lock(current);
+ 	current->rseq = rseq;
+ 	current->rseq_sig = sig;
++	task_unlock(current);
+ 	/*
+ 	 * If rseq was previously inactive, and has just been
+ 	 * registered, ensure the cpu_id_start and cpu_id fields
+-- 
+2.30.0.478.g8a0d178c01-goog
 
