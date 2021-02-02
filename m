@@ -2,221 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B819730B82C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 08:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01BD730B8A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 08:33:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232355AbhBBG5y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Feb 2021 01:57:54 -0500
-Received: from so15.mailgun.net ([198.61.254.15]:45442 "EHLO so15.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232234AbhBBG4w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Feb 2021 01:56:52 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1612248987; h=References: In-Reply-To: References:
- In-Reply-To: Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=0GJGgAjAx2/rdTTd5QE4pvrmTTzFGOM9WmXIW06Tfs4=; b=ceCCugG9+tKCo2/OYajxfYO5e8DZ/wbetRdTvT/BVhUmWg1TARogmkEB6a3+JW+eLikg4Qpc
- kShvgPCsCCjglE5QZQ2H0cH9z6ui7v3OqaDEGEpJmsiYtS8Waa7oAWWxzX0cdgzhFKYNuafj
- 3vDLynnMs+oZ9YwYU171c8eOX5E=
-X-Mailgun-Sending-Ip: 198.61.254.15
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 6018f77e6776573488581598 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 02 Feb 2021 06:55:58
- GMT
-Sender: cgoldswo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D1A24C43465; Tue,  2 Feb 2021 06:55:58 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
-Received: from cgoldswo-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cgoldswo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00D56C433C6;
-        Tue,  2 Feb 2021 06:55:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00D56C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=cgoldswo@codeaurora.org
-From:   Chris Goldsworthy <cgoldswo@codeaurora.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Chris Goldsworthy <cgoldswo@codeaurora.org>
-Subject: [PATCH] [RFC] mm: fs: Invalidate BH LRU during page migration
-Date:   Mon,  1 Feb 2021 22:55:47 -0800
-Message-Id: <695193a165bf538f35de84334b4da2cc3544abe0.1612248395.git.cgoldswo@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1612248395.git.cgoldswo@codeaurora.org>
-References: <cover.1612248395.git.cgoldswo@codeaurora.org>
-In-Reply-To: <cover.1612248395.git.cgoldswo@codeaurora.org>
-References: <cover.1612248395.git.cgoldswo@codeaurora.org>
+        id S231532AbhBBHdC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Feb 2021 02:33:02 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:55214 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229462AbhBBHdA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Feb 2021 02:33:00 -0500
+Received: by mail-il1-f198.google.com with SMTP id s4so5919420ilt.21
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Feb 2021 23:32:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=yEspMoGKMDuEEGSpdgz0FaL0GKC/NspiboJRr5zloY4=;
+        b=gpZZ3vi3Sd7oZF77tekGzEprOOZr3bmJHXqNgWMJW6/mbishvyxEBkE/x5p2KjfoYM
+         RYswq2iV/hwvl103aCTGg7JvWji0A/dPlwzrtFnWWlOF5/ygs+u0M+Stb9yq3gx3VYL6
+         3ooANJUy6FlS/fqR0qta5dI2zs/R2/q1cHGtJwqvF5oLXsD8bXR3hjg0l+WYPz3M86wj
+         9218PkIWO8yO8kTdr0AItu9GzI4fEVT0/I2O992Q97N34Qbi8H9N7+s9dBXMK1oxqRSK
+         DiYNRDLBjqdm4VzqlpEfpboHid0bZCrnBa3coP4rnCDECJmQKat3D+v2zFLRO4RimCA6
+         5sEw==
+X-Gm-Message-State: AOAM5313bYbewAgmd9SlQ0OejZSopZ6HVoIAVHrHlURG2yhoFjMBTxeV
+        Lw4eWVeT6VlGN+vNRoOfCJSJw1QwIl+CU9Y9MLxp5NyAmejM
+X-Google-Smtp-Source: ABdhPJw0ABknIZcjmWqfmFc8vxwHhusveS85e+Bq0Y/H0YQpQqNAseSgn9pii8y8Cj8Sj6uh56kPbgCZ9TcNWB2S/NkkfYwke/v+
+MIME-Version: 1.0
+X-Received: by 2002:a5d:8887:: with SMTP id d7mr15283961ioo.151.1612251139885;
+ Mon, 01 Feb 2021 23:32:19 -0800 (PST)
+Date:   Mon, 01 Feb 2021 23:32:19 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007b503905ba5578a6@google.com>
+Subject: general protection fault in invalidate_bdev
+From:   syzbot <syzbot+d65b0638dd3d123794f2@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pages containing buffer_heads that are in the buffer_head LRU cache
-will be pinned and thus cannot be migrated.  Correspondingly,
-invalidate the BH LRU before a migration starts and stop any
-buffer_head from being cached in the LRU, until migration has
-finished.
+Hello,
 
-Signed-off-by: Chris Goldsworthy <cgoldswo@codeaurora.org>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>
+syzbot found the following issue on:
+
+HEAD commit:    d03154e8 Add linux-next specific files for 20210128
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1088091cd00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6953ffb584722a1
+dashboard link: https://syzkaller.appspot.com/bug?extid=d65b0638dd3d123794f2
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d65b0638dd3d123794f2@syzkaller.appspotmail.com
+
+general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 0 PID: 30787 Comm: syz-executor.3 Not tainted 5.11.0-rc5-next-20210128-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:invalidate_bdev+0x1f/0xd0 fs/block_dev.c:92
+Code: ff 66 2e 0f 1f 84 00 00 00 00 00 55 53 48 89 fb e8 16 29 a0 ff 48 8d 7b 28 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 93 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffffc90017c07848 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc9000f244000
+RDX: 0000000000000005 RSI: ffffffff81d2ec3a RDI: 0000000000000028
+RBP: ffff888073ecc000 R08: 0000000000000000 R09: ffffffff8b2146c3
+R10: fffffbfff16428d8 R11: 0000000000000000 R12: ffff888076c38cc0
+R13: 0000000000000001 R14: 0000000000000001 R15: ffff888028720000
+FS:  00007fe9ef641700(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb745112db8 CR3: 000000008b834000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ open_ctree+0xab3/0x4060 fs/btrfs/disk-io.c:3086
+ btrfs_fill_super fs/btrfs/super.c:1356 [inline]
+ btrfs_mount_root.cold+0x14/0x165 fs/btrfs/super.c:1723
+ legacy_get_tree+0x105/0x220 fs/fs_context.c:592
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1497
+ fc_mount fs/namespace.c:993 [inline]
+ vfs_kern_mount.part.0+0xd3/0x170 fs/namespace.c:1023
+ vfs_kern_mount+0x3c/0x60 fs/namespace.c:1010
+ btrfs_mount+0x234/0xa20 fs/btrfs/super.c:1783
+ legacy_get_tree+0x105/0x220 fs/fs_context.c:592
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1497
+ do_new_mount fs/namespace.c:2903 [inline]
+ path_mount+0x132a/0x1f90 fs/namespace.c:3233
+ do_mount fs/namespace.c:3246 [inline]
+ __do_sys_mount fs/namespace.c:3454 [inline]
+ __se_sys_mount fs/namespace.c:3431 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3431
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x460c6a
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 ad 89 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 8a 89 fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007fe9ef640a78 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fe9ef640b10 RCX: 0000000000460c6a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fe9ef640ad0
+RBP: 00007fe9ef640ad0 R08: 00007fe9ef640b10 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
+R13: 0000000020000100 R14: 0000000020000200 R15: 0000000020003d00
+Modules linked in:
+---[ end trace 44edaf4ec7942bd8 ]---
+RIP: 0010:invalidate_bdev+0x1f/0xd0 fs/block_dev.c:92
+Code: ff 66 2e 0f 1f 84 00 00 00 00 00 55 53 48 89 fb e8 16 29 a0 ff 48 8d 7b 28 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 93 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffffc90017c07848 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc9000f244000
+RDX: 0000000000000005 RSI: ffffffff81d2ec3a RDI: 0000000000000028
+RBP: ffff888073ecc000 R08: 0000000000000000 R09: ffffffff8b2146c3
+R10: fffffbfff16428d8 R11: 0000000000000000 R12: ffff888076c38cc0
+R13: 0000000000000001 R14: 0000000000000001 R15: ffff888028720000
+FS:  00007fe9ef641700(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffdfaea9138 CR3: 000000008b834000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- fs/buffer.c                 |  6 ++++++
- include/linux/buffer_head.h |  3 +++
- include/linux/migrate.h     |  2 ++
- mm/migrate.c                | 18 ++++++++++++++++++
- mm/page_alloc.c             |  3 +++
- mm/swap.c                   |  3 +++
- 6 files changed, 35 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 96c7604..39ec4ec 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1289,6 +1289,8 @@ static inline void check_irqs_on(void)
- #endif
- }
- 
-+bool bh_migration_done = true;
-+
- /*
-  * Install a buffer_head into this cpu's LRU.  If not already in the LRU, it is
-  * inserted at the front, and the buffer_head at the back if any is evicted.
-@@ -1303,6 +1305,9 @@ static void bh_lru_install(struct buffer_head *bh)
- 	check_irqs_on();
- 	bh_lru_lock();
- 
-+	if (!bh_migration_done)
-+		goto out;
-+
- 	b = this_cpu_ptr(&bh_lrus);
- 	for (i = 0; i < BH_LRU_SIZE; i++) {
- 		swap(evictee, b->bhs[i]);
-@@ -1313,6 +1318,7 @@ static void bh_lru_install(struct buffer_head *bh)
- 	}
- 
- 	get_bh(bh);
-+out:
- 	bh_lru_unlock();
- 	brelse(evictee);
- }
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 6b47f94..ae4eb6d 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -193,6 +193,9 @@ void __breadahead_gfp(struct block_device *, sector_t block, unsigned int size,
- 		  gfp_t gfp);
- struct buffer_head *__bread_gfp(struct block_device *,
- 				sector_t block, unsigned size, gfp_t gfp);
-+
-+extern bool bh_migration_done;
-+
- void invalidate_bh_lrus(void);
- struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
- void free_buffer_head(struct buffer_head * bh);
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 3a38963..9e4a2dc 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -46,6 +46,7 @@ extern int isolate_movable_page(struct page *page, isolate_mode_t mode);
- extern void putback_movable_page(struct page *page);
- 
- extern void migrate_prep(void);
-+extern void migrate_finish(void);
- extern void migrate_prep_local(void);
- extern void migrate_page_states(struct page *newpage, struct page *page);
- extern void migrate_page_copy(struct page *newpage, struct page *page);
-@@ -67,6 +68,7 @@ static inline int isolate_movable_page(struct page *page, isolate_mode_t mode)
- 	{ return -EBUSY; }
- 
- static inline int migrate_prep(void) { return -ENOSYS; }
-+static inline int migrate_finish(void) { return -ENOSYS; }
- static inline int migrate_prep_local(void) { return -ENOSYS; }
- 
- static inline void migrate_page_states(struct page *newpage, struct page *page)
-diff --git a/mm/migrate.c b/mm/migrate.c
-index a69da8a..08c981d 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -64,6 +64,19 @@
-  */
- void migrate_prep(void)
- {
-+	bh_migration_done = false;
-+
-+	/*
-+	 * This barrier ensures that callers of bh_lru_install() between
-+	 * the barrier and the call to invalidate_bh_lrus() read
-+	 *  bh_migration_done() as false.
-+	 */
-+	/*
-+	 * TODO: Remove me? lru_add_drain_all() already has an smp_mb(),
-+	 * but it would be good to ensure that the barrier isn't forgotten.
-+	 */
-+	smp_mb();
-+
- 	/*
- 	 * Clear the LRU lists so pages can be isolated.
- 	 * Note that pages may be moved off the LRU after we have
-@@ -73,6 +86,11 @@ void migrate_prep(void)
- 	lru_add_drain_all();
- }
- 
-+void migrate_finish(void)
-+{
-+	bh_migration_done = true;
-+}
-+
- /* Do the necessary work of migrate_prep but not if it involves other CPUs */
- void migrate_prep_local(void)
- {
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 6446778..e4cb959 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -8493,6 +8493,9 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
- 		ret = migrate_pages(&cc->migratepages, alloc_migration_target,
- 				NULL, (unsigned long)&mtc, cc->mode, MR_CONTIG_RANGE);
- 	}
-+
-+	migrate_finish();
-+
- 	if (ret < 0) {
- 		putback_movable_pages(&cc->migratepages);
- 		return ret;
-diff --git a/mm/swap.c b/mm/swap.c
-index 31b844d..97efc49 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -36,6 +36,7 @@
- #include <linux/hugetlb.h>
- #include <linux/page_idle.h>
- #include <linux/local_lock.h>
-+#include <linux/buffer_head.h>
- 
- #include "internal.h"
- 
-@@ -759,6 +760,8 @@ void lru_add_drain_all(void)
- 	if (WARN_ON(!mm_percpu_wq))
- 		return;
- 
-+	invalidate_bh_lrus();
-+
- 	/*
- 	 * Guarantee pagevec counter stores visible by this CPU are visible to
- 	 * other CPUs before loading the current drain generation.
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
