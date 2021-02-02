@@ -2,223 +2,796 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D276B30BC7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 12:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14FA530BC8A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 12:07:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbhBBLBi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Feb 2021 06:01:38 -0500
-Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:32903 "EHLO
-        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229614AbhBBLBc (ORCPT
+        id S229622AbhBBLGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Feb 2021 06:06:06 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:59059 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229511AbhBBLGD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Feb 2021 06:01:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
-        t=1612263623;
+        Tue, 2 Feb 2021 06:06:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612263874;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1OdgJ9khXU7ttVvL+UtYdyAjH928ArYWWWtcH0nF4UY=;
-        b=XWsqs9Txg8HOnOo8DoD6BN/xhmT34Sp9HXVuHaV0ZJWYqqRZLLOiN5RkghPjkzM2C/Chho
-        3Q/np3L8Y7N58tzszD5PIVEjFbXUQqnNXdNqkao5hRm3JJ5g4ozPRMcXIdRSgoJ8CqvvOu
-        gOAN41K5PAECwKS+bAek3JVn/1u7uw8=
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (mail-vi1eur05lp2175.outbound.protection.outlook.com [104.47.17.175])
- (Using TLS) by relay.mimecast.com with ESMTP id
- de-mta-32-tbpjQc1ePxqh8bH65Eyerw-1; Tue, 02 Feb 2021 12:00:20 +0100
-X-MC-Unique: tbpjQc1ePxqh8bH65Eyerw-1
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SzJ/isSdyxY6VIiea1/EmzRi3FDL7/vWiKTJyXjjFfzD5H7XGrq3j97NveZ3JkuspQQqaOUrS/RINLbjJkaD+ERosehKvCuMJV7X9rvLcOlBPA2v3fnqINTyvb4hcl4BWyuVPC7tO8mTvz5S3wyO4ioCFwu1Y6CYlEuh1zVeI9RoicJYeLphbAaM4i9KQVH/kBX86cIwL8V/mkQQpPBjFlMx2/581Jv+dXQlMWN2bgDahkTKoaEc1f3GaByVCDKKRzNOhajGlz85Lm4AbhHzHyKFy0jeMytFNREw0dDVJnHNfnw2+BXtPa9d24Zgdld9xbtbY1htgJRXl/4Lr/rvmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1OdgJ9khXU7ttVvL+UtYdyAjH928ArYWWWtcH0nF4UY=;
- b=PBwD0MZkLXDHrXB/zE33r8AZ/UvBi/9aPuOFo+iXRKHURuSvJ/5i8OqVixbrvwd2mbtz0G23uU25gbpWDvgRffTUZBL8yZdFjnuZ9gYlKfy+Pmjj/OYamLpIj/d7yJrQZFM6yl4quawc57sJ2CuwQbt8H5lsuoIoCWfE/uVDErOKShsmGTNE8zD19ZnwdYAoGax7ufd68Y4fk16+Y1Lo2YjiKKlgZzs5Q/dEQq3k1yWYFKigIHggi3ZBoqqs+fgBrtiKQDkMdQ9Pf35AhaEJKRtmjPy1CFTTjiw4RIcezvYMrohKrqToNybTb06ARhc7Bg/daGCvRkWuPdPHEbegYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=suse.com;
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
- by VI1PR0401MB2381.eurprd04.prod.outlook.com (2603:10a6:800:2a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16; Tue, 2 Feb
- 2021 11:00:18 +0000
-Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
- ([fe80::9c1d:89de:a08e:ccc9%4]) with mapi id 15.20.3805.022; Tue, 2 Feb 2021
- 11:00:18 +0000
-From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-To:     Shyam Prasad N <nspmangalore@gmail.com>
-Cc:     CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        Steve French <smfrench@gmail.com>, Paulo Alcantara <pc@cjr.nz>
-Subject: Re: [PATCH v1] cifs: make nested cifs mount point dentries always
- valid to deal with signaled 'df'
-In-Reply-To: <CANT5p=oSrrCbCdXZSbjmPDM4P=z=1c=kj9w1DDTJO5UhtREo8g@mail.gmail.com>
-References: <20210129171316.13160-1-aaptel@suse.com>
- <CANT5p=ofvpimU9Z7jwj4cPXXa1E4KkcijYrxbVKQZf5JDiR-1g@mail.gmail.com>
- <877dns9izy.fsf@suse.com>
- <CANT5p=oSrrCbCdXZSbjmPDM4P=z=1c=kj9w1DDTJO5UhtREo8g@mail.gmail.com>
-Date:   Tue, 02 Feb 2021 12:00:16 +0100
-Message-ID: <87v9ba91kv.fsf@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [2003:fa:705:9f17:137b:35ab:5b49:10f1]
-X-ClientProxiedBy: ZR0P278CA0008.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:16::18) To VI1PR0402MB3359.eurprd04.prod.outlook.com
- (2603:10a6:803:3::28)
+         content-transfer-encoding:content-transfer-encoding;
+        bh=SVGYKHIcPo6tueTdXNVLBjjSO7ZYj2ZvN2dKNlpOlHI=;
+        b=AteY/IXd19PsmypHEFpyz+wAwFKrFKIwd6M6HnrjNPc+MnFXFnoB+tmMN7nAtYKArDjjG+
+        PIb48UO43FeKcFaNxTd8XGKg7TSEt53AwsX9jyJsqmI63W1U1eIJvsjdalQA46iP3on6JG
+        ZyUXmHyYRFxnp1QQoSclcsZRzaUjSvI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-394-BBnzba1hP1GlMVjmTv-a2w-1; Tue, 02 Feb 2021 06:04:30 -0500
+X-MC-Unique: BBnzba1hP1GlMVjmTv-a2w-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8DB571DDE1;
+        Tue,  2 Feb 2021 11:04:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B72C560C6B;
+        Tue,  2 Feb 2021 11:04:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+cc:     dhowells@redhat.com, Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        v9fs-developer@lists.sourceforge.net, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] 9p: Convert to cut-down fscache I/O API rewrite
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost (2003:fa:705:9f17:137b:35ab:5b49:10f1) by ZR0P278CA0008.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16 via Frontend Transport; Tue, 2 Feb 2021 11:00:17 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 899a6d7c-756b-4078-8b12-08d8c769b9e3
-X-MS-TrafficTypeDiagnostic: VI1PR0401MB2381:
-X-Microsoft-Antispam-PRVS: <VI1PR0401MB238167F701AD3DD38BC9BE52A8B59@VI1PR0401MB2381.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2733;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Rbph6AiGSqjomoJCjORPDT3f/JrShk0oYleA+buTN/vdFDRhy58ZuCMbpeT64BVQHBus12kL/GRj5HO/lroKXRS6S0O+Ky3QWR7EjpnSnIFw19ZKbbgZj0oaD/JBpf6mNIBu4JGLzZ1L0lFwqW6Lh2ftqYI5G3zpgH25afWkyXBcoXI6hrQ/WqQWyiJ91xp6DCPJlw5Vnmb1Pmi7OMppTwhor46gjoTwccYP7xN17UjTbwxlVxMHaNtdgB7NbmTi0GNSZUnZ1ISUq9fDlvSNmjKlFCjmWoOuGDfvowpI+E1NcjBfSUFiLjxh+q4tY08AyOseEzLX9vyUEX9IWuJTqJ1f6lRfopCr3HXgRZ3GKGsllXM9XIrGQtf4KE0+FmeSNrAAp4M2wDrVdi84M5hvE+unjvZUh/qJ8u7u0CE15fLQo6tHxDcXylvLwTUmKrD5YvEkUuhQ2t7AfYyfZ17+ZwWdw5k/DC9jOLaiAn4tWShZ1GQ203h2R+jKrSVYged93g0a+EwUyYLQe26zzsUj3hW0lfpBTdjyfRPVWcMBungznXVnF9QnBFVZM/ZnyYU+7J2jhWD4H4FdVFWpSVuf7QwBIV95WcTorBbwR6v2rkw=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(54906003)(52116002)(4326008)(36756003)(966005)(186003)(498600001)(66556008)(66476007)(66574015)(86362001)(83380400001)(2616005)(8936002)(16526019)(8676002)(2906002)(66946007)(6916009)(6486002)(6496006)(5660300002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?YWp4aGozdzYvUDIxNjYyd0VxKzk1L0JIUHFHZDBWMFV0amFNcEhQY3N4V0o1?=
- =?utf-8?B?UWZZdWlzanl4MjJFc2NTbk43Zi82V1lEMUhzN0s0OGg0cjdUYkFNTEhxeG96?=
- =?utf-8?B?alprZ1I2R2dhckNrLzV3QmRQWk9iVkVvZ21wK3NuU2NSQWR4azBidDYydHVh?=
- =?utf-8?B?ZnBKaVRNbm9MR001Q1FXSXJLTm9pVnRHaGxwSnJWQnkvVHUwTVppb1hJOG95?=
- =?utf-8?B?TkllR1BsaVFVRWp1T1ZCTzlCWmlVdFRjZXQrc1YxTUR3aVh4N1JGNzQrcE9y?=
- =?utf-8?B?RmNaQ0VoUCt4cU02TnJXVk9OQ0h5V0RrNjlxTW5UVE5yb2NxYXRVL2dIbUp2?=
- =?utf-8?B?YlpXOVBMaGY5cCsxSEpTdGhxaGx4N25vTGxUeGIwVUoyTStKYmpyZDJ0bXVw?=
- =?utf-8?B?MmF5V05mNkh5ekx6UThVV3VKZEJkazdNSzVKQm5WVnpBaHVoU3hlNUJaL2xp?=
- =?utf-8?B?eVhpbFdwNVZmVWZXeHE2dmg2djF0Qmpxa0JRVGZLeEh3SFhGckdzeG9NYzVs?=
- =?utf-8?B?R2tJWTYvWFJZajVzWEVoYlZSVWc3d0loeEhoYk5yazRrT2NNYjBGMEhNc2FX?=
- =?utf-8?B?V0szUThONEZjK3NwcmN3L29CMXY5TTFwWGJmckdNNXc1REgvTjVqNmVDZDNK?=
- =?utf-8?B?UG9xbUJsRUo5T2JrOEhPVjBsaFFDbWtwdFNXeVRQaXowZno2Wmh2Q0dDYWxh?=
- =?utf-8?B?NVpEYXBZYzNzYThpamYyZEVoK1RvN2E0MktXcWQ5SE8rd3dmZld0elBEQU94?=
- =?utf-8?B?U1BGazdtTnRGR0NsYktVQXVTTGJRNXladVVXQ1FERG90bUEwNE9EKzE3TkZk?=
- =?utf-8?B?OWQ2UUNXT2NjQ1NTZHNjU3J6VEwrdTI5bjR3T296WTBkbStXem9vREpLSllY?=
- =?utf-8?B?WnJtY3YwVGlGMnRPblgrUjNYNkRXb2d6RlhjZVFIMGtUWkFpNDZ3b0Y0VTVY?=
- =?utf-8?B?WjhsNmRkZ2F1dGY4OEVZVjFoTWpaK09tM1ErQ0tyYm5SaDZUNVptZkpwdnZS?=
- =?utf-8?B?VlRWY3BIQWVtYmxQc3Q3NU9IdmxnR0p3NmFMVjBFVFYxNnl1ZlVzKzUxcUM0?=
- =?utf-8?B?L2hJT2Rld0c2RlFzdS8vdTR5L212YktJZjEvYldDNHFSRnFYZHkvWW53MlIr?=
- =?utf-8?B?VlRXZ01CWlFMMGp2WFpQaDFqWENWMW1uZGhhU1diZXJ2WkN0dlNEUk5SK0tx?=
- =?utf-8?B?Qkd4MWdzaVZnYitmUnhONHIxQlpzWWZoTGNaQUp0TldWQzJDNnRWWjdQVkFk?=
- =?utf-8?B?TzBkOU9CN3BxWko5bUt6VnR5WTVFNXZNU1doa1lZTGVpYk9SZHkxRFhNdTNX?=
- =?utf-8?B?RkY4ZkhZSTFqcHVaOUtYeW10emNEVjlZNk5Bc2dZU0x6V1k3Z3Q0WEhNWDJ5?=
- =?utf-8?B?OHgvSmpnM0kzZmViUVozU1k0UmZXZ1ZhWEZBTzVZREh1YVp1ck16TS9saUdP?=
- =?utf-8?B?b200alI0ZFA5cjFRQ3o2UllqSjBnWUttQkRpbGUyVlp1REI4RjF5amFpKzhR?=
- =?utf-8?Q?CrwX/LwJSzcUQGR+lDo9IprcgMv?=
-X-OriginatorOrg: suse.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 899a6d7c-756b-4078-8b12-08d8c769b9e3
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2021 11:00:18.0174
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1mS7yHUR3cOxxMtUEvBYpOeULxxOuRHIyietpsWjEHXpJB/tXEdhO8Ec1s2mQE8o
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2381
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <241016.1612263863.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 02 Feb 2021 11:04:23 +0000
+Message-ID: <241017.1612263863@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Shyam Prasad N <nspmangalore@gmail.com> writes:
-> But the point that I'm trying to make here is that VFS reacts
-> differently when d_validate returns an error VS when it just returns
-> invalid:
-> https://elixir.bootlin.com/linux/latest/source/fs/namei.c#L1409
+Hi Dominique,
 
-I've tried returning the error with the repro script and it also worked.
+Here's a draft of a patch to convert 9P to use the cut-down part of the
+fscache I/O API rewrite (I've removed all the cookie and object state mach=
+ine
+changes for now).  It compiles, but I've no way to test it.  This is built=
+ on
+top of my fscache-netfs-lib branch:
 
-> Notice how it calls d_invalidate only when there's no error. And
-> d_invalidate seems to have detach_mounts.
-> It is likely that the umount happens there.
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
+/?h=3Dfscache-netfs-lib
 
-I've dumped call stacks, the revalidation is triggered by filename_lookup()
+I'm hoping to ask Linus to pull the netfs lib, afs and ceph changes in the
+next merge window.
 
-[   31.913092]  [<ffffffff8133e3d1>] ? SendReceive+0x2b1/0x2d0
-[   31.913093]  [<ffffffff8132cbd2>] ? CIFSSMBQPathInfo+0x152/0x260
-[   31.913096]  [<ffffffff81343c9f>] ? cifs_query_path_info+0x6f/0x1a0
-[   31.913098]  [<ffffffff81366953>] ? cifs_get_inode_info.cold+0x44f/0x6bb
-[   31.913100]  [<ffffffff810bf935>] ? wake_up_process+0x15/0x20
-[   31.913102]  [<ffffffff810e9c30>] ? vprintk_emit+0x200/0x500
-[   31.913103]  [<ffffffff810ea099>] ? vprintk_default+0x29/0x40
-[   31.913105]  [<ffffffff811a896f>] ? printk+0x50/0x52
-[   31.913107]  [<ffffffff813678c1>] ? cifs_revalidate_dentry_attr.cold+0x7=
-1/0x79
-[   31.913109]  [<ffffffff8133b194>] ? cifs_revalidate_dentry+0x14/0x30
-[   31.913110]  [<ffffffff813327e5>] ? cifs_d_revalidate+0x25/0xb0
-[   31.913112]  [<ffffffff812404ff>] ? lookup_fast+0x1bf/0x220
-[   31.913113]  [<ffffffff812407bc>] ? walk_component+0x3c/0x3f0
-[   31.913114]  [<ffffffff8123fe5b>] ? path_init+0x23b/0x450
-[   31.913116]  [<ffffffff812412bf>] ? path_lookupat+0x7f/0x110
-[   31.913118]  [<ffffffff81242ae7>] ? filename_lookup+0x97/0x190
-[   31.913120]  [<ffffffff811e1e39>] ? handle_pte_fault+0x1d9/0x240
-[   31.913122]  [<ffffffff81242cc9>] ? user_path_at_empty+0x59/0x90
-[   31.913124]  [<ffffffff8126ab59>] ? user_statfs+0x39/0xa0
-[   31.913125]  [<ffffffff8126abd6>] ? SYSC_statfs+0x16/0x40
-[   31.913127]  [<ffffffff8106de53>] ? trace_do_page_fault+0x43/0x150
-[   31.913130]  [<ffffffff8180359c>] ? async_page_fault+0x3c/0x60
-[   31.913131]  [<ffffffff8126ad6e>] ? SyS_statfs+0xe/0x10
-[   31.913132]  [<ffffffff81800021>] ? entry_SYSCALL_64_fastpath+0x20/0xee
+Would you be able to give it a whirl?
 
+David
+---
+commit 725145bde271b382e7e4e4ee2a9342a36f91b8fc
+Author: David Howells <dhowells@redhat.com>
+Date:   Wed Nov 18 09:06:42 2020 +0000
 
-d_invalidate()->...->drop_mountpoint() adds a callback to unmount at later =
-times:
+    9p: Convert to using the netfs helper lib to do reads and caching
+    =
 
-[   31.913246]  [<ffffffff812554da>] ? drop_mountpoint+0x6a/0x70
-[   31.913247]  [<ffffffff8126b0b8>] ? pin_kill+0x88/0x160
-[   31.913249]  [<ffffffff810d6a20>] ? prepare_to_wait_event+0x100/0x100
-[   31.913250]  [<ffffffff810d6a20>] ? prepare_to_wait_event+0x100/0x100
-[   31.913252]  [<ffffffff8126b205>] ? group_pin_kill+0x25/0x50
-[   31.913253]  [<ffffffff812564fa>] ? __detach_mounts+0x13a/0x140
-[   31.913255]  [<ffffffff8124bf24>] ? d_invalidate+0xa4/0x100
-[   31.913256]  [<ffffffff812404cd>] ? lookup_fast+0x18d/0x220
-[   31.913257]  [<ffffffff812407bc>] ? walk_component+0x3c/0x3f0
-[   31.913258]  [<ffffffff8123fe5b>] ? path_init+0x23b/0x450
-[   31.913259]  [<ffffffff812412bf>] ? path_lookupat+0x7f/0x110
-[   31.913261]  [<ffffffff81242ae7>] ? filename_lookup+0x97/0x190
-[   31.913262]  [<ffffffff811e1e39>] ? handle_pte_fault+0x1d9/0x240
-[   31.913263]  [<ffffffff81242cc9>] ? user_path_at_empty+0x59/0x90
-[   31.913265]  [<ffffffff8126ab59>] ? user_statfs+0x39/0xa0
-[   31.913266]  [<ffffffff8126abd6>] ? SYSC_statfs+0x16/0x40
-[   31.913268]  [<ffffffff8106de53>] ? trace_do_page_fault+0x43/0x150
-[   31.913269]  [<ffffffff8180359c>] ? async_page_fault+0x3c/0x60
-[   31.913270]  [<ffffffff8126ad6e>] ? SyS_statfs+0xe/0x10
-[   31.913272]  [<ffffffff81800021>] ? entry_SYSCALL_64_fastpath+0x20/0xee
+    Convert the 9p filesystem to use the netfs helper lib to handle readpa=
+ge,
+    readahead and write_begin, converting those into a common issue_op for=
+ the
+    filesystem itself to handle.  The netfs helper lib also handles readin=
+g
+    from fscache if a cache is available, and interleaving reads from both
+    sources.
+    =
 
-The actual unmount call:
+    This change also switches from the old fscache I/O API to the new one,
+    meaning that fscache no longer keeps track of netfs pages and instead =
+does
+    async DIO between the backing files and the 9p file pagecache.  As a p=
+art
+    of this change, the handling of PG_fscache changes.  It now just means=
+ that
+    the cache has a write I/O operation in progress on a page (PG_locked
+    is used for a read I/O op).
+    =
 
-[   31.913594]  [<ffffffff81362248>] ? cifs_put_tcon.part.0+0x71/0x123
-[   31.913597]  [<ffffffff81362309>] ? cifs_put_tlink.cold+0x5/0xa
-[   31.913599]  [<ffffffff813318a5>] ? cifs_umount+0x65/0xd0
-[   31.913601]  [<ffffffff8132976f>] ? cifs_kill_sb+0x1f/0x30
-[   31.913603]  [<ffffffff8123527a>] ? deactivate_locked_super+0x4a/0xd0
-[   31.913605]  [<ffffffff81235344>] ? deactivate_super+0x44/0x50
-[   31.913609]  [<ffffffff81253adb>] ? cleanup_mnt+0x3b/0x90
-[   31.913610]  [<ffffffff81253b82>] ? __cleanup_mnt+0x12/0x20
-[   31.913613]  [<ffffffff810af9eb>] ? task_work_run+0x7b/0xb0
-[   31.913616]  [<ffffffff810a0a3a>] ? get_signal+0x4ea/0x4f0
-[   31.913618]  [<ffffffff811e1e39>] ? handle_pte_fault+0x1d9/0x240
-[   31.913621]  [<ffffffff810185d1>] ? do_signal+0x21/0x100
-[   31.913624]  [<ffffffff81242cc9>] ? user_path_at_empty+0x59/0x90
-[   31.913626]  [<ffffffff8126ab59>] ? user_statfs+0x39/0xa0
-[   31.913628]  [<ffffffff8126abd6>] ? SYSC_statfs+0x16/0x40
-[   31.913630]  [<ffffffff81003517>] ? exit_to_usermode_loop+0x87/0xc0
-[   31.913632]  [<ffffffff81003bed>] ? syscall_return_slowpath+0xed/0x180
-[   31.913634]  [<ffffffff818001b1>] ? int_ret_from_sys_call+0x8/0x6d
+    Note that this is a cut-down version of the fscache rewrite and does n=
+ot
+    change any of the cookie and cache coherency handling.
+    =
 
+    Signed-off-by: David Howells <dhowells@redhat.com>
 
-> I'm suggesting that we should return errors inside d_validate
-> handlers, rather than just 0 or 1.
-> Makes sense?
+diff --git a/fs/9p/Kconfig b/fs/9p/Kconfig
+index 09fd4a185fd2..d7bc93447c85 100644
+--- a/fs/9p/Kconfig
++++ b/fs/9p/Kconfig
+@@ -2,6 +2,7 @@
+ config 9P_FS
+ 	tristate "Plan 9 Resource Sharing Support (9P2000)"
+ 	depends on INET && NET_9P
++	select NETFS_SUPPORT
+ 	help
+ 	  If you say Y here, you will get experimental support for
+ 	  Plan 9 resource sharing via the 9P2000 protocol.
+diff --git a/fs/9p/cache.c b/fs/9p/cache.c
+index eb2151fb6049..68e5d12e690d 100644
+--- a/fs/9p/cache.c
++++ b/fs/9p/cache.c
+@@ -199,140 +199,3 @@ void v9fs_cache_inode_reset_cookie(struct inode *ino=
+de)
+ =
 
-Yes that worked too. I'll send v2.
+ 	mutex_unlock(&v9inode->fscache_lock);
+ }
+-
+-int __v9fs_fscache_release_page(struct page *page, gfp_t gfp)
+-{
+-	struct inode *inode =3D page->mapping->host;
+-	struct v9fs_inode *v9inode =3D V9FS_I(inode);
+-
+-	BUG_ON(!v9inode->fscache);
+-
+-	return fscache_maybe_release_page(v9inode->fscache, page, gfp);
+-}
+-
+-void __v9fs_fscache_invalidate_page(struct page *page)
+-{
+-	struct inode *inode =3D page->mapping->host;
+-	struct v9fs_inode *v9inode =3D V9FS_I(inode);
+-
+-	BUG_ON(!v9inode->fscache);
+-
+-	if (PageFsCache(page)) {
+-		fscache_wait_on_page_write(v9inode->fscache, page);
+-		BUG_ON(!PageLocked(page));
+-		fscache_uncache_page(v9inode->fscache, page);
+-	}
+-}
+-
+-static void v9fs_vfs_readpage_complete(struct page *page, void *data,
+-				       int error)
+-{
+-	if (!error)
+-		SetPageUptodate(page);
+-
+-	unlock_page(page);
+-}
+-
+-/**
+- * __v9fs_readpage_from_fscache - read a page from cache
+- *
+- * Returns 0 if the pages are in cache and a BIO is submitted,
+- * 1 if the pages are not in cache and -error otherwise.
+- */
+-
+-int __v9fs_readpage_from_fscache(struct inode *inode, struct page *page)
+-{
+-	int ret;
+-	const struct v9fs_inode *v9inode =3D V9FS_I(inode);
+-
+-	p9_debug(P9_DEBUG_FSC, "inode %p page %p\n", inode, page);
+-	if (!v9inode->fscache)
+-		return -ENOBUFS;
+-
+-	ret =3D fscache_read_or_alloc_page(v9inode->fscache,
+-					 page,
+-					 v9fs_vfs_readpage_complete,
+-					 NULL,
+-					 GFP_KERNEL);
+-	switch (ret) {
+-	case -ENOBUFS:
+-	case -ENODATA:
+-		p9_debug(P9_DEBUG_FSC, "page/inode not in cache %d\n", ret);
+-		return 1;
+-	case 0:
+-		p9_debug(P9_DEBUG_FSC, "BIO submitted\n");
+-		return ret;
+-	default:
+-		p9_debug(P9_DEBUG_FSC, "ret %d\n", ret);
+-		return ret;
+-	}
+-}
+-
+-/**
+- * __v9fs_readpages_from_fscache - read multiple pages from cache
+- *
+- * Returns 0 if the pages are in cache and a BIO is submitted,
+- * 1 if the pages are not in cache and -error otherwise.
+- */
+-
+-int __v9fs_readpages_from_fscache(struct inode *inode,
+-				  struct address_space *mapping,
+-				  struct list_head *pages,
+-				  unsigned *nr_pages)
+-{
+-	int ret;
+-	const struct v9fs_inode *v9inode =3D V9FS_I(inode);
+-
+-	p9_debug(P9_DEBUG_FSC, "inode %p pages %u\n", inode, *nr_pages);
+-	if (!v9inode->fscache)
+-		return -ENOBUFS;
+-
+-	ret =3D fscache_read_or_alloc_pages(v9inode->fscache,
+-					  mapping, pages, nr_pages,
+-					  v9fs_vfs_readpage_complete,
+-					  NULL,
+-					  mapping_gfp_mask(mapping));
+-	switch (ret) {
+-	case -ENOBUFS:
+-	case -ENODATA:
+-		p9_debug(P9_DEBUG_FSC, "pages/inodes not in cache %d\n", ret);
+-		return 1;
+-	case 0:
+-		BUG_ON(!list_empty(pages));
+-		BUG_ON(*nr_pages !=3D 0);
+-		p9_debug(P9_DEBUG_FSC, "BIO submitted\n");
+-		return ret;
+-	default:
+-		p9_debug(P9_DEBUG_FSC, "ret %d\n", ret);
+-		return ret;
+-	}
+-}
+-
+-/**
+- * __v9fs_readpage_to_fscache - write a page to the cache
+- *
+- */
+-
+-void __v9fs_readpage_to_fscache(struct inode *inode, struct page *page)
+-{
+-	int ret;
+-	const struct v9fs_inode *v9inode =3D V9FS_I(inode);
+-
+-	p9_debug(P9_DEBUG_FSC, "inode %p page %p\n", inode, page);
+-	ret =3D fscache_write_page(v9inode->fscache, page,
+-				 i_size_read(&v9inode->vfs_inode), GFP_KERNEL);
+-	p9_debug(P9_DEBUG_FSC, "ret =3D  %d\n", ret);
+-	if (ret !=3D 0)
+-		v9fs_uncache_page(inode, page);
+-}
+-
+-/*
+- * wait for a page to complete writing to the cache
+- */
+-void __v9fs_fscache_wait_on_page_write(struct inode *inode, struct page *=
+page)
+-{
+-	const struct v9fs_inode *v9inode =3D V9FS_I(inode);
+-	p9_debug(P9_DEBUG_FSC, "inode %p page %p\n", inode, page);
+-	if (PageFsCache(page))
+-		fscache_wait_on_page_write(v9inode->fscache, page);
+-}
+diff --git a/fs/9p/cache.h b/fs/9p/cache.h
+index 00f107af443e..cfafa89b972c 100644
+--- a/fs/9p/cache.h
++++ b/fs/9p/cache.h
+@@ -7,9 +7,11 @@
+ =
 
-Cheers,
---=20
-Aur=C3=A9lien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, D=
-E
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
-nchen)
+ #ifndef _9P_CACHE_H
+ #define _9P_CACHE_H
+-#ifdef CONFIG_9P_FSCACHE
++
++#define FSCACHE_USE_NEW_IO_API
+ #include <linux/fscache.h>
+-#include <linux/spinlock.h>
++
++#ifdef CONFIG_9P_FSCACHE
+ =
+
+ extern struct fscache_netfs v9fs_cache_netfs;
+ extern const struct fscache_cookie_def v9fs_cache_session_index_def;
+@@ -27,64 +29,6 @@ extern void v9fs_cache_inode_reset_cookie(struct inode =
+*inode);
+ extern int __v9fs_cache_register(void);
+ extern void __v9fs_cache_unregister(void);
+ =
+
+-extern int __v9fs_fscache_release_page(struct page *page, gfp_t gfp);
+-extern void __v9fs_fscache_invalidate_page(struct page *page);
+-extern int __v9fs_readpage_from_fscache(struct inode *inode,
+-					struct page *page);
+-extern int __v9fs_readpages_from_fscache(struct inode *inode,
+-					 struct address_space *mapping,
+-					 struct list_head *pages,
+-					 unsigned *nr_pages);
+-extern void __v9fs_readpage_to_fscache(struct inode *inode, struct page *=
+page);
+-extern void __v9fs_fscache_wait_on_page_write(struct inode *inode,
+-					      struct page *page);
+-
+-static inline int v9fs_fscache_release_page(struct page *page,
+-					    gfp_t gfp)
+-{
+-	return __v9fs_fscache_release_page(page, gfp);
+-}
+-
+-static inline void v9fs_fscache_invalidate_page(struct page *page)
+-{
+-	__v9fs_fscache_invalidate_page(page);
+-}
+-
+-static inline int v9fs_readpage_from_fscache(struct inode *inode,
+-					     struct page *page)
+-{
+-	return __v9fs_readpage_from_fscache(inode, page);
+-}
+-
+-static inline int v9fs_readpages_from_fscache(struct inode *inode,
+-					      struct address_space *mapping,
+-					      struct list_head *pages,
+-					      unsigned *nr_pages)
+-{
+-	return __v9fs_readpages_from_fscache(inode, mapping, pages,
+-					     nr_pages);
+-}
+-
+-static inline void v9fs_readpage_to_fscache(struct inode *inode,
+-					    struct page *page)
+-{
+-	if (PageFsCache(page))
+-		__v9fs_readpage_to_fscache(inode, page);
+-}
+-
+-static inline void v9fs_uncache_page(struct inode *inode, struct page *pa=
+ge)
+-{
+-	struct v9fs_inode *v9inode =3D V9FS_I(inode);
+-	fscache_uncache_page(v9inode->fscache, page);
+-	BUG_ON(PageFsCache(page));
+-}
+-
+-static inline void v9fs_fscache_wait_on_page_write(struct inode *inode,
+-						   struct page *page)
+-{
+-	return __v9fs_fscache_wait_on_page_write(inode, page);
+-}
+-
+ #else /* CONFIG_9P_FSCACHE */
+ =
+
+ static inline void v9fs_cache_inode_get_cookie(struct inode *inode)
+@@ -99,39 +43,5 @@ static inline void v9fs_cache_inode_set_cookie(struct i=
+node *inode, struct file
+ {
+ }
+ =
+
+-static inline int v9fs_fscache_release_page(struct page *page,
+-					    gfp_t gfp) {
+-	return 1;
+-}
+-
+-static inline void v9fs_fscache_invalidate_page(struct page *page) {}
+-
+-static inline int v9fs_readpage_from_fscache(struct inode *inode,
+-					     struct page *page)
+-{
+-	return -ENOBUFS;
+-}
+-
+-static inline int v9fs_readpages_from_fscache(struct inode *inode,
+-					      struct address_space *mapping,
+-					      struct list_head *pages,
+-					      unsigned *nr_pages)
+-{
+-	return -ENOBUFS;
+-}
+-
+-static inline void v9fs_readpage_to_fscache(struct inode *inode,
+-					    struct page *page)
+-{}
+-
+-static inline void v9fs_uncache_page(struct inode *inode, struct page *pa=
+ge)
+-{}
+-
+-static inline void v9fs_fscache_wait_on_page_write(struct inode *inode,
+-						   struct page *page)
+-{
+-	return;
+-}
+-
+ #endif /* CONFIG_9P_FSCACHE */
+ #endif /* _9P_CACHE_H */
+diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
+index 7b763776306e..780b9ef78622 100644
+--- a/fs/9p/v9fs.h
++++ b/fs/9p/v9fs.h
+@@ -123,6 +123,15 @@ static inline struct v9fs_inode *V9FS_I(const struct =
+inode *inode)
+ {
+ 	return container_of(inode, struct v9fs_inode, vfs_inode);
+ }
++ =
+
++static inline struct fscache_cookie *v9fs_inode_cookie(struct v9fs_inode =
+*v9inode)
++{
++#ifdef CONFIG_9P_FSCACHE
++	return v9inode->fscache;
++#else
++	return NULL;
++#endif	=
+
++}
+ =
+
+ extern int v9fs_show_options(struct seq_file *m, struct dentry *root);
+ =
+
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index cce9ace651a2..4e273e006056 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -19,7 +19,7 @@
+ #include <linux/idr.h>
+ #include <linux/sched.h>
+ #include <linux/uio.h>
+-#include <linux/bvec.h>
++#include <linux/netfs.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
+ =
+
+@@ -29,89 +29,85 @@
+ #include "fid.h"
+ =
+
+ /**
+- * v9fs_fid_readpage - read an entire page in from 9P
+- *
+- * @fid: fid being read
+- * @page: structure to page
+- *
++ * v9fs_req_issue_op - Issue a read from 9P
++ * @subreq: The read to make
+  */
+-static int v9fs_fid_readpage(void *data, struct page *page)
++static void v9fs_req_issue_op(struct netfs_read_subrequest *subreq)
+ {
+-	struct p9_fid *fid =3D data;
+-	struct inode *inode =3D page->mapping->host;
+-	struct bio_vec bvec =3D {.bv_page =3D page, .bv_len =3D PAGE_SIZE};
++	struct netfs_read_request *rreq =3D subreq->rreq;
++	struct p9_fid *fid =3D rreq->netfs_priv;
+ 	struct iov_iter to;
++	loff_t pos =3D subreq->start + subreq->transferred;
++	size_t len =3D subreq->len   - subreq->transferred;
+ 	int retval, err;
+ =
+
+-	p9_debug(P9_DEBUG_VFS, "\n");
+-
+-	BUG_ON(!PageLocked(page));
++	iov_iter_xarray(&to, READ, &rreq->mapping->i_pages, pos, len);
+ =
+
+-	retval =3D v9fs_readpage_from_fscache(inode, page);
+-	if (retval =3D=3D 0)
+-		return retval;
++	retval =3D p9_client_read(fid, pos, &to, &err);
++	if (retval)
++		subreq->error =3D retval;
++}
+ =
+
+-	iov_iter_bvec(&to, READ, &bvec, 1, PAGE_SIZE);
++/**
++ * v9fs_init_rreq - Initialise a read request
++ * @rreq: The read request
++ * @file: The file being read from
++ */
++static void v9fs_init_rreq(struct netfs_read_request *rreq, struct file *=
+file)
++{
++	rreq->netfs_priv =3D file->private_data;
++}
+ =
+
+-	retval =3D p9_client_read(fid, page_offset(page), &to, &err);
+-	if (err) {
+-		v9fs_uncache_page(inode, page);
+-		retval =3D err;
+-		goto done;
+-	}
++/**
++ * v9fs_is_cache_enabled - Determine if caching is enabled for an inode
++ * @inode: The inode to check
++ */
++static bool v9fs_is_cache_enabled(struct inode *inode)
++{
++	struct fscache_cookie *cookie =3D v9fs_inode_cookie(V9FS_I(inode));
+ =
+
+-	zero_user(page, retval, PAGE_SIZE - retval);
+-	flush_dcache_page(page);
+-	SetPageUptodate(page);
++	return fscache_cookie_enabled(cookie) && !hlist_empty(&cookie->backing_o=
+bjects);
++}
+ =
+
+-	v9fs_readpage_to_fscache(inode, page);
+-	retval =3D 0;
++/**
++ * v9fs_begin_cache_operation - Begin a cache operation for a read
++ * @rreq: The read request
++ */
++static int v9fs_begin_cache_operation(struct netfs_read_request *rreq)
++{
++	struct fscache_cookie *cookie =3D v9fs_inode_cookie(V9FS_I(rreq->inode))=
+;
+ =
+
+-done:
+-	unlock_page(page);
+-	return retval;
++	if (fscache_cookie_valid(cookie) && fscache_cookie_enabled(cookie))
++		return __fscache_begin_read_operation(rreq, cookie);
++	else
++		return -ENOBUFS;
+ }
+ =
+
++static const struct netfs_read_request_ops v9fs_req_ops =3D {
++	.init_rreq		=3D v9fs_init_rreq,
++	.is_cache_enabled	=3D v9fs_is_cache_enabled,
++	.begin_cache_operation	=3D v9fs_begin_cache_operation,
++	.issue_op		=3D v9fs_req_issue_op,
++};
++
+ /**
+  * v9fs_vfs_readpage - read an entire page in from 9P
+- *
+  * @filp: file being read
+  * @page: structure to page
+  *
+  */
+-
+-static int v9fs_vfs_readpage(struct file *filp, struct page *page)
++static int v9fs_vfs_readpage(struct file *file, struct page *page)
+ {
+-	return v9fs_fid_readpage(filp->private_data, page);
++	return netfs_readpage(file, page, &v9fs_req_ops, NULL);
+ }
+ =
+
+ /**
+- * v9fs_vfs_readpages - read a set of pages from 9P
+- *
+- * @filp: file being read
+- * @mapping: the address space
+- * @pages: list of pages to read
+- * @nr_pages: count of pages to read
+- *
++ * v9fs_vfs_readahead - read a set of pages from 9P
++ * @ractl: The readahead parameters
+  */
+-
+-static int v9fs_vfs_readpages(struct file *filp, struct address_space *ma=
+pping,
+-			     struct list_head *pages, unsigned nr_pages)
++static void v9fs_vfs_readahead(struct readahead_control *ractl)
+ {
+-	int ret =3D 0;
+-	struct inode *inode;
+-
+-	inode =3D mapping->host;
+-	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, filp);
+-
+-	ret =3D v9fs_readpages_from_fscache(inode, mapping, pages, &nr_pages);
+-	if (ret =3D=3D 0)
+-		return ret;
+-
+-	ret =3D read_cache_pages(mapping, pages, v9fs_fid_readpage,
+-			filp->private_data);
+-	p9_debug(P9_DEBUG_VFS, "  =3D %d\n", ret);
+-	return ret;
++	netfs_readahead(ractl, &v9fs_req_ops, NULL);
+ }
+ =
+
+ /**
+@@ -124,7 +120,14 @@ static int v9fs_release_page(struct page *page, gfp_t=
+ gfp)
+ {
+ 	if (PagePrivate(page))
+ 		return 0;
+-	return v9fs_fscache_release_page(page, gfp);
++#ifdef CONFIG_AFS_FSCACHE
++	if (PageFsCache(page)) {
++		if (!(gfp & __GFP_DIRECT_RECLAIM) || !(gfp & __GFP_FS))
++			return 0;
++		wait_on_page_fscache(page);
++	}
++#endif
++	return 1;
+ }
+ =
+
+ /**
+@@ -137,21 +140,16 @@ static int v9fs_release_page(struct page *page, gfp_=
+t gfp)
+ static void v9fs_invalidate_page(struct page *page, unsigned int offset,
+ 				 unsigned int length)
+ {
+-	/*
+-	 * If called with zero offset, we should release
+-	 * the private state assocated with the page
+-	 */
+-	if (offset =3D=3D 0 && length =3D=3D PAGE_SIZE)
+-		v9fs_fscache_invalidate_page(page);
++	wait_on_page_fscache(page);
+ }
+ =
+
+ static int v9fs_vfs_writepage_locked(struct page *page)
+ {
+ 	struct inode *inode =3D page->mapping->host;
+ 	struct v9fs_inode *v9inode =3D V9FS_I(inode);
++	loff_t start =3D page_offset(page);
+ 	loff_t size =3D i_size_read(inode);
+ 	struct iov_iter from;
+-	struct bio_vec bvec;
+ 	int err, len;
+ =
+
+ 	if (page->index =3D=3D size >> PAGE_SHIFT)
+@@ -159,17 +157,14 @@ static int v9fs_vfs_writepage_locked(struct page *pa=
+ge)
+ 	else
+ 		len =3D PAGE_SIZE;
+ =
+
+-	bvec.bv_page =3D page;
+-	bvec.bv_offset =3D 0;
+-	bvec.bv_len =3D len;
+-	iov_iter_bvec(&from, WRITE, &bvec, 1, len);
++	iov_iter_xarray(&from, WRITE, &page->mapping->i_pages, start, len);
+ =
+
+ 	/* We should have writeback_fid always set */
+ 	BUG_ON(!v9inode->writeback_fid);
+ =
+
+ 	set_page_writeback(page);
+ =
+
+-	p9_client_write(v9inode->writeback_fid, page_offset(page), &from, &err);
++	p9_client_write(v9inode->writeback_fid, start, &from, &err);
+ =
+
+ 	end_page_writeback(page);
+ 	return err;
+@@ -205,14 +200,13 @@ static int v9fs_vfs_writepage(struct page *page, str=
+uct writeback_control *wbc)
+ static int v9fs_launder_page(struct page *page)
+ {
+ 	int retval;
+-	struct inode *inode =3D page->mapping->host;
+ =
+
+-	v9fs_fscache_wait_on_page_write(inode, page);
+ 	if (clear_page_dirty_for_io(page)) {
+ 		retval =3D v9fs_vfs_writepage_locked(page);
+ 		if (retval)
+ 			return retval;
+ 	}
++	wait_on_page_fscache(page);
+ 	return 0;
+ }
+ =
+
+@@ -256,35 +250,24 @@ static int v9fs_write_begin(struct file *filp, struc=
+t address_space *mapping,
+ 			    loff_t pos, unsigned len, unsigned flags,
+ 			    struct page **pagep, void **fsdata)
+ {
+-	int retval =3D 0;
++	int retval;
+ 	struct page *page;
+-	struct v9fs_inode *v9inode;
+-	pgoff_t index =3D pos >> PAGE_SHIFT;
+-	struct inode *inode =3D mapping->host;
+-
++	struct v9fs_inode *v9inode =3D V9FS_I(mapping->host);
+ =
+
+ 	p9_debug(P9_DEBUG_VFS, "filp %p, mapping %p\n", filp, mapping);
+ =
+
+-	v9inode =3D V9FS_I(inode);
+-start:
+-	page =3D grab_cache_page_write_begin(mapping, index, flags);
+-	if (!page) {
+-		retval =3D -ENOMEM;
+-		goto out;
+-	}
+ 	BUG_ON(!v9inode->writeback_fid);
+-	if (PageUptodate(page))
+-		goto out;
+ =
+
+-	if (len =3D=3D PAGE_SIZE)
+-		goto out;
++	/* Prefetch area to be written into the cache if we're caching this
++	 * file.  We need to do this before we get a lock on the page in case
++	 * there's more than one writer competing for the same cache block.
++	 */
++	retval =3D netfs_write_begin(filp, mapping, pos, len, flags, &page, fsda=
+ta,
++				   &v9fs_req_ops, NULL);
++	if (retval < 0)
++		return retval;
+ =
+
+-	retval =3D v9fs_fid_readpage(v9inode->writeback_fid, page);
+-	put_page(page);
+-	if (!retval)
+-		goto start;
+-out:
+-	*pagep =3D page;
++	*pagep =3D find_subpage(page, pos / PAGE_SIZE);
+ 	return retval;
+ }
+ =
+
+@@ -324,7 +307,7 @@ static int v9fs_write_end(struct file *filp, struct ad=
+dress_space *mapping,
+ =
+
+ const struct address_space_operations v9fs_addr_operations =3D {
+ 	.readpage =3D v9fs_vfs_readpage,
+-	.readpages =3D v9fs_vfs_readpages,
++	.readahead =3D v9fs_vfs_readahead,
+ 	.set_page_dirty =3D __set_page_dirty_nobuffers,
+ 	.writepage =3D v9fs_vfs_writepage,
+ 	.write_begin =3D v9fs_write_begin,
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 649f04f112dc..9a1f510633c7 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -555,14 +555,27 @@ v9fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	p9_debug(P9_DEBUG_VFS, "page %p fid %lx\n",
+ 		 page, (unsigned long)filp->private_data);
+ =
+
++	v9inode =3D V9FS_I(inode);
++
++	/* Wait for the page to be written to the cache before we allow it to
++	 * be modified.  We then assume the entire page will need writing back.
++	 */
++#ifdef CONFIG_V9FS_FSCACHE
++	if (PageFsCache(page) &&
++	    wait_on_page_bit_killable(page, PG_fscache) < 0)
++		return VM_FAULT_RETRY;
++#endif
++
++	if (PageWriteback(page) &&
++	    wait_on_page_bit_killable(page, PG_writeback) < 0)
++		return VM_FAULT_RETRY;
++
+ 	/* Update file times before taking page lock */
+ 	file_update_time(filp);
+ =
+
+-	v9inode =3D V9FS_I(inode);
+-	/* make sure the cache has finished storing the page */
+-	v9fs_fscache_wait_on_page_write(inode, page);
+ 	BUG_ON(!v9inode->writeback_fid);
+-	lock_page(page);
++	if (lock_page_killable(page) < 0)
++		return VM_FAULT_RETRY;
+ 	if (page->mapping !=3D inode->i_mapping)
+ 		goto out_unlock;
+ 	wait_for_stable_page(page);
 
