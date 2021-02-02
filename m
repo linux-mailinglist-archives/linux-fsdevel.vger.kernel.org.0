@@ -2,67 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9966C30CB50
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 20:21:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D03A330CB1F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Feb 2021 20:14:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239731AbhBBTU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Feb 2021 14:20:27 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56780 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237941AbhBBS5T (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Feb 2021 13:57:19 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 112Iqm6i191657;
-        Tue, 2 Feb 2021 13:55:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : mime-version : content-transfer-encoding; s=pp1;
- bh=f9zxCUw4M03BQ4ynBUOKWIG13PioNXDzHmOyFa7Yr50=;
- b=tGajUAV7nYMnOgvJ5XNDB+HPM04G6aJ4uyjJERBKE6JseyoiPK4ybLmz+xUMeF8A3ZvV
- 9CfgO1s4p/sWRTklZ/KBtXbyyaPSzcfHlGVLfsiesYbCjVINSb+2+ZSghFuAtlP+5PYP
- 1tDcLnZhDFH4d67b0vpQDKhAQj5nPXzfzvVe2pWz6p1vmBP5dlo0H/g8bmWucwiktluQ
- 4dF2nFgI9gYwGl5wdHr2aEN9XgChXUJmOhGJKG7TPXfSW1tejjZNletMaQBAMopJusM2
- WhMHFRJU7YZhPmNPJYYNTpO+11nR6aUDaj7QMRSQAP9T67mCdO2bXla32F4Zi+GZHxSP dg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36fcd60231-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Feb 2021 13:55:51 -0500
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 112Ir8MT196513;
-        Tue, 2 Feb 2021 13:55:51 -0500
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36fcd6022n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Feb 2021 13:55:50 -0500
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 112IkXHS016248;
-        Tue, 2 Feb 2021 18:55:50 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma01wdc.us.ibm.com with ESMTP id 36eyucmt0m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Feb 2021 18:55:49 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 112ItlXY24641948
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 2 Feb 2021 18:55:48 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E42A67805C;
-        Tue,  2 Feb 2021 18:55:47 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6E0857805E;
-        Tue,  2 Feb 2021 18:55:41 +0000 (GMT)
-Received: from jarvis.int.hansenpartnership.com (unknown [9.85.153.205])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  2 Feb 2021 18:55:41 +0000 (GMT)
-Message-ID: <f26a17366194880d58e67d10cb5d7d7fdf2f3c19.camel@linux.ibm.com>
-Subject: Re: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize
- direct map fragmentation
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Mike Rapoport <rppt@kernel.org>,
-        David Hildenbrand <david@redhat.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
+        id S239491AbhBBTN7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Feb 2021 14:13:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45758 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231862AbhBBTLw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Feb 2021 14:11:52 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 47C6D64D87;
+        Tue,  2 Feb 2021 19:10:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612293066;
+        bh=Pzyl+wYYgvPCwgJ+GvBahmfBmshzS1gdeGZydw56C1k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=urlxNYufSkfJp0SH0EEfwFzSeIYwXDdueMnyILwXIullWx4SbMoEerX80f5OQqyLU
+         Bg+fxp5cMzP5FzVAMlOPfjBauj+B1/aEKphaIK3R5lVLYCvCQesqrDIQmZvMjDXmNR
+         wmsGMRNi9ZfDbI6vAJ5p7VMbSsLj4nb8l1NhazBIB10phtLBckQ1cOU2nN3vTXLilS
+         uJtQ4CoJagfCIkQnsWqgtg/k3AnTkwWKwrvb5ozbBGjBggCHGi2zD+24ANJ5uL76kr
+         bEh+jPfAk+q1UtVeseCuM6MVzwqCxfVLsegGHFyjAVr0PWSO8yZEm61pbzlwU5cRc5
+         HnguLQxiFymVg==
+Date:   Tue, 2 Feb 2021 21:10:40 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andy Lutomirski <luto@kernel.org>,
@@ -94,98 +59,96 @@ Cc:     Michal Hocko <mhocko@suse.com>,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
         Palmer Dabbelt <palmerdabbelt@google.com>
-Date:   Tue, 02 Feb 2021 10:55:40 -0800
-In-Reply-To: <20210202181546.GO242749@kernel.org>
-References: <6de6b9f9c2d28eecc494e7db6ffbedc262317e11.camel@linux.ibm.com>
-         <YBkcyQsky2scjEcP@dhcp22.suse.cz> <20210202124857.GN242749@kernel.org>
-         <6653288a-dd02-f9de-ef6a-e8d567d71d53@redhat.com>
-         <YBlUXdwV93xMIff6@dhcp22.suse.cz>
-         <211f0214-1868-a5be-9428-7acfc3b73993@redhat.com>
-         <YBlgCl8MQuuII22w@dhcp22.suse.cz>
-         <d4fe580a-ef0e-e13f-9ee4-16fb8b6d65dd@redhat.com>
-         <YBlicIupOyPF9f3D@dhcp22.suse.cz>
-         <95625b83-f7e2-b27a-2b99-d231338047fb@redhat.com>
-         <20210202181546.GO242749@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+Subject: Re: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize
+ direct map fragmentation
+Message-ID: <20210202191040.GP242749@kernel.org>
+References: <303f348d-e494-e386-d1f5-14505b5da254@redhat.com>
+ <20210126120823.GM827@dhcp22.suse.cz>
+ <20210128092259.GB242749@kernel.org>
+ <YBK1kqL7JA7NePBQ@dhcp22.suse.cz>
+ <73738cda43236b5ac2714e228af362b67a712f5d.camel@linux.ibm.com>
+ <YBPF8ETGBHUzxaZR@dhcp22.suse.cz>
+ <6de6b9f9c2d28eecc494e7db6ffbedc262317e11.camel@linux.ibm.com>
+ <YBkcyQsky2scjEcP@dhcp22.suse.cz>
+ <20210202124857.GN242749@kernel.org>
+ <YBlTMqjB06aqyGbT@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-02_09:2021-02-02,2021-02-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- bulkscore=0 spamscore=0 phishscore=0 adultscore=0 mlxlogscore=530
- clxscore=1015 suspectscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102020118
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YBlTMqjB06aqyGbT@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-02-02 at 20:15 +0200, Mike Rapoport wrote:
-> On Tue, Feb 02, 2021 at 03:34:29PM +0100, David Hildenbrand wrote:
-> > On 02.02.21 15:32, Michal Hocko wrote:
-> > > On Tue 02-02-21 15:26:20, David Hildenbrand wrote:
-> > > > On 02.02.21 15:22, Michal Hocko wrote:
-> > > > > On Tue 02-02-21 15:12:21, David Hildenbrand wrote:
-> > > > > [...]
-> > > > > > I think secretmem behaves much more like longterm GUP right
-> > > > > > now
-> > > > > > ("unmigratable", "lifetime controlled by user space",
-> > > > > > "cannot go on
-> > > > > > CMA/ZONE_MOVABLE"). I'd either want to reasonably well
-> > > > > > control/limit it or
-> > > > > > make it behave more like mlocked pages.
-> > > > > 
-> > > > > I thought I have already asked but I must have forgotten. Is
-> > > > > there any
-> > > > > actual reason why the memory is not movable? Timing attacks?
-> > > > 
-> > > > I think the reason is simple: no direct map, no copying of
-> > > > memory.
+On Tue, Feb 02, 2021 at 02:27:14PM +0100, Michal Hocko wrote:
+> On Tue 02-02-21 14:48:57, Mike Rapoport wrote:
+> > On Tue, Feb 02, 2021 at 10:35:05AM +0100, Michal Hocko wrote:
+> > > On Mon 01-02-21 08:56:19, James Bottomley wrote:
 > > > 
-> > > This is an implementation detail though and not something
-> > > terribly hard
-> > > to add on top later on. I was more worried there would be really
-> > > fundamental reason why this is not possible. E.g. security
-> > > implications.
+> > > I have also proposed potential ways out of this. Either the pool is not
+> > > fixed sized and you make it a regular unevictable memory (if direct map
+> > > fragmentation is not considered a major problem)
 > > 
-> > I don't remember all the details. Let's see what Mike thinks
-> > regarding
-> > migration (e.g., security concerns).
+> > I think that the direct map fragmentation is not a major problem, and the
+> > data we have confirms it, so I'd be more than happy to entirely drop the
+> > pool, allocate memory page by page and remove each page from the direct
+> > map. 
+> > 
+> > Still, we cannot prove negative and it could happen that there is a
+> > workload that would suffer a lot from the direct map fragmentation, so
+> > having a pool of large pages upfront is better than trying to fix it
+> > afterwards. As we get more confidence that the direct map fragmentation is
+> > not an issue as it is common to believe we may remove the pool altogether.
 > 
-> Thanks for considering me a security expert :-)
+> I would drop the pool altogether and instantiate pages to the
+> unevictable LRU list and internally treat it as ramdisk/mlock so you
+> will get an accounting correctly. The feature should be still opt-in
+> (e.g. a kernel command line parameter) for now. The recent report by
+> Intel (http://lkml.kernel.org/r/213b4567-46ce-f116-9cdf-bbd0c884eb3c@linux.intel.com)
+> there is no clear win to have huge mappings in _general_ but there are
+> still workloads which benefit. 
+>  
+> > I think that using PMD_ORDER allocations for the pool with a fallback to
+> > order 0 will do the job, but unfortunately I doubt we'll reach a consensus
+> > about this because dogmatic beliefs are hard to shake...
 > 
-> Yet, I cannot estimate how dangerous is the temporal exposure of
-> this data to the kernel via the direct map in the simple
-> map/copy/unmap
-> sequence.
-
-Well the safest security statement is that we never expose the data to
-the kernel because it's a very clean security statement and easy to
-enforce.  It's also the easiest threat model to analyse.   Once we do
-start exposing the secret to the kernel it alters the threat profile
-and the analysis and obviously potentially provides the ROP gadget to
-an attacker to do the same.  Instinct tells me that the loss of
-security doesn't really make up for the ability to swap or migrate but
-if there were a case for doing the latter, it would have to be a
-security policy of the user (i.e. a user should be able to decide their
-data is too sensitive to expose to the kernel).
-
-> More secure way would be to map source and destination in a different
-> page table rather than in the direct map, similarly to the way
-> text_poke() on x86 does.
-
-I think doing this would have much less of an impact on the security
-posture because it's already theoretically possible to have kmap
-restore access to the kernel.
-
-James
-
-
-> I've left the migration callback empty for now because it can be
-> added on top and its implementation would depend on the way we do (or
-> do not do) pooling.
+> If this is opt-in then those beliefs can be relaxed somehow. Long term
+> it makes a lot of sense to optimize for a better direct map management
+> but I do not think this is a hard requirement for an initial
+> implementation if it is not imposed to everybody by default.
+>
+> > A more restrictive possibility is to still use plain PMD_ORDER allocations
+> > to fill the pool, without relying on CMA. In this case there will be no
+> > global secretmem specific pool to exhaust, but then it's possible to drain
+> > high order free blocks in a system, so CMA has an advantage of limiting
+> > secretmem pools to certain amount of memory with somewhat higher
+> > probability for high order allocation to succeed. 
+> > 
+> > > or you need a careful access control 
+> > 
+> > Do you mind elaborating what do you mean by "careful access control"?
 > 
+> As already mentioned, a mechanism to control who can use this feature -
+> e.g. make it a special device which you can access control by
+> permissions or higher level security policies. But that is really needed
+> only if the pool is fixed sized.
+  
+Let me reiterate to make sure I don't misread your suggestion.
 
+If we make secretmem an opt-in feature with, e.g. kernel parameter, the
+pooling of large pages is unnecessary. In this case there is no limited
+resource we need to protect because secretmem will allocate page by page.
 
+Since there is no limited resource, we don't need special permissions
+to access secretmem so we can move forward with a system call that creates
+a mmapable file descriptor and save the hassle of a chardev.
+
+I cannot say I don't like this as it cuts roughly half of mm/secretmem.c :)
+
+But I must say I am still a bit concerned about that we have no provisions
+here for dealing with the direct map fragmentation even with the set goal
+to improve the direct map management in the long run...
+
+-- 
+Sincerely yours,
+Mike.
