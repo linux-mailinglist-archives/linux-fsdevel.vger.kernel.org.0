@@ -2,93 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8430730E350
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 20:33:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF33C30E43D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 21:51:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231128AbhBCTcr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Feb 2021 14:32:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36140 "EHLO
+        id S232554AbhBCUu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Feb 2021 15:50:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbhBCTcp (ORCPT
+        with ESMTP id S232537AbhBCUuW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Feb 2021 14:32:45 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05B3FC0613D6;
-        Wed,  3 Feb 2021 11:32:05 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id v24so848565lfr.7;
-        Wed, 03 Feb 2021 11:32:04 -0800 (PST)
+        Wed, 3 Feb 2021 15:50:22 -0500
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA32C061573
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Feb 2021 12:49:40 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id o16so575695pgg.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Feb 2021 12:49:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tcLZknCefIdroLnvwaZu4BA8cKkKANxIH89d6baPmQU=;
-        b=KqrMrj7EbDc5JQQ8mfnTpsd7o6+bi6L3ZQtKF2kLlEw3S1GICznZFnGdtJOQBP2Uco
-         Ks3hwsLM8JmQs4TJzBE/ar/ueC8bhEnzly25SH8iLnlBr8CI+wOkeY10fPOMccqU8kG+
-         YK1EBHKxaceT+WcbiSq2S1MKVfw8O/W9kPVx87vlVr1r4TlSvSa6IoVREPPntmp3EcPi
-         +MHveAbdqCAvWDl5BjVixnUykJ87z5citpPoMvUy7pJzo8p0Te3cE7NY8GRBHMB+65pK
-         IuuMPquQDv6ys8CZZQmMr6hr7UP6pmUCRRzco1Z9sl8ks88TBxMXnIg7U95JPPfYhDGo
-         NaYQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc
+         :content-transfer-encoding;
+        bh=M8lFoGv6mHlkS4pfcEZxXT0GjlBrKSHlOVSDDjgilMk=;
+        b=rM1xvLKChJbMhPiPxDWEcePASMy0cf8HeErbywGhn2uz/vxUt3AWciE3Uj63Z9rkey
+         3clwXdhoaZ9tcupljd+xCp/yiRwzX/ekcHuZsIbhXa17Qm+44qBkGfi0JFpr2BfLDeUP
+         uL4Jo+ge5eJYzKr58jmA5TrlIeovIVSgJdXR6bfIIoYV+m7rgmaz3WLeyQzZxEEjpNnU
+         UNyxblr37Vse2cJev1TBfQXLjVuw5otZVV5JNNT8jZRq/IIGsHa9JjamNNJP/gdZTaZo
+         +iWKjsNqQHVX2hrRwm0Ki4jIyyS7RT2xYbuq6koIXVc5C5NFulhXVP9qaCbJ3Xt/zb+N
+         PvcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tcLZknCefIdroLnvwaZu4BA8cKkKANxIH89d6baPmQU=;
-        b=kdjL/0g3B1rhjWw6/Id8oPRedfRV0uLV+jfIq5HtUcPC4iED95dHiR/RMmcC8fRF9q
-         LzDuqcoCQFYp4vSdGNQ2LvpHTT6ijlolXU7VF3kk0Uss+APdKSoBAeUHjOAaOpgxUMJl
-         fTjrax5xiA/bXCORBhlptZ3KJNEmsux1UnLL31ZCcG79809I7yDQwiNOT+zgR7qYjIGk
-         wJ1TJ+R77PNGXsyXRcM43iJgg/S0bRntU4NZNdCZo8NNfHXvVLem6oTjYR3mohTegOVU
-         62X62QRFDN+niNrJsmS7IkX17Ul3gAwYReVF8lqwkKFa3xHJrDRK1Z5Dt9VOKgWioJNL
-         q9Gw==
-X-Gm-Message-State: AOAM5316B8T+WRaXQw9xI+id3KA2QeZagdh/KDFHJG8nN+as/ZDRLWMV
-        r2pmmQhYdnbcMQyWMYoVgic=
-X-Google-Smtp-Source: ABdhPJwiYWGj38qtddXaIiGsYvx1xPDYihRPJHwBvM44yGxFuSwgoGfoEzlG6F9wqambmBJ4n4FFfQ==
-X-Received: by 2002:a19:22cb:: with SMTP id i194mr2616917lfi.25.1612380723483;
-        Wed, 03 Feb 2021 11:32:03 -0800 (PST)
-Received: from grain.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id q190sm348257ljb.8.2021.02.03.11.32.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Feb 2021 11:32:02 -0800 (PST)
-Received: by grain.localdomain (Postfix, from userid 1000)
-        id 77B8F560088; Wed,  3 Feb 2021 22:32:01 +0300 (MSK)
-Date:   Wed, 3 Feb 2021 22:32:01 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Cc:     Jeff Layton <jlayton@poochiereds.net>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH] fcntl: make F_GETOWN(EX) return 0 on dead owner task
-Message-ID: <20210203193201.GD2172@grain>
-References: <20210203124156.425775-1-ptikhomirov@virtuozzo.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:cc:content-transfer-encoding;
+        bh=M8lFoGv6mHlkS4pfcEZxXT0GjlBrKSHlOVSDDjgilMk=;
+        b=nCIvtCnmXn960TYCai2pp32MQEAA0Xr3agAn4Vgy2vLcFjukgDhZ6PnGUdVjMjMokL
+         KZOX+a5xew0HO/DDF2l8P5T2GBdEVHkbczc/y4LwNa0XGDqObvc/9ZH9VGVapvOU4zsI
+         DyXYv+LD3bv3q61ZRJs50fFTybfTGRfHecY4X36f88fRCRG8QYAzpenpQY1iNE8kmRCe
+         WQ73vOHuH+GkRHz/Gnze4C9bYUxtHvmB7adSL3PZZpGWgtT2Siq84aWmykPmW4e5YrSC
+         5TrBq2d+MBmLm6vZBkHk7HvrwlQETm4a+yz266rUEbVoQ7r4gOQVxpjOhgSGrTMXntzm
+         5/Rg==
+X-Gm-Message-State: AOAM532ATmDmwZg1Hbh8HqwmZZhJONWcngRt1zradxgcIlWAtJrwVQYP
+        AgjPAiNSws5eFnbJ/ooBi5ia1VPpbOljcVq6AR6UrQ==
+X-Received: by 2002:aa7:910a:0:b029:1c8:9947:305c with SMTP id
+ 10-20020aa7910a0000b02901c89947305cmt3620828pfh.75.1612385380012; Wed, 03 Feb
+ 2021 12:49:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210203124156.425775-1-ptikhomirov@virtuozzo.com>
-User-Agent: Mutt/1.14.6 (2020-07-11)
+References: <20210128182432.2216573-1-kaleshsingh@google.com>
+In-Reply-To: <20210128182432.2216573-1-kaleshsingh@google.com>
+From:   Kalesh Singh <kaleshsingh@google.com>
+Date:   Wed, 3 Feb 2021 15:49:27 -0500
+Message-ID: <CAC_TJvdUN27PsjnehS03UQB=LdQUo9KJK=q1bgxJnZh2FJzXjw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Allow reading process DMA buf stats from fdinfo
+Cc:     Jann Horn <jannh@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Michel Lespinasse <walken@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 03, 2021 at 03:41:56PM +0300, Pavel Tikhomirov wrote:
-> Currently there is no way to differentiate the file with alive owner
-> from the file with dead owner but pid of the owner reused. That's why
-> CRIU can't actually know if it needs to restore file owner or not,
-> because if it restores owner but actual owner was dead, this can
-> introduce unexpected signals to the "false"-owner (which reused the
-> pid).
+On Thu, Jan 28, 2021 at 1:24 PM Kalesh Singh <kaleshsingh@google.com> wrote=
+:
+>
+> Android captures per-process system memory state when certain low memory
+> events (e.g a foreground app kill) occur, to identify potential memory
+> hoggers. In order to measure how much memory a process actually consumes,
+> it is necessary to include the DMA buffer sizes for that process in the
+> memory accounting. Since the handle to DMA buffers are raw FDs, it is
+> important to be able to identify which processes have FD references to
+> a DMA buffer.
+>
+> Currently, DMA buffer FDs can be accounted using /proc/<pid>/fd/* and
+> /proc/<pid>/fdinfo -- both are only readable by the process owner,
+> as follows:
+>   1. Do a readlink on each FD.
+>   2. If the target path begins with "/dmabuf", then the FD is a dmabuf FD=
+.
+>   3. stat the file to get the dmabuf inode number.
+>   4. Read/ proc/<pid>/fdinfo/<fd>, to get the DMA buffer size.
+>
+> Accessing other processes=E2=80=99 fdinfo requires root privileges. This =
+limits
+> the use of the interface to debugging environments and is not suitable
+> for production builds.  Granting root privileges even to a system process
+> increases the attack surface and is highly undesirable.
+>
+> This series proposes making the requirement to read fdinfo less strict
+> with PTRACE_MODE_READ.
+>
 
-Hi! Thanks for the patch. You know I manage to forget the fowner internals.
-Could you please enlighten me -- when owner is set with some pid we do
+Hi everyone,
 
-f_setown_ex
-  __f_setown
-    f_modown
-      filp->f_owner.pid = get_pid(pid);
+I will send v2 of this patch series. Please let me know if you have
+any other comments or feedback, that should be addressed in the new
+version.
 
-Thus pid get refcount incremented. Then the owner exits but refcounter
-should be still up and running and pid should not be reused, no? Or
-I miss something obvious?
+Thanks,
+Kalesh
 
-The patch itself looks ok on a first glance.
+> Kalesh Singh (2):
+>   procfs: Allow reading fdinfo with PTRACE_MODE_READ
+>   dmabuf: Add dmabuf inode no to fdinfo
+>
+>  drivers/dma-buf/dma-buf.c |  1 +
+>  fs/proc/base.c            |  4 ++--
+>  fs/proc/fd.c              | 15 ++++++++++++++-
+>  3 files changed, 17 insertions(+), 3 deletions(-)
+>
+> --
+> 2.30.0.365.g02bc693789-goog
+>
