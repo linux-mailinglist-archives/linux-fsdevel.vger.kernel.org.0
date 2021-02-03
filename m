@@ -2,34 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43ECE30DD5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 15:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7DA130DD8D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 16:05:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233372AbhBCO5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Feb 2021 09:57:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32860 "EHLO
+        id S233778AbhBCPEZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Feb 2021 10:04:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233319AbhBCO5G (ORCPT
+        with ESMTP id S233659AbhBCPEE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Feb 2021 09:57:06 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CFACC061573;
-        Wed,  3 Feb 2021 06:56:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jHqPAIZKxcFxf2pPTznII237kT1yeHQ+2XeU1SzqGnM=; b=ciOSmF9ZZGGhdHmfMPhVKouve8
-        lzqP+86x3R6u/INbMdIRkDp2xg1YTnJGUoVefwmZSY4qc4ri6fxz2QvNBNfSzrrRPAuSIJ/k+sXvE
-        WxkwDJ+kaKMslgS3Xq08s0i6t6nR59ZG/8EQRMNWHkJkStlWQmPCP+tZH/9dAvFI5hMKnh6Yp2TRI
-        A8fhym3ddh5QDu75cC4GvPuvccm2Bpt455YOo+v6N2Qf19VA3YAjEsvWccrklOLT5HsoSDG/NBjYy
-        /j57yT6qAH7FiAa4HMBMjN6UmKnzVsgjD70hp+9dLVLnrndyOD4+NMHuf6Yx4wllfXRlGqvs+c1Bw
-        5HmJQR1g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l7JZs-00H3eo-Bf; Wed, 03 Feb 2021 14:56:21 +0000
-Date:   Wed, 3 Feb 2021 14:56:20 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
+        Wed, 3 Feb 2021 10:04:04 -0500
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 080B5C06178A
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Feb 2021 07:03:18 -0800 (PST)
+Received: by mail-vs1-xe31.google.com with SMTP id v19so10113vsf.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Feb 2021 07:03:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=16cDNKxraA3jARSxbNqlIlmOE3npJRnOa9MH9uHHTKM=;
+        b=IgyIS8cRCiVNUXTC+2WVbi+ZidgiMoLewT/JGLIKvrJMri9lw2Shh0SES2p++86DOD
+         DjmFXxT3mWC8i7HegTGb8/5ye/98nC04js79jlDh0ejnE5lgrEv0JFXkvlsVXJy/Z9Co
+         nA+j2eFBLFImXMFLvQ+Z2jsSRr1Up1Cpdbzko=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=16cDNKxraA3jARSxbNqlIlmOE3npJRnOa9MH9uHHTKM=;
+        b=H9+QXMNNjt5/aAJnH2yvAYM9sX+7gO7PFloHNn9j+S2IXeypB9lH1o5U1vFQ7p75dr
+         1yrb+FYM4O8bnFapZzEU/wm+YTLByCvY7I8EhZGKvifPTFnBiIs0fiJ+s++xLQUHHJJs
+         U1MJMVFXQ6vuTQOkIJ5ClAEG0mnq2CMcbC6nxmS5Gk1Q6/4gH/NyEY4lD7k0u+ACE1mc
+         AzsFyGNfcI47OnlNNAkIafoLg3rFUIzXdRLNVVpTHteSiwGwcXIWOsPih0AnrD5qHUBD
+         TCbK692U1rHsn24WzJS4xLkdF6t/N1Ye7AW2roYCEsmpOojOrflBaXw/FD4qQG/Kcg4k
+         c/uQ==
+X-Gm-Message-State: AOAM530BCYof5G08eqNMDpdAsjcU609huxoSYOhswQZyWRNMhLHUQmbP
+        Z3FNSZO4HtFZSOwVVw0wO8mlKfFaTA9lnVXUnHPdBQ==
+X-Google-Smtp-Source: ABdhPJyvk/QConD3gywUwGfKEASsYovv/QTdEyyM8SgVTja0saduihmUwwthGFAWt3bDkKKxgFdHCSdij8V8adGtJ5M=
+X-Received: by 2002:a67:fb86:: with SMTP id n6mr1886934vsr.0.1612364597339;
+ Wed, 03 Feb 2021 07:03:17 -0800 (PST)
+MIME-Version: 1.0
+References: <20210203124112.1182614-1-mszeredi@redhat.com> <20210203130501.GY308988@casper.infradead.org>
+ <CAJfpegs3YWybmH7iKDLQ-KwmGieS1faO1uSZ-ADB0UFYOFPEnQ@mail.gmail.com>
+ <20210203135827.GZ308988@casper.infradead.org> <CAJfpegvHFHcCPtyJ+w6uRx+hLH9JAT46WJktF_nez-ZZAria7A@mail.gmail.com>
+ <20210203142802.GA308988@casper.infradead.org> <CAJfpegtW5-XObARX87A8siTJNxTCkzXG=QY5tTRXVUvHXXZn3g@mail.gmail.com>
+ <20210203145620.GB308988@casper.infradead.org>
+In-Reply-To: <20210203145620.GB308988@casper.infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 3 Feb 2021 16:03:06 +0100
+Message-ID: <CAJfpegvV19DT+nQcW5OiLsGWjnp9-DoLAY16S60PewSLcKLTMA@mail.gmail.com>
+Subject: Re: [PATCH 00/18] new API for FS_IOC_[GS]ETFLAGS/FS_IOC_FS[GS]ETXATTR
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -45,58 +68,28 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         Mike Marshall <hubcap@omnibond.com>,
         Richard Weinberger <richard@nod.at>,
         Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>, Tyler Hicks <code@tyhicks.com>
-Subject: Re: [PATCH 00/18] new API for FS_IOC_[GS]ETFLAGS/FS_IOC_FS[GS]ETXATTR
-Message-ID: <20210203145620.GB308988@casper.infradead.org>
-References: <20210203124112.1182614-1-mszeredi@redhat.com>
- <20210203130501.GY308988@casper.infradead.org>
- <CAJfpegs3YWybmH7iKDLQ-KwmGieS1faO1uSZ-ADB0UFYOFPEnQ@mail.gmail.com>
- <20210203135827.GZ308988@casper.infradead.org>
- <CAJfpegvHFHcCPtyJ+w6uRx+hLH9JAT46WJktF_nez-ZZAria7A@mail.gmail.com>
- <20210203142802.GA308988@casper.infradead.org>
- <CAJfpegtW5-XObARX87A8siTJNxTCkzXG=QY5tTRXVUvHXXZn3g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtW5-XObARX87A8siTJNxTCkzXG=QY5tTRXVUvHXXZn3g@mail.gmail.com>
+        "Theodore Ts'o" <tytso@mit.edu>, Tyler Hicks <code@tyhicks.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 03, 2021 at 03:38:54PM +0100, Miklos Szeredi wrote:
-> On Wed, Feb 3, 2021 at 3:28 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Wed, Feb 03, 2021 at 03:13:29PM +0100, Miklos Szeredi wrote:
-> > > On Wed, Feb 3, 2021 at 2:58 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > > Network filesystems frequently need to use the credentials attached to
-> > > > a struct file in order to communicate with the server.  There's no point
-> > > > fighting this reality.
-> > >
-> > > IDGI.  Credentials can be taken from the file and from the task.  In
-> > > this case every filesystem except cifs looks at task creds. Why are
-> > > network filesystem special in this respect?
-> >
-> > I don't necessarily mean 'struct cred'.  I mean "the authentication
-> > that the client has performed to the server".  Which is not a per-task
-> > thing, it's stored in the struct file, which is why we have things like
-> >
-> >         int (*write_begin)(struct file *, struct address_space *mapping,
-> >                                 loff_t pos, unsigned len, unsigned flags,
-> >                                 struct page **pagep, void **fsdata);
-> >
-> > disk filesystems ignore the struct file argument, but network filesystems
-> > very much use it.
-> 
-> Fine for file I/O.  That's authorized at open time for all
-> filesystems, not just network ones.
-> 
-> Not fine for metadata operations (IMO).   I.e. ->[gs]etattr() don't
-> take a file argument either, even though on the uAPI there are plenty
-> of open file based variants.
+On Wed, Feb 3, 2021 at 3:56 PM Matthew Wilcox <willy@infradead.org> wrote:
 
-That's a fine statement of principle, but if the filesystem needs to
-contact the server, then your principle must accede to reality.
+> But let's talk specifics.  What does CIFS need to contact the server for?
+> Could it be cached earlier?
 
-But let's talk specifics.  What does CIFS need to contact the server for?
-Could it be cached earlier?
+I don't understand what CIFS is doing, and I don't really care.   This
+is the sort of operation where adding a couple of network roundtrips
+so that the client can obtain the credentials required to perform the
+operation doesn't really matter.  We won't have thousands of chattr(1)
+calls per second.
+
+So I think the principle is more important than the details of the
+current implementation.
+
+And I'm saying that knowing that fixing up FUSE will be my
+responsibility and it won't be trivial either.
+
+Thanks,
+Miklos
