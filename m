@@ -2,257 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1A3C30D5E6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 10:11:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88A1130D601
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 10:15:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232951AbhBCJKp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Feb 2021 04:10:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42438 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233280AbhBCJJN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Feb 2021 04:09:13 -0500
-Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0321C061794
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Feb 2021 01:07:53 -0800 (PST)
-Received: by mail-pf1-x44a.google.com with SMTP id 137so15646080pfw.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Feb 2021 01:07:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=aacYYvBrsO89246VG7kwqo+UEXeIJ89FcRhL6OJu++c=;
-        b=pN/zjW9WW+TyD9lbKiOtFxDGJFcLXOUEk8mf4j4LL2nKVCYXWHgvcFMAIDORtfvxjR
-         ab3D51qsSlSJFu8gkhH1ug3grudzV/43vairsH8wHF9Ox8zgf/d4SiVVCBN+3PrNqV0R
-         YB2rujh4TnKXkkIiaDcAWTKoE4FtaH3x9IUUceBso37WVLyA+Rm4352hhfTAcvmLwxil
-         xxmxtYhk/nI96yrAAvcZKKm5Kw7YJWrKOe7oYYPugQEROAh512qFLoJIWgW24rtDPOvL
-         hdiNl7bLuddHHdxG+IQfcVfFT3bO2DKY2gKKdC6Rmc4zWzecF2ZeCFuHP9yYkjLckSk5
-         CFQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=aacYYvBrsO89246VG7kwqo+UEXeIJ89FcRhL6OJu++c=;
-        b=fbPpHoOeEz1uWkMzZCPFOgdf8UH7zXaqX5jIrtUu8J91ATCQ4ge7dDPr/rLDO1wM6H
-         Ud0A7C7/nzDYiOz7vWrhMutiRW2SE4Kg8dO5LZwM/wUbfUAOu5Qz1/EUx/vS0sfX617U
-         4URmn1SIe7FvYY7uiIaek7aqKbmXK7F2/6RaWlTVp8zLdZ8TAqkhzEaYfQk7cfl2tf0P
-         VpWAe6DZ+EKFpgFRRkP2KILS2DMp+86QK7YdWOkQOcKFmU2HVj4Zjhe52YQ3+1p4xAe5
-         Zsc7X/WQoBM46jguols+D/KKAErlel8npWgODF8r4BfYXSvlPyXEWBms1WkfRTkvtwVj
-         6yWQ==
-X-Gm-Message-State: AOAM531svvNb2ebjE+zF74rFH/k9Kg4HovUyviDOv0q9NCgoiSShSsG+
-        aOgoEtjv7Ug/13XAdXHnTRQvXNKRDnA=
-X-Google-Smtp-Source: ABdhPJw5vmAJE95kY1WlsgmFy7c+dcSAbpT0DRm2voYp9n6Cnu4XTnhuwz73/Pa5zmYCrpk77Md1S67BpU8=
-Sender: "drosen via sendgmr" <drosen@drosen.c.googlers.com>
-X-Received: from drosen.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:4e6f])
- (user=drosen job=sendgmr) by 2002:a17:90a:3b44:: with SMTP id
- t4mr87542pjf.1.1612343272973; Wed, 03 Feb 2021 01:07:52 -0800 (PST)
-Date:   Wed,  3 Feb 2021 09:07:45 +0000
-In-Reply-To: <20210203090745.4103054-1-drosen@google.com>
-Message-Id: <20210203090745.4103054-3-drosen@google.com>
-Mime-Version: 1.0
-References: <20210203090745.4103054-1-drosen@google.com>
-X-Mailer: git-send-email 2.30.0.365.g02bc693789-goog
-Subject: [PATCH 2/2] ext4: Optimize match for casefolded encrypted dirs
-From:   Daniel Rosenberg <drosen@google.com>
-To:     "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>,
-        Paul Lawrence <paullawrence@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S233284AbhBCJN4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Feb 2021 04:13:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42272 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233208AbhBCJNM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Feb 2021 04:13:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1612343545; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zc3hq7uDsgQ0b+vRRJzp2lKKXI9473aJH0r0Js1Sba8=;
+        b=HpVLWbDI2jrNX+ptbYXzVMjwEnvzT3tSDstsq31vn45eKVS7LJjYVzwqj1uQ2gr6lLmqUT
+        bC8zchNPhAk8QJcRoCgvPjBBGQ1e/qoJChvnC3zjw9HWM74APhhMECX1FCKKYKCE1otg6M
+        cOV8/W7XZopQR2+Wl4/NVeGMFzXcJ6g=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id CDE7CB0EA;
+        Wed,  3 Feb 2021 09:12:24 +0000 (UTC)
+Date:   Wed, 3 Feb 2021 10:12:22 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize
+ direct map fragmentation
+Message-ID: <YBpo9mC5feVQ0mpG@dhcp22.suse.cz>
+References: <20210126120823.GM827@dhcp22.suse.cz>
+ <20210128092259.GB242749@kernel.org>
+ <YBK1kqL7JA7NePBQ@dhcp22.suse.cz>
+ <73738cda43236b5ac2714e228af362b67a712f5d.camel@linux.ibm.com>
+ <YBPF8ETGBHUzxaZR@dhcp22.suse.cz>
+ <6de6b9f9c2d28eecc494e7db6ffbedc262317e11.camel@linux.ibm.com>
+ <YBkcyQsky2scjEcP@dhcp22.suse.cz>
+ <20210202124857.GN242749@kernel.org>
+ <YBlTMqjB06aqyGbT@dhcp22.suse.cz>
+ <20210202191040.GP242749@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210202191040.GP242749@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matching names with casefolded encrypting directories requires
-decrypting entries to confirm case since we are case preserving. We can
-avoid needing to decrypt if our hash values don't match.
+On Tue 02-02-21 21:10:40, Mike Rapoport wrote:
+> On Tue, Feb 02, 2021 at 02:27:14PM +0100, Michal Hocko wrote:
+> > On Tue 02-02-21 14:48:57, Mike Rapoport wrote:
+> > > On Tue, Feb 02, 2021 at 10:35:05AM +0100, Michal Hocko wrote:
+> > > > On Mon 01-02-21 08:56:19, James Bottomley wrote:
+> > > > 
+> > > > I have also proposed potential ways out of this. Either the pool is not
+> > > > fixed sized and you make it a regular unevictable memory (if direct map
+> > > > fragmentation is not considered a major problem)
+> > > 
+> > > I think that the direct map fragmentation is not a major problem, and the
+> > > data we have confirms it, so I'd be more than happy to entirely drop the
+> > > pool, allocate memory page by page and remove each page from the direct
+> > > map. 
+> > > 
+> > > Still, we cannot prove negative and it could happen that there is a
+> > > workload that would suffer a lot from the direct map fragmentation, so
+> > > having a pool of large pages upfront is better than trying to fix it
+> > > afterwards. As we get more confidence that the direct map fragmentation is
+> > > not an issue as it is common to believe we may remove the pool altogether.
+> > 
+> > I would drop the pool altogether and instantiate pages to the
+> > unevictable LRU list and internally treat it as ramdisk/mlock so you
+> > will get an accounting correctly. The feature should be still opt-in
+> > (e.g. a kernel command line parameter) for now. The recent report by
+> > Intel (http://lkml.kernel.org/r/213b4567-46ce-f116-9cdf-bbd0c884eb3c@linux.intel.com)
+> > there is no clear win to have huge mappings in _general_ but there are
+> > still workloads which benefit. 
+> >  
+> > > I think that using PMD_ORDER allocations for the pool with a fallback to
+> > > order 0 will do the job, but unfortunately I doubt we'll reach a consensus
+> > > about this because dogmatic beliefs are hard to shake...
+> > 
+> > If this is opt-in then those beliefs can be relaxed somehow. Long term
+> > it makes a lot of sense to optimize for a better direct map management
+> > but I do not think this is a hard requirement for an initial
+> > implementation if it is not imposed to everybody by default.
+> >
+> > > A more restrictive possibility is to still use plain PMD_ORDER allocations
+> > > to fill the pool, without relying on CMA. In this case there will be no
+> > > global secretmem specific pool to exhaust, but then it's possible to drain
+> > > high order free blocks in a system, so CMA has an advantage of limiting
+> > > secretmem pools to certain amount of memory with somewhat higher
+> > > probability for high order allocation to succeed. 
+> > > 
+> > > > or you need a careful access control 
+> > > 
+> > > Do you mind elaborating what do you mean by "careful access control"?
+> > 
+> > As already mentioned, a mechanism to control who can use this feature -
+> > e.g. make it a special device which you can access control by
+> > permissions or higher level security policies. But that is really needed
+> > only if the pool is fixed sized.
+>   
+> Let me reiterate to make sure I don't misread your suggestion.
+> 
+> If we make secretmem an opt-in feature with, e.g. kernel parameter, the
+> pooling of large pages is unnecessary. In this case there is no limited
+> resource we need to protect because secretmem will allocate page by page.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Signed-off-by: Paul Lawrence <paullawrence@google.com>
----
- fs/ext4/ext4.h  | 17 ++++++++-------
- fs/ext4/namei.c | 55 ++++++++++++++++++++++++++-----------------------
- 2 files changed, 38 insertions(+), 34 deletions(-)
+Yes.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 90a2c182e4d7..997f80cfe5df 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2637,9 +2637,9 @@ extern unsigned ext4_free_clusters_after_init(struct super_block *sb,
- ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
- 
- #ifdef CONFIG_UNICODE
--extern void ext4_fname_setup_ci_filename(struct inode *dir,
-+extern int ext4_fname_setup_ci_filename(struct inode *dir,
- 					 const struct qstr *iname,
--					 struct fscrypt_str *fname);
-+					 struct ext4_filename *fname);
- #endif
- 
- #ifdef CONFIG_FS_ENCRYPTION
-@@ -2670,9 +2670,9 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 	ext4_fname_from_fscrypt_name(fname, &name);
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, iname, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, iname, fname);
- #endif
--	return 0;
-+	return err;
- }
- 
- static inline int ext4_fname_prepare_lookup(struct inode *dir,
-@@ -2689,9 +2689,9 @@ static inline int ext4_fname_prepare_lookup(struct inode *dir,
- 	ext4_fname_from_fscrypt_name(fname, &name);
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, &dentry->d_name, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
- #endif
--	return 0;
-+	return err;
- }
- 
- static inline void ext4_fname_free_filename(struct ext4_filename *fname)
-@@ -2716,15 +2716,16 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 					    int lookup,
- 					    struct ext4_filename *fname)
- {
-+	int err = 0;
- 	fname->usr_fname = iname;
- 	fname->disk_name.name = (unsigned char *) iname->name;
- 	fname->disk_name.len = iname->len;
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, iname, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, iname, fname);
- #endif
- 
--	return 0;
-+	return err;
- }
- 
- static inline int ext4_fname_prepare_lookup(struct inode *dir,
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 00b0b0cb4600..ff024bb613c0 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -799,7 +799,9 @@ dx_probe(struct ext4_filename *fname, struct inode *dir,
- 	if (hinfo->hash_version <= DX_HASH_TEA)
- 		hinfo->hash_version += EXT4_SB(dir->i_sb)->s_hash_unsigned;
- 	hinfo->seed = EXT4_SB(dir->i_sb)->s_hash_seed;
--	if (fname && fname_name(fname))
-+	/* hash is already computed for encrypted casefolded directory */
-+	if (fname && fname_name(fname) &&
-+				!(IS_ENCRYPTED(dir) && IS_CASEFOLDED(dir)))
- 		ext4fs_dirhash(dir, fname_name(fname), fname_len(fname), hinfo);
- 	hash = hinfo->hash;
- 
-@@ -1364,19 +1366,21 @@ static int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
- 	return ret;
- }
- 
--void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
--				  struct fscrypt_str *cf_name)
-+int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
-+				  struct ext4_filename *name)
- {
-+	struct fscrypt_str *cf_name = &name->cf_name;
-+	struct dx_hash_info *hinfo = &name->hinfo;
- 	int len;
- 
- 	if (!IS_CASEFOLDED(dir) || !dir->i_sb->s_encoding) {
- 		cf_name->name = NULL;
--		return;
-+		return 0;
- 	}
- 
- 	cf_name->name = kmalloc(EXT4_NAME_LEN, GFP_NOFS);
- 	if (!cf_name->name)
--		return;
-+		return -ENOMEM;
- 
- 	len = utf8_casefold(dir->i_sb->s_encoding,
- 			    iname, cf_name->name,
-@@ -1384,10 +1388,18 @@ void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
- 	if (len <= 0) {
- 		kfree(cf_name->name);
- 		cf_name->name = NULL;
--		return;
- 	}
- 	cf_name->len = (unsigned) len;
-+	if (!IS_ENCRYPTED(dir))
-+		return 0;
- 
-+	hinfo->hash_version = DX_HASH_SIPHASH;
-+	hinfo->seed = NULL;
-+	if (cf_name->name)
-+		ext4fs_dirhash(dir, cf_name->name, cf_name->len, hinfo);
-+	else
-+		ext4fs_dirhash(dir, iname->name, iname->len, hinfo);
-+	return 0;
- }
- #endif
- 
-@@ -1417,16 +1429,12 @@ static bool ext4_match(struct inode *parent,
- 			struct qstr cf = {.name = fname->cf_name.name,
- 					  .len = fname->cf_name.len};
- 			if (IS_ENCRYPTED(parent)) {
--				struct dx_hash_info hinfo;
--
--				hinfo.hash_version = DX_HASH_SIPHASH;
--				hinfo.seed = NULL;
--				ext4fs_dirhash(parent, fname->cf_name.name,
--						fname_len(fname), &hinfo);
--				if (hinfo.hash != EXT4_DIRENT_HASH(de) ||
--						hinfo.minor_hash !=
--						    EXT4_DIRENT_MINOR_HASH(de))
-+				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
-+					fname->hinfo.minor_hash !=
-+						EXT4_DIRENT_MINOR_HASH(de)) {
-+
- 					return 0;
-+				}
- 			}
- 			return !ext4_ci_compare(parent, &cf, de->name,
- 							de->name_len, true);
-@@ -2061,15 +2069,11 @@ void ext4_insert_dentry(struct inode *dir,
- 	de->name_len = fname_len(fname);
- 	memcpy(de->name, fname_name(fname), fname_len(fname));
- 	if (ext4_hash_in_dirent(dir)) {
--		struct dx_hash_info hinfo;
-+		struct dx_hash_info *hinfo = &fname->hinfo;
- 
--		hinfo.hash_version = DX_HASH_SIPHASH;
--		hinfo.seed = NULL;
--		ext4fs_dirhash(dir, fname_usr_name(fname),
--				fname_len(fname), &hinfo);
--		EXT4_DIRENT_HASHES(de)->hash = cpu_to_le32(hinfo.hash);
-+		EXT4_DIRENT_HASHES(de)->hash = cpu_to_le32(hinfo->hash);
- 		EXT4_DIRENT_HASHES(de)->minor_hash =
--				cpu_to_le32(hinfo.minor_hash);
-+						cpu_to_le32(hinfo->minor_hash);
- 	}
- }
- 
-@@ -2220,10 +2224,9 @@ static int make_indexed_dir(handle_t *handle, struct ext4_filename *fname,
- 	if (fname->hinfo.hash_version <= DX_HASH_TEA)
- 		fname->hinfo.hash_version += EXT4_SB(dir->i_sb)->s_hash_unsigned;
- 	fname->hinfo.seed = EXT4_SB(dir->i_sb)->s_hash_seed;
--	if (ext4_hash_in_dirent(dir))
--		ext4fs_dirhash(dir, fname_usr_name(fname),
--				fname_len(fname), &fname->hinfo);
--	else
-+
-+	/* casefolded encrypted hashes are computed on fname setup */
-+	if (!ext4_hash_in_dirent(dir))
- 		ext4fs_dirhash(dir, fname_name(fname),
- 				fname_len(fname), &fname->hinfo);
- 
+> Since there is no limited resource, we don't need special permissions
+> to access secretmem so we can move forward with a system call that creates
+> a mmapable file descriptor and save the hassle of a chardev.
+
+Yes, I assume you implicitly assume mlock rlimit here. Also memcg
+accounting should be in place. Wrt to the specific syscall, please
+document why existing interfaces are not a good fit as well. It would be
+also great to describe interaction with mlock itself (I assume the two
+to be incompatible - mlock will fail on and mlockall will ignore it).
+
+> I cannot say I don't like this as it cuts roughly half of mm/secretmem.c :)
+> 
+> But I must say I am still a bit concerned about that we have no provisions
+> here for dealing with the direct map fragmentation even with the set goal
+> to improve the direct map management in the long run...
+
+Yes that is something that will be needed long term. I do not think this
+is strictly necessary for the initial submission, though. The
+implementation should be as simple as possible now and complexity added
+on top.
 -- 
-2.30.0.365.g02bc693789-goog
-
+Michal Hocko
+SUSE Labs
