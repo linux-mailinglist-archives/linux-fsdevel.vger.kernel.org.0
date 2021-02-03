@@ -2,105 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAE8A30DF1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 17:04:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D601230DFC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 17:33:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234792AbhBCQEa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Feb 2021 11:04:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47482 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234791AbhBCQEV (ORCPT
+        id S233920AbhBCQc1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Feb 2021 11:32:27 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:48832 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231571AbhBCQcY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Feb 2021 11:04:21 -0500
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72579C061573
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Feb 2021 08:03:24 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id v19so17724930pgj.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Feb 2021 08:03:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=0gWBL/eKNx2OZCYn91QXaSCmyWxGaTKIKa0SQUOL4Rc=;
-        b=Y5qhogWEOYyCzqiRESQmo9Q3Ipm48K2LCotJy/xfds2wvGrnQkdRKBN9iI/eejSwSV
-         KZoZL8wkgzoNklDUUs9M4GMfLypJ2BHPpocs4447qwjUSD19E+s9p8+CZYLsN8wkGR6d
-         B9vxNJcTN2kto+15lSFEfioKxTTpAtQoxoqzW0NqCFZq1GU6eXtul4mI+LerA92QCvN+
-         b6L19l+6mROViWz9PWHe3kH3I1BLmiE3tL+x40WWOEtozyQiJ8kYX3t2HO3ydEQeQIVs
-         pGdTadpT6ILGFm/FZHvBhZb7IIIy7jlfckzB73sW2HNH3ed5AftaRqAL/p/6CGyLzkgR
-         ywKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0gWBL/eKNx2OZCYn91QXaSCmyWxGaTKIKa0SQUOL4Rc=;
-        b=bI0HNjmtOsVHltLvAYJAkGUHKQINZGQ8fBhM8I1jmHySzHu4qcAhWJ9KX2WCa+yXL4
-         YFsNxWPPdbgCD/yJSWweaWhoTD59AQBMPfxjYrynW8ieSa7OZFaGl2ZNwoffIT0v3aUy
-         dr6Pb9/p25tZd52vUgV0SqKMz4Qkn2DOyI77OPKe7TAqJ6KJqp7oySUWUKm3NLqeoXDW
-         16wDN6hjXBQYRqAsdgvo5Cg/x5dvx3tS3stpO4iPXS/W4HBrGZeo/jDa2oXZsWq5vTF5
-         Cq5e30bt5hKqJzDHjCYwjbPBQW6VA2mxMV0HLva2Ok953zDg0o5KztbMXl4QNCPwSkJv
-         s9FQ==
-X-Gm-Message-State: AOAM531H9DaYAsZCrDE5LGApO2qCVsWOgLJauYkAHQdCud9tOj/hJGMR
-        euV+XxERaKvYEYxdJNWuYSc81A==
-X-Google-Smtp-Source: ABdhPJyb1dkIJejo7I2tX9/WXWn6AAkQ+Fo3iGdanmapXAiFMejRbp30LA0FxNkd342pnC6IgB2Bbg==
-X-Received: by 2002:a63:1863:: with SMTP id 35mr4418013pgy.191.1612368203947;
-        Wed, 03 Feb 2021 08:03:23 -0800 (PST)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:1510])
-        by smtp.gmail.com with ESMTPSA id 21sm2573808pfu.136.2021.02.03.08.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Feb 2021 08:03:22 -0800 (PST)
-Date:   Wed, 3 Feb 2021 08:03:20 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v7 00/10] fs: interface for directly reading/writing
- compressed data
-Message-ID: <YBrJSFURu8TUIzCU@relinquished.localdomain>
-References: <cover.1611346706.git.osandov@fb.com>
- <7ce164cd-e849-80d8-3d9e-8a9987dc3ad9@toxicpanda.com>
+        Wed, 3 Feb 2021 11:32:24 -0500
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 113GVSIH004657
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 3 Feb 2021 11:31:29 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 76B1C15C39E2; Wed,  3 Feb 2021 11:31:28 -0500 (EST)
+Date:   Wed, 3 Feb 2021 11:31:28 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com, Paul Lawrence <paullawrence@google.com>
+Subject: Re: [PATCH 1/2] ext4: Handle casefolding with encryption
+Message-ID: <YBrP4NXAsvveIpwA@mit.edu>
+References: <20210203090745.4103054-2-drosen@google.com>
+ <56BC7E2D-A303-45AE-93B6-D8921189F604@dilger.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7ce164cd-e849-80d8-3d9e-8a9987dc3ad9@toxicpanda.com>
+In-Reply-To: <56BC7E2D-A303-45AE-93B6-D8921189F604@dilger.ca>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 29, 2021 at 11:32:06AM -0500, Josef Bacik wrote:
-> On 1/22/21 3:46 PM, Omar Sandoval wrote:
-> > From: Omar Sandoval <osandov@fb.com>
-> > 
-> > This series adds an API for reading compressed data on a filesystem
-> > without decompressing it as well as support for writing compressed data
-> > directly to the filesystem. As with the previous submissions, I've
-> > included a man page patch describing the API. I have test cases
-> > (including fsstress support) and example programs which I'll send up
-> > [1].
-> > 
-> > The main use-case is Btrfs send/receive: currently, when sending data
-> > from one compressed filesystem to another, the sending side decompresses
-> > the data and the receiving side recompresses it before writing it out.
-> > This is wasteful and can be avoided if we can just send and write
-> > compressed extents. The patches implementing the send/receive support
-> > will be sent shortly.
-> > 
-> > Patches 1-3 add the VFS support and UAPI. Patch 4 is a fix that this
-> > series depends on; it can be merged independently. Patches 5-8 are Btrfs
-> > prep patches. Patch 9 adds Btrfs encoded read support and patch 10 adds
-> > Btrfs encoded write support.
-> > 
-> > These patches are based on Dave Sterba's Btrfs misc-next branch [2],
-> > which is in turn currently based on v5.11-rc4.
-> > 
+On Wed, Feb 03, 2021 at 03:55:06AM -0700, Andreas Dilger wrote:
 > 
-> Is everybody OK with this?  Al?  I would like to go ahead and get this
-> merged for the next merge window as long as everybody is OK with it, as it's
-> blocking a fair bit of BTRFS work.  Thanks,
+> It looks like this change will break the dirdata feature, which is similarly
+> storing a data field beyond the end of the dirent. However, that feature also
+> provides for flags stored in the high bits of the type field to indicate
+> which of the fields are in use there.
+> The first byte of each field stores
+> the length, so it can be skipped even if the content is not understood.
 
-Ping. Al, Christoph, any thoughts?
+Daniel, for context, the dirdata field is an out-of-tree feature which
+is used by Lustre, and so has fairly large deployed base.  So if there
+is a way that we can accomodate not breaking dirdata, that would be
+good.
+
+Did the ext4 casefold+encryption implementation escape out to any
+Android handsets?
+
+Thanks,
+
+					- Ted
