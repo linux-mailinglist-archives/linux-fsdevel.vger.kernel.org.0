@@ -2,102 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C279730D9A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 13:16:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8652A30D9FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Feb 2021 13:44:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234381AbhBCMQx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Feb 2021 07:16:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43316 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234322AbhBCMQw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Feb 2021 07:16:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1612354564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CWryIVYU+uhWQij5Zedr+mthwADlpM4pzIqLbc2PJTE=;
-        b=ZO1FDrig5tnUD0sD709rRk12j9b+f6/535vnUH3W+CDbRbO/2c6Kc8pifEUT1BMziNVfXa
-        CPTfjc6g/FfslyAYggad3k3ARdbimmNlG06TOX0F6IyHHo/BNMtx/NehxH/OCa8d7HxX5C
-        VpPnKpOaRmZ4e14jLHdyuC1KXNF7S80=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E0430B17A;
-        Wed,  3 Feb 2021 12:16:03 +0000 (UTC)
-Date:   Wed, 3 Feb 2021 13:15:58 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v16 06/11] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-ID: <YBqT/nwFpfP2EyeJ@dhcp22.suse.cz>
-References: <20210121122723.3446-1-rppt@kernel.org>
- <20210121122723.3446-7-rppt@kernel.org>
+        id S230106AbhBCMnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Feb 2021 07:43:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42986 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229692AbhBCMnC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Feb 2021 07:43:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612356095;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=eaHavqdLzNN4HIXolByqIWIQT4TrE3vDVyTXfXQ1h/o=;
+        b=TCMfTBfo/hGwUqGnaUxz1rbbL5x8yaZ2k4DE/XPXQO7z5rfvvDoTp+I6kkIjOZnv/GwPE/
+        uHZ75BKdtsuYLlKX4J4ohZSDc1vlUVyQbe3FL9Caz5S6JWxiU1JKo9KxDaQPNP6NQh/wLs
+        coIaGIvKHpVk6VQzh3TLVksKRVJapeo=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-406-rFy-n5SnMTmAqDoAmM1lcA-1; Wed, 03 Feb 2021 07:41:34 -0500
+X-MC-Unique: rFy-n5SnMTmAqDoAmM1lcA-1
+Received: by mail-ej1-f69.google.com with SMTP id le12so11928090ejb.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Feb 2021 04:41:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eaHavqdLzNN4HIXolByqIWIQT4TrE3vDVyTXfXQ1h/o=;
+        b=O6Pvzsx0RJPszEvwdZlY2hnjNWZruTxxoglL5VPzKFMIEKjA+ApTum6tZDzlkhOixp
+         nlM5A0TkMJATPhCPKSuKKNyFBpAhXVT2tph0qf0K1jvQRrRwpsKcaWtu7JkqguAXalqi
+         BWU2KTrDttwlHifJV4+F8Unwe5NWzMTy3vjBxxP0wNdGucZKtUdYvWMSPNH++7jGvzaU
+         K0/m7WRBDsT4dpP1tyFEeec/o4sWYt8T+meus9+246aSAiRTfhMSBy6EkY4789bqgUBN
+         osTSlQTrtAsuV+3OC9UyEWM3yw92NCMdG17eBfRzc3am6vJI1BIlGlrtEelh7DKwnQ/X
+         OaMQ==
+X-Gm-Message-State: AOAM531MRDU+hP6QLWgbqEBoN5ih8L50P1Y9Z2XIQShMPfeWO7vveEQO
+        5YxuK0vsILItv/iUXoBH8GwUNGurPzCY1Coo0Os+0zalcQLdLRYXDiLILCmohDEsVcbSSZS5OBt
+        ZvTqGcDNdQ8Z+xAKyk8bMfSJAssjdyXJbC0bzp1S1TV144Y89aoSJLB8J7Cm5iTGBfZnX4gQHhr
+        fNww==
+X-Received: by 2002:a17:906:5653:: with SMTP id v19mr733200ejr.481.1612356092442;
+        Wed, 03 Feb 2021 04:41:32 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyRXVedxTX98WUSw33tq7PLwSR8WbTWYfniFQx78sLmuewEdVI4H9cmtLKSUszoYJVf8TMoRw==
+X-Received: by 2002:a17:906:5653:: with SMTP id v19mr733179ejr.481.1612356092264;
+        Wed, 03 Feb 2021 04:41:32 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
+        by smtp.gmail.com with ESMTPSA id u9sm953320ejc.57.2021.02.03.04.41.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Feb 2021 04:41:31 -0800 (PST)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Joel Becker <jlbec@evilplan.org>,
+        Matthew Garrett <matthew.garrett@nebula.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Richard Weinberger <richard@nod.at>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Tyler Hicks <code@tyhicks.com>
+Subject: [PATCH 00/18] new API for FS_IOC_[GS]ETFLAGS/FS_IOC_FS[GS]ETXATTR
+Date:   Wed,  3 Feb 2021 13:40:54 +0100
+Message-Id: <20210203124112.1182614-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210121122723.3446-7-rppt@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 21-01-21 14:27:18, Mike Rapoport wrote:
-> +static struct file *secretmem_file_create(unsigned long flags)
-> +{
-> +	struct file *file = ERR_PTR(-ENOMEM);
-> +	struct secretmem_ctx *ctx;
-> +	struct inode *inode;
-> +
-> +	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-> +	if (IS_ERR(inode))
-> +		return ERR_CAST(inode);
-> +
-> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		goto err_free_inode;
-> +
-> +	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
-> +				 O_RDWR, &secretmem_fops);
-> +	if (IS_ERR(file))
-> +		goto err_free_ctx;
-> +
-> +	mapping_set_unevictable(inode->i_mapping);
+This series adds the infrastructure and conversion of filesystems to the
+new API.
 
-Btw. you need also mapping_set_gfp_mask(mapping, GFP_HIGHUSER) because
-the default is GFP_HIGHUSER_MOVABLE and you do not support migration so
-no pages from movable zones should be allowed.
+Two filesystems are not converted: FUSE and CIFS, as they behave
+differently from local filesystems (use the file pointer, don't perform
+permission checks).  It's likely that these two can be supported with minor
+changes to the API, but this requires more thought.
+
+Quick xfstests on ext4, xfs and overlayfs didn't show any regressions.
+Other filesystems were only compile tested.
+
+Git tree is available here:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#miscattr
+
+---
+Miklos Szeredi (18):
+  vfs: add miscattr ops
+  ecryptfs: stack miscattr ops
+  ovl: stack miscattr
+  btrfs: convert to miscattr
+  ext2: convert to miscattr
+  ext4: convert to miscattr
+  f2fs: convert to miscattr
+  gfs2: convert to miscattr
+  orangefs: convert to miscattr
+  xfs: convert to miscattr
+  efivars: convert to miscattr
+  hfsplus: convert to miscattr
+  jfs: convert to miscattr
+  nilfs2: convert to miscattr
+  ocfs2: convert to miscattr
+  reiserfs: convert to miscattr
+  ubifs: convert to miscattr
+  vfs: remove unused ioctl helpers
+
+ Documentation/filesystems/locking.rst |   4 +
+ Documentation/filesystems/vfs.rst     |  14 ++
+ fs/btrfs/ctree.h                      |   2 +
+ fs/btrfs/inode.c                      |   4 +
+ fs/btrfs/ioctl.c                      | 248 ++++---------------
+ fs/ecryptfs/inode.c                   |  21 ++
+ fs/efivarfs/file.c                    |  77 ------
+ fs/efivarfs/inode.c                   |  43 ++++
+ fs/ext2/ext2.h                        |   6 +-
+ fs/ext2/file.c                        |   2 +
+ fs/ext2/ioctl.c                       |  85 +++----
+ fs/ext2/namei.c                       |   2 +
+ fs/ext4/ext4.h                        |  11 +-
+ fs/ext4/file.c                        |   2 +
+ fs/ext4/ioctl.c                       | 209 ++++------------
+ fs/ext4/namei.c                       |   2 +
+ fs/f2fs/f2fs.h                        |   2 +
+ fs/f2fs/file.c                        | 212 +++--------------
+ fs/f2fs/namei.c                       |   2 +
+ fs/gfs2/file.c                        |  56 +----
+ fs/gfs2/inode.c                       |   4 +
+ fs/gfs2/inode.h                       |   2 +
+ fs/hfsplus/dir.c                      |   2 +
+ fs/hfsplus/hfsplus_fs.h               |  13 +-
+ fs/hfsplus/inode.c                    |  53 +++++
+ fs/hfsplus/ioctl.c                    |  84 -------
+ fs/inode.c                            |  87 -------
+ fs/ioctl.c                            | 329 ++++++++++++++++++++++++++
+ fs/jfs/file.c                         |   6 +-
+ fs/jfs/ioctl.c                        | 104 +++-----
+ fs/jfs/jfs_dinode.h                   |   7 -
+ fs/jfs/jfs_inode.h                    |   3 +-
+ fs/jfs/namei.c                        |   6 +-
+ fs/nilfs2/file.c                      |   2 +
+ fs/nilfs2/ioctl.c                     |  60 ++---
+ fs/nilfs2/namei.c                     |   2 +
+ fs/nilfs2/nilfs.h                     |   2 +
+ fs/ocfs2/file.c                       |   2 +
+ fs/ocfs2/ioctl.c                      |  58 ++---
+ fs/ocfs2/ioctl.h                      |   2 +
+ fs/ocfs2/namei.c                      |   3 +
+ fs/ocfs2/ocfs2_ioctl.h                |   8 -
+ fs/orangefs/file.c                    |  79 -------
+ fs/orangefs/inode.c                   |  49 ++++
+ fs/overlayfs/dir.c                    |   2 +
+ fs/overlayfs/inode.c                  |  43 ++++
+ fs/overlayfs/overlayfs.h              |   2 +
+ fs/reiserfs/file.c                    |   2 +
+ fs/reiserfs/ioctl.c                   | 120 +++++-----
+ fs/reiserfs/namei.c                   |   2 +
+ fs/reiserfs/reiserfs.h                |   6 +-
+ fs/reiserfs/super.c                   |   2 +-
+ fs/ubifs/dir.c                        |   2 +
+ fs/ubifs/file.c                       |   2 +
+ fs/ubifs/ioctl.c                      |  73 +++---
+ fs/ubifs/ubifs.h                      |   2 +
+ fs/xfs/libxfs/xfs_fs.h                |   4 -
+ fs/xfs/xfs_ioctl.c                    | 294 +++++++----------------
+ fs/xfs/xfs_ioctl.h                    |  10 +
+ fs/xfs/xfs_ioctl32.c                  |   2 -
+ fs/xfs/xfs_ioctl32.h                  |   2 -
+ fs/xfs/xfs_iops.c                     |   7 +
+ include/linux/fs.h                    |  15 +-
+ include/linux/miscattr.h              |  52 ++++
+ 64 files changed, 1097 insertions(+), 1518 deletions(-)
+ create mode 100644 include/linux/miscattr.h
 
 -- 
-Michal Hocko
-SUSE Labs
+2.26.2
+
