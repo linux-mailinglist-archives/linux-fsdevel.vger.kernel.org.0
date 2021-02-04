@@ -2,33 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 427E330F250
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 12:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9957B30F26B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 12:39:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235993AbhBDLeu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 06:34:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40704 "EHLO mail.kernel.org"
+        id S236012AbhBDLhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 06:37:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235851AbhBDLcn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 06:32:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B8D5A64F43;
-        Thu,  4 Feb 2021 11:31:49 +0000 (UTC)
+        id S235541AbhBDLfa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Feb 2021 06:35:30 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B41964F45;
+        Thu,  4 Feb 2021 11:34:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612438323;
-        bh=2YjywL5SDoEOedQJhLkpDYn35JOZkPUsSSTuGmTvbGc=;
+        s=k20201202; t=1612438488;
+        bh=kdvaYUzyR0twFNgrfjDXxc4xk/nIUc95siq77AcMxUw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kfyPb2gRQK0VJ0bG96IqzhK4wj3EQuLqLz846zpApxcBwm6WX5CtQsTqXRtAiettV
-         Besll6N47ziUztkxZ9uvbAsAManAgkDNtO1dfWhHGfCVtc763gwDqZuV/PJHM4amXe
-         NzZHR6+dZdeHxPTLxYHYjwbMQNb3w6QbyNiepEAxlD0e9d57gxLWScwoHeMOz0zzxT
-         Vme4kodJtOqIlDuUlby8EOucFxgZASr9qI2lvWzc7i6T1yxSrrhOjO19hjpFL65gQr
-         YqgO9vVlRT1CTjfaXTK0DGlZqxa/k2Qn7Vs36jPxV0PXtDTyFjDcxi+38fcdf2VRVr
-         ganUhejqO/Vig==
-Date:   Thu, 4 Feb 2021 13:31:45 +0200
+        b=Sy9fx25cRRyQxUg4PQiuwRqTEHX658JxHyGPHq/88My/x1kvTH4DAJ2aISoI2aXkQ
+         7q4ImT49/hSnXgZZe5nIte5an8yCdFl3/nKBSmL1KtXUQmhK86d+bWvAKpFB/hCPJ+
+         vHFmENUyT6t71Pv7oR0jOWL5QdCiNYnsM7hkVvYdNA83FthQ8MT6l5HSIaqDtEq017
+         v3Uf42+f0Hl/atXgvQESI8GiyyIE+mqMxGUZE9ZuSWQ78rGF9JCQdy6unJPKAA/OZt
+         AfPnD+C9cBVf98rjrYDltnlBiJ+vDveF6Nvs2anXspx7fDGAP1j2/zrNQYpSDiRu3a
+         P3N5VPANbVUIA==
+Date:   Thu, 4 Feb 2021 13:34:32 +0200
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Michal Hocko <mhocko@suse.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andy Lutomirski <luto@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
@@ -36,8 +34,10 @@ Cc:     James Bottomley <jejb@linux.ibm.com>,
         Christopher Lameter <cl@linux.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
         Elena Reshetova <elena.reshetova@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
         "Kirill A. Shutemov" <kirill@shutemov.name>,
         Matthew Wilcox <willy@infradead.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -59,64 +59,48 @@ Cc:     James Bottomley <jejb@linux.ibm.com>,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
         Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v16 07/11] secretmem: use PMD-size pages to amortize
- direct map fragmentation
-Message-ID: <20210204113145.GR242749@kernel.org>
-References: <6653288a-dd02-f9de-ef6a-e8d567d71d53@redhat.com>
- <YBlUXdwV93xMIff6@dhcp22.suse.cz>
- <211f0214-1868-a5be-9428-7acfc3b73993@redhat.com>
- <YBlgCl8MQuuII22w@dhcp22.suse.cz>
- <d4fe580a-ef0e-e13f-9ee4-16fb8b6d65dd@redhat.com>
- <YBlicIupOyPF9f3D@dhcp22.suse.cz>
- <95625b83-f7e2-b27a-2b99-d231338047fb@redhat.com>
- <20210202181546.GO242749@kernel.org>
- <f26a17366194880d58e67d10cb5d7d7fdf2f3c19.camel@linux.ibm.com>
- <YBqSejZ3XbUKFudR@dhcp22.suse.cz>
+Subject: Re: [PATCH v16 06/11] mm: introduce memfd_secret system call to
+ create "secret" memory areas
+Message-ID: <20210204113432.GS242749@kernel.org>
+References: <20210121122723.3446-1-rppt@kernel.org>
+ <20210121122723.3446-7-rppt@kernel.org>
+ <YBqT/nwFpfP2EyeJ@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YBqSejZ3XbUKFudR@dhcp22.suse.cz>
+In-Reply-To: <YBqT/nwFpfP2EyeJ@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 03, 2021 at 01:09:30PM +0100, Michal Hocko wrote:
-> On Tue 02-02-21 10:55:40, James Bottomley wrote:
-> > On Tue, 2021-02-02 at 20:15 +0200, Mike Rapoport wrote:
-> > > On Tue, Feb 02, 2021 at 03:34:29PM +0100, David Hildenbrand wrote:
-> > > > On 02.02.21 15:32, Michal Hocko wrote:
-> > 
-> > Well the safest security statement is that we never expose the data to
-> > the kernel because it's a very clean security statement and easy to
-> > enforce. It's also the easiest threat model to analyse.   Once we do
-> > start exposing the secret to the kernel it alters the threat profile
-> > and the analysis and obviously potentially provides the ROP gadget to
-> > an attacker to do the same. Instinct tells me that the loss of
-> > security doesn't really make up for the ability to swap or migrate but
-> > if there were a case for doing the latter, it would have to be a
-> > security policy of the user (i.e. a user should be able to decide their
-> > data is too sensitive to expose to the kernel).
+On Wed, Feb 03, 2021 at 01:15:58PM +0100, Michal Hocko wrote:
+> On Thu 21-01-21 14:27:18, Mike Rapoport wrote:
+> > +static struct file *secretmem_file_create(unsigned long flags)
+> > +{
+> > +	struct file *file = ERR_PTR(-ENOMEM);
+> > +	struct secretmem_ctx *ctx;
+> > +	struct inode *inode;
+> > +
+> > +	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
+> > +	if (IS_ERR(inode))
+> > +		return ERR_CAST(inode);
+> > +
+> > +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> > +	if (!ctx)
+> > +		goto err_free_inode;
+> > +
+> > +	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
+> > +				 O_RDWR, &secretmem_fops);
+> > +	if (IS_ERR(file))
+> > +		goto err_free_ctx;
+> > +
+> > +	mapping_set_unevictable(inode->i_mapping);
 > 
-> The security/threat model should be documented in the changelog as
-> well. I am not a security expert but I would tend to agree that not
-> allowing even temporal mapping for data copying (in the kernel) is the
-> most robust approach. Whether that is generally necessary for users I do
-> not know.
-> 
-> From the API POV I think it makes sense to have two
-> modes. NEVER_MAP_IN_KERNEL which would imply no migrateability, no
-> copy_{from,to}_user, no gup or any other way for the kernel to access
-> content of the memory. Maybe even zero the content on the last unmap to
-> never allow any data leak. ALLOW_TEMPORARY would unmap the page from
-> the direct mapping but it would still allow temporary mappings for
-> data copying inside the kernel (thus allow CoW, copy*user, migration).
-> Which one should be default and which an opt-in I do not know. A less
-> restrictive mode to be default and the more restrictive an opt-in via
-> flags makes a lot of sense to me though.
+> Btw. you need also mapping_set_gfp_mask(mapping, GFP_HIGHUSER) because
+> the default is GFP_HIGHUSER_MOVABLE and you do not support migration so
+> no pages from movable zones should be allowed.
 
-The default is already NEVER_MAP_IN_KERNEL, so there is no explicit flag
-for this. ALLOW_TEMPORARY should be opt-in, IMHO, and we can add it on top
-later on.
+Ok.
 
 -- 
 Sincerely yours,
