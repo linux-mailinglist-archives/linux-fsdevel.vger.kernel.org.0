@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E2830F083
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CCCC30F087
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:25:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235389AbhBDKYf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 05:24:35 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54276 "EHLO
+        id S235427AbhBDKYu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 05:24:50 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54283 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234756AbhBDKYb (ORCPT
+        with ESMTP id S235342AbhBDKYl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 05:24:31 -0500
+        Thu, 4 Feb 2021 05:24:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612434271; x=1643970271;
+  t=1612434281; x=1643970281;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=16Cyxz0AewxnSVyea76nd8i6lD1C3tgvgP+EVto14sQ=;
-  b=GN02HbXTdhTmeHKkamwO04dKQI/FmALwtOveS0bSIS1BH3eyGNyIPAWS
-   7SIKAC3tcisYoYqPCxDHLvuLQAOC0UPSj7mopFZOPzQ0FPcJJFhMUxVvw
-   4KX7lx6+PSWWuY2KY0TsiTmN4hSOxx6DR+6jQSFjjICeHHyIdhGT1Hdhr
-   izisqUg4qx9FxcJMAEMTckTBKRKFQaMMIpXVWIkYf+R9USmxIZJurqsYE
-   sOetO4sTxUh9ClJHioNNaNbHfr0WSvjn+cTo+nb5PcwWEP15S7GgW5SWK
-   WR72hxqKulzylQqryR+DQftyR65QZ5yMFCV8GOXBhE6dkumbRiuFnlB0w
+  bh=TRIIwMxHz8AYXIAQwMcpVIPM838tqUOQe+pVMTcvumU=;
+  b=M1LLpXsv+tU2J8lRVZiBNazUqXDSRYKYeFtPOgCPG5rEfTS03DKRQd3o
+   Vxs9TxJD1um5RpJrmgFhSdG3kKtkTFmxUUXeVjQuFtOmF3/5IK3Mdd1/M
+   1/L5iMz9lyyovbOfCwKzkVkjzAWmNg8gCkOE75QiC3RS56Od99G5JcZ2/
+   Yo3sjhNpXtNIJj4XpVy7mBe9grlLFaW9alYeOQF1kleU2b5DZPWrHyRSJ
+   QrFJoHrimCmm03V8neC7idM3On2rGoP1gI/U6lNw5JsCQgY6c640cc4FL
+   hH5xgGaPHh3Mecq9T0CkVWqoaCgCqb/3752XDuTs8ahDIFIKMzEC99s7T
    w==;
-IronPort-SDR: X+2pVH0DNMWWkv5xe3H3vanlaPFZNw2XVmLNPCO/Ng4ZFwx2356TpU4pkiG6SOoDmOW2eMUQ8A
- Quzow44D5x4DzdFvA0AlAnhi2gvjP1na3FWfRkkRXrxaly44UdYMqkhILcy4acvhzcy7WQ/3OH
- wkltbjtQLeTctT1tAku5dXhF3RfGQ0uJFFaDFsig78nLWB+eROOOqOK/R+bUz3/sfYxp/0bUAX
- UHCokMhTFrUzPlFQrGXg7L6KpdgMxxp9Vw8hJENMJeeT/XRh7anMexuLQFophulrkWWY2aniCL
- bGg=
+IronPort-SDR: hdXqqbTTjuvb9UAjzV0VKn5dLTnEMQw2Yy9tJqmfpR3LUNwHdSvBv2FDb2m/EtjXbwdF4qrZbW
+ kMErPv/x6DYwM57zExnfDbL9xSUxCFnyYqr76q/pKWl7OcMK9sMov/WjrU0RrxQdp45SosjxcT
+ ltK7ziE8Pbr6mj66tKmR2LCw1Pl96wwS14+d7ZL6niney3xPkN1QgyI+SflyjlLZPrsj9RWwI8
+ qr1hwlt19VEd1s1lygM1tvuEUl1uWuC2S41EtrLufRcCewgjB+8PyKnHjWnaApjRuVC0OIZW3X
+ HW8=
 X-IronPort-AV: E=Sophos;i="5.79,400,1602518400"; 
-   d="scan'208";a="159107949"
+   d="scan'208";a="159107952"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:22:58 +0800
-IronPort-SDR: LpktwMOtvWI1mA3ziM0iACWr7HesnH1+HDkVXLyvDxIu1LBIDFl2a88AA6j3DOWjEso4hjmjcn
- k+bE6MQSWTXaxXoTgq/U8vtUY0gMjff95QZQReF57cal/iDmyE/MFaQWavyDdCXGGvuTtYN3AR
- xpq2hkIvOFsTPiYE1sMKgTQX0JGHr8hYNi45+8EE9P8TGrNqkkiIcunsUlJ11hMGVP/v3SQ0MJ
- x8vQ7ufpcup3qS+4OFuwGWsOU/89rXlhsC57X0vRijJ5mc4I6D0f2TCie04inApnka4Igfq1f2
- egOlbd2G6HXyZDeSZMXwA7jc
+  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:00 +0800
+IronPort-SDR: UdemrVGqbchGRWB3xF5muBnrJejNnHimSvtJr4hiLtgDKgLPTKXj7Xndkqlky51WltKKAts+dl
+ TtmXH4Xz1AZ1zJBCBM+zjxQFb2k1S9Vfeyksq7IIBKXOa/a5KmpooxZNxCmlRMvExmOsp+BCNH
+ vGCLnuIUwBB2ToW/cz+k7Jn50HYEhY1GsOnJCfqXh/PO1mkSZD+LMb451eVvzS1vwk+sCah9Lz
+ BSPb8d3T6/4/V9AVoRAVkk1MmrXSxzXkLSghULWbS4DGCxe7OTYzkuM0LJPP9T+5vvjymg6Q/H
+ awYSFTVz5IyjK/Z0HNRAZ5bE
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:02 -0800
-IronPort-SDR: ld1Tx0eGtrkK4MrkO0Mb2kDmhBf+mKP9EmYoN5s/vIBIxoV2cbXGU9o6htFn4oI1JtaOpCsM/C
- 7mTZ3IRmPAlAV3ybd8qVzp9p5iYxKvjthVumxmEE5osPb/kAy99sYQp6LRspNKudfbcTbGCteO
- TcX1MQsyIcDHcZftg3PFQHD4YKOpnkB5mGtQeka+GZw3E5RrOQVjMMGEGA9dvBEVOYTYZr5poX
- NwCOrFMtqWN7op3ePRVY5cbJ5rujfSKzwG/iTtOssNMdxoWNvgWaBNJdKRdUOgH5g5ZIsBZWDb
- trs=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:03 -0800
+IronPort-SDR: 0zUz16AZNbMTwZ8N0B/1YV3ome2lUnDX75znjW07ME+9ne2+25hN/XU960B5h/5wxcdNouT7sL
+ oOKX2hHS8eIdLpL3aTUcvUgqtLp97olKFEZKybuxQiFl3PD+xWSkBqh6sF/jFt5ASfSxWwyoAe
+ IjFBEy7qn+dRDTDjfgApWgKurnPUoea8zsYjaMEwIHyt6sQvLxkQdlwVSXinFIL/4TiDBwDcQw
+ R8D/0q0Hs8ap8446jy03tSGuMBVlcYHXukbaC8YNfuz56vA/eKIHxNUdhuBRJGFRyJDBmYCmBE
+ puc=
 WDCIronportException: Internal
 Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon.wdc.com) ([10.84.71.79])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:22:57 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:22:59 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Naohiro Aota <naohiro.aota@wdc.com>,
         Anand Jain <anand.jain@oracle.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v15 03/42] btrfs: zoned: defer loading zone info after opening trees
-Date:   Thu,  4 Feb 2021 19:21:42 +0900
-Message-Id: <214dd3a87be0f9bdb19a5be6fc8880cb832846d4.1612434091.git.naohiro.aota@wdc.com>
+Subject: [PATCH v15 04/42] btrfs: zoned: use regular super block location on zone emulation
+Date:   Thu,  4 Feb 2021 19:21:43 +0900
+Message-Id: <906d62e60392f97e9ce10346ca7c79ff5f20e6da.1612434091.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
 References: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
@@ -67,135 +67,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a preparation patch to implement zone emulation on a regular
-device.
+A zoned btrfs filesystem currently has a superblock at the beginning of
+the superblock logging zones if the zones are conventional. This
+difference in superblock position causes a chicken-and-egg problem for
+filesystems with emulated zones. Since the device is a regular (non-zoned)
+device, we cannot know if the filesystem is regular or zoned while reading
+the superblock. But, to load the superblock, we need to see if it is
+emulated zoned or not.
 
-To emulate a zoned filesystem on a regular (non-zoned) device, we need to
-decide an emulated zone size. Instead of making it a compile-time static
-value, we'll make it configurable at mkfs time. Since we have one zone ==
-one device extent restriction, we can determine the emulated zone size
-from the size of a device extent. We can extend btrfs_get_dev_zone_info()
-to show a regular device filled with conventional zones once the zone size
-is decided.
-
-The current call site of btrfs_get_dev_zone_info() during the mount process
-is earlier than loading the file system trees so that we don't know the
-size of a device extent at this point. Thus we can't slice a regular device
-to conventional zones.
-
-This patch introduces btrfs_get_dev_zone_info_all_devices to load the zone
-info for all the devices. And, it places this function in open_ctree()
-after loading the trees.
+Place the superblocks at the same location as they are on regular btrfs on
+regular devices to solve the problem. It is possible because it's ensured
+that all the superblock locations are at an (emulated) conventional zone on
+regular devices.
 
 Reviewed-by: Anand Jain <anand.jain@oracle.com>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/disk-io.c | 13 +++++++++++++
- fs/btrfs/volumes.c |  4 ----
- fs/btrfs/zoned.c   | 25 +++++++++++++++++++++++++
- fs/btrfs/zoned.h   |  6 ++++++
- 4 files changed, 44 insertions(+), 4 deletions(-)
+ fs/btrfs/zoned.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 71fab77873a5..2b6a3df765cd 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -3333,6 +3333,19 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
- 	if (ret)
- 		goto fail_tree_roots;
- 
-+	/*
-+	 * Get zone type information of zoned block devices. This will also
-+	 * handle emulation of a zoned filesystem if a regular device has the
-+	 * zoned incompat feature flag set.
-+	 */
-+	ret = btrfs_get_dev_zone_info_all_devices(fs_info);
-+	if (ret) {
-+		btrfs_err(fs_info,
-+			  "zoned: failed to read device zone info: %d",
-+			  ret);
-+		goto fail_block_groups;
-+	}
-+
- 	/*
- 	 * If we have a uuid root and we're not being told to rescan we need to
- 	 * check the generation here so we can set the
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 3948f5b50d11..07cd4742c123 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -669,10 +669,6 @@ static int btrfs_open_one_device(struct btrfs_fs_devices *fs_devices,
- 	clear_bit(BTRFS_DEV_STATE_IN_FS_METADATA, &device->dev_state);
- 	device->mode = flags;
- 
--	ret = btrfs_get_dev_zone_info(device);
--	if (ret != 0)
--		goto error_free_page;
--
- 	fs_devices->open_devices++;
- 	if (test_bit(BTRFS_DEV_STATE_WRITEABLE, &device->dev_state) &&
- 	    device->devid != BTRFS_DEV_REPLACE_DEVID) {
 diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 41d27fefd306..0b1b1f38a196 100644
+index 0b1b1f38a196..8b3868088c5e 100644
 --- a/fs/btrfs/zoned.c
 +++ b/fs/btrfs/zoned.c
-@@ -143,6 +143,31 @@ static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
- 	return 0;
- }
+@@ -552,7 +552,13 @@ int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
+ 	struct btrfs_zoned_device_info *zinfo = device->zone_info;
+ 	u32 zone_num;
  
-+int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_info *fs_info)
-+{
-+	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
-+	struct btrfs_device *device;
-+	int ret = 0;
-+
-+	/* fs_info->zone_size might not set yet. Use the incomapt flag here. */
-+	if (!btrfs_fs_incompat(fs_info, ZONED))
-+		return 0;
-+
-+	mutex_lock(&fs_devices->device_list_mutex);
-+	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-+		/* We can skip reading of zone info for missing devices */
-+		if (!device->bdev)
-+			continue;
-+
-+		ret = btrfs_get_dev_zone_info(device);
-+		if (ret)
-+			break;
-+	}
-+	mutex_unlock(&fs_devices->device_list_mutex);
-+
-+	return ret;
-+}
-+
- int btrfs_get_dev_zone_info(struct btrfs_device *device)
- {
- 	struct btrfs_zoned_device_info *zone_info = NULL;
-diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-index 8abe2f83272b..eb47b7ad9ab1 100644
---- a/fs/btrfs/zoned.h
-+++ b/fs/btrfs/zoned.h
-@@ -25,6 +25,7 @@ struct btrfs_zoned_device_info {
- #ifdef CONFIG_BLK_DEV_ZONED
- int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
- 		       struct blk_zone *zone);
-+int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_info *fs_info);
- int btrfs_get_dev_zone_info(struct btrfs_device *device);
- void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
- int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
-@@ -42,6 +43,11 @@ static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
- 	return 0;
- }
- 
-+static inline int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_info *fs_info)
-+{
-+	return 0;
-+}
-+
- static inline int btrfs_get_dev_zone_info(struct btrfs_device *device)
- {
- 	return 0;
+-	if (!zinfo) {
++	/*
++	 * For a zoned filesystem on a non-zoned block device, use the same
++	 * super block locations as regular filesystem. Doing so, the super
++	 * block can always be retrieved and the zoned flag of the volume
++	 * detected from the super block information.
++	 */
++	if (!bdev_is_zoned(device->bdev)) {
+ 		*bytenr_ret = btrfs_sb_offset(mirror);
+ 		return 0;
+ 	}
 -- 
 2.30.0
 
