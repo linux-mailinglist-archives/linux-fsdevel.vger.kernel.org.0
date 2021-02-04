@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1933730F0E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DC530F0E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235586AbhBDKcw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 05:32:52 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54218 "EHLO
+        id S235590AbhBDKc5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 05:32:57 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54222 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235577AbhBDKbF (ORCPT
+        with ESMTP id S235581AbhBDKbe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 05:31:05 -0500
+        Thu, 4 Feb 2021 05:31:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612434664; x=1643970664;
+  t=1612434694; x=1643970694;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=eKn5s655mQV80Mh5yVdiqf2y3e6s1hG0pl3u2SlJQcM=;
-  b=W3skXC+P9z1UVyY8Q3LHKK0vdB4FL6wmY9KrCqE27tdspckaR2ZdafKK
-   dOHfbDzM1LXx5YXP/KohTzu0LVkuQ+jC8P+1o3O45A4V602wrUalk1Ofi
-   btc+/2fYEaF11KOMwVTyAKzMmFwJXtzvfpaiYQgKUbPhUMJqJBrt6/320
-   8he1kgn+ReCBZjlj2qQQLE5yChToZ8c1rva6KhYK3glsZsO60TwwsZ0vk
-   t+GQWuBqXca9WpvHTPpAz+z7rcbdSHAkJvD2+DK6/m/9bfQ1xnG2SSN6y
-   nytxzKFWmXMu0NUGQo6jTHpzhC41M/Ujmk23BaPnbqu2glDIQIwnfxkOI
-   A==;
-IronPort-SDR: A7CaCtQs74Oh8s0gnfzNYRUZo0r0Nvzqrh6i064fOV00vWh8/KqROBCwr9jnkry+lsPudz7qcd
- sfJmX5vM9GqSn5j1jsiiYbxESslmeaDepRTunck4ET30Or2CTssDYYbqJMKxwGouAdcOSn2KuM
- J5f6UbujoNn+py9HWKzHDEK0OGfo8zXJtDduXphQg8inkbEtInkCCaDpuu2qbYYUBY3cDbl4K3
- fYxIC6C4PJg3Zu5Xvj3Cc6AEKSu41X5JgG/3rbAtjytGY6dDnkSkj2sM/d/AyJyO0J16/Qp3HX
- pFA=
+  bh=cWRqAXnT6xrFDfwZO4TMUDgZFvtDQlnl6iNjK9ZIFOQ=;
+  b=qZeDUGVgXSgKIqBTF7RpGfaHv2dpqoEV6ntYw6CKxgZneFrhDWpS7DKL
+   uE7RSvxhBCHqztQ+GLj58VAOjnkcYuGReEmjWI1bDT0KQB9/gT53SZshg
+   cDXlOZd8Dv4hJmHBh4J0ybPsH6dYqD0XVyX99/jnSnqrPhGnWIIbVeIi3
+   FAgdMOx3T9isXvA6G6myBoezFoJ7uJ5wDrqXytwHlAawopTVivTM5f4aH
+   qQPTtlvg0Xgq1PYDqwDpQETAK/0lWeRZuSzwV8TUsa/IvKZJN69WCiXdi
+   mS6Mbw7ylTF10R+nuSbfrfHAUth3srLyW6Mk0mH0cDQmiKzbdzH1xXPrf
+   Q==;
+IronPort-SDR: qS4Dl8wP38wGpIL4P9UMGgH448ex+HOcaEEkT9jAwv0OxqZDDDDxxWb3anPqDYAItR9psyJPgP
+ TAJMVlfeLbiI+mTQsQXRE+pL1Z1serfggr96A5o02ie+u6YRHQg7Z2W8osnNB/RNS8ZMc1+mj4
+ ++FHX0p2p9VPoBlrGwS4jHTIf6s3e0DcQRnNPdO4ShUcmaOhr5ECb7QTCMAjlXQOjJfkRJyxu5
+ ahxaOmzcFN82FmxognLbv4khWhDTsVLTEbdVWma3QLwXkzwqfhHJbiCv+vgyZWrfzKXyumTkt8
+ VfA=
 X-IronPort-AV: E=Sophos;i="5.79,400,1602518400"; 
-   d="scan'208";a="159108063"
+   d="scan'208";a="159108065"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:45 +0800
-IronPort-SDR: Gwm9XgdPJmCN8s8sRK0HwD1JCWunMRtT4dw0hHdGk/OOd8U1NIHkLKATF16d+jeG+6+LWOkLZf
- ICYmEIAV6r6a4iBJtfbzTh9iPCUls+Fm+u1Znkc3JmtW+aJVnzaSuhw/srFGs5CsU/3vHKfOgC
- /0Mrm6M8F9Xu5X+UUKz4ZllqSwUFEmd31h31E1cNYg7gtjHEr+MuJP2FMqlKUB2wbCy6YOXMlc
- q9e++9GSAanDzYy1aMUF1sX8nsksKXVt6datKQnukS3dXlrkGNPqq6JqDUhay8S+5GGeK2BO93
- YT2I0c8oGIKuD9nq89Aim/ZX
+  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:46 +0800
+IronPort-SDR: jkuipV+Yj8rn5OPyO/t5q3ScwvMFCGvCjn+KBmzeF8aJVhvUqnCeg+GD5gnxnNb+E09jVadgfD
+ ROAwUm1j+Zms9cU93tNPDVA8WyCgcP64BsejbuF/DlIQDDeuE1Hx9RsFdtdrACGUwgverryfzo
+ rsFc3mTsKWSbq8/TUBDrnns3Qc+vlOiTzLQ/krA31GYcK8I/xZPF1zOV3R7S12F36XJ197nIPC
+ nshhNFW8+KcEeqbloGDhcM60s4kB7u+QeyMQuUkSs9Wscy1ojs6fqFqBLgYLMiYmxTW9ORJ6LZ
+ TLGveagb61HrZa0Z4aMFxr2G
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:48 -0800
-IronPort-SDR: 3WmhTBoeX0W/V4mfuIA9YVYkn3Aj8/46rSzugfONNG6JZsOWrA3IFzRl5SoOVtQId1tp3N8ZSM
- E5PHouyGitwaqtvulEJzVUiEKuYUjn4U5RZ9CBX53RBpjSjIhZ3QQ9SfG+P0Imm7Mgz6/wi+DE
- PkHSGpf9qLYvhUmasIMvNwNQCT9QJ2OL+NHXS+xtLDCA/SGn3y9pqSRVlyNF0h4ZZbQY1xsnyd
- sZNZPTrAmTPtM9ADtSPiemHTV6CQUqb59nbbGBxZvlkS0fLFfIUe2vYMVVDYjyvWPtAO0zvfvg
- /Bw=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:49 -0800
+IronPort-SDR: hTxEFEKP73v0hg6fRf5Rfuimx0X2qgt1XkaiVJI3nwx0X2qwXRhHqavSB/4FgpHfNBKam4LGcH
+ Iyj3Tk9uxnKaS78WlPpcD2QQNut1IEhegUvUU9ZH1IqDegDJvABODqggzADuw+RToT2zWCziSr
+ MtT8Tse9esYrkoWW9xjV8bqltaDRBKoCzDt09W3YCbjutmOpp89Lx8NThhCXMdF3w2rJqWXky7
+ nvXHEOlH7qeAg8xFKpOBYSdyKh9UpU1xo1BRK/S6sdwP+V1bwross4VdgKTL9w18UefMOPuVIq
+ ea4=
 WDCIronportException: Internal
 Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon.wdc.com) ([10.84.71.79])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:23:44 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:23:45 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Naohiro Aota <naohiro.aota@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v15 36/42] btrfs: zoned: enable relocation on a zoned filesystem
-Date:   Thu,  4 Feb 2021 19:22:15 +0900
-Message-Id: <a1648f09fca54c60fabc2cc9a76cf10d3147a809.1612434091.git.naohiro.aota@wdc.com>
+Subject: [PATCH v15 37/42] btrfs: zoned: relocate block group to repair IO failure in zoned filesystems
+Date:   Thu,  4 Feb 2021 19:22:16 +0900
+Message-Id: <e58fefd24be8f6535eefb2e1585a48e0f3d73835.1612434091.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
 References: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
@@ -66,89 +66,184 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently fallocate() is disabled on a zoned filesystem. Since current
-relocation process relies on preallocation to move file data extents, it
-must be handled differently.
+When btrfs finds a checksum error and if the file system has a mirror of
+the damaged data, btrfs read the correct data from the mirror and writes
+it to damaged blocks. This however, violates the sequential write
+constraints of a zoned block device.
 
-On a zoned filesystem, we just truncate the inode to the size that we
-wanted to pre-allocate. Then, we flush dirty pages on the file before
-finishing the relocation process. run_delalloc_zoned() will handle all the
-allocations and submit IOs to the underlying layers.
+We can consider three methods to repair an IO failure in zoned filesystems:
+(1) Reset and rewrite the damaged zone
+(2) Allocate new device extent and replace the damaged device extent to the
+    new extent
+(3) Relocate the corresponding block group
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Method (1) is most similar to a behavior done with regular devices.
+However, it also wipes non-damaged data in the same device extent, and so
+it unnecessary degrades non-damaged data.
+
+Method (2) is much like device replacing but done in the same device. It is
+safe because it keeps the device extent until the replacing finish.
+However, extending device replacing is non-trivial. It assumes
+"src_dev->physical == dst_dev->physical". Also, the extent mapping
+replacing function should be extended to support replacing device extent
+position in one device.
+
+Method (3) invokes relocation of the damaged block group and is
+straightforward to implement. It relocates all the mirrored device extents,
+so it potentially is a more costly operation than method (1) or (2). But
+it relocates only used extents which reduce the total IO size.
+
+Let's apply method (3) for now. In the future, we can extend device-replace
+and apply method (2).
+
+For protecting a block group gets relocated multiple time with multiple IO
+errors, this commit introduces "relocating_repair" bit to show it's now
+relocating to repair IO failures. Also it uses a new kthread
+"btrfs-relocating-repair", not to block IO path with relocating process.
+
+This commit also supports repairing in the scrub process.
+
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/btrfs/relocation.c | 34 ++++++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+ fs/btrfs/block-group.h |  1 +
+ fs/btrfs/extent_io.c   |  3 ++
+ fs/btrfs/scrub.c       |  3 ++
+ fs/btrfs/volumes.c     | 72 ++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/volumes.h     |  1 +
+ 5 files changed, 80 insertions(+)
 
-diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-index 473b78874844..232d5da7b7be 100644
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -2553,6 +2553,31 @@ static noinline_for_stack int prealloc_file_extent_cluster(
- 	if (ret)
- 		return ret;
+diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
+index d37ee576ac6e..29678426247d 100644
+--- a/fs/btrfs/block-group.h
++++ b/fs/btrfs/block-group.h
+@@ -96,6 +96,7 @@ struct btrfs_block_group {
+ 	unsigned int has_caching_ctl:1;
+ 	unsigned int removed:1;
+ 	unsigned int to_copy:1;
++	unsigned int relocating_repair:1;
  
-+	/*
-+	 * On a zoned filesystem, we cannot preallocate the file region.
-+	 * Instead, we dirty and fiemap_write the region.
-+	 */
-+	if (btrfs_is_zoned(inode->root->fs_info)) {
-+		struct btrfs_root *root = inode->root;
-+		struct btrfs_trans_handle *trans;
+ 	int disk_cache_state;
+ 
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index ac210cf0956b..32fb5021f353 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2260,6 +2260,9 @@ int repair_io_failure(struct btrfs_fs_info *fs_info, u64 ino, u64 start,
+ 	ASSERT(!(fs_info->sb->s_flags & SB_RDONLY));
+ 	BUG_ON(!mirror_num);
+ 
++	if (btrfs_is_zoned(fs_info))
++		return btrfs_repair_one_zone(fs_info, logical);
 +
-+		end = cluster->end - offset + 1;
-+		trans = btrfs_start_transaction(root, 1);
-+		if (IS_ERR(trans))
-+			return PTR_ERR(trans);
+ 	bio = btrfs_io_bio_alloc(1);
+ 	bio->bi_iter.bi_size = 0;
+ 	map_length = length;
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index e0c3ec01e324..310fce00fcda 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -857,6 +857,9 @@ static int scrub_handle_errored_block(struct scrub_block *sblock_to_check)
+ 	have_csum = sblock_to_check->pagev[0]->have_csum;
+ 	dev = sblock_to_check->pagev[0]->dev;
+ 
++	if (btrfs_is_zoned(fs_info) && !sctx->is_dev_replace)
++		return btrfs_repair_one_zone(fs_info, logical);
 +
-+		inode->vfs_inode.i_ctime = current_time(&inode->vfs_inode);
-+		i_size_write(&inode->vfs_inode, end);
-+		ret = btrfs_update_inode(trans, root, inode);
-+		if (ret) {
-+			btrfs_abort_transaction(trans, ret);
-+			btrfs_end_transaction(trans);
-+			return ret;
-+		}
+ 	/*
+ 	 * We must use GFP_NOFS because the scrub task might be waiting for a
+ 	 * worker task executing this function and in turn a transaction commit
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 1312b17a6b49..b8fab44394f5 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -7980,3 +7980,75 @@ bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr)
+ 	spin_unlock(&fs_info->swapfile_pins_lock);
+ 	return node != NULL;
+ }
 +
-+		return btrfs_end_transaction(trans);
++static int relocating_repair_kthread(void *data)
++{
++	struct btrfs_block_group *cache = (struct btrfs_block_group *)data;
++	struct btrfs_fs_info *fs_info = cache->fs_info;
++	u64 target;
++	int ret = 0;
++
++	target = cache->start;
++	btrfs_put_block_group(cache);
++
++	if (!btrfs_exclop_start(fs_info, BTRFS_EXCLOP_BALANCE)) {
++		btrfs_info(fs_info,
++			   "zoned: skip relocating block group %llu to repair: EBUSY",
++			   target);
++		return -EBUSY;
 +	}
 +
- 	inode_lock(&inode->vfs_inode);
- 	for (nr = 0; nr < cluster->nr; nr++) {
- 		start = cluster->boundary[nr] - offset;
-@@ -2756,6 +2781,8 @@ static int relocate_file_extent_cluster(struct inode *inode,
- 		}
- 	}
- 	WARN_ON(nr != cluster->nr);
-+	if (btrfs_is_zoned(fs_info) && !ret)
-+		ret = btrfs_wait_ordered_range(inode, 0, (u64)-1);
- out:
- 	kfree(ra);
- 	return ret;
-@@ -3434,8 +3461,12 @@ static int __insert_orphan_inode(struct btrfs_trans_handle *trans,
- 	struct btrfs_path *path;
- 	struct btrfs_inode_item *item;
- 	struct extent_buffer *leaf;
-+	u64 flags = BTRFS_INODE_NOCOMPRESS | BTRFS_INODE_PREALLOC;
- 	int ret;
- 
-+	if (btrfs_is_zoned(trans->fs_info))
-+		flags &= ~BTRFS_INODE_PREALLOC;
++	mutex_lock(&fs_info->delete_unused_bgs_mutex);
 +
- 	path = btrfs_alloc_path();
- 	if (!path)
- 		return -ENOMEM;
-@@ -3450,8 +3481,7 @@ static int __insert_orphan_inode(struct btrfs_trans_handle *trans,
- 	btrfs_set_inode_generation(leaf, item, 1);
- 	btrfs_set_inode_size(leaf, item, 0);
- 	btrfs_set_inode_mode(leaf, item, S_IFREG | 0600);
--	btrfs_set_inode_flags(leaf, item, BTRFS_INODE_NOCOMPRESS |
--					  BTRFS_INODE_PREALLOC);
-+	btrfs_set_inode_flags(leaf, item, flags);
- 	btrfs_mark_buffer_dirty(leaf);
- out:
- 	btrfs_free_path(path);
++	/* Ensure block group still exists */
++	cache = btrfs_lookup_block_group(fs_info, target);
++	if (!cache)
++		goto out;
++
++	if (!cache->relocating_repair)
++		goto out;
++
++	ret = btrfs_may_alloc_data_chunk(fs_info, target);
++	if (ret < 0)
++		goto out;
++
++	btrfs_info(fs_info,
++		   "zoned: relocating block group %llu to repair IO failure",
++		   target);
++	ret = btrfs_relocate_chunk(fs_info, target);
++
++out:
++	if (cache)
++		btrfs_put_block_group(cache);
++	mutex_unlock(&fs_info->delete_unused_bgs_mutex);
++	btrfs_exclop_finish(fs_info);
++
++	return ret;
++}
++
++int btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical)
++{
++	struct btrfs_block_group *cache;
++
++	/* Do not attempt to repair in degraded state */
++	if (btrfs_test_opt(fs_info, DEGRADED))
++		return 0;
++
++	cache = btrfs_lookup_block_group(fs_info, logical);
++	if (!cache)
++		return 0;
++
++	spin_lock(&cache->lock);
++	if (cache->relocating_repair) {
++		spin_unlock(&cache->lock);
++		btrfs_put_block_group(cache);
++		return 0;
++	}
++	cache->relocating_repair = 1;
++	spin_unlock(&cache->lock);
++
++	kthread_run(relocating_repair_kthread, cache,
++		    "btrfs-relocating-repair");
++
++	return 0;
++}
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index d3bbdb4175df..d4c3e0dd32b8 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -599,5 +599,6 @@ void btrfs_scratch_superblocks(struct btrfs_fs_info *fs_info,
+ int btrfs_bg_type_to_factor(u64 flags);
+ const char *btrfs_bg_type_to_raid_name(u64 flags);
+ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info);
++int btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical);
+ 
+ #endif
 -- 
 2.30.0
 
