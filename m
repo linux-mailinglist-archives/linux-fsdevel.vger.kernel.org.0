@@ -2,60 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C21A30FBB3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 19:39:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B1D930FBC5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 19:43:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239174AbhBDSjj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 13:39:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50674 "EHLO
+        id S239271AbhBDSli (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 13:41:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239234AbhBDShO (ORCPT
+        with ESMTP id S238274AbhBDSj0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 13:37:14 -0500
-Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 805E8C0611C0
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Feb 2021 10:35:03 -0800 (PST)
-Received: by mail-pj1-x104a.google.com with SMTP id x11so965708pjn.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Feb 2021 10:35:03 -0800 (PST)
+        Thu, 4 Feb 2021 13:39:26 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8792EC06178C
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Feb 2021 10:38:40 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id f6so4317732ioz.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Feb 2021 10:38:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=8hGsRhwaDWoDizfeeTsq9J+LowqD142CLh64m52wJCk=;
-        b=n4kHyH/OcEolnGZyvK4JrmtjTn9vIJiS9Exo+vxqn0fPsJxQLoaDR1yeHr1imFSxSF
-         eOvQgyctfyn20ByXGTJwj+D9+7w7R4k7ghmL80M7T2dCdnYgSF+9g03v8ZypyZwIwupc
-         qeOJuIfd6kJKY6IFt3CJS2hrh69ChAE6QX+EVTZO1yUr7EHVjVyteOpvMiXWepiGIKs2
-         VRvczP54eru7JR4J1IXVdiY2+fAOq//EDBUltNRFdDRaTl/6YH5hnkYQm/FjV73lDGwZ
-         +o/WIjU8Hmuckv7qO6s9fMuMyUkd8UAyO0JhXTawp0Z4IimSgq9KUvBAbxQb6wkJ2x/Y
-         jVbg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=weEyJ4NqUKzgrDe976axknYedIOOmssjDmQJevNBFW0=;
+        b=MUIiQlwYWva12TZR2lmb+89nZsawdJbIyEf5ZHEPKW7k/wPQFjk5rV1/el4UOR1bOV
+         bYc+0XomeAFpg2YafF+3e4DlCPvgUVUsypEQ/fr+gzccXl0TPvP32besn7Yme4+sV2nH
+         oydU/scUWd1sYUZJRVbxgmINaSAIA2SEEdzSQzka1CoEy0VGDcnxshyVqXhRSefPIstL
+         qS6ij5WOm5sMsx6NEboPMReyk/5XXocU10MM98Ve4kRlu4Nj71mrHOOS+4wFmHboApka
+         0RYzs97mzQO5Q7u1HtnqTwtTc/bAs72cSxHVqhTtwVStPc6rBRSWzT2Szu8FweWMVXvV
+         vjgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=8hGsRhwaDWoDizfeeTsq9J+LowqD142CLh64m52wJCk=;
-        b=QCobZLGBsEQh33ZogYYmTTrCJYE1qVqz+oe3JPN4rSkQHZP2vO2QcfQh1FWMUo7wZw
-         yQ30v+4apJDYJpBC7NcXqoyzumqmMtkxZW4EseIoMI7+LKs3wiwhztUI4p0FolS0Mb2J
-         PxgO8nX3kKiz8Mt/GoFSW8ITa4CyQnnl2Ek0UD3jZo4TUToDXLDIqB0gk5rg63VECsf2
-         om+tgOEuBFh9Fy1FFO6F75kEcYZTsuzrXexvjXEGCC1fzJVem9wWUwaXsOyTk+DCiV8Q
-         KE0aGSNu6qi5hQXBX31+NoHPV9ashI6VU6nuSrWo1gXC4/Oc8F8gEE1da6EshyGmYXV9
-         8NaQ==
-X-Gm-Message-State: AOAM5312lwlYt6lnb4ChvoeKyoYv5fDzB8vGEfWoGWCsUEfaM5Wm8Kt6
-        vhNkTdoBRfVkTGu072LoHx5MqaSSZDsqyv8LJU8l
-X-Google-Smtp-Source: ABdhPJzDUBTF1SiPoJJMYyg7MiYrHCvKNsxpANXekJSLV+B3WJJMPETX3zn5RQvsW0WBeHqUFuPcg5GZU7J0rGLJSdr4
-Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
-X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:b001:12c1:dc19:2089])
- (user=axelrasmussen job=sendgmr) by 2002:a17:903:185:b029:e1:8692:90bc with
- SMTP id z5-20020a1709030185b02900e1869290bcmr360402plg.75.1612463702914; Thu,
- 04 Feb 2021 10:35:02 -0800 (PST)
-Date:   Thu,  4 Feb 2021 10:34:33 -0800
-In-Reply-To: <20210204183433.1431202-1-axelrasmussen@google.com>
-Message-Id: <20210204183433.1431202-11-axelrasmussen@google.com>
-Mime-Version: 1.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=weEyJ4NqUKzgrDe976axknYedIOOmssjDmQJevNBFW0=;
+        b=t4l+dKXXcouose6IhYxFlf8tZcscRGwrqyJvMXgAR8vYhcffGTQDLK8TVUqXO0ZX/3
+         JbuupW4bXvbA85VR2n2Kn1izcDVf0dgYxjeIg9mw8/1/ripVF8GafQbzumQRhRxKyNVf
+         7iXF5WNjoetRmCWnvyW2v6KKIQPB2xOIHJkVikr0BOAVnmi6h8xwqPTkuOuHEr+T4ny0
+         PJSw/98MAUTrq5ZmG/cnReuPCxtAjWGXfOEvWACCFkBF5piuk2DBhCAq92w2D0wxxnsC
+         r7Vfgr4CdQRAAfPWoLMRVr38ZlzirN6SN+18alL4UqtB3NOwaYoQbz+Sw4vhY8ryBjaK
+         QJfA==
+X-Gm-Message-State: AOAM5312DBIGI48KMwIX5QbpmLuW/ue127TurTIbSKnLD+jgjU1dzCmS
+        80Vld+JOtwvU8HWkeL2u9z2Le3WSRfkmXVmKxtxlpg==
+X-Google-Smtp-Source: ABdhPJzHF0Jnubl5GY5YpP/GzWfIKSnTzH6dLwGle8kQioNfx8oFy5GRcwMMftTxFXDx6s2/OYRkyxFjfaTKbPD8trM=
+X-Received: by 2002:a6b:f112:: with SMTP id e18mr571110iog.57.1612463919646;
+ Thu, 04 Feb 2021 10:38:39 -0800 (PST)
+MIME-Version: 1.0
 References: <20210204183433.1431202-1-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.30.0.365.g02bc693789-goog
-Subject: [PATCH v4 10/10] userfaultfd/selftests: add test exercising minor
- fault handling
+In-Reply-To: <20210204183433.1431202-1-axelrasmussen@google.com>
 From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Thu, 4 Feb 2021 10:38:02 -0800
+Message-ID: <CAJHvVcjMkTC7=gca9EDoKxpadvfyHP73cF6znLvew-F1pNXCeg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] userfaultfd: add minor fault handling
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
@@ -69,7 +64,7 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Lokesh Gidra <lokeshgidra@google.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>,
+        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
         Michel Lespinasse <walken@google.com>,
         Mike Kravetz <mike.kravetz@oracle.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
@@ -79,9 +74,9 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Steven Rostedt <rostedt@goodmis.org>,
         Steven Price <steven.price@arm.com>,
         Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Adam Ruprecht <ruprecht@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>,
+        Adam Ruprecht <ruprecht@google.com>,
         Cannon Matthews <cannonmatthews@google.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
         David Rientjes <rientjes@google.com>,
@@ -92,286 +87,205 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix a dormant bug in userfaultfd_events_test(), where we did
-`return faulting_process(0)` instead of `exit(faulting_process(0))`.
-This caused the forked process to keep running, trying to execute any
-further test cases after the events test in parallel with the "real"
-process.
+On Thu, Feb 4, 2021 at 10:34 AM Axel Rasmussen <axelrasmussen@google.com> wrote:
+>
+> Changelog
+> =========
+>
+> v3->v4:
+> - Reordered if() branches in hugetlb_mcopy_atomic_pte, so the conditions are
+>   simpler and easier to read.
+> - Reverted most of the mfill_atomic_pte change (the anon / shmem path). Just
+>   return -EINVAL for CONTINUE, and set zeropage = (mode ==
+>   MCOPY_ATOMIC_ZEROPAGE), so we can keep the delta small.
+> - Split out adding #ifdef CONFIG_USERFAULTFD to a separate patch (instead of
+>   lumping it together with adding UFFDIO_CONTINUE). Also, extended it to make
+>   the same change for shmem as well as suggested by Hugh Dickins.
+> - Fixed signature of hugetlb_mcopy_atomic_pte for !CONFIG_HUGETLB_PAGE
+>   (signature must be the same in either case).
+> - Rebased onto a newer version of Peter's patches to disable huge PMD sharing.
 
-Add a simple test case which exercises minor faults. In short, it does
-the following:
+Apologies for the email noise, of course immediately after doing git
+send-email I realized I forgot to document one item here:
 
-1. "Sets up" an area (area_dst) and a second shared mapping to the same
-   underlying pages (area_dst_alias).
+- Relaxed restriction for minor registration to allow any hugetlb
+VMAs, not just those with VM_SHARED. Fixed setting VM_WRITE flag in a
+CONTINUE ioctl for non-VM_SHARED VMAs.
 
-2. Register one of these areas with userfaultfd, in minor fault mode.
-
-3. Start a second thread to handle any minor faults.
-
-4. Populate the underlying pages with the non-UFFD-registered side of
-   the mapping. Basically, memset() each page with some arbitrary
-   contents.
-
-5. Then, using the UFFD-registered mapping, read all of the page
-   contents, asserting that the contents match expectations (we expect
-   the minor fault handling thread can modify the page contents before
-   resolving the fault).
-
-The minor fault handling thread, upon receiving an event, flips all the
-bits (~) in that page, just to prove that it can modify it in some
-arbitrary way. Then it issues a UFFDIO_CONTINUE ioctl, to setup the
-mapping and resolve the fault. The reading thread should wake up and see
-this modification.
-
-Currently the minor fault test is only enabled in hugetlb_shared mode,
-as this is the only configuration the kernel feature supports.
-
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- tools/testing/selftests/vm/userfaultfd.c | 147 ++++++++++++++++++++++-
- 1 file changed, 143 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 92b8ec423201..73a72a3c4189 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -81,6 +81,8 @@ static volatile bool test_uffdio_copy_eexist = true;
- static volatile bool test_uffdio_zeropage_eexist = true;
- /* Whether to test uffd write-protection */
- static bool test_uffdio_wp = false;
-+/* Whether to test uffd minor faults */
-+static bool test_uffdio_minor = false;
- 
- static bool map_shared;
- static int huge_fd;
-@@ -96,6 +98,7 @@ struct uffd_stats {
- 	int cpu;
- 	unsigned long missing_faults;
- 	unsigned long wp_faults;
-+	unsigned long minor_faults;
- };
- 
- /* pthread_mutex_t starts at page offset 0 */
-@@ -153,17 +156,19 @@ static void uffd_stats_reset(struct uffd_stats *uffd_stats,
- 		uffd_stats[i].cpu = i;
- 		uffd_stats[i].missing_faults = 0;
- 		uffd_stats[i].wp_faults = 0;
-+		uffd_stats[i].minor_faults = 0;
- 	}
- }
- 
- static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
- {
- 	int i;
--	unsigned long long miss_total = 0, wp_total = 0;
-+	unsigned long long miss_total = 0, wp_total = 0, minor_total = 0;
- 
- 	for (i = 0; i < n_cpus; i++) {
- 		miss_total += stats[i].missing_faults;
- 		wp_total += stats[i].wp_faults;
-+		minor_total += stats[i].minor_faults;
- 	}
- 
- 	printf("userfaults: %llu missing (", miss_total);
-@@ -172,6 +177,9 @@ static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
- 	printf("\b), %llu wp (", wp_total);
- 	for (i = 0; i < n_cpus; i++)
- 		printf("%lu+", stats[i].wp_faults);
-+	printf("\b), %llu minor (", minor_total);
-+	for (i = 0; i < n_cpus; i++)
-+		printf("%lu+", stats[i].minor_faults);
- 	printf("\b)\n");
- }
- 
-@@ -328,7 +336,7 @@ static struct uffd_test_ops shmem_uffd_test_ops = {
- };
- 
- static struct uffd_test_ops hugetlb_uffd_test_ops = {
--	.expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC,
-+	.expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC & ~(1 << _UFFDIO_CONTINUE),
- 	.allocate_area	= hugetlb_allocate_area,
- 	.release_pages	= hugetlb_release_pages,
- 	.alias_mapping = hugetlb_alias_mapping,
-@@ -362,6 +370,22 @@ static void wp_range(int ufd, __u64 start, __u64 len, bool wp)
- 	}
- }
- 
-+static void continue_range(int ufd, __u64 start, __u64 len)
-+{
-+	struct uffdio_continue req;
-+
-+	req.range.start = start;
-+	req.range.len = len;
-+	req.mode = 0;
-+
-+	if (ioctl(ufd, UFFDIO_CONTINUE, &req)) {
-+		fprintf(stderr,
-+			"UFFDIO_CONTINUE failed for address 0x%" PRIx64 "\n",
-+			(uint64_t)start);
-+		exit(1);
-+	}
-+}
-+
- static void *locking_thread(void *arg)
- {
- 	unsigned long cpu = (unsigned long) arg;
-@@ -569,8 +593,32 @@ static void uffd_handle_page_fault(struct uffd_msg *msg,
- 	}
- 
- 	if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP) {
-+		/* Write protect page faults */
- 		wp_range(uffd, msg->arg.pagefault.address, page_size, false);
- 		stats->wp_faults++;
-+	} else if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_MINOR) {
-+		uint8_t *area;
-+		int b;
-+
-+		/*
-+		 * Minor page faults
-+		 *
-+		 * To prove we can modify the original range for testing
-+		 * purposes, we're going to bit flip this range before
-+		 * continuing.
-+		 *
-+		 * Note that this requires all minor page fault tests operate on
-+		 * area_dst (non-UFFD-registered) and area_dst_alias
-+		 * (UFFD-registered).
-+		 */
-+
-+		area = (uint8_t *)(area_dst +
-+				   ((char *)msg->arg.pagefault.address -
-+				    area_dst_alias));
-+		for (b = 0; b < page_size; ++b)
-+			area[b] = ~area[b];
-+		continue_range(uffd, msg->arg.pagefault.address, page_size);
-+		stats->minor_faults++;
- 	} else {
- 		/* Missing page faults */
- 		if (bounces & BOUNCE_VERIFY &&
-@@ -1112,7 +1160,7 @@ static int userfaultfd_events_test(void)
- 	}
- 
- 	if (!pid)
--		return faulting_process(0);
-+		exit(faulting_process(0));
- 
- 	waitpid(pid, &err, 0);
- 	if (err) {
-@@ -1215,6 +1263,95 @@ static int userfaultfd_sig_test(void)
- 	return userfaults != 0;
- }
- 
-+static int userfaultfd_minor_test(void)
-+{
-+	struct uffdio_register uffdio_register;
-+	unsigned long expected_ioctls;
-+	unsigned long p;
-+	pthread_t uffd_mon;
-+	uint8_t expected_byte;
-+	void *expected_page;
-+	char c;
-+	struct uffd_stats stats = { 0 };
-+
-+	if (!test_uffdio_minor)
-+		return 0;
-+
-+	printf("testing minor faults: ");
-+	fflush(stdout);
-+
-+	if (uffd_test_ops->release_pages(area_dst))
-+		return 1;
-+
-+	if (userfaultfd_open(0))
-+		return 1;
-+
-+	uffdio_register.range.start = (unsigned long)area_dst_alias;
-+	uffdio_register.range.len = nr_pages * page_size;
-+	uffdio_register.mode = UFFDIO_REGISTER_MODE_MINOR;
-+	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register)) {
-+		fprintf(stderr, "register failure\n");
-+		exit(1);
-+	}
-+
-+	expected_ioctls = uffd_test_ops->expected_ioctls;
-+	expected_ioctls |= 1 << _UFFDIO_CONTINUE;
-+	if ((uffdio_register.ioctls & expected_ioctls) != expected_ioctls) {
-+		fprintf(stderr, "unexpected missing ioctl(s)\n");
-+		exit(1);
-+	}
-+
-+	/*
-+	 * After registering with UFFD, populate the non-UFFD-registered side of
-+	 * the shared mapping. This should *not* trigger any UFFD minor faults.
-+	 */
-+	for (p = 0; p < nr_pages; ++p) {
-+		memset(area_dst + (p * page_size), p % ((uint8_t)-1),
-+		       page_size);
-+	}
-+
-+	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, &stats)) {
-+		perror("uffd_poll_thread create");
-+		exit(1);
-+	}
-+
-+	/*
-+	 * Read each of the pages back using the UFFD-registered mapping. We
-+	 * expect that the first time we touch a page, it will result in a minor
-+	 * fault. uffd_poll_thread will resolve the fault by bit-flipping the
-+	 * page's contents, and then issuing a CONTINUE ioctl.
-+	 */
-+
-+	if (posix_memalign(&expected_page, page_size, page_size)) {
-+		fprintf(stderr, "out of memory\n");
-+		return 1;
-+	}
-+
-+	for (p = 0; p < nr_pages; ++p) {
-+		expected_byte = ~((uint8_t)(p % ((uint8_t)-1)));
-+		memset(expected_page, expected_byte, page_size);
-+		if (my_bcmp(expected_page, area_dst_alias + (p * page_size),
-+			    page_size)) {
-+			fprintf(stderr,
-+				"unexpected page contents after minor fault\n");
-+			exit(1);
-+		}
-+	}
-+
-+	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c)) {
-+		perror("pipe write");
-+		exit(1);
-+	}
-+	if (pthread_join(uffd_mon, NULL))
-+		return 1;
-+
-+	close(uffd);
-+
-+	uffd_stats_report(&stats, 1);
-+
-+	return stats.minor_faults != nr_pages;
-+}
-+
- static int userfaultfd_stress(void)
- {
- 	void *area;
-@@ -1413,7 +1550,7 @@ static int userfaultfd_stress(void)
- 
- 	close(uffd);
- 	return userfaultfd_zeropage_test() || userfaultfd_sig_test()
--		|| userfaultfd_events_test();
-+		|| userfaultfd_events_test() || userfaultfd_minor_test();
- }
- 
- /*
-@@ -1454,6 +1591,8 @@ static void set_test_type(const char *type)
- 		map_shared = true;
- 		test_type = TEST_HUGETLB;
- 		uffd_test_ops = &hugetlb_uffd_test_ops;
-+		/* Minor faults require shared hugetlb; only enable here. */
-+		test_uffdio_minor = true;
- 	} else if (!strcmp(type, "shmem")) {
- 		map_shared = true;
- 		test_type = TEST_SHMEM;
--- 
-2.30.0.365.g02bc693789-goog
-
+>
+> v2->v3:
+> - Added #ifdef CONFIG_USERFAULTFD around hugetlb helper functions, to fix build
+>   errors when building without CONFIG_USERFAULTFD set.
+>
+> v1->v2:
+> - Fixed a bug in the hugetlb_mcopy_atomic_pte retry case. We now plumb in the
+>   enum mcopy_atomic_mode, so we can differentiate between the three cases this
+>   function needs to handle:
+>   1) We're doing a COPY op, and need to allocate a page, add to cache, etc.
+>   2) We're doing a COPY op, but allocation in this function failed previously;
+>      we're in the retry path. The page was allocated, but not e.g. added to page
+>      cache, so that still needs to be done.
+>   3) We're doing a CONTINUE op, we need to look up an existing page instead of
+>      allocating a new one.
+> - Rebased onto a newer version of Peter's patches to disable huge PMD sharing,
+>   which fixes syzbot complaints on some non-x86 architectures.
+> - Moved __VM_UFFD_FLAGS into userfaultfd_k.h, so inline helpers can use it.
+> - Renamed UFFD_FEATURE_MINOR_FAULT_HUGETLBFS to UFFD_FEATURE_MINOR_HUGETLBFS,
+>   for consistency with other existing feature flags.
+> - Moved the userfaultfd_minor hook in hugetlb.c into the else block, so we don't
+>   have to explicitly check for !new_page.
+>
+> RFC->v1:
+> - Rebased onto Peter Xu's patches for disabling huge PMD sharing for certain
+>   userfaultfd-registered areas.
+> - Added commits which update documentation, and add a self test which exercises
+>   the new feature.
+> - Fixed reporting CONTINUE as a supported ioctl even for non-MINOR ranges.
+>
+> Overview
+> ========
+>
+> This series adds a new userfaultfd registration mode,
+> UFFDIO_REGISTER_MODE_MINOR. This allows userspace to intercept "minor" faults.
+> By "minor" fault, I mean the following situation:
+>
+> Let there exist two mappings (i.e., VMAs) to the same page(s) (shared memory).
+> One of the mappings is registered with userfaultfd (in minor mode), and the
+> other is not. Via the non-UFFD mapping, the underlying pages have already been
+> allocated & filled with some contents. The UFFD mapping has not yet been
+> faulted in; when it is touched for the first time, this results in what I'm
+> calling a "minor" fault. As a concrete example, when working with hugetlbfs, we
+> have huge_pte_none(), but find_lock_page() finds an existing page.
+>
+> We also add a new ioctl to resolve such faults: UFFDIO_CONTINUE. The idea is,
+> userspace resolves the fault by either a) doing nothing if the contents are
+> already correct, or b) updating the underlying contents using the second,
+> non-UFFD mapping (via memcpy/memset or similar, or something fancier like RDMA,
+> or etc...). In either case, userspace issues UFFDIO_CONTINUE to tell the kernel
+> "I have ensured the page contents are correct, carry on setting up the mapping".
+>
+> Use Case
+> ========
+>
+> Consider the use case of VM live migration (e.g. under QEMU/KVM):
+>
+> 1. While a VM is still running, we copy the contents of its memory to a
+>    target machine. The pages are populated on the target by writing to the
+>    non-UFFD mapping, using the setup described above. The VM is still running
+>    (and therefore its memory is likely changing), so this may be repeated
+>    several times, until we decide the target is "up to date enough".
+>
+> 2. We pause the VM on the source, and start executing on the target machine.
+>    During this gap, the VM's user(s) will *see* a pause, so it is desirable to
+>    minimize this window.
+>
+> 3. Between the last time any page was copied from the source to the target, and
+>    when the VM was paused, the contents of that page may have changed - and
+>    therefore the copy we have on the target machine is out of date. Although we
+>    can keep track of which pages are out of date, for VMs with large amounts of
+>    memory, it is "slow" to transfer this information to the target machine. We
+>    want to resume execution before such a transfer would complete.
+>
+> 4. So, the guest begins executing on the target machine. The first time it
+>    touches its memory (via the UFFD-registered mapping), userspace wants to
+>    intercept this fault. Userspace checks whether or not the page is up to date,
+>    and if not, copies the updated page from the source machine, via the non-UFFD
+>    mapping. Finally, whether a copy was performed or not, userspace issues a
+>    UFFDIO_CONTINUE ioctl to tell the kernel "I have ensured the page contents
+>    are correct, carry on setting up the mapping".
+>
+> We don't have to do all of the final updates on-demand. The userfaultfd manager
+> can, in the background, also copy over updated pages once it receives the map of
+> which pages are up-to-date or not.
+>
+> Interaction with Existing APIs
+> ==============================
+>
+> Because it's possible to combine registration modes (e.g. a single VMA can be
+> userfaultfd-registered MINOR | MISSING), and because it's up to userspace how to
+> resolve faults once they are received, I spent some time thinking through how
+> the existing API interacts with the new feature.
+>
+> UFFDIO_CONTINUE cannot be used to resolve non-minor faults, as it does not
+> allocate a new page. If UFFDIO_CONTINUE is used on a non-minor fault:
+>
+> - For non-shared memory or shmem, -EINVAL is returned.
+> - For hugetlb, -EFAULT is returned.
+>
+> UFFDIO_COPY and UFFDIO_ZEROPAGE cannot be used to resolve minor faults. Without
+> modifications, the existing codepath assumes a new page needs to be allocated.
+> This is okay, since userspace must have a second non-UFFD-registered mapping
+> anyway, thus there isn't much reason to want to use these in any case (just
+> memcpy or memset or similar).
+>
+> - If UFFDIO_COPY is used on a minor fault, -EEXIST is returned.
+> - If UFFDIO_ZEROPAGE is used on a minor fault, -EEXIST is returned (or -EINVAL
+>   in the case of hugetlb, as UFFDIO_ZEROPAGE is unsupported in any case).
+> - UFFDIO_WRITEPROTECT simply doesn't work with shared memory, and returns
+>   -ENOENT in that case (regardless of the kind of fault).
+>
+> Dependencies
+> ============
+>
+> I've included 4 commits from Peter Xu's larger series
+> (https://lore.kernel.org/patchwork/cover/1366017/) in this series. My changes
+> depend on his work, to disable huge PMD sharing for MINOR registered userfaultfd
+> areas. I included the 4 commits directly because a) it lets this series just be
+> applied and work as-is, and b) they are fairly standalone, and could potentially
+> be merged even without the rest of the larger series Peter submitted. Thanks
+> Peter!
+>
+> Also, although it doesn't affect minor fault handling, I did notice that the
+> userfaultfd self test sometimes experienced memory corruption
+> (https://lore.kernel.org/patchwork/cover/1356755/). For anyone testing this
+> series, it may be useful to apply that series first to fix the selftest
+> flakiness. That series doesn't have to be merged into mainline / maintaner
+> branches before mine, though.
+>
+> Future Work
+> ===========
+>
+> Currently the patchset only supports hugetlbfs. There is no reason it can't work
+> with shmem, but I expect hugetlbfs to be much more commonly used since we're
+> talking about backing guest memory for VMs. I plan to implement shmem support in
+> a follow-up patch series.
+>
+> Axel Rasmussen (6):
+>   userfaultfd: add minor fault registration mode
+>   userfaultfd: disable huge PMD sharing for MINOR registered VMAs
+>   userfaultfd: hugetlbfs: only compile UFFD helpers if config enabled
+>   userfaultfd: add UFFDIO_CONTINUE ioctl
+>   userfaultfd: update documentation to describe minor fault handling
+>   userfaultfd/selftests: add test exercising minor fault handling
+>
+> Peter Xu (4):
+>   hugetlb: Pass vma into huge_pte_alloc() and huge_pmd_share()
+>   hugetlb/userfaultfd: Forbid huge pmd sharing when uffd enabled
+>   mm/hugetlb: Move flush_hugetlb_tlb_range() into hugetlb.h
+>   hugetlb/userfaultfd: Unshare all pmds for hugetlbfs when register wp
+>
+>  Documentation/admin-guide/mm/userfaultfd.rst | 107 ++++++----
+>  arch/arm64/mm/hugetlbpage.c                  |   7 +-
+>  arch/ia64/mm/hugetlbpage.c                   |   3 +-
+>  arch/mips/mm/hugetlbpage.c                   |   4 +-
+>  arch/parisc/mm/hugetlbpage.c                 |   2 +-
+>  arch/powerpc/mm/hugetlbpage.c                |   3 +-
+>  arch/s390/mm/hugetlbpage.c                   |   2 +-
+>  arch/sh/mm/hugetlbpage.c                     |   2 +-
+>  arch/sparc/mm/hugetlbpage.c                  |   6 +-
+>  fs/proc/task_mmu.c                           |   1 +
+>  fs/userfaultfd.c                             | 196 ++++++++++++++++---
+>  include/linux/hugetlb.h                      |  22 ++-
+>  include/linux/mm.h                           |   1 +
+>  include/linux/mmu_notifier.h                 |   1 +
+>  include/linux/userfaultfd_k.h                |  49 ++++-
+>  include/trace/events/mmflags.h               |   1 +
+>  include/uapi/linux/userfaultfd.h             |  36 +++-
+>  mm/hugetlb.c                                 | 113 +++++++----
+>  mm/userfaultfd.c                             |  51 +++--
+>  tools/testing/selftests/vm/userfaultfd.c     | 147 +++++++++++++-
+>  20 files changed, 601 insertions(+), 153 deletions(-)
+>
+> --
+> 2.30.0.365.g02bc693789-goog
+>
