@@ -2,178 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7A030EE4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 09:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1724030EE81
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 09:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234886AbhBDI0n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 03:26:43 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:34343 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233305AbhBDI0l (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 03:26:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612427200; x=1643963200;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=GtdY8LtyTR9VUmf4SBTpHa/Kososx3pGVqasa7L3upw=;
-  b=O/p9bA7PL2eRFL9nnEk+IJnC/21PlNR8eKAfnrw5+OEVxwd2WXmmT126
-   kZxhjVck05bKPDQFTVrheyVCrl/dKPIBjO7Z0b0hLIz3un1w7aYlt241Y
-   nLoUZ1+jUwzqsF+ydSbfybUgWFDpRXdKvRMYgBHBd6ohmLr6IGgv9oSrM
-   OQftAiWtzKE2edbasUBD3uECgHCHuSqyrAd3FrWMokFQc+aNlnVt06f/Y
-   C0a8k2WSZXU19EdhM8MqaP80UuKblsC1TPmLSezexV+X6lvok9n09b2uH
-   Z2d3erTr56x9C8QH4yQ/9WyF7YI1Gc19rOScplycb4XsNGVvkZrPxGc+f
-   A==;
-IronPort-SDR: JEV6O0hUYtO2Wn0XsG7UlCSCNTE5OBnUTVp5Qf/TgzfMAcM/UfkvVP2p5my1cXZ7gYDDAaAjZU
- NJrJUns7+A62NzFS4h8b/v28Ct4Pii17QLDxYvfY2jYAGAeVO/PtwWa6Of2CwpQHuJp25yV/CH
- /q8Epuhm20+dMEWVYD1QIGbCP2PzioQ1ZqW/xGRW55SBk1apRNoF9Xhm1PxGsJZZuWo4uld6tw
- oA8OhRcypBJwVbhPnZopNFHavfjT54jf5k4nCmFI1ew1a9g1aPMQV93fCYHDDugSG0K/OS5GJV
- Nic=
-X-IronPort-AV: E=Sophos;i="5.79,400,1602518400"; 
-   d="scan'208";a="269527913"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 16:25:34 +0800
-IronPort-SDR: INL2Vsu8nw0TnRK7BBvkPRK72lgOUCzvrXJ0wqUAr4qPpbCMOf4xRz6Ir9pdXivfqXUS+FCF1y
- Yop8/Qb1rblVzQsgqANlWDx/rQbZDRN4AucXJZkNozsaX75xro4sQU0RghGQq6chxkwwSYudME
- j2li30esH85Vsb9ZSlfaeTAKpfAxkmHEpyt++rElRGH1SGRGV4CzKxei8oqVhbYjNucmcm/mNf
- ruxOtRfBe7FXehdUJlh/21y+7q8QWki6Tq3K1KVBbqz5g/oi1E23PRPDkJGuf0AN7po+9GIC7c
- mhSZ857i5Gg1MjDjFKWjFuTb
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 00:07:38 -0800
-IronPort-SDR: fn/zU2u4FnEBE2zzzTbalQiz2PvTVBgRfs21HVlRvr/5FkHs6VAT6c6Uasj4iSER8zR2O7QSVD
- w50MMqS8/zwbhCiOtI+rLhDL1VclGMao6YODg7ijzttM38g3OGfS+s2xlKdnQVksUsqmZcDktF
- qq+E+Vs94MbUXsp4gZpH7RxPtTvM7qrHYkm+WG8UG377KNzgA8tbz4jFC2RZc2RQXEZQ8vQik/
- dQMw7hMQoRfmOoeYwkpJjgxfCkbtkvH7o7K6N5Lal4Vj13eVpnUYvPqpTzCxWf98auqBSWG9V3
- iDw=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 04 Feb 2021 00:25:34 -0800
-Received: (nullmailer pid 969874 invoked by uid 1000);
-        Thu, 04 Feb 2021 08:25:32 -0000
-Date:   Thu, 4 Feb 2021 17:25:32 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     dsterba@suse.cz, linux-btrfs@vger.kernel.org, dsterba@suse.com,
-        hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH v14 29/42] btrfs: introduce dedicated data write path for
- ZONED mode
-Message-ID: <20210204082532.ljbe2bpjkbxtmsim@naota.dhcp.fujisawa.hgst.com>
-References: <cover.1611627788.git.naohiro.aota@wdc.com>
- <698bfc6446634e06a9399fa819d0f19aba3b4196.1611627788.git.naohiro.aota@wdc.com>
- <20210202150045.GY1993@twin.jikos.cz>
+        id S234980AbhBDIcO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 03:32:14 -0500
+Received: from relay.sw.ru ([185.231.240.75]:54966 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234624AbhBDIcI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Feb 2021 03:32:08 -0500
+Received: from [192.168.15.247]
+        by relay.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1l7a2A-001etl-VD; Thu, 04 Feb 2021 11:30:39 +0300
+Subject: Re: [v6 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
+To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, vbabka@suse.cz,
+        shakeelb@google.com, david@fromorbit.com, hannes@cmpxchg.org,
+        mhocko@suse.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210203172042.800474-1-shy828301@gmail.com>
+ <20210203172042.800474-8-shy828301@gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <374a5513-9e80-f240-ef82-ef35c13931c1@virtuozzo.com>
+Date:   Thu, 4 Feb 2021 11:30:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20210202150045.GY1993@twin.jikos.cz>
+In-Reply-To: <20210203172042.800474-8-shy828301@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 02, 2021 at 04:00:45PM +0100, David Sterba wrote:
->On Tue, Jan 26, 2021 at 11:25:07AM +0900, Naohiro Aota wrote:
->> If more than one IO is issued for one file extent, these IO can be written
->> to separate regions on a device. Since we cannot map one file extent to
->> such a separate area, we need to follow the "one IO == one ordered extent"
->> rule.
->>
->> The Normal buffered, uncompressed, not pre-allocated write path (used by
->> cow_file_range()) sometimes does not follow this rule. It can write a part
->> of an ordered extent when specified a region to write e.g., when its
->> called from fdatasync().
->>
->> Introduces a dedicated (uncompressed buffered) data write path for ZONED
->> mode. This write path will CoW the region and write it at once.
->>
->> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
->> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
->> ---
->>  fs/btrfs/inode.c | 34 ++++++++++++++++++++++++++++++++--
->>  1 file changed, 32 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
->> index a9bf78eaed42..6d43aaa1f537 100644
->> --- a/fs/btrfs/inode.c
->> +++ b/fs/btrfs/inode.c
->> @@ -1400,6 +1400,29 @@ static int cow_file_range_async(struct btrfs_inode *inode,
->>  	return 0;
->>  }
->>
->> +static noinline int run_delalloc_zoned(struct btrfs_inode *inode,
->> +				       struct page *locked_page, u64 start,
->> +				       u64 end, int *page_started,
->> +				       unsigned long *nr_written)
->> +{
->> +	int ret;
->> +
->> +	ret = cow_file_range(inode, locked_page, start, end,
->> +			     page_started, nr_written, 0);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (*page_started)
->> +		return 0;
->> +
->> +	__set_page_dirty_nobuffers(locked_page);
->> +	account_page_redirty(locked_page);
->> +	extent_write_locked_range(&inode->vfs_inode, start, end, WB_SYNC_ALL);
->> +	*page_started = 1;
->> +
->> +	return 0;
->> +}
->> +
->>  static noinline int csum_exist_in_range(struct btrfs_fs_info *fs_info,
->>  					u64 bytenr, u64 num_bytes)
->>  {
->> @@ -1879,17 +1902,24 @@ int btrfs_run_delalloc_range(struct btrfs_inode *inode, struct page *locked_page
->>  {
->>  	int ret;
->>  	int force_cow = need_force_cow(inode, start, end);
->> +	const bool do_compress = inode_can_compress(inode) &&
->> +		inode_need_compress(inode, start, end);
->
->This would make sense to cache the values, but inode_need_compress is
->quite heavy as it runs the compression heuristic. This would affect all
->cases and drop some perf.
->
->> +	const bool zoned = btrfs_is_zoned(inode->root->fs_info);
->>
->>  	if (inode->flags & BTRFS_INODE_NODATACOW && !force_cow) {
->> +		ASSERT(!zoned);
->>  		ret = run_delalloc_nocow(inode, locked_page, start, end,
->>  					 page_started, 1, nr_written);
->>  	} else if (inode->flags & BTRFS_INODE_PREALLOC && !force_cow) {
->> +		ASSERT(!zoned);
->>  		ret = run_delalloc_nocow(inode, locked_page, start, end,
->>  					 page_started, 0, nr_written);
->> -	} else if (!inode_can_compress(inode) ||
->> -		   !inode_need_compress(inode, start, end)) {
->> +	} else if (!do_compress && !zoned) {
->>  		ret = cow_file_range(inode, locked_page, start, end,
->>  				     page_started, nr_written, 1);
->> +	} else if (!do_compress && zoned) {
->> +		ret = run_delalloc_zoned(inode, locked_page, start, end,
->> +					 page_started, nr_written);
->
->The part of the condition is shared so it should be structured lik
->
->	} else if (!<the compression checks>) {
->		if (zoned)
->			run_delalloc_zoned
->		else
->			cow_file_range
->	} ...
->
+On 03.02.2021 20:20, Yang Shi wrote:
+> Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> 
+> The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> may suffer from over shrink, excessive reclaim latency, etc.
+> 
+> For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> 
+> We observed this hit in our production environment which was running vfs heavy workload
+> shown as the below tracing log:
+> 
+> <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> cache items 246404277 delta 31345 total_scan 123202138
+> <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> last shrinker return val 123186855
+> 
+> The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> 
+> Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> better isolation.
+> 
+> When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> 
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> ---
+>  include/linux/memcontrol.h |  7 +++---
+>  mm/vmscan.c                | 45 ++++++++++++++++++++++++--------------
+>  2 files changed, 33 insertions(+), 19 deletions(-)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 4c9253896e25..c457fc7bc631 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -93,12 +93,13 @@ struct lruvec_stat {
+>  };
+>  
+>  /*
+> - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> - * which have elements charged to this memcg.
+> + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
+> + * shrinkers, which have elements charged to this memcg.
+>   */
+>  struct shrinker_info {
+>  	struct rcu_head rcu;
+> -	unsigned long map[];
+> +	atomic_long_t *nr_deferred;
+> +	unsigned long *map;
+>  };
+>  
+>  /*
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index dc0d69e081b0..d9126f12890f 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -196,10 +196,12 @@ static void free_shrinker_info_rcu(struct rcu_head *head)
+>  }
+>  
+>  static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> -				   int size, int old_size)
+> +				    int m_size, int d_size,
+> +				    int old_m_size, int old_d_size)
+>  {
+>  	struct shrinker_info *new, *old;
+>  	int nid;
+> +	int size = m_size + d_size;
+>  
+>  	for_each_node(nid) {
+>  		old = rcu_dereference_protected(
+> @@ -212,9 +214,15 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+>  		if (!new)
+>  			return -ENOMEM;
+>  
+> -		/* Set all old bits, clear all new bits */
+> -		memset(new->map, (int)0xff, old_size);
+> -		memset((void *)new->map + old_size, 0, size - old_size);
+> +		new->nr_deferred = (atomic_long_t *)(new + 1);
+> +		new->map = (void *)new->nr_deferred + d_size;
+> +
+> +		/* map: set all old bits, clear all new bits */
+> +		memset(new->map, (int)0xff, old_m_size);
+> +		memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
+> +		/* nr_deferred: copy old values, clear all new values */
+> +		memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
+> +		memset((void *)new->nr_deferred + old_d_size, 0, d_size - old_d_size);
+>  
+>  		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+>  		call_rcu(&old->rcu, free_shrinker_info_rcu);
+> @@ -229,9 +237,6 @@ void free_shrinker_info(struct mem_cgroup *memcg)
+>  	struct shrinker_info *info;
+>  	int nid;
+>  
+> -	if (mem_cgroup_is_root(memcg))
+> -		return;
+> -
+>  	for_each_node(nid) {
+>  		pn = mem_cgroup_nodeinfo(memcg, nid);
+>  		info = rcu_dereference_protected(pn->shrinker_info, true);
+> @@ -244,12 +249,13 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>  {
+>  	struct shrinker_info *info;
+>  	int nid, size, ret = 0;
+> -
+> -	if (mem_cgroup_is_root(memcg))
+> -		return 0;
+> +	int m_size, d_size = 0;
+>  
+>  	down_write(&shrinker_rwsem);
+> -	size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> +	m_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> +	d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> +	size = m_size + d_size;
+> +
+>  	for_each_node(nid) {
+>  		info = kvzalloc_node(sizeof(*info) + size, GFP_KERNEL, nid);
+>  		if (!info) {
+> @@ -257,6 +263,8 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>  			ret = -ENOMEM;
+>  			break;
+>  		}
+> +		info->nr_deferred = (atomic_long_t *)(info + 1);
+> +		info->map = (void *)info->nr_deferred + d_size;
+>  		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>  	}
+>  	up_write(&shrinker_rwsem);
+> @@ -268,10 +276,16 @@ static int expand_shrinker_info(int new_id)
+>  {
+>  	int size, old_size, ret = 0;
+>  	int new_nr_max = new_id + 1;
+> +	int m_size, d_size = 0;
+> +	int old_m_size, old_d_size = 0;
+>  	struct mem_cgroup *memcg;
+>  
+> -	size = NR_MAX_TO_SHR_MAP_SIZE(new_nr_max);
+> -	old_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> +	m_size = NR_MAX_TO_SHR_MAP_SIZE(new_nr_max);
+> +	d_size = new_nr_max * sizeof(atomic_long_t);
+> +	size = m_size + d_size;
+> +	old_m_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> +	old_d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> +	old_size = old_m_size + old_d_size;
+>  	if (size <= old_size)
+>  		goto out;
 
-Sure. I'll rewrite the code like this in v15.
+Before this patch we used to allocate shrinker_info with BITS_PER_LONG batching.
+So, first registered shrinker used to allocate a map of unsigned long size, and
+we could to allocate 63 more shrinkers without maps expanding.
 
-Thanks,
+After this patch we will expand maps on every shrinker registration, won't we?
+What do you think about batching here?
 
->>  	} else {
->>  		set_bit(BTRFS_INODE_HAS_ASYNC_EXTENT, &inode->runtime_flags);
->>  		ret = cow_file_range_async(inode, wbc, locked_page, start, end,
->> --
->> 2.27.0
+>  
+> @@ -280,9 +294,8 @@ static int expand_shrinker_info(int new_id)
+>  
+>  	memcg = mem_cgroup_iter(NULL, NULL, NULL);
+>  	do {
+> -		if (mem_cgroup_is_root(memcg))
+> -			continue;
+> -		ret = expand_one_shrinker_info(memcg, size, old_size);
+> +		ret = expand_one_shrinker_info(memcg, m_size, d_size,
+> +					       old_m_size, old_d_size);
+>  		if (ret) {
+>  			mem_cgroup_iter_break(NULL, memcg);
+>  			goto out;
+> 
+
