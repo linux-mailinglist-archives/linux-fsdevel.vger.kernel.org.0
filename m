@@ -2,104 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2213530EF81
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 10:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E0730EFB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 10:35:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234907AbhBDJUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 04:20:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44396 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234763AbhBDJUd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 04:20:33 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECC2C0613ED
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Feb 2021 01:19:52 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id lg21so4141521ejb.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Feb 2021 01:19:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=8lxogqlMZgpD9J7gbgqwGDjE7NKX9NOMGrM6eS5WeBQ=;
-        b=QdCtg961nF58oQwzzj/FzDEuBgWW7M25dZnVjXoEgymQXTCxy0678cMv6XetCZpUaZ
-         qGUlVnZB3LpsWGlT71eX2hazbFGUU2pF0XcdLR33Ivk89k8hrz5XdRrgSaJhJCaZhyfT
-         OdwMZ5PMaqR3dd5Kq5eizc2wWsP0JYooM+DK4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=8lxogqlMZgpD9J7gbgqwGDjE7NKX9NOMGrM6eS5WeBQ=;
-        b=s+5QQS7GdXRIbbyXPXd1h+ctZxI4c1fLvJZcwEhUdQu4Y86QiZj4zisgsRg40i4JsK
-         Tyt537+r3tPW2v3VDFiANHQPFXMCYUElRz+fr1VGdqwIB7MOHexaIgA86CnlttL1vnRi
-         f7C7M3GRlPYge9mowmJ3I05l+Uh/JPRm7UNneuG8EBZhyv7OxjadewxJ8W9ePPXsqNiK
-         CSC4PY96UwLfoMtiXixOFgsA/ltMbD2hkqWc8HOTOd0SVxC52jNJIQS5OM908ELETPQF
-         rgSViivcUWbZWjlAszF8LXYOq0jB2OPd5sGQ3R7EtgiyOnu4jmpp3NreRWX6NIiYzEfn
-         Pc9w==
-X-Gm-Message-State: AOAM530FHEnaR3Vaj6rIuLsv2kPxnBF/6oF+0Zm6uDOn5rUS4pok0y3C
-        jEJVb8mCmn1/bIV4Ru4N73vtag==
-X-Google-Smtp-Source: ABdhPJzueTAe+j4RnxD8AuLmdsIejqrJgdfclHJVHYp18QuH68ItotqE3diVPpuh2mkrAQoj3CScEw==
-X-Received: by 2002:a17:906:2d0:: with SMTP id 16mr7353415ejk.373.1612430391385;
-        Thu, 04 Feb 2021 01:19:51 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id k26sm2255486eds.41.2021.02.04.01.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Feb 2021 01:19:50 -0800 (PST)
-Date:   Thu, 4 Feb 2021 10:19:43 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs fixes for 5.11-rc7
-Message-ID: <20210204091943.GA1208880@miu.piliscsaba.redhat.com>
+        id S235103AbhBDJbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 04:31:14 -0500
+Received: from relay.sw.ru ([185.231.240.75]:57802 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233705AbhBDJbM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Feb 2021 04:31:12 -0500
+Received: from [192.168.15.247]
+        by relay.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1l7axL-001fKb-Hd; Thu, 04 Feb 2021 12:29:43 +0300
+Subject: Re: [v6 PATCH 09/11] mm: vmscan: don't need allocate
+ shrinker->nr_deferred for memcg aware shrinkers
+To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, vbabka@suse.cz,
+        shakeelb@google.com, david@fromorbit.com, hannes@cmpxchg.org,
+        mhocko@suse.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210203172042.800474-1-shy828301@gmail.com>
+ <20210203172042.800474-10-shy828301@gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <656865f5-bb56-4f4c-b88d-ec933a042b4c@virtuozzo.com>
+Date:   Thu, 4 Feb 2021 12:29:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20210203172042.800474-10-shy828301@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On 03.02.2021 20:20, Yang Shi wrote:
+> Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
+> allocate shrinker->nr_deferred for such shrinkers anymore.
+> 
+> The prealloc_memcg_shrinker() would return -ENOSYS if !CONFIG_MEMCG or memcg is disabled
+> by kernel command line, then shrinker's SHRINKER_MEMCG_AWARE flag would be cleared.
+> This makes the implementation of this patch simpler.
+> 
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> ---
+>  mm/vmscan.c | 31 ++++++++++++++++---------------
+>  1 file changed, 16 insertions(+), 15 deletions(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 545422d2aeec..20a35d26ae12 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -334,6 +334,9 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+>  {
+>  	int id, ret = -ENOMEM;
+>  
+> +	if (mem_cgroup_disabled())
+> +		return -ENOSYS;
+> +
+>  	down_write(&shrinker_rwsem);
+>  	/* This may call shrinker, so it must use down_read_trylock() */
+>  	id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
+> @@ -414,7 +417,7 @@ static bool writeback_throttling_sane(struct scan_control *sc)
+>  #else
+>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+>  {
+> -	return 0;
+> +	return -ENOSYS;
+>  }
+>  
+>  static void unregister_memcg_shrinker(struct shrinker *shrinker)
+> @@ -525,8 +528,18 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
+>   */
+>  int prealloc_shrinker(struct shrinker *shrinker)
+>  {
+> -	unsigned int size = sizeof(*shrinker->nr_deferred);
+> +	unsigned int size;
+> +	int err;
+> +
+> +	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+> +		err = prealloc_memcg_shrinker(shrinker);
+> +		if (err != -ENOSYS)
+> +			return err;
+>  
+> +		shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
+> +	}
+> +
+> +	size = sizeof(*shrinker->nr_deferred);
+>  	if (shrinker->flags & SHRINKER_NUMA_AWARE)
+>  		size *= nr_node_ids;
 
-Please pull from:
+This may sound surprisingly, but IIRC do_shrink_slab() may be called on early boot
+*even before* root_mem_cgroup is allocated. AFAIR, I received syzcaller crash report
+because of this, when I was implementing shrinker_maps.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-5.11-rc7
+This is a reason why we don't use shrinker_maps even in case of mem cgroup is not
+disabled: we iterate every shrinker of shrinker_list. See check in shrink_slab():
 
-- Fix capability conversion and minor overlayfs bugs that are related to
-  the unprivileged overlay mounts introduced in this cycle.
+	if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
 
-- Fix two recent (v5.10) and one old (v4.10) bug.
+Possible, we should do the same for nr_deferred: 1)always allocate shrinker->nr_deferred,
+2)use shrinker->nr_deferred in count_nr_deferred() and set_nr_deferred().
 
-- Clean up security xattr copy-up (related to a SELinux regression).
+>  
+> @@ -534,26 +547,14 @@ int prealloc_shrinker(struct shrinker *shrinker)
+>  	if (!shrinker->nr_deferred)
+>  		return -ENOMEM;
+>  
+> -	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+> -		if (prealloc_memcg_shrinker(shrinker))
+> -			goto free_deferred;
+> -	}
+>  
+>  	return 0;
+> -
+> -free_deferred:
+> -	kfree(shrinker->nr_deferred);
+> -	shrinker->nr_deferred = NULL;
+> -	return -ENOMEM;
+>  }
+>  
+>  void free_prealloced_shrinker(struct shrinker *shrinker)
+>  {
+> -	if (!shrinker->nr_deferred)
+> -		return;
+> -
+>  	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> -		unregister_memcg_shrinker(shrinker);
+> +		return unregister_memcg_shrinker(shrinker);
+>  
+>  	kfree(shrinker->nr_deferred);
+>  	shrinker->nr_deferred = NULL;
+> 
 
-Thanks,
-Miklos
-
----
-Amir Goldstein (1):
-      ovl: skip getxattr of security labels
-
-Liangyan (1):
-      ovl: fix dentry leak in ovl_get_redirect
-
-Miklos Szeredi (4):
-      ovl: add warning on user_ns mismatch
-      ovl: perform vfs_getxattr() with mounter creds
-      cap: fix conversions on getxattr
-      ovl: avoid deadlock on directory ioctl
-
-Sargun Dhillon (1):
-      ovl: implement volatile-specific fsync error behaviour
-
----
- Documentation/filesystems/overlayfs.rst |  8 ++++
- fs/overlayfs/copy_up.c                  | 15 ++++----
- fs/overlayfs/dir.c                      |  2 +-
- fs/overlayfs/file.c                     |  5 ++-
- fs/overlayfs/inode.c                    |  2 +
- fs/overlayfs/overlayfs.h                |  1 +
- fs/overlayfs/ovl_entry.h                |  2 +
- fs/overlayfs/readdir.c                  | 28 +++++---------
- fs/overlayfs/super.c                    | 38 +++++++++++++++----
- fs/overlayfs/util.c                     | 27 +++++++++++++
- security/commoncap.c                    | 67 +++++++++++++++++++++------------
- 11 files changed, 136 insertions(+), 59 deletions(-)
