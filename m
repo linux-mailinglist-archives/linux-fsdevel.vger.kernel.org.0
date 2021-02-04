@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A3E330F0A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3DE930F0A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:30:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235471AbhBDK0H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 05:26:07 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54296 "EHLO
+        id S235476AbhBDK00 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 05:26:26 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54276 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235394AbhBDKZq (ORCPT
+        with ESMTP id S235470AbhBDK0G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 05:25:46 -0500
+        Thu, 4 Feb 2021 05:26:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612434345; x=1643970345;
+  t=1612434366; x=1643970366;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=FdOdb3akZdghVnsgyOGjs7F8rdRCq2/2YmVHxcdWR0E=;
-  b=TSqtGdTl4jA23mG544hYWzj7Dv7htwmPWa7ztX4uaYELJm1PhApaKAJ2
-   jCbAyzCCVrtRGFk4ffeCaqoc10vffh1AOnmRv1CTLxXUe3Efb+HcHIwJ2
-   sTtsh8X3zv5YoqIrwoQ/B3wXviMGMFnFZDLJx89avvCpRcHfD3jQae7JO
-   QMtyi83Ktf/8cPPB+BpdGk4XraL2uzqsH+CaMX8ATX5/Kf1EreSEMKHyr
-   amdMwXV5H5drc56FKeGTu1/GIOyBPPq+MbQRof7xIhtqsyD1F8I02hofd
-   k2lomCpRAx1jQ1/dHL60SKjBhSZi/LfgdLmgOXwdmWjLCaakbby/xyuOA
-   Q==;
-IronPort-SDR: cMChE2ZBMW5d04lkNSQRYQq7ExYwEXsCzBbUG0QHWgZtNF0av6mVYsE5mz/Ewi5dByA4rR3uQu
- unMu7V2I9M9kMRvFJSmeBRmE3hVNApD6+nCGViYG41DkdwGb114REVdUKLXxQZ4LZT52/PmID/
- cvMEop8jT1RdE1s7q2qhOWrY8+2RnrySk6PE9wgQV6odulRq+/eY6Px/017SpoNYNmAFtdouD+
- F/KcYiq4QyG9bUd+UFT7EJMZXBU83HPXK49K3Q6gFLkUoRcOWh4j4uN5+TlbkUAT0kV/zwdtYi
- iuo=
+  bh=xg1Nsvpj3BZWKn8bbLvBcESBI3F08uBTb76C16cAjqc=;
+  b=PFsmUJRlF+xojOBQT6fzsUfcfhHDEETOhBuSI+gnskzkCFp5anJl03lH
+   Q/aFxtt9J0kz4fbVayyl5uGYAyWiwcw/Nz3wPC4xYjqrIsJ1Z5wyM9OXj
+   Z4mjJlx3lB/jXkT/qkvtoZybMXSFQ73WHa0Li4RoxEagv4fVpLA7qx/uX
+   Cewg9sXQeyzHsuFQlbKIemYFaYRuZFyL2hHCRICGwdbYyqGRl2dB8euCe
+   tU9SCkSOzMAFCaCQ7//B7zLsDPnbHj+fYr4hue/gsc09BHyhj0/0cI36q
+   FEAaW8IxzKQUfyzMWllxhHUlGaCpjao6ofsUontpb9UT7LSOvpQMaQjQt
+   w==;
+IronPort-SDR: c4j9F6Bwrb8wQeMRVOsZicXpLhGdq6wRFUVficWyezGVjYuPP1QgywqknriofAaBESmoXoH729
+ eqWJsrrxpIrfajIGuh8GnMNoqt1ybEeXwxX7Y9NgFz/QwWfrDW7UgRO6wpMsWyqAtYjMBBLXuR
+ kev3npQYK36BsGXuXqUFmGFRGlSUFmJdZBGCaL4uGATIUQASa6MWcU2l48BkiV/xB9kdhOwRP5
+ W3+vZ2euBL51xan+d/znmFb4yRI3LL0j4QFCTUVjlnPieyZTGLfBn9Zho2yTQuSi9n8oIzjCbf
+ YkI=
 X-IronPort-AV: E=Sophos;i="5.79,400,1602518400"; 
-   d="scan'208";a="159107994"
+   d="scan'208";a="159107997"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:15 +0800
-IronPort-SDR: 4YxgUQNEDs3xeYvLWWmskeLOc+MW0dLFIJ0R4CTiqL2AU3dtWDFGPWTnGy1JU3jDVqaGQn/KjS
- RvyOVZFOLb3Wc8kK+A4wfOs2xfjYGLscdMzEgBaYXTilDv2lBUZp9H3zs6B9YAoqrMkGOVVbvl
- 3cwvZbrSU4QjfiI8nT6qHBgiMwUxIVk0WguC/Yat7Vp1csS5vSk4zB5HVoEWuM/zegeEkjfBVJ
- N70LDVkhRck6X+PAtZqN7CtnMTwU/mJD5hlg9XD4uY0CpYcgCVI8Br9X7KGatVXXZL2bB9Xv7h
- F8cmEERxhl/KkSlhsPjMUfu6
+  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:16 +0800
+IronPort-SDR: BsPKIUz4gdDjwVC4JvkPzzN7FxYom5I3xZm5OzihYNBASpwllPVfkONk+o4aVgsPpXEBILIgLO
+ WE/ucbNfjM/paELznfY+rDUZAcoMBhaGEu45xxgXI4JBdOyZv+MH0RySWSBd4xyyJJosR15orp
+ BRPPo7wrfXW7WZKkmyv1noGfrMWRVIxLUVhlJRyNe7N/92p+ONXS8X3wGqH8vJr63CWNIl0KQy
+ AuVFOE3EIMJsZkShMqDZljtX1kG7D64R6X3jWqPC+gSyD00SBl5QcLaWAfW+tKz0LOhATWqcsU
+ AhCtrKZaODlJvBHPps2Nz9M2
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:18 -0800
-IronPort-SDR: EavtwIDsZOvTAEAx+5Zq9Bn1Y0Sy09qVulIhXhYsURw2hOCA5qwu+iFQup+SzdUlp1aFT7YFm8
- qCru0Pcdyw/wiFubZigyuTeYn68abvJStd8sbL2G91fFY5id0FSB7Lywrm32wDO6tUpvgJqtW8
- 3UE+POUVjNU/+Pre0M6yoQ9TMyHiLEUYol2RrXrjF9aM/nbGcZ41UtW6Q9utd6HKBSCjO6jE0l
- U+tUHJYRKEQhrYj/0W6PDvOvBnIY9A5Bsgfj1X/I43ZcllBBnjozwjR6AzatkTL196qP26/wNX
- Dxw=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:19 -0800
+IronPort-SDR: fc4zyBDBfx3SbYVhTVaUcX5IkIOBvwmm5EIeuFRQrRxxWsNvRDppkXlUbD6T/AJZVucLZ9nVp6
+ 8WmymN0O547pCETmMyaNEzBDGNk406wI9rvVvLMfocKeBN8Yj2nkymZ5VK8Ybd+sV0exSuRr3E
+ AMSUfZH4LreG0zBEP1cDj5T4CJKWSW5nEoMF8TWkgqdE0N7HQg6J8sYXpE/dVDlOrP7/sZKQNI
+ IRcMFgFvDLjsDrGq49FSXpoYD6C5PtKwf77ekt0j/mRzndW49NBDKtcpLfHWJg/ETrYYF0xjze
+ zlA=
 WDCIronportException: Internal
 Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon.wdc.com) ([10.84.71.79])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:23:14 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:23:15 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Naohiro Aota <naohiro.aota@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v15 14/42] btrfs: zoned: implement sequential extent allocation
-Date:   Thu,  4 Feb 2021 19:21:53 +0900
-Message-Id: <2a2f979a38943162a54ddf017aa44371d17695ec.1612434091.git.naohiro.aota@wdc.com>
+Subject: [PATCH v15 15/42] btrfs: zoned: redirty released extent buffers
+Date:   Thu,  4 Feb 2021 19:21:54 +0900
+Message-Id: <60882b8bb6f8723b8568515212cac64a55ce405f.1612434091.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
 References: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
@@ -66,237 +66,307 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement a sequential extent allocator for zoned filesystems. This
-allocator only needs to check if there is enough space in the block group
-after the allocation pointer to satisfy the extent allocation request.
-Therefore the allocator never manages bitmaps or clusters. Also, add
-assertions to the corresponding functions.
+Tree manipulating operations like merging nodes often release
+once-allocated tree nodes. Such nodes are cleaned so that pages in the
+node are not uselessly written out. On zoned volumes, however, such
+optimization blocks the following IOs as the cancellation of the write
+out of the freed blocks breaks the sequential write sequence expected by
+the device.
 
-As zone append writing is used, it would be unnecessary to track the
-allocation offset, as the allocator only needs to check available space.
-But by tracking and returning the offset as an allocated region, we can
-skip modification of ordered extents and checksum information when there
-is no IO reordering.
+Introduce a list of clean and unwritten extent buffers that have been
+released in a transaction. Redirty the buffers so that
+btree_write_cache_pages() can send proper bios to the devices.
+
+Besides it clears the entire content of the extent buffer not to confuse
+raw block scanners e.g. 'btrfs check'. By clearing the content,
+csum_dirty_buffer() complains about bytenr mismatch, so avoid the
+checking and checksum using newly introduced buffer flag
+EXTENT_BUFFER_NO_CHECK.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/block-group.c      |  4 ++
- fs/btrfs/extent-tree.c      | 90 ++++++++++++++++++++++++++++++++++---
- fs/btrfs/free-space-cache.c |  6 +++
- 3 files changed, 94 insertions(+), 6 deletions(-)
+ fs/btrfs/disk-io.c     |  8 ++++++++
+ fs/btrfs/extent-tree.c | 12 +++++++++++-
+ fs/btrfs/extent_io.c   |  4 ++++
+ fs/btrfs/extent_io.h   |  2 ++
+ fs/btrfs/transaction.c | 10 ++++++++++
+ fs/btrfs/transaction.h |  3 +++
+ fs/btrfs/tree-log.c    |  6 ++++++
+ fs/btrfs/zoned.c       | 37 +++++++++++++++++++++++++++++++++++++
+ fs/btrfs/zoned.h       |  7 +++++++
+ 9 files changed, 88 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-index e4444d4dd4b5..63093cfb807e 100644
---- a/fs/btrfs/block-group.c
-+++ b/fs/btrfs/block-group.c
-@@ -725,6 +725,10 @@ int btrfs_cache_block_group(struct btrfs_block_group *cache, int load_cache_only
- 	struct btrfs_caching_control *caching_ctl = NULL;
- 	int ret = 0;
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 8551b0fc1b22..eb1afd7d89f7 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -459,6 +459,12 @@ static int csum_dirty_buffer(struct btrfs_fs_info *fs_info, struct bio_vec *bvec
+ 		return 0;
  
-+	/* Allocator for zoned filesystems does not use the cache at all */
-+	if (btrfs_is_zoned(fs_info))
-+		return 0;
+ 	found_start = btrfs_header_bytenr(eb);
 +
- 	caching_ctl = kzalloc(sizeof(*caching_ctl), GFP_NOFS);
- 	if (!caching_ctl)
- 		return -ENOMEM;
++	if (test_bit(EXTENT_BUFFER_NO_CHECK, &eb->bflags)) {
++		WARN_ON(found_start != 0);
++		return 0;
++	}
++
+ 	/*
+ 	 * Please do not consolidate these warnings into a single if.
+ 	 * It is useful to know what went wrong.
+@@ -4774,6 +4780,8 @@ void btrfs_cleanup_one_transaction(struct btrfs_transaction *cur_trans,
+ 				     EXTENT_DIRTY);
+ 	btrfs_destroy_pinned_extent(fs_info, &cur_trans->pinned_extents);
+ 
++	btrfs_free_redirty_list(cur_trans);
++
+ 	cur_trans->state =TRANS_STATE_COMPLETED;
+ 	wake_up(&cur_trans->commit_wait);
+ }
 diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 5c61c3f136f7..85d99307673d 100644
+index 85d99307673d..4d48a773bf9c 100644
 --- a/fs/btrfs/extent-tree.c
 +++ b/fs/btrfs/extent-tree.c
-@@ -3429,6 +3429,7 @@ btrfs_release_block_group(struct btrfs_block_group *cache,
+@@ -3292,8 +3292,10 @@ void btrfs_free_tree_block(struct btrfs_trans_handle *trans,
  
- enum btrfs_extent_allocation_policy {
- 	BTRFS_EXTENT_ALLOC_CLUSTERED,
-+	BTRFS_EXTENT_ALLOC_ZONED,
+ 		if (root->root_key.objectid != BTRFS_TREE_LOG_OBJECTID) {
+ 			ret = check_ref_cleanup(trans, buf->start);
+-			if (!ret)
++			if (!ret) {
++				btrfs_redirty_list_add(trans->transaction, buf);
+ 				goto out;
++			}
+ 		}
+ 
+ 		cache = btrfs_lookup_block_group(fs_info, buf->start);
+@@ -3304,6 +3306,13 @@ void btrfs_free_tree_block(struct btrfs_trans_handle *trans,
+ 			goto out;
+ 		}
+ 
++		if (btrfs_is_zoned(fs_info)) {
++			btrfs_redirty_list_add(trans->transaction, buf);
++			pin_down_extent(trans, cache, buf->start, buf->len, 1);
++			btrfs_put_block_group(cache);
++			goto out;
++		}
++
+ 		WARN_ON(test_bit(EXTENT_BUFFER_DIRTY, &buf->bflags));
+ 
+ 		btrfs_add_free_space(cache, buf->start, buf->len);
+@@ -4635,6 +4644,7 @@ btrfs_init_new_buffer(struct btrfs_trans_handle *trans, struct btrfs_root *root,
+ 	__btrfs_tree_lock(buf, nest);
+ 	btrfs_clean_tree_block(buf);
+ 	clear_bit(EXTENT_BUFFER_STALE, &buf->bflags);
++	clear_bit(EXTENT_BUFFER_NO_CHECK, &buf->bflags);
+ 
+ 	set_extent_buffer_uptodate(buf);
+ 
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 2fa4ca12e2dd..fa9b37178d42 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -25,6 +25,7 @@
+ #include "backref.h"
+ #include "disk-io.h"
+ #include "subpage.h"
++#include "zoned.h"
+ 
+ static struct kmem_cache *extent_state_cache;
+ static struct kmem_cache *extent_buffer_cache;
+@@ -5183,6 +5184,7 @@ __alloc_extent_buffer(struct btrfs_fs_info *fs_info, u64 start,
+ 
+ 	btrfs_leak_debug_add(&fs_info->eb_leak_lock, &eb->leak_list,
+ 			     &fs_info->allocated_ebs);
++	INIT_LIST_HEAD(&eb->release_list);
+ 
+ 	spin_lock_init(&eb->refs_lock);
+ 	atomic_set(&eb->refs, 1);
+@@ -6105,6 +6107,8 @@ void write_extent_buffer(const struct extent_buffer *eb, const void *srcv,
+ 	char *src = (char *)srcv;
+ 	unsigned long i = get_eb_page_index(start);
+ 
++	WARN_ON(test_bit(EXTENT_BUFFER_NO_CHECK, &eb->bflags));
++
+ 	if (check_eb_range(eb, start, len))
+ 		return;
+ 
+diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
+index 047b3e66897f..824640cb0ace 100644
+--- a/fs/btrfs/extent_io.h
++++ b/fs/btrfs/extent_io.h
+@@ -31,6 +31,7 @@ enum {
+ 	EXTENT_BUFFER_IN_TREE,
+ 	/* write IO error */
+ 	EXTENT_BUFFER_WRITE_ERR,
++	EXTENT_BUFFER_NO_CHECK,
  };
  
- /*
-@@ -3681,6 +3682,65 @@ static int do_allocation_clustered(struct btrfs_block_group *block_group,
- 	return find_free_extent_unclustered(block_group, ffe_ctl);
+ /* these are flags for __process_pages_contig */
+@@ -93,6 +94,7 @@ struct extent_buffer {
+ 	struct rw_semaphore lock;
+ 
+ 	struct page *pages[INLINE_EXTENT_BUFFER_PAGES];
++	struct list_head release_list;
+ #ifdef CONFIG_BTRFS_DEBUG
+ 	struct list_head leak_list;
+ #endif
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index 00c0680dac3a..acff6bb49a97 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -21,6 +21,7 @@
+ #include "qgroup.h"
+ #include "block-group.h"
+ #include "space-info.h"
++#include "zoned.h"
+ 
+ #define BTRFS_ROOT_TRANS_TAG 0
+ 
+@@ -380,6 +381,8 @@ static noinline int join_transaction(struct btrfs_fs_info *fs_info,
+ 	spin_lock_init(&cur_trans->dirty_bgs_lock);
+ 	INIT_LIST_HEAD(&cur_trans->deleted_bgs);
+ 	spin_lock_init(&cur_trans->dropped_roots_lock);
++	INIT_LIST_HEAD(&cur_trans->releasing_ebs);
++	spin_lock_init(&cur_trans->releasing_ebs_lock);
+ 	list_add_tail(&cur_trans->list, &fs_info->trans_list);
+ 	extent_io_tree_init(fs_info, &cur_trans->dirty_pages,
+ 			IO_TREE_TRANS_DIRTY_PAGES, fs_info->btree_inode);
+@@ -2350,6 +2353,13 @@ int btrfs_commit_transaction(struct btrfs_trans_handle *trans)
+ 		goto scrub_continue;
+ 	}
+ 
++	/*
++	 * At this point, we should have written all the tree blocks allocated
++	 * in this transaction. So it's now safe to free the redirtyied extent
++	 * buffers.
++	 */
++	btrfs_free_redirty_list(cur_trans);
++
+ 	ret = write_all_supers(fs_info, 0);
+ 	/*
+ 	 * the super is written, we can safely allow the tree-loggers
+diff --git a/fs/btrfs/transaction.h b/fs/btrfs/transaction.h
+index 935bd6958a8a..6335716e513f 100644
+--- a/fs/btrfs/transaction.h
++++ b/fs/btrfs/transaction.h
+@@ -93,6 +93,9 @@ struct btrfs_transaction {
+ 	 */
+ 	atomic_t pending_ordered;
+ 	wait_queue_head_t pending_wait;
++
++	spinlock_t releasing_ebs_lock;
++	struct list_head releasing_ebs;
+ };
+ 
+ #define __TRANS_FREEZABLE	(1U << 0)
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index 4c7b283ed2b2..c02eeeac439c 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -19,6 +19,7 @@
+ #include "qgroup.h"
+ #include "block-group.h"
+ #include "space-info.h"
++#include "zoned.h"
+ 
+ /* magic values for the inode_only field in btrfs_log_inode:
+  *
+@@ -2752,6 +2753,8 @@ static noinline int walk_down_log_tree(struct btrfs_trans_handle *trans,
+ 						free_extent_buffer(next);
+ 						return ret;
+ 					}
++					btrfs_redirty_list_add(
++						trans->transaction, next);
+ 				} else {
+ 					if (test_and_clear_bit(EXTENT_BUFFER_DIRTY, &next->bflags))
+ 						clear_extent_buffer_dirty(next);
+@@ -3296,6 +3299,9 @@ static void free_log_tree(struct btrfs_trans_handle *trans,
+ 	clear_extent_bits(&log->dirty_log_pages, 0, (u64)-1,
+ 			  EXTENT_DIRTY | EXTENT_NEW | EXTENT_NEED_WAIT);
+ 	extent_io_tree_release(&log->log_csum_range);
++
++	if (trans && log->node)
++		btrfs_redirty_list_add(trans->transaction, log->node);
+ 	btrfs_put_root(log);
  }
  
-+/*
-+ * Simple allocator for sequential only block group. It only allows sequential
-+ * allocation. No need to play with trees. This function also reserves the
-+ * bytes as in btrfs_add_reserved_bytes.
-+ */
-+static int do_allocation_zoned(struct btrfs_block_group *block_group,
-+			       struct find_free_extent_ctl *ffe_ctl,
-+			       struct btrfs_block_group **bg_ret)
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index c5f9f4c6f20b..1de67d789b83 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -10,6 +10,7 @@
+ #include "rcu-string.h"
+ #include "disk-io.h"
+ #include "block-group.h"
++#include "transaction.h"
+ 
+ /* Maximum number of zones to report per blkdev_report_zones() call */
+ #define BTRFS_REPORT_NR_ZONES   4096
+@@ -1181,3 +1182,39 @@ void btrfs_calc_zone_unusable(struct btrfs_block_group *cache)
+ 	/* Should not have any excluded extents. Just in case, though */
+ 	btrfs_free_excluded_extents(cache);
+ }
++
++void btrfs_redirty_list_add(struct btrfs_transaction *trans,
++			    struct extent_buffer *eb)
 +{
-+	struct btrfs_space_info *space_info = block_group->space_info;
-+	struct btrfs_free_space_ctl *ctl = block_group->free_space_ctl;
-+	u64 start = block_group->start;
-+	u64 num_bytes = ffe_ctl->num_bytes;
-+	u64 avail;
-+	int ret = 0;
++	struct btrfs_fs_info *fs_info = eb->fs_info;
 +
-+	ASSERT(btrfs_is_zoned(block_group->fs_info));
++	if (!btrfs_is_zoned(fs_info) ||
++	    btrfs_header_flag(eb, BTRFS_HEADER_FLAG_WRITTEN) ||
++	    !list_empty(&eb->release_list))
++		return;
 +
-+	spin_lock(&space_info->lock);
-+	spin_lock(&block_group->lock);
++	set_extent_buffer_dirty(eb);
++	set_extent_bits_nowait(&trans->dirty_pages, eb->start,
++			       eb->start + eb->len - 1, EXTENT_DIRTY);
++	memzero_extent_buffer(eb, 0, eb->len);
++	set_bit(EXTENT_BUFFER_NO_CHECK, &eb->bflags);
 +
-+	if (block_group->ro) {
-+		ret = 1;
-+		goto out;
-+	}
-+
-+	avail = block_group->length - block_group->alloc_offset;
-+	if (avail < num_bytes) {
-+		if (ffe_ctl->max_extent_size < avail) {
-+			/*
-+			 * With sequential allocator, free space is always
-+			 * contiguous
-+			 */
-+			ffe_ctl->max_extent_size = avail;
-+			ffe_ctl->total_free_space = avail;
-+		}
-+		ret = 1;
-+		goto out;
-+	}
-+
-+	ffe_ctl->found_offset = start + block_group->alloc_offset;
-+	block_group->alloc_offset += num_bytes;
-+	spin_lock(&ctl->tree_lock);
-+	ctl->free_space -= num_bytes;
-+	spin_unlock(&ctl->tree_lock);
-+
-+	/*
-+	 * We do not check if found_offset is aligned to stripesize. The
-+	 * address is anyway rewritten when using zone append writing.
-+	 */
-+
-+	ffe_ctl->search_start = ffe_ctl->found_offset;
-+
-+out:
-+	spin_unlock(&block_group->lock);
-+	spin_unlock(&space_info->lock);
-+	return ret;
++	spin_lock(&trans->releasing_ebs_lock);
++	list_add_tail(&eb->release_list, &trans->releasing_ebs);
++	spin_unlock(&trans->releasing_ebs_lock);
++	atomic_inc(&eb->refs);
 +}
 +
- static int do_allocation(struct btrfs_block_group *block_group,
- 			 struct find_free_extent_ctl *ffe_ctl,
- 			 struct btrfs_block_group **bg_ret)
-@@ -3688,6 +3748,8 @@ static int do_allocation(struct btrfs_block_group *block_group,
- 	switch (ffe_ctl->policy) {
- 	case BTRFS_EXTENT_ALLOC_CLUSTERED:
- 		return do_allocation_clustered(block_group, ffe_ctl, bg_ret);
-+	case BTRFS_EXTENT_ALLOC_ZONED:
-+		return do_allocation_zoned(block_group, ffe_ctl, bg_ret);
- 	default:
- 		BUG();
- 	}
-@@ -3702,6 +3764,9 @@ static void release_block_group(struct btrfs_block_group *block_group,
- 		ffe_ctl->retry_clustered = false;
- 		ffe_ctl->retry_unclustered = false;
- 		break;
-+	case BTRFS_EXTENT_ALLOC_ZONED:
-+		/* Nothing to do */
-+		break;
- 	default:
- 		BUG();
- 	}
-@@ -3730,6 +3795,9 @@ static void found_extent(struct find_free_extent_ctl *ffe_ctl,
- 	case BTRFS_EXTENT_ALLOC_CLUSTERED:
- 		found_extent_clustered(ffe_ctl, ins);
- 		break;
-+	case BTRFS_EXTENT_ALLOC_ZONED:
-+		/* Nothing to do */
-+		break;
- 	default:
- 		BUG();
- 	}
-@@ -3745,6 +3813,9 @@ static int chunk_allocation_failed(struct find_free_extent_ctl *ffe_ctl)
- 		 */
- 		ffe_ctl->loop = LOOP_NO_EMPTY_SIZE;
- 		return 0;
-+	case BTRFS_EXTENT_ALLOC_ZONED:
-+		/* Give up here */
-+		return -ENOSPC;
- 	default:
- 		BUG();
- 	}
-@@ -3913,6 +3984,9 @@ static int prepare_allocation(struct btrfs_fs_info *fs_info,
- 	case BTRFS_EXTENT_ALLOC_CLUSTERED:
- 		return prepare_allocation_clustered(fs_info, ffe_ctl,
- 						    space_info, ins);
-+	case BTRFS_EXTENT_ALLOC_ZONED:
-+		/* Nothing to do */
-+		return 0;
- 	default:
- 		BUG();
- 	}
-@@ -3976,6 +4050,9 @@ static noinline int find_free_extent(struct btrfs_root *root,
- 	ffe_ctl.last_ptr = NULL;
- 	ffe_ctl.use_cluster = true;
- 
-+	if (btrfs_is_zoned(fs_info))
-+		ffe_ctl.policy = BTRFS_EXTENT_ALLOC_ZONED;
++void btrfs_free_redirty_list(struct btrfs_transaction *trans)
++{
++	spin_lock(&trans->releasing_ebs_lock);
++	while (!list_empty(&trans->releasing_ebs)) {
++		struct extent_buffer *eb;
 +
- 	ins->type = BTRFS_EXTENT_ITEM_KEY;
- 	ins->objectid = 0;
- 	ins->offset = 0;
-@@ -4118,20 +4195,21 @@ static noinline int find_free_extent(struct btrfs_root *root,
- 		/* move on to the next group */
- 		if (ffe_ctl.search_start + num_bytes >
- 		    block_group->start + block_group->length) {
--			btrfs_add_free_space(block_group, ffe_ctl.found_offset,
--					     num_bytes);
-+			btrfs_add_free_space_unused(block_group,
-+					    ffe_ctl.found_offset, num_bytes);
- 			goto loop;
- 		}
++		eb = list_first_entry(&trans->releasing_ebs,
++				      struct extent_buffer, release_list);
++		list_del_init(&eb->release_list);
++		free_extent_buffer(eb);
++	}
++	spin_unlock(&trans->releasing_ebs_lock);
++}
+diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
+index 37304d1675e6..b250a578e38c 100644
+--- a/fs/btrfs/zoned.h
++++ b/fs/btrfs/zoned.h
+@@ -43,6 +43,9 @@ int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
+ int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size);
+ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new);
+ void btrfs_calc_zone_unusable(struct btrfs_block_group *cache);
++void btrfs_redirty_list_add(struct btrfs_transaction *trans,
++			    struct extent_buffer *eb);
++void btrfs_free_redirty_list(struct btrfs_transaction *trans);
+ #else /* CONFIG_BLK_DEV_ZONED */
+ static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+ 				     struct blk_zone *zone)
+@@ -126,6 +129,10 @@ static inline int btrfs_load_block_group_zone_info(
  
- 		if (ffe_ctl.found_offset < ffe_ctl.search_start)
--			btrfs_add_free_space(block_group, ffe_ctl.found_offset,
--				ffe_ctl.search_start - ffe_ctl.found_offset);
-+			btrfs_add_free_space_unused(block_group,
-+					ffe_ctl.found_offset,
-+					ffe_ctl.search_start - ffe_ctl.found_offset);
+ static inline void btrfs_calc_zone_unusable(struct btrfs_block_group *cache) { }
  
- 		ret = btrfs_add_reserved_bytes(block_group, ram_bytes,
- 				num_bytes, delalloc);
- 		if (ret == -EAGAIN) {
--			btrfs_add_free_space(block_group, ffe_ctl.found_offset,
--					     num_bytes);
-+			btrfs_add_free_space_unused(block_group,
-+					ffe_ctl.found_offset, num_bytes);
- 			goto loop;
- 		}
- 		btrfs_inc_block_group_reservations(block_group);
-diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
-index b93ac31eca69..d2a43186cc7f 100644
---- a/fs/btrfs/free-space-cache.c
-+++ b/fs/btrfs/free-space-cache.c
-@@ -2928,6 +2928,8 @@ u64 btrfs_find_space_for_alloc(struct btrfs_block_group *block_group,
- 	u64 align_gap_len = 0;
- 	enum btrfs_trim_state align_gap_trim_state = BTRFS_TRIM_STATE_UNTRIMMED;
- 
-+	ASSERT(!btrfs_is_zoned(block_group->fs_info));
++static inline void btrfs_redirty_list_add(struct btrfs_transaction *trans,
++					  struct extent_buffer *eb) { }
++static inline void btrfs_free_redirty_list(struct btrfs_transaction *trans) { }
 +
- 	spin_lock(&ctl->tree_lock);
- 	entry = find_free_space(ctl, &offset, &bytes_search,
- 				block_group->full_stripe_len, max_extent_size);
-@@ -3059,6 +3061,8 @@ u64 btrfs_alloc_from_cluster(struct btrfs_block_group *block_group,
- 	struct rb_node *node;
- 	u64 ret = 0;
+ #endif
  
-+	ASSERT(!btrfs_is_zoned(block_group->fs_info));
-+
- 	spin_lock(&cluster->lock);
- 	if (bytes > cluster->max_size)
- 		goto out;
-@@ -3835,6 +3839,8 @@ int btrfs_trim_block_group(struct btrfs_block_group *block_group,
- 	int ret;
- 	u64 rem = 0;
- 
-+	ASSERT(!btrfs_is_zoned(block_group->fs_info));
-+
- 	*trimmed = 0;
- 
- 	spin_lock(&block_group->lock);
+ static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
 -- 
 2.30.0
 
