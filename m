@@ -2,146 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CADC330F07A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:25:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E5330F07C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:25:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235332AbhBDKYF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 05:24:05 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54218 "EHLO
+        id S235348AbhBDKYH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 05:24:07 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54222 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235201AbhBDKYB (ORCPT
+        with ESMTP id S235267AbhBDKYC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 05:24:01 -0500
+        Thu, 4 Feb 2021 05:24:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612434240; x=1643970240;
+  t=1612434242; x=1643970242;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=BMLhpfHfBzIq80REyLJtBw7YshDs+nIEmFK1hkUa1t8=;
-  b=HPOGI6EQXySJ1hSeeASMbhDPw4NxDSSfSidcJspHj+7jjhQXEPS87Zfw
-   sC7wcSrY0FOUUW7z02tJxELlUSfZ0alV4d/HNj88XVNUIwt/BxdywShvo
-   9waXqfZDV96VbiLV7qatGly+xRJ34yOw9DiQCejEGV6EpqRnb+V92eMK+
-   LltD9uqQ5d11tzIm9Q0Nf9GdmK7Bwdgsp71d5aJdKqsCcFggsGtpH2czf
-   3CDnalI0XczCcSbqeXQKfFxPKclmWYDqVZQPbxK/QHR1aSlazCtJA3qLy
-   1q+uAATtxcZsk0ezzqctY81HZ5mBhqsGPMcB+e+CoR1MH7ImVuLthOy1i
-   w==;
-IronPort-SDR: qj+9R4ntVQ2okrvAzc2utO2gDD0lalDyD7VaM399SOq7aR4Zd6cMsNSRhMUw9Ng9b4Cy3TQ/+w
- HnaWYJdY6/raVVaHGPJTYqSOO9J8mP4eBu66OXe/4nOKDHFBbVDVZCAquU6r/G3dE8iPLjAzZ6
- gwUxnZ3PYqX44Hn4ehD//o/6ndDq5iHQdWWKh27u2eOoiW3WpBAfNAo+Gt6HLlsd+OmuaU7HDH
- 9TXNDr+kvFAWpQk+wN3F845NvYazcXaxaA3ARo5G6tLKl4TKduYq1VCjxggt86/xFN1EVmsJOv
- ti8=
+  bh=qyufLWUgSwmWrYzDYEPcSXEzB03Y/7J9Ar2bT3V275o=;
+  b=X2Ha5Zv1npqTwQX0HwB6wr0Pl+Spkb6KbKj5wqPCj534FIztIGhfcSKp
+   blaL0xyO1RilBXqK3/GTzua3ZwcDRcLvgEPpr5GN1vnO2kg4gAL73si1H
+   8XQPJ+/0yp/RHYU3MHU7Vmk+qPRxcgtAtRlJCvmy2RNo1RTtmrGe/iSRK
+   lgT5JfQRb07VSHX+78H8mUHDRnR1vlxgyMjYbzO64vHUB+/973Q5j5mJa
+   lNQ+SiyZpteF3FZKnkBpbVDG2Gwd6snzClMe/enAuebLeqGhEt2vbuDXN
+   VcSB3+D0CVrfJdwrXQ7YkaMtTVk8UAyjx99k8gEFrkJSKm9XI3cHRvb/7
+   Q==;
+IronPort-SDR: 4BgndRiGdTMuo/Unpwt4hCSe9rSa6g+EpLqTuKwj2xIuyNT1ijNaP+aGnvircgvcQpOgoDRvyj
+ 8ga/4fdQ/Arc7achOefbinijDLNPPdM2/qaFdlPE8nWoyeAFuIx4Sh543y2rBNCpO5ChWvSmpD
+ +89Tj243bNfSikU8FcJjVuV/FUj8HmIqdc1M55xCETZpDDDV5KO/LcdHDBaMaXcOrX7SRKo3hf
+ uf9L96pi/c5orKbXN5x2Oi4oPYDQCeFisfGUg64xU3DqLiAgXZY3ds4oCbKAtQ55U6dA5oWnaM
+ yb8=
 X-IronPort-AV: E=Sophos;i="5.79,400,1602518400"; 
-   d="scan'208";a="159107942"
+   d="scan'208";a="159107946"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:22:55 +0800
-IronPort-SDR: And/SLZwm4WssPnlyQn4jN7Y/d/suMD5F2+wDJND3d90J3oNe/WUvp5f4p+aTXl9GWjmssOFj+
- pp3GnhGYMzu5YAP5uFtaEjy2QVjyV2sQ3SQvQle4KvKOO8dLYK4b8cXG3oDxSAh3U9wWhK9BwI
- j0aVV8vcdy8OnPcExaKDBGjpPqNjn39UxWoZonkEDBv+MTIb9MHC8BLgunmEQmNczYEGtGfP6A
- I3viqQSEkxHf2wPvMJt7PWTT80gFjKBLtt32XPaZKiPIOg1HyQfpAJXroEh0d9sdTtjWI2iWhx
- DUy4fuj6iZk7eRfRWRtJ6nNk
+  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:22:57 +0800
+IronPort-SDR: eq0a/anM/JA9VL7IXlCH3M+MmG9qNBQxuPrckT+i+BIspksMa6HnwHQDBC1MFJTifzk0fO96Qo
+ cE+nR9EMXP9TJweAFNy404DdyjHj3kkap+s/lRASyoplEXiVL4z0UEUTz7+Ol0I+VS93Q+HYuh
+ iloAV+Lpdz10HdCbHTdbWXZ7IXwiVs0vGtRUtSM7vZJhbQ/0R3uC0xRnPC699d+PgHQ/VhLTZc
+ 93FpSW3NnDPXgZpgYleP+N+1xiXwuPGciOxZ/RQ2VJQ9uunp/5BYezPPgIC2VLLlEEhOZN+xa1
+ jCPdfb4mV1543qDDBQOrZPR4
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:04:58 -0800
-IronPort-SDR: 9Jh2cmnEWePNq86qjtv7lNRtPSGAAZ8CDZFM+bADgWaXMgdPXPggcHK3kAK+aQCJ9hwhDdgzVm
- 4nltHnmXFZRQd9CpkE4cySvr8JrJxdxOQJimMS0CXqTNhE5sCsu/aQmOzPY4Vwd2lyfiUJdPem
- 90YwT+D+HTqUPMFpKbZb163FG5m4igG8uFylQWDVFQ95S3YcjNceesvmm+w7MSqoALvXgVl5wY
- JvSIqL8vx6mizqD1exD3PqstGQ7hN8sYBfSCpNqirdBGuxYvcQyuroXkIj+qF/oLv6QlLQTJUc
- ryw=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:00 -0800
+IronPort-SDR: YFzU51e54JdVUjo+h/QipFcHM9BLdh70P+M+0VGtP68bxgapY9kuxc+WHdsMojSSrosGX/zLdz
+ Yul+78xm2Fsgl8udAVS47ZbC2uVaaAnOgkjadt074eVZgEuYAXzEdY+fElJGFlRLcmQJYxiBbC
+ 8s+z85+QhKpmkrqg/0AzwJ9RnT3V1900zaONaPEfD0KFjEbYOdoTdA3Q+1P0oN0/elsn7Axfke
+ P/FpuudguX9/TFfkXADq48jXwPKYbrPZCILtQYveRzkOlsRr+D6dOChdGYsQfJEI+gviZ2aGYL
+ 4U0=
 WDCIronportException: Internal
 Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon.wdc.com) ([10.84.71.79])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:22:54 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:22:56 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
         Christoph Hellwig <hch@lst.de>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v15 01/42] block: add bio_add_zone_append_page
-Date:   Thu,  4 Feb 2021 19:21:40 +0900
-Message-Id: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Subject: [PATCH v15 02/42] iomap: support REQ_OP_ZONE_APPEND
+Date:   Thu,  4 Feb 2021 19:21:41 +0900
+Message-Id: <e824cfd3ccb9c24a331fe0bc996ce10b25fb748a.1612434091.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <cover.1612433345.git.naohiro.aota@wdc.com>
-References: <cover.1612433345.git.naohiro.aota@wdc.com>
+In-Reply-To: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
+References: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+A ZONE_APPEND bio must follow hardware restrictions (e.g. not exceeding
+max_zone_append_sectors) not to be split. bio_iov_iter_get_pages builds
+such restricted bio using __bio_iov_append_get_pages if bio_op(bio) ==
+REQ_OP_ZONE_APPEND.
 
-Add bio_add_zone_append_page(), a wrapper around bio_add_hw_page() which
-is intended to be used by file systems that directly add pages to a bio
-instead of using bio_iov_iter_get_pages().
+To utilize it, we need to set the bio_op before calling
+bio_iov_iter_get_pages(). This commit introduces IOMAP_F_ZONE_APPEND, so
+that iomap user can set the flag to indicate they want REQ_OP_ZONE_APPEND
+and restricted bio.
 
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Acked-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- block/bio.c         | 33 +++++++++++++++++++++++++++++++++
- include/linux/bio.h |  2 ++
- 2 files changed, 35 insertions(+)
+ fs/iomap/direct-io.c  | 43 +++++++++++++++++++++++++++++++++++++------
+ include/linux/iomap.h |  1 +
+ 2 files changed, 38 insertions(+), 6 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 1f2cc1fbe283..2f21d2958b60 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -851,6 +851,39 @@ int bio_add_pc_page(struct request_queue *q, struct bio *bio,
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 933f234d5bec..2273120d8ed7 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -201,6 +201,34 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+ 	iomap_dio_submit_bio(dio, iomap, bio, pos);
  }
- EXPORT_SYMBOL(bio_add_pc_page);
  
-+/**
-+ * bio_add_zone_append_page - attempt to add page to zone-append bio
-+ * @bio: destination bio
-+ * @page: page to add
-+ * @len: vec entry length
-+ * @offset: vec entry offset
-+ *
-+ * Attempt to add a page to the bio_vec maplist of a bio that will be submitted
-+ * for a zone-append request. This can fail for a number of reasons, such as the
-+ * bio being full or the target block device is not a zoned block device or
-+ * other limitations of the target block device. The target block device must
-+ * allow bio's up to PAGE_SIZE, so it is always possible to add a single page
-+ * to an empty bio.
-+ *
-+ * Returns: number of bytes added to the bio, or 0 in case of a failure.
++/*
++ * Figure out the bio's operation flags from the dio request, the
++ * mapping, and whether or not we want FUA.  Note that we can end up
++ * clearing the WRITE_FUA flag in the dio request.
 + */
-+int bio_add_zone_append_page(struct bio *bio, struct page *page,
-+			     unsigned int len, unsigned int offset)
++static inline unsigned int
++iomap_dio_bio_opflags(struct iomap_dio *dio, struct iomap *iomap, bool use_fua)
 +{
-+	struct request_queue *q = bio->bi_disk->queue;
-+	bool same_page = false;
++	unsigned int opflags = REQ_SYNC | REQ_IDLE;
 +
-+	if (WARN_ON_ONCE(bio_op(bio) != REQ_OP_ZONE_APPEND))
-+		return 0;
++	if (!(dio->flags & IOMAP_DIO_WRITE)) {
++		WARN_ON_ONCE(iomap->flags & IOMAP_F_ZONE_APPEND);
++		return REQ_OP_READ;
++	}
 +
-+	if (WARN_ON_ONCE(!blk_queue_is_zoned(q)))
-+		return 0;
++	if (iomap->flags & IOMAP_F_ZONE_APPEND)
++		opflags |= REQ_OP_ZONE_APPEND;
++	else
++		opflags |= REQ_OP_WRITE;
 +
-+	return bio_add_hw_page(q, bio, page, len, offset,
-+			       queue_max_zone_append_sectors(q), &same_page);
++	if (use_fua)
++		opflags |= REQ_FUA;
++	else
++		dio->flags &= ~IOMAP_DIO_WRITE_FUA;
++
++	return opflags;
 +}
-+EXPORT_SYMBOL_GPL(bio_add_zone_append_page);
 +
- /**
-  * __bio_try_merge_page - try appending data to an existing bvec.
-  * @bio: destination bio
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 1edda614f7ce..de62911473bb 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -455,6 +455,8 @@ void bio_chain(struct bio *, struct bio *);
- extern int bio_add_page(struct bio *, struct page *, unsigned int,unsigned int);
- extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
- 			   unsigned int, unsigned int);
-+int bio_add_zone_append_page(struct bio *bio, struct page *page,
-+			     unsigned int len, unsigned int offset);
- bool __bio_try_merge_page(struct bio *bio, struct page *page,
- 		unsigned int len, unsigned int off, bool *same_page);
- void __bio_add_page(struct bio *bio, struct page *page,
+ static loff_t
+ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		struct iomap_dio *dio, struct iomap *iomap)
+@@ -208,6 +236,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
+ 	unsigned int fs_block_size = i_blocksize(inode), pad;
+ 	unsigned int align = iov_iter_alignment(dio->submit.iter);
++	unsigned int bio_opf;
+ 	struct bio *bio;
+ 	bool need_zeroout = false;
+ 	bool use_fua = false;
+@@ -263,6 +292,13 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 			iomap_dio_zero(dio, iomap, pos - pad, pad);
+ 	}
+ 
++	/*
++	 * Set the operation flags early so that bio_iov_iter_get_pages
++	 * can set up the page vector appropriately for a ZONE_APPEND
++	 * operation.
++	 */
++	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
++
+ 	do {
+ 		size_t n;
+ 		if (dio->error) {
+@@ -278,6 +314,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		bio->bi_ioprio = dio->iocb->ki_ioprio;
+ 		bio->bi_private = dio;
+ 		bio->bi_end_io = iomap_dio_bio_end_io;
++		bio->bi_opf = bio_opf;
+ 
+ 		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
+ 		if (unlikely(ret)) {
+@@ -293,14 +330,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 
+ 		n = bio->bi_iter.bi_size;
+ 		if (dio->flags & IOMAP_DIO_WRITE) {
+-			bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_IDLE;
+-			if (use_fua)
+-				bio->bi_opf |= REQ_FUA;
+-			else
+-				dio->flags &= ~IOMAP_DIO_WRITE_FUA;
+ 			task_io_account_write(n);
+ 		} else {
+-			bio->bi_opf = REQ_OP_READ;
+ 			if (dio->flags & IOMAP_DIO_DIRTY)
+ 				bio_set_pages_dirty(bio);
+ 		}
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 5bd3cac4df9c..8ebb1fa6f3b7 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -55,6 +55,7 @@ struct vm_fault;
+ #define IOMAP_F_SHARED		0x04
+ #define IOMAP_F_MERGED		0x08
+ #define IOMAP_F_BUFFER_HEAD	0x10
++#define IOMAP_F_ZONE_APPEND	0x20
+ 
+ /*
+  * Flags set by the core iomap code during operations:
 -- 
 2.30.0
 
