@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCCC30F087
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6934830F08A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235427AbhBDKYu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 05:24:50 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54283 "EHLO
+        id S235432AbhBDKYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 05:24:52 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54215 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235342AbhBDKYl (ORCPT
+        with ESMTP id S234873AbhBDKYn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 05:24:41 -0500
+        Thu, 4 Feb 2021 05:24:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612434281; x=1643970281;
+  t=1612434282; x=1643970282;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=TRIIwMxHz8AYXIAQwMcpVIPM838tqUOQe+pVMTcvumU=;
-  b=M1LLpXsv+tU2J8lRVZiBNazUqXDSRYKYeFtPOgCPG5rEfTS03DKRQd3o
-   Vxs9TxJD1um5RpJrmgFhSdG3kKtkTFmxUUXeVjQuFtOmF3/5IK3Mdd1/M
-   1/L5iMz9lyyovbOfCwKzkVkjzAWmNg8gCkOE75QiC3RS56Od99G5JcZ2/
-   Yo3sjhNpXtNIJj4XpVy7mBe9grlLFaW9alYeOQF1kleU2b5DZPWrHyRSJ
-   QrFJoHrimCmm03V8neC7idM3On2rGoP1gI/U6lNw5JsCQgY6c640cc4FL
-   hH5xgGaPHh3Mecq9T0CkVWqoaCgCqb/3752XDuTs8ahDIFIKMzEC99s7T
-   w==;
-IronPort-SDR: hdXqqbTTjuvb9UAjzV0VKn5dLTnEMQw2Yy9tJqmfpR3LUNwHdSvBv2FDb2m/EtjXbwdF4qrZbW
- kMErPv/x6DYwM57zExnfDbL9xSUxCFnyYqr76q/pKWl7OcMK9sMov/WjrU0RrxQdp45SosjxcT
- ltK7ziE8Pbr6mj66tKmR2LCw1Pl96wwS14+d7ZL6niney3xPkN1QgyI+SflyjlLZPrsj9RWwI8
- qr1hwlt19VEd1s1lygM1tvuEUl1uWuC2S41EtrLufRcCewgjB+8PyKnHjWnaApjRuVC0OIZW3X
- HW8=
+  bh=aX25ISm2mENeBvL+nhAQbvr1BG8yMXwYbvgZNdffXxQ=;
+  b=NG8M1hl5tNFWTjePgWCbaoeRa/2Zy6NLjUgHX/sT4iw+0foleM2IhnKE
+   K3OcHW+I6suNMOf1m5xPd/keFfVvy5DhmOzlNZmGEB4T3Iy9WfwHADXdG
+   4rkIyw0ruKpMs+zEwqLYH2L4VMM5V/1fcEiLUad4hSf9qL7xrpXugCwgh
+   n375CnbbmguDVcaI0WyXoXWnzwOK7a8AOktWzrC2BWKWL7RNq0Wv7Rt0E
+   15rmDlf7+fl/43Q9FvzIi3nxYS4MO7tBrpygTaAuiTOYhICNz7xF4jSN8
+   SpVG+nAL+Xy2d7b93wzOL1Lq3wI89OcuyTszHy4ZS0YvRKwviuYKS77cx
+   g==;
+IronPort-SDR: lQnE7O+XzLdZQjmgJI7WseIYhz3QBZh+jcBoJGazUT5Dk0CF/LItgoz6wi239nB8Y9ioJyeNnq
+ je6NCGERW6KbRgwQOlv11+tArpO/1J3cdy0A5lo6Is8pnb41AzBJmi/uwcIilVgNe+zKvLlevb
+ oSXYab+TV4RsAVGnIk0HNWJGodFcz0eNv7YD4WQF0mgGloXRqvCAknElJ8+PcYkayy5MKDB/yM
+ Llloo0lTcRPpDXbjBIj9lG3MaGEEh1/QMTYgX4peNHytUICgD/uJTat41uXjMSaoV6Ik0cXfVK
+ 6sU=
 X-IronPort-AV: E=Sophos;i="5.79,400,1602518400"; 
-   d="scan'208";a="159107952"
+   d="scan'208";a="159107955"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:00 +0800
-IronPort-SDR: UdemrVGqbchGRWB3xF5muBnrJejNnHimSvtJr4hiLtgDKgLPTKXj7Xndkqlky51WltKKAts+dl
- TtmXH4Xz1AZ1zJBCBM+zjxQFb2k1S9Vfeyksq7IIBKXOa/a5KmpooxZNxCmlRMvExmOsp+BCNH
- vGCLnuIUwBB2ToW/cz+k7Jn50HYEhY1GsOnJCfqXh/PO1mkSZD+LMb451eVvzS1vwk+sCah9Lz
- BSPb8d3T6/4/V9AVoRAVkk1MmrXSxzXkLSghULWbS4DGCxe7OTYzkuM0LJPP9T+5vvjymg6Q/H
- awYSFTVz5IyjK/Z0HNRAZ5bE
+  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:01 +0800
+IronPort-SDR: okFE1leWb6OfgVCFB1GjuGWYiT4/lv0LXMF0BKTMrudi03u3bLBJz7a4ugr3qg9UmHSb7Hwox0
+ FsFqz/bLa/Da1CQWJlGppTp75Bq/++ZcCt0v+E/gRDgT67RTNTBfDT9zq4Tz5/FfzARpFP0Dnm
+ ikwq+Gr7p2qpj84YSYG2mK8SeOSh/RWOdz4LirDYt7vpEAyu8RjuIpnZmBCmw2XisWFpA7iX/H
+ Gq0fSJbGoWxTprZX1pF/Hkq28RFcSYRcBqPbJJ3dwGsCUZSxds0srE6pK3k8zoKEfD6wb292fh
+ vBUevP2Fx+WneNQgBd8goR+n
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:03 -0800
-IronPort-SDR: 0zUz16AZNbMTwZ8N0B/1YV3ome2lUnDX75znjW07ME+9ne2+25hN/XU960B5h/5wxcdNouT7sL
- oOKX2hHS8eIdLpL3aTUcvUgqtLp97olKFEZKybuxQiFl3PD+xWSkBqh6sF/jFt5ASfSxWwyoAe
- IjFBEy7qn+dRDTDjfgApWgKurnPUoea8zsYjaMEwIHyt6sQvLxkQdlwVSXinFIL/4TiDBwDcQw
- R8D/0q0Hs8ap8446jy03tSGuMBVlcYHXukbaC8YNfuz56vA/eKIHxNUdhuBRJGFRyJDBmYCmBE
- puc=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:05 -0800
+IronPort-SDR: hCyeLxDs43q5kz1q2dPIt39fx0an8FuSoLoIsMnyiiNYz6YGT1zUesFHb82Muwm1WV5v0Ad3Lk
+ V60Zmvd5mIq8/UNN1t41PRkXLrhoNDyl4W+3moq7HRDTpaKsc2JZULhrQZxAMfEq/J7uCnwas8
+ RxECLAtgUUlUNB2pEn0+Eg6w3tu37dSXY5Q/zc2mVEZrUuSSBHk0t8FGyHW9Lj0y+vaoHjXjvj
+ sVYQ+sPyPuxoTqfawOHfZ4FR6aakj+zP2XY1hMi05F/wIEHK3x91YM0quxKs3SmMnz8z6e/jNQ
+ VPs=
 WDCIronportException: Internal
 Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon.wdc.com) ([10.84.71.79])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:22:59 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:23:00 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Anand Jain <anand.jain@oracle.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v15 04/42] btrfs: zoned: use regular super block location on zone emulation
-Date:   Thu,  4 Feb 2021 19:21:43 +0900
-Message-Id: <906d62e60392f97e9ce10346ca7c79ff5f20e6da.1612434091.git.naohiro.aota@wdc.com>
+Subject: [PATCH v15 05/42] btrfs: release path before calling to btrfs_load_block_group_zone_info
+Date:   Thu,  4 Feb 2021 19:21:44 +0900
+Message-Id: <fccc7a9f182639b7610430ce98f28430f3b2a818.1612434091.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
 References: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
@@ -67,45 +67,101 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A zoned btrfs filesystem currently has a superblock at the beginning of
-the superblock logging zones if the zones are conventional. This
-difference in superblock position causes a chicken-and-egg problem for
-filesystems with emulated zones. Since the device is a regular (non-zoned)
-device, we cannot know if the filesystem is regular or zoned while reading
-the superblock. But, to load the superblock, we need to see if it is
-emulated zoned or not.
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Place the superblocks at the same location as they are on regular btrfs on
-regular devices to solve the problem. It is possible because it's ensured
-that all the superblock locations are at an (emulated) conventional zone on
-regular devices.
+Since we have no write pointer in conventional zones, we cannot
+determine the allocation offset from it. Instead, we set the allocation
+offset after the highest addressed extent. This is done by reading the
+extent tree in btrfs_load_block_group_zone_info().
+
+However, this function is called from btrfs_read_block_groups(), so the
+read lock for the tree node could be recursively taken.
+
+To avoid this unsafe locking scenario, release the path before reading
+the extent tree to get the allocation offset.
 
 Reviewed-by: Anand Jain <anand.jain@oracle.com>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 ---
- fs/btrfs/zoned.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/btrfs/block-group.c | 38 +++++++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 21 deletions(-)
 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 0b1b1f38a196..8b3868088c5e 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -552,7 +552,13 @@ int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
- 	struct btrfs_zoned_device_info *zinfo = device->zone_info;
- 	u32 zone_num;
+diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
+index 5fa6b3d540f4..b8fbee70a897 100644
+--- a/fs/btrfs/block-group.c
++++ b/fs/btrfs/block-group.c
+@@ -1810,24 +1810,8 @@ static int check_chunk_block_group_mappings(struct btrfs_fs_info *fs_info)
+ 	return ret;
+ }
  
--	if (!zinfo) {
-+	/*
-+	 * For a zoned filesystem on a non-zoned block device, use the same
-+	 * super block locations as regular filesystem. Doing so, the super
-+	 * block can always be retrieved and the zoned flag of the volume
-+	 * detected from the super block information.
-+	 */
-+	if (!bdev_is_zoned(device->bdev)) {
- 		*bytenr_ret = btrfs_sb_offset(mirror);
- 		return 0;
+-static void read_block_group_item(struct btrfs_block_group *cache,
+-				 struct btrfs_path *path,
+-				 const struct btrfs_key *key)
+-{
+-	struct extent_buffer *leaf = path->nodes[0];
+-	struct btrfs_block_group_item bgi;
+-	int slot = path->slots[0];
+-
+-	cache->length = key->offset;
+-
+-	read_extent_buffer(leaf, &bgi, btrfs_item_ptr_offset(leaf, slot),
+-			   sizeof(bgi));
+-	cache->used = btrfs_stack_block_group_used(&bgi);
+-	cache->flags = btrfs_stack_block_group_flags(&bgi);
+-}
+-
+ static int read_one_block_group(struct btrfs_fs_info *info,
+-				struct btrfs_path *path,
++				struct btrfs_block_group_item *bgi,
+ 				const struct btrfs_key *key,
+ 				int need_clear)
+ {
+@@ -1842,7 +1826,9 @@ static int read_one_block_group(struct btrfs_fs_info *info,
+ 	if (!cache)
+ 		return -ENOMEM;
+ 
+-	read_block_group_item(cache, path, key);
++	cache->length = key->offset;
++	cache->used = btrfs_stack_block_group_used(bgi);
++	cache->flags = btrfs_stack_block_group_flags(bgi);
+ 
+ 	set_free_space_tree_thresholds(cache);
+ 
+@@ -2001,19 +1987,29 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
+ 		need_clear = 1;
+ 
+ 	while (1) {
++		struct btrfs_block_group_item bgi;
++		struct extent_buffer *leaf;
++		int slot;
++
+ 		ret = find_first_block_group(info, path, &key);
+ 		if (ret > 0)
+ 			break;
+ 		if (ret != 0)
+ 			goto error;
+ 
+-		btrfs_item_key_to_cpu(path->nodes[0], &key, path->slots[0]);
+-		ret = read_one_block_group(info, path, &key, need_clear);
++		leaf = path->nodes[0];
++		slot = path->slots[0];
++
++		read_extent_buffer(leaf, &bgi, btrfs_item_ptr_offset(leaf, slot),
++				   sizeof(bgi));
++
++		btrfs_item_key_to_cpu(leaf, &key, slot);
++		btrfs_release_path(path);
++		ret = read_one_block_group(info, &bgi, &key, need_clear);
+ 		if (ret < 0)
+ 			goto error;
+ 		key.objectid += key.offset;
+ 		key.offset = 0;
+-		btrfs_release_path(path);
  	}
+ 	btrfs_release_path(path);
+ 
 -- 
 2.30.0
 
