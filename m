@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63FFA30F0B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6217130F0BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:31:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235530AbhBDK2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 05:28:13 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54218 "EHLO
+        id S235378AbhBDK3P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 05:29:15 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54222 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235343AbhBDK1c (ORCPT
+        with ESMTP id S235513AbhBDK1g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 05:27:32 -0500
+        Thu, 4 Feb 2021 05:27:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612434451; x=1643970451;
+  t=1612434455; x=1643970455;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=+6mD6KGXYIqq4AlpFryLdPvhIfjgM86x/lbMTwNm6PY=;
-  b=Csig+VJyEbFWvDvzhsxW24mq4ybGQ5uNJuCWW89qAP/ZviDVXlSVm9Du
-   M6mlPkIsmmnOGK+AdMXnHdXPKvNNFNZumnqCJYfi1zKGDcrV1Dv6tP8r8
-   A/sFpgNztbYbJMjrPMNJfh+EgHrdhlU9kOMjXxCEBi1DZXnrgD4CRoHke
-   MgqubMEYCZUO6SadSodg/gxJBQnfQ+YIhnSARPqUY8Jxuuo8ZHQhQYcyc
-   Ok0rf+PVF8NYDMnTWkLsFV0nVrpYeVRFoUPE6K7XiDTaIHcFSXJs24cKs
-   7tS7H/fAWtuhitlyoawf1uyilFaoRZrvR/x3BGVqi+BlQ739RLjHpM0++
+  bh=uPWaXkJRIOWqRbtNMZ5jK69QnjJnbxkr+9UN06Wk/i8=;
+  b=nZZzTm8riB4QsRxitOM3vAKNBAkbTnsXcyhGCObVv+1z69KVPBRkBJpb
+   XkIWJXmkzDwQ8spFx8MpSJU8xip9zh0u+4v8509YBNjlHE54jV7gbth9Q
+   w9FTsTQGWDq2w8D+Lr/vs7CJqC55i2UJAZBByf7q0vg0pyfw12lo8PsTq
+   MRT6hCia42OhaQW5zPjUNZA4QNPsyJuE3WK8+7WlJKfmDp15lsdwK/OST
+   aFLfJPUFxj3oDQu8FS51iinbzsE7nsVkXDeOpcoi68J1z0oJGTR3/tKAA
+   r2Nw92rRySUl9JQxyolLPkI2MWWsVSIrm5GtzlG5qTNaG1og089e8o+cF
    g==;
-IronPort-SDR: PeUfwyiq5CiKf+XMyXnBSl/Nw7hD9FOdo9WePRDQGcXmLMlXY4thyiWYv6h446F/owY1vfgNpX
- r3jM5hyawlA6TLgyFoG8VRrHJMtDEEa8PZWVnMAclHcbqHN8R2+fzI4hMeZu0fwhwgL4zx2R2f
- 8+kRqLHaAIC3agNfjXjy6ZsLs0bt9WwgXUpx6ROL6kazJfc6PjzmTqW5Hmc3hO/cjxQZV/FNiA
- bmJO58F4hXsbZUlRoeksYIHn36PL2vX5FGvKA23cLgZJMeTBlrM5GfuBN80Lb7lHhRTomICDp7
- KGQ=
+IronPort-SDR: xJLNE4saM7nChl0BJbvh4LjZ9HZa8TipfkH/NZJT7ke6G0+wWDoZqHgYLvtH0UEBzV4aaYeF8n
+ +YYW/PZLnE6jJCJp81pLkPTqhw0uCjbQuy4Fd5qkVwYPq23uNlTXSRYHtfzpxqZY4lIziIzns7
+ 26y9kIPT3UgsFT6WmswvV1X8otnT3nF5XkUgZyRweXPbBFtAjq2qNb+bE44gnU2oTC65VFXSKM
+ g8fivzRyRZSnFV1QyY4WWSM917pByew1oy+rERLR3Pp6AHsfcz9XaTb3oFdwtksO1t2Oi5t7hT
+ UTk=
 X-IronPort-AV: E=Sophos;i="5.79,400,1602518400"; 
-   d="scan'208";a="159108026"
+   d="scan'208";a="159108031"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:28 +0800
-IronPort-SDR: eo/k+7RZpTd4Tj9Skj6KYgPh5kszll+GHqa6mYOAucd9fn9WwQnY4vp6DBkrBVHCoZtWuAVa+h
- dCe3H3eFPBx0cto8IcAGiUQeyLodvNdHxF+5Zh1OvRa6g6Jqi5HVduRvMF0U7rJDIx1/yQcAQs
- nsilbKpNnt+M2FNxdsvpTr22y+eQrSFHA8Qu2NKqmoJHGSaw4rS6FV8GH14eyljsDfjF3wWj86
- Y3l+fhLyUZt2zUiTYgN4GJFCriYCi70j32I7azvUcemv4dY7FU5LM3Oy08yixDUK/5sOWrC4IX
- 70+7QpvzDu+NFN3qt6CmPw0/
+  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:30 +0800
+IronPort-SDR: tONe54oGgUv1Sn6EhLz8uVsBhJypPBxOlp27UyAYeGL5b4/fCxAVd2vKAcRkeiPAx54K7keb4U
+ KFGP4PRZIUHqOmu5UAvbsaNw5EnHWxT00bMKTSp3mezYHiAjyu8kQDK1XKLmrr+A/v3dpJamKg
+ HiZFS51Y2nr9oU74N+BkegJSbkv2xRxWMGByqz/UpfMEtX4fORbDPD8JTz6XtRbhxu/Dxl3moJ
+ CXbflUVvJwsI7xu/+tAtw7BLkzbrOr5SJAN/0ZR6KN97ldU6ehe4YjOot3dH6DVcZTAR8LoYzm
+ mmDDakXI9DLuXt1BpV7UVvHV
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:32 -0800
-IronPort-SDR: HQwWMnu/EoHRbD37xrEKRzPuJKTv2uPWOy7Lh+wqM/CTEqnHdQbK28rtqs17Y9GzFXqG/KcbTx
- 4Azc8gjI3piwtkk+WblhK9pzMdohvCTVuMnzuXTkvDNzv0eC+c8Z/zYWbr62Y58NegRcfGNMdb
- 16V9HoQZ7bv/cWD8CNDffQBZeJKKGhXzjPff63oj4xi4dsl6X/A7jkctsHlrzA9aG0TRpDFlhg
- z+c0CUZCnR+Ybms11ifeVGibRcx+gofus5l7Juua9tlwLKp+vIYhb7UhLUfyf50PAlqPSZ6qy/
- 5ts=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:33 -0800
+IronPort-SDR: zWviRoaZUZA93NQjTmBupbU6X26GBYBeb9CftuikEhbHnOPWQagmz40y5/dh+aF7DhG7wCk6tD
+ ttrIKchjCOrtc60w3kNZbfjCBYStac14mGwJ3HwfZ7ja75FVd7QBxzHVsbhuQLz2iIH1RPY7gA
+ 2QXkO5fdWjEmEzX56vN6sGAklgiLEMKlAell3v5HXreorPbGUNjjTYIASjOH2dbDc0oGYbntsC
+ HfJBEZm2XFBmw02CDKYa0UZgdhG8HRphoToOvTmGRecf7qkCkkZh/dMgdidq2v8NVd7WyjS3BG
+ VFU=
 WDCIronportException: Internal
 Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon.wdc.com) ([10.84.71.79])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:23:27 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:23:29 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v15 24/42] btrfs: zoned: cache if block-group is on a sequential zone
-Date:   Thu,  4 Feb 2021 19:22:03 +0900
-Message-Id: <feee22c518293509876c89ac766a09786d566973.1612434091.git.naohiro.aota@wdc.com>
+Subject: [PATCH v15 25/42] btrfs: save irq flags when looking up an ordered extent
+Date:   Thu,  4 Feb 2021 19:22:04 +0900
+Message-Id: <e29ea7fc41c784596bccaaa6983894d8397aae82.1612434091.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
 References: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
@@ -68,104 +68,44 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-On a zoned filesystem, cache if a block-group is on a sequential write
-only zone.
+A following patch will add another caller of
+btrfs_lookup_ordered_extent(), but from a bio's endio context.
 
-On sequential write only zones, we can use REQ_OP_ZONE_APPEND for writing
-of data, therefore provide btrfs_use_zone_append() to figure out if I/O is
-targeting a sequential write only zone and we can use REQ_OP_ZONE_APPEND
-for data writing.
+btrfs_lookup_ordered_extent() uses spin_lock_irq() which unconditionally
+disables interrupts. Change this to spin_lock_irqsave() so interrupts
+aren't disabled and re-enabled unconditionally.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/btrfs/block-group.h |  3 +++
- fs/btrfs/zoned.c       | 29 +++++++++++++++++++++++++++++
- fs/btrfs/zoned.h       |  6 ++++++
- 3 files changed, 38 insertions(+)
+ fs/btrfs/ordered-data.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
-index d14ac03bb93d..31c7c5872b92 100644
---- a/fs/btrfs/block-group.h
-+++ b/fs/btrfs/block-group.h
-@@ -181,6 +181,9 @@ struct btrfs_block_group {
- 	 */
- 	int needs_free_space;
+diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+index 2dc707f02f00..fe235ab935d3 100644
+--- a/fs/btrfs/ordered-data.c
++++ b/fs/btrfs/ordered-data.c
+@@ -767,9 +767,10 @@ struct btrfs_ordered_extent *btrfs_lookup_ordered_extent(struct btrfs_inode *ino
+ 	struct btrfs_ordered_inode_tree *tree;
+ 	struct rb_node *node;
+ 	struct btrfs_ordered_extent *entry = NULL;
++	unsigned long flags;
  
-+	/* Flag indicating this block group is placed on a sequential zone */
-+	bool seq_zone;
-+
- 	/* Record locked full stripes for RAID5/6 block group */
- 	struct btrfs_full_stripe_locks_tree full_stripe_locks_root;
- 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 1de67d789b83..f6c68704c840 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -1101,6 +1101,9 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
- 		}
- 	}
- 
-+	if (num_sequential > 0)
-+		cache->seq_zone = true;
-+
- 	if (num_conventional > 0) {
- 		/*
- 		 * Avoid calling calculate_alloc_pointer() for new BG. It
-@@ -1218,3 +1221,29 @@ void btrfs_free_redirty_list(struct btrfs_transaction *trans)
- 	}
- 	spin_unlock(&trans->releasing_ebs_lock);
+ 	tree = &inode->ordered_tree;
+-	spin_lock_irq(&tree->lock);
++	spin_lock_irqsave(&tree->lock, flags);
+ 	node = tree_search(tree, file_offset);
+ 	if (!node)
+ 		goto out;
+@@ -780,7 +781,7 @@ struct btrfs_ordered_extent *btrfs_lookup_ordered_extent(struct btrfs_inode *ino
+ 	if (entry)
+ 		refcount_inc(&entry->refs);
+ out:
+-	spin_unlock_irq(&tree->lock);
++	spin_unlock_irqrestore(&tree->lock, flags);
+ 	return entry;
  }
-+
-+bool btrfs_use_zone_append(struct btrfs_inode *inode, struct extent_map *em)
-+{
-+	struct btrfs_fs_info *fs_info = inode->root->fs_info;
-+	struct btrfs_block_group *cache;
-+	bool ret = false;
-+
-+	if (!btrfs_is_zoned(fs_info))
-+		return false;
-+
-+	if (!fs_info->max_zone_append_size)
-+		return false;
-+
-+	if (!is_data_inode(&inode->vfs_inode))
-+		return false;
-+
-+	cache = btrfs_lookup_block_group(fs_info, em->block_start);
-+	ASSERT(cache);
-+	if (!cache)
-+		return false;
-+
-+	ret = cache->seq_zone;
-+	btrfs_put_block_group(cache);
-+
-+	return ret;
-+}
-diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-index c105641a6ad3..14d578328cbe 100644
---- a/fs/btrfs/zoned.h
-+++ b/fs/btrfs/zoned.h
-@@ -46,6 +46,7 @@ void btrfs_calc_zone_unusable(struct btrfs_block_group *cache);
- void btrfs_redirty_list_add(struct btrfs_transaction *trans,
- 			    struct extent_buffer *eb);
- void btrfs_free_redirty_list(struct btrfs_transaction *trans);
-+bool btrfs_use_zone_append(struct btrfs_inode *inode, struct extent_map *em);
- #else /* CONFIG_BLK_DEV_ZONED */
- static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
- 				     struct blk_zone *zone)
-@@ -133,6 +134,11 @@ static inline void btrfs_redirty_list_add(struct btrfs_transaction *trans,
- 					  struct extent_buffer *eb) { }
- static inline void btrfs_free_redirty_list(struct btrfs_transaction *trans) { }
  
-+static inline bool btrfs_use_zone_append(struct btrfs_inode *inode,
-+					 struct extent_map *em)
-+{
-+	return false;
-+}
- #endif
- 
- static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
 -- 
 2.30.0
 
