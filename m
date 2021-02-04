@@ -2,192 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80AEC30F9F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 18:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC52330FA2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 18:50:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237954AbhBDRkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 12:40:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37296 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238593AbhBDRdk (ORCPT
+        id S237699AbhBDRtk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 12:49:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41768 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238756AbhBDRtG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 12:33:40 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C606C06178C;
-        Thu,  4 Feb 2021 09:33:00 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id a8so5719874lfi.8;
-        Thu, 04 Feb 2021 09:33:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D9/da0TYqc2IuJFpJdibkLommX5XSKGKPIxcqiy6/RM=;
-        b=jxK2pLrz7T9ANF2wqKTw7AKiJ7M0bYH1vM2tXWf0st/UY2Rz50ckQfB2Y+448RVr/L
-         nME7/yCM2E7dYcUxLvVSNnM6Vjk513mgj8U70Dldayl76491r/G/A9Dh23SxOsLyXgJx
-         Guo2P4wrf/AJrs6P97SVbPy1odjB4an45VuapaMlWVyd44lkoptaeaoML48Bs0/Wu/T3
-         zQ9rVePBSS5p1+JaPwCUBaAIdWMTLKlFE371UGwkFlWyux23z1klAJAH/mbnaN6iXEIA
-         M0HdoEVCue+e0/30e+am4lqWGZweIchKO0te8189gBrR0rwe3bSP1v9SFql6qFfAdfIH
-         luxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D9/da0TYqc2IuJFpJdibkLommX5XSKGKPIxcqiy6/RM=;
-        b=Z2U/vZK6e6+BwVFg23kwObpBgewSFLgnfWQh88+GKaGths5aPdMLRBvR0Q2+DQoAp4
-         sroVErYqctAVhClo5bafYrwlRr1IqPoV43sis0KV/Y6g0uvhH2Y+UTlquCplSN+oVwfK
-         jMFBAWxNYizK2/yxTVkNBFqSR0OJ6Kx3Lkfhxo6NyTz6xI+r3OIqMS/yR+YbWIb48JFa
-         3R7PiCHpd751wXqB0HyiiHk4gFQpDOhve89AesNPE0RN1QjI4Q0M4gsYtW6EY10hW7ZV
-         nXDr/lY7+XCf9h+waOCLtBOBmCwQvbu2ISSBxKukX8YnbGBZhm45WQX1dP9ftjAE2mJA
-         pJYw==
-X-Gm-Message-State: AOAM530W+6SOGiEFjwju7jJ31vVERNMmnE96Kz9hOJnb3xKSslkjKDEx
-        cMm55Gz3eJlX94vCcFlrhz01MvlprdkoRFYyKhM=
-X-Google-Smtp-Source: ABdhPJxskkEcudNmLMXwFbaywk0AsuzD69Nc7ex/EdDYH309v5vJBCtwQYOtDY9HFfxdJeg3cOVUTdY5u+uCKQ7uncc=
-X-Received: by 2002:a05:6512:3772:: with SMTP id z18mr243698lft.620.1612459978869;
- Thu, 04 Feb 2021 09:32:58 -0800 (PST)
+        Thu, 4 Feb 2021 12:49:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612460859;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=WoCQGzrOsnk55IaG+1UEwkLjcE8h9OKWofQDyL0qDdM=;
+        b=WNcds/5J8A2CRnfAbZp51mb8VPvU3obyD1e+aAqeo/+WtUI4wFYirG3PAXank6pPoyOyr2
+        HLnpqn0HhRXDjaw5JtdZHWUY3x4bupPuUAl5JtnUoYBY/yI2ysbrKyvpdC8c/Fl8Ru4LTb
+        pisRBeROEcV5IxCnqt1bSq+WZ4yE5po=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-195-lEo22RTJPJKzB2hJMUlSNw-1; Thu, 04 Feb 2021 12:47:36 -0500
+X-MC-Unique: lEo22RTJPJKzB2hJMUlSNw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6D5A8107ACE3;
+        Thu,  4 Feb 2021 17:47:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 81C4062679;
+        Thu,  4 Feb 2021 17:47:32 +0000 (UTC)
+Subject: [RFC][PATCH 0/2] keys: request_key() interception in containers
+From:   David Howells <dhowells@redhat.com>
+To:     sprabhu@redhat.com
+Cc:     dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
+        christian@brauner.io, selinux@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org
+Date:   Thu, 04 Feb 2021 17:47:31 +0000
+Message-ID: <161246085160.1990927.13137391845549674518.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210203172042.800474-1-shy828301@gmail.com> <20210203172042.800474-10-shy828301@gmail.com>
- <656865f5-bb56-4f4c-b88d-ec933a042b4c@virtuozzo.com> <5e335e4a-1556-e694-8f0b-192d924f99e5@virtuozzo.com>
-In-Reply-To: <5e335e4a-1556-e694-8f0b-192d924f99e5@virtuozzo.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 4 Feb 2021 09:32:46 -0800
-Message-ID: <CAHbLzkpy+bg+7HMb5qG_1gocXhkuuxip0Wn9Afu3Tx6-FMoMig@mail.gmail.com>
-Subject: Re: [v6 PATCH 09/11] mm: vmscan: don't need allocate
- shrinker->nr_deferred for memcg aware shrinkers
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 4, 2021 at 2:14 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On 04.02.2021 12:29, Kirill Tkhai wrote:
-> > On 03.02.2021 20:20, Yang Shi wrote:
-> >> Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
-> >> allocate shrinker->nr_deferred for such shrinkers anymore.
-> >>
-> >> The prealloc_memcg_shrinker() would return -ENOSYS if !CONFIG_MEMCG or memcg is disabled
-> >> by kernel command line, then shrinker's SHRINKER_MEMCG_AWARE flag would be cleared.
-> >> This makes the implementation of this patch simpler.
-> >>
-> >> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> >> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> >> ---
-> >>  mm/vmscan.c | 31 ++++++++++++++++---------------
-> >>  1 file changed, 16 insertions(+), 15 deletions(-)
-> >>
-> >> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> >> index 545422d2aeec..20a35d26ae12 100644
-> >> --- a/mm/vmscan.c
-> >> +++ b/mm/vmscan.c
-> >> @@ -334,6 +334,9 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
-> >>  {
-> >>      int id, ret = -ENOMEM;
-> >>
-> >> +    if (mem_cgroup_disabled())
-> >> +            return -ENOSYS;
-> >> +
-> >>      down_write(&shrinker_rwsem);
-> >>      /* This may call shrinker, so it must use down_read_trylock() */
-> >>      id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
-> >> @@ -414,7 +417,7 @@ static bool writeback_throttling_sane(struct scan_control *sc)
-> >>  #else
-> >>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
-> >>  {
-> >> -    return 0;
-> >> +    return -ENOSYS;
-> >>  }
-> >>
-> >>  static void unregister_memcg_shrinker(struct shrinker *shrinker)
-> >> @@ -525,8 +528,18 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
-> >>   */
-> >>  int prealloc_shrinker(struct shrinker *shrinker)
-> >>  {
-> >> -    unsigned int size = sizeof(*shrinker->nr_deferred);
-> >> +    unsigned int size;
-> >> +    int err;
-> >> +
-> >> +    if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> >> +            err = prealloc_memcg_shrinker(shrinker);
-> >> +            if (err != -ENOSYS)
-> >> +                    return err;
-> >>
-> >> +            shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
-> >> +    }
-> >> +
-> >> +    size = sizeof(*shrinker->nr_deferred);
-> >>      if (shrinker->flags & SHRINKER_NUMA_AWARE)
-> >>              size *= nr_node_ids;
-> >
-> > This may sound surprisingly, but IIRC do_shrink_slab() may be called on early boot
-> > *even before* root_mem_cgroup is allocated. AFAIR, I received syzcaller crash report
-> > because of this, when I was implementing shrinker_maps.
-> >
-> > This is a reason why we don't use shrinker_maps even in case of mem cgroup is not
-> > disabled: we iterate every shrinker of shrinker_list. See check in shrink_slab():
-> >
-> >       if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
-> >
-> > Possible, we should do the same for nr_deferred: 1)always allocate shrinker->nr_deferred,
-> > 2)use shrinker->nr_deferred in count_nr_deferred() and set_nr_deferred().
->
-> I looked over my mail box, and I can't find that crash report and conditions to reproduce.
->
-> Hm, let's remain this as is, and we rework this in case of such early shrinker call is still
-> possible, and there will be a report...
 
-Sure. But I'm wondering how that could happen. On a very small machine?
+Here's a rough draft of a facility by which keys can be intercepted.
 
->
-> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->
-> With only nit:
->
-> >>
-> >> @@ -534,26 +547,14 @@ int prealloc_shrinker(struct shrinker *shrinker)
-> >>      if (!shrinker->nr_deferred)
-> >>              return -ENOMEM;
-> >>
-> >> -    if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> >> -            if (prealloc_memcg_shrinker(shrinker))
-> >> -                    goto free_deferred;
-> >> -    }
-> >>
-> >>      return 0;
-> >> -
-> >> -free_deferred:
-> >> -    kfree(shrinker->nr_deferred);
-> >> -    shrinker->nr_deferred = NULL;
-> >> -    return -ENOMEM;
-> >>  }
-> >>
-> >>  void free_prealloced_shrinker(struct shrinker *shrinker)
-> >>  {
-> >> -    if (!shrinker->nr_deferred)
-> >> -            return;
-> >> -
-> >>      if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> >> -            unregister_memcg_shrinker(shrinker);
-> >> +            return unregister_memcg_shrinker(shrinker);
->
-> I've never seen return of void function in linux kernel. I'm not sure this won't confuse people.
+There are two patches:
 
-Will fix in v7.
+ (1) Add tags to namespaces that can be used to find out, when we're
+     looking for an intercept, if a namespace that an intercept is
+     filtering on is the same as namespace of the caller of request_key()
+     without the need for the intercept record to pin the namespaces that
+     it's using as filters (which would also cause a dependency cycle).
 
->
-> >>
-> >>      kfree(shrinker->nr_deferred);
-> >>      shrinker->nr_deferred = NULL;
-> >>
-> >
->
->
+     Tags contain only a refcount and are compared by address.
+
+ (2) Add a new keyctl:
+
+            keyctl(KEYCTL_SERVICE_INTERCEPT,
+                   int queue_keyring, int userns_fd,
+                   const char *type_name, unsigned int ns_mask);
+
+     that allows a request_key() intercept to be added to the specified
+     user namespace.  The authorisation key for an intercepted request is
+     placed in the queue_keyring, which can be watched to gain a
+     notification of this happening.  The watcher can then examine the auth
+     key to determine what key is to be instantiated.
+
+     A simple sample is provided that can be used to try this.
+
+Some things that need to be worked out:
+
+ (*) Intercepts are linked to the lifetime of the user_namespace on which
+     they're placed, but not the daemon or the queue keyring.  Probably
+     they should be removed when the queue keyring is removed, but they
+     currently pin it.
+
+ (*) Setting userns_fd to other than -1 is not yet supported (-1 indicates
+     the current user namespace).
+
+ (*) Multiple threads can monitor a queue keyring, but they will all get
+     woken.  They can use keyctl_move() to decide who gets to process it.
+
+
+The patches can be found on the following branch:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-intercept
+
+David
+---
+David Howells (2):
+      Add namespace tags that can be used for matching without pinning a ns
+      keys: Allow request_key upcalls from a container to be intercepted
+
+
+ include/linux/key-type.h                |   4 +-
+ include/linux/user_namespace.h          |   2 +
+ include/uapi/linux/keyctl.h             |  13 +
+ kernel/user.c                           |   3 +
+ kernel/user_namespace.c                 |   2 +
+ samples/watch_queue/Makefile            |   2 +
+ samples/watch_queue/key_req_intercept.c | 271 +++++++++++++++++++
+ security/keys/Makefile                  |   2 +
+ security/keys/compat.c                  |   3 +
+ security/keys/internal.h                |   5 +
+ security/keys/keyctl.c                  |   6 +
+ security/keys/keyring.c                 |   1 +
+ security/keys/process_keys.c            |   2 +-
+ security/keys/request_key.c             |  16 +-
+ security/keys/request_key_auth.c        |   3 +
+ security/keys/service.c                 | 337 ++++++++++++++++++++++++
+ 16 files changed, 663 insertions(+), 9 deletions(-)
+ create mode 100644 samples/watch_queue/key_req_intercept.c
+ create mode 100644 security/keys/service.c
+
+
