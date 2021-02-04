@@ -2,106 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9957B30F26B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 12:39:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD1D30F2A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 12:46:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236012AbhBDLhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 06:37:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235541AbhBDLfa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 06:35:30 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B41964F45;
-        Thu,  4 Feb 2021 11:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612438488;
-        bh=kdvaYUzyR0twFNgrfjDXxc4xk/nIUc95siq77AcMxUw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Sy9fx25cRRyQxUg4PQiuwRqTEHX658JxHyGPHq/88My/x1kvTH4DAJ2aISoI2aXkQ
-         7q4ImT49/hSnXgZZe5nIte5an8yCdFl3/nKBSmL1KtXUQmhK86d+bWvAKpFB/hCPJ+
-         vHFmENUyT6t71Pv7oR0jOWL5QdCiNYnsM7hkVvYdNA83FthQ8MT6l5HSIaqDtEq017
-         v3Uf42+f0Hl/atXgvQESI8GiyyIE+mqMxGUZE9ZuSWQ78rGF9JCQdy6unJPKAA/OZt
-         AfPnD+C9cBVf98rjrYDltnlBiJ+vDveF6Nvs2anXspx7fDGAP1j2/zrNQYpSDiRu3a
-         P3N5VPANbVUIA==
-Date:   Thu, 4 Feb 2021 13:34:32 +0200
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v16 06/11] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-ID: <20210204113432.GS242749@kernel.org>
-References: <20210121122723.3446-1-rppt@kernel.org>
- <20210121122723.3446-7-rppt@kernel.org>
- <YBqT/nwFpfP2EyeJ@dhcp22.suse.cz>
+        id S235864AbhBDLpG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 06:45:06 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12075 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235586AbhBDLpE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Feb 2021 06:45:04 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DWc9W6SRBzMV3b;
+        Thu,  4 Feb 2021 19:42:39 +0800 (CST)
+Received: from [10.174.179.241] (10.174.179.241) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 4 Feb 2021 19:44:13 +0800
+Subject: Re: [PATCH v14 2/8] mm: hugetlb: introduce a new config
+ HUGETLB_PAGE_FREE_VMEMMAP
+To:     Muchun Song <songmuchun@bytedance.com>
+CC:     <duanxiongchun@bytedance.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <corbet@lwn.net>,
+        <mike.kravetz@oracle.com>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <bp@alien8.de>, <x86@kernel.org>,
+        <hpa@zytor.com>, <dave.hansen@linux.intel.com>, <luto@kernel.org>,
+        <peterz@infradead.org>, <viro@zeniv.linux.org.uk>,
+        <akpm@linux-foundation.org>, <paulmck@kernel.org>,
+        <mchehab+huawei@kernel.org>, <pawan.kumar.gupta@linux.intel.com>,
+        <rdunlap@infradead.org>, <oneukum@suse.com>,
+        <anshuman.khandual@arm.com>, <jroedel@suse.de>,
+        <almasrymina@google.com>, <rientjes@google.com>,
+        <willy@infradead.org>, <osalvador@suse.de>, <mhocko@suse.com>,
+        <song.bao.hua@hisilicon.com>, <david@redhat.com>,
+        <naoya.horiguchi@nec.com>
+References: <20210204035043.36609-1-songmuchun@bytedance.com>
+ <20210204035043.36609-3-songmuchun@bytedance.com>
+From:   Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <7349db78-9eeb-86e2-b5de-9ebbcba85e1d@huawei.com>
+Date:   Thu, 4 Feb 2021 19:44:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YBqT/nwFpfP2EyeJ@dhcp22.suse.cz>
+In-Reply-To: <20210204035043.36609-3-songmuchun@bytedance.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.241]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 03, 2021 at 01:15:58PM +0100, Michal Hocko wrote:
-> On Thu 21-01-21 14:27:18, Mike Rapoport wrote:
-> > +static struct file *secretmem_file_create(unsigned long flags)
-> > +{
-> > +	struct file *file = ERR_PTR(-ENOMEM);
-> > +	struct secretmem_ctx *ctx;
-> > +	struct inode *inode;
-> > +
-> > +	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-> > +	if (IS_ERR(inode))
-> > +		return ERR_CAST(inode);
-> > +
-> > +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> > +	if (!ctx)
-> > +		goto err_free_inode;
-> > +
-> > +	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
-> > +				 O_RDWR, &secretmem_fops);
-> > +	if (IS_ERR(file))
-> > +		goto err_free_ctx;
-> > +
-> > +	mapping_set_unevictable(inode->i_mapping);
+Hi:
+On 2021/2/4 11:50, Muchun Song wrote:
+> The option HUGETLB_PAGE_FREE_VMEMMAP allows for the freeing of
+> some vmemmap pages associated with pre-allocated HugeTLB pages.
+> For example, on X86_64 6 vmemmap pages of size 4KB each can be
+> saved for each 2MB HugeTLB page. 4094 vmemmap pages of size 4KB
+> each can be saved for each 1GB HugeTLB page.
 > 
-> Btw. you need also mapping_set_gfp_mask(mapping, GFP_HIGHUSER) because
-> the default is GFP_HIGHUSER_MOVABLE and you do not support migration so
-> no pages from movable zones should be allowed.
+> When a HugeTLB page is allocated or freed, the vmemmap array
+> representing the range associated with the page will need to be
+> remapped. When a page is allocated, vmemmap pages are freed
+> after remapping. When a page is freed, previously discarded
+> vmemmap pages must be allocated before remapping.
+> 
+> The config option is introduced early so that supporting code
+> can be written to depend on the option. The initial version of
+> the code only provides support for x86-64.
+> 
+> Like other code which frees vmemmap, this config option depends on
+> HAVE_BOOTMEM_INFO_NODE. The routine register_page_bootmem_info() is
+> used to register bootmem info. Therefore, make sure
+> register_page_bootmem_info is enabled if HUGETLB_PAGE_FREE_VMEMMAP
+> is defined.
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-Ok.
+LGTM. Thanks.
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
 
--- 
-Sincerely yours,
-Mike.
+> ---
+>  arch/x86/mm/init_64.c | 2 +-
+>  fs/Kconfig            | 6 ++++++
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index 0a45f062826e..0435bee2e172 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
+>  
+>  static void __init register_page_bootmem_info(void)
+>  {
+> -#ifdef CONFIG_NUMA
+> +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
+>  	int i;
+>  
+>  	for_each_online_node(i)
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index 97e7b77c9309..de87f234f1e9 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -237,6 +237,12 @@ config HUGETLBFS
+>  config HUGETLB_PAGE
+>  	def_bool HUGETLBFS
+>  
+> +config HUGETLB_PAGE_FREE_VMEMMAP
+> +	def_bool HUGETLB_PAGE
+> +	depends on X86_64
+> +	depends on SPARSEMEM_VMEMMAP
+> +	depends on HAVE_BOOTMEM_INFO_NODE
+> +
+>  config MEMFD_CREATE
+>  	def_bool TMPFS || HUGETLBFS
+>  
+> 
+
