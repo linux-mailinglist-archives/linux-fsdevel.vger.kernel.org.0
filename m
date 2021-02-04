@@ -2,259 +2,262 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DC3830F972
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 18:21:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FFFB30F96E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 18:21:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238386AbhBDRTZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 12:19:25 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:38072 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238409AbhBDRSv (ORCPT
+        id S238362AbhBDRS4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 12:18:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33948 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237797AbhBDRSW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 12:18:51 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 114H904I093139;
-        Thu, 4 Feb 2021 17:17:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-transfer-encoding : content-type :
- mime-version; s=corp-2020-01-29;
- bh=oQaCgFr07ErL9O4RN7K+jvz+UJndRmk2E1Tydv/RO5A=;
- b=Pb+T2P3Nkn9Bfpt4FfzWwwGRqJ1siWLQDEhxpsAjrJUJTwaneCsg77gfhibw3+y3PLsi
- dFTMe5UD0qIa8VmFd2dpPaPSoujKAEyNCjAd6lmY3GYDszNuslS3/I5jFGczsftYPptB
- WhjwJ7yXtLMsjkW8dW/o0B7rdrpYlVLvFUFFmbfmnjb/IXl8uUdwxzDB55FE/+w6waWi
- pjvhhFmF/RzVD5x8XbMVZwHOqJBxt6F33NYYpeZzrJ7FgxGoLi2gcyyN+rQNJQeyJba3
- eFeUDz+/2vRAE8DFsWk3uoxDZkxDRF8P3JFdVKZT3rkcdWpH5HlEZP3/v3tQjAzdC+G5 pQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 36cydm69bf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 Feb 2021 17:17:43 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 114HGKcI178161;
-        Thu, 4 Feb 2021 17:17:42 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
-        by userp3020.oracle.com with ESMTP id 36dh7veshe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 Feb 2021 17:17:42 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WsJ4LF6Qm+OikHOXSmatcHaxJT3gq+5mKP4ASwVhBCaG7264OPIWuMnKkqG3EA04W2d8CcFAqvpNcyVvHQM4hJLMF4wpE1rqLfSy/xt2ZpHEtCWAtLTiauAe5DPB2ztJn0WLoxBS8d2xZpcoOU1b1c11mkQu54hUz4YmWocUN/e22+aX+/bwKGdwafViNQQ1Ri8ni+NMkl+0XQsUjVAlNMunIfpJqd2NYZB3jI/qJODoIHNOunUVS7bFzb+1FagQLQKFGiyBOkMuoO1crStf1CVCVRbFVf56zCSr1U1tzAaecmu3WR+iBK0ceOXtpKVbrq3F7HwK3hux6xSd09kWXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oQaCgFr07ErL9O4RN7K+jvz+UJndRmk2E1Tydv/RO5A=;
- b=NWtKsuiP8oMiausQP0gVd138HgLo4i8EygiI1rJMfXNe8b5IqGLqZXktn1tpHU413q2SzIMAtW2vyzpWf493J3uXIEX/Yad05NGbYMMvZyFsS3yAgMZ3ALdpYcLqhcc7hn+8bVpGYHG16kbQqdrTMVT8wEELAdumxCOP8FyOVV566tkPSekYOjgsf+r+VIs8hrf7AUoDpWBC1o1gru2s8xKEiKEt1mxe3QsbqVp7a86nqBkYhvv7Y482k8yKkWOba0C+xjqforKxO/vaka6RG8IL5SmhzvZ/htKFUMkKZ8YSBV9Z/c7fFosFm/lRarPRFTz8DbjcBPEBVrNGy1Cx6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Thu, 4 Feb 2021 12:18:22 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B6FC0613D6;
+        Thu,  4 Feb 2021 09:17:42 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id h12so5634652lfp.9;
+        Thu, 04 Feb 2021 09:17:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oQaCgFr07ErL9O4RN7K+jvz+UJndRmk2E1Tydv/RO5A=;
- b=WkQX7LmhCsGp7s4DbEtjnwN9Rs6QEpJHbzEsdfO8MSv8Jg9ujteWFKRybuWJqTgdyfA0GHTrzg+4sQFzMTwcI2BPgz7LihKFhxlG345K7Es0tDl4ocjXuqR1yxM9IZ8P339bMpZ9fvrCPeVUIQJlyeRXKnNXGsejwi3doMAklys=
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=oracle.com;
-Received: from BYAPR10MB2823.namprd10.prod.outlook.com (2603:10b6:a03:87::15)
- by SJ0PR10MB4432.namprd10.prod.outlook.com (2603:10b6:a03:2df::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.21; Thu, 4 Feb
- 2021 17:17:40 +0000
-Received: from BYAPR10MB2823.namprd10.prod.outlook.com
- ([fe80::adef:30b8:ee4e:c772]) by BYAPR10MB2823.namprd10.prod.outlook.com
- ([fe80::adef:30b8:ee4e:c772%3]) with mapi id 15.20.3805.029; Thu, 4 Feb 2021
- 17:17:40 +0000
-From:   Stephen Brennan <stephen.s.brennan@oracle.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH RESEND v5] proc: Allow pid_revalidate() during LOOKUP_RCU
-Date:   Thu,  4 Feb 2021 09:17:19 -0800
-Message-Id: <20210204171719.1021547-1-stephen.s.brennan@oracle.com>
-X-Mailer: git-send-email 2.27.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [2606:b400:8301:1041::18]
-X-ClientProxiedBy: SJ0PR13CA0033.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::8) To BYAPR10MB2823.namprd10.prod.outlook.com
- (2603:10b6:a03:87::15)
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=we57E+UnULJ0e1+k8Qouq8mtW4H8T+LwgEARxNrur7c=;
+        b=RVRBIuxWi9E4oMIxMdwocQ6KUHIeKv+BAmzMOeTTMNZnpq3htRmHKqVcWnowo8ifa9
+         nu1VDiiMOJNFfmNCCnRQyfLnif+TzqgLRycQvJRVKi+/K+mMLN4LTM69VS7QuSkGCLD1
+         cldFBVDdBmkONITgU6FUQ0HmjlT3hfABmuCyyD0DKB0aajkpwY0lS3WBloSxSBtlnSnZ
+         eN94Yx3SIvRj2o47tk+DKWz+pt4hsYmFSYLIXEc1ZyUClK775L7K4M2clq9nHeZx4OA0
+         ccsDmOseSKAPeqjbB5Mxu/KvRFys891ZUeKrXVbTDEZMyn58sf/oHg6/WUsEEjM8JvE0
+         upFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=we57E+UnULJ0e1+k8Qouq8mtW4H8T+LwgEARxNrur7c=;
+        b=BqqImSSwhOSvU1wd8BLCH0Zh+VpU1EA4loqGVegAWz/3o+XCDGX3fjydObeUTmWVNT
+         MSyzhjo2dvRZ5RgOZ9oR0KBwBLc6tiLGhLbQk621nRc2br+Xf/L10LGm8jYa+zCcJ2t9
+         KxRsCv6orZhffqJQ9GhgzltYFo6Xw0mdBCy4AwSlzOm9+Efitmj06a2t0MfRDmwL8/oJ
+         TT/utAnLFcH6qn9hTCUTnUXvNzwplqWMMSPsMeks+EMd5xAXid7avWuDNT23TQlPn3pz
+         L6hqZ+OK4atxoeTMtlKAYyaaGRSZ3BCz3KN4YXOoqDjqoAtOpbuWXOIko3ev+hWjnDq2
+         wzOA==
+X-Gm-Message-State: AOAM533pCLzHvRNiIvqu4KjYVkb2RZ1FDB51H6x//tRzVaf5rnWIy2Y3
+        nR7D1cJlTf9hy5UBhG8JfpAcgdQrk0dfBYHApTs=
+X-Google-Smtp-Source: ABdhPJwXb9hSdSuAhB6BIV1dO3NpauTN7OTiqcR9t/8uM0vsLFoYv0N6huRGpPUNdg3MQn3g7pb2sU5Z0HaHGtKbRNE=
+X-Received: by 2002:a19:ccf:: with SMTP id 198mr238092lfm.422.1612459060592;
+ Thu, 04 Feb 2021 09:17:40 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost (2606:b400:8301:1041::18) by SJ0PR13CA0033.namprd13.prod.outlook.com (2603:10b6:a03:2c2::8) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.13 via Frontend Transport; Thu, 4 Feb 2021 17:17:40 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: aee1a8a5-3852-451a-0d54-08d8c930c6cd
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB4432:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SJ0PR10MB44326066F5E399ECBF798A1BDBB39@SJ0PR10MB4432.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 6P5+uE8sXh4Eh57PWmhsUXELnh/vTCkKE3s9RKLD4UL5/mIKWJmM4nLu3u8rbEwb2tKXwczJFbggtl18Rr7WQSO9MEniR1soC1muJmDOF8P36YY2ekR3693A8R96g8qVAwzAbIAsjQK5KetZF9bODO86A4DfBrrc0Z1dpRc2n/Ow6mhmyEo7U0tSJmijbTgDezI/az7LgZpunKuCWDn1DIlrWgPErq80PKQJp2R0ORJFim4rpmRHG3cZiPyQ4b19jqBA2fyqKHR5JUzCjaoIbGwVLribWm+XoxHBOjnDbrYkTgICXG+KFMJhlP9DmGmcenewicKsIoSNFzhKCmIOmvlCJrEjbzevchJPZHnj2aAe4YfKH9Yud932uxQrNclDQ6wtm9CSAXeIU+3emHKVg4IKFJoLzhwEIs4/OstLSKR5ZRP7aQKOytVvQT0l3SveBZrS9sp69zm/m3W44j1FKy2GNMTP267V5kbTDRzTz7ACAS+zfW6nU0cFISPaGj5+CDCm80M6Krpe+ffTKa5Ogus4Yn3jDuwm9RNw6BqFDeDdp8qqQ4l63dhPVPffjjllPxRgFxapDA6HsAlvtGK53zl6d4ZnlPI5y8dh57E7IrjaqHhrSBOyBtYMSDOJqFEZNKy8lJY2D/gV5//ecxAHJfkZVLUy/0v70TkuTd9GkjS+3U0PaFEBe9DAUCiT7moeidgoIcHD+xAMackH6UMmDk7qLTWUKdT/QD031XpMmqUWtCO53JL1ng0N66zvlfgGgpNVS+fVvpsLV+JE6QO89ohWMw6lwoLdQRlvH09k29Je7l3GTqDl35n0vbi5SXTNbNQ8bg68Pa6t1mMT/Gq3KzOULfqBcQU9EmL1+XmhFaI/FUcAaVNaZeR6hnwGioyk0Y/VDIN+FVq2L8GBlIVVfw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:BYAPR10MB2823.namprd10.prod.outlook.com;PTR:;CAT:OSPM;SFS:(396003)(136003)(346002)(376002)(39860400002)(366004)(6916009)(186003)(1076003)(36756003)(7416002)(5660300002)(8676002)(83380400001)(4326008)(103116003)(66556008)(66946007)(478600001)(16526019)(6666004)(66476007)(8936002)(2906002)(6486002)(316002)(86362001)(2616005)(6496006)(52116002)(54906003)(23200700001);DIR:OUT;SFP:1501;
-X-MS-Exchange-AntiSpam-MessageData: fEYb92sUECuqtaD59w26tbHEhJWmlnaU5gDHhp+O29hEV6wR7mDhLUH6ycB9VwJRXJronO1KOZyAvjDURZPFWKrsXLBaVmayXb8go3lxH2QKAv2Q6WIkMsDZga98HY40ZdKByeZ6hCnNjuzlnOo+P6eVsI2vEvONN56V+Og6KHS7qNnMtnCgKXkRQYatU0f4gqwT+UrI2/kziRnpXDB9Jm0P8ZMTYEu7TCOnwv7YIG/tlzIIh1jq40tdOsJRICRmNOjTw3GJhJo++ZNZqKVrUchoxJUvYfvs6/v9jUM4W5WtGJ/tEsQFX7xc00rT2YcC2BbCZwd0+/MFiM60Gla/PhKerbkTQ3g8fSUg79r9BOR2sbxm1ZJ8BrucO5PqcRobXWwLhRh4ZBxSxhExQeS3bxsPm4Pww8IeAdU3FfSyxGiPNNDWMRodmBc3hh71+aSn8aQCt1cOGVu6VDB1RfU0ICcFb86JOwP+FIoe1rT9BIPM2I/iR/x0qm7gGfqyF/1ulVsI1iDot/H1IJZh/fdKFr9OT0x/YVOO1OXqO3uD0r5L46g/UvTc70NNvDn01mLcwtD/kPgPlKMf3qmbsUWPvUxYB0uYj2Z6F7ulAzGvYZqPFC/VdiIq0PbsT1mH8oqoS7wh8Mgt+lyzXe4NlFMqeW+qg03vvOqNTbwv09MeNt3CpKgktk8HW4aTRU+w3exMfbZbM4AqHJPKM7kHUQkkq/q34vJ4HMZV8NIBuRs+SL+RMXoZki+p9I+h9IbJ5higVUmEkSRXr4KID8yU2inxfg==
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aee1a8a5-3852-451a-0d54-08d8c930c6cd
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB2823.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2021 17:17:40.5834
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: H/I1QOzgMxq9i2xz3m+2GkrSOOMpiiPVsc6FH/9fPv6Q+BecahQJLu4+c1w2UZEUGmh4alYJi/QnPpQfdWsUhhrwuYbyqUmsH6W4ftbQki8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4432
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9885 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- suspectscore=0 spamscore=0 mlxlogscore=999 phishscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102040106
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9885 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 clxscore=1015
- spamscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102040105
+References: <20210203172042.800474-1-shy828301@gmail.com> <20210203172042.800474-8-shy828301@gmail.com>
+ <374a5513-9e80-f240-ef82-ef35c13931c1@virtuozzo.com>
+In-Reply-To: <374a5513-9e80-f240-ef82-ef35c13931c1@virtuozzo.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 4 Feb 2021 09:17:28 -0800
+Message-ID: <CAHbLzkpSSkgiSewqu2ie8N7yESqkoGtAOmQrZYFEb-2CRBCWiQ@mail.gmail.com>
+Subject: Re: [v6 PATCH 07/11] mm: vmscan: add per memcg shrinker nr_deferred
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pid_revalidate() function drops from RCU into REF lookup mode. When
-many threads are resolving paths within /proc in parallel, this can
-result in heavy spinlock contention on d_lockref as each thread tries to
-grab a reference to the /proc dentry (and drop it shortly thereafter).
+On Thu, Feb 4, 2021 at 12:31 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> On 03.02.2021 20:20, Yang Shi wrote:
+> > Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> >
+> > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> > may suffer from over shrink, excessive reclaim latency, etc.
+> >
+> > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> >
+> > We observed this hit in our production environment which was running vfs heavy workload
+> > shown as the below tracing log:
+> >
+> > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> > cache items 246404277 delta 31345 total_scan 123202138
+> > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> > last shrinker return val 123186855
+> >
+> > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> > This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> >
+> > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> > better isolation.
+> >
+> > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  include/linux/memcontrol.h |  7 +++---
+> >  mm/vmscan.c                | 45 ++++++++++++++++++++++++--------------
+> >  2 files changed, 33 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index 4c9253896e25..c457fc7bc631 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -93,12 +93,13 @@ struct lruvec_stat {
+> >  };
+> >
+> >  /*
+> > - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> > - * which have elements charged to this memcg.
+> > + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
+> > + * shrinkers, which have elements charged to this memcg.
+> >   */
+> >  struct shrinker_info {
+> >       struct rcu_head rcu;
+> > -     unsigned long map[];
+> > +     atomic_long_t *nr_deferred;
+> > +     unsigned long *map;
+> >  };
+> >
+> >  /*
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index dc0d69e081b0..d9126f12890f 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -196,10 +196,12 @@ static void free_shrinker_info_rcu(struct rcu_head *head)
+> >  }
+> >
+> >  static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> > -                                int size, int old_size)
+> > +                                 int m_size, int d_size,
+> > +                                 int old_m_size, int old_d_size)
+> >  {
+> >       struct shrinker_info *new, *old;
+> >       int nid;
+> > +     int size = m_size + d_size;
+> >
+> >       for_each_node(nid) {
+> >               old = rcu_dereference_protected(
+> > @@ -212,9 +214,15 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> >               if (!new)
+> >                       return -ENOMEM;
+> >
+> > -             /* Set all old bits, clear all new bits */
+> > -             memset(new->map, (int)0xff, old_size);
+> > -             memset((void *)new->map + old_size, 0, size - old_size);
+> > +             new->nr_deferred = (atomic_long_t *)(new + 1);
+> > +             new->map = (void *)new->nr_deferred + d_size;
+> > +
+> > +             /* map: set all old bits, clear all new bits */
+> > +             memset(new->map, (int)0xff, old_m_size);
+> > +             memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
+> > +             /* nr_deferred: copy old values, clear all new values */
+> > +             memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
+> > +             memset((void *)new->nr_deferred + old_d_size, 0, d_size - old_d_size);
+> >
+> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+> >               call_rcu(&old->rcu, free_shrinker_info_rcu);
+> > @@ -229,9 +237,6 @@ void free_shrinker_info(struct mem_cgroup *memcg)
+> >       struct shrinker_info *info;
+> >       int nid;
+> >
+> > -     if (mem_cgroup_is_root(memcg))
+> > -             return;
+> > -
+> >       for_each_node(nid) {
+> >               pn = mem_cgroup_nodeinfo(memcg, nid);
+> >               info = rcu_dereference_protected(pn->shrinker_info, true);
+> > @@ -244,12 +249,13 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+> >  {
+> >       struct shrinker_info *info;
+> >       int nid, size, ret = 0;
+> > -
+> > -     if (mem_cgroup_is_root(memcg))
+> > -             return 0;
+> > +     int m_size, d_size = 0;
+> >
+> >       down_write(&shrinker_rwsem);
+> > -     size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > +     m_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > +     d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> > +     size = m_size + d_size;
+> > +
+> >       for_each_node(nid) {
+> >               info = kvzalloc_node(sizeof(*info) + size, GFP_KERNEL, nid);
+> >               if (!info) {
+> > @@ -257,6 +263,8 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+> >                       ret = -ENOMEM;
+> >                       break;
+> >               }
+> > +             info->nr_deferred = (atomic_long_t *)(info + 1);
+> > +             info->map = (void *)info->nr_deferred + d_size;
+> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+> >       }
+> >       up_write(&shrinker_rwsem);
+> > @@ -268,10 +276,16 @@ static int expand_shrinker_info(int new_id)
+> >  {
+> >       int size, old_size, ret = 0;
+> >       int new_nr_max = new_id + 1;
+> > +     int m_size, d_size = 0;
+> > +     int old_m_size, old_d_size = 0;
+> >       struct mem_cgroup *memcg;
+> >
+> > -     size = NR_MAX_TO_SHR_MAP_SIZE(new_nr_max);
+> > -     old_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > +     m_size = NR_MAX_TO_SHR_MAP_SIZE(new_nr_max);
+> > +     d_size = new_nr_max * sizeof(atomic_long_t);
+> > +     size = m_size + d_size;
+> > +     old_m_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > +     old_d_size = shrinker_nr_max * sizeof(atomic_long_t);
+> > +     old_size = old_m_size + old_d_size;
+> >       if (size <= old_size)
+> >               goto out;
+>
+> Before this patch we used to allocate shrinker_info with BITS_PER_LONG batching.
+> So, first registered shrinker used to allocate a map of unsigned long size, and
+> we could to allocate 63 more shrinkers without maps expanding.
+>
+> After this patch we will expand maps on every shrinker registration, won't we?
 
-Investigation indicates that it is not necessary to drop RCU in
-pid_revalidate(), as no RCU data is modified and the function never
-sleeps. So, remove the LOOKUP_RCU check.
+Yes, I'm supposed "maps" means "info". I'm supposed the most shrinkers
+should be registered at boot time, and typically very few memcgs are
+created at boot time so I didn't treat it as a hot path.
 
-Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
----
+> What do you think about batching here?
 
-When running running ~100 parallel instances of "TZ=/etc/localtime ps -fe
->/dev/null" on a 100CPU machine, the %sys utilization reaches 90%, and perf
-shows the following code path as being responsible for heavy contention on
-the d_lockref spinlock:
+Just off the top of my head, we could allocate, for example, 64
+nr_deferred (64 * sizeof(atomic_long_t)) so that we just need to
+expand info for every 64 shrinker registrations. Maybe define it
+depends on the machine (64 bit - 64, 32 bit - 32).
 
-      walk_component()
-        lookup_fast()
-          d_revalidate()
-            pid_revalidate() // returns -ECHILD
-          unlazy_child()
-            lockref_get_not_dead(&nd->path.dentry->d_lockref) <-- contention
+Why 64? Basically a magic number. And when I was investigating that
+list_lru reparent race issue
+(https://lore.kernel.org/linux-mm/20201202171749.264354-1-shy828301@gmail.com/)
+I happened to notice that there are at most 64 shrinkers registered in
+our production environment (a typical data center configuration).
 
-By applying this patch, %sys utilization falls to around 60% under the same
-workload. Although this particular workload is a bit contrived, we have
-seen some monitoring scripts which produced similarly high %sys time due to
-this contention.
+How do you think about it?
 
-As a result this patch, several procfs methods which were only called in
-ref-walk mode could now be called from RCU mode. To ensure that this patch
-is safe, I audited all the inode get_link and permission() implementations,
-as well as dentry d_revalidate() implementations, in fs/proc. These methods
-are called in the following ways:
-
-* get_link() receives a NULL dentry pointer when called in RCU mode.
-* permission() receives MAY_NOT_BLOCK in the mode parameter when called
-  from RCU.
-* d_revalidate() receives LOOKUP_RCU in flags.
-
-There were generally three groups I found. Group (1) are functions which
-contain a check at the top of the function and return -ECHILD, and so
-appear to be trivially RCU safe (although this is by dropping out of RCU
-completely). Group (2) are functions which have no explicit check, but
-on my audit, I was confident that there were no sleeping function calls,
-and thus were RCU safe as is. However, I would appreciate any additional
-review if possible. Group (3) are functions which might be be unsafe for some
-reason or another.
-
-Group (1):
- proc_ns_get_link()
- proc_pid_get_link()
- map_files_d_revalidate()
- proc_misc_d_revalidate()
- tid_fd_revalidate()
-
-Group (2):
- proc_get_link()
- proc_self_get_link()
- proc_thread_self_get_link()
- proc_fd_permission()
-
-Group (3):
- pid_revalidate()            -- addressed by my patch
- proc_pid_permission()       -- addressed by commits by Al
- proc_map_files_get_link()   -- calls capable() which could audit
-
-I believe proc_map_files_get_link() is safe despite calling into the audit
-framework, however I'm not confident and so I did not include it in Group 2.
-proc_pid_permission() calls into the audit code, and is not safe with
-LSM_AUDIT_DATA_DENTRY or LSM_AUDIT_DATA_INODE. Al's commits[1] address
-these issues. This patch is tested and stable on the workload described
-at the beginning of this cover letter, on a system with selinux enabled.
-
-[1]: 23d8f5b684fc ("make dump_common_audit_data() safe to be called from
-     RCU pathwalk") and 2 previous
-
-Changes in v5:
-- Al's commits are now in linux-next, resolving proc_pid_permission() issue.
-- Add NULL check after d_inode_rcu(dentry), because inode may become NULL if
-  we do not hold a reference.
-Changes in v4:
-- Simplify by unconditionally calling pid_update_inode() from pid_revalidate,
-  and removing the LOOKUP_RCU check.
-Changes in v3:
-- Rather than call pid_update_inode() with flags, create
-  proc_inode_needs_update() to determine whether the call can be skipped.
-- Restore the call to the security hook (see next patch).
-Changes in v2:
-- Remove get_pid_task_rcu_user() and get_proc_task_rcu(), since they were
-  unnecessary.
-- Remove the call to security_task_to_inode().
-
- fs/proc/base.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ebea9501afb8..3e105bd05801 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1830,19 +1830,21 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
- {
- 	struct inode *inode;
- 	struct task_struct *task;
-+	int ret = 0;
- 
--	if (flags & LOOKUP_RCU)
--		return -ECHILD;
--
--	inode = d_inode(dentry);
--	task = get_proc_task(inode);
-+	rcu_read_lock();
-+	inode = d_inode_rcu(dentry);
-+	if (!inode)
-+		goto out;
-+	task = pid_task(proc_pid(inode), PIDTYPE_PID);
- 
- 	if (task) {
- 		pid_update_inode(task, inode);
--		put_task_struct(task);
--		return 1;
-+		ret = 1;
- 	}
--	return 0;
-+out:
-+	rcu_read_unlock();
-+	return ret;
- }
- 
- static inline bool proc_inode_is_dead(struct inode *inode)
--- 
-2.27.0
-
+> >
+> > @@ -280,9 +294,8 @@ static int expand_shrinker_info(int new_id)
+> >
+> >       memcg = mem_cgroup_iter(NULL, NULL, NULL);
+> >       do {
+> > -             if (mem_cgroup_is_root(memcg))
+> > -                     continue;
+> > -             ret = expand_one_shrinker_info(memcg, size, old_size);
+> > +             ret = expand_one_shrinker_info(memcg, m_size, d_size,
+> > +                                            old_m_size, old_d_size);
+> >               if (ret) {
+> >                       mem_cgroup_iter_break(NULL, memcg);
+> >                       goto out;
+> >
+>
+>
