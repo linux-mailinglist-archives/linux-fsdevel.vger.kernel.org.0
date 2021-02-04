@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D83230F9C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 18:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80AEC30F9F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 18:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238555AbhBDRco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 12:32:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36792 "EHLO
+        id S237954AbhBDRkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 12:40:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238592AbhBDRb0 (ORCPT
+        with ESMTP id S238593AbhBDRdk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 12:31:26 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF378C061356;
-        Thu,  4 Feb 2021 09:29:21 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id f1so5749096lfu.3;
-        Thu, 04 Feb 2021 09:29:21 -0800 (PST)
+        Thu, 4 Feb 2021 12:33:40 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C606C06178C;
+        Thu,  4 Feb 2021 09:33:00 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id a8so5719874lfi.8;
+        Thu, 04 Feb 2021 09:33:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=X1ahJvFsrZks1Lk0ripDXnB6weXUyAGbfZ45blD5PTU=;
-        b=RSpK0Teg2yPbyx+tN32lHdP56HoEVGFGksT+JkghM2BilhAM++ndPSiHehfezfx0vv
-         2usPaDOoocqRjyGUkmvCzcEjiTOnJ2PIaLjJOc5JFg5xEG5bXNPJN0F0VhbqgEjH47jN
-         p4Dk8zw7m3i1JeiIVok9xhDnXN5EfMus1K9zEGqO1LCYAF1uYpHYDTl+HaMoKtVH4rVa
-         5I3b+VYivjxIgN7ELRhDJjjgz6Tfosbc/n7fZ6IeoDnX+lFZ0AYzwojGYqztUBUc33c2
-         Wi/aYf0LBhH1zzgtE7od4YXuk3tNwtoeK3gDzNkKvZs5U/GFOTgTWZFsccOJVHz+HqgM
-         nF9w==
+        bh=D9/da0TYqc2IuJFpJdibkLommX5XSKGKPIxcqiy6/RM=;
+        b=jxK2pLrz7T9ANF2wqKTw7AKiJ7M0bYH1vM2tXWf0st/UY2Rz50ckQfB2Y+448RVr/L
+         nME7/yCM2E7dYcUxLvVSNnM6Vjk513mgj8U70Dldayl76491r/G/A9Dh23SxOsLyXgJx
+         Guo2P4wrf/AJrs6P97SVbPy1odjB4an45VuapaMlWVyd44lkoptaeaoML48Bs0/Wu/T3
+         zQ9rVePBSS5p1+JaPwCUBaAIdWMTLKlFE371UGwkFlWyux23z1klAJAH/mbnaN6iXEIA
+         M0HdoEVCue+e0/30e+am4lqWGZweIchKO0te8189gBrR0rwe3bSP1v9SFql6qFfAdfIH
+         luxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=X1ahJvFsrZks1Lk0ripDXnB6weXUyAGbfZ45blD5PTU=;
-        b=DdtRT9pajkg5Yl5jbwWRf3IjTnQNn9wxnlA+/4QJZhnym6lBI0ICIAbg8LRqZTL2HC
-         KfGWTJbUeXsuTzlijuFQITrjoRjUlbARErFPwi6KiiaTdp4NdzvyUbBkLDFkpplMLUeO
-         nk7ZGhSB2hpvnnE6zMGFgyzL742GuqMVgvfaCnqXKl04Ddwvo7p7mQ7/mlqIke1qZqAB
-         DPZ1VxmICXXdth2kzzAGjdTIglNVpG/KjOG3+dd+T1n9bz7RhHNkWWhJ40UDM0mWohVl
-         t7pVOwoZNuYcq27laFBCpmBZ7pss28iSpYemGBabt6G7gFKcRc1Ou2TI/rJGymsUwhm6
-         MY1w==
-X-Gm-Message-State: AOAM533JiKyq3kO7K5xhra2oCA+AueBaV2lMDQFx5G+c7PRkey3uhNWq
-        BBEK1CjmZQ4T2pcTB59mdtiJc6W0zGgPhXf3buM=
-X-Google-Smtp-Source: ABdhPJwT/uirdmDDpof36RQ4WHOo7qc+S6n5DG40Du1EdYVt6nWCd+lES33v9igd/hfr1ZQ/k/YbFx5uatDCgLJ9eOA=
-X-Received: by 2002:a19:23c5:: with SMTP id j188mr265462lfj.430.1612459759029;
- Thu, 04 Feb 2021 09:29:19 -0800 (PST)
+        bh=D9/da0TYqc2IuJFpJdibkLommX5XSKGKPIxcqiy6/RM=;
+        b=Z2U/vZK6e6+BwVFg23kwObpBgewSFLgnfWQh88+GKaGths5aPdMLRBvR0Q2+DQoAp4
+         sroVErYqctAVhClo5bafYrwlRr1IqPoV43sis0KV/Y6g0uvhH2Y+UTlquCplSN+oVwfK
+         jMFBAWxNYizK2/yxTVkNBFqSR0OJ6Kx3Lkfhxo6NyTz6xI+r3OIqMS/yR+YbWIb48JFa
+         3R7PiCHpd751wXqB0HyiiHk4gFQpDOhve89AesNPE0RN1QjI4Q0M4gsYtW6EY10hW7ZV
+         nXDr/lY7+XCf9h+waOCLtBOBmCwQvbu2ISSBxKukX8YnbGBZhm45WQX1dP9ftjAE2mJA
+         pJYw==
+X-Gm-Message-State: AOAM530W+6SOGiEFjwju7jJ31vVERNMmnE96Kz9hOJnb3xKSslkjKDEx
+        cMm55Gz3eJlX94vCcFlrhz01MvlprdkoRFYyKhM=
+X-Google-Smtp-Source: ABdhPJxskkEcudNmLMXwFbaywk0AsuzD69Nc7ex/EdDYH309v5vJBCtwQYOtDY9HFfxdJeg3cOVUTdY5u+uCKQ7uncc=
+X-Received: by 2002:a05:6512:3772:: with SMTP id z18mr243698lft.620.1612459978869;
+ Thu, 04 Feb 2021 09:32:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20210203172042.800474-1-shy828301@gmail.com> <20210203172042.800474-12-shy828301@gmail.com>
- <8c11f94a-bd1a-3311-2160-0f2c83994a53@virtuozzo.com>
-In-Reply-To: <8c11f94a-bd1a-3311-2160-0f2c83994a53@virtuozzo.com>
+References: <20210203172042.800474-1-shy828301@gmail.com> <20210203172042.800474-10-shy828301@gmail.com>
+ <656865f5-bb56-4f4c-b88d-ec933a042b4c@virtuozzo.com> <5e335e4a-1556-e694-8f0b-192d924f99e5@virtuozzo.com>
+In-Reply-To: <5e335e4a-1556-e694-8f0b-192d924f99e5@virtuozzo.com>
 From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 4 Feb 2021 09:29:06 -0800
-Message-ID: <CAHbLzkp6du=4rRcy2hxQrWo_2GX9QUcZuAyFqe_hiimDr6axyQ@mail.gmail.com>
-Subject: Re: [v6 PATCH 11/11] mm: vmscan: shrink deferred objects proportional
- to priority
+Date:   Thu, 4 Feb 2021 09:32:46 -0800
+Message-ID: <CAHbLzkpy+bg+7HMb5qG_1gocXhkuuxip0Wn9Afu3Tx6-FMoMig@mail.gmail.com>
+Subject: Re: [v6 PATCH 09/11] mm: vmscan: don't need allocate
+ shrinker->nr_deferred for memcg aware shrinkers
 To:     Kirill Tkhai <ktkhai@virtuozzo.com>
 Cc:     Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
         Shakeel Butt <shakeelb@google.com>,
@@ -68,105 +68,126 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 4, 2021 at 2:23 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+On Thu, Feb 4, 2021 at 2:14 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
 >
-> On 03.02.2021 20:20, Yang Shi wrote:
-> > The number of deferred objects might get windup to an absurd number, and it
-> > results in clamp of slab objects.  It is undesirable for sustaining workingset.
+> On 04.02.2021 12:29, Kirill Tkhai wrote:
+> > On 03.02.2021 20:20, Yang Shi wrote:
+> >> Now nr_deferred is available on per memcg level for memcg aware shrinkers, so don't need
+> >> allocate shrinker->nr_deferred for such shrinkers anymore.
+> >>
+> >> The prealloc_memcg_shrinker() would return -ENOSYS if !CONFIG_MEMCG or memcg is disabled
+> >> by kernel command line, then shrinker's SHRINKER_MEMCG_AWARE flag would be cleared.
+> >> This makes the implementation of this patch simpler.
+> >>
+> >> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> >> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> >> ---
+> >>  mm/vmscan.c | 31 ++++++++++++++++---------------
+> >>  1 file changed, 16 insertions(+), 15 deletions(-)
+> >>
+> >> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> >> index 545422d2aeec..20a35d26ae12 100644
+> >> --- a/mm/vmscan.c
+> >> +++ b/mm/vmscan.c
+> >> @@ -334,6 +334,9 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> >>  {
+> >>      int id, ret = -ENOMEM;
+> >>
+> >> +    if (mem_cgroup_disabled())
+> >> +            return -ENOSYS;
+> >> +
+> >>      down_write(&shrinker_rwsem);
+> >>      /* This may call shrinker, so it must use down_read_trylock() */
+> >>      id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
+> >> @@ -414,7 +417,7 @@ static bool writeback_throttling_sane(struct scan_control *sc)
+> >>  #else
+> >>  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> >>  {
+> >> -    return 0;
+> >> +    return -ENOSYS;
+> >>  }
+> >>
+> >>  static void unregister_memcg_shrinker(struct shrinker *shrinker)
+> >> @@ -525,8 +528,18 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
+> >>   */
+> >>  int prealloc_shrinker(struct shrinker *shrinker)
+> >>  {
+> >> -    unsigned int size = sizeof(*shrinker->nr_deferred);
+> >> +    unsigned int size;
+> >> +    int err;
+> >> +
+> >> +    if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+> >> +            err = prealloc_memcg_shrinker(shrinker);
+> >> +            if (err != -ENOSYS)
+> >> +                    return err;
+> >>
+> >> +            shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
+> >> +    }
+> >> +
+> >> +    size = sizeof(*shrinker->nr_deferred);
+> >>      if (shrinker->flags & SHRINKER_NUMA_AWARE)
+> >>              size *= nr_node_ids;
 > >
-> > So shrink deferred objects proportional to priority and cap nr_deferred to twice
-> > of cache items.
+> > This may sound surprisingly, but IIRC do_shrink_slab() may be called on early boot
+> > *even before* root_mem_cgroup is allocated. AFAIR, I received syzcaller crash report
+> > because of this, when I was implementing shrinker_maps.
 > >
-> > The idea is borrowed fron Dave Chinner's patch:
-> > https://lore.kernel.org/linux-xfs/20191031234618.15403-13-david@fromorbit.com/
+> > This is a reason why we don't use shrinker_maps even in case of mem cgroup is not
+> > disabled: we iterate every shrinker of shrinker_list. See check in shrink_slab():
 > >
-> > Tested with kernel build and vfs metadata heavy workload in our production
-> > environment, no regression is spotted so far.
+> >       if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
 > >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > Possible, we should do the same for nr_deferred: 1)always allocate shrinker->nr_deferred,
+> > 2)use shrinker->nr_deferred in count_nr_deferred() and set_nr_deferred().
 >
-> For some time I was away from this do_shrink_slab() magic formulas and recent changes,
-> so I hope somebody else, who is being in touch with this, can review.
+> I looked over my mail box, and I can't find that crash report and conditions to reproduce.
+>
+> Hm, let's remain this as is, and we rework this in case of such early shrinker call is still
+> possible, and there will be a report...
 
-Yes, I agree it is intimidating. The patch has been tested in our test
-and production environment for a couple of months, so far no
-regression is spotted. Of course it doesn't mean it will not incur
-regression for other workloads. My plan is to leave it stay in -mm
-then linux-next for a while for a broader test. The first 10 patches
-could go to Linus's tree separately.
+Sure. But I'm wondering how that could happen. On a very small machine?
 
 >
-> > ---
-> >  mm/vmscan.c | 40 +++++-----------------------------------
-> >  1 file changed, 5 insertions(+), 35 deletions(-)
-> >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 574d920c4cab..d0a86170854b 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -649,7 +649,6 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> >        */
-> >       nr = count_nr_deferred(shrinker, shrinkctl);
-> >
-> > -     total_scan = nr;
-> >       if (shrinker->seeks) {
-> >               delta = freeable >> priority;
-> >               delta *= 4;
-> > @@ -663,37 +662,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> >               delta = freeable / 2;
-> >       }
-> >
-> > +     total_scan = nr >> priority;
-> >       total_scan += delta;
-> > -     if (total_scan < 0) {
-> > -             pr_err("shrink_slab: %pS negative objects to delete nr=%ld\n",
-> > -                    shrinker->scan_objects, total_scan);
-> > -             total_scan = freeable;
-> > -             next_deferred = nr;
-> > -     } else
-> > -             next_deferred = total_scan;
-> > -
-> > -     /*
-> > -      * We need to avoid excessive windup on filesystem shrinkers
-> > -      * due to large numbers of GFP_NOFS allocations causing the
-> > -      * shrinkers to return -1 all the time. This results in a large
-> > -      * nr being built up so when a shrink that can do some work
-> > -      * comes along it empties the entire cache due to nr >>>
-> > -      * freeable. This is bad for sustaining a working set in
-> > -      * memory.
-> > -      *
-> > -      * Hence only allow the shrinker to scan the entire cache when
-> > -      * a large delta change is calculated directly.
-> > -      */
-> > -     if (delta < freeable / 4)
-> > -             total_scan = min(total_scan, freeable / 2);
-> > -
-> > -     /*
-> > -      * Avoid risking looping forever due to too large nr value:
-> > -      * never try to free more than twice the estimate number of
-> > -      * freeable entries.
-> > -      */
-> > -     if (total_scan > freeable * 2)
-> > -             total_scan = freeable * 2;
-> > +     total_scan = min(total_scan, (2 * freeable));
-> >
-> >       trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
-> >                                  freeable, delta, total_scan, priority);
-> > @@ -732,10 +703,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> >               cond_resched();
-> >       }
-> >
-> > -     if (next_deferred >= scanned)
-> > -             next_deferred -= scanned;
-> > -     else
-> > -             next_deferred = 0;
-> > +     next_deferred = max_t(long, (nr - scanned), 0) + total_scan;
-> > +     next_deferred = min(next_deferred, (2 * freeable));
-> > +
-> >       /*
-> >        * move the unused scan count back into the shrinker in a
-> >        * manner that handles concurrent updates.
+> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 >
-> Thanks
+> With only nit:
+>
+> >>
+> >> @@ -534,26 +547,14 @@ int prealloc_shrinker(struct shrinker *shrinker)
+> >>      if (!shrinker->nr_deferred)
+> >>              return -ENOMEM;
+> >>
+> >> -    if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+> >> -            if (prealloc_memcg_shrinker(shrinker))
+> >> -                    goto free_deferred;
+> >> -    }
+> >>
+> >>      return 0;
+> >> -
+> >> -free_deferred:
+> >> -    kfree(shrinker->nr_deferred);
+> >> -    shrinker->nr_deferred = NULL;
+> >> -    return -ENOMEM;
+> >>  }
+> >>
+> >>  void free_prealloced_shrinker(struct shrinker *shrinker)
+> >>  {
+> >> -    if (!shrinker->nr_deferred)
+> >> -            return;
+> >> -
+> >>      if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> >> -            unregister_memcg_shrinker(shrinker);
+> >> +            return unregister_memcg_shrinker(shrinker);
+>
+> I've never seen return of void function in linux kernel. I'm not sure this won't confuse people.
+
+Will fix in v7.
+
+>
+> >>
+> >>      kfree(shrinker->nr_deferred);
+> >>      shrinker->nr_deferred = NULL;
+> >>
+> >
 >
 >
