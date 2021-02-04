@@ -2,96 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A339A30F0F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:37:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEC0630F0DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 11:37:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235603AbhBDKex (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 05:34:53 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54218 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235470AbhBDKdb (ORCPT
+        id S235584AbhBDKbm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 05:31:42 -0500
+Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:32514 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235563AbhBDKa1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 05:33:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612434811; x=1643970811;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=31ceDJu2kLyRBJSxuPw51RxbKy7EDLDCYjcUDI+Ih0c=;
-  b=iK/4ap8s5vRcfZH1mo/7BWobxGqXKBnCRbZfI6zSugxO50peQZva0RHJ
-   eTsBzVIQ4q5q76CzrRGGvcm2B92H3t1vHNRp7oEH66EovK25WOTqYwwRm
-   BlZ1GquEP5CJf/rI1hAH8ECPnngv9TlXiQ6NUotghUa3wBZngRO37PzsA
-   xwzl0URKiS1fCfjufXxcdeVOcZzJK2XyBrgELiT9u2s+eYYnW7LGK/B6j
-   bw+j2Tt9JbH+Tlm3tL1OuUb+Y5hLzP1sgcXzMHg1sY47xNL6uzy1vXIFm
-   FfEemlt24L/ruJOEMPt20VQCyZh8+0M9xCI5dWYCucpDGeqcPqtt4ZMSE
-   A==;
-IronPort-SDR: tnaOEmcMNeipcyXOMY60qH+uYVsKk3Bnue0vGtzE5oLeAR1Kz2mUXCs4c1MdYrr8d8rai7J2eO
- 1jBf2TMcBon8ENA8wadO30KqhX6lla8kSon0Gz3n6vvy/qVw+6trOusZUCkks4xvH6/aqz/I+P
- 5GC6bWBJl1LBdu+BoLRbzPCS5nJlAO6ufpAsuxjURUcgklLpLdJy8v4lWlZdYaBPVVTgl7yx9K
- 1diayeP6vHcdQHTJD5ifZeSLOKQWHyO8mxpMZMGHzULqruRh3WwE+6t1QKSEI3I42UMe7mNnTZ
- Jl4=
-X-IronPort-AV: E=Sophos;i="5.79,400,1602518400"; 
-   d="scan'208";a="159108084"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Feb 2021 18:23:55 +0800
-IronPort-SDR: OVHgJQ3bgR41zYSJtU8G9HsmI1A9EX4o+e7nH5UKseXmTwwqRtI2hvJODy+mZvQkqVkO8cCpW9
- KrjKP1V76y8vmNathwoqjz/11/9q/swaay3ZGQCI33gRR1Z1+l3fh1STcqggE323uI8x5vAVaI
- HLo1hRkO1mn3qTf+ybDoIFKvqdQOiydIW+72j3KirRkDJZc6Hug9vNfkil6Odm87pDm8BIZ3uj
- TJt0J2KGJfQBCGIHhple/Is8md2jfQOmykiXUESeXsfNuSt+4YwdcGbsR9I+Uws2I1+iNaFV0e
- bROZygCmSq9dgDnbt8aCN90A
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2021 02:05:57 -0800
-IronPort-SDR: bhAZBBYJgUmAD9uq0Cj8A+j6Yx8yy9iAZR6FiU0YSA0oaDRAvPm87oTrdCc+iixOqoWes79nNV
- Z1nAnYQ/lRLKr8HVq2j/5z1LzQea8rO/+fPXPNCmVEI+DqSXSBJ3xnEM9yKtfVOcrFSPOteHUK
- n8IMottmv1ZC09PPFuFVhycjM1TjpEMQQqIQdtVx4HUXm6QevwUQeoMqIQ+zFb1kR/RffaOmw5
- 4mAamcEc91TykVLeMnPqjV8n+DC1vM0zqpPrrpMkzkJuV6o8ktzfXjWwoEXzVqmY8i4o3uIJu6
- 4sM=
-WDCIronportException: Internal
-Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon.wdc.com) ([10.84.71.79])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Feb 2021 02:23:53 -0800
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
-Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v15 42/42] btrfs: zoned: enable to mount ZONED incompat flag
-Date:   Thu,  4 Feb 2021 19:22:21 +0900
-Message-Id: <7c375b7f63706927869c142b2bb408828472445f.1612434091.git.naohiro.aota@wdc.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
-References: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
+        Thu, 4 Feb 2021 05:30:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1612434561;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0aBP0yZZ5Fcbmj3srGNBrjAQeibYtYRz/AaqkldShfk=;
+        b=FKWb11kn6aekHcNYASZP5YF9sC82R1Crq5ei+D3cOtK0ddMT8j73xOf+o9HmtIBnPjKKhW
+        xXjxb2ECR/34daxuw7znjEaMXPqUtycwkVdmYaQaXNb3Jlah8I82oLgXrCiVZuQNRgAUMY
+        Is7UH1NAOm3+0TEDE04kd2IheAVUfTE=
+Received: from EUR01-DB5-obe.outbound.protection.outlook.com
+ (mail-db5eur01lp2058.outbound.protection.outlook.com [104.47.2.58]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ de-mta-18-9yPKTVzrM2atM24peA1KaQ-1; Thu, 04 Feb 2021 11:29:19 +0100
+X-MC-Unique: 9yPKTVzrM2atM24peA1KaQ-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KE0YUX+18RtJnp8ErtbHay2ZCSti/BOGiA4JuTCtHJgaZG3IM5o3fVpIvkZKBbxLvCRlp3EkFQzBxNEKxAg+gDGe9mLedTobFAfYr0gOODN5NlLpVw5t4shOMSsWidiyPzcuJGM7p6C/3GSVq1ZxPtl9Tks9fwbRZk+nbsOwXab+WwSJYimgfVVD+2MWX9fhH6AW1CKvUJrj6S49Gi6IfZXj0UxK40BENQQXVxqv/FDMf5ha2eNqzesroIrm6yzdGHba5SjWHBhYAAUGOod0qWwjdzMoD0mEQLXMj0uK8h5m4S6tCo0s9pH0sB/O2Zdq+MtJ8gM5IkTArvisgwT89A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0aBP0yZZ5Fcbmj3srGNBrjAQeibYtYRz/AaqkldShfk=;
+ b=DJs0to90NUxzJHzjTMw39KX8g/FFO7g0l/6z2ANafTNvz4eMgUn/QEiP0nUDj1vnqPZdMUvQuwzH8aCAohqzZnKPbFjJiPKTQdueKp6oUw3GzC9HBlJ2nDJ4Y1feoKiCci6G6BLqkyFpbL5bbqNOREVCcLEw0IoAVo9NssUA7cuwQcJCNtxftaLji+OeTaSdIS6ayadiaGsaT4vhMR7f2CrDqSd5kn4NiG3qEeVZq8pAvZlFqCq/ZMxIwzO6XuupZsoNczqwMh4CpxVt5kYZnX/kcMg9WzwlYF4Oh2oS5mfGPKFRy+IUdV5M5gJ4kenyr+nF9jCKymFx58D/vjizMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=suse.com;
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
+ by VI1PR04MB5550.eurprd04.prod.outlook.com (2603:10a6:803:cf::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.21; Thu, 4 Feb
+ 2021 10:29:17 +0000
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::9c1d:89de:a08e:ccc9]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::9c1d:89de:a08e:ccc9%4]) with mapi id 15.20.3805.022; Thu, 4 Feb 2021
+ 10:29:17 +0000
+From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
+To:     Steve French <smfrench@gmail.com>,
+        CIFS <linux-cifs@vger.kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH] cifs: use discard iterator to discard unneeded network
+ data more efficiently
+In-Reply-To: <CAH2r5ms9dJ3RW=_+c0HApLyUC=LD5ACp_nhE2jJQuS-121kV=w@mail.gmail.com>
+References: <CAH2r5ms9dJ3RW=_+c0HApLyUC=LD5ACp_nhE2jJQuS-121kV=w@mail.gmail.com>
+Date:   Thu, 04 Feb 2021 11:29:15 +0100
+Message-ID: <87eehwnn2c.fsf@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [2003:fa:705:9b05:ee03:72d7:dd87:90d5]
+X-ClientProxiedBy: ZR0P278CA0080.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:22::13) To VI1PR0402MB3359.eurprd04.prod.outlook.com
+ (2603:10a6:803:3::28)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (2003:fa:705:9b05:ee03:72d7:dd87:90d5) by ZR0P278CA0080.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:22::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.19 via Frontend Transport; Thu, 4 Feb 2021 10:29:16 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: dbf7514e-8b35-4a95-a47c-08d8c8f7b997
+X-MS-TrafficTypeDiagnostic: VI1PR04MB5550:
+X-Microsoft-Antispam-PRVS: <VI1PR04MB555076BFDFE6F155C63FD8D7A8B39@VI1PR04MB5550.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 8spsbnI6ilMvObFmI2CAE95JSSepiKWNVvwy4mNy2nxaQTKtsrqRN4BwYhFsaPoa0f8HxT1wpSF/GrOS+pP1dY1qtyCEai28Cppj7U89MwLe2yUfzEQ3couJdINIJutnYKWWJs/w4SdTpvBIVl9L2H36+4TBVpJU1TOPxYevizQCghre872/rz7S9etP2xaYAe8G9uzfyBO2ImUbC1QFoeWVXD8e7xqlvTWteW5ZtPFkSoBQdxJ7sLi865WnOb3wgkkjLw675ZZrbGukVj/JvFpKOpD/HIxVkQnZmJnNJJ0r8uicCqVQcpFurBp2djJ0bAaWMKUceKKWA78TBKMqQdpa1IivsCsMP0DWq3F5gLKWyrLhC8HU5CZc0IWKgggrWCFOrKK44zZY0kKCxbQf5zpBL6AIuUTcPDvv8w6xJYmz6rDVF4H0hvpj7X+RXU12xXSEinQdI4BtHDQc6mdWnLZatEzWBgrTwcQh7pnaa1Xww2mTpJ+Zr1Bt2yL355RCRHSd//Ty5sDg/8qeEfmQ+A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(346002)(136003)(39860400002)(366004)(396003)(8936002)(86362001)(66556008)(52116002)(66476007)(66946007)(478600001)(16526019)(2616005)(54906003)(36756003)(186003)(6486002)(4744005)(2906002)(8676002)(316002)(5660300002)(6496006)(4326008)(110136005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?NmYwcTNWdk5Sb290MkM5NUxpRlFVWS9FVXdDNTdRSG51ZDExdlYxUk5hSjQz?=
+ =?utf-8?B?aWErNTc1eUJEU0ZPd1dZWmkzbENuQkJ3ZWI1YlZicm1tSElWeXJFcHNvZk9u?=
+ =?utf-8?B?cTEyT0tZUVN6Vk1xOVprTmJWenp6TS9pUHgxUW9ySmNSMXdpUDhWUmdkaXho?=
+ =?utf-8?B?TWh3VHBEYzZOOVpMQ25DSlpVVVNWUWRPMjhQaWliK21XdlFTZWFIN2I0ZnVv?=
+ =?utf-8?B?UGdEMWhzMUtwNGNLZUpETEEwM0kvWThNUDJJdmhJQ2pUdDFFK1RWRTdDZFhW?=
+ =?utf-8?B?VGxxMys4dVViVlBOUHBWWUdUOEsrTUcrV3lDclZ2cHIxZ09LWXBZdkY3NzRS?=
+ =?utf-8?B?OG5lM0psQ1dURFlUeHRHaHg3NHNTQWRQb3o2SWxpSU5YcklWQWljRnlUUTZk?=
+ =?utf-8?B?cHkzaHdicFhSZm9HdjkwYkprVjJPemlCc1VzZFpXMTRzSnZuRWordzdqOHFK?=
+ =?utf-8?B?dEQ0Z0Z4bHBlakZpVzRVR2xNcEpTcStDeDA0STFWUHR2cEJvYTAxSlJyc0Rx?=
+ =?utf-8?B?SkdvT21KekQ4bE15NUYydUxmL0EvRGhFWDBuVUE2WE1pWnpHUG5sZDBTK1Nh?=
+ =?utf-8?B?NUs4cklGeFJCZG93eno5cERqNjlrY2ppbzZmckhmK0dnSWFRMmJwMG9wVXhS?=
+ =?utf-8?B?QU9DL0tML2lPNHhHbTVSSTM4WDJUeWNlRTJxOGtXU0lYd2tKUXo4RXFKaHlz?=
+ =?utf-8?B?YWZJdysxeTJOL2pPV3RwRG5mRE1ZRVlTd2JaMzQ5dExQWDVvTGhwSWg5Ny9y?=
+ =?utf-8?B?b3N0QnBGU25ra2dBa2pqUDZlWXRUQ2FFRFZEUEJMVG9tcVoxREdWRGZ4VnAr?=
+ =?utf-8?B?QXZrb3dwaTZyN2IxTFR6ckoyc2VtSVpJaTVlRmpVMWlNVkpNRnByL25vNWh1?=
+ =?utf-8?B?eXZrTUpVY3ZMeXR4QzhEMDl6Ly8zRDFLdWFSZThOdkhYOFFTeTJZVmMvMEJD?=
+ =?utf-8?B?bjhHS3Z4SGcvb1VCWm9EdDFPL1BLQ3lIVmdJbzZyRXFPM1k2Z2toVDhEVWcr?=
+ =?utf-8?B?WXJ0Ui9PMG9jTGZ0QVl0Z3hURHgvTnUzL0ZNM3hKN25aQ1lSNllZNzYyTlpD?=
+ =?utf-8?B?OUdpczdVdjdnaWh2VUpaOXExMVVXUDJSV2NiQ3ZscmN5VHc4SSs3RmVRbGgr?=
+ =?utf-8?B?KzBSUVJJQjVQM0ZJVGhvbFZJbUFQUkVid1pwa2d0VzhjWERlUWxWai93ZXBr?=
+ =?utf-8?B?WFlVMEFLYVlVN0E5cFArQm4vOWVHa1c1SDAzZXg4N2J1aWJaK3pOYUl6YmEv?=
+ =?utf-8?B?amRQa05lTTZUK24vZFVtazl6b0F6L0tmSEM5eU9teERCMVB5OHBiNnNSSS9P?=
+ =?utf-8?B?dlZRLy8wZnhYTDJTRHZJVFBOS2xIaVFmREZDems2U2s2WDFlQjBLdCtGbzNo?=
+ =?utf-8?B?Wnk4N0V3a2psWkloUkVnczdLeXI0OHhSeElXZC82YU50OVdwNU1MRXJLeHVR?=
+ =?utf-8?B?aitzbEZMNStHN3VtK0RTT1JqL00zUmlmMURlcmJJODZYV1lZd1kzMG1zbEtW?=
+ =?utf-8?Q?+bsM1v1+Ib55YQj6ajl4Exs4Zl+?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dbf7514e-8b35-4a95-a47c-08d8c8f7b997
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2021 10:29:16.9995
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w7cXMiUH9+tLRn1jv7yNuZAIeMHQ3WVTfCwP8xw1ihrTn/OVDRC9y5vX9VCX3Ry9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5550
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This final patch adds the ZONED incompat flag to
-BTRFS_FEATURE_INCOMPAT_SUPP and enables btrfs to mount ZONED flagged file
-system.
+Steve French <smfrench@gmail.com> writes:
+> +ssize_t
+> +cifs_discard_from_socket(struct TCP_Server_Info *server, size_t to_read)
+> +{
+> +	struct msghdr smb_msg;
+> +
+> +	iov_iter_discard(&smb_msg.msg_iter, READ, to_read);
+> +
+> +	return cifs_readv_from_socket(server, &smb_msg);
+> +}
+> +
 
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
----
- fs/btrfs/ctree.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Shouldn't smb_msg be initialized to zeroes? Looking around this needs to
+be done for cifs_read_from_socket() and cifs_read_page_from_socket() too.
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 6f4b493625ef..3bc00aed13b2 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -298,7 +298,8 @@ struct btrfs_super_block {
- 	 BTRFS_FEATURE_INCOMPAT_SKINNY_METADATA |	\
- 	 BTRFS_FEATURE_INCOMPAT_NO_HOLES	|	\
- 	 BTRFS_FEATURE_INCOMPAT_METADATA_UUID	|	\
--	 BTRFS_FEATURE_INCOMPAT_RAID1C34)
-+	 BTRFS_FEATURE_INCOMPAT_RAID1C34	|	\
-+	 BTRFS_FEATURE_INCOMPAT_ZONED)
- 
- #define BTRFS_FEATURE_INCOMPAT_SAFE_SET			\
- 	(BTRFS_FEATURE_INCOMPAT_EXTENDED_IREF)
--- 
-2.30.0
+Cheers,
+--=20
+Aur=C3=A9lien Aptel / SUSE Labs Samba Team
+GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, D=
+E
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
+nchen)
 
