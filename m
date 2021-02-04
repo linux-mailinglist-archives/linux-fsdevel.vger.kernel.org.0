@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9569930FBAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 19:39:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B391430FBAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Feb 2021 19:39:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239250AbhBDShv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 13:37:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50852 "EHLO
+        id S238713AbhBDShn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 13:37:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238584AbhBDSgP (ORCPT
+        with ESMTP id S237649AbhBDSgI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 13:36:15 -0500
-Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9EBC0617A7
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Feb 2021 10:34:50 -0800 (PST)
-Received: by mail-qt1-x849.google.com with SMTP id r18so3271410qta.19
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Feb 2021 10:34:50 -0800 (PST)
+        Thu, 4 Feb 2021 13:36:08 -0500
+Received: from mail-qt1-x84a.google.com (mail-qt1-x84a.google.com [IPv6:2607:f8b0:4864:20::84a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B90C06121E
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Feb 2021 10:34:56 -0800 (PST)
+Received: by mail-qt1-x84a.google.com with SMTP id f7so3294063qtd.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Feb 2021 10:34:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:in-reply-to:message-id:mime-version:references:subject
          :from:to:cc;
-        bh=OEiarKErHeQBPZKsYeL3IkSXq4c5mYMZ0dIk1JQlp5Y=;
-        b=HaC1/BN3UFOD+8cUBOspMU73ct/e+qcOiXXFRVMYRHECbtjGH4eFsMreWMsc1gLI8E
-         D4HwfqBpv8ifvkQ0WTBn6pGbOvbPMH5naPNpoq6uIrdBp6aAsuqDwCDf2SHMU8U7EnQf
-         as+ddooJ5YbrDa0uuHll/bhyoJhHSwd8mgvYbwJbZpIPtS3RdBrNlhZIAxBzHn83KTEe
-         ColYJ67sQiwpnOsZb66BnQz+LGNeOAusyJeYaEc/NUueGhZQKpMBT4BxAkZqBVp13ukv
-         WAAZ4mkE7OgDpUP7dnncZRPz8SVVk3PinhZ4MkQv9OelGo/fPIj3rr0yOBddPveGFIiu
-         udHg==
+        bh=dnNo0P9pQk4mCWpPk9SkHpqnJh6eIBtgx02Oeb/UXjo=;
+        b=Al/UauZV1DDE1GQ/B3cVQR4rotIVxh2DLihJOd/5CWM7XthzAeW499I1SxHk1BPVLl
+         dEowBo6pNqZumu/JZm1jSFVw8i1MjyIgVLbAi90z4s0xRZzHVnnToEs7fW+HS9kf00lk
+         4oAQmnRtfTxMbdZjOrBsGE/MZfMsT25k5kWdEbxtyY9wMtiqQtxHtx5uhlPsRx/VHdLG
+         sJ/ahIQhrG/y3oGYrRQvsUscM6Yru+JLmb67PlIw4/1jSXn+PrZ7i7EzVDQgg/tdricm
+         UC9q2irp8osM7qLusXPZ7c9F8DyZjphS272uL5NoPER97hCV15fQvLGUwQktxrXH2CMl
+         J3+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=OEiarKErHeQBPZKsYeL3IkSXq4c5mYMZ0dIk1JQlp5Y=;
-        b=B0s0g1pDo1BCFKAtaxasOtN2fCGqvBOC27IkXNJLxiGs9XiV57DB9eivUKv1ro1HaH
-         yKd/H2VRcXbfCtV08NOFhQsm/zP+iVQZA7D1ud7YqVrjmppHcBWIGAnSmNTZqA5VUtDz
-         SzhyCyp8IalwiGtjz1iIA5h77yU93BVbBQVOZ4j7or31PeRvyQIC9EE68tEHS4bTfuPM
-         qaD6AxlB9k1R7/QTiZ6rYFNyp6LtT4Mr9lyT46uXhiq8aRbw9zSims9UuOTaP1MLI3hD
-         mHdYiQEsDVcFJMMFF0BbRRUdJMLB8tp7XqCCR2TUO9lUu0L6P+wCXDK4BzKYQPc064Fy
-         Bg5w==
-X-Gm-Message-State: AOAM531PCwK5L4TsYvW1RuKDHeX/mpiMtUHJdYq/zXZP+qxjDiyJgrmQ
-        mrneWJ0Y+Zy3KtmW9eqYTS6qcSM5aNpomzcBYcMW
-X-Google-Smtp-Source: ABdhPJwoP//UfZwpJJBLBfBtdgwOdsWrZ/lchYHtEI3yC3eDyBTvQXSkLtfePQ0byVtVxFApIJiz12FKAuAPClXh2/pD
+        bh=dnNo0P9pQk4mCWpPk9SkHpqnJh6eIBtgx02Oeb/UXjo=;
+        b=t8Qb+/rLR+VReCMmK4xzOpS6Q3uwUYe7OJgTjd6mYvp14f0muorawu7zsswNYzYtop
+         4/ShZxLaZj1Qv+fLklLu8V6OC3Q/4nVIy7qpk1L8BASka96+sJP8xfaXOR7WFoJt9z2J
+         +suqOIoSXwdxm4Op33ZduTrsIV9hoadaPPgjn4Y2+LXZW87dMTLVpyJakw7J50XI9eWQ
+         bXR7KyV4UyfP5wTI4pLjhveQRjkaZGBIKFH0+7oDVMyzRjW2VCoQGP2TDtwBd4iNHqg0
+         jBZzHo3O8ih9zMScQGw/18LaoO3HwA6oOW3FHZQ8yvIHa8AxNuykAJTZdfFLY9d76jw+
+         GOBw==
+X-Gm-Message-State: AOAM530GSJYySsIZf3/pxUvkdFCyrnMMBIgv95MoBYWY35uLShIRR3dF
+        2wcdiCtICG31F5z17L7xoGTWxH8BiCt8A0w6dbj9
+X-Google-Smtp-Source: ABdhPJwzY/m5iDRQzjnkOcfC3idOuJxllyLq6tjUscyKEYj5/eihbt8Wssn5DtrwP7t8RsmeAVnnF7FClkXApTydM2XJ
 Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
 X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:b001:12c1:dc19:2089])
- (user=axelrasmussen job=sendgmr) by 2002:a0c:a692:: with SMTP id
- t18mr803070qva.18.1612463689620; Thu, 04 Feb 2021 10:34:49 -0800 (PST)
-Date:   Thu,  4 Feb 2021 10:34:26 -0800
+ (user=axelrasmussen job=sendgmr) by 2002:a0c:e652:: with SMTP id
+ c18mr505898qvn.59.1612463695305; Thu, 04 Feb 2021 10:34:55 -0800 (PST)
+Date:   Thu,  4 Feb 2021 10:34:29 -0800
 In-Reply-To: <20210204183433.1431202-1-axelrasmussen@google.com>
-Message-Id: <20210204183433.1431202-4-axelrasmussen@google.com>
+Message-Id: <20210204183433.1431202-7-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20210204183433.1431202-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.30.0.365.g02bc693789-goog
-Subject: [PATCH v4 03/10] mm/hugetlb: Move flush_hugetlb_tlb_range() into hugetlb.h
+Subject: [PATCH v4 06/10] userfaultfd: disable huge PMD sharing for MINOR
+ registered VMAs
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
@@ -90,54 +91,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Peter Xu <peterx@redhat.com>
+As the comment says: for the MINOR fault use case, although the page
+might be present and populated in the other (non-UFFD-registered) half
+of the mapping, it may be out of date, and we explicitly want userspace
+to get a minor fault so it can check and potentially update the page's
+contents.
 
-Prepare for it to be called outside of mm/hugetlb.c.
+Huge PMD sharing would prevent these faults from occurring for
+suitably aligned areas, so disable it upon UFFD registration.
 
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Peter Xu <peterx@redhat.com>
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- include/linux/hugetlb.h | 8 ++++++++
- mm/hugetlb.c            | 8 --------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ include/linux/userfaultfd_k.h | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index f6d5939a6eb0..af40500c99f0 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -950,4 +950,12 @@ static inline __init void hugetlb_cma_check(void)
- 
- bool want_pmd_share(struct vm_area_struct *vma, unsigned long addr);
- 
-+#ifndef __HAVE_ARCH_FLUSH_HUGETLB_TLB_RANGE
-+/*
-+ * ARCHes with special requirements for evicting HUGETLB backing TLB entries can
-+ * implement this.
-+ */
-+#define flush_hugetlb_tlb_range(vma, addr, end)	flush_tlb_range(vma, addr, end)
-+#endif
-+
- #endif /* _LINUX_HUGETLB_H */
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 588c4c28c44d..5b3f00a1e276 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4924,14 +4924,6 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
- 	return i ? i : err;
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index 0390e5ac63b3..e060d5f77cc5 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -56,12 +56,19 @@ static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
  }
  
--#ifndef __HAVE_ARCH_FLUSH_HUGETLB_TLB_RANGE
--/*
-- * ARCHes with special requirements for evicting HUGETLB backing TLB entries can
-- * implement this.
-- */
--#define flush_hugetlb_tlb_range(vma, addr, end)	flush_tlb_range(vma, addr, end)
--#endif
--
- unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
- 		unsigned long address, unsigned long end, pgprot_t newprot)
+ /*
+- * Never enable huge pmd sharing on uffd-wp registered vmas, because uffd-wp
+- * protect information is per pgtable entry.
++ * Never enable huge pmd sharing on some uffd registered vmas:
++ *
++ * - VM_UFFD_WP VMAs, because write protect information is per pgtable entry.
++ *
++ * - VM_UFFD_MINOR VMAs, because otherwise we would never get minor faults for
++ *   VMAs which share huge pmds. (If you have two mappings to the same
++ *   underlying pages, and fault in the non-UFFD-registered one with a write,
++ *   with huge pmd sharing this would *also* setup the second UFFD-registered
++ *   mapping, and we'd not get minor faults.)
+  */
+ static inline bool uffd_disable_huge_pmd_share(struct vm_area_struct *vma)
  {
+-	return vma->vm_flags & VM_UFFD_WP;
++	return vma->vm_flags & (VM_UFFD_WP | VM_UFFD_MINOR);
+ }
+ 
+ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
 -- 
 2.30.0.365.g02bc693789-goog
 
