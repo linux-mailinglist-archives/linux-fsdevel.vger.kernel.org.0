@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76EA2310434
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 05:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF52310436
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 05:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbhBEExM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 23:53:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42436 "EHLO
+        id S230526AbhBEExN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 23:53:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230178AbhBEExG (ORCPT
+        with ESMTP id S229729AbhBEExI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 23:53:06 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6434CC061786;
-        Thu,  4 Feb 2021 20:52:26 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id d2so3116248pjs.4;
-        Thu, 04 Feb 2021 20:52:26 -0800 (PST)
+        Thu, 4 Feb 2021 23:53:08 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABFF0C06178A;
+        Thu,  4 Feb 2021 20:52:28 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id my11so6091691pjb.1;
+        Thu, 04 Feb 2021 20:52:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ebf53u+tGmB5LJxdnIJv3XzWkYXHGYPoxBE+b+T9QNU=;
-        b=Cvjz9vn3dF4SctIwPZU6fRm7gPveRochkIgB/zeFML4ybGIkiB2K6Txv9DiIagc7bJ
-         6oTEqQxbEVFi9qcPRmDIOjCIQZBY1UAXliCpJTGcFxCeYAUHP6rFuzxflYdlazqnZtZF
-         ofol6NUlV/8FxYzqCvJ7v5JweWgMNYBdh/UdCdoE3ZZjAWYIw0mQJMs1kxH39OtKpXx4
-         CeoETJYJ1T38sA+m+6xQZRKWqllDemr7yIIGqFAHJQKNSgCad7r35zhru9bfVk/NYR/D
-         t/Hl4gq93E95eu2/Fr+V1B02ir4fDW0lWyixTyOWXPJyg29qmGP7B1CD6prd5YBuIWya
-         +c7A==
+        bh=9XDA8Fby0VxVTHCohOTyUITpcvTBN9KM25u4jqRVwPs=;
+        b=D0rKaVDKeB2qxTlgxcKDSfVhy04m+Ci49FgsQnFVQaG3CGdaogLoeZj6AGb2yZ4cF4
+         RMg64n0wfuOXBee1+9wtE2BypjBRjH0LV0Z6aQXHeZRnhM74sicXYR+WBuH1reh3s9F0
+         2VOh12zCUr+0DlsrnXCKN3ui0OfJ9DpJaCEcwuMrcSS2ncaA1/k3oN9xxZ4hrumLlYXZ
+         eeuY3BoOnc1OvcXj+kVqzOi68UzAqRzk2d4Et+EeoRRqsiPVCK03fyZ+FvdjAvh1WILK
+         d8uV2DkWk8xF9erD3pAMbBPODx5hPdxXfyGumPPyxydUPprHNeBEhXErLbaBSyRMl/Na
+         ns+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ebf53u+tGmB5LJxdnIJv3XzWkYXHGYPoxBE+b+T9QNU=;
-        b=R+4nib7UFBqndiU/ayr4UzV9mgaFT9agkHqOvCDKbCDGXwzvLu1YiijjVEAoY+qhzp
-         PppTlDLrDPeFj+ra0Y93C6+iMTj3ZM76lyUqZRg8Pv4F5uhO5pJ7B/MeWhdIZtVXZ2e9
-         wlECPj0DIVh2sJllei7rfLdxbtxBwjCmLKFsnDszW6RfBEJ1ge63c/Jsu9hKQZAjNJF8
-         Ma5BHeCqOO5gCeukmbr4KYGX7NT+7pRLHGgXcQhpdP7FlkdgZBlYY9GlZbVrB11ZUvln
-         O8m1+2HWITLa9LCfSz2pdx7oHg+S66+8v3LN9r4DXgphbiDtsqus/eCUeEI6OETcchh6
-         3x0Q==
-X-Gm-Message-State: AOAM5331tXwluI/dNaFRtfiqmZdreUlmfKAIzrCSRj3qDl2eBF3I639c
-        3soIQFX9aW+d9b5lAa6h/mobkxEQKwfQDw==
-X-Google-Smtp-Source: ABdhPJzaiqbpmAVJdSS9XfZmYzHwyRg6TBP9ey1/xe6Cvtnwy494xIYkjZK8cK0NLnl11Nk1MJsANg==
-X-Received: by 2002:a17:903:1c2:b029:de:ad0a:2dbf with SMTP id e2-20020a17090301c2b02900dead0a2dbfmr2553461plh.44.1612500745738;
-        Thu, 04 Feb 2021 20:52:25 -0800 (PST)
+        bh=9XDA8Fby0VxVTHCohOTyUITpcvTBN9KM25u4jqRVwPs=;
+        b=ED89DTkPJj3Gh0aJYtF5QXSQ3PGAj8cTdhDl83Swajcv9+8E8tnRdOuWBdKL/i6cT+
+         jzD1VZ4XSjkcPPN/143DMHWokQcKTzyQAnWaX2w6loHIbOVf3Q7nWDr5mdaKm5pRJ6ud
+         enWS5ntQ7StFpmBeqd8hdUbfoXDdznqktGTIzM05x0s4TYVaXFf0FLAvyDNUPZg18hMy
+         GlasHvImsHvu2cp9zwo5p63LrMdjRz4/rB721a4wt0KyYueT0/KmqAMv+Bpnn74u9vW+
+         x0OwFrY6RpmZJIV/5szGVOqc0BDAICDaGS3QBoEj9Nikps6CJdxy1rzyMjTgngViMKio
+         WbRA==
+X-Gm-Message-State: AOAM533ryO4vWYrQ33CiM0oHLvdwXgoMtr9B6/UwZL7Q87IAq7i+FRaL
+        V3AcUObQuzKsP1XGh8ABCUcZ2GC8lZcE8Q==
+X-Google-Smtp-Source: ABdhPJwoxz0G2vdy8fZ6Bib/GVoB7b8SeNCAvqpQXb7VrOZD5rhYltU/McFRdySV8RiXqQlL5FBpDw==
+X-Received: by 2002:a17:902:c40a:b029:e2:9a65:ffec with SMTP id k10-20020a170902c40ab02900e29a65ffecmr2655092plk.42.1612500748026;
+        Thu, 04 Feb 2021 20:52:28 -0800 (PST)
 Received: from amypc-samantha.home ([47.145.126.51])
-        by smtp.gmail.com with ESMTPSA id s1sm6972440pjg.17.2021.02.04.20.52.25
+        by smtp.gmail.com with ESMTPSA id s1sm6972440pjg.17.2021.02.04.20.52.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Feb 2021 20:52:25 -0800 (PST)
+        Thu, 04 Feb 2021 20:52:27 -0800 (PST)
 From:   Amy Parker <enbyamy@gmail.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Amy Parker <enbyamy@gmail.com>
-Subject: [PATCH 1/3] fs/efs: Use correct brace styling for statements
-Date:   Thu,  4 Feb 2021 20:52:15 -0800
-Message-Id: <20210205045217.552927-2-enbyamy@gmail.com>
+Subject: [PATCH 2/3] fs/efs: Correct spacing after C keywords
+Date:   Thu,  4 Feb 2021 20:52:16 -0800
+Message-Id: <20210205045217.552927-3-enbyamy@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210205045217.552927-1-enbyamy@gmail.com>
 References: <20210205045217.552927-1-enbyamy@gmail.com>
@@ -63,110 +63,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Many single-line statements have unnecessary braces, and some statement pairs have mismatched braces. This is a clear violation of the kernel style guide, which mandates that single line statements have no braces and that pairs with at least one multi-line block maintain their braces.
-
-This patch fixes these style violations. Single-line statements that have braces have had their braces stripped. Pair single-line statements have been formatted per the style guide. Pair mixed-line statements have had their braces updated to conform.
+In EFS code, some C keywords (most commonly 'for') do not have spaces before their instructions, such as for() vs for (). The kernel style guide indicates that these should be of the latter variant. This patch updates them accordingly.
 
 Signed-off-by: Amy Parker <enbyamy@gmail.com>
 ---
- fs/efs/inode.c | 10 ++++++----
- fs/efs/super.c | 15 ++++++---------
- 2 files changed, 12 insertions(+), 13 deletions(-)
+ fs/efs/inode.c |  8 ++++----
+ fs/efs/namei.c |  2 +-
+ fs/efs/super.c | 10 +++++-----
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/fs/efs/inode.c b/fs/efs/inode.c
-index 89e73a6f0d36..36d6c45046e2 100644
+index 36d6c45046e2..2cc55d514421 100644
 --- a/fs/efs/inode.c
 +++ b/fs/efs/inode.c
-@@ -107,11 +107,11 @@ struct inode *efs_iget(struct super_block *super, unsigned long ino)
- 	inode->i_atime.tv_nsec = inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec = 0;
+@@ -130,7 +130,7 @@ struct inode *efs_iget(struct super_block *super, unsigned long ino)
+ 	in->lastextent = 0;
  
- 	/* this is the number of blocks in the file */
--	if (inode->i_size == 0) {
-+	if (inode->i_size == 0)
- 		inode->i_blocks = 0;
--	} else {
-+	else
- 		inode->i_blocks = ((inode->i_size - 1) >> EFS_BLOCKSIZE_BITS) + 1;
--	}
-+
+ 	/* copy the extents contained within the inode to memory */
+-	for(i = 0; i < EFS_DIRECTEXTENTS; i++) {
++	for (i = 0; i < EFS_DIRECTEXTENTS; i++) {
+ 		extent_copy(&(efs_inode->di_u.di_extents[i]), &(in->extents[i]));
+ 		if (i < in->numextents && in->extents[i].cooked.ex_magic != 0) {
+ 			pr_warn("extent %d has bad magic number in inode %lu\n",
+@@ -227,7 +227,7 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
+ 		 * check the stored extents in the inode
+ 		 * start with next extent and check forwards
+ 		 */
+-		for(dirext = 1; dirext < direxts; dirext++) {
++		for (dirext = 1; dirext < direxts; dirext++) {
+ 			cur = (last + dirext) % in->numextents;
+ 			if ((result = efs_extent_check(&in->extents[cur], block, sb))) {
+ 				in->lastextent = cur;
+@@ -244,7 +244,7 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
+ 	direxts = in->extents[0].cooked.ex_offset;
+ 	indexts = in->numextents;
  
- 	rdev = be16_to_cpu(efs_inode->di_u.di_dev.odev);
- 	if (rdev == 0xffff) {
-@@ -120,8 +120,10 @@ struct inode *efs_iget(struct super_block *super, unsigned long ino)
- 			device = 0;
- 		else
- 			device = MKDEV(sysv_major(rdev), sysv_minor(rdev));
--	} else
-+	}
-+	else {
- 		device = old_decode_dev(rdev);
-+	}
+-	for(indext = 0; indext < indexts; indext++) {
++	for (indext = 0; indext < indexts; indext++) {
+ 		cur = (last + indext) % indexts;
  
- 	/* get the number of extents for this object */
- 	in->numextents = be16_to_cpu(efs_inode->di_numextents);
+ 		/*
+@@ -255,7 +255,7 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
+ 		 *
+ 		 */
+ 		ibase = 0;
+-		for(dirext = 0; cur < ibase && dirext < direxts; dirext++) {
++		for (dirext = 0; cur < ibase && dirext < direxts; dirext++) {
+ 			ibase += in->extents[dirext].cooked.ex_length *
+ 				(EFS_BLOCKSIZE / sizeof(efs_extent));
+ 		}
+diff --git a/fs/efs/namei.c b/fs/efs/namei.c
+index 38961ee1d1af..65d9c7f4d0c0 100644
+--- a/fs/efs/namei.c
++++ b/fs/efs/namei.c
+@@ -28,7 +28,7 @@ static efs_ino_t efs_find_entry(struct inode *inode, const char *name, int len)
+ 		pr_warn("%s(): directory size not a multiple of EFS_DIRBSIZE\n",
+ 			__func__);
+ 
+-	for(block = 0; block < inode->i_blocks; block++) {
++	for (block = 0; block < inode->i_blocks; block++) {
+ 
+ 		bh = sb_bread(inode->i_sb, efs_bmap(inode, block));
+ 		if (!bh) {
 diff --git a/fs/efs/super.c b/fs/efs/super.c
-index 62b155b9366b..874d82096b2f 100644
+index 874d82096b2f..dd97a071f971 100644
 --- a/fs/efs/super.c
 +++ b/fs/efs/super.c
-@@ -160,14 +160,13 @@ static efs_block_t efs_validate_vh(struct volume_header *vh) {
- 	struct pt_types	*pt_entry;
- 	int		pt_type, slice = -1;
- 
--	if (be32_to_cpu(vh->vh_magic) != VHMAGIC) {
-+	if (be32_to_cpu(vh->vh_magic) != VHMAGIC)
- 		/*
- 		 * assume that we're dealing with a partition and allow
- 		 * read_super() to try and detect a valid superblock
- 		 * on the next block.
- 		 */
+@@ -169,7 +169,7 @@ static efs_block_t efs_validate_vh(struct volume_header *vh) {
  		return 0;
--	}
  
  	ui = ((__be32 *) (vh + 1)) - 1;
- 	for(csum = 0; ui >= ((__be32 *) vh);) {
-@@ -191,11 +190,11 @@ static efs_block_t efs_validate_vh(struct volume_header *vh) {
+-	for(csum = 0; ui >= ((__be32 *) vh);) {
++	for (csum = 0; ui >= ((__be32 *) vh);) {
+ 		cs = *ui--;
+ 		csum += be32_to_cpu(cs);
+ 	}
+@@ -181,11 +181,11 @@ static efs_block_t efs_validate_vh(struct volume_header *vh) {
+ #ifdef DEBUG
+ 	pr_debug("bf: \"%16s\"\n", vh->vh_bootfile);
+ 
+-	for(i = 0; i < NVDIR; i++) {
++	for (i = 0; i < NVDIR; i++) {
+ 		int	j;
+ 		char	name[VDNAMESIZE+1];
+ 
+-		for(j = 0; j < VDNAMESIZE; j++) {
++		for (j = 0; j < VDNAMESIZE; j++) {
+ 			name[j] = vh->vh_vd[i].vd_name[j];
  		}
  		name[j] = (char) 0;
- 
--		if (name[0]) {
-+		if (name[0])
- 			pr_debug("vh: %8s block: 0x%08x size: 0x%08x\n",
- 				name, (int) be32_to_cpu(vh->vh_vd[i].vd_lbn),
- 				(int) be32_to_cpu(vh->vh_vd[i].vd_nbytes));
--		}
-+
+@@ -198,9 +198,9 @@ static efs_block_t efs_validate_vh(struct volume_header *vh) {
  	}
  #endif
  
-@@ -219,15 +218,14 @@ static efs_block_t efs_validate_vh(struct volume_header *vh) {
+-	for(i = 0; i < NPARTAB; i++) {
++	for (i = 0; i < NPARTAB; i++) {
+ 		pt_type = (int) be32_to_cpu(vh->vh_pt[i].pt_type);
+-		for(pt_entry = sgi_pt_types; pt_entry->pt_name; pt_entry++) {
++		for (pt_entry = sgi_pt_types; pt_entry->pt_name; pt_entry++) {
+ 			if (pt_type == pt_entry->pt_type) break;
  		}
- 	}
- 
--	if (slice == -1) {
-+	if (slice == -1)
- 		pr_notice("partition table contained no EFS partitions\n");
  #ifdef DEBUG
--	} else {
-+	else
- 		pr_info("using slice %d (type %s, offset 0x%x)\n", slice,
- 			(pt_entry->pt_name) ? pt_entry->pt_name : "unknown",
- 			sblock);
- #endif
--	}
- 	return sblock;
- }
- 
-@@ -284,9 +282,8 @@ static int efs_fill_super(struct super_block *s, void *d, int silent)
- 	sb->fs_start = efs_validate_vh((struct volume_header *) bh->b_data);
- 	brelse(bh);
- 
--	if (sb->fs_start == -1) {
-+	if (sb->fs_start == -1)
- 		return -EINVAL;
--	}
- 
- 	bh = sb_bread(s, sb->fs_start + EFS_SUPER);
- 	if (!bh) {
 -- 
 2.29.2
 
