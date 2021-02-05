@@ -2,223 +2,266 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D7F310805
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 10:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C37310A36
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 12:27:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230497AbhBEJgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 04:36:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45674 "EHLO
+        id S231666AbhBELYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 06:24:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230273AbhBEJcQ (ORCPT
+        with ESMTP id S231376AbhBELWL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 04:32:16 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37B05C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Feb 2021 01:31:36 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id o7so4160756pgl.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Feb 2021 01:31:36 -0800 (PST)
+        Fri, 5 Feb 2021 06:22:11 -0500
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77876C061786;
+        Fri,  5 Feb 2021 03:21:31 -0800 (PST)
+Received: by mail-qt1-x830.google.com with SMTP id e11so4659768qtg.6;
+        Fri, 05 Feb 2021 03:21:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lZ52iWsdARGk2lAIOdx33a3ZO7f0psqY6W9v1+LcwX8=;
-        b=hmgcEJXs2lC+TuBrC3OG7kfz0kEvqC9gVuamTohw5/KFqqK9C1nVjxf+dI4nN6TAuc
-         t/Qaq+6Rbc34+Nkb+icyFho5ePqQrZU91QjEcNx8lSNQrAi0jbGH5eBdcsXyJAhvHO0n
-         eN/LnHPnjEnrQ2u8CB3EE/4jorFqrlP1PfGD5CoKzsdKevRyGDKQzA1w2w62ehjOZr3g
-         7BsvNzy8fuRLCePv5uivbXCUe6Utg3i1Coy7/AMNMryI3DWZxvEbXgBeda81qf3CaQUd
-         JbR5IrrJF0k8qanYzmAXrPBiUuvNtVmTZlQd9xfNyK6QS8tmNPzMiwkFAxv2l2WuiYz8
-         2wmw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=n63PCZmjecm1Kt+KnVOZRm5DeZvW/I4x9Xo7ew9oBXY=;
+        b=MQn3c4ZMzhdiKVdnUgU5Hkn0+/JuTPEeBOukCdpdL10b/2vj1InJbzWbZy2LO+v2eL
+         vB19NutgiAyYIvBtrS6KVUC4Im3LEZ6QXSaQnTkpcs2N4nK0qOTokPnfKEqvlfoP0Dc/
+         3gXh0if/m+a38JRMq8H8Uy8kiwTQSkUuEqmHMdm/CCrsT2B/QlhL4EZO23o0utVIzth+
+         DS7+cxkIO51eKJIxCRD2ZJp4/ajqHZg12XL/DjB37ot7mYvqMfNAdy59iWa7ZHqCTwKv
+         Qsy0gH+xWIOWDBB+CaCtcxR1U2a4x0wUACqK/+k8HhWVOxvswgMED27xRHXI25KtnLaz
+         w5Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lZ52iWsdARGk2lAIOdx33a3ZO7f0psqY6W9v1+LcwX8=;
-        b=rs1dLJg4RHLOUUiSBt+9afaOGW0X/MWBe7rtij5JSedrtSdKy7ngQaRvv5oDsPb/m5
-         ImVMCrrTXXrdKKlpmDizMFoRqZhzKL2KvskzU/c2EfwhNUY2cTQD2+OH6hjhj3G2rnV/
-         f5E7mFBn9/XU+VUxTwoPV0Sj+5fBHGqjRoU3IyAbWMu4fDVUj5gJHhkhVaBxqQ3GqcIz
-         39QxwdZApEU5uV32GTR4ktDcJ+VdLO6YiCDMAR8CLRk2xVNaklL2rtp/M5FIIviTvQdB
-         U7jfVrXHaMaUWQK5WOMkSsc/4gJKqyMU3/9pA5go3h+PExcLVCb4j9/KIjKslVdPeMbv
-         45Ew==
-X-Gm-Message-State: AOAM531RLUC0soYJV5O9m1J3zEWVAdIwGu7pvhNFJOlHsFLwKKaSXW7K
-        LoK3Ir3/Z/OQxELTBndSbXRY9hB9bWXoFkP0lWuUHg==
-X-Google-Smtp-Source: ABdhPJwV35KHOq4fEHYqxPMJ6oxRltbFzMTdl6LWDoB5jZOchXAiwqmkb2MMJUJsIfUL5zAsrBwbQew6pqOhTPA0B1c=
-X-Received: by 2002:aa7:9790:0:b029:1d8:263e:cc9b with SMTP id
- o16-20020aa797900000b02901d8263ecc9bmr1355925pfp.2.1612517495747; Fri, 05 Feb
- 2021 01:31:35 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=n63PCZmjecm1Kt+KnVOZRm5DeZvW/I4x9Xo7ew9oBXY=;
+        b=RQXeBdu0LGmC8HxRk0mLCLX29kZJkqzSgrZ9ZlhxKAfoAatv7zxtx/3tRXrQ7L8Xe/
+         zWBcWedqQAE6y9n6BjAaLe1magbRjBpd3SGG5FlvytBMsccvLTlh+N+KtkEowRJmAWUa
+         MmhsLGALnhBf5rmOfETxj73KbjFwW0jmeRWyvPz+EC3kXFxr0UvyKXSQpQTsa8GknX/x
+         WCvg5jhYB+9tUsxkyCme0f+64pS9tOeB3QHxFVsj26R95v9bmGBzZvmeSHVHIK7mkZ6w
+         pTFnQ7HTNkqvamKQ+P049pCYrx8Fun1Ld+XBr5ts2PA9/4TMcUt9TKKM3JvtWjynB45F
+         WaHg==
+X-Gm-Message-State: AOAM532u9rz4f+gYTBTTraCt9By3JKEnr2DVlC08UlM4UOk9MWBk0bx8
+        /MZDZ/p21cVjoxHf/sPOcPJNySq4N1P1+WttZGlI2MhZkyU=
+X-Google-Smtp-Source: ABdhPJyCF7SiIg8Np22esfLYmtR89wpZh4G8X68LRuo29O1DKQTrInlQIljvsJ0vsRBGGvCv+buR9jDT4cFlDrEoAlE=
+X-Received: by 2002:aed:2f01:: with SMTP id l1mr3766902qtd.21.1612524090656;
+ Fri, 05 Feb 2021 03:21:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20210204035043.36609-1-songmuchun@bytedance.com> <20210205085940.GD13848@linux>
-In-Reply-To: <20210205085940.GD13848@linux>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 5 Feb 2021 17:30:58 +0800
-Message-ID: <CAMZfGtUDBjKqcBF3NzMp5DMx_wQKYCR0QGZ7rWUoX3DOEpXT-A@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v14 0/8] Free some vmemmap pages of HugeTLB page
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
+ <5eabc4600691c618f34f8f39c156d9c094f2687b.1612434091.git.naohiro.aota@wdc.com>
+ <20210205091516.l3nkvig7swburnxx@naota-xeon>
+In-Reply-To: <20210205091516.l3nkvig7swburnxx@naota-xeon>
+Reply-To: fdmanana@gmail.com
+From:   Filipe Manana <fdmanana@gmail.com>
+Date:   Fri, 5 Feb 2021 11:21:19 +0000
+Message-ID: <CAL3q7H628ivfaObKuAeo6A7mT4ONNebrAJGWP-ADSVQJ7DLWwA@mail.gmail.com>
+Subject: Re: [PATCH v15 40/42] btrfs: zoned: serialize log transaction on
+ zoned filesystems
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, hare@suse.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 5, 2021 at 4:59 PM Oscar Salvador <osalvador@suse.de> wrote:
+On Fri, Feb 5, 2021 at 9:15 AM Naohiro Aota <naohiro.aota@wdc.com> wrote:
 >
-> On Thu, Feb 04, 2021 at 11:50:35AM +0800, Muchun Song wrote:
-> > Changelog in v13 -> v14:
-> >   - Refuse to free the HugeTLB page when the system is under memory pressure.
-> >   - Use GFP_ATOMIC to allocate vmemmap pages instead of GFP_KERNEL.
-> >   - Rebase to linux-next 20210202.
-> >   - Fix and add some comments for vmemmap_remap_free().
+> David, could you fold the below incremental diff to this patch? Or, I
+> can send a full replacement patch.
 >
-> What has happened to [1] ? AFAIK we still need it, right?
-> If not, could you explain why?
+> diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+> index 8be3164d4c5d..4e72794342c0 100644
+> --- a/fs/btrfs/tree-log.c
+> +++ b/fs/btrfs/tree-log.c
+> @@ -143,6 +143,7 @@ static int start_log_trans(struct btrfs_trans_handle =
+*trans,
+>         struct btrfs_root *tree_root =3D fs_info->tree_root;
+>         const bool zoned =3D btrfs_is_zoned(fs_info);
+>         int ret =3D 0;
+> +       bool created =3D false;
 >
-> [1] https://patchwork.kernel.org/project/linux-mm/patch/20210117151053.24600-7-songmuchun@bytedance.com/
+>         /*
+>          * First check if the log root tree was already created. If not, =
+create
+> @@ -152,8 +153,10 @@ static int start_log_trans(struct btrfs_trans_handle=
+ *trans,
+>                 mutex_lock(&tree_root->log_mutex);
+>                 if (!fs_info->log_root_tree) {
+>                         ret =3D btrfs_init_log_root_tree(trans, fs_info);
+> -                       if (!ret)
+> +                       if (!ret) {
+>                                 set_bit(BTRFS_ROOT_HAS_LOG_TREE, &tree_ro=
+ot->state);
+> +                               created =3D true;
+> +                       }
+>                 }
+>                 mutex_unlock(&tree_root->log_mutex);
+>                 if (ret)
+> @@ -183,16 +186,16 @@ static int start_log_trans(struct btrfs_trans_handl=
+e *trans,
+>                         set_bit(BTRFS_ROOT_MULTI_LOG_TASKS, &root->state)=
+;
+>                 }
+>         } else {
+> -               if (zoned) {
+> -                       mutex_lock(&fs_info->tree_log_mutex);
+> -                       if (fs_info->log_root_tree)
+> -                               ret =3D -EAGAIN;
+> -                       else
+> -                               ret =3D btrfs_init_log_root_tree(trans, f=
+s_info);
+> -                       mutex_unlock(&fs_info->tree_log_mutex);
+> -               }
+> -               if (ret)
+> +               /*
+> +                * This means fs_info->log_root_tree was already created
+> +                * for some other FS trees. Do the full commit not to mix
+> +                * nodes from multiple log transactions to do sequential
+> +                * writing.
+> +                */
+> +               if (zoned && !created) {
+> +                       ret =3D -EAGAIN;
+>                         goto out;
+> +               }
+>
+>                 ret =3D btrfs_add_log_tree(trans, root);
+>                 if (ret)
+>
 
-Hi Oscar,
+Ok, with this, it looks good to me and you can have,
 
-I reply to you in another thread (in the patch #4).
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
-Thanks. :-)
+Thanks.
 
 >
+> On Thu, Feb 04, 2021 at 07:22:19PM +0900, Naohiro Aota wrote:
+> > This is the 2/3 patch to enable tree-log on zoned filesystems.
 > >
-> >   Thanks to Oscar, Mike, David H and David R's suggestions and review.
+> > Since we can start more than one log transactions per subvolume
+> > simultaneously, nodes from multiple transactions can be allocated
+> > interleaved. Such mixed allocation results in non-sequential writes at =
+the
+> > time of a log transaction commit. The nodes of the global log root tree
+> > (fs_info->log_root_tree), also have the same problem with mixed
+> > allocation.
 > >
-> > Changelog in v12 -> v13:
-> >   - Remove VM_WARN_ON_PAGE macro.
-> >   - Add more comments in vmemmap_pte_range() and vmemmap_remap_free().
+> > Serializes log transactions by waiting for a committing transaction whe=
+n
+> > someone tries to start a new transaction, to avoid the mixed allocation
+> > problem. We must also wait for running log transactions from another
+> > subvolume, but there is no easy way to detect which subvolume root is
+> > running a log transaction. So, this patch forbids starting a new log
+> > transaction when other subvolumes already allocated the global log root
+> > tree.
 > >
-> >   Thanks to Oscar and Mike's suggestions and review.
+> > Cc: Filipe Manana <fdmanana@gmail.com>
+> > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> > ---
+> >  fs/btrfs/tree-log.c | 29 +++++++++++++++++++++++++++++
+> >  1 file changed, 29 insertions(+)
 > >
-> > Changelog in v11 -> v12:
-> >   - Move VM_WARN_ON_PAGE to a separate patch.
-> >   - Call __free_hugepage() with hugetlb_lock (See patch #5.) to serialize
-> >     with dissolve_free_huge_page(). It is to prepare for patch #9.
-> >   - Introduce PageHugeInflight. See patch #9.
+> > diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+> > index c02eeeac439c..8be3164d4c5d 100644
+> > --- a/fs/btrfs/tree-log.c
+> > +++ b/fs/btrfs/tree-log.c
+> > @@ -105,6 +105,7 @@ static noinline int replay_dir_deletes(struct btrfs=
+_trans_handle *trans,
+> >                                      struct btrfs_root *log,
+> >                                      struct btrfs_path *path,
+> >                                      u64 dirid, int del_all);
+> > +static void wait_log_commit(struct btrfs_root *root, int transid);
 > >
-> > Changelog in v10 -> v11:
-> >   - Fix compiler error when !CONFIG_HUGETLB_PAGE_FREE_VMEMMAP.
-> >   - Rework some comments and commit changes.
-> >   - Rework vmemmap_remap_free() to 3 parameters.
+> >  /*
+> >   * tree logging is a special write ahead log used to make sure that
+> > @@ -140,6 +141,7 @@ static int start_log_trans(struct btrfs_trans_handl=
+e *trans,
+> >  {
+> >       struct btrfs_fs_info *fs_info =3D root->fs_info;
+> >       struct btrfs_root *tree_root =3D fs_info->tree_root;
+> > +     const bool zoned =3D btrfs_is_zoned(fs_info);
+> >       int ret =3D 0;
 > >
-> >   Thanks to Oscar and Mike's suggestions and review.
+> >       /*
+> > @@ -160,12 +162,20 @@ static int start_log_trans(struct btrfs_trans_han=
+dle *trans,
 > >
-> > Changelog in v9 -> v10:
-> >   - Fix a bug in patch #11. Thanks to Oscar for pointing that out.
-> >   - Rework some commit log or comments. Thanks Mike and Oscar for the suggestions.
-> >   - Drop VMEMMAP_TAIL_PAGE_REUSE in the patch #3.
+> >       mutex_lock(&root->log_mutex);
 > >
-> >   Thank you very much Mike and Oscar for reviewing the code.
+> > +again:
+> >       if (root->log_root) {
+> > +             int index =3D (root->log_transid + 1) % 2;
+> > +
+> >               if (btrfs_need_log_full_commit(trans)) {
+> >                       ret =3D -EAGAIN;
+> >                       goto out;
+> >               }
 > >
-> > Changelog in v8 -> v9:
-> >   - Rework some code. Very thanks to Oscar.
-> >   - Put all the non-hugetlb vmemmap functions under sparsemem-vmemmap.c.
+> > +             if (zoned && atomic_read(&root->log_commit[index])) {
+> > +                     wait_log_commit(root, root->log_transid - 1);
+> > +                     goto again;
+> > +             }
+> > +
+> >               if (!root->log_start_pid) {
+> >                       clear_bit(BTRFS_ROOT_MULTI_LOG_TASKS, &root->stat=
+e);
+> >                       root->log_start_pid =3D current->pid;
+> > @@ -173,6 +183,17 @@ static int start_log_trans(struct btrfs_trans_hand=
+le *trans,
+> >                       set_bit(BTRFS_ROOT_MULTI_LOG_TASKS, &root->state)=
+;
+> >               }
+> >       } else {
+> > +             if (zoned) {
+> > +                     mutex_lock(&fs_info->tree_log_mutex);
+> > +                     if (fs_info->log_root_tree)
+> > +                             ret =3D -EAGAIN;
+> > +                     else
+> > +                             ret =3D btrfs_init_log_root_tree(trans, f=
+s_info);
+> > +                     mutex_unlock(&fs_info->tree_log_mutex);
+> > +             }
+> > +             if (ret)
+> > +                     goto out;
+> > +
+> >               ret =3D btrfs_add_log_tree(trans, root);
+> >               if (ret)
+> >                       goto out;
+> > @@ -201,14 +222,22 @@ static int start_log_trans(struct btrfs_trans_han=
+dle *trans,
+> >   */
+> >  static int join_running_log_trans(struct btrfs_root *root)
+> >  {
+> > +     const bool zoned =3D btrfs_is_zoned(root->fs_info);
+> >       int ret =3D -ENOENT;
 > >
-> > Changelog in v7 -> v8:
-> >   - Adjust the order of patches.
+> >       if (!test_bit(BTRFS_ROOT_HAS_LOG_TREE, &root->state))
+> >               return ret;
 > >
-> >   Very thanks to David and Oscar. Your suggestions are very valuable.
-> >
-> > Changelog in v6 -> v7:
-> >   - Rebase to linux-next 20201130
-> >   - Do not use basepage mapping for vmemmap when this feature is disabled.
-> >   - Rework some patchs.
-> >     [PATCH v6 08/16] mm/hugetlb: Free the vmemmap pages associated with each hugetlb page
-> >     [PATCH v6 10/16] mm/hugetlb: Allocate the vmemmap pages associated with each hugetlb page
-> >
-> >   Thanks to Oscar and Barry.
-> >
-> > Changelog in v5 -> v6:
-> >   - Disable PMD/huge page mapping of vmemmap if this feature was enabled.
-> >   - Simplify the first version code.
-> >
-> > Changelog in v4 -> v5:
-> >   - Rework somme comments and code in the [PATCH v4 04/21] and [PATCH v4 05/21].
-> >
-> >   Thanks to Mike and Oscar's suggestions.
-> >
-> > Changelog in v3 -> v4:
-> >   - Move all the vmemmap functions to hugetlb_vmemmap.c.
-> >   - Make the CONFIG_HUGETLB_PAGE_FREE_VMEMMAP default to y, if we want to
-> >     disable this feature, we should disable it by a boot/kernel command line.
-> >   - Remove vmemmap_pgtable_{init, deposit, withdraw}() helper functions.
-> >   - Initialize page table lock for vmemmap through core_initcall mechanism.
-> >
-> >   Thanks for Mike and Oscar's suggestions.
-> >
-> > Changelog in v2 -> v3:
-> >   - Rename some helps function name. Thanks Mike.
-> >   - Rework some code. Thanks Mike and Oscar.
-> >   - Remap the tail vmemmap page with PAGE_KERNEL_RO instead of PAGE_KERNEL.
-> >     Thanks Matthew.
-> >   - Add some overhead analysis in the cover letter.
-> >   - Use vmemap pmd table lock instead of a hugetlb specific global lock.
-> >
-> > Changelog in v1 -> v2:
-> >   - Fix do not call dissolve_compound_page in alloc_huge_page_vmemmap().
-> >   - Fix some typo and code style problems.
-> >   - Remove unused handle_vmemmap_fault().
-> >   - Merge some commits to one commit suggested by Mike.
-> >
-> > Muchun Song (8):
-> >   mm: memory_hotplug: factor out bootmem core functions to
-> >     bootmem_info.c
-> >   mm: hugetlb: introduce a new config HUGETLB_PAGE_FREE_VMEMMAP
-> >   mm: hugetlb: free the vmemmap pages associated with each HugeTLB page
-> >   mm: hugetlb: alloc the vmemmap pages associated with each HugeTLB page
-> >   mm: hugetlb: add a kernel parameter hugetlb_free_vmemmap
-> >   mm: hugetlb: introduce nr_free_vmemmap_pages in the struct hstate
-> >   mm: hugetlb: gather discrete indexes of tail page
-> >   mm: hugetlb: optimize the code with the help of the compiler
-> >
-> >  Documentation/admin-guide/kernel-parameters.txt |  14 ++
-> >  Documentation/admin-guide/mm/hugetlbpage.rst    |   3 +
-> >  arch/x86/mm/init_64.c                           |  13 +-
-> >  fs/Kconfig                                      |   6 +
-> >  include/linux/bootmem_info.h                    |  65 +++++
-> >  include/linux/hugetlb.h                         |  43 +++-
-> >  include/linux/hugetlb_cgroup.h                  |  19 +-
-> >  include/linux/memory_hotplug.h                  |  27 --
-> >  include/linux/mm.h                              |   5 +
-> >  mm/Makefile                                     |   2 +
-> >  mm/bootmem_info.c                               | 124 ++++++++++
-> >  mm/hugetlb.c                                    |  23 +-
-> >  mm/hugetlb_vmemmap.c                            | 314 ++++++++++++++++++++++++
-> >  mm/hugetlb_vmemmap.h                            |  33 +++
-> >  mm/memory_hotplug.c                             | 116 ---------
-> >  mm/sparse-vmemmap.c                             | 280 +++++++++++++++++++++
-> >  mm/sparse.c                                     |   1 +
-> >  17 files changed, 930 insertions(+), 158 deletions(-)
-> >  create mode 100644 include/linux/bootmem_info.h
-> >  create mode 100644 mm/bootmem_info.c
-> >  create mode 100644 mm/hugetlb_vmemmap.c
-> >  create mode 100644 mm/hugetlb_vmemmap.h
-> >
+> >       mutex_lock(&root->log_mutex);
+> > +again:
+> >       if (root->log_root) {
+> > +             int index =3D (root->log_transid + 1) % 2;
+> > +
+> >               ret =3D 0;
+> > +             if (zoned && atomic_read(&root->log_commit[index])) {
+> > +                     wait_log_commit(root, root->log_transid - 1);
+> > +                     goto again;
+> > +             }
+> >               atomic_inc(&root->log_writers);
+> >       }
+> >       mutex_unlock(&root->log_mutex);
 > > --
-> > 2.11.0
+> > 2.30.0
 > >
-> >
->
-> --
-> Oscar Salvador
-> SUSE L3
+
+
+
+--=20
+Filipe David Manana,
+
+=E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you're=
+ right.=E2=80=9D
