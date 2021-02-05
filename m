@@ -2,164 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EE703100F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 00:46:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E459310175
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 01:18:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhBDXpj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Feb 2021 18:45:39 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42445 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231245AbhBDXoc (ORCPT
+        id S231710AbhBEAQM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Feb 2021 19:16:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231366AbhBEAQJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Feb 2021 18:44:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612482134;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zIZh/QpswrY1424WeFxeb3hgosOJTtKrRZoe/Rxx33w=;
-        b=aQ/X/pKGNXGOJuD5EAGLJcivMRWexegddzEP40V+uDkA1kSOMI2IFw8tqbFbEpVACXfQd2
-        FR7hPgpAgyXS4JGvAM3AZeQkBy2RvBXXhpUh+JOUHrhZN/Opfifz9M8fGQYDDAteq7YTLE
-        Mz1A+2ZsSQ4vkuQN8wh7mxHZlbg9X8Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-480-7kq0YhApPA6W7_QuzixxYQ-1; Thu, 04 Feb 2021 18:42:13 -0500
-X-MC-Unique: 7kq0YhApPA6W7_QuzixxYQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0B3FC107ACC7;
-        Thu,  4 Feb 2021 23:42:12 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-113-87.rdu2.redhat.com [10.10.113.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E56165C3DF;
-        Thu,  4 Feb 2021 23:42:11 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 83E5A22054F; Thu,  4 Feb 2021 18:42:11 -0500 (EST)
-Date:   Thu, 4 Feb 2021 18:42:11 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/18] ovl: stack miscattr
-Message-ID: <20210204234211.GB52056@redhat.com>
-References: <20210203124112.1182614-1-mszeredi@redhat.com>
- <20210203124112.1182614-4-mszeredi@redhat.com>
+        Thu, 4 Feb 2021 19:16:09 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC796C0613D6;
+        Thu,  4 Feb 2021 16:15:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=UMFNjYapoD8y9Zb2loJ5hYIa9ykCl8ZDwdjgDf7L2RQ=; b=rk9CyHLligNgqgIOcRfByDlu1B
+        GMvRQ3EIJwV2uwY3tFQMq8n9QCQQIVJiZpYfHMFagxFt63zWfTTVkPYxJ7OCyMrUdpD6LZHMlcy9e
+        04+qWbF/Qg/Z/vKnitFgG5QH3x0oqh4jsGI3JVL4oXzXkJPLy7WJyKstKPWIeKvghN9yYaPQ6PqXQ
+        QwFY4Km1a56wwke0QV/IDl42GqWGNTZanpSrRfpcirhYhDpW9mRbvLoUlZh/7vRlg0vH2H583Z92H
+        9L6D+e2+Z/nRPT2lVqgJJ6U/Tx//j5XpK7ALU/hQD22ue1/8fzmkhAO6h4cVVc2Jo10e/Qhe1UlSx
+        fSzAP4pQ==;
+Received: from [2601:1c0:6280:3f0::aec2]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1l7omT-0008HR-AH; Fri, 05 Feb 2021 00:15:25 +0000
+Subject: Re: [PATCH v2 2/2] dmabuf: Add dmabuf inode number to /proc/*/fdinfo
+To:     Kalesh Singh <kaleshsingh@google.com>
+Cc:     jannh@google.com, jeffv@google.com, keescook@chromium.org,
+        surenb@google.com, minchan@kernel.org, hridya@google.com,
+        kernel-team@android.com, Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Michel Lespinasse <walken@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20210204232854.451676-1-kaleshsingh@google.com>
+ <20210204232854.451676-2-kaleshsingh@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4e71615b-bdc9-bd5f-ffe3-25f50ce5b882@infradead.org>
+Date:   Thu, 4 Feb 2021 16:15:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210203124112.1182614-4-mszeredi@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <20210204232854.451676-2-kaleshsingh@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 03, 2021 at 01:40:57PM +0100, Miklos Szeredi wrote:
-> Add stacking for the miscattr operations.
+On 2/4/21 3:28 PM, Kalesh Singh wrote:
+> If a FD refers to a DMA buffer add the DMA buffer inode number to
+> /proc/<pid>/fdinfo/<FD> and /proc/<pid>/task/<tid>/fdindo/<FD>.
 > 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> The dmabuf inode number allows userspace to uniquely identify the buffer
+> and avoids a dependency on /proc/<pid>/fd/* when accounting per-process
+> DMA buffer sizes.
+> 
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
 > ---
->  fs/overlayfs/dir.c       |  2 ++
->  fs/overlayfs/inode.c     | 43 ++++++++++++++++++++++++++++++++++++++++
->  fs/overlayfs/overlayfs.h |  2 ++
->  3 files changed, 47 insertions(+)
+
+Hi,
+Please document this change in
+Documentation/filesystems/proc.rst.
+
+Thanks.
+
 > 
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 28a075b5f5b2..77c6b44f8d83 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -1300,4 +1300,6 @@ const struct inode_operations ovl_dir_inode_operations = {
->  	.listxattr	= ovl_listxattr,
->  	.get_acl	= ovl_get_acl,
->  	.update_time	= ovl_update_time,
-> +	.miscattr_get	= ovl_miscattr_get,
-> +	.miscattr_set	= ovl_miscattr_set,
->  };
-> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-> index d739e14c6814..97d36d1f28c3 100644
-> --- a/fs/overlayfs/inode.c
-> +++ b/fs/overlayfs/inode.c
-> @@ -11,6 +11,7 @@
->  #include <linux/posix_acl.h>
->  #include <linux/ratelimit.h>
->  #include <linux/fiemap.h>
-> +#include <linux/miscattr.h>
->  #include "overlayfs.h"
->  
->  
-> @@ -495,6 +496,46 @@ static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  	return err;
->  }
->  
-> +int ovl_miscattr_set(struct dentry *dentry, struct miscattr *ma)
-> +{
-> +	struct inode *inode = d_inode(dentry);
-> +	struct dentry *upperdentry;
-> +	const struct cred *old_cred;
-> +	int err;
-> +
-> +	err = ovl_want_write(dentry);
-> +	if (err)
-> +		goto out;
-> +
-> +	err = ovl_copy_up(dentry);
-> +	if (!err) {
-> +		upperdentry = ovl_dentry_upper(dentry);
-> +
-> +		old_cred = ovl_override_creds(inode->i_sb);
-> +		/* err = security_file_ioctl(real.file, cmd, arg); */
-
-Is this an comment intended?
-
-Vivek
-
-> +		err = vfs_miscattr_set(upperdentry, ma);
-> +		revert_creds(old_cred);
-> +		ovl_copyflags(ovl_inode_real(inode), inode);
-> +	}
-> +	ovl_drop_write(dentry);
-> +out:
-> +	return err;
-> +}
-> +
-> +int ovl_miscattr_get(struct dentry *dentry, struct miscattr *ma)
-> +{
-> +	struct inode *inode = d_inode(dentry);
-> +	struct dentry *realdentry = ovl_dentry_real(dentry);
-> +	const struct cred *old_cred;
-> +	int err;
-> +
-> +	old_cred = ovl_override_creds(inode->i_sb);
-> +	err = vfs_miscattr_get(realdentry, ma);
-> +	revert_creds(old_cred);
-> +
-> +	return err;
-> +}
-> +
->  static const struct inode_operations ovl_file_inode_operations = {
->  	.setattr	= ovl_setattr,
->  	.permission	= ovl_permission,
-> @@ -503,6 +544,8 @@ static const struct inode_operations ovl_file_inode_operations = {
->  	.get_acl	= ovl_get_acl,
->  	.update_time	= ovl_update_time,
->  	.fiemap		= ovl_fiemap,
-> +	.miscattr_get	= ovl_miscattr_get,
-> +	.miscattr_set	= ovl_miscattr_set,
->  };
->  
->  static const struct inode_operations ovl_symlink_inode_operations = {
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index b487e48c7fd4..d3ad02c34cca 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -509,6 +509,8 @@ int __init ovl_aio_request_cache_init(void);
->  void ovl_aio_request_cache_destroy(void);
->  long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
->  long ovl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-> +int ovl_miscattr_get(struct dentry *dentry, struct miscattr *ma);
-> +int ovl_miscattr_set(struct dentry *dentry, struct miscattr *ma);
->  
->  /* copy_up.c */
->  int ovl_copy_up(struct dentry *dentry);
-> -- 
-> 2.26.2
+> Changes in v2: 
+>   - Update patch desciption
 > 
+>  drivers/dma-buf/dma-buf.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index 9ad6397aaa97..d869099ede83 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -414,6 +414,7 @@ static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
+>  {
+>  	struct dma_buf *dmabuf = file->private_data;
+>  
+> +	seq_printf(m, "dmabuf_inode_no:\t%lu\n", file_inode(file)->i_ino);
+>  	seq_printf(m, "size:\t%zu\n", dmabuf->size);
+>  	/* Don't count the temporary reference taken inside procfs seq_show */
+>  	seq_printf(m, "count:\t%ld\n", file_count(dmabuf->file) - 1);
+> 
+
+
+-- 
+~Randy
 
