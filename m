@@ -2,176 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D36E43114DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:23:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FD523114DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:23:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232770AbhBEWQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 17:16:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43724 "EHLO
+        id S232935AbhBEWRC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:17:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232684AbhBEOdI (ORCPT
+        with ESMTP id S231210AbhBEOdn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:33:08 -0500
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5395C061226
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Feb 2021 08:10:54 -0800 (PST)
-Received: by mail-io1-xd2f.google.com with SMTP id f67so5837265ioa.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Feb 2021 08:10:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uaau4sgQ9hT4TilyNvussNtYWDpCQq4C5pX2PL2MkbA=;
-        b=RQiutqdV9uKt5WpY7LmQnqOyik8QlV/xIC11t47Cxy6iPhsjdv7Kgt4t0vvK0ioHfm
-         evdTtgL4mXNsmg2lYfDsBg0vDtJuclK/YKze5J5lernt3k/bnB7sosOWua7eWz5n3xFd
-         Y9T09TOUDCpONnIP8oi8aST0SHKdlM7bsgcVwdzBVRwXa4+ypaC8v7qimmBPM/XVG0AH
-         6eeSMwZmJAYY73o5aDxUKihBsBtIdgCDSRiH35nqLpdz9zwJ34Pztdz4ltqVTgpzQEMI
-         Tqna40GWas6ybMNlVQ9D1coNYLz0CBr+9t8ic2Siyy66vvOie3xSqZPi5Kq7wjUtOV6h
-         tcjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uaau4sgQ9hT4TilyNvussNtYWDpCQq4C5pX2PL2MkbA=;
-        b=Gm0d4AXFaS1A658AxwI2zq70riXNQAdO2yuelGAAcqKuViausn2GBgHxCnIZfEh+qC
-         mOlIxFrjKBea2yJn4VFdBp4J9odKOJ3pXWYsXV7HmX1KGDrNHSM5hSgaYf1hZFDZK8i9
-         +zo5JwpjkriQaZVTnXUMGV9E2jGH/37kJRGvNTh0iXNQUwyoxOxR3qToTkkDFTjoDFEO
-         7AF6ISlc/qE4btevAt5lC3MLb7/SpMzzagDeLl41+Pt/l3FLaJ0oxEq/7nfzE+ZicBca
-         GsBmiUu1z9CqEiz9e2oXw/0KkgXDRYQrm7H7aTbN76/vEoGn+hHgzmseosqj6cgNIrZf
-         pnNw==
-X-Gm-Message-State: AOAM531FS5eGOqOKELiK8700iB/jAQ66Lr1FQ8Af4JudoTxmWfeN7mO7
-        3AR04pgtm8awgH6dFeSijExrKThnFBmN/Lyupnv4Ivi0jxmY2g==
-X-Google-Smtp-Source: ABdhPJw/KUgUzSu9HyWsw7w094KKGV8UazdOBjJhfXTEooNN4RSJLHuY9UsurqCqtD67VvrC4YI+d1km2qWrSXarE8o=
-X-Received: by 2002:a63:5309:: with SMTP id h9mr4691610pgb.19.1612538034909;
- Fri, 05 Feb 2021 07:13:54 -0800 (PST)
+        Fri, 5 Feb 2021 09:33:43 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38665C06178A;
+        Fri,  5 Feb 2021 08:11:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=+0WkhFCz6xUyn9L1glTxulg8Gxs8XBPGDsfl0JDzXmE=; b=IIg/2StJ1jRXNrytHsmqe6H2Xi
+        8qeP6CtpPh3AlzHOVKMqOcwIR3vt4x1CNbLe5XWi7Ov4dyCykq5r8j46achz1tAkk1JCL7rFctGKd
+        RgiKmJJAR2LBQS20GecXa68fpRAQJc+uxU7Votudqd5/UecOgWFoS2KFcGFN2g8cTS+wjytYj48Rl
+        8wrVzn0UlB6sUgAGYv7EQF0iGK5r7qQPmjVblVlnLq31PDAj/VuNyY05uC4GD2uUv2dD6DWfajQAa
+        6XbNs9tdoForYG2NT4TobVsxFE4aM61DMdExbgz9pufSB5/Mzw0yMg/5lzi645kncAHGhps1O8TCa
+        neVXHZRA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l83hu-002UPw-Ed; Fri, 05 Feb 2021 16:11:44 +0000
+Date:   Fri, 5 Feb 2021 16:11:42 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Subject: [RFC] Better page cache error handling
+Message-ID: <20210205161142.GI308988@casper.infradead.org>
 MIME-Version: 1.0
-References: <20210205022328.481524-1-kaleshsingh@google.com>
- <20210205022328.481524-2-kaleshsingh@google.com> <df97ba85-2291-487a-8af0-84398f9e8188@amd.com>
-In-Reply-To: <df97ba85-2291-487a-8af0-84398f9e8188@amd.com>
-From:   Kalesh Singh <kaleshsingh@google.com>
-Date:   Fri, 5 Feb 2021 10:13:43 -0500
-Message-ID: <CAC_TJvfZ4G8oL1c6kgBVvmjeXYPpf3ziRp+BEWqiEKYK1mhbDg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] dmabuf: Add dmabuf inode number to /proc/*/fdinfo
-To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Jann Horn <jannh@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Anand K Mistry <amistry@google.com>,
-        NeilBrown <neilb@suse.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Michel Lespinasse <walken@google.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 5, 2021 at 2:56 AM Christian K=C3=B6nig <christian.koenig@amd.c=
-om> wrote:
->
-> Am 05.02.21 um 03:23 schrieb Kalesh Singh:
-> > If a FD refers to a DMA buffer add the DMA buffer inode number to
-> > /proc/<pid>/fdinfo/<FD> and /proc/<pid>/task/<tid>/fdindo/<FD>.
-> >
-> > The dmabuf inode number allows userspace to uniquely identify the buffe=
-r
-> > and avoids a dependency on /proc/<pid>/fd/* when accounting per-process
-> > DMA buffer sizes.
->
-> BTW: Why do we make this DMA-buf specific? Couldn't we always print the
-> inode number for all fds?
+Scenario:
 
-Good point. We can make this a common field instead of DMA buf
-specific. I will update in the next version.
+You have a disk with a bad sector.  This disk will take 30 seconds of
+trying progressively harder to recover the sector before timing the
+I/O out and returning BLK_STS_MEDIUM to the filesystem.  Unfortunately
+for you, this bad sector happens to have landed in index.html on your
+webserver which gets one hit per second.  You have configured 500
+threads on your webserver.
 
-Thanks,
-Kalesh
->
-> Regards,
-> Christian.
->
-> >
-> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > ---
-> > Changes in v3:
-> >    - Add documentation in proc.rst
-> > Changes in v2:
-> >    - Update patch description
-> >
-> >   Documentation/filesystems/proc.rst | 17 +++++++++++++++++
-> >   drivers/dma-buf/dma-buf.c          |  1 +
-> >   2 files changed, 18 insertions(+)
-> >
-> > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesys=
-tems/proc.rst
-> > index 2fa69f710e2a..fdd38676f57f 100644
-> > --- a/Documentation/filesystems/proc.rst
-> > +++ b/Documentation/filesystems/proc.rst
-> > @@ -2031,6 +2031,23 @@ details]. 'it_value' is remaining time until the=
- timer expiration.
-> >   with TIMER_ABSTIME option which will be shown in 'settime flags', but=
- 'it_value'
-> >   still exhibits timer's remaining time.
-> >
-> > +DMA Buffer files
-> > +~~~~~~~~~~~~~~~~
-> > +
-> > +::
-> > +
-> > +     pos:    0
-> > +     flags:  04002
-> > +     mnt_id: 9
-> > +     dmabuf_inode_no: 63107
-> > +     size:   32768
-> > +     count:  2
-> > +     exp_name:  system-heap
-> > +
-> > +where 'dmabuf_inode_no' is the unique inode number of the DMA buffer f=
-ile.
-> > +'size' is the size of the DMA buffer in bytes. 'count' is the file cou=
-nt of
-> > +the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter=
-.
-> > +
-> >   3.9 /proc/<pid>/map_files - Information about memory mapped files
-> >   ---------------------------------------------------------------------
-> >   This directory contains symbolic links which represent memory mapped =
-files
-> > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> > index 9ad6397aaa97..d869099ede83 100644
-> > --- a/drivers/dma-buf/dma-buf.c
-> > +++ b/drivers/dma-buf/dma-buf.c
-> > @@ -414,6 +414,7 @@ static void dma_buf_show_fdinfo(struct seq_file *m,=
- struct file *file)
-> >   {
-> >       struct dma_buf *dmabuf =3D file->private_data;
-> >
-> > +     seq_printf(m, "dmabuf_inode_no:\t%lu\n", file_inode(file)->i_ino)=
-;
-> >       seq_printf(m, "size:\t%zu\n", dmabuf->size);
-> >       /* Don't count the temporary reference taken inside procfs seq_sh=
-ow */
-> >       seq_printf(m, "count:\t%ld\n", file_count(dmabuf->file) - 1);
->
+Today:
+
+We allocate a page and try to read it.  29 threads pile up waiting
+for the page lock in filemap_update_page() (or whatever variant of
+that you're looking at; I'm talking about linux-next).  The original
+requester gets the error and returns -EIO to userspace.  One of the
+lucky 29 waiting threads sends another read.  30 more threads pile up
+while it's processing.  Eventually, all 500 threads of your webserver
+are sleeping waiting for their turn to get an EIO.
+
+With the below patch:
+
+We allocate a page and try to read it.  29 threads pile up waiting
+for the page lock in filemap_update_page().  The error returned by the
+original I/O is shared between all 29 waiters as well as being returned
+to the requesting thread.  The next request for index.html will send
+another I/O, and more waiters will pile up trying to get the page lock,
+but at no time will more than 30 threads be waiting for the I/O to fail.
+
+----
+
+Individual filesystems will have to be modified to call unlock_page_err()
+to take advantage of this.  Unconverted filesystems will continue to
+behave as in the first scenario.
+
+I've only tested it lightly, but it doesn't seem to break anything.
+It needs some targetted testing with error injection which I haven't
+done yet.  It probably also needs some refinement to not report
+errors from readahead.  Also need to audit the other callers of
+put_and_wait_on_page_locked().  This patch interferes with the page
+folio work, so I'm not planning on pushing it for a couple of releases.
+
+----
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 16a1e82e3aeb..faeb6c4af7fd 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -183,7 +183,7 @@ iomap_read_page_end_io(struct bio_vec *bvec, int error)
+ 	}
+ 
+ 	if (!iop || atomic_sub_and_test(bvec->bv_len, &iop->read_bytes_pending))
+-		unlock_page(page);
++		unlock_page_err(page, error);
+ }
+ 
+ static void
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index fda84e88b2ba..e750881bedfe 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -564,11 +564,13 @@ struct wait_page_key {
+ 	struct page *page;
+ 	int bit_nr;
+ 	int page_match;
++	int err;
+ };
+ 
+ struct wait_page_queue {
+ 	struct page *page;
+ 	int bit_nr;
++	int err;
+ 	wait_queue_entry_t wait;
+ };
+ 
+@@ -591,6 +593,7 @@ extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
+ extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+ 				unsigned int flags);
+ extern void unlock_page(struct page *page);
++extern void unlock_page_err(struct page *page, int err);
+ extern void unlock_page_fscache(struct page *page);
+ 
+ /*
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 97ff7294516e..515e0136f00f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1077,6 +1077,7 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
+ 	 * afterwards to avoid any races. This store-release pairs
+ 	 * with the load-acquire in wait_on_page_bit_common().
+ 	 */
++	wait_page->err = key->err;
+ 	smp_store_release(&wait->flags, flags | WQ_FLAG_WOKEN);
+ 	wake_up_state(wait->private, mode);
+ 
+@@ -1094,7 +1095,7 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
+ 	return (flags & WQ_FLAG_EXCLUSIVE) != 0;
+ }
+ 
+-static void wake_up_page_bit(struct page *page, int bit_nr)
++static void wake_up_page_bit(struct page *page, int bit_nr, int err)
+ {
+ 	wait_queue_head_t *q = page_waitqueue(page);
+ 	struct wait_page_key key;
+@@ -1103,6 +1104,7 @@ static void wake_up_page_bit(struct page *page, int bit_nr)
+ 
+ 	key.page = page;
+ 	key.bit_nr = bit_nr;
++	key.err = err;
+ 	key.page_match = 0;
+ 
+ 	bookmark.flags = 0;
+@@ -1152,7 +1154,7 @@ static void wake_up_page(struct page *page, int bit)
+ {
+ 	if (!PageWaiters(page))
+ 		return;
+-	wake_up_page_bit(page, bit);
++	wake_up_page_bit(page, bit, 0);
+ }
+ 
+ /*
+@@ -1214,6 +1216,7 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
+ 	wait->func = wake_page_function;
+ 	wait_page.page = page;
+ 	wait_page.bit_nr = bit_nr;
++	wait_page.err = 0;
+ 
+ repeat:
+ 	wait->flags = 0;
+@@ -1325,8 +1328,10 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
+ 	 */
+ 	if (behavior == EXCLUSIVE)
+ 		return wait->flags & WQ_FLAG_DONE ? 0 : -EINTR;
++	if (behavior != DROP)
++		wait_page.err = 0;
+ 
+-	return wait->flags & WQ_FLAG_WOKEN ? 0 : -EINTR;
++	return wait->flags & WQ_FLAG_WOKEN ? wait_page.err : -EINTR;
+ }
+ 
+ void wait_on_page_bit(struct page *page, int bit_nr)
+@@ -1408,8 +1413,9 @@ static inline bool clear_bit_unlock_is_negative_byte(long nr, volatile void *mem
+ #endif
+ 
+ /**
+- * unlock_page - unlock a locked page
++ * unlock_page_err - unlock a locked page
+  * @page: the page
++ * @err: errno to be communicated to waiters
+  *
+  * Unlocks the page and wakes up sleepers in wait_on_page_locked().
+  * Also wakes sleepers in wait_on_page_writeback() because the wakeup
+@@ -1422,13 +1428,19 @@ static inline bool clear_bit_unlock_is_negative_byte(long nr, volatile void *mem
+  * portably (architectures that do LL/SC can test any bit, while x86 can
+  * test the sign bit).
+  */
+-void unlock_page(struct page *page)
++void unlock_page_err(struct page *page, int err)
+ {
+ 	BUILD_BUG_ON(PG_waiters != 7);
+ 	page = compound_head(page);
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	if (clear_bit_unlock_is_negative_byte(PG_locked, &page->flags))
+-		wake_up_page_bit(page, PG_locked);
++		wake_up_page_bit(page, PG_locked, err);
++}
++EXPORT_SYMBOL(unlock_page_err);
++
++void unlock_page(struct page *page)
++{
++	unlock_page_err(page, 0);
+ }
+ EXPORT_SYMBOL(unlock_page);
+ 
+@@ -1446,7 +1458,7 @@ void unlock_page_fscache(struct page *page)
+ 	page = compound_head(page);
+ 	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
+ 	clear_bit_unlock(PG_fscache, &page->flags);
+-	wake_up_page_bit(page, PG_fscache);
++	wake_up_page_bit(page, PG_fscache, 0);
+ }
+ EXPORT_SYMBOL(unlock_page_fscache);
+ 
+@@ -2298,8 +2310,11 @@ static int filemap_update_page(struct kiocb *iocb,
+ 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_NOIO))
+ 			return -EAGAIN;
+ 		if (!(iocb->ki_flags & IOCB_WAITQ)) {
+-			put_and_wait_on_page_locked(page, TASK_KILLABLE);
+-			return AOP_TRUNCATED_PAGE;
++			error = put_and_wait_on_page_locked(page,
++					TASK_KILLABLE);
++			if (!error)
++				return AOP_TRUNCATED_PAGE;
++			return error;
+ 		}
+ 		error = __lock_page_async(page, iocb->ki_waitq);
+ 		if (error)
