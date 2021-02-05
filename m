@@ -2,135 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0E931046B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 06:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE0EB3104D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 07:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230522AbhBEFPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 00:15:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47196 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230369AbhBEFPU (ORCPT
+        id S230466AbhBEGBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 01:01:00 -0500
+Received: from smtprelay0219.hostedemail.com ([216.40.44.219]:33568 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230379AbhBEGA7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 00:15:20 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9BE5C06178B;
-        Thu,  4 Feb 2021 21:14:39 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id c132so3732666pga.3;
-        Thu, 04 Feb 2021 21:14:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3Vega6QbYsSC2nlH6ET1v8PT9QhDice7/UaejuUUhWQ=;
-        b=qQlm+FJGPOKFZqqmMPEsA6Kk1OyMdHw4asPzzAUKOtHl1j/SJt0eBw0mXEqOMZW7f2
-         xWJn4OHT6WjO+QTqDIb+fLD2Bxh7SAFB4SdTTgA9myz9kto1Yvx60JlRPNh5aOCSaSDw
-         bcJ6pw0dg2RfZfX4ZHIjxdibbiWvCuQKW506XAHa/YIqU+peBjedlI9gCmTsyK8fSkn9
-         QwVhtgH7ESrm0aDHRGK6VrkW7UeH3kyTTfmn8BW71KGRT6YAWWgPsRpziT2byTO/O0KC
-         8B3wsQF/zdZsKsgERT4VXAzMUkKFkGOf0DvqVRf0Z13oUBydXdQc/liFpt0jBErLYMe7
-         G4yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3Vega6QbYsSC2nlH6ET1v8PT9QhDice7/UaejuUUhWQ=;
-        b=ixjKanwx/bdJyaYQcJV9uQbjnY0Bxi3YCjcjuhGRIRPqGP/mCBUHTha6+CEk8wnlB7
-         syIbYREtB2P3M+Fz7hMnucWcVEvNE5tIqzJjimZlUwiBEefLCjmcf/XYMYVB3Y51E2Sr
-         IOohWBjPXSaown9zfalWMa5TC7qHQQ7xalh+hu2DwRQKkCBSicFpr8gYFMvMdp0+2aFt
-         0aTwUXgXsUyiFVOGyWglbIeBn6G1VM3kY3xglvkzurbuUESxHR4mxL4L02R4YGKkZ9wm
-         61uHFbJPQ5IV7WJKSValpBLhhngXrnd2pEl/3qT3/ML6xuoGuVCA0Z4wfeYRt9OpWJzq
-         Z7Sw==
-X-Gm-Message-State: AOAM530aU2GXdDrp5aEmH4R+opOWR2GoKRF/aJ4TFdHB9rBt/TEy/aaQ
-        ZDzPWVHjynDH2VR6dviuFtk0e/zDX9pEHg==
-X-Google-Smtp-Source: ABdhPJwv/tsOK9jRedUFELlh01PTCZ8MoVbfl3kvQOa3EXYZGZrYP4G9Kalw8rRM/AD9Vx9BYVGBtw==
-X-Received: by 2002:a63:1201:: with SMTP id h1mr2655884pgl.296.1612502079442;
-        Thu, 04 Feb 2021 21:14:39 -0800 (PST)
-Received: from amypc-samantha.home ([47.145.126.51])
-        by smtp.gmail.com with ESMTPSA id v126sm5905000pfv.163.2021.02.04.21.14.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Feb 2021 21:14:38 -0800 (PST)
-From:   Amy Parker <enbyamy@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Amy Parker <enbyamy@gmail.com>
-Subject: [PATCH v2 3/3] fs/efs: Fix line breakage for C keywords
-Date:   Thu,  4 Feb 2021 21:14:29 -0800
-Message-Id: <20210205051429.553657-4-enbyamy@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210205051429.553657-1-enbyamy@gmail.com>
+        Fri, 5 Feb 2021 01:00:59 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 3255B182CED2A;
+        Fri,  5 Feb 2021 06:00:17 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1261:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3874:4321:5007:6119:7514:7652:10004:10400:10848:11232:11658:11914:12296:12297:12740:12895:13069:13311:13357:13439:13894:14181:14659:14721:21080:21611:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: song61_3716dc4275e2
+X-Filterd-Recvd-Size: 1998
+Received: from [192.168.1.159] (unknown [47.151.137.21])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  5 Feb 2021 06:00:16 +0000 (UTC)
+Message-ID: <0c62fcfacca67bfef2275040da7150602fd2003a.camel@perches.com>
+Subject: Re: [PATCH v2 1/3] fs/efs: Use correct brace styling for statements
+From:   Joe Perches <joe@perches.com>
+To:     Amy Parker <enbyamy@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Thu, 04 Feb 2021 22:00:13 -0800
+In-Reply-To: <20210205051429.553657-2-enbyamy@gmail.com>
 References: <20210205051429.553657-1-enbyamy@gmail.com>
+         <20210205051429.553657-2-enbyamy@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some statements - such as if statements - are not broken into their 
-lines correctly. For example, some are expressed on a single line. 
-Single line if statements are expressely prohibited by the style guide. 
-This patch corrects these violations.
+On Thu, 2021-02-04 at 21:14 -0800, Amy Parker wrote:
+> Many single-line statements have unnecessary braces, and some statement 
+> pairs have mismatched braces. This is a clear violation of the kernel 
+> style guide, which mandates that single line statements have no braces 
+> and that pairs with at least one multi-line block maintain their braces.
+> 
+> This patch fixes these style violations. Single-line statements that 
+> have braces have had their braces stripped. Pair single-line statements 
+> have been formatted per the style guide. Pair mixed-line statements have 
+> had their braces updated to conform.
+> 
+> Signed-off-by: Amy Parker <enbyamy@gmail.com>
+> ---
+>  fs/efs/inode.c | 10 ++++++----
+>  fs/efs/super.c | 15 ++++++---------
+>  2 files changed, 12 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/efs/inode.c b/fs/efs/inode.c
+> @@ -120,8 +120,10 @@ struct inode *efs_iget(struct super_block *super, unsigned long ino)
+>  			device = 0;
+>  		else
+>  			device = MKDEV(sysv_major(rdev), sysv_minor(rdev));
+> -	} else
+> +	}
+> +	else {
 
-Signed-off-by: Amy Parker <enbyamy@gmail.com>
----
- fs/efs/inode.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+Not the kernel specified style.
 
-diff --git a/fs/efs/inode.c b/fs/efs/inode.c
-index 2cc55d514421..0099e6ad529a 100644
---- a/fs/efs/inode.c
-+++ b/fs/efs/inode.c
-@@ -193,7 +193,8 @@ efs_extent_check(efs_extent *ptr, efs_block_t block, struct efs_sb_info *sb) {
- 
- 	if ((block >= offset) && (block < offset+length)) {
- 		return(sb->fs_start + start + block - offset);
--	} else {
-+	}
-+	else {
- 		return 0;
- 	}
- }
-@@ -264,7 +265,8 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
- 			/* should never happen */
- 			pr_err("couldn't find direct extent for indirect extent %d (block %u)\n",
- 			       cur, block);
--			if (bh) brelse(bh);
-+			if (bh)
-+				brelse(bh);
- 			return 0;
- 		}
- 		
-@@ -276,7 +278,8 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
- 			(EFS_BLOCKSIZE / sizeof(efs_extent));
- 
- 		if (first || lastblock != iblock) {
--			if (bh) brelse(bh);
-+			if (bh)
-+				brelse(bh);
- 
- 			bh = sb_bread(inode->i_sb, iblock);
- 			if (!bh) {
-@@ -297,17 +300,20 @@ efs_block_t efs_map_block(struct inode *inode, efs_block_t block) {
- 		if (ext.cooked.ex_magic != 0) {
- 			pr_err("extent %d has bad magic number in block %d\n",
- 			       cur, iblock);
--			if (bh) brelse(bh);
-+			if (bh)
-+				brelse(bh);
- 			return 0;
- 		}
- 
- 		if ((result = efs_extent_check(&ext, block, sb))) {
--			if (bh) brelse(bh);
-+			if (bh)
-+				brelse(bh);
- 			in->lastextent = cur;
- 			return result;
- 		}
- 	}
--	if (bh) brelse(bh);
-+	if (bh)
-+		brelse(bh);
- 	pr_err("%s() failed to map block %u (indir)\n", __func__, block);
- 	return 0;
- }  
--- 
-2.29.2
+	} else {
+
+Try using checkpatch on your proposed patches.
+
 
