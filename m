@@ -2,146 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCBC13114DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:23:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62F6C3115EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:55:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233071AbhBEWRU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 17:17:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
+        id S232830AbhBEWpY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:45:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232742AbhBEOfy (ORCPT
+        with ESMTP id S231277AbhBENKv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:35:54 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4707BC0617A9
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Feb 2021 08:14:00 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id o16so4865207pgg.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Feb 2021 08:14:00 -0800 (PST)
+        Fri, 5 Feb 2021 08:10:51 -0500
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9A4C061221;
+        Fri,  5 Feb 2021 05:07:41 -0800 (PST)
+Received: by mail-qk1-x730.google.com with SMTP id a19so6777832qka.2;
+        Fri, 05 Feb 2021 05:07:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tgToZXIcR//slb37mMxyXMF6K319Gf4e4xqtIkg5mSQ=;
-        b=vi1eZTDGn0s+c7nDc/UcaxmiZ8SO8djhd8YKp6I27b2SvO+LfWMsqNulS/rqad1/EE
-         zti94jrpclnDbtIra0/SF7oO933+vtLmvQh0LOlXgTtUA/Ys9pWpCzEJCP/8EeKnN7RY
-         KpnRSlevGccsTyUxdhwrPyWiJ1Hac/O8fH2AVQtrKbP/z2fQG58C63wBM+0nDMC0Ynvk
-         4eOqfX54/u8Ei+AiBWg43xL9oUa8Xrf8Zjdlyh5mAdzbTEcTH01mFIo52cFaP8k0nK7Z
-         Q4Y7yFF8vBMHXuXjyC1YB7Zwja6igzBF2grNPDY3PHAeLebuziRPFkGYUNNyVT7trndg
-         fTZg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=eifO5w09vaVkYD/HNL+OdTyeOvd9OOp5ZX1K5KzvrTo=;
+        b=uux1/nfGwEFnTg/EJ2HdZY7y2r9LwQKaqqCMlBfo/r+87x8xBc1uCR0W4HA3Am8xxl
+         ND1paPnztrtHvNqVIgvl09Jb1LpjoEee062glaCBFJhxTMlYL2zD4VLZjUfhr7KJXI/X
+         fJvt+NE/9xjR/1gC3nfciFI0dFE3sHddFXC0ahFKSrUk0s6KY4qJR8IwJ3WKvRGVXVK4
+         E+3VIHAJpsRFvpC08M2b03BT4xu2f3usNNGnS1eJnSkz6j72tNoGD4aOY1kmQB2mfx+W
+         pFA/+RQmR/jGXkd87VAeGcFW6y6uO9LeK2MDx1Lyd/NE+9NNWjpB/gI+QQZ3d6tEahWl
+         72CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tgToZXIcR//slb37mMxyXMF6K319Gf4e4xqtIkg5mSQ=;
-        b=Ht8pDYw+igvAfPy5LQPlbNANYMkZ24GU0t8WDywV176ugff2+bJyQa3mC8s50CiIYs
-         ysA8wXl0Nv5cVvtY4JT+ZSrjmWq6rb3HZdu1HVgF6zg1MLxmrMYDQb9JozBSEPTZhPuc
-         tyJlCkzBXFuQ9FYmwCgBF071vkTIV1+lBEpoYecYCePN+hYpWzqtuTfxsFdTKaS1SCai
-         NFOyeTuKpW22B42gbZUCBeAHcO7/1/uMYgak2dvuvpyeLWMnIQYjw+kqVyyGd0ynPJNT
-         w4tvowZFtpUmNbcNfcL3xm8pRtSHThAuE47r1018wjJsWMF59uVEL0sKHBzYsw70C3l0
-         Y2qw==
-X-Gm-Message-State: AOAM5309Je06vKdf8bEm++/SkUcyXiTwXrsUxoLzdcdIY2vdBulMdy7/
-        /4GpX2XeWPXe+UCWqSTDaU26MZDaTKEllQbTPorrDg==
-X-Google-Smtp-Source: ABdhPJwkirrFi8xuKWL/S5D2cKkWHr8/viSsyFvrNlI047a1E3Q16PWtG8tYxcyd1lVj1EuEzbAYJyMFxhtmMXc0PgQ=
-X-Received: by 2002:a62:1b93:0:b029:1cb:4985:623b with SMTP id
- b141-20020a621b930000b02901cb4985623bmr5289599pfb.59.1612541639757; Fri, 05
- Feb 2021 08:13:59 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=eifO5w09vaVkYD/HNL+OdTyeOvd9OOp5ZX1K5KzvrTo=;
+        b=NbkmFD8Cy96L60BIf4Y9FbWQ9BT7BWsXHZ05oxxb+sG6qs4Jvsq9gOjBMIuiW+J6Pt
+         rDddVTwzMQZwXpRhg3cDm7ipK+fmdRVfdf/nNz9YzMyyxy9sAJxgMLuD7ZxYRhy/MuiR
+         upKTIPIYYZwSOHVgOYyLBJV8UqIHJCuY/tU9XaWtuTkd39E5WG6pzt2NNvFXpEWnkVsN
+         F07TaQkR/zQSuYCQN4fDGKQVjwc7YE9IkWpwPlPJuuiQd9tCBEfqrZyp00DRSx/xw3bY
+         sWM2PalPNlJ/NoaCWX4EBsWLLGTLYw/F38OwUj/Z+bfmbQfSutfU1dyze4JIVzsaiMYd
+         /PlQ==
+X-Gm-Message-State: AOAM531LEjxhayoPDMFnkuGZcg252qAUj41hrsbBoUaD5pCbPUqG2O1w
+        8SZihCe1SZQ92rmlxzO6Oc2RSjUZmlw42Y9tPio=
+X-Google-Smtp-Source: ABdhPJx6LvF5n7cqNVXse1TC5iGMbFDY6ruGVS89G9oW4Vnhy82FeiuC3aqWafe15OIyMsm+d23xaqLM96nQCFOTmFY=
+X-Received: by 2002:a37:6491:: with SMTP id y139mr3989047qkb.479.1612530460261;
+ Fri, 05 Feb 2021 05:07:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20210204035043.36609-1-songmuchun@bytedance.com> <a14113c5-08ae-2819-7e24-3d2687ef88da@oracle.com>
-In-Reply-To: <a14113c5-08ae-2819-7e24-3d2687ef88da@oracle.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Sat, 6 Feb 2021 00:13:22 +0800
-Message-ID: <CAMZfGtXyWkeO9gGKGpEXYA9DA75mMZUaHboTXH6dGxZgEHvMpA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v14 0/8] Free some vmemmap pages of HugeTLB page
-To:     Joao Martins <joao.m.martins@oracle.com>
-Cc:     Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
+References: <cover.1612433345.git.naohiro.aota@wdc.com> <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
+ <20210205092635.i6w3c7brawlv6pgs@naota-xeon> <CAL3q7H6REfruE-DSyiqZQ_Y0=HmXbiTbEC3d18Q7+3Z7pf5QzQ@mail.gmail.com>
+ <20210205125526.4oeqd3utuho3b2hv@naota-xeon>
+In-Reply-To: <20210205125526.4oeqd3utuho3b2hv@naota-xeon>
+Reply-To: fdmanana@gmail.com
+From:   Filipe Manana <fdmanana@gmail.com>
+Date:   Fri, 5 Feb 2021 13:07:29 +0000
+Message-ID: <CAL3q7H6x4hcs3T17EKPQkHwth_2_M6c=c8=GxGy1eu1nDDDAUQ@mail.gmail.com>
+Subject: Re: [PATCH v15 43/43] btrfs: zoned: deal with holes writing out
+ tree-log pages
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, hare@suse.com,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 6, 2021 at 12:01 AM Joao Martins <joao.m.martins@oracle.com> wrote:
+On Fri, Feb 5, 2021 at 12:55 PM Naohiro Aota <naohiro.aota@wdc.com> wrote:
 >
-> On 2/4/21 3:50 AM, Muchun Song wrote:
-> > Hi all,
+> On Fri, Feb 05, 2021 at 11:49:05AM +0000, Filipe Manana wrote:
+> > On Fri, Feb 5, 2021 at 9:26 AM Naohiro Aota <naohiro.aota@wdc.com> wrot=
+e:
+> > >
+> > > Since the zoned filesystem requires sequential write out of metadata,=
+ we
+> > > cannot proceed with a hole in tree-log pages. When such a hole exists=
+,
+> > > btree_write_cache_pages() will return -EAGAIN. We cannot wait for the=
+ range
+> > > to be written, because it will cause a deadlock. So, let's bail out t=
+o a
+> > > full commit in this case.
+> > >
+> > > Cc: Filipe Manana <fdmanana@gmail.com>
+> > > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> > > ---
+> > >  fs/btrfs/tree-log.c | 19 ++++++++++++++++++-
+> > >  1 file changed, 18 insertions(+), 1 deletion(-)
+> > >
+> > > This patch solves a regression introduced by fixing patch 40. I'm
+> > > sorry for the confusing patch numbering.
 > >
+> > Hum, how does patch 40 can cause this?
+> > And is it before the fixup or after?
 >
-> [...]
+> With pre-5.10 code base + zoned series at that time, it passed
+> xfstests without this patch.
 >
-> > When a HugeTLB is freed to the buddy system, we should allocate 6 pages for
-> > vmemmap pages and restore the previous mapping relationship.
-> >
-> > Apart from 2MB HugeTLB page, we also have 1GB HugeTLB page. It is similar
-> > to the 2MB HugeTLB page. We also can use this approach to free the vmemmap
-> > pages.
-> >
-> > In this case, for the 1GB HugeTLB page, we can save 4094 pages. This is a
-> > very substantial gain. On our server, run some SPDK/QEMU applications which
-> > will use 1024GB hugetlbpage. With this feature enabled, we can save ~16GB
-> > (1G hugepage)/~12GB (2MB hugepage) memory.
-> >
-> > Because there are vmemmap page tables reconstruction on the freeing/allocating
-> > path, it increases some overhead. Here are some overhead analysis.
+> With current code base + zoned series without the fixup for patch 40,
+> it also passed the tests, because we are mostly bailing out to a full
+> commit.
 >
-> [...]
->
-> > Although the overhead has increased, the overhead is not significant. Like Mike
-> > said, "However, remember that the majority of use cases create hugetlb pages at
-> > or shortly after boot time and add them to the pool. So, additional overhead is
-> > at pool creation time. There is no change to 'normal run time' operations of
-> > getting a page from or returning a page to the pool (think page fault/unmap)".
-> >
->
-> Despite the overhead and in addition to the memory gains from this series ...
-> there's an additional benefit there isn't talked here with your vmemmap page
-> reuse trick. That is page (un)pinners will see an improvement and I presume because
-> there are fewer memmap pages and thus the tail/head pages are staying in cache more
-> often.
->
-> Out of the box I saw (when comparing linux-next against linux-next + this series)
-> with gup_test and pinning a 16G hugetlb file (with 1G pages):
->
->         get_user_pages(): ~32k -> ~9k
->         unpin_user_pages(): ~75k -> ~70k
->
-> Usually any tight loop fetching compound_head(), or reading tail pages data (e.g.
-> compound_head) benefit a lot. There's some unpinning inefficiencies I am fixing[0], but
-> with that in added it shows even more:
->
->         unpin_user_pages(): ~27k -> ~3.8k
->
-> FWIW, I was also seeing that with devdax and the ZONE_DEVICE vmemmap page reuse equivalent
-> series[1] but it was mixed with other numbers.
+> The fixup now stressed the new fsync code on zoned mode and revealed
+> an issue to have -EAGAIN from btrfs_write_marked_extents(). This error
+> happens when a concurrent transaction commit is writing a dirty extent
+> in this tree-log commit. This issue didn't occur previously because of
+> a longer critical section, I guess.
 
-It's really a surprise. Thank you very much for the test data.
-Very nice. Thanks again.
-
+Ok, if I understand you correctly, the problem is a transaction commit
+and an fsync both allocating metadata extents at the same time.
 
 >
-> Anyways, JFYI :)
+> >
+> > >
+> > > diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+> > > index 4e72794342c0..629e605cd62d 100644
+> > > --- a/fs/btrfs/tree-log.c
+> > > +++ b/fs/btrfs/tree-log.c
+> > > @@ -3120,6 +3120,14 @@ int btrfs_sync_log(struct btrfs_trans_handle *=
+trans,
+> > >          */
+> > >         blk_start_plug(&plug);
+> > >         ret =3D btrfs_write_marked_extents(fs_info, &log->dirty_log_p=
+ages, mark);
+> > > +       /*
+> > > +        * There is a hole writing out the extents and cannot proceed=
+ it on
+> > > +        * zoned filesystem, which require sequential writing. We can
+> >
+> > require -> requires
+> >
+> > > +        * ignore the error for now, since we don't wait for completi=
+on for
+> > > +        * now.
+> >
+> > So why can we ignore the error for now?
+> > Why not just bail out here and mark the log for full commit? (without
+> > a transaction abort)
 >
->         Joao
+> As described above, -EAGAIN happens when a concurrent process writes
+> out an extent buffer of this tree-log commit. This concurrent write
+> out will fill a hole for us, so the next write out might
+> succeed. Indeed we can bail out here, but I opted to try the next
+> write.
+
+Ok, if I understand you correctly, you mean it will be fine if after
+this point no one allocates metadata extents from the hole?
+
+I think such a clear explanation would fit nicely in the comment.
+
+Thanks.
+
 >
-> [0] https://lore.kernel.org/linux-mm/20210204202500.26474-1-joao.m.martins@oracle.com/
-> [1] https://lore.kernel.org/linux-mm/20201208172901.17384-1-joao.m.martins@oracle.com/
+> > > +        */
+> > > +       if (ret =3D=3D -EAGAIN)
+> > > +               ret =3D 0;
+> > >         if (ret) {
+> > >                 blk_finish_plug(&plug);
+> > >                 btrfs_abort_transaction(trans, ret);
+> > > @@ -3229,7 +3237,16 @@ int btrfs_sync_log(struct btrfs_trans_handle *=
+trans,
+> > >                                          &log_root_tree->dirty_log_pa=
+ges,
+> > >                                          EXTENT_DIRTY | EXTENT_NEW);
+> > >         blk_finish_plug(&plug);
+> > > -       if (ret) {
+> > > +       /*
+> > > +        * There is a hole in the extents, and failed to sequential w=
+rite
+> > > +        * on zoned filesystem. We cannot wait for this write outs, s=
+inc it
+> >
+> > this -> these
+> >
+> > > +        * cause a deadlock. Bail out to the full commit, instead.
+> > > +        */
+> > > +       if (ret =3D=3D -EAGAIN) {
+> > > +               btrfs_wait_tree_log_extents(log, mark);
+> > > +               mutex_unlock(&log_root_tree->log_mutex);
+> > > +               goto out_wake_log_root;
+> >
+> > Must also call btrfs_set_log_full_commit(trans);
+>
+> Oops, I missed this one.
+>
+> > Thanks.
+> >
+> > > +       } else if (ret) {
+> > >                 btrfs_set_log_full_commit(trans);
+> > >                 btrfs_abort_transaction(trans, ret);
+> > >                 mutex_unlock(&log_root_tree->log_mutex);
+> > > --
+> > > 2.30.0
+> > >
+> >
+> >
+> > --
+> > Filipe David Manana,
+> >
+> > =E2=80=9CWhether you think you can, or you think you can't =E2=80=94 yo=
+u're right.=E2=80=9D
+
+
+
+--=20
+Filipe David Manana,
+
+=E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you're=
+ right.=E2=80=9D
