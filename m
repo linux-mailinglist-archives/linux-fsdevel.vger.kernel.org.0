@@ -2,24 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A723105E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 08:32:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A9C3105E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 08:32:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbhBEHbH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 02:31:07 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12467 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231269AbhBEHah (ORCPT
+        id S231510AbhBEHbb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 02:31:31 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11682 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231394AbhBEHbU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 02:30:37 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DX6Ts6KNqzjKkV;
-        Fri,  5 Feb 2021 15:28:33 +0800 (CST)
+        Fri, 5 Feb 2021 02:31:20 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DX6V65LCfzlH7G;
+        Fri,  5 Feb 2021 15:28:46 +0800 (CST)
 Received: from [10.174.179.241] (10.174.179.241) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 5 Feb 2021 15:29:44 +0800
-Subject: Re: [PATCH v14 6/8] mm: hugetlb: introduce nr_free_vmemmap_pages in
- the struct hstate
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 5 Feb 2021 15:30:18 +0800
+Subject: Re: [PATCH v14 7/8] mm: hugetlb: gather discrete indexes of tail page
 To:     Muchun Song <songmuchun@bytedance.com>
 CC:     <duanxiongchun@bytedance.com>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
@@ -37,14 +36,14 @@ CC:     <duanxiongchun@bytedance.com>, <linux-doc@vger.kernel.org>,
         <song.bao.hua@hisilicon.com>, <david@redhat.com>,
         <naoya.horiguchi@nec.com>
 References: <20210204035043.36609-1-songmuchun@bytedance.com>
- <20210204035043.36609-7-songmuchun@bytedance.com>
+ <20210204035043.36609-8-songmuchun@bytedance.com>
 From:   Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <42c8272a-f170-b27e-af5e-a7cb7777a728@huawei.com>
-Date:   Fri, 5 Feb 2021 15:29:43 +0800
+Message-ID: <1312358b-f065-4525-bbdf-25d011c72395@huawei.com>
+Date:   Fri, 5 Feb 2021 15:30:17 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <20210204035043.36609-7-songmuchun@bytedance.com>
+In-Reply-To: <20210204035043.36609-8-songmuchun@bytedance.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -55,123 +54,141 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2021/2/4 11:50, Muchun Song wrote:
-> All the infrastructure is ready, so we introduce nr_free_vmemmap_pages
-> field in the hstate to indicate how many vmemmap pages associated with
-> a HugeTLB page that can be freed to buddy allocator. And initialize it
-> in the hugetlb_vmemmap_init(). This patch is actual enablement of the
-> feature.
+> For HugeTLB page, there are more metadata to save in the struct page.
+> But the head struct page cannot meet our needs, so we have to abuse
+> other tail struct page to store the metadata. In order to avoid
+> conflicts caused by subsequent use of more tail struct pages, we can
+> gather these discrete indexes of tail struct page. In this case, it
+> will be easier to add a new tail page index later.
+> 
+> There are only (RESERVE_VMEMMAP_SIZE / sizeof(struct page)) struct
+> page structs that can be used when CONFIG_HUGETLB_PAGE_FREE_VMEMMAP,
+> so add a BUILD_BUG_ON to catch invalid usage of the tail struct page.
 > 
 > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
 > Reviewed-by: Oscar Salvador <osalvador@suse.de>
-> ---
->  include/linux/hugetlb.h |  3 +++
->  mm/hugetlb.c            |  1 +
->  mm/hugetlb_vmemmap.c    | 30 ++++++++++++++++++++++++++----
->  mm/hugetlb_vmemmap.h    |  5 +++++
->  4 files changed, 35 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index ad249e56ac49..775aea53669a 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -560,6 +560,9 @@ struct hstate {
->  	unsigned int nr_huge_pages_node[MAX_NUMNODES];
->  	unsigned int free_huge_pages_node[MAX_NUMNODES];
->  	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
-> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-> +	unsigned int nr_free_vmemmap_pages;
-> +#endif
->  #ifdef CONFIG_CGROUP_HUGETLB
->  	/* cgroup control files */
->  	struct cftype cgroup_files_dfl[7];
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 5518283aa667..04dde2b71f3e 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -3220,6 +3220,7 @@ void __init hugetlb_add_hstate(unsigned int order)
->  	h->next_nid_to_free = first_memory_node;
->  	snprintf(h->name, HSTATE_NAME_LEN, "hugepages-%lukB",
->  					huge_page_size(h)/1024);
-> +	hugetlb_vmemmap_init(h);
->  
->  	parsed_hstate = h;
->  }
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index 224a3cb69bf9..36ebd677e606 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -208,13 +208,10 @@ early_param("hugetlb_free_vmemmap", early_hugetlb_free_vmemmap_param);
->  /*
->   * How many vmemmap pages associated with a HugeTLB page that can be freed
->   * to the buddy allocator.
-> - *
-> - * Todo: Returns zero for now, which means the feature is disabled. We will
-> - * enable it once all the infrastructure is there.
->   */
->  static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
->  {
-> -	return 0;
-> +	return h->nr_free_vmemmap_pages;
->  }
->  
->  static inline unsigned long free_vmemmap_pages_size_per_hpage(struct hstate *h)
-> @@ -269,3 +266,28 @@ void free_huge_page_vmemmap(struct hstate *h, struct page *head)
->  	 */
->  	vmemmap_remap_free(vmemmap_addr, vmemmap_end, vmemmap_reuse);
->  }
-> +
-> +void __init hugetlb_vmemmap_init(struct hstate *h)
-> +{
-> +	unsigned int nr_pages = pages_per_huge_page(h);
-> +	unsigned int vmemmap_pages;
-> +
-> +	if (!hugetlb_free_vmemmap_enabled)
-> +		return;
-> +
-> +	vmemmap_pages = (nr_pages * sizeof(struct page)) >> PAGE_SHIFT;
-> +	/*
-> +	 * The head page and the first tail page are not to be freed to buddy
-> +	 * allocator, the other pages will map to the first tail page, so they
-> +	 * can be freed.
-> +	 *
-> +	 * Could RESERVE_VMEMMAP_NR be greater than @vmemmap_pages? It is true
-> +	 * on some architectures (e.g. aarch64). See Documentation/arm64/
-> +	 * hugetlbpage.rst for more details.
-> +	 */
-> +	if (likely(vmemmap_pages > RESERVE_VMEMMAP_NR))
-> +		h->nr_free_vmemmap_pages = vmemmap_pages - RESERVE_VMEMMAP_NR;
 
-Not a problem. Should we set h->nr_free_vmemmap_pages to 0 in 'else' case explicitly ?
-
-Anyway, looks good to me. Thanks.
+Thanks.
 Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
 
+> ---
+>  include/linux/hugetlb.h        | 20 ++++++++++++++++++--
+>  include/linux/hugetlb_cgroup.h | 19 +++++++++++--------
+>  mm/hugetlb_vmemmap.c           |  8 ++++++++
+>  3 files changed, 37 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 775aea53669a..822ab2f5542a 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -28,6 +28,22 @@ typedef struct { unsigned long pd; } hugepd_t;
+>  #include <linux/shm.h>
+>  #include <asm/tlbflush.h>
+>  
+> +/*
+> + * For HugeTLB page, there are more metadata to save in the struct page. But
+> + * the head struct page cannot meet our needs, so we have to abuse other tail
+> + * struct page to store the metadata. In order to avoid conflicts caused by
+> + * subsequent use of more tail struct pages, we gather these discrete indexes
+> + * of tail struct page here.
+> + */
+> +enum {
+> +	SUBPAGE_INDEX_SUBPOOL = 1,	/* reuse page->private */
+> +#ifdef CONFIG_CGROUP_HUGETLB
+> +	SUBPAGE_INDEX_CGROUP,		/* reuse page->private */
+> +	SUBPAGE_INDEX_CGROUP_RSVD,	/* reuse page->private */
+> +#endif
+> +	NR_USED_SUBPAGE,
+> +};
 > +
-> +	pr_info("can free %d vmemmap pages for %s\n", h->nr_free_vmemmap_pages,
-> +		h->name);
-> +}
-> diff --git a/mm/hugetlb_vmemmap.h b/mm/hugetlb_vmemmap.h
-> index 6f89a9eed02c..02a21604ef1d 100644
-> --- a/mm/hugetlb_vmemmap.h
-> +++ b/mm/hugetlb_vmemmap.h
-> @@ -14,6 +14,7 @@
->  int alloc_huge_page_vmemmap(struct hstate *h, struct page *head,
->  			    gfp_t gfp_mask);
->  void free_huge_page_vmemmap(struct hstate *h, struct page *head);
-> +void hugetlb_vmemmap_init(struct hstate *h);
->  #else
->  static inline int alloc_huge_page_vmemmap(struct hstate *h, struct page *head,
->  					  gfp_t gfp_mask)
-> @@ -24,5 +25,9 @@ static inline int alloc_huge_page_vmemmap(struct hstate *h, struct page *head,
->  static inline void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+>  struct hugepage_subpool {
+>  	spinlock_t lock;
+>  	long count;
+> @@ -607,13 +623,13 @@ extern unsigned int default_hstate_idx;
+>   */
+>  static inline struct hugepage_subpool *hugetlb_page_subpool(struct page *hpage)
 >  {
+> -	return (struct hugepage_subpool *)(hpage+1)->private;
+> +	return (void *)page_private(hpage + SUBPAGE_INDEX_SUBPOOL);
 >  }
+>  
+>  static inline void hugetlb_set_page_subpool(struct page *hpage,
+>  					struct hugepage_subpool *subpool)
+>  {
+> -	set_page_private(hpage+1, (unsigned long)subpool);
+> +	set_page_private(hpage + SUBPAGE_INDEX_SUBPOOL, (unsigned long)subpool);
+>  }
+>  
+>  static inline struct hstate *hstate_file(struct file *f)
+> diff --git a/include/linux/hugetlb_cgroup.h b/include/linux/hugetlb_cgroup.h
+> index 2ad6e92f124a..c0cae6a704f2 100644
+> --- a/include/linux/hugetlb_cgroup.h
+> +++ b/include/linux/hugetlb_cgroup.h
+> @@ -21,15 +21,16 @@ struct hugetlb_cgroup;
+>  struct resv_map;
+>  struct file_region;
+>  
+> +#ifdef CONFIG_CGROUP_HUGETLB
+>  /*
+>   * Minimum page order trackable by hugetlb cgroup.
+>   * At least 4 pages are necessary for all the tracking information.
+> - * The second tail page (hpage[2]) is the fault usage cgroup.
+> - * The third tail page (hpage[3]) is the reservation usage cgroup.
+> + * The second tail page (hpage[SUBPAGE_INDEX_CGROUP]) is the fault
+> + * usage cgroup. The third tail page (hpage[SUBPAGE_INDEX_CGROUP_RSVD])
+> + * is the reservation usage cgroup.
+>   */
+> -#define HUGETLB_CGROUP_MIN_ORDER	2
+> +#define HUGETLB_CGROUP_MIN_ORDER	order_base_2(NR_USED_SUBPAGE)
+>  
+> -#ifdef CONFIG_CGROUP_HUGETLB
+>  enum hugetlb_memory_event {
+>  	HUGETLB_MAX,
+>  	HUGETLB_NR_MEMORY_EVENTS,
+> @@ -66,9 +67,9 @@ __hugetlb_cgroup_from_page(struct page *page, bool rsvd)
+>  	if (compound_order(page) < HUGETLB_CGROUP_MIN_ORDER)
+>  		return NULL;
+>  	if (rsvd)
+> -		return (struct hugetlb_cgroup *)page[3].private;
+> +		return (void *)page_private(page + SUBPAGE_INDEX_CGROUP_RSVD);
+>  	else
+> -		return (struct hugetlb_cgroup *)page[2].private;
+> +		return (void *)page_private(page + SUBPAGE_INDEX_CGROUP);
+>  }
+>  
+>  static inline struct hugetlb_cgroup *hugetlb_cgroup_from_page(struct page *page)
+> @@ -90,9 +91,11 @@ static inline int __set_hugetlb_cgroup(struct page *page,
+>  	if (compound_order(page) < HUGETLB_CGROUP_MIN_ORDER)
+>  		return -1;
+>  	if (rsvd)
+> -		page[3].private = (unsigned long)h_cg;
+> +		set_page_private(page + SUBPAGE_INDEX_CGROUP_RSVD,
+> +				 (unsigned long)h_cg);
+>  	else
+> -		page[2].private = (unsigned long)h_cg;
+> +		set_page_private(page + SUBPAGE_INDEX_CGROUP,
+> +				 (unsigned long)h_cg);
+>  	return 0;
+>  }
+>  
+> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> index 36ebd677e606..8efad9978821 100644
+> --- a/mm/hugetlb_vmemmap.c
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -272,6 +272,14 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
+>  	unsigned int nr_pages = pages_per_huge_page(h);
+>  	unsigned int vmemmap_pages;
+>  
+> +	/*
+> +	 * There are only (RESERVE_VMEMMAP_SIZE / sizeof(struct page)) struct
+> +	 * page structs that can be used when CONFIG_HUGETLB_PAGE_FREE_VMEMMAP,
+> +	 * so add a BUILD_BUG_ON to catch invalid usage of the tail struct page.
+> +	 */
+> +	BUILD_BUG_ON(NR_USED_SUBPAGE >=
+> +		     RESERVE_VMEMMAP_SIZE / sizeof(struct page));
 > +
-> +static inline void hugetlb_vmemmap_init(struct hstate *h)
-> +{
-> +}
->  #endif /* CONFIG_HUGETLB_PAGE_FREE_VMEMMAP */
->  #endif /* _LINUX_HUGETLB_VMEMMAP_H */
+>  	if (!hugetlb_free_vmemmap_enabled)
+>  		return;
+>  
 > 
 
