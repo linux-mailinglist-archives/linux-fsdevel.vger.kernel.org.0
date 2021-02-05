@@ -2,223 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8173C3113A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 22:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF76131149C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:14:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbhBEVf1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 16:35:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57106 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbhBEVex (ORCPT
+        id S233085AbhBEWIe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:08:34 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:64748 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232783AbhBEOwM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 16:34:53 -0500
-Received: from mail-qv1-xf4a.google.com (mail-qv1-xf4a.google.com [IPv6:2607:f8b0:4864:20::f4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4532C061794
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Feb 2021 13:34:09 -0800 (PST)
-Received: by mail-qv1-xf4a.google.com with SMTP id ew14so5987744qvb.21
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Feb 2021 13:34:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:cc;
-        bh=8MAy8AaN6ZS5Avy4E0Q7L68GZ02PGsx9JgCkTgKoHNQ=;
-        b=WnliLim5ZvWL9ZBmepw0MTbma5fCSUQs19cvbXGTo+LnqW1tu36qu/K4HvniKmFTjd
-         o/nv5QHpFhvC1eCslPC0jr1VAqkMPdVYGLNyfvhw7JiuBUz0u4i6PkS0c67rvgIQYiBO
-         g5+n6GO294I+aASt6Okdy9Y9hDftPtnxffwm4veUH2aPdEe1/mbXdiZO0+1PytM4wtcZ
-         4SBS8PoKpJ2a5KG8d3InFVtCAvi162x32ueOqd1DR2iJ9rUXtXQWvryG0yK/b9Gg8CUZ
-         F9LvfX+RVQiieanUmyi8TtjNs5RuLFq2g/8ltJvxdZrRvjYSm0t4RNN5SN+xVXeIeXlV
-         d4VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:cc;
-        bh=8MAy8AaN6ZS5Avy4E0Q7L68GZ02PGsx9JgCkTgKoHNQ=;
-        b=haGpAfWmV7REO9pByO03ZIM1bKS9FkCeNoJ+HzbbwZwc3VF45SQZ7adQiEl6efbEYy
-         6HlbE2AQlwitX50HzGW5qK4Rg/mDW/BBjMFHGdbDZlOXuaYRUry6HFhlPiul8uZFRZa8
-         O0r4fAgLZ5V8naVvYwyiqYekIrZLfBb0lMFcJVaoLmuXvYmDt8Yyz3p754fo1QsR8hoT
-         8QVqRh3Y+hZavMSNb/HgtkhV0VTyGMEGTUqgr5eQZb/RoWCWIjqQPQwNNt6LYQAv1oGV
-         EUhxpRyHBm41KJbbXNJpkiSCApeuo180ZpQajww2GgPi/Ws6ijkszK2g3CAS1EbYbqrI
-         g2ig==
-X-Gm-Message-State: AOAM532NmNSrcUbn15jqoy8S72U1FvzFKIQD76CxbxD0G6Tsf5GmM17Q
-        9uBxif5TOWy6YFl71mUp5CosYvf42XktsXM3hw==
-X-Google-Smtp-Source: ABdhPJy5Phpkm8UmSoQT/cka7X8jy/KGgS1Wrb3leZpBdapsYf0YaqsduncqfY+tg1G+WZk5ym5FvVPgD1lNua+NiA==
-Sender: "kaleshsingh via sendgmr" <kaleshsingh@kaleshsingh.c.googlers.com>
-X-Received: from kaleshsingh.c.googlers.com ([fda3:e722:ac3:10:14:4d90:c0a8:2145])
- (user=kaleshsingh job=sendgmr) by 2002:ad4:486c:: with SMTP id
- u12mr6427106qvy.5.1612560848833; Fri, 05 Feb 2021 13:34:08 -0800 (PST)
-Date:   Fri,  5 Feb 2021 21:33:44 +0000
-In-Reply-To: <20210205213353.669122-1-kaleshsingh@google.com>
-Message-Id: <20210205213353.669122-2-kaleshsingh@google.com>
-Mime-Version: 1.0
-References: <20210205213353.669122-1-kaleshsingh@google.com>
-X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-Subject: [PATCH v4 2/2] dmabuf: Add dmabuf inode number to /proc/*/fdinfo
-From:   Kalesh Singh <kaleshsingh@google.com>
-Cc:     jannh@google.com, jeffv@google.com, keescook@chromium.org,
-        surenb@google.com, minchan@kernel.org, hridya@google.com,
-        rdunlap@infradead.org, christian.koenig@amd.com,
-        kernel-team@android.com, Kalesh Singh <kaleshsingh@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        NeilBrown <neilb@suse.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Michel Lespinasse <walken@google.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 5 Feb 2021 09:52:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1612542657; x=1644078657;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=osl3Cr3Op+kKUp4lrjT4AnmetBsvXvl1ZR931UXyZoI=;
+  b=qfJyr/Trf9kYz5YdWfzXpbBOXdKE0dwcrvwL/ChWP6HrcxEkFGb9joxp
+   7ocnRTBv4q9VvwhU4A/2B0l75o8TqXniPwiTzX1JgKUbNLA/EZGP2zzkS
+   f2NQaTWAi4EEU2eKERxk6XODfgfKMnBvtRByXhoSSpVCPta+K5v408a3a
+   p/+BoQcI/LFIlb10f0DECbMQtIiZVp+lFXQhy7XafCf1l70wtZ9/82P/H
+   22w86HIhgc9qx4+LL5ZYwNodWoNU18mSLN2ViGk0h74mVyFBeayQFxQVu
+   PHYrED0p3NEsbJoVifZ4ZN3RYdVXtFMGsnbO97SdcR/iNoVkb3A5J1s2W
+   A==;
+IronPort-SDR: F/+dvg5lRPx7eKQyw23xS7HLpnE4FYXtZ8EtKpK6hDMn9HozjmEqH2vgb0lu97Ix4Sl3UFAmQ1
+ 2Y5aPo9/4mCfizxZqkjw+psT24qpmbiHCE3IhVvw4UL8fHlb/dVC5int1y51qqltL/HJADLepX
+ JISuaBeHpfwWrGqYKEjkDe3YOd/VtEwV/6gdekP2e29lK6fp5Dfs4Y3h+3vftZo6cWM/lDca/R
+ aoyKnMJ+pNYvQwiSwQTahcOuwbuFEVlQleFJkAv5TiAsMhdoX3FtzdHiuadu/phrpbc2Pc66tE
+ jBw=
+X-IronPort-AV: E=Sophos;i="5.81,155,1610380800"; 
+   d="scan'208";a="163683696"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 05 Feb 2021 22:46:51 +0800
+IronPort-SDR: Wf+AO90Vr0IY9WX9NmyRLwNfdTYZTLDZqvnfZhUrAVoaWLBxJatcxbvFR7kYlih915ZmJRBm6O
+ pcqDYS1XdSQ4MVh89MJY70ycaW9LNiG2zNuzv7/SoBWz6++ZwudbU83HeEl+9/3rQtm+uHMt1/
+ /VT5NlcAcztJGloBj4lZGgMPerfJeI2Rtv5U78P9hoYygywJY8RwmPpxEnsE6fup/tPqv3aedg
+ hvWVav63WYflmaxnEbjLCQERFU2AkTzRQ2IpEtKujm+m/pk+JEoQTOePOI8tlg9QBg3kLFNlAS
+ 7zLT7oKD7FNssi3nDK2NssPX
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 06:28:53 -0800
+IronPort-SDR: NzR6jfQ2IjhxqcIMWPIVSNyPshTRZgggpaRxs+JW1x8sb94HA/I0C4giK2s6UbM6txuDwRPafO
+ buJcE6fQgF/LCOWw9PNiNfPTFKSwQkUx4uo4V/5bk8DfPf2TVp4g1yQBeVO1Sain6K2w5rbDyc
+ c+YxQRH9PxlnmQG4k/PqvmUq+70sMVqpXtdTbWmcV5kCbm7mHad3tDc7cjA93riQJJC4vRtgnI
+ rYDnDyMKkNUUS6HZzyoFLCtHFcuE1fnD2W8flyIoRSDHz55zD3UuZF9L5FtT0MnjQmnMg47U/U
+ McE=
+WDCIronportException: Internal
+Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon) ([10.84.71.79])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 06:46:50 -0800
+Date:   Fri, 5 Feb 2021 23:46:48 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     Filipe Manana <fdmanana@gmail.com>
+Cc:     linux-btrfs <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, hare@suse.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v15 43/43] btrfs: zoned: deal with holes writing out
+ tree-log pages
+Message-ID: <20210205144648.lem3344kon2ncfli@naota-xeon>
+References: <cover.1612433345.git.naohiro.aota@wdc.com>
+ <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
+ <20210205092635.i6w3c7brawlv6pgs@naota-xeon>
+ <CAL3q7H6REfruE-DSyiqZQ_Y0=HmXbiTbEC3d18Q7+3Z7pf5QzQ@mail.gmail.com>
+ <CAL3q7H7YkUAJ1h_hQzJ5C_ek5DD==V1rD1petxrs1aDru5j1+A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL3q7H7YkUAJ1h_hQzJ5C_ek5DD==V1rD1petxrs1aDru5j1+A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-And 'inode_no' field to /proc/<pid>/fdinfo/<FD> and
-/proc/<pid>/task/<tid>/fdinfo/<FD>.
+On Fri, Feb 05, 2021 at 02:19:50PM +0000, Filipe Manana wrote:
+> On Fri, Feb 5, 2021 at 11:49 AM Filipe Manana <fdmanana@gmail.com> wrote:
+> >
+> > On Fri, Feb 5, 2021 at 9:26 AM Naohiro Aota <naohiro.aota@wdc.com> wrote:
+> > >
+> > > Since the zoned filesystem requires sequential write out of metadata, we
+> > > cannot proceed with a hole in tree-log pages. When such a hole exists,
+> > > btree_write_cache_pages() will return -EAGAIN. We cannot wait for the range
+> > > to be written, because it will cause a deadlock. So, let's bail out to a
+> > > full commit in this case.
+> > >
+> > > Cc: Filipe Manana <fdmanana@gmail.com>
+> > > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> > > ---
+> > >  fs/btrfs/tree-log.c | 19 ++++++++++++++++++-
+> > >  1 file changed, 18 insertions(+), 1 deletion(-)
+> > >
+> > > This patch solves a regression introduced by fixing patch 40. I'm
+> > > sorry for the confusing patch numbering.
+> >
+> > Hum, how does patch 40 can cause this?
+> > And is it before the fixup or after?
+> >
+> > >
+> > > diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+> > > index 4e72794342c0..629e605cd62d 100644
+> > > --- a/fs/btrfs/tree-log.c
+> > > +++ b/fs/btrfs/tree-log.c
+> > > @@ -3120,6 +3120,14 @@ int btrfs_sync_log(struct btrfs_trans_handle *trans,
+> > >          */
+> > >         blk_start_plug(&plug);
+> > >         ret = btrfs_write_marked_extents(fs_info, &log->dirty_log_pages, mark);
+> > > +       /*
+> > > +        * There is a hole writing out the extents and cannot proceed it on
+> > > +        * zoned filesystem, which require sequential writing. We can
+> >
+> > require -> requires
+> >
+> > > +        * ignore the error for now, since we don't wait for completion for
+> > > +        * now.
+> >
+> > So why can we ignore the error for now?
+> > Why not just bail out here and mark the log for full commit? (without
+> > a transaction abort)
+> >
+> > > +        */
+> > > +       if (ret == -EAGAIN)
+> > > +               ret = 0;
+> 
+> Thinking again about this, it would be safer, and self-documenting to
+> check here that we are in zoned mode:
+> 
+> if (ret == -EAGAIN && is_zoned)
+>     ret = 0;
+> 
+> Because if we start to get -EAGAIN here one day, from non-zoned code,
+> we risk not writing out some extent buffer and getting a corrupt log,
+> which may be very hard to find.
+> With that additional check in place, we'll end up aborting the
+> transaction with -EAGAIN and notice the problem much sooner.
 
-The inode numbers can be used to uniquely identify DMA buffers
-in user space and avoids a dependency on /proc/<pid>/fd/* when
-accounting per-process DMA buffer sizes.
+Yeah, I agree.
 
-Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
----
-Changes in v4:
-  - Add inode number as common field in fdinfo, per Christian
-Changes in v3:
-  - Add documentation in proc.rst, per Randy
-Changes in v2:
-  - Update patch description
+I'll post a new version with the comments revised and using "if (ret
+== -EAGAIN && btrfs_is_zoned(fs_info))".
 
- Documentation/filesystems/proc.rst | 37 +++++++++++++++++++++++++-----
- fs/proc/fd.c                       |  5 ++--
- 2 files changed, 34 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 2fa69f710e2a..db46da32230c 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -1902,18 +1902,20 @@ if precise results are needed.
- 3.8	/proc/<pid>/fdinfo/<fd> - Information about opened file
- ---------------------------------------------------------------
- This file provides information associated with an opened file. The regular
--files have at least three fields -- 'pos', 'flags' and 'mnt_id'. The 'pos'
--represents the current offset of the opened file in decimal form [see lseek(2)
--for details], 'flags' denotes the octal O_xxx mask the file has been
--created with [see open(2) for details] and 'mnt_id' represents mount ID of
--the file system containing the opened file [see 3.5 /proc/<pid>/mountinfo
--for details].
-+files have at least four fields -- 'pos', 'flags', 'mnt_id' and 'inode_no'.
-+The 'pos' represents the current offset of the opened file in decimal
-+form [see lseek(2) for details], 'flags' denotes the octal O_xxx mask the
-+file has been created with [see open(2) for details] and 'mnt_id' represents
-+mount ID of the file system containing the opened file [see 3.5
-+/proc/<pid>/mountinfo for details]. 'inode_no' represents the inode number
-+of the file.
- 
- A typical output is::
- 
- 	pos:	0
- 	flags:	0100002
- 	mnt_id:	19
-+	inode_no:       63107
- 
- All locks associated with a file descriptor are shown in its fdinfo too::
- 
-@@ -1930,6 +1932,7 @@ Eventfd files
- 	pos:	0
- 	flags:	04002
- 	mnt_id:	9
-+	inode_no:       63107
- 	eventfd-count:	5a
- 
- where 'eventfd-count' is hex value of a counter.
-@@ -1942,6 +1945,7 @@ Signalfd files
- 	pos:	0
- 	flags:	04002
- 	mnt_id:	9
-+	inode_no:       63107
- 	sigmask:	0000000000000200
- 
- where 'sigmask' is hex value of the signal mask associated
-@@ -1955,6 +1959,7 @@ Epoll files
- 	pos:	0
- 	flags:	02
- 	mnt_id:	9
-+	inode_no:       63107
- 	tfd:        5 events:       1d data: ffffffffffffffff pos:0 ino:61af sdev:7
- 
- where 'tfd' is a target file descriptor number in decimal form,
-@@ -1971,6 +1976,8 @@ For inotify files the format is the following::
- 
- 	pos:	0
- 	flags:	02000000
-+	mnt_id:	9
-+	inode_no:       63107
- 	inotify wd:3 ino:9e7e sdev:800013 mask:800afce ignored_mask:0 fhandle-bytes:8 fhandle-type:1 f_handle:7e9e0000640d1b6d
- 
- where 'wd' is a watch descriptor in decimal form, i.e. a target file
-@@ -1993,6 +2000,7 @@ For fanotify files the format is::
- 	pos:	0
- 	flags:	02
- 	mnt_id:	9
-+	inode_no:       63107
- 	fanotify flags:10 event-flags:0
- 	fanotify mnt_id:12 mflags:40 mask:38 ignored_mask:40000003
- 	fanotify ino:4f969 sdev:800013 mflags:0 mask:3b ignored_mask:40000000 fhandle-bytes:8 fhandle-type:1 f_handle:69f90400c275b5b4
-@@ -2017,6 +2025,7 @@ Timerfd files
- 	pos:	0
- 	flags:	02
- 	mnt_id:	9
-+	inode_no:       63107
- 	clockid: 0
- 	ticks: 0
- 	settime flags: 01
-@@ -2031,6 +2040,22 @@ details]. 'it_value' is remaining time until the timer expiration.
- with TIMER_ABSTIME option which will be shown in 'settime flags', but 'it_value'
- still exhibits timer's remaining time.
- 
-+DMA Buffer files
-+~~~~~~~~~~~~~~~~
-+
-+::
-+
-+	pos:	0
-+	flags:	04002
-+	mnt_id:	9
-+	inode_no:       63107
-+	size:   32768
-+	count:  2
-+	exp_name:  system-heap
-+
-+where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
-+the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
-+
- 3.9	/proc/<pid>/map_files - Information about memory mapped files
- ---------------------------------------------------------------------
- This directory contains symbolic links which represent memory mapped files
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 585e213301f9..2c25909bf9d1 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -54,9 +54,10 @@ static int seq_show(struct seq_file *m, void *v)
- 	if (ret)
- 		return ret;
- 
--	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\n",
-+	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\ninode_no:\t%lu\n",
- 		   (long long)file->f_pos, f_flags,
--		   real_mount(file->f_path.mnt)->mnt_id);
-+		   real_mount(file->f_path.mnt)->mnt_id,
-+		   file_inode(file)->i_ino);
- 
- 	/* show_fd_locks() never deferences files so a stale value is safe */
- 	show_fd_locks(m, file, files);
--- 
-2.30.0.478.g8a0d178c01-goog
-
+> > >         if (ret) {
+> > >                 blk_finish_plug(&plug);
+> > >                 btrfs_abort_transaction(trans, ret);
+> > > @@ -3229,7 +3237,16 @@ int btrfs_sync_log(struct btrfs_trans_handle *trans,
+> > >                                          &log_root_tree->dirty_log_pages,
+> > >                                          EXTENT_DIRTY | EXTENT_NEW);
+> > >         blk_finish_plug(&plug);
+> > > -       if (ret) {
+> > > +       /*
+> > > +        * There is a hole in the extents, and failed to sequential write
+> > > +        * on zoned filesystem. We cannot wait for this write outs, sinc it
+> >
+> > this -> these
+> >
+> > > +        * cause a deadlock. Bail out to the full commit, instead.
+> > > +        */
+> > > +       if (ret == -EAGAIN) {
+> 
+> I would add "&& is_zoned" here too.
+> 
+> Thanks.
+>
+> 
+> > > +               btrfs_wait_tree_log_extents(log, mark);
+> > > +               mutex_unlock(&log_root_tree->log_mutex);
+> > > +               goto out_wake_log_root;
+> >
+> > Must also call btrfs_set_log_full_commit(trans);
+> >
+> > Thanks.
+> >
+> > > +       } else if (ret) {
+> > >                 btrfs_set_log_full_commit(trans);
+> > >                 btrfs_abort_transaction(trans, ret);
+> > >                 mutex_unlock(&log_root_tree->log_mutex);
+> > > --
+> > > 2.30.0
+> > >
+> >
+> >
+> > --
+> > Filipe David Manana,
+> >
+> > “Whether you think you can, or you think you can't — you're right.”
+> 
+> 
+> 
+> --
+> Filipe David Manana,
+> 
+> “Whether you think you can, or you think you can't — you're right.”
