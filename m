@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EADE5310DE9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 17:33:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 219AA310DE7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 17:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232820AbhBEOxP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 09:53:15 -0500
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:59594 "EHLO
+        id S232778AbhBEOxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 09:53:08 -0500
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:59598 "EHLO
         relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232808AbhBEOr5 (ORCPT
+        by vger.kernel.org with ESMTP id S232810AbhBEOsR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:47:57 -0500
+        Fri, 5 Feb 2021 09:48:17 -0500
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 8C4591D0B;
-        Fri,  5 Feb 2021 18:04:52 +0300 (MSK)
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 0D8CE1D1E;
+        Fri,  5 Feb 2021 18:04:54 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1612537492;
-        bh=+WU6UvasWxLedE9rwKRF24CenD3IhPvD8sSXHdscu2Y=;
+        d=paragon-software.com; s=mail; t=1612537494;
+        bh=7Be1wAd4pxW0Ear9wH2j8N+xnsf62n12aO+RglFseD4=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=BpbTkQbE/72gwfE7AWjstzkAZBL1D6PnyOpzj0yZEfccx4CGz+FW5cWvpGovZdrD2
-         7DSzHfpaoI8oKPKTh9/oD0KO5PfTnBeyWB/8wRHhqJ3GzCiR+O+b4DJ2yt0DBfDE7A
-         Ys2N1j31KMqIRNHsJeDKU3eETkAm5ZWF5rCV0eiE=
+        b=uW6GvuwmZEn+g2/2hHZNKjwNgVw3HwSlCqFLIUNApOz90E4u8S+kts9IFrhOOfBH1
+         I4H40p3tUqSIe8QoxhV5W5XmWOf9lR9a7NzkC4xR3p8CXJ/5iLKH0Ev0B6+oiDx9+7
+         k/Q2CjbOKtUaLAD29aZZ5JoKy3AkEaaxLwO/OT0A=
 Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 5 Feb 2021 18:04:51 +0300
+ 15.1.1847.3; Fri, 5 Feb 2021 18:04:53 +0300
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <linux-fsdevel@vger.kernel.org>
 CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
@@ -36,15 +36,15 @@ CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
         <dan.carpenter@oracle.com>, <hch@lst.de>, <ebiggers@kernel.org>,
         <andy.lavr@gmail.com>,
         Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH v20 04/10] fs/ntfs3: Add file operations and implementation
-Date:   Fri, 5 Feb 2021 18:02:38 +0300
-Message-ID: <20210205150244.542628-5-almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v20 07/10] fs/ntfs3: Add NTFS journal
+Date:   Fri, 5 Feb 2021 18:02:41 +0300
+Message-ID: <20210205150244.542628-8-almaz.alexandrovich@paragon-software.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20210205150244.542628-1-almaz.alexandrovich@paragon-software.com>
 References: <20210205150244.542628-1-almaz.alexandrovich@paragon-software.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [172.30.114.105]
 X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
  vdlg-exch-02.paragon-software.com (172.30.1.105)
@@ -52,7179 +52,5223 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds file operations and implementation
+This adds NTFS journal
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/ntfs3/dir.c     |  583 +++++++++
- fs/ntfs3/file.c    | 1133 ++++++++++++++++
- fs/ntfs3/frecord.c | 3083 ++++++++++++++++++++++++++++++++++++++++++++
- fs/ntfs3/namei.c   |  592 +++++++++
- fs/ntfs3/record.c  |  609 +++++++++
- fs/ntfs3/run.c     | 1120 ++++++++++++++++
- 6 files changed, 7120 insertions(+)
- create mode 100644 fs/ntfs3/dir.c
- create mode 100644 fs/ntfs3/file.c
- create mode 100644 fs/ntfs3/frecord.c
- create mode 100644 fs/ntfs3/namei.c
- create mode 100644 fs/ntfs3/record.c
- create mode 100644 fs/ntfs3/run.c
+ fs/ntfs3/fslog.c | 5204 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 5204 insertions(+)
+ create mode 100644 fs/ntfs3/fslog.c
 
-diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
+diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
 new file mode 100644
-index 000000000000..2b5114c5e95b
+index 000000000000..140847de2e12
 --- /dev/null
-+++ b/fs/ntfs3/dir.c
-@@ -0,0 +1,583 @@
++++ b/fs/ntfs3/fslog.c
+@@ -0,0 +1,5204 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + *
 + * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
 + *
-+ *  directory handling functions for ntfs-based filesystems
-+ *
 + */
++
 +#include <linux/blkdev.h>
 +#include <linux/buffer_head.h>
 +#include <linux/fs.h>
-+#include <linux/iversion.h>
++#include <linux/hash.h>
 +#include <linux/nls.h>
++#include <linux/random.h>
++#include <linux/ratelimit.h>
++#include <linux/slab.h>
 +
 +#include "debug.h"
 +#include "ntfs.h"
 +#include "ntfs_fs.h"
 +
 +/*
-+ * Convert little endian utf16 to nls string
++ * LOG FILE structs
 + */
-+int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
-+		      u8 *buf, int buf_len)
-+{
-+	int ret, uni_len;
-+	const __le16 *ip;
-+	u8 *op;
-+	struct nls_table *nls = sbi->options.nls;
-+
-+	static_assert(sizeof(wchar_t) == sizeof(__le16));
-+
-+	if (!nls) {
-+		/* utf16 -> utf8 */
-+		ret = utf16s_to_utf8s((wchar_t *)uni->name, uni->len,
-+				      UTF16_LITTLE_ENDIAN, buf, buf_len);
-+		buf[ret] = '\0';
-+		return ret;
-+	}
-+
-+	ip = uni->name;
-+	op = buf;
-+	uni_len = uni->len;
-+
-+	while (uni_len--) {
-+		u16 ec;
-+		int charlen;
-+
-+		if (buf_len < NLS_MAX_CHARSET_SIZE) {
-+			ntfs_warn(sbi->sb,
-+				  "filename was truncated while converting.");
-+			break;
-+		}
-+
-+		ec = le16_to_cpu(*ip++);
-+		charlen = nls->uni2char(ec, op, buf_len);
-+
-+		if (charlen > 0) {
-+			op += charlen;
-+			buf_len -= charlen;
-+		} else {
-+			*op++ = ':';
-+			op = hex_byte_pack(op, ec >> 8);
-+			op = hex_byte_pack(op, ec);
-+			buf_len -= 5;
-+		}
-+	}
-+
-+	*op = '\0';
-+	return op - buf;
-+}
 +
 +// clang-format off
-+#define PLANE_SIZE	0x00010000
 +
-+#define SURROGATE_PAIR	0x0000d800
-+#define SURROGATE_LOW	0x00000400
-+#define SURROGATE_BITS	0x000003ff
++#define MaxLogFileSize     0x100000000ull
++#define DefaultLogPageSize 4096
++#define MinLogRecordPages  0x30
++
++struct RESTART_HDR {
++	struct NTFS_RECORD_HEADER rhdr; // 'RSTR'
++	__le32 sys_page_size; // 0x10: Page size of the system which initialized the log
++	__le32 page_size;     // 0x14: Log page size used for this log file
++	__le16 ra_off;        // 0x18:
++	__le16 minor_ver;     // 0x1A:
++	__le16 major_ver;     // 0x1C:
++	__le16 fixups[1];
++};
++
++#define LFS_NO_CLIENT 0xffff
++#define LFS_NO_CLIENT_LE cpu_to_le16(0xffff)
++
++struct CLIENT_REC {
++	__le64 oldest_lsn;
++	__le64 restart_lsn; // 0x08:
++	__le16 prev_client; // 0x10:
++	__le16 next_client; // 0x12:
++	__le16 seq_num;     // 0x14:
++	u8 align[6];        // 0x16
++	__le32 name_bytes;  // 0x1C: in bytes
++	__le16 name[32];    // 0x20: name of client
++};
++
++static_assert(sizeof(struct CLIENT_REC) == 0x60);
++
++/* Two copies of these will exist at the beginning of the log file */
++struct RESTART_AREA {
++	__le64 current_lsn;    // 0x00: Current logical end of log file
++	__le16 log_clients;    // 0x08: Maximum number of clients
++	__le16 client_idx[2];  // 0x0A: free/use index into the client record arrays
++	__le16 flags;          // 0x0E: See RESTART_SINGLE_PAGE_IO
++	__le32 seq_num_bits;   // 0x10: the number of bits in sequence number.
++	__le16 ra_len;         // 0x14:
++	__le16 client_off;     // 0x16:
++	__le64 l_size;         // 0x18: Usable log file size.
++	__le32 last_lsn_data_len; // 0x20:
++	__le16 rec_hdr_len;    // 0x24: log page data offset
++	__le16 data_off;       // 0x26: log page data length
++	__le32 open_log_count; // 0x28:
++	__le32 align[5];       // 0x2C:
++	struct CLIENT_REC clients[1]; // 0x40:
++};
++
++struct LOG_REC_HDR {
++	__le16 redo_op;      // 0x00:  NTFS_LOG_OPERATION
++	__le16 undo_op;      // 0x02:  NTFS_LOG_OPERATION
++	__le16 redo_off;     // 0x04:  Offset to Redo record
++	__le16 redo_len;     // 0x06:  Redo length
++	__le16 undo_off;     // 0x08:  Offset to Undo record
++	__le16 undo_len;     // 0x0A:  Undo length
++	__le16 target_attr;  // 0x0C:
++	__le16 lcns_follow;  // 0x0E:
++	__le16 record_off;   // 0x10:
++	__le16 attr_off;     // 0x12:
++	__le16 cluster_off;  // 0x14:
++	__le16 reserved;     // 0x16:
++	__le64 target_vcn;   // 0x18:
++	__le64 page_lcns[1]; // 0x20:
++};
++
++static_assert(sizeof(struct LOG_REC_HDR) == 0x28);
++
++#define RESTART_ENTRY_ALLOCATED    0xFFFFFFFF
++#define RESTART_ENTRY_ALLOCATED_LE cpu_to_le32(0xFFFFFFFF)
++
++struct RESTART_TABLE {
++	__le16 size;       // 0x00:  In bytes
++	__le16 used;       // 0x02: entries
++	__le16 total;      // 0x04: entries
++	__le16 res[3];     // 0x06:
++	__le32 free_goal;  // 0x0C:
++	__le32 first_free; // 0x10
++	__le32 last_free;  // 0x14
++
++};
++
++static_assert(sizeof(struct RESTART_TABLE) == 0x18);
++
++struct ATTR_NAME_ENTRY {
++	__le16 off; // offset in the Open attribute Table
++	__le16 name_bytes;
++	__le16 name[1];
++};
++
++struct OPEN_ATTR_ENRTY {
++	__le32 next;            // 0x00: RESTART_ENTRY_ALLOCATED if allocated
++	__le32 bytes_per_index; // 0x04:
++	enum ATTR_TYPE type;    // 0x08:
++	u8 is_dirty_pages;      // 0x0C:
++	u8 is_attr_name;        // 0x0B: Faked field to manage 'ptr'
++	u8 name_len;            // 0x0C: Faked field to manage 'ptr'
++	u8 res;
++	struct MFT_REF ref; // 0x10: File Reference of file containing attribute
++	__le64 open_record_lsn; // 0x18:
++	void *ptr;              // 0x20:
++};
++
++/* 32 bit version of 'struct OPEN_ATTR_ENRTY' */
++struct OPEN_ATTR_ENRTY_32 {
++	__le32 next;            // 0x00: RESTART_ENTRY_ALLOCATED if allocated
++	__le32 ptr;             // 0x04:
++	struct MFT_REF ref;     // 0x08:
++	__le64 open_record_lsn; // 0x10:
++	u8 is_dirty_pages;      // 0x18:
++	u8 is_attr_name;        // 0x19
++	u8 res1[2];
++	enum ATTR_TYPE type;    // 0x1C:
++	u8 name_len;            // 0x20:  in wchar
++	u8 res2[3];
++	__le32 AttributeName;   // 0x24:
++	__le32 bytes_per_index; // 0x28:
++};
++
++#define SIZEOF_OPENATTRIBUTEENTRY0 0x2c
++// static_assert( 0x2C == sizeof(struct OPEN_ATTR_ENRTY_32) );
++static_assert(sizeof(struct OPEN_ATTR_ENRTY) < SIZEOF_OPENATTRIBUTEENTRY0);
++
++/*
++ * One entry exists in the Dirty Pages Table for each page which is dirty at the
++ * time the Restart Area is written
++ */
++struct DIR_PAGE_ENTRY {
++	__le32 next;         // 0x00:  RESTART_ENTRY_ALLOCATED if allocated
++	__le32 target_attr;  // 0x04:  Index into the Open attribute Table
++	__le32 transfer_len; // 0x08:
++	__le32 lcns_follow;  // 0x0C:
++	__le64 vcn;          // 0x10:  Vcn of dirty page
++	__le64 oldest_lsn;   // 0x18:
++	__le64 page_lcns[1]; // 0x20:
++};
++
++static_assert(sizeof(struct DIR_PAGE_ENTRY) == 0x28);
++
++/* 32 bit version of 'struct DIR_PAGE_ENTRY' */
++struct DIR_PAGE_ENTRY_32 {
++	__le32 next;         // 0x00:  RESTART_ENTRY_ALLOCATED if allocated
++	__le32 target_attr;  // 0x04:  Index into the Open attribute Table
++	__le32 transfer_len; // 0x08:
++	__le32 lcns_follow;  // 0x0C:
++	__le32 reserved;     // 0x10:
++	__le32 vcn_low;      // 0x14:  Vcn of dirty page
++	__le32 vcn_hi;       // 0x18:  Vcn of dirty page
++	__le32 oldest_lsn_low; // 0x1C:
++	__le32 oldest_lsn_hi; // 0x1C:
++	__le32 page_lcns_low; // 0x24:
++	__le32 page_lcns_hi; // 0x24:
++};
++
++static_assert(offsetof(struct DIR_PAGE_ENTRY_32, vcn_low) == 0x14);
++static_assert(sizeof(struct DIR_PAGE_ENTRY_32) == 0x2c);
++
++enum transact_state {
++	TransactionUninitialized = 0,
++	TransactionActive,
++	TransactionPrepared,
++	TransactionCommitted
++};
++
++struct TRANSACTION_ENTRY {
++	__le32 next;          // 0x00: RESTART_ENTRY_ALLOCATED if allocated
++	u8 transact_state;    // 0x04:
++	u8 reserved[3];       // 0x05:
++	__le64 first_lsn;     // 0x08:
++	__le64 prev_lsn;      // 0x10:
++	__le64 undo_next_lsn; // 0x18:
++	__le32 undo_records;  // 0x20: Number of undo log records pending abort
++	__le32 undo_len;      // 0x24: Total undo size
++};
++
++static_assert(sizeof(struct TRANSACTION_ENTRY) == 0x28);
++
++struct NTFS_RESTART {
++	__le32 major_ver;             // 0x00:
++	__le32 minor_ver;             // 0x04:
++	__le64 check_point_start;     // 0x08:
++	__le64 open_attr_table_lsn;   // 0x10:
++	__le64 attr_names_lsn;        // 0x18:
++	__le64 dirty_pages_table_lsn; // 0x20:
++	__le64 transact_table_lsn;    // 0x28:
++	__le32 open_attr_len;         // 0x30: In bytes
++	__le32 attr_names_len;        // 0x34: In bytes
++	__le32 dirty_pages_len;       // 0x38: In bytes
++	__le32 transact_table_len;    // 0x3C: In bytes
++};
++
++static_assert(sizeof(struct NTFS_RESTART) == 0x40);
++
++struct NEW_ATTRIBUTE_SIZES {
++	__le64 alloc_size;
++	__le64 valid_size;
++	__le64 data_size;
++	__le64 total_size;
++};
++
++struct BITMAP_RANGE {
++	__le32 bitmap_off;
++	__le32 bits;
++};
++
++struct LCN_RANGE {
++	__le64 lcn;
++	__le64 len;
++};
++
++/* The following type defines the different log record types */
++#define LfsClientRecord  cpu_to_le32(1)
++#define LfsClientRestart cpu_to_le32(2)
++
++/* This is used to uniquely identify a client for a particular log file */
++struct CLIENT_ID {
++	__le16 seq_num;
++	__le16 client_idx;
++};
++
++/* This is the header that begins every Log Record in the log file */
++struct LFS_RECORD_HDR {
++	__le64 this_lsn;    // 0x00:
++	__le64 client_prev_lsn;  // 0x08:
++	__le64 client_undo_next_lsn; // 0x10:
++	__le32 client_data_len;  // 0x18:
++	struct CLIENT_ID client; // 0x1C: Owner of this log record
++	__le32 record_type; // 0x20: LfsClientRecord or LfsClientRestart
++	__le32 transact_id; // 0x24:
++	__le16 flags;       // 0x28:	LOG_RECORD_MULTI_PAGE
++	u8 align[6];        // 0x2A:
++};
++
++#define LOG_RECORD_MULTI_PAGE cpu_to_le16(1)
++
++static_assert(sizeof(struct LFS_RECORD_HDR) == 0x30);
++
++struct LFS_RECORD {
++	__le16 next_record_off; // 0x00: Offset of the free space in the page
++	u8 align[6];         // 0x02:
++	__le64 last_end_lsn; // 0x08: lsn for the last log record which ends on the page
++};
++
++static_assert(sizeof(struct LFS_RECORD) == 0x10);
++
++struct RECORD_PAGE_HDR {
++	struct NTFS_RECORD_HEADER rhdr; // 'RCRD'
++	__le32 rflags;     // 0x10:  See LOG_PAGE_LOG_RECORD_END
++	__le16 page_count; // 0x14:
++	__le16 page_pos;   // 0x16:
++	struct LFS_RECORD record_hdr; // 0x18
++	__le16 fixups[10]; // 0x28
++	__le32 file_off;   // 0x3c: used when major version >= 2
++};
++
 +// clang-format on
 +
-+/*
-+ * modified version of put_utf16 from fs/nls/nls_base.c
-+ * is sparse warnings free
-+ */
-+static inline void put_utf16(wchar_t *s, unsigned int c,
-+			     enum utf16_endian endian)
-+{
-+	static_assert(sizeof(wchar_t) == sizeof(__le16));
-+	static_assert(sizeof(wchar_t) == sizeof(__be16));
++// Page contains the end of a log record
++#define LOG_PAGE_LOG_RECORD_END cpu_to_le32(0x00000001)
 +
-+	switch (endian) {
-+	default:
-+		*s = (wchar_t)c;
-+		break;
-+	case UTF16_LITTLE_ENDIAN:
-+		*(__le16 *)s = __cpu_to_le16(c);
-+		break;
-+	case UTF16_BIG_ENDIAN:
-+		*(__be16 *)s = __cpu_to_be16(c);
-+		break;
-+	}
++static inline bool is_log_record_end(const struct RECORD_PAGE_HDR *hdr)
++{
++	return hdr->rflags & LOG_PAGE_LOG_RECORD_END;
 +}
 +
-+/*
-+ * modified version of 'utf8s_to_utf16s' allows to
-+ * detect -ENAMETOOLONG without writing out of expected maximum
-+ */
-+static int _utf8s_to_utf16s(const u8 *s, int inlen, enum utf16_endian endian,
-+			    wchar_t *pwcs, int maxout)
-+{
-+	u16 *op;
-+	int size;
-+	unicode_t u;
-+
-+	op = pwcs;
-+	while (inlen > 0 && *s) {
-+		if (*s & 0x80) {
-+			size = utf8_to_utf32(s, inlen, &u);
-+			if (size < 0)
-+				return -EINVAL;
-+			s += size;
-+			inlen -= size;
-+
-+			if (u >= PLANE_SIZE) {
-+				if (maxout < 2)
-+					return -ENAMETOOLONG;
-+
-+				u -= PLANE_SIZE;
-+				put_utf16(op++,
-+					  SURROGATE_PAIR |
-+						  ((u >> 10) & SURROGATE_BITS),
-+					  endian);
-+				put_utf16(op++,
-+					  SURROGATE_PAIR | SURROGATE_LOW |
-+						  (u & SURROGATE_BITS),
-+					  endian);
-+				maxout -= 2;
-+			} else {
-+				if (maxout < 1)
-+					return -ENAMETOOLONG;
-+
-+				put_utf16(op++, u, endian);
-+				maxout--;
-+			}
-+		} else {
-+			if (maxout < 1)
-+				return -ENAMETOOLONG;
-+
-+			put_utf16(op++, *s++, endian);
-+			inlen--;
-+			maxout--;
-+		}
-+	}
-+	return op - pwcs;
-+}
++static_assert(offsetof(struct RECORD_PAGE_HDR, file_off) == 0x3c);
 +
 +/*
-+ * Convert input string to utf16
-+ *
-+ * name, name_len - input name
-+ * uni, max_ulen - destination memory
-+ * endian - endian of target utf16 string
-+ *
-+ * This function is called:
-+ * - to create ntfs name
-+ * - to create symlink
-+ *
-+ * returns utf16 string length or error (if negative)
++ * END of NTFS LOG structures
 + */
-+int ntfs_nls_to_utf16(struct ntfs_sb_info *sbi, const u8 *name, u32 name_len,
-+		      struct cpu_str *uni, u32 max_ulen,
-+		      enum utf16_endian endian)
++
++/* Define some tuning parameters to keep the restart tables a reasonable size */
++#define INITIAL_NUMBER_TRANSACTIONS 5
++
++enum NTFS_LOG_OPERATION {
++
++	Noop = 0x00,
++	CompensationLogRecord = 0x01,
++	InitializeFileRecordSegment = 0x02,
++	DeallocateFileRecordSegment = 0x03,
++	WriteEndOfFileRecordSegment = 0x04,
++	CreateAttribute = 0x05,
++	DeleteAttribute = 0x06,
++	UpdateResidentValue = 0x07,
++	UpdateNonresidentValue = 0x08,
++	UpdateMappingPairs = 0x09,
++	DeleteDirtyClusters = 0x0A,
++	SetNewAttributeSizes = 0x0B,
++	AddIndexEntryRoot = 0x0C,
++	DeleteIndexEntryRoot = 0x0D,
++	AddIndexEntryAllocation = 0x0E,
++	DeleteIndexEntryAllocation = 0x0F,
++	WriteEndOfIndexBuffer = 0x10,
++	SetIndexEntryVcnRoot = 0x11,
++	SetIndexEntryVcnAllocation = 0x12,
++	UpdateFileNameRoot = 0x13,
++	UpdateFileNameAllocation = 0x14,
++	SetBitsInNonresidentBitMap = 0x15,
++	ClearBitsInNonresidentBitMap = 0x16,
++	HotFix = 0x17,
++	EndTopLevelAction = 0x18,
++	PrepareTransaction = 0x19,
++	CommitTransaction = 0x1A,
++	ForgetTransaction = 0x1B,
++	OpenNonresidentAttribute = 0x1C,
++	OpenAttributeTableDump = 0x1D,
++	AttributeNamesDump = 0x1E,
++	DirtyPageTableDump = 0x1F,
++	TransactionTableDump = 0x20,
++	UpdateRecordDataRoot = 0x21,
++	UpdateRecordDataAllocation = 0x22,
++
++	UpdateRelativeDataInIndex =
++		0x23, // NtOfsRestartUpdateRelativeDataInIndex
++	UpdateRelativeDataInIndex2 = 0x24,
++	ZeroEndOfFileRecord = 0x25,
++};
++
++/*
++ * Array for log records which require a target attribute
++ * A true indicates that the corresponding restart operation requires a target attribute
++ */
++static const u8 AttributeRequired[] = {
++	0xFC, 0xFB, 0xFF, 0x10, 0x06,
++};
++
++static inline bool is_target_required(u16 op)
 +{
-+	int ret, slen;
-+	const u8 *end;
-+	struct nls_table *nls = sbi->options.nls;
-+	u16 *uname = uni->name;
-+
-+	static_assert(sizeof(wchar_t) == sizeof(u16));
-+
-+	if (!nls) {
-+		/* utf8 -> utf16 */
-+		ret = _utf8s_to_utf16s(name, name_len, endian, uname, max_ulen);
-+		uni->len = ret;
-+		return ret;
-+	}
-+
-+	for (ret = 0, end = name + name_len; name < end; ret++, name += slen) {
-+		if (ret >= max_ulen)
-+			return -ENAMETOOLONG;
-+
-+		slen = nls->char2uni(name, end - name, uname + ret);
-+		if (!slen)
-+			return -EINVAL;
-+		if (slen < 0)
-+			return slen;
-+	}
-+
-+#ifdef __BIG_ENDIAN
-+	if (endian == UTF16_LITTLE_ENDIAN) {
-+		int i = ret;
-+
-+		while (i--) {
-+			__cpu_to_le16s(uname);
-+			uname++;
-+		}
-+	}
-+#else
-+	if (endian == UTF16_BIG_ENDIAN) {
-+		int i = ret;
-+
-+		while (i--) {
-+			__cpu_to_be16s(uname);
-+			uname++;
-+		}
-+	}
-+#endif
-+
-+	uni->len = ret;
++	bool ret = op <= UpdateRecordDataAllocation &&
++		   (AttributeRequired[op >> 3] >> (op & 7) & 1);
 +	return ret;
 +}
 +
-+/* helper function */
-+struct inode *dir_search_u(struct inode *dir, const struct cpu_str *uni,
-+			   struct ntfs_fnd *fnd)
++static inline bool can_skip_action(enum NTFS_LOG_OPERATION op)
 +{
-+	int err = 0;
-+	struct super_block *sb = dir->i_sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	struct NTFS_DE *e;
-+	int diff;
-+	struct inode *inode = NULL;
-+	struct ntfs_fnd *fnd_a = NULL;
-+
-+	if (!fnd) {
-+		fnd_a = fnd_get();
-+		if (!fnd_a) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+		fnd = fnd_a;
++	switch (op) {
++	case Noop:
++	case DeleteDirtyClusters:
++	case HotFix:
++	case EndTopLevelAction:
++	case PrepareTransaction:
++	case CommitTransaction:
++	case ForgetTransaction:
++	case CompensationLogRecord:
++	case OpenNonresidentAttribute:
++	case OpenAttributeTableDump:
++	case AttributeNamesDump:
++	case DirtyPageTableDump:
++	case TransactionTableDump:
++		return true;
++	default:
++		return false;
 +	}
-+
-+	err = indx_find(&ni->dir, ni, NULL, uni, 0, sbi, &diff, &e, fnd);
-+
-+	if (err)
-+		goto out;
-+
-+	if (diff) {
-+		err = -ENOENT;
-+		goto out;
-+	}
-+
-+	inode = ntfs_iget5(sb, &e->ref, uni);
-+	if (!IS_ERR(inode) && is_bad_inode(inode)) {
-+		iput(inode);
-+		err = -EINVAL;
-+	}
-+out:
-+	fnd_put(fnd_a);
-+
-+	return err == -ENOENT ? NULL : err ? ERR_PTR(err) : inode;
 +}
 +
-+static inline int ntfs_filldir(struct ntfs_sb_info *sbi, struct ntfs_inode *ni,
-+			       const struct NTFS_DE *e, u8 *name,
-+			       struct dir_context *ctx)
++enum { lcb_ctx_undo_next, lcb_ctx_prev, lcb_ctx_next };
++
++/* bytes per restart table */
++static inline u32 bytes_per_rt(const struct RESTART_TABLE *rt)
 +{
-+	const struct ATTR_FILE_NAME *fname;
-+	unsigned long ino;
-+	int name_len;
-+	u32 dt_type;
++	return le16_to_cpu(rt->used) * le16_to_cpu(rt->size) +
++	       sizeof(struct RESTART_TABLE);
++}
 +
-+	fname = Add2Ptr(e, sizeof(struct NTFS_DE));
++/* log record length */
++static inline u32 lrh_length(const struct LOG_REC_HDR *lr)
++{
++	u16 t16 = le16_to_cpu(lr->lcns_follow);
 +
-+	if (fname->type == FILE_NAME_DOS)
-+		return 0;
++	return t16 > 1 ? sizeof(struct LOG_REC_HDR) + (t16 - 1) * sizeof(u64) :
++			 sizeof(struct LOG_REC_HDR);
++}
 +
-+	if (!mi_is_ref(&ni->mi, &fname->home))
-+		return 0;
++struct lcb {
++	struct LFS_RECORD_HDR *lrh; // Log record header of the current lsn
++	struct LOG_REC_HDR *log_rec;
++	u32 ctx_mode; // lcb_ctx_undo_next/lcb_ctx_prev/lcb_ctx_next
++	struct CLIENT_ID client;
++	bool alloc; // if true the we should deallocate 'log_rec'
++};
 +
-+	ino = ino_get(&e->ref);
-+
-+	if (ino == MFT_REC_ROOT)
-+		return 0;
-+
-+	/* Skip meta files ( unless option to show metafiles is set ) */
-+	if (!sbi->options.showmeta && ntfs_is_meta_file(sbi, ino))
-+		return 0;
-+
-+	if (sbi->options.nohidden && (fname->dup.fa & FILE_ATTRIBUTE_HIDDEN))
-+		return 0;
-+
-+	name_len = ntfs_utf16_to_nls(sbi, (struct le_str *)&fname->name_len,
-+				     name, PATH_MAX);
-+	if (name_len <= 0) {
-+		ntfs_warn(sbi->sb, "failed to convert name for inode %lx.",
-+			  ino);
-+		return 0;
-+	}
-+
-+	dt_type = (fname->dup.fa & FILE_ATTRIBUTE_DIRECTORY) ? DT_DIR : DT_REG;
-+
-+	return !dir_emit(ctx, (s8 *)name, name_len, ino, dt_type);
++static void lcb_put(struct lcb *lcb)
++{
++	if (lcb->alloc)
++		ntfs_free(lcb->log_rec);
++	ntfs_free(lcb->lrh);
++	ntfs_free(lcb);
 +}
 +
 +/*
-+ * ntfs_read_hdr
++ * oldest_client_lsn
 + *
-+ * helper function 'ntfs_readdir'
++ * find the oldest lsn from active clients.
 + */
-+static int ntfs_read_hdr(struct ntfs_sb_info *sbi, struct ntfs_inode *ni,
-+			 const struct INDEX_HDR *hdr, u64 vbo, u64 pos,
-+			 u8 *name, struct dir_context *ctx)
++static inline void oldest_client_lsn(const struct CLIENT_REC *ca,
++				     __le16 next_client, u64 *oldest_lsn)
++{
++	while (next_client != LFS_NO_CLIENT_LE) {
++		const struct CLIENT_REC *cr = ca + le16_to_cpu(next_client);
++		u64 lsn = le64_to_cpu(cr->oldest_lsn);
++
++		/* ignore this block if it's oldest lsn is 0 */
++		if (lsn && lsn < *oldest_lsn)
++			*oldest_lsn = lsn;
++
++		next_client = cr->next_client;
++	}
++}
++
++static inline bool is_rst_page_hdr_valid(u32 file_off,
++					 const struct RESTART_HDR *rhdr)
++{
++	u32 sys_page = le32_to_cpu(rhdr->sys_page_size);
++	u32 page_size = le32_to_cpu(rhdr->page_size);
++	u32 end_usa;
++	u16 ro;
++
++	if (sys_page < SECTOR_SIZE || page_size < SECTOR_SIZE ||
++	    sys_page & (sys_page - 1) || page_size & (page_size - 1)) {
++		return false;
++	}
++
++	/* Check that if the file offset isn't 0, it is the system page size */
++	if (file_off && file_off != sys_page)
++		return false;
++
++	/* Check support version 1.1+ */
++	if (le16_to_cpu(rhdr->major_ver) <= 1 && !rhdr->minor_ver)
++		return false;
++
++	if (le16_to_cpu(rhdr->major_ver) > 2)
++		return false;
++
++	ro = le16_to_cpu(rhdr->ra_off);
++	if (!IsQuadAligned(ro) || ro > sys_page)
++		return false;
++
++	end_usa = ((sys_page >> SECTOR_SHIFT) + 1) * sizeof(short);
++	end_usa += le16_to_cpu(rhdr->rhdr.fix_off);
++
++	if (ro < end_usa)
++		return false;
++
++	return true;
++}
++
++static inline bool is_rst_area_valid(const struct RESTART_HDR *rhdr)
++{
++	const struct RESTART_AREA *ra;
++	u16 cl, fl, ul;
++	u32 off, l_size, file_dat_bits, file_size_round;
++	u16 ro = le16_to_cpu(rhdr->ra_off);
++	u32 sys_page = le32_to_cpu(rhdr->sys_page_size);
++
++	if (ro + offsetof(struct RESTART_AREA, l_size) >
++	    SECTOR_SIZE - sizeof(short))
++		return false;
++
++	ra = Add2Ptr(rhdr, ro);
++	cl = le16_to_cpu(ra->log_clients);
++
++	if (cl > 1)
++		return false;
++
++	off = le16_to_cpu(ra->client_off);
++
++	if (!IsQuadAligned(off) || ro + off > SECTOR_SIZE - sizeof(short))
++		return false;
++
++	off += cl * sizeof(struct CLIENT_REC);
++
++	if (off > sys_page)
++		return false;
++
++	/*
++	 * Check the restart length field and whether the entire
++	 * restart area is contained that length
++	 */
++	if (le16_to_cpu(rhdr->ra_off) + le16_to_cpu(ra->ra_len) > sys_page ||
++	    off > le16_to_cpu(ra->ra_len)) {
++		return false;
++	}
++
++	/*
++	 * As a final check make sure that the use list and the free list
++	 * are either empty or point to a valid client
++	 */
++	fl = le16_to_cpu(ra->client_idx[0]);
++	ul = le16_to_cpu(ra->client_idx[1]);
++	if ((fl != LFS_NO_CLIENT && fl >= cl) ||
++	    (ul != LFS_NO_CLIENT && ul >= cl))
++		return false;
++
++	/* Make sure the sequence number bits match the log file size */
++	l_size = le64_to_cpu(ra->l_size);
++
++	file_dat_bits = sizeof(u64) * 8 - le32_to_cpu(ra->seq_num_bits);
++	file_size_round = 1u << (file_dat_bits + 3);
++	if (file_size_round != l_size &&
++	    (file_size_round < l_size || (file_size_round / 2) > l_size)) {
++		return false;
++	}
++
++	/* The log page data offset and record header length must be quad-aligned */
++	if (!IsQuadAligned(le16_to_cpu(ra->data_off)) ||
++	    !IsQuadAligned(le16_to_cpu(ra->rec_hdr_len)))
++		return false;
++
++	return true;
++}
++
++static inline bool is_client_area_valid(const struct RESTART_HDR *rhdr,
++					bool usa_error)
++{
++	u16 ro = le16_to_cpu(rhdr->ra_off);
++	const struct RESTART_AREA *ra = Add2Ptr(rhdr, ro);
++	u16 ra_len = le16_to_cpu(ra->ra_len);
++	const struct CLIENT_REC *ca;
++	u32 i;
++
++	if (usa_error && ra_len + ro > SECTOR_SIZE - sizeof(short))
++		return false;
++
++	/* Find the start of the client array */
++	ca = Add2Ptr(ra, le16_to_cpu(ra->client_off));
++
++	/*
++	 * Start with the free list
++	 * Check that all the clients are valid and that there isn't a cycle
++	 * Do the in-use list on the second pass
++	 */
++	for (i = 0; i < 2; i++) {
++		u16 client_idx = le16_to_cpu(ra->client_idx[i]);
++		bool first_client = true;
++		u16 clients = le16_to_cpu(ra->log_clients);
++
++		while (client_idx != LFS_NO_CLIENT) {
++			const struct CLIENT_REC *cr;
++
++			if (!clients ||
++			    client_idx >= le16_to_cpu(ra->log_clients))
++				return false;
++
++			clients -= 1;
++			cr = ca + client_idx;
++
++			client_idx = le16_to_cpu(cr->next_client);
++
++			if (first_client) {
++				first_client = false;
++				if (cr->prev_client != LFS_NO_CLIENT_LE)
++					return false;
++			}
++		}
++	}
++
++	return true;
++}
++
++/*
++ * remove_client
++ *
++ * remove a client record from a client record list an restart area
++ */
++static inline void remove_client(struct CLIENT_REC *ca,
++				 const struct CLIENT_REC *cr, __le16 *head)
++{
++	if (cr->prev_client == LFS_NO_CLIENT_LE)
++		*head = cr->next_client;
++	else
++		ca[le16_to_cpu(cr->prev_client)].next_client = cr->next_client;
++
++	if (cr->next_client != LFS_NO_CLIENT_LE)
++		ca[le16_to_cpu(cr->next_client)].prev_client = cr->prev_client;
++}
++
++/*
++ * add_client
++ *
++ * add a client record to the start of a list
++ */
++static inline void add_client(struct CLIENT_REC *ca, u16 index, __le16 *head)
++{
++	struct CLIENT_REC *cr = ca + index;
++
++	cr->prev_client = LFS_NO_CLIENT_LE;
++	cr->next_client = *head;
++
++	if (*head != LFS_NO_CLIENT_LE)
++		ca[le16_to_cpu(*head)].prev_client = cpu_to_le16(index);
++
++	*head = cpu_to_le16(index);
++}
++
++/*
++ * enum_rstbl
++ *
++ */
++static inline void *enum_rstbl(struct RESTART_TABLE *t, void *c)
++{
++	__le32 *e;
++	u32 bprt;
++	u16 rsize = t ? le16_to_cpu(t->size) : 0;
++
++	if (!c) {
++		if (!t || !t->total)
++			return NULL;
++		e = Add2Ptr(t, sizeof(struct RESTART_TABLE));
++	} else {
++		e = Add2Ptr(c, rsize);
++	}
++
++	/* Loop until we hit the first one allocated, or the end of the list */
++	for (bprt = bytes_per_rt(t); PtrOffset(t, e) < bprt;
++	     e = Add2Ptr(e, rsize)) {
++		if (*e == RESTART_ENTRY_ALLOCATED_LE)
++			return e;
++	}
++	return NULL;
++}
++
++/*
++ * find_dp
++ *
++ * searches for a 'vcn' in Dirty Page Table,
++ */
++static inline struct DIR_PAGE_ENTRY *find_dp(struct RESTART_TABLE *dptbl,
++					     u32 target_attr, u64 vcn)
++{
++	__le32 ta = cpu_to_le32(target_attr);
++	struct DIR_PAGE_ENTRY *dp = NULL;
++
++	while ((dp = enum_rstbl(dptbl, dp))) {
++		u64 dp_vcn = le64_to_cpu(dp->vcn);
++
++		if (dp->target_attr == ta && vcn >= dp_vcn &&
++		    vcn < dp_vcn + le32_to_cpu(dp->lcns_follow)) {
++			return dp;
++		}
++	}
++	return NULL;
++}
++
++static inline u32 norm_file_page(u32 page_size, u32 *l_size, bool use_default)
++{
++	if (use_default)
++		page_size = DefaultLogPageSize;
++
++	/* Round the file size down to a system page boundary */
++	*l_size &= ~(page_size - 1);
++
++	/* File should contain at least 2 restart pages and MinLogRecordPages pages */
++	if (*l_size < (MinLogRecordPages + 2) * page_size)
++		return 0;
++
++	return page_size;
++}
++
++static bool check_log_rec(const struct LOG_REC_HDR *lr, u32 bytes, u32 tr,
++			  u32 bytes_per_attr_entry)
++{
++	u16 t16;
++
++	if (bytes < sizeof(struct LOG_REC_HDR))
++		return false;
++	if (!tr)
++		return false;
++
++	if ((tr - sizeof(struct RESTART_TABLE)) %
++	    sizeof(struct TRANSACTION_ENTRY))
++		return false;
++
++	if (le16_to_cpu(lr->redo_off) & 7)
++		return false;
++
++	if (le16_to_cpu(lr->undo_off) & 7)
++		return false;
++
++	if (lr->target_attr)
++		goto check_lcns;
++
++	if (is_target_required(le16_to_cpu(lr->redo_op)))
++		return false;
++
++	if (is_target_required(le16_to_cpu(lr->undo_op)))
++		return false;
++
++check_lcns:
++	if (!lr->lcns_follow)
++		goto check_length;
++
++	t16 = le16_to_cpu(lr->target_attr);
++	if ((t16 - sizeof(struct RESTART_TABLE)) % bytes_per_attr_entry)
++		return false;
++
++check_length:
++	if (bytes < lrh_length(lr))
++		return false;
++
++	return true;
++}
++
++static bool check_rstbl(const struct RESTART_TABLE *rt, size_t bytes)
++{
++	u32 ts;
++	u32 i, off;
++	u16 rsize = le16_to_cpu(rt->size);
++	u16 ne = le16_to_cpu(rt->used);
++	u32 ff = le32_to_cpu(rt->first_free);
++	u32 lf = le32_to_cpu(rt->last_free);
++
++	ts = rsize * ne + sizeof(struct RESTART_TABLE);
++
++	if (!rsize || rsize > bytes ||
++	    rsize + sizeof(struct RESTART_TABLE) > bytes || bytes < ts ||
++	    le16_to_cpu(rt->total) > ne || ff > ts || lf > ts ||
++	    (ff && ff < sizeof(struct RESTART_TABLE)) ||
++	    (lf && lf < sizeof(struct RESTART_TABLE))) {
++		return false;
++	}
++
++	/* Verify each entry is either allocated or points
++	 * to a valid offset the table
++	 */
++	for (i = 0; i < ne; i++) {
++		off = le32_to_cpu(*(__le32 *)Add2Ptr(
++			rt, i * rsize + sizeof(struct RESTART_TABLE)));
++
++		if (off != RESTART_ENTRY_ALLOCATED && off &&
++		    (off < sizeof(struct RESTART_TABLE) ||
++		     ((off - sizeof(struct RESTART_TABLE)) % rsize))) {
++			return false;
++		}
++	}
++
++	/* Walk through the list headed by the first entry to make
++	 * sure none of the entries are currently being used
++	 */
++	for (off = ff; off;) {
++		if (off == RESTART_ENTRY_ALLOCATED)
++			return false;
++
++		off = le32_to_cpu(*(__le32 *)Add2Ptr(rt, off));
++	}
++
++	return true;
++}
++
++/*
++ * free_rsttbl_idx
++ *
++ * frees a previously allocated index a Restart Table.
++ */
++static inline void free_rsttbl_idx(struct RESTART_TABLE *rt, u32 off)
++{
++	__le32 *e;
++	u32 lf = le32_to_cpu(rt->last_free);
++	__le32 off_le = cpu_to_le32(off);
++
++	e = Add2Ptr(rt, off);
++
++	if (off < le32_to_cpu(rt->free_goal)) {
++		*e = rt->first_free;
++		rt->first_free = off_le;
++		if (!lf)
++			rt->last_free = off_le;
++	} else {
++		if (lf)
++			*(__le32 *)Add2Ptr(rt, lf) = off_le;
++		else
++			rt->first_free = off_le;
++
++		rt->last_free = off_le;
++		*e = 0;
++	}
++
++	le16_sub_cpu(&rt->total, 1);
++}
++
++static inline struct RESTART_TABLE *init_rsttbl(u16 esize, u16 used)
++{
++	__le32 *e, *last_free;
++	u32 off;
++	u32 bytes = esize * used + sizeof(struct RESTART_TABLE);
++	u32 lf = sizeof(struct RESTART_TABLE) + (used - 1) * esize;
++	struct RESTART_TABLE *t = ntfs_zalloc(bytes);
++
++	t->size = cpu_to_le16(esize);
++	t->used = cpu_to_le16(used);
++	t->free_goal = cpu_to_le32(~0u);
++	t->first_free = cpu_to_le32(sizeof(struct RESTART_TABLE));
++	t->last_free = cpu_to_le32(lf);
++
++	e = (__le32 *)(t + 1);
++	last_free = Add2Ptr(t, lf);
++
++	for (off = sizeof(struct RESTART_TABLE) + esize; e < last_free;
++	     e = Add2Ptr(e, esize), off += esize) {
++		*e = cpu_to_le32(off);
++	}
++	return t;
++}
++
++static inline struct RESTART_TABLE *extend_rsttbl(struct RESTART_TABLE *tbl,
++						  u32 add, u32 free_goal)
++{
++	u16 esize = le16_to_cpu(tbl->size);
++	__le32 osize = cpu_to_le32(bytes_per_rt(tbl));
++	u32 used = le16_to_cpu(tbl->used);
++	struct RESTART_TABLE *rt = init_rsttbl(esize, used + add);
++
++	memcpy(rt + 1, tbl + 1, esize * used);
++
++	rt->free_goal = free_goal == ~0u ?
++				cpu_to_le32(~0u) :
++				cpu_to_le32(sizeof(struct RESTART_TABLE) +
++					    free_goal * esize);
++
++	if (tbl->first_free) {
++		rt->first_free = tbl->first_free;
++		*(__le32 *)Add2Ptr(rt, le32_to_cpu(tbl->last_free)) = osize;
++	} else {
++		rt->first_free = osize;
++	}
++
++	rt->total = tbl->total;
++
++	ntfs_free(tbl);
++	return rt;
++}
++
++/*
++ * alloc_rsttbl_idx
++ *
++ * allocates an index from within a previously initialized Restart Table
++ */
++static inline void *alloc_rsttbl_idx(struct RESTART_TABLE **tbl)
++{
++	u32 off;
++	__le32 *e;
++	struct RESTART_TABLE *t = *tbl;
++
++	if (!t->first_free)
++		*tbl = t = extend_rsttbl(t, 16, ~0u);
++
++	off = le32_to_cpu(t->first_free);
++
++	/* Dequeue this entry and zero it. */
++	e = Add2Ptr(t, off);
++
++	t->first_free = *e;
++
++	memset(e, 0, le16_to_cpu(t->size));
++
++	*e = RESTART_ENTRY_ALLOCATED_LE;
++
++	/* If list is going empty, then we fix the last_free as well. */
++	if (!t->first_free)
++		t->last_free = 0;
++
++	le16_add_cpu(&t->total, 1);
++
++	return Add2Ptr(t, off);
++}
++
++/*
++ * alloc_rsttbl_from_idx
++ *
++ * allocates a specific index from within a previously initialized Restart Table
++ */
++static inline void *alloc_rsttbl_from_idx(struct RESTART_TABLE **tbl, u32 vbo)
++{
++	u32 off;
++	__le32 *e;
++	struct RESTART_TABLE *rt = *tbl;
++	u32 bytes = bytes_per_rt(rt);
++	u16 esize = le16_to_cpu(rt->size);
++
++	/* If the entry is not the table, we will have to extend the table */
++	if (vbo >= bytes) {
++		/*
++		 * extend the size by computing the number of entries between
++		 * the existing size and the desired index and adding
++		 * 1 to that
++		 */
++		u32 bytes2idx = vbo - bytes;
++
++		/* There should always be an integral number of entries being added */
++		/* Now extend the table */
++		*tbl = rt = extend_rsttbl(rt, bytes2idx / esize + 1, bytes);
++		if (!rt)
++			return NULL;
++	}
++
++	/* see if the entry is already allocated, and just return if it is. */
++	e = Add2Ptr(rt, vbo);
++
++	if (*e == RESTART_ENTRY_ALLOCATED_LE)
++		return e;
++
++	/*
++	 * Walk through the table, looking for the entry we're
++	 * interested and the previous entry
++	 */
++	off = le32_to_cpu(rt->first_free);
++	e = Add2Ptr(rt, off);
++
++	if (off == vbo) {
++		/* this is a match */
++		rt->first_free = *e;
++		goto skip_looking;
++	}
++
++	/*
++	 * need to walk through the list looking for the predecessor of our entry
++	 */
++	for (;;) {
++		/* Remember the entry just found */
++		u32 last_off = off;
++		__le32 *last_e = e;
++
++		/* should never run of entries. */
++
++		/* Lookup up the next entry the list */
++		off = le32_to_cpu(*last_e);
++		e = Add2Ptr(rt, off);
++
++		/* If this is our match we are done */
++		if (off == vbo) {
++			*last_e = *e;
++
++			/* If this was the last entry, we update that the table as well */
++			if (le32_to_cpu(rt->last_free) == off)
++				rt->last_free = cpu_to_le32(last_off);
++			break;
++		}
++	}
++
++skip_looking:
++	/* If the list is now empty, we fix the last_free as well */
++	if (!rt->first_free)
++		rt->last_free = 0;
++
++	/* Zero this entry */
++	memset(e, 0, esize);
++	*e = RESTART_ENTRY_ALLOCATED_LE;
++
++	le16_add_cpu(&rt->total, 1);
++
++	return e;
++}
++
++#define RESTART_SINGLE_PAGE_IO cpu_to_le16(0x0001)
++
++#define NTFSLOG_WRAPPED 0x00000001
++#define NTFSLOG_MULTIPLE_PAGE_IO 0x00000002
++#define NTFSLOG_NO_LAST_LSN 0x00000004
++#define NTFSLOG_REUSE_TAIL 0x00000010
++#define NTFSLOG_NO_OLDEST_LSN 0x00000020
++
++/*
++ * Helper struct to work with NTFS $LogFile
++ */
++struct ntfs_log {
++	struct ntfs_inode *ni;
++
++	u32 l_size;
++	u32 sys_page_size;
++	u32 sys_page_mask;
++	u32 page_size;
++	u32 page_mask; // page_size - 1
++	u8 page_bits;
++	struct RECORD_PAGE_HDR *one_page_buf;
++
++	struct RESTART_TABLE *open_attr_tbl;
++	u32 transaction_id;
++	u32 clst_per_page;
++
++	u32 first_page;
++	u32 next_page;
++	u32 ra_off;
++	u32 data_off;
++	u32 restart_size;
++	u32 data_size;
++	u16 record_header_len;
++	u64 seq_num;
++	u32 seq_num_bits;
++	u32 file_data_bits;
++	u32 seq_num_mask; /* (1 << file_data_bits) - 1 */
++
++	struct RESTART_AREA *ra; /* in-memory image of the next restart area */
++	u32 ra_size; /* the usable size of the restart area */
++
++	/*
++	 * If true, then the in-memory restart area is to be written
++	 * to the first position on the disk
++	 */
++	bool init_ra;
++	bool set_dirty; /* true if we need to set dirty flag */
++
++	u64 oldest_lsn;
++
++	u32 oldest_lsn_off;
++	u64 last_lsn;
++
++	u32 total_avail;
++	u32 total_avail_pages;
++	u32 total_undo_commit;
++	u32 max_current_avail;
++	u32 current_avail;
++	u32 reserved;
++
++	short major_ver;
++	short minor_ver;
++
++	u32 l_flags; /* See NTFSLOG_XXX */
++	u32 current_openlog_count; /* On-disk value for open_log_count */
++
++	struct CLIENT_ID client_id;
++	u32 client_undo_commit;
++};
++
++static inline u32 lsn_to_vbo(struct ntfs_log *log, const u64 lsn)
++{
++	u32 vbo = (lsn << log->seq_num_bits) >> (log->seq_num_bits - 3);
++
++	return vbo;
++}
++
++/* compute the offset in the log file of the next log page */
++static inline u32 next_page_off(struct ntfs_log *log, u32 off)
++{
++	off = (off & ~log->sys_page_mask) + log->page_size;
++	return off >= log->l_size ? log->first_page : off;
++}
++
++static inline u32 lsn_to_page_off(struct ntfs_log *log, u64 lsn)
++{
++	return (((u32)lsn) << 3) & log->page_mask;
++}
++
++static inline u64 vbo_to_lsn(struct ntfs_log *log, u32 off, u64 Seq)
++{
++	return (off >> 3) + (Seq << log->file_data_bits);
++}
++
++static inline bool is_lsn_in_file(struct ntfs_log *log, u64 lsn)
++{
++	return lsn >= log->oldest_lsn &&
++	       lsn <= le64_to_cpu(log->ra->current_lsn);
++}
++
++static inline u32 hdr_file_off(struct ntfs_log *log,
++			       struct RECORD_PAGE_HDR *hdr)
++{
++	if (log->major_ver < 2)
++		return le64_to_cpu(hdr->rhdr.lsn);
++
++	return le32_to_cpu(hdr->file_off);
++}
++
++static inline u64 base_lsn(struct ntfs_log *log,
++			   const struct RECORD_PAGE_HDR *hdr, u64 lsn)
++{
++	u64 h_lsn = le64_to_cpu(hdr->rhdr.lsn);
++	u64 ret = (((h_lsn >> log->file_data_bits) +
++		    (lsn < (lsn_to_vbo(log, h_lsn) & ~log->page_mask) ? 1 : 0))
++		   << log->file_data_bits) +
++		  ((((is_log_record_end(hdr) &&
++		      h_lsn <= le64_to_cpu(hdr->record_hdr.last_end_lsn)) ?
++			     le16_to_cpu(hdr->record_hdr.next_record_off) :
++			     log->page_size) +
++		    lsn) >>
++		   3);
++
++	return ret;
++}
++
++static inline bool verify_client_lsn(struct ntfs_log *log,
++				     const struct CLIENT_REC *client, u64 lsn)
++{
++	return lsn >= le64_to_cpu(client->oldest_lsn) &&
++	       lsn <= le64_to_cpu(log->ra->current_lsn) && lsn;
++}
++
++struct restart_info {
++	u64 last_lsn;
++	struct RESTART_HDR *r_page;
++	u32 vbo;
++	bool chkdsk_was_run;
++	bool valid_page;
++	bool initialized;
++	bool restart;
++};
++
++static int read_log_page(struct ntfs_log *log, u32 vbo,
++			 struct RECORD_PAGE_HDR **buffer, bool *usa_error)
++{
++	int err = 0;
++	u32 page_idx = vbo >> log->page_bits;
++	u32 page_off = vbo & log->page_mask;
++	u32 bytes = log->page_size - page_off;
++	void *to_free = NULL;
++	u32 page_vbo = page_idx << log->page_bits;
++	struct RECORD_PAGE_HDR *page_buf;
++	struct ntfs_inode *ni = log->ni;
++	bool bBAAD;
++
++	if (vbo >= log->l_size)
++		return -EINVAL;
++
++	if (!*buffer) {
++		to_free = ntfs_malloc(bytes);
++		if (!to_free)
++			return -ENOMEM;
++		*buffer = to_free;
++	}
++
++	page_buf = page_off ? log->one_page_buf : *buffer;
++
++	err = ntfs_read_run_nb(ni->mi.sbi, &ni->file.run, page_vbo, page_buf,
++			       log->page_size, NULL);
++	if (err)
++		goto out;
++
++	if (page_buf->rhdr.sign != NTFS_FFFF_SIGNATURE)
++		ntfs_fix_post_read(&page_buf->rhdr, PAGE_SIZE, false);
++
++	if (page_buf != *buffer)
++		memcpy(*buffer, Add2Ptr(page_buf, page_off), bytes);
++
++	bBAAD = page_buf->rhdr.sign == NTFS_BAAD_SIGNATURE;
++
++	if (usa_error)
++		*usa_error = bBAAD;
++	/* Check that the update sequence array for this page is valid */
++	/* If we don't allow errors, raise an error status */
++	else if (bBAAD)
++		err = -EINVAL;
++
++out:
++	if (err && to_free) {
++		ntfs_free(to_free);
++		*buffer = NULL;
++	}
++
++	return err;
++}
++
++/*
++ * log_read_rst
++ *
++ * it walks through 512 blocks of the file looking for a valid restart page header
++ * It will stop the first time we find a valid page header
++ */
++static int log_read_rst(struct ntfs_log *log, u32 l_size, bool first,
++			struct restart_info *info)
++{
++	u32 skip, vbo;
++	struct RESTART_HDR *r_page = ntfs_malloc(DefaultLogPageSize);
++
++	if (!r_page)
++		return -ENOMEM;
++
++	memset(info, 0, sizeof(struct restart_info));
++
++	/* Determine which restart area we are looking for */
++	if (first) {
++		vbo = 0;
++		skip = 512;
++	} else {
++		vbo = 512;
++		skip = 0;
++	}
++
++	/* loop continuously until we succeed */
++	for (; vbo < l_size; vbo = 2 * vbo + skip, skip = 0) {
++		bool usa_error;
++		u32 sys_page_size;
++		bool brst, bchk;
++		struct RESTART_AREA *ra;
++
++		/* Read a page header at the current offset */
++		if (read_log_page(log, vbo, (struct RECORD_PAGE_HDR **)&r_page,
++				  &usa_error)) {
++			/* ignore any errors */
++			continue;
++		}
++
++		/* exit if the signature is a log record page */
++		if (r_page->rhdr.sign == NTFS_RCRD_SIGNATURE) {
++			info->initialized = true;
++			break;
++		}
++
++		brst = r_page->rhdr.sign == NTFS_RSTR_SIGNATURE;
++		bchk = r_page->rhdr.sign == NTFS_CHKD_SIGNATURE;
++
++		if (!bchk && !brst) {
++			if (r_page->rhdr.sign != NTFS_FFFF_SIGNATURE) {
++				/*
++				 * Remember if the signature does not
++				 * indicate uninitialized file
++				 */
++				info->initialized = true;
++			}
++			continue;
++		}
++
++		ra = NULL;
++		info->valid_page = false;
++		info->initialized = true;
++		info->vbo = vbo;
++
++		/* Let's check the restart area if this is a valid page */
++		if (!is_rst_page_hdr_valid(vbo, r_page))
++			goto check_result;
++		ra = Add2Ptr(r_page, le16_to_cpu(r_page->ra_off));
++
++		if (!is_rst_area_valid(r_page))
++			goto check_result;
++
++		/*
++		 * We have a valid restart page header and restart area.
++		 * If chkdsk was run or we have no clients then we have
++		 * no more checking to do
++		 */
++		if (bchk || ra->client_idx[1] == LFS_NO_CLIENT_LE) {
++			info->valid_page = true;
++			goto check_result;
++		}
++
++		/* Read the entire restart area */
++		sys_page_size = le32_to_cpu(r_page->sys_page_size);
++		if (DefaultLogPageSize != sys_page_size) {
++			ntfs_free(r_page);
++			r_page = ntfs_zalloc(sys_page_size);
++			if (!r_page)
++				return -ENOMEM;
++
++			if (read_log_page(log, vbo,
++					  (struct RECORD_PAGE_HDR **)&r_page,
++					  &usa_error)) {
++				/* ignore any errors */
++				ntfs_free(r_page);
++				r_page = NULL;
++				continue;
++			}
++		}
++
++		if (is_client_area_valid(r_page, usa_error)) {
++			info->valid_page = true;
++			ra = Add2Ptr(r_page, le16_to_cpu(r_page->ra_off));
++		}
++
++check_result:
++		/* If chkdsk was run then update the caller's values and return */
++		if (r_page->rhdr.sign == NTFS_CHKD_SIGNATURE) {
++			info->chkdsk_was_run = true;
++			info->last_lsn = le64_to_cpu(r_page->rhdr.lsn);
++			info->restart = true;
++			info->r_page = r_page;
++			return 0;
++		}
++
++		/* If we have a valid page then copy the values we need from it */
++		if (info->valid_page) {
++			info->last_lsn = le64_to_cpu(ra->current_lsn);
++			info->restart = true;
++			info->r_page = r_page;
++			return 0;
++		}
++	}
++
++	ntfs_free(r_page);
++
++	return 0;
++}
++
++/*
++ * log_init_pg_hdr
++ *
++ * init "log' from restart page header
++ */
++static void log_init_pg_hdr(struct ntfs_log *log, u32 sys_page_size,
++			    u32 page_size, u16 major_ver, u16 minor_ver)
++{
++	log->sys_page_size = sys_page_size;
++	log->sys_page_mask = sys_page_size - 1;
++	log->page_size = page_size;
++	log->page_mask = page_size - 1;
++	log->page_bits = blksize_bits(page_size);
++
++	log->clst_per_page = log->page_size >> log->ni->mi.sbi->cluster_bits;
++	if (!log->clst_per_page)
++		log->clst_per_page = 1;
++
++	log->first_page = major_ver >= 2 ?
++				  0x22 * page_size :
++				  ((sys_page_size << 1) + (page_size << 1));
++	log->major_ver = major_ver;
++	log->minor_ver = minor_ver;
++}
++
++/*
++ * log_create
++ *
++ * init "log" in cases when we don't have a restart area to use
++ */
++static void log_create(struct ntfs_log *log, u32 l_size, const u64 last_lsn,
++		       u32 open_log_count, bool wrapped, bool use_multi_page)
++{
++	log->l_size = l_size;
++	/* All file offsets must be quadword aligned */
++	log->file_data_bits = blksize_bits(l_size) - 3;
++	log->seq_num_mask = (8 << log->file_data_bits) - 1;
++	log->seq_num_bits = sizeof(u64) * 8 - log->file_data_bits;
++	log->seq_num = (last_lsn >> log->file_data_bits) + 2;
++	log->next_page = log->first_page;
++	log->oldest_lsn = log->seq_num << log->file_data_bits;
++	log->oldest_lsn_off = 0;
++	log->last_lsn = log->oldest_lsn;
++
++	log->l_flags |= NTFSLOG_NO_LAST_LSN | NTFSLOG_NO_OLDEST_LSN;
++
++	/* Set the correct flags for the I/O and indicate if we have wrapped */
++	if (wrapped)
++		log->l_flags |= NTFSLOG_WRAPPED;
++
++	if (use_multi_page)
++		log->l_flags |= NTFSLOG_MULTIPLE_PAGE_IO;
++
++	/* Compute the log page values */
++	log->data_off = QuadAlign(
++		offsetof(struct RECORD_PAGE_HDR, fixups) +
++		sizeof(short) * ((log->page_size >> SECTOR_SHIFT) + 1));
++	log->data_size = log->page_size - log->data_off;
++	log->record_header_len = sizeof(struct LFS_RECORD_HDR);
++
++	/* Remember the different page sizes for reservation */
++	log->reserved = log->data_size - log->record_header_len;
++
++	/* Compute the restart page values. */
++	log->ra_off = QuadAlign(
++		offsetof(struct RESTART_HDR, fixups) +
++		sizeof(short) * ((log->sys_page_size >> SECTOR_SHIFT) + 1));
++	log->restart_size = log->sys_page_size - log->ra_off;
++	log->ra_size = offsetof(struct RESTART_AREA, clients) +
++		       sizeof(struct CLIENT_REC);
++	log->current_openlog_count = open_log_count;
++
++	/*
++	 * The total available log file space is the number of
++	 * log file pages times the space available on each page
++	 */
++	log->total_avail_pages = log->l_size - log->first_page;
++	log->total_avail = log->total_avail_pages >> log->page_bits;
++
++	/*
++	 * We assume that we can't use the end of the page less than
++	 * the file record size
++	 * Then we won't need to reserve more than the caller asks for
++	 */
++	log->max_current_avail = log->total_avail * log->reserved;
++	log->total_avail = log->total_avail * log->data_size;
++	log->current_avail = log->max_current_avail;
++}
++
++/*
++ * log_create_ra
++ *
++ * This routine is called to fill a restart area from the values stored in 'log'
++ */
++static struct RESTART_AREA *log_create_ra(struct ntfs_log *log)
++{
++	struct CLIENT_REC *cr;
++	struct RESTART_AREA *ra = ntfs_zalloc(log->restart_size);
++
++	if (!ra)
++		return NULL;
++
++	ra->current_lsn = cpu_to_le64(log->last_lsn);
++	ra->log_clients = cpu_to_le16(1);
++	ra->client_idx[1] = LFS_NO_CLIENT_LE;
++	if (log->l_flags & NTFSLOG_MULTIPLE_PAGE_IO)
++		ra->flags = RESTART_SINGLE_PAGE_IO;
++	ra->seq_num_bits = cpu_to_le32(log->seq_num_bits);
++	ra->ra_len = cpu_to_le16(log->ra_size);
++	ra->client_off = cpu_to_le16(offsetof(struct RESTART_AREA, clients));
++	ra->l_size = cpu_to_le64(log->l_size);
++	ra->rec_hdr_len = cpu_to_le16(log->record_header_len);
++	ra->data_off = cpu_to_le16(log->data_off);
++	ra->open_log_count = cpu_to_le32(log->current_openlog_count + 1);
++
++	cr = ra->clients;
++
++	cr->prev_client = LFS_NO_CLIENT_LE;
++	cr->next_client = LFS_NO_CLIENT_LE;
++
++	return ra;
++}
++
++static u32 final_log_off(struct ntfs_log *log, u64 lsn, u32 data_len)
++{
++	u32 base_vbo = lsn << 3;
++	u32 final_log_off = (base_vbo & log->seq_num_mask) & ~log->page_mask;
++	u32 page_off = base_vbo & log->page_mask;
++	u32 tail = log->page_size - page_off;
++
++	page_off -= 1;
++
++	/* Add the length of the header */
++	data_len += log->record_header_len;
++
++	/*
++	 * If this lsn is contained this log page we are done
++	 * Otherwise we need to walk through several log pages
++	 */
++	if (data_len > tail) {
++		data_len -= tail;
++		tail = log->data_size;
++		page_off = log->data_off - 1;
++
++		for (;;) {
++			final_log_off = next_page_off(log, final_log_off);
++
++			/* We are done if the remaining bytes fit on this page */
++			if (data_len <= tail)
++				break;
++			data_len -= tail;
++		}
++	}
++
++	/*
++	 * We add the remaining bytes to our starting position on this page
++	 * and then add that value to the file offset of this log page
++	 */
++	return final_log_off + data_len + page_off;
++}
++
++static int next_log_lsn(struct ntfs_log *log, const struct LFS_RECORD_HDR *rh,
++			u64 *lsn)
 +{
 +	int err;
++	u64 this_lsn = le64_to_cpu(rh->this_lsn);
++	u32 vbo = lsn_to_vbo(log, this_lsn);
++	u32 end =
++		final_log_off(log, this_lsn, le32_to_cpu(rh->client_data_len));
++	u32 hdr_off = end & ~log->sys_page_mask;
++	u64 seq = this_lsn >> log->file_data_bits;
++	struct RECORD_PAGE_HDR *page = NULL;
++
++	/* Remember if we wrapped */
++	if (end <= vbo)
++		seq += 1;
++
++	/* log page header for this page */
++	err = read_log_page(log, hdr_off, &page, NULL);
++	if (err)
++		return err;
++
++	/*
++	 * If the lsn we were given was not the last lsn on this page,
++	 * then the starting offset for the next lsn is on a quad word
++	 * boundary following the last file offset for the current lsn
++	 * Otherwise the file offset is the start of the data on the next page
++	 */
++	if (this_lsn == le64_to_cpu(page->rhdr.lsn)) {
++		/* If we wrapped, we need to increment the sequence number */
++		hdr_off = next_page_off(log, hdr_off);
++		if (hdr_off == log->first_page)
++			seq += 1;
++
++		vbo = hdr_off + log->data_off;
++	} else {
++		vbo = QuadAlign(end);
++	}
++
++	/* Compute the lsn based on the file offset and the sequence count */
++	*lsn = vbo_to_lsn(log, vbo, seq);
++
++	/*
++	 * If this lsn is within the legal range for the file, we return true
++	 * Otherwise false indicates that there are no more lsn's
++	 */
++	if (!is_lsn_in_file(log, *lsn))
++		*lsn = 0;
++
++	ntfs_free(page);
++
++	return 0;
++}
++
++/*
++ * current_log_avail
++ *
++ * calculate the number of bytes available for log records
++ */
++static u32 current_log_avail(struct ntfs_log *log)
++{
++	u32 oldest_off, next_free_off, free_bytes;
++
++	if (log->l_flags & NTFSLOG_NO_LAST_LSN) {
++		/* The entire file is available */
++		return log->max_current_avail;
++	}
++
++	/*
++	 * If there is a last lsn the restart area then we know that we will
++	 * have to compute the free range
++	 * If there is no oldest lsn then start at the first page of the file
++	 */
++	oldest_off = (log->l_flags & NTFSLOG_NO_OLDEST_LSN) ?
++			     log->first_page :
++			     (log->oldest_lsn_off & ~log->sys_page_mask);
++
++	/*
++	 * We will use the next log page offset to compute the next free page\
++	 * If we are going to reuse this page go to the next page
++	 * If we are at the first page then use the end of the file
++	 */
++	next_free_off = (log->l_flags & NTFSLOG_REUSE_TAIL) ?
++				log->next_page + log->page_size :
++				log->next_page == log->first_page ?
++				log->l_size :
++				log->next_page;
++
++	/* If the two offsets are the same then there is no available space */
++	if (oldest_off == next_free_off)
++		return 0;
++	/*
++	 * If the free offset follows the oldest offset then subtract
++	 * this range from the total available pages
++	 */
++	free_bytes =
++		oldest_off < next_free_off ?
++			log->total_avail_pages - (next_free_off - oldest_off) :
++			oldest_off - next_free_off;
++
++	free_bytes >>= log->page_bits;
++	return free_bytes * log->reserved;
++}
++
++static bool check_subseq_log_page(struct ntfs_log *log,
++				  const struct RECORD_PAGE_HDR *rp, u32 vbo,
++				  u64 seq)
++{
++	u64 lsn_seq;
++	const struct NTFS_RECORD_HEADER *rhdr = &rp->rhdr;
++	u64 lsn = le64_to_cpu(rhdr->lsn);
++
++	if (rhdr->sign == NTFS_FFFF_SIGNATURE || !rhdr->sign)
++		return false;
++
++	/*
++	 * If the last lsn on the page occurs was written after the page
++	 * that caused the original error then we have a fatal error
++	 */
++	lsn_seq = lsn >> log->file_data_bits;
++
++	/*
++	 * If the sequence number for the lsn the page is equal or greater
++	 * than lsn we expect, then this is a subsequent write
++	 */
++	return lsn_seq >= seq ||
++	       (lsn_seq == seq - 1 && log->first_page == vbo &&
++		vbo != (lsn_to_vbo(log, lsn) & ~log->page_mask));
++}
++
++/*
++ * last_log_lsn
++ *
++ * This routine walks through the log pages for a file, searching for the
++ * last log page written to the file
++ */
++static int last_log_lsn(struct ntfs_log *log)
++{
++	int err;
++	bool usa_error = false;
++	bool replace_page = false;
++	bool reuse_page = log->l_flags & NTFSLOG_REUSE_TAIL;
++	bool wrapped_file, wrapped;
++
++	u32 page_cnt = 1, page_pos = 1;
++	u32 page_off = 0, page_off1 = 0, saved_off = 0;
++	u32 final_off, second_off, final_off_prev = 0, second_off_prev = 0;
++	u32 first_file_off = 0, second_file_off = 0;
++	u32 part_io_count = 0;
++	u32 tails = 0;
++	u32 this_off, curpage_off, nextpage_off, remain_pages;
++
++	u64 expected_seq, seq_base = 0, lsn_base = 0;
++	u64 best_lsn, best_lsn1, best_lsn2;
++	u64 lsn_cur, lsn1, lsn2;
++	u64 last_ok_lsn = reuse_page ? log->last_lsn : 0;
++
++	u16 cur_pos, best_page_pos;
++
++	struct RECORD_PAGE_HDR *page = NULL;
++	struct RECORD_PAGE_HDR *tst_page = NULL;
++	struct RECORD_PAGE_HDR *first_tail = NULL;
++	struct RECORD_PAGE_HDR *second_tail = NULL;
++	struct RECORD_PAGE_HDR *tail_page = NULL;
++	struct RECORD_PAGE_HDR *second_tail_prev = NULL;
++	struct RECORD_PAGE_HDR *first_tail_prev = NULL;
++	struct RECORD_PAGE_HDR *page_bufs = NULL;
++	struct RECORD_PAGE_HDR *best_page;
++
++	if (log->major_ver >= 2) {
++		final_off = 0x02 * log->page_size;
++		second_off = 0x12 * log->page_size;
++
++		// 0x10 == 0x12 - 0x2
++		page_bufs = ntfs_malloc(log->page_size * 0x10);
++		if (!page_bufs)
++			return -ENOMEM;
++	} else {
++		second_off = log->first_page - log->page_size;
++		final_off = second_off - log->page_size;
++	}
++
++next_tail:
++	/* Read second tail page (at pos 3/0x12000) */
++	if (read_log_page(log, second_off, &second_tail, &usa_error) ||
++	    usa_error || second_tail->rhdr.sign != NTFS_RCRD_SIGNATURE) {
++		ntfs_free(second_tail);
++		second_tail = NULL;
++		second_file_off = 0;
++		lsn2 = 0;
++	} else {
++		second_file_off = hdr_file_off(log, second_tail);
++		lsn2 = le64_to_cpu(second_tail->record_hdr.last_end_lsn);
++	}
++
++	/* Read first tail page (at pos 2/0x2000 ) */
++	if (read_log_page(log, final_off, &first_tail, &usa_error) ||
++	    usa_error || first_tail->rhdr.sign != NTFS_RCRD_SIGNATURE) {
++		ntfs_free(first_tail);
++		first_tail = NULL;
++		first_file_off = 0;
++		lsn1 = 0;
++	} else {
++		first_file_off = hdr_file_off(log, first_tail);
++		lsn1 = le64_to_cpu(first_tail->record_hdr.last_end_lsn);
++	}
++
++	if (log->major_ver < 2) {
++		int best_page;
++
++		first_tail_prev = first_tail;
++		final_off_prev = first_file_off;
++		second_tail_prev = second_tail;
++		second_off_prev = second_file_off;
++		tails = 1;
++
++		if (!first_tail && !second_tail)
++			goto tail_read;
++
++		if (first_tail && second_tail)
++			best_page = lsn1 < lsn2 ? 1 : 0;
++		else if (first_tail)
++			best_page = 0;
++		else
++			best_page = 1;
++
++		page_off = best_page ? second_file_off : first_file_off;
++		seq_base = (best_page ? lsn2 : lsn1) >> log->file_data_bits;
++		goto tail_read;
++	}
++
++	best_lsn1 = first_tail ? base_lsn(log, first_tail, first_file_off) : 0;
++	best_lsn2 =
++		second_tail ? base_lsn(log, second_tail, second_file_off) : 0;
++
++	if (first_tail && second_tail) {
++		if (best_lsn1 > best_lsn2) {
++			best_lsn = best_lsn1;
++			best_page = first_tail;
++			this_off = first_file_off;
++		} else {
++			best_lsn = best_lsn2;
++			best_page = second_tail;
++			this_off = second_file_off;
++		}
++	} else if (first_tail) {
++		best_lsn = best_lsn1;
++		best_page = first_tail;
++		this_off = first_file_off;
++	} else if (second_tail) {
++		best_lsn = best_lsn2;
++		best_page = second_tail;
++		this_off = second_file_off;
++	} else {
++		goto tail_read;
++	}
++
++	best_page_pos = le16_to_cpu(best_page->page_pos);
++
++	if (!tails) {
++		if (best_page_pos == page_pos) {
++			seq_base = best_lsn >> log->file_data_bits;
++			saved_off = page_off = le32_to_cpu(best_page->file_off);
++			lsn_base = best_lsn;
++
++			memmove(page_bufs, best_page, log->page_size);
++
++			page_cnt = le16_to_cpu(best_page->page_count);
++			if (page_cnt > 1)
++				page_pos += 1;
++
++			tails = 1;
++		}
++	} else if (seq_base == (best_lsn >> log->file_data_bits) &&
++		   saved_off + log->page_size == this_off &&
++		   lsn_base < best_lsn &&
++		   (page_pos != page_cnt || best_page_pos == page_pos ||
++		    best_page_pos == 1) &&
++		   (page_pos >= page_cnt || best_page_pos == page_pos)) {
++		u16 bppc = le16_to_cpu(best_page->page_count);
++
++		saved_off += log->page_size;
++		lsn_base = best_lsn;
++
++		memmove(Add2Ptr(page_bufs, tails * log->page_size), best_page,
++			log->page_size);
++
++		tails += 1;
++
++		if (best_page_pos != bppc) {
++			page_cnt = bppc;
++			page_pos = best_page_pos;
++
++			if (page_cnt > 1)
++				page_pos += 1;
++		} else {
++			page_pos = page_cnt = 1;
++		}
++	} else {
++		ntfs_free(first_tail);
++		ntfs_free(second_tail);
++		goto tail_read;
++	}
++
++	ntfs_free(first_tail_prev);
++	first_tail_prev = first_tail;
++	final_off_prev = first_file_off;
++	first_tail = NULL;
++
++	ntfs_free(second_tail_prev);
++	second_tail_prev = second_tail;
++	second_off_prev = second_file_off;
++	second_tail = NULL;
++
++	final_off += log->page_size;
++	second_off += log->page_size;
++
++	if (tails < 0x10)
++		goto next_tail;
++tail_read:
++	first_tail = first_tail_prev;
++	final_off = final_off_prev;
++
++	second_tail = second_tail_prev;
++	second_off = second_off_prev;
++
++	page_cnt = page_pos = 1;
++
++	curpage_off = seq_base == log->seq_num ? min(log->next_page, page_off) :
++						 log->next_page;
++
++	wrapped_file =
++		curpage_off == log->first_page &&
++		!(log->l_flags & (NTFSLOG_NO_LAST_LSN | NTFSLOG_REUSE_TAIL));
++
++	expected_seq = wrapped_file ? (log->seq_num + 1) : log->seq_num;
++
++	nextpage_off = curpage_off;
++
++next_page:
++	tail_page = NULL;
++	/* Read the next log page */
++	err = read_log_page(log, curpage_off, &page, &usa_error);
++
++	/* Compute the next log page offset the file */
++	nextpage_off = next_page_off(log, curpage_off);
++	wrapped = nextpage_off == log->first_page;
++
++	if (tails > 1) {
++		struct RECORD_PAGE_HDR *cur_page =
++			Add2Ptr(page_bufs, curpage_off - page_off);
++
++		if (curpage_off == saved_off) {
++			tail_page = cur_page;
++			goto use_tail_page;
++		}
++
++		if (page_off > curpage_off || curpage_off >= saved_off)
++			goto use_tail_page;
++
++		if (page_off1)
++			goto use_cur_page;
++
++		if (!err && !usa_error &&
++		    page->rhdr.sign == NTFS_RCRD_SIGNATURE &&
++		    cur_page->rhdr.lsn == page->rhdr.lsn &&
++		    cur_page->record_hdr.next_record_off ==
++			    page->record_hdr.next_record_off &&
++		    ((page_pos == page_cnt &&
++		      le16_to_cpu(page->page_pos) == 1) ||
++		     (page_pos != page_cnt &&
++		      le16_to_cpu(page->page_pos) == page_pos + 1 &&
++		      le16_to_cpu(page->page_count) == page_cnt))) {
++			cur_page = NULL;
++			goto use_tail_page;
++		}
++
++		page_off1 = page_off;
++
++use_cur_page:
++
++		lsn_cur = le64_to_cpu(cur_page->rhdr.lsn);
++
++		if (last_ok_lsn !=
++			    le64_to_cpu(cur_page->record_hdr.last_end_lsn) &&
++		    ((lsn_cur >> log->file_data_bits) +
++		     ((curpage_off <
++		       (lsn_to_vbo(log, lsn_cur) & ~log->page_mask)) ?
++			      1 :
++			      0)) != expected_seq) {
++			goto check_tail;
++		}
++
++		if (!is_log_record_end(cur_page)) {
++			tail_page = NULL;
++			last_ok_lsn = lsn_cur;
++			goto next_page_1;
++		}
++
++		log->seq_num = expected_seq;
++		log->l_flags &= ~NTFSLOG_NO_LAST_LSN;
++		log->last_lsn = le64_to_cpu(cur_page->record_hdr.last_end_lsn);
++		log->ra->current_lsn = cur_page->record_hdr.last_end_lsn;
++
++		if (log->record_header_len <=
++		    log->page_size -
++			    le16_to_cpu(cur_page->record_hdr.next_record_off)) {
++			log->l_flags |= NTFSLOG_REUSE_TAIL;
++			log->next_page = curpage_off;
++		} else {
++			log->l_flags &= ~NTFSLOG_REUSE_TAIL;
++			log->next_page = nextpage_off;
++		}
++
++		if (wrapped_file)
++			log->l_flags |= NTFSLOG_WRAPPED;
++
++		last_ok_lsn = le64_to_cpu(cur_page->record_hdr.last_end_lsn);
++		goto next_page_1;
++	}
++
++	/*
++	 * If we are at the expected first page of a transfer check to see
++	 * if either tail copy is at this offset
++	 * If this page is the last page of a transfer, check if we wrote
++	 * a subsequent tail copy
++	 */
++	if (page_cnt == page_pos || page_cnt == page_pos + 1) {
++		/*
++		 * Check if the offset matches either the first or second
++		 * tail copy. It is possible it will match both
++		 */
++		if (curpage_off == final_off)
++			tail_page = first_tail;
++
++		/*
++		 * If we already matched on the first page then
++		 * check the ending lsn's.
++		 */
++		if (curpage_off == second_off) {
++			if (!tail_page ||
++			    (second_tail &&
++			     le64_to_cpu(second_tail->record_hdr.last_end_lsn) >
++				     le64_to_cpu(first_tail->record_hdr
++							 .last_end_lsn))) {
++				tail_page = second_tail;
++			}
++		}
++	}
++
++use_tail_page:
++	if (tail_page) {
++		/* we have a candidate for a tail copy */
++		lsn_cur = le64_to_cpu(tail_page->record_hdr.last_end_lsn);
++
++		if (last_ok_lsn < lsn_cur) {
++			/*
++			 * If the sequence number is not expected,
++			 * then don't use the tail copy
++			 */
++			if (expected_seq != (lsn_cur >> log->file_data_bits))
++				tail_page = NULL;
++		} else if (last_ok_lsn > lsn_cur) {
++			/*
++			 * If the last lsn is greater than the one on
++			 * this page then forget this tail
++			 */
++			tail_page = NULL;
++		}
++	}
++
++	/* If we have an error on the current page, we will break of this loop */
++	if (err || usa_error)
++		goto check_tail;
++
++	/*
++	 * Done if the last lsn on this page doesn't match the previous known
++	 * last lsn or the sequence number is not expected
++	 */
++	lsn_cur = le64_to_cpu(page->rhdr.lsn);
++	if (last_ok_lsn != lsn_cur &&
++	    expected_seq != (lsn_cur >> log->file_data_bits)) {
++		goto check_tail;
++	}
++
++	/*
++	 * Check that the page position and page count values are correct
++	 * If this is the first page of a transfer the position must be 1
++	 * and the count will be unknown
++	 */
++	if (page_cnt == page_pos) {
++		if (page->page_pos != cpu_to_le16(1) &&
++		    (!reuse_page || page->page_pos != page->page_count)) {
++			/*
++			 * If the current page is the first page we are
++			 * looking at and we are reusing this page then
++			 * it can be either the first or last page of a
++			 * transfer. Otherwise it can only be the first.
++			 */
++			goto check_tail;
++		}
++	} else if (le16_to_cpu(page->page_count) != page_cnt ||
++		   le16_to_cpu(page->page_pos) != page_pos + 1) {
++		/*
++		 * The page position better be 1 more than the last page
++		 * position and the page count better match
++		 */
++		goto check_tail;
++	}
++
++	/*
++	 * We have a valid page the file and may have a valid page
++	 * the tail copy area
++	 * If the tail page was written after the page the file then
++	 * break of the loop
++	 */
++	if (tail_page &&
++	    le64_to_cpu(tail_page->record_hdr.last_end_lsn) > lsn_cur) {
++		/* Remember if we will replace the page */
++		replace_page = true;
++		goto check_tail;
++	}
++
++	tail_page = NULL;
++
++	if (is_log_record_end(page)) {
++		/*
++		 * Since we have read this page we know the sequence number
++		 * is the same as our expected value
++		 */
++		log->seq_num = expected_seq;
++		log->last_lsn = le64_to_cpu(page->record_hdr.last_end_lsn);
++		log->ra->current_lsn = page->record_hdr.last_end_lsn;
++		log->l_flags &= ~NTFSLOG_NO_LAST_LSN;
++
++		/*
++		 * If there is room on this page for another header then
++		 * remember we want to reuse the page
++		 */
++		if (log->record_header_len <=
++		    log->page_size -
++			    le16_to_cpu(page->record_hdr.next_record_off)) {
++			log->l_flags |= NTFSLOG_REUSE_TAIL;
++			log->next_page = curpage_off;
++		} else {
++			log->l_flags &= ~NTFSLOG_REUSE_TAIL;
++			log->next_page = nextpage_off;
++		}
++
++		/* Remember if we wrapped the log file */
++		if (wrapped_file)
++			log->l_flags |= NTFSLOG_WRAPPED;
++	}
++
++	/*
++	 * Remember the last page count and position.
++	 * Also remember the last known lsn
++	 */
++	page_cnt = le16_to_cpu(page->page_count);
++	page_pos = le16_to_cpu(page->page_pos);
++	last_ok_lsn = le64_to_cpu(page->rhdr.lsn);
++
++next_page_1:
++
++	if (wrapped) {
++		expected_seq += 1;
++		wrapped_file = 1;
++	}
++
++	curpage_off = nextpage_off;
++	ntfs_free(page);
++	page = NULL;
++	reuse_page = 0;
++	goto next_page;
++
++check_tail:
++	if (tail_page) {
++		log->seq_num = expected_seq;
++		log->last_lsn = le64_to_cpu(tail_page->record_hdr.last_end_lsn);
++		log->ra->current_lsn = tail_page->record_hdr.last_end_lsn;
++		log->l_flags &= ~NTFSLOG_NO_LAST_LSN;
++
++		if (log->page_size -
++			    le16_to_cpu(
++				    tail_page->record_hdr.next_record_off) >=
++		    log->record_header_len) {
++			log->l_flags |= NTFSLOG_REUSE_TAIL;
++			log->next_page = curpage_off;
++		} else {
++			log->l_flags &= ~NTFSLOG_REUSE_TAIL;
++			log->next_page = nextpage_off;
++		}
++
++		if (wrapped)
++			log->l_flags |= NTFSLOG_WRAPPED;
++	}
++
++	/* Remember that the partial IO will start at the next page */
++	second_off = nextpage_off;
++
++	/*
++	 * If the next page is the first page of the file then update
++	 * the sequence number for log records which begon the next page
++	 */
++	if (wrapped)
++		expected_seq += 1;
++
++	/*
++	 * If we have a tail copy or are performing single page I/O we can
++	 * immediately look at the next page
++	 */
++	if (replace_page || (log->ra->flags & RESTART_SINGLE_PAGE_IO)) {
++		page_cnt = 2;
++		page_pos = 1;
++		goto check_valid;
++	}
++
++	if (page_pos != page_cnt)
++		goto check_valid;
++	/*
++	 * If the next page causes us to wrap to the beginning of the log
++	 * file then we know which page to check next.
++	 */
++	if (wrapped) {
++		page_cnt = 2;
++		page_pos = 1;
++		goto check_valid;
++	}
++
++	cur_pos = 2;
++
++next_test_page:
++	ntfs_free(tst_page);
++	tst_page = NULL;
++
++	/* Walk through the file, reading log pages */
++	err = read_log_page(log, nextpage_off, &tst_page, &usa_error);
++
++	/*
++	 * If we get a USA error then assume that we correctly found
++	 * the end of the original transfer
++	 */
++	if (usa_error)
++		goto file_is_valid;
++
++	/*
++	 * If we were able to read the page, we examine it to see if it
++	 * is the same or different Io block
++	 */
++	if (err)
++		goto next_test_page_1;
++
++	if (le16_to_cpu(tst_page->page_pos) == cur_pos &&
++	    check_subseq_log_page(log, tst_page, nextpage_off, expected_seq)) {
++		page_cnt = le16_to_cpu(tst_page->page_count) + 1;
++		page_pos = le16_to_cpu(tst_page->page_pos);
++		goto check_valid;
++	} else {
++		goto file_is_valid;
++	}
++
++next_test_page_1:
++
++	nextpage_off = next_page_off(log, curpage_off);
++	wrapped = nextpage_off == log->first_page;
++
++	if (wrapped) {
++		expected_seq += 1;
++		page_cnt = 2;
++		page_pos = 1;
++	}
++
++	cur_pos += 1;
++	part_io_count += 1;
++	if (!wrapped)
++		goto next_test_page;
++
++check_valid:
++	/* Skip over the remaining pages this transfer */
++	remain_pages = page_cnt - page_pos - 1;
++	part_io_count += remain_pages;
++
++	while (remain_pages--) {
++		nextpage_off = next_page_off(log, curpage_off);
++		wrapped = nextpage_off == log->first_page;
++
++		if (wrapped)
++			expected_seq += 1;
++	}
++
++	/* Call our routine to check this log page */
++	ntfs_free(tst_page);
++	tst_page = NULL;
++
++	err = read_log_page(log, nextpage_off, &tst_page, &usa_error);
++	if (!err && !usa_error &&
++	    check_subseq_log_page(log, tst_page, nextpage_off, expected_seq)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++file_is_valid:
++
++	/* We have a valid file */
++	if (page_off1 || tail_page) {
++		struct RECORD_PAGE_HDR *tmp_page;
++
++		if (sb_rdonly(log->ni->mi.sbi->sb)) {
++			err = -EROFS;
++			goto out;
++		}
++
++		if (page_off1) {
++			tmp_page = Add2Ptr(page_bufs, page_off1 - page_off);
++			tails -= (page_off1 - page_off) / log->page_size;
++			if (!tail_page)
++				tails -= 1;
++		} else {
++			tmp_page = tail_page;
++			tails = 1;
++		}
++
++		while (tails--) {
++			u64 off = hdr_file_off(log, tmp_page);
++
++			if (!page) {
++				page = ntfs_malloc(log->page_size);
++				if (!page)
++					return -ENOMEM;
++			}
++
++			/*
++			 * Correct page and copy the data from this page
++			 * into it and flush it to disk
++			 */
++			memcpy(page, tmp_page, log->page_size);
++
++			/* Fill last flushed lsn value flush the page */
++			if (log->major_ver < 2)
++				page->rhdr.lsn = page->record_hdr.last_end_lsn;
++			else
++				page->file_off = 0;
++
++			page->page_pos = page->page_count = cpu_to_le16(1);
++
++			ntfs_fix_pre_write(&page->rhdr, log->page_size);
++
++			err = ntfs_sb_write_run(log->ni->mi.sbi,
++						&log->ni->file.run, off, page,
++						log->page_size);
++
++			if (err)
++				goto out;
++
++			if (part_io_count && second_off == off) {
++				second_off += log->page_size;
++				part_io_count -= 1;
++			}
++
++			tmp_page = Add2Ptr(tmp_page, log->page_size);
++		}
++	}
++
++	if (part_io_count) {
++		if (sb_rdonly(log->ni->mi.sbi->sb)) {
++			err = -EROFS;
++			goto out;
++		}
++	}
++
++out:
++	ntfs_free(second_tail);
++	ntfs_free(first_tail);
++	ntfs_free(page);
++	ntfs_free(tst_page);
++	ntfs_free(page_bufs);
++
++	return err;
++}
++
++/*
++ * read_log_rec_buf
++ *
++ * copies a log record from the file to a buffer
++ * The log record may span several log pages and may even wrap the file
++ */
++static int read_log_rec_buf(struct ntfs_log *log,
++			    const struct LFS_RECORD_HDR *rh, void *buffer)
++{
++	int err;
++	struct RECORD_PAGE_HDR *ph = NULL;
++	u64 lsn = le64_to_cpu(rh->this_lsn);
++	u32 vbo = lsn_to_vbo(log, lsn) & ~log->page_mask;
++	u32 off = lsn_to_page_off(log, lsn) + log->record_header_len;
++	u32 data_len = le32_to_cpu(rh->client_data_len);
++
++	/*
++	 * While there are more bytes to transfer,
++	 * we continue to attempt to perform the read
++	 */
++	for (;;) {
++		bool usa_error;
++		u32 tail = log->page_size - off;
++
++		if (tail >= data_len)
++			tail = data_len;
++
++		data_len -= tail;
++
++		err = read_log_page(log, vbo, &ph, &usa_error);
++		if (err)
++			goto out;
++
++		/*
++		 * The last lsn on this page better be greater or equal
++		 * to the lsn we are copying
++		 */
++		if (lsn > le64_to_cpu(ph->rhdr.lsn)) {
++			err = -EINVAL;
++			goto out;
++		}
++
++		memcpy(buffer, Add2Ptr(ph, off), tail);
++
++		/* If there are no more bytes to transfer, we exit the loop */
++		if (!data_len) {
++			if (!is_log_record_end(ph) ||
++			    lsn > le64_to_cpu(ph->record_hdr.last_end_lsn)) {
++				err = -EINVAL;
++				goto out;
++			}
++			break;
++		}
++
++		if (ph->rhdr.lsn == ph->record_hdr.last_end_lsn ||
++		    lsn > le64_to_cpu(ph->rhdr.lsn)) {
++			err = -EINVAL;
++			goto out;
++		}
++
++		vbo = next_page_off(log, vbo);
++		off = log->data_off;
++
++		/*
++		 * adjust our pointer the user's buffer to transfer
++		 * the next block to
++		 */
++		buffer = Add2Ptr(buffer, tail);
++	}
++
++out:
++	ntfs_free(ph);
++	return err;
++}
++
++static int read_rst_area(struct ntfs_log *log, struct NTFS_RESTART **rst_,
++			 u64 *lsn)
++{
++	int err;
++	struct LFS_RECORD_HDR *rh = NULL;
++	const struct CLIENT_REC *cr =
++		Add2Ptr(log->ra, le16_to_cpu(log->ra->client_off));
++	u64 lsnr, lsnc = le64_to_cpu(cr->restart_lsn);
++	u32 len;
++	struct NTFS_RESTART *rst;
++
++	*lsn = 0;
++	*rst_ = NULL;
++
++	/* If the client doesn't have a restart area, go ahead and exit now */
++	if (!lsnc)
++		return 0;
++
++	err = read_log_page(log, lsn_to_vbo(log, lsnc),
++			    (struct RECORD_PAGE_HDR **)&rh, NULL);
++	if (err)
++		return err;
++
++	rst = NULL;
++	lsnr = le64_to_cpu(rh->this_lsn);
++
++	if (lsnc != lsnr) {
++		/* If the lsn values don't match, then the disk is corrupt */
++		err = -EINVAL;
++		goto out;
++	}
++
++	*lsn = lsnr;
++	len = le32_to_cpu(rh->client_data_len);
++
++	if (!len) {
++		err = 0;
++		goto out;
++	}
++
++	if (len < sizeof(struct NTFS_RESTART)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	rst = ntfs_malloc(len);
++	if (!rst) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	/* Copy the data into the 'rst' buffer */
++	err = read_log_rec_buf(log, rh, rst);
++	if (err)
++		goto out;
++
++	*rst_ = rst;
++	rst = NULL;
++
++out:
++	ntfs_free(rh);
++	ntfs_free(rst);
++
++	return err;
++}
++
++static int find_log_rec(struct ntfs_log *log, u64 lsn, struct lcb *lcb)
++{
++	int err;
++	struct LFS_RECORD_HDR *rh = lcb->lrh;
++	u32 rec_len, len;
++
++	/* Read the record header for this lsn */
++	if (!rh) {
++		err = read_log_page(log, lsn_to_vbo(log, lsn),
++				    (struct RECORD_PAGE_HDR **)&rh, NULL);
++
++		lcb->lrh = rh;
++		if (err)
++			return err;
++	}
++
++	/*
++	 * If the lsn the log record doesn't match the desired
++	 * lsn then the disk is corrupt
++	 */
++	if (lsn != le64_to_cpu(rh->this_lsn))
++		return -EINVAL;
++
++	len = le32_to_cpu(rh->client_data_len);
++
++	/*
++	 * check that the length field isn't greater than the total
++	 * available space the log file
++	 */
++	rec_len = len + log->record_header_len;
++	if (rec_len >= log->total_avail)
++		return -EINVAL;
++
++	/*
++	 * If the entire log record is on this log page,
++	 * put a pointer to the log record the context block
++	 */
++	if (rh->flags & LOG_RECORD_MULTI_PAGE) {
++		void *lr = ntfs_malloc(len);
++
++		if (!lr)
++			return -ENOMEM;
++
++		lcb->log_rec = lr;
++		lcb->alloc = true;
++
++		/* Copy the data into the buffer returned */
++		err = read_log_rec_buf(log, rh, lr);
++		if (err)
++			return err;
++	} else {
++		/* If beyond the end of the current page -> an error */
++		u32 page_off = lsn_to_page_off(log, lsn);
++
++		if (page_off + len + log->record_header_len > log->page_size)
++			return -EINVAL;
++
++		lcb->log_rec = Add2Ptr(rh, sizeof(struct LFS_RECORD_HDR));
++		lcb->alloc = false;
++	}
++
++	return 0;
++}
++
++/*
++ * read_log_rec_lcb
++ *
++ * initiates the query operation.
++ */
++static int read_log_rec_lcb(struct ntfs_log *log, u64 lsn, u32 ctx_mode,
++			    struct lcb **lcb_)
++{
++	int err;
++	const struct CLIENT_REC *cr;
++	struct lcb *lcb;
++
++	switch (ctx_mode) {
++	case lcb_ctx_undo_next:
++	case lcb_ctx_prev:
++	case lcb_ctx_next:
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	/* check that the given lsn is the legal range for this client */
++	cr = Add2Ptr(log->ra, le16_to_cpu(log->ra->client_off));
++
++	if (!verify_client_lsn(log, cr, lsn))
++		return -EINVAL;
++
++	lcb = ntfs_zalloc(sizeof(struct lcb));
++	if (!lcb)
++		return -ENOMEM;
++	lcb->client = log->client_id;
++	lcb->ctx_mode = ctx_mode;
++
++	/* Find the log record indicated by the given lsn */
++	err = find_log_rec(log, lsn, lcb);
++	if (err)
++		goto out;
++
++	*lcb_ = lcb;
++	return 0;
++
++out:
++	lcb_put(lcb);
++	*lcb_ = NULL;
++	return err;
++}
++
++/*
++ * find_client_next_lsn
++ *
++ * attempt to find the next lsn to return to a client based on the context mode.
++ */
++static int find_client_next_lsn(struct ntfs_log *log, struct lcb *lcb, u64 *lsn)
++{
++	int err;
++	u64 next_lsn;
++	struct LFS_RECORD_HDR *hdr;
++
++	hdr = lcb->lrh;
++	*lsn = 0;
++
++	if (lcb_ctx_next != lcb->ctx_mode)
++		goto check_undo_next;
++
++	/* Loop as long as another lsn can be found */
++	for (;;) {
++		u64 current_lsn;
++
++		err = next_log_lsn(log, hdr, &current_lsn);
++		if (err)
++			goto out;
++
++		if (!current_lsn)
++			break;
++
++		if (hdr != lcb->lrh)
++			ntfs_free(hdr);
++
++		hdr = NULL;
++		err = read_log_page(log, lsn_to_vbo(log, current_lsn),
++				    (struct RECORD_PAGE_HDR **)&hdr, NULL);
++		if (err)
++			goto out;
++
++		if (memcmp(&hdr->client, &lcb->client,
++			   sizeof(struct CLIENT_ID))) {
++			/*err = -EINVAL; */
++		} else if (LfsClientRecord == hdr->record_type) {
++			ntfs_free(lcb->lrh);
++			lcb->lrh = hdr;
++			*lsn = current_lsn;
++			return 0;
++		}
++	}
++
++out:
++	if (hdr != lcb->lrh)
++		ntfs_free(hdr);
++	return err;
++
++check_undo_next:
++	if (lcb_ctx_undo_next == lcb->ctx_mode)
++		next_lsn = le64_to_cpu(hdr->client_undo_next_lsn);
++	else if (lcb_ctx_prev == lcb->ctx_mode)
++		next_lsn = le64_to_cpu(hdr->client_prev_lsn);
++	else
++		return 0;
++
++	if (!next_lsn)
++		return 0;
++
++	if (!verify_client_lsn(
++		    log, Add2Ptr(log->ra, le16_to_cpu(log->ra->client_off)),
++		    next_lsn))
++		return 0;
++
++	hdr = NULL;
++	err = read_log_page(log, lsn_to_vbo(log, next_lsn),
++			    (struct RECORD_PAGE_HDR **)&hdr, NULL);
++	if (err)
++		return err;
++	ntfs_free(lcb->lrh);
++	lcb->lrh = hdr;
++
++	*lsn = next_lsn;
++
++	return 0;
++}
++
++static int read_next_log_rec(struct ntfs_log *log, struct lcb *lcb, u64 *lsn)
++{
++	int err;
++
++	err = find_client_next_lsn(log, lcb, lsn);
++	if (err)
++		return err;
++
++	if (!*lsn)
++		return 0;
++
++	if (lcb->alloc)
++		ntfs_free(lcb->log_rec);
++
++	lcb->log_rec = NULL;
++	lcb->alloc = false;
++	ntfs_free(lcb->lrh);
++	lcb->lrh = NULL;
++
++	return find_log_rec(log, *lsn, lcb);
++}
++
++static inline bool check_index_header(const struct INDEX_HDR *hdr, size_t bytes)
++{
++	__le16 mask;
++	u32 min_de, de_off, used, total;
 +	const struct NTFS_DE *e;
-+	u32 e_size;
-+	u32 end = le32_to_cpu(hdr->used);
-+	u32 off = le32_to_cpu(hdr->de_off);
 +
-+	for (;; off += e_size) {
-+		if (off + sizeof(struct NTFS_DE) > end)
-+			return -1;
++	if (hdr_has_subnode(hdr)) {
++		min_de = sizeof(struct NTFS_DE) + sizeof(u64);
++		mask = NTFS_IE_HAS_SUBNODES;
++	} else {
++		min_de = sizeof(struct NTFS_DE);
++		mask = 0;
++	}
 +
-+		e = Add2Ptr(hdr, off);
-+		e_size = le16_to_cpu(e->size);
-+		if (e_size < sizeof(struct NTFS_DE) || off + e_size > end)
-+			return -1;
++	de_off = le32_to_cpu(hdr->de_off);
++	used = le32_to_cpu(hdr->used);
++	total = le32_to_cpu(hdr->total);
++
++	if (de_off > bytes - min_de || used > bytes || total > bytes ||
++	    de_off + min_de > used || used > total) {
++		return false;
++	}
++
++	e = Add2Ptr(hdr, de_off);
++	for (;;) {
++		u16 esize = le16_to_cpu(e->size);
++		struct NTFS_DE *next = Add2Ptr(e, esize);
++
++		if (esize < min_de || PtrOffset(hdr, next) > used ||
++		    (e->flags & NTFS_IE_HAS_SUBNODES) != mask) {
++			return false;
++		}
 +
 +		if (de_is_last(e))
-+			return 0;
-+
-+		/* Skip already enumerated*/
-+		if (vbo + off < pos)
-+			continue;
-+
-+		if (le16_to_cpu(e->key_size) < SIZEOF_ATTRIBUTE_FILENAME)
-+			return -1;
-+
-+		ctx->pos = vbo + off;
-+
-+		/* Submit the name to the filldir callback. */
-+		err = ntfs_filldir(sbi, ni, e, name, ctx);
-+		if (err)
-+			return err;
-+	}
-+}
-+
-+/*
-+ * file_operations::iterate_shared
-+ *
-+ * Use non sorted enumeration.
-+ * We have an example of broken volume where sorted enumeration
-+ * counts each name twice
-+ */
-+static int ntfs_readdir(struct file *file, struct dir_context *ctx)
-+{
-+	const struct INDEX_ROOT *root;
-+	u64 vbo;
-+	size_t bit;
-+	loff_t eod;
-+	int err = 0;
-+	struct inode *dir = file_inode(file);
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	struct super_block *sb = dir->i_sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	loff_t i_size = i_size_read(dir);
-+	u32 pos = ctx->pos;
-+	u8 *name = NULL;
-+	struct indx_node *node = NULL;
-+	u8 index_bits = ni->dir.index_bits;
-+
-+	/* name is a buffer of PATH_MAX length */
-+	static_assert(NTFS_NAME_LEN * 4 < PATH_MAX);
-+
-+	eod = i_size + sbi->record_size;
-+
-+	if (pos >= eod)
-+		return 0;
-+
-+	if (!dir_emit_dots(file, ctx))
-+		return 0;
-+
-+	/* allocate PATH_MAX bytes */
-+	name = __getname();
-+	if (!name)
-+		return -ENOMEM;
-+
-+	if (!ni->mi_loaded && ni->attr_list.size) {
-+		/*
-+		 * directory inode is locked for read
-+		 * load all subrecords to avoid 'write' access to 'ni' during
-+		 * directory reading
-+		 */
-+		ni_lock(ni);
-+		if (!ni->mi_loaded && ni->attr_list.size) {
-+			err = ni_load_all_mi(ni);
-+			if (!err)
-+				ni->mi_loaded = true;
-+		}
-+		ni_unlock(ni);
-+		if (err)
-+			goto out;
-+	}
-+
-+	root = indx_get_root(&ni->dir, ni, NULL, NULL);
-+	if (!root) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (pos >= sbi->record_size) {
-+		bit = (pos - sbi->record_size) >> index_bits;
-+	} else {
-+		err = ntfs_read_hdr(sbi, ni, &root->ihdr, 0, pos, name, ctx);
-+		if (err)
-+			goto out;
-+		bit = 0;
-+	}
-+
-+	if (!i_size) {
-+		ctx->pos = eod;
-+		goto out;
-+	}
-+
-+	for (;;) {
-+		vbo = (u64)bit << index_bits;
-+		if (vbo >= i_size) {
-+			ctx->pos = eod;
-+			goto out;
-+		}
-+
-+		err = indx_used_bit(&ni->dir, ni, &bit);
-+		if (err)
-+			goto out;
-+
-+		if (bit == MINUS_ONE_T) {
-+			ctx->pos = eod;
-+			goto out;
-+		}
-+
-+		vbo = (u64)bit << index_bits;
-+		if (vbo >= i_size) {
-+			ntfs_inode_err(dir, "Looks like your dir is corrupt");
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		err = indx_read(&ni->dir, ni, bit << ni->dir.idx2vbn_bits,
-+				&node);
-+		if (err)
-+			goto out;
-+
-+		err = ntfs_read_hdr(sbi, ni, &node->index->ihdr,
-+				    vbo + sbi->record_size, pos, name, ctx);
-+		if (err)
-+			goto out;
-+
-+		bit += 1;
-+	}
-+
-+out:
-+
-+	__putname(name);
-+	put_indx_node(node);
-+
-+	if (err == -ENOENT) {
-+		err = 0;
-+		ctx->pos = pos;
-+	}
-+
-+	return err;
-+}
-+
-+static int ntfs_dir_count(struct inode *dir, bool *is_empty, size_t *dirs,
-+			  size_t *files)
-+{
-+	int err = 0;
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	struct NTFS_DE *e = NULL;
-+	struct INDEX_ROOT *root;
-+	struct INDEX_HDR *hdr;
-+	const struct ATTR_FILE_NAME *fname;
-+	u32 e_size, off, end;
-+	u64 vbo = 0;
-+	size_t drs = 0, fles = 0, bit = 0;
-+	loff_t i_size = ni->vfs_inode.i_size;
-+	struct indx_node *node = NULL;
-+	u8 index_bits = ni->dir.index_bits;
-+
-+	if (is_empty)
-+		*is_empty = true;
-+
-+	root = indx_get_root(&ni->dir, ni, NULL, NULL);
-+	if (!root)
-+		return -EINVAL;
-+
-+	hdr = &root->ihdr;
-+
-+	for (;;) {
-+		end = le32_to_cpu(hdr->used);
-+		off = le32_to_cpu(hdr->de_off);
-+
-+		for (; off + sizeof(struct NTFS_DE) <= end; off += e_size) {
-+			e = Add2Ptr(hdr, off);
-+			e_size = le16_to_cpu(e->size);
-+			if (e_size < sizeof(struct NTFS_DE) ||
-+			    off + e_size > end)
-+				break;
-+
-+			if (de_is_last(e))
-+				break;
-+
-+			fname = de_get_fname(e);
-+			if (!fname)
-+				continue;
-+
-+			if (fname->type == FILE_NAME_DOS)
-+				continue;
-+
-+			if (is_empty) {
-+				*is_empty = false;
-+				if (!dirs && !files)
-+					goto out;
-+			}
-+
-+			if (fname->dup.fa & FILE_ATTRIBUTE_DIRECTORY)
-+				drs += 1;
-+			else
-+				fles += 1;
-+		}
-+
-+		if (vbo >= i_size)
-+			goto out;
-+
-+		err = indx_used_bit(&ni->dir, ni, &bit);
-+		if (err)
-+			goto out;
-+
-+		if (bit == MINUS_ONE_T)
-+			goto out;
-+
-+		vbo = (u64)bit << index_bits;
-+		if (vbo >= i_size)
-+			goto out;
-+
-+		err = indx_read(&ni->dir, ni, bit << ni->dir.idx2vbn_bits,
-+				&node);
-+		if (err)
-+			goto out;
-+
-+		hdr = &node->index->ihdr;
-+		bit += 1;
-+		vbo = (u64)bit << ni->dir.idx2vbn_bits;
-+	}
-+
-+out:
-+	put_indx_node(node);
-+	if (dirs)
-+		*dirs = drs;
-+	if (files)
-+		*files = fles;
-+
-+	return err;
-+}
-+
-+bool dir_is_empty(struct inode *dir)
-+{
-+	bool is_empty = false;
-+
-+	ntfs_dir_count(dir, &is_empty, NULL, NULL);
-+
-+	return is_empty;
-+}
-+
-+const struct file_operations ntfs_dir_operations = {
-+	.llseek = generic_file_llseek,
-+	.read = generic_read_dir,
-+	.iterate_shared = ntfs_readdir,
-+	.fsync = generic_file_fsync,
-+	.open = ntfs_file_open,
-+};
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-new file mode 100644
-index 000000000000..5ce203212c8c
---- /dev/null
-+++ b/fs/ntfs3/file.c
-@@ -0,0 +1,1133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *
-+ * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
-+ *
-+ *  regular file handling primitives for ntfs-based filesystems
-+ */
-+#include <linux/backing-dev.h>
-+#include <linux/buffer_head.h>
-+#include <linux/compat.h>
-+#include <linux/falloc.h>
-+#include <linux/fiemap.h>
-+#include <linux/msdos_fs.h> /* FAT_IOCTL_XXX */
-+#include <linux/nls.h>
-+
-+#include "debug.h"
-+#include "ntfs.h"
-+#include "ntfs_fs.h"
-+
-+static int ntfs_ioctl_fitrim(struct ntfs_sb_info *sbi, unsigned long arg)
-+{
-+	struct fstrim_range __user *user_range;
-+	struct fstrim_range range;
-+	struct request_queue *q = bdev_get_queue(sbi->sb->s_bdev);
-+	int err;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (!blk_queue_discard(q))
-+		return -EOPNOTSUPP;
-+
-+	user_range = (struct fstrim_range __user *)arg;
-+	if (copy_from_user(&range, user_range, sizeof(range)))
-+		return -EFAULT;
-+
-+	range.minlen = max_t(u32, range.minlen, q->limits.discard_granularity);
-+
-+	err = ntfs_trim_fs(sbi, &range);
-+	if (err < 0)
-+		return err;
-+
-+	if (copy_to_user(user_range, &range, sizeof(range)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static long ntfs_ioctl(struct file *filp, u32 cmd, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
-+	u32 __user *user_attr = (u32 __user *)arg;
-+
-+	switch (cmd) {
-+	case FAT_IOCTL_GET_ATTRIBUTES:
-+		return put_user(le32_to_cpu(ntfs_i(inode)->std_fa), user_attr);
-+
-+	case FAT_IOCTL_GET_VOLUME_ID:
-+		return put_user(sbi->volume.ser_num, user_attr);
-+
-+	case FITRIM:
-+		return ntfs_ioctl_fitrim(sbi, arg);
-+	}
-+	return -ENOTTY; /* Inappropriate ioctl for device */
-+}
-+
-+#ifdef CONFIG_COMPAT
-+static long ntfs_compat_ioctl(struct file *filp, u32 cmd, unsigned long arg)
-+
-+{
-+	return ntfs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
-+}
-+#endif
-+
-+/*
-+ * inode_operations::getattr
-+ */
-+int ntfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
-+		 struct kstat *stat, u32 request_mask, u32 flags)
-+{
-+	struct inode *inode = d_inode(path->dentry);
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+
-+	if (is_compressed(ni))
-+		stat->attributes |= STATX_ATTR_COMPRESSED;
-+
-+	if (is_encrypted(ni))
-+		stat->attributes |= STATX_ATTR_ENCRYPTED;
-+
-+	stat->attributes_mask |= STATX_ATTR_COMPRESSED | STATX_ATTR_ENCRYPTED;
-+
-+	generic_fillattr(mnt_userns, inode, stat);
-+
-+	stat->result_mask |= STATX_BTIME;
-+	stat->btime = ni->i_crtime;
-+
-+	return 0;
-+}
-+
-+static int ntfs_extend_initialized_size(struct file *file,
-+					struct ntfs_inode *ni,
-+					const loff_t valid,
-+					const loff_t new_valid)
-+{
-+	struct inode *inode = &ni->vfs_inode;
-+	struct address_space *mapping = inode->i_mapping;
-+	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
-+	loff_t pos = valid;
-+	int err;
-+
-+	if (is_resident(ni)) {
-+		ni->i_valid = new_valid;
-+		return 0;
-+	}
-+
-+	WARN_ON(is_compressed(ni));
-+	WARN_ON(valid >= new_valid);
-+
-+	for (;;) {
-+		u32 zerofrom, len;
-+		struct page *page;
-+		void *fsdata;
-+		u8 bits;
-+		CLST vcn, lcn, clen;
-+
-+		if (is_sparsed(ni)) {
-+			bits = sbi->cluster_bits;
-+			vcn = pos >> bits;
-+
-+			err = attr_data_get_block(ni, vcn, 0, &lcn, &clen,
-+						  NULL);
-+			if (err)
-+				goto out;
-+
-+			if (lcn == SPARSE_LCN) {
-+				loff_t vbo = (loff_t)vcn << bits;
-+				loff_t to = vbo + ((loff_t)clen << bits);
-+
-+				if (to <= new_valid) {
-+					ni->i_valid = to;
-+					pos = to;
-+					goto next;
-+				}
-+
-+				if (vbo < pos) {
-+					pos = vbo;
-+				} else {
-+					to = (new_valid >> bits) << bits;
-+					if (pos < to) {
-+						ni->i_valid = to;
-+						pos = to;
-+						goto next;
-+					}
-+				}
-+			}
-+		}
-+
-+		zerofrom = pos & (PAGE_SIZE - 1);
-+		len = PAGE_SIZE - zerofrom;
-+
-+		if (pos + len > new_valid)
-+			len = new_valid - pos;
-+
-+		err = pagecache_write_begin(file, mapping, pos, len, 0, &page,
-+					    &fsdata);
-+		if (err)
-+			goto out;
-+
-+		zero_user_segment(page, zerofrom, PAGE_SIZE);
-+
-+		/* this function in any case puts page*/
-+		err = pagecache_write_end(file, mapping, pos, len, len, page,
-+					  fsdata);
-+		if (err < 0)
-+			goto out;
-+		pos += len;
-+
-+next:
-+		if (pos >= new_valid)
 +			break;
 +
-+		balance_dirty_pages_ratelimited(mapping);
-+		cond_resched();
++		e = next;
 +	}
 +
-+	mark_inode_dirty(inode);
-+
-+	return 0;
-+
-+out:
-+	ni->i_valid = valid;
-+	ntfs_inode_warn(inode, "failed to extend initialized size to %llx.",
-+			new_valid);
-+	return err;
++	return true;
 +}
 +
-+/*
-+ * ntfs_sparse_cluster
-+ *
-+ * Helper function to zero a new allocated clusters
-+ */
-+void ntfs_sparse_cluster(struct inode *inode, struct page *page0, CLST vcn,
-+			 CLST len)
++static inline bool check_index_buffer(const struct INDEX_BUFFER *ib, u32 bytes)
 +{
-+	struct address_space *mapping = inode->i_mapping;
-+	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
-+	u64 vbo = (u64)vcn << sbi->cluster_bits;
-+	u64 bytes = (u64)len << sbi->cluster_bits;
-+	u32 blocksize = 1 << inode->i_blkbits;
-+	pgoff_t idx0 = page0 ? page0->index : -1;
-+	loff_t vbo_clst = vbo & sbi->cluster_mask_inv;
-+	loff_t end = ntfs_up_cluster(sbi, vbo + bytes);
-+	pgoff_t idx = vbo_clst >> PAGE_SHIFT;
-+	u32 from = vbo_clst & (PAGE_SIZE - 1);
-+	pgoff_t idx_end = (end + PAGE_SIZE - 1) >> PAGE_SHIFT;
-+	loff_t page_off;
-+	u32 to;
-+	bool partial;
-+	struct page *page;
++	u16 fo;
++	const struct NTFS_RECORD_HEADER *r = &ib->rhdr;
 +
-+	for (; idx < idx_end; idx += 1, from = 0) {
-+		page = idx == idx0 ? page0 : grab_cache_page(mapping, idx);
++	if (r->sign != NTFS_INDX_SIGNATURE)
++		return false;
 +
-+		if (!page)
-+			continue;
++	fo = (SECTOR_SIZE - ((bytes >> SECTOR_SHIFT) + 1) * sizeof(short));
 +
-+		page_off = (loff_t)idx << PAGE_SHIFT;
-+		to = (page_off + PAGE_SIZE) > end ? (end - page_off) :
-+						    PAGE_SIZE;
-+		partial = false;
++	if (le16_to_cpu(r->fix_off) > fo)
++		return false;
 +
-+		if ((from || PAGE_SIZE != to) &&
-+		    likely(!page_has_buffers(page))) {
-+			create_empty_buffers(page, blocksize, 0);
-+			if (!page_has_buffers(page)) {
-+				ntfs_inode_err(
-+					inode,
-+					"failed to allocate page buffers.");
-+				/*err = -ENOMEM;*/
-+				goto unlock_page;
-+			}
-+		}
++	if ((le16_to_cpu(r->fix_num) - 1) * SECTOR_SIZE != bytes)
++		return false;
 +
-+		if (page_has_buffers(page)) {
-+			struct buffer_head *head, *bh;
-+			u32 bh_off = 0;
-+
-+			bh = head = page_buffers(page);
-+			do {
-+				u32 bh_next = bh_off + blocksize;
-+
-+				if (from <= bh_off && bh_next <= to) {
-+					set_buffer_uptodate(bh);
-+					mark_buffer_dirty(bh);
-+				} else if (!buffer_uptodate(bh)) {
-+					partial = true;
-+				}
-+				bh_off = bh_next;
-+			} while (head != (bh = bh->b_this_page));
-+		}
-+
-+		zero_user_segment(page, from, to);
-+
-+		if (!partial) {
-+			if (!PageUptodate(page))
-+				SetPageUptodate(page);
-+			set_page_dirty(page);
-+		}
-+
-+unlock_page:
-+		if (idx != idx0) {
-+			unlock_page(page);
-+			put_page(page);
-+		}
-+		cond_resched();
-+	}
-+	mark_inode_dirty(inode);
++	return check_index_header(&ib->ihdr,
++				  bytes - offsetof(struct INDEX_BUFFER, ihdr));
 +}
 +
-+/*
-+ * file_operations::mmap
-+ */
-+static int ntfs_file_mmap(struct file *file, struct vm_area_struct *vma)
++static inline bool check_index_root(const struct ATTRIB *attr,
++				    struct ntfs_sb_info *sbi)
 +{
-+	struct address_space *mapping = file->f_mapping;
-+	struct inode *inode = mapping->host;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	u64 to, from = ((u64)vma->vm_pgoff << PAGE_SHIFT);
-+	bool rw = vma->vm_flags & VM_WRITE;
-+	int err;
++	bool ret;
++	const struct INDEX_ROOT *root = resident_data(attr);
++	u8 index_bits =
++		le32_to_cpu(root->index_block_size) >= sbi->cluster_size ?
++			sbi->cluster_bits :
++			SECTOR_SHIFT;
++	u8 block_clst = root->index_block_clst;
 +
-+	if (is_encrypted(ni)) {
-+		ntfs_inode_warn(inode,
-+				"mmap is not supported for encrypted files");
-+		err = -EOPNOTSUPP;
-+		goto out;
++	if (le32_to_cpu(attr->res.data_size) < sizeof(struct INDEX_ROOT) ||
++	    (root->type != ATTR_NAME && root->type != ATTR_ZERO) ||
++	    (root->type == ATTR_NAME &&
++	     root->rule != NTFS_COLLATION_TYPE_FILENAME) ||
++	    (le32_to_cpu(root->index_block_size) !=
++	     (block_clst << index_bits)) ||
++	    (block_clst != 1 && block_clst != 2 && block_clst != 4 &&
++	     block_clst != 8 && block_clst != 0x10 && block_clst != 0x20 &&
++	     block_clst != 0x40 && block_clst != 0x80)) {
++		return false;
 +	}
 +
-+	if (!rw)
-+		goto do_map;
-+
-+	if (is_compressed(ni)) {
-+		ntfs_inode_warn(
-+			inode,
-+			"mmap(write) is not supported for compressed files");
-+		err = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
-+	to = min_t(loff_t, i_size_read(inode),
-+		   from + vma->vm_end - vma->vm_start);
-+
-+	if (is_sparsed(ni)) {
-+		/* allocate clusters for rw map */
-+		struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
-+		CLST vcn, lcn, len;
-+		CLST end = bytes_to_cluster(sbi, to);
-+		bool new;
-+
-+		for (vcn = from >> sbi->cluster_bits; vcn < end; vcn += len) {
-+			err = attr_data_get_block(ni, vcn, 1, &lcn, &len, &new);
-+			if (err)
-+				goto out;
-+			if (!new)
-+				continue;
-+			ntfs_sparse_cluster(inode, NULL, vcn, 1);
-+		}
-+	}
-+
-+	if (ni->i_valid < to) {
-+		inode_lock(inode);
-+		err = ntfs_extend_initialized_size(file, ni, ni->i_valid, to);
-+		inode_unlock(inode);
-+		if (err)
-+			goto out;
-+	}
-+
-+do_map:
-+	err = generic_file_mmap(file, vma);
-+out:
-+	return err;
-+}
-+
-+static int ntfs_extend(struct inode *inode, loff_t pos, size_t count,
-+		       struct file *file)
-+{
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	struct address_space *mapping = inode->i_mapping;
-+	loff_t end = pos + count;
-+	bool extend_init = file && pos > ni->i_valid;
-+	int err;
-+
-+	if (end <= inode->i_size && !extend_init)
-+		return 0;
-+
-+	/*mark rw ntfs as dirty. it will be cleared at umount*/
-+	ntfs_set_state(ni->mi.sbi, NTFS_DIRTY_DIRTY);
-+
-+	if (end > inode->i_size) {
-+		err = ntfs_set_size(inode, end);
-+		if (err)
-+			goto out;
-+		inode->i_size = end;
-+	}
-+
-+	if (extend_init && !is_compressed(ni)) {
-+		err = ntfs_extend_initialized_size(file, ni, ni->i_valid, pos);
-+		if (err)
-+			goto out;
-+	} else {
-+		err = 0;
-+	}
-+
-+	inode->i_ctime = inode->i_mtime = current_time(inode);
-+	mark_inode_dirty(inode);
-+
-+	if (IS_SYNC(inode)) {
-+		int err2;
-+
-+		err = filemap_fdatawrite_range(mapping, pos, end - 1);
-+		err2 = sync_mapping_buffers(mapping);
-+		if (!err)
-+			err = err2;
-+		err2 = write_inode_now(inode, 1);
-+		if (!err)
-+			err = err2;
-+		if (!err)
-+			err = filemap_fdatawait_range(mapping, pos, end - 1);
-+	}
-+
-+out:
-+	return err;
-+}
-+
-+static int ntfs_truncate(struct inode *inode, loff_t new_size)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	int err, dirty = 0;
-+	u32 vcn;
-+	u64 new_valid;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return 0;
-+
-+	if (is_compressed(ni)) {
-+		if (ni->i_valid > new_size)
-+			ni->i_valid = new_size;
-+	} else {
-+		err = block_truncate_page(inode->i_mapping, new_size,
-+					  ntfs_get_block);
-+		if (err)
-+			return err;
-+	}
-+
-+	vcn = bytes_to_cluster(sbi, new_size);
-+	new_valid = ntfs_up_block(sb, min_t(u64, ni->i_valid, new_size));
-+
-+	ni_lock(ni);
-+
-+	truncate_setsize(inode, new_size);
-+
-+	down_write(&ni->file.run_lock);
-+	err = attr_set_size(ni, ATTR_DATA, NULL, 0, &ni->file.run, new_size,
-+			    &new_valid, true, NULL);
-+	up_write(&ni->file.run_lock);
-+
-+	if (new_valid < ni->i_valid)
-+		ni->i_valid = new_valid;
-+
-+	ni_unlock(ni);
-+
-+	ni->std_fa |= FILE_ATTRIBUTE_ARCHIVE;
-+	inode->i_ctime = inode->i_mtime = current_time(inode);
-+	if (!IS_DIRSYNC(inode)) {
-+		dirty = 1;
-+	} else {
-+		err = ntfs_sync_inode(inode);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (dirty)
-+		mark_inode_dirty(inode);
-+
-+	/*ntfs_flush_inodes(inode->i_sb, inode, NULL);*/
-+
-+	return 0;
-+}
-+
-+/*
-+ * Preallocate space for a file. This implements ntfs's fallocate file
-+ * operation, which gets called from sys_fallocate system call. User
-+ * space requests 'len' bytes at 'vbo'. If FALLOC_FL_KEEP_SIZE is set
-+ * we just allocate clusters without zeroing them out. Otherwise we
-+ * allocate and zero out clusters via an expanding truncate.
-+ */
-+static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
-+{
-+	struct inode *inode = file->f_mapping->host;
-+	struct super_block *sb = inode->i_sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	loff_t end = vbo + len;
-+	loff_t vbo_down = round_down(vbo, PAGE_SIZE);
-+	loff_t i_size;
-+	int err;
-+
-+	/* No support for dir */
-+	if (!S_ISREG(inode->i_mode))
-+		return -EOPNOTSUPP;
-+
-+	/* Return error if mode is not supported */
-+	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
-+		     FALLOC_FL_COLLAPSE_RANGE))
-+		return -EOPNOTSUPP;
-+
-+	ntfs_set_state(sbi, NTFS_DIRTY_DIRTY);
-+
-+	inode_lock(inode);
-+	i_size = inode->i_size;
-+
-+	if (WARN_ON(ni->ni_flags & NI_FLAG_COMPRESSED_MASK)) {
-+		/* should never be here, see ntfs_file_open*/
-+		err = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
-+	if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		if (!(mode & FALLOC_FL_KEEP_SIZE)) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (!is_sparsed(ni) && !is_compressed(ni)) {
-+			ntfs_inode_warn(
-+				inode,
-+				"punch_hole only for sparsed/compressed files");
-+			err = -EOPNOTSUPP;
-+			goto out;
-+		}
-+
-+		err = filemap_write_and_wait_range(inode->i_mapping, vbo,
-+						   end - 1);
-+		if (err)
-+			goto out;
-+
-+		err = filemap_write_and_wait_range(inode->i_mapping, end,
-+						   LLONG_MAX);
-+		if (err)
-+			goto out;
-+
-+		truncate_pagecache(inode, vbo_down);
-+
-+		ni_lock(ni);
-+		err = attr_punch_hole(ni, vbo, len);
-+		ni_unlock(ni);
-+	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
-+		if (mode & ~FALLOC_FL_COLLAPSE_RANGE) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		/*
-+		 * Write tail of the last page before removed range since
-+		 * it will get removed from the page cache below.
-+		 */
-+		err = filemap_write_and_wait_range(inode->i_mapping, vbo_down,
-+						   vbo);
-+		if (err)
-+			goto out;
-+
-+		/*
-+		 * Write data that will be shifted to preserve them
-+		 * when discarding page cache below
-+		 */
-+		err = filemap_write_and_wait_range(inode->i_mapping, end,
-+						   LLONG_MAX);
-+		if (err)
-+			goto out;
-+
-+		truncate_pagecache(inode, vbo_down);
-+
-+		ni_lock(ni);
-+		err = attr_collapse_range(ni, vbo, len);
-+		ni_unlock(ni);
-+	} else {
-+		/*
-+		 * normal file: allocate clusters, do not change 'valid' size
-+		 */
-+		err = ntfs_set_size(inode, max(end, i_size));
-+		if (err)
-+			goto out;
-+
-+		if (is_sparsed(ni) || is_compressed(ni)) {
-+			CLST vcn_v = ni->i_valid >> sbi->cluster_bits;
-+			CLST vcn = vbo >> sbi->cluster_bits;
-+			CLST cend = bytes_to_cluster(sbi, end);
-+			CLST lcn, clen;
-+			bool new;
-+
-+			/*
-+			 * allocate but not zero new clusters (see below comments)
-+			 * this breaks security (one can read unused on-disk areas)
-+			 * zeroing these clusters may be too long
-+			 * may be we should check here for root rights?
-+			 */
-+			for (; vcn < cend; vcn += clen) {
-+				err = attr_data_get_block(ni, vcn, cend - vcn,
-+							  &lcn, &clen, &new);
-+				if (err)
-+					goto out;
-+				if (!new || vcn >= vcn_v)
-+					continue;
-+
-+				/*
-+				 * Unwritten area
-+				 * NTFS is not able to store several unwritten areas
-+				 * Activate 'ntfs_sparse_cluster' to zero new allocated clusters
-+				 *
-+				 * Dangerous in case:
-+				 * 1G of sparsed clusters + 1 cluster of data =>
-+				 * valid_size == 1G + 1 cluster
-+				 * fallocate(1G) will zero 1G and this can be very long
-+				 * xfstest 016/086 will fail whithout 'ntfs_sparse_cluster'
-+				 */
-+				/*ntfs_sparse_cluster(inode, NULL, vcn,
-+				 *		    min(vcn_v - vcn, clen));
-+				 */
-+			}
-+		}
-+
-+		if (mode & FALLOC_FL_KEEP_SIZE) {
-+			ni_lock(ni);
-+			/*true - keep preallocated*/
-+			err = attr_set_size(ni, ATTR_DATA, NULL, 0,
-+					    &ni->file.run, i_size, &ni->i_valid,
-+					    true, NULL);
-+			ni_unlock(ni);
-+		}
-+	}
-+
-+	if (!err) {
-+		inode->i_ctime = inode->i_mtime = current_time(inode);
-+		mark_inode_dirty(inode);
-+	}
-+out:
-+	if (err == -EFBIG)
-+		err = -ENOSPC;
-+
-+	inode_unlock(inode);
-+	return err;
-+}
-+
-+/*
-+ * inode_operations::setattr
-+ */
-+int ntfs3_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		  struct iattr *attr)
-+{
-+	struct super_block *sb = dentry->d_sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	struct inode *inode = d_inode(dentry);
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	u32 ia_valid = attr->ia_valid;
-+	umode_t mode = inode->i_mode;
-+	int err;
-+
-+	if (sbi->options.no_acs_rules) {
-+		/* "no access rules" - force any changes of time etc. */
-+		attr->ia_valid |= ATTR_FORCE;
-+		/* and disable for editing some attributes */
-+		attr->ia_valid &= ~(ATTR_UID | ATTR_GID | ATTR_MODE);
-+		ia_valid = attr->ia_valid;
-+	}
-+
-+	err = setattr_prepare(mnt_userns, dentry, attr);
-+	if (err)
-+		goto out;
-+
-+	if (ia_valid & ATTR_SIZE) {
-+		loff_t oldsize = inode->i_size;
-+
-+		if (WARN_ON(ni->ni_flags & NI_FLAG_COMPRESSED_MASK)) {
-+			/* should never be here, see ntfs_file_open*/
-+			err = -EOPNOTSUPP;
-+			goto out;
-+		}
-+		inode_dio_wait(inode);
-+
-+		if (attr->ia_size < oldsize)
-+			err = ntfs_truncate(inode, attr->ia_size);
-+		else if (attr->ia_size > oldsize)
-+			err = ntfs_extend(inode, attr->ia_size, 0, NULL);
-+
-+		if (err)
-+			goto out;
-+
-+		ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-+	}
-+
-+	setattr_copy(mnt_userns, inode, attr);
-+
-+	if (mode != inode->i_mode) {
-+		err = ntfs_acl_chmod(mnt_userns, inode);
-+		if (err)
-+			goto out;
-+
-+		/* linux 'w' -> windows 'ro' */
-+		if (0222 & inode->i_mode)
-+			ni->std_fa &= ~FILE_ATTRIBUTE_READONLY;
-+		else
-+			ni->std_fa |= FILE_ATTRIBUTE_READONLY;
-+	}
-+
-+	mark_inode_dirty(inode);
-+out:
-+	return err;
-+}
-+
-+static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	ssize_t err;
-+	size_t count = iov_iter_count(iter);
-+	struct file *file = iocb->ki_filp;
-+	struct inode *inode = file->f_mapping->host;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+
-+	if (is_encrypted(ni)) {
-+		ntfs_inode_warn(inode, "encrypted i/o not supported");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
-+		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
-+		return -EOPNOTSUPP;
-+	}
-+
-+#ifndef CONFIG_NTFS3_LZX_XPRESS
-+	if (ni->ni_flags & NI_FLAG_COMPRESSED_MASK) {
-+		ntfs_inode_warn(
-+			inode,
-+			"activate CONFIG_NTFS3_LZX_XPRESS to read external compressed files");
-+		return -EOPNOTSUPP;
-+	}
-+#endif
-+
-+	if (is_dedup(ni)) {
-+		ntfs_inode_warn(inode, "read deduplicated not supported");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	err = count ? generic_file_read_iter(iocb, iter) : 0;
-+
-+	return err;
-+}
-+
-+/* returns array of locked pages */
-+static int ntfs_get_frame_pages(struct address_space *mapping, pgoff_t index,
-+				struct page **pages, u32 pages_per_frame,
-+				bool *frame_uptodate)
-+{
-+	gfp_t gfp_mask = mapping_gfp_mask(mapping);
-+	u32 npages;
-+
-+	*frame_uptodate = true;
-+
-+	for (npages = 0; npages < pages_per_frame; npages++, index++) {
-+		struct page *page;
-+
-+		page = find_or_create_page(mapping, index, gfp_mask);
-+		if (!page) {
-+			while (npages--) {
-+				page = pages[npages];
-+				unlock_page(page);
-+				put_page(page);
-+			}
-+
-+			return -ENOMEM;
-+		}
-+
-+		if (!PageUptodate(page))
-+			*frame_uptodate = false;
-+
-+		pages[npages] = page;
-+	}
-+
-+	return 0;
-+}
-+
-+/*helper for ntfs_file_write_iter (compressed files)*/
-+static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	int err;
-+	struct file *file = iocb->ki_filp;
-+	size_t count = iov_iter_count(from);
-+	loff_t pos = iocb->ki_pos;
-+	struct inode *inode = file_inode(file);
-+	loff_t i_size = inode->i_size;
-+	struct address_space *mapping = inode->i_mapping;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	u64 valid = ni->i_valid;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	struct page *page, **pages = NULL;
-+	size_t written = 0;
-+	u8 frame_bits = NTFS_LZNT_CUNIT + sbi->cluster_bits;
-+	u32 frame_size = 1u << frame_bits;
-+	u32 pages_per_frame = frame_size >> PAGE_SHIFT;
-+	u32 ip, off;
-+	CLST frame;
-+	u64 frame_vbo;
-+	pgoff_t index;
-+	bool frame_uptodate;
-+
-+	if (frame_size < PAGE_SIZE) {
-+		/*
-+		 * frame_size == 8K if cluster 512
-+		 * frame_size == 64K if cluster 4096
-+		 */
-+		ntfs_inode_warn(inode, "page size is bigger than frame size");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	pages = ntfs_malloc(pages_per_frame * sizeof(struct page *));
-+	if (!pages)
-+		return -ENOMEM;
-+
-+	current->backing_dev_info = inode_to_bdi(inode);
-+	err = file_remove_privs(file);
-+	if (err)
-+		goto out;
-+
-+	err = file_update_time(file);
-+	if (err)
-+		goto out;
-+
-+	/* zero range [valid : pos) */
-+	while (valid < pos) {
-+		CLST lcn, clen;
-+
-+		frame = valid >> frame_bits;
-+		frame_vbo = valid & ~(frame_size - 1);
-+		off = valid & (frame_size - 1);
-+
-+		err = attr_data_get_block(ni, frame << NTFS_LZNT_CUNIT, 0, &lcn,
-+					  &clen, NULL);
-+		if (err)
-+			goto out;
-+
-+		if (lcn == SPARSE_LCN) {
-+			ni->i_valid = valid =
-+				frame_vbo + ((u64)clen << sbi->cluster_bits);
-+			continue;
-+		}
-+
-+		/* Load full frame */
-+		err = ntfs_get_frame_pages(mapping, frame_vbo >> PAGE_SHIFT,
-+					   pages, pages_per_frame,
-+					   &frame_uptodate);
-+		if (err)
-+			goto out;
-+
-+		if (!frame_uptodate && off) {
-+			err = ni_read_frame(ni, frame_vbo, pages,
-+					    pages_per_frame);
-+			if (err) {
-+				for (ip = 0; ip < pages_per_frame; ip++) {
-+					page = pages[ip];
-+					unlock_page(page);
-+					put_page(page);
-+				}
-+				goto out;
-+			}
-+		}
-+
-+		ip = off >> PAGE_SHIFT;
-+		off = offset_in_page(valid);
-+		for (; ip < pages_per_frame; ip++, off = 0) {
-+			page = pages[ip];
-+			zero_user_segment(page, off, PAGE_SIZE);
-+			flush_dcache_page(page);
-+			SetPageUptodate(page);
-+		}
-+
-+		ni_lock(ni);
-+		err = ni_write_frame(ni, pages, pages_per_frame);
-+		ni_unlock(ni);
-+
-+		for (ip = 0; ip < pages_per_frame; ip++) {
-+			page = pages[ip];
-+			SetPageUptodate(page);
-+			unlock_page(page);
-+			put_page(page);
-+		}
-+
-+		if (err)
-+			goto out;
-+
-+		ni->i_valid = valid = frame_vbo + frame_size;
-+	}
-+
-+	/* copy user data [pos : pos + count) */
-+	while (count) {
-+		size_t copied, bytes;
-+
-+		off = pos & (frame_size - 1);
-+		bytes = frame_size - off;
-+		if (bytes > count)
-+			bytes = count;
-+
-+		frame = pos >> frame_bits;
-+		frame_vbo = pos & ~(frame_size - 1);
-+		index = frame_vbo >> PAGE_SHIFT;
-+
-+		if (unlikely(iov_iter_fault_in_readable(from, bytes))) {
-+			err = -EFAULT;
-+			goto out;
-+		}
-+
-+		/* Load full frame */
-+		err = ntfs_get_frame_pages(mapping, index, pages,
-+					   pages_per_frame, &frame_uptodate);
-+		if (err)
-+			goto out;
-+
-+		if (!frame_uptodate) {
-+			loff_t to = pos + bytes;
-+
-+			if (off || (to < i_size && (to & (frame_size - 1)))) {
-+				err = ni_read_frame(ni, frame_vbo, pages,
-+						    pages_per_frame);
-+				if (err) {
-+					for (ip = 0; ip < pages_per_frame;
-+					     ip++) {
-+						page = pages[ip];
-+						unlock_page(page);
-+						put_page(page);
-+					}
-+					goto out;
-+				}
-+			}
-+		}
-+
-+		WARN_ON(!bytes);
-+		copied = 0;
-+		ip = off >> PAGE_SHIFT;
-+		off = offset_in_page(pos);
-+
-+		/* copy user data to pages */
-+		for (;;) {
-+			size_t cp, tail = PAGE_SIZE - off;
-+
-+			page = pages[ip];
-+			cp = iov_iter_copy_from_user_atomic(page, from, off,
-+							    min(tail, bytes));
-+			flush_dcache_page(page);
-+			iov_iter_advance(from, cp);
-+			copied += cp;
-+			bytes -= cp;
-+			if (!bytes || !cp)
-+				break;
-+
-+			if (cp < tail) {
-+				off += cp;
-+			} else {
-+				ip++;
-+				off = 0;
-+			}
-+		}
-+
-+		ni_lock(ni);
-+		err = ni_write_frame(ni, pages, pages_per_frame);
-+		ni_unlock(ni);
-+
-+		for (ip = 0; ip < pages_per_frame; ip++) {
-+			page = pages[ip];
-+			ClearPageDirty(page);
-+			SetPageUptodate(page);
-+			unlock_page(page);
-+			put_page(page);
-+		}
-+
-+		if (err)
-+			goto out;
-+
-+		/*
-+		 * We can loop for a long time in here. Be nice and allow
-+		 * us to schedule out to avoid softlocking if preempt
-+		 * is disabled.
-+		 */
-+		cond_resched();
-+
-+		pos += copied;
-+		written += copied;
-+
-+		count = iov_iter_count(from);
-+	}
-+
-+out:
-+	ntfs_free(pages);
-+
-+	current->backing_dev_info = NULL;
-+
-+	if (err < 0)
-+		return err;
-+
-+	iocb->ki_pos += written;
-+	if (iocb->ki_pos > ni->i_valid)
-+		ni->i_valid = iocb->ki_pos;
-+
-+	return written;
-+}
-+
-+/*
-+ * file_operations::write_iter
-+ */
-+static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	struct file *file = iocb->ki_filp;
-+	struct address_space *mapping = file->f_mapping;
-+	struct inode *inode = mapping->host;
-+	ssize_t ret;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+
-+	if (is_encrypted(ni)) {
-+		ntfs_inode_warn(inode, "encrypted i/o not supported");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
-+		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (is_dedup(ni)) {
-+		ntfs_inode_warn(inode, "write into deduplicated not supported");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (!inode_trylock(inode)) {
-+		if (iocb->ki_flags & IOCB_NOWAIT)
-+			return -EAGAIN;
-+		inode_lock(inode);
-+	}
-+
-+	ret = generic_write_checks(iocb, from);
-+	if (ret <= 0)
-+		goto out;
-+
-+	if (WARN_ON(ni->ni_flags & NI_FLAG_COMPRESSED_MASK)) {
-+		/* should never be here, see ntfs_file_open*/
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
-+	ret = ntfs_extend(inode, iocb->ki_pos, ret, file);
-+	if (ret)
-+		goto out;
-+
-+	ret = is_compressed(ni) ? ntfs_compress_write(iocb, from) :
-+				  __generic_file_write_iter(iocb, from);
-+
-+out:
-+	inode_unlock(inode);
-+
-+	if (ret > 0)
-+		ret = generic_write_sync(iocb, ret);
-+
++	ret = check_index_header(&root->ihdr,
++				 le32_to_cpu(attr->res.data_size) -
++					 offsetof(struct INDEX_ROOT, ihdr));
 +	return ret;
 +}
 +
-+/*
-+ * file_operations::open
-+ */
-+int ntfs_file_open(struct inode *inode, struct file *file)
++static inline bool check_attr(const struct MFT_REC *rec,
++			      const struct ATTRIB *attr,
++			      struct ntfs_sb_info *sbi)
 +{
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+
-+	if (unlikely((is_compressed(ni) || is_encrypted(ni)) &&
-+		     (file->f_flags & O_DIRECT))) {
-+		return -EOPNOTSUPP;
-+	}
-+
-+	/* Decompress "external compressed" file if opened for rw */
-+	if ((ni->ni_flags & NI_FLAG_COMPRESSED_MASK) &&
-+	    (file->f_flags & (O_WRONLY | O_RDWR | O_TRUNC))) {
-+#ifdef CONFIG_NTFS3_LZX_XPRESS
-+		int err = ni_decompress_file(ni);
-+
-+		if (err)
-+			return err;
-+#else
-+		ntfs_inode_warn(
-+			inode,
-+			"activate CONFIG_NTFS3_LZX_XPRESS to write external compressed files");
-+		return -EOPNOTSUPP;
-+#endif
-+	}
-+
-+	return generic_file_open(inode, file);
-+}
-+
-+/*
-+ * file_operations::release
-+ */
-+static int ntfs_file_release(struct inode *inode, struct file *file)
-+{
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	int err = 0;
-+
-+	/* if we are the last writer on the inode, drop the block reservation */
-+	if (sbi->options.prealloc && ((file->f_mode & FMODE_WRITE) &&
-+				      atomic_read(&inode->i_writecount) == 1)) {
-+		ni_lock(ni);
-+		down_write(&ni->file.run_lock);
-+
-+		err = attr_set_size(ni, ATTR_DATA, NULL, 0, &ni->file.run,
-+				    inode->i_size, &ni->i_valid, false, NULL);
-+
-+		up_write(&ni->file.run_lock);
-+		ni_unlock(ni);
-+	}
-+	return err;
-+}
-+
-+/* file_operations::fiemap */
-+int ntfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-+		__u64 start, __u64 len)
-+{
-+	int err;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+
-+	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR)
-+		return -EOPNOTSUPP;
-+
-+	ni_lock(ni);
-+
-+	err = ni_fiemap(ni, fieinfo, start, len);
-+
-+	ni_unlock(ni);
-+
-+	return err;
-+}
-+
-+const struct inode_operations ntfs_file_inode_operations = {
-+	.getattr = ntfs_getattr,
-+	.setattr = ntfs3_setattr,
-+	.listxattr = ntfs_listxattr,
-+	.permission = ntfs_permission,
-+	.get_acl = ntfs_get_acl,
-+	.set_acl = ntfs_set_acl,
-+	.fiemap = ntfs_fiemap,
-+};
-+
-+const struct file_operations ntfs_file_operations = {
-+	.llseek = generic_file_llseek,
-+	.read_iter = ntfs_file_read_iter,
-+	.write_iter = ntfs_file_write_iter,
-+	.unlocked_ioctl = ntfs_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl = ntfs_compat_ioctl,
-+#endif
-+	.splice_read = generic_file_splice_read,
-+	.mmap = ntfs_file_mmap,
-+	.open = ntfs_file_open,
-+	.fsync = generic_file_fsync,
-+	.splice_write = iter_file_splice_write,
-+	.fallocate = ntfs_fallocate,
-+	.release = ntfs_file_release,
-+};
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-new file mode 100644
-index 000000000000..514feb487fd7
---- /dev/null
-+++ b/fs/ntfs3/frecord.c
-@@ -0,0 +1,3083 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *
-+ * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
-+ *
-+ */
-+
-+#include <linux/blkdev.h>
-+#include <linux/buffer_head.h>
-+#include <linux/fiemap.h>
-+#include <linux/fs.h>
-+#include <linux/nls.h>
-+#include <linux/vmalloc.h>
-+
-+#include "debug.h"
-+#include "ntfs.h"
-+#include "ntfs_fs.h"
-+#ifdef CONFIG_NTFS3_LZX_XPRESS
-+#include "lib/lib.h"
-+#endif
-+
-+static inline void get_mi_ref(const struct mft_inode *mi, struct MFT_REF *ref)
-+{
-+#ifdef NTFS3_64BIT_CLUSTER
-+	ref->low = cpu_to_le32(mi->rno);
-+	ref->high = cpu_to_le16(mi->rno >> 32);
-+#else
-+	ref->low = cpu_to_le32(mi->rno);
-+	ref->high = 0;
-+#endif
-+	ref->seq = mi->mrec->seq;
-+}
-+
-+static struct mft_inode *ni_ins_mi(struct ntfs_inode *ni, struct rb_root *tree,
-+				   CLST ino, struct rb_node *ins)
-+{
-+	struct rb_node **p = &tree->rb_node;
-+	struct rb_node *pr = NULL;
-+
-+	while (*p) {
-+		struct mft_inode *mi;
-+
-+		pr = *p;
-+		mi = rb_entry(pr, struct mft_inode, node);
-+		if (mi->rno > ino)
-+			p = &pr->rb_left;
-+		else if (mi->rno < ino)
-+			p = &pr->rb_right;
-+		else
-+			return mi;
-+	}
-+
-+	if (!ins)
-+		return NULL;
-+
-+	rb_link_node(ins, pr, p);
-+	rb_insert_color(ins, tree);
-+	return rb_entry(ins, struct mft_inode, node);
-+}
-+
-+/*
-+ * ni_find_mi
-+ *
-+ * finds mft_inode by record number
-+ */
-+static struct mft_inode *ni_find_mi(struct ntfs_inode *ni, CLST rno)
-+{
-+	return ni_ins_mi(ni, &ni->mi_tree, rno, NULL);
-+}
-+
-+/*
-+ * ni_add_mi
-+ *
-+ * adds new mft_inode into ntfs_inode
-+ */
-+static void ni_add_mi(struct ntfs_inode *ni, struct mft_inode *mi)
-+{
-+	ni_ins_mi(ni, &ni->mi_tree, mi->rno, &mi->node);
-+}
-+
-+/*
-+ * ni_remove_mi
-+ *
-+ * removes mft_inode from ntfs_inode
-+ */
-+void ni_remove_mi(struct ntfs_inode *ni, struct mft_inode *mi)
-+{
-+	rb_erase(&mi->node, &ni->mi_tree);
-+}
-+
-+/*
-+ * ni_std
-+ *
-+ * returns pointer into std_info from primary record
-+ */
-+struct ATTR_STD_INFO *ni_std(struct ntfs_inode *ni)
-+{
-+	const struct ATTRIB *attr;
-+
-+	attr = mi_find_attr(&ni->mi, NULL, ATTR_STD, NULL, 0, NULL);
-+	return attr ? resident_data_ex(attr, sizeof(struct ATTR_STD_INFO)) :
-+		      NULL;
-+}
-+
-+/*
-+ * ni_std5
-+ *
-+ * returns pointer into std_info from primary record
-+ */
-+struct ATTR_STD_INFO5 *ni_std5(struct ntfs_inode *ni)
-+{
-+	const struct ATTRIB *attr;
-+
-+	attr = mi_find_attr(&ni->mi, NULL, ATTR_STD, NULL, 0, NULL);
-+
-+	return attr ? resident_data_ex(attr, sizeof(struct ATTR_STD_INFO5)) :
-+		      NULL;
-+}
-+
-+/*
-+ * ni_clear
-+ *
-+ * clears resources allocated by ntfs_inode
-+ */
-+void ni_clear(struct ntfs_inode *ni)
-+{
-+	struct rb_node *node;
-+
-+	if (!ni->vfs_inode.i_nlink && is_rec_inuse(ni->mi.mrec))
-+		ni_delete_all(ni);
-+
-+	al_destroy(ni);
-+
-+	for (node = rb_first(&ni->mi_tree); node;) {
-+		struct rb_node *next = rb_next(node);
-+		struct mft_inode *mi = rb_entry(node, struct mft_inode, node);
-+
-+		rb_erase(node, &ni->mi_tree);
-+		mi_put(mi);
-+		node = next;
-+	}
-+
-+	/* bad inode always has mode == S_IFREG */
-+	if (ni->ni_flags & NI_FLAG_DIR)
-+		indx_clear(&ni->dir);
-+	else {
-+		run_close(&ni->file.run);
-+#ifdef CONFIG_NTFS3_LZX_XPRESS
-+		if (ni->file.offs_page) {
-+			/* on-demand allocated page for offsets */
-+			put_page(ni->file.offs_page);
-+			ni->file.offs_page = NULL;
-+		}
-+#endif
-+	}
-+
-+	mi_clear(&ni->mi);
-+}
-+
-+/*
-+ * ni_load_mi_ex
-+ *
-+ * finds mft_inode by record number.
-+ */
-+int ni_load_mi_ex(struct ntfs_inode *ni, CLST rno, struct mft_inode **mi)
-+{
-+	int err;
-+	struct mft_inode *r;
-+
-+	r = ni_find_mi(ni, rno);
-+	if (r)
-+		goto out;
-+
-+	err = mi_get(ni->mi.sbi, rno, &r);
-+	if (err)
-+		return err;
-+
-+	ni_add_mi(ni, r);
-+
-+out:
-+	if (mi)
-+		*mi = r;
-+	return 0;
-+}
-+
-+/*
-+ * ni_load_mi
-+ *
-+ * load mft_inode corresponded list_entry
-+ */
-+int ni_load_mi(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le,
-+	       struct mft_inode **mi)
-+{
-+	CLST rno;
-+
-+	if (!le) {
-+		*mi = &ni->mi;
-+		return 0;
-+	}
-+
-+	rno = ino_get(&le->ref);
-+	if (rno == ni->mi.rno) {
-+		*mi = &ni->mi;
-+		return 0;
-+	}
-+	return ni_load_mi_ex(ni, rno, mi);
-+}
-+
-+/*
-+ * ni_find_attr
-+ *
-+ * returns attribute and record this attribute belongs to
-+ */
-+struct ATTRIB *ni_find_attr(struct ntfs_inode *ni, struct ATTRIB *attr,
-+			    struct ATTR_LIST_ENTRY **le_o, enum ATTR_TYPE type,
-+			    const __le16 *name, u8 name_len, const CLST *vcn,
-+			    struct mft_inode **mi)
-+{
-+	struct ATTR_LIST_ENTRY *le;
-+	struct mft_inode *m;
-+
-+	if (!ni->attr_list.size ||
-+	    (!name_len && (type == ATTR_LIST || type == ATTR_STD))) {
-+		if (le_o)
-+			*le_o = NULL;
-+		if (mi)
-+			*mi = &ni->mi;
-+
-+		/* Look for required attribute in primary record */
-+		return mi_find_attr(&ni->mi, attr, type, name, name_len, NULL);
-+	}
-+
-+	/* first look for list entry of required type */
-+	le = al_find_ex(ni, le_o ? *le_o : NULL, type, name, name_len, vcn);
-+	if (!le)
-+		return NULL;
-+
-+	if (le_o)
-+		*le_o = le;
-+
-+	/* Load record that contains this attribute */
-+	if (ni_load_mi(ni, le, &m))
-+		return NULL;
-+
-+	/* Look for required attribute */
-+	attr = mi_find_attr(m, NULL, type, name, name_len, &le->id);
-+
-+	if (!attr)
-+		goto out;
-+
-+	if (!attr->non_res) {
-+		if (vcn && *vcn)
-+			goto out;
-+	} else if (!vcn) {
-+		if (attr->nres.svcn)
-+			goto out;
-+	} else if (le64_to_cpu(attr->nres.svcn) > *vcn ||
-+		   *vcn > le64_to_cpu(attr->nres.evcn)) {
-+		goto out;
-+	}
-+
-+	if (mi)
-+		*mi = m;
-+	return attr;
-+
-+out:
-+	ntfs_set_state(ni->mi.sbi, NTFS_DIRTY_ERROR);
-+	return NULL;
-+}
-+
-+/*
-+ * ni_enum_attr_ex
-+ *
-+ * enumerates attributes in ntfs_inode
-+ */
-+struct ATTRIB *ni_enum_attr_ex(struct ntfs_inode *ni, struct ATTRIB *attr,
-+			       struct ATTR_LIST_ENTRY **le,
-+			       struct mft_inode **mi)
-+{
-+	struct mft_inode *mi2;
-+	struct ATTR_LIST_ENTRY *le2;
-+
-+	/* Do we have an attribute list? */
-+	if (!ni->attr_list.size) {
-+		*le = NULL;
-+		if (mi)
-+			*mi = &ni->mi;
-+		/* Enum attributes in primary record */
-+		return mi_enum_attr(&ni->mi, attr);
-+	}
-+
-+	/* get next list entry */
-+	le2 = *le = al_enumerate(ni, attr ? *le : NULL);
-+	if (!le2)
-+		return NULL;
-+
-+	/* Load record that contains the required attribute */
-+	if (ni_load_mi(ni, le2, &mi2))
-+		return NULL;
-+
-+	if (mi)
-+		*mi = mi2;
-+
-+	/* Find attribute in loaded record */
-+	return rec_find_attr_le(mi2, le2);
-+}
-+
-+/*
-+ * ni_load_attr
-+ *
-+ * loads attribute that contains given vcn
-+ */
-+struct ATTRIB *ni_load_attr(struct ntfs_inode *ni, enum ATTR_TYPE type,
-+			    const __le16 *name, u8 name_len, CLST vcn,
-+			    struct mft_inode **pmi)
-+{
-+	struct ATTR_LIST_ENTRY *le;
-+	struct ATTRIB *attr;
-+	struct mft_inode *mi;
-+	struct ATTR_LIST_ENTRY *next;
-+
-+	if (!ni->attr_list.size) {
-+		if (pmi)
-+			*pmi = &ni->mi;
-+		return mi_find_attr(&ni->mi, NULL, type, name, name_len, NULL);
-+	}
-+
-+	le = al_find_ex(ni, NULL, type, name, name_len, NULL);
-+	if (!le)
-+		return NULL;
-+
-+	/*
-+	 * Unfortunately ATTR_LIST_ENTRY contains only start vcn
-+	 * So to find the ATTRIB segment that contains 'vcn' we should
-+	 * enumerate some entries
-+	 */
-+	if (vcn) {
-+		for (;; le = next) {
-+			next = al_find_ex(ni, le, type, name, name_len, NULL);
-+			if (!next || le64_to_cpu(next->vcn) > vcn)
-+				break;
-+		}
-+	}
-+
-+	if (ni_load_mi(ni, le, &mi))
-+		return NULL;
-+
-+	if (pmi)
-+		*pmi = mi;
-+
-+	attr = mi_find_attr(mi, NULL, type, name, name_len, &le->id);
-+	if (!attr)
-+		return NULL;
-+
-+	if (!attr->non_res)
-+		return attr;
-+
-+	if (le64_to_cpu(attr->nres.svcn) <= vcn &&
-+	    vcn <= le64_to_cpu(attr->nres.evcn))
-+		return attr;
-+
-+	return NULL;
-+}
-+
-+/*
-+ * ni_load_all_mi
-+ *
-+ * loads all subrecords
-+ */
-+int ni_load_all_mi(struct ntfs_inode *ni)
-+{
-+	int err;
-+	struct ATTR_LIST_ENTRY *le;
-+
-+	if (!ni->attr_list.size)
-+		return 0;
-+
-+	le = NULL;
-+
-+	while ((le = al_enumerate(ni, le))) {
-+		CLST rno = ino_get(&le->ref);
-+
-+		if (rno == ni->mi.rno)
-+			continue;
-+
-+		err = ni_load_mi_ex(ni, rno, NULL);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * ni_add_subrecord
-+ *
-+ * allocate + format + attach a new subrecord
-+ */
-+bool ni_add_subrecord(struct ntfs_inode *ni, CLST rno, struct mft_inode **mi)
-+{
-+	struct mft_inode *m;
-+
-+	m = ntfs_zalloc(sizeof(struct mft_inode));
-+	if (!m)
-+		return false;
-+
-+	if (mi_format_new(m, ni->mi.sbi, rno, 0, ni->mi.rno == MFT_REC_MFT)) {
-+		mi_put(m);
++	u32 asize = le32_to_cpu(attr->size);
++	u32 rsize = 0;
++	u64 dsize, svcn, evcn;
++	u16 run_off;
++
++	/* Check the fixed part of the attribute record header */
++	if (asize >= sbi->record_size ||
++	    asize + PtrOffset(rec, attr) >= sbi->record_size ||
++	    (attr->name_len &&
++	     le16_to_cpu(attr->name_off) + attr->name_len * sizeof(short) >
++		     asize)) {
 +		return false;
 +	}
 +
-+	get_mi_ref(&ni->mi, &m->mrec->parent_ref);
-+
-+	ni_add_mi(ni, m);
-+	*mi = m;
-+	return true;
-+}
-+
-+/*
-+ * ni_remove_attr
-+ *
-+ * removes all attributes for the given type/name/id
-+ */
-+int ni_remove_attr(struct ntfs_inode *ni, enum ATTR_TYPE type,
-+		   const __le16 *name, size_t name_len, bool base_only,
-+		   const __le16 *id)
-+{
-+	int err;
-+	struct ATTRIB *attr;
-+	struct ATTR_LIST_ENTRY *le;
-+	struct mft_inode *mi;
-+	u32 type_in;
-+	int diff;
-+
-+	if (base_only || type == ATTR_LIST || !ni->attr_list.size) {
-+		attr = mi_find_attr(&ni->mi, NULL, type, name, name_len, id);
-+		if (!attr)
-+			return -ENOENT;
-+
-+		mi_remove_attr(&ni->mi, attr);
-+		return 0;
-+	}
-+
-+	type_in = le32_to_cpu(type);
-+	le = NULL;
-+
-+	for (;;) {
-+		le = al_enumerate(ni, le);
-+		if (!le)
-+			return 0;
-+
-+next_le2:
-+		diff = le32_to_cpu(le->type) - type_in;
-+		if (diff < 0)
-+			continue;
-+
-+		if (diff > 0)
-+			return 0;
-+
-+		if (le->name_len != name_len)
-+			continue;
-+
-+		if (name_len &&
-+		    memcmp(le_name(le), name, name_len * sizeof(short)))
-+			continue;
-+
-+		if (id && le->id != *id)
-+			continue;
-+		err = ni_load_mi(ni, le, &mi);
-+		if (err)
-+			return err;
-+
-+		al_remove_le(ni, le);
-+
-+		attr = mi_find_attr(mi, NULL, type, name, name_len, id);
-+		if (!attr)
-+			return -ENOENT;
-+
-+		mi_remove_attr(mi, attr);
-+
-+		if (PtrOffset(ni->attr_list.le, le) >= ni->attr_list.size)
-+			return 0;
-+		goto next_le2;
-+	}
-+}
-+
-+/*
-+ * ni_ins_new_attr
-+ *
-+ * inserts the attribute into record
-+ * Returns not full constructed attribute or NULL if not possible to create
-+ */
-+static struct ATTRIB *ni_ins_new_attr(struct ntfs_inode *ni,
-+				      struct mft_inode *mi,
-+				      struct ATTR_LIST_ENTRY *le,
-+				      enum ATTR_TYPE type, const __le16 *name,
-+				      u8 name_len, u32 asize, u16 name_off,
-+				      CLST svcn)
-+{
-+	int err;
-+	struct ATTRIB *attr;
-+	bool le_added = false;
-+	struct MFT_REF ref;
-+
-+	get_mi_ref(mi, &ref);
-+
-+	if (type != ATTR_LIST && !le && ni->attr_list.size) {
-+		err = al_add_le(ni, type, name, name_len, svcn, cpu_to_le16(-1),
-+				&ref, &le);
-+		if (err) {
-+			/* no memory or no space */
-+			return NULL;
++	/* Check the attribute fields */
++	switch (attr->non_res) {
++	case 0:
++		rsize = le32_to_cpu(attr->res.data_size);
++		if (rsize >= asize ||
++		    le16_to_cpu(attr->res.data_off) + rsize > asize) {
++			return false;
 +		}
-+		le_added = true;
-+
-+		/*
-+		 * al_add_le -> attr_set_size (list) -> ni_expand_list
-+		 * which moves some attributes out of primary record
-+		 * this means that name may point into moved memory
-+		 * reinit 'name' from le
-+		 */
-+		name = le->name;
-+	}
-+
-+	attr = mi_insert_attr(mi, type, name, name_len, asize, name_off);
-+	if (!attr) {
-+		if (le_added)
-+			al_remove_le(ni, le);
-+		return NULL;
-+	}
-+
-+	if (type == ATTR_LIST) {
-+		/*attr list is not in list entry array*/
-+		goto out;
-+	}
-+
-+	if (!le)
-+		goto out;
-+
-+	/* Update ATTRIB Id and record reference */
-+	le->id = attr->id;
-+	ni->attr_list.dirty = true;
-+	le->ref = ref;
-+
-+out:
-+	return attr;
-+}
-+
-+/*
-+ * random write access to sparsed or compressed file may result to
-+ * not optimized packed runs.
-+ * Here it is the place to optimize it
-+ */
-+static int ni_repack(struct ntfs_inode *ni)
-+{
-+	int err = 0;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	struct mft_inode *mi, *mi_p = NULL;
-+	struct ATTRIB *attr = NULL, *attr_p;
-+	struct ATTR_LIST_ENTRY *le = NULL, *le_p;
-+	CLST alloc = 0;
-+	u8 cluster_bits = sbi->cluster_bits;
-+	CLST svcn, evcn = 0, svcn_p, evcn_p, next_svcn;
-+	u32 roff, rs = sbi->record_size;
-+	struct runs_tree run;
-+
-+	run_init(&run);
-+
-+	while ((attr = ni_enum_attr_ex(ni, attr, &le, &mi))) {
-+		if (!attr->non_res)
-+			continue;
-+
-+		svcn = le64_to_cpu(attr->nres.svcn);
-+		if (svcn != le64_to_cpu(le->vcn)) {
-+			err = -EINVAL;
-+			break;
-+		}
-+
-+		if (!svcn) {
-+			alloc = le64_to_cpu(attr->nres.alloc_size) >>
-+				cluster_bits;
-+			mi_p = NULL;
-+		} else if (svcn != evcn + 1) {
-+			err = -EINVAL;
-+			break;
-+		}
-+
-+		evcn = le64_to_cpu(attr->nres.evcn);
-+
-+		if (svcn > evcn + 1) {
-+			err = -EINVAL;
-+			break;
-+		}
-+
-+		if (!mi_p) {
-+			/* do not try if too little free space */
-+			if (le32_to_cpu(mi->mrec->used) + 8 >= rs)
-+				continue;
-+
-+			/* do not try if last attribute segment */
-+			if (evcn + 1 == alloc)
-+				continue;
-+			run_close(&run);
-+		}
-+
-+		roff = le16_to_cpu(attr->nres.run_off);
-+		err = run_unpack(&run, sbi, ni->mi.rno, svcn, evcn, svcn,
-+				 Add2Ptr(attr, roff),
-+				 le32_to_cpu(attr->size) - roff);
-+		if (err < 0)
-+			break;
-+
-+		if (!mi_p) {
-+			mi_p = mi;
-+			attr_p = attr;
-+			svcn_p = svcn;
-+			evcn_p = evcn;
-+			le_p = le;
-+			err = 0;
-+			continue;
-+		}
-+
-+		/*
-+		 * run contains data from two records: mi_p and mi
-+		 * try to pack in one
-+		 */
-+		err = mi_pack_runs(mi_p, attr_p, &run, evcn + 1 - svcn_p);
-+		if (err)
-+			break;
-+
-+		next_svcn = le64_to_cpu(attr_p->nres.evcn) + 1;
-+
-+		if (next_svcn >= evcn + 1) {
-+			/* we can remove this attribute segment */
-+			al_remove_le(ni, le);
-+			mi_remove_attr(mi, attr);
-+			le = le_p;
-+			continue;
-+		}
-+
-+		attr->nres.svcn = le->vcn = cpu_to_le64(next_svcn);
-+		mi->dirty = true;
-+		ni->attr_list.dirty = true;
-+
-+		if (evcn + 1 == alloc) {
-+			err = mi_pack_runs(mi, attr, &run,
-+					   evcn + 1 - next_svcn);
-+			if (err)
-+				break;
-+			mi_p = NULL;
-+		} else {
-+			mi_p = mi;
-+			attr_p = attr;
-+			svcn_p = next_svcn;
-+			evcn_p = evcn;
-+			le_p = le;
-+			run_truncate_head(&run, next_svcn);
-+		}
-+	}
-+
-+	if (err) {
-+		ntfs_inode_warn(&ni->vfs_inode, "there is a problem");
-+		ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
-+
-+		/* Pack loaded but not packed runs */
-+		if (mi_p)
-+			mi_pack_runs(mi_p, attr_p, &run, evcn_p + 1 - svcn_p);
-+	}
-+
-+	run_close(&run);
-+	return err;
-+}
-+
-+/*
-+ * ni_try_remove_attr_list
-+ *
-+ * Can we remove attribute list?
-+ * Check the case when primary record contains enough space for all attributes
-+ */
-+static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-+{
-+	int err = 0;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	struct ATTRIB *attr, *attr_list, *attr_ins;
-+	struct ATTR_LIST_ENTRY *le;
-+	struct mft_inode *mi;
-+	u32 asize, free;
-+	struct MFT_REF ref;
-+	__le16 id;
-+
-+	if (!ni->attr_list.dirty)
-+		return 0;
-+
-+	err = ni_repack(ni);
-+	if (err)
-+		return err;
-+
-+	attr_list = mi_find_attr(&ni->mi, NULL, ATTR_LIST, NULL, 0, NULL);
-+	if (!attr_list)
-+		return 0;
-+
-+	asize = le32_to_cpu(attr_list->size);
-+
-+	/* free space in primary record without attribute list */
-+	free = sbi->record_size - le32_to_cpu(ni->mi.mrec->used) + asize;
-+	get_mi_ref(&ni->mi, &ref);
-+
-+	le = NULL;
-+	while ((le = al_enumerate(ni, le))) {
-+		if (!memcmp(&le->ref, &ref, sizeof(ref)))
-+			continue;
-+
-+		if (le->vcn)
-+			return 0;
-+
-+		mi = ni_find_mi(ni, ino_get(&le->ref));
-+		if (!mi)
-+			return 0;
-+
-+		attr = mi_find_attr(mi, NULL, le->type, le_name(le),
-+				    le->name_len, &le->id);
-+		if (!attr)
-+			return 0;
-+
-+		asize = le32_to_cpu(attr->size);
-+		if (asize > free)
-+			return 0;
-+
-+		free -= asize;
-+	}
-+
-+	/* Is seems that attribute list can be removed from primary record */
-+	mi_remove_attr(&ni->mi, attr_list);
-+
-+	/*
-+	 * Repeat the cycle above and move all attributes to primary record.
-+	 * It should be success!
-+	 */
-+	le = NULL;
-+	while ((le = al_enumerate(ni, le))) {
-+		if (!memcmp(&le->ref, &ref, sizeof(ref)))
-+			continue;
-+
-+		mi = ni_find_mi(ni, ino_get(&le->ref));
-+
-+		attr = mi_find_attr(mi, NULL, le->type, le_name(le),
-+				    le->name_len, &le->id);
-+		asize = le32_to_cpu(attr->size);
-+
-+		/* insert into primary record */
-+		attr_ins = mi_insert_attr(&ni->mi, le->type, le_name(le),
-+					  le->name_len, asize,
-+					  le16_to_cpu(attr->name_off));
-+		id = attr_ins->id;
-+
-+		/* copy all except id */
-+		memcpy(attr_ins, attr, asize);
-+		attr_ins->id = id;
-+
-+		/* remove from original record */
-+		mi_remove_attr(mi, attr);
-+	}
-+
-+	run_deallocate(sbi, &ni->attr_list.run, true);
-+	run_close(&ni->attr_list.run);
-+	ni->attr_list.size = 0;
-+	ntfs_free(ni->attr_list.le);
-+	ni->attr_list.le = NULL;
-+	ni->attr_list.dirty = false;
-+
-+	return 0;
-+}
-+
-+/*
-+ * ni_create_attr_list
-+ *
-+ * generates an attribute list for this primary record
-+ */
-+int ni_create_attr_list(struct ntfs_inode *ni)
-+{
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	int err;
-+	u32 lsize;
-+	struct ATTRIB *attr;
-+	struct ATTRIB *arr_move[7];
-+	struct ATTR_LIST_ENTRY *le, *le_b[7];
-+	struct MFT_REC *rec;
-+	bool is_mft;
-+	CLST rno = 0;
-+	struct mft_inode *mi;
-+	u32 free_b, nb, to_free, rs;
-+	u16 sz;
-+
-+	is_mft = ni->mi.rno == MFT_REC_MFT;
-+	rec = ni->mi.mrec;
-+	rs = sbi->record_size;
-+
-+	/*
-+	 * Skip estimating exact memory requirement
-+	 * Looks like one record_size is always enough
-+	 */
-+	le = ntfs_malloc(al_aligned(rs));
-+	if (!le) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	get_mi_ref(&ni->mi, &le->ref);
-+	ni->attr_list.le = le;
-+
-+	attr = NULL;
-+	nb = 0;
-+	free_b = 0;
-+	attr = NULL;
-+
-+	for (; (attr = mi_enum_attr(&ni->mi, attr)); le = Add2Ptr(le, sz)) {
-+		sz = le_size(attr->name_len);
-+		le->type = attr->type;
-+		le->size = cpu_to_le16(sz);
-+		le->name_len = attr->name_len;
-+		le->name_off = offsetof(struct ATTR_LIST_ENTRY, name);
-+		le->vcn = 0;
-+		if (le != ni->attr_list.le)
-+			le->ref = ni->attr_list.le->ref;
-+		le->id = attr->id;
-+
-+		if (attr->name_len)
-+			memcpy(le->name, attr_name(attr),
-+			       sizeof(short) * attr->name_len);
-+		else if (attr->type == ATTR_STD)
-+			continue;
-+		else if (attr->type == ATTR_LIST)
-+			continue;
-+		else if (is_mft && attr->type == ATTR_DATA)
-+			continue;
-+
-+		if (!nb || nb < ARRAY_SIZE(arr_move)) {
-+			le_b[nb] = le;
-+			arr_move[nb++] = attr;
-+			free_b += le32_to_cpu(attr->size);
-+		}
-+	}
-+
-+	lsize = PtrOffset(ni->attr_list.le, le);
-+	ni->attr_list.size = lsize;
-+
-+	to_free = le32_to_cpu(rec->used) + lsize + SIZEOF_RESIDENT;
-+	if (to_free <= rs) {
-+		to_free = 0;
-+	} else {
-+		to_free -= rs;
-+
-+		if (to_free > free_b) {
-+			err = -EINVAL;
-+			goto out1;
-+		}
-+	}
-+
-+	/* Allocate child mft. */
-+	err = ntfs_look_free_mft(sbi, &rno, is_mft, ni, &mi);
-+	if (err)
-+		goto out1;
-+
-+	/* Call 'mi_remove_attr' in reverse order to keep pointers 'arr_move' valid */
-+	while (to_free > 0) {
-+		struct ATTRIB *b = arr_move[--nb];
-+		u32 asize = le32_to_cpu(b->size);
-+		u16 name_off = le16_to_cpu(b->name_off);
-+
-+		attr = mi_insert_attr(mi, b->type, Add2Ptr(b, name_off),
-+				      b->name_len, asize, name_off);
-+		WARN_ON(!attr);
-+
-+		get_mi_ref(mi, &le_b[nb]->ref);
-+		le_b[nb]->id = attr->id;
-+
-+		/* copy all except id */
-+		memcpy(attr, b, asize);
-+		attr->id = le_b[nb]->id;
-+
-+		WARN_ON(!mi_remove_attr(&ni->mi, b));
-+
-+		if (to_free <= asize)
-+			break;
-+		to_free -= asize;
-+		WARN_ON(!nb);
-+	}
-+
-+	attr = mi_insert_attr(&ni->mi, ATTR_LIST, NULL, 0,
-+			      lsize + SIZEOF_RESIDENT, SIZEOF_RESIDENT);
-+	WARN_ON(!attr);
-+
-+	attr->non_res = 0;
-+	attr->flags = 0;
-+	attr->res.data_size = cpu_to_le32(lsize);
-+	attr->res.data_off = SIZEOF_RESIDENT_LE;
-+	attr->res.flags = 0;
-+	attr->res.res = 0;
-+
-+	memcpy(resident_data_ex(attr, lsize), ni->attr_list.le, lsize);
-+
-+	ni->attr_list.dirty = false;
-+
-+	mark_inode_dirty(&ni->vfs_inode);
-+	goto out;
-+
-+out1:
-+	ntfs_free(ni->attr_list.le);
-+	ni->attr_list.le = NULL;
-+	ni->attr_list.size = 0;
-+
-+out:
-+	return err;
-+}
-+
-+/*
-+ * ni_ins_attr_ext
-+ *
-+ * This method adds an external attribute to the ntfs_inode.
-+ */
-+static int ni_ins_attr_ext(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le,
-+			   enum ATTR_TYPE type, const __le16 *name, u8 name_len,
-+			   u32 asize, CLST svcn, u16 name_off, bool force_ext,
-+			   struct ATTRIB **ins_attr, struct mft_inode **ins_mi)
-+{
-+	struct ATTRIB *attr;
-+	struct mft_inode *mi;
-+	CLST rno;
-+	u64 vbo;
-+	struct rb_node *node;
-+	int err;
-+	bool is_mft, is_mft_data;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+
-+	is_mft = ni->mi.rno == MFT_REC_MFT;
-+	is_mft_data = is_mft && type == ATTR_DATA && !name_len;
-+
-+	if (asize > sbi->max_bytes_per_attr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	/*
-+	 * standard information and attr_list cannot be made external.
-+	 * The Log File cannot have any external attributes
-+	 */
-+	if (type == ATTR_STD || type == ATTR_LIST ||
-+	    ni->mi.rno == MFT_REC_LOG) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* Create attribute list if it is not already existed */
-+	if (!ni->attr_list.size) {
-+		err = ni_create_attr_list(ni);
-+		if (err)
-+			goto out;
-+	}
-+
-+	vbo = is_mft_data ? ((u64)svcn << sbi->cluster_bits) : 0;
-+
-+	if (force_ext)
-+		goto insert_ext;
-+
-+	/* Load all subrecords into memory. */
-+	err = ni_load_all_mi(ni);
-+	if (err)
-+		goto out;
-+
-+	/* Check each of loaded subrecord */
-+	for (node = rb_first(&ni->mi_tree); node; node = rb_next(node)) {
-+		mi = rb_entry(node, struct mft_inode, node);
-+
-+		if (is_mft_data &&
-+		    (mi_enum_attr(mi, NULL) ||
-+		     vbo <= ((u64)mi->rno << sbi->record_bits))) {
-+			/* We can't accept this record 'case MFT's bootstrapping */
-+			continue;
-+		}
-+		if (is_mft &&
-+		    mi_find_attr(mi, NULL, ATTR_DATA, NULL, 0, NULL)) {
-+			/*
-+			 * This child record already has a ATTR_DATA.
-+			 * So it can't accept any other records.
-+			 */
-+			continue;
-+		}
-+
-+		if ((type != ATTR_NAME || name_len) &&
-+		    mi_find_attr(mi, NULL, type, name, name_len, NULL)) {
-+			/* Only indexed attributes can share same record */
-+			continue;
-+		}
-+
-+		/* Try to insert attribute into this subrecord */
-+		attr = ni_ins_new_attr(ni, mi, le, type, name, name_len, asize,
-+				       name_off, svcn);
-+		if (!attr)
-+			continue;
-+
-+		if (ins_attr)
-+			*ins_attr = attr;
-+		return 0;
-+	}
-+
-+insert_ext:
-+	/* We have to allocate a new child subrecord*/
-+	err = ntfs_look_free_mft(sbi, &rno, is_mft_data, ni, &mi);
-+	if (err)
-+		goto out;
-+
-+	if (is_mft_data && vbo <= ((u64)rno << sbi->record_bits)) {
-+		err = -EINVAL;
-+		goto out1;
-+	}
-+
-+	attr = ni_ins_new_attr(ni, mi, le, type, name, name_len, asize,
-+			       name_off, svcn);
-+	if (!attr)
-+		goto out2;
-+
-+	if (ins_attr)
-+		*ins_attr = attr;
-+	if (ins_mi)
-+		*ins_mi = mi;
-+
-+	return 0;
-+
-+out2:
-+	ni_remove_mi(ni, mi);
-+	mi_put(mi);
-+	err = -EINVAL;
-+
-+out1:
-+	ntfs_mark_rec_free(sbi, rno);
-+
-+out:
-+	return err;
-+}
-+
-+/*
-+ * ni_insert_attr
-+ *
-+ * inserts an attribute into the file.
-+ *
-+ * If the primary record has room, it will just insert the attribute.
-+ * If not, it may make the attribute external.
-+ * For $MFT::Data it may make room for the attribute by
-+ * making other attributes external.
-+ *
-+ * NOTE:
-+ * The ATTR_LIST and ATTR_STD cannot be made external.
-+ * This function does not fill new attribute full
-+ * It only fills 'size'/'type'/'id'/'name_len' fields
-+ */
-+static int ni_insert_attr(struct ntfs_inode *ni, enum ATTR_TYPE type,
-+			  const __le16 *name, u8 name_len, u32 asize,
-+			  u16 name_off, CLST svcn, struct ATTRIB **ins_attr,
-+			  struct mft_inode **ins_mi)
-+{
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	int err;
-+	struct ATTRIB *attr, *eattr;
-+	struct MFT_REC *rec;
-+	bool is_mft;
-+	struct ATTR_LIST_ENTRY *le;
-+	u32 list_reserve, max_free, free, used, t32;
-+	__le16 id;
-+	u16 t16;
-+
-+	is_mft = ni->mi.rno == MFT_REC_MFT;
-+	rec = ni->mi.mrec;
-+
-+	list_reserve = SIZEOF_NONRESIDENT + 3 * (1 + 2 * sizeof(u32));
-+	used = le32_to_cpu(rec->used);
-+	free = sbi->record_size - used;
-+
-+	if (is_mft && type != ATTR_LIST) {
-+		/* Reserve space for the ATTRIB List. */
-+		if (free < list_reserve)
-+			free = 0;
-+		else
-+			free -= list_reserve;
-+	}
-+
-+	if (asize <= free) {
-+		attr = ni_ins_new_attr(ni, &ni->mi, NULL, type, name, name_len,
-+				       asize, name_off, svcn);
-+		if (attr) {
-+			if (ins_attr)
-+				*ins_attr = attr;
-+			if (ins_mi)
-+				*ins_mi = &ni->mi;
-+			err = 0;
-+			goto out;
-+		}
-+	}
-+
-+	if (!is_mft || type != ATTR_DATA || svcn) {
-+		/* This ATTRIB will be external. */
-+		err = ni_ins_attr_ext(ni, NULL, type, name, name_len, asize,
-+				      svcn, name_off, false, ins_attr, ins_mi);
-+		goto out;
-+	}
-+
-+	/*
-+	 * Here we have: "is_mft && type == ATTR_DATA && !svcn
-+	 *
-+	 * The first chunk of the $MFT::Data ATTRIB must be the base record.
-+	 * Evict as many other attributes as possible.
-+	 */
-+	max_free = free;
-+
-+	/* Estimate the result of moving all possible attributes away.*/
-+	attr = NULL;
-+
-+	while ((attr = mi_enum_attr(&ni->mi, attr))) {
-+		if (attr->type == ATTR_STD)
-+			continue;
-+		if (attr->type == ATTR_LIST)
-+			continue;
-+		max_free += le32_to_cpu(attr->size);
-+	}
-+
-+	if (max_free < asize + list_reserve) {
-+		/* Impossible to insert this attribute into primary record */
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* Start real attribute moving */
-+	attr = NULL;
-+
-+	for (;;) {
-+		attr = mi_enum_attr(&ni->mi, attr);
-+		if (!attr) {
-+			/* We should never be here 'cause we have already check this case */
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		/* Skip attributes that MUST be primary record */
-+		if (attr->type == ATTR_STD || attr->type == ATTR_LIST)
-+			continue;
-+
-+		le = NULL;
-+		if (ni->attr_list.size) {
-+			le = al_find_le(ni, NULL, attr);
-+			if (!le) {
-+				/* Really this is a serious bug */
-+				err = -EINVAL;
-+				goto out;
-+			}
-+		}
-+
-+		t32 = le32_to_cpu(attr->size);
-+		t16 = le16_to_cpu(attr->name_off);
-+		err = ni_ins_attr_ext(ni, le, attr->type, Add2Ptr(attr, t16),
-+				      attr->name_len, t32, attr_svcn(attr), t16,
-+				      false, &eattr, NULL);
-+		if (err)
-+			return err;
-+
-+		id = eattr->id;
-+		memcpy(eattr, attr, t32);
-+		eattr->id = id;
-+
-+		/* remove attrib from primary record */
-+		mi_remove_attr(&ni->mi, attr);
-+
-+		/* attr now points to next attribute */
-+		if (attr->type == ATTR_END)
-+			goto out;
-+	}
-+	while (asize + list_reserve > sbi->record_size - le32_to_cpu(rec->used))
-+		;
-+
-+	attr = ni_ins_new_attr(ni, &ni->mi, NULL, type, name, name_len, asize,
-+			       name_off, svcn);
-+	if (!attr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (ins_attr)
-+		*ins_attr = attr;
-+	if (ins_mi)
-+		*ins_mi = &ni->mi;
-+
-+out:
-+	return err;
-+}
-+
-+/*
-+ * ni_expand_mft_list
-+ *
-+ * This method splits ATTR_DATA of $MFT
-+ */
-+static int ni_expand_mft_list(struct ntfs_inode *ni)
-+{
-+	int err = 0;
-+	struct runs_tree *run = &ni->file.run;
-+	u32 asize, run_size, done = 0;
-+	struct ATTRIB *attr;
-+	struct rb_node *node;
-+	CLST mft_min, mft_new, svcn, evcn, plen;
-+	struct mft_inode *mi, *mi_min, *mi_new;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+
-+	/* Find the nearest Mft */
-+	mft_min = 0;
-+	mft_new = 0;
-+	mi_min = NULL;
-+
-+	for (node = rb_first(&ni->mi_tree); node; node = rb_next(node)) {
-+		mi = rb_entry(node, struct mft_inode, node);
-+
-+		attr = mi_enum_attr(mi, NULL);
-+
-+		if (!attr) {
-+			mft_min = mi->rno;
-+			mi_min = mi;
-+			break;
-+		}
-+	}
-+
-+	if (ntfs_look_free_mft(sbi, &mft_new, true, ni, &mi_new)) {
-+		mft_new = 0;
-+		// really this is not critical
-+	} else if (mft_min > mft_new) {
-+		mft_min = mft_new;
-+		mi_min = mi_new;
-+	} else {
-+		ntfs_mark_rec_free(sbi, mft_new);
-+		mft_new = 0;
-+		ni_remove_mi(ni, mi_new);
-+	}
-+
-+	attr = mi_find_attr(&ni->mi, NULL, ATTR_DATA, NULL, 0, NULL);
-+	if (!attr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	asize = le32_to_cpu(attr->size);
-+
-+	evcn = le64_to_cpu(attr->nres.evcn);
-+	svcn = bytes_to_cluster(sbi, (u64)(mft_min + 1) << sbi->record_bits);
-+	if (evcn + 1 >= svcn) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	/*
-+	 * split primary attribute [0 evcn] in two parts [0 svcn) + [svcn evcn]
-+	 *
-+	 * Update first part of ATTR_DATA in 'primary MFT
-+	 */
-+	err = run_pack(run, 0, svcn, Add2Ptr(attr, SIZEOF_NONRESIDENT),
-+		       asize - SIZEOF_NONRESIDENT, &plen);
-+	if (err < 0)
-+		goto out;
-+
-+	run_size = QuadAlign(err);
-+	err = 0;
-+
-+	if (plen < svcn) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	attr->nres.evcn = cpu_to_le64(svcn - 1);
-+	attr->size = cpu_to_le32(run_size + SIZEOF_NONRESIDENT);
-+	/* 'done' - how many bytes of primary MFT becomes free */
-+	done = asize - run_size - SIZEOF_NONRESIDENT;
-+	le32_sub_cpu(&ni->mi.mrec->used, done);
-+
-+	/* Estimate the size of second part: run_buf=NULL */
-+	err = run_pack(run, svcn, evcn + 1 - svcn, NULL, sbi->record_size,
-+		       &plen);
-+	if (err < 0)
-+		goto out;
-+
-+	run_size = QuadAlign(err);
-+	err = 0;
-+
-+	if (plen < evcn + 1 - svcn) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	/*
-+	 * This function may implicitly call expand attr_list
-+	 * Insert second part of ATTR_DATA in 'mi_min'
-+	 */
-+	attr = ni_ins_new_attr(ni, mi_min, NULL, ATTR_DATA, NULL, 0,
-+			       SIZEOF_NONRESIDENT + run_size,
-+			       SIZEOF_NONRESIDENT, svcn);
-+	if (!attr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	attr->non_res = 1;
-+	attr->name_off = SIZEOF_NONRESIDENT_LE;
-+	attr->flags = 0;
-+
-+	run_pack(run, svcn, evcn + 1 - svcn, Add2Ptr(attr, SIZEOF_NONRESIDENT),
-+		 run_size, &plen);
-+
-+	attr->nres.svcn = cpu_to_le64(svcn);
-+	attr->nres.evcn = cpu_to_le64(evcn);
-+	attr->nres.run_off = cpu_to_le16(SIZEOF_NONRESIDENT);
-+
-+out:
-+	if (mft_new) {
-+		ntfs_mark_rec_free(sbi, mft_new);
-+		ni_remove_mi(ni, mi_new);
-+	}
-+
-+	return !err && !done ? -EOPNOTSUPP : err;
-+}
-+
-+/*
-+ * ni_expand_list
-+ *
-+ * This method moves all possible attributes out of primary record
-+ */
-+int ni_expand_list(struct ntfs_inode *ni)
-+{
-+	int err = 0;
-+	u32 asize, done = 0;
-+	struct ATTRIB *attr, *ins_attr;
-+	struct ATTR_LIST_ENTRY *le;
-+	bool is_mft = ni->mi.rno == MFT_REC_MFT;
-+	struct MFT_REF ref;
-+
-+	get_mi_ref(&ni->mi, &ref);
-+	le = NULL;
-+
-+	while ((le = al_enumerate(ni, le))) {
-+		if (le->type == ATTR_STD)
-+			continue;
-+
-+		if (memcmp(&ref, &le->ref, sizeof(struct MFT_REF)))
-+			continue;
-+
-+		if (is_mft && le->type == ATTR_DATA)
-+			continue;
-+
-+		/* Find attribute in primary record */
-+		attr = rec_find_attr_le(&ni->mi, le);
-+		if (!attr) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		asize = le32_to_cpu(attr->size);
-+
-+		/* Always insert into new record to avoid collisions (deep recursive) */
-+		err = ni_ins_attr_ext(ni, le, attr->type, attr_name(attr),
-+				      attr->name_len, asize, attr_svcn(attr),
-+				      le16_to_cpu(attr->name_off), true,
-+				      &ins_attr, NULL);
-+
-+		if (err)
-+			goto out;
-+
-+		memcpy(ins_attr, attr, asize);
-+		ins_attr->id = le->id;
-+		mi_remove_attr(&ni->mi, attr);
-+
-+		done += asize;
-+		goto out;
-+	}
-+
-+	if (!is_mft) {
-+		err = -EFBIG; /* attr list is too big(?) */
-+		goto out;
-+	}
-+
-+	/* split mft data as much as possible */
-+	err = ni_expand_mft_list(ni);
-+	if (err)
-+		goto out;
-+
-+out:
-+	return !err && !done ? -EOPNOTSUPP : err;
-+}
-+
-+/*
-+ * ni_insert_nonresident
-+ *
-+ * inserts new nonresident attribute
-+ */
-+int ni_insert_nonresident(struct ntfs_inode *ni, enum ATTR_TYPE type,
-+			  const __le16 *name, u8 name_len,
-+			  const struct runs_tree *run, CLST svcn, CLST len,
-+			  __le16 flags, struct ATTRIB **new_attr,
-+			  struct mft_inode **mi)
-+{
-+	int err;
-+	CLST plen;
-+	struct ATTRIB *attr;
-+	bool is_ext =
-+		(flags & (ATTR_FLAG_SPARSED | ATTR_FLAG_COMPRESSED)) && !svcn;
-+	u32 name_size = QuadAlign(name_len * sizeof(short));
-+	u32 name_off = is_ext ? SIZEOF_NONRESIDENT_EX : SIZEOF_NONRESIDENT;
-+	u32 run_off = name_off + name_size;
-+	u32 run_size, asize;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+
-+	err = run_pack(run, svcn, len, NULL, sbi->max_bytes_per_attr - run_off,
-+		       &plen);
-+	if (err < 0)
-+		goto out;
-+
-+	run_size = QuadAlign(err);
-+
-+	if (plen < len) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	asize = run_off + run_size;
-+
-+	if (asize > sbi->max_bytes_per_attr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	err = ni_insert_attr(ni, type, name, name_len, asize, name_off, svcn,
-+			     &attr, mi);
-+
-+	if (err)
-+		goto out;
-+
-+	attr->non_res = 1;
-+	attr->name_off = cpu_to_le16(name_off);
-+	attr->flags = flags;
-+
-+	run_pack(run, svcn, len, Add2Ptr(attr, run_off), run_size, &plen);
-+
-+	attr->nres.svcn = cpu_to_le64(svcn);
-+	attr->nres.evcn = cpu_to_le64((u64)svcn + len - 1);
-+
-+	err = 0;
-+	if (new_attr)
-+		*new_attr = attr;
-+
-+	*(__le64 *)&attr->nres.run_off = cpu_to_le64(run_off);
-+
-+	attr->nres.alloc_size =
-+		svcn ? 0 : cpu_to_le64((u64)len << ni->mi.sbi->cluster_bits);
-+	attr->nres.data_size = attr->nres.alloc_size;
-+	attr->nres.valid_size = attr->nres.alloc_size;
-+
-+	if (is_ext) {
-+		if (flags & ATTR_FLAG_COMPRESSED)
-+			attr->nres.c_unit = COMPRESSION_UNIT;
-+		attr->nres.total_size = attr->nres.alloc_size;
-+	}
-+
-+out:
-+	return err;
-+}
-+
-+/*
-+ * ni_insert_resident
-+ *
-+ * inserts new resident attribute
-+ */
-+int ni_insert_resident(struct ntfs_inode *ni, u32 data_size,
-+		       enum ATTR_TYPE type, const __le16 *name, u8 name_len,
-+		       struct ATTRIB **new_attr, struct mft_inode **mi)
-+{
-+	int err;
-+	u32 name_size = QuadAlign(name_len * sizeof(short));
-+	u32 asize = SIZEOF_RESIDENT + name_size + QuadAlign(data_size);
-+	struct ATTRIB *attr;
-+
-+	err = ni_insert_attr(ni, type, name, name_len, asize, SIZEOF_RESIDENT,
-+			     0, &attr, mi);
-+	if (err)
-+		return err;
-+
-+	attr->non_res = 0;
-+	attr->flags = 0;
-+
-+	attr->res.data_size = cpu_to_le32(data_size);
-+	attr->res.data_off = cpu_to_le16(SIZEOF_RESIDENT + name_size);
-+	if (type == ATTR_NAME)
-+		attr->res.flags = RESIDENT_FLAG_INDEXED;
-+	attr->res.res = 0;
-+
-+	if (new_attr)
-+		*new_attr = attr;
-+
-+	return 0;
-+}
-+
-+/*
-+ * ni_remove_attr_le
-+ *
-+ * removes attribute from record
-+ */
-+int ni_remove_attr_le(struct ntfs_inode *ni, struct ATTRIB *attr,
-+		      struct ATTR_LIST_ENTRY *le)
-+{
-+	int err;
-+	struct mft_inode *mi;
-+
-+	err = ni_load_mi(ni, le, &mi);
-+	if (err)
-+		return err;
-+
-+	mi_remove_attr(mi, attr);
-+
-+	if (le)
-+		al_remove_le(ni, le);
-+
-+	return 0;
-+}
-+
-+/*
-+ * ni_delete_all
-+ *
-+ * removes all attributes and frees allocates space
-+ * ntfs_evict_inode->ntfs_clear_inode->ni_delete_all (if no links)
-+ */
-+int ni_delete_all(struct ntfs_inode *ni)
-+{
-+	int err;
-+	struct ATTR_LIST_ENTRY *le = NULL;
-+	struct ATTRIB *attr = NULL;
-+	struct rb_node *node;
-+	u16 roff;
-+	u32 asize;
-+	CLST svcn, evcn;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	bool nt3 = is_ntfs3(sbi);
-+	struct MFT_REF ref;
-+
-+	while ((attr = ni_enum_attr_ex(ni, attr, &le, NULL))) {
-+		if (!nt3 || attr->name_len) {
-+			;
-+		} else if (attr->type == ATTR_REPARSE) {
-+			get_mi_ref(&ni->mi, &ref);
-+			ntfs_remove_reparse(sbi, 0, &ref);
-+		} else if (attr->type == ATTR_ID && !attr->non_res &&
-+			   le32_to_cpu(attr->res.data_size) >=
-+				   sizeof(struct GUID)) {
-+			ntfs_objid_remove(sbi, resident_data(attr));
-+		}
-+
-+		if (!attr->non_res)
-+			continue;
-+
-+		svcn = le64_to_cpu(attr->nres.svcn);
-+		evcn = le64_to_cpu(attr->nres.evcn);
-+
-+		if (evcn + 1 <= svcn)
-+			continue;
-+
-+		asize = le32_to_cpu(attr->size);
-+		roff = le16_to_cpu(attr->nres.run_off);
-+
-+		/*run==1 means unpack and deallocate*/
-+		run_unpack_ex(RUN_DEALLOCATE, sbi, ni->mi.rno, svcn, evcn, svcn,
-+			      Add2Ptr(attr, roff), asize - roff);
-+	}
-+
-+	if (ni->attr_list.size) {
-+		run_deallocate(ni->mi.sbi, &ni->attr_list.run, true);
-+		al_destroy(ni);
-+	}
-+
-+	/* Free all subrecords */
-+	for (node = rb_first(&ni->mi_tree); node;) {
-+		struct rb_node *next = rb_next(node);
-+		struct mft_inode *mi = rb_entry(node, struct mft_inode, node);
-+
-+		clear_rec_inuse(mi->mrec);
-+		mi->dirty = true;
-+		mi_write(mi, 0);
-+
-+		ntfs_mark_rec_free(sbi, mi->rno);
-+		ni_remove_mi(ni, mi);
-+		mi_put(mi);
-+		node = next;
-+	}
-+
-+	// Free base record
-+	clear_rec_inuse(ni->mi.mrec);
-+	ni->mi.dirty = true;
-+	err = mi_write(&ni->mi, 0);
-+
-+	ntfs_mark_rec_free(sbi, ni->mi.rno);
-+
-+	return err;
-+}
-+
-+/*
-+ * ni_fname_name
-+ *
-+ * returns file name attribute by its value
-+ */
-+struct ATTR_FILE_NAME *ni_fname_name(struct ntfs_inode *ni,
-+				     const struct cpu_str *uni,
-+				     const struct MFT_REF *home_dir,
-+				     struct ATTR_LIST_ENTRY **le)
-+{
-+	struct ATTRIB *attr = NULL;
-+	struct ATTR_FILE_NAME *fname;
-+
-+	*le = NULL;
-+
-+	/* Enumerate all names */
-+next:
-+	attr = ni_find_attr(ni, attr, le, ATTR_NAME, NULL, 0, NULL, NULL);
-+	if (!attr)
-+		return NULL;
-+
-+	fname = resident_data_ex(attr, SIZEOF_ATTRIBUTE_FILENAME);
-+	if (!fname)
-+		goto next;
-+
-+	if (home_dir && memcmp(home_dir, &fname->home, sizeof(*home_dir)))
-+		goto next;
-+
-+	if (!uni)
-+		goto next;
-+
-+	if (uni->len != fname->name_len)
-+		goto next;
-+
-+	if (ntfs_cmp_names_cpu(uni, (struct le_str *)&fname->name_len, NULL,
-+			       false))
-+		goto next;
-+
-+	return fname;
-+}
-+
-+/*
-+ * ni_fname_type
-+ *
-+ * returns file name attribute with given type
-+ */
-+struct ATTR_FILE_NAME *ni_fname_type(struct ntfs_inode *ni, u8 name_type,
-+				     struct ATTR_LIST_ENTRY **le)
-+{
-+	struct ATTRIB *attr = NULL;
-+	struct ATTR_FILE_NAME *fname;
-+
-+	*le = NULL;
-+
-+	/* Enumerate all names */
-+	for (;;) {
-+		attr = ni_find_attr(ni, attr, le, ATTR_NAME, NULL, 0, NULL,
-+				    NULL);
-+		if (!attr)
-+			return NULL;
-+
-+		fname = resident_data_ex(attr, SIZEOF_ATTRIBUTE_FILENAME);
-+		if (fname && name_type == fname->type)
-+			return fname;
-+	}
-+}
-+
-+/*
-+ * Process compressed/sparsed in special way
-+ * NOTE: you need to set ni->std_fa = new_fa
-+ * after this function to keep internal structures in consistency
-+ */
-+int ni_new_attr_flags(struct ntfs_inode *ni, enum FILE_ATTRIBUTE new_fa)
-+{
-+	struct ATTRIB *attr;
-+	struct mft_inode *mi;
-+	__le16 new_aflags;
-+	u32 new_asize;
-+
-+	attr = ni_find_attr(ni, NULL, NULL, ATTR_DATA, NULL, 0, NULL, &mi);
-+	if (!attr)
-+		return -EINVAL;
-+
-+	new_aflags = attr->flags;
-+
-+	if (new_fa & FILE_ATTRIBUTE_SPARSE_FILE)
-+		new_aflags |= ATTR_FLAG_SPARSED;
-+	else
-+		new_aflags &= ~ATTR_FLAG_SPARSED;
-+
-+	if (new_fa & FILE_ATTRIBUTE_COMPRESSED)
-+		new_aflags |= ATTR_FLAG_COMPRESSED;
-+	else
-+		new_aflags &= ~ATTR_FLAG_COMPRESSED;
-+
-+	if (new_aflags == attr->flags)
-+		return 0;
-+
-+	if ((new_aflags & (ATTR_FLAG_COMPRESSED | ATTR_FLAG_SPARSED)) ==
-+	    (ATTR_FLAG_COMPRESSED | ATTR_FLAG_SPARSED)) {
-+		ntfs_inode_warn(&ni->vfs_inode,
-+				"file can't be sparsed and compressed");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (!attr->non_res)
-+		goto out;
-+
-+	if (attr->nres.data_size) {
-+		ntfs_inode_warn(
-+			&ni->vfs_inode,
-+			"one can change sparsed/compressed only for empty files");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	/* resize nonresident empty attribute in-place only*/
-+	new_asize = (new_aflags & (ATTR_FLAG_COMPRESSED | ATTR_FLAG_SPARSED)) ?
-+			    (SIZEOF_NONRESIDENT_EX + 8) :
-+			    (SIZEOF_NONRESIDENT + 8);
-+
-+	if (!mi_resize_attr(mi, attr, new_asize - le32_to_cpu(attr->size)))
-+		return -EOPNOTSUPP;
-+
-+	if (new_aflags & ATTR_FLAG_SPARSED) {
-+		attr->name_off = SIZEOF_NONRESIDENT_EX_LE;
-+		/* windows uses 16 clusters per frame but supports one cluster per frame too*/
-+		attr->nres.c_unit = 0;
-+		ni->vfs_inode.i_mapping->a_ops = &ntfs_aops;
-+	} else if (new_aflags & ATTR_FLAG_COMPRESSED) {
-+		attr->name_off = SIZEOF_NONRESIDENT_EX_LE;
-+		/* the only allowed: 16 clusters per frame */
-+		attr->nres.c_unit = NTFS_LZNT_CUNIT;
-+		ni->vfs_inode.i_mapping->a_ops = &ntfs_aops_cmpr;
-+	} else {
-+		attr->name_off = SIZEOF_NONRESIDENT_LE;
-+		/* normal files */
-+		attr->nres.c_unit = 0;
-+		ni->vfs_inode.i_mapping->a_ops = &ntfs_aops;
-+	}
-+	attr->nres.run_off = attr->name_off;
-+out:
-+	attr->flags = new_aflags;
-+	mi->dirty = true;
-+
-+	return 0;
-+}
-+
-+/*
-+ * ni_parse_reparse
-+ *
-+ * buffer is at least 24 bytes
-+ */
-+enum REPARSE_SIGN ni_parse_reparse(struct ntfs_inode *ni, struct ATTRIB *attr,
-+				   void *buffer)
-+{
-+	const struct REPARSE_DATA_BUFFER *rp = NULL;
-+	u8 bits;
-+	u16 len;
-+	typeof(rp->CompressReparseBuffer) *cmpr;
-+
-+	static_assert(sizeof(struct REPARSE_DATA_BUFFER) <= 24);
-+
-+	/* Try to estimate reparse point */
-+	if (!attr->non_res) {
-+		rp = resident_data_ex(attr, sizeof(struct REPARSE_DATA_BUFFER));
-+	} else if (le64_to_cpu(attr->nres.data_size) >=
-+		   sizeof(struct REPARSE_DATA_BUFFER)) {
-+		struct runs_tree run;
-+
-+		run_init(&run);
-+
-+		if (!attr_load_runs_vcn(ni, ATTR_REPARSE, NULL, 0, &run, 0) &&
-+		    !ntfs_read_run_nb(ni->mi.sbi, &run, 0, buffer,
-+				      sizeof(struct REPARSE_DATA_BUFFER),
-+				      NULL)) {
-+			rp = buffer;
-+		}
-+
-+		run_close(&run);
-+	}
-+
-+	if (!rp)
-+		return REPARSE_NONE;
-+
-+	len = le16_to_cpu(rp->ReparseDataLength);
-+	switch (rp->ReparseTag) {
-+	case (IO_REPARSE_TAG_MICROSOFT | IO_REPARSE_TAG_SYMBOLIC_LINK):
-+		break; /* Symbolic link */
-+	case IO_REPARSE_TAG_MOUNT_POINT:
-+		break; /* Mount points and junctions */
-+	case IO_REPARSE_TAG_SYMLINK:
 +		break;
-+	case IO_REPARSE_TAG_COMPRESS:
-+		/*
-+		 * WOF - Windows Overlay Filter - used to compress files with lzx/xpress
-+		 * Unlike native NTFS file compression, the Windows Overlay Filter supports
-+		 * only read operations. This means that it doesn’t need to sector-align each
-+		 * compressed chunk, so the compressed data can be packed more tightly together.
-+		 * If you open the file for writing, the Windows Overlay Filter just decompresses
-+		 * the entire file, turning it back into a plain file.
-+		 *
-+		 * ntfs3 driver decompresses the entire file only on write or change size requests
-+		 */
 +
-+		cmpr = &rp->CompressReparseBuffer;
-+		if (len < sizeof(*cmpr) ||
-+		    cmpr->WofVersion != WOF_CURRENT_VERSION ||
-+		    cmpr->WofProvider != WOF_PROVIDER_SYSTEM ||
-+		    cmpr->ProviderVer != WOF_PROVIDER_CURRENT_VERSION) {
-+			return REPARSE_NONE;
++	case 1:
++		dsize = le64_to_cpu(attr->nres.data_size);
++		svcn = le64_to_cpu(attr->nres.svcn);
++		evcn = le64_to_cpu(attr->nres.evcn);
++		run_off = le16_to_cpu(attr->nres.run_off);
++
++		if (svcn > evcn + 1 || run_off >= asize ||
++		    le64_to_cpu(attr->nres.valid_size) > dsize ||
++		    dsize > le64_to_cpu(attr->nres.alloc_size)) {
++			return false;
 +		}
 +
-+		switch (cmpr->CompressionFormat) {
-+		case WOF_COMPRESSION_XPRESS4K:
-+			bits = 0xc; // 4k
-+			break;
-+		case WOF_COMPRESSION_XPRESS8K:
-+			bits = 0xd; // 8k
-+			break;
-+		case WOF_COMPRESSION_XPRESS16K:
-+			bits = 0xe; // 16k
-+			break;
-+		case WOF_COMPRESSION_LZX32K:
-+			bits = 0xf; // 32k
-+			break;
-+		default:
-+			bits = 0x10; // 64k
-+			break;
++		if (run_unpack(NULL, sbi, 0, svcn, evcn, svcn,
++			       Add2Ptr(attr, run_off), asize - run_off) < 0) {
++			return false;
 +		}
-+		ni_set_ext_compress_bits(ni, bits);
-+		return REPARSE_COMPRESSED;
 +
-+	case IO_REPARSE_TAG_DEDUP:
-+		ni->ni_flags |= NI_FLAG_DEDUPLICATED;
-+		return REPARSE_DEDUPLICATED;
++		return true;
 +
 +	default:
-+		if (rp->ReparseTag & IO_REPARSE_TAG_NAME_SURROGATE)
-+			break;
-+
-+		return REPARSE_NONE;
++		return false;
 +	}
 +
-+	/* Looks like normal symlink */
-+	return REPARSE_LINK;
-+}
-+
-+/*
-+ * helper for file_fiemap
-+ * assumed ni_lock
-+ * TODO: less aggressive locks
-+ */
-+int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
-+	      __u64 vbo, __u64 len)
-+{
-+	int err = 0;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	u8 cluster_bits = sbi->cluster_bits;
-+	struct runs_tree *run;
-+	struct rw_semaphore *run_lock;
-+	struct ATTRIB *attr;
-+	CLST vcn = vbo >> cluster_bits;
-+	CLST lcn, clen;
-+	u64 valid = ni->i_valid;
-+	u64 lbo, bytes;
-+	u64 end, alloc_size;
-+	size_t idx = -1;
-+	u32 flags;
-+	bool ok;
-+
-+	if (S_ISDIR(ni->vfs_inode.i_mode)) {
-+		run = &ni->dir.alloc_run;
-+		attr = ni_find_attr(ni, NULL, NULL, ATTR_ALLOC, I30_NAME,
-+				    ARRAY_SIZE(I30_NAME), NULL, NULL);
-+		run_lock = &ni->dir.run_lock;
-+	} else {
-+		run = &ni->file.run;
-+		attr = ni_find_attr(ni, NULL, NULL, ATTR_DATA, NULL, 0, NULL,
-+				    NULL);
-+		if (!attr) {
-+			err = -EINVAL;
-+			goto out;
++	switch (attr->type) {
++	case ATTR_NAME:
++		if (fname_full_size(Add2Ptr(
++			    attr, le16_to_cpu(attr->res.data_off))) > asize) {
++			return false;
 +		}
-+		if (is_attr_compressed(attr)) {
-+			/*unfortunately cp -r incorrectly treats compressed clusters*/
-+			err = -EOPNOTSUPP;
-+			ntfs_inode_warn(
-+				&ni->vfs_inode,
-+				"fiemap is not supported for compressed file (cp -r)");
-+			goto out;
-+		}
-+		run_lock = &ni->file.run_lock;
-+	}
-+
-+	if (!attr || !attr->non_res) {
-+		err = fiemap_fill_next_extent(
-+			fieinfo, 0, 0,
-+			attr ? le32_to_cpu(attr->res.data_size) : 0,
-+			FIEMAP_EXTENT_DATA_INLINE | FIEMAP_EXTENT_LAST |
-+				FIEMAP_EXTENT_MERGED);
-+		goto out;
-+	}
-+
-+	end = vbo + len;
-+	alloc_size = le64_to_cpu(attr->nres.alloc_size);
-+	if (end > alloc_size)
-+		end = alloc_size;
-+
-+	down_read(run_lock);
-+
-+	while (vbo < end) {
-+		if (idx == -1) {
-+			ok = run_lookup_entry(run, vcn, &lcn, &clen, &idx);
-+		} else {
-+			CLST vcn_next = vcn;
-+
-+			ok = run_get_entry(run, ++idx, &vcn, &lcn, &clen) &&
-+			     vcn == vcn_next;
-+			if (!ok)
-+				vcn = vcn_next;
-+		}
-+
-+		if (!ok) {
-+			up_read(run_lock);
-+			down_write(run_lock);
-+
-+			err = attr_load_runs_vcn(ni, attr->type,
-+						 attr_name(attr),
-+						 attr->name_len, run, vcn);
-+
-+			up_write(run_lock);
-+			down_read(run_lock);
-+
-+			if (err)
-+				break;
-+
-+			ok = run_lookup_entry(run, vcn, &lcn, &clen, &idx);
-+
-+			if (!ok) {
-+				err = -EINVAL;
-+				break;
-+			}
-+		}
-+
-+		if (!clen) {
-+			err = -EINVAL; // ?
-+			break;
-+		}
-+
-+		if (lcn == SPARSE_LCN) {
-+			vcn += clen;
-+			vbo = (u64)vcn << cluster_bits;
-+			continue;
-+		}
-+
-+		flags = FIEMAP_EXTENT_MERGED;
-+		if (S_ISDIR(ni->vfs_inode.i_mode)) {
-+			;
-+		} else if (is_attr_compressed(attr)) {
-+			CLST clst_data;
-+
-+			err = attr_is_frame_compressed(
-+				ni, attr, vcn >> attr->nres.c_unit, &clst_data);
-+			if (err)
-+				break;
-+			if (clst_data < NTFS_LZNT_CLUSTERS)
-+				flags |= FIEMAP_EXTENT_ENCODED;
-+		} else if (is_attr_encrypted(attr)) {
-+			flags |= FIEMAP_EXTENT_DATA_ENCRYPTED;
-+		}
-+
-+		vbo = (u64)vcn << cluster_bits;
-+		bytes = (u64)clen << cluster_bits;
-+		lbo = (u64)lcn << cluster_bits;
-+
-+		vcn += clen;
-+
-+		if (vbo + bytes >= end) {
-+			bytes = end - vbo;
-+			flags |= FIEMAP_EXTENT_LAST;
-+		}
-+
-+		if (vbo + bytes <= valid) {
-+			;
-+		} else if (vbo >= valid) {
-+			flags |= FIEMAP_EXTENT_UNWRITTEN;
-+		} else {
-+			/* vbo < valid && valid < vbo + bytes */
-+			u64 dlen = valid - vbo;
-+
-+			err = fiemap_fill_next_extent(fieinfo, vbo, lbo, dlen,
-+						      flags);
-+			if (err < 0)
-+				break;
-+			if (err == 1) {
-+				err = 0;
-+				break;
-+			}
-+
-+			vbo = valid;
-+			bytes -= dlen;
-+			if (!bytes)
-+				continue;
-+
-+			lbo += dlen;
-+			flags |= FIEMAP_EXTENT_UNWRITTEN;
-+		}
-+
-+		err = fiemap_fill_next_extent(fieinfo, vbo, lbo, bytes, flags);
-+		if (err < 0)
-+			break;
-+		if (err == 1) {
-+			err = 0;
-+			break;
-+		}
-+
-+		vbo += bytes;
-+	}
-+
-+	up_read(run_lock);
-+
-+out:
-+	return err;
-+}
-+
-+/*
-+ * When decompressing, we typically obtain more than one page per reference.
-+ * We inject the additional pages into the page cache.
-+ */
-+int ni_readpage_cmpr(struct ntfs_inode *ni, struct page *page)
-+{
-+	int err;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	struct address_space *mapping = page->mapping;
-+	pgoff_t index = page->index;
-+	u64 frame_vbo, vbo = (u64)index << PAGE_SHIFT;
-+	struct page **pages = NULL; /*array of at most 16 pages. stack?*/
-+	u8 frame_bits;
-+	CLST frame;
-+	u32 i, idx, frame_size, pages_per_frame;
-+	gfp_t gfp_mask;
-+	struct page *pg;
-+
-+	if (vbo >= ni->vfs_inode.i_size) {
-+		SetPageUptodate(page);
-+		err = 0;
-+		goto out;
-+	}
-+
-+	if (ni->ni_flags & NI_FLAG_COMPRESSED_MASK) {
-+		/* xpress or lzx */
-+		frame_bits = ni_ext_compress_bits(ni);
-+	} else {
-+		/* lznt compression*/
-+		frame_bits = NTFS_LZNT_CUNIT + sbi->cluster_bits;
-+	}
-+	frame_size = 1u << frame_bits;
-+	frame = vbo >> frame_bits;
-+	frame_vbo = (u64)frame << frame_bits;
-+	idx = (vbo - frame_vbo) >> PAGE_SHIFT;
-+
-+	pages_per_frame = frame_size >> PAGE_SHIFT;
-+	pages = ntfs_zalloc(pages_per_frame * sizeof(struct page *));
-+	if (!pages) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	pages[idx] = page;
-+	index = frame_vbo >> PAGE_SHIFT;
-+	gfp_mask = mapping_gfp_mask(mapping);
-+
-+	for (i = 0; i < pages_per_frame; i++, index++) {
-+		if (i == idx)
-+			continue;
-+
-+		pg = find_or_create_page(mapping, index, gfp_mask);
-+		if (!pg) {
-+			err = -ENOMEM;
-+			goto out1;
-+		}
-+		pages[i] = pg;
-+	}
-+
-+	err = ni_read_frame(ni, frame_vbo, pages, pages_per_frame);
-+
-+out1:
-+	if (err)
-+		SetPageError(page);
-+
-+	for (i = 0; i < pages_per_frame; i++) {
-+		pg = pages[i];
-+		if (i == idx)
-+			continue;
-+		unlock_page(pg);
-+		put_page(pg);
-+	}
-+
-+out:
-+	/* At this point, err contains 0 or -EIO depending on the "critical" page */
-+	ntfs_free(pages);
-+	unlock_page(page);
-+
-+	return err;
-+}
-+
-+#ifdef CONFIG_NTFS3_LZX_XPRESS
-+/*
-+ * decompress lzx/xpress compressed file
-+ * remove ATTR_DATA::WofCompressedData
-+ * remove ATTR_REPARSE
-+ */
-+int ni_decompress_file(struct ntfs_inode *ni)
-+{
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	struct inode *inode = &ni->vfs_inode;
-+	loff_t i_size = inode->i_size;
-+	struct address_space *mapping = inode->i_mapping;
-+	gfp_t gfp_mask = mapping_gfp_mask(mapping);
-+	struct page **pages = NULL;
-+	struct ATTR_LIST_ENTRY *le;
-+	struct ATTRIB *attr;
-+	CLST vcn, cend, lcn, clen, end;
-+	pgoff_t index;
-+	u64 vbo;
-+	u8 frame_bits;
-+	u32 i, frame_size, pages_per_frame, bytes;
-+	struct mft_inode *mi;
-+	int err;
-+
-+	/* clusters for decompressed data*/
-+	cend = bytes_to_cluster(sbi, i_size);
-+
-+	if (!i_size)
-+		goto remove_wof;
-+
-+	/* check in advance */
-+	if (cend > wnd_zeroes(&sbi->used.bitmap)) {
-+		err = -ENOSPC;
-+		goto out;
-+	}
-+
-+	frame_bits = ni_ext_compress_bits(ni);
-+	frame_size = 1u << frame_bits;
-+	pages_per_frame = frame_size >> PAGE_SHIFT;
-+	pages = ntfs_zalloc(pages_per_frame * sizeof(struct page *));
-+	if (!pages) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	/*
-+	 * Step 1: decompress data and copy to new allocated clusters
-+	 */
-+	index = 0;
-+	for (vbo = 0; vbo < i_size; vbo += bytes) {
-+		u32 nr_pages;
-+		bool new;
-+
-+		if (vbo + frame_size > i_size) {
-+			bytes = i_size - vbo;
-+			nr_pages = (bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
-+		} else {
-+			nr_pages = pages_per_frame;
-+			bytes = frame_size;
-+		}
-+
-+		end = bytes_to_cluster(sbi, vbo + bytes);
-+
-+		for (vcn = vbo >> sbi->cluster_bits; vcn < end; vcn += clen) {
-+			err = attr_data_get_block(ni, vcn, cend - vcn, &lcn,
-+						  &clen, &new);
-+			if (err)
-+				goto out;
-+		}
-+
-+		for (i = 0; i < pages_per_frame; i++, index++) {
-+			struct page *pg;
-+
-+			pg = find_or_create_page(mapping, index, gfp_mask);
-+			if (!pg) {
-+				while (i--) {
-+					unlock_page(pages[i]);
-+					put_page(pages[i]);
-+				}
-+				err = -ENOMEM;
-+				goto out;
-+			}
-+			pages[i] = pg;
-+		}
-+
-+		err = ni_read_frame(ni, vbo, pages, pages_per_frame);
-+
-+		if (!err) {
-+			down_read(&ni->file.run_lock);
-+			err = ntfs_bio_pages(sbi, &ni->file.run, pages,
-+					     nr_pages, vbo, bytes,
-+					     REQ_OP_WRITE);
-+			up_read(&ni->file.run_lock);
-+		}
-+
-+		for (i = 0; i < pages_per_frame; i++) {
-+			unlock_page(pages[i]);
-+			put_page(pages[i]);
-+		}
-+
-+		if (err)
-+			goto out;
-+
-+		cond_resched();
-+	}
-+
-+remove_wof:
-+	/*
-+	 * Step 2: deallocate attributes ATTR_DATA::WofCompressedData and ATTR_REPARSE
-+	 */
-+	attr = NULL;
-+	le = NULL;
-+	while ((attr = ni_enum_attr_ex(ni, attr, &le, NULL))) {
-+		CLST svcn, evcn;
-+		u32 asize, roff;
-+
-+		if (attr->type == ATTR_REPARSE) {
-+			struct MFT_REF ref;
-+
-+			get_mi_ref(&ni->mi, &ref);
-+			ntfs_remove_reparse(sbi, 0, &ref);
-+		}
-+
-+		if (!attr->non_res)
-+			continue;
-+
-+		if (attr->type != ATTR_REPARSE &&
-+		    (attr->type != ATTR_DATA ||
-+		     attr->name_len != ARRAY_SIZE(WOF_NAME) ||
-+		     memcmp(attr_name(attr), WOF_NAME, sizeof(WOF_NAME))))
-+			continue;
-+
-+		svcn = le64_to_cpu(attr->nres.svcn);
-+		evcn = le64_to_cpu(attr->nres.evcn);
-+
-+		if (evcn + 1 <= svcn)
-+			continue;
-+
-+		asize = le32_to_cpu(attr->size);
-+		roff = le16_to_cpu(attr->nres.run_off);
-+
-+		/*run==1 means unpack and deallocate*/
-+		run_unpack_ex(RUN_DEALLOCATE, sbi, ni->mi.rno, svcn, evcn, svcn,
-+			      Add2Ptr(attr, roff), asize - roff);
-+	}
-+
-+	/*
-+	 * Step 3: remove attribute ATTR_DATA::WofCompressedData
-+	 */
-+	err = ni_remove_attr(ni, ATTR_DATA, WOF_NAME, ARRAY_SIZE(WOF_NAME),
-+			     false, NULL);
-+	if (err)
-+		goto out;
-+
-+	/*
-+	 * Step 4: remove ATTR_REPARSE
-+	 */
-+	err = ni_remove_attr(ni, ATTR_REPARSE, NULL, 0, false, NULL);
-+	if (err)
-+		goto out;
-+
-+	/*
-+	 * Step 5: remove sparse flag from data attribute
-+	 */
-+	attr = ni_find_attr(ni, NULL, NULL, ATTR_DATA, NULL, 0, NULL, &mi);
-+	if (!attr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (attr->non_res && is_attr_sparsed(attr)) {
-+		/* sparsed attribute header is 8 bytes bigger than normal*/
-+		struct MFT_REC *rec = mi->mrec;
-+		u32 used = le32_to_cpu(rec->used);
-+		u32 asize = le32_to_cpu(attr->size);
-+		u16 roff = le16_to_cpu(attr->nres.run_off);
-+		char *rbuf = Add2Ptr(attr, roff);
-+
-+		memmove(rbuf - 8, rbuf, used - PtrOffset(rec, rbuf));
-+		attr->size = cpu_to_le32(asize - 8);
-+		attr->flags &= ~ATTR_FLAG_SPARSED;
-+		attr->nres.run_off = cpu_to_le16(roff - 8);
-+		attr->nres.c_unit = 0;
-+		rec->used = cpu_to_le32(used - 8);
-+		mi->dirty = true;
-+		ni->std_fa &= ~(FILE_ATTRIBUTE_SPARSE_FILE |
-+				FILE_ATTRIBUTE_REPARSE_POINT);
-+
-+		mark_inode_dirty(inode);
-+	}
-+
-+	/* clear cached flag */
-+	ni->ni_flags &= ~NI_FLAG_COMPRESSED_MASK;
-+	if (ni->file.offs_page) {
-+		put_page(ni->file.offs_page);
-+		ni->file.offs_page = NULL;
-+	}
-+	mapping->a_ops = &ntfs_aops;
-+
-+out:
-+	ntfs_free(pages);
-+	if (err) {
-+		make_bad_inode(inode);
-+		ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
-+	}
-+
-+	return err;
-+}
-+
-+/* external compression lzx/xpress */
-+static int decompress_lzx_xpress(struct ntfs_sb_info *sbi, const char *cmpr,
-+				 size_t cmpr_size, void *unc, size_t unc_size,
-+				 u32 frame_size)
-+{
-+	int err;
-+	void *ctx;
-+
-+	if (cmpr_size == unc_size) {
-+		/* frame not compressed */
-+		memcpy(unc, cmpr, unc_size);
-+		return 0;
-+	}
-+
-+	err = 0;
-+	if (frame_size == 0x8000) {
-+		mutex_lock(&sbi->compress.mtx_lzx);
-+		/* LZX: frame compressed */
-+		ctx = sbi->compress.lzx;
-+		if (!ctx) {
-+			/* Lazy initialize lzx decompress context */
-+			ctx = lzx_allocate_decompressor();
-+			if (!ctx) {
-+				err = -ENOMEM;
-+				goto out1;
-+			}
-+
-+			sbi->compress.lzx = ctx;
-+		}
-+
-+		if (lzx_decompress(ctx, cmpr, cmpr_size, unc, unc_size)) {
-+			/* treat all errors as "invalid argument" */
-+			err = -EINVAL;
-+		}
-+out1:
-+		mutex_unlock(&sbi->compress.mtx_lzx);
-+	} else {
-+		/* XPRESS: frame compressed */
-+		mutex_lock(&sbi->compress.mtx_xpress);
-+		ctx = sbi->compress.xpress;
-+		if (!ctx) {
-+			/* Lazy initialize xpress decompress context */
-+			ctx = xpress_allocate_decompressor();
-+			if (!ctx) {
-+				err = -ENOMEM;
-+				goto out2;
-+			}
-+
-+			sbi->compress.xpress = ctx;
-+		}
-+
-+		if (xpress_decompress(ctx, cmpr, cmpr_size, unc, unc_size)) {
-+			/* treat all errors as "invalid argument" */
-+			err = -EINVAL;
-+		}
-+out2:
-+		mutex_unlock(&sbi->compress.mtx_xpress);
-+	}
-+	return err;
-+}
-+#endif
-+
-+/*
-+ * ni_read_frame
-+ *
-+ * pages - array of locked pages
-+ */
-+int ni_read_frame(struct ntfs_inode *ni, u64 frame_vbo, struct page **pages,
-+		  u32 pages_per_frame)
-+{
-+	int err;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	u8 cluster_bits = sbi->cluster_bits;
-+	char *frame_ondisk = NULL;
-+	char *frame_mem = NULL;
-+	struct page **pages_disk = NULL;
-+	struct ATTR_LIST_ENTRY *le = NULL;
-+	struct runs_tree *run = &ni->file.run;
-+	u64 valid_size = ni->i_valid;
-+	u64 vbo_disk;
-+	size_t unc_size;
-+	u32 frame_size, i, npages_disk, ondisk_size;
-+	struct page *pg;
-+	struct ATTRIB *attr;
-+	CLST frame, clst_data;
-+
-+	/*
-+	 * To simplify decompress algorithm do vmap for source and target pages
-+	 */
-+	for (i = 0; i < pages_per_frame; i++)
-+		kmap(pages[i]);
-+
-+	frame_size = pages_per_frame << PAGE_SHIFT;
-+	frame_mem = vmap(pages, pages_per_frame, VM_MAP, PAGE_KERNEL);
-+	if (!frame_mem) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	attr = ni_find_attr(ni, NULL, &le, ATTR_DATA, NULL, 0, NULL, NULL);
-+	if (!attr) {
-+		err = -ENOENT;
-+		goto out1;
-+	}
-+
-+	if (!attr->non_res) {
-+		u32 data_size = le32_to_cpu(attr->res.data_size);
-+
-+		memset(frame_mem, 0, frame_size);
-+		if (frame_vbo < data_size) {
-+			ondisk_size = data_size - frame_vbo;
-+			memcpy(frame_mem, resident_data(attr) + frame_vbo,
-+			       min(ondisk_size, frame_size));
-+		}
-+		err = 0;
-+		goto out1;
-+	}
-+
-+	if (frame_vbo >= valid_size) {
-+		memset(frame_mem, 0, frame_size);
-+		err = 0;
-+		goto out1;
-+	}
-+
-+	if (ni->ni_flags & NI_FLAG_COMPRESSED_MASK) {
-+#ifndef CONFIG_NTFS3_LZX_XPRESS
-+		err = -EOPNOTSUPP;
-+		goto out1;
-+#else
-+		u32 frame_bits = ni_ext_compress_bits(ni);
-+		u64 frame64 = frame_vbo >> frame_bits;
-+		u64 frames, vbo_data;
-+
-+		if (frame_size != (1u << frame_bits)) {
-+			err = -EINVAL;
-+			goto out1;
-+		}
-+		switch (frame_size) {
-+		case 0x1000:
-+		case 0x2000:
-+		case 0x4000:
-+		case 0x8000:
-+			break;
-+		default:
-+			/* unknown compression */
-+			err = -EOPNOTSUPP;
-+			goto out1;
-+		}
-+
-+		attr = ni_find_attr(ni, attr, &le, ATTR_DATA, WOF_NAME,
-+				    ARRAY_SIZE(WOF_NAME), NULL, NULL);
-+		if (!attr) {
-+			ntfs_inode_err(
-+				&ni->vfs_inode,
-+				"external compressed file should contains data attribute \"WofCompressedData\"");
-+			err = -EINVAL;
-+			goto out1;
-+		}
-+
-+		if (!attr->non_res) {
-+			run = NULL;
-+		} else {
-+			run = run_alloc();
-+			if (!run) {
-+				err = -ENOMEM;
-+				goto out1;
-+			}
-+		}
-+
-+		frames = (ni->vfs_inode.i_size - 1) >> frame_bits;
-+
-+		err = attr_wof_frame_info(ni, attr, run, frame64, frames,
-+					  frame_bits, &ondisk_size, &vbo_data);
-+		if (err)
-+			goto out2;
-+
-+		if (frame64 == frames) {
-+			unc_size = 1 + ((ni->vfs_inode.i_size - 1) &
-+					(frame_size - 1));
-+			ondisk_size = attr_size(attr) - vbo_data;
-+		} else {
-+			unc_size = frame_size;
-+		}
-+
-+		if (ondisk_size > frame_size) {
-+			err = -EINVAL;
-+			goto out2;
-+		}
-+
-+		if (!attr->non_res) {
-+			if (vbo_data + ondisk_size >
-+			    le32_to_cpu(attr->res.data_size)) {
-+				err = -EINVAL;
-+				goto out1;
-+			}
-+
-+			err = decompress_lzx_xpress(
-+				sbi, Add2Ptr(resident_data(attr), vbo_data),
-+				ondisk_size, frame_mem, unc_size, frame_size);
-+			goto out1;
-+		}
-+		vbo_disk = vbo_data;
-+		/* load all runs to read [vbo_disk-vbo_to) */
-+		err = attr_load_runs_range(ni, ATTR_DATA, WOF_NAME,
-+					   ARRAY_SIZE(WOF_NAME), run, vbo_disk,
-+					   vbo_data + ondisk_size);
-+		if (err)
-+			goto out2;
-+		npages_disk = (ondisk_size + (vbo_disk & (PAGE_SIZE - 1)) +
-+			       PAGE_SIZE - 1) >>
-+			      PAGE_SHIFT;
-+#endif
-+	} else if (is_attr_compressed(attr)) {
-+		/* lznt compression*/
-+		if (sbi->cluster_size > NTFS_LZNT_MAX_CLUSTER) {
-+			err = -EOPNOTSUPP;
-+			goto out1;
-+		}
-+
-+		if (attr->nres.c_unit != NTFS_LZNT_CUNIT) {
-+			err = -EOPNOTSUPP;
-+			goto out1;
-+		}
-+
-+		down_write(&ni->file.run_lock);
-+		run_truncate_around(run, le64_to_cpu(attr->nres.svcn));
-+		frame = frame_vbo >> (cluster_bits + NTFS_LZNT_CUNIT);
-+		err = attr_is_frame_compressed(ni, attr, frame, &clst_data);
-+		up_write(&ni->file.run_lock);
-+		if (err)
-+			goto out1;
-+
-+		if (!clst_data) {
-+			memset(frame_mem, 0, frame_size);
-+			goto out1;
-+		}
-+
-+		frame_size = sbi->cluster_size << NTFS_LZNT_CUNIT;
-+		ondisk_size = clst_data << cluster_bits;
-+
-+		if (clst_data >= NTFS_LZNT_CLUSTERS) {
-+			/* frame is not compressed */
-+			down_read(&ni->file.run_lock);
-+			err = ntfs_bio_pages(sbi, run, pages, pages_per_frame,
-+					     frame_vbo, ondisk_size,
-+					     REQ_OP_READ);
-+			up_read(&ni->file.run_lock);
-+			goto out1;
-+		}
-+		vbo_disk = frame_vbo;
-+		npages_disk = (ondisk_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
-+	} else {
-+		__builtin_unreachable();
-+		err = -EINVAL;
-+		goto out1;
-+	}
-+
-+	pages_disk = ntfs_zalloc(npages_disk * sizeof(struct page *));
-+	if (!pages_disk) {
-+		err = -ENOMEM;
-+		goto out2;
-+	}
-+
-+	for (i = 0; i < npages_disk; i++) {
-+		pg = alloc_page(GFP_KERNEL);
-+		if (!pg) {
-+			err = -ENOMEM;
-+			goto out3;
-+		}
-+		pages_disk[i] = pg;
-+		lock_page(pg);
-+		kmap(pg);
-+	}
-+
-+	/* read 'ondisk_size' bytes from disk */
-+	down_read(&ni->file.run_lock);
-+	err = ntfs_bio_pages(sbi, run, pages_disk, npages_disk, vbo_disk,
-+			     ondisk_size, REQ_OP_READ);
-+	up_read(&ni->file.run_lock);
-+	if (err)
-+		goto out3;
-+
-+	/*
-+	 * To simplify decompress algorithm do vmap for source and target pages
-+	 */
-+	frame_ondisk = vmap(pages_disk, npages_disk, VM_MAP, PAGE_KERNEL_RO);
-+	if (!frame_ondisk) {
-+		err = -ENOMEM;
-+		goto out3;
-+	}
-+
-+	/* decompress: frame_ondisk -> frame_mem */
-+#ifdef CONFIG_NTFS3_LZX_XPRESS
-+	if (run != &ni->file.run) {
-+		/* LZX or XPRESS */
-+		err = decompress_lzx_xpress(
-+			sbi, frame_ondisk + (vbo_disk & (PAGE_SIZE - 1)),
-+			ondisk_size, frame_mem, unc_size, frame_size);
-+	} else
-+#endif
-+	{
-+		/* LZNT - native ntfs compression */
-+		unc_size = decompress_lznt(frame_ondisk, ondisk_size, frame_mem,
-+					   frame_size);
-+		if ((ssize_t)unc_size < 0)
-+			err = unc_size;
-+		else if (!unc_size || unc_size > frame_size)
-+			err = -EINVAL;
-+	}
-+	if (!err && valid_size < frame_vbo + frame_size) {
-+		size_t ok = valid_size - frame_vbo;
-+
-+		memset(frame_mem + ok, 0, frame_size - ok);
-+	}
-+
-+	vunmap(frame_ondisk);
-+
-+out3:
-+	for (i = 0; i < npages_disk; i++) {
-+		pg = pages_disk[i];
-+		if (pg) {
-+			kunmap(pg);
-+			unlock_page(pg);
-+			put_page(pg);
-+		}
-+	}
-+	ntfs_free(pages_disk);
-+
-+out2:
-+#ifdef CONFIG_NTFS3_LZX_XPRESS
-+	if (run != &ni->file.run)
-+		run_free(run);
-+#endif
-+out1:
-+	vunmap(frame_mem);
-+out:
-+	for (i = 0; i < pages_per_frame; i++) {
-+		pg = pages[i];
-+		kunmap(pg);
-+		ClearPageError(pg);
-+		SetPageUptodate(pg);
-+	}
-+
-+	return err;
-+}
-+
-+/*
-+ * ni_write_frame
-+ *
-+ * pages - array of locked pages
-+ */
-+int ni_write_frame(struct ntfs_inode *ni, struct page **pages,
-+		   u32 pages_per_frame)
-+{
-+	int err;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	u8 frame_bits = NTFS_LZNT_CUNIT + sbi->cluster_bits;
-+	u32 frame_size = sbi->cluster_size << NTFS_LZNT_CUNIT;
-+	u64 frame_vbo = (u64)pages[0]->index << PAGE_SHIFT;
-+	CLST frame = frame_vbo >> frame_bits;
-+	char *frame_ondisk = NULL;
-+	struct page **pages_disk = NULL;
-+	struct ATTR_LIST_ENTRY *le = NULL;
-+	char *frame_mem;
-+	struct ATTRIB *attr;
-+	struct mft_inode *mi;
-+	u32 i;
-+	struct page *pg;
-+	size_t compr_size, ondisk_size;
-+	struct lznt *lznt;
-+
-+	attr = ni_find_attr(ni, NULL, &le, ATTR_DATA, NULL, 0, NULL, &mi);
-+	if (!attr) {
-+		err = -ENOENT;
-+		goto out;
-+	}
-+
-+	if (WARN_ON(!is_attr_compressed(attr))) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (sbi->cluster_size > NTFS_LZNT_MAX_CLUSTER) {
-+		err = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
-+	if (!attr->non_res) {
-+		down_write(&ni->file.run_lock);
-+		err = attr_make_nonresident(ni, attr, le, mi,
-+					    le32_to_cpu(attr->res.data_size),
-+					    &ni->file.run, &attr, pages[0]);
-+		up_write(&ni->file.run_lock);
-+		if (err)
-+			goto out;
-+	}
-+
-+	if (attr->nres.c_unit != NTFS_LZNT_CUNIT) {
-+		err = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
-+	pages_disk = ntfs_zalloc(pages_per_frame * sizeof(struct page *));
-+	if (!pages_disk) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < pages_per_frame; i++) {
-+		pg = alloc_page(GFP_KERNEL);
-+		if (!pg) {
-+			err = -ENOMEM;
-+			goto out1;
-+		}
-+		pages_disk[i] = pg;
-+		lock_page(pg);
-+		kmap(pg);
-+	}
-+
-+	/*
-+	 * To simplify compress algorithm do vmap for source and target pages
-+	 */
-+	frame_ondisk = vmap(pages_disk, pages_per_frame, VM_MAP, PAGE_KERNEL);
-+	if (!frame_ondisk) {
-+		err = -ENOMEM;
-+		goto out1;
-+	}
-+
-+	for (i = 0; i < pages_per_frame; i++)
-+		kmap(pages[i]);
-+
-+	/* map in-memory frame for read-only */
-+	frame_mem = vmap(pages, pages_per_frame, VM_MAP, PAGE_KERNEL_RO);
-+	if (!frame_mem) {
-+		err = -ENOMEM;
-+		goto out2;
-+	}
-+
-+	mutex_lock(&sbi->compress.mtx_lznt);
-+	lznt = NULL;
-+	if (!sbi->compress.lznt) {
-+		/*
-+		 * lznt implements two levels of compression:
-+		 * 0 - standard compression
-+		 * 1 - best compression, requires a lot of cpu
-+		 * use mount option?
-+		 */
-+		lznt = get_lznt_ctx(0);
-+		if (!lznt) {
-+			mutex_unlock(&sbi->compress.mtx_lznt);
-+			err = -ENOMEM;
-+			goto out3;
-+		}
-+
-+		sbi->compress.lznt = lznt;
-+		lznt = NULL;
-+	}
-+
-+	/* compress: frame_mem -> frame_ondisk */
-+	compr_size = compress_lznt(frame_mem, frame_size, frame_ondisk,
-+				   frame_size, sbi->compress.lznt);
-+	mutex_unlock(&sbi->compress.mtx_lznt);
-+	ntfs_free(lznt);
-+
-+	if (compr_size + sbi->cluster_size > frame_size) {
-+		/* frame is not compressed */
-+		compr_size = frame_size;
-+		ondisk_size = frame_size;
-+	} else if (compr_size) {
-+		/* frame is compressed */
-+		ondisk_size = ntfs_up_cluster(sbi, compr_size);
-+		memset(frame_ondisk + compr_size, 0, ondisk_size - compr_size);
-+	} else {
-+		/* frame is sparsed */
-+		ondisk_size = 0;
-+	}
-+
-+	down_write(&ni->file.run_lock);
-+	run_truncate_around(&ni->file.run, le64_to_cpu(attr->nres.svcn));
-+	err = attr_allocate_frame(ni, frame, compr_size, ni->i_valid);
-+	up_write(&ni->file.run_lock);
-+	if (err)
-+		goto out2;
-+
-+	if (!ondisk_size)
-+		goto out2;
-+
-+	down_read(&ni->file.run_lock);
-+	err = ntfs_bio_pages(sbi, &ni->file.run,
-+			     ondisk_size < frame_size ? pages_disk : pages,
-+			     pages_per_frame, frame_vbo, ondisk_size,
-+			     REQ_OP_WRITE);
-+	up_read(&ni->file.run_lock);
-+
-+out3:
-+	vunmap(frame_mem);
-+
-+out2:
-+	for (i = 0; i < pages_per_frame; i++)
-+		kunmap(pages[i]);
-+
-+	vunmap(frame_ondisk);
-+out1:
-+	for (i = 0; i < pages_per_frame; i++) {
-+		pg = pages_disk[i];
-+		if (pg) {
-+			kunmap(pg);
-+			unlock_page(pg);
-+			put_page(pg);
-+		}
-+	}
-+	ntfs_free(pages_disk);
-+out:
-+	return err;
-+}
-+
-+/*
-+ * update duplicate info of ATTR_FILE_NAME in MFT and in parent directories
-+ */
-+static bool ni_update_parent(struct ntfs_inode *ni, struct NTFS_DUP_INFO *dup,
-+			     int sync)
-+{
-+	struct ATTRIB *attr;
-+	struct mft_inode *mi;
-+	struct ATTR_LIST_ENTRY *le = NULL;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	struct super_block *sb = sbi->sb;
-+	bool re_dirty = false;
-+	bool active = sb->s_flags & SB_ACTIVE;
-+	bool upd_parent = ni->ni_flags & NI_FLAG_UPDATE_PARENT;
-+
-+	if (ni->mi.mrec->flags & RECORD_FLAG_DIR) {
-+		dup->fa |= FILE_ATTRIBUTE_DIRECTORY;
-+		attr = NULL;
-+		dup->alloc_size = 0;
-+		dup->data_size = 0;
-+	} else {
-+		dup->fa &= ~FILE_ATTRIBUTE_DIRECTORY;
-+
-+		attr = ni_find_attr(ni, NULL, &le, ATTR_DATA, NULL, 0, NULL,
-+				    &mi);
-+		if (!attr) {
-+			dup->alloc_size = dup->data_size = 0;
-+		} else if (!attr->non_res) {
-+			u32 data_size = le32_to_cpu(attr->res.data_size);
-+
-+			dup->alloc_size = cpu_to_le64(QuadAlign(data_size));
-+			dup->data_size = cpu_to_le64(data_size);
-+		} else {
-+			u64 new_valid = ni->i_valid;
-+			u64 data_size = le64_to_cpu(attr->nres.data_size);
-+			__le64 valid_le;
-+
-+			dup->alloc_size = is_attr_ext(attr) ?
-+						  attr->nres.total_size :
-+						  attr->nres.alloc_size;
-+			dup->data_size = attr->nres.data_size;
-+
-+			if (new_valid > data_size)
-+				new_valid = data_size;
-+
-+			valid_le = cpu_to_le64(new_valid);
-+			if (valid_le != attr->nres.valid_size) {
-+				attr->nres.valid_size = valid_le;
-+				mi->dirty = true;
-+			}
-+		}
-+	}
-+
-+	/* TODO: fill reparse info */
-+	dup->reparse = 0;
-+	dup->ea_size = 0;
-+
-+	if (ni->ni_flags & NI_FLAG_EA) {
-+		attr = ni_find_attr(ni, attr, &le, ATTR_EA_INFO, NULL, 0, NULL,
-+				    NULL);
-+		if (attr) {
-+			const struct EA_INFO *info;
-+
-+			info = resident_data_ex(attr, sizeof(struct EA_INFO));
-+			dup->ea_size = info->size_pack;
-+		}
-+	}
-+
-+	attr = NULL;
-+	le = NULL;
-+
-+	while ((attr = ni_find_attr(ni, attr, &le, ATTR_NAME, NULL, 0, NULL,
-+				    &mi))) {
-+		struct inode *dir;
-+		struct ATTR_FILE_NAME *fname;
-+
-+		fname = resident_data_ex(attr, SIZEOF_ATTRIBUTE_FILENAME);
-+		if (!fname)
-+			continue;
-+
-+		if (memcmp(&fname->dup, dup, sizeof(fname->dup))) {
-+			memcpy(&fname->dup, dup, sizeof(fname->dup));
-+			mi->dirty = true;
-+		} else if (!upd_parent) {
-+			continue;
-+		}
-+
-+		if (!active)
-+			continue; /*avoid __wait_on_freeing_inode(inode); */
-+
-+		/*ntfs_iget5 may sleep*/
-+		dir = ntfs_iget5(sb, &fname->home, NULL);
-+		if (IS_ERR(dir)) {
-+			ntfs_inode_warn(
-+				&ni->vfs_inode,
-+				"failed to open parent directory r=%lx to update",
-+				(long)ino_get(&fname->home));
-+			continue;
-+		}
-+
-+		if (!is_bad_inode(dir)) {
-+			struct ntfs_inode *dir_ni = ntfs_i(dir);
-+
-+			if (!ni_trylock(dir_ni)) {
-+				re_dirty = true;
-+			} else {
-+				indx_update_dup(dir_ni, sbi, fname, dup, sync);
-+				ni_unlock(dir_ni);
-+			}
-+		}
-+		iput(dir);
-+	}
-+
-+	return re_dirty;
-+}
-+
-+/*
-+ * ni_write_inode
-+ *
-+ * write mft base record and all subrecords to disk
-+ */
-+int ni_write_inode(struct inode *inode, int sync, const char *hint)
-+{
-+	int err = 0, err2;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	struct super_block *sb = inode->i_sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	bool re_dirty = false;
-+	struct ATTR_STD_INFO *std;
-+	struct rb_node *node, *next;
-+	struct NTFS_DUP_INFO dup;
-+
-+	if (is_bad_inode(inode) || sb_rdonly(sb))
-+		return 0;
-+
-+	if (!ni_trylock(ni)) {
-+		/* 'ni' is under modification, skip for now */
-+		mark_inode_dirty_sync(inode);
-+		return 0;
-+	}
-+
-+	if (is_rec_inuse(ni->mi.mrec) &&
-+	    !(sbi->flags & NTFS_FLAGS_LOG_REPLAYING) && inode->i_nlink) {
-+		bool modified = false;
-+
-+		/* update times in standard attribute */
-+		std = ni_std(ni);
-+		if (!std) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		/* Update the access times if they have changed. */
-+		dup.m_time = kernel2nt(&inode->i_mtime);
-+		if (std->m_time != dup.m_time) {
-+			std->m_time = dup.m_time;
-+			modified = true;
-+		}
-+
-+		dup.c_time = kernel2nt(&inode->i_ctime);
-+		if (std->c_time != dup.c_time) {
-+			std->c_time = dup.c_time;
-+			modified = true;
-+		}
-+
-+		dup.a_time = kernel2nt(&inode->i_atime);
-+		if (std->a_time != dup.a_time) {
-+			std->a_time = dup.a_time;
-+			modified = true;
-+		}
-+
-+		dup.fa = ni->std_fa;
-+		if (std->fa != dup.fa) {
-+			std->fa = dup.fa;
-+			modified = true;
-+		}
-+
-+		if (modified)
-+			ni->mi.dirty = true;
-+
-+		if (!ntfs_is_meta_file(sbi, inode->i_ino) &&
-+		    (modified || (ni->ni_flags & NI_FLAG_UPDATE_PARENT))) {
-+			dup.cr_time = std->cr_time;
-+			/* Not critical if this function fail */
-+			re_dirty = ni_update_parent(ni, &dup, sync);
-+
-+			if (re_dirty)
-+				ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-+			else
-+				ni->ni_flags &= ~NI_FLAG_UPDATE_PARENT;
-+		}
-+
-+		/* update attribute list */
-+		if (ni->attr_list.size && ni->attr_list.dirty) {
-+			if (inode->i_ino != MFT_REC_MFT || sync) {
-+				err = ni_try_remove_attr_list(ni);
-+				if (err)
-+					goto out;
-+			}
-+
-+			err = al_update(ni);
-+			if (err)
-+				goto out;
-+		}
-+	}
-+
-+	for (node = rb_first(&ni->mi_tree); node; node = next) {
-+		struct mft_inode *mi = rb_entry(node, struct mft_inode, node);
-+		bool is_empty;
-+
-+		next = rb_next(node);
-+
-+		if (!mi->dirty)
-+			continue;
-+
-+		is_empty = !mi_enum_attr(mi, NULL);
-+
-+		if (is_empty)
-+			clear_rec_inuse(mi->mrec);
-+
-+		err2 = mi_write(mi, sync);
-+		if (!err && err2)
-+			err = err2;
-+
-+		if (is_empty) {
-+			ntfs_mark_rec_free(sbi, mi->rno);
-+			rb_erase(node, &ni->mi_tree);
-+			mi_put(mi);
-+		}
-+	}
-+
-+	if (ni->mi.dirty) {
-+		err2 = mi_write(&ni->mi, sync);
-+		if (!err && err2)
-+			err = err2;
-+	}
-+out:
-+	ni_unlock(ni);
-+
-+	if (err) {
-+		ntfs_err(sb, "%s r=%lx failed, %d.", hint, inode->i_ino, err);
-+		ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
-+		return err;
-+	}
-+
-+	if (re_dirty && (sb->s_flags & SB_ACTIVE))
-+		mark_inode_dirty_sync(inode);
-+
-+	return 0;
-+}
-diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
-new file mode 100644
-index 000000000000..f943b354b08e
---- /dev/null
-+++ b/fs/ntfs3/namei.c
-@@ -0,0 +1,592 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *
-+ * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
-+ *
-+ */
-+
-+#include <linux/blkdev.h>
-+#include <linux/buffer_head.h>
-+#include <linux/fs.h>
-+#include <linux/iversion.h>
-+#include <linux/namei.h>
-+#include <linux/nls.h>
-+
-+#include "debug.h"
-+#include "ntfs.h"
-+#include "ntfs_fs.h"
-+
-+/*
-+ * fill_name_de
-+ *
-+ * formats NTFS_DE in 'buf'
-+ */
-+int fill_name_de(struct ntfs_sb_info *sbi, void *buf, const struct qstr *name,
-+		 const struct cpu_str *uni)
-+{
-+	int err;
-+	struct NTFS_DE *e = buf;
-+	u16 data_size;
-+	struct ATTR_FILE_NAME *fname = (struct ATTR_FILE_NAME *)(e + 1);
-+
-+#ifndef NTFS3_64BIT_CLUSTER
-+	e->ref.high = fname->home.high = 0;
-+#endif
-+	if (uni) {
-+#ifdef __BIG_ENDIAN
-+		int ulen = uni->len;
-+		__le16 *uname = fname->name;
-+		const u16 *name_cpu = uni->name;
-+
-+		while (ulen--)
-+			*uname++ = cpu_to_le16(*name_cpu++);
-+#else
-+		memcpy(fname->name, uni->name, uni->len * sizeof(u16));
-+#endif
-+		fname->name_len = uni->len;
-+
-+	} else {
-+		/* Convert input string to unicode */
-+		err = ntfs_nls_to_utf16(sbi, name->name, name->len,
-+					(struct cpu_str *)&fname->name_len,
-+					NTFS_NAME_LEN, UTF16_LITTLE_ENDIAN);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	fname->type = FILE_NAME_POSIX;
-+	data_size = fname_full_size(fname);
-+
-+	e->size = cpu_to_le16(QuadAlign(data_size) + sizeof(struct NTFS_DE));
-+	e->key_size = cpu_to_le16(data_size);
-+	e->flags = 0;
-+	e->res = 0;
-+
-+	return 0;
-+}
-+
-+/*
-+ * ntfs_lookup
-+ *
-+ * inode_operations::lookup
-+ */
-+static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
-+				  u32 flags)
-+{
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	struct cpu_str *uni = __getname();
-+	struct inode *inode;
-+	int err;
-+
-+	if (!uni)
-+		inode = ERR_PTR(-ENOMEM);
-+	else {
-+		err = ntfs_nls_to_utf16(ni->mi.sbi, dentry->d_name.name,
-+					dentry->d_name.len, uni, NTFS_NAME_LEN,
-+					UTF16_HOST_ENDIAN);
-+		if (err < 0)
-+			inode = ERR_PTR(err);
-+		else {
-+			ni_lock(ni);
-+			inode = dir_search_u(dir, uni, NULL);
-+			ni_unlock(ni);
-+		}
-+		__putname(uni);
-+	}
-+
-+	return d_splice_alias(inode, dentry);
-+}
-+
-+/*
-+ * ntfs_create
-+ *
-+ * inode_operations::create
-+ */
-+static int ntfs_create(struct user_namespace *mnt_userns, struct inode *dir,
-+		       struct dentry *dentry, umode_t mode, bool excl)
-+{
-+	int err;
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	struct inode *inode;
-+
-+	ni_lock_dir(ni);
-+
-+	err = ntfs_create_inode(mnt_userns, dir, dentry, NULL, S_IFREG | mode,
-+				0, NULL, 0, excl, NULL, &inode);
-+
-+	ni_unlock(ni);
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_link
-+ *
-+ * inode_operations::link
-+ */
-+static int ntfs_link(struct dentry *ode, struct inode *dir, struct dentry *de)
-+{
-+	int err;
-+	struct inode *inode = d_inode(ode);
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+
-+	if (S_ISDIR(inode->i_mode))
-+		return -EPERM;
-+
-+	if (inode->i_nlink >= NTFS_LINK_MAX)
-+		return -EMLINK;
-+
-+	ni_lock_dir(ntfs_i(dir));
-+	if (inode != dir)
-+		ni_lock(ni);
-+
-+	dir->i_ctime = dir->i_mtime = inode->i_ctime = current_time(inode);
-+	inc_nlink(inode);
-+	ihold(inode);
-+
-+	err = ntfs_link_inode(inode, de);
-+	if (!err) {
-+		mark_inode_dirty(inode);
-+		mark_inode_dirty(dir);
-+		d_instantiate(de, inode);
-+	} else {
-+		drop_nlink(inode);
-+		iput(inode);
-+	}
-+
-+	if (inode != dir)
-+		ni_unlock(ni);
-+	ni_unlock(ntfs_i(dir));
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_unlink
-+ *
-+ * inode_operations::unlink
-+ */
-+static int ntfs_unlink(struct inode *dir, struct dentry *dentry)
-+{
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	int err;
-+
-+	ni_lock_dir(ni);
-+
-+	err = ntfs_unlink_inode(dir, dentry);
-+
-+	ni_unlock(ni);
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_symlink
-+ *
-+ * inode_operations::symlink
-+ */
-+static int ntfs_symlink(struct user_namespace *mnt_userns, struct inode *dir,
-+			struct dentry *dentry, const char *symname)
-+{
-+	int err;
-+	u32 size = strlen(symname);
-+	struct inode *inode;
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+
-+	ni_lock_dir(ni);
-+
-+	err = ntfs_create_inode(mnt_userns, dir, dentry, NULL, S_IFLNK | 0777,
-+				0, symname, size, 0, NULL, &inode);
-+
-+	ni_unlock(ni);
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_mkdir
-+ *
-+ * inode_operations::mkdir
-+ */
-+static int ntfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
-+		      struct dentry *dentry, umode_t mode)
-+{
-+	int err;
-+	struct inode *inode;
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+
-+	ni_lock_dir(ni);
-+
-+	err = ntfs_create_inode(mnt_userns, dir, dentry, NULL, S_IFDIR | mode,
-+				0, NULL, -1, 0, NULL, &inode);
-+
-+	ni_unlock(ni);
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_rmdir
-+ *
-+ * inode_operations::rm_dir
-+ */
-+static int ntfs_rmdir(struct inode *dir, struct dentry *dentry)
-+{
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	int err;
-+
-+	ni_lock_dir(ni);
-+
-+	err = ntfs_unlink_inode(dir, dentry);
-+
-+	ni_unlock(ni);
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_rename
-+ *
-+ * inode_operations::rename
-+ */
-+static int ntfs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
-+		       struct dentry *old_dentry, struct inode *new_dir,
-+		       struct dentry *new_dentry, u32 flags)
-+{
-+	int err;
-+	struct super_block *sb = old_dir->i_sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	struct ntfs_inode *old_dir_ni = ntfs_i(old_dir);
-+	struct ntfs_inode *new_dir_ni = ntfs_i(new_dir);
-+	struct ntfs_inode *old_ni;
-+	struct ATTR_FILE_NAME *old_name, *new_name, *fname;
-+	u8 name_type;
-+	bool is_same;
-+	struct inode *old_inode, *new_inode;
-+	struct NTFS_DE *old_de, *new_de;
-+	struct ATTRIB *attr;
-+	struct ATTR_LIST_ENTRY *le;
-+	u16 new_de_key_size;
-+
-+	static_assert(SIZEOF_ATTRIBUTE_FILENAME_MAX + SIZEOF_RESIDENT < 1024);
-+	static_assert(SIZEOF_ATTRIBUTE_FILENAME_MAX + sizeof(struct NTFS_DE) <
-+		      1024);
-+	static_assert(PATH_MAX >= 4 * 1024);
-+
-+	if (flags & ~RENAME_NOREPLACE)
-+		return -EINVAL;
-+
-+	old_inode = d_inode(old_dentry);
-+	new_inode = d_inode(new_dentry);
-+
-+	old_ni = ntfs_i(old_inode);
-+
-+	is_same = old_dentry->d_name.len == new_dentry->d_name.len &&
-+		  !memcmp(old_dentry->d_name.name, new_dentry->d_name.name,
-+			  old_dentry->d_name.len);
-+
-+	if (is_same && old_dir == new_dir) {
-+		/* Nothing to do */
-+		err = 0;
-+		goto out;
-+	}
-+
-+	if (ntfs_is_meta_file(sbi, old_inode->i_ino)) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (new_inode) {
-+		/*target name exists. unlink it*/
-+		dget(new_dentry);
-+		ni_lock_dir(new_dir_ni);
-+		err = ntfs_unlink_inode(new_dir, new_dentry);
-+		ni_unlock(new_dir_ni);
-+		dput(new_dentry);
-+		if (err)
-+			goto out;
-+	}
-+
-+	/* allocate PATH_MAX bytes */
-+	old_de = __getname();
-+	if (!old_de) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	err = fill_name_de(sbi, old_de, &old_dentry->d_name, NULL);
-+	if (err < 0)
-+		goto out1;
-+
-+	old_name = (struct ATTR_FILE_NAME *)(old_de + 1);
-+
-+	if (is_same) {
-+		new_de = old_de;
-+	} else {
-+		new_de = Add2Ptr(old_de, 1024);
-+		err = fill_name_de(sbi, new_de, &new_dentry->d_name, NULL);
-+		if (err < 0)
-+			goto out1;
-+	}
-+
-+	ni_lock_dir(old_dir_ni);
-+	ni_lock(old_ni);
-+
-+	old_name->home.low = cpu_to_le32(old_dir->i_ino);
-+#ifdef NTFS3_64BIT_CLUSTER
-+	old_name->home.high = cpu_to_le16(old_dir->i_ino >> 32);
-+#endif
-+	old_name->home.seq = old_dir_ni->mi.mrec->seq;
-+
-+	/*get pointer to file_name in mft*/
-+	fname = ni_fname_name(old_ni, (struct cpu_str *)&old_name->name_len,
-+			      &old_name->home, &le);
-+	if (!fname) {
-+		err = -EINVAL;
-+		goto out2;
-+	}
-+
-+	/* Copy fname info from record into new fname */
-+	new_name = (struct ATTR_FILE_NAME *)(new_de + 1);
-+	memcpy(&new_name->dup, &fname->dup, sizeof(fname->dup));
-+
-+	name_type = paired_name(fname->type);
-+
-+	/* remove first name from directory */
-+	err = indx_delete_entry(&old_dir_ni->dir, old_dir_ni, old_de + 1,
-+				le16_to_cpu(old_de->key_size), sbi);
-+	if (err)
-+		goto out3;
-+
-+	/* remove first name from mft */
-+	err = ni_remove_attr_le(old_ni, attr_from_name(fname), le);
-+	if (err)
-+		goto out4;
-+
-+	le16_add_cpu(&old_ni->mi.mrec->hard_links, -1);
-+	old_ni->mi.dirty = true;
-+
-+	if (name_type != FILE_NAME_POSIX) {
-+		/* get paired name */
-+		fname = ni_fname_type(old_ni, name_type, &le);
-+		if (fname) {
-+			/* remove second name from directory */
-+			err = indx_delete_entry(&old_dir_ni->dir, old_dir_ni,
-+						fname, fname_full_size(fname),
-+						sbi);
-+			if (err)
-+				goto out5;
-+
-+			/* remove second name from mft */
-+			err = ni_remove_attr_le(old_ni, attr_from_name(fname),
-+						le);
-+			if (err)
-+				goto out6;
-+
-+			le16_add_cpu(&old_ni->mi.mrec->hard_links, -1);
-+			old_ni->mi.dirty = true;
-+		}
-+	}
-+
-+	/* Add new name */
-+	new_de->ref.low = cpu_to_le32(old_inode->i_ino);
-+#ifdef NTFS3_64BIT_CLUSTER
-+	new_de->ref.high = cpu_to_le16(old_inode->i_ino >> 32);
-+	new_name->home.high = cpu_to_le16(new_dir->i_ino >> 32);
-+#endif
-+	new_de->ref.seq = old_ni->mi.mrec->seq;
-+
-+	new_name->home.low = cpu_to_le32(new_dir->i_ino);
-+	new_name->home.seq = ntfs_i(new_dir)->mi.mrec->seq;
-+
-+	new_de_key_size = le16_to_cpu(new_de->key_size);
-+
-+	/* insert new name in mft */
-+	err = ni_insert_resident(old_ni, new_de_key_size, ATTR_NAME, NULL, 0,
-+				 &attr, NULL);
-+	if (err)
-+		goto out7;
-+
-+	attr->res.flags = RESIDENT_FLAG_INDEXED;
-+
-+	memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), new_name, new_de_key_size);
-+
-+	le16_add_cpu(&old_ni->mi.mrec->hard_links, 1);
-+	old_ni->mi.dirty = true;
-+
-+	/* insert new name in directory */
-+	err = indx_insert_entry(&new_dir_ni->dir, new_dir_ni, new_de, sbi,
-+				NULL);
-+	if (err)
-+		goto out8;
-+
-+	if (IS_DIRSYNC(new_dir))
-+		err = ntfs_sync_inode(old_inode);
-+	else
-+		mark_inode_dirty(old_inode);
-+
-+	old_dir->i_ctime = old_dir->i_mtime = current_time(old_dir);
-+	if (IS_DIRSYNC(old_dir))
-+		(void)ntfs_sync_inode(old_dir);
-+	else
-+		mark_inode_dirty(old_dir);
-+
-+	if (old_dir != new_dir) {
-+		new_dir->i_mtime = new_dir->i_ctime = old_dir->i_ctime;
-+		mark_inode_dirty(new_dir);
-+	}
-+
-+	if (old_inode) {
-+		old_inode->i_ctime = old_dir->i_ctime;
-+		mark_inode_dirty(old_inode);
-+	}
-+
-+	err = 0;
-+	/* normal way */
-+	goto out2;
-+
-+out8:
-+	/* undo
-+	 * ni_insert_resident(old_ni, new_de_key_size, ATTR_NAME, NULL, 0,
-+	 *			 &attr, NULL);
-+	 */
-+	mi_remove_attr(&old_ni->mi, attr);
-+out7:
-+	/* undo
-+	 * ni_remove_attr_le(old_ni, attr_from_name(fname), le);
-+	 */
-+out6:
-+	/* undo
-+	 * indx_delete_entry(&old_dir_ni->dir, old_dir_ni,
-+	 *					fname, fname_full_size(fname),
-+	 *					sbi);
-+	 */
-+out5:
-+	/* undo
-+	 * ni_remove_attr_le(old_ni, attr_from_name(fname), le);
-+	 */
-+out4:
-+	/* undo:
-+	 * indx_delete_entry(&old_dir_ni->dir, old_dir_ni, old_de + 1,
-+	 *			old_de->key_size, NULL);
-+	 */
-+out3:
-+out2:
-+	ni_unlock(old_ni);
-+	ni_unlock(old_dir_ni);
-+out1:
-+	__putname(old_de);
-+out:
-+	return err;
-+}
-+
-+/*
-+ * ntfs_atomic_open
-+ *
-+ * inode_operations::atomic_open
-+ */
-+static int ntfs_atomic_open(struct inode *dir, struct dentry *dentry,
-+			    struct file *file, u32 flags, umode_t mode)
-+{
-+	int err;
-+	bool excl = !!(flags & O_EXCL);
-+	struct inode *inode;
-+	struct ntfs_fnd *fnd = NULL;
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	struct dentry *d = NULL;
-+	struct cpu_str *uni = __getname();
-+
-+	if (!uni)
-+		return -ENOMEM;
-+
-+	err = ntfs_nls_to_utf16(ni->mi.sbi, dentry->d_name.name,
-+				dentry->d_name.len, uni, NTFS_NAME_LEN,
-+				UTF16_HOST_ENDIAN);
-+	if (err < 0)
-+		goto out;
-+
-+	ni_lock_dir(ni);
-+
-+	if (d_in_lookup(dentry)) {
-+		fnd = fnd_get();
-+		if (!fnd) {
-+			err = -ENOMEM;
-+			goto out1;
-+		}
-+
-+		d = d_splice_alias(dir_search_u(dir, uni, fnd), dentry);
-+		if (IS_ERR(d)) {
-+			err = PTR_ERR(d);
-+			d = NULL;
-+			goto out2;
-+		}
-+
-+		if (d)
-+			dentry = d;
-+	}
-+
-+	if (!(flags & O_CREAT) || d_really_is_positive(dentry)) {
-+		err = finish_no_open(file, d);
-+		goto out2;
-+	}
-+
-+	file->f_mode |= FMODE_CREATED;
-+
-+	/*fnd contains tree's path to insert to*/
-+	/* TODO: init_user_ns? */
-+	err = ntfs_create_inode(&init_user_ns, dir, dentry, uni, mode, 0, NULL,
-+				0, excl, fnd, &inode);
-+	if (!err)
-+		err = finish_open(file, dentry, ntfs_file_open);
-+	dput(d);
-+
-+out2:
-+	fnd_put(fnd);
-+out1:
-+	ni_unlock(ni);
-+out:
-+	__putname(uni);
-+
-+	return err;
-+}
-+
-+struct dentry *ntfs3_get_parent(struct dentry *child)
-+{
-+	struct inode *inode = d_inode(child);
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+
-+	struct ATTR_LIST_ENTRY *le = NULL;
-+	struct ATTRIB *attr = NULL;
-+	struct ATTR_FILE_NAME *fname;
-+
-+	while ((attr = ni_find_attr(ni, attr, &le, ATTR_NAME, NULL, 0, NULL,
-+				    NULL))) {
-+		fname = resident_data_ex(attr, SIZEOF_ATTRIBUTE_FILENAME);
-+		if (!fname)
-+			continue;
-+
-+		return d_obtain_alias(
-+			ntfs_iget5(inode->i_sb, &fname->home, NULL));
-+	}
-+
-+	return ERR_PTR(-ENOENT);
-+}
-+
-+const struct inode_operations ntfs_dir_inode_operations = {
-+	.lookup = ntfs_lookup,
-+	.create = ntfs_create,
-+	.link = ntfs_link,
-+	.unlink = ntfs_unlink,
-+	.symlink = ntfs_symlink,
-+	.mkdir = ntfs_mkdir,
-+	.rmdir = ntfs_rmdir,
-+	.rename = ntfs_rename,
-+	.permission = ntfs_permission,
-+	.get_acl = ntfs_get_acl,
-+	.set_acl = ntfs_set_acl,
-+	.setattr = ntfs3_setattr,
-+	.getattr = ntfs_getattr,
-+	.listxattr = ntfs_listxattr,
-+	.atomic_open = ntfs_atomic_open,
-+	.fiemap = ntfs_fiemap,
-+};
-diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-new file mode 100644
-index 000000000000..0d4a6251bddc
---- /dev/null
-+++ b/fs/ntfs3/record.c
-@@ -0,0 +1,609 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *
-+ * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
-+ *
-+ */
-+
-+#include <linux/blkdev.h>
-+#include <linux/buffer_head.h>
-+#include <linux/fs.h>
-+#include <linux/nls.h>
-+
-+#include "debug.h"
-+#include "ntfs.h"
-+#include "ntfs_fs.h"
-+
-+static inline int compare_attr(const struct ATTRIB *left, enum ATTR_TYPE type,
-+			       const __le16 *name, u8 name_len,
-+			       const u16 *upcase)
-+{
-+	/* First, compare the type codes: */
-+	int diff = le32_to_cpu(left->type) - le32_to_cpu(type);
-+
-+	if (diff)
-+		return diff;
-+
-+	/*
-+	 * They have the same type code, so we have to compare the names.
-+	 */
-+	return ntfs_cmp_names(attr_name(left), left->name_len, name, name_len,
-+			      upcase, true);
-+}
-+
-+/*
-+ * mi_new_attt_id
-+ *
-+ * returns unused attribute id that is less than mrec->next_attr_id
-+ */
-+static __le16 mi_new_attt_id(struct mft_inode *mi)
-+{
-+	u16 free_id, max_id, t16;
-+	struct MFT_REC *rec = mi->mrec;
-+	struct ATTRIB *attr;
-+	__le16 id;
-+
-+	id = rec->next_attr_id;
-+	free_id = le16_to_cpu(id);
-+	if (free_id < 0x7FFF) {
-+		rec->next_attr_id = cpu_to_le16(free_id + 1);
-+		return id;
-+	}
-+
-+	/* One record can store up to 1024/24 ~= 42 attributes */
-+	free_id = 0;
-+	max_id = 0;
-+
-+	attr = NULL;
-+
-+	for (;;) {
-+		attr = mi_enum_attr(mi, attr);
-+		if (!attr) {
-+			rec->next_attr_id = cpu_to_le16(max_id + 1);
-+			mi->dirty = true;
-+			return cpu_to_le16(free_id);
-+		}
-+
-+		t16 = le16_to_cpu(attr->id);
-+		if (t16 == free_id) {
-+			free_id += 1;
-+			attr = NULL;
-+		} else if (max_id < t16)
-+			max_id = t16;
-+	}
-+}
-+
-+int mi_get(struct ntfs_sb_info *sbi, CLST rno, struct mft_inode **mi)
-+{
-+	int err;
-+	struct mft_inode *m = ntfs_zalloc(sizeof(struct mft_inode));
-+
-+	if (!m)
-+		return -ENOMEM;
-+
-+	err = mi_init(m, sbi, rno);
-+	if (err) {
-+		ntfs_free(m);
-+		return err;
-+	}
-+
-+	err = mi_read(m, false);
-+	if (err) {
-+		mi_put(m);
-+		return err;
-+	}
-+
-+	*mi = m;
-+	return 0;
-+}
-+
-+void mi_put(struct mft_inode *mi)
-+{
-+	mi_clear(mi);
-+	ntfs_free(mi);
-+}
-+
-+int mi_init(struct mft_inode *mi, struct ntfs_sb_info *sbi, CLST rno)
-+{
-+	mi->sbi = sbi;
-+	mi->rno = rno;
-+	mi->mrec = ntfs_malloc(sbi->record_size);
-+	if (!mi->mrec)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+/*
-+ * mi_read
-+ *
-+ * reads MFT data
-+ */
-+int mi_read(struct mft_inode *mi, bool is_mft)
-+{
-+	int err;
-+	struct MFT_REC *rec = mi->mrec;
-+	struct ntfs_sb_info *sbi = mi->sbi;
-+	u32 bpr = sbi->record_size;
-+	u64 vbo = (u64)mi->rno << sbi->record_bits;
-+	struct ntfs_inode *mft_ni = sbi->mft.ni;
-+	struct runs_tree *run = mft_ni ? &mft_ni->file.run : NULL;
-+	struct rw_semaphore *rw_lock = NULL;
-+
-+	if (is_mounted(sbi)) {
-+		if (!is_mft) {
-+			rw_lock = &mft_ni->file.run_lock;
-+			down_read(rw_lock);
-+		}
-+	}
-+
-+	err = ntfs_read_bh(sbi, run, vbo, &rec->rhdr, bpr, &mi->nb);
-+	if (rw_lock)
-+		up_read(rw_lock);
-+	if (!err)
-+		goto ok;
-+
-+	if (err == -E_NTFS_FIXUP) {
-+		mi->dirty = true;
-+		goto ok;
-+	}
-+
-+	if (err != -ENOENT)
-+		goto out;
-+
-+	if (rw_lock) {
-+		ni_lock(mft_ni);
-+		down_write(rw_lock);
-+	}
-+	err = attr_load_runs_vcn(mft_ni, ATTR_DATA, NULL, 0, &mft_ni->file.run,
-+				 vbo >> sbi->cluster_bits);
-+	if (rw_lock) {
-+		up_write(rw_lock);
-+		ni_unlock(mft_ni);
-+	}
-+	if (err)
-+		goto out;
-+
-+	if (rw_lock)
-+		down_read(rw_lock);
-+	err = ntfs_read_bh(sbi, run, vbo, &rec->rhdr, bpr, &mi->nb);
-+	if (rw_lock)
-+		up_read(rw_lock);
-+
-+	if (err == -E_NTFS_FIXUP) {
-+		mi->dirty = true;
-+		goto ok;
-+	}
-+	if (err)
-+		goto out;
-+
-+ok:
-+	/* check field 'total' only here */
-+	if (le32_to_cpu(rec->total) != bpr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	return 0;
-+
-+out:
-+	return err;
-+}
-+
-+struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
-+{
-+	const struct MFT_REC *rec = mi->mrec;
-+	u32 used = le32_to_cpu(rec->used);
-+	u32 t32, off, asize;
-+	u16 t16;
-+
-+	if (!attr) {
-+		u32 total = le32_to_cpu(rec->total);
-+
-+		off = le16_to_cpu(rec->attr_off);
-+
-+		if (used > total)
-+			return NULL;
-+
-+		if (off >= used || off < MFTRECORD_FIXUP_OFFSET_1 ||
-+		    !IsDwordAligned(off)) {
-+			return NULL;
-+		}
-+
-+		/* Skip non-resident records */
-+		if (!is_rec_inuse(rec))
-+			return NULL;
-+
-+		attr = Add2Ptr(rec, off);
-+	} else {
-+		/* Check if input attr inside record */
-+		off = PtrOffset(rec, attr);
-+		if (off >= used)
-+			return NULL;
-+
-+		asize = le32_to_cpu(attr->size);
-+		if (asize < SIZEOF_RESIDENT) {
-+			/* Impossible 'cause we should not return such attribute */
-+			return NULL;
-+		}
-+
-+		attr = Add2Ptr(attr, asize);
-+		off += asize;
-+	}
-+
-+	asize = le32_to_cpu(attr->size);
-+
-+	/* Can we use the first field (attr->type) */
-+	if (off + 8 > used) {
-+		static_assert(QuadAlign(sizeof(enum ATTR_TYPE)) == 8);
-+		return NULL;
-+	}
-+
-+	if (attr->type == ATTR_END) {
-+		/* end of enumeration */
-+		return NULL;
-+	}
-+
-+	/* 0x100 is last known attribute for now*/
-+	t32 = le32_to_cpu(attr->type);
-+	if ((t32 & 0xf) || (t32 > 0x100))
-+		return NULL;
-+
-+	/* Check boundary */
-+	if (off + asize > used)
-+		return NULL;
-+
-+	/* Check size of attribute */
-+	if (!attr->non_res) {
-+		if (asize < SIZEOF_RESIDENT)
-+			return NULL;
-+
-+		t16 = le16_to_cpu(attr->res.data_off);
-+
-+		if (t16 > asize)
-+			return NULL;
-+
-+		t32 = le32_to_cpu(attr->res.data_size);
-+		if (t16 + t32 > asize)
-+			return NULL;
-+
-+		return attr;
-+	}
-+
-+	/* Check some nonresident fields */
-+	if (attr->name_len &&
-+	    le16_to_cpu(attr->name_off) + sizeof(short) * attr->name_len >
-+		    le16_to_cpu(attr->nres.run_off)) {
-+		return NULL;
-+	}
-+
-+	if (attr->nres.svcn || !is_attr_ext(attr)) {
-+		if (asize + 8 < SIZEOF_NONRESIDENT)
-+			return NULL;
-+
-+		if (attr->nres.c_unit)
-+			return NULL;
-+	} else if (asize + 8 < SIZEOF_NONRESIDENT_EX)
-+		return NULL;
-+
-+	return attr;
-+}
-+
-+/*
-+ * mi_find_attr
-+ *
-+ * finds the attribute by type and name and id
-+ */
-+struct ATTRIB *mi_find_attr(struct mft_inode *mi, struct ATTRIB *attr,
-+			    enum ATTR_TYPE type, const __le16 *name,
-+			    size_t name_len, const __le16 *id)
-+{
-+	u32 type_in = le32_to_cpu(type);
-+	u32 atype;
-+
-+next_attr:
-+	attr = mi_enum_attr(mi, attr);
-+	if (!attr)
-+		return NULL;
-+
-+	atype = le32_to_cpu(attr->type);
-+	if (atype > type_in)
-+		return NULL;
-+
-+	if (atype < type_in)
-+		goto next_attr;
-+
-+	if (attr->name_len != name_len)
-+		goto next_attr;
-+
-+	if (name_len && memcmp(attr_name(attr), name, name_len * sizeof(short)))
-+		goto next_attr;
-+
-+	if (id && *id != attr->id)
-+		goto next_attr;
-+
-+	return attr;
-+}
-+
-+int mi_write(struct mft_inode *mi, int wait)
-+{
-+	struct MFT_REC *rec;
-+	int err;
-+	struct ntfs_sb_info *sbi;
-+
-+	if (!mi->dirty)
-+		return 0;
-+
-+	sbi = mi->sbi;
-+	rec = mi->mrec;
-+
-+	err = ntfs_write_bh(sbi, &rec->rhdr, &mi->nb, wait);
-+	if (err)
-+		return err;
-+
-+	if (mi->rno < sbi->mft.recs_mirr)
-+		sbi->flags |= NTFS_FLAGS_MFTMIRR;
-+
-+	mi->dirty = false;
-+
-+	return 0;
-+}
-+
-+int mi_format_new(struct mft_inode *mi, struct ntfs_sb_info *sbi, CLST rno,
-+		  __le16 flags, bool is_mft)
-+{
-+	int err;
-+	u16 seq = 1;
-+	struct MFT_REC *rec;
-+	u64 vbo = (u64)rno << sbi->record_bits;
-+
-+	err = mi_init(mi, sbi, rno);
-+	if (err)
-+		return err;
-+
-+	rec = mi->mrec;
-+
-+	if (rno == MFT_REC_MFT) {
-+		;
-+	} else if (rno < MFT_REC_FREE) {
-+		seq = rno;
-+	} else if (rno >= sbi->mft.used) {
-+		;
-+	} else if (mi_read(mi, is_mft)) {
-+		;
-+	} else if (rec->rhdr.sign == NTFS_FILE_SIGNATURE) {
-+		/* Record is reused. Update its sequence number */
-+		seq = le16_to_cpu(rec->seq) + 1;
-+		if (!seq)
-+			seq = 1;
-+	}
-+
-+	memcpy(rec, sbi->new_rec, sbi->record_size);
-+
-+	rec->seq = cpu_to_le16(seq);
-+	rec->flags = RECORD_FLAG_IN_USE | flags;
-+
-+	mi->dirty = true;
-+
-+	if (!mi->nb.nbufs) {
-+		struct ntfs_inode *ni = sbi->mft.ni;
-+		bool lock = false;
-+
-+		if (is_mounted(sbi) && !is_mft) {
-+			down_read(&ni->file.run_lock);
-+			lock = true;
-+		}
-+
-+		err = ntfs_get_bh(sbi, &ni->file.run, vbo, sbi->record_size,
-+				  &mi->nb);
-+		if (lock)
-+			up_read(&ni->file.run_lock);
-+	}
-+
-+	return err;
-+}
-+
-+/*
-+ * mi_mark_free
-+ *
-+ * marks record as unused and marks it as free in bitmap
-+ */
-+void mi_mark_free(struct mft_inode *mi)
-+{
-+	CLST rno = mi->rno;
-+	struct ntfs_sb_info *sbi = mi->sbi;
-+
-+	if (rno >= MFT_REC_RESERVED && rno < MFT_REC_FREE) {
-+		ntfs_clear_mft_tail(sbi, rno, rno + 1);
-+		mi->dirty = false;
-+		return;
-+	}
-+
-+	if (mi->mrec) {
-+		clear_rec_inuse(mi->mrec);
-+		mi->dirty = true;
-+		mi_write(mi, 0);
-+	}
-+	ntfs_mark_rec_free(sbi, rno);
-+}
-+
-+/*
-+ * mi_insert_attr
-+ *
-+ * reserves space for new attribute
-+ * returns not full constructed attribute or NULL if not possible to create
-+ */
-+struct ATTRIB *mi_insert_attr(struct mft_inode *mi, enum ATTR_TYPE type,
-+			      const __le16 *name, u8 name_len, u32 asize,
-+			      u16 name_off)
-+{
-+	size_t tail;
-+	struct ATTRIB *attr;
-+	__le16 id;
-+	struct MFT_REC *rec = mi->mrec;
-+	struct ntfs_sb_info *sbi = mi->sbi;
-+	u32 used = le32_to_cpu(rec->used);
-+	const u16 *upcase = sbi->upcase;
-+	int diff;
-+
-+	/* Can we insert mi attribute? */
-+	if (used + asize > mi->sbi->record_size)
-+		return NULL;
-+
-+	/*
-+	 * Scan through the list of attributes to find the point
-+	 * at which we should insert it.
-+	 */
-+	attr = NULL;
-+	while ((attr = mi_enum_attr(mi, attr))) {
-+		diff = compare_attr(attr, type, name, name_len, upcase);
-+		if (diff > 0)
-+			break;
-+		if (diff < 0)
-+			continue;
-+
-+		if (!is_attr_indexed(attr))
-+			return NULL;
 +		break;
-+	}
 +
-+	if (!attr) {
-+		tail = 8; /* not used, just to suppress warning */
-+		attr = Add2Ptr(rec, used - 8);
-+	} else {
-+		tail = used - PtrOffset(rec, attr);
-+	}
++	case ATTR_ROOT:
++		return check_index_root(attr, sbi);
 +
-+	id = mi_new_attt_id(mi);
-+
-+	memmove(Add2Ptr(attr, asize), attr, tail);
-+	memset(attr, 0, asize);
-+
-+	attr->type = type;
-+	attr->size = cpu_to_le32(asize);
-+	attr->name_len = name_len;
-+	attr->name_off = cpu_to_le16(name_off);
-+	attr->id = id;
-+
-+	memmove(Add2Ptr(attr, name_off), name, name_len * sizeof(short));
-+	rec->used = cpu_to_le32(used + asize);
-+
-+	mi->dirty = true;
-+
-+	return attr;
-+}
-+
-+/*
-+ * mi_remove_attr
-+ *
-+ * removes the attribute from record
-+ * NOTE: The source attr will point to next attribute
-+ */
-+bool mi_remove_attr(struct mft_inode *mi, struct ATTRIB *attr)
-+{
-+	struct MFT_REC *rec = mi->mrec;
-+	u32 aoff = PtrOffset(rec, attr);
-+	u32 used = le32_to_cpu(rec->used);
-+	u32 asize = le32_to_cpu(attr->size);
-+
-+	if (aoff + asize > used)
-+		return false;
-+
-+	used -= asize;
-+	memmove(attr, Add2Ptr(attr, asize), used - aoff);
-+	rec->used = cpu_to_le32(used);
-+	mi->dirty = true;
-+
-+	return true;
-+}
-+
-+/* bytes = "new attribute size" - "old attribute size" */
-+bool mi_resize_attr(struct mft_inode *mi, struct ATTRIB *attr, int bytes)
-+{
-+	struct MFT_REC *rec = mi->mrec;
-+	u32 aoff = PtrOffset(rec, attr);
-+	u32 total, used = le32_to_cpu(rec->used);
-+	u32 nsize, asize = le32_to_cpu(attr->size);
-+	u32 rsize = le32_to_cpu(attr->res.data_size);
-+	int tail = (int)(used - aoff - asize);
-+	int dsize;
-+	char *next;
-+
-+	if (tail < 0 || aoff >= used)
-+		return false;
-+
-+	if (!bytes)
-+		return true;
-+
-+	total = le32_to_cpu(rec->total);
-+	next = Add2Ptr(attr, asize);
-+
-+	if (bytes > 0) {
-+		dsize = QuadAlign(bytes);
-+		if (used + dsize > total)
++	case ATTR_STD:
++		if (rsize < sizeof(struct ATTR_STD_INFO5) &&
++		    rsize != sizeof(struct ATTR_STD_INFO)) {
 +			return false;
-+		nsize = asize + dsize;
-+		// move tail
-+		memmove(next + dsize, next, tail);
-+		memset(next, 0, dsize);
-+		used += dsize;
-+		rsize += dsize;
-+	} else {
-+		dsize = QuadAlign(-bytes);
-+		if (dsize > asize)
-+			return false;
-+		nsize = asize - dsize;
-+		memmove(next - dsize, next, tail);
-+		used -= dsize;
-+		rsize -= dsize;
-+	}
-+
-+	rec->used = cpu_to_le32(used);
-+	attr->size = cpu_to_le32(nsize);
-+	if (!attr->non_res)
-+		attr->res.data_size = cpu_to_le32(rsize);
-+	mi->dirty = true;
-+
-+	return true;
-+}
-+
-+int mi_pack_runs(struct mft_inode *mi, struct ATTRIB *attr,
-+		 struct runs_tree *run, CLST len)
-+{
-+	int err = 0;
-+	struct ntfs_sb_info *sbi = mi->sbi;
-+	u32 new_run_size;
-+	CLST plen;
-+	struct MFT_REC *rec = mi->mrec;
-+	CLST svcn = le64_to_cpu(attr->nres.svcn);
-+	u32 used = le32_to_cpu(rec->used);
-+	u32 aoff = PtrOffset(rec, attr);
-+	u32 asize = le32_to_cpu(attr->size);
-+	char *next = Add2Ptr(attr, asize);
-+	u16 run_off = le16_to_cpu(attr->nres.run_off);
-+	u32 run_size = asize - run_off;
-+	u32 tail = used - aoff - asize;
-+	u32 dsize = sbi->record_size - used;
-+
-+	/* Make a maximum gap in current record */
-+	memmove(next + dsize, next, tail);
-+
-+	/* Pack as much as possible */
-+	err = run_pack(run, svcn, len, Add2Ptr(attr, run_off), run_size + dsize,
-+		       &plen);
-+	if (err < 0) {
-+		memmove(next, next + dsize, tail);
-+		return err;
-+	}
-+
-+	new_run_size = QuadAlign(err);
-+
-+	memmove(next + new_run_size - run_size, next + dsize, tail);
-+
-+	attr->size = cpu_to_le32(asize + new_run_size - run_size);
-+	attr->nres.evcn = cpu_to_le64(svcn + plen - 1);
-+	rec->used = cpu_to_le32(used + new_run_size - run_size);
-+	mi->dirty = true;
-+
-+	return 0;
-+}
-diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
-new file mode 100644
-index 000000000000..e4e38242fc7d
---- /dev/null
-+++ b/fs/ntfs3/run.c
-@@ -0,0 +1,1120 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *
-+ * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
-+ *
-+ */
-+
-+#include <linux/blkdev.h>
-+#include <linux/buffer_head.h>
-+#include <linux/fs.h>
-+#include <linux/nls.h>
-+
-+#include "debug.h"
-+#include "ntfs.h"
-+#include "ntfs_fs.h"
-+
-+/* runs_tree is a continues memory. Try to avoid big size  */
-+#define NTFS3_RUN_MAX_BYTES 0x10000
-+
-+struct ntfs_run {
-+	CLST vcn; /* virtual cluster number */
-+	CLST len; /* length in clusters */
-+	CLST lcn; /* logical cluster number */
-+};
-+
-+/*
-+ * run_lookup
-+ *
-+ * Lookup the index of a MCB entry that is first <= vcn.
-+ * case of success it will return non-zero value and set
-+ * 'index' parameter to index of entry been found.
-+ * case of entry missing from list 'index' will be set to
-+ * point to insertion position for the entry question.
-+ */
-+bool run_lookup(const struct runs_tree *run, CLST vcn, size_t *index)
-+{
-+	size_t min_idx, max_idx, mid_idx;
-+	struct ntfs_run *r;
-+
-+	if (!run->count) {
-+		*index = 0;
-+		return false;
-+	}
-+
-+	min_idx = 0;
-+	max_idx = run->count - 1;
-+
-+	/* Check boundary cases specially, 'cause they cover the often requests */
-+	r = run->runs;
-+	if (vcn < r->vcn) {
-+		*index = 0;
-+		return false;
-+	}
-+
-+	if (vcn < r->vcn + r->len) {
-+		*index = 0;
-+		return true;
-+	}
-+
-+	r += max_idx;
-+	if (vcn >= r->vcn + r->len) {
-+		*index = run->count;
-+		return false;
-+	}
-+
-+	if (vcn >= r->vcn) {
-+		*index = max_idx;
-+		return true;
-+	}
-+
-+	do {
-+		mid_idx = min_idx + ((max_idx - min_idx) >> 1);
-+		r = run->runs + mid_idx;
-+
-+		if (vcn < r->vcn) {
-+			max_idx = mid_idx - 1;
-+			if (!mid_idx)
-+				break;
-+		} else if (vcn >= r->vcn + r->len) {
-+			min_idx = mid_idx + 1;
-+		} else {
-+			*index = mid_idx;
-+			return true;
 +		}
-+	} while (min_idx <= max_idx);
++		break;
 +
-+	*index = max_idx + 1;
++	case ATTR_LIST:
++	case ATTR_ID:
++	case ATTR_SECURE:
++	case ATTR_LABEL:
++	case ATTR_VOL_INFO:
++	case ATTR_DATA:
++	case ATTR_ALLOC:
++	case ATTR_BITMAP:
++	case ATTR_REPARSE:
++	case ATTR_EA_INFO:
++	case ATTR_EA:
++	case ATTR_PROPERTYSET:
++	case ATTR_LOGGED_UTILITY_STREAM:
++		break;
++
++	default:
++		return false;
++	}
++
++	return true;
++}
++
++static inline bool check_file_record(const struct MFT_REC *rec,
++				     const struct MFT_REC *rec2,
++				     struct ntfs_sb_info *sbi)
++{
++	const struct ATTRIB *attr;
++	u16 fo = le16_to_cpu(rec->rhdr.fix_off);
++	u16 fn = le16_to_cpu(rec->rhdr.fix_num);
++	u16 ao = le16_to_cpu(rec->attr_off);
++	u32 rs = sbi->record_size;
++
++	/* check the file record header for consistency */
++	if (rec->rhdr.sign != NTFS_FILE_SIGNATURE ||
++	    fo > (SECTOR_SIZE - ((rs >> SECTOR_SHIFT) + 1) * sizeof(short)) ||
++	    (fn - 1) * SECTOR_SIZE != rs || ao < MFTRECORD_FIXUP_OFFSET_1 ||
++	    ao > sbi->record_size - SIZEOF_RESIDENT || !is_rec_inuse(rec) ||
++	    le32_to_cpu(rec->total) != rs) {
++		return false;
++	}
++
++	/* Loop to check all of the attributes */
++	for (attr = Add2Ptr(rec, ao); attr->type != ATTR_END;
++	     attr = Add2Ptr(attr, le32_to_cpu(attr->size))) {
++		if (check_attr(rec, attr, sbi))
++			continue;
++		return false;
++	}
++
++	return true;
++}
++
++static inline int check_lsn(const struct NTFS_RECORD_HEADER *hdr,
++			    const u64 *rlsn)
++{
++	u64 lsn;
++
++	if (!rlsn)
++		return true;
++
++	lsn = le64_to_cpu(hdr->lsn);
++
++	if (hdr->sign == NTFS_HOLE_SIGNATURE)
++		return false;
++
++	if (*rlsn > lsn)
++		return true;
++
 +	return false;
 +}
 +
-+/*
-+ * run_consolidate
-+ *
-+ * consolidate runs starting from a given one.
-+ */
-+static void run_consolidate(struct runs_tree *run, size_t index)
++static inline bool check_if_attr(const struct MFT_REC *rec,
++				 const struct LOG_REC_HDR *lrh)
 +{
-+	size_t i;
-+	struct ntfs_run *r = run->runs + index;
++	u16 ro = le16_to_cpu(lrh->record_off);
++	u16 o = le16_to_cpu(rec->attr_off);
++	const struct ATTRIB *attr = Add2Ptr(rec, o);
 +
-+	while (index + 1 < run->count) {
-+		/*
-+		 * I should merge current run with next
-+		 * if start of the next run lies inside one being tested.
-+		 */
-+		struct ntfs_run *n = r + 1;
-+		CLST end = r->vcn + r->len;
-+		CLST dl;
++	while (o < ro) {
++		u32 asize;
 +
-+		/* Stop if runs are not aligned one to another. */
-+		if (n->vcn > end)
++		if (attr->type == ATTR_END)
 +			break;
 +
-+		dl = end - n->vcn;
-+
-+		/*
-+		 * If range at index overlaps with next one
-+		 * then I will either adjust it's start position
-+		 * or (if completely matches) dust remove one from the list.
-+		 */
-+		if (dl > 0) {
-+			if (n->len <= dl)
-+				goto remove_next_range;
-+
-+			n->len -= dl;
-+			n->vcn += dl;
-+			if (n->lcn != SPARSE_LCN)
-+				n->lcn += dl;
-+			dl = 0;
-+		}
-+
-+		/*
-+		 * Stop if sparse mode does not match
-+		 * both current and next runs.
-+		 */
-+		if ((n->lcn == SPARSE_LCN) != (r->lcn == SPARSE_LCN)) {
-+			index += 1;
-+			r = n;
-+			continue;
-+		}
-+
-+		/*
-+		 * Check if volume block
-+		 * of a next run lcn does not match
-+		 * last volume block of the current run.
-+		 */
-+		if (n->lcn != SPARSE_LCN && n->lcn != r->lcn + r->len)
++		asize = le32_to_cpu(attr->size);
++		if (!asize)
 +			break;
 +
-+		/*
-+		 * Next and current are siblings.
-+		 * Eat/join.
-+		 */
-+		r->len += n->len - dl;
-+
-+remove_next_range:
-+		i = run->count - (index + 1);
-+		if (i > 1)
-+			memmove(n, n + 1, sizeof(*n) * (i - 1));
-+
-+		run->count -= 1;
++		o += asize;
++		attr = Add2Ptr(attr, asize);
 +	}
++
++	return o == ro;
 +}
 +
-+/* returns true if range [svcn - evcn] is mapped*/
-+bool run_is_mapped_full(const struct runs_tree *run, CLST svcn, CLST evcn)
++static inline bool check_if_index_root(const struct MFT_REC *rec,
++				       const struct LOG_REC_HDR *lrh)
 +{
-+	size_t i;
-+	const struct ntfs_run *r, *end;
-+	CLST next_vcn;
++	u16 ro = le16_to_cpu(lrh->record_off);
++	u16 o = le16_to_cpu(rec->attr_off);
++	const struct ATTRIB *attr = Add2Ptr(rec, o);
 +
-+	if (!run_lookup(run, svcn, &i))
-+		return false;
++	while (o < ro) {
++		u32 asize;
 +
-+	end = run->runs + run->count;
-+	r = run->runs + i;
++		if (attr->type == ATTR_END)
++			break;
 +
-+	for (;;) {
-+		next_vcn = r->vcn + r->len;
-+		if (next_vcn > evcn)
-+			return true;
++		asize = le32_to_cpu(attr->size);
++		if (!asize)
++			break;
 +
-+		if (++r >= end)
-+			return false;
-+
-+		if (r->vcn != next_vcn)
-+			return false;
++		o += asize;
++		attr = Add2Ptr(attr, asize);
 +	}
++
++	return o == ro && attr->type == ATTR_ROOT;
 +}
 +
-+bool run_lookup_entry(const struct runs_tree *run, CLST vcn, CLST *lcn,
-+		      CLST *len, size_t *index)
++static inline bool check_if_root_index(const struct ATTRIB *attr,
++				       const struct INDEX_HDR *hdr,
++				       const struct LOG_REC_HDR *lrh)
 +{
-+	size_t idx;
-+	CLST gap;
-+	struct ntfs_run *r;
++	u16 ao = le16_to_cpu(lrh->attr_off);
++	u32 de_off = le32_to_cpu(hdr->de_off);
++	u32 o = PtrOffset(attr, hdr) + de_off;
++	const struct NTFS_DE *e = Add2Ptr(hdr, de_off);
++	u32 asize = le32_to_cpu(attr->size);
 +
-+	/* Fail immediately if nrun was not touched yet. */
-+	if (!run->runs)
-+		return false;
++	while (o < ao) {
++		u16 esize;
 +
-+	if (!run_lookup(run, vcn, &idx))
-+		return false;
++		if (o >= asize)
++			break;
 +
-+	r = run->runs + idx;
++		esize = le16_to_cpu(e->size);
++		if (!esize)
++			break;
 +
-+	if (vcn >= r->vcn + r->len)
-+		return false;
++		o += esize;
++		e = Add2Ptr(e, esize);
++	}
 +
-+	gap = vcn - r->vcn;
-+	if (r->len <= gap)
-+		return false;
-+
-+	*lcn = r->lcn == SPARSE_LCN ? SPARSE_LCN : (r->lcn + gap);
-+
-+	if (len)
-+		*len = r->len - gap;
-+	if (index)
-+		*index = idx;
-+
-+	return true;
++	return o == ao;
 +}
 +
-+/*
-+ * run_truncate_head
-+ *
-+ * decommit the range before vcn
-+ */
-+void run_truncate_head(struct runs_tree *run, CLST vcn)
++static inline bool check_if_alloc_index(const struct INDEX_HDR *hdr,
++					u32 attr_off)
 +{
-+	size_t index;
-+	struct ntfs_run *r;
++	u32 de_off = le32_to_cpu(hdr->de_off);
++	u32 o = offsetof(struct INDEX_BUFFER, ihdr) + de_off;
++	const struct NTFS_DE *e = Add2Ptr(hdr, de_off);
++	u32 used = le32_to_cpu(hdr->used);
 +
-+	if (run_lookup(run, vcn, &index)) {
-+		r = run->runs + index;
++	while (o < attr_off) {
++		u16 esize;
 +
-+		if (vcn > r->vcn) {
-+			CLST dlen = vcn - r->vcn;
++		if (de_off >= used)
++			break;
 +
-+			r->vcn = vcn;
-+			r->len -= dlen;
-+			if (r->lcn != SPARSE_LCN)
-+				r->lcn += dlen;
-+		}
++		esize = le16_to_cpu(e->size);
++		if (!esize)
++			break;
 +
-+		if (!index)
-+			return;
++		o += esize;
++		de_off += esize;
++		e = Add2Ptr(e, esize);
 +	}
-+	r = run->runs;
-+	memmove(r, r + index, sizeof(*r) * (run->count - index));
 +
-+	run->count -= index;
-+
-+	if (!run->count) {
-+		ntfs_vfree(run->runs);
-+		run->runs = NULL;
-+		run->allocated = 0;
-+	}
++	return o == attr_off;
 +}
 +
-+/*
-+ * run_truncate
-+ *
-+ * decommit the range after vcn
-+ */
-+void run_truncate(struct runs_tree *run, CLST vcn)
++static inline void change_attr_size(struct MFT_REC *rec, struct ATTRIB *attr,
++				    u32 nsize)
 +{
-+	size_t index;
++	u32 asize = le32_to_cpu(attr->size);
++	int dsize = nsize - asize;
++	u8 *next = Add2Ptr(attr, asize);
++	u32 used = le32_to_cpu(rec->used);
 +
-+	/*
-+	 * If I hit the range then
-+	 * I have to truncate one.
-+	 * If range to be truncated is becoming empty
-+	 * then it will entirely be removed.
-+	 */
-+	if (run_lookup(run, vcn, &index)) {
-+		struct ntfs_run *r = run->runs + index;
++	memmove(Add2Ptr(attr, nsize), next, used - PtrOffset(rec, next));
 +
-+		r->len = vcn - r->vcn;
-+
-+		if (r->len > 0)
-+			index += 1;
-+	}
-+
-+	/*
-+	 * At this point 'index' is set to
-+	 * position that should be thrown away (including index itself)
-+	 * Simple one - just set the limit.
-+	 */
-+	run->count = index;
-+
-+	/* Do not reallocate array 'runs'. Only free if possible */
-+	if (!index) {
-+		ntfs_vfree(run->runs);
-+		run->runs = NULL;
-+		run->allocated = 0;
-+	}
++	rec->used = cpu_to_le32(used + dsize);
++	attr->size = cpu_to_le32(nsize);
 +}
 +
-+/* trim head and tail if necessary*/
-+void run_truncate_around(struct runs_tree *run, CLST vcn)
-+{
-+	run_truncate_head(run, vcn);
++struct OpenAttr {
++	struct ATTRIB *attr;
++	struct runs_tree *run1;
++	struct runs_tree run0;
++	struct ntfs_inode *ni;
++	// CLST rno;
++};
 +
-+	if (run->count >= NTFS3_RUN_MAX_BYTES / sizeof(struct ntfs_run) / 2)
-+		run_truncate(run, (run->runs + (run->count >> 1))->vcn);
++/* Returns 0 if 'attr' has the same type and name */
++static inline int cmp_type_and_name(const struct ATTRIB *a1,
++				    const struct ATTRIB *a2)
++{
++	return a1->type != a2->type || a1->name_len != a2->name_len ||
++	       (a1->name_len && memcmp(attr_name(a1), attr_name(a2),
++				       a1->name_len * sizeof(short)));
 +}
 +
-+/*
-+ * run_add_entry
-+ *
-+ * sets location to known state.
-+ * run to be added may overlap with existing location.
-+ * returns false if of memory
-+ */
-+bool run_add_entry(struct runs_tree *run, CLST vcn, CLST lcn, CLST len,
-+		   bool is_mft)
++static struct OpenAttr *find_loaded_attr(struct ntfs_log *log,
++					 const struct ATTRIB *attr, CLST rno)
 +{
-+	size_t used, index;
-+	struct ntfs_run *r;
-+	bool inrange;
-+	CLST tail_vcn = 0, tail_len = 0, tail_lcn = 0;
-+	bool should_add_tail = false;
++	struct OPEN_ATTR_ENRTY *oe = NULL;
 +
-+	/*
-+	 * Lookup the insertion point.
-+	 *
-+	 * Execute bsearch for the entry containing
-+	 * start position question.
-+	 */
-+	inrange = run_lookup(run, vcn, &index);
++	while ((oe = enum_rstbl(log->open_attr_tbl, oe))) {
++		struct OpenAttr *op_attr;
 +
-+	/*
-+	 * Shortcut here would be case of
-+	 * range not been found but one been added
-+	 * continues previous run.
-+	 * this case I can directly make use of
-+	 * existing range as my start point.
-+	 */
-+	if (!inrange && index > 0) {
-+		struct ntfs_run *t = run->runs + index - 1;
-+
-+		if (t->vcn + t->len == vcn &&
-+		    (t->lcn == SPARSE_LCN) == (lcn == SPARSE_LCN) &&
-+		    (lcn == SPARSE_LCN || lcn == t->lcn + t->len)) {
-+			inrange = true;
-+			index -= 1;
-+		}
-+	}
-+
-+	/*
-+	 * At this point 'index' either points to the range
-+	 * containing start position or to the insertion position
-+	 * for a new range.
-+	 * So first let's check if range I'm probing is here already.
-+	 */
-+	if (!inrange) {
-+requires_new_range:
-+		/*
-+		 * Range was not found.
-+		 * Insert at position 'index'
-+		 */
-+		used = run->count * sizeof(struct ntfs_run);
-+
-+		/*
-+		 * Check allocated space.
-+		 * If one is not enough to get one more entry
-+		 * then it will be reallocated
-+		 */
-+		if (run->allocated < used + sizeof(struct ntfs_run)) {
-+			size_t bytes;
-+			struct ntfs_run *new_ptr;
-+
-+			/* Use power of 2 for 'bytes'*/
-+			if (!used) {
-+				bytes = 64;
-+			} else if (used <= 16 * PAGE_SIZE) {
-+				if (is_power_of2(run->allocated))
-+					bytes = run->allocated << 1;
-+				else
-+					bytes = (size_t)1
-+						<< (2 + blksize_bits(used));
-+			} else {
-+				bytes = run->allocated + (16 * PAGE_SIZE);
-+			}
-+
-+			WARN_ON(!is_mft && bytes > NTFS3_RUN_MAX_BYTES);
-+
-+			new_ptr = ntfs_vmalloc(bytes);
-+
-+			if (!new_ptr)
-+				return false;
-+
-+			r = new_ptr + index;
-+			memcpy(new_ptr, run->runs,
-+			       index * sizeof(struct ntfs_run));
-+			memcpy(r + 1, run->runs + index,
-+			       sizeof(struct ntfs_run) * (run->count - index));
-+
-+			ntfs_vfree(run->runs);
-+			run->runs = new_ptr;
-+			run->allocated = bytes;
-+
-+		} else {
-+			size_t i = run->count - index;
-+
-+			r = run->runs + index;
-+
-+			/* memmove appears to be a bottle neck here... */
-+			if (i > 0)
-+				memmove(r + 1, r, sizeof(struct ntfs_run) * i);
-+		}
-+
-+		r->vcn = vcn;
-+		r->lcn = lcn;
-+		r->len = len;
-+		run->count += 1;
-+	} else {
-+		r = run->runs + index;
-+
-+		/*
-+		 * If one of ranges was not allocated
-+		 * then I have to split location I just matched.
-+		 * and insert current one
-+		 * a common case this requires tail to be reinserted
-+		 * a recursive call.
-+		 */
-+		if (((lcn == SPARSE_LCN) != (r->lcn == SPARSE_LCN)) ||
-+		    (lcn != SPARSE_LCN && lcn != r->lcn + (vcn - r->vcn))) {
-+			CLST to_eat = vcn - r->vcn;
-+			CLST Tovcn = to_eat + len;
-+
-+			should_add_tail = Tovcn < r->len;
-+
-+			if (should_add_tail) {
-+				tail_lcn = r->lcn == SPARSE_LCN ?
-+						   SPARSE_LCN :
-+						   (r->lcn + Tovcn);
-+				tail_vcn = r->vcn + Tovcn;
-+				tail_len = r->len - Tovcn;
-+			}
-+
-+			if (to_eat > 0) {
-+				r->len = to_eat;
-+				inrange = false;
-+				index += 1;
-+				goto requires_new_range;
-+			}
-+
-+			/* lcn should match one I'm going to add. */
-+			r->lcn = lcn;
-+		}
-+
-+		/*
-+		 * If existing range fits then I'm done.
-+		 * Otherwise extend found one and fall back to range jocode.
-+		 */
-+		if (r->vcn + r->len < vcn + len)
-+			r->len += len - ((r->vcn + r->len) - vcn);
-+	}
-+
-+	/*
-+	 * And normalize it starting from insertion point.
-+	 * It's possible that no insertion needed case if
-+	 * start point lies within the range of an entry
-+	 * that 'index' points to.
-+	 */
-+	if (inrange && index > 0)
-+		index -= 1;
-+	run_consolidate(run, index);
-+	run_consolidate(run, index + 1);
-+
-+	/*
-+	 * a special case
-+	 * I have to add extra range a tail.
-+	 */
-+	if (should_add_tail &&
-+	    !run_add_entry(run, tail_vcn, tail_lcn, tail_len, is_mft))
-+		return false;
-+
-+	return true;
-+}
-+
-+/*helper for attr_collapse_range, which is helper for fallocate(collapse_range)*/
-+bool run_collapse_range(struct runs_tree *run, CLST vcn, CLST len)
-+{
-+	size_t index, eat;
-+	struct ntfs_run *r, *e, *eat_start, *eat_end;
-+	CLST end;
-+
-+	if (WARN_ON(!run_lookup(run, vcn, &index)))
-+		return true; /* should never be here */
-+
-+	e = run->runs + run->count;
-+	r = run->runs + index;
-+	end = vcn + len;
-+
-+	if (vcn > r->vcn) {
-+		if (r->vcn + r->len <= end) {
-+			/* collapse tail of run */
-+			r->len = vcn - r->vcn;
-+		} else if (r->lcn == SPARSE_LCN) {
-+			/* collapse a middle part of sparsed run */
-+			r->len -= len;
-+		} else {
-+			/* collapse a middle part of normal run, split */
-+			if (!run_add_entry(run, vcn, SPARSE_LCN, len, false))
-+				return false;
-+			return run_collapse_range(run, vcn, len);
-+		}
-+
-+		r += 1;
-+	}
-+
-+	eat_start = r;
-+	eat_end = r;
-+
-+	for (; r < e; r++) {
-+		CLST d;
-+
-+		if (r->vcn >= end) {
-+			r->vcn -= len;
++		if (ino_get(&oe->ref) != rno)
 +			continue;
-+		}
 +
-+		if (r->vcn + r->len <= end) {
-+			/* eat this run */
-+			eat_end = r + 1;
-+			continue;
-+		}
-+
-+		d = end - r->vcn;
-+		if (r->lcn != SPARSE_LCN)
-+			r->lcn += d;
-+		r->len -= d;
-+		r->vcn -= len - d;
++		op_attr = (struct OpenAttr *)oe->ptr;
++		if (!cmp_type_and_name(op_attr->attr, attr))
++			return op_attr;
 +	}
-+
-+	eat = eat_end - eat_start;
-+	memmove(eat_start, eat_end, (e - eat_end) * sizeof(*r));
-+	run->count -= eat;
-+
-+	return true;
++	return NULL;
 +}
 +
-+/*
-+ * run_get_entry
-+ *
-+ * returns index-th mapped region
-+ */
-+bool run_get_entry(const struct runs_tree *run, size_t index, CLST *vcn,
-+		   CLST *lcn, CLST *len)
++static struct ATTRIB *attr_create_nonres_log(struct ntfs_sb_info *sbi,
++					     enum ATTR_TYPE type, u64 size,
++					     const u16 *name, size_t name_len,
++					     __le16 flags)
 +{
-+	const struct ntfs_run *r;
++	struct ATTRIB *attr;
++	u32 name_size = QuadAlign(name_len * sizeof(short));
++	bool is_ext = flags & (ATTR_FLAG_COMPRESSED | ATTR_FLAG_SPARSED);
++	u32 asize = name_size +
++		    (is_ext ? SIZEOF_NONRESIDENT_EX : SIZEOF_NONRESIDENT);
 +
-+	if (index >= run->count)
-+		return false;
++	attr = ntfs_zalloc(asize);
++	if (!attr)
++		return NULL;
 +
-+	r = run->runs + index;
++	attr->type = type;
++	attr->size = cpu_to_le32(asize);
++	attr->flags = flags;
++	attr->non_res = 1;
++	attr->name_len = name_len;
 +
-+	if (!r->len)
-+		return false;
++	attr->nres.evcn = cpu_to_le64((u64)bytes_to_cluster(sbi, size) - 1);
++	attr->nres.alloc_size = cpu_to_le64(ntfs_up_cluster(sbi, size));
++	attr->nres.data_size = cpu_to_le64(size);
++	attr->nres.valid_size = attr->nres.data_size;
++	if (is_ext) {
++		attr->name_off = SIZEOF_NONRESIDENT_EX_LE;
++		if (is_attr_compressed(attr))
++			attr->nres.c_unit = COMPRESSION_UNIT;
 +
-+	if (vcn)
-+		*vcn = r->vcn;
-+	if (lcn)
-+		*lcn = r->lcn;
-+	if (len)
-+		*len = r->len;
-+	return true;
-+}
-+
-+/*
-+ * run_packed_size
-+ *
-+ * calculates the size of packed int64
-+ */
-+#ifdef __BIG_ENDIAN
-+static inline int run_packed_size(const s64 n)
-+{
-+	const u8 *p = (const u8 *)&n + sizeof(n) - 1;
-+
-+	if (n >= 0) {
-+		if (p[-7] || p[-6] || p[-5] || p[-4])
-+			p -= 4;
-+		if (p[-3] || p[-2])
-+			p -= 2;
-+		if (p[-1])
-+			p -= 1;
-+		if (p[0] & 0x80)
-+			p -= 1;
++		attr->nres.run_off =
++			cpu_to_le16(SIZEOF_NONRESIDENT_EX + name_size);
++		memcpy(Add2Ptr(attr, SIZEOF_NONRESIDENT_EX), name,
++		       name_len * sizeof(short));
 +	} else {
-+		if (p[-7] != 0xff || p[-6] != 0xff || p[-5] != 0xff ||
-+		    p[-4] != 0xff)
-+			p -= 4;
-+		if (p[-3] != 0xff || p[-2] != 0xff)
-+			p -= 2;
-+		if (p[-1] != 0xff)
-+			p -= 1;
-+		if (!(p[0] & 0x80))
-+			p -= 1;
-+	}
-+	return (const u8 *)n + sizeof(n) - p;
-+}
-+
-+/* full trusted function. It does not check 'size' for errors */
-+static inline void run_pack_s64(u8 *run_buf, u8 size, s64 v)
-+{
-+	const u8 *p = (u8 *)&v;
-+
-+	switch (size) {
-+	case 8:
-+		run_buf[7] = p[0];
-+		fallthrough;
-+	case 7:
-+		run_buf[6] = p[1];
-+		fallthrough;
-+	case 6:
-+		run_buf[5] = p[2];
-+		fallthrough;
-+	case 5:
-+		run_buf[4] = p[3];
-+		fallthrough;
-+	case 4:
-+		run_buf[3] = p[4];
-+		fallthrough;
-+	case 3:
-+		run_buf[2] = p[5];
-+		fallthrough;
-+	case 2:
-+		run_buf[1] = p[6];
-+		fallthrough;
-+	case 1:
-+		run_buf[0] = p[7];
-+	}
-+}
-+
-+/* full trusted function. It does not check 'size' for errors */
-+static inline s64 run_unpack_s64(const u8 *run_buf, u8 size, s64 v)
-+{
-+	u8 *p = (u8 *)&v;
-+
-+	switch (size) {
-+	case 8:
-+		p[0] = run_buf[7];
-+		fallthrough;
-+	case 7:
-+		p[1] = run_buf[6];
-+		fallthrough;
-+	case 6:
-+		p[2] = run_buf[5];
-+		fallthrough;
-+	case 5:
-+		p[3] = run_buf[4];
-+		fallthrough;
-+	case 4:
-+		p[4] = run_buf[3];
-+		fallthrough;
-+	case 3:
-+		p[5] = run_buf[2];
-+		fallthrough;
-+	case 2:
-+		p[6] = run_buf[1];
-+		fallthrough;
-+	case 1:
-+		p[7] = run_buf[0];
-+	}
-+	return v;
-+}
-+
-+#else
-+
-+static inline int run_packed_size(const s64 n)
-+{
-+	const u8 *p = (const u8 *)&n;
-+
-+	if (n >= 0) {
-+		if (p[7] || p[6] || p[5] || p[4])
-+			p += 4;
-+		if (p[3] || p[2])
-+			p += 2;
-+		if (p[1])
-+			p += 1;
-+		if (p[0] & 0x80)
-+			p += 1;
-+	} else {
-+		if (p[7] != 0xff || p[6] != 0xff || p[5] != 0xff ||
-+		    p[4] != 0xff)
-+			p += 4;
-+		if (p[3] != 0xff || p[2] != 0xff)
-+			p += 2;
-+		if (p[1] != 0xff)
-+			p += 1;
-+		if (!(p[0] & 0x80))
-+			p += 1;
++		attr->name_off = SIZEOF_NONRESIDENT_LE;
++		attr->nres.run_off =
++			cpu_to_le16(SIZEOF_NONRESIDENT + name_size);
++		memcpy(Add2Ptr(attr, SIZEOF_NONRESIDENT), name,
++		       name_len * sizeof(short));
 +	}
 +
-+	return 1 + p - (const u8 *)&n;
++	return attr;
 +}
-+
-+/* full trusted function. It does not check 'size' for errors */
-+static inline void run_pack_s64(u8 *run_buf, u8 size, s64 v)
-+{
-+	const u8 *p = (u8 *)&v;
-+
-+	/* memcpy( run_buf, &v, size); is it faster? */
-+	switch (size) {
-+	case 8:
-+		run_buf[7] = p[7];
-+		fallthrough;
-+	case 7:
-+		run_buf[6] = p[6];
-+		fallthrough;
-+	case 6:
-+		run_buf[5] = p[5];
-+		fallthrough;
-+	case 5:
-+		run_buf[4] = p[4];
-+		fallthrough;
-+	case 4:
-+		run_buf[3] = p[3];
-+		fallthrough;
-+	case 3:
-+		run_buf[2] = p[2];
-+		fallthrough;
-+	case 2:
-+		run_buf[1] = p[1];
-+		fallthrough;
-+	case 1:
-+		run_buf[0] = p[0];
-+	}
-+}
-+
-+/* full trusted function. It does not check 'size' for errors */
-+static inline s64 run_unpack_s64(const u8 *run_buf, u8 size, s64 v)
-+{
-+	u8 *p = (u8 *)&v;
-+
-+	/* memcpy( &v, run_buf, size); is it faster? */
-+	switch (size) {
-+	case 8:
-+		p[7] = run_buf[7];
-+		fallthrough;
-+	case 7:
-+		p[6] = run_buf[6];
-+		fallthrough;
-+	case 6:
-+		p[5] = run_buf[5];
-+		fallthrough;
-+	case 5:
-+		p[4] = run_buf[4];
-+		fallthrough;
-+	case 4:
-+		p[3] = run_buf[3];
-+		fallthrough;
-+	case 3:
-+		p[2] = run_buf[2];
-+		fallthrough;
-+	case 2:
-+		p[1] = run_buf[1];
-+		fallthrough;
-+	case 1:
-+		p[0] = run_buf[0];
-+	}
-+	return v;
-+}
-+#endif
 +
 +/*
-+ * run_pack
++ * do_action
 + *
-+ * packs runs into buffer
-+ * packed_vcns - how much runs we have packed
-+ * packed_size - how much bytes we have used run_buf
++ * common routine for the Redo and Undo Passes
++ * If rlsn is NULL then undo
 + */
-+int run_pack(const struct runs_tree *run, CLST svcn, CLST len, u8 *run_buf,
-+	     u32 run_buf_size, CLST *packed_vcns)
++static int do_action(struct ntfs_log *log, struct OPEN_ATTR_ENRTY *oe,
++		     const struct LOG_REC_HDR *lrh, u32 op, void *data,
++		     u32 dlen, u32 rec_len, const u64 *rlsn)
 +{
-+	CLST next_vcn, vcn, lcn;
-+	CLST prev_lcn = 0;
-+	CLST evcn1 = svcn + len;
-+	int packed_size = 0;
-+	size_t i;
-+	bool ok;
-+	s64 dlcn;
-+	int offset_size, size_size, tmp;
++	int err = 0;
++	struct ntfs_sb_info *sbi = log->ni->mi.sbi;
++	struct inode *inode = NULL, *inode_parent;
++	struct mft_inode *mi = NULL, *mi2_child = NULL;
++	CLST rno = 0, rno_base = 0;
++	struct INDEX_BUFFER *ib = NULL;
++	struct MFT_REC *rec = NULL;
++	struct ATTRIB *attr = NULL, *attr2;
++	struct INDEX_HDR *hdr;
++	struct INDEX_ROOT *root;
++	struct NTFS_DE *e, *e1, *e2;
++	struct NEW_ATTRIBUTE_SIZES *new_sz;
++	struct ATTR_FILE_NAME *fname;
++	struct OpenAttr *oa, *oa2;
++	u32 nsize, t32, asize, used, esize, bmp_off, bmp_bits;
++	u16 t16, id, id2;
++	u32 record_size = sbi->record_size;
++	u64 t64;
++	u64 lco = 0;
++	u64 cbo = (u64)le16_to_cpu(lrh->cluster_off) << SECTOR_SHIFT;
++	u64 tvo = le64_to_cpu(lrh->target_vcn) << sbi->cluster_bits;
++	u64 vbo = cbo + tvo;
++	void *buffer_le = NULL;
++	u32 bytes = 0;
++	bool a_dirty = false;
++	u16 data_off;
 +
-+	next_vcn = vcn = svcn;
++	oa = oe->ptr;
 +
-+	*packed_vcns = 0;
++	/* Big switch to prepare */
++	switch (op) {
++	/* ============================================================
++	 * Process MFT records, as described by the current log record
++	 * ============================================================
++	 */
++	case InitializeFileRecordSegment:
++	case DeallocateFileRecordSegment:
++	case WriteEndOfFileRecordSegment:
++	case CreateAttribute:
++	case DeleteAttribute:
++	case UpdateResidentValue:
++	case UpdateMappingPairs:
++	case SetNewAttributeSizes:
++	case AddIndexEntryRoot:
++	case DeleteIndexEntryRoot:
++	case SetIndexEntryVcnRoot:
++	case UpdateFileNameRoot:
++	case UpdateRecordDataRoot:
++	case ZeroEndOfFileRecord:
 +
-+	if (!len)
-+		goto out;
-+
-+	ok = run_lookup_entry(run, vcn, &lcn, &len, &i);
-+
-+	if (!ok)
-+		goto error;
-+
-+	if (next_vcn != vcn)
-+		goto error;
-+
-+	for (;;) {
-+		next_vcn = vcn + len;
-+		if (next_vcn > evcn1)
-+			len = evcn1 - vcn;
-+
-+		/* how much bytes required to pack len */
-+		size_size = run_packed_size(len);
-+
-+		/* offset_size - how much bytes is packed dlcn */
-+		if (lcn == SPARSE_LCN) {
-+			offset_size = 0;
-+			dlcn = 0;
++		rno = vbo >> sbi->record_bits;
++		inode = ilookup(sbi->sb, rno);
++		if (inode) {
++			mi = &ntfs_i(inode)->mi;
++		} else if (op == InitializeFileRecordSegment) {
++			mi = ntfs_zalloc(sizeof(struct mft_inode));
++			if (!mi)
++				return -ENOMEM;
++			err = mi_format_new(mi, sbi, rno, 0, false);
++			if (err)
++				goto out;
 +		} else {
-+			/* NOTE: lcn can be less than prev_lcn! */
-+			dlcn = (s64)lcn - prev_lcn;
-+			offset_size = run_packed_size(dlcn);
-+			prev_lcn = lcn;
++			/* read from disk */
++			err = mi_get(sbi, rno, &mi);
++			if (err)
++				return err;
++		}
++		rec = mi->mrec;
++
++		if (op == DeallocateFileRecordSegment)
++			goto skip_load_parent;
++
++		if (InitializeFileRecordSegment != op) {
++			if (rec->rhdr.sign == NTFS_BAAD_SIGNATURE)
++				goto dirty_vol;
++			if (!check_lsn(&rec->rhdr, rlsn))
++				goto out;
++			if (!check_file_record(rec, NULL, sbi))
++				goto dirty_vol;
++			attr = Add2Ptr(rec, le16_to_cpu(lrh->record_off));
 +		}
 +
-+		tmp = run_buf_size - packed_size - 2 - offset_size;
-+		if (tmp <= 0)
-+			goto out;
-+
-+		/* can we store this entire run */
-+		if (tmp < size_size)
-+			goto out;
-+
-+		if (run_buf) {
-+			/* pack run header */
-+			run_buf[0] = ((u8)(size_size | (offset_size << 4)));
-+			run_buf += 1;
-+
-+			/* Pack the length of run */
-+			run_pack_s64(run_buf, size_size, len);
-+
-+			run_buf += size_size;
-+			/* Pack the offset from previous lcn */
-+			run_pack_s64(run_buf, offset_size, dlcn);
-+			run_buf += offset_size;
++		if (is_rec_base(rec) || InitializeFileRecordSegment == op) {
++			rno_base = rno;
++			goto skip_load_parent;
 +		}
 +
-+		packed_size += 1 + offset_size + size_size;
-+		*packed_vcns += len;
++		rno_base = ino_get(&rec->parent_ref);
++		inode_parent = ntfs_iget5(sbi->sb, &rec->parent_ref, NULL);
++		if (IS_ERR(inode_parent))
++			goto skip_load_parent;
 +
-+		if (packed_size + 1 >= run_buf_size || next_vcn >= evcn1)
++		if (is_bad_inode(inode_parent)) {
++			iput(inode_parent);
++			goto skip_load_parent;
++		}
++
++		if (ni_load_mi_ex(ntfs_i(inode_parent), rno, &mi2_child)) {
++			iput(inode_parent);
++		} else {
++			if (mi2_child->mrec != mi->mrec)
++				memcpy(mi2_child->mrec, mi->mrec,
++				       sbi->record_size);
++
++			if (inode)
++				iput(inode);
++			else if (mi)
++				mi_put(mi);
++
++			inode = inode_parent;
++			mi = mi2_child;
++			rec = mi2_child->mrec;
++			attr = Add2Ptr(rec, le16_to_cpu(lrh->record_off));
++		}
++
++skip_load_parent:
++		inode_parent = NULL;
++		break;
++
++	/* ============================================================
++	 * Process attributes, as described by the current log record
++	 * ============================================================
++	 */
++	case UpdateNonresidentValue:
++	case AddIndexEntryAllocation:
++	case DeleteIndexEntryAllocation:
++	case WriteEndOfIndexBuffer:
++	case SetIndexEntryVcnAllocation:
++	case UpdateFileNameAllocation:
++	case SetBitsInNonresidentBitMap:
++	case ClearBitsInNonresidentBitMap:
++	case UpdateRecordDataAllocation:
++
++		attr = oa->attr;
++		bytes = UpdateNonresidentValue == op ? dlen : 0;
++		lco = (u64)le16_to_cpu(lrh->lcns_follow) << sbi->cluster_bits;
++
++		if (attr->type == ATTR_ALLOC) {
++			t32 = le32_to_cpu(oe->bytes_per_index);
++			if (bytes < t32)
++				bytes = t32;
++		}
++
++		if (!bytes)
++			bytes = lco - cbo;
++
++		bytes += le16_to_cpu(lrh->record_off);
++		if (attr->type == ATTR_ALLOC)
++			bytes = (bytes + 511) & ~511; // align
++
++		buffer_le = ntfs_malloc(bytes);
++		if (!buffer_le)
++			return -ENOMEM;
++
++		err = ntfs_read_run_nb(sbi, oa->run1, vbo, buffer_le, bytes,
++				       NULL);
++		if (err)
 +			goto out;
 +
-+		ok = run_get_entry(run, ++i, &vcn, &lcn, &len);
-+		if (!ok)
-+			goto error;
++		if (attr->type == ATTR_ALLOC && *(int *)buffer_le)
++			ntfs_fix_post_read(buffer_le, bytes, false);
++		break;
 +
-+		if (next_vcn != vcn)
-+			goto error;
++	default:
++		WARN_ON(1);
++	}
++
++	/* Big switch to do operation */
++	switch (op) {
++	case InitializeFileRecordSegment:
++		t16 = le16_to_cpu(lrh->record_off);
++		if (t16 + dlen > record_size)
++			goto dirty_vol;
++
++		memcpy(Add2Ptr(rec, t16), data, dlen);
++		mi->dirty = true;
++		break;
++
++	case DeallocateFileRecordSegment:
++		clear_rec_inuse(rec);
++		le16_add_cpu(&rec->seq, 1);
++		mi->dirty = true;
++		break;
++
++	case WriteEndOfFileRecordSegment:
++		attr2 = (struct ATTRIB *)data;
++		t16 = le16_to_cpu(lrh->record_off);
++
++		if (!check_if_attr(rec, lrh) || t16 + dlen > record_size)
++			goto dirty_vol;
++
++		memmove(attr, attr2, dlen);
++		rec->used = cpu_to_le32(QuadAlign(t16 + dlen));
++
++		mi->dirty = true;
++		break;
++
++	case CreateAttribute:
++		attr2 = (struct ATTRIB *)data;
++		asize = le32_to_cpu(attr2->size);
++		used = le32_to_cpu(rec->used);
++		t16 = le16_to_cpu(lrh->record_off);
++
++		if (!check_if_attr(rec, lrh) || dlen < SIZEOF_RESIDENT ||
++		    !IsQuadAligned(asize) ||
++		    Add2Ptr(attr2, asize) > Add2Ptr(lrh, rec_len) ||
++		    dlen > record_size - used) {
++			goto dirty_vol;
++		}
++
++		memmove(Add2Ptr(attr, asize), attr, used - t16);
++		memcpy(attr, attr2, asize);
++
++		rec->used = cpu_to_le32(used + asize);
++		id = le16_to_cpu(rec->next_attr_id);
++		id2 = le16_to_cpu(attr2->id);
++		if (id <= id2)
++			rec->next_attr_id = cpu_to_le16(id2 + 1);
++		if (is_attr_indexed(attr))
++			le16_add_cpu(&rec->hard_links, 1);
++
++		oa2 = find_loaded_attr(log, attr, rno_base);
++		if (oa2) {
++			void *p2 = ntfs_memdup(attr, le32_to_cpu(attr->size));
++
++			if (p2) {
++				// run_close(oa2->run1);
++				ntfs_free(oa2->attr);
++				oa2->attr = p2;
++			}
++		}
++
++		mi->dirty = true;
++		break;
++
++	case DeleteAttribute:
++		asize = le32_to_cpu(attr->size);
++		used = le32_to_cpu(rec->used);
++		t16 = le16_to_cpu(lrh->record_off);
++
++		if (!check_if_attr(rec, lrh))
++			goto dirty_vol;
++
++		rec->used = cpu_to_le32(used - asize);
++		if (is_attr_indexed(attr))
++			le16_add_cpu(&rec->hard_links, -1);
++
++		memmove(attr, Add2Ptr(attr, asize), used - t16);
++
++		mi->dirty = true;
++		break;
++
++	case UpdateResidentValue:
++		t16 = le16_to_cpu(lrh->attr_off);
++		nsize = t16 + dlen;
++
++		if (!check_if_attr(rec, lrh))
++			goto dirty_vol;
++
++		asize = le32_to_cpu(attr->size);
++		used = le32_to_cpu(rec->used);
++
++		if (lrh->redo_len == lrh->undo_len) {
++			if (nsize > asize)
++				goto dirty_vol;
++			goto move_data;
++		}
++
++		if (nsize > asize && nsize - asize > record_size - used)
++			goto dirty_vol;
++
++		nsize = QuadAlign(nsize);
++		data_off = le16_to_cpu(attr->res.data_off);
++
++		if (nsize < asize) {
++			memmove(Add2Ptr(attr, t16), data, dlen);
++			data = NULL; // To skip below memmove
++		}
++
++		memmove(Add2Ptr(attr, nsize), Add2Ptr(attr, asize),
++			used - le16_to_cpu(lrh->record_off) - asize);
++
++		rec->used = cpu_to_le32(used + nsize - asize);
++		attr->size = cpu_to_le32(nsize);
++		attr->res.data_size = cpu_to_le32(t16 + dlen - data_off);
++
++move_data:
++		if (data)
++			memmove(Add2Ptr(attr, t16), data, dlen);
++
++		oa2 = find_loaded_attr(log, attr, rno_base);
++		if (oa2) {
++			void *p2 = ntfs_memdup(attr, le32_to_cpu(attr->size));
++
++			if (p2) {
++				// run_close(&oa2->run0);
++				oa2->run1 = &oa2->run0;
++				ntfs_free(oa2->attr);
++				oa2->attr = p2;
++			}
++		}
++
++		mi->dirty = true;
++		break;
++
++	case UpdateMappingPairs:
++		t16 = le16_to_cpu(lrh->attr_off);
++		nsize = t16 + dlen;
++		asize = le32_to_cpu(attr->size);
++		used = le32_to_cpu(rec->used);
++
++		if (!check_if_attr(rec, lrh) || !attr->non_res ||
++		    t16 < le16_to_cpu(attr->nres.run_off) || t16 > asize ||
++		    (nsize > asize && nsize - asize > record_size - used)) {
++			goto dirty_vol;
++		}
++
++		nsize = QuadAlign(nsize);
++
++		memmove(Add2Ptr(attr, nsize), Add2Ptr(attr, asize),
++			used - le16_to_cpu(lrh->record_off) - asize);
++		rec->used = cpu_to_le32(used + nsize - asize);
++		attr->size = cpu_to_le32(nsize);
++		memmove(Add2Ptr(attr, t16), data, dlen);
++
++		if (run_get_highest_vcn(le64_to_cpu(attr->nres.svcn),
++					attr_run(attr), &t64)) {
++			goto dirty_vol;
++		}
++
++		attr->nres.evcn = cpu_to_le64(t64);
++		oa2 = find_loaded_attr(log, attr, rno_base);
++		if (oa2 && oa2->attr->non_res)
++			oa2->attr->nres.evcn = attr->nres.evcn;
++
++		mi->dirty = true;
++		break;
++
++	case SetNewAttributeSizes:
++		new_sz = data;
++
++		if (!check_if_attr(rec, lrh) || !attr->non_res)
++			goto dirty_vol;
++
++		attr->nres.alloc_size = new_sz->alloc_size;
++		attr->nres.data_size = new_sz->data_size;
++		attr->nres.valid_size = new_sz->valid_size;
++
++		if (dlen >= sizeof(struct NEW_ATTRIBUTE_SIZES))
++			attr->nres.total_size = new_sz->total_size;
++
++		oa2 = find_loaded_attr(log, attr, rno_base);
++		if (oa2) {
++			void *p2 = ntfs_memdup(attr, le32_to_cpu(attr->size));
++
++			if (p2) {
++				ntfs_free(oa2->attr);
++				oa2->attr = p2;
++			}
++		}
++		mi->dirty = true;
++		break;
++
++	case AddIndexEntryRoot:
++		e = (struct NTFS_DE *)data;
++		esize = le16_to_cpu(e->size);
++		root = resident_data(attr);
++		hdr = &root->ihdr;
++		used = le32_to_cpu(hdr->used);
++
++		if (!check_if_index_root(rec, lrh) ||
++		    !check_if_root_index(attr, hdr, lrh) ||
++		    Add2Ptr(data, esize) > Add2Ptr(lrh, rec_len) ||
++		    esize > le32_to_cpu(rec->total) - le32_to_cpu(rec->used)) {
++			goto dirty_vol;
++		}
++
++		e1 = Add2Ptr(attr, le16_to_cpu(lrh->attr_off));
++
++		change_attr_size(rec, attr, le32_to_cpu(attr->size) + esize);
++
++		memmove(Add2Ptr(e1, esize), e1,
++			PtrOffset(e1, Add2Ptr(hdr, used)));
++		memmove(e1, e, esize);
++
++		le32_add_cpu(&attr->res.data_size, esize);
++		hdr->used = cpu_to_le32(used + esize);
++		le32_add_cpu(&hdr->total, esize);
++
++		mi->dirty = true;
++		break;
++
++	case DeleteIndexEntryRoot:
++		root = resident_data(attr);
++		hdr = &root->ihdr;
++		used = le32_to_cpu(hdr->used);
++
++		if (!check_if_index_root(rec, lrh) ||
++		    !check_if_root_index(attr, hdr, lrh)) {
++			goto dirty_vol;
++		}
++
++		e1 = Add2Ptr(attr, le16_to_cpu(lrh->attr_off));
++		esize = le16_to_cpu(e1->size);
++		e2 = Add2Ptr(e1, esize);
++
++		memmove(e1, e2, PtrOffset(e2, Add2Ptr(hdr, used)));
++
++		le32_sub_cpu(&attr->res.data_size, esize);
++		hdr->used = cpu_to_le32(used - esize);
++		le32_sub_cpu(&hdr->total, esize);
++
++		change_attr_size(rec, attr, le32_to_cpu(attr->size) - esize);
++
++		mi->dirty = true;
++		break;
++
++	case SetIndexEntryVcnRoot:
++		root = resident_data(attr);
++		hdr = &root->ihdr;
++
++		if (!check_if_index_root(rec, lrh) ||
++		    !check_if_root_index(attr, hdr, lrh)) {
++			goto dirty_vol;
++		}
++
++		e = Add2Ptr(attr, le16_to_cpu(lrh->attr_off));
++
++		de_set_vbn_le(e, *(__le64 *)data);
++		mi->dirty = true;
++		break;
++
++	case UpdateFileNameRoot:
++		root = resident_data(attr);
++		hdr = &root->ihdr;
++
++		if (!check_if_index_root(rec, lrh) ||
++		    !check_if_root_index(attr, hdr, lrh)) {
++			goto dirty_vol;
++		}
++
++		e = Add2Ptr(attr, le16_to_cpu(lrh->attr_off));
++		fname = (struct ATTR_FILE_NAME *)(e + 1);
++		memmove(&fname->dup, data, sizeof(fname->dup)); //
++		mi->dirty = true;
++		break;
++
++	case UpdateRecordDataRoot:
++		root = resident_data(attr);
++		hdr = &root->ihdr;
++
++		if (!check_if_index_root(rec, lrh) ||
++		    !check_if_root_index(attr, hdr, lrh)) {
++			goto dirty_vol;
++		}
++
++		e = Add2Ptr(attr, le16_to_cpu(lrh->attr_off));
++
++		memmove(Add2Ptr(e, le16_to_cpu(e->view.data_off)), data, dlen);
++
++		mi->dirty = true;
++		break;
++
++	case ZeroEndOfFileRecord:
++		t16 = le16_to_cpu(lrh->record_off);
++		if (t16 + dlen > record_size)
++			goto dirty_vol;
++
++		memset(attr, 0, dlen);
++		mi->dirty = true;
++		break;
++
++	case UpdateNonresidentValue:
++		t16 = le16_to_cpu(lrh->record_off);
++
++		if (lco < cbo + t16 + dlen)
++			goto dirty_vol;
++
++		memcpy(Add2Ptr(buffer_le, t16), data, dlen);
++
++		a_dirty = true;
++		if (attr->type == ATTR_ALLOC)
++			ntfs_fix_pre_write(buffer_le, bytes);
++		break;
++
++	case AddIndexEntryAllocation:
++		t16 = le16_to_cpu(lrh->record_off);
++		ib = Add2Ptr(buffer_le, t16);
++		hdr = &ib->ihdr;
++		e = data;
++		esize = le16_to_cpu(e->size);
++		t16 = le16_to_cpu(lrh->attr_off);
++		e1 = Add2Ptr(ib, t16);
++
++		if (is_baad(&ib->rhdr))
++			goto dirty_vol;
++		if (!check_lsn(&ib->rhdr, rlsn))
++			goto out;
++
++		used = le32_to_cpu(hdr->used);
++
++		if (!check_index_buffer(ib, bytes) ||
++		    !check_if_alloc_index(hdr, t16) ||
++		    Add2Ptr(e, esize) > Add2Ptr(lrh, rec_len) ||
++		    used + esize > le32_to_cpu(hdr->total)) {
++			goto dirty_vol;
++		}
++
++		memmove(Add2Ptr(e1, esize), e1,
++			PtrOffset(e1, Add2Ptr(hdr, used)));
++		memcpy(e1, e, esize);
++
++		hdr->used = cpu_to_le32(used + esize);
++
++		a_dirty = true;
++
++		ntfs_fix_pre_write(&ib->rhdr, bytes);
++		break;
++
++	case DeleteIndexEntryAllocation:
++		t16 = le16_to_cpu(lrh->record_off);
++		ib = Add2Ptr(buffer_le, t16);
++		hdr = &ib->ihdr;
++		t16 = le16_to_cpu(lrh->attr_off);
++		e = Add2Ptr(ib, t16);
++		esize = le16_to_cpu(e->size);
++
++		if (is_baad(&ib->rhdr))
++			goto dirty_vol;
++		if (!check_lsn(&ib->rhdr, rlsn))
++			goto out;
++
++		if (!check_index_buffer(ib, bytes) ||
++		    !check_if_alloc_index(hdr, t16)) {
++			goto dirty_vol;
++		}
++
++		e1 = Add2Ptr(e, esize);
++		nsize = esize;
++		used = le32_to_cpu(hdr->used);
++
++		memmove(e, e1, PtrOffset(e1, Add2Ptr(hdr, used)));
++
++		hdr->used = cpu_to_le32(used - nsize);
++
++		a_dirty = true;
++
++		ntfs_fix_pre_write(&ib->rhdr, bytes);
++		break;
++
++	case WriteEndOfIndexBuffer:
++		t16 = le16_to_cpu(lrh->record_off);
++		ib = Add2Ptr(buffer_le, t16);
++		hdr = &ib->ihdr;
++		t16 = le16_to_cpu(lrh->attr_off);
++		e = Add2Ptr(ib, t16);
++
++		if (is_baad(&ib->rhdr))
++			goto dirty_vol;
++		if (!check_lsn(&ib->rhdr, rlsn))
++			goto out;
++		if (!check_index_buffer(ib, bytes) ||
++		    !check_if_alloc_index(hdr, t16) ||
++		    t16 + dlen > offsetof(struct INDEX_BUFFER, ihdr) +
++					 le32_to_cpu(hdr->total)) {
++			goto dirty_vol;
++		}
++
++		hdr->used = cpu_to_le32(dlen + PtrOffset(hdr, e));
++		memmove(e, data, dlen);
++
++		a_dirty = true;
++		ntfs_fix_pre_write(&ib->rhdr, bytes);
++		break;
++
++	case SetIndexEntryVcnAllocation:
++		t16 = le16_to_cpu(lrh->record_off);
++		ib = Add2Ptr(buffer_le, t16);
++		hdr = &ib->ihdr;
++		t16 = le16_to_cpu(lrh->attr_off);
++		e = Add2Ptr(ib, t16);
++
++		if (is_baad(&ib->rhdr))
++			goto dirty_vol;
++
++		if (!check_lsn(&ib->rhdr, rlsn))
++			goto out;
++		if (!check_index_buffer(ib, bytes) ||
++		    !check_if_alloc_index(hdr, t16)) {
++			goto dirty_vol;
++		}
++
++		de_set_vbn_le(e, *(__le64 *)data);
++
++		a_dirty = true;
++		ntfs_fix_pre_write(&ib->rhdr, bytes);
++		break;
++
++	case UpdateFileNameAllocation:
++		t16 = le16_to_cpu(lrh->record_off);
++		ib = Add2Ptr(buffer_le, t16);
++		hdr = &ib->ihdr;
++		t16 = le16_to_cpu(lrh->attr_off);
++		e = Add2Ptr(ib, t16);
++
++		if (is_baad(&ib->rhdr))
++			goto dirty_vol;
++
++		if (!check_lsn(&ib->rhdr, rlsn))
++			goto out;
++		if (!check_index_buffer(ib, bytes) ||
++		    !check_if_alloc_index(hdr, t16)) {
++			goto dirty_vol;
++		}
++
++		fname = (struct ATTR_FILE_NAME *)(e + 1);
++		memmove(&fname->dup, data, sizeof(fname->dup));
++
++		a_dirty = true;
++		ntfs_fix_pre_write(&ib->rhdr, bytes);
++		break;
++
++	case SetBitsInNonresidentBitMap:
++		bmp_off =
++			le32_to_cpu(((struct BITMAP_RANGE *)data)->bitmap_off);
++		bmp_bits = le32_to_cpu(((struct BITMAP_RANGE *)data)->bits);
++		t16 = le16_to_cpu(lrh->record_off);
++
++		if (cbo + (bmp_off + 7) / 8 > lco ||
++		    cbo + ((bmp_off + bmp_bits + 7) / 8) > lco) {
++			goto dirty_vol;
++		}
++
++		__bitmap_set(Add2Ptr(buffer_le, t16), bmp_off, bmp_bits);
++		a_dirty = true;
++		break;
++
++	case ClearBitsInNonresidentBitMap:
++		bmp_off =
++			le32_to_cpu(((struct BITMAP_RANGE *)data)->bitmap_off);
++		bmp_bits = le32_to_cpu(((struct BITMAP_RANGE *)data)->bits);
++		t16 = le16_to_cpu(lrh->record_off);
++
++		if (cbo + (bmp_off + 7) / 8 > lco ||
++		    cbo + ((bmp_off + bmp_bits + 7) / 8) > lco) {
++			goto dirty_vol;
++		}
++
++		__bitmap_clear(Add2Ptr(buffer_le, t16), bmp_off, bmp_bits);
++		a_dirty = true;
++		break;
++
++	case UpdateRecordDataAllocation:
++		t16 = le16_to_cpu(lrh->record_off);
++		ib = Add2Ptr(buffer_le, t16);
++		hdr = &ib->ihdr;
++		t16 = le16_to_cpu(lrh->attr_off);
++		e = Add2Ptr(ib, t16);
++
++		if (is_baad(&ib->rhdr))
++			goto dirty_vol;
++
++		if (!check_lsn(&ib->rhdr, rlsn))
++			goto out;
++		if (!check_index_buffer(ib, bytes) ||
++		    !check_if_alloc_index(hdr, t16)) {
++			goto dirty_vol;
++		}
++
++		memmove(Add2Ptr(e, le16_to_cpu(e->view.data_off)), data, dlen);
++
++		a_dirty = true;
++		ntfs_fix_pre_write(&ib->rhdr, bytes);
++		break;
++
++	default:
++		WARN_ON(1);
++	}
++
++	if (rlsn) {
++		__le64 t64 = cpu_to_le64(*rlsn);
++
++		if (rec)
++			rec->rhdr.lsn = t64;
++		if (ib)
++			ib->rhdr.lsn = t64;
++	}
++
++	if (inode) {
++		err = _ni_write_inode(inode, 0);
++	} else if (mi && mi->dirty) {
++		err = mi_write(mi, 0);
++		if (err)
++			goto out;
++	}
++
++	if (a_dirty) {
++		attr = oa->attr;
++		err = ntfs_sb_write_run(sbi, oa->run1, vbo, buffer_le, bytes);
++		if (err)
++			goto out;
 +	}
 +
 +out:
-+	/* Store last zero */
-+	if (run_buf)
-+		run_buf[0] = 0;
 +
-+	return packed_size + 1;
++	if (inode)
++		iput(inode);
++	else if (mi != mi2_child)
++		mi_put(mi);
 +
-+error:
-+	return -EOPNOTSUPP;
++	ntfs_free(buffer_le);
++
++	return err;
++
++dirty_vol:
++	log->set_dirty = true;
++	goto out;
 +}
 +
 +/*
-+ * run_unpack
++ * log_replay
 + *
-+ * unpacks packed runs from "run_buf"
-+ * returns error, if negative, or real used bytes
++ * this function is called during mount operation
++ * it replays log and empties it
 + */
-+int run_unpack(struct runs_tree *run, struct ntfs_sb_info *sbi, CLST ino,
-+	       CLST svcn, CLST evcn, CLST vcn, const u8 *run_buf,
-+	       u32 run_buf_size)
++int log_replay(struct ntfs_inode *ni)
 +{
-+	u64 prev_lcn, vcn64, lcn, next_vcn;
-+	const u8 *run_last, *run_0;
-+	bool is_mft = ino == MFT_REC_MFT;
++	int err;
++	struct ntfs_sb_info *sbi = ni->mi.sbi;
++	struct ntfs_log *log;
 +
-+	/* Check for empty */
-+	if (evcn + 1 == svcn)
-+		return 0;
++	struct restart_info rst_info, rst_info2;
++	u64 rec_lsn, ra_lsn, checkpt_lsn = 0, rlsn = 0;
++	struct ATTR_NAME_ENTRY *attr_names = NULL;
++	struct ATTR_NAME_ENTRY *ane;
++	struct RESTART_TABLE *dptbl = NULL;
++	struct RESTART_TABLE *trtbl = NULL;
++	const struct RESTART_TABLE *rt;
++	struct RESTART_TABLE *oatbl = NULL;
++	struct inode *inode;
++	struct OpenAttr *oa;
++	struct ntfs_inode *ni_oe;
++	struct ATTRIB *attr = NULL;
++	u64 size, vcn, undo_next_lsn;
++	CLST rno, lcn, lcn0, len0, clen;
++	void *data;
++	struct NTFS_RESTART *rst = NULL;
++	struct lcb *lcb = NULL;
++	struct OPEN_ATTR_ENRTY *oe;
++	struct TRANSACTION_ENTRY *tr;
++	struct DIR_PAGE_ENTRY *dp;
++	u32 i, bytes_per_attr_entry;
++	u32 l_size = ni->vfs_inode.i_size;
++	u32 orig_file_size = l_size;
++	u32 page_size, vbo, tail, off, dlen;
++	u32 saved_len, rec_len, transact_id;
++	bool use_second_page;
++	struct RESTART_AREA *ra2, *ra = NULL;
++	struct CLIENT_REC *ca, *cr;
++	__le16 client;
++	struct RESTART_HDR *rh;
++	const struct LFS_RECORD_HDR *frh;
++	const struct LOG_REC_HDR *lrh;
++	bool is_mapped;
++	bool is_ro = sb_rdonly(sbi->sb);
++	u64 t64;
++	u16 t16;
++	u32 t32;
 +
-+	if (evcn < svcn)
++	/* Get the size of page. NOTE: To replay we can use default page */
++	page_size = norm_file_page(PAGE_SIZE, &l_size,
++				   PAGE_SIZE >= DefaultLogPageSize &&
++					   PAGE_SIZE <= DefaultLogPageSize * 2);
++	if (!page_size)
 +		return -EINVAL;
 +
-+	run_0 = run_buf;
-+	run_last = run_buf + run_buf_size;
-+	prev_lcn = 0;
-+	vcn64 = svcn;
++	log = ntfs_zalloc(sizeof(struct ntfs_log));
++	if (!log)
++		return -ENOMEM;
 +
-+	/* Read all runs the chain */
-+	/* size_size - how much bytes is packed len */
-+	while (run_buf < run_last) {
-+		/* size_size - how much bytes is packed len */
-+		u8 size_size = *run_buf & 0xF;
-+		/* offset_size - how much bytes is packed dlcn */
-+		u8 offset_size = *run_buf++ >> 4;
-+		u64 len;
++	log->ni = ni;
++	log->l_size = l_size;
++	log->one_page_buf = ntfs_malloc(page_size);
 +
-+		if (!size_size)
-+			break;
++	if (!log->one_page_buf) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	log->page_size = page_size;
++	log->page_mask = page_size - 1;
++	log->page_bits = blksize_bits(page_size);
++
++	/* Look for a restart area on the disk */
++	err = log_read_rst(log, l_size, true, &rst_info);
++	if (err)
++		goto out;
++
++	if (!rst_info.restart) {
++		if (rst_info.initialized) {
++			/* no restart area but the file is not initialized */
++			err = -EINVAL;
++			goto out;
++		}
++
++		log_init_pg_hdr(log, page_size, page_size, 1, 1);
++		log_create(log, l_size, 0, get_random_int(), false, false);
++
++		log->ra = ra;
++
++		ra = log_create_ra(log);
++		if (!ra) {
++			err = -ENOMEM;
++			goto out;
++		}
++		log->ra = ra;
++		log->init_ra = true;
++
++		goto process_log;
++	}
++
++	/*
++	 * If the restart offset above wasn't zero then we won't
++	 * look for a second restart
++	 */
++	if (rst_info.vbo)
++		goto check_restart_area;
++
++	err = log_read_rst(log, l_size, false, &rst_info2);
++
++	/* Determine which restart area to use */
++	if (!rst_info2.restart || rst_info2.last_lsn <= rst_info.last_lsn)
++		goto use_first_page;
++
++	use_second_page = true;
++
++	if (rst_info.chkdsk_was_run && page_size != rst_info.vbo) {
++		struct RECORD_PAGE_HDR *sp = NULL;
++		bool usa_error;
++
++		if (!read_log_page(log, page_size, &sp, &usa_error) &&
++		    sp->rhdr.sign == NTFS_CHKD_SIGNATURE) {
++			use_second_page = false;
++		}
++		ntfs_free(sp);
++	}
++
++	if (use_second_page) {
++		ntfs_free(rst_info.r_page);
++		memcpy(&rst_info, &rst_info2, sizeof(struct restart_info));
++		rst_info2.r_page = NULL;
++	}
++
++use_first_page:
++	ntfs_free(rst_info2.r_page);
++
++check_restart_area:
++	/* If the restart area is at offset 0, we want to write the second restart area first */
++	log->init_ra = !!rst_info.vbo;
++
++	/* If we have a valid page then grab a pointer to the restart area */
++	ra2 = rst_info.valid_page ?
++		      Add2Ptr(rst_info.r_page,
++			      le16_to_cpu(rst_info.r_page->ra_off)) :
++		      NULL;
++
++	if (rst_info.chkdsk_was_run ||
++	    (ra2 && ra2->client_idx[1] == LFS_NO_CLIENT_LE)) {
++		bool wrapped = false;
++		bool use_multi_page = false;
++		u32 open_log_count;
++
++		/* Do some checks based on whether we have a valid log page */
++		if (!rst_info.valid_page) {
++			open_log_count = get_random_int();
++			goto init_log_instance;
++		}
++		open_log_count = le32_to_cpu(ra2->open_log_count);
 +
 +		/*
-+		 * Unpack runs.
-+		 * NOTE: runs are stored little endian order
-+		 * "len" is unsigned value, "dlcn" is signed
-+		 * Large positive number requires to store 5 bytes
-+		 * e.g.: 05 FF 7E FF FF 00 00 00
++		 * If the restart page size isn't changing then we want to
++		 * check how much work we need to do
 +		 */
-+		if (size_size > 8)
-+			return -EINVAL;
++		if (page_size != le32_to_cpu(rst_info.r_page->sys_page_size))
++			goto init_log_instance;
 +
-+		len = run_unpack_s64(run_buf, size_size, 0);
-+		/* skip size_size */
-+		run_buf += size_size;
++init_log_instance:
++		log_init_pg_hdr(log, page_size, page_size, 1, 1);
 +
-+		if (!len)
-+			return -EINVAL;
++		log_create(log, l_size, rst_info.last_lsn, open_log_count,
++			   wrapped, use_multi_page);
 +
-+		if (!offset_size)
-+			lcn = SPARSE_LCN64;
-+		else if (offset_size <= 8) {
-+			s64 dlcn;
++		ra = log_create_ra(log);
++		if (!ra) {
++			err = -ENOMEM;
++			goto out;
++		}
++		log->ra = ra;
 +
-+			/* initial value of dlcn is -1 or 0 */
-+			dlcn = (run_buf[offset_size - 1] & 0x80) ? (s64)-1 : 0;
-+			dlcn = run_unpack_s64(run_buf, offset_size, dlcn);
-+			/* skip offset_size */
-+			run_buf += offset_size;
++		/* Put the restart areas and initialize the log file as required */
++		goto process_log;
++	}
 +
-+			if (!dlcn)
++	if (!ra2) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	/*
++	 * If the log page or the system page sizes have changed, we can't use the log file
++	 * We must use the system page size instead of the default size
++	 * if there is not a clean shutdown
++	 */
++	t32 = le32_to_cpu(rst_info.r_page->sys_page_size);
++	if (page_size != t32) {
++		l_size = orig_file_size;
++		page_size =
++			norm_file_page(t32, &l_size, t32 == DefaultLogPageSize);
++	}
++
++	if (page_size != t32 ||
++	    page_size != le32_to_cpu(rst_info.r_page->page_size)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	/* If the file size has shrunk then we won't mount it */
++	if (l_size < le64_to_cpu(ra2->l_size)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	log_init_pg_hdr(log, page_size, page_size,
++			le16_to_cpu(rst_info.r_page->major_ver),
++			le16_to_cpu(rst_info.r_page->minor_ver));
++
++	log->l_size = le64_to_cpu(ra2->l_size);
++	log->seq_num_bits = le32_to_cpu(ra2->seq_num_bits);
++	log->file_data_bits = sizeof(u64) * 8 - log->seq_num_bits;
++	log->seq_num_mask = (8 << log->file_data_bits) - 1;
++	log->last_lsn = le64_to_cpu(ra2->current_lsn);
++	log->seq_num = log->last_lsn >> log->file_data_bits;
++	log->ra_off = le16_to_cpu(rst_info.r_page->ra_off);
++	log->restart_size = log->sys_page_size - log->ra_off;
++	log->record_header_len = le16_to_cpu(ra2->rec_hdr_len);
++	log->ra_size = le16_to_cpu(ra2->ra_len);
++	log->data_off = le16_to_cpu(ra2->data_off);
++	log->data_size = log->page_size - log->data_off;
++	log->reserved = log->data_size - log->record_header_len;
++
++	vbo = lsn_to_vbo(log, log->last_lsn);
++
++	if (vbo < log->first_page) {
++		/* This is a pseudo lsn */
++		log->l_flags |= NTFSLOG_NO_LAST_LSN;
++		log->next_page = log->first_page;
++		goto find_oldest;
++	}
++
++	/* Find the end of this log record */
++	off = final_log_off(log, log->last_lsn,
++			    le32_to_cpu(ra2->last_lsn_data_len));
++
++	/* If we wrapped the file then increment the sequence number */
++	if (off <= vbo) {
++		log->seq_num += 1;
++		log->l_flags |= NTFSLOG_WRAPPED;
++	}
++
++	/* Now compute the next log page to use */
++	vbo &= ~log->sys_page_mask;
++	tail = log->page_size - (off & log->page_mask) - 1;
++
++	/* If we can fit another log record on the page, move back a page the log file */
++	if (tail >= log->record_header_len) {
++		log->l_flags |= NTFSLOG_REUSE_TAIL;
++		log->next_page = vbo;
++	} else {
++		log->next_page = next_page_off(log, vbo);
++	}
++
++find_oldest:
++	/* Find the oldest client lsn. Use the last flushed lsn as a starting point */
++	log->oldest_lsn = log->last_lsn;
++	oldest_client_lsn(Add2Ptr(ra2, le16_to_cpu(ra2->client_off)),
++			  ra2->client_idx[1], &log->oldest_lsn);
++	log->oldest_lsn_off = lsn_to_vbo(log, log->oldest_lsn);
++
++	if (log->oldest_lsn_off < log->first_page)
++		log->l_flags |= NTFSLOG_NO_OLDEST_LSN;
++
++	if (!(ra2->flags & RESTART_SINGLE_PAGE_IO))
++		log->l_flags |= NTFSLOG_WRAPPED | NTFSLOG_MULTIPLE_PAGE_IO;
++
++	log->current_openlog_count = le32_to_cpu(ra2->open_log_count);
++	log->total_avail_pages = log->l_size - log->first_page;
++	log->total_avail = log->total_avail_pages >> log->page_bits;
++	log->max_current_avail = log->total_avail * log->reserved;
++	log->total_avail = log->total_avail * log->data_size;
++
++	log->current_avail = current_log_avail(log);
++
++	ra = ntfs_zalloc(log->restart_size);
++	if (!ra) {
++		err = -ENOMEM;
++		goto out;
++	}
++	log->ra = ra;
++
++	t16 = le16_to_cpu(ra2->client_off);
++	if (t16 == offsetof(struct RESTART_AREA, clients)) {
++		memcpy(ra, ra2, log->ra_size);
++	} else {
++		memcpy(ra, ra2, offsetof(struct RESTART_AREA, clients));
++		memcpy(ra->clients, Add2Ptr(ra2, t16),
++		       le16_to_cpu(ra2->ra_len) - t16);
++
++		log->current_openlog_count = get_random_int();
++		ra->open_log_count = cpu_to_le32(log->current_openlog_count);
++		log->ra_size = offsetof(struct RESTART_AREA, clients) +
++			       sizeof(struct CLIENT_REC);
++		ra->client_off =
++			cpu_to_le16(offsetof(struct RESTART_AREA, clients));
++		ra->ra_len = cpu_to_le16(log->ra_size);
++	}
++
++	le32_add_cpu(&ra->open_log_count, 1);
++
++	/* Now we need to walk through looking for the last lsn */
++	err = last_log_lsn(log);
++	if (err)
++		goto out;
++
++	log->current_avail = current_log_avail(log);
++
++	/* Remember which restart area to write first */
++	log->init_ra = rst_info.vbo;
++
++process_log:
++	/* 1.0, 1.1, 2.0 log->major_ver/minor_ver - short values */
++	switch ((log->major_ver << 16) + log->minor_ver) {
++	case 0x10000:
++	case 0x10001:
++	case 0x20000:
++		break;
++	default:
++		ntfs_warn(sbi->sb, "$LogFile version %d.%d is not supported",
++			  log->major_ver, log->minor_ver);
++		err = -EOPNOTSUPP;
++		log->set_dirty = true;
++		goto out;
++	}
++
++	/* One client "NTFS" per logfile */
++	ca = Add2Ptr(ra, le16_to_cpu(ra->client_off));
++
++	for (client = ra->client_idx[1];; client = cr->next_client) {
++		if (client == LFS_NO_CLIENT_LE) {
++			/* Insert "NTFS" client LogFile */
++			client = ra->client_idx[0];
++			if (client == LFS_NO_CLIENT_LE)
 +				return -EINVAL;
-+			lcn = prev_lcn + dlcn;
-+			prev_lcn = lcn;
-+		} else
-+			return -EINVAL;
 +
-+		next_vcn = vcn64 + len;
-+		/* check boundary */
-+		if (next_vcn > evcn + 1)
-+			return -EINVAL;
++			t16 = le16_to_cpu(client);
++			cr = ca + t16;
 +
-+#ifndef NTFS3_64BIT_CLUSTER
-+		if (next_vcn > 0x100000000ull || (lcn + len) > 0x100000000ull) {
-+			ntfs_err(
-+				sbi->sb,
-+				"This driver is compiled whitout NTFS3_64BIT_CLUSTER (like windows driver).\n"
-+				"Volume contains 64 bits run: vcn %llx, lcn %llx, len %llx.\n"
-+				"Activate NTFS3_64BIT_CLUSTER to process this case",
-+				vcn64, lcn, len);
-+			return -EOPNOTSUPP;
-+		}
-+#endif
-+		if (lcn != SPARSE_LCN64 && lcn + len > sbi->used.bitmap.nbits) {
-+			/* lcn range is out of volume */
-+			return -EINVAL;
++			remove_client(ca, cr, &ra->client_idx[0]);
++
++			cr->restart_lsn = 0;
++			cr->oldest_lsn = cpu_to_le64(log->oldest_lsn);
++			cr->name_bytes = cpu_to_le32(8);
++			cr->name[0] = cpu_to_le16('N');
++			cr->name[1] = cpu_to_le16('T');
++			cr->name[2] = cpu_to_le16('F');
++			cr->name[3] = cpu_to_le16('S');
++
++			add_client(ca, t16, &ra->client_idx[1]);
++			break;
 +		}
 +
-+		if (!run)
-+			; /* called from check_attr(fslog.c) to check run */
-+		else if (run == RUN_DEALLOCATE) {
-+			/* called from ni_delete_all to free clusters without storing in run */
-+			if (lcn != SPARSE_LCN64)
-+				mark_as_free_ex(sbi, lcn, len, true);
-+		} else if (vcn64 >= vcn) {
-+			if (!run_add_entry(run, vcn64, lcn, len, is_mft))
-+				return -ENOMEM;
-+		} else if (next_vcn > vcn) {
-+			u64 dlen = vcn - vcn64;
++		cr = ca + le16_to_cpu(client);
 +
-+			if (!run_add_entry(run, vcn, lcn + dlen, len - dlen,
-+					   is_mft))
-+				return -ENOMEM;
-+		}
-+
-+		vcn64 = next_vcn;
++		if (cpu_to_le32(8) == cr->name_bytes &&
++		    cpu_to_le16('N') == cr->name[0] &&
++		    cpu_to_le16('T') == cr->name[1] &&
++		    cpu_to_le16('F') == cr->name[2] &&
++		    cpu_to_le16('S') == cr->name[3])
++			break;
 +	}
 +
-+	if (vcn64 != evcn + 1) {
-+		/* not expected length of unpacked runs */
-+		return -EINVAL;
++	/* Update the client handle with the client block information */
++	log->client_id.seq_num = cr->seq_num;
++	log->client_id.client_idx = client;
++
++	err = read_rst_area(log, &rst, &ra_lsn);
++	if (err)
++		goto out;
++
++	if (!rst)
++		goto out;
++
++	bytes_per_attr_entry = !rst->major_ver ? 0x2C : 0x28;
++
++	checkpt_lsn = le64_to_cpu(rst->check_point_start);
++	if (!checkpt_lsn)
++		checkpt_lsn = ra_lsn;
++
++	/* Allocate and Read the Transaction Table */
++	if (!rst->transact_table_len)
++		goto check_dirty_page_table;
++
++	t64 = le64_to_cpu(rst->transact_table_lsn);
++	err = read_log_rec_lcb(log, t64, lcb_ctx_prev, &lcb);
++	if (err)
++		goto out;
++
++	lrh = lcb->log_rec;
++	frh = lcb->lrh;
++	rec_len = le32_to_cpu(frh->client_data_len);
++
++	if (!check_log_rec(lrh, rec_len, le32_to_cpu(frh->transact_id),
++			   bytes_per_attr_entry)) {
++		err = -EINVAL;
++		goto out;
 +	}
 +
-+	return run_buf - run_0;
-+}
++	t16 = le16_to_cpu(lrh->redo_off);
 +
-+#ifdef NTFS3_CHECK_FREE_CLST
-+/*
-+ * run_unpack_ex
-+ *
-+ * unpacks packed runs from "run_buf"
-+ * checks unpacked runs to be used in bitmap
-+ * returns error, if negative, or real used bytes
-+ */
-+int run_unpack_ex(struct runs_tree *run, struct ntfs_sb_info *sbi, CLST ino,
-+		  CLST svcn, CLST evcn, CLST vcn, const u8 *run_buf,
-+		  u32 run_buf_size)
-+{
-+	int ret, err;
-+	CLST next_vcn, lcn, len;
-+	size_t index;
-+	bool ok;
-+	struct wnd_bitmap *wnd;
++	rt = Add2Ptr(lrh, t16);
++	t32 = rec_len - t16;
 +
-+	ret = run_unpack(run, sbi, ino, svcn, evcn, vcn, run_buf, run_buf_size);
-+	if (ret < 0)
-+		return ret;
++	/* Now check that this is a valid restart table */
++	if (!check_rstbl(rt, t32)) {
++		err = -EINVAL;
++		goto out;
++	}
 +
-+	if (!sbi->used.bitmap.sb || !run || run == RUN_DEALLOCATE)
-+		return ret;
++	trtbl = ntfs_memdup(rt, t32);
++	if (!trtbl) {
++		err = -ENOMEM;
++		goto out;
++	}
 +
-+	if (ino == MFT_REC_BADCLUST)
-+		return ret;
++	lcb_put(lcb);
++	lcb = NULL;
 +
-+	next_vcn = vcn = svcn;
-+	wnd = &sbi->used.bitmap;
++check_dirty_page_table:
++	/* The next record back should be the Dirty Pages Table */
++	if (!rst->dirty_pages_len)
++		goto check_attribute_names;
 +
-+	for (ok = run_lookup_entry(run, vcn, &lcn, &len, &index);
-+	     next_vcn <= evcn;
-+	     ok = run_get_entry(run, ++index, &vcn, &lcn, &len)) {
-+		CLST real_free, i;
++	t64 = le64_to_cpu(rst->dirty_pages_table_lsn);
++	err = read_log_rec_lcb(log, t64, lcb_ctx_prev, &lcb);
++	if (err)
++		goto out;
 +
-+		if (!ok || next_vcn != vcn)
-+			return -EINVAL;
++	lrh = lcb->log_rec;
++	frh = lcb->lrh;
++	rec_len = le32_to_cpu(frh->client_data_len);
 +
-+		next_vcn = vcn + len;
++	if (!check_log_rec(lrh, rec_len, le32_to_cpu(frh->transact_id),
++			   bytes_per_attr_entry)) {
++		err = -EINVAL;
++		goto out;
++	}
 +
-+		if (lcn == SPARSE_LCN)
++	t16 = le16_to_cpu(lrh->redo_off);
++
++	rt = Add2Ptr(lrh, t16);
++	t32 = rec_len - t16;
++
++	/* Now check that this is a valid restart table */
++	if (!check_rstbl(rt, t32)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	dptbl = ntfs_memdup(rt, t32);
++	if (!dptbl) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	/* Convert Ra version '0' into version '1' */
++	if (rst->major_ver)
++		goto end_conv_1;
++
++	dp = NULL;
++	while ((dp = enum_rstbl(dptbl, dp))) {
++		struct DIR_PAGE_ENTRY_32 *dp0 = (struct DIR_PAGE_ENTRY_32 *)dp;
++		// NOTE: Danger. Check for of boundary
++		memmove(&dp->vcn, &dp0->vcn_low,
++			2 * sizeof(u64) +
++				le32_to_cpu(dp->lcns_follow) * sizeof(u64));
++	}
++
++end_conv_1:
++	lcb_put(lcb);
++	lcb = NULL;
++
++	/* Go through the table and remove the duplicates, remembering the oldest lsn values */
++	if (sbi->cluster_size <= log->page_size)
++		goto trace_dp_table;
++
++	dp = NULL;
++	while ((dp = enum_rstbl(dptbl, dp))) {
++		struct DIR_PAGE_ENTRY *next = dp;
++
++		while ((next = enum_rstbl(dptbl, next))) {
++			if (next->target_attr == dp->target_attr &&
++			    next->vcn == dp->vcn) {
++				if (le64_to_cpu(next->oldest_lsn) <
++				    le64_to_cpu(dp->oldest_lsn)) {
++					dp->oldest_lsn = next->oldest_lsn;
++				}
++
++				free_rsttbl_idx(dptbl, PtrOffset(dptbl, next));
++			}
++		}
++	}
++trace_dp_table:
++check_attribute_names:
++	/* The next record should be the Attribute Names */
++	if (!rst->attr_names_len)
++		goto check_attr_table;
++
++	t64 = le64_to_cpu(rst->attr_names_lsn);
++	err = read_log_rec_lcb(log, t64, lcb_ctx_prev, &lcb);
++	if (err)
++		goto out;
++
++	lrh = lcb->log_rec;
++	frh = lcb->lrh;
++	rec_len = le32_to_cpu(frh->client_data_len);
++
++	if (!check_log_rec(lrh, rec_len, le32_to_cpu(frh->transact_id),
++			   bytes_per_attr_entry)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	t32 = lrh_length(lrh);
++	rec_len -= t32;
++
++	attr_names = ntfs_memdup(Add2Ptr(lrh, t32), rec_len);
++
++	lcb_put(lcb);
++	lcb = NULL;
++
++check_attr_table:
++	/* The next record should be the attribute Table */
++	if (!rst->open_attr_len)
++		goto check_attribute_names2;
++
++	t64 = le64_to_cpu(rst->open_attr_table_lsn);
++	err = read_log_rec_lcb(log, t64, lcb_ctx_prev, &lcb);
++	if (err)
++		goto out;
++
++	lrh = lcb->log_rec;
++	frh = lcb->lrh;
++	rec_len = le32_to_cpu(frh->client_data_len);
++
++	if (!check_log_rec(lrh, rec_len, le32_to_cpu(frh->transact_id),
++			   bytes_per_attr_entry)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	t16 = le16_to_cpu(lrh->redo_off);
++
++	rt = Add2Ptr(lrh, t16);
++	t32 = rec_len - t16;
++
++	if (!check_rstbl(rt, t32)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	oatbl = ntfs_memdup(rt, t32);
++	if (!oatbl) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	log->open_attr_tbl = oatbl;
++
++	/* Clear all of the Attr pointers */
++	oe = NULL;
++	while ((oe = enum_rstbl(oatbl, oe))) {
++		if (!rst->major_ver) {
++			struct OPEN_ATTR_ENRTY_32 oe0;
++
++			/* Really 'oe' points to OPEN_ATTR_ENRTY_32 */
++			memcpy(&oe0, oe, SIZEOF_OPENATTRIBUTEENTRY0);
++
++			oe->bytes_per_index = oe0.bytes_per_index;
++			oe->type = oe0.type;
++			oe->is_dirty_pages = oe0.is_dirty_pages;
++			oe->name_len = 0;
++			oe->ref = oe0.ref;
++			oe->open_record_lsn = oe0.open_record_lsn;
++		}
++
++		oe->is_attr_name = 0;
++		oe->ptr = NULL;
++	}
++
++	lcb_put(lcb);
++	lcb = NULL;
++
++check_attribute_names2:
++	if (!rst->attr_names_len)
++		goto trace_attribute_table;
++
++	ane = attr_names;
++	if (!oatbl)
++		goto trace_attribute_table;
++	while (ane->off) {
++		/* TODO: Clear table on exit! */
++		oe = Add2Ptr(oatbl, le16_to_cpu(ane->off));
++		t16 = le16_to_cpu(ane->name_bytes);
++		oe->name_len = t16 / sizeof(short);
++		oe->ptr = ane->name;
++		oe->is_attr_name = 2;
++		ane = Add2Ptr(ane, sizeof(struct ATTR_NAME_ENTRY) + t16);
++	}
++
++trace_attribute_table:
++	/*
++	 * If the checkpt_lsn is zero, then this is a freshly
++	 * formatted disk and we have no work to do
++	 */
++	if (!checkpt_lsn) {
++		err = 0;
++		goto out;
++	}
++
++	if (!oatbl) {
++		oatbl = init_rsttbl(bytes_per_attr_entry, 8);
++		if (!oatbl) {
++			err = -ENOMEM;
++			goto out;
++		}
++	}
++
++	log->open_attr_tbl = oatbl;
++
++	/* Start the analysis pass from the Checkpoint lsn. */
++	rec_lsn = checkpt_lsn;
++
++	/* Read the first lsn */
++	err = read_log_rec_lcb(log, checkpt_lsn, lcb_ctx_next, &lcb);
++	if (err)
++		goto out;
++
++	/* Loop to read all subsequent records to the end of the log file */
++next_log_record_analyze:
++	err = read_next_log_rec(log, lcb, &rec_lsn);
++	if (err)
++		goto out;
++
++	if (!rec_lsn)
++		goto end_log_records_enumerate;
++
++	frh = lcb->lrh;
++	transact_id = le32_to_cpu(frh->transact_id);
++	rec_len = le32_to_cpu(frh->client_data_len);
++	lrh = lcb->log_rec;
++
++	if (!check_log_rec(lrh, rec_len, transact_id, bytes_per_attr_entry)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	/*
++	 * The first lsn after the previous lsn remembered
++	 * the checkpoint is the first candidate for the rlsn
++	 */
++	if (!rlsn)
++		rlsn = rec_lsn;
++
++	if (LfsClientRecord != frh->record_type)
++		goto next_log_record_analyze;
++
++	/*
++	 * Now update the Transaction Table for this transaction
++	 * If there is no entry present or it is unallocated we allocate the entry
++	 */
++	if (!trtbl) {
++		trtbl = init_rsttbl(sizeof(struct TRANSACTION_ENTRY),
++				    INITIAL_NUMBER_TRANSACTIONS);
++		if (!trtbl) {
++			err = -ENOMEM;
++			goto out;
++		}
++	}
++
++	tr = Add2Ptr(trtbl, transact_id);
++
++	if (transact_id >= bytes_per_rt(trtbl) ||
++	    tr->next != RESTART_ENTRY_ALLOCATED_LE) {
++		tr = alloc_rsttbl_from_idx(&trtbl, transact_id);
++		if (!tr) {
++			err = -ENOMEM;
++			goto out;
++		}
++		tr->transact_state = TransactionActive;
++		tr->first_lsn = cpu_to_le64(rec_lsn);
++	}
++
++	tr->prev_lsn = tr->undo_next_lsn = cpu_to_le64(rec_lsn);
++
++	/*
++	 * If this is a compensation log record, then change
++	 * the undo_next_lsn to be the undo_next_lsn of this record
++	 */
++	if (lrh->undo_op == cpu_to_le16(CompensationLogRecord))
++		tr->undo_next_lsn = frh->client_undo_next_lsn;
++
++	/* Dispatch to handle log record depending on type */
++	switch (le16_to_cpu(lrh->redo_op)) {
++	case InitializeFileRecordSegment:
++	case DeallocateFileRecordSegment:
++	case WriteEndOfFileRecordSegment:
++	case CreateAttribute:
++	case DeleteAttribute:
++	case UpdateResidentValue:
++	case UpdateNonresidentValue:
++	case UpdateMappingPairs:
++	case SetNewAttributeSizes:
++	case AddIndexEntryRoot:
++	case DeleteIndexEntryRoot:
++	case AddIndexEntryAllocation:
++	case DeleteIndexEntryAllocation:
++	case WriteEndOfIndexBuffer:
++	case SetIndexEntryVcnRoot:
++	case SetIndexEntryVcnAllocation:
++	case UpdateFileNameRoot:
++	case UpdateFileNameAllocation:
++	case SetBitsInNonresidentBitMap:
++	case ClearBitsInNonresidentBitMap:
++	case UpdateRecordDataRoot:
++	case UpdateRecordDataAllocation:
++	case ZeroEndOfFileRecord:
++		t16 = le16_to_cpu(lrh->target_attr);
++		t64 = le64_to_cpu(lrh->target_vcn);
++		dp = find_dp(dptbl, t16, t64);
++
++		if (dp)
++			goto copy_lcns;
++
++		/*
++		 * Calculate the number of clusters per page the system
++		 * which wrote the checkpoint, possibly creating the table
++		 */
++		if (dptbl) {
++			t32 = 1 + (le16_to_cpu(dptbl->size) -
++				   sizeof(struct DIR_PAGE_ENTRY)) /
++					  sizeof(u64);
++		} else {
++			t32 = log->clst_per_page;
++			ntfs_free(dptbl);
++			dptbl = init_rsttbl(sizeof(struct DIR_PAGE_ENTRY) +
++						    (t32 - 1) * sizeof(u64),
++					    32);
++			if (!dptbl) {
++				err = -ENOMEM;
++				goto out;
++			}
++		}
++
++		dp = alloc_rsttbl_idx(&dptbl);
++		dp->target_attr = cpu_to_le32(t16);
++		dp->transfer_len = cpu_to_le32(t32 << sbi->cluster_bits);
++		dp->lcns_follow = cpu_to_le32(t32);
++		dp->vcn = cpu_to_le64(t64 & ~((u64)t32 - 1));
++		dp->oldest_lsn = cpu_to_le64(rec_lsn);
++
++copy_lcns:
++		/*
++		 * Copy the Lcns from the log record into the Dirty Page Entry
++		 * TODO: for different page size support, must somehow make
++		 * whole routine a loop, case Lcns do not fit below
++		 */
++		t16 = le16_to_cpu(lrh->lcns_follow);
++		for (i = 0; i < t16; i++) {
++			size_t j = (size_t)(le64_to_cpu(lrh->target_vcn) -
++					    le64_to_cpu(dp->vcn));
++			dp->page_lcns[j + i] = lrh->page_lcns[i];
++		}
++
++		goto next_log_record_analyze;
++
++	case DeleteDirtyClusters: {
++		u32 range_count =
++			le16_to_cpu(lrh->redo_len) / sizeof(struct LCN_RANGE);
++		const struct LCN_RANGE *r =
++			Add2Ptr(lrh, le16_to_cpu(lrh->redo_off));
++
++		/* Loop through all of the Lcn ranges this log record */
++		for (i = 0; i < range_count; i++, r++) {
++			u64 lcn0 = le64_to_cpu(r->lcn);
++			u64 lcn_e = lcn0 + le64_to_cpu(r->len) - 1;
++
++			dp = NULL;
++			while ((dp = enum_rstbl(dptbl, dp))) {
++				u32 j;
++
++				t32 = le32_to_cpu(dp->lcns_follow);
++				for (j = 0; j < t32; j++) {
++					t64 = le64_to_cpu(dp->page_lcns[j]);
++					if (t64 >= lcn0 && t64 <= lcn_e)
++						dp->page_lcns[j] = 0;
++				}
++			}
++		}
++		goto next_log_record_analyze;
++		;
++	}
++
++	case OpenNonresidentAttribute:
++		t16 = le16_to_cpu(lrh->target_attr);
++		if (t16 >= bytes_per_rt(oatbl)) {
++			/*
++			 * Compute how big the table needs to be.
++			 * Add 10 extra entries for some cushion
++			 */
++			u32 new_e = t16 / le16_to_cpu(oatbl->size);
++
++			new_e += 10 - le16_to_cpu(oatbl->used);
++
++			oatbl = extend_rsttbl(oatbl, new_e, ~0u);
++			log->open_attr_tbl = oatbl;
++			if (!oatbl) {
++				err = -ENOMEM;
++				goto out;
++			}
++		}
++
++		/* Point to the entry being opened */
++		oe = alloc_rsttbl_from_idx(&oatbl, t16);
++		log->open_attr_tbl = oatbl;
++		if (!oe) {
++			err = -ENOMEM;
++			goto out;
++		}
++
++		/* Initialize this entry from the log record */
++		t16 = le16_to_cpu(lrh->redo_off);
++		if (!rst->major_ver) {
++			/* Convert version '0' into version '1' */
++			struct OPEN_ATTR_ENRTY_32 *oe0 = Add2Ptr(lrh, t16);
++
++			oe->bytes_per_index = oe0->bytes_per_index;
++			oe->type = oe0->type;
++			oe->is_dirty_pages = oe0->is_dirty_pages;
++			oe->name_len = 0; //oe0.name_len;
++			oe->ref = oe0->ref;
++			oe->open_record_lsn = oe0->open_record_lsn;
++		} else {
++			memcpy(oe, Add2Ptr(lrh, t16), bytes_per_attr_entry);
++		}
++
++		t16 = le16_to_cpu(lrh->undo_len);
++		if (t16) {
++			oe->ptr = ntfs_malloc(t16);
++			if (!oe->ptr) {
++				err = -ENOMEM;
++				goto out;
++			}
++			oe->name_len = t16 / sizeof(short);
++			memcpy(oe->ptr,
++			       Add2Ptr(lrh, le16_to_cpu(lrh->undo_off)), t16);
++			oe->is_attr_name = 1;
++		} else {
++			oe->ptr = NULL;
++			oe->is_attr_name = 0;
++		}
++
++		goto next_log_record_analyze;
++
++	case HotFix:
++		t16 = le16_to_cpu(lrh->target_attr);
++		t64 = le64_to_cpu(lrh->target_vcn);
++		dp = find_dp(dptbl, t16, t64);
++		if (dp) {
++			size_t j = le64_to_cpu(lrh->target_vcn) -
++				   le64_to_cpu(dp->vcn);
++			if (dp->page_lcns[j])
++				dp->page_lcns[j] = lrh->page_lcns[0];
++		}
++		goto next_log_record_analyze;
++
++	case EndTopLevelAction:
++		tr = Add2Ptr(trtbl, transact_id);
++		tr->prev_lsn = cpu_to_le64(rec_lsn);
++		tr->undo_next_lsn = frh->client_undo_next_lsn;
++		goto next_log_record_analyze;
++
++	case PrepareTransaction:
++		tr = Add2Ptr(trtbl, transact_id);
++		tr->transact_state = TransactionPrepared;
++		goto next_log_record_analyze;
++
++	case CommitTransaction:
++		tr = Add2Ptr(trtbl, transact_id);
++		tr->transact_state = TransactionCommitted;
++		goto next_log_record_analyze;
++
++	case ForgetTransaction:
++		free_rsttbl_idx(trtbl, transact_id);
++		goto next_log_record_analyze;
++
++	case Noop:
++	case OpenAttributeTableDump:
++	case AttributeNamesDump:
++	case DirtyPageTableDump:
++	case TransactionTableDump:
++		/* The following cases require no action the Analysis Pass */
++		goto next_log_record_analyze;
++
++	default:
++		/*
++		 * All codes will be explicitly handled.
++		 * If we see a code we do not expect, then we are trouble
++		 */
++		goto next_log_record_analyze;
++	}
++
++end_log_records_enumerate:
++	lcb_put(lcb);
++	lcb = NULL;
++
++	/*
++	 * Scan the Dirty Page Table and Transaction Table for
++	 * the lowest lsn, and return it as the Redo lsn
++	 */
++	dp = NULL;
++	while ((dp = enum_rstbl(dptbl, dp))) {
++		t64 = le64_to_cpu(dp->oldest_lsn);
++		if (t64 && t64 < rlsn)
++			rlsn = t64;
++	}
++
++	tr = NULL;
++	while ((tr = enum_rstbl(trtbl, tr))) {
++		t64 = le64_to_cpu(tr->first_lsn);
++		if (t64 && t64 < rlsn)
++			rlsn = t64;
++	}
++
++	/* Only proceed if the Dirty Page Table or Transaction table are not empty */
++	if ((!dptbl || !dptbl->total) && (!trtbl || !trtbl->total))
++		goto end_reply;
++
++	sbi->flags |= NTFS_FLAGS_NEED_REPLAY;
++	if (is_ro)
++		goto out;
++
++	/* Reopen all of the attributes with dirty pages */
++	oe = NULL;
++next_open_attribute:
++
++	oe = enum_rstbl(oatbl, oe);
++	if (!oe) {
++		err = 0;
++		dp = NULL;
++		goto next_dirty_page;
++	}
++
++	oa = ntfs_zalloc(sizeof(struct OpenAttr));
++	if (!oa) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	inode = ntfs_iget5(sbi->sb, &oe->ref, NULL);
++	if (IS_ERR(inode))
++		goto fake_attr;
++
++	if (is_bad_inode(inode)) {
++		iput(inode);
++fake_attr:
++		if (oa->ni) {
++			iput(&oa->ni->vfs_inode);
++			oa->ni = NULL;
++		}
++
++		attr = attr_create_nonres_log(sbi, oe->type, 0, oe->ptr,
++					      oe->name_len, 0);
++		if (!attr) {
++			ntfs_free(oa);
++			err = -ENOMEM;
++			goto out;
++		}
++		oa->attr = attr;
++		oa->run1 = &oa->run0;
++		goto final_oe;
++	}
++
++	ni_oe = ntfs_i(inode);
++	oa->ni = ni_oe;
++
++	attr = ni_find_attr(ni_oe, NULL, NULL, oe->type, oe->ptr, oe->name_len,
++			    NULL, NULL);
++
++	if (!attr)
++		goto fake_attr;
++
++	t32 = le32_to_cpu(attr->size);
++	oa->attr = ntfs_memdup(attr, t32);
++	if (!oa->attr)
++		goto fake_attr;
++
++	if (!S_ISDIR(inode->i_mode)) {
++		if (attr->type == ATTR_DATA && !attr->name_len) {
++			oa->run1 = &ni_oe->file.run;
++			goto final_oe;
++		}
++	} else {
++		if (attr->type == ATTR_ALLOC &&
++		    attr->name_len == ARRAY_SIZE(I30_NAME) &&
++		    !memcmp(attr_name(attr), I30_NAME, sizeof(I30_NAME))) {
++			oa->run1 = &ni_oe->dir.alloc_run;
++			goto final_oe;
++		}
++	}
++
++	if (attr->non_res) {
++		u16 roff = le16_to_cpu(attr->nres.run_off);
++		CLST svcn = le64_to_cpu(attr->nres.svcn);
++
++		err = run_unpack(&oa->run0, sbi, inode->i_ino, svcn,
++				 le64_to_cpu(attr->nres.evcn), svcn,
++				 Add2Ptr(attr, roff), t32 - roff);
++		if (err < 0) {
++			ntfs_free(oa->attr);
++			oa->attr = NULL;
++			goto fake_attr;
++		}
++		err = 0;
++	}
++	oa->run1 = &oa->run0;
++	attr = oa->attr;
++
++final_oe:
++	if (oe->is_attr_name == 1)
++		ntfs_free(oe->ptr);
++	oe->is_attr_name = 0;
++	oe->ptr = oa;
++	oe->name_len = attr->name_len;
++
++	goto next_open_attribute;
++
++	/*
++	 * Now loop through the dirty page table to extract all of the Vcn/Lcn
++	 * Mapping that we have, and insert it into the appropriate run
++	 */
++next_dirty_page:
++	dp = enum_rstbl(dptbl, dp);
++	if (!dp)
++		goto do_redo_1;
++
++	oe = Add2Ptr(oatbl, le32_to_cpu(dp->target_attr));
++
++	if (oe->next != RESTART_ENTRY_ALLOCATED_LE)
++		goto next_dirty_page;
++
++	oa = oe->ptr;
++	if (!oa)
++		goto next_dirty_page;
++
++	i = -1;
++next_dirty_page_vcn:
++	i += 1;
++	if (i >= le32_to_cpu(dp->lcns_follow))
++		goto next_dirty_page;
++
++	vcn = le64_to_cpu(dp->vcn) + i;
++	size = (vcn + 1) << sbi->cluster_bits;
++
++	if (!dp->page_lcns[i])
++		goto next_dirty_page_vcn;
++
++	rno = ino_get(&oe->ref);
++	if (rno <= MFT_REC_MIRR &&
++	    size < (MFT_REC_VOL + 1) * sbi->record_size &&
++	    oe->type == ATTR_DATA) {
++		goto next_dirty_page_vcn;
++	}
++
++	lcn = le64_to_cpu(dp->page_lcns[i]);
++
++	if ((!run_lookup_entry(oa->run1, vcn, &lcn0, &len0, NULL) ||
++	     lcn0 != lcn) &&
++	    !run_add_entry(oa->run1, vcn, lcn, 1, false)) {
++		err = -ENOMEM;
++		goto out;
++	}
++	attr = oa->attr;
++	t64 = le64_to_cpu(attr->nres.alloc_size);
++	if (size > t64) {
++		attr->nres.valid_size = attr->nres.data_size =
++			attr->nres.alloc_size = cpu_to_le64(size);
++	}
++	goto next_dirty_page_vcn;
++
++do_redo_1:
++	/*
++	 * Perform the Redo Pass, to restore all of the dirty pages to the same
++	 * contents that they had immediately before the crash
++	 * If the dirty page table is empty, then we can skip the entire Redo Pass
++	 */
++	if (!dptbl || !dptbl->total)
++		goto do_undo_action;
++
++	rec_lsn = rlsn;
++
++	/*
++	 * Read the record at the Redo lsn, before falling
++	 * into common code to handle each record
++	 */
++	err = read_log_rec_lcb(log, rlsn, lcb_ctx_next, &lcb);
++	if (err)
++		goto out;
++
++	/*
++	 * Now loop to read all of our log records forwards,
++	 * until we hit the end of the file, cleaning up at the end
++	 */
++do_action_next:
++	frh = lcb->lrh;
++
++	if (LfsClientRecord != frh->record_type)
++		goto read_next_log_do_action;
++
++	transact_id = le32_to_cpu(frh->transact_id);
++	rec_len = le32_to_cpu(frh->client_data_len);
++	lrh = lcb->log_rec;
++
++	if (!check_log_rec(lrh, rec_len, transact_id, bytes_per_attr_entry)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	/* Ignore log records that do not update pages */
++	if (lrh->lcns_follow)
++		goto find_dirty_page;
++
++	goto read_next_log_do_action;
++
++find_dirty_page:
++	t16 = le16_to_cpu(lrh->target_attr);
++	t64 = le64_to_cpu(lrh->target_vcn);
++	dp = find_dp(dptbl, t16, t64);
++
++	if (!dp)
++		goto read_next_log_do_action;
++
++	if (rec_lsn < le64_to_cpu(dp->oldest_lsn))
++		goto read_next_log_do_action;
++
++	t16 = le16_to_cpu(lrh->target_attr);
++	if (t16 >= bytes_per_rt(oatbl)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	oe = Add2Ptr(oatbl, t16);
++
++	if (oe->next != RESTART_ENTRY_ALLOCATED_LE) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	oa = oe->ptr;
++
++	if (!oa) {
++		err = -EINVAL;
++		goto out;
++	}
++	attr = oa->attr;
++
++	vcn = le64_to_cpu(lrh->target_vcn);
++
++	if (!run_lookup_entry(oa->run1, vcn, &lcn, NULL, NULL) ||
++	    lcn == SPARSE_LCN) {
++		goto read_next_log_do_action;
++	}
++
++	/* Point to the Redo data and get its length */
++	data = Add2Ptr(lrh, le16_to_cpu(lrh->redo_off));
++	dlen = le16_to_cpu(lrh->redo_len);
++
++	/* Shorten length by any Lcns which were deleted */
++	saved_len = dlen;
++
++	for (i = le16_to_cpu(lrh->lcns_follow); i; i--) {
++		size_t j;
++		u32 alen, voff;
++
++		voff = le16_to_cpu(lrh->record_off) +
++		       le16_to_cpu(lrh->attr_off);
++		voff += le16_to_cpu(lrh->cluster_off) << SECTOR_SHIFT;
++
++		/* If the Vcn question is allocated, we can just get out.*/
++		j = le64_to_cpu(lrh->target_vcn) - le64_to_cpu(dp->vcn);
++		if (dp->page_lcns[j + i - 1])
++			break;
++
++		if (!saved_len)
++			saved_len = 1;
++
++		/*
++		 * Calculate the allocated space left relative to the
++		 * log record Vcn, after removing this unallocated Vcn
++		 */
++		alen = (i - 1) << sbi->cluster_bits;
++
++		/*
++		 * If the update described this log record goes beyond
++		 * the allocated space, then we will have to reduce the length
++		 */
++		if (voff >= alen)
++			dlen = 0;
++		else if (voff + dlen > alen)
++			dlen = alen - voff;
++	}
++
++	/* If the resulting dlen from above is now zero, we can skip this log record */
++	if (!dlen && saved_len)
++		goto read_next_log_do_action;
++
++	t16 = le16_to_cpu(lrh->redo_op);
++	if (can_skip_action(t16))
++		goto read_next_log_do_action;
++
++	/* Apply the Redo operation a common routine */
++	err = do_action(log, oe, lrh, t16, data, dlen, rec_len, &rec_lsn);
++	if (err)
++		goto out;
++
++	/* Keep reading and looping back until end of file */
++read_next_log_do_action:
++	err = read_next_log_rec(log, lcb, &rec_lsn);
++	if (!err && rec_lsn)
++		goto do_action_next;
++
++	lcb_put(lcb);
++	lcb = NULL;
++
++do_undo_action:
++	/* Scan Transaction Table */
++	tr = NULL;
++transaction_table_next:
++	tr = enum_rstbl(trtbl, tr);
++	if (!tr)
++		goto undo_action_done;
++
++	if (TransactionActive != tr->transact_state || !tr->undo_next_lsn) {
++		free_rsttbl_idx(trtbl, PtrOffset(trtbl, tr));
++		goto transaction_table_next;
++	}
++
++	log->transaction_id = PtrOffset(trtbl, tr);
++	undo_next_lsn = le64_to_cpu(tr->undo_next_lsn);
++
++	/*
++	 * We only have to do anything if the transaction has
++	 * something its undo_next_lsn field
++	 */
++	if (!undo_next_lsn)
++		goto commit_undo;
++
++	/* Read the first record to be undone by this transaction */
++	err = read_log_rec_lcb(log, undo_next_lsn, lcb_ctx_undo_next, &lcb);
++	if (err)
++		goto out;
++
++	/*
++	 * Now loop to read all of our log records forwards,
++	 * until we hit the end of the file, cleaning up at the end
++	 */
++undo_action_next:
++
++	lrh = lcb->log_rec;
++	frh = lcb->lrh;
++	transact_id = le32_to_cpu(frh->transact_id);
++	rec_len = le32_to_cpu(frh->client_data_len);
++
++	if (!check_log_rec(lrh, rec_len, transact_id, bytes_per_attr_entry)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	if (lrh->undo_op == cpu_to_le16(Noop))
++		goto read_next_log_undo_action;
++
++	oe = Add2Ptr(oatbl, le16_to_cpu(lrh->target_attr));
++	oa = oe->ptr;
++
++	t16 = le16_to_cpu(lrh->lcns_follow);
++	if (!t16)
++		goto add_allocated_vcns;
++
++	is_mapped = run_lookup_entry(oa->run1, le64_to_cpu(lrh->target_vcn),
++				     &lcn, &clen, NULL);
++
++	/*
++	 * If the mapping isn't already the table or the  mapping
++	 * corresponds to a hole the mapping, we need to make sure
++	 * there is no partial page already memory
++	 */
++	if (is_mapped && lcn != SPARSE_LCN && clen >= t16)
++		goto add_allocated_vcns;
++
++	vcn = le64_to_cpu(lrh->target_vcn);
++	vcn &= ~(log->clst_per_page - 1);
++
++add_allocated_vcns:
++	for (i = 0, vcn = le64_to_cpu(lrh->target_vcn),
++	    size = (vcn + 1) << sbi->cluster_bits;
++	     i < t16; i++, vcn += 1, size += sbi->cluster_size) {
++		attr = oa->attr;
++		if (!attr->non_res) {
++			if (size > le32_to_cpu(attr->res.data_size))
++				attr->res.data_size = cpu_to_le32(size);
++		} else {
++			if (size > le64_to_cpu(attr->nres.data_size))
++				attr->nres.valid_size = attr->nres.data_size =
++					attr->nres.alloc_size =
++						cpu_to_le64(size);
++		}
++	}
++
++	t16 = le16_to_cpu(lrh->undo_op);
++	if (can_skip_action(t16))
++		goto read_next_log_undo_action;
++
++	/* Point to the Redo data and get its length */
++	data = Add2Ptr(lrh, le16_to_cpu(lrh->undo_off));
++	dlen = le16_to_cpu(lrh->undo_len);
++
++	/* it is time to apply the undo action */
++	err = do_action(log, oe, lrh, t16, data, dlen, rec_len, NULL);
++
++read_next_log_undo_action:
++	/*
++	 * Keep reading and looping back until we have read the
++	 * last record for this transaction
++	 */
++	err = read_next_log_rec(log, lcb, &rec_lsn);
++	if (err)
++		goto out;
++
++	if (rec_lsn)
++		goto undo_action_next;
++
++commit_undo:
++	free_rsttbl_idx(trtbl, log->transaction_id);
++
++	log->transaction_id = 0;
++
++	goto transaction_table_next;
++
++undo_action_done:
++
++	ntfs_update_mftmirr(sbi, 0);
++
++	sbi->flags &= ~NTFS_FLAGS_NEED_REPLAY;
++
++end_reply:
++
++	err = 0;
++	if (is_ro)
++		goto out;
++
++	rh = ntfs_zalloc(log->page_size);
++	if (!rh) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	rh->rhdr.sign = NTFS_RSTR_SIGNATURE;
++	rh->rhdr.fix_off = cpu_to_le16(offsetof(struct RESTART_HDR, fixups));
++	t16 = (log->page_size >> SECTOR_SHIFT) + 1;
++	rh->rhdr.fix_num = cpu_to_le16(t16);
++	rh->sys_page_size = cpu_to_le32(log->page_size);
++	rh->page_size = cpu_to_le32(log->page_size);
++
++	t16 = QuadAlign(offsetof(struct RESTART_HDR, fixups) +
++			sizeof(short) * t16);
++	rh->ra_off = cpu_to_le16(t16);
++	rh->minor_ver = cpu_to_le16(1); // 0x1A:
++	rh->major_ver = cpu_to_le16(1); // 0x1C:
++
++	ra2 = Add2Ptr(rh, t16);
++	memcpy(ra2, ra, sizeof(struct RESTART_AREA));
++
++	ra2->client_idx[0] = 0;
++	ra2->client_idx[1] = LFS_NO_CLIENT_LE;
++	ra2->flags = cpu_to_le16(2);
++
++	le32_add_cpu(&ra2->open_log_count, 1);
++
++	ntfs_fix_pre_write(&rh->rhdr, log->page_size);
++
++	err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rh, log->page_size);
++	if (!err)
++		err = ntfs_sb_write_run(sbi, &log->ni->file.run, log->page_size,
++					rh, log->page_size);
++
++	ntfs_free(rh);
++	if (err)
++		goto out;
++
++out:
++	ntfs_free(rst);
++	if (lcb)
++		lcb_put(lcb);
++
++	/* Scan the Open Attribute Table to close all of the open attributes */
++	oe = NULL;
++	while ((oe = enum_rstbl(oatbl, oe))) {
++		rno = ino_get(&oe->ref);
++
++		if (oe->is_attr_name == 1) {
++			ntfs_free(oe->ptr);
++			oe->ptr = NULL;
++			continue;
++		}
++
++		if (oe->is_attr_name)
 +			continue;
 +
-+		if (sbi->flags & NTFS_FLAGS_NEED_REPLAY)
++		oa = oe->ptr;
++		if (!oa)
 +			continue;
 +
-+next:
-+		down_read_nested(&wnd->rw_lock, BITMAP_MUTEX_CLUSTERS);
-+		/* Check for free blocks */
-+		ok = wnd_is_used(wnd, lcn, len);
-+		up_read(&wnd->rw_lock);
-+		if (ok)
-+			continue;
++		run_close(&oa->run0);
++		ntfs_free(oa->attr);
++		if (oa->ni)
++			iput(&oa->ni->vfs_inode);
++		ntfs_free(oa);
++	}
 +
++	ntfs_free(trtbl);
++	ntfs_free(oatbl);
++	ntfs_free(dptbl);
++	ntfs_free(attr_names);
++	ntfs_free(rst_info.r_page);
++
++	ntfs_free(ra);
++	ntfs_free(log->one_page_buf);
++
++	if (err)
++		sbi->flags |= NTFS_FLAGS_NEED_REPLAY;
++
++	if (err == -EROFS)
++		err = 0;
++	else if (log->set_dirty)
 +		ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
 +
-+		if (!down_write_trylock(&wnd->rw_lock))
-+			continue;
++	ntfs_free(log);
 +
-+		/* Find first free */
-+		real_free = len;
-+		while (real_free && !wnd_is_free(wnd, lcn, 1)) {
-+			lcn += 1;
-+			real_free -= 1;
-+		}
-+
-+		if (!real_free) {
-+			up_write(&wnd->rw_lock);
-+			continue;
-+		}
-+
-+		/* Find total free */
-+		i = 1;
-+		while (i < real_free && wnd_is_free(wnd, lcn + i, 1))
-+			i += 1;
-+
-+		real_free = i;
-+
-+		err = wnd_set_used(wnd, lcn, real_free);
-+		up_write(&wnd->rw_lock);
-+
-+		if (err)
-+			return err;
-+
-+		if (len != real_free) {
-+			len -= real_free + 1;
-+			lcn += real_free + 1;
-+			goto next;
-+		}
-+	}
-+
-+	return ret;
-+}
-+#endif
-+
-+/*
-+ * run_get_highest_vcn
-+ *
-+ * returns the highest vcn from a mapping pairs array
-+ * it used while replaying log file
-+ */
-+int run_get_highest_vcn(CLST vcn, const u8 *run_buf, u64 *highest_vcn)
-+{
-+	u64 vcn64 = vcn;
-+	u8 size_size;
-+
-+	while ((size_size = *run_buf & 0xF)) {
-+		u8 offset_size = *run_buf++ >> 4;
-+		u64 len;
-+
-+		if (size_size > 8 || offset_size > 8)
-+			return -EINVAL;
-+
-+		len = run_unpack_s64(run_buf, size_size, 0);
-+		if (!len)
-+			return -EINVAL;
-+
-+		run_buf += size_size + offset_size;
-+		vcn64 += len;
-+
-+#ifndef NTFS3_64BIT_CLUSTER
-+		if (vcn64 > 0x100000000ull)
-+			return -EINVAL;
-+#endif
-+	}
-+
-+	*highest_vcn = vcn64 - 1;
-+	return 0;
++	return err;
 +}
 -- 
 2.25.4
