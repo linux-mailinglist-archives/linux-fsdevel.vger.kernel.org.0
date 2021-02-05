@@ -2,239 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD523114DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCBC13114DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:23:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232935AbhBEWRC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 17:17:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43916 "EHLO
+        id S233071AbhBEWRU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:17:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231210AbhBEOdn (ORCPT
+        with ESMTP id S232742AbhBEOfy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:33:43 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38665C06178A;
-        Fri,  5 Feb 2021 08:11:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=+0WkhFCz6xUyn9L1glTxulg8Gxs8XBPGDsfl0JDzXmE=; b=IIg/2StJ1jRXNrytHsmqe6H2Xi
-        8qeP6CtpPh3AlzHOVKMqOcwIR3vt4x1CNbLe5XWi7Ov4dyCykq5r8j46achz1tAkk1JCL7rFctGKd
-        RgiKmJJAR2LBQS20GecXa68fpRAQJc+uxU7Votudqd5/UecOgWFoS2KFcGFN2g8cTS+wjytYj48Rl
-        8wrVzn0UlB6sUgAGYv7EQF0iGK5r7qQPmjVblVlnLq31PDAj/VuNyY05uC4GD2uUv2dD6DWfajQAa
-        6XbNs9tdoForYG2NT4TobVsxFE4aM61DMdExbgz9pufSB5/Mzw0yMg/5lzi645kncAHGhps1O8TCa
-        neVXHZRA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l83hu-002UPw-Ed; Fri, 05 Feb 2021 16:11:44 +0000
-Date:   Fri, 5 Feb 2021 16:11:42 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [RFC] Better page cache error handling
-Message-ID: <20210205161142.GI308988@casper.infradead.org>
+        Fri, 5 Feb 2021 09:35:54 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4707BC0617A9
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Feb 2021 08:14:00 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id o16so4865207pgg.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Feb 2021 08:14:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tgToZXIcR//slb37mMxyXMF6K319Gf4e4xqtIkg5mSQ=;
+        b=vi1eZTDGn0s+c7nDc/UcaxmiZ8SO8djhd8YKp6I27b2SvO+LfWMsqNulS/rqad1/EE
+         zti94jrpclnDbtIra0/SF7oO933+vtLmvQh0LOlXgTtUA/Ys9pWpCzEJCP/8EeKnN7RY
+         KpnRSlevGccsTyUxdhwrPyWiJ1Hac/O8fH2AVQtrKbP/z2fQG58C63wBM+0nDMC0Ynvk
+         4eOqfX54/u8Ei+AiBWg43xL9oUa8Xrf8Zjdlyh5mAdzbTEcTH01mFIo52cFaP8k0nK7Z
+         Q4Y7yFF8vBMHXuXjyC1YB7Zwja6igzBF2grNPDY3PHAeLebuziRPFkGYUNNyVT7trndg
+         fTZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tgToZXIcR//slb37mMxyXMF6K319Gf4e4xqtIkg5mSQ=;
+        b=Ht8pDYw+igvAfPy5LQPlbNANYMkZ24GU0t8WDywV176ugff2+bJyQa3mC8s50CiIYs
+         ysA8wXl0Nv5cVvtY4JT+ZSrjmWq6rb3HZdu1HVgF6zg1MLxmrMYDQb9JozBSEPTZhPuc
+         tyJlCkzBXFuQ9FYmwCgBF071vkTIV1+lBEpoYecYCePN+hYpWzqtuTfxsFdTKaS1SCai
+         NFOyeTuKpW22B42gbZUCBeAHcO7/1/uMYgak2dvuvpyeLWMnIQYjw+kqVyyGd0ynPJNT
+         w4tvowZFtpUmNbcNfcL3xm8pRtSHThAuE47r1018wjJsWMF59uVEL0sKHBzYsw70C3l0
+         Y2qw==
+X-Gm-Message-State: AOAM5309Je06vKdf8bEm++/SkUcyXiTwXrsUxoLzdcdIY2vdBulMdy7/
+        /4GpX2XeWPXe+UCWqSTDaU26MZDaTKEllQbTPorrDg==
+X-Google-Smtp-Source: ABdhPJwkirrFi8xuKWL/S5D2cKkWHr8/viSsyFvrNlI047a1E3Q16PWtG8tYxcyd1lVj1EuEzbAYJyMFxhtmMXc0PgQ=
+X-Received: by 2002:a62:1b93:0:b029:1cb:4985:623b with SMTP id
+ b141-20020a621b930000b02901cb4985623bmr5289599pfb.59.1612541639757; Fri, 05
+ Feb 2021 08:13:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20210204035043.36609-1-songmuchun@bytedance.com> <a14113c5-08ae-2819-7e24-3d2687ef88da@oracle.com>
+In-Reply-To: <a14113c5-08ae-2819-7e24-3d2687ef88da@oracle.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Sat, 6 Feb 2021 00:13:22 +0800
+Message-ID: <CAMZfGtXyWkeO9gGKGpEXYA9DA75mMZUaHboTXH6dGxZgEHvMpA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v14 0/8] Free some vmemmap pages of HugeTLB page
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Scenario:
+On Sat, Feb 6, 2021 at 12:01 AM Joao Martins <joao.m.martins@oracle.com> wrote:
+>
+> On 2/4/21 3:50 AM, Muchun Song wrote:
+> > Hi all,
+> >
+>
+> [...]
+>
+> > When a HugeTLB is freed to the buddy system, we should allocate 6 pages for
+> > vmemmap pages and restore the previous mapping relationship.
+> >
+> > Apart from 2MB HugeTLB page, we also have 1GB HugeTLB page. It is similar
+> > to the 2MB HugeTLB page. We also can use this approach to free the vmemmap
+> > pages.
+> >
+> > In this case, for the 1GB HugeTLB page, we can save 4094 pages. This is a
+> > very substantial gain. On our server, run some SPDK/QEMU applications which
+> > will use 1024GB hugetlbpage. With this feature enabled, we can save ~16GB
+> > (1G hugepage)/~12GB (2MB hugepage) memory.
+> >
+> > Because there are vmemmap page tables reconstruction on the freeing/allocating
+> > path, it increases some overhead. Here are some overhead analysis.
+>
+> [...]
+>
+> > Although the overhead has increased, the overhead is not significant. Like Mike
+> > said, "However, remember that the majority of use cases create hugetlb pages at
+> > or shortly after boot time and add them to the pool. So, additional overhead is
+> > at pool creation time. There is no change to 'normal run time' operations of
+> > getting a page from or returning a page to the pool (think page fault/unmap)".
+> >
+>
+> Despite the overhead and in addition to the memory gains from this series ...
+> there's an additional benefit there isn't talked here with your vmemmap page
+> reuse trick. That is page (un)pinners will see an improvement and I presume because
+> there are fewer memmap pages and thus the tail/head pages are staying in cache more
+> often.
+>
+> Out of the box I saw (when comparing linux-next against linux-next + this series)
+> with gup_test and pinning a 16G hugetlb file (with 1G pages):
+>
+>         get_user_pages(): ~32k -> ~9k
+>         unpin_user_pages(): ~75k -> ~70k
+>
+> Usually any tight loop fetching compound_head(), or reading tail pages data (e.g.
+> compound_head) benefit a lot. There's some unpinning inefficiencies I am fixing[0], but
+> with that in added it shows even more:
+>
+>         unpin_user_pages(): ~27k -> ~3.8k
+>
+> FWIW, I was also seeing that with devdax and the ZONE_DEVICE vmemmap page reuse equivalent
+> series[1] but it was mixed with other numbers.
 
-You have a disk with a bad sector.  This disk will take 30 seconds of
-trying progressively harder to recover the sector before timing the
-I/O out and returning BLK_STS_MEDIUM to the filesystem.  Unfortunately
-for you, this bad sector happens to have landed in index.html on your
-webserver which gets one hit per second.  You have configured 500
-threads on your webserver.
+It's really a surprise. Thank you very much for the test data.
+Very nice. Thanks again.
 
-Today:
 
-We allocate a page and try to read it.  29 threads pile up waiting
-for the page lock in filemap_update_page() (or whatever variant of
-that you're looking at; I'm talking about linux-next).  The original
-requester gets the error and returns -EIO to userspace.  One of the
-lucky 29 waiting threads sends another read.  30 more threads pile up
-while it's processing.  Eventually, all 500 threads of your webserver
-are sleeping waiting for their turn to get an EIO.
-
-With the below patch:
-
-We allocate a page and try to read it.  29 threads pile up waiting
-for the page lock in filemap_update_page().  The error returned by the
-original I/O is shared between all 29 waiters as well as being returned
-to the requesting thread.  The next request for index.html will send
-another I/O, and more waiters will pile up trying to get the page lock,
-but at no time will more than 30 threads be waiting for the I/O to fail.
-
-----
-
-Individual filesystems will have to be modified to call unlock_page_err()
-to take advantage of this.  Unconverted filesystems will continue to
-behave as in the first scenario.
-
-I've only tested it lightly, but it doesn't seem to break anything.
-It needs some targetted testing with error injection which I haven't
-done yet.  It probably also needs some refinement to not report
-errors from readahead.  Also need to audit the other callers of
-put_and_wait_on_page_locked().  This patch interferes with the page
-folio work, so I'm not planning on pushing it for a couple of releases.
-
-----
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 16a1e82e3aeb..faeb6c4af7fd 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -183,7 +183,7 @@ iomap_read_page_end_io(struct bio_vec *bvec, int error)
- 	}
- 
- 	if (!iop || atomic_sub_and_test(bvec->bv_len, &iop->read_bytes_pending))
--		unlock_page(page);
-+		unlock_page_err(page, error);
- }
- 
- static void
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index fda84e88b2ba..e750881bedfe 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -564,11 +564,13 @@ struct wait_page_key {
- 	struct page *page;
- 	int bit_nr;
- 	int page_match;
-+	int err;
- };
- 
- struct wait_page_queue {
- 	struct page *page;
- 	int bit_nr;
-+	int err;
- 	wait_queue_entry_t wait;
- };
- 
-@@ -591,6 +593,7 @@ extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
- extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 				unsigned int flags);
- extern void unlock_page(struct page *page);
-+extern void unlock_page_err(struct page *page, int err);
- extern void unlock_page_fscache(struct page *page);
- 
- /*
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 97ff7294516e..515e0136f00f 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1077,6 +1077,7 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
- 	 * afterwards to avoid any races. This store-release pairs
- 	 * with the load-acquire in wait_on_page_bit_common().
- 	 */
-+	wait_page->err = key->err;
- 	smp_store_release(&wait->flags, flags | WQ_FLAG_WOKEN);
- 	wake_up_state(wait->private, mode);
- 
-@@ -1094,7 +1095,7 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
- 	return (flags & WQ_FLAG_EXCLUSIVE) != 0;
- }
- 
--static void wake_up_page_bit(struct page *page, int bit_nr)
-+static void wake_up_page_bit(struct page *page, int bit_nr, int err)
- {
- 	wait_queue_head_t *q = page_waitqueue(page);
- 	struct wait_page_key key;
-@@ -1103,6 +1104,7 @@ static void wake_up_page_bit(struct page *page, int bit_nr)
- 
- 	key.page = page;
- 	key.bit_nr = bit_nr;
-+	key.err = err;
- 	key.page_match = 0;
- 
- 	bookmark.flags = 0;
-@@ -1152,7 +1154,7 @@ static void wake_up_page(struct page *page, int bit)
- {
- 	if (!PageWaiters(page))
- 		return;
--	wake_up_page_bit(page, bit);
-+	wake_up_page_bit(page, bit, 0);
- }
- 
- /*
-@@ -1214,6 +1216,7 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 	wait->func = wake_page_function;
- 	wait_page.page = page;
- 	wait_page.bit_nr = bit_nr;
-+	wait_page.err = 0;
- 
- repeat:
- 	wait->flags = 0;
-@@ -1325,8 +1328,10 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 	 */
- 	if (behavior == EXCLUSIVE)
- 		return wait->flags & WQ_FLAG_DONE ? 0 : -EINTR;
-+	if (behavior != DROP)
-+		wait_page.err = 0;
- 
--	return wait->flags & WQ_FLAG_WOKEN ? 0 : -EINTR;
-+	return wait->flags & WQ_FLAG_WOKEN ? wait_page.err : -EINTR;
- }
- 
- void wait_on_page_bit(struct page *page, int bit_nr)
-@@ -1408,8 +1413,9 @@ static inline bool clear_bit_unlock_is_negative_byte(long nr, volatile void *mem
- #endif
- 
- /**
-- * unlock_page - unlock a locked page
-+ * unlock_page_err - unlock a locked page
-  * @page: the page
-+ * @err: errno to be communicated to waiters
-  *
-  * Unlocks the page and wakes up sleepers in wait_on_page_locked().
-  * Also wakes sleepers in wait_on_page_writeback() because the wakeup
-@@ -1422,13 +1428,19 @@ static inline bool clear_bit_unlock_is_negative_byte(long nr, volatile void *mem
-  * portably (architectures that do LL/SC can test any bit, while x86 can
-  * test the sign bit).
-  */
--void unlock_page(struct page *page)
-+void unlock_page_err(struct page *page, int err)
- {
- 	BUILD_BUG_ON(PG_waiters != 7);
- 	page = compound_head(page);
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	if (clear_bit_unlock_is_negative_byte(PG_locked, &page->flags))
--		wake_up_page_bit(page, PG_locked);
-+		wake_up_page_bit(page, PG_locked, err);
-+}
-+EXPORT_SYMBOL(unlock_page_err);
-+
-+void unlock_page(struct page *page)
-+{
-+	unlock_page_err(page, 0);
- }
- EXPORT_SYMBOL(unlock_page);
- 
-@@ -1446,7 +1458,7 @@ void unlock_page_fscache(struct page *page)
- 	page = compound_head(page);
- 	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
- 	clear_bit_unlock(PG_fscache, &page->flags);
--	wake_up_page_bit(page, PG_fscache);
-+	wake_up_page_bit(page, PG_fscache, 0);
- }
- EXPORT_SYMBOL(unlock_page_fscache);
- 
-@@ -2298,8 +2310,11 @@ static int filemap_update_page(struct kiocb *iocb,
- 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_NOIO))
- 			return -EAGAIN;
- 		if (!(iocb->ki_flags & IOCB_WAITQ)) {
--			put_and_wait_on_page_locked(page, TASK_KILLABLE);
--			return AOP_TRUNCATED_PAGE;
-+			error = put_and_wait_on_page_locked(page,
-+					TASK_KILLABLE);
-+			if (!error)
-+				return AOP_TRUNCATED_PAGE;
-+			return error;
- 		}
- 		error = __lock_page_async(page, iocb->ki_waitq);
- 		if (error)
+>
+> Anyways, JFYI :)
+>
+>         Joao
+>
+> [0] https://lore.kernel.org/linux-mm/20210204202500.26474-1-joao.m.martins@oracle.com/
+> [1] https://lore.kernel.org/linux-mm/20201208172901.17384-1-joao.m.martins@oracle.com/
