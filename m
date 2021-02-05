@@ -2,90 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CBD6311541
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:32:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3889D31157B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:33:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232749AbhBEW0b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 17:26:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41314 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232443AbhBEOV5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:21:57 -0500
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31B4C0617A9
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Feb 2021 07:59:51 -0800 (PST)
-Received: by mail-vs1-xe2c.google.com with SMTP id t23so733524vsk.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Feb 2021 07:59:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v+hzPa1F4JAM47t70Roqcz7crnnubahY7MUE4gPkyOc=;
-        b=kJkmysqYHrZGs3+fpupO+SdH0WNgec3k/1YXBLzsjRhwhvSzX5Id9iqPsT171m5O6c
-         Mosq/QNbyUac50Z0p0hPlSQJc7vKSAqT8m9NZF4kzwxa8D+zV80lXgcCOtu1PBc7ooW3
-         VAN8E3DhnankzQz81VQF9GJoXXeBaUWnPRd0c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v+hzPa1F4JAM47t70Roqcz7crnnubahY7MUE4gPkyOc=;
-        b=qDY3myIb0gkQD8h0gQNXqrzZkDMOmkKiPzfmQsLZGC/uGbCAj90SrFdlTa6EJ51l6G
-         kvtm0a4pNj+2r0LccFzE/CXggJw+jguV7hbVpfo5FrS88u6M5rXWDdNiHTWftzVfnLw6
-         FpYzAlZpHwNTmduTlfRCuBrlxdZN50ow4miazJzNaBx0wakmcm8u5QdkXp9BLAdeUBwK
-         UWX3s1r6eZQKH7WHhY6K1fFErhd9Tf+lKgPoxZHpkbeFyHeyP5Cpu1WTrl8AtccjwMmB
-         cr3ofcm0TKKibGiUy2ulBaYj6YgiYIx01G4grEDpD6oTpAHf0UWSxQKPwnB+TY4q3nIc
-         gBOg==
-X-Gm-Message-State: AOAM532yVPPYZ6ostusWlOGZEl23IJK0u9byDkKblKbY2NFJyemqXOxr
-        UiPhzAx+GvQg/bBsT6tQCcHmAOjwnwZfD3TYkgnfNJ1lgdE=
-X-Google-Smtp-Source: ABdhPJxeWoZ0wWAybWqnxwlr/rJLeHQZqg86VDmAb37maDIyniFgAsX0Q0wwTZ+XuU8gjne6pl4QDillngq5h96qu6U=
-X-Received: by 2002:a67:c992:: with SMTP id y18mr3353078vsk.7.1612538917519;
- Fri, 05 Feb 2021 07:28:37 -0800 (PST)
+        id S232747AbhBEWct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:32:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42534 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232374AbhBEOQJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Feb 2021 09:16:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 46DE7B126;
+        Fri,  5 Feb 2021 15:36:34 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 8C5D4DA6E9; Fri,  5 Feb 2021 16:34:42 +0100 (CET)
+Date:   Fri, 5 Feb 2021 16:34:41 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     dsterba@suse.cz, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, Miao Xie <miaox@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/btrfs: Fix raid6 qstripe kmap'ing
+Message-ID: <20210205153441.GK1993@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Ira Weiny <ira.weiny@intel.com>,
+        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        Miao Xie <miaox@cn.fujitsu.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20210128061503.1496847-1-ira.weiny@intel.com>
+ <20210203155648.GE1993@suse.cz>
+ <20210204152608.GF1993@suse.cz>
+ <20210205035236.GB5033@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-References: <20210203124112.1182614-1-mszeredi@redhat.com> <20210203124112.1182614-4-mszeredi@redhat.com>
- <20210204234211.GB52056@redhat.com> <CAJfpegv+dtVZWJ1xmagaZsGfg3p9e0Svj_qFXiWYQ3ROvGPHLg@mail.gmail.com>
-In-Reply-To: <CAJfpegv+dtVZWJ1xmagaZsGfg3p9e0Svj_qFXiWYQ3ROvGPHLg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 5 Feb 2021 16:28:26 +0100
-Message-ID: <CAJfpegvxb9bfbBpoa6R8UENwL9m6BSU84kr50PBSssUJYc8wFQ@mail.gmail.com>
-Subject: Re: [PATCH 03/18] ovl: stack miscattr
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210205035236.GB5033@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 5, 2021 at 4:25 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Fri, Feb 5, 2021 at 12:49 AM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> > > +int ovl_miscattr_set(struct dentry *dentry, struct miscattr *ma)
-> > > +{
-> > > +     struct inode *inode = d_inode(dentry);
-> > > +     struct dentry *upperdentry;
-> > > +     const struct cred *old_cred;
-> > > +     int err;
-> > > +
-> > > +     err = ovl_want_write(dentry);
-> > > +     if (err)
-> > > +             goto out;
-> > > +
-> > > +     err = ovl_copy_up(dentry);
-> > > +     if (!err) {
-> > > +             upperdentry = ovl_dentry_upper(dentry);
-> > > +
-> > > +             old_cred = ovl_override_creds(inode->i_sb);
-> > > +             /* err = security_file_ioctl(real.file, cmd, arg); */
-> >
-> > Is this an comment intended?
->
-> I don't remember, but I guess not.  Will fix and test.
+On Thu, Feb 04, 2021 at 07:52:36PM -0800, Ira Weiny wrote:
+> On Thu, Feb 04, 2021 at 04:26:08PM +0100, David Sterba wrote:
+> > On Wed, Feb 03, 2021 at 04:56:48PM +0100, David Sterba wrote:
+> > > On Wed, Jan 27, 2021 at 10:15:03PM -0800, ira.weiny@intel.com wrote:
+> > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > Changelog is good, thanks. I've added stable tags as the missing unmap
+> > > is a potential problem.
+> > 
+> > There are lots of tests faling, stack traces like below. I haven't seen
+> > anything obvious in the patch so that needs a closer look and for the
+> > time being I can't add the patch to for-next.
+> 
+> :-(
+> 
+> I think I may have been off by 1 on the raid6 kmap...
+> 
+> Something like this should fix it...
+> 
+> diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+> index b8a39dad0f00..dbf52f1a379d 100644
+> --- a/fs/btrfs/raid56.c
+> +++ b/fs/btrfs/raid56.c
+> @@ -2370,7 +2370,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+>                         goto cleanup;
+>                 }
+>                 SetPageUptodate(q_page);
+> -               pointers[rbio->real_stripes] = kmap(q_page);
+> +               pointers[rbio->real_stripes - 1] = kmap(q_page);
 
-Sorry, yes, problem is that there's no file pointer available at this point.
+Oh right and tests agree it works.
 
-Fix is probably to introduce security_inode_miscattr_perm() hook.
+>         }
+>  
+>         atomic_set(&rbio->error, 0);
+> 
+> Let me roll a new version.
 
-Thanks,
-Miklos
+No need to, I'll fold the fixup. Thanks.
