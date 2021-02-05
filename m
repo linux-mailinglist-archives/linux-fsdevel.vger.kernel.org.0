@@ -2,209 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62F6C3115EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73EA73115F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:55:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232830AbhBEWpY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 17:45:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35842 "EHLO
+        id S232262AbhBEWq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:46:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231277AbhBENKv (ORCPT
+        with ESMTP id S229841AbhBENds (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 08:10:51 -0500
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9A4C061221;
-        Fri,  5 Feb 2021 05:07:41 -0800 (PST)
-Received: by mail-qk1-x730.google.com with SMTP id a19so6777832qka.2;
-        Fri, 05 Feb 2021 05:07:41 -0800 (PST)
+        Fri, 5 Feb 2021 08:33:48 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75542C0613D6;
+        Fri,  5 Feb 2021 05:33:00 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id b187so6705153ybg.9;
+        Fri, 05 Feb 2021 05:33:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=eifO5w09vaVkYD/HNL+OdTyeOvd9OOp5ZX1K5KzvrTo=;
-        b=uux1/nfGwEFnTg/EJ2HdZY7y2r9LwQKaqqCMlBfo/r+87x8xBc1uCR0W4HA3Am8xxl
-         ND1paPnztrtHvNqVIgvl09Jb1LpjoEee062glaCBFJhxTMlYL2zD4VLZjUfhr7KJXI/X
-         fJvt+NE/9xjR/1gC3nfciFI0dFE3sHddFXC0ahFKSrUk0s6KY4qJR8IwJ3WKvRGVXVK4
-         E+3VIHAJpsRFvpC08M2b03BT4xu2f3usNNGnS1eJnSkz6j72tNoGD4aOY1kmQB2mfx+W
-         pFA/+RQmR/jGXkd87VAeGcFW6y6uO9LeK2MDx1Lyd/NE+9NNWjpB/gI+QQZ3d6tEahWl
-         72CQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hws2a3q+IvIq2Tq4/ndL6OgkHoz5S/vLO/ZmY8diyq0=;
+        b=DwIRcm9AZ5sbrGU6NRZrg/q6F7eXpuTxZKwTdLL/pqUlLtWGQ54a8JOK/eRDEWqF6o
+         lDwr91+yNOYEFvmOVH7ugp8qZqnGbeEULsoBLzXmtVVbSxj47VHX9IFLGWqktff7Mtcc
+         zkTrwwNuamH5PIk1dHoYOhfveEDbtToJkbvvaSIIRZKkjF+xEr8kN4KP9HrUUYYfWCTA
+         r/XGnqwbOuV6xREMfqxpp9+FNOIpS8WsqNjxrN1xn3k8MPn4klSDfekN25PWqgZ4jRNB
+         Xto8Ic1nYDTZONWnx/fHASbVnM2dbjDdlPWGl7PnvDe0UOBHYsyMYvi5mQB4mVr+0Ar3
+         h2AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=eifO5w09vaVkYD/HNL+OdTyeOvd9OOp5ZX1K5KzvrTo=;
-        b=NbkmFD8Cy96L60BIf4Y9FbWQ9BT7BWsXHZ05oxxb+sG6qs4Jvsq9gOjBMIuiW+J6Pt
-         rDddVTwzMQZwXpRhg3cDm7ipK+fmdRVfdf/nNz9YzMyyxy9sAJxgMLuD7ZxYRhy/MuiR
-         upKTIPIYYZwSOHVgOYyLBJV8UqIHJCuY/tU9XaWtuTkd39E5WG6pzt2NNvFXpEWnkVsN
-         F07TaQkR/zQSuYCQN4fDGKQVjwc7YE9IkWpwPlPJuuiQd9tCBEfqrZyp00DRSx/xw3bY
-         sWM2PalPNlJ/NoaCWX4EBsWLLGTLYw/F38OwUj/Z+bfmbQfSutfU1dyze4JIVzsaiMYd
-         /PlQ==
-X-Gm-Message-State: AOAM531LEjxhayoPDMFnkuGZcg252qAUj41hrsbBoUaD5pCbPUqG2O1w
-        8SZihCe1SZQ92rmlxzO6Oc2RSjUZmlw42Y9tPio=
-X-Google-Smtp-Source: ABdhPJx6LvF5n7cqNVXse1TC5iGMbFDY6ruGVS89G9oW4Vnhy82FeiuC3aqWafe15OIyMsm+d23xaqLM96nQCFOTmFY=
-X-Received: by 2002:a37:6491:: with SMTP id y139mr3989047qkb.479.1612530460261;
- Fri, 05 Feb 2021 05:07:40 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hws2a3q+IvIq2Tq4/ndL6OgkHoz5S/vLO/ZmY8diyq0=;
+        b=DIzvUSOKFowhbKOfsj5oTZfbnLA8FugZ+CsaYFl7v6ntpEmD7T+SbtwEn3l45/26X/
+         cLLnWy68sWPqJdxsn5m31Ru/dJRLGgb1L6ReD2uTN0+CDvY5cx+N1cXOhYBxvs6KaRiA
+         7G7XSgFtHxYijPC0AT6FBwC8r7bMOneLSBSDQoS7/XW0khfZ6jNNISRuSDsphmMA+stn
+         7ANMa2VYiGVEhe3gNd38NcmQxj6YsctoNXx4PCKXZVydTV9Eu9A2o+ipkpUoI+om4KKn
+         mTM4usyl7eWfIY3/daMLAscM4Ck4IUnXeDa5mbF85pbDCwfcWNcV8NGz+EP6gaQPzETt
+         ujCg==
+X-Gm-Message-State: AOAM531szyRm2Iw9hwikLG5/ISAgIU8cIWbn2hmWvvMpkX3KI4Q3wOMP
+        p/nSrVvT4eDaQgvSe1wPI2vJmyxijIg3P5U+a4DN0h2byxg=
+X-Google-Smtp-Source: ABdhPJzBjZLjiR9WM0iOiyZxvFk7Oium5eg2lgy/A1BmZAnI54rDhPGu0WgYmIjpuSKp6Y1QgT8ec65ZTbSMlfoeZdI=
+X-Received: by 2002:a25:1646:: with SMTP id 67mr6506637ybw.97.1612531979586;
+ Fri, 05 Feb 2021 05:32:59 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1612433345.git.naohiro.aota@wdc.com> <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
- <20210205092635.i6w3c7brawlv6pgs@naota-xeon> <CAL3q7H6REfruE-DSyiqZQ_Y0=HmXbiTbEC3d18Q7+3Z7pf5QzQ@mail.gmail.com>
- <20210205125526.4oeqd3utuho3b2hv@naota-xeon>
-In-Reply-To: <20210205125526.4oeqd3utuho3b2hv@naota-xeon>
-Reply-To: fdmanana@gmail.com
-From:   Filipe Manana <fdmanana@gmail.com>
-Date:   Fri, 5 Feb 2021 13:07:29 +0000
-Message-ID: <CAL3q7H6x4hcs3T17EKPQkHwth_2_M6c=c8=GxGy1eu1nDDDAUQ@mail.gmail.com>
-Subject: Re: [PATCH v15 43/43] btrfs: zoned: deal with holes writing out
- tree-log pages
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, hare@suse.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <CANT5p=pK3hQNTvsR-WUmtrQFuKngx+A1iYfd0JXyb0WHqpfKMA@mail.gmail.com>
+ <20210202174255.4269-1-aaptel@suse.com> <CANT5p=qpnLH_3UrOv9wKGbxa6D8RUSzbY+uposEbAeVaObjbHg@mail.gmail.com>
+ <87o8h28gjb.fsf@suse.com>
+In-Reply-To: <87o8h28gjb.fsf@suse.com>
+From:   Shyam Prasad N <nspmangalore@gmail.com>
+Date:   Fri, 5 Feb 2021 05:32:48 -0800
+Message-ID: <CANT5p=o4b9RfQ5omd911pLH3WFbiC1-ghF43kRZ5-4SV+PeS=g@mail.gmail.com>
+Subject: Re: [PATCH v3] cifs: report error instead of invalid when
+ revalidating a dentry fails
+To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
+Cc:     CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        Steve French <smfrench@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 5, 2021 at 12:55 PM Naohiro Aota <naohiro.aota@wdc.com> wrote:
->
-> On Fri, Feb 05, 2021 at 11:49:05AM +0000, Filipe Manana wrote:
-> > On Fri, Feb 5, 2021 at 9:26 AM Naohiro Aota <naohiro.aota@wdc.com> wrot=
-e:
-> > >
-> > > Since the zoned filesystem requires sequential write out of metadata,=
- we
-> > > cannot proceed with a hole in tree-log pages. When such a hole exists=
-,
-> > > btree_write_cache_pages() will return -EAGAIN. We cannot wait for the=
- range
-> > > to be written, because it will cause a deadlock. So, let's bail out t=
-o a
-> > > full commit in this case.
-> > >
-> > > Cc: Filipe Manana <fdmanana@gmail.com>
-> > > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> > > ---
-> > >  fs/btrfs/tree-log.c | 19 ++++++++++++++++++-
-> > >  1 file changed, 18 insertions(+), 1 deletion(-)
-> > >
-> > > This patch solves a regression introduced by fixing patch 40. I'm
-> > > sorry for the confusing patch numbering.
-> >
-> > Hum, how does patch 40 can cause this?
-> > And is it before the fixup or after?
->
-> With pre-5.10 code base + zoned series at that time, it passed
-> xfstests without this patch.
->
-> With current code base + zoned series without the fixup for patch 40,
-> it also passed the tests, because we are mostly bailing out to a full
-> commit.
->
-> The fixup now stressed the new fsync code on zoned mode and revealed
-> an issue to have -EAGAIN from btrfs_write_marked_extents(). This error
-> happens when a concurrent transaction commit is writing a dirty extent
-> in this tree-log commit. This issue didn't occur previously because of
-> a longer critical section, I guess.
+Hi Aur=C3=A9lien,
 
-Ok, if I understand you correctly, the problem is a transaction commit
-and an fsync both allocating metadata extents at the same time.
+xfstest 070 was failing today with this patch.
+It looks like we need to handle ESTALE here, in addition to ENOENT.
+ESTALE happens when the file type or inode number has changed on the
+server, which indicates that it's a new entry.
 
+Regards,
+Shyam
+
+On Tue, Feb 2, 2021 at 10:34 AM Aur=C3=A9lien Aptel <aaptel@suse.com> wrote=
+:
 >
-> >
-> > >
-> > > diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-> > > index 4e72794342c0..629e605cd62d 100644
-> > > --- a/fs/btrfs/tree-log.c
-> > > +++ b/fs/btrfs/tree-log.c
-> > > @@ -3120,6 +3120,14 @@ int btrfs_sync_log(struct btrfs_trans_handle *=
-trans,
-> > >          */
-> > >         blk_start_plug(&plug);
-> > >         ret =3D btrfs_write_marked_extents(fs_info, &log->dirty_log_p=
-ages, mark);
-> > > +       /*
-> > > +        * There is a hole writing out the extents and cannot proceed=
- it on
-> > > +        * zoned filesystem, which require sequential writing. We can
-> >
-> > require -> requires
-> >
-> > > +        * ignore the error for now, since we don't wait for completi=
-on for
-> > > +        * now.
-> >
-> > So why can we ignore the error for now?
-> > Why not just bail out here and mark the log for full commit? (without
-> > a transaction abort)
+> Shyam Prasad N <nspmangalore@gmail.com> writes:
+> > This looks good to me.
+> > Let me know if you get a chance to test it out. If not, I'll test it
+> > on my setup tomorrow.
 >
-> As described above, -EAGAIN happens when a concurrent process writes
-> out an extent buffer of this tree-log commit. This concurrent write
-> out will fill a hole for us, so the next write out might
-> succeed. Indeed we can bail out here, but I opted to try the next
-> write.
-
-Ok, if I understand you correctly, you mean it will be fine if after
-this point no one allocates metadata extents from the hole?
-
-I think such a clear explanation would fit nicely in the comment.
-
-Thanks.
-
+> I've done some tests: the reproducer cannot trigger the bug, accessing a
+> deleted file invalidates, accessing an existing file revalidates. It look=
+s
+> ok.
 >
-> > > +        */
-> > > +       if (ret =3D=3D -EAGAIN)
-> > > +               ret =3D 0;
-> > >         if (ret) {
-> > >                 blk_finish_plug(&plug);
-> > >                 btrfs_abort_transaction(trans, ret);
-> > > @@ -3229,7 +3237,16 @@ int btrfs_sync_log(struct btrfs_trans_handle *=
-trans,
-> > >                                          &log_root_tree->dirty_log_pa=
-ges,
-> > >                                          EXTENT_DIRTY | EXTENT_NEW);
-> > >         blk_finish_plug(&plug);
-> > > -       if (ret) {
-> > > +       /*
-> > > +        * There is a hole in the extents, and failed to sequential w=
-rite
-> > > +        * on zoned filesystem. We cannot wait for this write outs, s=
-inc it
-> >
-> > this -> these
-> >
-> > > +        * cause a deadlock. Bail out to the full commit, instead.
-> > > +        */
-> > > +       if (ret =3D=3D -EAGAIN) {
-> > > +               btrfs_wait_tree_log_extents(log, mark);
-> > > +               mutex_unlock(&log_root_tree->log_mutex);
-> > > +               goto out_wake_log_root;
-> >
-> > Must also call btrfs_set_log_full_commit(trans);
+> Cheers,
+> --
+> Aur=C3=A9lien Aptel / SUSE Labs Samba Team
+> GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+> SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg,=
+ DE
+> GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=
+=BCnchen)
 >
-> Oops, I missed this one.
->
-> > Thanks.
-> >
-> > > +       } else if (ret) {
-> > >                 btrfs_set_log_full_commit(trans);
-> > >                 btrfs_abort_transaction(trans, ret);
-> > >                 mutex_unlock(&log_root_tree->log_mutex);
-> > > --
-> > > 2.30.0
-> > >
-> >
-> >
-> > --
-> > Filipe David Manana,
-> >
-> > =E2=80=9CWhether you think you can, or you think you can't =E2=80=94 yo=
-u're right.=E2=80=9D
-
 
 
 --=20
-Filipe David Manana,
-
-=E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you're=
- right.=E2=80=9D
+Regards,
+Shyam
