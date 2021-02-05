@@ -2,161 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F2D3107D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 10:27:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A4C13107DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 10:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230324AbhBEJ1F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 04:27:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44068 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230258AbhBEJYs (ORCPT
+        id S230423AbhBEJaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 04:30:12 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:4008 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230322AbhBEJ15 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 04:24:48 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52F2C061793;
-        Fri,  5 Feb 2021 01:24:07 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id n10so4110648pgl.10;
-        Fri, 05 Feb 2021 01:24:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=q2XdoJkLIugwL6PyCTK0JiidlqGVW8dYDvt5+f3iTgo=;
-        b=HbEpzL/prLHZw4lsA0c+8XxX5cS+ZWm4/dPyLpy8GWitl401Md5AGB2JzjYrcTEkwL
-         5pZ0HXj79jg2ghQPjH3IIp/GY3y2vzaiz7EnF6LZg3scLvN8K9qBb0sT/SxIFZ1vliFm
-         jwa8tTekHufDnt7jBbdj3JI34ny6/e4bBJqYkCIs3mrl+ckS/ft7xFwc2bIpY8p8SMz0
-         ciIDbw1aNo0YPdOBJAwlyULFn4ZjwKNMZn7gCpf/aP0kIYlpUZFNJnbmZcwJqoSLR2Zn
-         iFmk2oXY9KzU+4AMBi+UWpFunMMymDUM5zjay+NK2jy+DATH4crNVAk/dQCjeBmiuw/c
-         SnHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=q2XdoJkLIugwL6PyCTK0JiidlqGVW8dYDvt5+f3iTgo=;
-        b=aAMPxB8tnc6+039fb1QIDw/l7aCrz7+D8NPOd7T9zNq5M47LyNVkEMrUCQGZ8tEse8
-         x0qE0iYp/8Zaw90KTok5lXAX5zRyvwjN2Uz6dvXLSJ6qS37DLdmdXNPfVOhZmInXhxwY
-         3L5TSxHL+k/+2+iDKzccT31cZ/wLH5Pxq7QWRyNacORXCulyc/cZ8qPixJP/AMnFY1mC
-         YFnvfwnS9UpKjspqCF556DemEcPD45tQ1XBphm9qrfTg+syojdy3Qz2UAuTRRdArNZcl
-         q+PLDY2y7U7fKV38Gp6oMf9PBiVDuoGC1acn0V2g0eu+v+zM1VdfJR42pzJ7sx06PNxh
-         15EQ==
-X-Gm-Message-State: AOAM532kVwz9ufCLxQk25dsTZ3oo4c43WUvIBGg+dxD9CKU9e6PXnbt4
-        SpefU1zVJj7B44xOK1PfiHtDX/72MukNFe4VTyg=
-X-Google-Smtp-Source: ABdhPJx0l70MIZqD5qtN1LAQxR401emhKr9GK5VLLauOP1OVKdj7bASNmX6cF8xvawt83I5j0x3CcDaNZjzFPPhqamM=
-X-Received: by 2002:a65:678b:: with SMTP id e11mr3480265pgr.140.1612517047283;
- Fri, 05 Feb 2021 01:24:07 -0800 (PST)
+        Fri, 5 Feb 2021 04:27:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1612517276; x=1644053276;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XB98zZQ4xlGspCrelVu2sxwba448ajtO9H0TUF+r09o=;
+  b=h97ebBkUaByLFxexmxJoek7nxsasOBGZ4Cj+o9kGqJJjC8wGWErZbgY8
+   qAKl3aDF4S1vV4f+DWwW4wmrG8rZ9rRWcZIdf3C3it3TdghLvNBFVSNOH
+   x9wDvibpu5Di1XphKofd7QyYneBh8eaU7oNBjklGAzJAH3nZA19DEIjDe
+   NgP8lgCc4rMH5E+wgQslZF36RCungu1xDMzGxLY4bcHD+z3rz3nAeMpQY
+   T0C2oPTcKqjJ4ytVHIsSZo1AIoK/Z81zKbZZLFsKc0egFKO71nvtM7LM9
+   Vaercz3Tiwahv8xQViAMBXYlUqu1nGt/gmYw3rcwCpvAxnVxtzNMbAxxC
+   Q==;
+IronPort-SDR: TepCF29coyLikXLA7yB9kTrqZlP0kySANJsi77w/SX8SdwOCoZybVp9apAszWo+CkTnBrOXshD
+ v0dgGgxC5KkWq9q+AXvRhymhU6b0mCwktC+uXHIpmbbvhJIciIIRrwY+DnKj2UMH73pFk0If6Z
+ r92L/nBd2gvrQIaz4el1Q/OdmvzcTozH3SiANlTlodP9o4mjpI7w+HH0cGjD4pd1KUDYZVpjjZ
+ GvtH8pPY3ioEG2tCtmpKwgqHIAQNKfYOLCgVOwazRM9S3XCWkG24xMYKZDn0ltav9Pr0WHdk9X
+ bk8=
+X-IronPort-AV: E=Sophos;i="5.81,154,1610380800"; 
+   d="scan'208";a="160410287"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 05 Feb 2021 17:26:38 +0800
+IronPort-SDR: X+GDFTwY9urYwFvdQunIevvDtOpmQaA5Zv87CVY7tW0xJ4gaGbv0/+Xckrdv9+3zZcRZq76ydH
+ nbQzgNBVFpYO5cNuypNPS/6AcX+M0iDcqs+Zp1v6zJTprBmhTVMXt0KE6inex1BwtA3eNLm4py
+ F5gSqdVnQc11tGDmIypuLheiwthDON7gqNRYqCxniKwcCmm2i1ewXjxI8cscqG+NQ3rYtS3iUl
+ ojaOPO3n2I2zKW1KO/94khb5DUdW3y7RBWzJZAmjt/955JKdUH8sf6Pnx1ImQIvn0xXvA0QhRo
+ t8LruV/V9H616sh4Jv6ffyP6
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 01:10:35 -0800
+IronPort-SDR: CkFZSti/6Chni8JfWyBj238UQ0+HJfFsIWux/shvqMqbt7CQbyW62YkH8fV6S96G8OzBivXK0r
+ KFp5Ue2par5vI3QvXYLxuV9ogAv0fAGF1jLJhpZFdjE5iFVOxzLz98IXglWvH97tYYKuszx/ZB
+ H235kntISgdi6Ry9qpw5Mnd57z9Hb7VCynljXaEU6rW1DPOF2dXS2TyqUFB3gzZUBpW5Oov2rD
+ 0hXn42lBsnb8Rp8jfCUNsHurCLmkUQQsUhdHsMhui3FKpnl84b8hmXI6HfvTdR7RmHjQB021TZ
+ 88U=
+WDCIronportException: Internal
+Received: from jfklab-fym3sg2.ad.shared (HELO naota-xeon) ([10.84.71.79])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 01:26:38 -0800
+Date:   Fri, 5 Feb 2021 18:26:35 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Filipe Manana <fdmanana@gmail.com>
+Subject: [PATCH v15 43/43] btrfs: zoned: deal with holes writing out tree-log
+ pages
+Message-ID: <20210205092635.i6w3c7brawlv6pgs@naota-xeon>
+References: <cover.1612433345.git.naohiro.aota@wdc.com>
+ <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
 MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-8-balsini@android.com>
-In-Reply-To: <20210125153057.3623715-8-balsini@android.com>
-From:   Peng Tao <bergwolf@gmail.com>
-Date:   Fri, 5 Feb 2021 17:23:56 +0800
-Message-ID: <CA+a=Yy71JUwWwAPEi0Ngn_kt7Gt3KZwJgx_u=CBefJJTE_mYYw@mail.gmail.com>
-Subject: Re: [PATCH RESEND V12 7/8] fuse: Use daemon creds in passthrough mode
-To:     Alessio Balsini <balsini@android.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Akilesh Kailash <akailash@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b36444df121d46c6d9638a8ae8eacecaa845fbe4.1612434091.git.naohiro.aota@wdc.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 11:31 PM Alessio Balsini <balsini@android.com> wrote:
->
-> When using FUSE passthrough, read/write operations are directly
-> forwarded to the lower file system file through VFS, but there is no
-> guarantee that the process that is triggering the request has the right
-> permissions to access the lower file system. This would cause the
-> read/write access to fail.
->
-> In passthrough file systems, where the FUSE daemon is responsible for
-> the enforcement of the lower file system access policies, often happens
-> that the process dealing with the FUSE file system doesn't have access
-> to the lower file system.
-> Being the FUSE daemon in charge of implementing the FUSE file
-> operations, that in the case of read/write operations usually simply
-> results in the copy of memory buffers from/to the lower file system
-> respectively, these operations are executed with the FUSE daemon
-> privileges.
->
-> This patch adds a reference to the FUSE daemon credentials, referenced
-> at FUSE_DEV_IOC_PASSTHROUGH_OPEN ioctl() time so that they can be used
-> to temporarily raise the user credentials when accessing lower file
-> system files in passthrough.
-> The process accessing the FUSE file with passthrough enabled temporarily
-> receives the privileges of the FUSE daemon while performing read/write
-> operations. Similar behavior is implemented in overlayfs.
-> These privileges will be reverted as soon as the IO operation completes.
-> This feature does not provide any higher security privileges to those
-> processes accessing the FUSE file system with passthrough enabled. This
-> is because it is still the FUSE daemon responsible for enabling or not
-> the passthrough feature at file open time, and should enable the feature
-> only after appropriate access policy checks.
->
-> Signed-off-by: Alessio Balsini <balsini@android.com>
-> ---
->  fs/fuse/fuse_i.h      |  5 ++++-
->  fs/fuse/passthrough.c | 11 +++++++++++
->  2 files changed, 15 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index c4730d893324..815af1845b16 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -182,10 +182,13 @@ struct fuse_release_args;
->
->  /**
->   * Reference to lower filesystem file for read/write operations handled in
-> - * passthrough mode
-> + * passthrough mode.
-> + * This struct also tracks the credentials to be used for handling read/write
-> + * operations.
->   */
->  struct fuse_passthrough {
->         struct file *filp;
-> +       struct cred *cred;
->  };
->
->  /** FUSE specific file data */
-> diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-> index c7fa1eeb7639..24866c5fe7e2 100644
-> --- a/fs/fuse/passthrough.c
-> +++ b/fs/fuse/passthrough.c
-> @@ -52,6 +52,7 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
->                                    struct iov_iter *iter)
->  {
->         ssize_t ret;
-> +       const struct cred *old_cred;
->         struct file *fuse_filp = iocb_fuse->ki_filp;
->         struct fuse_file *ff = fuse_filp->private_data;
->         struct file *passthrough_filp = ff->passthrough.filp;
-> @@ -59,6 +60,7 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
->         if (!iov_iter_count(iter))
->                 return 0;
->
-> +       old_cred = override_creds(ff->passthrough.cred);
->         if (is_sync_kiocb(iocb_fuse)) {
->                 ret = vfs_iter_read(passthrough_filp, iter, &iocb_fuse->ki_pos,
->                                     iocb_to_rw_flags(iocb_fuse->ki_flags,
-> @@ -77,6 +79,7 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
->                 if (ret != -EIOCBQUEUED)
->                         fuse_aio_cleanup_handler(aio_req);
->         }
-> +       revert_creds(old_cred);
-cred should be reverted when kmalloc() fails above.
+Since the zoned filesystem requires sequential write out of metadata, we
+cannot proceed with a hole in tree-log pages. When such a hole exists,
+btree_write_cache_pages() will return -EAGAIN. We cannot wait for the range
+to be written, because it will cause a deadlock. So, let's bail out to a
+full commit in this case.
 
-Cheers,
-Tao
+Cc: Filipe Manana <fdmanana@gmail.com>
+Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+---
+ fs/btrfs/tree-log.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+This patch solves a regression introduced by fixing patch 40. I'm
+sorry for the confusing patch numbering.
+
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index 4e72794342c0..629e605cd62d 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3120,6 +3120,14 @@ int btrfs_sync_log(struct btrfs_trans_handle *trans,
+ 	 */
+ 	blk_start_plug(&plug);
+ 	ret = btrfs_write_marked_extents(fs_info, &log->dirty_log_pages, mark);
++	/*
++	 * There is a hole writing out the extents and cannot proceed it on
++	 * zoned filesystem, which require sequential writing. We can
++	 * ignore the error for now, since we don't wait for completion for
++	 * now.
++	 */
++	if (ret == -EAGAIN)
++		ret = 0;
+ 	if (ret) {
+ 		blk_finish_plug(&plug);
+ 		btrfs_abort_transaction(trans, ret);
+@@ -3229,7 +3237,16 @@ int btrfs_sync_log(struct btrfs_trans_handle *trans,
+ 					 &log_root_tree->dirty_log_pages,
+ 					 EXTENT_DIRTY | EXTENT_NEW);
+ 	blk_finish_plug(&plug);
+-	if (ret) {
++	/*
++	 * There is a hole in the extents, and failed to sequential write
++	 * on zoned filesystem. We cannot wait for this write outs, sinc it
++	 * cause a deadlock. Bail out to the full commit, instead.
++	 */
++	if (ret == -EAGAIN) {
++		btrfs_wait_tree_log_extents(log, mark);
++		mutex_unlock(&log_root_tree->log_mutex);
++		goto out_wake_log_root;
++	} else if (ret) {
+ 		btrfs_set_log_full_commit(trans);
+ 		btrfs_abort_transaction(trans, ret);
+ 		mutex_unlock(&log_root_tree->log_mutex);
 -- 
-Into Sth. Rich & Strange
+2.30.0
+
