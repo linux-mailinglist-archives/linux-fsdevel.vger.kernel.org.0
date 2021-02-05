@@ -2,215 +2,322 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 047D931152F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:32:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8061C311535
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:32:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232927AbhBEWYa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 17:24:30 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:50674 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232588AbhBEOYL (ORCPT
+        id S232978AbhBEWZL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:25:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41530 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232606AbhBEOZQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:24:11 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 115FdidX122299;
-        Fri, 5 Feb 2021 16:01:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2020-01-29;
- bh=kw8FXB7UOsXbBrq/R7dvbf/tE3djJ08y1xmEUb96zkc=;
- b=CwLsU4cC73uSiko3dbI8me2543eNYC42BrPVrKnLKbbYhOlRE6LP/+sutMYesYmKNXZG
- RcLwXs1/DkBxxh+ec7NdKqVGB5QpxCE+DcD7VsXRLSkwoifTGGRTXgX/aieDBZUoQ5zX
- TpvhABP3OtqJV/wy0pBfEN3Hr4crNsTUQFKPQPr2seETfLspY/AN9HofxypotGNxiJse
- d6ePcxEnjyE5kUpBdvkmSBKJiSInmk7MboY9RUYO7zKu/5w4pjzY4MHU/GO0Awx5SOwk
- 5x+TUw9y2u/DKRboeHTolku2j9H/t/4kZfRnPwf0U/Nf9txaO5HyF7WmQXukNLi3KjsT Tw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 36cydma6e5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 05 Feb 2021 16:01:08 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 115Fff01110960;
-        Fri, 5 Feb 2021 16:01:08 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2174.outbound.protection.outlook.com [104.47.56.174])
-        by aserp3030.oracle.com with ESMTP id 36dh1u45et-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 05 Feb 2021 16:01:07 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EKtUFG7jsP3OGKttGtntLzlJW8lUlq/1mMl39Shi+OFG0LTQR5ZXO6jeprffmiQ1Tmgww20tPrXs969TPkfl8C4Ru05UsjoZJ3rtqjvdPSaiYUuIKbWTudPtBfWGpVDRk0rpoLeu60GKTqDckjW+U8v++ho7glGt8dJAnshPp6AGjhDKiz/58CFwnOUUPNrCd8zrSjc1UfYio8IE0Twx2naMK7bDAbV1/0UB0hDSNoTGNveoPBXW64SjPPtfplgo16ic8l4jNWoKua8Md8KoPwqd8c8qDm7R3J6fZjAvhsHvuyoZK6g/6doCUNvClqDVXRvfFZYF73ZdjT+LwOj4dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kw8FXB7UOsXbBrq/R7dvbf/tE3djJ08y1xmEUb96zkc=;
- b=RYsW6N17xCBrcWA/KEmHSsOzUKXMLAzYGs0/gzrY2ATlyavWshbHC392gIqNX3XPMG5lK0M0HDPaq4di/IrWtSXVTQeleSDi3/O2mhbxRIoIkSSoFEZxK/5FtR6vQw9g5PFwnvkOC+99aKolTLQVecZRmSo53SI9Aj7xxpz4wKT4mFbTEDdHdWqIig+QCb3gqaGLz1Id8QemA9x+IdnLi6Wx8D5ekBqpt9Rf5WrwX42S6Mco0d+FCXSJ7CrfAwRqSBtqu8ESAxkFeOdPdO9ZP/BxwlrZEMMvFJV4+647gmGB7gnoAJLufrzi316TgQyEGwMkn0/Lo85U0qpnv/Cdvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Fri, 5 Feb 2021 09:25:16 -0500
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72E9C0611C1
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Feb 2021 08:01:59 -0800 (PST)
+Received: by mail-pf1-x42d.google.com with SMTP id t29so4593292pfg.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Feb 2021 08:01:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kw8FXB7UOsXbBrq/R7dvbf/tE3djJ08y1xmEUb96zkc=;
- b=YrLepVgFcbgL5xfOVYiOCsZ4t9QgUkTRo54lYSTV2aGhhbqwgdfZ4eIymK5AuULb3AK8kKx0MjL01RvOYqyUarZ68XBj62E9I3u73t7pIkUGQhB3YKEJaZQIicdtYfyGcn9s9IJXtQ5EF8+V0BC61QBqM4WW3uYu2kPh6eN3wgA=
-Authentication-Results: nec.com; dkim=none (message not signed)
- header.d=none;nec.com; dmarc=none action=none header.from=oracle.com;
-Received: from BYAPR10MB3077.namprd10.prod.outlook.com (2603:10b6:a03:8c::12)
- by BYAPR10MB2696.namprd10.prod.outlook.com (2603:10b6:a02:af::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.23; Fri, 5 Feb
- 2021 16:01:05 +0000
-Received: from BYAPR10MB3077.namprd10.prod.outlook.com
- ([fe80::74a8:8649:e20b:d571]) by BYAPR10MB3077.namprd10.prod.outlook.com
- ([fe80::74a8:8649:e20b:d571%7]) with mapi id 15.20.3805.024; Fri, 5 Feb 2021
- 16:01:05 +0000
-Subject: Re: [PATCH v14 0/8] Free some vmemmap pages of HugeTLB page
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, corbet@lwn.net,
-        mike.kravetz@oracle.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, mhocko@suse.com, song.bao.hua@hisilicon.com,
-        david@redhat.com, naoya.horiguchi@nec.com
-References: <20210204035043.36609-1-songmuchun@bytedance.com>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <a14113c5-08ae-2819-7e24-3d2687ef88da@oracle.com>
-Date:   Fri, 5 Feb 2021 16:00:51 +0000
-In-Reply-To: <20210204035043.36609-1-songmuchun@bytedance.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [94.61.1.144]
-X-ClientProxiedBy: LO2P265CA0107.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:c::23) To BYAPR10MB3077.namprd10.prod.outlook.com
- (2603:10b6:a03:8c::12)
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JKzHYk7x2hvbXkWUX21JwHTMetgJPnb4us/2IsTYdpk=;
+        b=zTSve8yXoBkXsy15pvK0/bcb/gGYrL2/Tf7JXvMkHJLmDRl+adWmXQPXvwvrnzDn18
+         XcAXX6wtaytv+zNeWGSTkhJLOthGcy+yuCB5Ygj0IyrlaKwCy2b8UfTGBAX0/noQW1Ar
+         PagMeWOIy8VRHX0efi2RnYl1jhXNcgdJQ5aygSbIxaizzcXirOccX0IfyPdRS6O9NPi0
+         0QwolKNXrchDKPXRWEh9zvyqZ87Lm3ApBulo6c52/EobMmvhBAeFJuxuYxQzrpAIFNMb
+         7quDVJyfcDRaufUqugLFowt+AHVMDGbm9xtrbHn8WDlnpq0HITovnopxyFBGGPpWP1q3
+         gXSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JKzHYk7x2hvbXkWUX21JwHTMetgJPnb4us/2IsTYdpk=;
+        b=hSKKETyvzpZ3b6G5KbIOT1AaYNc84W561b4lyVX9mMPVcxMW2SHfUQ4ixL4cHvp5X9
+         ku+3kkyiADIqXTJvv8M46tOjXS2xmVPK2sS1ek0HfuzDw6ILEcSNMtlmlGROSbpZYRru
+         SqoGMt1h9UJwQpGeFYtNLnjn6O2ICPx6feP9AEhMpfAr+Eo9N5cLPsKkDHSpOSXcCmo7
+         YjLZwsx0G00wNo8h/67trV9Nf/9ytQvMmsWphERudWFyCSj7qkjKKQmOo5NjXx4VPPvX
+         kL1i7MTARjNKO00UXN/ZIBi4Ci6MzBImb7Nljg1DPmmbml2LToMC1QVsMMz0ENnpFzub
+         XX0A==
+X-Gm-Message-State: AOAM533mUkMTAFmhP2B+p8BnRouHPSccgeFZ/TslBDnOmbDAN9iaR70H
+        HQKF10esvG9EdW+Q6bNBXAlYxPAOvOi0AtsA+eDJdw==
+X-Google-Smtp-Source: ABdhPJzpriQshTIpqKQMJT+0l4q2uq6+2sikc3EbsGrNrjMHRjbSi1HZo10AoayNFKnB5UaBFtSgW28vi+kRhgmUgm4=
+X-Received: by 2002:a63:de0e:: with SMTP id f14mr4863525pgg.273.1612540919220;
+ Fri, 05 Feb 2021 08:01:59 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.67] (94.61.1.144) by LO2P265CA0107.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:c::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.17 via Frontend Transport; Fri, 5 Feb 2021 16:00:56 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f1f62b36-91ae-42ea-0ffb-08d8c9ef3df8
-X-MS-TrafficTypeDiagnostic: BYAPR10MB2696:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BYAPR10MB269678B6166DB20AB022A6D3BBB29@BYAPR10MB2696.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: k3KfFOqvDhBMw6rsEwWX8RSDucnJXfOIvYjVaM8ZF0BnGjd6nbZh5l8+l+mtOIUKTwPNEAJmYDIJsdOYFG7r79AFXjUf255tk9tAZ5rLzHTR0ATcK4oqM0coUZg6+b6NtyfPdKZqmUepgZdlfCPxHh/8GmujORp4YhHvGSyGr73NoSeBPGqQ0NFL4W5WUfSUF/Jjl8WnrTgdia/FWn4IWT6H3wOAvUQn5RDXLNBGFfka2kpW1jDHhcZiwF2YPGgPn3vndSGvDf8IuTsZwDbaNNdHWlJW/fbV0uzHCy3PUya1uNA3s2szJJUI9rEOVQg5BtowmFlM1c0/ZwA6LMISAtdmFD3la3R7EvUhPF+wmMNlyDeyTL9WpY7CSwGV02mFuI2ISzUe+2zimhzkODellVIdPO23Rj9FbYuhhMZ+ZxWtIZV3WGcU3JcmJYaDlxP2lPxU3K4BgbmqNySucC4NyGw9Ki3MR84gSb/qxaMF0D6OBJ5UL9hOI3Z2uwMrG1sKTcqe9mpaToPmLa6hQxEHpHDAcQAxAY3SQ7AqRjNuhP+Zt0d3jmrnEZM1EOKyaTY/kisoAo4Bn4mU7nHAz/qLvsTwOWTpwlDtbGwIQ1tlhx7rqG1bn8x/f5fmyPW23kUqtWp4MVuba4OfDnwM0qhAc4VxXWYplUg/BMqWUjU6VnA=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3077.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(396003)(136003)(366004)(346002)(376002)(86362001)(16526019)(8936002)(316002)(53546011)(186003)(966005)(31696002)(36756003)(66556008)(66476007)(6666004)(66946007)(31686004)(83380400001)(16576012)(6486002)(2906002)(7416002)(6916009)(5660300002)(478600001)(956004)(8676002)(2616005)(4326008)(7406005)(26005)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?MGRkNlV1d1Y0dHdkT3JSZlJKU21YVXJmbUl5TmRQVDFTQ3AvSGs5ZWFoU2xG?=
- =?utf-8?B?WUlhUTNiLzVLNWtQd0UxRUZrdzl2RGptTHEzOEg4a2d2MFFtNy9jL2xydFZl?=
- =?utf-8?B?NCtaa2s5L3YxMnFFZDhKamdySXE4dTczSk5EbUxqQmtTMHJYTEx2eU5CTUhw?=
- =?utf-8?B?RlBURWZXYzBvSkJ1SVFWVHRSVXE3U21aYU9TbURKK1AzK3dzZ1V2UFNZZm1I?=
- =?utf-8?B?QzEvdjFaeWJpVExuZWxGekhpUndIeDloWGVFbWlENEM1RGdQbjdtdkxBQ1I3?=
- =?utf-8?B?bTlJQi84enNVYlAwZC8vWGFYTDBlL3k1NWs2N1p3S01tUXI4eHJQUTdqTWd1?=
- =?utf-8?B?Z1BCcU1FKy9vUUxvQVBMdVlSQXg0NDBGV0tEdXVyVEsxSUQ0eEFqengvZGRB?=
- =?utf-8?B?OWY2cEdINEppeVBKSE4wRDJ2RHF2dTdtVkZ2RmE0aHVObnl6K2ZFbGZSN0pt?=
- =?utf-8?B?VnVpbHdKMHJGWmZsTllxU2RzdnI5dkVSK20vUnAvd2gyVEUxNEtzWEhtZ2VE?=
- =?utf-8?B?UjVmS0Ria3A4UWdZZVl5QTJ2SG9vVkhsekEvWkFkdVptRWtJNnFEY1ovWUpW?=
- =?utf-8?B?RHA5YldkL0g0Z0U2QWpuRlZaOGo5NlF0MWRSRFNyekFuL0ZJM0lQK2RkcjZz?=
- =?utf-8?B?N3BuZlFhQ2hkNDl6WkV2VnVab2hJUkJJOVFvZHVKQUs1dXpja2FQeFVSQnBL?=
- =?utf-8?B?ZUJJdUZyWmNvRTF2ZytnLzdhaFNVVG5hT01tUFQraWxId1NFU3BpbldNdEpl?=
- =?utf-8?B?d3pMZXJraW9zYm4wVU5WNDhYM1BzZnlrUkZRclM4dUNUYmpCTnY5RXgxbFBU?=
- =?utf-8?B?aWlIaU5iT05kMDNGZXM4RW5rOHZJRkFOVnRyYzQ2V2lzTFhteWpQeENZUENo?=
- =?utf-8?B?b1Z2dnNtdWd1TmtGUjVWWkxzUmxEVWZmcDlKd05IMS9nZXkzVThyeEh1eTR6?=
- =?utf-8?B?RDMwbFJtRUwrc2ZqUkJuMkxMYnBMR3JjUDU3RlJTZVlXNkwvT3Q0aENpaW5P?=
- =?utf-8?B?MEgzMTgzSXY4RzNjaGlSaitwS0s0WmIwVUxMd21VcUJvc243WUJNYjQxSjNN?=
- =?utf-8?B?ZnRlYi9sZndXbjBhQ09EMHBNTTNJREZBei9LWmluM1pTUjJGcnZJNVNTZzNK?=
- =?utf-8?B?TzVsMklhRnFObXlDQlExdDhLQnlpU2U5LzUrUDhsRmdnbTBrVm5kdnlNRU9t?=
- =?utf-8?B?RGwySm5iblNXZVVKa1U0S1hxS2YvTDUvZ3d4THRnM1FJSHhhdFE1VzZQaFpD?=
- =?utf-8?B?YWJ1b2NyMVdnNFVzak5XZXZFWUZ0TDVEYUNUWUFUc0pKZEVNd3hIV2taZjdz?=
- =?utf-8?B?SnBtMVY2RS96ZkhBS2tieGx2N0lNdFpIZFEra3pjeTVNZ29TQ1lHM1NjWFNP?=
- =?utf-8?B?Ymo2bnl6QVI2RjA0eUkyZWhGdVQzUWZuU0JJSEZhZGxVS3hvZmRHN2R1Q3h3?=
- =?utf-8?B?MkZKWFMvaFh5dktiQVZNRFBidjcyeGpEQVg4U21jaktQZmxtYkQyQXA3Z1pF?=
- =?utf-8?B?a01yeGhaVXVJbHdXVWtEM1NaVnZKaU1DdGhRQVJrT1hGUExFaFQ2YS9RQW1U?=
- =?utf-8?B?eHVLMUEycXQrcUhPajFuQXRnTDFyYzF4TWFURWwwWm80T1JVanJXRDNuNFVv?=
- =?utf-8?B?cnhLblRXSm9HT01uTTlkL3kreTdIUWVKVU5hdnFMNENtTTc2WFlmdUVwYjho?=
- =?utf-8?B?V1g3V0U3VHVGRUJOZWh5MGxKeFpWcW81R0dBa3VCS0RmSVMzZ2tTSXpBQzVT?=
- =?utf-8?Q?JzvbXfCwbfrp8iPnjDk22I2yzttTRdzNVM622gN?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1f62b36-91ae-42ea-0ffb-08d8c9ef3df8
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3077.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2021 16:01:04.9427
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Omz6ypj+hxsZ5Il8EP6MBbZr19mTcWRa8UGBuGgs2g4mu2Tu+M+MYxFS0N4+shT0mFr7YlfI/Rg4nw+kzHBPl57oiO2VjIy+/Ouw9RTAuIc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2696
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9885 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2102050103
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9885 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 clxscore=1011
- spamscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102050103
+References: <20210204035043.36609-1-songmuchun@bytedance.com>
+ <20210204035043.36609-4-songmuchun@bytedance.com> <20210205085437.GB13848@linux>
+In-Reply-To: <20210205085437.GB13848@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Sat, 6 Feb 2021 00:01:23 +0800
+Message-ID: <CAMZfGtVF7eYtK1a=4m3=tbU5s0QtHU15V9SZ0gjCxkHW+fKDsg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v14 3/8] mm: hugetlb: free the vmemmap
+ pages associated with each HugeTLB page
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/4/21 3:50 AM, Muchun Song wrote:
-> Hi all,
-> 
+On Fri, Feb 5, 2021 at 4:54 PM Oscar Salvador <osalvador@suse.de> wrote:
+>
+> On Thu, Feb 04, 2021 at 11:50:38AM +0800, Muchun Song wrote:
+> > Every HugeTLB has more than one struct page structure. We __know__ that
+> > we only use the first 4(HUGETLB_CGROUP_MIN_ORDER) struct page structures
+> > to store metadata associated with each HugeTLB.
+> >
+> > There are a lot of struct page structures associated with each HugeTLB
+> > page. For tail pages, the value of compound_head is the same. So we can
+> > reuse first page of tail page structures. We map the virtual addresses
+> > of the remaining pages of tail page structures to the first tail page
+> > struct, and then free these page frames. Therefore, we need to reserve
+> > two pages as vmemmap areas.
+> >
+> > When we allocate a HugeTLB page from the buddy, we can free some vmemmap
+> > pages associated with each HugeTLB page. It is more appropriate to do it
+> > in the prep_new_huge_page().
+> >
+> > The free_vmemmap_pages_per_hpage(), which indicates how many vmemmap
+> > pages associated with a HugeTLB page can be freed, returns zero for
+> > now, which means the feature is disabled. We will enable it once all
+> > the infrastructure is there.
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+>
+> [...]
+>
+> > +void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+> > +{
+> > +     unsigned long vmemmap_addr = (unsigned long)head;
+> > +     unsigned long vmemmap_end, vmemmap_reuse;
+> > +
+> > +     if (!free_vmemmap_pages_per_hpage(h))
+> > +             return;
+> > +
+> > +     vmemmap_addr += RESERVE_VMEMMAP_SIZE;
+> > +     vmemmap_end = vmemmap_addr + free_vmemmap_pages_size_per_hpage(h);
+> > +     vmemmap_reuse = vmemmap_addr - PAGE_SIZE;
+> > +
+> > +     /*
+> > +      * Remap the vmemmap virtual address range [@vmemmap_addr, @vmemmap_end)
+> > +      * to the page which @vmemmap_reuse is mapped to, then free the vmemmap
+> > +      * pages which the range are mapped to.
+>
+> "then free the pages which the range [@vmemmap_addr, @vmemmap_end] is mapped to."
+>
+> I am not a native but sounds better to me.
 
-[...]
+Me too. But I believe you are right. :-)
 
-> When a HugeTLB is freed to the buddy system, we should allocate 6 pages for
-> vmemmap pages and restore the previous mapping relationship.
-> 
-> Apart from 2MB HugeTLB page, we also have 1GB HugeTLB page. It is similar
-> to the 2MB HugeTLB page. We also can use this approach to free the vmemmap
-> pages.
-> 
-> In this case, for the 1GB HugeTLB page, we can save 4094 pages. This is a
-> very substantial gain. On our server, run some SPDK/QEMU applications which
-> will use 1024GB hugetlbpage. With this feature enabled, we can save ~16GB
-> (1G hugepage)/~12GB (2MB hugepage) memory.
-> 
-> Because there are vmemmap page tables reconstruction on the freeing/allocating
-> path, it increases some overhead. Here are some overhead analysis.
+>
+> > +      */
+> > +     vmemmap_remap_free(vmemmap_addr, vmemmap_end, vmemmap_reuse);
+> > +}
+> > diff --git a/mm/hugetlb_vmemmap.h b/mm/hugetlb_vmemmap.h
+> > new file mode 100644
+> > index 000000000000..6923f03534d5
+> > --- /dev/null
+> > +++ b/mm/hugetlb_vmemmap.h
+>
+> [...]
+>
+> > diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> > index 16183d85a7d5..50c1dc00b686 100644
+> > --- a/mm/sparse-vmemmap.c
+> > +++ b/mm/sparse-vmemmap.c
+> > @@ -27,8 +27,215 @@
+> >  #include <linux/spinlock.h>
+> >  #include <linux/vmalloc.h>
+> >  #include <linux/sched.h>
+> > +#include <linux/pgtable.h>
+> > +#include <linux/bootmem_info.h>
+> > +
+> >  #include <asm/dma.h>
+> >  #include <asm/pgalloc.h>
+> > +#include <asm/tlbflush.h>
+> > +
+> > +/**
+> > + * vmemmap_remap_walk - walk vmemmap page table
+> > + *
+> > + * @remap_pte:               called for each non-empty PTE (lowest-level) entry.
+>
+> Well, we BUG_ON on empty PTE, so not sure that pointing out here is worth.
+> It sounds like we do nothing when it's empty.
+> Maybe:
+>
+> "called for each lowest-level entry (PTE)"
 
-[...]
+Thanks. I will update this.
 
-> Although the overhead has increased, the overhead is not significant. Like Mike
-> said, "However, remember that the majority of use cases create hugetlb pages at
-> or shortly after boot time and add them to the pool. So, additional overhead is
-> at pool creation time. There is no change to 'normal run time' operations of
-> getting a page from or returning a page to the pool (think page fault/unmap)".
-> 
+>
+> > + * @reuse_page:              the page which is reused for the tail vmemmap pages.
+> > + * @reuse_addr:              the virtual address of the @reuse_page page.
+> > + * @vmemmap_pages:   the list head of the vmemmap pages that can be freed.
+> > + */
+> > +struct vmemmap_remap_walk {
+> > +     void (*remap_pte)(pte_t *pte, unsigned long addr,
+> > +                       struct vmemmap_remap_walk *walk);
+> > +     struct page *reuse_page;
+> > +     unsigned long reuse_addr;
+> > +     struct list_head *vmemmap_pages;
+> > +};
+> > +
+> > +static void vmemmap_pte_range(pmd_t *pmd, unsigned long addr,
+> > +                           unsigned long end,
+> > +                           struct vmemmap_remap_walk *walk)
+> > +{
+> > +     pte_t *pte;
+> > +
+> > +     pte = pte_offset_kernel(pmd, addr);
+> > +
+> > +     /*
+> > +      * The reuse_page is found 'first' in table walk before we start
+> > +      * remapping (which is calling @walk->remap_pte).
+> > +      */
+> > +     if (!walk->reuse_page) {
+> > +             BUG_ON(pte_none(*pte) || walk->reuse_addr != addr);
+>
+> I would rather have them in separate lines:
+> BUG_ON(pte_none(*pte));
+> BUG_ON(walk->reuse_addr != addr));
+>
+> It helps when trying to figure out when we explode. One could dig in the
+> registers, but let's make it easier to find out.
 
-Despite the overhead and in addition to the memory gains from this series ...
-there's an additional benefit there isn't talked here with your vmemmap page
-reuse trick. That is page (un)pinners will see an improvement and I presume because
-there are fewer memmap pages and thus the tail/head pages are staying in cache more
-often.
+OK. Will do.
 
-Out of the box I saw (when comparing linux-next against linux-next + this series)
-with gup_test and pinning a 16G hugetlb file (with 1G pages):
+>
+> > +
+>
+> [...]
+>
+>
+> > +static void vmemmap_remap_range(unsigned long start, unsigned long end,
+> > +                             struct vmemmap_remap_walk *walk)
+> > +{
+> > +     unsigned long addr = start;
+> > +     unsigned long next;
+> > +     pgd_t *pgd;
+> > +
+> > +     VM_BUG_ON(!IS_ALIGNED(start, PAGE_SIZE));
+> > +     VM_BUG_ON(!IS_ALIGNED(end, PAGE_SIZE));
+> > +
+> > +     pgd = pgd_offset_k(addr);
+> > +     do {
+> > +             BUG_ON(pgd_none(*pgd));
+> > +
+> > +             next = pgd_addr_end(addr, end);
+> > +             vmemmap_p4d_range(pgd, addr, next, walk);
+> > +     } while (pgd++, addr = next, addr != end);
+> > +
+> > +     /*
+> > +      * We do not change the mapping of the vmemmap virtual address range
+> > +      * [@start, @start + PAGE_SIZE) which belongs to the reuse range.
+> > +      * So we not need to flush the TLB.
+> > +      */
+> > +     flush_tlb_kernel_range(start + PAGE_SIZE, end);
+>
+> I find that comment a bit confusing. I would rather describe what are we
+> flushing instead of what we are not.
+>
 
-	get_user_pages(): ~32k -> ~9k
-	unpin_user_pages(): ~75k -> ~70k
+OK. Will update it.
 
-Usually any tight loop fetching compound_head(), or reading tail pages data (e.g.
-compound_head) benefit a lot. There's some unpinning inefficiencies I am fixing[0], but
-with that in added it shows even more:
+>
+> > +}
+> > +
+> > +/*
+> > + * Free a vmemmap page. A vmemmap page can be allocated from the memblock
+> > + * allocator or buddy allocator. If the PG_reserved flag is set, it means
+> > + * that it allocated from the memblock allocator, just free it via the
+> > + * free_bootmem_page(). Otherwise, use __free_page().
+> > + */
+> > +static inline void free_vmemmap_page(struct page *page)
+> > +{
+> > +     if (PageReserved(page))
+> > +             free_bootmem_page(page);
+> > +     else
+> > +             __free_page(page);
+> > +}
+> > +
+> > +/* Free a list of the vmemmap pages */
+> > +static void free_vmemmap_page_list(struct list_head *list)
+> > +{
+> > +     struct page *page, *next;
+> > +
+> > +     list_for_each_entry_safe(page, next, list, lru) {
+> > +             list_del(&page->lru);
+> > +             free_vmemmap_page(page);
+> > +     }
+> > +}
+> > +
+> > +static void vmemmap_remap_pte(pte_t *pte, unsigned long addr,
+> > +                           struct vmemmap_remap_walk *walk)
+> > +{
+> > +     /*
+> > +      * Remap the tail pages as read-only to catch illegal write operation
+> > +      * to the tail pages.
+> > +      */
+> > +     pgprot_t pgprot = PAGE_KERNEL_RO;
+> > +     pte_t entry = mk_pte(walk->reuse_page, pgprot);
+> > +     struct page *page = pte_page(*pte);
+> > +
+> > +     list_add(&page->lru, walk->vmemmap_pages);
+> > +     set_pte_at(&init_mm, addr, pte, entry);
+> > +}
+> > +
+> > +/**
+> > + * vmemmap_remap_free - remap the vmemmap virtual address range [@start, @end)
+> > + *                   to the page which @reuse is mapped to, then free vmemmap
+> > + *                   which the range are mapped to.
+> > + * @start:   start address of the vmemmap virtual address range that we want
+> > + *           to remap.
+> > + * @end:     end address of the vmemmap virtual address range that we want to
+> > + *           remap.
+> > + * @reuse:   reuse address.
+> > + *
+> > + * Note: This function depends on vmemmap being base page mapped. Please make
+> > + * sure that the architecture disables PMD mapping of vmemmap pages when calling
+> > + * this function.
+>
+> Well, we do not really depend on the architecture to not map the vmemmap range
+> with PMDs, right? IIUC, that is driven by your boot parameter (patch#5), which
+> overrides whatever the architecture can do.
 
-	unpin_user_pages(): ~27k -> ~3.8k
+Right. I will rework the comment here.
 
-FWIW, I was also seeing that with devdax and the ZONE_DEVICE vmemmap page reuse equivalent
-series[1] but it was mixed with other numbers.
+>
+> Functional changes look good to me, so with all the above fixes, you can add:
+>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>
 
-Anyways, JFYI :)
+Very thanks.
 
-	Joao
-
-[0] https://lore.kernel.org/linux-mm/20210204202500.26474-1-joao.m.martins@oracle.com/
-[1] https://lore.kernel.org/linux-mm/20201208172901.17384-1-joao.m.martins@oracle.com/
+>
+> --
+> Oscar Salvador
+> SUSE L3
