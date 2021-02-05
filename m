@@ -2,78 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 516AC311532
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE6E311544
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232648AbhBEWYn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 17:24:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41520 "EHLO
+        id S232557AbhBEW0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:26:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232598AbhBEOZQ (ORCPT
+        with ESMTP id S232073AbhBEOUK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:25:16 -0500
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB1FC061797;
-        Fri,  5 Feb 2021 08:03:23 -0800 (PST)
-Received: by mail-oi1-x22c.google.com with SMTP id n7so7901695oic.11;
-        Fri, 05 Feb 2021 08:03:23 -0800 (PST)
+        Fri, 5 Feb 2021 09:20:10 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F8BC061BC3;
+        Fri,  5 Feb 2021 07:56:11 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id q5so6202356ilc.10;
+        Fri, 05 Feb 2021 07:56:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=FVdQ5ukkP9/XbYX/8CVztmsEIJMufgkJkRC2gxyWHPI=;
-        b=iC4JrNHZTN8cnhAfbFpXAv6CrFup/sVyTxWB7UeMqnn+hr1kvuuCSI8K3p2ARted3u
-         59LNcUye0Sy0/hKfpUXWC82aIyZwK8dCGo5zBKK++Nj01iZFkMSbMGPm356DrQKJRz1r
-         +AV6IgEH03dFHV2pGfYjGATnvdelNkX17KWcEdLdC0esiq307LeLHH2TZEirXbbape4e
-         5YobvlpVcF4g3OOFXMPnzLx6GlD9LbzjGMZWwGVh+C/NJdCdqTjx8Ve6LZsdxp7M9Don
-         piF1R2oOaNnqfbNVg6svIWto6ew7TKfXoi45NqqXNLygS8/z+tHJqKAluNwbRb8tzXnh
-         PK+A==
+        bh=NkWrwD+0iBY0AMI/Yx8lcRpCycaSsO404tmH7mOdGV0=;
+        b=l+EUrOAUSrfAV03jCy1lMdnJRW5gWWbZWzaLQCQ3ya/XW/WusXwUDtqerJY8QKDxjb
+         nMyliiVONhz+gMFl3x49wy16tOfpfzI/ycqpDpSuLAFVkrEgs2/LABC6WVCkmrk4P3Jj
+         YG8LW9x7upN8zKwzR2U/NnrCk+hOfEa3BW34UPbGsDA7iZvTAT7ieOIn6b5cIz6bHS8B
+         N+ACnr4qU11yK/240H+7RU1If0I1v/ZIosfrBE+MXMhXMEuRmDh0XImyhgtRBMQAkcV6
+         z244t9aGyFlLRIYzvJP0+RxrdISTzzNqSbE16DU4Iqy51X0awDMhbqQMnWK4wp4Gz9MM
+         fGig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to;
-        bh=FVdQ5ukkP9/XbYX/8CVztmsEIJMufgkJkRC2gxyWHPI=;
-        b=AA83PO6GF+GEVH3eFNc7ma3qgWct6qwxMlvT8EnXhyexnvO8B5sLJy/xlHt1xqJOJu
-         sRjX50U93Sv7FhLBV/o2TMEk5E2F7kW0kqhOf+SG+hMnseX5zBW8LTmrve4WA5llPvdZ
-         NIXilpvO9qHh6zwySc8A36WmGy6KRXE4Da7EHR784i0B+5AInoDWT2NWRyDgIonmwxJK
-         VvddfpIPaFueWWk2A6tADM79fL/wZET2ntHsvA07m543C8DXdF0+trdonZHO+CZxz+jG
-         ZvvWu4E7rcdDluB23R3BeMGoaKktObsK+XwqMxLuhDnwZbLcVpHVoXU6RoWNgVwDJ5gT
-         gC7w==
-X-Gm-Message-State: AOAM533qsHsYyD1N953i4f2G0SVbJVqtdIxDGVrKq41knRp9iNIp0p/n
-        TIlI6IySehmMYoGXEyWngh+AoWagzeez06lW5pCpTjtL6FU=
-X-Google-Smtp-Source: ABdhPJy6jCzEz03JnQXVhbqT+cuIUDmp9ZKy2c51bvVOq36mVzOPREDPhQTk2WphtOI6JFjfXJn66s2Kn9PDiuB374M=
-X-Received: by 2002:a05:6808:1290:: with SMTP id a16mr3368879oiw.161.1612539418567;
- Fri, 05 Feb 2021 07:36:58 -0800 (PST)
+        bh=NkWrwD+0iBY0AMI/Yx8lcRpCycaSsO404tmH7mOdGV0=;
+        b=MyLV8JlWQ27b4mzJmswjgMKO+0Vejs5V+SqDNqw4NBNjuFkaWFx349EiseFKsGZ1Bz
+         DHfAsDVqnGxUbYgWFRnVd1mBvNusof98s5nazJI79ZpRkCOZrBw45WGX8b31i2FAsuxl
+         4KmhrNyP8zp9rvDr/diZVKUQho+bfF5M+AJeIKZ8oE/2H3KVuoEKAfDCAFyun/gUQeM2
+         W61VgP6+jmILdQpyjOBvZIC86/2byDcWKr6LS4WOkHBRI883Wl14u+R9kA4qty4Hn0PH
+         x5n3DploymXRIRXdVUsKCw0HKCGMXWy0pZXApLESTzXn43ejVeBjnyjeYlRMmwi2HccU
+         nqxQ==
+X-Gm-Message-State: AOAM532eaexAifL7cFyB+GzcrcCSoMRYX1Rvb8jyyjVB+8r1nxeKu5OK
+        k4I7xkcmACrtp3fHUle0VDIO4kuvLtAFDkiayf4=
+X-Google-Smtp-Source: ABdhPJzH9oG7rDdE0KHhlyTkzPELm3dtJnUracCm5bXpmsToyJPVAyZv8mv098u6Y9LghFSdQSjTEaQWbqNe5fabjQQ=
+X-Received: by 2002:a92:6403:: with SMTP id y3mr4340494ilb.72.1612540571436;
+ Fri, 05 Feb 2021 07:56:11 -0800 (PST)
 MIME-Version: 1.0
-References: <20210205045217.552927-1-enbyamy@gmail.com> <20210205131910.GJ1993@twin.jikos.cz>
-In-Reply-To: <20210205131910.GJ1993@twin.jikos.cz>
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Fri, 5 Feb 2021 07:36:47 -0800
-Message-ID: <CAE1WUT4az3ZZ8OU2AS2xxi9h1TbW958ivNXr53jinqHK5vuzMg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] fs/efs: Follow kernel style guide
-To:     dsterba@suse.cz, Amy Parker <enbyamy@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210205122033.1345204-1-unixbhaskar@gmail.com>
+ <CAOQ4uxhy2XG=EBg6f6xwSNZnYU9z0vx0W6Q2pXDT_KOTKWPZ8A@mail.gmail.com> <YB1EHZL5gbVGO1Xx@ArchLinux>
+In-Reply-To: <YB1EHZL5gbVGO1Xx@ArchLinux>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 5 Feb 2021 17:56:00 +0200
+Message-ID: <CAOQ4uxgNQ9wCp_0jBiFf8Vzze6FG=pVO04gxF4wki4fePRTauA@mail.gmail.com>
+Subject: Re: [PATCH] fs: notify: inotify: Replace a common bad word with
+ better common word
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 5, 2021 at 5:1 AM David Sterba <dsterba@suse.cz> wrote:
+On Fri, Feb 5, 2021 at 3:12 PM Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
 >
-> On Thu, Feb 04, 2021 at 08:52:14PM -0800, Amy Parker wrote:
-> > As the EFS driver is old and non-maintained,
+> On 14:45 Fri 05 Feb 2021, Amir Goldstein wrote:
+> >On Fri, Feb 5, 2021 at 2:20 PM Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
+> >>
+> >>
+> >>
+> >> s/fucked/messed/
+> >>
+> >> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> >> ---
+> >>  fs/notify/inotify/inotify_user.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> >> index 59c177011a0f..0a9d1a81edf0 100644
+> >> --- a/fs/notify/inotify/inotify_user.c
+> >> +++ b/fs/notify/inotify/inotify_user.c
+> >> @@ -455,7 +455,7 @@ static void inotify_remove_from_idr(struct fsnotify_group *group,
+> >>         /*
+> >>          * We found an mark in the idr at the right wd, but it's
+> >>          * not the mark we were told to remove.  eparis seriously
+> >> -        * fucked up somewhere.
+> >> +        * messed up somewhere.
+> >>          */
+> >>         if (unlikely(found_i_mark != i_mark)) {
+> >>                 WARN_ONCE(1, "%s: i_mark=%p i_mark->wd=%d i_mark->group=%p "
+> >> --
+> >> 2.30.0
+> >>
+> >
+> >Same comment as the previous attempt:
+> >
+> >https://lore.kernel.org/linux-fsdevel/20181205094913.GC22304@quack2.suse.cz/
+> >
+> >Please remove the part of the comment that adds no valuable information
+> >and fix grammar mistakes.
+> >
+> I am not sure Amir ..could you please pinpoint that.
 >
-> Is anybody using EFS on current kernels? There's not much point updating
-> it to current coding style, deleting fs/efs is probably the best option.
->
 
-Wouldn't be surprised if there's a few systems out there that haven't
-migrated at all.
+        /*
+         * We found a mark in the idr at the right wd, but it's
+         * not the mark we were told to remove.
+         */
 
-> The EFS name is common for several filesystems, not to be confused with
-> eg.  Encrypted File System. In linux it's the IRIX version, check
-> Kconfig, and you could hardly find the utilities to create such
-> filesystem.
-
-Ah yep, good point.
-
-   -Amy IP
+Thanks,
+Amir.
