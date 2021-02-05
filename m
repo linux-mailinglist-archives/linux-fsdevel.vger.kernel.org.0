@@ -2,249 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C797B3112C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 21:46:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19AF5311386
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 22:29:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233441AbhBETDV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 14:03:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46122 "EHLO
+        id S233374AbhBEV1w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 16:27:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233374AbhBETBi (ORCPT
+        with ESMTP id S231303AbhBEPAc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 14:01:38 -0500
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1763EC06174A;
-        Fri,  5 Feb 2021 12:43:22 -0800 (PST)
-Received: by mail-vs1-xe35.google.com with SMTP id q23so4327819vsg.4;
-        Fri, 05 Feb 2021 12:43:22 -0800 (PST)
+        Fri, 5 Feb 2021 10:00:32 -0500
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C59C061786;
+        Fri,  5 Feb 2021 08:38:37 -0800 (PST)
+Received: by mail-ua1-x933.google.com with SMTP id p19so2310934uad.7;
+        Fri, 05 Feb 2021 08:38:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=zQsbQqU8v0J69kx7VlEEqc5CnlMmAXtv+kLMdo4DMoU=;
-        b=Q0NVz7Xg5ztNqEVp7o9ftQwRfhvHnLTnFQD2pcyaDROqmuH0UMeRXtAqhD/vXy9SZZ
-         XRkhMdIVJdFOa4FQ8brbYEiwGGHTfqeBiplecxKW6Od3zOJpV1Jk2k7xAEbG+q0biz/2
-         Yt3h1jxTQg/nStuYfLu6NL6iY0uJ161veM5hLLMa6SK+HdnPbig9pqW17qPqNXl6OW3P
-         KssDnJLanYqODyih11lUBShgXPlUoLe5OfQNyQZJiFCIy6lqKo/FtNIZT/olQyjrgoOS
-         LshggAoI+w6Z2yiZmb4l1SCzX9kT2JUXtn+IKNR0d0IoG9uTLyLgT5KF+IGHY03WT37x
-         z2IQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=I57FiQkDQ+xhVoz0anMGzaM3+FzzYkjie2v/Yi2uB3w=;
+        b=dd6MYgRnwCqIWamtBY8PPs1TbchkdtCoTsmd3cmxscyyn9EKnkOiC6d0o2f+8VPORq
+         I3/A5Rnpi9KTV5mQqw9wPkf0DTJSqUudQ0fPlStPLcI2qjK6Mkdv80h6MAoskuQd8Bmw
+         iXAfBHzFn9gh6oHFDKv1ketOdUKnTY5fp6syB8Of8WZUR/o6SgsihZvTLVdyydgsXWAQ
+         c6dtuT7JzeRwK6h0pDY3UYP38tclR3i2Kvs7FDB8xqes0xMBtTq5kGJh4XIeP72L6jOb
+         CIxKy8TiNk8o03Rw7sf6hCE/ew3YMwx3YSmALaHQgzct9hT9AwSbVn/HQbCFkzoa6698
+         mtvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=zQsbQqU8v0J69kx7VlEEqc5CnlMmAXtv+kLMdo4DMoU=;
-        b=MHdtNGjt1tla1/kluQEX1t9v9ohRCgEKW9L6Az6A0a9yzTkMjlKmN0YSpR24uaQWZ5
-         J4JoODnOERkSfDU4qYJgyB+vLn07G9Q+zzz6ksa8+x6KeRiURTkms9U/8kZ2RsB+WwNW
-         NW8dO23zyj2mG37yL1+O2bxhIjbZoTmFDbvAyukzofyRUAXhIl7hlDtYW6xsmx+UyIQB
-         WXTp3t2jY5oVqBzxYwV4GZalQjPJkqLkg5LhivTCQx+zZpHipMKkWb5jx0CERIV5nR62
-         6EiKUbmDGYPuj5uL7ImZuUNrnCEVdDIBreFVhFIrsyismv94ZSGe7/A9FemgZ9V/442S
-         Gxew==
-X-Gm-Message-State: AOAM532MvFZlzJs+bg3WCD3m6HFiHo/NJZxeMuqHJJQ79pmWbvdgNqkr
-        739AjB97NwBSvL2id1mGHg8VqeDD2Qtt4VfXd34=
-X-Google-Smtp-Source: ABdhPJxzP//EYDjw/9Gh7AShXIhMpCAZ8yFBWw3P1vtlwldQazlLxBNC9orqn4mv5zFF9oH5UoizNzSVMMuhvth2qY4=
-X-Received: by 2002:a67:c29e:: with SMTP id k30mr4509314vsj.45.1612557801344;
- Fri, 05 Feb 2021 12:43:21 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=I57FiQkDQ+xhVoz0anMGzaM3+FzzYkjie2v/Yi2uB3w=;
+        b=WpD15HDL2Dc7kpOzFg63BHuMzkXN8YqRRbk92OwgN6MZ37SA+/S0K0uTNDr0CO160s
+         heAMRp0o1vUFgRjxcqcFYuFqwuSj1D4+fCDplDCvHr7hUY2IGeXhqwe0VzdB5iaQW96n
+         +M1/0fkUdCwwzX+/b7wkHm4KtRcm6+duhvb/8/q0UrNNeOpkaz1lPa0Y5tDDJsyx3lsk
+         rCJXgOmfgk5SQnjt+M+RPLNuiX7O+FRDRJ4lmA7YPwXKDWLlKfKBj4f+pI8YKQBBeUn4
+         kMEfxZ6Y4akBy6y6xIX/OuytyO/Q8uesOs3U9BBTWtniayq6Otw/6sHydNsDNm/oRr1N
+         W2jw==
+X-Gm-Message-State: AOAM531pzNZGjaQvQzXYrfpLm0AXTgPGEZJO8vnPCbUvPGwnf0i/xf6j
+        zY14L83MJA/r2z8x+eW9oITzDox2dofKzAA7ww4RVaCDNbl1gA==
+X-Google-Smtp-Source: ABdhPJxXSn+EpSOusnsHf6NXEqgBAY2zdEq25/ycqgSkeVmZ7ME1vWs7sB+tCZM8qIKXe1d6nho1dSJyWVQDu2bt06w=
+X-Received: by 2002:a25:7706:: with SMTP id s6mr6758693ybc.3.1612536734191;
+ Fri, 05 Feb 2021 06:52:14 -0800 (PST)
 MIME-Version: 1.0
-From:   Hanabishi Recca <irecca.kun@gmail.com>
-Date:   Sat, 6 Feb 2021 01:43:10 +0500
-Message-ID: <CAOehnrO-qjA4-YbqjyQCc27SyE_T2_bPRfWNg=jb8_tTetRUkw@mail.gmail.com>
-Subject: Re: [PATCH v20 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-To:     almaz.alexandrovich@paragon-software.com
-Cc:     aaptel@suse.com, andy.lavr@gmail.com, anton@tuxera.com,
-        dan.carpenter@oracle.com, dsterba@suse.cz, ebiggers@kernel.org,
-        hch@lst.de, joe@perches.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        mark@harmstone.com, nborisov@suse.com, pali@kernel.org,
-        rdunlap@infradead.org, viro@zeniv.linux.org.uk, willy@infradead.org
+References: <CANT5p=o4b9RfQ5omd911pLH3WFbiC1-ghF43kRZ5-4SV+PeS=g@mail.gmail.com>
+ <20210205144248.13508-1-aaptel@suse.com>
+In-Reply-To: <20210205144248.13508-1-aaptel@suse.com>
+From:   Shyam Prasad N <nspmangalore@gmail.com>
+Date:   Fri, 5 Feb 2021 06:52:03 -0800
+Message-ID: <CANT5p=p7Ah_yFsmpj7VCzuoszpf6WiU+G8jws24njXgM_gv_mQ@mail.gmail.com>
+Subject: Re: [PATCH v4] cifs: report error instead of invalid when
+ revalidating a dentry fails
+To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
+Cc:     CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        Steve French <smfrench@gmail.com>,
+        Stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Can't even build v20 due to compilation errors.
+Looks good to me.
+Maybe change the FYI in the cifs_dbg line above to VFS?
 
-DKMS make.log for ntfs3-20.0.0 for kernel 5.10.13-arch1-1 (x86_64)
-Sat Feb  6 01:20:00 +05 2021
-make -C /lib/modules/5.10.13-arch1-1/build
-M=3D/var/lib/dkms/ntfs3/20.0.0/build modules
-make[1]: Entering directory '/usr/lib/modules/5.10.13-arch1-1/build'
-  CC [M]  /var/lib/dkms/ntfs3/20.0.0/build/attrib.o
-  CC [M]  /var/lib/dkms/ntfs3/20.0.0/build/attrlist.o
-  CC [M]  /var/lib/dkms/ntfs3/20.0.0/build/bitfunc.o
-  CC [M]  /var/lib/dkms/ntfs3/20.0.0/build/bitmap.o
-  CC [M]  /var/lib/dkms/ntfs3/20.0.0/build/dir.o
-  CC [M]  /var/lib/dkms/ntfs3/20.0.0/build/fsntfs.o
-  CC [M]  /var/lib/dkms/ntfs3/20.0.0/build/frecord.o
-  CC [M]  /var/lib/dkms/ntfs3/20.0.0/build/file.o
-/var/lib/dkms/ntfs3/20.0.0/build/file.c: In function =E2=80=98ntfs_getattr=
-=E2=80=99:
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:93:19: error: passing argument
-1 of =E2=80=98generic_fillattr=E2=80=99 from incompatible pointer type
-[-Werror=3Dincompatible-pointer-types]
-   93 |  generic_fillattr(mnt_userns, inode, stat);
-      |                   ^~~~~~~~~~
-      |                   |
-      |                   struct user_namespace *
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3095:30: note: expected =E2=80=98struct inode *=E2=80=
-=99 but
-argument is of type =E2=80=98struct user_namespace *=E2=80=99
- 3095 | extern void generic_fillattr(struct inode *, struct kstat *);
-      |                              ^~~~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:93:31: error: passing argument
-2 of =E2=80=98generic_fillattr=E2=80=99 from incompatible pointer type
-[-Werror=3Dincompatible-pointer-types]
-   93 |  generic_fillattr(mnt_userns, inode, stat);
-      |                               ^~~~~
-      |                               |
-      |                               struct inode *
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3095:46: note: expected =E2=80=98struct kstat *=E2=80=
-=99 but
-argument is of type =E2=80=98struct inode *=E2=80=99
- 3095 | extern void generic_fillattr(struct inode *, struct kstat *);
-      |                                              ^~~~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:93:2: error: too many
-arguments to function =E2=80=98generic_fillattr=E2=80=99
-   93 |  generic_fillattr(mnt_userns, inode, stat);
-      |  ^~~~~~~~~~~~~~~~
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3095:13: note: declared here
- 3095 | extern void generic_fillattr(struct inode *, struct kstat *);
-      |             ^~~~~~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c: In function =E2=80=98ntfs3_setattr=
-=E2=80=99:
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:639:24: error: passing
-argument 1 of =E2=80=98setattr_prepare=E2=80=99 from incompatible pointer t=
-ype
-[-Werror=3Dincompatible-pointer-types]
-  639 |  err =3D setattr_prepare(mnt_userns, dentry, attr);
-      |                        ^~~~~~~~~~
-      |                        |
-      |                        struct user_namespace *
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3217:28: note: expected =E2=80=98struct dentry *=E2=80=
-=99 but
-argument is of type =E2=80=98struct user_namespace *=E2=80=99
- 3217 | extern int setattr_prepare(struct dentry *, struct iattr *);
-      |                            ^~~~~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:639:36: error: passing
-argument 2 of =E2=80=98setattr_prepare=E2=80=99 from incompatible pointer t=
-ype
-[-Werror=3Dincompatible-pointer-types]
-  639 |  err =3D setattr_prepare(mnt_userns, dentry, attr);
-      |                                    ^~~~~~
-      |                                    |
-      |                                    struct dentry *
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3217:45: note: expected =E2=80=98struct iattr *=E2=80=
-=99 but
-argument is of type =E2=80=98struct dentry *=E2=80=99
- 3217 | extern int setattr_prepare(struct dentry *, struct iattr *);
-      |                                             ^~~~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:639:8: error: too many
-arguments to function =E2=80=98setattr_prepare=E2=80=99
-  639 |  err =3D setattr_prepare(mnt_userns, dentry, attr);
-      |        ^~~~~~~~~~~~~~~
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3217:12: note: declared here
- 3217 | extern int setattr_prepare(struct dentry *, struct iattr *);
-      |            ^~~~~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:664:15: error: passing
-argument 1 of =E2=80=98setattr_copy=E2=80=99 from incompatible pointer type
-[-Werror=3Dincompatible-pointer-types]
-  664 |  setattr_copy(mnt_userns, inode, attr);
-      |               ^~~~~~~~~~
-      |               |
-      |               struct user_namespace *
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3219:40: note: expected =E2=80=98struct inode *=E2=80=
-=99 but
-argument is of type =E2=80=98struct user_namespace *=E2=80=99
- 3219 | extern void setattr_copy(struct inode *inode, const struct iattr *a=
-ttr);
-      |                          ~~~~~~~~~~~~~~^~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:664:27: error: passing
-argument 2 of =E2=80=98setattr_copy=E2=80=99 from incompatible pointer type
-[-Werror=3Dincompatible-pointer-types]
-  664 |  setattr_copy(mnt_userns, inode, attr);
-      |                           ^~~~~
-      |                           |
-      |                           struct inode *
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3219:67: note: expected =E2=80=98const struct iattr *=
-=E2=80=99
-but argument is of type =E2=80=98struct inode *=E2=80=99
- 3219 | extern void setattr_copy(struct inode *inode, const struct iattr *a=
-ttr);
-      |                                               ~~~~~~~~~~~~~~~~~~~~^=
-~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:664:2: error: too many
-arguments to function =E2=80=98setattr_copy=E2=80=99
-  664 |  setattr_copy(mnt_userns, inode, attr);
-      |  ^~~~~~~~~~~~
-In file included from ./include/linux/backing-dev.h:13,
-                 from /var/lib/dkms/ntfs3/20.0.0/build/file.c:8:
-./include/linux/fs.h:3219:13: note: declared here
- 3219 | extern void setattr_copy(struct inode *inode, const struct iattr *a=
-ttr);
-      |             ^~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c: At top level:
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:1109:13: error: initialization
-of =E2=80=98int (*)(const struct path *, struct kstat *, u32,  unsigned int=
-)=E2=80=99
-{aka =E2=80=98int (*)(const struct path *, struct kstat *, unsigned int,
-unsigned int)=E2=80=99} from incompatible pointer type =E2=80=98int (*)(str=
-uct
-user_namespace *, const struct path *, struct kstat *, u32,  u32)=E2=80=99
-{aka =E2=80=98int (*)(struct user_namespace *, const struct path *, struct
-kstat *, unsigned int,  unsigned int)=E2=80=99}
-[-Werror=3Dincompatible-pointer-types]
- 1109 |  .getattr =3D ntfs_getattr,
-      |             ^~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:1109:13: note: (near
-initialization for =E2=80=98ntfs_file_inode_operations.getattr=E2=80=99)
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:1110:13: error: initialization
-of =E2=80=98int (*)(struct dentry *, struct iattr *)=E2=80=99 from incompat=
-ible
-pointer type =E2=80=98int (*)(struct user_namespace *, struct dentry *, str=
-uct
-iattr *)=E2=80=99 [-Werror=3Dincompatible-pointer-types]
- 1110 |  .setattr =3D ntfs3_setattr,
-      |             ^~~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:1110:13: note: (near
-initialization for =E2=80=98ntfs_file_inode_operations.setattr=E2=80=99)
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:1112:16: error: initialization
-of =E2=80=98int (*)(struct inode *, int)=E2=80=99 from incompatible pointer=
- type =E2=80=98int
-(*)(struct user_namespace *, struct inode *, int)=E2=80=99
-[-Werror=3Dincompatible-pointer-types]
- 1112 |  .permission =3D ntfs_permission,
-      |                ^~~~~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:1112:16: note: (near
-initialization for =E2=80=98ntfs_file_inode_operations.permission=E2=80=99)
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:1114:13: error: initialization
-of =E2=80=98int (*)(struct inode *, struct posix_acl *, int)=E2=80=99 from
-incompatible pointer type =E2=80=98int (*)(struct user_namespace *, struct
-inode *, struct posix_acl *, int)=E2=80=99
-[-Werror=3Dincompatible-pointer-types]
- 1114 |  .set_acl =3D ntfs_set_acl,
-      |             ^~~~~~~~~~~~
-/var/lib/dkms/ntfs3/20.0.0/build/file.c:1114:13: note: (near
-initialization for =E2=80=98ntfs_file_inode_operations.set_acl=E2=80=99)
-cc1: some warnings being treated as errors
-make[2]: *** [scripts/Makefile.build:279:
-/var/lib/dkms/ntfs3/20.0.0/build/file.o] Error 1
-make[1]: *** [Makefile:1805: /var/lib/dkms/ntfs3/20.0.0/build] Error 2
-make[1]: Leaving directory '/usr/lib/modules/5.10.13-arch1-1/build'
-make: *** [Makefile:37: all] Error 2
+On Fri, Feb 5, 2021 at 6:42 AM Aur=C3=A9lien Aptel <aaptel@suse.com> wrote:
+>
+> From: Aurelien Aptel <aaptel@suse.com>
+>
+> Assuming
+> - //HOST/a is mounted on /mnt
+> - //HOST/b is mounted on /mnt/b
+>
+> On a slow connection, running 'df' and killing it while it's
+> processing /mnt/b can make cifs_get_inode_info() returns -ERESTARTSYS.
+>
+> This triggers the following chain of events:
+> =3D> the dentry revalidation fail
+> =3D> dentry is put and released
+> =3D> superblock associated with the dentry is put
+> =3D> /mnt/b is unmounted
+>
+> This patch makes cifs_d_revalidate() return the error instead of 0
+> (invalid) when cifs_revalidate_dentry() fails, except for ENOENT (file
+> deleted) and ESTALE (file recreated).
+>
+> Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+> Suggested-by: Shyam Prasad N <nspmangalore@gmail.com>
+> CC: stable@vger.kernel.org
+>
+> ---
+>  fs/cifs/dir.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+> index 68900f1629bff..97ac363b5df16 100644
+> --- a/fs/cifs/dir.c
+> +++ b/fs/cifs/dir.c
+> @@ -737,6 +737,7 @@ static int
+>  cifs_d_revalidate(struct dentry *direntry, unsigned int flags)
+>  {
+>         struct inode *inode;
+> +       int rc;
+>
+>         if (flags & LOOKUP_RCU)
+>                 return -ECHILD;
+> @@ -746,8 +747,25 @@ cifs_d_revalidate(struct dentry *direntry, unsigned =
+int flags)
+>                 if ((flags & LOOKUP_REVAL) && !CIFS_CACHE_READ(CIFS_I(ino=
+de)))
+>                         CIFS_I(inode)->time =3D 0; /* force reval */
+>
+> -               if (cifs_revalidate_dentry(direntry))
+> -                       return 0;
+> +               rc =3D cifs_revalidate_dentry(direntry);
+> +               if (rc) {
+> +                       cifs_dbg(FYI, "cifs_revalidate_dentry failed with=
+ rc=3D%d", rc);
+> +                       switch (rc) {
+> +                       case -ENOENT:
+> +                       case -ESTALE:
+> +                               /*
+> +                                * Those errors mean the dentry is invali=
+d
+> +                                * (file was deleted or recreated)
+> +                                */
+> +                               return 0;
+> +                       default:
+> +                               /*
+> +                                * Otherwise some unexpected error happen=
+ed
+> +                                * report it as-is to VFS layer
+> +                                */
+> +                               return rc;
+> +                       }
+> +               }
+>                 else {
+>                         /*
+>                          * If the inode wasn't known to be a dfs entry wh=
+en
+> --
+> 2.29.2
+>
+
+
+--=20
+Regards,
+Shyam
