@@ -2,180 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90D0D310ABC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 12:58:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4DA310AF3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 13:16:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231455AbhBEL4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 06:56:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37476 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231992AbhBELy4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 06:54:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AFC76ACBA;
-        Fri,  5 Feb 2021 11:54:08 +0000 (UTC)
-Date:   Fri, 5 Feb 2021 12:54:03 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        mhocko@suse.com, song.bao.hua@hisilicon.com, david@redhat.com,
-        naoya.horiguchi@nec.com, duanxiongchun@bytedance.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 4/8] mm: hugetlb: alloc the vmemmap pages associated
- with each HugeTLB page
-Message-ID: <20210205115351.GA16428@linux>
-References: <20210204035043.36609-1-songmuchun@bytedance.com>
- <20210204035043.36609-5-songmuchun@bytedance.com>
+        id S230000AbhBEMO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 07:14:29 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:45203 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231612AbhBEMMJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Feb 2021 07:12:09 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 18849B5D;
+        Fri,  5 Feb 2021 07:10:49 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 05 Feb 2021 07:10:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        AvXcq8biKHIIRRZYtLWNOnk71TUfCiXAOEGRbn/XfEk=; b=efK/tpQtG/ziTIAe
+        roGGI4OiWdiKxTa6r6TVFJ55df0CN5zCne/kLZAz1Cef64KhLnvaFx/LakosaLgq
+        pmHzd7rrGOoGzQPB/aoXnSo5wf8qLl5Va94PwQMJHGpYn7dRUeKoMCYUg4I/OVP7
+        3vS824+Ip5dciKKzatTZ37cDKG1/EVgua4A4EgicKQcHm7XgpczadSh1DsKM35Ef
+        pNXu67ss5rETBeqqwwoZasmuXbGL0Fcukg5U4aWIu4wtCPQDSpyosr9tA8Fk7VFv
+        HXC6VwaAOXQ8wJ4F6HKFUSp5rw1N+hsj1rqqduhjpPmoZUnoZ7Clz5hYujw9E4H0
+        Oxr4DQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=AvXcq8biKHIIRRZYtLWNOnk71TUfCiXAOEGRbn/Xf
+        Ek=; b=FSlbg7w4dne+Gi7e5g0uxdSMYSGECjMA1gpfNVwl4UxtsjUomjAnt7FiJ
+        ihr7HKdIat70TeHGrOglCfAFLfOSHIuNASUfmhDh+1vtoVhJR7pGYqSzVPoom3cG
+        tc35NFpy2sTZuX5LyVVhAZxIC/K+t/mvsfqUivfM4mbOtTVkozjNlrt9j1589QHn
+        neCGVUMRJlsQXFOLxb/sW/C3XK92vJyMKqslioM5VwRT7/3TGLby37ejqrX2mdM5
+        8OgBlUhVvUxH9dUVvOs0LU7sVkO9lvu19gbo7t3MyIf0vueLEHLMf+DUL26VldZI
+        dL/2Q0HToKH+kLyheDcXeuV+Uj36Q==
+X-ME-Sender: <xms:xzUdYFHqO_7IbHk2cQWZXDvT0HdXiu3_vXWIxdHQME1NEc4LDgUY5w>
+    <xme:xzUdYB8Da0zh2OksEErJAG8T-xBQIKCuOUxUT0FX0RLxiyNa4fTzEloPS1we5ASFH
+    ZHtd9OkG4iT>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrgeeigddvhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    pedutdeirdeiledrvdegjedrkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:xzUdYHU1u4aA8Frlj7LryWPME8fUOAFPVY3JpfyQH8Zfx4hGUMnnCw>
+    <xmx:xzUdYDHGWrTz13wBJeG8cSOeiGr0j8ucL3spOLNWcN0krJZIDMylYQ>
+    <xmx:xzUdYL4P9FFwb754a0OiptZpFbPEQ435LlD3iuielOF734TNOCFh4Q>
+    <xmx:yDUdYJPaRQbEaSWT5bfUzsAVXI8QloKZFNep4nikQRakR_bzCpkBLw>
+Received: from mickey.themaw.net (106-69-247-87.dyn.iinet.net.au [106.69.247.87])
+        by mail.messagingengine.com (Postfix) with ESMTPA id A24B724005E;
+        Fri,  5 Feb 2021 07:10:44 -0500 (EST)
+Message-ID: <5c5875d7f67e1bd6785f30b425e17fd4effb1ae9.camel@themaw.net>
+Subject: Re: [PATCH 5/6] kernfs: stay in rcu-walk mode if possible
+From:   Ian Kent <raven@themaw.net>
+To:     Fox Chen <foxhlchen@gmail.com>
+Cc:     Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Fri, 05 Feb 2021 20:10:39 +0800
+In-Reply-To: <CAC2o3DKc0expAJAiNHnU5dY8hpom4z6TdRegQxahRBrZKL+7qg@mail.gmail.com>
+References: <160862320263.291330.9467216031366035418.stgit@mickey.themaw.net>
+         <160862330474.291330.11664503360150456908.stgit@mickey.themaw.net>
+         <CAC2o3DKc0expAJAiNHnU5dY8hpom4z6TdRegQxahRBrZKL+7qg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210204035043.36609-5-songmuchun@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 04, 2021 at 11:50:39AM +0800, Muchun Song wrote:
-> When we free a HugeTLB page to the buddy allocator, we should allocate the
-> vmemmap pages associated with it. But we may cannot allocate vmemmap pages
-> when the system is under memory pressure, in this case, we just refuse to
-> free the HugeTLB page instead of looping forever trying to allocate the
-> pages.
+On Fri, 2021-02-05 at 16:23 +0800, Fox Chen wrote:
+> Hi Ian,
 > 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> On Tue, Dec 22, 2020 at 3:48 PM Ian Kent <raven@themaw.net> wrote:
+> > During path walks in sysfs (kernfs) needing to take a reference to
+> > a mount doesn't happen often since the walk won't be crossing mount
+> > point boundaries.
+> > 
+> > Also while staying in rcu-walk mode where possible wouldn't
+> > normally
+> > give much improvement.
+> > 
+> > But when there are many concurrent path walks and there is high
+> > d_lock
+> > contention dget() will often need to resort to taking a spin lock
+> > to
+> > get the reference. And that could happen each time the reference is
+> > passed from component to component.
+> > 
+> > So, in the high contention case, it will contribute to the
+> > contention.
+> > 
+> > Therefore staying in rcu-walk mode when possible will reduce
+> > contention.
+> > 
+> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > ---
+> >  fs/kernfs/dir.c |   48
+> > +++++++++++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 47 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> > index fdeae2c6e7ba..50c5c8c886af 100644
+> > --- a/fs/kernfs/dir.c
+> > +++ b/fs/kernfs/dir.c
+> > @@ -1048,8 +1048,54 @@ static int kernfs_dop_revalidate(struct
+> > dentry *dentry, unsigned int flags)
+> >         struct kernfs_node *parent;
+> >         struct kernfs_node *kn;
+> > 
+> > -       if (flags & LOOKUP_RCU)
+> > +       if (flags & LOOKUP_RCU) {
+> > +               parent = kernfs_dentry_node(dentry->d_parent);
+> > +
+> > +               /* Directory node changed, no, then don't search?
+> > */
+> > +               if (!kernfs_dir_changed(parent, dentry))
+> > +                       return 1;
+> > +
+> > +               kn = kernfs_dentry_node(dentry);
+> > +               if (!kn) {
+> > +                       /* Negative hashed dentry, tell the VFS to
+> > switch to
+> > +                        * ref-walk mode and call us again so that
+> > node
+> > +                        * existence can be checked.
+> > +                        */
+> > +                       if (!d_unhashed(dentry))
+> > +                               return -ECHILD;
+> > +
+> > +                       /* Negative unhashed dentry, this shouldn't
+> > happen
+> > +                        * because this case occurs in ref-walk
+> > mode after
+> > +                        * dentry allocation which is followed by a
+> > call
+> > +                        * to ->loopup(). But if it does happen the
+> > dentry
+> > +                        * is surely invalid.
+> > +                        */
+> > +                       return 0;
+> > +               }
+> > +
+> > +               /* Since the dentry is positive (we got the kernfs
+> > node) a
+> > +                * kernfs node reference was held at the time. Now
+> > if the
+> > +                * dentry reference count is still greater than 0
+> > it's still
+> > +                * positive so take a reference to the node to
+> > perform an
+> > +                * active check.
+> > +                */
+> > +               if (d_count(dentry) <= 0 ||
+> > !atomic_inc_not_zero(&kn->count))
+> > +                       return -ECHILD;
+> > +
+> > +               /* The kernfs node reference count was greater than
+> > 0, if
+> > +                * it's active continue in rcu-walk mode.
+> > +                */
+> > +               if (kernfs_active_read(kn)) {
+> We are in RCU-walk mode, kernfs_rwsem should not be held, however,
+> kernfs_active_read will assert the readlock is held. I believe it
+> should be kernfs_active(kn) here. Am I wrong??
 
-[...]
+No I think you are correct.
+I'll check it and fix it.
 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 4cfca27c6d32..5518283aa667 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1397,16 +1397,26 @@ static void __free_huge_page(struct page *page)
->  		h->resv_huge_pages++;
->  
->  	if (HPageTemporary(page)) {
-> -		list_del(&page->lru);
->  		ClearHPageTemporary(page);
-> +
-> +		if (alloc_huge_page_vmemmap(h, page, GFP_ATOMIC)) {
-> +			h->surplus_huge_pages++;
-> +			h->surplus_huge_pages_node[nid]++;
-> +			goto enqueue;
-> +		}
-> +		list_del(&page->lru);
->  		update_and_free_page(h, page);
->  	} else if (h->surplus_huge_pages_node[nid]) {
-> +		if (alloc_huge_page_vmemmap(h, page, GFP_ATOMIC))
-> +			goto enqueue;
-> +
->  		/* remove the page from active list */
->  		list_del(&page->lru);
->  		update_and_free_page(h, page);
->  		h->surplus_huge_pages--;
->  		h->surplus_huge_pages_node[nid]--;
->  	} else {
-> +enqueue:
->  		arch_clear_hugepage_flags(page);
->  		enqueue_huge_page(h, page);
+> 
+> > +                       kernfs_put(kn);
+> > +                       return 1;
+> > +               }
+> > +
+> > +               /* Otherwise, just tell the VFS to switch to ref-
+> > walk mode
+> > +                * and call us again so the kernfs node can be
+> > validated.
+> > +                */
+> > +               kernfs_put(kn);
+> >                 return -ECHILD;
+> > +       }
+> > 
+> >         down_read(&kernfs_rwsem);
+> > 
+> > 
+> > 
+> 
+> thanks,
+> fox
 
-Ok, we just keep them in the pool in case we fail to allocate.
-
-
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index ddd872ab6180..0bd6b8d7282d 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -169,6 +169,8 @@
->   * (last) level. So this type of HugeTLB page can be optimized only when its
->   * size of the struct page structs is greater than 2 pages.
-
-[...]
-
-> +int alloc_huge_page_vmemmap(struct hstate *h, struct page *head, gfp_t gfp_mask)
-> +{
-> +	int ret;
-> +	unsigned long vmemmap_addr = (unsigned long)head;
-> +	unsigned long vmemmap_end, vmemmap_reuse;
-> +
-> +	if (!free_vmemmap_pages_per_hpage(h))
-> +		return 0;
-> +
-> +	vmemmap_addr += RESERVE_VMEMMAP_SIZE;
-> +	vmemmap_end = vmemmap_addr + free_vmemmap_pages_size_per_hpage(h);
-> +	vmemmap_reuse = vmemmap_addr - PAGE_SIZE;
-> +
-> +	/*
-> +	 * The pages which the vmemmap virtual address range [@vmemmap_addr,
-> +	 * @vmemmap_end) are mapped to are freed to the buddy allocator, and
-> +	 * the range is mapped to the page which @vmemmap_reuse is mapped to.
-> +	 * When a HugeTLB page is freed to the buddy allocator, previously
-> +	 * discarded vmemmap pages must be allocated and remapping.
-> +	 */
-> +	ret = vmemmap_remap_alloc(vmemmap_addr, vmemmap_end, vmemmap_reuse,
-> +				  gfp_mask | __GFP_NOWARN | __GFP_THISNODE);
-
-Why don't you set all the GFP flags here?
-
-vmemmap_remap_alloc(vmemmap_addr, vmemmap_end, vmemmap_reuse, GFP_ATOMIC|
-                    __GFP_NOWARN | __GFP_THISNODE) ?
-
-> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> index 50c1dc00b686..277eb43aebd5 100644
-> --- a/mm/sparse-vmemmap.c
-> +++ b/mm/sparse-vmemmap.c
-
-[...]
-
-> +static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
-> +				   gfp_t gfp_mask, struct list_head *list)
-
-I think it would make more sense for this function to get the nid and the
-nr_pages to allocate directly.
-
-> +{
-> +	unsigned long addr;
-> +	int nid = page_to_nid((const void *)start);
-
-Uh, that void is a bit ugly. page_to_nid(struct page *)start).
-Do not need the const either.
-
-> +	struct page *page, *next;
-> +
-> +	for (addr = start; addr < end; addr += PAGE_SIZE) {
-> +		page = alloc_pages_node(nid, gfp_mask, 0);
-> +		if (!page)
-> +			goto out;
-> +		list_add_tail(&page->lru, list);
-> +	}
-
-and replace this by while(--nr_pages) etc.
-
-I did not really go in depth, but looks good to me, and much more simply
-overall.
-
-The only thing I am not sure about is the use of GFP_ATOMIC.
-It has been raised before than when we are close to OOM, the user might want
-to try to free up some memory by dissolving free_huge_pages, and so we might
-want to dip in the reserves.
-
-Given the fact that we are prepared to fail, and that we do not retry, I would
-rather use GFP_KERNEL than to have X pages atomically allocated and then realize
-we need to drop them on the ground because we cannot go further at some point.
-I think those reserves would be better off used by someone else in that
-situation.
-
-But this is just my thoughs, and given the fact that there seems to be a consensus
-of susing GFP_ATOMIC.
-
--- 
-Oscar Salvador
-SUSE L3
