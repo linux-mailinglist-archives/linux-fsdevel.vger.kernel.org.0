@@ -2,82 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3889D31157B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:33:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 516AC311532
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Feb 2021 23:32:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232747AbhBEWct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 17:32:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42534 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232374AbhBEOQJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:16:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 46DE7B126;
-        Fri,  5 Feb 2021 15:36:34 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 8C5D4DA6E9; Fri,  5 Feb 2021 16:34:42 +0100 (CET)
-Date:   Fri, 5 Feb 2021 16:34:41 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     dsterba@suse.cz, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, Miao Xie <miaox@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/btrfs: Fix raid6 qstripe kmap'ing
-Message-ID: <20210205153441.GK1993@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Ira Weiny <ira.weiny@intel.com>,
-        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        Miao Xie <miaox@cn.fujitsu.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210128061503.1496847-1-ira.weiny@intel.com>
- <20210203155648.GE1993@suse.cz>
- <20210204152608.GF1993@suse.cz>
- <20210205035236.GB5033@iweiny-DESK2.sc.intel.com>
+        id S232648AbhBEWYn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 17:24:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41520 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232598AbhBEOZQ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Feb 2021 09:25:16 -0500
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB1FC061797;
+        Fri,  5 Feb 2021 08:03:23 -0800 (PST)
+Received: by mail-oi1-x22c.google.com with SMTP id n7so7901695oic.11;
+        Fri, 05 Feb 2021 08:03:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=FVdQ5ukkP9/XbYX/8CVztmsEIJMufgkJkRC2gxyWHPI=;
+        b=iC4JrNHZTN8cnhAfbFpXAv6CrFup/sVyTxWB7UeMqnn+hr1kvuuCSI8K3p2ARted3u
+         59LNcUye0Sy0/hKfpUXWC82aIyZwK8dCGo5zBKK++Nj01iZFkMSbMGPm356DrQKJRz1r
+         +AV6IgEH03dFHV2pGfYjGATnvdelNkX17KWcEdLdC0esiq307LeLHH2TZEirXbbape4e
+         5YobvlpVcF4g3OOFXMPnzLx6GlD9LbzjGMZWwGVh+C/NJdCdqTjx8Ve6LZsdxp7M9Don
+         piF1R2oOaNnqfbNVg6svIWto6ew7TKfXoi45NqqXNLygS8/z+tHJqKAluNwbRb8tzXnh
+         PK+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=FVdQ5ukkP9/XbYX/8CVztmsEIJMufgkJkRC2gxyWHPI=;
+        b=AA83PO6GF+GEVH3eFNc7ma3qgWct6qwxMlvT8EnXhyexnvO8B5sLJy/xlHt1xqJOJu
+         sRjX50U93Sv7FhLBV/o2TMEk5E2F7kW0kqhOf+SG+hMnseX5zBW8LTmrve4WA5llPvdZ
+         NIXilpvO9qHh6zwySc8A36WmGy6KRXE4Da7EHR784i0B+5AInoDWT2NWRyDgIonmwxJK
+         VvddfpIPaFueWWk2A6tADM79fL/wZET2ntHsvA07m543C8DXdF0+trdonZHO+CZxz+jG
+         ZvvWu4E7rcdDluB23R3BeMGoaKktObsK+XwqMxLuhDnwZbLcVpHVoXU6RoWNgVwDJ5gT
+         gC7w==
+X-Gm-Message-State: AOAM533qsHsYyD1N953i4f2G0SVbJVqtdIxDGVrKq41knRp9iNIp0p/n
+        TIlI6IySehmMYoGXEyWngh+AoWagzeez06lW5pCpTjtL6FU=
+X-Google-Smtp-Source: ABdhPJy6jCzEz03JnQXVhbqT+cuIUDmp9ZKy2c51bvVOq36mVzOPREDPhQTk2WphtOI6JFjfXJn66s2Kn9PDiuB374M=
+X-Received: by 2002:a05:6808:1290:: with SMTP id a16mr3368879oiw.161.1612539418567;
+ Fri, 05 Feb 2021 07:36:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210205035236.GB5033@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <20210205045217.552927-1-enbyamy@gmail.com> <20210205131910.GJ1993@twin.jikos.cz>
+In-Reply-To: <20210205131910.GJ1993@twin.jikos.cz>
+From:   Amy Parker <enbyamy@gmail.com>
+Date:   Fri, 5 Feb 2021 07:36:47 -0800
+Message-ID: <CAE1WUT4az3ZZ8OU2AS2xxi9h1TbW958ivNXr53jinqHK5vuzMg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] fs/efs: Follow kernel style guide
+To:     dsterba@suse.cz, Amy Parker <enbyamy@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 04, 2021 at 07:52:36PM -0800, Ira Weiny wrote:
-> On Thu, Feb 04, 2021 at 04:26:08PM +0100, David Sterba wrote:
-> > On Wed, Feb 03, 2021 at 04:56:48PM +0100, David Sterba wrote:
-> > > On Wed, Jan 27, 2021 at 10:15:03PM -0800, ira.weiny@intel.com wrote:
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > Changelog is good, thanks. I've added stable tags as the missing unmap
-> > > is a potential problem.
-> > 
-> > There are lots of tests faling, stack traces like below. I haven't seen
-> > anything obvious in the patch so that needs a closer look and for the
-> > time being I can't add the patch to for-next.
-> 
-> :-(
-> 
-> I think I may have been off by 1 on the raid6 kmap...
-> 
-> Something like this should fix it...
-> 
-> diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-> index b8a39dad0f00..dbf52f1a379d 100644
-> --- a/fs/btrfs/raid56.c
-> +++ b/fs/btrfs/raid56.c
-> @@ -2370,7 +2370,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
->                         goto cleanup;
->                 }
->                 SetPageUptodate(q_page);
-> -               pointers[rbio->real_stripes] = kmap(q_page);
-> +               pointers[rbio->real_stripes - 1] = kmap(q_page);
+On Fri, Feb 5, 2021 at 5:1 AM David Sterba <dsterba@suse.cz> wrote:
+>
+> On Thu, Feb 04, 2021 at 08:52:14PM -0800, Amy Parker wrote:
+> > As the EFS driver is old and non-maintained,
+>
+> Is anybody using EFS on current kernels? There's not much point updating
+> it to current coding style, deleting fs/efs is probably the best option.
+>
 
-Oh right and tests agree it works.
+Wouldn't be surprised if there's a few systems out there that haven't
+migrated at all.
 
->         }
->  
->         atomic_set(&rbio->error, 0);
-> 
-> Let me roll a new version.
+> The EFS name is common for several filesystems, not to be confused with
+> eg.  Encrypted File System. In linux it's the IRIX version, check
+> Kconfig, and you could hardly find the utilities to create such
+> filesystem.
 
-No need to, I'll fold the fixup. Thanks.
+Ah yep, good point.
+
+   -Amy IP
