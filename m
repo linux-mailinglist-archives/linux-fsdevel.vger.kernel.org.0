@@ -2,84 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 854193118AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Feb 2021 03:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF19F311865
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Feb 2021 03:38:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231587AbhBFCnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 21:43:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbhBFCiZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 21:38:25 -0500
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D559BC08ECB7;
-        Fri,  5 Feb 2021 14:49:13 -0800 (PST)
-Received: by mail-oi1-x235.google.com with SMTP id v193so3773465oie.8;
-        Fri, 05 Feb 2021 14:49:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ojF9+RHOmAuEE2HU5gcyNLd/Z5tAjeBRPHoUC6HrwLk=;
-        b=pxi2+PLhskq0A6d7mF2s7rrouvzdsM7TSvqes8XQR/F3NXfqa0wWJUe1Nk4E62fGTN
-         4RJCTUzsOFzBU4hX65dVsID04WW9kaGGTFK9qXUhYdywSDV/OBVI+rDk0jTGCyPBDS3z
-         df4dtFhAuuOcjxlQ1VwmF6nZ1DTthI1O0XqETBs3Ol3UvqiONXm7brZMf1BE0mTiPKiJ
-         hNcLuUtc5Hfxay5T13zHan0MwnlCHvQKH4NQ0rew167memQe0wC82ETHyQYyfxmwijEA
-         SPDwzEI9NckT9eK3sAiohPDBx7xozjfugZIxfR3J0e02SFozyqCYrwfJLI2ux6ul14tJ
-         Q8xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ojF9+RHOmAuEE2HU5gcyNLd/Z5tAjeBRPHoUC6HrwLk=;
-        b=SMy8IvyF4Cw2Cy4k2MsO3lPpHzW08RmVy+fR8ryXIxNNtEzb8R9+szpSqU45CQrH3T
-         IKieJbAxsWbpnAVweXPMPu2kdymCEh5scidjAsaLyScDNutEbOMOvfgRu+MQgbtswhvn
-         hZtZqB70BN3u5iUIp+ifKJ35Ji8QEJ2x9d3dL9az6lZ7Zh2Wqo4V698kGTaRIpLoY8xp
-         ov9i47lscTiDRp77/yOBRrhB5lPmiMIBit/G1zPjXRH22lw39kgBgyvAku9SsR6zRo+h
-         KvekiwGPcDOdrDyTTb+x+30NE7CmGpGAVDpENmvMQAA9wK/HF4/6MV3fORwYb1AxbPob
-         A1hg==
-X-Gm-Message-State: AOAM531+0M0gv9cvTvIEtzmpRGmcwYbY7GxCeRSg3gWe9itOMXAsRR+w
-        kz9DPM/Ci1EC/pG1N8vsNtaZtrGQ8JtwF5QZQbY=
-X-Google-Smtp-Source: ABdhPJxWGEoiaHg3LtbwhHldZO/Ccy2pzpAfPaypv8pJs2XmNwJy81zoTYFXK5bxo+oMzZNLAk21ecWpYJiwpen9YDI=
-X-Received: by 2002:aca:e108:: with SMTP id y8mr2216690oig.114.1612565353201;
- Fri, 05 Feb 2021 14:49:13 -0800 (PST)
+        id S231303AbhBFCgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 21:36:50 -0500
+Received: from mga14.intel.com ([192.55.52.115]:15180 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230392AbhBFCei (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Feb 2021 21:34:38 -0500
+IronPort-SDR: TCHA17zK98xYwtcNVhemcBbn1x/FKllJ7S0hdFsV7rt1brsr8LDYOX148FDhuglaz2Ftd+WJfW
+ sWxI8BBt7jMQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9886"; a="180725349"
+X-IronPort-AV: E=Sophos;i="5.81,156,1610438400"; 
+   d="scan'208";a="180725349"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 15:23:08 -0800
+IronPort-SDR: dfoMsox0sys4E2FEjMh74vTx+VIqCPoEifN+Z9LDi8Yd10bqmFOMN5AiRicZLQ0pgKcveL8uFj
+ 8aziCvhiG2/g==
+X-IronPort-AV: E=Sophos;i="5.81,156,1610438400"; 
+   d="scan'208";a="373729251"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2021 15:23:08 -0800
+From:   ira.weiny@intel.com
+To:     Andrew Morton <akpm@linux-foundation.org>, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com
+Cc:     Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/4] btrfs: Convert kmaps to core page calls
+Date:   Fri,  5 Feb 2021 15:23:00 -0800
+Message-Id: <20210205232304.1670522-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 MIME-Version: 1.0
-References: <20210205045217.552927-1-enbyamy@gmail.com> <20210205131910.GJ1993@twin.jikos.cz>
- <CAE1WUT4az3ZZ8OU2AS2xxi9h1TbW958ivNXr53jinqHK5vuzMg@mail.gmail.com> <CAFLxGvz0ZnTs1B7v3R+Zefd5BhE9ximFpgKL8zRmGfOdBrsVfw@mail.gmail.com>
-In-Reply-To: <CAFLxGvz0ZnTs1B7v3R+Zefd5BhE9ximFpgKL8zRmGfOdBrsVfw@mail.gmail.com>
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Fri, 5 Feb 2021 14:49:02 -0800
-Message-ID: <CAE1WUT6Hq=phyjW1Wv01nvG1fWOAZVEsNyrtKC6Tu37ABnU=dA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] fs/efs: Follow kernel style guide
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     dsterba@suse.cz, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 5, 2021 at 2:37 PM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
->
-> On Fri, Feb 5, 2021 at 11:26 PM Amy Parker <enbyamy@gmail.com> wrote:
-> >
-> > On Fri, Feb 5, 2021 at 5:1 AM David Sterba <dsterba@suse.cz> wrote:
-> > >
-> > > On Thu, Feb 04, 2021 at 08:52:14PM -0800, Amy Parker wrote:
-> > > > As the EFS driver is old and non-maintained,
-> > >
-> > > Is anybody using EFS on current kernels? There's not much point updating
-> > > it to current coding style, deleting fs/efs is probably the best option.
-> > >
-> >
-> > Wouldn't be surprised if there's a few systems out there that haven't
-> > migrated at all.
->
-> Before ripping it from the kernel source you could do a FUSE port of EFS.
-> That way old filesystems can still get used on Linux.
+From: Ira Weiny <ira.weiny@intel.com>
 
-A FUSE port of EFS would be a great idea. Know anyone that would be
-interested in working on it? I might try picking it up if no one else
-wants it, we'll see.
+There are many places where kmap/<operation>/kunmap patterns occur.  We lift
+these various patterns to core common functions and use them in the btrfs file
+system.  At the same time we convert those core functions to use
+kmap_local_page() which is more efficient in those calls.
+
+I think this is best accepted through Andrew's tree as it has the mem*_page
+functions in it.  But I'd like to get an ack from David or one of the other
+btrfs maintainers before the btrfs patches go through.
+
+There are a lot more kmap->kmap_local_page() conversions but kmap_local_page()
+requires some care with the unmapping order and so I'm still reviewing those
+changes because btrfs uses a lot of loops for it's kmaps.
+
+Thanks,
+Ira
+
+Ira Weiny (4):
+  mm/highmem: Lift memcpy_[to|from]_page to core
+  fs/btrfs: Use memcpy_[to|from]_page()
+  fs/btrfs: Use copy_highpage() instead of 2 kmaps()
+  fs/btrfs: Convert to zero_user()
+
+ fs/btrfs/compression.c  | 11 +++------
+ fs/btrfs/extent_io.c    | 22 ++++-------------
+ fs/btrfs/inode.c        | 33 ++++++++-----------------
+ fs/btrfs/lzo.c          |  4 ++--
+ fs/btrfs/raid56.c       | 10 +-------
+ fs/btrfs/reflink.c      | 12 ++--------
+ fs/btrfs/send.c         |  7 ++----
+ fs/btrfs/zlib.c         | 10 +++-----
+ fs/btrfs/zstd.c         | 11 +++------
+ include/linux/highmem.h | 53 +++++++++++++++++++++++++++++++++++++++++
+ lib/iov_iter.c          | 26 +++-----------------
+ 11 files changed, 86 insertions(+), 113 deletions(-)
+
+-- 
+2.28.0.rc0.12.gb6a658bd00c9
+
