@@ -2,51 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60BE2311965
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Feb 2021 04:04:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 320D231196A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Feb 2021 04:07:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbhBFDDr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 22:03:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41472 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231648AbhBFCwv (ORCPT
+        id S231898AbhBFDE7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Feb 2021 22:04:59 -0500
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:38269 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232463AbhBFDBS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 21:52:51 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C7BBC033275;
-        Fri,  5 Feb 2021 17:26:54 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id a8so12786755lfi.8;
-        Fri, 05 Feb 2021 17:26:54 -0800 (PST)
+        Fri, 5 Feb 2021 22:01:18 -0500
+Received: by mail-wm1-f50.google.com with SMTP id y187so7471403wmd.3;
+        Fri, 05 Feb 2021 19:01:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AYoAF7gPgCmz0hFYeiRmD4lOmSaTwA1DbF9cbEqAcQ0=;
-        b=ie63wiewQTPFO5AyrseRnYIWAna3cvOcmTRM5ltEPbD/emfDeZilCvFSRht467yRcU
-         ZEB6fBxFTpZEoCOnKTGrp9PBRcBCX3ds2VEpVtxD65Iazdpv8z+lAVJmFOfJgoYTkUg2
-         AVJyZJLnX4OYRbYlHYVeuO7tRizj+wEnCT69pI745LhjTB0wyk69MifKgYNnKyMTa10r
-         udJG6kPRhuAJbQoryGMdbrSF1fFeiZXSd/+do9GOTUK6XdDnIh1Behu/KA/ndg1Zd2r7
-         jVtx9qjqZi8M5yYCCSkxAmC8ul2LD8nDoNeQUkYReihA75x6X6dfGPSdpmTWbWuJVDNP
-         owLw==
-X-Gm-Message-State: AOAM531BqxcM1IzhRPKa5mHXDJEWIaJvx8RUP8VZJOtFUr63kUX1MBAc
-        H2Q8iiwZ9A1OrPRYmaZWTNezPSIHBBc=
-X-Google-Smtp-Source: ABdhPJz0zPGnTDbhSwzmVhzv+2yGPRYdicJfRxej/w+rmJd8/nndZwohleSblLFZNNYj9MfNIOTTQw==
-X-Received: by 2002:a5d:49c1:: with SMTP id t1mr7634170wrs.56.1612570147262;
-        Fri, 05 Feb 2021 16:09:07 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bexfxdD7y04/NN1BW/2LR9HyyA70oxPcF36yfxCxKpg=;
+        b=WtqVklhFNAKxH/D+PWJIM65mryGk/rDijSCe9RK3Gc5XhCTEjZkXXKSdEHyEwSSW9q
+         iwaBwv9337oh38Q0XF3sjqQe913FCpjJ6UTYQBEvUNbXvfq9EWuUuUo/B1PE4opyw0uY
+         +rzjFbBiybNOBVar7y9V5RdK+F+CMRHTyOJdK5qCN3wad16ZAa38rmMbQ7s2w0lQ3w9f
+         8LrBtkof2HDSBAKHYjtA10ZAqps06PlHAO/gevVpXN7QBTTmxO3lE5cUO5TMOnSfYXdV
+         GbTwpOEncI3LUS8MMfniKwMhQdK4qR/sSWbiKhewr6e5frD+8XX50FK70dMzvqywAoDq
+         fe1g==
+X-Gm-Message-State: AOAM533PY1glDbZHsCoi0bIJVasUn4JmsqdDf/1nmVLOLkmkJHvLCdRJ
+        qie1M98A+c2duRn5q3GCql+D/ZZzBuA=
+X-Google-Smtp-Source: ABdhPJw+KDHxxnP1/yl3ky5khDln+lFM6/pjtRM5lgi82AtvgGV0nU+5ibW4yldcAcq8uOrdqw9EaQ==
+X-Received: by 2002:a1c:acc9:: with SMTP id v192mr5436823wme.22.1612570320604;
+        Fri, 05 Feb 2021 16:12:00 -0800 (PST)
 Received: from msft-t490s.teknoraver.net (net-37-182-2-234.cust.vodafonedsl.it. [37.182.2.234])
-        by smtp.gmail.com with ESMTPSA id d3sm14566390wrp.79.2021.02.05.16.09.05
+        by smtp.gmail.com with ESMTPSA id d3sm14566390wrp.79.2021.02.05.16.11.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Feb 2021 16:09:06 -0800 (PST)
+        Fri, 05 Feb 2021 16:12:00 -0800 (PST)
 From:   Matteo Croce <mcroce@linux.microsoft.com>
 To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Lennart Poettering <lennart@poettering.net>,
         Luca Boccassi <bluca@debian.org>, Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 0/5] block: add a sequence number to disks
-Date:   Sat,  6 Feb 2021 01:08:58 +0100
-Message-Id: <20210206000903.215028-1-mcroce@linux.microsoft.com>
+Subject: [PATCH 2/5] block: add ioctl to read the disk sequence number
+Date:   Sat,  6 Feb 2021 01:09:00 +0100
+Message-Id: <20210206000903.215028-3-mcroce@linux.microsoft.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210206000903.215028-1-mcroce@linux.microsoft.com>
+References: <20210206000903.215028-1-mcroce@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -55,80 +54,40 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Matteo Croce <mcroce@microsoft.com>
 
-With this series a monotonically increasing number is added to disks,
-precisely in the genhd struct, and it's exported in sysfs and uevent.
+Add a new BLKGETDISKSEQ ioctl which retrieves the disk sequence number
+from the genhd structure.
 
-This helps the userspace correlate events for devices that reuse the
-same device, like loop.
+Signed-off-by: Matteo Croce <mcroce@microsoft.com>
+---
+ block/ioctl.c           | 2 ++
+ include/uapi/linux/fs.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-The first patch is the core one, the 2..4 expose the information in
-different ways, while the last one increase the sequence number for
-loop devices at every attach.
-
-    # udevadm monitor -kp |grep -e ^DEVNAME -e ^DISKSEQ &
-    [1] 523
-    # losetup -fP 3part
-    [ 3698.615848] loop0: detected capacity change from 16384 to 0
-    DEVNAME=/dev/loop0
-    DISKSEQ=13
-    [ 3698.647189]  loop0: p1 p2 p3
-    DEVNAME=/dev/loop0
-    DISKSEQ=13
-    DEVNAME=/dev/loop0p1
-    DISKSEQ=13
-    DEVNAME=/dev/loop0p2
-    DISKSEQ=13
-    DEVNAME=/dev/loop0p3
-    DISKSEQ=13
-    # losetup -fP 2part
-    [ 3705.170766] loop1: detected capacity change from 40960 to 0
-    DEVNAME=/dev/loop1
-    DISKSEQ=14
-    [ 3705.247280]  loop1: p1 p2
-    DEVNAME=/dev/loop1
-    DISKSEQ=14
-    DEVNAME=/dev/loop1p1
-    DISKSEQ=14
-    DEVNAME=/dev/loop1p2
-    DISKSEQ=14
-    # ./getdiskseq /dev/loop*
-    /dev/loop0:     13
-    /dev/loop0p1:   13
-    /dev/loop0p2:   13
-    /dev/loop0p3:   13
-    /dev/loop1:     14
-    /dev/loop1p1:   14
-    /dev/loop1p2:   14
-    /dev/loop2:     5
-    /dev/loop3:     6
-    /dev/loop-control: Function not implemented
-    # grep . /sys/class/block/*/diskseq
-    /sys/class/block/loop0/diskseq:13
-    /sys/class/block/loop1/diskseq:14
-    /sys/class/block/loop2/diskseq:5
-    /sys/class/block/loop3/diskseq:6
-    /sys/class/block/ram0/diskseq:1
-    /sys/class/block/ram1/diskseq:2
-    /sys/class/block/vda/diskseq:7
-
-If merged, this feature will immediately used by the userspace:
-https://github.com/systemd/systemd/issues/17469#issuecomment-762919781
-
-Matteo Croce (5):
-  block: add disk sequence number
-  block: add ioctl to read the disk sequence number
-  block: refactor sysfs code
-  block: export diskseq in sysfs
-  loop: increment sequence number
-
- Documentation/ABI/testing/sysfs-block | 12 ++++++++
- block/genhd.c                         | 43 ++++++++++++++++++++++++---
- block/ioctl.c                         |  2 ++
- drivers/block/loop.c                  |  3 ++
- include/linux/genhd.h                 |  2 ++
- include/uapi/linux/fs.h               |  1 +
- 6 files changed, 59 insertions(+), 4 deletions(-)
-
+diff --git a/block/ioctl.c b/block/ioctl.c
+index d61d652078f4..037fec888098 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -460,6 +460,8 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
+ 				BLKDEV_DISCARD_SECURE);
+ 	case BLKZEROOUT:
+ 		return blk_ioctl_zeroout(bdev, mode, arg);
++	case BLKGETDISKSEQ:
++		return put_u64(argp, bdev->bd_disk->diskseq);
+ 	case BLKREPORTZONE:
+ 		return blkdev_report_zones_ioctl(bdev, mode, cmd, arg);
+ 	case BLKRESETZONE:
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index f44eb0a04afd..5dc72bbdd9b7 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -184,6 +184,7 @@ struct fsxattr {
+ #define BLKSECDISCARD _IO(0x12,125)
+ #define BLKROTATIONAL _IO(0x12,126)
+ #define BLKZEROOUT _IO(0x12,127)
++#define BLKGETDISKSEQ _IOR(0x12,128,__u64)
+ /*
+  * A jump here: 130-131 are reserved for zoned block devices
+  * (see uapi/linux/blkzoned.h)
 -- 
 2.29.2
 
