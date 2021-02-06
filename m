@@ -2,230 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA18311969
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Feb 2021 04:07:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA94A311C0F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Feb 2021 09:04:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231233AbhBFDEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Feb 2021 22:04:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41662 "EHLO
+        id S229561AbhBFIDT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 Feb 2021 03:03:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232180AbhBFCyE (ORCPT
+        with ESMTP id S229537AbhBFIDR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Feb 2021 21:54:04 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC5D8C08EE7C;
-        Fri,  5 Feb 2021 16:40:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=+8+c6e2MXDrIRynamuIEcXTAJuyCmgpjsez/l/OAdUE=; b=M93kocYSsm7VHSI27ipgq83m4X
-        5Bm2dri1chpJof5Msn5PyZzvfhUOwpQPRW5zcAgbgVHJkN9BjnuDjYmwzrG52A0rvcoiyeT0wiWqo
-        HfFiGOPupsKDFz//dZsW6uH9lyB/XvsItdtQNN0IItQylnPu4DrIzzbyIRnwGA66owR6RfIjUbOfi
-        O7M9lphz2K44Tv0/Ck+CCLfWXhzCS5cWpR6nOfKr3k8V+uOmChh03hBkfzk2B73g3Ke4nohk48hON
-        HtkTiEtLFnXzY+bjaitQ9FE1xVfPeNI2hZTi2wZdhSPzPnDBfYA4tTepbCa0T2Ha+FYBSfB+PDS6h
-        odT1F7Ew==;
-Received: from [2601:1c0:6280:3f0::aec2]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1l8Bdp-0004ne-EB; Sat, 06 Feb 2021 00:40:01 +0000
-Subject: Re: [PATCH v4 2/2] dmabuf: Add dmabuf inode number to /proc/*/fdinfo
-To:     Kalesh Singh <kaleshsingh@google.com>
-Cc:     jannh@google.com, jeffv@google.com, keescook@chromium.org,
-        surenb@google.com, minchan@kernel.org, hridya@google.com,
-        christian.koenig@amd.com, kernel-team@android.com,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        NeilBrown <neilb@suse.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Michel Lespinasse <walken@google.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20210205213353.669122-1-kaleshsingh@google.com>
- <20210205213353.669122-2-kaleshsingh@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <753e0a3b-ce7c-5518-65b1-f743dd370b76@infradead.org>
-Date:   Fri, 5 Feb 2021 16:39:51 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        Sat, 6 Feb 2021 03:03:17 -0500
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8847DC061756
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 Feb 2021 00:02:36 -0800 (PST)
+Received: by mail-pf1-x42f.google.com with SMTP id 18so3764704pfz.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Feb 2021 00:02:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+4ngpioykdaswjtQ50G9wJ1z4lzpWogRACPFYV04cNw=;
+        b=LBNEqzXrKkilK+S+ibcAuad7DFuUukoIsNHlF4p6chdboba20kOYSIu5QwpWxQH2nx
+         OEZ31k5B9EyIvppcoINkh65RGhM7KBuvGESxDNDPNcDy8qRL1GZSlNF3RNZxFN0AnqUf
+         jzbSD2vCfbkyhYFr5nkOMwKC0n0demDWQv75PFSvstDHGmhOPtrCQS+pEBQgHzwMMIDD
+         iEWt2VE5hj7kFYYsIZ8F/GmiFVudtGC6EsUVV6VXChW3/RROvXmn3nLPPl5uCcAFABgh
+         Tpkct590AMCu9aD10Gqv5FCbNGgWxb8naqpM8gwbWdvZXQKbyJaYoWvFgocaCAfo0mQz
+         HdTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+4ngpioykdaswjtQ50G9wJ1z4lzpWogRACPFYV04cNw=;
+        b=qLaEdz+OD5hQ76AENxnrHf4ZznCZu3Mb1sQTHsaOwzk9I3SCae1yTeb5658x2EPG0v
+         kwsad8I012oZGQyw1qP9SZbNHWqv4PTPbGkmGf60U537Kmj15dmt+KOMeL/t7kW2tWzV
+         DFn1WOMYJawKAZaP0nemkAHmEVupNwwYCAGhWgvpSoYf7fRVJ9CarEthif/U0d9KbbHF
+         L6NUQjsXW7FIfJQYBgpiR58Rnnpx9yvzN8Zot+PjeiYO80C6ovlCkU5ONrDLSRozdVlH
+         KpLBHfr0L/snkKcH5fIP8PIWbe+5XYBLI4qjRIj2o+312l9ljqIjqGOpc+uYBMfpjW34
+         S9yg==
+X-Gm-Message-State: AOAM533/nhxueBeXcov38yXRymE8D48gp/VRefgHNk2LSLU3yTu57/Ju
+        P/rsK0yx9+NAD+Ds8Dos4j1/9XzFrmMa6dChH1uYjNUqts85Xg==
+X-Google-Smtp-Source: ABdhPJzVyVF5yNIljrr7V2pJ5nxH8aJhsD1UM3EyuHS7WsAUOEosBeeTy2sHnzGqAIU6QNuHnp8ZM3ux8Bx7YWuBCDE=
+X-Received: by 2002:aa7:9790:0:b029:1d8:263e:cc9b with SMTP id
+ o16-20020aa797900000b02901d8263ecc9bmr6239477pfp.2.1612598555875; Sat, 06 Feb
+ 2021 00:02:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210205213353.669122-2-kaleshsingh@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210204035043.36609-1-songmuchun@bytedance.com>
+ <20210204035043.36609-5-songmuchun@bytedance.com> <20210205115351.GA16428@linux>
+In-Reply-To: <20210205115351.GA16428@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Sat, 6 Feb 2021 16:01:58 +0800
+Message-ID: <CAMZfGtXWBThxT26B9nD+zNVoU9BcK_G8uwqqTBCCwCeXG0AuxQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v14 4/8] mm: hugetlb: alloc the vmemmap
+ pages associated with each HugeTLB page
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/5/21 1:33 PM, Kalesh Singh wrote:
-> And 'inode_no' field to /proc/<pid>/fdinfo/<FD> and
-> /proc/<pid>/task/<tid>/fdinfo/<FD>.
-> 
-> The inode numbers can be used to uniquely identify DMA buffers
-> in user space and avoids a dependency on /proc/<pid>/fd/* when
-> accounting per-process DMA buffer sizes.
-> 
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> ---
-> Changes in v4:
->   - Add inode number as common field in fdinfo, per Christian
-> Changes in v3:
->   - Add documentation in proc.rst, per Randy
-> Changes in v2:
->   - Update patch description
-> 
->  Documentation/filesystems/proc.rst | 37 +++++++++++++++++++++++++-----
->  fs/proc/fd.c                       |  5 ++--
->  2 files changed, 34 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 2fa69f710e2a..db46da32230c 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -1902,18 +1902,20 @@ if precise results are needed.
->  3.8	/proc/<pid>/fdinfo/<fd> - Information about opened file
->  ---------------------------------------------------------------
->  This file provides information associated with an opened file. The regular
-> -files have at least three fields -- 'pos', 'flags' and 'mnt_id'. The 'pos'
-> -represents the current offset of the opened file in decimal form [see lseek(2)
-> -for details], 'flags' denotes the octal O_xxx mask the file has been
-> -created with [see open(2) for details] and 'mnt_id' represents mount ID of
-> -the file system containing the opened file [see 3.5 /proc/<pid>/mountinfo
-> -for details].
-> +files have at least four fields -- 'pos', 'flags', 'mnt_id' and 'inode_no'.
-> +The 'pos' represents the current offset of the opened file in decimal
-> +form [see lseek(2) for details], 'flags' denotes the octal O_xxx mask the
-> +file has been created with [see open(2) for details] and 'mnt_id' represents
-> +mount ID of the file system containing the opened file [see 3.5
-> +/proc/<pid>/mountinfo for details]. 'inode_no' represents the inode number
-> +of the file.
->  
->  A typical output is::
->  
->  	pos:	0
->  	flags:	0100002
->  	mnt_id:	19
-> +	inode_no:       63107
->  
->  All locks associated with a file descriptor are shown in its fdinfo too::
->  
-> @@ -1930,6 +1932,7 @@ Eventfd files
->  	pos:	0
->  	flags:	04002
->  	mnt_id:	9
-> +	inode_no:       63107
->  	eventfd-count:	5a
->  
->  where 'eventfd-count' is hex value of a counter.
-> @@ -1942,6 +1945,7 @@ Signalfd files
->  	pos:	0
->  	flags:	04002
->  	mnt_id:	9
-> +	inode_no:       63107
->  	sigmask:	0000000000000200
->  
->  where 'sigmask' is hex value of the signal mask associated
-> @@ -1955,6 +1959,7 @@ Epoll files
->  	pos:	0
->  	flags:	02
->  	mnt_id:	9
-> +	inode_no:       63107
->  	tfd:        5 events:       1d data: ffffffffffffffff pos:0 ino:61af sdev:7
->  
->  where 'tfd' is a target file descriptor number in decimal form,
-> @@ -1971,6 +1976,8 @@ For inotify files the format is the following::
->  
->  	pos:	0
->  	flags:	02000000
-> +	mnt_id:	9
-> +	inode_no:       63107
->  	inotify wd:3 ino:9e7e sdev:800013 mask:800afce ignored_mask:0 fhandle-bytes:8 fhandle-type:1 f_handle:7e9e0000640d1b6d
->  
->  where 'wd' is a watch descriptor in decimal form, i.e. a target file
-> @@ -1993,6 +2000,7 @@ For fanotify files the format is::
->  	pos:	0
->  	flags:	02
->  	mnt_id:	9
-> +	inode_no:       63107
->  	fanotify flags:10 event-flags:0
->  	fanotify mnt_id:12 mflags:40 mask:38 ignored_mask:40000003
->  	fanotify ino:4f969 sdev:800013 mflags:0 mask:3b ignored_mask:40000000 fhandle-bytes:8 fhandle-type:1 f_handle:69f90400c275b5b4
-> @@ -2017,6 +2025,7 @@ Timerfd files
->  	pos:	0
->  	flags:	02
->  	mnt_id:	9
-> +	inode_no:       63107
->  	clockid: 0
->  	ticks: 0
->  	settime flags: 01
-> @@ -2031,6 +2040,22 @@ details]. 'it_value' is remaining time until the timer expiration.
->  with TIMER_ABSTIME option which will be shown in 'settime flags', but 'it_value'
->  still exhibits timer's remaining time.
->  
-> +DMA Buffer files
-> +~~~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +	pos:	0
-> +	flags:	04002
-> +	mnt_id:	9
-> +	inode_no:       63107
+On Fri, Feb 5, 2021 at 7:54 PM Oscar Salvador <osalvador@suse.de> wrote:
+>
+> On Thu, Feb 04, 2021 at 11:50:39AM +0800, Muchun Song wrote:
+> > When we free a HugeTLB page to the buddy allocator, we should allocate the
+> > vmemmap pages associated with it. But we may cannot allocate vmemmap pages
+> > when the system is under memory pressure, in this case, we just refuse to
+> > free the HugeTLB page instead of looping forever trying to allocate the
+> > pages.
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>
+> [...]
+>
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 4cfca27c6d32..5518283aa667 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -1397,16 +1397,26 @@ static void __free_huge_page(struct page *page)
+> >               h->resv_huge_pages++;
+> >
+> >       if (HPageTemporary(page)) {
+> > -             list_del(&page->lru);
+> >               ClearHPageTemporary(page);
+> > +
+> > +             if (alloc_huge_page_vmemmap(h, page, GFP_ATOMIC)) {
+> > +                     h->surplus_huge_pages++;
+> > +                     h->surplus_huge_pages_node[nid]++;
+> > +                     goto enqueue;
+> > +             }
+> > +             list_del(&page->lru);
+> >               update_and_free_page(h, page);
+> >       } else if (h->surplus_huge_pages_node[nid]) {
+> > +             if (alloc_huge_page_vmemmap(h, page, GFP_ATOMIC))
+> > +                     goto enqueue;
+> > +
+> >               /* remove the page from active list */
+> >               list_del(&page->lru);
+> >               update_and_free_page(h, page);
+> >               h->surplus_huge_pages--;
+> >               h->surplus_huge_pages_node[nid]--;
+> >       } else {
+> > +enqueue:
+> >               arch_clear_hugepage_flags(page);
+> >               enqueue_huge_page(h, page);
+>
+> Ok, we just keep them in the pool in case we fail to allocate.
+>
+>
+> > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> > index ddd872ab6180..0bd6b8d7282d 100644
+> > --- a/mm/hugetlb_vmemmap.c
+> > +++ b/mm/hugetlb_vmemmap.c
+> > @@ -169,6 +169,8 @@
+> >   * (last) level. So this type of HugeTLB page can be optimized only when its
+> >   * size of the struct page structs is greater than 2 pages.
+>
+> [...]
+>
+> > +int alloc_huge_page_vmemmap(struct hstate *h, struct page *head, gfp_t gfp_mask)
+> > +{
+> > +     int ret;
+> > +     unsigned long vmemmap_addr = (unsigned long)head;
+> > +     unsigned long vmemmap_end, vmemmap_reuse;
+> > +
+> > +     if (!free_vmemmap_pages_per_hpage(h))
+> > +             return 0;
+> > +
+> > +     vmemmap_addr += RESERVE_VMEMMAP_SIZE;
+> > +     vmemmap_end = vmemmap_addr + free_vmemmap_pages_size_per_hpage(h);
+> > +     vmemmap_reuse = vmemmap_addr - PAGE_SIZE;
+> > +
+> > +     /*
+> > +      * The pages which the vmemmap virtual address range [@vmemmap_addr,
+> > +      * @vmemmap_end) are mapped to are freed to the buddy allocator, and
+> > +      * the range is mapped to the page which @vmemmap_reuse is mapped to.
+> > +      * When a HugeTLB page is freed to the buddy allocator, previously
+> > +      * discarded vmemmap pages must be allocated and remapping.
+> > +      */
+> > +     ret = vmemmap_remap_alloc(vmemmap_addr, vmemmap_end, vmemmap_reuse,
+> > +                               gfp_mask | __GFP_NOWARN | __GFP_THISNODE);
+>
+> Why don't you set all the GFP flags here?
 
-Hi,
+Originally, I wanted to let the caller know the GFP flag which they
+used. But setting all the GFP flags here also makes sense to me.
+And we can remove the @gfp_mask parameter of the
+alloc_huge_page_vmemmap. It is simple.
 
-Why do all of the examples have so many spaces between inode_no:
-and the number?
+>
+> vmemmap_remap_alloc(vmemmap_addr, vmemmap_end, vmemmap_reuse, GFP_ATOMIC|
+>                     __GFP_NOWARN | __GFP_THISNODE) ?
 
-Ah, it's a \t in the output along with the length of the "inode_no:"
-string. OK.
+I will use this.
 
-Next question: why are there spaces instead of a tab between
-"inode_no": and the number? All of the other fields that are
-preceded by a \t in the seq_printf() call have tabs in the output.
+>
+> > diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> > index 50c1dc00b686..277eb43aebd5 100644
+> > --- a/mm/sparse-vmemmap.c
+> > +++ b/mm/sparse-vmemmap.c
+>
+> [...]
+>
+> > +static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
+> > +                                gfp_t gfp_mask, struct list_head *list)
+>
+> I think it would make more sense for this function to get the nid and the
+> nr_pages to allocate directly.
 
-Except for the tabs vs. spaces, the Documentation change is:
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Just like alloc_pages(), right? If so, make sense to me.
 
+>
+> > +{
+> > +     unsigned long addr;
+> > +     int nid = page_to_nid((const void *)start);
+>
+> Uh, that void is a bit ugly. page_to_nid(struct page *)start).
+> Do not need the const either.
 
+OK. Will do. Thanks.
 
-> +	size:   32768
-> +	count:  2
-> +	exp_name:  system-heap
-> +
-> +where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
-> +the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
-> +
->  3.9	/proc/<pid>/map_files - Information about memory mapped files
->  ---------------------------------------------------------------------
->  This directory contains symbolic links which represent memory mapped files
-> diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-> index 585e213301f9..2c25909bf9d1 100644
-> --- a/fs/proc/fd.c
-> +++ b/fs/proc/fd.c
-> @@ -54,9 +54,10 @@ static int seq_show(struct seq_file *m, void *v)
->  	if (ret)
->  		return ret;
->  
-> -	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\n",
-> +	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\ninode_no:\t%lu\n",
->  		   (long long)file->f_pos, f_flags,
-> -		   real_mount(file->f_path.mnt)->mnt_id);
-> +		   real_mount(file->f_path.mnt)->mnt_id,
-> +		   file_inode(file)->i_ino);
->  
->  	/* show_fd_locks() never deferences files so a stale value is safe */
->  	show_fd_locks(m, file, files);
-> 
+>
+> > +     struct page *page, *next;
+> > +
+> > +     for (addr = start; addr < end; addr += PAGE_SIZE) {
+> > +             page = alloc_pages_node(nid, gfp_mask, 0);
+> > +             if (!page)
+> > +                     goto out;
+> > +             list_add_tail(&page->lru, list);
+> > +     }
+>
+> and replace this by while(--nr_pages) etc.
 
-thanks.
--- 
-~Randy
+OK. Will do.
 
+>
+> I did not really go in depth, but looks good to me, and much more simply
+> overall.
+
+Yeah. The series only has 8 patches now. It is simpler.
+
+>
+> The only thing I am not sure about is the use of GFP_ATOMIC.
+> It has been raised before than when we are close to OOM, the user might want
+> to try to free up some memory by dissolving free_huge_pages, and so we might
+> want to dip in the reserves.
+>
+> Given the fact that we are prepared to fail, and that we do not retry, I would
+> rather use GFP_KERNEL than to have X pages atomically allocated and then realize
+> we need to drop them on the ground because we cannot go further at some point.
+> I think those reserves would be better off used by someone else in that
+> situation.
+>
+> But this is just my thoughs, and given the fact that there seems to be a consensus
+> of susing GFP_ATOMIC.
+>
+> --
+> Oscar Salvador
+> SUSE L3
