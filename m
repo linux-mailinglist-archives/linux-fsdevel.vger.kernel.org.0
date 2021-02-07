@@ -2,154 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A399731272C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Feb 2021 20:12:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B136312766
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Feb 2021 21:27:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbhBGTL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Feb 2021 14:11:56 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:45289 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbhBGTLx (ORCPT
+        id S229651AbhBGU1E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Feb 2021 15:27:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229506AbhBGU1C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Feb 2021 14:11:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612726183; x=1644262183;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=FzS9zFUmRqicv50QPGUeADa6V5Jl4yxJkzBPfpJ4xzg=;
-  b=IdwufY7kr5xKCvd0FYQNPucdbLEcRwVbMxyFkIEQxDLb5VL7cws/+izN
-   91bgJqPUZGeqhEh27T8j3VXT0OphnHXYKMM9U/JQdKQCVf2/a7eOE+tc0
-   oK33/9d2PmCD8DtxFT4Tg8xLJSjAzq5Bs/d1jP9YGLgk8+hqB5vSISanj
-   xCferfBO7SYZxjWyJiyqdSrCWxyvWmfPY/6HlfaRCKr6sf4IeoZXwp4+B
-   ZLL7lGD5py/H2BR4yDHPMXRmlu3irPieT2061TH4FUYG6fnNdIanJSlsS
-   58gzmcuMKDFegxtZwb9f2kxdSIvONBRPPAOE/2NmUSULNGbU/oc5vDSU+
-   g==;
-IronPort-SDR: JsZFWg87zoq742Kv9BeiHOscxurNSedo1XHiFZvPrOFH8NY9QRp6RlD7n/IG3Xk1Xwft22eHQo
- Agw9kTbHrwOJQ58yAbTOEmiGxaGRHgA4J8Rkf9zmdbtOaZebqya/MUJWta0UQ0zC8TUv7g8k5E
- Sq2XoeuOtIvQmB/wVIOrh7JQF4ajbuvBba/tX3gMY5Npcahg3mIIqMXq2cTDzPdpdfe4shGFdX
- WxwCyHsj9dofRB4HmxwwudYA1sJzyj0sAFj0hSDJQ3FfPhRBgaZqT23HtbWGotBnLKqztILxBl
- 1rM=
-X-IronPort-AV: E=Sophos;i="5.81,160,1610380800"; 
-   d="scan'208";a="263497557"
-Received: from mail-dm6nam12lp2173.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.173])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Feb 2021 03:28:00 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OJ69y0VSndSOll3ZjWX7hNioWH8qq8AJQZT23/IjgX3enZydpPcBir9L177QUUMNngtGhi40H7GPJeHoGgcjqGjkGhyrxMnKrekl+XF4Ivz+ohe5p9jl8wbqJeNVo+E5DpJVsBE1bXd5JpII1Vu6pSyvDNipwmRNu1vXa/JhT9xqS3cOP/58pZis2TdD64BEWivDyKW02KO1B6h3iDN0Chq/sfzbwbqNsBZcutqJEAeBX6k3RduG5AoP/dDefre58QhLjwJCc5G2f5AxFTxCU+Palh4fVG43OA56qKeHGdcTHU+AOExTqYIRkYcBjK0YfAy3cPWwETxcMOCnaGRjgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nRJx5OElmvEhkI0XpYnPJ0OUCTbMQdWdrHsDzxQTizU=;
- b=A52w6ZiiE6GSllgA+6V2luORB7xwQ6p0VuBc287AIdnUzVxtLT/NjF0Vsjf+4pql7mSLVaAtm8iR2a+VwHpmNPze96OIMqEmiYouZSenVRYeRRwoE/Hw/PJaAkt4B2rrP4hGY4iP/NseB0pAAohDGHCygmdY2ASe1vp2PdCiUt9yZQ8V+R1zY4CKXBWGUsEeIA82ZN5B5JH/SeO6UDdFy7uc8KPoeL4MpkTxsrkqIo5BXdPiqHEsU5cGiFEna54a4izlSToLH8u5GRJ60fga/rz/W1C0ypi2E3HDeP3Sum64pu8UwENETMvoVI0r4SZ9yY1tMZ3daklDDT77QvyEPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Sun, 7 Feb 2021 15:27:02 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34F4CC06174A
+        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Feb 2021 12:26:22 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id m2so2174755pgq.5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Feb 2021 12:26:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nRJx5OElmvEhkI0XpYnPJ0OUCTbMQdWdrHsDzxQTizU=;
- b=Yrm70KUHCpDQcO3TX1vL0yQpnWWEO8tLUk6HIpIk7TPXncd51Eu8iZFqXvk+3RBsv+xCBjJf5TT7V25eIPI/rP5Ud4T3cgBz7RTqHAbBmGL96hhKpy58oqTa1dzQzcduq95J4OiibdEXqvQIECt2XdivF5l4j6SGFXagRZO4rtU=
-Received: from BYAPR04MB4965.namprd04.prod.outlook.com (2603:10b6:a03:4d::25)
- by BYAPR04MB4965.namprd04.prod.outlook.com (2603:10b6:a03:4d::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.23; Sun, 7 Feb
- 2021 19:10:42 +0000
-Received: from BYAPR04MB4965.namprd04.prod.outlook.com
- ([fe80::1d83:38d9:143:4c9c]) by BYAPR04MB4965.namprd04.prod.outlook.com
- ([fe80::1d83:38d9:143:4c9c%5]) with mapi id 15.20.3825.027; Sun, 7 Feb 2021
- 19:10:42 +0000
-From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-        "chao@kernel.org" <chao@kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "dongli.zhang@oracle.com" <dongli.zhang@oracle.com>,
-        "clm@fb.com" <clm@fb.com>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>
-Subject: Re: [RFC PATCH 0/8] use core page calls instead of kmaps
-Thread-Topic: [RFC PATCH 0/8] use core page calls instead of kmaps
-Thread-Index: AQHW/YQRsjkxc1kvWUSrH/26RYB5ag==
-Date:   Sun, 7 Feb 2021 19:10:41 +0000
-Message-ID: <BYAPR04MB49655721C8EE8BAFF055EE2986B09@BYAPR04MB4965.namprd04.prod.outlook.com>
-References: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [199.255.45.62]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f93838af-af82-46ce-b5b2-08d8cb9c103c
-x-ms-traffictypediagnostic: BYAPR04MB4965:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR04MB4965082D7C82C908D953831686B09@BYAPR04MB4965.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 6hWj/jrXdnfYWUXhNExa/O0OpjrisD/J44b/bX8+1ORNxf52d6N8CSppwk6YHnTl8rcbo1s2OpmA/6qh19mDTOCfQib05CnZEGP2arjXWfihrDnCaeNaUesEiD95avtdlfhr5bnSZagM2Rd0GgpvrhiClVzn7i0mwqFY42tTvtnHpaeVR4N85Ywy+jT/38wuoaHllPJ15R08fOtktlFPwP8pdSyRR491MF/PKPv0VbOygt2UCAKXTIn58XQaD+vswoAP/RU3OTzCeRURx4vn7pZKmYp5pvPn4j3zeHbQgOtNbxq3HPQ94E9QFAgtCyjpzhgkDCCHa4qks22QfkaxuuBq2lcpZkR9UfOyLeSg96p6dRXU2KPx+VXfKdquChxdeOHlC0hOQ5oqnTnmsHzk0/TECCH7vnaivnfIqNLAR2ZAELtwSVGQfQO4W7NyH1Fii2dnpvEekbFdWgK+tE6Iy8qI6C44VqffcfVR5nKJpTRXLcXCFJMv2oLMZ0Vb6EVcoduOlUfIMNjH+Cew1DIbEg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR04MB4965.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(396003)(39860400002)(376002)(136003)(366004)(8676002)(26005)(186003)(6506007)(53546011)(33656002)(2906002)(4326008)(9686003)(5660300002)(7416002)(8936002)(55016002)(71200400001)(66556008)(7696005)(66946007)(64756008)(66446008)(66476007)(4744005)(52536014)(54906003)(110136005)(86362001)(478600001)(316002)(76116006);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?+DjXuXVD+ig/odKvbRNsHU9Vh8qi6bGDP7OTH3sDJtO+1I4atUN9QXJUIn/V?=
- =?us-ascii?Q?kRV3WbxyBvnRdUCuIvz8lpjCr7u6jpu0kEVvljYVNI5jzJrOdFA8p/GUQkw2?=
- =?us-ascii?Q?Lq/Tfno1k/nPAsJ3O6jO0cO3kjW59BdnPr1jbK6deg28l83JW1XIwp1tBCka?=
- =?us-ascii?Q?gfqwyVCgWL7ABYQ9vC16ctLrRnY3MK9Oeh3cP+GBbruC+QSuY7wDY+hH+FWD?=
- =?us-ascii?Q?c3lQY2p2knVBICgpZY1AekUajB88PNjFJz2JEFq+WnjfzwIJlgxKNHamrfJW?=
- =?us-ascii?Q?PcCuxUMCO9BgN6H7Zv5osHHS3ZuMuRwh4kZZdNL4qXeYLXCBlRsq9IZlp1Up?=
- =?us-ascii?Q?uPhzS+Fbdg1XyMr6ZGgvLsI/dIdcUczYcVsvrzAVcxmJ33L0fJkk3mdgP+2Q?=
- =?us-ascii?Q?GCV4y2/SqmDtlS6ds6IPPLrbwtmmBVfbV0Zlb72co3VymPZbVux3KgkuPh97?=
- =?us-ascii?Q?ydK/299xvdLfVk9xCa1jxiim8qLRpP2i3ToIH3Fd5DKmW/yIuIp8JahJFV+w?=
- =?us-ascii?Q?PFBEgnOcwNnrDU5B2ePPr5+5qan6FXps5vwMko6xD1RVfM+yFRVLEmf1WrL2?=
- =?us-ascii?Q?1V02oOLS670jYOmJLfLiKiFOcqYjoftCfl+HC6UZYygjZl6iXeppIXVPXuei?=
- =?us-ascii?Q?LxU8naFGJmijNqUi6Pj2AGregHHFHopFYkrDF+C/AwB6RfxHH+NZvKUPj3Cq?=
- =?us-ascii?Q?Vp9o31qeTOEGmhhjBshTPLygcqTyI8QlmJ2gePwMbiXaREp+JAFL4tdduDK5?=
- =?us-ascii?Q?JsNMbPRpp9POh6gGo/FzlukzWX2Q5ZTPmRQrq9KiBeiNmSk0sdLnNdTt+6pq?=
- =?us-ascii?Q?YraPVvNC+EJT3wwr/AbWdnn7MBvXIz1BF4rFXHUbfjacSspN68E+0ZCF6sLQ?=
- =?us-ascii?Q?F8lUq+906Gg6drJ4R5n1OWPC8e6KjiG8p0mMP4050Yw3MF4j9PgBCR7iV/8n?=
- =?us-ascii?Q?oQZOvApELIaYz/q8S1DGwxhNxZZZsDtzSpUmtZ8VkmZOnKZVT2A/lIVotIMo?=
- =?us-ascii?Q?ocvs0R1t5p9EVhEPQJme72w25LAYtJrT5JHhUAhD4IIAw5BUdHi/bh9SgK3s?=
- =?us-ascii?Q?frrEoyGziGkD9GGtxTiru8vwMbeX39I8mBeCKwv1uApFGUrWDJK/ZgDVKCnn?=
- =?us-ascii?Q?Qy67ANNXLpJUmr26TTvzgVll0Cj/Vcv90GC7q1EX+3TuNgTb+kZaI771K8Mo?=
- =?us-ascii?Q?SSIiAi7Xrmas5O99Iz8dnlb3S5gTxH33pdnDRLSMvjIFoP+HsfIHxCFfP/SK?=
- =?us-ascii?Q?jIIdsQTt8hXloduGqFO/QduzRjNT3QJhNExTFtNrWYsAOTfMh2674rVm2KOs?=
- =?us-ascii?Q?5Mev8NGuflbmeI/OE2dVAC0j?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language;
+        bh=mxKKO1TY0wYVaI8POrF6A8LJfDP6M0L/dZ2gay10pTs=;
+        b=EIwGaQ8SSc9i3SaZwRAyzA1b3AqcCp6dOSK3HSGQljqGc/VRlH+m5elvTpQ9va9nm/
+         uE0kdM/MTDu/rby/fdE/Lms0xN+l6NYd4iVjskSkMPD0kKpj4rfBo0xq/+HUxKxGi8H+
+         BMdGDQVS25EHxLabvc2NMfVCuCVuG3FsLv02Eisi9DTXtAH8OcfpYykuSkej2pojbsbf
+         ZwZtUrRCjfojR0qX89ymR7AgYtQcspydL8IKq83WhLinapN+BVpZVNsceVDe5/BW2GVP
+         3Z9M3GKOx8JMBU2otk00fioZS/kXtgz0lXd3lRz3i170fcT0bMCTyx9jhkwC4x2wT1Iz
+         4L5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language;
+        bh=mxKKO1TY0wYVaI8POrF6A8LJfDP6M0L/dZ2gay10pTs=;
+        b=Vz8TCP+X5i0cOhQU5wpDIjodjOTO8LdsbGe6diKRkGaW6wuJwRxNopPo7WZOsMq9JS
+         RWGSJU1Fwe/twmSOK2SUkIaI9D4L0q3sDHV2gA2rXp29G3ExrUDsY9+9BBr1NYwG9HcK
+         fw9adzgxG2P3Dt9w++HNiT6T/i49SlnfgOO+5+H4b5CyXIf4NppPpCc3kXVeB3DCVxCB
+         DKIJyvoYHy2zHs6qTla+EpEkwZI4kAa0M6YwswVJS0oqF//lVOnJzn3M5HU8Nde47AX0
+         t3b7+XhfxkmNJdBxalC+bK5dRIvw3erT1iWClJkAIWobisrIYAjleXPDc+By2clD+N7s
+         CqRw==
+X-Gm-Message-State: AOAM532WuoIT6bmJhQ5omS7dmW2Sun2FZTMIsfDiYo4B1UnvBPAqnv6u
+        3oUUn3rOZpQe5XLJCLo0MFFTOh9zk1LxwA==
+X-Google-Smtp-Source: ABdhPJwHOgd2MpiW5bI4cRdE5U/pU3MSDDzKfjwGYwVGvfvAU1YFEAu39pBtq52mZlzH26Q5vVAGXA==
+X-Received: by 2002:a65:57cd:: with SMTP id q13mr5876866pgr.367.1612729581590;
+        Sun, 07 Feb 2021 12:26:21 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id v1sm16563374pga.63.2021.02.07.12.26.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Feb 2021 12:26:20 -0800 (PST)
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH RFC] namei: don't drop link paths acquired under LOOKUP_RCU
+Message-ID: <8b114189-e943-a7e6-3d31-16aa8a148da6@kernel.dk>
+Date:   Sun, 7 Feb 2021 13:26:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR04MB4965.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f93838af-af82-46ce-b5b2-08d8cb9c103c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2021 19:10:41.9806
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: l/wvv+T9mIiuEfKRcklCSuPiZfhrgt77nEXhjc8PQ8WGRSJztJWmX/WyXvvmiZkwXefOUJc6XfJOhkWyzvikLSNoM6uUcjy+++G9H9DlxOc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4965
+Content-Type: multipart/mixed;
+ boundary="------------1AB8B81F96D255D88DCA2EF9"
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/7/21 11:04, Chaitanya Kulkarni wrote:=0A=
-> Chaitanya Kulkarni (8):=0A=
->   brd: use memcpy_from_page() in copy_from_brd()=0A=
->   brd: use memcpy_from_page() in copy_from_brd()=0A=
-I'm aware that couple of places in brd code we can use memcpy_to_page()=0A=
-and get rid the local variable, once I get some feedback I'll add those=0A=
-to the V1.=0A=
+This is a multi-part message in MIME format.
+--------------1AB8B81F96D255D88DCA2EF9
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+Ran into an issue where testing with LOOKUP_CACHED ended up complaining
+about a mount count mismatch:
+
+WARNING: CPU: 3 PID: 368 at fs/namespace.c:1168 mntput_no_expire+0x1b5/0x270
+Modules linked in:
+CPU: 3 PID: 368 Comm: al Not tainted 5.11.0-rc6+ #9166
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+RIP: 0010:mntput_no_expire+0x1b5/0x270
+Code: 0f 84 b9 fe ff ff 48 8b 35 28 d7 fd 00 b9 01 00 00 00 bf 08 00 00 00 48 c7 c2 80 1b 17 82 e8 d2 10 e2 ff e9 97 fe ff ff 79 02 <0f> 0b e8 44 d4 e7 ff 83 05 0d 91 da 00 01 48 c7 c7 04 96 00 82 e8
+RSP: 0018:ffffc900002bbe68 EFLAGS: 00010286
+RAX: 0000000000000008 RBX: 00000000ffffffff RCX: 0000000000000008
+RDX: 0000000000000008 RSI: 0000000000000000 RDI: 0000000000000008
+RBP: ffff888102790000 R08: 0000000000000000 R09: 0000000000000008
+R10: ffff8881b9ce9c80 R11: 0000000000002000 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff888102790088 R15: ffff888102790050
+FS:  00007f35e29f9580(0000) GS:ffff8881b9cc0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000558689fde004 CR3: 0000000108403003 CR4: 00000000001706e0
+Call Trace:
+ path_umount+0x224/0x510
+ __x64_sys_umount+0x6f/0x80
+ do_syscall_64+0x31/0x40
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f35e292f2cb
+Code: 1b 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 90 f3 0f 1e fa 31 f6 e9 05 00 00 00 0f 1f 44 00 00 f3 0f 1e fa b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 71 1b 0c 00 f7 d8
+RSP: 002b:00007ffc6536e638 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f35e292f2cb
+RDX: 00007ffc6536e640 RSI: 0000000000000000 RDI: 0000558689fde004
+RBP: 0000558689fdd220 R08: 00007f35e2a194c0 R09: 0000000000000000
+R10: 0000558689fdc448 R11: 0000000000000246 R12: 0000558689fdd120
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+and I believe this is due to the stack links being put, even though they
+were acquired under LOOKUP_RCU, and hence don't hold an actual reference.
+Before LOOKUP_CACHED, we always retried without LOOKUP_RCU, and hence
+they'd end up being valid. But if a caller specifies LOOKUP_CACHED, then
+we will not be retrying without LOOKUP_RCU.
+
+Fix this by clearing the stack link depth when we unlazy.
+
+Fixes: 6c6ec2b0a3e0 ("fs: add support for LOOKUP_CACHED")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+Al, not sure if this is the right fix for the situation, but it's
+definitely a problem. Observed by doing a LOOKUP_CACHED of something with
+links, using /proc/self/comm as the example in the attached way to
+demonstrate this problem.
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 4cae88733a5c..20e706fe505a 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -701,6 +701,7 @@ static bool try_to_unlazy(struct nameidata *nd)
+ out1:
+ 	nd->path.mnt = NULL;
+ 	nd->path.dentry = NULL;
++	nd->depth = 0;
+ out:
+ 	rcu_read_unlock();
+ 	return false;
+@@ -755,6 +756,7 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry, unsi
+ 
+ out2:
+ 	nd->path.mnt = NULL;
++	nd->depth = 0;
+ out1:
+ 	nd->path.dentry = NULL;
+ out:
+
+-- 
+Jens Axboe
+
+
+--------------1AB8B81F96D255D88DCA2EF9
+Content-Type: text/x-csrc; charset=UTF-8;
+ name="link-RESOLVE_CACHED.c"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="link-RESOLVE_CACHED.c"
+
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <string.h>
+#include <linux/openat2.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#define RESOLVE_CACHED	0x20
+
+static int io_openat2(const char *path, int dfd)
+{
+	struct open_how how;
+	int ret;
+
+	memset(&how, 0, sizeof(how));
+	how.flags = O_RDONLY;
+	how.resolve = RESOLVE_CACHED;
+
+	ret = syscall(437, dfd, path, &how, sizeof(how));
+	if (ret == -1)
+		return -errno;
+	return ret;
+}
+
+int main(int argc, char *argv[])
+{
+	mkdir("/proc2", 0644);
+	mount("none", "/proc2", "proc", 0, NULL);
+	io_openat2("/proc2/self/comm", -1);
+	umount("/proc2");
+	return 0;
+}
+
+--------------1AB8B81F96D255D88DCA2EF9--
