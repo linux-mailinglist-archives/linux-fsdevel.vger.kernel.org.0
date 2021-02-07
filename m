@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 478A5312711
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Feb 2021 20:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E24AD31271D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Feb 2021 20:07:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbhBGTGI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Feb 2021 14:06:08 -0500
+        id S229741AbhBGTG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Feb 2021 14:06:56 -0500
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:24872 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbhBGTGG (ORCPT
+        with ESMTP id S229717AbhBGTGt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Feb 2021 14:06:06 -0500
+        Sun, 7 Feb 2021 14:06:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1612724766; x=1644260766;
+  t=1612724809; x=1644260809;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=bUHJh7WdO4b/toeg0AHLw0ztouu30XNNBjvj4mVAqXU=;
-  b=MEGOBD0SUxSMma78+0AWH2c3ZlzZOiJSuuUCS1doO4+wr74a/n4zY3AZ
-   08Bl0VTpKxODg8bTYJAh/7onO0hpSyfQwLIBNZPMg6kJ/+NG7RaNJuJjn
-   LjwO4FQqOE8o9eCFm4wRulaAN6v8H3XmeCkYp/+zZjKtt/Xo7q4/WTy8G
-   OulswRKRlogjJ5HvUK50Le31vPQ1waN8SXAZY0HvpBWBIeWasvmzTd9vE
-   3/Rpd2eKHy2zOLvtvh58DwlmMo9X5pUcmQ7kEd/xDSl8Feuni7aZObnT1
-   8wKLJ7A48/JwBGSHsP/FKOjvi8ujJC2w7fwfNau7r/Re8CTHEj37qtxwC
-   w==;
-IronPort-SDR: fuC609NQHBv4sVwfaP8nv/TaILqX5q7fvyUTHggPlee4x/t/LO7GkNbcXHp+2V2404pz1iJH2p
- Mefwxnxl0qMEyquFLejbk78ybegFR60ATtiutNnKEzw7FMaiv1sQeh0wWTl9Dx8w6N31lD33kt
- 766gFrqqAzRLtuODFr9N5fVGITEelY3QsltsGsw3QvMvPmvYGnRUb2EfMH8SVj6KmSxMYFP+LF
- OLuBGRlwLSVsBeP9J6BHrTNI2rCTWaco0ubeM9ehIq+94UPW1Y1QSzrddocvb9pfbomEUxJtvH
- zTU=
+  bh=dehfSSqAC1aZX9IJSa3h7Royg46gKKUc/ViSk1Qqt4w=;
+  b=WZwpNOty3BPUFHcDBJiSB3D7FUX6a3v1mkptWtGQyTzAICp7VgBWjhfN
+   utkYiZosb6BOnAp2GpEaUa9piZ67gdcJ/h+TupEEiAREiM9ogXn/Usu8i
+   vEMtfFKy8A0w04mKX4ZjQ4PGQEluBgWJg3+HEmH/C3Q+OBwLVrG8GFP3U
+   oai1Umg50GFrXLfp3ULPCaufyiIfJ8vcar0qmlzzQTlnBBDZZdQryk9iu
+   w1tGjNYGZxZr9xZmKkpY5Q5slnQG0hpu6dEzhDw2nxHH7/LrhvSinS/St
+   /Kz6CqwdK3tvFdVmpK7yKljsECdWjwfLPalKd+QTD972Tnlyfka4j/Tmr
+   A==;
+IronPort-SDR: F8gL0u8taR9K/hBBZq1ALYAkFd436qU+4N3isSJ64+pIGmiwg5Qhvix6w23kK7J6cHwvDcu2Wf
+ nP4VJrAcC23uQpGxNOCUbmyRc4IsOPv/JRUnmqGM67lTJJpHw0CPU3a56SPhFtMre5AizvAbj1
+ 5RNCHdfbPq7BQgSxjFMfKfWQAZGUXNfMSkUOfuSc6u1I8zyq48HssnSYqg8ZKpUbAZ5D/pbdlT
+ cobpbyC5NuCOC6Fmp2NrV0WqYxGS/iK1cstutOcS215B6GUjv7iIZvJzWiHrN1qw9LJnqCIWjb
+ 7Nc=
 X-IronPort-AV: E=Sophos;i="5.81,160,1610380800"; 
-   d="scan'208";a="163856618"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Feb 2021 03:05:01 +0800
-IronPort-SDR: dmQc6zWHhlp1Kuo4d6RnAamUi/SO9d/n+KohGH2iyxGndllBfGZ36Jocs56ClcKJFD1zTt0kfS
- IlxaH54+MKitkkgn4tV5wFDW1wNfR+4a6zu4SMOsMK2jgeEyRVMHXpK64TeejRTyTrxA4lxfdf
- wNNdkUqqJ14VjvDzYlcA6FU48fPfNSxRKZylD0wRiGQo7Ecjksa+8eufIiKNA3Rhq/BiRbyL9U
- KLqeRff40qqcDOq1/Cnx0t2pRp2QjeVFX0IZ1RgDqamQhIAa+MkjDkgTmP2X5enQfYkevXL0Vg
- m8RuPADHo3gLeJx5AztQaG+n
+   d="scan'208";a="163856632"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 08 Feb 2021 03:05:18 +0800
+IronPort-SDR: JhBGXGoCZTzrn2Hizeh1WT8BzOAmVixm+E4wE/KvnoefdXvEneGeitJbnUzk6LgFnV/i9sbDvc
+ hmz4t26N3l55owuiFiRAb04cA2NNb+c6Mi5wTr8nr9O7zyE3w/UcNHEVrmhNxE/armoteTghXZ
+ GA+jJd9u65vyTreWeIwESro4rrSQXWnN19iC784F7R1qUoKjT79NfHT8CMUSpy180aVT7W47dQ
+ M7Yx69ibBgFakyyOJ7vLt2vOXNnTq6zD4m3SWoeJR6U1jEMCADwwR6yVYThjQ3IRjORatgNOwr
+ wzMJT62loEnjYS+52+ePjbVx
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2021 10:48:54 -0800
-IronPort-SDR: TvntBeAolPC47uEpAHveeRKqEAmQL1bLDsoSWx9UpeX47q4cyQVQy0/0wIpmXUs9xAT7lHssFB
- L57BvqnFnKJXULcHqEPvzUOsd8dD+lK3twgfLVgzhBoeVPuQ4CwxXf6ijN+9cS23SbxJwwC1ca
- OiM7KkSy/vLyrwoKEiE0ZKxRIxUziNbioNV1M/OyOdDwMEiYT1CCLSrTb6O8b05Bfrul78hTkm
- 1+OzN7Zu9sty6jW/ftaKVNTes1sB5dbW9tkCcjLxoqLUiryAVTdKBf9m197WEQaorT4hlklXpH
- B3I=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2021 10:47:13 -0800
+IronPort-SDR: /NXkTLt/6qjduDdq2JFD7H6ZU+2oB0Rep9ax9+DK8GZwj+QwFm5xGHo/lvt8Jhf3VxkmGz9WKT
+ ozZQT+ilXxLz9H78tNiiEyGRBVVQePcWqrOyWOs7rre3+lFVAGrVsUvOX5xKbv0BNnkxYqCDo6
+ lcfJ0FnspF3wCcBsGYidK8L/jGC7u9NuvCYsuTVkTuxmgmuxeG/bdTYhdVz/T5bsstD10Aa/nN
+ IJw8c3dJ5LpA9hTAS8X5AegS9FKMJ7cCnR8aKsp4kZvUGwJoa3LEMV3Fa3PQRHONuomK97B3SY
+ j1k=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2021 11:05:01 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2021 11:05:18 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
@@ -59,9 +59,9 @@ Cc:     axboe@kernel.dk, tytso@mit.edu, adilger.kernel@dilger.ca,
         chaitanya.kulkarni@wdc.com, dongli.zhang@oracle.com, clm@fb.com,
         ira.weiny@intel.com, dsterba@suse.com, ebiggers@kernel.org,
         hch@infradead.org, dave.hansen@intel.com
-Subject: [RFC PATCH 3/8] null_blk: use memcpy_page() in copy_to_nullb()
-Date:   Sun,  7 Feb 2021 11:04:20 -0800
-Message-Id: <20210207190425.38107-4-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 4/8] null_blk: use memcpy_page() in copy_from_nullb()
+Date:   Sun,  7 Feb 2021 11:04:21 -0800
+Message-Id: <20210207190425.38107-5-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
 In-Reply-To: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
 References: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
@@ -73,14 +73,14 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- drivers/block/null_blk/main.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/block/null_blk/main.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index d6c821d48090..c9b6db82b07c 100644
+index c9b6db82b07c..1c0e1a295e90 100644
 --- a/drivers/block/null_blk/main.c
 +++ b/drivers/block/null_blk/main.c
-@@ -1010,7 +1010,6 @@ static int copy_to_nullb(struct nullb *nullb, struct page *source,
+@@ -1042,7 +1042,6 @@ static int copy_from_nullb(struct nullb *nullb, struct page *dest,
  	size_t temp, count = 0;
  	unsigned int offset;
  	struct nullb_page *t_page;
@@ -88,19 +88,28 @@ index d6c821d48090..c9b6db82b07c 100644
  
  	while (count < n) {
  		temp = min_t(size_t, nullb->dev->blocksize, n - count);
-@@ -1024,11 +1023,7 @@ static int copy_to_nullb(struct nullb *nullb, struct page *source,
- 		if (!t_page)
- 			return -ENOSPC;
+@@ -1051,16 +1050,11 @@ static int copy_from_nullb(struct nullb *nullb, struct page *dest,
+ 		t_page = null_lookup_page(nullb, sector, false,
+ 			!null_cache_active(nullb));
  
--		src = kmap_atomic(source);
--		dst = kmap_atomic(t_page->page);
--		memcpy(dst + offset, src + off + count, temp);
--		kunmap_atomic(dst);
+-		dst = kmap_atomic(dest);
+-		if (!t_page) {
+-			memset(dst + off + count, 0, temp);
+-			goto next;
+-		}
+-		src = kmap_atomic(t_page->page);
+-		memcpy(dst + off + count, src + offset, temp);
 -		kunmap_atomic(src);
-+		memcpy_page(t_page->page, offset, source, off + count, temp);
+-next:
+-		kunmap_atomic(dst);
++		if (t_page)
++			memcpy_page(dest, off + count, t_page->page, offset,
++				    temp);
++		else
++			zero_user(dest, off + count, temp);
  
- 		__set_bit(sector & SECTOR_MASK, t_page->bitmap);
- 
+ 		count += temp;
+ 		sector += temp >> SECTOR_SHIFT;
 -- 
 2.22.1
 
