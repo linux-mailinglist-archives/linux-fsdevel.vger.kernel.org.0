@@ -2,77 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C104312352
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Feb 2021 11:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2981631263F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Feb 2021 18:12:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbhBGJ7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Feb 2021 04:59:25 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40801 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229548AbhBGJ7X (ORCPT
+        id S229733AbhBGRKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Feb 2021 12:10:37 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:49745 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229706AbhBGRKc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Feb 2021 04:59:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612691877;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nb463ar027tgXHewGatt6ByNt8vkBXPEnIGuv2d2YiI=;
-        b=TAUqrYE5ky5xmZQ8hRVvRficwMUqFGfFwqtTovMg7hAWxc4IBFBiaRzlBpZsZU9ucbMaeG
-        2MWgOmRiY/2tsYOU2siXwOigwsmHQQ4mW2sW5ATViqYxO0uvyhVTvXiL6NT/ahRYT8G+ei
-        eKtmEsVlWhLiEz3Qcyi4E1s2I4+U7ZQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-63-qm2LGXD_N1izJYfSh6wp3w-1; Sun, 07 Feb 2021 04:57:54 -0500
-X-MC-Unique: qm2LGXD_N1izJYfSh6wp3w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7EC01005501;
-        Sun,  7 Feb 2021 09:57:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DB8EE1A873;
-        Sun,  7 Feb 2021 09:57:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <87eehwnn2c.fsf@suse.com>
-References: <87eehwnn2c.fsf@suse.com> <CAH2r5ms9dJ3RW=_+c0HApLyUC=LD5ACp_nhE2jJQuS-121kV=w@mail.gmail.com>
-To:     =?us-ascii?Q?=3D=3Futf-8=3FQ=3FAur=3DC3=3DA9lien=3F=3D?= Aptel 
-        <aaptel@suse.com>
-Cc:     dhowells@redhat.com, Steve French <smfrench@gmail.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] cifs: use discard iterator to discard unneeded network data more efficiently
+        Sun, 7 Feb 2021 12:10:32 -0500
+X-IronPort-AV: E=Sophos;i="5.81,160,1610380800"; 
+   d="scan'208";a="104299367"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 08 Feb 2021 01:09:32 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id DEF7F4CE6F6E;
+        Mon,  8 Feb 2021 01:09:27 +0800 (CST)
+Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Mon, 8 Feb 2021 01:09:30 +0800
+Received: from irides.mr.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Mon, 8 Feb 2021 01:09:29 +0800
+From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <willy@infradead.org>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
+        <linux-btrfs@vger.kernel.org>, <ocfs2-devel@oss.oracle.com>,
+        <david@fromorbit.com>, <hch@lst.de>, <rgoldwyn@suse.de>
+Subject: [PATCH 0/7] fsdax,xfs: Add reflink&dedupe support for fsdax
+Date:   Mon, 8 Feb 2021 01:09:17 +0800
+Message-ID: <20210207170924.2933035-1-ruansy.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Sun, 07 Feb 2021 09:57:51 +0000
-Message-ID: <2689081.1612691871@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: DEF7F4CE6F6E.A03B3
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Aur=C3=A9lien Aptel <aaptel@suse.com> wrote:
+This patchset is attempt to add CoW support for fsdax, and take XFS,
+which has both reflink and fsdax feature, as an example.
 
-> > +{
-> > +	struct msghdr smb_msg;
-> > +
-> > +	iov_iter_discard(&smb_msg.msg_iter, READ, to_read);
-> > +
-> > +	return cifs_readv_from_socket(server, &smb_msg);
-> > +}
-> > +
->=20
-> Shouldn't smb_msg be initialized to zeroes? Looking around this needs to
-> be done for cifs_read_from_socket() and cifs_read_page_from_socket() too.
+One of the key mechanism need to be implemented in fsdax is CoW.  Copy
+the data from srcmap before we actually write data to the destance
+iomap.  And we just copy range in which data won't be changed.
 
-Yeah - I think you're right.  I didn't manage to finish making the changes,
-so what I gave to Steve wasn't tested.
+Another mechanism is range comparison .  In page cache case, readpage()
+is used to load data on disk to page cache in order to be able to
+compare data.  In fsdax case, readpage() does not work.  So, we need
+another compare data with direct access support.
 
-David
+With the two mechanism implemented in fsdax, we are able to make reflink
+and fsdax work together in XFS.
+
+
+Some of the patches are picked up from Goldwyn's patchset.  I made some
+changes to adapt to this patchset.
+
+(Rebased on v5.10)
+==
+
+Shiyang Ruan (7):
+  fsdax: Output address in dax_iomap_pfn() and rename it
+  fsdax: Introduce dax_copy_edges() for CoW
+  fsdax: Copy data before write
+  fsdax: Replace mmap entry in case of CoW
+  fsdax: Dedup file range to use a compare function
+  fs/xfs: Handle CoW for fsdax write() path
+  fs/xfs: Add dedupe support for fsdax
+
+ fs/btrfs/reflink.c     |   3 +-
+ fs/dax.c               | 188 ++++++++++++++++++++++++++++++++++++++---
+ fs/ocfs2/file.c        |   2 +-
+ fs/remap_range.c       |  14 +--
+ fs/xfs/xfs_bmap_util.c |   6 +-
+ fs/xfs/xfs_file.c      |  30 ++++++-
+ fs/xfs/xfs_inode.c     |   8 +-
+ fs/xfs/xfs_inode.h     |   1 +
+ fs/xfs/xfs_iomap.c     |   3 +-
+ fs/xfs/xfs_iops.c      |  11 ++-
+ fs/xfs/xfs_reflink.c   |  23 ++++-
+ include/linux/dax.h    |   5 ++
+ include/linux/fs.h     |   9 +-
+ 13 files changed, 270 insertions(+), 33 deletions(-)
+
+-- 
+2.30.0
+
+
 
