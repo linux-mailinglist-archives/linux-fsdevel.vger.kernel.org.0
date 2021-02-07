@@ -2,89 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC1A3122CB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Feb 2021 09:35:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C104312352
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Feb 2021 11:00:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbhBGIfK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Feb 2021 03:35:10 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12142 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230245AbhBGIdH (ORCPT
+        id S229445AbhBGJ7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Feb 2021 04:59:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40801 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229548AbhBGJ7X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Feb 2021 03:33:07 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DYMmx4fsHz164sT;
-        Sun,  7 Feb 2021 16:30:57 +0800 (CST)
-Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.498.0; Sun, 7 Feb 2021
- 16:32:18 +0800
-Subject: Re: [PATCH 3/6] fs-verity: add FS_IOC_READ_VERITY_METADATA ioctl
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     <linux-fscrypt@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        <linux-api@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-ext4@vger.kernel.org>, Victor Hsieh <victorhsieh@google.com>
-References: <20210115181819.34732-1-ebiggers@kernel.org>
- <20210115181819.34732-4-ebiggers@kernel.org>
- <107cf2f2-a6fe-57c2-d17d-57679d7c612d@huawei.com>
- <YB+ead3SvsQy5ULH@sol.localdomain>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <fbe787cc-fcba-7c97-d5ca-cb67345d0c8c@huawei.com>
-Date:   Sun, 7 Feb 2021 16:32:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 7 Feb 2021 04:59:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612691877;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nb463ar027tgXHewGatt6ByNt8vkBXPEnIGuv2d2YiI=;
+        b=TAUqrYE5ky5xmZQ8hRVvRficwMUqFGfFwqtTovMg7hAWxc4IBFBiaRzlBpZsZU9ucbMaeG
+        2MWgOmRiY/2tsYOU2siXwOigwsmHQQ4mW2sW5ATViqYxO0uvyhVTvXiL6NT/ahRYT8G+ei
+        eKtmEsVlWhLiEz3Qcyi4E1s2I4+U7ZQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-63-qm2LGXD_N1izJYfSh6wp3w-1; Sun, 07 Feb 2021 04:57:54 -0500
+X-MC-Unique: qm2LGXD_N1izJYfSh6wp3w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7EC01005501;
+        Sun,  7 Feb 2021 09:57:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB8EE1A873;
+        Sun,  7 Feb 2021 09:57:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <87eehwnn2c.fsf@suse.com>
+References: <87eehwnn2c.fsf@suse.com> <CAH2r5ms9dJ3RW=_+c0HApLyUC=LD5ACp_nhE2jJQuS-121kV=w@mail.gmail.com>
+To:     =?us-ascii?Q?=3D=3Futf-8=3FQ=3FAur=3DC3=3DA9lien=3F=3D?= Aptel 
+        <aaptel@suse.com>
+Cc:     dhowells@redhat.com, Steve French <smfrench@gmail.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] cifs: use discard iterator to discard unneeded network data more efficiently
 MIME-Version: 1.0
-In-Reply-To: <YB+ead3SvsQy5ULH@sol.localdomain>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.136.110.154]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date:   Sun, 07 Feb 2021 09:57:51 +0000
+Message-ID: <2689081.1612691871@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/2/7 16:01, Eric Biggers wrote:
-> On Sun, Feb 07, 2021 at 03:46:43PM +0800, Chao Yu wrote:
->> Hi Eric,
->>
->> On 2021/1/16 2:18, Eric Biggers wrote:
->>> +static int f2fs_ioc_read_verity_metadata(struct file *filp, unsigned long arg)
->>> +{
->>> +	if (!f2fs_sb_has_verity(F2FS_I_SB(file_inode(filp))))
->>> +		return -EOPNOTSUPP;
->>
->> One case is after we update kernel image, f2fs module may no longer support
->> compress algorithm which current file was compressed with, to avoid triggering
->> IO with empty compress engine (struct f2fs_compress_ops pointer):
->>
->> It needs to add f2fs_is_compress_backend_ready() check condition here?
->>
->> Thanks,
->>
->>> +
->>> +	return fsverity_ioctl_read_metadata(filp, (const void __user *)arg);
->>> +}
-> 
-> In that case it wouldn't have been possible to open the file, because
-> f2fs_file_open() checks for it.  So it's not necessary to repeat the same check
-> in every operation on the file descriptor.
+Aur=C3=A9lien Aptel <aaptel@suse.com> wrote:
 
-Oh, yes, it's safe now.
+> > +{
+> > +	struct msghdr smb_msg;
+> > +
+> > +	iov_iter_discard(&smb_msg.msg_iter, READ, to_read);
+> > +
+> > +	return cifs_readv_from_socket(server, &smb_msg);
+> > +}
+> > +
+>=20
+> Shouldn't smb_msg be initialized to zeroes? Looking around this needs to
+> be done for cifs_read_from_socket() and cifs_read_page_from_socket() too.
 
-I'm thinking we need to remove the check in f2fs_file_open(), because the check
-will fail metadata access/update (via f{g,s}etxattr/ioctl), however original
-intention of that check is only to avoid syscalls to touch compressed data w/o
-the engine, anyway this is another topic.
+Yeah - I think you're right.  I didn't manage to finish making the changes,
+so what I gave to Steve wasn't tested.
 
-The whole patchset looks fine to me, feel free to add:
+David
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-> 
-> - Eric
-> .
-> 
