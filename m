@@ -2,30 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C80C31336A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 14:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9FAA313397
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 14:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbhBHNff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 08:35:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35012 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229752AbhBHNfb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 08:35:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1612791284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        id S231393AbhBHNoS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 08:44:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:22331 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231380AbhBHNm1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Feb 2021 08:42:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612791660;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tPdxySZddbQD9qXDKMPnVWIQTa7PPiE4Qwe7qfgymrs=;
-        b=Ws1lDxg/c1OUiwJ+n1TiJoYFn0hPPDdML5K4+HkUiiEWmfvzMQjPpO3/qn1jln4ONS/kQr
-        iAi2I/2SSVcImlpMcLn9sGvyK1nH8qeEtezsgDdAsfxEiDnjlAtRKDe8fv4OppLwE1jcQF
-        IWgpduuoLm3r0wY2pkrb6rXd+NrR404=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id EAC5AAE47;
-        Mon,  8 Feb 2021 13:34:43 +0000 (UTC)
-Date:   Mon, 8 Feb 2021 14:34:37 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     David Hildenbrand <david@redhat.com>
+        bh=nIUUbNNEsbNY0qQ2TGTcojBdZ5jjYwt4zGR/YnTj+ow=;
+        b=KjIR+1bFrSfGCuc4MjpjrVFYPVg6asVqPBW7yGJKosn77Zf5F3MwQDAt3lkIyCl52MDEwr
+        D1ZRt3+ftfMEaFrV/6Vc+/MSGvjcQZnyMyOM6cgoyDR6B+z4H/pvTodEOKeuQ9eG9LPJMX
+        83DfaqI0wJ8Ou94/Abc4knappknl6OM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-144-Ransb7rrNHyz0DdVU9VPKA-1; Mon, 08 Feb 2021 08:40:56 -0500
+X-MC-Unique: Ransb7rrNHyz0DdVU9VPKA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EA297107ACC7;
+        Mon,  8 Feb 2021 13:40:51 +0000 (UTC)
+Received: from [10.36.113.240] (ovpn-113-240.ams2.redhat.com [10.36.113.240])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A34BC60C5B;
+        Mon,  8 Feb 2021 13:40:43 +0000 (UTC)
+Subject: Re: [PATCH v17 08/10] PM: hibernate: disable when there are active
+ secretmem users
+To:     Michal Hocko <mhocko@suse.com>
 Cc:     Mike Rapoport <rppt@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -58,13 +69,9 @@ Cc:     Mike Rapoport <rppt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v17 08/10] PM: hibernate: disable when there are active
- secretmem users
-Message-ID: <YCE97c9tDkdf+A6P@dhcp22.suse.cz>
-References: <20210208084920.2884-9-rppt@kernel.org>
- <YCEP/bmqm0DsvCYN@dhcp22.suse.cz>
+        Palmer Dabbelt <palmerdabbelt@google.com>
+References: <20210208084920.2884-1-rppt@kernel.org>
+ <20210208084920.2884-9-rppt@kernel.org> <YCEP/bmqm0DsvCYN@dhcp22.suse.cz>
  <38c0cad4-ac55-28e4-81c6-4e0414f0620a@redhat.com>
  <YCEXwUYepeQvEWTf@dhcp22.suse.cz>
  <a488a0bb-def5-0249-99e2-4643787cef69@redhat.com>
@@ -73,41 +80,47 @@ References: <20210208084920.2884-9-rppt@kernel.org>
  <21f4e742-1aab-f8ba-f0e7-40faa6d6c0bb@redhat.com>
  <5db6ac46-d4e1-3c68-22a0-94f2ecde8801@redhat.com>
  <YCEr1JS8k/nDbcVR@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <f822a203-f7ec-8b97-b88d-1bf6bffa93d8@redhat.com>
+Date:   Mon, 8 Feb 2021 14:40:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <YCEr1JS8k/nDbcVR@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Btw. I do not see Rafael involved. Maybe he can add some insight to
-this. Please note that the patch in question is
-http://lkml.kernel.org/r/20210208084920.2884-9-rppt@kernel.org and
-the full series is http://lkml.kernel.org/r/20210208084920.2884-1-rppt@kernel.org
-
-On Mon 08-02-21 13:17:26, Michal Hocko wrote:
+On 08.02.21 13:17, Michal Hocko wrote:
 > On Mon 08-02-21 12:26:31, David Hildenbrand wrote:
 > [...]
-> > My F33 system happily hibernates to disk, even with an application that
-> > succeeded in din doing an mlockall().
-> > 
-> > And it somewhat makes sense. Even my freshly-booted, idle F33 has
-> > 
-> > $ cat /proc/meminfo  | grep lock
-> > Mlocked:            4860 kB
-> > 
-> > So, stopping to hibernate with mlocked memory would essentially prohibit any
-> > modern Linux distro to hibernate ever.
+>> My F33 system happily hibernates to disk, even with an application that
+>> succeeded in din doing an mlockall().
+>>
+>> And it somewhat makes sense. Even my freshly-booted, idle F33 has
+>>
+>> $ cat /proc/meminfo  | grep lock
+>> Mlocked:            4860 kB
+>>
+>> So, stopping to hibernate with mlocked memory would essentially prohibit any
+>> modern Linux distro to hibernate ever.
 > 
 > My system seems to be completely fine without mlocked memory. It would
 > be interesting to see who mlocks memory on your system and check whether
 > the expectated mlock semantic really works for those. This should be
 > documented at least.
-> -- 
-> Michal Hocko
-> SUSE Labs
+
+I checked some other installations (Ubuntu, RHEL), and they also show no 
+sign of Mlock. My notebook (F33) and desktop (F33) both have mlocked 
+memory. Either related to F33 or due to some software (e.g., kerberos).
 
 -- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+David / dhildenb
+
