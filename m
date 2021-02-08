@@ -2,142 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D3531304B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 12:12:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2817B312FFA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 12:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233044AbhBHLLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 06:11:36 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:54424 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232845AbhBHLHC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 06:07:02 -0500
-X-IronPort-AV: E=Sophos;i="5.81,161,1610380800"; 
-   d="scan'208";a="104328074"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 08 Feb 2021 18:55:47 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 39E964CE6F87;
-        Mon,  8 Feb 2021 18:55:46 +0800 (CST)
-Received: from G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Mon, 8 Feb 2021 18:55:48 +0800
-Received: from irides.mr.mr.mr (10.167.225.141) by
- G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Mon, 8 Feb 2021 18:55:47 +0800
-From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <dm-devel@redhat.com>
-CC:     <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@lst.de>, <agk@redhat.com>,
-        <snitzer@redhat.com>, <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>,
-        <y-goto@fujitsu.com>
-Subject: [PATCH v3 11/11] fs/dax: Remove useless functions
-Date:   Mon, 8 Feb 2021 18:55:30 +0800
-Message-ID: <20210208105530.3072869-12-ruansy.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
-References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
+        id S232870AbhBHLAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 06:00:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56190 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232773AbhBHK5w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Feb 2021 05:57:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1612781826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZIZtK7KGQOpq2x4SzJLMBFITOVmfiRO9HVwMLT9AWfk=;
+        b=WpbjzGZc+3/YkHH1uGy0eGbUYo8oCacDxNQEQtRXANwZxHwtylTb3HKk6I403Q7833wHJ8
+        aLnM/cCkpwLJswRwURhqmjTvVUu01dIEr0vSyMIJGgoFeM+JOYdLAc7kCdZvfbthq/oS41
+        xyqZWWQ3VtQBnKDUYpZPwfTqaSytqRw=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id E729BAC6E;
+        Mon,  8 Feb 2021 10:57:05 +0000 (UTC)
+Date:   Mon, 8 Feb 2021 11:57:05 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Mike Rapoport <rppt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v17 08/10] PM: hibernate: disable when there are active
+ secretmem users
+Message-ID: <YCEZAWOv63KYglJZ@dhcp22.suse.cz>
+References: <20210208084920.2884-1-rppt@kernel.org>
+ <20210208084920.2884-9-rppt@kernel.org>
+ <YCEP/bmqm0DsvCYN@dhcp22.suse.cz>
+ <38c0cad4-ac55-28e4-81c6-4e0414f0620a@redhat.com>
+ <YCEXwUYepeQvEWTf@dhcp22.suse.cz>
+ <a488a0bb-def5-0249-99e2-4643787cef69@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 39E964CE6F87.AE17F
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a488a0bb-def5-0249-99e2-4643787cef69@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since owner tarcking is triggerred by pmem device, these functions are
-useless.  So remove them.
+On Mon 08-02-21 11:53:58, David Hildenbrand wrote:
+> On 08.02.21 11:51, Michal Hocko wrote:
+> > On Mon 08-02-21 11:32:11, David Hildenbrand wrote:
+> > > On 08.02.21 11:18, Michal Hocko wrote:
+> > > > On Mon 08-02-21 10:49:18, Mike Rapoport wrote:
+> > > > > From: Mike Rapoport <rppt@linux.ibm.com>
+> > > > > 
+> > > > > It is unsafe to allow saving of secretmem areas to the hibernation
+> > > > > snapshot as they would be visible after the resume and this essentially
+> > > > > will defeat the purpose of secret memory mappings.
+> > > > > 
+> > > > > Prevent hibernation whenever there are active secret memory users.
+> > > > 
+> > > > Does this feature need any special handling? As it is effectivelly
+> > > > unevictable memory then it should behave the same as other mlock, ramfs
+> > > > which should already disable hibernation as those cannot be swapped out,
+> > > > no?
+> > > > 
+> > > 
+> > > Why should unevictable memory not go to swap when hibernating? We're merely
+> > > dumping all of our system RAM (including any unmovable allocations) to swap
+> > > storage and the system is essentially completely halted.
+> > > 
+> > My understanding is that mlock is never really made visible via swap
+> > storage.
+> 
+> "Using swap storage for hibernation" and "swapping at runtime" are two
+> different things. I might be wrong, though.
 
-Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
----
- fs/dax.c | 46 ----------------------------------------------
- 1 file changed, 46 deletions(-)
-
-diff --git a/fs/dax.c b/fs/dax.c
-index c64c3a0e76a6..e20a5df03eec 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -323,48 +323,6 @@ static unsigned long dax_end_pfn(void *entry)
- 	for (pfn = dax_to_pfn(entry); \
- 			pfn < dax_end_pfn(entry); pfn++)
- 
--/*
-- * TODO: for reflink+dax we need a way to associate a single page with
-- * multiple address_space instances at different linear_page_index()
-- * offsets.
-- */
--static void dax_associate_entry(void *entry, struct address_space *mapping,
--		struct vm_area_struct *vma, unsigned long address)
--{
--	unsigned long size = dax_entry_size(entry), pfn, index;
--	int i = 0;
--
--	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
--		return;
--
--	index = linear_page_index(vma, address & ~(size - 1));
--	for_each_mapped_pfn(entry, pfn) {
--		struct page *page = pfn_to_page(pfn);
--
--		WARN_ON_ONCE(page->mapping);
--		page->mapping = mapping;
--		page->index = index + i++;
--	}
--}
--
--static void dax_disassociate_entry(void *entry, struct address_space *mapping,
--		bool trunc)
--{
--	unsigned long pfn;
--
--	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
--		return;
--
--	for_each_mapped_pfn(entry, pfn) {
--		struct page *page = pfn_to_page(pfn);
--
--		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
--		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
--		page->mapping = NULL;
--		page->index = 0;
--	}
--}
--
- static struct page *dax_busy_page(void *entry)
- {
- 	unsigned long pfn;
-@@ -543,7 +501,6 @@ static void *grab_mapping_entry(struct xa_state *xas,
- 			xas_lock_irq(xas);
- 		}
- 
--		dax_disassociate_entry(entry, mapping, false);
- 		xas_store(xas, NULL);	/* undo the PMD join */
- 		dax_wake_entry(xas, entry, true);
- 		mapping->nrexceptional--;
-@@ -680,7 +637,6 @@ static int __dax_invalidate_entry(struct address_space *mapping,
- 	    (xas_get_mark(&xas, PAGECACHE_TAG_DIRTY) ||
- 	     xas_get_mark(&xas, PAGECACHE_TAG_TOWRITE)))
- 		goto out;
--	dax_disassociate_entry(entry, mapping, trunc);
- 	xas_store(&xas, NULL);
- 	mapping->nrexceptional--;
- 	ret = 1;
-@@ -774,8 +730,6 @@ static void *dax_insert_entry(struct xa_state *xas,
- 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
- 		void *old;
- 
--		dax_disassociate_entry(entry, mapping, false);
--		dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address);
- 		/*
- 		 * Only swap our new entry into the page cache if the current
- 		 * entry is a zero page or an empty entry.  If a normal PTE or
+Well, mlock is certainly used to keep sensitive information, not only to
+protect from major/minor faults.
 -- 
-2.30.0
-
-
-
+Michal Hocko
+SUSE Labs
