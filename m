@@ -2,101 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FB4731321F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 13:20:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C96E31325D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 13:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230386AbhBHMTa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 07:19:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57490 "EHLO mx2.suse.de"
+        id S231221AbhBHMcP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 07:32:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232876AbhBHMSN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 07:18:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1612786646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=n+2LVFofWrDzo5XkXIbA8HqM46aC4ZldghhZ33psn6M=;
-        b=KSPyq7HV9X52hHkw5B3fAQ6GHHyEdJ7l95EmFctR048cvtpwwEJSzUjnHCHT2EQT2m1fwI
-        Jsts1jfz6j4PUcL+oOZWQPNH0wYw5qJxQghfmFs/AJ9ffQiRDEhRFqPxBNTbqXBqUQzMJN
-        tTTWa45AKjgqUKiY3BBR4wSnVehy4C8=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 268A7AC6E;
-        Mon,  8 Feb 2021 12:17:26 +0000 (UTC)
-Date:   Mon, 8 Feb 2021 13:17:24 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S231514AbhBHMcL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Feb 2021 07:32:11 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9793364E29;
+        Mon,  8 Feb 2021 12:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612787490;
+        bh=F2PHpBLXNZAIsLSijUxMtD8FTU+zeIu+dTbyywDf+co=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=agvJ8G3M7d4N1y+ftubHybgDAY9Qy0fd02C9eqUnWJJW1kDtfxx+/rNI+EVytu0lA
+         r8RwgR+09OuPdkah7j5hDhAYHYr1TGf+mnAAp3AfwQzGjLhdzu4I7HzwYs1nYh7NyW
+         3SV8w2/fu6NJx/+LdNXTkODgxYTvWS0itJygiFEFF1Cmz1i2N8az3dpleDYPs6S2Xr
+         zhd80853FAKfsO3OriiH90MpAqjpNqIXYhsWZKQ8togwLkdnkdoZip5Mxfs7Re+K9i
+         jkv4WPhrZxpayNjvv+AI82JGax+/4Ycs7529ew//usKvwIEsHlSh6ZXHW4imogk0ni
+         qLRYt9FM6YL8g==
+Message-ID: <948beb902296da5bb5d1a0db705ecb190623af84.camel@kernel.org>
+Subject: Re: [PATCH] fcntl: make F_GETOWN(EX) return 0 on dead owner task
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Cyrill Gorcunov <gorcunov@gmail.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v17 08/10] PM: hibernate: disable when there are active
- secretmem users
-Message-ID: <YCEr1JS8k/nDbcVR@dhcp22.suse.cz>
-References: <20210208084920.2884-1-rppt@kernel.org>
- <20210208084920.2884-9-rppt@kernel.org>
- <YCEP/bmqm0DsvCYN@dhcp22.suse.cz>
- <38c0cad4-ac55-28e4-81c6-4e0414f0620a@redhat.com>
- <YCEXwUYepeQvEWTf@dhcp22.suse.cz>
- <a488a0bb-def5-0249-99e2-4643787cef69@redhat.com>
- <YCEZAWOv63KYglJZ@dhcp22.suse.cz>
- <770690dc-634a-78dd-0772-3aba1a3beba8@redhat.com>
- <21f4e742-1aab-f8ba-f0e7-40faa6d6c0bb@redhat.com>
- <5db6ac46-d4e1-3c68-22a0-94f2ecde8801@redhat.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrei Vagin <avagin@gmail.com>
+Date:   Mon, 08 Feb 2021 07:31:28 -0500
+In-Reply-To: <20210203221726.GF2172@grain>
+References: <20210203124156.425775-1-ptikhomirov@virtuozzo.com>
+         <20210203193201.GD2172@grain>
+         <88739f26-63b0-be1d-4e6d-def01633323e@virtuozzo.com>
+         <20210203221726.GF2172@grain>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5db6ac46-d4e1-3c68-22a0-94f2ecde8801@redhat.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 08-02-21 12:26:31, David Hildenbrand wrote:
-[...]
-> My F33 system happily hibernates to disk, even with an application that
-> succeeded in din doing an mlockall().
+On Thu, 2021-02-04 at 01:17 +0300, Cyrill Gorcunov wrote:
+> On Thu, Feb 04, 2021 at 12:35:42AM +0300, Pavel Tikhomirov wrote:
+> > 
+> > AFAICS if pid is held only by 1) fowner refcount and by 2) single process
+> > (without threads, group and session for simplicity), on process exit we go
+> > through:
+> > 
+> > do_exit
+> >   exit_notify
+> >     release_task
+> >       __exit_signal
+> >         __unhash_process
+> >           detach_pid
+> >             __change_pid
+> >               free_pid
+> >                 idr_remove
+> > 
+> > So pid is removed from idr, and after that alloc_pid can reuse pid numbers
+> > even if old pid structure is still alive and is still held by fowner.
+> ...
+> > Hope this answers your question, Thanks!
 > 
-> And it somewhat makes sense. Even my freshly-booted, idle F33 has
-> 
-> $ cat /proc/meminfo  | grep lock
-> Mlocked:            4860 kB
-> 
-> So, stopping to hibernate with mlocked memory would essentially prohibit any
-> modern Linux distro to hibernate ever.
+> Yeah, indeed, thanks! So the change is sane still I'm
+> a bit worried about backward compatibility, gimme some
+> time I'll try to refresh my memory first, in a couple
+> of days or weekend (though here are a number of experienced
+> developers CC'ed maybe they reply even faster).
 
-My system seems to be completely fine without mlocked memory. It would
-be interesting to see who mlocks memory on your system and check whether
-the expectated mlock semantic really works for those. This should be
-documented at least.
+I always find it helpful to refer to the POSIX spec [1] for this sort of
+thing. In this case, it says:
+
+F_GETOWN
+    If fildes refers to a socket, get the process ID or process group ID
+specified to receive SIGURG signals when out-of-band data is available.
+Positive values shall indicate a process ID; negative values, other than
+-1, shall indicate a process group ID; the value zero shall indicate
+that no SIGURG signals are to be sent. If fildes does not refer to a
+socket, the results are unspecified.
+
+In the event that the PID is reused, the kernel won't send signals to
+the replacement task, correct? Assuming that's the case, then this patch
+looks fine to me too. I'll plan to pick it for linux-next later today,
+and we can hopefully get this into v5.12.
+
+[1]: https://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html#tag_16_122
 -- 
-Michal Hocko
-SUSE Labs
+Jeff Layton <jlayton@kernel.org>
+
