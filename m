@@ -2,131 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C4F314230
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 22:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84E513142BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 23:20:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236957AbhBHVrI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 16:47:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35745 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236994AbhBHVqN (ORCPT
+        id S230139AbhBHWTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 17:19:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229707AbhBHWTR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 16:46:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612820687;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4aepynJlknVRj6NFbhX2n2ebQXb/zj5Dsa2tNMP+Ofs=;
-        b=fEKYPjaIb/sgSLB0pw8f9nt8g+Fc33U7I0gLsSdU8vgyV6mHtzXLSAjTxdGDakDrpdGyOk
-        GGs1g7YoWaY6gNdraGlk+l93AQugGxz9iin0FpPRIe99QWWxqhOVBu6bfIJb6xV1I1IqVu
-        2wkcC+DkQXYiBNWLcdkeB0Yalws7Hsg=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-429-aGX0hJ-hMyCM8-QKKi0ozw-1; Mon, 08 Feb 2021 16:44:45 -0500
-X-MC-Unique: aGX0hJ-hMyCM8-QKKi0ozw-1
-Received: by mail-lf1-f72.google.com with SMTP id a15so4433553lfo.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Feb 2021 13:44:45 -0800 (PST)
+        Mon, 8 Feb 2021 17:19:17 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A9CC061786
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Feb 2021 14:18:36 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id s15so8595762plr.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Feb 2021 14:18:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d+p4V3Uds2r1nqxPoujfGyPXKob2/IV0lWtEI4+ZvEg=;
+        b=MCUOts+F6kQY/nu6UyvRrlXSoyvu5xOrN2/S+S9DWUJuNC6onmSzj1BmOb7N2a8bSU
+         hZdJ68ZQ8XXn74dwvSh+dF9j6GE9YrSGhLk47gTGhv6H4gsmfLw3spc3j0a3144mAKyW
+         pMWT0uhDrLwukYwKMCFV7BXkvdyL+qV8Ns00rCppn4ctjDaHE4NkgqOwNH9NS265iVxb
+         j0WtWGZnJ6lNGoXYyC3Zp5tkEwVTA+b+yQVzFAZiw0AIN5QJhLymyYeli85lm+GdxThI
+         hOJy0fcjiftVzMApESZ8penZ/O7w6r8c0SAtyr7uea8xRk2JscS0ZKa1LsuD6Uv5LoX1
+         ucYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=4aepynJlknVRj6NFbhX2n2ebQXb/zj5Dsa2tNMP+Ofs=;
-        b=P3w/PnUcD+1M8TzXXIF+RVXpoCMAaiY+qWEZysHNO2BZo+CEAO1fYBzrlJdNg+K4G/
-         8Z0jvh+xPv8vgV5yqLHZaX9vb81K3VgOKwrCmiXHDCUiMGbJgUwvcRFIBPj6xXbI9Wdt
-         Rb2dFSCU6O/90iPZjm70kVu1niEawZKZv6rKVYpqM1A+5xe7+Icxb2H0hAdYuyuKfSRI
-         +e+Nox431IDkXwjGqx0q2Cg7GAtbeGlSVQ2/4fu/1Smaz9n3F8sLIGiyMiZGdRhMX4ie
-         s1TBqnh1PsNB1UGiQC8/SW2fOFpbmAw8H4bbxUGpHYnRoPAI8Htjc7vd9U9eMwukAGrn
-         wadg==
-X-Gm-Message-State: AOAM533tntjBSWApsEQn6rLhCetUAVxxHwdaQqAW8d8+dqE/XeU5AU1X
-        W1lHRuBPwngzimqQRf+ycbOIufQq7AWPvDkCMcRsJTUFoc6XCZseqpR2yt6cc6vJcW9UaKCWaw3
-        NScGgMg+/Euntix78C8quBUCAPw==
-X-Received: by 2002:ac2:484b:: with SMTP id 11mr11144594lfy.605.1612820683682;
-        Mon, 08 Feb 2021 13:44:43 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwYU+ahfuGJ3mGlPDTjZ5sBTd5prIK5bha/7jxkj2wK46UMNjmdy8O20OWQnrZzKp7lrPlvQQ==
-X-Received: by 2002:a5d:4ac5:: with SMTP id y5mr589823wrs.345.1612820285413;
-        Mon, 08 Feb 2021 13:38:05 -0800 (PST)
-Received: from [192.168.3.108] (p5b0c696d.dip0.t-ipconnect.de. [91.12.105.109])
-        by smtp.gmail.com with ESMTPSA id w15sm30039179wrp.15.2021.02.08.13.38.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Feb 2021 13:38:04 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   David Hildenbrand <david@redhat.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v17 00/10] mm: introduce memfd_secret system call to create "secret" memory areas
-Date:   Mon, 8 Feb 2021 22:38:03 +0100
-Message-Id: <1F6A73CF-158A-4261-AA6C-1F5C77F4F326@redhat.com>
-References: <20210208211326.GV242749@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-In-Reply-To: <20210208211326.GV242749@kernel.org>
-To:     Mike Rapoport <rppt@kernel.org>
-X-Mailer: iPhone Mail (18D52)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d+p4V3Uds2r1nqxPoujfGyPXKob2/IV0lWtEI4+ZvEg=;
+        b=J9hc2FE0BmLhrBpdOuDkrx30sX5Map3TauLGPRQkckObDoox0QqpdnM16H1MEKASA5
+         3d+mHLbww77IAj2hDXtcMjN4PtUKf+vrhClGZAglFuGUWgrEBfk1qnvD6Btyu96UEJyL
+         7Du0KccbLsIgThtCgxWyxAzOmQxN7+RrG6ZrLi+o/Jlb8pBQTAg0FfGGFImBw0HYqO7J
+         8/izNdB+Y9H2O5P1lHl/VOUq1tuu5CqgVd/NevJ2rhU4SKL5zD0shnyqUw6rQxweM3s9
+         hYNpnsEmRDXAT9Z9KO29MLdzClxEfKK4BrlVqpKJQAnjckO2y0Fy9yZ3uFnP4YEzPoVq
+         bPlw==
+X-Gm-Message-State: AOAM533S34EB9/FxCYwqexbC0pIM9DLFyJNZx//uo+0XIAP6JBEKIfN1
+        9DEp7xL4dX7sk8RYtk7JpE1XaJhSTgCoUw==
+X-Google-Smtp-Source: ABdhPJztojDx2x8WNq5jT6fElvzP7MG7VRij6fFOjelaAvaWg9vgyxKKNiezcD5sKJ+bJGAjSNVdHA==
+X-Received: by 2002:a17:90a:d34b:: with SMTP id i11mr867673pjx.235.1612822715591;
+        Mon, 08 Feb 2021 14:18:35 -0800 (PST)
+Received: from localhost.localdomain ([2600:380:4a36:d38a:f60:a5d4:5474:9bbc])
+        by smtp.gmail.com with ESMTPSA id o10sm19324472pfp.87.2021.02.08.14.18.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Feb 2021 14:18:35 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     hch@infradead.org, akpm@linux-foundation.org
+Subject: [PATCHSET 0/3] Improve IOCB_NOWAIT O_DIRECT
+Date:   Mon,  8 Feb 2021 15:18:26 -0700
+Message-Id: <20210208221829.17247-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.30.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
-> Am 08.02.2021 um 22:13 schrieb Mike Rapoport <rppt@kernel.org>:
->=20
-> =EF=BB=BFOn Mon, Feb 08, 2021 at 10:27:18AM +0100, David Hildenbrand wrote=
-:
->> On 08.02.21 09:49, Mike Rapoport wrote:
->>=20
->> Some questions (and request to document the answers) as we now allow to h=
-ave
->> unmovable allocations all over the place and I don't see a single comment=
+Ran into an issue with IOCB_NOWAIT and O_DIRECT, which causes a rather
+serious performance issue. If IOCB_NOWAIT is set, the generic/iomap
+iterators check for page cache presence in the given range, and return
+-EAGAIN if any is there. This is rather simplistic and looks like
+something that was never really finished. For !IOCB_NOWAIT, we simply
+call filemap_write_and_wait_range() to issue (if any) and wait on the
+range. The fact that we have page cache entries for this range does
+not mean that we cannot safely do O_DIRECT IO to/from it.
 
->> regarding that in the cover letter:
->>=20
->> 1. How will the issue of plenty of unmovable allocations for user space b=
-e
->> tackled in the future?
->>=20
->> 2. How has this issue been documented? E.g., interaction with ZONE_MOVABL=
-E
->> and CMA, alloc_conig_range()/alloc_contig_pages?.
->=20
-> Secretmem sets the mappings gfp mask to GFP_HIGHUSER, so it does not
-> allocate movable pages at the first place.
+This series adds filemap_range_needs_writeback(), which checks if
+we have pages in the range that do require us to call
+filemap_write_and_wait_range(). If we don't, then we can proceed just
+fine with IOCB_NOWAIT.
 
-That is not the point. Secretmem cannot go on CMA / ZONE_MOVABLE memory and b=
-ehaves like long-term pinnings in that sense. This is a real issue when usin=
-g a lot of sectremem.
+The problem manifested itself in a production environment, where someone
+is doing O_DIRECT on a raw block device. Due to other circumstances,
+blkid was triggered on this device periodically, and blkid very helpfully
+does a number of page cache reads on the device. Now the mapping has
+page cache entries, and performance falls to pieces because we can no
+longer reliably do IOCB_NOWAIT O_DIRECT.
 
-Please have a look at what Pavel documents regarding long term pinnings and Z=
-ONE_MOVABLE in his patches currently on the list.=
+Patch 1 adds the helper, patch 2 uses it for the generic iterators, and
+patch 3 applies the same to the iomap direct-io code.
+
+ fs/iomap/direct-io.c | 10 ++++-----
+ include/linux/fs.h   |  2 ++
+ mm/filemap.c         | 52 +++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 56 insertions(+), 8 deletions(-)
+
+-- 
+Jens Axboe
+
+
 
