@@ -2,94 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39ECC3143A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 00:22:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D35D63143C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 00:29:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229751AbhBHXWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 18:22:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbhBHXWe (ORCPT
+        id S229707AbhBHX3d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 18:29:33 -0500
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:59083 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229545AbhBHX3b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 18:22:34 -0500
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE30C061786
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Feb 2021 15:21:54 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id b145so10715257pfb.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Feb 2021 15:21:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=K4iCaQx2KOxgVXKZ58QNUBJ5G2mvFus55zm+d+J4hcE=;
-        b=Hr/N2ePz2H3KWz2ulMypdoXaiBart0hMDY85msjXzZcuGuryV7nrE/0VIDxZqqaLSc
-         i9S4/d4FFKfuO6c4mF2eiCYN9e+e7hgy2aOGVdj9Wb/j1nbZYy45b/GRfU+oytlZ4Wof
-         Cpqrdzjh8VzI2d96BYEkIyRfdQKiNEPu8wE+0rGA3cLuuLkqngysfD31Tk4KxiqSs/lh
-         raAiZN5wFxBhc83bQ59Pvo1qK4LMWdL5m4D1BX/mWpaviUOeDtvBVN0/AsZ2rTjnUSpI
-         gsDfSo3x0gvrDvr+TAgpFJjmI7lANTJxwMPvz9/DgFuFMJ6vx97DOVbg7lPMR0zGv6rR
-         z+bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=K4iCaQx2KOxgVXKZ58QNUBJ5G2mvFus55zm+d+J4hcE=;
-        b=Zep0p1Ua1IXvdOAEUjETdZCUcDjjCUh83nhR5FDTtZggyy4jBikqUe0/ioSBi9vVkr
-         IFBH9R5M1SRHoAEXhi9ZUj7xHoIvnwKFgFOEYKENn5a6pcM3Z8XnSzPMQ3p17HvWoZyA
-         NFPFqTkRITq0dGoU9GplCFUX/cg/j4LmOwtCI4J2GU+iSA2NwldxuGGMfHwG+xMfJKuz
-         UFS8pdPhFwOpmWNDJMPFxeuseePiffZ/k8HsGOvnmXnk0CwcYpzTvfXU3iJtAM7DrKl5
-         Oc7xo41nBbyAG+VmaI1CEgLLghrTOv/UQMOx+0JVH4tvaGdaq6pBSIZx3g6jYQ+3ai58
-         4AKA==
-X-Gm-Message-State: AOAM532m1wObSp5iFQ0ooY9+nopz4lof4Y/VDt5LXoH/73a7kor5+gzt
-        WHl67OJQHctqxhlV50dEIiAe+A==
-X-Google-Smtp-Source: ABdhPJyAsSEuD8JNeAi971eFAYPq0GTV79Lj1tuCctsAnt7ByTYECNmwXQlpxC3nb7+Y1ruSmgVZCQ==
-X-Received: by 2002:a63:6e0f:: with SMTP id j15mr19265946pgc.21.1612826513553;
-        Mon, 08 Feb 2021 15:21:53 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id s21sm19428323pga.12.2021.02.08.15.21.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Feb 2021 15:21:53 -0800 (PST)
-Subject: Re: [PATCH 1/3] mm: provide filemap_range_needs_writeback() helper
-To:     Matthew Wilcox <willy@infradead.org>
+        Mon, 8 Feb 2021 18:29:31 -0500
+Received: from dread.disaster.area (pa49-181-52-82.pa.nsw.optusnet.com.au [49.181.52.82])
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 9CC1010FC80;
+        Tue,  9 Feb 2021 10:28:47 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1l9FxW-00DHLJ-8F; Tue, 09 Feb 2021 10:28:46 +1100
+Date:   Tue, 9 Feb 2021 10:28:46 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         hch@infradead.org, akpm@linux-foundation.org
+Subject: Re: [PATCHSET 0/3] Improve IOCB_NOWAIT O_DIRECT
+Message-ID: <20210208232846.GO4626@dread.disaster.area>
 References: <20210208221829.17247-1-axboe@kernel.dk>
- <20210208221829.17247-2-axboe@kernel.dk>
- <20210208230205.GV308988@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b4fc9f1e-e1b6-ff46-e5cf-5e59ca9db936@kernel.dk>
-Date:   Mon, 8 Feb 2021 16:21:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210208230205.GV308988@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210208221829.17247-1-axboe@kernel.dk>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=7pwokN52O8ERr2y46pWGmQ==:117 a=7pwokN52O8ERr2y46pWGmQ==:17
+        a=kj9zAlcOel0A:10 a=qa6Q16uM49sA:10 a=7-415B0cAAAA:8
+        a=YnzS4-gLf0zqtTgMpqAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/8/21 4:02 PM, Matthew Wilcox wrote:
-> On Mon, Feb 08, 2021 at 03:18:27PM -0700, Jens Axboe wrote:
->> +	rcu_read_lock();
->> +	xas_for_each(&xas, head, max) {
->> +		if (xas_retry(&xas, head))
->> +			continue;
->> +		if (xa_is_value(head))
->> +			continue;
->> +		page = find_subpage(head, xas.xa_index);
->> +		if (PageDirty(page) || PageLocked(page) || PageWriteback(page))
->> +			break;
->> +		page = NULL;
->> +	}
->> +	rcu_read_unlock();
+On Mon, Feb 08, 2021 at 03:18:26PM -0700, Jens Axboe wrote:
+> Hi,
 > 
-> There's no need to find the sub-page for any of these three conditions --
-> the bit will be set on the head page.
+> Ran into an issue with IOCB_NOWAIT and O_DIRECT, which causes a rather
+> serious performance issue. If IOCB_NOWAIT is set, the generic/iomap
+> iterators check for page cache presence in the given range, and return
+> -EAGAIN if any is there. This is rather simplistic and looks like
+> something that was never really finished. For !IOCB_NOWAIT, we simply
+> call filemap_write_and_wait_range() to issue (if any) and wait on the
+> range. The fact that we have page cache entries for this range does
+> not mean that we cannot safely do O_DIRECT IO to/from it.
+> 
+> This series adds filemap_range_needs_writeback(), which checks if
+> we have pages in the range that do require us to call
+> filemap_write_and_wait_range(). If we don't, then we can proceed just
+> fine with IOCB_NOWAIT.
 
-Gotcha, that makes it simpler. I'll make the edit.
+Not exactly. If it is a write we are doing, we _must_ invalidate
+the page cache pages over the range of the DIO write to maintain
+some level of cache coherency between the DIO write and the page
+cache contents. i.e. the DIO write makes the page cache contents
+stale, so the page cache has to be invalidated before the DIO write
+is started, and again when it completes to toss away racing updates
+(mmap) while the DIO write was in flight...
 
+Page invalidation can block (page locks, waits on writeback, taking
+the mmap_sem to zap page tables, etc), and it can also fail because
+pages are dirty (e.g. writeback+invalidation racing with mmap).
+
+And if it fails because dirty pages then we fall back to buffered
+IO, which serialises readers and writes and will block.
+
+> The problem manifested itself in a production environment, where someone
+> is doing O_DIRECT on a raw block device. Due to other circumstances,
+> blkid was triggered on this device periodically, and blkid very helpfully
+> does a number of page cache reads on the device. Now the mapping has
+> page cache entries, and performance falls to pieces because we can no
+> longer reliably do IOCB_NOWAIT O_DIRECT.
+
+If it was a DIO write, then the pages would have been invalidated
+on the first write and the second write would issued with NOWAIT
+just fine.
+
+So the problem sounds to me like DIO reads from the block device are
+not invalidating the page cache over the read range, so they persist
+and prevent IOCB_NOWAIT IO from being submitted.
+
+Historically speaking, this is why XFS always used to invalidate the
+page cache for DIO - it didn't want to leave cached clean pages that
+would prevent future DIOs from being issued concurrently because
+coherency with the page cache caused performance issues. We
+optimised away this invalidation because the data in the page cache
+is still valid after a flush+DIO read, but it sounds to me like
+there are still corner cases where "always invalidate cached pages"
+is the right thing for DIO to be doing....
+
+Not sure what the best way to go here it - the patch isn't correct
+for NOWAIT DIO writes, but it looks necessary for reads. And I'm not
+sure that we want to go back to "invalidate everything all the time"
+either....
+
+Cheers,
+
+Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com
