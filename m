@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB3C9312C75
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 09:55:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 208D7312C7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 09:55:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbhBHIyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 03:54:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43392 "EHLO mail.kernel.org"
+        id S231277AbhBHIzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 03:55:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230364AbhBHIwm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 03:52:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 03AAC64E99;
-        Mon,  8 Feb 2021 08:50:59 +0000 (UTC)
+        id S230377AbhBHIwr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Feb 2021 03:52:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 92AE864EA7;
+        Mon,  8 Feb 2021 08:51:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612774271;
-        bh=xidrDhecGP6CNp1WbvEb+2by3BdO1w+m3Yqw9X4ZQKU=;
+        s=k20201202; t=1612774283;
+        bh=8GoM0ZYqUn/qb8LoFe3IehC6umF0GBgToY93utoh7DI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A0/LBZ7BQf0jNALWaG80nd5zVj9fcSwP8saiC3x50DDP82kPSZY/A0v955jf5aFJ5
-         hz2nafz7mJFu9lFsiuczlq87NFtpkUSj4zutEbvS2ofRoS2L5eVd6bdpXuhL7FxQYE
-         zVIM15Rdd2pkPsJsy5uZSgCcNeO/RtRLyT8X/hGRUt7uBpbDGVT8zLwijF7vxy7VRz
-         skKkjmBx0CXQPXwmRH5r8kiLB/Jl0xK87y9pvlSEknsmG4LXwAZOiWDo+G+5DrSnI6
-         Rkm1RP0qmkIuZRxKOEV2UCav2AbqG5KbM8/fISz/y5PG+0a4m8b/7K+UP3AFVpEzpN
-         RXtkRj3m0XfXg==
+        b=ozStLFiYAFPTLnpaj77FiVCdgrASvuRwWETBZvA0HvNpZtEobymtPdW9qLAlRAcmD
+         hQGLaslwSiimz3T/NYpu7ZwtwhyRN0aydqlAt3B+Iw6MdL/Q6BpS4cVYssLw4WBiK6
+         MMQnvsrdsa77MbbVDMWbMyKA7V6lZ/yJQPjNFrXkEGcLTtoRtHYxyDx0ZG12EoNqYY
+         DLTTRvTdC9QwsvGhhNofifcshmB7w06g8Gsyq2iI4dhnDt8DTm4DY0elNf5IJU1qsV
+         PDaVicmwf3kPBcGim0jlcqb+4xYnpliQUxHC8WlrBP+XI5lpZfwPJNnpjDWMb2l6uT
+         Md88wAHEvPwGw==
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -57,11 +57,11 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v17 08/10] PM: hibernate: disable when there are active secretmem users
-Date:   Mon,  8 Feb 2021 10:49:18 +0200
-Message-Id: <20210208084920.2884-9-rppt@kernel.org>
+        x86@kernel.org, Palmer Dabbelt <palmerdabbelt@google.com>,
+        Hagen Paul Pfeifer <hagen@jauu.net>
+Subject: [PATCH v17 09/10] arch, mm: wire up memfd_secret system call where relevant
+Date:   Mon,  8 Feb 2021 10:49:19 +0200
+Message-Id: <20210208084920.2884-10-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20210208084920.2884-1-rppt@kernel.org>
 References: <20210208084920.2884-1-rppt@kernel.org>
@@ -73,18 +73,16 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-It is unsafe to allow saving of secretmem areas to the hibernation
-snapshot as they would be visible after the resume and this essentially
-will defeat the purpose of secret memory mappings.
-
-Prevent hibernation whenever there are active secret memory users.
+Wire up memfd_secret system call on architectures that define
+ARCH_HAS_SET_DIRECT_MAP, namely arm64, risc-v and x86.
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Christopher Lameter <cl@linux.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
@@ -99,7 +97,6 @@ Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Palmer Dabbelt <palmerdabbelt@google.com>
 Cc: Paul Walmsley <paul.walmsley@sifive.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -110,105 +107,105 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tycho Andersen <tycho@tycho.ws>
 Cc: Will Deacon <will@kernel.org>
 ---
- include/linux/secretmem.h |  6 ++++++
- kernel/power/hibernate.c  |  5 ++++-
- mm/secretmem.c            | 15 +++++++++++++++
- 3 files changed, 25 insertions(+), 1 deletion(-)
+ arch/arm64/include/uapi/asm/unistd.h   | 1 +
+ arch/riscv/include/asm/unistd.h        | 1 +
+ arch/x86/entry/syscalls/syscall_32.tbl | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+ include/linux/syscalls.h               | 1 +
+ include/uapi/asm-generic/unistd.h      | 6 +++++-
+ scripts/checksyscalls.sh               | 4 ++++
+ 7 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-index 70e7db9f94fe..907a6734059c 100644
---- a/include/linux/secretmem.h
-+++ b/include/linux/secretmem.h
-@@ -6,6 +6,7 @@
+diff --git a/arch/arm64/include/uapi/asm/unistd.h b/arch/arm64/include/uapi/asm/unistd.h
+index f83a70e07df8..ce2ee8f1e361 100644
+--- a/arch/arm64/include/uapi/asm/unistd.h
++++ b/arch/arm64/include/uapi/asm/unistd.h
+@@ -20,5 +20,6 @@
+ #define __ARCH_WANT_SET_GET_RLIMIT
+ #define __ARCH_WANT_TIME32_SYSCALLS
+ #define __ARCH_WANT_SYS_CLONE3
++#define __ARCH_WANT_MEMFD_SECRET
  
- bool vma_is_secretmem(struct vm_area_struct *vma);
- bool page_is_secretmem(struct page *page);
-+bool secretmem_active(void);
+ #include <asm-generic/unistd.h>
+diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
+index 977ee6181dab..6c316093a1e5 100644
+--- a/arch/riscv/include/asm/unistd.h
++++ b/arch/riscv/include/asm/unistd.h
+@@ -9,6 +9,7 @@
+  */
  
- #else
+ #define __ARCH_WANT_SYS_CLONE
++#define __ARCH_WANT_MEMFD_SECRET
  
-@@ -19,6 +20,11 @@ static inline bool page_is_secretmem(struct page *page)
- 	return false;
- }
+ #include <uapi/asm/unistd.h>
  
-+static inline bool secretmem_active(void)
-+{
-+	return false;
-+}
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index a1c9f496fca6..34f04076a140 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -447,3 +447,4 @@
+ 440	i386	process_madvise		sys_process_madvise
+ 441	i386	epoll_pwait2		sys_epoll_pwait2		compat_sys_epoll_pwait2
+ 442	i386	mount_setattr		sys_mount_setattr
++443	i386	memfd_secret		sys_memfd_secret
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 7bf01cbe582f..bd3783edf27f 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -364,6 +364,7 @@
+ 440	common	process_madvise		sys_process_madvise
+ 441	common	epoll_pwait2		sys_epoll_pwait2
+ 442	common	mount_setattr		sys_mount_setattr
++443	common	memfd_secret		sys_memfd_secret
+ 
+ #
+ # Due to a historical design error, certain syscalls are numbered differently
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index cd7b5c817ba2..ad7ac9717884 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1041,6 +1041,7 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
+ 				       siginfo_t __user *info,
+ 				       unsigned int flags);
+ asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
++asmlinkage long sys_memfd_secret(unsigned long flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index ce58cff99b66..7ac0732dbaa4 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -863,9 +863,13 @@ __SYSCALL(__NR_process_madvise, sys_process_madvise)
+ __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
+ #define __NR_mount_setattr 442
+ __SYSCALL(__NR_mount_setattr, sys_mount_setattr)
++#ifdef __ARCH_WANT_MEMFD_SECRET
++#define __NR_memfd_secret 443
++__SYSCALL(__NR_memfd_secret, sys_memfd_secret)
++#endif
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 443
++#define __NR_syscalls 444
+ 
+ /*
+  * 32 bit systems traditionally used different
+diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
+index a18b47695f55..b7609958ee36 100755
+--- a/scripts/checksyscalls.sh
++++ b/scripts/checksyscalls.sh
+@@ -40,6 +40,10 @@ cat << EOF
+ #define __IGNORE_setrlimit	/* setrlimit */
+ #endif
+ 
++#ifndef __ARCH_WANT_MEMFD_SECRET
++#define __IGNORE_memfd_secret
++#endif
 +
- #endif /* CONFIG_SECRETMEM */
+ /* Missing flags argument */
+ #define __IGNORE_renameat	/* renameat2 */
  
- #endif /* _LINUX_SECRETMEM_H */
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index da0b41914177..559acef3fddb 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -31,6 +31,7 @@
- #include <linux/genhd.h>
- #include <linux/ktime.h>
- #include <linux/security.h>
-+#include <linux/secretmem.h>
- #include <trace/events/power.h>
- 
- #include "power.h"
-@@ -81,7 +82,9 @@ void hibernate_release(void)
- 
- bool hibernation_available(void)
- {
--	return nohibernate == 0 && !security_locked_down(LOCKDOWN_HIBERNATION);
-+	return nohibernate == 0 &&
-+		!security_locked_down(LOCKDOWN_HIBERNATION) &&
-+		!secretmem_active();
- }
- 
- /**
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index fa6738e860c2..f2ae3f32a193 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -40,6 +40,13 @@ module_param_named(enable, secretmem_enable, bool, 0400);
- MODULE_PARM_DESC(secretmem_enable,
- 		 "Enable secretmem and memfd_secret(2) system call");
- 
-+static atomic_t secretmem_users;
-+
-+bool secretmem_active(void)
-+{
-+	return !!atomic_read(&secretmem_users);
-+}
-+
- static vm_fault_t secretmem_fault(struct vm_fault *vmf)
- {
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-@@ -94,6 +101,12 @@ static const struct vm_operations_struct secretmem_vm_ops = {
- 	.fault = secretmem_fault,
- };
- 
-+static int secretmem_release(struct inode *inode, struct file *file)
-+{
-+	atomic_dec(&secretmem_users);
-+	return 0;
-+}
-+
- static int secretmem_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	unsigned long len = vma->vm_end - vma->vm_start;
-@@ -116,6 +129,7 @@ bool vma_is_secretmem(struct vm_area_struct *vma)
- }
- 
- static const struct file_operations secretmem_fops = {
-+	.release	= secretmem_release,
- 	.mmap		= secretmem_mmap,
- };
- 
-@@ -212,6 +226,7 @@ SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
- 	file->f_flags |= O_LARGEFILE;
- 
- 	fd_install(fd, file);
-+	atomic_inc(&secretmem_users);
- 	return fd;
- 
- err_put_fd:
 -- 
 2.28.0
 
