@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C8873142BE
+	by mail.lfdr.de (Postfix) with ESMTP id 92FCB3142C0
 	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 23:20:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230213AbhBHWTV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 17:19:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
+        id S230258AbhBHWTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 17:19:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbhBHWTR (ORCPT
+        with ESMTP id S230127AbhBHWTT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 17:19:17 -0500
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC68BC061788
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Feb 2021 14:18:37 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id b145so10626455pfb.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Feb 2021 14:18:37 -0800 (PST)
+        Mon, 8 Feb 2021 17:19:19 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E500BC06178A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Feb 2021 14:18:38 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id l18so426548pji.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Feb 2021 14:18:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/11CO3rYWuI/f/YHyMz9MjwWlbtuyR7jns8drX5Z6GM=;
-        b=mb2oFeIEVgDEViUTWxQhJRn8gyfghyhp/ElayDIuXqgeaBC3HYBqXz/VyGWRwyfxyX
-         xNOVUOTlqZOiwoPZvGkawIKvPSdaiRywSD983pANIibOlTA45T3D/u9hBzhvPIaon/tU
-         WBt2X4roLHiAAxx56l/gFiUa/HQcYyqIS4SHHtGj51uM/gYRzdJCOrOubTCc7icgPz/e
-         TBPf1d33DE2Lp+z5ek0LEGD8l0kYthWmJBknCrZPLXoi744YaRuxo52NTOvbjN+Hl6oI
-         shdmBniDyS8xzu99iHg+R7lPS9r9fejFakjX/txkrDqm21gvQbo2V0UeFU7OjW3KBDZA
-         ushw==
+        bh=l21CUn6uOrJ6V+uVH7pfm2X9pDOAs2Cr5X1HAOPDvBM=;
+        b=CkUpTf4LsCzZxBf8xCPGD9HLztKuswz0Wz7mkj/6AHj1jEV5viIjhGkLl/M0cI8J//
+         YP5VkdWIj0dzDanvSVirVQ0PK3pZDI05qlB8A3d3pKAsbn2yW/gNuOSraXYqSYQ7DFoN
+         K6eFLBvv5XjfRIG+oPbxqWY8tjvUgjLhfz39BTfw5axsankjScRZtVRa1990CQs+sz5k
+         RsaBW81w/If5OHKriQMeTrp1A/pJQVLqD1USt/TlJvccTgyyVy7XzH94Dpkk2kIzDx42
+         zcH+/GiUASWBwFiPFFO0dc9zxHTjre3uaUtyaxw5u3SJeVRq7W2SeEWYM7qpyL5eVVM+
+         to7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/11CO3rYWuI/f/YHyMz9MjwWlbtuyR7jns8drX5Z6GM=;
-        b=WWEuHCrVGIuJnoXaH8kSHyZWql78yaHqc3OQmSfZAOz6X/EW3e62jRFXNcWFP4a/nW
-         6G1OlfI8toA8LIiq+A9mrcsqW/VKKSNfVkmgWhZbSCubL376M+ujPtNRKk7RAbdHoanj
-         AKSPE22lVAf4oJpneL6VwVSPYKT9tVdGEDGA1JiYEb0e1hyYUH1voDSyKbGf3GKJIHz3
-         ldhXnu8F2YtBv/INmn9aKPjUoY0mkOzYfHfsGVxoR7gcT9E7H+XPBWiMYI0BxXoTaAIu
-         GTysXcWaeWo8XA+ZrD6CrNsAuPUcXdjhV82Q7QAPMkc4CpT+m+lIdMaH2r8btHEwyMMk
-         L1SQ==
-X-Gm-Message-State: AOAM530TZelSiXjGODz8PbxAU7Baysxz8oNSaqUbnQmhav0kOFfGNZ5n
-        5ypj44da6qeAknJD+vC/jdQxJVP7LhOlrQ==
-X-Google-Smtp-Source: ABdhPJzusnHUSOjH31Tu9aj2qgCr38CSB6bRtXmJ7daXvBLWnpK3G1cjMgphD7zjBJsZ8VTZxUZ39g==
-X-Received: by 2002:a63:416:: with SMTP id 22mr18850742pge.286.1612822716935;
-        Mon, 08 Feb 2021 14:18:36 -0800 (PST)
+        bh=l21CUn6uOrJ6V+uVH7pfm2X9pDOAs2Cr5X1HAOPDvBM=;
+        b=awBKRLgc/GBwIo5ssF/qEPNhF6gtF2GHeixOnR+wnsKgQf4G/CmfhNor5SCYMJVEFp
+         HAuvrXT4RIYS3jmm4zrrHCPnIPdqhQzXw8UWSrChoB7aC5yL/vv92guFmqZ3ucp+yLJN
+         9KKNF0kAfDoJ6BOtDq/CPpnyAvSjnw+EN8L4q6B8ojYwaiWSTaQ068q/AQZRQw91ZROK
+         2WONohA9iJ8SuDthCbxs04C5bejqT1Qd412rTPlaWOc9Z7hYs8iMqNYb8sB1vfG5mzYx
+         9eb0Rjhso5WdMyZ9CsZV2XUvgTwxF6RKXBXDZHLUMJ1+L/Jv5GAf4Ff1Ag4NsGU0R97g
+         bQHQ==
+X-Gm-Message-State: AOAM530UZlT8CPKUxOeAl2xGqOGOMO0X4xG/5GUNc5KeZMK5POmzKDxm
+        /5miCSIrsaGYBHdg8FBRVfWru2nPocGP+//I
+X-Google-Smtp-Source: ABdhPJwk636mSXsDJfOY2icC7pKLKXKi13Hf9+733aw6b6XHlVfNF13HD2wUVVO8AIxkBCDamgOU6g==
+X-Received: by 2002:a17:90a:e292:: with SMTP id d18mr940078pjz.66.1612822718274;
+        Mon, 08 Feb 2021 14:18:38 -0800 (PST)
 Received: from localhost.localdomain ([2600:380:4a36:d38a:f60:a5d4:5474:9bbc])
-        by smtp.gmail.com with ESMTPSA id o10sm19324472pfp.87.2021.02.08.14.18.35
+        by smtp.gmail.com with ESMTPSA id o10sm19324472pfp.87.2021.02.08.14.18.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Feb 2021 14:18:36 -0800 (PST)
+        Mon, 08 Feb 2021 14:18:37 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     hch@infradead.org, akpm@linux-foundation.org,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] mm: provide filemap_range_needs_writeback() helper
-Date:   Mon,  8 Feb 2021 15:18:27 -0700
-Message-Id: <20210208221829.17247-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] mm: use filemap_range_needs_writeback() for O_DIRECT IO
+Date:   Mon,  8 Feb 2021 15:18:28 -0700
+Message-Id: <20210208221829.17247-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210208221829.17247-1-axboe@kernel.dk>
 References: <20210208221829.17247-1-axboe@kernel.dk>
@@ -64,93 +64,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For O_DIRECT reads/writes, we check if we need to issue a call to
-filemap_write_and_wait_range() to issue and/or wait for writeback for any
-page in the given range. The existing mechanism just checks for a page in
-the range, which is suboptimal for IOCB_NOWAIT as we'll fallback to the
-slow path (and needing retry) if there's just a clean page cache page in
-the range.
-
-Provide filemap_range_needs_writeback() which tries a little harder to
-check if we actually need to issue and/or wait for writeback in the
-range.
+For the generic page cache read/write helpers, use the better variant
+of checking for the need to call filemap_write_and_wait_range() when
+doing O_DIRECT reads or writes. This avoids falling back to the slow
+path for IOCB_NOWAIT, if there are no pages to wait for (or write out).
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/fs.h |  2 ++
- mm/filemap.c       | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+ mm/filemap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd47deea7c17..def89222dfe9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2633,6 +2633,8 @@ static inline int filemap_fdatawait(struct address_space *mapping)
- 
- extern bool filemap_range_has_page(struct address_space *, loff_t lstart,
- 				  loff_t lend);
-+extern bool filemap_range_needs_writeback(struct address_space *,
-+					  loff_t lstart, loff_t lend);
- extern int filemap_write_and_wait_range(struct address_space *mapping,
- 				        loff_t lstart, loff_t lend);
- extern int __filemap_fdatawrite_range(struct address_space *mapping,
 diff --git a/mm/filemap.c b/mm/filemap.c
-index aa0e0fb04670..1ed7acac8a1b 100644
+index 1ed7acac8a1b..3bc76f99ddc3 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -633,6 +633,52 @@ static bool mapping_needs_writeback(struct address_space *mapping)
- 	return mapping->nrpages;
- }
+@@ -2646,8 +2646,8 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
  
-+/**
-+ * filemap_range_needs_writeback - check if range potentially needs writeback
-+ * @mapping:           address space within which to check
-+ * @start_byte:        offset in bytes where the range starts
-+ * @end_byte:          offset in bytes where the range ends (inclusive)
-+ *
-+ * Find at least one page in the range supplied, usually used to check if
-+ * direct writing in this range will trigger a writeback. Used by O_DIRECT
-+ * read/write with IOCB_NOWAIT, to see if the caller needs to do
-+ * filemap_write_and_wait_range() before proceeding.
-+ *
-+ * Return: %true if the caller should do filemap_write_and_wait_range() before
-+ * doing O_DIRECT to a page in this range, %false otherwise.
-+ */
-+bool filemap_range_needs_writeback(struct address_space *mapping,
-+				   loff_t start_byte, loff_t end_byte)
-+{
-+	struct page *page = NULL, *head;
-+	XA_STATE(xas, &mapping->i_pages, start_byte >> PAGE_SHIFT);
-+	pgoff_t max = end_byte >> PAGE_SHIFT;
-+
-+	if (!mapping_needs_writeback(mapping))
-+		return false;
-+	if (!mapping_tagged(mapping, PAGECACHE_TAG_DIRTY) &&
-+	    !mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK))
-+		return false;
-+	if (end_byte < start_byte)
-+		return false;
-+
-+	rcu_read_lock();
-+	xas_for_each(&xas, head, max) {
-+		if (xas_retry(&xas, head))
-+			continue;
-+		if (xa_is_value(head))
-+			continue;
-+		page = find_subpage(head, xas.xa_index);
-+		if (PageDirty(page) || PageLocked(page) || PageWriteback(page))
-+			break;
-+		page = NULL;
-+	}
-+	rcu_read_unlock();
-+
-+	return page != NULL;
-+}
-+EXPORT_SYMBOL_GPL(filemap_range_needs_writeback);
-+
- /**
-  * filemap_write_and_wait_range - write out & wait on a file range
-  * @mapping:	the address_space for the pages
+ 		size = i_size_read(inode);
+ 		if (iocb->ki_flags & IOCB_NOWAIT) {
+-			if (filemap_range_has_page(mapping, iocb->ki_pos,
+-						   iocb->ki_pos + count - 1))
++			if (filemap_range_needs_writeback(mapping, iocb->ki_pos,
++							  iocb->ki_pos + count - 1))
+ 				return -EAGAIN;
+ 		} else {
+ 			retval = filemap_write_and_wait_range(mapping,
+@@ -3326,7 +3326,7 @@ generic_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 	if (iocb->ki_flags & IOCB_NOWAIT) {
+ 		/* If there are pages to writeback, return */
+-		if (filemap_range_has_page(file->f_mapping, pos,
++		if (filemap_range_needs_writeback(file->f_mapping, pos,
+ 					   pos + write_len - 1))
+ 			return -EAGAIN;
+ 	} else {
 -- 
 2.30.0
 
