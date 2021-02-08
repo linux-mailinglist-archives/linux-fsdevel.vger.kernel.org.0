@@ -2,104 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEC8F312BAA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 09:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A6B312BC6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 09:33:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbhBHI0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 03:26:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49204 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbhBHI0P (ORCPT
+        id S230155AbhBHIaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 03:30:21 -0500
+Received: from smtp-18d.idc2.mandic.com.br ([177.70.124.135]:19146 "EHLO
+        smtp-18.idc2.mandic.com.br" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230012AbhBHIaJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 03:26:15 -0500
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B5BC061756
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Feb 2021 00:25:34 -0800 (PST)
-Received: by mail-vs1-xe2f.google.com with SMTP id l192so7089926vsd.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Feb 2021 00:25:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WWpXNk9Y+G7a2x2FXqJab48oIcf6fRr7sg2s0g1XV/Q=;
-        b=nYdwkzeeU93vwWCVoAVZc1tis0j/40vIrVm7/IW7330CqTB22w5SQP24Zu+jVA3H8R
-         5/4DOhKaP0QncUCE5gKUNCt/BiRhi1Q0xXmO/rLXFmZztPi7QS6kBXCdkvxzUeSqI4t8
-         TvQLcCP4/nVLBSDmSdcer6pc/Cilsr5fDbwaQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WWpXNk9Y+G7a2x2FXqJab48oIcf6fRr7sg2s0g1XV/Q=;
-        b=mUifmb/TtWR0yQjp1nvmBXn74eQXerNLK3b1t4sc8nlInmj8mxhqwwwq21pHOxspU2
-         d5U6TE6J8e6ICBy/r1N/YWFEVzEYBRqNh98Xoq1Vx4pGeP3P0ddwkuEz9zsV+hrwJ6Ep
-         p3SZP0i0PDDWpq2s7yUVweOSA47jCd1mzvzcS9NB7bRDKjziCn5skNAAcI2ooIAKiL0v
-         vYCPcuCN/nDYENVkygqU92UZjCNSSr+IERw7r+ucPBCgsBW8YCcAHAeUhS+/h/M9d4a/
-         DNO3WfuZTrjITC2mCnHc+SVuesZFj38DyRs50vL6fWbw5sqLTWsFIQJMaBrb5Sy3gQTy
-         3Yaw==
-X-Gm-Message-State: AOAM530XnTOCqSC15ErHaL+HAtUBgsKvibGMpmTNEqmUs5Nk9Z19pofl
-        Y3YuTFmf1nkbrm+M19Iaal/AhWFxNmJit/NuaBz6HA==
-X-Google-Smtp-Source: ABdhPJzE95NhfjihZWoaQK5RgwPwArelJ+aYd/pxes9cWm0nmVxzjfkbXLwThKHWtViqMJ7c/7X1O3VJ9ZFOP8gkpak=
-X-Received: by 2002:a67:ea05:: with SMTP id g5mr8896448vso.47.1612772734040;
- Mon, 08 Feb 2021 00:25:34 -0800 (PST)
+        Mon, 8 Feb 2021 03:30:09 -0500
+Received: by smtp-18.smtp.mandic.prv (Postfix, from userid 491)
+        id 5BC52607E9FB; Mon,  8 Feb 2021 05:29:22 -0300 (-03)
+Received: from smtp-18.idc2.mandic.com.br (ifsmtp2 [192.168.1.38])
+        by smtp-18.smtp.mandic.prv (Postfix) with ESMTPS id C1044607AAA4;
+        Mon,  8 Feb 2021 05:29:16 -0300 (-03)
+Received: from User (unknown [52.235.38.23])
+        by smtp-18.smtp.mandic.prv (Postfix) with ESMTPA id 78375465E268;
+        Mon,  8 Feb 2021 05:26:42 -0300 (-03)
+Reply-To: <ms.reem@yandex.com>
+From:   "Ms. Reem" <stefy@macrometrica.com.br>
+Subject: Re:reply
+Date:   Mon, 8 Feb 2021 08:29:15 -0000
 MIME-Version: 1.0
-References: <20210203124112.1182614-1-mszeredi@redhat.com> <20210203130501.GY308988@casper.infradead.org>
- <CAJfpegs3YWybmH7iKDLQ-KwmGieS1faO1uSZ-ADB0UFYOFPEnQ@mail.gmail.com>
- <20210203135827.GZ308988@casper.infradead.org> <CAJfpegvHFHcCPtyJ+w6uRx+hLH9JAT46WJktF_nez-ZZAria7A@mail.gmail.com>
- <20210203142802.GA308988@casper.infradead.org> <CAJfpegtW5-XObARX87A8siTJNxTCkzXG=QY5tTRXVUvHXXZn3g@mail.gmail.com>
- <20210203145620.GB308988@casper.infradead.org> <CAJfpegvV19DT+nQcW5OiLsGWjnp9-DoLAY16S60PewSLcKLTMA@mail.gmail.com>
- <20210208020002.GM4626@dread.disaster.area>
-In-Reply-To: <20210208020002.GM4626@dread.disaster.area>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 8 Feb 2021 09:25:22 +0100
-Message-ID: <CAJfpeguTt+0099BE6DsVFW_jht_AD8_rtuSyxcz=r+JAnazQGA@mail.gmail.com>
-Subject: Re: [PATCH 00/18] new API for FS_IOC_[GS]ETFLAGS/FS_IOC_FS[GS]ETXATTR
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Joel Becker <jlbec@evilplan.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Richard Weinberger <richard@nod.at>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Tyler Hicks <code@tyhicks.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+X-Mandic-Auth: DYB6x5JcyVot9snxiAasWC73cfc93V+pC3vUrorm87+eXbqAUeEHL0ZNPgpM50IYQeUbiYx0PkMIK2oavHcOOA==
+X-Mandic-Sender: stefy@macrometrica.com.br
+Message-Id: <20210208082916.C1044607AAA4@smtp-18.smtp.mandic.prv>
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 8, 2021 at 3:00 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Wed, Feb 03, 2021 at 04:03:06PM +0100, Miklos Szeredi wrote:
-> > On Wed, Feb 3, 2021 at 3:56 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > > But let's talk specifics.  What does CIFS need to contact the server for?
-> > > Could it be cached earlier?
-> >
-> > I don't understand what CIFS is doing, and I don't really care.   This
-> > is the sort of operation where adding a couple of network roundtrips
-> > so that the client can obtain the credentials required to perform the
-> > operation doesn't really matter.  We won't have thousands of chattr(1)
-> > calls per second.
->
-> Incorrect.
+Hello,
 
-Okay, I was wrong.
+My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
+and Petroleum" also "Minister of State for International Cooperation"
+in UAE. I write to you on behalf of my other "three (3) colleagues"
+who has approved me to solicit for your "partnership in claiming of
+{us$47=Million}" from a Financial Home in Cambodia on their behalf and
+for our "Mutual Benefits".
 
-Still, CIFS may very well be able to perform these operations without
-a struct file.   But even if it can't, I'd still only add the file
-pointer as an *optional hint* from the VFS, not as the primary object
-as Matthew suggested.
+The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
+deal with Cambodian/Vietnam Government within 2013/2014, however, we
+don't want our government to know about the fund. If this proposal
+interests you, let me know, by sending me an email and I will send to
+you detailed information on how this business would be successfully
+transacted. Be informed that nobody knows about the secret of this
+fund except us, and we know how to carry out the entire transaction.
+So I am compelled to ask, that you will stand on our behalf and
+receive this fund into any account that is solely controlled by you.
 
-I stand by my choice of /struct dentry/ as the object to pass to these
-operations.
+We will compensate you with 15% of the total amount involved as
+gratification for being our partner in this transaction. Reply to:
+ms.reem@yandex.com
 
-Thanks,
-Miklos
+Regards,
+Ms. Reem.
