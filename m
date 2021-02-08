@@ -2,139 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A153312C99
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 09:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9021C312D50
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Feb 2021 10:31:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231336AbhBHI5r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 03:57:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55298 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231260AbhBHIzB (ORCPT
+        id S231446AbhBHJbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 04:31:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40698 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231555AbhBHJ3E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 03:55:01 -0500
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53A8BC061756
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Feb 2021 00:53:34 -0800 (PST)
-Received: by mail-pg1-x529.google.com with SMTP id o21so8360982pgn.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Feb 2021 00:53:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=V1vqZme5dUkJLXAIFa1FOp/NT03yErdrlnVUsdRukuU=;
-        b=bx5T3ZXOiy8/mkGPTZZ4aQ1Ov6xqOxnsHxA6UjYIT/8cnon18UmMPPugV3JAE5y22i
-         7IjEechfqZhELNm+4KnooZUM/lYKrPFgCpNa2i7QYFBb9DuHg2z4zthizo06KK13S+J1
-         C0i7YwqWW6mAtoE+rQk/SWvcVGK2t3K2nta7D77XxmJMNHaYjXJnwleRTjgV5k0wiafQ
-         L9J14T5tnvR0Q1Vnl/9Ryv+UE8YhBjktbk1MSgZHelAP+fnjLZ1IiTkTkU0Ywr9YHSjX
-         wwf7nog71P0Y0JpsoQLnT+434CnMB6Ab93s9nMPaLS44W/3Rtr1kU3A6t+b9k35thHZj
-         2H4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=V1vqZme5dUkJLXAIFa1FOp/NT03yErdrlnVUsdRukuU=;
-        b=P5zAiuDMk7Ni+FkLpADtDIhKPlhZfEnXGIHz+8J74JsnwoLwHANNr6PbwMkxa87JOn
-         Q1WSVTTcCX9WvE1wTJUWiM7HMEKhpm1FwiYH6Cy9/1q1Kln4DqYWGtwOyy8yu2O8/f5s
-         yT7J9HbqLPS/9KYDAi+RUdFTjVWBgys8L1YvOLzmUy8CpoZKu+XliJHxun0cMOkKYBGJ
-         mJtzVdrAnOGW+w2JJWgqgkc6H05PaslMq3jqtybNQdbPAO1rWSTHxBveeHbSsBS6wcZi
-         B4f0AmaZkbkaKOIFC4/gfMfuHp8g52mBvSLNhv4+sygPKfxcd1vHj/dgHnTjqTCVCFh2
-         TWjA==
-X-Gm-Message-State: AOAM530hHwTCy81WDlVhDq8SXmEzeEZzk0HSpEowunvIbNL/l6KL5Aoc
-        g/TaMHMkcltWQHiJJznWV0EDKg==
-X-Google-Smtp-Source: ABdhPJz4JFIa9ciPD9g3DtSL6o+xw6dNMHhz3p4nYEJpmhwDnzOBGHNd3JN6X6Q9Ym/a63A95a8Hqw==
-X-Received: by 2002:aa7:8ad5:0:b029:1df:5a5a:80e1 with SMTP id b21-20020aa78ad50000b02901df5a5a80e1mr651280pfd.52.1612774413913;
-        Mon, 08 Feb 2021 00:53:33 -0800 (PST)
-Received: from localhost.localdomain ([139.177.225.254])
-        by smtp.gmail.com with ESMTPSA id g15sm17205179pfb.30.2021.02.08.00.53.23
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Feb 2021 00:53:33 -0800 (PST)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, mhocko@suse.com, song.bao.hua@hisilicon.com,
-        david@redhat.com, naoya.horiguchi@nec.com,
-        joao.m.martins@oracle.com
-Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>,
-        Miaohe Lin <linmiaohe@huawei.com>
-Subject: [PATCH v15 8/8] mm: hugetlb: optimize the code with the help of the compiler
-Date:   Mon,  8 Feb 2021 16:50:13 +0800
-Message-Id: <20210208085013.89436-9-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
-In-Reply-To: <20210208085013.89436-1-songmuchun@bytedance.com>
-References: <20210208085013.89436-1-songmuchun@bytedance.com>
+        Mon, 8 Feb 2021 04:29:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612776454;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dgUd+2G1OxW5XPBZGlc3z4gNM80hK8Gpg3YPMpWSREs=;
+        b=Vebru5xy/2UXcpW9IczNuZKU2yNkvfGBrNgpxf4EVfGsIS55/NKm3U6+B9xVVVPj0nggs5
+        KMFMM8ihab4AytcJoQzcb+YdmqJ5fg9ynaJBeDbhGwMbsWRy58cqyli1ftPGygbyKO4yx/
+        YYmFf0G2gu7ErZp2DzzmXcnCbHTcZ2M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-304-wOalByIhNImBr91I-hxz5g-1; Mon, 08 Feb 2021 04:27:32 -0500
+X-MC-Unique: wOalByIhNImBr91I-hxz5g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EAF41934101;
+        Mon,  8 Feb 2021 09:27:27 +0000 (UTC)
+Received: from [10.36.113.240] (ovpn-113-240.ams2.redhat.com [10.36.113.240])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 80D2660C05;
+        Mon,  8 Feb 2021 09:27:19 +0000 (UTC)
+Subject: Re: [PATCH v17 00/10] mm: introduce memfd_secret system call to
+ create "secret" memory areas
+To:     Mike Rapoport <rppt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+References: <20210208084920.2884-1-rppt@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <4996348d-5710-d77d-bb14-d84e370b4a5c@redhat.com>
+Date:   Mon, 8 Feb 2021 10:27:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210208084920.2884-1-rppt@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the "struct page size" crosses page boundaries we cannot
-make use of this feature. Let free_vmemmap_pages_per_hpage()
-return zero if that is the case, most of the functions can be
-optimized away.
+On 08.02.21 09:49, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> 
+> Hi,
+> 
+> @Andrew, this is based on v5.11-rc5-mmotm-2021-01-27-23-30, with secretmem
+> and related patches dropped from there, I can rebase whatever way you
+> prefer.
+> 
+> This is an implementation of "secret" mappings backed by a file descriptor.
+> 
+> The file descriptor backing secret memory mappings is created using a
+> dedicated memfd_secret system call The desired protection mode for the
+> memory is configured using flags parameter of the system call. The mmap()
+> of the file descriptor created with memfd_secret() will create a "secret"
+> memory mapping. The pages in that mapping will be marked as not present in
+> the direct map and will be present only in the page table of the owning mm.
+> 
+> Although normally Linux userspace mappings are protected from other users,
+> such secret mappings are useful for environments where a hostile tenant is
+> trying to trick the kernel into giving them access to other tenants
+> mappings.
+> 
+> Additionally, in the future the secret mappings may be used as a mean to
+> protect guest memory in a virtual machine host.
+> 
+> For demonstration of secret memory usage we've created a userspace library
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/jejb/secret-memory-preloader.git
+> 
+> that does two things: the first is act as a preloader for openssl to
+> redirect all the OPENSSL_malloc calls to secret memory meaning any secret
+> keys get automatically protected this way and the other thing it does is
+> expose the API to the user who needs it. We anticipate that a lot of the
+> use cases would be like the openssl one: many toolkits that deal with
+> secret keys already have special handling for the memory to try to give
+> them greater protection, so this would simply be pluggable into the
+> toolkits without any need for user application modification.
+> 
+> Hiding secret memory mappings behind an anonymous file allows usage of
+> the page cache for tracking pages allocated for the "secret" mappings as
+> well as using address_space_operations for e.g. page migration callbacks.
+> 
+> The anonymous file may be also used implicitly, like hugetlb files, to
+> implement mmap(MAP_SECRET) and use the secret memory areas with "native" mm
+> ABIs in the future.
+> 
+> Removing of the pages from the direct map may cause its fragmentation on
+> architectures that use large pages to map the physical memory which affects
+> the system performance. However, the original Kconfig text for
+> CONFIG_DIRECT_GBPAGES said that gigabyte pages in the direct map "... can
+> improve the kernel's performance a tiny bit ..." (commit 00d1c5e05736
+> ("x86: add gbpages switches")) and the recent report [1] showed that "...
+> although 1G mappings are a good default choice, there is no compelling
+> evidence that it must be the only choice". Hence, it is sufficient to have
+> secretmem disabled by default with the ability of a system administrator to
+> enable it at boot time.
+> 
+> In addition, there is also a long term goal to improve management of the
+> direct map.
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
----
- include/linux/hugetlb.h |  3 ++-
- mm/hugetlb_vmemmap.c    | 13 +++++++++++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
+Some questions (and request to document the answers) as we now allow to 
+have unmovable allocations all over the place and I don't see a single 
+comment regarding that in the cover letter:
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 822ab2f5542a..7bfb06e16298 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -878,7 +878,8 @@ extern bool hugetlb_free_vmemmap_enabled;
- 
- static inline bool is_hugetlb_free_vmemmap_enabled(void)
- {
--	return hugetlb_free_vmemmap_enabled;
-+	return hugetlb_free_vmemmap_enabled &&
-+	       is_power_of_2(sizeof(struct page));
- }
- #else
- static inline bool is_hugetlb_free_vmemmap_enabled(void)
-diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index a67301a9d19a..2e7e1d6ee458 100644
---- a/mm/hugetlb_vmemmap.c
-+++ b/mm/hugetlb_vmemmap.c
-@@ -211,6 +211,12 @@ early_param("hugetlb_free_vmemmap", early_hugetlb_free_vmemmap_param);
-  */
- static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
- {
-+	/*
-+	 * This check aims to let the compiler help us optimize the code as
-+	 * much as possible.
-+	 */
-+	if (!is_power_of_2(sizeof(struct page)))
-+		return 0;
- 	return h->nr_free_vmemmap_pages;
- }
- 
-@@ -280,6 +286,13 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
- 	BUILD_BUG_ON(NR_USED_SUBPAGE >=
- 		     RESERVE_VMEMMAP_SIZE / sizeof(struct page));
- 
-+	/*
-+	 * The compiler can help us to optimize this function to null
-+	 * when the size of the struct page is not power of 2.
-+	 */
-+	if (!is_power_of_2(sizeof(struct page)))
-+		return;
-+
- 	if (!hugetlb_free_vmemmap_enabled)
- 		return;
- 
+1. How will the issue of plenty of unmovable allocations for user space 
+be tackled in the future?
+
+2. How has this issue been documented? E.g., interaction with 
+ZONE_MOVABLE and CMA, alloc_conig_range()/alloc_contig_pages?.
+
+3. How are the plans to support migration in the future and which 
+interface changes will be required? (Michal mentioned some good points 
+to make this configurable via the interface, we should plan ahead and 
+document)
+
+Thanks!
+
 -- 
-2.11.0
+Thanks,
+
+David / dhildenb
 
