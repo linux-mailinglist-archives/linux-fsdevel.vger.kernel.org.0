@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8393B315A62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 00:59:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C2D315A67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 01:01:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234129AbhBIX6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 18:58:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45168 "EHLO
+        id S234386AbhBIX7h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 18:59:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233463AbhBIX3X (ORCPT
+        with ESMTP id S234250AbhBIXcK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 18:29:23 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223A6C061786;
-        Tue,  9 Feb 2021 15:28:43 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id p20so502221ejb.6;
-        Tue, 09 Feb 2021 15:28:43 -0800 (PST)
+        Tue, 9 Feb 2021 18:32:10 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F099C061574;
+        Tue,  9 Feb 2021 15:31:30 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id y18so408671edw.13;
+        Tue, 09 Feb 2021 15:31:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+LOfUnbs2rjrDJJHm6hAN6K5xB7iMF06eg0OTBY+XJI=;
-        b=hKF40R8ujeaEK9QaHJwh3Q7/gcPxTTRo5CzSQA00Xy0IB4Rlp5wrTBlxulJ/nZNuWl
-         ig5yRREg4tHynFKLjKxxMFXAld1Ak51jizmo9hBLZRKrv5alMEw66nsxcVKS9SY+DOd3
-         E3nquhWnhwlXdJI4ryoHT93MXr+M84K31KgQSaJCUwhZoXzgnnxmosqCyWkCx8QM5p1o
-         pZqQKFYs2wtVqk+laCxEy+DaymqTmm4syXbjCvN2qtuzcLfNf8jTC9DMT8vJtWYs7D6q
-         Zvyl4ETPdD+01p4h7VOkIHpkXs+9U4vl15aC/JcR+FGplyeTK3Q70Z5xsouHfreVcpj5
-         MX9Q==
+        bh=SppdSCl2Hme6/0W5XbF7DtR4/Tbyteffik5eXOy3CDs=;
+        b=Bdvt2hK50arKPZ3PpbfPSBqtvsuBzb51S/mVQNIYON95z3t/S/VkR1pX/UlUpHEGyq
+         g1eTuwz9c1M9a4SJpBYF1oTxtqcrlrr+AbB8IIDxzCytack2IkYHnHrKQ6GV83TZbgrP
+         ClT5iA7dcKZ0oCJCIZ86DRGQSGoPwVZ67zE0Wk8ZauiKusgVTFXnO9MBuBYGWofH8P0U
+         PYZEyk9Otk6GeJ/3NbpQl3P7gehFMIbNq4Iti7wyDRCMElJapLPwIAPNE9d8jit3plgY
+         g0KTxXj9CxlzS6EJA8ROKNANPKYNdE6l50bpDlNnFWdsm1tZc0WEOU0Ex6Hqlb9HK17k
+         +jBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+LOfUnbs2rjrDJJHm6hAN6K5xB7iMF06eg0OTBY+XJI=;
-        b=mPSTONrOgZ7Bos4AYJIj8OyeyioR6W/vA0OiwORWX8GjEM9skur/lkM96YAaRCH4MZ
-         frPEZnFGSScicdErZBgvY5BwHXxYzPaP1JwGsR+Ko04cjLpa3JjuLa+56HEx+bxNpqQg
-         +lsR955hlb+szFHAuNgktUjRpa4DAx42h0wRILJr2gzLo66aibWQepS3k7m0+R2z5Pj9
-         hErtcVgyQSE5GZBExwq27NWJrA95PIF5+EXIBRI4dtGmLCD3Gxh2I/fXmrPnkHGz8k0v
-         9af1pgxX845/epUCS+casLui4xe1lse6KF3wjChMDSWhABvou+1Cl7UldL2+PBw/9unz
-         AmAA==
-X-Gm-Message-State: AOAM530ejf0d1k3AIqzGj3pna+NcWzinXIWYKYFn4AQi9xzaYRWWZOWa
-        bHiXzo9XxMZ4nKx91WjPB9jqgqr7wLZdZ703xa8=
-X-Google-Smtp-Source: ABdhPJy1/Q8eKamyH3M828qG9CNSWbfUR6JpVHCh723gGoVDjpQDzXNQgifkrKdm9F4jXpJcVEXg8oUMrI1xW3q1/gQ=
-X-Received: by 2002:a17:906:2e85:: with SMTP id o5mr127772eji.238.1612913321899;
- Tue, 09 Feb 2021 15:28:41 -0800 (PST)
+        bh=SppdSCl2Hme6/0W5XbF7DtR4/Tbyteffik5eXOy3CDs=;
+        b=glvznDXlV4Y7XgpY/9Dadb7jqXMSjK44XML/eeYDJZBTgxTKyJduISBooXEbWqcxQu
+         Afl0Qn9HrQJa4gnyY2tccsJatT/xawN6Rp90gDCAqBL6UWfElIiXPDIS5SnFJzMSpOLM
+         V2fNK03IYrZJhHByRhh6+nU5WvobkKV3VlKG8c9ENHcoBVoVvQe5K7kOxjEfdG36T1G0
+         uWvtpr+ytxNXZST0/wnR5TZRS6lbq6ZQ1fjfFdYzOlSbghZmVvq5ndQWD9zHKWiZIrAe
+         Qjy+Qnk1W990dmxFzmWP2M7rHSbs2/LOerGV+x9k470NDpwf83Bf1NmPFvh6NXfYzT4o
+         eMeg==
+X-Gm-Message-State: AOAM530wG0V/CAqNJDt482lr+G/ElDUSsNnmd04pb/4hdjmeYctXswkZ
+        fMequnmu6ssb7cxE7ywaehV4g00pdLS7oNRAnlY=
+X-Google-Smtp-Source: ABdhPJwD5iBUaoZ2DF9YLO6QB40HK0Y7wa32nRRFzuU242PC6dr8mLNS8Eh8gngI+Dc2H0Y9e8RnuUaskB3yeM3xGyQ=
+X-Received: by 2002:a05:6402:3069:: with SMTP id bs9mr532983edb.151.1612913488857;
+ Tue, 09 Feb 2021 15:31:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20210209174646.1310591-1-shy828301@gmail.com> <20210209174646.1310591-4-shy828301@gmail.com>
- <20210209203307.GF524633@carbon.DHCP.thefacebook.com>
-In-Reply-To: <20210209203307.GF524633@carbon.DHCP.thefacebook.com>
+References: <20210209174646.1310591-1-shy828301@gmail.com> <20210209174646.1310591-5-shy828301@gmail.com>
+ <20210209204314.GG524633@carbon.DHCP.thefacebook.com>
+In-Reply-To: <20210209204314.GG524633@carbon.DHCP.thefacebook.com>
 From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 9 Feb 2021 15:28:30 -0800
-Message-ID: <CAHbLzkqgd0U7pH2czz23HvRcbwOeSRzaHyCTZptfdX5mkgXqTA@mail.gmail.com>
-Subject: Re: [v7 PATCH 03/12] mm: vmscan: use shrinker_rwsem to protect
- shrinker_maps allocation
+Date:   Tue, 9 Feb 2021 15:31:17 -0800
+Message-ID: <CAHbLzkpcvF578TPB-tfh=MhDqTB5Oc7Sf_6ndV2uZL227o6dFQ@mail.gmail.com>
+Subject: Re: [v7 PATCH 04/12] mm: vmscan: remove memcg_shrinker_map_size
 To:     Roman Gushchin <guro@fb.com>
 Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         Vlastimil Babka <vbabka@suse.cz>,
@@ -69,120 +68,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 9, 2021 at 12:33 PM Roman Gushchin <guro@fb.com> wrote:
+On Tue, Feb 9, 2021 at 12:43 PM Roman Gushchin <guro@fb.com> wrote:
 >
-> On Tue, Feb 09, 2021 at 09:46:37AM -0800, Yang Shi wrote:
-> > Since memcg_shrinker_map_size just can be changed under holding shrinker_rwsem
-> > exclusively, the read side can be protected by holding read lock, so it sounds
-> > superfluous to have a dedicated mutex.
+> On Tue, Feb 09, 2021 at 09:46:38AM -0800, Yang Shi wrote:
+> > Both memcg_shrinker_map_size and shrinker_nr_max is maintained, but actually the
+> > map size can be calculated via shrinker_nr_max, so it seems unnecessary to keep both.
+> > Remove memcg_shrinker_map_size since shrinker_nr_max is also used by iterating the
+> > bit map.
 > >
-> > Kirill Tkhai suggested use write lock since:
-> >
-> >   * We want the assignment to shrinker_maps is visible for shrink_slab_memcg().
-> >   * The rcu_dereference_protected() dereferrencing in shrink_slab_memcg(), but
-> >     in case of we use READ lock in alloc_shrinker_maps(), the dereferrencing
-> >     is not actually protected.
-> >   * READ lock makes alloc_shrinker_info() racy against memory allocation fail.
-> >     alloc_shrinker_info()->free_shrinker_info() may free memory right after
-> >     shrink_slab_memcg() dereferenced it. You may say
-> >     shrink_slab_memcg()->mem_cgroup_online() protects us from it? Yes, sure,
-> >     but this is not the thing we want to remember in the future, since this
-> >     spreads modularity.
-> >
-> > And a test with heavy paging workload didn't show write lock makes things worse.
-> >
-> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
 > > Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 > > Signed-off-by: Yang Shi <shy828301@gmail.com>
->
-> Acked-by: Roman Gushchin <guro@fb.com>
->
-> with a small nit (below):
->
 > > ---
-> >  mm/vmscan.c | 16 ++++++----------
-> >  1 file changed, 6 insertions(+), 10 deletions(-)
+> >  mm/vmscan.c | 18 +++++++++---------
+> >  1 file changed, 9 insertions(+), 9 deletions(-)
 > >
 > > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 96b08c79f18d..e4ddaaaeffe2 100644
+> > index e4ddaaaeffe2..641077b09e5d 100644
 > > --- a/mm/vmscan.c
 > > +++ b/mm/vmscan.c
-> > @@ -187,7 +187,6 @@ static DECLARE_RWSEM(shrinker_rwsem);
+> > @@ -185,8 +185,10 @@ static LIST_HEAD(shrinker_list);
+> >  static DECLARE_RWSEM(shrinker_rwsem);
+> >
 > >  #ifdef CONFIG_MEMCG
+> > +static int shrinker_nr_max;
 > >
-> >  static int memcg_shrinker_map_size;
-> > -static DEFINE_MUTEX(memcg_shrinker_map_mutex);
-> >
-> >  static void free_shrinker_map_rcu(struct rcu_head *head)
-> >  {
-> > @@ -200,8 +199,6 @@ static int expand_one_shrinker_map(struct mem_cgroup *memcg,
-> >       struct memcg_shrinker_map *new, *old;
-> >       int nid;
-> >
-> > -     lockdep_assert_held(&memcg_shrinker_map_mutex);
-> > -
+> > -static int memcg_shrinker_map_size;
+> > +#define NR_MAX_TO_SHR_MAP_SIZE(nr_max) \
+> > +     (DIV_ROUND_UP(nr_max, BITS_PER_LONG) * sizeof(unsigned long))
 >
-> Why not check that shrinker_rwsem is down here?
+> How about something like this?
+>
+> static inline int shrinker_map_size(int nr_items)
+> {
+>         return DIV_ROUND_UP(nr_items, BITS_PER_LONG) * sizeof(unsigned long);
+> }
+>
+> I think it look less cryptic.
 
-No special reason, just because we know it was acquired before. We
-could add the check, but not here. I think it'd be better to have the
-assert in expand_shrinker_maps() since the rwsem was acquired before
-calling it.
+OK, I don't have a strong opinion for either one (inline function or
+macro). If no one objects this I could do it in the new version.
 
 >
-> >       for_each_node(nid) {
-> >               old = rcu_dereference_protected(
-> >                       mem_cgroup_nodeinfo(memcg, nid)->shrinker_map, true);
-> > @@ -249,7 +246,7 @@ int alloc_shrinker_maps(struct mem_cgroup *memcg)
-> >       if (mem_cgroup_is_root(memcg))
-> >               return 0;
-> >
-> > -     mutex_lock(&memcg_shrinker_map_mutex);
-> > +     down_write(&shrinker_rwsem);
-> >       size = memcg_shrinker_map_size;
-> >       for_each_node(nid) {
-> >               map = kvzalloc_node(sizeof(*map) + size, GFP_KERNEL, nid);
-> > @@ -260,7 +257,7 @@ int alloc_shrinker_maps(struct mem_cgroup *memcg)
-> >               }
-> >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_map, map);
-> >       }
-> > -     mutex_unlock(&memcg_shrinker_map_mutex);
-> > +     up_write(&shrinker_rwsem);
-> >
-> >       return ret;
-> >  }
-> > @@ -275,9 +272,8 @@ static int expand_shrinker_maps(int new_id)
-> >       if (size <= old_size)
-> >               return 0;
-> >
-> > -     mutex_lock(&memcg_shrinker_map_mutex);
+> The rest of the patch looks good to me.
 >
-> And here as well. It will make the locking model more obvious and will help
-> to avoid errors in the future.
->
-> >       if (!root_mem_cgroup)
-> > -             goto unlock;
-> > +             goto out;
-> >
-> >       memcg = mem_cgroup_iter(NULL, NULL, NULL);
-> >       do {
-> > @@ -286,13 +282,13 @@ static int int new_id)
-> >               ret = expand_one_shrinker_map(memcg, size, old_size);
-> >               if (ret) {
-> >                       mem_cgroup_iter_break(NULL, memcg);
-> > -                     goto unlock;
-> > +                     goto out;
-> >               }
-> >       } while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
-> > -unlock:
-> > +out:
-> >       if (!ret)
-> >               memcg_shrinker_map_size = size;
-> > -     mutex_unlock(&memcg_shrinker_map_mutex);
-> > +
-> >       return ret;
-> >  }
-> >
-> > --
-> > 2.26.2
-> >
+> Thanks!
