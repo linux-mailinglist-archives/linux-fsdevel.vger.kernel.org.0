@@ -2,100 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D799315884
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 22:25:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 021D3315954
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 23:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234402AbhBIVUr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 16:20:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233095AbhBIVLp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 16:11:45 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4AA4564E7C;
-        Tue,  9 Feb 2021 21:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1612905064;
-        bh=ytWLcwYOAUd4IbrcpYpDbdEK5/yTd4hUKIl3OD0fARQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GmCRQYb54ZgO/nxjSZAS7fqub0/QfEp6ycoSBu1FD4l8cDvEKSEN6cSzFvAFaU4UF
-         TScFPAkFtgIPK5vM4t1e8Z5LIHY8wpHGFy7R8cxD3Ds2MfdO8kUAECxtcMRguiP96t
-         OZgeHD5rfSxrtMRJ1b/JZSEU3wUw+sZ3B3HaCXag=
-Date:   Tue, 9 Feb 2021 13:11:03 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     dsterba@suse.cz, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/4] btrfs: Convert kmaps to core page calls
-Message-Id: <20210209131103.b46e80db675fec8bec8d2ad1@linux-foundation.org>
-In-Reply-To: <20210209205249.GB2975576@iweiny-DESK2.sc.intel.com>
-References: <20210205232304.1670522-1-ira.weiny@intel.com>
-        <20210209151123.GT1993@suse.cz>
-        <20210209110931.00f00e47d9a0529fcee2ff01@linux-foundation.org>
-        <20210209205249.GB2975576@iweiny-DESK2.sc.intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S234120AbhBIWVX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 17:21:23 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46052 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233959AbhBIWNt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Feb 2021 17:13:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612908742;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=njyj2XCXYGtI5AX/JV14IYXR8Ipi7RDaSVkhJ8oSglg=;
+        b=EA3Za0h758jj/Hd3hLIadII+kqMWGEt9QB04NhktkFyvq+6i7AYkWIdIJuknLHBcR4FOlw
+        TgVmLjYL/fsfjb1sJhZfDU7xf/sXouZmN36AzXHBp/O1qYAVj9F5fDxsDZXx4793uysNFp
+        rOmVmfR3ahGYpYTRDOWRcRS8R2ig9PU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-166-Ez0mEz_fP32izAfxafFp3w-1; Tue, 09 Feb 2021 16:25:32 -0500
+X-MC-Unique: Ez0mEz_fP32izAfxafFp3w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B7E8FCC626;
+        Tue,  9 Feb 2021 21:25:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E044519C78;
+        Tue,  9 Feb 2021 21:25:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210209202134.GA308988@casper.infradead.org>
+References: <20210209202134.GA308988@casper.infradead.org> <591237.1612886997@warthog.procyon.org.uk> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <618608.1612905923.1@warthog.procyon.org.uk>
+Date:   Tue, 09 Feb 2021 21:25:23 +0000
+Message-ID: <618609.1612905923@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 9 Feb 2021 12:52:49 -0800 Ira Weiny <ira.weiny@intel.com> wrote:
+Matthew Wilcox <willy@infradead.org> wrote:
 
-> On Tue, Feb 09, 2021 at 11:09:31AM -0800, Andrew Morton wrote:
-> > On Tue, 9 Feb 2021 16:11:23 +0100 David Sterba <dsterba@suse.cz> wrote:
-> > 
-> > > On Fri, Feb 05, 2021 at 03:23:00PM -0800, ira.weiny@intel.com wrote:
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > 
-> > > > There are many places where kmap/<operation>/kunmap patterns occur.  We lift
-> > > > these various patterns to core common functions and use them in the btrfs file
-> > > > system.  At the same time we convert those core functions to use
-> > > > kmap_local_page() which is more efficient in those calls.
-> > > > 
-> > > > I think this is best accepted through Andrew's tree as it has the mem*_page
-> > > > functions in it.  But I'd like to get an ack from David or one of the other
-> > > > btrfs maintainers before the btrfs patches go through.
-> > > 
-> > > I'd rather take the non-mm patches through my tree so it gets tested
-> > > the same way as other btrfs changes, straightforward cleanups or not.
-> > > 
-> > > This brings the question how to do that as the first patch should go
-> > > through the MM tree. One option is to posptpone the actual cleanups
-> > > after the 1st patch is merged but this could take a long delay.
-> > > 
-> > > I'd suggest to take the 1st patch within MM tree in the upcoming merge
-> > > window and then I can prepare a separate pull with just the cleanups.
-> > > Removing an inter-tree patch dependency was a sufficient reason for
-> > > Linus in the past for such pull requests.
-> > 
-> > It would be best to merge [1/4] via the btrfs tree.  Please add my
-> > 
-> > Acked-by: Andrew Morton <akpm@linux-foundation.org>
-> > 
-> > 
-> > Although I think it would be better if [1/4] merely did the code
-> > movement.  Adding those BUG_ON()s is a semantic/functional change and
-> > really shouldn't be bound up with the other things this patch series
-> > does.
-> 
-> I proposed this too and was told 'no'...
-> 
-> <quote>
-> If we put in into a separate patch, someone will suggest backing out the
-> patch which tells us that there's a problem.
-> </quote>
-> 	-- https://lore.kernel.org/lkml/20201209201415.GT7338@casper.infradead.org/
+> Yeah, I have trouble with the private2 vs fscache bit too.  I've been
+> trying to persuade David that he doesn't actually need an fscache
+> bit at all; he can just increment the page's refcount to prevent it
+> from being freed while he writes data to the cache.
 
-Yeah, no, please let's not do this.  Bundling an offtopic change into
-[1/4] then making three more patches dependent on the ontopic parts of
-[1/4] is just rude.
+That's not what the bit is primarily being used for.  It's being used to
+prevent the starting of a second write to the cache whilst the first is in
+progress and also to prevent modification whilst DMA to the cache is in
+progress.  This isn't so obvious in this cut-down patchset, but comes more in
+to play with full caching of local writes in my fscache-iter branch.
 
-I think the case for adding the BUG_ONs can be clearly made.  And that
-case should at least have been clearly made in the [1/4] changelog!
+I can't easily share PG_writeback for this because each bit covers a write to
+a different place.  PG_writeback covers the write to the server and PG_fscache
+the write to the cache.  These writes may get split up differently and will
+most likely finish at different times.
 
-(Although I expect VM_BUG_ON() would be better - will give us sufficient
-coverage without the overall impact.)
+If I have to share PG_writeback, that will mean storing both states for each
+page somewhere else and then "OR'ing" them together to drive PG_writeback.
 
-Let's please queue this up separately.
+David
+
