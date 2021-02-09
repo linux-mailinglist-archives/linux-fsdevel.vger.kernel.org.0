@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A822B3155A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 19:10:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CA43155A7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 19:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbhBISHP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 13:07:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56208 "EHLO
+        id S233332AbhBISHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 13:07:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233232AbhBIRsK (ORCPT
+        with ESMTP id S233234AbhBIRsQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 12:48:10 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17260C0617A7;
-        Tue,  9 Feb 2021 09:47:30 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id w18so12357841pfu.9;
-        Tue, 09 Feb 2021 09:47:30 -0800 (PST)
+        Tue, 9 Feb 2021 12:48:16 -0500
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B88DC0617A9;
+        Tue,  9 Feb 2021 09:47:32 -0800 (PST)
+Received: by mail-pf1-x42f.google.com with SMTP id 189so3350195pfy.6;
+        Tue, 09 Feb 2021 09:47:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0vxSQstCm0rFqXMJSzTOrbGMjufuS8TCQJNnJKNC7TU=;
-        b=kWhwJCn2HSplrJKmcFdUT8xE5+TrhsIvBVUakU3FxNw0V+tHRbkhT9QhFviWZpXngw
-         O6YPg2xJbS+4A7+wI4BykkTC/dfls4ro1MyqlcWXEt7q+G83CsFdata9Mmc25DFWYEbi
-         HyIGwQJUnNONeORegAXbOu0pWHI0/jWS0cEEFzSu30Nr0SftX+v2gBHde0oymvzY2Az9
-         Scfy1oEoB/gGsaxcDcKKiKleTcg1o+YfHeGd2wv/OX/ugFUI9/6xc8cepfppZsLWfj4i
-         3JsngITGO7n9ZlSdRCLEd6CUuCtvosTId5gZo1cxNtaM82gjTd/dQhC6trwkZerSrsdP
-         3GWA==
+        bh=kgP7rVV9XOms9KmN6ZlTZi1sz4j8/Qcyt5+yMhudraQ=;
+        b=txhUUvGbr6Et8P+qJstH1wN52HTIP3XvuXU6oQ/9/6VheYliy+7dIEw6ZrrxZnE3W5
+         8+KfztaNaJd32HRpr3VEsVNJVwTusKrTFLnbcTBWaDE6/cIbVDXhU5ipcpYUHcOzM+yt
+         k9Z0nErlYMG7CPMHK3Pi0lZMM1vv5WTNH6iwzY/toOZvVUlk+Dekpk5VKNNFA/b5Wx3T
+         5Sr97cG005c+mFUoa9ajLmq+nQAGDNLqnOCjho1uL+LIwdur9WgZGXXwRDsqFnNGtGup
+         KBcut14qm2csTIyHLQaxIz6xanoMmyaX3RZ+jrqmzP612y7tdyguUMidEMT8XzWW2uiu
+         fqVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0vxSQstCm0rFqXMJSzTOrbGMjufuS8TCQJNnJKNC7TU=;
-        b=d8ZYFioTNfY7asbUmJkscrwdMo54ARiOlzqiBz5TxfKqhI+tKYuupO9U4WoM96CYXJ
-         oVFM2iPT2CPRogT+MBJ6bbvBc52efJWXaIzueLNQ1+SuQUaWAFvHPuWg0LUvAfm5kn07
-         5K0OVO37eSdEUIxjDz+TvQv0wSFPB8ziFD7WVI9t8nP/MMBDzzu0rpk6BWsUKocBML/l
-         A5nCm6rwzvEmuQGXu3kC8M7Ly62stq8Jk805ne7k14OxDc2G7jHx8k91uyOfRMC5YBPH
-         ot4aid/tUlPoZuTKRChS2ZfIoVKfVhz/Cofe/KJ/VBv8sY6KlUsEDtIkdarfBpCAUohJ
-         LVvw==
-X-Gm-Message-State: AOAM532v0lLEvK6X+kpziPlaITY+wCNnbzg4LNZHgOykM9eaY3YgmLCI
-        yrrkEN7qGwi+hZRu98PhfR8=
-X-Google-Smtp-Source: ABdhPJyb1163li3Zilu1BpE4OXhPrvUfIC+orUtZkhePoodhjE4yilOtjb1DQgGcYyBK0qRpqo9ZZw==
-X-Received: by 2002:a62:b60c:0:b029:1dd:f110:b27d with SMTP id j12-20020a62b60c0000b02901ddf110b27dmr9796973pff.42.1612892849699;
-        Tue, 09 Feb 2021 09:47:29 -0800 (PST)
+        bh=kgP7rVV9XOms9KmN6ZlTZi1sz4j8/Qcyt5+yMhudraQ=;
+        b=YGOQscjHW27aNI6DFJIkbgoTm85U0+Ka/KMdDsyNZnyvxHq+rsk2XeiHxZ1crmK6zt
+         EsHDvt7qShn6SJkXkAh4+9S43d5yGmx15SEOsf0oCSW8acCfGCexd580zxUb+DM8FkBS
+         niH9yb9HfMITefG7Z9Otq/5tEYSITgu6AVuO/DXlst0u7xtn6HLMRfwxyDqFQlB1nhRf
+         4UaxbztVc6CkOLvQuEMNPenR1I5P2o0nb4MzstDtmE8rjN0yBytUaEaHX6GQc3ZqjDSs
+         s+J3x6XDrHNxLAwYEXUzCi3WM23aQJ1NowQZAy7l55wIgdY4tsrKGNIFDLKMfVnp2NjR
+         0egw==
+X-Gm-Message-State: AOAM533w9rbKT7km1sow6Kyu2MOsmMc0JcMtxk+REV7bojVB6tjTSag6
+        lUkY9feCsd9gDKv5Ib4/Fj4=
+X-Google-Smtp-Source: ABdhPJxSxqPLVfiBze/4jfixH2sN5dj1At9bov1ap2/6OLfH0or2smCvE1k6LYh2/CXBR93M629enA==
+X-Received: by 2002:a65:6384:: with SMTP id h4mr22820090pgv.76.1612892852199;
+        Tue, 09 Feb 2021 09:47:32 -0800 (PST)
 Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
-        by smtp.gmail.com with ESMTPSA id j1sm22260929pfr.78.2021.02.09.09.47.27
+        by smtp.gmail.com with ESMTPSA id j1sm22260929pfr.78.2021.02.09.09.47.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Feb 2021 09:47:28 -0800 (PST)
+        Tue, 09 Feb 2021 09:47:31 -0800 (PST)
 From:   Yang Shi <shy828301@gmail.com>
 To:     guro@fb.com, ktkhai@virtuozzo.com, vbabka@suse.cz,
         shakeelb@google.com, david@fromorbit.com, hannes@cmpxchg.org,
         mhocko@suse.com, akpm@linux-foundation.org
 Cc:     shy828301@gmail.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [v7 PATCH 11/12] mm: memcontrol: reparent nr_deferred when memcg offline
-Date:   Tue,  9 Feb 2021 09:46:45 -0800
-Message-Id: <20210209174646.1310591-12-shy828301@gmail.com>
+Subject: [v7 PATCH 12/12] mm: vmscan: shrink deferred objects proportional to priority
+Date:   Tue,  9 Feb 2021 09:46:46 -0800
+Message-Id: <20210209174646.1310591-13-shy828301@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210209174646.1310591-1-shy828301@gmail.com>
 References: <20210209174646.1310591-1-shy828301@gmail.com>
@@ -66,77 +66,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now shrinker's nr_deferred is per memcg for memcg aware shrinkers, add to parent's
-corresponding nr_deferred when memcg offline.
+The number of deferred objects might get windup to an absurd number, and it
+results in clamp of slab objects.  It is undesirable for sustaining workingset.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+So shrink deferred objects proportional to priority and cap nr_deferred to twice
+of cache items.
+
+The idea is borrowed from Dave Chinner's patch:
+https://lore.kernel.org/linux-xfs/20191031234618.15403-13-david@fromorbit.com/
+
+Tested with kernel build and vfs metadata heavy workload in our production
+environment, no regression is spotted so far.
+
 Signed-off-by: Yang Shi <shy828301@gmail.com>
 ---
- include/linux/memcontrol.h |  1 +
- mm/memcontrol.c            |  1 +
- mm/vmscan.c                | 24 ++++++++++++++++++++++++
- 3 files changed, 26 insertions(+)
+ mm/vmscan.c | 40 +++++-----------------------------------
+ 1 file changed, 5 insertions(+), 35 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index c457fc7bc631..e1c4b93889ad 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1585,6 +1585,7 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
- int alloc_shrinker_info(struct mem_cgroup *memcg);
- void free_shrinker_info(struct mem_cgroup *memcg);
- void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id);
-+void reparent_shrinker_deferred(struct mem_cgroup *memcg);
- #else
- #define mem_cgroup_sockets_enabled 0
- static inline void mem_cgroup_sk_alloc(struct sock *sk) { };
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index f64ad0d044d9..21f36b73f36a 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5282,6 +5282,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
- 	page_counter_set_low(&memcg->memory, 0);
- 
- 	memcg_offline_kmem(memcg);
-+	reparent_shrinker_deferred(memcg);
- 	wb_memcg_offline(memcg);
- 
- 	drain_all_stock(memcg);
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index dfde6e7fd7f5..66163082cc6f 100644
+index 66163082cc6f..d670b119d6bd 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -389,6 +389,30 @@ static long add_nr_deferred_memcg(long nr, int nid, struct shrinker *shrinker,
- 	return atomic_long_add_return(nr, &info->nr_deferred[shrinker->id]);
- }
+@@ -654,7 +654,6 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	 */
+ 	nr = count_nr_deferred(shrinker, shrinkctl);
  
-+void reparent_shrinker_deferred(struct mem_cgroup *memcg)
-+{
-+	int i, nid;
-+	long nr;
-+	struct mem_cgroup *parent;
-+	struct shrinker_info *child_info, *parent_info;
+-	total_scan = nr;
+ 	if (shrinker->seeks) {
+ 		delta = freeable >> priority;
+ 		delta *= 4;
+@@ -668,37 +667,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 		delta = freeable / 2;
+ 	}
+ 
++	total_scan = nr >> priority;
+ 	total_scan += delta;
+-	if (total_scan < 0) {
+-		pr_err("shrink_slab: %pS negative objects to delete nr=%ld\n",
+-		       shrinker->scan_objects, total_scan);
+-		total_scan = freeable;
+-		next_deferred = nr;
+-	} else
+-		next_deferred = total_scan;
+-
+-	/*
+-	 * We need to avoid excessive windup on filesystem shrinkers
+-	 * due to large numbers of GFP_NOFS allocations causing the
+-	 * shrinkers to return -1 all the time. This results in a large
+-	 * nr being built up so when a shrink that can do some work
+-	 * comes along it empties the entire cache due to nr >>>
+-	 * freeable. This is bad for sustaining a working set in
+-	 * memory.
+-	 *
+-	 * Hence only allow the shrinker to scan the entire cache when
+-	 * a large delta change is calculated directly.
+-	 */
+-	if (delta < freeable / 4)
+-		total_scan = min(total_scan, freeable / 2);
+-
+-	/*
+-	 * Avoid risking looping forever due to too large nr value:
+-	 * never try to free more than twice the estimate number of
+-	 * freeable entries.
+-	 */
+-	if (total_scan > freeable * 2)
+-		total_scan = freeable * 2;
++	total_scan = min(total_scan, (2 * freeable));
+ 
+ 	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
+ 				   freeable, delta, total_scan, priority);
+@@ -737,10 +708,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 		cond_resched();
+ 	}
+ 
+-	if (next_deferred >= scanned)
+-		next_deferred -= scanned;
+-	else
+-		next_deferred = 0;
++	next_deferred = max_t(long, (nr - scanned), 0) + total_scan;
++	next_deferred = min(next_deferred, (2 * freeable));
 +
-+	parent = parent_mem_cgroup(memcg);
-+	if (!parent)
-+		parent = root_mem_cgroup;
-+
-+	/* Prevent from concurrent shrinker_info expand */
-+	down_read(&shrinker_rwsem);
-+	for_each_node(nid) {
-+		child_info = shrinker_info_protected(memcg, nid);
-+		parent_info = shrinker_info_protected(parent, nid);
-+		for (i = 0; i < shrinker_nr_max; i++) {
-+			nr = atomic_long_read(&child_info->nr_deferred[i]);
-+			atomic_long_add(nr, &parent_info->nr_deferred[i]);
-+		}
-+	}
-+	up_read(&shrinker_rwsem);
-+}
-+
- static bool cgroup_reclaim(struct scan_control *sc)
- {
- 	return sc->target_mem_cgroup;
+ 	/*
+ 	 * move the unused scan count back into the shrinker in a
+ 	 * manner that handles concurrent updates.
 -- 
 2.26.2
 
