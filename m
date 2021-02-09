@@ -2,222 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26498315752
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 21:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0500831574D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 21:01:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233720AbhBIUAi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 15:00:38 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39778 "EHLO
+        id S233492AbhBIUAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 15:00:11 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:52064 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233294AbhBITvf (ORCPT
+        by vger.kernel.org with ESMTP id S233593AbhBITrq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 14:51:35 -0500
+        Tue, 9 Feb 2021 14:47:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612900202;
+        s=mimecast20190719; t=1612899955;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=J0SCPlBXORW2GTqcktfrJi1FQ//IYX3jvXLSujQSlo4=;
-        b=IgiuLGVzPBCckmncf0UpVznJrCoJD3En8zI2VUhthNnbycrCENXl584uicoXt8cA9PWsRA
-        gonfaJfiJ9L7wuYhCFtZwfzQniOSsNyZQlDLnTDnkAlmDZUCFK4WgxFHlIIFOBX/gtE0Ue
-        P/ZP89yF8x6rpsZPNRRt5gNCkrOrh5o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-266-O7ehgX27OtCxB3tHry24qg-1; Tue, 09 Feb 2021 14:09:22 -0500
-X-MC-Unique: O7ehgX27OtCxB3tHry24qg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C34D7107ACE3;
-        Tue,  9 Feb 2021 19:09:20 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-3.rdu2.redhat.com [10.10.116.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2183C60C04;
-        Tue,  9 Feb 2021 19:09:20 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id A82BA220BCF; Tue,  9 Feb 2021 14:09:19 -0500 (EST)
-Date:   Tue, 9 Feb 2021 14:09:19 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Qian Cai <cai@lca.pw>, Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        bh=07hMrz2JH7QjjSYxmQ6iVqH/nriv3v/7Q+e4rDzWnzs=;
+        b=KiAH844bYbda56nRJzMLJbgYFQQ5iNA8SjCHarsdZ1cJsv66aoMe+kqiu5+XXn2ae1VlNC
+        7sa+CtmCUKXgneE2U+KsvuFeMZ6DKClhER3XxsyxtSpGBEq/e0m3B7JvU5HJdt+QpjkJgC
+        KwlEPNk0+/ZzmHNsxB3BN1y+d56OiJo=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-378-Cu5XfDB7Mw2vfPeQKy8YBA-1; Tue, 09 Feb 2021 14:45:53 -0500
+X-MC-Unique: Cu5XfDB7Mw2vfPeQKy8YBA-1
+Received: by mail-qt1-f200.google.com with SMTP id l63so5465969qtd.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Feb 2021 11:45:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=07hMrz2JH7QjjSYxmQ6iVqH/nriv3v/7Q+e4rDzWnzs=;
+        b=TRiVv4JJbnGhGXqmzn+/+TUKeeeRCYKoIipEhtsIJX3g2sccEW0M6wGQMxOOh5QGAT
+         Iz8fUM2D4hUjnFOwZcjROBHIVAtIDP79KlhCdj/b3YfAq+qB8dFNeu5bTuxMYjq6ViL8
+         IEZmelszxS3gRrPuJK1cwvIUqjnkFZ4ESsRI7xgKQwo3q8avgoq7h2Prb5PPPyh9aFFk
+         Zi0qZWdAYIsNrwx5DUQGIuO2YZdEOeQ2MTqBWfwHtm97csAx4OYFcQi3/k2VimKxIjaT
+         LTf06hGCf5mtPRUnkQamns/zBrdlBs2uQFgzEfoAiG0TXWtjZRlwkYVi5SenoBuObhsn
+         F9pw==
+X-Gm-Message-State: AOAM531GgpRGR1zZv/lOQLxmq8N4I+mhzjs6SQT8A/zH2ruOImcf76Y3
+        2qoHwZZimmtqoUoLOsVN7MJMBRnva8tKHMTrYgNskJSpikTPUzz5xTFBJ/I8S/vAGayCA1RvvPn
+        PC3V68q93IGILCYA7logGHrWgUw==
+X-Received: by 2002:a37:4fcf:: with SMTP id d198mr23988266qkb.277.1612899953140;
+        Tue, 09 Feb 2021 11:45:53 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJybD7SbuYQXGOXd3mMxVBLEZfaSpNELJGXVWAV5LvAAprhYnJ48OVnrJ8zBSJ4tAUenGug78w==
+X-Received: by 2002:a37:4fcf:: with SMTP id d198mr23988232qkb.277.1612899952938;
+        Tue, 09 Feb 2021 11:45:52 -0800 (PST)
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id p16sm3234618qtq.24.2021.02.09.11.45.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Feb 2021 11:45:52 -0800 (PST)
+Message-ID: <c9d5464484dc7013eba9f49e88c19712c1276c31.camel@redhat.com>
+Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper
+ library
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: Possible deadlock in fuse write path (Was: Re: [PATCH 0/4] Some
- more lock_page work..)
-Message-ID: <20210209190919.GE3171@redhat.com>
-References: <CAHk-=wh9Eu-gNHzqgfvUAAiO=vJ+pWnzxkv+tX55xhGPFy+cOw@mail.gmail.com>
- <20201015151606.GA226448@redhat.com>
- <20201015195526.GC226448@redhat.com>
- <CAHk-=wj0vjx0jzaq5Gha-SmDKc3Hnog5LKX0eJZkudBvEQFAUA@mail.gmail.com>
- <CAJfpegtAstEo+nYgT81swYZWdziaZP_40QGAXcTORqYwgeWNUA@mail.gmail.com>
- <20201020204226.GA376497@redhat.com>
- <CAJfpegsi8UFiYyPrPbQob2x4X7NKSnciEz-a=5YZtFCgY0wL6w@mail.gmail.com>
- <20201021201249.GB442437@redhat.com>
- <CAJfpegsaLrbJ7bjJVBC3=vLzWZcF+GtTpGjVKYYOE3mjKyuVAw@mail.gmail.com>
- <20210209100115.GB1208880@miu.piliscsaba.redhat.com>
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 09 Feb 2021 14:45:51 -0500
+In-Reply-To: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+References: <591237.1612886997@warthog.procyon.org.uk>
+         <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210209100115.GB1208880@miu.piliscsaba.redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 09, 2021 at 11:01:15AM +0100, Miklos Szeredi wrote:
-> Hi Vivek,
+On Tue, 2021-02-09 at 11:06 -0800, Linus Torvalds wrote:
+> So I'm looking at this early, because I have more time now than I will
+> have during the merge window, and honestly, your pull requests have
+> been problematic in the past.
 > 
-> Here's an updated patch with a header comment containing all the gory details.
-> It's basically your patch, but it's missing your S-o-b.  If you are fine with
-> it, can you please provide one?
+> The PG_fscache bit waiting functions are completely crazy. The comment
+> about "this will wake up others" is actively wrong, and the waiting
+> function looks insane, because you're mixing the two names for
+> "fscache" which makes the code look totally incomprehensible. Why
+> would we wait for PF_fscache, when PG_private_2 was set? Yes, I know
+> why, but the code looks entirely nonsensical.
 > 
-> The only change I made was to clear PG_uptodate on write error, otherwise I
-> think the patch is fine.
+> So just looking at the support infrastructure changes, I get a big "Hmm".
+> 
+> But the thing that makes me go "No, I won't pull this", is that it has
+> all the same hallmark signs of trouble that I've complained about
+> before: I see absolutely zero sign of "this has more developers
+> involved".
+> 
+> There's not a single ack from a VM person for the VM changes. There's
+> no sign that this isn't yet another "David Howells went off alone and
+> did something that absolutely nobody else cared about".
+> 
+> See my problem? I need to be convinced that this makes sense outside
+> of your world, and it's not yet another thing that will cause problems
+> down the line because nobody else really ever used it or cared about
+> it until we hit a snag.
+> 
+>                   Linus
+> 
 
-Hi Miklos,
+I (and several other developers) have been working with David on this
+for the last year or so. Would it help if I gave this on the netfs lib
+work and the fscache patches?
 
-In general I am fine with the patch. I am still little concerned with
-how to handle error scenario and how to handle it best. Whether to
-clear Pageuptodate on error or leave it alone. Leaving it alone will
-more like be writeback failure scenario where many filesystems don't
-set dirty flag on page again if writeback fails. 
+    Reviewed-and-tested-by: Jeff Layton <jlayton@redhat.com>
 
-Can't decide whether to leave it alone is better or not. So for now, I
-will just go along with clearing PageUptodate on error.
+My testing has mainly been with ceph. My main interest is that this
+allows us to drop a fairly significant chunk of rather nasty code from
+fs/ceph. The netfs read helper infrastructure makes a _lot_ more sense
+for a networked filesystem, IMO.
 
-Can you please also put Link to this mail thread in the commit id. There
-are quite a few good details in this mail thread. Will be good to be
-able to track it back from commit.
+The legacy fscache code has some significant bugs too, and this gives it
+a path to making better use of more modern kernel features. It should
+also be set up so that filesystems can be converted piecemeal.
 
-Link: https://lore.kernel.org/linux-fsdevel/4794a3fa3742a5e84fb0f934944204b55730829b.camel@lca.pw/
+I'd really like to see this go in.
 
-With that.
-
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-
-
-> 
-> Splitting the request might cause a performance regression in some cases (lots
-> of unaligned writes that spill over a page boundary) but I don't have a better
-> idea at this moment.
-> 
-> Thanks,
-> Miklos
-> ----
-> 
-> Date: Wed, 21 Oct 2020 16:12:49 -0400
-> From: Vivek Goyal <vgoyal@redhat.com>
-> Subject: fuse: fix write deadlock
-> 
-> There are two modes for write(2) and friends in fuse:
-> 
-> a) write through (update page cache, send sync WRITE request to userspace)
-> 
-> b) buffered write (update page cache, async writeout later)
-> 
-> The write through method kept all the page cache pages locked that were
-> used for the request.  Keeping more than one page locked is deadlock prone
-> and Qian Cai demonstrated this with trinity fuzzing.
-> 
-> The reason for keeping the pages locked is that concurrent mapped reads
-> shouldn't try to pull possibly stale data into the page cache.
-> 
-> For full page writes, the easy way to fix this is to make the cached page
-> be the authoritative source by marking the page PG_uptodate immediately.
-> After this the page can be safely unlocked, since mapped/cached reads will
-> take the written data from the cache.
-> 
-> Concurrent mapped writes will now cause data in the original WRITE request
-> to be updated; this however doesn't cause any data inconsistency and this
-> scenario should be exceedingly rare anyway.
-> 
-> If the WRITE request returns with an error in the above case, currently the
-> page is not marked uptodate; this means that a concurrent read will always
-> read consistent data.  After this patch the page is uptodate between
-> writing to the cache and receiving the error: there's window where a cached
-> read will read the wrong data.  While theoretically this could be a
-> regression, it is unlikely to be one in practice, since this is normal for
-> buffered writes.
-> 
-> In case of a partial page write to an already uptodate page the locking is
-> also unnecessary, with the above caveats.
-> 
-> Partial write of a not uptodate page still needs to be handled.  One way
-> would be to read the complete page before doing the write.  This is not
-> possible, since it might break filesystems that don't expect any READ
-> requests when the file was opened O_WRONLY.
-> 
-> The other solution is to serialize the synchronous write with reads from
-> the partial pages.  The easiest way to do this is to keep the partial pages
-> locked.  The problem is that a write() may involve two such pages (one head
-> and one tail).  This patch fixes it by only locking the partial tail page.
-> If there's a partial head page as well, then split that off as a separate
-> WRITE request.
-> 
-> Reported-by: Qian Cai <cai@lca.pw>
-> Fixes: ea9b9907b82a ("fuse: implement perform_write")
-> Cc: <stable@vger.kernel.org> # v2.6.26
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/fuse/file.c   |   25 +++++++++++++++----------
->  fs/fuse/fuse_i.h |    1 +
->  2 files changed, 16 insertions(+), 10 deletions(-)
-> 
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1117,17 +1117,12 @@ static ssize_t fuse_send_write_pages(str
->  	count = ia->write.out.size;
->  	for (i = 0; i < ap->num_pages; i++) {
->  		struct page *page = ap->pages[i];
-> +		bool page_locked = ap->page_locked && (i == ap->num_pages - 1);
->  
-> -		if (!err && !offset && count >= PAGE_SIZE)
-> -			SetPageUptodate(page);
-> -
-> -		if (count > PAGE_SIZE - offset)
-> -			count -= PAGE_SIZE - offset;
-> -		else
-> -			count = 0;
-> -		offset = 0;
-> -
-> -		unlock_page(page);
-> +		if (err)
-> +			ClearPageUptodate(page);
-> +		if (page_locked)
-> +			unlock_page(page);
->  		put_page(page);
->  	}
->  
-> @@ -1191,6 +1186,16 @@ static ssize_t fuse_fill_write_pages(str
->  		if (offset == PAGE_SIZE)
->  			offset = 0;
->  
-> +		/* If we copied full page, mark it uptodate */
-> +		if (tmp == PAGE_SIZE)
-> +			SetPageUptodate(page);
-> +
-> +		if (PageUptodate(page)) {
-> +			unlock_page(page);
-> +		} else {
-> +			ap->page_locked = true;
-> +			break;
-> +		}
->  		if (!fc->big_writes)
->  			break;
->  	} while (iov_iter_count(ii) && count < fc->max_write &&
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -277,6 +277,7 @@ struct fuse_args_pages {
->  	struct page **pages;
->  	struct fuse_page_desc *descs;
->  	unsigned int num_pages;
-> +	bool page_locked;
->  };
->  
->  #define FUSE_ARGS(args) struct fuse_args args = {}
-> 
+Cheers,
+Jeff
 
