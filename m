@@ -2,89 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84E91314692
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 03:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D34D31474C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 05:06:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbhBICnO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 21:43:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59272 "EHLO
+        id S230051AbhBIEFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Feb 2021 23:05:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229763AbhBICnN (ORCPT
+        with ESMTP id S230071AbhBIEFH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 21:43:13 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1206C061788
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Feb 2021 18:42:32 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id cl8so735822pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Feb 2021 18:42:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tA3NkU7/ZdOeyh4OgJY88cyaW+ePcQQoqdXxwUHc2g0=;
-        b=i9PJSBwzTbDZuxA3G0oFraxAmIc9Q+OcH/i6djntpmLkrbYz3Mn9W5HaRFXt/4dtMf
-         nZUeJH2F7jrAOxBq+LfjexEH9E7rQ1drsuPKlBaHY6tT2rTCTPExvHQh4joi7SBi9eJT
-         RbC46xObuPO4+p/ZLsLWFLhoecrWyWoUkSXV2e+zG1e4ttL1XPIjjY0f42yvCpnK3pD5
-         Q4v9l3IfdyZpuxnUwMCWqc/zS58+JqEvPh3WrcEH3MEEUzcrCI2FIX3yliUAWdbQsB7k
-         P7w9IzYEpHP/KPHXgZVGLYAsSIe/69YGd55ELeTJOgQhnv1v+c+LJerN75YWVR3jXtBG
-         Akdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tA3NkU7/ZdOeyh4OgJY88cyaW+ePcQQoqdXxwUHc2g0=;
-        b=rqV4MwkI66NlZlxxYbzpFq/+0/VN5bFpIxJTVR5ScqzaqajN82IVVrnnYv0mOQ2bCq
-         pO54IDY9KGqlYzQY9HGL1oK2+PWWaODQm1us7bgEmzpjkmdllu5Ea/iB8NAqNCUvpA0e
-         FL3mMQtKrf1cFBSpky9gZfqKTVKSQMHDVNPpqO3a/OVlba/Fg+gZupP9x5w6e7+wCra2
-         50giWZYAyeEDdR//VyiQWLI7vzQMGRNyZ9/TAbTCUfFFtKxFhPhN/pKriOHzfhNZeCwW
-         Ajmt58EuteFmV/kMfCudI+9X8QS8dHRtR+cCX3+3k4MnZ4Ur6FeelMCJtQFRBNr+29c6
-         4G4A==
-X-Gm-Message-State: AOAM530QsEWPlplQ1goBU8ycp/4ILD5c4/uz8HDR8JZi0xPwYy5mzZhb
-        WOFdzFQXH0WGVOm/1FvZ6UmNlQ==
-X-Google-Smtp-Source: ABdhPJxtPXnBWIRRunn95nq37MIc/77qYGEHxQk2gdMt3spElLIQtBpYtk8yKNRD8RhX2T6sm9QBEA==
-X-Received: by 2002:a17:90b:1c0d:: with SMTP id oc13mr1853885pjb.156.1612838552301;
-        Mon, 08 Feb 2021 18:42:32 -0800 (PST)
-Received: from localhost.localdomain ([139.177.225.224])
-        by smtp.gmail.com with ESMTPSA id m4sm19428755pgu.4.2021.02.08.18.42.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Feb 2021 18:42:31 -0800 (PST)
-From:   zangchunxin@bytedance.com
-To:     viro@zeniv.linux.org.uk, axboe@kernel.dk
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chunxin Zang <zangchunxin@bytedance.com>
-Subject: [PATCH] fs/io_uring.c: fix typo in comment
-Date:   Tue,  9 Feb 2021 10:42:24 +0800
-Message-Id: <20210209024224.84122-1-zangchunxin@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+        Mon, 8 Feb 2021 23:05:07 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E536EC061788;
+        Mon,  8 Feb 2021 20:03:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=bMQrY5xxsyDu8SQKzHqPdOnXD4jQMrGQMm3kjadDQRg=; b=h8azyEwsxshv+2rXTvkoXaEOel
+        lvrShDE2SrJmZUpDB4xlX60rrU8yrEUB3ABc6E7NpyWJK0r8xeZbWak3N1/yiW5hoRmFQErLB+OcW
+        GLn92E1W00bgpx4W11hCXw2aicT/wso3KTDCJbQVjzVzBHUfmsXwA+bXYjlhlIVrnsb5YWjq3g+gu
+        3rWejYtMXGdZZMJwaKFzQTdGYhmzjooANexaXIjiW23Aa2AngBmklT37UuFOT/59/FNoQIj0Mka/V
+        nRZeWcqrjCffYuvKUqpiU5C7afVAbX0YWpx6HYxzSvOoPARSThCmJAmyx+R0ltqb2bdpvZGiCLxY5
+        vJtFbdaQ==;
+Received: from [2601:1c0:6280:3f0::cf3b]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1l9KF8-0002fr-Gv; Tue, 09 Feb 2021 04:03:14 +0000
+Subject: Re: mmotm 2021-02-08-15-44 uploaded
+ (mm-cma-print-region-name-on-failure.patch)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Patrick Daly <pdaly@codeaurora.org>
+References: <20210208234508.iCc6kmL1z%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c85a7dba-2f2a-c518-ab9d-26a0c934adda@infradead.org>
+Date:   Mon, 8 Feb 2021 20:03:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
+In-Reply-To: <20210208234508.iCc6kmL1z%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chunxin Zang <zangchunxin@bytedance.com>
+On 2/8/21 3:45 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2021-02-08-15-44 has been uploaded to
+> 
+>    https://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> https://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> https://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+> 
+> This tree is partially included in linux-next.  To see which patches are
+> included in linux-next, consult the `series' file.  Only the patches
+> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> linux-next.
 
-Change "sane" to "same" in a comment in io_uring.c
+mm-cma-print-region-name-on-failure.patch:
 
-Signed-off-by: Chunxin Zang <zangchunxin@bytedance.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This causes a printk format warning on i386 (these used to be readable):
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1f68105a41ed..da86440130f9 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -9519,7 +9519,7 @@ static int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 	struct io_rings *rings;
- 	size_t size, sq_array_offset;
- 
--	/* make sure these are sane, as we already accounted them */
-+	/* make sure these are same, as we already accounted them */
- 	ctx->sq_entries = p->sq_entries;
- 	ctx->cq_entries = p->cq_entries;
- 
+In file included from ../include/linux/printk.h:7:0,
+                 from ../include/linux/kernel.h:16,
+                 from ../include/asm-generic/bug.h:20,
+                 from ../arch/x86/include/asm/bug.h:93,
+                 from ../include/linux/bug.h:5,
+                 from ../include/linux/mmdebug.h:5,
+                 from ../include/linux/mm.h:9,
+                 from ../include/linux/memblock.h:13,
+                 from ../mm/cma.c:24:
+../mm/cma.c: In function ‘cma_alloc’:
+../include/linux/kern_levels.h:5:18: warning: format ‘%zu’ expects argument of type ‘size_t’, but argument 4 has type ‘long unsigned int’ [-Wformat=]
+ #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                  ^
+../include/linux/kern_levels.h:11:18: note: in expansion of macro ‘KERN_SOH’
+ #define KERN_ERR KERN_SOH "3" /* error conditions */
+                  ^~~~~~~~
+../include/linux/printk.h:343:9: note: in expansion of macro ‘KERN_ERR’
+  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         ^~~~~~~~
+../mm/cma.c:503:3: note: in expansion of macro ‘pr_err’
+   pr_err("%s: %s: alloc failed, req-size: %zu pages, ret: %d\n",
+   ^~~~~~
+../mm/cma.c:503:45: note: format string is defined here
+   pr_err("%s: %s: alloc failed, req-size: %zu pages, ret: %d\n",
+                                           ~~^
+                                           %lu
+
+because the type of count is not the same as the type of cma->count.
+
+Furthermore, are you sure that cma->count is the same value as count?
+I'm not.
+
+
+(also s/convienience/convenience/ in the patch description)
+
+thanks.
 -- 
-2.11.0
+~Randy
 
