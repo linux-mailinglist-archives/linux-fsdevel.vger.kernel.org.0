@@ -2,121 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9294731587A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 22:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E53031587B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 22:24:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233845AbhBIVQZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 16:16:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47834 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233733AbhBIUqB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 15:46:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1612901312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=utBmzEHnMldk+xybu3FUHQ/4GijdaViYwt5S9/fMX5g=;
-        b=TjFv3w1m/0Glle7o/mpLcPWsTy958OLjFP0MF4y2grgkrogeIq5dCnnfB5BszcW5ggUnqY
-        LL4MV1a1lL2B5WOEu6FaOYZ3DET/TzX9b1n3q4/VP0Y/08QiHTyolRop/Pd6AqhLXBScSy
-        PBnAIDa+ir2IADhVPtKtqxwjkXo403U=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AC40AADF0;
-        Tue,  9 Feb 2021 20:08:32 +0000 (UTC)
-Date:   Tue, 9 Feb 2021 21:08:31 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: Re: [PATCH v17 00/10] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-ID: <YCLrv86O0ZoKhfN0@dhcp22.suse.cz>
-References: <20210208211326.GV242749@kernel.org>
- <1F6A73CF-158A-4261-AA6C-1F5C77F4F326@redhat.com>
- <YCJO8zLq8YkXGy8B@dhcp22.suse.cz>
- <662b5871-b461-0896-697f-5e903c23d7b9@redhat.com>
- <YCJbmR11ikrWKaU8@dhcp22.suse.cz>
- <c1e5e7b6-3360-ddc4-2ff5-0e79515ee23a@redhat.com>
- <YCKNMqu8/g0OofqU@dhcp22.suse.cz>
- <8cbfe2c3-cfc6-72e0-bab1-852f80e20684@redhat.com>
+        id S233835AbhBIVS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 16:18:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233985AbhBIUq7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Feb 2021 15:46:59 -0500
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF979C061225
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Feb 2021 12:11:55 -0800 (PST)
+Received: by mail-io1-xd35.google.com with SMTP id u20so20135034iot.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Feb 2021 12:11:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=l6WEwLkb2xy2/U0iy3Xy7JNwk+HVvUNszayLkKhjccg=;
+        b=Z5YpwGg4VqyRP4sS3NjVEYzyqvsMqoVzKJFdJRvgySsfLXuj+4g51FQv7laeuDjbK/
+         WkjVW3P7YRJm5dan4lwtyid+A3NtH26DAW5gQAyF91b3n5U7G543cmlPFfhm87HH78qf
+         eXfYxkSfc7/7UCHC5xB+MPOLyEiijUfJTWxmmhTzSh6RdH+kuefG1Egkm6z6a3+AsEfk
+         mB+56F7MwSeTs5xWDqX+pm5nbvPWLasnto16x8rJmZ5ArdC3mnt3czSVZUFRpmEAyNjl
+         YBDri2oTR1TCRJ4X+eoZnpQfFKzEGY01/Do2JFg4Qfz3/Bs9B3qn/lFG034GQ6b3sUx2
+         tnSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=l6WEwLkb2xy2/U0iy3Xy7JNwk+HVvUNszayLkKhjccg=;
+        b=itGQ+eSafxzpj3XtcOsc54fy58aLrS9pA8EZwuwE+DdDJ6rkZ0mZnuJRNUB6EBvUsg
+         v42EUrUJqnI8JdzemYhTsCQy4V3jjfs7iYMqiF393kLx6hgoc7mQl9zl15hAsayQXJV7
+         jhi9raqNf55kp/yynLTVz5s53dI0L8AxiuWDW12/bUD+k56N35/ulMwwdSDHuoW3zhjL
+         2VdXF+DR4ypmw2CRR55mqgMLG99YdSEk2yD8tCwIeWaOLNrBvUK3oSU9aQP4oMqonVNB
+         7ACY3/Jm/+J/mMB/nHJJR7MVLe0DA+3vTQ+pemaM03oecrUrKO1xChEVOXZudd5WVMoD
+         qtWg==
+X-Gm-Message-State: AOAM530VNMyxBO/m87REQK9tSNFlRg9wsWQDe98bCJEn16sy/9DAKPZ1
+        h6Yg1XOhh4TEm1Ze+BXjSaOg1A==
+X-Google-Smtp-Source: ABdhPJxBV4JmG8c9o+4rIIGWzH552WvaEd8txOY2QEoNd9EsHL9oGHmfTXY3FSoFra7b774RnO+qjg==
+X-Received: by 2002:a6b:680e:: with SMTP id d14mr20634422ioc.74.1612901515134;
+        Tue, 09 Feb 2021 12:11:55 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id b1sm4393212iob.42.2021.02.09.12.11.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Feb 2021 12:11:54 -0800 (PST)
+Subject: Re: [PATCHSET v2 0/3] Improve IOCB_NOWAIT O_DIRECT reads
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        hch@infradead.org
+References: <20210209023008.76263-1-axboe@kernel.dk>
+ <20210209115542.3e407e306a4f1af29257c8f6@linux-foundation.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <32dba5cc-7878-3b7b-45e4-84690a45a998@kernel.dk>
+Date:   Tue, 9 Feb 2021 13:11:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cbfe2c3-cfc6-72e0-bab1-852f80e20684@redhat.com>
+In-Reply-To: <20210209115542.3e407e306a4f1af29257c8f6@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 09-02-21 17:17:22, David Hildenbrand wrote:
-> On 09.02.21 14:25, Michal Hocko wrote:
-> > On Tue 09-02-21 11:23:35, David Hildenbrand wrote:
-> > [...]
-> > > I am constantly trying to fight for making more stuff MOVABLE instead of
-> > > going into the other direction (e.g., because it's easier to implement,
-> > > which feels like the wrong direction).
-> > > 
-> > > Maybe I am the only person that really cares about ZONE_MOVABLE these days
-> > > :) I can't stop such new stuff from popping up, so at least I want it to be
-> > > documented.
-> > 
-> > MOVABLE zone is certainly an important thing to keep working. And there
-> > is still quite a lot of work on the way. But as I've said this is more
-> > of a outlier than a norm. On the other hand movable zone is kinda hard
-> > requirement for a lot of application and it is to be expected that
-> > many features will be less than 100% compatible.  Some usecases even
-> > impossible. That's why I am arguing that we should have a central
-> > document where the movable zone is documented with all the potential
-> > problems we have encountered over time and explicitly state which
-> > features are fully/partially incompatible.
-> > 
+On 2/9/21 12:55 PM, Andrew Morton wrote:
+> On Mon,  8 Feb 2021 19:30:05 -0700 Jens Axboe <axboe@kernel.dk> wrote:
 > 
-> I'll send a mail during the next weeks to gather current restrictions to
-> document them (and include my brain dump). We might see more excessive use
-> of ZONE_MOVABLE in the future and as history told us, of CMA as well. We
-> really should start documenting/caring.
-
-Excellent! Thanks a lot. I will do my best to help reviewing that.
-
-> @Mike, it would be sufficient for me if one of your patches at least mention
-> the situation in the description like
+>> Hi,
+>>
+>> For v1, see:
+>>
+>> https://lore.kernel.org/linux-fsdevel/20210208221829.17247-1-axboe@kernel.dk/
+>>
+>> tldr; don't -EAGAIN IOCB_NOWAIT dio reads just because we have page cache
+>> entries for the given range. This causes unnecessary work from the callers
+>> side, when the IO could have been issued totally fine without blocking on
+>> writeback when there is none.
+>>
 > 
-> "Please note that secretmem currently behaves much more like long-term GUP
-> instead of mlocked memory; secretmem is unmovable memory directly
-> consumed/controlled by user space. secretmem cannot be placed onto
-> ZONE_MOVABLE/CMA.
+> Seems a good idea.  Obviously we'll do more work in the case where some
+> writeback needs doing, but we'll be doing synchronous writeout in that
+> case anyway so who cares.
 
-Sounds good to me.
+Right, I think that'll be a round two on top of this, so we can make the
+write side happier too. That's a bit more involved...
+
+> Please remind me what prevents pages from becoming dirty during or
+> immediately after the filemap_range_needs_writeback() check?  Perhaps
+> filemap_range_needs_writeback() could have a comment explaining what it
+> is that keeps its return value true after it has returned it!
+
+It's inherently racy, just like it is now. There's really no difference
+there, and I don't think there's a way to close that. Even if you
+modified filemap_write_and_wait_range() to be non-block friendly,
+there's nothing stopping anyone from adding dirty page cache right after
+that call.
 
 -- 
-Michal Hocko
-SUSE Labs
+Jens Axboe
+
