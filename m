@@ -2,204 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA4D315A6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 01:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB9C315A6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 01:01:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234665AbhBJAA5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 19:00:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233765AbhBIXey (ORCPT
+        id S234682AbhBJAB1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 19:01:27 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:51156 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234616AbhBIXvi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 18:34:54 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B04EC06178B;
-        Tue,  9 Feb 2021 15:34:09 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id v7so448796eds.10;
-        Tue, 09 Feb 2021 15:34:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nHTNpCax2fmrQ51Vrz4XSGj+gC4T05k0BX8l/b1AeEU=;
-        b=MCfns2T/EVb5Mb77E83oTgiOfbog7Bzbo5emOWJe0HgtYa9usPl7PFWmzghJZ4U7/6
-         1PSxXiZpLFuwORaVn2U3NI/DdJtO0xxQDClSQ9e7PG8sVHDWROIvrsTgti4LODmzcBnJ
-         SHtt85gl9Y3BssM6BjPyDlVpfTjptHw0wultI3nLEviARRdcrDkJ10H6DOHbMYPap/wY
-         PTJpk/cZwg0HEWyFSwJNIT5wBuffyFkItxBXDKJdZYo2DHgECUiTpCZjJYnGsWpOqlcz
-         dHMZ3oHXHYdPF9kkGACZHT0mZxcDHar7gZTaAkKvS9E9CUn5WTLZmjVhzLvlBwFEiztG
-         Lq0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nHTNpCax2fmrQ51Vrz4XSGj+gC4T05k0BX8l/b1AeEU=;
-        b=a+3hFCNhMaDGwx/e4ciOLaQLMmiX6SFqYvp+AyrjjNPfdjoiWbxx9qRa613DKCsUdn
-         SNSZRbQxCwgunw33nsv1dMKlfkWe+GKLW3E/e5atiU7gwD/BAjxuNO9fM//D3/70FJJD
-         ec6CHBBhVA6ZvI2EKMh+DoKWWGt/EOhGPNU1potA5oCoj51yM2/AFjN1J/LEdhigwDBd
-         YMplgXUYKnwvKUqqprgn4qhpCPMh5NYvDAtdBNoyRMtTNsxfizaHduSl85Cn94T89pYZ
-         LgSK7kp9zKUbdKhDg/x434s6QMa6oewPR832ea/MdMl4uzIekFpkWpXivU8/wH59WT1p
-         spAg==
-X-Gm-Message-State: AOAM531Vj+NB8aOzfYfrDGPdPJlEnPhuErfYdRhfkqEO5fWryp5YwA0y
-        6IcQq+7jZ/BEJL5uDcv65m7GoAKSI8Nh2nNCS4c=
-X-Google-Smtp-Source: ABdhPJxbY1aYT7Kj5J/25Oo3lHU/Q3JeFDjy2nq8s8CG12sqiMqJxCvazOWJ008g77WUVrrJcMVYzCw5lxJmHGwSibA=
-X-Received: by 2002:a05:6402:11c7:: with SMTP id j7mr564335edw.290.1612913647990;
- Tue, 09 Feb 2021 15:34:07 -0800 (PST)
+        Tue, 9 Feb 2021 18:51:38 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210209235048epoutp01acb5e93537ff39ae33c23021edc44eae~iOVPgOjG50994909949epoutp01C
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Feb 2021 23:50:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210209235048epoutp01acb5e93537ff39ae33c23021edc44eae~iOVPgOjG50994909949epoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1612914648;
+        bh=Yfwyv25XMm32QG1IHtSFUvcYQNNR9BBObeWhcnK1FCE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=mBCKeIcQftIcOcMfaFYXqKRNaxVppqgWmVeNXwPiU60Nfu5vlou+TCaA2OkKvxPYW
+         kA+QhaTDHtvSxNosCSHBI8/jaH51Ar0+x1BLIax2FwiFxj3Fd1npcORUB10JeN7K1X
+         IzyY2c7y7ZGxfX/ACmSqCRMiEGB0u3xNvKif2AJI=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210209235048epcas1p19b606a3e69e8905ca6a3276bcfd68f04~iOVPEr4Uw1737417374epcas1p1P;
+        Tue,  9 Feb 2021 23:50:48 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.164]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4Db05M4DPSz4x9Pt; Tue,  9 Feb
+        2021 23:50:47 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        70.B6.10463.7DF13206; Wed, 10 Feb 2021 08:50:47 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210209235046epcas1p1416b5b121c0d78bfcb854aab46ea35c2~iOVNn36Ao2430624306epcas1p14;
+        Tue,  9 Feb 2021 23:50:46 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210209235046epsmtrp2f14ae2e2ca7328098069b18083a2fb3e~iOVNnAAeB1241312413epsmtrp2j;
+        Tue,  9 Feb 2021 23:50:46 +0000 (GMT)
+X-AuditID: b6c32a38-f11ff700000028df-8f-60231fd77323
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        34.12.13470.6DF13206; Wed, 10 Feb 2021 08:50:46 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210209235046epsmtip287ac00e030c4c6178459d4aaf99f55b1~iOVNXNVy80642306423epsmtip2L;
+        Tue,  9 Feb 2021 23:50:46 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+Cc:     "'Eric Sandeen'" <sandeen@sandeen.net>,
+        "'Goldwyn Rodrigues'" <rgoldwyn@suse.com>,
+        "'Nicolas Boos'" <nicolas.boos@wanadoo.fr>,
+        <sedat.dilek@gmail.com>, "'Hyunchul Lee'" <hyc.lee@gmail.com>,
+        "'Luca Stefani'" <luca.stefani.ge1@gmail.com>,
+        "'Matthieu CASTET'" <castet.matthieu@free.fr>,
+        "'Sven Hoexter'" <sven@stormbind.net>,
+        "'Ethan Sommer'" <e5ten.arch@gmail.com>,
+        "'Ethan Sommer'" <e5ten.arch@gmail.com>,
+        "'Hyeongseok Kim'" <hyeongseok@gmail.com>
+Subject: [ANNOUNCE] exfatprogs-1.1.0 version released
+Date:   Wed, 10 Feb 2021 08:50:46 +0900
+Message-ID: <000001d6ff3e$62f336d0$28d9a470$@samsung.com>
 MIME-Version: 1.0
-References: <20210209174646.1310591-1-shy828301@gmail.com> <20210209174646.1310591-6-shy828301@gmail.com>
- <20210209205014.GH524633@carbon.DHCP.thefacebook.com>
-In-Reply-To: <20210209205014.GH524633@carbon.DHCP.thefacebook.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 9 Feb 2021 15:33:56 -0800
-Message-ID: <CAHbLzkr+5t5wTVRDih53ty-TcsMrmKxZ5iiPw1dwnDsz_URz=Q@mail.gmail.com>
-Subject: Re: [v7 PATCH 05/12] mm: memcontrol: rename shrinker_map to shrinker_info
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: Adb/Pa6th4yELZeSR5GVSDSMGqBObg==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmvu51eeUEg7l/5S0+3+xlt+g88pTN
+        4tr99+wWfyd+YrLYs/cki8XlXXPYLP6tb2a3aDh2hMWi7e8uVovWK1oW66aeYLF4veEZqwOP
+        R/+6z6weO2fdZffYsvghk8fEH9PYPNZvucri8XmTnMfnu+tZA9ijcmwyUhNTUosUUvOS81My
+        89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgA5VUihLzCkFCgUkFhcr6dvZFOWX
+        lqQqZOQXl9gqpRak5BQYGhToFSfmFpfmpesl5+daGRoYGJkCVSbkZHTueMRSMIetYt7Dw2wN
+        jO2sXYycHBICJhKTdj5mA7GFBHYwStxu8u5i5AKyPzFKzJr3nxnC+cYoseTkC7iOTZ9XskAk
+        9jJKdM2/zgrhvGSUmHDxIDNIFZuArsS/P/vB5ooIJEvse72fEaSIWeAcs8SeM7PAEsICphJL
+        F39jAbFZBFQlHq1/AxbnFbCUeLHyFSOELShxcuYTsBpmAXmJ7W/nMEOcoSDx8+kyVogFehLb
+        1zezQdSISMzubAO7W0JgC4fE6+ZTTBANLhK3eptYIGxhiVfHt7BD2FISn9/tBWrmALKrJT7u
+        h5rfwSjx4rsthG0scXP9BlaQEmYBTYn1u/QhwooSO3/PZYRYyyfx7msPK8QUXomONiGIElWJ
+        vkuHoQ6Qluhq/wC11EPi8sfFrBMYFWcheXIWkidnIXlmFsLiBYwsqxjFUguKc9NTiw0LTJAj
+        exMjOBFrWexgnPv2g94hRiYOxkOMEhzMSiK8zjOVEoR4UxIrq1KL8uOLSnNSiw8xmgKDfSKz
+        lGhyPjAX5JXEG5oaGRsbW5iYmZuZGiuJ8yYZPIgXEkhPLEnNTk0tSC2C6WPi4JRqYMpc9TLU
+        oLNmnnzXojRxmfqnPIwrxBIkuo29mkKYb1y7svl28y+967z1dnO9zrXmssf++ZF3+sTbTULl
+        7t8U1EvXTku4lbDxXNvaXIVKvk/aSeaZmXvLXSv6LzbE9YbNE3hnoMZgdv3NO9tjnHMDNqze
+        nb9qQWvkHXH7QMMb9+/FRi2PMLBx3299SNZsX5iP4PGIK4dvrHq1b+7G0qrwohXx/XVWPpPi
+        AtzC7L11Z39YkDqzfqvPp/u/HyhH1vfymjBvOaCzl2NJgItsjblesfrT7fZynoUcudfZJiq+
+        mWnlqSN46uj1GLZs+X3/brAvO7JW5tJUcbUNb9gkhJwu5VVJXnCZnDs1+KHsxD1GSizFGYmG
+        WsxFxYkA2Z54wU0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42LZdlhJXveavHKCwb0X+hafb/ayW3Qeecpm
+        ce3+e3aLvxM/MVns2XuSxeLyrjlsFv/WN7NbNBw7wmLR9ncXq0XrFS2LdVNPsFi83vCM1YHH
+        o3/dZ1aPnbPusntsWfyQyWPij2lsHuu3XGXx+LxJzuPz3fWsAexRXDYpqTmZZalF+nYJXBmd
+        Ox6xFMxhq5j38DBbA2M7axcjJ4eEgInEps8rWboYuTiEBHYzSly79IURIiEtcezEGeYuRg4g
+        W1ji8OFiiJrnjBIHb29nB6lhE9CV+PdnPxuILSKQLLHv9X5GkCJmgWvMEnevQiSEBUwlli7+
+        xgJiswioSjxa/wYszitgKfFi5StGCFtQ4uTMJywgy5gF9CTaNoKFmQXkJba/ncMMcY+CxM+n
+        y1ghdulJbF/fzAZRIyIxu7ONeQKj4Cwkk2YhTJqFZNIsJB0LGFlWMUqmFhTnpucWGxYY5qWW
+        6xUn5haX5qXrJefnbmIEx5eW5g7G7as+6B1iZOJgPMQowcGsJMLrPFMpQYg3JbGyKrUoP76o
+        NCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQamAvHUAmvpDYHSpWesHX2/atay
+        LHh98pHri62ONrIPpy4vmfdIK6W7/18/f+apbenikV85itOLU22n5lv6m5ouj8g7Frpu1SQr
+        Wd91n1bzWJmtrgye0Zu016nH/WfsISX2+3Kb77YnBcsKOgmslSzoO6nT+LNv0+awTTzai7UO
+        KKWvcooxnJTxSvPX0h394i955uzk77mr+07itS8z8xGDpqtb81/xTrtZkpToqGNXEMG6+3Gz
+        wjy2w+551XH3+7dryV5/fuF2UZttz8NNyrt/8cas1mthO5Zpnrx322vpjqlTPi75tvpWz6fb
+        tcX+Wpc8uBbekb711IL/+4W4mz/d756Kub3v2f4D2/tXWnAosRRnJBpqMRcVJwIAqbxScx4D
+        AAA=
+X-CMS-MailID: 20210209235046epcas1p1416b5b121c0d78bfcb854aab46ea35c2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210209235046epcas1p1416b5b121c0d78bfcb854aab46ea35c2
+References: <CGME20210209235046epcas1p1416b5b121c0d78bfcb854aab46ea35c2@epcas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 9, 2021 at 12:50 PM Roman Gushchin <guro@fb.com> wrote:
->
-> On Tue, Feb 09, 2021 at 09:46:39AM -0800, Yang Shi wrote:
-> > The following patch is going to add nr_deferred into shrinker_map, the change will
-> > make shrinker_map not only include map anymore, so rename it to "memcg_shrinker_info".
-> > And this should make the patch adding nr_deferred cleaner and readable and make
-> > review easier.  Also remove the "memcg_" prefix.
-> >
-> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> > Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  include/linux/memcontrol.h |  8 ++---
-> >  mm/memcontrol.c            |  6 ++--
-> >  mm/vmscan.c                | 62 +++++++++++++++++++-------------------
-> >  3 files changed, 38 insertions(+), 38 deletions(-)
-> >
-> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > index 1739f17e0939..4c9253896e25 100644
-> > --- a/include/linux/memcontrol.h
-> > +++ b/include/linux/memcontrol.h
-> > @@ -96,7 +96,7 @@ struct lruvec_stat {
-> >   * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
-> >   * which have elements charged to this memcg.
-> >   */
-> > -struct memcg_shrinker_map {
-> > +struct shrinker_info {
-> >       struct rcu_head rcu;
-> >       unsigned long map[];
-> >  };
-> > @@ -118,7 +118,7 @@ struct mem_cgroup_per_node {
-> >
-> >       struct mem_cgroup_reclaim_iter  iter;
-> >
-> > -     struct memcg_shrinker_map __rcu *shrinker_map;
-> > +     struct shrinker_info __rcu      *shrinker_info;
->
-> Nice!
->
-> I really like how it looks now in comparison to the v1. Thank you for
-> working on it!
+Hi folk,
 
-Thanks a lot for all the great comments from all of you.
+We have released exfatprogs 1.1.0 version. In this release, exfatlabel
+has been added to print or re-write volume label and volume serial value.
+Also, A new dump.exfat util has been added to display statistics from
+a given device(Requested by Mike Fleetwood(GParted Developer)).
 
->
-> >
-> >       struct rb_node          tree_node;      /* RB tree node */
-> >       unsigned long           usage_in_excess;/* Set to the value by which */
-> > @@ -1581,8 +1581,8 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
-> >       return false;
-> >  }
-> >
-> > -int alloc_shrinker_maps(struct mem_cgroup *memcg);
-> > -void free_shrinker_maps(struct mem_cgroup *memcg);
-> > +int alloc_shrinker_info(struct mem_cgroup *memcg);
-> > +void free_shrinker_info(struct mem_cgroup *memcg);
-> >  void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id);
-> >  #else
-> >  #define mem_cgroup_sockets_enabled 0
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index f5c9a0d2160b..f64ad0d044d9 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -5246,11 +5246,11 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
-> >       struct mem_cgroup *memcg = mem_cgroup_from_css(css);
-> >
-> >       /*
-> > -      * A memcg must be visible for expand_shrinker_maps()
-> > +      * A memcg must be visible for expand_shrinker_info()
-> >        * by the time the maps are allocated. So, we allocate maps
-> >        * here, when for_each_mem_cgroup() can't skip it.
-> >        */
-> > -     if (alloc_shrinker_maps(memcg)) {
-> > +     if (alloc_shrinker_info(memcg)) {
-> >               mem_cgroup_id_remove(memcg);
-> >               return -ENOMEM;
-> >       }
-> > @@ -5314,7 +5314,7 @@ static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
-> >       vmpressure_cleanup(&memcg->vmpressure);
-> >       cancel_work_sync(&memcg->high_work);
-> >       mem_cgroup_remove_from_trees(memcg);
-> > -     free_shrinker_maps(memcg);
-> > +     free_shrinker_info(memcg);
-> >       memcg_free_kmem(memcg);
-> >       mem_cgroup_free(memcg);
-> >  }
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 641077b09e5d..9436f9246d32 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -190,20 +190,20 @@ static int shrinker_nr_max;
-> >  #define NR_MAX_TO_SHR_MAP_SIZE(nr_max) \
-> >       (DIV_ROUND_UP(nr_max, BITS_PER_LONG) * sizeof(unsigned long))
-> >
-> > -static void free_shrinker_map_rcu(struct rcu_head *head)
-> > +static void free_shrinker_info_rcu(struct rcu_head *head)
-> >  {
-> > -     kvfree(container_of(head, struct memcg_shrinker_map, rcu));
-> > +     kvfree(container_of(head, struct shrinker_info, rcu));
-> >  }
-> >
-> > -static int expand_one_shrinker_map(struct mem_cgroup *memcg,
-> > +static int expand_one_shrinker_info(struct mem_cgroup *memcg,
-> >                                  int size, int old_size)
-> >  {
-> > -     struct memcg_shrinker_map *new, *old;
-> > +     struct shrinker_info *new, *old;
-> >       int nid;
-> >
-> >       for_each_node(nid) {
-> >               old = rcu_dereference_protected(
-> > -                     mem_cgroup_nodeinfo(memcg, nid)->shrinker_map, true);
-> > +                     mem_cgroup_nodeinfo(memcg, nid)->shrinker_info, true);
-> >               /* Not yet online memcg */
-> >               if (!old)
-> >                       return 0;
-> > @@ -216,17 +216,17 @@ static int expand_one_shrinker_map(struct mem_cgroup *memcg,
-> >               memset(new->map, (int)0xff, old_size);
-> >               memset((void *)new->map + old_size, 0, size - old_size);
-> >
-> > -             rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_map, new);
-> > -             call_rcu(&old->rcu, free_shrinker_map_rcu);
-> > +             rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
-> > +             call_rcu(&old->rcu, free_shrinker_info_rcu);
->
-> Why not use kvfree_rcu() and get rid of free_shrinker_info_rcu() callback?
+Any feedback is welcome!:)
 
-Just because this patch is aimed to rename the structure. I think it
-may be more preferred to have the cleanup in a separate patch?
+CHANGES :
+ * fsck.exfat: Recover corrupted boot region.
 
->
-> Aside from this minor thing, the patch looks good to me. Please, feel free to add
-> Acked-by: Roman Gushchin <guro@fb.com>
->
-> Thanks!
+NEW FEATURES :
+ * exfatlabel: Print or set volume label and serial.
+ * dump.exfat: Show the on-disk metadata information and the statistics.
+
+BUG FIXES :
+ * Set _FILE_OFFSET_BITS=64 for Android build.
+
+The git tree is at:
+      https://github.com/exfatprogs/exfatprogs
+
+The tarballs can be found at:
+      https://github.com/exfatprogs/exfatprogs/releases/download/1.1.0/exfatprogs-1.1.0.tar.gz
+
