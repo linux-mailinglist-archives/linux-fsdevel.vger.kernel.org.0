@@ -2,46 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA853159B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 23:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 239783159B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 23:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233939AbhBIWtc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 17:49:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44649 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234532AbhBIWbC (ORCPT
+        id S234123AbhBIWuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 17:50:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33922 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234235AbhBIWhC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 17:31:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612909741;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GNTsEzyoPupLf8uFnqlZZbYFAgQKr7S0geejlS5p7yc=;
-        b=GaNqQwHcsf7X5DUG7zHse/iSOu+uumKqB4CNyntGD4Qh5Wfe5+oV6X2SykIpoTltj8Ossx
-        Mbqs6+Yx8x4dq9KnBbrqxq9oZYNmkovxnfHgRd7ymXsi0vllKZCF+P8TpDFPhjF5coPjWs
-        PO/1apuebPoFGiaX6t25IbHgrNTpF+s=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-246-zfMDn4FfM1uj1j28ps60sQ-1; Tue, 09 Feb 2021 16:10:52 -0500
-X-MC-Unique: zfMDn4FfM1uj1j28ps60sQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 199F0107ACC7;
-        Tue,  9 Feb 2021 21:10:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BDE796062F;
-        Tue,  9 Feb 2021 21:10:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
-References: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com> <591237.1612886997@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Tue, 9 Feb 2021 17:37:02 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DDCC06121E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Feb 2021 13:25:50 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id a25so95692ljn.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Feb 2021 13:25:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5NXrj70SaJJJRtMQWC0+3w4cmGywCfZjtndBL9rb8Bo=;
+        b=g8n7RWB/hph+MNS6KsfC0GffC4feoLtbwfzXkMDO5VGlvyK682yT02RPRIOW6hieUR
+         nxG1Mlzbyp5mtI1Do4dwBB4pr2NfNtLSNxuXGIfX+Az+7iAT6uxAH+/kuEuPZoNDiHrT
+         JX8A9+J4I4DIw7KDC1ACDk8XTP+nwuXWBZL+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5NXrj70SaJJJRtMQWC0+3w4cmGywCfZjtndBL9rb8Bo=;
+        b=en2+GJYVow9iHg0BADkKtfMzOygxiShx1wlcFtAvVL7tff5tIlJcnT9dgsAN7je3t0
+         8FCBZ1GW/RxwuV5TJtJBAatzSOA6RNdQjMTrNIRDNraIMMmriQ9FViFTkLZyffVe3XSo
+         wRBx75+qsfxUJJ5wtBv7sbHlHDZW6021e4ehzT3ihrYeNEeyFuLEkXowqHjrSCamIRM9
+         XUpS20Jw91+T0iANDYDVBjaImtFOhGUM0XBod5uqv6FRgMOwim+GjJLM1F8Y4tUowOdI
+         YPqM3VvbXXJDCtp0BgsnwclrwHcjOELnqA0PuxVtBEG0Aodl4zpADunvChVN0oFqpOKA
+         BIPg==
+X-Gm-Message-State: AOAM531a/lTO3jr8KvieUVaHlv3lH2JRB6lu7uduJgIRoKqEyK6N3CkG
+        Z22R8Xiw9a4D/5tfhFFYP2uPQWsJwiQIGQ==
+X-Google-Smtp-Source: ABdhPJxKlMgkT1uzRGFd2YNwo2CT6pTWHQTChWtXM2jaagkDD0eIND05X+Y104zwD4LZD7sS1FylVw==
+X-Received: by 2002:a05:651c:38f:: with SMTP id e15mr7762630ljp.420.1612905948824;
+        Tue, 09 Feb 2021 13:25:48 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id w15sm1541850lfp.171.2021.02.09.13.25.48
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Feb 2021 13:25:48 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id h26so4317020lfm.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Feb 2021 13:25:48 -0800 (PST)
+X-Received: by 2002:a2e:b1c8:: with SMTP id e8mr15253931lja.251.1612905557284;
+ Tue, 09 Feb 2021 13:19:17 -0800 (PST)
+MIME-Version: 1.0
+References: <591237.1612886997@warthog.procyon.org.uk> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+ <20210209202134.GA308988@casper.infradead.org>
+In-Reply-To: <20210209202134.GA308988@casper.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 9 Feb 2021 13:19:01 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh+2gbF7XEjYc=HV9w_2uVzVf7vs60BPz0gFA=+pUm3ww@mail.gmail.com>
+Message-ID: <CAHk-=wh+2gbF7XEjYc=HV9w_2uVzVf7vs60BPz0gFA=+pUm3ww@mail.gmail.com>
+Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
         Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -55,49 +74,32 @@ Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
         "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
         v9fs-developer@lists.sourceforge.net,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <617684.1612905042.1@warthog.procyon.org.uk>
-Date:   Tue, 09 Feb 2021 21:10:42 +0000
-Message-ID: <617685.1612905042@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, Feb 9, 2021 at 12:21 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> Yeah, I have trouble with the private2 vs fscache bit too.  I've been
+> trying to persuade David that he doesn't actually need an fscache
+> bit at all; he can just increment the page's refcount to prevent it
+> from being freed while he writes data to the cache.
 
-> The PG_fscache bit waiting functions are completely crazy. The comment
-> about "this will wake up others" is actively wrong,
+Does the code not hold a refcount already?
 
-You mean this?
+Honestly, the fact that writeback doesn't take a refcount, and then
+has magic "if writeback is set, don't free" code in other parts of the
+VM layer has been a problem already, when the wakeup ended up
+"leaking" from a previous page to a new allocation.
 
-/**
- * unlock_page_fscache - Unlock a page pinned with PG_fscache
- * @page: The page
- *
- * Unlocks the page and wakes up sleepers in wait_on_page_fscache().  Also
- * wakes those waiting for the lock and writeback bits because the wakeup
- * mechanism is shared.  But that's OK - those sleepers will just go back to
- * sleep.
- */
+I very much hope the fscache bit does not make similar mistakes,
+because the rest of the VM will _not_ have special "if fscache is set,
+then we won't do X" the way we do for writeback.
 
-Actually, you're right.  The wakeup check func is evaluated by the
-waker-upper.  I can fix the comment with a patch.
+So I think the fscache code needs to hold a refcount regardless, and
+that the fscache bit is set the page has to have a reference.
 
-> and the waiting function looks insane, because you're mixing the two names
-> for "fscache" which makes the code look totally incomprehensible. Why would
-> we wait for PF_fscache, when PG_private_2 was set? Yes, I know why, but the
-> code looks entirely nonsensical.
+So what are the current lifetime rules for the fscache bit?
 
-IIRC someone insisted that I should make it a generic name and put the
-accessor functions in the fscache headers (which means they aren't available
-to core code), but I don't remember who (maybe Andrew? it was before mid-2007)
-- kind of like PG_checked is an alias for PG_owner_priv_1.
-
-I'd be quite happy to move the accessors for PG_fscache to the
-linux/page-flags.h as that would simplify things.
-
-David
-
+             Linus
