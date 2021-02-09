@@ -2,205 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F735314C6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 11:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA89314CFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 11:29:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbhBIKE1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 05:04:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40296 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231250AbhBIKCA (ORCPT
+        id S231372AbhBIK2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 05:28:13 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20676 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231751AbhBIKZV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 05:02:00 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37A1EC061786
-        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Feb 2021 02:01:20 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id y8so22681109ede.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Feb 2021 02:01:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Ahe/88oDGLp2JKa7aUpgG0hTDRSR52Nw5wU2PH5TQN8=;
-        b=VRSPeA2UOfn1ZHevjh3mhpVVGTu5RXY4/uLvMzYCF2+9qehACcp0dWyUuKcU7fXxdq
-         SH6N2E0sLvRjtBCdtdzGcQghNb3ORdMVo6iYuB4RyXpdxdipLLeQfP+QYyjGgC40CQU6
-         a4xpujcX88eyRoVl7nOImVLiGOKxHe359s/ok=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ahe/88oDGLp2JKa7aUpgG0hTDRSR52Nw5wU2PH5TQN8=;
-        b=kEqhv/NdYYyKS7ZDHMWMNIUwTy7lT6C1FvNebegqI+a9twtPEsGc8/MXSRUnafqiA4
-         hsiT48yIhoBeuR2faQ9o6P875ChhEsF2Lka/YHDSVxBRVo2E/PBsomlvLDnFWi1/ndyW
-         CkZrTL6KXLQ0jlgWtnTtzPfcHArfE2jQZhMR4DApgVE6/opgQOmOeiAFfr8Glf+xkX1S
-         F318IpPqWx/z7GNldITigRHY82UNEUM8Pl/D0M2RGedgEIaTNzTKEW0RU3gvAdu6gerS
-         NSXBxC2hnyK4e6zu4EjBAh8g/Yd0qQLd0V6Ellt8far8ZWHe2wOudCCagfgYzXTnn3qr
-         ZscQ==
-X-Gm-Message-State: AOAM531Pc9FQ2W/cw453VeStQLyizFHkYYJ5iDQz73SjKzVhiM0kvfTE
-        eH3FP1ZuS1g2coT83a5C38md+A==
-X-Google-Smtp-Source: ABdhPJzdOIiuw6jzhZ8qEruOgYOnKANwOJwRc0ME7gBZpZ+BSxcudwxDoIDCLg0UCRZZzA6I+bPBTw==
-X-Received: by 2002:a05:6402:281:: with SMTP id l1mr2161407edv.252.1612864878928;
-        Tue, 09 Feb 2021 02:01:18 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id l5sm9588846edv.50.2021.02.09.02.01.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Feb 2021 02:01:18 -0800 (PST)
-Date:   Tue, 9 Feb 2021 11:01:15 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Qian Cai <cai@lca.pw>, Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Linux-MM <linux-mm@kvack.org>,
+        Tue, 9 Feb 2021 05:25:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612866233;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1IoX1DQCPa+nZtjLne30VDad7vc/+9XUN1LzFVohs0o=;
+        b=CHLKqheCD8/67o9xr8llyKnonFmde21iE75kEqc1RUCbaiLFow1RgZCL8zXjBOnLqNc4gP
+        50t1gEPtrIKiTZj5CJDIBg1qizUzSi0SyOD9tuhRkJmz2TFCAz91n5TsJJJFFG73YIfHHJ
+        dT/VfNWwbaxbIYgRVZjc3I6jl3tpass=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-65-shSTZr8_P1uvA3gtZUZXlw-1; Tue, 09 Feb 2021 05:23:49 -0500
+X-MC-Unique: shSTZr8_P1uvA3gtZUZXlw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5220F804023;
+        Tue,  9 Feb 2021 10:23:44 +0000 (UTC)
+Received: from [10.36.113.141] (ovpn-113-141.ams2.redhat.com [10.36.113.141])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 192F22CE01;
+        Tue,  9 Feb 2021 10:23:35 +0000 (UTC)
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Mike Rapoport <rppt@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: Possible deadlock in fuse write path (Was: Re: [PATCH 0/4] Some
- more lock_page work..)
-Message-ID: <20210209100115.GB1208880@miu.piliscsaba.redhat.com>
-References: <4794a3fa3742a5e84fb0f934944204b55730829b.camel@lca.pw>
- <CAHk-=wh9Eu-gNHzqgfvUAAiO=vJ+pWnzxkv+tX55xhGPFy+cOw@mail.gmail.com>
- <20201015151606.GA226448@redhat.com>
- <20201015195526.GC226448@redhat.com>
- <CAHk-=wj0vjx0jzaq5Gha-SmDKc3Hnog5LKX0eJZkudBvEQFAUA@mail.gmail.com>
- <CAJfpegtAstEo+nYgT81swYZWdziaZP_40QGAXcTORqYwgeWNUA@mail.gmail.com>
- <20201020204226.GA376497@redhat.com>
- <CAJfpegsi8UFiYyPrPbQob2x4X7NKSnciEz-a=5YZtFCgY0wL6w@mail.gmail.com>
- <20201021201249.GB442437@redhat.com>
- <CAJfpegsaLrbJ7bjJVBC3=vLzWZcF+GtTpGjVKYYOE3mjKyuVAw@mail.gmail.com>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+References: <20210208211326.GV242749@kernel.org>
+ <1F6A73CF-158A-4261-AA6C-1F5C77F4F326@redhat.com>
+ <YCJO8zLq8YkXGy8B@dhcp22.suse.cz>
+ <662b5871-b461-0896-697f-5e903c23d7b9@redhat.com>
+ <YCJbmR11ikrWKaU8@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Subject: Re: [PATCH v17 00/10] mm: introduce memfd_secret system call to
+ create "secret" memory areas
+Message-ID: <c1e5e7b6-3360-ddc4-2ff5-0e79515ee23a@redhat.com>
+Date:   Tue, 9 Feb 2021 11:23:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsaLrbJ7bjJVBC3=vLzWZcF+GtTpGjVKYYOE3mjKyuVAw@mail.gmail.com>
+In-Reply-To: <YCJbmR11ikrWKaU8@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Vivek,
+>>> A lot of unevictable memory is a concern regardless of CMA/ZONE_MOVABLE.
+>>> As I've said it is quite easy to land at the similar situation even with
+>>> tmpfs/MAP_ANON|MAP_SHARED on swapless system. Neither of the two is
+>>> really uncommon. It would be even worse that those would be allowed to
+>>> consume both CMA/ZONE_MOVABLE.
+>>
+>> IIRC, tmpfs/MAP_ANON|MAP_SHARED memory
+>> a) Is movable, can land in ZONE_MOVABLE/CMA
+>> b) Can be limited by sizing tmpfs appropriately
+>>
+>> AFAIK, what you describe is a problem with memory overcommit, not with zone
+>> imbalances (below). Or what am I missing?
+> 
+> It can be problem for both. If you have just too much of shm (do not
+> forget about MAP_SHARED|MAP_ANON which is much harder to size from an
+> admin POV) then migrateability doesn't really help because you need a
+> free memory to migrate. Without reclaimability this can easily become a
+> problem. That is why I am saying this is not really a new problem.
+> Swapless systems are not all that uncommon.
 
-Here's an updated patch with a header comment containing all the gory details.
-It's basically your patch, but it's missing your S-o-b.  If you are fine with
-it, can you please provide one?
+I get your point, it's similar but still different. "no memory in the 
+system" vs. "plenty of unusable free memory available in the system".
 
-The only change I made was to clear PG_uptodate on write error, otherwise I
-think the patch is fine.
+In many setups, memory for user space applications can go to 
+ZONE_MOVABLE just fine. ZONE_NORMAL etc. can be used for supporting user 
+space memory (e.g., page tables) and other kernel stuff.
 
-Splitting the request might cause a performance regression in some cases (lots
-of unaligned writes that spill over a page boundary) but I don't have a better
-idea at this moment.
+Like, have 4GB of ZONE_MOVABLE with 2GB of ZONE_NORMAL. Have an 
+application (database) that allocates 4GB of memory. Works just fine. 
+The zone ratio ends up being a problem for example with many processes 
+(-> many page tables).
 
+Not being able to put user space memory into the movable zone is a 
+special case. And we are introducing yet another special case here 
+(besides vfio, rdma, unmigratable huge pages like gigantic pages).
+
+With plenty of secretmem, looking at /proc/meminfo Total vs. Free can be 
+a big lie of how your system behaves.
+
+>   
+>>> One has to be very careful when relying on CMA or movable zones. This is
+>>> definitely worth a comment in the kernel command line parameter
+>>> documentation. But this is not a new problem.
+>>
+>> I see the following thing worth documenting:
+>>
+>> Assume you have a system with 2GB of ZONE_NORMAL/ZONE_DMA and 4GB of
+>> ZONE_MOVABLE/CMA.
+>>
+>> Assume you make use of 1.5GB of secretmem. Your system might run into OOM
+>> any time although you still have plenty of memory on ZONE_MOVAVLE (and even
+>> swap!), simply because you are making excessive use of unmovable allocations
+>> (for user space!) in an environment where you should not make excessive use
+>> of unmovable allocations (e.g., where should page tables go?).
+> 
+> yes, you are right of course and I am not really disputing this. But I
+> would argue that 2:1 Movable/Normal is something to expect problems
+> already. "Lowmem" allocations can easily trigger OOM even without secret
+> mem in the picture. It all just takes to allocate a lot of GFP_KERNEL or
+> even GFP_{HIGH}USER. Really, it is CMA/MOVABLE that are elephant in the
+> room and one has to be really careful when relying on them.
+
+Right, it's all about what the setup actually needs. Sure, there are 
+cases where you need significantly more GFP_KERNEL/GFP_{HIGH}USER such 
+that a 2:1 ratio is not feasible. But I claim that these are corner cases.
+
+Secretmem gives user space the option to allocate a lot of 
+GFP_{HIGH}USER memory. If I am not wrong, "ulimit -a" tells me that each 
+application on F33 can allocate 16 GiB (!) of secretmem.
+
+Which other ways do you know where random user space can do something 
+similar? I'd be curious what other scenarios there are where user space 
+can easily allocate a lot of unmovable memory.
+
+>   
+>> The existing controls (mlock limit) don't really match the current semantics
+>> of that memory. I repeat it once again: secretmem *currently* resembles
+>> long-term pinned memory, not mlocked memory.
+> 
+> Well, if we had a proper user space pinning accounting then I would
+> agree that there is a better model to use. But we don't. And previous
+> attempts to achieve that have failed. So I am afraid that we do not have
+> much choice left than using mlock as a model.
+
+Yes, I agree.
+
+> 
+>> Things will change when
+>> implementing migration support for secretmem pages. Until then, the
+>> semantics are different and this should be spelled out.
+>>
+>> For long-term pinnings this is kind of obvious, still we're now documenting
+>> it because it's dangerous to not be aware of. Secretmem behaves exactly the
+>> same and I think this is worth spelling out: secretmem has the potential of
+>> being used much more often than fairly special vfio/rdma/ ...
+> 
+> yeah I do agree that pinning is a problem for movable/CMA but most
+> people simply do not care about those. Movable is the thing for hoptlug
+> and a really weird fragmentation avoidance IIRC and CMA is mostly to
+
++ handling gigantic pages dynamically
+
+> handle crap HW. If those are to be used along with secret mem or
+> longterm GUP then they will constantly bump into corner cases. Do not
+> take me wrong, we should be looking at those problems, we should even
+> document them but I do not see this as anything new. We should probably
+> have a central place in Documentation explaining all those problems. I
+
+Exactly.
+
+> would be even happy to see an explicit note in the tunables - e.g.
+> configuring movable/normal in 2:1 will get you back to 32b times wrt.
+> low mem problems.
+
+In most setups, ratios of 1:1 up to 4:1 work reasonably well. Of course, 
+it's not applicable to all setups (obviously).
+
+For example, oVirt has been using ratios of 3:1 for a long time. (online 
+all memory to ZONE_MOVABLE in the guest, never hotplug more than 3x boot 
+memory size). Most distros end up onlining all hotplugged memory on bare 
+metal to ZONE_MOVABLE, and I've seen basically no bug reports related to 
+that.
+
+Highmem was a little different, yet similar. RHEL provided the bigmem 
+kernel with ratios of 60:4, which worked in many setups. The main 
+difference to highmem was that e.g., pagetables could be placed onto it. 
+So ratios like 18:1 are completely insane with ZONE_MOVABLE.
+
+I am constantly trying to fight for making more stuff MOVABLE instead of 
+going into the other direction (e.g., because it's easier to implement, 
+which feels like the wrong direction).
+
+Maybe I am the only person that really cares about ZONE_MOVABLE these 
+days :) I can't stop such new stuff from popping up, so at least I want 
+it to be documented.
+
+-- 
 Thanks,
-Miklos
-----
 
-Date: Wed, 21 Oct 2020 16:12:49 -0400
-From: Vivek Goyal <vgoyal@redhat.com>
-Subject: fuse: fix write deadlock
+David / dhildenb
 
-There are two modes for write(2) and friends in fuse:
-
-a) write through (update page cache, send sync WRITE request to userspace)
-
-b) buffered write (update page cache, async writeout later)
-
-The write through method kept all the page cache pages locked that were
-used for the request.  Keeping more than one page locked is deadlock prone
-and Qian Cai demonstrated this with trinity fuzzing.
-
-The reason for keeping the pages locked is that concurrent mapped reads
-shouldn't try to pull possibly stale data into the page cache.
-
-For full page writes, the easy way to fix this is to make the cached page
-be the authoritative source by marking the page PG_uptodate immediately.
-After this the page can be safely unlocked, since mapped/cached reads will
-take the written data from the cache.
-
-Concurrent mapped writes will now cause data in the original WRITE request
-to be updated; this however doesn't cause any data inconsistency and this
-scenario should be exceedingly rare anyway.
-
-If the WRITE request returns with an error in the above case, currently the
-page is not marked uptodate; this means that a concurrent read will always
-read consistent data.  After this patch the page is uptodate between
-writing to the cache and receiving the error: there's window where a cached
-read will read the wrong data.  While theoretically this could be a
-regression, it is unlikely to be one in practice, since this is normal for
-buffered writes.
-
-In case of a partial page write to an already uptodate page the locking is
-also unnecessary, with the above caveats.
-
-Partial write of a not uptodate page still needs to be handled.  One way
-would be to read the complete page before doing the write.  This is not
-possible, since it might break filesystems that don't expect any READ
-requests when the file was opened O_WRONLY.
-
-The other solution is to serialize the synchronous write with reads from
-the partial pages.  The easiest way to do this is to keep the partial pages
-locked.  The problem is that a write() may involve two such pages (one head
-and one tail).  This patch fixes it by only locking the partial tail page.
-If there's a partial head page as well, then split that off as a separate
-WRITE request.
-
-Reported-by: Qian Cai <cai@lca.pw>
-Fixes: ea9b9907b82a ("fuse: implement perform_write")
-Cc: <stable@vger.kernel.org> # v2.6.26
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/fuse/file.c   |   25 +++++++++++++++----------
- fs/fuse/fuse_i.h |    1 +
- 2 files changed, 16 insertions(+), 10 deletions(-)
-
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1117,17 +1117,12 @@ static ssize_t fuse_send_write_pages(str
- 	count = ia->write.out.size;
- 	for (i = 0; i < ap->num_pages; i++) {
- 		struct page *page = ap->pages[i];
-+		bool page_locked = ap->page_locked && (i == ap->num_pages - 1);
- 
--		if (!err && !offset && count >= PAGE_SIZE)
--			SetPageUptodate(page);
--
--		if (count > PAGE_SIZE - offset)
--			count -= PAGE_SIZE - offset;
--		else
--			count = 0;
--		offset = 0;
--
--		unlock_page(page);
-+		if (err)
-+			ClearPageUptodate(page);
-+		if (page_locked)
-+			unlock_page(page);
- 		put_page(page);
- 	}
- 
-@@ -1191,6 +1186,16 @@ static ssize_t fuse_fill_write_pages(str
- 		if (offset == PAGE_SIZE)
- 			offset = 0;
- 
-+		/* If we copied full page, mark it uptodate */
-+		if (tmp == PAGE_SIZE)
-+			SetPageUptodate(page);
-+
-+		if (PageUptodate(page)) {
-+			unlock_page(page);
-+		} else {
-+			ap->page_locked = true;
-+			break;
-+		}
- 		if (!fc->big_writes)
- 			break;
- 	} while (iov_iter_count(ii) && count < fc->max_write &&
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -277,6 +277,7 @@ struct fuse_args_pages {
- 	struct page **pages;
- 	struct fuse_page_desc *descs;
- 	unsigned int num_pages;
-+	bool page_locked;
- };
- 
- #define FUSE_ARGS(args) struct fuse_args args = {}
