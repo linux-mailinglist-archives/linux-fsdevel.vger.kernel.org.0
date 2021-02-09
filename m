@@ -2,91 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 021D3315954
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 23:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A2331591B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 23:08:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234120AbhBIWVX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 17:21:23 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46052 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233959AbhBIWNt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 17:13:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612908742;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=njyj2XCXYGtI5AX/JV14IYXR8Ipi7RDaSVkhJ8oSglg=;
-        b=EA3Za0h758jj/Hd3hLIadII+kqMWGEt9QB04NhktkFyvq+6i7AYkWIdIJuknLHBcR4FOlw
-        TgVmLjYL/fsfjb1sJhZfDU7xf/sXouZmN36AzXHBp/O1qYAVj9F5fDxsDZXx4793uysNFp
-        rOmVmfR3ahGYpYTRDOWRcRS8R2ig9PU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-166-Ez0mEz_fP32izAfxafFp3w-1; Tue, 09 Feb 2021 16:25:32 -0500
-X-MC-Unique: Ez0mEz_fP32izAfxafFp3w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B7E8FCC626;
-        Tue,  9 Feb 2021 21:25:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E044519C78;
-        Tue,  9 Feb 2021 21:25:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210209202134.GA308988@casper.infradead.org>
-References: <20210209202134.GA308988@casper.infradead.org> <591237.1612886997@warthog.procyon.org.uk> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+        id S233744AbhBIWH0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 17:07:26 -0500
+Received: from mga18.intel.com ([134.134.136.126]:22690 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233350AbhBIWFO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Feb 2021 17:05:14 -0500
+IronPort-SDR: qm3QDZKXVvUz7zK36R1cBmtYWTMjh9MmHmrEqnEf/VtC/ag/YXR087xiBAeOSqr2pPhsBdR/hE
+ d16Vo7P0q9cA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9890"; a="169646391"
+X-IronPort-AV: E=Sophos;i="5.81,166,1610438400"; 
+   d="scan'208";a="169646391"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 13:52:30 -0800
+IronPort-SDR: KMBExiMqHPbOmuFWjVF8uvMMKlFrOnZlogo2zHUcOm/4gLUvrr15QrFYyuMFho/oWotwP63h6j
+ qaE46oV2PR+w==
+X-IronPort-AV: E=Sophos;i="5.81,166,1610438400"; 
+   d="scan'208";a="578192087"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 13:52:30 -0800
+Date:   Tue, 9 Feb 2021 13:52:29 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     dsterba@suse.cz, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 0/4] btrfs: Convert kmaps to core page calls
+Message-ID: <20210209215229.GC2975576@iweiny-DESK2.sc.intel.com>
+References: <20210205232304.1670522-1-ira.weiny@intel.com>
+ <20210209151123.GT1993@suse.cz>
+ <20210209110931.00f00e47d9a0529fcee2ff01@linux-foundation.org>
+ <20210209205249.GB2975576@iweiny-DESK2.sc.intel.com>
+ <20210209131103.b46e80db675fec8bec8d2ad1@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <618608.1612905923.1@warthog.procyon.org.uk>
-Date:   Tue, 09 Feb 2021 21:25:23 +0000
-Message-ID: <618609.1612905923@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210209131103.b46e80db675fec8bec8d2ad1@linux-foundation.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, Feb 09, 2021 at 01:11:03PM -0800, Andrew Morton wrote:
+> > > 
+> > > It would be best to merge [1/4] via the btrfs tree.  Please add my
+> > > 
+> > > Acked-by: Andrew Morton <akpm@linux-foundation.org>
+> > > 
+> > > 
+> > > Although I think it would be better if [1/4] merely did the code
+> > > movement.  Adding those BUG_ON()s is a semantic/functional change and
+> > > really shouldn't be bound up with the other things this patch series
+> > > does.
+> > 
+> > I proposed this too and was told 'no'...
+> > 
+> > <quote>
+> > If we put in into a separate patch, someone will suggest backing out the
+> > patch which tells us that there's a problem.
+> > </quote>
+> > 	-- https://lore.kernel.org/lkml/20201209201415.GT7338@casper.infradead.org/
+> 
+> Yeah, no, please let's not do this.  Bundling an offtopic change into
+> [1/4] then making three more patches dependent on the ontopic parts of
+> [1/4] is just rude.
+> 
+> I think the case for adding the BUG_ONs can be clearly made.  And that
+> case should at least have been clearly made in the [1/4] changelog!
+> 
+> (Although I expect VM_BUG_ON() would be better - will give us sufficient
+> coverage without the overall impact.)
 
-> Yeah, I have trouble with the private2 vs fscache bit too.  I've been
-> trying to persuade David that he doesn't actually need an fscache
-> bit at all; he can just increment the page's refcount to prevent it
-> from being freed while he writes data to the cache.
+I'm ok with VM_BUG_ON()
 
-That's not what the bit is primarily being used for.  It's being used to
-prevent the starting of a second write to the cache whilst the first is in
-progress and also to prevent modification whilst DMA to the cache is in
-progress.  This isn't so obvious in this cut-down patchset, but comes more in
-to play with full caching of local writes in my fscache-iter branch.
+> 
+> Let's please queue this up separately.
 
-I can't easily share PG_writeback for this because each bit covers a write to
-a different place.  PG_writeback covers the write to the server and PG_fscache
-the write to the cache.  These writes may get split up differently and will
-most likely finish at different times.
+Ok can I retain your Ack on the move part of the patch?  Note that it does
+change kmap_atomic() to kmap_local_page() currently.
 
-If I have to share PG_writeback, that will mean storing both states for each
-page somewhere else and then "OR'ing" them together to drive PG_writeback.
+Would you prefer a separate change for that as well?
 
-David
+Ira
 
+PS really CC'ing Matthew now...
