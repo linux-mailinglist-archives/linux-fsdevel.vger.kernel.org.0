@@ -2,120 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6A8931477C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 05:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3D473147C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Feb 2021 06:03:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230183AbhBIEWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Feb 2021 23:22:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51882 "EHLO
+        id S229745AbhBIFDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 00:03:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbhBIEWT (ORCPT
+        with ESMTP id S229683AbhBIFDB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Feb 2021 23:22:19 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C1D1C061786;
-        Mon,  8 Feb 2021 20:20:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=sYOLrwkXkQ/wTBJL5CfjQNM5168BJkTC/1z/8YWcojM=; b=fXwKS7sS3ah1LrEF+esyJcwvzu
-        Bxb3S0w0CGziI/jeD3PBUvQZ1ARrIZps/0mnrkbgZP8fJp57AByyUYYYDYnpGVd8hPZJHuPCtRWVa
-        0PjVV4i6KMkzjyCtARsptGPqE32u83SEdj8aCIRnS1eMXVHWBuEYZ6iWpwHElI/bM0upLiSsB/Dr+
-        Uqw8N/4sGy6MQ2FvWyUMBTvfcTmRkPX+xNbDg4+PleAv6Zk0hpRlpgNwSoR/vlld8ZG/c1UFhzTTZ
-        Tc2RUH7WrMyposFC9fSmnu4kLVso7oNoiNmzpUlO1VxqfuhTLeymc5ojYFMlc+TspDNMgvtLXhjnP
-        vsW8zHYA==;
-Received: from [2601:1c0:6280:3f0::cf3b]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1l9KVV-0005YF-Sp; Tue, 09 Feb 2021 04:20:10 +0000
-Subject: Re: mmotm 2021-02-08-15-44 uploaded (drivers/media/i2c/rdacm2*.c)
-To:     akpm@linux-foundation.org, broonie@kernel.org,
+        Tue, 9 Feb 2021 00:03:01 -0500
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86FC5C061786;
+        Mon,  8 Feb 2021 21:02:21 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DZW385xCmz9sS8;
+        Tue,  9 Feb 2021 16:02:08 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1612846939;
+        bh=Csow+kkuJ/2yUX44H5MgA6XuUlNeuqlukseReSX30x4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XE8ck3uVokA0ODM3KcFJmqOCfKM+lkfFoQ4WGkpXXpGuHpt9mvpPfSUAZv0Clzkon
+         ZWIzWQLdBU0+Zqoydovkx/CI3NpSAclytXQpyzwhj6alUBsEt2mxuO3wTwsdofgWgJ
+         JBo5IDcx6bII/LRS1P3w4Visbd4mL/WO+UCRQEkxCMHx/nAzfihqhYJHRU4yTpkanO
+         Ite0cho14Hmo3I81R713aGUOVdPfHIPHB6JAJR1E/JT8/5ZXRYwWVumIjVHLNINDG/
+         Xtna+vYh1xW+5rV3fQNRySVPY1ia6arMnV15z+Xu5iI5Mk4d4+ld0yvR3njhsU2kDh
+         gVJC/qDZe6NLg==
+Date:   Tue, 9 Feb 2021 16:02:08 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        mm-commits@vger.kernel.org,
         linux-media <linux-media@vger.kernel.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        Niklas =?UTF-8?B?U8O2ZGVy?= =?UTF-8?B?bHVuZA==?= 
         <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: mmotm 2021-02-08-15-44 uploaded (drivers/media/i2c/rdacm2*.c)
+Message-ID: <20210209160208.2fc39c2b@canb.auug.org.au>
+In-Reply-To: <2a0149a9-b1ae-6d41-f4d7-04108fcd1431@infradead.org>
 References: <20210208234508.iCc6kmL1z%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2a0149a9-b1ae-6d41-f4d7-04108fcd1431@infradead.org>
-Date:   Mon, 8 Feb 2021 20:20:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        <2a0149a9-b1ae-6d41-f4d7-04108fcd1431@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20210208234508.iCc6kmL1z%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/LCnxAV6p98/IHSm75GQt19j";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/8/21 3:45 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2021-02-08-15-44 has been uploaded to
-> 
->    https://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> https://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> https://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
-> 
-> This tree is partially included in linux-next.  To see which patches are
-> included in linux-next, consult the `series' file.  Only the patches
-> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> linux-next.
-> 
-> 
-> A full copy of the full kernel tree with the linux-next and mmotm patches
-> already applied is available through git within an hour of the mmotm
-> release.  Individual mmotm releases are tagged.  The master branch always
-> points to the latest release, so it's constantly rebasing.
-> 
-> 	https://github.com/hnaz/linux-mm
-> 
-> The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-> contains daily snapshots of the -mm tree.  It is updated more frequently
-> than mmotm, and is untested.
-> 
-> A git copy of this tree is also available at
-> 
-> 	https://github.com/hnaz/linux-mm
+--Sig_/LCnxAV6p98/IHSm75GQt19j
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-on x86_64:
-CONFIG_VIDEO_RDACM20=m
-CONFIG_VIDEO_RDACM21=m
+Hi Randy,
 
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_serial_link' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_configure_i2c' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_high_threshold' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_configure_gmsl_link' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_clear_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_enable_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_disable_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_verify_id' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_address' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_deserializer_address' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
-WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_translation' exported twice. Previous export was in drivers/media/i2c/rdacm20-camera_module.ko
+On Mon, 8 Feb 2021 20:20:04 -0800 Randy Dunlap <rdunlap@infradead.org> wrot=
+e:
+>
+> on x86_64:
+> CONFIG_VIDEO_RDACM20=3Dm
+> CONFIG_VIDEO_RDACM21=3Dm
+>=20
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_s=
+erial_link' exported twice. Previous export was in drivers/media/i2c/rdacm2=
+0-camera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_confi=
+gure_i2c' exported twice. Previous export was in drivers/media/i2c/rdacm20-=
+camera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_h=
+igh_threshold' exported twice. Previous export was in drivers/media/i2c/rda=
+cm20-camera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_confi=
+gure_gmsl_link' exported twice. Previous export was in drivers/media/i2c/rd=
+acm20-camera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_g=
+pios' exported twice. Previous export was in drivers/media/i2c/rdacm20-came=
+ra_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_clear=
+_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-ca=
+mera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_enabl=
+e_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-c=
+amera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_disab=
+le_gpios' exported twice. Previous export was in drivers/media/i2c/rdacm20-=
+camera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_verif=
+y_id' exported twice. Previous export was in drivers/media/i2c/rdacm20-came=
+ra_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_a=
+ddress' exported twice. Previous export was in drivers/media/i2c/rdacm20-ca=
+mera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_d=
+eserializer_address' exported twice. Previous export was in drivers/media/i=
+2c/rdacm20-camera_module.ko
+> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module: 'max9271_set_t=
+ranslation' exported twice. Previous export was in drivers/media/i2c/rdacm2=
+0-camera_module.ko
 
+This was reported in yesterday' linux-next and is being worked on.
 
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LCnxAV6p98/IHSm75GQt19j
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmAiF1AACgkQAVBC80lX
+0GzVXwf/TACeaLB1CkSR2gSOvl86oSx/35+hVAKWAKfALSEWzENXuI0vB6yDbChm
+0/Tlr0m28p9fbt9PT0lNLCnAZWHuXpg/pbgaKSlV1cw5wyGILajRxqOkPAXYlsqR
+/CwPjCAPjmgxiD7OToDKWwm7mYFI+S037QlrSrni1xE1rdnjxykHxCzyFlIecu0i
+RAq2U5hqlV57cP7Q6+XILX2MXRXEr4ofatRGB7Xi7gqQ9boPQsrIarSAYfiwHGL5
+bn1R8Am8im/0LX8uJoC3+kaJGdtbKIMt5K0b8zvNHk6wJsamZbigeXPJbh7h7lLE
+FA5/3lmrMqZicd4jUIf9pxfbVxoXmw==
+=gQzm
+-----END PGP SIGNATURE-----
+
+--Sig_/LCnxAV6p98/IHSm75GQt19j--
