@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49993317246
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 22:24:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02B3A31724B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 22:25:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233704AbhBJVYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 16:24:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46022 "EHLO
+        id S233187AbhBJVY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 16:24:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233404AbhBJVXF (ORCPT
+        with ESMTP id S233556AbhBJVXc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 16:23:05 -0500
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEB7BC0617AA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:18 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id g17so1291646ybh.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:18 -0800 (PST)
+        Wed, 10 Feb 2021 16:23:32 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F085C06121E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:21 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id l10so3990779ybt.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:in-reply-to:message-id:mime-version:references:subject
          :from:to:cc;
-        bh=C7eX4+NVGX5He9yBXKDzK09THiAFk9zxs8Mq4BgC9+k=;
-        b=X4O2XnKeTyP1mrCdcCUv43l+RzH7IHrvPnQey/wsi4M+B7W6hzZlGZRvvKHgHPwxwy
-         /WvTVU9Ez2URRDEtOOJilnHqyhVt6olC/GaNJXdnpvVpPBeGB4gNunb7ZQQAvUfzsdxe
-         edZieAb5VYpDFXolL8aMA/zf1+cab8/dJJYDrbwRG+GaG11wlghI8k3l4/uai0ppkIOY
-         VRGXu6go8MCoW4HFmNHNxwfTbMwbVHMUk2ma8RoEvXxXQ4B5PVnkOj5fjrgRZZ2y3LAP
-         0DBfUQeu/ImT99KF9thtVNcUbahpM0amXl0cGg6p/tFca2fEUDbwL7TN4RyPqcPqmPCr
-         FDgQ==
+        bh=LwH+hfZPM+jVaAvlEL06OqVkbSlUL6Tgir5CZCKVHkU=;
+        b=CJaq+ppVANH85LoaHTydYsQP+8qhXAc7DrD4fdpFizDt2IgpDk7qxVTivgjvFVHaAn
+         hIqSZ/ibeEDQ4RVZW+7QRBAb2qq/Zph49sd705AweyTTZV/ICBugKHxkGbiezRL1Jw+2
+         uO3gZmePfbnjcXyjnht/ayrxZZi3cADuKTGZCoeBMTwdLUDemTKeX0FNnBX5sOQmwkb3
+         kZNi3Y9/Oagf58q7kagO2ju36xQkCffTD97vTha4xtJdQKiL4o/ji26wiMYbKVBFfcvE
+         f7igf8zpRTvJnxfDcdxk+FF8JfVWJfE1hXwaT6QvlRd/h62QlrqCrFGNkNLD3arlOMYf
+         fJdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=C7eX4+NVGX5He9yBXKDzK09THiAFk9zxs8Mq4BgC9+k=;
-        b=JrrmgOW0IvsvxKmk3uKn5+gUA75vVct91+Z7sSt3BFevChC//kSiApH/VopBPUAPM8
-         7cRpQtc3qCh/B64cqw6VO2cnXJ7xsukAgYcev22WiyMqaG9A7M1tjJipL092rG8gYbFN
-         X23sxRvfW5c8zOT+aJJxQVrf+9lz01S3NUHcOPSOGR5zg0J/cCyK2GypU2k4qyIPrNeQ
-         IggJ0whpSUE3ycEqmSS3dNOm2J51jJCLWaU3QFCIK3+wpoKsgE1usR2B6D8pe//yDAcn
-         ZCg/KMCzPsqR2b8z3ifLsHeULuhF/Iy+m4kUyXtF6dp5zQ6Vzu27AE1oSNEtNltYnxYZ
-         33Ug==
-X-Gm-Message-State: AOAM532fO3XBcUO+Sp3t09vbl2jp3fpk9jPgz/1wC3pd7dbhtx6GoYhu
-        8/xWoGxhtSewnRg/skNge86VLkW5JFImTOMwBoCY
-X-Google-Smtp-Source: ABdhPJwagtVWNE35dh8EXmqH56OhS+dAouO564OVOUkNaVQb6+9yLc/FG1bX+ngeJuwo0ZOZsUjMFDiVvTAXntctl3Gj
+        bh=LwH+hfZPM+jVaAvlEL06OqVkbSlUL6Tgir5CZCKVHkU=;
+        b=XSypMR6XN5itarddWBS0s/XKIQM6Nkz7I13t1R34XorLlWRB3dTEHRg1bX7r4KD9gB
+         b/uniMYRrOb3vXgYhHRI9DvNqER+bp9jhNuZkr21CsL2T+/J+18uQ8nQNEGm8+ogv1xr
+         2j/Bx6VaAcs05wC3GRMALTOBSs92eQotJniGBwpJIGGBoNX3FaLG5XX1F/WeGUmY5b8A
+         TtzkVT+l/6dxFjE9SXp6qY/BkKCWyF/fnQwMENxIPz7zHWNwLIJN5sahjyMkC5609Aik
+         QJDHIDsL0vurPZ04c4YOEcn7ttS8sG9hozvmCsITQnBjSyFVLMM6mcWm0mPSHFV6RqqB
+         jzlw==
+X-Gm-Message-State: AOAM531lIOCXGBw24F8K8JBgOySIPrK16/Ah+SayRXEkYRITkhAcd3mg
+        2PbcJlWT+XaIEPVdxV6a7zUSQ9HG4E78NkgJiPct
+X-Google-Smtp-Source: ABdhPJyyOu+evzNPJIKXPNB23IlLnIR5tDerndgDK9uc4DM87em2C9Af400s2pIB0TmS4jGuHqFYrYvdw49B/vh4BiM0
 Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
 X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:94ee:de01:168:9f20])
- (user=axelrasmussen job=sendgmr) by 2002:a25:cc46:: with SMTP id
- l67mr7659356ybf.16.1612992138150; Wed, 10 Feb 2021 13:22:18 -0800 (PST)
-Date:   Wed, 10 Feb 2021 13:21:56 -0800
+ (user=axelrasmussen job=sendgmr) by 2002:a25:25cd:: with SMTP id
+ l196mr6561637ybl.433.1612992140166; Wed, 10 Feb 2021 13:22:20 -0800 (PST)
+Date:   Wed, 10 Feb 2021 13:21:57 -0800
 In-Reply-To: <20210210212200.1097784-1-axelrasmussen@google.com>
-Message-Id: <20210210212200.1097784-7-axelrasmussen@google.com>
+Message-Id: <20210210212200.1097784-8-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20210210212200.1097784-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-Subject: [PATCH v5 06/10] userfaultfd: disable huge PMD sharing for MINOR
- registered VMAs
+Subject: [PATCH v5 07/10] userfaultfd: hugetlbfs: only compile UFFD helpers if
+ config enabled
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
@@ -91,48 +91,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As the comment says: for the MINOR fault use case, although the page
-might be present and populated in the other (non-UFFD-registered) half
-of the mapping, it may be out of date, and we explicitly want userspace
-to get a minor fault so it can check and potentially update the page's
-contents.
+For background, mm/userfaultfd.c provides a general mcopy_atomic
+implementation. But some types of memory (i.e., hugetlb and shmem) need
+a slightly different implementation, so they provide their own helpers
+for this. In other words, userfaultfd is the only caller of these
+functions.
 
-Huge PMD sharing would prevent these faults from occurring for
-suitably aligned areas, so disable it upon UFFD registration.
+This patch achieves two things:
 
+1. Don't spend time compiling code which will end up never being
+referenced anyway (a small build time optimization).
+
+2. In patches later in this series, we extend the signature of these
+helpers with UFFD-specific state (a mode enumeration). Once this
+happens, we *have to* either not compile the helpers, or unconditionally
+define the UFFD-only state (which seems messier to me). This includes
+the declarations in the headers, as otherwise they'd yield warnings
+about implicitly defining the type of those arguments.
+
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 Reviewed-by: Peter Xu <peterx@redhat.com>
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- include/linux/userfaultfd_k.h | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ include/linux/hugetlb.h | 4 ++++
+ mm/hugetlb.c            | 2 ++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 0390e5ac63b3..e060d5f77cc5 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -56,12 +56,19 @@ static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index d740c6fd19ae..aa9e1d6de831 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -134,11 +134,13 @@ void hugetlb_show_meminfo(void);
+ unsigned long hugetlb_total_pages(void);
+ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			unsigned long address, unsigned int flags);
++#ifdef CONFIG_USERFAULTFD
+ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm, pte_t *dst_pte,
+ 				struct vm_area_struct *dst_vma,
+ 				unsigned long dst_addr,
+ 				unsigned long src_addr,
+ 				struct page **pagep);
++#endif /* CONFIG_USERFAULTFD */
+ bool hugetlb_reserve_pages(struct inode *inode, long from, long to,
+ 						struct vm_area_struct *vma,
+ 						vm_flags_t vm_flags);
+@@ -309,6 +311,7 @@ static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+ 	BUG();
  }
  
++#ifdef CONFIG_USERFAULTFD
+ static inline int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+ 						pte_t *dst_pte,
+ 						struct vm_area_struct *dst_vma,
+@@ -319,6 +322,7 @@ static inline int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+ 	BUG();
+ 	return 0;
+ }
++#endif /* CONFIG_USERFAULTFD */
+ 
+ static inline pte_t *huge_pte_offset(struct mm_struct *mm, unsigned long addr,
+ 					unsigned long sz)
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index f150b10981a8..2331281cf133 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4638,6 +4638,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_USERFAULTFD
  /*
-- * Never enable huge pmd sharing on uffd-wp registered vmas, because uffd-wp
-- * protect information is per pgtable entry.
-+ * Never enable huge pmd sharing on some uffd registered vmas:
-+ *
-+ * - VM_UFFD_WP VMAs, because write protect information is per pgtable entry.
-+ *
-+ * - VM_UFFD_MINOR VMAs, because otherwise we would never get minor faults for
-+ *   VMAs which share huge pmds. (If you have two mappings to the same
-+ *   underlying pages, and fault in the non-UFFD-registered one with a write,
-+ *   with huge pmd sharing this would *also* setup the second UFFD-registered
-+ *   mapping, and we'd not get minor faults.)
-  */
- static inline bool uffd_disable_huge_pmd_share(struct vm_area_struct *vma)
- {
--	return vma->vm_flags & VM_UFFD_WP;
-+	return vma->vm_flags & (VM_UFFD_WP | VM_UFFD_MINOR);
+  * Used by userfaultfd UFFDIO_COPY.  Based on mcopy_atomic_pte with
+  * modifications for huge pages.
+@@ -4768,6 +4769,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+ 	put_page(page);
+ 	goto out;
  }
++#endif /* CONFIG_USERFAULTFD */
  
- static inline bool userfaultfd_missing(struct vm_area_struct *vma)
+ static void record_subpages_vmas(struct page *page, struct vm_area_struct *vma,
+ 				 int refs, struct page **pages,
 -- 
 2.30.0.478.g8a0d178c01-goog
 
