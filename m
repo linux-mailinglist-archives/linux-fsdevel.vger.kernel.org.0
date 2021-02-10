@@ -2,71 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B315316C0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 18:05:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6085E316C5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 18:17:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbhBJRFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 12:05:19 -0500
-Received: from mga02.intel.com ([134.134.136.20]:56432 "EHLO mga02.intel.com"
+        id S232363AbhBJRRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 12:17:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35314 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229888AbhBJRFR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 12:05:17 -0500
-IronPort-SDR: kcIJxSSWbROliXwDaDrk3Aq4jOvnSoA/ZIpNhN9+PsumTExoXzrYgnf9GCpgb6fuPCg/CMFetC
- 8spyDaR4DgMQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9891"; a="169237408"
-X-IronPort-AV: E=Sophos;i="5.81,168,1610438400"; 
-   d="scan'208";a="169237408"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2021 09:04:02 -0800
-IronPort-SDR: HxNZpxNQ3qg3nwq2kHejEo/ncl/66S8VQBIO5yDxjf9tyzYx3jacQ7VwtkZXn+sQc+D6qeKSy9
- cgAXbTMBmNQA==
-X-IronPort-AV: E=Sophos;i="5.81,168,1610438400"; 
-   d="scan'208";a="420603585"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2021 09:04:01 -0800
-Date:   Wed, 10 Feb 2021 09:04:01 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>, clm@fb.com,
-        josef@toxicpanda.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V2 4/8] mm/highmem: Add VM_BUG_ON() to mem*_page() calls
-Message-ID: <20210210170401.GE3014244@iweiny-DESK2.sc.intel.com>
-References: <20210210062221.3023586-1-ira.weiny@intel.com>
- <20210210062221.3023586-5-ira.weiny@intel.com>
- <20210210125502.GD2111784@infradead.org>
- <20210210162901.GB3014244@iweiny-DESK2.sc.intel.com>
- <20210210164134.GA2169678@infradead.org>
+        id S232418AbhBJRQx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Feb 2021 12:16:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 41F08AE2D;
+        Wed, 10 Feb 2021 17:16:09 +0000 (UTC)
+Subject: Re: [PATCH] proc: use vmalloc for our kernel buffer
+To:     Josef Bacik <josef@toxicpanda.com>, viro@ZenIV.linux.org.uk,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        willy@infradead.org
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Steven Noonan <steven@uplinklabs.net>
+References: <6345270a2c1160b89dd5e6715461f388176899d1.1612972413.git.josef@toxicpanda.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <4d4257c0-37ff-4602-a540-1607a8b42525@suse.cz>
+Date:   Wed, 10 Feb 2021 18:16:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210210164134.GA2169678@infradead.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <6345270a2c1160b89dd5e6715461f388176899d1.1612972413.git.josef@toxicpanda.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 04:41:34PM +0000, Christoph Hellwig wrote:
-> On Wed, Feb 10, 2021 at 08:29:01AM -0800, Ira Weiny wrote:
-> > On Wed, Feb 10, 2021 at 12:55:02PM +0000, Christoph Hellwig wrote:
-> > > On Tue, Feb 09, 2021 at 10:22:17PM -0800, ira.weiny@intel.com wrote:
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > 
-> > > > Add VM_BUG_ON bounds checks to ensure the newly lifted and created page
-> > > > memory operations do not result in corrupted data in neighbor pages and
-> > > > to make them consistent with zero_user().[1][2]
-> > > 
-> > > s/VM_BUG_ON/BUG_ON/g ?
-> > 
-> > Andrew wanted VM_BUG_ON.[1]
+On 2/10/21 4:54 PM, Josef Bacik wrote:
+> Since
 > 
-> I don't care either way, but the patch uses BUG_ON, so the description
-> should match.
+>   sysctl: pass kernel pointers to ->proc_handler
+> 
+> we have been pre-allocating a buffer to copy the data from the proc
+> handlers into, and then copying that to userspace.  The problem is this
+> just blind kmalloc()'s the buffer size passed in from the read, which in
+> the case of our 'cat' binary was 64kib.  Order-4 allocations are not
+> awesome, and since we can potentially allocate up to our maximum order,
+> use vmalloc for these buffers.
+> 
+> Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Oh man...  I changed the commit message after spliting the patch and forgot to
-change the code...  <doh>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Thanks,
-Ira
+> ---
+>  fs/proc/proc_sysctl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index d2018f70d1fa..070d2df8ab9c 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -571,7 +571,7 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
+>  	error = -ENOMEM;
+>  	if (count >= KMALLOC_MAX_SIZE)
+>  		goto out;
+> -	kbuf = kzalloc(count + 1, GFP_KERNEL);
+> +	kbuf = kvzalloc(count + 1, GFP_KERNEL);
+>  	if (!kbuf)
+>  		goto out;
+>  
+> @@ -600,7 +600,7 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
+>  
+>  	error = count;
+>  out_free_buf:
+> -	kfree(kbuf);
+> +	kvfree(kbuf);
+>  out:
+>  	sysctl_head_finish(head);
+>  
+> 
+
