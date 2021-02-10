@@ -2,75 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A5D531683B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 14:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD6E03168FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 15:20:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230043AbhBJNoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 08:44:55 -0500
-Received: from verein.lst.de ([213.95.11.211]:51232 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229818AbhBJNoy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 08:44:54 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id EE0636736F; Wed, 10 Feb 2021 14:44:09 +0100 (CET)
-Date:   Wed, 10 Feb 2021 14:44:09 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com,
-        darrick.wong@oracle.com, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@lst.de, agk@redhat.com,
-        snitzer@redhat.com, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
-        y-goto@fujitsu.com
-Subject: Re: [PATCH v3 10/11] xfs: Implement ->corrupted_range() for XFS
-Message-ID: <20210210134409.GF30109@lst.de>
-References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com> <20210208105530.3072869-11-ruansy.fnst@cn.fujitsu.com>
+        id S231186AbhBJOUd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 09:20:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39540 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230298AbhBJOU3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Feb 2021 09:20:29 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C69EC06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 06:19:48 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id a25so3076817ljn.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 06:19:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=STanyo0VxqectlsIzMPDjmIhDAwFO8ShwKQAZIMHAJ8=;
+        b=JJVIO8cTw0DZ7TaBIt9ZD/qu+pTbwmSPSxu3ZJtHq1HYVFkYlnvumMMA6oQOCsCnxy
+         DBWFDzx8MQqA1M1aqWSA2E94JTTCiXpkqFB/z+J6GMfHWF9rQQlyzwSjmBvp9fQGi06T
+         3DfnG8GC8iCIuKLidmGvDyhrs9Fz9AHI/eAeUzpKFcsMJ5POyJT5tudlakqmdm30sBuZ
+         TVfg5KqdzEozPxuVerAvCYuvBE0RUf9XzhSkm+oNX86BRPdXpNDprDI9dutzfQK1pILf
+         hjDMhaGqKnI2Njmb1uT9fhTQ2kLt3Y49uNlsDdeBzeiOKYuE/ixIjrIvIj6jJKhVqJU9
+         +njQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=STanyo0VxqectlsIzMPDjmIhDAwFO8ShwKQAZIMHAJ8=;
+        b=nrg5bEyr543YMza1j8SIva+iVJEatH8FvC72xepaVwMRpo4Zt3Fc6y1QmyI1WfnQT+
+         ZV4Rg5Nny3oaMTkdCXLGthBA4TWnXAfklJ22IvYjUHUZjTDp6g+j15vnyJZRm4Fqwv9x
+         bv8ziDmj5CBPWwLQ+FzdCX+J8gIgxaBVgdgi9KE/IH7TLYtAXcICdDB7OAGyuO1yMtn4
+         yekmi3mYKZin29gusDv9iBPG+7k6XprzKEOeTSVPsABcPr9wEjDCPC8galIZBJSJyKq1
+         AVjF2iV5epsfaoemh10UDlUj6Z5wTCoYvqWlSLA2oN3UNL1gL3eAY9c3waFCyhJndkpg
+         BEfA==
+X-Gm-Message-State: AOAM531+gmj0Of1ReJYw4kpJ+Q7AkXgPJDrmvmeG8dPckTLyShzW1SuU
+        Ewoy3JHbQ8LvxFh+DRdXCSQ9mwNnfi/aET8nPto+Iw==
+X-Google-Smtp-Source: ABdhPJxMnEHrTizG5GfHfjzb+C5dLVyw57d8HYLUk3hc88l0K4uvHzlXl2BcBR+I9W7Kk6l3XwqVEzjhJe/BNkWaUmM=
+X-Received: by 2002:a2e:9801:: with SMTP id a1mr2227628ljj.122.1612966786152;
+ Wed, 10 Feb 2021 06:19:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210208105530.3072869-11-ruansy.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20210209174646.1310591-1-shy828301@gmail.com> <20210209174646.1310591-3-shy828301@gmail.com>
+In-Reply-To: <20210209174646.1310591-3-shy828301@gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 10 Feb 2021 06:19:35 -0800
+Message-ID: <CALvZod4s4_AJPxjPo+okq3XuvXa45eXTAeJOHgu3rwGVBw-Oww@mail.gmail.com>
+Subject: Re: [v7 PATCH 02/12] mm: vmscan: consolidate shrinker_maps handling code
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Feb 9, 2021 at 9:47 AM Yang Shi <shy828301@gmail.com> wrote:
+>
+> The shrinker map management is not purely memcg specific, it is at the intersection
+> between memory cgroup and shrinkers.  It's allocation and assignment of a structure,
+> and the only memcg bit is the map is being stored in a memcg structure.  So move the
+> shrinker_maps handling code into vmscan.c for tighter integration with shrinker code,
+> and remove the "memcg_" prefix.  There is no functional change.
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
 
-> +	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
-> +	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-> +		// TODO check and try to fix metadata
-> +		rc = -EFSCORRUPTED;
-> +		xfs_force_shutdown(cur->bc_mp, SHUTDOWN_CORRUPT_META);
-
-Just return early here so that we can avoid the else later.
-
-> +		/*
-> +		 * Get files that incore, filter out others that are not in use.
-> +		 */
-> +		rc = xfs_iget(cur->bc_mp, cur->bc_tp, rec->rm_owner,
-> +			      XFS_IGET_INCORE, 0, &ip);
-
-Can we rename rc to error?
-
-> +		if (rc || !ip)
-> +			return rc;
-
-No need to check for ip here.
-
-> +		if (!VFS_I(ip)->i_mapping)
-> +			goto out;
-
-This can't happen either.
-
-> +
-> +		mapping = VFS_I(ip)->i_mapping;
-> +		if (IS_DAX(VFS_I(ip)))
-> +			rc = mf_dax_mapping_kill_procs(mapping, rec->rm_offset,
-> +						       *flags);
-> +		else {
-> +			rc = -EIO;
-> +			mapping_set_error(mapping, rc);
-> +		}
-
-By passing the method directly to the DAX device we should never get
-this called for the non-DAX case.
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
