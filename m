@@ -2,67 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 826E4316B8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 17:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D116316B90
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 17:45:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232944AbhBJQon (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 11:44:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41890 "EHLO
+        id S232618AbhBJQor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 11:44:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232990AbhBJQm1 (ORCPT
+        with ESMTP id S233076AbhBJQmp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 11:42:27 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02CA0C06174A;
-        Wed, 10 Feb 2021 08:41:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=v9yRMlvHCXlBWJoLZkr6GmF3X21NdcNOdmmcwmQ1wz4=; b=ZOlYhvxCmn92QujUmMYgBIPZVP
-        5YxBTBFobbzdLHFwIbywWhaip4VxFsEGHF0391VEjMt88YoFxNGZb6WB1e/60S+AFzJ5Dspc1fC9b
-        GW+BvuLwQMhhHN8spE3w3mzx2syXtq6Q6qvn6PFvS/5yNFAlYEBynuRYF9hnsrPR361M7LAPidXaP
-        P5roLkekwQssjJ1dZ6D+AbruBWdDQA8uUQgeg7E2MjRRRDkW8P8Yel7GKRkSlA8GjBbYq+gPY3NQJ
-        wAi+uYbXy22iC0cXqPPHuxKILei5ja+m4VfsA/c+sc+gbtIj3smmZywjjyl17uuXq3wBryTPXq/1J
-        RGEcobmA==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l9sYY-0096RT-83; Wed, 10 Feb 2021 16:41:34 +0000
-Date:   Wed, 10 Feb 2021 16:41:34 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>, clm@fb.com,
-        josef@toxicpanda.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V2 4/8] mm/highmem: Add VM_BUG_ON() to mem*_page() calls
-Message-ID: <20210210164134.GA2169678@infradead.org>
-References: <20210210062221.3023586-1-ira.weiny@intel.com>
- <20210210062221.3023586-5-ira.weiny@intel.com>
- <20210210125502.GD2111784@infradead.org>
- <20210210162901.GB3014244@iweiny-DESK2.sc.intel.com>
+        Wed, 10 Feb 2021 11:42:45 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C6EC061756;
+        Wed, 10 Feb 2021 08:42:05 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id f14so5326425ejc.8;
+        Wed, 10 Feb 2021 08:42:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T3OGEUXVqBRMwtyZ0DTJOgmQoVRlEeHXk2pk+BRLLdU=;
+        b=C6Dx+MpK4ZH+K2OxhilGb6z2GKpk0g2spNRQB5t3Do2XcKfVSbnvfBy//ndjIP/4hS
+         Bi2Xvj/A5pcPCojyCGdZyRGGH4UmRScvGmPxvwL5CzhI0PGJe7cJ536jp0bRQGHe+3mc
+         gXXHxuICSaNgGSQ8mXgUbGeyaw7jftTR6VTrAiGx5muzzDDwy1J1Ce3FJCJxJ3F/0oGd
+         BVX6GYuWNE9Fx3558QBeyq0WvyqCXKVpPBvpDJ7yDA6Uea9L3Fe6melbC6WNWa/inYWr
+         sReykCoOe7cMpcOD6gGEjEk3FxsApcBgQ+t5YkfGkh6s6KEvvXZqymjpLxMwZ65y7oPl
+         v18Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T3OGEUXVqBRMwtyZ0DTJOgmQoVRlEeHXk2pk+BRLLdU=;
+        b=T46qwPIo9Lkg9jyf/n+0OTB3Xwm8k8AA8DSobV2KzRsZJ5xD9U6t1yX17gTNDSbs7p
+         6KM4ZkHL+2C0+M454CFz8EXqXHoUZ5yVkPRDBxcN+BPYhtL9/wLmJLwnj/7NhAAqUoA5
+         wyDzg7bWxqbLFyqL76te0FXkbjlppXn9QoMjRjPhouKx0TeZRDa1oh6v/xe4EmGXVN/f
+         0yR1845b6JAyDFEfEMNI9LKOJdIvubmXJ5UdWw3IS8IqGMeegUn5AMSpPkakEjxmuo9+
+         xeksOpjrVkA4WWpQvCbFmww6XK2NPqaScIq3xvK2GskYRECqaCkMNQGBq7JUHeQuQECi
+         GmHw==
+X-Gm-Message-State: AOAM530IIdFwK3+4M5h42P8HXQPVqIpx722ta34I6oHK6nUEWQSsJ9h/
+        4eMEzjHcuJapi6gLxhMxj1cIiKCl7PcJqpvSou2fTCzEQg4=
+X-Google-Smtp-Source: ABdhPJxbZqIFBvHIHDqRAaYc66wR00X+57Ot3XMwL6jhGMUV979fKuVbb+4Hakv7nixS9LL3OyEKmJg3d7wjBZdxock=
+X-Received: by 2002:a17:906:eca5:: with SMTP id qh5mr3673714ejb.161.1612975324366;
+ Wed, 10 Feb 2021 08:42:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210210162901.GB3014244@iweiny-DESK2.sc.intel.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <20210209174646.1310591-1-shy828301@gmail.com> <20210209174646.1310591-10-shy828301@gmail.com>
+ <20210210012726.GO524633@carbon.DHCP.thefacebook.com> <CAHbLzkoKV6_w_KBp+cajvpxG2p8jN-es03C0ktk4tLdvULJwhg@mail.gmail.com>
+ <1d751688-12a9-a5c3-2d9a-c4b9e65c7492@virtuozzo.com>
+In-Reply-To: <1d751688-12a9-a5c3-2d9a-c4b9e65c7492@virtuozzo.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Wed, 10 Feb 2021 08:41:52 -0800
+Message-ID: <CAHbLzkof4TL3cehgubYU-oAu_6x3ODnzDoOUyQDdn4xG0ts_-A@mail.gmail.com>
+Subject: Re: [v7 PATCH 09/12] mm: vmscan: use per memcg nr_deferred of shrinker
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 08:29:01AM -0800, Ira Weiny wrote:
-> On Wed, Feb 10, 2021 at 12:55:02PM +0000, Christoph Hellwig wrote:
-> > On Tue, Feb 09, 2021 at 10:22:17PM -0800, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> > > Add VM_BUG_ON bounds checks to ensure the newly lifted and created page
-> > > memory operations do not result in corrupted data in neighbor pages and
-> > > to make them consistent with zero_user().[1][2]
-> > 
-> > s/VM_BUG_ON/BUG_ON/g ?
-> 
-> Andrew wanted VM_BUG_ON.[1]
+On Wed, Feb 10, 2021 at 6:37 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> On 10.02.2021 04:52, Yang Shi wrote:
+> > On Tue, Feb 9, 2021 at 5:27 PM Roman Gushchin <guro@fb.com> wrote:
+> >>
+> >> On Tue, Feb 09, 2021 at 09:46:43AM -0800, Yang Shi wrote:
+> >>> Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's nr_deferred
+> >>> will be used in the following cases:
+> >>>     1. Non memcg aware shrinkers
+> >>>     2. !CONFIG_MEMCG
+> >>>     3. memcg is disabled by boot parameter
+> >>>
+> >>> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> >>> ---
+> >>>  mm/vmscan.c | 78 ++++++++++++++++++++++++++++++++++++++++++++---------
+> >>>  1 file changed, 66 insertions(+), 12 deletions(-)
+> >>>
+> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> >>> index d4b030a0b2a9..748aa6e90f83 100644
+> >>> --- a/mm/vmscan.c
+> >>> +++ b/mm/vmscan.c
+> >>> @@ -368,6 +368,24 @@ static void unregister_memcg_shrinker(struct shrinker *shrinker)
+> >>>       up_write(&shrinker_rwsem);
+> >>>  }
+> >>>
+> >>> +static long count_nr_deferred_memcg(int nid, struct shrinker *shrinker,
+> >>> +                                 struct mem_cgroup *memcg)
+> >>
+> >> "Count" is not associated with xchg() semantics in my head, but I don't know
+> >> what's the better version. Maybe steal or pop?
+> >
+> > It is used to retrieve the nr_deferred value. I don't think "steal" or
+> > "pop" helps understand. Actually "count" is borrowed from
+> > count_objects() method of shrinker.
+>
+> I'd also voted for another name.
+>
+> xchg_nr_deferred() or steal/pop sound better for me.
 
-I don't care either way, but the patch uses BUG_ON, so the description
-should match.
+OK, I do have a hard time to understand steal/pop, but xchg sounds
+more self-explained to me.
+
+>
