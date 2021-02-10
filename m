@@ -2,83 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6085E316C5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 18:17:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C96316CFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 18:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232363AbhBJRRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 12:17:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35314 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232418AbhBJRQx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 12:16:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 41F08AE2D;
-        Wed, 10 Feb 2021 17:16:09 +0000 (UTC)
-Subject: Re: [PATCH] proc: use vmalloc for our kernel buffer
-To:     Josef Bacik <josef@toxicpanda.com>, viro@ZenIV.linux.org.uk,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        willy@infradead.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Steven Noonan <steven@uplinklabs.net>
-References: <6345270a2c1160b89dd5e6715461f388176899d1.1612972413.git.josef@toxicpanda.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <4d4257c0-37ff-4602-a540-1607a8b42525@suse.cz>
-Date:   Wed, 10 Feb 2021 18:16:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        id S232714AbhBJRjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 12:39:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53994 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232226AbhBJRi3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Feb 2021 12:38:29 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F076AC061574;
+        Wed, 10 Feb 2021 09:37:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=u1JoIW6LvBTUe9TCby8qPaMQDWbpGRBbF1kUIX9zmbE=; b=mDYxJtmkn/FZeISFLmyL+5iuSq
+        6UbfRhQ41CXqOiAfcASHKYfjqtRdh9pF3TILKWYtx207ZOsTQGvEgvV50TGcFwcDW0IOhIdE2g6+U
+        KPIu0S4xSc5TwYUb07Ds9lvuCqtRU4GJZQdd0Wy82ZRZoXRz+P5jNbl3bwkHvpGOGrlQG9tBUvAd9
+        DgPMamiCCDNN0oEnTSyTYPBwo6e77GVR0AQCvunY0dH3Sn+GEjrGL98C4RTbRtZfMS3rEjN8e8LLQ
+        TYThVcKi3Mkd8E82NMhB7QqLpt7UOy6AEVXvkgECLmkD/tKBKD9r/znkpasPTzr1Fq1jSPNT0OaeE
+        gCzukPjA==;
+Received: from [2601:1c0:6280:3f0::cf3b] (helo=merlin.infradead.org)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1l9tQu-0005tR-RH; Wed, 10 Feb 2021 17:37:45 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH -next] fs: io_uring: build when CONFIG_NET is disabled
+Date:   Wed, 10 Feb 2021 09:37:40 -0800
+Message-Id: <20210210173740.22328-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <6345270a2c1160b89dd5e6715461f388176899d1.1612972413.git.josef@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/10/21 4:54 PM, Josef Bacik wrote:
-> Since
-> 
->   sysctl: pass kernel pointers to ->proc_handler
-> 
-> we have been pre-allocating a buffer to copy the data from the proc
-> handlers into, and then copying that to userspace.  The problem is this
-> just blind kmalloc()'s the buffer size passed in from the read, which in
-> the case of our 'cat' binary was 64kib.  Order-4 allocations are not
-> awesome, and since we can potentially allocate up to our maximum order,
-> use vmalloc for these buffers.
-> 
-> Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+Fix build errors when CONFIG_NET is not enabled.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Fixes: b268c951abf8 ("io_uring: don't propagate io_comp_state")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org
+---
+ fs/io_uring.c |   18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-> ---
->  fs/proc/proc_sysctl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index d2018f70d1fa..070d2df8ab9c 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -571,7 +571,7 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
->  	error = -ENOMEM;
->  	if (count >= KMALLOC_MAX_SIZE)
->  		goto out;
-> -	kbuf = kzalloc(count + 1, GFP_KERNEL);
-> +	kbuf = kvzalloc(count + 1, GFP_KERNEL);
->  	if (!kbuf)
->  		goto out;
->  
-> @@ -600,7 +600,7 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
->  
->  	error = count;
->  out_free_buf:
-> -	kfree(kbuf);
-> +	kvfree(kbuf);
->  out:
->  	sysctl_head_finish(head);
->  
-> 
-
+--- linux-next-20210210.orig/fs/io_uring.c
++++ linux-next-20210210/fs/io_uring.c
+@@ -5145,14 +5145,12 @@ static int io_sendmsg_prep(struct io_kio
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags,
+-		      struct io_comp_state *cs)
++static int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_send(struct io_kiocb *req, unsigned int issue_flags,
+-		   struct io_comp_state *cs)
++static int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -5163,14 +5161,12 @@ static int io_recvmsg_prep(struct io_kio
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags,
+-		      struct io_comp_state *cs)
++static int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_recv(struct io_kiocb *req, unsigned int issue_flags,
+-		   struct io_comp_state *cs)
++static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -5180,8 +5176,7 @@ static int io_accept_prep(struct io_kioc
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_accept(struct io_kiocb *req, unsigned int issue_flags,
+-		     struct io_comp_state *cs)
++static int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -5191,8 +5186,7 @@ static int io_connect_prep(struct io_kio
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static int io_connect(struct io_kiocb *req, unsigned int issue_flags,
+-		      struct io_comp_state *cs)
++static int io_connect(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
