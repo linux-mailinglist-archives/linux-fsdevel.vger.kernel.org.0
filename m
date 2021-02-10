@@ -2,54 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D88731723C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 22:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C78A31723D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 22:24:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233355AbhBJVWu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 16:22:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45938 "EHLO
+        id S233427AbhBJVWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 16:22:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233224AbhBJVWr (ORCPT
+        with ESMTP id S232956AbhBJVWt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 16:22:47 -0500
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C544C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:07 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id g17so1291121ybh.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:07 -0800 (PST)
+        Wed, 10 Feb 2021 16:22:49 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C6BC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:09 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id 78so3929952ybn.14
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=f3bDipLNxq+4vQj/7fDtE/PjMb4mWt44G3LXQ2qAmsY=;
-        b=pQ2zUjlS/rzaBJwpjf02JILnvkXRckNWJVMgXVzbZ7nYG9888IQpy5wdTCuUEQifYw
-         NZxwo2sBI7KZNBa2vv7HgAMK7vbpBJVJtQHWqXTfKfj0tRet+pPbDg88ps5sqy+6L16X
-         nxADQpvCW3Sgv4kavvKUFLuyoJ3O8f5jUxl3O5crFBAIe/PHSfmAu1462Zo5FK73tDU6
-         QocJJ6sT0LKVxBRlmXe6dob19ruK7AgEQ6unhcI4tDPpyZrDBaxOvfoIsckW3jS/w0oQ
-         Fu6fOR6EF/fgTqOm4CLBhLHJ9uAcAF/yp3Uv6KonYX8Z3jb2H2Hivo++hiJw8zj1U7w2
-         IYCQ==
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:to:cc;
+        bh=VBmryFKM8o9VLDG+gh0Pw8CYXmNCgracyZ1/7zA46E4=;
+        b=bRwCJFZFBfkEqU8HN0Eo9K1vV/dk9ziw4khtfjoDz63kLliOjh8E8wV8y5HHmKlM1Z
+         AROzReTlVbm2aCLhZZ07Q1u3EEcmgZz5ae4c3wrPKKLF31YxKpCneL41qOkGi2BEwpak
+         wPaB1aWVWGOKJIJDXU40R4sHX5hMajIppuX+kxWNT7068mpvGDv//faOYoKWlKRa3IBU
+         DSQNBzH3bzvUsdencjbEbGhN5lC07NeniFXseJ3nZScfj3ZYp7PtSyjhhn+QR1EfLjG0
+         lgWEl6cEHoeoTtDrKOk2P0/0l13bC+mwSDbDA0s0oulOJbdknjJl1LG/jHVDE/Rxpkbc
+         7qKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=f3bDipLNxq+4vQj/7fDtE/PjMb4mWt44G3LXQ2qAmsY=;
-        b=SUyV72bphqvv224Uwn/wgziqXbyyqruGVNkj6yrgC+JPm1irLmPiJVDTrd7yd2TvcD
-         aFNF0XOMwF2uVsI5EyOaqpKsr81I5fZ7zGKzYrqe6wYXbgYHlyco/i/krvBchoPu9NBb
-         Nqhn8cA8vuYvqbRujURWRPuCifjNVZaRpMEkvwdKGaAzCIghHT3GPaLdPLHLv5LcvDqE
-         NQqKazd+j7mHtR/9KlSnBq3R4vDLb56ue8w7H+1kChHDOrWrKWx9QXia876R9TYsiIfY
-         jec6WWFEgZYY+4M/qG88BSA89cVfCxzUiDuyj0e8azKXH1zwO4yO3rqg4O8ufLPJ/X5o
-         peHQ==
-X-Gm-Message-State: AOAM532lrcx4kqLPpSsuoWSx01/DAvK/nmyoi7Lvyk8KpNPBKdRAp0iU
-        +tbUsBU0n0YzcIXwaSXzoOruS2LPWw8VM0aANBUq
-X-Google-Smtp-Source: ABdhPJxeiA6mwLfMVFGQz1imqphRN1QNjEGKnuWaMfUI1pAt1XJAlZNkHz1V5p/SMS6DvK15jkqM4u6nwwGQiY3nMhvL
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=VBmryFKM8o9VLDG+gh0Pw8CYXmNCgracyZ1/7zA46E4=;
+        b=O8ECa7lDkfIk+hX4045KtDG2FIjD3bLI00dYps4RCpdwHyjQHT6Ld8aiA8UNKdiFvw
+         6HwLpmoJByXFlqO5mDwjM0UR0WjJQrXWuM79EZRdcTmnITYs1pNr1cxv3F5AFAknh+b/
+         Sf7QYs2jftkhe7WXhXHvY42uYBnNx5mQNS9mHrBrCav2r4eYql9YvryYlGFRWfRPe3su
+         kwhGlelY5p+V2O+TwHv1erP0BIZ4APDC207fL/yT3XXrwvHX8IJIcxlrnP04yAjS+1Xp
+         Vr5ToV3z3zjFXCoaw0r156dHnZzs7Rmsr5kTvd4UJk+lFMOtFoZQYuin/APGjcT+kjPZ
+         +jjA==
+X-Gm-Message-State: AOAM533msBxv8z75trqDjMXmxj8RAu3YVej8YJJztVz+6XOlE5tzd7Os
+        2gzC9opia2fJFoa4eLqgMzzExZEBR/XhxKeksdJ+
+X-Google-Smtp-Source: ABdhPJxxvTs75rP4OAzQwehPBlaiY7y7rHy+Bg3qmBLM59Qx5pzHRa6aI+S28xB81z3rkxhpHH3N8hpW9EOOt5SsHoe1
 Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
 X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:94ee:de01:168:9f20])
- (user=axelrasmussen job=sendgmr) by 2002:a25:c090:: with SMTP id
- c138mr7134204ybf.314.1612992126484; Wed, 10 Feb 2021 13:22:06 -0800 (PST)
-Date:   Wed, 10 Feb 2021 13:21:50 -0800
-Message-Id: <20210210212200.1097784-1-axelrasmussen@google.com>
+ (user=axelrasmussen job=sendgmr) by 2002:a25:b992:: with SMTP id
+ r18mr7218605ybg.86.1612992128509; Wed, 10 Feb 2021 13:22:08 -0800 (PST)
+Date:   Wed, 10 Feb 2021 13:21:51 -0800
+In-Reply-To: <20210210212200.1097784-1-axelrasmussen@google.com>
+Message-Id: <20210210212200.1097784-2-axelrasmussen@google.com>
 Mime-Version: 1.0
+References: <20210210212200.1097784-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-Subject: [PATCH v5 00/10] userfaultfd: add minor fault handling
+Subject: [PATCH v5 01/10] hugetlb: Pass vma into huge_pte_alloc() and huge_pmd_share()
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
@@ -87,215 +90,249 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Changelog
-=========
+From: Peter Xu <peterx@redhat.com>
 
-v4->v5:
-- Typo fix in the documentation update.
-- Removed comment in vma_can_userfault. The same information is better covered
-  in the documentation update, so the comment is unnecessary (and slightly
-  confusing as written).
-- Reworded comment for MCOPY_ATOMIC_CONTINUE mode.
-- For non-shared CONTINUE, only make the PTE(s) non-writable, don't change flags
-  on the VMA.
-- In hugetlb_mcopy_atomic_pte, always unlock the page in MCOPY_ATOMIC_CONTINUE,
-  even if we don't have VM_SHARED.
-- In hugetlb_mcopy_atomic_pte, introduce "bool is_continue" to make that kind of
-  mode check more terse.
-- Merged two nested if()s into a single expression in __mcopy_atomic_hugetlb.
-- Moved "return -EINVAL if MCOPY_CONTINUE isn't supported for this vma type" up
-  one level, into __mcopy_atomic.
-- Rebased onto linux-next/akpm, instead of the latest 5.11 RC. Resolved
-  conflicts with Mike's recent hugetlb changes.
+It is a preparation work to be able to behave differently in the per
+architecture huge_pte_alloc() according to different VMA attributes.
 
-v3->v4:
-- Relaxed restriction for minor registration to allow any hugetlb VMAs, not
-  just those with VM_SHARED. Fixed setting VM_WRITE flag in a CONTINUE ioctl
-  for non-VM_SHARED VMAs.
-- Reordered if() branches in hugetlb_mcopy_atomic_pte, so the conditions are
-  simpler and easier to read.
-- Reverted most of the mfill_atomic_pte change (the anon / shmem path). Just
-  return -EINVAL for CONTINUE, and set zeropage = (mode ==
-  MCOPY_ATOMIC_ZEROPAGE), so we can keep the delta small.
-- Split out adding #ifdef CONFIG_USERFAULTFD to a separate patch (instead of
-  lumping it together with adding UFFDIO_CONTINUE).
-- Fixed signature of hugetlb_mcopy_atomic_pte for !CONFIG_HUGETLB_PAGE
-  (signature must be the same in either case).
-- Rebased onto a newer version of Peter's patches to disable huge PMD sharing.
+Pass it deeper into huge_pmd_share() so that we can avoid the find_vma() call.
 
-v2->v3:
-- Added #ifdef CONFIG_USERFAULTFD around hugetlb helper functions, to fix build
-  errors when building without CONFIG_USERFAULTFD set.
+Suggested-by: Mike Kravetz <mike.kravetz@oracle.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+---
+ arch/arm64/mm/hugetlbpage.c   |  4 ++--
+ arch/ia64/mm/hugetlbpage.c    |  3 ++-
+ arch/mips/mm/hugetlbpage.c    |  4 ++--
+ arch/parisc/mm/hugetlbpage.c  |  2 +-
+ arch/powerpc/mm/hugetlbpage.c |  3 ++-
+ arch/s390/mm/hugetlbpage.c    |  2 +-
+ arch/sh/mm/hugetlbpage.c      |  2 +-
+ arch/sparc/mm/hugetlbpage.c   |  6 +-----
+ include/linux/hugetlb.h       |  5 +++--
+ mm/hugetlb.c                  | 15 ++++++++-------
+ mm/userfaultfd.c              |  2 +-
+ 11 files changed, 24 insertions(+), 24 deletions(-)
 
-v1->v2:
-- Fixed a bug in the hugetlb_mcopy_atomic_pte retry case. We now plumb in the
-  enum mcopy_atomic_mode, so we can differentiate between the three cases this
-  function needs to handle:
-  1) We're doing a COPY op, and need to allocate a page, add to cache, etc.
-  2) We're doing a COPY op, but allocation in this function failed previously;
-     we're in the retry path. The page was allocated, but not e.g. added to page
-     cache, so that still needs to be done.
-  3) We're doing a CONTINUE op, we need to look up an existing page instead of
-     allocating a new one.
-- Rebased onto a newer version of Peter's patches to disable huge PMD sharing,
-  which fixes syzbot complaints on some non-x86 architectures.
-- Moved __VM_UFFD_FLAGS into userfaultfd_k.h, so inline helpers can use it.
-- Renamed UFFD_FEATURE_MINOR_FAULT_HUGETLBFS to UFFD_FEATURE_MINOR_HUGETLBFS,
-  for consistency with other existing feature flags.
-- Moved the userfaultfd_minor hook in hugetlb.c into the else block, so we don't
-  have to explicitly check for !new_page.
-
-RFC->v1:
-- Rebased onto Peter Xu's patches for disabling huge PMD sharing for certain
-  userfaultfd-registered areas.
-- Added commits which update documentation, and add a self test which exercises
-  the new feature.
-- Fixed reporting CONTINUE as a supported ioctl even for non-MINOR ranges.
-
-Overview
-========
-
-This series adds a new userfaultfd registration mode,
-UFFDIO_REGISTER_MODE_MINOR. This allows userspace to intercept "minor" faults.
-By "minor" fault, I mean the following situation:
-
-Let there exist two mappings (i.e., VMAs) to the same page(s) (shared memory).
-One of the mappings is registered with userfaultfd (in minor mode), and the
-other is not. Via the non-UFFD mapping, the underlying pages have already been
-allocated & filled with some contents. The UFFD mapping has not yet been
-faulted in; when it is touched for the first time, this results in what I'm
-calling a "minor" fault. As a concrete example, when working with hugetlbfs, we
-have huge_pte_none(), but find_lock_page() finds an existing page.
-
-We also add a new ioctl to resolve such faults: UFFDIO_CONTINUE. The idea is,
-userspace resolves the fault by either a) doing nothing if the contents are
-already correct, or b) updating the underlying contents using the second,
-non-UFFD mapping (via memcpy/memset or similar, or something fancier like RDMA,
-or etc...). In either case, userspace issues UFFDIO_CONTINUE to tell the kernel
-"I have ensured the page contents are correct, carry on setting up the mapping".
-
-Use Case
-========
-
-Consider the use case of VM live migration (e.g. under QEMU/KVM):
-
-1. While a VM is still running, we copy the contents of its memory to a
-   target machine. The pages are populated on the target by writing to the
-   non-UFFD mapping, using the setup described above. The VM is still running
-   (and therefore its memory is likely changing), so this may be repeated
-   several times, until we decide the target is "up to date enough".
-
-2. We pause the VM on the source, and start executing on the target machine.
-   During this gap, the VM's user(s) will *see* a pause, so it is desirable to
-   minimize this window.
-
-3. Between the last time any page was copied from the source to the target, and
-   when the VM was paused, the contents of that page may have changed - and
-   therefore the copy we have on the target machine is out of date. Although we
-   can keep track of which pages are out of date, for VMs with large amounts of
-   memory, it is "slow" to transfer this information to the target machine. We
-   want to resume execution before such a transfer would complete.
-
-4. So, the guest begins executing on the target machine. The first time it
-   touches its memory (via the UFFD-registered mapping), userspace wants to
-   intercept this fault. Userspace checks whether or not the page is up to date,
-   and if not, copies the updated page from the source machine, via the non-UFFD
-   mapping. Finally, whether a copy was performed or not, userspace issues a
-   UFFDIO_CONTINUE ioctl to tell the kernel "I have ensured the page contents
-   are correct, carry on setting up the mapping".
-
-We don't have to do all of the final updates on-demand. The userfaultfd manager
-can, in the background, also copy over updated pages once it receives the map of
-which pages are up-to-date or not.
-
-Interaction with Existing APIs
-==============================
-
-Because it's possible to combine registration modes (e.g. a single VMA can be
-userfaultfd-registered MINOR | MISSING), and because it's up to userspace how to
-resolve faults once they are received, I spent some time thinking through how
-the existing API interacts with the new feature.
-
-UFFDIO_CONTINUE cannot be used to resolve non-minor faults, as it does not
-allocate a new page. If UFFDIO_CONTINUE is used on a non-minor fault:
-
-- For non-shared memory or shmem, -EINVAL is returned.
-- For hugetlb, -EFAULT is returned.
-
-UFFDIO_COPY and UFFDIO_ZEROPAGE cannot be used to resolve minor faults. Without
-modifications, the existing codepath assumes a new page needs to be allocated.
-This is okay, since userspace must have a second non-UFFD-registered mapping
-anyway, thus there isn't much reason to want to use these in any case (just
-memcpy or memset or similar).
-
-- If UFFDIO_COPY is used on a minor fault, -EEXIST is returned.
-- If UFFDIO_ZEROPAGE is used on a minor fault, -EEXIST is returned (or -EINVAL
-  in the case of hugetlb, as UFFDIO_ZEROPAGE is unsupported in any case).
-- UFFDIO_WRITEPROTECT simply doesn't work with shared memory, and returns
-  -ENOENT in that case (regardless of the kind of fault).
-
-Dependencies
-============
-
-I've included 4 commits from Peter Xu's larger series
-(https://lore.kernel.org/patchwork/cover/1366017/) in this series. My changes
-depend on his work, to disable huge PMD sharing for MINOR registered userfaultfd
-areas. I included the 4 commits directly because a) it lets this series just be
-applied and work as-is, and b) they are fairly standalone, and could potentially
-be merged even without the rest of the larger series Peter submitted. Thanks
-Peter!
-
-Also, although it doesn't affect minor fault handling, I did notice that the
-userfaultfd self test sometimes experienced memory corruption
-(https://lore.kernel.org/patchwork/cover/1356755/). For anyone testing this
-series, it may be useful to apply that series first to fix the selftest
-flakiness. That series doesn't have to be merged into mainline / maintaner
-branches before mine, though.
-
-Future Work
-===========
-
-Currently the patchset only supports hugetlbfs. There is no reason it can't work
-with shmem, but I expect hugetlbfs to be much more commonly used since we're
-talking about backing guest memory for VMs. I plan to implement shmem support in
-a follow-up patch series.
-
-Axel Rasmussen (6):
-  userfaultfd: add minor fault registration mode
-  userfaultfd: disable huge PMD sharing for MINOR registered VMAs
-  userfaultfd: hugetlbfs: only compile UFFD helpers if config enabled
-  userfaultfd: add UFFDIO_CONTINUE ioctl
-  userfaultfd: update documentation to describe minor fault handling
-  userfaultfd/selftests: add test exercising minor fault handling
-
-Peter Xu (4):
-  hugetlb: Pass vma into huge_pte_alloc() and huge_pmd_share()
-  hugetlb/userfaultfd: Forbid huge pmd sharing when uffd enabled
-  mm/hugetlb: Move flush_hugetlb_tlb_range() into hugetlb.h
-  hugetlb/userfaultfd: Unshare all pmds for hugetlbfs when register wp
-
- Documentation/admin-guide/mm/userfaultfd.rst | 107 +++++++----
- arch/arm64/mm/hugetlbpage.c                  |   7 +-
- arch/ia64/mm/hugetlbpage.c                   |   3 +-
- arch/mips/mm/hugetlbpage.c                   |   4 +-
- arch/parisc/mm/hugetlbpage.c                 |   2 +-
- arch/powerpc/mm/hugetlbpage.c                |   3 +-
- arch/s390/mm/hugetlbpage.c                   |   2 +-
- arch/sh/mm/hugetlbpage.c                     |   2 +-
- arch/sparc/mm/hugetlbpage.c                  |   6 +-
- fs/proc/task_mmu.c                           |   1 +
- fs/userfaultfd.c                             | 186 +++++++++++++++----
- include/linux/hugetlb.h                      |  22 ++-
- include/linux/mm.h                           |   1 +
- include/linux/mmu_notifier.h                 |   1 +
- include/linux/userfaultfd_k.h                |  49 ++++-
- include/trace/events/mmflags.h               |   1 +
- include/uapi/linux/userfaultfd.h             |  36 +++-
- mm/hugetlb.c                                 | 116 ++++++++----
- mm/userfaultfd.c                             |  39 ++--
- tools/testing/selftests/vm/userfaultfd.c     | 147 ++++++++++++++-
- 20 files changed, 587 insertions(+), 148 deletions(-)
-
---
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 55ecf6de9ff7..6e3bcffe2837 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -252,7 +252,7 @@ void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr,
+ 		set_pte(ptep, pte);
+ }
+ 
+-pte_t *huge_pte_alloc(struct mm_struct *mm,
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		      unsigned long addr, unsigned long sz)
+ {
+ 	pgd_t *pgdp;
+@@ -286,7 +286,7 @@ pte_t *huge_pte_alloc(struct mm_struct *mm,
+ 	} else if (sz == PMD_SIZE) {
+ 		if (IS_ENABLED(CONFIG_ARCH_WANT_HUGE_PMD_SHARE) &&
+ 		    pud_none(READ_ONCE(*pudp)))
+-			ptep = huge_pmd_share(mm, addr, pudp);
++			ptep = huge_pmd_share(mm, vma, addr, pudp);
+ 		else
+ 			ptep = (pte_t *)pmd_alloc(mm, pudp, addr);
+ 	} else if (sz == (CONT_PMD_SIZE)) {
+diff --git a/arch/ia64/mm/hugetlbpage.c b/arch/ia64/mm/hugetlbpage.c
+index b331f94d20ac..f993cb36c062 100644
+--- a/arch/ia64/mm/hugetlbpage.c
++++ b/arch/ia64/mm/hugetlbpage.c
+@@ -25,7 +25,8 @@ unsigned int hpage_shift = HPAGE_SHIFT_DEFAULT;
+ EXPORT_SYMBOL(hpage_shift);
+ 
+ pte_t *
+-huge_pte_alloc(struct mm_struct *mm, unsigned long addr, unsigned long sz)
++huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
++	       unsigned long addr, unsigned long sz)
+ {
+ 	unsigned long taddr = htlbpage_to_page(addr);
+ 	pgd_t *pgd;
+diff --git a/arch/mips/mm/hugetlbpage.c b/arch/mips/mm/hugetlbpage.c
+index b9f76f433617..7eaff5b07873 100644
+--- a/arch/mips/mm/hugetlbpage.c
++++ b/arch/mips/mm/hugetlbpage.c
+@@ -21,8 +21,8 @@
+ #include <asm/tlb.h>
+ #include <asm/tlbflush.h>
+ 
+-pte_t *huge_pte_alloc(struct mm_struct *mm, unsigned long addr,
+-		      unsigned long sz)
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
++		      unsigned long addr, unsigned long sz)
+ {
+ 	pgd_t *pgd;
+ 	p4d_t *p4d;
+diff --git a/arch/parisc/mm/hugetlbpage.c b/arch/parisc/mm/hugetlbpage.c
+index 30e0a862a0b2..f67f64709f50 100644
+--- a/arch/parisc/mm/hugetlbpage.c
++++ b/arch/parisc/mm/hugetlbpage.c
+@@ -44,7 +44,7 @@ hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+ }
+ 
+ 
+-pte_t *huge_pte_alloc(struct mm_struct *mm,
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			unsigned long addr, unsigned long sz)
+ {
+ 	pgd_t *pgd;
+diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
+index 4e7d9b91f1da..e5caf2455aa4 100644
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -106,7 +106,8 @@ static int __hugepte_alloc(struct mm_struct *mm, hugepd_t *hpdp,
+  * At this point we do the placement change only for BOOK3S 64. This would
+  * possibly work on other subarchs.
+  */
+-pte_t *huge_pte_alloc(struct mm_struct *mm, unsigned long addr, unsigned long sz)
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
++		      unsigned long addr, unsigned long sz)
+ {
+ 	pgd_t *pg;
+ 	p4d_t *p4;
+diff --git a/arch/s390/mm/hugetlbpage.c b/arch/s390/mm/hugetlbpage.c
+index 3b5a4d25ca9b..da36d13ffc16 100644
+--- a/arch/s390/mm/hugetlbpage.c
++++ b/arch/s390/mm/hugetlbpage.c
+@@ -189,7 +189,7 @@ pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 	return pte;
+ }
+ 
+-pte_t *huge_pte_alloc(struct mm_struct *mm,
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			unsigned long addr, unsigned long sz)
+ {
+ 	pgd_t *pgdp;
+diff --git a/arch/sh/mm/hugetlbpage.c b/arch/sh/mm/hugetlbpage.c
+index 220d7bc43d2b..999ab5916e69 100644
+--- a/arch/sh/mm/hugetlbpage.c
++++ b/arch/sh/mm/hugetlbpage.c
+@@ -21,7 +21,7 @@
+ #include <asm/tlbflush.h>
+ #include <asm/cacheflush.h>
+ 
+-pte_t *huge_pte_alloc(struct mm_struct *mm,
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			unsigned long addr, unsigned long sz)
+ {
+ 	pgd_t *pgd;
+diff --git a/arch/sparc/mm/hugetlbpage.c b/arch/sparc/mm/hugetlbpage.c
+index ad4b42f04988..a487ea2977a2 100644
+--- a/arch/sparc/mm/hugetlbpage.c
++++ b/arch/sparc/mm/hugetlbpage.c
+@@ -275,11 +275,7 @@ static unsigned long huge_tte_to_size(pte_t pte)
+ 	return size;
+ }
+ 
+-unsigned long pud_leaf_size(pud_t pud) { return 1UL << tte_to_shift(*(pte_t *)&pud); }
+-unsigned long pmd_leaf_size(pmd_t pmd) { return 1UL << tte_to_shift(*(pte_t *)&pmd); }
+-unsigned long pte_leaf_size(pte_t pte) { return 1UL << tte_to_shift(pte); }
+-
+-pte_t *huge_pte_alloc(struct mm_struct *mm,
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			unsigned long addr, unsigned long sz)
+ {
+ 	pgd_t *pgd;
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index ce6533584eb7..ca6e5ba56f73 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -152,7 +152,8 @@ void hugetlb_fix_reserve_counts(struct inode *inode);
+ extern struct mutex *hugetlb_fault_mutex_table;
+ u32 hugetlb_fault_mutex_hash(struct address_space *mapping, pgoff_t idx);
+ 
+-pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud);
++pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
++		      unsigned long addr, pud_t *pud);
+ 
+ struct address_space *hugetlb_page_mapping_lock_write(struct page *hpage);
+ 
+@@ -161,7 +162,7 @@ extern struct list_head huge_boot_pages;
+ 
+ /* arch callbacks */
+ 
+-pte_t *huge_pte_alloc(struct mm_struct *mm,
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			unsigned long addr, unsigned long sz);
+ pte_t *huge_pte_offset(struct mm_struct *mm,
+ 		       unsigned long addr, unsigned long sz);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 0b7079dd0d35..32d4d2e277ad 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3757,7 +3757,7 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
+ 		src_pte = huge_pte_offset(src, addr, sz);
+ 		if (!src_pte)
+ 			continue;
+-		dst_pte = huge_pte_alloc(dst, addr, sz);
++		dst_pte = huge_pte_alloc(dst, vma, addr, sz);
+ 		if (!dst_pte) {
+ 			ret = -ENOMEM;
+ 			break;
+@@ -4494,7 +4494,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	 */
+ 	mapping = vma->vm_file->f_mapping;
+ 	i_mmap_lock_read(mapping);
+-	ptep = huge_pte_alloc(mm, haddr, huge_page_size(h));
++	ptep = huge_pte_alloc(mm, vma, haddr, huge_page_size(h));
+ 	if (!ptep) {
+ 		i_mmap_unlock_read(mapping);
+ 		return VM_FAULT_OOM;
+@@ -5289,9 +5289,9 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
+  * if !vma_shareable check at the beginning of the routine. i_mmap_rwsem is
+  * only required for subsequent processing.
+  */
+-pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud)
++pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
++		      unsigned long addr, pud_t *pud)
+ {
+-	struct vm_area_struct *vma = find_vma(mm, addr);
+ 	struct address_space *mapping = vma->vm_file->f_mapping;
+ 	pgoff_t idx = ((addr - vma->vm_start) >> PAGE_SHIFT) +
+ 			vma->vm_pgoff;
+@@ -5369,7 +5369,8 @@ int huge_pmd_unshare(struct mm_struct *mm, struct vm_area_struct *vma,
+ }
+ #define want_pmd_share()	(1)
+ #else /* !CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
+-pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud)
++pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct vma,
++		      unsigned long addr, pud_t *pud)
+ {
+ 	return NULL;
+ }
+@@ -5388,7 +5389,7 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
+ #endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
+ 
+ #ifdef CONFIG_ARCH_WANT_GENERAL_HUGETLB
+-pte_t *huge_pte_alloc(struct mm_struct *mm,
++pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			unsigned long addr, unsigned long sz)
+ {
+ 	pgd_t *pgd;
+@@ -5407,7 +5408,7 @@ pte_t *huge_pte_alloc(struct mm_struct *mm,
+ 		} else {
+ 			BUG_ON(sz != PMD_SIZE);
+ 			if (want_pmd_share() && pud_none(*pud))
+-				pte = huge_pmd_share(mm, addr, pud);
++				pte = huge_pmd_share(mm, vma, addr, pud);
+ 			else
+ 				pte = (pte_t *)pmd_alloc(mm, pud, addr);
+ 		}
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 7423808640ef..b2ce61c1b50d 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -290,7 +290,7 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
+ 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
+ 
+ 		err = -ENOMEM;
+-		dst_pte = huge_pte_alloc(dst_mm, dst_addr, vma_hpagesize);
++		dst_pte = huge_pte_alloc(dst_mm, dst_vma, dst_addr, vma_hpagesize);
+ 		if (!dst_pte) {
+ 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+ 			i_mmap_unlock_read(mapping);
+-- 
 2.30.0.478.g8a0d178c01-goog
 
