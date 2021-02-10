@@ -2,85 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E88E316DCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 19:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B951316E4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 19:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233717AbhBJSFA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 13:05:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54356 "EHLO mail.kernel.org"
+        id S233995AbhBJSQe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 13:16:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50028 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233736AbhBJSCS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 13:02:18 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C52B064DB1;
-        Wed, 10 Feb 2021 18:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612980097;
-        bh=Iudm1YPyBEuC3zsZbxFFEccmpFqohJdXbI1ik4Yv3hA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pPiT+PDAgEjsKzfsSkjSdc3SyTSYJczkvJZfDsvbkTjdsAappNeeowXVDm7c1ZfmW
-         3NgRp/xNq9/vvx0MDSPwae/Pfwez3sdYXSGjB0mCQkXM9WpavXDncCN6o2jipPHrkh
-         pPEd180S5qsSzBPfz3fKC18D0hy77ZQxdyct1n52BN5I8khJ6pUwIDDeMNWPNTSyHP
-         vOcM8LkFe/dcdgCmlMesbTdwTfCCAbI+C7qAlMPOm0Ji98dsDjtzuQc6XBV4RIX068
-         d57a0sEgyuKYO3ED/HADo5fFMtpOHocdukCHHQdd6AMMhsflHe5N6qXPTVqUly+fme
-         RzYAo2VodoOwA==
-Date:   Wed, 10 Feb 2021 10:01:35 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Cc:     linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-        johannes.thumshirn@wdc.com, damien.lemoal@wdc.com,
-        bvanassche@acm.org, dongli.zhang@oracle.com, clm@fb.com,
-        ira.weiny@intel.com, dsterba@suse.com, hch@infradead.org,
-        dave.hansen@intel.com
-Subject: Re: [RFC PATCH 8/8] f2fs: use memcpy_to_page() in pagecache_write()
-Message-ID: <YCQff/XYAqDUXhhQ@sol.localdomain>
-References: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
- <20210207190425.38107-9-chaitanya.kulkarni@wdc.com>
+        id S233648AbhBJSPb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Feb 2021 13:15:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 21398AD6A;
+        Wed, 10 Feb 2021 18:14:50 +0000 (UTC)
+Subject: Re: [v7 PATCH 04/12] mm: vmscan: remove memcg_shrinker_map_size
+To:     Roman Gushchin <guro@fb.com>, Yang Shi <shy828301@gmail.com>
+Cc:     ktkhai@virtuozzo.com, shakeelb@google.com, david@fromorbit.com,
+        hannes@cmpxchg.org, mhocko@suse.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210209174646.1310591-1-shy828301@gmail.com>
+ <20210209174646.1310591-5-shy828301@gmail.com>
+ <20210209204314.GG524633@carbon.DHCP.thefacebook.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <d27223a8-0a00-b670-da5b-205d4c16a2e4@suse.cz>
+Date:   Wed, 10 Feb 2021 19:14:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210207190425.38107-9-chaitanya.kulkarni@wdc.com>
+In-Reply-To: <20210209204314.GG524633@carbon.DHCP.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 07, 2021 at 11:04:25AM -0800, Chaitanya Kulkarni wrote:
-> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+On 2/9/21 9:43 PM, Roman Gushchin wrote:
+> On Tue, Feb 09, 2021 at 09:46:38AM -0800, Yang Shi wrote:
+>> Both memcg_shrinker_map_size and shrinker_nr_max is maintained, but actually the
+>> map size can be calculated via shrinker_nr_max, so it seems unnecessary to keep both.
+>> Remove memcg_shrinker_map_size since shrinker_nr_max is also used by iterating the
+>> bit map.
+>> 
+>> Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> Signed-off-by: Yang Shi <shy828301@gmail.com>
 
-No explanation in commit message?  There isn't much explanation needed for this,
-but there should be at least one sentence.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Likewise for the other patches.
-
->  fs/f2fs/verity.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+>> ---
+>>  mm/vmscan.c | 18 +++++++++---------
+>>  1 file changed, 9 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>> index e4ddaaaeffe2..641077b09e5d 100644
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -185,8 +185,10 @@ static LIST_HEAD(shrinker_list);
+>>  static DECLARE_RWSEM(shrinker_rwsem);
+>>  
+>>  #ifdef CONFIG_MEMCG
+>> +static int shrinker_nr_max;
+>>  
+>> -static int memcg_shrinker_map_size;
+>> +#define NR_MAX_TO_SHR_MAP_SIZE(nr_max) \
+>> +	(DIV_ROUND_UP(nr_max, BITS_PER_LONG) * sizeof(unsigned long))
 > 
-> diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-> index 44e057bdc416..ca019685a944 100644
-> --- a/fs/f2fs/verity.c
-> +++ b/fs/f2fs/verity.c
-> @@ -79,7 +79,6 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
->  				 PAGE_SIZE - offset_in_page(pos));
->  		struct page *page;
->  		void *fsdata;
-> -		void *addr;
->  		int res;
->  
->  		res = pagecache_write_begin(NULL, inode->i_mapping, pos, n, 0,
-> @@ -87,9 +86,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
->  		if (res)
->  			return res;
->  
-> -		addr = kmap_atomic(page);
-> -		memcpy(addr + offset_in_page(pos), buf, n);
-> -		kunmap_atomic(addr);
-> +		memcpy_to_page(page, offset_in_page(pos) buf, n);
+> How about something like this?
+> 
+> static inline int shrinker_map_size(int nr_items)
+> {
+> 	return DIV_ROUND_UP(nr_items, BITS_PER_LONG) * sizeof(unsigned long);
+> }
+> 
+> I think it look less cryptic.
 
-This is missing a comma between 'offset_in_page(pos)' and 'buf'.
+Yeah that looks nicer so I'm fine with that potential change.
 
-Otherwise the patches to fs/{ext4,f2fs}/verity.c look fine; thanks for doing
-this!
+> The rest of the patch looks good to me.
+> 
+> Thanks!
+> 
 
-- Eric
