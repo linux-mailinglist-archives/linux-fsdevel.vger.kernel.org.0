@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC900316831
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 14:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A5D531683B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 14:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230192AbhBJNlr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 08:41:47 -0500
-Received: from verein.lst.de ([213.95.11.211]:51214 "EHLO verein.lst.de"
+        id S230043AbhBJNoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 08:44:55 -0500
+Received: from verein.lst.de ([213.95.11.211]:51232 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229710AbhBJNlp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 08:41:45 -0500
+        id S229818AbhBJNoy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Feb 2021 08:44:54 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 97BF768B02; Wed, 10 Feb 2021 14:41:00 +0100 (CET)
-Date:   Wed, 10 Feb 2021 14:41:00 +0100
+        id EE0636736F; Wed, 10 Feb 2021 14:44:09 +0100 (CET)
+Date:   Wed, 10 Feb 2021 14:44:09 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
 Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
@@ -23,64 +23,54 @@ Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         david@fromorbit.com, hch@lst.de, agk@redhat.com,
         snitzer@redhat.com, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
         y-goto@fujitsu.com
-Subject: Re: [PATCH v3 06/11] mm, pmem: Implement ->memory_failure() in
- pmem driver
-Message-ID: <20210210134100.GE30109@lst.de>
-References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com> <20210208105530.3072869-7-ruansy.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v3 10/11] xfs: Implement ->corrupted_range() for XFS
+Message-ID: <20210210134409.GF30109@lst.de>
+References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com> <20210208105530.3072869-11-ruansy.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210208105530.3072869-7-ruansy.fnst@cn.fujitsu.com>
+In-Reply-To: <20210208105530.3072869-11-ruansy.fnst@cn.fujitsu.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
-> +		unsigned long pfn, int flags)
-> +{
-> +	struct pmem_device *pdev;
-> +	struct gendisk *disk;
-> +	loff_t disk_offset;
-> +	int rc = 0;
-> +	unsigned long size = page_size(pfn_to_page(pfn));
+
+> +	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+> +	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
+> +		// TODO check and try to fix metadata
+> +		rc = -EFSCORRUPTED;
+> +		xfs_force_shutdown(cur->bc_mp, SHUTDOWN_CORRUPT_META);
+
+Just return early here so that we can avoid the else later.
+
+> +		/*
+> +		 * Get files that incore, filter out others that are not in use.
+> +		 */
+> +		rc = xfs_iget(cur->bc_mp, cur->bc_tp, rec->rm_owner,
+> +			      XFS_IGET_INCORE, 0, &ip);
+
+Can we rename rc to error?
+
+> +		if (rc || !ip)
+> +			return rc;
+
+No need to check for ip here.
+
+> +		if (!VFS_I(ip)->i_mapping)
+> +			goto out;
+
+This can't happen either.
+
 > +
-> +	pdev = container_of(pgmap, struct pmem_device, pgmap);
-> +	disk = pdev->disk;
+> +		mapping = VFS_I(ip)->i_mapping;
+> +		if (IS_DAX(VFS_I(ip)))
+> +			rc = mf_dax_mapping_kill_procs(mapping, rec->rm_offset,
+> +						       *flags);
+> +		else {
+> +			rc = -EIO;
+> +			mapping_set_error(mapping, rc);
+> +		}
 
-Would be nice to initialize this at the time of declaration:
-
-	struct pmem_device *pdev =
-		container_of(pgmap, struct pmem_device, pgmap);
-	struct gendisk *disk = pdev->disk
-	unsigned long size = page_size(pfn_to_page(pfn));
-
-> +	if (!disk)
-> +		return -ENXIO;
-> +
-> +	disk_offset = PFN_PHYS(pfn) - pdev->phys_addr - pdev->data_offset;
-> +	if (disk->fops->corrupted_range) {
-> +		rc = disk->fops->corrupted_range(disk, NULL, disk_offset,
-> +						 size, &flags);
-> +		if (rc == -ENODEV)
-> +			rc = -ENXIO;
-> +	} else
-> +		rc = -EOPNOTSUPP;
-
-Why do we need the disk and fops check here? A pgmap registered by pmem.c
-should always have a disk with pmem_fops.  And more importantly this
-has no business going through the block layer.
-
-Instead the file system should deposit a callback when starting to use
-the dax_device using fs_dax_get_by_bdev / dax_get_by_host and a private
-data (the superblock), and we avoid all the lookup problems.
-
-> +int mf_generic_kill_procs(unsigned long long pfn, int flags)
-
-This function seems to be only used inside of memory-failure.c, so it
-could be marked static.  Also I'd name it dax_generic_memory_failure
-or something like that to match the naming of the ->memory_failure
-pgmap operation.
-
-Also maybe just splitting this out into a helper would be a nice prep
-patch.
+By passing the method directly to the DAX device we should never get
+this called for the non-DAX case.
