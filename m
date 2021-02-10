@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6939315C60
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 02:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9B9A315C7E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 02:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235014AbhBJBgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 20:36:52 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:43808 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235108AbhBJBff (ORCPT
+        id S234036AbhBJBng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 20:43:36 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34652 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S234214AbhBJBlS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 20:35:35 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11A1X9pB006202;
-        Tue, 9 Feb 2021 17:34:44 -0800
+        Tue, 9 Feb 2021 20:41:18 -0500
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.43/8.16.0.43) with SMTP id 11A1bkc5006919;
+        Tue, 9 Feb 2021 17:40:26 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
  subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=3mCJWurq8u2PKd9a96O1qNWdHlDlpxlJGtncmoGZFeM=;
- b=ha0ZPkk8BfSGWNsYNwPH7hlGcgM9Rlc1EvSDUGho8TJaP+Dcb8YEo9R/9a85SmbHKbXk
- E4jzj2beCaV2OgVTOrSm+6Ovuu6HLpFwkYrEFR7Q1PXXM8I5FuAkP4ehYpkI13c47nbq
- 2l/58+85doRJTkKgAnHFcc7nxx3WGycIPto= 
+ mime-version; s=facebook; bh=VUMeztw5J9CuPup2ykWx1nabUzD+gTWSydvbf3chdDM=;
+ b=BPHM71jAUjD9JGWpXbC0uQCyL9RAEkXxr7k9BtPqZ+woEgg757wEQOkX39AV7gEy8oAb
+ vmBhqCVOI9zltbMiJqvivhvSO2F1HrXg43QX2yEWzRiK5zSPyfyqYcve2FwYhLojL20r
+ NB2UgCb0WQGct5d9Q5coaxxANbseyIoNA/4= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 36hstphg5y-1
+        by m0001303.ppops.net with ESMTP id 36hqnthvtr-4
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 09 Feb 2021 17:34:44 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.231) with Microsoft SMTP Server
+        Tue, 09 Feb 2021 17:40:26 -0800
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.229) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Tue, 9 Feb 2021 17:34:10 -0800
+ 15.1.1979.3; Tue, 9 Feb 2021 17:40:25 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U8xd6r2iApPZpnkIpodSTt+Tsresf1VKTV1m6CSebM6r77uVhdUZkLX20/79rt+E8YmLj5HOxZ837JyabohummxUBxlLtTqzgvkvIZ7O9SkwTdCRTNsyJbUjOy4J106SRWYVmr59jPc3vtsVrDnErVSPQDyinNLamRWfd1xr16OsPEgOx29gbNLG+J+xmO8mgFrJoPm1OQSLCcRcKjiRtz8WI7FhPcx7iP4bfxbUjRLzXTnL3Q4WaaHO1BmMf+4E8++N33b0uVeZB3FlUQYWpVt1mwU/bDd39Q/+iZTxFItkJJYguXv6kgh8pNSY5K1hUHpNtjmQBDJZN8zVI/3Eeg==
+ b=ApJoHXpNUPWLl+ivm4h6JlL+JIvy24jeJ3k95Z1n6Oa36JBxTiX169NZF2il0s0d6Sw2wI5uCVkIwLPlZVh7vhlgru/lPnE1jyv7p8+oA6Q/NloZTG68Wpm0ICNtHOl/jH0B3cgvTPOhvTQweRk2zEYG+I9LlhD6oWrRIaicVredtiHU41ANeYFZ1iOU5W05vPynwLn3k0+HuoGcaUYmOOt6ielHXyzqOkjtJT3Hl4XCFuMQCEfCOBgRuALplrdCUufVq+AQGVTQlvsyKKjLOVY0XH1BBxPZPT/CB2iMh2pu3ysTSEOyBmyjA7Ubt2Wao1jbKRkkn/0Lrc/itUQmuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3mCJWurq8u2PKd9a96O1qNWdHlDlpxlJGtncmoGZFeM=;
- b=mweHkvuPQ3gYytAeKcyzDCuCkSMPbJbhNS/Qipj7laNNSs3o8Hx6eGWzHUxXrVcSdlHgq4YF070eFj13glgxHDjSXa3ZBX5lYJKdGy9LGGO1pp/tK4GjN4/za37Fb1vr/eUSN95rkI+t38WRMna6uG8cSA3auctmMeRHKKICUW6Rs1nshax85X92frk+cx1D+k4xYNCQSwkVfqBLC9zt41TmqX9mKQcJSZ8xB4rgadeX/3hv8z5wikFn17b+H9qv/0ARSKvO6CUqngwVgk4mWTBpdckjXOeweA+BUAtnFcdSPquqJKv5ZNNuJ2QYk7zSBxGa/0lPWY9hri61EH7KZA==
+ bh=VUMeztw5J9CuPup2ykWx1nabUzD+gTWSydvbf3chdDM=;
+ b=cppsOcnqgk5GvPPy+S7ltiOmJVyBEmw/msmU1zNVg/Ur3eryChR8uwXnby7dHjAYG8vac7Sb8ReiZzIBrj68shultUL7q6za9J2alO7Ss31tORa4X/JrgeJ/ky+tIEp53h4GXCsoWo97bnIdftOq3Aaq/aIJMSORz/RBUCTCcmg8YVPwpneiRhZqq9hdc671FaRYQfYh+OgVe/zO5jWRHMzKQv3ua64lqMr42uRom6Cw6KMbFsfuyasULW+cYtdlPO5EpNJbbRZwbCa8hDjtitn8f9/5dl9eJ/nwkludIJ/pjhE5fjnKkVRvtSX5ot3+SgRZ5fx+khid2p02O9Lw2A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
  header.d=fb.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector2-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3mCJWurq8u2PKd9a96O1qNWdHlDlpxlJGtncmoGZFeM=;
- b=OOqq67pw0djeflZfltYyzis5IWZsHIDE3aAArd4qfkU7R9WYSO2b20ASeTdQJHYswTuZiecKrcNfA8DnHwU0pTfmuH/jiR2k2mqdqD7whrIcxFDG2O7TpNUBdP9rre0TnlJlZjX+eqIF1EIHnm48njeNO2YgeCh3Y3VHsIf45rI=
+ bh=VUMeztw5J9CuPup2ykWx1nabUzD+gTWSydvbf3chdDM=;
+ b=GQ/Dm3HN3luexQG8Kx7iIvwBr53xJSMDk59ZMPEqHof+ovjeJ7HeN2lm265ct/cP26VL2IBOOh1R1GIVSaas/hTiH9QeUPFnfVKclrbvKId9+0GxmO0IcCcTqaUuF9Ukxc20r8ZyB2Yyv2nQ5sNhZGvXX/YNg/h7gYLQLFWexHI=
 Authentication-Results: gmail.com; dkim=none (message not signed)
  header.d=none;gmail.com; dmarc=none action=none header.from=fb.com;
 Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
  by SJ0PR15MB4758.namprd15.prod.outlook.com (2603:10b6:a03:37b::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.17; Wed, 10 Feb
- 2021 01:34:09 +0000
+ 2021 01:40:24 +0000
 Received: from BYAPR15MB4136.namprd15.prod.outlook.com
  ([fe80::53a:b2c3:8b03:12d1]) by BYAPR15MB4136.namprd15.prod.outlook.com
  ([fe80::53a:b2c3:8b03:12d1%7]) with mapi id 15.20.3825.030; Wed, 10 Feb 2021
- 01:34:09 +0000
-Date:   Tue, 9 Feb 2021 17:34:04 -0800
+ 01:40:23 +0000
+Date:   Tue, 9 Feb 2021 17:40:18 -0800
 From:   Roman Gushchin <guro@fb.com>
 To:     Yang Shi <shy828301@gmail.com>
 CC:     Kirill Tkhai <ktkhai@virtuozzo.com>,
@@ -68,202 +68,289 @@ CC:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         Linux MM <linux-mm@kvack.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [v7 PATCH 07/12] mm: vmscan: use a new flag to indicate shrinker
- is registered
-Message-ID: <20210210013404.GQ524633@carbon.DHCP.thefacebook.com>
+Subject: Re: [v7 PATCH 08/12] mm: vmscan: add per memcg shrinker nr_deferred
+Message-ID: <20210210014018.GR524633@carbon.DHCP.thefacebook.com>
 References: <20210209174646.1310591-1-shy828301@gmail.com>
- <20210209174646.1310591-8-shy828301@gmail.com>
- <20210210003943.GK524633@carbon.DHCP.thefacebook.com>
- <CAHbLzkq2_=b-_4adsf-8vwcG6io6Zx_2o82207S6z8J7ShfTMw@mail.gmail.com>
+ <20210209174646.1310591-9-shy828301@gmail.com>
+ <20210210011020.GL524633@carbon.DHCP.thefacebook.com>
+ <CAHbLzkpHRO1-iamUvwrg41MyzAonCPcUiObo7LFKLTbCuZptvQ@mail.gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHbLzkq2_=b-_4adsf-8vwcG6io6Zx_2o82207S6z8J7ShfTMw@mail.gmail.com>
-X-Originating-IP: [2620:10d:c090:400::5:781e]
-X-ClientProxiedBy: MWHPR18CA0055.namprd18.prod.outlook.com
- (2603:10b6:300:39::17) To BYAPR15MB4136.namprd15.prod.outlook.com
+In-Reply-To: <CAHbLzkpHRO1-iamUvwrg41MyzAonCPcUiObo7LFKLTbCuZptvQ@mail.gmail.com>
+X-Originating-IP: [2620:10d:c090:400::5:affa]
+X-ClientProxiedBy: MWHPR04CA0064.namprd04.prod.outlook.com
+ (2603:10b6:300:6c::26) To BYAPR15MB4136.namprd15.prod.outlook.com
  (2603:10b6:a03:96::24)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:781e) by MWHPR18CA0055.namprd18.prod.outlook.com (2603:10b6:300:39::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.27 via Frontend Transport; Wed, 10 Feb 2021 01:34:08 +0000
+Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:affa) by MWHPR04CA0064.namprd04.prod.outlook.com (2603:10b6:300:6c::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.25 via Frontend Transport; Wed, 10 Feb 2021 01:40:22 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 152989b0-4b56-4913-d1da-08d8cd63f68b
+X-MS-Office365-Filtering-Correlation-Id: 00149dac-ae81-499b-cfab-08d8cd64d59d
 X-MS-TrafficTypeDiagnostic: SJ0PR15MB4758:
-X-Microsoft-Antispam-PRVS: <SJ0PR15MB4758E091782C9AA8BDAAA5D2BE8D9@SJ0PR15MB4758.namprd15.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <SJ0PR15MB47586F935D56F6A54412FCFFBE8D9@SJ0PR15MB4758.namprd15.prod.outlook.com>
 X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: AaGqvQ+oTsMy9aVPMHYYASwhHuGQGzov9wzSYPgHcPhYM5Tz8o+JYpJlkjFSA0Ko2mmcYj08tMu01rLezDU4SvsduPxfk+si+GXSmPWSQbqGaDOwzsKk9q7LGbkn9hQfz8y9ouUizqkE2yhCioQ9t6uDkPXJsdxyzhk1dU+X6C52aXwUzEHu4oxO07L2nbhJwSBq1XUWD39wklc1mWEGREmNiab1vNpV93JZtMSc5cSsQc3v6aln479018WdKwInVOIa8AokYoA7gs7oRtIhMoT4199ajgLFhfz8GrgeN4c20NZZ+y1qWft1V4ovnGggymWBXob3CUPSXeY7q3HZhaKDCBkSW8GnirzjFNQ8XHv7adEw53WCEa/wmuUcXyn0PViPe0w/ynulPz7GCdXm79MMavBZHUehk6B2OdBS5POb3fYQfKPG/6WevHxmDZwxBNQlF3CQfgE8mCdEAiYUHyZvZgLkVHxAWqyF596sWefflA3tKwwblN9Ek3/qbaPEcqLfzae9VosXhvnUTzJRiA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(136003)(366004)(396003)(346002)(39860400002)(8676002)(54906003)(7696005)(53546011)(6506007)(52116002)(83380400001)(1076003)(9686003)(66946007)(316002)(7416002)(186003)(16526019)(66556008)(478600001)(5660300002)(6916009)(86362001)(66476007)(2906002)(33656002)(6666004)(55016002)(8936002)(4326008);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?0G5cYBRRme0x/nu+Iw8w1Rev14k/wfzheEoaAszzJONlBSdFFrgkQ5AQTjob?=
- =?us-ascii?Q?zGAMn1hA4Uvg1lzfHuXJ1X7m3dxFCU5ndyXKbmUyR+OOmc3BXuIYc/SQawlN?=
- =?us-ascii?Q?53jpH7fEry5yWom8Npxo3ePG6lzzSIwP+wEf/VuYqnPkgyIACXwtdBNAgKjy?=
- =?us-ascii?Q?b/23n5MuGdUuH4McLuJMC7GoaBiVx8ZUaJiMLr1x5d4RJPr3UFb4stFCJtQ5?=
- =?us-ascii?Q?MNBjIj43HAKGbo6tkmVBoZ7MaYAO7rQ2vjLd9NHZkFh00RxSdIuoOxto0u8x?=
- =?us-ascii?Q?Oyd/NLsfUuQFPFO/e2kEz5eAolMQ3a7p9PBlUklsL5X+UGMCa5YyPs7hg8TG?=
- =?us-ascii?Q?0t54cjXwqNuz4tHB+WCzqYxqZwfSp2jDXOVUDsZZzf+LuaKFTPo57hGvKghO?=
- =?us-ascii?Q?trAjZmPNf0hCSb8TFxLDgaO7tBv3Ueh07MP7yRmFsLjMIL71/rrkHS2WLhRm?=
- =?us-ascii?Q?ExeXImjeEczZdfdrf4c1M6mmQjfxy2/o23i6bLKQmT0W/yVDQpRzd8RnDB7d?=
- =?us-ascii?Q?U0KgfUHLGDrNRhDNaosMthwv4ArBGbxjsv9tjSG91d8r0VUEipcwwXBEOhz+?=
- =?us-ascii?Q?yUbkuOkKhJIxxxA5UMl/hWdZFdX4bYmPwAvUiOUWiMNpiFj6DSL5vI7BeIhV?=
- =?us-ascii?Q?Dt1LZQpa/P9LERteiymgxL4wshJ0Q80ByNemEBU3Ku7lf3dIdcaW4FQT8/Xy?=
- =?us-ascii?Q?W0EgTevy0wEU60f0N43KpT35qQoCfJWAeZ14YiZbFzsQwrqx9RHT8YrBilOD?=
- =?us-ascii?Q?KMvcZYBPWbWcOB03ab9BQB425PiEe2kmSXJlEieqopp6bHcri3Qcymk8LCo+?=
- =?us-ascii?Q?m4f127n0zKaOnGOuqPG/0TeNn64HcDjKq8ZSa1SX1cWMyz+wQMIJOWusQgec?=
- =?us-ascii?Q?Ti6DdFfe46EFzW/tK4Nq5A4jAZaG31576tpsh5QyrGHuOOaySzH9N0zxS2IP?=
- =?us-ascii?Q?aPRbEgptwU/udJycn6VOz/yGYxCgwE+z+BZ6AUJ+99LG/f32vuwk+4Pv4sWd?=
- =?us-ascii?Q?a3hjyJIjF9chfU//jD6wR3TNmVBuFR4wHAptftqhqn3B1UuMK9D4oRnCxtur?=
- =?us-ascii?Q?2fiDIeAPYWDv84a5rh32RppNiadBLIcYOmZYOtVWS36SO59kW3q2LvLox7cs?=
- =?us-ascii?Q?/hAltrqBuOQQHG+xTgV0oWHHJSIT68U/LVeCveqm8CKfVnOtEUPDnpGvt1l3?=
- =?us-ascii?Q?gL6FyNmewIe6lKfcM4DpqdzUnWDfDLkd/cvStVKesQM8dmX1qAg1Gl1j3pP7?=
- =?us-ascii?Q?b/CKml2qTBeVEpHj3En5DldlWjGToxKSdAe3+rBm5jErAvYLgI6gtbwIiHso?=
- =?us-ascii?Q?TCw0Ow7pQmz+DntB+LFilL7S0jNkoCWp/+7tVSAgmBdZRabMk+61vORlsCBR?=
- =?us-ascii?Q?Fm4wxaw=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 152989b0-4b56-4913-d1da-08d8cd63f68b
+X-Microsoft-Antispam-Message-Info: dYlSaInDxXvTybOr7z2/kCpS0WvBd+CdP0wYLu1yd1rqrMIwm6oQGk6d/ZmVJUHX8QDzor0jnme5vwuNKSBawRd+pmP7W5wskwIhELHXgxqhbQRhZ9h0Kd0D62PJ4J03AwQC7186ugy1uVmOzglRAwQCm2DvSO41GfbHCklymJ0LTzD41wmcWPXDZes4P6DDq35xC1rtp4IbRBb3DxwWvU+fwvOnpPlPI4QcmiENFhxoAqvcxzt+a58CZ5F62hqkPKzHGTyKpjgGZ4UK1rtNtecxeWouB+Ic5TtzbDMWrd4v1VcKue6pfF2gEeBnv+4BZ9St4pETw/N4AObMosJ1FMD75QJ6hBQ68sQyPVrGMpP7eb8KTf15G804/3EO4kPyAcDENbTP7GSNsztJMwjcz22NpumeNRS8j/Vn45BJawwfk3LMbrnHSH5f7ARZMHvXCJjsV70XX+korgTwLCFoPSyBU2uAg0qRQuCuA2gcSbxaHuQ/C5oansyAF97LmsK344G0DEcVYUw2d20JAd1ZcA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(346002)(396003)(366004)(136003)(376002)(66476007)(86362001)(6916009)(8936002)(4326008)(2906002)(6666004)(55016002)(33656002)(1076003)(5660300002)(83380400001)(52116002)(6506007)(54906003)(7696005)(8676002)(53546011)(186003)(16526019)(478600001)(66556008)(9686003)(316002)(7416002)(66946007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?GuvvZBhqgAe8w7F95f1oBkATVYg3rPr5SxS3y5iwLvE60beQzLy/gHmzB1gk?=
+ =?us-ascii?Q?ixFqGCdLcpheUz6Ow5/9/caXBS3w0mV64UafiVoDmP5xpHt/oGP/rDL9Cddi?=
+ =?us-ascii?Q?Xtsn4TYOZYaPNSyMsn1AOl6hCqRNABgA2EtPEPkubIV1rtOATTooEARZRADo?=
+ =?us-ascii?Q?vVCg9VJ6P55N0ASbJ2r2yimzk9alBV6/Vl8zyPUJPrpyK1vlbElnq9ZlfBzO?=
+ =?us-ascii?Q?pjfc6q0uMPGG1FYO9ndoHNGZthxD83FEcgKljmMvTxqg9EKGl3Q7BKap/FN5?=
+ =?us-ascii?Q?kph4Chpt2dndnFEnFGwgROO6f+H2+aD1q8Fn17+h7ZEOwIQePgEVqmE0U2hF?=
+ =?us-ascii?Q?VGJw7UWdSczD0M5rArgv48MbCtrXmOWIpEzenOJHckM8+aTRc87eWHOmrEi1?=
+ =?us-ascii?Q?rm+V3R+Qb6MU/VnllzwSBzKTDgKrZWQ+qCRBOOVsxCJtf9jxrrTEFCLlzpBP?=
+ =?us-ascii?Q?RHcgwsYN3M9v1m4nPdHn/RXiEozGeB6LGEZtaEH80H2tJDK6NjSzsRuyVBvj?=
+ =?us-ascii?Q?Sx8kuZGMB/PKUfeXUoPx7HmoJMOMjjRY7A8YXnJDj0YZWVwadrG3DfgXpDI5?=
+ =?us-ascii?Q?JzcCv6nxyOJlHP/pRPGh01dbBT3UyOOGuARq/w0g+KmluIIskdjmG95Ryb7V?=
+ =?us-ascii?Q?v46dy0M9ao1VQcJ7MWDCz8q3Ms0UIxnwcZg+uYbrTWXbbxf5lJ8GsDYyH2hu?=
+ =?us-ascii?Q?Gmo0O7AX+ZpuBKOKcn6sWFITzdZ9OYR3co5gOXdqigUaqTvhIMikbmGjCsxe?=
+ =?us-ascii?Q?+QOBFnEVxUkk0R5BeGfkfyM+YkgaD58he/OSz2rOGqQXKbbujm0UJcqBWcXE?=
+ =?us-ascii?Q?V8ZXAWMMl+LwF/f6XDTqcnzjtNtlxy40PNXmWokdfbYsBqZHz4Pj/zqKeLyy?=
+ =?us-ascii?Q?9g87rT0eWbJBNlDbQ+5MPjHa35MC8xfROrlLCCZv+MB5G2Zhux8WM27lQqVW?=
+ =?us-ascii?Q?mwFUdLwKpaXWANIAmufaMr7lc/+omNos0V5bZ3lB3vRJlI7VvLdauWMQ3BuQ?=
+ =?us-ascii?Q?Kgpk8dCSLa1hsuKx9tHYGuN3IaZQC7BsjQgsiHY/30khEAxGynExgnGQUu8Q?=
+ =?us-ascii?Q?3ZTmxWbSzgDzXfJtZZ1B0YsWUnim2cbPCjeJK+vtZpjTLrRpOmBUSxRSmCi1?=
+ =?us-ascii?Q?7ekhXDbHUTTjJkP4RvpwPW3eB7pfGHp/mviMd/lcIvvQHNQXoQ+gYwwzik0R?=
+ =?us-ascii?Q?/7uTMYocijfe42440rT7KnWj+kZRH3i7bwpwyV1IoSuN+wVrzT/Djcvik/Rh?=
+ =?us-ascii?Q?kMdGjaqz7P890xXennwGUzUI8Sy0vA03UAEzrZiFbNJr21/rZMF54ILwz+5n?=
+ =?us-ascii?Q?1qKI+zHNrB9WEHkg+5KZM9fJQHD8+e33KYRAC9qYFI/CYmiEFlinm/Xtq5Ts?=
+ =?us-ascii?Q?im9Li5I=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00149dac-ae81-499b-cfab-08d8cd64d59d
 X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2021 01:34:09.7098
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2021 01:40:23.9087
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X8l1tpBpjfq6kEY9I6+L2RiBAbT9THWE8MD+1z6uWVmhANW6/hKi/wEpO59LzHdC
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0mprVa7cirgEEMI4JnhHMx616TTRYp3P1bUrwArFvW1njpevAuy0wxh0w7dyPUzV
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB4758
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
  definitions=2021-02-09_08:2021-02-09,2021-02-09 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 suspectscore=0
- malwarescore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 phishscore=0 spamscore=0 lowpriorityscore=0
- clxscore=1015 adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2009150000 definitions=main-2102100014
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1015 spamscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102100014
 X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 09, 2021 at 05:12:51PM -0800, Yang Shi wrote:
-> On Tue, Feb 9, 2021 at 4:39 PM Roman Gushchin <guro@fb.com> wrote:
+On Tue, Feb 09, 2021 at 05:25:16PM -0800, Yang Shi wrote:
+> On Tue, Feb 9, 2021 at 5:10 PM Roman Gushchin <guro@fb.com> wrote:
 > >
-> > On Tue, Feb 09, 2021 at 09:46:41AM -0800, Yang Shi wrote:
-> > > Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
-> > > This approach is fine with nr_deferred at the shrinker level, but the following
-> > > patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
-> > > shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
-> > > from unregistering correctly.
+> > On Tue, Feb 09, 2021 at 09:46:42AM -0800, Yang Shi wrote:
+> > > Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> > > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
 > > >
-> > > Remove SHRINKER_REGISTERING since we could check if shrinker is registered
-> > > successfully by the new flag.
+> > > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> > > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> > > may suffer from over shrink, excessive reclaim latency, etc.
 > > >
-> > > Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> > > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> > > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> > > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> > >
+> > > We observed this hit in our production environment which was running vfs heavy workload
+> > > shown as the below tracing log:
+> > >
+> > > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> > > cache items 246404277 delta 31345 total_scan 123202138
+> > > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> > > last shrinker return val 123186855
+> > >
+> > > The vfs cache and page cache ratio was 10:1 on this machine, and half of caches were dropped.
+> > > This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> > >
+> > > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> > > better isolation.
+> > >
+> > > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> > > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> > >
 > > > Signed-off-by: Yang Shi <shy828301@gmail.com>
 > > > ---
-> > >  include/linux/shrinker.h |  7 ++++---
-> > >  mm/vmscan.c              | 31 +++++++++----------------------
-> > >  2 files changed, 13 insertions(+), 25 deletions(-)
+> > >  include/linux/memcontrol.h |  7 +++---
+> > >  mm/vmscan.c                | 49 +++++++++++++++++++++++++-------------
+> > >  2 files changed, 37 insertions(+), 19 deletions(-)
 > > >
-> > > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> > > index 0f80123650e2..1eac79ce57d4 100644
-> > > --- a/include/linux/shrinker.h
-> > > +++ b/include/linux/shrinker.h
-> > > @@ -79,13 +79,14 @@ struct shrinker {
-> > >  #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
+> > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > > index 4c9253896e25..c457fc7bc631 100644
+> > > --- a/include/linux/memcontrol.h
+> > > +++ b/include/linux/memcontrol.h
+> > > @@ -93,12 +93,13 @@ struct lruvec_stat {
+> > >  };
 > > >
-> > >  /* Flags */
-> > > -#define SHRINKER_NUMA_AWARE  (1 << 0)
-> > > -#define SHRINKER_MEMCG_AWARE (1 << 1)
-> > > +#define SHRINKER_REGISTERED  (1 << 0)
-> > > +#define SHRINKER_NUMA_AWARE  (1 << 1)
-> > > +#define SHRINKER_MEMCG_AWARE (1 << 2)
 > > >  /*
-> > >   * It just makes sense when the shrinker is also MEMCG_AWARE for now,
-> > >   * non-MEMCG_AWARE shrinker should not have this flag set.
+> > > - * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> > > - * which have elements charged to this memcg.
+> > > + * Bitmap and deferred work of shrinker::id corresponding to memcg-aware
+> > > + * shrinkers, which have elements charged to this memcg.
 > > >   */
-> > > -#define SHRINKER_NONSLAB     (1 << 2)
-> > > +#define SHRINKER_NONSLAB     (1 << 3)
+> > >  struct shrinker_info {
+> > >       struct rcu_head rcu;
+> > > -     unsigned long map[];
+> > > +     atomic_long_t *nr_deferred;
+> > > +     unsigned long *map;
+> > >  };
 > > >
-> > >  extern int prealloc_shrinker(struct shrinker *shrinker);
-> > >  extern void register_shrinker_prepared(struct shrinker *shrinker);
+> > >  /*
 > > > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > > index 273efbf4d53c..a047980536cf 100644
+> > > index a047980536cf..d4b030a0b2a9 100644
 > > > --- a/mm/vmscan.c
 > > > +++ b/mm/vmscan.c
-> > > @@ -315,19 +315,6 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
-> > >       }
+> > > @@ -187,9 +187,13 @@ static DECLARE_RWSEM(shrinker_rwsem);
+> > >  #ifdef CONFIG_MEMCG
+> > >  static int shrinker_nr_max;
+> > >
+> > > +/* The shrinker_info is expanded in a batch of BITS_PER_LONG */
+> > >  #define NR_MAX_TO_SHR_MAP_SIZE(nr_max) \
+> > >       (DIV_ROUND_UP(nr_max, BITS_PER_LONG) * sizeof(unsigned long))
+> > >
+> > > +#define NR_MAX_TO_SHR_DEF_SIZE(nr_max) \
+> > > +     (round_up(nr_max, BITS_PER_LONG) * sizeof(atomic_long_t))
+> > > +
+> > >  static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
+> > >                                                    int nid)
+> > >  {
+> > > @@ -203,10 +207,12 @@ static void free_shrinker_info_rcu(struct rcu_head *head)
 > > >  }
 > > >
-> > > -/*
-> > > - * We allow subsystems to populate their shrinker-related
-> > > - * LRU lists before register_shrinker_prepared() is called
-> > > - * for the shrinker, since we don't want to impose
-> > > - * restrictions on their internal registration order.
-> > > - * In this case shrink_slab_memcg() may find corresponding
-> > > - * bit is set in the shrinkers map.
-> > > - *
-> > > - * This value is used by the function to detect registering
-> > > - * shrinkers and to skip do_shrink_slab() calls for them.
-> > > - */
-> > > -#define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
+> > >  static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> > > -                                int size, int old_size)
+> > > +                                 int m_size, int d_size,
+> > > +                                 int old_m_size, int old_d_size)
+> > >  {
+> > >       struct shrinker_info *new, *old;
+> > >       int nid;
+> > > +     int size = m_size + d_size;
+> > >
+> > >       for_each_node(nid) {
+> > >               old = shrinker_info_protected(memcg, nid);
+> > > @@ -218,9 +224,15 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> > >               if (!new)
+> > >                       return -ENOMEM;
+> > >
+> > > -             /* Set all old bits, clear all new bits */
+> > > -             memset(new->map, (int)0xff, old_size);
+> > > -             memset((void *)new->map + old_size, 0, size - old_size);
+> > > +             new->nr_deferred = (atomic_long_t *)(new + 1);
+> > > +             new->map = (void *)new->nr_deferred + d_size;
+> > > +
+> > > +             /* map: set all old bits, clear all new bits */
+> > > +             memset(new->map, (int)0xff, old_m_size);
+> > > +             memset((void *)new->map + old_m_size, 0, m_size - old_m_size);
+> > > +             /* nr_deferred: copy old values, clear all new values */
+> > > +             memcpy(new->nr_deferred, old->nr_deferred, old_d_size);
+> > > +             memset((void *)new->nr_deferred + old_d_size, 0, d_size - old_d_size);
+> > >
+> > >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+> > >               call_rcu(&old->rcu, free_shrinker_info_rcu);
+> > > @@ -235,9 +247,6 @@ void free_shrinker_info(struct mem_cgroup *memcg)
+> > >       struct shrinker_info *info;
+> > >       int nid;
+> > >
+> > > -     if (mem_cgroup_is_root(memcg))
+> > > -             return;
 > > > -
-> > >  static DEFINE_IDR(shrinker_idr);
-> > >
-> > >  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
-> > > @@ -336,7 +323,7 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
-> > >
-> > >       down_write(&shrinker_rwsem);
-> > >       /* This may call shrinker, so it must use down_read_trylock() */
-> > > -     id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
-> > > +     id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
-> > >       if (id < 0)
-> > >               goto unlock;
-> > >
-> > > @@ -499,10 +486,7 @@ void register_shrinker_prepared(struct shrinker *shrinker)
+> > >       for_each_node(nid) {
+> > >               pn = mem_cgroup_nodeinfo(memcg, nid);
+> > >               info = shrinker_info_protected(memcg, nid);
+> > > @@ -250,12 +259,13 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
 > > >  {
-> > >       down_write(&shrinker_rwsem);
-> > >       list_add_tail(&shrinker->list, &shrinker_list);
-> > > -#ifdef CONFIG_MEMCG
-> > > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> > > -             idr_replace(&shrinker_idr, shrinker, shrinker->id);
-> > > -#endif
-> > > +     shrinker->flags |= SHRINKER_REGISTERED;
-> > >       up_write(&shrinker_rwsem);
-> > >  }
+> > >       struct shrinker_info *info;
+> > >       int nid, size, ret = 0;
+> > > -
+> > > -     if (mem_cgroup_is_root(memcg))
+> > > -             return 0;
+> > > +     int m_size, d_size = 0;
 > > >
-> > > @@ -522,13 +506,16 @@ EXPORT_SYMBOL(register_shrinker);
-> > >   */
-> > >  void unregister_shrinker(struct shrinker *shrinker)
-> > >  {
-> > > -     if (!shrinker->nr_deferred)
-> > > +     if (!(shrinker->flags & SHRINKER_REGISTERED))
-> > >               return;
-> > > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> > > -             unregister_memcg_shrinker(shrinker);
-> > > +
 > > >       down_write(&shrinker_rwsem);
-> > >       list_del(&shrinker->list);
-> > > +     shrinker->flags &= ~SHRINKER_REGISTERED;
-> > >       up_write(&shrinker_rwsem);
+> > > -     size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > > +     m_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > > +     d_size = NR_MAX_TO_SHR_DEF_SIZE(shrinker_nr_max);
+> > > +     size = m_size + d_size;
 > > > +
-> > > +     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> > > +             unregister_memcg_shrinker(shrinker);
+> > >       for_each_node(nid) {
+> > >               info = kvzalloc_node(sizeof(*info) + size, GFP_KERNEL, nid);
+> > >               if (!info) {
+> > > @@ -263,6 +273,8 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+> > >                       ret = -ENOMEM;
+> > >                       break;
+> > >               }
+> > > +             info->nr_deferred = (atomic_long_t *)(info + 1);
+> > > +             info->map = (void *)info->nr_deferred + d_size;
+> > >               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+> > >       }
+> > >       up_write(&shrinker_rwsem);
+> > > @@ -274,10 +286,16 @@ static int expand_shrinker_info(int new_id)
+> > >  {
+> > >       int size, old_size, ret = 0;
+> > >       int new_nr_max = new_id + 1;
+> > > +     int m_size, d_size = 0;
+> > > +     int old_m_size, old_d_size = 0;
+> > >       struct mem_cgroup *memcg;
+> > >
+> > > -     size = NR_MAX_TO_SHR_MAP_SIZE(new_nr_max);
+> > > -     old_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > > +     m_size = NR_MAX_TO_SHR_MAP_SIZE(new_nr_max);
+> > > +     d_size = NR_MAX_TO_SHR_DEF_SIZE(new_nr_max);
+> > > +     size = m_size + d_size;
+> > > +     old_m_size = NR_MAX_TO_SHR_MAP_SIZE(shrinker_nr_max);
+> > > +     old_d_size = NR_MAX_TO_SHR_DEF_SIZE(shrinker_nr_max);
+> > > +     old_size = old_m_size + old_d_size;
+> > >       if (size <= old_size)
+> > >               goto out;
 > >
-> > Because unregister_memcg_shrinker() will take and release shrinker_rwsem once again,
-> > I wonder if it's better to move it into the locked section and change the calling
-> > convention to require the caller to take the semaphore?
+> > It looks correct, but a bit bulky. Can we check that the new maximum
+> > number of elements is larger than then the old one here?
 > 
-> I don't think we could do that since unregister_memcg_shrinker() is
-> called by free_prealloced_shrinker() which is called without holding
-> the shrinker_rwsem by fs and workingset code.
+> Seems not to me. For example, we have shrinker_nr_max as 1, then a new
+> shrinker is registered and the new_nr_max is 2, but actually the new
+> size is equal to the old size.
+
+I see.
+
 > 
-> We could add a bool parameter to indicate if the rwsem was acquired or
-> not, but IMHO it seems not worth it.
+> We should be able to do:
+> if (round_up(new_nr_max, BITS_PER_LONG) <= round_up(shrinker_nr_mx,
+> BITS_PER_LONG))
+> 
+> Does it seem better?
 
-Can free_preallocated_shrinker() just do
+Yes, I think so.
 
-if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-	down_write(&shrinker_rwsem);
-	unregister_memcg_shrinker(shrinker);
-	up_write(&shrinker_rwsem);
-}
+> 
+> >
+> > >
+> > > @@ -286,9 +304,8 @@ static int expand_shrinker_info(int new_id)
+> > >
+> > >       memcg = mem_cgroup_iter(NULL, NULL, NULL);
+> > >       do {
+> > > -             if (mem_cgroup_is_root(memcg))
+> > > -                     continue;
+> > > -             ret = expand_one_shrinker_info(memcg, size, old_size);
+> > > +             ret = expand_one_shrinker_info(memcg, m_size, d_size,
+> > > +                                            old_m_size, old_d_size);
+> >
+> > Pass the old and the new numbers to expand_one_shrinker_info() and
+> > have all size manipulation there?
+> 
+> With the above proposal we could move the size manipulation right
+> before the memcg iter, we could save some cycles if we don't have to
+> expand it.
 
-?
+I mostly dislike passing 4 arguments to expand_one_shrinker_info():
+old_m_size, old_d_size, etc. But you're right, there is no good reason
+to calculate them for each cgroup, if we can do it once. Can you, please,
+rename arguments to map_size and defer_size (or something more obvious than
+m and d on your taste)?
+
+Thanks!
