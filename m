@@ -2,167 +2,300 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E30773171AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 21:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D88731723C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 22:23:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232149AbhBJUuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 15:50:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38908 "EHLO
+        id S233355AbhBJVWu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 16:22:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbhBJUuN (ORCPT
+        with ESMTP id S233224AbhBJVWr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 15:50:13 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C827C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 12:49:33 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id g10so4669298eds.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 12:49:33 -0800 (PST)
+        Wed, 10 Feb 2021 16:22:47 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C544C06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:07 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id g17so1291121ybh.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 13:22:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bFCBVLmx4m3P8OJ7FexI4xTU+D+dqeOPB5L3zdP1j98=;
-        b=OlXMEGE3+YXDW20u82up+ZZJxFuT5KQPVaOZp56fIviL/ca54YrjE5bQPiM0jLbtr5
-         JephDlBWc6ihBoJg5k8R1M7+hSbeoGkpREvy/8A8Bsg5/X4GhbjclPWfb060aUds7Xkf
-         2bFaMcZ2LOg9RoALDj7udW/xyJ4i9lrqIzZcg=
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=f3bDipLNxq+4vQj/7fDtE/PjMb4mWt44G3LXQ2qAmsY=;
+        b=pQ2zUjlS/rzaBJwpjf02JILnvkXRckNWJVMgXVzbZ7nYG9888IQpy5wdTCuUEQifYw
+         NZxwo2sBI7KZNBa2vv7HgAMK7vbpBJVJtQHWqXTfKfj0tRet+pPbDg88ps5sqy+6L16X
+         nxADQpvCW3Sgv4kavvKUFLuyoJ3O8f5jUxl3O5crFBAIe/PHSfmAu1462Zo5FK73tDU6
+         QocJJ6sT0LKVxBRlmXe6dob19ruK7AgEQ6unhcI4tDPpyZrDBaxOvfoIsckW3jS/w0oQ
+         Fu6fOR6EF/fgTqOm4CLBhLHJ9uAcAF/yp3Uv6KonYX8Z3jb2H2Hivo++hiJw8zj1U7w2
+         IYCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bFCBVLmx4m3P8OJ7FexI4xTU+D+dqeOPB5L3zdP1j98=;
-        b=VJx7a/5F62MDIUdI3Xp4B+nEo9l2/cTwhpu8vNOOH2bTcmLOnwJ31OVeXDrTZCaxB5
-         GP+Q6RAU5FPFdKS4E3zjAwVWFrsK5/P4vJsN0gO4FxpYx8et59X/oYoDsI7kH76WDDIO
-         05RhMxYkNoBrWEBd0yfL+CoWN9M3YK+ne1FqTk0pWo7VAIPIKR3xqCXvWImSLvQZ3hD8
-         UiZN+kyrgEv2SFneokTQHwsr8ndvdaqegGcL3XlsVkw/lBivlRXBduHIpfhXBGNNoJ1U
-         0kKAIn6R1/yAnjmkxgOGPHncAL8XEIaDwcz3/+h0jlXYssXGSFL4kWYcMohaT/0w9C4Q
-         LZ1A==
-X-Gm-Message-State: AOAM531hiWzIT4313udQnJLs0g8Kw/h/rPe2k9VH1ZO18EORL4BWX9yU
-        AcNx0XNeMbPAt7SxW9dUwx/ipYVStgIV9Q==
-X-Google-Smtp-Source: ABdhPJw/rvDrKnqGk5o5o6e7depTgOz0ECctyvaU2P4WpKQdZDb73Wjlnj5a43tiNOvKE50f3AVt1w==
-X-Received: by 2002:a05:6402:4252:: with SMTP id g18mr5047907edb.231.1612990171486;
-        Wed, 10 Feb 2021 12:49:31 -0800 (PST)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id b2sm2001081edk.11.2021.02.10.12.49.31
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Feb 2021 12:49:31 -0800 (PST)
-Received: by mail-ej1-f41.google.com with SMTP id l25so6557063eja.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 12:49:31 -0800 (PST)
-X-Received: by 2002:a05:6512:a8c:: with SMTP id m12mr2551518lfu.253.1612989815438;
- Wed, 10 Feb 2021 12:43:35 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
- <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk>
- <1330751.1612974783@warthog.procyon.org.uk>
-In-Reply-To: <1330751.1612974783@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 10 Feb 2021 12:43:19 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
-Message-ID: <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
-Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=f3bDipLNxq+4vQj/7fDtE/PjMb4mWt44G3LXQ2qAmsY=;
+        b=SUyV72bphqvv224Uwn/wgziqXbyyqruGVNkj6yrgC+JPm1irLmPiJVDTrd7yd2TvcD
+         aFNF0XOMwF2uVsI5EyOaqpKsr81I5fZ7zGKzYrqe6wYXbgYHlyco/i/krvBchoPu9NBb
+         Nqhn8cA8vuYvqbRujURWRPuCifjNVZaRpMEkvwdKGaAzCIghHT3GPaLdPLHLv5LcvDqE
+         NQqKazd+j7mHtR/9KlSnBq3R4vDLb56ue8w7H+1kChHDOrWrKWx9QXia876R9TYsiIfY
+         jec6WWFEgZYY+4M/qG88BSA89cVfCxzUiDuyj0e8azKXH1zwO4yO3rqg4O8ufLPJ/X5o
+         peHQ==
+X-Gm-Message-State: AOAM532lrcx4kqLPpSsuoWSx01/DAvK/nmyoi7Lvyk8KpNPBKdRAp0iU
+        +tbUsBU0n0YzcIXwaSXzoOruS2LPWw8VM0aANBUq
+X-Google-Smtp-Source: ABdhPJxeiA6mwLfMVFGQz1imqphRN1QNjEGKnuWaMfUI1pAt1XJAlZNkHz1V5p/SMS6DvK15jkqM4u6nwwGQiY3nMhvL
+Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
+X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:94ee:de01:168:9f20])
+ (user=axelrasmussen job=sendgmr) by 2002:a25:c090:: with SMTP id
+ c138mr7134204ybf.314.1612992126484; Wed, 10 Feb 2021 13:22:06 -0800 (PST)
+Date:   Wed, 10 Feb 2021 13:21:50 -0800
+Message-Id: <20210210212200.1097784-1-axelrasmussen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
+Subject: [PATCH v5 00/10] userfaultfd: add minor fault handling
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Steven Price <steven.price@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Adam Ruprecht <ruprecht@google.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 8:33 AM David Howells <dhowells@redhat.com> wrote:
->
-> Then I could follow it up with this patch here, moving towards dropping the
-> PG_fscache alias for the new API.
+Changelog
+=========
 
-So I don't mind the alias per se, but I did mind the odd mixing of
-names for the same thing.
+v4->v5:
+- Typo fix in the documentation update.
+- Removed comment in vma_can_userfault. The same information is better covered
+  in the documentation update, so the comment is unnecessary (and slightly
+  confusing as written).
+- Reworded comment for MCOPY_ATOMIC_CONTINUE mode.
+- For non-shared CONTINUE, only make the PTE(s) non-writable, don't change flags
+  on the VMA.
+- In hugetlb_mcopy_atomic_pte, always unlock the page in MCOPY_ATOMIC_CONTINUE,
+  even if we don't have VM_SHARED.
+- In hugetlb_mcopy_atomic_pte, introduce "bool is_continue" to make that kind of
+  mode check more terse.
+- Merged two nested if()s into a single expression in __mcopy_atomic_hugetlb.
+- Moved "return -EINVAL if MCOPY_CONTINUE isn't supported for this vma type" up
+  one level, into __mcopy_atomic.
+- Rebased onto linux-next/akpm, instead of the latest 5.11 RC. Resolved
+  conflicts with Mike's recent hugetlb changes.
 
-So I think your change to make it be named "wait_on_page_private_2()"
-fixed that mixing, but I also think that it's probably then a good
-idea to have aliases in place for filesystems that actually include
-the fscache.h header.
+v3->v4:
+- Relaxed restriction for minor registration to allow any hugetlb VMAs, not
+  just those with VM_SHARED. Fixed setting VM_WRITE flag in a CONTINUE ioctl
+  for non-VM_SHARED VMAs.
+- Reordered if() branches in hugetlb_mcopy_atomic_pte, so the conditions are
+  simpler and easier to read.
+- Reverted most of the mfill_atomic_pte change (the anon / shmem path). Just
+  return -EINVAL for CONTINUE, and set zeropage = (mode ==
+  MCOPY_ATOMIC_ZEROPAGE), so we can keep the delta small.
+- Split out adding #ifdef CONFIG_USERFAULTFD to a separate patch (instead of
+  lumping it together with adding UFFDIO_CONTINUE).
+- Fixed signature of hugetlb_mcopy_atomic_pte for !CONFIG_HUGETLB_PAGE
+  (signature must be the same in either case).
+- Rebased onto a newer version of Peter's patches to disable huge PMD sharing.
 
-Put another way: I think that it would be even better to simply just
-have a function like
+v2->v3:
+- Added #ifdef CONFIG_USERFAULTFD around hugetlb helper functions, to fix build
+  errors when building without CONFIG_USERFAULTFD set.
 
-   static inline void wait_on_page_fscache(struct page *page)
-   {
-        if (PagePrivate2(page))
-                wait_on_page_bit(page, PG_private_2);
-  }
+v1->v2:
+- Fixed a bug in the hugetlb_mcopy_atomic_pte retry case. We now plumb in the
+  enum mcopy_atomic_mode, so we can differentiate between the three cases this
+  function needs to handle:
+  1) We're doing a COPY op, and need to allocate a page, add to cache, etc.
+  2) We're doing a COPY op, but allocation in this function failed previously;
+     we're in the retry path. The page was allocated, but not e.g. added to page
+     cache, so that still needs to be done.
+  3) We're doing a CONTINUE op, we need to look up an existing page instead of
+     allocating a new one.
+- Rebased onto a newer version of Peter's patches to disable huge PMD sharing,
+  which fixes syzbot complaints on some non-x86 architectures.
+- Moved __VM_UFFD_FLAGS into userfaultfd_k.h, so inline helpers can use it.
+- Renamed UFFD_FEATURE_MINOR_FAULT_HUGETLBFS to UFFD_FEATURE_MINOR_HUGETLBFS,
+  for consistency with other existing feature flags.
+- Moved the userfaultfd_minor hook in hugetlb.c into the else block, so we don't
+  have to explicitly check for !new_page.
 
-and make that be *not* in <linux/pagemap.h>, but simply be in
-<linux/fscache.h> under that big comment about how PG_private_2 is
-used for the fscache bit. You already have that comment, putting the
-above kind of helper function right there would very much explain why
-a "wait for fscache bit" function then uses the PagePrivate2 function
-to test the bit. Agreed?
+RFC->v1:
+- Rebased onto Peter Xu's patches for disabling huge PMD sharing for certain
+  userfaultfd-registered areas.
+- Added commits which update documentation, and add a self test which exercises
+  the new feature.
+- Fixed reporting CONTINUE as a supported ioctl even for non-MINOR ranges.
 
-Alternatively, since that header file already has
+Overview
+========
 
-    #define PageFsCache(page)               PagePrivate2((page))
+This series adds a new userfaultfd registration mode,
+UFFDIO_REGISTER_MODE_MINOR. This allows userspace to intercept "minor" faults.
+By "minor" fault, I mean the following situation:
 
-you could also just write the above as
+Let there exist two mappings (i.e., VMAs) to the same page(s) (shared memory).
+One of the mappings is registered with userfaultfd (in minor mode), and the
+other is not. Via the non-UFFD mapping, the underlying pages have already been
+allocated & filled with some contents. The UFFD mapping has not yet been
+faulted in; when it is touched for the first time, this results in what I'm
+calling a "minor" fault. As a concrete example, when working with hugetlbfs, we
+have huge_pte_none(), but find_lock_page() finds an existing page.
 
-   static inline void wait_on_page_fscache(struct page *page)
-   {
-        if (PageFsCache(page))
-                wait_on_page_bit(page, PG_fscache);
-  }
+We also add a new ioctl to resolve such faults: UFFDIO_CONTINUE. The idea is,
+userspace resolves the fault by either a) doing nothing if the contents are
+already correct, or b) updating the underlying contents using the second,
+non-UFFD mapping (via memcpy/memset or similar, or something fancier like RDMA,
+or etc...). In either case, userspace issues UFFDIO_CONTINUE to tell the kernel
+"I have ensured the page contents are correct, carry on setting up the mapping".
 
-and now it is even more obvious. And there's no odd mixing of
-"fscache" and "private_2", it's all consistent.
+Use Case
+========
 
-IOW, I'm not against "wait_on_page_fscache()" as a function, but I
-*am* against the odd _mixing_ of things without a big explanation,
-where the code itself looks very odd and questionable.
+Consider the use case of VM live migration (e.g. under QEMU/KVM):
 
-And I think the "fscache" waiting functions should not be visible to
-any core VM or filesystem code - it should be limited explicitly to
-those filesystems that use fscache, and include that header file.
+1. While a VM is still running, we copy the contents of its memory to a
+   target machine. The pages are populated on the target by writing to the
+   non-UFFD mapping, using the setup described above. The VM is still running
+   (and therefore its memory is likely changing), so this may be repeated
+   several times, until we decide the target is "up to date enough".
 
-Wouldn't that make sense?
+2. We pause the VM on the source, and start executing on the target machine.
+   During this gap, the VM's user(s) will *see* a pause, so it is desirable to
+   minimize this window.
 
-Also, honestly, I really *REALLY* want your commit messages to talk
-about who has been cc'd, who has been part of development, and point
-to the PUBLIC MAILING LISTS WHERE THAT DISCUSSION WAS TAKING PLACE, so
-that I can actually see that "yes, other people were involved"
+3. Between the last time any page was copied from the source to the target, and
+   when the VM was paused, the contents of that page may have changed - and
+   therefore the copy we have on the target machine is out of date. Although we
+   can keep track of which pages are out of date, for VMs with large amounts of
+   memory, it is "slow" to transfer this information to the target machine. We
+   want to resume execution before such a transfer would complete.
 
-No, I don't require this in general, but exactly because of the
-history we have, I really really want to see that. I want to see a
+4. So, the guest begins executing on the target machine. The first time it
+   touches its memory (via the UFFD-registered mapping), userspace wants to
+   intercept this fault. Userspace checks whether or not the page is up to date,
+   and if not, copies the updated page from the source machine, via the non-UFFD
+   mapping. Finally, whether a copy was performed or not, userspace issues a
+   UFFDIO_CONTINUE ioctl to tell the kernel "I have ensured the page contents
+   are correct, carry on setting up the mapping".
 
-   Link: https://lore.kernel.org/r/....
+We don't have to do all of the final updates on-demand. The userfaultfd manager
+can, in the background, also copy over updated pages once it receives the map of
+which pages are up-to-date or not.
 
-and the Cc's - or better yet, the Reviewed-by's etc - so that when I
-get a pull request, it really is very obvious to me when I look at it
-that others really have been involved.
+Interaction with Existing APIs
+==============================
 
-So if I continue to see just
+Because it's possible to combine registration modes (e.g. a single VMA can be
+userfaultfd-registered MINOR | MISSING), and because it's up to userspace how to
+resolve faults once they are received, I spent some time thinking through how
+the existing API interacts with the new feature.
 
-    Signed-off-by: David Howells <dhowells@redhat.com>
+UFFDIO_CONTINUE cannot be used to resolve non-minor faults, as it does not
+allocate a new page. If UFFDIO_CONTINUE is used on a non-minor fault:
 
-at the end of the commit messages, I will not pull.
+- For non-shared memory or shmem, -EINVAL is returned.
+- For hugetlb, -EFAULT is returned.
 
-Yes, in this thread a couple of people have piped up and said that
-they were part of the discussion and that they are interested, but if
-I have to start asking around just to see that, then it's too little,
-too late.
+UFFDIO_COPY and UFFDIO_ZEROPAGE cannot be used to resolve minor faults. Without
+modifications, the existing codepath assumes a new page needs to be allocated.
+This is okay, since userspace must have a second non-UFFD-registered mapping
+anyway, thus there isn't much reason to want to use these in any case (just
+memcpy or memset or similar).
 
-No more of this "it looks like David Howells did things in private". I
-want links I can follow to see the discussion, and I really want to
-see that others really have been involved.
+- If UFFDIO_COPY is used on a minor fault, -EEXIST is returned.
+- If UFFDIO_ZEROPAGE is used on a minor fault, -EEXIST is returned (or -EINVAL
+  in the case of hugetlb, as UFFDIO_ZEROPAGE is unsupported in any case).
+- UFFDIO_WRITEPROTECT simply doesn't work with shared memory, and returns
+  -ENOENT in that case (regardless of the kind of fault).
 
-Ok?
+Dependencies
+============
 
-                  Linus
+I've included 4 commits from Peter Xu's larger series
+(https://lore.kernel.org/patchwork/cover/1366017/) in this series. My changes
+depend on his work, to disable huge PMD sharing for MINOR registered userfaultfd
+areas. I included the 4 commits directly because a) it lets this series just be
+applied and work as-is, and b) they are fairly standalone, and could potentially
+be merged even without the rest of the larger series Peter submitted. Thanks
+Peter!
+
+Also, although it doesn't affect minor fault handling, I did notice that the
+userfaultfd self test sometimes experienced memory corruption
+(https://lore.kernel.org/patchwork/cover/1356755/). For anyone testing this
+series, it may be useful to apply that series first to fix the selftest
+flakiness. That series doesn't have to be merged into mainline / maintaner
+branches before mine, though.
+
+Future Work
+===========
+
+Currently the patchset only supports hugetlbfs. There is no reason it can't work
+with shmem, but I expect hugetlbfs to be much more commonly used since we're
+talking about backing guest memory for VMs. I plan to implement shmem support in
+a follow-up patch series.
+
+Axel Rasmussen (6):
+  userfaultfd: add minor fault registration mode
+  userfaultfd: disable huge PMD sharing for MINOR registered VMAs
+  userfaultfd: hugetlbfs: only compile UFFD helpers if config enabled
+  userfaultfd: add UFFDIO_CONTINUE ioctl
+  userfaultfd: update documentation to describe minor fault handling
+  userfaultfd/selftests: add test exercising minor fault handling
+
+Peter Xu (4):
+  hugetlb: Pass vma into huge_pte_alloc() and huge_pmd_share()
+  hugetlb/userfaultfd: Forbid huge pmd sharing when uffd enabled
+  mm/hugetlb: Move flush_hugetlb_tlb_range() into hugetlb.h
+  hugetlb/userfaultfd: Unshare all pmds for hugetlbfs when register wp
+
+ Documentation/admin-guide/mm/userfaultfd.rst | 107 +++++++----
+ arch/arm64/mm/hugetlbpage.c                  |   7 +-
+ arch/ia64/mm/hugetlbpage.c                   |   3 +-
+ arch/mips/mm/hugetlbpage.c                   |   4 +-
+ arch/parisc/mm/hugetlbpage.c                 |   2 +-
+ arch/powerpc/mm/hugetlbpage.c                |   3 +-
+ arch/s390/mm/hugetlbpage.c                   |   2 +-
+ arch/sh/mm/hugetlbpage.c                     |   2 +-
+ arch/sparc/mm/hugetlbpage.c                  |   6 +-
+ fs/proc/task_mmu.c                           |   1 +
+ fs/userfaultfd.c                             | 186 +++++++++++++++----
+ include/linux/hugetlb.h                      |  22 ++-
+ include/linux/mm.h                           |   1 +
+ include/linux/mmu_notifier.h                 |   1 +
+ include/linux/userfaultfd_k.h                |  49 ++++-
+ include/trace/events/mmflags.h               |   1 +
+ include/uapi/linux/userfaultfd.h             |  36 +++-
+ mm/hugetlb.c                                 | 116 ++++++++----
+ mm/userfaultfd.c                             |  39 ++--
+ tools/testing/selftests/vm/userfaultfd.c     | 147 ++++++++++++++-
+ 20 files changed, 587 insertions(+), 148 deletions(-)
+
+--
+2.30.0.478.g8a0d178c01-goog
+
