@@ -2,320 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9257A315BBB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 01:57:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD15315BEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 02:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234079AbhBJA46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 19:56:58 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:42487 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234466AbhBJAyz (ORCPT
+        id S234581AbhBJBKM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 20:10:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39072 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234944AbhBJBIB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 19:54:55 -0500
-Received: by mail-io1-f71.google.com with SMTP id k26so582618ios.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Feb 2021 16:54:38 -0800 (PST)
+        Tue, 9 Feb 2021 20:08:01 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F5CC061574;
+        Tue,  9 Feb 2021 17:07:20 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id p20so959940ejb.6;
+        Tue, 09 Feb 2021 17:07:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ePOOgJ1bRE7sZrw4203J7YVw7l2PTtMtobAvSfxZsE8=;
+        b=GyyJJ/YjmAijxmg74wofh+2bQ0XakpFCm424T5jbHcOLM/qUrPvmEQk6wOQ95qlWS9
+         Gk1QfPaSXbUX9cSP16QgEP68Hgo+wRKKpKKq+syClxOwTlQnrqJWaH9qoHcFeT9/3StP
+         ZrxNd7cQuiRmYgcy1pHgJ3HY7O/xkSs50bH0XDWHx7rIzorLmS8+Tq8UQp00IlfAqzs2
+         p3elJnl+n5+s+UIYGcE5mBa9w885JXbgitP5XAjKPAYnD1M3BzsxHDifE3AXa5fNmKk2
+         UEZOoiP4L0534FaamPfN6OaulnBllYmpYYKhyhXUYsC/f/LtQU/Kwt9q9A7KQlxNCUU2
+         hWzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ELLsDRhc1OwIhGjv11zMuyJ1ltE0yFcmeFvVf50z9n0=;
-        b=W3EG+BRNm2bSnn15P6nbPxTMKHoGjT5sJDOF/xacQCrxYIHOEQ/Jl3zO3budlXNvR7
-         pURr1A/8E8zQIMXAMhop9lAe36tTjg8cvD85vJtlJfgsotsG0aVPrOxbfSL/PMPLdG9v
-         LMVXkTHsR4RWz+c6duOfj6vTfm/d+LKELGHD+YOCBV54PNJT5hY48INnzquy56tnp+PV
-         0Msvwgg9obXQURL0ct+OAkhclE7/Ip/E9bj5jlzB0bf2EgWPAsLWIsVhpg7QVjcZ7Q+b
-         5xMWJ9z/89m4TY4QJN51OIMb6cPNMe1Hv76CGBWjXHEwj5Ekhwoo9oh6tNOilFRdXd9d
-         RNuA==
-X-Gm-Message-State: AOAM532wyGP+kJ/zEBhojyD+1M7ZAcHu/l7yUGeSquAyfU/yj3lV/XA8
-        i6tW9hzEfcYb2a2FvDy380wHKBwB6vQW2dxjQ/TVJ/B3/KsO
-X-Google-Smtp-Source: ABdhPJziRd9BjJP8MQjGFT377RUnzOl96G/WQ1eNeNV5J7VTF9V5o/+nzhKQGJUK5u71+1ADkZ6A2TnL1f5e9PUo2lchyT+P0eox
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ePOOgJ1bRE7sZrw4203J7YVw7l2PTtMtobAvSfxZsE8=;
+        b=UeH+RbCDs5fbkSat5kaCBEnwwLJ74fG2015lmSWOrYRhc9BrznECdd/WB9Tqq1wuIZ
+         QGaZJvTsGBJhGE7fCviUb7QfX0VXaYIEkcz/brxnXQdvg24LLBsOCRv5b/tb448I8AIm
+         fxhYno9XbQBTVjMdu/eq6qZpGi8K9h/8WZfBR6nHZPMUZCjOA0p6MOVw2pBBJ9hl6feQ
+         sylDmaLtultON727i11ms7kIEN26WqGuoU3cF8pQF8FwpF40pjoysjPl30++hJez9M5N
+         xGWZgtHoM8IwiUj21aQg4NKwHZALPIBuc5B0RBktThBn55XSAHch93CnJN57ck6Zc9V7
+         9Igg==
+X-Gm-Message-State: AOAM530sVE52utf3LeW5a+IbOyojHzzhTIH3m578eVoGQ+nsXreEml2c
+        qiyN+GWhOztTiosCLYEoBm47jDZ5SEFMO5e3EA0=
+X-Google-Smtp-Source: ABdhPJw4DItb779I2iVr2ra7DPTmnwUuXp3XWcNxJXP4T0tQgBy4M3uYGgqeOu3ilbXbTM9VyEvJJ6VdPOIB+WjhakQ=
+X-Received: by 2002:a17:906:2583:: with SMTP id m3mr383234ejb.499.1612919239346;
+ Tue, 09 Feb 2021 17:07:19 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:8711:: with SMTP id m17mr601345ild.48.1612918453301;
- Tue, 09 Feb 2021 16:54:13 -0800 (PST)
-Date:   Tue, 09 Feb 2021 16:54:13 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075f90305baf0d732@google.com>
-Subject: INFO: task hung in io_uring_cancel_task_requests
-From:   syzbot <syzbot+695b03d82fa8e4901b06@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20210209174646.1310591-1-shy828301@gmail.com> <20210209174646.1310591-7-shy828301@gmail.com>
+ <20210210002218.GJ524633@carbon.DHCP.thefacebook.com>
+In-Reply-To: <20210210002218.GJ524633@carbon.DHCP.thefacebook.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 9 Feb 2021 17:07:07 -0800
+Message-ID: <CAHbLzkp6q60pGBGKB-H6k5YoCy8ZHcLVj4rrZOsXi3=jOfbGzQ@mail.gmail.com>
+Subject: Re: [v7 PATCH 06/12] mm: vmscan: add shrinker_info_protected() helper
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Feb 9, 2021 at 4:22 PM Roman Gushchin <guro@fb.com> wrote:
+>
+> On Tue, Feb 09, 2021 at 09:46:40AM -0800, Yang Shi wrote:
+> > The shrinker_info is dereferenced in a couple of places via rcu_dereference_protected
+> > with different calling conventions, for example, using mem_cgroup_nodeinfo helper
+> > or dereferencing memcg->nodeinfo[nid]->shrinker_info.  And the later patch
+> > will add more dereference places.
+> >
+> > So extract the dereference into a helper to make the code more readable.  No
+> > functional change.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  mm/vmscan.c | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 9436f9246d32..273efbf4d53c 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -190,6 +190,13 @@ static int shrinker_nr_max;
+> >  #define NR_MAX_TO_SHR_MAP_SIZE(nr_max) \
+> >       (DIV_ROUND_UP(nr_max, BITS_PER_LONG) * sizeof(unsigned long))
+> >
+> > +static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
+> > +                                                  int nid)
+> > +{
+> > +     return rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
+> > +                                      lockdep_is_held(&shrinker_rwsem));
+> > +}
+> > +
+>
+>
+> I'd probably drop the "protected" suffix (because there is no unprotected version,
+> right?).
 
-syzbot found the following issue on:
+No, actually there is one "unprotected" call in set_shrinker_bit().
 
-HEAD commit:    dd86e7fa Merge tag 'pci-v5.11-fixes-2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e43f90d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e83e68d0a6aba5f6
-dashboard link: https://syzkaller.appspot.com/bug?extid=695b03d82fa8e4901b06
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1490f0d4d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17aedf1cd00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+695b03d82fa8e4901b06@syzkaller.appspotmail.com
-
-INFO: task syz-executor893:8493 blocked for more than 143 seconds.
-      Not tainted 5.11.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor893 state:D stack:28144 pid: 8493 ppid:  8480 flags:0x00000004
-Call Trace:
- context_switch kernel/sched/core.c:4327 [inline]
- __schedule+0x90c/0x21a0 kernel/sched/core.c:5078
- schedule+0xcf/0x270 kernel/sched/core.c:5157
- io_uring_cancel_files fs/io_uring.c:8912 [inline]
- io_uring_cancel_task_requests+0xe70/0x11a0 fs/io_uring.c:8979
- __io_uring_files_cancel+0x110/0x1b0 fs/io_uring.c:9067
- io_uring_files_cancel include/linux/io_uring.h:51 [inline]
- do_exit+0x2fe/0x2ae0 kernel/exit.c:780
- do_group_exit+0x125/0x310 kernel/exit.c:922
- __do_sys_exit_group kernel/exit.c:933 [inline]
- __se_sys_exit_group kernel/exit.c:931 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43eb19
-RSP: 002b:00007ffda99d64d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00000000004b02f0 RCX: 000000000043eb19
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000010000000
-R10: 0000000000008011 R11: 0000000000000246 R12: 00000000004b02f0
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
-INFO: task syz-executor893:8571 blocked for more than 143 seconds.
-      Not tainted 5.11.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor893 state:D stack:28144 pid: 8571 ppid:  8479 flags:0x00004004
-Call Trace:
- context_switch kernel/sched/core.c:4327 [inline]
- __schedule+0x90c/0x21a0 kernel/sched/core.c:5078
- schedule+0xcf/0x270 kernel/sched/core.c:5157
- io_uring_cancel_files fs/io_uring.c:8912 [inline]
- io_uring_cancel_task_requests+0xe70/0x11a0 fs/io_uring.c:8979
- __io_uring_files_cancel+0x110/0x1b0 fs/io_uring.c:9067
- io_uring_files_cancel include/linux/io_uring.h:51 [inline]
- do_exit+0x2fe/0x2ae0 kernel/exit.c:780
- do_group_exit+0x125/0x310 kernel/exit.c:922
- __do_sys_exit_group kernel/exit.c:933 [inline]
- __se_sys_exit_group kernel/exit.c:931 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43eb19
-RSP: 002b:00007ffda99d64d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00000000004b02f0 RCX: 000000000043eb19
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000010000000
-R10: 0000000000008011 R11: 0000000000000246 R12: 00000000004b02f0
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
-INFO: task syz-executor893:8579 blocked for more than 143 seconds.
-      Not tainted 5.11.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor893 state:D stack:28144 pid: 8579 ppid:  8482 flags:0x00004004
-Call Trace:
- context_switch kernel/sched/core.c:4327 [inline]
- __schedule+0x90c/0x21a0 kernel/sched/core.c:5078
- schedule+0xcf/0x270 kernel/sched/core.c:5157
- io_uring_cancel_files fs/io_uring.c:8912 [inline]
- io_uring_cancel_task_requests+0xe70/0x11a0 fs/io_uring.c:8979
- __io_uring_files_cancel+0x110/0x1b0 fs/io_uring.c:9067
- io_uring_files_cancel include/linux/io_uring.h:51 [inline]
- do_exit+0x2fe/0x2ae0 kernel/exit.c:780
- do_group_exit+0x125/0x310 kernel/exit.c:922
- __do_sys_exit_group kernel/exit.c:933 [inline]
- __se_sys_exit_group kernel/exit.c:931 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43eb19
-RSP: 002b:00007ffda99d64d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00000000004b02f0 RCX: 000000000043eb19
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000010000000
-R10: 0000000000008011 R11: 0000000000000246 R12: 00000000004b02f0
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
-INFO: task syz-executor893:8591 blocked for more than 143 seconds.
-      Not tainted 5.11.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor893 state:D stack:28144 pid: 8591 ppid:  8481 flags:0x00000004
-Call Trace:
- context_switch kernel/sched/core.c:4327 [inline]
- __schedule+0x90c/0x21a0 kernel/sched/core.c:5078
- schedule+0xcf/0x270 kernel/sched/core.c:5157
- io_uring_cancel_files fs/io_uring.c:8912 [inline]
- io_uring_cancel_task_requests+0xe70/0x11a0 fs/io_uring.c:8979
- __io_uring_files_cancel+0x110/0x1b0 fs/io_uring.c:9067
- io_uring_files_cancel include/linux/io_uring.h:51 [inline]
- do_exit+0x2fe/0x2ae0 kernel/exit.c:780
- do_group_exit+0x125/0x310 kernel/exit.c:922
- __do_sys_exit_group kernel/exit.c:933 [inline]
- __se_sys_exit_group kernel/exit.c:931 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43eb19
-RSP: 002b:00007ffda99d64d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00000000004b02f0 RCX: 000000000043eb19
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000010000000
-R10: 0000000000008011 R11: 0000000000000246 R12: 00000000004b02f0
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
-INFO: task syz-executor893:8624 blocked for more than 144 seconds.
-      Not tainted 5.11.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor893 state:D stack:28144 pid: 8624 ppid:  8477 flags:0x00004004
-Call Trace:
- context_switch kernel/sched/core.c:4327 [inline]
- __schedule+0x90c/0x21a0 kernel/sched/core.c:5078
- schedule+0xcf/0x270 kernel/sched/core.c:5157
- io_uring_cancel_files fs/io_uring.c:8912 [inline]
- io_uring_cancel_task_requests+0xe70/0x11a0 fs/io_uring.c:8979
- __io_uring_files_cancel+0x110/0x1b0 fs/io_uring.c:9067
- io_uring_files_cancel include/linux/io_uring.h:51 [inline]
- do_exit+0x2fe/0x2ae0 kernel/exit.c:780
- do_group_exit+0x125/0x310 kernel/exit.c:922
- __do_sys_exit_group kernel/exit.c:933 [inline]
- __se_sys_exit_group kernel/exit.c:931 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43eb19
-RSP: 002b:00007ffda99d64d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00000000004b02f0 RCX: 000000000043eb19
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000010000000
-R10: 0000000000008011 R11: 0000000000000246 R12: 00000000004b02f0
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
-INFO: task syz-executor893:8633 blocked for more than 144 seconds.
-      Not tainted 5.11.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor893 state:D stack:27648 pid: 8633 ppid:  8478 flags:0x00004004
-Call Trace:
- context_switch kernel/sched/core.c:4327 [inline]
- __schedule+0x90c/0x21a0 kernel/sched/core.c:5078
- schedule+0xcf/0x270 kernel/sched/core.c:5157
- io_uring_cancel_files fs/io_uring.c:8912 [inline]
- io_uring_cancel_task_requests+0xe70/0x11a0 fs/io_uring.c:8979
- __io_uring_files_cancel+0x110/0x1b0 fs/io_uring.c:9067
- io_uring_files_cancel include/linux/io_uring.h:51 [inline]
- do_exit+0x2fe/0x2ae0 kernel/exit.c:780
- do_group_exit+0x125/0x310 kernel/exit.c:922
- __do_sys_exit_group kernel/exit.c:933 [inline]
- __se_sys_exit_group kernel/exit.c:931 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:931
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43eb19
-RSP: 002b:00007ffda99d64d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00000000004b02f0 RCX: 000000000043eb19
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffffffffffc0 R09: 0000000010000000
-R10: 0000000000008011 R11: 0000000000000246 R12: 00000000004b02f0
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1638:
- #0: ffffffff8bd73da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6259
-2 locks held by in:imklog/8193:
- #0: ffff888019c15bb0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:947
- #1: ffffffff8bd73da0 (rcu_read_lock){....}-{1:2}, at: is_bpf_text_address+0x0/0x160 kernel/bpf/core.c:687
-1 lock held by syz-executor893/8493:
- #0: ffff88801362dc70 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7468 [inline]
- #0: ffff88801362dc70 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7463 [inline]
- #0: ffff88801362dc70 (&sqd->lock){+.+.}-{3:3}, at: io_uring_cancel_task_requests+0x311/0x11a0 fs/io_uring.c:8973
-1 lock held by syz-executor893/8571:
- #0: ffff8880232b3470 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7468 [inline]
- #0: ffff8880232b3470 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7463 [inline]
- #0: ffff8880232b3470 (&sqd->lock){+.+.}-{3:3}, at: io_uring_cancel_task_requests+0x311/0x11a0 fs/io_uring.c:8973
-1 lock held by syz-executor893/8579:
- #0: ffff888014271070 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7468 [inline]
- #0: ffff888014271070 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7463 [inline]
- #0: ffff888014271070 (&sqd->lock){+.+.}-{3:3}, at: io_uring_cancel_task_requests+0x311/0x11a0 fs/io_uring.c:8973
-1 lock held by syz-executor893/8591:
- #0: ffff8880195b2470 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7468 [inline]
- #0: ffff8880195b2470 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7463 [inline]
- #0: ffff8880195b2470 (&sqd->lock){+.+.}-{3:3}, at: io_uring_cancel_task_requests+0x311/0x11a0 fs/io_uring.c:8973
-1 lock held by syz-executor893/8624:
- #0: ffff8880161a4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7468 [inline]
- #0: ffff8880161a4870 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7463 [inline]
- #0: ffff8880161a4870 (&sqd->lock){+.+.}-{3:3}, at: io_uring_cancel_task_requests+0x311/0x11a0 fs/io_uring.c:8973
-1 lock held by syz-executor893/8633:
- #0: ffff888025448c70 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7468 [inline]
- #0: ffff888025448c70 (&sqd->lock){+.+.}-{3:3}, at: io_sq_thread_park fs/io_uring.c:7463 [inline]
- #0: ffff888025448c70 (&sqd->lock){+.+.}-{3:3}, at: io_uring_cancel_task_requests+0x311/0x11a0 fs/io_uring.c:8973
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 1638 Comm: khungtaskd Not tainted 5.11.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:120
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
- watchdog+0xd43/0xfa0 kernel/hung_task.c:294
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 4885 Comm: systemd-journal Not tainted 5.11.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:209 [inline]
-RIP: 0010:bpf_ksym_find+0x6a/0x1c0 kernel/bpf/core.c:667
-Code: 68 ff ff ff 48 89 ef 4c 89 fe e8 41 66 f4 ff 4c 39 fd 0f 83 e9 00 00 00 e8 c3 5e f4 ff 8b 1d ad 7e 22 0a 44 8b 74 24 04 89 de <44> 89 f7 e8 ae 65 f4 ff 41 39 de 0f 84 e3 00 00 00 e8 a0 5e f4 ff
-RSP: 0018:ffffc90001207aa0 EFLAGS: 00000093
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff888015d6a200 RSI: 0000000000000000 RDI: ffffffff8ba0f3b0
-RBP: 00007fb450c54840 R08: 0000000000000000 R09: 0000000000000001
-R10: ffffffff817ec8c7 R11: 0000000000000000 R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000200
-FS:  00007fb4516c58c0(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb44eab7000 CR3: 0000000015593000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- is_bpf_text_address+0x75/0x160 kernel/bpf/core.c:701
- kernel_text_address kernel/extable.c:151 [inline]
- kernel_text_address+0xbd/0xf0 kernel/extable.c:120
- __kernel_text_address+0x9/0x30 kernel/extable.c:105
- unwind_get_return_address arch/x86/kernel/unwind_orc.c:318 [inline]
- unwind_get_return_address+0x51/0x90 arch/x86/kernel/unwind_orc.c:313
- arch_stack_walk+0x93/0xe0 arch/x86/kernel/stacktrace.c:26
- stack_trace_save+0x8c/0xc0 kernel/stacktrace.c:121
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:38
- kasan_record_aux_stack+0x87/0xb0 mm/kasan/generic.c:344
- __call_rcu kernel/rcu/tree.c:2965 [inline]
- call_rcu+0xbb/0x700 kernel/rcu/tree.c:3038
- task_work_run+0xdd/0x190 kernel/task_work.c:140
- tracehook_notify_resume include/linux/tracehook.h:189 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:174 [inline]
- exit_to_user_mode_prepare+0x249/0x250 kernel/entry/common.c:201
- __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7fb450c54840
-Code: 73 01 c3 48 8b 0d 68 77 20 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 89 bb 20 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e f6 ff ff 48 89 04 24
-RSP: 002b:00007ffd66c13138 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: fffffffffffffffe RBX: 00007ffd66c13440 RCX: 00007fb450c54840
-RDX: 00000000000001a0 RSI: 0000000000080042 RDI: 000055b07430c150
-RBP: 000000000000000d R08: 000000000000ffc0 R09: 00000000ffffffff
-R10: 0000000000000069 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 000055b0742fe060 R14: 00007ffd66c13400 R15: 000055b07430c1a0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+>
+> Other than that LGTM.
+>
+> Acked-by: Roman Gushchin <guro@fb.com>
