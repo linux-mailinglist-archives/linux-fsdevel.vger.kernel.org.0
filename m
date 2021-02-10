@@ -2,113 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5C20316665
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 13:16:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81ED9316729
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 13:55:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231431AbhBJMPv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 07:15:51 -0500
-Received: from relay.sw.ru ([185.231.240.75]:56482 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231623AbhBJMNi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 07:13:38 -0500
+        id S230290AbhBJMzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 07:55:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49370 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230294AbhBJMzF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Feb 2021 07:55:05 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA39C061574;
+        Wed, 10 Feb 2021 04:54:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=virtuozzo.com; s=relay; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GAOsibDhKJ04+xMmEsdPpg7oFYUkfCHjNiy9fpcutpg=; b=wKkkF4iMbqvGVMzMq11k823xrW
-        UgQUXkdf+qTU7A3j4VsVhEg9a8/s5d7Ydo+IgEMhU69ecEtaNz7JLebZaRhPCOYb2ysiF74VulqcC
-        16gA3FWJFaztuo9uYYa4+R/3k0d74rgLQkwj8AzVak53jrJ9Vkvr9ckz/t9B5ez1rVCo=;
-Received: from [192.168.15.133]
-        by relay.sw.ru with esmtp (Exim 4.94)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1l9oMA-002822-3z; Wed, 10 Feb 2021 15:12:30 +0300
-Subject: Re: [v7 PATCH 06/12] mm: vmscan: add shrinker_info_protected() helper
-To:     Yang Shi <shy828301@gmail.com>, guro@fb.com, vbabka@suse.cz,
-        shakeelb@google.com, david@fromorbit.com, hannes@cmpxchg.org,
-        mhocko@suse.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210209174646.1310591-1-shy828301@gmail.com>
- <20210209174646.1310591-7-shy828301@gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <73458559-f8b9-3f3a-6ffc-8fcc8a7dc519@virtuozzo.com>
-Date:   Wed, 10 Feb 2021 15:12:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=B0pdxrv6K3qeE0maWe89FmjunX
+        V23vkKajQUOKG0nC/7WZbUY3523sM2TcWGltq8tbLl+sZrsXUDf3aBrhbdI6pc/Mlq01lBqqNV10x
+        nyneEAYO9IWxMoYYVSLyFiTDfs8Ogx2g3VRP1IwZfd//wM4NwLyMBbAu5T8lgxjDsLnJNWn0s33ym
+        2Ct3EC0XxT5nFCnz72s5ybO5LRA6VdOhDkyebb7U5hPi1q03TrwqmbiQMlKxZXcs4SrTG7gqdVAVg
+        mZYu0nS9iOjm87s54UsAz8v7p7+RVki4IbtPkvhciVTYOOfobI9ehyffBSRLWT/wRiZJcCRswg/+U
+        Lui1ZkdQ==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l9p0F-008rON-M4; Wed, 10 Feb 2021 12:53:55 +0000
+Date:   Wed, 10 Feb 2021 12:53:55 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     ira.weiny@intel.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Sterba <dsterba@suse.cz>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Or Gerlitz <gerlitz.or@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@kernel.org>, clm@fb.com,
+        josef@toxicpanda.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V2 1/8] mm/highmem: Lift memcpy_[to|from]_page to core
+Message-ID: <20210210125355.GA2111784@infradead.org>
+References: <20210210062221.3023586-1-ira.weiny@intel.com>
+ <20210210062221.3023586-2-ira.weiny@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20210209174646.1310591-7-shy828301@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210210062221.3023586-2-ira.weiny@intel.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 09.02.2021 20:46, Yang Shi wrote:
-> The shrinker_info is dereferenced in a couple of places via rcu_dereference_protected
-> with different calling conventions, for example, using mem_cgroup_nodeinfo helper
-> or dereferencing memcg->nodeinfo[nid]->shrinker_info.  And the later patch
-> will add more dereference places.
-> 
-> So extract the dereference into a helper to make the code more readable.  No
-> functional change.
-> 
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
+Looks good,
 
-Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-
-> ---
->  mm/vmscan.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 9436f9246d32..273efbf4d53c 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -190,6 +190,13 @@ static int shrinker_nr_max;
->  #define NR_MAX_TO_SHR_MAP_SIZE(nr_max) \
->  	(DIV_ROUND_UP(nr_max, BITS_PER_LONG) * sizeof(unsigned long))
->  
-> +static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
-> +						     int nid)
-> +{
-> +	return rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
-> +					 lockdep_is_held(&shrinker_rwsem));
-> +}
-> +
->  static void free_shrinker_info_rcu(struct rcu_head *head)
->  {
->  	kvfree(container_of(head, struct shrinker_info, rcu));
-> @@ -202,8 +209,7 @@ static int expand_one_shrinker_info(struct mem_cgroup *memcg,
->  	int nid;
->  
->  	for_each_node(nid) {
-> -		old = rcu_dereference_protected(
-> -			mem_cgroup_nodeinfo(memcg, nid)->shrinker_info, true);
-> +		old = shrinker_info_protected(memcg, nid);
->  		/* Not yet online memcg */
->  		if (!old)
->  			return 0;
-> @@ -234,7 +240,7 @@ void free_shrinker_info(struct mem_cgroup *memcg)
->  
->  	for_each_node(nid) {
->  		pn = mem_cgroup_nodeinfo(memcg, nid);
-> -		info = rcu_dereference_protected(pn->shrinker_info, true);
-> +		info = shrinker_info_protected(memcg, nid);
->  		kvfree(info);
->  		rcu_assign_pointer(pn->shrinker_info, NULL);
->  	}
-> @@ -674,8 +680,7 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
->  	if (!down_read_trylock(&shrinker_rwsem))
->  		return 0;
->  
-> -	info = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
-> -					 true);
-> +	info = shrinker_info_protected(memcg, nid);
->  	if (unlikely(!info))
->  		goto unlock;
->  
-> 
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
