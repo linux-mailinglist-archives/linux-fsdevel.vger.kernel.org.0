@@ -2,110 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A603315DDB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 04:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2309B315E01
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 05:05:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231282AbhBJDib (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 22:38:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42972 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbhBJDi3 (ORCPT
+        id S229992AbhBJEEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 23:04:51 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:34724 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229969AbhBJEEs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 22:38:29 -0500
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4FB3C061574;
-        Tue,  9 Feb 2021 19:37:49 -0800 (PST)
-Received: by mail-io1-xd2f.google.com with SMTP id u20so462338iot.9;
-        Tue, 09 Feb 2021 19:37:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=x9HVDgnPoTke0bTnuMqVx+ED2tqcGWP2ABeatH+aVes=;
-        b=t7jAMtqyHUpSGSscQfTSXEJg5kxqcTvxCIqa+fqcNpnL6oPcIoUnTrzPw9IrmAiSaW
-         skylVVMOSW7rFqdoITC3I6GbrBr4+rw8OHB1DBWdL5yuVmQ4C9AB8JiHXIp/xkJLHXVJ
-         SGQn55LLfsO5dGpLCnsyII8Nw3AgDI+aAdvNjlJ5ywh1u12ubuYWRozdkc2TLLcZItq6
-         SfYAHH8i1Q2VgAN5k6jSDMaXpqj5P4Tnzd2Y9YUSP2O0oColRn5k2ULL0Aftfv1FosGZ
-         Jotm4ifYvjjCKb3pjld8AskrthCliWdtsXB5ToEc+nov3YEP+0N6td5eutKTFxHage4q
-         4SnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=x9HVDgnPoTke0bTnuMqVx+ED2tqcGWP2ABeatH+aVes=;
-        b=Oa8+9Xr0qnUOZhb7QUMxcLqgTZxyrDpkXBWen5ilhi1vVrbLv8XMOAcHGpkZFuRkiS
-         rLK9opFz6v4+IhcfYh0XeSWEGFIojeLTq7AD6wRVULBUahlhFnpN05zn+lLRRJJdSy+D
-         FY6jQ9Bd0dgLhpbLxOJurXKyM7gN4Piwjr/KN+NH9hZhF5tPHQrKiDTMy5s7whm0wJBg
-         9QqlUzhh2pl8a37mLdKcIcD7XCYeX8TeikpJsdBeNi33vnOW8FwRO8SfhqSyNjtzmlRk
-         Vz2k9kSQTJc50SNY2QqZh4XnOo2gwG2uojmp/jHsVvd+ghJCJF0JL9FWlhnnjXYt12BG
-         iYgA==
-X-Gm-Message-State: AOAM531UFNAypPGch5Yx9miJxfhQMwfqrhrrYh5IVy+mH19Zi4bP3F5U
-        nbYSiVqTyZc8wVxNuozHDzDwmzxPI3YX3xdsT24=
-X-Google-Smtp-Source: ABdhPJwk9hdwRzXxAIyP5Z1WKgHTjO3lQXYOnilNvqQLvkxYQOA3T7jqvfdl/hDL4K/3b8+GagpJW3riyr3Y9cvPHEU=
-X-Received: by 2002:a02:74a:: with SMTP id f71mr1153813jaf.30.1612928269184;
- Tue, 09 Feb 2021 19:37:49 -0800 (PST)
+        Tue, 9 Feb 2021 23:04:48 -0500
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 11A43jtE014659
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 9 Feb 2021 23:03:46 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 5627215C3601; Tue,  9 Feb 2021 23:03:45 -0500 (EST)
+Date:   Tue, 9 Feb 2021 23:03:45 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com, Paul Lawrence <paullawrence@google.com>
+Subject: Re: [PATCH 1/2] ext4: Handle casefolding with encryption
+Message-ID: <YCNbIdCsAsNcPuAL@mit.edu>
+References: <20210203090745.4103054-2-drosen@google.com>
+ <56BC7E2D-A303-45AE-93B6-D8921189F604@dilger.ca>
+ <YBrP4NXAsvveIpwA@mit.edu>
+ <YCMZSjgUDtxaVem3@mit.edu>
+ <42511E9D-3786-4E70-B6BE-D7CB8F524912@dilger.ca>
 MIME-Version: 1.0
-References: <CGME20210209235046epcas1p1416b5b121c0d78bfcb854aab46ea35c2@epcas1p1.samsung.com>
- <000001d6ff3e$62f336d0$28d9a470$@samsung.com>
-In-Reply-To: <000001d6ff3e$62f336d0$28d9a470$@samsung.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Wed, 10 Feb 2021 04:37:40 +0100
-Message-ID: <CA+icZUUFFrEJccHDZPV9nzj7zav-RA53eWqgKkDyvwOxCaKKnQ@mail.gmail.com>
-Subject: Re: [ANNOUNCE] exfatprogs-1.1.0 version released
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Eric Sandeen <sandeen@sandeen.net>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicolas Boos <nicolas.boos@wanadoo.fr>,
-        Hyunchul Lee <hyc.lee@gmail.com>,
-        Luca Stefani <luca.stefani.ge1@gmail.com>,
-        Matthieu CASTET <castet.matthieu@free.fr>,
-        Sven Hoexter <sven@stormbind.net>,
-        Ethan Sommer <e5ten.arch@gmail.com>,
-        Hyeongseok Kim <hyeongseok@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42511E9D-3786-4E70-B6BE-D7CB8F524912@dilger.ca>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 12:50 AM Namjae Jeon <namjae.jeon@samsung.com> wrote:
->
-> Hi folk,
->
-> We have released exfatprogs 1.1.0 version. In this release, exfatlabel
-> has been added to print or re-write volume label and volume serial value.
-> Also, A new dump.exfat util has been added to display statistics from
-> a given device(Requested by Mike Fleetwood(GParted Developer)).
->
-> Any feedback is welcome!:)
->
+On Tue, Feb 09, 2021 at 08:03:10PM -0700, Andreas Dilger wrote:
+> Depending on the size of the "escape", it probably makes sense to move
+> toward having e2fsck migrate from the current mechanism to using dirdata
+> for all deployments.  In the current implementation, tools don't really
+> know for sure if there is data beyond the filename in the dirent or not.
 
-Congrats to the new release and thanks to all involved people.
+It's actually quite well defined.  If dirdata is enabled, then we
+follow the dirdata rules.  If dirdata is *not* enabled, then if a
+directory inode has the case folding and encryption flags set, then
+there will be cryptographic data immediately following the filename.
+Otherwise, there is no valid data after the filename.
 
-Hope Sven will do a new release for Debian.
-( Note that Debian/bullseye release  plans "Milestone 2" this Friday,
-February 12th (see [1] > "Key release dates" > "[2021-Feb-12] Soft
-Freeze"). Dunno which impact this might have on this. )
+> For example, what if casefold is enabled on an existing filesystem that
+> already has an encrypted directory?  Does the code _assume_ that there is
+> a hash beyond the name if the rec_len is long enough for this?
 
-- Sedat -
+No, we will only expect there to be a hash beyond the name if
+EXT4_CASEFOLD_FL and EXT4_ENCRYPT_FL flags are set on the inode.  (And
+if the rec_len is not large enough, then that's a corrupted directory
+entry.)
 
-[1] https://release.debian.org/
+> I guess it is implicit with the casefold+encryption case for dirents in
+> directories that have the encryption flag set in a filesystem that also
+> has casefold enabled, but it's definitely not friendly to these features
+> being enabled on an existing filesystem.
+
+No, it's fine.  That's because the EXT4_CASEFOLD_FL inode flag can
+only be set if the EXT4_FEATURE_INCOMPAT_CASEFOLD is set in the
+superblock, and EXT4_ENCRYPT_FL inode flag can only be set if
+EXT4_FEATURE_INCOMPAT_ENCRYPT is set in the superblock, this is why it
+will be safe to enable of these features, since merely enabling the
+file system features only allows new directories to be created with
+both CASEFOLD_FL and ENCRYPT_FL set.
+
+The only restriction we would have is a file system has both the case
+folding and encryption features, it will *not* be safe to set the
+dirdata feature flag without first scanning all of the directories to
+see if there are any directories that have both the casefold and
+encrypt flags set on that inode, and if so, to convert all of the
+directory entries to use dirdata.  I don't think this is going to be a
+significant restriction in practice, though.
+
+						- Ted
 
 
-> CHANGES :
->  * fsck.exfat: Recover corrupted boot region.
->
-> NEW FEATURES :
->  * exfatlabel: Print or set volume label and serial.
->  * dump.exfat: Show the on-disk metadata information and the statistics.
->
-> BUG FIXES :
->  * Set _FILE_OFFSET_BITS=64 for Android build.
->
-> The git tree is at:
->       https://github.com/exfatprogs/exfatprogs
->
-> The tarballs can be found at:
->       https://github.com/exfatprogs/exfatprogs/releases/download/1.1.0/exfatprogs-1.1.0.tar.gz
->
