@@ -2,387 +2,277 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47181315B48
+	by mail.lfdr.de (Postfix) with ESMTP id DD9BA315B49
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 01:34:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233712AbhBJAdL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 19:33:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235085AbhBJAKQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 19:10:16 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7BEE464E02;
-        Wed, 10 Feb 2021 00:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612915773;
-        bh=zENo8bFy9YbvfnV6mY9wxRWqluaqpUG+3BdXcek4EBU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aFYHLLLhPWanK9XrCSTvNDtSeuU8mhysN4YSi36/R+UgA1lx4I6CiyfTp/rN0yHgY
-         eeIDbpK+ql8qfB7KYBiraz/ZGAt6DlpHFQnIKVGil7WzazHCeo+wZ8aylq/bKb2cCd
-         /jMrlJMwgpgmLJE9x2Amc00UFnzPbkY7ueQItMldBtAVdXmTZvyrp2cnNTulCdy91Q
-         gfOJtDt7zZMahrM9n19NRws5/BUWLZutrtllxv2h1+XH2S+JuQNCon+6pS9DsBwVM7
-         oHiFayTcfz5KMGpNJB6Ha4+0stb7fS/du5L50B3u4j3XNGyLJ6OGGKfw6phNOwcnIW
-         7sHmClAZuXjtA==
-Date:   Tue, 9 Feb 2021 16:09:32 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     tytso@mit.edu, jack@suse.com, viro@zeniv.linux.org.uk,
-        amir73il@gmail.com, dhowells@redhat.com, david@fromorbit.com,
-        darrick.wong@oracle.com, khazhy@google.com,
-        linux-fsdevel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [RFC] Filesystem error notifications proposal
-Message-ID: <20210210000932.GH7190@magnolia>
-References: <87lfcne59g.fsf@collabora.com>
-MIME-Version: 1.0
+        id S235093AbhBJAdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 19:33:23 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41120 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234654AbhBJASB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Feb 2021 19:18:01 -0500
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11A0DFBU017992;
+        Tue, 9 Feb 2021 16:17:02 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=Ac/X6sx6YpO2flbD5bHigjnmtiFMvzKNzutGYuUdnrc=;
+ b=qKDdbZmST9lI8AL1QmigoCFdhL4pPGAHMcZmX+ebF7RacVEFeAafgrwURPDZhtRt2QQ6
+ TPkZwRT3pvSHKEoLROXXOqZdCwwgZ+f8jkbK+npNWOOoS+3pafrSr8GN0V1kLYxpidF9
+ VXP4VeoJwl3QRldUw6OAiZzn9346dwi2HUQ= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 36hstph621-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 09 Feb 2021 16:17:01 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Tue, 9 Feb 2021 16:16:59 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A6QlmrK9P6wvaYdEr+QoiGV60N4fEYrGZIfWcrb+KBExzNit8TAACBaLYzmflB0ky7F+B8DZfUrAtxIr1vPayjo7JvVjDVi0bQCanOxO+5qGomC5rjnvxK+LJ7/A1IR36cipvjjVMnn/djIutYOX2gAXZJPneiAmSZn4dpZNQOQiYdbSBJQfQamgJBW0bS/kSIPZR8DBZhgqtnnOrdz3iESp74f1x+6vg4V9Q/kIQaXWGhaGEDcgDp8Gdow/f2/Mxpc0vvJLHmS4/pf7kQCGGEg/JXBtYEm6z98HXgaosgJ1JsOfaE45k9wf0PA42tYt25+YaIen9syM3ZVqok4S0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ac/X6sx6YpO2flbD5bHigjnmtiFMvzKNzutGYuUdnrc=;
+ b=W7VxcrxuTqOSQPmy1pUtL68CmXM+J4ZTVX8xflKv21xE6t0ELY4R0W+Pb0+e8bjybwb3lVXReLuZ2ooO1oTuR4Xxz8BxPp32S4oQZTGrLCxKqPzFWTuostik7ihW/DPaDDFZaezXc/b+N6eLOlmQsY91TVH+/LbwbSQSLUh03x98pPUhpaGc6ydnvjbKqOSMYhnSALaYFRCtavO2IDzuFTFBOlyfmwyt5OibdXHSU0lMW+/wdA3K6uF8JGIbghZcgqYdiAmfDTo4DlJxMrlmd9dDCnAuGLydr1m0KQWDC22iwkQcP6it79iVOpNWnivwzE+dGJgkR+Ewrioqtnn7Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ac/X6sx6YpO2flbD5bHigjnmtiFMvzKNzutGYuUdnrc=;
+ b=EpFcjFIUyCfA3HoQwuFDoE0BMh/ERGaEQywGqAt3zYi8oug0c04B0Dg4OSw+mkwYIoiQD+hwYB8xk+mjOaCryzEaLRhLxiGy+N4QYldCvpe83plhX+CQwMLkt+BIivkMsqyQoq3YXbi/9eND09qj8FFvvteSu9AlHNx5J+QsgVQ=
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=fb.com;
+Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
+ by BYAPR15MB3285.namprd15.prod.outlook.com (2603:10b6:a03:103::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.27; Wed, 10 Feb
+ 2021 00:16:52 +0000
+Received: from BYAPR15MB4136.namprd15.prod.outlook.com
+ ([fe80::53a:b2c3:8b03:12d1]) by BYAPR15MB4136.namprd15.prod.outlook.com
+ ([fe80::53a:b2c3:8b03:12d1%7]) with mapi id 15.20.3825.030; Wed, 10 Feb 2021
+ 00:16:52 +0000
+Date:   Tue, 9 Feb 2021 16:16:26 -0800
+From:   Roman Gushchin <guro@fb.com>
+To:     Yang Shi <shy828301@gmail.com>
+CC:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [v7 PATCH 05/12] mm: memcontrol: rename shrinker_map to
+ shrinker_info
+Message-ID: <20210210001626.GI524633@carbon.DHCP.thefacebook.com>
+References: <20210209174646.1310591-1-shy828301@gmail.com>
+ <20210209174646.1310591-6-shy828301@gmail.com>
+ <20210209205014.GH524633@carbon.DHCP.thefacebook.com>
+ <CAHbLzkr+5t5wTVRDih53ty-TcsMrmKxZ5iiPw1dwnDsz_URz=Q@mail.gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87lfcne59g.fsf@collabora.com>
+In-Reply-To: <CAHbLzkr+5t5wTVRDih53ty-TcsMrmKxZ5iiPw1dwnDsz_URz=Q@mail.gmail.com>
+X-Originating-IP: [2620:10d:c090:400::5:262e]
+X-ClientProxiedBy: MWHPR03CA0007.namprd03.prod.outlook.com
+ (2603:10b6:300:117::17) To BYAPR15MB4136.namprd15.prod.outlook.com
+ (2603:10b6:a03:96::24)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:262e) by MWHPR03CA0007.namprd03.prod.outlook.com (2603:10b6:300:117::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.25 via Frontend Transport; Wed, 10 Feb 2021 00:16:50 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: dcc64995-b478-4619-c96b-08d8cd592a62
+X-MS-TrafficTypeDiagnostic: BYAPR15MB3285:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB3285444FC6E26F04E6738DE1BE8D9@BYAPR15MB3285.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lPJrESatMrj0JsybiwNLltMAKGjlYWA/cV8sOIOlENQelSYv1KwwaWoQWw3gTUIVuMvc8RrBFMLeNlWVWIMV/Om56Vi8jvZhxC0O+GZ7HcGUqZzXJZoNJJku3Bhj01t3HR1QOOr4nM6RPf8Vb2fqPm2hWs0zRziYtXvY4q0Msc5LGW056pIFCwNjHKBhNj9kxPD2UAk7AtnOU86OZHkkYclyLEq6e7Kvzl/DJvEvu6xwkRvP3jH48qWg9v+NfWIcaM9qpgGGuf8XuEs0uoUWTbicQ9vvGGBaLNxkIoInlvu39Cp96vtH9zwnkuWpA6O7ObWqXmPKQqXrwibnQknno8xGkN5m6dgwpLJaY2PYlBeFxWyarSfKzpqnn0Zrs+Fl5bJe2M4ySkBEC2/GihL+uud6Rfb4KXbp5D2XeFt8nMy1e+Hbx0tObeURBVGoePhb4McciOMVx8tpyMdvEofqs6KANFG9pi6b58cAHGsQudsxS2rz0P6XRDpmSgwMvtYNv5YLH/mGdsIMhsytbs95kA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(396003)(39860400002)(366004)(346002)(136003)(16526019)(53546011)(4326008)(8676002)(52116002)(7696005)(33656002)(9686003)(8936002)(83380400001)(86362001)(6916009)(66946007)(55016002)(66476007)(66556008)(5660300002)(6666004)(7416002)(54906003)(2906002)(478600001)(6506007)(186003)(316002)(1076003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?eQrpDUr+fFFbNiloCHinsDdAFfaqenDcLDmqBwyjNRpPpisVCcrFnO7j3XzN?=
+ =?us-ascii?Q?GDzjuKPe4g+Z0tI6if+zRfzJc+DlX0eajJxbvEoCFEK1ZW7M5l6K9fWVtrUc?=
+ =?us-ascii?Q?lPqiQPFeoulXQg+yrQE3jxnnjiIw4TKqsRKFNoQzfdAvHe8XY+zeNZpubQh7?=
+ =?us-ascii?Q?fKoIcm92aHzEyiTNlWt71Lmf1eymSvJiOMAq3HkGrrIHmmsB+J3LzLn9YQ7t?=
+ =?us-ascii?Q?RdETChozeIi+I6zvkwaY/ZP1ezIIm98txZ954H6FVRTQc2bNeDY/Iqwi0hnO?=
+ =?us-ascii?Q?nDvwQB9ul+s7Le8cFNGR5Co9ySz7D3X8vOnzJXDT4Quwip68gn0g6DBY2RYM?=
+ =?us-ascii?Q?cFkdIANLvdW0Tl4fX0ESyFtmftLUSEDnLkH39yOrOrXq0KD5kIZqgwy2msgi?=
+ =?us-ascii?Q?J1Fr5Ua9H4w9N1keDGgO5xkSqkRdZRW8psKCCB/TkKA4na3UnD6k4vW1NNjG?=
+ =?us-ascii?Q?SBDVsThP6JwPr0EOfe6YxktIfNoEiuai4c43PGAMTwAOiQgwqmoGUlPxdkJ2?=
+ =?us-ascii?Q?OC/iBCzdq6bUB/uFDh6fVcbXLurCDCp1hwz3YuqoTNER7i0z8zVol+HMZFUt?=
+ =?us-ascii?Q?bojIH1Ect0g6AxMuYGulE9K/Gg4ulpk2iHh9bHZL7ErwY1v4CROCEem+zU6V?=
+ =?us-ascii?Q?J2FrQ+fXpy01m2V22DxwsWJROdSD7cUofN16YtU1vHUIzHjBINofMKQhhzKF?=
+ =?us-ascii?Q?SsmC+mDsu44D03ObCOyI1rvN5xRJXa53yVMloSEayLXuRxDY/S7pJeiJxrEy?=
+ =?us-ascii?Q?sQpqH3WzBFuR9Fg9G5wkgQ+juHAlW6/20V1G1AC4gjRpBUglTULtMivPRIiF?=
+ =?us-ascii?Q?tIphF0wcxmvde+skgNPCda73wVpV8R5J/SA6XveZftn0VDgVk7VaXZFQvC8h?=
+ =?us-ascii?Q?GbU1Qd9VpGw+s6+GXBxyaljK/iiZZjDDBvRczoRR+NRFd9qXNehDr/2ZEm/6?=
+ =?us-ascii?Q?rPZVd0JTdtbBxoVoP9arN3nEVHP4QSSchqB9jR631cCVFkImDiQOdhoSz7Dx?=
+ =?us-ascii?Q?JuyV+JmWbk3zplvH0M2hEN2ArObNEPcZyO7pDutgamkZjsqfMaioRN1AC8lw?=
+ =?us-ascii?Q?voPUv3vUyh0TqJfF1Pj2iUcM50DkEFKLiOaxjbOV8ondnUukXqShRU9D+Hyz?=
+ =?us-ascii?Q?jqGFbAVKp9yfEAyAq5ElBsRHP01tbxebyznpoUkhT2oZaR8BElZTl4OyuAbW?=
+ =?us-ascii?Q?NWFyGeaUjZQU7GnzwmYE/bUs03taw2gdv/ZfrC6p3MZesIAtLtsiDvOMTCDE?=
+ =?us-ascii?Q?06fYwDaY8PFTCsvSgvMnJzfV2907Lv2bWWB/bPxeiSXhsH09jV0Vry1c9fBX?=
+ =?us-ascii?Q?UlwHi+EXj8tnOCd0SHhhh1NNACfISVZKGE0ikHqQfB5HauupttV6RBR1kv6z?=
+ =?us-ascii?Q?LHsFUz8=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: dcc64995-b478-4619-c96b-08d8cd592a62
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2021 00:16:52.1005
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fjZfUS71Z+sK4hmuJybGzhwn+JqC1Jm5N+JO4faIcz9VMzKSiSp+Xgi+ONVpOE2F
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3285
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
+ definitions=2021-02-09_08:2021-02-09,2021-02-09 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 suspectscore=0
+ malwarescore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 phishscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2009150000 definitions=main-2102100000
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Gabriel,
-
-Sorry that it has taken me nearly three weeks to respond to this; I've
-been buried in XFS refactoring for 5.12. :(
-
-I forget if I've ever really laid out the user stories (or whatever)
-that I envision for XFS.  I think they're pretty close to what you've
-outlined for ext4, downthread discussions notwithstanding. :/
-
-The first usecase is, I think, the common one where a program has an
-open file descriptor and wants to know when some kind of error happens
-to that open file or its metadata so that it can start application-level
-recovery processes.
-
-I think the information exported by struct fanotify_event_error_hdr
-corresponds almost exactly to this use case since it only identifies an
-error, an inode, and an offset, which are (more or less) general
-concepts inside the vfs, and probably could be accomplished without help
-from individual filesystems.
-
-I would add a u32 context code so that programs can distinguish between
-errors in file data, xattrs, inode metadata, or a general filesystem
-error, but otherwise it looks fine to me.  I don't think we need to (or
-should) report function names and line numbers here.
-
-(Someone would have to make fanotify work for non-admin processes
-though, which if that fails, makes this part less generally useful.)
-
------
-
-The second usecase is very filesystem specific and administrative in
-nature, and I bet this would be where our paths diverge.  But that's
-probably ok, since exposing the details of an event requires a client
-that's tightly integrated with the fs implementation details, which
-pretty much means a program that we ship in {x,e2,*}fsprogs.
-
-Over the last couple of years, XFS has grown ioctl interfaces for
-reporting corruption errors to administrative programs and for xfs_scrub
-to initiate checks of metadata structures.  Someday we'll be able to
-perform repairs online too.
-
-The metadata corruption reporting interfaces are split into three
-categories corresponding to principal fs objects.  In other words, we
-can report on the state of file metadata, allocation group metadata, or
-full filesystem metadata.  So far, each of these three groups has
-sufficiently few types of metadata that we can summarize what's wrong
-with a u32 bitmap.
-
-For XFS, the following would suffice for a monitoring daemon that could
-become part of xfsprogs:
-
-struct notify_xfs_corruption_error {
-	__kernel_fsid_t fsid;
-
-	__u32 group; /* FS, AG, or INODE */
-	__u32 sick; /* bitset of XFS_{AG,FSOP,BS}_GEOM_SICK_* */
-	union {
-		struct {
-			__u64 inode;
-			__u32 gen;
-		};
-		__u32 agno;
-	};
-};
-
-(A real implementation would include a flags field and not have a union
-in the middle of it, but this is the bare minimum of what I think I
-want for xfs_scrubd having implemented zero of this.)
-
-Upon receipt of this structure, the monitoring daemon can translate
-those three fields into calls into the [future] online repair ioctls and
-fix the filesystem.  Or it can shut down the fs and kill everything
-running on it, I dunno. :)
-
-There would only be one monitoring daemon running for the whole xfs
-filesystem, so you could require CAP_SYS_ADMIN and FAN_MARK_MOUNT to
-prove that the daemon can get to the actual filesystem root directory.
-IOWs, the visibility semantics can be "only the sysadmin and only in the
-init namespace" initially.
-
-This structure /could/ include an instruction pointer for more advanced
-reporting, but it's not a hard requirement to have such a thing.  As far
-as xfs is concerned, something decided the fs was bad, and the only
-thing to do now is to recover.  I don't think it matters critically
-whether the notices are presented via fanotify or watch_queue.
-
-The tricky problem here is (I think?) how to multiplex different
-filesystem types wanting to send corruption reports to userspace.  I
-suppose you could define the fs metadata error format as:
-
-	[struct fanotify_event_metadata]
-	[optional struct fanotify_event_info_fid]
-	[u32 magic code corresponding to statvfs.f_type?]
-	[fs-specific blob of data here]
-
-And then you'd use fanotify_event_metadata.event_len to figure out the
-length of the fs-specific blob.  That way XFS could export the short
-structure I outlined above, and ext4 can emit instruction pointer
-addresses or strings or whatever else you and Ted settle on.
-
-If that sounds like "Well you go plumb in the fanotify bits with just
-enough information for dispatching and then we'll go write our own xfs
-specific thing"... yep. :)
-
-To be clear: I'm advocating for cleaving these two usescases completely
-apart, and not mixing them at all like what you defined below, because I
-now think these are totally separate use cases.
-
-I don't want to get too far into the implementation details, but FWIW
-XFS maintains its health state tracking in the incore data structures,
-so it's no problem for us to defer the actual fsnotify calls to a
-workqueue if we're in an atomic context.
-
-Ok, now I'll go through this and respond point by point.
-
-On Wed, Jan 20, 2021 at 05:13:15PM -0300, Gabriel Krisman Bertazi wrote:
+On Tue, Feb 09, 2021 at 03:33:56PM -0800, Yang Shi wrote:
+> On Tue, Feb 9, 2021 at 12:50 PM Roman Gushchin <guro@fb.com> wrote:
+> >
+> > On Tue, Feb 09, 2021 at 09:46:39AM -0800, Yang Shi wrote:
+> > > The following patch is going to add nr_deferred into shrinker_map, the change will
+> > > make shrinker_map not only include map anymore, so rename it to "memcg_shrinker_info".
+> > > And this should make the patch adding nr_deferred cleaner and readable and make
+> > > review easier.  Also remove the "memcg_" prefix.
+> > >
+> > > Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> > > Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> > > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > > ---
+> > >  include/linux/memcontrol.h |  8 ++---
+> > >  mm/memcontrol.c            |  6 ++--
+> > >  mm/vmscan.c                | 62 +++++++++++++++++++-------------------
+> > >  3 files changed, 38 insertions(+), 38 deletions(-)
+> > >
+> > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > > index 1739f17e0939..4c9253896e25 100644
+> > > --- a/include/linux/memcontrol.h
+> > > +++ b/include/linux/memcontrol.h
+> > > @@ -96,7 +96,7 @@ struct lruvec_stat {
+> > >   * Bitmap of shrinker::id corresponding to memcg-aware shrinkers,
+> > >   * which have elements charged to this memcg.
+> > >   */
+> > > -struct memcg_shrinker_map {
+> > > +struct shrinker_info {
+> > >       struct rcu_head rcu;
+> > >       unsigned long map[];
+> > >  };
+> > > @@ -118,7 +118,7 @@ struct mem_cgroup_per_node {
+> > >
+> > >       struct mem_cgroup_reclaim_iter  iter;
+> > >
+> > > -     struct memcg_shrinker_map __rcu *shrinker_map;
+> > > +     struct shrinker_info __rcu      *shrinker_info;
+> >
+> > Nice!
+> >
+> > I really like how it looks now in comparison to the v1. Thank you for
+> > working on it!
 > 
-> My apologies for the long email.
+> Thanks a lot for all the great comments from all of you.
 > 
-> Please let me know your thoughts.
+> >
+> > >
+> > >       struct rb_node          tree_node;      /* RB tree node */
+> > >       unsigned long           usage_in_excess;/* Set to the value by which */
+> > > @@ -1581,8 +1581,8 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
+> > >       return false;
+> > >  }
+> > >
+> > > -int alloc_shrinker_maps(struct mem_cgroup *memcg);
+> > > -void free_shrinker_maps(struct mem_cgroup *memcg);
+> > > +int alloc_shrinker_info(struct mem_cgroup *memcg);
+> > > +void free_shrinker_info(struct mem_cgroup *memcg);
+> > >  void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id);
+> > >  #else
+> > >  #define mem_cgroup_sockets_enabled 0
+> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > index f5c9a0d2160b..f64ad0d044d9 100644
+> > > --- a/mm/memcontrol.c
+> > > +++ b/mm/memcontrol.c
+> > > @@ -5246,11 +5246,11 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
+> > >       struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+> > >
+> > >       /*
+> > > -      * A memcg must be visible for expand_shrinker_maps()
+> > > +      * A memcg must be visible for expand_shrinker_info()
+> > >        * by the time the maps are allocated. So, we allocate maps
+> > >        * here, when for_each_mem_cgroup() can't skip it.
+> > >        */
+> > > -     if (alloc_shrinker_maps(memcg)) {
+> > > +     if (alloc_shrinker_info(memcg)) {
+> > >               mem_cgroup_id_remove(memcg);
+> > >               return -ENOMEM;
+> > >       }
+> > > @@ -5314,7 +5314,7 @@ static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
+> > >       vmpressure_cleanup(&memcg->vmpressure);
+> > >       cancel_work_sync(&memcg->high_work);
+> > >       mem_cgroup_remove_from_trees(memcg);
+> > > -     free_shrinker_maps(memcg);
+> > > +     free_shrinker_info(memcg);
+> > >       memcg_free_kmem(memcg);
+> > >       mem_cgroup_free(memcg);
+> > >  }
+> > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > index 641077b09e5d..9436f9246d32 100644
+> > > --- a/mm/vmscan.c
+> > > +++ b/mm/vmscan.c
+> > > @@ -190,20 +190,20 @@ static int shrinker_nr_max;
+> > >  #define NR_MAX_TO_SHR_MAP_SIZE(nr_max) \
+> > >       (DIV_ROUND_UP(nr_max, BITS_PER_LONG) * sizeof(unsigned long))
+> > >
+> > > -static void free_shrinker_map_rcu(struct rcu_head *head)
+> > > +static void free_shrinker_info_rcu(struct rcu_head *head)
+> > >  {
+> > > -     kvfree(container_of(head, struct memcg_shrinker_map, rcu));
+> > > +     kvfree(container_of(head, struct shrinker_info, rcu));
+> > >  }
+> > >
+> > > -static int expand_one_shrinker_map(struct mem_cgroup *memcg,
+> > > +static int expand_one_shrinker_info(struct mem_cgroup *memcg,
+> > >                                  int size, int old_size)
+> > >  {
+> > > -     struct memcg_shrinker_map *new, *old;
+> > > +     struct shrinker_info *new, *old;
+> > >       int nid;
+> > >
+> > >       for_each_node(nid) {
+> > >               old = rcu_dereference_protected(
+> > > -                     mem_cgroup_nodeinfo(memcg, nid)->shrinker_map, true);
+> > > +                     mem_cgroup_nodeinfo(memcg, nid)->shrinker_info, true);
+> > >               /* Not yet online memcg */
+> > >               if (!old)
+> > >                       return 0;
+> > > @@ -216,17 +216,17 @@ static int expand_one_shrinker_map(struct mem_cgroup *memcg,
+> > >               memset(new->map, (int)0xff, old_size);
+> > >               memset((void *)new->map + old_size, 0, size - old_size);
+> > >
+> > > -             rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_map, new);
+> > > -             call_rcu(&old->rcu, free_shrinker_map_rcu);
+> > > +             rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, new);
+> > > +             call_rcu(&old->rcu, free_shrinker_info_rcu);
+> >
+> > Why not use kvfree_rcu() and get rid of free_shrinker_info_rcu() callback?
 > 
-> 1 Summary
-> =========
-> 
->   I'm looking for a filesystem-agnostic mechanism to report filesystem
->   errors to a monitoring tool in userspace.  I experimented first with
->   the watch_queue API but decided to move to fanotify for a few reasons.
-> 
-> 
-> 2 Background
-> ============
-> 
->   I submitted a first set of patches, based on David Howells' original
->   superblock notifications patchset, that I expanded into error
->   reporting and had an example implementation for ext4.  Upstream review
->   has revealed a few design problems:
-> 
->   - Including the "function:line" tuple in the notification allows the
->     uniquely identification of the error origin but it also ties the
->     decodification of the error to the source code, i.e. <function:line>
->     is expected to change between releases.
-> 
->   - Useful debug data (inode number, block group) have formats specific
->     to the filesystems, and my design wouldn't be expansible to
->     filesystems other than ext4.
+> Just because this patch is aimed to rename the structure. I think it
+> may be more preferred to have the cleanup in a separate patch?
 
-Yes, hence proposing one set of generic notifications for most user
-programs, and a second interface for fs-specific daemons that we can
-ship in ${fs}progs.  My opinions have shifted a bit since the last
-posting.
+Completely up to you, I'm fine with either option.
 
->   - The implementation allowed an error string description (equivalent
->     to what would be thrown in dmesg) that is too short, as it needs to
->     fit in a single notification.
-> 
->   - How the user sees the filesystem.  The original patch points to a
->     mountpoint but uses the term superblock.  This is to differentiate
->     from another mechanism in development to watch mounting operations.
-> 
->   - Visibility of objects.  A bind mount of a subtree shouldn't receive
->     notifications of objects outside of that bind mount.
-> 
-> 
-> 2.1 Other constraints of the watch_queue API
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
->   watch_queue is a fairly new framework, which has one upstream user in
->   the keyring subsystem.  watch_queue is designed to submit very short
->   (max of 128 bytes) atomic notifications to userspace in a fast manner
->   through a ring buffer.  There is no current mechanism to link
->   notifications that require more than one slot and such mechanism
->   wouldn't be trivial to implement, since buffer overruns could
->   overwrite the beginning/end of a multi part notification.  In
-
-<nod> This second round of iteration in my head showed me that the two
-event notification use cases are divergent enough that the tagged
-notification scheme that I think I triggered last time isn't necessary
-at all.
-
->   addition, watch_queue requires an out-of-band overflow notification
->   mechanism, which would need to be implemented aside from the system
->   call, in a separate API.
-
-Yikes.
-
-> 2.2 fanotify vs watch_queue
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
->   watch_queue is designed for efficiency and fast submission of a large
->   number of notifications.  It doesn't require memory allocation in the
->   submission path, but with a flexibility cost, such as limited
->   notification size.  fanotify is more flexible, allows for larger
->   notifications and better filtering, but requires allocations on the
->   submission path.
-> 
->   On the other hand, fanotify already has support for the visibility
->   semantics we are looking for. fsnotify allows an inode to notify only
->   its subtree, mountpoints, or the entire filesystem, depending on the
->   watcher flags, while an equivalent support would need to be written
->   from scratch for watch_queue.  fanotify also has in-band overflow
->   handling, already implemented.  Finally, since fanotify supports much
->   larger notifications, there is no need to link separate notifications,
->   preventing buffer overruns from erasing parts of a notification chain.
-> 
->   fanotify is based on fsnotify, and the infrastructure for the
->   visibility semantics is mostly implemented by fsnotify itself.  It
->   would be possible to make error notifications a new mechanism on top
->   of fsnotify, without modifying fanotify, but that would require
->   exposing a very similar interface to userspace, new system calls, and
->   that doesn't seem justifiable since we can extend fanotify syscalls
->   without ABI breakage.
-
-<nod> AFAICT it sounds like fanotify is a good fit for that first
-usecase I outlined.  It'd probably work for both.
-
-> 3 Proposal
-> ==========
-> 
->   The error notification framework is based on fanotify instead of
->   watch_queue.  It is exposed through a new set of marks FAN_ERROR_*,
->   exposed through the fanotify_mark(2) API.
-> 
->   fanotify (fsnotify-based) has the infrastructure in-place to link
->   notifications happening at filesystem objects to mountpoints and to
->   filesystems, and already exposes an interface with well defined
->   semantics of how those are exposed to watchers in different
->   mountpoints or different subtrees.
-> 
->   A new message format is exposed, if the user passed
->   FAN_REPORT_DETAILED_ERROR fanotify_init(2) flag.  FAN_ERROR messages
->   don't have FID/DFID records.
-> 
->   A FAN_REPORT_DETAILED_ERROR record has the same struct
->   fanotify_event_metadata header, but it is followed by one or more
->   additional information record as follows:
-> 
->   struct fanotify_event_error_hdr {
->   	struct fanotify_event_info_header hdr;
->   	__u32 error;
->         __u64 inode;
->         __u64 offset;
->   }
-> 
->   error is a VFS generic error number that can notify generic conditions
->   like EFSCORRUPT. If hdr.len is larger than sizeof(struct
->   fanotify_event_error_hdr), this structure is followed by an optional
->   filesystem specific record that further specifies the error,
->   originating object and debug data. This record has a generic header:
-> 
->   struct fanotify_event_fs_error_hdr {
->   	struct fanotify_event_error_hdr hdr;
->         __kernel_fsid_t fsid;
->         __u32 fs_error;
->   }
-> 
->   fs_error is a filesystem specific error record, potentially more
->   detailed than fanotify_event_error.hdr.error . Each type of filesystem
-
-Er... is fs_error supposed to be a type code that tells the program that
-the next byte is the start of a fanotify_event_ext4_inode_error
-structure?
-
->   error has its own record type, that is used to report different
->   information useful for each type of error.  For instance, an ext4
->   lookup error, caused by an invalid inode type read from disk, produces
->   the following record:
-> 
->   struct fanotify_event_ext4_inode_error {
->   	struct fanotify_event_fs_error_hdr hdr;
->         __u64 block;
->         __u32 inode_type;
->   }
-> 
->   The separation between VFS and filesystem-specific error messages has
->   the benefit of always providing some information that an error has
->   occurred, regardless of filesystem-specific support, while allowing
-
-Ok, so I think we've outlined similar-ish proposals.
-
->   capable filesystems to expose specific internal data to further
->   document the issue.  This scheme leaves to the filesystem to expose
->   more meaningful information as needed.  For instance, multi-disk
->   filesystems can single out the problematic disk, network filesystems
->   can expose a network error while accessing the server.
-> 
-> 
-> 3.1 Visibility semantics
-> ~~~~~~~~~~~~~~~~~~~~~~~~
-> 
->   Error reporting follows the same semantics of fanotify events.
->   Therefore, a watcher can request to watch the entire filesystem, a
->   single mountpoint or a subtree.
-> 
-> 
-> 3.2 security implications
-> ~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
->   fanotify requires CAP_SYS_ADMIN.  My understanding is this requirement
->   suffices for most use cases but, according to fanotify documentation,
->   it could be relaxed without issues for the existing fanotify API.  For
->   instance, watching a subtree could be a allowed for a user who owns
->   that subtree.
-> 
-> 
-> 3.3 error location
-> ~~~~~~~~~~~~~~~~~~
-> 
->   While exposing the exact line of code that triggered the notification
->   ties that notification to a specific kernel version, it is an
->   important information for those who completely control their
->   environment and kernel builds, such as cloud providers.  Therefore,
->   this proposal includes a mechanism to optionally include in the
->   notification the line of code where the error occurred
-> 
->   A watcher who passes the flag FAN_REPORT_ERROR_LOCATION to
->   fanotify_init(2) receives an extra record for FAN_ERROR events:
-> 
->   struct fanotify_event_fs_error_location {
->   	struct fanotify_event_info_header hdr;
->         u32 line;
->         char function[];
->   }
-> 
->   This record identifies the place where the error occured.  function is
->   a VLA whose size extend to the end of the region delimited by hdr.len.
->   This VLA text-encodes the function name where the error occurred.
-> 
-> What do you think about his interface?  Would it be acceptable as part
-> of fanotify, or should it be a new fsnotify mode?
-
-I would say separate FAN_FILE_ERROR and FAN_FS_ERROR mode bits.
-
-> Regarding semantics, I believe fanotify should solve the visibility
-> problem for a subtree watcher not being able to see other branches
-> notifications.  Do you think this would suffice?
-
-It sounds like it.  I'll go brave reading the rest of the thread now.
-
---D
-
-> 
-> Thanks,
-> 
-> -- 
-> Gabriel Krisman Bertazi
+Thanks!
