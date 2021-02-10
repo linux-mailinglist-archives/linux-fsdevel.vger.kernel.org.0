@@ -2,256 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 462EE315B7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 01:44:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58173315BAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 01:55:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233311AbhBJAn1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 19:43:27 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:1076 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234000AbhBJAlB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 19:41:01 -0500
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11A0XsYX030239;
-        Tue, 9 Feb 2021 16:39:50 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=MzjPkYwOAaZHK3ou+4Tv27gQc3vzJ3S7J0p/e8g/6yA=;
- b=lKB8Q59VQwiXI/rBszcJNX86Ixgdx8cwGB1kCMtX3S6LYojXipc/OxIZww63xGseDnQf
- EgQChmvtf0FA+TCz1qIu+9VarvaQZsqjMg3Io2n5EzCimw0OqF/RVvLJicpCdNvwmSlH
- x3RQ1IUGuiUWq8ZfRO8juOG4rjUlGX9/LmY= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 36jc1ces4m-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 09 Feb 2021 16:39:50 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.198) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Tue, 9 Feb 2021 16:39:49 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VEowq5RSlhIhpe6OoBPSl9BB/Kcw9gGnAjb44Rdv55mZEFBioZoFE9oB8LCuq6vqTfhBajeFKliNdo5iyq5FyUgxPm5H+EYBcf5qFaYJraJjQGzRnkhXovQt7F6btfGFa3O1deN6Pmzi9VQfvn7vzl+bs6muN0v+KlbZB2drjRYt6bpq8FJQDdt497SeF3E8S4wrpXtwRwn9Q5WZ1QlOQ7p0/BFnWKUED1KM13yd89pKNQSqAr0aRzqbClH5l/Wa2pzOxWAqzy52O/ifh/s/btNCPMqYgvxtQQQSpAAhbaQW+PBnaEjocV5HehHJJ948HkSkILx72ODx88oWLlvJZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MzjPkYwOAaZHK3ou+4Tv27gQc3vzJ3S7J0p/e8g/6yA=;
- b=WUaiVaHNL/hUrQAH/VIijv3RxRqROnu7+zjVImWEAdu4OjFTaF5ZDT9iAXdkAb9eo6ofvBYHIWTixe7rLhfa93N+J/Z0qThkqdl23q7Gp159AbsnOv5y0lphTS+UTsB3yVYY2+DulRJV9E8XtSybGqYN95bukQr6K5u5wRfUfm+kY2jr7IFFVMcMMZZ3WSOQoAyQsMK/6s9rHlgTivlsyr3RKlJXBVtyhHaSZymBV8Weg4axM2JjE5jFfdvuHLRcYc1XMKLWxnJsQVRdVGfO9bSJwdHIHdtK9x/B0xQkOnEqD31h+s6r3SekVSzVv+cPHtn1BfN6cd2n7tdZxBcfOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MzjPkYwOAaZHK3ou+4Tv27gQc3vzJ3S7J0p/e8g/6yA=;
- b=S2VS5Hm+cA28dbVTrWn9o9oTT0Z05KHo2LH5x7SIPMmy8BflMQDopq2r3ZupcZDy3QzxDH1Y3MzY6ucmb4osim5G/u5mC2XROuwSHSQP2hTWMtka3lxaoEG4v5I1q7TQGvrIjw4PB+nCZfJ4R1QkeSrIZ44K6VYwIhMkEvAxeI8=
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by SJ0PR15MB4758.namprd15.prod.outlook.com (2603:10b6:a03:37b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.17; Wed, 10 Feb
- 2021 00:39:48 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::53a:b2c3:8b03:12d1]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::53a:b2c3:8b03:12d1%7]) with mapi id 15.20.3825.030; Wed, 10 Feb 2021
- 00:39:48 +0000
-Date:   Tue, 9 Feb 2021 16:39:43 -0800
-From:   Roman Gushchin <guro@fb.com>
-To:     Yang Shi <shy828301@gmail.com>
-CC:     <ktkhai@virtuozzo.com>, <vbabka@suse.cz>, <shakeelb@google.com>,
-        <david@fromorbit.com>, <hannes@cmpxchg.org>, <mhocko@suse.com>,
-        <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [v7 PATCH 07/12] mm: vmscan: use a new flag to indicate shrinker
- is registered
-Message-ID: <20210210003943.GK524633@carbon.DHCP.thefacebook.com>
-References: <20210209174646.1310591-1-shy828301@gmail.com>
- <20210209174646.1310591-8-shy828301@gmail.com>
+        id S234039AbhBJAxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 19:53:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234541AbhBJAua (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Feb 2021 19:50:30 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 77F0D64E54;
+        Wed, 10 Feb 2021 00:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612918182;
+        bh=Rk6J0+KYPK5qEV05zi3TT5KUWZemYqON9ybNKYK1rPk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GWTMV3VB2FtppLCkAo+DvPC8d9A+HNE/wEtgclu3UckSHie9C/AmhoXXZCE+6IwRb
+         GwAHVb6btfKhN6YmBCs6tdUkkdZ76Crt2qwi41DQ1j8uC/JnmIaZoGh26aaCky6FXX
+         oSXMRmXJDv5hOzbqIVzN2fnzCBVqeLTGyJH3xOUsJpSz9DxktG5/4y3nt5lbNIRltA
+         m9LQl12vuR9OVbX/NiYIg9ahxj8LeLK7xNBR/vt0QmKPqxU+pOAK0Wpxxcg5x1ltEs
+         OVTU867L49d8JhgyQgfPs1Q15kM1kbi3r/TPhHE09pzW8j6U3xVIgN6nzkmnmpwzEC
+         n0ZF0WBof054Q==
+Date:   Tue, 9 Feb 2021 16:49:41 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Theodore Ts'o <tytso@mit.edu>, jack@suse.com,
+        viro@zeniv.linux.org.uk, amir73il@gmail.com, dhowells@redhat.com,
+        darrick.wong@oracle.com, khazhy@google.com,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [RFC] Filesystem error notifications proposal
+Message-ID: <20210210004941.GD7187@magnolia>
+References: <87lfcne59g.fsf@collabora.com>
+ <YAoDz6ODFV2roDIj@mit.edu>
+ <87pn1xdclo.fsf@collabora.com>
+ <YBM6gAB5c2zZZsx1@mit.edu>
+ <871rdydxms.fsf@collabora.com>
+ <YBnTekVOQipGKXQc@mit.edu>
+ <87wnvi8ke2.fsf@collabora.com>
+ <20210208221916.GN4626@dread.disaster.area>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210209174646.1310591-8-shy828301@gmail.com>
-X-Originating-IP: [2620:10d:c090:400::5:7710]
-X-ClientProxiedBy: MWHPR22CA0066.namprd22.prod.outlook.com
- (2603:10b6:300:12a::28) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:7710) by MWHPR22CA0066.namprd22.prod.outlook.com (2603:10b6:300:12a::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.27 via Frontend Transport; Wed, 10 Feb 2021 00:39:47 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0e0961ca-6136-46de-f75c-08d8cd5c5eb7
-X-MS-TrafficTypeDiagnostic: SJ0PR15MB4758:
-X-Microsoft-Antispam-PRVS: <SJ0PR15MB4758F78BF8161DFACDDAA46EBE8D9@SJ0PR15MB4758.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UN60FwpMA+jwNUZBQhjzRow677SzDX4H5KXYy+/fwYg/JTmBee++fwbX3pjfw1W5fSTFv5D+YDKDtn3ufyh8BskXc10YxlY47xxYKe0U6Z1PltPV048/eW9qrr5JhMdoo7IZ1jRXjjT6svKpxXtyPpn5lMQggQXtTtr8tBHHK3nKvxqUXZU2beInm8DlZByvmQVwTsvKAkV61DWQbk/XwpPfUtLNWuBCsrQ4y2hmvUZY9dkRQ2kLHpUfuveXiF9UPMJDQdu2H3AaPWERZbmNfpKiliqK0tECxxSfnhOjJEzpmJ4WBjgYMOmRZokoJ5T8J/3G6IBJN5UYUhsx4G1MLoQlmYAe1xoE13JKFUYm7zYw6aUSnk8ggAQAHYJWTnYLZTCbS2nBYkDGl6UeoiXMbh+211qebTLSp/tKjWu1KcCO4W1qCnh5W9dk1Eu24r3cCvWURVxqucY++olU1xhzfi0oI4zNY/Ziltt9IY0EAyBqtujyK+DQ0lp7TqOPL5LyfOBVoou+M+HGyP+Dxci41A==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(366004)(39860400002)(346002)(376002)(136003)(66476007)(86362001)(6916009)(8936002)(4326008)(6666004)(55016002)(33656002)(2906002)(1076003)(83380400001)(7696005)(8676002)(52116002)(6506007)(186003)(16526019)(478600001)(66556008)(9686003)(7416002)(5660300002)(316002)(66946007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?gq6CDp6uHoeN4+8w98OiXnekAHJhOYzN/3fskXtlcH1iCwcRnznKfvJUsnmH?=
- =?us-ascii?Q?mDQogf7gZys+Jh2zLXOdE83ciD4gIexNzkhrif0RPCQiCWDCFkE/qRKHmCUN?=
- =?us-ascii?Q?gwHGP8ritHZ/fDuUajv2Rs9pLRyA1PtnhRE93sxj1WbWeKNhwDFvFB8QZcFI?=
- =?us-ascii?Q?VHjDLW4O7jiEYQ/LV/oNjM2vnaKBIeesjt5kkgnm9gGkA8rFB47DePNsASZH?=
- =?us-ascii?Q?3y2bhZRLXqMHaamsQF2CK2RIF6RIhCaYNz1RPuk9ZZTv8xpvifGpuqsUDblf?=
- =?us-ascii?Q?ClvXuxYvqnjg6iFluvQ1JaS5AHxESnqQCOaUihfTsEHpIyaFOlPSHUx3Eekw?=
- =?us-ascii?Q?gEg7NCgiZ/CGz5gxi3ydvGN3wVHRamHfYZClRHaiFwK/i3YEpTafe4pPj+77?=
- =?us-ascii?Q?aT095AogGoiWXzPi5Jbe3ewnk3k6ncEdvrFF82sNoOIoSKEe21ItBo6m2OfJ?=
- =?us-ascii?Q?gXDUPlN/fVrARVaSkLCrbbzPwwMgn6ScNe6H6E9DIqaa2Tw+LfKUoUZHVVLY?=
- =?us-ascii?Q?MQmgGVcq14+t+3B1aXXZV9jciwoQTFFbr4EY5pOmPZurUdSeb62/RQY1C2C2?=
- =?us-ascii?Q?yZNiKxO/2FHMqfPhj562HtXTvm6UtVVkYyR3Z3EqdMJm83iNuDJh5ftHWWcd?=
- =?us-ascii?Q?fHK9/fGNNbw483iNFUmAujV717MA9BiRwmAAfQFarzhztSmE4KBW8WfgMpzV?=
- =?us-ascii?Q?qXeCfVsPE/6JxeKj5nCG/QrpI4JhBFm7tfdQemwTTpvLF14C80MbnjsPI6w8?=
- =?us-ascii?Q?6k7sqN3DlilIyiriaUGQ0J1D6xRnR5O8IKXdrRjMJgC9CGkWKXWuwEwabn8F?=
- =?us-ascii?Q?vIrRBDKyZAwtuQLHTtypUfUHAE0zVDB7W7OY9b9iiJbb2X7JtxvE30ubqdkC?=
- =?us-ascii?Q?29FUMYuFZtyrBhDxQ4bOSyw2D3RTQV/BsjL6B+PhvcLSTychAp350SES/u/x?=
- =?us-ascii?Q?oyJztsYc6L20SLYQVPum88SDfXO6embdZ0nZ7XLydmoo4H5FiM+cVaQkcsGc?=
- =?us-ascii?Q?iOY+crRzIMlstsReNLwR8rgR+Re0tS/0jKjxDmG+/LpTmjqOVJtlhNafI/I3?=
- =?us-ascii?Q?W15Qs0J2Rw9F9eHigNYzN3hbc6zvZKnDxvN8cRplTZxG03nse8vda8hKzv3I?=
- =?us-ascii?Q?F+4+kyNPpmtOkH9kxMxc9iHoUj2GunfpFMteBydClXXVLf5pCfc1VKC0/WVZ?=
- =?us-ascii?Q?0T5xzc6BcW7DIhxIM5vizB1ap1hTxnPEd0cC2CNkxOQI1uykMvWDSm7KTFSv?=
- =?us-ascii?Q?DDZGA2gHzd9/usFCdBRVchpBiCTrIcLY3LxXS2lIgMWJSFnCB/I2orSnLCvC?=
- =?us-ascii?Q?aSKeVsPr0mQJn4qGoobghEqP+8eDO89pv64Bg/qhBMoQ6HjMBk5eE9M0dTMQ?=
- =?us-ascii?Q?eDkF2v4=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e0961ca-6136-46de-f75c-08d8cd5c5eb7
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2021 00:39:48.3904
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CiBVaYVDxDPirK/3l6dS8I2QMjR+FzcxvCccSr02HFNJSJgYQMTMtjkF7iDSEZaQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB4758
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-09_08:2021-02-09,2021-02-09 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0
- lowpriorityscore=0 phishscore=0 clxscore=1015 bulkscore=0 suspectscore=0
- malwarescore=0 mlxlogscore=999 adultscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102100004
-X-FB-Internal: deliver
+In-Reply-To: <20210208221916.GN4626@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 09, 2021 at 09:46:41AM -0800, Yang Shi wrote:
-> Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
-> This approach is fine with nr_deferred at the shrinker level, but the following
-> patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
-> shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
-> from unregistering correctly.
-> 
-> Remove SHRINKER_REGISTERING since we could check if shrinker is registered
-> successfully by the new flag.
-> 
-> Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> ---
->  include/linux/shrinker.h |  7 ++++---
->  mm/vmscan.c              | 31 +++++++++----------------------
->  2 files changed, 13 insertions(+), 25 deletions(-)
-> 
-> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> index 0f80123650e2..1eac79ce57d4 100644
-> --- a/include/linux/shrinker.h
-> +++ b/include/linux/shrinker.h
-> @@ -79,13 +79,14 @@ struct shrinker {
->  #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
->  
->  /* Flags */
-> -#define SHRINKER_NUMA_AWARE	(1 << 0)
-> -#define SHRINKER_MEMCG_AWARE	(1 << 1)
-> +#define SHRINKER_REGISTERED	(1 << 0)
-> +#define SHRINKER_NUMA_AWARE	(1 << 1)
-> +#define SHRINKER_MEMCG_AWARE	(1 << 2)
->  /*
->   * It just makes sense when the shrinker is also MEMCG_AWARE for now,
->   * non-MEMCG_AWARE shrinker should not have this flag set.
->   */
-> -#define SHRINKER_NONSLAB	(1 << 2)
-> +#define SHRINKER_NONSLAB	(1 << 3)
->  
->  extern int prealloc_shrinker(struct shrinker *shrinker);
->  extern void register_shrinker_prepared(struct shrinker *shrinker);
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 273efbf4d53c..a047980536cf 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -315,19 +315,6 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
->  	}
->  }
->  
-> -/*
-> - * We allow subsystems to populate their shrinker-related
-> - * LRU lists before register_shrinker_prepared() is called
-> - * for the shrinker, since we don't want to impose
-> - * restrictions on their internal registration order.
-> - * In this case shrink_slab_memcg() may find corresponding
-> - * bit is set in the shrinkers map.
-> - *
-> - * This value is used by the function to detect registering
-> - * shrinkers and to skip do_shrink_slab() calls for them.
-> - */
-> -#define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
-> -
->  static DEFINE_IDR(shrinker_idr);
->  
->  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
-> @@ -336,7 +323,7 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->  
->  	down_write(&shrinker_rwsem);
->  	/* This may call shrinker, so it must use down_read_trylock() */
-> -	id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
-> +	id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
->  	if (id < 0)
->  		goto unlock;
->  
-> @@ -499,10 +486,7 @@ void register_shrinker_prepared(struct shrinker *shrinker)
->  {
->  	down_write(&shrinker_rwsem);
->  	list_add_tail(&shrinker->list, &shrinker_list);
-> -#ifdef CONFIG_MEMCG
-> -	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> -		idr_replace(&shrinker_idr, shrinker, shrinker->id);
-> -#endif
-> +	shrinker->flags |= SHRINKER_REGISTERED;
->  	up_write(&shrinker_rwsem);
->  }
->  
-> @@ -522,13 +506,16 @@ EXPORT_SYMBOL(register_shrinker);
->   */
->  void unregister_shrinker(struct shrinker *shrinker)
->  {
-> -	if (!shrinker->nr_deferred)
-> +	if (!(shrinker->flags & SHRINKER_REGISTERED))
->  		return;
-> -	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> -		unregister_memcg_shrinker(shrinker);
-> +
->  	down_write(&shrinker_rwsem);
->  	list_del(&shrinker->list);
-> +	shrinker->flags &= ~SHRINKER_REGISTERED;
->  	up_write(&shrinker_rwsem);
-> +
-> +	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> +		unregister_memcg_shrinker(shrinker);
+(LOL, vger is taking super-long to get these emails to me!)
 
-Because unregister_memcg_shrinker() will take and release shrinker_rwsem once again,
-I wonder if it's better to move it into the locked section and change the calling
-convention to require the caller to take the semaphore?
+On Tue, Feb 09, 2021 at 09:19:16AM +1100, Dave Chinner wrote:
+> On Mon, Feb 08, 2021 at 01:49:41PM -0500, Gabriel Krisman Bertazi wrote:
+> > "Theodore Ts'o" <tytso@mit.edu> writes:
+> > 
+> > > On Tue, Feb 02, 2021 at 03:26:35PM -0500, Gabriel Krisman Bertazi wrote:
+> > >> 
+> > >> Thanks for the explanation.  That makes sense to me.  For corruptions
+> > >> where it is impossible to map to a mountpoint, I thought they could be
+> > >> considered global filesystem errors, being exposed only to someone
+> > >> watching the entire filesystem (like FAN_MARK_FILESYSTEM).
+> > >
+> > > At least for ext4, there are only 3 ext4_error_*() that we could map
+> > > to a subtree without having to make changes to the call points:
+> > >
+> > > % grep -i ext4_error_file\( fs/ext4/*.c  | wc -l
+> > > 3
+> > > % grep -i ext4_error_inode\( fs/ext4/*.c  | wc -l
+> > > 79
+> > > % grep -i ext4_error\( fs/ext4/*.c  | wc -l
+> > > 42
+> > >
+> > > So in practice, unless we want to make a lot of changes to ext4, most
+> > > of them will be global file system errors....
+> > >
+> > >> But, as you mentioned regarding the google use case, the entire idea of
+> > >> watching a subtree is a bit beyond the scope of my use-case, and was
+> > >> only added given the feedback on the previous proposal of this feature.
+> > >> While nice to have, I don't have the need to watch different mountpoints
+> > >> for errors, only the entire filesystem.
+> > >
+> > > I suspect that for most use cases, the most interesting thing is the
+> > > first error.  We already record this in the ext4 superblock, because
+> > > unfortunately, I can't guarantee that system administrators have
+> > > correctly configured their system logs, so when handling upstream bug
+> > > reports, I can just ask them to run dumpe2fs -h on the file system:
+> > >
+> > > FS Error count:           2
+> > > First error time:         Tue Feb  2 16:27:42 2021
+> > > First error function:     ext4_lookup
+> > > First error line #:       1704
+> > > First error inode #:      12
+> > > First error err:          EFSCORRUPTED
+> > > Last error time:          Tue Feb  2 16:27:59 2021
+> > > Last error function:      ext4_lookup
+> > > Last error line #:        1704
+> > > Last error inode #:       12
+> > > Last error err:           EFSCORRUPTED
+> > >
+> > > So it's not just the Google case.  I'd argue for most system
+> > > administrator, one of the most useful things is when the file system
+> > > was first found to be corrupted, so they can try correlating file
+> > > system corruptions, with, say, reports of I/O errors, or OOM kils,
+> > > etc.  This can also be useful for correlating the start of file system
+> > > problems with problems at the application layer --- say, MongoDB,
+> > > MySQL, etc.
+> > >
+> > > The reason why a notification system useful is because if you are
+> > > using database some kind of high-availability replication system, and
+> > > if there are problems detected in the file system of the primary MySQL
+> > > server, you'd want to have the system fail over to the secondary MySQL
+> > > server.  Sure, you *could* do this by polling the superblock, but
+> > > that's not the most efficient way to do things.
+> > 
+> > Hi Ted,
+> > 
+> > I think this closes a full circle back to my original proposal.  It
+> > doesn't have the complexities of objects other than superblock
+> > notifications, doesn't require allocations.  I sent an RFC for that a
+> > while ago [1] which resulted in this discussion and the current
+> > implementation.
+> 
+> Yup, we're back to "Design for Google/ext4 requirements only", and
+> ignoring that other filesystems and users also have non-trivial
+> requirements for userspace error notifications.
+> 
+> > For the sake of a having a proposal and a way to move forward, I'm not
+> > sure what would be the next step here.  I could revive the previous
+> > implementation, addressing some issues like avoiding the superblock
+> > name, the way we refer to blocks and using CAP_SYS_ADMIN.  I think that
+> > implementation solves the usecase you explained with more simplicity.
+> > But I'm not sure Darrick and Dave (all in cc) will be convinced by this
+> > approach of global pipe where we send messages for the entire
+> > filesystem, as Dave described it in the previous implementation.
 
->  	kfree(shrinkrem->nr_deferred);
->  	shrinker->nr_deferred = NULL;
->  }
-> @@ -693,7 +680,7 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
->  		struct shrinker *shrinker;
->  
->  		shrinker = idr_find(&shrinker_idr, i);
-> -		if (unlikely(!shrinker || shrinker == SHRINKER_REGISTERING)) {
-> +		if (unlikely(!shrinker || !(shrinker->flags & SHRINKER_REGISTERED))) {
->  			if (!shrinker)
->  				clear_bit(i, info->map);
->  			continue;
+(Well, yeah. :))
+
+> Nope, not convinced at all. As a generic interface, it cannot be
+> designed explicitly for the needs of a single filesystem, especially
+> when there are other filesystems needing to implement similar
+> functionality.
+> 
+> As Amir pointed up earlier in the thread, XFS already already has
+> extensive per-object verification and error reporting facilicities
+> that we would like to hook up to such a generic error reporting
+> mechanism. These use generic mechanisms within XFS, and we've
+> largely standardised the code interally to implement this (e.g. the
+> xfs_failaddr as a mechanism of efficiently encoding the exact check
+> that failed out of the hundreds of verification checks we do).
+
+<nod>
+
+> If we've already got largely standardised, efficient mechanisms for
+> doing all of this in a filesystem, then why would we want to throw
+> that all away when implementing a generic userspace notification
+> channel? We know exactly what we need to present with userspace, so
+> even if other filesystems don't need exactly the same detail of
+> information, they still need to supply a subset of that same
+> information to userspace.
+> 
+> The ext4-based proposals keep mentioning dumping text strings and
+> encoded structures that are ext4 error specific, instead of starting
+> from a generic notification structure that defines the object in the
+> filesystem and location within the object that the notification is
+> for. e.g the {bdev, object, offset, length} object ID tuple I
+> mention here:
+
+TBH I don't find the text strings and whatnot all that useful for
+automated recovery.  Freeform text is easy enough to grok from
+/var/log/kernel, but as for a program I'd rather have an event structure
+that more or less prompts me for what to do. :)
+
+> https://lore.kernel.org/linux-ext4/20201210220914.GG4170059@dread.disaster.area/
+> 
+> For XFS, we want to be able to hook up the verifier error reports
+> to a notification. We want to be able to hook all our corruption
+> reports to a notification. We want to be able to hook all our
+> writeback errors to a notification. We want to be able to hook all
+> our ENOSPC and EDQUOT errors to a notification. And that's just the
+> obvious stuff that notifications are useful for.
+> 
+> If you want an idea of all the different types of metadata objects
+> we need to have different notifications for, look at the GETFSMAP
+> ioctl man page. It lists all the different types of objects we are
+> likely to emit notifications for from XFS (e.g. free space
+> btree corruption at record index X to Y) because, well, that's the
+> sort of information we're already dumping to the kernel log....
+>
+> Hence from a design perspective, we need to separate the contents of
+> the notification from the mechanism used to configure, filter and
+> emit notifications to userspace.  That is, it doesn't matter if we
+> add a magic new syscall or use fanotify to configure watches and
+> transfer messages to userspace, the contents of the message is going
+> to be the exactly the same, and the API that the filesystem
+
+(Yep)
+
+> implementations are going to call to emit a notification to
+> userspace is exactly the same.
+> 
+> So a generic message structure looks something like this:
+> 
+> <notification type>		(msg structure type)
+> <notification location>		(encoded file/line info)
+> <object type>			(inode, dir, btree, bmap, block, etc)
+> <object ID>			{bdev, object}
+> <range>				{offset, length} (range in object)
+> <notification version>		(notification data version)
+> <notification data>		(filesystem specific data)
+
+/me notes that the first six fields are specific enough that a xfs_scrub
+daemon would be able to figure out what repair calls to make, so you
+could very well go with this structure instead of the things I rambled
+about elsewhere in this thread.
+
+Though I do kinda wonder about things like btrfs where you can have
+raid1 metadata; would you want to be able to know that the chunk tree on
+/dev/sda1 is bad?  Or is it enough to know that a chunk tree is bad
+since the remedy (at least in terms of poking the kernel) is the same?
+
+(I don't know since I don't grok btrfs)
+
+> The first six fields are generic and always needed and defined by
+> the kernel/user ABI (i.e. fixed forever in time). The notification
+> data is the custom message information from the filesystem, defined
+> by the filesystem, and is not covered by kernel ABI requirements
+> (similar to current dmesg output). That message could be a string,
+> an encoded structure, etc, but it's opaque to the notification layer
+> and just gets dumped to userspace in the notification. Generic tools
+> can parse the generic fields to give basic notification information,
+> debug/diagnostic tools can turn that fs specific information into
+> something useful for admins and support engineers.
+> 
+> IOWs, there is nothing that needs to be ext4 or XFS specific in the
+> notification infrastructure, just enough generic information for
+> generic tools to be useful, and a custom field for filesystem
+> specific diagnostic information to be included in the notification.
+
+I wonder ens 
+
+> At this point, we just don't care about where in the filesystem the
+> notification is generated - the notification infrastructure assigns
+> the errors according to the scope the filesystem maps the object
+> type to. e.g. if fanotify is the userspace ABI, then global metadata
+> corruptions go to FA_MARK_FILESYSTEM watchers but not FA_MARK_MOUNT.
+> The individual operations that get an -EFSCORRUPTED error emits a
+> notification to FA_MARK_INODE watchers on that inode. And so on.
+
+<nod>
+
+> If a new syscall is added, then it also needs to be able to scope
+> error notifications like this because we would really like to have
+> per-directory and per-inode notifications supported if at all
+> possible. But that is a separate discussion to the message contents
+> and API filesystems will use to create notifications on demand...
+
+Yeah.
+
+> Cheers,
+> 
+> Dave.
 > -- 
-> 2.26.2
-> 
+> Dave Chinner
+> david@fromorbit.com
