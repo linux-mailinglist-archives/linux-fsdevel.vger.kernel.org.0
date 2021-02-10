@@ -2,120 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC7A31699A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 16:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34AFB316A86
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 16:55:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbhBJO7y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 09:59:54 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35567 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231362AbhBJO7w (ORCPT
+        id S231754AbhBJPzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 10:55:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59890 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231695AbhBJPzH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 09:59:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612969105;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JXWQ3QsL02YUQqB+nIIe08owddr9BAKCHOsheK1b9hM=;
-        b=IdtrUlXTHHYjWEMFwS4+rdgmt3byBJ3JIvaq96TTf5MRIBeQu6HBbIJwDFrSP89CbTlY9w
-        IAyPhv7EeARZ0fQJnh1VXJ9g3TxsVsuwJjFANhSk8Jq1ut2ZryZ60zdK27R9xux7B2xy2x
-        koid4TXIlSpMF1Xw0p2UUkHgASX7GWw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-293-B1zn18xsMXiDzWEEnMcDrw-1; Wed, 10 Feb 2021 09:58:20 -0500
-X-MC-Unique: B1zn18xsMXiDzWEEnMcDrw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3613D189DF4F;
-        Wed, 10 Feb 2021 14:58:19 +0000 (UTC)
-Received: from localhost (ovpn-115-120.ams2.redhat.com [10.36.115.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FD2A60936;
-        Wed, 10 Feb 2021 14:58:15 +0000 (UTC)
-Date:   Wed, 10 Feb 2021 14:58:14 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH] virtiofs: Fail dax mount if device does not support it
-Message-ID: <20210210145814.GA231286@stefanha-x1.localdomain>
-References: <20210209224754.GG3171@redhat.com>
+        Wed, 10 Feb 2021 10:55:07 -0500
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F71C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 07:54:27 -0800 (PST)
+Received: by mail-qt1-x82f.google.com with SMTP id o21so1851309qtr.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 07:54:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NxE0y8wwvHdcyS4GSv6Atyz30ECFPty+ac1qjn7nH4M=;
+        b=N6fP+envttGaR6PkGS485E3oQQ6UGBOaDx5L4dsVZ1fgmOWbF2uakPTV7vOAETwvPg
+         URsIBRw5KvL/rsCcNCS1M1nKA/ZTHjtVDV3LaDFwk4kQs/YRriwHO9ubD67jFTREaBT/
+         AgVIg6d0r5MCH1ntJBNpGwbWp6e35irk+R3uW6RKos5huV/NlYl3Ds4m2WsLhSCHW4wp
+         3eyMVKFTIDF74YA4e36771qOeHtm3lZK/Wbm3E8if4cdv5MqHLmQ962swpebQwqnycOb
+         QEihWA9RrrY6T9Gn0JDyNp03eBF4mcOyhRMWaTjw67OJkTqhlsDVtk/B1RnfrTBICi0F
+         RogA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NxE0y8wwvHdcyS4GSv6Atyz30ECFPty+ac1qjn7nH4M=;
+        b=ko0V5cflV8iWRnYO/tHZxURv1uxBxfmOhZBrd0WJoixlH6IxOD44kBjOrtn4Q/p1RV
+         A+BO2MSlsb7LuK1krniCPPwXW/sEV/NyzkSUomGW0vmALHVpWht7R4c7EcdN18ulMFjT
+         LtlA92jSjWd96nC/l9shYfe1XyazlvF4eTrA1qF0Il2J2qchbl/zzekLbtDmq01/SwIU
+         4zYy24isIpI8rrxOkYvqrj3qRkgZjjMDw/S/GbadDvbsy/QgYutL5xC5F1PnrDmqOtrO
+         n6E/aNH9lnUUQ/cDl9S4C7pECYqIc+BLN7mD+jRsQOx6cpaN/muyM6m+IkS8Iq5uSypy
+         UNUA==
+X-Gm-Message-State: AOAM532BzM46MPjKRdhqJspNr4w0T4fPCjtl2Gtq8IDp2xvfv0X6ivWr
+        9Uvb1OP/yXzYDAZUEAG3Vsbbbw==
+X-Google-Smtp-Source: ABdhPJwDtffe2C4aP4GlKtE1CFhg36F0tM3gZlILLftBRVKFsAronaQQswr1uVmbsfOksveX2ZHywg==
+X-Received: by 2002:aed:3443:: with SMTP id w61mr990277qtd.89.1612972466533;
+        Wed, 10 Feb 2021 07:54:26 -0800 (PST)
+Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id z20sm1625439qki.93.2021.02.10.07.54.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Feb 2021 07:54:25 -0800 (PST)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     viro@ZenIV.linux.org.uk, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, vbabka@suse.cz, willy@infradead.org
+Cc:     Christoph Hellwig <hch@lst.de>
+Subject: [PATCH] proc: use vmalloc for our kernel buffer
+Date:   Wed, 10 Feb 2021 10:54:24 -0500
+Message-Id: <6345270a2c1160b89dd5e6715461f388176899d1.1612972413.git.josef@toxicpanda.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
-Content-Disposition: inline
-In-Reply-To: <20210209224754.GG3171@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Since
 
---+HP7ph2BbKc20aGI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  sysctl: pass kernel pointers to ->proc_handler
 
-On Tue, Feb 09, 2021 at 05:47:54PM -0500, Vivek Goyal wrote:
-> Right now "mount -t virtiofs -o dax myfs /mnt/virtiofs" succeeds even
-> if filesystem deivce does not have a cache window and hence DAX can't
-> be supported.
->=20
-> This gives a false sense to user that they are using DAX with virtiofs
-> but fact of the matter is that they are not.
->=20
-> Fix this by returning error if dax can't be supported and user has asked
-> for it.
->=20
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/fuse/virtio_fs.c |    9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> Index: redhat-linux/fs/fuse/virtio_fs.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- redhat-linux.orig/fs/fuse/virtio_fs.c	2021-02-04 10:40:21.704370721 -=
-0500
-> +++ redhat-linux/fs/fuse/virtio_fs.c	2021-02-09 15:56:45.693653979 -0500
-> @@ -1324,8 +1324,15 @@ static int virtio_fs_fill_super(struct s
-> =20
->  	/* virtiofs allocates and installs its own fuse devices */
->  	ctx->fudptr =3D NULL;
-> -	if (ctx->dax)
-> +	if (ctx->dax) {
-> +		if (!fs->dax_dev) {
-> +			err =3D -EINVAL;
-> +			pr_err("virtio-fs: dax can't be enabled as filesystem"
-> +			       " device does not support it.\n");
-> +			goto err_free_fuse_devs;
-> +		}
->  		ctx->dax_dev =3D fs->dax_dev;
-> +	}
->  	err =3D fuse_fill_super_common(sb, ctx);
->  	if (err < 0)
->  		goto err_free_fuse_devs;
+we have been pre-allocating a buffer to copy the data from the proc
+handlers into, and then copying that to userspace.  The problem is this
+just blind kmalloc()'s the buffer size passed in from the read, which in
+the case of our 'cat' binary was 64kib.  Order-4 allocations are not
+awesome, and since we can potentially allocate up to our maximum order,
+use vmalloc for these buffers.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/proc/proc_sysctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---+HP7ph2BbKc20aGI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmAj9IYACgkQnKSrs4Gr
-c8hKswgAx8cnf0HAP8eDaXN2en5yHDUSGwKbvCKrRN5KNUKPcwK372PNnX+H2Kp2
-/ngf5Umzb1oxvofxNWuZUuHRYl/LFVIcYlICW6IvccaR4DFHEKj9tHOA9SiEbg8j
-o9F3P7wgB2V6Hq5fH4556VUJJjWYTKQQO9WRWoQKJL1zeRUHcuhJIIFsJOpWQgTP
-k98uM6spvg21o0BFH+QVh3shizFkzYzYz6CtGhiKfPuEN0mMvr3zcwJpgETgNpOf
-DuMdsxNLf/DZc1Y5K3Kzhc5tf3EszcunGrFbbxhU3dAXX2CUQbB1fVEBRWwNPrlf
-8Kd8n7XyHtehZIGHabdIQNWGW0yyoA==
-=X28C
------END PGP SIGNATURE-----
-
---+HP7ph2BbKc20aGI--
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index d2018f70d1fa..070d2df8ab9c 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -571,7 +571,7 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
+ 	error = -ENOMEM;
+ 	if (count >= KMALLOC_MAX_SIZE)
+ 		goto out;
+-	kbuf = kzalloc(count + 1, GFP_KERNEL);
++	kbuf = kvzalloc(count + 1, GFP_KERNEL);
+ 	if (!kbuf)
+ 		goto out;
+ 
+@@ -600,7 +600,7 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
+ 
+ 	error = count;
+ out_free_buf:
+-	kfree(kbuf);
++	kvfree(kbuf);
+ out:
+ 	sysctl_head_finish(head);
+ 
+-- 
+2.26.2
 
