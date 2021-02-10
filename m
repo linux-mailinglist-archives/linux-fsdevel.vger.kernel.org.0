@@ -2,127 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0DBF316966
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 15:48:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC7A31699A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 16:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbhBJOsc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 09:48:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbhBJOsb (ORCPT
+        id S230148AbhBJO7y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 09:59:54 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35567 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231362AbhBJO7w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 09:48:31 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10F16C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 06:47:49 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id n14so2132262iog.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 06:47:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iLQB+ZEK+T1kkPIMmSiRQAuvCttN7l5jwO4FPXByOu0=;
-        b=S75Rvmwn8cPlYmIasDVtSfCicnMqmAmDIOC1KeS8b561gye7C5Z9s9xzzScUn2gzOp
-         x0YDpxqpXkhDAsX+n28rOKL53rEazrurt+Z+F3Elgnz81MXX8K8B23BwTVot7KHqtlGo
-         YMseBPoVonFI3uN0x26++7p5TJ+t4VdLq8rRdsM5JrLi2z1mM8iYQYt8tYTd6+ztrIuq
-         J/YFQXQ13fvlM1XfHZcgiHIXtfqvRbP7HkW7UNdQd3oS8q43SzVv9d1x4N1d+Fj0eYYT
-         agPR1I+hPbYFjqPdqfG0YhBoqNazVRrSFt/RQCVLunMGRcYvWu+XaGRjq8B5fK7kUnAM
-         ImVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iLQB+ZEK+T1kkPIMmSiRQAuvCttN7l5jwO4FPXByOu0=;
-        b=Cqxc3I5PKN/kxHx0hp1zA3AjSBuQKXJ2eU/FMQquqHhSLM5LUPA8Kj7FvYDqrIW1kZ
-         lRMrXPiuyQDsZrY6PJ4dl6u91Aj8zeb8XL3ZmaOz/CLrJLPUOxMDwK/tP+EzJrjkolTB
-         CXiNTMGSiTjpQE4IZjoaf7oBDqHjUZvsdonoYtRAk/uGyKmVlbUgcVXL7fpPz/0W/SJL
-         mbnSChN1pdLJdaBEQYhEga04pcEWuUcsOkB1WkryjdJperaD/2nni/ao/f7FhrEBWE2J
-         iQpYCAnnoN7ZPaT3ABhAPd4Sw2Nz+3o5l84wJlf42Tw2r96SfejSm/1RpgrD7i/0vnCv
-         xCaw==
-X-Gm-Message-State: AOAM533gTBaacXHw24g7oPMHwSwxH86H0Lc0FM2jUUTGdmfUCfLimJso
-        IYAfFzWk6pl0viTTcHyJ8zcdww==
-X-Google-Smtp-Source: ABdhPJzGI3wasT05NQNuC68AcYWOot4syxPq1VHZXP27MHio5htsMwcoYpP4TtJ1g5gZ9Ubksztcrw==
-X-Received: by 2002:a05:6638:b12:: with SMTP id a18mr3760547jab.114.1612968468565;
-        Wed, 10 Feb 2021 06:47:48 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id m4sm1101011ilc.53.2021.02.10.06.47.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Feb 2021 06:47:48 -0800 (PST)
-Subject: Re: [PATCHSET v2 0/3] Improve IOCB_NOWAIT O_DIRECT reads
-To:     sedat.dilek@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        hch@infradead.org
-References: <20210209023008.76263-1-axboe@kernel.dk>
- <20210209115542.3e407e306a4f1af29257c8f6@linux-foundation.org>
- <32dba5cc-7878-3b7b-45e4-84690a45a998@kernel.dk>
- <CA+icZUWBrHA72gQzyByKbNeCzaaVcNX85VwnYHozp6KWBt5tHQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6bb0288d-4a99-e971-636b-ebd48c59dfa4@kernel.dk>
-Date:   Wed, 10 Feb 2021 07:47:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 10 Feb 2021 09:59:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612969105;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JXWQ3QsL02YUQqB+nIIe08owddr9BAKCHOsheK1b9hM=;
+        b=IdtrUlXTHHYjWEMFwS4+rdgmt3byBJ3JIvaq96TTf5MRIBeQu6HBbIJwDFrSP89CbTlY9w
+        IAyPhv7EeARZ0fQJnh1VXJ9g3TxsVsuwJjFANhSk8Jq1ut2ZryZ60zdK27R9xux7B2xy2x
+        koid4TXIlSpMF1Xw0p2UUkHgASX7GWw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-293-B1zn18xsMXiDzWEEnMcDrw-1; Wed, 10 Feb 2021 09:58:20 -0500
+X-MC-Unique: B1zn18xsMXiDzWEEnMcDrw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3613D189DF4F;
+        Wed, 10 Feb 2021 14:58:19 +0000 (UTC)
+Received: from localhost (ovpn-115-120.ams2.redhat.com [10.36.115.120])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FD2A60936;
+        Wed, 10 Feb 2021 14:58:15 +0000 (UTC)
+Date:   Wed, 10 Feb 2021 14:58:14 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH] virtiofs: Fail dax mount if device does not support it
+Message-ID: <20210210145814.GA231286@stefanha-x1.localdomain>
+References: <20210209224754.GG3171@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+icZUWBrHA72gQzyByKbNeCzaaVcNX85VwnYHozp6KWBt5tHQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+Content-Disposition: inline
+In-Reply-To: <20210209224754.GG3171@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/10/21 1:07 AM, Sedat Dilek wrote:
-> On Tue, Feb 9, 2021 at 10:25 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 2/9/21 12:55 PM, Andrew Morton wrote:
->>> On Mon,  8 Feb 2021 19:30:05 -0700 Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>>> Hi,
->>>>
->>>> For v1, see:
->>>>
->>>> https://lore.kernel.org/linux-fsdevel/20210208221829.17247-1-axboe@kernel.dk/
->>>>
->>>> tldr; don't -EAGAIN IOCB_NOWAIT dio reads just because we have page cache
->>>> entries for the given range. This causes unnecessary work from the callers
->>>> side, when the IO could have been issued totally fine without blocking on
->>>> writeback when there is none.
->>>>
->>>
->>> Seems a good idea.  Obviously we'll do more work in the case where some
->>> writeback needs doing, but we'll be doing synchronous writeout in that
->>> case anyway so who cares.
->>
->> Right, I think that'll be a round two on top of this, so we can make the
->> write side happier too. That's a bit more involved...
->>
->>> Please remind me what prevents pages from becoming dirty during or
->>> immediately after the filemap_range_needs_writeback() check?  Perhaps
->>> filemap_range_needs_writeback() could have a comment explaining what it
->>> is that keeps its return value true after it has returned it!
->>
->> It's inherently racy, just like it is now. There's really no difference
->> there, and I don't think there's a way to close that. Even if you
->> modified filemap_write_and_wait_range() to be non-block friendly,
->> there's nothing stopping anyone from adding dirty page cache right after
->> that call.
->>
-> 
-> Jens, do you have some numbers before and after your patchset is applied?
 
-I don't, the load was pretty light for the test case - it was just doing
-33-34K of O_DIRECT 4k random reads in a pretty small range of the device.
-When you end up having page cache in that range, that means you end up
-punting a LOT of requests to the async worker. So it wasn't as much a
-performance win for this particular case, but an efficiency win. You get
-rid of a worker using 40% CPU, and reduce the latencies.
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> And kindly a test "profile" for FIO :-)?
+On Tue, Feb 09, 2021 at 05:47:54PM -0500, Vivek Goyal wrote:
+> Right now "mount -t virtiofs -o dax myfs /mnt/virtiofs" succeeds even
+> if filesystem deivce does not have a cache window and hence DAX can't
+> be supported.
+>=20
+> This gives a false sense to user that they are using DAX with virtiofs
+> but fact of the matter is that they are not.
+>=20
+> Fix this by returning error if dax can't be supported and user has asked
+> for it.
+>=20
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/virtio_fs.c |    9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+>=20
+> Index: redhat-linux/fs/fuse/virtio_fs.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- redhat-linux.orig/fs/fuse/virtio_fs.c	2021-02-04 10:40:21.704370721 -=
+0500
+> +++ redhat-linux/fs/fuse/virtio_fs.c	2021-02-09 15:56:45.693653979 -0500
+> @@ -1324,8 +1324,15 @@ static int virtio_fs_fill_super(struct s
+> =20
+>  	/* virtiofs allocates and installs its own fuse devices */
+>  	ctx->fudptr =3D NULL;
+> -	if (ctx->dax)
+> +	if (ctx->dax) {
+> +		if (!fs->dax_dev) {
+> +			err =3D -EINVAL;
+> +			pr_err("virtio-fs: dax can't be enabled as filesystem"
+> +			       " device does not support it.\n");
+> +			goto err_free_fuse_devs;
+> +		}
+>  		ctx->dax_dev =3D fs->dax_dev;
+> +	}
+>  	err =3D fuse_fill_super_common(sb, ctx);
+>  	if (err < 0)
+>  		goto err_free_fuse_devs;
 
-To reproduce this, have a small range dio rand reads and then have
-something else that does a few buffered reads from the same range.
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
--- 
-Jens Axboe
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmAj9IYACgkQnKSrs4Gr
+c8hKswgAx8cnf0HAP8eDaXN2en5yHDUSGwKbvCKrRN5KNUKPcwK372PNnX+H2Kp2
+/ngf5Umzb1oxvofxNWuZUuHRYl/LFVIcYlICW6IvccaR4DFHEKj9tHOA9SiEbg8j
+o9F3P7wgB2V6Hq5fH4556VUJJjWYTKQQO9WRWoQKJL1zeRUHcuhJIIFsJOpWQgTP
+k98uM6spvg21o0BFH+QVh3shizFkzYzYz6CtGhiKfPuEN0mMvr3zcwJpgETgNpOf
+DuMdsxNLf/DZc1Y5K3Kzhc5tf3EszcunGrFbbxhU3dAXX2CUQbB1fVEBRWwNPrlf
+8Kd8n7XyHtehZIGHabdIQNWGW0yyoA==
+=X28C
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
 
