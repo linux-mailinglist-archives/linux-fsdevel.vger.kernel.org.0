@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F003C315C50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 02:34:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6939315C60
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 02:37:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235069AbhBJBcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Feb 2021 20:32:48 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:60264 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S234905AbhBJBah (ORCPT
+        id S235014AbhBJBgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Feb 2021 20:36:52 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:43808 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235108AbhBJBff (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Feb 2021 20:30:37 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.43/8.16.0.43) with SMTP id 11A1Rjml022070;
-        Tue, 9 Feb 2021 17:29:38 -0800
+        Tue, 9 Feb 2021 20:35:35 -0500
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11A1X9pB006202;
+        Tue, 9 Feb 2021 17:34:44 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
  subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=rvS8m/OZfe3xoVbz9OdPiBteV2pJOn030SHgKciycb8=;
- b=lG6imbrjtFHdW2Z4B50GSt7EKv8v9t8QsDYb02PEN2zMLOWkOT57kfJ0ACeOR/zt7loe
- dZjDZLzrEp23LPgUv/jk5S84qd2pNEYnKPdV+tolIfrT0F8xnCiSQfJNpcOq4/JPxbjN
- Trpy1DZX3wfHZEbI68jdQM0T0iCAuX47VUg= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0001303.ppops.net with ESMTP id 36hqnthuja-1
+ mime-version; s=facebook; bh=3mCJWurq8u2PKd9a96O1qNWdHlDlpxlJGtncmoGZFeM=;
+ b=ha0ZPkk8BfSGWNsYNwPH7hlGcgM9Rlc1EvSDUGho8TJaP+Dcb8YEo9R/9a85SmbHKbXk
+ E4jzj2beCaV2OgVTOrSm+6Ovuu6HLpFwkYrEFR7Q1PXXM8I5FuAkP4ehYpkI13c47nbq
+ 2l/58+85doRJTkKgAnHFcc7nxx3WGycIPto= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 36hstphg5y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 09 Feb 2021 17:29:38 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.102) with Microsoft SMTP Server
+        Tue, 09 Feb 2021 17:34:44 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Tue, 9 Feb 2021 17:29:37 -0800
+ 15.1.1979.3; Tue, 9 Feb 2021 17:34:10 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fNHyzt2ajePis3M6eAdnMcOS74INW1J5/5NF15eabiCvetLwRlWQG6U5gKKu1s7pe8D9Ps43Sxfz1G2VYJ1xZroDMT3pWgxDMVJK32aiQM5qZhqPWS1joyQ/u9rd2+OFJxwsVnhTSG21hgSTPP10anMh6XmyWWG602erxIufEt9RCexwEhaCNjcvIebXlbr4tZmyLkTIt8/BOFvLwsjgxWxKfUDi74wcwiEMJy4lNkykhtzO+2YeIWoHoz8aUdvF0DEu0vCKxm2jp9zW3swu6+V/azr6xAN00ySff3qIL6SICwONywYG0ihOOD6ipHBHMczk0i05cYF2Mix13a3wyA==
+ b=U8xd6r2iApPZpnkIpodSTt+Tsresf1VKTV1m6CSebM6r77uVhdUZkLX20/79rt+E8YmLj5HOxZ837JyabohummxUBxlLtTqzgvkvIZ7O9SkwTdCRTNsyJbUjOy4J106SRWYVmr59jPc3vtsVrDnErVSPQDyinNLamRWfd1xr16OsPEgOx29gbNLG+J+xmO8mgFrJoPm1OQSLCcRcKjiRtz8WI7FhPcx7iP4bfxbUjRLzXTnL3Q4WaaHO1BmMf+4E8++N33b0uVeZB3FlUQYWpVt1mwU/bDd39Q/+iZTxFItkJJYguXv6kgh8pNSY5K1hUHpNtjmQBDJZN8zVI/3Eeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rvS8m/OZfe3xoVbz9OdPiBteV2pJOn030SHgKciycb8=;
- b=PIYnWB1EvFGaPSOokUN4q7O6iX7MnVB5ahjymAZp+zI5MfG/uL74PZkHzhntpRA4DGRObT1mPbuC3cFkWSigjQaxYGEpk1Fw/1Ree7L4/m9wGtcgiS3pJsdq4bvVuqATSAgo4InFZEIxbRsLGP5tLmE3gUWlzM/rh9QGgp93cveDAT37Pokj43txwWgEbbCElhWnTVEtpb5uJnyeXHCE2+QQKNLICc4Qjcmwg1Mvuv6ngEtJvYIAJSM1EWIxPW1AB91+kqYR0GrYg9Zaa1ae+tHSonAJ/li4Uym5okddGth110oSucnqMCBY3vjqjIWGlDw/W6N0k6QDMIrAybF8Kg==
+ bh=3mCJWurq8u2PKd9a96O1qNWdHlDlpxlJGtncmoGZFeM=;
+ b=mweHkvuPQ3gYytAeKcyzDCuCkSMPbJbhNS/Qipj7laNNSs3o8Hx6eGWzHUxXrVcSdlHgq4YF070eFj13glgxHDjSXa3ZBX5lYJKdGy9LGGO1pp/tK4GjN4/za37Fb1vr/eUSN95rkI+t38WRMna6uG8cSA3auctmMeRHKKICUW6Rs1nshax85X92frk+cx1D+k4xYNCQSwkVfqBLC9zt41TmqX9mKQcJSZ8xB4rgadeX/3hv8z5wikFn17b+H9qv/0ARSKvO6CUqngwVgk4mWTBpdckjXOeweA+BUAtnFcdSPquqJKv5ZNNuJ2QYk7zSBxGa/0lPWY9hri61EH7KZA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
  header.d=fb.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector2-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rvS8m/OZfe3xoVbz9OdPiBteV2pJOn030SHgKciycb8=;
- b=JgSUJRUkHxDfo18RVmLTSyFF46Nm1vgodSXRR9ibDmXfd6E6dMZkEs20cU1ylShE5EsqclvNUejfkJNsCfHDteHbcAiOU6hCZi1t8aLGCzVFPvqZKuRSznco96bk2FWBB0kRnHEI19AjN5/CfMdDbCNbhjGrwHZwbTAxBAM54T8=
+ bh=3mCJWurq8u2PKd9a96O1qNWdHlDlpxlJGtncmoGZFeM=;
+ b=OOqq67pw0djeflZfltYyzis5IWZsHIDE3aAArd4qfkU7R9WYSO2b20ASeTdQJHYswTuZiecKrcNfA8DnHwU0pTfmuH/jiR2k2mqdqD7whrIcxFDG2O7TpNUBdP9rre0TnlJlZjX+eqIF1EIHnm48njeNO2YgeCh3Y3VHsIf45rI=
 Authentication-Results: gmail.com; dkim=none (message not signed)
  header.d=none;gmail.com; dmarc=none action=none header.from=fb.com;
 Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by BYAPR15MB3350.namprd15.prod.outlook.com (2603:10b6:a03:109::10) with
+ by SJ0PR15MB4758.namprd15.prod.outlook.com (2603:10b6:a03:37b::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.26; Wed, 10 Feb
- 2021 01:29:36 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.17; Wed, 10 Feb
+ 2021 01:34:09 +0000
 Received: from BYAPR15MB4136.namprd15.prod.outlook.com
  ([fe80::53a:b2c3:8b03:12d1]) by BYAPR15MB4136.namprd15.prod.outlook.com
  ([fe80::53a:b2c3:8b03:12d1%7]) with mapi id 15.20.3825.030; Wed, 10 Feb 2021
- 01:29:36 +0000
-Date:   Tue, 9 Feb 2021 17:29:32 -0800
+ 01:34:09 +0000
+Date:   Tue, 9 Feb 2021 17:34:04 -0800
 From:   Roman Gushchin <guro@fb.com>
 To:     Yang Shi <shy828301@gmail.com>
 CC:     Kirill Tkhai <ktkhai@virtuozzo.com>,
@@ -68,122 +68,202 @@ CC:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         Linux MM <linux-mm@kvack.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [v7 PATCH 06/12] mm: vmscan: add shrinker_info_protected() helper
-Message-ID: <20210210012932.GP524633@carbon.DHCP.thefacebook.com>
+Subject: Re: [v7 PATCH 07/12] mm: vmscan: use a new flag to indicate shrinker
+ is registered
+Message-ID: <20210210013404.GQ524633@carbon.DHCP.thefacebook.com>
 References: <20210209174646.1310591-1-shy828301@gmail.com>
- <20210209174646.1310591-7-shy828301@gmail.com>
- <20210210002218.GJ524633@carbon.DHCP.thefacebook.com>
- <CAHbLzkp6q60pGBGKB-H6k5YoCy8ZHcLVj4rrZOsXi3=jOfbGzQ@mail.gmail.com>
+ <20210209174646.1310591-8-shy828301@gmail.com>
+ <20210210003943.GK524633@carbon.DHCP.thefacebook.com>
+ <CAHbLzkq2_=b-_4adsf-8vwcG6io6Zx_2o82207S6z8J7ShfTMw@mail.gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHbLzkp6q60pGBGKB-H6k5YoCy8ZHcLVj4rrZOsXi3=jOfbGzQ@mail.gmail.com>
-X-Originating-IP: [2620:10d:c090:400::5:f6e4]
-X-ClientProxiedBy: MW4PR04CA0249.namprd04.prod.outlook.com
- (2603:10b6:303:88::14) To BYAPR15MB4136.namprd15.prod.outlook.com
+In-Reply-To: <CAHbLzkq2_=b-_4adsf-8vwcG6io6Zx_2o82207S6z8J7ShfTMw@mail.gmail.com>
+X-Originating-IP: [2620:10d:c090:400::5:781e]
+X-ClientProxiedBy: MWHPR18CA0055.namprd18.prod.outlook.com
+ (2603:10b6:300:39::17) To BYAPR15MB4136.namprd15.prod.outlook.com
  (2603:10b6:a03:96::24)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:f6e4) by MW4PR04CA0249.namprd04.prod.outlook.com (2603:10b6:303:88::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.25 via Frontend Transport; Wed, 10 Feb 2021 01:29:35 +0000
+Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:781e) by MWHPR18CA0055.namprd18.prod.outlook.com (2603:10b6:300:39::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.27 via Frontend Transport; Wed, 10 Feb 2021 01:34:08 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ced2486d-eb3d-4a31-2d21-08d8cd6353e8
-X-MS-TrafficTypeDiagnostic: BYAPR15MB3350:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB33509A5A9A7F323923F1A78DBE8D9@BYAPR15MB3350.namprd15.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 152989b0-4b56-4913-d1da-08d8cd63f68b
+X-MS-TrafficTypeDiagnostic: SJ0PR15MB4758:
+X-Microsoft-Antispam-PRVS: <SJ0PR15MB4758E091782C9AA8BDAAA5D2BE8D9@SJ0PR15MB4758.namprd15.prod.outlook.com>
 X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:1186;
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Vs+0dTOKr+JtDMN14tclktEesjN49Xqrnh3a1mgld1dx8yNKjMU+i5GFdNut4kR++jlmcqCXSd0O2/HtFsMy8NS8ud585fXJrIzZSdoDfo153b4NcO8wPaUwKnF0K2T7VCpKOJY/oe8lo1eVK5Y+5ymBqW9obsS/BpOJtjdykkWi6Rv3Afz1njv9oyzP+rfSpYJOiR+5eSaAmvaZgMGWx7ume31Xrusm1hrlfd3eKhe1qRA4rPcWrYLsjw7mmjHqoosAdj/PR8PMpCSZQ7VTUzhp3WbRrsclnoRPDchjzgIauXpo5FwE1SFt9C0TyI4yonc+tyz5JSvh7BDyrSS+xaM1QuOB4HCTrVWXjRG67ESVR0d5Q6T6i45/9aLfqXGV5nfjkjXhDUEYpQJhZ5m0xeYBJnoLq5OjlfP/V75PtOIO9c0boTNQsSYWWP3xjyvm5Jmdmqe4C1WAf4s/HJt+xeQfrg6c9Z8acRJR4UFeaxrVIVTN6DQDG4Tv8ycHCi6DvQIKPUiRry3cPgYuZSm8rw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(396003)(39860400002)(346002)(136003)(366004)(66556008)(8936002)(4326008)(86362001)(9686003)(66946007)(66476007)(16526019)(186003)(55016002)(478600001)(7696005)(52116002)(6506007)(8676002)(2906002)(7416002)(1076003)(53546011)(316002)(6666004)(5660300002)(6916009)(83380400001)(54906003)(33656002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?CKIiY9FL0ha2H2zoBglQW+SIGItkvUSK34BH5rKO6zsW+ygDs+hPu9OvAPbM?=
- =?us-ascii?Q?d1+umDFI99znFu3lqblTpm1IocRYBHRes5aHhSfSXljamSxWlKZBpL2UnnQQ?=
- =?us-ascii?Q?vaHgvXDhhWYDVLPZdNvOTr32oH2lYd58alu3t4Ke/dm4Zn8rLSrWhMxThyNb?=
- =?us-ascii?Q?y23Rh/G8If440DBOcThZmwa3r99b5y5IWofN/4myg2i2Nxgwew1WZWek+dxI?=
- =?us-ascii?Q?DDul++okVh2Jx3GA5c2rOI/BMEBBJzcE+VIvVEVpBSU80n0z18rmDLukZSfA?=
- =?us-ascii?Q?74n3GgdXpi/VaDnEeRX1iRQ6fMedAHW3JJTNsINztiiMOTQmXIUrTTi76H3r?=
- =?us-ascii?Q?zBB43W6p1nyQGu8sHYYWrTOX7bu43Ne3RmCscoUhi1rH2QGHMtrLevM5evp2?=
- =?us-ascii?Q?V32lNWnhC3ac4Ptxm5cTm59neWmbVpC250Qfo2vlA4VKv1ueMlTZcUpSrroG?=
- =?us-ascii?Q?vmlvqdpY3RTxbY4O8wNsinxM5PUwEOsRi/6pXarQ6IqupqLouq0mQYMad63O?=
- =?us-ascii?Q?2v8Ng9c4eEkx+d6T/mlLcdZ8yigjg0vUNhN18kvlwTg+X5kCv3Ik6c5rsALg?=
- =?us-ascii?Q?351xRdd75hXiuO7EBTMul5pqbsB0ahjhxzIuaBi27qryRSRC9kUtiBHIuyxC?=
- =?us-ascii?Q?UOWFOpd0isQohQVsf8PzNcNrXuHAKuUu4MkhM8O1CsZRiEkq5VOju139Tbzq?=
- =?us-ascii?Q?t34C5dCQ0EX3aSfDksuQ74j2tIRbL8qBxso9GQ9xEBhHtN3fRJWFEWcMA0S3?=
- =?us-ascii?Q?pzxArY/AheoHWBb5Z4jFG+MXd5jR00KrnYX2EY3kTxYr+9OnRJt4W6HzJw0s?=
- =?us-ascii?Q?xxmVFefTYLwOyJQgi4N2Cg/BEK+hNccEme1mOeeTQMrMq7zdQ6dV0rsSE1Si?=
- =?us-ascii?Q?3OA1thgXf3Kky/m23Gd1XV/YFfOcjjiSb7q631dUBcOibZtb3uYr8YYQ4CKE?=
- =?us-ascii?Q?dkTVXh4VdCYMDZj7p4y76h62tcTNyECJF64g+eTixNxx68D55FIyq5bYUURe?=
- =?us-ascii?Q?cV6TSXzn9lg7qDNNrqvkBUMJWAkLVa+lJVvLQJbtzIsVZjoo7lVf/mDOS1dX?=
- =?us-ascii?Q?bVGV88qCcl/l2o8gFSXzQAv4881oiFhHfOWqDWQrGA9aKMVy/4xd+at83i7g?=
- =?us-ascii?Q?u3Ih2w+nK7eVhaiyB6oTx6PAPskk3M2qBGt6+ePnChQ/DrQ7KS9MYABc8IOW?=
- =?us-ascii?Q?4vVWRk4tkxE5qZUIpdX74x1PbWuTuUXBSuXEhge1BDKoLrXX3pOWULIV1xsE?=
- =?us-ascii?Q?nAPd3Sk1BIS02jj5nPwPT5sRj1HdikqgfXlcekPjn96Hs4+M3PfRIbjG0FPx?=
- =?us-ascii?Q?ofpKPFO/uZ+/wec9Avbx/8ZAoT3G2FKpGkXYTgcfEk2d7ldvhQ2ecDg9VsZI?=
- =?us-ascii?Q?c8/vWaw=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ced2486d-eb3d-4a31-2d21-08d8cd6353e8
+X-Microsoft-Antispam-Message-Info: AaGqvQ+oTsMy9aVPMHYYASwhHuGQGzov9wzSYPgHcPhYM5Tz8o+JYpJlkjFSA0Ko2mmcYj08tMu01rLezDU4SvsduPxfk+si+GXSmPWSQbqGaDOwzsKk9q7LGbkn9hQfz8y9ouUizqkE2yhCioQ9t6uDkPXJsdxyzhk1dU+X6C52aXwUzEHu4oxO07L2nbhJwSBq1XUWD39wklc1mWEGREmNiab1vNpV93JZtMSc5cSsQc3v6aln479018WdKwInVOIa8AokYoA7gs7oRtIhMoT4199ajgLFhfz8GrgeN4c20NZZ+y1qWft1V4ovnGggymWBXob3CUPSXeY7q3HZhaKDCBkSW8GnirzjFNQ8XHv7adEw53WCEa/wmuUcXyn0PViPe0w/ynulPz7GCdXm79MMavBZHUehk6B2OdBS5POb3fYQfKPG/6WevHxmDZwxBNQlF3CQfgE8mCdEAiYUHyZvZgLkVHxAWqyF596sWefflA3tKwwblN9Ek3/qbaPEcqLfzae9VosXhvnUTzJRiA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(136003)(366004)(396003)(346002)(39860400002)(8676002)(54906003)(7696005)(53546011)(6506007)(52116002)(83380400001)(1076003)(9686003)(66946007)(316002)(7416002)(186003)(16526019)(66556008)(478600001)(5660300002)(6916009)(86362001)(66476007)(2906002)(33656002)(6666004)(55016002)(8936002)(4326008);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?0G5cYBRRme0x/nu+Iw8w1Rev14k/wfzheEoaAszzJONlBSdFFrgkQ5AQTjob?=
+ =?us-ascii?Q?zGAMn1hA4Uvg1lzfHuXJ1X7m3dxFCU5ndyXKbmUyR+OOmc3BXuIYc/SQawlN?=
+ =?us-ascii?Q?53jpH7fEry5yWom8Npxo3ePG6lzzSIwP+wEf/VuYqnPkgyIACXwtdBNAgKjy?=
+ =?us-ascii?Q?b/23n5MuGdUuH4McLuJMC7GoaBiVx8ZUaJiMLr1x5d4RJPr3UFb4stFCJtQ5?=
+ =?us-ascii?Q?MNBjIj43HAKGbo6tkmVBoZ7MaYAO7rQ2vjLd9NHZkFh00RxSdIuoOxto0u8x?=
+ =?us-ascii?Q?Oyd/NLsfUuQFPFO/e2kEz5eAolMQ3a7p9PBlUklsL5X+UGMCa5YyPs7hg8TG?=
+ =?us-ascii?Q?0t54cjXwqNuz4tHB+WCzqYxqZwfSp2jDXOVUDsZZzf+LuaKFTPo57hGvKghO?=
+ =?us-ascii?Q?trAjZmPNf0hCSb8TFxLDgaO7tBv3Ueh07MP7yRmFsLjMIL71/rrkHS2WLhRm?=
+ =?us-ascii?Q?ExeXImjeEczZdfdrf4c1M6mmQjfxy2/o23i6bLKQmT0W/yVDQpRzd8RnDB7d?=
+ =?us-ascii?Q?U0KgfUHLGDrNRhDNaosMthwv4ArBGbxjsv9tjSG91d8r0VUEipcwwXBEOhz+?=
+ =?us-ascii?Q?yUbkuOkKhJIxxxA5UMl/hWdZFdX4bYmPwAvUiOUWiMNpiFj6DSL5vI7BeIhV?=
+ =?us-ascii?Q?Dt1LZQpa/P9LERteiymgxL4wshJ0Q80ByNemEBU3Ku7lf3dIdcaW4FQT8/Xy?=
+ =?us-ascii?Q?W0EgTevy0wEU60f0N43KpT35qQoCfJWAeZ14YiZbFzsQwrqx9RHT8YrBilOD?=
+ =?us-ascii?Q?KMvcZYBPWbWcOB03ab9BQB425PiEe2kmSXJlEieqopp6bHcri3Qcymk8LCo+?=
+ =?us-ascii?Q?m4f127n0zKaOnGOuqPG/0TeNn64HcDjKq8ZSa1SX1cWMyz+wQMIJOWusQgec?=
+ =?us-ascii?Q?Ti6DdFfe46EFzW/tK4Nq5A4jAZaG31576tpsh5QyrGHuOOaySzH9N0zxS2IP?=
+ =?us-ascii?Q?aPRbEgptwU/udJycn6VOz/yGYxCgwE+z+BZ6AUJ+99LG/f32vuwk+4Pv4sWd?=
+ =?us-ascii?Q?a3hjyJIjF9chfU//jD6wR3TNmVBuFR4wHAptftqhqn3B1UuMK9D4oRnCxtur?=
+ =?us-ascii?Q?2fiDIeAPYWDv84a5rh32RppNiadBLIcYOmZYOtVWS36SO59kW3q2LvLox7cs?=
+ =?us-ascii?Q?/hAltrqBuOQQHG+xTgV0oWHHJSIT68U/LVeCveqm8CKfVnOtEUPDnpGvt1l3?=
+ =?us-ascii?Q?gL6FyNmewIe6lKfcM4DpqdzUnWDfDLkd/cvStVKesQM8dmX1qAg1Gl1j3pP7?=
+ =?us-ascii?Q?b/CKml2qTBeVEpHj3En5DldlWjGToxKSdAe3+rBm5jErAvYLgI6gtbwIiHso?=
+ =?us-ascii?Q?TCw0Ow7pQmz+DntB+LFilL7S0jNkoCWp/+7tVSAgmBdZRabMk+61vORlsCBR?=
+ =?us-ascii?Q?Fm4wxaw=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 152989b0-4b56-4913-d1da-08d8cd63f68b
 X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2021 01:29:36.7355
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2021 01:34:09.7098
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jMDDxpLkiKIMGtzDMZfhW/AsFqyzHR0D0XkfwLKJ3SSBqhBMWMmYWIgGgvm5aCA6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3350
+X-MS-Exchange-CrossTenant-UserPrincipalName: X8l1tpBpjfq6kEY9I6+L2RiBAbT9THWE8MD+1z6uWVmhANW6/hKi/wEpO59LzHdC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB4758
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
  definitions=2021-02-09_08:2021-02-09,2021-02-09 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1015 spamscore=0
- phishscore=0 priorityscore=1501 impostorscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 bulkscore=0 mlxlogscore=867
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102100012
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 suspectscore=0
+ malwarescore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 phishscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2009150000 definitions=main-2102100014
 X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 09, 2021 at 05:07:07PM -0800, Yang Shi wrote:
-> On Tue, Feb 9, 2021 at 4:22 PM Roman Gushchin <guro@fb.com> wrote:
+On Tue, Feb 09, 2021 at 05:12:51PM -0800, Yang Shi wrote:
+> On Tue, Feb 9, 2021 at 4:39 PM Roman Gushchin <guro@fb.com> wrote:
 > >
-> > On Tue, Feb 09, 2021 at 09:46:40AM -0800, Yang Shi wrote:
-> > > The shrinker_info is dereferenced in a couple of places via rcu_dereference_protected
-> > > with different calling conventions, for example, using mem_cgroup_nodeinfo helper
-> > > or dereferencing memcg->nodeinfo[nid]->shrinker_info.  And the later patch
-> > > will add more dereference places.
+> > On Tue, Feb 09, 2021 at 09:46:41AM -0800, Yang Shi wrote:
+> > > Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
+> > > This approach is fine with nr_deferred at the shrinker level, but the following
+> > > patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
+> > > shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
+> > > from unregistering correctly.
 > > >
-> > > So extract the dereference into a helper to make the code more readable.  No
-> > > functional change.
+> > > Remove SHRINKER_REGISTERING since we could check if shrinker is registered
+> > > successfully by the new flag.
 > > >
+> > > Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 > > > Signed-off-by: Yang Shi <shy828301@gmail.com>
 > > > ---
-> > >  mm/vmscan.c | 15 ++++++++++-----
-> > >  1 file changed, 10 insertions(+), 5 deletions(-)
+> > >  include/linux/shrinker.h |  7 ++++---
+> > >  mm/vmscan.c              | 31 +++++++++----------------------
+> > >  2 files changed, 13 insertions(+), 25 deletions(-)
 > > >
+> > > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> > > index 0f80123650e2..1eac79ce57d4 100644
+> > > --- a/include/linux/shrinker.h
+> > > +++ b/include/linux/shrinker.h
+> > > @@ -79,13 +79,14 @@ struct shrinker {
+> > >  #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
+> > >
+> > >  /* Flags */
+> > > -#define SHRINKER_NUMA_AWARE  (1 << 0)
+> > > -#define SHRINKER_MEMCG_AWARE (1 << 1)
+> > > +#define SHRINKER_REGISTERED  (1 << 0)
+> > > +#define SHRINKER_NUMA_AWARE  (1 << 1)
+> > > +#define SHRINKER_MEMCG_AWARE (1 << 2)
+> > >  /*
+> > >   * It just makes sense when the shrinker is also MEMCG_AWARE for now,
+> > >   * non-MEMCG_AWARE shrinker should not have this flag set.
+> > >   */
+> > > -#define SHRINKER_NONSLAB     (1 << 2)
+> > > +#define SHRINKER_NONSLAB     (1 << 3)
+> > >
+> > >  extern int prealloc_shrinker(struct shrinker *shrinker);
+> > >  extern void register_shrinker_prepared(struct shrinker *shrinker);
 > > > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > > index 9436f9246d32..273efbf4d53c 100644
+> > > index 273efbf4d53c..a047980536cf 100644
 > > > --- a/mm/vmscan.c
 > > > +++ b/mm/vmscan.c
-> > > @@ -190,6 +190,13 @@ static int shrinker_nr_max;
-> > >  #define NR_MAX_TO_SHR_MAP_SIZE(nr_max) \
-> > >       (DIV_ROUND_UP(nr_max, BITS_PER_LONG) * sizeof(unsigned long))
+> > > @@ -315,19 +315,6 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
+> > >       }
+> > >  }
 > > >
-> > > +static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
-> > > +                                                  int nid)
-> > > +{
-> > > +     return rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
-> > > +                                      lockdep_is_held(&shrinker_rwsem));
-> > > +}
+> > > -/*
+> > > - * We allow subsystems to populate their shrinker-related
+> > > - * LRU lists before register_shrinker_prepared() is called
+> > > - * for the shrinker, since we don't want to impose
+> > > - * restrictions on their internal registration order.
+> > > - * In this case shrink_slab_memcg() may find corresponding
+> > > - * bit is set in the shrinkers map.
+> > > - *
+> > > - * This value is used by the function to detect registering
+> > > - * shrinkers and to skip do_shrink_slab() calls for them.
+> > > - */
+> > > -#define SHRINKER_REGISTERING ((struct shrinker *)~0UL)
+> > > -
+> > >  static DEFINE_IDR(shrinker_idr);
+> > >
+> > >  static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> > > @@ -336,7 +323,7 @@ static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+> > >
+> > >       down_write(&shrinker_rwsem);
+> > >       /* This may call shrinker, so it must use down_read_trylock() */
+> > > -     id = idr_alloc(&shrinker_idr, SHRINKER_REGISTERING, 0, 0, GFP_KERNEL);
+> > > +     id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
+> > >       if (id < 0)
+> > >               goto unlock;
+> > >
+> > > @@ -499,10 +486,7 @@ void register_shrinker_prepared(struct shrinker *shrinker)
+> > >  {
+> > >       down_write(&shrinker_rwsem);
+> > >       list_add_tail(&shrinker->list, &shrinker_list);
+> > > -#ifdef CONFIG_MEMCG
+> > > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> > > -             idr_replace(&shrinker_idr, shrinker, shrinker->id);
+> > > -#endif
+> > > +     shrinker->flags |= SHRINKER_REGISTERED;
+> > >       up_write(&shrinker_rwsem);
+> > >  }
+> > >
+> > > @@ -522,13 +506,16 @@ EXPORT_SYMBOL(register_shrinker);
+> > >   */
+> > >  void unregister_shrinker(struct shrinker *shrinker)
+> > >  {
+> > > -     if (!shrinker->nr_deferred)
+> > > +     if (!(shrinker->flags & SHRINKER_REGISTERED))
+> > >               return;
+> > > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> > > -             unregister_memcg_shrinker(shrinker);
 > > > +
+> > >       down_write(&shrinker_rwsem);
+> > >       list_del(&shrinker->list);
+> > > +     shrinker->flags &= ~SHRINKER_REGISTERED;
+> > >       up_write(&shrinker_rwsem);
+> > > +
+> > > +     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> > > +             unregister_memcg_shrinker(shrinker);
 > >
-> >
-> > I'd probably drop the "protected" suffix (because there is no unprotected version,
-> > right?).
+> > Because unregister_memcg_shrinker() will take and release shrinker_rwsem once again,
+> > I wonder if it's better to move it into the locked section and change the calling
+> > convention to require the caller to take the semaphore?
 > 
-> No, actually there is one "unprotected" call in set_shrinker_bit().
-
-Ah, ok. Then it makes sense. Sorry.
-
+> I don't think we could do that since unregister_memcg_shrinker() is
+> called by free_prealloced_shrinker() which is called without holding
+> the shrinker_rwsem by fs and workingset code.
 > 
-> >
-> > Other than that LGTM.
-> >
-> > Acked-by: Roman Gushchin <guro@fb.com>
+> We could add a bool parameter to indicate if the rwsem was acquired or
+> not, but IMHO it seems not worth it.
+
+Can free_preallocated_shrinker() just do
+
+if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+	down_write(&shrinker_rwsem);
+	unregister_memcg_shrinker(shrinker);
+	up_write(&shrinker_rwsem);
+}
+
+?
