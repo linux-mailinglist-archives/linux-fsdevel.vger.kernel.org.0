@@ -2,80 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6E03168FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 15:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C18EF31693D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Feb 2021 15:37:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231186AbhBJOUd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Feb 2021 09:20:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39540 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230298AbhBJOU3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Feb 2021 09:20:29 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C69EC06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 06:19:48 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id a25so3076817ljn.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Feb 2021 06:19:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=STanyo0VxqectlsIzMPDjmIhDAwFO8ShwKQAZIMHAJ8=;
-        b=JJVIO8cTw0DZ7TaBIt9ZD/qu+pTbwmSPSxu3ZJtHq1HYVFkYlnvumMMA6oQOCsCnxy
-         DBWFDzx8MQqA1M1aqWSA2E94JTTCiXpkqFB/z+J6GMfHWF9rQQlyzwSjmBvp9fQGi06T
-         3DfnG8GC8iCIuKLidmGvDyhrs9Fz9AHI/eAeUzpKFcsMJ5POyJT5tudlakqmdm30sBuZ
-         TVfg5KqdzEozPxuVerAvCYuvBE0RUf9XzhSkm+oNX86BRPdXpNDprDI9dutzfQK1pILf
-         hjDMhaGqKnI2Njmb1uT9fhTQ2kLt3Y49uNlsDdeBzeiOKYuE/ixIjrIvIj6jJKhVqJU9
-         +njQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=STanyo0VxqectlsIzMPDjmIhDAwFO8ShwKQAZIMHAJ8=;
-        b=nrg5bEyr543YMza1j8SIva+iVJEatH8FvC72xepaVwMRpo4Zt3Fc6y1QmyI1WfnQT+
-         ZV4Rg5Nny3oaMTkdCXLGthBA4TWnXAfklJ22IvYjUHUZjTDp6g+j15vnyJZRm4Fqwv9x
-         bv8ziDmj5CBPWwLQ+FzdCX+J8gIgxaBVgdgi9KE/IH7TLYtAXcICdDB7OAGyuO1yMtn4
-         yekmi3mYKZin29gusDv9iBPG+7k6XprzKEOeTSVPsABcPr9wEjDCPC8galIZBJSJyKq1
-         AVjF2iV5epsfaoemh10UDlUj6Z5wTCoYvqWlSLA2oN3UNL1gL3eAY9c3waFCyhJndkpg
-         BEfA==
-X-Gm-Message-State: AOAM531+gmj0Of1ReJYw4kpJ+Q7AkXgPJDrmvmeG8dPckTLyShzW1SuU
-        Ewoy3JHbQ8LvxFh+DRdXCSQ9mwNnfi/aET8nPto+Iw==
-X-Google-Smtp-Source: ABdhPJxMnEHrTizG5GfHfjzb+C5dLVyw57d8HYLUk3hc88l0K4uvHzlXl2BcBR+I9W7Kk6l3XwqVEzjhJe/BNkWaUmM=
-X-Received: by 2002:a2e:9801:: with SMTP id a1mr2227628ljj.122.1612966786152;
- Wed, 10 Feb 2021 06:19:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20210209174646.1310591-1-shy828301@gmail.com> <20210209174646.1310591-3-shy828301@gmail.com>
-In-Reply-To: <20210209174646.1310591-3-shy828301@gmail.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 10 Feb 2021 06:19:35 -0800
-Message-ID: <CALvZod4s4_AJPxjPo+okq3XuvXa45eXTAeJOHgu3rwGVBw-Oww@mail.gmail.com>
-Subject: Re: [v7 PATCH 02/12] mm: vmscan: consolidate shrinker_maps handling code
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
+        id S230260AbhBJOhv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Feb 2021 09:37:51 -0500
+Received: from relay.sw.ru ([185.231.240.75]:55326 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229839AbhBJOhv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Feb 2021 09:37:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=virtuozzo.com; s=relay; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RhI6NeJ9fQNo1JPboHNL4BxIltZhtUXo85xF5hWE03A=; b=y3zos7qAfBdf3c+rhZOcLTbDMs
+        8qNwDjYKxRqyAFDdbAs0tjhPy4avG3Ib72BbIyhdAvkmlO3qViDQWrfUONt/4RA99n9urutXkxUVy
+        EUyIzUQTduEJToXG2ogPLOWE64xvPvq4Ia+TJwwK1Ss10B/zFzNBdF/02txNHyMBlxpA=;
+Received: from [192.168.15.133]
+        by relay.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1l9qbm-0028G7-9l; Wed, 10 Feb 2021 17:36:46 +0300
+Subject: Re: [v7 PATCH 09/12] mm: vmscan: use per memcg nr_deferred of
+ shrinker
+To:     Yang Shi <shy828301@gmail.com>, Roman Gushchin <guro@fb.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>,
         Dave Chinner <david@fromorbit.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Michal Hocko <mhocko@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210209174646.1310591-1-shy828301@gmail.com>
+ <20210209174646.1310591-10-shy828301@gmail.com>
+ <20210210012726.GO524633@carbon.DHCP.thefacebook.com>
+ <CAHbLzkoKV6_w_KBp+cajvpxG2p8jN-es03C0ktk4tLdvULJwhg@mail.gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <1d751688-12a9-a5c3-2d9a-c4b9e65c7492@virtuozzo.com>
+Date:   Wed, 10 Feb 2021 17:36:56 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
+MIME-Version: 1.0
+In-Reply-To: <CAHbLzkoKV6_w_KBp+cajvpxG2p8jN-es03C0ktk4tLdvULJwhg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 9, 2021 at 9:47 AM Yang Shi <shy828301@gmail.com> wrote:
->
-> The shrinker map management is not purely memcg specific, it is at the intersection
-> between memory cgroup and shrinkers.  It's allocation and assignment of a structure,
-> and the only memcg bit is the map is being stored in a memcg structure.  So move the
-> shrinker_maps handling code into vmscan.c for tighter integration with shrinker code,
-> and remove the "memcg_" prefix.  There is no functional change.
->
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
+On 10.02.2021 04:52, Yang Shi wrote:
+> On Tue, Feb 9, 2021 at 5:27 PM Roman Gushchin <guro@fb.com> wrote:
+>>
+>> On Tue, Feb 09, 2021 at 09:46:43AM -0800, Yang Shi wrote:
+>>> Use per memcg's nr_deferred for memcg aware shrinkers.  The shrinker's nr_deferred
+>>> will be used in the following cases:
+>>>     1. Non memcg aware shrinkers
+>>>     2. !CONFIG_MEMCG
+>>>     3. memcg is disabled by boot parameter
+>>>
+>>> Signed-off-by: Yang Shi <shy828301@gmail.com>
+>>> ---
+>>>  mm/vmscan.c | 78 ++++++++++++++++++++++++++++++++++++++++++++---------
+>>>  1 file changed, 66 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>>> index d4b030a0b2a9..748aa6e90f83 100644
+>>> --- a/mm/vmscan.c
+>>> +++ b/mm/vmscan.c
+>>> @@ -368,6 +368,24 @@ static void unregister_memcg_shrinker(struct shrinker *shrinker)
+>>>       up_write(&shrinker_rwsem);
+>>>  }
+>>>
+>>> +static long count_nr_deferred_memcg(int nid, struct shrinker *shrinker,
+>>> +                                 struct mem_cgroup *memcg)
+>>
+>> "Count" is not associated with xchg() semantics in my head, but I don't know
+>> what's the better version. Maybe steal or pop?
+> 
+> It is used to retrieve the nr_deferred value. I don't think "steal" or
+> "pop" helps understand. Actually "count" is borrowed from
+> count_objects() method of shrinker.
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
+I'd also voted for another name.
+
+xchg_nr_deferred() or steal/pop sound better for me.
