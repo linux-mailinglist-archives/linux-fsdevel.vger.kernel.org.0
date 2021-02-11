@@ -2,283 +2,346 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DAE53195E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Feb 2021 23:40:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80268319620
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Feb 2021 23:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbhBKWkg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Feb 2021 17:40:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32648 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229626AbhBKWkg (ORCPT
+        id S230197AbhBKWzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Feb 2021 17:55:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230178AbhBKWzf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Feb 2021 17:40:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613083148;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VYs247Vg8x8v4v1gOC6IwE7LU/hjMIBgbsTS7aY+7Aw=;
-        b=ejxn5GkZRNmoUQk+kxwnk1flyo1UCI3mgdAjt8j+va5B791TNk8btmaCvCL3MfLtPNMuNv
-        M9q3vUXQOJ6wt3NJ5ecL047sVMw0WwyTAxLgFJsGICWpGsnb+hCRQhnbR1I5L96puy5Jsx
-        4fsMpVIvPSHgoX2Ja0M+IH4MXmqUah8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-10-d0Hylm1TP6OLgGOOr-pMng-1; Thu, 11 Feb 2021 17:39:06 -0500
-X-MC-Unique: d0Hylm1TP6OLgGOOr-pMng-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0F430107ACE8;
-        Thu, 11 Feb 2021 22:39:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 981F710013D7;
-        Thu, 11 Feb 2021 22:38:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
-References: <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com> <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk> <1330751.1612974783@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+        Thu, 11 Feb 2021 17:55:35 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A59FC061574;
+        Thu, 11 Feb 2021 14:54:55 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id q10so1185344plk.2;
+        Thu, 11 Feb 2021 14:54:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+tJoBnc8KR21oS215xMDwJ2EmSo2UjR67iWiW0FMZzc=;
+        b=u+xB31LXo856rD2SkaUibLBlHLr1qez3qTwe4fiWBqz51qvRowRgsgqb1rp7iuFyvE
+         YoslJWKKUJAsRKxhtf2rojniUXB5EJxLftpr9rXEwqcKmbGEXM95bccECg1DDfLAWQsl
+         Hy8+AC1ZBimKKG8jKrdNUjFiZTvA8NEpVFrK/WkbHMsd72429angyDUYS3sece/pZtsN
+         wRzA3L72yJpSFGTOmD/bycLst36kytgU+9fgi6r5LoK5eNkic7JBksCQUKE8EHLgG8pE
+         AkI+gMFs2Iz7AoGtZpGS7syhnnWGJUoaKg3yYryZrv9o0gWROAladhmSP/97WjWpbXcU
+         zDYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=+tJoBnc8KR21oS215xMDwJ2EmSo2UjR67iWiW0FMZzc=;
+        b=k/33sjJ2RqSdike6k1jhBkkewXm06UYZPSBzKBmpMvAwUkt9eXD2QnVE5ToiycRS1j
+         PwlaaGg0ml0DU0yseCNT4fSgLFUxWqRO4iitepOsB2HXOmzUFEYF4ke9yZAU1oeOgWx0
+         8fAUkJVPXFphzBCWKhWbPWBkwCnChwUddjDKRVeRoYeV7+gE9wfqzcotXz2RNswskdSb
+         u8w+3qPyHWISCUiwM0W0v7cV0w38ieBZl8oVmgBzDvCQUQz05xMtOCf2xvwBvs+P2GfU
+         s8ACAY5OZ2TG4JTMRwfRvp6VSyMpVEblIRSBNuRtAn2Vk5wad8AWpHg0kY0dBPUUJLWC
+         VlHw==
+X-Gm-Message-State: AOAM531G6V4Csi5WYt8vypqJkAS43V0b+ZQiRXYak2QCbs8nCvsy38G1
+        mwCup104am16SITh6B6jwF0=
+X-Google-Smtp-Source: ABdhPJxOA0JK0aLrbeujk4Enl3c9fty8lI4Mr99IlleIjZgaGlixzYHKjUwQXG6NWG29uWjv1NUtAg==
+X-Received: by 2002:a17:902:a710:b029:e3:b18:7e5b with SMTP id w16-20020a170902a710b02900e30b187e5bmr119281plq.17.1613084094449;
+        Thu, 11 Feb 2021 14:54:54 -0800 (PST)
+Received: from google.com ([2620:15c:211:201:2149:cbd5:4673:bc93])
+        by smtp.gmail.com with ESMTPSA id b25sm6821310pfp.26.2021.02.11.14.54.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Feb 2021 14:54:53 -0800 (PST)
+Sender: Minchan Kim <minchan.kim@gmail.com>
+Date:   Thu, 11 Feb 2021 14:54:51 -0800
+From:   Minchan Kim <minchan@kernel.org>
+To:     Chris Goldsworthy <cgoldswo@codeaurora.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>, david@redhat.com,
+        vbabka@suse.cz
+Subject: Re: [PATCH v2] [RFC] mm: fs: Invalidate BH LRU during page migration
+Message-ID: <YCW1u3Si/GsyI6td@google.com>
+References: <cover.1613020616.git.cgoldswo@codeaurora.org>
+ <c083b0ab6e410e33ca880d639f90ef4f6f3b33ff.1613020616.git.cgoldswo@codeaurora.org>
+ <20210211140950.GJ308988@casper.infradead.org>
+ <60485ac195c0b1eecac2c99d8bca7fcb@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <25540.1613083136.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 11 Feb 2021 22:38:56 +0000
-Message-ID: <25541.1613083136@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60485ac195c0b1eecac2c99d8bca7fcb@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, Feb 11, 2021 at 11:39:05AM -0800, Chris Goldsworthy wrote:
+> On 2021-02-11 06:09, Matthew Wilcox wrote:
+> > On Wed, Feb 10, 2021 at 09:35:40PM -0800, Chris Goldsworthy wrote:
+> > > +/* These are used to control the BH LRU invalidation during page
+> > > migration */
+> > > +static struct cpumask lru_needs_invalidation;
+> > > +static bool bh_lru_disabled = false;
+> > 
+> > As I asked before, what protects this on an SMP system?
+> > 
+> 
+> Sorry Matthew, I misconstrued your earlier question in V1, and thought you
+> had been referring to compile-time protection (so as to prevent build
+> breakages).  It is not protected, so I'll need to change this into an atomic
+> counter that is incremented and decremented by bh_lru_enable() and
+> bh_lru_disable() respectively (such that if the counter is greater than
+> zero, we bail).
+> 
+> > > @@ -1292,7 +1296,9 @@ static inline void check_irqs_on(void)
+> > >  /*
+> > >   * Install a buffer_head into this cpu's LRU.  If not already in
+> > > the LRU, it is
+> > >   * inserted at the front, and the buffer_head at the back if any is
+> > > evicted.
+> > > - * Or, if already in the LRU it is moved to the front.
+> > > + * Or, if already in the LRU it is moved to the front. Note that if
+> > > LRU is
+> > > + * disabled because of an ongoing page migration, we won't insert
+> > > bh into the
+> > > + * LRU.
+> > 
+> > And also, why do we need to do this?  The page LRU has no equivalent
+> > mechanism to prevent new pages being added to the per-CPU LRU lists.
+> > If a BH has just been used, isn't that a strong hint that this page is
+> > a bad candidate for migration?
+> 
+> I had assumed that up until now, that pages in the page cache aren't an
+> issue, such that they're dropped during migration as needed. Looking at
+> try_to_free_buffers[1], I don't see any handling for the page cache.  I will
+> need to do due diligence and follow up on this.
+> 
+> As for the question on necessity, if there is a case in which preventing
+> buffer_heads from being added to the BH LRU ensures that the containing page
+> can be migrated, then I would say that the change is justified, since adds
+> another scenario in which migration is guaranteed (I will follow up on this
+> as well).
 
-> ...
-> IOW, I'm not against "wait_on_page_fscache()" as a function, but I
-> *am* against the odd _mixing_ of things without a big explanation,
-> where the code itself looks very odd and questionable.
-> =
 
-> And I think the "fscache" waiting functions should not be visible to
-> any core VM or filesystem code - it should be limited explicitly to
-> those filesystems that use fscache, and include that header file.
 
-Okay...  How about the attached then?
+First of all, Thanks for the work, Chris.
 
-I've also discarded the patch that just moves towards completely getting r=
-id
-of PG_fscache and adjusted the third patch that takes a ref on the page fo=
-r
-the duration to handle the change of names.
+Looks like this is not only bh_lru problem but also general problem for
+LRU pagevecs. Furthemore, there are other hidden cache meachnism to hold
+additional page refcount until they are flush.
+(I have seen pages in pagevec with additional refcount on migration
+could make migration failure since early LRU draining right before
+migrate_pages). Even though migrate_pages has retrial logic, it just
+relies on the luck so the CMA allocation is still fragile for failure.
 
-Speaking of the ref-taking patch, is the one I posted yesterday the sort o=
-f
-thing you wanted for that?  I wonder if I should drop the ref in the unloc=
-k
-function, though doing it afterwards does allow for the possibility of usi=
-ng a
-pagevec to do mass-release.
+Ccing more folks, a random thought.
+The idea is disable such cache mechanism for a while critical migration(
+e.g., CMA) is going on. With the migrate_pending, we could apply draining
+whenever we find additional refcount problem.
 
-> Wouldn't that make sense?
-
-Well, that's the current principle, but I was wondering if the alias was
-causing confusion.
-
-David
----
-commit c723f0232c9f8928b3b15786499637bda3121f41
-Author: David Howells <dhowells@redhat.com>
-Date:   Wed Feb 10 10:53:02 2021 +0000
-
-    netfs: Rename unlock_page_fscache() and move wait_on_page_fscache()
-    =
-
-    Rename unlock_page_fscache() to unlock_page_private_2() and change the
-    references to PG_fscache to PG_private_2 also.  This makes it look mor=
-e
-    generic and doesn't mix the terminology.
-    =
-
-    Fix the kdoc comment on the above as the wake up mechanism doesn't wak=
-e up
-    all the sleepers.  Note the example usage case for the function in
-    conjunction with the cache also.
-    =
-
-    Place unlock_page_fscache() as an alias in linux/netfs.h.
-    =
-
-    Move wait_on_page_fscache() to linux/netfs.h.
-    =
-
-    [v2: Implement suggestion by Linus to move the wait function into netf=
-s.h]
-    =
-
-    Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    Tested-by: Jeff Layton <jlayton@kernel.org>
-    Link: https://lore.kernel.org/linux-fsdevel/1330473.1612974547@warthog=
-.procyon.org.uk/
-    Link: https://lore.kernel.org/linux-fsdevel/CAHk-=3DwjgA-74ddehziVk=3D=
-XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com/
-
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 2ffdef1ded91..59c2623dc408 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -14,6 +14,7 @@
- =
-
- #include <linux/workqueue.h>
- #include <linux/fs.h>
-+#include <linux/pagemap.h>
- =
-
- /*
-  * Overload PG_private_2 to give us PG_fscache - this is used to indicate=
- that
-@@ -25,6 +26,35 @@
- #define TestSetPageFsCache(page)	TestSetPagePrivate2((page))
- #define TestClearPageFsCache(page)	TestClearPagePrivate2((page))
- =
-
-+/**
-+ * unlock_page_fscache - Unlock a page that's locked with PG_fscache
-+ * @page: The page
-+ *
-+ * Unlocks a page that's locked with PG_fscache and wakes up sleepers in
-+ * wait_on_page_fscache().  This page bit is used by the netfs helpers wh=
-en a
-+ * netfs page is being written to a local disk cache, thereby allowing wr=
-ites
-+ * to the cache for the same page to be serialised.
-+ */
-+static inline void unlock_page_fscache(struct page *page)
-+{
-+	unlock_page_private_2(page);
-+}
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 96c7604f69b3..17b8c1efdbf3 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -48,6 +48,7 @@
+ #include <linux/sched/mm.h>
+ #include <trace/events/block.h>
+ #include <linux/fscrypt.h>
++#include <linux/migrate.h>
+ 
+ #include "internal.h"
+ 
+@@ -1300,6 +1301,9 @@ static void bh_lru_install(struct buffer_head *bh)
+ 	struct bh_lru *b;
+ 	int i;
+ 
++	if (migrate_pending())
++		return;
 +
-+/**
-+ * wait_on_page_fscache - Wait for PG_fscache to be cleared on a page
-+ * @page: The page
-+ *
-+ * Wait for the PG_fscache (PG_private_2) page bit to be removed from a p=
-age.
-+ * This is, for example, used to handle a netfs page being written to a l=
-ocal
-+ * disk cache, thereby allowing writes to the cache for the same page to =
-be
-+ * serialised.
-+ */
-+static inline void wait_on_page_fscache(struct page *page)
-+{
-+	if (PageFsCache(page))
-+		wait_on_page_bit(compound_head(page), PG_fscache);
-+}
+ 	check_irqs_on();
+ 	bh_lru_lock();
+ 
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index 3a389633b68f..047d5358fe0d 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -46,6 +46,8 @@ extern int isolate_movable_page(struct page *page, isolate_mode_t mode);
+ extern void putback_movable_page(struct page *page);
+ 
+ extern void migrate_prep(void);
++extern void migrate_finish(void);
++extern bool migrate_pending(void);
+ extern void migrate_prep_local(void);
+ extern void migrate_page_states(struct page *newpage, struct page *page);
+ extern void migrate_page_copy(struct page *newpage, struct page *page);
+@@ -67,6 +69,7 @@ static inline int isolate_movable_page(struct page *page, isolate_mode_t mode)
+ 	{ return -EBUSY; }
+ 
+ static inline int migrate_prep(void) { return -ENOSYS; }
++static inline void migrate_finish(void) {}
+ static inline int migrate_prep_local(void) { return -ENOSYS; }
+ 
+ static inline void migrate_page_states(struct page *newpage, struct page *page)
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 6961238c7ef5..46d9986c7bf0 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1208,6 +1208,8 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
+ 			break;
+ 	}
+ 	mmap_read_unlock(mm);
++	migrate_finish();
 +
- enum netfs_read_source {
- 	NETFS_FILL_WITH_ZEROES,
- 	NETFS_DOWNLOAD_FROM_SERVER,
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 4935ad6171c1..d2786607d297 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -591,7 +591,7 @@ extern int __lock_page_async(struct page *page, struct=
- wait_page_queue *wait);
- extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
- 				unsigned int flags);
- extern void unlock_page(struct page *page);
--extern void unlock_page_fscache(struct page *page);
-+extern void unlock_page_private_2(struct page *page);
- =
-
- /*
-  * Return true if the page was successfully locked
-@@ -682,19 +682,6 @@ static inline int wait_on_page_locked_killable(struct=
- page *page)
- 	return wait_on_page_bit_killable(compound_head(page), PG_locked);
+ 	if (err < 0)
+ 		return err;
+ 	return busy;
+@@ -1371,6 +1373,10 @@ static long do_mbind(unsigned long start, unsigned long len,
+ 	mmap_write_unlock(mm);
+ mpol_out:
+ 	mpol_put(new);
++
++	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL))
++		migrate_finish();
++
+ 	return err;
  }
- =
-
--/**
-- * wait_on_page_fscache - Wait for PG_fscache to be cleared on a page
-- * @page: The page
-- *
-- * Wait for the fscache mark to be removed from a page, usually signifyin=
-g the
-- * completion of a write from that page to the cache.
-- */
--static inline void wait_on_page_fscache(struct page *page)
--{
--	if (PagePrivate2(page))
--		wait_on_page_bit(compound_head(page), PG_fscache);
--}
--
- extern void put_and_wait_on_page_locked(struct page *page);
- =
-
- void wait_on_page_writeback(struct page *page);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 91fcae006d64..7d321152d579 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1467,22 +1467,24 @@ void unlock_page(struct page *page)
- EXPORT_SYMBOL(unlock_page);
- =
-
- /**
-- * unlock_page_fscache - Unlock a page pinned with PG_fscache
-+ * unlock_page_private_2 - Unlock a page that's locked with PG_private_2
-  * @page: The page
-  *
-- * Unlocks the page and wakes up sleepers in wait_on_page_fscache().  Als=
-o
-- * wakes those waiting for the lock and writeback bits because the wakeup
-- * mechanism is shared.  But that's OK - those sleepers will just go back=
- to
-- * sleep.
-+ * Unlocks a page that's locked with PG_private_2 and wakes up sleepers i=
-n
-+ * wait_on_page_private_2().
-+ *
-+ * This is, for example, used when a netfs page is being written to a loc=
-al
-+ * disk cache, thereby allowing writes to the cache for the same page to =
-be
-+ * serialised.
+ 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index a69da8aaeccd..3130a27e4e94 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -57,6 +57,8 @@
+ 
+ #include "internal.h"
+ 
++static atomic_t migrate_pending_count = ATOMIC_INIT(0);
++
+ /*
+  * migrate_prep() needs to be called before we start compiling a list of pages
+  * to be migrated using isolate_lru_page(). If scheduling work on other CPUs is
+@@ -64,13 +66,12 @@
   */
--void unlock_page_fscache(struct page *page)
-+void unlock_page_private_2(struct page *page)
+ void migrate_prep(void)
  {
- 	page =3D compound_head(page);
- 	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
--	clear_bit_unlock(PG_fscache, &page->flags);
--	wake_up_page_bit(page, PG_fscache);
-+	clear_bit_unlock(PG_private_2, &page->flags);
-+	wake_up_page_bit(page, PG_private_2);
++	atomic_inc(&migrate_pending_count);
+ 	/*
+ 	 * Clear the LRU lists so pages can be isolated.
+-	 * Note that pages may be moved off the LRU after we have
+-	 * drained them. Those pages will fail to migrate like other
+-	 * pages that may be busy.
+ 	 */
+ 	lru_add_drain_all();
++	invalidate_bh_lrus();
  }
--EXPORT_SYMBOL(unlock_page_fscache);
-+EXPORT_SYMBOL(unlock_page_private_2);
- =
-
- /**
-  * end_page_writeback - end writeback against a page
+ 
+ /* Do the necessary work of migrate_prep but not if it involves other CPUs */
+@@ -79,6 +80,16 @@ void migrate_prep_local(void)
+ 	lru_add_drain();
+ }
+ 
++void migrate_finish(void)
++{
++	atomic_dec(&migrate_pending_count);
++}
++
++bool migrate_pending(void)
++{
++	return atomic_read(&migrate_pending_count);
++}
++
+ int isolate_movable_page(struct page *page, isolate_mode_t mode)
+ {
+ 	struct address_space *mapping;
+@@ -1837,6 +1848,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+ 	if (err >= 0)
+ 		err = err1;
+ out:
++	migrate_finish();
+ 	return err;
+ }
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index f8fbee73dd6d..4ced6d559073 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8493,6 +8493,9 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+ 		ret = migrate_pages(&cc->migratepages, alloc_migration_target,
+ 				NULL, (unsigned long)&mtc, cc->mode, MR_CONTIG_RANGE);
+ 	}
++
++	migrate_finish();
++
+ 	if (ret < 0) {
+ 		putback_movable_pages(&cc->migratepages);
+ 		return ret;
+diff --git a/mm/swap.c b/mm/swap.c
+index 31b844d4ed94..55f9e8c8ca5b 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -36,6 +36,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/page_idle.h>
+ #include <linux/local_lock.h>
++#include <linux/migrate.h>
+ 
+ #include "internal.h"
+ 
+@@ -252,7 +253,8 @@ void rotate_reclaimable_page(struct page *page)
+ 		get_page(page);
+ 		local_lock_irqsave(&lru_rotate.lock, flags);
+ 		pvec = this_cpu_ptr(&lru_rotate.pvec);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (!pagevec_add(pvec, page) || PageCompound(page)
++					|| migrate_pending())
+ 			pagevec_lru_move_fn(pvec, pagevec_move_tail_fn);
+ 		local_unlock_irqrestore(&lru_rotate.lock, flags);
+ 	}
+@@ -343,7 +345,8 @@ static void activate_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.activate_page);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (!pagevec_add(pvec, page) || PageCompound(page)
++					|| migrate_pending())
+ 			pagevec_lru_move_fn(pvec, __activate_page);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -458,7 +461,7 @@ void lru_cache_add(struct page *page)
+ 	get_page(page);
+ 	local_lock(&lru_pvecs.lock);
+ 	pvec = this_cpu_ptr(&lru_pvecs.lru_add);
+-	if (!pagevec_add(pvec, page) || PageCompound(page))
++	if (!pagevec_add(pvec, page) || PageCompound(page) || migrate_pending())
+ 		__pagevec_lru_add(pvec);
+ 	local_unlock(&lru_pvecs.lock);
+ }
+@@ -654,7 +657,8 @@ void deactivate_file_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_deactivate_file);
+ 
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (!pagevec_add(pvec, page) || PageCompound(page) ||
++					migrate_pending())
+ 			pagevec_lru_move_fn(pvec, lru_deactivate_file_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -676,7 +680,8 @@ void deactivate_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_deactivate);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (!pagevec_add(pvec, page) || PageCompound(page) ||
++					migrate_pending())
+ 			pagevec_lru_move_fn(pvec, lru_deactivate_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -698,7 +703,8 @@ void mark_page_lazyfree(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_lazyfree);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (!pagevec_add(pvec, page) || PageCompound(page)
++					|| migrate_pending())
+ 			pagevec_lru_move_fn(pvec, lru_lazyfree_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+-- 
+2.30.0.478.g8a0d178c01-goog
 
