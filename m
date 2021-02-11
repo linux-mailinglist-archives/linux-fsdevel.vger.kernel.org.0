@@ -2,165 +2,517 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9057F3192E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Feb 2021 20:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 432D531931B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Feb 2021 20:30:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbhBKTQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Feb 2021 14:16:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45058 "EHLO
+        id S230305AbhBKT3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Feb 2021 14:29:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229873AbhBKTP7 (ORCPT
+        with ESMTP id S229955AbhBKT31 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Feb 2021 14:15:59 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44DB3C061574;
-        Thu, 11 Feb 2021 11:15:18 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id l12so8150802edt.3;
-        Thu, 11 Feb 2021 11:15:18 -0800 (PST)
+        Thu, 11 Feb 2021 14:29:27 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17BFEC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Feb 2021 11:28:47 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id p15so6119838ilq.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Feb 2021 11:28:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6aiFefqoimb6TFhPhRuNGjxw3R3UdnJbDOdGhYcf71E=;
-        b=u4NieD2DpZipPoDbNyb/O29FcpWoDFTEF5fVeUcQTfXHWoLGXlQid9V+apL8Ac0OTx
-         vLPeGmb2H7cO+Zo6GzVfk/aqVX5vNPx0jIYVkSe2EJEB+Cukt7sAd5oVQYnue4RQdxl3
-         mm0FLTPcAEHNVRdGmF3iVdf0Zt/JbGAjrgO2sinnSWRlbmLxKIUFsvngM6FluQ3YpAhg
-         oNU0SPvRzOPDeY0prhkg3nCXCy6Mfs3smJ6EBXOZ8EIcDKMpNuR9cAnVYAvOcPQ+HheF
-         TiuKKmMbylyQHrRIveNrELq3Nq/oAFkmEAWu4G5VoYHqDXKPymxkbJ1pNEoWlFH04aQM
-         qXxg==
+        bh=4WLL5gzZ1IPjnpm3EXQXFTDc/E+7onep9g188jSxK0o=;
+        b=G3LuOmvLuXgEJ5B1+baxpXglO6i6np4JPvMIjRobqmpa4NVsCigoPjtJW8wqSiGwuG
+         FAKZHvYjSB4cFBhZrlsFXSQR25geY0MZYjQCQE2mg4EEP6XPU6xKPDln6xKgmClokh8B
+         r41WHjNC+wDYBLAmI9y/9NNrUY300u1DxgUSQS5QH/oHTauTstlftbF4ygzj+l4WHXST
+         uKbObrAjFoD0hRfNqYSNiYSZ0CEA7QLmc5ZAP4j8rgb+b9bdm2TAU8xCyTB8iLEznxjI
+         5Hv9lMydgA5IX55jDSdojDRAE48bsur4mbMGVz3+fVHm3JPA51qT86jnE3VE8i81mcP0
+         X/eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6aiFefqoimb6TFhPhRuNGjxw3R3UdnJbDOdGhYcf71E=;
-        b=qerUfV40V6DQ1oz1hPkYGGP8hCY3VlPhB1qk2y5Ed1FIqVBdoPyF51ZaPQSu7J8yXT
-         JMDqgifssf8cC4mbNl/20KJWiOkH7eEBHY+/fof/ybyRbL7FDkC8W6saxJX7/QLgdotm
-         gN69LQHj1zunOafV7K4BfoLEdYR9WKvGq4M+FvCM1dlF4liOu8jXqEG+WzbeKS2gfUcj
-         sy++Gv5+N/bWFvm5qyzFaX0iwoj8kmYADP/SW6PgNB5I2MEinfTdvriGcGIDqH+2N8y0
-         LkfoK/yx6JQ+dUH382h5VMXtuffpA1pTRsuWm/PqZHM9cUW7rWINgxvh/2MH4BiboyVF
-         oJ1A==
-X-Gm-Message-State: AOAM533VRYIx8O8HBbYyEasneO0Xl6D6/6gzEZvIqsOpyYK1PrUn7e9X
-        i6UZkhXjgOA8BZMrkUa6Ujnpunfct1RNP3RCCvM=
-X-Google-Smtp-Source: ABdhPJzNIhQdqijCqLZpM87eKqzcbgw66UVqZknP5r/7I6cuRetDOJRWQczlIO90h30Zd653oNIsnZ+LZgL36LjUpcQ=
-X-Received: by 2002:aa7:de82:: with SMTP id j2mr9740116edv.313.1613070916975;
- Thu, 11 Feb 2021 11:15:16 -0800 (PST)
+        bh=4WLL5gzZ1IPjnpm3EXQXFTDc/E+7onep9g188jSxK0o=;
+        b=pT9YtxAJWn/gOs7yZtQOytTvRd3M6hzOmza+4AP7LL6UygO/nT6ZyaqJ/j2Qkq0Jh6
+         zjTxGyP1keajtDTrdLRQR7WvpmQwuTuPDD2xhkFbZq2+aq8D25udbTLUl6rt4Wg5iMwi
+         M434fbcGIiyHEUEp2YJ5XZW/wv1bU31VWiUC6RXjBBTQrXxE/YMaXeFDUU7bcmTppuau
+         dGjArYAECYyrkpcx2Cka1nYKtcuIq0zxazc8a+DW9mvDKjmRfXOuDOylu20+XOqbjDV7
+         bKcB+HWA9TvgSYiNxV09eH+MU+j/v2jFA7duD02cAw6nt6RNzJsvfZrmj0RWEW4dC9Ki
+         Gb4w==
+X-Gm-Message-State: AOAM531ALNzuYOoU2FDDjzinC9jfIJzj6jbP+VavIpIuUwwQG5ubaY1l
+        6kFgq3L8qAgokFCSM9pCB2aEdVWeRhSaGIr9zxPMTA==
+X-Google-Smtp-Source: ABdhPJyhGAGl4qqyrozbI72S/rDRSJx4RHYsCYbyuN6KMSaozEIcYmIfE8qrkilCuhARL++GC+81bfnhdNo2GIbo0/U=
+X-Received: by 2002:a05:6e02:1d02:: with SMTP id i2mr7282612ila.30.1613071726125;
+ Thu, 11 Feb 2021 11:28:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20210209174646.1310591-1-shy828301@gmail.com> <20210209174646.1310591-13-shy828301@gmail.com>
- <acd1915c-306b-08a8-9e0f-b06c1e09fb4c@suse.cz> <CAHbLzkpF9+NUp2yUf_yKHHngKXGDya4Mj3ZTc-2rm3yFNw_==A@mail.gmail.com>
- <a56fa0f1-3ac6-49f1-31c1-8bfec961d04e@suse.cz>
-In-Reply-To: <a56fa0f1-3ac6-49f1-31c1-8bfec961d04e@suse.cz>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 11 Feb 2021 11:15:04 -0800
-Message-ID: <CAHbLzkpqTGWKQuK7HB0o5PPVoebdM83gsPo_Uo7NTD-e_foGWQ@mail.gmail.com>
-Subject: Re: [v7 PATCH 12/12] mm: vmscan: shrink deferred objects proportional
- to priority
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
+References: <20210210212200.1097784-1-axelrasmussen@google.com> <20210210212200.1097784-6-axelrasmussen@google.com>
+In-Reply-To: <20210210212200.1097784-6-axelrasmussen@google.com>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Thu, 11 Feb 2021 11:28:09 -0800
+Message-ID: <CAJHvVch8jmqu=Hi9=1CHzPHJfZCRvSb6g7xngSBDQ_nDfSj-gA@mail.gmail.com>
+Subject: Re: [PATCH v5 05/10] userfaultfd: add minor fault registration mode
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Steven Price <steven.price@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
         Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Adam Ruprecht <ruprecht@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 11, 2021 at 10:52 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+On Wed, Feb 10, 2021 at 1:22 PM Axel Rasmussen <axelrasmussen@google.com> wrote:
 >
-> On 2/11/21 6:29 PM, Yang Shi wrote:
-> > On Thu, Feb 11, 2021 at 5:10 AM Vlastimil Babka <vbabka@suse.cz> wrote:
-> >> >       trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
-> >> >                                  freeable, delta, total_scan, priority);
-> >> > @@ -737,10 +708,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-> >> >               cond_resched();
-> >> >       }
-> >> >
-> >> > -     if (next_deferred >= scanned)
-> >> > -             next_deferred -= scanned;
-> >> > -     else
-> >> > -             next_deferred = 0;
-> >> > +     next_deferred = max_t(long, (nr - scanned), 0) + total_scan;
-> >>
-> >> And here's the bias I think. Suppose we scanned 0 due to e.g. GFP_NOFS. We count
-> >> as newly deferred both the "delta" part of total_scan, which is fine, but also
-> >> the "nr >> priority" part, where we failed to our share of the "reduce
-> >> nr_deferred" work, but I don't think it means we should also increase
-> >> nr_deferred by that amount of failed work.
-> >
-> > Here "nr" is the saved deferred work since the last scan, "scanned" is
-> > the scanned work in this round, total_scan is the *unscanned" work
-> > which is actually "total_scan - scanned" (total_scan is decreased by
-> > scanned in each loop). So, the logic is "decrease any scanned work
-> > from deferred then add newly unscanned work to deferred". IIUC this is
-> > what "deferred" means even before this patch.
+> This feature allows userspace to intercept "minor" faults. By "minor"
+> faults, I mean the following situation:
 >
-> Hm I thought the logic was "increase by any new work (delta) that wasn't done,
-> decrease by old deferred work that was done now". My examples with scanned = 0
-> and scanned = total_work (total_work before subtracting scanned from it) should
-> demonstrate that the logic is different with your patch.
+> Let there exist two mappings (i.e., VMAs) to the same page(s). One of
+> the mappings is registered with userfaultfd (in minor mode), and the
+> other is not. Via the non-UFFD mapping, the underlying pages have
+> already been allocated & filled with some contents. The UFFD mapping
+> has not yet been faulted in; when it is touched for the first time,
+> this results in what I'm calling a "minor" fault. As a concrete
+> example, when working with hugetlbfs, we have huge_pte_none(), but
+> find_lock_page() finds an existing page.
+>
+> This commit adds the new registration mode, and sets the relevant flag
+> on the VMAs being registered. In the hugetlb fault path, if we find
+> that we have huge_pte_none(), but find_lock_page() does indeed find an
+> existing page, then we have a "minor" fault, and if the VMA has the
+> userfaultfd registration flag, we call into userfaultfd to handle it.
+>
+> Why add a new registration mode, as opposed to adding a feature to
+> MISSING registration, like UFFD_FEATURE_SIGBUS?
+>
+> - The semantics are significantly different. UFFDIO_COPY or
+>   UFFDIO_ZEROPAGE do not make sense for these minor faults; userspace
+>   would instead just memset() or memcpy() or whatever via the non-UFFD
+>   mapping. Unlike MISSING registration, MINOR registration only makes
+>   sense for hugetlbfs (or, in the future, shmem), as this is the only
+>   way to get two VMAs to a single set of underlying pages.
+>
+> - Doing so would make handle_userfault()'s "reason" argument confusing.
+>   We'd pass in "MISSING" even if the pages weren't really missing.
+>
+> Reviewed-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> ---
+>  fs/proc/task_mmu.c               |  1 +
+>  fs/userfaultfd.c                 | 71 ++++++++++++++++++--------------
+>  include/linux/mm.h               |  1 +
+>  include/linux/userfaultfd_k.h    | 15 ++++++-
+>  include/trace/events/mmflags.h   |  1 +
+>  include/uapi/linux/userfaultfd.h | 15 ++++++-
+>  mm/hugetlb.c                     | 32 ++++++++++++++
+>  7 files changed, 102 insertions(+), 34 deletions(-)
+>
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 602e3a52884d..94e951ea3e03 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -651,6 +651,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+>                 [ilog2(VM_MTE)]         = "mt",
+>                 [ilog2(VM_MTE_ALLOWED)] = "",
+>  #endif
+> +               [ilog2(VM_UFFD_MINOR)]  = "ui",
+>  #ifdef CONFIG_ARCH_HAS_PKEYS
+>                 /* These come out via ProtectionKey: */
+>                 [ilog2(VM_PKEY_BIT0)]   = "",
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 1f4a34b1a1e7..b351a8552140 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -197,24 +197,21 @@ static inline struct uffd_msg userfault_msg(unsigned long address,
+>         msg_init(&msg);
+>         msg.event = UFFD_EVENT_PAGEFAULT;
+>         msg.arg.pagefault.address = address;
+> +       /*
+> +        * These flags indicate why the userfault occurred:
+> +        * - UFFD_PAGEFAULT_FLAG_WP indicates a write protect fault.
+> +        * - UFFD_PAGEFAULT_FLAG_MINOR indicates a minor fault.
+> +        * - Neither of these flags being set indicates a MISSING fault.
+> +        *
+> +        * Separately, UFFD_PAGEFAULT_FLAG_WRITE indicates it was a write
+> +        * fault. Otherwise, it was a read fault.
+> +        */
+>         if (flags & FAULT_FLAG_WRITE)
+> -               /*
+> -                * If UFFD_FEATURE_PAGEFAULT_FLAG_WP was set in the
+> -                * uffdio_api.features and UFFD_PAGEFAULT_FLAG_WRITE
+> -                * was not set in a UFFD_EVENT_PAGEFAULT, it means it
+> -                * was a read fault, otherwise if set it means it's
+> -                * a write fault.
+> -                */
+>                 msg.arg.pagefault.flags |= UFFD_PAGEFAULT_FLAG_WRITE;
+>         if (reason & VM_UFFD_WP)
+> -               /*
+> -                * If UFFD_FEATURE_PAGEFAULT_FLAG_WP was set in the
+> -                * uffdio_api.features and UFFD_PAGEFAULT_FLAG_WP was
+> -                * not set in a UFFD_EVENT_PAGEFAULT, it means it was
+> -                * a missing fault, otherwise if set it means it's a
+> -                * write protect fault.
+> -                */
+>                 msg.arg.pagefault.flags |= UFFD_PAGEFAULT_FLAG_WP;
+> +       if (reason & VM_UFFD_MINOR)
+> +               msg.arg.pagefault.flags |= UFFD_PAGEFAULT_FLAG_MINOR;
+>         if (features & UFFD_FEATURE_THREAD_ID)
+>                 msg.arg.pagefault.feat.ptid = task_pid_vnr(current);
+>         return msg;
+> @@ -401,8 +398,10 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+>
+>         BUG_ON(ctx->mm != mm);
+>
+> -       VM_BUG_ON(reason & ~(VM_UFFD_MISSING|VM_UFFD_WP));
+> -       VM_BUG_ON(!(reason & VM_UFFD_MISSING) ^ !!(reason & VM_UFFD_WP));
+> +       /* Any unrecognized flag is a bug. */
+> +       VM_BUG_ON(reason & ~__VM_UFFD_FLAGS);
+> +       /* 0 or > 1 flags set is a bug; we expect exactly 1. */
+> +       VM_BUG_ON(!reason || !!(reason & (reason - 1)));
+>
+>         if (ctx->features & UFFD_FEATURE_SIGBUS)
+>                 goto out;
+> @@ -612,7 +611,7 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
+>                 for (vma = mm->mmap; vma; vma = vma->vm_next)
+>                         if (vma->vm_userfaultfd_ctx.ctx == release_new_ctx) {
+>                                 vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+> -                               vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
+> +                               vma->vm_flags &= ~__VM_UFFD_FLAGS;
+>                         }
+>                 mmap_write_unlock(mm);
+>
+> @@ -644,7 +643,7 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
+>         octx = vma->vm_userfaultfd_ctx.ctx;
+>         if (!octx || !(octx->features & UFFD_FEATURE_EVENT_FORK)) {
+>                 vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+> -               vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
+> +               vma->vm_flags &= ~__VM_UFFD_FLAGS;
+>                 return 0;
+>         }
+>
+> @@ -726,7 +725,7 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
+>         } else {
+>                 /* Drop uffd context if remap feature not enabled */
+>                 vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+> -               vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
+> +               vma->vm_flags &= ~__VM_UFFD_FLAGS;
+>         }
+>  }
+>
+> @@ -867,12 +866,12 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+>         for (vma = mm->mmap; vma; vma = vma->vm_next) {
+>                 cond_resched();
+>                 BUG_ON(!!vma->vm_userfaultfd_ctx.ctx ^
+> -                      !!(vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP)));
+> +                      !!(vma->vm_flags & __VM_UFFD_FLAGS));
+>                 if (vma->vm_userfaultfd_ctx.ctx != ctx) {
+>                         prev = vma;
+>                         continue;
+>                 }
+> -               new_flags = vma->vm_flags & ~(VM_UFFD_MISSING | VM_UFFD_WP);
+> +               new_flags = vma->vm_flags & ~__VM_UFFD_FLAGS;
+>                 prev = vma_merge(mm, prev, vma->vm_start, vma->vm_end,
+>                                  new_flags, vma->anon_vma,
+>                                  vma->vm_file, vma->vm_pgoff,
+> @@ -1306,9 +1305,19 @@ static inline bool vma_can_userfault(struct vm_area_struct *vma,
+>                                      unsigned long vm_flags)
+>  {
+>         /* FIXME: add WP support to hugetlbfs and shmem */
+> -       return vma_is_anonymous(vma) ||
+> -               ((is_vm_hugetlb_page(vma) || vma_is_shmem(vma)) &&
+> -                !(vm_flags & VM_UFFD_WP));
+> +       if (vm_flags & VM_UFFD_WP) {
+> +               if (is_vm_hugetlb_page(vma) || vma_is_shmem(vma))
+> +                       return false;
+> +       }
+> +
+> +       if (vm_flags & VM_UFFD_MINOR) {
+> +               /* FIXME: Add minor fault interception for shmem. */
+> +               if (!is_vm_hugetlb_page(vma))
+> +                       return false;
+> +       }
+> +
+> +       return vma_is_anonymous(vma) || is_vm_hugetlb_page(vma) ||
+> +              vma_is_shmem(vma);
+>  }
+>
+>  static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> @@ -1334,14 +1343,15 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>         ret = -EINVAL;
+>         if (!uffdio_register.mode)
+>                 goto out;
+> -       if (uffdio_register.mode & ~(UFFDIO_REGISTER_MODE_MISSING|
+> -                                    UFFDIO_REGISTER_MODE_WP))
+> +       if (uffdio_register.mode & ~UFFD_API_REGISTER_MODES)
+>                 goto out;
+>         vm_flags = 0;
+>         if (uffdio_register.mode & UFFDIO_REGISTER_MODE_MISSING)
+>                 vm_flags |= VM_UFFD_MISSING;
+>         if (uffdio_register.mode & UFFDIO_REGISTER_MODE_WP)
+>                 vm_flags |= VM_UFFD_WP;
+> +       if (uffdio_register.mode & UFFDIO_REGISTER_MODE_MINOR)
+> +               vm_flags |= VM_UFFD_MINOR;
+>
+>         ret = validate_range(mm, &uffdio_register.range.start,
+>                              uffdio_register.range.len);
+> @@ -1385,7 +1395,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>                 cond_resched();
+>
+>                 BUG_ON(!!cur->vm_userfaultfd_ctx.ctx ^
+> -                      !!(cur->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP)));
+> +                      !!(cur->vm_flags & __VM_UFFD_FLAGS));
+>
+>                 /* check not compatible vmas */
+>                 ret = -EINVAL;
+> @@ -1465,8 +1475,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>                         start = vma->vm_start;
+>                 vma_end = min(end, vma->vm_end);
+>
+> -               new_flags = (vma->vm_flags &
+> -                            ~(VM_UFFD_MISSING|VM_UFFD_WP)) | vm_flags;
+> +               new_flags = (vma->vm_flags & ~__VM_UFFD_FLAGS) | vm_flags;
+>                 prev = vma_merge(mm, prev, start, vma_end, new_flags,
+>                                  vma->anon_vma, vma->vm_file, vma->vm_pgoff,
+>                                  vma_policy(vma),
+> @@ -1588,7 +1597,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+>                 cond_resched();
+>
+>                 BUG_ON(!!cur->vm_userfaultfd_ctx.ctx ^
+> -                      !!(cur->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP)));
+> +                      !!(cur->vm_flags & __VM_UFFD_FLAGS));
+>
+>                 /*
+>                  * Check not compatible vmas, not strictly required
+> @@ -1639,7 +1648,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+>                         wake_userfault(vma->vm_userfaultfd_ctx.ctx, &range);
+>                 }
+>
+> -               new_flags = vma->vm_flags & ~(VM_UFFD_MISSING | VM_UFFD_WP);
+> +               new_flags = vma->vm_flags & ~__VM_UFFD_FLAGS;
+>                 prev = vma_merge(mm, prev, start, vma_end, new_flags,
+>                                  vma->anon_vma, vma->vm_file, vma->vm_pgoff,
+>                                  vma_policy(vma),
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 89fca443e6f1..3f65a506c743 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -276,6 +276,7 @@ extern unsigned int kobjsize(const void *objp);
+>  #define VM_PFNMAP      0x00000400      /* Page-ranges managed without "struct page", just pure PFN */
+>  #define VM_DENYWRITE   0x00000800      /* ETXTBSY on write attempts.. */
+>  #define VM_UFFD_WP     0x00001000      /* wrprotect pages tracking */
+> +#define VM_UFFD_MINOR  0x00002000      /* minor fault interception */
 
-I think we are on the same page about the logic. But I agree the
-formula implemented in the code is wrong.
+Ah, I had added this just after VM_UFFD_WP, without noticing that this
+would be sharing a bit with VM_LOCKED. That seems like not such a
+great idea.
+
+I don't see another unused bit, and I don't see some other obvious
+candidate to share with. So, the solution that comes to mind is
+something like:
+
+- Since it isn't feasible to have one VM_ flag per UFFD trigger type,
+handle_userfault()'s "reason" argument should be some enumeration of
+possible UFFD reasons instead.
+- Introduce a path where handle_userfault() can return 0, meaning "you
+called into me, but I am not meant to be handling this fault per the
+userfaultfd_ctx, handle it normally instead".
+- Use VM_UFFD_MISSING to decide whether or not to call
+handle_userfault(), whether it was a missing or minor fault.
+
+Unless there are objections or some simpler idea, I'll send a v6 with
+this change.
 
 >
-> >> OTOH if we succeed and scan exactly the whole goal, we are subtracting from
-> >> nr_deferred both the "nr >> priority" part, which is correct, but also delta,
-> >> which was new work, not deferred one, so that's incorrect IMHO as well.
-> >
-> > I don't think so. The deferred comes from new work, why not dec new
-> > work from deferred?
-> >
-> > And, the old code did:
-> >
-> > if (next_deferred >= scanned)
-> >                 next_deferred -= scanned;
-> >         else
-> >                 next_deferred = 0;
-> >
-> > IIUC, it also decreases the new work (the scanned includes both last
-> > deferred and new delata).
+>  #define VM_LOCKED      0x00002000
+>  #define VM_IO           0x00004000     /* Memory mapped I/O or similar */
+> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+> index c63ccdae3eab..0390e5ac63b3 100644
+> --- a/include/linux/userfaultfd_k.h
+> +++ b/include/linux/userfaultfd_k.h
+> @@ -17,6 +17,9 @@
+>  #include <linux/mm.h>
+>  #include <asm-generic/pgtable_uffd.h>
 >
-> Yes, but in the old code, next_deferred starts as
+> +/* The set of all possible UFFD-related VM flags. */
+> +#define __VM_UFFD_FLAGS (VM_UFFD_MISSING | VM_UFFD_WP | VM_UFFD_MINOR)
+> +
+>  /*
+>   * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
+>   * new flags, since they might collide with O_* ones. We want
+> @@ -71,6 +74,11 @@ static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+>         return vma->vm_flags & VM_UFFD_WP;
+>  }
 >
-> nr = count_nr_deferred()...
-> total_scan = nr;
-> delta = ... // something based on freeable
-> total_scan += delta;
-> next_deferred = total_scan; // in the common case total_scan >= 0
+> +static inline bool userfaultfd_minor(struct vm_area_struct *vma)
+> +{
+> +       return vma->vm_flags & VM_UFFD_MINOR;
+> +}
+> +
+>  static inline bool userfaultfd_pte_wp(struct vm_area_struct *vma,
+>                                       pte_t pte)
+>  {
+> @@ -85,7 +93,7 @@ static inline bool userfaultfd_huge_pmd_wp(struct vm_area_struct *vma,
 >
-> ... and that's "total_scan" before "scanned" is subtracted from it, so it
-> includes the new_work ("delta"), so then it's OK to do "next_deferred -= scanned";
+>  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+>  {
+> -       return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
+> +       return vma->vm_flags & __VM_UFFD_FLAGS;
+>  }
 >
-> I still think your formula is (unintentionally) changing the logic. You can also
-> look at it from different angle, it's effectively (without the max_t() part) "nr
-> - scanned + total_scan" where total_scan is actually "total_scan - scanned" as
-> you point your yourself. So "scanned" is subtracted twice? That can't be correct...
-
-Yes, I think you are right, it can not be correct. Actually I wanted
-plus the unscanned delta part to the next_deferred. But my formula
-actually not only decs scanned twice but also adds unscanned deferred
-back again. So it seems the formula suggested by you is correct. Will
-correct this in v8. Thanks a lot for helping get out of the maze. Will
-add some notes right before the formula as well.
-
+>  extern int dup_userfaultfd(struct vm_area_struct *, struct list_head *);
+> @@ -132,6 +140,11 @@ static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+>         return false;
+>  }
 >
-> >> So the calculation should probably be something like this?
-> >>
-> >>         next_deferred = max_t(long, nr + delta - scanned, 0);
-> >>
-> >> Thanks,
-> >> Vlastimil
-> >>
-> >> > +     next_deferred = min(next_deferred, (2 * freeable));
-> >> > +
-> >> >       /*
-> >> >        * move the unused scan count back into the shrinker in a
-> >> >        * manner that handles concurrent updates.
-> >> >
-> >>
-> >
+> +static inline bool userfaultfd_minor(struct vm_area_struct *vma)
+> +{
+> +       return false;
+> +}
+> +
+>  static inline bool userfaultfd_pte_wp(struct vm_area_struct *vma,
+>                                       pte_t pte)
+>  {
+> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+> index 67018d367b9f..2d583ffd4100 100644
+> --- a/include/trace/events/mmflags.h
+> +++ b/include/trace/events/mmflags.h
+> @@ -151,6 +151,7 @@ IF_HAVE_PG_ARCH_2(PG_arch_2,                "arch_2"        )
+>         {VM_PFNMAP,                     "pfnmap"        },              \
+>         {VM_DENYWRITE,                  "denywrite"     },              \
+>         {VM_UFFD_WP,                    "uffd_wp"       },              \
+> +       {VM_UFFD_MINOR,                 "uffd_minor"    },              \
+>         {VM_LOCKED,                     "locked"        },              \
+>         {VM_IO,                         "io"            },              \
+>         {VM_SEQ_READ,                   "seqread"       },              \
+> diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
+> index 5f2d88212f7c..f24dd4fcbad9 100644
+> --- a/include/uapi/linux/userfaultfd.h
+> +++ b/include/uapi/linux/userfaultfd.h
+> @@ -19,15 +19,19 @@
+>   * means the userland is reading).
+>   */
+>  #define UFFD_API ((__u64)0xAA)
+> +#define UFFD_API_REGISTER_MODES (UFFDIO_REGISTER_MODE_MISSING |        \
+> +                                UFFDIO_REGISTER_MODE_WP |      \
+> +                                UFFDIO_REGISTER_MODE_MINOR)
+>  #define UFFD_API_FEATURES (UFFD_FEATURE_PAGEFAULT_FLAG_WP |    \
+>                            UFFD_FEATURE_EVENT_FORK |            \
+>                            UFFD_FEATURE_EVENT_REMAP |           \
+> -                          UFFD_FEATURE_EVENT_REMOVE |  \
+> +                          UFFD_FEATURE_EVENT_REMOVE |          \
+>                            UFFD_FEATURE_EVENT_UNMAP |           \
+>                            UFFD_FEATURE_MISSING_HUGETLBFS |     \
+>                            UFFD_FEATURE_MISSING_SHMEM |         \
+>                            UFFD_FEATURE_SIGBUS |                \
+> -                          UFFD_FEATURE_THREAD_ID)
+> +                          UFFD_FEATURE_THREAD_ID |             \
+> +                          UFFD_FEATURE_MINOR_HUGETLBFS)
+>  #define UFFD_API_IOCTLS                                \
+>         ((__u64)1 << _UFFDIO_REGISTER |         \
+>          (__u64)1 << _UFFDIO_UNREGISTER |       \
+> @@ -127,6 +131,7 @@ struct uffd_msg {
+>  /* flags for UFFD_EVENT_PAGEFAULT */
+>  #define UFFD_PAGEFAULT_FLAG_WRITE      (1<<0)  /* If this was a write fault */
+>  #define UFFD_PAGEFAULT_FLAG_WP         (1<<1)  /* If reason is VM_UFFD_WP */
+> +#define UFFD_PAGEFAULT_FLAG_MINOR      (1<<2)  /* If reason is VM_UFFD_MINOR */
+>
+>  struct uffdio_api {
+>         /* userland asks for an API number and the features to enable */
+> @@ -171,6 +176,10 @@ struct uffdio_api {
+>          *
+>          * UFFD_FEATURE_THREAD_ID pid of the page faulted task_struct will
+>          * be returned, if feature is not requested 0 will be returned.
+> +        *
+> +        * UFFD_FEATURE_MINOR_HUGETLBFS indicates that minor faults
+> +        * can be intercepted (via REGISTER_MODE_MINOR) for
+> +        * hugetlbfs-backed pages.
+>          */
+>  #define UFFD_FEATURE_PAGEFAULT_FLAG_WP         (1<<0)
+>  #define UFFD_FEATURE_EVENT_FORK                        (1<<1)
+> @@ -181,6 +190,7 @@ struct uffdio_api {
+>  #define UFFD_FEATURE_EVENT_UNMAP               (1<<6)
+>  #define UFFD_FEATURE_SIGBUS                    (1<<7)
+>  #define UFFD_FEATURE_THREAD_ID                 (1<<8)
+> +#define UFFD_FEATURE_MINOR_HUGETLBFS           (1<<9)
+>         __u64 features;
+>
+>         __u64 ioctls;
+> @@ -195,6 +205,7 @@ struct uffdio_register {
+>         struct uffdio_range range;
+>  #define UFFDIO_REGISTER_MODE_MISSING   ((__u64)1<<0)
+>  #define UFFDIO_REGISTER_MODE_WP                ((__u64)1<<1)
+> +#define UFFDIO_REGISTER_MODE_MINOR     ((__u64)1<<2)
+>         __u64 mode;
+>
+>         /*
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index e41b77cf6cc2..f150b10981a8 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -4366,6 +4366,38 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
+>                                 VM_FAULT_SET_HINDEX(hstate_index(h));
+>                         goto backout_unlocked;
+>                 }
+> +
+> +               /* Check for page in userfault range. */
+> +               if (userfaultfd_minor(vma)) {
+> +                       u32 hash;
+> +                       struct vm_fault vmf = {
+> +                               .vma = vma,
+> +                               .address = haddr,
+> +                               .flags = flags,
+> +                               /*
+> +                                * Hard to debug if it ends up being used by a
+> +                                * callee that assumes something about the
+> +                                * other uninitialized fields... same as in
+> +                                * memory.c
+> +                                */
+> +                       };
+> +
+> +                       unlock_page(page);
+> +
+> +                       /*
+> +                        * hugetlb_fault_mutex and i_mmap_rwsem must be dropped
+> +                        * before handling userfault.  Reacquire after handling
+> +                        * fault to make calling code simpler.
+> +                        */
+> +
+> +                       hash = hugetlb_fault_mutex_hash(mapping, idx);
+> +                       mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+> +                       i_mmap_unlock_read(mapping);
+> +                       ret = handle_userfault(&vmf, VM_UFFD_MINOR);
+> +                       i_mmap_lock_read(mapping);
+> +                       mutex_lock(&hugetlb_fault_mutex_table[hash]);
+> +                       goto out;
+> +               }
+>         }
+>
+>         /*
+> --
+> 2.30.0.478.g8a0d178c01-goog
 >
