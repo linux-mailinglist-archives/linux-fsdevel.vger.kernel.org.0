@@ -2,50 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40971318EF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Feb 2021 16:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E87D0318F2A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Feb 2021 16:54:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230052AbhBKPlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Feb 2021 10:41:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54976 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbhBKPja (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Feb 2021 10:39:30 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62FF4C061788;
-        Thu, 11 Feb 2021 07:38:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=fB39imcLsV4m8j47uUz7LYp4JK
-        y5C9g1Yi7Fs5hlPNKjrdaEIOKbF8Xxfxh3A4nKY296rM6FCkum3SfyejWIJi/cFROoUWVC994wC1Z
-        Sa4FYEvfSlWuQKT1qUO7PdqjznuIhCQsdiM0FIzS+j2nPZpTgYCScmHchdBB0oqZYRqUlacGaO7oO
-        r6E1d5Ubmccdm/ZcUzyXFURHRZBGaZwBbHuxOPFECZidtox2XFN0J3v6CN5f9im1K+9XGMGd9k2RL
-        fdIjEA6qst0ENxdm7z5U7YDHnJSOMJe6niAy9dp5tpGQ7BhHozZnKTqTtcHDHmnV2G6lUEX7DKhIg
-        NA7+aRHA==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lAE3D-00APk7-VY; Thu, 11 Feb 2021 15:38:41 +0000
-Date:   Thu, 11 Feb 2021 15:38:39 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, kernel@pengutronix.de,
-        Jan Kara <jack@suse.com>, Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH 2/2] quota: wire up quotactl_path
-Message-ID: <20210211153839.GB2480649@infradead.org>
-References: <20210211153024.32502-1-s.hauer@pengutronix.de>
- <20210211153024.32502-3-s.hauer@pengutronix.de>
+        id S231618AbhBKPvC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Feb 2021 10:51:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55730 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230002AbhBKPtD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Feb 2021 10:49:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 14EF3B083;
+        Thu, 11 Feb 2021 15:48:22 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id ED3FEDA6E9; Thu, 11 Feb 2021 16:46:27 +0100 (CET)
+Date:   Thu, 11 Feb 2021 16:46:27 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v15 00/42] btrfs: zoned block device support
+Message-ID: <20210211154627.GE1993@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <cover.1612433345.git.naohiro.aota@wdc.com>
+ <20210210195829.GW1993@twin.jikos.cz>
+ <SN4PR0401MB35987EE941FA59E2ECB8D7269B8C9@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20210211151901.GD1993@twin.jikos.cz>
+ <SN4PR0401MB3598ADA963CA60A715DE5EDE9B8C9@SN4PR0401MB3598.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210211153024.32502-3-s.hauer@pengutronix.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <SN4PR0401MB3598ADA963CA60A715DE5EDE9B8C9@SN4PR0401MB3598.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+On Thu, Feb 11, 2021 at 03:26:04PM +0000, Johannes Thumshirn wrote:
+> On 11/02/2021 16:21, David Sterba wrote:
+> > On Thu, Feb 11, 2021 at 09:58:09AM +0000, Johannes Thumshirn wrote:
+> >> On 10/02/2021 21:02, David Sterba wrote:
+> >>>> This series implements superblock log writing. It uses two zones as a
+> >>>> circular buffer to write updated superblocks. Once the first zone is filled
+> >>>> up, start writing into the second zone. The first zone will be reset once
+> >>>> both zones are filled. We can determine the postion of the latest
+> >>>> superblock by reading the write pointer information from a device.
+> >>>
+> >>> About that, in this patchset it's still leaving superblock at the fixed
+> >>> zone number while we want it at a fixed location, spanning 2 zones
+> >>> regardless of their size.
+> >>
+> >> We'll always need 2 zones or otherwise we won't be powercut safe.
+> > 
+> > Yes we do, that hasn't changed.
+> 
+> OK that I don't understand, with the log structured superblocks on a zoned
+> filesystem, we're writing a new superblock until the 1st zone is filled.
+> Then we advance to the second zone. As soon as we wrote a superblock to
+> the second zone we can reset the first.
+> If we only use one zone,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+No, that can't work and nobody suggests that.
+
+> we would need to write until it's end, reset and
+> start writing again from the beginning. But if a powercut happens between
+> reset and first write after the reset, we end up with no superblock.
+
+What I'm saying and what we discussed on slack in December, we can't fix
+the zone number for the 1st and 2nd copy of superblock like it is now in
+sb_zone_number.
+
+The primary superblock must be there for any reference and to actually
+let the tools learn about the incompat bits.
+
+The 1st copy is now fixed zone 16, which depends on the zone size. The
+idea is to define the superblock offsets to start at given offsets,
+where the ring buffer has the two consecutive zones, regardless of their
+size.
+
+primary:		   0
+1st copy:		 16G
+2nd copy:		256G
+
+Due to the variability of the zones in future devices, we'll reserve a
+space at the superblock interval, assuming the zone sizes can grow up to
+several gigabytes. Current working number is 1G, with some safety margin
+the reserved ranges would be (eg. for a 4G zone size):
+
+primary:		0 up to 8G
+1st copy:		16G up to 24G
+2nd copy:		256G up to 262G
+
+It is wasteful but we want to be future proof and expecting disk sizes
+from tens of terabytes to a hundred terabytes, it's not significant
+loss of space.
+
+If the zone sizes can be expected higher than 4G, the 1st copy can be
+defined at 64G, that would leave us some margin until somebody thinks
+that 32G zones are a great idea.
