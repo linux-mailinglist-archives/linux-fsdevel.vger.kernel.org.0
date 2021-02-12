@@ -2,133 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8A6831A1BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 16:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDC6731A1C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 16:36:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232216AbhBLPdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Feb 2021 10:33:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54994 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232171AbhBLPdP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Feb 2021 10:33:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1613143949; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Sz9isorLitO6+MUwRfzG4d+ngvLUmm93AgjGBsOwKxU=;
-        b=NQFIpsht5R8CYBdP29r7QuSh8xFKjDnFvyWczXw2qhMx0h5DJV2E0hbTnJHzVsLWCnPW/h
-        fUKCMiIHUHpf17evOuH6L7eqIrEe463x0HpUMjljIPGsL1x/f3VXY/PO91PEzCKiqvWKbB
-        xHUcXgycKFZm5Uhlp5UuiIkmNfoz9CY=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id EC145AD29;
-        Fri, 12 Feb 2021 15:32:28 +0000 (UTC)
-Date:   Fri, 12 Feb 2021 16:32:26 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, song.bao.hua@hisilicon.com, david@redhat.com,
-        naoya.horiguchi@nec.com, joao.m.martins@oracle.com,
-        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v15 4/8] mm: hugetlb: alloc the vmemmap pages associated
- with each HugeTLB page
-Message-ID: <YCafit5ruRJ+SL8I@dhcp22.suse.cz>
-References: <20210208085013.89436-1-songmuchun@bytedance.com>
- <20210208085013.89436-5-songmuchun@bytedance.com>
+        id S231611AbhBLPfa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Feb 2021 10:35:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51934 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230521AbhBLPew (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Feb 2021 10:34:52 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F1F3C061756
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Feb 2021 07:34:11 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id r23so12097932ljh.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Feb 2021 07:34:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=golang-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bnSJrWIXDrR4SdgszlbiKJGOs4XpFQvM2/Z+tUum89c=;
+        b=djI42P5xOLiLflD5ZImjvpowk0ziZM+eZsnGCAwDmZk5CS0w/I9qUmHpNeteIYu2vA
+         Wc3wO+pot9h9Zc9LPmlVZyNQXi7FOPmChl2Am3cxco58YeEdOd/XenvXO46534gXG82t
+         lIhETD7HBsX3ibtWX4YpNUZ6LFqxmKDKOgpW9HK8jcK0yP4XPZRVXEQaJOsFi/F6gCcD
+         nrtWhR7VUn9J4wyYk81QW1IpmI7EsekEXy4RitZqZV5jOZOg3RlJ+lXTgnROalh/Z5tj
+         b6LW09XNYZ8XBo0LTcYOzvbtCotRDey2na4EAExsnuSnpu3iN6wA9Dh9cdPH9bPYrACR
+         f6ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bnSJrWIXDrR4SdgszlbiKJGOs4XpFQvM2/Z+tUum89c=;
+        b=tl1CXUrUsCc8jD7ZEeYnfzSSggtDLZDoruJhTY81syE1pvMNQ5r+VihB67O0/t3jqv
+         62E7rkqFXydG4tfWrtBzca1L0CcF7nd8J5n/gjZu2AhsgOkQ6/wnrhaUzAc/RfPEb7Qx
+         XKG4bmkECJwBzK1BjM5yRyI4uLd7Irc6Xqq42PrPT9zdGsnj5mRupqstdLtF8rnw4mMh
+         8E8v8fyBNfyT7L0qM0dIeJiXwMeDUBhTN81uYPrJ35LjOwlQDySzW0izqqO9nyZBkxpS
+         RupQ6uqfUliUUAJ7s+alasl23BARNbKuK862pBFl5rGQqb/09VF1oXVcE4m8E/iztk0o
+         CTHA==
+X-Gm-Message-State: AOAM530F8+LZOIXe1NwMxkjO8tZmFTKEL6eiOQay2oLri/5nFE4Tam2Z
+        AY9CCUqWi5+QHiQVU2NG83nSXNR7kaUF4Odkb1agog==
+X-Google-Smtp-Source: ABdhPJyyof8JyS5LgslkTjPt53at92dLqvINeMxdzmqxXZ1pqGAxbiHWP+1K6bWY0NnL+6Lj25x/ZE/j65sHjSY478w=
+X-Received: by 2002:a2e:95d2:: with SMTP id y18mr2071178ljh.292.1613144049145;
+ Fri, 12 Feb 2021 07:34:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210208085013.89436-5-songmuchun@bytedance.com>
+References: <20210212044405.4120619-1-drinkcat@chromium.org>
+ <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
+ <YCYybUg4d3+Oij4N@kroah.com> <CANMq1KBuPaU5UtRR8qTgdf+J3pt-xAQq69kCVBdaYGx8F+WmFA@mail.gmail.com>
+ <YCY+Ytr2J2R5Vh0+@kroah.com>
+In-Reply-To: <YCY+Ytr2J2R5Vh0+@kroah.com>
+From:   Ian Lance Taylor <iant@golang.org>
+Date:   Fri, 12 Feb 2021 07:33:57 -0800
+Message-ID: <CAKOQZ8zPFM29DYPwbnUJEhf+a8kPSJ5E_W06JLFjn-5Fy-ZWWw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate content
+ is generated
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luis Lozano <llozano@chromium.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 08-02-21 16:50:09, Muchun Song wrote:
-> When we free a HugeTLB page to the buddy allocator, we should allocate the
-> vmemmap pages associated with it. But we may cannot allocate vmemmap pages
-> when the system is under memory pressure, in this case, we just refuse to
-> free the HugeTLB page instead of looping forever trying to allocate the
-> pages.
+On Fri, Feb 12, 2021 at 12:38 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> Why are people trying to use copy_file_range on simple /proc and /sys
+> files in the first place?  They can not seek (well most can not), so
+> that feels like a "oh look, a new syscall, let's use it everywhere!"
+> problem that userspace should not do.
 
-Thanks for simplifying the implementation from your early proposal!
+This may have been covered elsewhere, but it's not that people are
+saying "let's use copy_file_range on files in /proc."  It's that the
+Go language standard library provides an interface to operating system
+files.  When Go code uses the standard library function io.Copy to
+copy the contents of one open file to another open file, then on Linux
+kernels 5.3 and greater the Go standard library will use the
+copy_file_range system call.  That seems to be exactly what
+copy_file_range is intended for.  Unfortunately it appears that when
+people writing Go code open a file in /proc and use io.Copy the
+contents to another open file, copy_file_range does nothing and
+reports success.  There isn't anything on the copy_file_range man page
+explaining this limitation, and there isn't any documented way to know
+that the Go standard library should not use copy_file_range on certain
+files.
 
-This will not be looping for ever. The allocation will usually trigger
-the OOM killer and sooner or later there will be a memory to allocate
-from or the system panics when there are no eligible tasks to kill. This
-is just a side note.
+So ideally the kernel will report EOPNOTSUPP or EINVAL when using
+copy_file_range on a file in /proc or some other file system that
+fails (and, minor side note, the copy_file_range man page should
+document that it can return EOPNOTSUPP or EINVAL in some cases, which
+does already happen on at least some kernel versions using at least
+some file systems).  Or, less ideally, there will be some documented
+way that the Go standard library can determine that copy_file_range
+will fail before trying to use it.  If neither of those can be done,
+then I think the only option is for the Go standard library to never
+use copy_file_range, as even though it will almost always work and
+work well, in some unpredictable number of cases it will fail
+silently.
 
-I think the changelog could benefit from a more explicit documentation
-of those error failures. There are different cases when the hugetlb page
-is freed. It can be due to an admin intervention (decrease the pool),
-overcommit, migration, dissolving and likely some others. Most of them
-should be fine to stay in the pool which would just increase the surplus
-pages in the pool. I am not so sure about dissolving path.
-[...]
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index 0209b736e0b4..3d85e3ab7caa 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -169,6 +169,8 @@
->   * (last) level. So this type of HugeTLB page can be optimized only when its
->   * size of the struct page structs is greater than 2 pages.
->   */
-> +#define pr_fmt(fmt)	"HugeTLB: " fmt
-> +
->  #include "hugetlb_vmemmap.h"
->  
->  /*
-> @@ -198,6 +200,34 @@ static inline unsigned long free_vmemmap_pages_size_per_hpage(struct hstate *h)
->  	return (unsigned long)free_vmemmap_pages_per_hpage(h) << PAGE_SHIFT;
->  }
->  
-> +int alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
-> +{
-> +	int ret;
-> +	unsigned long vmemmap_addr = (unsigned long)head;
-> +	unsigned long vmemmap_end, vmemmap_reuse;
-> +
-> +	if (!free_vmemmap_pages_per_hpage(h))
-> +		return 0;
-> +
-> +	vmemmap_addr += RESERVE_VMEMMAP_SIZE;
-> +	vmemmap_end = vmemmap_addr + free_vmemmap_pages_size_per_hpage(h);
-> +	vmemmap_reuse = vmemmap_addr - PAGE_SIZE;
-> +
-> +	/*
-> +	 * The pages which the vmemmap virtual address range [@vmemmap_addr,
-> +	 * @vmemmap_end) are mapped to are freed to the buddy allocator, and
-> +	 * the range is mapped to the page which @vmemmap_reuse is mapped to.
-> +	 * When a HugeTLB page is freed to the buddy allocator, previously
-> +	 * discarded vmemmap pages must be allocated and remapping.
-> +	 */
-> +	ret = vmemmap_remap_alloc(vmemmap_addr, vmemmap_end, vmemmap_reuse,
-> +				  GFP_ATOMIC | __GFP_NOWARN | __GFP_THISNODE);
+Thanks.
 
-I do not think that this is a good allocation mode. GFP_ATOMIC is a non
-sleeping allocation and a medium memory pressure might cause it to
-fail prematurely. I do not think this is really an atomic context which
-couldn't afford memory reclaim. I also do not think we want to grant
-access to memory reserve is reasonable. Just think of a huge number of
-hugetlb pages being freed which can deplete the memory reserve for
-atomic allocations. I think that you want 
-	GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN | __GFP_THISNODE
-
-for an initial implementation. The justification being that the
-allocation should at least try to reclaim but it shouldn't cause any
-major disruption because the failure is not fatal. If the failure rate
-would be impractically high then just drop NORETRY part. You can replace
-it by __GFP_RETRY_MAYFAIL but that shouldn't be strictly necessary
-because __GFP_THISNODE on its own implies on OOM killer, but that is
-kinda ugly to rely on.
--- 
-Michal Hocko
-SUSE Labs
+Ian
