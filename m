@@ -2,115 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DAC31A761
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 23:18:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80BDF31A76C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 23:22:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbhBLWPg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Feb 2021 17:15:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42113 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229497AbhBLWPf (ORCPT
+        id S229959AbhBLWUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Feb 2021 17:20:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53976 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229497AbhBLWUK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Feb 2021 17:15:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613168049;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NM6XT65mv4VcavdfmwjtH1q2UKP+BPnEnoXWk6zcyFs=;
-        b=fjDL4pBJmagNRv3l29WRE0SMOyeH5hM9v9ijuuZv3a0EyJodeRtPtJ2ZD++OJ6dtNH1FD+
-        6bVSCR2HmkNaxNOLVIsbf9eDVgCKLssbgjS+r4VSplbURuhah9ISqKx4xadnbcXc36CVoh
-        HqJ5aHAbLaCcwFbWuexaEleE7Dd75Tc=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-350-vnPBqCfgOlOkjlT2idF7Rw-1; Fri, 12 Feb 2021 17:14:07 -0500
-X-MC-Unique: vnPBqCfgOlOkjlT2idF7Rw-1
-Received: by mail-qk1-f197.google.com with SMTP id z19so759822qki.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Feb 2021 14:14:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NM6XT65mv4VcavdfmwjtH1q2UKP+BPnEnoXWk6zcyFs=;
-        b=pf2FboC/thNnsEDNSUkBHD747b4VEAipT9JrDzuZgdnItp2sw6/HUHOYCMuHUC0Dss
-         JZpzQDCbokmsmTwNon8di8+ptJNKBAjgRx/LEZVxRGy0sMAoYMS6fZlZA0cjPdwSp0FV
-         d61o9/TkzBoE0EJtAoU6hgLhDkTI+T8Sa8ht+i1nTxVyD4NYXYkOw5DqMy+UHU/2ELvn
-         gIxIWbi3G3lQMO8h+AlR5xj5E6/lncZpw0nFNo1maMIrBsTIF/VpRJ6EF/xr6RLdkx9u
-         +xGRXoo0iPIMznV23nq0KLxx7lQ2mc6kFuFFlxNNsQqyZFeIUrSOVBWkZttYujKBpHnV
-         +8Hg==
-X-Gm-Message-State: AOAM532wskReHwqc9lPzAlPZ4+rBUWIkMmwuE9GbCDnUlfnS7JIlZvee
-        +VdMOQYF2dtIx0bAWnA+LNEgykDiqHVMU2VFm0H6MpiE0Lt4xyCixUYtpbfN9fgKh2UMjpD8KGN
-        m257VXgnMt2tseqm8C7jRcfF0eQ==
-X-Received: by 2002:a05:620a:6d0:: with SMTP id 16mr4645210qky.335.1613168047024;
-        Fri, 12 Feb 2021 14:14:07 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJybRSOjiYGjU1WMov5+xWuEznSoVTMv4b/Sz5l/l/d/2YmGS2gMcMRRnE4elHcSTnBXvTjm4A==
-X-Received: by 2002:a05:620a:6d0:: with SMTP id 16mr4645162qky.335.1613168046774;
-        Fri, 12 Feb 2021 14:14:06 -0800 (PST)
-Received: from xz-x1 (bras-vprn-toroon474qw-lp130-20-174-93-89-182.dsl.bell.ca. [174.93.89.182])
-        by smtp.gmail.com with ESMTPSA id p16sm6558793qtq.24.2021.02.12.14.14.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Feb 2021 14:14:06 -0800 (PST)
-Date:   Fri, 12 Feb 2021 17:14:04 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Axel Rasmussen <axelrasmussen@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
+        Fri, 12 Feb 2021 17:20:10 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE614C061756;
+        Fri, 12 Feb 2021 14:19:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=RVK/AN6AEBmpXPega/cXcOXam0ZuYymejv9R+QiYt4U=; b=TPv4QhW0okuknx5KfPHQslKmIk
+        Bk32+7pfv8cUQ+xYTvyMh2TFy5dsd0TRepl2SDYfBlIN6QV1eVicZy+B1d4hP/WS7bf44kxhj/u6e
+        ZNn2Ty5TIejtLL3TmpLcjxcTiILo6hepKY+pbOBYu6ul74pYHnN10Ozucc3tMUs21mRZw2Ey2/uZJ
+        t/dGPJX23+pTDYQvWUdzH9oZ2+Nmm8FZi3EYffEDGQULIjwQuHPOWt+Vct9gBnS2dMugMKs/0bre9
+        mT+CQVT54eIOIFxbej6RteK4K1+yTNHRynL3fag3cgUxgPEzabo2mdY3fBFEmFs7GRJpikSLXFRjn
+        I/s8QTuQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lAgmU-00CCMm-95; Fri, 12 Feb 2021 22:19:19 +0000
+Date:   Fri, 12 Feb 2021 22:19:18 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Joe Perches <joe@perches.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Steven Price <steven.price@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Adam Ruprecht <ruprecht@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v5 04/10] hugetlb/userfaultfd: Unshare all pmds for
- hugetlbfs when register wp
-Message-ID: <20210212221404.GE3171@xz-x1>
-References: <20210210212200.1097784-1-axelrasmussen@google.com>
- <20210210212200.1097784-5-axelrasmussen@google.com>
- <517f3477-cb80-6dc9-bda0-b147dea68f95@oracle.com>
- <20210212211856.GD3171@xz-x1>
- <a32b5427-0560-fa24-450c-376c427dd166@oracle.com>
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] proc: Convert S_<FOO> permission uses to octal
+Message-ID: <20210212221918.GA2858050@casper.infradead.org>
+References: <85ff6fd6b26aafdf6087666629bad3acc29258d8.camel@perches.com>
+ <m1im6x0wtv.fsf@fess.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a32b5427-0560-fa24-450c-376c427dd166@oracle.com>
+In-Reply-To: <m1im6x0wtv.fsf@fess.ebiederm.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 12, 2021 at 01:34:03PM -0800, Mike Kravetz wrote:
-> I'm good with the new MMU_NOTIFY_HUGETLB_UNSHARE and agree with your reasoning
-> for adding it.  I really did not know enough about usage which caused me to
-> question.
+On Fri, Feb 12, 2021 at 04:01:48PM -0600, Eric W. Biederman wrote:
+> Joe Perches <joe@perches.com> writes:
+> 
+> > Convert S_<FOO> permissions to the more readable octal.
+> >
+> > Done using:
+> > $ ./scripts/checkpatch.pl -f --fix-inplace --types=SYMBOLIC_PERMS fs/proc/*.[ch]
+> >
+> > No difference in generated .o files allyesconfig x86-64
+> >
+> > Link:
+> > https://lore.kernel.org/lkml/CA+55aFw5v23T-zvDZp-MmD_EYxF8WbafwwB59934FV7g21uMGQ@mail.gmail.com/
+> 
+> 
+> I will be frank.  I don't know what 0644 means.  I can never remember
+> which bit is read, write or execute.  So I like symbolic constants.
 
-It actually is a good question..  Because after a 2nd thought I cannot think of
-any mmu notifier usage to explicitly listen to huge pmd unshare event - it
-could be just a too internal impl detail of hugetlbfs.  I think any new flag
-should justify itself when introduced.  Before I could justify it, I think
-MMU_NOTIFIER_CLEAR is indeed more suitable.
+Heh, I'm the other way, I can't remember what S_IRUGO means.
 
-Thanks,
+but I think there's another way which improves the information
+density:
 
--- 
-Peter Xu
+#define DIR_RO_ALL(NAME, iops, fops)	DIR(NAME, 0555, iops, fops)
+...
+(or S_IRUGO or whatever expands to 0555)
 
+There's really only a few combinations --
+	root read-only,
+	everybody read-only
+	root-write, others-read
+	everybody-write
+
+and execute is only used by proc for directories, not files, so I think
+there's only 8 combinations we'd need (and everybody-write is almost
+unused ...)
+
+> Perhaps we can do something like:
+> 
+> #define S_IRWX 7
+> #define S_IRW_ 6
+> #define S_IR_X 5
+> #define S_IR__ 4
+> #define S_I_WX 3
+> #define S_I_W_ 2
+> #define S_I__X 1
+> #define S_I___ 0
+> 
+> #define MODE(TYPE, USER, GROUP, OTHER) \
+> 	(((S_IF##TYPE) << 9) | \
+>          ((S_I##USER)  << 6) | \
+>          ((S_I##GROUP) << 3) | \
+>          (S_I##OTHER))
+> 
+> Which would be used something like:
+> MODE(DIR, RWX, R_X, R_X)
+> MODE(REG, RWX, R__, R__)
+> 
+> Something like that should be able to address the readability while
+> still using symbolic constants.
+
+I think that's been proposed before.
