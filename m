@@ -2,155 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2E66319BBD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 10:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB274319C08
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 10:44:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbhBLJUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Feb 2021 04:20:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:45190 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229674AbhBLJUG (ORCPT
+        id S230105AbhBLJno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Feb 2021 04:43:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229497AbhBLJnl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Feb 2021 04:20:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613121519;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=baunC+JA0c74vn12rH+deswOvAmvXs+9aRij2anuo18=;
-        b=MkC/0aY1zksQt9Ga+cXM/PRFIKRMO4EnLeUU3QqKg7GmRmLysHxSNetWiWzHiU8v+hVny4
-        G26gMeaq0/vudwx33BQ/H0qa4vHxajIBtuzpJkMdtzWfeRKQO46rrA/uRbwSj0wMv4jp97
-        82KFQFfGEvTBkel+v3qfEpLKV4RDNbo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-380-Led8hCyZOVOQcxBvYOphjw-1; Fri, 12 Feb 2021 04:18:35 -0500
-X-MC-Unique: Led8hCyZOVOQcxBvYOphjw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CA327192CC41;
-        Fri, 12 Feb 2021 09:18:29 +0000 (UTC)
-Received: from [10.36.114.178] (ovpn-114-178.ams2.redhat.com [10.36.114.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DA5E310023AC;
-        Fri, 12 Feb 2021 09:18:20 +0000 (UTC)
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-References: <YCEXMgXItY7xMbIS@dhcp22.suse.cz>
- <20210208212605.GX242749@kernel.org> <YCJMDBss8Qhha7g9@dhcp22.suse.cz>
- <20210209090938.GP299309@linux.ibm.com> <YCKLVzBR62+NtvyF@dhcp22.suse.cz>
- <20210211071319.GF242749@kernel.org> <YCTtSrCEvuBug2ap@dhcp22.suse.cz>
- <0d66baec-1898-987b-7eaf-68a015c027ff@redhat.com>
- <20210211112702.GI242749@kernel.org>
- <05082284-bd85-579f-2b3e-9b1af663eb6f@redhat.com>
- <20210211230910.GL242749@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Subject: Re: [PATCH v17 07/10] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-ID: <a903338e-3d56-ff0a-4f4f-0f23db7ec0da@redhat.com>
-Date:   Fri, 12 Feb 2021 10:18:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Fri, 12 Feb 2021 04:43:41 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFFB7C061574;
+        Fri, 12 Feb 2021 01:43:00 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id m17so8652966ioy.4;
+        Fri, 12 Feb 2021 01:43:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3S5RLTLok1pQUJwa2EYNw4MYnr3DPOV2Q+scsowAtbc=;
+        b=h1bUpwNW9Q9tprM2WJ7Wz15LkBh2uYIjoRKVNHISj7E1NSJYhPFVKjbUs8QhWVsS2y
+         uFIsF44CAhAEPwesU904/8HzAypQaUXGVjLPTdywfgtgdFAsRLdNktsfpb9hdwTULHQG
+         g5Sbcnx236BkX2HdR2MyN9rlYN2iC2LpJJD3fzh6zcNDcBb+8IxHPM76tlhUn49Ft0GJ
+         MqfTkb8sgO1Avr138xz58oThd4ACHS/wre8uuLs9Ka5+5CfJoXV3z0nvuTxXKR0A21tN
+         elgEcqt8Dppr5suYpggIF6kCxlujNYJK/mHK35FHBFK0epDfQRWuokzduk41kOjTpXz/
+         6ZiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3S5RLTLok1pQUJwa2EYNw4MYnr3DPOV2Q+scsowAtbc=;
+        b=EQUq8cGmeYtzQ16KH9hphfqynSi/ZJ7eCGdhVfW0reftf9GS7ytxRpWQk7/UYf+ekN
+         XK/FFl1A91XUDrIlRvwAnVc5ZPexbgStXGfHIKLj52DfZtKMzMa2nLB1s5QfLoGtm7Rt
+         XwiSIQoh2ZcAkvEf4eqsVHeHwnAisNBHxk/UmKMm7j4nlcZM5y8rIG5TqrkJcpveg4vV
+         pBeQCIROtrJWUTazzS5L9fGw3Lc3NwFIoGuOVPaTnAi6wNabNAE8Ckcb67A5u6EoPRwL
+         JXNLYCoRf1iI/YF67BtEDMr4uhdfZT1OGw6b+sxgDbPmmsirDAPhQdlUe/kboxWLOLNw
+         ZOuw==
+X-Gm-Message-State: AOAM530Phq3z7o1lht2SZ4sOTRre5F+JkyI2h4THxbUeaCubw4HFAGCF
+        K3CeyvetIwo522I4uPu8J52h7Xsjbb3kAAzXZXc=
+X-Google-Smtp-Source: ABdhPJwNrVQzk76irgDYoKO+++bE9yFzzDAWVdMpGNevJaJbEN8cW6/05m8Xj+XLVT0Fqrr0ZFa4hj+otA6SGmSLfxE=
+X-Received: by 2002:a05:6638:1928:: with SMTP id p40mr1912460jal.3.1613122980432;
+ Fri, 12 Feb 2021 01:43:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210211230910.GL242749@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20210202082353.2152271-1-dkadashev@gmail.com> <20210202082353.2152271-2-dkadashev@gmail.com>
+In-Reply-To: <20210202082353.2152271-2-dkadashev@gmail.com>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Fri, 12 Feb 2021 16:42:49 +0700
+Message-ID: <CAOKbgA7fBRpnkjvDRynZcyHxB_L6NYNCprwUtz+HwxqcqiJcLA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] fs: make do_mkdirat() take struct filename
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12.02.21 00:09, Mike Rapoport wrote:
-> On Thu, Feb 11, 2021 at 01:07:10PM +0100, David Hildenbrand wrote:
->> On 11.02.21 12:27, Mike Rapoport wrote:
->>> On Thu, Feb 11, 2021 at 10:01:32AM +0100, David Hildenbrand wrote:
->>
->> So let's talk about the main user-visible differences to other memfd files
->> (especially, other purely virtual files like hugetlbfs). With secretmem:
->>
->> - File content can only be read/written via memory mappings.
->> - File content cannot be swapped out.
->>
->> I think there are still valid ways to modify file content using syscalls:
->> e.g., fallocate(PUNCH_HOLE). Things like truncate also seems to work just
->> fine.
->   
-> These work perfectly with any file, so maybe we should have added
-> memfd_create as a flag to open(2) back then and now the secretmem file
-> descriptors?
+On Tue, Feb 2, 2021 at 3:25 PM Dmitry Kadashev <dkadashev@gmail.com> wrote:
+>
+> Pass in the struct filename pointers instead of the user string, and
+> update the three callers to do the same. This is heavily based on
+> commit dbea8d345177 ("fs: make do_renameat2() take struct filename").
+>
+> This behaves like do_unlinkat() and do_renameat2().
+>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+> ---
+>  fs/internal.h |  1 +
+>  fs/namei.c    | 25 +++++++++++++++++++------
+>  2 files changed, 20 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/internal.h b/fs/internal.h
+> index c6c85f6ad598..b10005dfaa48 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -76,6 +76,7 @@ long do_unlinkat(int dfd, struct filename *name);
+>  int may_linkat(struct path *link);
+>  int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
+>                  struct filename *newname, unsigned int flags);
+> +long do_mkdirat(int dfd, struct filename *name, umode_t mode);
+>
+>  /*
+>   * namespace.c
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4cae88733a5c..3657bdf1aafc 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3431,7 +3431,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+>         return file;
+>  }
+>
+> -static struct dentry *filename_create(int dfd, struct filename *name,
+> +static struct dentry *__filename_create(int dfd, struct filename *name,
+>                                 struct path *path, unsigned int lookup_flags)
+>  {
+>         struct dentry *dentry = ERR_PTR(-EEXIST);
+> @@ -3487,7 +3487,6 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+>                 error = err2;
+>                 goto fail;
+>         }
+> -       putname(name);
+>         return dentry;
+>  fail:
+>         dput(dentry);
+> @@ -3502,6 +3501,16 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+>         return dentry;
+>  }
+>
+> +static inline struct dentry *filename_create(int dfd, struct filename *name,
+> +                               struct path *path, unsigned int lookup_flags)
+> +{
+> +       struct dentry *res = __filename_create(dfd, name, path, lookup_flags);
+> +
+> +       if (!IS_ERR(res))
+> +               putname(name);
+> +       return res;
+> +}
+> +
+>  struct dentry *kern_path_create(int dfd, const char *pathname,
+>                                 struct path *path, unsigned int lookup_flags)
+>  {
+> @@ -3654,15 +3663,18 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+>  }
+>  EXPORT_SYMBOL(vfs_mkdir);
+>
+> -static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
+> +long do_mkdirat(int dfd, struct filename *name, umode_t mode)
+>  {
+>         struct dentry *dentry;
+>         struct path path;
+>         int error;
+>         unsigned int lookup_flags = LOOKUP_DIRECTORY;
+>
+> +       if (IS_ERR(name))
+> +               return PTR_ERR(name);
+> +
+>  retry:
+> -       dentry = user_path_create(dfd, pathname, &path, lookup_flags);
+> +       dentry = __filename_create(dfd, name, &path, lookup_flags);
+>         if (IS_ERR(dentry))
+>                 return PTR_ERR(dentry);
+>
+> @@ -3676,17 +3688,18 @@ static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
+>                 lookup_flags |= LOOKUP_REVAL;
+>                 goto retry;
+>         }
+> +       putname(name);
+>         return error;
+>  }
+>
+>  SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+>  {
+> -       return do_mkdirat(dfd, pathname, mode);
+> +       return do_mkdirat(dfd, getname(pathname), mode);
+>  }
+>
+>  SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+>  {
+> -       return do_mkdirat(AT_FDCWD, pathname, mode);
+> +       return do_mkdirat(AT_FDCWD, getname(pathname), mode);
+>  }
+>
+>  int vfs_rmdir(struct inode *dir, struct dentry *dentry)
+> --
+> 2.30.0
 
-I think open() vs memfd_create() makes sense: for open, the path 
-specifies main properties (tmpfs, hugetlbfs, filesystem). On memfd, 
-there is no such path and the "type" has to be specified differently.
+Hi Al,
 
-Also, open() might open existing files - memfd always creates new files.
+Are you OK with this version?
 
->   
->>>> AFAIKS, we would need MFD_SECRET and disallow
->>>> MFD_ALLOW_SEALING and MFD_HUGETLB.
->>>
->>> So here we start to multiplex.
->>
->> Yes. And as Michal said, maybe we can support combinations in the future.
-> 
-> Isn't there a general agreement that syscall multiplexing is not a good
-> thing?
-
-Looking at mmap(), madvise(), fallocate(), I think multiplexing is just 
-fine and flags can be mutually exclusive - as long as we're not 
-squashing completely unrelated things into a single system call.
-
-As one example: we don't have mmap_private() vs. mmap_shared() vs. 
-mmap_shared_validate(). E.g., MAP_SYNC is only available for 
-MAP_SHARED_VALIDATE.
-
-
-> memfd_create already has flags validation that does not look very nice.
-
-I assume you're talking about the hugetlb size specifications, right? 
-It's not nice but fairly compact.
-
-> Adding there only MFD_SECRET will make it a bit less nice, but when we'll
-> grow new functionality into secretmem that will become horrible.
-
-What do you have in mind? A couple of MFD_SECRET_* flags that only work 
-with MFD_SECRET won't hurt IMHO. Just like we allow MFD_HUGE_* only with 
-MFD_HUGETLB.
-
-Thanks,
-
-David / dhildenb
-
+-- 
+Dmitry Kadashev
