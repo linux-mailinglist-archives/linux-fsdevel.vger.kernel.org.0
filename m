@@ -2,158 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F9031A871
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Feb 2021 00:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C683831A87D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Feb 2021 00:56:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231663AbhBLXta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Feb 2021 18:49:30 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:38418 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231743AbhBLXtU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Feb 2021 18:49:20 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1lAiAw-001KYF-6b; Fri, 12 Feb 2021 16:48:38 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1lAiAs-00AAwv-BU; Fri, 12 Feb 2021 16:48:37 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <85ff6fd6b26aafdf6087666629bad3acc29258d8.camel@perches.com>
-        <m1im6x0wtv.fsf@fess.ebiederm.org>
-        <20210212221918.GA2858050@casper.infradead.org>
-Date:   Fri, 12 Feb 2021 17:48:16 -0600
-In-Reply-To: <20210212221918.GA2858050@casper.infradead.org> (Matthew Wilcox's
-        message of "Fri, 12 Feb 2021 22:19:18 +0000")
-Message-ID: <m1ft20zw3j.fsf@fess.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S230125AbhBLXzh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Feb 2021 18:55:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52758 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229679AbhBLXza (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Feb 2021 18:55:30 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4F4E864E25;
+        Fri, 12 Feb 2021 23:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613174089;
+        bh=/OvqjRmaBoFigF88nuGOnn8jZUAKHCUoPALIy3wKaE4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FNcUUbm3NiiNAzM1st/UIKjwfMmXXIIrFHJRZwV4hTGBgdQIOvlQWHRfEwKpvZ2p+
+         RinxLoyCUKISZ2pU/lLkqmlRsyV+uFf7oJYeJKq2SpLDpoPtySvUXSz8QM+5PwIG1V
+         JC0h1x2EUMc7NaFUG8dpVB3kpuyAJB1Y1Np9m4CXa8M4o2L9KIIrPRvpLCd10uIdga
+         V3EefdYP9daNMHdpnbeGbsV/SwHhKO7PpKeJ/ex+NWQqdQl6IizE3DtPQ6xCbK4gMD
+         FKk5b0p5E3Cj4AA6hWD8xdoSXZ0nlr+66cJVVP8TOCcoPOkfZvXJVqd4JvwWYrc5G7
+         3iKoBfhuQYung==
+Date:   Fri, 12 Feb 2021 15:54:48 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ian Lance Taylor <iant@golang.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luis Lozano <llozano@chromium.org>,
+        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate content
+ is generated
+Message-ID: <20210212235448.GH7187@magnolia>
+References: <20210212044405.4120619-1-drinkcat@chromium.org>
+ <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
+ <YCYybUg4d3+Oij4N@kroah.com>
+ <CANMq1KBuPaU5UtRR8qTgdf+J3pt-xAQq69kCVBdaYGx8F+WmFA@mail.gmail.com>
+ <YCY+Ytr2J2R5Vh0+@kroah.com>
+ <CAKOQZ8zPFM29DYPwbnUJEhf+a8kPSJ5E_W06JLFjn-5Fy-ZWWw@mail.gmail.com>
+ <YCaipZ+iY65iSrui@kroah.com>
+ <20210212230346.GU4626@dread.disaster.area>
+ <CAOyqgcX_wN2RGunDix5rSWxtp3pvSpFy2Stx-Ln4GozgSeS2LQ@mail.gmail.com>
+ <20210212232726.GW4626@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1lAiAs-00AAwv-BU;;;mid=<m1ft20zw3j.fsf@fess.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/kBYeaNDremxU4TaUBAJy1fsy5iUdwbQQ=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,
-        T_TooManySym_01,T_TooManySym_02 autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4898]
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Matthew Wilcox <willy@infradead.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 3303 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 12 (0.4%), b_tie_ro: 10 (0.3%), parse: 1.07
-        (0.0%), extract_message_metadata: 20 (0.6%), get_uri_detail_list: 2.5
-        (0.1%), tests_pri_-1000: 12 (0.4%), tests_pri_-950: 1.19 (0.0%),
-        tests_pri_-900: 0.98 (0.0%), tests_pri_-90: 89 (2.7%), check_bayes: 86
-        (2.6%), b_tokenize: 8 (0.2%), b_tok_get_all: 9 (0.3%), b_comp_prob:
-        3.1 (0.1%), b_tok_touch_all: 63 (1.9%), b_finish: 0.96 (0.0%),
-        tests_pri_0: 267 (8.1%), check_dkim_signature: 0.50 (0.0%),
-        check_dkim_adsp: 2.3 (0.1%), poll_dns_idle: 2865 (86.7%),
-        tests_pri_10: 2.2 (0.1%), tests_pri_500: 2894 (87.6%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH] proc: Convert S_<FOO> permission uses to octal
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210212232726.GW4626@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> writes:
+On Sat, Feb 13, 2021 at 10:27:26AM +1100, Dave Chinner wrote:
+> On Fri, Feb 12, 2021 at 03:07:39PM -0800, Ian Lance Taylor wrote:
+> > On Fri, Feb 12, 2021 at 3:03 PM Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Fri, Feb 12, 2021 at 04:45:41PM +0100, Greg KH wrote:
+> > > > On Fri, Feb 12, 2021 at 07:33:57AM -0800, Ian Lance Taylor wrote:
+> > > > > On Fri, Feb 12, 2021 at 12:38 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > > >
+> > > > > > Why are people trying to use copy_file_range on simple /proc and /sys
+> > > > > > files in the first place?  They can not seek (well most can not), so
+> > > > > > that feels like a "oh look, a new syscall, let's use it everywhere!"
+> > > > > > problem that userspace should not do.
+> > > > >
+> > > > > This may have been covered elsewhere, but it's not that people are
+> > > > > saying "let's use copy_file_range on files in /proc."  It's that the
+> > > > > Go language standard library provides an interface to operating system
+> > > > > files.  When Go code uses the standard library function io.Copy to
+> > > > > copy the contents of one open file to another open file, then on Linux
+> > > > > kernels 5.3 and greater the Go standard library will use the
+> > > > > copy_file_range system call.  That seems to be exactly what
+> > > > > copy_file_range is intended for.  Unfortunately it appears that when
+> > > > > people writing Go code open a file in /proc and use io.Copy the
+> > > > > contents to another open file, copy_file_range does nothing and
+> > > > > reports success.  There isn't anything on the copy_file_range man page
+> > > > > explaining this limitation, and there isn't any documented way to know
+> > > > > that the Go standard library should not use copy_file_range on certain
+> > > > > files.
+> > > >
+> > > > But, is this a bug in the kernel in that the syscall being made is not
+> > > > working properly, or a bug in that Go decided to do this for all types
+> > > > of files not knowing that some types of files can not handle this?
+> > > >
+> > > > If the kernel has always worked this way, I would say that Go is doing
+> > > > the wrong thing here.  If the kernel used to work properly, and then
+> > > > changed, then it's a regression on the kernel side.
+> > > >
+> > > > So which is it?
+> > >
+> > > Both Al Viro and myself have said "copy file range is not a generic
+> > > method for copying data between two file descriptors". It is a
+> > > targetted solution for *regular files only* on filesystems that store
+> > > persistent data and can accelerate the data copy in some way (e.g.
+> > > clone, server side offload, hardware offlead, etc). It is not
+> > > intended as a copy mechanism for copying data from one random file
+> > > descriptor to another.
+> > >
+> > > The use of it as a general file copy mechanism in the Go system
+> > > library is incorrect and wrong. It is a userspace bug.  Userspace
+> > > has done the wrong thing, userspace needs to be fixed.
+> > 
+> > OK, we'll take it out.
+> > 
+> > I'll just make one last plea that I think that copy_file_range could
+> > be much more useful if there were some way that a program could know
+> > whether it would work or not.
 
-> On Fri, Feb 12, 2021 at 04:01:48PM -0600, Eric W. Biederman wrote:
->> Joe Perches <joe@perches.com> writes:
->> 
->> > Convert S_<FOO> permissions to the more readable octal.
->> >
->> > Done using:
->> > $ ./scripts/checkpatch.pl -f --fix-inplace --types=SYMBOLIC_PERMS fs/proc/*.[ch]
->> >
->> > No difference in generated .o files allyesconfig x86-64
->> >
->> > Link:
->> > https://lore.kernel.org/lkml/CA+55aFw5v23T-zvDZp-MmD_EYxF8WbafwwB59934FV7g21uMGQ@mail.gmail.com/
->> 
->> 
->> I will be frank.  I don't know what 0644 means.  I can never remember
->> which bit is read, write or execute.  So I like symbolic constants.
->
-> Heh, I'm the other way, I can't remember what S_IRUGO means.
->
-> but I think there's another way which improves the information
-> density:
->
-> #define DIR_RO_ALL(NAME, iops, fops)	DIR(NAME, 0555, iops, fops)
-> ...
-> (or S_IRUGO or whatever expands to 0555)
->
-> There's really only a few combinations --
-> 	root read-only,
-> 	everybody read-only
-> 	root-write, others-read
-> 	everybody-write
->
-> and execute is only used by proc for directories, not files, so I think
-> there's only 8 combinations we'd need (and everybody-write is almost
-> unused ...)
+Well... we could always implement a CFR_DRYRUN flag that would run
+through all the parameter validation and return 0 just before actually
+starting any real copying logic.  But that wouldn't itself solve the
+problem that there are very old virtual filesystems in Linux that have
+zero-length regular files that behave like a pipe.
 
-I guess it depends on which part of proc.  For fs/proc/base.c and it's
-per process relatives something like that seems reasonable.
+> If you can't tell from userspace that a file has data in it other
+> than by calling read() on it, then you can't use cfr on it.
 
-I don't know about fs/proc/generic.c where everyone from all over the
-kernel registers new proc entries.
+I don't know how to do that, Dave. :)
 
->> Perhaps we can do something like:
->> 
->> #define S_IRWX 7
->> #define S_IRW_ 6
->> #define S_IR_X 5
->> #define S_IR__ 4
->> #define S_I_WX 3
->> #define S_I_W_ 2
->> #define S_I__X 1
->> #define S_I___ 0
->> 
->> #define MODE(TYPE, USER, GROUP, OTHER) \
->> 	(((S_IF##TYPE) << 9) | \
->>          ((S_I##USER)  << 6) | \
->>          ((S_I##GROUP) << 3) | \
->>          (S_I##OTHER))
->> 
->> Which would be used something like:
->> MODE(DIR, RWX, R_X, R_X)
->> MODE(REG, RWX, R__, R__)
->> 
->> Something like that should be able to address the readability while
->> still using symbolic constants.
->
-> I think that's been proposed before.
+Frankly I'm with the Go developers on this -- one should detect c_f_r by
+calling it and if it errors out then fall back to the usual userspace
+buffer copy strategy.
 
-I don't think it has ever been shot down.  Just no one care enough to
-implement it.
+That still means we need to fix the kernel WRT these weird old
+filesystems.  One of...
 
-Come to think of it, that has the nice property that if we cared we
-could make it type safe as well.  Something we can't do with the octal
-for obvious reasons.
+1. Get rid of the generic fallback completely, since splice only copies
+64k at a time and ... yay?  I guess it at least passes generic/521 and
+generic/522 these days.
 
-Eric
+2. Keep it, but change c_f_r to require that both files have a
+->copy_file_range implementation.  If they're the same then we'll call
+the function pointer, if not, we call the generic fallback.  This at
+least gets us back to the usual behavior which is that filesystems have
+to opt in to new functionality (== we assume they QA'd all the wunnerful
+combinations).
 
+3. #2, but fix the generic fallback to not suck so badly.  That sounds
+like someone (else's) 2yr project. :P
+
+--D
+
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
