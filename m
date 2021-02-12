@@ -2,115 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1ED31A105
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 16:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A4A31A113
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 16:06:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbhBLPBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Feb 2021 10:01:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43894 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229465AbhBLPBf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Feb 2021 10:01:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 014C8AC90;
-        Fri, 12 Feb 2021 15:00:54 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id d8a92aa3;
-        Fri, 12 Feb 2021 15:01:55 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate
- content is generated
-References: <20210212044405.4120619-1-drinkcat@chromium.org>
-        <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
-        <YCYybUg4d3+Oij4N@kroah.com>
-        <CAOQ4uxhovoZ4S3WhXwgYDeOeomBxfQ1BdzSyGdqoVX6boDOkeA@mail.gmail.com>
-        <YCY+tjPgcDmgmVD1@kroah.com> <871rdljxtx.fsf@suse.de>
-        <YCZyBZ1iT+MUXLu1@kroah.com> <87sg61ihkj.fsf@suse.de>
-        <YCaMgtpCzPrLjw9c@kroah.com>
-Date:   Fri, 12 Feb 2021 15:01:54 +0000
-In-Reply-To: <YCaMgtpCzPrLjw9c@kroah.com> (Greg KH's message of "Fri, 12 Feb
-        2021 15:11:14 +0100")
-Message-ID: <87lfbtib31.fsf@suse.de>
+        id S229812AbhBLPEx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Feb 2021 10:04:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43613 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229465AbhBLPEu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Feb 2021 10:04:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1613142200;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=JhAp9Dkg4RRdpdBWiCoCFdcpso2FfEPdKgKKWApZlQU=;
+        b=dzxD27QfhTaiTOLfPV9tRNib55wlXF2DwHZ2LBWdiyPHL9Rd1/PuSqwh7qAPjBkw/Rzus6
+        loTIF0/cTHmhtOLEQm6++7xbOqGaKnuJNo3QJStVCY4kIq0qhWD8TphlHBqopzQPE8krP9
+        XbUTbQSiClPA8PzMTtnhQoRTvJIGffg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-63-mP_OdMD9NdOC4DzwWgLBbQ-1; Fri, 12 Feb 2021 10:03:13 -0500
+X-MC-Unique: mP_OdMD9NdOC4DzwWgLBbQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 834E1107ACC7;
+        Fri, 12 Feb 2021 15:03:12 +0000 (UTC)
+Received: from ws.net.home (ovpn-117-0.ams2.redhat.com [10.36.117.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 993C219811;
+        Fri, 12 Feb 2021 15:03:11 +0000 (UTC)
+Date:   Fri, 12 Feb 2021 16:03:09 +0100
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.36.2
+Message-ID: <20210212150309.dk7pnsjc4gk66m7u@ws.net.home>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greg KH <gregkh@linuxfoundation.org> writes:
 
-> On Fri, Feb 12, 2021 at 12:41:48PM +0000, Luis Henriques wrote:
->> Greg KH <gregkh@linuxfoundation.org> writes:
-...
->> >> >> Our option now are:
->> >> >> - Restore the cross-fs restriction into generic_copy_file_range()
->> >> >
->> >> > Yes.
->> >> >
->> >> 
->> >> Restoring this restriction will actually change the current cephfs CFR
->> >> behaviour.  Since that commit we have allowed doing remote copies between
->> >> different filesystems within the same ceph cluster.  See commit
->> >> 6fd4e6348352 ("ceph: allow object copies across different filesystems in
->> >> the same cluster").
->> >> 
->> >> Although I'm not aware of any current users for this scenario, the
->> >> performance impact can actually be huge as it's the difference between
->> >> asking the OSDs for copying a file and doing a full read+write on the
->> >> client side.
->> >
->> > Regression in performance is ok if it fixes a regression for things that
->> > used to work just fine in the past :)
->> >
->> > First rule, make it work.
->> 
->> Sure, I just wanted to point out that *maybe* there are other options than
->> simply reverting that commit :-)
->> 
->> Something like the patch below (completely untested!) should revert to the
->> old behaviour in filesystems that don't implement the CFR syscall.
->> 
->> Cheers,
->> -- 
->> Luis
->> 
->> diff --git a/fs/read_write.c b/fs/read_write.c
->> index 75f764b43418..bf5dccc43cc9 100644
->> --- a/fs/read_write.c
->> +++ b/fs/read_write.c
->> @@ -1406,8 +1406,11 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
->>  						       file_out, pos_out,
->>  						       len, flags);
->>  
->> -	return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
->> -				       flags);
->> +	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
->> +		return -EXDEV;
->> +	else
->> +		generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
->> +					flags);
->>  }
->>  
->>  /*
->
-> That would make much more sense to me.
+The util-linux stable maintenance release v2.36.2 is available at
+ 
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.36/
+ 
+Feedback and bug reports, as always, are welcomed.
+ 
+  Karel
 
-Great.  I can send a proper patch with changelog, if this is the really
-what we want.  But I would rather hear from others first.  I guess that at
-least the NFS devs have something to say here.
 
-Cheers,
+util-linux 2.36.2 Release Notes
+===============================
+
+agetty:
+   - tty eol defaults to REPRINT  [Sami Loone]
+blkdiscard:
+   - fix compiler warnings [-Wmaybe-uninitialized]  [Karel Zak]
+build-sys:
+   - do not build plymouth-ctrl.c w/ disabled plymouth  [Pino Toscano]
+configure:
+   - test -a|o is not POSIX  [Issam E. Maghni]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fsck.cramfs:
+   - fix fsck.cramfs crashes on blocksizes > 4K  [ToddRK]
+fstab:
+   - fstab.5 NTFS and FAT volume IDs use upper case  [Heinrich Schuchardt]
+github:
+   - remove cifuzz from stable branch  [Karel Zak]
+hwclock:
+   - do not assume __NR_settimeofday_time32  [Pino Toscano]
+   - fix compiler warnings [-Wmaybe-uninitialized]  [Karel Zak]
+lib/caputils:
+   - add fall back for last cap using prctl.  [Érico Rolim]
+lib/loopdev:
+   - make is_loopdev() more robust  [Karel Zak]
+lib/procutils:
+   - add proc_is_procfs helper.  [Érico Rolim]
+   - improve proc_is_procfs(), add test  [Karel Zak]
+lib/signames:
+   - change license to public domain  [Karel Zak]
+libblkid:
+   - drbdmanage  use blkid_probe_strncpy_uuid instead of blkid_probe_set_id_label  [Pali Rohár]
+   - make gfs2 prober more extendible  [Karel Zak]
+libfdisk:
+   - (dos) fix last possible sector calculation  [Karel Zak]
+   - (script) ignore empty values for start and size  [Gaël PORTAY]
+   - ignore 33553920 byte optimal I/O size  [Ryan Finnie]
+libmount:
+   - (py) do not use pointer as an integer value  [Karel Zak]
+   - add vboxsf, virtiofs to pseudo filesystems  [Shahid Laher]
+   - do not canonicalize ZFS source dataset  [Karel Zak]
+   - don't use "symfollow" for helpers on user mounts  [Karel Zak]
+   - fix /{etc,proc}/filesystems use  [Karel Zak]
+login:
+   - use full tty path for PAM_TTY  [Karel Zak]
+losetup:
+   - fix wrong printf() format specifier for ino_t data type  [Manuel Bentele]
+lsblk:
+   - read SCSI_IDENT_SERIAL also from udev  [Karel Zak]
+lslogins:
+   - call close() for usable FD [coverity scan]  [Karel Zak]
+po:
+   - add sr.po (from translationproject.org)  [Мирослав Николић]
+   - merge changes  [Karel Zak]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+rfkill:
+   - stop execution when rfkill device cannot be opened  [Sami Kerola]
+script:
+   - fix compiler warnings [-Wmaybe-uninitialized]  [Karel Zak]
+scriptlive:
+   - fix compiler warnings [-Wmaybe-uninitialized]  [Karel Zak]
+setpriv:
+   - allow using [-+]all for capabilities.  [Érico Rolim]
+   - small clean-up.  [Érico Rolim]
+su:
+   - use full tty path for PAM_TTY  [Karel Zak]
+switch_root:
+   - check if mount point to move even exists  [Thomas Deutschmann]
+sys-utils:
+   - mount.8  fix a typo  [Eric Biggers]
+tests:
+   - add checksum for cramfs/mkfs for LE 16384 (ia64)  [Anatoly Pugachev]
+   - be explicit with file permissions for cramfs  [Karel Zak]
+   - don't rely on scsi_debug partitions  [Karel Zak]
+umount:
+   - ignore --no-canonicalize,-c for non-root users  [Karel Zak]
+
+- Show the 'r' option in the help menu  [Vincent McIntyre]
+
 -- 
-Luis
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
