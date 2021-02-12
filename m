@@ -2,120 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA993319B5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 09:44:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8110319B9E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 10:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230073AbhBLIkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Feb 2021 03:40:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52776 "EHLO mail.kernel.org"
+        id S229730AbhBLJEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Feb 2021 04:04:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60020 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230024AbhBLIkB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Feb 2021 03:40:01 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 067FE64E56;
-        Fri, 12 Feb 2021 08:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1613119160;
-        bh=0RDCEB1dSflSI5nXa6iE2Jxwnf0NqSgsW3CVWb/ar0s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MZ5p1Ys1bWM0d6fl/J6/taMlmNOgtsUk5QeqdLJFBxFzkW+ib/PuT7SYGiDw6tUdp
-         tkUPM/5T957Wvnol1T15QrBHtP5UTQvUbpMdlTHVLSN4Upwl762SdgYmYmgW6zrozE
-         WZ0oHcjBTemixcSjxS3hGojvNqv2PYBUsE3Ka/Wc=
-Date:   Fri, 12 Feb 2021 09:39:18 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
+        id S229844AbhBLJDI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Feb 2021 04:03:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1613120541; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fuLAmxR9iwO43/C3LbcJHqR7LRiBnZEE0LsKt1rN5RA=;
+        b=maIJbN5v88UD3goki+HrDViBKPQKMVtsrMuVzNcWnDhTSddOOLE9kT0LL00VEyFKn1w2wu
+        hBoG4RHY3X+r3uWP/goD/p/Dg7u5wWxfs7ea54Ma6J6j7ggOCIfWOJ3R2fAi1nMYOg65X0
+        v0fJhu0jSZq0pBodruezPHImvLU92w8=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 0E22FB176;
+        Fri, 12 Feb 2021 09:02:21 +0000 (UTC)
+Date:   Fri, 12 Feb 2021 10:02:18 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate content
- is generated
-Message-ID: <YCY+tjPgcDmgmVD1@kroah.com>
-References: <20210212044405.4120619-1-drinkcat@chromium.org>
- <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
- <YCYybUg4d3+Oij4N@kroah.com>
- <CAOQ4uxhovoZ4S3WhXwgYDeOeomBxfQ1BdzSyGdqoVX6boDOkeA@mail.gmail.com>
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v17 07/10] mm: introduce memfd_secret system call to
+ create "secret" memory areas
+Message-ID: <YCZEGuLK94szKZDf@dhcp22.suse.cz>
+References: <YCEXMgXItY7xMbIS@dhcp22.suse.cz>
+ <20210208212605.GX242749@kernel.org>
+ <YCJMDBss8Qhha7g9@dhcp22.suse.cz>
+ <20210209090938.GP299309@linux.ibm.com>
+ <YCKLVzBR62+NtvyF@dhcp22.suse.cz>
+ <20210211071319.GF242749@kernel.org>
+ <YCTtSrCEvuBug2ap@dhcp22.suse.cz>
+ <20210211112008.GH242749@kernel.org>
+ <YCUjck0I8qgjB24i@dhcp22.suse.cz>
+ <20210211225929.GK242749@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhovoZ4S3WhXwgYDeOeomBxfQ1BdzSyGdqoVX6boDOkeA@mail.gmail.com>
+In-Reply-To: <20210211225929.GK242749@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 12, 2021 at 10:22:16AM +0200, Amir Goldstein wrote:
-> On Fri, Feb 12, 2021 at 9:49 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Feb 12, 2021 at 12:44:00PM +0800, Nicolas Boichat wrote:
-> > > Filesystems such as procfs and sysfs generate their content at
-> > > runtime. This implies the file sizes do not usually match the
-> > > amount of data that can be read from the file, and that seeking
-> > > may not work as intended.
-> > >
-> > > This will be useful to disallow copy_file_range with input files
-> > > from such filesystems.
-> > >
-> > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> > > ---
-> > > I first thought of adding a new field to struct file_operations,
-> > > but that doesn't quite scale as every single file creation
-> > > operation would need to be modified.
-> >
-> > Even so, you missed a load of filesystems in the kernel with this patch
-> > series, what makes the ones you did mark here different from the
-> > "internal" filesystems that you did not?
-> >
-> > This feels wrong, why is userspace suddenly breaking?  What changed in
-> > the kernel that caused this?  Procfs has been around for a _very_ long
-> > time :)
+On Fri 12-02-21 00:59:29, Mike Rapoport wrote:
+> On Thu, Feb 11, 2021 at 01:30:42PM +0100, Michal Hocko wrote:
+[...]
+> > Have a look how hugetlb proliferates through our MM APIs. I strongly
+> > suspect this is strong signal that this won't be any different.
+> > 
+> > > And even if yes, adding SECRETMEM_HUGE
+> > > flag seems to me less confusing than saying "from kernel x.y you can use
+> > > MFD_CREATE | MFD_SECRET | MFD_HUGE" etc for all possible combinations.
+> > 
+> > I really fail to see your point. This is a standard model we have. It is
+> > quite natural that flags are added. Moreover adding a new syscall will
+> > not make it any less of a problem.
 > 
-> That would be because of (v5.3):
+> Nowadays adding a new syscall is not as costly as it used to be. And I
+> think it'll provide better extensibility when new features would be added
+> to secretmem. 
 > 
-> 5dae222a5ff0 vfs: allow copy_file_range to copy across devices
+> For instance, for creating a secretmem fd backed with sealing we'd have
 > 
-> The intention of this change (series) was to allow server side copy
-> for nfs and cifs via copy_file_range().
-> This is mostly work by Dave Chinner that I picked up following requests
-> from the NFS folks.
+> 	memfd_secretm(SECRETMEM_HUGE);
+
+You mean SECRETMEM_HUGE_1G_AND_SEALED or SECRET_HUGE_2MB_WITHOUT_SEALED?
+This would be rather an antipatern to our flags design, no? Really there
+are orthogonal requirements here and there is absolutely zero reason
+to smash everything into a single thing. It is just perfectly fine to
+combine those functionalities without a pre-described way how to do
+that.
+
+> rather than
 > 
-> But the above change also includes this generic change:
+> 	memfd_create(MFD_ALLOW_SEALING | MFD_HUGETLB | MFD_SECRET);
 > 
-> -       /* this could be relaxed once a method supports cross-fs copies */
-> -       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-> -               return -EXDEV;
-> -
 > 
-> The change of behavior was documented in the commit message.
-> It was also documented in:
+> Besides, if we overload memfd_secret we add complexity to flags validation
+> of allowable flag combinations even with the simplest initial
+> implementation.
+
+This is the least of my worry, really. The existing code in
+memfd_create, unlike others legacy interfaces, allows extensions just
+fine.
+
+> And what it will become when more features are added to secretmem?
+
+Example?
+
+> > > > I by no means do not insist one way or the other but from what I have
+> > > > seen so far I have a feeling that the interface hasn't been thought
+> > > > through enough.
+> > > 
+> > > It has been, but we have different thoughts about it ;-)
+> > 
+> > Then you must be carrying a lot of implicit knowledge which I want you
+> > to document.
 > 
-> 88e75e2c5 copy_file_range.2: Kernel v5.3 updates
-> 
-> I think our rationale for the generic change was:
-> "Why not? What could go wrong? (TM)"
-> I am not sure if any workload really gained something from this
-> kernel cross-fs CFR.
+> I don't have any implicit knowledge, we just have a different perspective.
 
-Why not put that check back?
+OK, I will stop discussing now because it doesn't really seem to lead
+anywhere.
 
-> In retrospect, I think it would have been safer to allow cross-fs CFR
-> only to the filesystems that implement ->{copy,remap}_file_range()...
+Just to recap my current understanding. Your main argument so far is
+that this is somehow special and you believe it would be confusing
+to use an existing interface. I beg to disagree here because memfd
+interface is exactly a way to get a file handle to describe a memory
+which is what you want. About the only thing that secretmem is special
+is that it only operates on mapped areas and read/write interface is
+not supported (but I do not see a fundamental reason this couldn't be
+added in the future). All the rest is just operating on a memory backed
+file. I envison the hugetlb support will follow and sealing sounds like
+a useful thing to be requested as well.  All that would have to be
+added to a new syscall over time and then we will land at two parallel
+interface supporting a largerly overlapping feature set.
 
-Why not make this change?  That seems easier and should fix this for
-everyone, right?
+To me all the above sounds to be much stronher argument than your worry
+this might be confusing.
 
-> Our option now are:
-> - Restore the cross-fs restriction into generic_copy_file_range()
-
-Yes.
-
-> - Explicitly opt-out of CFR per-fs and/or per-file as Nicolas' patch does
-
-No.  That way lies constant auditing and someone being "vigilant" for
-the next 30+ years.  Which will not happen.
-
-thanks,
-
-greg k-h
+I will not insist on this but you should have some more thought on those
+arguments.
+-- 
+Michal Hocko
+SUSE Labs
