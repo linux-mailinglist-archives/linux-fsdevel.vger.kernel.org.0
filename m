@@ -2,176 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B55C831A5FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 21:24:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 122AF31A626
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 21:42:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbhBLUXi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Feb 2021 15:23:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57236 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229903AbhBLUX1 (ORCPT
+        id S230109AbhBLUmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Feb 2021 15:42:03 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38685 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229648AbhBLUmC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Feb 2021 15:23:27 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68352C061756
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Feb 2021 12:22:47 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id jt13so1280689ejb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Feb 2021 12:22:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=golang-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jt/znij/3B8fOvG2/6cCyKxwvx+Ld8xIFxr8VpQdpGs=;
-        b=UMNFf3VNvvXt7dkwZkk67PYsZgTlumZvT3waqw6JYJE4qEKa+y1zf4JNt+5R+2zqqm
-         yN/E5gw7Vfqut29zBhqcTM4yAHaJGHxWDDouOftu/xKLEz+T35rs9UbgrWnPtytQTmv7
-         s6WiKQE6Wsc6N5p1TTzP844IK6c2ZtlNQPPFcQacJZzQrP+3MuEW4r3Wz0FAMyAMGR3t
-         FmOHlkR8jEB/c/ZwfNjnDxLWmfoTi5F3fl8jml+xhf6D9dKtsa9ScwLTZ1MWQJ5LPMFK
-         LXjF3ba1y0rX2nqh+h6xyOX4krOzF/W+vYlw1wkUTZ69oSlWMrIWbaTmnooEXSQcl0gj
-         t6Xg==
+        Fri, 12 Feb 2021 15:42:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1613162435;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lhv01WUAUIt7cfh7FfrEWuxYc6udpak2O8cJ5MSKjhM=;
+        b=Szm855oU8snwS7qsjEreT7xdhUhpnkCY994OP5xpxslOPNPaMF0sAqMr02gQWIblMaSKjV
+        +yltYICOnlJnrK+hHsocWmeX/6GuwT5tbb0CxHJRzMXRsXGFDv5Nc0g2sGwBdlfrxdBiOi
+        YtmWQnC1sCoskQbAkCiPEtnO4rIevpc=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-231-2Ur34okqPJGVyQBXA9l8Sg-1; Fri, 12 Feb 2021 15:40:34 -0500
+X-MC-Unique: 2Ur34okqPJGVyQBXA9l8Sg-1
+Received: by mail-qk1-f198.google.com with SMTP id s66so526033qkh.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Feb 2021 12:40:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jt/znij/3B8fOvG2/6cCyKxwvx+Ld8xIFxr8VpQdpGs=;
-        b=Bq9d3D+dpgMvw+eesJ/wqfwfwsvH4WBHAhrZUpDl5jLPb7HKqSiqRvEseVxBJJW2qb
-         5OhfG3Kif7McCrxDVI1NxFVSFe4lJGHv9tTDRHkmAHnCvbN5iO+zJM7IzdSpywnsrHSH
-         0YSirlCztVnNUaNh9+4SyfMOR4Im5mFOp+4ef5MqEsCdal8fdBmVwNj4aCHghvrtURO6
-         7N8Dv3szEKf/UK5oU0RHINXsGWiS0oH71DpoXOJtpC1chXJIFclY4fdhs5O1WBJh3cnK
-         3dBRwiE+XMhmtFUFGEjHnTN2Meej0gMdK+CmEHDTRzKTeTUoOhY5tnib1e/GQubGpIkv
-         IjFA==
-X-Gm-Message-State: AOAM5309s4NNThg11XQMU3SXwd1f72xEZLnlcQ9wrddq3zXDnfytPr+B
-        4eIR1uLJQwboH8ugPYO/aGoQsam0z72wk/A7Sk52/mmRnK2OYA==
-X-Google-Smtp-Source: ABdhPJyv9jhJSOtLHG3vaLP+bavuIfKMvj1SN0/eHImcOVZ/RjghvLg035DceUMNKiNcRQXaG5p+R4AhFW9WUK4LNjs=
-X-Received: by 2002:a17:906:7687:: with SMTP id o7mr4715498ejm.209.1613161365986;
- Fri, 12 Feb 2021 12:22:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20210212044405.4120619-1-drinkcat@chromium.org>
- <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
- <YCYybUg4d3+Oij4N@kroah.com> <CANMq1KBuPaU5UtRR8qTgdf+J3pt-xAQq69kCVBdaYGx8F+WmFA@mail.gmail.com>
- <YCY+Ytr2J2R5Vh0+@kroah.com> <CAKOQZ8zPFM29DYPwbnUJEhf+a8kPSJ5E_W06JLFjn-5Fy-ZWWw@mail.gmail.com>
- <YCaipZ+iY65iSrui@kroah.com> <CAOyqgcVTYhozM-mwc400qt+fabmUuBQTsjqbcA03xDooYXXcMA@mail.gmail.com>
- <YCaswkcgM2NMxiMh@kroah.com>
-In-Reply-To: <YCaswkcgM2NMxiMh@kroah.com>
-From:   Ian Lance Taylor <iant@golang.org>
-Date:   Fri, 12 Feb 2021 12:22:33 -0800
-Message-ID: <CAOyqgcXV96OeHg8OkzP-EYV7WCn+sJNGsy1RXBP86wYAYv+g3Q@mail.gmail.com>
-Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate content
- is generated
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lhv01WUAUIt7cfh7FfrEWuxYc6udpak2O8cJ5MSKjhM=;
+        b=c5KRn7BGed3ZCA8MZR8oOq8NEM6aNDvIBZbKUu5bN3ajt12zTr1z5dAHs80P2sKd1k
+         sBG61CF9a/67EGtsau+4A49gZ4i3jegPyfyYWuu42vcP/CTNQo46eI6qbP0S4lrmzcdr
+         5UFedbQXJdp+XLiA3s6CdG8VHU9qlFlh/O/eMvLvB0OGRaTQoYoi7Bj1EoJE1YRE4Hw1
+         cOC21RgRruomHHArsmWRVprelTlMfgdHddfCS8XxLbyyP0Uc7JMh+tR0HWCdTh5j40gi
+         IgMqqviSYMu+C/Y9tW02u5dxbaprGRAOy6RkHr+WniQikKhojWpIAd47i3uReyXWUAtY
+         q8Dg==
+X-Gm-Message-State: AOAM531P8Ndnn0i4rXpzx+XiDEu/aLPZ/qApBZABXn+sYlfukea16OpE
+        lmbvh6Lj10UngxGEIXQFJmhLLR91hY/iNA9x6cPHywAmUjs2/8Am1M/Z1zrCE0F7OlnydHNl+0p
+        IQB6LMdNVwrnRse5qQv4ZKxkXeg==
+X-Received: by 2002:a37:794:: with SMTP id 142mr4518277qkh.108.1613162433647;
+        Fri, 12 Feb 2021 12:40:33 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzUswzGCW3ELL2qJurJb7kKjeX2jYZXKw9W8lc+8Y9xOJdWIoFNQJ7ew2FPIeSB2eswM62WHQ==
+X-Received: by 2002:a37:794:: with SMTP id 142mr4518131qkh.108.1613162431919;
+        Fri, 12 Feb 2021 12:40:31 -0800 (PST)
+Received: from xz-x1 (bras-vprn-toroon474qw-lp130-20-174-93-89-182.dsl.bell.ca. [174.93.89.182])
+        by smtp.gmail.com with ESMTPSA id s129sm7083362qkh.37.2021.02.12.12.40.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Feb 2021 12:40:30 -0800 (PST)
+Date:   Fri, 12 Feb 2021 15:40:28 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Axel Rasmussen <axelrasmussen@google.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Lozano <llozano@chromium.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000302b1d05bb296631"
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Steven Price <steven.price@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Adam Ruprecht <ruprecht@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH v5 02/10] hugetlb/userfaultfd: Forbid huge pmd sharing
+ when uffd enabled
+Message-ID: <20210212204028.GC3171@xz-x1>
+References: <20210210212200.1097784-1-axelrasmussen@google.com>
+ <20210210212200.1097784-3-axelrasmussen@google.com>
+ <0a991b83-18f8-cd76-46c0-4e0dcd5c87a7@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0a991b83-18f8-cd76-46c0-4e0dcd5c87a7@oracle.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000302b1d05bb296631
-Content-Type: text/plain; charset="UTF-8"
+On Thu, Feb 11, 2021 at 04:19:55PM -0800, Mike Kravetz wrote:
+> want_pmd_share() is currently just a check for CONFIG_ARCH_WANT_HUGE_PMD_SHARE.
+> How about leaving that mostly as is, and adding the new vma checks to
+> vma_shareable().  vma_shareable() would then be something like:
+> 
+> 	if (!(vma->vm_flags & VM_MAYSHARE))
+> 		return false;
+> #ifdef CONFIG_USERFAULTFD
+> 	if (uffd_disable_huge_pmd_share(vma)
+> 		return false;
+> #endif
+> #ifdef /* XXX */
+> 	/* add other checks for things like uffd wp and soft dirty here */
+> #endif /* XXX */
+> 
+> 	if (range_in_vma(vma, base, end)
+> 		return true;
+> 	return false;
+> 
+> Of course, this would require we leave the call to vma_shareable() at the
+> beginning of huge_pmd_share.  It also means that we are always making a
+> function call into huge_pmd_share to determine if sharing is possible.
+> That is not any different than today.  If we do not want to make that extra
+> function call, then I would suggest putting all that code in want_pmd_share.
+> It just seems that all the vma checks for sharing should be in one place
+> if possible.
 
-On Fri, Feb 12, 2021 at 8:28 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Feb 12, 2021 at 07:59:04AM -0800, Ian Lance Taylor wrote:
-> > On Fri, Feb 12, 2021 at 7:45 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Fri, Feb 12, 2021 at 07:33:57AM -0800, Ian Lance Taylor wrote:
-> > > > On Fri, Feb 12, 2021 at 12:38 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > Why are people trying to use copy_file_range on simple /proc and /sys
-> > > > > files in the first place?  They can not seek (well most can not), so
-> > > > > that feels like a "oh look, a new syscall, let's use it everywhere!"
-> > > > > problem that userspace should not do.
-> > > >
-> > > > This may have been covered elsewhere, but it's not that people are
-> > > > saying "let's use copy_file_range on files in /proc."  It's that the
-> > > > Go language standard library provides an interface to operating system
-> > > > files.  When Go code uses the standard library function io.Copy to
-> > > > copy the contents of one open file to another open file, then on Linux
-> > > > kernels 5.3 and greater the Go standard library will use the
-> > > > copy_file_range system call.  That seems to be exactly what
-> > > > copy_file_range is intended for.  Unfortunately it appears that when
-> > > > people writing Go code open a file in /proc and use io.Copy the
-> > > > contents to another open file, copy_file_range does nothing and
-> > > > reports success.  There isn't anything on the copy_file_range man page
-> > > > explaining this limitation, and there isn't any documented way to know
-> > > > that the Go standard library should not use copy_file_range on certain
-> > > > files.
-> > >
-> > > But, is this a bug in the kernel in that the syscall being made is not
-> > > working properly, or a bug in that Go decided to do this for all types
-> > > of files not knowing that some types of files can not handle this?
-> > >
-> > > If the kernel has always worked this way, I would say that Go is doing
-> > > the wrong thing here.  If the kernel used to work properly, and then
-> > > changed, then it's a regression on the kernel side.
-> > >
-> > > So which is it?
-> >
-> > I don't work on the kernel, so I can't tell you which it is.  You will
-> > have to decide.
->
-> As you have the userspace code, it should be easier for you to test this
-> on an older kernel.  I don't have your userspace code...
+I don't worry a lot on that since we've already got huge_pte_alloc() which
+takes care of huge pmd sharing case, so I don't expect e.g. even most hugetlb
+developers to use want_pmd_share() at all, because huge_pte_alloc() will be the
+one that frequently got called.
 
-Sorry, I'm not sure what you are asking.
+But yeah we can definitely put the check logic into huge_pmd_share() too.
+Looking at above code it looks still worth a helper like want_pmd_share() or
+with some other name.  Then... instead of making this complicated, how about I
+mostly keep this patch but move want_pmd_share() call into huge_pmd_share()
+instead?
 
-I've attached a sample Go program.  On kernel version 2.6.32 this
-program exits 0.  On kernel version 5.7.17 it prints
+Btw, Axel, it seems there will still be some respins on the pmd sharing
+patches.  Since it turns out it'll be shared by multiple tasks now, do you mind
+I pick those out and send them separately?  Then we can consolidate this part
+to move on with either the rest of the tasks we've got on hand.
 
-got "" want "./foo\x00"
+Thanks,
 
-and exits with status 1.
+-- 
+Peter Xu
 
-This program hardcodes the string "/proc/self/cmdline" for
-convenience, but of course the same results would happen if this were
-a generic copy program that somebody invoked with /proc/self/cmdline
-as a command line option.
-
-I could write the same program in C easily enough, by explicitly
-calling copy_file_range.  Would it help to see a sample C program?
-
-
-> > From my perspective, as a kernel user rather than a kernel developer,
-> > a system call that silently fails for certain files and that provides
-> > no way to determine either 1) ahead of time that the system call will
-> > fail, or 2) after the call that the system call did fail, is a useless
-> > system call.
->
-> Great, then don't use copy_file_range() yet as it seems like it fits
-> that category at the moment :)
-
-That seems like an unfortunate result, but if that is the determining
-opinion then I guess that is what we will have to do in the Go
-standard library.
-
-Ian
-
---000000000000302b1d05bb296631
-Content-Type: text/x-go; charset="US-ASCII"; name="foo7.go"
-Content-Disposition: attachment; filename="foo7.go"
-Content-Transfer-Encoding: base64
-Content-ID: <f_kl2qjoq50>
-X-Attachment-Id: f_kl2qjoq50
-
-cGFja2FnZSBtYWluCgppbXBvcnQgKAoJImJ5dGVzIgoJImZtdCIKCSJpbyIKCSJpby9pb3V0aWwi
-Cgkib3MiCikKCmZ1bmMgbWFpbigpIHsKCXRtcGZpbGUsIGVyciA6PSBpb3V0aWwuVGVtcEZpbGUo
-IiIsICJjb3B5X2ZpbGVfcmFuZ2UiKQoJaWYgZXJyICE9IG5pbCB7CgkJZm10LkZwcmludChvcy5T
-dGRlcnIsIGVycikKCQlvcy5FeGl0KDEpCgl9CglzdGF0dXMgOj0gY29weSh0bXBmaWxlKQoJb3Mu
-UmVtb3ZlKHRtcGZpbGUuTmFtZSgpKQoJb3MuRXhpdChzdGF0dXMpCn0KCmZ1bmMgY29weSh0bXBm
-aWxlICpvcy5GaWxlKSBpbnQgewoJY21kbGluZSwgZXJyIDo9IG9zLk9wZW4oIi9wcm9jL3NlbGYv
-Y21kbGluZSIpCglpZiBlcnIgIT0gbmlsIHsKCQlmbXQuRnByaW50bG4ob3MuU3RkZXJyLCBlcnIp
-CgkJcmV0dXJuIDEKCX0KCWRlZmVyIGNtZGxpbmUuQ2xvc2UoKQoJaWYgXywgZXJyIDo9IGlvLkNv
-cHkodG1wZmlsZSwgY21kbGluZSk7IGVyciAhPSBuaWwgewoJCWZtdC5GcHJpbnRmKG9zLlN0ZGVy
-ciwgImNvcHkgZmFpbGVkOiAldlxuIiwgZXJyKQoJCXJldHVybiAxCgl9CglpZiBlcnIgOj0gdG1w
-ZmlsZS5DbG9zZSgpOyBlcnIgIT0gbmlsIHsKCQlmbXQuRnByaW50bG4ob3MuU3RkZXJyLCBlcnIp
-CgkJcmV0dXJuIDEKCX0KCW9sZCwgZXJyIDo9IGlvdXRpbC5SZWFkRmlsZSgiL3Byb2Mvc2VsZi9j
-bWRsaW5lIikKCWlmIGVyciAhPSBuaWwgewoJCWZtdC5GcHJpbnRsbihvcy5TdGRlcnIsIGVycikK
-CQlyZXR1cm4gMQoJfQoJbmV3LCBlcnIgOj0gaW91dGlsLlJlYWRGaWxlKHRtcGZpbGUuTmFtZSgp
-KQoJaWYgZXJyICE9IG5pbCB7CgkJZm10LkZwcmludGxuKG9zLlN0ZGVyciwgZXJyKQoJCXJldHVy
-biAxCgl9CglpZiAhYnl0ZXMuRXF1YWwob2xkLCBuZXcpIHsKCQlmbXQuRnByaW50Zihvcy5TdGRl
-cnIsICJnb3QgJXEgd2FudCAlcVxuIiwgbmV3LCBvbGQpCgkJcmV0dXJuIDEKCX0KCXJldHVybiAw
-Cn0K
---000000000000302b1d05bb296631--
