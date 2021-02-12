@@ -2,139 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17A7231A238
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 17:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4753131A241
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Feb 2021 17:03:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232059AbhBLQAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Feb 2021 11:00:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57320 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230043AbhBLQAA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Feb 2021 11:00:00 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E08C061756
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Feb 2021 07:59:18 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id jj19so11538ejc.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Feb 2021 07:59:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=golang-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yQtB9DQQCYhoE2PX3zsTi2OoG8c7N9zifSGdBLGMpRU=;
-        b=P7JvmqoKUlPwbYY/W3Md5u/d01RJCmNBOeYtTfXs92AEtiC9YivrE84PxDu0n+N02L
-         gesWb+j292sMEUyr5ctTX5IGac4iVjlcVnN1ahRKq+VLmA8ErVq0ZCc2X3iuuM8+PUl+
-         kI9fmuOff8qeVPLhxpbERC4MS93gj6B14V9PPWVDb2mURmuVn/88ZJwtBY9JSumVykwp
-         DfkJVPgDssLVgvQ1HWTx2+QB29osXG+n0k1GvvSr2NAOUgDCWuTTObGzMsAuDWzKs5Bs
-         xFEZIHl1U8MALR5uadD1YE5rAHF1RwOin0ANNZg5VWf/iL5ORbrUXH5akj1tuMWcDwbP
-         rMqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yQtB9DQQCYhoE2PX3zsTi2OoG8c7N9zifSGdBLGMpRU=;
-        b=nyS0t3FBju9YgqqHz7RH5i6e63D2r6MDcmBDdqQ/gkub2oiOJ90MQptn3PWL04MRV2
-         gD3DUy83gohJNXfB88QQb549Q4GfK0qsUjqqsM9udikAmVYA9nxMW1asxXyFbir9yWyL
-         EuZmPVINoCtmW+XDIMiLvZJ6DsL3pMz9HL3xzt73KzV2nb+ydahTIplxKnZBcQZt9zJG
-         obwF+2pojZDmV6ley2ZtCyogwaIv43St4zsiQeCM4prwLLNmZpx41n0/iCFpZlvnHbTY
-         KCr6yHMbv+WFjRkPmVD5oWtJuRPapmNCXJY5Y+CPJZLDJV8DCCWp317wnznw40der4KS
-         rJwA==
-X-Gm-Message-State: AOAM530Es9Q4d0xC7E0EJm/5j4sh4f5MftW/pwUpMCfpUA2WYiD9iEi5
-        XSdhCRl9gfybnoq2yEtCMW/cfww4bfESXBayZA/lDw==
-X-Google-Smtp-Source: ABdhPJxkERY/oPSU3XzhUsb2aRy7fBSqogheSCk2JXtUPt7fSrF/htK7vOhSmdS90JsKYB559clwRp7ujO8ykCKC/D8=
-X-Received: by 2002:a17:906:8555:: with SMTP id h21mr3585156ejy.403.1613145555571;
- Fri, 12 Feb 2021 07:59:15 -0800 (PST)
+        id S231599AbhBLQBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Feb 2021 11:01:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51924 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230286AbhBLQBw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Feb 2021 11:01:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 558E9B773;
+        Fri, 12 Feb 2021 16:01:09 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D4CEA1E62E4; Fri, 12 Feb 2021 17:01:08 +0100 (CET)
+Date:   Fri, 12 Feb 2021 17:01:08 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 0/2 RFC v2] fs: Hole punch vs page cache filling races
+Message-ID: <20210212160108.GW19070@quack2.suse.cz>
+References: <20210208163918.7871-1-jack@suse.cz>
+ <20210209014357.GR4626@dread.disaster.area>
 MIME-Version: 1.0
-References: <20210212044405.4120619-1-drinkcat@chromium.org>
- <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
- <YCYybUg4d3+Oij4N@kroah.com> <CANMq1KBuPaU5UtRR8qTgdf+J3pt-xAQq69kCVBdaYGx8F+WmFA@mail.gmail.com>
- <YCY+Ytr2J2R5Vh0+@kroah.com> <CAKOQZ8zPFM29DYPwbnUJEhf+a8kPSJ5E_W06JLFjn-5Fy-ZWWw@mail.gmail.com>
- <YCaipZ+iY65iSrui@kroah.com>
-In-Reply-To: <YCaipZ+iY65iSrui@kroah.com>
-From:   Ian Lance Taylor <iant@golang.org>
-Date:   Fri, 12 Feb 2021 07:59:04 -0800
-Message-ID: <CAOyqgcVTYhozM-mwc400qt+fabmUuBQTsjqbcA03xDooYXXcMA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate content
- is generated
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Lozano <llozano@chromium.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210209014357.GR4626@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 12, 2021 at 7:45 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Feb 12, 2021 at 07:33:57AM -0800, Ian Lance Taylor wrote:
-> > On Fri, Feb 12, 2021 at 12:38 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > Why are people trying to use copy_file_range on simple /proc and /sys
-> > > files in the first place?  They can not seek (well most can not), so
-> > > that feels like a "oh look, a new syscall, let's use it everywhere!"
-> > > problem that userspace should not do.
-> >
-> > This may have been covered elsewhere, but it's not that people are
-> > saying "let's use copy_file_range on files in /proc."  It's that the
-> > Go language standard library provides an interface to operating system
-> > files.  When Go code uses the standard library function io.Copy to
-> > copy the contents of one open file to another open file, then on Linux
-> > kernels 5.3 and greater the Go standard library will use the
-> > copy_file_range system call.  That seems to be exactly what
-> > copy_file_range is intended for.  Unfortunately it appears that when
-> > people writing Go code open a file in /proc and use io.Copy the
-> > contents to another open file, copy_file_range does nothing and
-> > reports success.  There isn't anything on the copy_file_range man page
-> > explaining this limitation, and there isn't any documented way to know
-> > that the Go standard library should not use copy_file_range on certain
-> > files.
->
-> But, is this a bug in the kernel in that the syscall being made is not
-> working properly, or a bug in that Go decided to do this for all types
-> of files not knowing that some types of files can not handle this?
->
-> If the kernel has always worked this way, I would say that Go is doing
-> the wrong thing here.  If the kernel used to work properly, and then
-> changed, then it's a regression on the kernel side.
->
-> So which is it?
+On Tue 09-02-21 12:43:57, Dave Chinner wrote:
+> On Mon, Feb 08, 2021 at 05:39:16PM +0100, Jan Kara wrote:
+> > Hello,
+> > 
+> > Amir has reported [1] a that ext4 has a potential issues when reads can race
+> > with hole punching possibly exposing stale data from freed blocks or even
+> > corrupting filesystem when stale mapping data gets used for writeout. The
+> > problem is that during hole punching, new page cache pages can get instantiated
+> > and block mapping from the looked up in a punched range after
+> > truncate_inode_pages() has run but before the filesystem removes blocks from
+> > the file. In principle any filesystem implementing hole punching thus needs to
+> > implement a mechanism to block instantiating page cache pages during hole
+> > punching to avoid this race. This is further complicated by the fact that there
+> > are multiple places that can instantiate pages in page cache.  We can have
+> > regular read(2) or page fault doing this but fadvise(2) or madvise(2) can also
+> > result in reading in page cache pages through force_page_cache_readahead().
+> > 
+> > There are couple of ways how to fix this. First way (currently
+> > implemented by XFS) is to protect read(2) and *advise(2) calls with
+> > i_rwsem so that they are serialized with hole punching. This is easy to
+> > do but as a result all reads would then be serialized with writes and
+> > thus mixed read-write workloads suffer heavily on ext4. Thus this
+> > series introduces inode->i_mapping_sem and uses it when creating new
+> > pages in the page cache and looking up their corresponding block
+> > mapping. We also replace EXT4_I(inode)->i_mmap_sem with this new rwsem
+> > which provides necessary serialization with hole punching for ext4. If
+> > this approach looks viable, I'll convert also other equivalent fs locks
+> > to use this new VFS semaphore instead - in particular XFS'
+> > XFS_MMAPLOCK, f2fs's i_mmap_sem, fuse's i_mmap_sem and maybe others as
+> > well.
+> 
+> So a page cache read needs to take this lock.
 
-I don't work on the kernel, so I can't tell you which it is.  You will
-have to decide.
+Currently, the rules implemented in this patch set are: A page cache read
+needs to hold either i_mapping_sem or i_rwsem. And I fully agree with your
+comment below that rules need to be spelled out exactly and written
+somewhere in the code / documentation. My attempt at that is below.
 
-From my perspective, as a kernel user rather than a kernel developer,
-a system call that silently fails for certain files and that provides
-no way to determine either 1) ahead of time that the system call will
-fail, or 2) after the call that the system call did fail, is a useless
-system call.  I can never use that system call, because I don't know
-whether or not it will work.  So as a kernel user I would say that you
-should fix the system call to report failure, or document some way to
-know whether the system call will fail, or you should remove the
-system call.  But I'm not a kernel developer, I don't have all the
-information, and it's obviously your call.
+> What happens if a hole punch range is not block aligned and needs to
+> zero part of a block that is not in cache? i.e. we do this:
+> 
+> fallocate(punch_hole)
+> down_write(i_mapping_sem)
+> invalidate whole cached pages within the punched range
+> zero sub-block edges of range
+> punch extents out extents
+> up_write(i_mapping_sem)
+> 
+> The question that comes to mind for me is about the zeroing of the
+> edges of the range. If those pages are not in cache, we have to read
+> them in, and that goes through the page cache, which according to
+> the rules you mention above should be taking
+> down_read(i_mapping_sem)....
 
-I'll note that to the best of my knowledge this failure started
-happening with the 5.3 kernel, as before 5.3 the problematic calls
-would report a failure (EXDEV).  Since 5.3 isn't all that old I
-personally wouldn't say that the kernel "has always worked this way."
-But I may be mistaken about this.
+Well, not all paths are taking i_mapping_sem themselves. The read(2),
+fallocate(2) and page fault paths do but e.g. write(2) path which may need
+to fetch pages into page cache as well does not grab i_mapping_sem and
+leaves all the locking on the caller (and usually i_rwsem makes sure we are
+fine). This case (both logically and in terms of code) is actually more
+similar to partial block write and hence locking is left on the filesystem
+and i_rwsem covers it.
 
+> Of course, if we are now requiring different locking for page cache
+> instantiation done by read() call patchs vs those done by, say,
+> iomap_zero_range(), then this seems like it is opening up a
+> can of worms with some interfaces requiring the caller to hold
+> i_mapping_sem and others taking it internally so the caller must not
+> hold it....
 
-> > So ideally the kernel will report EOPNOTSUPP or EINVAL when using
-> > copy_file_range on a file in /proc or some other file system that
-> > fails (and, minor side note, the copy_file_range man page should
-> > document that it can return EOPNOTSUPP or EINVAL in some cases, which
-> > does already happen on at least some kernel versions using at least
-> > some file systems).
->
-> Documentation is good, but what the kernel does is the true "definition"
-> of what is going right or wrong here.
+I agree it's a bit messy. That's why this is RFC and I'm mostly
+brainstorming about the least messy way to implement this :).
 
-Sure.  The documentation comment was just a side note.  I hope that we
-can all agree that accurate man pages are better than inaccurate ones.
+> Can you spell out the way this lock is supposed to nest amongst
+> other locks, and where and how it is expected to be taken, what the
+> rules are for doing atomic RMW operations through the page cache
+> while we have IO and page faults locked out, etc?
 
-Ian
+Sure. Let me start with an abstract specification of i_mapping_sem so that
+the rest is hopefully better understandable - it is a lock that protects
+consistency of page cache information with filesystem's internal
+file_offset -> disk_block mapping (both in terms of page contents and
+metadata infomation cached with a page - e.g. buffer heads attached to a
+page). Now you can observe that on the "loading / using cache info" side
+this is a subset of what i_rwsem protects so if you hold i_rwsem, there's
+no need to bother with i_mapping_sem.
+
+In terms of lock ordering the relevant locks we have at VFS level are:
+mm->mmap_sem, inode->i_rwsem, inode->i_mapping_sem, page lock. The lock
+ordering among them is:
+
+i_rwsem --> mmap_sem --> i_mapping_sem --> page_lock
+        (1)          (2)               (3)
+
+(1) is enforced by buffered write path where writes may need to fault in
+pages from user buffers.
+(2) is enforced by the page fault path where we need to synchronize page
+faults with hole punching
+(3) is enforced by the hole punching path where we need to block page
+faults but need to traverse and lock page cache pages.
+
+In terms of when i_mapping_sem is expected to be taken: 
+When you are mapping file_offset -> disk_block and using this information
+to load data into page cache i_mapping_sem or i_rwsem must be held (for
+reading is enough in either case). Given the lock ordering this means you
+have to grab i_mapping_sem or i_rwsem before you start looking up / adding
+pages to page cache. Page lock needs to protect data loading itself.
+
+When you are going to be modifying file_offset -> disk_block mapping (or
+unwritten extent state which is the same from page cache POV), you
+must hold i_rwsem for writing. Additionally you must either hold page lock
+(usually the case for write path) or i_mapping_sem for writing (usually the
+case of hole punching) during the time when page cache contents (both in
+terms of data and attached mapping information) is inconsistent with
+filesystem's internal file_offset -> disk_block mapping.
+
+In terms of which functions do the lock grabbing for you and which expect
+locks to be held the current situation is:
+
+filemap_fault(), generic_file_buffered_read() (or filemap_read() how
+Matthew renamed it), all readahead calls take the i_mapping_sem on their
+own. All other calls expect i_mapping_sem to be acquired by the caller as
+needed. Originally I thought i_mapping_sem would be always up to the caller
+to grab but there's no suitable hook in filemap_read() path to grab it and
+Christoph didn't want to introduce a new hook just for this.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
