@@ -2,96 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5BD831ADA3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Feb 2021 20:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE90E31AFD1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Feb 2021 10:22:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbhBMTBT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Feb 2021 14:01:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbhBMTBS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Feb 2021 14:01:18 -0500
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62DA8C061574;
-        Sat, 13 Feb 2021 11:00:38 -0800 (PST)
-Received: by mail-vs1-xe34.google.com with SMTP id q23so1389209vsg.4;
-        Sat, 13 Feb 2021 11:00:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EMAUY9hS4bc4jUz/i8HmaZkUrdp7bHScBNSf6T3QN0Q=;
-        b=IYPmykXjaJ+of/tsfhz0Qxd+UuprM9HQudcUmoCT7r7Wkl7k/IXPKHqFFarPMNhUdn
-         HA3dg0a5wI7SrwY95vrZOHBRyciQR+t7vsAW2COeTr3TWy0hVHVTgjGYnKxt1U8t13fy
-         +6caiJgI4relL342+VB5IT76x6yUzkj/LuIQwj7YMYfLS4aRWdlyvS1qllr7kM+DBOk7
-         ZsNfmkuD/MfKNJpWB+GMp1cOWutJjaWqjelj2peq+Hu0LNiLIy7DbDr5tey9zpxbOFRX
-         iltD6KqlF4s1Ao7IHLgTi10RG0veiZ968b9/AAKZ5+S1P/OqdDjH4+HnTFdAHRvVGXO9
-         aZDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EMAUY9hS4bc4jUz/i8HmaZkUrdp7bHScBNSf6T3QN0Q=;
-        b=m58uH0pgc34FxuvB25Ny4FBnYxSvFSZMT/mB5CUm7sQ4sPzJYboePJfpoXjgAyhpqq
-         /dmXH8qcCtY/L9ZK0/mFXvJp0z/rKJCAnsJW9nBez6a3lHpO48kSQyjyxn+WWnJtjXze
-         eeJ+KtUIWuohsKldK1Y+GE/NV9hrhLHc6qRfJjxmRIqj6AaTay/pcvHG9z+ilo2X0mDh
-         C6WDYCRUC37aVYCcjAOnm2fV/rNownCFnxNp9oyM6X14+8bbrtNwMveBwAtNuMvxAaF2
-         rj6eK4mogxJcetIbG2PdomSXE05gsuQxgQEuRKKhIBHzO8x2G0R45sz1rEov5BZQGhA8
-         xYTA==
-X-Gm-Message-State: AOAM531NgOO2JsO7XNdxgCTXYtAKhsQOyk99RufVKSr1lpw5OD97OMrp
-        9TUBAJIMNt+APTuJG3oLFx+sQuKCpWowlxoDZ1o=
-X-Google-Smtp-Source: ABdhPJxuna/b0FVJqzqRMmhj9/Uu7T/5ErOJjpQ8Izpc4OEQ8PPC371waXzT28SB9tlED9KTyyj25ZcdG3s3AahCnN0=
-X-Received: by 2002:a67:f87:: with SMTP id 129mr4967716vsp.24.1613242837017;
- Sat, 13 Feb 2021 11:00:37 -0800 (PST)
+        id S229768AbhBNJUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Feb 2021 04:20:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229528AbhBNJUx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 14 Feb 2021 04:20:53 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2CB2B64D73;
+        Sun, 14 Feb 2021 09:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613294412;
+        bh=IojP/99cv2KZA0UAqkGIVvcnNQXpAQrGnDSYSmISYMk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ggTE3epmRlYiZpCIulQqzfZIZLk/o9Hy+eMY/vtIj4RBJvlbLU6YBe6xW+nn3Nh9o
+         MyYMRX8NGusIKQSvjXjeNrYN2FzXGXOOYKN32wbF5K9UR5i2fL54NWoZ4kzch8O1fz
+         0j0N6t7YI6VhKfHIfT1MILdmaVlC+bJrUkGBAjCyOCyGfWtt4wmkaNl5ygGD55KRog
+         FpJCiXGCmq9B5RiAfE9vA/ahNtHagvIeFYzLpSK837gPh4weRSFHUqNEb1+FAp4m0u
+         60OF5nZHG/kKqrkEsLohg2nOPziZfAIwq4U8bxWTmen5x/8iLmJMxF5gj8klmC/iDZ
+         Da8cagTHmtKmw==
+Date:   Sun, 14 Feb 2021 11:19:54 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v17 07/10] mm: introduce memfd_secret system call to
+ create "secret" memory areas
+Message-ID: <20210214091954.GM242749@kernel.org>
+References: <YCJMDBss8Qhha7g9@dhcp22.suse.cz>
+ <20210209090938.GP299309@linux.ibm.com>
+ <YCKLVzBR62+NtvyF@dhcp22.suse.cz>
+ <20210211071319.GF242749@kernel.org>
+ <YCTtSrCEvuBug2ap@dhcp22.suse.cz>
+ <0d66baec-1898-987b-7eaf-68a015c027ff@redhat.com>
+ <20210211112702.GI242749@kernel.org>
+ <05082284-bd85-579f-2b3e-9b1af663eb6f@redhat.com>
+ <20210211230910.GL242749@kernel.org>
+ <a903338e-3d56-ff0a-4f4f-0f23db7ec0da@redhat.com>
 MIME-Version: 1.0
-References: <20210212162416.2756937-1-almaz.alexandrovich@paragon-software.com>
- <20210212212737.d4fwocea3rbxbfle@spock.localdomain>
-In-Reply-To: <20210212212737.d4fwocea3rbxbfle@spock.localdomain>
-From:   Hanabishi Recca <irecca.kun@gmail.com>
-Date:   Sun, 14 Feb 2021 00:00:26 +0500
-Message-ID: <CAOehnrMK_9uP5j+QCF2qy_08yJEr_u9TEPwJJFogXQCeNFm6Gg@mail.gmail.com>
-Subject: Re: [PATCH v21 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-To:     Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kasep pisan <babam.yes@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a903338e-3d56-ff0a-4f4f-0f23db7ec0da@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 13, 2021 at 2:27 AM Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
+On Fri, Feb 12, 2021 at 10:18:19AM +0100, David Hildenbrand wrote:
+> On 12.02.21 00:09, Mike Rapoport wrote:
+> > On Thu, Feb 11, 2021 at 01:07:10PM +0100, David Hildenbrand wrote:
+> > > On 11.02.21 12:27, Mike Rapoport wrote:
+> > > > On Thu, Feb 11, 2021 at 10:01:32AM +0100, David Hildenbrand wrote:
+> > > 
+> > > So let's talk about the main user-visible differences to other memfd files
+> > > (especially, other purely virtual files like hugetlbfs). With secretmem:
+> > > 
+> > > - File content can only be read/written via memory mappings.
+> > > - File content cannot be swapped out.
+> > > 
+> > > I think there are still valid ways to modify file content using syscalls:
+> > > e.g., fallocate(PUNCH_HOLE). Things like truncate also seems to work just
+> > > fine.
+> > These work perfectly with any file, so maybe we should have added
+> > memfd_create as a flag to open(2) back then and now the secretmem file
+> > descriptors?
+> 
+> I think open() vs memfd_create() makes sense: for open, the path specifies
+> main properties (tmpfs, hugetlbfs, filesystem). On memfd, there is no such
+> path and the "type" has to be specified differently.
+> 
+> Also, open() might open existing files - memfd always creates new files.
 
-> Hanabishi, babam (both in Cc), here [2] you've reported some issues with
-> accessing some files and with hidden attributes. You may reply to this
-> email of mine with detailed description of your issues, and maybe
-> developers will answer you.
+Yes, but still open() returns a handle to a file and memfd_create() returns
+a handle to a file. The differences may be well hidden by e.g. O_MEMORY and
+than features unique to memfd files will have their set of O_SOMETHING
+flags.
 
-There is strange files access issue since v18 update. Some random
-files on partition became inaccessible, can't be read or even deleted.
-For example:
+It's the same logic that says "we already have an interface that's close
+enough and it's fine to add a bunch of new flags there".
+ 
+And here we come to the question "what are the differences that justify a
+new system call?" and the answer to this is very subjective. And as such we
+can continue bikeshedding forever.
 
-# ls -la
-ls: cannot access 'NlsStrings.js': No such file or directory
-total 176
-drwxrwxrwx 1 root root  4096 Oct 20 10:41 .
-drwxrwxrwx 1 root root 12288 Oct 20 10:42 ..
--rwxrwxrwx 1 root root  8230 Oct 19 17:02 Layer.js < this file is ok
--????????? ? ?    ?        ?            ? NlsStrings.js < this file is
-inaccessible
-...
-
-To reproduce the issue try to mount a NTFS partition with deep
-structure and large files amout. Then run on it some recursive file
-command, e.g. 'du -sh', it will list all access errors.
-Can't say what exactly causes it. Filesystem itself is not damaged,
-when mounting it via ntfs-3g, ntfs3 <18 or in Windows it works
-normally. The files is not damaged and chkdsk report no errors.
+-- 
+Sincerely yours,
+Mike.
