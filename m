@@ -2,173 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75A9131B3A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 01:39:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A64331B3D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 02:09:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbhBOAjm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Feb 2021 19:39:42 -0500
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:35842 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229818AbhBOAjl (ORCPT
+        id S229993AbhBOBIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Feb 2021 20:08:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52386 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229818AbhBOBIr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Feb 2021 19:39:41 -0500
-Received: from dread.disaster.area (pa49-181-52-82.pa.nsw.optusnet.com.au [49.181.52.82])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id E6AA81140442;
-        Mon, 15 Feb 2021 11:38:55 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lBRuh-0053ei-3V; Mon, 15 Feb 2021 11:38:55 +1100
-Date:   Mon, 15 Feb 2021 11:38:55 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Ian Lance Taylor <iant@golang.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Lozano <llozano@chromium.org>,
-        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate content
- is generated
-Message-ID: <20210215003855.GY4626@dread.disaster.area>
-References: <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
- <YCYybUg4d3+Oij4N@kroah.com>
- <CANMq1KBuPaU5UtRR8qTgdf+J3pt-xAQq69kCVBdaYGx8F+WmFA@mail.gmail.com>
- <YCY+Ytr2J2R5Vh0+@kroah.com>
- <CAKOQZ8zPFM29DYPwbnUJEhf+a8kPSJ5E_W06JLFjn-5Fy-ZWWw@mail.gmail.com>
- <YCaipZ+iY65iSrui@kroah.com>
- <20210212230346.GU4626@dread.disaster.area>
- <CAOyqgcX_wN2RGunDix5rSWxtp3pvSpFy2Stx-Ln4GozgSeS2LQ@mail.gmail.com>
- <20210212232726.GW4626@dread.disaster.area>
- <20210212235448.GH7187@magnolia>
+        Sun, 14 Feb 2021 20:08:47 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCA39C061574
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Feb 2021 17:08:06 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id f14so8604953ejc.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Feb 2021 17:08:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8oLEqXUvdqy1QH/cRggvF58640ngzAUjBT8Tfk3Wjwg=;
+        b=eb+VDAyVwB6RZ6vXNDSIXjjY5/KGJonBZpcw4InpSNpoqcKC9wCYBknhMsgf9sPklg
+         GzCvnbIRKgTg7gtA7teRfKAGGFk9BR9qw3HHsG7GJ3+trFjsmHXqEUXRQMhyaGXIHFPG
+         +BYG0bBsO6r2Y7DOTssLQQLnPqsDN5e1ysQAo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8oLEqXUvdqy1QH/cRggvF58640ngzAUjBT8Tfk3Wjwg=;
+        b=CjiKd77rJQsvVgQP+Xz8oYr02TDvrllwSllev/H4qccKxMz08DzdaaNLYdfe3M8fpr
+         K/NoBKGPZswPExURFlt9xZT6YuPZ3vniOM+mL8it3Cl2tW+YYjzBLr7aE7xklX9TqECI
+         MtyT5mj6bvHGru77vNjbgeg/EvAwJS3s6oeQrxSZZFzOZ6DXRKu+mfQFzB3wPtaBMN80
+         Edyob9yur2dPyXigtD5Gds6t2B69hOZSUvuSUkITgHHWXVslypOn9prTrOdbHyRYQBz0
+         ZX9CJew+VYALUXGciwb3zbWVD0iiqSSTZJn+fQPztkkHEPDRQ1hbxYLPYX1hZ7TkxSSX
+         i1BA==
+X-Gm-Message-State: AOAM533QNPz+w9GdYX3YffQZSwBOQYxh50B5xj2eI+upUTGGCDvGkQEo
+        GG7Hj+j1Ilbi2HwfnXcR9U1fbWUpKBNUHQ==
+X-Google-Smtp-Source: ABdhPJyEZmBQX1tSUDTlNo9OV43s5jhWeqIfV6gUnrhcUf8UMsou8vh13mO1escMABFjrBUIbvcbXg==
+X-Received: by 2002:a17:906:c0c9:: with SMTP id bn9mr13530002ejb.318.1613351285218;
+        Sun, 14 Feb 2021 17:08:05 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id v20sm9131429edt.3.2021.02.14.17.08.04
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 Feb 2021 17:08:05 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id h10so1554528edl.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Feb 2021 17:08:04 -0800 (PST)
+X-Received: by 2002:a05:651c:112:: with SMTP id a18mr8181174ljb.465.1613350911576;
+ Sun, 14 Feb 2021 17:01:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210212235448.GH7187@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=7pwokN52O8ERr2y46pWGmQ==:117 a=7pwokN52O8ERr2y46pWGmQ==:17
-        a=kj9zAlcOel0A:10 a=qa6Q16uM49sA:10 a=7-415B0cAAAA:8 a=ag1SF4gXAAAA:8
-        a=Ctr0A7MYLLdSEb84NpgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-        a=Yupwre4RP9_Eg_Bd0iYG:22
+References: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+ <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk>
+ <1330751.1612974783@warthog.procyon.org.uk> <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
+ <27816.1613085646@warthog.procyon.org.uk> <CAHk-=wi68OpbwBm6RCodhNUyg6x8N7vi5ufjRtosQSPy_EYqLA@mail.gmail.com>
+ <860729.1613348577@warthog.procyon.org.uk>
+In-Reply-To: <860729.1613348577@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 14 Feb 2021 17:01:35 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh7xY3UF7zEc0BNVNjOox59jYBW-Gfi7=emm+BXPWc6nQ@mail.gmail.com>
+Message-ID: <CAHk-=wh7xY3UF7zEc0BNVNjOox59jYBW-Gfi7=emm+BXPWc6nQ@mail.gmail.com>
+Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+To:     David Howells <dhowells@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 12, 2021 at 03:54:48PM -0800, Darrick J. Wong wrote:
-> On Sat, Feb 13, 2021 at 10:27:26AM +1100, Dave Chinner wrote:
-> > On Fri, Feb 12, 2021 at 03:07:39PM -0800, Ian Lance Taylor wrote:
-> > > On Fri, Feb 12, 2021 at 3:03 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > >
-> > > > On Fri, Feb 12, 2021 at 04:45:41PM +0100, Greg KH wrote:
-> > > > > On Fri, Feb 12, 2021 at 07:33:57AM -0800, Ian Lance Taylor wrote:
-> > > > > > On Fri, Feb 12, 2021 at 12:38 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > > >
-> > > > > > > Why are people trying to use copy_file_range on simple /proc and /sys
-> > > > > > > files in the first place?  They can not seek (well most can not), so
-> > > > > > > that feels like a "oh look, a new syscall, let's use it everywhere!"
-> > > > > > > problem that userspace should not do.
-> > > > > >
-> > > > > > This may have been covered elsewhere, but it's not that people are
-> > > > > > saying "let's use copy_file_range on files in /proc."  It's that the
-> > > > > > Go language standard library provides an interface to operating system
-> > > > > > files.  When Go code uses the standard library function io.Copy to
-> > > > > > copy the contents of one open file to another open file, then on Linux
-> > > > > > kernels 5.3 and greater the Go standard library will use the
-> > > > > > copy_file_range system call.  That seems to be exactly what
-> > > > > > copy_file_range is intended for.  Unfortunately it appears that when
-> > > > > > people writing Go code open a file in /proc and use io.Copy the
-> > > > > > contents to another open file, copy_file_range does nothing and
-> > > > > > reports success.  There isn't anything on the copy_file_range man page
-> > > > > > explaining this limitation, and there isn't any documented way to know
-> > > > > > that the Go standard library should not use copy_file_range on certain
-> > > > > > files.
-> > > > >
-> > > > > But, is this a bug in the kernel in that the syscall being made is not
-> > > > > working properly, or a bug in that Go decided to do this for all types
-> > > > > of files not knowing that some types of files can not handle this?
-> > > > >
-> > > > > If the kernel has always worked this way, I would say that Go is doing
-> > > > > the wrong thing here.  If the kernel used to work properly, and then
-> > > > > changed, then it's a regression on the kernel side.
-> > > > >
-> > > > > So which is it?
-> > > >
-> > > > Both Al Viro and myself have said "copy file range is not a generic
-> > > > method for copying data between two file descriptors". It is a
-> > > > targetted solution for *regular files only* on filesystems that store
-> > > > persistent data and can accelerate the data copy in some way (e.g.
-> > > > clone, server side offload, hardware offlead, etc). It is not
-> > > > intended as a copy mechanism for copying data from one random file
-> > > > descriptor to another.
-> > > >
-> > > > The use of it as a general file copy mechanism in the Go system
-> > > > library is incorrect and wrong. It is a userspace bug.  Userspace
-> > > > has done the wrong thing, userspace needs to be fixed.
-> > > 
-> > > OK, we'll take it out.
-> > > 
-> > > I'll just make one last plea that I think that copy_file_range could
-> > > be much more useful if there were some way that a program could know
-> > > whether it would work or not.
-> 
-> Well... we could always implement a CFR_DRYRUN flag that would run
-> through all the parameter validation and return 0 just before actually
-> starting any real copying logic.  But that wouldn't itself solve the
-> problem that there are very old virtual filesystems in Linux that have
-> zero-length regular files that behave like a pipe.
-> 
-> > If you can't tell from userspace that a file has data in it other
-> > than by calling read() on it, then you can't use cfr on it.
-> 
-> I don't know how to do that, Dave. :)
+On Sun, Feb 14, 2021 at 4:23 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Anyway, I have posted my fscache modernisation patches multiple times for
+> public review, I have tried to involve the wider community in aspects of the
+> development on public mailing lists and I have been including the maintainers
+> in to/cc.
 
-If stat returns a non-zero size, then userspace knows it has at
-least that much data in it, whether it be zeros or previously
-written data. cfr will copy that data. The special zero length
-regular pipe files fail this simple "how much data is there to copy
-in this file" check...
+So then add those links and the cc's to the commit logs, so that I can
+*see* them.
 
-> Frankly I'm with the Go developers on this -- one should detect c_f_r by
-> calling it and if it errors out then fall back to the usual userspace
-> buffer copy strategy.
-> 
-> That still means we need to fix the kernel WRT these weird old
-> filesystems.  One of...
+I'm done with this discussion.
 
-And that is the whole problem here, not that cfr is failing. cfr is
-behaving correctly and consistently as the filesystem is telling the
-kernel there is no data in the file (i.e. size = 0).
+If I see a pull request from you, I DO NOT WANT TO HAVE TO HAVE A
+WEEK-LONG EMAIL THREAD ABOUT HOW I CANNOT SEE THAT IT HAS EVER SEEN
+ANY REVIEW.
 
-> 1. Get rid of the generic fallback completely, since splice only copies
-> 64k at a time and ... yay?  I guess it at least passes generic/521 and
-> generic/522 these days.
+So if all I see is "Signed-off-by:" from you, I will promptly throw
+that pull request into the garbage, because it's just not worth my
+time to try to have to get you kicking and screaming to show that
+others have been involved.
 
-I've had a few people ask me for cfr to not fall back to a manual
-copy because they only want it to do something if it can accelerate
-the copy to be faster than userspace can copy the data itself. If
-the filesystem can't optimise the copy in some way, they want to
-know so they can do something else of their own chosing.
+Can you not understand that?
 
-Hence this seems like the sane option to take here...
+When I get that pull request, I need to see that yes, this has been
+reviewed, people have been involved, and yes, it's been in linux-next.
 
-> 2. Keep it, but change c_f_r to require that both files have a
-> ->copy_file_range implementation.  If they're the same then we'll call
-> the function pointer, if not, we call the generic fallback.  This at
-> least gets us back to the usual behavior which is that filesystems have
-> to opt in to new functionality (== we assume they QA'd all the wunnerful
-> combinations).
+I want to see "reviewed-by" and "tested-by", I want to see "cc", and I
+want to see links to submission threads with discussion showing that
+others actually were involved.
 
-That doesn't address the "write failure turns into short read"
-problem with the splice path...
+I do *not* want to see just a single signed-off-by line from you, and
+then have to ask for "has anybody else actually seen this and reviewed
+it".
 
-> 3. #2, but fix the generic fallback to not suck so badly.  That sounds
-> like someone (else's) 2yr project. :P
+Look, here's an entirely unrelated example from a single fairly recent
+trivial one-liner memory leak fix:
 
-Not mine, either.
+    Fixes: 87c715dcde63 ("scsi: scsi_debug: Add per_host_store option")
+    Link: https://lore.kernel.org/r/20210208111734.34034-1-mlombard@redhat.com
+    Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+    Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+    Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-Cheers,
+that's from a quite a trivial commit. Yes, it's trivial, but it could
+still be wrong, of course. And if somebody ever reports that it causes
+problems despite how simple it was, look at what I have: I have three
+people to contact, and I have a pointer to the actual original
+submission of the patch.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Do we have that for all our commits? No. But it's also not at all
+unusual any more, and in fact many commits have even more, with
+testing etc.
+
+And yes, sometimes the test results and acks come back later after
+you've already pushed the changes out etc, and no, it's generally not
+worth rebasing for that - maybe others have now started to rely on
+whatever public branch you have. Which is why the "Link:" is useful,
+so that if things come in later, the discussion can still be found.
+But quite often, you shouldn't have pushed out some final branch
+before you've gotten at least *some* positive response from people, so
+I do kind of expect some "Acked-by" etc in the commit itself.
+
+THAT is what you need to aim for.
+
+And yes, I'm picking on you. Because we've had this problem before.
+I've complained when you've sent me pull requests that don't even
+build, that you in fact had been told by linux-next didn't build, and
+you still sent them to me.
+
+And as a result, I've asked for more involvement from other people before.
+
+So now I'm clarifying that requirement - I  absolutely need to see
+that it has actually seen testing, that it has seen other people being
+involved, and that it isn't just you throwing spaghetti at the wall to
+see what sticks.
+
+And I'm not going to do that for every pull request. I want to see
+that data *in* the pull request itself.
+
+            Linus
