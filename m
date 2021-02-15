@@ -2,105 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC1831B46C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 04:32:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7D631B481
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 05:26:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229836AbhBODcM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Feb 2021 22:32:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54642 "EHLO
+        id S229875AbhBOEZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Feb 2021 23:25:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229829AbhBODcK (ORCPT
+        with ESMTP id S229783AbhBOEZJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Feb 2021 22:32:10 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE69C061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Feb 2021 19:31:29 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id m6so3389908pfk.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Feb 2021 19:31:29 -0800 (PST)
+        Sun, 14 Feb 2021 23:25:09 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63EE1C061574;
+        Sun, 14 Feb 2021 20:24:29 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id gb24so2977013pjb.4;
+        Sun, 14 Feb 2021 20:24:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uGee1Sqxh09dV8vkHRwclJsUep7f7elSEGwb7r92uZM=;
-        b=pMZRPm8cdpq3GcVV5SDtobk8F9OheAbYTKyEDYitF0QmZDXfi6oU6zRwlv7eiGgBSh
-         Me4X3zKbVocZrB3i/SGkbl4ifvBbJfeEG+/cysE+N+ocenj34bP296YwAdyyBCJeUtz9
-         8CGClmncU+4n6MpMkRt/xV68du7s2u2YHrpxuJR356NX5mXg9vdkFZflEqM4hxGoabEm
-         avmuBPR65AYEnOW0v7Ey50/DMN0AgGqX3HctU4YwsIs+hk322EnJ8lMjfpY86wlpk7A3
-         WU44ZJ4HCcigJKK/WVj7IWR8ALIs3RNE8BXb+FWZ5ODyjkGd6bdCnvyxl3UT2KgS/0gW
-         RtNg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Dc52RJMFGbh/YC/FYB6BFalirRTnRGBAM9OW4sOUqhU=;
+        b=QpCTEjvTHOy+X8eXZRXePyxISqjTEjIZXlCEeG5xmKNx5YnqVTSBtHB4LwB6VQQdmv
+         pH9Kwzb+0C4GR3XpRIDKmv3RGU5eWuHgY990xwZrrSFMqxwwjSTeml4FLwF4x2YqQJil
+         bcPfKnuzJiBDOYct9rl1s9oLk3chZXCyF22zkyVltyFY6hHNo+1NQ38/0Nl1KoIuSLSh
+         sZa//odgi7NmnXeTutmCMPYu0jzfKELbFn8orhCzP0U7pm1HHVUTYDxDZw14G7kn8/Ds
+         FjfYfDH8ZwRgKZTiOPqGlS2o3PpAkuYpoWulmVHFQ1mMIfApKkmIMpcaqzRkKxxW8SBH
+         fKiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=uGee1Sqxh09dV8vkHRwclJsUep7f7elSEGwb7r92uZM=;
-        b=D6vzsyWX5qvxgsfJekVvUd/Zq6l4ZAIMR65+E82DeHoTJA9my5i8yZ9x6+nWDWs0UV
-         cGre0mjLKv+6BjrehUlbvM5RvV4ca/o7PaHVbOMnFS05s5l6UJw2w6OrFkMTmzNgO91r
-         1/841YEzr5g+45J+p6MtqJaednNl7n94n9VMbIarErPfZGCQDW9/oUC/fpRr+F8tmxTL
-         02Igl2pYnD08lfpJeI6t/eiulcVtyoETf5gknJ9a8zHWzXm6DHNJ61tWBtvMq+w380TH
-         1WPJeCJ09TI7X6M5VAPDr7ZROwZ/teb0jQBVIGPjVJyhnInJ+l3BXC4V/65TBG0LzCab
-         aWSg==
-X-Gm-Message-State: AOAM533TrLUxTwjnqhRHvyfbNp4puJXV76dCzqmpx85nRKX+YQtZQm/X
-        f7UEq1gHI0aYoWBkZ8i3q7/5uB5k3PoY4Q==
-X-Google-Smtp-Source: ABdhPJxQGBImz1c71eRCcr+c0r2VMSqsNlE1XnUx5xnHp69PpA4EkU/fNFi0Ej5WharSBU3FFAaaLA==
-X-Received: by 2002:a62:3852:0:b029:1da:7238:1cb1 with SMTP id f79-20020a6238520000b02901da72381cb1mr13722320pfa.11.1613359889195;
-        Sun, 14 Feb 2021 19:31:29 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y73sm16687963pfb.17.2021.02.14.19.31.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Feb 2021 19:31:28 -0800 (PST)
-Subject: Re: [PATCH RFC] namei: don't drop link paths acquired under
- LOOKUP_RCU
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <8b114189-e943-a7e6-3d31-16aa8a148da6@kernel.dk>
- <YClKQlivsPPcbyCd@zeniv-ca.linux.org.uk>
- <YClSik4Ilvh1vF64@zeniv-ca.linux.org.uk>
- <0699912b-84ae-39d5-6b2e-8cb04eaa3939@kernel.dk>
- <YCmq75pc0bHInDGP@zeniv-ca.linux.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8b364ddb-cf9a-bf32-d426-053ff3aa6385@kernel.dk>
-Date:   Sun, 14 Feb 2021 20:31:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=Dc52RJMFGbh/YC/FYB6BFalirRTnRGBAM9OW4sOUqhU=;
+        b=nt3FprELCkPdAoEs5GL3aE7deBfmNZ5lQQFLPqRmwR+hFFz0Kn7GttTGNeg2Gmk8Is
+         vdKU00uFNex6HI6kgzh8I3SwX9ERRzKptibGLgALgVnc0zPGsbrEXJTZ+LaGlEHRG7FQ
+         0yVSeEQMB7/OiUEG9XWBVDEiK0b74+7064saFRFMQi6UjkVRw86xBSnXxiMB//PddGsv
+         X5kty+rhBBgqx9XNiTPzS4iLN3O+QOAqnNNneNoOA031TxPO4LTSXPXh9ihKgNaJcKvd
+         aCYRNl0PsiJtTqAOnUYUoGKk1af66WIWHZ85czY4Hv0CbQ/NGOl0D9S1oGFn9qJEUwff
+         Av8Q==
+X-Gm-Message-State: AOAM532xw4xfAXVWt1EYrkoYiXNRFjF62bX2PC35DB/PDiNBsL0XITq1
+        z8diOv4Yp4LilapxWdp8cHc=
+X-Google-Smtp-Source: ABdhPJxjLufyHDD+idZExaMH5kuNoeMudAhe315XTqyYUGcdIbh4IoQPWVdZep7M0tSH1MeCqoaRVw==
+X-Received: by 2002:a17:902:a3c7:b029:e3:3827:d7e6 with SMTP id q7-20020a170902a3c7b02900e33827d7e6mr8728000plb.66.1613363068937;
+        Sun, 14 Feb 2021 20:24:28 -0800 (PST)
+Received: from localhost.localdomain ([27.122.242.75])
+        by smtp.gmail.com with ESMTPSA id o135sm15768241pfg.21.2021.02.14.20.24.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Feb 2021 20:24:28 -0800 (PST)
+From:   Hyeongseok Kim <hyeongseok@gmail.com>
+To:     namjae.jeon@samsung.com, sj1557.seo@samsung.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hyeongseok Kim <hyeongseok@gmail.com>
+Subject: [PATCH 1/2] exfat: add initial ioctl function
+Date:   Mon, 15 Feb 2021 13:24:10 +0900
+Message-Id: <20210215042411.119392-1-hyeongseok@gmail.com>
+X-Mailer: git-send-email 2.27.0.83.g0313f36
 MIME-Version: 1.0
-In-Reply-To: <YCmq75pc0bHInDGP@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/14/21 3:57 PM, Al Viro wrote:
-> On Sun, Feb 14, 2021 at 09:45:39AM -0700, Jens Axboe wrote:
-> 
->>>> +out3:
->>>> +	nd->depth = 0;	// as we hadn't gotten to legitimize_links()
->>>>  out2:
->>>>  	nd->path.mnt = NULL;
->>>>  out1:
->>>
->>> Alternatively, we could use the fact that legitimize_links() is not
->>> called anywhere other than these two places and have LOOKUP_CACHED
->>> checked there.  As in
->>
->> Both fix the issue for me, just tested them. The second one seems
->> cleaner to me, would probably be nice to have a comment on that in
->> either the two callers or at least in legitimize_links() though.
-> 
-> Hmm...  Do you have anything on top of that branch?  If you do, there's
-> no way to avoid leaving bisect hazard; if not, I'd rather fold a fix
-> into the broken commit...
+Initialize empty ioctl function
 
-I do, that's basically the base of that series, -rc6 + that branch. So
-I'd prefer if you just apply the fixup, which I do think is pretty low
-risk even if it is a potential bisection pain point. But not really
-a huge one, in this case.
+Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
+---
+ fs/exfat/dir.c      |  5 +++++
+ fs/exfat/exfat_fs.h |  3 +++
+ fs/exfat/file.c     | 21 +++++++++++++++++++++
+ 3 files changed, 29 insertions(+)
 
-That said, if you do want to rebase it, I can rebase mine. That's not
-the end of the world either.
-
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 916797077aad..e1d5536de948 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/slab.h>
++#include <linux/compat.h>
+ #include <linux/bio.h>
+ #include <linux/buffer_head.h>
+ 
+@@ -306,6 +307,10 @@ const struct file_operations exfat_dir_operations = {
+ 	.llseek		= generic_file_llseek,
+ 	.read		= generic_read_dir,
+ 	.iterate	= exfat_iterate,
++	.unlocked_ioctl = exfat_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl = exfat_compat_ioctl,
++#endif
+ 	.fsync		= exfat_file_fsync,
+ };
+ 
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 764bc645241e..a183021ae31d 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -420,6 +420,9 @@ int exfat_setattr(struct dentry *dentry, struct iattr *attr);
+ int exfat_getattr(const struct path *path, struct kstat *stat,
+ 		unsigned int request_mask, unsigned int query_flags);
+ int exfat_file_fsync(struct file *file, loff_t start, loff_t end, int datasync);
++long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
++long exfat_compat_ioctl(struct file *filp, unsigned int cmd,
++				unsigned long arg);
+ 
+ /* namei.c */
+ extern const struct dentry_operations exfat_dentry_ops;
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index a92478eabfa4..679828e7be07 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/slab.h>
++#include <linux/compat.h>
+ #include <linux/cred.h>
+ #include <linux/buffer_head.h>
+ #include <linux/blkdev.h>
+@@ -348,6 +349,22 @@ int exfat_setattr(struct dentry *dentry, struct iattr *attr)
+ 	return error;
+ }
+ 
++long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++	switch (cmd) {
++	default:
++		return -ENOTTY;
++	}
++}
++
++#ifdef CONFIG_COMPAT
++long exfat_compat_ioctl(struct file *filp, unsigned int cmd,
++				unsigned long arg)
++{
++	return exfat_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
++
+ int exfat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+ {
+ 	struct inode *inode = filp->f_mapping->host;
+@@ -368,6 +385,10 @@ const struct file_operations exfat_file_operations = {
+ 	.llseek		= generic_file_llseek,
+ 	.read_iter	= generic_file_read_iter,
+ 	.write_iter	= generic_file_write_iter,
++	.unlocked_ioctl = exfat_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl = exfat_compat_ioctl,
++#endif
+ 	.mmap		= generic_file_mmap,
+ 	.fsync		= exfat_file_fsync,
+ 	.splice_read	= generic_file_splice_read,
 -- 
-Jens Axboe
+2.27.0.83.g0313f36
 
