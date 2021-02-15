@@ -2,231 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8C7331B483
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 05:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B87D331B552
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 06:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229906AbhBOEZR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Feb 2021 23:25:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37714 "EHLO
+        id S229898AbhBOF5t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 00:57:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229895AbhBOEZO (ORCPT
+        with ESMTP id S229652AbhBOF5j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Feb 2021 23:25:14 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7E8C061756;
-        Sun, 14 Feb 2021 20:24:34 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id t11so3508100pgu.8;
-        Sun, 14 Feb 2021 20:24:34 -0800 (PST)
+        Mon, 15 Feb 2021 00:57:39 -0500
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E39E4C061574;
+        Sun, 14 Feb 2021 21:56:58 -0800 (PST)
+Received: by mail-io1-xd31.google.com with SMTP id i8so1345952iog.7;
+        Sun, 14 Feb 2021 21:56:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HX3Y6/bZJNI/LCL5M4XjVMDlW67dC1nmK86mUGOjbP8=;
-        b=O7m6Lok/luQkrvdgV/DHDliKanSrmh1+FR+yr5kA7HnRET/Khgt14AoGtmzxiLW7Nv
-         5p1RBtgewgCGV8b2UvYR+DFClHjKnDNIPCOQqZ5vDcUUC5iOJv88HJLTXTP17+Nw1ceJ
-         K14I0IN3K1qcTyioiJZd2R5+TaJfJOPboXHvks6PlsWfdGIo+yy0eEhqpVdXbDCKZsbe
-         VjDmDM/qFQq4K69D+fwX4bgycvDSkLCXppIIPhx+akXoOhrxe68O0sqIA3S8CzJ9iV0+
-         BFZ/mt+cO56WGLje8j6HBzjC9I4Ozz8NXDhw/ptuW5qCbtly22RmV0OAlvgeFHx1CbBt
-         VwUg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iIgh8HuKJYUrgA4jcFeRQpYRrHR/5oXsXAmQ+VRmojs=;
+        b=a+bEWXewbA9u10rreL16bakqpNGBlKTBw5WunBquVeucHWziR61pdoPwcoZ96Uht/Q
+         CPPp1cp/4TglTl7zk8kNLOuXO/l36t58m1lhn770MhURTFLYj/3LIGauGnXaA6z03T+a
+         onBHUDHv/XxwYu/pG5b5xCrS4q318Q+SF6Sw2JcJNJXe1PQ/43xCshPO/pm8iqKKpVwM
+         WKs38rXxc0jlbf1Zw/mFQi7plVgccYbvH6Vpxd0JfgAuA0Du2APJqPaIIJjxSlMztUW7
+         1sI9AUYZGZD27yTtO7iZNXn4PNAUSILmj/ZjpSfVEBu1msRshDM+Txa5IeX2yhLVNwxy
+         B6Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HX3Y6/bZJNI/LCL5M4XjVMDlW67dC1nmK86mUGOjbP8=;
-        b=MJlbNsGJFVz83ojOELIL1liGUYg+8R0lqw+QKD+UaOgvMznAMpeW3wzKiLavC7r+Th
-         6dXmNKEnfD445GLfGdUyU/kRhlDzIxq9jw+xhNJ4GTz5EpSQUm/WOwWtsnJSML1KCFiG
-         zXzK1bVpTWFHOCWbZHEWbn9TLoFQcBHDpC/OupZHG4+Q/UQzDkhiXQ9XF3ljUoULufpY
-         8LjvhNFkkDKwCVmdqdaKL2GrHqXlWBmZ9VcTRM2aka1yJc8aZimQ8eTNVQP4iuWDEPbO
-         kVNYKLyTVC5nx7Nj+9dB+PpghEFkuratL7pLEEAs8uH3LAgLrV9jrCE7TRVfR4X/khio
-         BpAQ==
-X-Gm-Message-State: AOAM530NAMq3EaHXiRwIcLwuynqR3EqtCN2kc0qqoQ+IByQln/Ly8PgO
-        blKZ477ddN6jVY0mVnEuGQO/E/DOfy8bAqxT
-X-Google-Smtp-Source: ABdhPJxlJmZ50rgX1hMcG/z4GukLG7/oyUYPseNH08LytOgXbc7LTT5Qy6pXPW6R+2CDCVcY/1TQiw==
-X-Received: by 2002:aa7:930f:0:b029:1e3:9a82:39e5 with SMTP id 15-20020aa7930f0000b02901e39a8239e5mr13831900pfj.33.1613363073661;
-        Sun, 14 Feb 2021 20:24:33 -0800 (PST)
-Received: from localhost.localdomain ([27.122.242.75])
-        by smtp.gmail.com with ESMTPSA id o135sm15768241pfg.21.2021.02.14.20.24.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Feb 2021 20:24:33 -0800 (PST)
-From:   Hyeongseok Kim <hyeongseok@gmail.com>
-To:     namjae.jeon@samsung.com, sj1557.seo@samsung.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hyeongseok Kim <hyeongseok@gmail.com>
-Subject: [PATCH 2/2] exfat: add support FITRIM ioctl
-Date:   Mon, 15 Feb 2021 13:24:11 +0900
-Message-Id: <20210215042411.119392-2-hyeongseok@gmail.com>
-X-Mailer: git-send-email 2.27.0.83.g0313f36
-In-Reply-To: <20210215042411.119392-1-hyeongseok@gmail.com>
-References: <20210215042411.119392-1-hyeongseok@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iIgh8HuKJYUrgA4jcFeRQpYRrHR/5oXsXAmQ+VRmojs=;
+        b=f2KMZoufnRLlQDLCA3tCM/QgrQU03YVqCFc7vtRsMZm32ymh3JROQfFrnCByv765aP
+         xjjM+zXOkTBaizot2tfxvcW8LmaDGVeSIdkNrjnEDXcD0uoXFB+OXVHWG/50X00rhxhX
+         YQSOmUzSsMC8khrHgkEuf5WkYeG3QlZBlGOknNXLXYCzl2BE8JiUKynGx77aSc758G4k
+         /2xIuhcMd7yK+qKeWZGKy2jcxgfeTePJ0UlnGfF2HLN5/TQbAsLSeTadQYa6KBlmQJ7x
+         iTCc66//V5U3SYd5ntcprYZOOcROtTaatLSpMRLjin6yrTgxh+JDuNayDX1I5RCX0wf6
+         kMCQ==
+X-Gm-Message-State: AOAM531rA/X7g13TMcDR4t1qKOVz5pn0T/7+h/2v8hUBBaL4BWR624up
+        4wJm2oUUtJkNqM9AOFs7kE2J2SrNkdZT87UL3vg=
+X-Google-Smtp-Source: ABdhPJzpCf4+eLP4+jIdm5H7oLLWkeS1rbn5yYM8jOjGkofSKNPdQ+Py9ipaA6ELmrAFzJkq7CYS0enRLf/yI4KHVH8=
+X-Received: by 2002:a02:ca45:: with SMTP id i5mr7687809jal.123.1613368618345;
+ Sun, 14 Feb 2021 21:56:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
+ <YCYybUg4d3+Oij4N@kroah.com> <CANMq1KBuPaU5UtRR8qTgdf+J3pt-xAQq69kCVBdaYGx8F+WmFA@mail.gmail.com>
+ <YCY+Ytr2J2R5Vh0+@kroah.com> <CAKOQZ8zPFM29DYPwbnUJEhf+a8kPSJ5E_W06JLFjn-5Fy-ZWWw@mail.gmail.com>
+ <YCaipZ+iY65iSrui@kroah.com> <20210212230346.GU4626@dread.disaster.area>
+ <CAOyqgcX_wN2RGunDix5rSWxtp3pvSpFy2Stx-Ln4GozgSeS2LQ@mail.gmail.com>
+ <20210212232726.GW4626@dread.disaster.area> <20210212235448.GH7187@magnolia>
+ <20210215003855.GY4626@dread.disaster.area> <CAOyqgcX6HrbPU39nznmRMXJXtMWA0giYNRsio1jt1p5OU1jvOA@mail.gmail.com>
+ <CANMq1KDv-brWeKOTt3aUUi_1SOXSpEFo5pS5A6mpRT8k-O88nA@mail.gmail.com>
+In-Reply-To: <CANMq1KDv-brWeKOTt3aUUi_1SOXSpEFo5pS5A6mpRT8k-O88nA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 15 Feb 2021 07:56:47 +0200
+Message-ID: <CAOQ4uxjX2v6nERGCPubz4NBV+4we01+=Yx-H4kMKQ78FLPv48Q@mail.gmail.com>
+Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate content
+ is generated
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Ian Lance Taylor <iant@golang.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luis Lozano <llozano@chromium.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-add FITRIM ioctl to support trimming mounted filesystem
+On Mon, Feb 15, 2021 at 3:27 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
+>
+> On Mon, Feb 15, 2021 at 9:12 AM Ian Lance Taylor <iant@golang.org> wrote:
+> >
+> > On Sun, Feb 14, 2021 at 4:38 PM Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Fri, Feb 12, 2021 at 03:54:48PM -0800, Darrick J. Wong wrote:
+> > > > On Sat, Feb 13, 2021 at 10:27:26AM +1100, Dave Chinner wrote:
+> > > >
+> > > > > If you can't tell from userspace that a file has data in it other
+> > > > > than by calling read() on it, then you can't use cfr on it.
+> > > >
+> > > > I don't know how to do that, Dave. :)
+> > >
+> > > If stat returns a non-zero size, then userspace knows it has at
+> > > least that much data in it, whether it be zeros or previously
+> > > written data. cfr will copy that data. The special zero length
+> > > regular pipe files fail this simple "how much data is there to copy
+> > > in this file" check...
+> >
+> > This suggests that if the Go standard library sees that
+> > copy_file_range reads zero bytes, we should assume that it failed, and
+> > should use the fallback path as though copy_file_range returned
+> > EOPNOTSUPP or EINVAL.  This will cause an extra system call for an
+> > empty file, but as long as copy_file_range does not return an error
+> > for cases that it does not support we are going to need an extra
+> > system call anyhow.
+> >
+> > Does that seem like a possible mitigation?  That is, are there cases
+> > where copy_file_range will fail to do a correct copy, and will return
+> > success, and will not return zero?
+>
+> I'm a bit worried about the sysfs files that report a 4096 bytes file
+> size, for 2 reasons:
+>  - I'm not sure if the content _can_ actually be longer (I couldn't
+> find a counterexample)
+>  - If you're unlucky enough to have a partial write in the output
+> filesystem, you'll get a non-zero return value and probably corrupted
+> content.
+>
 
-Signed-off-by: Hyeongseok Kim <hyeongseok@gmail.com>
----
- fs/exfat/balloc.c   | 89 +++++++++++++++++++++++++++++++++++++++++++++
- fs/exfat/exfat_fs.h |  1 +
- fs/exfat/file.c     | 33 +++++++++++++++++
- 3 files changed, 123 insertions(+)
+First of all, I am in favor of fixing the regression in the kernel caused
+by the change of behavior in v5.3.
 
-diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
-index 761c79c3a4ba..edd0f6912e8e 100644
---- a/fs/exfat/balloc.c
-+++ b/fs/exfat/balloc.c
-@@ -273,3 +273,92 @@ int exfat_count_used_clusters(struct super_block *sb, unsigned int *ret_count)
- 	*ret_count = count;
- 	return 0;
- }
-+
-+int exfat_trim_fs(struct inode *inode, struct fstrim_range *range)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	u64 clu_start, clu_end, trim_minlen, trimmed_total = 0;
-+	unsigned int trim_begin, trim_end, count;
-+	unsigned int next_free_clu;
-+	int err = 0;
-+
-+	clu_start = max_t(u64, range->start >> sbi->cluster_size_bits,
-+				EXFAT_FIRST_CLUSTER);
-+	clu_end = clu_start + (range->len >> sbi->cluster_size_bits) - 1;
-+	trim_minlen = range->minlen >> sbi->cluster_size_bits;
-+
-+	if (clu_start >= sbi->num_clusters || range->len < sbi->cluster_size)
-+		return -EINVAL;
-+
-+	if (clu_end >= sbi->num_clusters)
-+		clu_end = sbi->num_clusters - 1;
-+
-+	mutex_lock(&EXFAT_SB(inode->i_sb)->s_lock);
-+
-+	trim_begin = trim_end = exfat_find_free_bitmap(sb, clu_start);
-+	if (trim_begin == EXFAT_EOF_CLUSTER)
-+		goto unlock;
-+
-+	next_free_clu = exfat_find_free_bitmap(sb, trim_end + 1);
-+	if (next_free_clu == EXFAT_EOF_CLUSTER)
-+		goto unlock;
-+
-+	do {
-+		if (next_free_clu == trim_end + 1)
-+			/* extend trim range for continuous free cluster */
-+			trim_end++;
-+		else {
-+			/* trim current range if it's larger than trim_minlen */
-+			count = trim_end - trim_begin + 1;
-+			if (count >= trim_minlen) {
-+				err = sb_issue_discard(sb,
-+					exfat_cluster_to_sector(sbi, trim_begin),
-+					count * sbi->sect_per_clus, GFP_NOFS, 0);
-+				if (err && err != -EOPNOTSUPP)
-+					goto unlock;
-+				if (!err)
-+					trimmed_total += count;
-+			}
-+
-+			/* set next start point of the free hole */
-+			trim_begin = trim_end = next_free_clu;
-+		}
-+
-+		if (next_free_clu >= clu_end)
-+			break;
-+
-+		if (fatal_signal_pending(current)) {
-+			err = -ERESTARTSYS;
-+			goto unlock;
-+		}
-+
-+		if (need_resched()) {
-+			mutex_unlock(&EXFAT_SB(inode->i_sb)->s_lock);
-+			cond_resched();
-+			mutex_lock(&EXFAT_SB(inode->i_sb)->s_lock);
-+		}
-+
-+		next_free_clu = exfat_find_free_bitmap(sb, next_free_clu + 1);
-+
-+	} while (next_free_clu != EXFAT_EOF_CLUSTER &&
-+			next_free_clu > trim_end);
-+
-+	/* try to trim remainder */
-+	count = trim_end - trim_begin + 1;
-+	if (count >= trim_minlen) {
-+		err = sb_issue_discard(sb, exfat_cluster_to_sector(sbi, trim_begin),
-+			count * sbi->sect_per_clus, GFP_NOFS, 0);
-+		if (err && err != -EOPNOTSUPP)
-+			goto unlock;
-+
-+		if (!err)
-+			trimmed_total += count;
-+	}
-+
-+unlock:
-+	mutex_unlock(&EXFAT_SB(inode->i_sb)->s_lock);
-+	range->len = trimmed_total << sbi->cluster_size_bits;
-+
-+	return err;
-+}
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index a183021ae31d..e050aea0b639 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -411,6 +411,7 @@ int exfat_set_bitmap(struct inode *inode, unsigned int clu);
- void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync);
- unsigned int exfat_find_free_bitmap(struct super_block *sb, unsigned int clu);
- int exfat_count_used_clusters(struct super_block *sb, unsigned int *ret_count);
-+int exfat_trim_fs(struct inode *inode, struct fstrim_range *range);
- 
- /* file.c */
- extern const struct file_operations exfat_file_operations;
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 679828e7be07..61a64a4d4e6a 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -351,7 +351,40 @@ int exfat_setattr(struct dentry *dentry, struct iattr *attr)
- 
- long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
-+	struct inode *inode = file_inode(filp);
-+	struct super_block *sb = inode->i_sb;
-+
- 	switch (cmd) {
-+	case FITRIM:
-+	{
-+		struct request_queue *q = bdev_get_queue(sb->s_bdev);
-+		struct fstrim_range range;
-+		int ret = 0;
-+
-+		if (!capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+
-+		if (!blk_queue_discard(q))
-+			return -EOPNOTSUPP;
-+
-+		if (copy_from_user(&range, (struct fstrim_range __user *)arg,
-+			sizeof(range)))
-+			return -EFAULT;
-+
-+		range.minlen = max_t(unsigned int, range.minlen,
-+					q->limits.discard_granularity);
-+
-+		ret = exfat_trim_fs(inode, &range);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (copy_to_user((struct fstrim_range __user *)arg, &range,
-+			sizeof(range)))
-+			return -EFAULT;
-+
-+		return 0;
-+	}
-+
- 	default:
- 		return -ENOTTY;
- 	}
--- 
-2.27.0.83.g0313f36
+Having said that, I don't think it is a good idea to use ANY tool to copy
+a zero size pseudo file.
+rsync doesn't copy any data either if you try to use it to copy tracing into
+a temp file.
+I think it is perfectly sane for any tool to check file size before trying
+to read/copy.
 
+w.r.t. short write/short read, did you consider using the off_in/off_out
+arguments? I *think* current kernel CFR should be safe to use as long
+as the tool:
+1. Checks file size before copy
+2. Does not try to copy a range beyond EOF
+3. Pass off_in/off_out args and verify that off_in/off_out advances
+    as expected
+
+Thanks,
+Amir.
