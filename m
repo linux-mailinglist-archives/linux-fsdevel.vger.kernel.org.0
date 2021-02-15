@@ -2,117 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6433B31C0FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 18:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CB3B31C10E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 18:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231435AbhBORuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 12:50:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40296 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231518AbhBORts (ORCPT
+        id S230280AbhBOR5q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 12:57:46 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:36746 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230131AbhBOR5l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 12:49:48 -0500
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 776AAC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Feb 2021 09:49:06 -0800 (PST)
-Received: by mail-pg1-x532.google.com with SMTP id t11so4615942pgu.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Feb 2021 09:49:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0raigWBsW5BmlJVVshcrNYwzQYWZPvQmzq/5zwebTXY=;
-        b=fl6FixGKWjTID3qTSaKuX0EgetRR8QBn7aRcT3Xl+UP8cqOr6p3G+iD1eTTf0hu3ak
-         +liuII/Gu+qlMZYn4CTSKBRild3fq4iiKeEGL+8b/HMEyTkfR0lxpp1aIyP5MOkOnLHu
-         n7mDgFs4eE/SMAqzxJNbxWCbSUC+xHlWEWLG3qrIScMk/bjvOR57kk7nFY7rVn/9UiH9
-         g2pOpALQHu/15aB71vd8qzQeiPvr76pUiiibWLdgNXzIRdH3e7uN2WCmTp8lGk/ksYR7
-         ZIRk0VV4pwRJE21aYuWDbkXc3kOpnbN0CK8+C727b5npEWm2JsCj1LaBgWNXZrMEv6//
-         4r6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0raigWBsW5BmlJVVshcrNYwzQYWZPvQmzq/5zwebTXY=;
-        b=IGVhxxPIK14qqR27Bh2nPXJBEo7xIKHL0uh7BcdLEje3wWu2VkLUPUzhwMriUqjwE0
-         v8TRsfS2b1sabkzGv6nzv7TmZxtm7Z8MF1LFXaw+PF+M/CeUIgXPdVaduHXLB71G1kUw
-         DLzfzUhofDfZW8WAkYTm3WI6YJVaU+BJyO7TUWf7EebCADGnm7LwxND19zLaddDrZCS9
-         qqMeulfyYWIIvs0TN0LHsCPsCdrwA/28daBa6ZrOSq9jgPk8vhUcz+f9I+5u8fWIFNDw
-         mKJTc4YLQEGtWUYjerVnWLr9WrYFTThxSD04lb3Vqzwx7dlsSbRNyC+9GATWn0vBSp1D
-         iM6g==
-X-Gm-Message-State: AOAM53182ucX0hfeQLxXQ7BIojG9DxL9sNMiP1x63tbFvjEA52kAcDx4
-        ev9wVkWFKvIZgRNu0Hyw4QK18K9+VAu4AA6NQbpayQ==
-X-Google-Smtp-Source: ABdhPJz4LqZsDGklbkN4FqRjRy8OxHw8u+JlsWDcM1+xjYoqctmuuXLbOUqvMlpcK78wa9N3DIsalYaZRJP0O/OTh7o=
-X-Received: by 2002:a63:480f:: with SMTP id v15mr15739656pga.341.1613411345880;
- Mon, 15 Feb 2021 09:49:05 -0800 (PST)
+        Mon, 15 Feb 2021 12:57:41 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lBi7G-00Ewhl-6H; Mon, 15 Feb 2021 10:56:58 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lBi7F-0007sy-8Z; Mon, 15 Feb 2021 10:56:57 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk
+References: <20201214191323.173773-1-axboe@kernel.dk>
+        <m1lfbrwrgq.fsf@fess.ebiederm.org>
+        <94731b5a-a83e-91b5-bc6c-6fd4aaacb704@kernel.dk>
+Date:   Mon, 15 Feb 2021 11:56:16 -0600
+In-Reply-To: <94731b5a-a83e-91b5-bc6c-6fd4aaacb704@kernel.dk> (Jens Axboe's
+        message of "Sun, 14 Feb 2021 09:38:01 -0700")
+Message-ID: <m1wnv9use7.fsf@fess.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20210208085013.89436-5-songmuchun@bytedance.com>
- <YCafit5ruRJ+SL8I@dhcp22.suse.cz> <CAMZfGtXgVUvCejpxu1o5WDvmQ7S88rWqGi3DAGM6j5NHJgtdcg@mail.gmail.com>
- <YCpN38i75olgispI@dhcp22.suse.cz> <CAMZfGtUXJTaMo36aB4nTFuYFy3qfWW69o=4uUo-FjocO8obDgw@mail.gmail.com>
- <CAMZfGtWT8CJ-QpVofB2X-+R7GE7sMa40eiAJm6PyD0ji=FzBYQ@mail.gmail.com>
- <YCpmlGuoTakPJs1u@dhcp22.suse.cz> <CAMZfGtWd_ZaXtiEdMKhpnAHDw5CTm-CSPSXW+GfKhyX5qQK=Og@mail.gmail.com>
- <YCp04NVBZpZZ5k7G@dhcp22.suse.cz> <CAMZfGtV8-yJa_eGYtSXc0YY8KhYpgUo=pfj6TZ9zMo8fbz8nWA@mail.gmail.com>
- <YCqhDZ0EAgvCz+wX@dhcp22.suse.cz>
-In-Reply-To: <YCqhDZ0EAgvCz+wX@dhcp22.suse.cz>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Tue, 16 Feb 2021 01:48:29 +0800
-Message-ID: <CAMZfGtW6n_YUbZOPFbivzn-HP4Q2yi0DrUoQ3JAjSYy5m17VWw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v15 4/8] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1lBi7F-0007sy-8Z;;;mid=<m1wnv9use7.fsf@fess.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1967J4c9TL3f1UdqqpMRd1Hs7BR9oOrmT0=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,T_TooManySym_03,XMSubLong,XM_B_SpammyWords
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4221]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Jens Axboe <axboe@kernel.dk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 543 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 12 (2.1%), b_tie_ro: 10 (1.9%), parse: 1.19
+        (0.2%), extract_message_metadata: 14 (2.6%), get_uri_detail_list: 2.5
+        (0.5%), tests_pri_-1000: 4.5 (0.8%), tests_pri_-950: 1.25 (0.2%),
+        tests_pri_-900: 1.01 (0.2%), tests_pri_-90: 79 (14.5%), check_bayes:
+        77 (14.2%), b_tokenize: 8 (1.4%), b_tok_get_all: 9 (1.6%),
+        b_comp_prob: 2.9 (0.5%), b_tok_touch_all: 53 (9.8%), b_finish: 1.04
+        (0.2%), tests_pri_0: 277 (51.0%), check_dkim_signature: 0.52 (0.1%),
+        check_dkim_adsp: 2.4 (0.4%), poll_dns_idle: 138 (25.4%), tests_pri_10:
+        2.1 (0.4%), tests_pri_500: 148 (27.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCHSET v3 0/4] fs: Support for LOOKUP_NONBLOCK / RESOLVE_NONBLOCK (Insufficiently faking current?)
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 12:28 AM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Mon 15-02-21 23:36:49, Muchun Song wrote:
-> [...]
-> > > There shouldn't be any real reason why the memory allocation for
-> > > vmemmaps, or handling vmemmap in general, has to be done from within the
-> > > hugetlb lock and therefore requiring a non-sleeping semantic. All that
-> > > can be deferred to a more relaxed context. If you want to make a
-> >
-> > Yeah, you are right. We can put the freeing hugetlb routine to a
-> > workqueue. Just like I do in the previous version (before v13) patch.
-> > I will pick up these patches.
->
-> I haven't seen your v13 and I will unlikely have time to revisit that
-> version. I just wanted to point out that the actual allocation doesn't
-> have to happen from under the spinlock. There are multiple ways to go
-> around that. Dropping the lock would be one of them. Preallocation
-> before the spin lock is taken is another. WQ is certainly an option but
-> I would take it as the last resort when other paths are not feasible.
->
+Jens Axboe <axboe@kernel.dk> writes:
 
-"Dropping the lock" and "Preallocation before the spin lock" can limit
-the context of put_page to non-atomic context. I am not sure if there
-is a page puted somewhere under an atomic context. e.g. compaction.
-I am not an expert on this.
+> On 2/13/21 3:08 PM, Eric W. Biederman wrote:
+>> 
+>> I have to ask.  Are you doing work to verify that performing
+>> path traversals and opening of files yields the same results
+>> when passed to io_uring as it does when performed by the caller?
+>> 
+>> Looking at v5.11-rc7 it appears I can arbitrarily access the
+>> io-wq thread in proc by traversing "/proc/thread-self/".
+>
+> Yes that looks like a bug, it needs similar treatment to /proc/self:
+Agreed.
 
-> --
-> Michal Hocko
-> SUSE Labs
+
+> diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
+> index a553273fbd41..e8ca19371a36 100644
+> --- a/fs/proc/thread_self.c
+> +++ b/fs/proc/thread_self.c
+> @@ -17,6 +17,13 @@ static const char *proc_thread_self_get_link(struct dentry *dentry,
+>  	pid_t pid = task_pid_nr_ns(current, ns);
+>  	char *name;
+>  
+> +	/*
+> +	 * Not currently supported. Once we can inherit all of struct pid,
+> +	 * we can allow this.
+> +	 */
+> +	if (current->flags & PF_KTHREAD)
+> +		return ERR_PTR(-EOPNOTSUPP);
+
+I suspect simply testing for PF_IO_WORKER is a better test.  As it is
+the delegation to the io_worker not the fact that it is a kernel thread
+that causes a problem.
+
+I have a memory of that point being made when the smack_privileged test
+and the tomoyo_kernel_service test and how to fix them was being
+discussed.
+
+>  	if (!pid)
+>  		return ERR_PTR(-ENOENT);
+>  	name = kmalloc(10 + 6 + 10 + 1, dentry ? GFP_KERNEL : GFP_ATOMIC);
+>
+> as was done in this commit:
+>
+> commit 8d4c3e76e3be11a64df95ddee52e99092d42fc19
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Fri Nov 13 16:47:52 2020 -0700
+>
+>     proc: don't allow async path resolution of /proc/self components
+
+I suspect that would be better as PF_IO_WORKER as well.
+
+>> Similarly it looks like opening of "/dev/tty" fails to
+>> return the tty of the caller but instead fails because
+>> io-wq threads don't have a tty.
+>> 
+>> 
+>> There are a non-trivial number of places where current is used in the
+>> kernel both in path traversal and in opening files, and I may be blind
+>> but I have not see any work to find all of those places and make certain
+>> they are safe when called from io_uring.  That worries me as that using
+>> a kernel thread instead of a user thread could potential lead to
+>> privilege escalation.
+>
+> I've got a patch queued up for 5.12 that clears ->fs and ->files for the
+> thread if not explicitly inherited, and I'm working on similarly
+> proactively catching these cases that could potentially be
+> problematic.
+
+Any pointers or is this all in a private tree for now?
+
+It is difficult to follow because many of the fixes have not CC'd the
+reporters or even the maintainers of the subsystems who have been
+affected by this kind of issue.
+
+Eric
+
