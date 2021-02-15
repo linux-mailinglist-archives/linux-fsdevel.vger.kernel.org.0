@@ -2,111 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA44D31B750
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 11:39:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A9831B85F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 12:51:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbhBOKjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 05:39:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44206 "EHLO mx2.suse.de"
+        id S229996AbhBOLv1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 06:51:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229802AbhBOKjC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 05:39:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6C69FAC32;
-        Mon, 15 Feb 2021 10:38:20 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 3e5d9e0a;
-        Mon, 15 Feb 2021 10:39:22 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate
- content is generated
-References: <20210212044405.4120619-1-drinkcat@chromium.org>
-        <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
-        <YCYybUg4d3+Oij4N@kroah.com>
-        <CAOQ4uxhovoZ4S3WhXwgYDeOeomBxfQ1BdzSyGdqoVX6boDOkeA@mail.gmail.com>
-        <YCY+tjPgcDmgmVD1@kroah.com> <871rdljxtx.fsf@suse.de>
-        <YCZyBZ1iT+MUXLu1@kroah.com> <87sg61ihkj.fsf@suse.de>
-        <CAOQ4uxi-VuBmE8Ej_B3xmBnn1nmp9qpiA-BkNpPcrE0PCRp1UA@mail.gmail.com>
-Date:   Mon, 15 Feb 2021 10:39:22 +0000
-In-Reply-To: <CAOQ4uxi-VuBmE8Ej_B3xmBnn1nmp9qpiA-BkNpPcrE0PCRp1UA@mail.gmail.com>
-        (Amir Goldstein's message of "Mon, 15 Feb 2021 08:12:03 +0200")
-Message-ID: <87h7mdvcmd.fsf@suse.de>
+        id S229908AbhBOLvI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Feb 2021 06:51:08 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C06CE64DFD;
+        Mon, 15 Feb 2021 11:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613389826;
+        bh=1O2ZAfyhwnctNig5Kkji9nFvZQTlpIIhVaXrpX4Qd54=;
+        h=Subject:From:To:Cc:Date:From;
+        b=bfDoALhtxqsUkI5Z+E+1bklP+WEf51/Mgl8JTePLTx4vVjn97RhkSVGVOondBh6Ze
+         0m/oHxdv1w2OoHKS74SAvibSGOeIMGCsuZKj6ruxFbnx0WAfr5qll539DTfXaLLGDp
+         EtK09vly4A9ncjS4lFwZ4c5muWtUFf0OrNjSvEb89DX8pwgpdliMKIBcQHeUvon+af
+         wZmhsnm16kLXxOQ2M8eGTFcpRmG3GdAStToIGGYrPaoXX9hV9xMuB509HCK3/aqrk1
+         DU63yNlG6q9GTYcsEoLrtXiu3oJlhk+bURBjY1S6+mv9BG0seMoOjmENChTqhmSPab
+         bI3wZHbz+ik+w==
+Message-ID: <b811d76937408f4fded7314da18f770b88c83fe2.camel@kernel.org>
+Subject: [GIT PULL] fcntl fix
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Mon, 15 Feb 2021 06:50:24 -0500
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-LNHjxsThbfUszIrk08Ao"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Amir Goldstein <amir73il@gmail.com> writes:
 
-> On Fri, Feb 12, 2021 at 2:40 PM Luis Henriques <lhenriques@suse.de> wrote:
-...
->> Sure, I just wanted to point out that *maybe* there are other options than
->> simply reverting that commit :-)
->>
->> Something like the patch below (completely untested!) should revert to the
->> old behaviour in filesystems that don't implement the CFR syscall.
->>
->> Cheers,
->> --
->> Luis
->>
->> diff --git a/fs/read_write.c b/fs/read_write.c
->> index 75f764b43418..bf5dccc43cc9 100644
->> --- a/fs/read_write.c
->> +++ b/fs/read_write.c
->> @@ -1406,8 +1406,11 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
->>                                                        file_out, pos_out,
->>                                                        len, flags);
->>
->> -       return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
->> -                                      flags);
->> +       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
->> +               return -EXDEV;
->> +       else
->> +               generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
->> +                                       flags);
->>  }
->>
->
-> Which kernel is this patch based on?
+--=-LNHjxsThbfUszIrk08Ao
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
 
-It was v5.11-rc7.
+The following changes since commit 92bf22614b21a2706f4993b278017e437f7785b3=
+:
 
-> At this point, I am with Dave and Darrick on not falling back to
-> generic_copy_file_range() at all.
->
-> We do not have proof of any workload that benefits from it and the
-> above patch does not protect from a wierd use case of trying to copy a file
-> from sysfs to sysfs.
->
+  Linux 5.11-rc7 (2021-02-07 13:57:38 -0800)
 
-Ok, cool.  I can post a new patch doing just that.  I guess that function
-do_copy_file_range() can be dropped in that case.
+are available in the Git repository at:
 
-> I am indecisive about what should be done with generic_copy_file_range()
-> called as fallback from within filesystems.
->
-> I think the wise choice is to not do the fallback in any case, but this is up
-> to the specific filesystem maintainers to decide.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/lock=
+s-v5.12
 
-I see what you mean.  You're suggesting to have userspace handle all the
--EOPNOTSUPP and -EXDEV errors.  Would you rather have a patch that also
-removes all the calls to generic_copy_file_range() function?  And that
-function can also be deleted too, of course.
+for you to fetch changes up to cc4a3f885e8f2bc3c86a265972e94fef32d68f67:
 
-Cheers,
--- 
-Luis
+  fcntl: make F_GETOWN(EX) return 0 on dead owner task (2021-02-08 07:36:13=
+ -0500)
+
+----------------------------------------------------------------
+
+Just a single fix from Pavel for fcntl(F_GETOWN(_EX), ...), needed for
+proper functioning of CRIU.
+
+Thanks,
+Jeff
+
+----------------------------------------------------------------
+Pavel Tikhomirov (1):
+      fcntl: make F_GETOWN(EX) return 0 on dead owner task
+
+ fs/fcntl.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+--=-LNHjxsThbfUszIrk08Ao
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAABCAAxFiEES8DXskRxsqGE6vXTAA5oQRlWghUFAmAqYAATHGpsYXl0b25A
+a2VybmVsLm9yZwAKCRAADmhBGVaCFZnkD/9byKXRJnPAcMf3UzFfP4imHyJugUxm
++mYLKufiNRVDW8aq1bTiwVBJcqMCepTTFs9U1MgkYemNJa/myb3BMdYFgJffF27/
+NJXiccCHcZowLZKnZbsB7hn65H1QIOhCgT4ps1JCdrFJHkP3Msvco21YdsSeiepR
+Y5VXTO5aMkXS3jYJ+oDlaf0nDK1D49cdYDsiHW6i/rxonKYzuRcIADZXWWq1P67M
+yKsstp6zzk8GHjquslVXi5mLb5Eqne0xnJz4LOueBwg9EqepJtS4ZSeyFzEMYs9f
+I0XjG8et9Rn/wy/VReiMdIQrHbhCYdImOSohaCKAIW9X6hllU15TcH3sTG1Kw1/k
+MDdqRl6ETDu55oJmkAEEAT+DM0DsmiSjK6eTVsKQyjQQtoNv1xXb/qKsVgqXirID
+GVRVbFHMO/8bdVNp7ik5Vp574qgy1JePWL5YCDL+YtVkv54vNhWbUx4ZkS0mBv88
+jnI/iTcCm7IC33ejwbeCGNtz7suctpe5w0Hb6ykOYv6VDH5fK7T0Z2dK77sFkg+t
+eNos1JBYKPSEavxsfUApdkpcSoDv8/J8qZ8aUWWeisgWUt4jWiuUYfCR36nRVXqS
+x0aEF8084pJhE7EC6+4hzI7E0c3AbjCGH09oqQQlQP5ih8GPrcAMO782g4NPuyW0
+VAafUnUDFAZgJw==
+=/Q9X
+-----END PGP SIGNATURE-----
+
+--=-LNHjxsThbfUszIrk08Ao--
+
