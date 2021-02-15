@@ -2,118 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A0031B64D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 10:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CF2C31B6DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 11:06:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbhBOJR5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 04:17:57 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:21198 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230159AbhBOJR4 (ORCPT
+        id S230098AbhBOKGZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 05:06:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53816 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230031AbhBOKGX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 04:17:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1613380675; x=1644916675;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=7y2izleM35CFVNGAxGJJlXECouLNTefd9rurtUGcNfs=;
-  b=qedxiS1Wo3+Ob9Rhl2hViX+SlV24hxUpbw8nehUf+wcv5SvuKHEvKeMx
-   /9pEuWCs6zc7fQ6i8rjl4TOuOycQizmnADwf9TqlNSer4mPVaAqXGUexo
-   rEb2EnPVCacoQx781OreRHCjKmWxrXDnv/wj9p+sB0gDT7WmFz4CtakPz
-   D8GXhEqhHbCJQr97Ulqy/JijOckiWUC+st9k3rm9F5pdnoJMGJLEZ7m4S
-   T078v3n4B1gPERjoklb+6NWPRkhsRYk8+FpLkUrSR8iff10u/GWiq0qP5
-   wPJq5DpcbrvDq6R3jqegrmotECr3j7plp93g/ciuYy+Q9DoIhK9kiFqvN
-   A==;
-IronPort-SDR: hX9h9Aqiv3T/YCsNHOoTW77JKtZOSYmK6MkWqlFrI+xvmM/AjJD8iPhk3WHx+djuX7KsXGvWM4
- CWFZ1R/YwYw5tEo+EylcBR8GvVSpms+XueFDkNxJwRR3x9Er2g8xJM0jO60kQLAgNGh051zfn+
- /xpaTDYjAqzB0o1oVZ1EKiCz4itv3SBY4QrcC4THAEA7FYfAwu96RgpctCADvvXR/KDm/Cr1Lc
- SjL2a7NrnSDfPX58NUTXS5YVTEUkSfIxUsqu37x04GS4EzWtBgU2XJIXs+Tism9JXTQgY004cw
- i/8=
-X-IronPort-AV: E=Sophos;i="5.81,180,1610380800"; 
-   d="scan'208";a="161147454"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Feb 2021 17:16:49 +0800
-IronPort-SDR: u3leuAvi9+5u0qvVPIlKPNY8qhjOe8isojVYfqf+Fxi90K+R/9tNEVglfVNfsgRGCsDQp1EQWb
- X/rLUiJbYo1CAXBq0Mnh5CVyJtbH7UcXKdSWsDbAUbpFHFUweeFPk4HOuIEPQz3JUoNUNnIjXY
- lGWY5oKf7ce7wq8DGK6caXnMyq5xWns6Mw0woJfrksWttsOpsDPpfEgvf1FR+Nl2oa/KWIEGM0
- veYBFoPXeqR65IeCGttnXMPqwveKshnhRhPyuuNOxSEvne2iXZf5zsNRqBHGqRvJ609NqHqAvL
- M4nivQQnArzQZ7i75f6QZGKR
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2021 00:58:35 -0800
-IronPort-SDR: Xfk652Gu7fYrrfKok81posvgiNNP+uHIfwSkGnw9cQQ3ftG4ugTNJBUsYfZUN9Mj/HSPLYaB7q
- uA1SKm6HOD0HP+1Yec836PcgmJiIXz2+cm7L0BwYxrxBVZbh9uPp9LwxV3rT1OfTETXQ8F9qn6
- Im702yVKDbprvB3FQFf/KA17eVrpTR7BI8m3W4+ka/ZFUH5Uz/VGsSIlZhWKqrGdmYrwDy3eIL
- AS8+3LgLNhNNlqvj+Sc53MHZu/j7fxMi4BEdmY9KQ4WB+fKV7x+0S7HDcdruCAOLkKn2BnJGzj
- FVo=
-WDCIronportException: Internal
-Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip02.wdc.com with ESMTP; 15 Feb 2021 01:16:49 -0800
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] zonefs: fix build warning for s390 in tracepoints
-Date:   Mon, 15 Feb 2021 18:16:29 +0900
-Message-Id: <d3378bec918aab6090def490784fb0de5a336388.1613380577.git.johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.26.2
+        Mon, 15 Feb 2021 05:06:23 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BBBAC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Feb 2021 02:05:43 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id cv23so3425611pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Feb 2021 02:05:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DmRB0K44KO7vG/sp1xtUpHVwS6fGMWfTKOE8QU8jS6g=;
+        b=EhjrjjBYBupuI5im9doAwVzO+jGLquTgwobo7U7h3v0K1j4+obz4rjNleNiQ0aPEqZ
+         IHY9+7M4Vd2XXMsNbJe5aNZpoMy2ArzXBurcksVbF1YUiMH6cgwm5mfd+RCu2K0PHI9O
+         hGXGA7Uc5JkSiWzC7Yv18dOIaqkgGJgRdDPb+vfGpEG+wi4fLoHCujyw4qC1yH2f2NID
+         LRnAWqpTTUrx1HSRDEPr9KBqy2AXz3oPQnSljzqgZXbZ5hc5MRdxm7Z16NvzEEX4OGyn
+         AAuHKLuXnOWV0VUvted7bLe42IU2y8LNp07b53RTcEthwczxVjWkAD21NW5756+5CSmx
+         vyiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DmRB0K44KO7vG/sp1xtUpHVwS6fGMWfTKOE8QU8jS6g=;
+        b=mhK9fHK7pKKYsPm5H/h79NuP3pzNKUyhIpn3XXpkEORGp88eMLu3wHpC+OHo0nTmIa
+         NpnTz8rLoXTbGL5tpCDTC2FQr9psy72Qlbq8/rv4mmnpsb33Lx9prqeA8f6SrcAZBZwK
+         oE3dKO5mafpSHlz4XLWI9IwvJ5M5FEZkubp259ApACL7hirI+8I0FU62j2pfT3c96fpB
+         MRTJ7HoanHgbuBQ9AdGvdQeswtOV5q0B6dQNetBZwu55ZiksyIKee7zruawNDeYYML4f
+         IqA78o2TQHzvG6MkvNa28MZFmzC1zBvDH9X5ZsXLwSjumL9kCU/uWYqyn3HPShnwEcfx
+         rBEw==
+X-Gm-Message-State: AOAM533f5xTLqYhsVYAovniL8KG1Q9iIJMJVItWCUVvBE/fUXdsmqMHW
+        BLqukJuCemWKH91gDPAB2e+4O51S7/W6WgsQGAaqB5LXTO8WMA==
+X-Google-Smtp-Source: ABdhPJz3aVkYh+fCF+JZBBZYkK3dCHFrSlukd/ZQkDuxm0T341Lg/HmVz8233DOtYoTwQIYNuKyP66yVJ8zhGG9fRlE=
+X-Received: by 2002:a17:902:7290:b029:e3:1dcf:f3ec with SMTP id
+ d16-20020a1709027290b02900e31dcff3ecmr14638057pll.20.1613383542493; Mon, 15
+ Feb 2021 02:05:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210208085013.89436-1-songmuchun@bytedance.com>
+ <20210208085013.89436-5-songmuchun@bytedance.com> <YCafit5ruRJ+SL8I@dhcp22.suse.cz>
+In-Reply-To: <YCafit5ruRJ+SL8I@dhcp22.suse.cz>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 15 Feb 2021 18:05:06 +0800
+Message-ID: <CAMZfGtXgVUvCejpxu1o5WDvmQ7S88rWqGi3DAGM6j5NHJgtdcg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v15 4/8] mm: hugetlb: alloc the vmemmap
+ pages associated with each HugeTLB page
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        David Hildenbrand <david@redhat.com>,
+        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-s390 (and alpha) define __kernel_ino_t and thus ino_t as unsigned int
-instead of unsigned long like the other architectures do.
+On Fri, Feb 12, 2021 at 11:32 PM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Mon 08-02-21 16:50:09, Muchun Song wrote:
+> > When we free a HugeTLB page to the buddy allocator, we should allocate the
+> > vmemmap pages associated with it. But we may cannot allocate vmemmap pages
+> > when the system is under memory pressure, in this case, we just refuse to
+> > free the HugeTLB page instead of looping forever trying to allocate the
+> > pages.
+>
+> Thanks for simplifying the implementation from your early proposal!
+>
+> This will not be looping for ever. The allocation will usually trigger
+> the OOM killer and sooner or later there will be a memory to allocate
+> from or the system panics when there are no eligible tasks to kill. This
+> is just a side note.
+>
+> I think the changelog could benefit from a more explicit documentation
+> of those error failures. There are different cases when the hugetlb page
+> is freed. It can be due to an admin intervention (decrease the pool),
+> overcommit, migration, dissolving and likely some others. Most of them
+> should be fine to stay in the pool which would just increase the surplus
+> pages in the pool. I am not so sure about dissolving path.
 
-Zonefs' tracepoints use the %lu format specifier for unsigned long
-generating a build warning. So cast inode numbers to (unsigned long) when
-printing to get rid of the build warning, like other filesystems do as well.
+Thanks. I will update the changelog.
 
-Fixes: 6716b125b339 ("zonefs: add tracepoints for file operations")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/zonefs/trace.h | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+> [...]
+> > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> > index 0209b736e0b4..3d85e3ab7caa 100644
+> > --- a/mm/hugetlb_vmemmap.c
+> > +++ b/mm/hugetlb_vmemmap.c
+> > @@ -169,6 +169,8 @@
+> >   * (last) level. So this type of HugeTLB page can be optimized only when its
+> >   * size of the struct page structs is greater than 2 pages.
+> >   */
+> > +#define pr_fmt(fmt)  "HugeTLB: " fmt
+> > +
+> >  #include "hugetlb_vmemmap.h"
+> >
+> >  /*
+> > @@ -198,6 +200,34 @@ static inline unsigned long free_vmemmap_pages_size_per_hpage(struct hstate *h)
+> >       return (unsigned long)free_vmemmap_pages_per_hpage(h) << PAGE_SHIFT;
+> >  }
+> >
+> > +int alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
+> > +{
+> > +     int ret;
+> > +     unsigned long vmemmap_addr = (unsigned long)head;
+> > +     unsigned long vmemmap_end, vmemmap_reuse;
+> > +
+> > +     if (!free_vmemmap_pages_per_hpage(h))
+> > +             return 0;
+> > +
+> > +     vmemmap_addr += RESERVE_VMEMMAP_SIZE;
+> > +     vmemmap_end = vmemmap_addr + free_vmemmap_pages_size_per_hpage(h);
+> > +     vmemmap_reuse = vmemmap_addr - PAGE_SIZE;
+> > +
+> > +     /*
+> > +      * The pages which the vmemmap virtual address range [@vmemmap_addr,
+> > +      * @vmemmap_end) are mapped to are freed to the buddy allocator, and
+> > +      * the range is mapped to the page which @vmemmap_reuse is mapped to.
+> > +      * When a HugeTLB page is freed to the buddy allocator, previously
+> > +      * discarded vmemmap pages must be allocated and remapping.
+> > +      */
+> > +     ret = vmemmap_remap_alloc(vmemmap_addr, vmemmap_end, vmemmap_reuse,
+> > +                               GFP_ATOMIC | __GFP_NOWARN | __GFP_THISNODE);
+>
+> I do not think that this is a good allocation mode. GFP_ATOMIC is a non
+> sleeping allocation and a medium memory pressure might cause it to
+> fail prematurely. I do not think this is really an atomic context which
+> couldn't afford memory reclaim. I also do not think we want to grant
 
-diff --git a/fs/zonefs/trace.h b/fs/zonefs/trace.h
-index 26b9370a9235..f369d7d50303 100644
---- a/fs/zonefs/trace.h
-+++ b/fs/zonefs/trace.h
-@@ -38,7 +38,7 @@ TRACE_EVENT(zonefs_zone_mgmt,
- 				   ZONEFS_I(inode)->i_zone_size >> SECTOR_SHIFT;
- 	    ),
- 	    TP_printk("bdev=(%d,%d), ino=%lu op=%s, sector=%llu, nr_sectors=%llu",
--		      show_dev(__entry->dev), __entry->ino,
-+		      show_dev(__entry->dev), (unsigned long)__entry->ino,
- 		      blk_op_str(__entry->op), __entry->sector,
- 		      __entry->nr_sectors
- 	    )
-@@ -64,8 +64,9 @@ TRACE_EVENT(zonefs_file_dio_append,
- 			   __entry->ret = ret;
- 	    ),
- 	    TP_printk("bdev=(%d, %d), ino=%lu, sector=%llu, size=%zu, wpoffset=%llu, ret=%zu",
--		      show_dev(__entry->dev), __entry->ino, __entry->sector,
--		      __entry->size, __entry->wpoffset, __entry->ret
-+		      show_dev(__entry->dev), (unsigned long)__entry->ino,
-+		      __entry->sector, __entry->size, __entry->wpoffset,
-+		      __entry->ret
- 	    )
- );
- 
-@@ -87,8 +88,8 @@ TRACE_EVENT(zonefs_iomap_begin,
- 			   __entry->length = iomap->length;
- 	    ),
- 	    TP_printk("bdev=(%d,%d), ino=%lu, addr=%llu, offset=%llu, length=%llu",
--		      show_dev(__entry->dev), __entry->ino, __entry->addr,
--		      __entry->offset, __entry->length
-+		      show_dev(__entry->dev), (unsigned long)__entry->ino,
-+		      __entry->addr, __entry->offset, __entry->length
- 	    )
- );
- 
--- 
-2.26.2
+Because alloc_huge_page_vmemmap is called under hugetlb_lock
+now. So using GFP_ATOMIC indeed makes the code more simpler.
+From the document of the kernel, I learned that __GFP_NOMEMALLOC
+can be used to explicitly forbid access to emergency reserves. So if
+we do not want to use the reserve memory. How about replacing it to
 
+GFP_ATOMIC | __GFP_NOMEMALLOC | __GFP_NOWARN | __GFP_THISNODE
+
+Thanks.
+
+> access to memory reserve is reasonable. Just think of a huge number of
+> hugetlb pages being freed which can deplete the memory reserve for
+> atomic allocations. I think that you want
+>         GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN | __GFP_THISNODE
+>
+> for an initial implementation. The justification being that the
+> allocation should at least try to reclaim but it shouldn't cause any
+> major disruption because the failure is not fatal. If the failure rate
+> would be impractically high then just drop NORETRY part. You can replace
+> it by __GFP_RETRY_MAYFAIL but that shouldn't be strictly necessary
+> because __GFP_THISNODE on its own implies on OOM killer, but that is
+> kinda ugly to rely on.
+> --
+> Michal Hocko
+> SUSE Labs
