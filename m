@@ -2,347 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 790F431BE06
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 17:06:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E49B031BE7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 17:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232331AbhBOP6I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 10:58:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27462 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232195AbhBOPwn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 10:52:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613404275;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=D1Aj9+tG4VEgGGH9o80WvrEBEq+uLnBg7oguv+L08lE=;
-        b=G4lzaKJ7zJ3LUAlEiyHnKuaOxCzz/iUAu9cAP51JrfoJaMLPdcp5pg4u8EHv4c6pv69WU/
-        lO0vPd9X28fFvCdeZVZugSJqLVuIlYA6ex41nqk0Wz/8mi8NzDXN7gWibY3Ketg4bx8jRL
-        Tg9JBAfhot+scwW5FCLEirDR07njQ8w=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-119-F69PHfOcO8GF8t1OZR35Bw-1; Mon, 15 Feb 2021 10:51:11 -0500
-X-MC-Unique: F69PHfOcO8GF8t1OZR35Bw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 302748030D6;
-        Mon, 15 Feb 2021 15:51:09 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CB1B919C99;
-        Mon, 15 Feb 2021 15:51:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 33/33] ceph: convert ceph_readpages to ceph_readahead
-From:   David Howells <dhowells@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 15 Feb 2021 15:51:01 +0000
-Message-ID: <161340426195.1303470.14717135788428630282.stgit@warthog.procyon.org.uk>
-In-Reply-To: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
-References: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
-MIME-Version: 1.0
+        id S232629AbhBOQKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 11:10:52 -0500
+Received: from mail-eopbgr770090.outbound.protection.outlook.com ([40.107.77.90]:9518
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232747AbhBOQDN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Feb 2021 11:03:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N6aLwAVfdxMZjAsWo265D0wP6AioUyOPQkeEqDOnTFyuiXuISZiINRRlpg3KUQbNc6Q66S4Pti2dBKaq1JsW80GXeSq0aszNXdlAOZSEvkY6Jq8KYO4MVeW4VlDAGD4IQQzZxyz+oERyrN6VI1EWUeOVx/pEDfScTFzfr3J7RlK1SCceD63Oh4cdjr/riaUj+X+udEgAfTG7HkXv8E+wUKjUWaWdVRMnvPo4orio6FoDCczhuPCEtV5KnVsRmS+D6Y3oGZpDL1LuEZ85TTS+fNp/btK0SEIjsiwnn/zkW+XLFEc228e+h3rAkFIzvQ3dA/9JwtZ/FEIep9lDFb7d7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LaGNQARnwpEkL1xtIrvWd4c7lfcd0NMUQPoWZ/HnLps=;
+ b=RLZbs5mpRkBfBX4bB86c9enmyXl+53IHw/3vuQd2fyBauKG1Go+RkQ/6+v2fJGJKq177pEJzGXbDbaHjAv/oHq6uB2OOjJGZf5eFdZVeslF1GZpG0BCn8brEDEU+mhKnGbuRB5t9T3vmuD7VPxnAxPX76ruGFKyxCj5K41pB4TwxRBRnGNpRYtqeCrKEZsIKtStLQt/EdHnC887w6jxqIIe6z+XyYZE6421NS5/XCnJJ5Z7oWiNlPoWtGRYptfwmltD+K8p9g8EHWER/JUpd1RdAWNR5UAoydlN97MlctNigZVMU535SaCUDif0q9kdOEJz8kWQiDr9rdArLXiPXvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LaGNQARnwpEkL1xtIrvWd4c7lfcd0NMUQPoWZ/HnLps=;
+ b=P3eOoel3tAJ+g7XCd82wEpMt+y1KxGExfelQrJRWJgT+ZbOy4SxbK+s0uui1jXcgpJHVNMc+GzIVxtgIKNk1fzmwka5Z9pmCTpQ5y+EVJvIcz+kUHs3eKuEt7qH+n3NkInrbaQ+H4ARIRmMV8z0yEmOIygiC28Xb7SB64Dog+1w=
+Received: from CH2PR13MB3525.namprd13.prod.outlook.com (2603:10b6:610:21::29)
+ by CH2PR13MB3847.namprd13.prod.outlook.com (2603:10b6:610:99::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3868.11; Mon, 15 Feb
+ 2021 16:02:20 +0000
+Received: from CH2PR13MB3525.namprd13.prod.outlook.com
+ ([fe80::f453:2dd2:675:d063]) by CH2PR13MB3525.namprd13.prod.outlook.com
+ ([fe80::f453:2dd2:675:d063%3]) with mapi id 15.20.3868.025; Mon, 15 Feb 2021
+ 16:02:20 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "drinkcat@chromium.org" <drinkcat@chromium.org>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "iant@google.com" <iant@google.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "dchinner@redhat.com" <dchinner@redhat.com>,
+        "llozano@chromium.org" <llozano@chromium.org>,
+        "lhenriques@suse.de" <lhenriques@suse.de>,
+        "sfrench@samba.org" <sfrench@samba.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "miklos@szeredi.hu" <miklos@szeredi.hu>
+CC:     "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>
+Subject: Re: [PATCH v2] vfs: prevent copy_file_range to copy across devices
+Thread-Topic: [PATCH v2] vfs: prevent copy_file_range to copy across devices
+Thread-Index: AQHXA7EmiAMwHAQV80CDyBR44E7wi6pZYHkA
+Date:   Mon, 15 Feb 2021 16:02:20 +0000
+Message-ID: <ec3a5337b9da71a7bc9527728067a4a3d027419b.camel@hammerspace.com>
+References: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
+         <20210215154317.8590-1-lhenriques@suse.de>
+In-Reply-To: <20210215154317.8590-1-lhenriques@suse.de>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: chromium.org; dkim=none (message not signed)
+ header.d=none;chromium.org; dmarc=none action=none
+ header.from=hammerspace.com;
+x-originating-ip: [68.36.133.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cce1c63a-bf40-438b-352a-08d8d1cb1335
+x-ms-traffictypediagnostic: CH2PR13MB3847:
+x-microsoft-antispam-prvs: <CH2PR13MB3847F931D8B7941CA1C3D946B8889@CH2PR13MB3847.namprd13.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: p9ABEgRiSzR5EEdXJSG8JT3ZqLuy+vYu6QX0oSH8q3s9gde3nmI0dwlJ7XtvwWzA8lKsi4NTrLuk9cCPiLGHfLsp5d16JtwYwywovDXcVVPQvZ1H9h88m1PjFoABw2ijX6MXqTt6EAMtjPj7Gp92MWYaCgXUWF/9ZLI5VJIGDKNs1fxx8SJ2BDrGHInDS+jfwrJUOH6v9JC8UdsDu2skR3FxtbzL36H9kpJI0u3nhTp1mNxRfF3KOZ6w9HE0/KrcM8o+1+k6bjncbzCwBioUZNN4AFr6kj/kvY4lnkooxsQnnoXFlZd67m7fxW09A0my3RtZTGPFMpdE7Sw4uPVpg0mewkteToc2ddCk13ujAfpmBvwTAfhwq7sSyEU+8I8jqUgOpzl4XYoGqjmI1BL3fJ2f0gwfpoeUYD39dKIIGsV/DWP0HR0MzTC2Z2CW/MOd2+8a0ejA8MKdzoadpa5c4MJNAGluOYK14Tz0dKz3moSoSBjfObQvjR8eHvSwMeISJ1vpRO+UCWntjwykhaCqnvJ6xOSelb0yEyh5uzpMaRUeFz02hPVsMPGgE25IPKcM
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR13MB3525.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(136003)(376002)(396003)(39830400003)(346002)(4744005)(5660300002)(8676002)(76116006)(66476007)(2616005)(66556008)(71200400001)(921005)(66946007)(64756008)(66446008)(478600001)(8936002)(6512007)(36756003)(2906002)(316002)(186003)(26005)(7416002)(86362001)(4326008)(6506007)(110136005)(6486002)(54906003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?utf-8?B?bXRMME1vZW1YZkR6eXBPaXl0U2hGYkdNQ2FKRmFmZExNYk1mTEptc0kvSUFx?=
+ =?utf-8?B?OU5EYkdBY0VtaElCZ2QzeW50cTB2elgwNE9EaTY4aDVpZkd2MzZVM1lhQzgx?=
+ =?utf-8?B?ei9kM3RsY2V5M3V0bkkvTW5zTlVidjRKZlA3TVhVd1BEdmtUMXJIdGdCaTh4?=
+ =?utf-8?B?SURja3J0N0d2Y09seW4zZUFwWWk2NU9uMlZlUHBrcFN3dXJoY0FXN21BamhJ?=
+ =?utf-8?B?eExxR2VhaCtNYXVrYXplL2RsYlZJbTQ0TmloNHZnRkF2UzdwTmh4bC9sYUs5?=
+ =?utf-8?B?MWI2cU1VNEMrUEwrU2lHblNhb1F5OXdsL3FoVGJTODF5cU8vR3NOK1hvOHJI?=
+ =?utf-8?B?UVcycWN3Y3NYd091TzBEbmhRdTdpeHdYRDdtRFlvaGZtN2E0RGp4ZFBmNndH?=
+ =?utf-8?B?Tk9sckY2cVI1eG0rSWFvaE92VHJrb3A0V0VqZHRQOGp6RG12bXlvTFRVaTJS?=
+ =?utf-8?B?bmNxS2dyQW43QmdXWEZ5aXhzWDFla2ZIdWdlWDROdzVaaWxyMjVmU2lrYy9a?=
+ =?utf-8?B?VHJlc2U2TVNNVzVFTTNiT01DRzEydWR4clkxUndoejc1MGZVSlRHYThDZzRt?=
+ =?utf-8?B?M2VRUk1zT3ppMjBjOWFzbjlURkliU0poZTVVRkNCQ0pXTWNFSUpvQ2sza1Q2?=
+ =?utf-8?B?UHNZczY5WHdRb20zaXlGRGM3OFh1ZklhdnRseU9nT2g3OEVsVTRRbURGbmlY?=
+ =?utf-8?B?aWZQMlhZbHR2bG1rMUZyeW0ybU9FVzgvOExCcXNlYUt6eTNVSFZSNG14dEVp?=
+ =?utf-8?B?ekkzWDV1dHM2akdqY2FDZG1lVHVTS3VZUzA4ek1PNjJnNmwxdDdURFpiTW5D?=
+ =?utf-8?B?eWJicklKSmZSa2dMcEYrNzF1YlFpbjNQRmZFTkhuWTRsdEhVa0EyUkpQcGdz?=
+ =?utf-8?B?U3hSYndFeHRsdEQ2Qjc1dFdaZ0QzbGJLbTVGQWtmWDdINWQvaWtSV1FEc0lV?=
+ =?utf-8?B?QkErOVVuR0tSYUgvYjBxd2ZHK1lPRTVzSGd0SHV1aWs1YUl0M09zTW1DK3Bx?=
+ =?utf-8?B?ZTZPZHdaYk9lR2dVaFBzTGlzajlvdmdzQmhIczFGVEtrVDNxSGgzMmZLTjE2?=
+ =?utf-8?B?bWFSUTVSYkg1RGk5RlhJbWlKMnRDMHl5UzlJTFpyT0dyUEhtTDkvVzErZTNS?=
+ =?utf-8?B?UDN0Ykk5R2RwMTI0N29rSS9LazNZMTdXa0pNcFVOaDdZNU5TWGZvWDJ1OU1o?=
+ =?utf-8?B?RGRJa3JWNTh4WklFQWM4QmIzYVV0VlIvUFUzcGppdXVVaU10a2l3cmpEenV0?=
+ =?utf-8?B?aExqWG92eWFRNWdOY3h6YlpNL0F6WWdsdUg0Wlc4VU9BVndXOHhxVFY0YS9r?=
+ =?utf-8?B?NUhNN1dUdnIwQnBhS1E2Uk4waVZZSkF3Vit1VDVqeXQ2b2lQaHlFWGZCVWRN?=
+ =?utf-8?B?Z0ZNdDJsTHA2bWVrWGlsQWg2SUpNeWszdnhVNGc4UjNsdVlsYkF4aEFQS3Vw?=
+ =?utf-8?B?SG9CMzNnSmNuaWhNSTZpL29TR0ptYzdyck9qTHE1UUZuaWFacTJ3dkFIalM3?=
+ =?utf-8?B?YzJmdUdDbkFYb2JiWElUcW1nM0JmcTNPUFVBWTNKU0pwSUF4OEszVlJLN2U5?=
+ =?utf-8?B?NzBEYnhSM0ZuV0ZmYjJSYk9nYmdSWkxyR2RKRjhodEZ2QnIrakN4M2ZxN1Fj?=
+ =?utf-8?B?c2ZBY2VwOFVnR1FNNzRtSU83MDc4VGE4OXEveld5VE9DNHB0eFJmQUdlWkwr?=
+ =?utf-8?B?SmxLaW5nd2NGcWkyaDdLTnhrN2NUY1E3Sy96MFRxc1MyMEcrMjYwdlFLdm5Q?=
+ =?utf-8?Q?hprbA0Zf+DathyxUfrHvC9JYCcmmNR2LzsEvJA6?=
+x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-ID: <F8AFBCC046D0CD4A93A0E77383E79F0E@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR13MB3525.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cce1c63a-bf40-438b-352a-08d8d1cb1335
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2021 16:02:20.2906
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vrWcB+/NEhJ3P1I1hOJLlJrWrtegOKOwavZ0CVt3PhhrjSwet3yO53mLpJ8hxYIIvOZZap6EQDa4v4wqISs1Gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR13MB3847
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
-
-Convert ceph_readpages to ceph_readahead and make it use
-netfs_readahead. With this we can rip out a lot of the old
-readpage/readpages infrastructure.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: ceph-devel@vger.kernel.org
-cc: linux-cachefs@redhat.com
-cc: linux-fsdevel@vger.kernel.org
----
-
- fs/ceph/addr.c |  229 ++++++++------------------------------------------------
- 1 file changed, 34 insertions(+), 195 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 18f660611ba1..0dd64d31eff6 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -322,214 +322,53 @@ static int ceph_readpage(struct file *file, struct page *page)
- 	return netfs_readpage(file, page, &ceph_readpage_netfs_ops, NULL);
- }
- 
--/*
-- * Finish an async read(ahead) op.
-- */
--static void finish_read(struct ceph_osd_request *req)
-+static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
- {
--	struct inode *inode = req->r_inode;
--	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
--	struct ceph_osd_data *osd_data;
--	int rc = req->r_result <= 0 ? req->r_result : 0;
--	int bytes = req->r_result >= 0 ? req->r_result : 0;
--	int num_pages;
--	int i;
--
--	dout("finish_read %p req %p rc %d bytes %d\n", inode, req, rc, bytes);
--	if (rc == -EBLOCKLISTED)
--		ceph_inode_to_client(inode)->blocklisted = true;
--
--	/* unlock all pages, zeroing any data we didn't read */
--	osd_data = osd_req_op_extent_osd_data(req, 0);
--	BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_PAGES);
--	num_pages = calc_pages_for((u64)osd_data->alignment,
--					(u64)osd_data->length);
--	for (i = 0; i < num_pages; i++) {
--		struct page *page = osd_data->pages[i];
--
--		if (rc < 0 && rc != -ENOENT)
--			goto unlock;
--		if (bytes < (int)PAGE_SIZE) {
--			/* zero (remainder of) page */
--			int s = bytes < 0 ? 0 : bytes;
--			zero_user_segment(page, s, PAGE_SIZE);
--		}
-- 		dout("finish_read %p uptodate %p idx %lu\n", inode, page,
--		     page->index);
--		flush_dcache_page(page);
--		SetPageUptodate(page);
--unlock:
--		unlock_page(page);
--		put_page(page);
--		bytes -= PAGE_SIZE;
--	}
--
--	ceph_update_read_latency(&fsc->mdsc->metric, req->r_start_latency,
--				 req->r_end_latency, rc);
--
--	kfree(osd_data->pages);
--}
--
--/*
-- * start an async read(ahead) operation.  return nr_pages we submitted
-- * a read for on success, or negative error code.
-- */
--static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
--		      struct list_head *page_list, int max)
--{
--	struct ceph_osd_client *osdc =
--		&ceph_inode_to_client(inode)->client->osdc;
-+	struct inode *inode = mapping->host;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
--	struct page *page = lru_to_page(page_list);
--	struct ceph_vino vino;
--	struct ceph_osd_request *req;
--	u64 off;
--	u64 len;
--	int i;
--	struct page **pages;
--	pgoff_t next_index;
--	int nr_pages = 0;
--	int got = 0;
--	int ret = 0;
--
--	if (!rw_ctx) {
--		/* caller of readpages does not hold buffer and read caps
--		 * (fadvise, madvise and readahead cases) */
--		int want = CEPH_CAP_FILE_CACHE;
--		ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want,
--					true, &got);
--		if (ret < 0) {
--			dout("start_read %p, error getting cap\n", inode);
--		} else if (!(got & want)) {
--			dout("start_read %p, no cache cap\n", inode);
--			ret = 0;
--		}
--		if (ret <= 0) {
--			if (got)
--				ceph_put_cap_refs(ci, got);
--			while (!list_empty(page_list)) {
--				page = lru_to_page(page_list);
--				list_del(&page->lru);
--				put_page(page);
--			}
--			return ret;
--		}
--	}
--
--	off = (u64) page_offset(page);
--
--	/* count pages */
--	next_index = page->index;
--	list_for_each_entry_reverse(page, page_list, lru) {
--		if (page->index != next_index)
--			break;
--		nr_pages++;
--		next_index++;
--		if (max && nr_pages == max)
--			break;
--	}
--	len = nr_pages << PAGE_SHIFT;
--	dout("start_read %p nr_pages %d is %lld~%lld\n", inode, nr_pages,
--	     off, len);
--	vino = ceph_vino(inode);
--	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len,
--				    0, 1, CEPH_OSD_OP_READ,
--				    CEPH_OSD_FLAG_READ, NULL,
--				    ci->i_truncate_seq, ci->i_truncate_size,
--				    false);
--	if (IS_ERR(req)) {
--		ret = PTR_ERR(req);
--		goto out;
--	}
--
--	/* build page vector */
--	nr_pages = calc_pages_for(0, len);
--	pages = kmalloc_array(nr_pages, sizeof(*pages), GFP_KERNEL);
--	if (!pages) {
--		ret = -ENOMEM;
--		goto out_put;
--	}
--	for (i = 0; i < nr_pages; ++i) {
--		page = list_entry(page_list->prev, struct page, lru);
--		BUG_ON(PageLocked(page));
--		list_del(&page->lru);
--
-- 		dout("start_read %p adding %p idx %lu\n", inode, page,
--		     page->index);
--		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
--					  GFP_KERNEL)) {
--			put_page(page);
--			dout("start_read %p add_to_page_cache failed %p\n",
--			     inode, page);
--			nr_pages = i;
--			if (nr_pages > 0) {
--				len = nr_pages << PAGE_SHIFT;
--				osd_req_op_extent_update(req, 0, len);
--				break;
--			}
--			goto out_pages;
--		}
--		pages[i] = page;
--	}
--	osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, false);
--	req->r_callback = finish_read;
--	req->r_inode = inode;
--
--	dout("start_read %p starting %p %lld~%lld\n", inode, req, off, len);
--	ret = ceph_osdc_start_request(osdc, req, false);
--	if (ret < 0)
--		goto out_pages;
--	ceph_osdc_put_request(req);
-+	int got = (int)(uintptr_t)priv;
- 
--	/* After adding locked pages to page cache, the inode holds cache cap.
--	 * So we can drop our cap refs. */
- 	if (got)
- 		ceph_put_cap_refs(ci, got);
--
--	return nr_pages;
--
--out_pages:
--	for (i = 0; i < nr_pages; ++i)
--		unlock_page(pages[i]);
--	ceph_put_page_vector(pages, nr_pages, false);
--out_put:
--	ceph_osdc_put_request(req);
--out:
--	if (got)
--		ceph_put_cap_refs(ci, got);
--	return ret;
- }
-+const struct netfs_read_request_ops ceph_readahead_netfs_ops = {
-+	.init_rreq		= ceph_init_rreq,
-+	.is_cache_enabled	= ceph_is_cache_enabled,
-+	.begin_cache_operation	= ceph_begin_cache_operation,
-+	.issue_op		= ceph_netfs_issue_op,
-+	.clamp_length		= ceph_netfs_clamp_length,
-+	.cleanup		= ceph_readahead_cleanup,
-+};
- 
--
--/*
-- * Read multiple pages.  Leave pages we don't read + unlock in page_list;
-- * the caller (VM) cleans them up.
-- */
--static int ceph_readpages(struct file *file, struct address_space *mapping,
--			  struct list_head *page_list, unsigned nr_pages)
-+static void ceph_readahead(struct readahead_control *ractl)
- {
--	struct inode *inode = file_inode(file);
--	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
--	struct ceph_file_info *fi = file->private_data;
-+	struct inode *inode = file_inode(ractl->file);
-+	struct ceph_file_info *fi = ractl->file->private_data;
- 	struct ceph_rw_context *rw_ctx;
--	int rc = 0;
--	int max = 0;
-+	int got = 0;
-+	int ret = 0;
- 
- 	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
--		return -EINVAL;
-+		return;
- 
- 	rw_ctx = ceph_find_rw_context(fi);
--	max = fsc->mount_options->rsize >> PAGE_SHIFT;
--	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
--	     inode, file, rw_ctx, nr_pages, max);
--	while (!list_empty(page_list)) {
--		rc = start_read(inode, rw_ctx, page_list, max);
--		if (rc < 0)
--			goto out;
-+	if (!rw_ctx) {
-+		/*
-+		 * readahead callers do not necessarily hold Fcb caps
-+		 * (e.g. fadvise, madvise).
-+		 */
-+		int want = CEPH_CAP_FILE_CACHE;
-+
-+		ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
-+		if (ret < 0)
-+			dout("start_read %p, error getting cap\n", inode);
-+		else if (!(got & want))
-+			dout("start_read %p, no cache cap\n", inode);
-+
-+		if (ret <= 0)
-+			return;
- 	}
--out:
--	dout("readpages %p file %p ret %d\n", inode, file, rc);
--	return rc;
-+	netfs_readahead(ractl, &ceph_readahead_netfs_ops, (void *)(uintptr_t)got);
- }
- 
- struct ceph_writeback_ctl
-@@ -1482,7 +1321,7 @@ static ssize_t ceph_direct_io(struct kiocb *iocb, struct iov_iter *iter)
- 
- const struct address_space_operations ceph_aops = {
- 	.readpage = ceph_readpage,
--	.readpages = ceph_readpages,
-+	.readahead = ceph_readahead,
- 	.writepage = ceph_writepage,
- 	.writepages = ceph_writepages_start,
- 	.write_begin = ceph_write_begin,
-
-
+T24gTW9uLCAyMDIxLTAyLTE1IGF0IDE1OjQzICswMDAwLCBMdWlzIEhlbnJpcXVlcyB3cm90ZToN
+Cj4gTmljb2xhcyBCb2ljaGF0IHJlcG9ydGVkIGFuIGlzc3VlIHdoZW4gdHJ5aW5nIHRvIHVzZSB0
+aGUNCj4gY29weV9maWxlX3JhbmdlDQo+IHN5c2NhbGwgb24gYSB0cmFjZWZzIGZpbGUuwqAgSXQg
+ZmFpbGVkIHNpbGVudGx5IGJlY2F1c2UgdGhlIGZpbGUNCj4gY29udGVudCBpcw0KPiBnZW5lcmF0
+ZWQgb24tdGhlLWZseSAocmVwb3J0aW5nIGEgc2l6ZSBvZiB6ZXJvKSBhbmQgY29weV9maWxlX3Jh
+bmdlDQo+IG5lZWRzDQo+IHRvIGtub3cgaW4gYWR2YW5jZSBob3cgbXVjaCBkYXRhIGlzIHByZXNl
+bnQuDQoNClRoYXQgZXhwbGFuYXRpb24gbWFrZXMgbm8gc2Vuc2Ugd2hhdHNvZXZlci4gY29weV9m
+aWxlX3JhbmdlIGlzIGEgbm9uLQ0KYXRvbWljIG9wZXJhdGlvbiBhbmQgc28gdGhlIGZpbGUgY2Fu
+IGNoYW5nZSB3aGlsZSBiZWluZyBjb3BpZWQuIEFueQ0KZGV0ZXJtaW5hdGlvbiBvZiAnaG93IG11
+Y2ggZGF0YSBpcyBwcmVzZW50JyB0aGF0IGlzIG1hZGUgaW4gYWR2YW5jZQ0Kd291bGQgdGhlcmVm
+b3JlIGJlIGEgZmxhdyBpbiB0aGUgY29weSBwcm9jZXNzIGJlaW5nIHVzZWQgKGkuZS4NCmRvX3Nw
+bGljZV9kaXJlY3QoKSkuIERvZXMgc2VuZGZpbGUoKSBhbHNvICdpc3N1ZScgaW4gdGhlIHNhbWUg
+d2F5Pw0KDQoNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWlu
+ZXIsIEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29tDQoNCg0K
