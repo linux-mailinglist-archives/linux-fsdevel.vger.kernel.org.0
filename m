@@ -2,298 +2,298 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0149831BD57
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 16:45:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9621531BD6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 16:48:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230203AbhBOPoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 10:44:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49476 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231584AbhBOPng (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 10:43:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 616CCADE0;
-        Mon, 15 Feb 2021 15:42:17 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 69cb18b7;
-        Mon, 15 Feb 2021 15:43:19 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        id S231582AbhBOPsH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 10:48:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30947 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231563AbhBOPqD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Feb 2021 10:46:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1613403868;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=OUcau2RScLJC1sbBhCFeWAqe5oOjO8CLqdBwSyrKW/k=;
+        b=aKRRAT0XkQ4dzQv6Uq8SPMZbl7wOGK5G33jAK5jEnHigAg8PSIbS4se1nafW3dbO6OOTwv
+        /kzuba03qHiSnFuN4Yw6E/YEdLN5QA/xmjJVL93JrygI5NJmKlO2Vqh9XCaeN+NaCTFJhX
+        hVmucm8NGyYkstGu6lmlAHsMhZjqwck=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-357-TJr8slT8P9GEspE4LilBZQ-1; Mon, 15 Feb 2021 10:44:24 -0500
+X-MC-Unique: TJr8slT8P9GEspE4LilBZQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 736BB79EC2;
+        Mon, 15 Feb 2021 15:44:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 38F3B608DB;
+        Mon, 15 Feb 2021 15:44:14 +0000 (UTC)
+Subject: [PATCH 00/33] Network fs helper library & fscache kiocb API [ver #3]
+From:   David Howells <dhowells@redhat.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-cachefs@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        linux-afs@lists.infradead.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.de>
-Subject: [PATCH v2] vfs: prevent copy_file_range to copy across devices
-Date:   Mon, 15 Feb 2021 15:43:17 +0000
-Message-Id: <20210215154317.8590-1-lhenriques@suse.de>
-In-Reply-To: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
-References: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 15 Feb 2021 15:44:13 +0000
+Message-ID: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Nicolas Boichat reported an issue when trying to use the copy_file_range
-syscall on a tracefs file.  It failed silently because the file content is
-generated on-the-fly (reporting a size of zero) and copy_file_range needs
-to know in advance how much data is present.
 
-This commit restores the cross-fs restrictions that existed prior to
-5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") and
-removes generic_copy_file_range() calls from ceph, cifs, fuse, and nfs.
+Here's a set of patches to do two things:
 
-Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
-Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-Cc: Nicolas Boichat <drinkcat@chromium.org>
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
+ (1) Add a helper library to handle the new VM readahead interface.  This
+     is intended to be used unconditionally by the filesystem (whether or
+     not caching is enabled) and provides a common framework for doing
+     caching, transparent huge pages and, in the future, possibly fscrypt
+     and read bandwidth maximisation.  It also allows the netfs and the
+     cache to align, expand and slice up a read request from the VM in
+     various ways; the netfs need only provide a function to read a stretch
+     of data to the pagecache and the helper takes care of the rest.
+
+ (2) Add an alternative fscache/cachfiles I/O API that uses the kiocb
+     facility to do async DIO to transfer data to/from the netfs's pages,
+     rather than using readpage with wait queue snooping on one side and
+     vfs_write() on the other.  It also uses less memory, since it doesn't
+     do buffered I/O on the backing file.
+
+     Note that this uses SEEK_HOLE/SEEK_DATA to locate the data available
+     to be read from the cache.  Whilst this is an improvement from the
+     bmap interface, it still has a problem with regard to a modern
+     extent-based filesystem inserting or removing bridging blocks of
+     zeros.  Fixing that requires a much greater overhaul.
+
+This is a step towards overhauling the fscache API.  The change is opt-in
+on the part of the network filesystem.  A netfs should not try to mix the
+old and the new API because of conflicting ways of handling pages and the
+PG_fscache page flag and because it would be mixing DIO with buffered I/O.
+Further, the helper library can't be used with the old API.
+
+This does not change any of the fscache cookie handling APIs or the way
+invalidation is done.
+
+In the near term, I intend to deprecate and remove the old I/O API
+(fscache_allocate_page{,s}(), fscache_read_or_alloc_page{,s}(),
+fscache_write_page() and fscache_uncache_page()) and eventually replace
+most of fscache/cachefiles with something simpler and easier to follow.
+
+The patchset contains five parts:
+
+ (1) Some helper patches, including provision of an ITER_XARRAY iov
+     iterator and a function to do readahead expansion.
+
+ (2) Patches to add the netfs helper library.
+
+ (3) A patch to add the fscache/cachefiles kiocb API.
+
+ (4) Patches to add support in AFS for this.
+
+ (5) Patches from Jeff Layton to add support in Ceph for this.
+
+Dave Wysochanski also has patches for NFS for this, though they're not
+included on this branch as there's an issue with PNFS.
+
+With this, AFS without a cache passes all expected xfstests; with a cache,
+there's an extra failure, but that's also there before these patches.
+Fixing that probably requires a greater overhaul.  Ceph and NFS also pass
+the expected tests.
+
+These patches can be found also on:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-netfs-lib
+
+For diffing reference, the tag for the 9th Feb pull request is
+fscache-ioapi-20210203 and can be found in the same repository.
+
+
+
+Changes
+=======
+
+ (v3) Rolled in the bug fixes.
+
+      Adjusted the functions that unlock and wait for PG_fscache according
+      to Linus's suggestion.
+
+      Hold a ref on a page when PG_fscache is set as per Linus's
+      suggestion.
+
+      Dropped NFS support and added Ceph support.
+
+ (v2) Fixed some bugs and added NFS support.
+
+
+References
+==========
+
+These patches have been published for review before, firstly as part of a
+larger set:
+
+Link: https://lore.kernel.org/linux-fsdevel/158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk/
+
+Link: https://lore.kernel.org/linux-fsdevel/159465766378.1376105.11619976251039287525.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/159465784033.1376674.18106463693989811037.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/159465821598.1377938.2046362270225008168.stgit@warthog.procyon.org.uk/
+
+Link: https://lore.kernel.org/linux-fsdevel/160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk/
+
+Then as a cut-down set:
+
+Link: https://lore.kernel.org/linux-fsdevel/161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk/
+
+Link: https://lore.kernel.org/linux-fsdevel/161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk/
+
+
+Proposals/information about the design has been published here:
+
+Link: https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/2758811.1610621106@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/1441311.1598547738@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/160655.1611012999@warthog.procyon.org.uk/
+
+And requests for information:
+
+Link: https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/4467.1579020509@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/3577430.1579705075@warthog.procyon.org.uk/
+
+The NFS parts, though not included here, have been tested by someone who's
+using fscache in production:
+
+Link: https://listman.redhat.com/archives/linux-cachefs/2020-December/msg00000.html
+
+I've posted partial patches to try and help 9p and cifs along:
+
+Link: https://lore.kernel.org/linux-fsdevel/1514086.1605697347@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-cifs/1794123.1605713481@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/241017.1612263863@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/linux-cifs/270998.1612265397@warthog.procyon.org.uk/
+
+David
 ---
-Changes since v1 (after Amir review)
-- restored do_copy_file_range() helper
-- return -EOPNOTSUPP if fs doesn't implement CFR
-- updated commit description
+David Howells (27):
+      iov_iter: Add ITER_XARRAY
+      mm: Add an unlock function for PG_private_2/PG_fscache
+      mm: Implement readahead_control pageset expansion
+      vfs: Export rw_verify_area() for use by cachefiles
+      netfs: Make a netfs helper module
+      netfs, mm: Move PG_fscache helper funcs to linux/netfs.h
+      netfs, mm: Add unlock_page_fscache() and wait_on_page_fscache()
+      netfs: Provide readahead and readpage netfs helpers
+      netfs: Add tracepoints
+      netfs: Gather stats
+      netfs: Add write_begin helper
+      netfs: Define an interface to talk to a cache
+      netfs: Hold a ref on a page when PG_private_2 is set
+      fscache, cachefiles: Add alternate API to use kiocb for read/write to cache
+      afs: Disable use of the fscache I/O routines
+      afs: Pass page into dirty region helpers to provide THP size
+      afs: Print the operation debug_id when logging an unexpected data version
+      afs: Move key to afs_read struct
+      afs: Don't truncate iter during data fetch
+      afs: Log remote unmarshalling errors
+      afs: Set up the iov_iter before calling afs_extract_data()
+      afs: Use ITER_XARRAY for writing
+      afs: Wait on PG_fscache before modifying/releasing a page
+      afs: Extract writeback extension into its own function
+      afs: Prepare for use of THPs
+      afs: Use the fs operation ops to handle FetchData completion
+      afs: Use new fscache read helper API
 
- fs/ceph/file.c     | 21 +++-----------------
- fs/cifs/cifsfs.c   |  3 ---
- fs/fuse/file.c     | 21 +++-----------------
- fs/nfs/nfs4file.c  | 20 +++----------------
- fs/read_write.c    | 49 ++++++++++------------------------------------
- include/linux/fs.h |  3 ---
- 6 files changed, 19 insertions(+), 98 deletions(-)
+Jeff Layton (6):
+      ceph: disable old fscache readpage handling
+      ceph: rework PageFsCache handling
+      ceph: fix fscache invalidation
+      ceph: convert readpage to fscache read helper
+      ceph: plug write_begin into read helper
+      ceph: convert ceph_readpages to ceph_readahead
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 209535d5b8d3..639bd7bfaea9 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2261,9 +2261,9 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
- 	return bytes;
- }
- 
--static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
--				      struct file *dst_file, loff_t dst_off,
--				      size_t len, unsigned int flags)
-+static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
-+				    struct file *dst_file, loff_t dst_off,
-+				    size_t len, unsigned int flags)
- {
- 	struct inode *src_inode = file_inode(src_file);
- 	struct inode *dst_inode = file_inode(dst_file);
-@@ -2456,21 +2456,6 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	return ret;
- }
- 
--static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
--				    struct file *dst_file, loff_t dst_off,
--				    size_t len, unsigned int flags)
--{
--	ssize_t ret;
--
--	ret = __ceph_copy_file_range(src_file, src_off, dst_file, dst_off,
--				     len, flags);
--
--	if (ret == -EOPNOTSUPP || ret == -EXDEV)
--		ret = generic_copy_file_range(src_file, src_off, dst_file,
--					      dst_off, len, flags);
--	return ret;
--}
--
- const struct file_operations ceph_file_fops = {
- 	.open = ceph_open,
- 	.release = ceph_release,
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index ab883e84e116..7aa3d20f21c0 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -1229,9 +1229,6 @@ static ssize_t cifs_copy_file_range(struct file *src_file, loff_t off,
- 					len, flags);
- 	free_xid(xid);
- 
--	if (rc == -EOPNOTSUPP || rc == -EXDEV)
--		rc = generic_copy_file_range(src_file, off, dst_file,
--					     destoff, len, flags);
- 	return rc;
- }
- 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 8cccecb55fb8..0dd703278e49 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3330,9 +3330,9 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	return err;
- }
- 
--static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
--				      struct file *file_out, loff_t pos_out,
--				      size_t len, unsigned int flags)
-+static ssize_t fuse_copy_file_range(struct file *file_in, loff_t pos_in,
-+				    struct file *file_out, loff_t pos_out,
-+				    size_t len, unsigned int flags)
- {
- 	struct fuse_file *ff_in = file_in->private_data;
- 	struct fuse_file *ff_out = file_out->private_data;
-@@ -3439,21 +3439,6 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 	return err;
- }
- 
--static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
--				    struct file *dst_file, loff_t dst_off,
--				    size_t len, unsigned int flags)
--{
--	ssize_t ret;
--
--	ret = __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
--				     len, flags);
--
--	if (ret == -EOPNOTSUPP || ret == -EXDEV)
--		ret = generic_copy_file_range(src_file, src_off, dst_file,
--					      dst_off, len, flags);
--	return ret;
--}
--
- static const struct file_operations fuse_file_operations = {
- 	.llseek		= fuse_file_llseek,
- 	.read_iter	= fuse_file_read_iter,
-diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-index 57b3821d975a..60998209e310 100644
---- a/fs/nfs/nfs4file.c
-+++ b/fs/nfs/nfs4file.c
-@@ -133,9 +133,9 @@ nfs4_file_flush(struct file *file, fl_owner_t id)
- }
- 
- #ifdef CONFIG_NFS_V4_2
--static ssize_t __nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
--				      struct file *file_out, loff_t pos_out,
--				      size_t count, unsigned int flags)
-+static ssize_t nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
-+				    struct file *file_out, loff_t pos_out,
-+				    size_t count, unsigned int flags)
- {
- 	struct nfs42_copy_notify_res *cn_resp = NULL;
- 	struct nl4_server *nss = NULL;
-@@ -189,20 +189,6 @@ static ssize_t __nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
- 	return ret;
- }
- 
--static ssize_t nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
--				    struct file *file_out, loff_t pos_out,
--				    size_t count, unsigned int flags)
--{
--	ssize_t ret;
--
--	ret = __nfs4_copy_file_range(file_in, pos_in, file_out, pos_out, count,
--				     flags);
--	if (ret == -EOPNOTSUPP || ret == -EXDEV)
--		ret = generic_copy_file_range(file_in, pos_in, file_out,
--					      pos_out, count, flags);
--	return ret;
--}
--
- static loff_t nfs4_file_llseek(struct file *filep, loff_t offset, int whence)
- {
- 	loff_t ret;
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 75f764b43418..b217cd62ae0d 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1358,40 +1358,12 @@ COMPAT_SYSCALL_DEFINE4(sendfile64, int, out_fd, int, in_fd,
- }
- #endif
- 
--/**
-- * generic_copy_file_range - copy data between two files
-- * @file_in:	file structure to read from
-- * @pos_in:	file offset to read from
-- * @file_out:	file structure to write data to
-- * @pos_out:	file offset to write data to
-- * @len:	amount of data to copy
-- * @flags:	copy flags
-- *
-- * This is a generic filesystem helper to copy data from one file to another.
-- * It has no constraints on the source or destination file owners - the files
-- * can belong to different superblocks and different filesystem types. Short
-- * copies are allowed.
-- *
-- * This should be called from the @file_out filesystem, as per the
-- * ->copy_file_range() method.
-- *
-- * Returns the number of bytes copied or a negative error indicating the
-- * failure.
-- */
--
--ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
--				struct file *file_out, loff_t pos_out,
--				size_t len, unsigned int flags)
--{
--	return do_splice_direct(file_in, &pos_in, file_out, &pos_out,
--				len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
--}
--EXPORT_SYMBOL(generic_copy_file_range);
--
- static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
- 				  struct file *file_out, loff_t pos_out,
- 				  size_t len, unsigned int flags)
- {
-+	ssize_t ret = -EXDEV;
-+
- 	/*
- 	 * Although we now allow filesystems to handle cross sb copy, passing
- 	 * a file of the wrong filesystem type to filesystem driver can result
-@@ -1400,14 +1372,14 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
- 	 * several different file_system_type structures, but they all end up
- 	 * using the same ->copy_file_range() function pointer.
- 	 */
--	if (file_out->f_op->copy_file_range &&
--	    file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
--		return file_out->f_op->copy_file_range(file_in, pos_in,
--						       file_out, pos_out,
--						       len, flags);
-+	if (!file_out->f_op->copy_file_range)
-+		ret = -EOPNOTSUPP;
-+	else if (file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
-+		ret = file_out->f_op->copy_file_range(file_in, pos_in,
-+						      file_out, pos_out,
-+						      len, flags);
- 
--	return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
--				       flags);
-+	return ret;
- }
- 
- /*
-@@ -1514,8 +1486,7 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 	}
- 
- 	ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
--				flags);
--	WARN_ON_ONCE(ret == -EOPNOTSUPP);
-+				 flags);
- done:
- 	if (ret > 0) {
- 		fsnotify_access(file_in);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd47deea7c17..3aaf627be409 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1910,9 +1910,6 @@ extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
- extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
- extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
- 				   loff_t, size_t, unsigned int);
--extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
--				       struct file *file_out, loff_t pos_out,
--				       size_t len, unsigned int flags);
- extern int generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
- 					 struct file *file_out, loff_t pos_out,
- 					 loff_t *count,
+
+ fs/Kconfig                    |    1 +
+ fs/Makefile                   |    1 +
+ fs/afs/Kconfig                |    1 +
+ fs/afs/dir.c                  |  225 ++++---
+ fs/afs/file.c                 |  470 ++++---------
+ fs/afs/fs_operation.c         |    4 +-
+ fs/afs/fsclient.c             |  108 +--
+ fs/afs/inode.c                |    7 +-
+ fs/afs/internal.h             |   58 +-
+ fs/afs/rxrpc.c                |  150 ++---
+ fs/afs/write.c                |  610 +++++++++--------
+ fs/afs/yfsclient.c            |   82 +--
+ fs/cachefiles/Makefile        |    1 +
+ fs/cachefiles/interface.c     |    5 +-
+ fs/cachefiles/internal.h      |    9 +
+ fs/cachefiles/rdwr2.c         |  412 ++++++++++++
+ fs/ceph/Kconfig               |    1 +
+ fs/ceph/addr.c                |  535 ++++++---------
+ fs/ceph/cache.c               |  125 ----
+ fs/ceph/cache.h               |  101 +--
+ fs/ceph/caps.c                |   10 +-
+ fs/ceph/inode.c               |    1 +
+ fs/ceph/super.h               |    1 +
+ fs/fscache/Kconfig            |    1 +
+ fs/fscache/Makefile           |    3 +-
+ fs/fscache/internal.h         |    3 +
+ fs/fscache/page.c             |    2 +-
+ fs/fscache/page2.c            |  117 ++++
+ fs/fscache/stats.c            |    1 +
+ fs/internal.h                 |    5 -
+ fs/netfs/Kconfig              |   23 +
+ fs/netfs/Makefile             |    5 +
+ fs/netfs/internal.h           |   97 +++
+ fs/netfs/read_helper.c        | 1169 +++++++++++++++++++++++++++++++++
+ fs/netfs/stats.c              |   59 ++
+ fs/read_write.c               |    1 +
+ include/linux/fs.h            |    1 +
+ include/linux/fscache-cache.h |    4 +
+ include/linux/fscache.h       |   40 +-
+ include/linux/netfs.h         |  195 ++++++
+ include/linux/pagemap.h       |    3 +
+ include/net/af_rxrpc.h        |    2 +-
+ include/trace/events/afs.h    |   74 +--
+ include/trace/events/netfs.h  |  201 ++++++
+ mm/filemap.c                  |   20 +
+ mm/readahead.c                |   70 ++
+ net/rxrpc/recvmsg.c           |    9 +-
+ 47 files changed, 3473 insertions(+), 1550 deletions(-)
+ create mode 100644 fs/cachefiles/rdwr2.c
+ create mode 100644 fs/fscache/page2.c
+ create mode 100644 fs/netfs/Kconfig
+ create mode 100644 fs/netfs/Makefile
+ create mode 100644 fs/netfs/internal.h
+ create mode 100644 fs/netfs/read_helper.c
+ create mode 100644 fs/netfs/stats.c
+ create mode 100644 include/linux/netfs.h
+ create mode 100644 include/trace/events/netfs.h
+
+
