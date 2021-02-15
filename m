@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3611131BDEF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 17:05:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8496B31BDF4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 17:06:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232408AbhBOP4m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 10:56:42 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25075 "EHLO
+        id S231586AbhBOP4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 10:56:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:59555 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231907AbhBOPsx (ORCPT
+        by vger.kernel.org with ESMTP id S232109AbhBOPvm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 10:48:53 -0500
+        Mon, 15 Feb 2021 10:51:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613404046;
+        s=mimecast20190719; t=1613404214;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NWw5msYLz0E7stM1TyigiAc+AbKZuImRNTVP4T9S/zY=;
-        b=JucJUNZdKHNIByPs7ZbKrpjx5vOTF3EUNiZVXURW0q+y01A31OmIS5XoYf+GbTHVJPCjbg
-        hRYrifxStBIpFBHcFmJdyauWcEAV4iubPShUuk/+QlyJ1kDIcX9A27Rl4HcU0KpkKQEni8
-        +9zrmozq1M5eTIv8gU5YVPEX0c4zUKQ=
+        bh=66ACIn3TA/xnIyJbirBjqL9BW2ZzwrRtog7EFceoxuU=;
+        b=Kz2WrmSiroG1L1RWlzDzfl9TElIawqrb2rTAy8kq6Gl6nkTe0QqAKqr/yJy3OT9qY7bZQC
+        vcPbQQfIfGnvxDv4iVKTQl/6ImXVdEefT3PUM7bto2COea1wgStL7zHGGHmna0zUY4B1AO
+        pcgqW9bXn85dl6BhZdeK8m93K+ziIAA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-136-GIrUIhksPNuJsqrE0dPNjA-1; Mon, 15 Feb 2021 10:47:22 -0500
-X-MC-Unique: GIrUIhksPNuJsqrE0dPNjA-1
+ us-mta-535-jjZgcjxAMRKKGBqSERbfag-1; Mon, 15 Feb 2021 10:50:09 -0500
+X-MC-Unique: jjZgcjxAMRKKGBqSERbfag-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4C86479EC2;
-        Mon, 15 Feb 2021 15:47:20 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1D97F192AB79;
+        Mon, 15 Feb 2021 15:50:07 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EA8360BE2;
-        Mon, 15 Feb 2021 15:47:13 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C4D460BE2;
+        Mon, 15 Feb 2021 15:50:00 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 15/33] afs: Disable use of the fscache I/O routines
+Subject: [PATCH 28/33] ceph: disable old fscache readpage handling
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>
-Cc:     linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        Jeff Layton <jlayton@redhat.com>,
+Cc:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -54,8 +54,8 @@ Cc:     linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 15 Feb 2021 15:47:13 +0000
-Message-ID: <161340403323.1303470.8159439948319423431.stgit@warthog.procyon.org.uk>
+Date:   Mon, 15 Feb 2021 15:49:59 +0000
+Message-ID: <161340419960.1303470.11943471506055138257.stgit@warthog.procyon.org.uk>
 In-Reply-To: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
 References: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
@@ -67,328 +67,445 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Disable use of the fscache I/O routined by the AFS filesystem.  It's about
-to transition to passing iov_iters down and fscache is about to have its
-I/O path to use iov_iter, so all that needs to change.
+From: Jeff Layton <jlayton@kernel.org>
 
+With the new netfs read helper functions, we won't need a lot of this
+infrastructure as it handles the pagecache pages itself. Rip out the
+read handling for now, and much of the old infrastructure that deals in
+individual pages.
+
+The cookie handling is mostly unchanged, however.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-afs@lists.infradead.org
+cc: ceph-devel@vger.kernel.org
 cc: linux-cachefs@redhat.com
 cc: linux-fsdevel@vger.kernel.org
 ---
 
- fs/afs/file.c  |  199 ++++++++++----------------------------------------------
- fs/afs/inode.c |    2 -
- fs/afs/write.c |   10 ---
- 3 files changed, 36 insertions(+), 175 deletions(-)
+ fs/ceph/addr.c  |   31 +-------------
+ fs/ceph/cache.c |  125 -------------------------------------------------------
+ fs/ceph/cache.h |   91 ----------------------------------------
+ fs/ceph/caps.c  |    9 ----
+ 4 files changed, 3 insertions(+), 253 deletions(-)
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 85f5adf21aa0..6d43713fde01 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -203,24 +203,6 @@ void afs_put_read(struct afs_read *req)
- 	}
- }
- 
--#ifdef CONFIG_AFS_FSCACHE
--/*
-- * deal with notification that a page was read from the cache
-- */
--static void afs_file_readpage_read_complete(struct page *page,
--					    void *data,
--					    int error)
--{
--	_enter("%p,%p,%d", page, data, error);
--
--	/* if the read completes with an error, we just unlock the page and let
--	 * the VM reissue the readpage */
--	if (!error)
--		SetPageUptodate(page);
--	unlock_page(page);
--}
--#endif
--
- static void afs_fetch_data_success(struct afs_operation *op)
- {
- 	struct afs_vnode *vnode = op->file[0].vnode;
-@@ -288,89 +270,46 @@ int afs_page_filler(void *data, struct page *page)
- 	if (test_bit(AFS_VNODE_DELETED, &vnode->flags))
- 		goto error;
- 
--	/* is it cached? */
--#ifdef CONFIG_AFS_FSCACHE
--	ret = fscache_read_or_alloc_page(vnode->cache,
--					 page,
--					 afs_file_readpage_read_complete,
--					 NULL,
--					 GFP_KERNEL);
--#else
--	ret = -ENOBUFS;
--#endif
--	switch (ret) {
--		/* read BIO submitted (page in cache) */
--	case 0:
--		break;
--
--		/* page not yet cached */
--	case -ENODATA:
--		_debug("cache said ENODATA");
--		goto go_on;
--
--		/* page will not be cached */
--	case -ENOBUFS:
--		_debug("cache said ENOBUFS");
--
--		fallthrough;
--	default:
--	go_on:
--		req = kzalloc(struct_size(req, array, 1), GFP_KERNEL);
--		if (!req)
--			goto enomem;
--
--		/* We request a full page.  If the page is a partial one at the
--		 * end of the file, the server will return a short read and the
--		 * unmarshalling code will clear the unfilled space.
--		 */
--		refcount_set(&req->usage, 1);
--		req->pos = (loff_t)page->index << PAGE_SHIFT;
--		req->len = PAGE_SIZE;
--		req->nr_pages = 1;
--		req->pages = req->array;
--		req->pages[0] = page;
--		get_page(page);
--
--		/* read the contents of the file from the server into the
--		 * page */
--		ret = afs_fetch_data(vnode, key, req);
--		afs_put_read(req);
--
--		if (ret < 0) {
--			if (ret == -ENOENT) {
--				_debug("got NOENT from server"
--				       " - marking file deleted and stale");
--				set_bit(AFS_VNODE_DELETED, &vnode->flags);
--				ret = -ESTALE;
--			}
--
--#ifdef CONFIG_AFS_FSCACHE
--			fscache_uncache_page(vnode->cache, page);
--#endif
--			BUG_ON(PageFsCache(page));
--
--			if (ret == -EINTR ||
--			    ret == -ENOMEM ||
--			    ret == -ERESTARTSYS ||
--			    ret == -EAGAIN)
--				goto error;
--			goto io_error;
--		}
-+	req = kzalloc(struct_size(req, array, 1), GFP_KERNEL);
-+	if (!req)
-+		goto enomem;
- 
--		SetPageUptodate(page);
-+	/* We request a full page.  If the page is a partial one at the
-+	 * end of the file, the server will return a short read and the
-+	 * unmarshalling code will clear the unfilled space.
-+	 */
-+	refcount_set(&req->usage, 1);
-+	req->pos = (loff_t)page->index << PAGE_SHIFT;
-+	req->len = PAGE_SIZE;
-+	req->nr_pages = 1;
-+	req->pages = req->array;
-+	req->pages[0] = page;
-+	get_page(page);
-+
-+	/* read the contents of the file from the server into the
-+	 * page */
-+	ret = afs_fetch_data(vnode, key, req);
-+	afs_put_read(req);
- 
--		/* send the page to the cache */
--#ifdef CONFIG_AFS_FSCACHE
--		if (PageFsCache(page) &&
--		    fscache_write_page(vnode->cache, page, vnode->status.size,
--				       GFP_KERNEL) != 0) {
--			fscache_uncache_page(vnode->cache, page);
--			BUG_ON(PageFsCache(page));
-+	if (ret < 0) {
-+		if (ret == -ENOENT) {
-+			_debug("got NOENT from server"
-+			       " - marking file deleted and stale");
-+			set_bit(AFS_VNODE_DELETED, &vnode->flags);
-+			ret = -ESTALE;
- 		}
--#endif
--		unlock_page(page);
-+
-+		if (ret == -EINTR ||
-+		    ret == -ENOMEM ||
-+		    ret == -ERESTARTSYS ||
-+		    ret == -EAGAIN)
-+			goto error;
-+		goto io_error;
- 	}
- 
-+	SetPageUptodate(page);
-+	unlock_page(page);
-+
- 	_leave(" = 0");
- 	return 0;
- 
-@@ -416,23 +355,10 @@ static int afs_readpage(struct file *file, struct page *page)
-  */
- static void afs_readpages_page_done(struct afs_read *req)
- {
--#ifdef CONFIG_AFS_FSCACHE
--	struct afs_vnode *vnode = req->vnode;
--#endif
- 	struct page *page = req->pages[req->index];
- 
- 	req->pages[req->index] = NULL;
- 	SetPageUptodate(page);
--
--	/* send the page to the cache */
--#ifdef CONFIG_AFS_FSCACHE
--	if (PageFsCache(page) &&
--	    fscache_write_page(vnode->cache, page, vnode->status.size,
--			       GFP_KERNEL) != 0) {
--		fscache_uncache_page(vnode->cache, page);
--		BUG_ON(PageFsCache(page));
--	}
--#endif
- 	unlock_page(page);
- 	put_page(page);
- }
-@@ -491,9 +417,6 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 		index = page->index;
- 		if (add_to_page_cache_lru(page, mapping, index,
- 					  readahead_gfp_mask(mapping))) {
--#ifdef CONFIG_AFS_FSCACHE
--			fscache_uncache_page(vnode->cache, page);
--#endif
- 			put_page(page);
- 			break;
- 		}
-@@ -526,9 +449,6 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 	for (i = 0; i < req->nr_pages; i++) {
- 		page = req->pages[i];
- 		if (page) {
--#ifdef CONFIG_AFS_FSCACHE
--			fscache_uncache_page(vnode->cache, page);
--#endif
- 			SetPageError(page);
- 			unlock_page(page);
- 		}
-@@ -560,37 +480,6 @@ static int afs_readpages(struct file *file, struct address_space *mapping,
- 	}
- 
- 	/* attempt to read as many of the pages as possible */
--#ifdef CONFIG_AFS_FSCACHE
--	ret = fscache_read_or_alloc_pages(vnode->cache,
--					  mapping,
--					  pages,
--					  &nr_pages,
--					  afs_file_readpage_read_complete,
--					  NULL,
--					  mapping_gfp_mask(mapping));
--#else
--	ret = -ENOBUFS;
--#endif
--
--	switch (ret) {
--		/* all pages are being read from the cache */
--	case 0:
--		BUG_ON(!list_empty(pages));
--		BUG_ON(nr_pages != 0);
--		_leave(" = 0 [reading all]");
--		return 0;
--
--		/* there were pages that couldn't be read from the cache */
--	case -ENODATA:
--	case -ENOBUFS:
--		break;
--
--		/* other error */
--	default:
--		_leave(" = %d", ret);
--		return ret;
--	}
--
- 	while (!list_empty(pages)) {
- 		ret = afs_readpages_one(file, mapping, pages);
- 		if (ret < 0)
-@@ -670,17 +559,6 @@ static void afs_invalidatepage(struct page *page, unsigned int offset,
- 
- 	BUG_ON(!PageLocked(page));
- 
--#ifdef CONFIG_AFS_FSCACHE
--	/* we clean up only if the entire page is being invalidated */
--	if (offset == 0 && length == PAGE_SIZE) {
--		if (PageFsCache(page)) {
--			struct afs_vnode *vnode = AFS_FS_I(page->mapping->host);
--			fscache_wait_on_page_write(vnode->cache, page);
--			fscache_uncache_page(vnode->cache, page);
--		}
--	}
--#endif
--
- 	if (PagePrivate(page))
- 		afs_invalidate_dirty(page, offset, length);
- 
-@@ -702,13 +580,6 @@ static int afs_releasepage(struct page *page, gfp_t gfp_flags)
- 
- 	/* deny if page is being written to the cache and the caller hasn't
- 	 * elected to wait */
--#ifdef CONFIG_AFS_FSCACHE
--	if (!fscache_maybe_release_page(vnode->cache, page, gfp_flags)) {
--		_leave(" = F [cache busy]");
--		return 0;
--	}
--#endif
--
- 	if (PagePrivate(page)) {
- 		priv = (unsigned long)detach_page_private(page);
- 		trace_afs_page_dirty(vnode, tracepoint_string("rel"),
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index b0d7b892090d..48edd8d724d2 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -428,7 +428,7 @@ static void afs_get_inode_cache(struct afs_vnode *vnode)
- 	} __packed key;
- 	struct afs_vnode_cache_aux aux;
- 
--	if (vnode->status.type == AFS_FTYPE_DIR) {
-+	if (vnode->status.type != AFS_FTYPE_FILE) {
- 		vnode->cache = NULL;
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 950552944436..2b17bb36e548 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -155,8 +155,6 @@ static void ceph_invalidatepage(struct page *page, unsigned int offset,
  		return;
  	}
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index c9195fc67fd8..92eaa88000d7 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -847,9 +847,6 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
- 	/* Wait for the page to be written to the cache before we allow it to
- 	 * be modified.  We then assume the entire page will need writing back.
- 	 */
--#ifdef CONFIG_AFS_FSCACHE
--	fscache_wait_on_page_write(vnode->cache, vmf->page);
--#endif
  
- 	if (PageWriteback(vmf->page) &&
- 	    wait_on_page_bit_killable(vmf->page, PG_writeback) < 0)
-@@ -936,12 +933,5 @@ int afs_launder_page(struct page *page)
- 	priv = (unsigned long)detach_page_private(page);
- 	trace_afs_page_dirty(vnode, tracepoint_string("laundered"),
- 			     page->index, priv);
+-	ceph_invalidate_fscache_page(inode, page);
 -
--#ifdef CONFIG_AFS_FSCACHE
--	if (PageFsCache(page)) {
--		fscache_wait_on_page_write(vnode->cache, page);
--		fscache_uncache_page(vnode->cache, page);
+ 	WARN_ON(!PageLocked(page));
+ 	if (!PagePrivate(page))
+ 		return;
+@@ -175,10 +173,6 @@ static int ceph_releasepage(struct page *page, gfp_t g)
+ 	dout("%p releasepage %p idx %lu (%sdirty)\n", page->mapping->host,
+ 	     page, page->index, PageDirty(page) ? "" : "not ");
+ 
+-	/* Can we release the page from the cache? */
+-	if (!ceph_release_fscache_page(page, g))
+-		return 0;
+-
+ 	return !PagePrivate(page);
+ }
+ 
+@@ -213,10 +207,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ 		return 0;
+ 	}
+ 
+-	err = ceph_readpage_from_fscache(inode, page);
+-	if (err == 0)
+-		return -EINPROGRESS;
+-
+ 	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
+ 	     vino.ino, vino.snap, filp, off, len, page, page->index);
+ 	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len, 0, 1,
+@@ -241,7 +231,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ 	if (err == -ENOENT)
+ 		err = 0;
+ 	if (err < 0) {
+-		ceph_fscache_readpage_cancel(inode, page);
+ 		if (err == -EBLOCKLISTED)
+ 			fsc->blocklisted = true;
+ 		goto out;
+@@ -253,8 +242,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ 		flush_dcache_page(page);
+ 
+ 	SetPageUptodate(page);
+-	ceph_readpage_to_fscache(inode, page);
+-
+ out:
+ 	return err < 0 ? err : 0;
+ }
+@@ -294,10 +281,8 @@ static void finish_read(struct ceph_osd_request *req)
+ 	for (i = 0; i < num_pages; i++) {
+ 		struct page *page = osd_data->pages[i];
+ 
+-		if (rc < 0 && rc != -ENOENT) {
+-			ceph_fscache_readpage_cancel(inode, page);
++		if (rc < 0 && rc != -ENOENT)
+ 			goto unlock;
+-		}
+ 		if (bytes < (int)PAGE_SIZE) {
+ 			/* zero (remainder of) page */
+ 			int s = bytes < 0 ? 0 : bytes;
+@@ -307,7 +292,6 @@ static void finish_read(struct ceph_osd_request *req)
+ 		     page->index);
+ 		flush_dcache_page(page);
+ 		SetPageUptodate(page);
+-		ceph_readpage_to_fscache(inode, page);
+ unlock:
+ 		unlock_page(page);
+ 		put_page(page);
+@@ -408,7 +392,6 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+ 		     page->index);
+ 		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
+ 					  GFP_KERNEL)) {
+-			ceph_fscache_uncache_page(inode, page);
+ 			put_page(page);
+ 			dout("start_read %p add_to_page_cache failed %p\n",
+ 			     inode, page);
+@@ -440,10 +423,8 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+ 	return nr_pages;
+ 
+ out_pages:
+-	for (i = 0; i < nr_pages; ++i) {
+-		ceph_fscache_readpage_cancel(inode, pages[i]);
++	for (i = 0; i < nr_pages; ++i)
+ 		unlock_page(pages[i]);
 -	}
+ 	ceph_put_page_vector(pages, nr_pages, false);
+ out_put:
+ 	ceph_osdc_put_request(req);
+@@ -471,12 +452,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
+ 	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
+ 		return -EINVAL;
+ 
+-	rc = ceph_readpages_from_fscache(mapping->host, mapping, page_list,
+-					 &nr_pages);
+-
+-	if (rc == 0)
+-		goto out;
+-
+ 	rw_ctx = ceph_find_rw_context(fi);
+ 	max = fsc->mount_options->rsize >> PAGE_SHIFT;
+ 	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
+@@ -487,8 +462,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
+ 			goto out;
+ 	}
+ out:
+-	ceph_fscache_readpages_cancel(inode, page_list);
+-
+ 	dout("readpages %p file %p ret %d\n", inode, file, rc);
+ 	return rc;
+ }
+diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+index 2f5cb6bc78e1..9cfadbb86568 100644
+--- a/fs/ceph/cache.c
++++ b/fs/ceph/cache.c
+@@ -173,7 +173,6 @@ void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci)
+ 
+ 	ci->fscache = NULL;
+ 
+-	fscache_uncache_all_inode_pages(cookie, &ci->vfs_inode);
+ 	fscache_relinquish_cookie(cookie, &ci->i_vino, false);
+ }
+ 
+@@ -194,7 +193,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
+ 		dout("fscache_file_set_cookie %p %p disabling cache\n",
+ 		     inode, filp);
+ 		fscache_disable_cookie(ci->fscache, &ci->i_vino, false);
+-		fscache_uncache_all_inode_pages(ci->fscache, inode);
+ 	} else {
+ 		fscache_enable_cookie(ci->fscache, &ci->i_vino, i_size_read(inode),
+ 				      ceph_fscache_can_enable, inode);
+@@ -205,108 +203,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
+ 	}
+ }
+ 
+-static void ceph_readpage_from_fscache_complete(struct page *page, void *data, int error)
+-{
+-	if (!error)
+-		SetPageUptodate(page);
+-
+-	unlock_page(page);
+-}
+-
+-static inline bool cache_valid(struct ceph_inode_info *ci)
+-{
+-	return ci->i_fscache_gen == ci->i_rdcache_gen;
+-}
+-
+-
+-/* Atempt to read from the fscache,
+- *
+- * This function is called from the readpage_nounlock context. DO NOT attempt to
+- * unlock the page here (or in the callback).
+- */
+-int ceph_readpage_from_fscache(struct inode *inode, struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	int ret;
+-
+-	if (!cache_valid(ci))
+-		return -ENOBUFS;
+-
+-	ret = fscache_read_or_alloc_page(ci->fscache, page,
+-					 ceph_readpage_from_fscache_complete, NULL,
+-					 GFP_KERNEL);
+-
+-	switch (ret) {
+-		case 0: /* Page found */
+-			dout("page read submitted\n");
+-			return 0;
+-		case -ENOBUFS: /* Pages were not found, and can't be */
+-		case -ENODATA: /* Pages were not found */
+-			dout("page/inode not in cache\n");
+-			return ret;
+-		default:
+-			dout("%s: unknown error ret = %i\n", __func__, ret);
+-			return ret;
+-	}
+-}
+-
+-int ceph_readpages_from_fscache(struct inode *inode,
+-				  struct address_space *mapping,
+-				  struct list_head *pages,
+-				  unsigned *nr_pages)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	int ret;
+-
+-	if (!cache_valid(ci))
+-		return -ENOBUFS;
+-
+-	ret = fscache_read_or_alloc_pages(ci->fscache, mapping, pages, nr_pages,
+-					  ceph_readpage_from_fscache_complete,
+-					  NULL, mapping_gfp_mask(mapping));
+-
+-	switch (ret) {
+-		case 0: /* All pages found */
+-			dout("all-page read submitted\n");
+-			return 0;
+-		case -ENOBUFS: /* Some pages were not found, and can't be */
+-		case -ENODATA: /* some pages were not found */
+-			dout("page/inode not in cache\n");
+-			return ret;
+-		default:
+-			dout("%s: unknown error ret = %i\n", __func__, ret);
+-			return ret;
+-	}
+-}
+-
+-void ceph_readpage_to_fscache(struct inode *inode, struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	int ret;
+-
+-	if (!PageFsCache(page))
+-		return;
+-
+-	if (!cache_valid(ci))
+-		return;
+-
+-	ret = fscache_write_page(ci->fscache, page, i_size_read(inode),
+-				 GFP_KERNEL);
+-	if (ret)
+-		 fscache_uncache_page(ci->fscache, page);
+-}
+-
+-void ceph_invalidate_fscache_page(struct inode* inode, struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-
+-	if (!PageFsCache(page))
+-		return;
+-
+-	fscache_wait_on_page_write(ci->fscache, page);
+-	fscache_uncache_page(ci->fscache, page);
+-}
+-
+ void ceph_fscache_unregister_fs(struct ceph_fs_client* fsc)
+ {
+ 	if (fscache_cookie_valid(fsc->fscache)) {
+@@ -329,24 +225,3 @@ void ceph_fscache_unregister_fs(struct ceph_fs_client* fsc)
+ 	}
+ 	fsc->fscache = NULL;
+ }
+-
+-/*
+- * caller should hold CEPH_CAP_FILE_{RD,CACHE}
+- */
+-void ceph_fscache_revalidate_cookie(struct ceph_inode_info *ci)
+-{
+-	if (cache_valid(ci))
+-		return;
+-
+-	/* resue i_truncate_mutex. There should be no pending
+-	 * truncate while the caller holds CEPH_CAP_FILE_RD */
+-	mutex_lock(&ci->i_truncate_mutex);
+-	if (!cache_valid(ci)) {
+-		if (fscache_check_consistency(ci->fscache, &ci->i_vino))
+-			fscache_invalidate(ci->fscache);
+-		spin_lock(&ci->i_ceph_lock);
+-		ci->i_fscache_gen = ci->i_rdcache_gen;
+-		spin_unlock(&ci->i_ceph_lock);
+-	}
+-	mutex_unlock(&ci->i_truncate_mutex);
+-}
+diff --git a/fs/ceph/cache.h b/fs/ceph/cache.h
+index 89dbdd1eb14a..10c21317b62f 100644
+--- a/fs/ceph/cache.h
++++ b/fs/ceph/cache.h
+@@ -29,13 +29,10 @@ int ceph_readpages_from_fscache(struct inode *inode,
+ 				struct address_space *mapping,
+ 				struct list_head *pages,
+ 				unsigned *nr_pages);
+-void ceph_readpage_to_fscache(struct inode *inode, struct page *page);
+-void ceph_invalidate_fscache_page(struct inode* inode, struct page *page);
+ 
+ static inline void ceph_fscache_inode_init(struct ceph_inode_info *ci)
+ {
+ 	ci->fscache = NULL;
+-	ci->i_fscache_gen = 0;
+ }
+ 
+ static inline void ceph_fscache_invalidate(struct inode *inode)
+@@ -43,40 +40,6 @@ static inline void ceph_fscache_invalidate(struct inode *inode)
+ 	fscache_invalidate(ceph_inode(inode)->fscache);
+ }
+ 
+-static inline void ceph_fscache_uncache_page(struct inode *inode,
+-					     struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	return fscache_uncache_page(ci->fscache, page);
+-}
+-
+-static inline int ceph_release_fscache_page(struct page *page, gfp_t gfp)
+-{
+-	struct inode* inode = page->mapping->host;
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	return fscache_maybe_release_page(ci->fscache, page, gfp);
+-}
+-
+-static inline void ceph_fscache_readpage_cancel(struct inode *inode,
+-						struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	if (fscache_cookie_valid(ci->fscache) && PageFsCache(page))
+-		__fscache_uncache_page(ci->fscache, page);
+-}
+-
+-static inline void ceph_fscache_readpages_cancel(struct inode *inode,
+-						 struct list_head *pages)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	return fscache_readpages_cancel(ci->fscache, pages);
+-}
+-
+-static inline void ceph_disable_fscache_readpage(struct ceph_inode_info *ci)
+-{
+-	ci->i_fscache_gen = ci->i_rdcache_gen - 1;
+-}
+-
+ #else
+ 
+ static inline int ceph_fscache_register(void)
+@@ -115,62 +78,10 @@ static inline void ceph_fscache_file_set_cookie(struct inode *inode,
+ {
+ }
+ 
+-static inline void ceph_fscache_revalidate_cookie(struct ceph_inode_info *ci)
+-{
+-}
+-
+-static inline void ceph_fscache_uncache_page(struct inode *inode,
+-					     struct page *pages)
+-{
+-}
+-
+-static inline int ceph_readpage_from_fscache(struct inode* inode,
+-					     struct page *page)
+-{
+-	return -ENOBUFS;
+-}
+-
+-static inline int ceph_readpages_from_fscache(struct inode *inode,
+-					      struct address_space *mapping,
+-					      struct list_head *pages,
+-					      unsigned *nr_pages)
+-{
+-	return -ENOBUFS;
+-}
+-
+-static inline void ceph_readpage_to_fscache(struct inode *inode,
+-					    struct page *page)
+-{
+-}
+-
+ static inline void ceph_fscache_invalidate(struct inode *inode)
+ {
+ }
+ 
+-static inline void ceph_invalidate_fscache_page(struct inode *inode,
+-						struct page *page)
+-{
+-}
+-
+-static inline int ceph_release_fscache_page(struct page *page, gfp_t gfp)
+-{
+-	return 1;
+-}
+-
+-static inline void ceph_fscache_readpage_cancel(struct inode *inode,
+-						struct page *page)
+-{
+-}
+-
+-static inline void ceph_fscache_readpages_cancel(struct inode *inode,
+-						 struct list_head *pages)
+-{
+-}
+-
+-static inline void ceph_disable_fscache_readpage(struct ceph_inode_info *ci)
+-{
+-}
+-
+ #endif
+ 
 -#endif
- 	return ret;
++#endif /* _CEPH_CACHE_H */
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 255a512f1277..ca07dfc60652 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -2730,10 +2730,6 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+ 				*got = need | want;
+ 			else
+ 				*got = need;
+-			if (S_ISREG(inode->i_mode) &&
+-			    (need & CEPH_CAP_FILE_RD) &&
+-			    !(*got & CEPH_CAP_FILE_CACHE))
+-				ceph_disable_fscache_readpage(ci);
+ 			ceph_take_cap_refs(ci, *got, true);
+ 			ret = 1;
+ 		}
+@@ -2983,11 +2979,6 @@ int ceph_get_caps(struct file *filp, int need, int want,
+ 		}
+ 		break;
+ 	}
+-
+-	if (S_ISREG(ci->vfs_inode.i_mode) &&
+-	    (_got & CEPH_CAP_FILE_RD) && (_got & CEPH_CAP_FILE_CACHE))
+-		ceph_fscache_revalidate_cookie(ci);
+-
+ 	*got = _got;
+ 	return 0;
  }
 
 
