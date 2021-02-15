@@ -2,183 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA28D31B391
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 01:24:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75A9131B3A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 01:39:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbhBOAYk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Feb 2021 19:24:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:35153 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229881AbhBOAYi (ORCPT
+        id S230104AbhBOAjm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Feb 2021 19:39:42 -0500
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:35842 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229818AbhBOAjl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Feb 2021 19:24:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613348591;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=icyirenyNVPQ/6+Zc420o3Iw7zjp69we48horNqQpPg=;
-        b=Gm8bdkiMNHIpOdEKvgxUW7pseqmRMOeClH5yiwLBCQ5lnqDHD7wifsxshV72xkKUAfe1Hj
-        dBukpa/PSQEK6kkMY7Nn5OtVPi343sPWs4+zhj1eaJAinfDtYBlfE0KKrSKL3d8ahgUSue
-        wFGmpZy8/1qKvrXcisjjZNy6C1RXjoE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-484-xtPvx-7lP1aR-4qYcHimfw-1; Sun, 14 Feb 2021 19:23:07 -0500
-X-MC-Unique: xtPvx-7lP1aR-4qYcHimfw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6FB8D1005501;
-        Mon, 15 Feb 2021 00:23:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 013BD6F986;
-        Mon, 15 Feb 2021 00:22:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wi68OpbwBm6RCodhNUyg6x8N7vi5ufjRtosQSPy_EYqLA@mail.gmail.com>
-References: <CAHk-=wi68OpbwBm6RCodhNUyg6x8N7vi5ufjRtosQSPy_EYqLA@mail.gmail.com> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com> <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk> <1330751.1612974783@warthog.procyon.org.uk> <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com> <27816.1613085646@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
+        Sun, 14 Feb 2021 19:39:41 -0500
+Received: from dread.disaster.area (pa49-181-52-82.pa.nsw.optusnet.com.au [49.181.52.82])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id E6AA81140442;
+        Mon, 15 Feb 2021 11:38:55 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lBRuh-0053ei-3V; Mon, 15 Feb 2021 11:38:55 +1100
+Date:   Mon, 15 Feb 2021 11:38:55 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Ian Lance Taylor <iant@golang.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+        Luis Lozano <llozano@chromium.org>,
+        linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate content
+ is generated
+Message-ID: <20210215003855.GY4626@dread.disaster.area>
+References: <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
+ <YCYybUg4d3+Oij4N@kroah.com>
+ <CANMq1KBuPaU5UtRR8qTgdf+J3pt-xAQq69kCVBdaYGx8F+WmFA@mail.gmail.com>
+ <YCY+Ytr2J2R5Vh0+@kroah.com>
+ <CAKOQZ8zPFM29DYPwbnUJEhf+a8kPSJ5E_W06JLFjn-5Fy-ZWWw@mail.gmail.com>
+ <YCaipZ+iY65iSrui@kroah.com>
+ <20210212230346.GU4626@dread.disaster.area>
+ <CAOyqgcX_wN2RGunDix5rSWxtp3pvSpFy2Stx-Ln4GozgSeS2LQ@mail.gmail.com>
+ <20210212232726.GW4626@dread.disaster.area>
+ <20210212235448.GH7187@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <860728.1613348577.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 15 Feb 2021 00:22:57 +0000
-Message-ID: <860729.1613348577@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210212235448.GH7187@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=7pwokN52O8ERr2y46pWGmQ==:117 a=7pwokN52O8ERr2y46pWGmQ==:17
+        a=kj9zAlcOel0A:10 a=qa6Q16uM49sA:10 a=7-415B0cAAAA:8 a=ag1SF4gXAAAA:8
+        a=Ctr0A7MYLLdSEb84NpgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=Yupwre4RP9_Eg_Bd0iYG:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Fri, Feb 12, 2021 at 03:54:48PM -0800, Darrick J. Wong wrote:
+> On Sat, Feb 13, 2021 at 10:27:26AM +1100, Dave Chinner wrote:
+> > On Fri, Feb 12, 2021 at 03:07:39PM -0800, Ian Lance Taylor wrote:
+> > > On Fri, Feb 12, 2021 at 3:03 PM Dave Chinner <david@fromorbit.com> wrote:
+> > > >
+> > > > On Fri, Feb 12, 2021 at 04:45:41PM +0100, Greg KH wrote:
+> > > > > On Fri, Feb 12, 2021 at 07:33:57AM -0800, Ian Lance Taylor wrote:
+> > > > > > On Fri, Feb 12, 2021 at 12:38 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > > > >
+> > > > > > > Why are people trying to use copy_file_range on simple /proc and /sys
+> > > > > > > files in the first place?  They can not seek (well most can not), so
+> > > > > > > that feels like a "oh look, a new syscall, let's use it everywhere!"
+> > > > > > > problem that userspace should not do.
+> > > > > >
+> > > > > > This may have been covered elsewhere, but it's not that people are
+> > > > > > saying "let's use copy_file_range on files in /proc."  It's that the
+> > > > > > Go language standard library provides an interface to operating system
+> > > > > > files.  When Go code uses the standard library function io.Copy to
+> > > > > > copy the contents of one open file to another open file, then on Linux
+> > > > > > kernels 5.3 and greater the Go standard library will use the
+> > > > > > copy_file_range system call.  That seems to be exactly what
+> > > > > > copy_file_range is intended for.  Unfortunately it appears that when
+> > > > > > people writing Go code open a file in /proc and use io.Copy the
+> > > > > > contents to another open file, copy_file_range does nothing and
+> > > > > > reports success.  There isn't anything on the copy_file_range man page
+> > > > > > explaining this limitation, and there isn't any documented way to know
+> > > > > > that the Go standard library should not use copy_file_range on certain
+> > > > > > files.
+> > > > >
+> > > > > But, is this a bug in the kernel in that the syscall being made is not
+> > > > > working properly, or a bug in that Go decided to do this for all types
+> > > > > of files not knowing that some types of files can not handle this?
+> > > > >
+> > > > > If the kernel has always worked this way, I would say that Go is doing
+> > > > > the wrong thing here.  If the kernel used to work properly, and then
+> > > > > changed, then it's a regression on the kernel side.
+> > > > >
+> > > > > So which is it?
+> > > >
+> > > > Both Al Viro and myself have said "copy file range is not a generic
+> > > > method for copying data between two file descriptors". It is a
+> > > > targetted solution for *regular files only* on filesystems that store
+> > > > persistent data and can accelerate the data copy in some way (e.g.
+> > > > clone, server side offload, hardware offlead, etc). It is not
+> > > > intended as a copy mechanism for copying data from one random file
+> > > > descriptor to another.
+> > > >
+> > > > The use of it as a general file copy mechanism in the Go system
+> > > > library is incorrect and wrong. It is a userspace bug.  Userspace
+> > > > has done the wrong thing, userspace needs to be fixed.
+> > > 
+> > > OK, we'll take it out.
+> > > 
+> > > I'll just make one last plea that I think that copy_file_range could
+> > > be much more useful if there were some way that a program could know
+> > > whether it would work or not.
+> 
+> Well... we could always implement a CFR_DRYRUN flag that would run
+> through all the parameter validation and return 0 just before actually
+> starting any real copying logic.  But that wouldn't itself solve the
+> problem that there are very old virtual filesystems in Linux that have
+> zero-length regular files that behave like a pipe.
+> 
+> > If you can't tell from userspace that a file has data in it other
+> > than by calling read() on it, then you can't use cfr on it.
+> 
+> I don't know how to do that, Dave. :)
 
-> But no, it's not a replacement for actual code review after the fact.
-> =
+If stat returns a non-zero size, then userspace knows it has at
+least that much data in it, whether it be zeros or previously
+written data. cfr will copy that data. The special zero length
+regular pipe files fail this simple "how much data is there to copy
+in this file" check...
 
-> If you think email has too long latency for review, and can't use
-> public mailing lists and cc the people who are maintainers, then I
-> simply don't want your patches.
+> Frankly I'm with the Go developers on this -- one should detect c_f_r by
+> calling it and if it errors out then fall back to the usual userspace
+> buffer copy strategy.
+> 
+> That still means we need to fix the kernel WRT these weird old
+> filesystems.  One of...
 
-I think we were talking at cross-purposes by the term "development" here. =
- I
-was referring to the discussion of how the implementation should be done a=
-nd
-working closely with colleagues - both inside and outside Red Hat - to get
-things working, not specifically the public review side of things.  It's j=
-ust
-that I don't have a complete record of the how-to-implement-it, the
-how-to-get-various-bits-working-together and the why-is-it-not-working?
-discussions.
+And that is the whole problem here, not that cfr is failing. cfr is
+behaving correctly and consistently as the filesystem is telling the
+kernel there is no data in the file (i.e. size = 0).
 
-Anyway, I have posted my fscache modernisation patches multiple times for
-public review, I have tried to involve the wider community in aspects of t=
-he
-development on public mailing lists and I have been including the maintain=
-ers
-in to/cc.
+> 1. Get rid of the generic fallback completely, since splice only copies
+> 64k at a time and ... yay?  I guess it at least passes generic/521 and
+> generic/522 these days.
 
-I've posted the more full patchset for public review a number of times:
+I've had a few people ask me for cfr to not fall back to a manual
+copy because they only want it to do something if it can accelerate
+the copy to be faster than userspace can copy the data itself. If
+the filesystem can't optimise the copy in some way, they want to
+know so they can do something else of their own chosing.
 
-4th May 2020:
-https://lore.kernel.org/linux-fsdevel/158861203563.340223.7585359869938129=
-395.stgit@warthog.procyon.org.uk/
+Hence this seems like the sane option to take here...
 
-13th Jul (split into three subsets):
-https://lore.kernel.org/linux-fsdevel/159465766378.1376105.116199762510392=
-87525.stgit@warthog.procyon.org.uk/
-https://lore.kernel.org/linux-fsdevel/159465784033.1376674.181064636939898=
-11037.stgit@warthog.procyon.org.uk/
-https://lore.kernel.org/linux-fsdevel/159465821598.1377938.204636227022500=
-8168.stgit@warthog.procyon.org.uk/
+> 2. Keep it, but change c_f_r to require that both files have a
+> ->copy_file_range implementation.  If they're the same then we'll call
+> the function pointer, if not, we call the generic fallback.  This at
+> least gets us back to the usual behavior which is that filesystems have
+> to opt in to new functionality (== we assume they QA'd all the wunnerful
+> combinations).
 
-20th Nov:
-https://lore.kernel.org/linux-fsdevel/160588455242.3465195.321473385827301=
-9178.stgit@warthog.procyon.org.uk/
+That doesn't address the "write failure turns into short read"
+problem with the splice path...
 
-I then cut it down and posted that publically a couple of times:
+> 3. #2, but fix the generic fallback to not suck so badly.  That sounds
+> like someone (else's) 2yr project. :P
 
-20th Jan:
-https://lore.kernel.org/linux-fsdevel/161118128472.1232039.117467998330664=
-25131.stgit@warthog.procyon.org.uk/
+Not mine, either.
 
-25th Jan:
-https://lore.kernel.org/linux-fsdevel/161161025063.2537118.200924944468224=
-1405.stgit@warthog.procyon.org.uk/
+Cheers,
 
-I let you know what was coming here:
-https://lore.kernel.org/linux-fsdevel/447452.1596109876@warthog.procyon.or=
-g.uk/
-https://lore.kernel.org/linux-fsdevel/2522190.1612544534@warthog.procyon.o=
-rg.uk/
-
-to try and find out whether you were going to have any objections to the
-design in advance, rather than at the last minute.
-
-I've apprised people of what I was up to:
-https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
-https://lore.kernel.org/linux-fsdevel/2758811.1610621106@warthog.procyon.o=
-rg.uk/
-https://lore.kernel.org/linux-fsdevel/1441311.1598547738@warthog.procyon.o=
-rg.uk/
-https://lore.kernel.org/linux-fsdevel/160655.1611012999@warthog.procyon.or=
-g.uk/
-
-Asked for consultation on parts of what I wanted to do:
-https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.=
-uk/
-https://lore.kernel.org/linux-fsdevel/4467.1579020509@warthog.procyon.org.=
-uk/
-https://lore.kernel.org/linux-fsdevel/3577430.1579705075@warthog.procyon.o=
-rg.uk/
-
-Asked someone who is actually using fscache in production to test the rewr=
-ite:
-https://listman.redhat.com/archives/linux-cachefs/2020-December/msg00000.h=
-tml
-
-I've posted partial patches to try and help 9p and cifs along:
-https://lore.kernel.org/linux-fsdevel/1514086.1605697347@warthog.procyon.o=
-rg.uk/
-https://lore.kernel.org/linux-cifs/1794123.1605713481@warthog.procyon.org.=
-uk/
-https://lore.kernel.org/linux-fsdevel/241017.1612263863@warthog.procyon.or=
-g.uk/
-https://lore.kernel.org/linux-cifs/270998.1612265397@warthog.procyon.org.u=
-k/
-
-(Jeff has been handling Ceph and Dave NFS).
-
-Proposed conference topics related to this:
-https://lore.kernel.org/linux-fsdevel/9608.1575900019@warthog.procyon.org.=
-uk/
-https://lore.kernel.org/linux-fsdevel/14196.1575902815@warthog.procyon.org=
-.uk/
-https://lore.kernel.org/linux-fsdevel/364531.1579265357@warthog.procyon.or=
-g.uk/
-
-though the lockdown put paid to that:-(
-
-Willy has discussed it too:
-https://lore.kernel.org/linux-fsdevel/20200826193116.GU17456@casper.infrad=
-ead.org/
-
-David
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
