@@ -2,120 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8D7031B733
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 11:35:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA44D31B750
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Feb 2021 11:39:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhBOKdz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 05:33:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39334 "EHLO mx2.suse.de"
+        id S230171AbhBOKjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 05:39:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44206 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229652AbhBOKdw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 05:33:52 -0500
+        id S229802AbhBOKjC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Feb 2021 05:39:02 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1613385185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5VOUPmXPZzeS6nM2Yw1Dqr1Wa/BJdfFT6ZPLkwHsXto=;
-        b=BJcggBbOIeuRofSc2tjGIErH5zKllt9x1z9zms4Zs5MQ+OpM+rswGyh4BYXla/4ahQLnh4
-        OXg74SFAnOtr3aSdCPBAyuOKLw4kSUKDaPBPZYFbyXBwp0KgV7h6/rMbeS+BvSn2Z0Wdax
-        VED9JvEeS6lPuZN2UhkQR5SQjfJCms0=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E3421AC32;
-        Mon, 15 Feb 2021 10:33:04 +0000 (UTC)
-Date:   Mon, 15 Feb 2021 11:33:03 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [External] Re: [PATCH v15 4/8] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-Message-ID: <YCpN38i75olgispI@dhcp22.suse.cz>
-References: <20210208085013.89436-1-songmuchun@bytedance.com>
- <20210208085013.89436-5-songmuchun@bytedance.com>
- <YCafit5ruRJ+SL8I@dhcp22.suse.cz>
- <CAMZfGtXgVUvCejpxu1o5WDvmQ7S88rWqGi3DAGM6j5NHJgtdcg@mail.gmail.com>
+        by mx2.suse.de (Postfix) with ESMTP id 6C69FAC32;
+        Mon, 15 Feb 2021 10:38:20 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 3e5d9e0a;
+        Mon, 15 Feb 2021 10:39:22 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] fs: Add flag to file_system_type to indicate
+ content is generated
+References: <20210212044405.4120619-1-drinkcat@chromium.org>
+        <20210212124354.1.I7084a6235fbcc522b674a6b1db64e4aff8170485@changeid>
+        <YCYybUg4d3+Oij4N@kroah.com>
+        <CAOQ4uxhovoZ4S3WhXwgYDeOeomBxfQ1BdzSyGdqoVX6boDOkeA@mail.gmail.com>
+        <YCY+tjPgcDmgmVD1@kroah.com> <871rdljxtx.fsf@suse.de>
+        <YCZyBZ1iT+MUXLu1@kroah.com> <87sg61ihkj.fsf@suse.de>
+        <CAOQ4uxi-VuBmE8Ej_B3xmBnn1nmp9qpiA-BkNpPcrE0PCRp1UA@mail.gmail.com>
+Date:   Mon, 15 Feb 2021 10:39:22 +0000
+In-Reply-To: <CAOQ4uxi-VuBmE8Ej_B3xmBnn1nmp9qpiA-BkNpPcrE0PCRp1UA@mail.gmail.com>
+        (Amir Goldstein's message of "Mon, 15 Feb 2021 08:12:03 +0200")
+Message-ID: <87h7mdvcmd.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZfGtXgVUvCejpxu1o5WDvmQ7S88rWqGi3DAGM6j5NHJgtdcg@mail.gmail.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 15-02-21 18:05:06, Muchun Song wrote:
-> On Fri, Feb 12, 2021 at 11:32 PM Michal Hocko <mhocko@suse.com> wrote:
-[...]
-> > > +int alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
-> > > +{
-> > > +     int ret;
-> > > +     unsigned long vmemmap_addr = (unsigned long)head;
-> > > +     unsigned long vmemmap_end, vmemmap_reuse;
-> > > +
-> > > +     if (!free_vmemmap_pages_per_hpage(h))
-> > > +             return 0;
-> > > +
-> > > +     vmemmap_addr += RESERVE_VMEMMAP_SIZE;
-> > > +     vmemmap_end = vmemmap_addr + free_vmemmap_pages_size_per_hpage(h);
-> > > +     vmemmap_reuse = vmemmap_addr - PAGE_SIZE;
-> > > +
-> > > +     /*
-> > > +      * The pages which the vmemmap virtual address range [@vmemmap_addr,
-> > > +      * @vmemmap_end) are mapped to are freed to the buddy allocator, and
-> > > +      * the range is mapped to the page which @vmemmap_reuse is mapped to.
-> > > +      * When a HugeTLB page is freed to the buddy allocator, previously
-> > > +      * discarded vmemmap pages must be allocated and remapping.
-> > > +      */
-> > > +     ret = vmemmap_remap_alloc(vmemmap_addr, vmemmap_end, vmemmap_reuse,
-> > > +                               GFP_ATOMIC | __GFP_NOWARN | __GFP_THISNODE);
-> >
-> > I do not think that this is a good allocation mode. GFP_ATOMIC is a non
-> > sleeping allocation and a medium memory pressure might cause it to
-> > fail prematurely. I do not think this is really an atomic context which
-> > couldn't afford memory reclaim. I also do not think we want to grant
-> 
-> Because alloc_huge_page_vmemmap is called under hugetlb_lock
-> now. So using GFP_ATOMIC indeed makes the code more simpler.
+Amir Goldstein <amir73il@gmail.com> writes:
 
-You can have a preallocated list of pages prior taking the lock.
-Moreover do we want to manipulate vmemmaps from under spinlock in
-general. I have to say I have missed that detail when reviewing. Need to
-think more.
+> On Fri, Feb 12, 2021 at 2:40 PM Luis Henriques <lhenriques@suse.de> wrote:
+...
+>> Sure, I just wanted to point out that *maybe* there are other options than
+>> simply reverting that commit :-)
+>>
+>> Something like the patch below (completely untested!) should revert to the
+>> old behaviour in filesystems that don't implement the CFR syscall.
+>>
+>> Cheers,
+>> --
+>> Luis
+>>
+>> diff --git a/fs/read_write.c b/fs/read_write.c
+>> index 75f764b43418..bf5dccc43cc9 100644
+>> --- a/fs/read_write.c
+>> +++ b/fs/read_write.c
+>> @@ -1406,8 +1406,11 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+>>                                                        file_out, pos_out,
+>>                                                        len, flags);
+>>
+>> -       return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+>> -                                      flags);
+>> +       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+>> +               return -EXDEV;
+>> +       else
+>> +               generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+>> +                                       flags);
+>>  }
+>>
+>
+> Which kernel is this patch based on?
 
-> From the document of the kernel, I learned that __GFP_NOMEMALLOC
-> can be used to explicitly forbid access to emergency reserves. So if
-> we do not want to use the reserve memory. How about replacing it to
-> 
-> GFP_ATOMIC | __GFP_NOMEMALLOC | __GFP_NOWARN | __GFP_THISNODE
+It was v5.11-rc7.
 
-The whole point of GFP_ATOMIC is to grant access to memory reserves so
-the above is quite dubious. If you do not want access to memory reserves
-then use GFP_NOWAIT instead. But failures are much more easier to happen
-then.
+> At this point, I am with Dave and Darrick on not falling back to
+> generic_copy_file_range() at all.
+>
+> We do not have proof of any workload that benefits from it and the
+> above patch does not protect from a wierd use case of trying to copy a file
+> from sysfs to sysfs.
+>
 
-NOMEMALLOC is meant to be used from paths which are allowed to consume
-memory reserves - e.g. when invoked from the memory reclaim path.
+Ok, cool.  I can post a new patch doing just that.  I guess that function
+do_copy_file_range() can be dropped in that case.
+
+> I am indecisive about what should be done with generic_copy_file_range()
+> called as fallback from within filesystems.
+>
+> I think the wise choice is to not do the fallback in any case, but this is up
+> to the specific filesystem maintainers to decide.
+
+I see what you mean.  You're suggesting to have userspace handle all the
+-EOPNOTSUPP and -EXDEV errors.  Would you rather have a patch that also
+removes all the calls to generic_copy_file_range() function?  And that
+function can also be deleted too, of course.
+
+Cheers,
 -- 
-Michal Hocko
-SUSE Labs
+Luis
