@@ -2,118 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C6B531CE72
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 17:53:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE54331CE95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 18:02:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230264AbhBPQw1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Feb 2021 11:52:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56872 "EHLO mx2.suse.de"
+        id S230234AbhBPRCh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Feb 2021 12:02:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34996 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229699AbhBPQwX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Feb 2021 11:52:23 -0500
+        id S229913AbhBPRCg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Feb 2021 12:02:36 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1613494295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fv1cqvwsI0OzZQzjo9Fzqiw9J9sAKYM15trtTiADU8I=;
-        b=m+7A3yBnlzXwcSFUtKDR2Y9JcLQQ7GBKZLbjSDY4uRJe8Oprcc1t3A0Yb4nCpmSjJzTq71
-        m2lvwh4POgKc94rijkZTo8EsctDQ8udo5YFmIVVBqcDZmQE+zdGsrWJMYIvr1Q40Hpav5m
-        AI5AIoiWGkF74EgEjx/NO759Sl7hNIs=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 93467AE05;
-        Tue, 16 Feb 2021 16:51:35 +0000 (UTC)
-Date:   Tue, 16 Feb 2021 17:51:34 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: Re: [PATCH v17 07/10] mm: introduce memfd_secret system call to
- create "secret" memory areas
-Message-ID: <YCv4FhseXJ8cZ62/@dhcp22.suse.cz>
-References: <20210214091954.GM242749@kernel.org>
- <052DACE9-986B-424C-AF8E-D6A4277DE635@redhat.com>
- <244f86cba227fa49ca30cd595c4e5538fe2f7c2b.camel@linux.ibm.com>
- <YCo7TqUnBdgJGkwN@dhcp22.suse.cz>
- <be1d821d3f0aec24ad13ca7126b4359822212eb0.camel@linux.ibm.com>
- <YCrJjYmr7A2nO6lA@dhcp22.suse.cz>
- <12c3890b233c8ec8e3967352001a7b72a8e0bfd0.camel@linux.ibm.com>
+        by mx2.suse.de (Postfix) with ESMTP id 07A70AD2B;
+        Tue, 16 Feb 2021 17:01:55 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 808A11F2AA7; Tue, 16 Feb 2021 18:01:54 +0100 (CET)
+Date:   Tue, 16 Feb 2021 18:01:54 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [RFC][PATCH 2/2] fanotify: support limited functionality for
+ unprivileged users
+Message-ID: <20210216170154.GG21108@quack2.suse.cz>
+References: <20210124184204.899729-1-amir73il@gmail.com>
+ <20210124184204.899729-3-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <12c3890b233c8ec8e3967352001a7b72a8e0bfd0.camel@linux.ibm.com>
+In-Reply-To: <20210124184204.899729-3-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 16-02-21 08:25:39, James Bottomley wrote:
-> On Mon, 2021-02-15 at 20:20 +0100, Michal Hocko wrote:
-> [...]
-> > > >   What kind of flags are we talking about and why would that be a
-> > > > problem with memfd_create interface? Could you be more specific
-> > > > please?
-> > > 
-> > > You mean what were the ioctl flags in the patch series linked
-> > > above? They were SECRETMEM_EXCLUSIVE and SECRETMEM_UNCACHED in
-> > > patch 3/5. 
-> > 
-> > OK I see. How many potential modes are we talking about? A few or
-> > potentially many?
+On Sun 24-01-21 20:42:04, Amir Goldstein wrote:
+> Add limited support for unprivileged fanotify event listener.
+> An unprivileged event listener does not get an open file descriptor in
+> the event nor the process pid of another process.  An unprivileged event
+> listener cannot request permission events, cannot set mount/filesystem
+> marks and cannot request unlimited queue/marks.
+> 
+> This enables the limited functionality similar to inotify when watching a
+> set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
+> requiring SYS_CAP_ADMIN privileges.
+> 
+> The FAN_REPORT_DFID_NAME init flag, provide a method for an unprivileged
+> event listener watching a set of directories (with FAN_EVENT_ON_CHILD)
+> to monitor all changes inside those directories.
+> 
+> This typically requires that the listener keeps a map of watched directory
+> fid to dirfd (O_PATH), where fid is obtained with name_to_handle_at()
+> before starting to watch for changes.
+> 
+> When getting an event, the reported fid of the parent should be resolved
+> to dirfd and fstatsat(2) with dirfd and name should be used to query the
+> state of the filesystem entry.
+> 
+> Note that even though events do not report the event creator pid,
+> fanotify does not merge similar events on the same object that were
+> generated by different processes. This is aligned with exiting behavior
+> when generating processes are outside of the listener pidns (which
+> results in reporting 0 pid to listener).
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+The patch looks mostly good to me. Just two questions:
+
+a) Remind me please, why did we decide pid isn't safe to report to
+unpriviledged listeners?
+
+b) Why did we decide returning open file descriptors isn't safe for
+unpriviledged listeners? Is it about FMODE_NONOTIFY?
+
+I'm not opposed to either but I'm wondering. Also with b) old style
+fanotify events are not very useful so maybe we could just disallow all
+notification groups without FID/DFID reporting? In the future if we ever
+decide returning open fds is safe or how to do it, we can enable that group
+type for unpriviledged users. However just starting to return open fds
+later won't fly because listener has to close these fds when receiving
+events.
+
+								Honza
+
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 49 +++++++++++++++++++++++++++---
+>  fs/notify/fdinfo.c                 |  3 +-
+>  include/linux/fanotify.h           | 16 ++++++++++
+>  3 files changed, 62 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 4ade3f9df337..b70de273eedb 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -397,9 +397,21 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  	metadata.vers = FANOTIFY_METADATA_VERSION;
+>  	metadata.reserved = 0;
+>  	metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
+> -	metadata.pid = pid_vnr(event->pid);
+> +	/*
+> +	 * An unprivileged event listener does not get an open file descriptor
+> +	 * in the event nor another generating process pid. If the event was
+> +	 * generated by the unprivileged process itself, self pid is reported.
+> +	 * We may relax this in the future by checking calling process access
+> +	 * permissions to the object.
+> +	 */
+> +	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) ||
+> +	    task_tgid(current) == event->pid)
+> +		metadata.pid = pid_vnr(event->pid);
+> +	else
+> +		metadata.pid = 0;
 >  
-> Well I initially thought there were two (uncached or not) until you
-> came up with the migratable or non-migratable, which affects the
-> security properties.  But now there's also potential for hardware
-> backing, like mktme,  described by flags as well.
-
-I do not remember details about mktme but from what I still recall it
-had keys associated with direct maps. Is the key management something
-that fits into flags management?
-
-> I suppose you could
-> also use RDT to restrict which cache the data goes into: say L1 but not
-> L2 on to lessen the impact of fully uncached (although the big thrust
-> of uncached was to blunt hyperthread side channels).  So there is
-> potential for quite a large expansion even though I'd be willing to bet
-> that a lot of the modes people have thought about turn out not to be
-> very effective in the field.
-
-Are those very HW specific features really viable through a generic
-syscall? Don't get me wrong but I find it much more likely somebody will
-want a hugetlb (pretty HW independent) without a direct map than a very
-close to the HW caching mode soon.
-
-But thanks for the clarification anyway.
+> -	if (path && path->mnt && path->dentry) {
+> +	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+> +	    path && path->mnt && path->dentry) {
+>  		fd = create_fd(group, path, &f);
+>  		if (fd < 0)
+>  			return fd;
+> @@ -995,12 +1007,29 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  	int f_flags, fd;
+>  	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
+>  	unsigned int class = flags & FANOTIFY_CLASS_BITS;
+> +	unsigned int internal_flags = 0;
+>  
+>  	pr_debug("%s: flags=%x event_f_flags=%x\n",
+>  		 __func__, flags, event_f_flags);
+>  
+> -	if (!capable(CAP_SYS_ADMIN))
+> -		return -EPERM;
+> +	if (!capable(CAP_SYS_ADMIN)) {
+> +		/*
+> +		 * An unprivileged user can setup an unprivileged listener with
+> +		 * limited functionality - an unprivileged event listener cannot
+> +		 * request permission events, cannot set mount/filesystem marks
+> +		 * and cannot request unlimited queue/marks.
+> +		 */
+> +		if ((flags & ~FANOTIFY_UNPRIV_INIT_FLAGS) ||
+> +		    class != FAN_CLASS_NOTIF)
+> +			return -EPERM;
+> +
+> +		/*
+> +		 * We set the internal flag FANOTIFY_UNPRIV on the group, so we
+> +		 * know that we need to limit setting mount/filesystem marks on
+> +		 * this group and avoid providing pid and open fd in the event.
+> +		 */
+> +		internal_flags |= FANOTIFY_UNPRIV;
+> +	}
+>  
+>  #ifdef CONFIG_AUDITSYSCALL
+>  	if (flags & ~(FANOTIFY_INIT_FLAGS | FAN_ENABLE_AUDIT))
+> @@ -1051,7 +1080,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  		goto out_destroy_group;
+>  	}
+>  
+> -	group->fanotify_data.flags = flags;
+> +	group->fanotify_data.flags = flags | internal_flags;
+>  	group->memcg = get_mem_cgroup_from_mm(current->mm);
+>  
+>  	group->overflow_event = fanotify_alloc_overflow_event();
+> @@ -1247,6 +1276,15 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  		goto fput_and_out;
+>  	group = f.file->private_data;
+>  
+> +	/*
+> +	 * An unprivileged event listener is not allowed to watch a mount
+> +	 * point nor a filesystem.
+> +	 */
+> +	ret = -EPERM;
+> +	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
+> +	    mark_type != FAN_MARK_INODE)
+> +		goto fput_and_out;
+> +
+>  	/*
+>  	 * group->priority == FS_PRIO_0 == FAN_CLASS_NOTIF.  These are not
+>  	 * allowed to set permissions events.
+> @@ -1379,6 +1417,7 @@ SYSCALL32_DEFINE6(fanotify_mark,
+>   */
+>  static int __init fanotify_user_setup(void)
+>  {
+> +	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_FLAGS);
+>  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
+>  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+>  
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index f0d6b54be412..57f0d5d9f934 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -144,7 +144,8 @@ void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
+>  	struct fsnotify_group *group = f->private_data;
+>  
+>  	seq_printf(m, "fanotify flags:%x event-flags:%x\n",
+> -		   group->fanotify_data.flags, group->fanotify_data.f_flags);
+> +		   group->fanotify_data.flags & FANOTIFY_INIT_FLAGS,
+> +		   group->fanotify_data.f_flags);
+>  
+>  	show_fdinfo(m, f, fanotify_fdinfo);
+>  }
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index 031a97d8369a..a573c1028c14 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -28,6 +28,22 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+>  				 FAN_CLOEXEC | FAN_NONBLOCK | \
+>  				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS)
+>  
+> +/* Internal flags */
+> +#define FANOTIFY_UNPRIV		0x80000000
+> +#define FANOTIFY_INTERNAL_FLAGS	(FANOTIFY_UNPRIV)
+> +
+> +/*
+> + * fanotify_init() flags allowed for unprivileged listener.
+> + * FAN_CLASS_NOTIF in this mask is purely semantic because it is zero,
+> + * but it is the only class we allow for unprivileged listener.
+> + * Since unprivileged listener does not provide file descriptors in events,
+> + * reporting file handles makes sense, but it is not a must.
+> + * FAN_REPORT_TID does not make sense for unprivileged listener, which uses
+> + * event->pid only to filter out events generated by listener process itself.
+> + */
+> +#define FANOTIFY_UNPRIV_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
+> +					 FAN_CLASS_NOTIF | FANOTIFY_FID_BITS)
+> +
+>  #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
+>  				 FAN_MARK_FILESYSTEM)
+>  
+> -- 
+> 2.25.1
+> 
 -- 
-Michal Hocko
-SUSE Labs
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
