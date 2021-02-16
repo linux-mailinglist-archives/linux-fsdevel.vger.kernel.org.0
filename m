@@ -2,345 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A59231C4A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 01:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B297331C4B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 01:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbhBPAlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 19:41:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43622 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbhBPAlU (ORCPT
+        id S229697AbhBPAuy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 19:50:54 -0500
+Received: from sonic315-55.consmr.mail.gq1.yahoo.com ([98.137.65.31]:42751
+        "EHLO sonic315-55.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229652AbhBPAuy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 19:41:20 -0500
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC987C061574;
-        Mon, 15 Feb 2021 16:40:39 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id b16so9860343lji.13;
-        Mon, 15 Feb 2021 16:40:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xicHfylzCSM6YGN+one5fuBAC6Bh3w7bra1ceUh6ZvM=;
-        b=PfK4V6TAQY0sPFFmbEgXZRZwtRDmdfVWXGpCksch7YLii014m7Kc8etXhkoB8fAJAp
-         GpsUtFDmERR4ff2stp9oKIgdv0jOsnbYuL8wbP8UOrNcgaOcQeVov/KS0RnB4p1Ld36+
-         RrkfsHrJUfUEmUBzy7X27QQD1Vvgx52+42m8avstnUhFiq7kYpomalqFz+IacbFC5kQw
-         RSNmGBB9V2WFoUGzgQ3h5TdmhqWxgRmaZ2I1wGUX2s8ZuBfZComOPvqt5hTNpxybiCHw
-         UrgAHfVZ+RHF4U4rJ+tb82qJVtjeLUX+2iatI3Wc3WwsmWOHYrgwlonHnOJ4evuOIXda
-         LUGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xicHfylzCSM6YGN+one5fuBAC6Bh3w7bra1ceUh6ZvM=;
-        b=p/xLokOxnnkKGNi5KbuoY8V4tmLb5tfgWHCweYtHTOioc/VyO+7mvEBe5hdB8s1zLv
-         Lr9ghzappwovBwBDdWPXj+qRq5Zb3pgKH9L/2J8WyVeG+c7loTsEM4a6BvDEM8v4Fxr2
-         qSZB5pBubCBmWhCGJ/X64qMQ96NlwqiuJ+c9p/j/ST949FwHc4xzsyaen21VUneeJ1Oh
-         sjpjHhEOVSu1WZvyVOZvzWnRukoonRMNEmuC4/qbRt3/IqPVq0Sm5+KvZEvkU0vbapR0
-         bCzlP1A5XxZ7T5PPj8oR2dKHW2gESsZMCyNFhE8pNpuRWNXWGwE9G0Ofr9+Z19wt37pS
-         dDkA==
-X-Gm-Message-State: AOAM533JBxPFLvR3HI7bbiFaxnAMsmZNUiCymy0RxyKOcroFlepIlvnB
-        Jxe4xdFoHAuJRIXJ4Y+VuNL6hDdDRvqmho+SHIcd1sMfZtY=
-X-Google-Smtp-Source: ABdhPJzy94ik1tFw7QxWM1zEMhmTMT/Bm5dhimMsKPcvESs+iEybsgt/cS1kOWOZOprYnaipGNwuw3aAXJHMfzV0q0w=
-X-Received: by 2002:a05:651c:548:: with SMTP id q8mr10766213ljp.256.1613436038218;
- Mon, 15 Feb 2021 16:40:38 -0800 (PST)
+        Mon, 15 Feb 2021 19:50:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1613436578; bh=uCn/Bflq9/wBUpEgI+BGaqJEFBlq0OwkbVwQBJDS7V0=; h=Date:From:Subject:To:References:In-Reply-To:From:Subject:Reply-To; b=WKpmldmlioOSiKnU0OXf8UaMGc0ozpBDy4JALwRX8uNNa8hX/fEwuB6Br5iguLcxaFSj59Wp9oRj2kYQPEp8Y9CpY9au9vV8dqOwkIL9pcE/DRdvPVtfC4Ad5xWiB66cW3UVoaIFBFT9kiAftKvdiuBdhZZWL2/kLt/0lOgkFDl2VamAZB+9E1C2uxJWq2OQhABkjLIeY8imh4c+3RgmPZ0D6UbJdyXR5v2KmV+wyveWIe00KtzxYozLGT+oxz5igU2BERxUV9JkOFdzjX43XiHQzxuDgP0rCukFhlKn9wUCy9/m4h//ZBadgOiLfiRoEUo64ef5ero0T2aAHb9p0Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1613436578; bh=4K43OsaN+c3jkspguRDAWVkUOYXOkclZJICSojcXm7Z=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=bQh7o/gD5oJjp79PChp3fGKwX8uWFuGECDmxnzYn6f1lsqVVsfmxEi9iKaS3zQShpqz1E+seIDxyQsXVuTHtZ0YRM8WGMK3GDd7uE5VkA2KVZR/T+d4GazXYrRbIMXkFPFRC00GIdNR581UpJqCLsHHe3hPdFE9ZAXPJ667Cy6tlsmAOSto303CEdNoJaf4YNstPeCJOSelEyVAgOsDQrg/1k1Trobcq8TMzp5zkbCjeeY4+Ix6Op+YntkCzMrdCcRk+mXmJ3Xz2Io0cOwm2aw1PCR6ngoJlqCfuCt79RMu9sM9tdd5I5sot+Ls64O1UILGLVxl2Jiy9udrX1FZ9fw==
+X-YMail-OSG: RhkyYoIVM1lvMN0kXt5R0eceLxBg2F24d8srvRU.xEsBPvY2KtCSx._ni8SbuAo
+ F7Q0qayE.k61JySmeiRO2_UvCN7qstvZTLkuxxQ7nD55oR0j7WdkBPDYQlhWLxb3swSBr8xBnyjJ
+ KtuYxhkjltN4EUSL1EOZ8VRt4bmF4zsPZ893YW299ocHMx3X2LGhlPldVud09y5xZdNY9ntVeY0r
+ JLZqjEjrtaZgbbCdyHMigiYTGzxDpdr8ZrY5RCmPIECm5TWfIpA9PKEMgUJ3IykirWhCjf04a0Sz
+ Hb45GLJR9VShaq27L88B83MvrBXh2Nv5fWyL__de2bzdlcMRAZamx.GE5Mtn0StEDKAInIRIpaKn
+ n6W8EAKXunShmv0y0A3YWe29H0okVIXeQmC6HWJ7gG039n52ufXnTTUgxVS4gyRS_b_ddPCb8Cvm
+ E4kOmu2Nn.ETHhyXwkm40IDZfUSxSNNtYrK6W2r5UOJr1mq6G0wy4z423CbHVuGXwSKAFaDWuY4E
+ KgmqqQFDXwRhSJeRPYp8AyYNQG9bUkis1zj6uIz9Dfe9fRoazEsU0TDVRX.gATuEejrM_v3Fv3Jd
+ 52zpLI2oj.IDOymMP3b4pcl.TD7a5N4oy6gWMGIWI3VYcyUx1iQbPN.sUfPJXFuHL941KNaUqD9q
+ FHD_yFGOpzVZfiNgVqM_9HdZYAOBNqRVpd9OD16GyIPxkPDBCeRFQ2SMjj3cINrqfjzp59k1g8hS
+ QUFvo2_pFNAuWwvrPHb9p3QCsXbbReM3QoZ47L1I74BTuNSb_CEk_iLQkoxDISlMKW80Qc.a3ubI
+ afBm_UaqtV6pNtwq43RlcoQoG020bKexH12.oqv8aHtz.Bmg16UDHgYh7R71S8IHSbwtnpzQtO6A
+ W_58jF3upUZ3o1dqwVbPABzI1r6mwU6.2ewBS2cZP_dtLHxSvELBOd7h7ipoiowV.e8VtLOHwfTB
+ B6VK90iXElBKh4GfP6cANxYv.RyAhwrlg7mMjUDdvYS4g6rBtocXEB7CdKBv0hWLvy9SAUVUjo7E
+ hwxYJuJUfvHl8JlK9eK5XM7RuLcU5gqx0UC12gsweTF0wTIMK6Q_9UhL8dKLRIWDnaad3o90uxQu
+ lfL4kusJ3s_s7F8yU.TM7LhixD.bc3mmw9Cwyt.ztX1jBWrtKLQz6Ld_SgvOfKnj.L28Ob4oFsVY
+ O6T.jLfsqlLogw4OFo5lfrnlyH9.Tkgl8wBurqbxswsyqTQoqKnIWXQQzBQu0xaWlJItkrvQ09HB
+ ISmz4WbV7D7YJxdCnY7XmQWVVvslMsnseoD1OX.RbPmurVZbcQBe9pnAk4ovLufyeDTYUJMU0lwO
+ yoNYJrQOoghU3MBRAT7c3l0ujpxH0Lgm0anf3L6Nuy0BbQfCtkO8YPQzrTImLAktcx985xXROVUY
+ biVu9uf3Cxj0vVhRWGOqSYYn6d11S_aKnq7YoH0nFXU_nrX86lyxxMpVl7._XEa24ZU0ADa26UIG
+ ct922vsujxw3J7I1w9omCiOWgsw9kYlbbaR0fS9nNHKiz9_h4q7HeHv_RGi0veD0cVDFGpCh6Gct
+ eYFLvY7hlKdZU88f..UhqaIhIPRpRnkBbM8E5m1gf6dcTu12a7i1WDVmOXV.c.jajRC8Ora7rLVo
+ mTp6Ff_sbjBwHUoqKFUPWVl5TqvMG4o3ScqtzjSL2Odsp5VBDhtgXacCg6YHgtLSlT3y2WOtH24a
+ RPnrTpZuaK6td53Fwp5P0E0jRBvpq5WeqBJrYRn3motEjLsydEdSVlzri5bci6nZQYKsG9HB1Azc
+ lZ2BLK_TVjsD1t0MwPgNgWNAqvyjG2ljaxZJOlx4HAgGr0NIG.gptSr.G6MOxXf061wSHAVKYjqJ
+ GAL3AH4HEglbQhfmoROnMNzCKv6LCnYlNfcJAtbYdzd0mEkbfx_tve5roHwi5BPuqyRllas_.4nl
+ bd0eKXT_6ucc2fKoQWEmZgPmbCCXRmoHRtJPElAYR14zvADpnQ_svPnUPmxQ.hRB0Zsh1iVz72Dq
+ WN_I29z6sKsaIN4p3qJuV4EdKROKHIu_TNYMNYdbZI7PiHQpJhX.fa_LOanRvCrBWfvRAjjQwwlr
+ 9T4qr1EhDbLchB_isasOE_.TdZvJ.MaNWHRANRdbChF.o3vXW_9Gto54TDiirjZUVjLlAxur6BNT
+ tt1pmJu5dT0erJZWEHH.0ASTzw8YsnPAyzpxy9uv06DpkSVEA6ZDDIR2XJYRsUQFQ.9Xm50abUqL
+ qtocHi3.hc5Hu15Hbi3FjrWGdtxfYnVRKR0amvXTKRZBgbwUv7BRfI6govrzDyaHDuTjUE_AopOp
+ _YhaHdgE2DMo2A1m2BPLA1Awk7lsv8bwTIInN8NxDMke10h1QiYJ_.Tr7Bf8LnCOwb2EWibWEuAg
+ _gs2BXqDNWfCGesZa4AySiWa7JcgO3_H_BXUrpMgbNXiG2kDtjMZdrFyYhNzkHgEdePRdgWcWWNZ
+ iCYcjgcVxp7QpHVQoFTc5jtQVYPGT2QVF5Y0Vxi_H0yHvxbKN5zN2DCEby44X_HtSPij.9cK1k7G
+ JFSWv8KKLMLDr1Bz.KFAK189K3JNIpP0xhYVp09E814nTiiHd12KUtnx9TbXxAKX4VOTrWDAMU1Y
+ 18.8zNR.zzznq.dPX9N4i7BgZiod3HO8h.jQZBQWsINPIc4ucWpwN7ilWm.ufWvwqKFvlMAW7OZ6
+ ZbP54ULOKeYs-
+X-Sonic-MF: <alex_y_xu@yahoo.ca>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Tue, 16 Feb 2021 00:49:38 +0000
+Received: by smtp408.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID a743c5bf659a941befe506b5142ddb40;
+          Tue, 16 Feb 2021 00:49:34 +0000 (UTC)
+Date:   Mon, 15 Feb 2021 19:49:31 -0500
+From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
+Subject: Re: [PATCH] proc_sysctl: clamp sizes using table->maxlen
+To:     linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@lst.de>, Andrey Ignatov <rdna@fb.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20210215145305.283064-1-alex_y_xu.ref@yahoo.ca>
+        <20210215145305.283064-1-alex_y_xu@yahoo.ca>
+In-Reply-To: <20210215145305.283064-1-alex_y_xu@yahoo.ca>
 MIME-Version: 1.0
-References: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
- <9e49f96cd80eaf9c8ed267a7fbbcb4c6467ee790.camel@redhat.com>
-In-Reply-To: <9e49f96cd80eaf9c8ed267a7fbbcb4c6467ee790.camel@redhat.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 15 Feb 2021 18:40:27 -0600
-Message-ID: <CAH2r5mvPLivjuE=cbijzGSHOvx-hkWSWbcxpoBnJX-BR9pBskQ@mail.gmail.com>
-Subject: Re: [PATCH 00/33] Network fs helper library & fscache kiocb API [ver #3]
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, linux-cachefs@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-mm <linux-mm@kvack.org>, linux-afs@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net,
-        Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <1613436483.9rqrq5iswg.none@localhost>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: WebService/1.1.17712 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff,
-What are the performance differences you are seeing (positive or
-negative) with ceph and netfs, especially with simple examples like
-file copy or grep of large files?
+Excerpts from Alex Xu (Hello71)'s message of February 15, 2021 9:53 am:
+> This issue was discussed at [0] and following, and the solution was to
+> clamp the size at KMALLOC_MAX_LEN. However, KMALLOC_MAX_LEN is a maximum
+> allocation, and may be difficult to allocate in low memory conditions.
+>=20
+> Since maxlen is already exposed, we can allocate approximately the right
+> amount directly, fixing up those drivers which set a bogus maxlen. These
+> drivers were located based on those which had copy_x_user replaced in
+> 32927393dc1c, on the basis that other drivers either use builtin proc_*
+> handlers, or do not access the data pointer. The latter is OK because
+> maxlen only needs to be an upper limit.
+>=20
+> [0] https://lore.kernel.org/lkml/1fc7ce08-26a7-59ff-e580-4e6c22554752@ora=
+cle.com/
+>=20
+> Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+> Signed-off-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
 
-It could be good if netfs simplifies the problem experienced by
-network filesystems on Linux with readahead on large sequential reads
-- where we don't get as much parallelism due to only having one
-readahead request at a time (thus in many cases there is 'dead time'
-on either the network or the file server while waiting for the next
-readpages request to be issued).   This can be a significant
-performance problem for current readpages when network latency is long
-(or e.g. in cases when network encryption is enabled, and hardware
-offload not available so time consuming on the server or client to
-encrypt the packet).
-
-Do you see netfs much faster than currentreadpages for ceph?
-
-Have you been able to get much benefit from throttling readahead with
-ceph from the current netfs approach for clamping i/o?
-
-On Mon, Feb 15, 2021 at 12:08 PM Jeff Layton <jlayton@redhat.com> wrote:
->
-> On Mon, 2021-02-15 at 15:44 +0000, David Howells wrote:
-> > Here's a set of patches to do two things:
-> >
-> >  (1) Add a helper library to handle the new VM readahead interface.  This
-> >      is intended to be used unconditionally by the filesystem (whether or
-> >      not caching is enabled) and provides a common framework for doing
-> >      caching, transparent huge pages and, in the future, possibly fscrypt
-> >      and read bandwidth maximisation.  It also allows the netfs and the
-> >      cache to align, expand and slice up a read request from the VM in
-> >      various ways; the netfs need only provide a function to read a stretch
-> >      of data to the pagecache and the helper takes care of the rest.
-> >
-> >  (2) Add an alternative fscache/cachfiles I/O API that uses the kiocb
-> >      facility to do async DIO to transfer data to/from the netfs's pages,
-> >      rather than using readpage with wait queue snooping on one side and
-> >      vfs_write() on the other.  It also uses less memory, since it doesn't
-> >      do buffered I/O on the backing file.
-> >
-> >      Note that this uses SEEK_HOLE/SEEK_DATA to locate the data available
-> >      to be read from the cache.  Whilst this is an improvement from the
-> >      bmap interface, it still has a problem with regard to a modern
-> >      extent-based filesystem inserting or removing bridging blocks of
-> >      zeros.  Fixing that requires a much greater overhaul.
-> >
-> > This is a step towards overhauling the fscache API.  The change is opt-in
-> > on the part of the network filesystem.  A netfs should not try to mix the
-> > old and the new API because of conflicting ways of handling pages and the
-> > PG_fscache page flag and because it would be mixing DIO with buffered I/O.
-> > Further, the helper library can't be used with the old API.
-> >
-> > This does not change any of the fscache cookie handling APIs or the way
-> > invalidation is done.
-> >
-> > In the near term, I intend to deprecate and remove the old I/O API
-> > (fscache_allocate_page{,s}(), fscache_read_or_alloc_page{,s}(),
-> > fscache_write_page() and fscache_uncache_page()) and eventually replace
-> > most of fscache/cachefiles with something simpler and easier to follow.
-> >
-> > The patchset contains five parts:
-> >
-> >  (1) Some helper patches, including provision of an ITER_XARRAY iov
-> >      iterator and a function to do readahead expansion.
-> >
-> >  (2) Patches to add the netfs helper library.
-> >
-> >  (3) A patch to add the fscache/cachefiles kiocb API.
-> >
-> >  (4) Patches to add support in AFS for this.
-> >
-> >  (5) Patches from Jeff Layton to add support in Ceph for this.
-> >
-> > Dave Wysochanski also has patches for NFS for this, though they're not
-> > included on this branch as there's an issue with PNFS.
-> >
-> > With this, AFS without a cache passes all expected xfstests; with a cache,
-> > there's an extra failure, but that's also there before these patches.
-> > Fixing that probably requires a greater overhaul.  Ceph and NFS also pass
-> > the expected tests.
-> >
-> > These patches can be found also on:
-> >
-> >       https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-netfs-lib
-> >
-> > For diffing reference, the tag for the 9th Feb pull request is
-> > fscache-ioapi-20210203 and can be found in the same repository.
-> >
-> >
-> >
-> > Changes
-> > =======
-> >
-> >  (v3) Rolled in the bug fixes.
-> >
-> >       Adjusted the functions that unlock and wait for PG_fscache according
-> >       to Linus's suggestion.
-> >
-> >       Hold a ref on a page when PG_fscache is set as per Linus's
-> >       suggestion.
-> >
-> >       Dropped NFS support and added Ceph support.
-> >
-> >  (v2) Fixed some bugs and added NFS support.
-> >
-> >
-> > References
-> > ==========
-> >
-> > These patches have been published for review before, firstly as part of a
-> > larger set:
-> >
-> > Link: https://lore.kernel.org/linux-fsdevel/158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk/
-> >
-> > Link: https://lore.kernel.org/linux-fsdevel/159465766378.1376105.11619976251039287525.stgit@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-fsdevel/159465784033.1376674.18106463693989811037.stgit@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-fsdevel/159465821598.1377938.2046362270225008168.stgit@warthog.procyon.org.uk/
-> >
-> > Link: https://lore.kernel.org/linux-fsdevel/160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk/
-> >
-> > Then as a cut-down set:
-> >
-> > Link: https://lore.kernel.org/linux-fsdevel/161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk/
-> >
-> > Link: https://lore.kernel.org/linux-fsdevel/161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk/
-> >
-> >
-> > Proposals/information about the design has been published here:
-> >
-> > Link: https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-fsdevel/2758811.1610621106@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-fsdevel/1441311.1598547738@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-fsdevel/160655.1611012999@warthog.procyon.org.uk/
-> >
-> > And requests for information:
-> >
-> > Link: https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-fsdevel/4467.1579020509@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-fsdevel/3577430.1579705075@warthog.procyon.org.uk/
-> >
-> > The NFS parts, though not included here, have been tested by someone who's
-> > using fscache in production:
-> >
-> > Link: https://listman.redhat.com/archives/linux-cachefs/2020-December/msg00000.html
-> >
-> > I've posted partial patches to try and help 9p and cifs along:
-> >
-> > Link: https://lore.kernel.org/linux-fsdevel/1514086.1605697347@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-cifs/1794123.1605713481@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-fsdevel/241017.1612263863@warthog.procyon.org.uk/
-> > Link: https://lore.kernel.org/linux-cifs/270998.1612265397@warthog.procyon.org.uk/
-> >
-> > David
-> > ---
-> > David Howells (27):
-> >       iov_iter: Add ITER_XARRAY
-> >       mm: Add an unlock function for PG_private_2/PG_fscache
-> >       mm: Implement readahead_control pageset expansion
-> >       vfs: Export rw_verify_area() for use by cachefiles
-> >       netfs: Make a netfs helper module
-> >       netfs, mm: Move PG_fscache helper funcs to linux/netfs.h
-> >       netfs, mm: Add unlock_page_fscache() and wait_on_page_fscache()
-> >       netfs: Provide readahead and readpage netfs helpers
-> >       netfs: Add tracepoints
-> >       netfs: Gather stats
-> >       netfs: Add write_begin helper
-> >       netfs: Define an interface to talk to a cache
-> >       netfs: Hold a ref on a page when PG_private_2 is set
-> >       fscache, cachefiles: Add alternate API to use kiocb for read/write to cache
-> >       afs: Disable use of the fscache I/O routines
-> >       afs: Pass page into dirty region helpers to provide THP size
-> >       afs: Print the operation debug_id when logging an unexpected data version
-> >       afs: Move key to afs_read struct
-> >       afs: Don't truncate iter during data fetch
-> >       afs: Log remote unmarshalling errors
-> >       afs: Set up the iov_iter before calling afs_extract_data()
-> >       afs: Use ITER_XARRAY for writing
-> >       afs: Wait on PG_fscache before modifying/releasing a page
-> >       afs: Extract writeback extension into its own function
-> >       afs: Prepare for use of THPs
-> >       afs: Use the fs operation ops to handle FetchData completion
-> >       afs: Use new fscache read helper API
-> >
-> > Jeff Layton (6):
-> >       ceph: disable old fscache readpage handling
-> >       ceph: rework PageFsCache handling
-> >       ceph: fix fscache invalidation
-> >       ceph: convert readpage to fscache read helper
-> >       ceph: plug write_begin into read helper
-> >       ceph: convert ceph_readpages to ceph_readahead
-> >
-> >
-> >  fs/Kconfig                    |    1 +
-> >  fs/Makefile                   |    1 +
-> >  fs/afs/Kconfig                |    1 +
-> >  fs/afs/dir.c                  |  225 ++++---
-> >  fs/afs/file.c                 |  470 ++++---------
-> >  fs/afs/fs_operation.c         |    4 +-
-> >  fs/afs/fsclient.c             |  108 +--
-> >  fs/afs/inode.c                |    7 +-
-> >  fs/afs/internal.h             |   58 +-
-> >  fs/afs/rxrpc.c                |  150 ++---
-> >  fs/afs/write.c                |  610 +++++++++--------
-> >  fs/afs/yfsclient.c            |   82 +--
-> >  fs/cachefiles/Makefile        |    1 +
-> >  fs/cachefiles/interface.c     |    5 +-
-> >  fs/cachefiles/internal.h      |    9 +
-> >  fs/cachefiles/rdwr2.c         |  412 ++++++++++++
-> >  fs/ceph/Kconfig               |    1 +
-> >  fs/ceph/addr.c                |  535 ++++++---------
-> >  fs/ceph/cache.c               |  125 ----
-> >  fs/ceph/cache.h               |  101 +--
-> >  fs/ceph/caps.c                |   10 +-
-> >  fs/ceph/inode.c               |    1 +
-> >  fs/ceph/super.h               |    1 +
-> >  fs/fscache/Kconfig            |    1 +
-> >  fs/fscache/Makefile           |    3 +-
-> >  fs/fscache/internal.h         |    3 +
-> >  fs/fscache/page.c             |    2 +-
-> >  fs/fscache/page2.c            |  117 ++++
-> >  fs/fscache/stats.c            |    1 +
-> >  fs/internal.h                 |    5 -
-> >  fs/netfs/Kconfig              |   23 +
-> >  fs/netfs/Makefile             |    5 +
-> >  fs/netfs/internal.h           |   97 +++
-> >  fs/netfs/read_helper.c        | 1169 +++++++++++++++++++++++++++++++++
-> >  fs/netfs/stats.c              |   59 ++
-> >  fs/read_write.c               |    1 +
-> >  include/linux/fs.h            |    1 +
-> >  include/linux/fscache-cache.h |    4 +
-> >  include/linux/fscache.h       |   40 +-
-> >  include/linux/netfs.h         |  195 ++++++
-> >  include/linux/pagemap.h       |    3 +
-> >  include/net/af_rxrpc.h        |    2 +-
-> >  include/trace/events/afs.h    |   74 +--
-> >  include/trace/events/netfs.h  |  201 ++++++
-> >  mm/filemap.c                  |   20 +
-> >  mm/readahead.c                |   70 ++
-> >  net/rxrpc/recvmsg.c           |    9 +-
-> >  47 files changed, 3473 insertions(+), 1550 deletions(-)
-> >  create mode 100644 fs/cachefiles/rdwr2.c
-> >  create mode 100644 fs/fscache/page2.c
-> >  create mode 100644 fs/netfs/Kconfig
-> >  create mode 100644 fs/netfs/Makefile
-> >  create mode 100644 fs/netfs/internal.h
-> >  create mode 100644 fs/netfs/read_helper.c
-> >  create mode 100644 fs/netfs/stats.c
-> >  create mode 100644 include/linux/netfs.h
-> >  create mode 100644 include/trace/events/netfs.h
-> >
-> >
->
-> Thanks David,
->
-> I did an xfstests run on ceph with a kernel based on this and it seemed
-> to do fine. I'll plan to pull this into the ceph-client/testing branch
-> and run it through the ceph kclient test harness. There are only a few
-> differences from the last run we did, so I'm not expecting big changes,
-> but I'll keep you posted.
->
-> --
-> Jeff Layton <jlayton@redhat.com>
->
-
-
--- 
-Thanks,
-
-Steve
+Yeah, no, this doesn't work. A bunch of functions call proc_* but don't=20
+set maxlen, and it's annoying to check this statically. Also causes=20
+weird failures elsewhere. May need to think of a better solution here=20
+(kvzalloc?).
