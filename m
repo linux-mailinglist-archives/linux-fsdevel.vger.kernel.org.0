@@ -2,101 +2,342 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F16D331C494
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 01:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A59231C4A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 01:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbhBPA0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 19:26:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40228 "EHLO
+        id S229720AbhBPAlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 19:41:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbhBPA0E (ORCPT
+        with ESMTP id S229497AbhBPAlU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 19:26:04 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ECA8C061574;
-        Mon, 15 Feb 2021 16:25:24 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id v24so13233368lfr.7;
-        Mon, 15 Feb 2021 16:25:24 -0800 (PST)
+        Mon, 15 Feb 2021 19:41:20 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC987C061574;
+        Mon, 15 Feb 2021 16:40:39 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id b16so9860343lji.13;
+        Mon, 15 Feb 2021 16:40:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ObQgczvE8R33D3cAuZo8fgSRVSdB2ZqxOCCYpoFtjv0=;
-        b=e9zxxHz1e7pAv3pU9NG4BuMQZ5DWngKrFtXaQo7gV8rSt4tJMPEF27HZv69/CW7ea/
-         /vLC32dq7fxlZhABT+nWhOp919k34UlfE/mlqwpbdgQnSZwkV+/r/Xt8x753rGZ1RTH2
-         S+yDoeWvtxFvYrSGlkVWcu/UdexliysthMcI+smWYVzurNi3WX4n90aQwATlf1qgokP3
-         GaWZhZXP2FKEadpKMKR4sc+rknFkIDqQvtyTkagsU4n80JxaK8yXJOr81z3gqEXr3DqW
-         iJALt5NhZ4fV5VQ/Pza5AX3aD2AUHJPVMDgo98ihj2J2kkzXt3gU06EwEAt88jVP7NfI
-         smsQ==
+        bh=xicHfylzCSM6YGN+one5fuBAC6Bh3w7bra1ceUh6ZvM=;
+        b=PfK4V6TAQY0sPFFmbEgXZRZwtRDmdfVWXGpCksch7YLii014m7Kc8etXhkoB8fAJAp
+         GpsUtFDmERR4ff2stp9oKIgdv0jOsnbYuL8wbP8UOrNcgaOcQeVov/KS0RnB4p1Ld36+
+         RrkfsHrJUfUEmUBzy7X27QQD1Vvgx52+42m8avstnUhFiq7kYpomalqFz+IacbFC5kQw
+         RSNmGBB9V2WFoUGzgQ3h5TdmhqWxgRmaZ2I1wGUX2s8ZuBfZComOPvqt5hTNpxybiCHw
+         UrgAHfVZ+RHF4U4rJ+tb82qJVtjeLUX+2iatI3Wc3WwsmWOHYrgwlonHnOJ4evuOIXda
+         LUGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ObQgczvE8R33D3cAuZo8fgSRVSdB2ZqxOCCYpoFtjv0=;
-        b=AEA31faFoNdosJXGFDGsMz+VcLc796gFAC5Rd0eaUutz2ajiwYjcMXcZv/KNSSUB35
-         u/wIski13f4wp6g8+Wd7Cm1X4wlL9ZBf9ti+5aGgjglm39GCKNVLH3oSAyXTA3wWGXFk
-         PLFw9oEoJeLOgvIYKpjYHGrOhXsguqWpB3dTNQlXpV/sgXRi18qeNgc74WceFg0bTQje
-         v9zP1kajfVVwbYX22mts1pB5MmTPh72uEsFelH58+cLeOeWihYr4nFWDXtIvqJNzHyAq
-         3WKttrMU9RJgq0EPtwOWCjSHWqYWEGI0QpQgVLfSTwgzF8pk7q344MOFdoqQahfoEUZA
-         tHiw==
-X-Gm-Message-State: AOAM532ubarOqYiJkXrVTw8StLb9k9e5OCxRF1OQDi+3RLd5C4/Zh2J0
-        eFfVObZiSCzJ7fnVsDTXea7+1yBxFXir0p5wcY8vwmY0HuM=
-X-Google-Smtp-Source: ABdhPJwpbGfZrSvCI3ABnbC9IBo8oG4rOHvzFLGU7ukunhQ4On71xzIGoWuS/3fSxipTHKxgarNopdwZT7vsuD67hhk=
-X-Received: by 2002:a05:6512:2118:: with SMTP id q24mr4435716lfr.133.1613435122509;
- Mon, 15 Feb 2021 16:25:22 -0800 (PST)
+        bh=xicHfylzCSM6YGN+one5fuBAC6Bh3w7bra1ceUh6ZvM=;
+        b=p/xLokOxnnkKGNi5KbuoY8V4tmLb5tfgWHCweYtHTOioc/VyO+7mvEBe5hdB8s1zLv
+         Lr9ghzappwovBwBDdWPXj+qRq5Zb3pgKH9L/2J8WyVeG+c7loTsEM4a6BvDEM8v4Fxr2
+         qSZB5pBubCBmWhCGJ/X64qMQ96NlwqiuJ+c9p/j/ST949FwHc4xzsyaen21VUneeJ1Oh
+         sjpjHhEOVSu1WZvyVOZvzWnRukoonRMNEmuC4/qbRt3/IqPVq0Sm5+KvZEvkU0vbapR0
+         bCzlP1A5XxZ7T5PPj8oR2dKHW2gESsZMCyNFhE8pNpuRWNXWGwE9G0Ofr9+Z19wt37pS
+         dDkA==
+X-Gm-Message-State: AOAM533JBxPFLvR3HI7bbiFaxnAMsmZNUiCymy0RxyKOcroFlepIlvnB
+        Jxe4xdFoHAuJRIXJ4Y+VuNL6hDdDRvqmho+SHIcd1sMfZtY=
+X-Google-Smtp-Source: ABdhPJzy94ik1tFw7QxWM1zEMhmTMT/Bm5dhimMsKPcvESs+iEybsgt/cS1kOWOZOprYnaipGNwuw3aAXJHMfzV0q0w=
+X-Received: by 2002:a05:651c:548:: with SMTP id q8mr10766213ljp.256.1613436038218;
+ Mon, 15 Feb 2021 16:40:38 -0800 (PST)
 MIME-Version: 1.0
-References: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
- <20210215154317.8590-1-lhenriques@suse.de> <ec3a5337b9da71a7bc9527728067a4a3d027419b.camel@hammerspace.com>
-In-Reply-To: <ec3a5337b9da71a7bc9527728067a4a3d027419b.camel@hammerspace.com>
+References: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
+ <9e49f96cd80eaf9c8ed267a7fbbcb4c6467ee790.camel@redhat.com>
+In-Reply-To: <9e49f96cd80eaf9c8ed267a7fbbcb4c6467ee790.camel@redhat.com>
 From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 15 Feb 2021 18:25:11 -0600
-Message-ID: <CAH2r5msJtUSKm0rX9UttUB5xEmsz8jfEev6UqVu31n2x7Gj-ug@mail.gmail.com>
-Subject: Re: [PATCH v2] vfs: prevent copy_file_range to copy across devices
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "iant@google.com" <iant@google.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "dchinner@redhat.com" <dchinner@redhat.com>,
-        "llozano@chromium.org" <llozano@chromium.org>,
-        "lhenriques@suse.de" <lhenriques@suse.de>,
-        "sfrench@samba.org" <sfrench@samba.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>
+Date:   Mon, 15 Feb 2021 18:40:27 -0600
+Message-ID: <CAH2r5mvPLivjuE=cbijzGSHOvx-hkWSWbcxpoBnJX-BR9pBskQ@mail.gmail.com>
+Subject: Re: [PATCH 00/33] Network fs helper library & fscache kiocb API [ver #3]
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, linux-cachefs@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-mm <linux-mm@kvack.org>, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 15, 2021 at 10:11 AM Trond Myklebust
-<trondmy@hammerspace.com> wrote:
->
-> On Mon, 2021-02-15 at 15:43 +0000, Luis Henriques wrote:
-> > Nicolas Boichat reported an issue when trying to use the
-> > copy_file_range
-> > syscall on a tracefs file.  It failed silently because the file
-> > content is
-> > generated on-the-fly (reporting a size of zero) and copy_file_range
-> > needs
-> > to know in advance how much data is present.
->
-> That explanation makes no sense whatsoever. copy_file_range is a non-
-> atomic operation and so the file can change while being copied. Any
-> determination of 'how much data is present' that is made in advance
-> would therefore be a flaw in the copy process being used (i.e.
-> do_splice_direct()). Does sendfile() also 'issue' in the same way?
+Jeff,
+What are the performance differences you are seeing (positive or
+negative) with ceph and netfs, especially with simple examples like
+file copy or grep of large files?
 
-I agree that the explanation of the tracefs problem motivating this
-patch doesn't make sense.
+It could be good if netfs simplifies the problem experienced by
+network filesystems on Linux with readahead on large sequential reads
+- where we don't get as much parallelism due to only having one
+readahead request at a time (thus in many cases there is 'dead time'
+on either the network or the file server while waiting for the next
+readpages request to be issued).   This can be a significant
+performance problem for current readpages when network latency is long
+(or e.g. in cases when network encryption is enabled, and hardware
+offload not available so time consuming on the server or client to
+encrypt the packet).
+
+Do you see netfs much faster than currentreadpages for ceph?
+
+Have you been able to get much benefit from throttling readahead with
+ceph from the current netfs approach for clamping i/o?
+
+On Mon, Feb 15, 2021 at 12:08 PM Jeff Layton <jlayton@redhat.com> wrote:
+>
+> On Mon, 2021-02-15 at 15:44 +0000, David Howells wrote:
+> > Here's a set of patches to do two things:
+> >
+> >  (1) Add a helper library to handle the new VM readahead interface.  This
+> >      is intended to be used unconditionally by the filesystem (whether or
+> >      not caching is enabled) and provides a common framework for doing
+> >      caching, transparent huge pages and, in the future, possibly fscrypt
+> >      and read bandwidth maximisation.  It also allows the netfs and the
+> >      cache to align, expand and slice up a read request from the VM in
+> >      various ways; the netfs need only provide a function to read a stretch
+> >      of data to the pagecache and the helper takes care of the rest.
+> >
+> >  (2) Add an alternative fscache/cachfiles I/O API that uses the kiocb
+> >      facility to do async DIO to transfer data to/from the netfs's pages,
+> >      rather than using readpage with wait queue snooping on one side and
+> >      vfs_write() on the other.  It also uses less memory, since it doesn't
+> >      do buffered I/O on the backing file.
+> >
+> >      Note that this uses SEEK_HOLE/SEEK_DATA to locate the data available
+> >      to be read from the cache.  Whilst this is an improvement from the
+> >      bmap interface, it still has a problem with regard to a modern
+> >      extent-based filesystem inserting or removing bridging blocks of
+> >      zeros.  Fixing that requires a much greater overhaul.
+> >
+> > This is a step towards overhauling the fscache API.  The change is opt-in
+> > on the part of the network filesystem.  A netfs should not try to mix the
+> > old and the new API because of conflicting ways of handling pages and the
+> > PG_fscache page flag and because it would be mixing DIO with buffered I/O.
+> > Further, the helper library can't be used with the old API.
+> >
+> > This does not change any of the fscache cookie handling APIs or the way
+> > invalidation is done.
+> >
+> > In the near term, I intend to deprecate and remove the old I/O API
+> > (fscache_allocate_page{,s}(), fscache_read_or_alloc_page{,s}(),
+> > fscache_write_page() and fscache_uncache_page()) and eventually replace
+> > most of fscache/cachefiles with something simpler and easier to follow.
+> >
+> > The patchset contains five parts:
+> >
+> >  (1) Some helper patches, including provision of an ITER_XARRAY iov
+> >      iterator and a function to do readahead expansion.
+> >
+> >  (2) Patches to add the netfs helper library.
+> >
+> >  (3) A patch to add the fscache/cachefiles kiocb API.
+> >
+> >  (4) Patches to add support in AFS for this.
+> >
+> >  (5) Patches from Jeff Layton to add support in Ceph for this.
+> >
+> > Dave Wysochanski also has patches for NFS for this, though they're not
+> > included on this branch as there's an issue with PNFS.
+> >
+> > With this, AFS without a cache passes all expected xfstests; with a cache,
+> > there's an extra failure, but that's also there before these patches.
+> > Fixing that probably requires a greater overhaul.  Ceph and NFS also pass
+> > the expected tests.
+> >
+> > These patches can be found also on:
+> >
+> >       https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-netfs-lib
+> >
+> > For diffing reference, the tag for the 9th Feb pull request is
+> > fscache-ioapi-20210203 and can be found in the same repository.
+> >
+> >
+> >
+> > Changes
+> > =======
+> >
+> >  (v3) Rolled in the bug fixes.
+> >
+> >       Adjusted the functions that unlock and wait for PG_fscache according
+> >       to Linus's suggestion.
+> >
+> >       Hold a ref on a page when PG_fscache is set as per Linus's
+> >       suggestion.
+> >
+> >       Dropped NFS support and added Ceph support.
+> >
+> >  (v2) Fixed some bugs and added NFS support.
+> >
+> >
+> > References
+> > ==========
+> >
+> > These patches have been published for review before, firstly as part of a
+> > larger set:
+> >
+> > Link: https://lore.kernel.org/linux-fsdevel/158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk/
+> >
+> > Link: https://lore.kernel.org/linux-fsdevel/159465766378.1376105.11619976251039287525.stgit@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-fsdevel/159465784033.1376674.18106463693989811037.stgit@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-fsdevel/159465821598.1377938.2046362270225008168.stgit@warthog.procyon.org.uk/
+> >
+> > Link: https://lore.kernel.org/linux-fsdevel/160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk/
+> >
+> > Then as a cut-down set:
+> >
+> > Link: https://lore.kernel.org/linux-fsdevel/161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk/
+> >
+> > Link: https://lore.kernel.org/linux-fsdevel/161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk/
+> >
+> >
+> > Proposals/information about the design has been published here:
+> >
+> > Link: https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-fsdevel/2758811.1610621106@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-fsdevel/1441311.1598547738@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-fsdevel/160655.1611012999@warthog.procyon.org.uk/
+> >
+> > And requests for information:
+> >
+> > Link: https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-fsdevel/4467.1579020509@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-fsdevel/3577430.1579705075@warthog.procyon.org.uk/
+> >
+> > The NFS parts, though not included here, have been tested by someone who's
+> > using fscache in production:
+> >
+> > Link: https://listman.redhat.com/archives/linux-cachefs/2020-December/msg00000.html
+> >
+> > I've posted partial patches to try and help 9p and cifs along:
+> >
+> > Link: https://lore.kernel.org/linux-fsdevel/1514086.1605697347@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-cifs/1794123.1605713481@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-fsdevel/241017.1612263863@warthog.procyon.org.uk/
+> > Link: https://lore.kernel.org/linux-cifs/270998.1612265397@warthog.procyon.org.uk/
+> >
+> > David
+> > ---
+> > David Howells (27):
+> >       iov_iter: Add ITER_XARRAY
+> >       mm: Add an unlock function for PG_private_2/PG_fscache
+> >       mm: Implement readahead_control pageset expansion
+> >       vfs: Export rw_verify_area() for use by cachefiles
+> >       netfs: Make a netfs helper module
+> >       netfs, mm: Move PG_fscache helper funcs to linux/netfs.h
+> >       netfs, mm: Add unlock_page_fscache() and wait_on_page_fscache()
+> >       netfs: Provide readahead and readpage netfs helpers
+> >       netfs: Add tracepoints
+> >       netfs: Gather stats
+> >       netfs: Add write_begin helper
+> >       netfs: Define an interface to talk to a cache
+> >       netfs: Hold a ref on a page when PG_private_2 is set
+> >       fscache, cachefiles: Add alternate API to use kiocb for read/write to cache
+> >       afs: Disable use of the fscache I/O routines
+> >       afs: Pass page into dirty region helpers to provide THP size
+> >       afs: Print the operation debug_id when logging an unexpected data version
+> >       afs: Move key to afs_read struct
+> >       afs: Don't truncate iter during data fetch
+> >       afs: Log remote unmarshalling errors
+> >       afs: Set up the iov_iter before calling afs_extract_data()
+> >       afs: Use ITER_XARRAY for writing
+> >       afs: Wait on PG_fscache before modifying/releasing a page
+> >       afs: Extract writeback extension into its own function
+> >       afs: Prepare for use of THPs
+> >       afs: Use the fs operation ops to handle FetchData completion
+> >       afs: Use new fscache read helper API
+> >
+> > Jeff Layton (6):
+> >       ceph: disable old fscache readpage handling
+> >       ceph: rework PageFsCache handling
+> >       ceph: fix fscache invalidation
+> >       ceph: convert readpage to fscache read helper
+> >       ceph: plug write_begin into read helper
+> >       ceph: convert ceph_readpages to ceph_readahead
+> >
+> >
+> >  fs/Kconfig                    |    1 +
+> >  fs/Makefile                   |    1 +
+> >  fs/afs/Kconfig                |    1 +
+> >  fs/afs/dir.c                  |  225 ++++---
+> >  fs/afs/file.c                 |  470 ++++---------
+> >  fs/afs/fs_operation.c         |    4 +-
+> >  fs/afs/fsclient.c             |  108 +--
+> >  fs/afs/inode.c                |    7 +-
+> >  fs/afs/internal.h             |   58 +-
+> >  fs/afs/rxrpc.c                |  150 ++---
+> >  fs/afs/write.c                |  610 +++++++++--------
+> >  fs/afs/yfsclient.c            |   82 +--
+> >  fs/cachefiles/Makefile        |    1 +
+> >  fs/cachefiles/interface.c     |    5 +-
+> >  fs/cachefiles/internal.h      |    9 +
+> >  fs/cachefiles/rdwr2.c         |  412 ++++++++++++
+> >  fs/ceph/Kconfig               |    1 +
+> >  fs/ceph/addr.c                |  535 ++++++---------
+> >  fs/ceph/cache.c               |  125 ----
+> >  fs/ceph/cache.h               |  101 +--
+> >  fs/ceph/caps.c                |   10 +-
+> >  fs/ceph/inode.c               |    1 +
+> >  fs/ceph/super.h               |    1 +
+> >  fs/fscache/Kconfig            |    1 +
+> >  fs/fscache/Makefile           |    3 +-
+> >  fs/fscache/internal.h         |    3 +
+> >  fs/fscache/page.c             |    2 +-
+> >  fs/fscache/page2.c            |  117 ++++
+> >  fs/fscache/stats.c            |    1 +
+> >  fs/internal.h                 |    5 -
+> >  fs/netfs/Kconfig              |   23 +
+> >  fs/netfs/Makefile             |    5 +
+> >  fs/netfs/internal.h           |   97 +++
+> >  fs/netfs/read_helper.c        | 1169 +++++++++++++++++++++++++++++++++
+> >  fs/netfs/stats.c              |   59 ++
+> >  fs/read_write.c               |    1 +
+> >  include/linux/fs.h            |    1 +
+> >  include/linux/fscache-cache.h |    4 +
+> >  include/linux/fscache.h       |   40 +-
+> >  include/linux/netfs.h         |  195 ++++++
+> >  include/linux/pagemap.h       |    3 +
+> >  include/net/af_rxrpc.h        |    2 +-
+> >  include/trace/events/afs.h    |   74 +--
+> >  include/trace/events/netfs.h  |  201 ++++++
+> >  mm/filemap.c                  |   20 +
+> >  mm/readahead.c                |   70 ++
+> >  net/rxrpc/recvmsg.c           |    9 +-
+> >  47 files changed, 3473 insertions(+), 1550 deletions(-)
+> >  create mode 100644 fs/cachefiles/rdwr2.c
+> >  create mode 100644 fs/fscache/page2.c
+> >  create mode 100644 fs/netfs/Kconfig
+> >  create mode 100644 fs/netfs/Makefile
+> >  create mode 100644 fs/netfs/internal.h
+> >  create mode 100644 fs/netfs/read_helper.c
+> >  create mode 100644 fs/netfs/stats.c
+> >  create mode 100644 include/linux/netfs.h
+> >  create mode 100644 include/trace/events/netfs.h
+> >
+> >
+>
+> Thanks David,
+>
+> I did an xfstests run on ceph with a kernel based on this and it seemed
+> to do fine. I'll plan to pull this into the ceph-client/testing branch
+> and run it through the ceph kclient test harness. There are only a few
+> differences from the last run we did, so I'm not expecting big changes,
+> but I'll keep you posted.
+>
+> --
+> Jeff Layton <jlayton@redhat.com>
+>
 
 
 -- 
