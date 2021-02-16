@@ -2,233 +2,351 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE54331CE95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 18:02:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EFFC31CE9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 18:04:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230234AbhBPRCh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Feb 2021 12:02:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34996 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229913AbhBPRCg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Feb 2021 12:02:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 07A70AD2B;
-        Tue, 16 Feb 2021 17:01:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 808A11F2AA7; Tue, 16 Feb 2021 18:01:54 +0100 (CET)
-Date:   Tue, 16 Feb 2021 18:01:54 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [RFC][PATCH 2/2] fanotify: support limited functionality for
- unprivileged users
-Message-ID: <20210216170154.GG21108@quack2.suse.cz>
-References: <20210124184204.899729-1-amir73il@gmail.com>
- <20210124184204.899729-3-amir73il@gmail.com>
+        id S230336AbhBPREk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Feb 2021 12:04:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56640 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229913AbhBPREg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Feb 2021 12:04:36 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9583C061574;
+        Tue, 16 Feb 2021 09:03:54 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id z15so6525493pfc.3;
+        Tue, 16 Feb 2021 09:03:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JY/xjLys2p6Df/83yNvluuwt58vz7rso04y3aoxqnD8=;
+        b=dWuiVyjzsHfoumFzHsotMyKdkUM5pYeGihMonK42WiCckLLntBKEMmSP0BCdjVXB53
+         D8xlhFhXopKongDdMw7+1MhRmVmMvOG1RDMFOT5JkmkUizHVpuSjaT8q3DRrdAdPFsy/
+         LtbuqoeEs6rbzREzx/FXC/5Jjx3T3N2dHPBKRonSvGaBeNW9aPiWeIDpQ8MElIUt92Ik
+         iVOpA6ujExsUjxUtN+EF5KGtk2i1DGQxveeVCkUCJj/h1NKFk2FdOW3tXpDX1uQk4upi
+         A78sCie8qvo4o3Yb6fbyhXOT9OdCFypXq5dl6xFKUlBIPK9pu/X4EKfhQXYJZxpK55cb
+         GDNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=JY/xjLys2p6Df/83yNvluuwt58vz7rso04y3aoxqnD8=;
+        b=VapCLtbSXzZoe/T8YrLMWNcOFKoLz4azHXJFMsgIZquNQ9Wtym9+zmWx5GUsm4dmcz
+         QMjvgZqsSIve4BphXEujPZVmdJZZQGmwElvuFUlplkgS3Ha01edM1tJLDcJv4EppuW43
+         mK+OA9Kepu0Lzja8/cYJ59e1gMxMZv6GvnP/Stsu0Xh4ki9TKsGgydHxGa84AbvwErqQ
+         nxF6AyCJzQpHFK12zkrkSLMUgogV4dkuCFoZdhznEULKo600vERXZ3jSk+0gp+Fv8U50
+         jEv5jYApi4EXFDzZZoUKtsQyQYq6YhK0lG2iK1TBfKvRCRuAWqsMNPEFWOE10NB1Bk/W
+         AEFA==
+X-Gm-Message-State: AOAM530z1Q/biUDJnHgJ8RwAqodz6xs98SEcXKI2BJ+/aYjlLtR97/PY
+        6qekQ6ePG+GrCTSuWF7dTck=
+X-Google-Smtp-Source: ABdhPJxN4hS40Q1KbiaUYSSXwZmevh2bhfAajbI7s3QAoqOTET5ECQ0rf6zq3rzvvHLKNJpYqSDdTg==
+X-Received: by 2002:a65:6706:: with SMTP id u6mr19958722pgf.26.1613495034232;
+        Tue, 16 Feb 2021 09:03:54 -0800 (PST)
+Received: from bbox-1.mtv.corp.google.com ([2620:15c:211:201:fc2a:a664:489d:d48f])
+        by smtp.gmail.com with ESMTPSA id 143sm21876424pfw.3.2021.02.16.09.03.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Feb 2021 09:03:52 -0800 (PST)
+Sender: Minchan Kim <minchan.kim@gmail.com>
+From:   Minchan Kim <minchan@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        cgoldswo@codeaurora.org, linux-fsdevel@vger.kernel.org,
+        willy@infradead.org, mhocko@suse.com, david@redhat.com,
+        vbabka@suse.cz, viro@zeniv.linux.org.uk, joaodias@google.com,
+        Minchan Kim <minchan@kernel.org>
+Subject: [RFC 1/2] mm: disable LRU pagevec during the migration temporarily
+Date:   Tue, 16 Feb 2021 09:03:47 -0800
+Message-Id: <20210216170348.1513483-1-minchan@kernel.org>
+X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210124184204.899729-3-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 24-01-21 20:42:04, Amir Goldstein wrote:
-> Add limited support for unprivileged fanotify event listener.
-> An unprivileged event listener does not get an open file descriptor in
-> the event nor the process pid of another process.  An unprivileged event
-> listener cannot request permission events, cannot set mount/filesystem
-> marks and cannot request unlimited queue/marks.
-> 
-> This enables the limited functionality similar to inotify when watching a
-> set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
-> requiring SYS_CAP_ADMIN privileges.
-> 
-> The FAN_REPORT_DFID_NAME init flag, provide a method for an unprivileged
-> event listener watching a set of directories (with FAN_EVENT_ON_CHILD)
-> to monitor all changes inside those directories.
-> 
-> This typically requires that the listener keeps a map of watched directory
-> fid to dirfd (O_PATH), where fid is obtained with name_to_handle_at()
-> before starting to watch for changes.
-> 
-> When getting an event, the reported fid of the parent should be resolved
-> to dirfd and fstatsat(2) with dirfd and name should be used to query the
-> state of the filesystem entry.
-> 
-> Note that even though events do not report the event creator pid,
-> fanotify does not merge similar events on the same object that were
-> generated by different processes. This is aligned with exiting behavior
-> when generating processes are outside of the listener pidns (which
-> results in reporting 0 pid to listener).
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+LRU pagevec holds refcount of pages until the pagevec are drained.
+It could prevent migration since the refcount of the page is greater
+than the expection in migration logic. To mitigate the issue,
+callers of migrate_pages drains LRU pagevec via migrate_prep or
+lru_add_drain_all before migrate_pages call.
 
-The patch looks mostly good to me. Just two questions:
+However, it's not enough because pages coming into pagevec after the
+draining call still could stay at the pagevec so it could keep
+preventing page migration. Since some callers of migrate_pages have
+retrial logic with LRU draining, the page would migrate at next trail
+but it is still fragile in that it doesn't close the fundamental race
+between upcoming LRU pages into pagvec and migration so the migration
+failure could cause contiguous memory allocation failure in the end.
 
-a) Remind me please, why did we decide pid isn't safe to report to
-unpriviledged listeners?
+The other concern is migration keeps retrying until pages in pagevec
+are drained. During the time, migration repeatedly allocates target
+page, unmap source page from page table of processes and then get to
+know the failure, restore the original page to pagetable of processes,
+free target page, which is also not good.
 
-b) Why did we decide returning open file descriptors isn't safe for
-unpriviledged listeners? Is it about FMODE_NONOTIFY?
+To solve the issue, this patch tries to close the race rather than
+relying on retrial and luck. The idea is to introduce
+migration-in-progress tracking count with introducing IPI barrier
+after atomic updating the count to minimize read-side overhead.
 
-I'm not opposed to either but I'm wondering. Also with b) old style
-fanotify events are not very useful so maybe we could just disallow all
-notification groups without FID/DFID reporting? In the future if we ever
-decide returning open fds is safe or how to do it, we can enable that group
-type for unpriviledged users. However just starting to return open fds
-later won't fly because listener has to close these fds when receiving
-events.
+The migrate_prep increases migrate_pending_count under the lock
+and IPI call to guarantee every CPU see the uptodate value
+of migrate_pending_count. Then, drain pagevec via lru_add_drain_all.
+From now on, no LRU pages could reach pagevec since LRU handling
+functions skips the batching if migration is in progress with checking
+migrate_pedning(IOW, pagevec should be empty until migration is done).
+Every migrate_prep's caller should call migrate_finish in pair to
+decrease the migration tracking count.
 
-								Honza
+With the migrate_pending, vulnerable places to make migration failure
+could catch migration-in-progress and make their plan to help the
+migration(e.g., bh_lru_install[1]) in future.
 
-> ---
->  fs/notify/fanotify/fanotify_user.c | 49 +++++++++++++++++++++++++++---
->  fs/notify/fdinfo.c                 |  3 +-
->  include/linux/fanotify.h           | 16 ++++++++++
->  3 files changed, 62 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 4ade3f9df337..b70de273eedb 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -397,9 +397,21 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
->  	metadata.vers = FANOTIFY_METADATA_VERSION;
->  	metadata.reserved = 0;
->  	metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
-> -	metadata.pid = pid_vnr(event->pid);
-> +	/*
-> +	 * An unprivileged event listener does not get an open file descriptor
-> +	 * in the event nor another generating process pid. If the event was
-> +	 * generated by the unprivileged process itself, self pid is reported.
-> +	 * We may relax this in the future by checking calling process access
-> +	 * permissions to the object.
-> +	 */
-> +	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) ||
-> +	    task_tgid(current) == event->pid)
-> +		metadata.pid = pid_vnr(event->pid);
-> +	else
-> +		metadata.pid = 0;
->  
-> -	if (path && path->mnt && path->dentry) {
-> +	if (!FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
-> +	    path && path->mnt && path->dentry) {
->  		fd = create_fd(group, path, &f);
->  		if (fd < 0)
->  			return fd;
-> @@ -995,12 +1007,29 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
->  	int f_flags, fd;
->  	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
->  	unsigned int class = flags & FANOTIFY_CLASS_BITS;
-> +	unsigned int internal_flags = 0;
->  
->  	pr_debug("%s: flags=%x event_f_flags=%x\n",
->  		 __func__, flags, event_f_flags);
->  
-> -	if (!capable(CAP_SYS_ADMIN))
-> -		return -EPERM;
-> +	if (!capable(CAP_SYS_ADMIN)) {
-> +		/*
-> +		 * An unprivileged user can setup an unprivileged listener with
-> +		 * limited functionality - an unprivileged event listener cannot
-> +		 * request permission events, cannot set mount/filesystem marks
-> +		 * and cannot request unlimited queue/marks.
-> +		 */
-> +		if ((flags & ~FANOTIFY_UNPRIV_INIT_FLAGS) ||
-> +		    class != FAN_CLASS_NOTIF)
-> +			return -EPERM;
-> +
-> +		/*
-> +		 * We set the internal flag FANOTIFY_UNPRIV on the group, so we
-> +		 * know that we need to limit setting mount/filesystem marks on
-> +		 * this group and avoid providing pid and open fd in the event.
-> +		 */
-> +		internal_flags |= FANOTIFY_UNPRIV;
-> +	}
->  
->  #ifdef CONFIG_AUDITSYSCALL
->  	if (flags & ~(FANOTIFY_INIT_FLAGS | FAN_ENABLE_AUDIT))
-> @@ -1051,7 +1080,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
->  		goto out_destroy_group;
->  	}
->  
-> -	group->fanotify_data.flags = flags;
-> +	group->fanotify_data.flags = flags | internal_flags;
->  	group->memcg = get_mem_cgroup_from_mm(current->mm);
->  
->  	group->overflow_event = fanotify_alloc_overflow_event();
-> @@ -1247,6 +1276,15 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  		goto fput_and_out;
->  	group = f.file->private_data;
->  
-> +	/*
-> +	 * An unprivileged event listener is not allowed to watch a mount
-> +	 * point nor a filesystem.
-> +	 */
-> +	ret = -EPERM;
-> +	if (FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV) &&
-> +	    mark_type != FAN_MARK_INODE)
-> +		goto fput_and_out;
-> +
->  	/*
->  	 * group->priority == FS_PRIO_0 == FAN_CLASS_NOTIF.  These are not
->  	 * allowed to set permissions events.
-> @@ -1379,6 +1417,7 @@ SYSCALL32_DEFINE6(fanotify_mark,
->   */
->  static int __init fanotify_user_setup(void)
->  {
-> +	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_FLAGS);
->  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
->  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
->  
-> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-> index f0d6b54be412..57f0d5d9f934 100644
-> --- a/fs/notify/fdinfo.c
-> +++ b/fs/notify/fdinfo.c
-> @@ -144,7 +144,8 @@ void fanotify_show_fdinfo(struct seq_file *m, struct file *f)
->  	struct fsnotify_group *group = f->private_data;
->  
->  	seq_printf(m, "fanotify flags:%x event-flags:%x\n",
-> -		   group->fanotify_data.flags, group->fanotify_data.f_flags);
-> +		   group->fanotify_data.flags & FANOTIFY_INIT_FLAGS,
-> +		   group->fanotify_data.f_flags);
->  
->  	show_fdinfo(m, f, fanotify_fdinfo);
->  }
-> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-> index 031a97d8369a..a573c1028c14 100644
-> --- a/include/linux/fanotify.h
-> +++ b/include/linux/fanotify.h
-> @@ -28,6 +28,22 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
->  				 FAN_CLOEXEC | FAN_NONBLOCK | \
->  				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS)
->  
-> +/* Internal flags */
-> +#define FANOTIFY_UNPRIV		0x80000000
-> +#define FANOTIFY_INTERNAL_FLAGS	(FANOTIFY_UNPRIV)
-> +
-> +/*
-> + * fanotify_init() flags allowed for unprivileged listener.
-> + * FAN_CLASS_NOTIF in this mask is purely semantic because it is zero,
-> + * but it is the only class we allow for unprivileged listener.
-> + * Since unprivileged listener does not provide file descriptors in events,
-> + * reporting file handles makes sense, but it is not a must.
-> + * FAN_REPORT_TID does not make sense for unprivileged listener, which uses
-> + * event->pid only to filter out events generated by listener process itself.
-> + */
-> +#define FANOTIFY_UNPRIV_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
-> +					 FAN_CLASS_NOTIF | FANOTIFY_FID_BITS)
-> +
->  #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
->  				 FAN_MARK_FILESYSTEM)
->  
-> -- 
-> 2.25.1
-> 
+[1] https://lore.kernel.org/linux-mm/c083b0ab6e410e33ca880d639f90ef4f6f3b33ff.1613020616.git.cgoldswo@codeaurora.org/
+
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ include/linux/migrate.h |  3 +++
+ mm/mempolicy.c          |  6 +++++
+ mm/migrate.c            | 55 ++++++++++++++++++++++++++++++++++++++---
+ mm/page_alloc.c         |  3 +++
+ mm/swap.c               | 24 +++++++++++++-----
+ 5 files changed, 82 insertions(+), 9 deletions(-)
+
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index 3a389633b68f..047d5358fe0d 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -46,6 +46,8 @@ extern int isolate_movable_page(struct page *page, isolate_mode_t mode);
+ extern void putback_movable_page(struct page *page);
+ 
+ extern void migrate_prep(void);
++extern void migrate_finish(void);
++extern bool migrate_pending(void);
+ extern void migrate_prep_local(void);
+ extern void migrate_page_states(struct page *newpage, struct page *page);
+ extern void migrate_page_copy(struct page *newpage, struct page *page);
+@@ -67,6 +69,7 @@ static inline int isolate_movable_page(struct page *page, isolate_mode_t mode)
+ 	{ return -EBUSY; }
+ 
+ static inline int migrate_prep(void) { return -ENOSYS; }
++static inline void migrate_finish(void) {}
+ static inline int migrate_prep_local(void) { return -ENOSYS; }
+ 
+ static inline void migrate_page_states(struct page *newpage, struct page *page)
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 6961238c7ef5..46d9986c7bf0 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1208,6 +1208,8 @@ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
+ 			break;
+ 	}
+ 	mmap_read_unlock(mm);
++	migrate_finish();
++
+ 	if (err < 0)
+ 		return err;
+ 	return busy;
+@@ -1371,6 +1373,10 @@ static long do_mbind(unsigned long start, unsigned long len,
+ 	mmap_write_unlock(mm);
+ mpol_out:
+ 	mpol_put(new);
++
++	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL))
++		migrate_finish();
++
+ 	return err;
+ }
+ 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index a69da8aaeccd..d70e113eee04 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -57,6 +57,22 @@
+ 
+ #include "internal.h"
+ 
++static DEFINE_SPINLOCK(migrate_pending_lock);
++static unsigned long migrate_pending_count;
++static DEFINE_PER_CPU(struct work_struct, migrate_pending_work);
++
++static void read_migrate_pending(struct work_struct *work)
++{
++	/* TODO : not sure it's needed */
++	unsigned long dummy = __READ_ONCE(migrate_pending_count);
++	(void)dummy;
++}
++
++bool migrate_pending(void)
++{
++	return migrate_pending_count;
++}
++
+ /*
+  * migrate_prep() needs to be called before we start compiling a list of pages
+  * to be migrated using isolate_lru_page(). If scheduling work on other CPUs is
+@@ -64,11 +80,27 @@
+  */
+ void migrate_prep(void)
+ {
++	unsigned int cpu;
++
++	spin_lock(&migrate_pending_lock);
++	migrate_pending_count++;
++	spin_unlock(&migrate_pending_lock);
++
++	for_each_online_cpu(cpu) {
++		struct work_struct *work = &per_cpu(migrate_pending_work, cpu);
++
++		INIT_WORK(work, read_migrate_pending);
++		queue_work_on(cpu, mm_percpu_wq, work);
++	}
++
++	for_each_online_cpu(cpu)
++		flush_work(&per_cpu(migrate_pending_work, cpu));
++	/*
++	 * From now on, every online cpu will see uptodate
++	 * migarte_pending_work.
++	 */
+ 	/*
+ 	 * Clear the LRU lists so pages can be isolated.
+-	 * Note that pages may be moved off the LRU after we have
+-	 * drained them. Those pages will fail to migrate like other
+-	 * pages that may be busy.
+ 	 */
+ 	lru_add_drain_all();
+ }
+@@ -79,6 +111,22 @@ void migrate_prep_local(void)
+ 	lru_add_drain();
+ }
+ 
++void migrate_finish(void)
++{
++	int cpu;
++
++	spin_lock(&migrate_pending_lock);
++	migrate_pending_count--;
++	spin_unlock(&migrate_pending_lock);
++
++	for_each_online_cpu(cpu) {
++		struct work_struct *work = &per_cpu(migrate_pending_work, cpu);
++
++		INIT_WORK(work, read_migrate_pending);
++		queue_work_on(cpu, mm_percpu_wq, work);
++	}
++}
++
+ int isolate_movable_page(struct page *page, isolate_mode_t mode)
+ {
+ 	struct address_space *mapping;
+@@ -1837,6 +1885,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+ 	if (err >= 0)
+ 		err = err1;
+ out:
++	migrate_finish();
+ 	return err;
+ }
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 6446778cbc6b..e4cb959f64dc 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8493,6 +8493,9 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
+ 		ret = migrate_pages(&cc->migratepages, alloc_migration_target,
+ 				NULL, (unsigned long)&mtc, cc->mode, MR_CONTIG_RANGE);
+ 	}
++
++	migrate_finish();
++
+ 	if (ret < 0) {
+ 		putback_movable_pages(&cc->migratepages);
+ 		return ret;
+diff --git a/mm/swap.c b/mm/swap.c
+index 31b844d4ed94..e42c4b4bf2b3 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -36,6 +36,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/page_idle.h>
+ #include <linux/local_lock.h>
++#include <linux/migrate.h>
+ 
+ #include "internal.h"
+ 
+@@ -235,6 +236,17 @@ static void pagevec_move_tail_fn(struct page *page, struct lruvec *lruvec)
+ 	}
+ }
+ 
++/* return true if pagevec needs flush */
++static bool pagevec_add_and_need_flush(struct pagevec *pvec, struct page *page)
++{
++	bool ret = false;
++
++	if (!pagevec_add(pvec, page) || PageCompound(page) || migrate_pending())
++		ret = true;
++
++	return ret;
++}
++
+ /*
+  * Writeback is about to end against a page which has been marked for immediate
+  * reclaim.  If it still appears to be reclaimable, move it to the tail of the
+@@ -252,7 +264,7 @@ void rotate_reclaimable_page(struct page *page)
+ 		get_page(page);
+ 		local_lock_irqsave(&lru_rotate.lock, flags);
+ 		pvec = this_cpu_ptr(&lru_rotate.pvec);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, pagevec_move_tail_fn);
+ 		local_unlock_irqrestore(&lru_rotate.lock, flags);
+ 	}
+@@ -343,7 +355,7 @@ static void activate_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.activate_page);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, __activate_page);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -458,7 +470,7 @@ void lru_cache_add(struct page *page)
+ 	get_page(page);
+ 	local_lock(&lru_pvecs.lock);
+ 	pvec = this_cpu_ptr(&lru_pvecs.lru_add);
+-	if (!pagevec_add(pvec, page) || PageCompound(page))
++	if (pagevec_add_and_need_flush(pvec, page))
+ 		__pagevec_lru_add(pvec);
+ 	local_unlock(&lru_pvecs.lock);
+ }
+@@ -654,7 +666,7 @@ void deactivate_file_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_deactivate_file);
+ 
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, lru_deactivate_file_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -676,7 +688,7 @@ void deactivate_page(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_deactivate);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, lru_deactivate_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
+@@ -698,7 +710,7 @@ void mark_page_lazyfree(struct page *page)
+ 		local_lock(&lru_pvecs.lock);
+ 		pvec = this_cpu_ptr(&lru_pvecs.lru_lazyfree);
+ 		get_page(page);
+-		if (!pagevec_add(pvec, page) || PageCompound(page))
++		if (pagevec_add_and_need_flush(pvec, page))
+ 			pagevec_lru_move_fn(pvec, lru_lazyfree_fn);
+ 		local_unlock(&lru_pvecs.lock);
+ 	}
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.30.0.478.g8a0d178c01-goog
+
