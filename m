@@ -2,210 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B9EAB31C9AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 12:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D204931CA2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 12:52:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbhBPL3u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Feb 2021 06:29:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39720 "EHLO mail.kernel.org"
+        id S230291AbhBPLup (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Feb 2021 06:50:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49866 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229907AbhBPL3m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Feb 2021 06:29:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A94BF64DFF;
-        Tue, 16 Feb 2021 11:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1613474940;
-        bh=RPjPaTvayhktPzqcqsg1ndjbnlMY4ZXLaVp+CQgT4h4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=btdYIVxrhY203EYeuIVn+hf+O9MCnU4jc3+ifo20WyjTunezcWc/ss5NCNm9kD2yM
-         NiRP82OU5FeL+iR1Mvd+m2h+4eXigLIZK63k3VD2u8bFvrnyL4+rNZRd10a4PFVrtT
-         KAd3AWg1RQAU09Lp2Ite+6kqNCeEtH4cUeyD7KJc=
-Date:   Tue, 16 Feb 2021 12:28:57 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "iant@google.com" <iant@google.com>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "llozano@chromium.org" <llozano@chromium.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "dchinner@redhat.com" <dchinner@redhat.com>,
+        id S230310AbhBPLsw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Feb 2021 06:48:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 0AF90AF9F;
+        Tue, 16 Feb 2021 11:48:08 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id D5105DA6EF; Tue, 16 Feb 2021 12:46:11 +0100 (CET)
+Date:   Tue, 16 Feb 2021 12:46:11 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "sfrench@samba.org" <sfrench@samba.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH v2] vfs: prevent copy_file_range to copy across devices
-Message-ID: <YCuseTMyjL+9sWum@kroah.com>
-References: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
- <20210215154317.8590-1-lhenriques@suse.de>
- <CAOQ4uxgjcCrzDkj-0ukhvHRgQ-D+A3zU5EAe0A=s1Gw2dnTJSA@mail.gmail.com>
- <73ab4951f48d69f0183548c7a82f7ae37e286d1c.camel@hammerspace.com>
- <CAOQ4uxgPtqG6eTi2AnAV4jTAaNDbeez+Xi2858mz1KLGMFntfg@mail.gmail.com>
- <92d27397479984b95883197d90318ee76995b42e.camel@hammerspace.com>
- <CAOQ4uxjUf15fDjz11pCzT3GkFmw=2ySXR_6XF-Bf-TfUwpj77Q@mail.gmail.com>
- <87r1lgjm7l.fsf@suse.de>
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Subject: Re: [PATCH v15 00/42] btrfs: zoned block device support
+Message-ID: <20210216114611.GM1993@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+References: <cover.1612433345.git.naohiro.aota@wdc.com>
+ <20210210195829.GW1993@twin.jikos.cz>
+ <SN4PR0401MB35987EE941FA59E2ECB8D7269B8C9@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20210211151901.GD1993@twin.jikos.cz>
+ <SN4PR0401MB3598ADA963CA60A715DE5EDE9B8C9@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20210211154627.GE1993@twin.jikos.cz>
+ <SN4PR0401MB359821DC2BBF171C946142D09B889@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20210216043247.cjxybi7dudpgvvyg@naota-xeon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87r1lgjm7l.fsf@suse.de>
+In-Reply-To: <20210216043247.cjxybi7dudpgvvyg@naota-xeon>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 11:17:34AM +0000, Luis Henriques wrote:
-> Amir Goldstein <amir73il@gmail.com> writes:
+On Tue, Feb 16, 2021 at 01:33:28PM +0900, Naohiro Aota wrote:
+> On Mon, Feb 15, 2021 at 04:58:05PM +0000, Johannes Thumshirn wrote:
+> > On 11/02/2021 16:48, David Sterba wrote:
+> > > On Thu, Feb 11, 2021 at 03:26:04PM +0000, Johannes Thumshirn wrote:
+> > >> On 11/02/2021 16:21, David Sterba wrote:
+> > >>> On Thu, Feb 11, 2021 at 09:58:09AM +0000, Johannes Thumshirn wrote:
+> > >>>> On 10/02/2021 21:02, David Sterba wrote:
+> > >>>>>> This series implements superblock log writing. It uses two zones as a
+> > >>>>>> circular buffer to write updated superblocks. Once the first zone is filled
+> > >>>>>> up, start writing into the second zone. The first zone will be reset once
+> > >>>>>> both zones are filled. We can determine the postion of the latest
+> > >>>>>> superblock by reading the write pointer information from a device.
+> > >>>>>
+> > >>>>> About that, in this patchset it's still leaving superblock at the fixed
+> > >>>>> zone number while we want it at a fixed location, spanning 2 zones
+> > >>>>> regardless of their size.
+> > >>>>
+> > >>>> We'll always need 2 zones or otherwise we won't be powercut safe.
+> > >>>
+> > >>> Yes we do, that hasn't changed.
+> > >>
+> > >> OK that I don't understand, with the log structured superblocks on a zoned
+> > >> filesystem, we're writing a new superblock until the 1st zone is filled.
+> > >> Then we advance to the second zone. As soon as we wrote a superblock to
+> > >> the second zone we can reset the first.
+> > >> If we only use one zone,
+> > > 
+> > > No, that can't work and nobody suggests that.
+> > > 
+> > >> we would need to write until it's end, reset and
+> > >> start writing again from the beginning. But if a powercut happens between
+> > >> reset and first write after the reset, we end up with no superblock.
+> > > 
+> > > What I'm saying and what we discussed on slack in December, we can't fix
+> > > the zone number for the 1st and 2nd copy of superblock like it is now in
+> > > sb_zone_number.
+> > > 
+> > > The primary superblock must be there for any reference and to actually
+> > > let the tools learn about the incompat bits.
+> > > 
+> > > The 1st copy is now fixed zone 16, which depends on the zone size. The
+> > > idea is to define the superblock offsets to start at given offsets,
+> > > where the ring buffer has the two consecutive zones, regardless of their
+> > > size.
+> > > 
+> > > primary:		   0
+> > > 1st copy:		 16G
+> > > 2nd copy:		256G
+> > > 
+> > > Due to the variability of the zones in future devices, we'll reserve a
+> > > space at the superblock interval, assuming the zone sizes can grow up to
+> > > several gigabytes. Current working number is 1G, with some safety margin
+> > > the reserved ranges would be (eg. for a 4G zone size):
+> > > 
+> > > primary:		0 up to 8G
+> > > 1st copy:		16G up to 24G
+> > > 2nd copy:		256G up to 262G
+> > > 
+> > > It is wasteful but we want to be future proof and expecting disk sizes
+> > > from tens of terabytes to a hundred terabytes, it's not significant
+> > > loss of space.
+> > > 
+> > > If the zone sizes can be expected higher than 4G, the 1st copy can be
+> > > defined at 64G, that would leave us some margin until somebody thinks
+> > > that 32G zones are a great idea.
+> > > 
+> > 
+> > We've been talking about this today and our proposal would be as follows:
+> > Primary SB is two zones starting at LBA 0
+> > Seconday SB the two zones starting with the zone that contains the address 16G
 > 
-> > On Mon, Feb 15, 2021 at 8:57 PM Trond Myklebust <trondmy@hammerspace.com> wrote:
-> >>
-> >> On Mon, 2021-02-15 at 19:24 +0200, Amir Goldstein wrote:
-> >> > On Mon, Feb 15, 2021 at 6:53 PM Trond Myklebust <
-> >> > trondmy@hammerspace.com> wrote:
-> >> > >
-> >> > > On Mon, 2021-02-15 at 18:34 +0200, Amir Goldstein wrote:
-> >> > > > On Mon, Feb 15, 2021 at 5:42 PM Luis Henriques <
-> >> > > > lhenriques@suse.de>
-> >> > > > wrote:
-> >> > > > >
-> >> > > > > Nicolas Boichat reported an issue when trying to use the
-> >> > > > > copy_file_range
-> >> > > > > syscall on a tracefs file.  It failed silently because the file
-> >> > > > > content is
-> >> > > > > generated on-the-fly (reporting a size of zero) and
-> >> > > > > copy_file_range
-> >> > > > > needs
-> >> > > > > to know in advance how much data is present.
-> >> > > > >
-> >> > > > > This commit restores the cross-fs restrictions that existed
-> >> > > > > prior
-> >> > > > > to
-> >> > > > > 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-> >> > > > > devices")
-> >> > > > > and
-> >> > > > > removes generic_copy_file_range() calls from ceph, cifs, fuse,
-> >> > > > > and
-> >> > > > > nfs.
-> >> > > > >
-> >> > > > > Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-> >> > > > > devices")
-> >> > > > > Link:
-> >> > > > > https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-> >> > > > > Cc: Nicolas Boichat <drinkcat@chromium.org>
-> >> > > > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> >> > > >
-> >> > > > Code looks ok.
-> >> > > > You may add:
-> >> > > >
-> >> > > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> >> > > >
-> >> > > > I agree with Trond that the first paragraph of the commit message
-> >> > > > could
-> >> > > > be improved.
-> >> > > > The purpose of this change is to fix the change of behavior that
-> >> > > > caused the regression.
-> >> > > >
-> >> > > > Before v5.3, behavior was -EXDEV and userspace could fallback to
-> >> > > > read.
-> >> > > > After v5.3, behavior is zero size copy.
-> >> > > >
-> >> > > > It does not matter so much what makes sense for CFR to do in this
-> >> > > > case (generic cross-fs copy).  What matters is that nobody asked
-> >> > > > for
-> >> > > > this change and that it caused problems.
-> >> > > >
-> >> > >
-> >> > > No. I'm saying that this patch should be NACKed unless there is a
-> >> > > real
-> >> > > explanation for why we give crap about this tracefs corner case and
-> >> > > why
-> >> > > it can't be fixed.
-> >> > >
-> >> > > There are plenty of reasons why copy offload across filesystems
-> >> > > makes
-> >> > > sense, and particularly when you're doing NAS. Clone just doesn't
-> >> > > cut
-> >> > > it when it comes to disaster recovery (whereas backup to a
-> >> > > different
-> >> > > storage unit does). If the client has to do the copy, then you're
-> >> > > effectively doubling the load on the server, and you're adding
-> >> > > potentially unnecessary network traffic (or at the very least you
-> >> > > are
-> >> > > doubling that traffic).
-> >> > >
-> >> >
-> >> > I don't understand the use case you are describing.
-> >> >
-> >> > Which filesystem types are you talking about for source and target
-> >> > of copy_file_range()?
-> >> >
-> >> > To be clear, the original change was done to support NFS/CIFS server-
-> >> > side
-> >> > copy and those should not be affected by this change.
-> >> >
-> >>
-> >> That is incorrect:
-> >>
-> >> ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file
-> >> *dst,
-> >>  u64 dst_pos, u64 count)
-> >> {
-> >>
-> >>  /*
-> >>  * Limit copy to 4MB to prevent indefinitely blocking an nfsd
-> >>  * thread and client rpc slot. The choice of 4MB is somewhat
-> >>  * arbitrary. We might instead base this on r/wsize, or make it
-> >>  * tunable, or use a time instead of a byte limit, or implement
-> >>  * asynchronous copy. In theory a client could also recognize a
-> >>  * limit like this and pipeline multiple COPY requests.
-> >>  */
-> >>  count = min_t(u64, count, 1 << 22);
-> >>  return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
-> >> }
-> >>
-> >> You are now explicitly changing the behaviour of knfsd when the source
-> >> and destination filesystem differ.
-> >>
-> >> For one thing, you are disallowing the NFSv4.2 copy offload use case of
-> >> copying from a local filesystem to a remote NFS server. However you are
-> >> also disallowing the copy from, say, an XFS formatted partition to an
-> >> ext4 partition.
-> >>
-> >
-> > Got it.
-> 
-> Ugh.  And I guess overlayfs may have a similar problem.
-> 
-> > This is easy to solve with a flag COPY_FILE_SPLICE (or something) that
-> > is internal to kernel users.
-> >
-> > FWIW, you may want to look at the loop in ovl_copy_up_data()
-> > for improvements to nfsd_copy_file_range().
-> >
-> > We can move the check out to copy_file_range syscall:
-> >
-> >         if (flags != 0)
-> >                 return -EINVAL;
-> >
-> > Leave the fallback from all filesystems and check for the
-> > COPY_FILE_SPLICE flag inside generic_copy_file_range().
-> 
-> Ok, the diff bellow is just to make sure I understood your suggestion.
-> 
-> The patch will also need to:
-> 
->  - change nfs and overlayfs calls to vfs_copy_file_range() so that they
->    use the new flag.
-> 
->  - check flags in generic_copy_file_checks() to make sure only valid flags
->    are used (COPY_FILE_SPLICE at the moment).
-> 
-> Also, where should this flag be defined?  include/uapi/linux/fs.h?
+> For the secondary SB on a file system < 16GB, how do you think of
+> using the last two zones (or zones #2, #3 will do)? Then, we can
+> assure to have two SB copies even on such a file system.
 
-Why would userspace want/need this flag?
-
+For real hardware I think this is not relevant but for the emulated mode
+we need to deal with that case. The reserved size is wasteful and this
+will become noticeable for devices < 16G but I'd rather keep the logic
+simple and not care much about this corner case. So, the superblock
+range would be reserved and if there's not enough to store the secondary
+sb, then don't.
