@@ -2,182 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1AA731CD13
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 16:40:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C735331CD4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 16:56:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbhBPPk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Feb 2021 10:40:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52066 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229585AbhBPPk0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Feb 2021 10:40:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 39806AC90;
-        Tue, 16 Feb 2021 15:39:44 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 068E61F2AA7; Tue, 16 Feb 2021 16:39:44 +0100 (CET)
-Date:   Tue, 16 Feb 2021 16:39:44 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 6/7] fanotify: mix event info into merge key hash
-Message-ID: <20210216153943.GD21108@quack2.suse.cz>
-References: <20210202162010.305971-1-amir73il@gmail.com>
- <20210202162010.305971-7-amir73il@gmail.com>
+        id S230362AbhBPPz4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Feb 2021 10:55:56 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:43408 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230335AbhBPPzw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Feb 2021 10:55:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1613490864;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TNOjpMpLRgsL2IwZkM78qrpDOnky7OlwT9/pSrFiwMk=;
+        b=WqLsU3U89TvD2MSe9vxhFNYINeEnFLfgokzK6fU9m9MkFAZChiU0sNYZiKq0BG6T1HWieT
+        jCQBP3Soy8CpzJq+oCQs7itmfEHEZqCTkaRvW2Lg3mS5tYaRLacd3ss4fR8vBWyglj3TrD
+        aPR7wEEwGIo3IHDHbCpFH0J6xPdKMFc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-178-WOih62mcNmSBtfyj2pTgiQ-1; Tue, 16 Feb 2021 10:54:22 -0500
+X-MC-Unique: WOih62mcNmSBtfyj2pTgiQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A4F82427DC;
+        Tue, 16 Feb 2021 15:54:21 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-123.rdu2.redhat.com [10.10.114.123])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 373C31970A;
+        Tue, 16 Feb 2021 15:54:17 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 8A2D1220BCF; Tue, 16 Feb 2021 10:54:16 -0500 (EST)
+Date:   Tue, 16 Feb 2021 10:54:16 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     virtio-fs-list <virtio-fs@redhat.com>,
+        Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>
+Subject: Re: [Virtio-fs] Question on ACLs support in virtiofs
+Message-ID: <20210216155416.GA10195@redhat.com>
+References: <87r1llk28a.fsf@suse.de>
+ <20210215205221.GB3331@redhat.com>
+ <CAJfpegsEa6ZCXBFUpER6Fiagp3TEpxa82qBo0a4NydjC3ucnTw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210202162010.305971-7-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAJfpegsEa6ZCXBFUpER6Fiagp3TEpxa82qBo0a4NydjC3ucnTw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 02-02-21 18:20:09, Amir Goldstein wrote:
-> Improve the balance of hashed queue lists by mixing more event info
-> relevant for merge.
+On Tue, Feb 16, 2021 at 04:11:20PM +0100, Miklos Szeredi wrote:
+> On Mon, Feb 15, 2021 at 9:52 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Fri, Feb 12, 2021 at 10:30:13AM +0000, Luis Henriques wrote:
+> > > Hi!
+> > >
+> > > I've recently executed the generic fstests on virtiofs and decided to have
+> > > a closer look at generic/099 failure.  In a nutshell, here's the sequence
+> > > of commands that reproduce that failure:
+> > >
+> > > # umask 0
+> > > # mkdir acldir
+> > > # chacl -b "u::rwx,g::rwx,o::rwx" "u::r-x,g::r--,o::---" acldir
+> > > # touch acldir/file1
+> > > # umask 722
+> > > # touch acldir/file2
+> > > # ls -l acldir
+> > > total 0
+> > > -r--r----- 1 root root 0 Feb 12 10:04 file1
+> > > ----r----- 1 root root 0 Feb 12 10:05 file2
+> > >
+> > > The failure is that setting umask to 722 shouldn't affect the new file2
+> > > because acldir has a default ACL (from umask(2): "... if the parent
+> > > directory has a default ACL (see acl(5)), the umask is ignored...").
+> > >
+> > > So... I tried to have look at the code, and initially I thought that the
+> > > problem was in (kernel) function fuse_create_open(), where we have this:
+> > >
+> > >       if (!fm->fc->dont_mask)
+> > >               mode &= ~current_umask();
+> > >
+> > > but then I went down the rabbit hole, into the user-space code, and
+> > > couldn't reach a conclusion.  Maybe the issue is that there's in fact no
+> > > support for this POSIX ACLs in virtiofs/FUSE?  Any ideas?
+> >
+> > Hi,
+> >
+> > [ CC Miklos and linux-fsdevel ]
+> >
+> > I debugged into this a little. There are many knobs and it is little
+> > confusing that what are right set of fixes.
+> >
+> > So what's happening in this case is that fc->dont_mask is not set. That
+> > means fuse client is modifying mode using umask. First time you
+> > touch file, umask is 0, so there is no modification. But next time,
+> > you set umask to 722, and fuse modifies mode before sending file
+> > create request to server. virtiofs server is already running with
+> > umask 0, so it does not touch the mode.
+> >
+> > So that means, that in case of default acl, fuse client should not
+> > be modifying mode using umask. But question is when should fuse
+> > skip applying umask.
+> >
+> > I see that fuse always sets SB_POSIXACL. That means VFS is not
+> > going to apply umask and all the umask handling is with-in fuse.
+> >
+> > sb->s_flags |= SB_POSIXACL;
+> >
+> > Currently fuse sets fc->dont_mask in two conditions.
+> >
+> > - If the caller mounted with flag MS_POSIXACL, then fc->dont_mask is set.
+> > - If fuse server opted in for option FUSE_DONT_MASK, then fc->dont_mask
+> >   is set.
+> >
+> > I see that for virtiofs, both the conditions are not true out of the
+> > box. In fact looks like ACL support is not fully enabled, because
+> > I don't see fuse server opting in for FUSE_POSIX_ACL.
+> >
+> > I suspect that we probably should provide an option in virtiofsd to
+> > enable/disable acl support.
 > 
-> For example, all FAN_CREATE name events in the same dir used to have the
-> same merge key based on the dir inode.  With this change the created
-> file name is mixed into the merge key.
+> Sounds good.
 > 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/notify/fanotify/fanotify.c | 33 +++++++++++++++++++++++++++------
->  fs/notify/fanotify/fanotify.h | 20 +++++++++++++++++---
->  2 files changed, 44 insertions(+), 9 deletions(-)
+> > Setting FUSE_DONT_MASK is tricky. If we leave it to fuse, that means
+> > fuse will have to query acl to figure out if default acl is set or
+> > not on parent dir. And that data could be stale and there could be
+> > races w.r.t setting acls from other client.
+> >
+> > If we do set FUSE_DONT_MASK, that means in file creation path virtiofsd
+> > server will have to switch its umask to one provided in request. Given
+> > its a per process property, we will have to have some locks to make
+> > sure other create requests are not progressing in parallel. And that
+> > hope host does the right thing. That is apply umask if parent dir does
+> > not have default acl otherwise apply umask (as set by virtiofsd process).
+> >
+> > Miklos, does above sound reasonable. You might have more thoughts on
+> > how to handle this best in fuse/virtiofs.
 > 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 6d3807012851..b19fef1c6f64 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-...
-> @@ -476,8 +485,11 @@ static struct fanotify_event *fanotify_alloc_fid_event(struct inode *id,
->  
->  	ffe->fae.type = FANOTIFY_EVENT_TYPE_FID;
->  	ffe->fsid = *fsid;
-> -	fanotify_encode_fh(&ffe->object_fh, id, fanotify_encode_fh_len(id),
-> -			   gfp);
-> +	fh = &ffe->object_fh;
-> +	fanotify_encode_fh(fh, id, fanotify_encode_fh_len(id), gfp);
-> +
-> +	/* Mix fsid+fid info into event merge key */
-> +	ffe->fae.info_hash = full_name_hash(ffe->fskey, fanotify_fh_buf(fh), fh->len);
+> fv_queue_worker() does unshare(CLONE_FS) for the fchdir() call in
+> xattr ops, which means that umask is now a per-thread propery in
+> virtiofsd.
 
-Is it really sensible to hash FID with full_name_hash()? It would make more
-sense to treat it as binary data, not strings...
+Aha.. I forgot about that. Thanks. 
+> 
+> So setting umask before create ops sounds like a good solution.
 
->  	return &ffe->fae;
->  }
-> @@ -517,6 +529,9 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
->  	if (file_name)
->  		fanotify_info_copy_name(info, file_name);
->  
-> +	/* Mix fsid+dfid+name+fid info into event merge key */
-> +	fne->fae.info_hash = full_name_hash(fne->fskey, info->buf, fanotify_info_len(info));
-> +
+I will give it a try along with an option to enable/disable acl
+support in virtiofsd. 
 
-Similarly here...
+Vivek
 
->  	pr_debug("%s: ino=%lu size=%u dir_fh_len=%u child_fh_len=%u name_len=%u name='%.*s'\n",
->  		 __func__, id->i_ino, size, dir_fh_len, child_fh_len,
->  		 info->name_len, info->name_len, fanotify_info_name(info));
-> @@ -539,6 +554,8 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
->  	struct mem_cgroup *old_memcg;
->  	struct inode *child = NULL;
->  	bool name_event = false;
-> +	unsigned int hash = 0;
-> +	struct pid *pid;
->  
->  	if ((fid_mode & FAN_REPORT_DIR_FID) && dirid) {
->  		/*
-> @@ -606,13 +623,17 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
->  	 * Use the victim inode instead of the watching inode as the id for
->  	 * event queue, so event reported on parent is merged with event
->  	 * reported on child when both directory and child watches exist.
-> -	 * Reduce object id to 32bit hash for hashed queue merge.
-> +	 * Reduce object id and event info to 32bit hash for hashed queue merge.
->  	 */
-> -	fanotify_init_event(event, hash_ptr(id, 32), mask);
-> +	hash = event->info_hash ^ hash_ptr(id, 32);
->  	if (FAN_GROUP_FLAG(group, FAN_REPORT_TID))
-> -		event->pid = get_pid(task_pid(current));
-> +		pid = get_pid(task_pid(current));
->  	else
-> -		event->pid = get_pid(task_tgid(current));
-> +		pid = get_pid(task_tgid(current));
-> +	/* Mix pid info into event merge key */
-> +	hash ^= hash_ptr(pid, 32);
-
-hash_32() here?
-
-> +	fanotify_init_event(event, hash, mask);
-> +	event->pid = pid;
->  
->  out:
->  	set_active_memcg(old_memcg);
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index 2e856372ffc8..522fb1a68b30 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -115,6 +115,11 @@ static inline void fanotify_info_init(struct fanotify_info *info)
->  	info->name_len = 0;
->  }
->  
-> +static inline unsigned int fanotify_info_len(struct fanotify_info *info)
-> +{
-> +	return info->dir_fh_totlen + info->file_fh_totlen + info->name_len;
-> +}
-> +
->  static inline void fanotify_info_copy_name(struct fanotify_info *info,
->  					   const struct qstr *name)
->  {
-> @@ -138,7 +143,10 @@ enum fanotify_event_type {
->  };
->  
->  struct fanotify_event {
-> -	struct fsnotify_event fse;
-> +	union {
-> +		struct fsnotify_event fse;
-> +		unsigned int info_hash;
-> +	};
->  	u32 mask;
->  	enum fanotify_event_type type;
->  	struct pid *pid;
-
-How is this ever safe? info_hash will likely overlay with 'list' in
-fsnotify_event.
-
-> @@ -154,7 +162,10 @@ static inline void fanotify_init_event(struct fanotify_event *event,
->  
->  struct fanotify_fid_event {
->  	struct fanotify_event fae;
-> -	__kernel_fsid_t fsid;
-> +	union {
-> +		__kernel_fsid_t fsid;
-> +		void *fskey;	/* 64 or 32 bits of fsid used for salt */
-> +	};
->  	struct fanotify_fh object_fh;
->  	/* Reserve space in object_fh.buf[] - access with fanotify_fh_buf() */
->  	unsigned char _inline_fh_buf[FANOTIFY_INLINE_FH_LEN];
-> @@ -168,7 +179,10 @@ FANOTIFY_FE(struct fanotify_event *event)
->  
->  struct fanotify_name_event {
->  	struct fanotify_event fae;
-> -	__kernel_fsid_t fsid;
-> +	union {
-> +		__kernel_fsid_t fsid;
-> +		void *fskey;	/* 64 or 32 bits of fsid used for salt */
-> +	};
->  	struct fanotify_info info;
->  };
-
-What games are you playing here with the unions? I presume you can remove
-these 'fskey' unions and just use (void *)(event->fsid) at appropriate
-places? IMO much more comprehensible...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
