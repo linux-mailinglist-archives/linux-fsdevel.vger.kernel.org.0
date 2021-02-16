@@ -2,188 +2,290 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D21B731C5A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 03:42:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10D2D31C5CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 04:32:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbhBPCmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Feb 2021 21:42:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbhBPCmX (ORCPT
+        id S229833AbhBPDbw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Feb 2021 22:31:52 -0500
+Received: from mx0a-002c1b01.pphosted.com ([148.163.151.68]:59528 "EHLO
+        mx0a-002c1b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229497AbhBPDbv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Feb 2021 21:42:23 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9BEC061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Feb 2021 18:41:43 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id cv23so4805293pjb.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Feb 2021 18:41:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=N2wfceIw/1agtFY1A1DOX2hqcAxOR5x5DYgiw6GM0xs=;
-        b=LDmgpPpMgK1fq8jD65UBp5YmPRvv8iRvXj6SK5H/x/yscBqlEMMp/G9EPRcT5F7c4Y
-         NPEV8hkBQJsATJo4PaD/vvF+hGzFg+d8+9U2ZswW2/094Nt5RLQ4ULqnCdhFVZ+HQOMF
-         ceAtXxqC7lC5q/uKs0XRisNDV5QXGjVqjF8SOdnxMYKpX7kRGGIJtrICRPqp93N1wW7H
-         aVNLA7BYi+J9f2B7QLzbvWK+K1vb/HJpNCIjWZfAAEVrxY2eNbUvTbXS1bPOQ6yJ0iqU
-         ZE2FB/ME3vXbhSZyGg5leTTH098JTZeZxf6p6S7hP5b6ot+wl+8MwGwcl6whg6qb6G8L
-         hWMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=N2wfceIw/1agtFY1A1DOX2hqcAxOR5x5DYgiw6GM0xs=;
-        b=VeGOUrEhOM/QfO+97Y4ruKoJXABDPBiF/iBQ6K/STW6Kzsum5PNC59wWpasLnEHtLP
-         BU2NEMV4DHtuvX0K+oXRDrjq5agVThmAsZWGqylgMu75QEmgDVKgAZeAFf7D2HUJSGcZ
-         PRzQpOyfqCoW5IAUqsGaJ8jqaSvi88g3ne67+rQ/jndnFMEYJZVjjUtIT4XS6Hn2Rl3X
-         GXiPjYjpaRIXXysr3VhbehMFk6aM7L8Afc+Kb7CpjTIGe9OSBfuYufXc2nAWpyMdMs6V
-         5SBOaN1331l6LaQ/lyE4aLzjePGWSn0mZ8TQ7XRKzLLMOQGIA9r3roM/+DkrMnzJeQoj
-         o+HQ==
-X-Gm-Message-State: AOAM531zRIwrvplWbyUUAEXrS1UYnE6Uil9pugchutbymSSbohvR0J24
-        0RgYw30SKhhQgNHnDKW8FErpLm1bgedSDw==
-X-Google-Smtp-Source: ABdhPJzkA1SSJaAdOT4iDtgIrhiZ21sZYmUv5PsCnzFmlVlyuTRoe5zTJy1pspAIeCVxXXbi6pKDWw==
-X-Received: by 2002:a17:902:ed94:b029:de:8844:a650 with SMTP id e20-20020a170902ed94b02900de8844a650mr17872975plj.56.1613443302548;
-        Mon, 15 Feb 2021 18:41:42 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id s23sm19002030pgj.29.2021.02.15.18.41.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Feb 2021 18:41:42 -0800 (PST)
-Subject: Re: [PATCHSET v3 0/4] fs: Support for LOOKUP_NONBLOCK /
- RESOLVE_NONBLOCK (Insufficiently faking current?)
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20201214191323.173773-1-axboe@kernel.dk>
- <m1lfbrwrgq.fsf@fess.ebiederm.org>
- <94731b5a-a83e-91b5-bc6c-6fd4aaacb704@kernel.dk>
- <CAHk-=wiZuX-tyhR6rRxDfQOvyRkCVZjv0DCg1pHBUmzRZ_f1bQ@mail.gmail.com>
- <m11rdhurvp.fsf@fess.ebiederm.org>
- <e9ba3d6c-ee1f-6491-e7a9-56f4d7a167a3@kernel.dk>
- <e3335211-83f2-5305-9601-663cc2a73427@kernel.dk>
- <m1r1lht0lo.fsf@fess.ebiederm.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <99b642d3-6a38-af68-b99d-44efcf0b13a5@kernel.dk>
-Date:   Mon, 15 Feb 2021 19:41:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 15 Feb 2021 22:31:51 -0500
+X-Greylist: delayed 1393 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Feb 2021 22:31:49 EST
+Received: from pps.filterd (m0127839.ppops.net [127.0.0.1])
+        by mx0a-002c1b01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11G37kPd021288;
+        Mon, 15 Feb 2021 19:07:46 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=from : to : cc :
+ subject : date : message-id : content-type : mime-version;
+ s=proofpoint20171006; bh=ZxJRvxfkZd7JUYzca9azCkyuubE8h9/aVFT+aQrieqQ=;
+ b=narnpgcrhhLPAY726z41Ejbi/PsSLcKfPvUaX35kmO6NZ9QLb0TSQLoBPgWqCysW3nET
+ ML6Jw/HurZRlUAepuOkorU68FCXSVEdZCtUXdEYmavjh2QmfNrUnEM9VWYaWrzgJGMPC
+ 5M0uqB3vZxBogiUwpWppp/I6lSGQwzOMLCSRcM8u4QbGst10Zzrp4EDRphqgfA9SKKNE
+ 60qZflAOsXGsTao/HEMFgup9ie4xxt+bKPvg16dCBC9osYmXT5OJa6++jqZzcCObZmCA
+ yFP/g1G3lA1E6Edxe8tVokg53Abst3MzN6QB7KJnR7nFnOk4afprEkfT0Hr52lQWXITZ 1Q== 
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2042.outbound.protection.outlook.com [104.47.66.42])
+        by mx0a-002c1b01.pphosted.com with ESMTP id 36peqnvq0j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 Feb 2021 19:07:45 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dYFFtvZMnt70I4hoRZ2gIwpATOVGnI+2md12rvQxA3J6Ir7kKxT18pZbX8Z3fP3jqy+QDg1JglCNyUkaUJixpeexyjaxR/AAjzjQ5xjvuN0UTnU2/RTevvE0Q7MHBipyH0G5Gr3iSdOuBRaZMVyOp0v4tb5E0vYL+52sXg6IbJDaZt60nCF9x9X0lwpBEPvSm5Udf7mGIcUTZZUbuwZTfUXOAlJox2Dzd6o7ODsFMyAp1EiyDGJB5STQ54ihwGNae3epuGGwBjZb23IDhu6FkrwTwX+EqTxcrmOXz5qrLpF7tqG0o7nt2bbMRJIUPQv7JpdfP8qHFFj3dblb2UgWOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZxJRvxfkZd7JUYzca9azCkyuubE8h9/aVFT+aQrieqQ=;
+ b=QT/Z/+/GZRJniOPkj2BBiIHAHiVWq4El3xSxMqKhcX1mdbn11c5Dha1/2/g6OyBgVhhnOywnjPRvsUyTLc/dsq2YdSNu7Sz3cTqRor5RPuHg5e2RIzQXqBibqNPkVjYW6XDl+OxUnRHERzIhYm4kBrp4s+EUfIgYDIWNjOoq3kToF/ocTtz86vUOkv29EFVnIwconk5us3KffhXCGIvb3IWNVBgTMFjrAHOWxi4tpxcXiUEQvKvqwS3HtnPhsHAY0dKLgIAnYXUd2axZPpVuu16HOPzlfWG2xjoNSISvkjef2boaj65+4M6waya/Sv0cof1xsEfWHm/JUi4LS814qQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
+ dkim=pass header.d=nutanix.com; arc=none
+Authentication-Results: lwn.net; dkim=none (message not signed)
+ header.d=none;lwn.net; dmarc=none action=none header.from=nutanix.com;
+Received: from DM6PR02MB6250.namprd02.prod.outlook.com (2603:10b6:5:1f5::26)
+ by DM5PR02MB3180.namprd02.prod.outlook.com (2603:10b6:4:61::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.29; Tue, 16 Feb
+ 2021 03:07:44 +0000
+Received: from DM6PR02MB6250.namprd02.prod.outlook.com
+ ([fe80::6059:b0b7:ce3e:cb7e]) by DM6PR02MB6250.namprd02.prod.outlook.com
+ ([fe80::6059:b0b7:ce3e:cb7e%6]) with mapi id 15.20.3846.039; Tue, 16 Feb 2021
+ 03:07:44 +0000
+From:   Eiichi Tsukata <eiichi.tsukata@nutanix.com>
+To:     corbet@lwn.net, mike.kravetz@oracle.com, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     felipe.franciosi@nutanix.com,
+        Eiichi Tsukata <eiichi.tsukata@nutanix.com>
+Subject: [RFC PATCH] mm, oom: introduce vm.sacrifice_hugepage_on_oom
+Date:   Tue, 16 Feb 2021 03:07:13 +0000
+Message-Id: <20210216030713.79101-1-eiichi.tsukata@nutanix.com>
+X-Mailer: git-send-email 2.9.3
+Content-Type: text/plain
+X-Originating-IP: [192.146.154.244]
+X-ClientProxiedBy: BY3PR05CA0022.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::27) To DM6PR02MB6250.namprd02.prod.outlook.com
+ (2603:10b6:5:1f5::26)
 MIME-Version: 1.0
-In-Reply-To: <m1r1lht0lo.fsf@fess.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from eiichi-tsukata.ubvm.nutanix.com (192.146.154.244) by BY3PR05CA0022.namprd05.prod.outlook.com (2603:10b6:a03:254::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3868.12 via Frontend Transport; Tue, 16 Feb 2021 03:07:43 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: dde58638-9aae-462e-e1d2-08d8d22807a2
+X-MS-TrafficTypeDiagnostic: DM5PR02MB3180:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM5PR02MB3180637D2A6F8248BC0505EB80879@DM5PR02MB3180.namprd02.prod.outlook.com>
+x-proofpoint-crosstenant: true
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9IDRnPQWr+p1xeSeeutaAy/kHUMaoy3ZUqsPMbAjfjvSnh+0AvsX1afRkY/kKgiSZuJYoRTtP3JnBN5Xth/isKIMO0o1QpGB6eVAEMZMO33p8pMH39bgeNqIVLywIaCBqBR6JO8udQnN5HGykkvefJQuHKHueycGpdgq92Ne8ckL7B8ar+2VWaw4HAxe25NXbORgICSEBP1wwkV2YNYgkmppg2hVWT0IKV4a4hu8U5Ghnkm9W4VpkMrMCuM7GUKo5a9XlsBvMCzsQJNbcTLTxMDh0AKHCOYLEiAUSfUrpCLR7oGT1kqy6786UqwPvhjKNlZL2Yw8XvAmeHvMezIFUsWtlCgv2mZhQor0HoQyrveiw4tn11BuoV3KGBreMKZmGvnGHW3/XZymCwpXVTCHVOQlaQ+rI74B3TCM3Z6+t6Q3qSpVvWVETG3BzHN2sMaSdar8Mvk/MdbfUUgE03WroEeaZ3nDxB5ZguOsPqAUk9nYrLLhMF03QvSzbo1jKvwkIXs+k6ekCzGpUo2KBndYH7oAT9KvooQziwUYrHI5fa/L5DYkFlPuGmpUR915R2HP
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR02MB6250.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(376002)(39860400002)(346002)(366004)(136003)(8936002)(478600001)(7416002)(52116002)(1076003)(316002)(66946007)(107886003)(6486002)(7696005)(8676002)(26005)(66476007)(66556008)(83380400001)(86362001)(2906002)(956004)(186003)(36756003)(44832011)(2616005)(16526019)(6666004)(5660300002)(4326008)(921005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?FM5GNUNuV/usfbV5gl+K/H6lUPRzGLLe6AzVVroeoPOJDHr1zo0TXScYMLAc?=
+ =?us-ascii?Q?bfpeCt1C/ziOgJzfddOzYkpbmSdBephu2vTOlSKiyQAko3QTquCwu+Z/VavZ?=
+ =?us-ascii?Q?di+yz7rE9z6m4EIXEc9c4o+V23WEjQIlQh6Y4uVPtjD8cJFYEkVwj6PsDKY2?=
+ =?us-ascii?Q?MKozmw5koozHPkO8JtZIaNbNhEtlEskpu3fUnv1jzBCxqmqjE7MpGya9anBo?=
+ =?us-ascii?Q?CqEB/mf2glTBXvabgC80jP4d29f5ksRZUzqAy0oIXZckNQDyNx4M1PyT7l5W?=
+ =?us-ascii?Q?hfKubuD7AKNM48j0uKHklW3ASU6tqsIicFF1CqS1QZdMgbC9vtWikqCwOb2S?=
+ =?us-ascii?Q?M+MTkS3UiTg12PmuHfO6o/Y8ecyL8qtQIjo2lxGsDPvjJHu0hgov7HYr0GXF?=
+ =?us-ascii?Q?7NbNL/3iyWEKeTAa+iQmCgBrm42g7YpkBE3JoJ6tyWrutIJ46rnNhmrM1eQb?=
+ =?us-ascii?Q?nSPCEY57cGlLUhvv6i6fOTgusC1S+0MvxNMfJDG9VKOQEf1B1qxG5HQKZzIC?=
+ =?us-ascii?Q?zXTE+acEtpOHzk3yDBry77RYUiuwtXftdOuYz01Y8aL8zIQZzYV9YXQb3hwM?=
+ =?us-ascii?Q?uN/tKAygNZFxZGiyo2Yb4P3f/TJ5yY/x86JAbqe4yV0rhvNdVNZReLjFnCBf?=
+ =?us-ascii?Q?uwKRVxLWN3x+OhRo6ZXBddUgWgAOEx8HWLLLbmRE0ESpyikZKB5aA8Rl7mmm?=
+ =?us-ascii?Q?v0KVv7jNrWUQRAa0CVZFriKH6EWoDRlZv5oozVXLUH1oQupkeQWIE0g672Lv?=
+ =?us-ascii?Q?+D6N9SkGYkeTtrvoNB4I/mn3sTCmbymq1lpln9Od/fcQHRxn+PY/+CeWQxkt?=
+ =?us-ascii?Q?ra3HHzTLQIX8jscTDkE1B5cOBJ/2CCaNgXxJgH0jUwFv7e7Fl0YtEW/7tN0i?=
+ =?us-ascii?Q?NbOz4pPP4+Vr09iM3tSYt0+53mD6BT8u2XyswJrW+OmwGnQ97nb/Emwn19Nv?=
+ =?us-ascii?Q?wGRSzOox5gD6ski8FFzwj3OSLwCvp1FpEO9kLjnsC3v7CEqaR2iHcuaN161h?=
+ =?us-ascii?Q?I/4ve4FZvQG0epK73qa+LDRYxECHUDx2MIA+qHRFEnBF1UTlHApvNwCG9/KD?=
+ =?us-ascii?Q?a0aMzjuv43UuE6A5K4IymNvQFQ0/S/Ana+CBfU8lrroFFIkROwP6b+5xKifE?=
+ =?us-ascii?Q?dqdZi6jemrX52z9n/ncRBnX6Zrzyo9WrII/lJAwI49jI+hgaKRp9llpLCdQJ?=
+ =?us-ascii?Q?65r8cNi+EYsuVbWHjaPdAKZ2PvaiDvh2xT4NykQ7uUDziqP+P+aq6hm5OmQl?=
+ =?us-ascii?Q?C1hqvBvMFfSwtXhapGYPHJOKKKfqQTV74MqOjdTPtLPCpXQdWRjSb/y7P5jG?=
+ =?us-ascii?Q?BRaH2FljNmnLDzBqzHnjqGlc?=
+X-OriginatorOrg: nutanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dde58638-9aae-462e-e1d2-08d8d22807a2
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR02MB6250.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2021 03:07:44.3024
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bb047546-786f-4de1-bd75-24e5b6f79043
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /lKz80Hx3hld74l/xJdKf+9bHIPp+oOyu0DC0HUpoYcLhGK4J4qN8+DruV1iyiy/+JPEnn4CfsAnIaW9AMzJDNLTuxdx8nkbndd/qgKpwyo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB3180
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-02-15_16:2021-02-12,2021-02-15 signatures=0
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/15/21 3:41 PM, Eric W. Biederman wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> On 2/15/21 11:24 AM, Jens Axboe wrote:
->>> On 2/15/21 11:07 AM, Eric W. Biederman wrote:
->>>> Linus Torvalds <torvalds@linux-foundation.org> writes:
->>>>
->>>>> On Sun, Feb 14, 2021 at 8:38 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>
->>>>>>> Similarly it looks like opening of "/dev/tty" fails to
->>>>>>> return the tty of the caller but instead fails because
->>>>>>> io-wq threads don't have a tty.
->>>>>>
->>>>>> I've got a patch queued up for 5.12 that clears ->fs and ->files for the
->>>>>> thread if not explicitly inherited, and I'm working on similarly
->>>>>> proactively catching these cases that could potentially be problematic.
->>>>>
->>>>> Well, the /dev/tty case still needs fixing somehow.
->>>>>
->>>>> Opening /dev/tty actually depends on current->signal, and if it is
->>>>> NULL it will fall back on the first VT console instead (I think).
->>>>>
->>>>> I wonder if it should do the same thing /proc/self does..
->>>>
->>>> Would there be any downside of making the io-wq kernel threads be per
->>>> process instead of per user?
->>>>
->>>> I can see a lower probability of a thread already existing.  Are there
->>>> other downsides I am missing?
->>>>
->>>> The upside would be that all of the issues of have we copied enough
->>>> should go away, as the io-wq thread would then behave like another user
->>>> space thread.  To handle posix setresuid() and friends it looks like
->>>> current_cred would need to be copied but I can't think of anything else.
->>>
->>> I really like that idea. Do we currently have a way of creating a thread
->>> internally, akin to what would happen if the same task did pthread_create?
->>> That'd ensure that we have everything we need, without actively needing to
->>> map the request types, or find future issues of "we also need this bit".
->>> It'd work fine for the 'need new worker' case too, if one goes to sleep.
->>> We'd just 'fork' off that child.
->>>
->>> Would require some restructuring of io-wq, but at the end of it, it'd
->>> be a simpler solution.
->>
->> I was intrigued enough that I tried to wire this up. If we can pull this
->> off, then it would take a great weight off my shoulders as there would
->> be no more worries on identity.
->>
->> Here's a branch that's got a set of patches that actually work, though
->> it's a bit of a hack in spots. Notes:
->>
->> - Forked worker initially crashed, since it's an actual user thread and
->>   bombed on deref of kernel structures. Expectedly. That's what the
->>   horrible kernel_clone_args->io_wq hack is working around for now.
->>   Obviously not the final solution, but helped move things along so
->>   I could actually test this.
->>
->> - Shared io-wq helpers need indexing for task, right now this isn't
->>   done. But that's not hard to do.
->>
->> - Idle thread reaping isn't done yet, so they persist until the
->>   context goes away.
->>
->> - task_work fallback needs a bit of love. Currently we fallback to
->>   the io-wq manager thread for handling that, but a) manager is gone,
->>   and b) the new workers are now threads and go away as well when
->>   the original task goes away. None of the three fallback sites need
->>   task context, so likely solution here is just punt it to system_wq.
->>   Not the hot path, obviously, we're exiting.
->>
->> - Personality registration is broken, it's just Good Enough to compile.
->>
->> Probably a few more items that escape me right now. As long as you
->> don't hit the fallback cases, it appears to work fine for me. And
->> the diffstat is pretty good to:
->>
->>  fs/io-wq.c                 | 418 +++++++++++--------------------------
->>  fs/io-wq.h                 |  10 +-
->>  fs/io_uring.c              | 314 +++-------------------------
->>  fs/proc/self.c             |   7 -
->>  fs/proc/thread_self.c      |   7 -
->>  include/linux/io_uring.h   |  19 --
->>  include/linux/sched.h      |   3 +
->>  include/linux/sched/task.h |   1 +
->>  kernel/fork.c              |   2 +
->>  9 files changed, 161 insertions(+), 620 deletions(-)
->>
->> as it gets rid of _all_ the 'grab this or that piece' that we're
->> tracking.
->>
->> WIP series here:
->>
->> https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-worker
-> 
-> I took a quick look through the code and in general it seems reasonable.
+Hugepages can be preallocated to avoid unpredictable allocation latency.
+If we run into 4k page shortage, the kernel can trigger OOM even though
+there were free hugepages. When OOM is triggered by user address page
+fault handler, we can use oom notifier to free hugepages in user space
+but if it's triggered by memory allocation for kernel, there is no way
+to synchronously handle it in user space.
 
-Great, thanks for checking.
+This patch introduces a new sysctl vm.sacrifice_hugepage_on_oom. If
+enabled, it first tries to free a hugepage if available before invoking
+the oom-killer. The default value is disabled not to change the current
+behavior.
 
-> Can the io_uring_task_cancel in begin_new_exec go away as well?
-> Today it happens after de_thread and so presumably all of the io_uring
-> threads are already gone.
+Signed-off-by: Eiichi Tsukata <eiichi.tsukata@nutanix.com>
+---
+ Documentation/admin-guide/sysctl/vm.rst | 12 ++++++++++++
+ include/linux/hugetlb.h                 |  2 ++
+ include/linux/oom.h                     |  1 +
+ kernel/sysctl.c                         |  9 +++++++++
+ mm/hugetlb.c                            |  4 ++--
+ mm/oom_kill.c                           | 23 +++++++++++++++++++++++
+ 6 files changed, 49 insertions(+), 2 deletions(-)
 
-I don't think so, async offload is only the slower path of async. We
-can have poll based waiting, and various others. If we want to guarantee
-that no requests escape across exec, then we'll need to retain that.
-
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index e35a3f2fb006..f2f195524be6 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -65,6 +65,7 @@ Currently, these files are in /proc/sys/vm:
+ - page-cluster
+ - panic_on_oom
+ - percpu_pagelist_fraction
++- sacrifice_hugepage_on_oom
+ - stat_interval
+ - stat_refresh
+ - numa_stat
+@@ -807,6 +808,17 @@ The initial value is zero.  Kernel does not use this value at boot time to set
+ the high water marks for each per cpu page list.  If the user writes '0' to this
+ sysctl, it will revert to this default behavior.
+ 
++sacrifice_hugepage_on_oom
++=========================
++
++This value controls whether the kernel should attempt to break up hugepages
++when out-of-memory happens. OOM happens under memory cgroup would not invoke
++this.
++
++If set to 0 (default), the kernel doesn't touch the hugepage pool during OOM
++conditions.
++If set to 1, the kernel frees one hugepage at a time, if available, before
++invoking the oom-killer.
+ 
+ stat_interval
+ =============
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index b5807f23caf8..8aad2f2ab6e6 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -145,6 +145,8 @@ int hugetlb_reserve_pages(struct inode *inode, long from, long to,
+ long hugetlb_unreserve_pages(struct inode *inode, long start, long end,
+ 						long freed);
+ bool isolate_huge_page(struct page *page, struct list_head *list);
++int free_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed,
++			bool acct_surplus);
+ void putback_active_hugepage(struct page *page);
+ void move_hugetlb_state(struct page *oldpage, struct page *newpage, int reason);
+ void free_huge_page(struct page *page);
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 2db9a1432511..0bfae027ec16 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -127,4 +127,5 @@ extern struct task_struct *find_lock_task_mm(struct task_struct *p);
+ extern int sysctl_oom_dump_tasks;
+ extern int sysctl_oom_kill_allocating_task;
+ extern int sysctl_panic_on_oom;
++extern int sysctl_sacrifice_hugepage_on_oom;
+ #endif /* _INCLUDE_LINUX_OOM_H */
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index c9fbdd848138..d2e3ec625f5f 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2708,6 +2708,15 @@ static struct ctl_table vm_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 	},
++	{
++		.procname	= "sacrifice_hugepage_on_oom",
++		.data		= &sysctl_sacrifice_hugepage_on_oom,
++		.maxlen		= sizeof(sysctl_sacrifice_hugepage_on_oom),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
+ 	{
+ 		.procname	= "overcommit_ratio",
+ 		.data		= &sysctl_overcommit_ratio,
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 4bdb58ab14cb..e2d57200fd00 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -1726,8 +1726,8 @@ static int alloc_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed,
+  * balanced over allowed nodes.
+  * Called with hugetlb_lock locked.
+  */
+-static int free_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed,
+-							 bool acct_surplus)
++int free_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed,
++			bool acct_surplus)
+ {
+ 	int nr_nodes, node;
+ 	int ret = 0;
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 04b19b7b5435..fd2c1f427926 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -43,6 +43,7 @@
+ #include <linux/kthread.h>
+ #include <linux/init.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/hugetlb.h>
+ 
+ #include <asm/tlb.h>
+ #include "internal.h"
+@@ -52,6 +53,7 @@
+ #include <trace/events/oom.h>
+ 
+ int sysctl_panic_on_oom;
++int sysctl_sacrifice_hugepage_on_oom;
+ int sysctl_oom_kill_allocating_task;
+ int sysctl_oom_dump_tasks = 1;
+ 
+@@ -1023,6 +1025,22 @@ static void check_panic_on_oom(struct oom_control *oc)
+ 		sysctl_panic_on_oom == 2 ? "compulsory" : "system-wide");
+ }
+ 
++static int sacrifice_hugepage(void)
++{
++	int ret;
++
++	spin_lock(&hugetlb_lock);
++	ret = free_pool_huge_page(&default_hstate, &node_states[N_MEMORY], 0);
++	spin_unlock(&hugetlb_lock);
++	if (ret) {
++		pr_warn("Out of memory: Successfully sacrificed a hugepage\n");
++		hugetlb_show_meminfo();
++	} else {
++		pr_warn("Out of memory: No free hugepage available\n");
++	}
++	return ret;
++}
++
+ static BLOCKING_NOTIFIER_HEAD(oom_notify_list);
+ 
+ int register_oom_notifier(struct notifier_block *nb)
+@@ -1100,6 +1118,11 @@ bool out_of_memory(struct oom_control *oc)
+ 		return true;
+ 	}
+ 
++	if (!is_memcg_oom(oc) && sysctl_sacrifice_hugepage_on_oom) {
++		if (sacrifice_hugepage())
++			return true;
++	}
++
+ 	select_bad_process(oc);
+ 	/* Found nothing?!?! */
+ 	if (!oc->chosen) {
 -- 
-Jens Axboe
+2.29.2
 
