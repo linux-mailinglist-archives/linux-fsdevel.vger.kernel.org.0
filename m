@@ -2,43 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D51831C74B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 09:22:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A29C231C748
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 09:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229694AbhBPIWg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Feb 2021 03:22:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57462 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229809AbhBPIWP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Feb 2021 03:22:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613463648;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        id S229889AbhBPIWW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Feb 2021 03:22:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45514 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229811AbhBPIVv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Feb 2021 03:21:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1613463662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=nXQZaXLCBgz8dc1mXq0vQ/pvFEf1q+06R2ew5QKUNfc=;
-        b=bLNY7cFLlQ+/um4oCe4Q2GTOHJXJJWlXB8AaMixwN+6CvehM081MTskFlE3fS/T4HJhrH8
-        BEoSDnLGop61X4xxAy8NUIhd9Y5PiJd0aqXCOdiZYa02Lz+Sy4Re0toygcEDx0s9z/S04y
-        h2NlxrqeetlJvsPjdRm0fqJoZuIcTEs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-497-clV1UIxWNYudo5xffb8pPg-1; Tue, 16 Feb 2021 03:20:43 -0500
-X-MC-Unique: clV1UIxWNYudo5xffb8pPg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76555192D785;
-        Tue, 16 Feb 2021 08:20:39 +0000 (UTC)
-Received: from [10.36.114.70] (ovpn-114-70.ams2.redhat.com [10.36.114.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 171BE10013DB;
-        Tue, 16 Feb 2021 08:20:32 +0000 (UTC)
-Subject: Re: [External] Re: [PATCH v15 4/8] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-To:     Michal Hocko <mhocko@suse.com>,
-        Muchun Song <songmuchun@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
+        bh=yxFwziSyZyOqU27QatYvWYrbroR4UnAqOg89qO7rMuM=;
+        b=eYhfed6NW++hDwqLUPTACF6UbC/shda+lS/QxJlotWM16Wipv6jy5WmRh0cQc/dRvyIxn1
+        ej82DijW+bwiWE8xN5YuvI0cL/vh4pQBm5opBLNybn59CV64dhCAs6bX7KzaRJl7Wzoetb
+        brEJ3VJWFdkxM425lJ/yR6eCq3l9z6o=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8D7B1AD29;
+        Tue, 16 Feb 2021 08:21:02 +0000 (UTC)
+Date:   Tue, 16 Feb 2021 09:21:01 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Muchun Song <songmuchun@bytedance.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         Mike Kravetz <mike.kravetz@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
         bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -53,55 +42,53 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Matthew Wilcox <willy@infradead.org>,
         Oscar Salvador <osalvador@suse.de>,
         "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
         <naoya.horiguchi@nec.com>,
         Joao Martins <joao.m.martins@oracle.com>,
         Xiongchun duan <duanxiongchun@bytedance.com>,
         linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         Linux Memory Management List <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <CAMZfGtWT8CJ-QpVofB2X-+R7GE7sMa40eiAJm6PyD0ji=FzBYQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v15 4/8] mm: hugetlb: alloc the vmemmap
+ pages associated with each HugeTLB page
+Message-ID: <YCuAbWJC751ROfTS@dhcp22.suse.cz>
+References: <CAMZfGtUXJTaMo36aB4nTFuYFy3qfWW69o=4uUo-FjocO8obDgw@mail.gmail.com>
+ <CAMZfGtWT8CJ-QpVofB2X-+R7GE7sMa40eiAJm6PyD0ji=FzBYQ@mail.gmail.com>
  <YCpmlGuoTakPJs1u@dhcp22.suse.cz>
  <CAMZfGtWd_ZaXtiEdMKhpnAHDw5CTm-CSPSXW+GfKhyX5qQK=Og@mail.gmail.com>
  <YCp04NVBZpZZ5k7G@dhcp22.suse.cz>
  <CAMZfGtV8-yJa_eGYtSXc0YY8KhYpgUo=pfj6TZ9zMo8fbz8nWA@mail.gmail.com>
  <YCqhDZ0EAgvCz+wX@dhcp22.suse.cz>
  <CAMZfGtW6n_YUbZOPFbivzn-HP4Q2yi0DrUoQ3JAjSYy5m17VWw@mail.gmail.com>
- <CAMZfGtWVwEdBfiof3=wW2-FUN4PU-N5J=HfiAETVbwbEzdvAGQ@mail.gmail.com>
- <YCrN4/EWRTOwNw72@dhcp22.suse.cz>
- <CAMZfGtX8xizYQxwB_Ffe6VcesaftkzGPDr=BP=6va_=aR3HikQ@mail.gmail.com>
- <YCt/N9LkJT1VJEW1@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <83ba1af6-7c11-3da7-eadb-020ca591bb56@redhat.com>
-Date:   Tue, 16 Feb 2021 09:20:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+ <YCrFY4ODu/O9KSND@dhcp22.suse.cz>
+ <4f8664fb-0d65-b7d6-39d6-2ce5fc86623a@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <YCt/N9LkJT1VJEW1@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f8664fb-0d65-b7d6-39d6-2ce5fc86623a@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> If current
->> node has no memory and other nodes have enough memory.
->> We can fail to allocate vmemmap pages. But actually it is
->> suitable to allocate vmemmap pages from other nodes.
->> Right?
+On Tue 16-02-21 09:13:09, David Hildenbrand wrote:
+> On 15.02.21 20:02, Michal Hocko wrote:
+> > Would it be feasible to reused parts of the freed page in
+> > the worst case?
 > 
-> Falling back to a different node would be very suboptimal because then
-> you would have vmemmap back by remote pages. We do not want that.
+> As already discussed, this is only possible when the huge page does not
+> reside on ZONE_MOVABLE/CMA.
 
-... and we even warn when this happens right now:
+Right. But usually this is not the case so it would be at least
+something.
 
-mm/sparse-vmemmap.c:vmemmap_verify()
+> In addition, we can no longer form a huge page at that memory location ever.
 
+Yes, that's why I am saying in the worst case. E.g. when dissolving is
+really necessary like in hwpoison case.
+
+Maybe we are really far from needing something like that. I just wanted
+to mention this option and I was not aware this has been discussed
+previously.
 -- 
-Thanks,
-
-David / dhildenb
-
+Michal Hocko
+SUSE Labs
