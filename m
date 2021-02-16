@@ -2,156 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C735331CD4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 16:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A717231CD71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Feb 2021 17:04:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbhBPPz4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Feb 2021 10:55:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:43408 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230335AbhBPPzw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Feb 2021 10:55:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613490864;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TNOjpMpLRgsL2IwZkM78qrpDOnky7OlwT9/pSrFiwMk=;
-        b=WqLsU3U89TvD2MSe9vxhFNYINeEnFLfgokzK6fU9m9MkFAZChiU0sNYZiKq0BG6T1HWieT
-        jCQBP3Soy8CpzJq+oCQs7itmfEHEZqCTkaRvW2Lg3mS5tYaRLacd3ss4fR8vBWyglj3TrD
-        aPR7wEEwGIo3IHDHbCpFH0J6xPdKMFc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-178-WOih62mcNmSBtfyj2pTgiQ-1; Tue, 16 Feb 2021 10:54:22 -0500
-X-MC-Unique: WOih62mcNmSBtfyj2pTgiQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A4F82427DC;
-        Tue, 16 Feb 2021 15:54:21 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-114-123.rdu2.redhat.com [10.10.114.123])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 373C31970A;
-        Tue, 16 Feb 2021 15:54:17 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 8A2D1220BCF; Tue, 16 Feb 2021 10:54:16 -0500 (EST)
-Date:   Tue, 16 Feb 2021 10:54:16 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     virtio-fs-list <virtio-fs@redhat.com>,
-        Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>
-Subject: Re: [Virtio-fs] Question on ACLs support in virtiofs
-Message-ID: <20210216155416.GA10195@redhat.com>
-References: <87r1llk28a.fsf@suse.de>
- <20210215205221.GB3331@redhat.com>
- <CAJfpegsEa6ZCXBFUpER6Fiagp3TEpxa82qBo0a4NydjC3ucnTw@mail.gmail.com>
+        id S230253AbhBPQDl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Feb 2021 11:03:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41212 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229708AbhBPQDk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Feb 2021 11:03:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 3F282AC69;
+        Tue, 16 Feb 2021 16:02:59 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EFA161F2AA7; Tue, 16 Feb 2021 17:02:58 +0100 (CET)
+Date:   Tue, 16 Feb 2021 17:02:58 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/7] Performance improvement for fanotify merge
+Message-ID: <20210216160258.GE21108@quack2.suse.cz>
+References: <20210202162010.305971-1-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegsEa6ZCXBFUpER6Fiagp3TEpxa82qBo0a4NydjC3ucnTw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <20210202162010.305971-1-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 04:11:20PM +0100, Miklos Szeredi wrote:
-> On Mon, Feb 15, 2021 at 9:52 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Fri, Feb 12, 2021 at 10:30:13AM +0000, Luis Henriques wrote:
-> > > Hi!
-> > >
-> > > I've recently executed the generic fstests on virtiofs and decided to have
-> > > a closer look at generic/099 failure.  In a nutshell, here's the sequence
-> > > of commands that reproduce that failure:
-> > >
-> > > # umask 0
-> > > # mkdir acldir
-> > > # chacl -b "u::rwx,g::rwx,o::rwx" "u::r-x,g::r--,o::---" acldir
-> > > # touch acldir/file1
-> > > # umask 722
-> > > # touch acldir/file2
-> > > # ls -l acldir
-> > > total 0
-> > > -r--r----- 1 root root 0 Feb 12 10:04 file1
-> > > ----r----- 1 root root 0 Feb 12 10:05 file2
-> > >
-> > > The failure is that setting umask to 722 shouldn't affect the new file2
-> > > because acldir has a default ACL (from umask(2): "... if the parent
-> > > directory has a default ACL (see acl(5)), the umask is ignored...").
-> > >
-> > > So... I tried to have look at the code, and initially I thought that the
-> > > problem was in (kernel) function fuse_create_open(), where we have this:
-> > >
-> > >       if (!fm->fc->dont_mask)
-> > >               mode &= ~current_umask();
-> > >
-> > > but then I went down the rabbit hole, into the user-space code, and
-> > > couldn't reach a conclusion.  Maybe the issue is that there's in fact no
-> > > support for this POSIX ACLs in virtiofs/FUSE?  Any ideas?
-> >
-> > Hi,
-> >
-> > [ CC Miklos and linux-fsdevel ]
-> >
-> > I debugged into this a little. There are many knobs and it is little
-> > confusing that what are right set of fixes.
-> >
-> > So what's happening in this case is that fc->dont_mask is not set. That
-> > means fuse client is modifying mode using umask. First time you
-> > touch file, umask is 0, so there is no modification. But next time,
-> > you set umask to 722, and fuse modifies mode before sending file
-> > create request to server. virtiofs server is already running with
-> > umask 0, so it does not touch the mode.
-> >
-> > So that means, that in case of default acl, fuse client should not
-> > be modifying mode using umask. But question is when should fuse
-> > skip applying umask.
-> >
-> > I see that fuse always sets SB_POSIXACL. That means VFS is not
-> > going to apply umask and all the umask handling is with-in fuse.
-> >
-> > sb->s_flags |= SB_POSIXACL;
-> >
-> > Currently fuse sets fc->dont_mask in two conditions.
-> >
-> > - If the caller mounted with flag MS_POSIXACL, then fc->dont_mask is set.
-> > - If fuse server opted in for option FUSE_DONT_MASK, then fc->dont_mask
-> >   is set.
-> >
-> > I see that for virtiofs, both the conditions are not true out of the
-> > box. In fact looks like ACL support is not fully enabled, because
-> > I don't see fuse server opting in for FUSE_POSIX_ACL.
-> >
-> > I suspect that we probably should provide an option in virtiofsd to
-> > enable/disable acl support.
-> 
-> Sounds good.
-> 
-> > Setting FUSE_DONT_MASK is tricky. If we leave it to fuse, that means
-> > fuse will have to query acl to figure out if default acl is set or
-> > not on parent dir. And that data could be stale and there could be
-> > races w.r.t setting acls from other client.
-> >
-> > If we do set FUSE_DONT_MASK, that means in file creation path virtiofsd
-> > server will have to switch its umask to one provided in request. Given
-> > its a per process property, we will have to have some locks to make
-> > sure other create requests are not progressing in parallel. And that
-> > hope host does the right thing. That is apply umask if parent dir does
-> > not have default acl otherwise apply umask (as set by virtiofsd process).
-> >
-> > Miklos, does above sound reasonable. You might have more thoughts on
-> > how to handle this best in fuse/virtiofs.
-> 
-> fv_queue_worker() does unshare(CLONE_FS) for the fchdir() call in
-> xattr ops, which means that umask is now a per-thread propery in
-> virtiofsd.
+Hi Amir!
 
-Aha.. I forgot about that. Thanks. 
+Looking at the patches I've got one idea:
+
+Currently you have fsnotify_event like:
+
+struct fsnotify_event {
+        struct list_head list;
+        unsigned int key;
+        unsigned int next_bucket;
+};
+
+And 'list' is used for hashed queue list, next_bucket is used to simulate
+single queue out of all the individual lists. The option I'm considering
+is:
+
+struct fsnotify_event {
+        struct list_head list;
+	struct fsnotify_event *hash_next;
+        unsigned int key;
+};
+
+So 'list' would stay to be used for the single queue of events like it was
+before your patches. 'hash_next' would be used for list of events in the
+hash chain. The advantage of this scheme would be somewhat more obvious
+handling, also we can handle removal of permission events (they won't be
+hashed so there's no risk of breaking hash-chain in the middle, removal
+from global queue is easy as currently). The disadvantage is increase of
+event size by one pointer on 64-bit but I think we can live with that. What
+do you think?
+
+								Honza
+
+On Tue 02-02-21 18:20:03, Amir Goldstein wrote:
+> Jan,
 > 
-> So setting umask before create ops sounds like a good solution.
-
-I will give it a try along with an option to enable/disable acl
-support in virtiofsd. 
-
-Vivek
-
+> fanotify_merge() has been observed [1] to consume a lot of CPU.
+> This is not surprising considering that it is implemented as a linear
+> search on a practically unbounded size list.
+> 
+> The following series improves the linear search for an event to merge
+> in three different ways:
+> 1. Hash events into as much as to 128 lists
+> 2. Limit linear search to 128 last list elements
+> 3. Use a better key - instead of victim inode ptr, use a hash of all
+>    the compared fields
+> 
+> The end result can be observed in the test run times below.
+> The test is an extension of your queue overflow LTP test [2].
+> The timing results use are from the 2nd run of -i 2, where files
+> are already existing in the test fs.
+> 
+> With an unlimited queue, queueing of 16385 events on unique objects
+> is ~3 times faster than before the change.
+> 
+> In fact, the run time of queueing 16385 events (~600ms) is almost the
+> same as the run time of rejecting 16385 events (~550ms) due to full
+> queue, which suggest a very low overhead for merging events.
+> 
+> The test runs two passes to test event merge, the "create" pass and
+> the "open" pass.
+> 
+> Before the change (v5.11-rc2) 100% of the events of the "open" pass
+> are merged (16385 files and 16385 events).
+> 
+> After the change, only %50 of the events of the "open" pass are
+> merged (16385 files and 25462 events).
+> 
+> This is because 16384 is the maximum number of events that we can
+> merge when hash table is fully balanced.
+> When reducing the number of unique objects to 8192, all events
+> on the "open" pass are merged.
+> 
+> Thanks,
+> Amir.
+> 
+> v5.11-rc2, run #2 of ./fanotify05 -i 2:
+> 
+> fanotify05.c:109: TINFO: Test #0: Limited queue
+> fanotify05.c:98: TINFO: Created 16385 files in 1653ms
+> fanotify05.c:98: TINFO: Opened 16385 files in 543ms
+> fanotify05.c:77: TINFO: Got event #0 filename=fname_0
+> fanotify05.c:176: TPASS: Got an overflow event: pid=0 fd=-1
+> fanotify05.c:182: TINFO: Got 16385 events
+> 
+> fanotify05.c:109: TINFO: Test #1: Unlimited queue
+> fanotify05.c:98: TINFO: Created 16385 files in 1683ms
+> fanotify05.c:98: TINFO: Opened 16385 files in 1647ms
+> fanotify05.c:77: TINFO: Got event #0 filename=fname_0
+> fanotify05.c:138: TPASS: Overflow event not generated!
+> fanotify05.c:182: TINFO: Got 16385 events
+> 
+> fanotify_merge branch, run #2 of ./fanotify05 -i 2:
+> 
+> fanotify05.c:109: TINFO: Test #0: Limited queue
+> fanotify05.c:98: TINFO: Created 16385 files in 616ms
+> fanotify05.c:98: TINFO: Opened 16385 files in 549ms
+> fanotify05.c:77: TINFO: Got event #0 filename=fname_0
+> fanotify05.c:176: TPASS: Got an overflow event: pid=0 fd=-1
+> fanotify05.c:182: TINFO: Got 16385 events
+> 
+> fanotify05.c:109: TINFO: Test #1: Unlimited queue
+> fanotify05.c:98: TINFO: Created 16385 files in 614ms
+> fanotify05.c:98: TINFO: Opened 16385 files in 599ms
+> fanotify05.c:77: TINFO: Got event #0 filename=fname_0
+> fanotify05.c:138: TPASS: Overflow event not generated!
+> fanotify05.c:182: TINFO: Got 25462 events
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20200714025417.A25EB95C0339@us180.sjc.aristanetworks.com/
+> [2] https://github.com/amir73il/ltp/commits/fanotify_merge
+> 
+> Amir Goldstein (7):
+>   fsnotify: allow fsnotify_{peek,remove}_first_event with empty queue
+>   fsnotify: support hashed notification queue
+>   fsnotify: read events from hashed notification queue by order of
+>     insertion
+>   fanotify: enable hashed notification queue for FAN_CLASS_NOTIF groups
+>   fanotify: limit number of event merge attempts
+>   fanotify: mix event info into merge key hash
+>   fsnotify: print some debug stats on hashed queue overflow
+> 
+>  fs/notify/fanotify/fanotify.c      |  40 ++++++-
+>  fs/notify/fanotify/fanotify.h      |  24 +++-
+>  fs/notify/fanotify/fanotify_user.c |  55 ++++++---
+>  fs/notify/group.c                  |  37 ++++--
+>  fs/notify/inotify/inotify_user.c   |  22 ++--
+>  fs/notify/notification.c           | 175 +++++++++++++++++++++++++----
+>  include/linux/fsnotify_backend.h   | 105 +++++++++++++++--
+>  7 files changed, 383 insertions(+), 75 deletions(-)
+> 
+> -- 
+> 2.25.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
