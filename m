@@ -2,224 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A986B31E0C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 21:48:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A1F31E0D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 21:52:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235102AbhBQUs2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Feb 2021 15:48:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45044 "EHLO
+        id S233017AbhBQUwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Feb 2021 15:52:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234469AbhBQUsX (ORCPT
+        with ESMTP id S232050AbhBQUwJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Feb 2021 15:48:23 -0500
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44C5C061574;
-        Wed, 17 Feb 2021 12:47:43 -0800 (PST)
-Received: by mail-il1-x12d.google.com with SMTP id g9so12588749ilc.3;
-        Wed, 17 Feb 2021 12:47:43 -0800 (PST)
+        Wed, 17 Feb 2021 15:52:09 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AC3DC061574;
+        Wed, 17 Feb 2021 12:51:29 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id t29so9202238pfg.11;
+        Wed, 17 Feb 2021 12:51:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=36J8v8GcH0x9Wqo2pW5kCC6+tAea+frYUujmEbPD8JY=;
-        b=EHG39DHe2zUwLnGbzMrWPQMvmSl8upXvtYlyQ9u9dlyfiiSuT2JC8ELoKzr6WpptkN
-         3JIsTo8q+IfvY4bHSOuyHNyxDfACJR4+sIpfwHk5JHgzBaQcSfJcBNqbR71A53xRIodv
-         3WFEbgruXKD1y2sQNNn6PYSwrU/Ldp5LpXuzKCJq1phqteLj/YC7dKiE/TMPteB3+dPI
-         IYDH74sfRZpmCLblx01Ucss9/e2GFqDTHfqRURp0G04p3WEWBivyB8qWVvM92mhEdxIy
-         yVKwYgIkehVQ7N/vVIcck0Yw/Vr4k+9SPgnJ+iXtfLOby+yEQrvMet2VzWRW470LuOjd
-         WOIQ==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=KZ2YDaTrQUxNgyjPGXSCzsEOssMhFQi4w5yssr+wN8k=;
+        b=I1c4pAWQOn9X4rC/3iGQL9deLcILN/k6imqe10/rBbzJ/3WSxHT3GF7uobSkL04iQa
+         eok36l37EBjUSYf37Bhk7oSa51YMfDPlFZkygZNt8XAFnNBRcW095uU843fXf7OA0Cpv
+         Jo+bMyKH6X2QaB8M7apZsIWDExwZLludz7dUl+vwlpF7hgOUm0DXAsrxL/HSSUYf1tvT
+         lZtVhHzRZz4uEn51WoZ2KW3XN5GSCws6J8dTZHt53HclTSLPSu2xsxvIrwElKnLAfpMl
+         dTP/EThr22TufBqiqjgK1zFw+p//bk9Cf5gHDvqbAZ9p/vjC5w4UNIkfXgWNvGgK/YhN
+         3I/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=36J8v8GcH0x9Wqo2pW5kCC6+tAea+frYUujmEbPD8JY=;
-        b=YE0bit75DwWvfquq22mUwhZiCNbNVGz6MiihmYEZu6TpETkK0GlLAW1kFdVDbL8eZB
-         lfk3tNReq3hH+YMjcCE5+lQSaQwSyNOZitG1okg2MzWT1N3TfeIH04APAaa9SGYHbp10
-         wqXmTjBj+X/JuZHDMnLHmUZPp18a9eDWimeM3I+99IG97Us37Uz4F2xcsS/MFNFhblOa
-         LPo7rEwV0uAGcOMMQWj+Ae7b1nuaq8dghfWUXZnbj1QrqFwDRMC5yIQp85GTGCuKbHPL
-         yxNubgQBcJLpuXLndu9F3os08LkFpVgQlQmaQdA96bXAwkxuPSYOmUVVMh7vUDwwifBQ
-         RKSQ==
-X-Gm-Message-State: AOAM533Dv2kihBbuNWrVC4q9E1sPinZ/Y4/rja3h9ICmxD5wxr1jINzi
-        0rVcCzukSetftiPVgwejRufWfds+tqmWGlel2pE=
-X-Google-Smtp-Source: ABdhPJzYkAHI/b+3jQMEdQXB+iRBVamaK5rWR+tLyf4FlWaxVbdV7OF2k1+Ohh+hilknNdvyyqFx0zNjCFgMTzTsKE4=
-X-Received: by 2002:a05:6e02:8ab:: with SMTP id a11mr736193ilt.137.1613594863093;
- Wed, 17 Feb 2021 12:47:43 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=KZ2YDaTrQUxNgyjPGXSCzsEOssMhFQi4w5yssr+wN8k=;
+        b=tp0oJ420hNI5DEtrdRzDBaF1OOv4ljxzor0Qi/EdAi/15u0X2Iho+rEcNMur9NRkjS
+         SEzSfoRDHnfUCv6XovWd6rr5zqqu3piiudh321kfmAjU6ljy+z6oZwd/uANH0tAUFHiW
+         Ctvs60qIgIrc9ZCZHpMsa3SigvmogAQA4OGeUdQss4TdfIw+dQM6CpN/oyVxqAkIbXEd
+         nAniuVP3nPHExF8ncHFqkLenj5JcoYwmQ+MvznAv6l7qXlS0SX6XyKxH4FePzdbLQC/k
+         T0l6+Y4AxL3gjz2BY5uErt+L+o9ADYjlvY7MHbvb7EUxk1Y2xBelIG2TfhAsDnF3pNXB
+         7bIw==
+X-Gm-Message-State: AOAM531qWGSjoGSX2VE8prUoY+LvaHW738VSfAJPcYdMI5fywdQ6ebB9
+        pyKdDNsEDZ9HcA95exvYasE=
+X-Google-Smtp-Source: ABdhPJxajiR0XpFqMA+nXwR2lha7uU9OOxH9cyx53NpuErp3m0XGQO+tHGLlfnF9013gT7e7wQHP+g==
+X-Received: by 2002:a63:cd41:: with SMTP id a1mr1024554pgj.177.1613595089015;
+        Wed, 17 Feb 2021 12:51:29 -0800 (PST)
+Received: from google.com ([2620:15c:211:201:157d:8a19:5427:ea9e])
+        by smtp.gmail.com with ESMTPSA id r13sm3646734pfc.198.2021.02.17.12.51.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Feb 2021 12:51:27 -0800 (PST)
+Sender: Minchan Kim <minchan.kim@gmail.com>
+Date:   Wed, 17 Feb 2021 12:51:25 -0800
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, cgoldswo@codeaurora.org,
+        linux-fsdevel@vger.kernel.org, willy@infradead.org,
+        david@redhat.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+        joaodias@google.com
+Subject: Re: [RFC 1/2] mm: disable LRU pagevec during the migration
+ temporarily
+Message-ID: <YC2BzdHxF0xEdNxH@google.com>
+References: <20210216170348.1513483-1-minchan@kernel.org>
+ <YCzbCg3+upAo1Kdj@dhcp22.suse.cz>
+ <YCzm/3GIy1EJlBi2@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <CAOQ4uxii=7KUKv1w32VbjkwS+Z1a0ge0gezNzpn_BiY6MFWkpA@mail.gmail.com>
- <20210217172654.22519-1-lhenriques@suse.de>
-In-Reply-To: <20210217172654.22519-1-lhenriques@suse.de>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 17 Feb 2021 22:47:31 +0200
-Message-ID: <CAOQ4uxisQicRLso-i=5jWfAQX1kxSc=Bb9BaU5Wezs=QKbuciA@mail.gmail.com>
-Subject: Re: [PATCH v3] vfs: fix copy_file_range regression in cross-fs copies
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YCzm/3GIy1EJlBi2@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 17, 2021 at 7:25 PM Luis Henriques <lhenriques@suse.de> wrote:
->
-> A regression has been reported by Nicolas Boichat, found while using the
-> copy_file_range syscall to copy a tracefs file.  Before commit
-> 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
-> kernel would return -EXDEV to userspace when trying to copy a file across
-> different filesystems.  After this commit, the syscall doesn't fail anymore
-> and instead returns zero (zero bytes copied), as this file's content is
-> generated on-the-fly and thus reports a size of zero.
->
-> This patch restores some cross-filesystems copy restrictions that existed
-> prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-> devices").  It also introduces a flag (COPY_FILE_SPLICE) that can be used
-> by filesystems calling directly into the vfs copy_file_range to override
-> these restrictions.  Right now, only NFS needs to set this flag.
->
-> Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
-> Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-> Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
-> Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
-> Reported-by: Nicolas Boichat <drinkcat@chromium.org>
-> Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> ---
-> Ok, I've tried to address all the issues and comments.  Hopefully this v3
-> is a bit closer to the final fix.
->
-> Changes since v2
-> - do all the required checks earlier, in generic_copy_file_checks(),
->   adding new checks for ->remap_file_range
-> - new COPY_FILE_SPLICE flag
-> - don't remove filesystem's fallback to generic_copy_file_range()
-> - updated commit changelog (and subject)
-> Changes since v1 (after Amir review)
-> - restored do_copy_file_range() helper
-> - return -EOPNOTSUPP if fs doesn't implement CFR
-> - updated commit description
->
->  fs/nfsd/vfs.c      |  3 ++-
->  fs/read_write.c    | 44 +++++++++++++++++++++++++++++++++++++++++---
->  include/linux/fs.h |  7 +++++++
->  3 files changed, 50 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index 04937e51de56..14e55822c223 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -578,7 +578,8 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
->          * limit like this and pipeline multiple COPY requests.
->          */
->         count = min_t(u64, count, 1 << 22);
-> -       return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
-> +       return vfs_copy_file_range(src, src_pos, dst, dst_pos, count,
-> +                                  COPY_FILE_SPLICE);
->  }
->
->  __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 75f764b43418..40a16003fb05 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1410,6 +1410,33 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
->                                        flags);
->  }
->
-> +/*
-> + * This helper function checks whether copy_file_range can actually be used,
-> + * depending on the source and destination filesystems being the same.
-> + *
-> + * In-kernel callers may set COPY_FILE_SPLICE to override these checks.
-> + */
-> +static int fops_copy_file_checks(struct file *file_in, struct file *file_out,
-> +                                unsigned int flags)
-> +{
-> +       if (WARN_ON_ONCE(flags & ~COPY_FILE_SPLICE))
-> +               return -EINVAL;
-> +
-> +       if (flags & COPY_FILE_SPLICE)
-> +               return 0;
-> +       /*
-> +        * We got here from userspace, so forbid copies if copy_file_range isn't
-> +        * implemented or if we're doing a cross-fs copy.
-> +        */
+On Wed, Feb 17, 2021 at 10:50:55AM +0100, Michal Hocko wrote:
+> On Wed 17-02-21 09:59:54, Michal Hocko wrote:
+> > On Tue 16-02-21 09:03:47, Minchan Kim wrote:
+> [...]
+> > >  /*
+> > >   * migrate_prep() needs to be called before we start compiling a list of pages
+> > >   * to be migrated using isolate_lru_page(). If scheduling work on other CPUs is
+> > > @@ -64,11 +80,27 @@
+> > >   */
+> > >  void migrate_prep(void)
+> > >  {
+> > > +	unsigned int cpu;
+> > > +
+> > > +	spin_lock(&migrate_pending_lock);
+> > > +	migrate_pending_count++;
+> > > +	spin_unlock(&migrate_pending_lock);
+> > 
+> > I suspect you do not want to add atomic_read inside hot paths, right? Is
+> > this really something that we have to microoptimize for? atomic_read is
+> > a simple READ_ONCE on many archs.
+> 
+> Or you rather wanted to prevent from read memory barrier to enfore the
+> ordering.
 
-Suggest:
+Yub.
 
-       if (!file_in->f_op->copy_file_range) {
-               if (file_in->f_op->copy_file_range !=
-                   file_out->f_op->copy_file_range)
-                   return -EXDEV;
-       } else if (file_in->f_op->remap_file_range) {
-               if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-                    return -EXDEV;
-       } else {
-                return -EOPNOTSUPP;
-       }
+> 
+> > > +
+> > > +	for_each_online_cpu(cpu) {
+> > > +		struct work_struct *work = &per_cpu(migrate_pending_work, cpu);
+> > > +
+> > > +		INIT_WORK(work, read_migrate_pending);
+> > > +		queue_work_on(cpu, mm_percpu_wq, work);
+> > > +	}
+> > > +
+> > > +	for_each_online_cpu(cpu)
+> > > +		flush_work(&per_cpu(migrate_pending_work, cpu));
+> > 
+> > I also do not follow this scheme. Where is the IPI you are mentioning
+> > above?
+> 
+> Thinking about it some more I think you mean the rescheduling IPI here?
 
-       return 0;
-}
+True.
 
-> +
->  /*
->   * Performs necessary checks before doing a file copy
->   *
-> @@ -1427,6 +1454,14 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
->         loff_t size_in;
->         int ret;
->
-> +       /* Only check f_ops if we're not trying to clone */
-> +       if (!file_in->f_op->remap_file_range ||
-> +           (file_inode(file_in)->i_sb == file_inode(file_out)->i_sb)) {
-> +               ret = fops_copy_file_checks(file_in, file_out, flags);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
+> 
+> > > +	/*
+> > > +	 * From now on, every online cpu will see uptodate
+> > > +	 * migarte_pending_work.
+> > > +	 */
+> > >  	/*
+> > >  	 * Clear the LRU lists so pages can be isolated.
+> > > -	 * Note that pages may be moved off the LRU after we have
+> > > -	 * drained them. Those pages will fail to migrate like other
+> > > -	 * pages that may be busy.
+> > >  	 */
+> > >  	lru_add_drain_all();
+> > 
+> > Overall, this looks rather heavy weight to my taste. Have you tried to
+> > play with a simple atomic counter approach? atomic_read when adding to
+> > the cache and atomic_inc inside migrate_prep followed by lrdu_add_drain.
 
-and then you don't need this special casing of clone here.
+I'd like to avoid atomic operation if we could.
 
->         ret = generic_file_rw_checks(file_in, file_out);
->         if (ret)
->                 return ret;
-> @@ -1474,9 +1509,6 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+> 
+> If you really want a strong ordering then it should be sufficient to
+> simply alter lru_add_drain_all to force draining all CPUs. This will
+> make sure no new pages are added to the pcp lists and you will also sync
+> up anything that has accumulated because of a race between atomic_read
+> and inc:
+> diff --git a/mm/swap.c b/mm/swap.c
+> index 2cca7141470c..91600d7bb7a8 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -745,7 +745,7 @@ static void lru_add_drain_per_cpu(struct work_struct *dummy)
+>   * Calling this function with cpu hotplug locks held can actually lead
+>   * to obscure indirect dependencies via WQ context.
+>   */
+> -void lru_add_drain_all(void)
+> +void lru_add_drain_all(bool force_all_cpus)
 >  {
->         ssize_t ret;
->
-> -       if (flags != 0)
-> -               return -EINVAL;
-> -
->         ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
->                                        flags);
->         if (unlikely(ret))
-> @@ -1511,6 +1543,9 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
->                         ret = cloned;
->                         goto done;
->                 }
-> +               ret = fops_copy_file_checks(file_in, file_out, flags);
-> +               if (ret)
-> +                       return ret;
+>  	/*
+>  	 * lru_drain_gen - Global pages generation number
+> @@ -820,7 +820,8 @@ void lru_add_drain_all(void)
+>  	for_each_online_cpu(cpu) {
+>  		struct work_struct *work = &per_cpu(lru_add_drain_work, cpu);
+>  
+> -		if (pagevec_count(&per_cpu(lru_pvecs.lru_add, cpu)) ||
+> +		if (force_all_cpus ||
+> +		    pagevec_count(&per_cpu(lru_pvecs.lru_add, cpu)) ||
+>  		    data_race(pagevec_count(&per_cpu(lru_rotate.pvec, cpu))) ||
+>  		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate_file, cpu)) ||
+>  		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate, cpu)) ||
 
-and you don't need this here (right?)
+Yub, that's a idea.
+How about this?
 
-and you can remove the checks for same i_sb and same copy_file_range
-op that were already tested from vfs_copy_file_range().
+diff --git a/mm/migrate.c b/mm/migrate.c
+index a69da8aaeccd..2531642dd9ce 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -57,6 +57,14 @@
+ 
+ #include "internal.h"
+ 
++static DEFINE_SPINLOCK(migrate_pending_lock);
++static unsigned long migrate_pending_count;
++
++bool migrate_pending(void)
++{
++	return migrate_pending_count;
++}
++
+ /*
+  * migrate_prep() needs to be called before we start compiling a list of pages
+  * to be migrated using isolate_lru_page(). If scheduling work on other CPUs is
+@@ -64,13 +72,20 @@
+  */
+ void migrate_prep(void)
+ {
++	unsigned int cpu;
++
++	/*
++	 * lru_add_drain_all's IPI will make sure no new pages are added
++	 * to the pcp lists and drain them all.
++	 */
++	spin_lock(&migrate_pending_lock);
++	migrate_pending_count++;
++	spin_unlock(&migrate_pending_lock);
++
+ 	/*
+ 	 * Clear the LRU lists so pages can be isolated.
+-	 * Note that pages may be moved off the LRU after we have
+-	 * drained them. Those pages will fail to migrate like other
+-	 * pages that may be busy.
+ 	 */
+-	lru_add_drain_all();
++	lru_add_drain_all(true);
+ }
+ 
+ /* Do the necessary work of migrate_prep but not if it involves other CPUs */
+@@ -79,6 +94,15 @@ void migrate_prep_local(void)
+ 	lru_add_drain();
+ }
+ 
++void migrate_finish(void)
++{
++	int cpu;
++
++	spin_lock(&migrate_pending_lock);
++	migrate_pending_count--;
++	spin_unlock(&migrate_pending_lock);
++}
 
-Hope I am not missing anything.
+A odd here is there are no barrier for migrate_finish for
+updating migrate_pending_count so other CPUs will see
+stale value until they encounters the barrier by chance.
+However, it wouldn't be a big deal, IMHO.
 
-Thanks,
-Amir.
+What do you think?
