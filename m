@@ -2,82 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9C3E31D6D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 10:14:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A15F531D720
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 10:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231998AbhBQJLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Feb 2021 04:11:34 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21853 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231713AbhBQJLc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Feb 2021 04:11:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613553005;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        id S231898AbhBQJvq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Feb 2021 04:51:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37088 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231470AbhBQJvo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Feb 2021 04:51:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1613555457; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RFusShBhS4qAoH9QAhjf7bQvV8GQfYBBL88bdpAsQow=;
-        b=QPdvjnnP1R+9gDV+zmUc4lsAfj3h4fAdrT00RlaRS239TPavBbmoHfvl0eSd8kSaWWkVqS
-        kFnkyIURfm7E+iCTCynmhm2oniGo+xt8Sw+7SaTZgsoZKxcAVNm4zj312tN5mifd5jyFhS
-        SVKa7RioOiS9Ht0JqBy59sjImoK4WHc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-599-8jQz2_2HM-mUSQwRkBX7UA-1; Wed, 17 Feb 2021 04:10:03 -0500
-X-MC-Unique: 8jQz2_2HM-mUSQwRkBX7UA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C3E81020C20;
-        Wed, 17 Feb 2021 09:10:01 +0000 (UTC)
-Received: from [10.36.114.178] (ovpn-114-178.ams2.redhat.com [10.36.114.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DF16660C62;
-        Wed, 17 Feb 2021 09:09:58 +0000 (UTC)
-Subject: Re: [RFC PATCH] mm, oom: introduce vm.sacrifice_hugepage_on_oom
-To:     Eiichi Tsukata <eiichi.tsukata@nutanix.com>, corbet@lwn.net,
-        mike.kravetz@oracle.com, mcgrof@kernel.org, keescook@chromium.org,
-        yzaikin@google.com, akpm@linux-foundation.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc:     felipe.franciosi@nutanix.com
-References: <20210216030713.79101-1-eiichi.tsukata@nutanix.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <dc18e98e-2467-bb36-7f78-d7003d9aa5f9@redhat.com>
-Date:   Wed, 17 Feb 2021 10:09:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        bh=A8liV9LivvgJbefXJ55VyrMSp067sOf3ODYYksKOF1U=;
+        b=vUF/7zLqOIqRO3nHFbLVor/ibH6SIiaLTRd3+Z+WlOYv/WpjYhGjkjIDAI+N2LQZmScOMy
+        91aUHNP9DizHYPNHY8OIu+h5XNrlpC6KuxoZmT8YFFZgJW9aIrB97wCEMLoea/3cifM7sd
+        skrLy8aV8Ymd4rwEaISTX5QXhPG4sFE=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7079EB7A8;
+        Wed, 17 Feb 2021 09:50:57 +0000 (UTC)
+Date:   Wed, 17 Feb 2021 10:50:55 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, cgoldswo@codeaurora.org,
+        linux-fsdevel@vger.kernel.org, willy@infradead.org,
+        david@redhat.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+        joaodias@google.com
+Subject: Re: [RFC 1/2] mm: disable LRU pagevec during the migration
+ temporarily
+Message-ID: <YCzm/3GIy1EJlBi2@dhcp22.suse.cz>
+References: <20210216170348.1513483-1-minchan@kernel.org>
+ <YCzbCg3+upAo1Kdj@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20210216030713.79101-1-eiichi.tsukata@nutanix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YCzbCg3+upAo1Kdj@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 16.02.21 04:07, Eiichi Tsukata wrote:
-> Hugepages can be preallocated to avoid unpredictable allocation latency.
-> If we run into 4k page shortage, the kernel can trigger OOM even though
-> there were free hugepages. When OOM is triggered by user address page
-> fault handler, we can use oom notifier to free hugepages in user space
-> but if it's triggered by memory allocation for kernel, there is no way
-> to synchronously handle it in user space.
+On Wed 17-02-21 09:59:54, Michal Hocko wrote:
+> On Tue 16-02-21 09:03:47, Minchan Kim wrote:
+[...]
+> >  /*
+> >   * migrate_prep() needs to be called before we start compiling a list of pages
+> >   * to be migrated using isolate_lru_page(). If scheduling work on other CPUs is
+> > @@ -64,11 +80,27 @@
+> >   */
+> >  void migrate_prep(void)
+> >  {
+> > +	unsigned int cpu;
+> > +
+> > +	spin_lock(&migrate_pending_lock);
+> > +	migrate_pending_count++;
+> > +	spin_unlock(&migrate_pending_lock);
 > 
-> This patch introduces a new sysctl vm.sacrifice_hugepage_on_oom. If
-> enabled, it first tries to free a hugepage if available before invoking
-> the oom-killer. The default value is disabled not to change the current
-> behavior.
+> I suspect you do not want to add atomic_read inside hot paths, right? Is
+> this really something that we have to microoptimize for? atomic_read is
+> a simple READ_ONCE on many archs.
 
-In addition to the other comments, some more thoughts:
+Or you rather wanted to prevent from read memory barrier to enfore the
+ordering.
 
-What if you're low on kernel memory but you end up freeing huge pages 
-residing in ZONE_MOVABLE? IOW, this is not zone aware.
+> > +
+> > +	for_each_online_cpu(cpu) {
+> > +		struct work_struct *work = &per_cpu(migrate_pending_work, cpu);
+> > +
+> > +		INIT_WORK(work, read_migrate_pending);
+> > +		queue_work_on(cpu, mm_percpu_wq, work);
+> > +	}
+> > +
+> > +	for_each_online_cpu(cpu)
+> > +		flush_work(&per_cpu(migrate_pending_work, cpu));
+> 
+> I also do not follow this scheme. Where is the IPI you are mentioning
+> above?
 
+Thinking about it some more I think you mean the rescheduling IPI here?
+
+> > +	/*
+> > +	 * From now on, every online cpu will see uptodate
+> > +	 * migarte_pending_work.
+> > +	 */
+> >  	/*
+> >  	 * Clear the LRU lists so pages can be isolated.
+> > -	 * Note that pages may be moved off the LRU after we have
+> > -	 * drained them. Those pages will fail to migrate like other
+> > -	 * pages that may be busy.
+> >  	 */
+> >  	lru_add_drain_all();
+> 
+> Overall, this looks rather heavy weight to my taste. Have you tried to
+> play with a simple atomic counter approach? atomic_read when adding to
+> the cache and atomic_inc inside migrate_prep followed by lrdu_add_drain.
+
+If you really want a strong ordering then it should be sufficient to
+simply alter lru_add_drain_all to force draining all CPUs. This will
+make sure no new pages are added to the pcp lists and you will also sync
+up anything that has accumulated because of a race between atomic_read
+and inc:
+diff --git a/mm/swap.c b/mm/swap.c
+index 2cca7141470c..91600d7bb7a8 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -745,7 +745,7 @@ static void lru_add_drain_per_cpu(struct work_struct *dummy)
+  * Calling this function with cpu hotplug locks held can actually lead
+  * to obscure indirect dependencies via WQ context.
+  */
+-void lru_add_drain_all(void)
++void lru_add_drain_all(bool force_all_cpus)
+ {
+ 	/*
+ 	 * lru_drain_gen - Global pages generation number
+@@ -820,7 +820,8 @@ void lru_add_drain_all(void)
+ 	for_each_online_cpu(cpu) {
+ 		struct work_struct *work = &per_cpu(lru_add_drain_work, cpu);
+ 
+-		if (pagevec_count(&per_cpu(lru_pvecs.lru_add, cpu)) ||
++		if (force_all_cpus ||
++		    pagevec_count(&per_cpu(lru_pvecs.lru_add, cpu)) ||
+ 		    data_race(pagevec_count(&per_cpu(lru_rotate.pvec, cpu))) ||
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate_file, cpu)) ||
+ 		    pagevec_count(&per_cpu(lru_pvecs.lru_deactivate, cpu)) ||
 -- 
-Thanks,
-
-David / dhildenb
-
+Michal Hocko
+SUSE Labs
