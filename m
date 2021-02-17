@@ -2,203 +2,289 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B044231DE1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 18:27:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3DA031DEE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 19:13:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234396AbhBQR0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Feb 2021 12:26:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34706 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230179AbhBQR0h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Feb 2021 12:26:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7BA78B7C2;
-        Wed, 17 Feb 2021 17:25:54 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 04828e09;
-        Wed, 17 Feb 2021 17:26:56 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
+        id S234815AbhBQSMz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Feb 2021 13:12:55 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:33916 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234796AbhBQSMv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Feb 2021 13:12:51 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11HI4Z8M001220;
+        Wed, 17 Feb 2021 18:11:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : content-type :
+ mime-version; s=corp-2020-01-29;
+ bh=jlM5wl0wxhmeGu++9Bg6LFkLfQD4uPVeibBhySVZ4Bs=;
+ b=iKi79n5yUvk9PsxOeFkeZbyWTvTEfdh3AHLx5E1l68DhaoycPzsskFPmL/Dl7tglP3Gk
+ WzUfyYTFXXfnsG2VM+QKlQ+FhaBZrVc5lYN6cpmvRyhn3ilTD+Z04S2nOOB76it7vcpB
+ FGKpVR+6fM7rDYaHZ3QozRWBQkXmWMMX0k4qHToyV6r+yJe0wwtMbsT6kmuy9C0o/haL
+ KJumGY5qWB+uftqNV6TrhkhnY/w385sqMFltVpbKVeWw2QIg4CDWXlICCrwXhHgY6xSb
+ erUsE3Sxi/YBaGttTk1GiFIKbkJhFpW8itBywrS9IGshqc79BgXfGEYhawypRTQfxFdr OQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 36p49bbh3u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Feb 2021 18:11:35 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11HIABI3164530;
+        Wed, 17 Feb 2021 18:11:35 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam08lp2168.outbound.protection.outlook.com [104.47.73.168])
+        by aserp3020.oracle.com with ESMTP id 36prp0hpsc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Feb 2021 18:11:35 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LrTiwKKeqDb7Uy0EoktLTFaFbpwPWDKQjVBkp/V6WfsgUvs3Sfe6Dh9vDCwUVYM1eRdPkZi7NnkdKIBDPMBv3CVhSRyS8tLMZs5J+H6QDNVWx0AItvxpi/tOlVp2J7iYJSu/3qPtRYnekLzU/FK2k9vWi4MSABZJYGvcZnZtoGPQp5rkLDrhyJ0tUfWF6p4bBB9SvKFhSqwr6kKgaqhrqTf/oMTgZfHSiSiSj/ZxqSBIgfctOvvYzkuKXSw02b/KdpRBe5du+KkNmRcmveAOAvyUliQh/gOZ8CifbaHwsurhnf2w2E34zHi7MjnlWpE0UYABUbOb9NSM+b235D/crQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jlM5wl0wxhmeGu++9Bg6LFkLfQD4uPVeibBhySVZ4Bs=;
+ b=X4K2DTl4blQnrWtA9sZo/mo0XfIJZZzshCnqtp4rj1ikweHQ1cEt2Vixo9MLMzxwcMpG9maHpW1zALhlMuJlNEZ0HPOsP+SlU0mFuDKguicGwXKhu6rhemM5LZ6LQemTKWPP48jv6JPSUMMfLMh28JerXCWYf4Ja+Oc1HXrafYYP8+rOoBMsZiqr3w9wF5T48sPgb8H+YO3SzlUcAF5ljvOqVh1gfrDyVocb5oIs/vXLbnC3s+MGeVi/jqy4oP4gZsCYL6+/JT7FmX1itx1Dngos9nTlaMqMdHNaEy1EMJVA1wTxDN+AOeIecLaAj40LY/OrgCj4SY0d5P8uxpjbeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jlM5wl0wxhmeGu++9Bg6LFkLfQD4uPVeibBhySVZ4Bs=;
+ b=C1MjbXCZ5YYAOTpLuDd/lC4duwzfq7+ZbUN4udd5QVBtAVLK0EvSKULtvZ7wJWw2Tac4oXFHiJ/IctXLvT3CllRSK3PAt30SHAr4hJtG+8O53Tu7sqeDtF5ZYmTGE8MrRBfNiN+e1nUsFJM7DZdEmdBhXIHOgESi3LHL1siXlkc=
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=oracle.com;
+Received: from BYAPR10MB2823.namprd10.prod.outlook.com (2603:10b6:a03:87::15)
+ by SJ0PR10MB4512.namprd10.prod.outlook.com (2603:10b6:a03:2dc::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.41; Wed, 17 Feb
+ 2021 18:11:33 +0000
+Received: from BYAPR10MB2823.namprd10.prod.outlook.com
+ ([fe80::adef:30b8:ee4e:c772]) by BYAPR10MB2823.namprd10.prod.outlook.com
+ ([fe80::adef:30b8:ee4e:c772%3]) with mapi id 15.20.3846.042; Wed, 17 Feb 2021
+ 18:11:33 +0000
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.de>
-Subject: [PATCH v3] vfs: fix copy_file_range regression in cross-fs copies
-Date:   Wed, 17 Feb 2021 17:26:54 +0000
-Message-Id: <20210217172654.22519-1-lhenriques@suse.de>
-In-Reply-To: <CAOQ4uxii=7KUKv1w32VbjkwS+Z1a0ge0gezNzpn_BiY6MFWkpA@mail.gmail.com>
-References: <CAOQ4uxii=7KUKv1w32VbjkwS+Z1a0ge0gezNzpn_BiY6MFWkpA@mail.gmail.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH RESEND v5] proc: Allow pid_revalidate() during LOOKUP_RCU
+In-Reply-To: <20210204171719.1021547-1-stephen.s.brennan@oracle.com>
+References: <20210204171719.1021547-1-stephen.s.brennan@oracle.com>
+Date:   Wed, 17 Feb 2021 10:11:30 -0800
+Message-ID: <87eehe5zu5.fsf@stepbren-lnx.us.oracle.com>
+Content-Type: text/plain
+X-Originating-IP: [136.24.53.113]
+X-ClientProxiedBy: SJ0PR13CA0228.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c1::23) To BYAPR10MB2823.namprd10.prod.outlook.com
+ (2603:10b6:a03:87::15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (136.24.53.113) by SJ0PR13CA0228.namprd13.prod.outlook.com (2603:10b6:a03:2c1::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3868.11 via Frontend Transport; Wed, 17 Feb 2021 18:11:32 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4599997e-e7b1-4687-eaa3-08d8d36f74c6
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB4512:
+X-Microsoft-Antispam-PRVS: <SJ0PR10MB45124CFEC400EE9417334667DB869@SJ0PR10MB4512.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jlaEo4Ic2wh8WAr7NlWHWGl9Vcf99FFmeJh+TGaJXdScN2A67g5ysMw9dwO2T1yMcpEWfus2VBqYiSAIPsQhdz4W+UcDKlGBd4BPHRvnCnahyMlCfrBs2OBTFRg/D0ajokESmsMnWX9xPF7zOZfNk3wyo2EH/1uSXmFkxNsq8EOQoss1QBVpl9C5XFyEzKN0Gi4vVtnl8sYtWqZY/mU1MO0exwPr6MGkAP4hnuLVS4BZGCaystxJxdmGOfTNTXXYxk2stcMMGHpVA5Knewor/gSWJh4MlR3lIJ6jtPhr3+N0tq4V10b7f0vfVLq26SCsvm2c1ZAQ/3cZ6MT0QF/92sxJ5nIpUnmzrBKRpPXdsUxsRzwWRCv9KSWzk2WAIxvPG9SdvNX9Fi5DXLbN3LU59wsq9I/rVzW6W2URvLEsL9QusSsO+kN2Dfrx2PCXd6MBXOZXQNQ3vtRRXoSJmwvCguGQ2QP7dXdosnx1AJmnsvbpv1E0VNSjOVxwpbhKoJDyBIR7+dyPeg+cjNBnwLa+3g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB2823.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(366004)(396003)(346002)(136003)(39860400002)(478600001)(8936002)(186003)(6916009)(83380400001)(26005)(6496006)(316002)(52116002)(2906002)(8676002)(7416002)(4326008)(6486002)(5660300002)(956004)(16526019)(54906003)(86362001)(66946007)(66476007)(66556008);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?nkFjFJ2UGD4D4bkqOrK7/bwxrIWmEh0zL+XxuZpxihqhCBF0Ox86DMyMvd7L?=
+ =?us-ascii?Q?akfuUqsXm+oclWFoK1ircHllWRNDCbZBLHJi+g9zmYjapSDYpSPBzvU2d+TO?=
+ =?us-ascii?Q?qGwadj2cc8M+Xx2pw9iTGvtj0n9xwGUfsOXygwlaz3uIQKalFVGsz5RR3vO6?=
+ =?us-ascii?Q?BMQhFvjrMu3lq5F74oS8XwSmZ7dbA+oKJvr2SlnBaSnJB0CJa3iaf2VuhtU5?=
+ =?us-ascii?Q?T3b7NT7euV1cslSpWdmO9lZLE8yir8Z17ry3+Xu0yyyAkFB/apK8o482sGKb?=
+ =?us-ascii?Q?k7+xL3YrCnwbpZwwWZSdotKDEGQoWJb684r70+h95K0CUxBx7MdUIZVSkWna?=
+ =?us-ascii?Q?RYCt8XXrjOyxY3KAqOCwGHXaCrzffshYXlT+lFftN/mI2hidOz5wCeWtMx6T?=
+ =?us-ascii?Q?7nJ1tpkQ8/y6kw0R0sdnpr1j1m+pqY3z4o1jf4SzJLtqVXsDs3ixBVcgeB52?=
+ =?us-ascii?Q?f6sDT9gPjzjj/4VuSmMvqJqXQYEUhqv6mtHPBYppYkTFd6rms3JQisVqxvel?=
+ =?us-ascii?Q?wwy5gVh8X+ykV1WJ/Sr6esavXqSIhwpfGDTnnHH5K2mPoZf6oOSnB++kMQcZ?=
+ =?us-ascii?Q?V3Vm6Q55X1m81ezSsBcGbYrSvRwyQF71hgBsSgEnqbMa6RypwQpgHPRD3Fdj?=
+ =?us-ascii?Q?6VvA+3H+goAOHzgV0V+4j6I8P5xOELpIJID6DvGyoer8XnP0XU7Mt6fATgkk?=
+ =?us-ascii?Q?UgvwLYFpBj4x2o0XfUtBQOkSiiEmBbFq7L+K8uDPmDPiQPCgcoi3+ubi3T1w?=
+ =?us-ascii?Q?ACkxaiZS78E/FIzdXbqvH6npB4ue8SsUXhZGmOS3tddLs+iSwuhZfvEYv3jg?=
+ =?us-ascii?Q?NQZ6Q/Eb9+PClvdZ9Y/PuJlhvXig2ja/qzTc3un/0NVcVQoZIToAKTN1OBmp?=
+ =?us-ascii?Q?xDOTFjTFVZf0XxeRIw1BB+qJY9BIVv2vbMniGSiHSwlpTRVeKuxd8K3wqMhI?=
+ =?us-ascii?Q?1di4bZOiYqmmkogFura+ZKUWk3XQ2Cgkdm88dSdd6eUIkVTZOnH12Qk1p6tm?=
+ =?us-ascii?Q?HA5q8B5uZvQ6ojh+f7cAzic728fSIdQvvBVO8c4qg6lNQp9MyK44AA0tDbkE?=
+ =?us-ascii?Q?gUWBc9nO5YBKvUJysU5BTc831YVQd9iuqlAHVCiBcZm45KYAjC7llAxLZv0Y?=
+ =?us-ascii?Q?F5LF8HedPHvki7srZ/QK/UfEq7nklJvdSxq8ERk4W29P+VEWIcjSJD7nPGUB?=
+ =?us-ascii?Q?mCjzV/OWenF40lNp8+i8yKupfjykQN08KNF/mvkJ+eVyN0FE0NxMTe8mKJwA?=
+ =?us-ascii?Q?fT6Q0E12G0XLOsFjUW/kGzsPxQaVLxOE9Ilu15saHdgFA9aVuICSV7Oh3P4i?=
+ =?us-ascii?Q?7YsesfInW4CVV1uHFqHMLNur?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4599997e-e7b1-4687-eaa3-08d8d36f74c6
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB2823.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2021 18:11:33.0476
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jxmXgcknRPob0oABxJY2VcjEGHUjtE5+vbn0gbvlysv0A257wJmGu1Soa5+CvCieZL8qRdeOcp98+yzyVOzBS2kf/KEo++H91KA08oV839k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4512
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9898 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102170133
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9898 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 mlxlogscore=999
+ adultscore=0 malwarescore=0 phishscore=0 clxscore=1011 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102170132
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A regression has been reported by Nicolas Boichat, found while using the
-copy_file_range syscall to copy a tracefs file.  Before commit
-5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
-kernel would return -EXDEV to userspace when trying to copy a file across
-different filesystems.  After this commit, the syscall doesn't fail anymore
-and instead returns zero (zero bytes copied), as this file's content is
-generated on-the-fly and thus reports a size of zero.
+Stephen Brennan <stephen.s.brennan@oracle.com> writes:
 
-This patch restores some cross-filesystems copy restrictions that existed
-prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-devices").  It also introduces a flag (COPY_FILE_SPLICE) that can be used
-by filesystems calling directly into the vfs copy_file_range to override
-these restrictions.  Right now, only NFS needs to set this flag.
+> The pid_revalidate() function drops from RCU into REF lookup mode. When
+> many threads are resolving paths within /proc in parallel, this can
+> result in heavy spinlock contention on d_lockref as each thread tries to
+> grab a reference to the /proc dentry (and drop it shortly thereafter).
+>
+> Investigation indicates that it is not necessary to drop RCU in
+> pid_revalidate(), as no RCU data is modified and the function never
+> sleeps. So, remove the LOOKUP_RCU check.
+>
+> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> ---
 
-Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
-Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
-Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
-Reported-by: Nicolas Boichat <drinkcat@chromium.org>
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
----
-Ok, I've tried to address all the issues and comments.  Hopefully this v3
-is a bit closer to the final fix.
+Hello all,
 
-Changes since v2
-- do all the required checks earlier, in generic_copy_file_checks(),
-  adding new checks for ->remap_file_range
-- new COPY_FILE_SPLICE flag
-- don't remove filesystem's fallback to generic_copy_file_range()
-- updated commit changelog (and subject)
-Changes since v1 (after Amir review)
-- restored do_copy_file_range() helper
-- return -EOPNOTSUPP if fs doesn't implement CFR
-- updated commit description
+I wanted to bring this patch to the surface again in case anyone has an
+opportunity to review the changes.
 
- fs/nfsd/vfs.c      |  3 ++-
- fs/read_write.c    | 44 +++++++++++++++++++++++++++++++++++++++++---
- include/linux/fs.h |  7 +++++++
- 3 files changed, 50 insertions(+), 4 deletions(-)
+Thank you,
+Stephen
 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 04937e51de56..14e55822c223 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -578,7 +578,8 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
- 	 * limit like this and pipeline multiple COPY requests.
- 	 */
- 	count = min_t(u64, count, 1 << 22);
--	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
-+	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count,
-+				   COPY_FILE_SPLICE);
- }
- 
- __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 75f764b43418..40a16003fb05 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1410,6 +1410,33 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
- 				       flags);
- }
- 
-+/*
-+ * This helper function checks whether copy_file_range can actually be used,
-+ * depending on the source and destination filesystems being the same.
-+ *
-+ * In-kernel callers may set COPY_FILE_SPLICE to override these checks.
-+ */
-+static int fops_copy_file_checks(struct file *file_in, struct file *file_out,
-+				 unsigned int flags)
-+{
-+	if (WARN_ON_ONCE(flags & ~COPY_FILE_SPLICE))
-+		return -EINVAL;
-+
-+	if (flags & COPY_FILE_SPLICE)
-+		return 0;
-+	/*
-+	 * We got here from userspace, so forbid copies if copy_file_range isn't
-+	 * implemented or if we're doing a cross-fs copy.
-+	 */
-+	if (!file_out->f_op->copy_file_range)
-+		return -EOPNOTSUPP;
-+	else if (file_out->f_op->copy_file_range !=
-+		 file_in->f_op->copy_file_range)
-+		return -EXDEV;
-+
-+	return 0;
-+}
-+
- /*
-  * Performs necessary checks before doing a file copy
-  *
-@@ -1427,6 +1454,14 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
- 	loff_t size_in;
- 	int ret;
- 
-+	/* Only check f_ops if we're not trying to clone */
-+	if (!file_in->f_op->remap_file_range ||
-+	    (file_inode(file_in)->i_sb == file_inode(file_out)->i_sb)) {
-+		ret = fops_copy_file_checks(file_in, file_out, flags);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	ret = generic_file_rw_checks(file_in, file_out);
- 	if (ret)
- 		return ret;
-@@ -1474,9 +1509,6 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- {
- 	ssize_t ret;
- 
--	if (flags != 0)
--		return -EINVAL;
--
- 	ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
- 				       flags);
- 	if (unlikely(ret))
-@@ -1511,6 +1543,9 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 			ret = cloned;
- 			goto done;
- 		}
-+		ret = fops_copy_file_checks(file_in, file_out, flags);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
-@@ -1543,6 +1578,9 @@ SYSCALL_DEFINE6(copy_file_range, int, fd_in, loff_t __user *, off_in,
- 	struct fd f_out;
- 	ssize_t ret = -EBADF;
- 
-+	if (flags != 0)
-+		return -EINVAL;
-+
- 	f_in = fdget(fd_in);
- 	if (!f_in.file)
- 		goto out2;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd47deea7c17..6f604926d955 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1815,6 +1815,13 @@ struct dir_context {
-  */
- #define REMAP_FILE_ADVISORY		(REMAP_FILE_CAN_SHORTEN)
- 
-+/*
-+ * This flag control the behavior of copy_file_range from internal (kernel)
-+ * users.  It can be used to override the policy of forbidding copies when
-+ * source and destination filesystems are different.
-+ */
-+#define COPY_FILE_SPLICE		(1 << 0)
-+
- struct iov_iter;
- 
- struct file_operations {
+>
+> When running running ~100 parallel instances of "TZ=/etc/localtime ps -fe
+>>/dev/null" on a 100CPU machine, the %sys utilization reaches 90%, and perf
+> shows the following code path as being responsible for heavy contention on
+> the d_lockref spinlock:
+>
+>       walk_component()
+>         lookup_fast()
+>           d_revalidate()
+>             pid_revalidate() // returns -ECHILD
+>           unlazy_child()
+>             lockref_get_not_dead(&nd->path.dentry->d_lockref) <-- contention
+>
+> By applying this patch, %sys utilization falls to around 60% under the same
+> workload. Although this particular workload is a bit contrived, we have
+> seen some monitoring scripts which produced similarly high %sys time due to
+> this contention.
+>
+> As a result this patch, several procfs methods which were only called in
+> ref-walk mode could now be called from RCU mode. To ensure that this patch
+> is safe, I audited all the inode get_link and permission() implementations,
+> as well as dentry d_revalidate() implementations, in fs/proc. These methods
+> are called in the following ways:
+>
+> * get_link() receives a NULL dentry pointer when called in RCU mode.
+> * permission() receives MAY_NOT_BLOCK in the mode parameter when called
+>   from RCU.
+> * d_revalidate() receives LOOKUP_RCU in flags.
+>
+> There were generally three groups I found. Group (1) are functions which
+> contain a check at the top of the function and return -ECHILD, and so
+> appear to be trivially RCU safe (although this is by dropping out of RCU
+> completely). Group (2) are functions which have no explicit check, but
+> on my audit, I was confident that there were no sleeping function calls,
+> and thus were RCU safe as is. However, I would appreciate any additional
+> review if possible. Group (3) are functions which might be be unsafe for some
+> reason or another.
+>
+> Group (1):
+>  proc_ns_get_link()
+>  proc_pid_get_link()
+>  map_files_d_revalidate()
+>  proc_misc_d_revalidate()
+>  tid_fd_revalidate()
+>
+> Group (2):
+>  proc_get_link()
+>  proc_self_get_link()
+>  proc_thread_self_get_link()
+>  proc_fd_permission()
+>
+> Group (3):
+>  pid_revalidate()            -- addressed by my patch
+>  proc_pid_permission()       -- addressed by commits by Al
+>  proc_map_files_get_link()   -- calls capable() which could audit
+>
+> I believe proc_map_files_get_link() is safe despite calling into the audit
+> framework, however I'm not confident and so I did not include it in Group 2.
+> proc_pid_permission() calls into the audit code, and is not safe with
+> LSM_AUDIT_DATA_DENTRY or LSM_AUDIT_DATA_INODE. Al's commits[1] address
+> these issues. This patch is tested and stable on the workload described
+> at the beginning of this cover letter, on a system with selinux enabled.
+>
+> [1]: 23d8f5b684fc ("make dump_common_audit_data() safe to be called from
+>      RCU pathwalk") and 2 previous
+>
+> Changes in v5:
+> - Al's commits are now in linux-next, resolving proc_pid_permission() issue.
+> - Add NULL check after d_inode_rcu(dentry), because inode may become NULL if
+>   we do not hold a reference.
+> Changes in v4:
+> - Simplify by unconditionally calling pid_update_inode() from pid_revalidate,
+>   and removing the LOOKUP_RCU check.
+> Changes in v3:
+> - Rather than call pid_update_inode() with flags, create
+>   proc_inode_needs_update() to determine whether the call can be skipped.
+> - Restore the call to the security hook (see next patch).
+> Changes in v2:
+> - Remove get_pid_task_rcu_user() and get_proc_task_rcu(), since they were
+>   unnecessary.
+> - Remove the call to security_task_to_inode().
+>
+>  fs/proc/base.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index ebea9501afb8..3e105bd05801 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -1830,19 +1830,21 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+>  {
+>  	struct inode *inode;
+>  	struct task_struct *task;
+> +	int ret = 0;
+>  
+> -	if (flags & LOOKUP_RCU)
+> -		return -ECHILD;
+> -
+> -	inode = d_inode(dentry);
+> -	task = get_proc_task(inode);
+> +	rcu_read_lock();
+> +	inode = d_inode_rcu(dentry);
+> +	if (!inode)
+> +		goto out;
+> +	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+>  
+>  	if (task) {
+>  		pid_update_inode(task, inode);
+> -		put_task_struct(task);
+> -		return 1;
+> +		ret = 1;
+>  	}
+> -	return 0;
+> +out:
+> +	rcu_read_unlock();
+> +	return ret;
+>  }
+>  
+>  static inline bool proc_inode_is_dead(struct inode *inode)
+> -- 
+> 2.27.0
