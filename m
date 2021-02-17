@@ -2,168 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC8931DB19
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 15:06:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3D831DB8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 15:38:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232854AbhBQOF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Feb 2021 09:05:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43252 "EHLO
+        id S233513AbhBQOht (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Feb 2021 09:37:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232707AbhBQOF7 (ORCPT
+        with ESMTP id S233505AbhBQOhs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Feb 2021 09:05:59 -0500
-Received: from mail-vk1-xa36.google.com (mail-vk1-xa36.google.com [IPv6:2607:f8b0:4864:20::a36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C02FBC061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 06:05:18 -0800 (PST)
-Received: by mail-vk1-xa36.google.com with SMTP id v66so2886220vkd.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 06:05:18 -0800 (PST)
+        Wed, 17 Feb 2021 09:37:48 -0500
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71FEDC061788
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 06:37:08 -0800 (PST)
+Received: by mail-ot1-x32f.google.com with SMTP id s107so12160293otb.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 06:37:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2BrS0+ssNbJaJ+JUXxaNPnqL/g3xkyb+nz2Bw22EZU0=;
-        b=dLLwCciDAgieVeCKNhmfIyOnK4x8JBF1YjzqcE1BwosEwGEJGA+vDKuP8fLkl5ek2Y
-         xAx8x1cQFNXOO2JoiBvJsQh46wvYxkT3epAucH35ZYU46ld7TNa+JxCWCh7VfY7QMTME
-         gTW1OFVJRd8Kx6fleDGiSQchqTXQnRKKShZUA=
+        bh=KRNZjZzTqfrWLRx1QJmelJFfxfPUcehdqwqj+L7mkPQ=;
+        b=R8hCb4eKqdCpoFdkYTrVn7FoN33zUtyi/ljWByVLrm0nNn3tup4D+Hft33LDzdElis
+         n16SrG3viJflBxrjVIN2QmmXO/BgPFSDWJe1ljVa2OopffyUF0+G8Fh9aoQpou3/MlTR
+         6lOKbNE6+B3j4d5dwhv33gPtGhtt8L27dc4EMEm0vGnJ/TAunXib+QvZcOCi9i0mwM86
+         k3prqX0Oe/sUpTqzEgE3HcERBdh4YwNsSjrGveT+xsSircuhGURdlWmXiZnYI5Mz2W8Z
+         jNhEhauvpFlyX/F69JD4IZFRmykIsAN3vuO7r6enaGZ5EvFYprDuRwGgQKV+8pJmk5aD
+         UJew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2BrS0+ssNbJaJ+JUXxaNPnqL/g3xkyb+nz2Bw22EZU0=;
-        b=Ci93DUNqp5E9FGLdayIA198MNibMww19usmadhOkTXK4q9+RKz+pd6Ol5G6VmIEwnY
-         6DiQG/cDKn37jIXcpBdhM9yjABgcjkoBlZsFz/bPQUaaKmleymeU3xyMpXK3OKqwoSbR
-         7CpG2WdahtCQVmzu5eSiXX9YXQw5h2ytSHrYwm9a/FWGGi2rMEmbWvt/Nb6ntxlBZ2gF
-         /1ahPjBpvopwv4n/xUPkaKMmL+fp5jvJ2Z3q6EqqWvSmOIP/6crh3Bkl6yrvZPzKYrLL
-         3UhlLTI4PlYcYI4SkYBJIrdtWXsd7kmM62lZq99wSfkC+qaJNSxBABRyHCGtpk74Q8O7
-         P7pg==
-X-Gm-Message-State: AOAM532XSharVwE4KJTrBX1jYio5ZIqORqPKS2QiXsiBewAaMYrZqr7b
-        AtACAJwA7cgNCcSEsJLTBLQG2FxCwqcnhd784piCoQ==
-X-Google-Smtp-Source: ABdhPJx5hHCDxneRfWzPI9tduXBZmSAklUQN/iesIhOWfiBz1SzpTJTAsc7m83sGdPW2/Zdwe8cSxGKSc05rhrtvdR4=
-X-Received: by 2002:a1f:c108:: with SMTP id r8mr14181633vkf.11.1613570717742;
- Wed, 17 Feb 2021 06:05:17 -0800 (PST)
+        bh=KRNZjZzTqfrWLRx1QJmelJFfxfPUcehdqwqj+L7mkPQ=;
+        b=QsrlRjMdt66qfMYM2eaTeyiBNBDuqSZLI+3ee2r8SEmk7xxFZJ8ix2gDMhJFqZC1zJ
+         QrQRoKn36WJxcKZfIVhwnt+IqYzgoFlzgSA3DAzZagWW7dMo6xatOH0qD4IiZOhMXt0S
+         xkfE6SngxUSwwoYPu1Ki9gKlUXt/lqN6U9oTnG9Ux81mwipIoAwRcXcWQLp1U0hebf5+
+         Nv/rlUu+VCXuZHOjno9g/SSi2gFIsFzvtdUFcTyTNiX5sfsfa6yNCyd1ShL/wJ5pxPUh
+         SX5Qz4dDeFVnMZ0171DqCuQGu8StEQIbx3zeDDChHspZYfFpNf0uhHKCPg63EYRqwIP/
+         Y0zQ==
+X-Gm-Message-State: AOAM53180hfNgMfD7q6FwXZrF8XSYySwniho2zSUq5ZEIAD60Q2ep8TG
+        zOY9/1mp7ph/7ExGhIfQoA+Jj+DrrVg/h+3yEpAHag==
+X-Google-Smtp-Source: ABdhPJy4hyW/PUrDPGqVg3UI4ZfJfCb8Vr2cdTNl0Mc8udn+hWDu9ZRGdP0xDV4oyRaIVmDhAucDgP/5yXuHdlUvdPs=
+X-Received: by 2002:a05:6830:2424:: with SMTP id k4mr7412732ots.352.1613572627726;
+ Wed, 17 Feb 2021 06:37:07 -0800 (PST)
 MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-9-balsini@android.com>
-In-Reply-To: <20210125153057.3623715-9-balsini@android.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 17 Feb 2021 15:05:07 +0100
-Message-ID: <CAJfpegsphqg=AMDj37cMUobtCHu_-0EiHrEYvHZkE-RphRgWVw@mail.gmail.com>
-Subject: Re: [PATCH RESEND V12 8/8] fuse: Introduce passthrough for mmap
-To:     Alessio Balsini <balsini@android.com>
-Cc:     Akilesh Kailash <akailash@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
+ <161340389201.1303470.14353807284546854878.stgit@warthog.procyon.org.uk>
+ <20210216103215.GB27714@lst.de> <20210216132251.GI2858050@casper.infradead.org>
+In-Reply-To: <20210216132251.GI2858050@casper.infradead.org>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Wed, 17 Feb 2021 09:36:56 -0500
+Message-ID: <CAOg9mSQYBjnMsDj5pMd6MOGTY5w_ZR=pw7VRYKfP5ZwmHBj2=Q@mail.gmail.com>
+Subject: Re: [PATCH 03/33] mm: Implement readahead_control pageset expansion
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-mm <linux-mm@kvack.org>, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-cifs@vger.kernel.org,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        V9FS Developers <v9fs-developer@lists.sourceforge.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 4:31 PM Alessio Balsini <balsini@android.com> wrote:
->
-> Enabling FUSE passthrough for mmap-ed operations not only affects
-> performance, but has also been shown as mandatory for the correct
-> functioning of FUSE passthrough.
-> yanwu noticed [1] that a FUSE file with passthrough enabled may suffer
-> data inconsistencies if the same file is also accessed with mmap. What
-> happens is that read/write operations are directly applied to the lower
-> file system (and its cache), while mmap-ed operations are affecting the
-> FUSE cache.
->
-> Extend the FUSE passthrough implementation to also handle memory-mapped
-> FUSE file, to both fix the cache inconsistencies and extend the
-> passthrough performance benefits to mmap-ed operations.
->
-> [1] https://lore.kernel.org/lkml/20210119110654.11817-1-wu-yan@tcl.com/
->
-> Signed-off-by: Alessio Balsini <balsini@android.com>
-> ---
->  fs/fuse/file.c        |  3 +++
->  fs/fuse/fuse_i.h      |  1 +
->  fs/fuse/passthrough.c | 41 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 45 insertions(+)
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index cddada1e8bd9..e3741a94c1f9 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -2370,6 +2370,9 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
->         if (FUSE_IS_DAX(file_inode(file)))
->                 return fuse_dax_mmap(file, vma);
->
-> +       if (ff->passthrough.filp)
-> +               return fuse_passthrough_mmap(file, vma);
-> +
->         if (ff->open_flags & FOPEN_DIRECT_IO) {
->                 /* Can't provide the coherency needed for MAP_SHARED */
->                 if (vma->vm_flags & VM_MAYSHARE)
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 815af1845b16..7b0d65984608 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -1244,5 +1244,6 @@ int fuse_passthrough_setup(struct fuse_conn *fc, struct fuse_file *ff,
->  void fuse_passthrough_release(struct fuse_passthrough *passthrough);
->  ssize_t fuse_passthrough_read_iter(struct kiocb *iocb, struct iov_iter *to);
->  ssize_t fuse_passthrough_write_iter(struct kiocb *iocb, struct iov_iter *from);
-> +ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma);
->
->  #endif /* _FS_FUSE_I_H */
-> diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-> index 24866c5fe7e2..284979f87747 100644
-> --- a/fs/fuse/passthrough.c
-> +++ b/fs/fuse/passthrough.c
-> @@ -135,6 +135,47 @@ ssize_t fuse_passthrough_write_iter(struct kiocb *iocb_fuse,
->         return ret;
->  }
->
-> +ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma)
-> +{
-> +       int ret;
-> +       const struct cred *old_cred;
-> +       struct fuse_file *ff = file->private_data;
-> +       struct inode *fuse_inode = file_inode(file);
-> +       struct file *passthrough_filp = ff->passthrough.filp;
-> +       struct inode *passthrough_inode = file_inode(passthrough_filp);
-> +
-> +       if (!passthrough_filp->f_op->mmap)
-> +               return -ENODEV;
-> +
-> +       if (WARN_ON(file != vma->vm_file))
-> +               return -EIO;
-> +
-> +       vma->vm_file = get_file(passthrough_filp);
-> +
-> +       old_cred = override_creds(ff->passthrough.cred);
-> +       ret = call_mmap(vma->vm_file, vma);
-> +       revert_creds(old_cred);
-> +
-> +       if (ret)
-> +               fput(passthrough_filp);
-> +       else
-> +               fput(file);
-> +
-> +       if (file->f_flags & O_NOATIME)
-> +               return ret;
-> +
-> +       if ((!timespec64_equal(&fuse_inode->i_mtime,
-> +                              &passthrough_inode->i_mtime) ||
-> +            !timespec64_equal(&fuse_inode->i_ctime,
-> +                              &passthrough_inode->i_ctime))) {
-> +               fuse_inode->i_mtime = passthrough_inode->i_mtime;
-> +               fuse_inode->i_ctime = passthrough_inode->i_ctime;
+I plan to try and use readahead_expand in Orangefs...
 
-Again, violation of rules.   Not sure why this is needed, mmap(2)
-isn't supposed to change mtime or ctime, AFAIK.
+-Mike
 
-Thanks,
-Miklos
+On Tue, Feb 16, 2021 at 8:28 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Tue, Feb 16, 2021 at 11:32:15AM +0100, Christoph Hellwig wrote:
+> > On Mon, Feb 15, 2021 at 03:44:52PM +0000, David Howells wrote:
+> > > Provide a function, readahead_expand(), that expands the set of pages
+> > > specified by a readahead_control object to encompass a revised area with a
+> > > proposed size and length.
+> > >
+> > > The proposed area must include all of the old area and may be expanded yet
+> > > more by this function so that the edges align on (transparent huge) page
+> > > boundaries as allocated.
+> > >
+> > > The expansion will be cut short if a page already exists in either of the
+> > > areas being expanded into.  Note that any expansion made in such a case is
+> > > not rolled back.
+> > >
+> > > This will be used by fscache so that reads can be expanded to cache granule
+> > > boundaries, thereby allowing whole granules to be stored in the cache, but
+> > > there are other potential users also.
+> >
+> > So looking at linux-next this seems to have a user, but that user is
+> > dead wood given that nothing implements ->expand_readahead.
+> >
+> > Looking at the code structure I think netfs_readahead and
+> > netfs_rreq_expand is a complete mess and needs to be turned upside
+> > down, that is instead of calling back from netfs_readahead to the
+> > calling file system, split it into a few helpers called by the
+> > caller.
+>
+> That's funny, we modelled it after iomap.
+>
+> > But even after this can't we just expose the cache granule boundary
+> > to the VM so that the read-ahead request gets setup correctly from
+> > the very beginning?
+>
+> The intent is that this be usable by filesystems which want to (for
+> example) compress variable sized blocks.  So they won't know which pages
+> they want to readahead until they're in their iomap actor routine,
+> see that the extent they're in is compressed, and find out how large
+> the extent is.
