@@ -2,112 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C521031DDCC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 18:01:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B044231DE1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 18:27:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234314AbhBQRAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Feb 2021 12:00:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234217AbhBQRAH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Feb 2021 12:00:07 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC8FAC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 08:59:26 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id q4so12609003otm.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 08:59:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7sO3sUZqmmuiy5ZWICfkEsaBnSxzPGcJa4JjW5AEhLI=;
-        b=wkvcOIo/YOiyjJMcPp9t49oCoUuB0gAAXQOA0MaUAjtskFk4Y0zabPTmfPgIVj7S9X
-         6m4bAQCAN+3eyk2moKhxkMLMHHsa4aCZhxjaV8ydaA1JKvJevC6E7yHwnT+GGn2n6Ozi
-         46vBTDf/msm46ed3SMv2GWg6LW7yHHgTcQP8J1x7kK5lUTCGzzB3bPk5SP4FKAeyEFDz
-         p6ciTaj85L6iXgw0dC/67tFnsvY0vAY/nZ4dNNdw2UUOJTgGSEEbrdVEXlJxJJZIm1BJ
-         TuwrXToQ9KalPFlBbTGo7eqFOHbfFuTrqO8W7W9EGN/qBxvcyw3G+iuQ9petlOE3k5Wu
-         UoWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7sO3sUZqmmuiy5ZWICfkEsaBnSxzPGcJa4JjW5AEhLI=;
-        b=ZySGFq6F160zsmFFuw6WnC/YZzqh6xC/npM/saRMws14L32excj8f0eAMXdOXwasHP
-         hbYie/Rw90oGMg6lQ6jSzXNbPItaCiS1sEQePrrKN196dkamIpqlcMNeX1l2/73ML7Hb
-         G1CzFd7jsEW+QfM/I2t5AEAJvDVmORrxhKCcKw8qnQ7ou6k9Sj5GYJl8LFozpgHrvSx9
-         RUdPh15msu9ooR2u2N66Z5piBM/VtWc3vqdP/8+UpVOwraQgbwBe8hGE4rRLaIuONFNb
-         DFZUpyPd6k9KG+mRJ0WP8BQFCkb7/MBzDNV685QN7K9GTKSJpqK8nDlF+pHZQwgpueSe
-         fMNA==
-X-Gm-Message-State: AOAM530Od+KVzRpMpzKRVW+GNppekg/s5AsbLGAYPawlbhxdblYpUtHy
-        rMq4XoYxel5p5hcsNj53Nsp66C/vt2m8Cdm4q/WLow==
-X-Google-Smtp-Source: ABdhPJwChss0o2dxG2RNWJW1xeyysww7AKgNgkTjjECbssh7P0+Vree7tQLd/y6uY6aD7E7WIsZvOGZ0HXpRVi3fZGQ=
-X-Received: by 2002:a9d:6c4c:: with SMTP id g12mr66707otq.53.1613581166449;
- Wed, 17 Feb 2021 08:59:26 -0800 (PST)
-MIME-Version: 1.0
-References: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
- <161340389201.1303470.14353807284546854878.stgit@warthog.procyon.org.uk>
- <20210216103215.GB27714@lst.de> <20210216132251.GI2858050@casper.infradead.org>
- <CAOg9mSQYBjnMsDj5pMd6MOGTY5w_ZR=pw7VRYKfP5ZwmHBj2=Q@mail.gmail.com> <1586931.1613576553@warthog.procyon.org.uk>
-In-Reply-To: <1586931.1613576553@warthog.procyon.org.uk>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Wed, 17 Feb 2021 11:59:15 -0500
-Message-ID: <CAOg9mSTyFX+2MMSV77hLDUpHogQ=KXO5oNduA90FLoowPGk0Jw@mail.gmail.com>
-Subject: Re: [PATCH 03/33] mm: Implement readahead_control pageset expansion
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
+        id S234396AbhBQR0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Feb 2021 12:26:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34706 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230179AbhBQR0h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Feb 2021 12:26:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7BA78B7C2;
+        Wed, 17 Feb 2021 17:25:54 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 04828e09;
+        Wed, 17 Feb 2021 17:26:56 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
         Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-mm <linux-mm@kvack.org>, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-cifs@vger.kernel.org,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        V9FS Developers <v9fs-developer@lists.sourceforge.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.de>
+Subject: [PATCH v3] vfs: fix copy_file_range regression in cross-fs copies
+Date:   Wed, 17 Feb 2021 17:26:54 +0000
+Message-Id: <20210217172654.22519-1-lhenriques@suse.de>
+In-Reply-To: <CAOQ4uxii=7KUKv1w32VbjkwS+Z1a0ge0gezNzpn_BiY6MFWkpA@mail.gmail.com>
+References: <CAOQ4uxii=7KUKv1w32VbjkwS+Z1a0ge0gezNzpn_BiY6MFWkpA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew has looked at how I'm fumbling about
-trying to deal with Orangefs's need for much larger
-than page-sized IO...
+A regression has been reported by Nicolas Boichat, found while using the
+copy_file_range syscall to copy a tracefs file.  Before commit
+5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
+kernel would return -EXDEV to userspace when trying to copy a file across
+different filesystems.  After this commit, the syscall doesn't fail anymore
+and instead returns zero (zero bytes copied), as this file's content is
+generated on-the-fly and thus reports a size of zero.
 
-I think I need to implement orangefs_readahead
-and from there fire off an asynchronous read
-and while that's going I'll call readahead_page
-with a rac that I've cranked up with readahead_expand
-and when the read gets done I'll have plenty of pages
-for the large IO I did.
+This patch restores some cross-filesystems copy restrictions that existed
+prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
+devices").  It also introduces a flag (COPY_FILE_SPLICE) that can be used
+by filesystems calling directly into the vfs copy_file_range to override
+these restrictions.  Right now, only NFS needs to set this flag.
 
-Even if what I think I need to do is somewhere
-near right, the async code in the Orangefs
-kernel module didn't make it into the upstream
-version, so I have to refurbish that. All that to
-say: I don't need readahead_expand
-"tomorrow", but it fits into my plan to
-get Orangefs the extra pages it needs
-without me having open-coded page cache
-code in orangefs_readpage.
+Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
+Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
+Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
+Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
+Reported-by: Nicolas Boichat <drinkcat@chromium.org>
+Signed-off-by: Luis Henriques <lhenriques@suse.de>
+---
+Ok, I've tried to address all the issues and comments.  Hopefully this v3
+is a bit closer to the final fix.
 
--Mike
+Changes since v2
+- do all the required checks earlier, in generic_copy_file_checks(),
+  adding new checks for ->remap_file_range
+- new COPY_FILE_SPLICE flag
+- don't remove filesystem's fallback to generic_copy_file_range()
+- updated commit changelog (and subject)
+Changes since v1 (after Amir review)
+- restored do_copy_file_range() helper
+- return -EOPNOTSUPP if fs doesn't implement CFR
+- updated commit description
 
-On Wed, Feb 17, 2021 at 10:42 AM David Howells <dhowells@redhat.com> wrote:
->
-> Mike Marshall <hubcap@omnibond.com> wrote:
->
-> > I plan to try and use readahead_expand in Orangefs...
->
-> Would it help if I shuffled the readahead_expand patch to the bottom of the
-> pack?
->
-> David
->
+ fs/nfsd/vfs.c      |  3 ++-
+ fs/read_write.c    | 44 +++++++++++++++++++++++++++++++++++++++++---
+ include/linux/fs.h |  7 +++++++
+ 3 files changed, 50 insertions(+), 4 deletions(-)
+
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 04937e51de56..14e55822c223 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -578,7 +578,8 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+ 	 * limit like this and pipeline multiple COPY requests.
+ 	 */
+ 	count = min_t(u64, count, 1 << 22);
+-	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
++	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count,
++				   COPY_FILE_SPLICE);
+ }
+ 
+ __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 75f764b43418..40a16003fb05 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1410,6 +1410,33 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+ 				       flags);
+ }
+ 
++/*
++ * This helper function checks whether copy_file_range can actually be used,
++ * depending on the source and destination filesystems being the same.
++ *
++ * In-kernel callers may set COPY_FILE_SPLICE to override these checks.
++ */
++static int fops_copy_file_checks(struct file *file_in, struct file *file_out,
++				 unsigned int flags)
++{
++	if (WARN_ON_ONCE(flags & ~COPY_FILE_SPLICE))
++		return -EINVAL;
++
++	if (flags & COPY_FILE_SPLICE)
++		return 0;
++	/*
++	 * We got here from userspace, so forbid copies if copy_file_range isn't
++	 * implemented or if we're doing a cross-fs copy.
++	 */
++	if (!file_out->f_op->copy_file_range)
++		return -EOPNOTSUPP;
++	else if (file_out->f_op->copy_file_range !=
++		 file_in->f_op->copy_file_range)
++		return -EXDEV;
++
++	return 0;
++}
++
+ /*
+  * Performs necessary checks before doing a file copy
+  *
+@@ -1427,6 +1454,14 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+ 	loff_t size_in;
+ 	int ret;
+ 
++	/* Only check f_ops if we're not trying to clone */
++	if (!file_in->f_op->remap_file_range ||
++	    (file_inode(file_in)->i_sb == file_inode(file_out)->i_sb)) {
++		ret = fops_copy_file_checks(file_in, file_out, flags);
++		if (ret)
++			return ret;
++	}
++
+ 	ret = generic_file_rw_checks(file_in, file_out);
+ 	if (ret)
+ 		return ret;
+@@ -1474,9 +1509,6 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+ {
+ 	ssize_t ret;
+ 
+-	if (flags != 0)
+-		return -EINVAL;
+-
+ 	ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
+ 				       flags);
+ 	if (unlikely(ret))
+@@ -1511,6 +1543,9 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+ 			ret = cloned;
+ 			goto done;
+ 		}
++		ret = fops_copy_file_checks(file_in, file_out, flags);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+@@ -1543,6 +1578,9 @@ SYSCALL_DEFINE6(copy_file_range, int, fd_in, loff_t __user *, off_in,
+ 	struct fd f_out;
+ 	ssize_t ret = -EBADF;
+ 
++	if (flags != 0)
++		return -EINVAL;
++
+ 	f_in = fdget(fd_in);
+ 	if (!f_in.file)
+ 		goto out2;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index fd47deea7c17..6f604926d955 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1815,6 +1815,13 @@ struct dir_context {
+  */
+ #define REMAP_FILE_ADVISORY		(REMAP_FILE_CAN_SHORTEN)
+ 
++/*
++ * This flag control the behavior of copy_file_range from internal (kernel)
++ * users.  It can be used to override the policy of forbidding copies when
++ * source and destination filesystems are different.
++ */
++#define COPY_FILE_SPLICE		(1 << 0)
++
+ struct iov_iter;
+ 
+ struct file_operations {
