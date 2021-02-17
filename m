@@ -2,119 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70C5931DCEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 17:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4E7331DD23
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 17:19:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233983AbhBQQJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Feb 2021 11:09:03 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38719 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233894AbhBQQJC (ORCPT
+        id S233903AbhBQQSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Feb 2021 11:18:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43550 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233070AbhBQQSi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Feb 2021 11:09:02 -0500
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 11HG86UW020779
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 17 Feb 2021 11:08:06 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 0CF1F15C39E1; Wed, 17 Feb 2021 11:08:06 -0500 (EST)
-Date:   Wed, 17 Feb 2021 11:08:06 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Andreas Dilger <adilger@dilger.ca>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Paul Lawrence <paullawrence@google.com>
-Subject: Re: [PATCH 1/2] ext4: Handle casefolding with encryption
-Message-ID: <YC0/ZsQbKntSpl97@mit.edu>
-References: <20210203090745.4103054-2-drosen@google.com>
- <56BC7E2D-A303-45AE-93B6-D8921189F604@dilger.ca>
- <YBrP4NXAsvveIpwA@mit.edu>
- <YCMZSjgUDtxaVem3@mit.edu>
- <42511E9D-3786-4E70-B6BE-D7CB8F524912@dilger.ca>
- <YCNbIdCsAsNcPuAL@mit.edu>
- <CA+PiJmT2hfdRLztCdp3-tYBqAo+-ibmuyqLvq5nb+asFj4vL7A@mail.gmail.com>
+        Wed, 17 Feb 2021 11:18:38 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9CFC061574;
+        Wed, 17 Feb 2021 08:17:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VfrUoqOUihVjvmCvSLv9mlyS0o00nDdsmdN3qvEoA00=; b=cSa+ST1CT82tnPFcDFN6385/gf
+        fX5ue2PIy1WjeGVEzkDGZMTsFzLmqC7c+WYAQLnYutzJbsajtl2Jh42nC0w4lqBcrHrlZkXESMSyp
+        xlcoDR3Wp9R6AuEdsi/ty3h3DDMfecTJMK444IMwUHEhC9geKbbRqshaygCMw7xBUsOlIbyDSduNy
+        dmDRIklz83kii8sK5gQXi1rPYZtyfyYvM4vvxJRvwGML8x9D7AnF0WgJAsIE2nAV7DOSN//6W8z37
+        7Iss1QwTmm8FBDB49gMScTNNT7Ln/Ocl0tdU2/isZxvLSBXMpl/SURMPrdCcTpYsHSkF0tAUW3gJk
+        KVjidQgA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lCPSg-000e1H-2j; Wed, 17 Feb 2021 16:14:28 +0000
+Date:   Wed, 17 Feb 2021 16:13:58 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/33] mm: Implement readahead_control pageset expansion
+Message-ID: <20210217161358.GM2858050@casper.infradead.org>
+References: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
+ <161340389201.1303470.14353807284546854878.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+PiJmT2hfdRLztCdp3-tYBqAo+-ibmuyqLvq5nb+asFj4vL7A@mail.gmail.com>
+In-Reply-To: <161340389201.1303470.14353807284546854878.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 08:01:11PM -0800, Daniel Rosenberg wrote:
-> I'm not sure what the conflict is, at least format-wise. Naturally,
-> there would need to be some work to reconcile the two patches, but my
-> patch only alters the format for directories which are encrypted and
-> casefolded, which always must have the additional hash field. In the
-> case of dirdata along with encryption and casefolding, couldn't we
-> have the dirdata simply follow after the existing data? Since we
-> always already know the length, it'd be unambiguous where that would
-> start. Casefolding can only be altered on an empty directory, and you
-> can only enable encryption for an empty directory, so I'm not too
-> concerned there. I feel like having it swapping between the different
-> methods makes it more prone to bugs, although it would be doable. I've
-> started rebasing the dirdata patch on my end to see how easy it is to
-> mix the two. At a glance, they touch a lot of the same areas in
-> similar ways, so it shouldn't be too hard. It's more of a question of
-> which way we want to resolve that, and which patch goes first.
-> 
-> I've been trying to figure out how many devices in the field are using
-> casefolded encryption, but haven't found out yet. The code is
-> definitely available though, so I would not be surprised if it's being
-> used, or is about to be.
+On Mon, Feb 15, 2021 at 03:44:52PM +0000, David Howells wrote:
+> +++ b/include/linux/pagemap.h
+> @@ -761,6 +761,8 @@ extern void __delete_from_page_cache(struct page *page, void *shadow);
+>  int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
+>  void delete_from_page_cache_batch(struct address_space *mapping,
+>  				  struct pagevec *pvec);
+> +void readahead_expand(struct readahead_control *ractl,
+> +		      loff_t new_start, size_t new_len);
 
-The problem is in how the space after the filename in a directory is
-encoded.  The dirdata format is (mildly) expandable, supporting up to
-4 different metadata chunks after the filename, using a very
-compatctly encoded TLV (or moral equivalent) scheme.  For directory
-inodes that have both the encyption and compression flags set, we have
-a single blob which gets used as the IV for the crypto.
+If we're revising this patchset, I'd rather this lived with the other
+readahead declarations, ie after the definition of readahead_control.
 
-So it's the difference between a simple blob that is only used for one
-thing in this particular case, and something which is the moral
-equivalent of simple ASN.1 or protobuf encoding.
+> +	/* Expand the trailing edge upwards */
+> +	while (ractl->_nr_pages < new_nr_pages) {
+> +		unsigned long index = ractl->_index + ractl->_nr_pages;
+> +		struct page *page = xa_load(&mapping->i_pages, index);
+> +
+> +		if (page && !xa_is_value(page))
+> +			return; /* Page apparently present */
+> +
+> +		page = __page_cache_alloc(gfp_mask);
+> +		if (!page)
+> +			return;
+> +		if (add_to_page_cache_lru(page, mapping, index, gfp_mask) < 0) {
+> +			put_page(page);
+> +			return;
+> +		}
+> +		ractl->_nr_pages++;
+> +	}
 
-Currently, datadata has defined uses for 2 of the 4 "chunks", which is
-used in Lustre servers.  The proposal which Andreas has suggested is
-if the dirdata feature is supported, then the 3rd dirdata chunk would
-be used for the case where we currently used by the
-encrypted-casefolded extension, and the 4th would get reserved for a
-to-be-defined extension mechanism.
+We're defeating the ondemand_readahead() algorithm here.  Let's suppose
+userspace is doing 64kB reads, the filesystem is OrangeFS which only
+wants to do 4MB reads, the page cache is initially empty and there's
+only one thread doing a sequential read.  ondemand_readahead() calls
+get_init_ra_size() which tells it to allocate 128kB and set the async
+marker at 64kB.  Then orangefs calls readahead_expand() to allocate the
+remainder of the 4MB.  After the app has read the first 64kB, it comes
+back to read the next 64kB, sees the readahead marker and tries to trigger
+the next batch of readahead, but it's already present, so it does nothing
+(see page_cache_ra_unbounded() for what happens with pages present).
 
-If there ext4 encrypted/casefold is not yet in use, and we can get the
-changes out to all potential users before they release products out
-into the field, then one approach would be to only support
-encrypted/casefold when dirdata is also enabled.
+Then it keeps going through the 4MB that's been read, not seeing any more
+readahead markers, gets to 4MB and asks for ... 256kB?  Not quite sure.
+Anyway, it then has to wait for the next 4MB because the readahead didn't
+overlap with the application processing.
 
-If ext4 encrypted/casefold is in use, my suggestion is that we support
-both encrypted/casefold && !dirdata as you have currently implemented
-it, and encrypted/casefold && dirdata as Andreas has proposed.
+So readahead_expand() needs to adjust the file's f_ra so that when the
+application gets to 64kB, it kicks off the readahead of 4MB-8MB chunk (and
+then when we get to 4MB+256kB, it kicks off the readahead of 8MB-12MB,
+and so on).
 
-IIRC, supporting that Andreas's scheme essentially means that we use
-the top four bits in the rec_len field to indicate which chunks are
-present, and then for each chunk which is present, there is a 1 byte
-length followed by payload.  So that means in the case where it's
-encrypted/casefold && dirdata, the required storage of the directory
-entry would take one additional byte, plus setting a bit indicating
-that the encrypted/casefold dirdata chunk was present.
-
-So, no, they aren't incompatible ultimatly, but it might require a
-tiny bit more work to integrate the combined support for dirdata plus
-encrypted/casefold.  One way we can do this, if we have to support the
-current encrypted/casefold format because it's out there in deployed
-implementations already, is to integrate encrypted/casefold &&
-!dirdata first upstream, and then when we integrate dirdata into
-upstream, we'll have to add support for the encrypted/casefold &&
-dirdata case.  This means that we'll have two variants of the on-disk
-format to test and support, but I don't think it's the going to be
-that difficult.
-
-Andreas, anything you'd like to correct or add in this summary?
-
-	 	  	     		- Ted
+Unless someone sees a better way to do this?  I don't
+want to inadvertently break POSIX_FADV_WILLNEED which calls
+force_page_cache_readahead() and should not perturb the kernel's
+ondemand algorithm.  Perhaps we need to add an 'ra' pointer to the
+ractl to indicate whether the file_ra_state should be updated by
+readahead_expand()?
