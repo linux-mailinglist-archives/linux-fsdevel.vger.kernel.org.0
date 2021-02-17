@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 167EF31D403
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 03:50:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDF5031D406
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Feb 2021 03:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbhBQCtE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Feb 2021 21:49:04 -0500
-Received: from mga07.intel.com ([134.134.136.100]:54788 "EHLO mga07.intel.com"
+        id S230240AbhBQCtS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Feb 2021 21:49:18 -0500
+Received: from mga07.intel.com ([134.134.136.100]:54811 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230179AbhBQCs7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Feb 2021 21:48:59 -0500
-IronPort-SDR: 2HwvXUiw6bUxADjh5df9SbnDg8ABUoRBtxusfxQ0+5JdynWq4banHe75ZUEnJ3F52zcewkTNmy
- HCmHJ5a2F1jQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="247152591"
+        id S230071AbhBQCtQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Feb 2021 21:49:16 -0500
+IronPort-SDR: 4QmAf6uelNyeR9ee1nO6CuFkDr+FvXPhyU49N7toE9fTl9gaktL77acl5HF1Lcyo3+iXkleGz0
+ lPKNRlTc9oxw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="247152592"
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="247152591"
+   d="scan'208";a="247152592"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 18:48:34 -0800
-IronPort-SDR: Tnx5xrXWshHSWJknOSUxl9Qhfpemy0aj1HGa17C/CLVTz+Jpy9EMK5FRvttZREnbGRQMP4W5aS
- pYy3vzDre9iQ==
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 18:48:35 -0800
+IronPort-SDR: wRHJaJyU1fkz8igK7t+37rtg+DEijII+g+OA8fXQprZevZDzVmF7rgwuw48tQSY3QvqezKqWrR
+ 7hsEAWZENEmg==
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="384922159"
+   d="scan'208";a="384922221"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 18:48:34 -0800
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 18:48:35 -0800
 From:   ira.weiny@intel.com
 To:     David Sterba <dsterba@suse.cz>
 Cc:     Ira Weiny <ira.weiny@intel.com>, Chris Mason <clm@fb.com>,
         Josef Bacik <josef@toxicpanda.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/4] fs/btrfs: Convert kmap to kmap_local_page() using coccinelle
-Date:   Tue, 16 Feb 2021 18:48:23 -0800
-Message-Id: <20210217024826.3466046-2-ira.weiny@intel.com>
+Subject: [PATCH 2/4] fs/btrfs: Convert raid5/6 kmaps to kmap_local_page()
+Date:   Tue, 16 Feb 2021 18:48:24 -0800
+Message-Id: <20210217024826.3466046-3-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20210217024826.3466046-1-ira.weiny@intel.com>
 References: <20210217024826.3466046-1-ira.weiny@intel.com>
@@ -43,138 +43,183 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Use a simple coccinelle script to help convert the most common
-kmap()/kunmap() patterns to kmap_local_page()/kunmap_local().
+These kmaps are thread local and don't need to be atomic.  So they can use
+the more efficient kmap_local_page().  However, the mapping of pages in
+the stripes and the additional parity and qstripe pages are a bit
+trickier because the unmapping must occur in the opposite order from the
+mapping.  Furthermore, the pointer array in __raid_recover_end_io() may
+get reordered.
 
-Note that some kmaps which were caught by this script needed to be
-handled by hand because of the strict unmapping order of kunmap_local()
-so they are not included in this patch.  But this script got us started.
-
-The development of this patch was aided by the follow script:
-
-// <smpl>
-// SPDX-License-Identifier: GPL-2.0-only
-// Find kmap and replace with kmap_local_page then mark kunmap
-//
-// Confidence: Low
-// Copyright: (C) 2021 Intel Corporation
-// URL: http://coccinelle.lip6.fr/
-
-@ catch_all @
-expression e, e2;
-@@
-
-(
--kmap(e)
-+kmap_local_page(e)
-)
-...
-(
--kunmap(...)
-+kunmap_local()
-)
-
-// </smpl>
+Convert these calls to kmap_local_page() taking care to reverse the
+unmappings of any page arrays as well as being careful with the mappings
+of any special pages such as the parity and qstripe pages.
 
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
----
- fs/btrfs/compression.c | 4 ++--
- fs/btrfs/inode.c       | 4 ++--
- fs/btrfs/lzo.c         | 9 ++++-----
- fs/btrfs/raid56.c      | 4 ++--
- 4 files changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index a219dcdb749e..21833a2fe8c6 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -1578,7 +1578,7 @@ static void heuristic_collect_sample(struct inode *inode, u64 start, u64 end,
- 	curr_sample_pos = 0;
- 	while (index < index_end) {
- 		page = find_get_page(inode->i_mapping, index);
--		in_data = kmap(page);
-+		in_data = kmap_local_page(page);
- 		/* Handle case where the start is not aligned to PAGE_SIZE */
- 		i = start % PAGE_SIZE;
- 		while (i < PAGE_SIZE - SAMPLING_READ_SIZE) {
-@@ -1591,7 +1591,7 @@ static void heuristic_collect_sample(struct inode *inode, u64 start, u64 end,
- 			start += SAMPLING_INTERVAL;
- 			curr_sample_pos += SAMPLING_READ_SIZE;
- 		}
--		kunmap(page);
-+		kunmap_local(in_data);
- 		put_page(page);
- 
- 		index++;
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 641f21a11722..66c6f1185de2 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6845,7 +6845,7 @@ struct extent_map *btrfs_get_extent(struct btrfs_inode *inode,
- 				if (ret)
- 					goto out;
- 			} else {
--				map = kmap(page);
-+				map = kmap_local_page(page);
- 				read_extent_buffer(leaf, map + pg_offset, ptr,
- 						   copy_size);
- 				if (pg_offset + copy_size < PAGE_SIZE) {
-@@ -6853,7 +6853,7 @@ struct extent_map *btrfs_get_extent(struct btrfs_inode *inode,
- 					       PAGE_SIZE - pg_offset -
- 					       copy_size);
- 				}
--				kunmap(page);
-+				kunmap_local(map);
- 			}
- 			flush_dcache_page(page);
- 		}
-diff --git a/fs/btrfs/lzo.c b/fs/btrfs/lzo.c
-index 9084a950dc09..cd042c7567a4 100644
---- a/fs/btrfs/lzo.c
-+++ b/fs/btrfs/lzo.c
-@@ -118,7 +118,7 @@ int lzo_compress_pages(struct list_head *ws, struct address_space *mapping,
- 	struct workspace *workspace = list_entry(ws, struct workspace, list);
- 	int ret = 0;
- 	char *data_in;
--	char *cpage_out;
-+	char *cpage_out, *sizes_ptr;
- 	int nr_pages = 0;
- 	struct page *in_page = NULL;
- 	struct page *out_page = NULL;
-@@ -258,10 +258,9 @@ int lzo_compress_pages(struct list_head *ws, struct address_space *mapping,
- 	}
- 
- 	/* store the size of all chunks of compressed data */
--	cpage_out = kmap(pages[0]);
--	write_compress_length(cpage_out, tot_out);
--
--	kunmap(pages[0]);
-+	sizes_ptr = kmap_local_page(pages[0]);
-+	write_compress_length(sizes_ptr, tot_out);
-+	kunmap_local(sizes_ptr);
- 
- 	ret = 0;
- 	*total_out = tot_out;
+---
+This patch depends on the fix to raid5/6 kmapping sent previously
+
+https://lore.kernel.org/lkml/20210205163943.GD5033@iweiny-DESK2.sc.intel.com/#t
+---
+ fs/btrfs/raid56.c | 57 +++++++++++++++++++++++------------------------
+ 1 file changed, 28 insertions(+), 29 deletions(-)
+
 diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-index 7c3f6dc918c1..9759fb31b73e 100644
+index 9759fb31b73e..04abae305582 100644
 --- a/fs/btrfs/raid56.c
 +++ b/fs/btrfs/raid56.c
-@@ -2391,13 +2391,13 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+@@ -1233,13 +1233,13 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 		/* first collect one page from each data stripe */
+ 		for (stripe = 0; stripe < nr_data; stripe++) {
+ 			p = page_in_rbio(rbio, stripe, pagenr, 0);
+-			pointers[stripe] = kmap(p);
++			pointers[stripe] = kmap_local_page(p);
+ 		}
  
- 		/* Check scrubbing parity and repair it */
- 		p = rbio_stripe_page(rbio, rbio->scrubp, pagenr);
--		parity = kmap(p);
-+		parity = kmap_local_page(p);
- 		if (memcmp(parity, pointers[rbio->scrubp], PAGE_SIZE))
- 			copy_page(parity, pointers[rbio->scrubp]);
- 		else
- 			/* Parity is right, needn't writeback */
+ 		/* then add the parity stripe */
+ 		p = rbio_pstripe_page(rbio, pagenr);
+ 		SetPageUptodate(p);
+-		pointers[stripe++] = kmap(p);
++		pointers[stripe++] = kmap_local_page(p);
+ 
+ 		if (has_qstripe) {
+ 
+@@ -1249,7 +1249,7 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 			 */
+ 			p = rbio_qstripe_page(rbio, pagenr);
+ 			SetPageUptodate(p);
+-			pointers[stripe++] = kmap(p);
++			pointers[stripe++] = kmap_local_page(p);
+ 
+ 			raid6_call.gen_syndrome(rbio->real_stripes, PAGE_SIZE,
+ 						pointers);
+@@ -1258,10 +1258,8 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 			copy_page(pointers[nr_data], pointers[0]);
+ 			run_xor(pointers + 1, nr_data - 1, PAGE_SIZE);
+ 		}
+-
+-
+-		for (stripe = 0; stripe < rbio->real_stripes; stripe++)
+-			kunmap(page_in_rbio(rbio, stripe, pagenr, 0));
++		for (stripe = stripe - 1; stripe >= 0; stripe--)
++			kunmap_local(pointers[stripe]);
+ 	}
+ 
+ 	/*
+@@ -1780,6 +1778,7 @@ static void __raid_recover_end_io(struct btrfs_raid_bio *rbio)
+ {
+ 	int pagenr, stripe;
+ 	void **pointers;
++	void **unmap_array;
+ 	int faila = -1, failb = -1;
+ 	struct page *page;
+ 	blk_status_t err;
+@@ -1791,6 +1790,12 @@ static void __raid_recover_end_io(struct btrfs_raid_bio *rbio)
+ 		goto cleanup_io;
+ 	}
+ 
++	unmap_array = kcalloc(rbio->real_stripes, sizeof(void *), GFP_NOFS);
++	if (!unmap_array) {
++		err = BLK_STS_RESOURCE;
++		goto cleanup_pointers;
++	}
++
+ 	faila = rbio->faila;
+ 	failb = rbio->failb;
+ 
+@@ -1814,6 +1819,9 @@ static void __raid_recover_end_io(struct btrfs_raid_bio *rbio)
+ 
+ 		/* setup our array of pointers with pages
+ 		 * from each stripe
++		 *
++		 * NOTE Store a duplicate array of pointers to preserve the
++		 * pointer order.
+ 		 */
+ 		for (stripe = 0; stripe < rbio->real_stripes; stripe++) {
+ 			/*
+@@ -1827,7 +1835,8 @@ static void __raid_recover_end_io(struct btrfs_raid_bio *rbio)
+ 			} else {
+ 				page = rbio_stripe_page(rbio, stripe, pagenr);
+ 			}
+-			pointers[stripe] = kmap(page);
++			pointers[stripe] = kmap_local_page(page);
++			unmap_array[stripe] = pointers[stripe];
+ 		}
+ 
+ 		/* all raid6 handling here */
+@@ -1920,24 +1929,14 @@ static void __raid_recover_end_io(struct btrfs_raid_bio *rbio)
+ 				}
+ 			}
+ 		}
+-		for (stripe = 0; stripe < rbio->real_stripes; stripe++) {
+-			/*
+-			 * if we're rebuilding a read, we have to use
+-			 * pages from the bio list
+-			 */
+-			if ((rbio->operation == BTRFS_RBIO_READ_REBUILD ||
+-			     rbio->operation == BTRFS_RBIO_REBUILD_MISSING) &&
+-			    (stripe == faila || stripe == failb)) {
+-				page = page_in_rbio(rbio, stripe, pagenr, 0);
+-			} else {
+-				page = rbio_stripe_page(rbio, stripe, pagenr);
+-			}
+-			kunmap(page);
+-		}
++		for (stripe = rbio->real_stripes - 1; stripe >= 0; stripe--)
++			kunmap_local(unmap_array[stripe]);
+ 	}
+ 
+ 	err = BLK_STS_OK;
+ cleanup:
++	kfree(unmap_array);
++cleanup_pointers:
+ 	kfree(pointers);
+ 
+ cleanup_io:
+@@ -2362,13 +2361,13 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 			goto cleanup;
+ 		}
+ 		SetPageUptodate(q_page);
+-		pointers[rbio->real_stripes - 1] = kmap(q_page);
++		pointers[rbio->real_stripes - 1] = kmap_local_page(q_page);
+ 	}
+ 
+ 	atomic_set(&rbio->error, 0);
+ 
+ 	/* map the parity stripe just once */
+-	pointers[nr_data] = kmap(p_page);
++	pointers[nr_data] = kmap_local_page(p_page);
+ 
+ 	for_each_set_bit(pagenr, rbio->dbitmap, rbio->stripe_npages) {
+ 		struct page *p;
+@@ -2376,7 +2375,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 		/* first collect one page from each data stripe */
+ 		for (stripe = 0; stripe < nr_data; stripe++) {
+ 			p = page_in_rbio(rbio, stripe, pagenr, 0);
+-			pointers[stripe] = kmap(p);
++			pointers[stripe] = kmap_local_page(p);
+ 		}
+ 
+ 		if (has_qstripe) {
+@@ -2399,14 +2398,14 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
  			bitmap_clear(rbio->dbitmap, pagenr, 1);
--		kunmap(p);
-+		kunmap_local(parity);
+ 		kunmap_local(parity);
  
- 		for (stripe = 0; stripe < nr_data; stripe++)
- 			kunmap(page_in_rbio(rbio, stripe, pagenr, 0));
+-		for (stripe = 0; stripe < nr_data; stripe++)
+-			kunmap(page_in_rbio(rbio, stripe, pagenr, 0));
++		for (stripe = nr_data - 1; stripe >= 0; stripe--)
++			kunmap_local(pointers[stripe]);
+ 	}
+ 
+-	kunmap(p_page);
++	kunmap_local(pointers[nr_data]);
+ 	__free_page(p_page);
+ 	if (q_page) {
+-		kunmap(q_page);
++		kunmap_local(pointers[rbio->real_stripes - 1]);
+ 		__free_page(q_page);
+ 	}
+ 
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
