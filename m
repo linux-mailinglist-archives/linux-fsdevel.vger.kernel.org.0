@@ -2,84 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7D5B31E7D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 10:22:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA79631E807
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 10:36:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231339AbhBRJA5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 04:00:57 -0500
-Received: from mout.gmx.net ([212.227.17.21]:50295 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230414AbhBRI4w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 03:56:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1613638492;
-        bh=AA4GBMmyUcN7Q2gYpk6jzHSsbCUXTNMZs3rI8avoWHQ=;
-        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
-        b=PPiVfMBYmrkONh2ZwZ82Iodjlm1JH+xVEenFiJ7DwXvsJQLTI/6H5ZuDvNxLX82J2
-         neCraFfnpVe4uqQ+qQPXZpVyGeN+/677+LgNSMTdKdOmH9koKK5NyObUX+pfS62Iam
-         CRZYr8fO/g2IIFTeilGw8hke5+R9V7t4MuEciSj8=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MhlGq-1lqPkJ0s2y-00drcV; Thu, 18
- Feb 2021 09:54:52 +0100
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: page->index limitation on 32bit system?
-Message-ID: <1783f16d-7a28-80e6-4c32-fdf19b705ed0@gmx.com>
-Date:   Thu, 18 Feb 2021 16:54:46 +0800
+        id S230510AbhBRJ1V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 04:27:21 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:40611 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230303AbhBRJBV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Feb 2021 04:01:21 -0500
+X-IronPort-AV: E=Sophos;i="5.81,186,1610380800"; 
+   d="scan'208";a="104601999"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 18 Feb 2021 17:00:03 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id 2F5E34CE72E3;
+        Thu, 18 Feb 2021 16:59:58 +0800 (CST)
+Received: from irides.mr (10.167.225.141) by G08CNEXMBPEKD05.g08.fujitsu.local
+ (10.167.33.204) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 18 Feb
+ 2021 16:59:57 +0800
+Subject: Re: [PATCH v3 05/11] mm, fsdax: Refactor memory-failure handler for
+ dax mapping
+To:     Christoph Hellwig <hch@lst.de>
+CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <dm-devel@redhat.com>,
+        <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <agk@redhat.com>, <snitzer@redhat.com>,
+        <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
+References: <20210208105530.3072869-1-ruansy.fnst@cn.fujitsu.com>
+ <20210208105530.3072869-6-ruansy.fnst@cn.fujitsu.com>
+ <20210210133347.GD30109@lst.de>
+ <45a20d88-63ee-d678-ad86-6ccd8cdf7453@cn.fujitsu.com>
+ <20210218083230.GA17913@lst.de>
+From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
+Message-ID: <9edffa8e-faf8-3d29-6ec0-69ad512e7bb7@cn.fujitsu.com>
+Date:   Thu, 18 Feb 2021 16:59:56 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210218083230.GA17913@lst.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NLNrHdu2PQlGO41adJCFYaeEDgThaXErXIbDWf1W2nggia1gRVL
- lsgE3nmKTSKpLETVmYtLWWcZ1onIxMdp3u60lWzFKG9daR6ZuZNw3XWAhrhF+AX4eMSCs94
- JHFyRr9SR5/eDlKytdY2QKsOYGQppj3XXrO1LCjkhzEm91WpoxDaCIXPh2NPAedaakqBkVF
- ZwvP7isQuhv0+2c0n3vPQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:mWjtKmYvCCM=:PL7DHeHyyQZFmcIkitq7GD
- nC5wSDxLnhdmOuyRrkjCEPFzHf5nPZj5Kh2BEF4TblQ3Vs08CDiPzT4AS2P0Zihx9AAIvYIv5
- kT9UM3xjzuIGmNFfGhWU7zrAosoj5AmZN9upRJZsRFlCwslE8+1cvkAJ80CkHDMoBozrxp2oe
- pELhjEyo6l2wK5kjjDXcpAf1O0VlKMDn6XTBD9uyecjybtkVEnZs7UkEsmo0y9sq2vJLCIP99
- WbL6d3BIWTgk3fNxQaDQR3Bpu5aXi21tJLp7JRYP/UKvZ/ozilSktIhSwJkW5oGtz4vcgWI7g
- pFMVFjiu9RYj6bNEoV0d67hQF0i5hMkoJQ+JgMmJ7dOLKsgypG9D1OqqEn0Chsr08xnjFuOCD
- SiYcea66ZHfVFhoMosy5QYTl0f564sgZTBXMV5SXZ7OrAo9AERqGvTuz5Pj/4qKERd6QUkP6N
- TVl8CcaVxkvxygNRUIM3vy94ZuPNw0KDAwmHwfDweeVfVtq0rDgX/RvD3BDsV+z0K7wVyYjWe
- 8AuKoXoKCQEOI+kEy7uvknNGhUwDphA8PnGAReKVMnB0BhIa1PvVsKoR/KNmRXvhCUyQ/87Yi
- C+lWZSanj7nSe/7mMsNCONAVoYM5QbtABaF3m5WeOx4DRK3igaUPpvE6ywGCBx1AsIhhNVMlX
- hyRkYl9907g30R+urITcGLIpRzwZBbBsvi/6FWPtAIk7RhghvBeFcuS0Ojhzpt+QJLWJOv56F
- jIUBuV8yKLNJA5gUeECXEBOXROrVxAi2qYxtLUFhK2SinJHJizjHRv5W3bgqyS0WqWjCHpqiV
- /xSRT+t17Vu1WEA3LsthMrrFmIA43LOFhP0zPsLtXXjM22TITqa54IiS7domNgVoVoUKum/OH
- aAGuuJB/IFy34hO98pDQ==
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.225.141]
+X-ClientProxiedBy: G08CNEXCHPEKD04.g08.fujitsu.local (10.167.33.200) To
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
+X-yoursite-MailScanner-ID: 2F5E34CE72E3.AE2D0
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
 
-Recently we got a strange bug report that, one 32bit systems like armv6
-or non-64bit x86, certain large btrfs can't be mounted.
 
-It turns out that, since page->index is just unsigned long, and on 32bit
-systemts, that can just be 32bit.
+On 2021/2/18 下午4:32, Christoph Hellwig wrote:
+> On Wed, Feb 17, 2021 at 10:56:11AM +0800, Ruan Shiyang wrote:
+>> I'd like to confirm one thing...  I have checked all of this patchset by
+>> checkpatch.pl and it did not report the overly long line warning.  So, I
+>> should still obey the rule of 80 chars one line?
+> 
+> checkpatch.pl is completely broken, I would not rely on it.
+> 
+> Here is the quote from the coding style document:
+> 
+> "The preferred limit on the length of a single line is 80 columns.
+> 
+> Statements longer than 80 columns should be broken into sensible chunks,
+> unless exceeding 80 columns significantly increases readability and does
+> not hide information."
+> 
 
-And when filesystems is utilizing any page offset over 4T, page->index
-get truncated, causing various problems.
+OK.  Got it.  Thank you.
 
-This is especially a big problem for btrfs, as btrfs uses its internal
-address space, which is from 0 to U64_MAX, but still sometimes relies on
-page->index, just like most filesystems.
 
-If a metadata is at or beyond 4T boundary (which is not rare, even with
-small btrfs, as btrfs can related its chunks to much higher bytenr than
-device boundary), then page->index will be truncated and may even
-conflicts with existing pages.
+--
+Ruan Shiyang.
+> 
 
-I'm wonder if this is a known problem, and if so is there any plan to fix?
-If not a known one, does it mean we have to make page->index u64 to fix
-it? (this is definitely not going to be easy)
 
-Thanks,
-Qu
