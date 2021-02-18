@@ -2,83 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8826D31EF45
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 20:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC5931EF46
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 20:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232111AbhBRTId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 14:08:33 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40394 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234582AbhBRRsk (ORCPT
+        id S231452AbhBRTIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 14:08:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47220 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232358AbhBRS6A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 12:48:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613670434;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Vh8JVeAq553dnjUjXxpSp+/x6fHtJkixwlI1e+/bfY8=;
-        b=D0ltEqDHzz+O5R9uzG1lWvXLWNOsTtoS4eKgoRhnlKGEdWagczQx8HQ1KXZDFQYXo/qYuA
-        TStT1QppC4wbsbZe/YYRaj4UJR0XpUHpJbSohbx9hsB2TgSS3+1UVP7/mFyV4u27okaPb+
-        frax6pKXV5DE4pmVlEFvDzQj5GDiWS0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-348-qum9-M-dOJ-dh4Cpmuan6A-1; Thu, 18 Feb 2021 12:47:10 -0500
-X-MC-Unique: qum9-M-dOJ-dh4Cpmuan6A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C51CF107ACF4;
-        Thu, 18 Feb 2021 17:47:07 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C64060877;
-        Thu, 18 Feb 2021 17:47:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210217161358.GM2858050@casper.infradead.org>
-References: <20210217161358.GM2858050@casper.infradead.org> <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk> <161340389201.1303470.14353807284546854878.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/33] mm: Implement readahead_control pageset expansion
+        Thu, 18 Feb 2021 13:58:00 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703C1C061574;
+        Thu, 18 Feb 2021 10:57:20 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id s17so3128261ioj.4;
+        Thu, 18 Feb 2021 10:57:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u4xxXYKJo5IV3bB9fNqOq03Zn+tFydpSlHd7y6T/7rA=;
+        b=Ii03twkrTTNQ3M8wsgGS/6aYPx0ugsGb8RM+2lz7YuGnmD2sHaUIp/9CYFoY2JTv7W
+         jDPrXSjroXzaSKeHI/y3H5luQqC9z6ty4q0auB5hNEO1XDhP5Qg2BIFB0Hm7qZVMHXIO
+         0HY56yFCyYhafOeICpBs+v3P0TMVU5+895wVgQb3GozWvwZg8DaK2fMQINtNDeen2Z9+
+         cCWv0p2526t5kpQQHsY7SVjCjyytf1ilPJGSUmA9hWmCX5scH/zHZmZ169cGMCBgF9m+
+         5ezZiGhqTl6bflB7v3YIEmYF3pJSAlItbHPTFQP4DAjh/v0YGfQoQB6h7e72uLG4xlCm
+         Vr6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u4xxXYKJo5IV3bB9fNqOq03Zn+tFydpSlHd7y6T/7rA=;
+        b=suj0BKb/smp8S2dIXvAc6dQK5/xS286VXoT31kFCa//YCn/ypiciHXU/Zv5pcZx9Zn
+         AP+FxpIsemShc9bOeBNkuxZ/A6LQcrXVXTDzopwqX5LB7eGn3R2o3ZqTnBrz0wNKjsnb
+         0fHbqUwz9CDETAH+ITBiOPJq4CP1L2ydTUd/b53XQUK12F/mrawCELTVUl/i4sdbXbVW
+         XXPylx0vi5uuregk2HgpiHqZNkvDg4CS+0Eq2mARIJQxzrZxSGx6NdrDYEySLWTtOIe+
+         zu/SjNy+sKffxnbNO0laRqLmVvSARK9ECwYKMXe76lFPWhDgiK7vQiYilwueWh3Is9lJ
+         URtw==
+X-Gm-Message-State: AOAM532fl9399jxSJBWPB+rtgaC6MKJorXBaxtfnjJeDDuotlPwYJnhr
+        d/dKJziGX84QwtEo5EDy8l/OP6s5SKe5cPEkBVIFLbQvuBU=
+X-Google-Smtp-Source: ABdhPJx87FVeRedno9dW12aEXtx4a6OTuFu5D8r4dF6Lq18/UmBlTyFM0rlLCldmw/6w0yOT71RBN6lhaMoKG5Ln1aA=
+X-Received: by 2002:a02:74a:: with SMTP id f71mr5795794jaf.30.1613674639752;
+ Thu, 18 Feb 2021 10:57:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2083367.1613670420.1@warthog.procyon.org.uk>
-Date:   Thu, 18 Feb 2021 17:47:00 +0000
-Message-ID: <2083368.1613670420@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20210124184204.899729-1-amir73il@gmail.com> <20210124184204.899729-2-amir73il@gmail.com>
+ <20210216162754.GF21108@quack2.suse.cz>
+In-Reply-To: <20210216162754.GF21108@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 18 Feb 2021 20:57:08 +0200
+Message-ID: <CAOQ4uxj8BbAnDQ9RyEM3fUtw7SPd38d1JsgfB2vN2Zni1UndQg@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/2] fanotify: configurable limits via sysfs
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, Feb 16, 2021 at 6:27 PM Jan Kara <jack@suse.cz> wrote:
+>
+> Hi Amir!
+>
+>
+> I'm sorry that I've got to this only now.
+>
+> On Sun 24-01-21 20:42:03, Amir Goldstein wrote:
+> > fanotify has some hardcoded limits. The only APIs to escape those limits
+> > are FAN_UNLIMITED_QUEUE and FAN_UNLIMITED_MARKS.
+> >
+> > Allow finer grained tuning of the system limits via sysfs tunables under
+> > /proc/sys/fs/fanotify/, similar to tunables under /proc/sys/fs/inotify,
+> > with some minor differences.
+> >
+> > - max_queued_events - global system tunable for group queue size limit.
+> >   Like the inotify tunable with the same name, it defaults to 16384 and
+> >   applies on initialization of a new group.
+> >
+> > - max_listener_marks - global system tunable of marks limit per group.
+> >   Defaults to 8192. inotify has no per group marks limit.
+> >
+> > - max_user_marks - user ns tunable for marks limit per user.
+> >   Like the inotify tunable named max_user_watches, it defaults to 1048576
+> >   and is accounted for every containing user ns.
+> >
+> > - max_user_listeners - user ns tunable for number of listeners per user.
+> >   Like the inotify tunable named max_user_instances, it defaults to 128
+> >   and is accounted for every containing user ns.
+>
+> I think term 'group' is used in the manpages even more and in the code as
+> well. 'listener' more generally tends to refer to the application listening
+> to the events. So I'd rather call the limits 'max_group_marks' and
+> 'max_user_groups'.
+>
+> > The slightly different tunable names are derived from the "listener" and
+> > "mark" terminology used in the fanotify man pages.
+> >
+> > max_listener_marks was kept for compatibility with legacy fanotify
+> > behavior. Given that inotify max_user_instances was increased from 8192
+> > to 1048576 in kernel v5.10, we may want to consider changing also the
+> > default for max_listener_marks or remove it completely, leaving only the
+> > per user marks limit.
+>
+> Yes, probably I'd just drop 'max_group_marks' completely and leave just
+> per-user marks limit. You can always tune it in init_user_ns if you wish.
+> Can't you?
+>
 
-> So readahead_expand() needs to adjust the file's f_ra so that when the
-> application gets to 64kB, it kicks off the readahead of 4MB-8MB chunk (and
-> then when we get to 4MB+256kB, it kicks off the readahead of 8MB-12MB,
-> and so on).
+So I am fine with making this change but what about
+FAN_UNLIMITED_MARKS?
 
-Ummm...  Two questions:
+What will it mean?
+Should the group be able to escape ucount limits?
 
-Firstly, how do I do that?  Set ->async_size?  And to what?  The expansion
-could be 2MB from a ceph stripe, 256k from the cache.  Just to add to the fun,
-the leading edge of the window might also be rounded downwards and the RA
-trigger could be before where the app is going to start reading.
-
-Secondly, what happens if, say, a 4MB read is covered by a single 4MB THP?
-
-David
-
+Thanks,
+Amir.
