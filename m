@@ -2,109 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3206831E769
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 09:28:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 768A131E772
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 09:31:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231136AbhBRIZ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 03:25:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46448 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230353AbhBRIXG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 03:23:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1613636495; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        id S230499AbhBRI2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 03:28:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:37071 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231137AbhBRI0B (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Feb 2021 03:26:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1613636675;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Iy07AOSgNqm+R91SC7oREQlpbXz4qmRIVGZCrE6AhuY=;
-        b=ExfopU0B8BLib5q2xKI/qzE1ZkLkoWTD+4+HXnhga/CtFgYKnD2gf2so3fkfp09ilqNHrL
-        5SyVNbfeNbiEqeFxLV5tylw3Gm2F8zeMVaDF/44uq4kFZxea1Kc3lYkfQz6kKsgi/rsL8o
-        Nf5I1WEP01gCovDHsswXFOx3/8XyyIc=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E45B3AFC1;
-        Thu, 18 Feb 2021 08:21:34 +0000 (UTC)
-Date:   Thu, 18 Feb 2021 09:21:31 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [External] Re: [PATCH v15 4/8] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-Message-ID: <YC4ji+pMhtOs+KVM@dhcp22.suse.cz>
-References: <CAMZfGtWT8CJ-QpVofB2X-+R7GE7sMa40eiAJm6PyD0ji=FzBYQ@mail.gmail.com>
- <YCpmlGuoTakPJs1u@dhcp22.suse.cz>
- <CAMZfGtWd_ZaXtiEdMKhpnAHDw5CTm-CSPSXW+GfKhyX5qQK=Og@mail.gmail.com>
- <YCp04NVBZpZZ5k7G@dhcp22.suse.cz>
- <CAMZfGtV8-yJa_eGYtSXc0YY8KhYpgUo=pfj6TZ9zMo8fbz8nWA@mail.gmail.com>
- <YCqhDZ0EAgvCz+wX@dhcp22.suse.cz>
- <29cdbd0f-dbc2-1a72-15b7-55f81000fa9e@oracle.com>
- <YCzQJIeI+dj9vphw@dhcp22.suse.cz>
- <f956c39a-6043-6d0e-9f4c-6013f54c2768@oracle.com>
- <CAMZfGtWVSWN0dL+2Dm=7bPSNFyomTQYEijCdd_ThXvArsA04ug@mail.gmail.com>
+        bh=4/ZLB+LGzU8OCPH9fs/lC8xxc437w5UN3WLlRuc6l1s=;
+        b=RcZjhCg2vBesepTcANxga0Gkj5wW0HkSHbEVlKSgrIDTNKiUF2Hcq2q2HAxvrAXXcy0bIb
+        57tq9VuDy6iEyIMweEOvXWdRlAKq45I5NyCOZSTDXuvWRYCod+4jZ/HnFbFrd7ovairtn3
+        aGEuTQc0RBor2iIXTCmHsU+sBqUyLKE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-148-idMIFum9OKKWuzNa2wzPYA-1; Thu, 18 Feb 2021 03:24:32 -0500
+X-MC-Unique: idMIFum9OKKWuzNa2wzPYA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5034108C20A;
+        Thu, 18 Feb 2021 08:24:30 +0000 (UTC)
+Received: from [10.36.114.59] (ovpn-114-59.ams2.redhat.com [10.36.114.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 61CFF5C3E4;
+        Thu, 18 Feb 2021 08:24:28 +0000 (UTC)
+Subject: Re: [RFC 1/2] mm: disable LRU pagevec during the migration
+ temporarily
+To:     Michal Hocko <mhocko@suse.com>, Minchan Kim <minchan@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, cgoldswo@codeaurora.org,
+        linux-fsdevel@vger.kernel.org, vbabka@suse.cz,
+        viro@zeniv.linux.org.uk, joaodias@google.com
+References: <20210216170348.1513483-1-minchan@kernel.org>
+ <YCzbCg3+upAo1Kdj@dhcp22.suse.cz> <YC2Am34Fso5Y5SPC@google.com>
+ <20210217211612.GO2858050@casper.infradead.org> <YC2LVXO6e2NVsBqz@google.com>
+ <YC4ifqXYEeWrj4aF@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <0c9bc288-4713-f552-ce97-d050eb749e20@redhat.com>
+Date:   Thu, 18 Feb 2021 09:24:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZfGtWVSWN0dL+2Dm=7bPSNFyomTQYEijCdd_ThXvArsA04ug@mail.gmail.com>
+In-Reply-To: <YC4ifqXYEeWrj4aF@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 18-02-21 11:20:51, Muchun Song wrote:
-> On Thu, Feb 18, 2021 at 9:00 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
-> >
-> > On 2/17/21 12:13 AM, Michal Hocko wrote:
-> > > On Tue 16-02-21 11:44:34, Mike Kravetz wrote:
-> > > [...]
-> > >> If we are not going to do the allocations under the lock, then we will need
-> > >> to either preallocate or take the workqueue approach.
-> > >
-> > > We can still drop the lock temporarily right? As we already do before
-> > > calling destroy_compound_gigantic_page...
-> > >
-> >
-> > Yes we can.  I forgot about that.
-> >
-> > Actually, very little of what update_and_free_page does needs to be done
-> > under the lock.  Perhaps, just decrementing the global count and clearing
-> > the destructor so PageHuge() is no longer true.
+On 18.02.21 09:17, Michal Hocko wrote:
+> On Wed 17-02-21 13:32:05, Minchan Kim wrote:
+>> On Wed, Feb 17, 2021 at 09:16:12PM +0000, Matthew Wilcox wrote:
+>>> On Wed, Feb 17, 2021 at 12:46:19PM -0800, Minchan Kim wrote:
+>>>>> I suspect you do not want to add atomic_read inside hot paths, right? Is
+>>>>> this really something that we have to microoptimize for? atomic_read is
+>>>>> a simple READ_ONCE on many archs.
+>>>>
+>>>> It's also spin_lock_irq_save in some arch. If the new synchonization is
+>>>> heavily compilcated, atomic would be better for simple start but I thought
+>>>> this locking scheme is too simple so no need to add atomic operation in
+>>>> readside.
+>>>
+>>> What arch uses a spinlock for atomic_read()?  I just had a quick grep and
+>>> didn't see any.
+>>
+>> Ah, my bad. I was confused with update side.
+>> Okay, let's use atomic op to make it simple.
 > 
-> Right. I have another question about using GFP flags. Michal
-> suggested using GFP_KERNEL instead of GFP_ATOMIC to
-> save reserve memory. From your last email, you suggested
-> using non-blocking allocation GFP flags (perhaps GFP_NOWAIT).
+> Thanks. This should make the code much more simple. Before you send
+> another version for the review I have another thing to consider. You are
+> kind of wiring this into the migration code but control over lru pcp
+> caches can be used in other paths as well. Memory offlining would be
+> another user. We already disable page allocator pcp caches to prevent
+> regular draining. We could do the same with lru pcp caches.
 > 
-> Hi Mike and Michal,
-> 
-> What is the consensus we finally reached? Thanks.
 
-If the lock can be dropped and you make sure the final put on page is
-not called from an atomic context then use (for starter)
-GFP_KERNEL | __GFP_NORETRY | __GFP_THISNODE. I have intentionaly dropped
-__GFP_NOWARN because likely want to hear about the failure so that we
-can evaluate how often this happens.
+Agreed. And dealing with PCP more reliably might also be of interest in 
+context of more reliable alloc_contig_range().
 
-This would be my recommendation.
 -- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+David / dhildenb
+
