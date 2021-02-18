@@ -2,51 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7909731ECF9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 18:14:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 371C931ECFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 18:14:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbhBRRL0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 12:11:26 -0500
-Received: from mail-ed1-f44.google.com ([209.85.208.44]:37476 "EHLO
-        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229893AbhBRPHq (ORCPT
+        id S232530AbhBRRMW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 12:12:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56220 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231573AbhBRPRo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 10:07:46 -0500
-Received: by mail-ed1-f44.google.com with SMTP id o3so4784565edv.4;
-        Thu, 18 Feb 2021 07:07:14 -0800 (PST)
+        Thu, 18 Feb 2021 10:17:44 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78393C061756;
+        Thu, 18 Feb 2021 07:16:59 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id o15so4095131wmq.5;
+        Thu, 18 Feb 2021 07:16:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O78uEHEfLc3RzIWydBI8NhLr0ai8VEAz3B7vJuFRrAU=;
+        b=M/vKAtowq/1EQKfuCDlV8OqKd0CjpCNITBgOxBGn65pvSs4UfxbjFrAtbBdOC/LCeK
+         2djhFcQh78OiRjanrtTohghE7v/ZjiBbrgX5Crk0nroEmQCoIL5VDlEeiL5tdlzzI3DO
+         UIP1q/lMAZynm504I/jq7MQdaYE0DivN4qewZFqgazLIa9s1Gx66Ovcys48AO9YkipKc
+         UIuiNH+caFC0b2XXh1mr2jTj39hF3J+nO17hyn3GtZwJTFzzRsN4+vkWBvHUVTbQM6O9
+         +Wkt00LpBZDmLYtqKYLK0kMsqvYRvKBVlPGOKvcBWPwW8y2MaeOCUyna/5xYK/R94fsh
+         Wfnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
         bh=O78uEHEfLc3RzIWydBI8NhLr0ai8VEAz3B7vJuFRrAU=;
-        b=YHLMN3F9BCv2Z/OrmixRtUXsrDiRBmjEoG2Of5RtsL6APvtLjLUTHXGvy8mXXEgUD3
-         7N2gmRSpGdtUZReq7uESQzK3CjU6UFcU2a5baK2/fcyPtWRI58phXRyyLPKAHCFKXmOF
-         JVgzgKZjtjqlq8JZP/7MqNUEx++cZUaDq3bkQGBF1gxluc3+2baFnMKcQs4J/xCXeNNA
-         v0bfthlhnIDKp8XjGLAONpAf7KUYIN8p3+Y1IuLmWxPuJJEhH24qV1QYNeKY6eYlYUAg
-         eFSu9nxNzRzUWMZgheMjZJKSodjTCntVW55tQRqvpF0J1ZqJ/WJwcdXKRUOKqMbqOkZe
-         +H3g==
-X-Gm-Message-State: AOAM53278BvcX5ThKXrPju/2sbswcv9xbdPyPNadQFzjMs+y3H2Flped
-        lwpJkeVFiWhv9UlZuvHxSevztgDdxreetaUT
-X-Google-Smtp-Source: ABdhPJzXq6qlHtASuY4Zk6Y1xjGZAhOSXi5FReoEEuwXyGxyfJpOehHr0Hm1h8AHhCIfl/hVgb1bRg==
-X-Received: by 2002:aa7:c659:: with SMTP id z25mr4582456edr.351.1613660807964;
-        Thu, 18 Feb 2021 07:06:47 -0800 (PST)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
-        by smtp.gmail.com with ESMTPSA id g3sm3000745edk.75.2021.02.18.07.06.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Feb 2021 07:06:46 -0800 (PST)
-Received: by mail-wm1-f50.google.com with SMTP id o24so4231898wmh.5;
-        Thu, 18 Feb 2021 07:06:46 -0800 (PST)
-X-Received: by 2002:a1c:608b:: with SMTP id u133mr4070976wmb.149.1613660805792;
- Thu, 18 Feb 2021 07:06:45 -0800 (PST)
+        b=HOnQEcMwViHgOjI6SSTRVZGX5MwvEA9A11wsrootcenrLAZeuC6SzQo2mENSizZOSD
+         c+NzuRQDJL3Fb4LaloZ3Vw0DpY7LLlYYyZdnZRqz3o9qXkIk9+g9Kiy8jqT7iD3gkCdL
+         J6FxvQFuUsYKm089N9MRBIzD/WI93Yo/v4HCN2rW2hgrB+evUUU9AXrETMeQEvgLOWXH
+         wy0VZ+8IUbJ5VvxNRNK7GJioRUBal2N5Il5LbAiYvVvwWXc2CJ4h17fMwl8ueEcGv0jP
+         LPKVtyD3tj8Rhf+IzO52DiKBrwSaI8dCSXgkXjS2X781KdVLv6+7tYdmGxF7HN+YD3of
+         h+gg==
+X-Gm-Message-State: AOAM5309Vfecu7bXdZijPB8kS6yQ0hGkRmSqodDc8R5fN4cAbW0ik5s6
+        nrz4z/qmn4xp7jTYH0IgoGI0YWzhhQVnf2vkQJI=
+X-Google-Smtp-Source: ABdhPJzBksUspxbLUCKUvkOmckHW7dQioOF9DqXHoU4dt6/xOrHPrHFeVMokibswhF+xCJhXqtbBaD+c8tTOwBtB3K0=
+X-Received: by 2002:a1c:608b:: with SMTP id u133mr4115769wmb.149.1613661418089;
+ Thu, 18 Feb 2021 07:16:58 -0800 (PST)
 MIME-Version: 1.0
 References: <20210216084230.GA23669@lst.de> <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
  <1376938.1613429183@warthog.procyon.org.uk> <1419965.1613467771@warthog.procyon.org.uk>
  <20210216093044.GA24615@lst.de> <2017129.1613656956@warthog.procyon.org.uk>
 In-Reply-To: <2017129.1613656956@warthog.procyon.org.uk>
-From:   Marc Dionne <marc.dionne@auristor.com>
-Date:   Thu, 18 Feb 2021 11:06:34 -0400
-X-Gmail-Original-Message-ID: <CAB9dFduOP9CEqmw2acxp5nYwcx0Zm+=oASJoMRrO_oAkA42YxA@mail.gmail.com>
-Message-ID: <CAB9dFduOP9CEqmw2acxp5nYwcx0Zm+=oASJoMRrO_oAkA42YxA@mail.gmail.com>
+From:   Marc Dionne <marc.c.dionne@gmail.com>
+Date:   Thu, 18 Feb 2021 11:16:46 -0400
+Message-ID: <CAB9dFdsLBm9za1DTBmLDm_JpCj5rhOCFck-A7gY_2sPPpPD1hQ@mail.gmail.com>
 Subject: Re: [PATCH 34/33] netfs: Pass flag rather than use in_softirq()
 To:     David Howells <dhowells@redhat.com>
 Cc:     Christoph Hellwig <hch@lst.de>,
