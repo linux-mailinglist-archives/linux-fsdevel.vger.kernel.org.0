@@ -2,56 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 390EF31EA17
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 13:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5221431EA1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 14:01:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232977AbhBRM40 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 07:56:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55056 "EHLO
+        id S232346AbhBRM5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 07:57:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231750AbhBRKrn (ORCPT
+        with ESMTP id S231487AbhBRKx3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 05:47:43 -0500
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33AF1C06178A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 02:47:00 -0800 (PST)
-Received: by mail-il1-x131.google.com with SMTP id w1so1030937ilm.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 02:47:00 -0800 (PST)
+        Thu, 18 Feb 2021 05:53:29 -0500
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0A5CC061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 02:52:47 -0800 (PST)
+Received: by mail-il1-x133.google.com with SMTP id z18so1053623ile.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 02:52:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=K48jZaDHPVLXCbj1Y7t9zcs8Q+io+VRtVTQrPP22D6g=;
-        b=tu/tmNivnKnCLo3TCzVyLglAq9/y8i7n+k4p+oNYGM+lwE2I+TI887VNdEJwyzgB9P
-         Xfs3cyRVJVNjmGLiOYpaZemw0RJN2GEUQXPIvQ/R/T/1gzi8RrqJdBBR2JBKgKAdsgeP
-         s7LwT+dB0ceHRHUnhVhy2IpNECycgJqihOqvtApUoz9zGhpYp9w1k+xpzGDTnMOkwtGn
-         figHCzYo/nWQmaHXvDCf/1rytfds5M0hlW0J7ixANcNICjwbvSj0gn/BfSLJxGoUghXq
-         JbVd9Xy0iBoAfSvARxrpfDtCdZExyLCE+/4lU/pkzYujhdWEtT1ryMnzVwJehDNzCbI3
-         f7Ag==
+        bh=tLh++AN0vk0Kz9kYD8F8l9GYNXNgzZ2GC7OuRNEoNRE=;
+        b=QP9FYl4jZT9MfDw2MNKuyG4dGlOjpJCG3InXrJ+VG9xxAfBKHFKqYvpMzptOBlugnK
+         lAbRYO9/J9iNyqIFse3OCTSKbPU+zHzvwQK6AFWRizb221bO1PHfBl+4wXxktel4BdUG
+         61BktqyYbNVqRT6iaxdlQe6Hj1N+HiF5Q+1DGTZunxN6PTnrkjyBYUIjfc46BdTFdKHF
+         azoD/ge0YPQGCVwUiK2EqXptyI90JGdgvEaSB1BKiR1PRQAB3Y1Ceg8/g9aFGiw4GONH
+         J2ZSfZffabft41IMI41DVbtPzFayCjGb6Bzgf2x5B03I2rbjrDtXGrmL3ognfDuYFpL+
+         gtyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=K48jZaDHPVLXCbj1Y7t9zcs8Q+io+VRtVTQrPP22D6g=;
-        b=o4LMBTna4gb+3n5U3kHi/u90GQDXhH/xIMuCnjUlde2UrgveD2NJzR4B/cv+vcgfAU
-         YaHAFTPvquXaMg7OKJ7MmyUCahmdMywY+CEkU7P5OwhZjROkdC0qkRDUI9YQyEcpcP3y
-         x19Z9FdlJKfY9Lk9KXIJX3nlIfuHunS4Z9AOxwbS9tCl2thChqW7ErB2FHFS43UxMuYy
-         UR3OtYd2eMTidEwyCEEvU5KhY0AaXPQ9gXtPe0SBaKtfDtjppKT81PJnepNc/E+jfn1Q
-         f0jW+SuRFAv2+dTWn0Dic3Z9893s4AUpd8YUUrUNgLSSlBpzm3nNSOYP6Nbp6u/XUx7q
-         o9dA==
-X-Gm-Message-State: AOAM530ZbTJu8laPuOG2DEdCrO6g5j9JgO91UBPiv53sQAfl/7nVukt5
-        olSDTVBhEqjL3CcdINKoFa9U3FADN4wSMXucHnMS7Dcd
-X-Google-Smtp-Source: ABdhPJzHg8FW+mCyCb8KfvTG6lXvK0S9UkmBtGCXQpyk/OdTbCnIiGSeCzq3Htoz+qisJDxm6dxR3mEfhopK7BzBybc=
-X-Received: by 2002:a92:2c08:: with SMTP id t8mr3108280ile.72.1613645219621;
- Thu, 18 Feb 2021 02:46:59 -0800 (PST)
+        bh=tLh++AN0vk0Kz9kYD8F8l9GYNXNgzZ2GC7OuRNEoNRE=;
+        b=WHtzzQMfyxliYtGGDLM6LNYyOJ2W68qs+jwA+QHt3sB7+lOfJcVhA3Fd9ElMzpkV6h
+         fP1srqS3RqcjT2yEQ1wmA91y5TB6oZIhKNjSGZZC/fY2XbBiYy7LGBsdjkAX5AdnGVWM
+         I5RPSxu4I8CZzPECtihL1fN3nWYaw97U39butFVfAP3GNQiH812qzkKBWt6d69AMvNCH
+         5rylKNHcPTF2k1j+jXZVSKo7xgKHrOtuzuN0Sw69v6pZWlrUx0Db8nghvMMNHtcWVjoc
+         +Ow8PZaD4WRYwE2s3Z4JGP5/+Lbw7U1ukZFCDMscmIIfCbUyyVbr5uyxRM2B7pzx+wEU
+         7NVg==
+X-Gm-Message-State: AOAM532aOEbaD0fvuX+Qjw99r06MfdoBmkU+eSu9qTXmjOmxZkKdApdT
+        5D/1hgV+hte7UMHe4HPLyrLApO2QWuls7emsVsc=
+X-Google-Smtp-Source: ABdhPJwKSp15LjonrR8rpjp9Y784VijPa/vCNNQYEMXpxBKUs/JVrDUjCvsguJMN1pokCb+GmJtEtAfZKDTBpJVJaBE=
+X-Received: by 2002:a92:c90b:: with SMTP id t11mr3248833ilp.275.1613645566822;
+ Thu, 18 Feb 2021 02:52:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20210202162010.305971-1-amir73il@gmail.com> <20210202162010.305971-7-amir73il@gmail.com>
- <20210216153943.GD21108@quack2.suse.cz> <CAOQ4uxhpJ=pNsKTpRwGYUancosdLRNaf596he4Ykmd8u=fPFBw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhpJ=pNsKTpRwGYUancosdLRNaf596he4Ykmd8u=fPFBw@mail.gmail.com>
+References: <20210202162010.305971-1-amir73il@gmail.com> <20210202162010.305971-3-amir73il@gmail.com>
+ <20210216150247.GB21108@quack2.suse.cz> <CAOQ4uxhLQBPd3aeVOj0E3HpKiYoqpfzPv9wZ8H8ncWTG4FOrtA@mail.gmail.com>
+ <20210217134837.GD14758@quack2.suse.cz> <CAOQ4uxjWXJpLBFQU8Z1WsaWxYTFB6_3HwAnUv5A5nKkTRtrXzA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjWXJpLBFQU8Z1WsaWxYTFB6_3HwAnUv5A5nKkTRtrXzA@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 18 Feb 2021 12:46:48 +0200
-Message-ID: <CAOQ4uxg0LfHaJz5t6a=4=OF26_+4ZfPAhB7vcj7xD0wBD7dAmA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] fanotify: mix event info into merge key hash
+Date:   Thu, 18 Feb 2021 12:52:35 +0200
+Message-ID: <CAOQ4uxgD-qnPDBzhnWcm+1E8xZzYdYk98_X+YAhGUNXgb-fkcQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] fsnotify: support hashed notification queue
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -59,176 +60,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 17, 2021 at 12:13 PM Amir Goldstein <amir73il@gmail.com> wrote:
+On Wed, Feb 17, 2021 at 5:42 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> On Tue, Feb 16, 2021 at 5:39 PM Jan Kara <jack@suse.cz> wrote:
+> On Wed, Feb 17, 2021 at 3:48 PM Jan Kara <jack@suse.cz> wrote:
 > >
-> > On Tue 02-02-21 18:20:09, Amir Goldstein wrote:
-> > > Improve the balance of hashed queue lists by mixing more event info
-> > > relevant for merge.
+> > On Wed 17-02-21 14:33:46, Amir Goldstein wrote:
+> > > On Tue, Feb 16, 2021 at 5:02 PM Jan Kara <jack@suse.cz> wrote:
+> > > > > @@ -300,10 +301,16 @@ static long inotify_ioctl(struct file *file, unsigned int cmd,
+> > > > >       switch (cmd) {
+> > > > >       case FIONREAD:
+> > > > >               spin_lock(&group->notification_lock);
+> > > > > -             list_for_each_entry(fsn_event, &group->notification_list,
+> > > > > -                                 list) {
+> > > > > -                     send_len += sizeof(struct inotify_event);
+> > > > > -                     send_len += round_event_name_len(fsn_event);
+> > > > > +             list = fsnotify_first_notification_list(group);
+> > > > > +             /*
+> > > > > +              * With multi queue, send_len will be a lower bound
+> > > > > +              * on total events size.
+> > > > > +              */
+> > > > > +             if (list) {
+> > > > > +                     list_for_each_entry(fsn_event, list, list) {
+> > > > > +                             send_len += sizeof(struct inotify_event);
+> > > > > +                             send_len += round_event_name_len(fsn_event);
+> > > > > +                     }
+> > > >
+> > > > As I write below IMO we should enable hashed queues also for inotify (is
+> > > > there good reason not to?)
 > > >
-> > > For example, all FAN_CREATE name events in the same dir used to have the
-> > > same merge key based on the dir inode.  With this change the created
-> > > file name is mixed into the merge key.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > ---
-> > >  fs/notify/fanotify/fanotify.c | 33 +++++++++++++++++++++++++++------
-> > >  fs/notify/fanotify/fanotify.h | 20 +++++++++++++++++---
-> > >  2 files changed, 44 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> > > index 6d3807012851..b19fef1c6f64 100644
-> > > --- a/fs/notify/fanotify/fanotify.c
-> > > +++ b/fs/notify/fanotify/fanotify.c
-> > ...
-> > > @@ -476,8 +485,11 @@ static struct fanotify_event *fanotify_alloc_fid_event(struct inode *id,
-> > >
-> > >       ffe->fae.type = FANOTIFY_EVENT_TYPE_FID;
-> > >       ffe->fsid = *fsid;
-> > > -     fanotify_encode_fh(&ffe->object_fh, id, fanotify_encode_fh_len(id),
-> > > -                        gfp);
-> > > +     fh = &ffe->object_fh;
-> > > +     fanotify_encode_fh(fh, id, fanotify_encode_fh_len(id), gfp);
-> > > +
-> > > +     /* Mix fsid+fid info into event merge key */
-> > > +     ffe->fae.info_hash = full_name_hash(ffe->fskey, fanotify_fh_buf(fh), fh->len);
+> > > I see your perception of inotify_merge() is the same as mine was
+> > > when I wrote a patch to support hashed queues for inotify.
+> > > It is only after that I realized that inotify_merge() only ever merges
+> > > with the last event and I dropped that patch.
+> > > I see no reason to change this long time behavior.
 > >
-> > Is it really sensible to hash FID with full_name_hash()? It would make more
-> > sense to treat it as binary data, not strings...
+> > Ah, I even briefly looked at that code but didn't notice it merges only
+> > with the last event. I agree that hashing for inotify doesn't make sense
+> > then.
+> >
+> > Hum, if the hashing and merging is specific to fanotify and as we decided
+> > to keep the event->list for the global event list, we could easily have the
+> > hash table just in fanotify private group data and hash->next pointer in
+> > fanotify private part of the event? Maybe that would even result in a more
+> > compact code?
+> >
 >
-> See the actual implementation of full_name_hash() for 64bit.
-> it treats the string as an array of ulong, which is quite perfect for FID.
->
-> >
-> > >       return &ffe->fae;
-> > >  }
-> > > @@ -517,6 +529,9 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
-> > >       if (file_name)
-> > >               fanotify_info_copy_name(info, file_name);
-> > >
-> > > +     /* Mix fsid+dfid+name+fid info into event merge key */
-> > > +     fne->fae.info_hash = full_name_hash(fne->fskey, info->buf, fanotify_info_len(info));
-> > > +
-> >
-> > Similarly here...
-> >
-> > >       pr_debug("%s: ino=%lu size=%u dir_fh_len=%u child_fh_len=%u name_len=%u name='%.*s'\n",
-> > >                __func__, id->i_ino, size, dir_fh_len, child_fh_len,
-> > >                info->name_len, info->name_len, fanotify_info_name(info));
-> > > @@ -539,6 +554,8 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
-> > >       struct mem_cgroup *old_memcg;
-> > >       struct inode *child = NULL;
-> > >       bool name_event = false;
-> > > +     unsigned int hash = 0;
-> > > +     struct pid *pid;
-> > >
-> > >       if ((fid_mode & FAN_REPORT_DIR_FID) && dirid) {
-> > >               /*
-> > > @@ -606,13 +623,17 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
-> > >        * Use the victim inode instead of the watching inode as the id for
-> > >        * event queue, so event reported on parent is merged with event
-> > >        * reported on child when both directory and child watches exist.
-> > > -      * Reduce object id to 32bit hash for hashed queue merge.
-> > > +      * Reduce object id and event info to 32bit hash for hashed queue merge.
-> > >        */
-> > > -     fanotify_init_event(event, hash_ptr(id, 32), mask);
-> > > +     hash = event->info_hash ^ hash_ptr(id, 32);
-> > >       if (FAN_GROUP_FLAG(group, FAN_REPORT_TID))
-> > > -             event->pid = get_pid(task_pid(current));
-> > > +             pid = get_pid(task_pid(current));
-> > >       else
-> > > -             event->pid = get_pid(task_tgid(current));
-> > > +             pid = get_pid(task_tgid(current));
-> > > +     /* Mix pid info into event merge key */
-> > > +     hash ^= hash_ptr(pid, 32);
-> >
-> > hash_32() here?
->
-> I don't think so.
-> hash_32() looses the high bits of ptr before mixing them.
-> hash_ptr(pid, 32) looses the *low* bits which contain less entropy
-> after mixing all 64bits of ptr.
->
-> >
-> > > +     fanotify_init_event(event, hash, mask);
-> > > +     event->pid = pid;
-> > >
-> > >  out:
-> > >       set_active_memcg(old_memcg);
-> > > diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> > > index 2e856372ffc8..522fb1a68b30 100644
-> > > --- a/fs/notify/fanotify/fanotify.h
-> > > +++ b/fs/notify/fanotify/fanotify.h
-> > > @@ -115,6 +115,11 @@ static inline void fanotify_info_init(struct fanotify_info *info)
-> > >       info->name_len = 0;
-> > >  }
-> > >
-> > > +static inline unsigned int fanotify_info_len(struct fanotify_info *info)
-> > > +{
-> > > +     return info->dir_fh_totlen + info->file_fh_totlen + info->name_len;
-> > > +}
-> > > +
-> > >  static inline void fanotify_info_copy_name(struct fanotify_info *info,
-> > >                                          const struct qstr *name)
-> > >  {
-> > > @@ -138,7 +143,10 @@ enum fanotify_event_type {
-> > >  };
-> > >
-> > >  struct fanotify_event {
-> > > -     struct fsnotify_event fse;
-> > > +     union {
-> > > +             struct fsnotify_event fse;
-> > > +             unsigned int info_hash;
-> > > +     };
-> > >       u32 mask;
-> > >       enum fanotify_event_type type;
-> > >       struct pid *pid;
-> >
-> > How is this ever safe? info_hash will likely overlay with 'list' in
-> > fsnotify_event.
->
-> Oh yeh. That's an ugly hack. Sorry for that.
-> I wanted to avoid adding an arg unsigned int *info_hash to all
-> fanotify_alloc_*_event() helpers, so I used this uninitialized space
-> in event instead.
-> I'll do it the proper way.
->
-> >
-> > > @@ -154,7 +162,10 @@ static inline void fanotify_init_event(struct fanotify_event *event,
-> > >
-> > >  struct fanotify_fid_event {
-> > >       struct fanotify_event fae;
-> > > -     __kernel_fsid_t fsid;
-> > > +     union {
-> > > +             __kernel_fsid_t fsid;
-> > > +             void *fskey;    /* 64 or 32 bits of fsid used for salt */
-> > > +     };
-> > >       struct fanotify_fh object_fh;
-> > >       /* Reserve space in object_fh.buf[] - access with fanotify_fh_buf() */
-> > >       unsigned char _inline_fh_buf[FANOTIFY_INLINE_FH_LEN];
-> > > @@ -168,7 +179,10 @@ FANOTIFY_FE(struct fanotify_event *event)
-> > >
-> > >  struct fanotify_name_event {
-> > >       struct fanotify_event fae;
-> > > -     __kernel_fsid_t fsid;
-> > > +     union {
-> > > +             __kernel_fsid_t fsid;
-> > > +             void *fskey;    /* 64 or 32 bits of fsid used for salt */
-> > > +     };
-> > >       struct fanotify_info info;
-> > >  };
-> >
-> > What games are you playing here with the unions? I presume you can remove
-> > these 'fskey' unions and just use (void *)(event->fsid) at appropriate
-> > places? IMO much more comprehensible...
+> Maybe, I am not so sure. I will look into it.
 >
 
-FYI, this is what the open coded conversion looks like:
+I ended up doing something slightly different:
+- The hash table and lists remained in fsnotify (and in a prep patch)
+- event->key remains in fsnotify_event (and event->mask moved too)
+- backend gets a callback insert() from fsnotify_add_event() to do it's thing
+- event->next is in fanotify_event
+- fanotify_insert() callback takes care of chaining all events by timeline
 
-(void *)*(long *)event->fsid.val
-
-Not so comprehensible... but I used to open coded conversion anyway.
+Hope you will like the result (pushed it to fanotify_merge branch).
 
 Thanks,
 Amir.
