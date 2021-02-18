@@ -2,194 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9766631E393
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 01:52:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3C131E3BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 02:00:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230210AbhBRAvY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Feb 2021 19:51:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40616 "EHLO
+        id S229934AbhBRA7r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Feb 2021 19:59:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230021AbhBRAvV (ORCPT
+        with ESMTP id S230378AbhBRA5n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Feb 2021 19:51:21 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 542D5C061786
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 16:50:41 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id a9so277990plh.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 16:50:41 -0800 (PST)
+        Wed, 17 Feb 2021 19:57:43 -0500
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAFACC061794
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 16:56:53 -0800 (PST)
+Received: by mail-vs1-xe31.google.com with SMTP id o186so123743vso.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Feb 2021 16:56:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=zSNf4zEuNYLh9QMwdOefeg3SBSqTSCCjWXcw+CrRYeA=;
-        b=GzVD5J/6dJeN0jK3xbvCkp8GBwAAwhljwRmslFd4muzDOpkujDtF6E5+Zl0WpvCTvE
-         yPV6zN+KMJw5bm0M7KOqLkbeQ/ygxqpRDpOzQjmkOrJgeS1bdnah5aMXIy7TxLHjdV8o
-         i5mAiep1drpAq4ucXVs7JfAtWLqU2bvR0ZRLKAfjop8xup72eaibwmCrUtcwwdhA3nXw
-         h6mk2yS6T/o35qsShtX6IISGJWFwk99clwsgtZokEaiY63g5nfZY6q3gxTQBZAsdGUnb
-         frbN8/+6/uu2WqpEswBsbocNdKM2ZpfahYKnSt9ajNWFt8BJBaHjRKy6ligm/NrA7mrX
-         u0qg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vxbhVU+xTpR/weyN8SH71YwtBih0U9RJGA2ufjhtKjc=;
+        b=g8/QVJ74cfotfG8qjNXNZcf5Nh6F+ELqL/wtkEy0CyrdhNLL5khAwWaALJrLkxgDdk
+         oKTxEco26A1bZquNH/Wat87qVlSuvYIypnjlub2NvU+NohZ2qmWMXd5GLfq93+Uqk3hg
+         oOnuoWRw3sxKcrSnUH9rFAnPLm+rG0L5LJwxQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=zSNf4zEuNYLh9QMwdOefeg3SBSqTSCCjWXcw+CrRYeA=;
-        b=CtgVH8cpJVwx+BVXGji99/ERHhsFLj65u1g6rwYr8QmmUsvs9uTRRplq38KWv0Qq9x
-         /vC2CNC/HIMsqBTG2d8TsnNSc5TXwXq1yeLOXuShCQAggzNUy437Th2FcqOgCswVbLTw
-         HHHM0alTm1E/6LGY9RofWf44Q43+sKcNeXI6ONKphtSCt8MQcPTKKiq0qRGy7JtOuW2P
-         H6ZPvLXyeJXdAFpci4GiftxGOjqMXoFdorpkZh4XV/G914nS0G9JbL8wMnRvdIdziU+k
-         q1h4ni3o5WXPGp7+1zFCwSdjAeJmqjKaD1t+zF8ssgnw2NhhyM6wjQGy/07KzmldMZo6
-         dx/w==
-X-Gm-Message-State: AOAM530ttxGMnISUTWQuWWRNGo743DWdqa2c40mzFn/SvME/xxyQzrxm
-        0/HFoPQNJUW1Vus2bbU4/RI/fg==
-X-Google-Smtp-Source: ABdhPJx5CdTywPoSpnizVseLRqF9GG0p/+HnFFJrSSYPz5qfEFA9aehylKSsOop09UGA3XRGPbYmuw==
-X-Received: by 2002:a17:90b:ec5:: with SMTP id gz5mr1485070pjb.34.1613609440561;
-        Wed, 17 Feb 2021 16:50:40 -0800 (PST)
-Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id j1sm3507363pfr.78.2021.02.17.16.50.37
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Feb 2021 16:50:39 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <216103D5-0575-4BFC-9802-2C21A1B12DF9@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_78AEEB9E-A81A-43DA-9A4B-7AC7529D21C3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v2] vfs: prevent copy_file_range to copy across devices
-Date:   Wed, 17 Feb 2021 17:50:35 -0700
-In-Reply-To: <CAOQ4uxii=7KUKv1w32VbjkwS+Z1a0ge0gezNzpn_BiY6MFWkpA@mail.gmail.com>
-Cc:     Steve French <smfrench@gmail.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vxbhVU+xTpR/weyN8SH71YwtBih0U9RJGA2ufjhtKjc=;
+        b=jhhzNTlIEHETKHzWuj1Hxco4CwOUlRpu/cruyeAkeg6Bb9sx7fSAwOJ3SPyhyYZFSP
+         E8SLZJOLFXHCxW3uqog8wEJNlpKEpMoNG77Vg3gWu8IzNoGih1m42bRxWsftsibcc4aw
+         lUtgORjf23ln+r32duHkma4DnHfPoGSW9O+IFuzGfOAtTcBLQqvD4X4/RvYpjZ7ehc0U
+         dI9IDqrUB9NtB86038uFEZP5GNamVrn+Gi64nHH4rJWmQO7hzmKZDG1OjOBmxIbhxi8n
+         4bICS+Vt+2NsQO7HpmEmoO/riNbE0i7sDBt6sViI0/LB93357clHTvnfGLf4ifEZNm8W
+         CVVg==
+X-Gm-Message-State: AOAM532KU7OQ42PQgd9ldd6gPySNZI8NXXJQeVJ+tMwkHzlryoEAJpo0
+        EFFz6iZ2aI6CYO7+jeU3JKw0BGHza/DWprcu19fOgw==
+X-Google-Smtp-Source: ABdhPJyfWilBqai79/3FsuxGekzh4hohRVDm1mI1p7cFrLhpzd3K4urHUiCM3//wo1TO60uq90QjF0JN9lXE526kC4E=
+X-Received: by 2002:a05:6102:350:: with SMTP id e16mr1308067vsa.16.1613609812885;
+ Wed, 17 Feb 2021 16:56:52 -0800 (PST)
+MIME-Version: 1.0
+References: <CAOQ4uxii=7KUKv1w32VbjkwS+Z1a0ge0gezNzpn_BiY6MFWkpA@mail.gmail.com>
+ <20210217172654.22519-1-lhenriques@suse.de>
+In-Reply-To: <20210217172654.22519-1-lhenriques@suse.de>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Thu, 18 Feb 2021 08:56:41 +0800
+Message-ID: <CANMq1KCU2LXuU98QZzhMhg0A_XuYDSi90mnadZi+ySM59e3-OQ@mail.gmail.com>
+Subject: Re: [PATCH v3] vfs: fix copy_file_range regression in cross-fs copies
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
-        Luis Henriques <lhenriques@suse.de>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "iant@google.com" <iant@google.com>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "llozano@chromium.org" <llozano@chromium.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "dchinner@redhat.com" <dchinner@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "sfrench@samba.org" <sfrench@samba.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-References: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
- <20210215154317.8590-1-lhenriques@suse.de>
- <CAOQ4uxgjcCrzDkj-0ukhvHRgQ-D+A3zU5EAe0A=s1Gw2dnTJSA@mail.gmail.com>
- <73ab4951f48d69f0183548c7a82f7ae37e286d1c.camel@hammerspace.com>
- <CAOQ4uxgPtqG6eTi2AnAV4jTAaNDbeez+Xi2858mz1KLGMFntfg@mail.gmail.com>
- <92d27397479984b95883197d90318ee76995b42e.camel@hammerspace.com>
- <CAOQ4uxjUf15fDjz11pCzT3GkFmw=2ySXR_6XF-Bf-TfUwpj77Q@mail.gmail.com>
- <87r1lgjm7l.fsf@suse.de>
- <CAOQ4uxgucdN8hi=wkcvnFhBoZ=L5=ZDc7-6SwKVHYaRODdcFkg@mail.gmail.com>
- <87blckj75z.fsf@suse.de>
- <CAOQ4uxiiy_Jdi3V1ait56=zfDQRBu_5gb+UsCo8GjMZ6XRhozw@mail.gmail.com>
- <874kibkflh.fsf@suse.de>
- <CAOQ4uxgRK3vXH8uAJKy8cFLL8siKnMMN8h6hx4yZeA5Fe0ZZYA@mail.gmail.com>
- <CAFX2Jfk0X=jKBpOzjq7k-U6SEwFn1Atw62BK2DzavM8XgeLUaQ@mail.gmail.com>
- <CAH2r5mvybG3mRUfHUub9B+nk5WrQ5Fvzu5pZ+ZynqZg4c4ct2A@mail.gmail.com>
- <CAOQ4uxhqaTUwD8Lw+9HWWj61EXRv4X-eE3u4DFeWnv_VOUZF5A@mail.gmail.com>
- <CAH2r5msmtuk0f8FuZxdRBQ2d_VKXexctcP0OmnLXoDEBien-nQ@mail.gmail.com>
- <CAOQ4uxii=7KUKv1w32VbjkwS+Z1a0ge0gezNzpn_BiY6MFWkpA@mail.gmail.com>
-X-Mailer: Apple Mail (2.3273)
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>, ceph-devel@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Feb 18, 2021 at 1:25 AM Luis Henriques <lhenriques@suse.de> wrote:
+>
+> A regression has been reported by Nicolas Boichat, found while using the
+> copy_file_range syscall to copy a tracefs file.  Before commit
+> 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
+> kernel would return -EXDEV to userspace when trying to copy a file across
+> different filesystems.  After this commit, the syscall doesn't fail anymore
+> and instead returns zero (zero bytes copied), as this file's content is
+> generated on-the-fly and thus reports a size of zero.
+>
+> This patch restores some cross-filesystems copy restrictions that existed
+> prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
+> devices").
 
---Apple-Mail=_78AEEB9E-A81A-43DA-9A4B-7AC7529D21C3
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Note that you also fix intra-filesystem copy_file_range on these
+generated filesystems. This is IMHO great, but needs to be mentioned
+in the commit message.
 
-On Feb 17, 2021, at 1:08 AM, Amir Goldstein <amir73il@gmail.com> wrote:
->=20
-> You are missing my point.
-> Never mind which server. The server does not *need* to rely on
-> vfs_copy_file_range() to copy files from XFS to ext4.
-> The server is very capable of implementing the fallback generic copy
-> in case source/target fs do not support native =
-{copy,remap}_file_range().
->=20
-> w.r.t semantics of copy_file_range() syscall vs. the fallback to =
-userespace
-> 'cp' tool (check source file size before copy or not), please note =
-that the
-> semantics of CIFS_IOC_COPYCHUNK_FILE are that of the former:
->=20
->        rc =3D cifs_file_copychunk_range(xid, src_file.file, 0, =
-dst_file, 0,
->                                        src_inode->i_size, 0);
->=20
-> It will copy zero bytes if advertised source file size if zero.
->=20
-> NFS server side copy semantics are currently de-facto the same
-> because both the client and the server will have to pass through this
-> line in vfs_copy_file_range():
->=20
->        if (len =3D=3D 0)
->                return 0;
->=20
-> IMO, and this opinion was voiced by several other filesystem =
-developers,
-> the shortend copy semantics are the correct semantics for =
-copy_file_range()
-> syscall as well as for vfs_copy_file_range() for internal kernel =
-users.
->=20
-> I guess what this means is that if the 'cp' tool ever tries an =
-opportunistic
-> copy_file_range() syscall (e.g. --cfr=3Dauto), it may result in zero =
-size copy.
+>  It also introduces a flag (COPY_FILE_SPLICE) that can be used
+> by filesystems calling directly into the vfs copy_file_range to override
+> these restrictions.  Right now, only NFS needs to set this flag.
+>
+> Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
 
-Having a syscall that does the "wrong thing" when called on two files
-doesn't make sense.  Expecting userspace to check whether source/target
-files supports CFR is also not practical.  This is trivial for the
-kernel to determine and return -EOPNOTSUPP to the caller if the source
-file (procfs/sysfs/etc) does not work with CFR properly.
+So technically this fixes something much older, presumably ever since
+copy_file_range was introduced.
 
-Applications must already handle -EOPNOTSUPP with a fallback, but
-expecting all applications that may call copy_file_range() to be
-properly coded to handle corner cases is just asking for trouble.
-That is doubly true given that an existing widely-used tool like
-cp and mv are using this syscall if it is available in the kernel.
+> Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
+> Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
+> Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
+> Reported-by: Nicolas Boichat <drinkcat@chromium.org>
 
-Cheers, Andreas
+Tested-by: Nicolas Boichat <drinkcat@chromium.org>
+but I guess you should not add to the next revision, I'll keep testing
+further revisions ,-)
+
+> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> ---
+> Ok, I've tried to address all the issues and comments.  Hopefully this v3
+> is a bit closer to the final fix.
+>
+> Changes since v2
+> - do all the required checks earlier, in generic_copy_file_checks(),
+>   adding new checks for ->remap_file_range
+> - new COPY_FILE_SPLICE flag
+> - don't remove filesystem's fallback to generic_copy_file_range()
+> - updated commit changelog (and subject)
+> Changes since v1 (after Amir review)
+> - restored do_copy_file_range() helper
+> - return -EOPNOTSUPP if fs doesn't implement CFR
+> - updated commit description
+>
+>  fs/nfsd/vfs.c      |  3 ++-
+>  fs/read_write.c    | 44 +++++++++++++++++++++++++++++++++++++++++---
+>  include/linux/fs.h |  7 +++++++
+>  3 files changed, 50 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 04937e51de56..14e55822c223 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -578,7 +578,8 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+>          * limit like this and pipeline multiple COPY requests.
+>          */
+>         count = min_t(u64, count, 1 << 22);
+> -       return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+> +       return vfs_copy_file_range(src, src_pos, dst, dst_pos, count,
+> +                                  COPY_FILE_SPLICE);
+>  }
+>
+>  __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 75f764b43418..40a16003fb05 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1410,6 +1410,33 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+>                                        flags);
+>  }
+>
+> +/*
+> + * This helper function checks whether copy_file_range can actually be used,
+> + * depending on the source and destination filesystems being the same.
+> + *
+> + * In-kernel callers may set COPY_FILE_SPLICE to override these checks.
+> + */
+> +static int fops_copy_file_checks(struct file *file_in, struct file *file_out,
+
+fops_copy_file_range_checks ?
+
+> +                                unsigned int flags)
+> +{
+> +       if (WARN_ON_ONCE(flags & ~COPY_FILE_SPLICE))
+> +               return -EINVAL;
+> +
+> +       if (flags & COPY_FILE_SPLICE)
+> +               return 0;
+> +       /*
+> +        * We got here from userspace, so forbid copies if copy_file_range isn't
+> +        * implemented or if we're doing a cross-fs copy.
+> +        */
+> +       if (!file_out->f_op->copy_file_range)
+> +               return -EOPNOTSUPP;
+
+After this is merged, should this be added as an error code to the man page?
+
+> +       else if (file_out->f_op->copy_file_range !=
+> +                file_in->f_op->copy_file_range)
+
+Just note, this could be a cross-fs copy (just not a cross-fs_type copy).
+
+> +               return -EXDEV;
+> +
+> +       return 0;
+> +}
+> +
+>  /*
+>   * Performs necessary checks before doing a file copy
+>   *
+> @@ -1427,6 +1454,14 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+>         loff_t size_in;
+>         int ret;
+>
+> +       /* Only check f_ops if we're not trying to clone */
+> +       if (!file_in->f_op->remap_file_range ||
+> +           (file_inode(file_in)->i_sb == file_inode(file_out)->i_sb)) {
+> +               ret = fops_copy_file_checks(file_in, file_out, flags);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+>         ret = generic_file_rw_checks(file_in, file_out);
+>         if (ret)
+>                 return ret;
+> @@ -1474,9 +1509,6 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>  {
+>         ssize_t ret;
+>
+> -       if (flags != 0)
+> -               return -EINVAL;
+> -
+>         ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
+>                                        flags);
+>         if (unlikely(ret))
+> @@ -1511,6 +1543,9 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>                         ret = cloned;
+>                         goto done;
+>                 }
+> +               ret = fops_copy_file_checks(file_in, file_out, flags);
+> +               if (ret)
+> +                       return ret;
+>         }
+>
+>         ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> @@ -1543,6 +1578,9 @@ SYSCALL_DEFINE6(copy_file_range, int, fd_in, loff_t __user *, off_in,
+>         struct fd f_out;
+>         ssize_t ret = -EBADF;
+>
+> +       if (flags != 0)
+> +               return -EINVAL;
+> +
+>         f_in = fdget(fd_in);
+>         if (!f_in.file)
+>                 goto out2;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index fd47deea7c17..6f604926d955 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1815,6 +1815,13 @@ struct dir_context {
+>   */
+>  #define REMAP_FILE_ADVISORY            (REMAP_FILE_CAN_SHORTEN)
+>
+> +/*
+> + * This flag control the behavior of copy_file_range from internal (kernel)
+> + * users.  It can be used to override the policy of forbidding copies when
+> + * source and destination filesystems are different.
+> + */
+> +#define COPY_FILE_SPLICE               (1 << 0)
+
+nit: BIT(0) ?
 
 
-
-
-
-
---Apple-Mail=_78AEEB9E-A81A-43DA-9A4B-7AC7529D21C3
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmAtudsACgkQcqXauRfM
-H+CO9g//WwBMyeIl911flDvwfLe5tUQtTs8/bVC4xjWR3LBb+PIqo8UfTbhe+9T6
-18pmJ8bSza18bVv+TKZr0qVgJBb44/5dM9sIlFQth5VCSdQUJiqmLc2sGduO0DGh
-f9tQmw+2wDtzhuAJyxL2Vz1jIDKPMjr91xODblzQ+fBa1d/H8N04vE7TPmI5mbWx
-V3Hs7RlvMoYZ6ZqdQR9SJ2aDmJmMixkOnXVomDM0yEqCftZWLk8tI+n0aLkSfmqz
-aQIYf2mFwJ6q+U6LoaRMqMG1malw75xcS+FkgddxvrYjLII/3ZJ8oe0/zkNuGxIF
-OkQt6ghStT1zi6TU+IxP6Pdk5BPTWhF1EAFtHiKnuezPfCQlhABSmv4sru8jyArD
-7zo7SoH/6Qu+/dSSLXYC1gma3eS6+e0NZrEVR655lBJy4hnssNJNRe5hlobtgTMr
-5Dkim9EXb2qYUdf6SRA4oXA0JVbaL44F/QiPzeFXPcQWa6ACzf33sCSMyuM1KVHR
-Q2o0dNkP3BettePxdN5dq0JkrSbQFVKZ9Tgb6nmw5lVWPXjBA/jU2Oj0zD9n/KbW
-h9FijAV/QQBdylhuxrKZFayeOrk5cz3fGyerKAEjSMyJddFciZNewYv6RjVUYw19
-6aoTk2cTs+9dfT/GDN5Af/QgJHu2J3+hWX2celNzL1ExUENIgtU=
-=sggq
------END PGP SIGNATURE-----
-
---Apple-Mail=_78AEEB9E-A81A-43DA-9A4B-7AC7529D21C3--
+> +
+>  struct iov_iter;
+>
+>  struct file_operations {
