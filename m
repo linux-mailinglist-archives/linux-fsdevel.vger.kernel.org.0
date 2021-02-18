@@ -2,80 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D27B31EA22
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 14:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD61631EA26
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 14:03:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233112AbhBRM6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 07:58:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59962 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231573AbhBRLTl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 06:19:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 960C1AFDC;
-        Thu, 18 Feb 2021 11:17:21 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 2BDD51E0F3B; Thu, 18 Feb 2021 12:17:21 +0100 (CET)
-Date:   Thu, 18 Feb 2021 12:17:21 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH] Revert "block: Do not discard buffers under a mounted
- filesystem"
-Message-ID: <20210218111721.GC16953@quack2.suse.cz>
-References: <20210216133849.8244-1-jack@suse.cz>
- <20210216163606.GA4063489@infradead.org>
- <20210216171609.GH21108@quack2.suse.cz>
+        id S233179AbhBRM65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 07:58:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45634 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232468AbhBRMQY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Feb 2021 07:16:24 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B85C061574;
+        Thu, 18 Feb 2021 04:15:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=v3SwnkJsMELC9SE5dvpsa5IIrh1hU1zdxGUYiPT3UtE=; b=uxK1wBp5wfyYq29eGpAiFLQ+gP
+        5JRxD/J+zH90/XyU+b7q1w15LcIyboTDT6+7mHcqRyyIk8jyXq2LsKDFup3GdsnDWd6/X6jS8NfCe
+        HFfvbbP9cxriBuGYgnx9DVWt5CJpG7F5xWUe+mcsQX3QzibhOism7/Wrxp0B3rRkUBj9cIyPbEtEL
+        YmdrAS+GoYUFCDxXcI1o2Fy64lk8MrzhpO3QrF04KskREEOjTM+23Q712CPV57Hw58KODM5vuZAuK
+        sQVyCvsAJqxfyAAk0vTsAWQEJ1c7yFEYLZEZjayikAknoPF58KnVzimABP3i7w9h8piXIXRp8AUpK
+        8EnFSj5g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lCiD1-001e5i-DY; Thu, 18 Feb 2021 12:15:07 +0000
+Date:   Thu, 18 Feb 2021 12:15:03 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: page->index limitation on 32bit system?
+Message-ID: <20210218121503.GQ2858050@casper.infradead.org>
+References: <1783f16d-7a28-80e6-4c32-fdf19b705ed0@gmx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210216171609.GH21108@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1783f16d-7a28-80e6-4c32-fdf19b705ed0@gmx.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 16-02-21 18:16:09, Jan Kara wrote:
-> On Tue 16-02-21 16:36:06, Christoph Hellwig wrote:
-> > On Tue, Feb 16, 2021 at 02:38:49PM +0100, Jan Kara wrote:
-> > > Apparently there are several userspace programs that depend on being
-> > > able to call BLKDISCARD ioctl without the ability to grab bdev
-> > > exclusively - namely FUSE filesystems have the device open without
-> > > O_EXCL (the kernel has the bdev open with O_EXCL) so the commit breaks
-> > > fstrim(8) for such filesystems. Also LVM when shrinking LV opens PV and
-> > > discards ranges released from LV but that PV may be already open
-> > > exclusively by someone else (see bugzilla link below for more details).
-> > > 
-> > > This reverts commit 384d87ef2c954fc58e6c5fd8253e4a1984f5fe02.
-> > 
-> > I think that is a bad idea. We fixed the problem for a reason.
-> > I think the right fix is to just do nothing if the device hasn't been
-> > opened with O_EXCL and can't be reopened with it, just don't do anything
-> > but also don't return an error.  After all discard and thus
-> > BLKDISCARD is purely advisory.
+On Thu, Feb 18, 2021 at 04:54:46PM +0800, Qu Wenruo wrote:
+> Recently we got a strange bug report that, one 32bit systems like armv6
+> or non-64bit x86, certain large btrfs can't be mounted.
 > 
-> Yeah, certainly we'd have to fix the original problem in some other way.
-> Just silently ignoring BLKDISCARD if we cannot claim the device exclusively
-> is certainly an option to stop complaints from userspace. But note that
-> fstrim with fuse-based filesystem would still stay silent NOP which is
-> suboptimal. It could be fixed on FUSE side as I talked to Miklos but it
-> is not trivial. Similarly for the LVM regression...
+> It turns out that, since page->index is just unsigned long, and on 32bit
+> systemts, that can just be 32bit.
 > 
-> I was wondering whether we could do something like:
-> 	use truncate_inode_pages() if we can claim bdev exclusively
-> 	use invalidate_inode_pages2_range() if we cannot claim bdev
->           exclusively, possibly do nothing if that returns EBUSY?
-> 
-> The downside is that cases where we cannot claim bdev exclusively would
-> unnecessarily write dirty buffer cache before discard.
+> And when filesystems is utilizing any page offset over 4T, page->index
+> get truncated, causing various problems.
 
-OK, no more comments I guess so I'll post this in a form of a patch and
-we'll see what people think.
+4TB?  I think you mean 16TB (4kB * 4GB)
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yes, this is a known limitation.  Some vendors have gone to the trouble
+of introducing a new page_index_t.  I'm not convinced this is a problem
+worth solving.  There are very few 32-bit systems with this much storage
+on a single partition (everything should work fine if you take a 20TB
+drive and partition it into two 10TB partitions).
+
+As usual, the best solution is for people to stop buying 32-bit systems.
