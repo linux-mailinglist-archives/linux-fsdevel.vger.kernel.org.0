@@ -2,119 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC5931EF46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 20:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A45B31F148
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 21:44:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231452AbhBRTIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 14:08:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47220 "EHLO
+        id S231392AbhBRUnw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 15:43:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232358AbhBRS6A (ORCPT
+        with ESMTP id S230209AbhBRUlp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 13:58:00 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703C1C061574;
-        Thu, 18 Feb 2021 10:57:20 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id s17so3128261ioj.4;
-        Thu, 18 Feb 2021 10:57:20 -0800 (PST)
+        Thu, 18 Feb 2021 15:41:45 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31AEC0617AA;
+        Thu, 18 Feb 2021 12:41:22 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id r23so8224156ljh.1;
+        Thu, 18 Feb 2021 12:41:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=u4xxXYKJo5IV3bB9fNqOq03Zn+tFydpSlHd7y6T/7rA=;
-        b=Ii03twkrTTNQ3M8wsgGS/6aYPx0ugsGb8RM+2lz7YuGnmD2sHaUIp/9CYFoY2JTv7W
-         jDPrXSjroXzaSKeHI/y3H5luQqC9z6ty4q0auB5hNEO1XDhP5Qg2BIFB0Hm7qZVMHXIO
-         0HY56yFCyYhafOeICpBs+v3P0TMVU5+895wVgQb3GozWvwZg8DaK2fMQINtNDeen2Z9+
-         cCWv0p2526t5kpQQHsY7SVjCjyytf1ilPJGSUmA9hWmCX5scH/zHZmZ169cGMCBgF9m+
-         5ezZiGhqTl6bflB7v3YIEmYF3pJSAlItbHPTFQP4DAjh/v0YGfQoQB6h7e72uLG4xlCm
-         Vr6w==
+        bh=cFyQNASifwQpMLri08Ol4P6yp5dFeoJ6Rz1w04iex40=;
+        b=ad9xrVWwPRJ0Op7IrKvZt0bJXunRvSzb1OGuouK5C/8+63N00msV3K1hURk0ID3R/t
+         ssl6CA+hTMPJX/9Sr62yXSmtN/nkX7ytk1DTXwRHAplmTCj+7VQfEoFCAngSsig6xVOM
+         wafKbDXUw5R9Ib/vN/DgZ2ijnRTaOkMnqgYalC2c0B/3kC9SpKIHNqQGWw3lnfYzPieO
+         zac3ULzHVUiS/CzUScmj8giO7bJNLSWKbHHHzOKPKI6SH4VnXmkz+2bIatpm+3JaeGTu
+         0WNWTxias5zgTTvhLwQyhUtog6ElixtiMQk/UqeRbfJJotEBLzgTg1hkhOl8WsdwHQQR
+         dQIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=u4xxXYKJo5IV3bB9fNqOq03Zn+tFydpSlHd7y6T/7rA=;
-        b=suj0BKb/smp8S2dIXvAc6dQK5/xS286VXoT31kFCa//YCn/ypiciHXU/Zv5pcZx9Zn
-         AP+FxpIsemShc9bOeBNkuxZ/A6LQcrXVXTDzopwqX5LB7eGn3R2o3ZqTnBrz0wNKjsnb
-         0fHbqUwz9CDETAH+ITBiOPJq4CP1L2ydTUd/b53XQUK12F/mrawCELTVUl/i4sdbXbVW
-         XXPylx0vi5uuregk2HgpiHqZNkvDg4CS+0Eq2mARIJQxzrZxSGx6NdrDYEySLWTtOIe+
-         zu/SjNy+sKffxnbNO0laRqLmVvSARK9ECwYKMXe76lFPWhDgiK7vQiYilwueWh3Is9lJ
-         URtw==
-X-Gm-Message-State: AOAM532fl9399jxSJBWPB+rtgaC6MKJorXBaxtfnjJeDDuotlPwYJnhr
-        d/dKJziGX84QwtEo5EDy8l/OP6s5SKe5cPEkBVIFLbQvuBU=
-X-Google-Smtp-Source: ABdhPJx87FVeRedno9dW12aEXtx4a6OTuFu5D8r4dF6Lq18/UmBlTyFM0rlLCldmw/6w0yOT71RBN6lhaMoKG5Ln1aA=
-X-Received: by 2002:a02:74a:: with SMTP id f71mr5795794jaf.30.1613674639752;
- Thu, 18 Feb 2021 10:57:19 -0800 (PST)
+        bh=cFyQNASifwQpMLri08Ol4P6yp5dFeoJ6Rz1w04iex40=;
+        b=IMF8hs1ANiNwmmUFisKxbbZcTs+pQ+kfsHDs8++sSHLy/jlSsBwAJoXyzvygKN+heD
+         k+xnaHDu6WxjomuAF89rbDswEt8YRHMi/rzHMFoxNihgeo03580KMcnRFQm+XPUsZsvB
+         2vKG6iVHYzUJbCAtD9E1Qr/is0AGu04GiW4oFA2KfVh/iOj6E+rdqxaOopRkl6Gr4G2Z
+         ENEYiOSD6HFdvw219NDo/Q9MyM0NsRpAbu/fDEFooX8tlNZIAQwrD0oWmU0ZGrKmfxA9
+         RLCIFSzAXDRgeKagtGf8R24L8RjrT8lCOk5w1Bwq7G+Vs8MKHf6zo98MlhLFAty61GLN
+         DggA==
+X-Gm-Message-State: AOAM531vCEE26Ho44XL5x4SyY5MZW0KrH/EtrzKIbal+7RsaaZuBdQTz
+        OYUTeMBfZ33cqzpEbuC64J7PZmHD+PAtw7b4WZI=
+X-Google-Smtp-Source: ABdhPJzIe4u7R8N9hXZ7mZlqZtsMdthHDVWh1IqsLqv46KHoPGGXza+HzvNxYxde5rbeiZfOPb400z4NE3Ei7y3Na8A=
+X-Received: by 2002:a05:6512:1311:: with SMTP id x17mr3289191lfu.307.1613680881337;
+ Thu, 18 Feb 2021 12:41:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20210124184204.899729-1-amir73il@gmail.com> <20210124184204.899729-2-amir73il@gmail.com>
- <20210216162754.GF21108@quack2.suse.cz>
-In-Reply-To: <20210216162754.GF21108@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 18 Feb 2021 20:57:08 +0200
-Message-ID: <CAOQ4uxj8BbAnDQ9RyEM3fUtw7SPd38d1JsgfB2vN2Zni1UndQg@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/2] fanotify: configurable limits via sysfs
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+References: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
+ <20210215154317.8590-1-lhenriques@suse.de> <20210218074207.GA329605@infradead.org>
+ <CAOQ4uxgreB=TywvWQXfcHYMBcFm5OKSdwUC8YJY1WuVja6PccQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgreB=TywvWQXfcHYMBcFm5OKSdwUC8YJY1WuVja6PccQ@mail.gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 18 Feb 2021 14:41:10 -0600
+Message-ID: <CAH2r5ms46x-XviHDKRJEsPt64+qW+zDKwHHSO15gxsZ+a0-ToQ@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: prevent copy_file_range to copy across devices
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Luis Henriques <lhenriques@suse.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 6:27 PM Jan Kara <jack@suse.cz> wrote:
+On Thu, Feb 18, 2021 at 4:03 AM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> Hi Amir!
->
->
-> I'm sorry that I've got to this only now.
->
-> On Sun 24-01-21 20:42:03, Amir Goldstein wrote:
-> > fanotify has some hardcoded limits. The only APIs to escape those limits
-> > are FAN_UNLIMITED_QUEUE and FAN_UNLIMITED_MARKS.
+> On Thu, Feb 18, 2021 at 9:42 AM Christoph Hellwig <hch@infradead.org> wrote:
 > >
-> > Allow finer grained tuning of the system limits via sysfs tunables under
-> > /proc/sys/fs/fanotify/, similar to tunables under /proc/sys/fs/inotify,
-> > with some minor differences.
+> > Looks good:
 > >
-> > - max_queued_events - global system tunable for group queue size limit.
-> >   Like the inotify tunable with the same name, it defaults to 16384 and
-> >   applies on initialization of a new group.
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
 > >
-> > - max_listener_marks - global system tunable of marks limit per group.
-> >   Defaults to 8192. inotify has no per group marks limit.
-> >
-> > - max_user_marks - user ns tunable for marks limit per user.
-> >   Like the inotify tunable named max_user_watches, it defaults to 1048576
-> >   and is accounted for every containing user ns.
-> >
-> > - max_user_listeners - user ns tunable for number of listeners per user.
-> >   Like the inotify tunable named max_user_instances, it defaults to 128
-> >   and is accounted for every containing user ns.
+> > This whole idea of cross-device copie has always been a horrible idea,
+> > and I've been arguing against it since the patches were posted.
 >
-> I think term 'group' is used in the manpages even more and in the code as
-> well. 'listener' more generally tends to refer to the application listening
-> to the events. So I'd rather call the limits 'max_group_marks' and
-> 'max_user_groups'.
->
-> > The slightly different tunable names are derived from the "listener" and
-> > "mark" terminology used in the fanotify man pages.
-> >
-> > max_listener_marks was kept for compatibility with legacy fanotify
-> > behavior. Given that inotify max_user_instances was increased from 8192
-> > to 1048576 in kernel v5.10, we may want to consider changing also the
-> > default for max_listener_marks or remove it completely, leaving only the
-> > per user marks limit.
->
-> Yes, probably I'd just drop 'max_group_marks' completely and leave just
-> per-user marks limit. You can always tune it in init_user_ns if you wish.
-> Can't you?
->
+> Ok. I'm good with this v2 as well, but need to add the fallback to
+> do_splice_direct()
+> in nfsd_copy_file_range(), because this patch breaks it.
 
-So I am fine with making this change but what about
-FAN_UNLIMITED_MARKS?
+Interestingly, for ksmbd (cifsd) looks like they already do splice not
+copy_file_range
 
-What will it mean?
-Should the group be able to escape ucount limits?
 
+-- 
 Thanks,
-Amir.
+
+Steve
