@@ -2,189 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B18B31EA2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 14:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89C7A31EA2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Feb 2021 14:03:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233318AbhBRNAc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 08:00:32 -0500
-Received: from hmm.wantstofly.org ([213.239.204.108]:57170 "EHLO
-        mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232837AbhBRM3C (ORCPT
+        id S233327AbhBRNAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 08:00:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233083AbhBRMge (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 07:29:02 -0500
-Received: by mail.wantstofly.org (Postfix, from userid 1000)
-        id 258987F4BE; Thu, 18 Feb 2021 14:27:55 +0200 (EET)
-Date:   Thu, 18 Feb 2021 14:27:55 +0200
-From:   Lennert Buytenhek <buytenh@wantstofly.org>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Cc:     David Laight <David.Laight@aculab.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v3 2/2] io_uring: add support for IORING_OP_GETDENTS
-Message-ID: <20210218122755.GC334506@wantstofly.org>
-References: <20210218122640.GA334506@wantstofly.org>
+        Thu, 18 Feb 2021 07:36:34 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A469C061786
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 04:35:51 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id q77so1820428iod.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 04:35:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZlJ99JZQ7q/ou4SwU4854EmDgGc5VVts6YXU4XTE2SQ=;
+        b=MfCdhyfN3CFYosDGPvwxSww90E0tO6M98nKgJK0sZISib2BiAW70WvK6m7Lp9sTnqR
+         mNwkfI1DM7DQdJWMR1CeWKb1ofRQowjDBdg2T6gV61eo3pzVnPTZ7MQhUb7//eZM+sNI
+         +vZyGMdDfPrjMHkb8XOSuLGykj2Z7M/DE9tNzGkP6eRikz3u1CEqUlh5faVSRHqDqE8d
+         Wg1tB1SbHSyngtXyAcuor8WaGcDWlAKynDEU0GnL/lqwOFY9UTCvtG5lk9Jhyh6Jw0Ce
+         HYaFYcqTvhRnTo+qiaWGKywcDQjEpIBGkQSdAr93cZ7wa25BXdHUJFuQCYTWG2F+jHw4
+         pLLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZlJ99JZQ7q/ou4SwU4854EmDgGc5VVts6YXU4XTE2SQ=;
+        b=fC8nbRIU14NOHgyHWqlCRH2/VfMnrcgd49H/iSYRgV/4spRjoKsLsheWpxW7segPo2
+         GCXqjVonYuD3hf3RCY+/H4M7rJcVcayG7RAYMm1e5s3i+HNvlDKTmac+g9CyNa0tIK1W
+         3F4120MAOBrZCz+1fRX044OcVmAL1+cKAl4kgiyu9Q5OkmPSQZ0GcLiB4jW0yAz/Ka+J
+         t3eyeaswU+pdLkDKdc/4wAE3+SA6Rd3SPVnBFj9IuPAh3700f8jS5w73FYEV1uLe/q1E
+         nfMK4ItIvhsoFnjpshg7gKCwxrPU4tgQ1LAo8eFgroG0MiFFVuC9HfGkWsnv1p2GzUO6
+         suxQ==
+X-Gm-Message-State: AOAM530GckX+zi3s2SizvPhEfwzD8tv/jKWGSOZETtU28nsi6dR+BAnf
+        J+BrIVMh1F+pNfaqvVZemirilJBMHp9Chuf212jA5kXvaDQ=
+X-Google-Smtp-Source: ABdhPJy0xMjWlhXgJYEWe8sQX7G7thuZ7fd2xAdD8tLWzO0lzKHSeWW2tc+0FmfeWWMyQ2BhEcTCh1kmh06CgIN4yOU=
+X-Received: by 2002:a02:bb16:: with SMTP id y22mr4226074jan.123.1613651750771;
+ Thu, 18 Feb 2021 04:35:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210218122640.GA334506@wantstofly.org>
+References: <20210202162010.305971-1-amir73il@gmail.com> <20210216160258.GE21108@quack2.suse.cz>
+ <CAOQ4uxi7NdNQOpGResWEtRDPv+yGSTkMY99tVDVv2mkOW3g97w@mail.gmail.com>
+ <20210217112539.GC14758@quack2.suse.cz> <CAOQ4uxiEuWaw1VKwJvp5V-_dN=MZNXWro4q8OnO8qhN-r7dLhA@mail.gmail.com>
+ <20210218111558.GB16953@quack2.suse.cz>
+In-Reply-To: <20210218111558.GB16953@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 18 Feb 2021 14:35:39 +0200
+Message-ID: <CAOQ4uxj0HE1A=E3ufSVFjGa1MckkdbQz3n-tBEAS-Zx7nwOKOQ@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Performance improvement for fanotify merge
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-IORING_OP_GETDENTS behaves much like getdents64(2) and takes the same
-arguments, but with a small twist: it takes an additional offset
-argument, and reading from the specified directory starts at the given
-offset.
+On Thu, Feb 18, 2021 at 1:15 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 18-02-21 12:56:18, Amir Goldstein wrote:
+> > On Wed, Feb 17, 2021 at 1:25 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Wed 17-02-21 12:52:21, Amir Goldstein wrote:
+> > > > On Tue, Feb 16, 2021 at 6:02 PM Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > Hi Amir!
+> > > > >
+> > > > > Looking at the patches I've got one idea:
+> > > > >
+> > > > > Currently you have fsnotify_event like:
+> > > > >
+> > > > > struct fsnotify_event {
+> > > > >         struct list_head list;
+> > > > >         unsigned int key;
+> > > > >         unsigned int next_bucket;
+> > > > > };
+> > > > >
+> > > > > And 'list' is used for hashed queue list, next_bucket is used to simulate
+> > > > > single queue out of all the individual lists. The option I'm considering
+> > > > > is:
+> > > > >
+> > > > > struct fsnotify_event {
+> > > > >         struct list_head list;
+> > > > >         struct fsnotify_event *hash_next;
+> > > > >         unsigned int key;
+> > > > > };
+> > > > >
+> > > > > So 'list' would stay to be used for the single queue of events like it was
+> > > > > before your patches. 'hash_next' would be used for list of events in the
+> > > > > hash chain. The advantage of this scheme would be somewhat more obvious
+> > > > > handling,
+> > > >
+> > > > I can agree to that.
+> > > >
+> > > > > also we can handle removal of permission events (they won't be
+> > > > > hashed so there's no risk of breaking hash-chain in the middle, removal
+> > > > > from global queue is easy as currently).
+> > > >
+> > > > Ok. but I do not really see a value in hashing non-permission events
+> > > > for high priority groups, so this is not a strong argument.
+> > >
+> > > The reason why I thought it is somewhat beneficial is that someone might be
+> > > using higher priority fanotify group just for watching non-permission
+> > > events because so far the group priority makes little difference. And
+> > > conceptually it isn't obvious (from userspace POV) why higher priority
+> > > groups should be merging events less efficiently...
+> > >
+> >
+> > So I implemented your suggestion with ->next_event, but it did not
+> > end up with being able to remove from the middle of the queue.
+> > The thing is we know that permission events are on list #0, but what
+> > we need to find out when removing a permission event is the previous
+> > event in timeline order and we do not have that information.
+>
+> So my idea was that if 'list' is the time ordered list and permission
+> events are *never inserted into the hash* (we don't need them there as
+> hashed lists are used only for merging), then removal of permission events
+> is no problem.
+>
 
-For the first IORING_OP_GETDENTS call on a directory, the offset
-parameter can be set to zero, and for subsequent calls, it can be
-set to the ->d_off field of the last struct linux_dirent64 returned
-by the previous IORING_OP_GETDENTS call.
+We are still not talking in the same language.
 
-Internally, if necessary, IORING_OP_GETDENTS will vfs_llseek() to
-the right directory position before calling vfs_getdents().
+I think what you mean is use a dedicated list only for permission events
+which is not any one of the hash lists.
 
-IORING_OP_GETDENTS may or may not update the specified directory's
-file offset, and the file offset should not be relied upon having
-any particular value during or after an IORING_OP_GETDENTS call.
+In that case, get_one_event() will have to look at both the high
+priority queue and the hash queue if we want to allow mixing hashed
+event with permission events.
 
-Signed-off-by: Lennert Buytenhek <buytenh@wantstofly.org>
----
- fs/io_uring.c                 | 73 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 74 insertions(+)
+It will also mean that permission events always get priority over non-permission
+events. While this makes a lot of sense, this is not the current behavior.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 056bd4c90ade..6853bf48369a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -635,6 +635,13 @@ struct io_mkdir {
- 	struct filename			*filename;
- };
- 
-+struct io_getdents {
-+	struct file			*file;
-+	struct linux_dirent64 __user	*dirent;
-+	unsigned int			count;
-+	loff_t				pos;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -772,6 +779,7 @@ struct io_kiocb {
- 		struct io_rename	rename;
- 		struct io_unlink	unlink;
- 		struct io_mkdir		mkdir;
-+		struct io_getdents	getdents;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -1030,6 +1038,11 @@ static const struct io_op_def io_op_defs[] = {
- 		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
- 						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
- 	},
-+	[IORING_OP_GETDENTS] = {
-+		.needs_file		= 1,
-+		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
-+						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
-+	},
- };
- 
- static void io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
-@@ -4677,6 +4690,61 @@ static int io_sync_file_range(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
- }
- 
-+static int io_getdents_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_getdents *getdents = &req->getdents;
-+
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+	if (sqe->ioprio || sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+
-+	getdents->pos = READ_ONCE(sqe->off);
-+	getdents->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	getdents->count = READ_ONCE(sqe->len);
-+	return 0;
-+}
-+
-+static int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_getdents *getdents = &req->getdents;
-+	bool pos_unlock = false;
-+	int ret = 0;
-+
-+	/* getdents always requires a blocking context */
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		return -EAGAIN;
-+
-+	/* for vfs_llseek and to serialize ->iterate_shared() on this file */
-+	if (file_count(req->file) > 1) {
-+		pos_unlock = true;
-+		mutex_lock(&req->file->f_pos_lock);
-+	}
-+
-+	if (req->file->f_pos != getdents->pos) {
-+		loff_t res = vfs_llseek(req->file, getdents->pos, SEEK_SET);
-+		if (res < 0)
-+			ret = res;
-+	}
-+
-+	if (ret == 0) {
-+		ret = vfs_getdents(req->file, getdents->dirent,
-+				   getdents->count);
-+	}
-+
-+	if (pos_unlock)
-+		mutex_unlock(&req->file->f_pos_lock);
-+
-+	if (ret < 0) {
-+		if (ret == -ERESTARTSYS)
-+			ret = -EINTR;
-+		req_set_fail_links(req);
-+	}
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- #if defined(CONFIG_NET)
- static int io_setup_async_msg(struct io_kiocb *req,
- 			      struct io_async_msghdr *kmsg)
-@@ -6184,6 +6252,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_unlinkat_prep(req, sqe);
- 	case IORING_OP_MKDIRAT:
- 		return io_mkdirat_prep(req, sqe);
-+	case IORING_OP_GETDENTS:
-+		return io_getdents_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6428,6 +6498,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
- 	case IORING_OP_MKDIRAT:
- 		ret = io_mkdirat(req, issue_flags);
- 		break;
-+	case IORING_OP_GETDENTS:
-+		ret = io_getdents(req, issue_flags);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 890edd850a9e..fe097b1fa332 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -138,6 +138,7 @@ enum {
- 	IORING_OP_RENAMEAT,
- 	IORING_OP_UNLINKAT,
- 	IORING_OP_MKDIRAT,
-+	IORING_OP_GETDENTS,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.29.2
+So what am I missing?
+
+Thanks,
+Amir.
