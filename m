@@ -2,127 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD9631FA61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Feb 2021 15:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6474331FA7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Feb 2021 15:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230091AbhBSONQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Feb 2021 09:13:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60188 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229799AbhBSONJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Feb 2021 09:13:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1613743942; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E+USPRqgN/Kvs1vKcFSGjJ866vTEg0TvC4G84Ip+KFg=;
-        b=VVGs6Gzbps3TiRPDVnJniqgF440MGZD562bPBpZzHg+L/83JMZABxDLxLUuNh8RyIQ5FX+
-        5do62w8Y5b3/gjk2YbNAJXSAyXbdysChF7Ep7U6HlDVLE96BgnFmUfYI6DzRGzStyPuCh6
-        /UscW72CNfGAS+2RP13mtY4I8/woSKg=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A889FABAE;
-        Fri, 19 Feb 2021 14:12:22 +0000 (UTC)
-Date:   Fri, 19 Feb 2021 15:12:21 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, song.bao.hua@hisilicon.com, david@redhat.com,
-        naoya.horiguchi@nec.com, joao.m.martins@oracle.com,
-        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v16 4/9] mm: hugetlb: alloc the vmemmap pages associated
- with each HugeTLB page
-Message-ID: <YC/HRTq1MRaDWn7O@dhcp22.suse.cz>
-References: <20210219104954.67390-1-songmuchun@bytedance.com>
- <20210219104954.67390-5-songmuchun@bytedance.com>
+        id S229998AbhBSOXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Feb 2021 09:23:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41936 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229553AbhBSOXz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 19 Feb 2021 09:23:55 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CC3C061574;
+        Fri, 19 Feb 2021 06:23:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Wz2Nx7ok9lIMmSB/ZDAfj7FZQpYP3BsNpceZvExmG8g=; b=oJ27mjRsxdwn++86shGQQ0Ca8/
+        OuU2704ESLy2oaUOwstVOYpQPuKy/GEixxBwJx00zH0W7fjw20AY63bV65/Oa0ur4NyzjoWasYihe
+        t4ko8q6a7kGbySkINIkluQrF/ux1c4t4e/wB3a/MW1KwL/zxKbfsY5U0mIIkMesz1qtsOPrBSOBBW
+        SMcPJ2PPdtR2JZSleCxBfkjuN+Fh2QMx7pYzOtDRsL24S1PJRL2Y2HFEFkZXV19sewaSQD1SyOorw
+        21itSWWa8cC/GBLC1dL9BJhUYPs2lMJjckRrI/O6Oz4Akkm1lLkBNyEuPVOuDzs98bdC6jUH7g+Ky
+        zV9MigZA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lD6fR-002xwD-Bj; Fri, 19 Feb 2021 14:22:27 +0000
+Date:   Fri, 19 Feb 2021 14:22:01 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Erik Jensen <erikjensen@rkjnsn.net>
+Cc:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: page->index limitation on 32bit system?
+Message-ID: <20210219142201.GU2858050@casper.infradead.org>
+References: <1783f16d-7a28-80e6-4c32-fdf19b705ed0@gmx.com>
+ <20210218121503.GQ2858050@casper.infradead.org>
+ <927c018f-c951-c44c-698b-cb76d15d67bb@rkjnsn.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210219104954.67390-5-songmuchun@bytedance.com>
+In-Reply-To: <927c018f-c951-c44c-698b-cb76d15d67bb@rkjnsn.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 19-02-21 18:49:49, Muchun Song wrote:
-> When we free a HugeTLB page to the buddy allocator, we should allocate
-> the vmemmap pages associated with it. But we may cannot allocate vmemmap
-> pages when the system is under memory pressure, in this case, we just
-> refuse to free the HugeTLB page instead of looping forever trying to
-> allocate the pages. This changes some behavior (list below) on some
-> corner cases.
+On Thu, Feb 18, 2021 at 01:27:09PM -0800, Erik Jensen wrote:
+> On 2/18/21 4:15 AM, Matthew Wilcox wrote:
 > 
->  1) Failing to free a huge page triggered by the user (decrease nr_pages).
+> > On Thu, Feb 18, 2021 at 04:54:46PM +0800, Qu Wenruo wrote:
+> > > Recently we got a strange bug report that, one 32bit systems like armv6
+> > > or non-64bit x86, certain large btrfs can't be mounted.
+> > > 
+> > > It turns out that, since page->index is just unsigned long, and on 32bit
+> > > systemts, that can just be 32bit.
+> > > 
+> > > And when filesystems is utilizing any page offset over 4T, page->index
+> > > get truncated, causing various problems.
+> > 4TB?  I think you mean 16TB (4kB * 4GB)
+> > 
+> > Yes, this is a known limitation.  Some vendors have gone to the trouble
+> > of introducing a new page_index_t.  I'm not convinced this is a problem
+> > worth solving.  There are very few 32-bit systems with this much storage
+> > on a single partition (everything should work fine if you take a 20TB
+> > drive and partition it into two 10TB partitions).
+> For what it's worth, I'm the reporter of the original bug. My use case is a
+> custom NAS system. It runs on a 32-bit ARM processor, and has 5 8TB drives,
+> which I'd like to use as a single, unified storage array. I chose btrfs for
+> this project due to the filesystem-integrated snapshots and checksums.
+> Currently, I'm working around this issue by exporting the raw drives using
+> nbd and mounting them on a 64-bit system to access the filesystem, but this
+> is very inconvenient, only allows one machine to access the filesystem at a
+> time, and prevents running any tools that need access to the filesystem
+> (such as backup and file sync utilities) on the NAS itself.
 > 
->     Need try again later by the user.
+> It sounds like this limitation would also prevent me from trying to use a
+> different filesystem on top of software RAID, since in that case the logical
+> filesystem would still be over 16TB.
 > 
->  2) Failing to free a surplus huge page when freed by the application.
-> 
->     Try again later when freeing a huge page next time.
+> > As usual, the best solution is for people to stop buying 32-bit systems.
+> I purchased this device in 2018, so it's not exactly ancient. At the time,
+> it was the only SBC I could find that was low power, used ECC RAM, had a
+> crypto accelerator, and had multiple sata ports with port-multiplier
+> support.
 
-This means that surplus pages can accumulate right? This should be
-rather unlikely because one released huge page could then be reused for
-normal allocations - including vmemmap. Unlucky timing might still end
-up in the accumulation though. Not something critical though.
+I'm sorry you bought unsupported hardware.
 
->  3) Failing to dissolve a free huge page on ZONE_MOVABLE via
->     offline_pages().
-> 
->     This is a bit unfortunate if we have plenty of ZONE_MOVABLE memory
->     but are low on kernel memory. For example, migration of huge pages
->     would still work, however, dissolving the free page does not work.
->     This is a corner cases. When the system is that much under memory
->     pressure, offlining/unplug can be expected to fail.
+This limitation has been known since at least 2009:
+https://lore.kernel.org/lkml/19041.4714.686158.130252@notabene.brown/
 
-Please mention that this is unfortunate because it prevents from the
-memory offlining which shouldn't happen for movable zones. People
-depending on the memory hotplug and movable zone should carefuly
-consider whether savings on unmovable memory are worth losing their
-hotplug functionality in some situations.
+In the last decade, nobody's tried to fix it in mainline that I know of.
+As I said, some vendors have tried to fix it in their NAS products,
+but I don't know where to find that patch any more.
 
->  4) Failing to dissolve a huge page on CMA/ZONE_MOVABLE via
->     alloc_contig_range() - once we have that handling in place. Mainly
->     affects CMA and virtio-mem.
-
-What about hugetlb page poisoning on HW failure (resp. soft offlining)?
-
-> 
->     Similar to 3). virito-mem will handle migration errors gracefully.
->     CMA might be able to fallback on other free areas within the CMA
->     region.
-> 
-> We do not want to use GFP_ATOMIC to allocate vmemmap pages. Because it
-> grants access to memory reserves and we do not think it is reasonable
-> to use memory reserves. We use GFP_KERNEL in alloc_huge_page_vmemmap().
-
-This likely needs more context around. Maybe something like
-"
-Vmemmap pages are allocated from the page freeing context. In order for
-those allocations to be not disruptive (e.g. trigger oom killer)
-__GFP_NORETRY is used. hugetlb_lock is dropped for the allocation
-because a non sleeping allocation would be too fragile and it could fail
-too easily under memory pressure. GFP_ATOMIC or other modes to access
-memory reserves is not used because we want to prevent consuming
-reserves under heavy hugetlb freeing.
-"
-
-I haven't gone through the patch in a great detail yet, from a high
-level POV it looks good although the counter changes and reshuffling
-seems little wild. That requires a more detailed look I do not have time
-for right now. Mike would be much better for that anywya ;)
-
-I do not see any check for an atomic context in free_huge_page path. I
-have suggested to replace in_task by in_atomic check (with a gotcha that
-the later doesn't work without preempt_count but there is a work to
-address that).
--- 
-Michal Hocko
-SUSE Labs
+https://bootlin.com/blog/large-page-support-for-nas-systems-on-32-bit-arm/
+might help you, but btrfs might still contain assumptions that will trip
+you up.
