@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD55131F36C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Feb 2021 01:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A7131F36E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Feb 2021 01:51:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbhBSAuQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 19:50:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37876 "EHLO
+        id S229983AbhBSAuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 19:50:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229925AbhBSAuA (ORCPT
+        with ESMTP id S229927AbhBSAuA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 18 Feb 2021 19:50:00 -0500
-Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18026C0617A7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 16:48:42 -0800 (PST)
-Received: by mail-qk1-x74a.google.com with SMTP id p27so2491561qkp.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 16:48:42 -0800 (PST)
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E5EC0617A9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 16:48:43 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id u3so4765748ybj.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 16:48:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:in-reply-to:message-id:mime-version:references:subject
          :from:to:cc;
-        bh=1cwm5N3iRSXNZcDifIiTRhsYT8Ky/UdIpcuK8zvOJso=;
-        b=KOIP0f7r/7awfBYAwsiP/am4wnAatFFEUV0C/ZGa1HGU4QPkDXqyQT7hMY06fmCKpn
-         pOeD7L0zsDoWrUSccbB/A6Xgn1Iix2vRx7bd4VMXz48CnhGVZKtbqRTamescV20PnCT9
-         Z6y4D9UXmogsLgHVKFxXJInlJSbJifOEvMNDG5OI5cZFC/pdDWMFoVVEU929qqb8V4jM
-         yP/+a4bKQ50e7fVm+b2KZco77RZC23ckyqym29kxbN01uYvQbFYkLxJb8UMKR0a/LmHt
-         HBDf+qWky+cTz/zlyvFkj48fQMR1P7bYIH1MMUW5Ozz6SYAl3qWbTcUlZ2xkl8nyVZEX
-         Ut4w==
+        bh=GazJDzV5iyx2MTSXdqNNeepmMt1dNbBmqdH0ILdgqPs=;
+        b=uAettp44g+s99GvJt/vkUX9VHvkl0Sy1qAmvv4M7DrRctp89/osKXDQyGHaCiWyRRV
+         BH40OeOmOYSEsRQsWGboEdkssDnTSR0Vnkk1VLSGdWMuDpE0ylkAqz3RiofhEtsvDC+S
+         R6tLX4uV9q4IJaOdFwI9CNOgQa0+T2FXPRYaempHXgnHPVxrkaM5Hyb8fleiNxAZYdOn
+         mw2DGMkrmN/ymUIywCnlzl6SZGz9qleuGrYpiLWVOc7sAMp+3E2bwHFmVQvgeNfFORMh
+         Bgu3+R6v0rVjDn9nAL3mRzNgv8y5e0AOMo4TykZLsghFYXzrNRgTmPMjq9V73ylqwuO9
+         wIeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=1cwm5N3iRSXNZcDifIiTRhsYT8Ky/UdIpcuK8zvOJso=;
-        b=AvR9uUCC+ASKWSXGFtC8BElRGO2ONM8fQdyC1gnP/wTIeBUtDHtiK2WMODaBYCT3M7
-         a0inMQraUAUEAHyfx+QGOVeR8brXbHOT9iOYIMDXtTfQbR4RSYvOvmSZe3bghx1I0Jbp
-         T/pPqDk3GuU4xVa+Gyp48Lx4qw0aIwMC9X8kldvRJV/znjCTDb04rpdfpYDqluib7z8F
-         qphGIXbSnaqQCcq+l7YagVh1QgNbfG7qG/1MdpSgWvjYgznB1029uFBBjPKMZlOWXmA6
-         6HH5MMr9LIwKBcODXxVJb7UEwdJm8a5IMmIdx1sUGRkMxSsZiQFh6CjISigsC0Jf/vVB
-         a0Jw==
-X-Gm-Message-State: AOAM533km/c8jfH3xsKXALgMfsIK7fitfQy/ZMlwqwDVnPKttMJZ2+MD
-        o5ywFXKPHmhSQdg+0l0VnVHF24qonpmuaQ62SoM3
-X-Google-Smtp-Source: ABdhPJz4vhWFuVnp5vZJkaSLtjDx8IU8+aqy5+CrhvbiTfNv/ouXJ3YO2ta6NPQxm5kqWb2YzvielKKWLm4hxSFVydyd
+        bh=GazJDzV5iyx2MTSXdqNNeepmMt1dNbBmqdH0ILdgqPs=;
+        b=X9D1u2HtHqyp5sNf8vxJbUI9HvxlwKC67cP99schhFLfVBBe0uFQ1wFMPUm1pa03Lj
+         wj3daPyJBItritrpkXOCP/SwNjFW65pObljcHQqdQcdxl0nBwfLnYgDrpwaAtSV15CrC
+         ss1skP7kp7aNZcnJp7dt5Aotl0yOtMDeiRi8XEWu9JAr8BgcdjeqKZBJX+WMD1OVpp3X
+         4GGyEFVxkaBXyrDp9zE/SpBBryjdDlMJGO3hgCyYh48KDGTUD6PtGFXt2aNMGq1rDo46
+         OVdLyoO1aFVq8zMx+c0cbxzCmMkiy4KMJmfh12UKPHSTKe6T+Cv9bCF7T/xrgrnmPhBY
+         Cufg==
+X-Gm-Message-State: AOAM530TTlklhMQ0ZQVJm5qMWoA8KLEUrspzdTkVZYUcUwXo0oF0Q/IL
+        a/GQ8Koktp/fmc5KRdWXItG/cORVRcY9C1NEhqSb
+X-Google-Smtp-Source: ABdhPJz6OZdV4/Q0vRGTvqWRKliDiOA2hvToDmBsTmJRZ5syQ4cbAr5bkxD/hD1NT1+Ye10btiPT1c/v+FZZc2MS9TRz
 Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
 X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:e939:4cce:117:5af3])
- (user=axelrasmussen job=sendgmr) by 2002:a0c:dd05:: with SMTP id
- u5mr7037895qvk.54.1613695721183; Thu, 18 Feb 2021 16:48:41 -0800 (PST)
-Date:   Thu, 18 Feb 2021 16:48:23 -0800
+ (user=axelrasmussen job=sendgmr) by 2002:a25:d84b:: with SMTP id
+ p72mr9845138ybg.272.1613695723172; Thu, 18 Feb 2021 16:48:43 -0800 (PST)
+Date:   Thu, 18 Feb 2021 16:48:24 -0800
 In-Reply-To: <20210219004824.2899045-1-axelrasmussen@google.com>
-Message-Id: <20210219004824.2899045-6-axelrasmussen@google.com>
+Message-Id: <20210219004824.2899045-7-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20210219004824.2899045-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.30.0.617.g56c4b15f3c-goog
-Subject: [PATCH v7 5/6] userfaultfd: update documentation to describe minor
- fault handling
+Subject: [PATCH v7 6/6] userfaultfd/selftests: add test exercising minor fault handling
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
@@ -91,158 +90,327 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reword / reorganize things a little bit into "lists", so new features /
-modes / ioctls can sort of just be appended.
+Fix a dormant bug in userfaultfd_events_test(), where we did
+`return faulting_process(0)` instead of `exit(faulting_process(0))`.
+This caused the forked process to keep running, trying to execute any
+further test cases after the events test in parallel with the "real"
+process.
 
-Describe how UFFDIO_REGISTER_MODE_MINOR and UFFDIO_CONTINUE can be used
-to intercept and resolve minor faults. Make it clear that COPY and
-ZEROPAGE are used for MISSING faults, whereas CONTINUE is used for MINOR
-faults.
+Add a simple test case which exercises minor faults. In short, it does
+the following:
 
+1. "Sets up" an area (area_dst) and a second shared mapping to the same
+   underlying pages (area_dst_alias).
+
+2. Register one of these areas with userfaultfd, in minor fault mode.
+
+3. Start a second thread to handle any minor faults.
+
+4. Populate the underlying pages with the non-UFFD-registered side of
+   the mapping. Basically, memset() each page with some arbitrary
+   contents.
+
+5. Then, using the UFFD-registered mapping, read all of the page
+   contents, asserting that the contents match expectations (we expect
+   the minor fault handling thread can modify the page contents before
+   resolving the fault).
+
+The minor fault handling thread, upon receiving an event, flips all the
+bits (~) in that page, just to prove that it can modify it in some
+arbitrary way. Then it issues a UFFDIO_CONTINUE ioctl, to setup the
+mapping and resolve the fault. The reading thread should wake up and see
+this modification.
+
+Currently the minor fault test is only enabled in hugetlb_shared mode,
+as this is the only configuration the kernel feature supports.
+
+Reviewed-by: Peter Xu <peterx@redhat.com>
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- Documentation/admin-guide/mm/userfaultfd.rst | 107 ++++++++++++-------
- 1 file changed, 66 insertions(+), 41 deletions(-)
+ tools/testing/selftests/vm/userfaultfd.c | 164 ++++++++++++++++++++++-
+ 1 file changed, 158 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
-index 65eefa66c0ba..3aa38e8b8361 100644
---- a/Documentation/admin-guide/mm/userfaultfd.rst
-+++ b/Documentation/admin-guide/mm/userfaultfd.rst
-@@ -63,36 +63,36 @@ the generic ioctl available.
+diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+index 92b8ec423201..f5ab5e0312e7 100644
+--- a/tools/testing/selftests/vm/userfaultfd.c
++++ b/tools/testing/selftests/vm/userfaultfd.c
+@@ -81,6 +81,8 @@ static volatile bool test_uffdio_copy_eexist = true;
+ static volatile bool test_uffdio_zeropage_eexist = true;
+ /* Whether to test uffd write-protection */
+ static bool test_uffdio_wp = false;
++/* Whether to test uffd minor faults */
++static bool test_uffdio_minor = false;
  
- The ``uffdio_api.features`` bitmask returned by the ``UFFDIO_API`` ioctl
- defines what memory types are supported by the ``userfaultfd`` and what
--events, except page fault notifications, may be generated.
--
--If the kernel supports registering ``userfaultfd`` ranges on hugetlbfs
--virtual memory areas, ``UFFD_FEATURE_MISSING_HUGETLBFS`` will be set in
--``uffdio_api.features``. Similarly, ``UFFD_FEATURE_MISSING_SHMEM`` will be
--set if the kernel supports registering ``userfaultfd`` ranges on shared
--memory (covering all shmem APIs, i.e. tmpfs, ``IPCSHM``, ``/dev/zero``,
--``MAP_SHARED``, ``memfd_create``, etc).
--
--The userland application that wants to use ``userfaultfd`` with hugetlbfs
--or shared memory need to set the corresponding flag in
--``uffdio_api.features`` to enable those features.
--
--If the userland desires to receive notifications for events other than
--page faults, it has to verify that ``uffdio_api.features`` has appropriate
--``UFFD_FEATURE_EVENT_*`` bits set. These events are described in more
--detail below in `Non-cooperative userfaultfd`_ section.
--
--Once the ``userfaultfd`` has been enabled the ``UFFDIO_REGISTER`` ioctl should
--be invoked (if present in the returned ``uffdio_api.ioctls`` bitmask) to
--register a memory range in the ``userfaultfd`` by setting the
-+events, except page fault notifications, may be generated:
-+
-+- The ``UFFD_FEATURE_EVENT_*`` flags indicate that various other events
-+  other than page faults are supported. These events are described in more
-+  detail below in the `Non-cooperative userfaultfd`_ section.
-+
-+- ``UFFD_FEATURE_MISSING_HUGETLBFS`` and ``UFFD_FEATURE_MISSING_SHMEM``
-+  indicate that the kernel supports ``UFFDIO_REGISTER_MODE_MISSING``
-+  registrations for hugetlbfs and shared memory (covering all shmem APIs,
-+  i.e. tmpfs, ``IPCSHM``, ``/dev/zero``, ``MAP_SHARED``, ``memfd_create``,
-+  etc) virtual memory areas, respectively.
-+
-+- ``UFFD_FEATURE_MINOR_HUGETLBFS`` indicates that the kernel supports
-+  ``UFFDIO_REGISTER_MODE_MINOR`` registration for hugetlbfs virtual memory
-+  areas.
-+
-+The userland application should set the feature flags it intends to use
-+when invoking the ``UFFDIO_API`` ioctl, to request that those features be
-+enabled if supported.
-+
-+Once the ``userfaultfd`` API has been enabled the ``UFFDIO_REGISTER``
-+ioctl should be invoked (if present in the returned ``uffdio_api.ioctls``
-+bitmask) to register a memory range in the ``userfaultfd`` by setting the
- uffdio_register structure accordingly. The ``uffdio_register.mode``
- bitmask will specify to the kernel which kind of faults to track for
--the range (``UFFDIO_REGISTER_MODE_MISSING`` would track missing
--pages). The ``UFFDIO_REGISTER`` ioctl will return the
-+the range. The ``UFFDIO_REGISTER`` ioctl will return the
- ``uffdio_register.ioctls`` bitmask of ioctls that are suitable to resolve
- userfaults on the range registered. Not all ioctls will necessarily be
--supported for all memory types depending on the underlying virtual
--memory backend (anonymous memory vs tmpfs vs real filebacked
--mappings).
-+supported for all memory types (e.g. anonymous memory vs. shmem vs.
-+hugetlbfs), or all types of intercepted faults.
+ static bool map_shared;
+ static int huge_fd;
+@@ -96,6 +98,7 @@ struct uffd_stats {
+ 	int cpu;
+ 	unsigned long missing_faults;
+ 	unsigned long wp_faults;
++	unsigned long minor_faults;
+ };
  
- Userland can use the ``uffdio_register.ioctls`` to manage the virtual
- address space in the background (to add or potentially also remove
-@@ -100,21 +100,46 @@ memory from the ``userfaultfd`` registered range). This means a userfault
- could be triggering just before userland maps in the background the
- user-faulted page.
+ /* pthread_mutex_t starts at page offset 0 */
+@@ -153,17 +156,19 @@ static void uffd_stats_reset(struct uffd_stats *uffd_stats,
+ 		uffd_stats[i].cpu = i;
+ 		uffd_stats[i].missing_faults = 0;
+ 		uffd_stats[i].wp_faults = 0;
++		uffd_stats[i].minor_faults = 0;
+ 	}
+ }
  
--The primary ioctl to resolve userfaults is ``UFFDIO_COPY``. That
--atomically copies a page into the userfault registered range and wakes
--up the blocked userfaults
--(unless ``uffdio_copy.mode & UFFDIO_COPY_MODE_DONTWAKE`` is set).
--Other ioctl works similarly to ``UFFDIO_COPY``. They're atomic as in
--guaranteeing that nothing can see an half copied page since it'll
--keep userfaulting until the copy has finished.
-+Resolving Userfaults
-+--------------------
-+
-+There are three basic ways to resolve userfaults:
-+
-+- ``UFFDIO_COPY`` atomically copies some existing page contents from
-+  userspace.
-+
-+- ``UFFDIO_ZEROPAGE`` atomically zeros the new page.
-+
-+- ``UFFDIO_CONTINUE`` maps an existing, previously-populated page.
-+
-+These operations are atomic in the sense that they guarantee nothing can
-+see a half-populated page, since readers will keep userfaulting until the
-+operation has finished.
-+
-+By default, these wake up userfaults blocked on the range in question.
-+They support a ``UFFDIO_*_MODE_DONTWAKE`` ``mode`` flag, which indicates
-+that waking will be done separately at some later time.
-+
-+Which ioctl to choose depends on the kind of page fault, and what we'd
-+like to do to resolve it:
-+
-+- For ``UFFDIO_REGISTER_MODE_MISSING`` faults, the fault needs to be
-+  resolved by either providing a new page (``UFFDIO_COPY``), or mapping
-+  the zero page (``UFFDIO_ZEROPAGE``). By default, the kernel would map
-+  the zero page for a missing fault. With userfaultfd, userspace can
-+  decide what content to provide before the faulting thread continues.
-+
-+- For ``UFFDIO_REGISTER_MODE_MINOR`` faults, there is an existing page (in
-+  the page cache). Userspace has the option of modifying the page's
-+  contents before resolving the fault. Once the contents are correct
-+  (modified or not), userspace asks the kernel to map the page and let the
-+  faulting thread continue with ``UFFDIO_CONTINUE``.
+ static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
+ {
+ 	int i;
+-	unsigned long long miss_total = 0, wp_total = 0;
++	unsigned long long miss_total = 0, wp_total = 0, minor_total = 0;
  
- Notes:
+ 	for (i = 0; i < n_cpus; i++) {
+ 		miss_total += stats[i].missing_faults;
+ 		wp_total += stats[i].wp_faults;
++		minor_total += stats[i].minor_faults;
+ 	}
  
--- If you requested ``UFFDIO_REGISTER_MODE_MISSING`` when registering then
--  you must provide some kind of page in your thread after reading from
--  the uffd.  You must provide either ``UFFDIO_COPY`` or ``UFFDIO_ZEROPAGE``.
--  The normal behavior of the OS automatically providing a zero page on
--  an anonymous mmaping is not in place.
-+- You can tell which kind of fault occurred by examining
-+  ``pagefault.flags`` within the ``uffd_msg``, checking for the
-+  ``UFFD_PAGEFAULT_FLAG_*`` flags.
+ 	printf("userfaults: %llu missing (", miss_total);
+@@ -172,6 +177,9 @@ static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
+ 	printf("\b), %llu wp (", wp_total);
+ 	for (i = 0; i < n_cpus; i++)
+ 		printf("%lu+", stats[i].wp_faults);
++	printf("\b), %llu minor (", minor_total);
++	for (i = 0; i < n_cpus; i++)
++		printf("%lu+", stats[i].minor_faults);
+ 	printf("\b)\n");
+ }
  
- - None of the page-delivering ioctls default to the range that you
-   registered with.  You must fill in all fields for the appropriate
-@@ -122,9 +147,9 @@ Notes:
+@@ -328,7 +336,7 @@ static struct uffd_test_ops shmem_uffd_test_ops = {
+ };
  
- - You get the address of the access that triggered the missing page
-   event out of a struct uffd_msg that you read in the thread from the
--  uffd.  You can supply as many pages as you want with ``UFFDIO_COPY`` or
--  ``UFFDIO_ZEROPAGE``.  Keep in mind that unless you used DONTWAKE then
--  the first of any of those IOCTLs wakes up the faulting thread.
-+  uffd.  You can supply as many pages as you want with these IOCTLs.
-+  Keep in mind that unless you used DONTWAKE then the first of any of
-+  those IOCTLs wakes up the faulting thread.
+ static struct uffd_test_ops hugetlb_uffd_test_ops = {
+-	.expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC,
++	.expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC & ~(1 << _UFFDIO_CONTINUE),
+ 	.allocate_area	= hugetlb_allocate_area,
+ 	.release_pages	= hugetlb_release_pages,
+ 	.alias_mapping = hugetlb_alias_mapping,
+@@ -362,6 +370,22 @@ static void wp_range(int ufd, __u64 start, __u64 len, bool wp)
+ 	}
+ }
  
- - Be sure to test for all errors including
-   (``pollfd[0].revents & POLLERR``).  This can happen, e.g. when ranges
++static void continue_range(int ufd, __u64 start, __u64 len)
++{
++	struct uffdio_continue req;
++
++	req.range.start = start;
++	req.range.len = len;
++	req.mode = 0;
++
++	if (ioctl(ufd, UFFDIO_CONTINUE, &req)) {
++		fprintf(stderr,
++			"UFFDIO_CONTINUE failed for address 0x%" PRIx64 "\n",
++			(uint64_t)start);
++		exit(1);
++	}
++}
++
+ static void *locking_thread(void *arg)
+ {
+ 	unsigned long cpu = (unsigned long) arg;
+@@ -569,8 +593,32 @@ static void uffd_handle_page_fault(struct uffd_msg *msg,
+ 	}
+ 
+ 	if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP) {
++		/* Write protect page faults */
+ 		wp_range(uffd, msg->arg.pagefault.address, page_size, false);
+ 		stats->wp_faults++;
++	} else if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_MINOR) {
++		uint8_t *area;
++		int b;
++
++		/*
++		 * Minor page faults
++		 *
++		 * To prove we can modify the original range for testing
++		 * purposes, we're going to bit flip this range before
++		 * continuing.
++		 *
++		 * Note that this requires all minor page fault tests operate on
++		 * area_dst (non-UFFD-registered) and area_dst_alias
++		 * (UFFD-registered).
++		 */
++
++		area = (uint8_t *)(area_dst +
++				   ((char *)msg->arg.pagefault.address -
++				    area_dst_alias));
++		for (b = 0; b < page_size; ++b)
++			area[b] = ~area[b];
++		continue_range(uffd, msg->arg.pagefault.address, page_size);
++		stats->minor_faults++;
+ 	} else {
+ 		/* Missing page faults */
+ 		if (bounces & BOUNCE_VERIFY &&
+@@ -779,7 +827,7 @@ static int stress(struct uffd_stats *uffd_stats)
+ 	return 0;
+ }
+ 
+-static int userfaultfd_open(int features)
++static int userfaultfd_open_ext(uint64_t *features)
+ {
+ 	struct uffdio_api uffdio_api;
+ 
+@@ -792,7 +840,7 @@ static int userfaultfd_open(int features)
+ 	uffd_flags = fcntl(uffd, F_GETFD, NULL);
+ 
+ 	uffdio_api.api = UFFD_API;
+-	uffdio_api.features = features;
++	uffdio_api.features = *features;
+ 	if (ioctl(uffd, UFFDIO_API, &uffdio_api)) {
+ 		fprintf(stderr, "UFFDIO_API failed.\nPlease make sure to "
+ 			"run with either root or ptrace capability.\n");
+@@ -804,9 +852,15 @@ static int userfaultfd_open(int features)
+ 		return 1;
+ 	}
+ 
++	*features = uffdio_api.features;
+ 	return 0;
+ }
+ 
++static int userfaultfd_open(uint64_t features)
++{
++	return userfaultfd_open_ext(&features);
++}
++
+ sigjmp_buf jbuf, *sigbuf;
+ 
+ static void sighndl(int sig, siginfo_t *siginfo, void *ptr)
+@@ -1112,7 +1166,7 @@ static int userfaultfd_events_test(void)
+ 	}
+ 
+ 	if (!pid)
+-		return faulting_process(0);
++		exit(faulting_process(0));
+ 
+ 	waitpid(pid, &err, 0);
+ 	if (err) {
+@@ -1215,6 +1269,102 @@ static int userfaultfd_sig_test(void)
+ 	return userfaults != 0;
+ }
+ 
++static int userfaultfd_minor_test(void)
++{
++	struct uffdio_register uffdio_register;
++	unsigned long expected_ioctls;
++	unsigned long p;
++	pthread_t uffd_mon;
++	uint8_t expected_byte;
++	void *expected_page;
++	char c;
++	struct uffd_stats stats = { 0 };
++	uint64_t features = UFFD_FEATURE_MINOR_HUGETLBFS;
++
++	if (!test_uffdio_minor)
++		return 0;
++
++	printf("testing minor faults: ");
++	fflush(stdout);
++
++	if (uffd_test_ops->release_pages(area_dst))
++		return 1;
++
++	if (userfaultfd_open_ext(&features))
++		return 1;
++	/* If kernel reports the feature isn't supported, skip the test. */
++	if (!(features & UFFD_FEATURE_MINOR_HUGETLBFS)) {
++		printf("skipping test due to lack of feature support\n");
++		fflush(stdout);
++		return 0;
++	}
++
++	uffdio_register.range.start = (unsigned long)area_dst_alias;
++	uffdio_register.range.len = nr_pages * page_size;
++	uffdio_register.mode = UFFDIO_REGISTER_MODE_MINOR;
++	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register)) {
++		fprintf(stderr, "register failure\n");
++		exit(1);
++	}
++
++	expected_ioctls = uffd_test_ops->expected_ioctls;
++	expected_ioctls |= 1 << _UFFDIO_CONTINUE;
++	if ((uffdio_register.ioctls & expected_ioctls) != expected_ioctls) {
++		fprintf(stderr, "unexpected missing ioctl(s)\n");
++		exit(1);
++	}
++
++	/*
++	 * After registering with UFFD, populate the non-UFFD-registered side of
++	 * the shared mapping. This should *not* trigger any UFFD minor faults.
++	 */
++	for (p = 0; p < nr_pages; ++p) {
++		memset(area_dst + (p * page_size), p % ((uint8_t)-1),
++		       page_size);
++	}
++
++	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, &stats)) {
++		perror("uffd_poll_thread create");
++		exit(1);
++	}
++
++	/*
++	 * Read each of the pages back using the UFFD-registered mapping. We
++	 * expect that the first time we touch a page, it will result in a minor
++	 * fault. uffd_poll_thread will resolve the fault by bit-flipping the
++	 * page's contents, and then issuing a CONTINUE ioctl.
++	 */
++
++	if (posix_memalign(&expected_page, page_size, page_size)) {
++		fprintf(stderr, "out of memory\n");
++		return 1;
++	}
++
++	for (p = 0; p < nr_pages; ++p) {
++		expected_byte = ~((uint8_t)(p % ((uint8_t)-1)));
++		memset(expected_page, expected_byte, page_size);
++		if (my_bcmp(expected_page, area_dst_alias + (p * page_size),
++			    page_size)) {
++			fprintf(stderr,
++				"unexpected page contents after minor fault\n");
++			exit(1);
++		}
++	}
++
++	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c)) {
++		perror("pipe write");
++		exit(1);
++	}
++	if (pthread_join(uffd_mon, NULL))
++		return 1;
++
++	close(uffd);
++
++	uffd_stats_report(&stats, 1);
++
++	return stats.missing_faults != 0 || stats.minor_faults != nr_pages;
++}
++
+ static int userfaultfd_stress(void)
+ {
+ 	void *area;
+@@ -1413,7 +1563,7 @@ static int userfaultfd_stress(void)
+ 
+ 	close(uffd);
+ 	return userfaultfd_zeropage_test() || userfaultfd_sig_test()
+-		|| userfaultfd_events_test();
++		|| userfaultfd_events_test() || userfaultfd_minor_test();
+ }
+ 
+ /*
+@@ -1454,6 +1604,8 @@ static void set_test_type(const char *type)
+ 		map_shared = true;
+ 		test_type = TEST_HUGETLB;
+ 		uffd_test_ops = &hugetlb_uffd_test_ops;
++		/* Minor faults require shared hugetlb; only enable here. */
++		test_uffdio_minor = true;
+ 	} else if (!strcmp(type, "shmem")) {
+ 		map_shared = true;
+ 		test_type = TEST_SHMEM;
 -- 
 2.30.0.617.g56c4b15f3c-goog
 
