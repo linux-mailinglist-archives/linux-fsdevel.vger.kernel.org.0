@@ -2,172 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D8A31F2F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Feb 2021 00:21:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88AAF31F35F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Feb 2021 01:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229787AbhBRXVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Feb 2021 18:21:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbhBRXVy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Feb 2021 18:21:54 -0500
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2170C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 15:21:13 -0800 (PST)
-Received: by mail-oi1-x22f.google.com with SMTP id r75so3919060oie.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Feb 2021 15:21:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xEIVc+vQWriCkNYhFpstAFofB52ZFALeJcABj2wsqhc=;
-        b=jDt5GopaK8zN5wP04scD4w78fTJ48VcmEfXVLKOfcbNh/1CjTeq9BqmsTJPIxnICoY
-         gNYiT3wvvye3MuNpdHVWx1MOx0tO/P1WnbcPnH7jV2/V4wHcLZ4OT+7Gsc7eLH8/jdlY
-         edvzQs1v9s+PY5jjEJwVNSLCjXeszcc7tHWWTkzgNGYj0XXcZ0J7yDUfjYatTbXTvWNP
-         pk+eZITrLwb64iSXeLlDUBZ6CFsgdia8mL7aX4SRFKcBwvlIyYJxoEwVjQ/XvMPpD2Ey
-         OaqD0Ef4eos9r1rw1VNYcbPNkdax2DcBzncBOQaT+N0jZ39XJdM0o8AdtcwfBDTjwESl
-         wWEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xEIVc+vQWriCkNYhFpstAFofB52ZFALeJcABj2wsqhc=;
-        b=V7wDuSravhj0qsJ2mQvVt/0f0A77r/4lMEwGKzQWbIhDK285ubdp6knEheddMeeSH6
-         ZpN0su6Tjyr53z26yqFL1zggNKh4tmyq+8nb9dsnd1HDViTDD4qGqajmBS4jpBv66GXb
-         fZNLePYbc3wpvq2l9et9UYjJI6VqMZaf0Jog44RPnewZtWgOZoZOzdPweFs+lJC+X45e
-         kvQnRAhB7SuNS0C/RzYOCuJCgzFI41bX47RE33BgXoKHizDjm/LuMB3JBMp9ZY72C9bA
-         WAPh2EDQPqwbFt/UF7KuKA2q9AzhPUBDqDq+2LBMXk4Cn48Rwg0cv0z0kh4WL8TXbyqu
-         znVw==
-X-Gm-Message-State: AOAM533ORqH2ZC1lrQR4tCbDRKCJ63Jjsex4ZJr8B4ZYFd1se7RpIw+9
-        lilc6knGKkE8A4MXF6cucWqOE7GFJIKhamuaZ+TV0g==
-X-Google-Smtp-Source: ABdhPJxN9UNunrU4U+YuaCFkAnkHUg/NsTcyax5MKcFTm4nUwI4VguyHgN7bNe58SAv47zPW5k+w3Zw4C8RjDu9HenQ=
-X-Received: by 2002:aca:ad0d:: with SMTP id w13mr2851317oie.84.1613690473045;
- Thu, 18 Feb 2021 15:21:13 -0800 (PST)
+        id S229652AbhBSAkD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Feb 2021 19:40:03 -0500
+Received: from mout.gmx.net ([212.227.15.18]:35661 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229535AbhBSAkD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Feb 2021 19:40:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1613695054;
+        bh=pInc6uPG7HB09z6ZvJFfn7PDeFmncjM6F/Zg1GnOzKo=;
+        h=X-UI-Sender-Class:To:Cc:References:From:Subject:Date:In-Reply-To;
+        b=ecR9l4bGetmsuPDvxFh93ZR09Ij/zPFLISy/fEKChwk1LgjSqnTm++dc2TTco3Ohl
+         H+qSR8WDGkCT5cjuMavzKIJVvKO3O5fp/rOPUouaOcrA6V3bgTKF0TqI4mzDNddMpc
+         rmepnXj9lgNuIpAT/+DQNStmvXuqDSmzzGJsGx7Y=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1Md6Mj-1llPfZ0Mk7-00aFnI; Fri, 19
+ Feb 2021 01:37:34 +0100
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+References: <1783f16d-7a28-80e6-4c32-fdf19b705ed0@gmx.com>
+ <20210218121503.GQ2858050@casper.infradead.org>
+ <af1aac2f-e7dc-76f3-0b3a-4cb36b22247f@gmx.com>
+ <20210218133954.GR2858050@casper.infradead.org>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Re: page->index limitation on 32bit system?
+Message-ID: <e0faf229-ce7f-70b8-8998-ed7870c702a5@gmx.com>
+Date:   Fri, 19 Feb 2021 08:37:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-References: <20210203090745.4103054-2-drosen@google.com> <56BC7E2D-A303-45AE-93B6-D8921189F604@dilger.ca>
- <YBrP4NXAsvveIpwA@mit.edu> <YCMZSjgUDtxaVem3@mit.edu> <42511E9D-3786-4E70-B6BE-D7CB8F524912@dilger.ca>
- <YCNbIdCsAsNcPuAL@mit.edu> <CA+PiJmT2hfdRLztCdp3-tYBqAo+-ibmuyqLvq5nb+asFj4vL7A@mail.gmail.com>
- <YC0/ZsQbKntSpl97@mit.edu> <01918C7B-9D9B-4BD8-8ED1-BA1CBF53CA95@dilger.ca>
-In-Reply-To: <01918C7B-9D9B-4BD8-8ED1-BA1CBF53CA95@dilger.ca>
-From:   Daniel Rosenberg <drosen@google.com>
-Date:   Thu, 18 Feb 2021 15:21:01 -0800
-Message-ID: <CA+PiJmReVX_YXZF1JrfXmothFX7q3iihm2qHyEOGEoYFyrrE5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ext4: Handle casefolding with encryption
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Paul Lawrence <paullawrence@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210218133954.GR2858050@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YD87Avkz+R8uz268iyEgTfqiD6799tgxDSeX8GinEBJb5pLPlju
+ QM7rWz8ozpJig/G4c7lZ7W/1KHmQBl/8ji5C6up1OhlhM1jAHHV2xM7iaRH4bcI+mX7mRXO
+ TDoLYeQpqRdNAVpCVJcpOs8OhyL3xI71nTzzdEaiERIw/Ur2SUKHXq9xSJltMAYOUxLgMOh
+ W6o7f9ozcG/VbIpn5o6Rw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:iAmBwf1UjLE=:0poaa+tpcFLvAXv4j84jMM
+ FeBiEhlvXg9Cb6QFXPq/34NrMfV6j0jlUqCjqjUaO/fVbrn7vmNnrXYKO9YcpYsbxVcArp/3N
+ Hv/0PakVJg1Vdj4QsfT/aA0Z9VTf3la8d18W7zMmi/4YnKUoPqrJpIqaV3MP/Wee3/stuFmDQ
+ 8Zml+VyIfH2+OlWjbjE1n5xww0XBK386+l1NBIApg7RG+Y7PnqalN76MsjJOMJhnKPW3Jr/Cg
+ 0+iIID3/UNUn/ZIEAqg7oPs7UEaQI69B7hLhU3QjD/67UshX3bfDa3FM1kbpbpk4vDpwdkOhz
+ hCJizCELOgYblyL0E1GYGnKuJHuRDRYbpA9aJjY3/oXW1oOGf219iWtFlp7yjaPtgj7unB80Q
+ ORS8gtgFvRNpnuuYbqwsq+CoxRfm3n1QpDmUU78UMJU7wdZ/GsQKW2RhSf4D2q1T7k8g6VYmw
+ 5W6X6fzPM0TotBh0oeEATlqHm1Z1mROEhchsjbW61frr7LwG+6+RTsrEDDR2fa89Xn/vL+Aol
+ ZOwGvUyc/U60IE15PadP4vhdWqdrhZX4JFv2DF99saxJq6ydfRh0Yk0Idtb7XYiMeaG8iEprr
+ Lc+uEomt+ajfuYvZaPverRk4sRRpKZOgQkqDsaQu2U+0eMafwMuC+53NWp6gtijsmjvrrFtgK
+ wW/kFE4hzDKK2dtJyXPzrUli1xPL/5ZAfnax/Qr+GBGhL/QDbhAObOllv2nOwPgvRrsvnlebn
+ x8mjRXeLMyBDoobQsKP5jIgFFBF/3N2BKO3tJtca/GN/aXa0Evob6UyjSTNL5G8Oxd66+h/WD
+ ZfuIrVRBSW4D32bgfT6w9Ur4o6d0KX9REl5QSqlXTfQhRr90uPaAYyHKoNbmVYndvZN9ua+qu
+ yX0mYaYrvhIB83zcVjRQ==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 17, 2021 at 2:48 PM Andreas Dilger <adilger@dilger.ca> wrote:
->
-> On Feb 17, 2021, at 9:08 AM, Theodore Ts'o <tytso@mit.edu> wrote:
-> >
-> > On Tue, Feb 16, 2021 at 08:01:11PM -0800, Daniel Rosenberg wrote:
-> >> I'm not sure what the conflict is, at least format-wise. Naturally,
-> >> there would need to be some work to reconcile the two patches, but my
-> >> patch only alters the format for directories which are encrypted and
-> >> casefolded, which always must have the additional hash field. In the
-> >> case of dirdata along with encryption and casefolding, couldn't we
-> >> have the dirdata simply follow after the existing data? Since we
-> >> always already know the length, it'd be unambiguous where that would
-> >> start. Casefolding can only be altered on an empty directory, and you
-> >> can only enable encryption for an empty directory, so I'm not too
-> >> concerned there. I feel like having it swapping between the different
-> >> methods makes it more prone to bugs, although it would be doable. I've
-> >> started rebasing the dirdata patch on my end to see how easy it is to
-> >> mix the two. At a glance, they touch a lot of the same areas in
-> >> similar ways, so it shouldn't be too hard. It's more of a question of
-> >> which way we want to resolve that, and which patch goes first.
-> >>
-> >> I've been trying to figure out how many devices in the field are using
-> >> casefolded encryption, but haven't found out yet. The code is
-> >> definitely available though, so I would not be surprised if it's being
-> >> used, or is about to be.
-> >
-> > The problem is in how the space after the filename in a directory is
-> > encoded.  The dirdata format is (mildly) expandable, supporting up to
-> > 4 different metadata chunks after the filename, using a very
-> > compatctly encoded TLV (or moral equivalent) scheme.  For directory
-> > inodes that have both the encyption and compression flags set, we have
-> > a single blob which gets used as the IV for the crypto.
-> >
-> > So it's the difference between a simple blob that is only used for one
-> > thing in this particular case, and something which is the moral
-> > equivalent of simple ASN.1 or protobuf encoding.
-> >
-> > Currently, datadata has defined uses for 2 of the 4 "chunks", which is
-> > used in Lustre servers.  The proposal which Andreas has suggested is
-> > if the dirdata feature is supported, then the 3rd dirdata chunk would
-> > be used for the case where we currently used by the
-> > encrypted-casefolded extension, and the 4th would get reserved for a
-> > to-be-defined extension mechanism.
-> >
-> > If there ext4 encrypted/casefold is not yet in use, and we can get the
-> > changes out to all potential users before they release products out
-> > into the field, then one approach would be to only support
-> > encrypted/casefold when dirdata is also enabled.
-> >
-> > If ext4 encrypted/casefold is in use, my suggestion is that we support
-> > both encrypted/casefold && !dirdata as you have currently implemented
-> > it, and encrypted/casefold && dirdata as Andreas has proposed.
-> >
-> > IIRC, supporting that Andreas's scheme essentially means that we use
-> > the top four bits in the rec_len field to indicate which chunks are
-> > present, and then for each chunk which is present, there is a 1 byte
-> > length followed by payload.  So that means in the case where it's
-> > encrypted/casefold && dirdata, the required storage of the directory
-> > entry would take one additional byte, plus setting a bit indicating
-> > that the encrypted/casefold dirdata chunk was present.
->
-> I think your email already covers pretty much all of the points.
->
-> One small difference between current "raw" encrypted/casefold hash vs.
-> dirdata is that the former is 4-byte aligned within the dirent, while
-> dirdata is packed.  So in 3/4 cases dirdata would take the same amount
-> of space (the 1-byte length would use one of the 1-3 bytes of padding
-> vs. the raw format), since the next dirent needs to be aligned anyway.
->
-> The other implication here is that the 8-byte hash may need to be
-> copied out of the dirent into a local variable before use, due to
-> alignment issues, but I'm not sure if that is actually needed or not.
->
-> > So, no, they aren't incompatible ultimatly, but it might require a
-> > tiny bit more work to integrate the combined support for dirdata plus
-> > encrypted/casefold.  One way we can do this, if we have to support the
-> > current encrypted/casefold format because it's out there in deployed
-> > implementations already, is to integrate encrypted/casefold &&
-> > !dirdata first upstream, and then when we integrate dirdata into
-> > upstream, we'll have to add support for the encrypted/casefold &&
-> > dirdata case.  This means that we'll have two variants of the on-disk
-> > format to test and support, but I don't think it's the going to be
-> > that difficult.
->
-> It would be possible to detect if the encrypted/casefold+dirdata
-> variant is in use, because the dirdata variant would have the 0x40
-> bit set in the file_type byte.  It isn't possible to positively
-> identify the "raw" non-dirdata variant, but the assumption would be
-> if (rec_len >= round_up(name_len, 4) + 8) in an encrypted+casefold
-> directory that the "raw" hash must be present in the dirent.
->
-> Cheers, Andreas
->
->
->
->
->
 
-So sounds like we're going with the combined version. Andreas, do you
-have any suggestions for changes to the casefolding patch to ease the
-eventual merging with dirdata? A bunch of the changes are already
-pretty similar, so some of it is just calling essentially the same
-functions different things.
--Daniel
+
+On 2021/2/18 =E4=B8=8B=E5=8D=889:39, Matthew Wilcox wrote:
+> On Thu, Feb 18, 2021 at 08:42:14PM +0800, Qu Wenruo wrote:
+>> On 2021/2/18 =E4=B8=8B=E5=8D=888:15, Matthew Wilcox wrote:
+>>> Yes, this is a known limitation.  Some vendors have gone to the troubl=
+e
+>>> of introducing a new page_index_t.  I'm not convinced this is a proble=
+m
+>>> worth solving.  There are very few 32-bit systems with this much stora=
+ge
+>>> on a single partition (everything should work fine if you take a 20TB
+>>> drive and partition it into two 10TB partitions).
+>> What would happen if a user just tries to write 4K at file offset 16T
+>> fir a sparse file?
+>>
+>> Would it be blocked by other checks before reaching the underlying fs?
+>
+> /* Page cache limit. The filesystems should put that into their s_maxbyt=
+es
+>     limits, otherwise bad things can happen in VM. */
+> #if BITS_PER_LONG=3D=3D32
+> #define MAX_LFS_FILESIZE        ((loff_t)ULONG_MAX << PAGE_SHIFT)
+> #elif BITS_PER_LONG=3D=3D64
+> #define MAX_LFS_FILESIZE        ((loff_t)LLONG_MAX)
+> #endif
+>
+>> This is especially true for btrfs, which has its internal address space
+>> (and it can be any aligned U64 value).
+>> Even 1T btrfs can have its metadata at its internal bytenr way larger
+>> than 1T. (although those ranges still needs to be mapped inside the dev=
+ice).
+>
+> Sounds like btrfs has a problem to fix.
+
+You're kinda right. Btrfs metadata uses an inode to organize the whole
+metadata as a file, but that doesn't take the limit into consideration.
+
+Although to fix it there will be tons of new problems.
+
+We will have cases like the initial fs meets the limit, but when user
+wants to do something like balance, then it may go beyond the limit and
+cause problems.
+
+And when such problem happens, users won't be happy anyway.
+>
+>> And considering the reporter is already using 32bit with 10T+ storage, =
+I
+>> doubt if it's really not worthy.
+>>
+>> BTW, what would be the extra cost by converting page::index to u64?
+>> I know tons of printk() would cause warning, but most 64bit systems
+>> should not be affected anyway.
+>
+> No effect for 64-bit systems, other than the churn.
+>
+> For 32-bit systems, it'd have some pretty horrible overhead.  You don't
+> just have to touch the page cache, you have to convert the XArray.
+> It's doable (I mean, it's been done), but it's very costly for all the
+> 32-bit systems which don't use a humongous filesystem.  And we could
+> minimise that overhead with a typedef, but then the source code gets
+> harder to work with.
+>
+So it means the 32bit archs are already 2nd tier targets for at least
+upstream linux kernel?
+
+Or would it be possible to make it an option to make the index u64?
+So guys who really wants large file support can enable it while most
+other 32bit guys can just keep the existing behavior?
+
+Thanks,
+Qu
