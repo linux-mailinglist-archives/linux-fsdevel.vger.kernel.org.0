@@ -2,102 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D1143206CF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Feb 2021 20:13:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D91BB3206DF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Feb 2021 20:20:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbhBTTNd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Feb 2021 14:13:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbhBTTNY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Feb 2021 14:13:24 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96E2CC061574;
-        Sat, 20 Feb 2021 11:12:44 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id b145so4069667pfb.4;
-        Sat, 20 Feb 2021 11:12:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RCUJuiuY9ImPZDy5gp8HkT1sX9iXGmZBVPPpZjV0Ekk=;
-        b=qzN/R/a4nQ4sWoBSqu8DusatbUCaG9iu98obAWoqdH89gN5BTbKJ0EphpRPKVU9JdH
-         SulpF7DRdLV9jgmNQtYBZjjoVADUu0oD9tjVuju7p59tbe3N9f2u3bNHljMlVOzED9TM
-         b/1S4wzAUQwGBK3ToBfZeHekI7oujbkRSWRuylQY+F8aPvxmeouOJSuoCfi38S0wH1XY
-         PfWli9UEWmMerM4rE/3NE+le8EDuPX3QddDrFUk3KhacPUNd+G2+8uOPE+magTHcX3LC
-         Z28GyHEcJiVti3tcSKa6ifZsQVxC1umOjCxg9rSRMNEfUvWixb99RkWQNgXdizE3mumh
-         MKuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RCUJuiuY9ImPZDy5gp8HkT1sX9iXGmZBVPPpZjV0Ekk=;
-        b=E5qunurTE6SzgPtNz7ZIjlmeH/bSU49Usn3F15xG7Px1ZRIeJkK8Er1bqnQP3bYo/N
-         hSEDvPoNDKOV3tgLGgK7TV+763O9CwERgQ/D3A19z3JA5tsmvz2+9wtFa3dGrbJZMag2
-         /WqZimtoSVdY49c1Kh6uT/7At0mdDs5Y4ueXrScajEvNEMs+lk8i/rJ6su43EMW4jY+r
-         cTLFZ8krL+WuzLCrDlIoENMWfo9WJo498hcbxQ1eDEfPVoD9fFxPnoV0f7ccKAdzHlFX
-         oYFgkNoocxmMJFtQeG+XfLbzBtfaa0urh3/bHQruItMLvgBPlowsnNTBGchdRjgCN1M0
-         ZeXg==
-X-Gm-Message-State: AOAM530BMkju7GBwOGIN9Wcd6++HF/EcpnRVUg0qd4d/uoVntJCN2fZt
-        mr8j5xa6gGWxHQukwTUo5Z3IV4sIxO7lbFQoaX8=
-X-Google-Smtp-Source: ABdhPJyp4HlnmV7Eqn8Xr8nC6MPAVuIsRn/kjr8NVF51K5no/1Ln7G+vr/KHutSBYQFlI7UuJqXgwJK9fOD9NWpqWXg=
-X-Received: by 2002:a63:e109:: with SMTP id z9mr13566082pgh.5.1613848364207;
- Sat, 20 Feb 2021 11:12:44 -0800 (PST)
+        id S229887AbhBTTUN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Feb 2021 14:20:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229808AbhBTTUI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 20 Feb 2021 14:20:08 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5BF2264E51;
+        Sat, 20 Feb 2021 19:19:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613848768;
+        bh=opkZV9+iiOg5i7CeRhciYmBMWsz/qz9Xmo/qIEL+++w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lAzR3vLqQJN7zA0sj+1l2vnXCMVW4WzYcT/7zoi2XEkR75dxEfZxsr9ZZXs0vfoPA
+         MIIgjdK8Bfi/OCFnVUkAXbnH1QuOe78GE9Zog3tA5xLd9ntizTOGRftkJ5DbbTpQLW
+         omYiai3857LXH2o97xCBrMSxBqmNpxN940EtlMYI230TK91985WJW6trAwt3FkdY/L
+         VqIe5cfn3Bm95NdASEstDvnzMUXt7VhCJVGdKAJfJ58WvX9DqAgAts08MiZ6GAolne
+         0nuR0yF2z+6rnQQ4z7QrJaZEUfQQrwShmPsQQ1TDKXSeEoktfn9AzBO1+I/LSxew2+
+         2ipaElzzXH/Mw==
+Date:   Sun, 21 Feb 2021 04:19:21 +0900
+From:   Keith Busch <kbusch@kernel.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'SelvaKumar S' <selvakuma.s1@samsung.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "damien.lemoal@wdc.com" <damien.lemoal@wdc.com>,
+        "hch@lst.de" <hch@lst.de>, "sagi@grimberg.me" <sagi@grimberg.me>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "selvajove@gmail.com" <selvajove@gmail.com>,
+        "joshiiitr@gmail.com" <joshiiitr@gmail.com>,
+        "nj.shetty@samsung.com" <nj.shetty@samsung.com>,
+        "joshi.k@samsung.com" <joshi.k@samsung.com>,
+        "javier.gonz@samsung.com" <javier.gonz@samsung.com>,
+        "kch@kernel.org" <kch@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH v5 0/4] add simple copy support
+Message-ID: <20210220191921.GA7968@redsun51.ssa.fujisawa.hgst.com>
+References: <CGME20210219124555epcas5p1334e7c4d64ada5dc4a2ca0feb48c1d44@epcas5p1.samsung.com>
+ <20210219124517.79359-1-selvakuma.s1@samsung.com>
+ <146c47907c2446d4a896830de400dd81@AcuMS.aculab.com>
 MIME-Version: 1.0
-References: <20210125154937.26479-1-kda@linux-powerpc.org> <20210127175742.GA1744861@infradead.org>
- <CAOJe8K0MC-TCURE2Gpci1SLnLXCbUkE7q6SS0fznzBA+Pf-B8Q@mail.gmail.com>
- <20210129082524.GA2282796@infradead.org> <CAOJe8K0iG91tm8YBRmE_rdMMMbc4iRsMGYNxJk0p9vEedNHEkg@mail.gmail.com>
- <20210129131855.GA2346744@infradead.org> <YClpVIfHYyzd6EWu@zeniv-ca.linux.org.uk>
- <CAOJe8K00srtuD+VAJOFcFepOqgNUm0mC8C=hLq2=qhUFSfhpuw@mail.gmail.com>
- <YCwIQmsxWxuw+dnt@zeniv-ca.linux.org.uk> <YC86WeSTkYZqRlJY@zeniv-ca.linux.org.uk>
- <YC88acS6dN6cU1y0@zeniv-ca.linux.org.uk>
-In-Reply-To: <YC88acS6dN6cU1y0@zeniv-ca.linux.org.uk>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Sat, 20 Feb 2021 11:12:33 -0800
-Message-ID: <CAM_iQpVpJwRNKjKo3p1jFvCjYAXAY83ux09rd2Mt0hKmvx=RgQ@mail.gmail.com>
-Subject: Re: [PATCH 1/8] af_unix: take address assignment/hash insertion into
- a new helper
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Denis Kirjanov <kda@linux-powerpc.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <146c47907c2446d4a896830de400dd81@AcuMS.aculab.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 18, 2021 at 8:22 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Duplicated logics in all bind variants (autobind, bind-to-path,
-> bind-to-abstract) gets taken into a common helper.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  net/unix/af_unix.c | 30 +++++++++++++++---------------
->  1 file changed, 15 insertions(+), 15 deletions(-)
->
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 41c3303c3357..179b4fe837e6 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -262,6 +262,16 @@ static void __unix_insert_socket(struct hlist_head *list, struct sock *sk)
->         sk_add_node(sk, list);
->  }
->
-> +static void __unix_set_addr(struct sock *sk, struct unix_address *addr,
-> +                           unsigned hash)
-> +       __releases(&unix_table_lock)
-> +{
-> +       __unix_remove_socket(sk);
-> +       smp_store_release(&unix_sk(sk)->addr, addr);
-> +       __unix_insert_socket(&unix_socket_table[hash], sk);
-> +       spin_unlock(&unix_table_lock);
+On Sat, Feb 20, 2021 at 06:01:56PM +0000, David Laight wrote:
+> From: SelvaKumar S
+> > Sent: 19 February 2021 12:45
+> > 
+> > This patchset tries to add support for TP4065a ("Simple Copy Command"),
+> > v2020.05.04 ("Ratified")
+> > 
+> > The Specification can be found in following link.
+> > https://nvmexpress.org/wp-content/uploads/NVM-Express-1.4-Ratified-TPs-1.zip
+> > 
+> > Simple copy command is a copy offloading operation and is  used to copy
+> > multiple contiguous ranges (source_ranges) of LBA's to a single destination
+> > LBA within the device reducing traffic between host and device.
+> 
+> Sounds to me like the real reason is that the copy just ends up changing
+> some indirect block pointers rather than having to actually copy the data.
 
-Please take the unlock out, it is clearly an anti-pattern.
-
-And please Cc netdev for networking changes.
-
-Thanks.
+I guess an implementation could do that, but I think that's missing the
+point of the command. The intention is to copy the data to a new
+location on the media for host managed garbage collection. 
