@@ -2,71 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B46AB32072A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Feb 2021 22:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A0A320730
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Feb 2021 22:19:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229867AbhBTVJq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Feb 2021 16:09:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229849AbhBTVJp (ORCPT
+        id S229817AbhBTVTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Feb 2021 16:19:04 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33435 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229804AbhBTVTE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Feb 2021 16:09:45 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD198C061574;
-        Sat, 20 Feb 2021 13:09:05 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lDZUl-00GQzx-U4; Sat, 20 Feb 2021 21:08:56 +0000
-Date:   Sat, 20 Feb 2021 21:08:55 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     Denis Kirjanov <kda@linux-powerpc.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/8] af_unix: take address assignment/hash insertion into
- a new helper
-Message-ID: <YDF6Z8QHh3yw7es9@zeniv-ca.linux.org.uk>
-References: <CAOJe8K0iG91tm8YBRmE_rdMMMbc4iRsMGYNxJk0p9vEedNHEkg@mail.gmail.com>
- <20210129131855.GA2346744@infradead.org>
- <YClpVIfHYyzd6EWu@zeniv-ca.linux.org.uk>
- <CAOJe8K00srtuD+VAJOFcFepOqgNUm0mC8C=hLq2=qhUFSfhpuw@mail.gmail.com>
- <YCwIQmsxWxuw+dnt@zeniv-ca.linux.org.uk>
- <YC86WeSTkYZqRlJY@zeniv-ca.linux.org.uk>
- <YC88acS6dN6cU1y0@zeniv-ca.linux.org.uk>
- <CAM_iQpVpJwRNKjKo3p1jFvCjYAXAY83ux09rd2Mt0hKmvx=RgQ@mail.gmail.com>
- <YDFj3OZ4DMQSqylH@zeniv-ca.linux.org.uk>
- <CAM_iQpXX7SBGgUkBUY6BEjCqJYbHAUW5Z3VtV2U=yhiw1YJr=w@mail.gmail.com>
+        Sat, 20 Feb 2021 16:19:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1613855858;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6Vk8BAIJ1uIAxCVSQYpQIIdAE9knnRSPLsjNrtwjnAk=;
+        b=Ex7kmAwiffMzQ9502i2i3e5myxubEyt4Jg3mViEQbP8bkiTWHfOnrvw27KvIHbNlTUNtHQ
+        B/ze1IkkUIpDtChbzU/TkqzERzJU5xX5h2j9gUrVuGHjzIUQ+5FBdEB56GpLT9TKdIZ/0I
+        wrqlG1eQ2rhBefIwTJlW5pOWTb2I2DA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-589-qZ_pHs6nOu-iOfvAWM_Hag-1; Sat, 20 Feb 2021 16:17:35 -0500
+X-MC-Unique: qZ_pHs6nOu-iOfvAWM_Hag-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B650518449E4;
+        Sat, 20 Feb 2021 21:17:34 +0000 (UTC)
+Received: from madhat.boston.devel.redhat.com (ovpn-112-108.phx2.redhat.com [10.3.112.108])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 716FB5D9C6;
+        Sat, 20 Feb 2021 21:17:34 +0000 (UTC)
+From:   Steve Dickson <SteveD@RedHat.com>
+Subject: ANNOUNCE: nfs-utils-2.5.3 released.
+To:     Linux NFS Mailing list <linux-nfs@vger.kernel.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Message-ID: <7f306bd8-d181-3536-8c3b-eb43f566aaf7@RedHat.com>
+Date:   Sat, 20 Feb 2021 16:19:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM_iQpXX7SBGgUkBUY6BEjCqJYbHAUW5Z3VtV2U=yhiw1YJr=w@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 20, 2021 at 12:31:49PM -0800, Cong Wang wrote:
-> Because it does not lock the lock, just compare:
-> 
-> lock();
-> __unix_set_addr();
-> unlock();
-> 
-> to:
-> 
-> lock();
-> __unix_set_addr();
-> 
-> Clearly the former is more readable and less error-prone. Even
-> if you really want to do unlock, pick a name which explicitly says
-> it, for example, __unix_set_addr_unlock().
+Hello,
 
-*shrug*
+There is a new daemon call nfsv4.exportd that will only
+listen for NFSv4 mounts which will allow for a NFSv4
+only server, which should make things a bit more 
+container friendly. Note, the --enable-nfsv4server
+is needed for the code to be included in the compilation.
 
-If anything, __unix_complete_bind() might make a better name for that,
-with dropping ->bindlock also pulled in, but TBH I don't have sufficiently
-strong preferences - might as well leave dropping the lock to caller.
+NeilBrown did a lot of work in converting the
+config parsing code to used the came code as
+the mount.nfs used. Thanks you!
 
-I'll post that series to netdev tonight.
+As well as a number of bug fixes... 
+
+The tarballs can be found in
+  https://www.kernel.org/pub/linux/utils/nfs-utils/2.5.3/
+or
+  http://sourceforge.net/projects/nfs/files/nfs-utils/2.5.3
+
+The change log is in
+   https://www.kernel.org/pub/linux/utils/nfs-utils/2.5.3/2.5.3-Changelog
+or
+   http://sourceforge.net/projects/nfs/files/nfs-utils/2.5.3/
+
+The git tree is at:
+   git://linux-nfs.org/~steved/nfs-utils
+
+Please send comments/bugs to linux-nfs@vger.kernel.org
+
+steved.
+
