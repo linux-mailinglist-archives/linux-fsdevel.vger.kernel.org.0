@@ -2,83 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45250321FDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 20:17:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD896322005
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 20:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233004AbhBVTQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Feb 2021 14:16:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35668 "EHLO
+        id S232988AbhBVTVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Feb 2021 14:21:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232990AbhBVTNN (ORCPT
+        with ESMTP id S232994AbhBVTSp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Feb 2021 14:13:13 -0500
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EC63C0617A9;
-        Mon, 22 Feb 2021 11:12:33 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lEGdB-00HB0i-B9; Mon, 22 Feb 2021 19:12:29 +0000
-Date:   Mon, 22 Feb 2021 19:12:29 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     netdev@vger.kernel.org
-Cc:     Denis Kirjanov <kda@linux-powerpc.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>
-Subject: Re: [PATCHSET] making unix_bind() undo mknod on failure
-Message-ID: <YDQCHd37zoByJqz3@zeniv-ca.linux.org.uk>
-References: <YClpVIfHYyzd6EWu@zeniv-ca.linux.org.uk>
- <CAOJe8K00srtuD+VAJOFcFepOqgNUm0mC8C=hLq2=qhUFSfhpuw@mail.gmail.com>
- <YCwIQmsxWxuw+dnt@zeniv-ca.linux.org.uk>
- <YC86WeSTkYZqRlJY@zeniv-ca.linux.org.uk>
- <YC88acS6dN6cU1y0@zeniv-ca.linux.org.uk>
- <CAM_iQpVpJwRNKjKo3p1jFvCjYAXAY83ux09rd2Mt0hKmvx=RgQ@mail.gmail.com>
- <YDFj3OZ4DMQSqylH@zeniv-ca.linux.org.uk>
- <CAM_iQpXX7SBGgUkBUY6BEjCqJYbHAUW5Z3VtV2U=yhiw1YJr=w@mail.gmail.com>
- <YDF6Z8QHh3yw7es9@zeniv-ca.linux.org.uk>
- <YDQAmH9zSsaqf+Dg@zeniv-ca.linux.org.uk>
+        Mon, 22 Feb 2021 14:18:45 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAD54C06178A
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Feb 2021 11:17:52 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id e13so27895127ejl.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Feb 2021 11:17:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mL0bjhfITdu5839ghM56EtmuJ0mV3o1IEyaUJSuFMFs=;
+        b=0VKXgI+d4N8/TsZjQE/E5fkYxDFeC7KFxegFQ1tUDUQWXj1P6cXOsiH5slGqxqrmbb
+         dBx4HcRD8Hzu5KRTHX5N1ybYz5yC5e7kYtwfTlsuU2esXKkYljaX8VDDRS1DaE/uHUin
+         QAGppPvDyByXQFp+iE9GKGPwF3A2dB1mFytnHdtGJw+XJLGP5r33xK45enAbysyTaEHa
+         57tTo6DZyOE+uYzDNdPTZAL71cYVMSUiSI5K7sek4p2eMAFj1YmFFfuyLNvbSLKSE5kW
+         D+y3PQVbEo19hoNoanDSrLywkZqhcPGuG5KVCRRj/oMJKHnyCwkRLTAD6EZO4JnoconN
+         aV4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mL0bjhfITdu5839ghM56EtmuJ0mV3o1IEyaUJSuFMFs=;
+        b=ZNOJoyC/6vLUjYFul3GYdbSO6IkuwHe4NS/+PbftCVi5YlN+vAzzt99uQyPaaS7VU4
+         hNVnisfyU5pmhLP+B9NPMkKzti7wEk4ANJSdtIOmVUMGJNjyOiyt2b9BarIn59/NpN3V
+         F720fVhyX5x/HTpV7F5RTxeBRW6wtwV6CZ/iy/QQklyEbwZKG4SsefoxQT3Z+jhgT024
+         ExYHeb+G0hsdGOZHoUSjmJ7k/ZCeewanzMWX2LVegeVGVMy4EfZqpZm0Iucm9gveBHHy
+         X5wMJLuwb0f0yRiDI8TBLDYSwuPxh5UQvURf2gkBSHkMnz4XtDbM6ig5rSqGmdRBWdVG
+         W1jQ==
+X-Gm-Message-State: AOAM532jO7uc/JI0nXpgyFgerQbAG5f76GVDyY6Xo2ZQhwN6IbkWLPGC
+        a/a81b6gPFZi9lmkfT76rn1sXQzACdFFuBPxVg5WAg==
+X-Google-Smtp-Source: ABdhPJwkiWshDLTsz8a3A7EzLjYNcKqX6Z1F01E3QE0NjkocZdW4txgaDcjEXqIRRI2IV4obwnL12Zk+rIG7YnuhZ4g=
+X-Received: by 2002:a17:906:8692:: with SMTP id g18mr22575502ejx.418.1614021471495;
+ Mon, 22 Feb 2021 11:17:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YDQAmH9zSsaqf+Dg@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20210208084920.2884-1-rppt@kernel.org> <20210208084920.2884-9-rppt@kernel.org>
+ <20210222073452.GA30403@codon.org.uk> <20210222102359.GE1447004@kernel.org>
+In-Reply-To: <20210222102359.GE1447004@kernel.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 22 Feb 2021 11:17:46 -0800
+Message-ID: <CAPcyv4hCXZFmeMkKxN54Yw3ZbvoYQ3Z9y9Ayv42i6u+24Bkmqg@mail.gmail.com>
+Subject: Re: [PATCH v17 08/10] PM: hibernate: disable when there are active
+ secretmem users
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-riscv@lists.infradead.org, X86 ML <x86@kernel.org>,
+        Hagen Paul Pfeifer <hagen@jauu.net>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 22, 2021 at 07:06:00PM +0000, Al Viro wrote:
-> On Sat, Feb 20, 2021 at 09:08:56PM +0000, Al Viro wrote:
-> 
-> > *shrug*
-> > 
-> > If anything, __unix_complete_bind() might make a better name for that,
-> > with dropping ->bindlock also pulled in, but TBH I don't have sufficiently
-> > strong preferences - might as well leave dropping the lock to caller.
-> > 
-> > I'll post that series to netdev tonight.
-> 
-> 	Took longer than I hoped...  Anyway, here's the current variant;
-> it's 5.11-based, lives in
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git misc.af_unix
-> 
-> Shortlog:
-> Al Viro (8):
->       af_unix: take address assignment/hash insertion into a new helper
->       unix_bind(): allocate addr earlier
->       unix_bind(): separate BSD and abstract cases
->       unix_bind(): take BSD and abstract address cases into new helpers
->       fold unix_mknod() into unix_bind_bsd()
->       unix_bind_bsd(): move done_path_create() call after dealing with ->bindlock
->       unix_bind_bsd(): unlink if we fail after successful mknod
->       __unix_find_socket_byname(): don't pass hash and type separately
-> 
-> Diffstat:
->  net/unix/af_unix.c | 186 +++++++++++++++++++++++++++--------------------------
->  1 file changed, 94 insertions(+), 92 deletions(-)
-> 
-> The actual fix is in #7/8, the first 6 are massage in preparation to that
-> and #8/8 is a minor followup cleanup.  Individual patches in followups.
-> Please, review.
+On Mon, Feb 22, 2021 at 2:24 AM Mike Rapoport <rppt@kernel.org> wrote:
+>
+> On Mon, Feb 22, 2021 at 07:34:52AM +0000, Matthew Garrett wrote:
+> > On Mon, Feb 08, 2021 at 10:49:18AM +0200, Mike Rapoport wrote:
+> >
+> > > It is unsafe to allow saving of secretmem areas to the hibernation
+> > > snapshot as they would be visible after the resume and this essentially
+> > > will defeat the purpose of secret memory mappings.
+> >
+> > Sorry for being a bit late to this - from the point of view of running
+> > processes (and even the kernel once resume is complete), hibernation is
+> > effectively equivalent to suspend to RAM. Why do they need to be handled
+> > differently here?
+>
+> Hibernation leaves a copy of the data on the disk which we want to prevent.
 
-Argh...  git send-email is playing silly buggers again ;-/
+Why not document that users should use data at rest protection
+mechanisms for their hibernation device? Just because secretmem can't
+assert its disclosure guarantee does not mean the hibernation device
+is untrustworthy.
