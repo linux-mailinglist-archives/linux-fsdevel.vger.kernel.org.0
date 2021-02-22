@@ -2,94 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 087D3320F24
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 02:35:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDE8320F3F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 02:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231769AbhBVBd6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Feb 2021 20:33:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28541 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231739AbhBVBdo (ORCPT
+        id S230072AbhBVBta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Feb 2021 20:49:30 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:52923 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230151AbhBVBt1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Feb 2021 20:33:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613957537;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=N34hBKZHkXIxa+0JV+MfgWWrHN+GVw6/8nre7Mkust8=;
-        b=BJfyIfumHNc8YqdGK0DcPmxoW3zSy6OMjoCp12PjhNU9IfT1YsN0XJVT4Zi3YY9ogcYZuD
-        4x2A1KgQ92DoFj2zvNpDhL1l7RvjnbCrMs2h7jR6tzuL8hWeqcP7XRbastcU8sjUTjd5Nq
-        DOdMKBmyxKHvoQjul2Pj4jG3VY1G4Lc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-181-vCCu8_aQNUS3Y2da_gJthQ-1; Sun, 21 Feb 2021 20:32:00 -0500
-X-MC-Unique: vCCu8_aQNUS3Y2da_gJthQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EA26A79EC0;
-        Mon, 22 Feb 2021 01:31:57 +0000 (UTC)
-Received: from T590 (ovpn-12-196.pek2.redhat.com [10.72.12.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7972B1A867;
-        Mon, 22 Feb 2021 01:31:37 +0000 (UTC)
-Date:   Mon, 22 Feb 2021 09:31:33 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     SelvaKumar S <selvakuma.s1@samsung.com>
-Cc:     linux-nvme@lists.infradead.org, kbusch@kernel.org, axboe@kernel.dk,
-        damien.lemoal@wdc.com, hch@lst.de, sagi@grimberg.me,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com, snitzer@redhat.com, selvajove@gmail.com,
-        joshiiitr@gmail.com, nj.shetty@samsung.com, joshi.k@samsung.com,
-        javier.gonz@samsung.com, kch@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [RFC PATCH v5 0/4] add simple copy support
-Message-ID: <YDMJdekWhy/Y1Y1r@T590>
-References: <CGME20210219124555epcas5p1334e7c4d64ada5dc4a2ca0feb48c1d44@epcas5p1.samsung.com>
- <20210219124517.79359-1-selvakuma.s1@samsung.com>
+        Sun, 21 Feb 2021 20:49:27 -0500
+Received: from dread.disaster.area (pa49-179-130-210.pa.nsw.optusnet.com.au [49.179.130.210])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D8CFF1040F47;
+        Mon, 22 Feb 2021 12:48:44 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lE0L6-00FxiU-1W; Mon, 22 Feb 2021 12:48:44 +1100
+Date:   Mon, 22 Feb 2021 12:48:44 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Erik Jensen <erikjensen@rkjnsn.net>,
+        Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: page->index limitation on 32bit system?
+Message-ID: <20210222014844.GB4626@dread.disaster.area>
+References: <1783f16d-7a28-80e6-4c32-fdf19b705ed0@gmx.com>
+ <20210218121503.GQ2858050@casper.infradead.org>
+ <927c018f-c951-c44c-698b-cb76d15d67bb@rkjnsn.net>
+ <20210219142201.GU2858050@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210219124517.79359-1-selvakuma.s1@samsung.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <20210219142201.GU2858050@casper.infradead.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=JD06eNgDs9tuHP7JIKoLzw==:117 a=JD06eNgDs9tuHP7JIKoLzw==:17
+        a=kj9zAlcOel0A:10 a=qa6Q16uM49sA:10 a=VwQbUJbxAAAA:8 a=eJfxgxciAAAA:8
+        a=7-415B0cAAAA:8 a=eMNfAaulUtgvWOZ4qZIA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=xM9caqqi1sUkTy8OJ5Uh:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 19, 2021 at 06:15:13PM +0530, SelvaKumar S wrote:
-> This patchset tries to add support for TP4065a ("Simple Copy Command"),
-> v2020.05.04 ("Ratified")
+On Fri, Feb 19, 2021 at 02:22:01PM +0000, Matthew Wilcox wrote:
+> On Thu, Feb 18, 2021 at 01:27:09PM -0800, Erik Jensen wrote:
+> > On 2/18/21 4:15 AM, Matthew Wilcox wrote:
+> > 
+> > > On Thu, Feb 18, 2021 at 04:54:46PM +0800, Qu Wenruo wrote:
+> > > > Recently we got a strange bug report that, one 32bit systems like armv6
+> > > > or non-64bit x86, certain large btrfs can't be mounted.
+> > > > 
+> > > > It turns out that, since page->index is just unsigned long, and on 32bit
+> > > > systemts, that can just be 32bit.
+> > > > 
+> > > > And when filesystems is utilizing any page offset over 4T, page->index
+> > > > get truncated, causing various problems.
+> > > 4TB?  I think you mean 16TB (4kB * 4GB)
+> > > 
+> > > Yes, this is a known limitation.  Some vendors have gone to the trouble
+> > > of introducing a new page_index_t.  I'm not convinced this is a problem
+> > > worth solving.  There are very few 32-bit systems with this much storage
+> > > on a single partition (everything should work fine if you take a 20TB
+> > > drive and partition it into two 10TB partitions).
+> > For what it's worth, I'm the reporter of the original bug. My use case is a
+> > custom NAS system. It runs on a 32-bit ARM processor, and has 5 8TB drives,
+> > which I'd like to use as a single, unified storage array. I chose btrfs for
+> > this project due to the filesystem-integrated snapshots and checksums.
+> > Currently, I'm working around this issue by exporting the raw drives using
+> > nbd and mounting them on a 64-bit system to access the filesystem, but this
+> > is very inconvenient, only allows one machine to access the filesystem at a
+> > time, and prevents running any tools that need access to the filesystem
+> > (such as backup and file sync utilities) on the NAS itself.
+> > 
+> > It sounds like this limitation would also prevent me from trying to use a
+> > different filesystem on top of software RAID, since in that case the logical
+> > filesystem would still be over 16TB.
+> > 
+> > > As usual, the best solution is for people to stop buying 32-bit systems.
+> > I purchased this device in 2018, so it's not exactly ancient. At the time,
+> > it was the only SBC I could find that was low power, used ECC RAM, had a
+> > crypto accelerator, and had multiple sata ports with port-multiplier
+> > support.
 > 
-> The Specification can be found in following link.
-> https://nvmexpress.org/wp-content/uploads/NVM-Express-1.4-Ratified-TPs-1.zip
+> I'm sorry you bought unsupported hardware.
 > 
-> Simple copy command is a copy offloading operation and is  used to copy
-> multiple contiguous ranges (source_ranges) of LBA's to a single destination
-> LBA within the device reducing traffic between host and device.
-> 
-> This implementation doesn't add native copy offload support for stacked
-> devices rather copy offload is done through emulation. Possible use
-> cases are F2FS gc and BTRFS relocation/balance.
-> 
-> *blkdev_issue_copy* takes source bdev, no of sources, array of source
-> ranges (in sectors), destination bdev and destination offset(in sectors).
-> If both source and destination block devices are same and copy_offload = 1,
-> then copy is done through native copy offloading. Copy emulation is used
-> in other cases.
-> 
-> As SCSI XCOPY can take two different block devices and no of source range is
-> equal to 1, this interface can be extended in future to support SCSI XCOPY.
+> This limitation has been known since at least 2009:
+> https://lore.kernel.org/lkml/19041.4714.686158.130252@notabene.brown/
 
-The patchset adds ioctl(BLKCOPY) and two userspace visible data
-struture(range_entry, and copy_range), all belong to kabi stuff, and the
-interface is generic block layer kabi.
+2004:
 
-The API has to be allowed to extend for supporting SCSI XCOPY in future or similar
-block copy commands without breaking previous application, so please CC linux-scsi
-and scsi guys in your next post.
+commit 839099eb5ea07aef093ae2c5674f5a16a268f8b6
+Author: Eric Sandeen <sandeen@sgi.com>
+Date:   Wed Jul 14 20:02:01 2004 +0000
 
+    Add filesystem size limit even when XFS_BIG_BLKNOS is
+    in effect; limited by page cache index size (16T on ia32)
 
+This all popped up on XFS around 2003 when the the disk address
+space was expanded from 32 bits to 64 bits on 32 bit systems
+(CONFIG_LBD) and so XFS could define XFS_BIG_FILESYSTEMS on 32 bit
+systems for the first time.
+
+FWIW, from an early 1994 commit into xfs_types.h:
+
++/*
++ * Some types are conditional based on the selected configuration.
++ * Set XFS_BIG_FILES=1 or 0 and XFS_BIG_FILESYSTEMS=1 or 0 depending
++ * on the desired configuration.
++ * XFS_BIG_FILES needs pgno_t to be 64 bits.
++ * XFS_BIG_FILESYSTEMS needs daddr_t to be 64 bits.
++ *
++ * Expect these to be set from klocaldefs, or from the machine-type
++ * defs files for the normal case.
++ */
+
+So limiting file and filesystem sizes on 32 bit systems is
+something XFS has done right from the start...
+
+> In the last decade, nobody's tried to fix it in mainline that I know of.
+> As I said, some vendors have tried to fix it in their NAS products,
+> but I don't know where to find that patch any more.
+
+It's not suportable from a disaster recovery perspective. I recently
+saw a 14TB filesystem with billions of hardlinks in it require 240GB
+of RAM to run xfs_repair. We just can't support large filesystems
+on 32 bit systems, and it has nothing to do with simple stuff like
+page cache index sizes...
+
+Cheers,
+
+Dave.
 -- 
-Ming
-
+Dave Chinner
+david@fromorbit.com
