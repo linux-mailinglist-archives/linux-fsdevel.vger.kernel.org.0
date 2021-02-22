@@ -2,56 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99A63322193
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 22:38:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76CCF32218B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 22:38:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232029AbhBVVgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Feb 2021 16:36:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38834 "EHLO mail.kernel.org"
+        id S231897AbhBVVgN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Feb 2021 16:36:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232033AbhBVVgm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Feb 2021 16:36:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id F2B8D64E61;
+        id S230455AbhBVVf4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Feb 2021 16:35:56 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 9A0A864E4D;
         Mon, 22 Feb 2021 21:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614029716;
-        bh=dmOEq64ZhvOK0sQiy3WbXHtz/JiLCB5BzhsjjQuwE7E=;
+        s=k20201202; t=1614029715;
+        bh=4J5hUWzxOoQLHZk34zsNaBQnKxTP5Tv8KI4YmB7NRI0=;
         h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=NwsuMRtp+Gp271uRwbpQ4AZtasalSVvryrumTrMyHQEFv/I9ciwFaj02V9OLDv8U3
-         5fixTGVTVrSSUtQiEsdAUNbJHOga4mZe/C/YMr68DvgrxzeJ8VoSfjHc/RYm2n+XPT
-         wdhbma5keWB2YD/1RqCVdj41Vb2DnKWLhxh7TcL2nIdLGvfZRNzjZUnnWgzJx+ew+6
-         oVnDQsnAX/q+9zjyazaK4lZeXZFpii7MAu2cXxgwq9p8wzMQHcECRomLZh/2itNp70
-         EKBhGEmgUMMjhpt4itPrWpkl8716zTnv4dmqP58UjPqYZQ3Mp69PKWR3IrIjAQImdY
-         /7e4w/EB0l5UQ==
+        b=Py9JyLAJosly/2DN3uWEq8Up6qq+VxS8AcrILa8VtI3dcrgt/l2Y5DdJpy89QODhV
+         raFbRe/2sSCRJEUfc/B9jobSg1rdYTDxNcLDKD4dxOHfHCMTcJDrqMPiaeBXtBhdJI
+         FPEJg4VwwoY5mrD9M0u/mfXt6wkNx2tyWdigcnzltAmH1lWMYvJmZJWK9cLoAVQV/a
+         WvLd/OiMOc1Dyp7XrizxNZLVZA9kvMlmOWvyczF+QOW4NrtXEyEOfEkTRtY8f1h79S
+         Y5lUKZkCrTKD9tMJRvmBUP+NHxvFN8/BmWUMGRNW5oTPNM9t0LPI9CqJYwOtWBvTXq
+         1C5QXB4vkledg==
 Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id EF4D860982;
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 95F9260982;
         Mon, 22 Feb 2021 21:35:15 +0000 (UTC)
-Subject: Re: [GIT PULL] writeback: Cleanup lazytime handling
+Subject: Re: [git pull] RCU-safe common_lsm_audit()
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210222122315.GE19630@quack2.suse.cz>
-References: <20210222122315.GE19630@quack2.suse.cz>
+In-Reply-To: <YDLhphz/PfGLTXfx@zeniv-ca.linux.org.uk>
+References: <YDLhphz/PfGLTXfx@zeniv-ca.linux.org.uk>
 X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210222122315.GE19630@quack2.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git lazytime_for_v5.12-rc1
-X-PR-Tracked-Commit-Id: ed296c6c05b0ac52d7c6bf13a90f02b8b8222169
+X-PR-Tracked-Message-Id: <YDLhphz/PfGLTXfx@zeniv-ca.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.audit
+X-PR-Tracked-Commit-Id: 23d8f5b684fc30126b7708cad38b753eaa078b3e
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d61c6a58ae30e80fb68925877cab06ad7a4ce41e
-Message-Id: <161402971597.2768.12992410000767778113.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 250a25e7a1d71da06213aa354ece44fb8faa73f7
+Message-Id: <161402971560.2768.5357763934785810618.pr-tracker-bot@kernel.org>
 Date:   Mon, 22 Feb 2021 21:35:15 +0000
-To:     Jan Kara <jack@suse.cz>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon, 22 Feb 2021 13:23:15 +0100:
+The pull request you sent on Sun, 21 Feb 2021 22:41:42 +0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git lazytime_for_v5.12-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.audit
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d61c6a58ae30e80fb68925877cab06ad7a4ce41e
+https://git.kernel.org/torvalds/c/250a25e7a1d71da06213aa354ece44fb8faa73f7
 
 Thank you!
 
