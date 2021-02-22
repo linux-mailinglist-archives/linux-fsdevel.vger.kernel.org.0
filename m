@@ -2,229 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24CA4321A71
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 15:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D96321A87
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 15:49:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbhBVOfa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Feb 2021 09:35:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231375AbhBVOe2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Feb 2021 09:34:28 -0500
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59956C06174A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Feb 2021 06:33:41 -0800 (PST)
-Received: by mail-io1-xd2a.google.com with SMTP id a7so13377643iok.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Feb 2021 06:33:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JO32q5fPn0DGWos0JK/kEGYznlXgZQ3x7QyQiycLWM4=;
-        b=09PGHVV9iHjJ2KgS1fZmUroAPCg2DpQj8+75pLjnHRIkUBUHc1dcDMPB3m5YmdJk/N
-         KrH3S+VlUktXPgbTuCSFX9ATlQ9EyCvg+kZDD38HIqEM4t4vh6NL/L5NII7SESQLVJvE
-         98vyscYJcD9WQfOxVsUMoKKieXsvDDAbcjpVXiDnhH6Cew48TLBMMQfCVZl2x2BhVeIz
-         or2YjVDlVUCpyq5Fyv6mYxS2tvvb/QQon983I/OlvmQ+pIBpVc+INCaWtC/025lOqPZP
-         GUV+TCR3Z7MhLQ08pKOslWuLi37+VYC2Ap6q/Nyb/Xa1QAase9MI0chH8qm3VkZY981N
-         /+DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JO32q5fPn0DGWos0JK/kEGYznlXgZQ3x7QyQiycLWM4=;
-        b=Mx8d6RdWmqZZIqIGLF1sArYIu7MU8vluroSYQwW8t2Ei0GIxS+a/rUql9Bstvr1pvZ
-         nfypzsqtV7xDml5ZrXIHecSM52b4qZXkRQ3/2AJCDV527AgUEnnocQSk6yv4EXVqzUDI
-         9ewVok3iVfvqqZFnukjMPOEFBGYbR/b5I97e6TA+x/PUBvyfdc5V8F5ZVS6r9m5mPw+j
-         HyI1JkkODlo2IR1oecm4/tM7Pj9sL0hCiZUVW3GqoraqAUWGxVfG4EsE8tuavsky7g10
-         VfASlKptAE6VyfCdRVszle8Y1Y/d8wY/+eCJIX5PfQdBu7DK61yrRfgv+hJFRdHUZdzQ
-         6ZxA==
-X-Gm-Message-State: AOAM5317AENrzTvM3JmFiSDFvOKwCd77Nl1id6Egc6dMa7lZmB5PqKYD
-        bC63Dn+3vVtJUusDtUAHq0dNSQ==
-X-Google-Smtp-Source: ABdhPJyzVpeauR6vkegV1RB7nvXptTO6uzLp5CKgeWirnk2rWHV8k8twxWA94BkkuabkQp4U+BkNxg==
-X-Received: by 2002:a6b:d01a:: with SMTP id x26mr15797193ioa.11.1614004420388;
-        Mon, 22 Feb 2021 06:33:40 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h13sm13055345ioe.40.2021.02.22.06.33.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Feb 2021 06:33:39 -0800 (PST)
-Subject: Re: [RFC PATCH 0/4] Asynchronous passthrough ioctl
-To:     Kanchan Joshi <joshiiitr@gmail.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Javier Gonzalez <javier.gonz@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Selvakumar S <selvakuma.s1@samsung.com>
-References: <CGME20210127150134epcas5p251fc1de3ff3581dd4c68b3fbe0b9dd91@epcas5p2.samsung.com>
- <20210127150029.13766-1-joshi.k@samsung.com>
- <489691ce-3b1e-30ce-9f72-d32389e33901@gmail.com>
- <a287bd9e-3474-83a4-e5c2-98df17214dc7@gmail.com>
- <CA+1E3rJHHFyjwv7Kp32E9H-cf5ksh0pOHSVdGoTpktQrB8SE6A@mail.gmail.com>
- <2d37d0ca-5853-4bb6-1582-551b9044040c@kernel.dk>
- <CA+1E3rKeqaLXBuvpMcjZ37XH9RqJHjPnTFObJj0T-u8K9Otw-w@mail.gmail.com>
- <dd0392a1-acfa-ef4d-5531-5f1dddc9efe7@kernel.dk>
- <CA+1E3rJqtpfDbKVGBjSYhX=WfzZ2bE8b0U3drUNz_=bp0u9Vuw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <03c15e42-c10a-1f67-c60b-ddc11902f9c5@kernel.dk>
-Date:   Mon, 22 Feb 2021 07:33:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S230060AbhBVOrs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Feb 2021 09:47:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229991AbhBVOrr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Feb 2021 09:47:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7676064E32;
+        Mon, 22 Feb 2021 14:47:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614005224;
+        bh=HzplLp2O3fW08T3Ezea3Vba0aB1IfGHNS5Ygv3Ql8u4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=q2M2AyQmofYlzngMHhTvd19537tZ0k3jktsIBYVLVBnJ2ipuG1IndrLdRWnu7ceBu
+         XV7eoOlWiFFvY5V8QpkXI71mJ+N3s05mJLaf0vL1AAypAcpGqZctV0fzYs5z542eF+
+         HNZRF4jGfgeRPQHF6eE8tBviFyx3HPpIpd0PrzimTKOpUA4JId+71Wvq8dt9YqoR/z
+         bpYKP4fYa2QbXN6j8YBXdKrNA+82AgQCiGJG2lv+tKnbuKGlB+U59uHQ5dNHmuyqeR
+         /TJKKILiCwg+ZpUaaD8GC20NEHkmCUqlvDw9fdVtmvvGhPLv5vCHL6OSnWtX4grTmU
+         gibN1AoFAE9mQ==
+Message-ID: <5bb9b183ea568b9fab098c3e8bdd03fba13673df.camel@kernel.org>
+Subject: Re: [PATCH v2 1/6] ceph: disable old fscache readpage handling
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, dhowells@redhat.com,
+        idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org
+Date:   Mon, 22 Feb 2021 09:47:02 -0500
+In-Reply-To: <d6fcd45c-21eb-d00e-db8a-f2e9441d7f85@redhat.com>
+References: <20210217125845.10319-1-jlayton@kernel.org>
+         <20210217125845.10319-2-jlayton@kernel.org>
+         <d6fcd45c-21eb-d00e-db8a-f2e9441d7f85@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-In-Reply-To: <CA+1E3rJqtpfDbKVGBjSYhX=WfzZ2bE8b0U3drUNz_=bp0u9Vuw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/22/21 6:42 AM, Kanchan Joshi wrote:
-> On Thu, Jan 28, 2021 at 10:54 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 1/28/21 10:13 AM, Kanchan Joshi wrote:
->>> On Thu, Jan 28, 2021 at 8:08 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> On 1/28/21 5:04 AM, Kanchan Joshi wrote:
->>>>> On Wed, Jan 27, 2021 at 9:32 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>>>
->>>>>> On 27/01/2021 15:42, Pavel Begunkov wrote:
->>>>>>> On 27/01/2021 15:00, Kanchan Joshi wrote:
->>>>>>>> This RFC patchset adds asynchronous ioctl capability for NVMe devices.
->>>>>>>> Purpose of RFC is to get the feedback and optimize the path.
->>>>>>>>
->>>>>>>> At the uppermost io-uring layer, a new opcode IORING_OP_IOCTL_PT is
->>>>>>>> presented to user-space applications. Like regular-ioctl, it takes
->>>>>>>> ioctl opcode and an optional argument (ioctl-specific input/output
->>>>>>>> parameter). Unlike regular-ioctl, it is made to skip the block-layer
->>>>>>>> and reach directly to the underlying driver (nvme in the case of this
->>>>>>>> patchset). This path between io-uring and nvme is via a newly
->>>>>>>> introduced block-device operation "async_ioctl". This operation
->>>>>>>> expects io-uring to supply a callback function which can be used to
->>>>>>>> report completion at later stage.
->>>>>>>>
->>>>>>>> For a regular ioctl, NVMe driver submits the command to the device and
->>>>>>>> the submitter (task) is made to wait until completion arrives. For
->>>>>>>> async-ioctl, completion is decoupled from submission. Submitter goes
->>>>>>>> back to its business without waiting for nvme-completion. When
->>>>>>>> nvme-completion arrives, it informs io-uring via the registered
->>>>>>>> completion-handler. But some ioctls may require updating certain
->>>>>>>> ioctl-specific fields which can be accessed only in context of the
->>>>>>>> submitter task. For that reason, NVMe driver uses task-work infra for
->>>>>>>> that ioctl-specific update. Since task-work is not exported, it cannot
->>>>>>>> be referenced when nvme is compiled as a module. Therefore, one of the
->>>>>>>> patch exports task-work API.
->>>>>>>>
->>>>>>>> Here goes example of usage (pseudo-code).
->>>>>>>> Actual nvme-cli source, modified to issue all ioctls via this opcode
->>>>>>>> is present at-
->>>>>>>> https://github.com/joshkan/nvme-cli/commit/a008a733f24ab5593e7874cfbc69ee04e88068c5
->>>>>>>
->>>>>>> see https://git.kernel.dk/cgit/linux-block/log/?h=io_uring-fops
->>>>>>>
->>>>>>> Looks like good time to bring that branch/discussion back
->>>>>>
->>>>>> a bit more context:
->>>>>> https://github.com/axboe/liburing/issues/270
->>>>>
->>>>> Thanks, it looked good. It seems key differences (compared to
->>>>> uring-patch that I posted) are -
->>>>> 1. using file-operation instead of block-dev operation.
->>>>
->>>> Right, it's meant to span wider than just block devices.
->>>>
->>>>> 2. repurpose the sqe memory for ioctl-cmd. If an application does
->>>>> ioctl with <=40 bytes of cmd, it does not have to allocate ioctl-cmd.
->>>>> That's nifty. We still need to support passing larger-cmd (e.g.
->>>>> nvme-passthru ioctl takes 72 bytes) but that shouldn't get too
->>>>> difficult I suppose.
->>>>
->>>> It's actually 48 bytes in the as-posted version, and I've bumped it to
->>>> 56 bytes in the latest branch. So not quite enough for everything,
->>>> nothing ever will be, but should work for a lot of cases without
->>>> requiring per-command allocations just for the actual command.
->>>
->>> Agreed. But if I got it right, you are open to support both in-the-sqe
->>> command (<= 56 bytes) and out-of-sqe command (> 56 bytes) with this
->>> interface.
->>> Driver processing the ioctl can fetch the cmd from user-space in one
->>> case (as it does now), and skips in another.
->>
->> Your out-of-seq command would be none of io_urings business, outside of
->> the fact that we'd need to ensure it's stable if we need to postpone
->> it. So yes, that would be fine, it just means your actual command is
->> passed in as a pointer, and you would be responsible for copying it
->> in for execution
->>
->> We're going to need something to handle postponing, and something
->> for ensuring that eg cancelations free the allocated memory.
+On Fri, 2021-02-19 at 13:09 +0800, Xiubo Li wrote:
+> On 2021/2/17 20:58, Jeff Layton wrote:
+> > With the new netfs read helper functions, we won't need a lot of this
+> > infrastructure as it handles the pagecache pages itself. Rip out the
+> > read handling for now, and much of the old infrastructure that deals in
+> > individual pages.
+> > 
+> > The cookie handling is mostly unchanged, however.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > Cc: ceph-devel@vger.kernel.org
+> > Cc: linux-cachefs@redhat.com
+> > Cc: linux-fsdevel@vger.kernel.org
+> > ---
+> >   fs/ceph/addr.c  |  31 +-----------
+> >   fs/ceph/cache.c | 125 ------------------------------------------------
+> >   fs/ceph/cache.h |  91 +----------------------------------
+> >   fs/ceph/caps.c  |   9 ----
+> >   4 files changed, 3 insertions(+), 253 deletions(-)
+> > 
+> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > index 950552944436..2b17bb36e548 100644
+> > --- a/fs/ceph/addr.c
+> > +++ b/fs/ceph/addr.c
+> > @@ -155,8 +155,6 @@ static void ceph_invalidatepage(struct page *page, unsigned int offset,
+> >   		return;
+> >   	}
+> >   
+> > 
+> > -	ceph_invalidate_fscache_page(inode, page);
+> > -
+> >   	WARN_ON(!PageLocked(page));
+> >   	if (!PagePrivate(page))
+> >   		return;
+> > @@ -175,10 +173,6 @@ static int ceph_releasepage(struct page *page, gfp_t g)
+> >   	dout("%p releasepage %p idx %lu (%sdirty)\n", page->mapping->host,
+> >   	     page, page->index, PageDirty(page) ? "" : "not ");
+> >   
+> > 
+> > -	/* Can we release the page from the cache? */
+> > -	if (!ceph_release_fscache_page(page, g))
+> > -		return 0;
+> > -
+> >   	return !PagePrivate(page);
+> >   }
+> >   
+> > 
+> > @@ -213,10 +207,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+> >   		return 0;
+> >   	}
+> >   
+> > 
+> > -	err = ceph_readpage_from_fscache(inode, page);
+> > -	if (err == 0)
+> > -		return -EINPROGRESS;
+> > -
+> >   	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
+> >   	     vino.ino, vino.snap, filp, off, len, page, page->index);
+> >   	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len, 0, 1,
+> > @@ -241,7 +231,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+> >   	if (err == -ENOENT)
+> >   		err = 0;
+> >   	if (err < 0) {
+> > -		ceph_fscache_readpage_cancel(inode, page);
+> >   		if (err == -EBLOCKLISTED)
+> >   			fsc->blocklisted = true;
+> >   		goto out;
+> > @@ -253,8 +242,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+> >   		flush_dcache_page(page);
+> >   
+> > 
+> >   	SetPageUptodate(page);
+> > -	ceph_readpage_to_fscache(inode, page);
+> > -
+> >   out:
+> >   	return err < 0 ? err : 0;
+> >   }
+> > @@ -294,10 +281,8 @@ static void finish_read(struct ceph_osd_request *req)
+> >   	for (i = 0; i < num_pages; i++) {
+> >   		struct page *page = osd_data->pages[i];
+> >   
+> > 
+> > -		if (rc < 0 && rc != -ENOENT) {
+> > -			ceph_fscache_readpage_cancel(inode, page);
+> > +		if (rc < 0 && rc != -ENOENT)
+> >   			goto unlock;
+> > -		}
+> >   		if (bytes < (int)PAGE_SIZE) {
+> >   			/* zero (remainder of) page */
+> >   			int s = bytes < 0 ? 0 : bytes;
+> > @@ -307,7 +292,6 @@ static void finish_read(struct ceph_osd_request *req)
+> >   		     page->index);
+> >   		flush_dcache_page(page);
+> >   		SetPageUptodate(page);
+> > -		ceph_readpage_to_fscache(inode, page);
+> >   unlock:
+> >   		unlock_page(page);
+> >   		put_page(page);
+> > @@ -408,7 +392,6 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+> >   		     page->index);
+> >   		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
+> >   					  GFP_KERNEL)) {
+> > -			ceph_fscache_uncache_page(inode, page);
+> >   			put_page(page);
+> >   			dout("start_read %p add_to_page_cache failed %p\n",
+> >   			     inode, page);
+> > @@ -440,10 +423,8 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+> >   	return nr_pages;
+> >   
+> > 
+> >   out_pages:
+> > -	for (i = 0; i < nr_pages; ++i) {
+> > -		ceph_fscache_readpage_cancel(inode, pages[i]);
+> > +	for (i = 0; i < nr_pages; ++i)
+> >   		unlock_page(pages[i]);
+> > -	}
+> >   	ceph_put_page_vector(pages, nr_pages, false);
+> >   out_put:
+> >   	ceph_osdc_put_request(req);
+> > @@ -471,12 +452,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
+> >   	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
+> >   		return -EINVAL;
+> >   
+> > 
+> > -	rc = ceph_readpages_from_fscache(mapping->host, mapping, page_list,
+> > -					 &nr_pages);
+> > -
+> > -	if (rc == 0)
+> > -		goto out;
+> > -
+> >   	rw_ctx = ceph_find_rw_context(fi);
+> >   	max = fsc->mount_options->rsize >> PAGE_SHIFT;
+> >   	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
+> > @@ -487,8 +462,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
+> >   			goto out;
+> >   	}
+> >   out:
+> > -	ceph_fscache_readpages_cancel(inode, page_list);
+> > -
+> >   	dout("readpages %p file %p ret %d\n", inode, file, rc);
+> >   	return rc;
+> >   }
+> > diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+> > index 2f5cb6bc78e1..9cfadbb86568 100644
+> > --- a/fs/ceph/cache.c
+> > +++ b/fs/ceph/cache.c
+> > @@ -173,7 +173,6 @@ void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci)
+> >   
+> > 
+> >   	ci->fscache = NULL;
+> >   
+> > 
+> > -	fscache_uncache_all_inode_pages(cookie, &ci->vfs_inode);
+> >   	fscache_relinquish_cookie(cookie, &ci->i_vino, false);
+> >   }
+> >   
+> > 
+> > @@ -194,7 +193,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
+> >   		dout("fscache_file_set_cookie %p %p disabling cache\n",
+> >   		     inode, filp);
+> >   		fscache_disable_cookie(ci->fscache, &ci->i_vino, false);
+> > -		fscache_uncache_all_inode_pages(ci->fscache, inode);
+> >   	} else {
+> >   		fscache_enable_cookie(ci->fscache, &ci->i_vino, i_size_read(inode),
+> >   				      ceph_fscache_can_enable, inode);
+> > @@ -205,108 +203,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
+> >   	}
+> >   }
+> >   
+> > 
+> > -static void ceph_readpage_from_fscache_complete(struct page *page, void *data, int error)
+> > -{
+> > -	if (!error)
+> > -		SetPageUptodate(page);
+> > -
+> > -	unlock_page(page);
+> > -}
+> > -
+> > -static inline bool cache_valid(struct ceph_inode_info *ci)
+> > -{
+> > -	return ci->i_fscache_gen == ci->i_rdcache_gen;
+> > -}
+> > -
 > 
-> I have few doubts about allocation/postponing. Are you referring to
-> uring allocating memory for this case, similar to the way
-> "req->async_data" is managed for few other opcodes?
-> Or can it (i.e. larger cmd) remain a user-space pointer, and the
-> underlying driver fetches the command in.
-> If submission context changes (for sqo/io-wq case), uring seemed to
-> apply context-grabbing techniques to make that work.
-
-There are two concerns here:
-
-1) We need more space than the 48 bytes, which means we need to allocate
-   the command or part of the command when get the sqe, and of course
-   free that when the command is done.
-
-2) When io_uring_enter() returns and has consumed N commands, the state
-   for those commands must be stable. Hence if you're passing in a
-   pointer to a struct, that struct will have been read and store
-   safely. This prevents things like on-stack structures from being an
-   issue.
-
-->async_data deals with #2 here, it's used when a command needs to store
-data because we're switching to an async context to execute the command
-(or the command is otherwise deferred, eg links and such). You can
-always rely on the context being sane, it's either the task itself or
-equivalent.
-
->>>>> And for some ioctls, driver may still need to use task-work to update
->>>>> the user-space pointers (embedded in uring/ioctl cmd) during
->>>>> completion.
->>>>>
->>>>> @Jens - will it be fine if I start looking at plumbing nvme-part of
->>>>> this series on top of your work?
->>>>
->>>> Sure, go ahead. Just beware that things are still changing, so you might
->>>> have to adapt it a few times. It's still early days, but I do think
->>>> that's the way forward in providing controlled access to what is
->>>> basically async ioctls.
->>>
->>> Sounds good, I will start with the latest branch that you posted. Thanks.
->>
->> It's io_uring-fops.v2 for now, use that one.
+> Hi Jeff,
 > 
-> Moved to v3 now.
-> nvme_user_io is 48 bytes, while nvme passthrough requires 72 or 80
-> bytes (passthru with 64 bit result).
-> The block_uring_cmd has 32 bytes of available space. If NVMe defines
-> its own "nvme_uring_cmd" (which can be used for nvme char interface)
-> that will buy some more space, but still won't be enough for passthru
-> command.
+> Please delete the "i_fscache_gen" member from the struct ceph_inode_info 
+> if we are not using it any more.
 > 
-> So I am looking at adding support for large-cmd in uring. And felt the
-> need to clear those doubts I mentioned above.
 
-The simple solution is to just keep the command type the same on the
-NVMe side, and just pass in a pointer to it. Then API could then be
-nr_commands and **commands, for example.
+Good catch. Fixed in my tree. I'll post an updated set in another day or
+so with this rolled in.
 
-But I think we're getting to the point where it'd be easier to just
-discuss actual code. So if you rebase on top of the v3 code, then send
-out those patches and we can discuss the most convenient API to present
-for nvme passthrough and friends. Does that work?
-
+Thanks,
 -- 
-Jens Axboe
+Jeff Layton <jlayton@kernel.org>
 
