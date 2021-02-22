@@ -2,58 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD896322005
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 20:25:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2CD132201B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 20:28:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232988AbhBVTVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Feb 2021 14:21:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36806 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232994AbhBVTSp (ORCPT
+        id S233271AbhBVT1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Feb 2021 14:27:07 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39752 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233066AbhBVTYm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Feb 2021 14:18:45 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAD54C06178A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Feb 2021 11:17:52 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id e13so27895127ejl.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Feb 2021 11:17:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mL0bjhfITdu5839ghM56EtmuJ0mV3o1IEyaUJSuFMFs=;
-        b=0VKXgI+d4N8/TsZjQE/E5fkYxDFeC7KFxegFQ1tUDUQWXj1P6cXOsiH5slGqxqrmbb
-         dBx4HcRD8Hzu5KRTHX5N1ybYz5yC5e7kYtwfTlsuU2esXKkYljaX8VDDRS1DaE/uHUin
-         QAGppPvDyByXQFp+iE9GKGPwF3A2dB1mFytnHdtGJw+XJLGP5r33xK45enAbysyTaEHa
-         57tTo6DZyOE+uYzDNdPTZAL71cYVMSUiSI5K7sek4p2eMAFj1YmFFfuyLNvbSLKSE5kW
-         D+y3PQVbEo19hoNoanDSrLywkZqhcPGuG5KVCRRj/oMJKHnyCwkRLTAD6EZO4JnoconN
-         aV4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mL0bjhfITdu5839ghM56EtmuJ0mV3o1IEyaUJSuFMFs=;
-        b=ZNOJoyC/6vLUjYFul3GYdbSO6IkuwHe4NS/+PbftCVi5YlN+vAzzt99uQyPaaS7VU4
-         hNVnisfyU5pmhLP+B9NPMkKzti7wEk4ANJSdtIOmVUMGJNjyOiyt2b9BarIn59/NpN3V
-         F720fVhyX5x/HTpV7F5RTxeBRW6wtwV6CZ/iy/QQklyEbwZKG4SsefoxQT3Z+jhgT024
-         ExYHeb+G0hsdGOZHoUSjmJ7k/ZCeewanzMWX2LVegeVGVMy4EfZqpZm0Iucm9gveBHHy
-         X5wMJLuwb0f0yRiDI8TBLDYSwuPxh5UQvURf2gkBSHkMnz4XtDbM6ig5rSqGmdRBWdVG
-         W1jQ==
-X-Gm-Message-State: AOAM532jO7uc/JI0nXpgyFgerQbAG5f76GVDyY6Xo2ZQhwN6IbkWLPGC
-        a/a81b6gPFZi9lmkfT76rn1sXQzACdFFuBPxVg5WAg==
-X-Google-Smtp-Source: ABdhPJwkiWshDLTsz8a3A7EzLjYNcKqX6Z1F01E3QE0NjkocZdW4txgaDcjEXqIRRI2IV4obwnL12Zk+rIG7YnuhZ4g=
-X-Received: by 2002:a17:906:8692:: with SMTP id g18mr22575502ejx.418.1614021471495;
- Mon, 22 Feb 2021 11:17:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20210208084920.2884-1-rppt@kernel.org> <20210208084920.2884-9-rppt@kernel.org>
- <20210222073452.GA30403@codon.org.uk> <20210222102359.GE1447004@kernel.org>
-In-Reply-To: <20210222102359.GE1447004@kernel.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 22 Feb 2021 11:17:46 -0800
-Message-ID: <CAPcyv4hCXZFmeMkKxN54Yw3ZbvoYQ3Z9y9Ayv42i6u+24Bkmqg@mail.gmail.com>
+        Mon, 22 Feb 2021 14:24:42 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11MJEpp1109474;
+        Mon, 22 Feb 2021 14:22:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : reply-to : to : cc : date : in-reply-to : references : content-type
+ : mime-version : content-transfer-encoding; s=pp1;
+ bh=KAyj3eKLFKOMnwU1Es38+VsKyGm7gMDhy7ENyWKcDm4=;
+ b=bn8IhK//XUxSeVLKRWaudUpoZzL3HN5vnUn4dYDpyPFm9aPCaPnD+QiwGxLCGeTzELxl
+ PppAlRy+arUk88Dhx2rNqZySKY6ng2azqgGEVWR2grK/HbTghTHlijIE6pTMcJB3Vg/1
+ GSPfdff6vMuq186WZnDTsg+gUMVvggORWXLF/f2a3vzpjKTMKAwgSXW3kjfo0kJ5ca75
+ 10nkRQpUwTmxScPMGE5eZkL9fMfmn6thoNYthm6uAKXwqpRPs90KjqwDpJUUI4LRrd6O
+ Q+BXIG4P3y9Geq5ul5vQRFgctbObacFSkjKUgekkyuvlqcgR4IITzI9pxcRVpdvK/lGJ 9A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36vjkkgbyp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Feb 2021 14:22:05 -0500
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 11MJFWXD164416;
+        Mon, 22 Feb 2021 14:22:04 -0500
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36vjkkgbwh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Feb 2021 14:22:03 -0500
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11MJLub8006699;
+        Mon, 22 Feb 2021 19:22:00 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma05wdc.us.ibm.com with ESMTP id 36tt29gytt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Feb 2021 19:22:00 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11MJLxGN50266622
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Feb 2021 19:21:59 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 795D87806D;
+        Mon, 22 Feb 2021 19:21:59 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B698978060;
+        Mon, 22 Feb 2021 19:21:51 +0000 (GMT)
+Received: from jarvis.int.hansenpartnership.com (unknown [9.80.227.153])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 22 Feb 2021 19:21:51 +0000 (GMT)
+Message-ID: <22003fc92c16852debfdd35293475e7093d2bc67.camel@linux.ibm.com>
 Subject: Re: [PATCH v17 08/10] PM: hibernate: disable when there are active
  secretmem users
-To:     Mike Rapoport <rppt@kernel.org>
+From:   James Bottomley <jejb@linux.ibm.com>
+Reply-To: jejb@linux.ibm.com
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Mike Rapoport <rppt@kernel.org>
 Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -65,7 +73,6 @@ Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
         David Hildenbrand <david@redhat.com>,
         Elena Reshetova <elena.reshetova@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
         "Kirill A. Shutemov" <kirill@shutemov.name>,
         Matthew Wilcox <willy@infradead.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -92,28 +99,61 @@ Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
         linux-riscv@lists.infradead.org, X86 ML <x86@kernel.org>,
         Hagen Paul Pfeifer <hagen@jauu.net>,
         Palmer Dabbelt <palmerdabbelt@google.com>
+Date:   Mon, 22 Feb 2021 11:21:50 -0800
+In-Reply-To: <CAPcyv4hCXZFmeMkKxN54Yw3ZbvoYQ3Z9y9Ayv42i6u+24Bkmqg@mail.gmail.com>
+References: <20210208084920.2884-1-rppt@kernel.org>
+         <20210208084920.2884-9-rppt@kernel.org>
+         <20210222073452.GA30403@codon.org.uk> <20210222102359.GE1447004@kernel.org>
+         <CAPcyv4hCXZFmeMkKxN54Yw3ZbvoYQ3Z9y9Ayv42i6u+24Bkmqg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-02-22_06:2021-02-22,2021-02-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0
+ clxscore=1011 spamscore=0 suspectscore=0 bulkscore=0 impostorscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102220168
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 22, 2021 at 2:24 AM Mike Rapoport <rppt@kernel.org> wrote:
->
-> On Mon, Feb 22, 2021 at 07:34:52AM +0000, Matthew Garrett wrote:
-> > On Mon, Feb 08, 2021 at 10:49:18AM +0200, Mike Rapoport wrote:
-> >
-> > > It is unsafe to allow saving of secretmem areas to the hibernation
-> > > snapshot as they would be visible after the resume and this essentially
-> > > will defeat the purpose of secret memory mappings.
-> >
-> > Sorry for being a bit late to this - from the point of view of running
-> > processes (and even the kernel once resume is complete), hibernation is
-> > effectively equivalent to suspend to RAM. Why do they need to be handled
-> > differently here?
->
-> Hibernation leaves a copy of the data on the disk which we want to prevent.
+On Mon, 2021-02-22 at 11:17 -0800, Dan Williams wrote:
+> On Mon, Feb 22, 2021 at 2:24 AM Mike Rapoport <rppt@kernel.org>
+> wrote:
+> > On Mon, Feb 22, 2021 at 07:34:52AM +0000, Matthew Garrett wrote:
+> > > On Mon, Feb 08, 2021 at 10:49:18AM +0200, Mike Rapoport wrote:
+> > > 
+> > > > It is unsafe to allow saving of secretmem areas to the
+> > > > hibernation snapshot as they would be visible after the resume
+> > > > and this essentially will defeat the purpose of secret memory
+> > > > mappings.
+> > > 
+> > > Sorry for being a bit late to this - from the point of view of
+> > > running processes (and even the kernel once resume is complete),
+> > > hibernation is effectively equivalent to suspend to RAM. Why do
+> > > they need to be handled differently here?
+> > 
+> > Hibernation leaves a copy of the data on the disk which we want to
+> > prevent.
+> 
+> Why not document that users should use data at rest protection
+> mechanisms for their hibernation device? Just because secretmem can't
+> assert its disclosure guarantee does not mean the hibernation device
+> is untrustworthy.
 
-Why not document that users should use data at rest protection
-mechanisms for their hibernation device? Just because secretmem can't
-assert its disclosure guarantee does not mean the hibernation device
-is untrustworthy.
+It's not just data at rest.  Part of the running security guarantees
+are that the kernel never gets access to the data.  To support
+hibernate and swap we have to break that, so it reduces the runtime
+security posture as well as the data at rest one.
+
+This argues we could do it with a per region flags (something like less
+secure or more secure mappings), but when you give users that choice
+most of them rarely choose less secure.
+
+James
+
+
