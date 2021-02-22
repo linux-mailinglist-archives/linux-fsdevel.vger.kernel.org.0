@@ -2,176 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B9232119B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 08:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C5843212C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 10:10:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbhBVHvw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Feb 2021 02:51:52 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:57256 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230189AbhBVHvv (ORCPT
+        id S229990AbhBVJHl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Feb 2021 04:07:41 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:52815 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230171AbhBVJGz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Feb 2021 02:51:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1613981268; x=1645517268;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=I7gEhcAiQWm7xkZhIQBr9647eucFuNKvy/zHo8RnLRo=;
-  b=hQgMqqHtAhMmrA0OobAF4asGVIDtVWMdMXf9Fy9OjDSCCcKx9daG3ywt
-   RpoGiv/0LugN4Al0BgRyEoVNfP7C/vtEv3f+R9AaIizgnf/P0u+Plr0Ce
-   PN/ae4W+kueDh6y32APToLPZrKBPQRvLdDiV+RkmeXpRPAYa5K0ST/leN
-   czCIpqjbhgw6jeNDBBTzOrDIAsTppVESShlKNIz4dYXpWt3tOsuc2o3oG
-   Hv+dkBc3jzjHeL/bzsGJEHaJZ7DZL73iINCbM9dbbygrMvFCh5TKCHWoi
-   VqtUCCVioA4yQJ9Aus+JGuQtc37QKcIJHjZ+FWOGW/vgDCXS50lLG8spr
-   A==;
-IronPort-SDR: GPxpXauqj8gJHi3DrvqfKiOxXU3M5iVeiNEsUNk3xc5hPZEAVmpW/AXBewh+nLmbphM8U+tD5X
- ETbAtlRJPq08mHPE/AMatVRkvu8//ccu8OipVaByaxb02nc3tOgilWnJDVstQ0gIECuCYx4kKb
- vV3TnhiQcMvPRe/Uem8hH7mLAl7UON2AWF5pnsvu6uI6WlEHiPjsCDyy41dh9hb+ChZbFbFuqF
- pmZBv8CsjOWsOWNuAPJat8g+UqiUQuDwTACJTGu6hFMq5btutgIiQp+nVQLlf+6qS5CXtgzTSo
- K7U=
-X-IronPort-AV: E=Sophos;i="5.81,196,1610380800"; 
-   d="scan'208";a="264674816"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Feb 2021 16:06:09 +0800
-IronPort-SDR: gSeHAdgID6gsgYEE6g76dxDJ7wwtyzMyFRsHStJ4gGbOOnZUaRenQHp3Q/JiGslqMfK9jij66s
- WkdXwbiMiE5p+RywsvzM3NNYP/wDft+zsJXnha1C8Gk9c/VJ4wqTYzcV0pu58mKi3WWX0XXPFp
- 8S4xnpc/6NcbrnSococFXvL4ig9e/vzS5AjfQ8D2kTyIK71VFqAeoLqcLpx+2Z3wM1ZTour/qf
- SasIhfzxU/0NNmNY/ERboq792goLW86DSvxTdcnvhy4lE74trjadMUNkvGq6QPoCbbRXBsGhTS
- VR3MwjRhQmKFIVKsNg8N7TV9
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2021 23:32:18 -0800
-IronPort-SDR: JgH3gSVH9lcWxXlRg/QoEkPWSzxowDWQDBAxglfcg3jgnnQkOP7rpl26GfmdcKpZM0EFNvhwbg
- xQZU2ZTLnMa3VnICajT3GvQpv+p36WFDvYQgRNPg10mPYCOXh3J1Qgeru8rPlLqNek+pEMFeYu
- EcJOY6WTci4l718OnV4Uv2zc14RaSnk9AJFX/lxF32kTudTXqG+10GdbKEFjQv/8iuNX1P+j+y
- uvJ9oMoKDXpgHbqu5ZyZw9dldHJpBKHelUIbkOe+q/cJw+tWEVi3aWST1Z7Q1+NH6P55hyKlwp
- ICI=
-WDCIronportException: Internal
-Received: from cnf009945.ad.shared (HELO naota-xeon) ([10.225.62.190])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2021 23:50:45 -0800
-Date:   Mon, 22 Feb 2021 16:50:43 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     dsterba@suse.cz, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: Re: [PATCH v15 00/42] btrfs: zoned block device support
-Message-ID: <20210222075043.3g7watpx5gedguaj@naota-xeon>
-References: <cover.1612433345.git.naohiro.aota@wdc.com>
- <20210210195829.GW1993@twin.jikos.cz>
- <SN4PR0401MB35987EE941FA59E2ECB8D7269B8C9@SN4PR0401MB3598.namprd04.prod.outlook.com>
- <20210211151901.GD1993@twin.jikos.cz>
- <SN4PR0401MB3598ADA963CA60A715DE5EDE9B8C9@SN4PR0401MB3598.namprd04.prod.outlook.com>
- <20210211154627.GE1993@twin.jikos.cz>
- <SN4PR0401MB359821DC2BBF171C946142D09B889@SN4PR0401MB3598.namprd04.prod.outlook.com>
- <20210216043247.cjxybi7dudpgvvyg@naota-xeon>
- <20210216114611.GM1993@suse.cz>
+        Mon, 22 Feb 2021 04:06:55 -0500
+Received: by mail-io1-f72.google.com with SMTP id v5so1183788ioq.19
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Feb 2021 01:06:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=SnPAfYRAYGtfnVs6B/o8MLHL0hcsdQDCUmNnokrQL7o=;
+        b=jliRHi8x1mHC5kC7tbxR4M460lKWzUD5sy9stBYZl0pixgCDkxXh6kkcoKsSBeWPZl
+         3gCywXvdFy/nRpPHKmXHh/p18JF150ZXoNmxy6mGr0A9WtaP3QTi5a6deg6b0g60s6S1
+         t7LMb3YQXAOKgfz6TTNPIPJ6c1OhmQtWCYU/BzedLvEHKReyCFdEjgsUqH0ncl+TvsFl
+         Kr8w64c9vervuSrgHIZTzOQ6k3yOs+CkGs1WumyNlqxxsLpogYSAWmtlU9QMQ1rAxpK4
+         4KL2C43x0/IY6cDq2VQ5NgbSerKvJCS9JMhzG85ckacF72MaVoq7h6hZJ70hIgjATru7
+         O1JQ==
+X-Gm-Message-State: AOAM533kWUr6kdZY86e5CxkjS5P8Mt0AsAs/edbirLwUHEITU46wol3y
+        3KXKR5f8giWQSa47RbSVYbrKuopOiodL6GfwO0G9LtZ4sdOM
+X-Google-Smtp-Source: ABdhPJwmxkJjRFeNvq2UYxQJReoERu+QZLrYkYc09f0SI6K1RXT5HU/mr/PVvn51bznq8aJQtYH2OmmxLM11pvYMTnZlvAAQNXfy
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210216114611.GM1993@suse.cz>
+X-Received: by 2002:a05:6638:d8a:: with SMTP id l10mr21309377jaj.2.1613984774045;
+ Mon, 22 Feb 2021 01:06:14 -0800 (PST)
+Date:   Mon, 22 Feb 2021 01:06:14 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002142f605bbe91dc8@google.com>
+Subject: memory leak in iget_locked
+From:   syzbot <syzbot+739e5b9d4646ff8618a9@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 12:46:11PM +0100, David Sterba wrote:
-> On Tue, Feb 16, 2021 at 01:33:28PM +0900, Naohiro Aota wrote:
-> > On Mon, Feb 15, 2021 at 04:58:05PM +0000, Johannes Thumshirn wrote:
-> > > On 11/02/2021 16:48, David Sterba wrote:
-> > > > On Thu, Feb 11, 2021 at 03:26:04PM +0000, Johannes Thumshirn wrote:
-> > > >> On 11/02/2021 16:21, David Sterba wrote:
-> > > >>> On Thu, Feb 11, 2021 at 09:58:09AM +0000, Johannes Thumshirn wrote:
-> > > >>>> On 10/02/2021 21:02, David Sterba wrote:
-> > > >>>>>> This series implements superblock log writing. It uses two zones as a
-> > > >>>>>> circular buffer to write updated superblocks. Once the first zone is filled
-> > > >>>>>> up, start writing into the second zone. The first zone will be reset once
-> > > >>>>>> both zones are filled. We can determine the postion of the latest
-> > > >>>>>> superblock by reading the write pointer information from a device.
-> > > >>>>>
-> > > >>>>> About that, in this patchset it's still leaving superblock at the fixed
-> > > >>>>> zone number while we want it at a fixed location, spanning 2 zones
-> > > >>>>> regardless of their size.
-> > > >>>>
-> > > >>>> We'll always need 2 zones or otherwise we won't be powercut safe.
-> > > >>>
-> > > >>> Yes we do, that hasn't changed.
-> > > >>
-> > > >> OK that I don't understand, with the log structured superblocks on a zoned
-> > > >> filesystem, we're writing a new superblock until the 1st zone is filled.
-> > > >> Then we advance to the second zone. As soon as we wrote a superblock to
-> > > >> the second zone we can reset the first.
-> > > >> If we only use one zone,
-> > > > 
-> > > > No, that can't work and nobody suggests that.
-> > > > 
-> > > >> we would need to write until it's end, reset and
-> > > >> start writing again from the beginning. But if a powercut happens between
-> > > >> reset and first write after the reset, we end up with no superblock.
-> > > > 
-> > > > What I'm saying and what we discussed on slack in December, we can't fix
-> > > > the zone number for the 1st and 2nd copy of superblock like it is now in
-> > > > sb_zone_number.
-> > > > 
-> > > > The primary superblock must be there for any reference and to actually
-> > > > let the tools learn about the incompat bits.
-> > > > 
-> > > > The 1st copy is now fixed zone 16, which depends on the zone size. The
-> > > > idea is to define the superblock offsets to start at given offsets,
-> > > > where the ring buffer has the two consecutive zones, regardless of their
-> > > > size.
-> > > > 
-> > > > primary:		   0
-> > > > 1st copy:		 16G
-> > > > 2nd copy:		256G
-> > > > 
-> > > > Due to the variability of the zones in future devices, we'll reserve a
-> > > > space at the superblock interval, assuming the zone sizes can grow up to
-> > > > several gigabytes. Current working number is 1G, with some safety margin
-> > > > the reserved ranges would be (eg. for a 4G zone size):
-> > > > 
-> > > > primary:		0 up to 8G
-> > > > 1st copy:		16G up to 24G
-> > > > 2nd copy:		256G up to 262G
-> > > > 
-> > > > It is wasteful but we want to be future proof and expecting disk sizes
-> > > > from tens of terabytes to a hundred terabytes, it's not significant
-> > > > loss of space.
-> > > > 
-> > > > If the zone sizes can be expected higher than 4G, the 1st copy can be
-> > > > defined at 64G, that would leave us some margin until somebody thinks
-> > > > that 32G zones are a great idea.
-> > > > 
-> > > 
-> > > We've been talking about this today and our proposal would be as follows:
-> > > Primary SB is two zones starting at LBA 0
-> > > Seconday SB the two zones starting with the zone that contains the address 16G
-> > 
-> > For the secondary SB on a file system < 16GB, how do you think of
-> > using the last two zones (or zones #2, #3 will do)? Then, we can
-> > assure to have two SB copies even on such a file system.
-> 
-> For real hardware I think this is not relevant but for the emulated mode
-> we need to deal with that case. The reserved size is wasteful and this
-> will become noticeable for devices < 16G but I'd rather keep the logic
-> simple and not care much about this corner case. So, the superblock
-> range would be reserved and if there's not enough to store the secondary
-> sb, then don't.
+Hello,
 
-Sure. That works. I'm running xfstests with these new SB
-locations. Once it passed, I'll post the patch.
+syzbot found the following issue on:
 
-One corner case left. What should we do with zone size > 8G? In this
-case, the primary SB zones and the 1st copy SB zones overlap. I know
-this is unrealistic for real hardware, but you can still create such a
-device with null_blk.
+HEAD commit:    f40ddce8 Linux 5.11
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e1a434d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5528e8db7fc481ae
+dashboard link: https://syzkaller.appspot.com/bug?extid=739e5b9d4646ff8618a9
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10aeddd2d00000
 
-1) Use the following zones (zones #2, #3) as the primary SB zones
-2) Do not write the primary SBs
-3) Reject to mkfs
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+739e5b9d4646ff8618a9@syzkaller.appspotmail.com
 
-To be simple logic, method #3 would be appropriate here?
+BUG: memory leak
+unreferenced object 0xffff88810ffd32e0 (size 608):
+  comm "systemd", pid 1, jiffies 4294966945 (age 26.710s)
+  hex dump (first 32 bytes):
+    80 80 0c 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff  ................
+  backtrace:
+    [<00000000159405a6>] alloc_inode+0xbe/0x100 fs/inode.c:235
+    [<00000000a1ba61ba>] iget_locked+0x126/0x340 fs/inode.c:1192
+    [<0000000058bf69d6>] kernfs_get_inode+0x20/0x190 fs/kernfs/inode.c:252
+    [<0000000038d3c844>] kernfs_iop_lookup+0xa0/0xe0 fs/kernfs/dir.c:1100
+    [<00000000f316b4af>] lookup_open fs/namei.c:3085 [inline]
+    [<00000000f316b4af>] open_last_lookups fs/namei.c:3180 [inline]
+    [<00000000f316b4af>] path_openat+0x95d/0x1b00 fs/namei.c:3368
+    [<00000000952158a9>] do_filp_open+0xa0/0x190 fs/namei.c:3398
+    [<00000000ca8d298d>] do_sys_openat2+0xed/0x230 fs/open.c:1172
+    [<00000000be6807df>] do_sys_open fs/open.c:1188 [inline]
+    [<00000000be6807df>] __do_sys_open fs/open.c:1196 [inline]
+    [<00000000be6807df>] __se_sys_open fs/open.c:1192 [inline]
+    [<00000000be6807df>] __x64_sys_open+0x7d/0xe0 fs/open.c:1192
+    [<00000000ea2012e0>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+    [<00000000e7253572>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Technically, all the log zones overlap with zone size > 128 GB. I'm
-considering to reject to mkfs in this insane case anyway.
+BUG: memory leak
+unreferenced object 0xffff888111bd1ab0 (size 24):
+  comm "systemd", pid 1, jiffies 4294966945 (age 26.710s)
+  hex dump (first 24 bytes):
+    18 34 fd 0f 81 88 ff ff 90 e3 09 82 ff ff ff ff  .4..............
+    00 00 00 00 00 00 00 00                          ........
+  backtrace:
+    [<00000000c34be1ab>] kmem_cache_zalloc include/linux/slab.h:672 [inline]
+    [<00000000c34be1ab>] lsm_inode_alloc security/security.c:590 [inline]
+    [<00000000c34be1ab>] security_inode_alloc+0x2a/0xb0 security/security.c:973
+    [<00000000682cda2f>] inode_init_always+0x10c/0x250 fs/inode.c:170
+    [<00000000b63896fb>] alloc_inode+0x44/0x100 fs/inode.c:240
+    [<00000000a1ba61ba>] iget_locked+0x126/0x340 fs/inode.c:1192
+    [<0000000058bf69d6>] kernfs_get_inode+0x20/0x190 fs/kernfs/inode.c:252
+    [<0000000038d3c844>] kernfs_iop_lookup+0xa0/0xe0 fs/kernfs/dir.c:1100
+    [<00000000f316b4af>] lookup_open fs/namei.c:3085 [inline]
+    [<00000000f316b4af>] open_last_lookups fs/namei.c:3180 [inline]
+    [<00000000f316b4af>] path_openat+0x95d/0x1b00 fs/namei.c:3368
+    [<00000000952158a9>] do_filp_open+0xa0/0x190 fs/namei.c:3398
+    [<00000000ca8d298d>] do_sys_openat2+0xed/0x230 fs/open.c:1172
+    [<00000000be6807df>] do_sys_open fs/open.c:1188 [inline]
+    [<00000000be6807df>] __do_sys_open fs/open.c:1196 [inline]
+    [<00000000be6807df>] __se_sys_open fs/open.c:1192 [inline]
+    [<00000000be6807df>] __x64_sys_open+0x7d/0xe0 fs/open.c:1192
+    [<00000000ea2012e0>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+    [<00000000e7253572>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff88810ffd8ce0 (size 608):
+  comm "systemd", pid 1, jiffies 4294966945 (age 26.710s)
+  hex dump (first 32 bytes):
+    a4 81 0c 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff  ................
+  backtrace:
+    [<00000000159405a6>] alloc_inode+0xbe/0x100 fs/inode.c:235
+    [<00000000a1ba61ba>] iget_locked+0x126/0x340 fs/inode.c:1192
+    [<0000000058bf69d6>] kernfs_get_inode+0x20/0x190 fs/kernfs/inode.c:252
+    [<0000000038d3c844>] kernfs_iop_lookup+0xa0/0xe0 fs/kernfs/dir.c:1100
+    [<00000000f316b4af>] lookup_open fs/namei.c:3085 [inline]
+    [<00000000f316b4af>] open_last_lookups fs/namei.c:3180 [inline]
+    [<00000000f316b4af>] path_openat+0x95d/0x1b00 fs/namei.c:3368
+    [<00000000952158a9>] do_filp_open+0xa0/0x190 fs/namei.c:3398
+    [<00000000ca8d298d>] do_sys_openat2+0xed/0x230 fs/open.c:1172
+    [<00000000be6807df>] do_sys_open fs/open.c:1188 [inline]
+    [<00000000be6807df>] __do_sys_open fs/open.c:1196 [inline]
+    [<00000000be6807df>] __se_sys_open fs/open.c:1192 [inline]
+    [<00000000be6807df>] __x64_sys_open+0x7d/0xe0 fs/open.c:1192
+    [<00000000ea2012e0>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+    [<00000000e7253572>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff88810ed17e28 (size 24):
+  comm "systemd", pid 1, jiffies 4294966945 (age 26.710s)
+  hex dump (first 24 bytes):
+    18 8e fd 0f 81 88 ff ff 90 e3 09 82 ff ff ff ff  ................
+    00 00 00 00 00 00 00 00                          ........
+  backtrace:
+    [<00000000c34be1ab>] kmem_cache_zalloc include/linux/slab.h:672 [inline]
+    [<00000000c34be1ab>] lsm_inode_alloc security/security.c:590 [inline]
+    [<00000000c34be1ab>] security_inode_alloc+0x2a/0xb0 security/security.c:973
+    [<00000000682cda2f>] inode_init_always+0x10c/0x250 fs/inode.c:170
+    [<00000000b63896fb>] alloc_inode+0x44/0x100 fs/inode.c:240
+    [<00000000a1ba61ba>] iget_locked+0x126/0x340 fs/inode.c:1192
+    [<0000000058bf69d6>] kernfs_get_inode+0x20/0x190 fs/kernfs/inode.c:252
+    [<0000000038d3c844>] kernfs_iop_lookup+0xa0/0xe0 fs/kernfs/dir.c:1100
+    [<00000000f316b4af>] lookup_open fs/namei.c:3085 [inline]
+    [<00000000f316b4af>] open_last_lookups fs/namei.c:3180 [inline]
+    [<00000000f316b4af>] path_openat+0x95d/0x1b00 fs/namei.c:3368
+    [<00000000952158a9>] do_filp_open+0xa0/0x190 fs/namei.c:3398
+    [<00000000ca8d298d>] do_sys_openat2+0xed/0x230 fs/open.c:1172
+    [<00000000be6807df>] do_sys_open fs/open.c:1188 [inline]
+    [<00000000be6807df>] __do_sys_open fs/open.c:1196 [inline]
+    [<00000000be6807df>] __se_sys_open fs/open.c:1192 [inline]
+    [<00000000be6807df>] __x64_sys_open+0x7d/0xe0 fs/open.c:1192
+    [<00000000ea2012e0>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+    [<00000000e7253572>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[  323.608401][  
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
