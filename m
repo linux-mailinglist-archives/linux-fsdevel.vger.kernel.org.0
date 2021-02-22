@@ -2,241 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1D96321A87
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 15:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ECE4321BC4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 16:45:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230060AbhBVOrs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Feb 2021 09:47:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51670 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229991AbhBVOrr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Feb 2021 09:47:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7676064E32;
-        Mon, 22 Feb 2021 14:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614005224;
-        bh=HzplLp2O3fW08T3Ezea3Vba0aB1IfGHNS5Ygv3Ql8u4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=q2M2AyQmofYlzngMHhTvd19537tZ0k3jktsIBYVLVBnJ2ipuG1IndrLdRWnu7ceBu
-         XV7eoOlWiFFvY5V8QpkXI71mJ+N3s05mJLaf0vL1AAypAcpGqZctV0fzYs5z542eF+
-         HNZRF4jGfgeRPQHF6eE8tBviFyx3HPpIpd0PrzimTKOpUA4JId+71Wvq8dt9YqoR/z
-         bpYKP4fYa2QbXN6j8YBXdKrNA+82AgQCiGJG2lv+tKnbuKGlB+U59uHQ5dNHmuyqeR
-         /TJKKILiCwg+ZpUaaD8GC20NEHkmCUqlvDw9fdVtmvvGhPLv5vCHL6OSnWtX4grTmU
-         gibN1AoFAE9mQ==
-Message-ID: <5bb9b183ea568b9fab098c3e8bdd03fba13673df.camel@kernel.org>
-Subject: Re: [PATCH v2 1/6] ceph: disable old fscache readpage handling
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, dhowells@redhat.com,
-        idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Date:   Mon, 22 Feb 2021 09:47:02 -0500
-In-Reply-To: <d6fcd45c-21eb-d00e-db8a-f2e9441d7f85@redhat.com>
-References: <20210217125845.10319-1-jlayton@kernel.org>
-         <20210217125845.10319-2-jlayton@kernel.org>
-         <d6fcd45c-21eb-d00e-db8a-f2e9441d7f85@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S230270AbhBVPpm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Feb 2021 10:45:42 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:43248 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230037AbhBVPpl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Feb 2021 10:45:41 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lEDOL-0093bx-OT; Mon, 22 Feb 2021 08:44:57 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lEDOK-001Z2V-UG; Mon, 22 Feb 2021 08:44:57 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Alexey Gladkov <legion@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>
+References: <cover.1613550081.git.gladkov.alexey@gmail.com>
+Date:   Mon, 22 Feb 2021 09:44:40 -0600
+In-Reply-To: <cover.1613550081.git.gladkov.alexey@gmail.com> (Alexey Gladkov's
+        message of "Wed, 17 Feb 2021 09:21:40 +0100")
+Message-ID: <m1zgzwm7iv.fsf@fess.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1lEDOK-001Z2V-UG;;;mid=<m1zgzwm7iv.fsf@fess.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18UX+qcoGNY+o+bfYPzgo2AhKFciywhCUM=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4934]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Alexey Gladkov <gladkov.alexey@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 294 ms - load_scoreonly_sql: 0.33 (0.1%),
+        signal_user_changed: 11 (3.9%), b_tie_ro: 9 (3.0%), parse: 1.01 (0.3%),
+         extract_message_metadata: 3.1 (1.1%), get_uri_detail_list: 0.73
+        (0.2%), tests_pri_-1000: 4.6 (1.6%), tests_pri_-950: 1.52 (0.5%),
+        tests_pri_-900: 1.62 (0.6%), tests_pri_-90: 70 (23.9%), check_bayes:
+        68 (23.3%), b_tokenize: 6 (1.9%), b_tok_get_all: 4.7 (1.6%),
+        b_comp_prob: 2.2 (0.7%), b_tok_touch_all: 52 (17.8%), b_finish: 1.14
+        (0.4%), tests_pri_0: 179 (61.0%), check_dkim_signature: 1.09 (0.4%),
+        check_dkim_adsp: 3.2 (1.1%), poll_dns_idle: 0.99 (0.3%), tests_pri_10:
+        2.2 (0.8%), tests_pri_500: 8 (2.7%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RESEND PATCH v4 0/3] proc: Relax check of mount visibility
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2021-02-19 at 13:09 +0800, Xiubo Li wrote:
-> On 2021/2/17 20:58, Jeff Layton wrote:
-> > With the new netfs read helper functions, we won't need a lot of this
-> > infrastructure as it handles the pagecache pages itself. Rip out the
-> > read handling for now, and much of the old infrastructure that deals in
-> > individual pages.
-> > 
-> > The cookie handling is mostly unchanged, however.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > Cc: ceph-devel@vger.kernel.org
-> > Cc: linux-cachefs@redhat.com
-> > Cc: linux-fsdevel@vger.kernel.org
-> > ---
-> >   fs/ceph/addr.c  |  31 +-----------
-> >   fs/ceph/cache.c | 125 ------------------------------------------------
-> >   fs/ceph/cache.h |  91 +----------------------------------
-> >   fs/ceph/caps.c  |   9 ----
-> >   4 files changed, 3 insertions(+), 253 deletions(-)
-> > 
-> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > index 950552944436..2b17bb36e548 100644
-> > --- a/fs/ceph/addr.c
-> > +++ b/fs/ceph/addr.c
-> > @@ -155,8 +155,6 @@ static void ceph_invalidatepage(struct page *page, unsigned int offset,
-> >   		return;
-> >   	}
-> >   
-> > 
-> > -	ceph_invalidate_fscache_page(inode, page);
-> > -
-> >   	WARN_ON(!PageLocked(page));
-> >   	if (!PagePrivate(page))
-> >   		return;
-> > @@ -175,10 +173,6 @@ static int ceph_releasepage(struct page *page, gfp_t g)
-> >   	dout("%p releasepage %p idx %lu (%sdirty)\n", page->mapping->host,
-> >   	     page, page->index, PageDirty(page) ? "" : "not ");
-> >   
-> > 
-> > -	/* Can we release the page from the cache? */
-> > -	if (!ceph_release_fscache_page(page, g))
-> > -		return 0;
-> > -
-> >   	return !PagePrivate(page);
-> >   }
-> >   
-> > 
-> > @@ -213,10 +207,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
-> >   		return 0;
-> >   	}
-> >   
-> > 
-> > -	err = ceph_readpage_from_fscache(inode, page);
-> > -	if (err == 0)
-> > -		return -EINPROGRESS;
-> > -
-> >   	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
-> >   	     vino.ino, vino.snap, filp, off, len, page, page->index);
-> >   	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len, 0, 1,
-> > @@ -241,7 +231,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
-> >   	if (err == -ENOENT)
-> >   		err = 0;
-> >   	if (err < 0) {
-> > -		ceph_fscache_readpage_cancel(inode, page);
-> >   		if (err == -EBLOCKLISTED)
-> >   			fsc->blocklisted = true;
-> >   		goto out;
-> > @@ -253,8 +242,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
-> >   		flush_dcache_page(page);
-> >   
-> > 
-> >   	SetPageUptodate(page);
-> > -	ceph_readpage_to_fscache(inode, page);
-> > -
-> >   out:
-> >   	return err < 0 ? err : 0;
-> >   }
-> > @@ -294,10 +281,8 @@ static void finish_read(struct ceph_osd_request *req)
-> >   	for (i = 0; i < num_pages; i++) {
-> >   		struct page *page = osd_data->pages[i];
-> >   
-> > 
-> > -		if (rc < 0 && rc != -ENOENT) {
-> > -			ceph_fscache_readpage_cancel(inode, page);
-> > +		if (rc < 0 && rc != -ENOENT)
-> >   			goto unlock;
-> > -		}
-> >   		if (bytes < (int)PAGE_SIZE) {
-> >   			/* zero (remainder of) page */
-> >   			int s = bytes < 0 ? 0 : bytes;
-> > @@ -307,7 +292,6 @@ static void finish_read(struct ceph_osd_request *req)
-> >   		     page->index);
-> >   		flush_dcache_page(page);
-> >   		SetPageUptodate(page);
-> > -		ceph_readpage_to_fscache(inode, page);
-> >   unlock:
-> >   		unlock_page(page);
-> >   		put_page(page);
-> > @@ -408,7 +392,6 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
-> >   		     page->index);
-> >   		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
-> >   					  GFP_KERNEL)) {
-> > -			ceph_fscache_uncache_page(inode, page);
-> >   			put_page(page);
-> >   			dout("start_read %p add_to_page_cache failed %p\n",
-> >   			     inode, page);
-> > @@ -440,10 +423,8 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
-> >   	return nr_pages;
-> >   
-> > 
-> >   out_pages:
-> > -	for (i = 0; i < nr_pages; ++i) {
-> > -		ceph_fscache_readpage_cancel(inode, pages[i]);
-> > +	for (i = 0; i < nr_pages; ++i)
-> >   		unlock_page(pages[i]);
-> > -	}
-> >   	ceph_put_page_vector(pages, nr_pages, false);
-> >   out_put:
-> >   	ceph_osdc_put_request(req);
-> > @@ -471,12 +452,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
-> >   	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
-> >   		return -EINVAL;
-> >   
-> > 
-> > -	rc = ceph_readpages_from_fscache(mapping->host, mapping, page_list,
-> > -					 &nr_pages);
-> > -
-> > -	if (rc == 0)
-> > -		goto out;
-> > -
-> >   	rw_ctx = ceph_find_rw_context(fi);
-> >   	max = fsc->mount_options->rsize >> PAGE_SHIFT;
-> >   	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
-> > @@ -487,8 +462,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
-> >   			goto out;
-> >   	}
-> >   out:
-> > -	ceph_fscache_readpages_cancel(inode, page_list);
-> > -
-> >   	dout("readpages %p file %p ret %d\n", inode, file, rc);
-> >   	return rc;
-> >   }
-> > diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
-> > index 2f5cb6bc78e1..9cfadbb86568 100644
-> > --- a/fs/ceph/cache.c
-> > +++ b/fs/ceph/cache.c
-> > @@ -173,7 +173,6 @@ void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci)
-> >   
-> > 
-> >   	ci->fscache = NULL;
-> >   
-> > 
-> > -	fscache_uncache_all_inode_pages(cookie, &ci->vfs_inode);
-> >   	fscache_relinquish_cookie(cookie, &ci->i_vino, false);
-> >   }
-> >   
-> > 
-> > @@ -194,7 +193,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
-> >   		dout("fscache_file_set_cookie %p %p disabling cache\n",
-> >   		     inode, filp);
-> >   		fscache_disable_cookie(ci->fscache, &ci->i_vino, false);
-> > -		fscache_uncache_all_inode_pages(ci->fscache, inode);
-> >   	} else {
-> >   		fscache_enable_cookie(ci->fscache, &ci->i_vino, i_size_read(inode),
-> >   				      ceph_fscache_can_enable, inode);
-> > @@ -205,108 +203,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
-> >   	}
-> >   }
-> >   
-> > 
-> > -static void ceph_readpage_from_fscache_complete(struct page *page, void *data, int error)
-> > -{
-> > -	if (!error)
-> > -		SetPageUptodate(page);
-> > -
-> > -	unlock_page(page);
-> > -}
-> > -
-> > -static inline bool cache_valid(struct ceph_inode_info *ci)
-> > -{
-> > -	return ci->i_fscache_gen == ci->i_rdcache_gen;
-> > -}
-> > -
-> 
-> Hi Jeff,
-> 
-> Please delete the "i_fscache_gen" member from the struct ceph_inode_info 
-> if we are not using it any more.
-> 
+Alexey Gladkov <gladkov.alexey@gmail.com> writes:
 
-Good catch. Fixed in my tree. I'll post an updated set in another day or
-so with this rolled in.
+> If only the dynamic part of procfs is mounted (subset=pid), then there is no
+> need to check if procfs is fully visible to the user in the new user
+> namespace.
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+
+A couple of things.
+
+1) Allowing the mount should come in the last patch.  So we don't have a
+bisect hazard.
+
+2) We should document that we still require a mount of proc to match on
+atime and readonly mount attributes.
+
+3) If we can find a way to safely not require a previous mount of proc
+this will be much more valuable.
+
+Eric
 
