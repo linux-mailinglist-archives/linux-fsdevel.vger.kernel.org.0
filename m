@@ -2,59 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0138D322195
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Feb 2021 22:38:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79BE43222B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 00:41:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232053AbhBVVhB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Feb 2021 16:37:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232050AbhBVVgn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Feb 2021 16:36:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 5FDA564E83;
-        Mon, 22 Feb 2021 21:35:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614029716;
-        bh=Jkvx+tuTrrl5P2XZBMNxl1FZk7c4ytOXUTn6qIZ88Ac=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=j6OURz1P1EorJI+jLJySgGCfJh7BQuB2Xd/o44kfyKSbFzmDrhCmm6gpa27hJfORU
-         ExYEQZolq0uTk0nh3+ncPHU3o/zmgQo77d8IgwEUkV+EpCpZJK7jqKFt/eQO5p38EA
-         Sg2KDEyBNxGebtpNobratNKGOGTy8VN98Ptg4plkz5hvwemQIqEdd3ZAcL3Bnsgeij
-         uk0oLYwoI7K/Bzehp8US9ruFHVbaXXK2Lf6kYy420JAQsrsxNmCY4yhuhW+zPrKRmi
-         uGJqBAD1eldPV86OPGLUS9QSMpRGx2VEEJbHeRq+5AaKK4cU8ZWh6TYFHCR6OBp9pd
-         CS9EU9c9yLgGQ==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 5BE1960982;
-        Mon, 22 Feb 2021 21:35:16 +0000 (UTC)
-Subject: Re: [GIT PULL] Isofs, udf, and quota changes for v5.12-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210222135322.GG19630@quack2.suse.cz>
-References: <20210222135322.GG19630@quack2.suse.cz>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210222135322.GG19630@quack2.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.12-rc1
-X-PR-Tracked-Commit-Id: b9bffa10b267b045e2c106db75b311216d669529
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9fe190462668d4dc6db56e819322624cbfda919b
-Message-Id: <161402971637.2768.10903615339919882772.pr-tracker-bot@kernel.org>
-Date:   Mon, 22 Feb 2021 21:35:16 +0000
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        id S231143AbhBVXlK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Feb 2021 18:41:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36538 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229996AbhBVXlI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Feb 2021 18:41:08 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C2D4C061574;
+        Mon, 22 Feb 2021 15:40:28 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id x124so3433725qkc.1;
+        Mon, 22 Feb 2021 15:40:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Lu36EvNlVpZLf9vn0AKWWzvCVJacgGfuW8XvxcdcSYc=;
+        b=MKjAdzGJEiG1GANzaNG8NQwv8A3zr3O9eiZt64ixz7q3fFUbHW+A/18gmHI0mqQkl4
+         c0Czceg+s2X7DgJgR1QbTh5bRcInUFBql0hvlSazNZVog5hKHyIwhda+e0uTeGUs/zOR
+         0K5hMHLjyjD/7J+bGPwFMw7RfvPNpnvk0f2ypbWwsM9jQeWrTsXl+bfSgDLg7Mjm3opO
+         HpJxQgsLARFWgDehBIQ8B1nccgTfM3PpKxYNblTdH0/3mqgBpI4+Qj7827/GrCjL2iyI
+         u5NZ5lCtHmkelBoVSzqMvg89VdBveFbLCSai7R259PBckLLhEQ3b5O3H4+r7AVCIt/FU
+         EMNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Lu36EvNlVpZLf9vn0AKWWzvCVJacgGfuW8XvxcdcSYc=;
+        b=g6Ax6gbdhrLffUQDHhXpF69RcPPP84dh8OrL9QTeA+Pu/83PMz8v02hcI9Y19+4SCI
+         KgEGSjldytGogRa6hnNDaLEl/nsrveWAW4LFsil9II59Mcopl+hts7M3UupFjPkKhQK5
+         EOQmhcWK/m3s123P5xdaE/iahhD8V49zr/zNkqhJT+sAFSZyMRXiXWj5cHX/sK4ORlEp
+         vlDHw8i/gWqmXBRIKVhv1GHf8rcPkvlCgVhSUXy1JWqfTBvw/IGJmyo8VoqYcMaxb96w
+         BAAW3SoP/aCbyvTWSG9t/oioJk2o2r8pjFzvaHpyWKT/8qS3a1lrChBAnX3E4B+n6aXC
+         aoXw==
+X-Gm-Message-State: AOAM532lSnO2k+tCgQEHFxJN8dGZb7fQSZSg5tr/pHem2sIirch1ERO7
+        HRINgGDV4so0/Ty6YsntTirtdkruGfVaA8vxuhgMtaombn0=
+X-Google-Smtp-Source: ABdhPJyJVKWY/DkuD0WOWSp91n6+oqxtE7PSXfP+0elLYFTUbM9vBNhdR82o6I8qr+gmA6ORi+kFRielnme1ChDbDUs=
+X-Received: by 2002:a05:620a:41:: with SMTP id t1mr23814731qkt.322.1614037227122;
+ Mon, 22 Feb 2021 15:40:27 -0800 (PST)
+MIME-Version: 1.0
+References: <d2d3e617-17bf-8d43-f4a2-e4a7a2d421bd@gmail.com> <20210220173605.GD2858050@casper.infradead.org>
+In-Reply-To: <20210220173605.GD2858050@casper.infradead.org>
+From:   Peter Geis <pgwipeout@gmail.com>
+Date:   Mon, 22 Feb 2021 18:40:15 -0500
+Message-ID: <CAMdYzYojq--qWhxmpj4VL_feNjMFZcjN6q7mQL-+SWujScNzkQ@mail.gmail.com>
+Subject: Re: [BUG] page allocation failure reading procfs ipv6 configuration
+ files with cgroups
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon, 22 Feb 2021 14:53:22 +0100:
+On Sat, Feb 20, 2021 at 12:36 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sat, Feb 20, 2021 at 12:29:18PM -0500, Peter Geis wrote:
+> > Good Afternoon,
+> >
+> > I have been tracking down a regular bug that triggers when running OpenWRT in a lxd container.
+> > Every ten minutes I was greeted with the following splat in the kernel log:
+> >
+> > [2122311.383389] warn_alloc: 3 callbacks suppressed
+> > [2122311.383403] cat: page allocation failure: order:5, mode:0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=(null),cpuset=lxc.payload.openwrt,mems_allowed=0
+>
+> You want this patch:
+>
+> https://lore.kernel.org/linux-fsdevel/6345270a2c1160b89dd5e6715461f388176899d1.1612972413.git.josef@toxicpanda.com/
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.12-rc1
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9fe190462668d4dc6db56e819322624cbfda919b
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I've tested this patch against 5.10.17 for 36 hours and can confirm it
+solves the problem.
+Thank you.
