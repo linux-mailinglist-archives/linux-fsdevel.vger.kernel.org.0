@@ -2,54 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D703C322C72
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 15:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 065B4322C7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 15:37:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232991AbhBWOf1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 09:35:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58482 "EHLO
+        id S233115AbhBWOgK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 09:36:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232466AbhBWOf0 (ORCPT
+        with ESMTP id S233098AbhBWOgG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 09:35:26 -0500
-Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2867C061786
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 06:34:45 -0800 (PST)
-Received: by mail-qt1-x849.google.com with SMTP id k28so10083794qtu.17
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 06:34:45 -0800 (PST)
+        Tue, 23 Feb 2021 09:36:06 -0500
+Received: from mail-wr1-x449.google.com (mail-wr1-x449.google.com [IPv6:2a00:1450:4864:20::449])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4B1BC061793
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 06:34:49 -0800 (PST)
+Received: by mail-wr1-x449.google.com with SMTP id d7so7383583wri.23
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 06:34:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=Q8hQJDMeUJlqSjrNYnPafLaJX5CJRNsJS+XYHF26pcU=;
-        b=PJnNVGeDqB/jzzRFb43n6pABAUatJLV3VpoQVilcEqdrryJp08zjPufvVz5cFPnSEY
-         t/li1aI0RjRwp7z2bUQbnWYCBL0UM2aSKop0ae9s2DpamNAajkWv+hxDEW2W9qIUp36d
-         PAkr+ieLWes8nDdQ/+SEvLNzI2fhbLggfEVRl9YrCoom2ez47kSRP4/0+WUFn/kOA6Dt
-         tTkwHtzevwds9t+smuh8yccupDpw+dh//SW88nsBdvQXbwTAsE8g1S7IxFZI03HwubvC
-         rBVvVUVzattE0GWgZFrJETMXyA15a2rVhKdtnp2DazMEJEX4XDqEecySE72Fjn1RZ8Z0
-         L2rQ==
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:to:cc;
+        bh=Z91iRBzRx2L82S3eGkndbig8apk87DxttK33upPKVz8=;
+        b=a431b0ZLlBnPrATBY/DRQE4q8vBQ/N7UJ9ffCueo+lNS8kg8LfkH9ez0z03CoE5lSp
+         zxbmJGk/zZL98SQeupAK5IfHXTtXvOehv65MgcrpsdIMRGFk+pRUR6nV3xdCEEjFxV4h
+         ybKuEBt3PMXYJpWA0U8TjT/znU+oEdGS846YEdZBtEVMfaNO3g1enGKg64K4mZ576qhr
+         kTjeG/IiULQSmxjJEm3Sa09fRM9ne6JUXBvNU1m4kSzb4+XssSmrTSNlNEZN8mc/Ag9y
+         YdOHXvNfYSDCPatpb2Mp8nuFrGYPgVFOwmxz8ZJPq1ceYW13BSPOGetpXK//JyySuK3j
+         kMSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=Q8hQJDMeUJlqSjrNYnPafLaJX5CJRNsJS+XYHF26pcU=;
-        b=VJwry7poyQZlfi4gkLjXIjA1/jtUECJ6opaqCsPkSgFlEJoRBPgTTs82IDw5iyYBVN
-         OczqX4s8tsjNJv5gjbdb0gtrpmktT6//qpJNPVkMeHOU5+ZVT+LDHXQMxIfa9uyF3yTu
-         ksaRljxsveT0ahd+tRU0Rq6QgWx0+3AHK1GwTOISRB4xz8iifaoA3sojaz82FZYZQDpn
-         IA9zgMoMFrs+od5/v4ERjsxZjw1M35VMIFHat12OMm3A/Jb79JihozAQbjEkal2nQh2A
-         yVrv2QT3Hu9vN1elKhBlCe6dKwLOXu9C6HLlz7lB+DWRo8q0JGVQBtu0pzETRv/13Eqv
-         sZSQ==
-X-Gm-Message-State: AOAM532VWxKb6BUdU0S458aJL8rXiE6GZRD9IHaEejTOI+fY0eNu9C34
-        ZC6U2xvbufROLemzrU8TIrycCDh+jA==
-X-Google-Smtp-Source: ABdhPJwIekUA4sFfcyjccindFCcQp2ep8MthgqSzW3N3MtGLmm1PZlc40koEqgpP+XoOBcmnN/Qv1jzPlw==
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=Z91iRBzRx2L82S3eGkndbig8apk87DxttK33upPKVz8=;
+        b=NMdl3DXghQvW/Yuh2+DnGL0S3bNnsi+ivCTQC233whF2aoNPp2tQukR7Grtb+PJ/il
+         x1KCNarSVcGUVY09pWXM4pfGzKYpij+IMpaf58qSfpFYS1CjxQ+3bTXK8sw0CPGaSh2w
+         VreyqzfSzfv3FullfouoNXPK6qT8/bWUL6gzkgmXNR3+gCZ05ccYdc8eG8vzvcIrbk6z
+         m6OgcxxQ/JoYz6QYhIupB/QwLndkIcKoT8NNjtSnAH/qlLx33tr/JFVkMAshUJIAIBsm
+         uEpfcDM4IETJnY/qh4miOBKXPI90S2rTyAZ9hbxUihqDWR6rQ7m2VRSZ+l3nt3q8naCO
+         jGiQ==
+X-Gm-Message-State: AOAM5321JSTe+2TBCBwrfsQEkbxyqvpVTgOi1obkokY80pX5hQBiqOE6
+        /qzlUcybjsrMEkkR38FW8XVWCtEg6Q==
+X-Google-Smtp-Source: ABdhPJy7g0zcabVF3MNZ/LRvsLUDnf2kQNQpsuRBe4nEbsVMPFhp66EHScWAovu0+nBHYuOPOY6D5n8zGg==
 Sender: "elver via sendgmr" <elver@elver.muc.corp.google.com>
 X-Received: from elver.muc.corp.google.com ([2a00:79e0:15:13:855b:f924:6e71:3d5d])
- (user=elver job=sendgmr) by 2002:a0c:a8cf:: with SMTP id h15mr25576657qvc.20.1614090884790;
- Tue, 23 Feb 2021 06:34:44 -0800 (PST)
-Date:   Tue, 23 Feb 2021 15:34:22 +0100
-Message-Id: <20210223143426.2412737-1-elver@google.com>
+ (user=elver job=sendgmr) by 2002:a1c:a90e:: with SMTP id s14mr25359822wme.36.1614090887099;
+ Tue, 23 Feb 2021 06:34:47 -0800 (PST)
+Date:   Tue, 23 Feb 2021 15:34:23 +0100
+In-Reply-To: <20210223143426.2412737-1-elver@google.com>
+Message-Id: <20210223143426.2412737-2-elver@google.com>
 Mime-Version: 1.0
+References: <20210223143426.2412737-1-elver@google.com>
 X-Mailer: git-send-email 2.30.0.617.g56c4b15f3c-goog
-Subject: [PATCH RFC 0/4] Add support for synchronous signals on perf events
+Subject: [PATCH RFC 1/4] perf/core: Apply PERF_EVENT_IOC_MODIFY_ATTRIBUTES to children
 From:   Marco Elver <elver@google.com>
 To:     elver@google.com, peterz@infradead.org,
         alexander.shishkin@linux.intel.com, acme@kernel.org,
@@ -67,83 +70,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The perf subsystem today unifies various tracing and monitoring
-features, from both software and hardware. One benefit of the perf
-subsystem is automatically inheriting events to child tasks, which
-enables process-wide events monitoring with low overheads. By default
-perf events are non-intrusive, not affecting behaviour of the tasks
-being monitored.
+As with other ioctls (such as PERF_EVENT_IOC_{ENABLE,DISABLE}), fix up
+handling of PERF_EVENT_IOC_MODIFY_ATTRIBUTES to also apply to children.
 
-For certain use-cases, however, it makes sense to leverage the
-generality of the perf events subsystem and optionally allow the tasks
-being monitored to receive signals on events they are interested in.
-This patch series adds the option to synchronously signal user space on
-events.
+Link: https://lkml.kernel.org/r/YBqVaY8aTMYtoUnX@hirez.programming.kicks-ass.net
+Suggested-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Marco Elver <elver@google.com>
+---
+ kernel/events/core.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-The discussion at [1] led to the changes proposed in this series. The
-approach taken in patch 3/4 to use 'event_limit' to trigger the signal
-was kindly suggested by Peter Zijlstra in [2].
-
-[1] https://lore.kernel.org/lkml/CACT4Y+YPrXGw+AtESxAgPyZ84TYkNZdP0xpocX2jwVAbZD=-XQ@mail.gmail.com/
-[2] https://lore.kernel.org/lkml/YBv3rAT566k+6zjg@hirez.programming.kicks-ass.net/ 
-
-Motivation and example uses:
-
-1. 	Our immediate motivation is low-overhead sampling-based race
-	detection for user-space [3]. By using perf_event_open() at
-	process initialization, we can create hardware
-	breakpoint/watchpoint events that are propagated automatically
-	to all threads in a process. As far as we are aware, today no
-	existing kernel facility (such as ptrace) allows us to set up
-	process-wide watchpoints with minimal overheads (that are
-	comparable to mprotect() of whole pages).
-
-	[3] https://llvm.org/devmtg/2020-09/slides/Morehouse-GWP-Tsan.pdf 
-
-2.	Other low-overhead error detectors that rely on detecting
-	accesses to certain memory locations or code, process-wide and
-	also only in a specific set of subtasks or threads.
-
-Other example use-cases we found potentially interesting:
-
-3.	Code hot patching without full stop-the-world. Specifically, by
-	setting a code breakpoint to entry to the patched routine, then
-	send signals to threads and check that they are not in the
-	routine, but without stopping them further. If any of the
-	threads will enter the routine, it will receive SIGTRAP and
-	pause.
-
-4. 	Safepoints without mprotect(). Some Java implementations use
-	"load from a known memory location" as a safepoint. When threads
-	need to be stopped, the page containing the location is
-	mprotect()ed and threads get a signal. This can be replaced with
-	a watchpoint, which does not require a whole page nor DTLB
-	shootdowns.
-
-5.	Tracking data flow globally.
-
-6.	Threads receiving signals on performance events to
-	throttle/unthrottle themselves.
-
-
-Marco Elver (4):
-  perf/core: Apply PERF_EVENT_IOC_MODIFY_ATTRIBUTES to children
-  signal: Introduce TRAP_PERF si_code and si_perf to siginfo
-  perf/core: Add support for SIGTRAP on perf events
-  perf/core: Add breakpoint information to siginfo on SIGTRAP
-
- arch/m68k/kernel/signal.c          |  3 ++
- arch/x86/kernel/signal_compat.c    |  5 ++-
- fs/signalfd.c                      |  4 +++
- include/linux/compat.h             |  2 ++
- include/linux/signal.h             |  1 +
- include/uapi/asm-generic/siginfo.h |  6 +++-
- include/uapi/linux/perf_event.h    |  3 +-
- include/uapi/linux/signalfd.h      |  4 ++-
- kernel/events/core.c               | 54 +++++++++++++++++++++++++++++-
- kernel/signal.c                    | 11 ++++++
- 10 files changed, 88 insertions(+), 5 deletions(-)
-
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 129dee540a8b..37a8297be164 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -3179,16 +3179,36 @@ static int perf_event_modify_breakpoint(struct perf_event *bp,
+ static int perf_event_modify_attr(struct perf_event *event,
+ 				  struct perf_event_attr *attr)
+ {
++	int (*func)(struct perf_event *, struct perf_event_attr *);
++	struct perf_event *child;
++	int err;
++
+ 	if (event->attr.type != attr->type)
+ 		return -EINVAL;
+ 
+ 	switch (event->attr.type) {
+ 	case PERF_TYPE_BREAKPOINT:
+-		return perf_event_modify_breakpoint(event, attr);
++		func = perf_event_modify_breakpoint;
++		break;
+ 	default:
+ 		/* Place holder for future additions. */
+ 		return -EOPNOTSUPP;
+ 	}
++
++	WARN_ON_ONCE(event->ctx->parent_ctx);
++
++	mutex_lock(&event->child_mutex);
++	err = func(event, attr);
++	if (err)
++		goto out;
++	list_for_each_entry(child, &event->child_list, child_list) {
++		err = func(child, attr);
++		if (err)
++			goto out;
++	}
++out:
++	mutex_unlock(&event->child_mutex);
++	return err;
+ }
+ 
+ static void ctx_sched_out(struct perf_event_context *ctx,
 -- 
 2.30.0.617.g56c4b15f3c-goog
 
