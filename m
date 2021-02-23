@@ -2,68 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A8D3230E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 19:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F7AF323113
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 19:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233201AbhBWSkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 13:40:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54792 "EHLO
+        id S232878AbhBWS7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 13:59:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232986AbhBWSkC (ORCPT
+        with ESMTP id S232180AbhBWS66 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 13:40:02 -0500
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75C6C061574;
-        Tue, 23 Feb 2021 10:39:21 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id o16so59642607ljj.11;
-        Tue, 23 Feb 2021 10:39:21 -0800 (PST)
+        Tue, 23 Feb 2021 13:58:58 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8D7C061574;
+        Tue, 23 Feb 2021 10:58:17 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id h10so27059345edl.6;
+        Tue, 23 Feb 2021 10:58:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=/dQXAMhErQFcRRic9fceFXsYd4MlrVmyK0wct060mNk=;
-        b=rlzPzfrapjnCOS5qgF1o4BIHsbdajD23mpRwqNg8yX8jhg9zt0YLmx7MrSP8pj99Fx
-         dYZ0f693+NOFJudqrypWjZRsMv63DMO9AxJswLW7TbIUlVckQC/y4wBz44/azL+SKz6j
-         cfxFngUwm+6Faz/C7c+KiHGrJXyp3cL7BNkNvun5ujBCJ5kl7w0R/NSh8sgJVNXXTCFv
-         plKmd7yQHmJQo20RBrTEWrbVJeBu5Hpvh29u5g7JRuvY8xC1t8cG2RnyqgMQsAEUOjKQ
-         dEkRWeW8iDRS7VRshaorEK8XWQSDf51fg0mMONBMK7ySWwxRRmrOH9auEH76DW2kahIQ
-         4aZA==
+        bh=c3Zp7Y8jEqsjl7S9sUTF85KS6ayS+qBC9fZSiiv4Ej8=;
+        b=PfFv9nEYZoR1CN2KuzO+8+jiDsXhnhhHPGH6Y8dcmCuERip7fX4YQTqcJ+unH4lb3+
+         Lc02NYbedkbOPFoJIU4KGskH6vYXmD2yB/6jgsZh8EpZGBUmlioaVmYB5ilhZlo2vQaU
+         X6oLBqFKjANjNfkTHV3JYYEpTzZllwcXqHtk4Q40dWiF8RfF3TS7Nhf4k3hoq3iuzB1O
+         x4KOErknk8kssJkDeoDhRti/jcm+BqRWWkvzzLxsPkrZStNv4y8I3MVhAxezgaQ0Z+aA
+         Ee5GaxGbMOJ/rqmnzX3fv/C0nGL0lNakar0IUucAqqgPz8Lk8/9Hqo7MhK7pm8Efqi8Q
+         zs3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/dQXAMhErQFcRRic9fceFXsYd4MlrVmyK0wct060mNk=;
-        b=KFfAltbJg6qx7AAumNHiJHID4NhQ8zkajKf2sOlxLXJVAICuDQ2iAfQUgUdNtXrcG2
-         IiE07ZG0V+2rLNYWViySN8TNPKaswnLb/d1wAoIwwOXBerTJONi80pu14rB83xaoXTm0
-         KwC2K4F9RkZDdqLwB3wNZ09VgYbZ7gcfcCSwIArW7SrdzMtP2zoia48Fxj6ZOuB3XhOh
-         a3bxhRaF7vGhctZmlRWBxm1bi0UUsTTdyVneD3CpzVTnVlTqTW0J/WI2cJqy6620py19
-         zVZrSMnj4EUL1JDsErNIErSLdefEqrDk12HIGRk3+RxvfQK1UZL5v7ni0tc6xAMrDX9k
-         Mb/w==
-X-Gm-Message-State: AOAM5315vyXhdbkhY4LDg1HVhUl2CMT8PVzEqMq86Qgg8rKVCF9WFgxk
-        BmLsQKkffkb5pGDGcadjNYa5/mov/UYpy9C2gQnlkButEOM=
-X-Google-Smtp-Source: ABdhPJzJJC4HP+w+ZoCJWy7EJcF2+ktQ3WjfswK8JMeAiFq2VEXwpOaCPuW0JIzaED8eqmYffj6AOoaZgZ9W8RWpQ4Y=
-X-Received: by 2002:a2e:a36d:: with SMTP id i13mr4788221ljn.148.1614105560304;
- Tue, 23 Feb 2021 10:39:20 -0800 (PST)
+        bh=c3Zp7Y8jEqsjl7S9sUTF85KS6ayS+qBC9fZSiiv4Ej8=;
+        b=Edi5n9rw3d7a5ZJITI7eklJeBWVeKlbFXecfW81yz9vWKPk4unMUDF+Y7EY1eSJNGo
+         pPwTgNXOS6I09gMe27uSjgreyelGJWtc0CI2P0Rj6SQ2s2bBA7fYSkAzjDU5XVN1KQo+
+         +BcD6Dp0NJwp6J7z2PSk4zkoCuNdZbFTLwCNmt7VOQ34sHNt4xfVrDxEBb9RbDgEaxMq
+         rhufFUmLDBrtXBfGWxhYMOrNE5Qb+RiwS/o5EB2eu2N+nnHbepaOx29wCAbFzJ7Y8wXd
+         7jhQxDjZRREto6DvzITnKH1J3TyCY/wU64N8EPlzxuzyI+8cNqJoR2KKuBLZWBsy7noC
+         UE2g==
+X-Gm-Message-State: AOAM533WF9bkEGsiiRnO/ip1bUsXRhi5KiBoMbL6ECab7lYUuQHEW5uf
+        dmtA1AiCSzInX6dgGr8hQ/lcm6YoFfwNm2byXw==
+X-Google-Smtp-Source: ABdhPJxMV1bqwgvcwMgali0HJUbrzEGCN3F/c7rJKoFZk58xtdX+IBSUb2VNa2+arCTCLyCIcl4xV+nMAnTmhdp0qts=
+X-Received: by 2002:a05:6402:1853:: with SMTP id v19mr7932160edy.10.1614106696386;
+ Tue, 23 Feb 2021 10:58:16 -0800 (PST)
 MIME-Version: 1.0
 References: <20210223182726.31763-1-aaptel@suse.com>
 In-Reply-To: <20210223182726.31763-1-aaptel@suse.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 23 Feb 2021 12:39:09 -0600
-Message-ID: <CAH2r5mvsWr6F7yZmVQw_b9EegH13y6eOiky-LPxe-_0sKup8dQ@mail.gmail.com>
+From:   Pavel Shilovsky <piastryyy@gmail.com>
+Date:   Tue, 23 Feb 2021 10:58:05 -0800
+Message-ID: <CAKywueSCbANjCzPMnWJx7CXQM4kWO4pHtAhgpwwchMqCOcV0Lg@mail.gmail.com>
 Subject: Re: [PATCH] cifs: ignore FL_FLOCK locks in read/write
 To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     linux-cifs <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Steve French <smfrench@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Would be great if we had some simple reproducer like this in xfstests.
+If a flock is emulated on the server side with mandatory locks (which
+is what we only have for SMB2 without POSIX extensions) then we should
+maintain the same logic on the client. Otherwise you get different
+behavior depending on the caching policies currently in effect on the
+client side. You may consider testing with both modes when
+leases/oplocks are on and off.
 
-On Tue, Feb 23, 2021 at 12:27 PM Aur=C3=A9lien Aptel <aaptel@suse.com> wrot=
-e:
+--
+Best regards,
+Pavel Shilovsky
+
+=D0=B2=D1=82, 23 =D1=84=D0=B5=D0=B2=D1=80. 2021 =D0=B3. =D0=B2 10:30, Aur=
+=C3=A9lien Aptel <aaptel@suse.com>:
+
 >
 > From: Aurelien Aptel <aaptel@suse.com>
 >
@@ -173,9 +184,3 @@ ags & FL_FLOCK))
 > --
 > 2.30.0
 >
-
-
---=20
-Thanks,
-
-Steve
