@@ -2,60 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5FE23229EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 13:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 473DE322B29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 14:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232695AbhBWL4p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 06:56:45 -0500
-Received: from mail.jvpinto.com ([65.49.11.60]:54491 "EHLO mail.JVPinto.com"
+        id S232605AbhBWNHe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 08:07:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232501AbhBWLyb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 06:54:31 -0500
-Received: from RW-EXC1.JVPinto.com (2002:ac20:10d::ac20:10d) by
- RW-EXC1.JVPinto.com (2002:ac20:10d::ac20:10d) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Tue, 23 Feb 2021 03:52:35 -0800
-Received: from User (52.231.198.195) by RW-EXC1.JVPinto.com (172.32.1.13) with
- Microsoft SMTP Server id 15.0.1497.2 via Frontend Transport; Tue, 23 Feb 2021
- 03:52:20 -0800
-Reply-To: <ms.reem@yandex.com>
-From:   "Ms. Reem" <johnpinto@jvpinto.com>
-Subject: Hello okay
-Date:   Tue, 23 Feb 2021 11:52:34 +0000
+        id S232588AbhBWNHN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Feb 2021 08:07:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 781F364E31;
+        Tue, 23 Feb 2021 13:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614085592;
+        bh=H0ZuxAlx9Sqw7HRYzR0VEIUpSiqd1zY+9kWfHyBQQ/k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=E99XEtwEA9GbmQ6iGKb/HD/Et9vtw80s8iltoJ7LjAIX8PrtqHk+piIlJ42Re2RRY
+         pMzfruOZlAenC+qrFTo6SdCQuOUKIW78K1aZpao0BSIy34Twf+Unpv1RRVqejTTsnB
+         uXNJVS8Yl6seqQukUcAHteVBVJ+SILGPHXdecaLzqPR/2YC1QlJ5BO8dCSBZvhV8VO
+         USImhYeUfnZ8qeUDrUDpjzBc7FLhHhNcoh6da83O08RaFe15vkTaJpBFbYr19h0LvE
+         AwTXHph2DjVVyo8X8Vhib17VU0B9tAInfqmCcMdPX/y/pnU7o1qdMW/HblmQ33T62q
+         vTuis4y2RAbKQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, xiubli@redhat.com, dhowells@redhat.com,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        willy@infradead.org
+Subject: [PATCH v3 0/6] ceph: convert to netfs helper library
+Date:   Tue, 23 Feb 2021 08:06:23 -0500
+Message-Id: <20210223130629.249546-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <933f089f49b04946b97b7d0f2a305064@RW-EXC1.JVPinto.com>
-To:     Undisclosed recipients:;
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+This is the third posting of this patchset. The main differences between
+this one and the last are some bugfixes, and cleanups:
 
-My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
-and Petroleum" also "Minister of State for International Cooperation"
-in UAE. I write to you on behalf of my other "three (3) colleagues"
-who has approved me to solicit for your "partnership in claiming of
-{us$47=Million}" from a Financial Home in Cambodia on their behalf and
-for our "Mutual Benefits".
+- rebase onto David's latest fscache-netfs-lib set
+- unify the netfs_read_request_ops into one struct
+- fix inline_data handling in write_begin
+- remove the now-unneeded i_fscache_gen field from ceph_inode_info
+- rename gfp_flags to gfp in releasepage
+- pass appropriate was_async flag to netfs_subreq_terminated
 
-The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
-deal with Cambodian/Vietnam Government within 2013/2014, however, we
-don't want our government to know about the fund. If this proposal
-interests you, let me know, by sending me an email and I will send to
-you detailed information on how this business would be successfully
-transacted. Be informed that nobody knows about the secret of this
-fund except us, and we know how to carry out the entire transaction.
-So I am compelled to ask, that you will stand on our behalf and
-receive this fund into any account that is solely controlled by you.
+This set is currently sitting in the ceph-client/testing branch, so
+it should get good testing coverage over the next few weeks via in
+the teuthology lab.
 
-We will compensate you with 15% of the total amount involved as
-gratification for being our partner in this transaction. Reply to:
-ms.reem@yandex.com
+Jeff Layton (6):
+  ceph: disable old fscache readpage handling
+  ceph: rework PageFsCache handling
+  ceph: fix fscache invalidation
+  ceph: convert readpage to fscache read helper
+  ceph: plug write_begin into read helper
+  ceph: convert ceph_readpages to ceph_readahead
 
-Regards,
-Ms. Reem.
+ fs/ceph/Kconfig |   1 +
+ fs/ceph/addr.c  | 541 +++++++++++++++++++-----------------------------
+ fs/ceph/cache.c | 125 -----------
+ fs/ceph/cache.h | 101 +++------
+ fs/ceph/caps.c  |  10 +-
+ fs/ceph/inode.c |   1 +
+ fs/ceph/super.h |   2 +-
+ 7 files changed, 242 insertions(+), 539 deletions(-)
+
+-- 
+2.29.2
+
