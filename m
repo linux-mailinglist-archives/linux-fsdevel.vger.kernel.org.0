@@ -2,129 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2837432290C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 11:53:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 594183229B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 12:53:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232012AbhBWKvG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 05:51:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54528 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232033AbhBWKuw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 05:50:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A75CCAC69;
-        Tue, 23 Feb 2021 10:50:10 +0000 (UTC)
-Date:   Tue, 23 Feb 2021 11:50:05 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [External] Re: [PATCH v16 4/9] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-Message-ID: <20210223104957.GA3844@linux>
-References: <20210219104954.67390-1-songmuchun@bytedance.com>
- <20210219104954.67390-5-songmuchun@bytedance.com>
- <13a5363c-6af4-1e1f-9a18-972ca18278b5@oracle.com>
- <20210223092740.GA1998@linux>
- <CAMZfGtVRSBkKe=tKAKLY8dp_hywotq3xL+EJZNjXuSKt3HK3bQ@mail.gmail.com>
+        id S232473AbhBWLwf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 06:52:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51724 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232464AbhBWLw1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Feb 2021 06:52:27 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79580C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 03:51:46 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id t5so1514018pjd.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 03:51:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xdz76Pr5X2U4qGHNaBUqTnUQFn7wjtLgR16d6odDiDY=;
+        b=KqAJzp4Ub9NgdWZX0Vx+kHhWD2qcuxAU6AlaIr1cTEa34WXruEbOqzAduVnsyuTiVq
+         Qrj6vhsW64HXdsYLwgt1DG1lA+9TBfZc692wNCowM9cPgj7jJnYpvmm/cvgJvHoJExvV
+         Xxv9RFF5PRqatMwzSs7jXOqar4QnqNbmRljz1DSrtU5dIG0PRZ6lgyriHVoG9LQCpKAG
+         CPGyxiEwaf+JQABA6jerjDMlAAj+c7c0yRibE9YyayEvUVlVTFEnuSSb1M8pu50stbnL
+         LGbS+/8NrESm09jnrN+7TNWR7JMY7D24qOMgkvxMbUPorHkxamXnkMMD8Ks3aGu/oSOZ
+         kaUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xdz76Pr5X2U4qGHNaBUqTnUQFn7wjtLgR16d6odDiDY=;
+        b=bf+og+voDHh4XTlr7tAQxBIU6phoIfl9K4rWiNrbdzV3IQLkCxd3gaeHDZZUgURf9X
+         R7mOnpDkSj19mOBLCiZwkw4C1WeLeRH43HlMLSEuxvtyg3siVZjXPY8EUhqHHl080E6E
+         ggCQcIvmfdCHi0bLzNOWJdQuy+i9RW8xp1LAXoJNaRpU0Cbi3cl/XuMMjzWP30juloW0
+         noqtsV8EXu4cQOztoNNHu36vakfo8yB+5gnn2Khp1E8LvDZLXqITm0R5avfW0+C42vl3
+         mb+U66qOWSkM4EJtD6AmtJ8lR3AK2Lq7zoIZJPQBijFKX0YxcbTxPi59YXWtEGTiDobn
+         3jHg==
+X-Gm-Message-State: AOAM530L3tBKhnV5SkF/tcjWaeMqWCJE2d0oOx+WP7zl6P+4tgoADDJ5
+        4DhQfEaGAG0L6EG48frBO2MY
+X-Google-Smtp-Source: ABdhPJz+79mE6shXBsPb0acvIFtMPBgzHOe2E85ktwi8FRo2C3PHXFv0KX2CxiJB+oN/aw8FRop8mg==
+X-Received: by 2002:a17:90a:ba02:: with SMTP id s2mr29110785pjr.53.1614081105834;
+        Tue, 23 Feb 2021 03:51:45 -0800 (PST)
+Received: from localhost ([139.177.225.253])
+        by smtp.gmail.com with ESMTPSA id ca19sm3086493pjb.31.2021.02.23.03.51.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Feb 2021 03:51:45 -0800 (PST)
+From:   Xie Yongji <xieyongji@bytedance.com>
+To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
+        sgarzare@redhat.com, parav@nvidia.com, bob.liu@oracle.com,
+        hch@infradead.org, rdunlap@infradead.org, willy@infradead.org,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
+        corbet@lwn.net
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC v4 00/11] Introduce VDUSE - vDPA Device in Userspace
+Date:   Tue, 23 Feb 2021 19:50:37 +0800
+Message-Id: <20210223115048.435-1-xieyongji@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZfGtVRSBkKe=tKAKLY8dp_hywotq3xL+EJZNjXuSKt3HK3bQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 06:27:07PM +0800, Muchun Song wrote:
-> > > > +
-> > > > +   if (alloc_huge_page_vmemmap(h, page)) {
-> > > > +           int zeroed;
-> > > > +
-> > > > +           spin_lock(&hugetlb_lock);
-> > > > +           INIT_LIST_HEAD(&page->lru);
-> > > > +           set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
-> > > > +           h->nr_huge_pages++;
-> > > > +           h->nr_huge_pages_node[nid]++;
-> >
-> > I think prep_new_huge_page() does this for us?
-> 
-> Actually, there are some differences. e.g. prep_new_huge_page()
-> will reset hugetlb cgroup and ClearHPageFreed, but we do not need
-> them here. And prep_new_huge_page will acquire and release
-> the hugetlb_lock. But here we also need hold the lock to update
-> the surplus counter and enqueue the page to the free list.
-> So I do not think reuse prep_new_huge_page is a good idea.
+This series introduces a framework, which can be used to implement
+vDPA Devices in a userspace program. The work consist of two parts:
+control path forwarding and data path offloading.
 
-I see, I missed that.
+In the control path, the VDUSE driver will make use of message
+mechnism to forward the config operation from vdpa bus driver
+to userspace. Userspace can use read()/write() to receive/reply
+those control messages.
 
-> > Can this actually happen? AFAIK, page landed in update_and_free_page should be
-> > zero refcounted, then we increase the reference, and I cannot see how the
-> > reference might have changed in the meantime.
-> 
-> I am not sure whether other modules get the page and then put the
-> page. I see gather_surplus_pages does the same thing. So I copied
-> from there. I try to look at the memory_failure routine.
-> 
-> 
-> CPU0:                           CPU1:
->                                 set_compound_page_dtor(HUGETLB_PAGE_DTOR);
-> memory_failure_hugetlb
->   get_hwpoison_page
->     __get_hwpoison_page
->       get_page_unless_zero
->                                 put_page_testzero()
-> 
-> Maybe this can happen. But it is a very corner case. If we want to
-> deal with this. We can put_page_testzero() first and then
-> set_compound_page_dtor(HUGETLB_PAGE_DTOR).
+In the data path, the core is mapping dma buffer into VDUSE
+daemon's address space, which can be implemented in different ways
+depending on the vdpa bus to which the vDPA device is attached.
 
-I have to check further, but it looks like this could actually happen.
-Handling this with VM_BUG_ON is wrong, because memory_failure/soft_offline are
-entitled to increase the refcount of the page.
+In virtio-vdpa case, we implements a MMU-based on-chip IOMMU driver with
+bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
+buffer is reside in a userspace memory region which can be shared to the
+VDUSE userspace processs via transferring the shmfd.
 
-AFAICS,
+The details and our user case is shown below:
 
- CPU0:                                    CPU1:
-                                          set_compound_page_dtor(HUGETLB_PAGE_DTOR);
- memory_failure_hugetlb
-   get_hwpoison_page
-     __get_hwpoison_page
-       get_page_unless_zero
-                                          put_page_testzero()
-        identify_page_state
-         me_huge_page
+------------------------    -------------------------   ----------------------------------------------
+|            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
+|       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
+|       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
+------------+-----------     -----------+------------   -------------+----------------------+---------
+            |                           |                            |                      |
+            |                           |                            |                      |
+------------+---------------------------+----------------------------+----------------------+---------
+|    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
+|    -------+--------           --------+--------            -------+--------          -----+----    |
+|           |                           |                           |                       |        |
+| ----------+----------       ----------+-----------         -------+-------                |        |
+| | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
+| ----------+----------       ----------+-----------         -------+-------                |        |
+|           |      virtio bus           |                           |                       |        |
+|   --------+----+-----------           |                           |                       |        |
+|                |                      |                           |                       |        |
+|      ----------+----------            |                           |                       |        |
+|      | virtio-blk device |            |                           |                       |        |
+|      ----------+----------            |                           |                       |        |
+|                |                      |                           |                       |        |
+|     -----------+-----------           |                           |                       |        |
+|     |  virtio-vdpa driver |           |                           |                       |        |
+|     -----------+-----------           |                           |                       |        |
+|                |                      |                           |    vdpa bus           |        |
+|     -----------+----------------------+---------------------------+------------           |        |
+|                                                                                        ---+---     |
+-----------------------------------------------------------------------------------------| NIC |------
+                                                                                         ---+---
+                                                                                            |
+                                                                                   ---------+---------
+                                                                                   | Remote Storages |
+                                                                                   -------------------
 
-I think we can reach me_huge_page with either refcount = 1 or refcount =2,
-depending whether put_page_testzero has been issued.
+We make use of it to implement a block device connecting to
+our distributed storage, which can be used both in containers and
+VMs. Thus, we can have an unified technology stack in this two cases.
 
-For now, I would not re-enqueue the page if put_page_testzero == false.
-I have to see how this can be handled gracefully.
+To test it with null-blk:
 
+  $ qemu-storage-daemon \
+      --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+      --monitor chardev=charmonitor \
+      --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
+      --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
 
+The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
+
+Future work:
+  - Improve performance
+  - Userspace library (find a way to reuse device emulation code in qemu/rust-vmm)
+
+V3 to V4:
+- Rebase to vhost.git
+- Split some patches
+- Add some documents
+- Use ioctl to inject interrupt rather than eventfd
+- Enable config interrupt support
+- Support binding irq to the specified cpu
+- Add two module parameter to limit bounce/iova size
+- Create char device rather than anon inode per vduse
+- Reuse vhost IOTLB for iova domain
+- Rework the message mechnism in control path
+
+V2 to V3:
+- Rework the MMU-based IOMMU driver
+- Use the iova domain as iova allocator instead of genpool
+- Support transferring vma->vm_file in vhost-vdpa
+- Add SVA support in vhost-vdpa
+- Remove the patches on bounce pages reclaim
+
+V1 to V2:
+- Add vhost-vdpa support
+- Add some documents
+- Based on the vdpa management tool
+- Introduce a workqueue for irq injection
+- Replace interval tree with array map to store the iova_map
+
+Xie Yongji (11):
+  eventfd: Increase the recursion depth of eventfd_signal()
+  vhost-vdpa: protect concurrent access to vhost device iotlb
+  vhost-iotlb: Add an opaque pointer for vhost IOTLB
+  vdpa: Add an opaque pointer for vdpa_config_ops.dma_map()
+  vdpa: Support transferring virtual addressing during DMA mapping
+  vduse: Implement an MMU-based IOMMU driver
+  vduse: Introduce VDUSE - vDPA Device in Userspace
+  vduse: Add config interrupt support
+  Documentation: Add documentation for VDUSE
+  vduse: Introduce a workqueue for irq injection
+  vduse: Support binding irq to the specified cpu
+
+ Documentation/userspace-api/index.rst              |    1 +
+ Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
+ Documentation/userspace-api/vduse.rst              |  112 ++
+ drivers/vdpa/Kconfig                               |   10 +
+ drivers/vdpa/Makefile                              |    1 +
+ drivers/vdpa/ifcvf/ifcvf_main.c                    |    2 +-
+ drivers/vdpa/mlx5/net/mlx5_vnet.c                  |    2 +-
+ drivers/vdpa/vdpa.c                                |    9 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c                   |    8 +-
+ drivers/vdpa/vdpa_user/Makefile                    |    5 +
+ drivers/vdpa/vdpa_user/iova_domain.c               |  486 +++++++
+ drivers/vdpa/vdpa_user/iova_domain.h               |   61 +
+ drivers/vdpa/vdpa_user/vduse_dev.c                 | 1399 ++++++++++++++++++++
+ drivers/vhost/iotlb.c                              |   20 +-
+ drivers/vhost/vdpa.c                               |  106 +-
+ fs/eventfd.c                                       |    2 +-
+ include/linux/eventfd.h                            |    5 +-
+ include/linux/vdpa.h                               |   22 +-
+ include/linux/vhost_iotlb.h                        |    3 +
+ include/uapi/linux/vduse.h                         |  144 ++
+ 20 files changed, 2363 insertions(+), 36 deletions(-)
+ create mode 100644 Documentation/userspace-api/vduse.rst
+ create mode 100644 drivers/vdpa/vdpa_user/Makefile
+ create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
+ create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
+ create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
+ create mode 100644 include/uapi/linux/vduse.h
 
 -- 
-Oscar Salvador
-SUSE L3
+2.11.0
+
