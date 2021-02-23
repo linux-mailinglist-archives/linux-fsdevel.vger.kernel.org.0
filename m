@@ -2,114 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57881322DB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 16:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B98F9322DEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 16:49:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233247AbhBWPmR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 10:42:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35408 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233101AbhBWPmQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 10:42:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A7C06AF5A;
-        Tue, 23 Feb 2021 15:41:32 +0000 (UTC)
-Date:   Tue, 23 Feb 2021 16:41:28 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [External] Re: [PATCH v16 4/9] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-Message-ID: <20210223154128.GA21082@localhost.localdomain>
-References: <20210219104954.67390-1-songmuchun@bytedance.com>
- <20210219104954.67390-5-songmuchun@bytedance.com>
- <13a5363c-6af4-1e1f-9a18-972ca18278b5@oracle.com>
- <20210223092740.GA1998@linux>
- <CAMZfGtVRSBkKe=tKAKLY8dp_hywotq3xL+EJZNjXuSKt3HK3bQ@mail.gmail.com>
- <20210223104957.GA3844@linux>
+        id S233454AbhBWPsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 10:48:54 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:41060 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233393AbhBWPsI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Feb 2021 10:48:08 -0500
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B74C42089C9B;
+        Tue, 23 Feb 2021 07:47:27 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B74C42089C9B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1614095247;
+        bh=CNobBivITyIZHfV9IIhBh12WyKXN0ArCPEmTlhSkQys=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=AnWeEW+Ah60JQOeGC0VbHERpDEPpLFss8vZ9u9f1/Zj/tWCEOvEaNwGrEJHsKUib8
+         k/IxJZVPeLBQm2ku7quSz0P7Fb1VzwXEeKzxkZNByyfl1VskznqcWyc8zLI7Xq8I2c
+         pINtq091F6bkw43wY5mu0wF7wRD2HO3tzV4nUV10=
+Received: by mail-pf1-f178.google.com with SMTP id w18so9010011pfu.9;
+        Tue, 23 Feb 2021 07:47:27 -0800 (PST)
+X-Gm-Message-State: AOAM530fb7kMUxO8Tah2WM4y+nDQwVed39m0t31rVu9g9MdNHb/5b5A/
+        DPNLqCZqfAgf2Pbci3HfoPvjny7V/DU74BHCaIc=
+X-Google-Smtp-Source: ABdhPJxpQGF6YDtaKy9RwYuxdhixk5+xajdkcOUF6LcT/2J4R6s08m7LRjdk1BOqzpmP8JcZJdeTBLElCiLzh161BEo=
+X-Received: by 2002:a62:fc45:0:b029:1ed:bdd2:a07d with SMTP id
+ e66-20020a62fc450000b02901edbdd2a07dmr2847913pfh.0.1614095247349; Tue, 23 Feb
+ 2021 07:47:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210223104957.GA3844@linux>
+References: <20210206000903.215028-1-mcroce@linux.microsoft.com>
+In-Reply-To: <20210206000903.215028-1-mcroce@linux.microsoft.com>
+From:   Matteo Croce <mcroce@linux.microsoft.com>
+Date:   Tue, 23 Feb 2021 16:46:51 +0100
+X-Gmail-Original-Message-ID: <CAFnufp1zuXTVcNvSX9eE9hekZ6h455JVve0q2=Ht+xd007CVdQ@mail.gmail.com>
+Message-ID: <CAFnufp1zuXTVcNvSX9eE9hekZ6h455JVve0q2=Ht+xd007CVdQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] block: add a sequence number to disks
+To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Luca Boccassi <bluca@debian.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 11:50:05AM +0100, Oscar Salvador wrote:
-> > CPU0:                           CPU1:
-> >                                 set_compound_page_dtor(HUGETLB_PAGE_DTOR);
-> > memory_failure_hugetlb
-> >   get_hwpoison_page
-> >     __get_hwpoison_page
-> >       get_page_unless_zero
-> >                                 put_page_testzero()
-> > 
-> > Maybe this can happen. But it is a very corner case. If we want to
-> > deal with this. We can put_page_testzero() first and then
-> > set_compound_page_dtor(HUGETLB_PAGE_DTOR).
-> 
-> I have to check further, but it looks like this could actually happen.
-> Handling this with VM_BUG_ON is wrong, because memory_failure/soft_offline are
-> entitled to increase the refcount of the page.
-> 
-> AFAICS,
-> 
->  CPU0:                                    CPU1:
->                                           set_compound_page_dtor(HUGETLB_PAGE_DTOR);
->  memory_failure_hugetlb
->    get_hwpoison_page
->      __get_hwpoison_page
->        get_page_unless_zero
->                                           put_page_testzero()
->         identify_page_state
->          me_huge_page
-> 
-> I think we can reach me_huge_page with either refcount = 1 or refcount =2,
-> depending whether put_page_testzero has been issued.
-> 
-> For now, I would not re-enqueue the page if put_page_testzero == false.
-> I have to see how this can be handled gracefully.
+On Sat, Feb 6, 2021 at 1:09 AM Matteo Croce <mcroce@linux.microsoft.com> wrote:
+>
+> From: Matteo Croce <mcroce@microsoft.com>
+>
+> With this series a monotonically increasing number is added to disks,
+> precisely in the genhd struct, and it's exported in sysfs and uevent.
+>
+> This helps the userspace correlate events for devices that reuse the
+> same device, like loop.
+>
+> The first patch is the core one, the 2..4 expose the information in
+> different ways, while the last one increase the sequence number for
+> loop devices at every attach.
+>
+>     # udevadm monitor -kp |grep -e ^DEVNAME -e ^DISKSEQ &
+>     [1] 523
+>     # losetup -fP 3part
+>     [ 3698.615848] loop0: detected capacity change from 16384 to 0
+>     DEVNAME=/dev/loop0
+>     DISKSEQ=13
+>     [ 3698.647189]  loop0: p1 p2 p3
+>     DEVNAME=/dev/loop0
+>     DISKSEQ=13
+>     DEVNAME=/dev/loop0p1
+>     DISKSEQ=13
+>     DEVNAME=/dev/loop0p2
+>     DISKSEQ=13
+>     DEVNAME=/dev/loop0p3
+>     DISKSEQ=13
+>     # losetup -fP 2part
+>     [ 3705.170766] loop1: detected capacity change from 40960 to 0
+>     DEVNAME=/dev/loop1
+>     DISKSEQ=14
+>     [ 3705.247280]  loop1: p1 p2
+>     DEVNAME=/dev/loop1
+>     DISKSEQ=14
+>     DEVNAME=/dev/loop1p1
+>     DISKSEQ=14
+>     DEVNAME=/dev/loop1p2
+>     DISKSEQ=14
+>     # ./getdiskseq /dev/loop*
+>     /dev/loop0:     13
+>     /dev/loop0p1:   13
+>     /dev/loop0p2:   13
+>     /dev/loop0p3:   13
+>     /dev/loop1:     14
+>     /dev/loop1p1:   14
+>     /dev/loop1p2:   14
+>     /dev/loop2:     5
+>     /dev/loop3:     6
+>     /dev/loop-control: Function not implemented
+>     # grep . /sys/class/block/*/diskseq
+>     /sys/class/block/loop0/diskseq:13
+>     /sys/class/block/loop1/diskseq:14
+>     /sys/class/block/loop2/diskseq:5
+>     /sys/class/block/loop3/diskseq:6
+>     /sys/class/block/ram0/diskseq:1
+>     /sys/class/block/ram1/diskseq:2
+>     /sys/class/block/vda/diskseq:7
+>
+> If merged, this feature will immediately used by the userspace:
+> https://github.com/systemd/systemd/issues/17469#issuecomment-762919781
+>
+> Matteo Croce (5):
+>   block: add disk sequence number
+>   block: add ioctl to read the disk sequence number
+>   block: refactor sysfs code
+>   block: export diskseq in sysfs
+>   loop: increment sequence number
+>
+>  Documentation/ABI/testing/sysfs-block | 12 ++++++++
+>  block/genhd.c                         | 43 ++++++++++++++++++++++++---
+>  block/ioctl.c                         |  2 ++
+>  drivers/block/loop.c                  |  3 ++
+>  include/linux/genhd.h                 |  2 ++
+>  include/uapi/linux/fs.h               |  1 +
+>  6 files changed, 59 insertions(+), 4 deletions(-)
+>
+> --
+> 2.29.2
+>
 
-I took a brief look.
-It is not really your patch fault. Hugetlb <-> memory-failure synchronization is
-a bit odd, it definitely needs improvment.
+Hi,
 
-The thing is, we can have different scenarios here.
-E.g: by the time we return from put_page_testzero, we might have refcount ==
-0 and PageHWPoison, or refcount == 1 PageHWPoison.
+Did anyone have a chance to look at this series?
 
-The former will let a user get a page from the pool and get a sigbus
-when it faults in the page, and the latter will be even more odd as we
-will have a self-refcounted page in the free pool (and hwpoisoned).
+Ideas or suggestions?
 
-As I said, it is not this patchset fault. I just made me realize this
-problem.
+Regards,
 
-I have to think some more about this.
 
--- 
-Oscar Salvador
-SUSE L3
+--
+per aspera ad upstream
