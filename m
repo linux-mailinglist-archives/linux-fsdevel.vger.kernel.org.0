@@ -2,133 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF2FA32303C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 19:07:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCF4A323061
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 19:15:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233777AbhBWSHK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 13:07:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47750 "EHLO
+        id S232810AbhBWSOh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 13:14:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231591AbhBWSHI (ORCPT
+        with ESMTP id S233108AbhBWSOg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 13:07:08 -0500
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B55DC06174A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 10:06:28 -0800 (PST)
-Received: by mail-io1-xd2f.google.com with SMTP id f20so18089629ioo.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 10:06:28 -0800 (PST)
+        Tue, 23 Feb 2021 13:14:36 -0500
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27706C06178B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 10:13:56 -0800 (PST)
+Received: by mail-qv1-xf34.google.com with SMTP id 2so8236781qvd.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 10:13:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vTI/ZdZz+qz8Dx2SLW9Ocz24gRVgR01CbdQNKNmll5k=;
-        b=kJv3Zxq0E0xdXJMdBV0Qymaxo3EKmXLhrzNKEoR1lEq6FQ2L+KIToHQV71nOETjiu4
-         jSIDazyhhQfKFV3Siq4AGLLgHpeAJgvfeNFFwl6ZBV/NypjnFAv26PscPklbQKZkbhIg
-         KDaQvT5mNTADuS2BE5Z/VFllYEjnbu736vlWbV0xSE74lwfdo2P+3SMSBuWCzk2d90X5
-         HmYlmKJd0nucCD/9eyNVU9egBEf6Y/sqkUNBf1FGWNLYulQ3vHiy1IEDz5FiGqsOc2JY
-         bnw/q/JSbt8u8APa8ShoLnkzb05+xx30eFz/W7GHM/NuZn1EL1MmXYGVk82D0N3MXgUO
-         D+zA==
+        bh=64chh81MrDhbGsEgUYAQK1O320WsxsfdzdSvZe/81Lc=;
+        b=FMcvcTOtJbk9S1OVOWzfwDI5hEJZtOOmWU/jx2w96FB7sbM4dTOUaL9uiX7+DbzOjh
+         SckAfTThgCrNq9MZdWyLykL8A8V2tpZq2WKyEu+IEcuT9vYdy42OJfU0uY5KQmUvOc14
+         IWOySySdL1dIZtnKCoAktLqbu5etA0LNHAujHL8fGQQx/khRZpqpAlO/3G9ifKZOSe7p
+         U/V1t1C2ssrd12UzPv6Tc8TI1ZQmeQL4SBk29m7M3GzQuqVAIvMNKithrg9NzgJ+wPvt
+         p3t+iw8zwvxfIY5nhwTyV9xO8IgyaZDSCJqvoTzizj2jdUg5IQ/zrKmsPyS0Q5cSX+pn
+         /DxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vTI/ZdZz+qz8Dx2SLW9Ocz24gRVgR01CbdQNKNmll5k=;
-        b=rv+PcXnhln5DgN0UWx3RNQ1L/is0QZXqOW0FaO77A8r4Fnc31fyXqgyg5rUckCK5W4
-         q8VpTMQJybKKLLNGxZiSGHSC7uXmFQg5lAMD/lOoNuCSxbgqf1mROUJg/ZpeTMT1103y
-         wmA5Zmm+b+zAOxWfXZhZ0cM7xj/W51k74FsqhVG9EMWnvgVYhVbctZo3MX6JAc+i1aKt
-         eGlo7ffSVT6/MaZlLDMXsvQ/ner42s1sTfUGOkiCb1a6L6RybgNHcQDWULw3sPKQVdF2
-         UUk4gyCwNj57s2Jp2sG5zcfBp9xaUWpWB6GYrapCD5zZ4jAkHhbulcfenilgYbxouh1V
-         E/9Q==
-X-Gm-Message-State: AOAM5303QMwswKv457M/HWJku4hvmyEmJ72WMQVYjJxBtdtTMiXn6uGA
-        7X+CeS0Apu7jPv2KQb5rufau+NIu56pyhoziwQQ7dw==
-X-Google-Smtp-Source: ABdhPJzpHY27RWxiyNrVgREJDawnkqSWtUel0EdDg7HXH+35aHSwQVloU4RBy57ghfHc1GSt5G6KzF/z83VRwCEKrxE=
-X-Received: by 2002:a6b:c84a:: with SMTP id y71mr20733760iof.86.1614103587647;
- Tue, 23 Feb 2021 10:06:27 -0800 (PST)
+        bh=64chh81MrDhbGsEgUYAQK1O320WsxsfdzdSvZe/81Lc=;
+        b=WmpO2SrWue/7JkCU6nvRUNobrEodY6gRXlpdaDAUtDAHzf9eaTTV5r/PfAsiCyOFZ+
+         sstzQ8SRaigk5nXG9GLEITk8kmfmBKjEvChs/A5+OD2ShWTJS2hSzwaND3jYkhqj+Asz
+         C7X7z00ruoEiLU/rO5MERvVFnUQQt3B33S9ZE/mdEw+cTDv9pW3/TY0AGHaMJXP1nxyV
+         dSszTVbRrNrqBhX78DcHPhLWCgi2tm5mI1CfQ35CvPQG26OBnXEmDARFL6rGCluzQkAt
+         z0VEbIiBupHpTYgBf3W5wy07nI1hbQrlg+yu/y+PLd7urQ4JaZWFewE2dhMZMIvoybZn
+         QUMg==
+X-Gm-Message-State: AOAM531zWHWx+F8RaDsUreWNQxb6TuRSJvD9ZvmzDJo9QVrP6MNO6Nv7
+        4fVhnIevGjdmgKL2OairIV0RKmeHkYjgG1o4GWtSMg==
+X-Google-Smtp-Source: ABdhPJzd2W30fvJh6WbDh5Kt5luVUnWfWNcb2OCq6wulmujrbpLeuMCS+sjlsu+6F+H08XVOLW05o0n0O0xTf4LNtqY=
+X-Received: by 2002:a0c:8304:: with SMTP id j4mr26498875qva.18.1614104034885;
+ Tue, 23 Feb 2021 10:13:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20210219004824.2899045-1-axelrasmussen@google.com>
- <20210219004824.2899045-5-axelrasmussen@google.com> <20210223153840.GB154711@xz-x1>
-In-Reply-To: <20210223153840.GB154711@xz-x1>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Tue, 23 Feb 2021 10:05:49 -0800
-Message-ID: <CAJHvVcg_hV0diLxyB2=JbLbJkXWTW+zsPsdzBTJW_WcG-vbvbA@mail.gmail.com>
-Subject: Re: [PATCH v7 4/6] userfaultfd: add UFFDIO_CONTINUE ioctl
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Steven Price <steven.price@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
+References: <20210223143426.2412737-1-elver@google.com> <20210223143426.2412737-4-elver@google.com>
+In-Reply-To: <20210223143426.2412737-4-elver@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 23 Feb 2021 19:13:42 +0100
+Message-ID: <CACT4Y+byoqr4UjNcYO-VMRZorqVxGyZmQb==pJXiQ0WjqwXvhg@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/4] perf/core: Add support for SIGTRAP on perf events
+To:     Marco Elver <elver@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Matt Morehouse <mascasa@google.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Ian Rogers <irogers@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        Adam Ruprecht <ruprecht@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
+        linux-m68k@lists.linux-m68k.org,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 7:38 AM Peter Xu <peterx@redhat.com> wrote:
+On Tue, Feb 23, 2021 at 3:34 PM Marco Elver <elver@google.com> wrote:
 >
-> On Thu, Feb 18, 2021 at 04:48:22PM -0800, Axel Rasmussen wrote:
-> > @@ -4645,8 +4646,18 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
-> >       spinlock_t *ptl;
-> >       int ret;
-> >       struct page *page;
-> > +     int writable;
-> >
-> > -     if (!*pagep) {
-> > +     mapping = dst_vma->vm_file->f_mapping;
-> > +     idx = vma_hugecache_offset(h, dst_vma, dst_addr);
-> > +
-> > +     if (is_continue) {
-> > +             ret = -EFAULT;
-> > +             page = find_lock_page(mapping, idx);
-> > +             *pagep = NULL;
+> Adds bit perf_event_attr::sigtrap, which can be set to cause events to
+> send SIGTRAP (with si_code TRAP_PERF) to the task where the event
+> occurred. To distinguish perf events and allow user space to decode
+> si_perf (if set), the event type is set in si_errno.
 >
-> Why set *pagep to NULL?  Shouldn't it be NULL always?.. If that's the case,
-> maybe WARN_ON_ONCE(*pagep) suite more.
-
-Right, the caller should be passing in NULL in the
-MCOPY_ATOMIC_CONTINUE case. Looking more closely at the caller
-(__mcopy_atomic_hugetlb), it already has a BUG_ON(page), so at best
-this assignment is redundant, and at worst it might actually cover up
-a real bug (say the caller mistakenly *did* pass in some page, we'd
-set it to NULL and the BUG_ON wouldn't trigger).
-
-So, I'll just remove this - I don't think an additional WARN_ON_ONCE
-is needed given the existing BUG_ON.
-
+> The primary motivation is to support synchronous signals on perf events
+> in the task where an event (such as breakpoints) triggered.
 >
-> Otherwise the patch looks good to me.
-
-Shall I add a R-B? :)
-
-Thanks for taking the time to review Peter!
-
+> Link: https://lore.kernel.org/lkml/YBv3rAT566k+6zjg@hirez.programming.kicks-ass.net/
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Marco Elver <elver@google.com>
+> ---
+>  include/uapi/linux/perf_event.h |  3 ++-
+>  kernel/events/core.c            | 21 +++++++++++++++++++++
+>  2 files changed, 23 insertions(+), 1 deletion(-)
 >
-> Thanks,
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index ad15e40d7f5d..b9cc6829a40c 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -389,7 +389,8 @@ struct perf_event_attr {
+>                                 cgroup         :  1, /* include cgroup events */
+>                                 text_poke      :  1, /* include text poke events */
+>                                 build_id       :  1, /* use build id in mmap2 events */
+> -                               __reserved_1   : 29;
+> +                               sigtrap        :  1, /* send synchronous SIGTRAP on event */
+> +                               __reserved_1   : 28;
 >
+>         union {
+>                 __u32           wakeup_events;    /* wakeup every n events */
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 37a8297be164..8718763045fd 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -6288,6 +6288,17 @@ void perf_event_wakeup(struct perf_event *event)
+>         }
+>  }
+>
+> +static void perf_sigtrap(struct perf_event *event)
+> +{
+> +       struct kernel_siginfo info;
+> +
+> +       clear_siginfo(&info);
+> +       info.si_signo = SIGTRAP;
+> +       info.si_code = TRAP_PERF;
+> +       info.si_errno = event->attr.type;
+> +       force_sig_info(&info);
+> +}
+> +
+>  static void perf_pending_event_disable(struct perf_event *event)
+>  {
+>         int cpu = READ_ONCE(event->pending_disable);
+> @@ -6297,6 +6308,13 @@ static void perf_pending_event_disable(struct perf_event *event)
+>
+>         if (cpu == smp_processor_id()) {
+>                 WRITE_ONCE(event->pending_disable, -1);
+> +
+> +               if (event->attr.sigtrap) {
+> +                       atomic_inc(&event->event_limit); /* rearm event */
+
+We send the signal to the current task. Can this fire outside of the
+current task context? E.g. in interrupt/softirq/etc? And then we will
+send the signal to the current task. Watchpoint can be set to
+userspace address and then something asynchronous (some IO completion)
+that does not belong to this task access the userspace address (is
+this possible?). But watchpoints can also be set to kernel addresses,
+then another context can definitely access it.
+(1) can this happen? maybe perf context is somehow disabled when !in_task()?
+(2) if yes, what is the desired behavior?
+
+
+
+
+> +                       perf_sigtrap(event);
+> +                       return;
+> +               }
+> +
+>                 perf_event_disable_local(event);
+>                 return;
+>         }
+> @@ -11325,6 +11343,9 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+>
+>         event->state            = PERF_EVENT_STATE_INACTIVE;
+>
+> +       if (event->attr.sigtrap)
+> +               atomic_set(&event->event_limit, 1);
+> +
+>         if (task) {
+>                 event->attach_state = PERF_ATTACH_TASK;
+>                 /*
 > --
-> Peter Xu
+> 2.30.0.617.g56c4b15f3c-goog
 >
