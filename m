@@ -2,147 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E1D7322F71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 18:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC592322F74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 18:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233116AbhBWRRO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 12:17:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36880 "EHLO
+        id S233665AbhBWRRo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 12:17:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233640AbhBWRRN (ORCPT
+        with ESMTP id S233694AbhBWRRe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 12:17:13 -0500
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E48C061786
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 09:16:33 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id s107so16313441otb.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 09:16:33 -0800 (PST)
+        Tue, 23 Feb 2021 12:17:34 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F90C06178B;
+        Tue, 23 Feb 2021 09:16:51 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id d15so9712501ioe.4;
+        Tue, 23 Feb 2021 09:16:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Y/7lyBIawgXVibPEQjRnIJxZC4/J4mTsACbEERnxYDg=;
-        b=mRjlqnBTeAG3y2s8FAauHnaH1SamsOPskLA8yoP4qMATNnDLnjombF0ueoOHemI4v+
-         ON6jLAZhOorVDCKlKeVaclVW9ax1Wykz+j252M1N70rI88dT8+/ddGZqMupFk8ePUsvK
-         lR4xLAbwYMFT1IC4bvpofpMVF0Gyw4e25Mcw1bCWYrZ7TrIvqotBPjioRqMac5HIgLYa
-         XYfi7UxAvEjWctj8pwgTeUIb+FgkAKDx3VBwjigk5C2ZNvZd5+QhbZQoHnNks7gY3H+l
-         VwJXfx7Fo2e8npir946O3k87wAW02SzO5wtDlyBr5gc6B5JV4UqSIR3Y9/ZCsk3rsY7Q
-         MPSg==
+        bh=bqm02B/mllfyAzyyWjAj/vk3+g5QN1rn4lIudfXEjj4=;
+        b=OcKo+ONyCAsXp72p4dSLyaR6AZf29hkoaNLn5NLkxF0aXmIKMIBfV3N2+b4RTmoXp2
+         ezntvkRVsdIeW6RrgEokqSSnS8YhnY1rC61DYeDZh9OALSPpEeDIsOqao6gG/NF2Ya87
+         S5Hz05o3o0+aHKin9VzYSdZpBMwHCHwmvWYBQ0AGReDqKxzl6pUon5tUCAV/QRVc1/5x
+         13UyDYBjiN5fXrAG8OezX5WSKZktw8RrEe6UeyO5jUsX0krDqc/HumONLqUi6p5TJp7d
+         JkIXOw+Tse920rUsVzip8a8tVjFuxRZS17sv9rs9hYwzlpTXvw86+RBnEBe6gOeYTUR8
+         LVnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Y/7lyBIawgXVibPEQjRnIJxZC4/J4mTsACbEERnxYDg=;
-        b=JtcNAEKzb1d5pmL3iNjtEPHtSKZ/eQPrveOOQmYIn80PLLFk2wGNvk/j3QSgTaOC0u
-         TXPyD6jYbyKgjLc85KIuin89louQYjDF1Ui0XnS0RkPC1V4t42fubgJQbQvTlRSewC0b
-         SlfSgmcvYyo3ER6p1QStqN3JOlexCmFfo4rfjS/E7UF7zaYDUC7dHjvdIV7aUB+Inxot
-         lVD1H6MMoummyal5kkCHi0C3WAyQSTGTYkWTPq0gR7YGqV507AnnMEFApwliE6OEBjtU
-         9BJ2i2QU2ZYPlYQi+y3gw4+GKRopGdxt5nsXyT9jYsplMnYzRq2Ybtri+8NGhVQvB02I
-         Hpyg==
-X-Gm-Message-State: AOAM533fkC1wIIW1eQhIGkCQdL06BAgT/gFKZg+nZYuCehXrdiF5AXYR
-        glgXpxIxgqEQFZJQbwZr2JKU6ev3AVey8kBbzmridA==
-X-Google-Smtp-Source: ABdhPJw2zJQHH6G+SOVfrrWuVDvoFs3AyTMegDYPDbhen+c9h8Rqfm/XJ8UoE2cbXebtHnL9Z/5RERNNXFBoFBXyXaU=
-X-Received: by 2002:a05:6830:1552:: with SMTP id l18mr21502367otp.233.1614100592568;
- Tue, 23 Feb 2021 09:16:32 -0800 (PST)
+        bh=bqm02B/mllfyAzyyWjAj/vk3+g5QN1rn4lIudfXEjj4=;
+        b=Bb+EfmDJoVAv4hvHwWZ/fuYQJ0fSYblQIJNVKqubxk4V1wGl3lOn4tEMfDt8lFrBMV
+         bjMPr+vz6e0aL6HRb6p7/fjWtMvMOVFjyFpJ8Im8K+8Y15w7zz0Q0pB6VPGoOAzyaQQb
+         RXAPJOTUk2xiilZq7X8wzp6PtBgckSFUr6bCR6a34/H5KX9eQTNJR6nhEv1jbv52oPr7
+         t4/DSnu4YXT9kP3MoIi5+77ZEGljFmds+T5G2pJeNoghEvlIxX7PNtFYzJlgSxzEAJuE
+         ZDcVMUgYrg05fl0+k7slkOAk2r15EMVRrDiOz0icDLuuUpyXHc3OG5ZSWeKFHyoqQCQ2
+         fOfg==
+X-Gm-Message-State: AOAM531SZHEXaUKKvGrSNd0ehYLB04lhuZKAvcpkCpwCUkKUdUfk5y6z
+        3oizdLqSkmnTX2daYs1U6BA9Gd0RgLkrtkeBFNU=
+X-Google-Smtp-Source: ABdhPJxJpUJF187LUu7dlUiDCGj6E+R4tpaskWFf7hipYU5CmL7SzsDDP7TUVSmC9pY9M6CSNDsa2aEv6H+3bCAdltc=
+X-Received: by 2002:a02:660b:: with SMTP id k11mr28834911jac.120.1614100611307;
+ Tue, 23 Feb 2021 09:16:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20210223143426.2412737-1-elver@google.com> <20210223143426.2412737-5-elver@google.com>
- <CACT4Y+aq6voiAEfs0d5Vd9trumVbnQhv-PHYfns2LefijmfyoQ@mail.gmail.com>
- <CANpmjNP1wQvG0SNPP2L9QO=natf0XU8HXj-r2_-U4QZxtr-dVA@mail.gmail.com> <CACT4Y+ar7=q0p=LFxkbKbKhz-U3rwdf=PJ3Gg3=ZLP6w_sgTeA@mail.gmail.com>
-In-Reply-To: <CACT4Y+ar7=q0p=LFxkbKbKhz-U3rwdf=PJ3Gg3=ZLP6w_sgTeA@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 23 Feb 2021 18:16:20 +0100
-Message-ID: <CANpmjNO-xj8jnakVoWBbjPjn2gjHaugEVJTOebfdpvSwZhG5LQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 4/4] perf/core: Add breakpoint information to siginfo
- on SIGTRAP
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
+References: <20210124184204.899729-1-amir73il@gmail.com> <20210124184204.899729-3-amir73il@gmail.com>
+ <20210216170154.GG21108@quack2.suse.cz> <CAOQ4uxhwZG=aC+ZpB90Gn_5aNmQrwsJUnniWVhFXoq454vuyHA@mail.gmail.com>
+ <CAOQ4uxhnrZu0phZniiBEqPJJZwWfs3UbCJt0atkHirdHQVCWgw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhnrZu0phZniiBEqPJJZwWfs3UbCJt0atkHirdHQVCWgw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 23 Feb 2021 19:16:40 +0200
+Message-ID: <CAOQ4uxgS5G2ajTfUWUPB5DsjjP0ji-Vu_9RjEzLJGfkNFz0P4w@mail.gmail.com>
+Subject: Re: [RFC][PATCH 2/2] fanotify: support limited functionality for
+ unprivileged users
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-m68k@lists.linux-m68k.org,
-        "the arch/x86 maintainers" <x86@kernel.org>
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 23 Feb 2021 at 16:16, Dmitry Vyukov <dvyukov@google.com> wrote:
+On Fri, Feb 19, 2021 at 6:16 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> On Tue, Feb 23, 2021 at 4:10 PM 'Marco Elver' via kasan-dev
-> <kasan-dev@googlegroups.com> wrote:
-> > > > Encode information from breakpoint attributes into siginfo_t, which
-> > > > helps disambiguate which breakpoint fired.
-> > > >
-> > > > Note, providing the event fd may be unreliable, since the event may have
-> > > > been modified (via PERF_EVENT_IOC_MODIFY_ATTRIBUTES) between the event
-> > > > triggering and the signal being delivered to user space.
-> > > >
-> > > > Signed-off-by: Marco Elver <elver@google.com>
-> > > > ---
-> > > >  kernel/events/core.c | 11 +++++++++++
-> > > >  1 file changed, 11 insertions(+)
-> > > >
-> > > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > > index 8718763045fd..d7908322d796 100644
-> > > > --- a/kernel/events/core.c
-> > > > +++ b/kernel/events/core.c
-> > > > @@ -6296,6 +6296,17 @@ static void perf_sigtrap(struct perf_event *event)
-> > > >         info.si_signo = SIGTRAP;
-> > > >         info.si_code = TRAP_PERF;
-> > > >         info.si_errno = event->attr.type;
-> > > > +
-> > > > +       switch (event->attr.type) {
-> > > > +       case PERF_TYPE_BREAKPOINT:
-> > > > +               info.si_addr = (void *)(unsigned long)event->attr.bp_addr;
-> > > > +               info.si_perf = (event->attr.bp_len << 16) | (u64)event->attr.bp_type;
-> > > > +               break;
-> > > > +       default:
-> > > > +               /* No additional info set. */
+> On Tue, Feb 16, 2021 at 8:12 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Tue, Feb 16, 2021 at 7:01 PM Jan Kara <jack@suse.cz> wrote:
 > > >
-> > > Should we prohibit using attr.sigtrap for !PERF_TYPE_BREAKPOINT if we
-> > > don't know what info to pass yet?
+> > > On Sun 24-01-21 20:42:04, Amir Goldstein wrote:
+> > > > Add limited support for unprivileged fanotify event listener.
+> > > > An unprivileged event listener does not get an open file descriptor in
+> > > > the event nor the process pid of another process.  An unprivileged event
+> > > > listener cannot request permission events, cannot set mount/filesystem
+> > > > marks and cannot request unlimited queue/marks.
+> > > >
+> > > > This enables the limited functionality similar to inotify when watching a
+> > > > set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
+> > > > requiring SYS_CAP_ADMIN privileges.
+> > > >
+> > > > The FAN_REPORT_DFID_NAME init flag, provide a method for an unprivileged
+> > > > event listener watching a set of directories (with FAN_EVENT_ON_CHILD)
+> > > > to monitor all changes inside those directories.
+> > > >
+> > > > This typically requires that the listener keeps a map of watched directory
+> > > > fid to dirfd (O_PATH), where fid is obtained with name_to_handle_at()
+> > > > before starting to watch for changes.
+> > > >
+> > > > When getting an event, the reported fid of the parent should be resolved
+> > > > to dirfd and fstatsat(2) with dirfd and name should be used to query the
+> > > > state of the filesystem entry.
+> > > >
+> > > > Note that even though events do not report the event creator pid,
+> > > > fanotify does not merge similar events on the same object that were
+> > > > generated by different processes. This is aligned with exiting behavior
+> > > > when generating processes are outside of the listener pidns (which
+> > > > results in reporting 0 pid to listener).
+> > > >
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > >
+> > > The patch looks mostly good to me. Just two questions:
+> > >
+> > > a) Remind me please, why did we decide pid isn't safe to report to
+> > > unpriviledged listeners?
 > >
-> > I don't think it's necessary. This way, by default we get support for
-> > other perf events. If user space observes si_perf==0, then there's no
-> > information available. That would require that any event type that
-> > sets si_perf in future, must ensure that it sets si_perf!=0.
+> > Just because the information that process X modified file Y is not an
+> > information that user can generally obtain without extra capabilities(?)
+> > I can add a flag FAN_REPORT_OWN_PID to make that behavior
+> > explicit and then we can relax reporting pids later.
 > >
-> > I can add a comment to document the requirement here (and user space
-> > facing documentation should get a copy of how the info is encoded,
-> > too).
-> >
-> > Alternatively, we could set si_errno to 0 if no info is available, at
-> > the cost of losing the type information for events not explicitly
-> > listed here.
-
-Note that PERF_TYPE_HARDWARE == 0, so setting si_errno to 0 does not
-work. Which leaves us with:
-
-1. Ensure si_perf==0 (or some other magic value) if no info is
-available and !=0 otherwise.
-
-2. Return error for events where we do not officially support
-requesting sigtrap.
-
-I'm currently leaning towards (1).
-
-> > What do you prefer?
 >
-> Ah, I see.
-> Let's wait for the opinions of other people. There are a number of
-> options for how to approach this.
+> FYI a patch for flag FAN_REPORT_SELF_PID is pushed to branch
+> fanotify_unpriv.
+>
+> The UAPI feels a bit awkward with this flag, but that is the easiest way
+> to start without worrying about disclosing pids.
+>
+> I guess we can require that unprivileged listener has pid 1 in its own
+> pid ns. The outcome is similar to FAN_REPORT_SELF_PID, except
+> it can also get pids of its children which is probably fine.
+>
+
+Jan,
+
+WRT your comment in github:
+"So maybe we can just require that this flag is already set by userspace
+instead of silently setting it? Like:
+
+if (!(flags & FAN_REPORT_SELF_PID)) return -EPERM;
+
+I'd say that variant is more futureproof and the difference for user
+is minimal."
+
+I started with this approach and then I wrote the tests and imagined
+the man page
+requiring this flag would be a bit awkward, so I changed it to auto-enable.
+
+I am not strongly against the more implicit flag requirement, but in
+favor of the
+auto-enable approach I would like to argue that with current fanotify you CAN
+get zero pid in event, so think about it this way:
+If a listener is started in (or moved into) its own pid ns, it will
+get zero pid in all
+events (other than those generated by itself and its own children).
+
+With the proposed change, the same applies also if the listener is started
+without CAP_SYS_ADMIN.
+
+As a matter of fact, we do not need the flag at all, we can determine whether
+or not to report pid according to capabilities of the event reader at
+event read time.
+And we can check for one of:
+- CAP_SYS_ADMIN
+- CAP_SYS_PACCT
+- CAP_SYS_PTRACE
+
+Do you prefer this flag-less approach?
+
+Thanks,
+Amir.
