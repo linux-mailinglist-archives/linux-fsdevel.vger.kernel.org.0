@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64758322CCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 15:51:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DEA2322CFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 15:58:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232997AbhBWOty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 09:49:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33364 "EHLO
+        id S232258AbhBWO6N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 09:58:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232853AbhBWOts (ORCPT
+        with ESMTP id S232066AbhBWO6C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 09:49:48 -0500
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A12B9C06178A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 06:49:07 -0800 (PST)
-Received: by mail-qv1-xf35.google.com with SMTP id gi9so7829358qvb.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 06:49:07 -0800 (PST)
+        Tue, 23 Feb 2021 09:58:02 -0500
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6624C06178C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 06:57:18 -0800 (PST)
+Received: by mail-qk1-x730.google.com with SMTP id 204so11403705qke.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 06:57:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5S1278VXBXOSLVzud0ikIuJDPMbbC2qcHtU1cXjsgPk=;
-        b=NiVKZu5i8qwDclQxF0dwzHxzXcPvLJbWdBqJ0G5HlyTCGT8dxnmVly+zHKAPdGPFrQ
-         jLdOKWrkacctxFanoSKOGX3fa5L5bCcvzYdI6za53kIxVTLpypD57RLJB3PkyBrTsKkd
-         lKj6wAgVQntdDLIQBxJ8PT4t95heusHlnfeTwdCiuCeqGzrqnyqBeEaDR+9vUSPaYSbq
-         DG/uwnbkangeBPnYXVIcU4DYx5Qyusddt4EZdL8HrGfvG6gGArKhgL8JjHqAqZbyNnSP
-         9/dOz/8pMQC+MMk4o8QWp5Tuz5WRqftR8WswyTX6bHnKj8/SSyC4Do5EmH6jhxTuAx7C
-         iWwg==
+        bh=LmrazInE9lkHVfTVT/c9ri5uOiLTKO8Po9aKcmrNBAY=;
+        b=lPGcs8+XN3ZhWjVfUavOT+6rAWT08aaeXOP+i0kowIIBYo9WhUzverN7jPlsTiao8N
+         Dsh0tpbLvYdVtf3jpRizZ1sub2i15T6IvYNm6KOy79b2VfnDv01x/1WP/06N5TEXCPvK
+         ks31czjm8XJoxoKwMTPR61Wpm52jhrg/b5h0lhp1zsIFoxgM/XTerBw6sRWLdQL+/q4B
+         R3IBD3hWUe+/7M45KI932Aoi2d/fOuhsL9ZuoTPMMGhuIzFgitBPsh4dDGzQtpn4jvCg
+         3v7HHGk73/z4DgE6CrT1ht0NL9IWXRrD9YLxTDwKy9t7WXvPvb81TuXjDk2KSlm0SyIL
+         jAKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5S1278VXBXOSLVzud0ikIuJDPMbbC2qcHtU1cXjsgPk=;
-        b=keo4uPGo5b+esJgCI30J4VMklYWNdSG/vZpAVJSmSRhAEGAHVYkgQvxzTAveFMiqNe
-         B8xUHba6ZL5MERGHM1INEmd+1WAw4K5yZyU2Xx0rc6N1Ji1mN3vOkJXkLhsgseKQJ34z
-         MuW+J9cfH4S66bGeU7nXAB9Ek7qa89tyYdGGYqHwYyi/h3U4K8JV7aX2dwFHkeuASGiX
-         ga8Tf/B5maabF+hEkMT7sGtRbdkb5u79j8y7DPKo47ruQO4G1+FUgYWBkKRnLGc4CEZZ
-         IKPvuUrN27WJgLjUpCNiVRWYXS6Wdhue78GzZ5WYRoWlwnyaGrs1hHy/55aBPelFfXGg
-         /dVQ==
-X-Gm-Message-State: AOAM533Pjxc8PgkE6lQyDVHRja8VCxxns9SXqHF+UEhp2vtD0a2F1a1w
-        4tnesU8rb4MjR235r7LTtzXJNdxy60xFTfhcRKsL+Q==
-X-Google-Smtp-Source: ABdhPJzkj0kFTsnMC8xw+10LnB3Mw8u1Yp18xzsvPq+XTQfqTRg36gkO97V96V/4F1u+24NycHQHKwxhsiqGo6/rJ1s=
-X-Received: by 2002:a0c:e20f:: with SMTP id q15mr22742422qvl.13.1614091745827;
- Tue, 23 Feb 2021 06:49:05 -0800 (PST)
+        bh=LmrazInE9lkHVfTVT/c9ri5uOiLTKO8Po9aKcmrNBAY=;
+        b=YY11HGnhybQluQMaH/3EISnRWhelvbGrCinbeZ+4w9uooo2KkPuFnAsAaLITNz/LC5
+         mjnsn2oxhvCNUXsl/9sQQ5J5hAz6t8lNc43iyfXDOnvC6J90i6I2a9xeeefMou/yw0tN
+         TtDGXFxEHo5XaXXhR5ZnZewO9gQurm5HreBVo2J93VGIzyOet2m13KQhhAFTatE5bUZJ
+         TS4Le69HWKHZ7Bj9nCmuoDd3tTg2zYLji/4cjsYpPxRcqLxEaDFEOCLlBBa/TbJLfKYC
+         i+XVp0KVtdJhSoWoxIALETBZGMaJXuxNgryi3HLssMAXAVh45+JSqZtH/JxKrkO3foAa
+         KFLw==
+X-Gm-Message-State: AOAM530CZXiz6dLCpCYbVdkd9J9c02sIX3fFE0L5+FyjOD+EO3Mcnk2i
+        JufenbHF5Zxfxj3PaY9cb0PGgl2KbYSWelVS6fwlLQ==
+X-Google-Smtp-Source: ABdhPJxskRNcDrPojVCsfatXoteGeJRu+C8kFTCNr9W1n27qH/CtTomH+2quLi9leH/3XygPSui+HOsTQSf1jHotd2I=
+X-Received: by 2002:a37:a757:: with SMTP id q84mr25540114qke.501.1614092237384;
+ Tue, 23 Feb 2021 06:57:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20210223143426.2412737-1-elver@google.com> <20210223143426.2412737-2-elver@google.com>
-In-Reply-To: <20210223143426.2412737-2-elver@google.com>
+References: <20210223143426.2412737-1-elver@google.com> <20210223143426.2412737-4-elver@google.com>
+In-Reply-To: <20210223143426.2412737-4-elver@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 23 Feb 2021 15:48:54 +0100
-Message-ID: <CACT4Y+YGrj3zc+KsxQ0=N5t3dPy58FwVuy=MY95RphOD4i4FHg@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/4] perf/core: Apply PERF_EVENT_IOC_MODIFY_ATTRIBUTES
- to children
+Date:   Tue, 23 Feb 2021 15:57:06 +0100
+Message-ID: <CACT4Y+aEZ5_KFf8Uj-J6uLCdZcB_r5+tSpw8KhGg0PoBn_eMFQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/4] perf/core: Add support for SIGTRAP on perf events
 To:     Marco Elver <elver@google.com>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -81,62 +80,90 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Tue, Feb 23, 2021 at 3:34 PM Marco Elver <elver@google.com> wrote:
 >
-> As with other ioctls (such as PERF_EVENT_IOC_{ENABLE,DISABLE}), fix up
-> handling of PERF_EVENT_IOC_MODIFY_ATTRIBUTES to also apply to children.
+> Adds bit perf_event_attr::sigtrap, which can be set to cause events to
+> send SIGTRAP (with si_code TRAP_PERF) to the task where the event
+> occurred. To distinguish perf events and allow user space to decode
+> si_perf (if set), the event type is set in si_errno.
 >
-> Link: https://lkml.kernel.org/r/YBqVaY8aTMYtoUnX@hirez.programming.kicks-ass.net
-> Suggested-by: Dmitry Vyukov <dvyukov@google.com>
+> The primary motivation is to support synchronous signals on perf events
+> in the task where an event (such as breakpoints) triggered.
+>
+> Link: https://lore.kernel.org/lkml/YBv3rAT566k+6zjg@hirez.programming.kicks-ass.net/
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
 > Signed-off-by: Marco Elver <elver@google.com>
-
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
-
-
 > ---
->  kernel/events/core.c | 22 +++++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
+>  include/uapi/linux/perf_event.h |  3 ++-
+>  kernel/events/core.c            | 21 +++++++++++++++++++++
+>  2 files changed, 23 insertions(+), 1 deletion(-)
 >
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index ad15e40d7f5d..b9cc6829a40c 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -389,7 +389,8 @@ struct perf_event_attr {
+>                                 cgroup         :  1, /* include cgroup events */
+>                                 text_poke      :  1, /* include text poke events */
+>                                 build_id       :  1, /* use build id in mmap2 events */
+> -                               __reserved_1   : 29;
+> +                               sigtrap        :  1, /* send synchronous SIGTRAP on event */
+> +                               __reserved_1   : 28;
+>
+>         union {
+>                 __u32           wakeup_events;    /* wakeup every n events */
 > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 129dee540a8b..37a8297be164 100644
+> index 37a8297be164..8718763045fd 100644
 > --- a/kernel/events/core.c
 > +++ b/kernel/events/core.c
-> @@ -3179,16 +3179,36 @@ static int perf_event_modify_breakpoint(struct perf_event *bp,
->  static int perf_event_modify_attr(struct perf_event *event,
->                                   struct perf_event_attr *attr)
->  {
-> +       int (*func)(struct perf_event *, struct perf_event_attr *);
-> +       struct perf_event *child;
-> +       int err;
-> +
->         if (event->attr.type != attr->type)
->                 return -EINVAL;
->
->         switch (event->attr.type) {
->         case PERF_TYPE_BREAKPOINT:
-> -               return perf_event_modify_breakpoint(event, attr);
-> +               func = perf_event_modify_breakpoint;
-> +               break;
->         default:
->                 /* Place holder for future additions. */
->                 return -EOPNOTSUPP;
+> @@ -6288,6 +6288,17 @@ void perf_event_wakeup(struct perf_event *event)
 >         }
-> +
-> +       WARN_ON_ONCE(event->ctx->parent_ctx);
-> +
-> +       mutex_lock(&event->child_mutex);
-> +       err = func(event, attr);
-> +       if (err)
-> +               goto out;
-> +       list_for_each_entry(child, &event->child_list, child_list) {
-> +               err = func(child, attr);
-> +               if (err)
-> +                       goto out;
-> +       }
-> +out:
-> +       mutex_unlock(&event->child_mutex);
-> +       return err;
 >  }
 >
->  static void ctx_sched_out(struct perf_event_context *ctx,
+> +static void perf_sigtrap(struct perf_event *event)
+> +{
+> +       struct kernel_siginfo info;
+> +
+> +       clear_siginfo(&info);
+> +       info.si_signo = SIGTRAP;
+> +       info.si_code = TRAP_PERF;
+> +       info.si_errno = event->attr.type;
+> +       force_sig_info(&info);
+> +}
+> +
+>  static void perf_pending_event_disable(struct perf_event *event)
+>  {
+>         int cpu = READ_ONCE(event->pending_disable);
+> @@ -6297,6 +6308,13 @@ static void perf_pending_event_disable(struct perf_event *event)
+>
+>         if (cpu == smp_processor_id()) {
+>                 WRITE_ONCE(event->pending_disable, -1);
+> +
+> +               if (event->attr.sigtrap) {
+> +                       atomic_inc(&event->event_limit); /* rearm event */
+
+Can/should this be atomic_set(&event->event_limit, 1)? It should only
+go between 1 and 0, right?
+Otherwise:
+
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
+
+
+> +                       perf_sigtrap(event);
+> +                       return;
+> +               }
+> +
+>                 perf_event_disable_local(event);
+>                 return;
+>         }
+> @@ -11325,6 +11343,9 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+>
+>         event->state            = PERF_EVENT_STATE_INACTIVE;
+>
+> +       if (event->attr.sigtrap)
+> +               atomic_set(&event->event_limit, 1);
+> +
+>         if (task) {
+>                 event->attach_state = PERF_ATTACH_TASK;
+>                 /*
 > --
 > 2.30.0.617.g56c4b15f3c-goog
 >
