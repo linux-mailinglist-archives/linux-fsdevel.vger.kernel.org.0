@@ -2,146 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B81643230C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 19:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A8D3230E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Feb 2021 19:40:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233965AbhBWSab (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 13:30:31 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41956 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233880AbhBWSa3 (ORCPT
+        id S233201AbhBWSkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 13:40:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54792 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232986AbhBWSkC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 13:30:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614104942;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=o+lMNmwE9sWeaJZim5ktBynQMO9mBkWFkIPu3ZX6sdY=;
-        b=GxTI5FNILOwQGgO1im5rT80uUghcNdet7H1yRoj0nI2rCJwZ+w2uw0uWQu1NGk5QVYskYi
-        zs1+9flIieVgh9vgXQn2c7RyuLG4H1JfIHW+5doLTxgagC/HAXpgIJbZLKGjZ0WzG1p+Uv
-        hgcabndRFG/vLrIYVLnuRzunbw8csz4=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-153-kpm7Qzw6Nguy1H67XbP_5A-1; Tue, 23 Feb 2021 13:29:00 -0500
-X-MC-Unique: kpm7Qzw6Nguy1H67XbP_5A-1
-Received: by mail-qt1-f197.google.com with SMTP id 22so10642302qty.14
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 10:29:00 -0800 (PST)
+        Tue, 23 Feb 2021 13:40:02 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75C6C061574;
+        Tue, 23 Feb 2021 10:39:21 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id o16so59642607ljj.11;
+        Tue, 23 Feb 2021 10:39:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/dQXAMhErQFcRRic9fceFXsYd4MlrVmyK0wct060mNk=;
+        b=rlzPzfrapjnCOS5qgF1o4BIHsbdajD23mpRwqNg8yX8jhg9zt0YLmx7MrSP8pj99Fx
+         dYZ0f693+NOFJudqrypWjZRsMv63DMO9AxJswLW7TbIUlVckQC/y4wBz44/azL+SKz6j
+         cfxFngUwm+6Faz/C7c+KiHGrJXyp3cL7BNkNvun5ujBCJ5kl7w0R/NSh8sgJVNXXTCFv
+         plKmd7yQHmJQo20RBrTEWrbVJeBu5Hpvh29u5g7JRuvY8xC1t8cG2RnyqgMQsAEUOjKQ
+         dEkRWeW8iDRS7VRshaorEK8XWQSDf51fg0mMONBMK7ySWwxRRmrOH9auEH76DW2kahIQ
+         4aZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o+lMNmwE9sWeaJZim5ktBynQMO9mBkWFkIPu3ZX6sdY=;
-        b=CtDGDRiNSlahKuyOYc4gsTgXUpyzpJRpNL0j5uZ7jHv4nvf5xUabgHZ5bVLJgPCcF1
-         K+p+BmIUmlEcJH3qjh4rW0PSCHTPXrfE6chLUKjNJ2a+dTNw6H1vcl7Ch26MAMnLRyxu
-         AhhHBr8XWMfoUioXhEsm8ubWkmsw1Vyl0/Vroq/DGMAlpXrhbe4/rVPGxYXW/NNJGeqM
-         f8FDXoihg0Ks9XocvC/8VvEuyRanGhc9HzSITythReTdBZHUGS5MGFkOnGvOcR2oQic7
-         QgxpM0UBc1YZ0CQ39omnqqPIJko+5pG/S3FEyEZwEzh+gFeclsXLXnbL9TxDZDkBlxMu
-         8g1w==
-X-Gm-Message-State: AOAM531cHWHteNV7iEv0Hwjdpsfj4nPkXqkLJ1/qlpjghn1p2i7uyYLy
-        wQbz8NhuDbpAxyD9qbxneJtgH8Gqjv0nbdL7jDM6CdlX2EFV/cbDIOsgBo8y3jnLEvuITveKQxn
-        /kLUBcrmQeu5SElIObRSmIDyesQ==
-X-Received: by 2002:a05:620a:21c2:: with SMTP id h2mr27925122qka.494.1614104940024;
-        Tue, 23 Feb 2021 10:29:00 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw/BshTm6p2mAAGoJn9l2lOs8hsKvkpGfB8X8pMIvq7Eii7zi5lDF8avtFrEUscK2NizzpzIA==
-X-Received: by 2002:a05:620a:21c2:: with SMTP id h2mr27925073qka.494.1614104939764;
-        Tue, 23 Feb 2021 10:28:59 -0800 (PST)
-Received: from xz-x1 (bras-vprn-toroon474qw-lp130-25-174-95-95-253.dsl.bell.ca. [174.95.95.253])
-        by smtp.gmail.com with ESMTPSA id d5sm9388455qtd.67.2021.02.23.10.28.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Feb 2021 10:28:58 -0800 (PST)
-Date:   Tue, 23 Feb 2021 13:28:56 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Steven Price <steven.price@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        Adam Ruprecht <ruprecht@google.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Mina Almasry <almasrymina@google.com>,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v7 4/6] userfaultfd: add UFFDIO_CONTINUE ioctl
-Message-ID: <20210223182856.GA176114@xz-x1>
-References: <20210219004824.2899045-1-axelrasmussen@google.com>
- <20210219004824.2899045-5-axelrasmussen@google.com>
- <20210223153840.GB154711@xz-x1>
- <CAJHvVcg_hV0diLxyB2=JbLbJkXWTW+zsPsdzBTJW_WcG-vbvbA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/dQXAMhErQFcRRic9fceFXsYd4MlrVmyK0wct060mNk=;
+        b=KFfAltbJg6qx7AAumNHiJHID4NhQ8zkajKf2sOlxLXJVAICuDQ2iAfQUgUdNtXrcG2
+         IiE07ZG0V+2rLNYWViySN8TNPKaswnLb/d1wAoIwwOXBerTJONi80pu14rB83xaoXTm0
+         KwC2K4F9RkZDdqLwB3wNZ09VgYbZ7gcfcCSwIArW7SrdzMtP2zoia48Fxj6ZOuB3XhOh
+         a3bxhRaF7vGhctZmlRWBxm1bi0UUsTTdyVneD3CpzVTnVlTqTW0J/WI2cJqy6620py19
+         zVZrSMnj4EUL1JDsErNIErSLdefEqrDk12HIGRk3+RxvfQK1UZL5v7ni0tc6xAMrDX9k
+         Mb/w==
+X-Gm-Message-State: AOAM5315vyXhdbkhY4LDg1HVhUl2CMT8PVzEqMq86Qgg8rKVCF9WFgxk
+        BmLsQKkffkb5pGDGcadjNYa5/mov/UYpy9C2gQnlkButEOM=
+X-Google-Smtp-Source: ABdhPJzJJC4HP+w+ZoCJWy7EJcF2+ktQ3WjfswK8JMeAiFq2VEXwpOaCPuW0JIzaED8eqmYffj6AOoaZgZ9W8RWpQ4Y=
+X-Received: by 2002:a2e:a36d:: with SMTP id i13mr4788221ljn.148.1614105560304;
+ Tue, 23 Feb 2021 10:39:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJHvVcg_hV0diLxyB2=JbLbJkXWTW+zsPsdzBTJW_WcG-vbvbA@mail.gmail.com>
+References: <20210223182726.31763-1-aaptel@suse.com>
+In-Reply-To: <20210223182726.31763-1-aaptel@suse.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 23 Feb 2021 12:39:09 -0600
+Message-ID: <CAH2r5mvsWr6F7yZmVQw_b9EegH13y6eOiky-LPxe-_0sKup8dQ@mail.gmail.com>
+Subject: Re: [PATCH] cifs: ignore FL_FLOCK locks in read/write
+To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 10:05:49AM -0800, Axel Rasmussen wrote:
-> On Tue, Feb 23, 2021 at 7:38 AM Peter Xu <peterx@redhat.com> wrote:
-> >
-> > On Thu, Feb 18, 2021 at 04:48:22PM -0800, Axel Rasmussen wrote:
-> > > @@ -4645,8 +4646,18 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
-> > >       spinlock_t *ptl;
-> > >       int ret;
-> > >       struct page *page;
-> > > +     int writable;
-> > >
-> > > -     if (!*pagep) {
-> > > +     mapping = dst_vma->vm_file->f_mapping;
-> > > +     idx = vma_hugecache_offset(h, dst_vma, dst_addr);
-> > > +
-> > > +     if (is_continue) {
-> > > +             ret = -EFAULT;
-> > > +             page = find_lock_page(mapping, idx);
-> > > +             *pagep = NULL;
-> >
-> > Why set *pagep to NULL?  Shouldn't it be NULL always?.. If that's the case,
-> > maybe WARN_ON_ONCE(*pagep) suite more.
-> 
-> Right, the caller should be passing in NULL in the
-> MCOPY_ATOMIC_CONTINUE case. Looking more closely at the caller
-> (__mcopy_atomic_hugetlb), it already has a BUG_ON(page), so at best
-> this assignment is redundant, and at worst it might actually cover up
-> a real bug (say the caller mistakenly *did* pass in some page, we'd
-> set it to NULL and the BUG_ON wouldn't trigger).
-> 
-> So, I'll just remove this - I don't think an additional WARN_ON_ONCE
-> is needed given the existing BUG_ON.
+Would be great if we had some simple reproducer like this in xfstests.
 
-It's still okay to have the WARN_ON_ONCE; it gives a direct hint that *pagep
-should never be set for uffdio_continue.  No strong opinion.
+On Tue, Feb 23, 2021 at 12:27 PM Aur=C3=A9lien Aptel <aaptel@suse.com> wrot=
+e:
+>
+> From: Aurelien Aptel <aaptel@suse.com>
+>
+> flock(2)-type locks are advisory, they are not supposed to prevent IO
+> if mode would otherwise allow it. From man page:
+>
+>    flock()  places  advisory  locks  only; given suitable permissions on =
+a
+>    file, a process is free to ignore the use of flock() and perform I/O o=
+n
+>    the file.
+>
+> Simple reproducer:
+>
+>         #include <stdlib.h>
+>         #include <stdio.h>
+>         #include <errno.h>
+>         #include <sys/file.h>
+>         #include <sys/types.h>
+>         #include <sys/wait.h>
+>         #include <unistd.h>
+>
+>         int main(int argc, char** argv)
+>         {
+>                 const char* fn =3D argv[1] ? argv[1] : "aaa";
+>                 int fd, status, rc;
+>                 pid_t pid;
+>
+>                 fd =3D open(fn, O_RDWR|O_CREAT, S_IRWXU);
+>                 pid =3D fork();
+>
+>                 if (pid =3D=3D 0) {
+>                         flock(fd, LOCK_SH);
+>                         exit(0);
+>                 }
+>
+>                 waitpid(pid, &status, 0);
+>                 rc =3D write(fd, "xxx\n", 4);
+>                 if (rc < 0) {
+>                         perror("write");
+>                         return 1;
+>                 }
+>
+>                 puts("ok");
+>                 return 0;
+>         }
+>
+> If the locks are advisory the write() call is supposed to work
+> otherwise we are trying to write with only a read lock (aka shared
+> lock) so it fails.
+>
+> Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+> ---
+>  fs/cifs/file.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index 6d001905c8e5..3e351a534720 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -3242,6 +3242,7 @@ cifs_writev(struct kiocb *iocb, struct iov_iter *fr=
+om)
+>         struct inode *inode =3D file->f_mapping->host;
+>         struct cifsInodeInfo *cinode =3D CIFS_I(inode);
+>         struct TCP_Server_Info *server =3D tlink_tcon(cfile->tlink)->ses-=
+>server;
+> +       struct cifsLockInfo *lock;
+>         ssize_t rc;
+>
+>         inode_lock(inode);
+> @@ -3257,7 +3258,7 @@ cifs_writev(struct kiocb *iocb, struct iov_iter *fr=
+om)
+>
+>         if (!cifs_find_lock_conflict(cfile, iocb->ki_pos, iov_iter_count(=
+from),
+>                                      server->vals->exclusive_lock_type, 0=
+,
+> -                                    NULL, CIFS_WRITE_OP))
+> +                                    &lock, CIFS_WRITE_OP) || (lock->flag=
+s & FL_FLOCK))
+>                 rc =3D __generic_file_write_iter(iocb, from);
+>         else
+>                 rc =3D -EACCES;
+> @@ -3975,6 +3976,7 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_it=
+er *to)
+>         struct cifsFileInfo *cfile =3D (struct cifsFileInfo *)
+>                                                 iocb->ki_filp->private_da=
+ta;
+>         struct cifs_tcon *tcon =3D tlink_tcon(cfile->tlink);
+> +       struct cifsLockInfo *lock;
+>         int rc =3D -EACCES;
+>
+>         /*
+> @@ -4000,7 +4002,7 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_it=
+er *to)
+>         down_read(&cinode->lock_sem);
+>         if (!cifs_find_lock_conflict(cfile, iocb->ki_pos, iov_iter_count(=
+to),
+>                                      tcon->ses->server->vals->shared_lock=
+_type,
+> -                                    0, NULL, CIFS_READ_OP))
+> +                                    0, &lock, CIFS_READ_OP) || (lock->fl=
+ags & FL_FLOCK))
+>                 rc =3D generic_file_read_iter(iocb, to);
+>         up_read(&cinode->lock_sem);
+>         return rc;
+> --
+> 2.30.0
+>
 
-> 
-> >
-> > Otherwise the patch looks good to me.
-> 
-> Shall I add a R-B? :)
 
-Yes, as long as "*pagep = NULL" dropped, please feel free to. :)
-
+--=20
 Thanks,
 
--- 
-Peter Xu
-
+Steve
