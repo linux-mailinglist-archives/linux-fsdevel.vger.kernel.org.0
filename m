@@ -2,193 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37B5732399C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 10:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FBC83239CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 10:47:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234590AbhBXJih (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 04:38:37 -0500
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25316 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232563AbhBXJi0 (ORCPT
+        id S234590AbhBXJqp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 04:46:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50938 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234708AbhBXJp3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 04:38:26 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1614159441; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=HDh4Z45Hc6qnqIj38eBC6lHv/pvRBYzvWKgoJskrlSqn9AM1iw/7NSPVMZaHKTnbvsp7u1CjU7OwjumSE3I8XbTu/w/Tne+FJpw30EJf3RM5fEKeKfD3X/dat2a2pjUZHHClMszmIuDkjEUh49eGWdz7x+c6eOVYBnuY/db8yFA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1614159441; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=09h0ZbKKodi5aTH6k3A5KFGM6v9Ogm9E16PIeeLiaDg=; 
-        b=T4/erASbQCzhBUDcoOFuZSUSMPRbm15pbpqFuhqJvh3U23JeW/4Rce0cMcoyX1g4TO83ayLRs1iA5E2P9IOHmp+HJY4qPUrFdZ4iWROcZ/Xow0/jQfN/gANXi98Odp/iEquy4UfjgNZZFI34ujQ/vrIlhbNQzsU9wx0WP3hBT6k=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1614159441;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=09h0ZbKKodi5aTH6k3A5KFGM6v9Ogm9E16PIeeLiaDg=;
-        b=agRG+FwV1PXE4l2kRf1XDtXomSoK9rTLrnorAQt2s19u0Nmup10d90mMcg3w1gmu
-        UTrVjw0ZIqGR8jsK7iSND1Ad5sRaBjvtuFXAxaiH4GReLKNm2f8PNSEGp6s2+55xQuy
-        /KSvS2VRp6bw4IDJp5u/ShR4fcupgeSacmlKCd84=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1614159440447655.9358186061675; Wed, 24 Feb 2021 17:37:20 +0800 (CST)
-Date:   Wed, 24 Feb 2021 17:37:20 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Su Yue" <l@damenly.su>
-Cc:     "guaneryu" <guaneryu@gmail.com>,
-        "fstests" <fstests@vger.kernel.org>,
-        "linux-btrfs" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-ext4" <linux-ext4@vger.kernel.org>,
-        "linux-xfs" <linux-xfs@vger.kernel.org>
-Message-ID: <177d3666a3c.e47042d016248.8805085013477614929@mykernel.net>
-In-Reply-To: <wnuxq0px.fsf@damenly.su>
-References: <20210223134042.2212341-1-cgxu519@mykernel.net>
- <4ki1rjgu.fsf@damenly.su>
- <177d33c0982.10b8858b515683.1169986601273192029@mykernel.net> <wnuxq0px.fsf@damenly.su>
-Subject: Re: [PATCH] generic/473: fix expectation properly in out file
+        Wed, 24 Feb 2021 04:45:29 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E9AC06174A;
+        Wed, 24 Feb 2021 01:44:49 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id b3so1222602wrj.5;
+        Wed, 24 Feb 2021 01:44:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=LfcmABgWCle95IJI4lRPY0H0SCG46K15H2+YXiVhLLK2XnLsnZYJlaHg0xEgWkC3Fa
+         LcfTMC13L6nuBlCI047AP2Ke/uJ+1fQnI6tWg80V8tT3OmVkNIroB5mlgx40XsHAeEU1
+         C5bJQz22wSm4Vx1Lo6bvM1i6wFTnuMlNGmP3wJEz494b8d6ZIDbI26YjpzKyjFsH5HYh
+         WM8zy9TwMLcZ848S4sNAENIU76UUfl7wn6242IqDwwQTRfIBtDzERxbS3MJJ/96I0Ynj
+         hMy+n7m2+vSzunPR3oFX7gC5GilvYN156W/6i6w04L6fNok+6D2ijWTuXyXIi70ikLb2
+         IOnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=DHXoOZx9xc+jXwBB4AJvvx+VbXOQ7XhghCS/PzrvEBAcxq586PxsILRDLXPyDyTfBU
+         S4FS48kXQWCDASBWw0Q5BPftiTTl0LY6PYZ5H9ORhjhXpQDXy9SmGqfM4PsZIYGzT9nf
+         biikyDh4uUoSfNiuGHG8dCQmq6zyjUGZwP0D0sLLN9u9IPYPIrXGMRN4+pMa0YslMRMI
+         crCp+8ePBjLwJs6cSbNTqqMVUaf7Mm99ux+DBmceoCTqrwpjWR5X76f8GLZHNDdZI1sI
+         oXcIrOd1YJrn83FfX15BRwFcYtfxe2jw9jOd79wKuPMdsytJI7+cg1SbjWQNysgm32qy
+         iQdQ==
+X-Gm-Message-State: AOAM533nr9XwWAksf/lNDxUYs+96wSQLYG8fYW2gsvBZjdWfrHRfv2R3
+        oINH7ErfCRI2XRSWRYayOC4TKzdwANLoKA==
+X-Google-Smtp-Source: ABdhPJyKwoLFcFECkDb3rYb5PpKY4OVBN0ENzwVGLX+YlzZ21VrTgTQVM4/YByVL0Prmd9Uk25IPVw==
+X-Received: by 2002:adf:f589:: with SMTP id f9mr28757237wro.159.1614159888311;
+        Wed, 24 Feb 2021 01:44:48 -0800 (PST)
+Received: from localhost.localdomain (bzq-79-179-86-219.red.bezeqint.net. [79.179.86.219])
+        by smtp.googlemail.com with ESMTPSA id z11sm2968269wrm.72.2021.02.24.01.44.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Feb 2021 01:44:47 -0800 (PST)
+From:   Lior Ribak <liorribak@gmail.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        liorribak@gmail.com
+Subject: Re: [PATCH] binfmt_misc: Fix possible deadlock in bm_register_write
+Date:   Wed, 24 Feb 2021 01:42:37 -0800
+Message-Id: <20210224094237.122929-1-liorribak@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201224111533.24719-1-liorribak@gmail.com>
+References: <20201224111533.24719-1-liorribak@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-02-24 17:22:35 Su Yue <l@=
-damenly.su> =E6=92=B0=E5=86=99 ----
- >=20
- > On Wed 24 Feb 2021 at 16:51, Chengguang Xu <cgxu519@mykernel.net>=20
- > wrote:
- >=20
- > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=89, 2021-02-24 15:52:17 Su Yu=
-e <l@damenly.su> =E6=92=B0=E5=86=99=20
- > >  ----
- > >  >
- > >  > Cc to the author and linux-xfs, since it's xfsprogs related.
- > >  >
- > >  > On Tue 23 Feb 2021 at 21:40, Chengguang Xu=20
- > >  > <cgxu519@mykernel.net>
- > >  > wrote:
- > >  >
- > >  > > It seems the expected result of testcase of "Hole + Data"
- > >  > > in generic/473 is not correct, so just fix it properly.
- > >  > >
- > >  >
- > >  > But it's not proper...
- > >  >
- > >  > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
- > >  > > ---
- > >  > >  tests/generic/473.out | 2 +-
- > >  > >  1 file changed, 1 insertion(+), 1 deletion(-)
- > >  > >
- > >  > > diff --git a/tests/generic/473.out b/tests/generic/473.out
- > >  > > index 75816388..f1ee5805 100644
- > >  > > --- a/tests/generic/473.out
- > >  > > +++ b/tests/generic/473.out
- > >  > > @@ -6,7 +6,7 @@ Data + Hole
- > >  > >  1: [256..287]: hole
- > >  > >  Hole + Data
- > >  > >  0: [0..127]: hole
- > >  > > -1: [128..255]: data
- > >  > > +1: [128..135]: data
- > >  > >
- > >  > The line is produced by `$XFS_IO_PROG -c "fiemap -v 0 65k"=20
- > >  > $file |
- > >  > _filter_fiemap`.
- > >  > 0-64k is a hole and 64k-128k is a data extent.
- > >  > fiemap ioctl always returns *complete* ranges of extents.
- > >
- > > Manual testing result in latest kernel like below.
- > >
- > > [root@centos test]# uname -a
- > > Linux centos 5.11.0+ #5 SMP Tue Feb 23 21:02:27 CST 2021 x86_64=20
- > > x86_64 x86_64 GNU/Linux
- > >
- > > [root@centos test]# xfs_io -V
- > > xfs_io version 5.0.0
- > >
- > > [root@centos test]# stat a
- > >   File: a
- > >   Size: 4194304         Blocks: 0          IO Block: 4096=20
- > >   regular file
- > > Device: fc01h/64513d    Inode: 140         Links: 1
- > > Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/=20
- > > root)
- > > Access: 2021-02-24 16:33:20.235654140 +0800
- > > Modify: 2021-02-24 16:33:25.070641521 +0800
- > > Change: 2021-02-24 16:33:25.070641521 +0800
- > >  Birth: -
- > >
- > > [root@centos test]# xfs_io -c "pwrite 64k 64k" a
- > > wrote 65536/65536 bytes at offset 65536
- > > 64 KiB, 16 ops; 0.0000 sec (992.063 MiB/sec and 253968.2540=20
- > > ops/sec)
- > >
- > > [root@VM-8-4-centos test]# xfs_io -c "fiemap -v 0 65k" a
- > > a:
- > >  EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
- > >    0: [0..127]:        hole               128
- > >    1: [128..135]:      360..367             8   0x1
- > >
- >=20
- > Sorry, my carelessness. I only checked btrfs implementation but=20
- > xfs
- > and ext4 do return the change you made.
- >=20
-
-Yeah, it seems there is no bad side effect to show  only specified range of=
- extents
-and keep all the same behavior is also good for testing. I can post a fix p=
-atch for
-this but before that let us to wait some feedback from maintainers and expe=
-rts.
-
-Thanks,
-Chengguang
-
-
- >=20
- > > [root@centos test]# xfs_io -c "fiemap -v 0 128k" a
- > > a:
- > >  EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
- > >    0: [0..127]:        hole               128
- > >    1: [128..255]:      360..487           128   0x1
- > >
- > >
- > >  >
- > >  > You may ask why the ending hole range is not aligned to 128=20
- > >  > in
- > >  > 473.out. Because
- > >  > fiemap ioctl returns nothing of querying holes. xfs_io does=20
- > >  > the
- > >  > extra
- > >  > print work for holes.
- > >  >
- > >  > xfsprogs-dev/io/fiemap.c:
- > >  > for holes:
- > >  >  153     if (lstart > llast) {
- > >  >  154         print_hole(0, 0, 0, cur_extent, lflag, true,=20
- > >  >  llast,
- > >  >  lstart);
- > >  >  155         cur_extent++;
- > >  >  156         num_printed++;
- > >  >  157     }
- > >  >
- > >  > for the ending hole:
- > >  >   381     if (cur_extent && last_logical < range_end)
- > >  >   382         print_hole(foff_w, boff_w, tot_w, cur_extent,=20
- > >  >   lflag,
- > >  >   !vflag,
- > >  >   383                BTOBBT(last_logical),=20
- > >  >   BTOBBT(range_end));
- > >  >
- > >  > >  Hole + Data + Hole
- > >  > >  0: [0..127]: hole
- > >  > >  1: [128..255]: data
- > >  >
- >=20
- >=20
