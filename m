@@ -2,139 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A53613241D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 17:19:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C5D13241E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 17:19:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235712AbhBXQLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 11:11:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45342 "EHLO
+        id S233871AbhBXQOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 11:14:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236777AbhBXPxM (ORCPT
+        with ESMTP id S235723AbhBXQLo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 10:53:12 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A28C4C061788;
-        Wed, 24 Feb 2021 07:52:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1iUhtDEi+5CkGUvyZLsVBOnlGWt86U2HUz3W2iE42HY=; b=LBROo6968UJXNWuvJt7SF366Zt
-        iIP5QF+rM+aTNmUyr+hfxsInxV40EbrDM7j/il7G5o/9qtY6exZWs/T6Iqf772qHIppcDJMb1NJZn
-        phm9I1J2568XEQfvf+XTA4PWCrbE7MeMmOEr5A3VlbG1kogSiPxU2i8TByW/7aipMq0msY8WHuFL+
-        DgbfVbHfY0vuyMKSDHXFgyV2cRxWbSHN+hXpKc1fzxc12Mg6lodWqRBhNKxqAmvW0pWmI5sv5jOp2
-        WtiPX3StG7iGvARSYw8+rEEGy4Za1PT4EW+UM1FP4DxZaZWq2K6vpiCflB6eB+DAqQEgWaA2XVibt
-        +0Wh2msw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lEwRd-009aTu-W2; Wed, 24 Feb 2021 15:51:25 +0000
-Date:   Wed, 24 Feb 2021 15:51:21 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Steve French <smfrench@gmail.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        linux-cachefs@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-mm <linux-mm@kvack.org>, linux-afs@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net,
-        Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH 00/33] Network fs helper library & fscache kiocb API [ver
- #3]
-Message-ID: <20210224155121.GQ2858050@casper.infradead.org>
-References: <CAH2r5mv=PZk_wn2=b0VQcaom9TEw1MGLz+qB_Ktxxm2bnV9Nig@mail.gmail.com>
- <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
- <9e49f96cd80eaf9c8ed267a7fbbcb4c6467ee790.camel@redhat.com>
- <CAH2r5mvPLivjuE=cbijzGSHOvx-hkWSWbcxpoBnJX-BR9pBskQ@mail.gmail.com>
- <20210216021015.GH2858050@casper.infradead.org>
- <3743319.1614173522@warthog.procyon.org.uk>
+        Wed, 24 Feb 2021 11:11:44 -0500
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 598BBC061574;
+        Wed, 24 Feb 2021 08:10:57 -0800 (PST)
+Received: by mail-il1-x12a.google.com with SMTP id o1so2151788ila.11;
+        Wed, 24 Feb 2021 08:10:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2ZrSVmIV6Jr6Xzq9w2halpbi749GnRBmns1YcidehFs=;
+        b=r3dq2T5c+ijM7x/v5M2Ih6l9XYck+ODuIBBH/x/tc8VLT4NzFTAhL9D3TZ6jTzrJJq
+         eugIbm+8R7AQp92iu2jisPEHOPF5prsHO22C4RidgNthdTrWu/ceOAHHfszPHMnCKcxv
+         Gv4BbuarQ7HbOtkmu9tGicT/SldHKpXN6lmjQ4Uaq42vd1xz8ZJdRBNV/EK9uAsj4s7T
+         k5rFhA5yK01XI5R3OMU9bbvNTJbOQ4LF1diQEiX9JocNwiTOIVOxicHR4IxcNhDAhuth
+         pLD+WsER2zvUqw2fDq1pdI5bmVsw8frmULC55LYgieenK2nSB4qGm+3vGfRwLQ3SxKxY
+         oNuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2ZrSVmIV6Jr6Xzq9w2halpbi749GnRBmns1YcidehFs=;
+        b=L7fWw1b68DCWXB2RbxPGCKPVoZuTAhKKIesaBuOngy0jBh9mQTV5x7e0hcQCYJ5Mmp
+         jOkzIMJcMTFTvN3OycaI0PHNpwZfRkAzMFxoUfVsW5Ak8u7LOTa9q2t371bT5p6eaW/a
+         ntVNA7xLp0jZFks2dFxixmvYdk9mS4ZrVm/n6jENh0hQJRXQ1LdMSGjmUtwUl8E4XTin
+         BhBBOa907hNM7xiu8eLngPoFGkrIzNL8QcdBhUEqe8l31Vgij9AkKz1KfmPItsSgX1eU
+         wPU2WR1cltAfDEBbdjKqa138TUVhiFg3XF1bZxNPxkfQ36Xi/+ylFnv8GSBYLwSdURtr
+         2Nig==
+X-Gm-Message-State: AOAM530qFcoBT/OcVOA6cyg/9XT8K1f3pZ0qMQpzdLjb0mJu06UUsEdE
+        FL2RX8Z35mDs81EVz+23Go1izGiJSgUkuwcJ3lI=
+X-Google-Smtp-Source: ABdhPJz4biK9u+kKEn+Yhj/dHN3DjRGLVsZYeMNfF4JnDvxaL1ZCEPjGW6kxF+q3wWlmBl3wBcd+uAy5Oim6wcaso64=
+X-Received: by 2002:a92:2c08:: with SMTP id t8mr24098439ile.72.1614183056681;
+ Wed, 24 Feb 2021 08:10:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3743319.1614173522@warthog.procyon.org.uk>
+References: <20210222102456.6692-1-lhenriques@suse.de> <20210224142307.7284-1-lhenriques@suse.de>
+In-Reply-To: <20210224142307.7284-1-lhenriques@suse.de>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 24 Feb 2021 18:10:45 +0200
+Message-ID: <CAOQ4uxi3-+tOgHV_GUnWtJoQXbV5ZS9qDZsLsd9sJxX5Aftyew@mail.gmail.com>
+Subject: Re: [PATCH] copy_file_range.2: Kernel v5.12 updates
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Alejandro Colomar <alx.manpages@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 01:32:02PM +0000, David Howells wrote:
-> Steve French <smfrench@gmail.com> wrote:
-> 
-> > This (readahead behavior improvements in Linux, on single large file
-> > sequential read workloads like cp or grep) gets particularly interesting
-> > with SMB3 as multichannel becomes more common.  With one channel having one
-> > readahead request pending on the network is suboptimal - but not as bad as
-> > when multichannel is negotiated. Interestingly in most cases two network
-> > connections to the same server (different TCP sockets,but the same mount,
-> > even in cases where only network adapter) can achieve better performance -
-> > but still significantly lags Windows (and probably other clients) as in
-> > Linux we don't keep multiple I/Os in flight at one time (unless different
-> > files are being read at the same time by different threads).
-> 
-> I think it should be relatively straightforward to make the netfs_readahead()
-> function generate multiple read requests.  If I wasn't handed sufficient pages
-> by the VM upfront to do two or more read requests, I would need to do extra
-> expansion.  There are a couple of ways this could be done:
+On Wed, Feb 24, 2021 at 4:22 PM Luis Henriques <lhenriques@suse.de> wrote:
+>
+> Update man-page with recent changes to this syscall.
+>
+> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> ---
+> Hi!
+>
+> Here's a suggestion for fixing the manpage for copy_file_range().  Note that
+> I've assumed the fix will hit 5.12.
+>
+>  man2/copy_file_range.2 | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/man2/copy_file_range.2 b/man2/copy_file_range.2
+> index 611a39b8026b..b0fd85e2631e 100644
+> --- a/man2/copy_file_range.2
+> +++ b/man2/copy_file_range.2
+> @@ -169,6 +169,9 @@ Out of memory.
+>  .B ENOSPC
+>  There is not enough space on the target filesystem to complete the copy.
+>  .TP
+> +.B EOPNOTSUPP
+> +The filesystem does not support this operation.
+> +.TP
+>  .B EOVERFLOW
+>  The requested source or destination range is too large to represent in the
+>  specified data types.
+> @@ -187,7 +190,7 @@ refers to an active swap file.
+>  .B EXDEV
+>  The files referred to by
+>  .IR fd_in " and " fd_out
+> -are not on the same mounted filesystem (pre Linux 5.3).
+> +are not on the same mounted filesystem (pre Linux 5.3 and post Linux 5.12).
 
-I don't think this is a job for netfs_readahead().  We can get into a
-similar situation with SSDs or RAID arrays where ideally we would have
-several outstanding readahead requests.
+I think you need to drop the (Linux range) altogether.
+What's missing here is the NFS cross server copy use case.
+Maybe:
 
-If your drive is connected through a 1Gbps link (eg PCIe gen 1 x1) and
-has a latency of 10ms seek time, with one outstanding read, each read
-needs to be 12.5MB in size in order to saturate the bus.  If the device
-supports 128 outstanding commands, each read need only be 100kB.
+...are not on the same mounted filesystem and the source and target filesystems
+do not support cross-filesystem copy.
 
-We need the core readahead code to handle this situation.  My suggestion
-for doing this is to send off an extra readahead request every time we
-hit a !Uptodate page.  It looks something like this (assuming the app
-is processing the data fast and always hits the !Uptodate case) ...
+You may refer the reader to VERSIONS section where it will say which
+filesystems support cross-fs copy as of kernel version XXX (i.e. cifs and nfs).
 
-1. hit 0,
-	set readahead size to 64kB,
-	mark 32kB as Readahead, send read for 0-64kB
-	wait for 0-64kB to complete
-2. hit 32kB (Readahead), no reads outstanding
-	inc readahead size to 128kB,
-	mark 128kB as Readahead, send read for 64k-192kB
-3. hit 64kB (!Uptodate), one read outstanding
-	mark 256kB as Readahead, send read for 192-320kB
-	mark 384kB as Readahead, send read for 320-448kB
-	wait for 64-192kB to complete
-4. hit 128kB (Readahead), two reads outstanding
-	inc readahead size to 256kB,
-	mark 576kB as Readahead, send read for 448-704kB
-5. hit 192kB (!Uptodate), three reads outstanding
-	mark 832kB as Readahead, send read for 704-960kB
-	mark 1088kB as Readahead, send read for 960-1216kB
-	wait for 192-320kB to complete
-6. hit 256kB (Readahead), four reads outstanding
-	mark 1344kB as Readahead, send read for 1216-1472kB
-7. hit 320kB (!Uptodate), five reads outstanding
-	mark 1600kB as Readahead, send read for 1472-1728kB
-	mark 1856kB as Readahead, send read for 1728-1984kB
-	wait for 320-448kB to complete
-8. hit 384kB (Readahead), five reads outstanding
-	mark 2112kB as Readahead, send read for 1984-2240kB
-9. hit 448kB (!Uptodate), six reads outstanding
-	mark 2368kB as Readahead, send read for 2240-2496kB
-	mark 2624kB as Readahead, send read for 2496-2752kB
-	wait for 448-704kB to complete
-10. hit 576kB (Readahead), seven reads outstanding
-	mark 2880kB as Readahead, send read for 2752-3008kB
+>  .SH VERSIONS
+>  The
+>  .BR copy_file_range ()
+> @@ -202,6 +205,11 @@ Applications should target the behaviour and requirements of 5.3 kernels.
+>  .PP
+>  First support for cross-filesystem copies was introduced in Linux 5.3.
+>  Older kernels will return -EXDEV when cross-filesystem copies are attempted.
+> +.PP
+> +After Linux 5.12, support for copies between different filesystems was dropped.
+> +However, individual filesystems may still provide
+> +.BR copy_file_range ()
+> +implementations that allow copies across different devices.
 
-...
+Again, this is not likely to stay uptodate for very long.
+The stable kernels are expected to apply your patch (because it fixes
+a regression)
+so this should be phrased differently.
+If it were me, I would provide all the details of the situation to
+Michael and ask him
+to write the best description for this section.
 
-Once we stop hitting !Uptodate pages, we'll maintain the number of pages
-marked as Readahead, and thus keep the number of readahead requests
-at the level it determined was necessary to keep the link saturated.
-I think we may need to put a parallelism cap in the bdi so that a device
-which is just slow instead of at the end of a long fat pipe doesn't get
-overwhelmed with requests.
+Thanks,
+Amir.
