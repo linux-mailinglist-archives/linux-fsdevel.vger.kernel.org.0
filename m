@@ -2,136 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35F98323AB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 11:46:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19333323AD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 11:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234924AbhBXKpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 05:45:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234918AbhBXKpb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 05:45:31 -0500
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D33C061786
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Feb 2021 02:44:50 -0800 (PST)
-Received: by mail-vk1-xa30.google.com with SMTP id f145so287528vka.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Feb 2021 02:44:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7IeVrluan2r2kYEdEBttnfq/zM9jcQl9nm+rI5Hkr4o=;
-        b=av1wcjABNicK94u3ElvqGuVPfJykZiudez3NH0qMVLgXPS7gyUY6TPG5Uu5OEuYCsM
-         sJ+9LQeebUu6iRayXoqXLEhXxqLpGm8ar+uwgnNpWp0YFFIi9vPezL7VykoxNJrLW9Zo
-         QcwhNWs8X3Gx/1fqCcCv+wtkuRdJHjiuy7qW8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7IeVrluan2r2kYEdEBttnfq/zM9jcQl9nm+rI5Hkr4o=;
-        b=iDRqTDeb042oEMLJtNxS7cusWttQsZxp5MNQZYMto0WX9JWxzlNrxXE5t9ab/Miy0H
-         F0x1+71UUZ1EAxqQd926iPevZzZUI6xkl4ZacIH1og6m/oTUEYX39fC+lbvS+2YbRFBI
-         hyNelO/8U+9Re3v13uDnw4ao31NKfZLXpPF6kWYLyY9EKcyp/h/B5YJV7jAleqBvnfY7
-         1H5gb4xJ9ZhgI8AEHLrJdQO4s5UcFcOqY4g9BFAtArFhcfjuHlDgYRQoswv9xjqMNuEX
-         yHmBqIPbRP3JopP22QyoM0uLX8tRC5F0xwuHIGAl7AQbJDQMcOIEdTB4wSo+22oq/AfH
-         N+jw==
-X-Gm-Message-State: AOAM531+elc93TqyqvZh/7vw3+3i8BPsp9Fyb5em0BZ/fcs7EfE62U3g
-        AW4KLBwH6sIY/FQfIxsEJb5xCHlIkcnAloAWkl5lrg==
-X-Google-Smtp-Source: ABdhPJwcNF1awAfqI71jc+osdOvaKBSAu3tcjeQYXjwNeU8VD31ZIj0UmTyh4zCeNoXqu9c1BxTl4zi+NBhRQ2wYoTw=
-X-Received: by 2002:a1f:ab52:: with SMTP id u79mr19791797vke.9.1614163489899;
- Wed, 24 Feb 2021 02:44:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20210221195833.23828-1-lhenriques@suse.de> <20210222102456.6692-1-lhenriques@suse.de>
- <CAN-5tyELMY7b7CKO-+an47ydq8r_4+SOyhuvdH0qE0-JmdZ44Q@mail.gmail.com> <YDYpHccgM7agpdTQ@suse.de>
-In-Reply-To: <YDYpHccgM7agpdTQ@suse.de>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 24 Feb 2021 18:44:38 +0800
-Message-ID: <CANMq1KBgwEXFh8AxpPW2t1SA0NVsyR45m0paLEU4D4w80dc_fA@mail.gmail.com>
-Subject: Re: [PATCH v8] vfs: fix copy_file_range regression in cross-fs copies
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Olga Kornievskaia <aglo@umich.edu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
+        id S234429AbhBXKxG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 05:53:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45044 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233794AbhBXKws (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Feb 2021 05:52:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C5CEEAF19;
+        Wed, 24 Feb 2021 10:52:05 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id BF5321E14EF; Wed, 24 Feb 2021 11:52:04 +0100 (CET)
+Date:   Wed, 24 Feb 2021 11:52:04 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [RFC][PATCH 2/2] fanotify: support limited functionality for
+ unprivileged users
+Message-ID: <20210224105204.GC20583@quack2.suse.cz>
+References: <20210124184204.899729-1-amir73il@gmail.com>
+ <20210124184204.899729-3-amir73il@gmail.com>
+ <20210216170154.GG21108@quack2.suse.cz>
+ <CAOQ4uxhwZG=aC+ZpB90Gn_5aNmQrwsJUnniWVhFXoq454vuyHA@mail.gmail.com>
+ <CAOQ4uxhnrZu0phZniiBEqPJJZwWfs3UbCJt0atkHirdHQVCWgw@mail.gmail.com>
+ <CAOQ4uxgS5G2ajTfUWUPB5DsjjP0ji-Vu_9RjEzLJGfkNFz0P4w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgS5G2ajTfUWUPB5DsjjP0ji-Vu_9RjEzLJGfkNFz0P4w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 6:22 PM Luis Henriques <lhenriques@suse.de> wrote:
->
-> On Tue, Feb 23, 2021 at 08:00:54PM -0500, Olga Kornievskaia wrote:
-> > On Mon, Feb 22, 2021 at 5:25 AM Luis Henriques <lhenriques@suse.de> wro=
-te:
-> > >
-> > > A regression has been reported by Nicolas Boichat, found while using =
-the
-> > > copy_file_range syscall to copy a tracefs file.  Before commit
-> > > 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") th=
-e
-> > > kernel would return -EXDEV to userspace when trying to copy a file ac=
-ross
-> > > different filesystems.  After this commit, the syscall doesn't fail a=
-nymore
-> > > and instead returns zero (zero bytes copied), as this file's content =
-is
-> > > generated on-the-fly and thus reports a size of zero.
-> > >
-> > > This patch restores some cross-filesystem copy restrictions that exis=
-ted
-> > > prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy acr=
-oss
-> > > devices").  Filesystems are still allowed to fall-back to the VFS
-> > > generic_copy_file_range() implementation, but that has now to be done
-> > > explicitly.
-> > >
-> > > nfsd is also modified to fall-back into generic_copy_file_range() in =
-case
-> > > vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
-> > >
-> > > Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devic=
-es")
-> > > Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-=
-drinkcat@chromium.org/
-> > > Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+=
-BnvW=3DZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
-> > > Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cd=
-c3ff707bc1efa17f5366057d60603c45f@changeid/
-> > > Reported-by: Nicolas Boichat <drinkcat@chromium.org>
-> > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
+On Tue 23-02-21 19:16:40, Amir Goldstein wrote:
+> On Fri, Feb 19, 2021 at 6:16 PM Amir Goldstein <amir73il@gmail.com> wrote:
 > >
-> > I tested v8 and I believe it works for NFS.
->
-> Thanks a lot for the testing.  And to everyone else for reviews,
-> feedback,... and patience.
+> > On Tue, Feb 16, 2021 at 8:12 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > On Tue, Feb 16, 2021 at 7:01 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Sun 24-01-21 20:42:04, Amir Goldstein wrote:
+> > > > > Add limited support for unprivileged fanotify event listener.
+> > > > > An unprivileged event listener does not get an open file descriptor in
+> > > > > the event nor the process pid of another process.  An unprivileged event
+> > > > > listener cannot request permission events, cannot set mount/filesystem
+> > > > > marks and cannot request unlimited queue/marks.
+> > > > >
+> > > > > This enables the limited functionality similar to inotify when watching a
+> > > > > set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
+> > > > > requiring SYS_CAP_ADMIN privileges.
+> > > > >
+> > > > > The FAN_REPORT_DFID_NAME init flag, provide a method for an unprivileged
+> > > > > event listener watching a set of directories (with FAN_EVENT_ON_CHILD)
+> > > > > to monitor all changes inside those directories.
+> > > > >
+> > > > > This typically requires that the listener keeps a map of watched directory
+> > > > > fid to dirfd (O_PATH), where fid is obtained with name_to_handle_at()
+> > > > > before starting to watch for changes.
+> > > > >
+> > > > > When getting an event, the reported fid of the parent should be resolved
+> > > > > to dirfd and fstatsat(2) with dirfd and name should be used to query the
+> > > > > state of the filesystem entry.
+> > > > >
+> > > > > Note that even though events do not report the event creator pid,
+> > > > > fanotify does not merge similar events on the same object that were
+> > > > > generated by different processes. This is aligned with exiting behavior
+> > > > > when generating processes are outside of the listener pidns (which
+> > > > > results in reporting 0 pid to listener).
+> > > > >
+> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > >
+> > > > The patch looks mostly good to me. Just two questions:
+> > > >
+> > > > a) Remind me please, why did we decide pid isn't safe to report to
+> > > > unpriviledged listeners?
+> > >
+> > > Just because the information that process X modified file Y is not an
+> > > information that user can generally obtain without extra capabilities(?)
+> > > I can add a flag FAN_REPORT_OWN_PID to make that behavior
+> > > explicit and then we can relax reporting pids later.
+> > >
+> >
+> > FYI a patch for flag FAN_REPORT_SELF_PID is pushed to branch
+> > fanotify_unpriv.
+> >
+> > The UAPI feels a bit awkward with this flag, but that is the easiest way
+> > to start without worrying about disclosing pids.
+> >
+> > I guess we can require that unprivileged listener has pid 1 in its own
+> > pid ns. The outcome is similar to FAN_REPORT_SELF_PID, except
+> > it can also get pids of its children which is probably fine.
+> >
+> 
+> Jan,
+> 
+> WRT your comment in github:
+> "So maybe we can just require that this flag is already set by userspace
+> instead of silently setting it? Like:
+> 
+> if (!(flags & FAN_REPORT_SELF_PID)) return -EPERM;
+> 
+> I'd say that variant is more futureproof and the difference for user
+> is minimal."
+> 
+> I started with this approach and then I wrote the tests and imagined
+> the man page
+> requiring this flag would be a bit awkward, so I changed it to auto-enable.
+> 
+> I am not strongly against the more implicit flag requirement, but in
+> favor of the
+> auto-enable approach I would like to argue that with current fanotify you CAN
+> get zero pid in event, so think about it this way:
+> If a listener is started in (or moved into) its own pid ns, it will
+> get zero pid in all
+> events (other than those generated by itself and its own children).
+> 
+> With the proposed change, the same applies also if the listener is started
+> without CAP_SYS_ADMIN.
+> 
+> As a matter of fact, we do not need the flag at all, we can determine whether
+> or not to report pid according to capabilities of the event reader at
+> event read time.
+> And we can check for one of:
+> - CAP_SYS_ADMIN
+> - CAP_SYS_PACCT
+> - CAP_SYS_PTRACE
+> 
+> Do you prefer this flag-less approach?
 
-Thanks so much to you!!!
+Well, I don't have strong opinion what we should do internally either. The
+flag seems OK to me. The biggest question is whether we should expose the
+FAN_REPORT_SELF_PID flag to userspace or not. If we would not require
+explicit flag for unpriv users, I see little reason to expose that flag at
+all.
 
-Works here, you can add my
-Tested-by: Nicolas Boichat <drinkcat@chromium.org>
-
->
-> I'll now go look into the manpage and see what needs to be changed.
->
-> Cheers,
-> --
-> Lu=C3=ADs
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
