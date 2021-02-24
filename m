@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADFF323E35
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 14:32:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1578323E52
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 14:35:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233299AbhBXN10 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 08:27:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51028 "EHLO mail.kernel.org"
+        id S236999AbhBXNcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 08:32:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235270AbhBXMw6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 07:52:58 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0072A64F19;
-        Wed, 24 Feb 2021 12:51:05 +0000 (UTC)
+        id S231881AbhBXM7p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Feb 2021 07:59:45 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BFACD64F44;
+        Wed, 24 Feb 2021 12:52:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614171066;
-        bh=6KX6rTq050eO0jJnZEn5B8xm1cIDqUPE9fNmOa+qQ3o=;
+        s=k20201202; t=1614171163;
+        bh=II3Df3jhXQ7K75Vz1mRKRcKgindvoAkCIdzC/wO8K80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XcsEdNoWoJBXlhL+HZfp3bMmlPO518H0fwakZEAVxa1GvHFw8jY3JJf6+Nwgm6z8X
-         C21lZB7SLd6eejcHzlM9LL8FXnckRT7sB9xgvA2MU84IeqlDZKZPOEC79rO0VSLp84
-         +cnQkSF5iVARBxsWrDJrvEdzfImtB70e7dIVhNx8a8QHm7FA3u+t4NUlrH18UeWaJ6
-         gV3TmTfdtzFOgNJJB4EZnyzskju5v8ao/Y1+yM348uuPAp9BEJG1Jj5QK7gVMNRF6A
-         MENGzqTGY52r4egrQ8n3XY5RKgRU/0DiynGF0QV3an5DQNMX96eFv2esBxnOxk5FRO
-         FPTkAHzaFY0uw==
+        b=gOQEBMSq+a8KCHZ90shLNcvGVoyman6DhssmwygBqRDrMOtzrJdMibdf73/FW42Ni
+         EEL2yP5TEjbUndSbZ4ZeUvoj21tuqYIiL4F1ynkOUTg2dagFSJ5nPYYsYfbTjQJefv
+         BfEmFHVPBL8/GsmEdhXPz8tcWQdNWDpVIR4x5EkqWgPA+5V7fAlXR5Wob5iGk2dFml
+         8c1cTeN7dVdUimFIf3IdgoMaCj2j4XOphrlBj/C1uWp26zF7INmaTPu5IEJ1qv7tTg
+         YkYkDANG5k4HuUbnItFjjLoTBTMs5+yDv/H2LBc0/AVRhmhiXfG7g6obreYspa++8N
+         iwZAc0RGuzYWQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.11 29/67] fs: make unlazy_walk() error handling consistent
-Date:   Wed, 24 Feb 2021 07:49:47 -0500
-Message-Id: <20210224125026.481804-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 23/56] fs: make unlazy_walk() error handling consistent
+Date:   Wed, 24 Feb 2021 07:51:39 -0500
+Message-Id: <20210224125212.482485-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210224125026.481804-1-sashal@kernel.org>
-References: <20210224125026.481804-1-sashal@kernel.org>
+In-Reply-To: <20210224125212.482485-1-sashal@kernel.org>
+References: <20210224125212.482485-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -62,7 +62,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 17 insertions(+), 26 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 78443a85480a5..dd85e12ac85a6 100644
+index d4a6dd7723038..7af66d5a0c1bf 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
 @@ -669,17 +669,17 @@ static bool legitimize_root(struct nameidata *nd)
@@ -166,7 +166,7 @@ index 78443a85480a5..dd85e12ac85a6 100644
  		} else {
  			res = get(link->dentry, inode, &last->done);
  		}
-@@ -2195,7 +2190,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+@@ -2193,7 +2188,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
  		}
  		if (unlikely(!d_can_lookup(nd->path.dentry))) {
  			if (nd->flags & LOOKUP_RCU) {
@@ -175,7 +175,7 @@ index 78443a85480a5..dd85e12ac85a6 100644
  					return -ECHILD;
  			}
  			return -ENOTDIR;
-@@ -3129,7 +3124,6 @@ static const char *open_last_lookups(struct nameidata *nd,
+@@ -3127,7 +3122,6 @@ static const char *open_last_lookups(struct nameidata *nd,
  	struct inode *inode;
  	struct dentry *dentry;
  	const char *res;
@@ -183,7 +183,7 @@ index 78443a85480a5..dd85e12ac85a6 100644
  
  	nd->flags |= op->intent;
  
-@@ -3153,9 +3147,8 @@ static const char *open_last_lookups(struct nameidata *nd,
+@@ -3151,9 +3145,8 @@ static const char *open_last_lookups(struct nameidata *nd,
  	} else {
  		/* create side of things */
  		if (nd->flags & LOOKUP_RCU) {
@@ -195,7 +195,7 @@ index 78443a85480a5..dd85e12ac85a6 100644
  		}
  		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
  		/* trailing slashes? */
-@@ -3164,9 +3157,7 @@ static const char *open_last_lookups(struct nameidata *nd,
+@@ -3162,9 +3155,7 @@ static const char *open_last_lookups(struct nameidata *nd,
  	}
  
  	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
