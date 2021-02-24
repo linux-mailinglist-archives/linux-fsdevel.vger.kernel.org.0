@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DC9532425E
+	by mail.lfdr.de (Postfix) with ESMTP id BED5E32425F
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 17:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbhBXQqD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 11:46:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56620 "EHLO
+        id S234654AbhBXQqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 11:46:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235361AbhBXQpr (ORCPT
+        with ESMTP id S235397AbhBXQpr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 24 Feb 2021 11:45:47 -0500
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD45EC061786
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Feb 2021 08:45:00 -0800 (PST)
-Received: by mail-il1-x134.google.com with SMTP id k2so2282477ili.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Feb 2021 08:45:00 -0800 (PST)
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 740D5C061788
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Feb 2021 08:45:01 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id a7so2637086iok.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Feb 2021 08:45:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Owukme2spaP1zcM9AHe/6hJeoYkmBs9bd0Xi7g8qADI=;
-        b=GeDAo7Bc1lkwEaS/OFb6vd+jmpQQkTiXXvshs4eXK221ZcL0dZcaVB0lb1WFKvgKym
-         h0uKM1lq1iBvNdNmz7EVIEvEJb11qjJD2oK+PEdz+G1oZ4zhUj+M23frgBZzvgV0Qnw8
-         troypsZkvPWeHDTHKC6Lha9WQQyh1Ud5MFj/W33jd8LRmE/S3zkeI5irCh2jwDOR75di
-         l3toWqZJZLqiwSUzh9mQL4k45w6vwvBh0jMS0ibTJiQjz2YqgUaF647VT5OM+staaOsZ
-         kTohBAGlscOR7g+W4RQGn8p66TiBRohVf94DEJWLbIY7qmev2STOMA9WutevYPxjtYP9
-         lWIw==
+        bh=AeRNuJwb26jecYMYshpZyYXTh8+P3sXAHEYap904nwc=;
+        b=dBA4tatNquPbOX9jozxTqfDTxIugjGjAaNp/E8p8mGSEaTf5Vqp/X2Sw5upZoy3oDb
+         pKdTyXBY9+G1HNiWIozAwLiNrkcVZAbzkYnNk/sNvi4BppTDVq4wssMn69Or3nAZsIlG
+         v3LjOfV6S/1W4hQuCoMuHjMsC/pcXEoiiXEULEZz4wS177ArMHr3z3iwb8bRenhSE25f
+         eeyzttn95ulHx2s/BeJYlKx5yl+y/Dp8N1ob3lU7vmNhs6JB5t7LrsdLLuCF9YwnNIwe
+         jebKdgOpTuYtwITGdHusRTNV4F7qTXbXVTib5OaPnacajl1jSsgrlea0/N6CPKtsbiPm
+         WQjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Owukme2spaP1zcM9AHe/6hJeoYkmBs9bd0Xi7g8qADI=;
-        b=Df7IrXBr3SeDH2TXothxmdqhH49OS3VJSMVEKA82q+Ms0hNJdUGhjVkTXerdhlaBF4
-         6u2HmgdgqQ0N6JhL877HkKSMyO4KHqvbGjxvpUWPhvwsp+51kkMUhRaALVAngzQxSnq7
-         lq4Dmr/3UV1zBAatjatDg+yMO6yr0w6m6zRipo546eYnYjI7fCHFbV3eytCpeuBeeQ6U
-         NT1ntCW2EALuT8DCLdzVqaSnjGhMoLVLhnvMs5KqrOvIDktiDQ8QzvYZAP8beu+4yVa2
-         w20NhXSChNZ713Cuk4f7Gx34SV1/ApMcyqNZ9sN8dWL2hE/BrFmIXNOALBEsn0vrLIgh
-         NK9g==
-X-Gm-Message-State: AOAM533MpRlXJiCtimPhM7WMTeBiV7hMHU3U+pYoegBuAfM3ZvG92kzH
-        EBOD2rgbMedICGVJUFoK9gctaTpoQdnz7nK+
-X-Google-Smtp-Source: ABdhPJzpcC+zKFW8OqpZDD687rXHdYoKLtmGUfTu+b4vervy16l9zQ+Zel7Wo9F6htsMLjpgyNRD8A==
-X-Received: by 2002:a05:6e02:1aa5:: with SMTP id l5mr23894877ilv.278.1614185099819;
-        Wed, 24 Feb 2021 08:44:59 -0800 (PST)
+        bh=AeRNuJwb26jecYMYshpZyYXTh8+P3sXAHEYap904nwc=;
+        b=EGgTAySgYif9/+MS1E0TDxCtfNmVqRcgpLhg+jl5I5xUwjaw2vM+AeQXw4APjH8myb
+         dzua2dOP0twga4YJfwkQmfLozvS+C5eRnYIY7ibB7tT41zlIV1XfbzMabOzJNvXHRCmm
+         8zyTzItxQ1EggMe4h0nCSIyAqn3+u+ajxcYFiiWHwiLeH/s3KC6fOeG0Z1zxTa+4BulO
+         z0795bcwTwpeWOgb6BWnurOWrFSL8FQSM/K5QnCWc3017KsJ+AyzbFFUo2jAwTONgE+p
+         ZI1/IGSMkPHB1OlFghKGyJfHqbdfsK2axmiPY7ILc6kAOtALpaYDqv9oBoyNaaI50sPC
+         luFg==
+X-Gm-Message-State: AOAM531U778US0Mw1mqUqgNGRHnpE/M7uvTL/ilZb4Ikei9lhCZazi6S
+        yhSO3v+7bknAVwP6XuCp0Dl+2tfpIrKJ8AW/
+X-Google-Smtp-Source: ABdhPJyu6UQs/JPMF8a5cuR5B6fkZaVUvjWgzmMcs7a1pMpBdTKtP4C9yXuvh99wpYZ8leey8BJdkw==
+X-Received: by 2002:a05:6638:22e:: with SMTP id f14mr20097775jaq.96.1614185100654;
+        Wed, 24 Feb 2021 08:45:00 -0800 (PST)
 Received: from p1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f1sm2273652iov.3.2021.02.24.08.44.58
+        by smtp.gmail.com with ESMTPSA id f1sm2273652iov.3.2021.02.24.08.44.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Feb 2021 08:44:59 -0800 (PST)
+        Wed, 24 Feb 2021 08:45:00 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     akpm@linux-foundation.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] mm: provide filemap_range_needs_writeback() helper
-Date:   Wed, 24 Feb 2021 09:44:53 -0700
-Message-Id: <20210224164455.1096727-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] mm: use filemap_range_needs_writeback() for O_DIRECT reads
+Date:   Wed, 24 Feb 2021 09:44:54 -0700
+Message-Id: <20210224164455.1096727-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210224164455.1096727-1-axboe@kernel.dk>
 References: <20210224164455.1096727-1-axboe@kernel.dk>
@@ -63,90 +63,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For O_DIRECT reads/writes, we check if we need to issue a call to
-filemap_write_and_wait_range() to issue and/or wait for writeback for any
-page in the given range. The existing mechanism just checks for a page in
-the range, which is suboptimal for IOCB_NOWAIT as we'll fallback to the
-slow path (and needing retry) if there's just a clean page cache page in
-the range.
-
-Provide filemap_range_needs_writeback() which tries a little harder to
-check if we actually need to issue and/or wait for writeback in the
-range.
+For the generic page cache read helper, use the better variant of checking
+for the need to call filemap_write_and_wait_range() when doing O_DIRECT
+reads. This avoids falling back to the slow path for IOCB_NOWAIT, if there
+are no pages to wait for (or write out).
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/fs.h |  2 ++
- mm/filemap.c       | 43 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
+ mm/filemap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6d8b1e7337e4..4925275e6365 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2633,6 +2633,8 @@ static inline int filemap_fdatawait(struct address_space *mapping)
- 
- extern bool filemap_range_has_page(struct address_space *, loff_t lstart,
- 				  loff_t lend);
-+extern bool filemap_range_needs_writeback(struct address_space *,
-+					  loff_t lstart, loff_t lend);
- extern int filemap_write_and_wait_range(struct address_space *mapping,
- 				        loff_t lstart, loff_t lend);
- extern int __filemap_fdatawrite_range(struct address_space *mapping,
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 6ff2a3fb0dc7..13338f877677 100644
+index 13338f877677..77f1b527541e 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -635,6 +635,49 @@ static bool mapping_needs_writeback(struct address_space *mapping)
- 	return mapping->nrpages;
- }
+@@ -2645,8 +2645,8 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
  
-+/**
-+ * filemap_range_needs_writeback - check if range potentially needs writeback
-+ * @mapping:           address space within which to check
-+ * @start_byte:        offset in bytes where the range starts
-+ * @end_byte:          offset in bytes where the range ends (inclusive)
-+ *
-+ * Find at least one page in the range supplied, usually used to check if
-+ * direct writing in this range will trigger a writeback. Used by O_DIRECT
-+ * read/write with IOCB_NOWAIT, to see if the caller needs to do
-+ * filemap_write_and_wait_range() before proceeding.
-+ *
-+ * Return: %true if the caller should do filemap_write_and_wait_range() before
-+ * doing O_DIRECT to a page in this range, %false otherwise.
-+ */
-+bool filemap_range_needs_writeback(struct address_space *mapping,
-+				   loff_t start_byte, loff_t end_byte)
-+{
-+	XA_STATE(xas, &mapping->i_pages, start_byte >> PAGE_SHIFT);
-+	pgoff_t max = end_byte >> PAGE_SHIFT;
-+	struct page *page;
-+
-+	if (!mapping_needs_writeback(mapping))
-+		return false;
-+	if (!mapping_tagged(mapping, PAGECACHE_TAG_DIRTY) &&
-+	    !mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK))
-+		return false;
-+	if (end_byte < start_byte)
-+		return false;
-+
-+	rcu_read_lock();
-+	xas_for_each(&xas, page, max) {
-+		if (xas_retry(&xas, page))
-+			continue;
-+		if (xa_is_value(page))
-+			continue;
-+		if (PageDirty(page) || PageLocked(page) || PageWriteback(page))
-+			break;
-+	}
-+	rcu_read_unlock();
-+	return page != NULL;
-+}
-+EXPORT_SYMBOL_GPL(filemap_range_needs_writeback);
-+
- /**
-  * filemap_write_and_wait_range - write out & wait on a file range
-  * @mapping:	the address_space for the pages
+ 		size = i_size_read(inode);
+ 		if (iocb->ki_flags & IOCB_NOWAIT) {
+-			if (filemap_range_has_page(mapping, iocb->ki_pos,
+-						   iocb->ki_pos + count - 1))
++			if (filemap_range_needs_writeback(mapping, iocb->ki_pos,
++						iocb->ki_pos + count - 1))
+ 				return -EAGAIN;
+ 		} else {
+ 			retval = filemap_write_and_wait_range(mapping,
 -- 
 2.30.0
 
