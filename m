@@ -2,68 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB2F7324084
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 16:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEFF324086
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 16:29:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235386AbhBXPKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 10:10:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47976 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237992AbhBXOlD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 09:41:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 580A6AD5C;
-        Wed, 24 Feb 2021 14:40:22 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1AA601E14F1; Wed, 24 Feb 2021 15:40:22 +0100 (CET)
-Date:   Wed, 24 Feb 2021 15:40:22 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Fengnan Chang <changfengnan@vivo.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: use sb_end_write instend of __sb_end_write
-Message-ID: <20210224144022.GB849@quack2.suse.cz>
-References: <20210219120149.1056-1-changfengnan@vivo.com>
+        id S234333AbhBXPKm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 10:10:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238325AbhBXOvC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Feb 2021 09:51:02 -0500
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E883CC061A30;
+        Wed, 24 Feb 2021 06:44:15 -0800 (PST)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id CC94D2824; Wed, 24 Feb 2021 09:44:14 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org CC94D2824
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1614177854;
+        bh=TwbArCQN28JUuA1hpdKxArXzNxTGN/pJ1jRvpci9NgY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MXI5lEYrKSCfUdw2YkieOLB+EvzfAJLrqElSLaXxmz/VmkWb7skK9YdQ/8EWLMYWC
+         clZ9lVjEfeuj9ArPF8rltwvKzKvKVndAaq+uJ8yS0gA05cUUI3DltxqGmCvqjL0uCi
+         X12rnQgjpK5vvZFWqHRyC2nNyLOhGmkNsANApJfY=
+Date:   Wed, 24 Feb 2021 09:44:14 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Luo Longjun <luolongjun@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sangyan@huawei.com, luchunhua@huawei.com
+Subject: Re: [PATCH v2 02/24] fs/locks: print full locks information
+Message-ID: <20210224144414.GA11591@fieldses.org>
+References: <YDKP0XdT1TVOaGnj@zeniv-ca.linux.org.uk>
+ <20210224083544.750887-1-luolongjun@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210219120149.1056-1-changfengnan@vivo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210224083544.750887-1-luolongjun@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 19-02-21 20:01:49, Fengnan Chang wrote:
-> __sb_end_write is an internal function, use sb_end_write instead of __sb_end_write.
-> 
-> Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
-
-Makes sense. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/fs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index fd47deea7c17..6b2e6f9035a5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2784,7 +2784,7 @@ static inline void file_end_write(struct file *file)
->  {
->  	if (!S_ISREG(file_inode(file)->i_mode))
->  		return;
-> -	__sb_end_write(file_inode(file)->i_sb, SB_FREEZE_WRITE);
-> +	sb_end_write(file_inode(file)->i_sb);
->  }
+On Wed, Feb 24, 2021 at 03:35:44AM -0500, Luo Longjun wrote:
+> @@ -2912,17 +2922,66 @@ static int locks_show(struct seq_file *f, void *v)
+>  	struct file_lock *fl, *bfl;
+>  	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
 >  
->  /*
-> -- 
-> 2.29.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +	struct list_head root;
+> +	struct list_head *tail = &root;
+> +	struct list_head *pos, *tmp;
+> +	struct locks_traverse_list *node, *node_child;
+> +
+> +	int ret = 0;
+> +
+>  	fl = hlist_entry(v, struct file_lock, fl_link);
+>  
+>  	if (locks_translate_pid(fl, proc_pidns) == 0)
+> -		return 0;
+> +		return ret;
+> +
+> +	INIT_LIST_HEAD(&root);
+>  
+> -	lock_get_status(f, fl, iter->li_pos, "");
+> +	node = kmalloc(sizeof(struct locks_traverse_list), GFP_KERNEL);
+
+Is it safe to allocate here?  I thought this was under the
+blocked_lock_lock spinlock.
+
+And I still don't think you need a stack.  Have you tried the suggestion
+in my previous mail?
+
+--b.
