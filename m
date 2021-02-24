@@ -2,88 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C103238AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 09:33:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5042B323B47
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 12:29:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234381AbhBXIdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 03:33:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44288 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232563AbhBXIcj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 03:32:39 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id F39D9AF3E;
-        Wed, 24 Feb 2021 08:31:55 +0000 (UTC)
-Date:   Wed, 24 Feb 2021 09:31:49 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [External] Re: [PATCH v16 4/9] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-Message-ID: <20210224083145.GA14894@linux>
-References: <20210219104954.67390-1-songmuchun@bytedance.com>
- <20210219104954.67390-5-songmuchun@bytedance.com>
- <13a5363c-6af4-1e1f-9a18-972ca18278b5@oracle.com>
- <20210223092740.GA1998@linux>
- <CAMZfGtVRSBkKe=tKAKLY8dp_hywotq3xL+EJZNjXuSKt3HK3bQ@mail.gmail.com>
- <20210223104957.GA3844@linux>
- <20210223154128.GA21082@localhost.localdomain>
- <20210223223157.GA2740@localhost.localdomain>
- <CAMZfGtUBMzAgPVgm=9wgJg+yytxwSGOK_BVOw93RPLb3_tFS_g@mail.gmail.com>
+        id S232545AbhBXL2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 06:28:46 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12570 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232806AbhBXL2d (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Feb 2021 06:28:33 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Dltrl5zRqzMcfL;
+        Wed, 24 Feb 2021 19:25:43 +0800 (CST)
+Received: from huawei.com (10.151.151.241) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.498.0; Wed, 24 Feb 2021
+ 19:27:38 +0800
+From:   Luo Longjun <luolongjun@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <jlayton@kernel.org>,
+        <bfields@fieldses.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sangyan@huawei.com>, <luchunhua@huawei.com>,
+        <luolongjun@huawei.com>
+Subject: [PATCH v2 02/24] fs/locks: print full locks information
+Date:   Wed, 24 Feb 2021 03:35:44 -0500
+Message-ID: <20210224083544.750887-1-luolongjun@huawei.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <YDKP0XdT1TVOaGnj@zeniv-ca.linux.org.uk>
+References: <YDKP0XdT1TVOaGnj@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZfGtUBMzAgPVgm=9wgJg+yytxwSGOK_BVOw93RPLb3_tFS_g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.151.151.241]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 11:47:49AM +0800, Muchun Song wrote:
-> I have been looking at the dequeue_huge_page_node_exact().
-> If a PageHWPoison huge page is in the free pool list, the page will
-> not be allocated to the user. The PageHWPoison huge page
-> will be skip in the dequeue_huge_page_node_exact().
+Commit fd7732e033e3 ("fs/locks: create a tree of dependent requests.")
+has put blocked locks into a tree.
 
-Yes, now I see where the problem lies.
+So, with a for loop, we can't check all locks information.
 
-hugetlb_no_page()->..->dequeue_huge_page_node_exact() will fail if the only
-page in the pool is hwpoisoned, as expected.
-Then alloc_buddy_huge_page_with_mpol() will be tried, but since surplus_huge_pages
-counter is stale, we will fail there.
-That relates to the problem Mike pointed out, that we should decrease again the
-surplus_huge_pages.
+To solve this problem, we should traverse the tree by non-recursion DFS.
 
-I think hwpoisoned pages should not be in the free pool though.
-Probably we want to take them off when we notice we have one:
-e.g: dequeue_huge_page_node_exact could place the page in another list 
-and place it back in case it was unpoisoned.
+Signed-off-by: Luo Longjun <luolongjun@huawei.com>
+---
+ fs/locks.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 67 insertions(+), 8 deletions(-)
 
-But anyway, that has nothing to do with this (apart from the surplus problem).
-
+diff --git a/fs/locks.c b/fs/locks.c
+index 99ca97e81b7a..fdf240626777 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2827,8 +2827,14 @@ struct locks_iterator {
+ 	loff_t	li_pos;
+ };
+ 
++struct locks_traverse_list {
++	struct list_head head;
++	struct file_lock *lock;
++	int level;
++};
++
+ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+-			    loff_t id, char *pfx)
++			    loff_t id, char *pfx, int repeat)
+ {
+ 	struct inode *inode = NULL;
+ 	unsigned int fl_pid;
+@@ -2844,7 +2850,11 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ 	if (fl->fl_file != NULL)
+ 		inode = locks_inode(fl->fl_file);
+ 
+-	seq_printf(f, "%lld:%s ", id, pfx);
++	seq_printf(f, "%lld: ", id);
++
++	if (repeat)
++		seq_printf(f, "%*s", repeat - 1 + strlen(pfx), pfx);
++
+ 	if (IS_POSIX(fl)) {
+ 		if (fl->fl_flags & FL_ACCESS)
+ 			seq_puts(f, "ACCESS");
+@@ -2912,17 +2922,66 @@ static int locks_show(struct seq_file *f, void *v)
+ 	struct file_lock *fl, *bfl;
+ 	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
+ 
++	struct list_head root;
++	struct list_head *tail = &root;
++	struct list_head *pos, *tmp;
++	struct locks_traverse_list *node, *node_child;
++
++	int ret = 0;
++
+ 	fl = hlist_entry(v, struct file_lock, fl_link);
+ 
+ 	if (locks_translate_pid(fl, proc_pidns) == 0)
+-		return 0;
++		return ret;
++
++	INIT_LIST_HEAD(&root);
+ 
+-	lock_get_status(f, fl, iter->li_pos, "");
++	node = kmalloc(sizeof(struct locks_traverse_list), GFP_KERNEL);
++	if (!node) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+-	list_for_each_entry(bfl, &fl->fl_blocked_requests, fl_blocked_member)
+-		lock_get_status(f, bfl, iter->li_pos, " ->");
++	node->level = 0;
++	node->lock = fl;
++	list_add(&node->head, tail);
++	tail = &node->head;
+ 
+-	return 0;
++	while (tail != &root) {
++		node = list_entry(tail, struct locks_traverse_list, head);
++		if (!node->level)
++			lock_get_status(f, node->lock, iter->li_pos, "", node->level);
++		else
++			lock_get_status(f, node->lock, iter->li_pos, "-> ", node->level);
++
++		tmp = tail->prev;
++		list_del(tail);
++		tail = tmp;
++
++		list_for_each_entry_reverse(bfl, &node->lock->fl_blocked_requests,
++						fl_blocked_member) {
++			node_child = kmalloc(sizeof(struct locks_traverse_list), GFP_KERNEL);
++			if (!node_child) {
++				ret = -ENOMEM;
++				goto out;
++			}
++
++			node_child->level = node->level + 1;
++			node_child->lock = bfl;
++			list_add(&node_child->head, tail);
++			tail = &node_child->head;
++		}
++		kfree(node);
++	}
++
++out:
++	list_for_each_safe(pos, tmp, &root) {
++		node = list_entry(pos, struct locks_traverse_list, head);
++		list_del(pos);
++		if (!node)
++			kfree(node);
++	}
++	return ret;
+ }
+ 
+ static void __show_fd_locks(struct seq_file *f,
+@@ -2941,7 +3000,7 @@ static void __show_fd_locks(struct seq_file *f,
+ 
+ 		(*id)++;
+ 		seq_puts(f, "lock:\t");
+-		lock_get_status(f, fl, *id, "");
++		lock_get_status(f, fl, *id, "", 0);
+ 	}
+ }
+ 
 -- 
-Oscar Salvador
-SUSE L3
+2.17.1
+
