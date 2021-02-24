@@ -2,197 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C0E32432D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 18:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B1A132434C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 18:46:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233454AbhBXRaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 12:30:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53014 "EHLO mx2.suse.de"
+        id S235838AbhBXRo7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 12:44:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59436 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229534AbhBXRaL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 12:30:11 -0500
+        id S234716AbhBXRox (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Feb 2021 12:44:53 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7A6E2AE47;
-        Wed, 24 Feb 2021 17:29:29 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 5142EADDB;
+        Wed, 24 Feb 2021 17:44:11 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C3DFC1E14EE; Wed, 24 Feb 2021 18:29:28 +0100 (CET)
-Date:   Wed, 24 Feb 2021 18:29:28 +0100
+        id 19A281E14EE; Wed, 24 Feb 2021 18:44:11 +0100 (CET)
+Date:   Wed, 24 Feb 2021 18:44:11 +0100
 From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC][PATCH 2/2] fanotify: support limited functionality for
- unprivileged users
-Message-ID: <20210224172928.GG849@quack2.suse.cz>
-References: <20210124184204.899729-1-amir73il@gmail.com>
- <20210124184204.899729-3-amir73il@gmail.com>
- <20210216170154.GG21108@quack2.suse.cz>
- <CAOQ4uxhwZG=aC+ZpB90Gn_5aNmQrwsJUnniWVhFXoq454vuyHA@mail.gmail.com>
- <CAOQ4uxhnrZu0phZniiBEqPJJZwWfs3UbCJt0atkHirdHQVCWgw@mail.gmail.com>
- <CAOQ4uxgS5G2ajTfUWUPB5DsjjP0ji-Vu_9RjEzLJGfkNFz0P4w@mail.gmail.com>
- <20210224105204.GC20583@quack2.suse.cz>
- <CAOQ4uxjCB14RxJTSUfcfn39+N0BUN8LO_QmkpLT7S1-Ssm3DFg@mail.gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: [RFC] Better page cache error handling
+Message-ID: <20210224174411.GH849@quack2.suse.cz>
+References: <20210205161142.GI308988@casper.infradead.org>
+ <20210224123848.GA27695@quack2.suse.cz>
+ <20210224134115.GP2858050@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjCB14RxJTSUfcfn39+N0BUN8LO_QmkpLT7S1-Ssm3DFg@mail.gmail.com>
+In-Reply-To: <20210224134115.GP2858050@casper.infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 24-02-21 14:58:31, Amir Goldstein wrote:
-> On Wed, Feb 24, 2021 at 12:52 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 23-02-21 19:16:40, Amir Goldstein wrote:
-> > > On Fri, Feb 19, 2021 at 6:16 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >
-> > > > On Tue, Feb 16, 2021 at 8:12 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > >
-> > > > > On Tue, Feb 16, 2021 at 7:01 PM Jan Kara <jack@suse.cz> wrote:
-> > > > > >
-> > > > > > On Sun 24-01-21 20:42:04, Amir Goldstein wrote:
-> > > > > > > Add limited support for unprivileged fanotify event listener.
-> > > > > > > An unprivileged event listener does not get an open file descriptor in
-> > > > > > > the event nor the process pid of another process.  An unprivileged event
-> > > > > > > listener cannot request permission events, cannot set mount/filesystem
-> > > > > > > marks and cannot request unlimited queue/marks.
-> > > > > > >
-> > > > > > > This enables the limited functionality similar to inotify when watching a
-> > > > > > > set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
-> > > > > > > requiring SYS_CAP_ADMIN privileges.
-> > > > > > >
-> > > > > > > The FAN_REPORT_DFID_NAME init flag, provide a method for an unprivileged
-> > > > > > > event listener watching a set of directories (with FAN_EVENT_ON_CHILD)
-> > > > > > > to monitor all changes inside those directories.
-> > > > > > >
-> > > > > > > This typically requires that the listener keeps a map of watched directory
-> > > > > > > fid to dirfd (O_PATH), where fid is obtained with name_to_handle_at()
-> > > > > > > before starting to watch for changes.
-> > > > > > >
-> > > > > > > When getting an event, the reported fid of the parent should be resolved
-> > > > > > > to dirfd and fstatsat(2) with dirfd and name should be used to query the
-> > > > > > > state of the filesystem entry.
-> > > > > > >
-> > > > > > > Note that even though events do not report the event creator pid,
-> > > > > > > fanotify does not merge similar events on the same object that were
-> > > > > > > generated by different processes. This is aligned with exiting behavior
-> > > > > > > when generating processes are outside of the listener pidns (which
-> > > > > > > results in reporting 0 pid to listener).
-> > > > > > >
-> > > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > >
-> > > > > > The patch looks mostly good to me. Just two questions:
-> > > > > >
-> > > > > > a) Remind me please, why did we decide pid isn't safe to report to
-> > > > > > unpriviledged listeners?
-> > > > >
-> > > > > Just because the information that process X modified file Y is not an
-> > > > > information that user can generally obtain without extra capabilities(?)
-> > > > > I can add a flag FAN_REPORT_OWN_PID to make that behavior
-> > > > > explicit and then we can relax reporting pids later.
-> > > > >
-> > > >
-> > > > FYI a patch for flag FAN_REPORT_SELF_PID is pushed to branch
-> > > > fanotify_unpriv.
-> > > >
-> > > > The UAPI feels a bit awkward with this flag, but that is the easiest way
-> > > > to start without worrying about disclosing pids.
-> > > >
-> > > > I guess we can require that unprivileged listener has pid 1 in its own
-> > > > pid ns. The outcome is similar to FAN_REPORT_SELF_PID, except
-> > > > it can also get pids of its children which is probably fine.
-> > > >
-> > >
-> > > Jan,
-> > >
-> > > WRT your comment in github:
-> > > "So maybe we can just require that this flag is already set by userspace
-> > > instead of silently setting it? Like:
-> > >
-> > > if (!(flags & FAN_REPORT_SELF_PID)) return -EPERM;
-> > >
-> > > I'd say that variant is more futureproof and the difference for user
-> > > is minimal."
-> > >
-> > > I started with this approach and then I wrote the tests and imagined
-> > > the man page
-> > > requiring this flag would be a bit awkward, so I changed it to auto-enable.
-> > >
-> > > I am not strongly against the more implicit flag requirement, but in
-> > > favor of the
-> > > auto-enable approach I would like to argue that with current fanotify you CAN
-> > > get zero pid in event, so think about it this way:
-> > > If a listener is started in (or moved into) its own pid ns, it will
-> > > get zero pid in all
-> > > events (other than those generated by itself and its own children).
-> > >
-> > > With the proposed change, the same applies also if the listener is started
-> > > without CAP_SYS_ADMIN.
-> > >
-> > > As a matter of fact, we do not need the flag at all, we can determine whether
-> > > or not to report pid according to capabilities of the event reader at
-> > > event read time.
-> > > And we can check for one of:
-> > > - CAP_SYS_ADMIN
-> > > - CAP_SYS_PACCT
-> > > - CAP_SYS_PTRACE
-> > >
-> > > Do you prefer this flag-less approach?
-> >
-> > Well, I don't have strong opinion what we should do internally either. The
-> > flag seems OK to me. The biggest question is whether we should expose the
-> > FAN_REPORT_SELF_PID flag to userspace or not. If we would not require
-> > explicit flag for unpriv users, I see little reason to expose that flag at
-> > all.
-> >
+On Wed 24-02-21 13:41:15, Matthew Wilcox wrote:
+> On Wed, Feb 24, 2021 at 01:38:48PM +0100, Jan Kara wrote:
+> > > We allocate a page and try to read it.  29 threads pile up waiting
+> > > for the page lock in filemap_update_page().  The error returned by the
+> > > original I/O is shared between all 29 waiters as well as being returned
+> > > to the requesting thread.  The next request for index.html will send
+> > > another I/O, and more waiters will pile up trying to get the page lock,
+> > > but at no time will more than 30 threads be waiting for the I/O to fail.
+> > 
+> > Interesting idea. It certainly improves current behavior. I just wonder
+> > whether this isn't a partial solution to a problem and a full solution of
+> > it would have to go in a different direction? I mean it just seems
+> > wrong that each reader (let's assume they just won't overlap) has to retry
+> > the failed IO and wait for the HW to figure out it's not going to work.
+> > Shouldn't we cache the error state with the page? And I understand that we
+> > then also have to deal with the problem how to invalidate the error state
+> > when the block might eventually become readable (for stuff like temporary
+> > IO failures). That would need some signalling from the driver to the page
+> > cache, maybe in a form of some error recovery sequence counter or something
+> > like that. For stuff like iSCSI, multipath, or NBD it could be doable I
+> > believe...
 > 
-> IMO the only listeners that actually care about event->pid are permission
-> event listeners. I think that FAN_CLASS_NOTIF listeners do not care
-> about it. The only thing that *I* ever used event->pid for is to ignore events
-> from self pid.
-> 
-> My question is, do you mind if we start with this code:
-> 
-> @@ -419,6 +419,14 @@ static ssize_t copy_event_to_user(struct
-> fsnotify_group *group,
->         metadata.reserved = 0;
->         metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
->         metadata.pid = pid_vnr(event->pid);
-> +
-> +        /*
-> +         * For an unprivileged listener, event->pid can be used to identify the
-> +         * events generated by the listener process itself, without disclosing
-> +         * the pids of other processes.
-> +         */
-> +        if (!capable(CAP_SYS_ADMIN) &&
-> +            task_tgid(current) != event->pid)
-> +                metadata.pid = 0;
-> 
-> No need for any visible or invisible user flags.
+> That felt like a larger change than I wanted to make.  I already have
+> a few big projects on my plate!
 
-OK, I think this is fine.
+I can understand that ;)
 
-> If users ask for event->pid of other processes later (I don't think they will)
-> and we decide that it is safe to disclose them, we will require another flag
-> and then the test will become:
+> Also, it's not clear to me that the host can necessarily figure out when
+> a device has fixed an error -- certainly for the three cases you list
+> it can be done.  I think we'd want a timer to indicate that it's worth
+> retrying instead of returning the error.
 > 
-> +        if (!capable(CAP_SYS_ADMIN) ||
-> +            FAN_GROUP_FLAG(group, FAN_REPORT_PID))
-> 
-> and *if* that ever happens, we will document the FAN_REPORT_PID
-> flag and say that it is enabled by default for CAP_SYS_ADMIN instead of
-> requiring and documenting FAN_REPORT_SELF_PID now.
-> 
-> The way I see it, the only disadvantage with this negated approach is
-> that CAP_SYS_ADMIN listeners cannot turn off event->pid reporting,
-> but why would anybody need to do that?
+> Anyway, that seems like a lot of data to cram into a struct page.  So I
+> think my proposal is still worth pursuing while waiting for someone to
+> come up with a perfect solution.
 
-Yeah, let's leave complications for later when someone asks for it :)
+Yes, timer could be a fallback. Or we could just schedule work to discard
+all 'error' pages in the fs in an hour or so. Not perfect but more or less
+workable I'd say. Also I don't think we need to cram this directly into
+struct page - I think it is perfectly fine to kmalloc() structure we need
+for caching if we hit error and just don't cache if the allocation fails.
+Then we might just reference it from appropriate place... didn't put too
+much thought to this...
 
 								Honza
 -- 
