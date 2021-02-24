@@ -2,90 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 937A13237C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 08:16:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA0AF32382E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 08:59:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232542AbhBXHQQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 02:16:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47212 "EHLO
+        id S233930AbhBXH6a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 02:58:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232673AbhBXHQJ (ORCPT
+        with ESMTP id S233864AbhBXH6G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 02:16:09 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCCC3C06174A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 23:15:29 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id u8so973295ior.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 23:15:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K8mnisfsMQh7DWxYjGik5XwdXMgnMbISx4g2kSATFAw=;
-        b=f/1kPVJnrI4/oMXaLiD3A9nqwIOpFApFhCZdcN2wxDzkw8HEzjDoLmkzx8XgFnV9js
-         0YMN0pgoymTdqi5YRZlfYZwF3TKw3UV13lyF4joleJDOfO4NQ0fYS0FVAY2+2aMURosv
-         OYP5DuidoVYSZtae/Q4mLebQqJbXXje92qEC/QmoH89pKqEV3AkyCILpnVAxTVd/7M2E
-         cQ6iczyLDhbfOc2hJtFB9dceJIbUC5gzKbn1SoCb7L5bH8+RobwPC8Abgn3/oBPIGksW
-         1/BSCkkbYvCysPP41YneVVmZhEkxDAvYxu7banvcSt1WfDKVgY4DWa7LBdx91InG9gk/
-         OB9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K8mnisfsMQh7DWxYjGik5XwdXMgnMbISx4g2kSATFAw=;
-        b=mwBP7Ve/r8TTQ6c4VEm3ULtf/PfaaPult8YDVAbQOgCt+PyKlCMIV8CT/dGZS9+xkS
-         4cGZwBD5foaPSfBNz0Ty/Tk69gUf49KETKf+UUxSamzaHLro9M1cCPXHEXFSkIralHQ1
-         VvWmZSB98D/6d7SCRR+HNes4KghKJnm7F6tmQoQD+VshxKSYvASFSKXAtl6SN1qMg628
-         8yRh4Mcr2x/XQUMe8+MMYTEtJw2RqfuEHwqII5FpZh7Vt0pAF+M0oOjnVJVm662OYF3h
-         r8m//rl2nsggcQOJuA2lj6e2QEWaD5CBQL6WTh0tdx0ncx+AkfFov1ALcwyolReqx+Wi
-         x3Yw==
-X-Gm-Message-State: AOAM532L7YYpYDWCPpFg8hU84SZPVfe5n1Mu4vqDgUhvnTWmIvSSCU6f
-        obNmQEpJkE/WHg5j4orC1T6/zy1huO/7cV0k5yg=
-X-Google-Smtp-Source: ABdhPJyF/smOB5Kba0djNj0xm/T8TE1j37Mud8M6KlacMU6jZr8rYUPvo66h860R47oVQnWzg/kASxLu8CyjwZ0tTlA=
-X-Received: by 2002:a02:bb16:: with SMTP id y22mr31477148jan.123.1614150929172;
- Tue, 23 Feb 2021 23:15:29 -0800 (PST)
+        Wed, 24 Feb 2021 02:58:06 -0500
+X-Greylist: delayed 258 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 Feb 2021 23:57:26 PST
+Received: from mail.as201155.net (mail.as201155.net [IPv6:2a05:a1c0:f001::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD381C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 23:57:26 -0800 (PST)
+Received: from smtps.newmedia-net.de ([2a05:a1c0:0:de::167]:54948 helo=webmail.newmedia-net.de)
+        by mail.as201155.net with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <s.gottschall@dd-wrt.com>)
+        id 1lEoy5-0008Mc-1V; Wed, 24 Feb 2021 08:52:21 +0100
+X-CTCH-RefID: str=0001.0A782F19.603605B5.0077,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dd-wrt.com; s=mikd;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID; bh=+h4wN+gEmCE4egeucsEqyx1BKFItgtfkkCG2z9NxOAs=;
+        b=R4VFlbzLjYccPkcZXkyIKEf9f88UQyZ0tY3zJRIyKEAmsfegFsJyAUp3Wl7WFQhICwRYz+Hr847ldUn7kZz3UaQp9Y3fMRT5oAoLethXyetf8mu+HHIt5iBUwr8w9vndy96d9dz0FhMLkyF/XPmTp4V1c9cp6BaF1uTmAO0RWM4=;
+Message-ID: <f2b72217-3da5-7e71-e108-56e657e8a85d@dd-wrt.com>
+Date:   Wed, 24 Feb 2021 08:52:18 +0100
 MIME-Version: 1.0
-References: <CAOQ4uxjGkm0Pn84UW6JKSK3mFkrPKykfkXDLL1V4YPSgAOXULA@mail.gmail.com>
- <20210218143635.24916-1-lhenriques@suse.de>
-In-Reply-To: <20210218143635.24916-1-lhenriques@suse.de>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 24 Feb 2021 09:15:18 +0200
-Message-ID: <CAOQ4uxjtap0jQat19h7g+6xvpMnqrwEihgN7pw11d57kkRVsaw@mail.gmail.com>
-Subject: Re: [PATCH v4] vfs: fix copy_file_range regression in cross-fs copies
-To:     Petr Vorel <pvorel@suse.cz>
-Cc:     Luis Henriques <lhenriques@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LTP List <ltp@lists.linux.it>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101
+ Thunderbird/86.0
+Subject: Re: [PATCH v21 10/10] fs/ntfs3: Add MAINTAINERS
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        pali@kernel.org, dsterba@suse.cz, aaptel@suse.com,
+        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
+        mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
+        andy.lavr@gmail.com
+References: <20210212162416.2756937-1-almaz.alexandrovich@paragon-software.com>
+ <20210212162416.2756937-11-almaz.alexandrovich@paragon-software.com>
+From:   Sebastian Gottschall <s.gottschall@dd-wrt.com>
+In-Reply-To: <20210212162416.2756937-11-almaz.alexandrovich@paragon-software.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Received:  from [2003:c9:3f4c:a900:81f8:af90:a12c:2d22]
+        by webmail.newmedia-net.de with esmtpsa (TLSv1:AES128-SHA:128)
+        (Exim 4.72)
+        (envelope-from <s.gottschall@dd-wrt.com>)
+        id 1lEoy4-000OVA-EG; Wed, 24 Feb 2021 08:52:20 +0100
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 18, 2021 at 4:35 PM Luis Henriques <lhenriques@suse.de> wrote:
+
+Am 12.02.2021 um 17:24 schrieb Konstantin Komarov:
+> This adds MAINTAINERS
 >
-> A regression has been reported by Nicolas Boichat, found while using the
-> copy_file_range syscall to copy a tracefs file.  Before commit
-> 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
-> kernel would return -EXDEV to userspace when trying to copy a file across
-> different filesystems.  After this commit, the syscall doesn't fail anymore
-> and instead returns zero (zero bytes copied), as this file's content is
-> generated on-the-fly and thus reports a size of zero.
->
-> This patch restores some cross-filesystem copy restrictions that existed
-> prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-> devices").  Filesystems are still allowed to fall-back to the VFS
-> generic_copy_file_range() implementation, but that has now to be done
-> explicitly.
->
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 
-Petr,
+just for your info with latest ntfs3 driver
 
-Please note that the check for verify_cross_fs_copy_support() in LTP
-tests can no longer be used to determine if copy_file_range() is post v5.3.
-You will need to fix the tests to expect cross-fs failures (this change of
-behavior is supposed to be backported to stable kernels as well).
+kern.err kernel: ntfs3: sda1: ntfs_evict_inode r=fe1 failed, -22.
 
-I guess the copy_file_range() tests will need to use min_kver.
 
-Thanks,
-Amir.
