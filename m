@@ -2,87 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B1A132434C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 18:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5921324727
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 23:51:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235838AbhBXRo7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 12:44:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59436 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234716AbhBXRox (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 12:44:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5142EADDB;
-        Wed, 24 Feb 2021 17:44:11 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 19A281E14EE; Wed, 24 Feb 2021 18:44:11 +0100 (CET)
-Date:   Wed, 24 Feb 2021 18:44:11 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: Re: [RFC] Better page cache error handling
-Message-ID: <20210224174411.GH849@quack2.suse.cz>
-References: <20210205161142.GI308988@casper.infradead.org>
- <20210224123848.GA27695@quack2.suse.cz>
- <20210224134115.GP2858050@casper.infradead.org>
+        id S235510AbhBXWu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 17:50:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50208 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235330AbhBXWu4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Feb 2021 17:50:56 -0500
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97BD3C061574;
+        Wed, 24 Feb 2021 14:50:16 -0800 (PST)
+Received: by mail-ot1-x333.google.com with SMTP id c16so3883061otp.0;
+        Wed, 24 Feb 2021 14:50:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=AJwgy5s6IIZ9waVTG+Qa1R17TyqtVhDR8SD9mifAfOM=;
+        b=APE8Kc7Lk/4af15m4bMi2WNSQm0PuyeGREP5HcYv/un7+2ze7ab3c1sUyBR4pkVc7g
+         mVHjmHtBs6hVsTI6z8vKkawQPkOMdHCS55s/v9OMVvnnBqd4VN+QIM9qCbGVzHMoHoX+
+         szFblEc4EgBY6bT3zTpFoBdVo+W7yUKzYiyY4vlw904Y81nEtjHm11EKUhL5AFK+4JFO
+         mD9p2hw80ZqCtnI2sscLgRubqi9eMfEHHCDiAimi4NulsgPj5YDR7b/OQFjAk+1OXGnM
+         i7JBl4G9TQsPNvDRl7Na0If7gdIRh+QzXM82TN3RKBZ28+UsT4m0lzQTiOh/Vcrq4oES
+         zf6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=AJwgy5s6IIZ9waVTG+Qa1R17TyqtVhDR8SD9mifAfOM=;
+        b=DhZkgnazmO7vMk4HCBdOf2eDdZqGoN1EmyUB0f0jWHcBNe2qAT6b+RZyoLff8+J22x
+         8a3YizBCYL8QT+FTziSIp8TihoLurBlQFmrDb0Dm4eOI/Kr+xD+oOmKWUrblyEsBx5Qz
+         SxcEpvwg110/aYVvPCRUTgedfAsTWK8mRmmjM2306Gg9OZhZtqq/RNWBVGITy336FvH6
+         Q859s0HmAH4rXxADKXpX3PW0iUty+a3Q1Bf/tIBuY0dSBPvQDUJqTixy/YTcWrJQjFfj
+         Q921LGcmR/Pxi2pW1LXmspNZos5J3tABvsYez5+BS9XjRlMSxeoU6QxO25na0Kt4iviP
+         +clg==
+X-Gm-Message-State: AOAM533r03C480FwGfUT8eU47HFEGJJFEiz723Yg+8r0fL5gUYKyLN94
+        7zFv3bf9ibZJwWk+jDr44mQp46pjkVaustnYhk+nvcWA+lU=
+X-Google-Smtp-Source: ABdhPJyoTIZEwjkgBu+f7msVgJbrv/TbwvF9PgSxq6V+/LYYER93+eKB/7XUQiPq3itMUT5HoM/h6ffH3W9bkoCzDoU=
+X-Received: by 2002:a05:6830:1688:: with SMTP id k8mr7910325otr.45.1614207015779;
+ Wed, 24 Feb 2021 14:50:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210224134115.GP2858050@casper.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Amy Parker <enbyamy@gmail.com>
+Date:   Wed, 24 Feb 2021 14:50:04 -0800
+Message-ID: <CAE1WUT53F+xPT-Rt83EStGimQXKoU-rE+oYgcib87pjP4Sm0rw@mail.gmail.com>
+Subject: Adding LZ4 compression support to Btrfs
+To:     Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 24-02-21 13:41:15, Matthew Wilcox wrote:
-> On Wed, Feb 24, 2021 at 01:38:48PM +0100, Jan Kara wrote:
-> > > We allocate a page and try to read it.  29 threads pile up waiting
-> > > for the page lock in filemap_update_page().  The error returned by the
-> > > original I/O is shared between all 29 waiters as well as being returned
-> > > to the requesting thread.  The next request for index.html will send
-> > > another I/O, and more waiters will pile up trying to get the page lock,
-> > > but at no time will more than 30 threads be waiting for the I/O to fail.
-> > 
-> > Interesting idea. It certainly improves current behavior. I just wonder
-> > whether this isn't a partial solution to a problem and a full solution of
-> > it would have to go in a different direction? I mean it just seems
-> > wrong that each reader (let's assume they just won't overlap) has to retry
-> > the failed IO and wait for the HW to figure out it's not going to work.
-> > Shouldn't we cache the error state with the page? And I understand that we
-> > then also have to deal with the problem how to invalidate the error state
-> > when the block might eventually become readable (for stuff like temporary
-> > IO failures). That would need some signalling from the driver to the page
-> > cache, maybe in a form of some error recovery sequence counter or something
-> > like that. For stuff like iSCSI, multipath, or NBD it could be doable I
-> > believe...
-> 
-> That felt like a larger change than I wanted to make.  I already have
-> a few big projects on my plate!
+The compression options in Btrfs are great, and help save a ton of
+space on disk. Zstandard works extremely well for this, and is fairly
+fast. However, it can heavily reduce the speed of quick disks, does
+not work well on lower-end systems, and does not scale well across
+multiple cores. Zlib is even slower and worse on compression ratio,
+and LZO suffers on both the compression ratio and speed.
 
-I can understand that ;)
+I've been laying out my plans for a backup software recently, and
+stumbled upon LZ4. Tends to hover around LZO compression ratios.
+Performs better than Zstandard and LZO slightly for compression - but
+significantly outpaces them on decompression, which matters
+significantly more for users:
 
-> Also, it's not clear to me that the host can necessarily figure out when
-> a device has fixed an error -- certainly for the three cases you list
-> it can be done.  I think we'd want a timer to indicate that it's worth
-> retrying instead of returning the error.
-> 
-> Anyway, that seems like a lot of data to cram into a struct page.  So I
-> think my proposal is still worth pursuing while waiting for someone to
-> come up with a perfect solution.
+zstd 1.4.5:
+ - ratio 2.884
+ - compression 500 MiB/s
+ - decompression 1.66 GiB/s
+zlib 1.2.11:
+ - ratio 2.743
+ - compression 90 MiB/s
+ - decompression 400 MiB/s
+lzo 2.10:
+ - ratio 2.106
+ - compression 690 MiB/s
+ - decompression 820 MiB/s
+lz4 1.9.2:
+ - ratio 2.101
+ - compression 740 MiB/s
+ - decompression 4.5 GiB/s
 
-Yes, timer could be a fallback. Or we could just schedule work to discard
-all 'error' pages in the fs in an hour or so. Not perfect but more or less
-workable I'd say. Also I don't think we need to cram this directly into
-struct page - I think it is perfectly fine to kmalloc() structure we need
-for caching if we hit error and just don't cache if the allocation fails.
-Then we might just reference it from appropriate place... didn't put too
-much thought to this...
+LZ4's speeds are high enough to allow many applications which
+previously declined to use any compression due to speed to increase
+their possible space while keeping fast write and especially read
+access.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+What're thoughts like on adding something like LZ4 as a compression
+option in btrfs? Is it feasible given the current implementation of
+compression in btrfs?
+
+   -Amy IP
