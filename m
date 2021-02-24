@@ -2,179 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D4D323635
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 04:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B74D323689
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Feb 2021 05:59:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233533AbhBXDtN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Feb 2021 22:49:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59554 "EHLO
+        id S233573AbhBXE6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Feb 2021 23:58:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233387AbhBXDtK (ORCPT
+        with ESMTP id S230315AbhBXE6l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Feb 2021 22:49:10 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36BF8C061786
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 19:48:30 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id k22so383308pll.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Feb 2021 19:48:30 -0800 (PST)
+        Tue, 23 Feb 2021 23:58:41 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39E1EC061574;
+        Tue, 23 Feb 2021 20:58:01 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id j19so1034642lfr.12;
+        Tue, 23 Feb 2021 20:58:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=I3jEBbY4A/UGX153lu2E72Jwi3lU4l9DJKDSt9tjW5Q=;
-        b=oOOuEBK72Tmj/AsITLSIjEWrvt7HNB/gWSE+VBImqLREZdfVm1dpZI8mf4k72Hxa/i
-         yz6rqpz2vNUXnB1OxaJodya7pzUj87q/qibBdEQMTtVsQVKfuzEhmJMzAfyJ+Mbb2Fn9
-         i65JdEo2JKdsp/A2cpG5N6kMA2fCekFGx9tDv5NKfhPCcdKHU2CdBfmMMm9qnY9ovJr4
-         hhaeVaGjHvJ65SuOfuxbvFjlLDme47Q8kr9h2QXnHT+HFfbH9RURUJIUHpk7pMQg3iw7
-         eQ3kBof44riyepos3rgTe6Mcloz+QQOhOmUHH0OrAw8lEEZZJwuWTz+mTEgrTksKjtyT
-         TX8w==
+        bh=FrajYP2hBjaKUlNDr5nfLO5dI2VEsLYw/fRZTXaD8VA=;
+        b=ZMmxrY5nQMPOuw6scDp5kDuYNOONNS6FyeSqMA2TydiNEydn5VzajUuNlS+6FCjg52
+         co69WuI+FJUhbw5cv6uyYbvJIPdGEGuFONjiN7n7CEjSBcSkK47PSIn/83dDwIZjPNJq
+         Bc99HBK+z471EUjv/2nnZGGvJp/vo7jFdbMAlPsQ1RCh3q4g4yMELRcpKYfgS1mz87PD
+         dQLRvVz5IpraVECQzwKylQiGaE5qLGQtbFuuea9LWXD4GtMr51zfpdKbYhYqwn2V7uqY
+         FCYktNTYMdvVIEunttK0IvC1KekDxUVtDEzPeP5hRuKb778GNss7erwfqplRsaae2Y6Y
+         mtgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=I3jEBbY4A/UGX153lu2E72Jwi3lU4l9DJKDSt9tjW5Q=;
-        b=IkD4AaeCXHwmXZcJ1QQswpCuSjcMknw0LAm2s4juTq0FgpbNJPO2WjRAmjSicLGqRq
-         sEXMhawemz1OXCvqdfd0JFtkopjW5kWzuyYoVzGBdV2ZZJlo3MP9wpBZ2V0auy6YfzYt
-         tbNciEWpTMjn6xNPsSlRjmFT9vmT2ymRAuZlFq3MCU6cCWOVTD7KXX+tCPZXamT/eCcq
-         iCSVM3Z/1Qu1hryXnQV9Q25r20A77K08NiHmhwzu/V7iBMK7kwqvZ9LUNmGW1COsRsQW
-         ATmLk54Q0uafapIAr06V+Ffq4hVBrVhX7PsrHDYufJXuU7QvqokUKzVKjI6EgRlrsw2m
-         kOWw==
-X-Gm-Message-State: AOAM533b7JKsCAyE3h9dmJUyf4dHZeYAW8VC+sU08BltnnwmLmaR9R1P
-        sYEKhf+efISnjE0p8dN6uYuEyRibLqYhA+Mc9R/g/A==
-X-Google-Smtp-Source: ABdhPJzp43cIb2gX9ENgBjGVlI9FQm0pVDYzvzqm2ZG0XDH8tXJp7biWDBSXXBsr0JJO9Dml11ss+IuaBHVyoXMHfB8=
-X-Received: by 2002:a17:90a:778a:: with SMTP id v10mr2148311pjk.229.1614138507328;
- Tue, 23 Feb 2021 19:48:27 -0800 (PST)
+        bh=FrajYP2hBjaKUlNDr5nfLO5dI2VEsLYw/fRZTXaD8VA=;
+        b=NGA7Az4ASmIXmQ5xEKr8iSXFBg+yrn33CL7+6JInPNCrhSIJkRI767vbH5/UZVJXAQ
+         h6lk1A/oHws47C80rbLXJN5l66DVwZXZyCG5t2M/WGGOX/EFSDDXK4fXTvZv85MFsZi/
+         tsIo0yaw7SVKYuJSbPDEj+AvfKwKVNgUTNIM/SNoXdRXK/rwZHraPQNpIKCedIosjGco
+         QK6w2MB3V+D/l2HjIKwMSFRE30pBzjvyYkfdW7346pv5W9FnYM9AqSoiFahYDSrrW14D
+         DB8VhjLazFFPMPfD0XYF45jAln7jUCAsW6YLFcApYdzOmmyTImJyQIpG2HfFLgIyBxY/
+         dMoQ==
+X-Gm-Message-State: AOAM53190DLh3Z3wkfSwVsuOiJ7oMF7ReU7HiHy7ggOfqdhIRKDwPAv/
+        srgIxChCkJyJaLyK2zHzTu5DlAnYzfqiuyMUOr/9jJ8h9O9Y+g==
+X-Google-Smtp-Source: ABdhPJw6r/na/lmIQBVTZHzL3REpx3JMt6S1bztYIeQ+Q0r5DTYVKTT1II6PMpNnp9XsQr/gpOhg2b3f8C/vYdZxtAM=
+X-Received: by 2002:a05:6512:1311:: with SMTP id x17mr17837516lfu.307.1614142679263;
+ Tue, 23 Feb 2021 20:57:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20210219104954.67390-1-songmuchun@bytedance.com>
- <20210219104954.67390-5-songmuchun@bytedance.com> <13a5363c-6af4-1e1f-9a18-972ca18278b5@oracle.com>
- <20210223092740.GA1998@linux> <CAMZfGtVRSBkKe=tKAKLY8dp_hywotq3xL+EJZNjXuSKt3HK3bQ@mail.gmail.com>
- <20210223104957.GA3844@linux> <20210223154128.GA21082@localhost.localdomain> <20210223223157.GA2740@localhost.localdomain>
-In-Reply-To: <20210223223157.GA2740@localhost.localdomain>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 24 Feb 2021 11:47:49 +0800
-Message-ID: <CAMZfGtUBMzAgPVgm=9wgJg+yytxwSGOK_BVOw93RPLb3_tFS_g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v16 4/9] mm: hugetlb: alloc the vmemmap
- pages associated with each HugeTLB page
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
+ <9e49f96cd80eaf9c8ed267a7fbbcb4c6467ee790.camel@redhat.com>
+ <CAH2r5mvPLivjuE=cbijzGSHOvx-hkWSWbcxpoBnJX-BR9pBskQ@mail.gmail.com>
+ <20210216021015.GH2858050@casper.infradead.org> <CAH2r5mv+AdiODH1TSL+SOQ5qpZ25n7Ysrp+iYxauX9sD8ehhVQ@mail.gmail.com>
+ <20210223202742.GM2858050@casper.infradead.org>
+In-Reply-To: <20210223202742.GM2858050@casper.infradead.org>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 23 Feb 2021 22:57:48 -0600
+Message-ID: <CAH2r5ms06hL0f5+ejXJTYE7_8rO4SZRW+-ZeWETNFiXDPu1Jbg@mail.gmail.com>
+Subject: Re: [PATCH 00/33] Network fs helper library & fscache kiocb API [ver #3]
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jeff Layton <jlayton@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-cachefs@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-mm <linux-mm@kvack.org>, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Case van Rij <case.vanrij@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 6:32 AM Oscar Salvador <osalvador@suse.de> wrote:
+On Tue, Feb 23, 2021 at 2:28 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> On Tue, Feb 23, 2021 at 04:41:28PM +0100, Oscar Salvador wrote:
-> > On Tue, Feb 23, 2021 at 11:50:05AM +0100, Oscar Salvador wrote:
-> > > > CPU0:                           CPU1:
-> > > >                                 set_compound_page_dtor(HUGETLB_PAGE_DTOR);
-> > > > memory_failure_hugetlb
-> > > >   get_hwpoison_page
-> > > >     __get_hwpoison_page
-> > > >       get_page_unless_zero
-> > > >                                 put_page_testzero()
-> > > >
-> > > > Maybe this can happen. But it is a very corner case. If we want to
-> > > > deal with this. We can put_page_testzero() first and then
-> > > > set_compound_page_dtor(HUGETLB_PAGE_DTOR).
-> > >
-> > > I have to check further, but it looks like this could actually happen.
-> > > Handling this with VM_BUG_ON is wrong, because memory_failure/soft_offline are
-> > > entitled to increase the refcount of the page.
-> > >
-> > > AFAICS,
-> > >
-> > >  CPU0:                                    CPU1:
-> > >                                           set_compound_page_dtor(HUGETLB_PAGE_DTOR);
-> > >  memory_failure_hugetlb
-> > >    get_hwpoison_page
-> > >      __get_hwpoison_page
-> > >        get_page_unless_zero
-> > >                                           put_page_testzero()
-> > >         identify_page_state
-> > >          me_huge_page
-> > >
-> > > I think we can reach me_huge_page with either refcount = 1 or refcount =2,
-> > > depending whether put_page_testzero has been issued.
-> > >
-> > > For now, I would not re-enqueue the page if put_page_testzero == false.
-> > > I have to see how this can be handled gracefully.
+> On Mon, Feb 15, 2021 at 11:22:20PM -0600, Steve French wrote:
+> > On Mon, Feb 15, 2021 at 8:10 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > The switch from readpages to readahead does help in a couple of corner
+> > > cases.  For example, if you have two processes reading the same file at
+> > > the same time, one will now block on the other (due to the page lock)
+> > > rather than submitting a mess of overlapping and partial reads.
 > >
-> > I took a brief look.
-> > It is not really your patch fault. Hugetlb <-> memory-failure synchronization is
-> > a bit odd, it definitely needs improvment.
-> >
-> > The thing is, we can have different scenarios here.
-> > E.g: by the time we return from put_page_testzero, we might have refcount ==
-> > 0 and PageHWPoison, or refcount == 1 PageHWPoison.
-> >
-> > The former will let a user get a page from the pool and get a sigbus
-> > when it faults in the page, and the latter will be even more odd as we
-> > will have a self-refcounted page in the free pool (and hwpoisoned).
+> > Do you have a simple repro example of this we could try (fio, dbench, iozone
+> > etc) to get some objective perf data?
+>
+> I don't.  The problem was noted by the f2fs people, so maybe they have a
+> reproducer.
+>
+> > My biggest worry is making sure that the switch to netfs doesn't degrade
+> > performance (which might be a low bar now since current network file copy
+> > perf seems to signifcantly lag at least Windows), and in some easy to understand
+> > scenarios want to make sure it actually helps perf.
+>
+> I had a question about that ... you've mentioned having 4x4MB reads
+> outstanding as being the way to get optimum performance.  Is there a
+> significant performance difference between 4x4MB, 16x1MB and 64x256kB?
+> I'm concerned about having "too large" an I/O on the wire at a given time.
+> For example, with a 1Gbps link, you get 250MB/s.  That's a minimum
+> latency of 16us for a 4kB page, but 16ms for a 4MB page.
+>
+> "For very simple tasks, people can perceive latencies down to 2 ms or less"
+> (https://danluu.com/input-lag/)
+> so going all the way to 4MB I/Os takes us into the perceptible latency
+> range, whereas a 256kB I/O is only 1ms.
+>
+> So could you do some experiments with fio doing direct I/O to see if
+> it takes significantly longer to do, say, 1TB of I/O in 4MB chunks vs
+> 256kB chunks?  Obviously use threads to keep lots of I/Os outstanding.
 
-I have been looking at the dequeue_huge_page_node_exact().
-If a PageHWPoison huge page is in the free pool list, the page will
-not be allocated to the user. The PageHWPoison huge page
-will be skip in the dequeue_huge_page_node_exact().
+That is a good question and it has been months since I have done experiments
+with something similar.   Obviously this will vary depending on RDMA or not and
+multichannel or not - but assuming the 'normal' low end network configuration -
+ie a 1Gbps link and no RDMA or multichannel I could do some more recent
+experiments.
 
-> >
-> > As I said, it is not this patchset fault. I just made me realize this
-> > problem.
-> >
-> > I have to think some more about this.
->
-> I have been thinking more about this.
-> memory failure events can occur at any time, and we might not be in a
-> position where we can handle gracefully the error, meaning that the page
-> might end up in non desirable state.
->
-> E.g: we could flag the page right before enqueing it.
->
-> I still think that VM_BUG_ON should go, as the refcount can be perfectly
-> increased by memory-failure/soft_offline handlers, so BUGing there does
-> not make much sense.
+In the past what I had noticed was that server performance for simple
+workloads like cp or grep increased with network I/O size to a point:
+smaller than 256K packet size was bad. Performance improved
+significantly from 256K to 512K to 1MB, but only very
+slightly from 1MB to 2MB to 4MB and sometimes degraded at 8MB
+(IIRC 8MB is the max commonly supported by SMB3 servers),
+but this is with only one adapter (no multichannel) and 1Gb adapters.
 
-Make sense. I will remove the VM_BUG_ON.
+But in those examples there wasn't a lot of concurrency on the wire.
 
->
-> One think we could do is to check the state of the page we want to
-> retrieve from the free hugepage pool.
-> We should discard any HWpoisoned ones, and dissolve them.
->
-> The thing is, memory-failure/soft_offline should allocate a new hugepage
-> for the free pool, so keep the pool stable.
-> Something like [1].
->
-> Anyway, this is orthogonal to this patch, and something I will work on
-> soon.
->
-> [1] https://lore.kernel.org/linux-mm/20210222135137.25717-2-osalvador@suse.de/T/#u
+I did some experiments with increasing the read ahead size
+(which causes more than one async read to be issued by cifs.ko
+but presumably does still result in some 'dead time')
+which seemed to help perf of some sequential read examples
+(e.g. grep or cp) to some servers but I didn't try enough variety
+of server targets to feel confident about that change especially
+if netfs is coming
 
-Thanks for your efforts on this.
+e.g. a change I experimented with was:
+         sb->s_bdi->ra_pages = cifs_sb->ctx->rsize / PAGE_SIZE
+to
+         sb->s_bdi->ra_pages = 2 * cifs_sb->ctx->rsize / PAGE_SIZE
 
->
-> --
-> Oscar Salvador
-> SUSE L3
+and it did seem to help a little.
+
+I would expect that 8x1MB (ie trying to keep eight 1MB reads in process should
+keep the network mostly busy and not lead to too much dead time on
+server, client
+or network) and is 'good enough' in many read ahead use cases (at
+least for non-RDMA, and non-multichannel on a slower network) to keep the pipe
+file, and I would expect the performance to be similar to the equivalent using
+2MB read (e.g. 4x2MB) and perhaps better than 2x4MB.  Below 1MB i/o size
+on the wire I would expect to see degradation due to packet processing
+and task switching
+overhead.  Would definitely be worth doing more experimentation here.
+-- 
+Thanks,
+
+Steve
