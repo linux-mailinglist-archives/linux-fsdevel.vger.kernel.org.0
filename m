@@ -2,75 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 422363247AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 00:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4509E3247D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 01:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234407AbhBXX4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 18:56:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35944 "EHLO
+        id S236232AbhBYARX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 19:17:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232491AbhBXXz4 (ORCPT
+        with ESMTP id S234294AbhBYARV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 18:55:56 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650F0C06174A;
-        Wed, 24 Feb 2021 15:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ZKtbljNjRDo6cY0QPHsZ6Rnq2DeZQM19dzIHGg5f4PY=; b=R11gkp4K6rehkkXSl4PSRzx65l
-        omOs9KB4haZFN5IszYClFTlIXNmakpAsz4fAxZC7AP4NT0be48ChODM8fR9s0/eXa/4Ty3HZvM4gt
-        6lHCl7SJswDAajgVgHI2iVL4pUKvNycpwzbn5KTaT/ENMXWr5tq2GMvgVbbwKIMXRywuv/Ful5xhu
-        dCtFqPDsR9IhaO+ztDoHOy2wHWc42wdSRaZ4WQzmlL79HDrh2j26nL25+BanEl5FxoMxfOgGAMVT0
-        NhWxnqlvn8KV9j6D0BCcqR4RJuPlTFObo0dTO2Kd5vzwZhGp+60qiUC+RVhmrTZBXgKvRn100zgST
-        WvXhqM/w==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lF3za-00A2mh-3j; Wed, 24 Feb 2021 23:54:57 +0000
-Date:   Wed, 24 Feb 2021 23:54:54 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: Re: [RFC] Better page cache error handling
-Message-ID: <20210224235454.GV2858050@casper.infradead.org>
-References: <20210205161142.GI308988@casper.infradead.org>
- <20210224123848.GA27695@quack2.suse.cz>
- <20210224134115.GP2858050@casper.infradead.org>
- <DC74377C-DFFD-4E26-90AB-213577DB3081@dilger.ca>
+        Wed, 24 Feb 2021 19:17:21 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A92D2C061574;
+        Wed, 24 Feb 2021 16:16:40 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id h19so4726485edb.9;
+        Wed, 24 Feb 2021 16:16:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dMyBH8rlEjqz4SpSQi70uv2VmD1HrNQDiHNj1GOL5L0=;
+        b=TwdyVUZlKez3JqD7Hd5bEFvh3QfmIMhHOSji7kAPwJCQX+Mf818+C169DpCoaZ91ar
+         aaqi9+n/lPZ7zBxVtSshlN9dgTtk9lSNZP9WAb6z52brFh4x65afBkINHioG55jnuEY2
+         Umtl0LgNrNY8TTzZGL8YxsyyhTwUhVe8CR/IAmXy/ue/YXM9piPCi8n/Aom7FZ4SJpdi
+         cOwbrRCLtJSanSY6AcCUAMEYgckNuvy1J9Vi64hsW2+r6rk6GN2kSxksxwEVVfUC1pm1
+         i24ruebjNy5ORSEK/rslS2aw/NT39bVTQkzDp1McCckF21oCdvb1+50Ies9cJbiCtokV
+         2ZsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dMyBH8rlEjqz4SpSQi70uv2VmD1HrNQDiHNj1GOL5L0=;
+        b=Cn1tic7F3k7nBudWFJw80BthhxN+jN2S0HzeyavGC0+J7VNdoXXXcE1Gyb9B0ubjak
+         0FvasR4edRrWkNygbuxhHqcMeFykSMnpEuCaC2jwUnZ2g6TH8Q9k8va2jb+/S66xg2dJ
+         EZ9MnvjuzAxGs9xPo4P06EGZS7iandxoC3b0Bkj95WPkYdJRYIRDu1uMLTcqH06mqeXb
+         bLULrukTQnEDs8RNTmjdK4hx4k2cIO3ZgxkgQa0YgZ2O+3fqXWF/e9F1l8y2w0GDzmCA
+         A/FBpA7L32Gbij/MMpoSy+nlBK4IBdRjLzkBk6R5WGzPeyMLXkkEnbB1WDXpoL4xmz/p
+         oZ0g==
+X-Gm-Message-State: AOAM53082EmLTnQu3pra6LWqR5/MvPU1JEbJVsVh3r2xYTsYTywrp/sC
+        GRPp/itiZ7s0crGbgj14KzFVJZraXcYB8PchA3CjFN8=
+X-Google-Smtp-Source: ABdhPJyRzNcBX08vuJKuUxot/oPyEFoGQr2mMx7+Fh7Uf2znCB566Sc49XJu+X67Ker+Jewvv6d0gfyX6U0s/urSXMA=
+X-Received: by 2002:a05:6402:1283:: with SMTP id w3mr377477edv.340.1614212199483;
+ Wed, 24 Feb 2021 16:16:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DC74377C-DFFD-4E26-90AB-213577DB3081@dilger.ca>
+References: <20210223182726.31763-1-aaptel@suse.com> <CAKywueSCbANjCzPMnWJx7CXQM4kWO4pHtAhgpwwchMqCOcV0Lg@mail.gmail.com>
+ <87tuq1zpo8.fsf@suse.com>
+In-Reply-To: <87tuq1zpo8.fsf@suse.com>
+From:   Pavel Shilovsky <piastryyy@gmail.com>
+Date:   Wed, 24 Feb 2021 16:16:28 -0800
+Message-ID: <CAKywueSz=zMd2+BHnSd8Qt+t6jtqAYjCAR3N2yu5QJt9ZSD4-Q@mail.gmail.com>
+Subject: Re: [PATCH] cifs: ignore FL_FLOCK locks in read/write
+To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
+Cc:     linux-cifs <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Steve French <smfrench@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 04:41:26PM -0700, Andreas Dilger wrote:
-> Since you would know that the page is bad at this point (not uptodate,
-> does not contain valid data) you could potentially re-use some other
+Agree - given the differences between semantics with and without POSIX
+extensions we should document limitations that the CIFS client has in
+respect to locking including flock, posix locks and ofd locks.
+--
+Best regards,
+Pavel Shilovsky
 
-Oh, we don't know that.  We know _a_ read has failed.  There could be
-up to 128 blocks that comprise this (64kB) page, and we don't want to
-prevent reads to those other blocks in the page to fail unnecessarily.
-
-> fields in struct page, or potentially store something in the page itself?
-> That would avoid bloating struct page with fields that are only rarely
-> needed.  Userspace shouldn't be able to read the page at that point if
-> it is not marked uptodate, but they could overwrite it, so you wouldn't
-> want to store any kind of complex data structure there, but you _could_
-> store a magic, an error value, and a timeout, that are only valid if
-> !uptodate (cleared if the page were totally overwritten by userspace).
-> 
-> Yes, it's nasty, but better than growing struct page, and better than
-> blocking userspace threads for tens of minutes when a block is bad.
-
-The current state blocks threads for tens of minutes.  I'm proposing
-reducing it down to 30 seconds.  I'd want to see a more concrete
-proposal than this ...
-
-(also, a per-page data structure might blow up nastily if the entire
-drive is inaccessible, rather than just a single bad block)
+=D1=81=D1=80, 24 =D1=84=D0=B5=D0=B2=D1=80. 2021 =D0=B3. =D0=B2 03:11, Aur=
+=C3=A9lien Aptel <aaptel@suse.com>:
+>
+> Pavel Shilovsky <piastryyy@gmail.com> writes:
+> > If a flock is emulated on the server side with mandatory locks (which
+> > is what we only have for SMB2 without POSIX extensions) then we should
+> > maintain the same logic on the client. Otherwise you get different
+> > behavior depending on the caching policies currently in effect on the
+> > client side. You may consider testing with both modes when
+> > leases/oplocks are on and off.
+>
+> Hm.. you're right, the write will fail on the server side without
+> cache.
+>
+> I guess we should document current cifs behaviour in the flock man page.
+>
+> Cheers,
+> --
+> Aur=C3=A9lien Aptel / SUSE Labs Samba Team
+> GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+> SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg,=
+ DE
+> GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=
+=BCnchen)
+>
