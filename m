@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36794325821
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 21:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA9E1325830
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 22:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235070AbhBYUzh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 15:55:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56425 "EHLO
+        id S235193AbhBYU4q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 15:56:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42668 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234676AbhBYUwh (ORCPT
+        by vger.kernel.org with ESMTP id S230201AbhBYUyV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 15:52:37 -0500
+        Thu, 25 Feb 2021 15:54:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614286270;
+        s=mimecast20190719; t=1614286374;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=sJgpcpz8JbWE9yNjQ8U8bqTTI3MQeUxSjU+A+WBNGno=;
-        b=aVrpMO9MZfiSiNqOg6RcwIWEEhjG28i4cE499QQo2pVvM334yo7dt0CeZTFus1ImAP2Kzu
-        mzSaPpjKdQe4u167q/QMGnXw6/ncKEFlr7MNeOKXI4m0iSiODgP2L2mC38PBmU2Dv4GwTs
-        9HoB51OCiYSZxp52RtnrXNSzgLjBmaU=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-538-w-o-yC3OObyD752jwnEm4A-1; Thu, 25 Feb 2021 15:51:09 -0500
-X-MC-Unique: w-o-yC3OObyD752jwnEm4A-1
-Received: by mail-qv1-f69.google.com with SMTP id m1so5233410qvp.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Feb 2021 12:51:08 -0800 (PST)
+        bh=fTyh/njbTvxGBCwzrRyX2EiAfSR949VElesvFbgeey4=;
+        b=I4+eJrNl60ZNQ4sVaWcm1ZtqVLJOIh4RhIqMVply79I2akK/lzqX+L+eX2hQiMATT6xhM0
+        m6f7ME32cw5N/Gse4FZO7wuoqK7qUbPf4pWJ61sTV4ufYmcrF3+RYxTnmkYD7T3Zo+hJ5j
+        kdwDXe/lOcHiqWKZhWWPW25l/dH5lNI=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-448-JsqsyEU7MYiErRpL9QnWRQ-1; Thu, 25 Feb 2021 15:52:52 -0500
+X-MC-Unique: JsqsyEU7MYiErRpL9QnWRQ-1
+Received: by mail-qv1-f71.google.com with SMTP id er16so5196565qvb.22
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Feb 2021 12:52:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=sJgpcpz8JbWE9yNjQ8U8bqTTI3MQeUxSjU+A+WBNGno=;
-        b=W1x1oyJm0YAcpAfRDkBUmv72p1zybQocwoO/wP1dENLwT8P/GfMZcB59gUAxeBi2tH
-         6B+9xodQI4kFr11tI/pfkKtvFWKoW09fikNa1JDqu+63l6OtoGIv+ywWBz3H46SCxr4/
-         ZM2iGdYmOpZa9OCePztMpnm6QzwKhVYrjCxV+OIdjswPredLr0sdJqgT1GDEO+AxMJ5v
-         cSDOW5BNebWWCWLt0yw1E14FcZt3tZW2dGU1GE7yoxOFtZ3CfIWdhEHySQPZCmo1yoEK
-         hqnAOzvUnPiAB5yc686B68/PySQjIyjyf0D8Sbb6rL8r9b1EJ2QCg74d1kSA9vKYvPOS
-         J0Dw==
-X-Gm-Message-State: AOAM531Qp5LEE4EjTqFhEOElAslOR8RT+EPfq3Iyw/whSgzWmGCGmQ96
-        gXhNcnRf6Wtv5JZR6gURSHvc9eoH51LtJx/Upgg3s+/ymNGCjM3cGY/9PjOl2FvBkHmn60Kr/p1
-        AjiW20+Tk1Oo09jRBPfaAt1i8ZQ==
-X-Received: by 2002:a37:d247:: with SMTP id f68mr4676746qkj.187.1614286267785;
-        Thu, 25 Feb 2021 12:51:07 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw5LhdlJsUL0iIi4gSlu38o06OrkQM2ycT5KFnq+Wy5d0l/uDMC6+YahAOSzJOTlEUPreVofA==
-X-Received: by 2002:a37:d247:: with SMTP id f68mr4676721qkj.187.1614286267533;
-        Thu, 25 Feb 2021 12:51:07 -0800 (PST)
+        bh=fTyh/njbTvxGBCwzrRyX2EiAfSR949VElesvFbgeey4=;
+        b=mkErcsHImqC/fzvNHuoBUAvfh7uXpKv9T6ymWoEPYCD/RhsVPoUxW+3l+II+BQNyTN
+         UnoQCk6PIQUlpb/+38Zjg1iL/Udmwe6mCVwfKfCu6ZIwXPNMeF4cMYC2JlVk8UByfQUB
+         Ovn+623rNbPmqgAOfEaSvcO7tMFTTj9AT0zGHWgUN/eogyGR/e+tg+jk6cKCfIXm+mJS
+         eWUvXv1WksBVJGZQaO8866N0TYpghkRkztbTtkPk+QNWAtgrBJ6JDJJmZ0vQjqM+kW+P
+         0pUUJiCYWxNfTHosoPDO0L26TAhgJXxNXRbQ60Bg0WTW8qap1/C+H6SH9wE+C0ziItxZ
+         6TDg==
+X-Gm-Message-State: AOAM530nF1BJAqYOxROcMT2E1S6p9HEjC2zEHWRrajj6kxjX3fzD/8bC
+        ieyiZudKo+il8o/7iLcDyS0Ti8sdErkGyWztWasQ9rdWcjzIbNMdYeMEs8ywWbIE2FyHrIU5f1Y
+        wahPk5GTMpJjd4kVj79r7o8BZ7Q==
+X-Received: by 2002:a0c:aa44:: with SMTP id e4mr4666452qvb.49.1614286372231;
+        Thu, 25 Feb 2021 12:52:52 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyCLajWQUkxvgpgD7t4awfHzseijCI18Fdo3q4NvLoomSopF09Ho/6jtHG7arGIFZ+5QeJm7g==
+X-Received: by 2002:a0c:aa44:: with SMTP id e4mr4666419qvb.49.1614286372014;
+        Thu, 25 Feb 2021 12:52:52 -0800 (PST)
 Received: from xz-x1 (bras-vprn-toroon474qw-lp130-25-174-95-95-253.dsl.bell.ca. [174.95.95.253])
-        by smtp.gmail.com with ESMTPSA id 18sm3820035qkr.77.2021.02.25.12.51.05
+        by smtp.gmail.com with ESMTPSA id w20sm4787394qki.102.2021.02.25.12.52.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Feb 2021 12:51:07 -0800 (PST)
-Date:   Thu, 25 Feb 2021 15:51:04 -0500
+        Thu, 25 Feb 2021 12:52:51 -0800 (PST)
+Date:   Thu, 25 Feb 2021 15:52:49 -0500
 From:   Peter Xu <peterx@redhat.com>
 To:     Axel Rasmussen <axelrasmussen@google.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -82,39 +82,27 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         David Rientjes <rientjes@google.com>,
         Mina Almasry <almasrymina@google.com>,
         Oliver Upton <oupton@google.com>
-Subject: Re: [PATCH v8 4/6] userfaultfd: add UFFDIO_CONTINUE ioctl
-Message-ID: <20210225205104.GA261488@xz-x1>
+Subject: Re: [PATCH v8 5/6] userfaultfd: update documentation to describe
+ minor fault handling
+Message-ID: <20210225205249.GB261488@xz-x1>
 References: <20210225002658.2021807-1-axelrasmussen@google.com>
- <20210225002658.2021807-5-axelrasmussen@google.com>
+ <20210225002658.2021807-6-axelrasmussen@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210225002658.2021807-5-axelrasmussen@google.com>
+In-Reply-To: <20210225002658.2021807-6-axelrasmussen@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 04:26:56PM -0800, Axel Rasmussen wrote:
-> This ioctl is how userspace ought to resolve "minor" userfaults. The
-> idea is, userspace is notified that a minor fault has occurred. It might
-> change the contents of the page using its second non-UFFD mapping, or
-> not. Then, it calls UFFDIO_CONTINUE to tell the kernel "I have ensured
-> the page contents are correct, carry on setting up the mapping".
+On Wed, Feb 24, 2021 at 04:26:57PM -0800, Axel Rasmussen wrote:
+> Reword / reorganize things a little bit into "lists", so new features /
+> modes / ioctls can sort of just be appended.
 > 
-> Note that it doesn't make much sense to use UFFDIO_{COPY,ZEROPAGE} for
-> MINOR registered VMAs. ZEROPAGE maps the VMA to the zero page; but in
-> the minor fault case, we already have some pre-existing underlying page.
-> Likewise, UFFDIO_COPY isn't useful if we have a second non-UFFD mapping.
-> We'd just use memcpy() or similar instead.
-> 
-> It turns out hugetlb_mcopy_atomic_pte() already does very close to what
-> we want, if an existing page is provided via `struct page **pagep`. We
-> already special-case the behavior a bit for the UFFDIO_ZEROPAGE case, so
-> just extend that design: add an enum for the three modes of operation,
-> and make the small adjustments needed for the MCOPY_ATOMIC_CONTINUE
-> case. (Basically, look up the existing page, and avoid adding the
-> existing page to the page cache or calling set_page_huge_active() on
-> it.)
+> Describe how UFFDIO_REGISTER_MODE_MINOR and UFFDIO_CONTINUE can be used
+> to intercept and resolve minor faults. Make it clear that COPY and
+> ZEROPAGE are used for MISSING faults, whereas CONTINUE is used for MINOR
+> faults.
 > 
 > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 
