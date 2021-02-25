@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA426324AF7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:11:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 970B0324AEF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:09:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232763AbhBYHKE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 02:10:04 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:5434 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233329AbhBYHIQ (ORCPT
+        id S233155AbhBYHJ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 02:09:29 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:53171 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233169AbhBYHHx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 02:08:16 -0500
+        Thu, 25 Feb 2021 02:07:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1614237498; x=1645773498;
+  t=1614236873; x=1645772873;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=YIrjN8J8y0s9FmEZoq8v2vDrrP7j1iwQGvx1511RvM8=;
-  b=MiQjW7HrPlWMsC2TtRmm7Kk52bybTugl9IdVDCWlWBOimCfWog81btCS
-   bwNHELFUG0PybaRyWgR1ME1MTPeLlto5yajyBVg37FLBBeVXb89ZkN2H/
-   0vju4/3qIQZINvA71DfxhSNUxKhV41IVcvGNJoN66cPTaVq362CJMwH19
-   +o11TPz6mkjGfLbOx3dgM2QslhIHsaOS+CJdw7SS7YJVer9WfC879BPJB
-   GKrDwyt3n5NaJXQm4RMlzudgoSMQAgcPToVhWatkeOPNXCLW7AkNKFnaY
-   bGPEo7B9A/9jTugMBPlx6TYgqGvOK135gkaHZo4eDi8IBbfAWVDpAFZ9W
-   w==;
-IronPort-SDR: +1h4R6smeg+45su5EgT+5LpN/tx8RcACASjTK+7uTN3Eq/WCEiS1e+AEPKTmhoJ2AfP/Izx7i5
- ZRXNr0wro/EGtnClTz99I9TtXg+4ErO92mshNqRGLdl4aovYi+ahlQNTxeYp2voQMtDg78J1gK
- XpGappSvzU5HF3QkPFuK7U74a3C5OJ/BYQizr2iqjQUtk4sbHi/Ov1ekVcgHgU9nkkyQf+jidZ
- clCge735Igtza8PsUQ/blapcxnHmXOfSuafujOn8iy5IrmusC5rSnKdJmOPRKsLl5yKyRfnwSh
- mNU=
+  bh=SC0pXVUCDuaPbg+F0lWxh72IEBX9ZhX5hajRxPIkVPU=;
+  b=pAhZPr0Arm7V5sKxUnWamD5hWEWw4DuckhDm2ALM0LeXH2sX3ladTrDR
+   UT6R4q3kf5BefyvKCYNpvTrjoxtCkQfeA7az7iGzZzrQJ2BpUBaM+C2y0
+   Q7rZ2gBgKF70ZcXtETOvB9WScshgTHCWxb0nPCIhY44K1lhgPhwC32tGf
+   JpP+Zrt+L72wloBahBmXSoDSL1iLh52BvrvhlDA8q9ZBZSgbtzELp6oy/
+   O2YauWXEWeaSkjlEg/HIWm2Ji7YtXtTXROEsmrLPmCZbG7QPK38H9FF9v
+   KPxW/87v0BxECPeDNb0tqqIOO0UNZ77jLz5s3SbigPGU/9Dc7SZD5BPjQ
+   g==;
+IronPort-SDR: 4K/2Qj4LqJKPs+drCu7XeWEux3OU1EysjFUzX/bIiMjIODfdNLBMjE/9UoMmgoW7X1kHyqVclH
+ jagyonPEnAU7fKe/06JhuZCThZSbCwFG6Jp8VKFi65zaG0ktHU8kyky4zCsQztnjfauO1zAZTF
+ ydaGjYh2/6vBeRADfu+1CN+lFX1h7FhhM5DBL05OKFE34SlgfSShZ0gL5vzFpqCc6dWSaBD43b
+ sp50W+dhWV+rvFItsLa4dJzmEuPwdSu+AAU4ejAN+xAcqMJRPwlIOUOO2KTj4/oHNtIqUm833q
+ qYU=
 X-IronPort-AV: E=Sophos;i="5.81,205,1610380800"; 
-   d="scan'208";a="264978989"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:15:28 +0800
-IronPort-SDR: VrXXPoZ0VK1+WM50WzFRfyWMp2fT1hrjepAOm2JxRphdwh8LW+C5uTm5ijPRKv+tmm9dqDQ4yj
- ICTHTW05Ago1uYemcPrv0T785EIxJTiIFMRTnQBUi3zdpy4X6Oo2E2HbfLzZlggBAB2cMH9S3Y
- G0BF5LcWbAr4jNS9XcG/fejoa+IsQ7itBEmXUw8RUa7xrIKQuu/H7bEV5BnvfkwbPlDZl47FsA
- IHgM8fN9Hl93wg4PiwIupdKqGsbETvnRLOyvWZi1wUccmI2zbVNh86HppUNvh8Noq3357sZYt1
- /i8Rf8wK+MJ+bz0COlGFvD4A
+   d="scan'208";a="160778025"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:06:31 +0800
+IronPort-SDR: O2EYhLQUJDq6JMLiMDc3GXjzcxEvV8vQn5QAFER9XsLRQgoUkkWth52FKcRaJNfGWGHYSb5UaN
+ SHj8gSb02B6I5qLx0ZMO7sm2jedqI94wYYQrlXAnffUY86yV1FEOtcuwmHbw7GXFH3396Hw+mT
+ D2+YGX1qupZcNe8Y9YnyAdd5yYiYKMhuVEF1Y0tOSko1zgDV6d8uwnEXSQRDe4moJ0tepZvT19
+ gbdE2al46mtw3y6eWtBrOyMZPTCMBiIA+LdAF+L0lR75TZ/QzR9B9UL/aE/Y865Ys8weUyegcg
+ 6mRXiYQ46nNqUnijvr6bJMMg
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:47:44 -0800
-IronPort-SDR: Snxudnct31WEUyWcEiTZX+P6QojNkpwGT+jQAojQqESUryUG5GpUnkVB9ppN/nGdzexmeRFF2m
- cGymp1c/Pijje14xIa4B6T5W89XjAfpk0KKPe3zY4/iAsWwdcIyYnnL3ESfOUMJRXDniuPA37R
- W74KpFbSiE4/s6fCcTJ+UNdNZ6A/AHxodIpRG2KekabU1hWc9qCACB10Y+lxrDP6eN+znsZBs/
- eKkXyhyl7u6KTmIh/TXpHsgPQXJ8DcIyTU/ct67pU0UmoAJLnym/jcI+XwIayYlrT3ZIuK0tBz
- Cuk=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:49:46 -0800
+IronPort-SDR: 5UjRW13wELQaoILvjTuJW1uTQ2Reo7QcTwFg2ymZEjUdyxbflF4kqglXRB7TbrN679yLIo/9eh
+ LtbOIm1qTpRdn4iXSBx9rNuewZfhwkWo3tWtVc/amVN45ND5g5qeuuS36hANy2pefoezaHLEQT
+ ox9ILkFA+vIKM1c0jmUBZgnXs2Dp/DvZRqxGqydoWJhyxwQI06CUJMCm2u8AlI47ihwtGu3RqP
+ 8qwPUdC+DYY8DXJhe1GbM6F++EZP7fspwojPhxAdwa3OtOLVFsi841xwGQb8ii21s4Fq4W/aVp
+ 5A0=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:06:23 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:06:30 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         mingo@redhat.com, chaitanya.kulkarni@wdc.com,
@@ -57,9 +57,9 @@ To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         aravind.ramesh@wdc.com, joshi.k@samsung.com, niklas.cassel@wdc.com,
         hch@lst.de, osandov@fb.com, martin.petersen@oracle.com
 Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 26/39] blktrace: add trace entry & pdu helpers
-Date:   Wed, 24 Feb 2021 23:02:18 -0800
-Message-Id: <20210225070231.21136-27-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 27/39] blktrace: add a new formatting routine
+Date:   Wed, 24 Feb 2021 23:02:19 -0800
+Message-Id: <20210225070231.21136-28-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1.dirty
 In-Reply-To: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
 References: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
@@ -71,120 +71,82 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- kernel/trace/blktrace.c | 55 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ kernel/trace/blktrace.c | 57 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
 diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 1f9bc2eb31da..84bee8677162 100644
+index 84bee8677162..2241c7304749 100644
 --- a/kernel/trace/blktrace.c
 +++ b/kernel/trace/blktrace.c
-@@ -1728,52 +1728,107 @@ const struct blk_io_trace *te_blk_io_trace(const struct trace_entry *ent)
- 	return (const struct blk_io_trace *)ent;
+@@ -1722,6 +1722,62 @@ static void fill_rwbs(char *rwbs, const struct blk_io_trace *t)
+ 	rwbs[i] = '\0';
  }
  
-+static inline
-+const struct blk_io_trace_ext *te_blk_io_trace_ext(const struct trace_entry *ent)
++static void fill_rwbs_ext(char *rwbs, const struct blk_io_trace_ext *t)
 +{
-+	return (const struct blk_io_trace_ext *)ent;
++	int i = 0;
++	int tc = t->action >> BLK_TC_SHIFT_EXT;
++
++	if ((t->action & ~__BLK_TN_CGROUP) == BLK_TN_MESSAGE_EXT) {
++		rwbs[i++] = 'N';
++		goto out;
++	}
++
++	if (tc & BLK_TC_FLUSH)
++		rwbs[i++] = 'F';
++
++	if (tc & BLK_TC_DISCARD)
++		rwbs[i++] = 'D';
++	else if ((tc & BLK_TC_WRITE_ZEROES)) {
++		rwbs[i++] = 'W';
++		rwbs[i++] = 'Z';
++	} else if ((tc & BLK_TC_ZONE_RESET)) {
++		rwbs[i++] = 'Z';
++		rwbs[i++] = 'R';
++	} else if ((tc & BLK_TC_ZONE_RESET_ALL)) {
++		rwbs[i++] = 'Z';
++		rwbs[i++] = 'R';
++		rwbs[i++] = 'A';
++	} else if ((tc & BLK_TC_ZONE_APPEND)) {
++		rwbs[i++] = 'Z';
++		rwbs[i++] = 'A';
++	} else if ((tc & BLK_TC_ZONE_OPEN)) {
++		rwbs[i++] = 'Z';
++		rwbs[i++] = 'O';
++	} else if ((tc & BLK_TC_ZONE_CLOSE)) {
++		rwbs[i++] = 'Z';
++		rwbs[i++] = 'C';
++	} else if ((tc & BLK_TC_ZONE_FINISH)) {
++		rwbs[i++] = 'Z';
++		rwbs[i++] = 'F';
++	} else if (tc & BLK_TC_WRITE)
++		rwbs[i++] = 'W';
++	else if (t->bytes)
++		rwbs[i++] = 'R';
++	else
++		rwbs[i++] = 'N';
++
++	if (tc & BLK_TC_FUA)
++		rwbs[i++] = 'F';
++	if (tc & BLK_TC_AHEAD)
++		rwbs[i++] = 'A';
++	if (tc & BLK_TC_SYNC)
++		rwbs[i++] = 'S';
++	if (tc & BLK_TC_META)
++		rwbs[i++] = 'M';
++out:
++	rwbs[i] = '\0';
 +}
 +
- static inline const void *pdu_start(const struct trace_entry *ent, bool has_cg)
+ static inline
+ const struct blk_io_trace *te_blk_io_trace(const struct trace_entry *ent)
  {
- 	return (void *)(te_blk_io_trace(ent) + 1) + (has_cg ? sizeof(u64) : 0);
+@@ -2514,5 +2570,6 @@ void blk_fill_rwbs(char *rwbs, unsigned int op)
  }
+ EXPORT_SYMBOL_GPL(blk_fill_rwbs);
  
-+static inline const void *pdu_start_ext(const struct trace_entry *ent, bool has_cg)
-+{
-+	return (void *)(te_blk_io_trace_ext(ent) + 1) +
-+		(has_cg ? sizeof(u64) : 0);
 +
-+}
-+
- static inline u64 t_cgid(const struct trace_entry *ent)
- {
- 	return *(u64 *)(te_blk_io_trace(ent) + 1);
- }
- 
-+static inline const void *cgid_start_ext(const struct trace_entry *ent)
-+{
-+	return (void *)(te_blk_io_trace_ext(ent) + 1);
-+}
-+
- static inline int pdu_real_len(const struct trace_entry *ent, bool has_cg)
- {
- 	return te_blk_io_trace(ent)->pdu_len - (has_cg ? sizeof(u64) : 0);
- }
- 
-+static inline int pdu_real_len_ext(const struct trace_entry *ent, bool has_cg)
-+{
-+	return te_blk_io_trace_ext(ent)->pdu_len -
-+			(has_cg ? sizeof(u64) : 0);
-+}
-+
- static inline u32 t_action(const struct trace_entry *ent)
- {
- 	return te_blk_io_trace(ent)->action;
- }
- 
-+static inline u64 t_action_ext(const struct trace_entry *ent)
-+{
-+	return te_blk_io_trace_ext(ent)->action;
-+}
-+
- static inline u32 t_bytes(const struct trace_entry *ent)
- {
- 	return te_blk_io_trace(ent)->bytes;
- }
- 
-+static inline u32 t_bytes_ext(const struct trace_entry *ent)
-+{
-+	return te_blk_io_trace_ext(ent)->bytes;
-+}
-+
- static inline u32 t_sec(const struct trace_entry *ent)
- {
- 	return te_blk_io_trace(ent)->bytes >> 9;
- }
- 
-+static inline u32 t_sec_ext(const struct trace_entry *ent)
-+{
-+	return te_blk_io_trace_ext(ent)->bytes >> 9;
-+}
-+
- static inline unsigned long long t_sector(const struct trace_entry *ent)
- {
- 	return te_blk_io_trace(ent)->sector;
- }
- 
-+static inline unsigned long long t_sector_ext(const struct trace_entry *ent)
-+{
-+	return te_blk_io_trace_ext(ent)->sector;
-+}
-+
- static inline __u16 t_error(const struct trace_entry *ent)
- {
- 	return te_blk_io_trace(ent)->error;
- }
- 
-+static inline __u16 t_error_ext(const struct trace_entry *ent)
-+{
-+	return te_blk_io_trace_ext(ent)->error;
-+}
-+
- static __u64 get_pdu_int(const struct trace_entry *ent, bool has_cg)
- {
- 	const __be64 *val = pdu_start(ent, has_cg);
- 	return be64_to_cpu(*val);
- }
- 
-+static __u64 get_pdu_int_ext(const struct trace_entry *ent, bool has_cg)
-+{
-+	const __u64 *val = pdu_start_ext(ent, has_cg);
-+	return be64_to_cpu(*val);
-+}
-+
- typedef void (blk_log_action_t) (struct trace_iterator *iter, const char *act,
- 	bool has_cg);
+ #endif /* CONFIG_EVENT_TRACING */
  
 -- 
 2.22.1
