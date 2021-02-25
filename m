@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 032D9324AF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:11:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2764E324AF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233604AbhBYHJy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 02:09:54 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:4505 "EHLO
+        id S233329AbhBYHKI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 02:10:08 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:4515 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233313AbhBYHIP (ORCPT
+        with ESMTP id S232923AbhBYHIZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 02:08:15 -0500
+        Thu, 25 Feb 2021 02:08:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1614236894; x=1645772894;
+  t=1614236904; x=1645772904;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Y4ZxvW+ayhHo+JhxLWhJUQIwkempqxmtM6LSOEmI9U0=;
-  b=fVNgFb6ozWWJTy0yKoGb0uZSfKbnWL0f7I4uDRP0HzhBa4n2/pNcACMV
-   C9wkYJs27QGXf/MBIa/Lsuo+XgEiHAUipivhMElc356BdkwMlw4bno9CJ
-   LJHDJN/6t5+DYlnr4gG1Bl2CEjD5ARnfHgSfxA+yCfggnr4HFJvnocqck
-   AoW3H7y3XG5i8AWWyCdq3i/dWKJybL4l+rhoornAoJA/2ktQFgBjNzhES
-   hzfByd5DWlI0QwauAKcuA+yz60g0+8g6CULwjnoDfLmJpp4J3LIfUyfvO
-   ffkG+aVWlTShpIppcCmUPv25qRWp7uAPrS78kRI4DDMcP9cqtzC7YQn0F
-   w==;
-IronPort-SDR: cKwTNKHJdtYesXwxvdp9PJ8iFBkMpATR/ERmgsbLfgMRnFbXb7cMbUiBIO1SF2IpTjcDdcM9Zj
- B6KT6ynpsCc5RyzJz+RgW8e/YJbT4nmI0LTs8AYgAl4zZepg/+2UROnH4QiO7nFMYfP1Va5Bmp
- E5RtrmU7CsfC6cKX08yZcF6VXAvkKJcl/+S+l4NhCKvmoEXYMVzA3PBX1YxYCrzq7LLfBUiCiT
- WXnlPK190JHjzk6UjdVoQPEGqSGbKEGEdDibtFv3OfFAZn2jqvPreUhqxFWkgETfpDxeBJB9sF
- WFE=
+  bh=1hBv8Gu4qfS+3fsLLBjregm8reryLOBw/ybrB5vLfFM=;
+  b=hh5BCxDhIdlQRkZEY1Z9QFxD1q9NNgXT8qPgJrWO/6BvpW9bmgNlFhiB
+   MrIo9CiQBLCDHfZ/sD9/pwM5Fr7VKvBc0XNw2XBcq31+Iuv4uoD0TF44i
+   9/NlCgjEmN5XD7ugd63gLcNPEeCiguPE4glemmPS7CMBRuv8KtngY+f6h
+   GSdaxTfT37Ms3yKHVpnsS8JTH8HEv0/EkXaG6IN0pqtau2wvtxROszRp/
+   Of/XsnrdO9lQ5PnwTFq1iBDJK02NRD5+F83U5opVfOj24634+0IUysv55
+   59/RjIlVBGB9CgDpHyqa7/GbBIZDYOouJecCKStuX19a9IsAsWrGbDJ3o
+   Q==;
+IronPort-SDR: zGxBJxxQrDDdC0ucph/RfmrlfTaJvE+vEAn7evILrLtpVlg7CLKRZz/edzmU0NvDAUEb6tNgza
+ E+WHAPtGfA2RjAZm6kJrmb1ylw75scoJs52w2Q8UsRiIqfrCSOKBcilpJW7MHg/a+cfY1gpQMH
+ 3T3kOJ1uv3hsjVnFBnTm9QiO+9qcUEVzKfIGpP5f55Wno3gTeEdPfhYSv/3fWyMQ5ytgIfa0Me
+ ImfBWYUzGaCRYRTjfdrTD6aWz44gXJylxAriv3jcc/E0xsvClaF2eAADlnVKpmFBJiVF31eIKT
+ +oA=
 X-IronPort-AV: E=Sophos;i="5.81,205,1610380800"; 
-   d="scan'208";a="271319235"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:07:09 +0800
-IronPort-SDR: 6BnNq8mRGyniPz3Z59aufhkAqmuqxse+AVTYkAz7xkQg5YUjFFxp1gES2D2DdWLP712qOxv5xo
- wkmh9q62nRVHfuFRNJi8ajxO3agjKiudauFhY9CLhKspZZofhoULc2o59xGsc77LknvRYvaFPW
- L7Ypo52FEtvdvKP4Z61aK4lWO/0QhJ2bHCbLHNMELlHDOd6r/AAvU/YoiD/09mIPPE6uMnBCtm
- GIshfP2rys2W9wdG/yctlrPBj7g8d3HBhvg7zROEEcrrEnvpytr5cvmwDwAMoI2JJvQyEJtjN8
- PmzAVd90Zl8J8qC+YnPO0pgB
+   d="scan'208";a="271319252"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:07:16 +0800
+IronPort-SDR: 0uoramwMAK5nO91+krnq9wy/JMpUFv2o1OEjLhYsBd5x7eVLqwrULfT9e17H8RSvM8uVXIpzjR
+ YOVMek6wUTsV1o8bP4ADpc1X8Jliocjjqf7V33QUWHVGME77lW2jXX6zap6le14+b68SuvyfuC
+ 7gvCorzsUIxhBRB7XSh/3GSoJhlIDFCNQbzjl0Vhn9q0m8yLB5qOjmM1sYcjFm8fpHns+mNQ7U
+ Yhvq8/1d0CCZNVyhYHL4EuoEPeTmguALgfKQBYBDmUOqu+F662Lz0ymVvmBdlFog0qYMBapGSh
+ jWTuzAZMax5D+/q+jLRVy9TY
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:50:24 -0800
-IronPort-SDR: 7NUV+Cljl9oT4cLlsofGNqrp91SRWL5KA8y94YS21VX5HfaeRc0Q+3IMfMw9+DVNuEar5q/nlh
- 7uTK2K0YrC357grRwbRvwnyXiubonoHUz3TBBEBvCeYSjQsPf7X0uZtCo0vAwIKkM4aH4uRFTD
- v42ww5buVuYpM99na2F3dZkv8bCVNZ9WTpf+ixT8YDXk7nrIXIOWvfWcQKYR1AJ/GdjI+8epEk
- 7s8DuNwWmt+scDCfXP0Hg/PyFvLKDrwz57XTh5LVOVGdwVM/oqZa3JSth1SvQ3q7NyIAmiDsaF
- VSc=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:48:38 -0800
+IronPort-SDR: tTkqodW0+y/1iCCApd6wfSVWRetFjKjxI+gnXFyP8IMFdCZjLziwK1eUJixyaalCKBKexVMApX
+ LtQx1fqtoA7r9H96areCy7K00hwXk1fvRlf2QB6iNDw8vM+1a+UfN4Gnp2EPhcmr+MILCQgeNq
+ +G/bBLGGkQdlkz7o92uszxZY1V+h/BJXGshCY8ykmt6h0+ob0lVROC//GO7OSxzyg+L47/fUS1
+ cmHfxubD+Sxz831jFiWZjQgyibvUF9kyZXBG1uBascPLcwKdTN74/jcSo/GQdLYMRfFdiAXtP3
+ ZOQ=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:07:09 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:07:16 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         mingo@redhat.com, chaitanya.kulkarni@wdc.com,
@@ -57,9 +57,9 @@ To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         aravind.ramesh@wdc.com, joshi.k@samsung.com, niklas.cassel@wdc.com,
         hch@lst.de, osandov@fb.com, martin.petersen@oracle.com
 Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 32/39] blktrace: add trace print helpers
-Date:   Wed, 24 Feb 2021 23:02:24 -0800
-Message-Id: <20210225070231.21136-33-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 33/39] blktrace: add blkext tracer
+Date:   Wed, 24 Feb 2021 23:02:25 -0800
+Message-Id: <20210225070231.21136-34-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1.dirty
 In-Reply-To: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
 References: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
@@ -71,44 +71,101 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- kernel/trace/blktrace.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ kernel/trace/blktrace.c | 47 ++++++++++++++++++++++++++++++++++++++---
+ kernel/trace/trace.h    |  1 +
+ 2 files changed, 45 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index a904a800b696..53bba8537294 100644
+index 53bba8537294..f707ebde0062 100644
 --- a/kernel/trace/blktrace.c
 +++ b/kernel/trace/blktrace.c
-@@ -2440,6 +2440,15 @@ blk_trace_event_print_binary(struct trace_iterator *iter, int flags,
- 	return trace_handle_return(&iter->seq);
+@@ -2490,18 +2490,42 @@ static struct tracer blk_tracer __read_mostly = {
+ 	.set_flag	= blk_tracer_set_flag,
+ };
+ 
++static struct tracer blk_tracer_ext __read_mostly = {
++	.name		= "blkext",
++	.init		= blk_tracer_init,
++	.reset		= blk_tracer_reset,
++	.start		= blk_tracer_start,
++	.stop		= blk_tracer_stop,
++	.print_header	= blk_tracer_print_header,
++	.print_line	= blk_tracer_print_line_ext,
++	.flags		= &blk_tracer_flags,
++	.set_flag	= blk_tracer_set_flag,
++};
++
+ static struct trace_event_functions trace_blk_event_funcs = {
+ 	.trace		= blk_trace_event_print,
+ 	.binary		= blk_trace_event_print_binary,
+ };
+ 
++static struct trace_event_functions trace_blk_event_funcs_ext = {
++	.trace		= blk_trace_event_print_ext,
++	.binary		= blk_trace_event_print_binary_ext,
++};
++
+ static struct trace_event trace_blk_event = {
+ 	.type		= TRACE_BLK,
+ 	.funcs		= &trace_blk_event_funcs,
+ };
+ 
++static struct trace_event trace_blk_event_ext = {
++	.type		= TRACE_BLK_EXT,
++	.funcs		= &trace_blk_event_funcs_ext,
++};
++
+ static int __init init_blk_tracer(void)
+ {
++	int ret = 0;
++
+ 	if (!register_trace_event(&trace_blk_event)) {
+ 		pr_warn("Warning: could not register block events\n");
+ 		return 1;
+@@ -2509,11 +2533,28 @@ static int __init init_blk_tracer(void)
+ 
+ 	if (register_tracer(&blk_tracer) != 0) {
+ 		pr_warn("Warning: could not register the block tracer\n");
+-		unregister_trace_event(&trace_blk_event);
+-		return 1;
++		goto unregister_trace_event;
+ 	}
+ 
+-	return 0;
++	if (!register_trace_event(&trace_blk_event_ext)) {
++		pr_warn("Warning: could not register block events\n");
++		/* unregister blk_tracer */
++		goto unregister_trace_event;
++	}
++
++	if (register_tracer(&blk_tracer_ext) != 0) {
++		pr_warn("Warning: could not register the block tracer\n");
++		goto unregister_trace_event_ext;
++	}
++out:
++	return ret;
++
++unregister_trace_event_ext:
++	unregister_trace_event(&trace_blk_event_ext);
++unregister_trace_event:
++	unregister_trace_event(&trace_blk_event);
++	ret = 1;
++	goto out;
  }
  
-+static enum print_line_t
-+blk_trace_event_print_binary_ext(struct trace_iterator *iter, int flags,
-+			     struct trace_event *event)
-+{
-+	blk_trace_synthesize_old_trace_ext(iter);
-+
-+	return trace_handle_return(&iter->seq);
-+}
-+
- static enum print_line_t blk_tracer_print_line(struct trace_iterator *iter)
- {
- 	if (!(blk_tracer_flags.val & TRACE_BLK_OPT_CLASSIC))
-@@ -2448,6 +2457,14 @@ static enum print_line_t blk_tracer_print_line(struct trace_iterator *iter)
- 	return print_one_line(iter, true);
- }
- 
-+static enum print_line_t blk_tracer_print_line_ext(struct trace_iterator *iter)
-+{
-+	if (!(blk_tracer_flags.val & TRACE_BLK_OPT_CLASSIC))
-+		return TRACE_TYPE_UNHANDLED;
-+
-+	return print_one_line_ext(iter, true);
-+}
-+
- static int
- blk_tracer_set_flag(struct trace_array *tr, u32 old_flags, u32 bit, int set)
- {
+ device_initcall(init_blk_tracer);
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index e448d2da0b99..8bb010753a17 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -42,6 +42,7 @@ enum trace_type {
+ 	TRACE_GRAPH_ENT,
+ 	TRACE_USER_STACK,
+ 	TRACE_BLK,
++	TRACE_BLK_EXT,
+ 	TRACE_BPUTS,
+ 	TRACE_HWLAT,
+ 	TRACE_RAW_DATA,
 -- 
 2.22.1
 
