@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2184324AB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5152324ABD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:05:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229919AbhBYHEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 02:04:55 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:61594 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230165AbhBYHE0 (ORCPT
+        id S231960AbhBYHFB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 02:05:01 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:40841 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229566AbhBYHE3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 02:04:26 -0500
+        Thu, 25 Feb 2021 02:04:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1614236667; x=1645772667;
+  t=1614236668; x=1645772668;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=d651v85zCDRiBFcpLwJk/4ElAAp+r9REzayoZ1T+uy8=;
-  b=S9ZrQrSe/0YdgP5VVm4QV/zYpsco+cWXJwQEslte3kJhxOPq/QhVibGC
-   AK8UdFfbP4gLWw/Olv/0D28Zj+EhuvO+uwo4gZbkGY25EHSmAaXRxxLg+
-   r+lSNVVpc0rIJgpdCOR2NJ+pHijKDIGzAa1LgnJIwMXPza72QyH49434o
-   2LQrXX83G7ljetVSOc58bHa4DzzW0qCCCQ5A0DJRN0FD7Iqfu8KMDuEXY
-   Jio3R2QoU9+fJ8CIubd10l4xryDKTHVrGbRj71fNpOIYhR7ynnTrYYw39
-   DPhKPqOfkBt1b8BisFTgqzc5X7JPDMSDAJZKeLlLChoDuGxSnNiDqEFU+
-   Q==;
-IronPort-SDR: Fh/jv3+oTnM1C1PGV6JsYQ1TI/v1a9vY6fW2v6FHc0i7mIXrMFaqbT6J2DIYG4TlCqjKJjpsDJ
- 4CewgS7EnaEDZ+zIoYy7Y9csPItnoo8RnreTG9p2pWCBOpppx/6caCZpvnWIhzB6isPhqKJgSx
- lwRjLFSdOHzpQ5kmvhnH56pKwQCH4LymaCxSNMdpDdaC4r2gVwWn/mUXtSBPfQYSlFNfdRCHls
- zMu2NPNzonOc4mhmXtZx7kmQW3V/fMcrLsI/grRNLbOKmQH5dY31SwwxIxMhE9SAtPKg095HG5
- Eho=
+  bh=YqyjlzPNQjTMRjOk6Mtz4VEUf84S5Nuxb+VjgSMGlAw=;
+  b=UaW74+j7pQoSpS/9ZXr8d6w1v/HAU6NP/MjOe2QBVb1gcwN3KsrCy5vl
+   Qj5oauJsrKV/PMs/0CaWknZ118X2yyUI7fCdSbAeLCFu6TchQKoNUzptn
+   JpxFn0YnsG5gCD6fGuhd70RwENr22RgKXO6bNcDbvHmm5MYxTAsIgCZhV
+   jZ9a+L3pNhVQ4ztOaz1EMccu38MuMnWbABByrot3qZclhow4ut8gDZb2P
+   FlyQswkdmaq9byyN/AA7MuIpS9WPtL2yUdd1yhfGbDVq9ir07vjUnMiXG
+   gN8Cvz53Vm6HbjYpk01rc4x6+AR5GPOanf7Yq5qd7NVHj+Ac3Qw4SLcWX
+   g==;
+IronPort-SDR: vug1FgfP955B5CgApzZts6lfg3uSpKmH1ZpKE0jCyG+0atOc4P3lagz4LCM3+amho/wmhFnj/z
+ TVlTYxWR/yQWAInDOyK3dl5SysX8BIJ4AG0Wx1zl5327PatURRKBKciZTiK7XBmB67spJXJuCm
+ 7YEFliVsraMMgqF07T62tIz+M/wBulXC6SZP1+AJcglyuWbk4XGkeV/BHtVDwtLf+F+o/oTbXT
+ tJDiX6eLrR0DUNamm+evd8chNZU9p5wPAOUeZH0QzpxPknT1SVMy7fthl0g1d3eL/JItdWLwUl
+ lH4=
 X-IronPort-AV: E=Sophos;i="5.81,205,1610380800"; 
-   d="scan'208";a="161931329"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:03:12 +0800
-IronPort-SDR: 09yDS0cB5LCtQmX/ZybKorEU7GvQnGqxdFAb6qA2AxABInOExbD/xKRSl/mKEZPZUjMn+nkMjp
- bOsQl+7JlEG4uq7EvNmFy8bAPu7fn1jYeNwCDL4wCUWvyJJ3QP+aVTLkYBjZ7PslYK1rUuCbl9
- 2lxZg4leiWht117q+XutvXjWDIAEkMxplVHX9ffPwEg7ytINJWEmJfgsoNzmFJgz/0zUk7b25a
- 1EFrMT+FGDvldk38yz9n9qID5P6CLqkUfxv4QSDs47wQ8kuIP+GsyB4M4upTmrBNiVNBfe0ifM
- rCQb43/N9k7YxCx5zGQNEFuW
+   d="scan'208";a="271318941"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:03:20 +0800
+IronPort-SDR: XHoA/padyu3eAVe0wow4xq6KZprJeYXDVXB4pj95VJutdAhbIuubARBKCu01iQJ96f/gJmiKOr
+ 0YRA4B0L0J/SSWjZNJ3ttdKDEUWiQNlMN9xq0NdvnCumxNDYk8fNzx2xkhA0a6zNzxdhIqL1ko
+ lY5HNNnnOAo6HLH9pgg6fx3NiSTONtKr38Q/KlLCB8c4vCkQEpWqyj+642eILq1/Cjagy/MOzF
+ 2j3qQvkYKBPrn4FYD8MvyABohLsxy7+3/T5HZuHLOdfHWg23f2eHQyFcgHReg9LTuBr6p1rXrO
+ aCVRKdJcIWwG5XcP++/6hcWH
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:46:26 -0800
-IronPort-SDR: 9iMZnrTBci9VBgi7qsOF6VGkQpmaHLHmW4QDyTlgIRxHhfj0xFHTkrxqZ9A4lnEsRqL1UwmCrR
- lK5sDvsne+COA3w8XYPFoZ7tQUVYgBDYBK/bEIMv2V66DRwIw1BHkzuzznYX7DYqXRpUR9NMTL
- 5JvNmkqY0n4U03edOc/1VVYKiQ7hNg1Qxsy8XxusK4qNEQheFOea95/0XPHi2PiBbfHcmIl/ro
- MsLIe8WLtJ/4k5Ks2lPJFXDICD5x/w1lpkuZn9Rk48yIfT6LnlmjKidHiKR/j2TpDwSkN5X7zW
- Yr0=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:44:42 -0800
+IronPort-SDR: /hjG3Gw3NpTQ7UoUXCey8Agu3ljuUiBGQbfO/EQmLCyI3xHTR+KfpB6Ii8FPxyUgbB9CzPKL5e
+ jOjj/xsxrWHba2EZ5XZzyczE9szDplFR2ahNG1oBXxUF8WewA0ygQULv7KFgEbkVwrHK/4hviY
+ rF2Qn1uxI7XfZg7jwODu5qkMedGLnhN3bDYrNMrUgRS9rsMCmOJ71HgIMuubzv4Bj1wC4P9OJN
+ 83KMkdikvEDTK7AHfzBtbOiLI6VmAs6pgFusE3ewldgarFDhYJ8fXuDCh+ESsDuDQtFInhpeFV
+ 9wI=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:03:11 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:03:20 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         mingo@redhat.com, chaitanya.kulkarni@wdc.com,
@@ -57,9 +57,9 @@ To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         aravind.ramesh@wdc.com, joshi.k@samsung.com, niklas.cassel@wdc.com,
         hch@lst.de, osandov@fb.com, martin.petersen@oracle.com
 Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 03/39] blkdev.h: add new trace ext as a queue member
-Date:   Wed, 24 Feb 2021 23:01:55 -0800
-Message-Id: <20210225070231.21136-4-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 04/39] blktrace: add a new global list
+Date:   Wed, 24 Feb 2021 23:01:56 -0800
+Message-Id: <20210225070231.21136-5-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1.dirty
 In-Reply-To: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
 References: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
@@ -69,25 +69,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Update a struct queue with block trace extension.
+Add a separate list to hold running extension traces.
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- include/linux/blkdev.h | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/trace/blktrace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index c032cfe133c7..7c21f22f2077 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -533,6 +533,7 @@ struct request_queue {
- 	struct mutex		debugfs_mutex;
- #ifdef CONFIG_BLK_DEV_IO_TRACE
- 	struct blk_trace __rcu	*blk_trace;
-+	struct blk_trace_ext __rcu	*blk_trace_ext;
- #endif
- 	/*
- 	 * for flush operations
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index ca6f0ceba09b..e45bbfcb5daf 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -36,6 +36,9 @@ static bool blk_tracer_enabled __read_mostly;
+ static LIST_HEAD(running_trace_list);
+ static __cacheline_aligned_in_smp DEFINE_SPINLOCK(running_trace_lock);
+ 
++static LIST_HEAD(running_trace_ext_list);
++static __cacheline_aligned_in_smp DEFINE_SPINLOCK(running_trace_ext_lock);
++
+ /* Select an alternative, minimalistic output than the original one */
+ #define TRACE_BLK_OPT_CLASSIC	0x1
+ #define TRACE_BLK_OPT_CGROUP	0x2
 -- 
 2.22.1
 
