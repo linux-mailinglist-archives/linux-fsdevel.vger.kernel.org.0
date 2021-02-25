@@ -2,59 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B3E3247ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 01:29:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 584A73247F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 01:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236438AbhBYA2z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Feb 2021 19:28:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42948 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236420AbhBYA2h (ORCPT
+        id S230467AbhBYAfg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Feb 2021 19:35:36 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:36452 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233266AbhBYAfd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Feb 2021 19:28:37 -0500
-Received: from mail-qk1-x749.google.com (mail-qk1-x749.google.com [IPv6:2607:f8b0:4864:20::749])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBAEC0617AA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Feb 2021 16:27:21 -0800 (PST)
-Received: by mail-qk1-x749.google.com with SMTP id y64so1833505qkc.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Feb 2021 16:27:21 -0800 (PST)
+        Wed, 24 Feb 2021 19:35:33 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11P0OfnT187844;
+        Thu, 25 Feb 2021 00:33:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=1MFeS0U+Khi95zmt9OhQUEMylerL7n4+Tuxols/VvYc=;
+ b=cmtzwPsUqHaaAZQaQjZCEHiA3VLjv3ZYEkyvMZ7rtIbnXoB5Refh6YYCxiM5cufPwQQU
+ qcqRQ/a/YsVly8vBqykxec1ABLMba2iWzrYT4Ua94altCFvH62CFesHTbZsTRDiQHVgJ
+ xYt4q8YCIRnSlMAi9JkbNJbJigP2dcP5WeXUdbUCECaidQ7GLP250vxoqpyLJTohT7ZS
+ 4L11QqOArrGC03CIXjGqZb44hV3itERA0vptxgXTae3oVl6E9m3W1mUYex3Ax2sCp2wK
+ AIqq7l76AuufmHrguukF4T8Wws6DXanE5quUoTWEQh+VdFb17AwF2H/qlcD+JEMzjNMq pw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 36ttcmcsu4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Feb 2021 00:33:58 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11P0QZoj181514;
+        Thu, 25 Feb 2021 00:33:57 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2171.outbound.protection.outlook.com [104.47.58.171])
+        by userp3030.oracle.com with ESMTP id 36ucc0j5mc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Feb 2021 00:33:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ctESuY9UOqSmMLteQ6gkSfPWLnS6j7v6PXwKtoVtDcNc9+tWg1qSq0bxYosOTg560/60pqJgbdcFAQwuPc4+n95n3I5LHKjwAEuVcAIqzT5Mtaqu+hlKfW6nZzy5kOuDddiPzDnuZ4h84mkY9QDv5yCKTIJkZTD33b3rO3lHXoXm2b3Ad63P8/2sG5UDZTzziD2yvAjkUt9oM+nznIW5TyXE6pG/niY9GupWBSh1OhW9gAY4YRdy4ToH232sHr2MDMCFjfPaE3q9R84c1TR5FLEmu27QxzWh8AKvmHwsp0ff3Tu4J+ucKbQI7327aoPa9u+UxBCH0HxQNb1GEbsdzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1MFeS0U+Khi95zmt9OhQUEMylerL7n4+Tuxols/VvYc=;
+ b=i8ysAp3IgESZSrfLJKGFdYLlEU/uLrEyZdL1V8U7NhddisHlsM5f9ToOVCBm0MrCg7ZqWOXjTRhB31EGWYOuKAwRdoX8HqeH+1k9v8xKX000DDkFqyshevxkzj6mfK4p42Q5xFqYjQGpKYCTK7K3agL5YTdu9Jqgr+M0zNvXV+Nh3ecreqdodNx70BoNCC22Nrr7WlvmjzE+YuO5P5083wlRk/AWpK5go8oWRnK/kR5XxlWBz1U0b7/+Mdh5nYBWHy5N0TxNBk7u0TxwE1VlsyviehhNp5+FgzNRXEDkYnawdbBYKQZSSfoL5VEDJO8YO9FTk203c9CQm7QjJP5OWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=GazJDzV5iyx2MTSXdqNNeepmMt1dNbBmqdH0ILdgqPs=;
-        b=MD2SvoHX2aHmcfSxlQcDqxuPAH2CKkAT48OSpILdlorLqMLbFKC0DhybiKd4sUEe43
-         /ecEZYACL5wJtRYdwDxe2D9RmJhARCywHXuVXOdRLPU+5EkWsYnZdgOzdtp7tgE9newG
-         vgjhU+dwetGWLxyFoUWcMq4cqbXOFV+/QucNk8JCklUAQwUD4MN870vT1ueNMT7bA4ST
-         lVX5nrR1FrTDP8Z4Zv1GS/3M96H+z6p30Xlq2I7RTv/xsuQQjWUf7etdU77dhQqegUN1
-         KUjRfFGPSpu1vnerFJyLy2kQSLQTP1mDKqX6VMeWeJOI8OHaXrqoR6Q6k4uDTgLok3ZB
-         +htQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=GazJDzV5iyx2MTSXdqNNeepmMt1dNbBmqdH0ILdgqPs=;
-        b=pIeNZVhFxbZKXFlNci81QNplcI3deHHGsnCh4XI72mAHHft2s65jy0L6NWb3fybY2Y
-         2nyfUN6WkHV09iep0YRqJRTq/3yXVyemdq1wMfaj/clu8jWm4qVj/YQiy//LxXqBebF9
-         65EGYmGAaVXrDz9I37iV81kQz+uDfS+ZQY/nXHjLoYkF01YiLaqeY20hZ5ArYP2pfUlG
-         dM8mrXYu2c4xGkmTMO/emkfbZ0x2bcw7Tmj3eeBrXecGt8saiGj/iUFutxxPmF8TQUcw
-         uK5m2wdUXo82TX6Ou6dpvJ+UNzNdQ4rUbMJTIeAWoRcrLFJWPrakKLEXSiFoIlAooU1t
-         RCeQ==
-X-Gm-Message-State: AOAM53323vcIO8pOqyzR+5FnucnTcLSimM6w0f3Fmn7ebrkvBEvVtLVJ
-        fk5E52CKdLk7pq+EomkKcqoU4d1QKj6Uf/rCUnaH
-X-Google-Smtp-Source: ABdhPJyIsDWUYmLPtaHxjukO7ygs3YvbqZJXZevBVjhULyhIIhV0D2dsGp1pf+Da8bDJBXwuIf41/rb4YIIElIqA+hFW
-Sender: "axelrasmussen via sendgmr" <axelrasmussen@ajr0.svl.corp.google.com>
-X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:a5fd:f848:2fdf:4651])
- (user=axelrasmussen job=sendgmr) by 2002:a0c:83a4:: with SMTP id
- k33mr360595qva.1.1614212840348; Wed, 24 Feb 2021 16:27:20 -0800 (PST)
-Date:   Wed, 24 Feb 2021 16:26:58 -0800
-In-Reply-To: <20210225002658.2021807-1-axelrasmussen@google.com>
-Message-Id: <20210225002658.2021807-7-axelrasmussen@google.com>
-Mime-Version: 1.0
-References: <20210225002658.2021807-1-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.30.0.617.g56c4b15f3c-goog
-Subject: [PATCH v8 6/6] userfaultfd/selftests: add test exercising minor fault handling
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1MFeS0U+Khi95zmt9OhQUEMylerL7n4+Tuxols/VvYc=;
+ b=sM9JxlGxK2IM5Xe/Ubc3/p+zTuOR08Gw5O2j3AvPLz41AdcDgrRF/lmY3f7QiOWUDYNEFThIglP3ARZ50HxxtqYBoN+ibAM96OvzmN7hJldxiz84ss+/m8GqOqqKpnz7EVEdMV33g5VdlXej0j0hBn0Q0axWfo/Uzgxoj2UNrt4=
+Authentication-Results: google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=none action=none header.from=oracle.com;
+Received: from BY5PR10MB4196.namprd10.prod.outlook.com (2603:10b6:a03:20d::23)
+ by BYAPR10MB2951.namprd10.prod.outlook.com (2603:10b6:a03:84::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3868.30; Thu, 25 Feb
+ 2021 00:33:54 +0000
+Received: from BY5PR10MB4196.namprd10.prod.outlook.com
+ ([fe80::980e:61ba:57d2:47ee]) by BY5PR10MB4196.namprd10.prod.outlook.com
+ ([fe80::980e:61ba:57d2:47ee%6]) with mapi id 15.20.3890.019; Thu, 25 Feb 2021
+ 00:33:54 +0000
+Subject: Re: [PATCH v7 2/6] userfaultfd: disable huge PMD sharing for MINOR
+ registered VMAs
+To:     Axel Rasmussen <axelrasmussen@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -67,9 +77,8 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Lokesh Gidra <lokeshgidra@google.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        "=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
         Michel Lespinasse <walken@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Nicholas Piggin <npiggin@gmail.com>,
         Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
@@ -79,338 +88,109 @@ To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Vlastimil Babka <vbabka@suse.cz>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, Adam Ruprecht <ruprecht@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
         Cannon Matthews <cannonmatthews@google.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
         David Rientjes <rientjes@google.com>,
         Mina Almasry <almasrymina@google.com>,
         Oliver Upton <oupton@google.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20210219004824.2899045-1-axelrasmussen@google.com>
+ <20210219004824.2899045-3-axelrasmussen@google.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <ad7a9417-2172-499c-c3a6-db78f2212f4d@oracle.com>
+Date:   Wed, 24 Feb 2021 16:33:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+In-Reply-To: <20210219004824.2899045-3-axelrasmussen@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [50.38.35.18]
+X-ClientProxiedBy: MWHPR12CA0040.namprd12.prod.outlook.com
+ (2603:10b6:301:2::26) To BY5PR10MB4196.namprd10.prod.outlook.com
+ (2603:10b6:a03:20d::23)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.2.112] (50.38.35.18) by MWHPR12CA0040.namprd12.prod.outlook.com (2603:10b6:301:2::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.19 via Frontend Transport; Thu, 25 Feb 2021 00:33:53 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 297862a9-46a9-49fb-1f1a-08d8d92507ff
+X-MS-TrafficTypeDiagnostic: BYAPR10MB2951:
+X-Microsoft-Antispam-PRVS: <BYAPR10MB29512BDC917FBDCA0C3FFD04E29E9@BYAPR10MB2951.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /9RWqvTGsspZ8G6ot1w0B3NZNf4RQ4nkW6y+NtWBWQfSk/QvUasS9WTchrAYwxUnR7z6X4FudtVrJR5W09QSHmmdiqE1ePmtDVjksq85WpiLqdNIPSCf1vflQO5bz6/tSlOvogTdvAM+iUgduwDYjzqEmsQ92Ih38HTaeeIC3Djpxk7Lta/E0aX92KSoxATxoGkEbHByJPhl5qzthC8tYtvMtSu5VhmJ23YqVXQ5/u6RH8gyz2FaGdlI7Rc6VQfXVZcRCHGxRG8e8LrLUr4lyHES7YfiahgCQV4i2QrdnvJlUf6OpkF8rhA5D9rDwGsAVhW7H9qDS6WwMasMnfoQC8N9TzJF4to1y/yzTot2eKmIFgAIuWZevhkEP9hwIU+lNDA+vG9uLT3/7F2lD/mL73cFP46JrilTPoc+ve/EEY+05DKSTk05LsAECp3sEJDcbDR5o1tZLN2KWpYIXt3DhjLf2a3046Uoy9W2KLbMDa1yIOZR8kpj3sAp/j+4YsiIP3WMk73ykyi5yvqK7SAmUtM1J8PORjgQagrdHdLPn1kwAQl14/V7dDEkR7DJJNIU9G7QmahnvhH4Bnjz9KZLBUq40IinePmKDl+xRpxNUCi5UzzMscv9ZlUe/8GNKEtKQofY4FFBfD8O3B89/M6ENw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4196.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(136003)(376002)(366004)(346002)(39860400002)(31696002)(478600001)(44832011)(86362001)(66476007)(186003)(66946007)(2906002)(52116002)(4326008)(53546011)(16526019)(7406005)(956004)(16576012)(66556008)(7416002)(110136005)(5660300002)(36756003)(4744005)(54906003)(26005)(83380400001)(2616005)(921005)(31686004)(8676002)(8936002)(316002)(6486002)(14583001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?WFErekVIQWZXcTVidVlMc0todzBlV0NjMytRbDFsNmVrTFkwRXdEVzRjR3Az?=
+ =?utf-8?B?LzhmVEk0UmpmNm9pRXpkM3g5VlVqYmVnbnRPeVNKMVhRZkxEZlVCYlZhQWd4?=
+ =?utf-8?B?UUJGOHN2aEpPYW81eXpPOXliOC9PWnJsUktZdG5HNVRPQzJwWHl4ZElGeURm?=
+ =?utf-8?B?eXBhUndtRkwrQnBxL3k4bDlTcFZwVVJmVGlqWVRmT092V0FrWmpiMDZJRkMr?=
+ =?utf-8?B?RUwzQkVvV3lKb1lSOVlEVVo0U2U2VnJDb1FuTVoxUysvK2FrTktQdmdZbWl4?=
+ =?utf-8?B?MUFTNU1tYmZCL2tYNGhScDNORlFpUjArV3dnYnBwVFNxakxkNk96dUNKY29z?=
+ =?utf-8?B?c3JRcnVOai9CRzc0bElOM1lRSWxiTnhhNEMzQi91YVZvemQxWXdzdlMzNERO?=
+ =?utf-8?B?bUdvTlZoQ1UybHNHa01ZMlFtV2dPb0ZsOTY5SkhOaWFZWGhuMktBZHVzTU9q?=
+ =?utf-8?B?ekgxeHh0UGd3QWJISnd1My9lajF1a3VTaUl4OFpmRzJqMDBrdmlvbHVQUTda?=
+ =?utf-8?B?NFNDSHJRRlhxOE4wcmw1YWd3MGw2RmREZGsxVjg2bEtjNFhIMk5XQUJtZjlM?=
+ =?utf-8?B?ODFWcEFnWkpmUEtWYXBmUWYwdG5PcXdGblVyeEFYKzBNMGFKVFRlRGFFNmJ1?=
+ =?utf-8?B?NVpDQ3RlRGxnTHZBWXdUaFdKME5KR2dTWHQrS2dVM0VPQVJ1ajhoL2tzeFNY?=
+ =?utf-8?B?UUVEVEFLdWc3QkRqVTVqdGppa2REVGR2ZkpmY1BSVFBWL0xuSjZURzk0UlVy?=
+ =?utf-8?B?S0VwcFZudlQwcUVENVVTblhyU2VVcFJ2QmhsVWxxdlpaNTFpQVc4MWhTTGlF?=
+ =?utf-8?B?WUR6bWNkVzRMa2pKY1F3cXlPbnFLdUZDbW5pZmY2dUQvWnBFL1ZJUzhkVlpw?=
+ =?utf-8?B?NGk3WkdSZXJnWjlVeisxVUJiSUpqRitjbnVIZTFjZitUZEtNS0loa1kzQk1W?=
+ =?utf-8?B?UllKMk45d1BYcnlPWXpnc0JwWDIyTnFHbVZtUUFwQ2lkbHlESVZDMXFvQTJH?=
+ =?utf-8?B?VHdleXBRRm4vb3hGNVhZcHR6dEc1cDZlNE1Hd3JnZWpvUTVaUVJrNlkyajVW?=
+ =?utf-8?B?cWtUZ1hnYVRvR2NCbnlOQTNUVmplU3VpS2xacmJ4UU1uNmV2aGtWU1dGODR0?=
+ =?utf-8?B?bWlna1FvUjgwOU5QLy9lbXJsbWtpd2dBc1h3cThKMzJvMTQ2bzlCb3QwdSsx?=
+ =?utf-8?B?Qm1qbzBCU2pjWW8xWHk4RjlIcG43L2NWQlZWSHE5WUQvOUJPZnkzN01mS2tl?=
+ =?utf-8?B?T0VFUWdtUDM4TjNBL1cwS25saWVhZ3RwVkt5ekJGQ2RXeXExcXc0SmZaQVpL?=
+ =?utf-8?B?WWtRSHFOQlRUNVhhRVpZVnNXam1SQ2pBUm1td3Q1TDFsaWVRZmdQVnQ1VmZr?=
+ =?utf-8?B?aVU4M0RybmNzWUl6VzBJdFRWMnVjRU5Sa2g1bU93aDE0UEs3L24xYXVhSWlM?=
+ =?utf-8?B?bElKOUxJTFhTZWhLRDFyc2U0dzRhanQ4M0kyUkxPZjhtMXdvamRVMFRkR05a?=
+ =?utf-8?B?aEJ3enY2YUVTYW1PbjU5N0hZTk1teEtTRk9pT0R2YlFIK0xuOTNvbDNoNUtP?=
+ =?utf-8?B?bjNmR0xTUExONVBaSFdvOWk2MHZGOEpxbjZEMmtISWNYYnBINW9DOTF4bXo4?=
+ =?utf-8?B?WXNDSFI1c2lsdnc4em9Lc3V0cnRIODlYc1ZNTnpuNDErK214K1M0d2xmblFu?=
+ =?utf-8?B?QWtLZVJ1WnpVbWQ1UmU1MnFoZjNOaW8reUU1cHJHMEtheTJNOUwwTWVndnBL?=
+ =?utf-8?Q?Gfkv1m69i8QyQqHrYix5ZjpdVcdiNly4I0ZyX3r?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 297862a9-46a9-49fb-1f1a-08d8d92507ff
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4196.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2021 00:33:54.6123
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5z8Mesx0XZnn6wrgSLnFz/ZVhKMTnYRgVvihEHxx+QH1jv6NNuIik/LF0tGuvTV+Gv9nMy40AyLonwHH/sBTXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2951
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9905 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102250000
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9905 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102250000
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix a dormant bug in userfaultfd_events_test(), where we did
-`return faulting_process(0)` instead of `exit(faulting_process(0))`.
-This caused the forked process to keep running, trying to execute any
-further test cases after the events test in parallel with the "real"
-process.
+On 2/18/21 4:48 PM, Axel Rasmussen wrote:
+> As the comment says: for the MINOR fault use case, although the page
+> might be present and populated in the other (non-UFFD-registered) half
+> of the mapping, it may be out of date, and we explicitly want userspace
+> to get a minor fault so it can check and potentially update the page's
+> contents.
+> 
+> Huge PMD sharing would prevent these faults from occurring for
+> suitably aligned areas, so disable it upon UFFD registration.
+> 
+> Reviewed-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 
-Add a simple test case which exercises minor faults. In short, it does
-the following:
+Thanks,
 
-1. "Sets up" an area (area_dst) and a second shared mapping to the same
-   underlying pages (area_dst_alias).
-
-2. Register one of these areas with userfaultfd, in minor fault mode.
-
-3. Start a second thread to handle any minor faults.
-
-4. Populate the underlying pages with the non-UFFD-registered side of
-   the mapping. Basically, memset() each page with some arbitrary
-   contents.
-
-5. Then, using the UFFD-registered mapping, read all of the page
-   contents, asserting that the contents match expectations (we expect
-   the minor fault handling thread can modify the page contents before
-   resolving the fault).
-
-The minor fault handling thread, upon receiving an event, flips all the
-bits (~) in that page, just to prove that it can modify it in some
-arbitrary way. Then it issues a UFFDIO_CONTINUE ioctl, to setup the
-mapping and resolve the fault. The reading thread should wake up and see
-this modification.
-
-Currently the minor fault test is only enabled in hugetlb_shared mode,
-as this is the only configuration the kernel feature supports.
-
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- tools/testing/selftests/vm/userfaultfd.c | 164 ++++++++++++++++++++++-
- 1 file changed, 158 insertions(+), 6 deletions(-)
-
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 92b8ec423201..f5ab5e0312e7 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -81,6 +81,8 @@ static volatile bool test_uffdio_copy_eexist = true;
- static volatile bool test_uffdio_zeropage_eexist = true;
- /* Whether to test uffd write-protection */
- static bool test_uffdio_wp = false;
-+/* Whether to test uffd minor faults */
-+static bool test_uffdio_minor = false;
- 
- static bool map_shared;
- static int huge_fd;
-@@ -96,6 +98,7 @@ struct uffd_stats {
- 	int cpu;
- 	unsigned long missing_faults;
- 	unsigned long wp_faults;
-+	unsigned long minor_faults;
- };
- 
- /* pthread_mutex_t starts at page offset 0 */
-@@ -153,17 +156,19 @@ static void uffd_stats_reset(struct uffd_stats *uffd_stats,
- 		uffd_stats[i].cpu = i;
- 		uffd_stats[i].missing_faults = 0;
- 		uffd_stats[i].wp_faults = 0;
-+		uffd_stats[i].minor_faults = 0;
- 	}
- }
- 
- static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
- {
- 	int i;
--	unsigned long long miss_total = 0, wp_total = 0;
-+	unsigned long long miss_total = 0, wp_total = 0, minor_total = 0;
- 
- 	for (i = 0; i < n_cpus; i++) {
- 		miss_total += stats[i].missing_faults;
- 		wp_total += stats[i].wp_faults;
-+		minor_total += stats[i].minor_faults;
- 	}
- 
- 	printf("userfaults: %llu missing (", miss_total);
-@@ -172,6 +177,9 @@ static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
- 	printf("\b), %llu wp (", wp_total);
- 	for (i = 0; i < n_cpus; i++)
- 		printf("%lu+", stats[i].wp_faults);
-+	printf("\b), %llu minor (", minor_total);
-+	for (i = 0; i < n_cpus; i++)
-+		printf("%lu+", stats[i].minor_faults);
- 	printf("\b)\n");
- }
- 
-@@ -328,7 +336,7 @@ static struct uffd_test_ops shmem_uffd_test_ops = {
- };
- 
- static struct uffd_test_ops hugetlb_uffd_test_ops = {
--	.expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC,
-+	.expected_ioctls = UFFD_API_RANGE_IOCTLS_BASIC & ~(1 << _UFFDIO_CONTINUE),
- 	.allocate_area	= hugetlb_allocate_area,
- 	.release_pages	= hugetlb_release_pages,
- 	.alias_mapping = hugetlb_alias_mapping,
-@@ -362,6 +370,22 @@ static void wp_range(int ufd, __u64 start, __u64 len, bool wp)
- 	}
- }
- 
-+static void continue_range(int ufd, __u64 start, __u64 len)
-+{
-+	struct uffdio_continue req;
-+
-+	req.range.start = start;
-+	req.range.len = len;
-+	req.mode = 0;
-+
-+	if (ioctl(ufd, UFFDIO_CONTINUE, &req)) {
-+		fprintf(stderr,
-+			"UFFDIO_CONTINUE failed for address 0x%" PRIx64 "\n",
-+			(uint64_t)start);
-+		exit(1);
-+	}
-+}
-+
- static void *locking_thread(void *arg)
- {
- 	unsigned long cpu = (unsigned long) arg;
-@@ -569,8 +593,32 @@ static void uffd_handle_page_fault(struct uffd_msg *msg,
- 	}
- 
- 	if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP) {
-+		/* Write protect page faults */
- 		wp_range(uffd, msg->arg.pagefault.address, page_size, false);
- 		stats->wp_faults++;
-+	} else if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_MINOR) {
-+		uint8_t *area;
-+		int b;
-+
-+		/*
-+		 * Minor page faults
-+		 *
-+		 * To prove we can modify the original range for testing
-+		 * purposes, we're going to bit flip this range before
-+		 * continuing.
-+		 *
-+		 * Note that this requires all minor page fault tests operate on
-+		 * area_dst (non-UFFD-registered) and area_dst_alias
-+		 * (UFFD-registered).
-+		 */
-+
-+		area = (uint8_t *)(area_dst +
-+				   ((char *)msg->arg.pagefault.address -
-+				    area_dst_alias));
-+		for (b = 0; b < page_size; ++b)
-+			area[b] = ~area[b];
-+		continue_range(uffd, msg->arg.pagefault.address, page_size);
-+		stats->minor_faults++;
- 	} else {
- 		/* Missing page faults */
- 		if (bounces & BOUNCE_VERIFY &&
-@@ -779,7 +827,7 @@ static int stress(struct uffd_stats *uffd_stats)
- 	return 0;
- }
- 
--static int userfaultfd_open(int features)
-+static int userfaultfd_open_ext(uint64_t *features)
- {
- 	struct uffdio_api uffdio_api;
- 
-@@ -792,7 +840,7 @@ static int userfaultfd_open(int features)
- 	uffd_flags = fcntl(uffd, F_GETFD, NULL);
- 
- 	uffdio_api.api = UFFD_API;
--	uffdio_api.features = features;
-+	uffdio_api.features = *features;
- 	if (ioctl(uffd, UFFDIO_API, &uffdio_api)) {
- 		fprintf(stderr, "UFFDIO_API failed.\nPlease make sure to "
- 			"run with either root or ptrace capability.\n");
-@@ -804,9 +852,15 @@ static int userfaultfd_open(int features)
- 		return 1;
- 	}
- 
-+	*features = uffdio_api.features;
- 	return 0;
- }
- 
-+static int userfaultfd_open(uint64_t features)
-+{
-+	return userfaultfd_open_ext(&features);
-+}
-+
- sigjmp_buf jbuf, *sigbuf;
- 
- static void sighndl(int sig, siginfo_t *siginfo, void *ptr)
-@@ -1112,7 +1166,7 @@ static int userfaultfd_events_test(void)
- 	}
- 
- 	if (!pid)
--		return faulting_process(0);
-+		exit(faulting_process(0));
- 
- 	waitpid(pid, &err, 0);
- 	if (err) {
-@@ -1215,6 +1269,102 @@ static int userfaultfd_sig_test(void)
- 	return userfaults != 0;
- }
- 
-+static int userfaultfd_minor_test(void)
-+{
-+	struct uffdio_register uffdio_register;
-+	unsigned long expected_ioctls;
-+	unsigned long p;
-+	pthread_t uffd_mon;
-+	uint8_t expected_byte;
-+	void *expected_page;
-+	char c;
-+	struct uffd_stats stats = { 0 };
-+	uint64_t features = UFFD_FEATURE_MINOR_HUGETLBFS;
-+
-+	if (!test_uffdio_minor)
-+		return 0;
-+
-+	printf("testing minor faults: ");
-+	fflush(stdout);
-+
-+	if (uffd_test_ops->release_pages(area_dst))
-+		return 1;
-+
-+	if (userfaultfd_open_ext(&features))
-+		return 1;
-+	/* If kernel reports the feature isn't supported, skip the test. */
-+	if (!(features & UFFD_FEATURE_MINOR_HUGETLBFS)) {
-+		printf("skipping test due to lack of feature support\n");
-+		fflush(stdout);
-+		return 0;
-+	}
-+
-+	uffdio_register.range.start = (unsigned long)area_dst_alias;
-+	uffdio_register.range.len = nr_pages * page_size;
-+	uffdio_register.mode = UFFDIO_REGISTER_MODE_MINOR;
-+	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register)) {
-+		fprintf(stderr, "register failure\n");
-+		exit(1);
-+	}
-+
-+	expected_ioctls = uffd_test_ops->expected_ioctls;
-+	expected_ioctls |= 1 << _UFFDIO_CONTINUE;
-+	if ((uffdio_register.ioctls & expected_ioctls) != expected_ioctls) {
-+		fprintf(stderr, "unexpected missing ioctl(s)\n");
-+		exit(1);
-+	}
-+
-+	/*
-+	 * After registering with UFFD, populate the non-UFFD-registered side of
-+	 * the shared mapping. This should *not* trigger any UFFD minor faults.
-+	 */
-+	for (p = 0; p < nr_pages; ++p) {
-+		memset(area_dst + (p * page_size), p % ((uint8_t)-1),
-+		       page_size);
-+	}
-+
-+	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, &stats)) {
-+		perror("uffd_poll_thread create");
-+		exit(1);
-+	}
-+
-+	/*
-+	 * Read each of the pages back using the UFFD-registered mapping. We
-+	 * expect that the first time we touch a page, it will result in a minor
-+	 * fault. uffd_poll_thread will resolve the fault by bit-flipping the
-+	 * page's contents, and then issuing a CONTINUE ioctl.
-+	 */
-+
-+	if (posix_memalign(&expected_page, page_size, page_size)) {
-+		fprintf(stderr, "out of memory\n");
-+		return 1;
-+	}
-+
-+	for (p = 0; p < nr_pages; ++p) {
-+		expected_byte = ~((uint8_t)(p % ((uint8_t)-1)));
-+		memset(expected_page, expected_byte, page_size);
-+		if (my_bcmp(expected_page, area_dst_alias + (p * page_size),
-+			    page_size)) {
-+			fprintf(stderr,
-+				"unexpected page contents after minor fault\n");
-+			exit(1);
-+		}
-+	}
-+
-+	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c)) {
-+		perror("pipe write");
-+		exit(1);
-+	}
-+	if (pthread_join(uffd_mon, NULL))
-+		return 1;
-+
-+	close(uffd);
-+
-+	uffd_stats_report(&stats, 1);
-+
-+	return stats.missing_faults != 0 || stats.minor_faults != nr_pages;
-+}
-+
- static int userfaultfd_stress(void)
- {
- 	void *area;
-@@ -1413,7 +1563,7 @@ static int userfaultfd_stress(void)
- 
- 	close(uffd);
- 	return userfaultfd_zeropage_test() || userfaultfd_sig_test()
--		|| userfaultfd_events_test();
-+		|| userfaultfd_events_test() || userfaultfd_minor_test();
- }
- 
- /*
-@@ -1454,6 +1604,8 @@ static void set_test_type(const char *type)
- 		map_shared = true;
- 		test_type = TEST_HUGETLB;
- 		uffd_test_ops = &hugetlb_uffd_test_ops;
-+		/* Minor faults require shared hugetlb; only enable here. */
-+		test_uffdio_minor = true;
- 	} else if (!strcmp(type, "shmem")) {
- 		map_shared = true;
- 		test_type = TEST_SHMEM;
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 -- 
-2.30.0.617.g56c4b15f3c-goog
-
+Mike Kravetz
