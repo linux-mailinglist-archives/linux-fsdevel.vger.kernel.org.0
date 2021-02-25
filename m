@@ -2,111 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 968933252B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 16:48:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA04732543F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 18:02:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232296AbhBYPrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 10:47:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36857 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229890AbhBYPrH (ORCPT
+        id S232949AbhBYRB0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 12:01:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57878 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233117AbhBYRBK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 10:47:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614267940;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YpCvlQYx6vhAoMX/ljEDh4+GeB6i/L4OzgR+3DRvI5g=;
-        b=iZdsGnXmb6FzPOtkzIKCSA9/s+tuKmGgcv1IaGRx0joemCMyUq+fhU/aX0+e37TUlb1M8T
-        lBn2EmDRT+2IT+yo1zGVjOwZFhhHfpOvLVOXyyt4GHO7ehSLcre6MEqI9QDkDbtFqLd79S
-        94Qda9UWIDg0btsWg7J08dhPMfoxXIo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-314-aGYeJXbQO06hHWuoYqFm9Q-1; Thu, 25 Feb 2021 10:45:38 -0500
-X-MC-Unique: aGYeJXbQO06hHWuoYqFm9Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C8929100CCCB;
-        Thu, 25 Feb 2021 15:45:36 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DADA5C224;
-        Thu, 25 Feb 2021 15:45:34 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Yang Li <yang.lee@linux.alibaba.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] direct-io: Using kmem_cache_zalloc() instead of kmem_cache_alloc() and memset()
-References: <1614243581-50870-1-git-send-email-yang.lee@linux.alibaba.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 25 Feb 2021 10:46:15 -0500
-In-Reply-To: <1614243581-50870-1-git-send-email-yang.lee@linux.alibaba.com>
-        (Yang Li's message of "Thu, 25 Feb 2021 16:59:41 +0800")
-Message-ID: <x4935xknoag.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 25 Feb 2021 12:01:10 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE326C06174A;
+        Thu, 25 Feb 2021 09:00:29 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id cf12so7011441edb.8;
+        Thu, 25 Feb 2021 09:00:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+m1d5CY/dF8o5udkQaQvUfO44nkt75LbnmvMpeNlDbs=;
+        b=VQepAW4qGEpIG4zriDbpRNyKdaSQlv+/1iG5RzDzSQ3mQv9w2D+vWLgyjWjpON75KK
+         e6pwT+zx0vR64mtkqfmq7bUQKAB7l50cfts7x52XcM35f8oWj0FLVIKT0NaMIQcPNhay
+         72J+HExew308Z3SXPWY7IqcfvWz8c+iFbOUqSJY7KSpEuW4ArubR8xjELpgzYHQftdDB
+         HnNu35M+vu27C3JLxTGqPKvm5AEFbpxH8gmD1qXqhza9R4KuihJeqtrA/z5sCHRDt3tS
+         twE6xuxgpDyuiGISzjE3ErWR06rI3DsRD+5j8kWHbxH+SrcUPh2KXG2S8wUk6nTh3GuE
+         Z4hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+m1d5CY/dF8o5udkQaQvUfO44nkt75LbnmvMpeNlDbs=;
+        b=rbwGVEj2PHO94fH75DngoFqG+Axv/C0rILa7rxvNbPcMaU/UwxjzHGm62hx/ec/VdX
+         Jq+rpO/GbjB/pVXvJ+uEiz+dUGYJPzM4Wy/qDqkZhp/gVMMV4yj+auQfc7uXWTXdHKRi
+         zGu2w+wnoJAzjYkDBWTP1xbvG7zyxymrI7uEm42aP/IAiOTZifQp9xECUx9CSaz3toRS
+         37wrg4ef7Gwrgm2tjzqDgsWCy1c3O/17ThAeWi6dZSaDdzx0ozU0802NZJKgQov6i6dB
+         GZLZoaFOykKZE7/1aaewfi98ScrqPmcF/E/pNqi2TQSIWNR5x6zvz4057vmpRjrBu2R3
+         JvnA==
+X-Gm-Message-State: AOAM533zMOf47ESVmiGdycrRV/WN2R93BbpBhRmtrfgmBb2Nah7vDzKX
+        J5RmYCx+V6bgDQn+4rn+gkOKz1fUwvhIuiBWBCM=
+X-Google-Smtp-Source: ABdhPJy6oLq5mlHnobE3bk/kmGmTG4Pibg+rGHaVCnM0iER+VUl9nMOHV/R0KgGhB4WKo/IsIPMDLwDUj1Zr9Fo+j74=
+X-Received: by 2002:a50:bec3:: with SMTP id e3mr3904100edk.290.1614272428345;
+ Thu, 25 Feb 2021 09:00:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <20210217001322.2226796-1-shy828301@gmail.com>
+In-Reply-To: <20210217001322.2226796-1-shy828301@gmail.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 25 Feb 2021 09:00:16 -0800
+Message-ID: <CAHbLzkrEfeoofwJjncFDepcOxEKzqiAo8T7mowX2jJVCz5ikEA@mail.gmail.com>
+Subject: Re: [v8 PATCH 00/13] Make shrinker's nr_deferred memcg aware
+To:     Roman Gushchin <guro@fb.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Y, Yang,
+Hi Andrew,
 
-Yang Li <yang.lee@linux.alibaba.com> writes:
+Just checking in whether this series is on your radar. The patch 1/13
+~ patch 12/13 have been reviewed and acked. Vlastimil had had some
+comments on patch 13/13, I'm not sure if he is going to continue
+reviewing that one. I hope the last patch could get into the -mm tree
+along with the others so that it can get a broader test. What do you
+think about it?
 
-> Fix the following coccicheck warning:
-> ./fs/direct-io.c:1155:7-23: WARNING: kmem_cache_zalloc should be used
-> for dio, instead of kmem_cache_alloc/memset
+Thanks,
+Yang
+
+On Tue, Feb 16, 2021 at 4:13 PM Yang Shi <shy828301@gmail.com> wrote:
 >
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-> ---
->  fs/direct-io.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
 >
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index 0957e1b..6ec2935 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -1152,7 +1152,7 @@ static inline int drop_refcount(struct dio *dio)
->  	if (iov_iter_rw(iter) == READ && !count)
->  		return 0;
->  
-> -	dio = kmem_cache_alloc(dio_cache, GFP_KERNEL);
-> +	dio = kmem_cache_zalloc(dio_cache, GFP_KERNEL);
->  	if (!dio)
->  		return -ENOMEM;
->  	/*
-> @@ -1160,8 +1160,6 @@ static inline int drop_refcount(struct dio *dio)
->  	 * performance regression in a database benchmark.  So, we take
->  	 * care to only zero out what's needed.
->  	 */
-> -	memset(dio, 0, offsetof(struct dio, pages));
-> -
-
-You must have missed the comment just above this memset:
-
-        /*
-         * Believe it or not, zeroing out the page array caused a .5%
-         * performance regression in a database benchmark.  So, we take
-         * care to only zero out what's needed.
-         */
-
-That's referring to this part of the dio struct:
-
-        /*
-         * pages[] (and any fields placed after it) are not zeroed out at
-         * allocation time.  Don't add new fields after pages[] unless you
-         * wish that they not be zeroed.
-         */
-        union {
-                struct page *pages[DIO_PAGES];  /* page buffer */
-                struct work_struct complete_work;/* deferred AIO completion */
-        };
-} ____cacheline_aligned_in_smp;
-
-Nacked-by: Jeff Moyer <jmoyer@redhat.com>
-
+> Changelog
+> v7 --> v8:
+>     * Added lockdep assert in expand_shrinker_info() per Roman.
+>     * Added patch 05/13 to use kvfree_rcu() instead of call_rcu() per Roman
+>       and Kirill.
+>     * Moved rwsem acquire/release out of unregister_memcg_shrinker() per Roman.
+>     * Renamed count_nr_deferred_{memcg} to xchg_nr_deferred_{memcg} per Roman.
+>     * Fixed the next_deferred logic per Vlastimil.
+>     * Misc minor code cleanup, refactor and spelling correction per Roman
+>       and Shakeel.
+>     * Collected more ack and review tags from Roman, Shakeel and Vlastimil.
+> v6 --> v7:
+>     * Expanded shrinker_info in a batch of BITS_PER_LONG per Kirill.
+>     * Added patch 06/12 to introduce a helper for dereferencing shrinker_info
+>       per Kirill.
+>     * Renamed set_nr_deferred_memcg to add_nr_deferred_memcg per Kirill.
+>     * Collected Acked-by from Kirill.
+> v5 --> v6:
+>     * Rebased on top of https://lore.kernel.org/linux-mm/1611216029-34397-1-git-send-email-abaci-bugfix@linux.alibaba.com/
+>       per Kirill.
+>     * Don't register shrinker idr with NULL and remove idr_replace() per Vlastimil.
+>     * Move nr_deferred before map to guarantee the alignment per Vlastimil.
+>     * Misc minor code cleanup and refactor per Kirill and Vlastimil.
+>     * Added Acked-by from Vlastimil for path #1, #2, #3, #5, #9 and #10.
+> v4 --> v5:
+>     * Incorporated the comments from Kirill.
+>     * Rebased to v5.11-rc5.
+> v3 --> v4:
+>     * Removed "memcg_" prefix for shrinker_maps related functions per Roman.
+>     * Use write lock instead of read lock per Kirill. Also removed Johannes's ack
+>       since write lock is used.
+>     * Incorporated the comments from Kirill.
+>     * Removed RFC.
+>     * Rebased to v5.11-rc4.
+> v2 --> v3:
+>     * Moved shrinker_maps related code to vmscan.c per Dave.
+>     * Removed memcg_shrinker_map_size. Calcuated the size of map via shrinker_nr_max
+>       per Johannes.
+>     * Consolidated shrinker_deferred with shrinker_maps into one struct per Dave.
+>     * Simplified the nr_deferred related code.
+>     * Dropped the memory barrier from v2.
+>     * Moved nr_deferred reparent code to vmscan.c per Dave.
+>     * Added test coverage information in patch #11. Dave is concerned about the
+>       potential regression. I didn't notice regression with my tests, but suggestions
+>       about more test coverage is definitely welcome. And it may help spot regression
+>       with this patch in -mm tree then linux-next tree so I keep it in this version.
+>     * The code cleanup and consolidation resulted in the series grow to 11 patches.
+>     * Rebased onto 5.11-rc2.
+> v1 --> v2:
+>     * Use shrinker->flags to store the new SHRINKER_REGISTERED flag per Roman.
+>     * Folded patch #1 into patch #6 per Roman.
+>     * Added memory barrier to prevent shrink_slab_memcg from seeing NULL shrinker_maps/
+>       shrinker_deferred per Kirill.
+>     * Removed memcg_shrinker_map_mutex. Protcted shrinker_map/shrinker_deferred
+>       allocations from expand with shrinker_rwsem per Johannes.
+>
+> Recently huge amount one-off slab drop was seen on some vfs metadata heavy workloads,
+> it turned out there were huge amount accumulated nr_deferred objects seen by the
+> shrinker.
+>
+> On our production machine, I saw absurd number of nr_deferred shown as the below
+> tracing result:
+>
+> <...>-48776 [032] .... 27970562.458916: mm_shrink_slab_start:
+> super_cache_scan+0x0/0x1a0 ffff9a83046f3458: nid: 0 objects to shrink
+> 2531805877005 gfp_flags GFP_HIGHUSER_MOVABLE pgs_scanned 32 lru_pgs
+> 9300 cache items 1667 delta 11 total_scan 833
+>
+> There are 2.5 trillion deferred objects on one node, assuming all of them
+> are dentry (192 bytes per object), so the total size of deferred on
+> one node is ~480TB. It is definitely ridiculous.
+>
+> I managed to reproduce this problem with kernel build workload plus negative dentry
+> generator.
+>
+> First step, run the below kernel build test script:
+>
+> NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+>
+> cd /root/Buildarea/linux-stable
+>
+> for i in `seq 1500`; do
+>         cgcreate -g memory:kern_build
+>         echo 4G > /sys/fs/cgroup/memory/kern_build/memory.limit_in_bytes
+>
+>         echo 3 > /proc/sys/vm/drop_caches
+>         cgexec -g memory:kern_build make clean > /dev/null 2>&1
+>         cgexec -g memory:kern_build make -j$NR_CPUS > /dev/null 2>&1
+>
+>         cgdelete -g memory:kern_build
+> done
+>
+> Then run the below negative dentry generator script:
+>
+> NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+>
+> mkdir /sys/fs/cgroup/memory/test
+> echo $$ > /sys/fs/cgroup/memory/test/tasks
+>
+> for i in `seq $NR_CPUS`; do
+>         while true; do
+>                 FILE=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 64`
+>                 cat $FILE 2>/dev/null
+>         done &
+> done
+>
+> Then kswapd will shrink half of dentry cache in just one loop as the below tracing result
+> showed:
+>
+>         kswapd0-475   [028] .... 305968.252561: mm_shrink_slab_start: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0
+> objects to shrink 4994376020 gfp_flags GFP_KERNEL cache items 93689873 delta 45746 total_scan 46844936 priority 12
+>         kswapd0-475   [021] .... 306013.099399: mm_shrink_slab_end: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0 unused
+> scan count 4994376020 new scan count 4947576838 total_scan 8 last shrinker return val 46844928
+>
+> There were huge number of deferred objects before the shrinker was called, the behavior
+> does match the code but it might be not desirable from the user's stand of point.
+>
+> The excessive amount of nr_deferred might be accumulated due to various reasons, for example:
+>     * GFP_NOFS allocation
+>     * Significant times of small amount scan (< scan_batch, 1024 for vfs metadata)
+>
+> However the LRUs of slabs are per memcg (memcg-aware shrinkers) but the deferred objects
+> is per shrinker, this may have some bad effects:
+>     * Poor isolation among memcgs. Some memcgs which happen to have frequent limit
+>       reclaim may get nr_deferred accumulated to a huge number, then other innocent
+>       memcgs may take the fall. In our case the main workload was hit.
+>     * Unbounded deferred objects. There is no cap for deferred objects, it can outgrow
+>       ridiculously as the tracing result showed.
+>     * Easy to get out of control. Although shrinkers take into account deferred objects,
+>       but it can go out of control easily. One misconfigured memcg could incur absurd
+>       amount of deferred objects in a period of time.
+>     * Sort of reclaim problems, i.e. over reclaim, long reclaim latency, etc. There may be
+>       hundred GB slab caches for vfe metadata heavy workload, shrink half of them may take
+>       minutes. We observed latency spike due to the prolonged reclaim.
+>
+> These issues also have been discussed in https://lore.kernel.org/linux-mm/20200916185823.5347-1-shy828301@gmail.com/.
+> The patchset is the outcome of that discussion.
+>
+> So this patchset makes nr_deferred per-memcg to tackle the problem. It does:
+>     * Have memcg_shrinker_deferred per memcg per node, just like what shrinker_map
+>       does. Instead it is an atomic_long_t array, each element represent one shrinker
+>       even though the shrinker is not memcg aware, this simplifies the implementation.
+>       For memcg aware shrinkers, the deferred objects are just accumulated to its own
+>       memcg. The shrinkers just see nr_deferred from its own memcg. Non memcg aware
+>       shrinkers still use global nr_deferred from struct shrinker.
+>     * Once the memcg is offlined, its nr_deferred will be reparented to its parent along
+>       with LRUs.
+>     * The root memcg has memcg_shrinker_deferred array too. It simplifies the handling of
+>       reparenting to root memcg.
+>     * Cap nr_deferred to 2x of the length of lru. The idea is borrowed from Dave Chinner's
+>       series (https://lore.kernel.org/linux-xfs/20191031234618.15403-1-david@fromorbit.com/)
+>
+> The downside is each memcg has to allocate extra memory to store the nr_deferred array.
+> On our production environment, there are typically around 40 shrinkers, so each memcg
+> needs ~320 bytes. 10K memcgs would need ~3.2MB memory. It seems fine.
+>
+> We have been running the patched kernel on some hosts of our fleet (test and production) for
+> months, it works very well. The monitor data shows the working set is sustained as expected.
+>
+> Yang Shi (13):
+>       mm: vmscan: use nid from shrink_control for tracepoint
+>       mm: vmscan: consolidate shrinker_maps handling code
+>       mm: vmscan: use shrinker_rwsem to protect shrinker_maps allocation
+>       mm: vmscan: remove memcg_shrinker_map_size
+>       mm: vmscan: use kvfree_rcu instead of call_rcu
+>       mm: memcontrol: rename shrinker_map to shrinker_info
+>       mm: vmscan: add shrinker_info_protected() helper
+>       mm: vmscan: use a new flag to indicate shrinker is registered
+>       mm: vmscan: add per memcg shrinker nr_deferred
+>       mm: vmscan: use per memcg nr_deferred of shrinker
+>       mm: vmscan: don't need allocate shrinker->nr_deferred for memcg aware shrinkers
+>       mm: memcontrol: reparent nr_deferred when memcg offline
+>       mm: vmscan: shrink deferred objects proportional to priority
+>
+>  include/linux/memcontrol.h |  23 +++---
+>  include/linux/shrinker.h   |   7 +-
+>  mm/huge_memory.c           |   4 +-
+>  mm/list_lru.c              |   6 +-
+>  mm/memcontrol.c            | 130 +------------------------------
+>  mm/vmscan.c                | 394 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------------------------
+>  6 files changed, 319 insertions(+), 245 deletions(-)
+>
