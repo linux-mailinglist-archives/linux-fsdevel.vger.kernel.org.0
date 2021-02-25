@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 489B1324B05
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7D0324B14
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:15:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234031AbhBYHLa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 02:11:30 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:13098 "EHLO
+        id S232686AbhBYHNR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 02:13:17 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:5434 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233443AbhBYHI6 (ORCPT
+        with ESMTP id S233938AbhBYHKc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 02:08:58 -0500
+        Thu, 25 Feb 2021 02:10:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1614237562; x=1645773562;
+  t=1614237703; x=1645773703;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=noVlfdAKnU4/DGq6YcXktGnI8djjvUkkGf2lKgCrAX4=;
-  b=cSPIYwhGSIUejV88S5mKlwioyBu6zbWW1mtPo90H8faTR7QILTFRpGxp
-   ELianDUDr28tdOFE9idOto/0qzezhYC9GZC0qxg8aggG8nFwKdoSdA1Er
-   6qCGNi9rzgRknoxfjV2w6oRZiGcE4L0jZ7yAACPL5w9P4ifxmHSfBZY9D
-   X9VB/VBOVk9BklHu8183u5TqK/aMoGZJ2Xq/oQzYtL4jS1btWqWAoMmBe
-   yVaQqyBVFExEr4x+vH7ccRSdJ7GpYbfLFCqInXKHdiDgjC5j1g8NqkTTW
-   82WVWTlXV+qaRNFCoKkf8UKibKksdhJfRQVx9vSV1qa2VB6b6cYQnyxn9
+  bh=qELsFddYf/fZidR2F4nWrGgbbzisn0TnUODqE1wzd5c=;
+  b=KK3+F1DVazhWSCN8fEN4KeAc2nNxhw4NaCh+AA7qxdfDOVFxdwVptBr2
+   o1A3Vi9gBIdPtMp6hb7D9qu38Wg7t1+S+MhBLoz0l3GECzldpcGlAinu5
+   wBWVBWvhtIh7GuGnTSQhFucvtvKwJ6X85hAV9CdfgtQmD0Mw+tICC5lhY
+   0FPncYhXL0vyJ+R8/YKPoOcckSdc/tIjPyS1QBl/EEXGAF4Kl4+a/oJuA
+   gxwC2vR6W7U/cg1910idH2masHAHiZjRoe6VNjT5IeKWxp7Lk6Ne0uG1N
+   INxdkNVQU7Gippn+Gf3BNIlTet6RiusJquj2MYxIpi/MIz3vHNJAhNraz
    w==;
-IronPort-SDR: 8gqxMM8ZWzHpKGx+n1PWvpekDx8AWvcPgAghsllp6V2uXMXIqtg0tZM7od/aiiwOwnMxx3RCli
- nuymznVq0U5V2UGzndHgM6Ley2QL4cgV/Je/DtolfzPVegyYzZ/Ru4awaudSn48WfwLZDhaWa+
- /GSExXVYpMYBsv0syx55tgEeXH6H38mPTt+HD56QfCSaEc9L7soRqSUiQr1/7+B/FEWNYxRfiP
- 5Bz0meudCACB8sXg+eiOhWmhFja8HEgy71hh6wV8gF3qeH6ShZEfmGmMAltEnKCd4pE6Typ05q
- Z4s=
+IronPort-SDR: +jLz/R4w7Sq0TKfJTcjsqN5sLuk4VjYt79Y1Qxifn/oaIYUMIT4mE7PVwYEtFGy/4XMRrQvooi
+ ylo58BrhhgYeayFaq1TKbwcfSNDUprmK9BmhUwGbODdSg8Rp4sJsVtLQZFnqj+dj5d/oR3lRmB
+ hlghH6OJ4HJuTCGRFmRCSpF4LXykvc7Z1Pj/cSUINzZ5/MYTCaXJPmxu6gOJ/0meYHrzkIbtVD
+ zAz8pvFLAR/7oGX8GBOqCNhy8FgJ2wgpqa0tPCNuiVRihZYqU9aQNFA8CDcuqidHg8nqNALwFI
+ 9iw=
 X-IronPort-AV: E=Sophos;i="5.81,205,1610380800"; 
-   d="scan'208";a="264979007"
+   d="scan'208";a="264979019"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:16:03 +0800
-IronPort-SDR: rsNQwtKUayRvaSkli0NLoqm1GObehnsms0PPysiLq+d4vDtTvq2LPc+/hfDISMpUUSY9tFlquy
- CtdKDEnHlEvi8iyw4C3KXJvcBVmMUyE4f4uw7VVxDOznhEuOd+16+GWthpVPTCtXnooS5bFDng
- UzIcB+99MkRr/S5sf1fkgpnAyxff89q1XLhTbkJNQ2qqO6w6nCVL190mjPyWRRei8nZDUDb+yx
- JJXDFr6n0T1neVd3sdBR9VFggAGvItS3LbD9zSoVsdMxOzfQPY9y/wMaC1cN3cWbvhrXJ/Xoun
- dLnujhaFKkR0ZDW0/liTV2jS
+  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:16:14 +0800
+IronPort-SDR: AFsHqhGAozGpbCPqpMs6v1fKIwznRauQ7wfZa1lg3CJvQ5nsWqSW1gLG+qWvnmy/I7ozs+Wnge
+ +8A1ZArxZYl3tMX7BwFnykEiiAsoRx1/4DxcpIu6ow0nCGQr+TrVgaSnGip35Oe+C/g/+eS4p1
+ tcYO1lDzNqqnWKVL+kAoQbwxFrcRe7YMYGe8JoC1vuEHpdwB3SuGTS396fTjxvZQwojJKvNXk5
+ nRQv3vUtzAZ+F0iwINm8M91AJsit4TK56sZa+ZVEtN3oB0lu2h/MfLRj3Q4IqrCN6TErAI6UqX
+ cT4mM/afnoIBmLxQ+qCTmGnW
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:50:01 -0800
-IronPort-SDR: vmgi6cHID6K41DB+8KrCq4QjXdT70xFkXHUOdUmSgXrJwU9B2QMv7y/3Si5TgBo85fwjIblUhc
- WoYO3YwnUJXGat67wjhTWCk5EV6WZKdLYnXsnoyshNnoAbrlC6XvUtOq8xuXf5y0vnGxsMSZD9
- TjPusohN+UnSYA/ElQwAZU7Mh3Vy9smvxumz6fjlAIm3/Q+MfmfX6dXmSW3ibXK9QIsbcGzgcR
- 3QlhcEnH1GvHyiI0J1BPhWmp+XZR6TocQ4qSzTejWkkZcATBZj2WxmVdzhfcVK6hEv28w2j6a7
- 30Q=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:50:09 -0800
+IronPort-SDR: PQVvuUl0urV+AuHXoztIv2ko4ec5dnFXGMemj8nj98xLSxNSzY+fPjPQsEHPXi+DWIf/mEpthf
+ lxggagRReXwz2a3qn1VtF0ulgngisTFgDc8GARpNPqvFCmSjwrqNPYJBYWQmXJuwJW1I+jcOfi
+ mBefp/964dE3h3HgCffZkJDMNQ+Y2CTcG3X9wPYJRI/aNXIxvpkFSZCvBPjh/0AQZ9CcjAywMA
+ VsiZcNWe2+YTYB+oTNZV9z4YznZH7rcm2BK8z8DwmhzxhVgCmg+FR6smll6MEDUYZv4HormmV6
+ /k8=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:06:46 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:06:53 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         mingo@redhat.com, chaitanya.kulkarni@wdc.com,
@@ -57,9 +57,9 @@ To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         aravind.ramesh@wdc.com, joshi.k@samsung.com, niklas.cassel@wdc.com,
         hch@lst.de, osandov@fb.com, martin.petersen@oracle.com
 Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 29/39] blktrace: link blk_log_xxx() to trace action
-Date:   Wed, 24 Feb 2021 23:02:21 -0800
-Message-Id: <20210225070231.21136-30-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 30/39] blktrace: add trace event print helper
+Date:   Wed, 24 Feb 2021 23:02:22 -0800
+Message-Id: <20210225070231.21136-31-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1.dirty
 In-Reply-To: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
 References: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
@@ -71,42 +71,65 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- kernel/trace/blktrace.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ kernel/trace/blktrace.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
 diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 425756a62457..4a4ba1d45cb9 100644
+index 4a4ba1d45cb9..75b2ec88d8c4 100644
 --- a/kernel/trace/blktrace.c
 +++ b/kernel/trace/blktrace.c
-@@ -2301,6 +2301,28 @@ static const struct {
- 	[__BLK_TA_REMAP]	= {{  "A", "remap" },	   blk_log_remap },
- };
+@@ -2356,12 +2356,51 @@ static enum print_line_t print_one_line(struct trace_iterator *iter,
+ 	return trace_handle_return(s);
+ }
  
-+static const struct {
-+	const char *act[2];
-+	void	   (*print)(struct trace_seq *s, const struct trace_entry *ent,
-+			    bool has_cg);
-+} what2act_ext[] = {
-+	[__BLK_TA_QUEUE]	= {{  "Q", "queue" },	   blk_log_generic_ext },
-+	[__BLK_TA_BACKMERGE]	= {{  "M", "backmerge" },  blk_log_generic_ext },
-+	[__BLK_TA_FRONTMERGE]	= {{  "F", "frontmerge" }, blk_log_generic_ext },
-+	[__BLK_TA_GETRQ]	= {{  "G", "getrq" },	   blk_log_generic_ext },
-+	[__BLK_TA_SLEEPRQ]	= {{  "S", "sleeprq" },	   blk_log_generic_ext },
-+	[__BLK_TA_REQUEUE]	= {{  "R", "requeue" },	   blk_log_with_error_ext },
-+	[__BLK_TA_ISSUE]	= {{  "D", "issue" },	   blk_log_generic_ext },
-+	[__BLK_TA_COMPLETE]	= {{  "C", "complete" },   blk_log_with_error_ext },
-+	[__BLK_TA_PLUG]		= {{  "P", "plug" },	   blk_log_plug },
-+	[__BLK_TA_UNPLUG_IO]	= {{  "U", "unplug_io" },  blk_log_unplug_ext },
-+	[__BLK_TA_UNPLUG_TIMER]	= {{ "UT", "unplug_timer" }, blk_log_unplug_ext},
-+	[__BLK_TA_INSERT]	= {{  "I", "insert" },	   blk_log_generic_ext},
-+	[__BLK_TA_SPLIT]	= {{  "X", "split" },	   blk_log_split_ext },
-+	[__BLK_TA_BOUNCE]	= {{  "B", "bounce" },	   blk_log_generic_ext },
-+	[__BLK_TA_REMAP]	= {{  "A", "remap" },	   blk_log_remap_ext },
-+};
++static enum print_line_t print_one_line_ext(struct trace_iterator *iter,
++					bool classic)
++{
++	struct trace_array *tr = iter->tr;
++	struct trace_seq *s = &iter->seq;
++	const struct blk_io_trace_ext *t;
++	u32 what;
++	bool long_act;
++	blk_log_action_t *log_action;
++	bool has_cg;
 +
- static enum print_line_t print_one_line(struct trace_iterator *iter,
- 					bool classic)
++	t	   = te_blk_io_trace_ext(iter->ent);
++	what	   = (t->action & ((1ULL << BLK_TC_SHIFT_EXT) - 1)) & ~__BLK_TA_CGROUP;
++	long_act   = !!(tr->trace_flags & TRACE_ITER_VERBOSE);
++	log_action = classic ? &blk_log_action_classic_ext : &blk_log_action_ext;
++	has_cg	   = t->action & __BLK_TA_CGROUP;
++
++	if ((t->action & ~__BLK_TN_CGROUP) == BLK_TN_MESSAGE_EXT) {
++		log_action(iter, long_act ? "message" : "m", has_cg);
++		blk_log_msg_ext(s, iter->ent, has_cg);
++		return trace_handle_return(s);
++	}
++
++	if (unlikely(what == 0 || what >= ARRAY_SIZE(what2act_ext)))
++		trace_seq_printf(s, "Unknown action %x\n", what);
++	else {
++		log_action(iter, what2act_ext[what].act[long_act], has_cg);
++		what2act_ext[what].print(s, iter->ent, has_cg);
++	}
++
++	return trace_handle_return(s);
++}
++
+ static enum print_line_t blk_trace_event_print(struct trace_iterator *iter,
+ 					       int flags, struct trace_event *event)
  {
+ 	return print_one_line(iter, false);
+ }
+ 
++static enum print_line_t blk_trace_event_print_ext(struct trace_iterator *iter,
++					       int flags, struct trace_event *event)
++{
++	return print_one_line_ext(iter, false);
++}
++
+ static void blk_trace_synthesize_old_trace(struct trace_iterator *iter)
+ {
+ 	struct trace_seq *s = &iter->seq;
 -- 
 2.22.1
 
