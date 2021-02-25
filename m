@@ -2,581 +2,458 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24014325653
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 20:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD60832568E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 20:21:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234310AbhBYTLJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 14:11:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
+        id S234475AbhBYTTi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 14:19:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233743AbhBYTJg (ORCPT
+        with ESMTP id S234583AbhBYTRQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 14:09:36 -0500
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A03C061A2B;
-        Thu, 25 Feb 2021 11:05:11 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Dmj0Q2hwwzMq6C4;
-        Thu, 25 Feb 2021 20:05:10 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Dmj0P6rmSzlh8TD;
-        Thu, 25 Feb 2021 20:05:09 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v29 12/12] landlock: Add user and kernel documentation
-Date:   Thu, 25 Feb 2021 20:06:14 +0100
-Message-Id: <20210225190614.2181147-13-mic@digikod.net>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210225190614.2181147-1-mic@digikod.net>
-References: <20210225190614.2181147-1-mic@digikod.net>
+        Thu, 25 Feb 2021 14:17:16 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60EB5C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Feb 2021 11:16:56 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id f20so7065112ioo.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Feb 2021 11:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qfNImcMZahGTQR/wFhR0yx9z5vs3v44np7klwwTW/0Q=;
+        b=dDDJUUBQTCGLjzHBmE/MZUJsNopbyItqIUJAjPxafBft+YwccAedXliHLXWDEjYAZk
+         Ooc8SK73DwDvJNLINbZUtcc6eYT5B/M/xl7JEQ2KUXwtE92UoEUCYt2GZSO4n5/WGPfv
+         w8mCpRFGMg9nm79ek7HctdP3YkiiamnsKS+C/TKtQmezHbrWh5htexhLvE6uiWkYyXOg
+         3IcnqaAyTC8e4IkERspPZp0ZzT1M47yFxCMm/xhGa5GAKGaEqUWA7H8T5kpVa2XnbSES
+         FJkizLWzj52EkRxGweG36WwGeNMnThTvAEiSMn/uWs6N/ezwoDg02pALV6S1WwFl728j
+         QHjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qfNImcMZahGTQR/wFhR0yx9z5vs3v44np7klwwTW/0Q=;
+        b=Pf0NFLeSdYdlMXiBwNU1uSES8KgkDJtlWGBZ8LjdcX2JE95xNFRHKNjFVLqcgpbm8s
+         nz/C63qimDnauUaTGNLA4MK3c7/vRze5fxQnO+7GMwUy0XV7L5lBxTxeKAYnh71ycOyR
+         c/Ngto4QgFILv++fnXL3XfeDzkhkQ+NYwAn/i3Fkdt+H3tZfbJIBUNaGtB/RZnYA0CA2
+         kCQjO3ZagahveMTBUoIbxmvlF+fTZpzCRgVrVCJHTUrDAPEGPjQzAQKoI5FMQiAOTmS7
+         SYLufcpEYlikDYWQ2g3OCyxv5teqKMHKiQ0uABPcsRBP4WAKMYZUf4+Cz7VLqkkKfkiN
+         qm5A==
+X-Gm-Message-State: AOAM532gUEwCiUQgmXrsQFuR3x9M5g6QvDdL3O/wyasREnQ9t7xG2yCk
+        8WVoUq8FNt9g12K4UXXks8meeBR751YUNoUZzR8g0+wcWvljwg==
+X-Google-Smtp-Source: ABdhPJymW+piO68EEVQmhDtOkSJtf8nzu2dddTlhmOD1fd2xNIh/xoHoQiF96yoAm5PVbzyXrSvW0tW4wTDn/BHCiyE=
+X-Received: by 2002:a05:6602:2432:: with SMTP id g18mr2805468iob.86.1614280615585;
+ Thu, 25 Feb 2021 11:16:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20210225021420.2290912-1-axelrasmussen@google.com> <20210225021420.2290912-2-axelrasmussen@google.com>
+In-Reply-To: <20210225021420.2290912-2-axelrasmussen@google.com>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Thu, 25 Feb 2021 11:16:19 -0800
+Message-ID: <CAJHvVch433COtJMMnJD+L4xZ=BoJqBK6y9R=gsfYkC3cegfWHQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] userfaultfd: support minor fault handling for shmem
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Peter Xu <peterx@redhat.com>, Shaohua Li <shli@fb.com>,
+        Shuah Khan <shuah@kernel.org>, Wang Qing <wangqing@vivo.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>, linux-kselftest@vger.kernel.org,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+On Wed, Feb 24, 2021 at 6:14 PM Axel Rasmussen <axelrasmussen@google.com> wrote:
+>
+> Modify the userfaultfd register API to allow registering shmem VMAs in
+> minor mode. Modify the shmem mcopy implementation to support
+> UFFDIO_CONTINUE in order to resolve such faults.
+>
+> Combine the shmem mcopy handler functions into a single
+> shmem_mcopy_atomic_pte, which takes a mode parameter. This matches how
+> the hugetlbfs implementation is structured, and lets us remove a good
+> chunk of boilerplate.
+>
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> ---
+>  fs/userfaultfd.c                 |  6 +--
+>  include/linux/shmem_fs.h         | 26 ++++------
+>  include/uapi/linux/userfaultfd.h |  4 +-
+>  mm/memory.c                      |  8 +--
+>  mm/shmem.c                       | 88 +++++++++++++++-----------------
+>  mm/userfaultfd.c                 | 27 +++++-----
+>  6 files changed, 77 insertions(+), 82 deletions(-)
+>
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 0311e9b8a8fc..aa6d584ae8c7 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1267,8 +1267,7 @@ static inline bool vma_can_userfault(struct vm_area_struct *vma,
+>         }
+>
+>         if (vm_flags & VM_UFFD_MINOR) {
+> -               /* FIXME: Add minor fault interception for shmem. */
+> -               if (!is_vm_hugetlb_page(vma))
+> +               if (!(is_vm_hugetlb_page(vma) || vma_is_shmem(vma)))
+>                         return false;
+>         }
+>
+> @@ -1941,7 +1940,8 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
+>         /* report all available features and ioctls to userland */
+>         uffdio_api.features = UFFD_API_FEATURES;
+>  #ifndef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
+> -       uffdio_api.features &= ~UFFD_FEATURE_MINOR_HUGETLBFS;
+> +       uffdio_api.features &=
+> +               ~(UFFD_FEATURE_MINOR_HUGETLBFS | UFFD_FEATURE_MINOR_SHMEM);
+>  #endif
+>         uffdio_api.ioctls = UFFD_API_IOCTLS;
+>         ret = -EFAULT;
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index d82b6f396588..f0919c3722e7 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/percpu_counter.h>
+>  #include <linux/xattr.h>
+>  #include <linux/fs_parser.h>
+> +#include <linux/userfaultfd_k.h>
+>
+>  /* inode in-kernel data */
+>
+> @@ -122,21 +123,16 @@ static inline bool shmem_file(struct file *file)
+>  extern bool shmem_charge(struct inode *inode, long pages);
+>  extern void shmem_uncharge(struct inode *inode, long pages);
+>
+> +#ifdef CONFIG_USERFAULTFD
+>  #ifdef CONFIG_SHMEM
+> -extern int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+> -                                 struct vm_area_struct *dst_vma,
+> -                                 unsigned long dst_addr,
+> -                                 unsigned long src_addr,
+> -                                 struct page **pagep);
+> -extern int shmem_mfill_zeropage_pte(struct mm_struct *dst_mm,
+> -                                   pmd_t *dst_pmd,
+> -                                   struct vm_area_struct *dst_vma,
+> -                                   unsigned long dst_addr);
+> -#else
+> -#define shmem_mcopy_atomic_pte(dst_mm, dst_pte, dst_vma, dst_addr, \
+> -                              src_addr, pagep)        ({ BUG(); 0; })
+> -#define shmem_mfill_zeropage_pte(dst_mm, dst_pmd, dst_vma, \
+> -                                dst_addr)      ({ BUG(); 0; })
+> -#endif
+> +int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+> +                          struct vm_area_struct *dst_vma,
+> +                          unsigned long dst_addr, unsigned long src_addr,
+> +                          enum mcopy_atomic_mode mode, struct page **pagep);
+> +#else /* !CONFIG_SHMEM */
+> +#define shmem_mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr, \
+> +                              src_addr, mode, pagep)        ({ BUG(); 0; })
+> +#endif /* CONFIG_SHMEM */
+> +#endif /* CONFIG_USERFAULTFD */
+>
+>  #endif
+> diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
+> index bafbeb1a2624..47d9790d863d 100644
+> --- a/include/uapi/linux/userfaultfd.h
+> +++ b/include/uapi/linux/userfaultfd.h
+> @@ -31,7 +31,8 @@
+>                            UFFD_FEATURE_MISSING_SHMEM |         \
+>                            UFFD_FEATURE_SIGBUS |                \
+>                            UFFD_FEATURE_THREAD_ID |             \
+> -                          UFFD_FEATURE_MINOR_HUGETLBFS)
+> +                          UFFD_FEATURE_MINOR_HUGETLBFS |       \
+> +                          UFFD_FEATURE_MINOR_SHMEM)
+>  #define UFFD_API_IOCTLS                                \
+>         ((__u64)1 << _UFFDIO_REGISTER |         \
+>          (__u64)1 << _UFFDIO_UNREGISTER |       \
+> @@ -196,6 +197,7 @@ struct uffdio_api {
+>  #define UFFD_FEATURE_SIGBUS                    (1<<7)
+>  #define UFFD_FEATURE_THREAD_ID                 (1<<8)
+>  #define UFFD_FEATURE_MINOR_HUGETLBFS           (1<<9)
+> +#define UFFD_FEATURE_MINOR_SHMEM               (1<<10)
+>         __u64 features;
+>
+>         __u64 ioctls;
+> diff --git a/mm/memory.c b/mm/memory.c
+> index c8e357627318..a1e5ff55027e 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3929,9 +3929,11 @@ static vm_fault_t do_read_fault(struct vm_fault *vmf)
+>          * something).
+>          */
+>         if (vma->vm_ops->map_pages && fault_around_bytes >> PAGE_SHIFT > 1) {
+> -               ret = do_fault_around(vmf);
+> -               if (ret)
+> -                       return ret;
+> +               if (likely(!userfaultfd_minor(vmf->vma))) {
+> +                       ret = do_fault_around(vmf);
+> +                       if (ret)
+> +                               return ret;
+> +               }
+>         }
+>
+>         ret = __do_fault(vmf);
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 06c771d23127..d7847f6f696b 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -77,7 +77,6 @@ static struct vfsmount *shm_mnt;
+>  #include <linux/syscalls.h>
+>  #include <linux/fcntl.h>
+>  #include <uapi/linux/memfd.h>
+> -#include <linux/userfaultfd_k.h>
+>  #include <linux/rmap.h>
+>  #include <linux/uuid.h>
+>
+> @@ -1781,8 +1780,8 @@ static int shmem_swapin_page(struct inode *inode, pgoff_t index,
+>   * vm. If we swap it in we mark it dirty since we also free the swap
+>   * entry since a page cannot live in both the swap and page cache.
+>   *
+> - * vmf and fault_type are only supplied by shmem_fault:
+> - * otherwise they are NULL.
+> + * vma, vmf, and fault_type are only supplied by shmem_fault: otherwise they
+> + * are NULL.
+>   */
+>  static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+>         struct page **pagep, enum sgp_type sgp, gfp_t gfp,
+> @@ -1826,6 +1825,12 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+>                 return error;
+>         }
+>
+> +       if (page && vma && userfaultfd_minor(vma)) {
+> +               unlock_page(page);
+> +               *fault_type = handle_userfault(vmf, VM_UFFD_MINOR);
+> +               return 0;
+> +       }
+> +
+>         if (page)
+>                 hindex = page->index;
+>         if (page && sgp == SGP_WRITE)
+> @@ -2350,14 +2355,12 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+>         return inode;
+>  }
+>
+> -static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+> -                                 pmd_t *dst_pmd,
+> -                                 struct vm_area_struct *dst_vma,
+> -                                 unsigned long dst_addr,
+> -                                 unsigned long src_addr,
+> -                                 bool zeropage,
+> -                                 struct page **pagep)
+> +int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+> +                          struct vm_area_struct *dst_vma,
+> +                          unsigned long dst_addr, unsigned long src_addr,
+> +                          enum mcopy_atomic_mode mode, struct page **pagep)
+>  {
+> +       bool is_continue = (mode == MCOPY_ATOMIC_CONTINUE);
+>         struct inode *inode = file_inode(dst_vma->vm_file);
+>         struct shmem_inode_info *info = SHMEM_I(inode);
+>         struct address_space *mapping = inode->i_mapping;
+> @@ -2374,12 +2377,17 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>         if (!shmem_inode_acct_block(inode, 1))
+>                 goto out;
+>
+> -       if (!*pagep) {
+> +       if (is_continue) {
+> +               ret = -EFAULT;
+> +               page = find_get_page(mapping, pgoff);
+> +               if (!page)
+> +                       goto out_unacct_blocks;
+> +       } else if (!*pagep) {
+>                 page = shmem_alloc_page(gfp, info, pgoff);
+>                 if (!page)
+>                         goto out_unacct_blocks;
+>
+> -               if (!zeropage) {        /* mcopy_atomic */
+> +               if (mode == MCOPY_ATOMIC_NORMAL) {      /* mcopy_atomic */
+>                         page_kaddr = kmap_atomic(page);
+>                         ret = copy_from_user(page_kaddr,
+>                                              (const void __user *)src_addr,
+> @@ -2393,7 +2401,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>                                 /* don't free the page */
+>                                 return -ENOENT;
+>                         }
+> -               } else {                /* mfill_zeropage_atomic */
+> +               } else {                /* zeropage */
+>                         clear_highpage(page);
+>                 }
+>         } else {
+> @@ -2401,9 +2409,12 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>                 *pagep = NULL;
+>         }
+>
+> -       VM_BUG_ON(PageLocked(page) || PageSwapBacked(page));
+> +       if (!is_continue)
+> +               VM_BUG_ON(PageSwapBacked(page));
+> +       VM_BUG_ON(PageLocked(page));
+>         __SetPageLocked(page);
+> -       __SetPageSwapBacked(page);
+> +       if (!is_continue || !PageSwapBacked(page))
+> +               __SetPageSwapBacked(page);
+>         __SetPageUptodate(page);
 
-This documentation can be built with the Sphinx framework.
+Apologies, I was testing more scenarios today and discovered this
+doesn't work when the shmem is backed by a tmpfs file with the
+huge=always mount option. I think it's more correct to lookup the page
+with find_lock_page, and then wrap *all* of the page flag fiddling
+here in an "if(!is_continue) {" block. I'll send a v2 with this fix
+next week.
 
-Cc: James Morris <jmorris@namei.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Reviewed-by: Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>
-Link: https://lore.kernel.org/r/20210225190614.2181147-13-mic@digikod.net
----
-
-Changes since v28:
-* Reorder subsections by importance in the "Current limitations"
-  section.
-
-Changes since v27:
-* Update landlock_restrict_self(2).
-* Update date and copyright.
-
-Changes since v25:
-* Explain the behavior of layered access rights.
-* Explain how bind mounts and overayfs mounts are handled by Landlock:
-  merged overlayfs mount points have their own inodes, which makes these
-  hierarchies independent from its upper and lower layers, unlike bind
-  mounts which share the same inodes between the source hierarchy and
-  the mount point hierarchy.
-  New overlayfs mount and bind mount tests check these behaviors.
-* Synchronize with the new syscalls.c file and update syscall names.
-* Fix spelling.
-* Remove Reviewed-by Jann Horn because of the above changes.
-
-Changes since v24:
-* Add Reviewed-by Jann Horn.
-* Add a paragraph to explain how the ruleset layers work.
-* Bump date.
-
-Changes since v23:
-* Explain limitations for the maximum number of stacked ruleset, and the
-  memory usage restrictions.
-
-Changes since v22:
-* Fix spelling and remove obsolete sentence (spotted by Jann Horn).
-* Bump date.
-
-Changes since v21:
-* Move the user space documentation to userspace-api/landlock.rst and
-  the kernel documentation to security/landlock.rst .
-* Add license headers.
-* Add last update dates.
-* Update MAINTAINERS file.
-* Add (back) links to git.kernel.org .
-* Fix spelling.
-
-Changes since v20:
-* Update examples and documentation with the new syscalls.
-
-Changes since v19:
-* Update examples and documentation with the new syscalls.
-
-Changes since v15:
-* Add current limitations.
-
-Changes since v14:
-* Fix spelling (contributed by Randy Dunlap).
-* Extend documentation about inheritance and explain layer levels.
-* Remove the use of now-removed access rights.
-* Use GitHub links.
-* Improve kernel documentation.
-* Add section for tests.
-* Update example.
-
-Changes since v13:
-* Rewrote the documentation according to the major revamp.
-
-Previous changes:
-https://lore.kernel.org/lkml/20191104172146.30797-8-mic@digikod.net/
----
- Documentation/security/index.rst         |   1 +
- Documentation/security/landlock.rst      |  79 ++++++
- Documentation/userspace-api/index.rst    |   1 +
- Documentation/userspace-api/landlock.rst | 307 +++++++++++++++++++++++
- MAINTAINERS                              |   2 +
- 5 files changed, 390 insertions(+)
- create mode 100644 Documentation/security/landlock.rst
- create mode 100644 Documentation/userspace-api/landlock.rst
-
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index 8129405eb2cc..16335de04e8c 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -16,3 +16,4 @@ Security Documentation
-    siphash
-    tpm/index
-    digsig
-+   landlock
-diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-new file mode 100644
-index 000000000000..ff145a661abd
---- /dev/null
-+++ b/Documentation/security/landlock.rst
-@@ -0,0 +1,79 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+.. Copyright © 2019-2020 ANSSI
-+
-+==================================
-+Landlock LSM: kernel documentation
-+==================================
-+
-+:Author: Mickaël Salaün
-+:Date: February 2021
-+
-+Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
-+harden a whole system, this feature should be available to any process,
-+including unprivileged ones.  Because such process may be compromised or
-+backdoored (i.e. untrusted), Landlock's features must be safe to use from the
-+kernel and other processes point of view.  Landlock's interface must therefore
-+expose a minimal attack surface.
-+
-+Landlock is designed to be usable by unprivileged processes while following the
-+system security policy enforced by other access control mechanisms (e.g. DAC,
-+LSM).  Indeed, a Landlock rule shall not interfere with other access-controls
-+enforced on the system, only add more restrictions.
-+
-+Any user can enforce Landlock rulesets on their processes.  They are merged and
-+evaluated according to the inherited ones in a way that ensures that only more
-+constraints can be added.
-+
-+User space documentation can be found here: :doc:`/userspace-api/landlock`.
-+
-+Guiding principles for safe access controls
-+===========================================
-+
-+* A Landlock rule shall be focused on access control on kernel objects instead
-+  of syscall filtering (i.e. syscall arguments), which is the purpose of
-+  seccomp-bpf.
-+* To avoid multiple kinds of side-channel attacks (e.g. leak of security
-+  policies, CPU-based attacks), Landlock rules shall not be able to
-+  programmatically communicate with user space.
-+* Kernel access check shall not slow down access request from unsandboxed
-+  processes.
-+* Computation related to Landlock operations (e.g. enforcing a ruleset) shall
-+  only impact the processes requesting them.
-+
-+Tests
-+=====
-+
-+Userspace tests for backward compatibility, ptrace restrictions and filesystem
-+support can be found here: `tools/testing/selftests/landlock/`_.
-+
-+Kernel structures
-+=================
-+
-+Object
-+------
-+
-+.. kernel-doc:: security/landlock/object.h
-+    :identifiers:
-+
-+Ruleset and domain
-+------------------
-+
-+A domain is a read-only ruleset tied to a set of subjects (i.e. tasks'
-+credentials).  Each time a ruleset is enforced on a task, the current domain is
-+duplicated and the ruleset is imported as a new layer of rules in the new
-+domain.  Indeed, once in a domain, each rule is tied to a layer level.  To
-+grant access to an object, at least one rule of each layer must allow the
-+requested action on the object.  A task can then only transit to a new domain
-+that is the intersection of the constraints from the current domain and those
-+of a ruleset provided by the task.
-+
-+The definition of a subject is implicit for a task sandboxing itself, which
-+makes the reasoning much easier and helps avoid pitfalls.
-+
-+.. kernel-doc:: security/landlock/ruleset.h
-+    :identifiers:
-+
-+.. Links
-+.. _tools/testing/selftests/landlock/:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/landlock/
-diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-index d29b020e5622..744c6491610c 100644
---- a/Documentation/userspace-api/index.rst
-+++ b/Documentation/userspace-api/index.rst
-@@ -18,6 +18,7 @@ place where this information is gathered.
- 
-    no_new_privs
-    seccomp_filter
-+   landlock
-    unshare
-    spec_ctrl
-    accelerators/ocxl
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-new file mode 100644
-index 000000000000..affe8b1d9c6e
---- /dev/null
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -0,0 +1,307 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+.. Copyright © 2019-2020 ANSSI
-+.. Copyright © 2021 Microsoft Corporation
-+
-+=====================================
-+Landlock: unprivileged access control
-+=====================================
-+
-+:Author: Mickaël Salaün
-+:Date: February 2021
-+
-+The goal of Landlock is to enable to restrict ambient rights (e.g. global
-+filesystem access) for a set of processes.  Because Landlock is a stackable
-+LSM, it makes possible to create safe security sandboxes as new security layers
-+in addition to the existing system-wide access-controls. This kind of sandbox
-+is expected to help mitigate the security impact of bugs or
-+unexpected/malicious behaviors in user space applications.  Landlock empowers
-+any process, including unprivileged ones, to securely restrict themselves.
-+
-+Landlock rules
-+==============
-+
-+A Landlock rule describes an action on an object.  An object is currently a
-+file hierarchy, and the related filesystem actions are defined in `Access
-+rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
-+the thread enforcing it, and its future children.
-+
-+Defining and enforcing a security policy
-+----------------------------------------
-+
-+We first need to create the ruleset that will contain our rules.  For this
-+example, the ruleset will contain rules that only allow read actions, but write
-+actions will be denied.  The ruleset then needs to handle both of these kind of
-+actions.
-+
-+.. code-block:: c
-+
-+    int ruleset_fd;
-+    struct landlock_ruleset_attr ruleset_attr = {
-+        .handled_access_fs =
-+            LANDLOCK_ACCESS_FS_EXECUTE |
-+            LANDLOCK_ACCESS_FS_WRITE_FILE |
-+            LANDLOCK_ACCESS_FS_READ_FILE |
-+            LANDLOCK_ACCESS_FS_READ_DIR |
-+            LANDLOCK_ACCESS_FS_REMOVE_DIR |
-+            LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+            LANDLOCK_ACCESS_FS_MAKE_CHAR |
-+            LANDLOCK_ACCESS_FS_MAKE_DIR |
-+            LANDLOCK_ACCESS_FS_MAKE_REG |
-+            LANDLOCK_ACCESS_FS_MAKE_SOCK |
-+            LANDLOCK_ACCESS_FS_MAKE_FIFO |
-+            LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-+            LANDLOCK_ACCESS_FS_MAKE_SYM,
-+    };
-+
-+    ruleset_fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+    if (ruleset_fd < 0) {
-+        perror("Failed to create a ruleset");
-+        return 1;
-+    }
-+
-+We can now add a new rule to this ruleset thanks to the returned file
-+descriptor referring to this ruleset.  The rule will only allow reading the
-+file hierarchy ``/usr``.  Without another rule, write actions would then be
-+denied by the ruleset.  To add ``/usr`` to the ruleset, we open it with the
-+``O_PATH`` flag and fill the &struct landlock_path_beneath_attr with this file
-+descriptor.
-+
-+.. code-block:: c
-+
-+    int err;
-+    struct landlock_path_beneath_attr path_beneath = {
-+        .allowed_access =
-+            LANDLOCK_ACCESS_FS_EXECUTE |
-+            LANDLOCK_ACCESS_FS_READ_FILE |
-+            LANDLOCK_ACCESS_FS_READ_DIR,
-+    };
-+
-+    path_beneath.parent_fd = open("/usr", O_PATH | O_CLOEXEC);
-+    if (path_beneath.parent_fd < 0) {
-+        perror("Failed to open file");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-+                            &path_beneath, 0);
-+    close(path_beneath.parent_fd);
-+    if (err) {
-+        perror("Failed to update ruleset");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+
-+We now have a ruleset with one rule allowing read access to ``/usr`` while
-+denying all other handled accesses for the filesystem.  The next step is to
-+restrict the current thread from gaining more privileges (e.g. thanks to a SUID
-+binary).
-+
-+.. code-block:: c
-+
-+    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-+        perror("Failed to restrict privileges");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+
-+The current thread is now ready to sandbox itself with the ruleset.
-+
-+.. code-block:: c
-+
-+    if (landlock_restrict_self(ruleset_fd, 0)) {
-+        perror("Failed to enforce ruleset");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+    close(ruleset_fd);
-+
-+If the `landlock_restrict_self` system call succeeds, the current thread is now
-+restricted and this policy will be enforced on all its subsequently created
-+children as well.  Once a thread is landlocked, there is no way to remove its
-+security policy; only adding more restrictions is allowed.  These threads are
-+now in a new Landlock domain, merge of their parent one (if any) with the new
-+ruleset.
-+
-+Full working code can be found in `samples/landlock/sandboxer.c`_.
-+
-+Layers of file path access rights
-+---------------------------------
-+
-+Each time a thread enforces a ruleset on itself, it updates its Landlock domain
-+with a new layer of policy.  Indeed, this complementary policy is stacked with
-+the potentially other rulesets already restricting this thread.  A sandboxed
-+thread can then safely add more constraints to itself with a new enforced
-+ruleset.
-+
-+One policy layer grants access to a file path if at least one of its rules
-+encountered on the path grants the access.  A sandboxed thread can only access
-+a file path if all its enforced policy layers grant the access as well as all
-+the other system access controls (e.g. filesystem DAC, other LSM policies,
-+etc.).
-+
-+Bind mounts and OverlayFS
-+-------------------------
-+
-+Landlock enables to restrict access to file hierarchies, which means that these
-+access rights can be propagated with bind mounts (cf.
-+:doc:`/filesystems/sharedsubtree`) but not with :doc:`/filesystems/overlayfs`.
-+
-+A bind mount mirrors a source file hierarchy to a destination.  The destination
-+hierarchy is then composed of the exact same files, on which Landlock rules can
-+be tied, either via the source or the destination path.  These rules restrict
-+access when they are encountered on a path, which means that they can restrict
-+access to multiple file hierarchies at the same time, whether these hierarchies
-+are the result of bind mounts or not.
-+
-+An OverlayFS mount point consists of upper and lower layers.  These layers are
-+combined in a merge directory, result of the mount point.  This merge hierarchy
-+may include files from the upper and lower layers, but modifications performed
-+on the merge hierarchy only reflects on the upper layer.  From a Landlock
-+policy point of view, each OverlayFS layers and merge hierarchies are
-+standalone and contains their own set of files and directories, which is
-+different from bind mounts.  A policy restricting an OverlayFS layer will not
-+restrict the resulted merged hierarchy, and vice versa.
-+
-+Inheritance
-+-----------
-+
-+Every new thread resulting from a :manpage:`clone(2)` inherits Landlock domain
-+restrictions from its parent.  This is similar to the seccomp inheritance (cf.
-+:doc:`/userspace-api/seccomp_filter`) or any other LSM dealing with task's
-+:manpage:`credentials(7)`.  For instance, one process's thread may apply
-+Landlock rules to itself, but they will not be automatically applied to other
-+sibling threads (unlike POSIX thread credential changes, cf.
-+:manpage:`nptl(7)`).
-+
-+When a thread sandboxes itself, we have the guarantee that the related security
-+policy will stay enforced on all this thread's descendants.  This allows
-+creating standalone and modular security policies per application, which will
-+automatically be composed between themselves according to their runtime parent
-+policies.
-+
-+Ptrace restrictions
-+-------------------
-+
-+A sandboxed process has less privileges than a non-sandboxed process and must
-+then be subject to additional restrictions when manipulating another process.
-+To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
-+process, a sandboxed process should have a subset of the target process rules,
-+which means the tracee must be in a sub-domain of the tracer.
-+
-+Kernel interface
-+================
-+
-+Access rights
-+-------------
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: fs_access
-+
-+Creating a new ruleset
-+----------------------
-+
-+.. kernel-doc:: security/landlock/syscalls.c
-+    :identifiers: sys_landlock_create_ruleset
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: landlock_ruleset_attr
-+
-+Extending a ruleset
-+-------------------
-+
-+.. kernel-doc:: security/landlock/syscalls.c
-+    :identifiers: sys_landlock_add_rule
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: landlock_rule_type landlock_path_beneath_attr
-+
-+Enforcing a ruleset
-+-------------------
-+
-+.. kernel-doc:: security/landlock/syscalls.c
-+    :identifiers: sys_landlock_restrict_self
-+
-+Current limitations
-+===================
-+
-+File renaming and linking
-+-------------------------
-+
-+Because Landlock targets unprivileged access controls, it is needed to properly
-+handle composition of rules.  Such property also implies rules nesting.
-+Properly handling multiple layers of ruleset, each one of them able to restrict
-+access to files, also implies to inherit the ruleset restrictions from a parent
-+to its hierarchy.  Because files are identified and restricted by their
-+hierarchy, moving or linking a file from one directory to another implies to
-+propagate the hierarchy constraints.  To protect against privilege escalations
-+through renaming or linking, and for the sack of simplicity, Landlock currently
-+limits linking and renaming to the same directory.  Future Landlock evolutions
-+will enable more flexibility for renaming and linking, with dedicated ruleset
-+flags.
-+
-+Filesystem layout modification
-+------------------------------
-+
-+As for file renaming and linking, a sandboxed thread cannot modify its
-+filesystem layout, whether via :manpage:`mount(2)` or :manpage:`pivot_root(2)`.
-+However, :manpage:`chroot(2)` calls are not denied.
-+
-+Special filesystems
-+-------------------
-+
-+Access to regular files and directories can be restricted by Landlock,
-+according to the handled accesses of a ruleset.  However, files that do not
-+come from a user-visible filesystem (e.g. pipe, socket), but can still be
-+accessed through /proc/self/fd/, cannot currently be restricted.  Likewise,
-+some special kernel filesystems such as nsfs, which can be accessed through
-+/proc/self/ns/, cannot currently be restricted.  For now, these kind of special
-+paths are then always allowed.  Future Landlock evolutions will enable to
-+restrict such paths with dedicated ruleset flags.
-+
-+Ruleset layers
-+--------------
-+
-+There is a limit of 64 layers of stacked rulesets.  This can be an issue for a
-+task willing to enforce a new ruleset in complement to its 64 inherited
-+rulesets.  Once this limit is reached, sys_landlock_restrict_self() returns
-+E2BIG.  It is then strongly suggested to carefully build rulesets once in the
-+life of a thread, especially for applications able to launch other applications
-+that may also want to sandbox themselves (e.g. shells, container managers,
-+etc.).
-+
-+Memory usage
-+------------
-+
-+Kernel memory allocated to create rulesets is accounted and can be restricted
-+by the :doc:`/admin-guide/cgroup-v1/memory`.
-+
-+Questions and answers
-+=====================
-+
-+What about user space sandbox managers?
-+---------------------------------------
-+
-+Using user space process to enforce restrictions on kernel resources can lead
-+to race conditions or inconsistent evaluations (i.e. `Incorrect mirroring of
-+the OS code and state
-+<https://www.ndss-symposium.org/ndss2003/traps-and-pitfalls-practical-problems-system-call-interposition-based-security-tools/>`_).
-+
-+What about namespaces and containers?
-+-------------------------------------
-+
-+Namespaces can help create sandboxes but they are not designed for
-+access-control and then miss useful features for such use case (e.g. no
-+fine-grained restrictions).  Moreover, their complexity can lead to security
-+issues, especially when untrusted processes can manipulate them (cf.
-+`Controlling access to user namespaces <https://lwn.net/Articles/673597/>`_).
-+
-+Additional documentation
-+========================
-+
-+* :doc:`/security/landlock`
-+* https://landlock.io
-+
-+.. Links
-+.. _samples/landlock/sandboxer.c:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/samples/landlock/sandboxer.c
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 624bbdcf7478..6c22623a1bfd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9933,6 +9933,8 @@ L:	linux-security-module@vger.kernel.org
- S:	Supported
- W:	https://landlock.io
- T:	git https://github.com/landlock-lsm/linux.git
-+F:	Documentation/security/landlock.rst
-+F:	Documentation/userspace-api/landlock.rst
- F:	include/uapi/linux/landlock.h
- F:	samples/landlock/
- F:	security/landlock/
--- 
-2.30.0
-
+>
+>         ret = -EFAULT;
+> @@ -2412,10 +2423,13 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>         if (unlikely(offset >= max_off))
+>                 goto out_release;
+>
+> -       ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
+> -                                     gfp & GFP_RECLAIM_MASK, dst_mm);
+> -       if (ret)
+> -               goto out_release;
+> +       /* If page wasn't already in the page cache, add it. */
+> +       if (!is_continue) {
+> +               ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
+> +                                             gfp & GFP_RECLAIM_MASK, dst_mm);
+> +               if (ret)
+> +                       goto out_release;
+> +       }
+>
+>         _dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+>         if (dst_vma->vm_flags & VM_WRITE)
+> @@ -2442,13 +2456,15 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>         if (!pte_none(*dst_pte))
+>                 goto out_release_unlock;
+>
+> -       lru_cache_add(page);
+> +       if (!is_continue) {
+> +               lru_cache_add(page);
+>
+> -       spin_lock_irq(&info->lock);
+> -       info->alloced++;
+> -       inode->i_blocks += BLOCKS_PER_PAGE;
+> -       shmem_recalc_inode(inode);
+> -       spin_unlock_irq(&info->lock);
+> +               spin_lock_irq(&info->lock);
+> +               info->alloced++;
+> +               inode->i_blocks += BLOCKS_PER_PAGE;
+> +               shmem_recalc_inode(inode);
+> +               spin_unlock_irq(&info->lock);
+> +       }
+>
+>         inc_mm_counter(dst_mm, mm_counter_file(page));
+>         page_add_file_rmap(page, false);
+> @@ -2473,28 +2489,6 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+>         goto out;
+>  }
+>
+> -int shmem_mcopy_atomic_pte(struct mm_struct *dst_mm,
+> -                          pmd_t *dst_pmd,
+> -                          struct vm_area_struct *dst_vma,
+> -                          unsigned long dst_addr,
+> -                          unsigned long src_addr,
+> -                          struct page **pagep)
+> -{
+> -       return shmem_mfill_atomic_pte(dst_mm, dst_pmd, dst_vma,
+> -                                     dst_addr, src_addr, false, pagep);
+> -}
+> -
+> -int shmem_mfill_zeropage_pte(struct mm_struct *dst_mm,
+> -                            pmd_t *dst_pmd,
+> -                            struct vm_area_struct *dst_vma,
+> -                            unsigned long dst_addr)
+> -{
+> -       struct page *page = NULL;
+> -
+> -       return shmem_mfill_atomic_pte(dst_mm, dst_pmd, dst_vma,
+> -                                     dst_addr, 0, true, &page);
+> -}
+> -
+>  #ifdef CONFIG_TMPFS
+>  static const struct inode_operations shmem_symlink_inode_operations;
+>  static const struct inode_operations shmem_short_symlink_operations;
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index ce6cb4760d2c..6cd7ab531aec 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -415,7 +415,7 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+>                                                 unsigned long dst_addr,
+>                                                 unsigned long src_addr,
+>                                                 struct page **page,
+> -                                               bool zeropage,
+> +                                               enum mcopy_atomic_mode mode,
+>                                                 bool wp_copy)
+>  {
+>         ssize_t err;
+> @@ -431,22 +431,24 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+>          * and not in the radix tree.
+>          */
+>         if (!(dst_vma->vm_flags & VM_SHARED)) {
+> -               if (!zeropage)
+> +               switch (mode) {
+> +               case MCOPY_ATOMIC_NORMAL:
+>                         err = mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
+>                                                dst_addr, src_addr, page,
+>                                                wp_copy);
+> -               else
+> +                       break;
+> +               case MCOPY_ATOMIC_ZEROPAGE:
+>                         err = mfill_zeropage_pte(dst_mm, dst_pmd,
+>                                                  dst_vma, dst_addr);
+> +                       break;
+> +               case MCOPY_ATOMIC_CONTINUE:
+> +                       err = -EINVAL;
+> +                       break;
+> +               }
+>         } else {
+>                 VM_WARN_ON_ONCE(wp_copy);
+> -               if (!zeropage)
+> -                       err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd,
+> -                                                    dst_vma, dst_addr,
+> -                                                    src_addr, page);
+> -               else
+> -                       err = shmem_mfill_zeropage_pte(dst_mm, dst_pmd,
+> -                                                      dst_vma, dst_addr);
+> +               err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
+> +                                            src_addr, mode, page);
+>         }
+>
+>         return err;
+> @@ -467,7 +469,6 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
+>         long copied;
+>         struct page *page;
+>         bool wp_copy;
+> -       bool zeropage = (mcopy_mode == MCOPY_ATOMIC_ZEROPAGE);
+>
+>         /*
+>          * Sanitize the command parameters:
+> @@ -530,7 +531,7 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
+>
+>         if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
+>                 goto out_unlock;
+> -       if (mcopy_mode == MCOPY_ATOMIC_CONTINUE)
+> +       if (!vma_is_shmem(dst_vma) && mcopy_mode == MCOPY_ATOMIC_CONTINUE)
+>                 goto out_unlock;
+>
+>         /*
+> @@ -578,7 +579,7 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
+>                 BUG_ON(pmd_trans_huge(*dst_pmd));
+>
+>                 err = mfill_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
+> -                                      src_addr, &page, zeropage, wp_copy);
+> +                                      src_addr, &page, mcopy_mode, wp_copy);
+>                 cond_resched();
+>
+>                 if (unlikely(err == -ENOENT)) {
+> --
+> 2.30.0.617.g56c4b15f3c-goog
+>
