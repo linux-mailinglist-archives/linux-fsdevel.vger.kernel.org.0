@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B80324ACC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:07:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23C66324AD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:07:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232608AbhBYHG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 02:06:26 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:61594 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbhBYHFe (ORCPT
+        id S232969AbhBYHG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 02:06:57 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:13098 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232486AbhBYHFj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 02:05:34 -0500
+        Thu, 25 Feb 2021 02:05:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1614236735; x=1645772735;
+  t=1614237261; x=1645773261;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=jJS33jTeS4XOBYxJhHFf4LP5tOs+0XruCJUSjMPRWFQ=;
-  b=VBquBQsLeNhwCzvHAGchjVn5OhOmxonchIor33W9BnOOpeTPUYUmkr7H
-   8FQrX8BngwpSrBeX7XS1YXV+saPG5sQQy/MPlrE7ukRI6Zp1C4o80NqzO
-   cmGYJPqkxZx3SQIEu0Ry6wYxToUfPNU38pb2JJOutTy9yVswgqBut0/oe
-   5fhD2VA0Ed0P1NEeb0mwYWbKe9qpUuZANFbzDjHOacl7pHLPb8Nrmu0rW
-   nRZNQiqyrFdVwwL89pX7jBJqYT6P4id/hH7GjJQvByrVUWdytzcjFivcg
-   O85qXHALe8NH91R3eQtSdHdl9QxSmEEESrbxd4U6zCkjAOeixgOYqy8lb
-   g==;
-IronPort-SDR: W+1+t3b5Dml6Vz/GRuNdBsgYUEIxpiWYy28A9fy8+elhhIgRET4laNiVRapcVw/SXIu7sQ0mHf
- rTEYAG/xg3xInr7Z4t7QIDhoYWjMYy8q65WsC/bk7sa52pGS9w6GHRAZA1shgClOAJQ6nMdjfL
- 7moUdVV1if+RvPM7LMokANKZc0s1GPsULgV6qVj3Y4+iMCRaVpR8jenE6lIk7uHZNBdHUl3glS
- GaCWnDkKoK1qAU8x6C0EXbDy/t8/OzAKzPC0vTwcgUoe3ZcFaNRQRq1PhHkRBQDnsqea354fif
- Ab8=
+  bh=oCu3+kNWbsW2ZNvShwFNhd9xthlLzpeD0o9Ug702zLA=;
+  b=aUYfqxm5ElNMRX9VonJ/8ZJEe0VpHiUw2Ujop9DrX2VlXvJyNuvPQhxP
+   UWaseu3wn/i8IdBWLIh/fMnW+2Lo21V+IEVAlWUxM4o+hHqxyK1oU09d9
+   RbuIPXp/ABwCTV58qryxg6QkAD4lSPjboinI21sqmiI+lI1c7ydybEZfC
+   iTzPksTYArcJ+u/g+PjwsIGGMlzRU+/ckrWpBVIQ2ZdLVNAdJT/qwBvKf
+   LBvFFs+gz7SN+PY5B+sEZ1Dh8LjtxQI+EUjVQSoR8xltdGu2hScz7mcfC
+   07CCkpVm1EAQIiyz3G+57ab1eE4pbBhoofBQx/SvzpCX5l9x5GzPb7JAd
+   A==;
+IronPort-SDR: Q+dkk34Zc4w2OV2u3FNywpJsNBcSQ/REtYCu+/negt6RD9DFhsXUxJRJLdV125q+d6FGYHq5nF
+ DC0uSjBTuNZfZgEIrfDEBm83zWqSvbS+rVwqPtAl35HUbWbYTS4D0YJLFgF/UWjFYXVXMqLZLo
+ zw031ukqsGMPPf5FS1Caot5cSm3CFKqqF+kl0JnPPQKr9nkr+MUD9b1UO/2BYjvcBQuica6I/g
+ eXb/SDqqUZLCAR5msVs2pw7M5c5hMPhh+CitstFeN469Ls+z6DhkjgV5lDUeXwePnjT5DrwJnl
+ SGg=
 X-IronPort-AV: E=Sophos;i="5.81,205,1610380800"; 
-   d="scan'208";a="161931415"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:04:41 +0800
-IronPort-SDR: 5ecHJDcH030FWYLkstVEL2M6nZYHDgLO1y47JVVgsWu0B39a4PsHVm92JbAncjwkGUf6v/NCg7
- qn3D8c0O1kZqqZpK5euNs20yssg3VTEZ4Yd3SP+Ur1BKpq4XFcDJMedZy4o8/YleQDQVPDDWrB
- bgo15juSh8NqB7qbCB8lgEU2xwGapoSLHTANqm7Z9Y6hKoQtr4n0lWAiosczOXUQadhFYPl98k
- 3q86NT+dRTPf+H/LSNp07ag4JkAgnCGg6wR1BdM4Z+yeLdLrhbsNzKn7avAmc2PoNrtZN5LBGm
- 4CZprC9AvMG38iVt1Gryh2cU
+   d="scan'208";a="264978876"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:13:06 +0800
+IronPort-SDR: MFLFIMLo8QsX1IknvU+4uu7t9LH84ls9VuefsK/yL9m6pfTM0KQlYVoaYsIeetmVsz97B0mrM9
+ DekNCogVXv6QKo23A/2M7sXaGmaK8ygAiGzbAdV8eZ1hYq+NaxJ2UOpP1iLRcvyqWZRxch1reQ
+ Eub7QZDQzhzwYfNVBBfBpyUa2zo3bjMApNny91pv5q83AtwTZRGh11on4KFBI8mux9MNM9dzwZ
+ oUhjiejTK0Tq8SenPidcfz/nQNaKVQDZVj8xjV8GYzY79ieDTdio47+HCrkK3m78YxinvCxGY2
+ ANZxYsnbyk8VtS3Goq52WkRu
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:46:02 -0800
-IronPort-SDR: 88N634aVstBuqVOxPofvX7qZC4KLKjL5g9B29uWfgYJRqBpZOUUdcWNVsdaqbYfeOIvnZHzUDS
- U25Ij7rei2zcHXrWF1SsqzUnBD2fOi00T4FyplhfecBoxZamE6CkRCKWomrjCBPZfyc2XnMTWW
- Yqi22ei+izyD+nBM2YzymQ+MW1rQoOxKkFwecELtf5t9AWYYYFWhoYGF6NxpaH88/0qPy4R+G9
- URwILbAyFv3GDsO4uHFtuSiktTwc5j4fxIocSjhnQ4Li/JnasWMXgOv/RIn5JSAdKLUaxqg/DC
- JJA=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:48:05 -0800
+IronPort-SDR: WcQGSHilogCONek1dvPeaTZ+NSX6ZsQpzH7zXtz4o78vPCAIOvdh9BGJpfmYDZCj3I/HuvZv5l
+ j2afCI6Pgo+cysftS/CEWeNDd3kZ4aE3j7wBDRQ/k5RWFp4J/lU41LjcjX2Y8ZLi6d2Fs+4k/u
+ Mun8vCjNBzgXaRbugeggqBNZ62Z8Ta4by3ZR3Xkl7hFRjQ6nvcsj2wfjXYBWRii5tIDZR4nHTV
+ 40PriSHdrHwH08V/GGoOm3cg2t9+ZQObMMeGpO9OLzu1V7SPRNYTNu0xcAJhharAvCiOwSCLnA
+ vNI=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:04:40 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:04:49 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         mingo@redhat.com, chaitanya.kulkarni@wdc.com,
@@ -57,9 +57,9 @@ To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         aravind.ramesh@wdc.com, joshi.k@samsung.com, niklas.cassel@wdc.com,
         hch@lst.de, osandov@fb.com, martin.petersen@oracle.com
 Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 13/39] blktrace: update blk_add_trace_bio()
-Date:   Wed, 24 Feb 2021 23:02:05 -0800
-Message-Id: <20210225070231.21136-14-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 14/39] blktrace: update blk_add_trace_bio_bounce()
+Date:   Wed, 24 Feb 2021 23:02:06 -0800
+Message-Id: <20210225070231.21136-15-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1.dirty
 In-Reply-To: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
 References: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
@@ -71,50 +71,40 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- kernel/trace/blktrace.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ kernel/trace/blktrace.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 07f71a052a0d..14658b2a3fc8 100644
+index 14658b2a3fc8..d4c3ae0f419e 100644
 --- a/kernel/trace/blktrace.c
 +++ b/kernel/trace/blktrace.c
-@@ -1247,20 +1247,31 @@ static void blk_add_trace_rq_complete(void *ignore, struct request *rq,
-  *
-  **/
- static void blk_add_trace_bio(struct request_queue *q, struct bio *bio,
--			      u32 what, int error)
-+			      u64 what, int error)
+@@ -1277,7 +1277,25 @@ static void blk_add_trace_bio(struct request_queue *q, struct bio *bio,
+ 
+ static void blk_add_trace_bio_bounce(void *ignore, struct bio *bio)
  {
- 	struct blk_trace *bt;
+-	blk_add_trace_bio(bio->bi_bdev->bd_disk->queue, bio, BLK_TA_BOUNCE, 0);
++	u64 ta = 0;
++	struct blk_trace *bt;
 +	struct blk_trace_ext *bte;
- 
- 	rcu_read_lock();
- 	bt = rcu_dereference(q->blk_trace);
--	if (likely(!bt)) {
-+	bte = rcu_dereference(q->blk_trace_ext);
++
++	rcu_read_lock();
++	bt = rcu_dereference(bio->bi_bdev->bd_disk->queue->blk_trace);
++	bte = rcu_dereference(bio->bi_bdev->bd_disk->queue->blk_trace_ext);
 +	if (likely(!bt) && likely(!bte)) {
- 		rcu_read_unlock();
- 		return;
- 	}
- 
--	__blk_add_trace(bt, bio->bi_iter.bi_sector, bio->bi_iter.bi_size,
--			bio_op(bio), bio->bi_opf, what, error, 0, NULL,
--			blk_trace_bio_get_cgid(q, bio));
-+	if (bt) {
-+		__blk_add_trace(bt, bio->bi_iter.bi_sector,
-+				bio->bi_iter.bi_size, bio_op(bio),
-+				bio->bi_opf, (u32)what, error, 0, NULL,
-+				blk_trace_bio_get_cgid(q, bio));
-+	} else if (bte) {
-+		__blk_add_trace_ext(bte, bio->bi_iter.bi_sector,
-+				    bio->bi_iter.bi_size, bio_op(bio),
-+				    bio->bi_opf, what, error, 0, NULL,
-+				    blk_trace_bio_get_cgid(q, bio),
-+				    bio_prio(bio));
++		rcu_read_unlock();
++		return;
 +	}
- 	rcu_read_unlock();
++
++	if (bt) {
++		ta = BLK_TA_BOUNCE;
++	} else if (bte) {
++		ta = BLK_TA_BOUNCE_EXT;
++	}
++	rcu_read_unlock();
++	blk_add_trace_bio(bio->bi_bdev->bd_disk->queue, bio, ta, 0);
  }
  
+ static void blk_add_trace_bio_complete(void *ignore,
 -- 
 2.22.1
 
