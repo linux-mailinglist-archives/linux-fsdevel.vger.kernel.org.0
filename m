@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 970B0324AEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87ADF324AFB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 08:11:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233155AbhBYHJ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 02:09:29 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:53171 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233169AbhBYHHx (ORCPT
+        id S233895AbhBYHK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 02:10:28 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:13049 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232596AbhBYHIh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 02:07:53 -0500
+        Thu, 25 Feb 2021 02:08:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1614236873; x=1645772873;
+  t=1614237528; x=1645773528;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=SC0pXVUCDuaPbg+F0lWxh72IEBX9ZhX5hajRxPIkVPU=;
-  b=pAhZPr0Arm7V5sKxUnWamD5hWEWw4DuckhDm2ALM0LeXH2sX3ladTrDR
-   UT6R4q3kf5BefyvKCYNpvTrjoxtCkQfeA7az7iGzZzrQJ2BpUBaM+C2y0
-   Q7rZ2gBgKF70ZcXtETOvB9WScshgTHCWxb0nPCIhY44K1lhgPhwC32tGf
-   JpP+Zrt+L72wloBahBmXSoDSL1iLh52BvrvhlDA8q9ZBZSgbtzELp6oy/
-   O2YauWXEWeaSkjlEg/HIWm2Ji7YtXtTXROEsmrLPmCZbG7QPK38H9FF9v
-   KPxW/87v0BxECPeDNb0tqqIOO0UNZ77jLz5s3SbigPGU/9Dc7SZD5BPjQ
-   g==;
-IronPort-SDR: 4K/2Qj4LqJKPs+drCu7XeWEux3OU1EysjFUzX/bIiMjIODfdNLBMjE/9UoMmgoW7X1kHyqVclH
- jagyonPEnAU7fKe/06JhuZCThZSbCwFG6Jp8VKFi65zaG0ktHU8kyky4zCsQztnjfauO1zAZTF
- ydaGjYh2/6vBeRADfu+1CN+lFX1h7FhhM5DBL05OKFE34SlgfSShZ0gL5vzFpqCc6dWSaBD43b
- sp50W+dhWV+rvFItsLa4dJzmEuPwdSu+AAU4ejAN+xAcqMJRPwlIOUOO2KTj4/oHNtIqUm833q
- qYU=
+  bh=nW/cmAEGEcgZbRtFTdFsCAsbqIyXkGA21B4Ruo36fus=;
+  b=Gi3HpZ6mXi9915ZLw8kmJgStq6icuEc3qdP+wovMKmTff41OSrTvdMJw
+   0zLSAVueX6m4e+LYE+mc/PFHx+3Y3SNVi/AMJ1n5PB/hK3hgbnlGXqAyW
+   x6JWOGFgve4FKab1bvVEe5VjaczZsngnqe1k7PWS+Ln8luWH6PzXLmdS3
+   WMQM47bt+sh4er5xiCsy5ZKr1qD0FHHeBnPZ1ijCfGhahmEqCJApRpWdj
+   dfRZBmuYkPg0HN9qcmLjgTGA8nGq5wkYJ5V47zMvDXr4CDS1hDKcG0Q/P
+   WdrNa1PgN0vgNZL1DG5gAejyR7CNS9V5fJr64DB3PxyXLCtczsGHYXZA5
+   A==;
+IronPort-SDR: Ps7tSymEFWZXg/dsOF3ActnBlDiYZ7bKeWt+LQcTCg3NJNGuuWwq8ktDg1UsoFiYf5ygIVb0+X
+ Xmg+3jsvePIm4J5zivAb7i9vWD0J6DyeP0I8o6o1uFjbpNNPl/4sv0MSSTz8ftNLAhBtTgZ6az
+ pjhWZAUimxILCeTRs+Tu+VB801ujehehLCZfTKgbg5ZTSCmsvYpxZd0BligcNUj+poCPSv6j1q
+ 8OtaNPuxBu46hv7P04pblg7ayke41eaa2ANpZ1YN3uFxnhKKJmbMyEiUdXp3ffiBhmZt4VFhPA
+ AoY=
 X-IronPort-AV: E=Sophos;i="5.81,205,1610380800"; 
-   d="scan'208";a="160778025"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:06:31 +0800
-IronPort-SDR: O2EYhLQUJDq6JMLiMDc3GXjzcxEvV8vQn5QAFER9XsLRQgoUkkWth52FKcRaJNfGWGHYSb5UaN
- SHj8gSb02B6I5qLx0ZMO7sm2jedqI94wYYQrlXAnffUY86yV1FEOtcuwmHbw7GXFH3396Hw+mT
- D2+YGX1qupZcNe8Y9YnyAdd5yYiYKMhuVEF1Y0tOSko1zgDV6d8uwnEXSQRDe4moJ0tepZvT19
- gbdE2al46mtw3y6eWtBrOyMZPTCMBiIA+LdAF+L0lR75TZ/QzR9B9UL/aE/Y865Ys8weUyegcg
- 6mRXiYQ46nNqUnijvr6bJMMg
+   d="scan'208";a="264978997"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2021 15:15:51 +0800
+IronPort-SDR: zSQb9hDUteibx8kGfmRUCA+Uh6GurbINI6LD4OP/b0rOKJHH1ewn7fCk7NlgDGaf953LmibmbV
+ Wp8dx3EUUt3xY64PqUo3q9vkHBSrEjN2fTI+LJWtSy13MfdTFIt0O+Fhv2IuRYP29IPTT6U9k9
+ sfK7yAw2cZuKFR4BZqeyIrIasW8Qm/CSMO14xcAr2ShkbbN6y5TRl/ti9nc9tb6xdeR0xHoEE+
+ Gu2ARb0LRp4Xai40p7t1PzG6RcUL39YjGHWHS3Zf3TgWgZRfezgeCgFYjz5VXpiwtOCNcq2YYT
+ 8VV31c+TlNIEDTsifj5Wy4hZ
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:49:46 -0800
-IronPort-SDR: 5UjRW13wELQaoILvjTuJW1uTQ2Reo7QcTwFg2ymZEjUdyxbflF4kqglXRB7TbrN679yLIo/9eh
- LtbOIm1qTpRdn4iXSBx9rNuewZfhwkWo3tWtVc/amVN45ND5g5qeuuS36hANy2pefoezaHLEQT
- ox9ILkFA+vIKM1c0jmUBZgnXs2Dp/DvZRqxGqydoWJhyxwQI06CUJMCm2u8AlI47ihwtGu3RqP
- 8qwPUdC+DYY8DXJhe1GbM6F++EZP7fspwojPhxAdwa3OtOLVFsi841xwGQb8ii21s4Fq4W/aVp
- 5A0=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2021 22:48:00 -0800
+IronPort-SDR: p54ivtLl1cUh8l/ibC2RBUdDuD+07LGlub+OkBDVVPqkg4UvXDGJ5dPlQflaC7lm6SYs+12QPk
+ neKJpiZbmcBzEoFnaVfq9jr8hbcV8wD9JVlKXxoK28kcq/3+PvtytA+RSAxlhND1zNaSfD5QWY
+ wGp/fZ8qqiFIIShgxWuxddqGwwMTJS6WPr3YtDvmc9tOcvc06OIu+AgnjPIfERxsCAK1AxaVPX
+ So9RQb40cXTqprfWeByBqaeWsc/kzhhucyEoV8yFpeQHOqunrE7qsSCbRsnw6kTtC3An4pNSjH
+ fSA=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:06:30 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2021 23:06:38 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         mingo@redhat.com, chaitanya.kulkarni@wdc.com,
@@ -57,9 +57,9 @@ To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, rostedt@goodmis.org,
         aravind.ramesh@wdc.com, joshi.k@samsung.com, niklas.cassel@wdc.com,
         hch@lst.de, osandov@fb.com, martin.petersen@oracle.com
 Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 27/39] blktrace: add a new formatting routine
-Date:   Wed, 24 Feb 2021 23:02:19 -0800
-Message-Id: <20210225070231.21136-28-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 28/39] blktrace: add blk_log_xxx helpers()
+Date:   Wed, 24 Feb 2021 23:02:20 -0800
+Message-Id: <20210225070231.21136-29-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1.dirty
 In-Reply-To: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
 References: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
@@ -71,83 +71,258 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- kernel/trace/blktrace.c | 57 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ kernel/trace/blktrace.c | 175 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 175 insertions(+)
 
 diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 84bee8677162..2241c7304749 100644
+index 2241c7304749..425756a62457 100644
 --- a/kernel/trace/blktrace.c
 +++ b/kernel/trace/blktrace.c
-@@ -1722,6 +1722,62 @@ static void fill_rwbs(char *rwbs, const struct blk_io_trace *t)
- 	rwbs[i] = '\0';
+@@ -1905,6 +1905,23 @@ static void blk_log_action_classic(struct trace_iterator *iter, const char *act,
+ 			 secs, nsec_rem, iter->ent->pid, act, rwbs);
  }
  
-+static void fill_rwbs_ext(char *rwbs, const struct blk_io_trace_ext *t)
++static void blk_log_action_classic_ext(struct trace_iterator *iter, const char *act,
++	bool has_cg)
 +{
-+	int i = 0;
-+	int tc = t->action >> BLK_TC_SHIFT_EXT;
++	char rwbs[RWBS_LEN];
++	unsigned long long ts  = iter->ts;
++	unsigned long nsec_rem = do_div(ts, NSEC_PER_SEC);
++	unsigned secs	       = (unsigned long)ts;
++	const struct blk_io_trace_ext *t = te_blk_io_trace_ext(iter->ent);
 +
-+	if ((t->action & ~__BLK_TN_CGROUP) == BLK_TN_MESSAGE_EXT) {
-+		rwbs[i++] = 'N';
-+		goto out;
-+	}
++	fill_rwbs_ext(rwbs, t);
 +
-+	if (tc & BLK_TC_FLUSH)
-+		rwbs[i++] = 'F';
-+
-+	if (tc & BLK_TC_DISCARD)
-+		rwbs[i++] = 'D';
-+	else if ((tc & BLK_TC_WRITE_ZEROES)) {
-+		rwbs[i++] = 'W';
-+		rwbs[i++] = 'Z';
-+	} else if ((tc & BLK_TC_ZONE_RESET)) {
-+		rwbs[i++] = 'Z';
-+		rwbs[i++] = 'R';
-+	} else if ((tc & BLK_TC_ZONE_RESET_ALL)) {
-+		rwbs[i++] = 'Z';
-+		rwbs[i++] = 'R';
-+		rwbs[i++] = 'A';
-+	} else if ((tc & BLK_TC_ZONE_APPEND)) {
-+		rwbs[i++] = 'Z';
-+		rwbs[i++] = 'A';
-+	} else if ((tc & BLK_TC_ZONE_OPEN)) {
-+		rwbs[i++] = 'Z';
-+		rwbs[i++] = 'O';
-+	} else if ((tc & BLK_TC_ZONE_CLOSE)) {
-+		rwbs[i++] = 'Z';
-+		rwbs[i++] = 'C';
-+	} else if ((tc & BLK_TC_ZONE_FINISH)) {
-+		rwbs[i++] = 'Z';
-+		rwbs[i++] = 'F';
-+	} else if (tc & BLK_TC_WRITE)
-+		rwbs[i++] = 'W';
-+	else if (t->bytes)
-+		rwbs[i++] = 'R';
-+	else
-+		rwbs[i++] = 'N';
-+
-+	if (tc & BLK_TC_FUA)
-+		rwbs[i++] = 'F';
-+	if (tc & BLK_TC_AHEAD)
-+		rwbs[i++] = 'A';
-+	if (tc & BLK_TC_SYNC)
-+		rwbs[i++] = 'S';
-+	if (tc & BLK_TC_META)
-+		rwbs[i++] = 'M';
-+out:
-+	rwbs[i] = '\0';
++	trace_seq_printf(&iter->seq,
++			 "%3d,%-3d %2d %5d.%09lu %5u %2s %3s ",
++			 MAJOR(t->device), MINOR(t->device), iter->cpu,
++			 secs, nsec_rem, iter->ent->pid, act, rwbs);
 +}
 +
- static inline
- const struct blk_io_trace *te_blk_io_trace(const struct trace_entry *ent)
+ static void blk_log_action(struct trace_iterator *iter, const char *act,
+ 	bool has_cg)
  {
-@@ -2514,5 +2570,6 @@ void blk_fill_rwbs(char *rwbs, unsigned int op)
+@@ -1947,6 +1964,35 @@ static void blk_log_action(struct trace_iterator *iter, const char *act,
+ 				 MAJOR(t->device), MINOR(t->device), act, rwbs);
  }
- EXPORT_SYMBOL_GPL(blk_fill_rwbs);
  
++static void blk_log_action_ext(struct trace_iterator *iter, const char *act,
++	bool has_cg)
++{
++	char rwbs[RWBS_LEN];
++	const struct blk_io_trace_ext *t = te_blk_io_trace_ext(iter->ent);
 +
- #endif /* CONFIG_EVENT_TRACING */
++	fill_rwbs_ext(rwbs, t);
++	if (has_cg) {
++		u64 id = t_cgid(iter->ent);
++
++		if (blk_tracer_flags.val & TRACE_BLK_OPT_CGNAME) {
++			char blkcg_name_buf[NAME_MAX + 1] = "<...>";
++
++			cgroup_path_from_kernfs_id(id, blkcg_name_buf,
++				sizeof(blkcg_name_buf));
++			trace_seq_printf(&iter->seq, "%3d,%-3d %s %2s %3s ",
++				 MAJOR(t->device), MINOR(t->device),
++				 blkcg_name_buf, act, rwbs);
++		} else
++			trace_seq_printf(&iter->seq,
++				 "%3d,%-3d %llx,%-llx %2s %3s ",
++				 MAJOR(t->device), MINOR(t->device),
++				 id & U32_MAX, id >> 32, act, rwbs);
++	} else
++		trace_seq_printf(&iter->seq, "%3d,%-3d %2s %3s ",
++				 MAJOR(t->device), MINOR(t->device), act, rwbs);
++}
++
++
+ static void blk_log_dump_pdu(struct trace_seq *s,
+ 	const struct trace_entry *ent, bool has_cg)
+ {
+@@ -1986,6 +2032,45 @@ static void blk_log_dump_pdu(struct trace_seq *s,
+ 	trace_seq_puts(s, ") ");
+ }
  
++static void blk_log_dump_pdu_ext(struct trace_seq *s,
++	const struct trace_entry *ent, bool has_cg)
++{
++	const unsigned char *pdu_buf;
++	int pdu_len;
++	int i, end;
++
++	pdu_buf = pdu_start_ext(ent, has_cg);
++	pdu_len = pdu_real_len_ext(ent, has_cg);
++
++	if (!pdu_len)
++		return;
++
++	/* find the last zero that needs to be printed */
++	for (end = pdu_len - 1; end >= 0; end--)
++		if (pdu_buf[end])
++			break;
++	end++;
++
++	trace_seq_putc(s, '(');
++
++	for (i = 0; i < pdu_len; i++) {
++
++		trace_seq_printf(s, "%s%02x",
++				 i == 0 ? "" : " ", pdu_buf[i]);
++
++		/*
++		 * stop when the rest is just zeroes and indicate so
++		 * with a ".." appended
++		 */
++		if (i == end && end != pdu_len - 1) {
++			trace_seq_puts(s, " ..) ");
++			return;
++		}
++	}
++
++	trace_seq_puts(s, ") ");
++}
++
+ static void blk_log_generic(struct trace_seq *s, const struct trace_entry *ent, bool has_cg)
+ {
+ 	char cmd[TASK_COMM_LEN];
+@@ -2005,6 +2090,28 @@ static void blk_log_generic(struct trace_seq *s, const struct trace_entry *ent,
+ 	}
+ }
+ 
++static void blk_log_generic_ext(struct trace_seq *s,
++				const struct trace_entry *ent,
++				bool has_cg)
++{
++	char cmd[TASK_COMM_LEN];
++
++	trace_find_cmdline(ent->pid, cmd);
++
++	if (t_action(ent) & BLK_TC_ACT_EXT(BLK_TC_PC)) {
++		trace_seq_printf(s, "%u ", t_bytes_ext(ent));
++		blk_log_dump_pdu_ext(s, ent, has_cg);
++		trace_seq_printf(s, "[%s]\n", cmd);
++	} else {
++		if (t_sec_ext(ent))
++			trace_seq_printf(s, "%llu + %u [%s]\n",
++						t_sector_ext(ent),
++						t_sec_ext(ent), cmd);
++		else
++			trace_seq_printf(s, "[%s]\n", cmd);
++	}
++}
++
+ static void blk_log_with_error(struct trace_seq *s,
+ 			      const struct trace_entry *ent, bool has_cg)
+ {
+@@ -2022,6 +2129,23 @@ static void blk_log_with_error(struct trace_seq *s,
+ 	}
+ }
+ 
++static void blk_log_with_error_ext(struct trace_seq *s,
++			      const struct trace_entry *ent, bool has_cg)
++{
++	if (t_action_ext(ent) & BLK_TC_ACT_EXT(BLK_TC_PC)) {
++		blk_log_dump_pdu_ext(s, ent, has_cg);
++		trace_seq_printf(s, "[%d]\n", t_error_ext(ent));
++	} else {
++		if (t_sec_ext(ent))
++			trace_seq_printf(s, "%llu + %u [%d]\n",
++					 t_sector_ext(ent),
++					 t_sec_ext(ent), t_error_ext(ent));
++		else
++			trace_seq_printf(s, "%llu [%d]\n",
++					 t_sector_ext(ent), t_error_ext(ent));
++	}
++}
++
+ static void blk_log_remap(struct trace_seq *s, const struct trace_entry *ent, bool has_cg)
+ {
+ 	const struct blk_io_trace_remap *__r = pdu_start(ent, has_cg);
+@@ -2033,6 +2157,18 @@ static void blk_log_remap(struct trace_seq *s, const struct trace_entry *ent, bo
+ 			 be64_to_cpu(__r->sector_from));
+ }
+ 
++static void blk_log_remap_ext(struct trace_seq *s, const struct trace_entry *ent,
++		bool has_cg)
++{
++	const struct blk_io_trace_remap *__r = pdu_start_ext(ent, has_cg);
++
++	trace_seq_printf(s, "%llu + %u <- (%d,%d) %llu\n",
++			 t_sector_ext(ent), t_sec_ext(ent),
++			 MAJOR(be32_to_cpu(__r->device_from)),
++			 MINOR(be32_to_cpu(__r->device_from)),
++			 be64_to_cpu(__r->sector_from));
++}
++
+ static void blk_log_plug(struct trace_seq *s, const struct trace_entry *ent, bool has_cg)
+ {
+ 	char cmd[TASK_COMM_LEN];
+@@ -2042,6 +2178,16 @@ static void blk_log_plug(struct trace_seq *s, const struct trace_entry *ent, boo
+ 	trace_seq_printf(s, "[%s]\n", cmd);
+ }
+ 
++static void blk_log_plug_ext(struct trace_seq *s, const struct trace_entry *ent,
++		bool has_cg)
++{
++	char cmd[TASK_COMM_LEN];
++
++	trace_find_cmdline(ent->pid, cmd);
++
++	trace_seq_printf(s, "[%s] %llu\n", cmd, get_pdu_int_ext(ent, has_cg));
++}
++
+ static void blk_log_unplug(struct trace_seq *s, const struct trace_entry *ent, bool has_cg)
+ {
+ 	char cmd[TASK_COMM_LEN];
+@@ -2051,6 +2197,16 @@ static void blk_log_unplug(struct trace_seq *s, const struct trace_entry *ent, b
+ 	trace_seq_printf(s, "[%s] %llu\n", cmd, get_pdu_int(ent, has_cg));
+ }
+ 
++static void blk_log_unplug_ext(struct trace_seq *s, const struct trace_entry *ent,
++		bool has_cg)
++{
++	char cmd[TASK_COMM_LEN];
++
++	trace_find_cmdline(ent->pid, cmd);
++
++	trace_seq_printf(s, "[%s] %llu\n", cmd, get_pdu_int_ext(ent, has_cg));
++}
++
+ static void blk_log_split(struct trace_seq *s, const struct trace_entry *ent, bool has_cg)
+ {
+ 	char cmd[TASK_COMM_LEN];
+@@ -2061,6 +2217,16 @@ static void blk_log_split(struct trace_seq *s, const struct trace_entry *ent, bo
+ 			 get_pdu_int(ent, has_cg), cmd);
+ }
+ 
++static void blk_log_split_ext(struct trace_seq *s, const struct trace_entry *ent, bool has_cg)
++{
++	char cmd[TASK_COMM_LEN];
++
++	trace_find_cmdline(ent->pid, cmd);
++
++	trace_seq_printf(s, "%llu / %llu [%s]\n", t_sector_ext(ent),
++			 get_pdu_int_ext(ent, has_cg), cmd);
++}
++
+ static void blk_log_msg(struct trace_seq *s, const struct trace_entry *ent,
+ 			bool has_cg)
+ {
+@@ -2070,6 +2236,15 @@ static void blk_log_msg(struct trace_seq *s, const struct trace_entry *ent,
+ 	trace_seq_putc(s, '\n');
+ }
+ 
++static void blk_log_msg_ext(struct trace_seq *s, const struct trace_entry *ent,
++			bool has_cg)
++{
++
++	trace_seq_putmem(s, pdu_start_ext(ent, has_cg),
++		pdu_real_len_ext(ent, has_cg));
++	trace_seq_putc(s, '\n');
++}
++
+ /*
+  * struct tracer operations
+  */
 -- 
 2.22.1
 
