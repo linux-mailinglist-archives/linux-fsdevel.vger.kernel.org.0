@@ -2,202 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E2FE325704
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 20:46:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36794325821
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Feb 2021 21:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234766AbhBYTpj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 14:45:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36440 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234811AbhBYTnz (ORCPT
+        id S235070AbhBYUzh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 15:55:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56425 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234676AbhBYUwh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 14:43:55 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9BBAC061574;
-        Thu, 25 Feb 2021 11:43:14 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id w36so10359296lfu.4;
-        Thu, 25 Feb 2021 11:43:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8+53X3tsgIIGYEic7as5AIOyPMdcVwcLUcoH1RGZe9I=;
-        b=G3IJc6PAVdTEh4z7PsspuIOMQNQQ2hdGKB5Pl/1/LnguoOO3X1ivm2U/PzksEW3Jyc
-         z0QGJtlVUNWYNsMsrt7f/33Sx1ECZKqTL9ayuZUvZcZBzei+V7Hkhiv3ZLf0AdN4rbAp
-         qj5m/q47sZ8ywEjh6Ovhcm61CDghMUVL7/+XGOQF+H/UT5KC8Yxgu2sy/OBboakvlllA
-         jeA0ULJEaJ5TPxxxFW5mg8xGKTqZgsddR2qjZH2OMSByYfQtkIxoy3wJMBkJ4+Y1Wl3G
-         tUBzOD/KmMINSm/obG/iG3qYSUsWhosOjmuVHzpsgdEP30gSpnPKqDsJiFz1z634QtO3
-         /V7Q==
+        Thu, 25 Feb 2021 15:52:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614286270;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sJgpcpz8JbWE9yNjQ8U8bqTTI3MQeUxSjU+A+WBNGno=;
+        b=aVrpMO9MZfiSiNqOg6RcwIWEEhjG28i4cE499QQo2pVvM334yo7dt0CeZTFus1ImAP2Kzu
+        mzSaPpjKdQe4u167q/QMGnXw6/ncKEFlr7MNeOKXI4m0iSiODgP2L2mC38PBmU2Dv4GwTs
+        9HoB51OCiYSZxp52RtnrXNSzgLjBmaU=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-538-w-o-yC3OObyD752jwnEm4A-1; Thu, 25 Feb 2021 15:51:09 -0500
+X-MC-Unique: w-o-yC3OObyD752jwnEm4A-1
+Received: by mail-qv1-f69.google.com with SMTP id m1so5233410qvp.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Feb 2021 12:51:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8+53X3tsgIIGYEic7as5AIOyPMdcVwcLUcoH1RGZe9I=;
-        b=B/a6SJzyXECPX9sb2jNgv8X+q8HDtb5NMPRLeF6FF2APWWRCmNygTLa8rOLSBeEF0s
-         IGtovyy+Zl5fr+VC+UQ3qz5Z5BSCnPrpZZje608Qoo0K3hRt1q4ftdv2o1cIqEoxlHzh
-         cKKDozaLlVvTH5RZzPF/jxuy6PhUDwpVMsPYqu8l5Rz8TcY3SoJWjLjPqOmca0Tt8fjg
-         DFwegrl0BtZHoRKxDqCIbTG4PLdFCAhFlx4PYjHjIDB1Ya65LLnJt6k5DRoZgEWsGBow
-         HobPe5o5/96//yL0SWSFtTias0mCGI5bG4TaaxWnMF8+JEPG+tHYstxYdo66XRjU2xah
-         Mhcw==
-X-Gm-Message-State: AOAM531Xpo7/Iab+sE14xVDZ9DGiw8Gx1cnXYO4m/poRt/2F5Hlq+wqB
-        UGDJ4hNV/EVaGWsoWLBx0Egb+pyW61qKCKS2Iho=
-X-Google-Smtp-Source: ABdhPJxv05QcgOcUT7nilIDW33RMxLkaUKO2xb4vq+/JGyNuU0mwWrCKhTOicQb3v3OcAOA5bVvMOzhLNzhJlrsHgJQ=
-X-Received: by 2002:a05:6512:1284:: with SMTP id u4mr2831452lfs.175.1614282193047;
- Thu, 25 Feb 2021 11:43:13 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sJgpcpz8JbWE9yNjQ8U8bqTTI3MQeUxSjU+A+WBNGno=;
+        b=W1x1oyJm0YAcpAfRDkBUmv72p1zybQocwoO/wP1dENLwT8P/GfMZcB59gUAxeBi2tH
+         6B+9xodQI4kFr11tI/pfkKtvFWKoW09fikNa1JDqu+63l6OtoGIv+ywWBz3H46SCxr4/
+         ZM2iGdYmOpZa9OCePztMpnm6QzwKhVYrjCxV+OIdjswPredLr0sdJqgT1GDEO+AxMJ5v
+         cSDOW5BNebWWCWLt0yw1E14FcZt3tZW2dGU1GE7yoxOFtZ3CfIWdhEHySQPZCmo1yoEK
+         hqnAOzvUnPiAB5yc686B68/PySQjIyjyf0D8Sbb6rL8r9b1EJ2QCg74d1kSA9vKYvPOS
+         J0Dw==
+X-Gm-Message-State: AOAM531Qp5LEE4EjTqFhEOElAslOR8RT+EPfq3Iyw/whSgzWmGCGmQ96
+        gXhNcnRf6Wtv5JZR6gURSHvc9eoH51LtJx/Upgg3s+/ymNGCjM3cGY/9PjOl2FvBkHmn60Kr/p1
+        AjiW20+Tk1Oo09jRBPfaAt1i8ZQ==
+X-Received: by 2002:a37:d247:: with SMTP id f68mr4676746qkj.187.1614286267785;
+        Thu, 25 Feb 2021 12:51:07 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw5LhdlJsUL0iIi4gSlu38o06OrkQM2ycT5KFnq+Wy5d0l/uDMC6+YahAOSzJOTlEUPreVofA==
+X-Received: by 2002:a37:d247:: with SMTP id f68mr4676721qkj.187.1614286267533;
+        Thu, 25 Feb 2021 12:51:07 -0800 (PST)
+Received: from xz-x1 (bras-vprn-toroon474qw-lp130-25-174-95-95-253.dsl.bell.ca. [174.95.95.253])
+        by smtp.gmail.com with ESMTPSA id 18sm3820035qkr.77.2021.02.25.12.51.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Feb 2021 12:51:07 -0800 (PST)
+Date:   Thu, 25 Feb 2021 15:51:04 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Shaohua Li <shli@fb.com>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Steven Price <steven.price@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Adam Ruprecht <ruprecht@google.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH v8 4/6] userfaultfd: add UFFDIO_CONTINUE ioctl
+Message-ID: <20210225205104.GA261488@xz-x1>
+References: <20210225002658.2021807-1-axelrasmussen@google.com>
+ <20210225002658.2021807-5-axelrasmussen@google.com>
 MIME-Version: 1.0
-References: <CAH2r5ms9dJ3RW=_+c0HApLyUC=LD5ACp_nhE2jJQuS-121kV=w@mail.gmail.com>
- <87eehwnn2c.fsf@suse.com> <CAH2r5muuEj_ZpbZ+yAGfnG-JPRP0mAzaBNVYhw7SnbReT8B1DA@mail.gmail.com>
-In-Reply-To: <CAH2r5muuEj_ZpbZ+yAGfnG-JPRP0mAzaBNVYhw7SnbReT8B1DA@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 25 Feb 2021 13:43:01 -0600
-Message-ID: <CAH2r5muV02_MT_641_OGB8gWdxZk4Och=2Mv-768MR36o8ukfA@mail.gmail.com>
-Subject: Re: [PATCH] cifs: use discard iterator to discard unneeded network
- data more efficiently
-To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Content-Type: multipart/mixed; boundary="000000000000af387b05bc2e5c4d"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210225002658.2021807-5-axelrasmussen@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000af387b05bc2e5c4d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 24, 2021 at 04:26:56PM -0800, Axel Rasmussen wrote:
+> This ioctl is how userspace ought to resolve "minor" userfaults. The
+> idea is, userspace is notified that a minor fault has occurred. It might
+> change the contents of the page using its second non-UFFD mapping, or
+> not. Then, it calls UFFDIO_CONTINUE to tell the kernel "I have ensured
+> the page contents are correct, carry on setting up the mapping".
+> 
+> Note that it doesn't make much sense to use UFFDIO_{COPY,ZEROPAGE} for
+> MINOR registered VMAs. ZEROPAGE maps the VMA to the zero page; but in
+> the minor fault case, we already have some pre-existing underlying page.
+> Likewise, UFFDIO_COPY isn't useful if we have a second non-UFFD mapping.
+> We'd just use memcpy() or similar instead.
+> 
+> It turns out hugetlb_mcopy_atomic_pte() already does very close to what
+> we want, if an existing page is provided via `struct page **pagep`. We
+> already special-case the behavior a bit for the UFFDIO_ZEROPAGE case, so
+> just extend that design: add an enum for the three modes of operation,
+> and make the small adjustments needed for the MCOPY_ATOMIC_CONTINUE
+> case. (Basically, look up the existing page, and avoid adding the
+> existing page to the page cache or calling set_page_huge_active() on
+> it.)
+> 
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 
-lightly updated patch
+Reviewed-by: Peter Xu <peterx@redhat.com>
 
+-- 
+Peter Xu
 
-On Thu, Feb 25, 2021 at 1:29 PM Steve French <smfrench@gmail.com> wrote:
->
-> The other two routines initialize in iov_iter_bvec
->
-> iov->type
-> iov->bvec
-> iov->offset
-> iov->count
->
-> but iov_iter_discard already does the initialization:
-> iov_type
-> iov_offset
-> iov_count
->
-> and then we call cifs_readv_from_socket in all 3
-> which sets:
->     iov->msg_control =3D NULL
->     iov->msg_controllen =3D NULL
->
-> I will set the two additional ones to null
->     iov->msg_name
-> and
->     iov->msg_namelen
->
->
->
-> On Thu, Feb 4, 2021 at 4:29 AM Aur=C3=A9lien Aptel <aaptel@suse.com> wrot=
-e:
-> >
-> > Steve French <smfrench@gmail.com> writes:
-> > > +ssize_t
-> > > +cifs_discard_from_socket(struct TCP_Server_Info *server, size_t to_r=
-ead)
-> > > +{
-> > > +     struct msghdr smb_msg;
-> > > +
-> > > +     iov_iter_discard(&smb_msg.msg_iter, READ, to_read);
-> > > +
-> > > +     return cifs_readv_from_socket(server, &smb_msg);
-> > > +}
-> > > +
-> >
-> > Shouldn't smb_msg be initialized to zeroes? Looking around this needs t=
-o
-> > be done for cifs_read_from_socket() and cifs_read_page_from_socket() to=
-o.
-> >
-> > Cheers,
-> > --
-> > Aur=C3=A9lien Aptel / SUSE Labs Samba Team
-> > GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-> > SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnber=
-g, DE
-> > GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=
-=C3=BCnchen)
-> >
->
->
-> --
-> Thanks,
->
-> Steve
-
-
-
---=20
-Thanks,
-
-Steve
-
---000000000000af387b05bc2e5c4d
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-cifs-use-discard-iterator-to-discard-unneeded-networ.patch"
-Content-Disposition: attachment; 
-	filename="0001-cifs-use-discard-iterator-to-discard-unneeded-networ.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_kll9xfrg0>
-X-Attachment-Id: f_kll9xfrg0
-
-RnJvbSAxYjBiZGI1ZTZjOWM4ODQ2YWI0YTU0ODA5M2EzMjMxMWFlOWQwMDM3IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBEYXZpZCBIb3dlbGxzIDxkaG93ZWxsc0ByZWRoYXQuY29tPgpE
-YXRlOiBUaHUsIDQgRmViIDIwMjEgMDA6MTU6MjEgLTA2MDAKU3ViamVjdDogW1BBVENIXSBjaWZz
-OiB1c2UgZGlzY2FyZCBpdGVyYXRvciB0byBkaXNjYXJkIHVubmVlZGVkIG5ldHdvcmsgZGF0YQog
-bW9yZSBlZmZpY2llbnRseQoKVGhlIGl0ZXJhdG9yLCBJVEVSX0RJU0NBUkQsIHRoYXQgY2FuIG9u
-bHkgYmUgdXNlZCBpbiBSRUFEIG1vZGUgYW5kCmp1c3QgZGlzY2FyZHMgYW55IGRhdGEgY29waWVk
-IHRvIGl0LCB3YXMgYWRkZWQgdG8gYWxsb3cgYSBuZXR3b3JrCmZpbGVzeXN0ZW0gdG8gZGlzY2Fy
-ZCBhbnkgdW53YW50ZWQgZGF0YSBzZW50IGJ5IGEgc2VydmVyLgpDb252ZXJ0IGNpZnNfZGlzY2Fy
-ZF9mcm9tX3NvY2tldCgpIHRvIHVzZSB0aGlzLgoKU2lnbmVkLW9mZi1ieTogRGF2aWQgSG93ZWxs
-cyA8ZGhvd2VsbHNAcmVkaGF0LmNvbT4KU2lnbmVkLW9mZi1ieTogU3RldmUgRnJlbmNoIDxzdGZy
-ZW5jaEBtaWNyb3NvZnQuY29tPgotLS0KIGZzL2NpZnMvY2lmc3Byb3RvLmggfCAgMiArKwogZnMv
-Y2lmcy9jaWZzc21iLmMgICB8ICA2ICsrKy0tLQogZnMvY2lmcy9jb25uZWN0LmMgICB8IDE3ICsr
-KysrKysrKysrKysrKysrCiAzIGZpbGVzIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDMgZGVs
-ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvY2lmcy9jaWZzcHJvdG8uaCBiL2ZzL2NpZnMvY2lm
-c3Byb3RvLmgKaW5kZXggZDRiMmNjN2U2YjFlLi42NGViNWM4MTc3MTIgMTAwNjQ0Ci0tLSBhL2Zz
-L2NpZnMvY2lmc3Byb3RvLmgKKysrIGIvZnMvY2lmcy9jaWZzcHJvdG8uaApAQCAtMjMyLDYgKzIz
-Miw4IEBAIGV4dGVybiB1bnNpZ25lZCBpbnQgc2V0dXBfc3BlY2lhbF91c2VyX293bmVyX0FDRShz
-dHJ1Y3QgY2lmc19hY2UgKnBhY2UpOwogZXh0ZXJuIHZvaWQgZGVxdWV1ZV9taWQoc3RydWN0IG1p
-ZF9xX2VudHJ5ICptaWQsIGJvb2wgbWFsZm9ybWVkKTsKIGV4dGVybiBpbnQgY2lmc19yZWFkX2Zy
-b21fc29ja2V0KHN0cnVjdCBUQ1BfU2VydmVyX0luZm8gKnNlcnZlciwgY2hhciAqYnVmLAogCQkJ
-ICAgICAgICAgdW5zaWduZWQgaW50IHRvX3JlYWQpOworZXh0ZXJuIHNzaXplX3QgY2lmc19kaXNj
-YXJkX2Zyb21fc29ja2V0KHN0cnVjdCBUQ1BfU2VydmVyX0luZm8gKnNlcnZlciwKKwkJCQkJc2l6
-ZV90IHRvX3JlYWQpOwogZXh0ZXJuIGludCBjaWZzX3JlYWRfcGFnZV9mcm9tX3NvY2tldChzdHJ1
-Y3QgVENQX1NlcnZlcl9JbmZvICpzZXJ2ZXIsCiAJCQkJCXN0cnVjdCBwYWdlICpwYWdlLAogCQkJ
-CQl1bnNpZ25lZCBpbnQgcGFnZV9vZmZzZXQsCmRpZmYgLS1naXQgYS9mcy9jaWZzL2NpZnNzbWIu
-YyBiL2ZzL2NpZnMvY2lmc3NtYi5jCmluZGV4IDA0OTY5MzRmZWVjYi4uYzI3OTUyN2FhZTkyIDEw
-MDY0NAotLS0gYS9mcy9jaWZzL2NpZnNzbWIuYworKysgYi9mcy9jaWZzL2NpZnNzbWIuYwpAQCAt
-MTQ1MSw5ICsxNDUxLDkgQEAgY2lmc19kaXNjYXJkX3JlbWFpbmluZ19kYXRhKHN0cnVjdCBUQ1Bf
-U2VydmVyX0luZm8gKnNlcnZlcikKIAl3aGlsZSAocmVtYWluaW5nID4gMCkgewogCQlpbnQgbGVu
-Z3RoOwogCi0JCWxlbmd0aCA9IGNpZnNfcmVhZF9mcm9tX3NvY2tldChzZXJ2ZXIsIHNlcnZlci0+
-YmlnYnVmLAotCQkJCW1pbl90KHVuc2lnbmVkIGludCwgcmVtYWluaW5nLAotCQkJCSAgICBDSUZT
-TWF4QnVmU2l6ZSArIE1BWF9IRUFERVJfU0laRShzZXJ2ZXIpKSk7CisJCWxlbmd0aCA9IGNpZnNf
-ZGlzY2FyZF9mcm9tX3NvY2tldChzZXJ2ZXIsCisJCQkJbWluX3Qoc2l6ZV90LCByZW1haW5pbmcs
-CisJCQkJICAgICAgQ0lGU01heEJ1ZlNpemUgKyBNQVhfSEVBREVSX1NJWkUoc2VydmVyKSkpOwog
-CQlpZiAobGVuZ3RoIDwgMCkKIAkJCXJldHVybiBsZW5ndGg7CiAJCXNlcnZlci0+dG90YWxfcmVh
-ZCArPSBsZW5ndGg7CmRpZmYgLS1naXQgYS9mcy9jaWZzL2Nvbm5lY3QuYyBiL2ZzL2NpZnMvY29u
-bmVjdC5jCmluZGV4IDU1YjFlYzczMWQ1Mi4uYjkwODU2MjUzMzRlIDEwMDY0NAotLS0gYS9mcy9j
-aWZzL2Nvbm5lY3QuYworKysgYi9mcy9jaWZzL2Nvbm5lY3QuYwpAQCAtNTY0LDYgKzU2NCwyMyBA
-QCBjaWZzX3JlYWRfZnJvbV9zb2NrZXQoc3RydWN0IFRDUF9TZXJ2ZXJfSW5mbyAqc2VydmVyLCBj
-aGFyICpidWYsCiAJcmV0dXJuIGNpZnNfcmVhZHZfZnJvbV9zb2NrZXQoc2VydmVyLCAmc21iX21z
-Zyk7CiB9CiAKK3NzaXplX3QKK2NpZnNfZGlzY2FyZF9mcm9tX3NvY2tldChzdHJ1Y3QgVENQX1Nl
-cnZlcl9JbmZvICpzZXJ2ZXIsIHNpemVfdCB0b19yZWFkKQoreworCXN0cnVjdCBtc2doZHIgc21i
-X21zZzsKKworCS8qCisJICogIGlvdl9pdGVyX2Rpc2NhcmQgYWxyZWFkeSBzZXRzIHNtYl9tc2cu
-dHlwZSBhbmQgY291bnQgYW5kIGlvdl9vZmZzZXQKKwkgKiAgYW5kIGNpZnNfcmVhZHZfZnJvbV9z
-b2NrZXQgc2V0cyBtc2dfY29udHJvbCBhbmQgbXNnX2NvbnRyb2xsZW4KKwkgKiAgc28gbGl0dGxl
-IHRvIGluaXRpYWxpemUgaW4gc3RydWN0IG1zZ2hkcgorCSAqLworCXNtYl9tc2cubXNnX25hbWUg
-PSBOVUxMOworCXNtYl9tc2dfbmFtZWxlbiA9IDA7CisJaW92X2l0ZXJfZGlzY2FyZCgmc21iX21z
-Zy5tc2dfaXRlciwgUkVBRCwgdG9fcmVhZCk7CisKKwlyZXR1cm4gY2lmc19yZWFkdl9mcm9tX3Nv
-Y2tldChzZXJ2ZXIsICZzbWJfbXNnKTsKK30KKwogaW50CiBjaWZzX3JlYWRfcGFnZV9mcm9tX3Nv
-Y2tldChzdHJ1Y3QgVENQX1NlcnZlcl9JbmZvICpzZXJ2ZXIsIHN0cnVjdCBwYWdlICpwYWdlLAog
-CXVuc2lnbmVkIGludCBwYWdlX29mZnNldCwgdW5zaWduZWQgaW50IHRvX3JlYWQpCi0tIAoyLjI3
-LjAKCg==
---000000000000af387b05bc2e5c4d--
