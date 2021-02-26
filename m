@@ -2,164 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF7B32642E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 15:38:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6457B32645F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 15:50:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230206AbhBZOg6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Feb 2021 09:36:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36882 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230185AbhBZOgv (ORCPT
+        id S230185AbhBZOtH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Feb 2021 09:49:07 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:43386 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230179AbhBZOs4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Feb 2021 09:36:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614350124;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z0UEtT1xxQkq7jvE/gzRGeVwRilrSoAFuOXJwma7YY8=;
-        b=etoK10LAOgK2w8gjhaGOUncPfrUMZPMvGzn05ARCkcwTWZxd15ed25I8PmJ5P6gUxDL+6F
-        hEK6mBuJDfISnvNuCeFBAgP7hmcjtO0VfUzICU/pJ/ZrUHa2gi/r2K1OZl7+IfCChhnS9H
-        talKWFqaELStG4Fdd+b9P+Md30cbMxY=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-382-tWTZRs85MwayEL6ChFYonQ-1; Fri, 26 Feb 2021 09:35:22 -0500
-X-MC-Unique: tWTZRs85MwayEL6ChFYonQ-1
-Received: by mail-pg1-f197.google.com with SMTP id y26so6222445pga.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Feb 2021 06:35:22 -0800 (PST)
+        Fri, 26 Feb 2021 09:48:56 -0500
+Received: by mail-il1-f199.google.com with SMTP id b4so7204291ilj.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Feb 2021 06:48:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z0UEtT1xxQkq7jvE/gzRGeVwRilrSoAFuOXJwma7YY8=;
-        b=G/yL76/lCxJNThMe8MGVz7ZQHy6oOd3wn+lAh35EX29m5JIVxZkr7n1cUl2/L5OH5z
-         o566eJukqwM4axlRUpHfrlCqVGQf7Re/qlvoGQwG0bRt44m7UZJXRy6y1bA7kakQPRcX
-         fgZmxNlnh8dWuXA0EkCttu/vaSKB79tHIKq1QuOqX9z5tSM8fM77Sc3GR2s75ILOleIr
-         9wWGfiu1jiBzF43dJB9Aj3w1sZ1qggSp3o4MxtgL5jvOExF54ihBqbpgnCdrqI6/bLlZ
-         X1q49s/my+QSNbefy4s31KpQEh4SfyYJYshUav1VIjYXss3EaSASPhHPymib5tkRB4Tm
-         jTGg==
-X-Gm-Message-State: AOAM532AmjYAtKU8n9YMlUX63Qnun61sLjs+9mwp7EVKsmNrKCbKBEYW
-        nuYCdZKu8t6N0BCYrbE0YmwWN1giEhqp4PhG/iX/C1mM3xdk5uRv43VrNhtZmEJOYJFbfn+60lL
-        Knw2OC+BCre22cmOof1rFR2UssA==
-X-Received: by 2002:a62:f20d:0:b029:1ed:c019:50dd with SMTP id m13-20020a62f20d0000b02901edc01950ddmr3385496pfh.67.1614350121166;
-        Fri, 26 Feb 2021 06:35:21 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyMynrqUTTph41HDFIDaheM+7S9T9q1nsHtcWBLAs8KHu2yOGmotRO54ulaXZnxVWr0b73oXg==
-X-Received: by 2002:a62:f20d:0:b029:1ed:c019:50dd with SMTP id m13-20020a62f20d0000b02901edc01950ddmr3385474pfh.67.1614350120769;
-        Fri, 26 Feb 2021 06:35:20 -0800 (PST)
-Received: from xiangao.remote.csb ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id w6sm10132555pfj.190.2021.02.26.06.35.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Feb 2021 06:35:20 -0800 (PST)
-Date:   Fri, 26 Feb 2021 22:35:09 +0800
-From:   Gao Xiang <hsiangkao@redhat.com>
-To:     dsterba@suse.cz
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Neal Gompa <ngompa13@gmail.com>,
-        Amy Parker <enbyamy@gmail.com>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Adding LZ4 compression support to Btrfs
-Message-ID: <20210226143509.GB1905816@xiangao.remote.csb>
-References: <CAE1WUT53F+xPT-Rt83EStGimQXKoU-rE+oYgcib87pjP4Sm0rw@mail.gmail.com>
- <CAEg-Je-Hs3+F9yshrW2MUmDNTaN-y6J-YxeQjneZx=zC5=58JA@mail.gmail.com>
- <20210225132647.GB7604@twin.jikos.cz>
- <YDfxkGkWnLEfsDwZ@gmail.com>
- <20210226093653.GI7604@twin.jikos.cz>
- <20210226112854.GA1890271@xiangao.remote.csb>
- <20210226141203.GJ7604@suse.cz>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=UL/N5d3J1rT+ym+/Jn9kHXUDPqBkiL4ljBzXNafEZSU=;
+        b=ABS2YNVFpuVyAz18QNGni4hUQtYEyHsyfJaArTMEAe1TnwGqw8tT1Xxb6ZVChXAdWD
+         +7Q1SldV05VCOvPoH0oqgQfTax5ghaU/nE4vydlJGL4CzVK+oZ/Lv5Jd6yN+S5z5NIw/
+         Za5PXgFlUJiNoPirajp5xjH6UcCjGIhFY6XCQd9BSaP5zSVW6J2KxcoSV7rzVYdVCqiM
+         mPwnanbye1OzBmaV0E5xMhBqTFyqMHfLNXLuHvwlyu8Ww53ayEQccFgexXI0qQggOlam
+         GuqXyb5QY8RvJYIXFvHxeYcuK7sDd0usMfZ69mCoNJyFca2Osq91XSQwGaLQKMgM8YnY
+         GV2w==
+X-Gm-Message-State: AOAM5306Qz4bm+70qHLltyaWHZC7111GHTEjQ4I0n9QkM6lsSHTVcANN
+        HYGl+93K83/tFBbPL98R+v+rhP5njGyC1b60trDXUEWXEYpd
+X-Google-Smtp-Source: ABdhPJzI+gtHTkL5rLWZ9Ur1x5Itb6365yRJD2pcnhr2YLIsGNcZcow+L1pOt9HtAKFwwHIPFq/WH8JQLq0WtnLDcrQEIicldJOb
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210226141203.GJ7604@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a5e:8903:: with SMTP id k3mr3029786ioj.54.1614350895999;
+ Fri, 26 Feb 2021 06:48:15 -0800 (PST)
+Date:   Fri, 26 Feb 2021 06:48:15 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b304d505bc3e5b3a@google.com>
+Subject: general protection fault in try_to_wake_up (2)
+From:   syzbot <syzbot+b4a81dc8727e513f364d@syzkaller.appspotmail.com>
+To:     asml.silence@gmail.com, axboe@kernel.dk, christian@brauner.io,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+Hello,
 
-On Fri, Feb 26, 2021 at 03:12:03PM +0100, David Sterba wrote:
-> On Fri, Feb 26, 2021 at 07:28:54PM +0800, Gao Xiang wrote:
-> > On Fri, Feb 26, 2021 at 10:36:53AM +0100, David Sterba wrote:
-> > > On Thu, Feb 25, 2021 at 10:50:56AM -0800, Eric Biggers wrote:
-> > > 
-> > > ZLIB and ZSTD can have a separate dictionary and don't need the input
-> > > chunks to be contiguous. This brings some additional overhead like
-> > > copying parts of the input to the dictionary and additional memory for
-> > > themporary structures, but with higher compression ratios.
-> > > 
-> > > IIRC the biggest problem for LZ4 was the cost of setting up each 4K
-> > > chunk, the work memory had to be zeroed. The size of the work memory is
-> > > tunable but trading off compression ratio. Either way it was either too
-> > > slow or too bad.
-> > 
-> > May I ask why LZ4 needs to zero the work memory (if you mean dest
-> > buffer and LZ4_decompress_safe), just out of curiousity... I didn't
-> > see that restriction before. Thanks!
-> 
-> Not the destination buffer, but the work memory or state as it can be
-> also called. This is from my initial interest in lz4 in 2012 and I got
-> that from Yann himself.  There was a tradeoff to either expect zeroed
-> work memory or add more conditionals.
-> 
-> At time he got some benchmark result and the conditionals came out
-> worse. And I see the memset is still there (see below) so there's been
-> no change.
-> 
-> For example in f2fs sources there is:
-> lz4_compress_pages
->   LZ4_compress_default (cc->private is the work memory)
->     LZ4_compress_fast
->       LZ4_compress_fast_extState
->         LZ4_resetStream
-> 	  memset
-> 
-> Where the state size LZ4_MEM_COMPRESS is hidden in the maze od defines
-> 
-> #define LZ4_MEM_COMPRESS	LZ4_STREAMSIZE
-> #define LZ4_STREAMSIZE	(LZ4_STREAMSIZE_U64 * sizeof(unsigned long long))
-> #define LZ4_STREAMSIZE_U64 ((1 << (LZ4_MEMORY_USAGE - 3)) + 4)
-> /*
->  * LZ4_MEMORY_USAGE :
->  * Memory usage formula : N->2^N Bytes
->  * (examples : 10 -> 1KB; 12 -> 4KB ; 16 -> 64KB; 20 -> 1MB; etc.)
->  * Increasing memory usage improves compression ratio
->  * Reduced memory usage can improve speed, due to cache effect
->  * Default value is 14, for 16KB, which nicely fits into Intel x86 L1 cache
->  */
-> #define LZ4_MEMORY_USAGE 14
-> 
-> So it's 16K by default in linux. Now imagine doing memset(16K) just to
-> compress 4K, and do that 32 times to compress the whole 128K chunk.
-> That's not a negligible overhead.
+syzbot found the following issue on:
 
-Ok, thanks for your reply & info. I get the concern now. That is mainly a
-internal HASHTABLE for LZ4 matchfinder (most LZ algs use hash table as a way
-to find a previous match) to get len-distance pair from history sliding
-window. I just did a quick glance, If I understand correctly, I think LZO
-has a similiar table (yet not quite sure since I don't looked into that
-much), see:
+HEAD commit:    7f206cf3 Add linux-next specific files for 20210225
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15280e32d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1746d2802a82a05
+dashboard link: https://syzkaller.appspot.com/bug?extid=b4a81dc8727e513f364d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10bc8466d00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f5bf5ad00000
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/lzo/lzodefs.h#n68
-#define D_BITS		13
-#define D_SIZE		(1u << D_BITS)
+The issue was bisected to:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/lzo/lzo1x_compress.c#n108
-t = ((dv * 0x1824429d) >> (32 - D_BITS)) & D_MASK;
-m_pos = in + dict[t];
-dict[t] = (lzo_dict_t) (ip - in);
-if (unlikely(dv != get_unaligned_le32(m_pos)))
-	goto literal;
+commit 7c25c0d16ef3c37e49c593ac92f69fa3884d4bb9
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Tue Feb 16 14:17:00 2021 +0000
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/lzo/lzo1x_compress.c#n334
-memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
+    io_uring: remove the need for relying on an io-wq fallback worker
 
-LZO uses 13 but LZ4 uses 14, so in principle less collision. But it can
-be tunable especially considering btrfs 4kb fixed-sized input compression,
-it seems double memset though (16kb vs 8kb)..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14269b96d00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16269b96d00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12269b96d00000
 
-Thanks,
-Gao Xiang
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b4a81dc8727e513f364d@syzkaller.appspotmail.com
+Fixes: 7c25c0d16ef3 ("io_uring: remove the need for relying on an io-wq fallback worker")
 
-> 
+general protection fault, probably for non-canonical address 0xdffffc000000011a: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x00000000000008d0-0x00000000000008d7]
+CPU: 0 PID: 8677 Comm: iou-wrk-8423 Not tainted 5.11.0-next-20210225-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__lock_acquire+0xcfe/0x54c0 kernel/locking/lockdep.c:4770
+Code: 0c 0e 41 bf 01 00 00 00 0f 86 8c 00 00 00 89 05 08 41 0c 0e e9 81 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 5b 31 00 00 49 81 3e 80 73 3a 8f 0f 84 d0 f3 ff
+RSP: 0018:ffffc9000213f988 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000011a RSI: 1ffff92000427f42 RDI: 00000000000008d0
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000000 R12: ffff88801ae7d400
+R13: 0000000000000000 R14: 00000000000008d0 R15: 0000000000000000
+FS:  000000000088a400(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa46e8f46c0 CR3: 000000001be5b000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ lock_acquire kernel/locking/lockdep.c:5510 [inline]
+ lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x39/0x50 kernel/locking/spinlock.c:159
+ try_to_wake_up+0x98/0x14a0 kernel/sched/core.c:3347
+ io_wqe_wake_worker+0x51a/0x680 fs/io-wq.c:248
+ io_wqe_dec_running.isra.0+0xe6/0x100 fs/io-wq.c:265
+ __io_worker_busy fs/io-wq.c:296 [inline]
+ io_worker_handle_work+0x34f/0x1950 fs/io-wq.c:449
+ io_wqe_worker fs/io-wq.c:531 [inline]
+ task_thread.isra.0+0xfa8/0x1340 fs/io-wq.c:608
+ task_thread_bound+0x18/0x20 fs/io-wq.c:614
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Modules linked in:
+---[ end trace 1ccdee97cc2e65dd ]---
+RIP: 0010:__lock_acquire+0xcfe/0x54c0 kernel/locking/lockdep.c:4770
+Code: 0c 0e 41 bf 01 00 00 00 0f 86 8c 00 00 00 89 05 08 41 0c 0e e9 81 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 5b 31 00 00 49 81 3e 80 73 3a 8f 0f 84 d0 f3 ff
+RSP: 0018:ffffc9000213f988 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000011a RSI: 1ffff92000427f42 RDI: 00000000000008d0
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000000 R12: ffff88801ae7d400
+R13: 0000000000000000 R14: 00000000000008d0 R15: 0000000000000000
+FS:  000000000088a400(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa46e8f46c0 CR3: 000000001be5b000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
