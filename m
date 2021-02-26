@@ -2,115 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 880CA326166
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 11:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F36343261D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 12:15:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231206AbhBZKhI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Feb 2021 05:37:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57708 "EHLO
+        id S229915AbhBZLPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Feb 2021 06:15:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231201AbhBZKfS (ORCPT
+        with ESMTP id S230288AbhBZLOv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Feb 2021 05:35:18 -0500
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6901AC061574;
-        Fri, 26 Feb 2021 02:34:38 -0800 (PST)
-Received: by mail-il1-x131.google.com with SMTP id e7so7591221ile.7;
-        Fri, 26 Feb 2021 02:34:38 -0800 (PST)
+        Fri, 26 Feb 2021 06:14:51 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78DB2C061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Feb 2021 03:14:10 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id k66so7460074wmf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Feb 2021 03:14:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dKPWJ2vXHOJ7BygK8wqPKLpAtkdMRDyOo5zcEtzB+lQ=;
-        b=aDCpldvU7pTZUlcU0bh6o6izJC3pMqDFf8ZoDaybY8UHQjifgj4QKmw6tHh6dmWjs3
-         g/6JzYFlohIuHURl2qjlVa45z5RI1iWkiPBqRsOYYWUyvzR3k/kUjIuCBYbGP9x6+pSy
-         a8EUhKcyvGGm8hQBgvPLAM+KJcKKKQcxqT2E+w55xSfNV6k8QxIPLxE/Mi5YQ7V8aWmI
-         uR5PCEOJqUV3yfiJwcLovgZnaSB0/E+uV8qd11D7DH1KFuREX0JZ2R4e/bmS+fAbG5fo
-         q6kOEL485/WcHBRPc3Oiv0OQ0T1YXAgROhbbjEsROUg2CiABoxGyLa4mHWXc6atJxf8y
-         Oidg==
+        d=freebox-fr.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=y49VM4vxrIluoWZYygAbeWpFWX4C8YemeYTsHwW6ByM=;
+        b=e0z0W3vusltMyQI2YMbnnSAP9ts5ejDyxbUXibTlDhVQEuFd1yh80IHICiq8g32yZ7
+         DkZDHKMfgs3WjRwE6r2Oflb06pgFUKwgeigFKZIwY0kmdr+9A9EkCNsNE6pM6Mr15Msh
+         +WRFsDxvpNNLkZYG52bbJOe501lFywxKV6mT1AIORD+Pr2Eg8gxW9OeN+nX8qFwYMtwO
+         ChebSgA5u2RbIJBsDPtjd/sBdi/t668rjGRvRONCVFyze7lpUI91IlEx2jBfem1w6eXM
+         +CcnkmHE0o+kXrqgIRmsR/YWX5EN2CzTK0yyNoDrfIWnsl6btUCe7pDqhdzM20S5oWoe
+         i/lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dKPWJ2vXHOJ7BygK8wqPKLpAtkdMRDyOo5zcEtzB+lQ=;
-        b=ZFLJ3fXAeJovWGhtUQZWjcDMIf41JuKHp8d+l/XHcQlVDCgIhNJ4E/UFy1a6siBWc8
-         rITx5AkJxeE40cIdrB7jMAZJayK3oHLBeXVR2Rc0UYpIEiNpFG8lBFJHRkBqAaZFELdG
-         lpFLP9AUn67oj39BKz73dM0zDzJp7OxJsFxoIg3pPjrnbr1cEApAms0QZFoeFKW2UMrd
-         oTeMtyGTxFQICxWM7wp7R3RBmRSTez277HZR/m30YFVtqmYLDzqvFf0nZ9owZnzp5WcK
-         NyyZS3/oLwDbEH64PKSbwres1ITbQ/l2r8e82cUYyc4/rlzqpcDQAQ1/t+1XXRgfblTH
-         HMdw==
-X-Gm-Message-State: AOAM530mkxc/rGqFSM5iDYbToO7stEEhnJ03E4vZgZU68D+/aCo3Utzv
-        stM+U9DUTvpM7HYR2y142Yf+ghGQ40KXXkWl0AI=
-X-Google-Smtp-Source: ABdhPJyVvQafC62ZZanNVOmiYZS+T7dRdoUjzY7ufrxA7FhWOl4Xvpul8DKSph5sHFpVYsYNJ4N2URBdaIKR7OVs1xg=
-X-Received: by 2002:a92:da90:: with SMTP id u16mr1918861iln.275.1614335677822;
- Fri, 26 Feb 2021 02:34:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20210222102456.6692-1-lhenriques@suse.de> <20210224142307.7284-1-lhenriques@suse.de>
- <CAOQ4uxi3-+tOgHV_GUnWtJoQXbV5ZS9qDZsLsd9sJxX5Aftyew@mail.gmail.com>
- <YDd6EMpvZhHq6ncM@suse.de> <fd5d0d24-35e3-6097-31a9-029475308f15@gmail.com>
-In-Reply-To: <fd5d0d24-35e3-6097-31a9-029475308f15@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 26 Feb 2021 12:34:26 +0200
-Message-ID: <CAOQ4uxiVxEwvgFhdHGWLpdCk==NcGXgu52r_mXA+ebbLp_XPzQ@mail.gmail.com>
-Subject: Re: [PATCH] copy_file_range.2: Kernel v5.12 updates
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Cc:     Luis Henriques <lhenriques@suse.de>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=y49VM4vxrIluoWZYygAbeWpFWX4C8YemeYTsHwW6ByM=;
+        b=QFDadyyx1Z3c2H8TJM1rtLUF7CyKHCxE7ER+UOoc4GCyOo9fY287J/6kni8ZBXNKKb
+         0FGYlTyqiG0RvObzghhffz3rGfa9jv4NeLcN4BIx/lFY1YTwnT4d7xJwdR8fZpt+LV0Z
+         kwh5AbP5WBUQjwSfVCt8blTD2eUgv6S8Yg0oBVFSwhzjnZacB/1GXydyGjqo/WgP6++x
+         fsm1FztG5xB/Y8rxz9Kt1oC7R6ipUKAxNKtYu9t6qe3tqrRGJvQhycOSvokqjkDWO76M
+         otlwwD8x8qdnKCRjUZ644EC6oJHpyf99T5aVvtOoTa9XSACzqVulb7Zo+BsfJaut7zKn
+         PKyw==
+X-Gm-Message-State: AOAM533QsdwIiTtFHwZUp9Zd75DXPUxIIHqE7RyxqhdabON1MDcipW3v
+        E5jvbGK3FgJSBqeHOqDLWOmc0g==
+X-Google-Smtp-Source: ABdhPJwCfNGIDUxCyYbBE+DNvq9cfNw0MP1Excp4gOjjTHDYnSTRaf31JOdRW4YErP21q1J/j3BhJQ==
+X-Received: by 2002:a05:600c:4f07:: with SMTP id l7mr2288044wmq.141.1614338049188;
+        Fri, 26 Feb 2021 03:14:09 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ec4b:6d50:b813:aeab:baca:27d? ([2a01:e34:ec4b:6d50:b813:aeab:baca:27d])
+        by smtp.gmail.com with ESMTPSA id h19sm10623401wmq.47.2021.02.26.03.14.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Feb 2021 03:14:08 -0800 (PST)
+Message-ID: <d2ca20d40dfe23304072815f4733ffc25b7967cb.camel@freebox.fr>
+Subject: Re: [BUG] KASAN: global-out-of-bounds in
+ __fuse_write_file_get.isra.0+0x81/0xe0
+From:   Marios Makassikis <mmakassikis@freebox.fr>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org
+Date:   Fri, 26 Feb 2021 12:14:08 +0100
+In-Reply-To: <CAJfpegsJ0kWcGS1Si1dWHmpORKk3c7PUNO2tJdh3_W2YWmY5gg@mail.gmail.com>
+References: <CAF6XXKWCwqSa72p+iQjg4QSBmAkX4Y5DxGrRR1tW1ar2uthd=w@mail.gmail.com>
+         <CAJfpegsJ0kWcGS1Si1dWHmpORKk3c7PUNO2tJdh3_W2YWmY5gg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 26, 2021 at 12:13 PM Alejandro Colomar (man-pages)
-<alx.manpages@gmail.com> wrote:
->
-> Hello Luis,
->
-> On 2/25/21 11:21 AM, Luis Henriques wrote:
-> > On Wed, Feb 24, 2021 at 06:10:45PM +0200, Amir Goldstein wrote:
-> >> If it were me, I would provide all the details of the situation to
-> >> Michael and ask him
-> >> to write the best description for this section.
-> >
-> > Thanks Amir.
-> >
-> > Yeah, it's tricky.  Support was added and then dropped.   Since stable
-> > kernels will be picking this patch,  maybe the best thing to do is to no
-> > mention the generic cross-filesystem support at all...?  Or simply say
-> > that 5.3 temporarily supported it but that support was later dropped.
-> >
-> > Michael (or Alejandro), would you be OK handling this yourself as Amir
-> > suggested?
->
-> Could you please provide a more detailed history of what is to be
-> documented?
->
+On Mon, 2021-02-22 at 11:43 +0100, Miklos Szeredi wrote:
+> On Sun, Feb 21, 2021 at 2:30 AM Marios Makassikis
+> <mmakassikis@freebox.fr> wrote:
+> > Hello,
+> > 
+> > I hope this is the correct list to report this bug I've been
+> > seeing.
+> > 
+> > Background: I am testing a kernel SMB server implementation
+> > ("ksmbd": https://github.com/cifsd-team/cifsd).
+> > 
+> > As part of my tests, I tried having a Windows client store a backup
+> > on a SMB
+> > share that is backed by an NTFS formatted disk. In doing so, the
+> > kernel
+> > reports a BUG and locks up (either immediately, or after a few
+> > minutes).
+> 
+> Seems like fi->write_files list gets corrupted.
+> 
+> Is list debugging turned on?
+> 
+> Can you get a crashdump, and see if the rest of the fi structure is
+> okay?
+> 
+> Thanks,
+> Miklos
 
-Is this detailed enough? ;-)
+Hello Miklos,
 
-https://lwn.net/Articles/846403/
+I managed to get a crashdump, but couldn't get the crash utility to
+work (I fed it the kernel and the crashdump but it exited without any
+error message and I didn't get a chance to figure out what was wrong).
 
-Thanks,
-Amir.
+Meanwhile, a fix was committed on ksmbd with which I cannot reproduce
+the issue [1]. Previously, the i_mutex lock was not held in
+set_file_basic_info(): I'm guessing this is what caused the list
+corruption.
+
+Marios
+
+[1] 
+https://github.com/cifsd-team/cifsd/commit/5e929125e519acaf48abc4c42f8389caa26c4d5a
+
