@@ -2,109 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9898D325C32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 04:56:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5C0325C6E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 05:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbhBZD4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 22:56:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:50068 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229492AbhBZD4T (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 22:56:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614311692;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vXvPvwpzblhe1ssQWirHDB36I3K3aT43aO1CtB7cQ2M=;
-        b=c2aYhYdwuE9P1i36c0Pn5OZM2pBnnn1oUpP69GRFa+dQum5qfdhVSHUJdsu1hvKJbOTV/W
-        qpldiDQfSp8H6KifYhZgUxHR06zJjIcubwJb0wFsSrpuD2jooDMjJzo1EDlamIEv44tY61
-        QrMHor+pI7MfwwH6c7iEtX0Xw567JGE=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-436-CFPYXM4dN7CUwGwJRDnW_A-1; Thu, 25 Feb 2021 22:54:51 -0500
-X-MC-Unique: CFPYXM4dN7CUwGwJRDnW_A-1
-Received: by mail-pf1-f198.google.com with SMTP id u188so5681072pfu.23
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Feb 2021 19:54:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vXvPvwpzblhe1ssQWirHDB36I3K3aT43aO1CtB7cQ2M=;
-        b=BPdIpsHGc5mJx9JNG1x7FOhM4ZL0Mj2RW72suzcV6AKLAgyUf2+GcXUczFh9vol7/F
-         mFGr0qSr39qIu08KVkkhmLnlwLNWwrJOgrDS5v3vCL4s/pOER4h2pbWFx7URBn11kJ1A
-         UBlOZ84J3eWwFXKxF9U0AdCVNeICb0MZbOzf/zIsRA35wEX3nyGXjn4edeaoqpqM+ZPw
-         kvva3bqzYj2jVim6lqi1d+ydpgB4iR1jsZ1yPHhIZXxFoSfuX5Q/bSV0q9itrDACa5ZN
-         gls1P4X4OK0RYILhYQlqyRhlXF5PoUQji3VNo+8yluryKKC6Apqezr20riPtJc0BMVWc
-         bEXA==
-X-Gm-Message-State: AOAM533jCI40hVNDtz5IUF97pkOqJbtP3BsNeWljUw2ua6ugQzGk6Rq9
-        I1cmwsKoUEfZ88V+bE8QaqiVTIaK02b2YzRJn659PTk2H0isXRsmCaTf1qSqdx/TttuFxFGh7X9
-        mLx3Opvzn1l6qE4lO4qjIWrdcHA==
-X-Received: by 2002:a63:fb11:: with SMTP id o17mr1124280pgh.282.1614311689728;
-        Thu, 25 Feb 2021 19:54:49 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyLwthVn3ErB5FJJ8D3RILvNqSTxwlL+mmdtW8EMVdNTkKQlOcGdAkOl+qJoURmZrrGkSiZGg==
-X-Received: by 2002:a63:fb11:: with SMTP id o17mr1124268pgh.282.1614311689480;
-        Thu, 25 Feb 2021 19:54:49 -0800 (PST)
-Received: from xiangao.remote.csb ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id d12sm6896114pgm.83.2021.02.25.19.54.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Feb 2021 19:54:48 -0800 (PST)
-Date:   Fri, 26 Feb 2021 11:54:38 +0800
-From:   Gao Xiang <hsiangkao@redhat.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     dsterba@suse.cz, Neal Gompa <ngompa13@gmail.com>,
-        Amy Parker <enbyamy@gmail.com>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Adding LZ4 compression support to Btrfs
-Message-ID: <20210226035438.GA1831167@xiangao.remote.csb>
-References: <CAE1WUT53F+xPT-Rt83EStGimQXKoU-rE+oYgcib87pjP4Sm0rw@mail.gmail.com>
- <CAEg-Je-Hs3+F9yshrW2MUmDNTaN-y6J-YxeQjneZx=zC5=58JA@mail.gmail.com>
- <20210225132647.GB7604@twin.jikos.cz>
- <YDfxkGkWnLEfsDwZ@gmail.com>
+        id S229800AbhBZEP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Feb 2021 23:15:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229492AbhBZEP1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Feb 2021 23:15:27 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9227864EDC;
+        Fri, 26 Feb 2021 04:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614312885;
+        bh=sgWuxqBTz4uJmSaPMNWjznkck8E4uzq3eRWOtth4/Pk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GaKlhVvbTBQ10wmdG8lJGORHMFm7ED+I2ZQh6j3TMj5vcfdLDA91LE6NAJU6sYUAQ
+         PLQ/fdnQyVxpFDdaGoY8MBdg+9xQznfx/6tHoJIAPnTa5XymqVuRDgGDR9woUdGIt1
+         qR9bvxbSIdjDrVgZMmBG3RdSwbrzz2s14VpCvmDDxQir6273b544lhaey0J9JohhGF
+         /F9PfucDLwp+H/egWwJ0jCumTfHCKrfrAlR7rN1QEeK4gDR++yhSE51klT4tcnTvSp
+         QGkqBbHSLvEQYMwJNM9436fxTtc2kUqBJVmlSHPW//XR7cYfGQxa9nqGz78tOJbvah
+         n5IabVC/GXYtw==
+Date:   Thu, 25 Feb 2021 20:14:46 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, dan.j.williams@intel.com,
+        willy@infradead.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+        linux-btrfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        david@fromorbit.com, hch@lst.de, rgoldwyn@suse.de
+Subject: Re: [PATCH v2 07/10] iomap: Introduce iomap_apply2() for operations
+ on two files
+Message-ID: <20210226041446.GV7272@magnolia>
+References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
+ <20210226002030.653855-8-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YDfxkGkWnLEfsDwZ@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210226002030.653855-8-ruansy.fnst@fujitsu.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 25, 2021 at 10:50:56AM -0800, Eric Biggers wrote:
-> On Thu, Feb 25, 2021 at 02:26:47PM +0100, David Sterba wrote:
-> > 
-> > LZ4 support has been asked for so many times that it has it's own FAQ
-> > entry:
-> > https://btrfs.wiki.kernel.org/index.php/FAQ#Will_btrfs_support_LZ4.3F
-> > 
-> > The decompression speed is not the only thing that should be evaluated,
-> > the way compression works in btrfs (in 4k blocks) does not allow good
-> > compression ratios and overall LZ4 does not do much better than LZO. So
-> > this is not worth the additional costs of compatibility. With ZSTD we
-> > got the high compression and recently there have been added real-time
-> > compression levels that we'll use in btrfs eventually.
+On Fri, Feb 26, 2021 at 08:20:27AM +0800, Shiyang Ruan wrote:
+> Some operations, such as comparing a range of data in two files under
+> fsdax mode, requires nested iomap_open()/iomap_end() on two file.  Thus,
+> we introduce iomap_apply2() to accept arguments from two files and
+> iomap_actor2_t for actions on two files.
 > 
-> When ZSTD support was being added to btrfs, it was claimed that btrfs compresses
-> up to 128KB at a time
-> (https://lore.kernel.org/r/5a7c09dd-3415-0c00-c0f2-a605a0656499@fb.com).
-> So which is it -- 4KB or 128KB?
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  fs/iomap/apply.c      | 51 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/iomap.h |  7 +++++-
+>  2 files changed, 57 insertions(+), 1 deletion(-)
 > 
+> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+> index 26ab6563181f..fd2f8bde5791 100644
+> --- a/fs/iomap/apply.c
+> +++ b/fs/iomap/apply.c
+> @@ -97,3 +97,54 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+>  
+>  	return written ? written : ret;
+>  }
+> +
+> +loff_t
+> +iomap_apply2(struct inode *ino1, loff_t pos1, struct inode *ino2, loff_t pos2,
+> +		loff_t length, unsigned int flags, const struct iomap_ops *ops,
+> +		void *data, iomap_actor2_t actor)
+> +{
+> +	struct iomap smap = { .type = IOMAP_HOLE };
+> +	struct iomap dmap = { .type = IOMAP_HOLE };
+> +	loff_t written = 0, ret;
+> +
+> +	ret = ops->iomap_begin(ino1, pos1, length, 0, &smap, NULL);
+> +	if (ret)
+> +		goto out_src;
+> +	if (WARN_ON(smap.offset > pos1)) {
+> +		written = -EIO;
+> +		goto out_src;
+> +	}
+> +	if (WARN_ON(smap.length == 0)) {
+> +		written = -EIO;
+> +		goto out_src;
+> +	}
+> +
+> +	ret = ops->iomap_begin(ino2, pos2, length, 0, &dmap, NULL);
+> +	if (ret)
+> +		goto out_dest;
+> +	if (WARN_ON(dmap.offset > pos2)) {
+> +		written = -EIO;
+> +		goto out_dest;
+> +	}
+> +	if (WARN_ON(dmap.length == 0)) {
+> +		written = -EIO;
+> +		goto out_dest;
+> +	}
+> +
+> +	/* make sure extent length of two file is equal */
+> +	if (WARN_ON(smap.length != dmap.length)) {
 
-I think it was to say in one 4kb block there are no 2 different
-compress extents, so there is no noticable extra space saving
-difference if compression algorithms (e.g. LZ4 vs LZO) with very
-similiar C/R. I think that conclusion is also be applied to F2FS
-compression as I said months ago before.
+Why not set smap.length and dmap.length to min(smap.length, dmap.length) ?
 
-LZ4 has better decompression speed (also has better decompression
-speed / CR ratio) due to LZ4 block format design. Apart from
-compatibility concern, IMO LZ4 is much better than LZO (Also LZ4
-itself is much actively maintainence compared with LZO as well.)
+--D
 
-Thanks,
-Gao Xiang
-
-> - Eric
-
+> +		written = -EIO;
+> +		goto out_dest;
+> +	}
+> +
+> +	written = actor(ino1, pos1, ino2, pos2, length, data, &smap, &dmap);
+> +
+> +out_dest:
+> +	if (ops->iomap_end)
+> +		ret = ops->iomap_end(ino2, pos2, length, 0, 0, &dmap);
+> +out_src:
+> +	if (ops->iomap_end)
+> +		ret = ops->iomap_end(ino1, pos1, length, 0, 0, &smap);
+> +
+> +	return ret;
+> +}
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 5bd3cac4df9c..913f98897a77 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -148,10 +148,15 @@ struct iomap_ops {
+>   */
+>  typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
+>  		void *data, struct iomap *iomap, struct iomap *srcmap);
+> -
+> +typedef loff_t (*iomap_actor2_t)(struct inode *ino1, loff_t pos1,
+> +		struct inode *ino2, loff_t pos2, loff_t len, void *data,
+> +		struct iomap *smap, struct iomap *dmap);
+>  loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
+>  		unsigned flags, const struct iomap_ops *ops, void *data,
+>  		iomap_actor_t actor);
+> +loff_t iomap_apply2(struct inode *ino1, loff_t pos1, struct inode *ino2,
+> +		loff_t pos2, loff_t length, unsigned int flags,
+> +		const struct iomap_ops *ops, void *data, iomap_actor2_t actor);
+>  
+>  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+>  		const struct iomap_ops *ops);
+> -- 
+> 2.30.1
+> 
+> 
+> 
