@@ -2,101 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1A73266F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 19:34:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABBC326733
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 20:06:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbhBZSdn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Feb 2021 13:33:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52786 "EHLO mx2.suse.de"
+        id S230211AbhBZTFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Feb 2021 14:05:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230360AbhBZSdd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Feb 2021 13:33:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 795F6AFF5;
-        Fri, 26 Feb 2021 18:32:51 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 57c09077;
-        Fri, 26 Feb 2021 18:33:58 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.de>
-Subject: [RFC PATCH] fuse: Clear SGID bit when setting mode in setacl
-Date:   Fri, 26 Feb 2021 18:33:57 +0000
-Message-Id: <20210226183357.28467-1-lhenriques@suse.de>
+        id S229545AbhBZTFi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Feb 2021 14:05:38 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2B1D464F1B;
+        Fri, 26 Feb 2021 19:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614366295;
+        bh=PfeQuDYBIjQHtNJ4RxOXOTAV74C+Re27WPBrWtzUDU4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nGGKVLRykjmczWP3FyivF6q0SYw6J8EAG4OIZIx2MxP8mAiZ/Isk3756eCG1HlOdt
+         E/oCaXcPPD8hThBiCj/+yfoWeN0n2CjA/Z/05xkmNmTvaxvC1Tmwpj9PM+P6+2q7zT
+         1w2DKcFQSLF7aMWyQc2Zr1L3FiSB1ZR1/RjUmfWcmebygeM6qp0oenFuBe1DutDFWw
+         2iXkgZarGC5e6UNsbo+wm3l93zCTzETISjYVwRYJZGJwUvovCL9yboyyXfx4sLxw+y
+         qGOl89rmrHNo9QgYn5VEseoY1bwzOSPMtj4cw8YtZWrBYgo4prpP+aUsJsoXaYAW5S
+         kdxN4BoF0OWHg==
+Date:   Fri, 26 Feb 2021 11:04:54 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
+        "y-goto@fujitsu.com" <y-goto@fujitsu.com>,
+        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
+        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
+Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
+Message-ID: <20210226190454.GD7272@magnolia>
+References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
+ <OSBPR01MB2920899F1D71E7B054A04E39F49D9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB2920899F1D71E7B054A04E39F49D9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Setting file permissions with POSIX ACLs (setxattr) isn't clearing the
-setgid bit.  This seems to be CVE-2016-7097, detected by running fstest
-generic/375 in virtiofs.  Unfortunately, when the fix for this CVE landed
-in the kernel with commit 073931017b49 ("posix_acl: Clear SGID bit when
-setting file permissions"), FUSE didn't had ACLs support yet.
+On Fri, Feb 26, 2021 at 09:45:45AM +0000, ruansy.fnst@fujitsu.com wrote:
+> Hi, guys
+> 
+> Beside this patchset, I'd like to confirm something about the
+> "EXPERIMENTAL" tag for dax in XFS.
+> 
+> In XFS, the "EXPERIMENTAL" tag, which is reported in waring message
+> when we mount a pmem device with dax option, has been existed for a
+> while.  It's a bit annoying when using fsdax feature.  So, my initial
+> intention was to remove this tag.  And I started to find out and solve
+> the problems which prevent it from being removed.
+> 
+> As is talked before, there are 3 main problems.  The first one is "dax
+> semantics", which has been resolved.  The rest two are "RMAP for
+> fsdax" and "support dax reflink for filesystem", which I have been
+> working on.  
 
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
----
- fs/fuse/acl.c | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+<nod>
 
-diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-index f529075a2ce8..1b273277c1c9 100644
---- a/fs/fuse/acl.c
-+++ b/fs/fuse/acl.c
-@@ -54,7 +54,9 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- {
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	const char *name;
-+	umode_t mode = inode->i_mode;
- 	int ret;
-+	bool update_mode = false;
- 
- 	if (fuse_is_bad(inode))
- 		return -EIO;
-@@ -62,11 +64,18 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- 	if (!fc->posix_acl || fc->no_setxattr)
- 		return -EOPNOTSUPP;
- 
--	if (type == ACL_TYPE_ACCESS)
-+	if (type == ACL_TYPE_ACCESS) {
- 		name = XATTR_NAME_POSIX_ACL_ACCESS;
--	else if (type == ACL_TYPE_DEFAULT)
-+		if (acl) {
-+			ret = posix_acl_update_mode(inode, &mode, &acl);
-+			if (ret)
-+				return ret;
-+			if (inode->i_mode != mode)
-+				update_mode = true;
-+		}
-+	} else if (type == ACL_TYPE_DEFAULT) {
- 		name = XATTR_NAME_POSIX_ACL_DEFAULT;
--	else
-+	} else
- 		return -EINVAL;
- 
- 	if (acl) {
-@@ -98,6 +107,20 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- 	} else {
- 		ret = fuse_removexattr(inode, name);
- 	}
-+	if (!ret && update_mode) {
-+		struct dentry *entry;
-+		struct iattr attr;
-+
-+		entry = d_find_alias(inode);
-+		if (entry) {
-+			memset(&attr, 0, sizeof(attr));
-+			attr.ia_valid = ATTR_MODE | ATTR_CTIME;
-+			attr.ia_mode = mode;
-+			attr.ia_ctime = current_time(inode);
-+			ret = fuse_do_setattr(entry, &attr, NULL);
-+			dput(entry);
-+		}
-+	}
- 	forget_all_cached_acls(inode);
- 	fuse_invalidate_attr(inode);
- 
+> So, what I want to confirm is: does it means that we can remove the
+> "EXPERIMENTAL" tag when the rest two problem are solved?
+
+Yes.  I'd keep the experimental tag for a cycle or two to make sure that
+nothing new pops up, but otherwise the two patchsets you've sent close
+those two big remaining gaps.  Thank you for working on this!
+
+> Or maybe there are other important problems need to be fixed before
+> removing it?  If there are, could you please show me that?
+
+That remains to be seen through QA/validation, but I think that's it.
+
+Granted, I still have to read through the two patchsets...
+
+--D
+
+> 
+> Thank you.
+> 
+> 
+> --
+> Ruan Shiyang.
