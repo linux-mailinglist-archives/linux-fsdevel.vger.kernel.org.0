@@ -2,201 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5402325CBC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 05:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25DD9325CEF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 06:15:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230022AbhBZEuk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Feb 2021 23:50:40 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:36920 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbhBZEui (ORCPT
+        id S229752AbhBZFPA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Feb 2021 00:15:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45642 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229621AbhBZFOw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Feb 2021 23:50:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1614315036; x=1645851036;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=hG0o4RrhhJ9Ey7dkScFWLdEleCwYLHv4sLpQAAqdpMQ=;
-  b=lVxMr3szdg+Cfd69txGvkysrKNmF48DelWb9odihLiTQFRYrEmbzxl37
-   4ESiLDHvoGLBOWINduysx+2pgmpBaopZkdQFXWSFuK+aLJRuUCrCyfd72
-   5U6/TZPw2NT/UIJJlVwDnHC7XFuZvVemp5lFwKUXQzoybPqElfmVWacOi
-   aA0koPEQGFx5AgIWuVJ+Gf/W20ZNAmQk6nBFb0l41m2sx9C5YpL12txII
-   jb6ch3yDk9Frr/NL4JN9SHrhkF8K9H8SIHNMnD5R1a70AM5/0SR0HlRIA
-   pPrYRF9/kHoaUEpu4ujzXUaPDZ4iBmNXhcb9S9jrndC4m5wtfpRWDdWKe
-   g==;
-IronPort-SDR: p9Aw/Iwt/radL1gHfruaNXxatVxnGWDJ/mTID10FDSp8f6RSa986HaoEfIiPb+6Jg1EaNfjy3C
- IrQepZaCQWt8wNC7JIuMp4YVbLVba2v72GOJNgWBhJ5/LQ9BLvyrHEPykcxh4i82hiJeBq+u7I
- 1zxhHlxJQVZEj5z/O98s5upTBtyBJr6ip1MQuOgB52lLtG4SBlYzomRLFxuwOIdicPaSoo4/5d
- TcosA4v4KmUh/Q+6DMmEhIFZdPvUhGZpYho2CiOKXxakwAvT+Bh/eadgd9NbNrBizEc4OL+n4b
- Joc=
-X-IronPort-AV: E=Sophos;i="5.81,207,1610380800"; 
-   d="scan'208";a="271419745"
-Received: from mail-bn8nam08lp2048.outbound.protection.outlook.com (HELO NAM04-BN8-obe.outbound.protection.outlook.com) ([104.47.74.48])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Feb 2021 12:49:29 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kLvbY8fp6t8d7dy7NZzOsQLLvL97wVPssKG5ZUv/gdk8M9TNCAWuURVFitY+09JiI8FeFWS2+Q2jlf535qzAnc1rB0fAbtU5XLF1UECSopCrhYvTvEZVK9KOyf+B8s4Vg/j2LaF/Dz/auMI3r9/ubuOEh22shZFGOuxJZUivVu/TRapDNw07Bq4knKtE083WfBqvFTVZia2JABaElVetODJyj2luVovTCS1OvR1RHvllKE5vWvaHwGp0FMHdPqA2rOk8dSmWsf6Ikw1KEJeS1B/mAWM2qO/ZK8GQsqRc1UEKTFXbCW5dSHIkyMSXFbnKTp/SSPcjo1H/P8Y7HyWO4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wzmBEVrYwx8jiJpbx6RtE8odwWsf21LF3jKKedfu41E=;
- b=cqvd5Xw4nCCC+aI512pMn77MgbTDyNXa2kFq6uxETFRkCFUz9IyOWgp9b7/9gxb2/Q8ZixhwpJh0sc7WaYazL3SBVU+VVmbFE1OwDovn626uFsaNQIKb+xfnU7frIYBual4TfDsbBacDEE+PiNJthwc7Ur8LTE/jfTXB92Cmo+Ya89ZY32l6hVOPuQvAvkQQUN8SGmXC/lqN/Latwvtn+iiufqVwwAtihnpGha2LElh+xm5e9Y7JzxsSPuUFOrav44XZ2S3wQjcVFG0Wg1fRs7IywU4bhyfgAZa+ib9IHjwWARjVek9aRjTmlZz7vBL/oDY7W+rzhPt2A56kW0q4fw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Fri, 26 Feb 2021 00:14:52 -0500
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A96C061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Feb 2021 21:14:12 -0800 (PST)
+Received: by mail-pg1-x52a.google.com with SMTP id e6so5537670pgk.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Feb 2021 21:14:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wzmBEVrYwx8jiJpbx6RtE8odwWsf21LF3jKKedfu41E=;
- b=iMqUbSAELOlasqVJbVL0GEGvhPR4engwqQmBxbnISKswUY+NCvNvUlJNwcoftV4CzfmiJGwWMXdwnpEYh4GkzWkGt1qi9vALCSenyUfd6S1PI1dyz6pWcbFe51fUyghBpUzyyef1GQs1vH3aslt5i4d1wIf3+AX6T3iB25iaQgQ=
-Received: from BL0PR04MB6514.namprd04.prod.outlook.com (2603:10b6:208:1ca::23)
- by BL0PR04MB4643.namprd04.prod.outlook.com (2603:10b6:208:4c::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.20; Fri, 26 Feb
- 2021 04:49:29 +0000
-Received: from BL0PR04MB6514.namprd04.prod.outlook.com
- ([fe80::e9c5:588:89e:6887]) by BL0PR04MB6514.namprd04.prod.outlook.com
- ([fe80::e9c5:588:89e:6887%3]) with mapi id 15.20.3890.020; Fri, 26 Feb 2021
- 04:49:29 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "dongli.zhang@oracle.com" <dongli.zhang@oracle.com>,
-        Aravind Ramesh <Aravind.Ramesh@wdc.com>,
-        "joshi.k@samsung.com" <joshi.k@samsung.com>,
-        Niklas Cassel <Niklas.Cassel@wdc.com>,
-        "hch@lst.de" <hch@lst.de>, "osandov@fb.com" <osandov@fb.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 13/39] blktrace: update blk_add_trace_bio()
-Thread-Topic: [RFC PATCH 13/39] blktrace: update blk_add_trace_bio()
-Thread-Index: AQHXC0R/LIu9yya0uEmtJ+d5NjA13A==
-Date:   Fri, 26 Feb 2021 04:49:29 +0000
-Message-ID: <BL0PR04MB6514F16DE15CAC134E5C68BEE79D9@BL0PR04MB6514.namprd04.prod.outlook.com>
-References: <20210225070231.21136-1-chaitanya.kulkarni@wdc.com>
- <20210225070231.21136-14-chaitanya.kulkarni@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: wdc.com; dkim=none (message not signed)
- header.d=none;wdc.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2400:2411:43c0:6000:f9e3:2590:6709:ee46]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 94074f19-9289-4e65-3ef2-08d8da11e696
-x-ms-traffictypediagnostic: BL0PR04MB4643:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BL0PR04MB46437103B4148FA360AF5235E79D9@BL0PR04MB4643.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:66;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: XpTn/IdGeJNjP0oUtvhlrBEopZCwFXUMWaQ2qOSQXYjq1c1RMk5UTNGhygdm+A5up7t8EybNF8WDSA2slYAAWG8XjTQpAdqgIOdJ4XPiluyjhIdqxBIkzBirqIZusniCRa3eZ2hzPwuk56KCSSEYyVaEwTE1DntFGlMXN+UfiT661f8ZbRe480xXhwfwFBfc6saGy+Xs+BzVXf8Yg+00C51DXLjazsJGMpl6ilsGa3sKPLU5DeA1CLfS7BLsyInfeYVsNCUg/8TMfDjlpSmt+weC6eSo+oCsVatrr3DVJawuQoso8117R8zeZkJcN3TwOH2GULSDNdZwYTBX2pxiEs0nMiKN8GHvBfGOVfYbwZkp5yqqqPwGT3TaT4XdLgj/PzFFHl4tfSkNMnCJk5l+8IBQIbOZNg/3ezwoOc8Hx0siUVNOGnQ4UzNc5RZfsXDeIKiL/S3vIf3ttxeoxT9jCBGmNgAwtaUEqBCGvw5mTqDak8ew2wYw1kujI5WmU+SfbOonlMtVUIgOx5r++Rp1GLoPzCRITUydicP7DlLaDOeFXpB2gh9D5tNC0UNH6Shb
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6514.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(136003)(376002)(366004)(396003)(346002)(55016002)(6506007)(33656002)(9686003)(15650500001)(71200400001)(5660300002)(2906002)(186003)(53546011)(4326008)(66446008)(64756008)(478600001)(7416002)(66476007)(76116006)(66946007)(86362001)(91956017)(316002)(921005)(83380400001)(8936002)(54906003)(8676002)(66556008)(7696005)(110136005)(52536014);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?o+S0sfUHprL1FxjrVns8cqjltlUbgQ9bOzzZtFbgCevDJ/Yhwkul+dx6D/UK?=
- =?us-ascii?Q?EbECj9asnkuIaWc2qyKY+k2oX2oS0zk6tb3SdB7xABBykTNkPucFoYHZSgMp?=
- =?us-ascii?Q?ixdf5F2qjR/34kpA9OKTeykAoyXaP353i+l5yU0okPmKvLeyOmXrN/zYm6h7?=
- =?us-ascii?Q?npsahO2WdY3YTLdlQW6wrX4gzFHuY0qlI5TNWDHT29Qigg6VDrXJFwy+st+n?=
- =?us-ascii?Q?F0f/afj4wLds3Z9+HBErD+9YC4pEJd4cN31bWO6nI7PQHXlfHmBrmaAbejrm?=
- =?us-ascii?Q?FaPBw5oG0s6g2Wm1+Xqar2d0EwirhQDGo/KqVqDhYv2KXcgmqK483/LIR++C?=
- =?us-ascii?Q?jTu/NZ2IQJQqL/zyFrarQODH1oVH51kHnbesW0PVLEPJ4aQ4CDKNxxIxpHmk?=
- =?us-ascii?Q?NeNhzKRJLLH1DXpp/ycM6kQO089v5jDd4FMH2P3JfIJv6IR4PdZPebDS9Dh1?=
- =?us-ascii?Q?iXjMNMcGQKmKO423JJRQtfeQ/LQVG8u83z6sUkcZw58FFLlVvDP9omogRCjV?=
- =?us-ascii?Q?9njv226m4c/NpkRzaiLTLXWmwqP5Icj+2/qglZFJuyqqLocnJ5GDjyyA4slC?=
- =?us-ascii?Q?RDZf8a4Zp4ZgWx9ZwM+5l81vRQhcMLIq/VRQ7kllIzX9JhRycn8GBEKRf4gy?=
- =?us-ascii?Q?X9CUvY3t94TrhXxX6e/BkM5U/tApRAScpPkgRWAzKEH3dRXAe6nTcj2sF5pN?=
- =?us-ascii?Q?ZabJkduwHWHu1mAEGBSpK7alxaq1JKqtTNUBON300UsZcfzWzeBWMCT8qWcO?=
- =?us-ascii?Q?JNdYi9G1oedqhKga/w6hUj0Iuya0lbGnI4vr6XIDw6qa32eznxcbbw47/AT/?=
- =?us-ascii?Q?dgOTBsU6nR0oiFUNTCfiD0m3x8Ryg2CmLoTeWasgZlrRaEUzuTrxkpDgsPNu?=
- =?us-ascii?Q?Dmy+pydb+yfFyeRP7MlQmB/svnTQBqvNaKnyJzM64oWyHht0fwpyotm9KdqA?=
- =?us-ascii?Q?72v/nl0+v3/rx7YEF2f2/4ufx3lPh6Kev8+FUUB2hb8UssCzL1ToHyS/b6Lg?=
- =?us-ascii?Q?tJc9LqFuRsDuDLytZRdFvTkZYaSHxnqPCmmlOObdbkT4EYzNidiG5+hTCqmf?=
- =?us-ascii?Q?3+eoBXZZ9UnwQIdL4lck6/6+/dgpQveJW47FI+KacloIHWJhUrlFpbT94qMt?=
- =?us-ascii?Q?SXmj24ZJNNxZ1nojZxzoosy1Dly/W08RDzLWaMkOblshl5ZcpYZ8W93KG/Y+?=
- =?us-ascii?Q?+GSbenwQzTUvf156wGr8bjtVJgxwdq2Itj6SJpeR8f9q/iL9SHhjP2IqTjHu?=
- =?us-ascii?Q?UhwomouhxMy+HIeB9MWlkqfpPb2OXkZKWcuJScqXWcscCOPHiHQBtrED1AhU?=
- =?us-ascii?Q?4fYTyzqOhve9DukC9SFTxKJl6E2jDKR/FOwqMcKotAQk0074JmdDpzTS9Wof?=
- =?us-ascii?Q?LCK5crKYRRoGlKDdpQU+6O/iEqNGg+Po1Eoe4R+aMXMjQacNtg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6514.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94074f19-9289-4e65-3ef2-08d8da11e696
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2021 04:49:29.0342
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6BS/LPsB4Y2dIL19637GsyzHZh08xWg6sHG4oW6dO38mhxZ8x3MJKfXzxJy6k4dxDlsRk+OIvLKdwMmwthvR8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR04MB4643
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=XP1tl4Hv8qsKy1mV1NKF6MqYxY1y0R3nrC5SHGdIwNk=;
+        b=vd5aFiZGXu9xC6o/pdUMZanASQ7lgwwFDUIxiH2EghzmDgmfIf6nW16AiDRpv5tIC1
+         IV748zScdPdWY8xfrUta0lyD2CgK6GFNEZeepqHwZgdFcPBrp63B0CHAomMjdIvA9CSV
+         GK+cEhORkLkn30rJsCHQSdbHI4Sm1SWogtvE9Rapd3IKRaVDBNU/urqcK2dpQU9Wqaek
+         jApxcVU/F/2vgqXfqiTvXqpzBbl/HWvrvt3i8G0Lok4fej38PU+msNJ1huBpnixCthqm
+         YIXPCnD2OqNrb3sXAD1ji2/vi6M6r8TdpcUA9vAt+oXm0ZQHWoBQPapj533Z1zFJIlVu
+         AYBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=XP1tl4Hv8qsKy1mV1NKF6MqYxY1y0R3nrC5SHGdIwNk=;
+        b=W5VeLi+qbtBrqN1FtWOunH8ZfN486aOItcEPHrWKfZlJgZJY8BYlXRchHuwfMV0+lA
+         cIHXK4vrCNIcCaXqOkp7uzrN3ZLE8+iz7JDRSpYXRjpLFRqaxtyhWQVq5CFviOLVK7uu
+         qMxTZoestOQYq14gbY8iB2lVYOHzbM7c0WGSudu24m6bkjIZbTc1pjBwh7vVfBYQ73az
+         rrmTA/cL5cPzTw0+cVFhJneiAFmGDzmCtJS9MX7vuM3seQSnULMw9qZYR+v0lm+rKFY3
+         6199yGfJgAYec6FMWKpv1Pga2boyIpqAHqnEaA89ZpXwNbfY8b0HHN95lb0HET9+/nyp
+         OJuw==
+X-Gm-Message-State: AOAM532PofWcgQ0OnPpuA9aP48TbKGIGR7w0VCZu++BsrFkg0mRylFjy
+        yvV5Jzl2kl6jEg7JTgXhVmFemn9TCRkrzrmZeXc=
+X-Google-Smtp-Source: ABdhPJxy/2GKZso2KcbQLWUAMCO4b2QsXaABUWQj8opEwl3Osvud6EbSbaFFL7g8o9WK3nSFFWG7YQ==
+X-Received: by 2002:a62:7bc5:0:b029:1ed:62d5:31f7 with SMTP id w188-20020a627bc50000b02901ed62d531f7mr1559815pfc.24.1614316451509;
+        Thu, 25 Feb 2021 21:14:11 -0800 (PST)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id w187sm7818137pgb.52.2021.02.25.21.14.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Feb 2021 21:14:10 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <24A7BB91-16E7-4C9D-BD80-0B75927AF7B0@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_454B88CC-A469-4B83-B785-9645C1B288C0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH 1/2] ext4: Handle casefolding with encryption
+Date:   Thu, 25 Feb 2021 22:14:07 -0700
+In-Reply-To: <CA+PiJmReVX_YXZF1JrfXmothFX7q3iihm2qHyEOGEoYFyrrE5Q@mail.gmail.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com, Paul Lawrence <paullawrence@google.com>
+To:     Daniel Rosenberg <drosen@google.com>
+References: <20210203090745.4103054-2-drosen@google.com>
+ <56BC7E2D-A303-45AE-93B6-D8921189F604@dilger.ca> <YBrP4NXAsvveIpwA@mit.edu>
+ <YCMZSjgUDtxaVem3@mit.edu> <42511E9D-3786-4E70-B6BE-D7CB8F524912@dilger.ca>
+ <YCNbIdCsAsNcPuAL@mit.edu>
+ <CA+PiJmT2hfdRLztCdp3-tYBqAo+-ibmuyqLvq5nb+asFj4vL7A@mail.gmail.com>
+ <YC0/ZsQbKntSpl97@mit.edu> <01918C7B-9D9B-4BD8-8ED1-BA1CBF53CA95@dilger.ca>
+ <CA+PiJmReVX_YXZF1JrfXmothFX7q3iihm2qHyEOGEoYFyrrE5Q@mail.gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/02/25 16:04, Chaitanya Kulkarni wrote:=0A=
-> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>=0A=
-=0A=
-No commit message.=0A=
-=0A=
-> ---=0A=
->  kernel/trace/blktrace.c | 21 ++++++++++++++++-----=0A=
->  1 file changed, 16 insertions(+), 5 deletions(-)=0A=
-> =0A=
-> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c=0A=
-> index 07f71a052a0d..14658b2a3fc8 100644=0A=
-> --- a/kernel/trace/blktrace.c=0A=
-> +++ b/kernel/trace/blktrace.c=0A=
-> @@ -1247,20 +1247,31 @@ static void blk_add_trace_rq_complete(void *ignor=
-e, struct request *rq,=0A=
->   *=0A=
->   **/=0A=
->  static void blk_add_trace_bio(struct request_queue *q, struct bio *bio,=
-=0A=
-> -			      u32 what, int error)=0A=
-> +			      u64 what, int error)=0A=
->  {=0A=
->  	struct blk_trace *bt;=0A=
-> +	struct blk_trace_ext *bte;=0A=
->  =0A=
->  	rcu_read_lock();=0A=
->  	bt =3D rcu_dereference(q->blk_trace);=0A=
-> -	if (likely(!bt)) {=0A=
-> +	bte =3D rcu_dereference(q->blk_trace_ext);=0A=
-> +	if (likely(!bt) && likely(!bte)) {=0A=
->  		rcu_read_unlock();=0A=
->  		return;=0A=
->  	}=0A=
->  =0A=
-> -	__blk_add_trace(bt, bio->bi_iter.bi_sector, bio->bi_iter.bi_size,=0A=
-> -			bio_op(bio), bio->bi_opf, what, error, 0, NULL,=0A=
-> -			blk_trace_bio_get_cgid(q, bio));=0A=
-> +	if (bt) {=0A=
-> +		__blk_add_trace(bt, bio->bi_iter.bi_sector,=0A=
-> +				bio->bi_iter.bi_size, bio_op(bio),=0A=
-> +				bio->bi_opf, (u32)what, error, 0, NULL,=0A=
-> +				blk_trace_bio_get_cgid(q, bio));=0A=
-> +	} else if (bte) {=0A=
-> +		__blk_add_trace_ext(bte, bio->bi_iter.bi_sector,=0A=
-> +				    bio->bi_iter.bi_size, bio_op(bio),=0A=
-> +				    bio->bi_opf, what, error, 0, NULL,=0A=
-> +				    blk_trace_bio_get_cgid(q, bio),=0A=
-> +				    bio_prio(bio));=0A=
-> +	}=0A=
->  	rcu_read_unlock();=0A=
->  }=0A=
->  =0A=
-> =0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+
+--Apple-Mail=_454B88CC-A469-4B83-B785-9645C1B288C0
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Feb 18, 2021, at 4:21 PM, Daniel Rosenberg <drosen@google.com> wrote:
+> 
+> On Wed, Feb 17, 2021 at 2:48 PM Andreas Dilger <adilger@dilger.ca> wrote:
+>> 
+>> On Feb 17, 2021, at 9:08 AM, Theodore Ts'o <tytso@mit.edu> wrote:
+>>> 
+>>> The problem is in how the space after the filename in a directory is
+>>> encoded.  The dirdata format is (mildly) expandable, supporting up to
+>>> 4 different metadata chunks after the filename, using a very
+>>> compatctly encoded TLV (or moral equivalent) scheme.  For directory
+>>> inodes that have both the encyption and compression flags set, we have
+>>> a single blob which gets used as the IV for the crypto.
+>>> 
+>>> So it's the difference between a simple blob that is only used for one
+>>> thing in this particular case, and something which is the moral
+>>> equivalent of simple ASN.1 or protobuf encoding.
+>>> 
+>>> Currently, datadata has defined uses for 2 of the 4 "chunks", which is
+>>> used in Lustre servers.  The proposal which Andreas has suggested is
+>>> if the dirdata feature is supported, then the 3rd dirdata chunk would
+>>> be used for the case where we currently used by the
+>>> encrypted-casefolded extension, and the 4th would get reserved for a
+>>> to-be-defined extension mechanism.
+>>> 
+>>> If there ext4 encrypted/casefold is not yet in use, and we can get the
+>>> changes out to all potential users before they release products out
+>>> into the field, then one approach would be to only support
+>>> encrypted/casefold when dirdata is also enabled.
+>>> 
+>>> If ext4 encrypted/casefold is in use, my suggestion is that we support
+>>> both encrypted/casefold && !dirdata as you have currently implemented
+>>> it, and encrypted/casefold && dirdata as Andreas has proposed.
+>>> 
+>>> IIRC, supporting that Andreas's scheme essentially means that we use
+>>> the top four bits in the rec_len field to indicate which chunks are
+>>> present, and then for each chunk which is present, there is a 1 byte
+>>> length followed by payload.  So that means in the case where it's
+>>> encrypted/casefold && dirdata, the required storage of the directory
+>>> entry would take one additional byte, plus setting a bit indicating
+>>> that the encrypted/casefold dirdata chunk was present.
+>> 
+>> I think your email already covers pretty much all of the points.
+>> 
+>> One small difference between current "raw" encrypted/casefold hash vs.
+>> dirdata is that the former is 4-byte aligned within the dirent, while
+>> dirdata is packed.  So in 3/4 cases dirdata would take the same amount
+>> of space (the 1-byte length would use one of the 1-3 bytes of padding
+>> vs. the raw format), since the next dirent needs to be aligned anyway.
+>> 
+>> The other implication here is that the 8-byte hash may need to be
+>> copied out of the dirent into a local variable before use, due to
+>> alignment issues, but I'm not sure if that is actually needed or not.
+>> 
+>>> So, no, they aren't incompatible ultimatly, but it might require a
+>>> tiny bit more work to integrate the combined support for dirdata plus
+>>> encrypted/casefold.  One way we can do this, if we have to support the
+>>> current encrypted/casefold format because it's out there in deployed
+>>> implementations already, is to integrate encrypted/casefold &&
+>>> !dirdata first upstream, and then when we integrate dirdata into
+>>> upstream, we'll have to add support for the encrypted/casefold &&
+>>> dirdata case.  This means that we'll have two variants of the on-disk
+>>> format to test and support, but I don't think it's the going to be
+>>> that difficult.
+>> 
+>> It would be possible to detect if the encrypted/casefold+dirdata
+>> variant is in use, because the dirdata variant would have the 0x40
+>> bit set in the file_type byte.  It isn't possible to positively
+>> identify the "raw" non-dirdata variant, but the assumption would be
+>> if (rec_len >= round_up(name_len, 4) + 8) in an encrypted+casefold
+>> directory that the "raw" hash must be present in the dirent.
+> 
+> So sounds like we're going with the combined version. Andreas, do you
+> have any suggestions for changes to the casefolding patch to ease the
+> eventual merging with dirdata? A bunch of the changes are already
+> pretty similar, so some of it is just calling essentially the same
+> functions different things.
+
+One thing I would suggest is to change the "is_fake_entry()" from using
+offsets in the leaf block to using the content of the dirent to make
+that decision.  Comparing entries against "." and ".." is trivial (and
+already done in many places), and the checksum entry/tail has a "magic"
+file type that can be used.  This will avoid potential problems if e.g.
+encrypted entries are stored inline with the inode, and/or dirdata that
+also adds fields to "." and "..".
+
+Also, the patch adds the use of "lblk" all around the code, but that
+wouldn't be needed if is_fake_entry() was updated as above?
+
+Note in find_group_orlov() the filename hash doesn't strictly need to
+match the actual hash used in the directory.  That is only for finding
+a suitable group for allocating the inode, so it can be any relatively
+uniform hash function and could remain DX_HASH_HALF_MD4.
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_454B88CC-A469-4B83-B785-9645C1B288C0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmA4g58ACgkQcqXauRfM
+H+BRXg//fy5o+4ytQgWc8yyRlaMFkOF/GiWN2aDTB3IUxEN9L5gt4fXL3B46na18
+8e5RjqrYmxEulFuKWqS49L/IF8hBlUhEWRtBiwt1LxKlEcQXC1AbhGdYDwjdbYUw
+1fNaAV32Lq+UyJsNgKP2W6tTY3Bn0kEJepk2XMs0lPMQDubQM3OxueKE8VfA9m2x
+gqOPsUC426hm0LqSG5MAJxXSWbc/CYvfyFiBlDse/HkFcgTrHUWmim4cAROz6xPJ
+YVtsW91oVur9+IahA0+Vy2qYst989cncJF+6UTIa4dPB5FLaDgoXYrWciuXvpSyN
+zILmeR6pHUTxWulkWCmozZ/dCrafPoiy7f0OKIvPHA1BlQlthf31khdzvUO/IYwp
+c8zGvhT/Ig0K4dRxNUBOowZN+4tFIP+AcD8j1P4FquEB3LKTcNlnHQlajnGGYMBS
+L999E2Zf5PZTNFkO74SXDVxkSH5W61tKCmHf4dLk5Svs2prUWvL44E6UcmsPcqK+
+dDQsi3Zq9o9c3do0/4cep6NtpZF2ZadYgOc1bV6lqApOiEkV3vfaCnPIct7MTrrI
+9IrYV6awazmVNTgC6l9bEytxwJlJTdmdgIPTXrbZ01Td855Bua3H/DEQIMiYSr3R
+RxXWKGR4F/WNwl2HX1yEeBcYv0RgWN8UUEMtH5kbNsyOd53z2gk=
+=yJ/1
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_454B88CC-A469-4B83-B785-9645C1B288C0--
