@@ -2,123 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F383D32611D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 11:16:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4698D326130
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 11:25:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230288AbhBZKPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Feb 2021 05:15:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231272AbhBZKN7 (ORCPT
+        id S230087AbhBZKYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Feb 2021 05:24:41 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13004 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229835AbhBZKYk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Feb 2021 05:13:59 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41A68C06174A;
-        Fri, 26 Feb 2021 02:13:19 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id o10so749575wmc.1;
-        Fri, 26 Feb 2021 02:13:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UcwXbjPspvdQ4b6hP2yUf/RnFbzT9dnV8toQVcT9t0Q=;
-        b=W/Z3NYQvkwE7RJz0m8fThZtcPXZa52gGx5QJa1TIfz7B1mvKdmTy7955/+wL9msJN/
-         U1qAMheJC4I/zW3KnQ7gaLaQhEw3Kcm/VA0SO1OjuyX6jsUE4g03vSfkty0u6jvT+w0o
-         0YxboNCAWX2b/ws6rvL0bkQSA6RQ0cKU7wx81r8vJMRZGav0LhWse6BUS+jmju/k62tx
-         Ssvmn6mh+FPePI1qiiQ6EnJTLXa/Pw4oDiD/ZuwepvNAVjTgwwAqSG3rf9Y+lOe6+RjH
-         ewGEosyyc751yQfq+/5p018C0U2kOUpZUerF3ds6fXNGnbSnh5AM8rSaAOPHkFxivLrp
-         oDIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UcwXbjPspvdQ4b6hP2yUf/RnFbzT9dnV8toQVcT9t0Q=;
-        b=Uxr6m2VZv/WpsfeIcL6CPhsYmqJL//ZFd21rsbVaYrTsSmfJC8weFPWwmoavssBLcZ
-         9TYIkOqPvea8IXbb5qCWS6OtV+kINxbjopUzgxAg9bmvVQdGl53H7GNqC1t8McH9CRCM
-         0U0ukm5R6I4k1+6vHBwQ2gjNDgtKFwCeHf9k7DJD5B3HZWtuDq2dh4NTYAK0qx87GbuB
-         X1CCayrMlxKh1YlPQkduo/rDyBPuW8PpkuY25YP+cEuq12vwOdtLAUDE8k7gl1GHOvYp
-         cnLsUx5p3rQDmgTuI4NuDQl/AgJZMG+OKP4a/QkaMv19ieMwpr/oA3fYyk0PR8rOg4EE
-         FBPQ==
-X-Gm-Message-State: AOAM533Pol4bnyePSiZl5x3F1QUp+K4T9P928fihhJmMHm9NnWC0bTZJ
-        rxMSQTNbyWbW439ubNsczJ2hwhz5vCgEJw==
-X-Google-Smtp-Source: ABdhPJz+kl3sKdVAUjZUW1w6qXbEODQ2vpK+v7Ynjy6o1JFRa9VgJCMlLmgI9oC0gBY/DWPSryH7NA==
-X-Received: by 2002:a1c:721a:: with SMTP id n26mr2088010wmc.181.1614334397997;
-        Fri, 26 Feb 2021 02:13:17 -0800 (PST)
-Received: from [192.168.1.143] ([170.253.51.130])
-        by smtp.gmail.com with ESMTPSA id v9sm12426835wrt.76.2021.02.26.02.13.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Feb 2021 02:13:17 -0800 (PST)
-Subject: Re: [PATCH] copy_file_range.2: Kernel v5.12 updates
-To:     Luis Henriques <lhenriques@suse.de>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>
-References: <20210222102456.6692-1-lhenriques@suse.de>
- <20210224142307.7284-1-lhenriques@suse.de>
- <CAOQ4uxi3-+tOgHV_GUnWtJoQXbV5ZS9qDZsLsd9sJxX5Aftyew@mail.gmail.com>
- <YDd6EMpvZhHq6ncM@suse.de>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Message-ID: <fd5d0d24-35e3-6097-31a9-029475308f15@gmail.com>
-Date:   Fri, 26 Feb 2021 11:13:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Fri, 26 Feb 2021 05:24:40 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Dn5Lf31WszjMjN;
+        Fri, 26 Feb 2021 18:22:18 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.498.0; Fri, 26 Feb 2021
+ 18:23:50 +0800
+From:   "zhangyi (F)" <yi.zhang@huawei.com>
+To:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>
+CC:     <tytso@mit.edu>, <jack@suse.cz>, <viro@zeniv.linux.org.uk>,
+        <yi.zhang@huawei.com>
+Subject: [PATCH] block_dump: don't put the last refcount when marking inode dirty
+Date:   Fri, 26 Feb 2021 18:31:03 +0800
+Message-ID: <20210226103103.3048803-1-yi.zhang@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <YDd6EMpvZhHq6ncM@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Luis,
+There is an AA deadlock problem when using block_dump on ext4 file
+system with data=journal mode.
 
-On 2/25/21 11:21 AM, Luis Henriques wrote:
-> On Wed, Feb 24, 2021 at 06:10:45PM +0200, Amir Goldstein wrote:
->> If it were me, I would provide all the details of the situation to
->> Michael and ask him
->> to write the best description for this section.
-> 
-> Thanks Amir.
-> 
-> Yeah, it's tricky.  Support was added and then dropped.   Since stable
-> kernels will be picking this patch,  maybe the best thing to do is to no
-> mention the generic cross-filesystem support at all...?  Or simply say
-> that 5.3 temporarily supported it but that support was later dropped.
-> 
-> Michael (or Alejandro), would you be OK handling this yourself as Amir
-> suggested?
+  watchdog: BUG: soft lockup - CPU#19 stuck for 22s! [jbd2/pmem0-8:1002]
+  CPU: 19 PID: 1002 Comm: jbd2/pmem0-8
+  RIP: 0010:queued_spin_lock_slowpath+0x60/0x3b0
+  ...
+  Call Trace:
+   _raw_spin_lock+0x57/0x70
+   jbd2_journal_invalidatepage+0x166/0x680
+   __ext4_journalled_invalidatepage+0x8c/0x120
+   ext4_journalled_invalidatepage+0x12/0x40
+   truncate_cleanup_page+0x10e/0x1c0
+   truncate_inode_pages_range+0x2c8/0xec0
+   truncate_inode_pages_final+0x41/0x90
+   ext4_evict_inode+0x254/0xac0
+   evict+0x11c/0x2f0
+   iput+0x20e/0x3a0
+   dentry_unlink_inode+0x1bf/0x1d0
+   __dentry_kill+0x14c/0x2c0
+   dput+0x2bc/0x630
+   block_dump___mark_inode_dirty.cold+0x5c/0x111
+   __mark_inode_dirty+0x678/0x6b0
+   mark_buffer_dirty+0x16e/0x1d0
+   __jbd2_journal_temp_unlink_buffer+0x127/0x1f0
+   __jbd2_journal_unfile_buffer+0x24/0x80
+   __jbd2_journal_refile_buffer+0x12f/0x1b0
+   jbd2_journal_commit_transaction+0x244b/0x3030
 
-Could you please provide a more detailed history of what is to be 
-documented?
+The problem is a race between jbd2 committing data buffer and user
+unlink the file concurrently. The jbd2 will get jh->b_state_lock and
+redirty the inode's data buffer and inode itself. If block_dump is
+enabled, it will try to find inode's dentry and invoke the last dput()
+after the inode was unlinked. Then the evict procedure will unmap
+buffer and get jh->b_state_lock again in journal_unmap_buffer(), and
+finally lead to deadlock. It works fine if block_dump is not enabled
+because the last evict procedure is not invoked in jbd2 progress and
+the jh->b_state_lock will also prevent inode use after free.
 
-Thanks,
+jbd2                                xxx
+                                    vfs_unlink
+                                     ext4_unlink
+jbd2_journal_commit_transaction
+**get jh->b_state_lock**
+jbd2_journal_refile_buffer
+ mark_buffer_dirty
+  __mark_inode_dirty
+   block_dump___mark_inode_dirty
+    d_find_alias
+                                     d_delete
+                                      unhash
+    dput  //put the last refcount
+     evict
+      journal_unmap_buffer
+       **get jh->b_state_lock again**
 
-Alex
+In most cases of where invoking mark_inode_dirty() will get inode's
+refcount and the last iput may not happen, but it's not safe. After
+checking the block_dump code, it only want to dump the file name of the
+dirty inode, so there is no need to get and put denrty, and dump an
+unhashed dentry is also fine. This patch remove the dget() && dput(),
+print the dentry name directly.
 
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Signed-off-by: yebin (H) <yebin10@huawei.com>
+---
+ fs/fs-writeback.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index c41cb887eb7d..e9b0952fe236 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2199,21 +2199,29 @@ int dirtytime_interval_handler(struct ctl_table *table, int write,
+ static noinline void block_dump___mark_inode_dirty(struct inode *inode)
+ {
+ 	if (inode->i_ino || strcmp(inode->i_sb->s_id, "bdev")) {
+-		struct dentry *dentry;
++		struct dentry *dentry = NULL;
+ 		const char *name = "?";
+ 
+-		dentry = d_find_alias(inode);
+-		if (dentry) {
+-			spin_lock(&dentry->d_lock);
+-			name = (const char *) dentry->d_name.name;
++		if (!hlist_empty(&inode->i_dentry)) {
++			spin_lock(&inode->i_lock);
++			if (!hlist_empty(&inode->i_dentry)) {
++				dentry = hlist_entry(inode->i_dentry.first,
++						     struct dentry, d_u.d_alias);
++				spin_lock(&dentry->d_lock);
++				name = (const char *) dentry->d_name.name;
++			} else {
++				spin_unlock(&inode->i_lock);
++			}
+ 		}
++
+ 		printk(KERN_DEBUG
+ 		       "%s(%d): dirtied inode %lu (%s) on %s\n",
+ 		       current->comm, task_pid_nr(current), inode->i_ino,
+ 		       name, inode->i_sb->s_id);
++
+ 		if (dentry) {
+ 			spin_unlock(&dentry->d_lock);
+-			dput(dentry);
++			spin_unlock(&inode->i_lock);
+ 		}
+ 	}
+ }
 -- 
-Alejandro Colomar
-Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
-http://www.alejandro-colomar.es/
+2.25.4
+
