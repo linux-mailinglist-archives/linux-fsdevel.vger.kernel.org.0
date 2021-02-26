@@ -2,161 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A660325DB8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 07:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F8DB325DEE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 08:07:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbhBZGvR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Feb 2021 01:51:17 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12583 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbhBZGvR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Feb 2021 01:51:17 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Dn0by6MRJzMfMs;
-        Fri, 26 Feb 2021 14:48:30 +0800 (CST)
-Received: from huawei.com (10.151.151.241) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.498.0; Fri, 26 Feb 2021
- 14:50:25 +0800
-From:   Luo Longjun <luolongjun@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <jlayton@kernel.org>,
-        <bfields@fieldses.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sangyan@huawei.com>, <luchunhua@huawei.com>,
-        <luolongjun@huawei.com>
-Subject: [PATCH v3] fs/locks: print full locks information
-Date:   Thu, 25 Feb 2021 22:58:29 -0500
-Message-ID: <685386c2840b76c49b060bf7dcea1fefacf18176.1614322182.git.luolongjun@huawei.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20210221201024.GB15975@fieldses.org>
-References: <20210221201024.GB15975@fieldses.org>
+        id S230029AbhBZHEL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Feb 2021 02:04:11 -0500
+Received: from mout.gmx.net ([212.227.17.21]:44109 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229586AbhBZHEC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Feb 2021 02:04:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1614322950;
+        bh=mq4f2WMmO9nRks/+TzMI0/5rSX6H2Hodz5h3z3gFsRE=;
+        h=X-UI-Sender-Class:To:From:Subject:Date;
+        b=QMKGImFKUwSGlpRPXdUgOIqz8KmEmOzZc5wv/JojvSGF08yYyNj5CaFhT2FfHQwcH
+         xPL4VS06EDtlEOcDCyNqi5USmsx5oiE6g0GxsLBEubLGDapYh3Sn+j1xgtOPGdeuhl
+         MWSDMBdCSe1XK23D5y/66OSsxw/c3Fk1rcLPpoSI=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1M4axq-1lHBIp1jcc-001hBf; Fri, 26
+ Feb 2021 08:02:30 +0100
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Bio read race with different ranges inside the same page?
+Message-ID: <d38d7a97-b413-a5cd-1c86-193453c4b51e@gmx.com>
+Date:   Fri, 26 Feb 2021 15:02:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.151.151.241]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xw3YALjJ0+SsejEjxI1TzuLmgPI42Lj1VSQoEG3Ay0bVPxWdUMv
+ fXB73spmb0xwJylN+AnE79CptDQImFQCq9O6ddMD4OtNWTqCDLPUo+GEilTgcfTq8AKk9u0
+ whjhY3hW/c5NlfLsZfh/O2yQxKVUeggbbCrx2/c2uFVspy+37bQ2RX28Xp4ESExMqE9M3ux
+ MfxZp8lHP9SqVqGbLpzmA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ZmTRRvQyIRI=:zdYuihDC2owAqa5NvBi5JN
+ 3tUyw4GvqLke/nwGbz9iaw6E2SCyomRRx5mbvLQhjMRPd8etBQyX1I9kZuXFAC0hv6oMcgI9D
+ tSbsXng1XkFJwBYlmFCSS3eFps9HxzicIcFUS53GyV0ZrWc6UlLJyhaJAm3UGyJFxBETqggMx
+ c7C+ITnsCVXn+qpd1RNlSH97ZM6DLeghtTVZDtDCNfMsiW1t45Q7pYXqs/fx1GdSbiPCyjeAC
+ Y3W4P8LCwxB0CQbMVjsoCOtjY/H8b2u7AliULNaUovThFR8yz/hpU4fSw2MwAFB/vkIyFhRLN
+ grbJ32Da/uf5EYrtaOwY042B5YtNYw0XtLYHu9/qAu3MJ2xKDNKDQIC/Xxub5uX1xJczC/FA3
+ HGbIkLy2aTrmfU0Cpd2/Y8AejYu1DpIyLdgGRCUkadLFtU7rvHmzOabmFxXnSY9FgfxTLflnA
+ 4c8ELSsy/oSL1i4KS++HgkY1Xa/s0NJ5gUtzsyFNzNq6csgoiNO9/i1WQjOaIBObsSREuwbRT
+ uMF57mLTTQmgiHG6gF6Pz/eemI3cMe8aFb07wc9Fh8Cs07y8ZvhRSEHaQY+3SP2lMt+2Xb1IV
+ RaQpHM5QS2G7MpgrTp/MmaZ9gdRbDIflgVHWRlzfsnKUTUJhwEp3IuiSk0RUHX2z45mbNOiBW
+ dwaZvPvR43PTRyH+MB3fW9L69wajjmMcQrgwIItpt/JSGYN4Fh0M4iWAfY8Jk1/vsk0N9zPS4
+ 1GOYNX+qPpbe3haGU8B0Y0CEjEJR46d9SWEbnhM/YOD2Q2UJDDxdNmB6gwFfY6KtTfWkx2O+4
+ 0zjyqXDX/VqMW9lw6nVwP6lKq5LYD0rrelA7EFHWRG3vrSg6yxpBt20BUp8EVRhkBbJCmdgiX
+ 8hOP1n6twT+DcqGCun7g==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit fd7732e033e3 ("fs/locks: create a tree of dependent requests.")
-has put blocked locks into a tree.
+Hi,
 
-So, with a for loop, we can't check all locks information.
+Is it possible that multiple ranges of the same page are submitted to
+one or more bios, and such ranges race with each other and cause data
+corruption.
 
-To solve this problem, we should traverse the tree.
+Recently I'm trying to add subpage read/write support for btrfs, and
+notice one strange false data corruption.
 
-Signed-off-by: Luo Longjun <luolongjun@huawei.com>
----
- fs/locks.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 56 insertions(+), 9 deletions(-)
+E.g, there is a 64K page to be read from disk:
 
-diff --git a/fs/locks.c b/fs/locks.c
-index 99ca97e81b7a..ecaecd1f1b58 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2828,7 +2828,7 @@ struct locks_iterator {
- };
- 
- static void lock_get_status(struct seq_file *f, struct file_lock *fl,
--			    loff_t id, char *pfx)
-+			    loff_t id, char *pfx, int repeat)
- {
- 	struct inode *inode = NULL;
- 	unsigned int fl_pid;
-@@ -2844,7 +2844,11 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- 	if (fl->fl_file != NULL)
- 		inode = locks_inode(fl->fl_file);
- 
--	seq_printf(f, "%lld:%s ", id, pfx);
-+	seq_printf(f, "%lld: ", id);
-+
-+	if (repeat)
-+		seq_printf(f, "%*s", repeat - 1 + (int)strlen(pfx), pfx);
-+
- 	if (IS_POSIX(fl)) {
- 		if (fl->fl_flags & FL_ACCESS)
- 			seq_puts(f, "ACCESS");
-@@ -2906,21 +2910,64 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- 	}
- }
- 
-+static struct file_lock *get_next_blocked_member(struct file_lock *node)
-+{
-+	struct file_lock *tmp;
-+
-+	/* NULL node or root node */
-+	if (node == NULL || node->fl_blocker == NULL)
-+		return NULL;
-+
-+	/* Next member in the linked list could be itself */
-+	tmp = list_next_entry(node, fl_blocked_member);
-+	if (list_entry_is_head(tmp, &node->fl_blocker->fl_blocked_requests, fl_blocked_member)
-+		|| tmp == node) {
-+		return NULL;
-+	}
-+
-+	return tmp;
-+}
-+
- static int locks_show(struct seq_file *f, void *v)
- {
- 	struct locks_iterator *iter = f->private;
--	struct file_lock *fl, *bfl;
-+	struct file_lock *cur, *tmp;
- 	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
-+	int level = 0;
- 
--	fl = hlist_entry(v, struct file_lock, fl_link);
-+	cur = hlist_entry(v, struct file_lock, fl_link);
- 
--	if (locks_translate_pid(fl, proc_pidns) == 0)
-+	if (locks_translate_pid(cur, proc_pidns) == 0)
- 		return 0;
- 
--	lock_get_status(f, fl, iter->li_pos, "");
-+	/* View this crossed linked list as a binary tree, the first member of fl_blocked_requests
-+	 * is the left child of current node, the next silibing in fl_blocked_member is the
-+	 * right child, we can alse get the parent of current node from fl_blocker, so this
-+	 * question becomes traversal of a binary tree
-+	 */
-+	while (cur != NULL) {
-+		if (level)
-+			lock_get_status(f, cur, iter->li_pos, "-> ", level);
-+		else
-+			lock_get_status(f, cur, iter->li_pos, "", level);
- 
--	list_for_each_entry(bfl, &fl->fl_blocked_requests, fl_blocked_member)
--		lock_get_status(f, bfl, iter->li_pos, " ->");
-+		if (!list_empty(&cur->fl_blocked_requests)) {
-+			/* Turn left */
-+			cur = list_first_entry_or_null(&cur->fl_blocked_requests,
-+				struct file_lock, fl_blocked_member);
-+			level++;
-+		} else {
-+			/* Turn right */
-+			tmp = get_next_blocked_member(cur);
-+			/* Fall back to parent node */
-+			while (tmp == NULL && cur->fl_blocker != NULL) {
-+				cur = cur->fl_blocker;
-+				level--;
-+				tmp = get_next_blocked_member(cur);
-+			}
-+			cur = tmp;
-+		}
-+	}
- 
- 	return 0;
- }
-@@ -2941,7 +2988,7 @@ static void __show_fd_locks(struct seq_file *f,
- 
- 		(*id)++;
- 		seq_puts(f, "lock:\t");
--		lock_get_status(f, fl, *id, "");
-+		lock_get_status(f, fl, *id, "", 0);
- 	}
- }
- 
--- 
-2.17.1
+0	16K	32K	48K	64K
+|///////|       |///////|       |
 
+Where |///| means data which needs to be read from disk.
+And |   | means hole, we just zeroing the range.
+
+Currently the code will:
+
+- Submit bio for [0, 16K)
+- Zero [16K, 32K)
+- Submit bio for [32K, 48K)
+- Zero [48K, 64k)
+
+Between bio submission and zero, there is no need to wait for submitted
+bio to finish, as I assume the submitted bio won't touch any range of
+the page, except the one specified.
+
+But randomly (not reliable), btrfs csum verification at the endio time
+reports errors for the data read from disk mismatch from csum.
+
+However the following things show it's read path has something wrong:
+- On-disk data matches with csum
+
+- If fully serialized the read path, the error just disappera
+   If I changed the read path to be fully serialized, e.g:
+   - Submit bio for [0, 16K)
+   - Wait bio for [0, 16K) to finish
+   - Zero [16K, 32K)
+   - Submit bio for [32K, 48K)
+   - Wait bio for [32K, 48K) to finish
+   - Zero [48K, 64k)
+   Then the problem just completely disappears.
+
+So this looks like that, the read path hole zeroing and bio submission
+is racing with each other?
+
+Shouldn't bios only touch the range specified and not touching anything
+else?
+
+Or is there something I missed like off-by-one bug?
+
+Thanks,
+Qu
