@@ -2,104 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5C63265B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 17:41:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE1A73266F6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 19:34:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230170AbhBZQkc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Feb 2021 11:40:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47228 "EHLO mail.kernel.org"
+        id S230384AbhBZSdn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Feb 2021 13:33:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52786 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229849AbhBZQkb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Feb 2021 11:40:31 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7922464F13;
-        Fri, 26 Feb 2021 16:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614357589;
-        bh=lEfZYpuP4K1vJFK/jjoqcBdS+eR6xUvZ/xZlU6zhtq0=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=bc07srVxXcvI8rWV5nMNBUvBERF8r7/QwecNmvSChB8zZM9TYJDYyK6ygYIt49Xto
-         K1fw5efDEqIwWpOEXZAZQcLHFKWU4WJCjOk7F/iWw0rnrWNPFWKzXFq9L/UUAXAWWC
-         mgIdJ3HItbpaY/ixV4ESkv+6PNj5m6crKN/7ABjybtysAJleREsXmlkgdg6lux3EQA
-         HFo5bDUZm7bU++SE6dVX7WGg903Wdr/gHDLZ+JYs95HSPnxxyfwoZBclv2djYSJFw0
-         2KGmeSNt6UppLGKE33DSkgebDJ64uHlwqWQTKZXwMEDyHYoZM1tchUqsvjGIZplznH
-         g0/a0YXYsLIpg==
-Date:   Fri, 26 Feb 2021 08:39:47 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     dsterba@suse.cz, Neal Gompa <ngompa13@gmail.com>,
-        Amy Parker <enbyamy@gmail.com>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Adding LZ4 compression support to Btrfs
-Message-ID: <YDkkUx7UXszXi6hV@gmail.com>
-References: <CAE1WUT53F+xPT-Rt83EStGimQXKoU-rE+oYgcib87pjP4Sm0rw@mail.gmail.com>
- <CAEg-Je-Hs3+F9yshrW2MUmDNTaN-y6J-YxeQjneZx=zC5=58JA@mail.gmail.com>
- <20210225132647.GB7604@twin.jikos.cz>
- <YDfxkGkWnLEfsDwZ@gmail.com>
- <20210226093653.GI7604@twin.jikos.cz>
+        id S230360AbhBZSdd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Feb 2021 13:33:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 795F6AFF5;
+        Fri, 26 Feb 2021 18:32:51 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 57c09077;
+        Fri, 26 Feb 2021 18:33:58 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com, linux-kernel@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.de>
+Subject: [RFC PATCH] fuse: Clear SGID bit when setting mode in setacl
+Date:   Fri, 26 Feb 2021 18:33:57 +0000
+Message-Id: <20210226183357.28467-1-lhenriques@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210226093653.GI7604@twin.jikos.cz>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 26, 2021 at 10:36:53AM +0100, David Sterba wrote:
-> On Thu, Feb 25, 2021 at 10:50:56AM -0800, Eric Biggers wrote:
-> > On Thu, Feb 25, 2021 at 02:26:47PM +0100, David Sterba wrote:
-> > > 
-> > > LZ4 support has been asked for so many times that it has it's own FAQ
-> > > entry:
-> > > https://btrfs.wiki.kernel.org/index.php/FAQ#Will_btrfs_support_LZ4.3F
-> > > 
-> > > The decompression speed is not the only thing that should be evaluated,
-> > > the way compression works in btrfs (in 4k blocks) does not allow good
-> > > compression ratios and overall LZ4 does not do much better than LZO. So
-> > > this is not worth the additional costs of compatibility. With ZSTD we
-> > > got the high compression and recently there have been added real-time
-> > > compression levels that we'll use in btrfs eventually.
-> > 
-> > When ZSTD support was being added to btrfs, it was claimed that btrfs compresses
-> > up to 128KB at a time
-> > (https://lore.kernel.org/r/5a7c09dd-3415-0c00-c0f2-a605a0656499@fb.com).
-> > So which is it -- 4KB or 128KB?
-> 
-> Logical extent ranges are sliced to 128K that are submitted to the
-> compression routine. Then, the whole range is fed by 4K (or more exactly
-> by page sized chunks) to the compression. Depending on the capabilities
-> of the compression algorithm, the 4K chunks are either independent or
-> can reuse some internal state of the algorithm.
-> 
-> LZO and LZ4 use some kind of embedded dictionary in the same buffer, and
-> references to that dictionary directly. Ie. assuming the whole input
-> range to be contiguous. Which is something that's not trivial to achive
-> in kernel because of pages that are not contiguous in general.
-> 
-> Thus, LZO and LZ4 compress 4K at a time, each chunk is independent. This
-> results in worse compression ratio because of less data reuse
-> possibilities. OTOH this allows decompression in place.
-> 
-> ZLIB and ZSTD can have a separate dictionary and don't need the input
-> chunks to be contiguous. This brings some additional overhead like
-> copying parts of the input to the dictionary and additional memory for
-> themporary structures, but with higher compression ratios.
-> 
-> IIRC the biggest problem for LZ4 was the cost of setting up each 4K
-> chunk, the work memory had to be zeroed. The size of the work memory is
-> tunable but trading off compression ratio. Either way it was either too
-> slow or too bad.
+Setting file permissions with POSIX ACLs (setxattr) isn't clearing the
+setgid bit.  This seems to be CVE-2016-7097, detected by running fstest
+generic/375 in virtiofs.  Unfortunately, when the fix for this CVE landed
+in the kernel with commit 073931017b49 ("posix_acl: Clear SGID bit when
+setting file permissions"), FUSE didn't had ACLs support yet.
 
-Okay so you have 128K to compress, but not in a virtually contiguous buffer, so
-you need the algorithm to support streaming of 4K chunks.  And the LZ4
-implementation doesn't properly support that.  (Note that this is a property of
-the LZ4 *implementation*, not the LZ4 *format*.)
+Signed-off-by: Luis Henriques <lhenriques@suse.de>
+---
+ fs/fuse/acl.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-How about using vm_map_ram() to get a contiguous buffer, like what f2fs does?
-Then you wouldn't need streaming support.
-
-There is some overhead in setting up page mappings, but it might actually turn
-out to be faster (also for the other algorithms, not just LZ4) since it avoids
-the overhead of streaming, such as the algorithm having to copy all the data
-into an internal buffer for matchfinding.
-
-- Eric
+diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
+index f529075a2ce8..1b273277c1c9 100644
+--- a/fs/fuse/acl.c
++++ b/fs/fuse/acl.c
+@@ -54,7 +54,9 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	const char *name;
++	umode_t mode = inode->i_mode;
+ 	int ret;
++	bool update_mode = false;
+ 
+ 	if (fuse_is_bad(inode))
+ 		return -EIO;
+@@ -62,11 +64,18 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type)
+ 	if (!fc->posix_acl || fc->no_setxattr)
+ 		return -EOPNOTSUPP;
+ 
+-	if (type == ACL_TYPE_ACCESS)
++	if (type == ACL_TYPE_ACCESS) {
+ 		name = XATTR_NAME_POSIX_ACL_ACCESS;
+-	else if (type == ACL_TYPE_DEFAULT)
++		if (acl) {
++			ret = posix_acl_update_mode(inode, &mode, &acl);
++			if (ret)
++				return ret;
++			if (inode->i_mode != mode)
++				update_mode = true;
++		}
++	} else if (type == ACL_TYPE_DEFAULT) {
+ 		name = XATTR_NAME_POSIX_ACL_DEFAULT;
+-	else
++	} else
+ 		return -EINVAL;
+ 
+ 	if (acl) {
+@@ -98,6 +107,20 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type)
+ 	} else {
+ 		ret = fuse_removexattr(inode, name);
+ 	}
++	if (!ret && update_mode) {
++		struct dentry *entry;
++		struct iattr attr;
++
++		entry = d_find_alias(inode);
++		if (entry) {
++			memset(&attr, 0, sizeof(attr));
++			attr.ia_valid = ATTR_MODE | ATTR_CTIME;
++			attr.ia_mode = mode;
++			attr.ia_ctime = current_time(inode);
++			ret = fuse_do_setattr(entry, &attr, NULL);
++			dput(entry);
++		}
++	}
+ 	forget_all_cached_acls(inode);
+ 	fuse_invalidate_attr(inode);
+ 
