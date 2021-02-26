@@ -2,124 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BC0E3261D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 12:16:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24039326201
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Feb 2021 12:31:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbhBZLP4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Feb 2021 06:15:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38238 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230107AbhBZLPy (ORCPT
+        id S230083AbhBZLai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Feb 2021 06:30:38 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:21069 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229915AbhBZLae (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Feb 2021 06:15:54 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9521C061574;
-        Fri, 26 Feb 2021 03:15:13 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id x16so7108633wmk.3;
-        Fri, 26 Feb 2021 03:15:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k9sgvuu+Qg7wjNtisoO7UUJtH7RFCSXcGRmLfuSyvbk=;
-        b=OAzPZsAKVzOOVk/lVwdaN7WCTeTKAS+mUNsholcGXOu+X8jjx7HMZ8C3pqb6iDPL17
-         gFQzW+tyuhdZTIMcw6kK9dDvlxagLHfNyy0+3/VXGekWkABdR/RtJ1lJQ7m37E9IaXV+
-         ObcCxwk8GacZFucrwObVzBobJwVvQirVAzUJVomaeXMIGmSAa7CRRI8aLPex3mmI4nRZ
-         8ai7sEXyxpF/JGSLrLvhAx/CXWqMkZcTGXlXWcfeKWDge74fGEYiFwa2kw5FrG0x1mWC
-         Wl4w8UwwPD9Zr1fu6oEIjEsSpQQSAGRpANKf57sBTH/xj3VbKoziVY5ayS1wTdLMimVx
-         zY3Q==
+        Fri, 26 Feb 2021 06:30:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1614338947;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MNF+TMBq2x8AHoskiIxekBDFE4UwjfxLslB/3NnDO7M=;
+        b=iuGCpIvM4DbDx6+Isy2YX2pL/06dy/mRrkhC95j0O8SvNV5YALCMBECyo0JRA9goZsHhKD
+        RgSLcY7nlwPvLPq7sXAe97Hr6/lqGF9UlG4W/cFn0SOkzZByTm+aBcRYITfW6R+AzXnzgk
+        VIhbgoU609CpfZPebA7HDrk6aRwWklc=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-308-340c8waIMeqRZ3CCMEW0Yw-1; Fri, 26 Feb 2021 06:29:05 -0500
+X-MC-Unique: 340c8waIMeqRZ3CCMEW0Yw-1
+Received: by mail-pg1-f197.google.com with SMTP id l2so5912986pgi.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Feb 2021 03:29:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k9sgvuu+Qg7wjNtisoO7UUJtH7RFCSXcGRmLfuSyvbk=;
-        b=oCwGnKlouDZna3L3VPpYTMMs2xNqtbs7RVOaea84jRFdsJp8Cek/4gByMdw3iaOVlw
-         W7pBo93hscPMNQzPrarAEU47cFcUdZl/26DtVY9+r+Epn6YquaDXItG4uvRhvmgHjzkv
-         psQpckPHBupJgUwwSuJXs88YH7QSd2eTQLbZ5cFw4j0Yf8/WYhmSa4GJZ6McOq2RxBZj
-         p4ZuemdNid0ffyVN/8B5Uxil3XGKUzfFq6eb+MYZNyLq5LVtTpYkHlTxe6I3YPtguCi0
-         CeRNPTwfyEcesdTHjBUoU1s4vWBBCd46rarYXb/mf7xldVUpCD8cGtj7sENhFJAI2Ndv
-         5w3w==
-X-Gm-Message-State: AOAM5331APQQlglaqxp6lEq6urRUNvhoweJwDawX6M41RJjRfgEzx5l6
-        mgUsJSe2nrbfp5kuYVPmEXhhZt1IvXuWlQ==
-X-Google-Smtp-Source: ABdhPJw53tMXBEIgjj5Ydx1dx2zknCtn2TrKdJOPUiAyxh8gwjNqu3cCzVaxU88Bf3Vqq3INSHd1wQ==
-X-Received: by 2002:a7b:c303:: with SMTP id k3mr2366345wmj.67.1614338112576;
-        Fri, 26 Feb 2021 03:15:12 -0800 (PST)
-Received: from [192.168.1.143] ([170.253.51.130])
-        by smtp.gmail.com with ESMTPSA id r9sm10358838wmq.26.2021.02.26.03.15.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Feb 2021 03:15:11 -0800 (PST)
-Subject: Re: [PATCH] copy_file_range.2: Kernel v5.12 updates
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Luis Henriques <lhenriques@suse.de>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>
-References: <20210222102456.6692-1-lhenriques@suse.de>
- <20210224142307.7284-1-lhenriques@suse.de>
- <CAOQ4uxi3-+tOgHV_GUnWtJoQXbV5ZS9qDZsLsd9sJxX5Aftyew@mail.gmail.com>
- <YDd6EMpvZhHq6ncM@suse.de> <fd5d0d24-35e3-6097-31a9-029475308f15@gmail.com>
- <CAOQ4uxiVxEwvgFhdHGWLpdCk==NcGXgu52r_mXA+ebbLp_XPzQ@mail.gmail.com>
-From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Message-ID: <abf61760-2099-634a-7519-2138bb75e41b@gmail.com>
-Date:   Fri, 26 Feb 2021 12:15:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MNF+TMBq2x8AHoskiIxekBDFE4UwjfxLslB/3NnDO7M=;
+        b=crRh+Z0eDNSDdMkF7AaFOx6V0ZwmjJGXWTpXgp2CsJfiwAOfRf2T1qbbLzvGou4wJ+
+         XjMdR0rmpG4vUKsr0/aDTARtFPNbQj4UrKXEHLXR3qb/KPP09+/PbuCYq2ABgZkpv1OA
+         iXzXCMQzrD8dn238LLHxFA6PHWn8qHM3vbgjBN92az+1xzUIzfkHMy6T/zvmQy+Sys2h
+         W4zFkib0++aM4fj7L4U/SYT8gbETAfZROYe/6MUSvKclYHOSK+2Z9XkEIeMwJxMcnpeR
+         mBdK2xu8EtvX3NkO/u4rcxXlTtuym3XjwY6/JohB3Npy/iiQwVsU+0tQj7yzULsoM8QR
+         Hs4w==
+X-Gm-Message-State: AOAM530gkRQjwjy3zYLyR7azP3BllWPKwkADyKqFagR2H+Vzi+gTV7V+
+        sqPsgmiUN0xzLRrjaGUM6LMTO35ZIZoUM4wOHsz9N07BUbEmGYStVcCSthwOLUqGEZjhMTDgZIO
+        dRN8YJ34rireqXsf13QFmjU1BOw==
+X-Received: by 2002:a17:90a:4494:: with SMTP id t20mr3099180pjg.33.1614338944694;
+        Fri, 26 Feb 2021 03:29:04 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxB9lMKA4Z0WhN0N/pdbRDpwUCIpdqq9nm2vvVVRGoe1ktkOBJbB5/YyntJKwbmUjGT+MwCTw==
+X-Received: by 2002:a17:90a:4494:: with SMTP id t20mr3099164pjg.33.1614338944471;
+        Fri, 26 Feb 2021 03:29:04 -0800 (PST)
+Received: from xiangao.remote.csb ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id j7sm1889599pji.25.2021.02.26.03.29.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Feb 2021 03:29:03 -0800 (PST)
+Date:   Fri, 26 Feb 2021 19:28:54 +0800
+From:   Gao Xiang <hsiangkao@redhat.com>
+To:     dsterba@suse.cz
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Neal Gompa <ngompa13@gmail.com>,
+        Amy Parker <enbyamy@gmail.com>,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Adding LZ4 compression support to Btrfs
+Message-ID: <20210226112854.GA1890271@xiangao.remote.csb>
+References: <CAE1WUT53F+xPT-Rt83EStGimQXKoU-rE+oYgcib87pjP4Sm0rw@mail.gmail.com>
+ <CAEg-Je-Hs3+F9yshrW2MUmDNTaN-y6J-YxeQjneZx=zC5=58JA@mail.gmail.com>
+ <20210225132647.GB7604@twin.jikos.cz>
+ <YDfxkGkWnLEfsDwZ@gmail.com>
+ <20210226093653.GI7604@twin.jikos.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxiVxEwvgFhdHGWLpdCk==NcGXgu52r_mXA+ebbLp_XPzQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210226093653.GI7604@twin.jikos.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Amir,
-
-On 2/26/21 11:34 AM, Amir Goldstein wrote:
-> Is this detailed enough? ;-)
+On Fri, Feb 26, 2021 at 10:36:53AM +0100, David Sterba wrote:
+> On Thu, Feb 25, 2021 at 10:50:56AM -0800, Eric Biggers wrote:
+> > On Thu, Feb 25, 2021 at 02:26:47PM +0100, David Sterba wrote:
+> > > 
+> > > LZ4 support has been asked for so many times that it has it's own FAQ
+> > > entry:
+> > > https://btrfs.wiki.kernel.org/index.php/FAQ#Will_btrfs_support_LZ4.3F
+> > > 
+> > > The decompression speed is not the only thing that should be evaluated,
+> > > the way compression works in btrfs (in 4k blocks) does not allow good
+> > > compression ratios and overall LZ4 does not do much better than LZO. So
+> > > this is not worth the additional costs of compatibility. With ZSTD we
+> > > got the high compression and recently there have been added real-time
+> > > compression levels that we'll use in btrfs eventually.
+> > 
+> > When ZSTD support was being added to btrfs, it was claimed that btrfs compresses
+> > up to 128KB at a time
+> > (https://lore.kernel.org/r/5a7c09dd-3415-0c00-c0f2-a605a0656499@fb.com).
+> > So which is it -- 4KB or 128KB?
 > 
-> https://lwn.net/Articles/846403/
+> Logical extent ranges are sliced to 128K that are submitted to the
+> compression routine. Then, the whole range is fed by 4K (or more exactly
+> by page sized chunks) to the compression. Depending on the capabilities
+> of the compression algorithm, the 4K chunks are either independent or
+> can reuse some internal state of the algorithm.
+> 
+> LZO and LZ4 use some kind of embedded dictionary in the same buffer, and
+> references to that dictionary directly. Ie. assuming the whole input
+> range to be contiguous. Which is something that's not trivial to achive
+> in kernel because of pages that are not contiguous in general.
+> 
+> Thus, LZO and LZ4 compress 4K at a time, each chunk is independent. This
+> results in worse compression ratio because of less data reuse
+> possibilities. OTOH this allows decompression in place.
 
-I'm sorry I can't read it yet:
+Sorry about the noise before. I misread btrfs LZO implementation.
+Yet it sounds that approach has lower CR than compress 128kb as
+a while. In principle it can archive decompress in-place (margin
+by a whole lzo chunk), yet LZ4/LZO algorithm can have a more
+accurate lower inplace margin in math.
 
-[
-Subscription required
-The page you have tried to view (How useful should copy_file_range() 
-be?) is currently available to LWN subscribers only. Reader 
-subscriptions are a necessary way to fund the continued existence of LWN 
-and the quality of its content.
-[...]
-(Alternatively, this item will become freely available on March 4, 2021)
-]
+> 
+> ZLIB and ZSTD can have a separate dictionary and don't need the input
+> chunks to be contiguous. This brings some additional overhead like
+> copying parts of the input to the dictionary and additional memory for
+> themporary structures, but with higher compression ratios.
+> 
+> IIRC the biggest problem for LZ4 was the cost of setting up each 4K
+> chunk, the work memory had to be zeroed. The size of the work memory is
+> tunable but trading off compression ratio. Either way it was either too
+> slow or too bad.
 
-However, the 4th of March is close enough, i guess.
+May I ask why LZ4 needs to zero the work memory (if you mean dest
+buffer and LZ4_decompress_safe), just out of curiousity... I didn't
+see that restriction before. Thanks!
 
 Thanks,
+Gao Xiang
 
-Alex
-
--- 
-Alejandro Colomar
-Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
-http://www.alejandro-colomar.es/
