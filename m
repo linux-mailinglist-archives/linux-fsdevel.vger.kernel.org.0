@@ -2,94 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46734326E72
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Feb 2021 18:41:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE189326E8A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Feb 2021 19:03:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbhB0Rkz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Feb 2021 12:40:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230281AbhB0Rim (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Feb 2021 12:38:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6971964E45;
-        Sat, 27 Feb 2021 17:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614447445;
-        bh=tG4egkDj8OlEjNI6bUEakV8M22h7xiFwPQoSna2hUmI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FmHldItd3RW4Jl/TWZLl8pa77IkF35XD4Cvb9Vf6A9kmAVczJ5sXfigJJWk/dQ8Yf
-         9dO912Ggf3TgFlN1+9u67BiaEc6K7ygkIkKhC3Pjk6jKZdbnROCrkyTb8C0hEdUNcv
-         nc/Vq1ttwO7BWvQCqPY8lYLZFPOi7IJ3+GAqa+co598JofLD1lt6luUAjQLbqbSRVf
-         5JFDeS0VL1E3hIAJvvRv8iHBDNfSU/PYlRzM+6rUq9cbh6fSGpKg/XBA4FQqv6CDzu
-         f9L3+OTFs5emAtkVwlF7v7z7KRLn8osFA2Io2kETRWH+CvmC2oo8ObwMwtimyyp5n6
-         Xouv9645GGqyA==
-Date:   Sat, 27 Feb 2021 09:37:25 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de, djwong@kernel.org
-Subject: [GIT PULL] xfs: fixes for 5.12-rc1
-Message-ID: <20210227173725.GE7272@magnolia>
+        id S230258AbhB0SCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Feb 2021 13:02:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35908 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230235AbhB0R7w (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Feb 2021 12:59:52 -0500
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DE9CC06174A
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Feb 2021 09:59:12 -0800 (PST)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4DnvQq4VqszQlKq;
+        Sat, 27 Feb 2021 18:58:43 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id AfSWKstFy77y; Sat, 27 Feb 2021 18:58:39 +0100 (CET)
+Date:   Sun, 28 Feb 2021 04:58:33 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Drew DeVault <sir@cmpwn.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: openat, mkdirat, and TOCTOU for directory creation
+Message-ID: <20210227175833.qgj4qrzz7aqe4zah@yavin.dot.cyphar.com>
+References: <C9KDTRDMTBR4.2JFWCA79LXA9X@taiga>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vlu4vcdxhethdjpg"
 Content-Disposition: inline
+In-Reply-To: <C9KDTRDMTBR4.2JFWCA79LXA9X@taiga>
+X-MBO-SPAM-Probability: 
+X-Rspamd-Score: -8.61 / 15.00 / 15.00
+X-Rspamd-Queue-Id: 5879617D6
+X-Rspamd-UID: 7574aa
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
 
-Please pull the following branch containing some fixes to the xfs code
-for 5.12-rc1.  The most notable fix here prevents premature reuse of
-freed metadata blocks, and adding the ability to detect accidental
-nested transactions, which are not allowed here.
+--vlu4vcdxhethdjpg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This branch merges cleanly with upstream as of a few minutes ago.
-Please let me know if anything else strange happens during the merge
-process.
+On 2021-02-27, Drew DeVault <sir@cmpwn.com> wrote:
+> Hiya! I'm looking into the mkdirat and openat syscalls, and I noticed
+> that there's no means of implementing TOCTOU (time-of-check to
+> time-of-use, a technique for preventing race conditions) on directory
+> creation.
+>=20
+> To create a directory and obtain a dirfd for it, you have to (1)
+> mkdirat, then (2) openat with O_DIRECTORY, and if the directory is
+> removed in between, the latter will fail.
+>=20
+> One possibly straightforward solution is to support openat with the
+> O_DIRECTORY and O_CREAT flags specified.
 
---D
+This was discussed last year[1]. I think it would be useful but it
+shouldn't be done as part of openat(2) because we already have enough
+multiplexing with that syscall.
 
-The following changes since commit 1cd738b13ae9b29e03d6149f0246c61f76e81fcf:
+Maybe a mkdirat2(2) (which takes a flags argument -- sigh) that can be
+told to return a handle to the new directory would be a nicer API.
 
-  xfs: consider shutdown in bmapbt cursor delete assert (2021-02-11 08:46:38 -0800)
+> The present behavior of this flag combination is to create a file and
+> return ENOTDIR. The appropriate behavior is probably to create a
+> directory as proposed, or, at a minimum, to return EINVAL and not create
+> the file.
 
-are available in the Git repository at:
+Changing the semantics of open scares me a fair bit -- you could
+probably change openat2(2) since it's not as widely used yet.
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.12-merge-6
+[1]: https://lore.kernel.org/linux-fsdevel/20200316142057.xo24zea3k5zwswra@=
+yavin/
 
-for you to fetch changes up to 756b1c343333a5aefcc26b0409f3fd16f72281bf:
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-  xfs: use current->journal_info for detecting transaction recursion (2021-02-25 08:07:04 -0800)
+--vlu4vcdxhethdjpg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-More new code for 5.12:
-- Restore a disused sysctl control knob that was inadvertently dropped
-  during the merge window to avoid fstests regressions.
-- Don't speculatively release freed blocks from the busy list until
-  we're actually allocating them, which fixes a rare log recovery
-  regression.
-- Don't nest transactions when scanning for free space.
-- Add an idiot^Wmaintainer light to detect nested transactions. ;)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Brian Foster (1):
-      xfs: don't reuse busy extents on extent trim
+iHQEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCYDqIRAAKCRCdlLljIbnQ
+ErFpAPiXHZVSHF+4T/Nt1I9Cr8IJe595sq7oQ8L+45Q2xMmwAQC2t2vdIHwOAshg
+7TjIxJzeX2xRl0XW2HY1odi4SRM7Dw==
+=NQG+
+-----END PGP SIGNATURE-----
 
-Darrick J. Wong (2):
-      xfs: restore speculative_cow_prealloc_lifetime sysctl
-      xfs: don't nest transactions when scanning for eofblocks
-
-Dave Chinner (1):
-      xfs: use current->journal_info for detecting transaction recursion
-
- Documentation/admin-guide/xfs.rst | 16 ++++++++++------
- fs/iomap/buffered-io.c            |  7 -------
- fs/xfs/libxfs/xfs_btree.c         | 12 ++++++++++--
- fs/xfs/xfs_aops.c                 | 17 +++++++++++++++--
- fs/xfs/xfs_extent_busy.c          | 14 --------------
- fs/xfs/xfs_sysctl.c               | 35 ++++++++++++++---------------------
- fs/xfs/xfs_trans.c                | 33 +++++++++++++++------------------
- fs/xfs/xfs_trans.h                | 30 ++++++++++++++++++++++++++++++
- 8 files changed, 94 insertions(+), 70 deletions(-)
+--vlu4vcdxhethdjpg--
