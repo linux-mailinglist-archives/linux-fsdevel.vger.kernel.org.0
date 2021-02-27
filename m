@@ -2,59 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD500326DD9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Feb 2021 17:29:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 869BD326E62
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Feb 2021 18:26:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230081AbhB0Q3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Feb 2021 11:29:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229999AbhB0Q3s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Feb 2021 11:29:48 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 174B264DED;
-        Sat, 27 Feb 2021 16:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614443345;
-        bh=IF5KrOhlU8cBLHUhpwdTgbI39xpEkuocUjU5GL0divI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=L+YYPufDIECLo7BD4dbaKqJYQkxpBVzdDJ4lT1/A8LquaG7YKxdZhogrYNvyNQI4k
-         xfsxlLbgkpKA2ruLp9VREy4qLp6W/Na4PRH81Abuu3us2EYHCbAfKQ9GNn/O/3TmOC
-         UB17GQQFGjBImDOZcLxUyPtIU51MkF7J3YqYyy+6FoONvksyKJ7vUlfJCsfsFrRMw6
-         oSX54JDNzkHZWsE6FQAYizr8WRjZT/Pq/x2ne9fa/QZQGbZxTxA7YUHigWmcUNndCo
-         sj3IrlCMT7TtgYxWXhgXqeHhQkfP2LZRXDDvABFa/LPTKfwQjP3fAuJtUEo30/YiO8
-         z4h0wP4ZSRDBg==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 04B3460A23;
-        Sat, 27 Feb 2021 16:29:05 +0000 (UTC)
+        id S230144AbhB0RXM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Feb 2021 12:23:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55646 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230210AbhB0RTz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Feb 2021 12:19:55 -0500
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A85AC06174A;
+        Sat, 27 Feb 2021 09:19:02 -0800 (PST)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lG3Ex-001QwC-As; Sat, 27 Feb 2021 17:18:51 +0000
+Date:   Sat, 27 Feb 2021 17:18:51 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Subject: Re: [git pull] vfs.git misc stuff
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <YDnf/cY4c0uOIcVd@zeniv-ca.linux.org.uk>
+Message-ID: <YDp++xQkiawy2z2r@zeniv-ca.linux.org.uk>
 References: <YDnf/cY4c0uOIcVd@zeniv-ca.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <YDnf/cY4c0uOIcVd@zeniv-ca.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
-X-PR-Tracked-Commit-Id: 6f24784f00f2b5862b367caeecc5cca22a77faa3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5ceabb6078b80a8544ba86d6ee523ad755ae6d5e
-Message-Id: <161444334496.24634.2390663305624345985.pr-tracker-bot@kernel.org>
-Date:   Sat, 27 Feb 2021 16:29:04 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+ <CAHk-=whHCLK=_h27zMi8A=sn-GO=C+JOAX4nb7QjuGRbLebgbQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whHCLK=_h27zMi8A=sn-GO=C+JOAX4nb7QjuGRbLebgbQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sat, 27 Feb 2021 06:00:29 +0000:
+On Sat, Feb 27, 2021 at 08:21:55AM -0800, Linus Torvalds wrote:
+> On Fri, Feb 26, 2021 at 10:00 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > Al Viro (3):
+> >       9p: fix misuse of sscanf() in v9fs_stat2inode()
+> 
+> Hmm. Technically this changes some of the rules. It used to check that
+> i tall fit in 32 bytes. Now there could be arbitrary spaces in there
+> that pushes it over the limit.
+> 
+> I don't think we care, but..
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5ceabb6078b80a8544ba86d6ee523ad755ae6d5e
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+	I doubt that something was sending "HARDLINKCOUNT                 123"
+*and* relying upon the truncation to have that parsed as 1 rather than 123...
