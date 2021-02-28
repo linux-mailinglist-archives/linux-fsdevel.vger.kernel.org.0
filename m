@@ -2,101 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 282D03271CE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 11:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F34F327282
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 14:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230402AbhB1KAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 05:00:02 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:52859 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbhB1J77 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 04:59:59 -0500
-Received: by mail-io1-f71.google.com with SMTP id v5so10931440ioq.19
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 01:59:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=NLWuewdUS1OfIOpz3uSGkuRZirCCodU+4FFzIrUczyQ=;
-        b=odETUQLj0r0HuV6X7tp4C/EPBr8nxyE71vAv3qZdJ+RDFi7SEuDHsLWJ8M/ULkUKV+
-         7SRWk/gTPVU2Q6lOKrmPW2xCw59FEzMluOLLSO4xpzXjl/Kk3J21nrwMzX8Yx6MgW7vO
-         6/P/98RU9v7KuIVXisD/Hi1zR2bTQfVn5FkSjCQZ6AW4x77mJr8rgqzWa2E8LP0Kqe0S
-         azlyjSBsPIw5iZnM3+eh7jC+MT9NDC0QvuS3hB7Zi1oIwsbQbJFFMZ98kPhJNXf5IhPa
-         VRY9M0qBGA2cye66ta43fe2la6iB92EqmumtVhFRux8yDSJTLtUxBJrIa0MvOofzZipI
-         KTag==
-X-Gm-Message-State: AOAM532XUOTyFRARZ4QF39rWgeWTOr2pHisEsdIS/C0kQFD5NJ1BjhYP
-        DKCegv56ibYD/u7tj4eSRsz/lCpS2El05dB8CvBpLtr+NpYO
-X-Google-Smtp-Source: ABdhPJwcABAyP8+wKD4xv9GfnU9jio/a0UYe85WEhgszjWZtThWuX4P2fWKbemIzRKk8aPVh1QV8QeLLflHKzPqmq8HyawyKY/nm
+        id S230178AbhB1N4u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Feb 2021 08:56:50 -0500
+Received: from out1.migadu.com ([91.121.223.63]:19062 "EHLO out1.migadu.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230167AbhB1N4u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Feb 2021 08:56:50 -0500
+X-Greylist: delayed 64310 seconds by postgrey-1.27 at vger.kernel.org; Sun, 28 Feb 2021 08:56:49 EST
 MIME-Version: 1.0
-X-Received: by 2002:a92:444e:: with SMTP id a14mr9103259ilm.215.1614506358701;
- Sun, 28 Feb 2021 01:59:18 -0800 (PST)
-Date:   Sun, 28 Feb 2021 01:59:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ff83de05bc628d3c@google.com>
-Subject: KASAN: null-ptr-deref Read in __fget_light
-From:   syzbot <syzbot+21c62f4403f8c167e6f6@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
+        t=1614520565;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sPRqwLQ7R3UvrMGac2JNlWUrHipXXOdI+lOTDeAQJ+E=;
+        b=JHOqju67Xe+ESrvtRJttVcpD4RJaxgHsK710BZGlWyTv0kbwMj8svBhH/C+RbsRUyba7O+
+        1hf5xvVHqGlfdX2pHLMjaD4U7cujFKWtGY0OZ003ESz/mE2nJtT6gkr723vAYVpbtoiMi0
+        cJaXyr72BAb2ba/GcTgUlEVt+4zb64uKKkMpVGy1gVnfAAq4OHAgsizQ6K6Ypi6kaEESWD
+        EIbfylHdKArJk2ojETImzGQjGDfcLwpkQH7fFbmiGxXvg2Ix1ZwFAnVcv5mp5sxSToGgfU
+        3Qc27jadQMcXD9bfcOV8Kt0gmVR1OcztR2IIivrq9jiZcOzSiZ+qubBqE1gDEw==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Sun, 28 Feb 2021 08:56:04 -0500
+Message-Id: <C9L7RW0S7YU0.16I8160PKEP0K@taiga>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        "Aleksa Sarai" <cyphar@cyphar.com>
+Subject: Re: [RFC PATCH] fs: introduce mkdirat2 syscall for atomic mkdir
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   "Drew DeVault" <sir@cmpwn.com>
+To:     "Al Viro" <viro@zeniv.linux.org.uk>
+References: <20210228002500.11483-1-sir@cmpwn.com>
+ <YDr8UihFQ3M469x8@zeniv-ca.linux.org.uk> <C9KSZTRJ2CL6.DWD539LYTVZX@taiga>
+ <YDsGzhBzLzSp6nPj@zeniv-ca.linux.org.uk>
+In-Reply-To: <YDsGzhBzLzSp6nPj@zeniv-ca.linux.org.uk>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: sir@cmpwn.com
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sat Feb 27, 2021 at 9:58 PM EST, Al Viro wrote:
+> open() *always* returns descriptor or an error, for one thing.
+> And quite a few of open() flags are completely wrong for mkdir,
+> starting with symlink following and truncation.
 
-syzbot found the following issue on:
+So does mkdirat2. Are you referring to the do_mkdirat2 function? I
+merged mkdir/mkdirat/mkdirat2 into one function with a flag to enable
+the mkdirat2 behavior, to avoid copying and pasting much of the
+functionality. However, the syscalls themselves don't overload their
+return value as you expect. mkdir & mkdirat both still return 0 or an
+error, and mkdirat2 always returns an fd or an error. If you prefer, I
+can leave their implementations separate so that this is more clear.
 
-HEAD commit:    3b9cdafb Merge tag 'pinctrl-v5.12-1' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=114ac832d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=22008533485b2c35
-dashboard link: https://syzkaller.appspot.com/bug?extid=21c62f4403f8c167e6f6
+I supposed the flags might be wrong - should I just introduce a new set
+of flags, with the specific ones which are useful (which I think is just
+O_CLOEXEC)?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> What's more, your implementation is both racy and deadlock-prone -
+> it repeats the entire pathwalk with no warranty that it'll
+> arrive to the object you've created *AND* if you have
+> something like /foo/bar/baz/../../splat and dentry of bar
+> gets evicted on memory pressure, that pathwalk will end up
+> trying to look bar up. In the already locked /foo, aka
+> /foo/bar/baz/../..
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+21c62f4403f8c167e6f6@syzkaller.appspotmail.com
+This is down to unfamiliarity with this code, I think. I'll try to give
+it a closer look.
 
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
-BUG: KASAN: null-ptr-deref in atomic_read include/asm-generic/atomic-instrumented.h:27 [inline]
-BUG: KASAN: null-ptr-deref in __fget_light+0x4f/0x280 fs/file.c:930
-Read of size 4 at addr 0000000000000000 by task io_wqe_worker-0/10248
+> TBH, I don't understand what are you trying to achieve -
+> what will that mkdir+open combination buy you, especially
+> since that atomicity goes straight out of window if you try
+> to use that on e.g. NFS. How is the userland supposed to make
+> use of that thing?
 
-CPU: 0 PID: 10248 Comm: io_wqe_worker-0 Not tainted 5.11.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0xfa/0x151 lib/dump_stack.c:120
- __kasan_report mm/kasan/report.c:400 [inline]
- kasan_report.cold+0x5f/0xd5 mm/kasan/report.c:413
- check_memory_region_inline mm/kasan/generic.c:179 [inline]
- check_memory_region+0x13d/0x180 mm/kasan/generic.c:185
- instrument_atomic_read include/linux/instrumented.h:71 [inline]
- atomic_read include/asm-generic/atomic-instrumented.h:27 [inline]
- __fget_light+0x4f/0x280 fs/file.c:930
- fdget_raw include/linux/file.h:70 [inline]
- path_init+0xc24/0x1800 fs/namei.c:2275
- path_lookupat+0x30/0x830 fs/namei.c:2331
- filename_lookup+0x19f/0x560 fs/namei.c:2374
- user_path_at include/linux/namei.h:60 [inline]
- vfs_statx+0x142/0x390 fs/stat.c:185
- do_statx+0xd9/0x160 fs/stat.c:580
- io_statx fs/io_uring.c:4525 [inline]
- io_issue_sqe+0x2c87/0x4ec0 fs/io_uring.c:6343
- io_wq_submit_work+0x2a7/0x3f0 fs/io_uring.c:6418
- io_worker_handle_work+0xe2f/0x1d00 fs/io-wq.c:561
- io_wqe_worker+0xc2c/0x1080 fs/io-wq.c:603
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-==================================================================
+I'm trying to close what appears to be an oversight in the API. See the
+previous threads:
 
+https://lore.kernel.org/linux-fsdevel/C9KKYZ4T5O53.338Y48UIQ9W3H@taiga/T/#t
+https://lore.kernel.org/linux-fsdevel/20200316142057.xo24zea3k5zwswra@yavin=
+/
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Userland uses it the same way they use mkdir+open, but in one call, so
+that they can use the directory they make as soon as it's created. The
+atomicity goal, if possible, would also add a reference to the new
+directory via the open fd, so they can use it even if it's removed by
+another process. It makes such applications less error-prone, albiet in
+a minor edge case.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I'm not sure what's involved with the NFS case, but I can look into it.
