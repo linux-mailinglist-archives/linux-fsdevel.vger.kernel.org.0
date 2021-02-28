@@ -2,236 +2,361 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17F6D326FA7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 00:43:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8255326FBC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 01:26:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230195AbhB0XlQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Feb 2021 18:41:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230170AbhB0XlP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Feb 2021 18:41:15 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27241C061756
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Feb 2021 15:40:35 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id hs11so21360489ejc.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Feb 2021 15:40:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0ElBUABiAQGzdBb9Q14hhgxo5CKFBJ/fW6SlESrFX9c=;
-        b=0d/WY1VbsmftP5txlFPrN06ZSFwAfu/IzMFnySmCKUxeZh76AWOWhvMNPjRDVkAIFL
-         dk6y3c78mH1V6FDD52TW3RE2pfToGib3K8Lg2GdOpluHw/SfUtUjvw7KPrFmRL5O+7Q/
-         W5MhvvnE8la08VUW1FQ3RwzbTpghL0fiSOENkZcZY1DChYaNNluUAGILW/o/QkX4vzA4
-         MAIKveH6uUSub4mm/Qx4FlzXWMM4pcU4XVJkTbmCQYhE4T23cq6XxcdfOdWax87TKduI
-         XoecLuzoQQqfB/pm+H7NJg4Dpj83ClY7bydMO5sBLRMXOosSpuwO2yTW8aX+lPZ+4hlp
-         LpJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0ElBUABiAQGzdBb9Q14hhgxo5CKFBJ/fW6SlESrFX9c=;
-        b=lCO9VE6z/1+T1di4ge8qdxDnFp2ZaDfKbOA857j2UqnUgij9lBpFmFFbNWYxAB8C2k
-         6NpU3gtLRckOdlTFfOJRfMcko8wz2i2hd2MQwTncDhESJmjFgN9xC4P0kJzJwYSvP9Nc
-         cT3SzYIBFmbPczUvOdpc7Lejzl6qYXbngJOMMvEeFKIo8AMhwljtTx6sDh9pSWMsLyq8
-         9Kv0zxIb+FJdaPMnVjLqxmvr+435DiVjdyM7GL+ivjEOp/98fKuK+Lo5RpMaMZ8a+Oo3
-         +jPbJdLk5P3biYqG3I75/AjkyU2rTnYUHLNGInuhgYaWbGCQcx0V7yVG/hvFav/20edI
-         tewA==
-X-Gm-Message-State: AOAM532bpF5e6OeIAnMt+8Gs5afKgpca8DRtw/AluECV5HKL4WSTrI/E
-        3PCYZ5hpGUoNh9EyhATKwu3KpPR6+DGeFBmeHZeX9w==
-X-Google-Smtp-Source: ABdhPJxbfr1J+RzSUV7IBi8GoEnzC9yBAlDFbKQxsZp0Gu26nrbT35J97kR4cgoSTL5V4L7WiF5R1/XaKW63d8ST/2A=
-X-Received: by 2002:a17:907:3fa3:: with SMTP id hr35mr9631355ejc.418.1614469233758;
- Sat, 27 Feb 2021 15:40:33 -0800 (PST)
+        id S230040AbhB1AZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Feb 2021 19:25:48 -0500
+Received: from out2.migadu.com ([188.165.223.204]:41451 "EHLO out2.migadu.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230008AbhB1AZs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Feb 2021 19:25:48 -0500
+X-Greylist: delayed 35812 seconds by postgrey-1.27 at vger.kernel.org; Sat, 27 Feb 2021 19:25:45 EST
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cmpwn.com; s=key1;
+        t=1614471903;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Q8Y+vHhsGDbZpvB3gPEp+L9CqDH/Hm1OQHl6L3oqGnQ=;
+        b=DEKSXuSgwXOOAzD1goJ24T/oHmXjv3PpqoOK6LQeZ3A4pLfPez7ouQPMfdLDibe2xW9upC
+        P3g3KTigBjvaAYpYIlpeO2oP/Y8LEd20rwJXyB/u+r7dZ5pOtPwTekAoMmxAaGnV4BYkgz
+        lFYkJCvdiDx375nanWQqJFZvdf8WZhFfrihA5CG/C8Clp4b39kyxKiSRyyKAEL2bawsvLW
+        eAhKhsT61IS9uFFT3DP8hizz6HZg4EelJujlUC7MF/jvnOLk6AtHn1ZkG+0L956ciZWXaw
+        8oOJqW96zcHj5Sc9DonmoTPEeMt4fWH+1t6rpPpO7nrbqoOFBP9PcYQKhk3OYA==
+From:   Drew DeVault <sir@cmpwn.com>
+To:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Cc:     Drew DeVault <sir@cmpwn.com>, "Aleksa Sarai" <cyphar@cyphar.com>
+Subject: [RFC PATCH] fs: introduce mkdirat2 syscall for atomic mkdir
+Date:   Sat, 27 Feb 2021 19:25:00 -0500
+Message-Id: <20210228002500.11483-1-sir@cmpwn.com>
 MIME-Version: 1.0
-References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
- <OSBPR01MB2920899F1D71E7B054A04E39F49D9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
- <20210226190454.GD7272@magnolia> <CAPcyv4iJiYsM5FQdpMvCi24aCi7RqUnnxC6sM0umFqiN+Q59cg@mail.gmail.com>
- <20210226205126.GX4662@dread.disaster.area> <CAPcyv4iDefA3Y0wUW=p080SYAsM_2TPJba-V-sxdK_BeJMkmsw@mail.gmail.com>
- <20210226212748.GY4662@dread.disaster.area> <CAPcyv4jryJ32R5vOwwEdoU3V8C0B7zu_pCt=7f6A3Gk-9h6Dfg@mail.gmail.com>
- <20210227223611.GZ4662@dread.disaster.area>
-In-Reply-To: <20210227223611.GZ4662@dread.disaster.area>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Sat, 27 Feb 2021 15:40:24 -0800
-Message-ID: <CAPcyv4h7XA3Jorcy_J+t9scw0A4KdT2WEwAhE-Nbjc=C2qmkMw@mail.gmail.com>
-Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
-        "y-goto@fujitsu.com" <y-goto@fujitsu.com>,
-        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
-        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: sir@cmpwn.com
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 27, 2021 at 2:36 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Fri, Feb 26, 2021 at 02:41:34PM -0800, Dan Williams wrote:
-> > On Fri, Feb 26, 2021 at 1:28 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > On Fri, Feb 26, 2021 at 12:59:53PM -0800, Dan Williams wrote:
-> > > > On Fri, Feb 26, 2021 at 12:51 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > > > My immediate concern is the issue Jason recently highlighted [1] with
-> > > > > > respect to invalidating all dax mappings when / if the device is
-> > > > > > ripped out from underneath the fs. I don't think that will collide
-> > > > > > with Ruan's implementation, but it does need new communication from
-> > > > > > driver to fs about removal events.
-> > > > > >
-> > > > > > [1]: http://lore.kernel.org/r/CAPcyv4i+PZhYZiePf2PaH0dT5jDfkmkDX-3usQy1fAhf6LPyfw@mail.gmail.com
-> > > > >
-> > > > > Oh, yay.
-> > > > >
-> > > > > The XFS shutdown code is centred around preventing new IO from being
-> > > > > issued - we don't actually do anything about DAX mappings because,
-> > > > > well, I don't think anyone on the filesystem side thought they had
-> > > > > to do anything special if pmem went away from under it.
-> > > > >
-> > > > > My understanding -was- that the pmem removal invalidates
-> > > > > all the ptes currently mapped into CPU page tables that point at
-> > > > > the dax device across the system. THe vmas that manage these
-> > > > > mappings are not really something the filesystem really manages,
-> > > > > but a function of the mm subsystem. What the filesystem cares about
-> > > > > is that it gets page faults triggered when a change of state occurs
-> > > > > so that it can remap the page to it's backing store correctly.
-> > > > >
-> > > > > IOWs, all the mm subsystem needs to when pmem goes away is clear the
-> > > > > CPU ptes, because then when then when userspace tries to access the
-> > > > > mapped DAX pages we get a new page fault. In processing the fault, the
-> > > > > filesystem will try to get direct access to the pmem from the block
-> > > > > device. This will get an ENODEV error from the block device because
-> > > > > because the backing store (pmem) has been unplugged and is no longer
-> > > > > there...
-> > > > >
-> > > > > AFAICT, as long as pmem removal invalidates all the active ptes that
-> > > > > point at the pmem being removed, the filesystem doesn't need to
-> > > > > care about device removal at all, DAX or no DAX...
-> > > >
-> > > > How would the pmem removal do that without walking all the active
-> > > > inodes in the fs at the time of shutdown and call
-> > > > unmap_mapping_range(inode->i_mapping, 0, 0, 1)?
-> > >
-> > > Which then immediately ends up back at the vmas that manage the ptes
-> > > to unmap them.
-> > >
-> > > Isn't finding the vma(s) that map a specific memory range exactly
-> > > what the rmap code in the mm subsystem is supposed to address?
-> >
-> > rmap can lookup only vmas from a virt address relative to a given
-> > mm_struct. The driver has neither the list of mm_struct objects nor
-> > virt addresses to do a lookup. All it knows is that someone might have
-> > mapped pages through the fsdax interface.
->
-> So there's no physical addr to vma translation in the mm subsystem
-> at all?
->
-> That doesn't make sense. We do exactly this for hwpoison for DAX
-> mappings. While we don't look at ptes, we get a pfn,
+The mkdir and mkdirat syscalls both return 0 on success, and use of the
+newly-created directory requires a separate open or openat (or openat2)
+call. The time between these syscalls is an opportunity for a race
+condition. It is thus desirable to establish a means of creating a
+directory and returning an open dirfd for it in one atomic operation.
 
-True hwpoison does get a known failing pfn and then uses page->mapping
-to get the 'struct address_space' to do the unmap. I discounted that
-approach from the outset because it would mean walking every pfn in a
-multi-terabyte device just in case one is mapped at device shutdown.
+The possibility of using open(at(2)) with O_CREAT | O_DIRECTORY suggests
+itself. The present behavior for this flag combination is quite
+certainly wrong: it returns ENOTDIR, but creates a file with the desired
+name. We could explicitly support this combination of flags, but we are
+loathe to expand an already over-burdened syscall with additional flag
+combinations.
 
-> it points to, check if it points to the PMEM that is being removed,
-> grab the page it points to, map that to the relevant struct page,
-> run collect_procs() on that page, then kill the user processes that
-> map that page.
->
-> So why can't we walk the ptescheck the physical pages that they
-> map to and if they map to a pmem page we go poison that
-> page and that kills any user process that maps it.
->
-> i.e. I can't see how unexpected pmem device unplug is any different
-> to an MCE delivering a hwpoison event to a DAX mapped page.
+This introduces mkdirat2, along with the requisite flag argument, which
+presently accepts the same flags as open - allowing the caller to
+specify, say, O_CLOEXEC - and leaving us room to expand the next time an
+unforeseeable addition to mkdir is called for. Otherwise, it behaves
+identically to mkdirat, but returns an open file descriptor for the new
+directory.
+---
+This is my first foray into the fs bits, and first syscall addition as
+well; the reader's patience with the many obvious errors this is certain
+to include is much appreciated.
 
-I guess the tradeoff is walking a long list of inodes vs walking a
-large array of pages.
+I am pretty sure that this is actually atomic - gated between
+user_path_create and done_path_create - but I admit that I don't grok
+the inode locking bits. Otherwise, this was basically made by splicing
+together relevant-looking bits of mkdir and openat until a syscall which
+appeared to work under testing emerged.
 
-There's likely always more pages than inodes, but perhaps it's more
-efficient to walk the 'struct page' array than sb->s_inodes?
+ arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
+ arch/arm/tools/syscall.tbl                  |  1 +
+ arch/arm64/include/asm/unistd.h             |  2 +-
+ arch/arm64/include/asm/unistd32.h           |  2 +
+ arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
+ arch/s390/kernel/syscalls/syscall.tbl       |  1 +
+ arch/sh/kernel/syscalls/syscall.tbl         |  1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
+ fs/namei.c                                  | 46 ++++++++++++++++++---
+ include/linux/syscalls.h                    |  1 +
+ include/uapi/asm-generic/unistd.h           |  4 +-
+ 19 files changed, 62 insertions(+), 7 deletions(-)
 
->  Both
-> indicate a physical address range now contains invalid data and the
-> filesystem has to take the same action...
->
-> IOWs, we could just call ->corrupted_range(0, EOD) here to tell the
-> filesystem the entire device went away. Then the filesystem deal
-> with this however it needs to. However, it would be more efficient
-> from an invalidation POV to just call it on the pages that have
-> currently active ptes because once the block device is dead
-> new page faults on DAX mappings will get a SIGBUS naturally.
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index ee7b01bb7346..c621fa5aaccf 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -480,3 +480,4 @@
+ 548	common	pidfd_getfd			sys_pidfd_getfd
+ 549	common	faccessat2			sys_faccessat2
+ 550	common	process_madvise			sys_process_madvise
++551	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index d056a548358e..8ad43ac853b4 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -454,3 +454,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++441	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index b3b2019f8d16..86a9d7b3eabe 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		441
++#define __NR_compat_syscalls		442
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 107f08e03b9f..b9ae6fbba839 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -889,6 +889,8 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
+ #define __NR_process_madvise 440
+ __SYSCALL(__NR_process_madvise, sys_process_madvise)
++#define __NR_mkdirat2 441
++__SYSCALL(__NR_mkdirat2, sys_mkdirat2)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index b96ed8b8a508..e71ee20bf3da 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -361,3 +361,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++441	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 625fb6d32842..a64bc3463b48 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -440,3 +440,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++441	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index aae729c95cf9..199f4a6df658 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -446,3 +446,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++441	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 32817c954435..6fab6f6e9b0f 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -379,3 +379,4 @@
+ 438	n32	pidfd_getfd			sys_pidfd_getfd
+ 439	n32	faccessat2			sys_faccessat2
+ 440	n32	process_madvise			sys_process_madvise
++441	n32	mkdirat2			sys_mkdirat2
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 9e4ea3c31b1c..f9c672d00e75 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -355,3 +355,4 @@
+ 438	n64	pidfd_getfd			sys_pidfd_getfd
+ 439	n64	faccessat2			sys_faccessat2
+ 440	n64	process_madvise			sys_process_madvise
++441	n64	mkdirat2			sys_mkdirat2
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index f375ea528e59..a1f433044a7c 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -438,3 +438,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++441	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index 1275daec7fec..1c73b34517d1 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -530,3 +530,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++441	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index 28c168000483..2cc370736912 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -443,3 +443,4 @@
+ 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
+ 439  common	faccessat2		sys_faccessat2			sys_faccessat2
+ 440  common	process_madvise		sys_process_madvise		sys_process_madvise
++441  common	mkdirat2		sys_mkdirat2			sys_mkdirat2
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index 783738448ff5..e0e15828c19f 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -443,3 +443,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++441	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index 78160260991b..57bee5e64645 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -486,3 +486,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++441	common	mkdirat2			sys_mkdirat2
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 379819244b91..8bb125749d7b 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -362,6 +362,7 @@
+ 438	common	pidfd_getfd		sys_pidfd_getfd
+ 439	common	faccessat2		sys_faccessat2
+ 440	common	process_madvise		sys_process_madvise
++441	common	mkdirat2		sys_mkdirat2
+ 
+ #
+ # Due to a historical design error, certain syscalls are numbered differently
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index b070f272995d..07f1ddc8092f 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -411,3 +411,4 @@
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
+ 440	common	process_madvise			sys_process_madvise
++440	common	mkdirat2			sys_mkdirat2
+diff --git a/fs/namei.c b/fs/namei.c
+index d4a6dd772303..6bd296d929d7 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3654,13 +3654,27 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ }
+ EXPORT_SYMBOL(vfs_mkdir);
+ 
+-static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
++static long do_mkdirat2(int dfd, const char __user *pathname, umode_t mode,
++			int flags, bool open)
+ {
++	struct open_flags op;
+ 	struct dentry *dentry;
++	struct filename *tmp;
+ 	struct path path;
+ 	int error;
++	int fd;
+ 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+ 
++	if (open) {
++		tmp = getname(pathname);
++		if (IS_ERR(tmp))
++			return PTR_ERR(tmp);
++
++		fd = get_unused_fd_flags(flags);
++		if (fd < 0)
++			return fd;
++	}
++
+ retry:
+ 	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
+ 	if (IS_ERR(dentry))
+@@ -3669,24 +3683,46 @@ static long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
+ 	if (!IS_POSIXACL(path.dentry->d_inode))
+ 		mode &= ~current_umask();
+ 	error = security_path_mkdir(&path, dentry, mode);
+-	if (!error)
++	if (!error) {
+ 		error = vfs_mkdir(path.dentry->d_inode, dentry, mode);
++		if (open) {
++			struct file *f = do_filp_open(dfd, tmp, &op);
++			if (IS_ERR(f)) {
++				put_unused_fd(fd);
++				error = PTR_ERR(f);
++				goto out;
++			} else {
++				fsnotify_open(f);
++				fd_install(fd, f);
++			}
++		}
++	}
+ 	done_path_create(&path, dentry);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+ 		goto retry;
+ 	}
+-	return error;
++out:
++	if (open)
++		putname(tmp);
++	if (error < 0 || !open)
++		return error;
++	return fd;
++}
++
++SYSCALL_DEFINE4(mkdirat2, int, dfd, const char __user *, pathname, umode_t, mode, int, flags)
++{
++	return do_mkdirat2(dfd, pathname, mode, flags, true);
+ }
+ 
+ SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
+ {
+-	return do_mkdirat(dfd, pathname, mode);
++	return do_mkdirat2(dfd, pathname, mode, 0, false);
+ }
+ 
+ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+ {
+-	return do_mkdirat(AT_FDCWD, pathname, mode);
++	return do_mkdirat2(AT_FDCWD, pathname, mode, 0, false);
+ }
+ 
+ int vfs_rmdir(struct inode *dir, struct dentry *dentry)
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index aea0ce9f3b74..8dd5d7acc333 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -417,6 +417,7 @@ asmlinkage long sys_flock(unsigned int fd, unsigned int cmd);
+ asmlinkage long sys_mknodat(int dfd, const char __user * filename, umode_t mode,
+ 			    unsigned dev);
+ asmlinkage long sys_mkdirat(int dfd, const char __user * pathname, umode_t mode);
++asmlinkage long sys_mkdirat2(int dfd, const char __user * pathname, umode_t mode, int flags);
+ asmlinkage long sys_unlinkat(int dfd, const char __user * pathname, int flag);
+ asmlinkage long sys_symlinkat(const char __user * oldname,
+ 			      int newdfd, const char __user * newname);
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 2056318988f7..5a4604461ede 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -859,9 +859,11 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
+ #define __NR_process_madvise 440
+ __SYSCALL(__NR_process_madvise, sys_process_madvise)
++#define __NR_process_madvise 441
++__SYSCALL(__NR_mkdirat2, sys_mkdirat2)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 441
++#define __NR_syscalls 442
+ 
+ /*
+  * 32 bit systems traditionally used different
+-- 
+2.30.1
 
-There is no efficient way to lookup "currently active ptes" relative
-to a physical pfn range.
-
-SIGBUS will happen naturally either way. I don't think the hwpoison
-signal with the extra BUS_MCEERR_* info is appropriate given that
-indicates data loss vs data offline of a device being unplugged.
-
->
-> > To me this looks like a notifier that fires from memunmap_pages()
-> > after dev_pagemap_kill() to notify any block_device associated with
-> > that dev_pagemap() to say that any dax mappings arranged through this
-> > block_device are now invalid. The reason to do this after
-> > dev_pagemap_kill() is so that any new mapping attempts that are racing
-> > the removal will be blocked.
->
-> I don't see why this needs a unique notifier. At the filesystem
-> level, we want a single interface that tells us "something bad
-> happened to the block device", not a proliferation of similar but
-> subtly different "bad thing X happened to block device" interfaces
-> that are unique to specific physical device drivers...
->
-> > The receiver of that notification needs to go from a block_device to a
-> > superblock that has mapped inodes and walk ->sb_inodes triggering the
-> > unmap/invalidation.
->
-> Not necessarily.
->
-> What if the filesystem is managing mirrored data across multiple
-> devices and this device is only one leg of the mirror?
-
-I can see DAX mapping for read access to one leg of the mirror. The
-unplug would fire zap_pte for all the inodes with DAX mappings for
-that fs. Filesystem is still free at that point to wait for the next
-user access, take a refault, and re-establish the mapping to another
-leg of the mirror.
-
-> Or that the
-> pmem was used by the RT device in XFS and the data/log devices are
-> still fine?
-
-I was assuming that the callback would only be triggered for a dax
-device as the data device. So xfs_open_devices() would register
-mp->m_super for dax_rtdev.
-
-> What if the pmem is just being used as a cache tier, and
-> no data was actually lost?
-
-That's fine the cache mapping is zapped and re-fault figures out what
-to do. If anything these questions are a reason not to use
-->corrupted_range() for this because recovery can happen at refault vs
-taking permanent action on a data loss event.
-
->
-> IOWs, what needs to happen at this point is very filesystem
-> specific. Assuming that "device unplug == filesystem dead" is not
-> correct, nor is specifying a generic action that assumes the
-> filesystem is dead because a device it is using went away.
-
-Ok, I think I set this discussion in the wrong direction implying any
-mapping of this action to a "filesystem dead" event. It's just a "zap
-all ptes" event and upper layers recover from there.
