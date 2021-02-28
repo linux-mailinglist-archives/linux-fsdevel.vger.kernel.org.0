@@ -2,111 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7248327176
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 08:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 282D03271CE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 11:00:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbhB1HqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 02:46:00 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:63795 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229820AbhB1HqA (ORCPT
+        id S230402AbhB1KAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Feb 2021 05:00:02 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:52859 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230147AbhB1J77 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 02:46:00 -0500
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id 11S7ixkK020061;
-        Sun, 28 Feb 2021 16:45:00 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 11S7ixkK020061
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1614498300;
-        bh=DaK0zdF1pDCQb/m8EdzHuxdkTgRyS8/NR/dRs6CxQVQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CPN0NWDLl8CMgvVDdgkU9LJ/fR8GxtUMeG8tjlA9s0d7P/3aBUggx0B07Z2l6dJYY
-         oMJER/l6lrJnP1veRWQAzXmn5bWksEmGrVMosmk9mAwxPChk9JPJOSinLp6QjTk7RN
-         LU8IzRKazssbTg1O8NWhvO5zGvwffGmiZDpFPw1JeZBO62ftDFEyb0ULQZJPqJyXat
-         M+IWfjMQ4oRDJT81yNmSFWqlWuMSOFrFRz5fAXeXyvbSX42BtJMZmNjWBMXcMkIZpS
-         6FeTPAPTSRsuXQfdauNFD6i7zGZKAUUhMeN189l5Mcu4psgg002MAKZCrEJrMGqyz0
-         vVVlfQNWtI5Ug==
-X-Nifty-SrcIP: [209.85.216.54]
-Received: by mail-pj1-f54.google.com with SMTP id c19so8521745pjq.3;
-        Sat, 27 Feb 2021 23:44:59 -0800 (PST)
-X-Gm-Message-State: AOAM530rCFgByuUOT4N1qm4/WmjHmXznWPl+xxu88P8UYMhFZ0NeVY+4
-        qs0+5TP7cjmrKh6aygBDBtSMbR0Co4JqkWMwVTw=
-X-Google-Smtp-Source: ABdhPJwuMFCU2KtqRh3yEc1CvcvmwCJivIfwJkV56KyDYTKnwzD4xZqEWNFrRf7yKka/doaNMycaqnlFTATqxIUPF+o=
-X-Received: by 2002:a17:902:e891:b029:e4:20d3:3d5c with SMTP id
- w17-20020a170902e891b02900e420d33d5cmr10517559plg.71.1614498299143; Sat, 27
- Feb 2021 23:44:59 -0800 (PST)
+        Sun, 28 Feb 2021 04:59:59 -0500
+Received: by mail-io1-f71.google.com with SMTP id v5so10931440ioq.19
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 01:59:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=NLWuewdUS1OfIOpz3uSGkuRZirCCodU+4FFzIrUczyQ=;
+        b=odETUQLj0r0HuV6X7tp4C/EPBr8nxyE71vAv3qZdJ+RDFi7SEuDHsLWJ8M/ULkUKV+
+         7SRWk/gTPVU2Q6lOKrmPW2xCw59FEzMluOLLSO4xpzXjl/Kk3J21nrwMzX8Yx6MgW7vO
+         6/P/98RU9v7KuIVXisD/Hi1zR2bTQfVn5FkSjCQZ6AW4x77mJr8rgqzWa2E8LP0Kqe0S
+         azlyjSBsPIw5iZnM3+eh7jC+MT9NDC0QvuS3hB7Zi1oIwsbQbJFFMZ98kPhJNXf5IhPa
+         VRY9M0qBGA2cye66ta43fe2la6iB92EqmumtVhFRux8yDSJTLtUxBJrIa0MvOofzZipI
+         KTag==
+X-Gm-Message-State: AOAM532XUOTyFRARZ4QF39rWgeWTOr2pHisEsdIS/C0kQFD5NJ1BjhYP
+        DKCegv56ibYD/u7tj4eSRsz/lCpS2El05dB8CvBpLtr+NpYO
+X-Google-Smtp-Source: ABdhPJwcABAyP8+wKD4xv9GfnU9jio/a0UYe85WEhgszjWZtThWuX4P2fWKbemIzRKk8aPVh1QV8QeLLflHKzPqmq8HyawyKY/nm
 MIME-Version: 1.0
-References: <20210104083221.21184-1-masahiroy@kernel.org>
-In-Reply-To: <20210104083221.21184-1-masahiroy@kernel.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sun, 28 Feb 2021 16:44:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARXy_puE7KZp2vjzn_KcW5uZ_ba3O5zFX46yGULjNhpZg@mail.gmail.com>
-Message-ID: <CAK7LNARXy_puE7KZp2vjzn_KcW5uZ_ba3O5zFX46yGULjNhpZg@mail.gmail.com>
-Subject: Re: [PATCH] sysctl: use min() helper for namecmp()
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+X-Received: by 2002:a92:444e:: with SMTP id a14mr9103259ilm.215.1614506358701;
+ Sun, 28 Feb 2021 01:59:18 -0800 (PST)
+Date:   Sun, 28 Feb 2021 01:59:18 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ff83de05bc628d3c@google.com>
+Subject: KASAN: null-ptr-deref Read in __fget_light
+From:   syzbot <syzbot+21c62f4403f8c167e6f6@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(CC: Andrew Morton)
+Hello,
 
-A friendly reminder.
+syzbot found the following issue on:
 
+HEAD commit:    3b9cdafb Merge tag 'pinctrl-v5.12-1' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=114ac832d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=22008533485b2c35
+dashboard link: https://syzkaller.appspot.com/bug?extid=21c62f4403f8c167e6f6
 
-This is just a minor clean-up.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If nobody picks it up,
-I hope perhaps Andrew Morton will do.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+21c62f4403f8c167e6f6@syzkaller.appspotmail.com
 
-This patch:
-https://lore.kernel.org/patchwork/patch/1360092/
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
+BUG: KASAN: null-ptr-deref in atomic_read include/asm-generic/atomic-instrumented.h:27 [inline]
+BUG: KASAN: null-ptr-deref in __fget_light+0x4f/0x280 fs/file.c:930
+Read of size 4 at addr 0000000000000000 by task io_wqe_worker-0/10248
 
-
-
-
-
-On Mon, Jan 4, 2021 at 5:33 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> Make it slightly readable by using min().
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->
->  fs/proc/proc_sysctl.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 317899222d7f..86341c0f0c40 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -94,14 +94,9 @@ static void sysctl_print_dir(struct ctl_dir *dir)
->
->  static int namecmp(const char *name1, int len1, const char *name2, int len2)
->  {
-> -       int minlen;
->         int cmp;
->
-> -       minlen = len1;
-> -       if (minlen > len2)
-> -               minlen = len2;
-> -
-> -       cmp = memcmp(name1, name2, minlen);
-> +       cmp = memcmp(name1, name2, min(len1, len2));
->         if (cmp == 0)
->                 cmp = len1 - len2;
->         return cmp;
-> --
-> 2.27.0
->
+CPU: 0 PID: 10248 Comm: io_wqe_worker-0 Not tainted 5.11.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0xfa/0x151 lib/dump_stack.c:120
+ __kasan_report mm/kasan/report.c:400 [inline]
+ kasan_report.cold+0x5f/0xd5 mm/kasan/report.c:413
+ check_memory_region_inline mm/kasan/generic.c:179 [inline]
+ check_memory_region+0x13d/0x180 mm/kasan/generic.c:185
+ instrument_atomic_read include/linux/instrumented.h:71 [inline]
+ atomic_read include/asm-generic/atomic-instrumented.h:27 [inline]
+ __fget_light+0x4f/0x280 fs/file.c:930
+ fdget_raw include/linux/file.h:70 [inline]
+ path_init+0xc24/0x1800 fs/namei.c:2275
+ path_lookupat+0x30/0x830 fs/namei.c:2331
+ filename_lookup+0x19f/0x560 fs/namei.c:2374
+ user_path_at include/linux/namei.h:60 [inline]
+ vfs_statx+0x142/0x390 fs/stat.c:185
+ do_statx+0xd9/0x160 fs/stat.c:580
+ io_statx fs/io_uring.c:4525 [inline]
+ io_issue_sqe+0x2c87/0x4ec0 fs/io_uring.c:6343
+ io_wq_submit_work+0x2a7/0x3f0 fs/io_uring.c:6418
+ io_worker_handle_work+0xe2f/0x1d00 fs/io-wq.c:561
+ io_wqe_worker+0xc2c/0x1080 fs/io-wq.c:603
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+==================================================================
 
 
--- 
-Best Regards
-Masahiro Yamada
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
