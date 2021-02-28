@@ -2,169 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD3903274F7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 23:47:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D68B232751B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 00:11:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231139AbhB1Wrg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 17:47:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35702 "EHLO
+        id S231358AbhB1XJH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Feb 2021 18:09:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230490AbhB1Wrf (ORCPT
+        with ESMTP id S231199AbhB1XJA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 17:47:35 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4442BC06174A;
-        Sun, 28 Feb 2021 14:46:55 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id d11so14139553wrj.7;
-        Sun, 28 Feb 2021 14:46:55 -0800 (PST)
+        Sun, 28 Feb 2021 18:09:00 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54BDFC061788
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 15:08:19 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id d12so7707930pfo.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 15:08:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xhlwoHgoag22c/OnIU6YItPlWONw4dkAGC1UA9P8T10=;
-        b=M7wYrEpHzgUhKnL7QGtlmkVRzWmFYqwsPKbfTczjC4CKEmW26ZcWShCny9xmZVzkCZ
-         MozteBv53jCFTB2EXnvFIRm8DNuCGDZeDIUGCMBi2aod+HkRtPWt+WOABXfxEevbJxTG
-         ZWpN2xW5GGh7+cnQ4/lCUmon0N9mosnuxVfg7vCgcKU7kmO5G6uuK4gDhoQxFherbIii
-         Ce3FmyhQVw/efkcbp57L8aiO9wYlSXh7Igs4IjxT+AEWdFJo/eTvRNcSKP41J0+adi1f
-         cG6RgTRmhuKsxXXx3cuFNzbFYA/BmoyzKnweYU5YhSi6OlCKGclay0NqhVTn9or1CJWy
-         +Vag==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=SmQMsrGoUKJ4zXu9YtAmV2nQB1dfM6MYK666mtQb/K8=;
+        b=g31OoGZGFUnX4krXGaFWn4eV6UTBvSMWM0CrGCtI49f6Ex4gcUMZ8xq0CDBbHm1uFI
+         AOkvFmL6mRZWcAkGsFqkkeH+aJUZiZE7zCcn1OW7C4KxqLd9PYFYKctKTJPFsZqLBV8z
+         o6gtVbS4+ZKAegoYu1c5YP+NeAl8frowCxDCF8jPc8ZM2cR4OOizrVpqhZ6C5US4THVn
+         nL4nNpu1Vo7F6glp1NrK1QzwX9r1fQ2ejROUwN60Hxf99iggFGQSGVPbx+3lW57tTNiC
+         iKmUjgk1rkXR6sywWZNX2WZbgdP2JfwXOx/O5W6hPe/SXdbQS1IlhUS5dZNdFg5xZzO7
+         YQfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xhlwoHgoag22c/OnIU6YItPlWONw4dkAGC1UA9P8T10=;
-        b=MEQDxN3d954mBG1c8DluR2918SSh1295rxZHaz8izVZcwOcIiArmUJ4oqCvtTCbcC9
-         53Bb8NjHdyCwgDbbsh43esn1VJNCm+jHn3Zs42yxHWKvBpDX/WizaSm83Xf/MkCF0MOa
-         RZmWA6qzuneiQAabqVX0OSK7WClAQDfb8goF9iJvyBY2BHsS4+AwCRssD2VofkaeiRTG
-         +BFzYFqZW4TD07ry15NS7UI6J9FHBfJuHAWpXaeTK0z6p2UeM9zAir4uBtZyEIM7dDcb
-         jp6ZpMoXKXWjZ6hUTb5OhqDfyurBaKzKtZL589ZF8jvsnQSBBLxnccYRWReClQx7xDcM
-         JdxQ==
-X-Gm-Message-State: AOAM530S2H9DzR/0FA9L9wAy4ajfgsU1A/we+t3wuVaZVdo+UqYv2oeh
-        Gg10+CWtA4IkR1oNVsoYyxc=
-X-Google-Smtp-Source: ABdhPJwUypNba/VOBHgduU8n6jQ2BNqZPYLWgh9k9kJ0vLFVQtfTOQiJgXq32o+a0x9V5c+lQuyN8Q==
-X-Received: by 2002:a5d:54c4:: with SMTP id x4mr6815832wrv.329.1614552414077;
-        Sun, 28 Feb 2021 14:46:54 -0800 (PST)
-Received: from localhost.localdomain (bzq-79-179-86-219.red.bezeqint.net. [79.179.86.219])
-        by smtp.googlemail.com with ESMTPSA id h22sm22965134wmb.36.2021.02.28.14.46.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Feb 2021 14:46:53 -0800 (PST)
-From:   Lior Ribak <liorribak@gmail.com>
-To:     akpm@linux-foundation.org, deller@gmx.de, viro@zeniv.linux.org.uk
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        liorribak@gmail.com
-Subject: [PATCH v2] binfmt_misc: Fix possible deadlock in bm_register_write
-Date:   Sun, 28 Feb 2021 14:44:14 -0800
-Message-Id: <20210228224414.95962-1-liorribak@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201224111533.24719-1-liorribak@gmail.com>
-References: <20201224111533.24719-1-liorribak@gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SmQMsrGoUKJ4zXu9YtAmV2nQB1dfM6MYK666mtQb/K8=;
+        b=RzA7QR6UDqVHcDzm7+OsZ7mK5x3jUWpnsiPig0FJex5/F94Ri8eObjHA8RYTLbzcL5
+         /4iaGK11uXxT8RDH63r4oC14UNEKFiB+jlbLBd91TW1n/avScSwAyg5RAlVMAuF0Q4QC
+         zBLTzx/IbbG9qx7PEYZWMJfL7PWzt1UVXOETE8Xq48Z8mASQxOAD6iFXr+czlTAVz5t5
+         pExJHBc8dqamzv1ZX0tRgL3iQ8eLjoKTkOSoYgx6+U6T2f4r2qgIBStOgyzg9BK6skKH
+         8UjHYFk6Nhvhxchlojf4Vup358EMywEajdpOKtKxrsiKPgeRmxVqHzRpFfc6vCOy5e1P
+         KUpQ==
+X-Gm-Message-State: AOAM531qTBAX+h1Po3slaZq4cgD3csIr+HFnnmOKBvDdTYmOdJ0DKFfg
+        k1lYTjqpr+tv28x0qL1n7+uksA==
+X-Google-Smtp-Source: ABdhPJxJtumVB71k4TqXBUAdw3zeznGsRyBEmpMItWv0L4FRLCHdd9/yi9a0nPVuJVUBmbgyz4PwXw==
+X-Received: by 2002:aa7:90c5:0:b029:1e3:5e84:4a7c with SMTP id k5-20020aa790c50000b02901e35e844a7cmr12133417pfk.71.1614553698815;
+        Sun, 28 Feb 2021 15:08:18 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id t2sm14656086pfg.152.2021.02.28.15.08.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Feb 2021 15:08:18 -0800 (PST)
+Subject: Re: possible deadlock in io_poll_double_wake (2)
+To:     syzbot <syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <000000000000e61a7605bc5ac540@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <900e27f3-6503-ed03-4c58-ccc946df7a6a@kernel.dk>
+Date:   Sun, 28 Feb 2021 16:08:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <000000000000e61a7605bc5ac540@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is a deadlock in bm_register_write:
-First, in the beggining of the function, a lock is taken on the
-binfmt_misc root inode with inode_lock(d_inode(root))
-Then, if the user used the MISC_FMT_OPEN_FILE flag, the function will
-call open_exec on the user-provided interpreter.
-open_exec will call a path lookup, and if the path lookup process
-includes the root of binfmt_misc, it will try to take a shared lock
-on its inode again, but it is already locked, and the code will
-get stuck in a deadlock
+On 2/27/21 5:42 PM, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    5695e516 Merge tag 'io_uring-worker.v3-2021-02-25' of git:..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=114e3866d00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c76dad0946df1f3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=28abd693db9e92c160d8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ed9b6d00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d5a292d00000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+28abd693db9e92c160d8@syzkaller.appspotmail.com
+> 
+> ============================================
+> WARNING: possible recursive locking detected
+> 5.11.0-syzkaller #0 Not tainted
+> --------------------------------------------
+> swapper/1/0 is trying to acquire lock:
+> ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
+> ffff88801b2b1130 (&runtime->sleep){..-.}-{2:2}, at: io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
+> 
+> but task is already holding lock:
+> ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
+> 
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0
+>        ----
+>   lock(&runtime->sleep);
+>   lock(&runtime->sleep);
+> 
+>  *** DEADLOCK ***
+> 
+>  May be due to missing lock nesting notation
+> 
+> 2 locks held by swapper/1/0:
+>  #0: ffff888147474908 (&group->lock){..-.}-{2:2}, at: _snd_pcm_stream_lock_irqsave+0x9f/0xd0 sound/core/pcm_native.c:170
+>  #1: ffff88801b2b3130 (&runtime->sleep){..-.}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:137
+> 
+> stack backtrace:
+> CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.11.0-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:79 [inline]
+>  dump_stack+0xfa/0x151 lib/dump_stack.c:120
+>  print_deadlock_bug kernel/locking/lockdep.c:2829 [inline]
+>  check_deadlock kernel/locking/lockdep.c:2872 [inline]
+>  validate_chain kernel/locking/lockdep.c:3661 [inline]
+>  __lock_acquire.cold+0x14c/0x3b4 kernel/locking/lockdep.c:4900
+>  lock_acquire kernel/locking/lockdep.c:5510 [inline]
+>  lock_acquire+0x1ab/0x730 kernel/locking/lockdep.c:5475
+>  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+>  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+>  spin_lock include/linux/spinlock.h:354 [inline]
+>  io_poll_double_wake+0x25f/0x6a0 fs/io_uring.c:4960
+>  __wake_up_common+0x147/0x650 kernel/sched/wait.c:108
+>  __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:138
+>  snd_pcm_update_state+0x46a/0x540 sound/core/pcm_lib.c:203
+>  snd_pcm_update_hw_ptr0+0xa75/0x1a50 sound/core/pcm_lib.c:464
+>  snd_pcm_period_elapsed+0x160/0x250 sound/core/pcm_lib.c:1805
+>  dummy_hrtimer_callback+0x94/0x1b0 sound/drivers/dummy.c:378
+>  __run_hrtimer kernel/time/hrtimer.c:1519 [inline]
+>  __hrtimer_run_queues+0x609/0xe40 kernel/time/hrtimer.c:1583
+>  hrtimer_run_softirq+0x17b/0x360 kernel/time/hrtimer.c:1600
+>  __do_softirq+0x29b/0x9f6 kernel/softirq.c:345
+>  invoke_softirq kernel/softirq.c:221 [inline]
+>  __irq_exit_rcu kernel/softirq.c:422 [inline]
+>  irq_exit_rcu+0x134/0x200 kernel/softirq.c:434
+>  sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1100
+>  </IRQ>
+>  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:632
+> RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:29 [inline]
+> RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
+> RIP: 0010:arch_irqs_disabled arch/x86/include/asm/irqflags.h:137 [inline]
+> RIP: 0010:acpi_safe_halt drivers/acpi/processor_idle.c:111 [inline]
+> RIP: 0010:acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:516
+> Code: dd 38 6e f8 84 db 75 ac e8 54 32 6e f8 e8 0f 1c 74 f8 e9 0c 00 00 00 e8 45 32 6e f8 0f 00 2d 4e 4a c5 00 e8 39 32 6e f8 fb f4 <9c> 5b 81 e3 00 02 00 00 fa 31 ff 48 89 de e8 14 3a 6e f8 48 85 db
+> RSP: 0018:ffffc90000d47d18 EFLAGS: 00000293
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: ffff8880115c3780 RSI: ffffffff89052537 RDI: 0000000000000000
+> RBP: ffff888141127064 R08: 0000000000000001 R09: 0000000000000001
+> R10: ffffffff81794168 R11: 0000000000000000 R12: 0000000000000001
+> R13: ffff888141127000 R14: ffff888141127064 R15: ffff888143331804
+>  acpi_idle_enter+0x361/0x500 drivers/acpi/processor_idle.c:647
+>  cpuidle_enter_state+0x1b1/0xc80 drivers/cpuidle/cpuidle.c:237
+>  cpuidle_enter+0x4a/0xa0 drivers/cpuidle/cpuidle.c:351
+>  call_cpuidle kernel/sched/idle.c:158 [inline]
+>  cpuidle_idle_call kernel/sched/idle.c:239 [inline]
+>  do_idle+0x3e1/0x590 kernel/sched/idle.c:300
+>  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:397
+>  start_secondary+0x274/0x350 arch/x86/kernel/smpboot.c:272
+>  secondary_startup_64_no_verify+0xb0/0xbb
 
-To reproduce the bug:
-$ echo ":iiiii:E::ii::/proc/sys/fs/binfmt_misc/bla:F" > /proc/sys/fs/binfmt_misc/register
+This looks very odd, only thing I can think of is someone doing
+poll_wait() twice with different entries but for the same
+waitqueue head.
 
-backtrace of where the lock occurs (#5):
-0  schedule () at ./arch/x86/include/asm/current.h:15
-1  0xffffffff81b51237 in rwsem_down_read_slowpath (sem=0xffff888003b202e0, count=<optimized out>, state=state@entry=2) at kernel/locking/rwsem.c:992
-2  0xffffffff81b5150a in __down_read_common (state=2, sem=<optimized out>) at kernel/locking/rwsem.c:1213
-3  __down_read (sem=<optimized out>) at kernel/locking/rwsem.c:1222
-4  down_read (sem=<optimized out>) at kernel/locking/rwsem.c:1355
-5  0xffffffff811ee22a in inode_lock_shared (inode=<optimized out>) at ./include/linux/fs.h:783
-6  open_last_lookups (op=0xffffc9000022fe34, file=0xffff888004098600, nd=0xffffc9000022fd10) at fs/namei.c:3177
-7  path_openat (nd=nd@entry=0xffffc9000022fd10, op=op@entry=0xffffc9000022fe34, flags=flags@entry=65) at fs/namei.c:3366
-8  0xffffffff811efe1c in do_filp_open (dfd=<optimized out>, pathname=pathname@entry=0xffff8880031b9000, op=op@entry=0xffffc9000022fe34) at fs/namei.c:3396
-9  0xffffffff811e493f in do_open_execat (fd=fd@entry=-100, name=name@entry=0xffff8880031b9000, flags=<optimized out>, flags@entry=0) at fs/exec.c:913
-10 0xffffffff811e4a92 in open_exec (name=<optimized out>) at fs/exec.c:948
-11 0xffffffff8124aa84 in bm_register_write (file=<optimized out>, buffer=<optimized out>, count=19, ppos=<optimized out>) at fs/binfmt_misc.c:682
-12 0xffffffff811decd2 in vfs_write (file=file@entry=0xffff888004098500, buf=buf@entry=0xa758d0 ":iiiii:E::ii::i:CF\n", count=count@entry=19, pos=pos@entry=0xffffc9000022ff10) at fs/read_write.c:603
-13 0xffffffff811defda in ksys_write (fd=<optimized out>, buf=0xa758d0 ":iiiii:E::ii::i:CF\n", count=19) at fs/read_write.c:658
-14 0xffffffff81b49813 in do_syscall_64 (nr=<optimized out>, regs=0xffffc9000022ff58) at arch/x86/entry/common.c:46
-15 0xffffffff81c0007c in entry_SYSCALL_64 () at arch/x86/entry/entry_64.S:120
+#syz test: git://git.kernel.dk/linux-block syzbot-test
 
-To solve the issue, the open_exec call is moved to before the write
-lock is taken by bm_register_write
-
-Signed-off-by: Lior Ribak <liorribak@gmail.com>
----
-v2: Added "kfree(e)" above "return PTR_ERR(f)"
-
- fs/binfmt_misc.c | 29 ++++++++++++++---------------
- 1 file changed, 14 insertions(+), 15 deletions(-)
-
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index c457334de43f..e1eae7ea823a 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -649,12 +649,24 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	struct super_block *sb = file_inode(file)->i_sb;
- 	struct dentry *root = sb->s_root, *dentry;
- 	int err = 0;
-+	struct file *f = NULL;
- 
- 	e = create_entry(buffer, count);
- 
- 	if (IS_ERR(e))
- 		return PTR_ERR(e);
- 
-+	if (e->flags & MISC_FMT_OPEN_FILE) {
-+		f = open_exec(e->interpreter);
-+		if (IS_ERR(f)) {
-+			pr_notice("register: failed to install interpreter file %s\n",
-+				 e->interpreter);
-+			kfree(e);
-+			return PTR_ERR(f);
-+		}
-+		e->interp_file = f;
-+	}
-+
- 	inode_lock(d_inode(root));
- 	dentry = lookup_one_len(e->name, root, strlen(e->name));
- 	err = PTR_ERR(dentry);
-@@ -678,21 +690,6 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 		goto out2;
- 	}
- 
--	if (e->flags & MISC_FMT_OPEN_FILE) {
--		struct file *f;
--
--		f = open_exec(e->interpreter);
--		if (IS_ERR(f)) {
--			err = PTR_ERR(f);
--			pr_notice("register: failed to install interpreter file %s\n", e->interpreter);
--			simple_release_fs(&bm_mnt, &entry_count);
--			iput(inode);
--			inode = NULL;
--			goto out2;
--		}
--		e->interp_file = f;
--	}
--
- 	e->dentry = dget(dentry);
- 	inode->i_private = e;
- 	inode->i_fop = &bm_entry_operations;
-@@ -709,6 +706,8 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	inode_unlock(d_inode(root));
- 
- 	if (err) {
-+		if (f)
-+			filp_close(f, NULL);
- 		kfree(e);
- 		return err;
- 	}
 -- 
-2.25.1
+Jens Axboe
 
