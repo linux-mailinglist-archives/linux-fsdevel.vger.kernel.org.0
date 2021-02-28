@@ -2,61 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4814327460
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 21:17:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFAA73274A4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 22:40:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231313AbhB1UO7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 15:14:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56796 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231282AbhB1UO5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 15:14:57 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7C1EE64E85;
-        Sun, 28 Feb 2021 20:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614543256;
-        bh=UHCjfBsgMssuzREO5YJJsNWidYK5vRxkRW6DSu9RgWo=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=mE/kCwKe90oGkGAy3h4zivg7DmpYUT7v2Pc5pe0+kXd1fKNsB8BXsuXHD+izsOczf
-         dD/X7RJrulPjT27t7fI6kLVJ+FOAEU96FkykBlMFiim7CcpRWifs3YBuD40EITT4i3
-         tAubSOPJUDXlkGgfyJ39Px8nY+PIBARUwEkVlpBG+eB+OkYuCATxT82Mei1mV25NxC
-         2Fc9jqwcoRFyU5OYpq3De0sLT4NilZrpXxBgbZtEEFB1mtdTCBapKd6+md/o/1rd1n
-         2v9iKlmMgQQURRQSkD+69o6hqLQk7kgwB/RMaenpzwaC3v4yQwisR4SgK+ydrYb9kH
-         R6QYwNCh9cPcQ==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 7738160A13;
-        Sun, 28 Feb 2021 20:14:16 +0000 (UTC)
-Subject: Re: [GIT PULL] xfs: fixes for 5.12-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210227173725.GE7272@magnolia>
-References: <20210227173725.GE7272@magnolia>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210227173725.GE7272@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.12-merge-6
-X-PR-Tracked-Commit-Id: 756b1c343333a5aefcc26b0409f3fd16f72281bf
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 03dc748bf11051df1f65a2cb6e317d88934d8960
-Message-Id: <161454325648.2182.2660010480088666972.pr-tracker-bot@kernel.org>
-Date:   Sun, 28 Feb 2021 20:14:16 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de, djwong@kernel.org
+        id S231139AbhB1VjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Feb 2021 16:39:00 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:33070 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231408AbhB1VjA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Feb 2021 16:39:00 -0500
+Received: by mail-io1-f69.google.com with SMTP id m3so11801323ioy.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Feb 2021 13:38:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Eans+Y8M5kEDbsfDM4w+vnrR9uMK3i6NDK+ASbnwiqw=;
+        b=h17QDm0sUDj3TcOA6QURvKz0YHNXRDmGlYRadlozMR60JO4tSgOx6mUDEw7SF1x+mz
+         /SR/RvBWBo+s94IpZ70DgdcLhuJyBpymH2CTnnB0YFMNeTySoWi6BcpJZPNcR5f7XNDA
+         kQa7Z/z++6gGLiwz6NPUh/jq2Ux36+K2i5iOqWOGB+CN62cwkrxtWn+frnqieYl7KQjP
+         ItGD0tJYfBvdVmE8niYGCThjbqquSXjk1ZT+kmAp1p1C9sBzD6lq18/wYfXOkXW1oGr1
+         x+T74xbhrN318rzfVwLdpED467/eE0zYkjGE+oOX9jtnt70KXQ25pimcx/uPFuE2BrJV
+         +rtQ==
+X-Gm-Message-State: AOAM530jBcls1jqafam76pAa00GVQqwJ4pBWwLQfl7djfnILa9ik5Di+
+        zyLL+6h3Tq1FR4FKtlF0Ojk6u4+jcAcdiaLem5bmayIoTM7u
+X-Google-Smtp-Source: ABdhPJzSIoA34gS/Jw7BAERzxmfGTaBs67RN3urq1p5QkgRKW2vregW0I/rm33/bQextDyUbE9nUgN4A5Z1G8E4jAT3GH/WXyRSH
+MIME-Version: 1.0
+X-Received: by 2002:a92:d7c7:: with SMTP id g7mr10592113ilq.305.1614548299301;
+ Sun, 28 Feb 2021 13:38:19 -0800 (PST)
+Date:   Sun, 28 Feb 2021 13:38:19 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000da67e105bc6c51d4@google.com>
+Subject: WARNING: suspicious RCU usage in __inode_security_revalidate
+From:   syzbot <syzbot+1058632e58766789d9f2@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sat, 27 Feb 2021 09:37:25 -0800:
+Hello,
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.12-merge-6
+syzbot found the following issue on:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/03dc748bf11051df1f65a2cb6e317d88934d8960
+HEAD commit:    719bbd4a Merge tag 'vfio-v5.12-rc1' of git://github.com/aw..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b131b6d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8d398c54d51d75eb
+dashboard link: https://syzkaller.appspot.com/bug?extid=1058632e58766789d9f2
 
-Thank you!
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1058632e58766789d9f2@syzkaller.appspotmail.com
+
+=============================
+WARNING: suspicious RCU usage
+5.11.0-syzkaller #0 Not tainted
+-----------------------------
+kernel/sched/core.c:8296 Illegal context switch in RCU-sched read-side critical section!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 0
+2 locks held by syz-executor.0/10588:
+ #0: ffff88801ec94460 (sb_writers#5){.+.+}-{0:0}, at: do_unlinkat+0x190/0x690 fs/namei.c:4075
+ #1: ffff888024cc2548 (&type->i_mutex_dir_key#4/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:810 [inline]
+ #1: ffff888024cc2548 (&type->i_mutex_dir_key#4/1){+.+.}-{3:3}, at: do_unlinkat+0x27d/0x690 fs/namei.c:4079
+
+stack backtrace:
+CPU: 1 PID: 10588 Comm: syz-executor.0 Not tainted 5.11.0-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:79 [inline]
+ dump_stack+0xfa/0x151 lib/dump_stack.c:120
+ ___might_sleep+0x266/0x2c0 kernel/sched/core.c:8296
+ __inode_security_revalidate+0x112/0x140 security/selinux/hooks.c:259
+ inode_security_rcu security/selinux/hooks.c:285 [inline]
+ selinux_inode_permission+0x2e1/0x670 security/selinux/hooks.c:3137
+ security_inode_permission+0x92/0xf0 security/security.c:1268
+ inode_permission.part.0+0x119/0x440 fs/namei.c:521
+ inode_permission fs/namei.c:2812 [inline]
+ may_delete+0x318/0x750 fs/namei.c:2790
+ vfs_unlink+0x53/0x610 fs/namei.c:4012
+ do_unlinkat+0x3de/0x690 fs/namei.c:4096
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x465837
+Code: 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 57 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb29f6728 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000465837
+RDX: 00007ffdb29f6760 RSI: 00007ffdb29f6760 RDI: 00007ffdb29f67f0
+RBP: 00007ffdb29f67f0 R08: 0000000000000001 R09: 00007ffdb29f65c0
+R10: 000000000253588b R11: 0000000000000206 R12: 00000000004bbe42
+R13: 00007ffdb29f78c0 R14: 0000000002535810 R15: 00007ffdb29f7900
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
