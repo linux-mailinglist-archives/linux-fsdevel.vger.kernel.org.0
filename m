@@ -2,134 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65DAA3274E4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 23:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD3903274F7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Feb 2021 23:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231580AbhB1Wjf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 17:39:35 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:47679 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230167AbhB1Wje (ORCPT
+        id S231139AbhB1Wrg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Feb 2021 17:47:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35702 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230490AbhB1Wrf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 17:39:34 -0500
-Received: from dread.disaster.area (pa49-179-130-210.pa.nsw.optusnet.com.au [49.179.130.210])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 7E4FD1041250;
-        Mon,  1 Mar 2021 09:38:47 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lGUi6-008ztl-Kp; Mon, 01 Mar 2021 09:38:46 +1100
-Date:   Mon, 1 Mar 2021 09:38:46 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
-        "y-goto@fujitsu.com" <y-goto@fujitsu.com>,
-        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
-        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
-Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
-Message-ID: <20210228223846.GA4662@dread.disaster.area>
-References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
- <OSBPR01MB2920899F1D71E7B054A04E39F49D9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
- <20210226190454.GD7272@magnolia>
- <CAPcyv4iJiYsM5FQdpMvCi24aCi7RqUnnxC6sM0umFqiN+Q59cg@mail.gmail.com>
- <20210226205126.GX4662@dread.disaster.area>
- <CAPcyv4iDefA3Y0wUW=p080SYAsM_2TPJba-V-sxdK_BeJMkmsw@mail.gmail.com>
- <20210226212748.GY4662@dread.disaster.area>
- <CAPcyv4jryJ32R5vOwwEdoU3V8C0B7zu_pCt=7f6A3Gk-9h6Dfg@mail.gmail.com>
- <20210227223611.GZ4662@dread.disaster.area>
- <CAPcyv4h7XA3Jorcy_J+t9scw0A4KdT2WEwAhE-Nbjc=C2qmkMw@mail.gmail.com>
+        Sun, 28 Feb 2021 17:47:35 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4442BC06174A;
+        Sun, 28 Feb 2021 14:46:55 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id d11so14139553wrj.7;
+        Sun, 28 Feb 2021 14:46:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=xhlwoHgoag22c/OnIU6YItPlWONw4dkAGC1UA9P8T10=;
+        b=M7wYrEpHzgUhKnL7QGtlmkVRzWmFYqwsPKbfTczjC4CKEmW26ZcWShCny9xmZVzkCZ
+         MozteBv53jCFTB2EXnvFIRm8DNuCGDZeDIUGCMBi2aod+HkRtPWt+WOABXfxEevbJxTG
+         ZWpN2xW5GGh7+cnQ4/lCUmon0N9mosnuxVfg7vCgcKU7kmO5G6uuK4gDhoQxFherbIii
+         Ce3FmyhQVw/efkcbp57L8aiO9wYlSXh7Igs4IjxT+AEWdFJo/eTvRNcSKP41J0+adi1f
+         cG6RgTRmhuKsxXXx3cuFNzbFYA/BmoyzKnweYU5YhSi6OlCKGclay0NqhVTn9or1CJWy
+         +Vag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=xhlwoHgoag22c/OnIU6YItPlWONw4dkAGC1UA9P8T10=;
+        b=MEQDxN3d954mBG1c8DluR2918SSh1295rxZHaz8izVZcwOcIiArmUJ4oqCvtTCbcC9
+         53Bb8NjHdyCwgDbbsh43esn1VJNCm+jHn3Zs42yxHWKvBpDX/WizaSm83Xf/MkCF0MOa
+         RZmWA6qzuneiQAabqVX0OSK7WClAQDfb8goF9iJvyBY2BHsS4+AwCRssD2VofkaeiRTG
+         +BFzYFqZW4TD07ry15NS7UI6J9FHBfJuHAWpXaeTK0z6p2UeM9zAir4uBtZyEIM7dDcb
+         jp6ZpMoXKXWjZ6hUTb5OhqDfyurBaKzKtZL589ZF8jvsnQSBBLxnccYRWReClQx7xDcM
+         JdxQ==
+X-Gm-Message-State: AOAM530S2H9DzR/0FA9L9wAy4ajfgsU1A/we+t3wuVaZVdo+UqYv2oeh
+        Gg10+CWtA4IkR1oNVsoYyxc=
+X-Google-Smtp-Source: ABdhPJwUypNba/VOBHgduU8n6jQ2BNqZPYLWgh9k9kJ0vLFVQtfTOQiJgXq32o+a0x9V5c+lQuyN8Q==
+X-Received: by 2002:a5d:54c4:: with SMTP id x4mr6815832wrv.329.1614552414077;
+        Sun, 28 Feb 2021 14:46:54 -0800 (PST)
+Received: from localhost.localdomain (bzq-79-179-86-219.red.bezeqint.net. [79.179.86.219])
+        by smtp.googlemail.com with ESMTPSA id h22sm22965134wmb.36.2021.02.28.14.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Feb 2021 14:46:53 -0800 (PST)
+From:   Lior Ribak <liorribak@gmail.com>
+To:     akpm@linux-foundation.org, deller@gmx.de, viro@zeniv.linux.org.uk
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        liorribak@gmail.com
+Subject: [PATCH v2] binfmt_misc: Fix possible deadlock in bm_register_write
+Date:   Sun, 28 Feb 2021 14:44:14 -0800
+Message-Id: <20210228224414.95962-1-liorribak@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201224111533.24719-1-liorribak@gmail.com>
+References: <20201224111533.24719-1-liorribak@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4h7XA3Jorcy_J+t9scw0A4KdT2WEwAhE-Nbjc=C2qmkMw@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
-        a=JD06eNgDs9tuHP7JIKoLzw==:117 a=JD06eNgDs9tuHP7JIKoLzw==:17
-        a=kj9zAlcOel0A:10 a=dESyimp9J3IA:10 a=7-415B0cAAAA:8
-        a=TP_jekbwqI1TK37FQS4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 27, 2021 at 03:40:24PM -0800, Dan Williams wrote:
-> On Sat, Feb 27, 2021 at 2:36 PM Dave Chinner <david@fromorbit.com> wrote:
-> > On Fri, Feb 26, 2021 at 02:41:34PM -0800, Dan Williams wrote:
-> > > On Fri, Feb 26, 2021 at 1:28 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > On Fri, Feb 26, 2021 at 12:59:53PM -0800, Dan Williams wrote:
-> > it points to, check if it points to the PMEM that is being removed,
-> > grab the page it points to, map that to the relevant struct page,
-> > run collect_procs() on that page, then kill the user processes that
-> > map that page.
-> >
-> > So why can't we walk the ptescheck the physical pages that they
-> > map to and if they map to a pmem page we go poison that
-> > page and that kills any user process that maps it.
-> >
-> > i.e. I can't see how unexpected pmem device unplug is any different
-> > to an MCE delivering a hwpoison event to a DAX mapped page.
-> 
-> I guess the tradeoff is walking a long list of inodes vs walking a
-> large array of pages.
+There is a deadlock in bm_register_write:
+First, in the beggining of the function, a lock is taken on the
+binfmt_misc root inode with inode_lock(d_inode(root))
+Then, if the user used the MISC_FMT_OPEN_FILE flag, the function will
+call open_exec on the user-provided interpreter.
+open_exec will call a path lookup, and if the path lookup process
+includes the root of binfmt_misc, it will try to take a shared lock
+on its inode again, but it is already locked, and the code will
+get stuck in a deadlock
 
-Not really. You're assuming all a filesystem has to do is invalidate
-everything if a device goes away, and that's not true. Finding if an
-inode has a mapping that spans a specific device in a multi-device
-filesystem can be a lot more complex than that. Just walking inodes
-is easy - determining whihc inodes need invalidation is the hard
-part.
+To reproduce the bug:
+$ echo ":iiiii:E::ii::/proc/sys/fs/binfmt_misc/bla:F" > /proc/sys/fs/binfmt_misc/register
 
-That's where ->corrupt_range() comes in - the filesystem is already
-set up to do reverse mapping from physical range to inode(s)
-offsets...
+backtrace of where the lock occurs (#5):
+0  schedule () at ./arch/x86/include/asm/current.h:15
+1  0xffffffff81b51237 in rwsem_down_read_slowpath (sem=0xffff888003b202e0, count=<optimized out>, state=state@entry=2) at kernel/locking/rwsem.c:992
+2  0xffffffff81b5150a in __down_read_common (state=2, sem=<optimized out>) at kernel/locking/rwsem.c:1213
+3  __down_read (sem=<optimized out>) at kernel/locking/rwsem.c:1222
+4  down_read (sem=<optimized out>) at kernel/locking/rwsem.c:1355
+5  0xffffffff811ee22a in inode_lock_shared (inode=<optimized out>) at ./include/linux/fs.h:783
+6  open_last_lookups (op=0xffffc9000022fe34, file=0xffff888004098600, nd=0xffffc9000022fd10) at fs/namei.c:3177
+7  path_openat (nd=nd@entry=0xffffc9000022fd10, op=op@entry=0xffffc9000022fe34, flags=flags@entry=65) at fs/namei.c:3366
+8  0xffffffff811efe1c in do_filp_open (dfd=<optimized out>, pathname=pathname@entry=0xffff8880031b9000, op=op@entry=0xffffc9000022fe34) at fs/namei.c:3396
+9  0xffffffff811e493f in do_open_execat (fd=fd@entry=-100, name=name@entry=0xffff8880031b9000, flags=<optimized out>, flags@entry=0) at fs/exec.c:913
+10 0xffffffff811e4a92 in open_exec (name=<optimized out>) at fs/exec.c:948
+11 0xffffffff8124aa84 in bm_register_write (file=<optimized out>, buffer=<optimized out>, count=19, ppos=<optimized out>) at fs/binfmt_misc.c:682
+12 0xffffffff811decd2 in vfs_write (file=file@entry=0xffff888004098500, buf=buf@entry=0xa758d0 ":iiiii:E::ii::i:CF\n", count=count@entry=19, pos=pos@entry=0xffffc9000022ff10) at fs/read_write.c:603
+13 0xffffffff811defda in ksys_write (fd=<optimized out>, buf=0xa758d0 ":iiiii:E::ii::i:CF\n", count=19) at fs/read_write.c:658
+14 0xffffffff81b49813 in do_syscall_64 (nr=<optimized out>, regs=0xffffc9000022ff58) at arch/x86/entry/common.c:46
+15 0xffffffff81c0007c in entry_SYSCALL_64 () at arch/x86/entry/entry_64.S:120
 
-> There's likely always more pages than inodes, but perhaps it's more
-> efficient to walk the 'struct page' array than sb->s_inodes?
+To solve the issue, the open_exec call is moved to before the write
+lock is taken by bm_register_write
 
-I really don't see you seem to be telling us that invalidation is an
-either/or choice. There's more ways to convert physical block
-address -> inode file offset and mapping index than brute force
-inode cache walks....
+Signed-off-by: Lior Ribak <liorribak@gmail.com>
+---
+v2: Added "kfree(e)" above "return PTR_ERR(f)"
 
-.....
+ fs/binfmt_misc.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-> > IOWs, what needs to happen at this point is very filesystem
-> > specific. Assuming that "device unplug == filesystem dead" is not
-> > correct, nor is specifying a generic action that assumes the
-> > filesystem is dead because a device it is using went away.
-> 
-> Ok, I think I set this discussion in the wrong direction implying any
-> mapping of this action to a "filesystem dead" event. It's just a "zap
-> all ptes" event and upper layers recover from there.
-
-Yes, that's exactly what ->corrupt_range() is intended for. It
-allows the filesystem to lock out access to the bad range
-and then recover the data. Or metadata, if that's where the bad
-range lands. If that recovery fails, it can then report a data
-loss/filesystem shutdown event to userspace and kill user procs that
-span the bad range...
-
-FWIW, is this notification going to occur before or after the device
-has been physically unplugged? i.e. what do we do about the
-time-of-unplug-to-time-of-invalidation window where userspace can
-still attempt to access the missing pmem though the
-not-yet-invalidated ptes? It may not be likely that people just yank
-pmem nvdimms out of machines, but with NVMe persistent memory
-spaces, there's every chance that someone pulls the wrong device...
-
-Cheers,
-
-Dave.
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index c457334de43f..e1eae7ea823a 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -649,12 +649,24 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+ 	struct super_block *sb = file_inode(file)->i_sb;
+ 	struct dentry *root = sb->s_root, *dentry;
+ 	int err = 0;
++	struct file *f = NULL;
+ 
+ 	e = create_entry(buffer, count);
+ 
+ 	if (IS_ERR(e))
+ 		return PTR_ERR(e);
+ 
++	if (e->flags & MISC_FMT_OPEN_FILE) {
++		f = open_exec(e->interpreter);
++		if (IS_ERR(f)) {
++			pr_notice("register: failed to install interpreter file %s\n",
++				 e->interpreter);
++			kfree(e);
++			return PTR_ERR(f);
++		}
++		e->interp_file = f;
++	}
++
+ 	inode_lock(d_inode(root));
+ 	dentry = lookup_one_len(e->name, root, strlen(e->name));
+ 	err = PTR_ERR(dentry);
+@@ -678,21 +690,6 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+ 		goto out2;
+ 	}
+ 
+-	if (e->flags & MISC_FMT_OPEN_FILE) {
+-		struct file *f;
+-
+-		f = open_exec(e->interpreter);
+-		if (IS_ERR(f)) {
+-			err = PTR_ERR(f);
+-			pr_notice("register: failed to install interpreter file %s\n", e->interpreter);
+-			simple_release_fs(&bm_mnt, &entry_count);
+-			iput(inode);
+-			inode = NULL;
+-			goto out2;
+-		}
+-		e->interp_file = f;
+-	}
+-
+ 	e->dentry = dget(dentry);
+ 	inode->i_private = e;
+ 	inode->i_fop = &bm_entry_operations;
+@@ -709,6 +706,8 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+ 	inode_unlock(d_inode(root));
+ 
+ 	if (err) {
++		if (f)
++			filp_close(f, NULL);
+ 		kfree(e);
+ 		return err;
+ 	}
 -- 
-Dave Chinner
-david@fromorbit.com
+2.25.1
+
