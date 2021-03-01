@@ -2,244 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A77329245
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 21:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5B1D329283
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 21:49:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242478AbhCAUmU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Mar 2021 15:42:20 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14905 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243349AbhCAUgC (ORCPT
+        id S237559AbhCAUqs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 15:46:48 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:47616 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242642AbhCAUom (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 15:36:02 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B603d50040000>; Mon, 01 Mar 2021 12:35:16 -0800
-Received: from HKMAIL103.nvidia.com (10.18.16.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 1 Mar
- 2021 20:35:15 +0000
-Received: from HKMAIL102.nvidia.com (10.18.16.11) by HKMAIL103.nvidia.com
- (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 1 Mar
- 2021 20:26:21 +0000
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.46) by
- HKMAIL102.nvidia.com (10.18.16.11) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2 via Frontend Transport; Mon, 1 Mar 2021 20:26:20 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=glrWQzAUM3e6/Z1WPHlXzcUE5tlcH4gInqEPMDM4REhlF1QHC0oBL+bkQeA2H45GyOfilToI+gz4Bu474PN5ehs/mZvwWP0t6GDLoTxru9QHZ2fgeNNSAbVYialgt6VOkpY2O0FXs6doYGePhEeac/5OjUl4U3SSvhw5G/MLSgaMkbsQHHDKsfSrBp2EI1FRKsAZhCHtF3x+vaE19cS2+ddQ85XS+VxuUo7m8MBwxY5ARloP4KZMr/sgH6OEVgc7uluEjVFkE3lfPEKAHwjIozRQmIWS/ETTE0nv3PfTfiifn0Ns7fek6N4iK2/vmw6w1jkJGqloSdzDjVnnieAS1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BnbHebE4w4j6uvPA7UIPO8pKivQIDjyrVhKBV5rExLs=;
- b=d9+fsJBgBErIfrLNEJqTv0nZdTbfTASO11sooI7LFxDb5F+Ji0OVwaD21OwfpYeJVCZJoLEZsazUf4CfjBrooK3ZeGl1WQwDYQz3LYgsWmpqom8z77HP1V9xjzqoxn71SicwMZRYRfjzPJZAoPNShOYwOgmn/IvXGSCk0qSvwSnqDGfierQvQYOIb+sxfJFdHCa5DCKUeFSWowkL1FDUuoP/e2MWetFwV/GN6EJAZlhg4l17BItDzBZjcHF/1Br43P/wKsPJ6VN8Jkgd+EwwIWOHyrhDKLlqqM/om4b1ys7YqJxY2L5OwLOVUizbzPiM82H0eSJck4wtcVsi8UslXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-Authentication-Results: infradead.org; dkim=none (message not signed)
- header.d=none;infradead.org; dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3823.namprd12.prod.outlook.com (2603:10b6:208:168::26)
- by MN2PR12MB4285.namprd12.prod.outlook.com (2603:10b6:208:1d7::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.20; Mon, 1 Mar
- 2021 20:26:17 +0000
-Received: from MN2PR12MB3823.namprd12.prod.outlook.com
- ([fe80::a1b1:5d8:47d7:4b60]) by MN2PR12MB3823.namprd12.prod.outlook.com
- ([fe80::a1b1:5d8:47d7:4b60%7]) with mapi id 15.20.3890.028; Mon, 1 Mar 2021
- 20:26:17 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v3 01/25] mm: Introduce struct folio
-Date:   Mon, 1 Mar 2021 15:26:11 -0500
-X-Mailer: MailMate (1.14r5757)
-Message-ID: <68723D50-AFD1-4F25-8F10-81EC11045BE5@nvidia.com>
-In-Reply-To: <20210128070404.1922318-2-willy@infradead.org>
-References: <20210128070404.1922318-1-willy@infradead.org>
- <20210128070404.1922318-2-willy@infradead.org>
-Content-Type: multipart/signed;
-        boundary="=_MailMate_35B182F9-D59B-4424-93FE-9E511CE5CE30_=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-X-Originating-IP: [216.228.112.22]
-X-ClientProxiedBy: BL1PR13CA0053.namprd13.prod.outlook.com
- (2603:10b6:208:257::28) To MN2PR12MB3823.namprd12.prod.outlook.com
- (2603:10b6:208:168::26)
+        Mon, 1 Mar 2021 15:44:42 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lGpOT-006C0N-V3; Mon, 01 Mar 2021 13:43:54 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lGpOT-0003CY-2q; Mon, 01 Mar 2021 13:43:53 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <CALCv0x1NauG_13DmmzwYaRDaq3qjmvEdyi7=XzF04KR06Q=WHA@mail.gmail.com>
+Date:   Mon, 01 Mar 2021 14:43:51 -0600
+In-Reply-To: <CALCv0x1NauG_13DmmzwYaRDaq3qjmvEdyi7=XzF04KR06Q=WHA@mail.gmail.com>
+        (Ilya Lipnitskiy's message of "Sun, 28 Feb 2021 19:28:13 -0800")
+Message-ID: <m1wnuqhaew.fsf@fess.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.2.62.13] (216.228.112.22) by BL1PR13CA0053.namprd13.prod.outlook.com (2603:10b6:208:257::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.9 via Frontend Transport; Mon, 1 Mar 2021 20:26:14 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9f3c13e6-c3e5-4272-de89-08d8dcf043db
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4285:
-X-MS-Exchange-MinimumUrlDomainAge: kernel.org#8760
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4285EAAC25B1F132D00DCCF8C29A9@MN2PR12MB4285.namprd12.prod.outlook.com>
-X-Header: ProcessedBy-CMR-outbound
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hb8SZJ2XWgCtj0AIAX5VlBlNly/rWA4Wj4mJjk7aJirDJu0drLCTeX5d7/XK6vT1bdAFjum3I8DSPEBcc8AWLjiUsREvOE36odzBViSp1rn3+zbSf+yJNqphkpEANiQBNkYkcIlC6tp1xySZ9wuQlpf48t8SiRcX8bTGtFfIz0tO+KnXX8+iaGUqVaRd333SuvvagNk6bqFc2tgl7GRNQhYJi3/MWO5v9Eb9T+7TuEnqeeDmlf/Tf/fBum2e46A4DDRFMGjB0I+Za6dqyyVVe9cydRIGRm7IjHYiDWqdM1p/SPvH6spGgnobMrvI7/muA7y77KQVt17QcKfRIFvtPzce64y6sexFCP7Uxq8rb1GgmOZS7Rd18zsIGC+2VqtZbMQItYH4b0odepPJfoQKoJFq+xc5z5voMYMIDfAC2fBdTemwmYgvxR0Dugw3tew0tOKOUnp5aH2wnc3aDEjj2/zAeLqEg9YTsZcC2nrrAIWHae4qz5MEEnFbInnF22VRANiPMOmlAY0bpwEY6ttedIeYKYET1rzjboiyY3osz8U+jMtegBl3wngYy6LTies0nmVCDUrST1K4+XJ44bENOaIAEz350Pluo5ZxkfXKj5Qo93xfj5jffXxED1MagJx1TSLEd3Wuykd1MUO1zHRUXoTOYAhIn3xTrsjmTmj23acq6l3Al5BAFVv9381WRNmT
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3823.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39860400002)(346002)(396003)(136003)(235185007)(83380400001)(5660300002)(4326008)(26005)(36756003)(316002)(16576012)(2906002)(33964004)(33656002)(66946007)(66556008)(66476007)(53546011)(86362001)(8676002)(478600001)(6666004)(8936002)(6486002)(2616005)(956004)(966005)(186003)(16526019)(6916009)(45980500001)(72826003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?cWdJbkJ4UjBCWm1oa0VLeEN1NFRmZ3piTEtuTDdTcmY4ZnZCbDI2Zkc4U1VZ?=
- =?utf-8?B?YStYb2xrY3BLS215V1pjTktEcldhZmMwQXdBUVBTMWY5UTVDYys0TG43d2V1?=
- =?utf-8?B?c3ZCQ1FSK1l0WFAzT1pwVjJjek1EM1ZLb0VtYjFJVDlmeml2QS92TnZIZ2VH?=
- =?utf-8?B?ZEtVa0N4UnB1UVV3NEcxdG5pVWsvZTFCbmErR0RoNXJLUXZ4Nm5JeW1qMFFB?=
- =?utf-8?B?WXhJVzRrSnRaenArS2NuQ3JDbWpvelZrQ0M2R21DQlhCZ1hLVFVBREFQNkhQ?=
- =?utf-8?B?UUlwYlpRQ2xRS3dzU01zaGo4WjYzQ2hWaVJVeGp0MjhvS2FqTkJjMENURU1k?=
- =?utf-8?B?cmZnV1lNSW9BTkNpWUtqZ01IejdZS2JSTDl6VXoyRVpEME9BV3R4eXc0QUNN?=
- =?utf-8?B?S09BQjFCUmV3MVBHcWFjZ0J5aDZ0UXJCYys3QmY0c3ZOUmZXUkNFbE5IakYx?=
- =?utf-8?B?VHJ1emFEWis3bnpNOE1sTW9vWXhadkVZQ2x2MWhKU2hnMWsyMTZFaXhTTm0r?=
- =?utf-8?B?Z3p3c25KanJhUWwzQjgzSTNGSVAxWWR3Si9CQm9DdnlMRXBCZEdMSzBWVW1U?=
- =?utf-8?B?UXZEWE5WcWFvV2U3NVVFdi9VZjJ6VEZ0andwTEZ6SUtpam1xSllzQisybUtv?=
- =?utf-8?B?RXpNRVFlK1lMNm5yMFg5ZTZHVE1UQjVRZXV0QlVRT2h0Y1FKL1k5MDQ1TUU2?=
- =?utf-8?B?VVExSU1SMW84YjQ0aVZYbVpvWDFOWDFFOW9vTG9pYkZTRXpUTTMyR0tjWEpU?=
- =?utf-8?B?NzFkTDNtK0ZoUlpxNFlaL0kzaTJKalBaMGFzSFRTNitFMFRVNkJ1YUFNdmVZ?=
- =?utf-8?B?R2lISnpRby9mRExHUzQ4eGwyU3ZRSlRienYxeDQ4Y0pWS0F6QU1MOUZPc2Vh?=
- =?utf-8?B?UDV1NHZTNjZzZDdwVk11ZEJEdWNycE1YNUFSOGc5dkJBWnF1RWtnc2U1QzEy?=
- =?utf-8?B?ejdSOU9aMzlwYkpaVCtkbjl3NkYrK3g1THpxems1MkloVHlVSkswZ21LRDZF?=
- =?utf-8?B?VlFXRklwbStFT042UHFuZHpTSjU5d1lJcWIvTU42N3MrUUFFNzY1UTNYWUxK?=
- =?utf-8?B?eXdramQ3MFFBVHgyYkR2WENVNTgzdjAzZjZkeWVGMjJTWnJHZ2tNSG9QVnVh?=
- =?utf-8?B?WjZtZlEvUHpuNytwTTFURzVhTXBTdG1FUzBCQzd0aFczYktXL05CWG85NE83?=
- =?utf-8?B?TTNLNC8xZlU5RUVoQ0czMi9MVW9qQUZoNzdPNmZpMVF3K1hVMzB5Tm5vMnhz?=
- =?utf-8?B?YTZNUGxaaFVFcmQ3cG9xZWQ5K3VraHJnL1p5QmNUK2F0ZFpJT25uYWczUkxG?=
- =?utf-8?B?d1pTVityOXA1VDR2c291eHR1NDhOcDN6bkxDYjFwc1dTMHBCU05LbTMwOXFT?=
- =?utf-8?B?NFZjSXQzdTJtUGk0Zm1HRXFvTDZmNFQrdGhyT0RPL08zRldhS3BXM3dkc1Y1?=
- =?utf-8?B?M0ZieTZqZFloRVFkM0FRU3gza3Z2blFsNGdMSFQ5ZFZXTG4xSjJxTTlMaTdL?=
- =?utf-8?B?d1lrWXpnaENqWEtPd2x6MnU5eWplVXFMcFZoZitOS1A3dGhIQ1NUMlJpRkEy?=
- =?utf-8?B?N1BldGE4eFkxZDRxSll5eklOeFdwU3M2ZkdVakQ0RTl2QWdrMWNnbmI1OTZR?=
- =?utf-8?B?UExIQkhnN0FVRGFJcXlSRGhhcVN6OC8vdEJNd3AwWUJrblF6Vm5sM3FzbnhP?=
- =?utf-8?B?TkhwSE95cWtiTVBtNldlcmtLVWgxMkc5cUY3ellhKzJlTkxiL1N3MmxraXQz?=
- =?utf-8?Q?kyB/3wc4GAqU/uQwIRtRlxDxztdRq1H+sJVYLc0?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f3c13e6-c3e5-4272-de89-08d8dcf043db
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3823.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2021 20:26:17.2683
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eMVqs6VJmNTLqdNsHOTL23OOYVq+Vzk/p+pYW8q+kPulCEfNgyZfaJDixlDSFwoJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4285
-X-OriginatorOrg: Nvidia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1614630916; bh=TcXNkwWtPCEi561wawVkFCbNQlEdLaajqKxpzBscl1Y=;
-        h=ARC-Seal:ARC-Message-Signature:ARC-Authentication-Results:
-         Authentication-Results:From:To:CC:Subject:Date:X-Mailer:Message-ID:
-         In-Reply-To:References:Content-Type:X-Originating-IP:
-         X-ClientProxiedBy:MIME-Version:
-         X-MS-Exchange-MessageSentRepresentingType:X-MS-PublicTrafficType:
-         X-MS-Office365-Filtering-Correlation-Id:X-MS-TrafficTypeDiagnostic:
-         X-MS-Exchange-MinimumUrlDomainAge:X-MS-Exchange-Transport-Forked:
-         X-Microsoft-Antispam-PRVS:X-Header:X-MS-Oob-TLC-OOBClassifiers:
-         X-MS-Exchange-SenderADCheck:X-Microsoft-Antispam:
-         X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-         X-MS-Exchange-AntiSpam-MessageData:
-         X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-AuthSource:
-         X-MS-Exchange-CrossTenant-AuthAs:
-         X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-         X-MS-Exchange-CrossTenant-FromEntityHeader:
-         X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-         X-MS-Exchange-CrossTenant-UserPrincipalName:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
-        b=kaOEQDzrJfZRaxadeZCNoSytJSrS1r3iUzh6pafBNn4nCjtcIe5cKLAfPjkBSqmQj
-         06gmUkmJbRXDxVLvhCgv9BJY2Gi3pXE8gJM8ZOqlYhrjiIv3bNk88P2YSjGm2TGgS+
-         P3Yu4Figqn582dWLyobVOLcqaYnS1CLIoEV7KSf7kGdvAq9t5D9epv6FCSm93VY7Vl
-         3sF2endYI1/YfAONmwxU1bgHee0++u2YSe7khdebAeQ33SWTj4DfDCr0r/c8Yxajki
-         lNomKGiltjY94c1ycZl4Q/0DG1DZkuERX10wcCRoKQnE4Q5k3fL8AY6o8/sIZA04i1
-         PF3nAFCRyl+Lw==
+Content-Type: text/plain
+X-XM-SPF: eid=1lGpOT-0003CY-2q;;;mid=<m1wnuqhaew.fsf@fess.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+ZsUJ86c4hhhX5oCFbgiwx0LuN3v/uMm4=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4725]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 539 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 11 (2.1%), b_tie_ro: 10 (1.8%), parse: 1.21
+        (0.2%), extract_message_metadata: 5 (1.0%), get_uri_detail_list: 3.0
+        (0.6%), tests_pri_-1000: 3.5 (0.6%), tests_pri_-950: 1.26 (0.2%),
+        tests_pri_-900: 1.01 (0.2%), tests_pri_-90: 73 (13.6%), check_bayes:
+        72 (13.3%), b_tokenize: 10 (1.8%), b_tok_get_all: 11 (2.0%),
+        b_comp_prob: 3.4 (0.6%), b_tok_touch_all: 44 (8.1%), b_finish: 0.90
+        (0.2%), tests_pri_0: 423 (78.5%), check_dkim_signature: 0.55 (0.1%),
+        check_dkim_adsp: 2.6 (0.5%), poll_dns_idle: 1.04 (0.2%), tests_pri_10:
+        2.2 (0.4%), tests_pri_500: 7 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: exec error: BUG: Bad rss-counter
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_35B182F9-D59B-4424-93FE-9E511CE5CE30_=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com> writes:
 
-On 28 Jan 2021, at 2:03, Matthew Wilcox (Oracle) wrote:
-
-> We have trouble keeping track of whether we've already called
-> compound_head() to ensure we're not operating on a tail page.  Further,=
-
-> it's never clear whether we intend a struct page to refer to PAGE_SIZE
-> bytes or page_size(compound_head(page)).
+> Eric, All,
 >
-> Introduce a new type 'struct folio' that always refers to an entire
-> (possibly compound) page, and points to the head page (or base page).
+> The following error appears when running Linux 5.10.18 on an embedded
+> MIPS mt7621 target:
+> [    0.301219] BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:1
 >
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/mm.h       | 26 ++++++++++++++++++++++++++
->  include/linux/mm_types.h | 17 +++++++++++++++++
->  2 files changed, 43 insertions(+)
+> Being a very generic error, I started digging and added a stack dump
+> before the BUG:
+> Call Trace:
+> [<80008094>] show_stack+0x30/0x100
+> [<8033b238>] dump_stack+0xac/0xe8
+> [<800285e8>] __mmdrop+0x98/0x1d0
+> [<801a6de8>] free_bprm+0x44/0x118
+> [<801a86a8>] kernel_execve+0x160/0x1d8
+> [<800420f4>] call_usermodehelper_exec_async+0x114/0x194
+> [<80003198>] ret_from_kernel_thread+0x14/0x1c
 >
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 2d6e715ab8ea..f20504017adf 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -924,6 +924,11 @@ static inline unsigned int compound_order(struct p=
-age *page)
->  	return page[1].compound_order;
->  }
+> So that's how I got to looking at fs/exec.c and noticed quite a few
+> changes last year. Turns out this message only occurs once very early
+> at boot during the very first call to kernel_execve. current->mm is
+> NULL at this stage, so acct_arg_size() is effectively a no-op.
+
+If you believe this is a new error you could bisect the kernel
+to see which change introduced the behavior you are seeing.
+
+> More digging, and I traced the RSS counter increment to:
+> [<8015adb4>] add_mm_counter_fast+0xb4/0xc0
+> [<80160d58>] handle_mm_fault+0x6e4/0xea0
+> [<80158aa4>] __get_user_pages.part.78+0x190/0x37c
+> [<8015992c>] __get_user_pages_remote+0x128/0x360
+> [<801a6d9c>] get_arg_page+0x34/0xa0
+> [<801a7394>] copy_string_kernel+0x194/0x2a4
+> [<801a880c>] kernel_execve+0x11c/0x298
+> [<800420f4>] call_usermodehelper_exec_async+0x114/0x194
+> [<80003198>] ret_from_kernel_thread+0x14/0x1c
 >
-> +static inline unsigned int folio_order(struct folio *folio)
-> +{
-> +	return compound_order(&folio->page);
-> +}
-> +
->  static inline bool hpage_pincount_available(struct page *page)
->  {
->  	/*
-> @@ -975,6 +980,26 @@ static inline unsigned int page_shift(struct page =
-*page)
+> In fact, I also checked vma_pages(bprm->vma) and lo and behold it is set to 1.
 >
->  void free_compound_page(struct page *page);
+> How is fs/exec.c supposed to handle implied RSS increments that happen
+> due to page faults when discarding the bprm structure? In this case,
+> the bug-generating kernel_execve call never succeeded, it returned -2,
+> but I didn't trace exactly what failed.
+
+Unless I am mistaken any left over pages should be purged by exit_mmap
+which is called by mmput before mmput calls mmdrop.
+
+AKA it looks very very fishy this happens and this does not look like
+an execve error.
+
+On the other hand it would be good to know why kernel_execve is failing.
+Then the error handling paths could be scrutinized, and we can check to
+see if everything that should happen on an error path does.
+
+> Interestingly, this "BUG:" message is timing-dependent. If I wait a
+> bit before calling free_bprm after bprm_execve the message seems to go
+> away (there are 3 other cores running and calling into kernel_execve
+> at the same time, so there is that). The error also only ever happens
+> once (probably because no more page faults happen?).
 >
-> +static inline unsigned long folio_nr_pages(struct folio *folio)
-> +{
-> +	return compound_nr(&folio->page);
-> +}
-> +
-> +static inline struct folio *next_folio(struct folio *folio)
-> +{
-> +	return folio + folio_nr_pages(folio);
+> I don't know enough to propose a proper fix here. Is it decrementing
+> the bprm->mm RSS counter to account for that page fault? Or is
+> current->mm being NULL a bigger problem?
 
-Are you planning to make hugetlb use folio too?
+This is call_usermode_helper calls kernel_execve from a kernel thread
+forked by kthreadd.  Which means current->mm == NULL is expected, and
+current->active_mm == &init_mm.
 
-If yes, this might not work if we have CONFIG_SPARSEMEM && !CONFIG_SPARSE=
-MEM_VMEMMAP
-with a hugetlb folio > MAX_ORDER, because struct page might not be virtua=
-lly contiguous.
-See the experiment I did in [1].
+Similarly I bprm->mm having an incremented RSS counter appears correct.
 
+The question is why doesn't that count get consistently cleaned up.
 
-[1] https://lore.kernel.org/linux-mm/16F7C58B-4D79-41C5-9B64-A1A1628F4AF2=
-@nvidia.com/
+> Apologies in advance, but I have looked hard and do not see a clear
+> resolution for this even in the latest kernel code.
 
+I may be blind but I see two possibilities.
 
-=E2=80=94
-Best Regards,
-Yan Zi
+1) There is a memory stomp that happens early on and bad timing causes
+   the memory stomp to result in an elevated rss count.
 
---=_MailMate_35B182F9-D59B-4424-93FE-9E511CE5CE30_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
+2) There is a buggy error handling path, and whatever failure you are
+    running into that early in boot walks through that buggy failure
+    path.
 
------BEGIN PGP SIGNATURE-----
+I don't think this is a widespread issue or yours would not be the first
+report like this I have seen.
 
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmA9TeMPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKQ0kP/iahPETeIDBFgmOBeqho0ttcjgSnEO2vxDfQ
-2bwkT/BkSbJFdozgYX9XlbWABp4rePNzLXhnNvD6nZVSS1EiZ2fxk+83lnzFQ3rQ
-ffq0M5/fSjpm27ZzRKksGXVFXNa/uk9CKR5YxavmQAKUSqe3GaP8ZVEQXul97twR
-fhqi2MpyW2wv4TEuo6+Jby/HPwyB2jsjrx28089TqifcQp3m2odb1rOuY406t/vY
-QhED5zD2wvp9/bfMeQrdEZQbUf6xj11xHhLjpeZaBgN7vbytd7FZQwjxYW1R2S8D
-ReUdNEfJs1Btm76yn4yTTOOJ03w5YvSARdrV0Lvxsio34T9QqlHzwZWp9yjJ/6Uv
-Kb2XfP7gi+e4J7XYrn6ZTeefO1hyxVUoNc6sCS7Y7BST4tX2O0aI2W4ftU5ng0sV
-F/0v6CHb6PbbpJj+0FmoFuUqjzBQ3nJqlNSC87LoYecJGxJ8Zdce0qpAEPAidFRz
-FGVbXSoMqlu+0UNprU3aH+7afLiXTklSi3ElY6o25ahAQXKC+QBVq0pHdGwmkaBA
-qbhUDctrEJhWmAC2t0fJtXWolieC6K47sCTQKKUB60tZ6IYnDu8AnczwNT66Inxc
-Oj1pMfUc5bxbLzEyBEHYJDrRQpr180xNSHkbgWJ5zWsWrseSHPBzSya+70lWlkEN
-nVZaBvlI
-=u8ZM
------END PGP SIGNATURE-----
+The two productive paths I can see for tracing down your problem are:
+1) git bisect (assuming you have a known good version)
+2) Figuring out what exec failed.
 
---=_MailMate_35B182F9-D59B-4424-93FE-9E511CE5CE30_=--
+I really think exec_mmap should have cleaned up anything in the mm.  So
+the fact that it doesn't worries me.
+
+Eric
