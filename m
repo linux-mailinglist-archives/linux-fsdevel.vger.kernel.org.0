@@ -2,138 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B4432785D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 08:42:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DA4D3278BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 08:57:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232575AbhCAHlS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Mar 2021 02:41:18 -0500
-Received: from esa5.hc1455-7.c3s2.iphmx.com ([68.232.139.130]:34593 "EHLO
-        esa5.hc1455-7.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232574AbhCAHlR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Mar 2021 02:41:17 -0500
-IronPort-SDR: tGvBDWbOft83eNsQjRioYLiVBVz1iyTh5nEUdQtY/rAjCbWstI0P576mQxG76VXSQw4xGhrL2O
- 4pwBXFGLFfhyEbZhAR/Mgsk0Y5Jr5w8MEPfKH8NLh/OX8XS0Nr1OYGhwmOZpX+d7dbK3mK+0Zu
- k6MIMtLyZivYsUNlCwnuq4wnqvQFqUY3d/d+V53NnFfS+l32tQyX/4P0l4NjWnCus3LwP1B33G
- r72yxnXbCv2gEGqjmBh+qABH4oGmwPuvAC4E8deFIwy0n12gZGnaDb5KFX3wnOvJPF3pKE4Q81
- sgE=
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="20943770"
-X-IronPort-AV: E=Sophos;i="5.81,214,1610377200"; 
-   d="scan'208";a="20943770"
-Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
-  by esa5.hc1455-7.c3s2.iphmx.com with ESMTP; 01 Mar 2021 16:26:47 +0900
-Received: from oym-m3.gw.nic.fujitsu.com (oym-nat-oym-m3.gw.nic.fujitsu.com [192.168.87.60])
-        by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id CC3C2E60A7;
-        Mon,  1 Mar 2021 16:26:46 +0900 (JST)
-Received: from m3050.s.css.fujitsu.com (msm.b.css.fujitsu.com [10.134.21.208])
-        by oym-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id D3CCE15331;
-        Mon,  1 Mar 2021 16:26:45 +0900 (JST)
-Received: from [10.133.113.145] (VPC-Y08P0560117.g01.fujitsu.local [10.133.113.145])
-        by m3050.s.css.fujitsu.com (Postfix) with ESMTP id A473F2A7;
-        Mon,  1 Mar 2021 16:26:45 +0900 (JST)
-Subject: Re: Question about the "EXPERIMENTAL" tag for dax in XFS
-To:     Dan Williams <dan.j.williams@intel.com>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@lst.de" <hch@lst.de>, "rgoldwyn@suse.de" <rgoldwyn@suse.de>,
-        "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>,
-        "fnstml-iaas@cn.fujitsu.com" <fnstml-iaas@cn.fujitsu.com>
-References: <20210226002030.653855-1-ruansy.fnst@fujitsu.com>
- <OSBPR01MB2920899F1D71E7B054A04E39F49D9@OSBPR01MB2920.jpnprd01.prod.outlook.com>
- <20210226190454.GD7272@magnolia>
- <CAPcyv4iJiYsM5FQdpMvCi24aCi7RqUnnxC6sM0umFqiN+Q59cg@mail.gmail.com>
-From:   Yasunori Goto <y-goto@fujitsu.com>
-Message-ID: <556921a1-456c-c24d-6d47-e8b15c1d9972@fujitsu.com>
-Date:   Mon, 1 Mar 2021 16:26:45 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S232700AbhCAH5S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 02:57:18 -0500
+Received: from mout.gmx.net ([212.227.17.22]:59333 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232676AbhCAH5F (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Mar 2021 02:57:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1614585331;
+        bh=XFHC5ac0afiwN0pQnK766BXUmPRnF49/Wtqs8//J58Y=;
+        h=X-UI-Sender-Class:Subject:From:To:References:Date:In-Reply-To;
+        b=bBZaGgjk1ir7vzVljTSijS49xv1dBsF0fygubfDbRNhZiePlRofHwWKeUU+ydjREk
+         xxFUwQCAOU1DetwSk6jxYfZFxWnRZFOJJag3byOmqBHVk/csgTgdsebjpsKFU5tsKm
+         VyvvPR/BCHgGl9SJoY+yW+EXMAqm8s5baV/nbCdA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N49hB-1lys1D2pH7-0106Vo; Mon, 01
+ Mar 2021 08:55:31 +0100
+Subject: Re: Bio read race with different ranges inside the same page?
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+References: <d38d7a97-b413-a5cd-1c86-193453c4b51e@gmx.com>
+Message-ID: <bb189a2f-e419-c4f1-3b2b-90c5a401d81f@gmx.com>
+Date:   Mon, 1 Mar 2021 15:55:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4iJiYsM5FQdpMvCi24aCi7RqUnnxC6sM0umFqiN+Q59cg@mail.gmail.com>
+In-Reply-To: <d38d7a97-b413-a5cd-1c86-193453c4b51e@gmx.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:XwNEUF4niBnVchOqI0g04ORLCU6AvCrehJz4d56IOGkLGQAc8F/
+ KpF6xzpJag5UtBaP9eSqM5b5V3ebtcenrb3fmS1NuxPAjFPs/lex5v8+eUujWyv5jmYruQ5
+ 4g3VGGecBWGeIlOZzqneXMkX6AQGW7S4Uv1er3Ip2XjNmLWQyNQyVQbVZvVAWXv7Y9o7tup
+ tuOnf68sxuIV+1h7XY4AQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:B2H8Rnftp1I=:uspYPD5ev2CB9kmOVyaC3h
+ g0vVHxuUqodQr+f6nmLvdoNZ7gsxFnr0uEwXoqUFBpzSmI0kiW5DpE9Idts/OR0LxnzgGoytN
+ Kjht5BrndP2ecWiwQhHBCG8peoZoa6xdzBt82uPQtTBAqtPaWcSLUpATUD8u4DdsaSrInA457
+ prWidvHkzSQ3GwjAC2OW13lS8GFtBR7pYguZMdgN95sbeFffERAC7eqrDAQOeKUp/j0ip90qW
+ 9iiWZZMw41oKUcT9S6taxEezcJH4ct12VYjAdGl68MedneXXWjmDQNMeg6z3va4ChzhC1b7fQ
+ +ymFlyJDaGB9MNAAPqNm59p91mHEyynCxK4C9UEFUJ1jQ3ixwSCv5mZtMPQRtyc3VnNdx3Qch
+ odabRsoomuyaSm19CHzW3nahNES5PgBx6tKf9P4jyDA5HEPGkju04UBRK4JjCLJPeFiWTjHVN
+ 5mF6xuRB59mt+bk2KiSR+a4oQzhqjgluUoUlB+Apbi6LhdPtyP0h2BdKI4FQPbUJVjGuuzKIP
+ mY96bOXJxA4KLznN8Vyp3NKLQJsBbzorGruJIkCTiFy9NeWsr7pU57anVnjI12nB+lx41vqWl
+ 3bJ9ews62HvtKoobFypCS2hYFkWF14sfHpyQIHQw0WGVOj35cc0XFlUu7xLYYnHpE2Rdk9YNM
+ 50p5q7wAL1JpGK1a4Xb8RaI0awAiwya6g+hi/t6jp+vcx5VANz+FuRs9ADmHPhQ90jrsDAYOV
+ c8vtr4Fx9zL0ZopytoyWpZZmozCnuJZCKmkXNefwHqqqlkO2jSdELUHLDnYhhmXROZa6aFHiM
+ JbIH0FW1miKbEZVqWqf8R9bJe23TR1tNs8p+hZl9Ja36BaTSfyuU6lxX5WEzEXX7miwIIgxiC
+ PzldvLz2KHhU8DJ9u9CQ==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello, Dan-san,
 
-On 2021/02/27 4:24, Dan Williams wrote:
-> On Fri, Feb 26, 2021 at 11:05 AM Darrick J. Wong <djwong@kernel.org> wrote:
->>
->> On Fri, Feb 26, 2021 at 09:45:45AM +0000, ruansy.fnst@fujitsu.com wrote:
->>> Hi, guys
->>>
->>> Beside this patchset, I'd like to confirm something about the
->>> "EXPERIMENTAL" tag for dax in XFS.
->>>
->>> In XFS, the "EXPERIMENTAL" tag, which is reported in waring message
->>> when we mount a pmem device with dax option, has been existed for a
->>> while.  It's a bit annoying when using fsdax feature.  So, my initial
->>> intention was to remove this tag.  And I started to find out and solve
->>> the problems which prevent it from being removed.
->>>
->>> As is talked before, there are 3 main problems.  The first one is "dax
->>> semantics", which has been resolved.  The rest two are "RMAP for
->>> fsdax" and "support dax reflink for filesystem", which I have been
->>> working on.
->>
->> <nod>
->>
->>> So, what I want to confirm is: does it means that we can remove the
->>> "EXPERIMENTAL" tag when the rest two problem are solved?
->>
->> Yes.  I'd keep the experimental tag for a cycle or two to make sure that
->> nothing new pops up, but otherwise the two patchsets you've sent close
->> those two big remaining gaps.  Thank you for working on this!
->>
->>> Or maybe there are other important problems need to be fixed before
->>> removing it?  If there are, could you please show me that?
->>
->> That remains to be seen through QA/validation, but I think that's it.
->>
->> Granted, I still have to read through the two patchsets...
-> 
-> I've been meaning to circle back here as well.
-> 
-> My immediate concern is the issue Jason recently highlighted [1] with
-> respect to invalidating all dax mappings when / if the device is
-> ripped out from underneath the fs. I don't think that will collide
-> with Ruan's implementation, but it does need new communication from
-> driver to fs about removal events.
-> 
-> [1]: http://lore.kernel.org/r/CAPcyv4i+PZhYZiePf2PaH0dT5jDfkmkDX-3usQy1fAhf6LPyfw@mail.gmail.com
-> 
 
-I'm not sure why there is a race condition between unbinding operation 
-and accessing mmaped file on filesystem dax yet.
+On 2021/2/26 =E4=B8=8B=E5=8D=883:02, Qu Wenruo wrote:
+> Hi,
+>
+> Is it possible that multiple ranges of the same page are submitted to
+> one or more bios, and such ranges race with each other and cause data
+> corruption.
+>
+> Recently I'm trying to add subpage read/write support for btrfs, and
+> notice one strange false data corruption.
+>
+> E.g, there is a 64K page to be read from disk:
+>
+> 0=C2=A0=C2=A0=C2=A0 16K=C2=A0=C2=A0=C2=A0 32K=C2=A0=C2=A0=C2=A0 48K=C2=
+=A0=C2=A0=C2=A0 64K
+> |///////|=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |///////|=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |
+>
+> Where |///| means data which needs to be read from disk.
+> And |=C2=A0=C2=A0 | means hole, we just zeroing the range.
+>
+> Currently the code will:
+>
+> - Submit bio for [0, 16K)
+> - Zero [16K, 32K)
+> - Submit bio for [32K, 48K)
+> - Zero [48K, 64k)
+>
+> Between bio submission and zero, there is no need to wait for submitted
+> bio to finish, as I assume the submitted bio won't touch any range of
+> the page, except the one specified.
+>
+> But randomly (not reliable), btrfs csum verification at the endio time
+> reports errors for the data read from disk mismatch from csum.
+>
+> However the following things show it's read path has something wrong:
+> - On-disk data matches with csum
+>
+> - If fully serialized the read path, the error just disappera
+>  =C2=A0 If I changed the read path to be fully serialized, e.g:
+>  =C2=A0 - Submit bio for [0, 16K)
+>  =C2=A0 - Wait bio for [0, 16K) to finish
+>  =C2=A0 - Zero [16K, 32K)
+>  =C2=A0 - Submit bio for [32K, 48K)
+>  =C2=A0 - Wait bio for [32K, 48K) to finish
+>  =C2=A0 - Zero [48K, 64k)
+>  =C2=A0 Then the problem just completely disappears.
 
-May be silly question, but could you tell me why the "unbinding" 
-operation of the namespace which is mounted by filesystem dax must be
-allowed?
-If "unbinding" is rejected when the filesystem is mounted with dax 
-enabled, what is inconvenience?
+Never mind, the bio read part is doing what we expect, they won't really
+touch any thing beyond the range specified.
 
-I can imagine if a device like usb memory stick is removed surprisingly, 
-kernel/filesystem need to reject writeback at the time, and discard page 
-cache. Then, I can understand that unbinding operation is essential for 
-such case.
-But I don't know why PMEM device/namespace allows unbinding operation 
-like surprising removal event.
+It's the endio of btrfs end_bio_extent_readpage() doing zeroing which is
+always to page end causing the problem.
 
 Thanks,
+Qu
 
--- 
-Yasunori Goto
+>
+> So this looks like that, the read path hole zeroing and bio submission
+> is racing with each other?
+>
+> Shouldn't bios only touch the range specified and not touching anything
+> else?
+>
+> Or is there something I missed like off-by-one bug?
+>
+> Thanks,
+> Qu
