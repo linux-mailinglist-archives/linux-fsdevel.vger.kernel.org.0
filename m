@@ -2,151 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 742E23276C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 05:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE7643276C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Mar 2021 06:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbhCAE7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Feb 2021 23:59:11 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:23221 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231757AbhCAE7J (ORCPT
+        id S229452AbhCAFBE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Mar 2021 00:01:04 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:53000 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231787AbhCAFBD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Feb 2021 23:59:09 -0500
+        Mon, 1 Mar 2021 00:01:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1614574750; x=1646110750;
+  t=1614574862; x=1646110862;
   h=date:from:to:subject:message-id:references:mime-version:
    in-reply-to;
-  bh=9vC9iIdCtQcnsi30gaVjoF2yU6hKJpuznKwhI8fRwYw=;
-  b=dtarEE2m9Zv6/EuQcO9lmzcEKdd7TCKn/AY4NVqBh5kAgXyrR8LBveuI
-   k4kPyYBND6Un2uYgU8jEWiWaat8HwXmfu+VZegAR85sZV6hCA9pkYUxCx
-   hhWjOR8FLaLyfK91Pdyz9AhDqDC+/x3fU6WQ4zZRdbhXE3KIZgD9QHFHJ
-   Cyed9iNIoMv868RIJ/WYUAJZjKot+TCjMUIQSR+s0fAAyMpQaIafPx7sp
-   SwsHjM05OTyRUwnr1BJ+TGsrcQ0OUVBdPN9LQTSJ++CefD6XNI6zxnrL9
-   KqZExfZBmisjhhQOW4DNsMKSrFHQQ3Ge08ntn5FEJyyxyMj2EffZToaHz
-   A==;
-IronPort-SDR: RLvOzBgDK0F2XXDVASArPmzpP/Uz/9dNyEr5Laj3j5D9nUER16jJy2RQjZQzbKhEGBCB/aD3FV
- 6jBq/hDan4NpD65nsTm4uKAeG9wQ3f8st567HO7sUycw5xFIo1GKuMpx/nOcVdFi7hy9DpN8MT
- y73RqBs//GZaKUMJuXSddtvZtzmWkmJmOqJ6Yz93flFdZF29m7tAYLypTcmpwucn9KKbO/1E+b
- RmADv87Cluwb72/SJJ1bUfYJ/ynnnFfnA6wDzeUgTV1lSoG/vJvsQHXKivQrHyXb0jMXN5Ctv2
- 2J8=
+  bh=BwDcBgRCdU5sQw+8D3yJawASvWDBZEZaQnkXK76I0qk=;
+  b=kX+l1dUE1AFQnpYwafc9kLiFjM1BuDpvCw3FFmPeOa/LZsVElt+YUXQo
+   +XAgNI0xegDTfFtatE/xjDylXTcz63vvVDWnArdSwNEFG5qsC4Gg5pZ+M
+   lZwhcoyc3GJIxyvBSELE6sQwQUbV97s4RaqGZEOw6pFDMpnJwROUVJnnm
+   f7BuRW2cTaBQIOmHI4m6/VMDVR/8S3mlQKsrJRfc2YGcmNCyM1WgJNvS7
+   QfDFo4E580yEJ/5nuQT5Lcr8STRoQUqdJtzVB0TLly17+Kpx444mnptJC
+   Nor/i89emfADBnn8HzdFoSNjrejd577y5V8z1C6DaQ1gLJkAKNr1cjwGC
+   g==;
+IronPort-SDR: k4JL+MqKMlL/ZzNhMBjSN8LdojReJvxIbE0vu8DcIwNjjFJsehkR5W1ozhPOCnazT6gcWdLeou
+ QCupk8vYb9EgQOP9n9pFfvphej8bt8oMDIwQxN8ElTSf3+55Hnqc9XbaaxHwH1CbrZGgLqwdDW
+ 3dzySeVlPbSLsrrVRQnRVMv5gOH6fm6danutXeED9Hppq3WRCxAyPhkPCYCfSuhVDtE2XRJcxX
+ K4/1L6k0CGhfSlNcGKQxbYF8gebJ/ntNdTRdhHm53jvZqSZeg5inYfzr4qGrzGVUdsRLJeLVq1
+ 1U0=
 X-IronPort-AV: E=Sophos;i="5.81,214,1610380800"; 
-   d="scan'208";a="162200950"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Mar 2021 12:55:51 +0800
-IronPort-SDR: 56UT7LqdYFca2hA1N7akaeRRXHXSVfAfoU6P783sKgmSpfnXXhkzTknHB0zO3EQ+8apntBQMAg
- YGgs+6f9hG/qtiTnjgbCIOPtNRbdq5gKEWVvBu4kWIHC/zG6baxNdA2bnEGjH4X5E1THNDGyaX
- 7CjsqnpLSUSjkgHN+3krC78mzOC9HPyHTcO/Tf9Fl6XunMnbPJfOV+e+rLBn17D9cNGu1Cu6jJ
- fiu1RWky9UakaXh6UcrM4aqQfMfqS11XCbWR3NyhsPUPE1ZSXGxQLumZ5r7Qx3nQk8FUwexW2r
- PLdZnO8oenMwsQqIBYZ4kkdo
+   d="scan'208";a="271625847"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 01 Mar 2021 12:57:45 +0800
+IronPort-SDR: CscbAZSMvPOCyxCJD3vAbLFTd8/gIlD8VZ/U+JWCTeIeKOAxLd493V9FTpe3IXs6HXMPPSmW8H
+ 1tLF+MGJUdNrof+iidH9iE4Y5gu721moqLOgG5NvyLwjgUpivtjuyaTvKiLSxLrIukL5tO/iGa
+ 9bLg+z1b3CANYw/fBsKtKhLO8Pf2bswxaJTZAyXCxFiybXdaCnQFRh7L8N107Ttro99OAXeflc
+ zhnekm+fA5MoMxEzTQ/HQymcgMMHbpbHFUCm/kGvaLShTb+IoDafApagcHxaVsqUMjmYlwGosg
+ 1GDhwv9i0A/UPoV86VpaEfil
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 20:37:08 -0800
-IronPort-SDR: RChYY+3QClU3mq5Y/5WM7AQSldWMBGqO+aYTWaG6t2/pSBFETCAQkXA13UpNLgs1SR52gGzo/B
- Mg/ohsDZbMzMQUp+Qo9ogkNlLJ0v6jJv4myyPSDg3bwRVsUdQxsFPPHKrEhbpCOAMn3gBAiRXb
- QFB9DNXbPbXMp33U6gSn/rSe2CB4+TqRm0EtTFaUywc1qE+bWt23tUFlsrMhpYj04TR39CPPvL
- RbbuyAClyFALzRzICz5cpzfZX3vI85UM0FBudIa57PiTDtfZa79kkmSxrTwRZkCvjP2JP0erNP
- giI=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 20:39:03 -0800
+IronPort-SDR: ErFomcOHyzzLXU4yN4lPccE1Y1Uja6lyq/wYdG/9rq8mdCl1Eibe5p1DE2KDebhDieIESLrNWE
+ 2qXbRJy5nC4MRSXnkGHSqzmtawHaNw/ne2GeCURXp5L3AjCNfmnJL4fn3ll120iFp+OUxUGsmY
+ BJZ1858PNHC71M8Hl1MgexedNQdea8GQB7qFhxuY8+ibK/28AYnIvl0j6+kMKCdB83FTwbUScm
+ k1u1g9r2tvi55lj1uRj/08ALA+MRo3tAkYzKT9jkyTLlBS+ck2xMcDr1Z7Tx2Rf8zTpatT0dRr
+ OIA=
 WDCIronportException: Internal
 Received: from 4bypzw2.ad.shared (HELO naota-xeon) ([10.225.48.68])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 20:55:49 -0800
-Date:   Mon, 1 Mar 2021 13:55:48 +0900
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 20:57:44 -0800
+Date:   Mon, 1 Mar 2021 13:57:43 +0900
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     dsterba@suse.cz, linux-btrfs@vger.kernel.org, dsterba@suse.com,
         hare@suse.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] btrfs: zoned: move superblock logging zone location
-Message-ID: <20210301045548.zirmwk56almxgint@naota-xeon>
+Subject: Re: [PATCH 2/3] btrfs: zoned: add missing type conversion
+Message-ID: <20210301045743.24veuvqolbor447m@naota-xeon>
 References: <cover.1614331998.git.naohiro.aota@wdc.com>
- <7d02b9117f15101e70d2cd37da05ca93c2fd624d.1614331998.git.naohiro.aota@wdc.com>
- <20210226191130.GR7604@twin.jikos.cz>
+ <e6519c3681550015fbeeb0565f707d72705a39f1.1614331998.git.naohiro.aota@wdc.com>
+ <20210226191858.GS7604@twin.jikos.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210226191130.GR7604@twin.jikos.cz>
+In-Reply-To: <20210226191858.GS7604@twin.jikos.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 26, 2021 at 08:11:30PM +0100, David Sterba wrote:
-> On Fri, Feb 26, 2021 at 06:34:36PM +0900, Naohiro Aota wrote:
-> > This commit moves the location of superblock logging zones basing on the
-> > static address instead of the static zone number.
+On Fri, Feb 26, 2021 at 08:18:58PM +0100, David Sterba wrote:
+> On Fri, Feb 26, 2021 at 06:34:37PM +0900, Naohiro Aota wrote:
+> > We need to cast zone_sectors from u32 to u64 when setting the zone_size, or
+> > it set the zone size = 0 when the size >= 4G.
 > > 
-> > The following zones are reserved as the circular buffer on zoned btrfs.
-> >   - The primary superblock: zone at LBA 0 and the next zone
-> >   - The first copy: zone at LBA 16G and the next zone
-> >   - The second copy: zone at LBA 256G and the next zone
-> 
-> This contains all the important information but somehow feels too short
-> given how many mails we've exchanged and all the reasoning why we do
-> that
-
-Yep, sure. I'll expand the description and repost.
-
-> > 
-> > We disallow zone size larger than 8GB not to overlap the superblock log
-> > zones.
-> > 
-> > Since the superblock zones overlap, we disallow zone size larger than 8GB.
-> 
-> or why we chose 8G to be the reasonable upper limit for the zone size.
-> 
+> > Fixes: 5b316468983d ("btrfs: get zone information of zoned block devices")
 > > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 > > ---
-> >  fs/btrfs/zoned.c | 21 +++++++++++++++------
-> >  1 file changed, 15 insertions(+), 6 deletions(-)
+> >  fs/btrfs/zoned.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > 
 > > diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> > index 9a5cf153da89..40cb99854844 100644
+> > index 40cb99854844..4de82da39c10 100644
 > > --- a/fs/btrfs/zoned.c
 > > +++ b/fs/btrfs/zoned.c
-> > @@ -112,10 +112,9 @@ static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
-> >  
-> >  /*
-> >   * The following zones are reserved as the circular buffer on ZONED btrfs.
-> > - *  - The primary superblock: zones 0 and 1
-> > - *  - The first copy: zones 16 and 17
-> > - *  - The second copy: zones 1024 or zone at 256GB which is minimum, and
-> > - *                     the following one
-> > + *  - The primary superblock: zone at LBA 0 and the next zone
-> > + *  - The first copy: zone at LBA 16G and the next zone
-> > + *  - The second copy: zone at LBA 256G and the next zone
-> >   */
-> >  static inline u32 sb_zone_number(int shift, int mirror)
-> >  {
-> > @@ -123,8 +122,8 @@ static inline u32 sb_zone_number(int shift, int mirror)
-> >  
-> >  	switch (mirror) {
-> >  	case 0: return 0;
-> > -	case 1: return 16;
-> > -	case 2: return min_t(u64, btrfs_sb_offset(mirror) >> shift, 1024);
-> > +	case 1: return 1 << (const_ilog2(SZ_16G) - shift);
-> > +	case 2: return 1 << (const_ilog2(SZ_1G) + 8 - shift);
-> 
-> This ilog(SZ_1G) + 8 is confusing, it should have been 256G for clarity,
-> as it's a constant it'll get expanded at compile time.
-
-I'd like to use SZ_256G here, but linux/sizes.h does not define
-it. I'll define one for us and use it in the next version.
-
-> >  	}
-> >  
-> >  	return 0;
-> > @@ -300,6 +299,16 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
-> >  		zone_sectors = bdev_zone_sectors(bdev);
-> >  	}
-> >  
-> > +	/* We don't support zone size > 8G that SB log zones overlap. */
-> > +	if (zone_sectors > (SZ_8G >> SECTOR_SHIFT)) {
-> > +		btrfs_err_in_rcu(fs_info,
-> > +				 "zoned: %s: zone size %llu is too large",
-> > +				 rcu_str_deref(device->name),
-> > +				 (u64)zone_sectors << SECTOR_SHIFT);
-> > +		ret = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
+> > @@ -312,7 +312,7 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
 > >  	nr_sectors = bdev_nr_sectors(bdev);
 > >  	/* Check if it's power of 2 (see is_power_of_2) */
 > >  	ASSERT(zone_sectors != 0 && (zone_sectors & (zone_sectors - 1)) == 0);
+> > -	zone_info->zone_size = zone_sectors << SECTOR_SHIFT;
+> > +	zone_info->zone_size = (u64)zone_sectors << SECTOR_SHIFT;
+> 
+> That should be fixed by changing type to sector_t, it's already so in
+> other functions (btrfs_reset_sb_log_zones, emulate_report_zones).
+> 
+> In btrfs_get_dev_zone_info thers's already a type mismatch near line
+> 300:
+> 
+> 	zone_sectors = bdev_zone_sectors(bdev);
+> 
+> linux/blkdev.h:
+> static inline sector_t bdev_zone_sectors(struct block_device *bdev)
+
+Ah, yes, I forgot that point. I'll repost by fixing the type of
+zone_sectors.
+
+> >  	zone_info->zone_size_shift = ilog2(zone_info->zone_size);
+> >  	zone_info->max_zone_append_size =
+> >  		(u64)queue_max_zone_append_sectors(queue) << SECTOR_SHIFT;
 > > -- 
 > > 2.30.1
